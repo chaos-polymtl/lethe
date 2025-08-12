@@ -568,7 +568,15 @@ InterfaceTools::SignedDistanceSolver<dim, VectorType>::
 
   const unsigned int        n_opposite_faces_per_dofs = dim;
   std::vector<unsigned int> dof_opposite_faces(n_opposite_faces_per_dofs);
-  const unsigned int        dofs_per_cell = fe->n_dofs_per_cell();
+  unsigned int              n_opposite_dofs_per_faces = 2;
+  if constexpr (dim == 3)
+    n_opposite_dofs_per_faces = 4;
+  std::vector<unsigned int> face_opposite_dofs(n_opposite_dofs_per_faces);
+
+  const unsigned int dofs_per_cell  = fe->n_dofs_per_cell();
+  unsigned int       faces_per_cell = 4;
+  if constexpr (dim == 3)
+    faces_per_cell = 6;
 
   // Jacobians
   std::vector<Point<dim>>                  stencil_real(2 * dim - 1);
@@ -591,6 +599,14 @@ correction in the reference face. */
   ref_face_center_point(0)             = 0.5;
   if constexpr (dim == 3)
     ref_face_center_point(1) = 0.5;
+
+  // Stencil
+  std::vector<Point<dim>> x_n_ref_vector(n_opposite_dofs_per_faces);
+  std::vector<Point<dim>> x_n_real_vector(n_opposite_dofs_per_faces);
+  std::vector<Point<dim>> stencil_ref_vector(
+    n_opposite_dofs_per_faces * 2 * dim - 1);
+
+
 
   FEPointEvaluation<1, dim> fe_point_evaluation(
     *mapping, *fe, update_values | update_gradients | update_jacobians);
@@ -683,56 +699,35 @@ correction in the reference face. */
                                    cell_dof_values.begin(),
                                    cell_dof_values.end());
 
-              // Loop over the cell's DoFs
-              for (unsigned int i = 0; i < dofs_per_cell; ++i)
+              // Loop over the cell's faces
+              for (unsigned int j = 0; j < faces_per_cell; ++j)
                 {
-                  /* If the dof belongs to an intersected cell, the distance
-                  is already computed */
-                  if (intersected_dofs.find(dof_indices[i]) !=
-                      intersected_dofs.end())
+                  get_face_opposite_dofs(j, face_opposite_dofs);
+
+                  for (unsigned int i = 0; i < n_opposite_dofs_per_faces; ++i)
                     {
-                      continue;
+                      // Initial evaluation points for the Newton method
+                      x_n_ref_vector[i] = transform_ref_face_point_to_ref_cell(
+                        ref_face_center_point, j);
                     }
 
-                  // Get opposite faces
+                  const double        tol = 1e-12;
+                  std::vector<double> correction_norm(n_opposite_dofs_per_faces,
+                                                      1.0);
+                  unsigned int        newton_it     = 0;
+                  const int           newton_max_it = 100;
 
-                  get_dof_opposite_faces(i, dof_opposite_faces);
+                  // Check to constrain the solution in the face F_J
+                  std::vector<int> outside_check(n_opposite_dofs_per_faces);
 
-                  // Get the real coordinates of the current DoF I
-                  const Point<dim> x_I_real =
-                    dof_support_points.at(dof_indices[i]);
-
-                  // Loop on opposite faces F_J
-                  for (unsigned int j = 0; j < n_opposite_faces_per_dofs; ++j)
+                  // Solve the minimization problem with Newton method
+                  // using a numerical jacobian
+                  while (*std::max_element(correction_norm.begin(),
+                                           correction_norm.end()) > tol &&
+                         newton_it < newton_max_it)
                     {
-                      /* The minimization problem is: Find x in the face F_J
-                      (opposite to the DoF of interest I) such that:
-
-                        |d|_{x_I} = min(phi(x) +|x_I - x|)
-
-                      where x_I is the coord of the DoF I, phi(x) is the
-                      distance (not signed) at the point x, belonging to the
-                      face F_J. Here, we solve the problem in the reference
-                      space (dim - 1).
-                      */
-
-                      // Initialize required variables
-                      Point<dim> x_n_ref = transform_ref_face_point_to_ref_cell(
-                        ref_face_center_point, dof_opposite_faces[j]);
-                      Point<dim> x_n_real;
-
-                      const double tol             = 1e-12;
-                      double       correction_norm = 1.0;
-                      int          newton_it       = 0;
-                      const int    newton_max_it   = 100;
-
-                      // Check to constrain the solution in the face F_J
-                      int outside_check = 0;
-
-                      // Solve the minimization problem with Newton method
-                      // using a numerical jacobian
-                      while (correction_norm > tol && outside_check < 3 &&
-                             newton_it < newton_max_it)
+                      for (unsigned int i = 0; i < n_opposite_dofs_per_faces;
+                           ++i)
                         {
                           /* Set stencil for numerical jacobian computation.
                            The entries of the vector are the following:
@@ -742,37 +737,62 @@ correction in the reference face. */
 
                                     3
                           The entry 0 is the current evaluation point. */
-
                           const double perturbation =
-                            std::max(1e-6 * x_n_ref.norm(), 1e-8);
+                            std::max(1e-6 * x_n_ref_vector[i].norm(), 1e-8);
                           std::vector<Point<dim>> stencil_ref =
                             compute_numerical_jacobian_stencil(
-                              x_n_ref, dof_opposite_faces[j], perturbation);
+                              x_n_ref_vector[i], j, perturbation);
 
+                          for (unsigned int k = 0; k < 2 * dim - 1; ++k)
+                            {
+                              stencil_ref_vector[k + (2 * dim - 1) * i] =
+                                stencil_ref[k];
+                            }
+                        }
 
+                      /* Prepare FEPointEvaluation to compute value and
+                      gradient at the stencil points*/
+                      fe_point_evaluation.reinit(cell, stencil_ref_vector);
+                      fe_point_evaluation.evaluate(cell_dof_values,
+                                                   EvaluationFlags::gradients);
 
-                          /* Prepare FEPointEvaluation to compute value and
-                          gradient at the stencil points*/
-                          fe_point_evaluation.reinit(cell, stencil_ref);
-                          fe_point_evaluation.evaluate(
-                            cell_dof_values, EvaluationFlags::gradients);
+                      // Loop over the face's opposite DoFs
+                      for (unsigned int i = 0; i < n_opposite_dofs_per_faces;
+                           ++i)
+                        {
+                          const unsigned int local_face_opposite_dof =
+                            face_opposite_dofs[i];
+                          if (intersected_dofs.find(
+                                dof_indices[local_face_opposite_dof]) !=
+                              intersected_dofs.end())
+                            {
+                              correction_norm[i] = 0;
+                              continue;
+                            }
+                          // Get the real coordinates of the current DoF I
+                          const Point<dim> x_I_real = dof_support_points.at(
+                            dof_indices[local_face_opposite_dof]);
 
                           // Get the required values at each stencil point
                           for (unsigned int k = 0; k < 2 * dim - 1; k++)
                             {
                               stencil_real[k] =
-                                fe_point_evaluation.quadrature_point(k);
+                                fe_point_evaluation.quadrature_point(
+                                  k + i * (2 * dim - 1));
                               distance_gradients[k] =
-                                fe_point_evaluation.get_gradient(k);
+                                fe_point_evaluation.get_gradient(
+                                  k + i * (2 * dim - 1));
                               cell_transformation_jacobians[k] =
-                                fe_point_evaluation.jacobian(k);
+                                fe_point_evaluation.jacobian(k +
+                                                             i * (2 * dim - 1));
                               get_face_transformation_jacobian(
                                 cell_transformation_jacobians[k],
-                                dof_opposite_faces[j],
+                                j,
                                 face_transformation_jacobians[k]);
                             }
 
-
+                          const double perturbation =
+                            std::max(1e-6 * x_n_ref_vector[i].norm(), 1e-8);
                           compute_numerical_jacobian(
                             stencil_real,
                             x_I_real,
@@ -798,25 +818,24 @@ correction in the reference face. */
                                             residual_n_vec.end());
                           residual_n_vec *= -1.0;
 
-
-
                           /* Factorize and solve the matrix. The correction is
                           put back in residual_n_vec. */
                           jacobian_matrix.compute_lu_factorization();
                           jacobian_matrix.solve(residual_n_vec);
 
                           // Compute the norm of the correction
-                          correction_norm = residual_n_vec.l2_norm();
+                          correction_norm[i] = residual_n_vec.l2_norm();
 
                           /* Transform the dim-1 correction (in the reference
                           face) to dim (in the reference cell) */
                           Tensor<1, dim> correction =
                             transform_ref_face_correction_to_ref_cell(
-                              residual_n_vec, dof_opposite_faces[j]);
+                              residual_n_vec, j);
 
-                          /* Compute the solution (the point x_n_ref on the
-                          face minimizing the distance)*/
-                          Point<dim> x_n_p1_ref = stencil_ref[0] + correction;
+                          /* Compute the solution (the point x_n_p1_ref on the
+        face minimizing the distance)*/
+                          Point<dim> x_n_p1_ref =
+                            x_n_ref_vector[i] + correction;
 
                           /* Relax the correction if it brings us outside
                           the cell */
@@ -874,71 +893,80 @@ correction in the reference face. */
                                   if (correction[k] > tol)
                                     {
                                       relaxation =
-                                        std::min((1.0 - x_n_ref[k]) /
+                                        std::min((1.0 - x_n_ref_vector[i][k]) /
                                                    (correction[k] + tol),
                                                  relaxation);
                                     }
                                   else if (correction[k] < -tol)
                                     {
                                       relaxation =
-                                        std::min((0.0 - x_n_ref[k]) /
+                                        std::min((0.0 - x_n_ref_vector[i][k]) /
                                                    (correction[k] + tol),
                                                  relaxation);
                                     }
                                 }
                             }
-
                           // Increment the outside_check if the correction
                           // brought us outside the face
                           if (check)
-                            outside_check += 1;
+                            outside_check[i] += 1;
 
+                          if (outside_check[i] > 3)
+                            {
+                              correction_norm[i] = 0.0;
+                              correction         = 0.0;
+                            }
                           // Re-compute the solution with the relaxation
-                          x_n_p1_ref = stencil_ref[0] + relaxation * correction;
+                          x_n_p1_ref =
+                            x_n_ref_vector[i] + relaxation * correction;
 
                           // Update the solution.
-                          x_n_ref = x_n_p1_ref;
+                          x_n_ref_vector[i] = x_n_p1_ref;
+                        }
 
-                          newton_it += 1;
-                        } // End of the Newton solver.
+                      newton_it += 1;
+                    } // End of the Newton solver.
+                  fe_point_evaluation.reinit(cell, x_n_ref_vector);
+                  fe_point_evaluation.evaluate(cell_dof_values,
+                                               EvaluationFlags::values);
+                  Tensor<1, dim> x_n_to_x_I_real;
+                  Point<dim>     x_I_real;
+                  for (unsigned int i = 0; i < n_opposite_dofs_per_faces; ++i)
+                    {
+                      const unsigned int local_face_opposite_dof =
+                        face_opposite_dofs[i];
 
-                      // Transform the solution from reference to the real
-                      // cell. This could be improved to not call
-                      // fe_point_evaluation.
-                      std::vector<Point<dim>> x_n_p1_ref_vec = {x_n_ref};
-                      fe_point_evaluation.reinit(cell, x_n_p1_ref_vec);
-                      Point<dim> x_n_p1_real =
-                        fe_point_evaluation.quadrature_point(0);
-                      x_n_real = x_n_p1_real;
+                      x_I_real = dof_support_points.at(
+                        dof_indices[local_face_opposite_dof]);
 
-                      // Compute the distance approximation: distance(x_I) =
-                      // distance(x_n) + |x_n - x_I|
-                      const Tensor<1, dim> x_n_to_x_I_real =
-                        x_I_real - x_n_real;
-                      fe_point_evaluation.evaluate(cell_dof_values,
-                                                   EvaluationFlags::values);
+                      x_n_real_vector[i] =
+                        fe_point_evaluation.quadrature_point(i);
+                      x_n_to_x_I_real = x_I_real - x_n_real_vector[i];
 
                       double distance_value_at_x_n =
-                        fe_point_evaluation.get_value(0);
+                        fe_point_evaluation.get_value(i);
 
                       double approx_distance =
                         compute_distance(x_n_to_x_I_real,
                                          distance_value_at_x_n);
 
                       /* If the new distance is smaller than the previous,
-                         update the value and flag the change.
-                         The tolerance needs to be higher than the one for the
-                         Newton method becaus we don't want the change flag to
-                         depend on the Newton method convergence.*/
+                     update the value and flag the change.
+                     The tolerance needs to be higher than the one for the
+                     Newton method becaus we don't want the change flag to
+                     depend on the Newton method convergence.*/
+
+
                       const double distance_tol = 1e-8;
-                      if (distance(dof_indices[i]) >
+                      if (distance(dof_indices[local_face_opposite_dof]) >
                           (approx_distance + distance_tol))
                         {
-                          change                   = true;
-                          distance(dof_indices[i]) = approx_distance;
+                          change = true;
+                          distance(dof_indices[local_face_opposite_dof]) =
+                            approx_distance;
                         }
-                    } // End of the loop on the opposite faces
-                } // End of the loop on the DoFs
+                    }
+                }
             }
         } // End of the loop on the cells
 
