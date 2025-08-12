@@ -96,6 +96,10 @@ particle_sphere_intersection_3d(double r_particle,
  * called to establish new particle fields.
  *
  * @tparam dim An integer that denotes the number of spatial dimensions.
+ *
+ * @tparam component_start An integer that indicates at which particle property the field starts
+ *
+ * @tparam n_components The number of components in the field. This number should be either 1 (a scalar) or dim (a Tensor<1,dim>)
  */
 template <int dim, int component_start, int n_components>
 class ParticleFieldQCM
