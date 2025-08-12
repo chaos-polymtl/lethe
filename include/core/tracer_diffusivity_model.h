@@ -134,9 +134,9 @@ public:
   double
   value(const std::map<field, double> &field_values) override
   {
-    AssertThrow(field_values.find(field::levelset) != field_values.end(),
-                PhysicialPropertyModelFieldUndefined(
-                  "TanhLevelsetTracerDiffusivity", "levelset"));
+    Assert(field_values.find(field::levelset) != field_values.end(),
+           PhysicialPropertyModelFieldUndefined("TanhLevelsetTracerDiffusivity",
+                                                "levelset"));
     double levelset = field_values.at(field::levelset);
 
     return tracer_diffusivity_inside +
@@ -156,9 +156,9 @@ public:
   vector_value(const std::map<field, std::vector<double>> &field_vectors,
                std::vector<double> &property_vector) override
   {
-    AssertThrow(field_vectors.find(field::levelset) != field_vectors.end(),
-                PhysicialPropertyModelFieldUndefined(
-                  "TanhLevelsetTracerDiffusivity", "levelset"));
+    Assert(field_vectors.find(field::levelset) != field_vectors.end(),
+           PhysicialPropertyModelFieldUndefined("TanhLevelsetTracerDiffusivity",
+                                                "levelset"));
 
     const std::vector<double> &levelset_vec = field_vectors.at(field::levelset);
 
@@ -194,9 +194,9 @@ public:
   {
     if (id == field::levelset)
       {
-        AssertThrow(field_values.find(field::levelset) != field_values.end(),
-                    PhysicialPropertyModelFieldUndefined(
-                      "TanhLevelsetTracerDiffusivity", "levelset"));
+        Assert(field_values.find(field::levelset) != field_values.end(),
+               PhysicialPropertyModelFieldUndefined(
+                 "TanhLevelsetTracerDiffusivity", "levelset"));
         return numerical_jacobian(field_values, field::levelset);
       }
     else
@@ -222,9 +222,9 @@ public:
   {
     if (id == field::levelset)
       {
-        AssertThrow(field_vectors.find(field::levelset) != field_vectors.end(),
-                    PhysicialPropertyModelFieldUndefined(
-                      "TanhLevelsetTracerDiffusivity", "levelset"));
+        Assert(field_vectors.find(field::levelset) != field_vectors.end(),
+               PhysicialPropertyModelFieldUndefined(
+                 "TanhLevelsetTracerDiffusivity", "levelset"));
         vector_numerical_jacobian(field_vectors, id, jacobian_vector);
       }
     else

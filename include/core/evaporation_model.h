@@ -413,9 +413,9 @@ public:
   double
   saturation_pressure(const std::map<field, double> &field_values)
   {
-    AssertThrow(field_values.find(field::temperature) != field_values.end(),
-                PhysicialPropertyModelFieldUndefined(
-                  "EvaporationModelTemperature", "temperature"));
+    Assert(field_values.find(field::temperature) != field_values.end(),
+           PhysicialPropertyModelFieldUndefined("EvaporationModelTemperature",
+                                                "temperature"));
     const double temperature_inv =
       1.0 / (field_values.at(field::temperature) + 1e-16);
 
@@ -441,9 +441,9 @@ public:
   saturation_pressure(const std::map<field, std::vector<double>> &field_vectors,
                       std::vector<double> &saturation_pressure_vector)
   {
-    AssertThrow(field_vectors.find(field::temperature) != field_vectors.end(),
-                PhysicialPropertyModelFieldUndefined(
-                  "EvaporationModelTemperature", "temperature"));
+    Assert(field_vectors.find(field::temperature) != field_vectors.end(),
+           PhysicialPropertyModelFieldUndefined("EvaporationModelTemperature",
+                                                "temperature"));
     const std::vector<double> &temperature =
       field_vectors.at(field::temperature);
 
@@ -500,9 +500,9 @@ public:
   mass_flux(const std::map<field, std::vector<double>> &field_vectors,
             std::vector<double> &mass_flux_vector) override
   {
-    AssertThrow(field_vectors.find(field::temperature) != field_vectors.end(),
-                PhysicialPropertyModelFieldUndefined(
-                  "EvaporationModelTemperature", "temperature"));
+    Assert(field_vectors.find(field::temperature) != field_vectors.end(),
+           PhysicialPropertyModelFieldUndefined("EvaporationModelTemperature",
+                                                "temperature"));
     const std::vector<double> &temperature =
       field_vectors.at(field::temperature);
 
@@ -575,9 +575,9 @@ public:
   heat_flux_jacobian(const std::map<field, double> &field_values,
                      const field                    id) override
   {
-    AssertThrow(field_values.find(field::temperature) != field_values.end(),
-                PhysicialPropertyModelFieldUndefined(
-                  "EvaporationModelTemperature", "temperature"));
+    Assert(field_values.find(field::temperature) != field_values.end(),
+           PhysicialPropertyModelFieldUndefined("EvaporationModelTemperature",
+                                                "temperature"));
     const double temperature_inv =
       1.0 / (field_values.at(field::temperature) + 1e-16);
 
@@ -620,10 +620,9 @@ public:
 
     if (id == field::temperature)
       {
-        AssertThrow(
-          field_vectors.find(field::temperature) != field_vectors.end(),
-          PhysicialPropertyModelFieldUndefined("EvaporationModelTemperature",
-                                               "temperature"));
+        Assert(field_vectors.find(field::temperature) != field_vectors.end(),
+               PhysicialPropertyModelFieldUndefined(
+                 "EvaporationModelTemperature", "temperature"));
         const std::vector<double> &temperature =
           field_vectors.at(field::temperature);
 

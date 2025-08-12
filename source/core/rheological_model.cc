@@ -42,8 +42,8 @@ Newtonian::value(const std::map<field, double> & /*field_values*/)
 double
 PowerLaw::value(const std::map<field, double> &field_values)
 {
-  AssertThrow(field_values.find(field::shear_rate) != field_values.end(),
-              PhysicialPropertyModelFieldUndefined("PowerLaw", "shear_rate"));
+  Assert(field_values.find(field::shear_rate) != field_values.end(),
+         PhysicialPropertyModelFieldUndefined("PowerLaw", "shear_rate"));
   const double shear_rate_magnitude = field_values.at(field::shear_rate);
 
   return calculate_kinematic_viscosity(shear_rate_magnitude);
@@ -54,8 +54,8 @@ PowerLaw::vector_value(
   const std::map<field, std::vector<double>> &field_vectors,
   std::vector<double>                        &property_vector)
 {
-  AssertThrow(field_vectors.find(field::shear_rate) != field_vectors.end(),
-              PhysicialPropertyModelFieldUndefined("PowerLaw", "shear_rate"));
+  Assert(field_vectors.find(field::shear_rate) != field_vectors.end(),
+         PhysicialPropertyModelFieldUndefined("PowerLaw", "shear_rate"));
   const auto shear_rate_magnitude = field_vectors.at(field::shear_rate);
 
   for (unsigned int i = 0; i < shear_rate_magnitude.size(); ++i)
@@ -68,9 +68,8 @@ PowerLaw::jacobian(const std::map<field, double> &field_values, const field id)
   const double shear_rate_magnitude = field_values.at(field::shear_rate);
   if (id == field::shear_rate)
     {
-      AssertThrow(field_values.find(field::shear_rate) != field_values.end(),
-                  PhysicialPropertyModelFieldUndefined("PowerLaw",
-                                                       "shear_rate"));
+      Assert(field_values.find(field::shear_rate) != field_values.end(),
+             PhysicialPropertyModelFieldUndefined("PowerLaw", "shear_rate"));
       return calculate_derivative(shear_rate_magnitude);
     }
   else
@@ -83,8 +82,8 @@ PowerLaw::vector_jacobian(
   const field                                 id,
   std::vector<double>                        &jacobian_vector)
 {
-  AssertThrow(field_vectors.find(field::shear_rate) != field_vectors.end(),
-              PhysicialPropertyModelFieldUndefined("PowerLaw", "shear_rate"));
+  Assert(field_vectors.find(field::shear_rate) != field_vectors.end(),
+         PhysicialPropertyModelFieldUndefined("PowerLaw", "shear_rate"));
   const auto shear_rate_magnitude = field_vectors.at(field::shear_rate);
 
   if (id == field::shear_rate)
@@ -97,8 +96,8 @@ PowerLaw::vector_jacobian(
 double
 Carreau::value(const std::map<field, double> &field_values)
 {
-  AssertThrow(field_values.find(field::shear_rate) != field_values.end(),
-              PhysicialPropertyModelFieldUndefined("Carreau", "shear_rate"));
+  Assert(field_values.find(field::shear_rate) != field_values.end(),
+         PhysicialPropertyModelFieldUndefined("Carreau", "shear_rate"));
   const double shear_rate_magnitude = field_values.at(field::shear_rate);
 
   return calculate_kinematic_viscosity(shear_rate_magnitude);
@@ -108,8 +107,8 @@ void
 Carreau::vector_value(const std::map<field, std::vector<double>> &field_vectors,
                       std::vector<double> &property_vector)
 {
-  AssertThrow(field_vectors.find(field::shear_rate) != field_vectors.end(),
-              PhysicialPropertyModelFieldUndefined("Carreau", "shear_rate"));
+  Assert(field_vectors.find(field::shear_rate) != field_vectors.end(),
+         PhysicialPropertyModelFieldUndefined("Carreau", "shear_rate"));
   const auto shear_rate_magnitude = field_vectors.at(field::shear_rate);
 
   for (unsigned int i = 0; i < shear_rate_magnitude.size(); ++i)
@@ -124,9 +123,8 @@ Carreau::jacobian(const std::map<field, double> &field_values, const field id)
 {
   if (id == field::shear_rate)
     {
-      AssertThrow(field_values.find(field::shear_rate) != field_values.end(),
-                  PhysicialPropertyModelFieldUndefined("Carreau",
-                                                       "shear_rate"));
+      Assert(field_values.find(field::shear_rate) != field_values.end(),
+             PhysicialPropertyModelFieldUndefined("Carreau", "shear_rate"));
       return this->numerical_jacobian(field_values, field::shear_rate);
     }
   else
@@ -141,9 +139,8 @@ Carreau::vector_jacobian(
 {
   if (id == field::shear_rate)
     {
-      AssertThrow(field_vectors.find(field::shear_rate) != field_vectors.end(),
-                  PhysicialPropertyModelFieldUndefined("Carreau",
-                                                       "shear_rate"));
+      Assert(field_vectors.find(field::shear_rate) != field_vectors.end(),
+             PhysicialPropertyModelFieldUndefined("Carreau", "shear_rate"));
       this->vector_numerical_jacobian(field_vectors,
                                       field::shear_rate,
                                       jacobian_vector);
@@ -157,9 +154,9 @@ Carreau::vector_jacobian(
 double
 PhaseChangeRheology::value(const std::map<field, double> &field_values)
 {
-  AssertThrow(field_values.find(field::temperature) != field_values.end(),
-              PhysicialPropertyModelFieldUndefined("PhaseChangeRheology",
-                                                   "temperature"));
+  Assert(field_values.find(field::temperature) != field_values.end(),
+         PhysicialPropertyModelFieldUndefined("PhaseChangeRheology",
+                                              "temperature"));
   const double temperature = field_values.at(field::temperature);
 
   return kinematic_viscosity(temperature);
@@ -170,9 +167,9 @@ PhaseChangeRheology::vector_value(
   const std::map<field, std::vector<double>> &field_vectors,
   std::vector<double>                        &property_vector)
 {
-  AssertThrow(field_vectors.find(field::temperature) != field_vectors.end(),
-              PhysicialPropertyModelFieldUndefined("PhaseChangeRheology",
-                                                   "temperature"));
+  Assert(field_vectors.find(field::temperature) != field_vectors.end(),
+         PhysicialPropertyModelFieldUndefined("PhaseChangeRheology",
+                                              "temperature"));
   const std::vector<double> &temperature_vec =
     field_vectors.at(field::temperature);
 
@@ -188,9 +185,9 @@ PhaseChangeRheology::jacobian(const std::map<field, double> &field_values,
 {
   if (id == field::temperature)
     {
-      AssertThrow(field_values.find(field::temperature) != field_values.end(),
-                  PhysicialPropertyModelFieldUndefined("PhaseChangeRheology",
-                                                       "temperature"));
+      Assert(field_values.find(field::temperature) != field_values.end(),
+             PhysicialPropertyModelFieldUndefined("PhaseChangeRheology",
+                                                  "temperature"));
       return this->numerical_jacobian(field_values, field::temperature);
     }
   else
@@ -203,9 +200,9 @@ PhaseChangeRheology::vector_jacobian(
   const field                                 id,
   std::vector<double>                        &jacobian_vector)
 {
-  AssertThrow(field_vectors.find(field::temperature) != field_vectors.end(),
-              PhysicialPropertyModelFieldUndefined("PhaseChangeRheology",
-                                                   "temperature"));
+  Assert(field_vectors.find(field::temperature) != field_vectors.end(),
+         PhysicialPropertyModelFieldUndefined("PhaseChangeRheology",
+                                              "temperature"));
   vector_numerical_jacobian(field_vectors, id, jacobian_vector);
 }
 

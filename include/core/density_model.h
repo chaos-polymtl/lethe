@@ -253,9 +253,9 @@ public:
   double
   value(const std::map<field, double> &field_values) override
   {
-    AssertThrow(field_values.find(field::pressure) != field_values.end(),
-                PhysicialPropertyModelFieldUndefined(
-                  "DensityIsothermalIdealGas", "pressure"));
+    Assert(field_values.find(field::pressure) != field_values.end(),
+           PhysicialPropertyModelFieldUndefined("DensityIsothermalIdealGas",
+                                                "pressure"));
     const double pressure = field_values.at(field::pressure);
     return density_ref + psi * pressure;
   }
@@ -273,9 +273,9 @@ public:
   vector_value(const std::map<field, std::vector<double>> &field_vectors,
                std::vector<double> &property_vector) override
   {
-    AssertThrow(field_vectors.find(field::pressure) != field_vectors.end(),
-                PhysicialPropertyModelFieldUndefined(
-                  "DensityIsothermalIdealGas", "pressure"));
+    Assert(field_vectors.find(field::pressure) != field_vectors.end(),
+           PhysicialPropertyModelFieldUndefined("DensityIsothermalIdealGas",
+                                                "pressure"));
     const std::vector<double> &pressure = field_vectors.at(field::pressure);
     for (unsigned int i = 0; i < property_vector.size(); ++i)
       property_vector[i] = density_ref + psi * pressure[i];

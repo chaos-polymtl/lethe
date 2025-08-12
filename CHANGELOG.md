@@ -2,6 +2,11 @@
 # Change Log
 All notable changes to the Lethe project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/).
+### [Master] - 2025-08-13
+
+### Added
+
+- MINOR In some location in the core library, AssertThrow were being used in locations were a simple Assert would have been sufficient. This should have a slightly positive impact on performance. [#1615](https://github.com/chaos-polymtl/lethe/pull/1615)
 
 ### [Master] - 2025-08-12
 

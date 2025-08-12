@@ -524,10 +524,10 @@ value_string_to_tensor(const std::string &value_string)
   std::vector<double> vector_of_double =
     Utilities::string_to_double(vector_of_string);
 
-  AssertThrow(vector_of_double.size() == 3 || vector_of_double.size() == 2,
-              ExcMessage("Invalid string: " + value_string +
-                         ". This should be a two or three dimensional vector "
-                         "or point."));
+  Assert(vector_of_double.size() == 3 || vector_of_double.size() == 2,
+         ExcMessage("Invalid string: " + value_string +
+                    ". This should be a two or three dimensional vector "
+                    "or point."));
 
   Tensor<1, spacedim> output_tensor;
   for (unsigned int i = 0; i < spacedim; ++i)
@@ -572,11 +572,10 @@ value_string_to_tensor(const std::string &value_string_0,
     {
       std::vector<double> vector_of_double =
         Utilities::string_to_double(vector_of_string);
-      AssertThrow(vector_of_double.size() == 3 || vector_of_double.size() == 2,
-                  ExcMessage(
-                    "Invalid string: " + value_string_0 +
-                    ". This should be a two or three dimensional vector "
-                    "or point."));
+      Assert(vector_of_double.size() == 3 || vector_of_double.size() == 2,
+             ExcMessage("Invalid string: " + value_string_0 +
+                        ". This should be a two or three dimensional vector "
+                        "or point."));
       for (unsigned int i = 0; i < vector_of_double.size(); ++i)
         output_tensor[i] = vector_of_double[i];
     }

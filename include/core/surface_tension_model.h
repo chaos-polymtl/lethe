@@ -157,9 +157,9 @@ public:
   double
   value(const std::map<field, double> &fields_value) override
   {
-    AssertThrow(fields_value.find(field::temperature) != fields_value.end(),
-                PhysicialPropertyModelFieldUndefined("SurfaceTensionLinear",
-                                                     "temperature"));
+    Assert(fields_value.find(field::temperature) != fields_value.end(),
+           PhysicialPropertyModelFieldUndefined("SurfaceTensionLinear",
+                                                "temperature"));
     const double temperature = fields_value.at(field::temperature);
     return surface_tension_coefficient +
            surface_tension_gradient * (temperature - T_0);
@@ -175,9 +175,9 @@ public:
   vector_value(const std::map<field, std::vector<double>> &field_vectors,
                std::vector<double> &property_vector) override
   {
-    AssertThrow(field_vectors.find(field::temperature) != field_vectors.end(),
-                PhysicialPropertyModelFieldUndefined("SurfaceTensionLinear",
-                                                     "temperature"));
+    Assert(field_vectors.find(field::temperature) != field_vectors.end(),
+           PhysicialPropertyModelFieldUndefined("SurfaceTensionLinear",
+                                                "temperature"));
     const std::vector<double> &temperature =
       field_vectors.at(field::temperature);
     for (unsigned int i = 0; i < property_vector.size(); ++i)
@@ -266,9 +266,9 @@ public:
   double
   value(const std::map<field, double> &fields_value) override
   {
-    AssertThrow(fields_value.find(field::temperature) != fields_value.end(),
-                PhysicialPropertyModelFieldUndefined(
-                  "SurfaceTensionPhaseChange", "temperature"));
+    Assert(fields_value.find(field::temperature) != fields_value.end(),
+           PhysicialPropertyModelFieldUndefined("SurfaceTensionPhaseChange",
+                                                "temperature"));
     const double temperature = fields_value.at(field::temperature);
 
     double surface_tension;
@@ -300,9 +300,9 @@ public:
   vector_value(const std::map<field, std::vector<double>> &field_vectors,
                std::vector<double> &property_vector) override
   {
-    AssertThrow(field_vectors.find(field::temperature) != field_vectors.end(),
-                PhysicialPropertyModelFieldUndefined(
-                  "SurfaceTensionPhaseChange", "temperature"));
+    Assert(field_vectors.find(field::temperature) != field_vectors.end(),
+           PhysicialPropertyModelFieldUndefined("SurfaceTensionPhaseChange",
+                                                "temperature"));
     const std::vector<double> &temperature =
       field_vectors.at(field::temperature);
     for (unsigned int i = 0; i < property_vector.size(); ++i)
@@ -338,9 +338,9 @@ public:
   {
     if (id == field::temperature)
       {
-        AssertThrow(field_values.find(field::temperature) != field_values.end(),
-                    PhysicialPropertyModelFieldUndefined(
-                      "SurfaceTensionPhaseChange", "temperature"));
+        Assert(field_values.find(field::temperature) != field_values.end(),
+               PhysicialPropertyModelFieldUndefined("SurfaceTensionPhaseChange",
+                                                    "temperature"));
         const double temperature = field_values.at(field::temperature);
         if (temperature < T_solidus)
           return 0;
@@ -374,10 +374,9 @@ public:
   {
     if (id == field::temperature)
       {
-        AssertThrow(
-          field_vectors.find(field::temperature) != field_vectors.end(),
-          PhysicialPropertyModelFieldUndefined("SurfaceTensionPhaseChange",
-                                               "temperature"));
+        Assert(field_vectors.find(field::temperature) != field_vectors.end(),
+               PhysicialPropertyModelFieldUndefined("SurfaceTensionPhaseChange",
+                                                    "temperature"));
         const std::vector<double> &temperature =
           field_vectors.at(field::temperature);
         for (unsigned int i = 0; i < jacobian_vector.size(); ++i)
