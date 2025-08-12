@@ -3,6 +3,12 @@
 All notable changes to the Lethe project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
+### [Master] - 2025-08-12
+
+### Added
+
+- MAJOR The void fraction manager has been refactored to become the particle_projector. This class now manages not only the calculation of the void fraction, but it can also project other particle fields onto the triangulation. Right now the only field that can be projected is the particle velocity, but additional fields can be easily added to the method. [#1614](https://github.com/chaos-polymtl/lethe/pull/1614)
+
 ### [Master] - 2025-08-11
 
 ### Added
