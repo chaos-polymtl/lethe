@@ -176,7 +176,9 @@ write_collision_stats(const DEMSolverParameters<dim>   &parameters,
   if ((csv_file == std::string::npos) && (dat_file == std::string::npos))
     filename += ".csv";
 
-  // Open the file for writing or appending based on the MPI process
+  // Open the file for writing or appending based on the MPI process.
+  // This forces a barrier after MPI processes and will undoubtly be slow in large parallel simulations.
+  // If this becomes an issue, the function should be ported to use MPI I/O or a format like HDF5.
   for (unsigned int i = 0; i < n_mpi_processes; ++i)
     {
       if (this_mpi_process == i)
