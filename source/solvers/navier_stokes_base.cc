@@ -2050,7 +2050,9 @@ NavierStokesBase<dim, VectorType, DofsType>::rotate_rotor_mapping(
       *this->triangulation,
       *this->mapping,
       this->simulation_parameters.mortar_parameters)),
-    rotation_angle);
+    rotation_angle,
+    this->simulation_parameters.mortar_parameters.center_of_rotation,
+    this->simulation_parameters.mortar_parameters.rotation_axis);
 }
 
 template <int dim, typename VectorType, typename DofsType>
