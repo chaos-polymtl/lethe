@@ -9,6 +9,10 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
 -MINOR Fix the rotate_mapping() function for 2D cases to account for the center_of_rotation. [#1619](https://github.com/chaos-polymtl/lethe/pull/1619)
 
+### Added
+
+- MINOR The function to write the collision logs is modified to manage the way MPI processes can access the .csv file to write the data. A forced synchronization of the MPI processes is imposed to avoid corrupting the data. The particle diameter and mass is added to the collision log, and a dem_current_time is calculated in CFD-DEM. [#1613](https://github.com/chaos-polymtl/lethe/pull/1613)
+
 ### [Master] - 2025-08-11
 
 ### Added

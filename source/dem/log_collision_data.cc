@@ -3,6 +3,8 @@
 
 #include <dem/log_collision_data.h>
 
+#include <deal.II/base/mpi.h>
+
 using namespace dealii;
 
 template <int dim, typename PropertiesIndex>
@@ -13,8 +15,7 @@ log_collision_data(
                              &particle_wall_pairs_in_contact,
   const double                current_time,
   OngoingCollisionLog<dim>   &ongoing_collision_log,
-  CompletedCollisionLog<dim> &collision_event_log,
-  const ConditionalOStream   &pcout)
+  CompletedCollisionLog<dim> &collision_event_log)
 {
   // Looping over all the active particles in particle-wall pairs
   for (auto &&pairs_in_contact_content :
@@ -65,6 +66,8 @@ log_collision_data(
                 {
                   collision_log<dim> start_log;
                   start_log.particle_id = particle_id;
+                  start_log.dp   = particle_properties[PropertiesIndex::dp];
+                  start_log.mass = particle_properties[PropertiesIndex::mass];
                   start_log.velocity[0] =
                     particle_properties[PropertiesIndex::v_x];
                   start_log.velocity[1] =
@@ -87,9 +90,9 @@ log_collision_data(
                   if (parameters.post_processing.collision_verbosity ==
                       Parameters::Verbosity::verbose)
                     {
-                      pcout << "Collision with boundary "
-                            << start_log.boundary_id << " started for particle "
-                            << particle_id << std::endl;
+                      std::cout
+                        << "Collision with boundary " << start_log.boundary_id
+                        << " started for particle " << particle_id << std::endl;
                     }
                 }
 
@@ -103,6 +106,8 @@ log_collision_data(
                 {
                   collision_log<dim> end_log;
                   end_log.particle_id = particle_id;
+                  end_log.dp   = particle_properties[PropertiesIndex::dp];
+                  end_log.mass = particle_properties[PropertiesIndex::mass];
                   end_log.velocity[0] =
                     particle_properties[PropertiesIndex::v_x];
                   end_log.velocity[1] =
@@ -138,61 +143,103 @@ log_collision_data(
                   if (parameters.post_processing.collision_verbosity ==
                       Parameters::Verbosity::verbose)
                     {
-                      pcout << "Collision with boundary " << end_log.boundary_id
-                            << " ended for particle " << particle_id
-                            << std::endl;
+                      std::cout << "Collision with boundary "
+                                << end_log.boundary_id << " ended for particle "
+                                << particle_id << std::endl;
                     }
                 }
             }
         }
     }
 }
+
 template <int dim>
 void
 write_collision_stats(const DEMSolverParameters<dim>   &parameters,
-                      const CompletedCollisionLog<dim> &collision_event_log)
+                      const CompletedCollisionLog<dim> &collision_event_log,
+                      const MPI_Comm                   &mpi_communicator)
 {
-  // Open a file
-  std::ofstream myfile;
-  std::string   sep;
-  std::string   filename = parameters.post_processing.collision_stats_file_name;
+  // MPI processes information
+  const unsigned int this_mpi_process =
+    Utilities::MPI::this_mpi_process(mpi_communicator);
+  const unsigned int n_mpi_processes =
+    Utilities::MPI::n_mpi_processes(mpi_communicator);
+
+  // Separator and filename for the output file
+  std::string sep;
+  std::string filename = parameters.post_processing.collision_stats_file_name;
+
   // Check if a .csv or .dat extension is specified in the filename, if not add
   // ".csv"
   std::size_t csv_file = filename.find(".csv");
   std::size_t dat_file = filename.find(".dat");
+
   if ((csv_file == std::string::npos) && (dat_file == std::string::npos))
     filename += ".csv";
-  myfile.open(filename);
-  if (filename.substr(filename.find_last_of('.') + 1) == ".dat")
-    {
-      myfile
-        << "particle_id boundary_id start_time end_time start_particle_velocity_x start_particle_velocity_y start_particle_velocity_z start_particle_angular_velocity_x start_particle_angular_velocity_y start_particle_angular_velocity_z end_particle_velocity_x end_particle_velocity_y end_particle_velocity_z end_particle_angular_velocity_x end_particle_angular_velocity_y end_particle_angular_velocity_z"
-        << std::endl;
-      sep = " ";
-    }
-  else // .csv is default
-    {
-      myfile
-        << "particle_id,boundary_id,start_time,end_time,start_particle_velocity_x,start_particle_velocity_y,start_particle_velocity_z,start_particle_angular_velocity_x,start_particle_angular_velocity_y,start_particle_angular_velocity_z,end_particle_velocity_x,end_particle_velocity_y,end_particle_velocity_z,end_particle_angular_velocity_x,end_particle_angular_velocity_y,end_particle_angular_velocity_z"
-        << std::endl;
-      sep = ",";
-    }
-  // Write the collision statistics
-  for (const auto &event : collision_event_log.get_events())
-    {
-      const auto &start = event.start_log;
-      const auto &end   = event.end_log;
 
-      // Write the collision data to the file
-      myfile << start.particle_id << sep << static_cast<int>(start.boundary_id)
-             << sep << start.time << sep << end.time << sep << start.velocity[0]
-             << sep << start.velocity[1] << sep << start.velocity[2] << sep
-             << start.omega[0] << sep << start.omega[1] << sep << start.omega[2]
-             << sep << end.velocity[0] << sep << end.velocity[1] << sep
-             << end.velocity[2] << sep << end.omega[0] << sep << end.omega[1]
-             << sep << end.omega[2] << std::endl;
+  // Open the file for writing or appending based on the MPI process.
+  // This forces a barrier after MPI processes and will undoubtly be slow in
+  // large parallel simulations. If this becomes an issue, the function should
+  // be ported to use MPI I/O or a format like HDF5.
+  for (unsigned int i = 0; i < n_mpi_processes; ++i)
+    {
+      if (this_mpi_process == i)
+        {
+          std::ofstream myfile;
+
+          if (this_mpi_process == 0)
+            {
+              // If this is the first MPI process, we write the header
+              myfile.open(filename);
+              if (filename.substr(filename.find_last_of('.') + 1) == ".dat")
+                {
+                  myfile
+                    << "particle_id diameter mass boundary_id start_time end_time start_particle_velocity_x start_particle_velocity_y start_particle_velocity_z start_particle_angular_velocity_x start_particle_angular_velocity_y start_particle_angular_velocity_z end_particle_velocity_x end_particle_velocity_y end_particle_velocity_z end_particle_angular_velocity_x end_particle_angular_velocity_y end_particle_angular_velocity_z"
+                    << std::endl;
+                  sep = " ";
+                }
+              else // .csv is default
+                {
+                  myfile
+                    << "particle_id,diameter,mass,boundary_id,start_time,end_time,start_particle_velocity_x,start_particle_velocity_y,start_particle_velocity_z,start_particle_angular_velocity_x,start_particle_angular_velocity_y,start_particle_angular_velocity_z,end_particle_velocity_x,end_particle_velocity_y,end_particle_velocity_z,end_particle_angular_velocity_x,end_particle_angular_velocity_y,end_particle_angular_velocity_z"
+                    << std::endl;
+                  sep = ",";
+                }
+            }
+          else
+            {
+              // If this is not the first MPI process, we open the file for
+              // appending
+              myfile.open(filename, std::ios::app);
+              if (filename.substr(filename.find_last_of('.') + 1) == ".dat")
+                sep = " ";
+              else // .csv is default
+                sep = ",";
+            }
+
+          // Write the collision statistics
+          for (const auto &event : collision_event_log.get_events())
+            {
+              const auto &start = event.start_log;
+              const auto &end   = event.end_log;
+
+              // Write the collision data to the file
+              myfile << start.particle_id << sep << start.dp << sep
+                     << start.mass << sep << static_cast<int>(start.boundary_id)
+                     << sep << start.time << sep << end.time << sep
+                     << start.velocity[0] << sep << start.velocity[1] << sep
+                     << start.velocity[2] << sep << start.omega[0] << sep
+                     << start.omega[1] << sep << start.omega[2] << sep
+                     << end.velocity[0] << sep << end.velocity[1] << sep
+                     << end.velocity[2] << sep << end.omega[0] << sep
+                     << end.omega[1] << sep << end.omega[2] << std::endl;
+            }
+          myfile.close();
+        }
+      // Ensure all MPI processes reach this point before continuing.
+      // The barrier forces the synchronisation of the processes.
+      MPI_Barrier(mpi_communicator);
     }
-  myfile.close();
 }
 
 template void
@@ -202,8 +249,7 @@ log_collision_data<2, DEM::DEMProperties::PropertiesIndex>(
                            &particle_wall_pairs_in_contact,
   const double              current_time,
   OngoingCollisionLog<2>   &ongoing_collision_log,
-  CompletedCollisionLog<2> &collision_event_log,
-  const ConditionalOStream &pcout);
+  CompletedCollisionLog<2> &collision_event_log);
 
 template void
 log_collision_data<3, DEM::DEMProperties::PropertiesIndex>(
@@ -212,8 +258,7 @@ log_collision_data<3, DEM::DEMProperties::PropertiesIndex>(
                            &particle_wall_pairs_in_contact,
   const double              current_time,
   OngoingCollisionLog<3>   &ongoing_collision_log,
-  CompletedCollisionLog<3> &collision_event_log,
-  const ConditionalOStream &pcout);
+  CompletedCollisionLog<3> &collision_event_log);
 
 template void
 log_collision_data<2, DEM::CFDDEMProperties::PropertiesIndex>(
@@ -222,8 +267,7 @@ log_collision_data<2, DEM::CFDDEMProperties::PropertiesIndex>(
                            &particle_wall_pairs_in_contact,
   const double              current_time,
   OngoingCollisionLog<2>   &ongoing_collision_log,
-  CompletedCollisionLog<2> &collision_event_log,
-  const ConditionalOStream &pcout);
+  CompletedCollisionLog<2> &collision_event_log);
 
 template void
 log_collision_data<3, DEM::CFDDEMProperties::PropertiesIndex>(
@@ -232,8 +276,7 @@ log_collision_data<3, DEM::CFDDEMProperties::PropertiesIndex>(
                            &particle_wall_pairs_in_contact,
   const double              current_time,
   OngoingCollisionLog<3>   &ongoing_collision_log,
-  CompletedCollisionLog<3> &collision_event_log,
-  const ConditionalOStream &pcout);
+  CompletedCollisionLog<3> &collision_event_log);
 
 template void
 log_collision_data<2, DEM::DEMMPProperties::PropertiesIndex>(
@@ -242,8 +285,7 @@ log_collision_data<2, DEM::DEMMPProperties::PropertiesIndex>(
                            &particle_wall_pairs_in_contact,
   const double              current_time,
   OngoingCollisionLog<2>   &ongoing_collision_log,
-  CompletedCollisionLog<2> &collision_event_log,
-  const ConditionalOStream &pcout);
+  CompletedCollisionLog<2> &collision_event_log);
 
 template void
 log_collision_data<3, DEM::DEMMPProperties::PropertiesIndex>(
@@ -252,13 +294,14 @@ log_collision_data<3, DEM::DEMMPProperties::PropertiesIndex>(
                            &particle_wall_pairs_in_contact,
   const double              current_time,
   OngoingCollisionLog<3>   &ongoing_collision_log,
-  CompletedCollisionLog<3> &collision_event_log,
-  const ConditionalOStream &pcout);
+  CompletedCollisionLog<3> &collision_event_log);
 
 template void
 write_collision_stats<2>(const DEMSolverParameters<2>   &parameters,
-                         const CompletedCollisionLog<2> &collision_event_log);
+                         const CompletedCollisionLog<2> &collision_event_log,
+                         const MPI_Comm                 &mpi_communicator);
 
 template void
 write_collision_stats<3>(const DEMSolverParameters<3>   &parameters,
-                         const CompletedCollisionLog<3> &collision_event_log);
+                         const CompletedCollisionLog<3> &collision_event_log,
+                         const MPI_Comm                 &mpi_communicator);

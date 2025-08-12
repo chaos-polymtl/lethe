@@ -21,6 +21,8 @@ template <int dim>
 struct collision_log
 {
   unsigned int       particle_id;
+  double             dp;
+  double             mass;
   Tensor<1, dim>     velocity;
   Tensor<1, dim>     omega;
   double             time;
@@ -178,17 +180,18 @@ log_collision_data(
                              &particle_wall_pairs_in_contact,
   const double                current_time,
   OngoingCollisionLog<dim>   &ongoing_collision_log,
-  CompletedCollisionLog<dim> &collision_event_log,
-  const ConditionalOStream   &pcout);
+  CompletedCollisionLog<dim> &collision_event_log);
 
 /**
  * @brief Writes the collision statistics to a file.
  * @param[in] collision_event_log Completed collision event log.
  * @param[in] parameters Parameters
+ * @param[in] mpi_communicator MPI communicator
  */
 template <int dim>
 void
 write_collision_stats(const DEMSolverParameters<dim>   &parameters,
-                      const CompletedCollisionLog<dim> &collision_event_log);
+                      const CompletedCollisionLog<dim> &collision_event_log,
+                      const MPI_Comm                   &mpi_communicator);
 
 #endif // lethe_collision_log_data_h
