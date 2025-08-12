@@ -20,7 +20,7 @@ FluidDynamicsVANS<dim>::FluidDynamicsVANS(
   , particle_handler(*this->triangulation,
                      particle_mapping,
                      DEM::CFDDEMProperties::n_properties)
-  , void_fraction_manager(
+  , particle_projector(
       &(*this->triangulation),
       nsparam.void_fraction,
       this->cfd_dem_simulation_parameters.cfd_parameters.linear_solver.at(
@@ -63,8 +63,8 @@ FluidDynamicsVANS<dim>::setup_dofs()
 {
   FluidDynamicsMatrixBased<dim>::setup_dofs();
 
-  void_fraction_manager.setup_dofs();
-  void_fraction_manager.setup_constraints(
+  particle_projector.setup_dofs();
+  particle_projector.setup_constraints(
     this->cfd_dem_simulation_parameters.cfd_parameters.boundary_conditions);
 }
 
@@ -74,7 +74,7 @@ FluidDynamicsVANS<dim>::finish_time_step_fd()
 {
   // Void fraction percolation must be done before the time step is finished to
   // ensure that the checkpointed information is correct
-  void_fraction_manager.percolate_void_fraction();
+  particle_projector.percolate_void_fraction();
 
   FluidDynamicsMatrixBased<dim>::finish_time_step();
 }
@@ -166,7 +166,7 @@ void
 FluidDynamicsVANS<dim>::calculate_void_fraction(const double time)
 {
   TimerOutput::Scope t(this->computing_timer, "Calculate void fraction");
-  void_fraction_manager.calculate_void_fraction(time);
+  particle_projector.calculate_void_fraction(time);
 }
 
 template <int dim>
@@ -176,12 +176,12 @@ FluidDynamicsVANS<dim>::vertices_cell_mapping()
   // Find all the cells around each vertex
   TimerOutput::Scope t(this->computing_timer, "Map vertices to cell");
 
-  LetheGridTools::vertices_cell_mapping(this->void_fraction_manager.dof_handler,
+  LetheGridTools::vertices_cell_mapping(this->particle_projector.dof_handler,
                                         vertices_to_cell);
 
   if (has_periodic_boundaries)
     LetheGridTools::vertices_cell_mapping_with_periodic_boundaries(
-      this->void_fraction_manager.dof_handler, vertices_to_periodic_cell);
+      this->particle_projector.dof_handler, vertices_to_periodic_cell);
 }
 
 // Do an iteration with the NavierStokes Solver
@@ -383,7 +383,7 @@ FluidDynamicsVANS<dim>::assemble_system_matrix()
       *this->mapping,
       *this->face_quadrature);
 
-    scratch_data.enable_void_fraction(*void_fraction_manager.fe,
+    scratch_data.enable_void_fraction(*particle_projector.fe,
                                       *this->cell_quadrature,
                                       *this->mapping);
 
@@ -428,21 +428,21 @@ FluidDynamicsVANS<dim>::assemble_local_system_matrix(
     &(*(this->triangulation)),
     cell->level(),
     cell->index(),
-    &this->void_fraction_manager.dof_handler);
+    &this->particle_projector.dof_handler);
 
   scratch_data.reinit_void_fraction(
     void_fraction_cell,
-    void_fraction_manager.void_fraction_locally_relevant,
-    void_fraction_manager.previous_void_fraction);
+    particle_projector.void_fraction_locally_relevant,
+    particle_projector.previous_void_fraction);
 
   scratch_data.reinit_particle_fluid_interactions(
     cell,
     this->evaluation_point,
     this->previous_solutions[0],
-    this->void_fraction_manager.void_fraction_locally_relevant,
+    this->particle_projector.void_fraction_locally_relevant,
     particle_handler,
     this->dof_handler,
-    void_fraction_manager.dof_handler);
+    particle_projector.dof_handler);
 
   scratch_data.calculate_physical_properties();
   copy_data.reset();
@@ -492,7 +492,7 @@ FluidDynamicsVANS<dim>::assemble_system_rhs()
     *this->mapping,
     *this->face_quadrature);
 
-  scratch_data.enable_void_fraction(*void_fraction_manager.fe,
+  scratch_data.enable_void_fraction(*particle_projector.fe,
                                     *this->cell_quadrature,
                                     *this->mapping);
 
@@ -540,21 +540,21 @@ FluidDynamicsVANS<dim>::assemble_local_system_rhs(
     &(*(this->triangulation)),
     cell->level(),
     cell->index(),
-    &this->void_fraction_manager.dof_handler);
+    &this->particle_projector.dof_handler);
 
   scratch_data.reinit_void_fraction(
     void_fraction_cell,
-    void_fraction_manager.void_fraction_locally_relevant,
-    void_fraction_manager.previous_void_fraction);
+    particle_projector.void_fraction_locally_relevant,
+    particle_projector.previous_void_fraction);
 
   scratch_data.reinit_particle_fluid_interactions(
     cell,
     this->evaluation_point,
     this->previous_solutions[0],
-    void_fraction_manager.void_fraction_locally_relevant,
+    particle_projector.void_fraction_locally_relevant,
     particle_handler,
     this->dof_handler,
-    void_fraction_manager.dof_handler);
+    particle_projector.dof_handler);
 
   scratch_data.calculate_physical_properties();
   copy_data.reset();
@@ -590,8 +590,8 @@ template <int dim>
 void
 FluidDynamicsVANS<dim>::output_field_hook(DataOut<dim> &data_out)
 {
-  data_out.add_data_vector(void_fraction_manager.dof_handler,
-                           void_fraction_manager.void_fraction_locally_relevant,
+  data_out.add_data_vector(particle_projector.dof_handler,
+                           particle_projector.void_fraction_locally_relevant,
                            "void_fraction");
   if (this->cfd_dem_simulation_parameters.void_fraction
         ->project_particle_velocity)
@@ -601,8 +601,8 @@ FluidDynamicsVANS<dim>::output_field_hook(DataOut<dim> &data_out)
         data_interpretation(
           dim, DataComponentInterpretation::component_is_part_of_vector);
       data_out.add_data_vector(
-        void_fraction_manager.particle_velocity.dof_handler,
-        void_fraction_manager.particle_velocity.particle_field_solution,
+        particle_projector.particle_velocity.dof_handler,
+        particle_projector.particle_velocity.particle_field_solution,
         names,
         data_interpretation);
     }
@@ -622,7 +622,7 @@ FluidDynamicsVANS<dim>::monitor_mass_conservation()
                             update_hessians);
 
   FEValues<dim> fe_values_void_fraction(*this->mapping,
-                                        *this->void_fraction_manager.fe,
+                                        *this->particle_projector.fe,
                                         quadrature_formula,
                                         update_values |
                                           update_quadrature_points |
@@ -666,15 +666,15 @@ FluidDynamicsVANS<dim>::monitor_mass_conservation()
             &(*this->triangulation),
             cell->level(),
             cell->index(),
-            &this->void_fraction_manager.dof_handler);
+            &this->particle_projector.dof_handler);
           fe_values_void_fraction.reinit(void_fraction_cell);
 
           // Gather void fraction (values, gradient)
           fe_values_void_fraction.get_function_values(
-            void_fraction_manager.void_fraction_locally_relevant,
+            particle_projector.void_fraction_locally_relevant,
             present_void_fraction_values);
           fe_values_void_fraction.get_function_gradients(
-            void_fraction_manager.void_fraction_locally_relevant,
+            particle_projector.void_fraction_locally_relevant,
             present_void_fraction_gradients);
 
           fe_values.reinit(cell);
@@ -700,19 +700,19 @@ FluidDynamicsVANS<dim>::monitor_mass_conservation()
               Parameters::SimulationControl::TimeSteppingMethod::steady)
             {
               fe_values_void_fraction.get_function_values(
-                void_fraction_manager.previous_void_fraction[0],
+                particle_projector.previous_void_fraction[0],
                 p1_void_fraction_values);
 
               if (scheme ==
                   Parameters::SimulationControl::TimeSteppingMethod::bdf2)
                 fe_values_void_fraction.get_function_values(
-                  void_fraction_manager.previous_void_fraction[1],
+                  particle_projector.previous_void_fraction[1],
                   p2_void_fraction_values);
 
               if (scheme ==
                   Parameters::SimulationControl::TimeSteppingMethod::bdf3)
                 fe_values_void_fraction.get_function_values(
-                  void_fraction_manager.previous_void_fraction[2],
+                  particle_projector.previous_void_fraction[2],
                   p3_void_fraction_values);
             }
 
@@ -827,7 +827,7 @@ FluidDynamicsVANS<dim>::solve()
       if (this->simulation_control->is_at_start())
         {
           vertices_cell_mapping();
-          void_fraction_manager.initialize_void_fraction(
+          particle_projector.initialize_void_fraction(
             this->simulation_control->get_current_time());
           this->iterate();
         }

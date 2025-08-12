@@ -193,7 +193,7 @@ ParticleProjector<dim>::setup_constraints(
 
   AssertThrow(
     has_periodic_boundaries == false ||
-      void_fraction_parameters->project_particle_velocity,
+      void_fraction_parameters->project_particle_velocity == false,
     ExcMessage(
       "The projection of particle velocity is currently not supported for periodic boundary conditions"));
 
