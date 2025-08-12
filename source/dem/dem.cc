@@ -1157,7 +1157,7 @@ DEMSolver<dim, PropertiesIndex>::solve()
 
   // Write particle-wall collision statistics file if enabled
   if (parameters.post_processing.particle_wall_collision_statistics)
-    write_collision_stats(parameters, collision_event_log);
+    write_collision_stats(parameters, collision_event_log, mpi_communicator);
 
   finish_simulation();
 }

@@ -1664,7 +1664,9 @@ CFDDEMSolver<dim>::solve()
 
   // Write particle-wall collision statistics file if enabled
   if (dem_parameters.post_processing.particle_wall_collision_statistics)
-    write_collision_stats(dem_parameters, collision_event_log);
+    write_collision_stats(dem_parameters,
+                          collision_event_log,
+                          this->mpi_communicator);
 
   this->finish_simulation();
 }

@@ -186,10 +186,12 @@ log_collision_data(
  * @brief Writes the collision statistics to a file.
  * @param[in] collision_event_log Completed collision event log.
  * @param[in] parameters Parameters
+ * @param[in] mpi_communicator MPI communicator
  */
 template <int dim>
 void
 write_collision_stats(const DEMSolverParameters<dim>   &parameters,
-                      const CompletedCollisionLog<dim> &collision_event_log);
+                      const CompletedCollisionLog<dim> &collision_event_log,
+                      const MPI_Comm                   &mpi_communicator);
 
 #endif // lethe_collision_log_data_h

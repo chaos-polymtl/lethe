@@ -156,13 +156,14 @@ log_collision_data(
 template <int dim>
 void
 write_collision_stats(const DEMSolverParameters<dim>   &parameters,
-                      const CompletedCollisionLog<dim> &collision_event_log)
+                      const CompletedCollisionLog<dim> &collision_event_log,
+                      const MPI_Comm                   &mpi_communicator)
 {
   // MPI processes information
   const unsigned int this_mpi_process =
-    Utilities::MPI::this_mpi_process(MPI_COMM_WORLD);
+    Utilities::MPI::this_mpi_process(mpi_communicator);
   const unsigned int n_mpi_processes =
-    Utilities::MPI::n_mpi_processes(MPI_COMM_WORLD);
+    Utilities::MPI::n_mpi_processes(mpi_communicator);
 
   // Separator and filename for the output file
   std::string sep;
@@ -177,8 +178,9 @@ write_collision_stats(const DEMSolverParameters<dim>   &parameters,
     filename += ".csv";
 
   // Open the file for writing or appending based on the MPI process.
-  // This forces a barrier after MPI processes and will undoubtly be slow in large parallel simulations.
-  // If this becomes an issue, the function should be ported to use MPI I/O or a format like HDF5.
+  // This forces a barrier after MPI processes and will undoubtly be slow in
+  // large parallel simulations. If this becomes an issue, the function should
+  // be ported to use MPI I/O or a format like HDF5.
   for (unsigned int i = 0; i < n_mpi_processes; ++i)
     {
       if (this_mpi_process == i)
@@ -236,7 +238,7 @@ write_collision_stats(const DEMSolverParameters<dim>   &parameters,
         }
       // Ensure all MPI processes reach this point before continuing.
       // The barrier forces the synchronisation of the processes.
-      MPI_Barrier(MPI_COMM_WORLD);
+      MPI_Barrier(mpi_communicator);
     }
 }
 
@@ -296,8 +298,10 @@ log_collision_data<3, DEM::DEMMPProperties::PropertiesIndex>(
 
 template void
 write_collision_stats<2>(const DEMSolverParameters<2>   &parameters,
-                         const CompletedCollisionLog<2> &collision_event_log);
+                         const CompletedCollisionLog<2> &collision_event_log,
+                         const MPI_Comm                 &mpi_communicator);
 
 template void
 write_collision_stats<3>(const DEMSolverParameters<3>   &parameters,
-                         const CompletedCollisionLog<3> &collision_event_log);
+                         const CompletedCollisionLog<3> &collision_event_log,
+                         const MPI_Comm                 &mpi_communicator);
