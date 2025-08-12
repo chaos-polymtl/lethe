@@ -88,9 +88,12 @@ particle_sphere_intersection_3d(double r_particle,
 }
 
 /**
- * @brief Particle velocity calculator. This class stores the required information for the calculation of the projected particle velocity.
- * This class does not solve any equation, but compartimentalize the necessary
- * information for the projection of the particle velocity onto the mesh.
+ * @brief Particle fieldy calculator.
+ * This class stores the required information for the calculation of the
+ * projection of a particle field onto a mesh. This class does not solve any
+ * equation, but compartmentalize the necessary information for the projection
+ * of the particle field onto a mesh. Multiple instances of this function can be
+ * called to establish new particle fields.
  *
  * @tparam dim An integer that denotes the number of spatial dimensions.
  */
@@ -98,6 +101,17 @@ template <int dim, int component_start, int n_components>
 class ParticleFieldQCM
 {
 public:
+  /**
+   * @brief Constructor
+   *
+   * @param triangulation The triangulation on which the particles reside
+   * @param fe_degree The finite element degree used to interpolate the field
+   * @param simplex A flag to indicate if the simulations are being done with simplex elements.
+   * @param neumann_boundaries A flag to indicate what to do with cells that do not contain particles.
+   * If the neumann_boundaries is set to true, then  cells without particles do
+   * not have a mass matrix assembled. This corresponds to setting a neumann
+   * boundary at the cells which do not contain particles.
+   */
   ParticleFieldQCM(parallel::DistributedTriangulationBase<dim> *triangulation,
                    const unsigned int                           fe_degree,
                    const bool                                   simplex,
@@ -136,7 +150,7 @@ public:
   /// deal.II vector for the particle velocity
   LinearAlgebra::distributed::Vector<double> particle_field_solution;
 
-  /// Finite element for the void fraction
+  /// Finite element for the particle field
   std::shared_ptr<FESystem<dim>> fe;
 
   /// Index set for the locally owned degree of freedoms
@@ -145,7 +159,7 @@ public:
   /// Index set for the locally relevant degree of freedoms
   IndexSet locally_relevant_dofs;
 
-  /// Locally owned solution of the void fraction
+  /// Locally owned solution of particle field
   GlobalVectorType particle_field_locally_owned;
 
   /// System matrix used to assemble the smoothed L2 projection of the void
@@ -156,20 +170,17 @@ public:
   /// fraction
   GlobalVectorType system_rhs;
 
-  /// Constraints used for the boundary conditions of the void fraction.
-  /// Currently, this is only used to establish periodic void fractions. This
-  /// object has to be made public because the boundary conditions are set
-  /// outside of the object for now.
+  /// Constraints used for the boundary conditions of the particle field
   AffineConstraints<double> particle_field_constraints;
 
   /// Boolean that indicates if Neumann boundary conditions are used during the
-  /// projectin In this case, instead of assuming a value of zero if there are
+  /// projection In this case, instead of assuming a value of zero if there are
   /// no particles, the mass matrix is cancelled in region without particles
   /// which results in a no flux zone.
   const bool neumann_boundaries;
 
   /**
-   * @brief Setup the degrees of freedom.
+   * @brief Setup the degrees of freedom. This function allocates the necessary memory.
    *
    */
   void
@@ -179,7 +190,7 @@ public:
 /**
  * @brief Particle information projection.
  * This class manages the calculation of the projection of the particle
- * information onto a triangulation. Its main use is the calculation of the
+ * fields onto a triangulation. Its main use is the calculation of the
  * void fraction which is used as an auxiliary field for the solvers that solve
  * the Volume-Averaged Navier-Stokes equations. The present architecture
  * of the class support all of the different void fraction calculation methods
@@ -187,7 +198,7 @@ public:
  * because there are only a few void fraction calculation strategies.
  *
  * Using QCM, this class is also capable of projecting arbitrary fields
- * belonging to the particle back onto the mesh by leveraging the
+ * belonging to the particle back onto the mesh by instantiating
  * @ParticleFieldQCM class.
  *
  * @tparam dim An integer that denotes the number of spatial dimensions.
@@ -256,6 +267,12 @@ public:
                 "For void fraction using Gauss-Lobatto ('gauss-lobatto') quadrature rule, the minimum number of quadrature points is 3"));
           }
       }
+
+    AssertThrow(
+      !void_fraction_parameters->project_particle_velocity ||
+        void_fraction_parameters->l2_smoothing_length > 0,
+      ExcMessage(
+        "The projection of the particle velocity field requires that the l2 smoothing length be > 0. Otherwise, the Poisson equation used in the Neumann boundary is invalid."));
   }
 
   /**
