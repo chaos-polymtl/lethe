@@ -41,7 +41,9 @@ NavierStokesScratchData<dim>::allocate()
 
   // For SDIRK method: sum(a_ij * k_j)
   if (this->simulation_control->is_sdirk())
-    this->sdirk_stage_sum = std::vector<Tensor<1, dim>>(n_q_points);
+    {
+      this->sdirk_stage_sum = std::vector<Tensor<1, dim>>(n_q_points);
+    }
 
   // Velocity for BDF schemes
   this->previous_velocity_values = std::vector<std::vector<Tensor<1, dim>>>(

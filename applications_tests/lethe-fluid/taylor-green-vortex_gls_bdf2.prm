@@ -14,7 +14,7 @@ set dimension = 2
 
 subsection simulation control
   set method            = bdf2
-  set time step         = 0.1 # Time step
+  set time step         = 0.01 # Time step
   set number mesh adapt = 0    # If steady, nb mesh adaptation
   set time end          = 1.00 # End time of simulation
   set output name       = tgv  # Prefix for VTU outputs
@@ -26,8 +26,8 @@ end
 #---------------------------------------------------
 
 subsection FEM
-  set velocity order = 2
-  set pressure order = 2
+  set velocity order = 1
+  set pressure order = 1
 end
 
 #---------------------------------------------------
@@ -91,7 +91,7 @@ subsection mesh
   set type               = dealii
   set grid type          = hyper_cube
   set grid arguments     = 0 : 6.28318530718 : true
-  set initial refinement = 6 # initial mesh refinement
+  set initial refinement = 5 # initial mesh refinement
 end
 
 #---------------------------------------------------

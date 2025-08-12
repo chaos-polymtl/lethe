@@ -283,8 +283,10 @@ public:
     // For the SDIRK methods, \sum_{j=1}^{i-1} a_{ij} k_j is needed for the
     // assembler
     if (this->simulation_control->is_sdirk())
-      this->fe_values[velocities].get_function_values(sum_over_previous_stages,
-                                                      this->sdirk_stage_sum);
+      {
+        this->fe_values[velocities].get_function_values(sum_over_previous_stages,
+                                                        this->sdirk_stage_sum);
+      }
 
     // Gather velocity (values, gradient and laplacian)
     this->fe_values[velocities].get_function_values(current_solution,
