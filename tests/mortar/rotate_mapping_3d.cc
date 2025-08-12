@@ -75,8 +75,8 @@ test()
   mortar_parameters.stator_boundary_id  = 0;
   mortar_parameters.rotor_boundary_id   = 5; // after shifting
   mortar_parameters.rotation_axis       = Tensor<1, dim>({0, 0, 1});
-  const Point<dim> center_of_rotation   = Point<dim>();
-  const double     rotation_angle       = 0.1;
+  mortar_parameters.center_of_rotation  = Point<dim>();
+  const double rotation_angle           = 0.1;
 
   // Initialized merged triangulation
   parallel::distributed::Triangulation<dim> triangulation(comm);
@@ -109,7 +109,7 @@ test()
                                  mapping,
                                  radius,
                                  rotation_angle,
-                                 center_of_rotation,
+                                 mortar_parameters.center_of_rotation,
                                  mortar_parameters.rotation_axis);
 
   // Print information

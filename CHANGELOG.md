@@ -3,6 +3,12 @@
 All notable changes to the Lethe project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
+### [Master] - 2025-08-12
+
+### Fixed
+
+-MINOR Fix the rotate_mapping() function for 2D cases to account for the center_of_rotation. [#1619](https://github.com/chaos-polymtl/lethe/pull/1619)
+
 ### [Master] - 2025-08-11
 
 ### Added
