@@ -638,10 +638,10 @@ $(document).ready(function() { init_codefold(0); });
 <div class="line"><a id="l00524" name="l00524"></a><span class="lineno">  524</span>  std::vector&lt;double&gt; vector_of_double =</div>
 <div class="line"><a id="l00525" name="l00525"></a><span class="lineno">  525</span>    Utilities::string_to_double(vector_of_string);</div>
 <div class="line"><a id="l00526" name="l00526"></a><span class="lineno">  526</span> </div>
-<div class="line"><a id="l00527" name="l00527"></a><span class="lineno">  527</span>  AssertThrow(vector_of_double.size() == 3 || vector_of_double.size() == 2,</div>
-<div class="line"><a id="l00528" name="l00528"></a><span class="lineno">  528</span>              ExcMessage(<span class="stringliteral">&quot;Invalid string: &quot;</span> + value_string +</div>
-<div class="line"><a id="l00529" name="l00529"></a><span class="lineno">  529</span>                         <span class="stringliteral">&quot;. This should be a two or three dimensional vector &quot;</span></div>
-<div class="line"><a id="l00530" name="l00530"></a><span class="lineno">  530</span>                         <span class="stringliteral">&quot;or point.&quot;</span>));</div>
+<div class="line"><a id="l00527" name="l00527"></a><span class="lineno">  527</span>  Assert(vector_of_double.size() == 3 || vector_of_double.size() == 2,</div>
+<div class="line"><a id="l00528" name="l00528"></a><span class="lineno">  528</span>         ExcMessage(<span class="stringliteral">&quot;Invalid string: &quot;</span> + value_string +</div>
+<div class="line"><a id="l00529" name="l00529"></a><span class="lineno">  529</span>                    <span class="stringliteral">&quot;. This should be a two or three dimensional vector &quot;</span></div>
+<div class="line"><a id="l00530" name="l00530"></a><span class="lineno">  530</span>                    <span class="stringliteral">&quot;or point.&quot;</span>));</div>
 <div class="line"><a id="l00531" name="l00531"></a><span class="lineno">  531</span> </div>
 <div class="line"><a id="l00532" name="l00532"></a><span class="lineno">  532</span>  Tensor&lt;1, spacedim&gt; output_tensor;</div>
 <div class="line"><a id="l00533" name="l00533"></a><span class="lineno">  533</span>  <span class="keywordflow">for</span> (<span class="keywordtype">unsigned</span> <span class="keywordtype">int</span> i = 0; i &lt; spacedim; ++i)</div>
@@ -688,302 +688,301 @@ $(document).ready(function() { init_codefold(0); });
 <div class="line"><a id="l00572" name="l00572"></a><span class="lineno">  572</span>    {</div>
 <div class="line"><a id="l00573" name="l00573"></a><span class="lineno">  573</span>      std::vector&lt;double&gt; vector_of_double =</div>
 <div class="line"><a id="l00574" name="l00574"></a><span class="lineno">  574</span>        Utilities::string_to_double(vector_of_string);</div>
-<div class="line"><a id="l00575" name="l00575"></a><span class="lineno">  575</span>      AssertThrow(vector_of_double.size() == 3 || vector_of_double.size() == 2,</div>
-<div class="line"><a id="l00576" name="l00576"></a><span class="lineno">  576</span>                  ExcMessage(</div>
-<div class="line"><a id="l00577" name="l00577"></a><span class="lineno">  577</span>                    <span class="stringliteral">&quot;Invalid string: &quot;</span> + value_string_0 +</div>
-<div class="line"><a id="l00578" name="l00578"></a><span class="lineno">  578</span>                    <span class="stringliteral">&quot;. This should be a two or three dimensional vector &quot;</span></div>
-<div class="line"><a id="l00579" name="l00579"></a><span class="lineno">  579</span>                    <span class="stringliteral">&quot;or point.&quot;</span>));</div>
-<div class="line"><a id="l00580" name="l00580"></a><span class="lineno">  580</span>      <span class="keywordflow">for</span> (<span class="keywordtype">unsigned</span> <span class="keywordtype">int</span> i = 0; i &lt; vector_of_double.size(); ++i)</div>
-<div class="line"><a id="l00581" name="l00581"></a><span class="lineno">  581</span>        output_tensor[i] = vector_of_double[i];</div>
-<div class="line"><a id="l00582" name="l00582"></a><span class="lineno">  582</span>    }</div>
-<div class="line"><a id="l00583" name="l00583"></a><span class="lineno">  583</span>  <span class="keywordflow">else</span> <span class="comment">// Depreciated individual entries</span></div>
-<div class="line"><a id="l00584" name="l00584"></a><span class="lineno">  584</span>    {</div>
-<div class="line"><a id="l00585" name="l00585"></a><span class="lineno">  585</span>      <span class="comment">// Since the first parameter is the alias of the new parameter,</span></div>
-<div class="line"><a id="l00586" name="l00586"></a><span class="lineno">  586</span>      <span class="comment">// the value of the first parameter is obtained for its entry</span></div>
-<div class="line"><a id="l00587" name="l00587"></a><span class="lineno">  587</span>      output_tensor[0] = Utilities::string_to_double(value_string_0);</div>
-<div class="line"><a id="l00588" name="l00588"></a><span class="lineno">  588</span>      output_tensor[1] = value_1;</div>
-<div class="line"><a id="l00589" name="l00589"></a><span class="lineno">  589</span>      <span class="keywordflow">if</span> <span class="keyword">constexpr</span> (spacedim == 3)</div>
-<div class="line"><a id="l00590" name="l00590"></a><span class="lineno">  590</span>        output_tensor[2] = value_2;</div>
-<div class="line"><a id="l00591" name="l00591"></a><span class="lineno">  591</span>    }</div>
-<div class="line"><a id="l00592" name="l00592"></a><span class="lineno">  592</span>  <span class="keywordflow">return</span> output_tensor;</div>
-<div class="line"><a id="l00593" name="l00593"></a><span class="lineno">  593</span>}</div>
+<div class="line"><a id="l00575" name="l00575"></a><span class="lineno">  575</span>      Assert(vector_of_double.size() == 3 || vector_of_double.size() == 2,</div>
+<div class="line"><a id="l00576" name="l00576"></a><span class="lineno">  576</span>             ExcMessage(<span class="stringliteral">&quot;Invalid string: &quot;</span> + value_string_0 +</div>
+<div class="line"><a id="l00577" name="l00577"></a><span class="lineno">  577</span>                        <span class="stringliteral">&quot;. This should be a two or three dimensional vector &quot;</span></div>
+<div class="line"><a id="l00578" name="l00578"></a><span class="lineno">  578</span>                        <span class="stringliteral">&quot;or point.&quot;</span>));</div>
+<div class="line"><a id="l00579" name="l00579"></a><span class="lineno">  579</span>      <span class="keywordflow">for</span> (<span class="keywordtype">unsigned</span> <span class="keywordtype">int</span> i = 0; i &lt; vector_of_double.size(); ++i)</div>
+<div class="line"><a id="l00580" name="l00580"></a><span class="lineno">  580</span>        output_tensor[i] = vector_of_double[i];</div>
+<div class="line"><a id="l00581" name="l00581"></a><span class="lineno">  581</span>    }</div>
+<div class="line"><a id="l00582" name="l00582"></a><span class="lineno">  582</span>  <span class="keywordflow">else</span> <span class="comment">// Depreciated individual entries</span></div>
+<div class="line"><a id="l00583" name="l00583"></a><span class="lineno">  583</span>    {</div>
+<div class="line"><a id="l00584" name="l00584"></a><span class="lineno">  584</span>      <span class="comment">// Since the first parameter is the alias of the new parameter,</span></div>
+<div class="line"><a id="l00585" name="l00585"></a><span class="lineno">  585</span>      <span class="comment">// the value of the first parameter is obtained for its entry</span></div>
+<div class="line"><a id="l00586" name="l00586"></a><span class="lineno">  586</span>      output_tensor[0] = Utilities::string_to_double(value_string_0);</div>
+<div class="line"><a id="l00587" name="l00587"></a><span class="lineno">  587</span>      output_tensor[1] = value_1;</div>
+<div class="line"><a id="l00588" name="l00588"></a><span class="lineno">  588</span>      <span class="keywordflow">if</span> <span class="keyword">constexpr</span> (spacedim == 3)</div>
+<div class="line"><a id="l00589" name="l00589"></a><span class="lineno">  589</span>        output_tensor[2] = value_2;</div>
+<div class="line"><a id="l00590" name="l00590"></a><span class="lineno">  590</span>    }</div>
+<div class="line"><a id="l00591" name="l00591"></a><span class="lineno">  591</span>  <span class="keywordflow">return</span> output_tensor;</div>
+<div class="line"><a id="l00592" name="l00592"></a><span class="lineno">  592</span>}</div>
 </div>
-<div class="line"><a id="l00594" name="l00594"></a><span class="lineno">  594</span><span class="comment"></span> </div>
-<div class="line"><a id="l00595" name="l00595"></a><span class="lineno">  595</span><span class="comment">/**</span></div>
-<div class="line"><a id="l00596" name="l00596"></a><span class="lineno">  596</span><span class="comment"> * @brief Computes equivalent cell diameter by comparing the area to a disk (2D)</span></div>
-<div class="line"><a id="l00597" name="l00597"></a><span class="lineno">  597</span><span class="comment"> * or the volume to a sphere (3D).</span></div>
-<div class="line"><a id="l00598" name="l00598"></a><span class="lineno">  598</span><span class="comment"> *</span></div>
-<div class="line"><a id="l00599" name="l00599"></a><span class="lineno">  599</span><span class="comment"> * @tparam dim Number of spatial dimensions (2D or 3D).</span></div>
-<div class="line"><a id="l00600" name="l00600"></a><span class="lineno">  600</span><span class="comment"> *</span></div>
-<div class="line"><a id="l00601" name="l00601"></a><span class="lineno">  601</span><span class="comment"> * @param[in] cell_measure Area (2D) or volume (3D) of the cell.</span></div>
-<div class="line"><a id="l00602" name="l00602"></a><span class="lineno">  602</span><span class="comment"> *</span></div>
-<div class="line"><a id="l00603" name="l00603"></a><span class="lineno">  603</span><span class="comment"> * @param[in] fe_degree Polynomial degree of the shape function.</span></div>
-<div class="line"><a id="l00604" name="l00604"></a><span class="lineno">  604</span><span class="comment"> *</span></div>
-<div class="line"><a id="l00605" name="l00605"></a><span class="lineno">  605</span><span class="comment"> * @return Cell diameter value.</span></div>
-<div class="line"><a id="l00606" name="l00606"></a><span class="lineno">  606</span><span class="comment"> */</span></div>
-<div class="line"><a id="l00607" name="l00607"></a><span class="lineno">  607</span><span class="keyword">template</span> &lt;<span class="keywordtype">int</span> dim&gt;</div>
-<div class="line"><a id="l00608" name="l00608"></a><span class="lineno">  608</span><span class="keyword">inline</span> <span class="keywordtype">double</span></div>
-<div class="foldopen" id="foldopen00609" data-start="{" data-end="}">
-<div class="line"><a id="l00609" name="l00609"></a><span class="lineno"><a class="line" href="utilities_8h.html#a9b1c8b293984f450067058ee53084afc">  609</a></span><a class="code hl_function" href="utilities_8h.html#a9b1c8b293984f450067058ee53084afc">compute_cell_diameter</a>(<span class="keyword">const</span> <span class="keywordtype">double</span> cell_measure, <span class="keyword">const</span> <span class="keywordtype">unsigned</span> <span class="keywordtype">int</span> fe_degree)</div>
-<div class="line"><a id="l00610" name="l00610"></a><span class="lineno">  610</span>{</div>
-<div class="line"><a id="l00611" name="l00611"></a><span class="lineno">  611</span>  <span class="keywordtype">double</span> h;</div>
-<div class="line"><a id="l00612" name="l00612"></a><span class="lineno">  612</span>  <span class="keywordflow">if</span> <span class="keyword">constexpr</span> (dim == 2)</div>
-<div class="line"><a id="l00613" name="l00613"></a><span class="lineno">  613</span>    h = std::sqrt(4. * cell_measure / numbers::PI) / fe_degree;</div>
-<div class="line"><a id="l00614" name="l00614"></a><span class="lineno">  614</span>  <span class="keywordflow">else</span> <span class="keywordflow">if</span> <span class="keyword">constexpr</span> (dim == 3)</div>
-<div class="line"><a id="l00615" name="l00615"></a><span class="lineno">  615</span>    h = std::cbrt(6. * cell_measure / numbers::PI) / fe_degree;</div>
-<div class="line"><a id="l00616" name="l00616"></a><span class="lineno">  616</span>  <span class="keywordflow">else</span></div>
-<div class="line"><a id="l00617" name="l00617"></a><span class="lineno">  617</span>    Assert(</div>
-<div class="line"><a id="l00618" name="l00618"></a><span class="lineno">  618</span>      <span class="keyword">false</span>,</div>
-<div class="line"><a id="l00619" name="l00619"></a><span class="lineno">  619</span>      ExcMessage(std::string(</div>
-<div class="line"><a id="l00620" name="l00620"></a><span class="lineno">  620</span>        <span class="stringliteral">&quot;&#39;dim&#39; should have a value of either 2 or 3. Only 2D and 3D simulations &quot;</span></div>
-<div class="line"><a id="l00621" name="l00621"></a><span class="lineno">  621</span>        <span class="stringliteral">&quot;are supported.&quot;</span>)));</div>
-<div class="line"><a id="l00622" name="l00622"></a><span class="lineno">  622</span>  <span class="keywordflow">return</span> h;</div>
-<div class="line"><a id="l00623" name="l00623"></a><span class="lineno">  623</span>}</div>
+<div class="line"><a id="l00593" name="l00593"></a><span class="lineno">  593</span><span class="comment"></span> </div>
+<div class="line"><a id="l00594" name="l00594"></a><span class="lineno">  594</span><span class="comment">/**</span></div>
+<div class="line"><a id="l00595" name="l00595"></a><span class="lineno">  595</span><span class="comment"> * @brief Computes equivalent cell diameter by comparing the area to a disk (2D)</span></div>
+<div class="line"><a id="l00596" name="l00596"></a><span class="lineno">  596</span><span class="comment"> * or the volume to a sphere (3D).</span></div>
+<div class="line"><a id="l00597" name="l00597"></a><span class="lineno">  597</span><span class="comment"> *</span></div>
+<div class="line"><a id="l00598" name="l00598"></a><span class="lineno">  598</span><span class="comment"> * @tparam dim Number of spatial dimensions (2D or 3D).</span></div>
+<div class="line"><a id="l00599" name="l00599"></a><span class="lineno">  599</span><span class="comment"> *</span></div>
+<div class="line"><a id="l00600" name="l00600"></a><span class="lineno">  600</span><span class="comment"> * @param[in] cell_measure Area (2D) or volume (3D) of the cell.</span></div>
+<div class="line"><a id="l00601" name="l00601"></a><span class="lineno">  601</span><span class="comment"> *</span></div>
+<div class="line"><a id="l00602" name="l00602"></a><span class="lineno">  602</span><span class="comment"> * @param[in] fe_degree Polynomial degree of the shape function.</span></div>
+<div class="line"><a id="l00603" name="l00603"></a><span class="lineno">  603</span><span class="comment"> *</span></div>
+<div class="line"><a id="l00604" name="l00604"></a><span class="lineno">  604</span><span class="comment"> * @return Cell diameter value.</span></div>
+<div class="line"><a id="l00605" name="l00605"></a><span class="lineno">  605</span><span class="comment"> */</span></div>
+<div class="line"><a id="l00606" name="l00606"></a><span class="lineno">  606</span><span class="keyword">template</span> &lt;<span class="keywordtype">int</span> dim&gt;</div>
+<div class="line"><a id="l00607" name="l00607"></a><span class="lineno">  607</span><span class="keyword">inline</span> <span class="keywordtype">double</span></div>
+<div class="foldopen" id="foldopen00608" data-start="{" data-end="}">
+<div class="line"><a id="l00608" name="l00608"></a><span class="lineno"><a class="line" href="utilities_8h.html#a9b1c8b293984f450067058ee53084afc">  608</a></span><a class="code hl_function" href="utilities_8h.html#a9b1c8b293984f450067058ee53084afc">compute_cell_diameter</a>(<span class="keyword">const</span> <span class="keywordtype">double</span> cell_measure, <span class="keyword">const</span> <span class="keywordtype">unsigned</span> <span class="keywordtype">int</span> fe_degree)</div>
+<div class="line"><a id="l00609" name="l00609"></a><span class="lineno">  609</span>{</div>
+<div class="line"><a id="l00610" name="l00610"></a><span class="lineno">  610</span>  <span class="keywordtype">double</span> h;</div>
+<div class="line"><a id="l00611" name="l00611"></a><span class="lineno">  611</span>  <span class="keywordflow">if</span> <span class="keyword">constexpr</span> (dim == 2)</div>
+<div class="line"><a id="l00612" name="l00612"></a><span class="lineno">  612</span>    h = std::sqrt(4. * cell_measure / numbers::PI) / fe_degree;</div>
+<div class="line"><a id="l00613" name="l00613"></a><span class="lineno">  613</span>  <span class="keywordflow">else</span> <span class="keywordflow">if</span> <span class="keyword">constexpr</span> (dim == 3)</div>
+<div class="line"><a id="l00614" name="l00614"></a><span class="lineno">  614</span>    h = std::cbrt(6. * cell_measure / numbers::PI) / fe_degree;</div>
+<div class="line"><a id="l00615" name="l00615"></a><span class="lineno">  615</span>  <span class="keywordflow">else</span></div>
+<div class="line"><a id="l00616" name="l00616"></a><span class="lineno">  616</span>    Assert(</div>
+<div class="line"><a id="l00617" name="l00617"></a><span class="lineno">  617</span>      <span class="keyword">false</span>,</div>
+<div class="line"><a id="l00618" name="l00618"></a><span class="lineno">  618</span>      ExcMessage(std::string(</div>
+<div class="line"><a id="l00619" name="l00619"></a><span class="lineno">  619</span>        <span class="stringliteral">&quot;&#39;dim&#39; should have a value of either 2 or 3. Only 2D and 3D simulations &quot;</span></div>
+<div class="line"><a id="l00620" name="l00620"></a><span class="lineno">  620</span>        <span class="stringliteral">&quot;are supported.&quot;</span>)));</div>
+<div class="line"><a id="l00621" name="l00621"></a><span class="lineno">  621</span>  <span class="keywordflow">return</span> h;</div>
+<div class="line"><a id="l00622" name="l00622"></a><span class="lineno">  622</span>}</div>
 </div>
-<div class="line"><a id="l00624" name="l00624"></a><span class="lineno">  624</span><span class="comment"></span> </div>
-<div class="line"><a id="l00625" name="l00625"></a><span class="lineno">  625</span><span class="comment">/**</span></div>
-<div class="line"><a id="l00626" name="l00626"></a><span class="lineno">  626</span><span class="comment"> * @brief Computes the area (2D) or volume (3D) of the cell by integrating 1</span></div>
-<div class="line"><a id="l00627" name="l00627"></a><span class="lineno">  627</span><span class="comment"> * over the cell, by summing JxW values (quadrature weights) returned by the</span></div>
-<div class="line"><a id="l00628" name="l00628"></a><span class="lineno">  628</span><span class="comment"> * FEValues object.</span></div>
-<div class="line"><a id="l00629" name="l00629"></a><span class="lineno">  629</span><span class="comment"> *</span></div>
-<div class="line"><a id="l00630" name="l00630"></a><span class="lineno">  630</span><span class="comment"> * @tparam dim Number of spatial dimensions (2D or 3D).</span></div>
-<div class="line"><a id="l00631" name="l00631"></a><span class="lineno">  631</span><span class="comment"> *</span></div>
-<div class="line"><a id="l00632" name="l00632"></a><span class="lineno">  632</span><span class="comment"> * @param[in] JxW_values Vector of mapped quadrature weights.</span></div>
-<div class="line"><a id="l00633" name="l00633"></a><span class="lineno">  633</span><span class="comment"> *</span></div>
-<div class="line"><a id="l00634" name="l00634"></a><span class="lineno">  634</span><span class="comment"> * @return Area (2D) volume (3D) of the cell.</span></div>
-<div class="line"><a id="l00635" name="l00635"></a><span class="lineno">  635</span><span class="comment"> */</span></div>
-<div class="line"><a id="l00636" name="l00636"></a><span class="lineno">  636</span><span class="keyword">inline</span> <span class="keywordtype">double</span></div>
-<div class="foldopen" id="foldopen00637" data-start="{" data-end="}">
-<div class="line"><a id="l00637" name="l00637"></a><span class="lineno"><a class="line" href="utilities_8h.html#a3d02cb065c32b672c94bb862ecff4431">  637</a></span><a class="code hl_function" href="utilities_8h.html#a3d02cb065c32b672c94bb862ecff4431">compute_cell_measure_with_JxW</a>(<span class="keyword">const</span> std::vector&lt;double&gt; &amp;JxW_values)</div>
-<div class="line"><a id="l00638" name="l00638"></a><span class="lineno">  638</span>{</div>
-<div class="line"><a id="l00639" name="l00639"></a><span class="lineno">  639</span>  <span class="keywordtype">double</span> cell_measure = 0;</div>
-<div class="line"><a id="l00640" name="l00640"></a><span class="lineno">  640</span>  <span class="keywordflow">for</span> (<span class="keyword">const</span> <span class="keywordtype">double</span> &amp;JxW : JxW_values)</div>
-<div class="line"><a id="l00641" name="l00641"></a><span class="lineno">  641</span>    cell_measure += JxW;</div>
-<div class="line"><a id="l00642" name="l00642"></a><span class="lineno">  642</span>  <span class="keywordflow">return</span> cell_measure;</div>
-<div class="line"><a id="l00643" name="l00643"></a><span class="lineno">  643</span>}</div>
+<div class="line"><a id="l00623" name="l00623"></a><span class="lineno">  623</span><span class="comment"></span> </div>
+<div class="line"><a id="l00624" name="l00624"></a><span class="lineno">  624</span><span class="comment">/**</span></div>
+<div class="line"><a id="l00625" name="l00625"></a><span class="lineno">  625</span><span class="comment"> * @brief Computes the area (2D) or volume (3D) of the cell by integrating 1</span></div>
+<div class="line"><a id="l00626" name="l00626"></a><span class="lineno">  626</span><span class="comment"> * over the cell, by summing JxW values (quadrature weights) returned by the</span></div>
+<div class="line"><a id="l00627" name="l00627"></a><span class="lineno">  627</span><span class="comment"> * FEValues object.</span></div>
+<div class="line"><a id="l00628" name="l00628"></a><span class="lineno">  628</span><span class="comment"> *</span></div>
+<div class="line"><a id="l00629" name="l00629"></a><span class="lineno">  629</span><span class="comment"> * @tparam dim Number of spatial dimensions (2D or 3D).</span></div>
+<div class="line"><a id="l00630" name="l00630"></a><span class="lineno">  630</span><span class="comment"> *</span></div>
+<div class="line"><a id="l00631" name="l00631"></a><span class="lineno">  631</span><span class="comment"> * @param[in] JxW_values Vector of mapped quadrature weights.</span></div>
+<div class="line"><a id="l00632" name="l00632"></a><span class="lineno">  632</span><span class="comment"> *</span></div>
+<div class="line"><a id="l00633" name="l00633"></a><span class="lineno">  633</span><span class="comment"> * @return Area (2D) volume (3D) of the cell.</span></div>
+<div class="line"><a id="l00634" name="l00634"></a><span class="lineno">  634</span><span class="comment"> */</span></div>
+<div class="line"><a id="l00635" name="l00635"></a><span class="lineno">  635</span><span class="keyword">inline</span> <span class="keywordtype">double</span></div>
+<div class="foldopen" id="foldopen00636" data-start="{" data-end="}">
+<div class="line"><a id="l00636" name="l00636"></a><span class="lineno"><a class="line" href="utilities_8h.html#a3d02cb065c32b672c94bb862ecff4431">  636</a></span><a class="code hl_function" href="utilities_8h.html#a3d02cb065c32b672c94bb862ecff4431">compute_cell_measure_with_JxW</a>(<span class="keyword">const</span> std::vector&lt;double&gt; &amp;JxW_values)</div>
+<div class="line"><a id="l00637" name="l00637"></a><span class="lineno">  637</span>{</div>
+<div class="line"><a id="l00638" name="l00638"></a><span class="lineno">  638</span>  <span class="keywordtype">double</span> cell_measure = 0;</div>
+<div class="line"><a id="l00639" name="l00639"></a><span class="lineno">  639</span>  <span class="keywordflow">for</span> (<span class="keyword">const</span> <span class="keywordtype">double</span> &amp;JxW : JxW_values)</div>
+<div class="line"><a id="l00640" name="l00640"></a><span class="lineno">  640</span>    cell_measure += JxW;</div>
+<div class="line"><a id="l00641" name="l00641"></a><span class="lineno">  641</span>  <span class="keywordflow">return</span> cell_measure;</div>
+<div class="line"><a id="l00642" name="l00642"></a><span class="lineno">  642</span>}</div>
 </div>
-<div class="line"><a id="l00644" name="l00644"></a><span class="lineno">  644</span><span class="comment"></span> </div>
-<div class="line"><a id="l00645" name="l00645"></a><span class="lineno">  645</span><span class="comment">/**</span></div>
-<div class="line"><a id="l00646" name="l00646"></a><span class="lineno">  646</span><span class="comment"> * @brief Identify minimum cell size. The cell size corresponds to the diameter</span></div>
-<div class="line"><a id="l00647" name="l00647"></a><span class="lineno">  647</span><span class="comment"> * of a disk (2D) or sphere (3D) of equivalent area (2D) or volume (3D).</span></div>
-<div class="line"><a id="l00648" name="l00648"></a><span class="lineno">  648</span><span class="comment"> *</span></div>
-<div class="line"><a id="l00649" name="l00649"></a><span class="lineno">  649</span><span class="comment"> * @tparam dim Number of spatial dimensions (2D or 3D).</span></div>
-<div class="line"><a id="l00650" name="l00650"></a><span class="lineno">  650</span><span class="comment"> *</span></div>
-<div class="line"><a id="l00651" name="l00651"></a><span class="lineno">  651</span><span class="comment"> * @param[in] mapping Interface for transformation from the reference (unit)</span></div>
-<div class="line"><a id="l00652" name="l00652"></a><span class="lineno">  652</span><span class="comment"> * cell to the real cell.</span></div>
-<div class="line"><a id="l00653" name="l00653"></a><span class="lineno">  653</span><span class="comment"> *</span></div>
-<div class="line"><a id="l00654" name="l00654"></a><span class="lineno">  654</span><span class="comment"> * @param[in] dof_handler Describes the layout of DoFs and the type of FE.</span></div>
-<div class="line"><a id="l00655" name="l00655"></a><span class="lineno">  655</span><span class="comment"> *</span></div>
-<div class="line"><a id="l00656" name="l00656"></a><span class="lineno">  656</span><span class="comment"> * @param[in] cell_quadrature Local cell quadrature information.</span></div>
-<div class="line"><a id="l00657" name="l00657"></a><span class="lineno">  657</span><span class="comment"> *</span></div>
-<div class="line"><a id="l00658" name="l00658"></a><span class="lineno">  658</span><span class="comment"> * @param[in] mpi_communicator Allows communication between cores.</span></div>
-<div class="line"><a id="l00659" name="l00659"></a><span class="lineno">  659</span><span class="comment"> *</span></div>
-<div class="line"><a id="l00660" name="l00660"></a><span class="lineno">  660</span><span class="comment"> * @return Smallest cell size value.</span></div>
-<div class="line"><a id="l00661" name="l00661"></a><span class="lineno">  661</span><span class="comment"> */</span></div>
-<div class="line"><a id="l00662" name="l00662"></a><span class="lineno">  662</span><span class="keyword">template</span> &lt;<span class="keywordtype">int</span> dim&gt;</div>
-<div class="line"><a id="l00663" name="l00663"></a><span class="lineno">  663</span><span class="keyword">inline</span> <span class="keywordtype">double</span></div>
-<div class="foldopen" id="foldopen00664" data-start="{" data-end="}">
-<div class="line"><a id="l00664" name="l00664"></a><span class="lineno"><a class="line" href="utilities_8h.html#a47c096b4659adc4e0aa45d4aeb994dad">  664</a></span><a class="code hl_function" href="utilities_8h.html#a47c096b4659adc4e0aa45d4aeb994dad">identify_minimum_cell_size</a>(<span class="keyword">const</span> Mapping&lt;dim&gt;    &amp;mapping,</div>
-<div class="line"><a id="l00665" name="l00665"></a><span class="lineno">  665</span>                           <span class="keyword">const</span> DoFHandler&lt;dim&gt; &amp;dof_handler,</div>
-<div class="line"><a id="l00666" name="l00666"></a><span class="lineno">  666</span>                           <span class="keyword">const</span> Quadrature&lt;dim&gt; &amp;cell_quadrature,</div>
-<div class="line"><a id="l00667" name="l00667"></a><span class="lineno">  667</span>                           <span class="keyword">const</span> MPI_Comm        &amp;mpi_communicator)</div>
-<div class="line"><a id="l00668" name="l00668"></a><span class="lineno">  668</span>{</div>
-<div class="line"><a id="l00669" name="l00669"></a><span class="lineno">  669</span>  <span class="comment">// Initialize FEValues for interface algebraic reinitialization</span></div>
-<div class="line"><a id="l00670" name="l00670"></a><span class="lineno">  670</span>  FEValues&lt;dim&gt; fe_values(mapping,</div>
-<div class="line"><a id="l00671" name="l00671"></a><span class="lineno">  671</span>                          dof_handler.get_fe(),</div>
-<div class="line"><a id="l00672" name="l00672"></a><span class="lineno">  672</span>                          cell_quadrature,</div>
-<div class="line"><a id="l00673" name="l00673"></a><span class="lineno">  673</span>                          update_JxW_values);</div>
-<div class="line"><a id="l00674" name="l00674"></a><span class="lineno">  674</span> </div>
-<div class="line"><a id="l00675" name="l00675"></a><span class="lineno">  675</span>  <span class="comment">// Initialize cell diameter</span></div>
-<div class="line"><a id="l00676" name="l00676"></a><span class="lineno">  676</span>  <span class="keywordtype">double</span> h = DBL_MAX;</div>
-<div class="line"><a id="l00677" name="l00677"></a><span class="lineno">  677</span> </div>
-<div class="line"><a id="l00678" name="l00678"></a><span class="lineno">  678</span>  <span class="comment">// Element degree</span></div>
-<div class="line"><a id="l00679" name="l00679"></a><span class="lineno">  679</span>  <span class="keyword">const</span> <span class="keywordtype">double</span> degree = double(fe_values.get_fe().degree);</div>
-<div class="line"><a id="l00680" name="l00680"></a><span class="lineno">  680</span> </div>
-<div class="line"><a id="l00681" name="l00681"></a><span class="lineno">  681</span>  <span class="keywordflow">for</span> (<span class="keyword">const</span> <span class="keyword">auto</span> &amp;cell : dof_handler.active_cell_iterators())</div>
-<div class="line"><a id="l00682" name="l00682"></a><span class="lineno">  682</span>    {</div>
-<div class="line"><a id="l00683" name="l00683"></a><span class="lineno">  683</span>      <span class="keywordflow">if</span> (cell-&gt;is_locally_owned())</div>
-<div class="line"><a id="l00684" name="l00684"></a><span class="lineno">  684</span>        {</div>
-<div class="line"><a id="l00685" name="l00685"></a><span class="lineno">  685</span>          fe_values.reinit(cell);</div>
-<div class="line"><a id="l00686" name="l00686"></a><span class="lineno">  686</span> </div>
-<div class="line"><a id="l00687" name="l00687"></a><span class="lineno">  687</span>          <span class="comment">// Compute cell diameter</span></div>
-<div class="line"><a id="l00688" name="l00688"></a><span class="lineno">  688</span>          <span class="keywordtype">double</span> cell_measure =</div>
-<div class="line"><a id="l00689" name="l00689"></a><span class="lineno">  689</span>            <a class="code hl_function" href="utilities_8h.html#a3d02cb065c32b672c94bb862ecff4431">compute_cell_measure_with_JxW</a>(fe_values.get_JxW_values());</div>
-<div class="line"><a id="l00690" name="l00690"></a><span class="lineno">  690</span>          <span class="keywordtype">double</span> h_local = compute_cell_diameter&lt;dim&gt;(cell_measure, degree);</div>
-<div class="line"><a id="l00691" name="l00691"></a><span class="lineno">  691</span> </div>
-<div class="line"><a id="l00692" name="l00692"></a><span class="lineno">  692</span>          <span class="comment">// Update cell diameter to minimum value</span></div>
-<div class="line"><a id="l00693" name="l00693"></a><span class="lineno">  693</span>          h = std::min(h, h_local);</div>
-<div class="line"><a id="l00694" name="l00694"></a><span class="lineno">  694</span>        }</div>
-<div class="line"><a id="l00695" name="l00695"></a><span class="lineno">  695</span>    }</div>
-<div class="line"><a id="l00696" name="l00696"></a><span class="lineno">  696</span> </div>
-<div class="line"><a id="l00697" name="l00697"></a><span class="lineno">  697</span>  <span class="comment">// Get the minimum between all processes</span></div>
-<div class="line"><a id="l00698" name="l00698"></a><span class="lineno">  698</span>  h = Utilities::MPI::min(h, mpi_communicator);</div>
-<div class="line"><a id="l00699" name="l00699"></a><span class="lineno">  699</span> </div>
-<div class="line"><a id="l00700" name="l00700"></a><span class="lineno">  700</span>  <span class="keywordflow">return</span> h;</div>
-<div class="line"><a id="l00701" name="l00701"></a><span class="lineno">  701</span>}</div>
+<div class="line"><a id="l00643" name="l00643"></a><span class="lineno">  643</span><span class="comment"></span> </div>
+<div class="line"><a id="l00644" name="l00644"></a><span class="lineno">  644</span><span class="comment">/**</span></div>
+<div class="line"><a id="l00645" name="l00645"></a><span class="lineno">  645</span><span class="comment"> * @brief Identify minimum cell size. The cell size corresponds to the diameter</span></div>
+<div class="line"><a id="l00646" name="l00646"></a><span class="lineno">  646</span><span class="comment"> * of a disk (2D) or sphere (3D) of equivalent area (2D) or volume (3D).</span></div>
+<div class="line"><a id="l00647" name="l00647"></a><span class="lineno">  647</span><span class="comment"> *</span></div>
+<div class="line"><a id="l00648" name="l00648"></a><span class="lineno">  648</span><span class="comment"> * @tparam dim Number of spatial dimensions (2D or 3D).</span></div>
+<div class="line"><a id="l00649" name="l00649"></a><span class="lineno">  649</span><span class="comment"> *</span></div>
+<div class="line"><a id="l00650" name="l00650"></a><span class="lineno">  650</span><span class="comment"> * @param[in] mapping Interface for transformation from the reference (unit)</span></div>
+<div class="line"><a id="l00651" name="l00651"></a><span class="lineno">  651</span><span class="comment"> * cell to the real cell.</span></div>
+<div class="line"><a id="l00652" name="l00652"></a><span class="lineno">  652</span><span class="comment"> *</span></div>
+<div class="line"><a id="l00653" name="l00653"></a><span class="lineno">  653</span><span class="comment"> * @param[in] dof_handler Describes the layout of DoFs and the type of FE.</span></div>
+<div class="line"><a id="l00654" name="l00654"></a><span class="lineno">  654</span><span class="comment"> *</span></div>
+<div class="line"><a id="l00655" name="l00655"></a><span class="lineno">  655</span><span class="comment"> * @param[in] cell_quadrature Local cell quadrature information.</span></div>
+<div class="line"><a id="l00656" name="l00656"></a><span class="lineno">  656</span><span class="comment"> *</span></div>
+<div class="line"><a id="l00657" name="l00657"></a><span class="lineno">  657</span><span class="comment"> * @param[in] mpi_communicator Allows communication between cores.</span></div>
+<div class="line"><a id="l00658" name="l00658"></a><span class="lineno">  658</span><span class="comment"> *</span></div>
+<div class="line"><a id="l00659" name="l00659"></a><span class="lineno">  659</span><span class="comment"> * @return Smallest cell size value.</span></div>
+<div class="line"><a id="l00660" name="l00660"></a><span class="lineno">  660</span><span class="comment"> */</span></div>
+<div class="line"><a id="l00661" name="l00661"></a><span class="lineno">  661</span><span class="keyword">template</span> &lt;<span class="keywordtype">int</span> dim&gt;</div>
+<div class="line"><a id="l00662" name="l00662"></a><span class="lineno">  662</span><span class="keyword">inline</span> <span class="keywordtype">double</span></div>
+<div class="foldopen" id="foldopen00663" data-start="{" data-end="}">
+<div class="line"><a id="l00663" name="l00663"></a><span class="lineno"><a class="line" href="utilities_8h.html#a47c096b4659adc4e0aa45d4aeb994dad">  663</a></span><a class="code hl_function" href="utilities_8h.html#a47c096b4659adc4e0aa45d4aeb994dad">identify_minimum_cell_size</a>(<span class="keyword">const</span> Mapping&lt;dim&gt;    &amp;mapping,</div>
+<div class="line"><a id="l00664" name="l00664"></a><span class="lineno">  664</span>                           <span class="keyword">const</span> DoFHandler&lt;dim&gt; &amp;dof_handler,</div>
+<div class="line"><a id="l00665" name="l00665"></a><span class="lineno">  665</span>                           <span class="keyword">const</span> Quadrature&lt;dim&gt; &amp;cell_quadrature,</div>
+<div class="line"><a id="l00666" name="l00666"></a><span class="lineno">  666</span>                           <span class="keyword">const</span> MPI_Comm        &amp;mpi_communicator)</div>
+<div class="line"><a id="l00667" name="l00667"></a><span class="lineno">  667</span>{</div>
+<div class="line"><a id="l00668" name="l00668"></a><span class="lineno">  668</span>  <span class="comment">// Initialize FEValues for interface algebraic reinitialization</span></div>
+<div class="line"><a id="l00669" name="l00669"></a><span class="lineno">  669</span>  FEValues&lt;dim&gt; fe_values(mapping,</div>
+<div class="line"><a id="l00670" name="l00670"></a><span class="lineno">  670</span>                          dof_handler.get_fe(),</div>
+<div class="line"><a id="l00671" name="l00671"></a><span class="lineno">  671</span>                          cell_quadrature,</div>
+<div class="line"><a id="l00672" name="l00672"></a><span class="lineno">  672</span>                          update_JxW_values);</div>
+<div class="line"><a id="l00673" name="l00673"></a><span class="lineno">  673</span> </div>
+<div class="line"><a id="l00674" name="l00674"></a><span class="lineno">  674</span>  <span class="comment">// Initialize cell diameter</span></div>
+<div class="line"><a id="l00675" name="l00675"></a><span class="lineno">  675</span>  <span class="keywordtype">double</span> h = DBL_MAX;</div>
+<div class="line"><a id="l00676" name="l00676"></a><span class="lineno">  676</span> </div>
+<div class="line"><a id="l00677" name="l00677"></a><span class="lineno">  677</span>  <span class="comment">// Element degree</span></div>
+<div class="line"><a id="l00678" name="l00678"></a><span class="lineno">  678</span>  <span class="keyword">const</span> <span class="keywordtype">double</span> degree = double(fe_values.get_fe().degree);</div>
+<div class="line"><a id="l00679" name="l00679"></a><span class="lineno">  679</span> </div>
+<div class="line"><a id="l00680" name="l00680"></a><span class="lineno">  680</span>  <span class="keywordflow">for</span> (<span class="keyword">const</span> <span class="keyword">auto</span> &amp;cell : dof_handler.active_cell_iterators())</div>
+<div class="line"><a id="l00681" name="l00681"></a><span class="lineno">  681</span>    {</div>
+<div class="line"><a id="l00682" name="l00682"></a><span class="lineno">  682</span>      <span class="keywordflow">if</span> (cell-&gt;is_locally_owned())</div>
+<div class="line"><a id="l00683" name="l00683"></a><span class="lineno">  683</span>        {</div>
+<div class="line"><a id="l00684" name="l00684"></a><span class="lineno">  684</span>          fe_values.reinit(cell);</div>
+<div class="line"><a id="l00685" name="l00685"></a><span class="lineno">  685</span> </div>
+<div class="line"><a id="l00686" name="l00686"></a><span class="lineno">  686</span>          <span class="comment">// Compute cell diameter</span></div>
+<div class="line"><a id="l00687" name="l00687"></a><span class="lineno">  687</span>          <span class="keywordtype">double</span> cell_measure =</div>
+<div class="line"><a id="l00688" name="l00688"></a><span class="lineno">  688</span>            <a class="code hl_function" href="utilities_8h.html#a3d02cb065c32b672c94bb862ecff4431">compute_cell_measure_with_JxW</a>(fe_values.get_JxW_values());</div>
+<div class="line"><a id="l00689" name="l00689"></a><span class="lineno">  689</span>          <span class="keywordtype">double</span> h_local = compute_cell_diameter&lt;dim&gt;(cell_measure, degree);</div>
+<div class="line"><a id="l00690" name="l00690"></a><span class="lineno">  690</span> </div>
+<div class="line"><a id="l00691" name="l00691"></a><span class="lineno">  691</span>          <span class="comment">// Update cell diameter to minimum value</span></div>
+<div class="line"><a id="l00692" name="l00692"></a><span class="lineno">  692</span>          h = std::min(h, h_local);</div>
+<div class="line"><a id="l00693" name="l00693"></a><span class="lineno">  693</span>        }</div>
+<div class="line"><a id="l00694" name="l00694"></a><span class="lineno">  694</span>    }</div>
+<div class="line"><a id="l00695" name="l00695"></a><span class="lineno">  695</span> </div>
+<div class="line"><a id="l00696" name="l00696"></a><span class="lineno">  696</span>  <span class="comment">// Get the minimum between all processes</span></div>
+<div class="line"><a id="l00697" name="l00697"></a><span class="lineno">  697</span>  h = Utilities::MPI::min(h, mpi_communicator);</div>
+<div class="line"><a id="l00698" name="l00698"></a><span class="lineno">  698</span> </div>
+<div class="line"><a id="l00699" name="l00699"></a><span class="lineno">  699</span>  <span class="keywordflow">return</span> h;</div>
+<div class="line"><a id="l00700" name="l00700"></a><span class="lineno">  700</span>}</div>
 </div>
-<div class="line"><a id="l00702" name="l00702"></a><span class="lineno">  702</span><span class="comment"></span> </div>
-<div class="line"><a id="l00703" name="l00703"></a><span class="lineno">  703</span><span class="comment">/**</span></div>
-<div class="line"><a id="l00704" name="l00704"></a><span class="lineno">  704</span><span class="comment"> * @brief Calculate the penalty factor for the SIPG method for the case when two cells are of different sizes. A harmonic mean is used to calculate an average cell extent.</span></div>
-<div class="line"><a id="l00705" name="l00705"></a><span class="lineno">  705</span><span class="comment"> *</span></div>
-<div class="line"><a id="l00706" name="l00706"></a><span class="lineno">  706</span><span class="comment"> * @param[in] fe_degree Finite element degree</span></div>
-<div class="line"><a id="l00707" name="l00707"></a><span class="lineno">  707</span><span class="comment"> * @param[in] cell_extent_here Distance of the here cell. The ratio between the</span></div>
-<div class="line"><a id="l00708" name="l00708"></a><span class="lineno">  708</span><span class="comment"> * volume of the cell and the area of the face is generally used as a metric for</span></div>
-<div class="line"><a id="l00709" name="l00709"></a><span class="lineno">  709</span><span class="comment"> * this distance.</span></div>
-<div class="line"><a id="l00710" name="l00710"></a><span class="lineno">  710</span><span class="comment"> * @param[in] cell_extent_there Distance of the there cell. The ratio between</span></div>
-<div class="line"><a id="l00711" name="l00711"></a><span class="lineno">  711</span><span class="comment"> * the volume of the cell and the area of the face is generally used as a metric</span></div>
-<div class="line"><a id="l00712" name="l00712"></a><span class="lineno">  712</span><span class="comment"> * for this distance.</span></div>
-<div class="line"><a id="l00713" name="l00713"></a><span class="lineno">  713</span><span class="comment"> * @return double</span></div>
-<div class="line"><a id="l00714" name="l00714"></a><span class="lineno">  714</span><span class="comment"> */</span></div>
-<div class="line"><a id="l00715" name="l00715"></a><span class="lineno">  715</span> </div>
-<div class="line"><a id="l00716" name="l00716"></a><span class="lineno">  716</span><span class="keyword">inline</span> <span class="keywordtype">double</span></div>
-<div class="foldopen" id="foldopen00717" data-start="{" data-end="}">
-<div class="line"><a id="l00717" name="l00717"></a><span class="lineno"><a class="line" href="utilities_8h.html#adb087a954bd6464fa862ca5974bebeaf">  717</a></span><a class="code hl_function" href="utilities_8h.html#adb087a954bd6464fa862ca5974bebeaf">get_penalty_factor</a>(<span class="keyword">const</span> <span class="keywordtype">unsigned</span> <span class="keywordtype">int</span> fe_degree,</div>
-<div class="line"><a id="l00718" name="l00718"></a><span class="lineno">  718</span>                   <span class="keyword">const</span> <span class="keywordtype">double</span>       cell_extent_here,</div>
-<div class="line"><a id="l00719" name="l00719"></a><span class="lineno">  719</span>                   <span class="keyword">const</span> <span class="keywordtype">double</span>       cell_extent_there)</div>
-<div class="line"><a id="l00720" name="l00720"></a><span class="lineno">  720</span>{</div>
-<div class="line"><a id="l00721" name="l00721"></a><span class="lineno">  721</span>  <span class="keywordflow">return</span> (fe_degree + 1) * (fe_degree + 1.) * 0.5 *</div>
-<div class="line"><a id="l00722" name="l00722"></a><span class="lineno">  722</span>         (1. / cell_extent_here + 1. / cell_extent_there);</div>
-<div class="line"><a id="l00723" name="l00723"></a><span class="lineno">  723</span>}</div>
+<div class="line"><a id="l00701" name="l00701"></a><span class="lineno">  701</span><span class="comment"></span> </div>
+<div class="line"><a id="l00702" name="l00702"></a><span class="lineno">  702</span><span class="comment">/**</span></div>
+<div class="line"><a id="l00703" name="l00703"></a><span class="lineno">  703</span><span class="comment"> * @brief Calculate the penalty factor for the SIPG method for the case when two cells are of different sizes. A harmonic mean is used to calculate an average cell extent.</span></div>
+<div class="line"><a id="l00704" name="l00704"></a><span class="lineno">  704</span><span class="comment"> *</span></div>
+<div class="line"><a id="l00705" name="l00705"></a><span class="lineno">  705</span><span class="comment"> * @param[in] fe_degree Finite element degree</span></div>
+<div class="line"><a id="l00706" name="l00706"></a><span class="lineno">  706</span><span class="comment"> * @param[in] cell_extent_here Distance of the here cell. The ratio between the</span></div>
+<div class="line"><a id="l00707" name="l00707"></a><span class="lineno">  707</span><span class="comment"> * volume of the cell and the area of the face is generally used as a metric for</span></div>
+<div class="line"><a id="l00708" name="l00708"></a><span class="lineno">  708</span><span class="comment"> * this distance.</span></div>
+<div class="line"><a id="l00709" name="l00709"></a><span class="lineno">  709</span><span class="comment"> * @param[in] cell_extent_there Distance of the there cell. The ratio between</span></div>
+<div class="line"><a id="l00710" name="l00710"></a><span class="lineno">  710</span><span class="comment"> * the volume of the cell and the area of the face is generally used as a metric</span></div>
+<div class="line"><a id="l00711" name="l00711"></a><span class="lineno">  711</span><span class="comment"> * for this distance.</span></div>
+<div class="line"><a id="l00712" name="l00712"></a><span class="lineno">  712</span><span class="comment"> * @return double</span></div>
+<div class="line"><a id="l00713" name="l00713"></a><span class="lineno">  713</span><span class="comment"> */</span></div>
+<div class="line"><a id="l00714" name="l00714"></a><span class="lineno">  714</span> </div>
+<div class="line"><a id="l00715" name="l00715"></a><span class="lineno">  715</span><span class="keyword">inline</span> <span class="keywordtype">double</span></div>
+<div class="foldopen" id="foldopen00716" data-start="{" data-end="}">
+<div class="line"><a id="l00716" name="l00716"></a><span class="lineno"><a class="line" href="utilities_8h.html#adb087a954bd6464fa862ca5974bebeaf">  716</a></span><a class="code hl_function" href="utilities_8h.html#adb087a954bd6464fa862ca5974bebeaf">get_penalty_factor</a>(<span class="keyword">const</span> <span class="keywordtype">unsigned</span> <span class="keywordtype">int</span> fe_degree,</div>
+<div class="line"><a id="l00717" name="l00717"></a><span class="lineno">  717</span>                   <span class="keyword">const</span> <span class="keywordtype">double</span>       cell_extent_here,</div>
+<div class="line"><a id="l00718" name="l00718"></a><span class="lineno">  718</span>                   <span class="keyword">const</span> <span class="keywordtype">double</span>       cell_extent_there)</div>
+<div class="line"><a id="l00719" name="l00719"></a><span class="lineno">  719</span>{</div>
+<div class="line"><a id="l00720" name="l00720"></a><span class="lineno">  720</span>  <span class="keywordflow">return</span> (fe_degree + 1) * (fe_degree + 1.) * 0.5 *</div>
+<div class="line"><a id="l00721" name="l00721"></a><span class="lineno">  721</span>         (1. / cell_extent_here + 1. / cell_extent_there);</div>
+<div class="line"><a id="l00722" name="l00722"></a><span class="lineno">  722</span>}</div>
 </div>
-<div class="line"><a id="l00724" name="l00724"></a><span class="lineno">  724</span><span class="comment"></span> </div>
-<div class="line"><a id="l00725" name="l00725"></a><span class="lineno">  725</span><span class="comment">/**</span></div>
-<div class="line"><a id="l00726" name="l00726"></a><span class="lineno">  726</span><span class="comment"> * @brief Extract the keys from map object</span></div>
-<div class="line"><a id="l00727" name="l00727"></a><span class="lineno">  727</span><span class="comment"> *</span></div>
-<div class="line"><a id="l00728" name="l00728"></a><span class="lineno">  728</span><span class="comment"> * @tparam key Key of the map</span></div>
-<div class="line"><a id="l00729" name="l00729"></a><span class="lineno">  729</span><span class="comment"> * @tparam val Value of the map. This template parameter is not used.</span></div>
-<div class="line"><a id="l00730" name="l00730"></a><span class="lineno">  730</span><span class="comment"> * @param[in] map Map object from which the keys are extracted</span></div>
-<div class="line"><a id="l00731" name="l00731"></a><span class="lineno">  731</span><span class="comment"> * @return keys Vector of keys from the map</span></div>
-<div class="line"><a id="l00732" name="l00732"></a><span class="lineno">  732</span><span class="comment"> */</span></div>
-<div class="line"><a id="l00733" name="l00733"></a><span class="lineno">  733</span> </div>
-<div class="line"><a id="l00734" name="l00734"></a><span class="lineno">  734</span><span class="keyword">template</span> &lt;<span class="keyword">typename</span> key, <span class="keyword">typename</span> val&gt;</div>
-<div class="line"><a id="l00735" name="l00735"></a><span class="lineno">  735</span>std::vector&lt;key&gt;</div>
-<div class="foldopen" id="foldopen00736" data-start="{" data-end="}">
-<div class="line"><a id="l00736" name="l00736"></a><span class="lineno"><a class="line" href="utilities_8h.html#aa7a3beaf194e7e21b6745c52b3695c4b">  736</a></span><a class="code hl_function" href="utilities_8h.html#aa7a3beaf194e7e21b6745c52b3695c4b">extract_keys_from_map</a>(<span class="keyword">const</span> std::map&lt;key, val&gt; &amp;map)</div>
-<div class="line"><a id="l00737" name="l00737"></a><span class="lineno">  737</span>{</div>
-<div class="line"><a id="l00738" name="l00738"></a><span class="lineno">  738</span>  std::vector&lt;key&gt; keys;</div>
-<div class="line"><a id="l00739" name="l00739"></a><span class="lineno">  739</span>  <span class="keywordflow">for</span> (<span class="keyword">const</span> <span class="keyword">auto</span> &amp;pair : map)</div>
-<div class="line"><a id="l00740" name="l00740"></a><span class="lineno">  740</span>    keys.push_back(pair.first);</div>
-<div class="line"><a id="l00741" name="l00741"></a><span class="lineno">  741</span>  <span class="keywordflow">return</span> keys;</div>
-<div class="line"><a id="l00742" name="l00742"></a><span class="lineno">  742</span>}</div>
+<div class="line"><a id="l00723" name="l00723"></a><span class="lineno">  723</span><span class="comment"></span> </div>
+<div class="line"><a id="l00724" name="l00724"></a><span class="lineno">  724</span><span class="comment">/**</span></div>
+<div class="line"><a id="l00725" name="l00725"></a><span class="lineno">  725</span><span class="comment"> * @brief Extract the keys from map object</span></div>
+<div class="line"><a id="l00726" name="l00726"></a><span class="lineno">  726</span><span class="comment"> *</span></div>
+<div class="line"><a id="l00727" name="l00727"></a><span class="lineno">  727</span><span class="comment"> * @tparam key Key of the map</span></div>
+<div class="line"><a id="l00728" name="l00728"></a><span class="lineno">  728</span><span class="comment"> * @tparam val Value of the map. This template parameter is not used.</span></div>
+<div class="line"><a id="l00729" name="l00729"></a><span class="lineno">  729</span><span class="comment"> * @param[in] map Map object from which the keys are extracted</span></div>
+<div class="line"><a id="l00730" name="l00730"></a><span class="lineno">  730</span><span class="comment"> * @return keys Vector of keys from the map</span></div>
+<div class="line"><a id="l00731" name="l00731"></a><span class="lineno">  731</span><span class="comment"> */</span></div>
+<div class="line"><a id="l00732" name="l00732"></a><span class="lineno">  732</span> </div>
+<div class="line"><a id="l00733" name="l00733"></a><span class="lineno">  733</span><span class="keyword">template</span> &lt;<span class="keyword">typename</span> key, <span class="keyword">typename</span> val&gt;</div>
+<div class="line"><a id="l00734" name="l00734"></a><span class="lineno">  734</span>std::vector&lt;key&gt;</div>
+<div class="foldopen" id="foldopen00735" data-start="{" data-end="}">
+<div class="line"><a id="l00735" name="l00735"></a><span class="lineno"><a class="line" href="utilities_8h.html#aa7a3beaf194e7e21b6745c52b3695c4b">  735</a></span><a class="code hl_function" href="utilities_8h.html#aa7a3beaf194e7e21b6745c52b3695c4b">extract_keys_from_map</a>(<span class="keyword">const</span> std::map&lt;key, val&gt; &amp;map)</div>
+<div class="line"><a id="l00736" name="l00736"></a><span class="lineno">  736</span>{</div>
+<div class="line"><a id="l00737" name="l00737"></a><span class="lineno">  737</span>  std::vector&lt;key&gt; keys;</div>
+<div class="line"><a id="l00738" name="l00738"></a><span class="lineno">  738</span>  <span class="keywordflow">for</span> (<span class="keyword">const</span> <span class="keyword">auto</span> &amp;pair : map)</div>
+<div class="line"><a id="l00739" name="l00739"></a><span class="lineno">  739</span>    keys.push_back(pair.first);</div>
+<div class="line"><a id="l00740" name="l00740"></a><span class="lineno">  740</span>  <span class="keywordflow">return</span> keys;</div>
+<div class="line"><a id="l00741" name="l00741"></a><span class="lineno">  741</span>}</div>
 </div>
-<div class="line"><a id="l00743" name="l00743"></a><span class="lineno">  743</span><span class="comment"></span> </div>
-<div class="line"><a id="l00744" name="l00744"></a><span class="lineno">  744</span><span class="comment">/**</span></div>
-<div class="line"><a id="l00745" name="l00745"></a><span class="lineno">  745</span><span class="comment"> * @brief Extract the values from map object</span></div>
-<div class="line"><a id="l00746" name="l00746"></a><span class="lineno">  746</span><span class="comment"> *</span></div>
-<div class="line"><a id="l00747" name="l00747"></a><span class="lineno">  747</span><span class="comment"> * @tparam key Key of the map. This template parameter is not used.</span></div>
-<div class="line"><a id="l00748" name="l00748"></a><span class="lineno">  748</span><span class="comment"> * @tparam val Value of the map.</span></div>
-<div class="line"><a id="l00749" name="l00749"></a><span class="lineno">  749</span><span class="comment"> * @param[in] map Map object from which the keys are extracted</span></div>
-<div class="line"><a id="l00750" name="l00750"></a><span class="lineno">  750</span><span class="comment"> * @return values Vector of values from the map</span></div>
-<div class="line"><a id="l00751" name="l00751"></a><span class="lineno">  751</span><span class="comment"> */</span></div>
-<div class="line"><a id="l00752" name="l00752"></a><span class="lineno">  752</span> </div>
-<div class="line"><a id="l00753" name="l00753"></a><span class="lineno">  753</span><span class="keyword">template</span> &lt;<span class="keyword">typename</span> key, <span class="keyword">typename</span> val&gt;</div>
-<div class="line"><a id="l00754" name="l00754"></a><span class="lineno">  754</span>std::vector&lt;val&gt;</div>
-<div class="foldopen" id="foldopen00755" data-start="{" data-end="}">
-<div class="line"><a id="l00755" name="l00755"></a><span class="lineno"><a class="line" href="utilities_8h.html#a4a392cd214e737c300c8f727e465a409">  755</a></span><a class="code hl_function" href="utilities_8h.html#a4a392cd214e737c300c8f727e465a409">extract_values_from_map</a>(<span class="keyword">const</span> std::map&lt;key, val&gt; &amp;map)</div>
-<div class="line"><a id="l00756" name="l00756"></a><span class="lineno">  756</span>{</div>
-<div class="line"><a id="l00757" name="l00757"></a><span class="lineno">  757</span>  std::vector&lt;val&gt; values;</div>
-<div class="line"><a id="l00758" name="l00758"></a><span class="lineno">  758</span>  <span class="keywordflow">for</span> (<span class="keyword">const</span> <span class="keyword">auto</span> &amp;pair : map)</div>
-<div class="line"><a id="l00759" name="l00759"></a><span class="lineno">  759</span>    values.push_back(pair.second);</div>
-<div class="line"><a id="l00760" name="l00760"></a><span class="lineno">  760</span>  <span class="keywordflow">return</span> values;</div>
-<div class="line"><a id="l00761" name="l00761"></a><span class="lineno">  761</span>}</div>
+<div class="line"><a id="l00742" name="l00742"></a><span class="lineno">  742</span><span class="comment"></span> </div>
+<div class="line"><a id="l00743" name="l00743"></a><span class="lineno">  743</span><span class="comment">/**</span></div>
+<div class="line"><a id="l00744" name="l00744"></a><span class="lineno">  744</span><span class="comment"> * @brief Extract the values from map object</span></div>
+<div class="line"><a id="l00745" name="l00745"></a><span class="lineno">  745</span><span class="comment"> *</span></div>
+<div class="line"><a id="l00746" name="l00746"></a><span class="lineno">  746</span><span class="comment"> * @tparam key Key of the map. This template parameter is not used.</span></div>
+<div class="line"><a id="l00747" name="l00747"></a><span class="lineno">  747</span><span class="comment"> * @tparam val Value of the map.</span></div>
+<div class="line"><a id="l00748" name="l00748"></a><span class="lineno">  748</span><span class="comment"> * @param[in] map Map object from which the keys are extracted</span></div>
+<div class="line"><a id="l00749" name="l00749"></a><span class="lineno">  749</span><span class="comment"> * @return values Vector of values from the map</span></div>
+<div class="line"><a id="l00750" name="l00750"></a><span class="lineno">  750</span><span class="comment"> */</span></div>
+<div class="line"><a id="l00751" name="l00751"></a><span class="lineno">  751</span> </div>
+<div class="line"><a id="l00752" name="l00752"></a><span class="lineno">  752</span><span class="keyword">template</span> &lt;<span class="keyword">typename</span> key, <span class="keyword">typename</span> val&gt;</div>
+<div class="line"><a id="l00753" name="l00753"></a><span class="lineno">  753</span>std::vector&lt;val&gt;</div>
+<div class="foldopen" id="foldopen00754" data-start="{" data-end="}">
+<div class="line"><a id="l00754" name="l00754"></a><span class="lineno"><a class="line" href="utilities_8h.html#a4a392cd214e737c300c8f727e465a409">  754</a></span><a class="code hl_function" href="utilities_8h.html#a4a392cd214e737c300c8f727e465a409">extract_values_from_map</a>(<span class="keyword">const</span> std::map&lt;key, val&gt; &amp;map)</div>
+<div class="line"><a id="l00755" name="l00755"></a><span class="lineno">  755</span>{</div>
+<div class="line"><a id="l00756" name="l00756"></a><span class="lineno">  756</span>  std::vector&lt;val&gt; values;</div>
+<div class="line"><a id="l00757" name="l00757"></a><span class="lineno">  757</span>  <span class="keywordflow">for</span> (<span class="keyword">const</span> <span class="keyword">auto</span> &amp;pair : map)</div>
+<div class="line"><a id="l00758" name="l00758"></a><span class="lineno">  758</span>    values.push_back(pair.second);</div>
+<div class="line"><a id="l00759" name="l00759"></a><span class="lineno">  759</span>  <span class="keywordflow">return</span> values;</div>
+<div class="line"><a id="l00760" name="l00760"></a><span class="lineno">  760</span>}</div>
 </div>
-<div class="line"><a id="l00762" name="l00762"></a><span class="lineno">  762</span><span class="comment"></span> </div>
-<div class="line"><a id="l00763" name="l00763"></a><span class="lineno">  763</span><span class="comment">/**</span></div>
-<div class="line"><a id="l00764" name="l00764"></a><span class="lineno">  764</span><span class="comment"> * @brief Concatenate words which are passed from the command line to a main function</span></div>
-<div class="line"><a id="l00765" name="l00765"></a><span class="lineno">  765</span><span class="comment"> * into a single string in which the words are seperated by space.</span></div>
-<div class="line"><a id="l00766" name="l00766"></a><span class="lineno">  766</span><span class="comment"> *</span></div>
-<div class="line"><a id="l00767" name="l00767"></a><span class="lineno">  767</span><span class="comment"> * @param[in] argc number of arguments in C style.</span></div>
-<div class="line"><a id="l00768" name="l00768"></a><span class="lineno">  768</span><span class="comment"> * @param[in] argv arguments themselves in C style.</span></div>
-<div class="line"><a id="l00769" name="l00769"></a><span class="lineno">  769</span><span class="comment"> */</span></div>
-<div class="line"><a id="l00770" name="l00770"></a><span class="lineno">  770</span> </div>
-<div class="line"><a id="l00771" name="l00771"></a><span class="lineno">  771</span>std::string</div>
-<div class="line"><a id="l00772" name="l00772"></a><span class="lineno">  772</span><a class="code hl_function" href="utilities_8h.html#aa2b435317e26c5fbf3f8f86b77c7fe4c">concatenate_strings</a>(<span class="keyword">const</span> <span class="keywordtype">int</span> argc, <span class="keywordtype">char</span> **argv);</div>
-<div class="line"><a id="l00773" name="l00773"></a><span class="lineno">  773</span><span class="comment"></span> </div>
-<div class="line"><a id="l00774" name="l00774"></a><span class="lineno">  774</span><span class="comment">/**</span></div>
-<div class="line"><a id="l00775" name="l00775"></a><span class="lineno">  775</span><span class="comment"> * @brief Print the information of the deal.II and Lethe branches</span></div>
-<div class="line"><a id="l00776" name="l00776"></a><span class="lineno">  776</span><span class="comment"> * used to run an application in the &quot;git describe&quot; format.</span></div>
-<div class="line"><a id="l00777" name="l00777"></a><span class="lineno">  777</span><span class="comment"> *</span></div>
-<div class="line"><a id="l00778" name="l00778"></a><span class="lineno">  778</span><span class="comment"> * @param[in] pcout Parallel output stream</span></div>
-<div class="line"><a id="l00779" name="l00779"></a><span class="lineno">  779</span><span class="comment"> */</span></div>
-<div class="line"><a id="l00780" name="l00780"></a><span class="lineno">  780</span><span class="keywordtype">void</span></div>
-<div class="line"><a id="l00781" name="l00781"></a><span class="lineno">  781</span><a class="code hl_function" href="utilities_8h.html#a8f95af8244cc326628392a04517913c7">print_version_info</a>(<span class="keyword">const</span> ConditionalOStream &amp;pcout);</div>
-<div class="line"><a id="l00782" name="l00782"></a><span class="lineno">  782</span><span class="comment"></span> </div>
-<div class="line"><a id="l00783" name="l00783"></a><span class="lineno">  783</span><span class="comment">/**</span></div>
-<div class="line"><a id="l00784" name="l00784"></a><span class="lineno">  784</span><span class="comment"> * @brief Parse the arguments given to the application</span></div>
-<div class="line"><a id="l00785" name="l00785"></a><span class="lineno">  785</span><span class="comment"> *</span></div>
-<div class="line"><a id="l00786" name="l00786"></a><span class="lineno">  786</span><span class="comment"> * @param[in] argc Number of arguments</span></div>
-<div class="line"><a id="l00787" name="l00787"></a><span class="lineno">  787</span><span class="comment"> * @param[in] argv Array of strings representing the arguments</span></div>
-<div class="line"><a id="l00788" name="l00788"></a><span class="lineno">  788</span><span class="comment"> * @return Tuple containing a map with the command line flags</span></div>
-<div class="line"><a id="l00789" name="l00789"></a><span class="lineno">  789</span><span class="comment"> * and a boolean set to 1 for the specific flag; and a vector of</span></div>
-<div class="line"><a id="l00790" name="l00790"></a><span class="lineno">  790</span><span class="comment"> * strings with the rest of the arguments that are not flags; in Lethe,</span></div>
-<div class="line"><a id="l00791" name="l00791"></a><span class="lineno">  791</span><span class="comment"> * this corresponds to the parameter file given to the application.</span></div>
-<div class="line"><a id="l00792" name="l00792"></a><span class="lineno">  792</span><span class="comment"> */</span></div>
-<div class="line"><a id="l00793" name="l00793"></a><span class="lineno">  793</span>std::tuple&lt;std::map&lt;std::string, bool&gt;, std::vector&lt;std::string&gt;&gt;</div>
-<div class="line"><a id="l00794" name="l00794"></a><span class="lineno">  794</span><a class="code hl_function" href="utilities_8h.html#a3badf505e17c1f77892888491dd53f5f">parse_args</a>(<span class="keywordtype">int</span> argc, <span class="keywordtype">char</span> **argv);</div>
-<div class="line"><a id="l00795" name="l00795"></a><span class="lineno">  795</span><span class="comment"></span> </div>
-<div class="line"><a id="l00796" name="l00796"></a><span class="lineno">  796</span><span class="comment">/**</span></div>
-<div class="line"><a id="l00797" name="l00797"></a><span class="lineno">  797</span><span class="comment"> * @brief Print the parameters given by the parameter file of the application</span></div>
-<div class="line"><a id="l00798" name="l00798"></a><span class="lineno">  798</span><span class="comment"> *</span></div>
-<div class="line"><a id="l00799" name="l00799"></a><span class="lineno">  799</span><span class="comment"> * @param[in] pcout Parallel output stream</span></div>
-<div class="line"><a id="l00800" name="l00800"></a><span class="lineno">  800</span><span class="comment"> * @param[in] prm Object containing the parameters parsed from the parameter</span></div>
-<div class="line"><a id="l00801" name="l00801"></a><span class="lineno">  801</span><span class="comment"> * file</span></div>
-<div class="line"><a id="l00802" name="l00802"></a><span class="lineno">  802</span><span class="comment"> */</span></div>
-<div class="line"><a id="l00803" name="l00803"></a><span class="lineno">  803</span><span class="keywordtype">void</span></div>
-<div class="line"><a id="l00804" name="l00804"></a><span class="lineno">  804</span><a class="code hl_function" href="utilities_8h.html#a5f8e2b4fdf7a2b6eceab3461c4edd221">print_parameters_to_output_file</a>(<span class="keyword">const</span> ConditionalOStream &amp;pcout,</div>
-<div class="line"><a id="l00805" name="l00805"></a><span class="lineno">  805</span>                                <span class="keyword">const</span> ParameterHandler   &amp;prm,</div>
-<div class="line"><a id="l00806" name="l00806"></a><span class="lineno">  806</span>                                <span class="keyword">const</span> std::string        &amp;file_name);</div>
-<div class="line"><a id="l00807" name="l00807"></a><span class="lineno">  807</span><span class="comment"></span> </div>
-<div class="line"><a id="l00808" name="l00808"></a><span class="lineno">  808</span><span class="comment">/**</span></div>
-<div class="line"><a id="l00809" name="l00809"></a><span class="lineno">  809</span><span class="comment"> * @brief Delete vtu and pvd files</span></div>
-<div class="line"><a id="l00810" name="l00810"></a><span class="lineno">  810</span><span class="comment"> */</span></div>
-<div class="line"><a id="l00811" name="l00811"></a><span class="lineno">  811</span><span class="keywordtype">void</span></div>
-<div class="line"><a id="l00812" name="l00812"></a><span class="lineno">  812</span><a class="code hl_function" href="utilities_8h.html#a6bff1c25176117effa0161cb4ebfc520">delete_vtu_and_pvd_files</a>(<span class="keyword">const</span> std::string &amp;output_path);</div>
-<div class="line"><a id="l00813" name="l00813"></a><span class="lineno">  813</span><span class="comment"></span> </div>
-<div class="line"><a id="l00814" name="l00814"></a><span class="lineno">  814</span><span class="comment">/**</span></div>
-<div class="line"><a id="l00815" name="l00815"></a><span class="lineno">  815</span><span class="comment"> * @brief Converts point to angle (in radians)</span></div>
-<div class="line"><a id="l00816" name="l00816"></a><span class="lineno">  816</span><span class="comment"> * @param[in] point Point in cartesian coordinates (x-y plane)</span></div>
-<div class="line"><a id="l00817" name="l00817"></a><span class="lineno">  817</span><span class="comment"> * @param[in] center_of_rotation Center of rotation</span></div>
-<div class="line"><a id="l00818" name="l00818"></a><span class="lineno">  818</span><span class="comment"> *</span></div>
-<div class="line"><a id="l00819" name="l00819"></a><span class="lineno">  819</span><span class="comment"> * @return Angle between point and the x-axis</span></div>
-<div class="line"><a id="l00820" name="l00820"></a><span class="lineno">  820</span><span class="comment"> */</span></div>
-<div class="line"><a id="l00821" name="l00821"></a><span class="lineno">  821</span><span class="keyword">template</span> &lt;<span class="keywordtype">int</span> dim&gt;</div>
-<div class="line"><a id="l00822" name="l00822"></a><span class="lineno">  822</span><span class="keyword">inline</span> <span class="keywordtype">double</span></div>
-<div class="foldopen" id="foldopen00823" data-start="{" data-end="}">
-<div class="line"><a id="l00823" name="l00823"></a><span class="lineno"><a class="line" href="utilities_8h.html#a5df21d5e2572a5711790ce28e326a07d">  823</a></span><a class="code hl_function" href="utilities_8h.html#a5df21d5e2572a5711790ce28e326a07d">point_to_angle</a>(<span class="keyword">const</span> Point&lt;dim&gt; &amp;point,</div>
-<div class="line"><a id="l00824" name="l00824"></a><span class="lineno">  824</span>               <span class="keyword">const</span> Point&lt;dim&gt; &amp;center_of_rotation = Point&lt;dim&gt;())</div>
-<div class="line"><a id="l00825" name="l00825"></a><span class="lineno">  825</span>{</div>
-<div class="line"><a id="l00826" name="l00826"></a><span class="lineno">  826</span>  <span class="keywordflow">return</span> std::fmod(std::atan2(point[1] - center_of_rotation[1],</div>
-<div class="line"><a id="l00827" name="l00827"></a><span class="lineno">  827</span>                              point[0] - center_of_rotation[0]) +</div>
-<div class="line"><a id="l00828" name="l00828"></a><span class="lineno">  828</span>                     2 * numbers::PI,</div>
-<div class="line"><a id="l00829" name="l00829"></a><span class="lineno">  829</span>                   2 * numbers::PI);</div>
-<div class="line"><a id="l00830" name="l00830"></a><span class="lineno">  830</span>}</div>
+<div class="line"><a id="l00761" name="l00761"></a><span class="lineno">  761</span><span class="comment"></span> </div>
+<div class="line"><a id="l00762" name="l00762"></a><span class="lineno">  762</span><span class="comment">/**</span></div>
+<div class="line"><a id="l00763" name="l00763"></a><span class="lineno">  763</span><span class="comment"> * @brief Concatenate words which are passed from the command line to a main function</span></div>
+<div class="line"><a id="l00764" name="l00764"></a><span class="lineno">  764</span><span class="comment"> * into a single string in which the words are seperated by space.</span></div>
+<div class="line"><a id="l00765" name="l00765"></a><span class="lineno">  765</span><span class="comment"> *</span></div>
+<div class="line"><a id="l00766" name="l00766"></a><span class="lineno">  766</span><span class="comment"> * @param[in] argc number of arguments in C style.</span></div>
+<div class="line"><a id="l00767" name="l00767"></a><span class="lineno">  767</span><span class="comment"> * @param[in] argv arguments themselves in C style.</span></div>
+<div class="line"><a id="l00768" name="l00768"></a><span class="lineno">  768</span><span class="comment"> */</span></div>
+<div class="line"><a id="l00769" name="l00769"></a><span class="lineno">  769</span> </div>
+<div class="line"><a id="l00770" name="l00770"></a><span class="lineno">  770</span>std::string</div>
+<div class="line"><a id="l00771" name="l00771"></a><span class="lineno">  771</span><a class="code hl_function" href="utilities_8h.html#aa2b435317e26c5fbf3f8f86b77c7fe4c">concatenate_strings</a>(<span class="keyword">const</span> <span class="keywordtype">int</span> argc, <span class="keywordtype">char</span> **argv);</div>
+<div class="line"><a id="l00772" name="l00772"></a><span class="lineno">  772</span><span class="comment"></span> </div>
+<div class="line"><a id="l00773" name="l00773"></a><span class="lineno">  773</span><span class="comment">/**</span></div>
+<div class="line"><a id="l00774" name="l00774"></a><span class="lineno">  774</span><span class="comment"> * @brief Print the information of the deal.II and Lethe branches</span></div>
+<div class="line"><a id="l00775" name="l00775"></a><span class="lineno">  775</span><span class="comment"> * used to run an application in the &quot;git describe&quot; format.</span></div>
+<div class="line"><a id="l00776" name="l00776"></a><span class="lineno">  776</span><span class="comment"> *</span></div>
+<div class="line"><a id="l00777" name="l00777"></a><span class="lineno">  777</span><span class="comment"> * @param[in] pcout Parallel output stream</span></div>
+<div class="line"><a id="l00778" name="l00778"></a><span class="lineno">  778</span><span class="comment"> */</span></div>
+<div class="line"><a id="l00779" name="l00779"></a><span class="lineno">  779</span><span class="keywordtype">void</span></div>
+<div class="line"><a id="l00780" name="l00780"></a><span class="lineno">  780</span><a class="code hl_function" href="utilities_8h.html#a8f95af8244cc326628392a04517913c7">print_version_info</a>(<span class="keyword">const</span> ConditionalOStream &amp;pcout);</div>
+<div class="line"><a id="l00781" name="l00781"></a><span class="lineno">  781</span><span class="comment"></span> </div>
+<div class="line"><a id="l00782" name="l00782"></a><span class="lineno">  782</span><span class="comment">/**</span></div>
+<div class="line"><a id="l00783" name="l00783"></a><span class="lineno">  783</span><span class="comment"> * @brief Parse the arguments given to the application</span></div>
+<div class="line"><a id="l00784" name="l00784"></a><span class="lineno">  784</span><span class="comment"> *</span></div>
+<div class="line"><a id="l00785" name="l00785"></a><span class="lineno">  785</span><span class="comment"> * @param[in] argc Number of arguments</span></div>
+<div class="line"><a id="l00786" name="l00786"></a><span class="lineno">  786</span><span class="comment"> * @param[in] argv Array of strings representing the arguments</span></div>
+<div class="line"><a id="l00787" name="l00787"></a><span class="lineno">  787</span><span class="comment"> * @return Tuple containing a map with the command line flags</span></div>
+<div class="line"><a id="l00788" name="l00788"></a><span class="lineno">  788</span><span class="comment"> * and a boolean set to 1 for the specific flag; and a vector of</span></div>
+<div class="line"><a id="l00789" name="l00789"></a><span class="lineno">  789</span><span class="comment"> * strings with the rest of the arguments that are not flags; in Lethe,</span></div>
+<div class="line"><a id="l00790" name="l00790"></a><span class="lineno">  790</span><span class="comment"> * this corresponds to the parameter file given to the application.</span></div>
+<div class="line"><a id="l00791" name="l00791"></a><span class="lineno">  791</span><span class="comment"> */</span></div>
+<div class="line"><a id="l00792" name="l00792"></a><span class="lineno">  792</span>std::tuple&lt;std::map&lt;std::string, bool&gt;, std::vector&lt;std::string&gt;&gt;</div>
+<div class="line"><a id="l00793" name="l00793"></a><span class="lineno">  793</span><a class="code hl_function" href="utilities_8h.html#a3badf505e17c1f77892888491dd53f5f">parse_args</a>(<span class="keywordtype">int</span> argc, <span class="keywordtype">char</span> **argv);</div>
+<div class="line"><a id="l00794" name="l00794"></a><span class="lineno">  794</span><span class="comment"></span> </div>
+<div class="line"><a id="l00795" name="l00795"></a><span class="lineno">  795</span><span class="comment">/**</span></div>
+<div class="line"><a id="l00796" name="l00796"></a><span class="lineno">  796</span><span class="comment"> * @brief Print the parameters given by the parameter file of the application</span></div>
+<div class="line"><a id="l00797" name="l00797"></a><span class="lineno">  797</span><span class="comment"> *</span></div>
+<div class="line"><a id="l00798" name="l00798"></a><span class="lineno">  798</span><span class="comment"> * @param[in] pcout Parallel output stream</span></div>
+<div class="line"><a id="l00799" name="l00799"></a><span class="lineno">  799</span><span class="comment"> * @param[in] prm Object containing the parameters parsed from the parameter</span></div>
+<div class="line"><a id="l00800" name="l00800"></a><span class="lineno">  800</span><span class="comment"> * file</span></div>
+<div class="line"><a id="l00801" name="l00801"></a><span class="lineno">  801</span><span class="comment"> */</span></div>
+<div class="line"><a id="l00802" name="l00802"></a><span class="lineno">  802</span><span class="keywordtype">void</span></div>
+<div class="line"><a id="l00803" name="l00803"></a><span class="lineno">  803</span><a class="code hl_function" href="utilities_8h.html#a5f8e2b4fdf7a2b6eceab3461c4edd221">print_parameters_to_output_file</a>(<span class="keyword">const</span> ConditionalOStream &amp;pcout,</div>
+<div class="line"><a id="l00804" name="l00804"></a><span class="lineno">  804</span>                                <span class="keyword">const</span> ParameterHandler   &amp;prm,</div>
+<div class="line"><a id="l00805" name="l00805"></a><span class="lineno">  805</span>                                <span class="keyword">const</span> std::string        &amp;file_name);</div>
+<div class="line"><a id="l00806" name="l00806"></a><span class="lineno">  806</span><span class="comment"></span> </div>
+<div class="line"><a id="l00807" name="l00807"></a><span class="lineno">  807</span><span class="comment">/**</span></div>
+<div class="line"><a id="l00808" name="l00808"></a><span class="lineno">  808</span><span class="comment"> * @brief Delete vtu and pvd files</span></div>
+<div class="line"><a id="l00809" name="l00809"></a><span class="lineno">  809</span><span class="comment"> */</span></div>
+<div class="line"><a id="l00810" name="l00810"></a><span class="lineno">  810</span><span class="keywordtype">void</span></div>
+<div class="line"><a id="l00811" name="l00811"></a><span class="lineno">  811</span><a class="code hl_function" href="utilities_8h.html#a6bff1c25176117effa0161cb4ebfc520">delete_vtu_and_pvd_files</a>(<span class="keyword">const</span> std::string &amp;output_path);</div>
+<div class="line"><a id="l00812" name="l00812"></a><span class="lineno">  812</span><span class="comment"></span> </div>
+<div class="line"><a id="l00813" name="l00813"></a><span class="lineno">  813</span><span class="comment">/**</span></div>
+<div class="line"><a id="l00814" name="l00814"></a><span class="lineno">  814</span><span class="comment"> * @brief Converts point to angle (in radians)</span></div>
+<div class="line"><a id="l00815" name="l00815"></a><span class="lineno">  815</span><span class="comment"> * @param[in] point Point in cartesian coordinates (x-y plane)</span></div>
+<div class="line"><a id="l00816" name="l00816"></a><span class="lineno">  816</span><span class="comment"> * @param[in] center_of_rotation Center of rotation</span></div>
+<div class="line"><a id="l00817" name="l00817"></a><span class="lineno">  817</span><span class="comment"> *</span></div>
+<div class="line"><a id="l00818" name="l00818"></a><span class="lineno">  818</span><span class="comment"> * @return Angle between point and the x-axis</span></div>
+<div class="line"><a id="l00819" name="l00819"></a><span class="lineno">  819</span><span class="comment"> */</span></div>
+<div class="line"><a id="l00820" name="l00820"></a><span class="lineno">  820</span><span class="keyword">template</span> &lt;<span class="keywordtype">int</span> dim&gt;</div>
+<div class="line"><a id="l00821" name="l00821"></a><span class="lineno">  821</span><span class="keyword">inline</span> <span class="keywordtype">double</span></div>
+<div class="foldopen" id="foldopen00822" data-start="{" data-end="}">
+<div class="line"><a id="l00822" name="l00822"></a><span class="lineno"><a class="line" href="utilities_8h.html#a5df21d5e2572a5711790ce28e326a07d">  822</a></span><a class="code hl_function" href="utilities_8h.html#a5df21d5e2572a5711790ce28e326a07d">point_to_angle</a>(<span class="keyword">const</span> Point&lt;dim&gt; &amp;point,</div>
+<div class="line"><a id="l00823" name="l00823"></a><span class="lineno">  823</span>               <span class="keyword">const</span> Point&lt;dim&gt; &amp;center_of_rotation = Point&lt;dim&gt;())</div>
+<div class="line"><a id="l00824" name="l00824"></a><span class="lineno">  824</span>{</div>
+<div class="line"><a id="l00825" name="l00825"></a><span class="lineno">  825</span>  <span class="keywordflow">return</span> std::fmod(std::atan2(point[1] - center_of_rotation[1],</div>
+<div class="line"><a id="l00826" name="l00826"></a><span class="lineno">  826</span>                              point[0] - center_of_rotation[0]) +</div>
+<div class="line"><a id="l00827" name="l00827"></a><span class="lineno">  827</span>                     2 * numbers::PI,</div>
+<div class="line"><a id="l00828" name="l00828"></a><span class="lineno">  828</span>                   2 * numbers::PI);</div>
+<div class="line"><a id="l00829" name="l00829"></a><span class="lineno">  829</span>}</div>
 </div>
-<div class="line"><a id="l00831" name="l00831"></a><span class="lineno">  831</span><span class="comment"></span> </div>
-<div class="line"><a id="l00832" name="l00832"></a><span class="lineno">  832</span><span class="comment">/**</span></div>
-<div class="line"><a id="l00833" name="l00833"></a><span class="lineno">  833</span><span class="comment"> * @brief Converts radius to point in cartesian coordinates (in the x-y plane)</span></div>
-<div class="line"><a id="l00834" name="l00834"></a><span class="lineno">  834</span><span class="comment"> * @param[in] radius Radial distance</span></div>
-<div class="line"><a id="l00835" name="l00835"></a><span class="lineno">  835</span><span class="comment"> * @param[in] angle Angle (in radians)</span></div>
-<div class="line"><a id="l00836" name="l00836"></a><span class="lineno">  836</span><span class="comment"> *</span></div>
-<div class="line"><a id="l00837" name="l00837"></a><span class="lineno">  837</span><span class="comment"> * @return point Point cartesian coordinates</span></div>
-<div class="line"><a id="l00838" name="l00838"></a><span class="lineno">  838</span><span class="comment"> */</span></div>
-<div class="line"><a id="l00839" name="l00839"></a><span class="lineno">  839</span><span class="keyword">template</span> &lt;<span class="keywordtype">int</span> dim&gt;</div>
-<div class="line"><a id="l00840" name="l00840"></a><span class="lineno">  840</span><span class="keyword">inline</span> Point&lt;dim&gt;</div>
-<div class="foldopen" id="foldopen00841" data-start="{" data-end="}">
-<div class="line"><a id="l00841" name="l00841"></a><span class="lineno"><a class="line" href="utilities_8h.html#a0bea60f70f692902d4d84d9cf118ccaf">  841</a></span><a class="code hl_function" href="utilities_8h.html#a0bea60f70f692902d4d84d9cf118ccaf">radius_to_point</a>(<span class="keyword">const</span> <span class="keywordtype">double</span> radius, <span class="keyword">const</span> <span class="keywordtype">double</span> rad)</div>
-<div class="line"><a id="l00842" name="l00842"></a><span class="lineno">  842</span>{</div>
-<div class="line"><a id="l00843" name="l00843"></a><span class="lineno">  843</span>  Point&lt;dim&gt; point;</div>
-<div class="line"><a id="l00844" name="l00844"></a><span class="lineno">  844</span> </div>
-<div class="line"><a id="l00845" name="l00845"></a><span class="lineno">  845</span>  point[0] = radius * std::cos(rad);</div>
-<div class="line"><a id="l00846" name="l00846"></a><span class="lineno">  846</span>  point[1] = radius * std::sin(rad);</div>
-<div class="line"><a id="l00847" name="l00847"></a><span class="lineno">  847</span> </div>
-<div class="line"><a id="l00848" name="l00848"></a><span class="lineno">  848</span>  <span class="keywordflow">return</span> point;</div>
-<div class="line"><a id="l00849" name="l00849"></a><span class="lineno">  849</span>}</div>
+<div class="line"><a id="l00830" name="l00830"></a><span class="lineno">  830</span><span class="comment"></span> </div>
+<div class="line"><a id="l00831" name="l00831"></a><span class="lineno">  831</span><span class="comment">/**</span></div>
+<div class="line"><a id="l00832" name="l00832"></a><span class="lineno">  832</span><span class="comment"> * @brief Converts radius to point in cartesian coordinates (in the x-y plane)</span></div>
+<div class="line"><a id="l00833" name="l00833"></a><span class="lineno">  833</span><span class="comment"> * @param[in] radius Radial distance</span></div>
+<div class="line"><a id="l00834" name="l00834"></a><span class="lineno">  834</span><span class="comment"> * @param[in] angle Angle (in radians)</span></div>
+<div class="line"><a id="l00835" name="l00835"></a><span class="lineno">  835</span><span class="comment"> *</span></div>
+<div class="line"><a id="l00836" name="l00836"></a><span class="lineno">  836</span><span class="comment"> * @return point Point cartesian coordinates</span></div>
+<div class="line"><a id="l00837" name="l00837"></a><span class="lineno">  837</span><span class="comment"> */</span></div>
+<div class="line"><a id="l00838" name="l00838"></a><span class="lineno">  838</span><span class="keyword">template</span> &lt;<span class="keywordtype">int</span> dim&gt;</div>
+<div class="line"><a id="l00839" name="l00839"></a><span class="lineno">  839</span><span class="keyword">inline</span> Point&lt;dim&gt;</div>
+<div class="foldopen" id="foldopen00840" data-start="{" data-end="}">
+<div class="line"><a id="l00840" name="l00840"></a><span class="lineno"><a class="line" href="utilities_8h.html#a0bea60f70f692902d4d84d9cf118ccaf">  840</a></span><a class="code hl_function" href="utilities_8h.html#a0bea60f70f692902d4d84d9cf118ccaf">radius_to_point</a>(<span class="keyword">const</span> <span class="keywordtype">double</span> radius, <span class="keyword">const</span> <span class="keywordtype">double</span> rad)</div>
+<div class="line"><a id="l00841" name="l00841"></a><span class="lineno">  841</span>{</div>
+<div class="line"><a id="l00842" name="l00842"></a><span class="lineno">  842</span>  Point&lt;dim&gt; point;</div>
+<div class="line"><a id="l00843" name="l00843"></a><span class="lineno">  843</span> </div>
+<div class="line"><a id="l00844" name="l00844"></a><span class="lineno">  844</span>  point[0] = radius * std::cos(rad);</div>
+<div class="line"><a id="l00845" name="l00845"></a><span class="lineno">  845</span>  point[1] = radius * std::sin(rad);</div>
+<div class="line"><a id="l00846" name="l00846"></a><span class="lineno">  846</span> </div>
+<div class="line"><a id="l00847" name="l00847"></a><span class="lineno">  847</span>  <span class="keywordflow">return</span> point;</div>
+<div class="line"><a id="l00848" name="l00848"></a><span class="lineno">  848</span>}</div>
 </div>
+<div class="line"><a id="l00849" name="l00849"></a><span class="lineno">  849</span> </div>
 <div class="line"><a id="l00850" name="l00850"></a><span class="lineno">  850</span> </div>
 <div class="line"><a id="l00851" name="l00851"></a><span class="lineno">  851</span> </div>
-<div class="line"><a id="l00852" name="l00852"></a><span class="lineno">  852</span> </div>
-<div class="line"><a id="l00853" name="l00853"></a><span class="lineno">  853</span><span class="preprocessor">#endif</span></div>
+<div class="line"><a id="l00852" name="l00852"></a><span class="lineno">  852</span><span class="preprocessor">#endif</span></div>
 <div class="ttc" id="aclassstatistics_html"><div class="ttname"><a href="classstatistics.html">statistics</a></div><div class="ttdoc">Small class that is used to store statistics (min,max,total,average) of variables that are used in si...</div><div class="ttdef"><b>Definition</b> <a href="utilities_8h_source.html#l00037">utilities.h:38</a></div></div>
 <div class="ttc" id="aclassstatistics_html_a0288afba1bf979183eed4fe63c9d6677"><div class="ttname"><a href="classstatistics.html#a0288afba1bf979183eed4fe63c9d6677">statistics::average</a></div><div class="ttdeci">double average</div><div class="ttdef"><b>Definition</b> <a href="utilities_8h_source.html#l00050">utilities.h:50</a></div></div>
 <div class="ttc" id="aclassstatistics_html_a04dec28f738b790becb32245ef23a1d0"><div class="ttname"><a href="classstatistics.html#a04dec28f738b790becb32245ef23a1d0">statistics::max</a></div><div class="ttdeci">double max</div><div class="ttdef"><b>Definition</b> <a href="utilities_8h_source.html#l00048">utilities.h:48</a></div></div>
@@ -994,7 +993,7 @@ $(document).ready(function() { init_codefold(0); });
 <div class="ttc" id="amultiphysics_8h_html_a2cbb04ef215561a69b48772159577fdda7ee7184c970537ea83afe7f9bae4c61f"><div class="ttname"><a href="multiphysics_8h.html#a2cbb04ef215561a69b48772159577fdda7ee7184c970537ea83afe7f9bae4c61f">Variable::phase</a></div><div class="ttdeci">@ phase</div><div class="ttdoc">Phase fraction scalar field from VOF.</div></div>
 <div class="ttc" id="anamespaceDEM_1_1DEMMPProperties_html_aca0676848b97f3864735e524aac253f8a32891fa53aeae88db39ab9887c6b3cd9"><div class="ttname"><a href="namespaceDEM_1_1DEMMPProperties.html#aca0676848b97f3864735e524aac253f8a32891fa53aeae88db39ab9887c6b3cd9">DEM::DEMMPProperties::T</a></div><div class="ttdeci">@ T</div><div class="ttdef"><b>Definition</b> <a href="dem__properties_8h_source.html#l00099">dem_properties.h:99</a></div></div>
 <div class="ttc" id="anamespacedealii_html"><div class="ttname"><a href="namespacedealii.html">dealii</a></div><div class="ttdef"><b>Definition</b> <a href="fluid__dynamics__matrix__free_8h_source.html#l00033">fluid_dynamics_matrix_free.h:34</a></div></div>
-<div class="ttc" id="autilities_8h_html_a0bea60f70f692902d4d84d9cf118ccaf"><div class="ttname"><a href="utilities_8h.html#a0bea60f70f692902d4d84d9cf118ccaf">radius_to_point</a></div><div class="ttdeci">Point&lt; dim &gt; radius_to_point(const double radius, const double rad)</div><div class="ttdoc">Converts radius to point in cartesian coordinates (in the x-y plane)</div><div class="ttdef"><b>Definition</b> <a href="utilities_8h_source.html#l00841">utilities.h:841</a></div></div>
+<div class="ttc" id="autilities_8h_html_a0bea60f70f692902d4d84d9cf118ccaf"><div class="ttname"><a href="utilities_8h.html#a0bea60f70f692902d4d84d9cf118ccaf">radius_to_point</a></div><div class="ttdeci">Point&lt; dim &gt; radius_to_point(const double radius, const double rad)</div><div class="ttdoc">Converts radius to point in cartesian coordinates (in the x-y plane)</div><div class="ttdef"><b>Definition</b> <a href="utilities_8h_source.html#l00840">utilities.h:840</a></div></div>
 <div class="ttc" id="autilities_8h_html_a1169674c9744ed63bfb067efce02df5f"><div class="ttname"><a href="utilities_8h.html#a1169674c9744ed63bfb067efce02df5f">serialize_table</a></div><div class="ttdeci">void serialize_table(const TableHandler &amp;table, const std::string filename)</div><div class="ttdoc">Serializes a table using boost serialization feature the filename should contain the desired extensio...</div><div class="ttdef"><b>Definition</b> <a href="utilities_8h_source.html#l00440">utilities.h:440</a></div></div>
 <div class="ttc" id="autilities_8h_html_a1ab31b90bc584c635ec159468ceed9b2"><div class="ttname"><a href="utilities_8h.html#a1ab31b90bc584c635ec159468ceed9b2">sgn</a></div><div class="ttdeci">int sgn(T val)</div><div class="ttdoc">Used in the calculate_properties_ch to retrieve the sign of the phase parameter.</div><div class="ttdef"><b>Definition</b> <a href="utilities_8h_source.html#l00300">utilities.h:300</a></div></div>
 <div class="ttc" id="autilities_8h_html_a28e3647b49b871d119c8e19d390d6d66"><div class="ttname"><a href="utilities_8h.html#a28e3647b49b871d119c8e19d390d6d66">add_statistics_to_table_handler</a></div><div class="ttdeci">void add_statistics_to_table_handler(const std::string variable, const statistics stats, TableHandler &amp;table)</div><div class="ttdoc">add_statistics_to_table_handler Add statistics to a TableHandler under the indicated variable name</div><div class="ttdef"><b>Definition</b> <a href="utilities_8h_source.html#l00059">utilities.h:59</a></div></div>
@@ -1002,16 +1001,16 @@ $(document).ready(function() { init_codefold(0); });
 <div class="ttc" id="autilities_8h_html_a34ac72c0df6c4a24f85c97b22d137520"><div class="ttname"><a href="utilities_8h.html#a34ac72c0df6c4a24f85c97b22d137520">get_last_value_of_parameter</a></div><div class="ttdeci">std::string get_last_value_of_parameter(const std::string &amp;file_name, const std::string &amp;parameter_name)</div><div class="ttdoc">get the value of a particular parameter from the contents of the input file. Return an empty string i...</div><div class="ttdef"><b>Definition</b> <a href="utilities_8cc_source.html#l00547">utilities.cc:547</a></div></div>
 <div class="ttc" id="autilities_8h_html_a35c8d614ce37fe3ad797e3cab0808631"><div class="ttname"><a href="utilities_8h.html#a35c8d614ce37fe3ad797e3cab0808631">value_string_to_tensor</a></div><div class="ttdeci">Tensor&lt; 1, spacedim &gt; value_string_to_tensor(const std::string &amp;value_string)</div><div class="ttdoc">Return the tensor corresponding to the value_string. If the dimension correspondence of the value_str...</div><div class="ttdef"><b>Definition</b> <a href="utilities_8h_source.html#l00520">utilities.h:520</a></div></div>
 <div class="ttc" id="autilities_8h_html_a3badf505e17c1f77892888491dd53f5f"><div class="ttname"><a href="utilities_8h.html#a3badf505e17c1f77892888491dd53f5f">parse_args</a></div><div class="ttdeci">std::tuple&lt; std::map&lt; std::string, bool &gt;, std::vector&lt; std::string &gt; &gt; parse_args(int argc, char **argv)</div><div class="ttdoc">Parse the arguments given to the application.</div><div class="ttdef"><b>Definition</b> <a href="utilities_8cc_source.html#l00767">utilities.cc:767</a></div></div>
-<div class="ttc" id="autilities_8h_html_a3d02cb065c32b672c94bb862ecff4431"><div class="ttname"><a href="utilities_8h.html#a3d02cb065c32b672c94bb862ecff4431">compute_cell_measure_with_JxW</a></div><div class="ttdeci">double compute_cell_measure_with_JxW(const std::vector&lt; double &gt; &amp;JxW_values)</div><div class="ttdoc">Computes the area (2D) or volume (3D) of the cell by integrating 1 over the cell, by summing JxW valu...</div><div class="ttdef"><b>Definition</b> <a href="utilities_8h_source.html#l00637">utilities.h:637</a></div></div>
+<div class="ttc" id="autilities_8h_html_a3d02cb065c32b672c94bb862ecff4431"><div class="ttname"><a href="utilities_8h.html#a3d02cb065c32b672c94bb862ecff4431">compute_cell_measure_with_JxW</a></div><div class="ttdeci">double compute_cell_measure_with_JxW(const std::vector&lt; double &gt; &amp;JxW_values)</div><div class="ttdoc">Computes the area (2D) or volume (3D) of the cell by integrating 1 over the cell, by summing JxW valu...</div><div class="ttdef"><b>Definition</b> <a href="utilities_8h_source.html#l00636">utilities.h:636</a></div></div>
 <div class="ttc" id="autilities_8h_html_a40f89884908bf5a561d2cc5f0e5e028d"><div class="ttname"><a href="utilities_8h.html#a40f89884908bf5a561d2cc5f0e5e028d">make_table_scalars_tensors</a></div><div class="ttdeci">TableHandler make_table_scalars_tensors(const std::vector&lt; T &gt; &amp;independent_values, const std::string &amp;independent_column_name, const std::vector&lt; Tensor&lt; 1, dim &gt; &gt; &amp;dependent_vector, const std::vector&lt; std::string &gt; &amp;dependent_column_names, const unsigned int display_precision, const bool display_scientific_notation=false)</div><div class="ttdoc">Generate a table from a vector of scalars (independent variable) and a vector of Tensor&lt;1,...</div><div class="ttdef"><b>Definition</b> <a href="utilities_8cc_source.html#l00048">utilities.cc:48</a></div></div>
 <div class="ttc" id="autilities_8h_html_a439affc773842316d1ef847a134b246c"><div class="ttname"><a href="utilities_8h.html#a439affc773842316d1ef847a134b246c">fill_string_vectors_from_file</a></div><div class="ttdeci">void fill_string_vectors_from_file(std::map&lt; std::string, std::vector&lt; std::string &gt; &gt; &amp;map, const std::string &amp;file_name, const std::string &amp;delimiter=&quot; &quot;)</div><div class="ttdoc">Function that read a file that was build from a dealii table and create a map with the key being the ...</div><div class="ttdef"><b>Definition</b> <a href="utilities_8cc_source.html#l00307">utilities.cc:307</a></div></div>
 <div class="ttc" id="autilities_8h_html_a4571c70fd85a35c8ddaaa75f9743df63"><div class="ttname"><a href="utilities_8h.html#a4571c70fd85a35c8ddaaa75f9743df63">make_table_tensors_scalars</a></div><div class="ttdeci">TableHandler make_table_tensors_scalars(const std::vector&lt; Tensor&lt; 1, dim &gt; &gt; &amp;independent_vector, const std::vector&lt; std::string &gt; &amp;independent_column_names, const std::vector&lt; double &gt; &amp;dependent_values, const std::string &amp;dependent_column_name, const unsigned int display_precision, const bool display_scientific_notation=false)</div><div class="ttdoc">Generate a table from a vector of Tensor&lt;1,dim&gt; (independent variables) and a vector of scalars (depe...</div><div class="ttdef"><b>Definition</b> <a href="utilities_8cc_source.html#l00172">utilities.cc:172</a></div></div>
-<div class="ttc" id="autilities_8h_html_a47c096b4659adc4e0aa45d4aeb994dad"><div class="ttname"><a href="utilities_8h.html#a47c096b4659adc4e0aa45d4aeb994dad">identify_minimum_cell_size</a></div><div class="ttdeci">double identify_minimum_cell_size(const Mapping&lt; dim &gt; &amp;mapping, const DoFHandler&lt; dim &gt; &amp;dof_handler, const Quadrature&lt; dim &gt; &amp;cell_quadrature, const MPI_Comm &amp;mpi_communicator)</div><div class="ttdoc">Identify minimum cell size. The cell size corresponds to the diameter of a disk (2D) or sphere (3D) o...</div><div class="ttdef"><b>Definition</b> <a href="utilities_8h_source.html#l00664">utilities.h:664</a></div></div>
-<div class="ttc" id="autilities_8h_html_a4a392cd214e737c300c8f727e465a409"><div class="ttname"><a href="utilities_8h.html#a4a392cd214e737c300c8f727e465a409">extract_values_from_map</a></div><div class="ttdeci">std::vector&lt; val &gt; extract_values_from_map(const std::map&lt; key, val &gt; &amp;map)</div><div class="ttdoc">Extract the values from map object.</div><div class="ttdef"><b>Definition</b> <a href="utilities_8h_source.html#l00755">utilities.h:755</a></div></div>
+<div class="ttc" id="autilities_8h_html_a47c096b4659adc4e0aa45d4aeb994dad"><div class="ttname"><a href="utilities_8h.html#a47c096b4659adc4e0aa45d4aeb994dad">identify_minimum_cell_size</a></div><div class="ttdeci">double identify_minimum_cell_size(const Mapping&lt; dim &gt; &amp;mapping, const DoFHandler&lt; dim &gt; &amp;dof_handler, const Quadrature&lt; dim &gt; &amp;cell_quadrature, const MPI_Comm &amp;mpi_communicator)</div><div class="ttdoc">Identify minimum cell size. The cell size corresponds to the diameter of a disk (2D) or sphere (3D) o...</div><div class="ttdef"><b>Definition</b> <a href="utilities_8h_source.html#l00663">utilities.h:663</a></div></div>
+<div class="ttc" id="autilities_8h_html_a4a392cd214e737c300c8f727e465a409"><div class="ttname"><a href="utilities_8h.html#a4a392cd214e737c300c8f727e465a409">extract_values_from_map</a></div><div class="ttdeci">std::vector&lt; val &gt; extract_values_from_map(const std::map&lt; key, val &gt; &amp;map)</div><div class="ttdoc">Extract the values from map object.</div><div class="ttdef"><b>Definition</b> <a href="utilities_8h_source.html#l00754">utilities.h:754</a></div></div>
 <div class="ttc" id="autilities_8h_html_a4b182f49ed10ffa3d2d50a9a309cd2f0"><div class="ttname"><a href="utilities_8h.html#a4b182f49ed10ffa3d2d50a9a309cd2f0">create_output_folder</a></div><div class="ttdeci">void create_output_folder(const std::string &amp;dirname)</div><div class="ttdoc">Creates the simulation output folder.</div><div class="ttdef"><b>Definition</b> <a href="utilities_8cc_source.html#l00356">utilities.cc:356</a></div></div>
 <div class="ttc" id="autilities_8h_html_a56a967052620929f4db03cee351d6890"><div class="ttname"><a href="utilities_8h.html#a56a967052620929f4db03cee351d6890">announce_string</a></div><div class="ttdeci">void announce_string(const ConditionalOStream &amp;pcout, const std::string expression, const char delimiter='-')</div><div class="ttdoc">Prints a string and then adds a line above and below made with dashes containing as many dashes as th...</div><div class="ttdef"><b>Definition</b> <a href="utilities_8h_source.html#l00423">utilities.h:423</a></div></div>
 <div class="ttc" id="autilities_8h_html_a5b337d2e0e6ac7f6bce6205d1f92e205"><div class="ttname"><a href="utilities_8h.html#a5b337d2e0e6ac7f6bce6205d1f92e205">make_table_scalars_vectors</a></div><div class="ttdeci">TableHandler make_table_scalars_vectors(const std::vector&lt; T &gt; &amp;independent_values, const std::string &amp;independent_column_name, const std::vector&lt; std::vector&lt; double &gt; &gt; &amp;dependent_vector, const std::vector&lt; std::string &gt; &amp;dependent_column_names, const unsigned int display_precision, const bool display_scientific_notation=false)</div><div class="ttdoc">Generate a table from a vector of scalars (independent variable) and a vector of vectors of scalars (...</div><div class="ttdef"><b>Definition</b> <a href="utilities_8cc_source.html#l00013">utilities.cc:13</a></div></div>
-<div class="ttc" id="autilities_8h_html_a5df21d5e2572a5711790ce28e326a07d"><div class="ttname"><a href="utilities_8h.html#a5df21d5e2572a5711790ce28e326a07d">point_to_angle</a></div><div class="ttdeci">double point_to_angle(const Point&lt; dim &gt; &amp;point, const Point&lt; dim &gt; &amp;center_of_rotation=Point&lt; dim &gt;())</div><div class="ttdoc">Converts point to angle (in radians)</div><div class="ttdef"><b>Definition</b> <a href="utilities_8h_source.html#l00823">utilities.h:823</a></div></div>
+<div class="ttc" id="autilities_8h_html_a5df21d5e2572a5711790ce28e326a07d"><div class="ttname"><a href="utilities_8h.html#a5df21d5e2572a5711790ce28e326a07d">point_to_angle</a></div><div class="ttdeci">double point_to_angle(const Point&lt; dim &gt; &amp;point, const Point&lt; dim &gt; &amp;center_of_rotation=Point&lt; dim &gt;())</div><div class="ttdoc">Converts point to angle (in radians)</div><div class="ttdef"><b>Definition</b> <a href="utilities_8h_source.html#l00822">utilities.h:822</a></div></div>
 <div class="ttc" id="autilities_8h_html_a5f8e2b4fdf7a2b6eceab3461c4edd221"><div class="ttname"><a href="utilities_8h.html#a5f8e2b4fdf7a2b6eceab3461c4edd221">print_parameters_to_output_file</a></div><div class="ttdeci">void print_parameters_to_output_file(const ConditionalOStream &amp;pcout, const ParameterHandler &amp;prm, const std::string &amp;file_name)</div><div class="ttdoc">Print the parameters given by the parameter file of the application.</div><div class="ttdef"><b>Definition</b> <a href="utilities_8cc_source.html#l00813">utilities.cc:813</a></div></div>
 <div class="ttc" id="autilities_8h_html_a6761d32800de2739011760d71ae33c09"><div class="ttname"><a href="utilities_8h.html#a6761d32800de2739011760d71ae33c09">delete_output_folder</a></div><div class="ttdeci">void delete_output_folder(const std::string &amp;dirname)</div><div class="ttdoc">Delete the output folder and its content.</div><div class="ttdef"><b>Definition</b> <a href="utilities_8cc_source.html#l00367">utilities.cc:367</a></div></div>
 <div class="ttc" id="autilities_8h_html_a6bff1c25176117effa0161cb4ebfc520"><div class="ttname"><a href="utilities_8h.html#a6bff1c25176117effa0161cb4ebfc520">delete_vtu_and_pvd_files</a></div><div class="ttdeci">void delete_vtu_and_pvd_files(const std::string &amp;output_path)</div><div class="ttdoc">Delete vtu and pvd files.</div><div class="ttdef"><b>Definition</b> <a href="utilities_8cc_source.html#l00847">utilities.cc:847</a></div></div>
@@ -1021,12 +1020,12 @@ $(document).ready(function() { init_codefold(0); });
 <div class="ttc" id="autilities_8h_html_a8f95af8244cc326628392a04517913c7"><div class="ttname"><a href="utilities_8h.html#a8f95af8244cc326628392a04517913c7">print_version_info</a></div><div class="ttdeci">void print_version_info(const ConditionalOStream &amp;pcout)</div><div class="ttdoc">Print the information of the deal.II and Lethe branches used to run an application in the &quot;git descri...</div><div class="ttdef"><b>Definition</b> <a href="utilities_8cc_source.html#l00736">utilities.cc:736</a></div></div>
 <div class="ttc" id="autilities_8h_html_a955c2851894d041727c14dff59686f0d"><div class="ttname"><a href="utilities_8h.html#a955c2851894d041727c14dff59686f0d">calculate_point_property</a></div><div class="ttdeci">double calculate_point_property(const double phase, const double property0, const double property1)</div><div class="ttdoc">Calculate the equivalent properties for a given phase. Method called in quadrature points loops in VO...</div><div class="ttdef"><b>Definition</b> <a href="utilities_8h_source.html#l00269">utilities.h:269</a></div></div>
 <div class="ttc" id="autilities_8h_html_a9aaa34d570ccff65aa586904187cfff5"><div class="ttname"><a href="utilities_8h.html#a9aaa34d570ccff65aa586904187cfff5">clip</a></div><div class="ttdeci">T clip(const T &amp;n, const T &amp;lower, const T &amp;upper)</div><div class="ttdoc">Clip a property between a lower and a higher value.</div><div class="ttdef"><b>Definition</b> <a href="utilities_8h_source.html#l00317">utilities.h:317</a></div></div>
-<div class="ttc" id="autilities_8h_html_a9b1c8b293984f450067058ee53084afc"><div class="ttname"><a href="utilities_8h.html#a9b1c8b293984f450067058ee53084afc">compute_cell_diameter</a></div><div class="ttdeci">double compute_cell_diameter(const double cell_measure, const unsigned int fe_degree)</div><div class="ttdoc">Computes equivalent cell diameter by comparing the area to a disk (2D) or the volume to a sphere (3D)...</div><div class="ttdef"><b>Definition</b> <a href="utilities_8h_source.html#l00609">utilities.h:609</a></div></div>
+<div class="ttc" id="autilities_8h_html_a9b1c8b293984f450067058ee53084afc"><div class="ttname"><a href="utilities_8h.html#a9b1c8b293984f450067058ee53084afc">compute_cell_diameter</a></div><div class="ttdeci">double compute_cell_diameter(const double cell_measure, const unsigned int fe_degree)</div><div class="ttdoc">Computes equivalent cell diameter by comparing the area to a disk (2D) or the volume to a sphere (3D)...</div><div class="ttdef"><b>Definition</b> <a href="utilities_8h_source.html#l00608">utilities.h:608</a></div></div>
 <div class="ttc" id="autilities_8h_html_a9be87343e816d07edaee585ada17cd4a"><div class="ttname"><a href="utilities_8h.html#a9be87343e816d07edaee585ada17cd4a">get_max_subsection_size</a></div><div class="ttdeci">int get_max_subsection_size(const std::string &amp;file_name)</div><div class="ttdoc">Extract the maximum value between the number of boundary conditions and the number of manifolds from ...</div><div class="ttdef"><b>Definition</b> <a href="utilities_8cc_source.html#l00697">utilities.cc:697</a></div></div>
 <div class="ttc" id="autilities_8h_html_aa2b435317e26c5fbf3f8f86b77c7fe4c"><div class="ttname"><a href="utilities_8h.html#aa2b435317e26c5fbf3f8f86b77c7fe4c">concatenate_strings</a></div><div class="ttdeci">std::string concatenate_strings(const int argc, char **argv)</div><div class="ttdoc">Concatenate words which are passed from the command line to a main function into a single string in w...</div><div class="ttdef"><b>Definition</b> <a href="utilities_8cc_source.html#l00719">utilities.cc:719</a></div></div>
-<div class="ttc" id="autilities_8h_html_aa7a3beaf194e7e21b6745c52b3695c4b"><div class="ttname"><a href="utilities_8h.html#aa7a3beaf194e7e21b6745c52b3695c4b">extract_keys_from_map</a></div><div class="ttdeci">std::vector&lt; key &gt; extract_keys_from_map(const std::map&lt; key, val &gt; &amp;map)</div><div class="ttdoc">Extract the keys from map object.</div><div class="ttdef"><b>Definition</b> <a href="utilities_8h_source.html#l00736">utilities.h:736</a></div></div>
+<div class="ttc" id="autilities_8h_html_aa7a3beaf194e7e21b6745c52b3695c4b"><div class="ttname"><a href="utilities_8h.html#aa7a3beaf194e7e21b6745c52b3695c4b">extract_keys_from_map</a></div><div class="ttdeci">std::vector&lt; key &gt; extract_keys_from_map(const std::map&lt; key, val &gt; &amp;map)</div><div class="ttdoc">Extract the keys from map object.</div><div class="ttdef"><b>Definition</b> <a href="utilities_8h_source.html#l00735">utilities.h:735</a></div></div>
 <div class="ttc" id="autilities_8h_html_ac2174ef369010698c8197b717864e4a3"><div class="ttname"><a href="utilities_8h.html#ac2174ef369010698c8197b717864e4a3">calculate_point_property_cahn_hilliard</a></div><div class="ttdeci">double calculate_point_property_cahn_hilliard(const double phase_cahn_hilliard, const double property0, const double property1)</div><div class="ttdoc">Calculate the equivalent properties for a given phase. Method called in quadrature points loops in Ca...</div><div class="ttdef"><b>Definition</b> <a href="utilities_8h_source.html#l00333">utilities.h:333</a></div></div>
-<div class="ttc" id="autilities_8h_html_adb087a954bd6464fa862ca5974bebeaf"><div class="ttname"><a href="utilities_8h.html#adb087a954bd6464fa862ca5974bebeaf">get_penalty_factor</a></div><div class="ttdeci">double get_penalty_factor(const unsigned int fe_degree, const double cell_extent_here, const double cell_extent_there)</div><div class="ttdoc">Calculate the penalty factor for the SIPG method for the case when two cells are of different sizes....</div><div class="ttdef"><b>Definition</b> <a href="utilities_8h_source.html#l00717">utilities.h:717</a></div></div>
+<div class="ttc" id="autilities_8h_html_adb087a954bd6464fa862ca5974bebeaf"><div class="ttname"><a href="utilities_8h.html#adb087a954bd6464fa862ca5974bebeaf">get_penalty_factor</a></div><div class="ttdeci">double get_penalty_factor(const unsigned int fe_degree, const double cell_extent_here, const double cell_extent_there)</div><div class="ttdoc">Calculate the penalty factor for the SIPG method for the case when two cells are of different sizes....</div><div class="ttdef"><b>Definition</b> <a href="utilities_8h_source.html#l00716">utilities.h:716</a></div></div>
 <div class="ttc" id="autilities_8h_html_af36ab9d4f26f349b1558ce2a12719c6e"><div class="ttname"><a href="utilities_8h.html#af36ab9d4f26f349b1558ce2a12719c6e">fill_table_from_file</a></div><div class="ttdeci">void fill_table_from_file(TableHandler &amp;table, const std::string &amp;file_name, const std::string &amp;delimiter=&quot; &quot;)</div><div class="ttdoc">Reads a file that was built by writing a deal.II TableHandler class, and refills a TableHandler with ...</div><div class="ttdef"><b>Definition</b> <a href="utilities_8cc_source.html#l00208">utilities.cc:208</a></div></div>
 </div><!-- fragment --></div><!-- contents -->
 <!-- start footer part -->
