@@ -4,7 +4,7 @@
 #include <core/lethe_grid_tools.h>
 #include <core/vector.h>
 
-#include <fem-dem/void_fraction.h>
+#include <fem-dem/particle_projector.h>
 
 #include <deal.II/base/timer.h>
 
@@ -21,10 +21,64 @@
 
 using namespace dealii;
 
+template <int dim, int component_start, int n_components>
+void
+ParticleFieldQCM<dim, component_start, n_components>::setup_dofs()
+{
+  // Get a constant copy of the communicator since it is used extensively to
+  // establish the void fraction vectors
+  const MPI_Comm mpi_communicator = dof_handler.get_mpi_communicator();
+
+  dof_handler.distribute_dofs(*fe);
+  locally_owned_dofs = dof_handler.locally_owned_dofs();
+
+  locally_relevant_dofs = DoFTools::extract_locally_relevant_dofs(dof_handler);
+
+  particle_field_locally_relevant.reinit(locally_owned_dofs,
+                                         locally_relevant_dofs,
+                                         mpi_communicator);
+
+  particle_field_locally_owned.reinit(locally_owned_dofs, mpi_communicator);
+
+  // deal.II vector that will also hold the solution
+  this->particle_field_solution.reinit(dof_handler.locally_owned_dofs(),
+                                       DoFTools::extract_locally_active_dofs(
+                                         dof_handler),
+                                       mpi_communicator);
+
+  particle_field_constraints.clear();
+  particle_field_constraints.reinit(locally_owned_dofs, locally_relevant_dofs);
+  DoFTools::make_hanging_node_constraints(dof_handler,
+                                          particle_field_constraints);
+
+  particle_field_constraints.close();
+
+  DynamicSparsityPattern dsp(locally_relevant_dofs);
+  DoFTools::make_sparsity_pattern(dof_handler,
+                                  dsp,
+                                  particle_field_constraints,
+                                  false);
+
+  SparsityTools::distribute_sparsity_pattern(dsp,
+                                             locally_owned_dofs,
+                                             mpi_communicator,
+                                             locally_relevant_dofs);
+
+  system_matrix.reinit(locally_owned_dofs,
+                       locally_owned_dofs,
+                       dsp,
+                       mpi_communicator);
+
+
+  system_rhs.reinit(locally_owned_dofs, mpi_communicator);
+}
+
 template <int dim>
 void
-VoidFractionBase<dim>::setup_dofs()
+ParticleProjector<dim>::setup_dofs()
 {
+  // First we setup the dofs related to the void fraction
+
   // Get a constant copy of the communicator since it is used extensively to
   // establish the void fraction vectors
   const MPI_Comm mpi_communicator = dof_handler.get_mpi_communicator();
@@ -89,12 +143,17 @@ VoidFractionBase<dim>::setup_dofs()
 
   // Vertices to cell mapping
   LetheGridTools::vertices_cell_mapping(this->dof_handler, vertices_to_cell);
+
+  // If particle projection is enabled, we also setup the dofs for the particle
+  // velocity
+  if (void_fraction_parameters->project_particle_velocity)
+    particle_velocity.setup_dofs();
 }
 
 
 template <int dim>
 void
-VoidFractionBase<dim>::setup_constraints(
+ParticleProjector<dim>::setup_constraints(
   const BoundaryConditions::NSBoundaryConditions<dim> &boundary_conditions)
 {
   has_periodic_boundaries = false;
@@ -132,6 +191,12 @@ VoidFractionBase<dim>::setup_constraints(
     }
   void_fraction_constraints.close();
 
+  AssertThrow(
+    has_periodic_boundaries == false ||
+      void_fraction_parameters->project_particle_velocity == false,
+    ExcMessage(
+      "The projection of particle velocity is currently not supported for periodic boundary conditions"));
+
 
   // Reinit system matrix
 
@@ -161,7 +226,7 @@ VoidFractionBase<dim>::setup_constraints(
 
 template <int dim>
 void
-VoidFractionBase<dim>::calculate_void_fraction(const double time)
+ParticleProjector<dim>::calculate_void_fraction(const double time)
 {
   announce_string(this->pcout, "Void Fraction");
 
@@ -189,12 +254,17 @@ VoidFractionBase<dim>::calculate_void_fraction(const double time)
       calculate_void_fraction_satellite_point_method();
     }
 
-  solve_linear_system_and_update_solution();
+  solve_void_fraction_linear_system();
+
+  if (void_fraction_parameters->project_particle_velocity)
+    {
+      calculate_field_projection(particle_velocity);
+    }
 }
 
 template <int dim>
 void
-VoidFractionBase<dim>::calculate_void_fraction_function(const double time)
+ParticleProjector<dim>::calculate_void_fraction_function(const double time)
 {
   // The current time of the function is set for time-dependant functions
   void_fraction_parameters->void_fraction.set_time(time);
@@ -223,7 +293,7 @@ VoidFractionBase<dim>::calculate_void_fraction_function(const double time)
 
 template <int dim>
 void
-VoidFractionBase<dim>::calculate_void_fraction_particle_centered_method()
+ParticleProjector<dim>::calculate_void_fraction_particle_centered_method()
 {
   FEValues<dim> fe_values_void_fraction(*mapping,
                                         *fe,
@@ -322,7 +392,7 @@ VoidFractionBase<dim>::calculate_void_fraction_particle_centered_method()
 
 template <int dim>
 void
-VoidFractionBase<dim>::calculate_void_fraction_satellite_point_method()
+ParticleProjector<dim>::calculate_void_fraction_satellite_point_method()
 {
   FEValues<dim> fe_values_void_fraction(*mapping,
                                         *fe,
@@ -562,7 +632,7 @@ VoidFractionBase<dim>::calculate_void_fraction_satellite_point_method()
 
 template <int dim>
 void
-VoidFractionBase<dim>::calculate_void_fraction_quadrature_centered_method()
+ParticleProjector<dim>::calculate_void_fraction_quadrature_centered_method()
 {
   FEValues<dim> fe_values_void_fraction(*mapping,
                                         *fe,
@@ -943,7 +1013,7 @@ VoidFractionBase<dim>::calculate_void_fraction_quadrature_centered_method()
 
 template <int dim>
 void
-VoidFractionBase<dim>::solve_linear_system_and_update_solution()
+ParticleProjector<dim>::solve_void_fraction_linear_system()
 {
   // Solve the L2 projection system
   const double linear_solver_tolerance =
@@ -1009,5 +1079,5 @@ VoidFractionBase<dim>::solve_linear_system_and_update_solution()
 // Pre-compile the 2D and 3D VoidFractionBase solver to ensure that the
 // library is valid before we actually compile the solver This greatly
 // helps with debugging
-template class VoidFractionBase<2>;
-template class VoidFractionBase<3>;
+template class ParticleProjector<2>;
+template class ParticleProjector<3>;

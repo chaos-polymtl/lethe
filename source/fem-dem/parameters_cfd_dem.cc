@@ -55,6 +55,11 @@ namespace Parameters
       "0",
       Patterns::Integer(),
       "Number of quadrature points per cell used in the QCM void fraction scheme");
+    prm.declare_entry(
+      "project particle velocity",
+      "false",
+      Patterns::Bool(),
+      "Specify whether the particle velocity is projected using QCM");
     prm.leave_subsection();
   }
 
@@ -95,6 +100,9 @@ namespace Parameters
         "Invalid quadrature rule for the void fraction calculation scheme. Options are 'gauss' or 'gauss-lobatto'"));
 
     n_quadrature_points = prm.get_integer("n quadrature points");
+
+    project_particle_velocity = prm.get_bool("project particle velocity");
+
 
     prm.leave_subsection();
   }

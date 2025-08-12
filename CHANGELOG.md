@@ -18,6 +18,12 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
 - MINOR The function to write the collision logs is modified to manage the way MPI processes can access the .csv file to write the data. A forced synchronization of the MPI processes is imposed to avoid corrupting the data. The particle diameter and mass is added to the collision log, and a dem_current_time is calculated in CFD-DEM. [#1613](https://github.com/chaos-polymtl/lethe/pull/1613)
 
+### [Master] - 2025-08-12
+
+### Added
+
+- MAJOR The void fraction manager has been refactored to become the particle_projector. This class now manages not only the calculation of the void fraction, but it can also project other particle fields onto the triangulation. Right now the only field that can be projected is the particle velocity, but additional fields can be easily added to the method. [#1614](https://github.com/chaos-polymtl/lethe/pull/1614)
+
 ### [Master] - 2025-08-11
 
 ### Added
