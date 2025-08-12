@@ -75,7 +75,7 @@ test()
   mortar_parameters.stator_boundary_id  = 0;
   mortar_parameters.rotor_boundary_id   = 5; // after shifting
   mortar_parameters.rotation_axis       = Tensor<1, dim>({0, 0, 1});
-  const Point<dim> center_of_rotation   = Point<dim>();
+  mortar_parameters.center_of_rotation   = Point<dim>(1, 1, 0);
   const double     rotation_angle       = 0.1;
 
   // Initialized merged triangulation
@@ -88,6 +88,9 @@ test()
                                                false,
                                                boundary_conditions,
                                                mortar_parameters);
+
+  const Tensor<1, dim> shift_vec ({1, 1, 0});                                             
+  GridTools::shift(shift_vec, triangulation);
 
   FE_Q<dim>          fe(fe_degree);
   DoFHandler<dim>    dof_handler(triangulation);
@@ -109,7 +112,7 @@ test()
                                  mapping,
                                  radius,
                                  rotation_angle,
-                                 center_of_rotation,
+                                 mortar_parameters.center_of_rotation,
                                  mortar_parameters.rotation_axis);
 
   // Print information
@@ -120,6 +123,22 @@ test()
               << std::endl;
       deallog << "Radius : " << radius << std::endl;
     }
+
+  // Generate vtu file
+  DataOut<dim>       data_out;
+
+  DataOutBase::VtkFlags flags;
+  flags.write_higher_order_cells = true;
+  data_out.set_flags(flags);
+  data_out.attach_triangulation(triangulation);
+
+  Vector<double> ranks(triangulation.n_active_cells());
+  ranks = Utilities::MPI::this_mpi_process(comm);
+  data_out.add_data_vector(ranks, "ranks");
+  data_out.build_patches(mapping,
+                         mapping_degree + 1,
+                         DataOut<dim>::CurvedCellRegion::curved_inner_cells);
+  data_out.write_vtu_in_parallel("out.vtu", comm);
 }
 
 int
