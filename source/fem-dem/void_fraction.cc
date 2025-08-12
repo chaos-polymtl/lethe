@@ -77,6 +77,8 @@ template <int dim>
 void
 ParticleProjector<dim>::setup_dofs()
 {
+  // First we setup the dofs related to the void fraction
+
   // Get a constant copy of the communicator since it is used extensively to
   // establish the void fraction vectors
   const MPI_Comm mpi_communicator = dof_handler.get_mpi_communicator();
@@ -142,7 +144,10 @@ ParticleProjector<dim>::setup_dofs()
   // Vertices to cell mapping
   LetheGridTools::vertices_cell_mapping(this->dof_handler, vertices_to_cell);
 
-  particle_velocity.setup_dofs();
+  // If particle projection is enabled, we also setup the dofs for the particle
+  // velocity
+  if (void_fraction_parameters->project_particle_velocity)
+    particle_velocity.setup_dofs();
 }
 
 
