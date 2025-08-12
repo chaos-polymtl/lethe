@@ -390,6 +390,9 @@ FluidDynamicsMatrixBased<dim>::setup_assemblers()
 
   if (this->simulation_parameters.multiphysics.cahn_hilliard)
     {
+      AssertThrow(
+        is_sdirk(this->simulation_control->get_assembly_method()) == true,
+        ExcMessage("The SDIRK scheme is not yet supported for this physics"));
       // Time-stepping schemes
       if (is_bdf(this->simulation_control->get_assembly_method()))
         {
@@ -409,6 +412,9 @@ FluidDynamicsMatrixBased<dim>::setup_assemblers()
 
   if (this->simulation_parameters.multiphysics.VOF)
     {
+      AssertThrow(
+        is_sdirk(this->simulation_control->get_assembly_method()) == true,
+        ExcMessage("The SDIRK scheme is not yet supported for this physics"));
       // Time-stepping schemes
       if (is_bdf(this->simulation_control->get_assembly_method()) &&
           this->simulation_parameters.physical_properties_manager
