@@ -760,6 +760,11 @@ correction in the reference face. */
                       for (unsigned int i = 0; i < n_opposite_dofs_per_faces;
                            ++i)
                         {
+                          if (correction_norm[i] < tol)
+                          {
+                            continue;
+                          }
+                          
                           const unsigned int local_face_opposite_dof =
                             face_opposite_dofs[i];
                           if (intersected_dofs.find(
