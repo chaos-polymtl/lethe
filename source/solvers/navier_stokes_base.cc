@@ -41,12 +41,6 @@
 
 #include <sys/stat.h>
 
-template struct OutputStruct<2, GlobalVectorType>;
-template struct OutputStruct<3, GlobalVectorType>;
-template struct OutputStruct<2, GlobalBlockVectorType>;
-template struct OutputStruct<3, GlobalBlockVectorType>;
-template struct OutputStruct<2, LinearAlgebra::distributed::Vector<double>>;
-template struct OutputStruct<3, LinearAlgebra::distributed::Vector<double>>;
 /*
  * Constructor for the Navier-Stokes base class
  */
@@ -2740,7 +2734,7 @@ NavierStokesBase<dim, VectorType, DofsType>::gather_output_results(
   data_component_interpretation.emplace_back(
     DataComponentInterpretation::component_is_scalar);
 
-  OutputStruct<dim, VectorType> solution_fd_struct(
+  OutputStructDoFHandler<dim, VectorType> solution_fd_struct(
     this->dof_handler, solution, solution_names, data_component_interpretation);
 
   solution_output_structs.emplace_back(solution_fd_struct);
