@@ -604,7 +604,7 @@ FluidDynamicsBlock<dim>::setup_dofs_fd()
   // Zero constraints
   this->define_zero_constraints();
 
-  // Important note : operations on the following vectors (addition,
+  // Operations on the following vectors (addition,
   // multiplication, etc.) can only be done if these are reinitialized WITHOUT
   // locally_relevant_dofs. This is why most of them are reinitialized both with
   // and without locally_relevant_dofs.

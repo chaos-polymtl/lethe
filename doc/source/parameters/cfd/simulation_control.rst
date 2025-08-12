@@ -111,7 +111,7 @@ This subsection is the most important in a simulation and therefore, the most co
 	* ``sdirk33``: 3rd order 3 stages singly diagonally implicit Runge-Kutta
 
 .. note::
-	For now, the SDIRK schemes are only available for a matrix based resolution.
+	For now, the SDIRK schemes are only available for a matrix based resolution and are not supported by any physics other than Navier-Stokes.
 
 -----------------------------------
 Steady-state simulation parameters

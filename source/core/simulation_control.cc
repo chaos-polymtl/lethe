@@ -151,7 +151,7 @@ SimulationControl::get_number_of_stages(
       case Method::bdf3:
         return 1;
 
-      // Important note : When referencing to SDIRK methods the pattern used is
+      // When referencing to SDIRK methods the pattern used is
       // sdirkOrderStage. For instance, sdirk22 indicates SDIRK method with
       // order 2 and 2 stages
       case Method::sdirk22:
