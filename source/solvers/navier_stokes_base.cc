@@ -2964,13 +2964,8 @@ NavierStokesBase<dim, VectorType, DofsType>::write_output_results(
         {
           std::cout << postprocessor_struct->data_postprocessor->get_names()[0]
                     << std::endl;
-          if (postprocessor_struct->solution.size() ==
-              postprocessor_struct->dof_handler.n_dofs())
             data_out.add_data_vector(postprocessor_struct->dof_handler,
                                      postprocessor_struct->solution,
-                                     *postprocessor_struct->data_postprocessor);
-          else
-            data_out.add_data_vector(postprocessor_struct->solution,
                                      *postprocessor_struct->data_postprocessor);
         }
     }
