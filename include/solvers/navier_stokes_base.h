@@ -859,7 +859,7 @@ protected:
   /**
    * @brief Gather solution information to generate output results
    *
-   * @param[in] solution_output_structs Vector of OutputStructs that will be
+   * @param[out] solution_output_structs Vector of OutputStructs that will be
    * used to write the output results as VTU files
    *
    * @param[in] solution Vector of present solution

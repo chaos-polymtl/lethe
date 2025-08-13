@@ -2964,15 +2964,17 @@ NavierStokesBase<dim, VectorType, DofsType>::write_output_results(
         {
           std::cout << postprocessor_struct->data_postprocessor->get_names()[0]
                     << std::endl;
-            data_out.add_data_vector(postprocessor_struct->dof_handler,
-                                     postprocessor_struct->solution,
-                                     *postprocessor_struct->data_postprocessor);
+          data_out.add_data_vector(postprocessor_struct->dof_handler,
+                                   postprocessor_struct->solution,
+                                   *postprocessor_struct->data_postprocessor);
         }
     }
   Vector<float> subdomain(this->triangulation->n_active_cells());
   for (unsigned int i = 0; i < subdomain.size(); ++i)
     subdomain(i) = this->triangulation->locally_owned_subdomain();
-  data_out.add_data_vector(this->dof_handler, subdomain, "subdomain");
+  data_out.add_data_vector(subdomain,
+                           "subdomain",
+                           DataOut<dim>::type_cell_data);
 
   output_field_hook(data_out);
 
