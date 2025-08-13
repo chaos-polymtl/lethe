@@ -160,6 +160,10 @@ template <int dim>
 void
 VolumeOfFluid<dim>::setup_assemblers()
 {
+  AssertThrow(
+        is_sdirk(this->simulation_control->get_assembly_method()) == false,
+        ExcMessage("The SDIRK scheme is not yet supported for this physics"));
+        
   this->assemblers.clear();
 
   // Time-stepping schemes

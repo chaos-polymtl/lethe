@@ -171,17 +171,14 @@ NavierStokesBase<dim, VectorType, DofsType>::NavierStokesBase(
 
   if (this->simulation_control->is_sdirk())
     {
-      // Pre-allocate memory for the previous solutions using the information
-      // of the SDIRK schemes
-      previous_solutions.resize(1);
+      //Pre-allocate memory for the previous k_j solutions using the number of stages of the method
       sdirk_vectors.previous_k_j_solutions.resize(
         SimulationControl::get_number_of_stages(
           this->simulation_control->get_assembly_method()));
     }
-  else
-    // Pre-allocate memory for the previous solutions using the information
-    // of the BDF schemes
-    previous_solutions.resize(maximum_number_of_previous_solutions());
+  // Pre-allocate memory for the previous solutions using the information
+  // of the BDF schemes
+  previous_solutions.resize(maximum_number_of_previous_solutions());
 
   // Change the behavior of the timer for situations when you don't want
   // outputs

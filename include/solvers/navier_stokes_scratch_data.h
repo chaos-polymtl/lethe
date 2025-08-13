@@ -101,13 +101,7 @@ public:
                      update_values | update_quadrature_points |
                        update_JxW_values | update_gradients | update_hessians |
                        update_normal_vectors)
-    , sdirk_table(
-        simulation_control->get_assembly_method() ==
-              Parameters::SimulationControl::TimeSteppingMethod::sdirk22 ||
-            simulation_control->get_assembly_method() ==
-              Parameters::SimulationControl::TimeSteppingMethod::sdirk33 ||
-            simulation_control->get_assembly_method() ==
-              Parameters::SimulationControl::TimeSteppingMethod::sdirk43 ?
+    , sdirk_table(is_sdirk(simulation_control->get_assembly_method()) ?
           ::sdirk_table(simulation_control->get_assembly_method()) :
           SDIRKTable())
   {
