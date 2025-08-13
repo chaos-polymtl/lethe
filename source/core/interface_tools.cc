@@ -328,7 +328,6 @@ InterfaceTools::SignedDistanceSolver<dim, VectorType>::solve()
   interface_reconstruction_cells.clear();
   intersected_dofs.clear();
 
-
   initialize_distance();
 
   // Identify intersected cells and compute the interface reconstruction.
@@ -341,21 +340,17 @@ InterfaceTools::SignedDistanceSolver<dim, VectorType>::solve()
                                         interface_reconstruction_cells,
                                         intersected_dofs);
 
-
   /* Compute the distance for the DoFs of the intersected cells (the ones in
   the intersected_dofs set). They correspond to the first neighbor DoFs.*/
   compute_first_neighbors_distance();
 
   /* Compute signed distance from distance (only first neighbors have an
   updated value)*/
-
   compute_signed_distance_from_distance();
-
 
   // Conserve local and global volume
   compute_cell_wise_volume_correction();
   conserve_global_volume();
-
 
   /* Compute the distance for the DoFs of the rest of the mesh. They
   correspond to the second neighbors DoFs. */
