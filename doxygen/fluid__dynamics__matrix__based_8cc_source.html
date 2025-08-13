@@ -860,7 +860,7 @@ $(document).ready(function() { init_codefold(0); });
 <div class="line"><a id="l00750" name="l00750"></a><span class="lineno">  750</span>  <span class="keywordflow">if</span> (this-&gt;simulation_parameters.mortar_parameters.enable)</div>
 <div class="line"><a id="l00751" name="l00751"></a><span class="lineno">  751</span>    scratch_data.<a class="code hl_function" href="classNavierStokesScratchData.html#a3377bdde203866dd8bd0d4670df2fb89">reinit_mortar</a>(cell,</div>
 <div class="line"><a id="l00752" name="l00752"></a><span class="lineno">  752</span>                               this-&gt;simulation_parameters.mortar_parameters,</div>
-<div class="line"><a id="l00753" name="l00753"></a><span class="lineno">  753</span>                               this-&gt;mortar_manager-&gt;radius);</div>
+<div class="line"><a id="l00753" name="l00753"></a><span class="lineno">  753</span>                               this-&gt;mortar_manager-&gt;radius[0]);</div>
 <div class="line"><a id="l00754" name="l00754"></a><span class="lineno">  754</span> </div>
 <div class="line"><a id="l00755" name="l00755"></a><span class="lineno">  755</span>  scratch_data.<a class="code hl_function" href="classNavierStokesScratchData.html#a30ca912e22e35000f7109061ad47726b">calculate_physical_properties</a>();</div>
 <div class="line"><a id="l00756" name="l00756"></a><span class="lineno">  756</span> </div>
@@ -1100,7 +1100,7 @@ $(document).ready(function() { init_codefold(0); });
 <div class="line"><a id="l00984" name="l00984"></a><span class="lineno">  984</span>  <span class="keywordflow">if</span> (this-&gt;simulation_parameters.mortar_parameters.enable)</div>
 <div class="line"><a id="l00985" name="l00985"></a><span class="lineno">  985</span>    scratch_data.<a class="code hl_function" href="classNavierStokesScratchData.html#a3377bdde203866dd8bd0d4670df2fb89">reinit_mortar</a>(cell,</div>
 <div class="line"><a id="l00986" name="l00986"></a><span class="lineno">  986</span>                               this-&gt;simulation_parameters.mortar_parameters,</div>
-<div class="line"><a id="l00987" name="l00987"></a><span class="lineno">  987</span>                               this-&gt;mortar_manager-&gt;radius);</div>
+<div class="line"><a id="l00987" name="l00987"></a><span class="lineno">  987</span>                               this-&gt;mortar_manager-&gt;radius[0]);</div>
 <div class="line"><a id="l00988" name="l00988"></a><span class="lineno">  988</span> </div>
 <div class="line"><a id="l00989" name="l00989"></a><span class="lineno">  989</span>  scratch_data.<a class="code hl_function" href="classNavierStokesScratchData.html#a30ca912e22e35000f7109061ad47726b">calculate_physical_properties</a>();</div>
 <div class="line"><a id="l00990" name="l00990"></a><span class="lineno">  990</span> </div>
