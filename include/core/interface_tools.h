@@ -794,12 +794,12 @@ namespace InterfaceTools
      *                                    3
      * The entry 0 is the current evaluation point x_ref
      */
-    inline std::vector<Point<dim>>
-    compute_numerical_jacobian_stencil(const Point<dim>   x_ref,
-                                       const unsigned int local_face_id,
-                                       const double       perturbation)
+    inline void
+    compute_numerical_jacobian_stencil(const Point<dim>         x_ref,
+                                       const unsigned int       local_face_id,
+                                       const double             perturbation,
+                                       std::vector<Point<dim>> &stencil)
     {
-      std::vector<Point<dim>> stencil(2 * dim - 1);
       for (unsigned int i = 0; i < 2 * dim - 1; ++i)
         {
           stencil[i] = x_ref;
@@ -825,8 +825,6 @@ namespace InterfaceTools
           stencil[2 * i - 1][j] -= perturbation;
           stencil[2 * i][j] += perturbation;
         }
-
-      return stencil;
     };
 
     /**
