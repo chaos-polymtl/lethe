@@ -202,8 +202,7 @@ protected:
 
     if (this->simulation_control->is_output_iteration())
       {
-        this->gather_output_results(this->present_solution);
-        this->write_output_results();
+        this->write_output_results(this->present_solution);
       }
   };
 
@@ -259,8 +258,7 @@ protected:
         multiphysics->postprocess(true);
         if (this->simulation_control->is_output_iteration())
           {
-            this->gather_output_results(this->present_solution);
-            this->write_output_results();
+            this->write_output_results(this->present_solution);
           }
       }
   }
@@ -845,17 +843,26 @@ protected:
   /**
    * @brief gather_output_results
    * Gather solution information to generate output results
+   *
+   * @param[in] solution_output_structs Vector of OutputStructs that will be
+   * used to write the output results as VTU files
+   *
+   * @param[in] solution Vector of present solution
    */
   void
-  gather_output_results(const VectorType &solution);
+  gather_output_results(
+    std::vector<OutputStruct<dim, VectorType>> &solution_output_structs,
+    const VectorType                           &solution);
 
   /**
    * @brief write_output_results
    * Generate post-processing parallel VTU files from vector of
    * solution_output_struct
+   *
+   * @param[in] solution Vector of present solution
    */
   void
-  write_output_results() const;
+  write_output_results(const VectorType &solution);
 
   /**
    * @brief output_field_hook
@@ -1018,9 +1025,6 @@ protected:
   /// Dynamic homogeneous constraints used for temperature-dependent solid
   /// domain constraints
   AffineConstraints<double> dynamic_zero_constraints;
-
-  /// Vector containing structs with vtu output information
-  std::vector<OutputStruct<dim, VectorType>> solution_output_structs;
 };
 
 #endif

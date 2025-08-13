@@ -16,11 +16,11 @@ template struct OutputStructPostprocessor<
   3,
   LinearAlgebra::distributed::Vector<double>>;
 
-template struct OutputStructDoFHandler<2, GlobalVectorType>;
-template struct OutputStructDoFHandler<3, GlobalVectorType>;
-template struct OutputStructDoFHandler<2, GlobalBlockVectorType>;
-template struct OutputStructDoFHandler<3, GlobalBlockVectorType>;
-template struct OutputStructDoFHandler<
+template struct OutputStructSolution<2, GlobalVectorType>;
+template struct OutputStructSolution<3, GlobalVectorType>;
+template struct OutputStructSolution<2, GlobalBlockVectorType>;
+template struct OutputStructSolution<3, GlobalBlockVectorType>;
+template struct OutputStructSolution<
   2,
   LinearAlgebra::distributed::Vector<double>>;
 template struct OutputStructDoFHandler<

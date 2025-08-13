@@ -4,10 +4,9 @@
 #ifndef lethe_output_struct_h
 #define lethe_output_struct_h
 
-#include <core/vector.h>
-
 #include <solvers/postprocessors.h>
 
+using namespace dealii;
 
 /**
  * @brief Struct containing information about the solution output.
@@ -28,13 +27,16 @@ struct OutputStructPostprocessor
    *
    */
   OutputStructPostprocessor(
-    const VectorType                              &solution,
-    const std::shared_ptr<DataPostprocessor<dim>> &data_postprocessor)
-    : solution(solution)
+    const DoFHandler<dim>                        &dof_handler,
+    const VectorType                             &solution,
+    const std::shared_ptr<DataPostprocessor<dim>> data_postprocessor)
+    : dof_handler(dof_handler)
+    , solution(solution)
     , data_postprocessor(data_postprocessor)
   {}
-  const VectorType                              &solution;
-  const std::shared_ptr<DataPostprocessor<dim>> &data_postprocessor;
+  const DoFHandler<dim>                        &dof_handler;
+  const VectorType                             &solution;
+  const std::shared_ptr<DataPostprocessor<dim>> data_postprocessor;
 };
 
 /**
@@ -46,7 +48,7 @@ struct OutputStructPostprocessor
  * component interpretation vector.
  */
 template <int dim, typename VectorType>
-struct OutputStructDoFHandler
+struct OutputStructSolution
 {
   /**
    * @brief Constructor for when data is not related to a data_postprocessor.
@@ -60,7 +62,7 @@ struct OutputStructDoFHandler
    * @param[in] data_component_interpretation Vector with data component
    * interpretation of the solution.
    */
-  OutputStructDoFHandler(
+  OutputStructSolution(
     const DoFHandler<dim>          &dof_handler,
     const VectorType               &solution,
     const std::vector<std::string> &solution_names,
@@ -78,8 +80,13 @@ struct OutputStructDoFHandler
     data_component_interpretation;
 };
 
+/**
+ * @brief Variant handler of the two output structs (OutputStructPostprocessor and OutputStructDoFHandler).
+ * This is used to allow the output of both postprocessors and DoF handlers in a
+ * single vector of OutputStruct.
+ */
 template <int dim, typename VectorType>
 using OutputStruct = std::variant<OutputStructPostprocessor<dim, VectorType>,
-                                  OutputStructDoFHandler<dim, VectorType>>;
+                                  OutputStructSolution<dim, VectorType>>;
 
 #endif
