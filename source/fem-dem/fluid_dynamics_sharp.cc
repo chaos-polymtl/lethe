@@ -2774,7 +2774,7 @@ FluidDynamicsSharp<dim>::finish_time_step_particles()
 
   // We only write the particle pvd when outputs are enabled and the current
   // iteration is an output iteration. (same as the fluid pvd)
-  if (this->simulation_control->output_enabled() && 
+  if (this->simulation_control->output_enabled() &&
       this->simulation_control->is_output_iteration())
     {
       // If the processor id is id=0 we write the particles pvd
@@ -2957,19 +2957,15 @@ FluidDynamicsSharp<dim>::finish_time_step_particles()
       table_p[p].add_value("p_x", particles[p].position[0]);
       table_all_p.add_value("v_x", particles[p].velocity[0]);
       table_all_p.add_value("p_x", particles[p].position[0]);
-      
+
       table_p[p].set_precision(
-        "v_x",
-        this->simulation_parameters.simulation_control.log_precision);
+        "v_x", this->simulation_parameters.simulation_control.log_precision);
       table_p[p].set_precision(
-        "p_x",
-        this->simulation_parameters.simulation_control.log_precision);
+        "p_x", this->simulation_parameters.simulation_control.log_precision);
       table_all_p.set_precision(
-        "v_x",
-        this->simulation_parameters.simulation_control.log_precision);
+        "v_x", this->simulation_parameters.simulation_control.log_precision);
       table_all_p.set_precision(
-        "p_x",
-        this->simulation_parameters.simulation_control.log_precision);
+        "p_x", this->simulation_parameters.simulation_control.log_precision);
 
       table_p[p].add_value("f_y", particles[p].fluid_forces[1]);
       table_p[p].set_precision(
@@ -2982,17 +2978,13 @@ FluidDynamicsSharp<dim>::finish_time_step_particles()
       table_all_p.add_value("v_y", particles[p].velocity[1]);
       table_all_p.add_value("p_y", particles[p].position[1]);
       table_p[p].set_precision(
-        "v_y",
-        this->simulation_parameters.simulation_control.log_precision);
+        "v_y", this->simulation_parameters.simulation_control.log_precision);
       table_p[p].set_precision(
-        "p_y",
-        this->simulation_parameters.simulation_control.log_precision);
+        "p_y", this->simulation_parameters.simulation_control.log_precision);
       table_all_p.set_precision(
-        "v_y",
-        this->simulation_parameters.simulation_control.log_precision);
+        "v_y", this->simulation_parameters.simulation_control.log_precision);
       table_all_p.set_precision(
-        "p_y",
-        this->simulation_parameters.simulation_control.log_precision);
+        "p_y", this->simulation_parameters.simulation_control.log_precision);
 
       if constexpr (dim == 3)
         {
