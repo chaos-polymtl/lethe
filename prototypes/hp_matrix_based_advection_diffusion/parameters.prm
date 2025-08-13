@@ -29,7 +29,7 @@ set number of cycles = 2
 
 # Output vtu files <true|false>
 
-set output = true
+set output = false
 
 # Name for vtu files
 
