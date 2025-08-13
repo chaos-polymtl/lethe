@@ -33,6 +33,12 @@ public:
                     const Quadrature<dim2> &quadrature,
                     const double            rotation_angle);
 
+  template <int dim2>
+  MortarManagerBase(const std::vector<unsigned int> &n_subdivisions,
+                    const std::vector<double>       &radius,
+                    const Quadrature<dim2>          &quadrature,
+                    const double                     rotation_angle);
+
   /**
    * @brief Verify if cells of the inner and outer domains are aligned
    */
@@ -88,7 +94,7 @@ public:
    *
    * @return points Coordinate of quadrature points of the cell
    */
-  std::vector<Point<1>>
+  std::vector<Point<std::max(1, dim - 1)>>
   get_points_ref(const Point<dim> &face_center) const;
 
   /**
@@ -112,9 +118,10 @@ public:
   get_normals(const Point<dim> &face_center) const;
 
   /// Number of cells at the interface between inner and outer domains
-  unsigned int n_subdivisions;
-  /// Radius at the interface between inner and outer domains
-  double radius;
+  std::vector<unsigned int> n_subdivisions;
+  /// Vector containing the radius at the mortar interface and the domain length
+  /// in the direction of the rotation axis
+  std::vector<double> radius;
 
 protected:
   /**
@@ -126,9 +133,13 @@ protected:
    * type = 0: mesh aligned
    * type = 1: mesh not aligned, inner domain (allows rotation)
    * type = 2: mesh not aligned, outer domain (fixed)
-   * @return id Index of the cell in which lies the rotated cell center
+   * @return id_in_plane Index of the cell in which lies the rotated cell center
+   * @return id_out_plane Second index of the cell in which lies the rotated cell center.
+   *
+   * Note that the id_out_plane corresponds to indexes along the rotation axis,
+   * and it is necessary only for 3D problems.
    */
-  std::pair<unsigned int, unsigned int>
+  std::tuple<unsigned int, unsigned int, unsigned int>
   get_config(const Point<dim> &face_center) const;
 
   /**
@@ -150,7 +161,7 @@ protected:
   get_normal(const Point<dim> &point) const = 0;
 
   /// Mortar quadrature
-  Quadrature<1> quadrature;
+  Quadrature<std::max(1, dim - 1)> quadrature;
   /// Number of quadrature points per cell
   const unsigned int n_quadrature_points;
   /// Rotation angle for the inner domain
@@ -159,7 +170,8 @@ protected:
 
 /**
  * @brief Compute the number of subdivisions at the rotor-stator interface and the rotor radius
- * @param[in] dof_handler DoFHandler associated to the triangulation
+ * @param[in] triangulation The triangulation object
+ * @param[in] mapping Mapping associated to the domain
  * @param[in] mortar_parameters The information about the mortar method
  * control, including the rotor mesh parameters
  *
@@ -232,6 +244,20 @@ MortarManagerBase<dim>::MortarManagerBase(unsigned int n_subdivisions,
                                           double       radius,
                                           const Quadrature<dim2> &quadrature_in,
                                           const double rotation_angle)
+  : MortarManagerBase(std::vector<unsigned int>{n_subdivisions, 1},
+                      std::vector<double>{radius, 1.0},
+                      quadrature_in,
+                      rotation_angle)
+{}
+
+
+template <int dim>
+template <int dim2>
+MortarManagerBase<dim>::MortarManagerBase(
+  const std::vector<unsigned int> &n_subdivisions,
+  const std::vector<double>       &radius,
+  const Quadrature<dim2>          &quadrature_in,
+  const double                     rotation_angle)
   : n_subdivisions(n_subdivisions)
   , radius(radius)
   , quadrature(quadrature_in.get_tensor_basis()[0])
