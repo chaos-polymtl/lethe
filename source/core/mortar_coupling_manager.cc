@@ -100,7 +100,7 @@ MortarManagerBase<dim>::get_mortar_indices(const Point<dim> &face_center) const
 
           AssertIndexRange(index, n_subdivisions[0] * 2);
 
-          indices.emplace_back(index + n_subdivisions[0] * id_out_plane);
+          indices.emplace_back(index + 2 * n_subdivisions[0] * id_out_plane);
         }
 
       return indices;
@@ -115,7 +115,7 @@ MortarManagerBase<dim>::get_mortar_indices(const Point<dim> &face_center) const
 
           AssertIndexRange(index, n_subdivisions[0] * 2);
 
-          indices.emplace_back(index + n_subdivisions[0] * id_out_plane);
+          indices.emplace_back(index + 2 * n_subdivisions[0] * id_out_plane);
         }
 
       return indices;

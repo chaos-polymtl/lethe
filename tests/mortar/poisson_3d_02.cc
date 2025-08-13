@@ -111,7 +111,7 @@ main(int argc, char **argv)
                                      quadrature);
 
   const auto mortar_manager = std::make_shared<MyMortarManagerCircle<dim>>(
-    std::vector<unsigned int>{4 * Utilities::pow(2, n_global_refinements + 1),
+    std::vector<unsigned int>{8 * Utilities::pow(2, n_global_refinements),
                               1 * Utilities::pow(2, n_global_refinements)},
     std::vector<double>{radius, radius},
     construct_quadrature(quadrature),
