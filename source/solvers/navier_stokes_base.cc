@@ -2951,7 +2951,6 @@ NavierStokesBase<dim, VectorType, DofsType>::write_output_results(
               &solution_output_struct))
         {
           // auto solution_output = *solution_struct;
-          std::cout << solution_struct->solution_names[0] << std::endl;
           data_out.add_data_vector(
             solution_struct->dof_handler,
             solution_struct->solution,
@@ -2962,8 +2961,6 @@ NavierStokesBase<dim, VectorType, DofsType>::write_output_results(
                  std::get_if<OutputStructPostprocessor<dim, VectorType>>(
                    &solution_output_struct))
         {
-          std::cout << postprocessor_struct->data_postprocessor->get_names()[0]
-                    << std::endl;
           data_out.add_data_vector(postprocessor_struct->dof_handler,
                                    postprocessor_struct->solution,
                                    *postprocessor_struct->data_postprocessor);
