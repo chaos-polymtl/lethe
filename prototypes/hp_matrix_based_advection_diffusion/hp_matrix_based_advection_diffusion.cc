@@ -453,11 +453,11 @@ private:
   hp::QCollection<dim>     quadrature_collection;
   hp::QCollection<dim - 1> face_quadrature_collection;
 
-  DoFHandler<dim>           dof_handler;
-  AffineConstraints<double> zero_constraints;
-  AffineConstraints<double> nonzero_constraints;
-  MatrixType                system_matrix;
-  SparsityPattern           sparsity_pattern;
+  DoFHandler<dim>                             dof_handler;
+  AffineConstraints<double>                   zero_constraints;
+  AffineConstraints<double>                   nonzero_constraints;
+  MatrixType                                  system_matrix;
+  SparsityPattern                             sparsity_pattern;
   std::unique_ptr<parallel::CellWeights<dim>> cell_weights;
 
   IndexSet locally_owned_dofs;
@@ -496,7 +496,12 @@ MatrixBasedAdvectionDiffusion<dim, fe_degree>::MatrixBasedAdvectionDiffusion(
 {
   for (unsigned int degree = 1; degree <= 4; ++degree)
     {
-      // In the implementation of the hp-finite element method, each cell might have a different finite element associated with it. To handle this, the DoFHandler must have a whole set of finite element classes associated with it. This is done through the hp::FECollection class, which is a container for finite element objects. Here we create a collection of FE_Q elements of orders 1 to 4.
+      // In the implementation of the hp-finite element method, each cell might
+      // have a different finite element associated with it. To handle this, the
+      // DoFHandler must have a whole set of finite element classes associated
+      // with it. This is done through the hp::FECollection class, which is a
+      // container for finite element objects. Here we create a collection of
+      // FE_Q elements of orders 1 to 4.
       fe_collection.push_back(FE_Q<dim>(degree));
       quadrature_collection.push_back(QGauss<dim>(degree + 1));
       face_quadrature_collection.push_back(QGauss<dim - 1>(degree + 1));
@@ -758,7 +763,12 @@ MatrixBasedAdvectionDiffusion<dim, fe_degree>::assemble_rhs()
 
   system_rhs = 0;
 
-  // When assemblimg matrices or vectors in the hp-finite element method, there may be different finite elements on different cells, and consequently one may also want to use different quadrature formulas for different cells. Upon construction, one passes not one finite element and quadrature object (and possible a mapping), but a whole collection of type hp::FECollection and hp::QCollection.
+  // When assemblimg matrices or vectors in the hp-finite element method, there
+  // may be different finite elements on different cells, and consequently one
+  // may also want to use different quadrature formulas for different cells.
+  // Upon construction, one passes not one finite element and quadrature object
+  // (and possible a mapping), but a whole collection of type hp::FECollection
+  // and hp::QCollection.
   hp::FEValues<dim> hp_fe_values(fe_collection,
                                  quadrature_collection,
                                  update_values | update_gradients |
@@ -786,7 +796,11 @@ MatrixBasedAdvectionDiffusion<dim, fe_degree>::assemble_rhs()
 
           const unsigned int n_q_points = fe_values.n_quadrature_points;
 
-          // In an non-HP refinement context, one would typically declare these vectors only once outside the loop over all cells, and then resize them to the correct size inside the loop. However, since in hp-FEM the number of quadrature points may change from cell to cell, we here simply re-declare them on each cell.
+          // In an non-HP refinement context, one would typically declare these
+          // vectors only once outside the loop over all cells, and then resize
+          // them to the correct size inside the loop. However, since in hp-FEM
+          // the number of quadrature points may change from cell to cell, we
+          // here simply re-declare them on each cell.
           std::vector<double>         source_term_values(n_q_points);
           std::vector<double>         newton_step_values(n_q_points);
           std::vector<Tensor<1, dim>> newton_step_gradients(n_q_points);
@@ -882,7 +896,12 @@ MatrixBasedAdvectionDiffusion<dim, fe_degree>::assemble_matrix()
 
   system_matrix = 0;
 
-  // When assemblimg matrices or vectors in the hp-finite element method, there may be different finite elements on different cells, and consequently one may also want to use different quadrature formulas for different cells. Upon construction, one passes not one finite element and quadrature object (and possible a mapping), but a whole collection of type hp::FECollection and hp::QCollection.
+  // When assemblimg matrices or vectors in the hp-finite element method, there
+  // may be different finite elements on different cells, and consequently one
+  // may also want to use different quadrature formulas for different cells.
+  // Upon construction, one passes not one finite element and quadrature object
+  // (and possible a mapping), but a whole collection of type hp::FECollection
+  // and hp::QCollection.
   hp::FEValues<dim> hp_fe_values(fe_collection,
                                  quadrature_collection,
                                  update_values | update_gradients |
@@ -907,10 +926,14 @@ MatrixBasedAdvectionDiffusion<dim, fe_degree>::assemble_matrix()
 
           const FEValues<dim> &fe_values = hp_fe_values.get_present_fe_values();
 
-          const unsigned int  n_q_points = fe_values.n_quadrature_points;
+          const unsigned int n_q_points = fe_values.n_quadrature_points;
 
-          // In an non-HP refinement context, one would typically declare these vectors only once outside the loop over all cells, and then resize them to the correct size inside the loop. However, since in hp-FEM the number of quadrature points may change from cell to cell, we here simply re-declare them on each cell.
-          std::vector<double> newton_step_values(n_q_points);
+          // In an non-HP refinement context, one would typically declare these
+          // vectors only once outside the loop over all cells, and then resize
+          // them to the correct size inside the loop. However, since in hp-FEM
+          // the number of quadrature points may change from cell to cell, we
+          // here simply re-declare them on each cell.
+          std::vector<double>         newton_step_values(n_q_points);
           std::vector<Tensor<1, dim>> advection_term_values(n_q_points);
 
           fe_values.get_function_values(solution, newton_step_values);
@@ -1045,11 +1068,15 @@ MatrixBasedAdvectionDiffusion<dim, fe_degree>::compute_residual(
 
           const FEValues<dim> &fe_values = hp_fe_values.get_present_fe_values();
 
-          const unsigned int  n_q_points = fe_values.n_quadrature_points;
-          
-          // In an non-HP refinement context, one would typically declare these vectors only once outside the loop over all cells, and then resize them to the correct size inside the loop. However, since in hp-FEM the number of quadrature points may change from cell to cell, we here simply re-declare them on each cell. 
-          std::vector<double> source_term_values(n_q_points);
-          std::vector<double> values(n_q_points);
+          const unsigned int n_q_points = fe_values.n_quadrature_points;
+
+          // In an non-HP refinement context, one would typically declare these
+          // vectors only once outside the loop over all cells, and then resize
+          // them to the correct size inside the loop. However, since in hp-FEM
+          // the number of quadrature points may change from cell to cell, we
+          // here simply re-declare them on each cell.
+          std::vector<double>         source_term_values(n_q_points);
+          std::vector<double>         values(n_q_points);
           std::vector<Tensor<1, dim>> gradients(n_q_points);
           std::vector<double>         laplacians(n_q_points);
           std::vector<Tensor<1, dim>> advection_term_values(n_q_points);
@@ -1199,7 +1226,8 @@ MatrixBasedAdvectionDiffusion<dim, fe_degree>::hp_refine()
 {
   TimerOutput::Scope t(computing_timer, "hp refinement");
 
-  // As in non-HP refinement, we use an estimator such as the KellyErrorEstimator to decide which cells to refine.
+  // As in non-HP refinement, we use an estimator such as the
+  // KellyErrorEstimator to decide which cells to refine.
   Vector<float> estimated_error_per_cell(triangulation.n_active_cells());
   KellyErrorEstimator<dim>::estimate(
     dof_handler,
@@ -1208,7 +1236,10 @@ MatrixBasedAdvectionDiffusion<dim, fe_degree>::hp_refine()
     solution,
     estimated_error_per_cell);
 
-  // To decide whether to use h- or p-refinement on a given cell, we need to estimate the smoothness of the solution on that cell. On cells where the solution is smooth, we prefer p-refinement to h-refinement (and vice-versa). This call is expensive.
+  // To decide whether to use h- or p-refinement on a given cell, we need to
+  // estimate the smoothness of the solution on that cell. On cells where the
+  // solution is smooth, we prefer p-refinement to h-refinement (and
+  // vice-versa). This call is expensive.
   Vector<float> smoothness_indicators(triangulation.n_active_cells());
   FESeries::Fourier<dim, dim> fourier =
     SmoothnessEstimator::Fourier::default_fe_series(fe_collection);
