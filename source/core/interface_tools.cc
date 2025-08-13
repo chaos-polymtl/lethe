@@ -3,8 +3,6 @@
 
 #include <core/interface_tools.h>
 
-#include <deal.II/base/timer.h>
-
 template <int dim>
 double
 InterfaceTools::compute_cell_wise_volume(
@@ -318,11 +316,6 @@ template <int dim, typename VectorType>
 void
 InterfaceTools::SignedDistanceSolver<dim, VectorType>::solve()
 {
-  // TimerOutput timer(dof_handler.get_mpi_communicator(),
-  //                   this->pcout,
-  //                   TimerOutput::summary,
-  //                   TimerOutput::wall_times);
-
   if (verbosity != Parameters::Verbosity::quiet)
     {
       announce_string(this->pcout, "Signed Distance Solver");
@@ -335,57 +328,41 @@ InterfaceTools::SignedDistanceSolver<dim, VectorType>::solve()
   interface_reconstruction_cells.clear();
   intersected_dofs.clear();
 
-  // Initialize local distance vectors.
-  {
-    // TimerOutput::Scope t(timer, "Initialize-dist");
-    initialize_distance();
-  }
-  // Identify intersected cells and compute the interface reconstruction.
-  {
-    // TimerOutput::Scope t(timer, "Reconstruct Interface");
 
-    InterfaceTools::reconstruct_interface(*mapping,
-                                          dof_handler,
-                                          *fe,
-                                          level_set,
-                                          iso_level,
-                                          interface_reconstruction_vertices,
-                                          interface_reconstruction_cells,
-                                          intersected_dofs);
-  }
+  initialize_distance();
+
+  // Identify intersected cells and compute the interface reconstruction.
+  InterfaceTools::reconstruct_interface(*mapping,
+                                        dof_handler,
+                                        *fe,
+                                        level_set,
+                                        iso_level,
+                                        interface_reconstruction_vertices,
+                                        interface_reconstruction_cells,
+                                        intersected_dofs);
+
 
   /* Compute the distance for the DoFs of the intersected cells (the ones in
   the intersected_dofs set). They correspond to the first neighbor DoFs.*/
-  {
-    // TimerOutput::Scope t(timer, "First");
-    compute_first_neighbors_distance();
-  }
+  compute_first_neighbors_distance();
+
   /* Compute signed distance from distance (only first neighbors have an
   updated value)*/
-  {
-    // TimerOutput::Scope t(timer, "First-p2");
-    compute_signed_distance_from_distance();
-  }
+
+  compute_signed_distance_from_distance();
+
 
   // Conserve local and global volume
-  {
-    // TimerOutput::Scope t(timer, "Mass volume corr");
-    compute_cell_wise_volume_correction();
-    conserve_global_volume();
-  }
+  compute_cell_wise_volume_correction();
+  conserve_global_volume();
+
 
   /* Compute the distance for the DoFs of the rest of the mesh. They
   correspond to the second neighbors DoFs. */
-  {
-    // TimerOutput::Scope t(timer, "Second");
-    compute_second_neighbors_distance();
-  }
+  compute_second_neighbors_distance();
 
   // Compute signed distance from distance (all DoFs have updated value)
-  {
-    // TimerOutput::Scope t(timer, "Second-p2");
-    compute_signed_distance_from_distance();
-  }
+  compute_signed_distance_from_distance();
 
   // Update ghost values to regain reading ability.
   update_ghost_values();
