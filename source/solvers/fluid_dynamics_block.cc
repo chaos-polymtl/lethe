@@ -606,8 +606,8 @@ FluidDynamicsBlock<dim>::setup_dofs_fd()
 
   // Operations on the following vectors (addition,
   // multiplication, etc.) can only be done if these are reinitialized WITHOUT
-  // locally_relevant_dofs (i.e. without ghost DoFs). This is why most of them are reinitialized both with
-  // and without locally_relevant_dofs.
+  // locally_relevant_dofs (i.e. without ghost DoFs). This is why most of them
+  // are reinitialized both with and without locally_relevant_dofs.
   this->present_solution.reinit(this->locally_owned_dofs,
                                 this->locally_relevant_dofs,
                                 this->mpi_communicator);

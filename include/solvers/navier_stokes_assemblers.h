@@ -311,17 +311,17 @@ public:
 /**
  * @brief Class that assembles the transient term arising from SDIRK time
  * integration for the Navier Stokes equations.
- * For a given stage \( i \), the following expression is assembled and treated
- * implicitly: \f[ \frac{\mathbf{u}_i^* - \mathbf{u}_n}{h a_{ii}} -
+ * For a given stage \f[ i \f], the following expression is assembled and
+ * treated implicitly: \f[ \frac{\mathbf{u}_i^* - \mathbf{u}_n}{h a_{ii}} -
  * \sum_{j=0}^{i-1} \frac{a_{ij}}{a_{ii}} \mathbf{k}_j \f] where:
- * - \( \mathbf{u}_i^* \) is the current stage solution,
- * - \( \mathbf{u}_n \) is the solution at the previous time step,
- * - \( \mathbf{k}_j \)coefficients are the solution increments at the previous
- * stages,
- * - \( h \) is the time step size,
- * - \( a_{ij} \), \( a_{ii} \) are coefficients from the SDIRK Butcher tableau.
- * These coefficients are given data by the method and constant for the entire
- * simulation.
+ * - \f[ \mathbf{u}_i^* \f] is the current stage solution,
+ * - \f[ \mathbf{u}_n \f] is the solution at the previous time step,
+ * - \f[ \mathbf{k}_j \f] coefficients are the solution increments at the
+ * previous stages,
+ * - \f[ h \f] is the time step size,
+ * - \f[ a_{ij} \), \( a_{ii} \f] are coefficients from the SDIRK Butcher
+ * tableau. These coefficients are given data by the method and constant for the
+ * entire simulation.
  *
  * @tparam dim An integer that denotes the number of spatial dimensions
  *

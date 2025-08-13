@@ -12,6 +12,10 @@ test()
   // 12 digits of precision for the output
   deallog << std::setprecision(12) << std::scientific;
 
+  deallog
+    << "This test returns the values of the Butcher's table associated with each SDIRK method"
+    << std::endl;
+
   deallog << "Testing SDIRK22 coefficients" << std::endl;
 
   // Important note : the nomenclature used for the name of the SDIRK methods

@@ -171,7 +171,8 @@ NavierStokesBase<dim, VectorType, DofsType>::NavierStokesBase(
 
   if (this->simulation_control->is_sdirk())
     {
-      //Pre-allocate memory for the previous k_j solutions using the number of stages of the method
+      // Pre-allocate memory for the previous k_j solutions using the number of
+      // stages of the method
       sdirk_vectors.previous_k_j_solutions.resize(
         SimulationControl::get_number_of_stages(
           this->simulation_control->get_assembly_method()));

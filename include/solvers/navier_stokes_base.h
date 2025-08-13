@@ -357,7 +357,7 @@ protected:
    * Update \f$ \sum_{i=1}^{N_{stages}} b_i * k_i \f$
    *
    * @param stage An unsigned integer which gives the index of the current stage
-   * @param method SDIRK methods for now (BDF methods are single stage)
+   * @param method SDIRK method for now (BDF methods are single stage)
    * @param time_step The current time step to build the solution at the next time step
    */
   virtual void

@@ -102,8 +102,8 @@ public:
                        update_JxW_values | update_gradients | update_hessians |
                        update_normal_vectors)
     , sdirk_table(is_sdirk(simulation_control->get_assembly_method()) ?
-          ::sdirk_table(simulation_control->get_assembly_method()) :
-          SDIRKTable())
+                    ::sdirk_table(simulation_control->get_assembly_method()) :
+                    SDIRKTable())
   {
     allocate();
 
