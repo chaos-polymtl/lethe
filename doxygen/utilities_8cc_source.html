@@ -661,354 +661,353 @@ $(document).ready(function() { init_codefold(0); });
 <div class="line"><a id="l00547" name="l00547"></a><span class="lineno"><a class="line" href="utilities_8h.html#a34ac72c0df6c4a24f85c97b22d137520">  547</a></span><a class="code hl_function" href="utilities_8cc.html#a34ac72c0df6c4a24f85c97b22d137520">get_last_value_of_parameter</a>(<span class="keyword">const</span> std::string &amp;file_name,</div>
 <div class="line"><a id="l00548" name="l00548"></a><span class="lineno">  548</span>                            <span class="keyword">const</span> std::string &amp;parameter_name)</div>
 <div class="line"><a id="l00549" name="l00549"></a><span class="lineno">  549</span>{</div>
-<div class="line"><a id="l00550" name="l00550"></a><span class="lineno">  550</span>  std::string return_value;</div>
-<div class="line"><a id="l00551" name="l00551"></a><span class="lineno">  551</span> </div>
-<div class="line"><a id="l00552" name="l00552"></a><span class="lineno">  552</span>  std::ifstream x_file(file_name);</div>
-<div class="line"><a id="l00553" name="l00553"></a><span class="lineno">  553</span>  AssertThrow(x_file.fail() == <span class="keyword">false</span>, ExcIO());</div>
-<div class="line"><a id="l00554" name="l00554"></a><span class="lineno">  554</span> </div>
-<div class="line"><a id="l00555" name="l00555"></a><span class="lineno">  555</span>  <span class="keywordflow">while</span> (x_file)</div>
-<div class="line"><a id="l00556" name="l00556"></a><span class="lineno">  556</span>    {</div>
-<div class="line"><a id="l00557" name="l00557"></a><span class="lineno">  557</span>      <span class="comment">// Get one line and then match a regex to it that matches the parameter</span></div>
-<div class="line"><a id="l00558" name="l00558"></a><span class="lineno">  558</span>      <span class="comment">// we are looking for. Before we do that, strip spaces from the front</span></div>
-<div class="line"><a id="l00559" name="l00559"></a><span class="lineno">  559</span>      <span class="comment">// and back of the line:</span></div>
-<div class="line"><a id="l00560" name="l00560"></a><span class="lineno">  560</span>      std::string line;</div>
-<div class="line"><a id="l00561" name="l00561"></a><span class="lineno">  561</span>      std::getline(x_file, line);</div>
-<div class="line"><a id="l00562" name="l00562"></a><span class="lineno">  562</span> </div>
-<div class="line"><a id="l00563" name="l00563"></a><span class="lineno">  563</span>      <span class="keywordflow">while</span> ((line.size() &gt; 0) &amp;&amp; (line[0] == <span class="charliteral">&#39; &#39;</span> || line[0] == <span class="charliteral">&#39;\t&#39;</span>))</div>
-<div class="line"><a id="l00564" name="l00564"></a><span class="lineno">  564</span>        line.erase(0, 1);</div>
-<div class="line"><a id="l00565" name="l00565"></a><span class="lineno">  565</span>      <span class="keywordflow">while</span> ((line.size() &gt; 0) &amp;&amp;</div>
-<div class="line"><a id="l00566" name="l00566"></a><span class="lineno">  566</span>             (line[line.size() - 1] == <span class="charliteral">&#39; &#39;</span> || line[line.size() - 1] == <span class="charliteral">&#39;\t&#39;</span>))</div>
-<div class="line"><a id="l00567" name="l00567"></a><span class="lineno">  567</span>        line.erase(line.size() - 1, std::string::npos);</div>
-<div class="line"><a id="l00568" name="l00568"></a><span class="lineno">  568</span> </div>
-<div class="line"><a id="l00569" name="l00569"></a><span class="lineno">  569</span>      std::match_results&lt;std::string::const_iterator&gt; matches;</div>
-<div class="line"><a id="l00570" name="l00570"></a><span class="lineno">  570</span>      <span class="keyword">const</span> std::string                               regex =</div>
-<div class="line"><a id="l00571" name="l00571"></a><span class="lineno">  571</span>        <span class="stringliteral">&quot;set[ \t]+&quot;</span> + parameter_name + <span class="stringliteral">&quot;[ \t]*=[ \t]*(.*)&quot;</span>;</div>
-<div class="line"><a id="l00572" name="l00572"></a><span class="lineno">  572</span>      <span class="keywordflow">if</span> (std::regex_match(line, matches, std::regex(regex)))</div>
-<div class="line"><a id="l00573" name="l00573"></a><span class="lineno">  573</span>        {</div>
-<div class="line"><a id="l00574" name="l00574"></a><span class="lineno">  574</span>          <span class="comment">// Since the line as a whole matched, the &#39;matches&#39; variable needs</span></div>
-<div class="line"><a id="l00575" name="l00575"></a><span class="lineno">  575</span>          <span class="comment">// to contain two entries: [0] denotes the whole string, and [1] the</span></div>
-<div class="line"><a id="l00576" name="l00576"></a><span class="lineno">  576</span>          <span class="comment">// one that was matched by the &#39;(.*)&#39; expression.</span></div>
-<div class="line"><a id="l00577" name="l00577"></a><span class="lineno">  577</span>          Assert(matches.size() == 2, dealii::ExcInternalError());</div>
-<div class="line"><a id="l00578" name="l00578"></a><span class="lineno">  578</span>          return_value = std::string(matches[1].first, matches[1].second);</div>
-<div class="line"><a id="l00579" name="l00579"></a><span class="lineno">  579</span>        }</div>
-<div class="line"><a id="l00580" name="l00580"></a><span class="lineno">  580</span>    }</div>
-<div class="line"><a id="l00581" name="l00581"></a><span class="lineno">  581</span> </div>
-<div class="line"><a id="l00582" name="l00582"></a><span class="lineno">  582</span>  <span class="keywordflow">return</span> return_value;</div>
-<div class="line"><a id="l00583" name="l00583"></a><span class="lineno">  583</span>}</div>
+<div class="line"><a id="l00550" name="l00550"></a><span class="lineno">  550</span>  std::string   return_value;</div>
+<div class="line"><a id="l00551" name="l00551"></a><span class="lineno">  551</span>  std::ifstream x_file(file_name);</div>
+<div class="line"><a id="l00552" name="l00552"></a><span class="lineno">  552</span>  AssertThrow(x_file.fail() == <span class="keyword">false</span>, ExcIO());</div>
+<div class="line"><a id="l00553" name="l00553"></a><span class="lineno">  553</span> </div>
+<div class="line"><a id="l00554" name="l00554"></a><span class="lineno">  554</span>  <span class="keywordflow">while</span> (x_file)</div>
+<div class="line"><a id="l00555" name="l00555"></a><span class="lineno">  555</span>    {</div>
+<div class="line"><a id="l00556" name="l00556"></a><span class="lineno">  556</span>      <span class="comment">// Get one line and then match a regex to it that matches the parameter</span></div>
+<div class="line"><a id="l00557" name="l00557"></a><span class="lineno">  557</span>      <span class="comment">// we are looking for. Before we do that, strip spaces from the front</span></div>
+<div class="line"><a id="l00558" name="l00558"></a><span class="lineno">  558</span>      <span class="comment">// and back of the line:</span></div>
+<div class="line"><a id="l00559" name="l00559"></a><span class="lineno">  559</span>      std::string line;</div>
+<div class="line"><a id="l00560" name="l00560"></a><span class="lineno">  560</span>      std::getline(x_file, line);</div>
+<div class="line"><a id="l00561" name="l00561"></a><span class="lineno">  561</span> </div>
+<div class="line"><a id="l00562" name="l00562"></a><span class="lineno">  562</span>      <span class="keywordflow">while</span> ((line.size() &gt; 0) &amp;&amp; (line[0] == <span class="charliteral">&#39; &#39;</span> || line[0] == <span class="charliteral">&#39;\t&#39;</span>))</div>
+<div class="line"><a id="l00563" name="l00563"></a><span class="lineno">  563</span>        line.erase(0, 1);</div>
+<div class="line"><a id="l00564" name="l00564"></a><span class="lineno">  564</span>      <span class="keywordflow">while</span> ((line.size() &gt; 0) &amp;&amp;</div>
+<div class="line"><a id="l00565" name="l00565"></a><span class="lineno">  565</span>             (line[line.size() - 1] == <span class="charliteral">&#39; &#39;</span> || line[line.size() - 1] == <span class="charliteral">&#39;\t&#39;</span>))</div>
+<div class="line"><a id="l00566" name="l00566"></a><span class="lineno">  566</span>        line.erase(line.size() - 1, std::string::npos);</div>
+<div class="line"><a id="l00567" name="l00567"></a><span class="lineno">  567</span> </div>
+<div class="line"><a id="l00568" name="l00568"></a><span class="lineno">  568</span>      std::match_results&lt;std::string::const_iterator&gt; matches;</div>
+<div class="line"><a id="l00569" name="l00569"></a><span class="lineno">  569</span>      <span class="keyword">const</span> std::string                               regex =</div>
+<div class="line"><a id="l00570" name="l00570"></a><span class="lineno">  570</span>        <span class="stringliteral">&quot;set[ \t]+&quot;</span> + parameter_name + <span class="stringliteral">&quot;[ \t]*=[ \t]*(.*)&quot;</span>;</div>
+<div class="line"><a id="l00571" name="l00571"></a><span class="lineno">  571</span>      <span class="keywordflow">if</span> (std::regex_match(line, matches, std::regex(regex)))</div>
+<div class="line"><a id="l00572" name="l00572"></a><span class="lineno">  572</span>        {</div>
+<div class="line"><a id="l00573" name="l00573"></a><span class="lineno">  573</span>          <span class="comment">// Since the line as a whole matched, the &#39;matches&#39; variable needs</span></div>
+<div class="line"><a id="l00574" name="l00574"></a><span class="lineno">  574</span>          <span class="comment">// to contain two entries: [0] denotes the whole string, and [1] the</span></div>
+<div class="line"><a id="l00575" name="l00575"></a><span class="lineno">  575</span>          <span class="comment">// one that was matched by the &#39;(.*)&#39; expression.</span></div>
+<div class="line"><a id="l00576" name="l00576"></a><span class="lineno">  576</span>          Assert(matches.size() == 2, dealii::ExcInternalError());</div>
+<div class="line"><a id="l00577" name="l00577"></a><span class="lineno">  577</span>          return_value = std::string(matches[1].first, matches[1].second);</div>
+<div class="line"><a id="l00578" name="l00578"></a><span class="lineno">  578</span>        }</div>
+<div class="line"><a id="l00579" name="l00579"></a><span class="lineno">  579</span>    }</div>
+<div class="line"><a id="l00580" name="l00580"></a><span class="lineno">  580</span> </div>
+<div class="line"><a id="l00581" name="l00581"></a><span class="lineno">  581</span>  <span class="keywordflow">return</span> return_value;</div>
+<div class="line"><a id="l00582" name="l00582"></a><span class="lineno">  582</span>}</div>
 </div>
+<div class="line"><a id="l00583" name="l00583"></a><span class="lineno">  583</span> </div>
 <div class="line"><a id="l00584" name="l00584"></a><span class="lineno">  584</span> </div>
-<div class="line"><a id="l00585" name="l00585"></a><span class="lineno">  585</span> </div>
-<div class="line"><a id="l00586" name="l00586"></a><span class="lineno">  586</span><span class="keywordtype">int</span></div>
-<div class="foldopen" id="foldopen00587" data-start="{" data-end="}">
-<div class="line"><a id="l00587" name="l00587"></a><span class="lineno"><a class="line" href="utilities_8cc.html#a9fc5d803036352e72efcd625b2466707">  587</a></span><a class="code hl_function" href="utilities_8cc.html#a9fc5d803036352e72efcd625b2466707">get_max_value_of_parameter</a>(<span class="keyword">const</span> std::string &amp;file_name,</div>
-<div class="line"><a id="l00588" name="l00588"></a><span class="lineno">  588</span>                           <span class="keyword">const</span> std::string &amp;parameter_name)</div>
-<div class="line"><a id="l00589" name="l00589"></a><span class="lineno">  589</span>{</div>
-<div class="line"><a id="l00590" name="l00590"></a><span class="lineno">  590</span>  std::string return_string;</div>
-<div class="line"><a id="l00591" name="l00591"></a><span class="lineno">  591</span>  <span class="keywordtype">int</span>         return_value = -100000;</div>
-<div class="line"><a id="l00592" name="l00592"></a><span class="lineno">  592</span> </div>
-<div class="line"><a id="l00593" name="l00593"></a><span class="lineno">  593</span>  std::ifstream x_file(file_name);</div>
-<div class="line"><a id="l00594" name="l00594"></a><span class="lineno">  594</span>  AssertThrow(x_file.fail() == <span class="keyword">false</span>, ExcIO());</div>
-<div class="line"><a id="l00595" name="l00595"></a><span class="lineno">  595</span> </div>
-<div class="line"><a id="l00596" name="l00596"></a><span class="lineno">  596</span>  <span class="keywordflow">while</span> (x_file)</div>
-<div class="line"><a id="l00597" name="l00597"></a><span class="lineno">  597</span>    {</div>
-<div class="line"><a id="l00598" name="l00598"></a><span class="lineno">  598</span>      <span class="comment">// Get one line and then match a regex to it that matches the parameter</span></div>
-<div class="line"><a id="l00599" name="l00599"></a><span class="lineno">  599</span>      <span class="comment">// we are looking for. Before we do that, strip spaces from the front</span></div>
-<div class="line"><a id="l00600" name="l00600"></a><span class="lineno">  600</span>      <span class="comment">// and back of the line:</span></div>
-<div class="line"><a id="l00601" name="l00601"></a><span class="lineno">  601</span>      std::string line;</div>
-<div class="line"><a id="l00602" name="l00602"></a><span class="lineno">  602</span>      std::getline(x_file, line);</div>
-<div class="line"><a id="l00603" name="l00603"></a><span class="lineno">  603</span> </div>
-<div class="line"><a id="l00604" name="l00604"></a><span class="lineno">  604</span>      <span class="keywordflow">while</span> ((line.size() &gt; 0) &amp;&amp; (line[0] == <span class="charliteral">&#39; &#39;</span> || line[0] == <span class="charliteral">&#39;\t&#39;</span>))</div>
-<div class="line"><a id="l00605" name="l00605"></a><span class="lineno">  605</span>        line.erase(0, 1);</div>
-<div class="line"><a id="l00606" name="l00606"></a><span class="lineno">  606</span>      <span class="keywordflow">while</span> ((line.size() &gt; 0) &amp;&amp;</div>
-<div class="line"><a id="l00607" name="l00607"></a><span class="lineno">  607</span>             (line[line.size() - 1] == <span class="charliteral">&#39; &#39;</span> || line[line.size() - 1] == <span class="charliteral">&#39;\t&#39;</span>))</div>
-<div class="line"><a id="l00608" name="l00608"></a><span class="lineno">  608</span>        line.erase(line.size() - 1, std::string::npos);</div>
-<div class="line"><a id="l00609" name="l00609"></a><span class="lineno">  609</span> </div>
-<div class="line"><a id="l00610" name="l00610"></a><span class="lineno">  610</span>      std::match_results&lt;std::string::const_iterator&gt; matches;</div>
-<div class="line"><a id="l00611" name="l00611"></a><span class="lineno">  611</span>      <span class="keyword">const</span> std::string                               regex =</div>
-<div class="line"><a id="l00612" name="l00612"></a><span class="lineno">  612</span>        <span class="stringliteral">&quot;set[ \t]+&quot;</span> + parameter_name + <span class="stringliteral">&quot;[ \t]*=[ \t]*(.*)&quot;</span>;</div>
-<div class="line"><a id="l00613" name="l00613"></a><span class="lineno">  613</span>      <span class="keywordflow">if</span> (std::regex_match(line, matches, std::regex(regex)))</div>
-<div class="line"><a id="l00614" name="l00614"></a><span class="lineno">  614</span>        {</div>
-<div class="line"><a id="l00615" name="l00615"></a><span class="lineno">  615</span>          <span class="comment">// Since the line as a whole matched, the &#39;matches&#39; variable needs</span></div>
-<div class="line"><a id="l00616" name="l00616"></a><span class="lineno">  616</span>          <span class="comment">// to contain two entries: [0] denotes the whole string, and [1] the</span></div>
-<div class="line"><a id="l00617" name="l00617"></a><span class="lineno">  617</span>          <span class="comment">// one that was matched by the &#39;(.*)&#39; expression.</span></div>
-<div class="line"><a id="l00618" name="l00618"></a><span class="lineno">  618</span>          Assert(matches.size() == 2, dealii::ExcInternalError());</div>
-<div class="line"><a id="l00619" name="l00619"></a><span class="lineno">  619</span>          return_string = std::string(matches[1].first, matches[1].second);</div>
-<div class="line"><a id="l00620" name="l00620"></a><span class="lineno">  620</span>          return_value =</div>
-<div class="line"><a id="l00621" name="l00621"></a><span class="lineno">  621</span>            std::max(return_value, Utilities::string_to_int(return_string));</div>
-<div class="line"><a id="l00622" name="l00622"></a><span class="lineno">  622</span>        }</div>
-<div class="line"><a id="l00623" name="l00623"></a><span class="lineno">  623</span>    }</div>
-<div class="line"><a id="l00624" name="l00624"></a><span class="lineno">  624</span> </div>
-<div class="line"><a id="l00625" name="l00625"></a><span class="lineno">  625</span>  <span class="keywordflow">return</span> return_value;</div>
-<div class="line"><a id="l00626" name="l00626"></a><span class="lineno">  626</span>}</div>
+<div class="line"><a id="l00585" name="l00585"></a><span class="lineno">  585</span><span class="keywordtype">int</span></div>
+<div class="foldopen" id="foldopen00586" data-start="{" data-end="}">
+<div class="line"><a id="l00586" name="l00586"></a><span class="lineno"><a class="line" href="utilities_8cc.html#a9fc5d803036352e72efcd625b2466707">  586</a></span><a class="code hl_function" href="utilities_8cc.html#a9fc5d803036352e72efcd625b2466707">get_max_value_of_parameter</a>(<span class="keyword">const</span> std::string &amp;file_name,</div>
+<div class="line"><a id="l00587" name="l00587"></a><span class="lineno">  587</span>                           <span class="keyword">const</span> std::string &amp;parameter_name)</div>
+<div class="line"><a id="l00588" name="l00588"></a><span class="lineno">  588</span>{</div>
+<div class="line"><a id="l00589" name="l00589"></a><span class="lineno">  589</span>  std::string return_string;</div>
+<div class="line"><a id="l00590" name="l00590"></a><span class="lineno">  590</span>  <span class="keywordtype">int</span>         return_value = -100000;</div>
+<div class="line"><a id="l00591" name="l00591"></a><span class="lineno">  591</span> </div>
+<div class="line"><a id="l00592" name="l00592"></a><span class="lineno">  592</span>  std::ifstream x_file(file_name);</div>
+<div class="line"><a id="l00593" name="l00593"></a><span class="lineno">  593</span>  AssertThrow(x_file.fail() == <span class="keyword">false</span>, ExcIO());</div>
+<div class="line"><a id="l00594" name="l00594"></a><span class="lineno">  594</span> </div>
+<div class="line"><a id="l00595" name="l00595"></a><span class="lineno">  595</span>  <span class="keywordflow">while</span> (x_file)</div>
+<div class="line"><a id="l00596" name="l00596"></a><span class="lineno">  596</span>    {</div>
+<div class="line"><a id="l00597" name="l00597"></a><span class="lineno">  597</span>      <span class="comment">// Get one line and then match a regex to it that matches the parameter</span></div>
+<div class="line"><a id="l00598" name="l00598"></a><span class="lineno">  598</span>      <span class="comment">// we are looking for. Before we do that, strip spaces from the front</span></div>
+<div class="line"><a id="l00599" name="l00599"></a><span class="lineno">  599</span>      <span class="comment">// and back of the line:</span></div>
+<div class="line"><a id="l00600" name="l00600"></a><span class="lineno">  600</span>      std::string line;</div>
+<div class="line"><a id="l00601" name="l00601"></a><span class="lineno">  601</span>      std::getline(x_file, line);</div>
+<div class="line"><a id="l00602" name="l00602"></a><span class="lineno">  602</span> </div>
+<div class="line"><a id="l00603" name="l00603"></a><span class="lineno">  603</span>      <span class="keywordflow">while</span> ((line.size() &gt; 0) &amp;&amp; (line[0] == <span class="charliteral">&#39; &#39;</span> || line[0] == <span class="charliteral">&#39;\t&#39;</span>))</div>
+<div class="line"><a id="l00604" name="l00604"></a><span class="lineno">  604</span>        line.erase(0, 1);</div>
+<div class="line"><a id="l00605" name="l00605"></a><span class="lineno">  605</span>      <span class="keywordflow">while</span> ((line.size() &gt; 0) &amp;&amp;</div>
+<div class="line"><a id="l00606" name="l00606"></a><span class="lineno">  606</span>             (line[line.size() - 1] == <span class="charliteral">&#39; &#39;</span> || line[line.size() - 1] == <span class="charliteral">&#39;\t&#39;</span>))</div>
+<div class="line"><a id="l00607" name="l00607"></a><span class="lineno">  607</span>        line.erase(line.size() - 1, std::string::npos);</div>
+<div class="line"><a id="l00608" name="l00608"></a><span class="lineno">  608</span> </div>
+<div class="line"><a id="l00609" name="l00609"></a><span class="lineno">  609</span>      std::match_results&lt;std::string::const_iterator&gt; matches;</div>
+<div class="line"><a id="l00610" name="l00610"></a><span class="lineno">  610</span>      <span class="keyword">const</span> std::string                               regex =</div>
+<div class="line"><a id="l00611" name="l00611"></a><span class="lineno">  611</span>        <span class="stringliteral">&quot;set[ \t]+&quot;</span> + parameter_name + <span class="stringliteral">&quot;[ \t]*=[ \t]*(.*)&quot;</span>;</div>
+<div class="line"><a id="l00612" name="l00612"></a><span class="lineno">  612</span>      <span class="keywordflow">if</span> (std::regex_match(line, matches, std::regex(regex)))</div>
+<div class="line"><a id="l00613" name="l00613"></a><span class="lineno">  613</span>        {</div>
+<div class="line"><a id="l00614" name="l00614"></a><span class="lineno">  614</span>          <span class="comment">// Since the line as a whole matched, the &#39;matches&#39; variable needs</span></div>
+<div class="line"><a id="l00615" name="l00615"></a><span class="lineno">  615</span>          <span class="comment">// to contain two entries: [0] denotes the whole string, and [1] the</span></div>
+<div class="line"><a id="l00616" name="l00616"></a><span class="lineno">  616</span>          <span class="comment">// one that was matched by the &#39;(.*)&#39; expression.</span></div>
+<div class="line"><a id="l00617" name="l00617"></a><span class="lineno">  617</span>          Assert(matches.size() == 2, dealii::ExcInternalError());</div>
+<div class="line"><a id="l00618" name="l00618"></a><span class="lineno">  618</span>          return_string = std::string(matches[1].first, matches[1].second);</div>
+<div class="line"><a id="l00619" name="l00619"></a><span class="lineno">  619</span>          return_value =</div>
+<div class="line"><a id="l00620" name="l00620"></a><span class="lineno">  620</span>            std::max(return_value, Utilities::string_to_int(return_string));</div>
+<div class="line"><a id="l00621" name="l00621"></a><span class="lineno">  621</span>        }</div>
+<div class="line"><a id="l00622" name="l00622"></a><span class="lineno">  622</span>    }</div>
+<div class="line"><a id="l00623" name="l00623"></a><span class="lineno">  623</span> </div>
+<div class="line"><a id="l00624" name="l00624"></a><span class="lineno">  624</span>  <span class="keywordflow">return</span> return_value;</div>
+<div class="line"><a id="l00625" name="l00625"></a><span class="lineno">  625</span>}</div>
 </div>
+<div class="line"><a id="l00626" name="l00626"></a><span class="lineno">  626</span> </div>
 <div class="line"><a id="l00627" name="l00627"></a><span class="lineno">  627</span> </div>
 <div class="line"><a id="l00628" name="l00628"></a><span class="lineno">  628</span> </div>
-<div class="line"><a id="l00629" name="l00629"></a><span class="lineno">  629</span> </div>
-<div class="line"><a id="l00630" name="l00630"></a><span class="lineno">  630</span><span class="keywordtype">unsigned</span> <span class="keywordtype">int</span></div>
-<div class="foldopen" id="foldopen00631" data-start="{" data-end="}">
-<div class="line"><a id="l00631" name="l00631"></a><span class="lineno"><a class="line" href="utilities_8h.html#a2f4c4c70d98da93b973297b97e085b90">  631</a></span><a class="code hl_function" href="utilities_8cc.html#a2f4c4c70d98da93b973297b97e085b90">get_dimension</a>(<span class="keyword">const</span> std::string &amp;file_name)</div>
-<div class="line"><a id="l00632" name="l00632"></a><span class="lineno">  632</span>{</div>
-<div class="line"><a id="l00633" name="l00633"></a><span class="lineno">  633</span>  <span class="keyword">const</span> std::string dimension =</div>
-<div class="line"><a id="l00634" name="l00634"></a><span class="lineno">  634</span>    <a class="code hl_function" href="utilities_8cc.html#a34ac72c0df6c4a24f85c97b22d137520">get_last_value_of_parameter</a>(file_name, <span class="stringliteral">&quot;dimension&quot;</span>);</div>
-<div class="line"><a id="l00635" name="l00635"></a><span class="lineno">  635</span> </div>
-<div class="line"><a id="l00636" name="l00636"></a><span class="lineno">  636</span>  <span class="keywordflow">if</span> (dimension.size() &gt; 0)</div>
-<div class="line"><a id="l00637" name="l00637"></a><span class="lineno">  637</span>    {</div>
-<div class="line"><a id="l00638" name="l00638"></a><span class="lineno">  638</span>      <span class="comment">// Extracted from ASPECT</span></div>
-<div class="line"><a id="l00639" name="l00639"></a><span class="lineno">  639</span>      <span class="comment">// A common problem is that people have .prm files that were generated</span></div>
-<div class="line"><a id="l00640" name="l00640"></a><span class="lineno">  640</span>      <span class="comment">// on Windows, but then run this on Linux where the line endings are</span></div>
-<div class="line"><a id="l00641" name="l00641"></a><span class="lineno">  641</span>      <span class="comment">// different. This is pernicious because it means that the conversion</span></div>
-<div class="line"><a id="l00642" name="l00642"></a><span class="lineno">  642</span>      <span class="comment">// of a string such as &quot;2\r&quot; to an integer fails, but if we print</span></div>
-<div class="line"><a id="l00643" name="l00643"></a><span class="lineno">  643</span>      <span class="comment">// this string, it comes out completely garbled because it contains</span></div>
-<div class="line"><a id="l00644" name="l00644"></a><span class="lineno">  644</span>      <span class="comment">// a carriage-return without a newline -- so the error message looks</span></div>
-<div class="line"><a id="l00645" name="l00645"></a><span class="lineno">  645</span>      <span class="comment">// like this:</span></div>
-<div class="line"><a id="l00646" name="l00646"></a><span class="lineno">  646</span>      <span class="comment">//</span></div>
-<div class="line"><a id="l00647" name="l00647"></a><span class="lineno">  647</span>      <span class="comment">//    &gt;.  While reading the dimension from the input file, Lethe found</span></div>
-<div class="line"><a id="l00648" name="l00648"></a><span class="lineno">  648</span>      <span class="comment">//    a string that can not be converted to an integer: &lt;2</span></div>
-<div class="line"><a id="l00649" name="l00649"></a><span class="lineno">  649</span>      <span class="comment">//</span></div>
-<div class="line"><a id="l00650" name="l00650"></a><span class="lineno">  650</span>      <span class="comment">// Note how the end of the error message overwrites the beginning</span></div>
-<div class="line"><a id="l00651" name="l00651"></a><span class="lineno">  651</span>      <span class="comment">// of the line.</span></div>
-<div class="line"><a id="l00652" name="l00652"></a><span class="lineno">  652</span>      <span class="comment">//</span></div>
-<div class="line"><a id="l00653" name="l00653"></a><span class="lineno">  653</span>      <span class="comment">// To avoid this kind of error, specifically test up front that the</span></div>
-<div class="line"><a id="l00654" name="l00654"></a><span class="lineno">  654</span>      <span class="comment">// text in question does not contain &#39;\r&#39; characters. If we are on</span></div>
-<div class="line"><a id="l00655" name="l00655"></a><span class="lineno">  655</span>      <span class="comment">// linux, then this kind of character would means that the line endings</span></div>
-<div class="line"><a id="l00656" name="l00656"></a><span class="lineno">  656</span>      <span class="comment">// are wrong. On the other hand, if we are on windows, then the</span></div>
-<div class="line"><a id="l00657" name="l00657"></a><span class="lineno">  657</span>      <span class="comment">// getline command we have used in finding &#39;dimension&#39; would have</span></div>
-<div class="line"><a id="l00658" name="l00658"></a><span class="lineno">  658</span>      <span class="comment">// filtered it out. So its presence points to a problem.</span></div>
-<div class="line"><a id="l00659" name="l00659"></a><span class="lineno">  659</span> </div>
-<div class="line"><a id="l00660" name="l00660"></a><span class="lineno">  660</span>      AssertThrow(</div>
-<div class="line"><a id="l00661" name="l00661"></a><span class="lineno">  661</span>        dimension.find(<span class="charliteral">&#39;\r&#39;</span>) == std::string::npos,</div>
-<div class="line"><a id="l00662" name="l00662"></a><span class="lineno">  662</span>        dealii::ExcMessage(</div>
-<div class="line"><a id="l00663" name="l00663"></a><span class="lineno">  663</span>          <span class="stringliteral">&quot;It appears that your input file uses Windows-style &quot;</span></div>
-<div class="line"><a id="l00664" name="l00664"></a><span class="lineno">  664</span>          <span class="stringliteral">&quot;line endings (&#39;\\r\\n&#39;) but you are running on a system where &quot;</span></div>
-<div class="line"><a id="l00665" name="l00665"></a><span class="lineno">  665</span>          <span class="stringliteral">&quot;the C++ run time environment expects input files to have &quot;</span></div>
-<div class="line"><a id="l00666" name="l00666"></a><span class="lineno">  666</span>          <span class="stringliteral">&quot;Unix-style line endings (&#39;\\n&#39;). You need to convert your &quot;</span></div>
-<div class="line"><a id="l00667" name="l00667"></a><span class="lineno">  667</span>          <span class="stringliteral">&quot;input file to use the correct line endings before running &quot;</span></div>
-<div class="line"><a id="l00668" name="l00668"></a><span class="lineno">  668</span>          <span class="stringliteral">&quot;ASPECT with it.&quot;</span>));</div>
-<div class="line"><a id="l00669" name="l00669"></a><span class="lineno">  669</span>      <span class="keywordflow">try</span></div>
-<div class="line"><a id="l00670" name="l00670"></a><span class="lineno">  670</span>        {</div>
-<div class="line"><a id="l00671" name="l00671"></a><span class="lineno">  671</span>          <span class="keywordflow">return</span> dealii::Utilities::string_to_int(dimension);</div>
-<div class="line"><a id="l00672" name="l00672"></a><span class="lineno">  672</span>        }</div>
-<div class="line"><a id="l00673" name="l00673"></a><span class="lineno">  673</span>      <span class="keywordflow">catch</span> (...)</div>
-<div class="line"><a id="l00674" name="l00674"></a><span class="lineno">  674</span>        {</div>
-<div class="line"><a id="l00675" name="l00675"></a><span class="lineno">  675</span>          AssertThrow(<span class="keyword">false</span>,</div>
-<div class="line"><a id="l00676" name="l00676"></a><span class="lineno">  676</span>                      dealii::ExcMessage(</div>
-<div class="line"><a id="l00677" name="l00677"></a><span class="lineno">  677</span>                        <span class="stringliteral">&quot;While reading the dimension from the input file, &quot;</span></div>
-<div class="line"><a id="l00678" name="l00678"></a><span class="lineno">  678</span>                        <span class="stringliteral">&quot;Lethe found a string that can not be converted to &quot;</span></div>
-<div class="line"><a id="l00679" name="l00679"></a><span class="lineno">  679</span>                        <span class="stringliteral">&quot;an integer: &lt;&quot;</span> +</div>
-<div class="line"><a id="l00680" name="l00680"></a><span class="lineno">  680</span>                        dimension + <span class="stringliteral">&quot;&gt;.&quot;</span>));</div>
-<div class="line"><a id="l00681" name="l00681"></a><span class="lineno">  681</span>          <span class="keywordflow">return</span> 0; <span class="comment">// we should never get here.</span></div>
-<div class="line"><a id="l00682" name="l00682"></a><span class="lineno">  682</span>        }</div>
-<div class="line"><a id="l00683" name="l00683"></a><span class="lineno">  683</span>    }</div>
-<div class="line"><a id="l00684" name="l00684"></a><span class="lineno">  684</span>  <span class="keywordflow">else</span></div>
-<div class="line"><a id="l00685" name="l00685"></a><span class="lineno">  685</span>    {</div>
-<div class="line"><a id="l00686" name="l00686"></a><span class="lineno">  686</span>      AssertThrow(</div>
-<div class="line"><a id="l00687" name="l00687"></a><span class="lineno">  687</span>        <span class="keyword">false</span>,</div>
-<div class="line"><a id="l00688" name="l00688"></a><span class="lineno">  688</span>        dealii::ExcMessage(</div>
-<div class="line"><a id="l00689" name="l00689"></a><span class="lineno">  689</span>          <span class="stringliteral">&quot;While reading the dimension from the input file, &quot;</span></div>
-<div class="line"><a id="l00690" name="l00690"></a><span class="lineno">  690</span>          <span class="stringliteral">&quot;Lethe found a value that is neither 2 or 3. Since August 2023, &quot;</span></div>
-<div class="line"><a id="l00691" name="l00691"></a><span class="lineno">  691</span>          <span class="stringliteral">&quot;Lethe requires that the user explicitly specify the dimension of the problem within the parameter file. This can be achieved by adding set dimension = 2 or set dimension = 3 within the parameter file&quot;</span>));</div>
-<div class="line"><a id="l00692" name="l00692"></a><span class="lineno">  692</span>    }</div>
-<div class="line"><a id="l00693" name="l00693"></a><span class="lineno">  693</span>}</div>
+<div class="line"><a id="l00629" name="l00629"></a><span class="lineno">  629</span><span class="keywordtype">unsigned</span> <span class="keywordtype">int</span></div>
+<div class="foldopen" id="foldopen00630" data-start="{" data-end="}">
+<div class="line"><a id="l00630" name="l00630"></a><span class="lineno"><a class="line" href="utilities_8h.html#a2f4c4c70d98da93b973297b97e085b90">  630</a></span><a class="code hl_function" href="utilities_8cc.html#a2f4c4c70d98da93b973297b97e085b90">get_dimension</a>(<span class="keyword">const</span> std::string &amp;file_name)</div>
+<div class="line"><a id="l00631" name="l00631"></a><span class="lineno">  631</span>{</div>
+<div class="line"><a id="l00632" name="l00632"></a><span class="lineno">  632</span>  <span class="keyword">const</span> std::string dimension =</div>
+<div class="line"><a id="l00633" name="l00633"></a><span class="lineno">  633</span>    <a class="code hl_function" href="utilities_8cc.html#a34ac72c0df6c4a24f85c97b22d137520">get_last_value_of_parameter</a>(file_name, <span class="stringliteral">&quot;dimension&quot;</span>);</div>
+<div class="line"><a id="l00634" name="l00634"></a><span class="lineno">  634</span> </div>
+<div class="line"><a id="l00635" name="l00635"></a><span class="lineno">  635</span>  <span class="keywordflow">if</span> (dimension.size() &gt; 0)</div>
+<div class="line"><a id="l00636" name="l00636"></a><span class="lineno">  636</span>    {</div>
+<div class="line"><a id="l00637" name="l00637"></a><span class="lineno">  637</span>      <span class="comment">// Extracted from ASPECT</span></div>
+<div class="line"><a id="l00638" name="l00638"></a><span class="lineno">  638</span>      <span class="comment">// A common problem is that people have .prm files that were generated</span></div>
+<div class="line"><a id="l00639" name="l00639"></a><span class="lineno">  639</span>      <span class="comment">// on Windows, but then run this on Linux where the line endings are</span></div>
+<div class="line"><a id="l00640" name="l00640"></a><span class="lineno">  640</span>      <span class="comment">// different. This is pernicious because it means that the conversion</span></div>
+<div class="line"><a id="l00641" name="l00641"></a><span class="lineno">  641</span>      <span class="comment">// of a string such as &quot;2\r&quot; to an integer fails, but if we print</span></div>
+<div class="line"><a id="l00642" name="l00642"></a><span class="lineno">  642</span>      <span class="comment">// this string, it comes out completely garbled because it contains</span></div>
+<div class="line"><a id="l00643" name="l00643"></a><span class="lineno">  643</span>      <span class="comment">// a carriage-return without a newline -- so the error message looks</span></div>
+<div class="line"><a id="l00644" name="l00644"></a><span class="lineno">  644</span>      <span class="comment">// like this:</span></div>
+<div class="line"><a id="l00645" name="l00645"></a><span class="lineno">  645</span>      <span class="comment">//</span></div>
+<div class="line"><a id="l00646" name="l00646"></a><span class="lineno">  646</span>      <span class="comment">//    &gt;.  While reading the dimension from the input file, Lethe found</span></div>
+<div class="line"><a id="l00647" name="l00647"></a><span class="lineno">  647</span>      <span class="comment">//    a string that can not be converted to an integer: &lt;2</span></div>
+<div class="line"><a id="l00648" name="l00648"></a><span class="lineno">  648</span>      <span class="comment">//</span></div>
+<div class="line"><a id="l00649" name="l00649"></a><span class="lineno">  649</span>      <span class="comment">// Note how the end of the error message overwrites the beginning</span></div>
+<div class="line"><a id="l00650" name="l00650"></a><span class="lineno">  650</span>      <span class="comment">// of the line.</span></div>
+<div class="line"><a id="l00651" name="l00651"></a><span class="lineno">  651</span>      <span class="comment">//</span></div>
+<div class="line"><a id="l00652" name="l00652"></a><span class="lineno">  652</span>      <span class="comment">// To avoid this kind of error, specifically test up front that the</span></div>
+<div class="line"><a id="l00653" name="l00653"></a><span class="lineno">  653</span>      <span class="comment">// text in question does not contain &#39;\r&#39; characters. If we are on</span></div>
+<div class="line"><a id="l00654" name="l00654"></a><span class="lineno">  654</span>      <span class="comment">// linux, then this kind of character would means that the line endings</span></div>
+<div class="line"><a id="l00655" name="l00655"></a><span class="lineno">  655</span>      <span class="comment">// are wrong. On the other hand, if we are on windows, then the</span></div>
+<div class="line"><a id="l00656" name="l00656"></a><span class="lineno">  656</span>      <span class="comment">// getline command we have used in finding &#39;dimension&#39; would have</span></div>
+<div class="line"><a id="l00657" name="l00657"></a><span class="lineno">  657</span>      <span class="comment">// filtered it out. So its presence points to a problem.</span></div>
+<div class="line"><a id="l00658" name="l00658"></a><span class="lineno">  658</span> </div>
+<div class="line"><a id="l00659" name="l00659"></a><span class="lineno">  659</span>      AssertThrow(</div>
+<div class="line"><a id="l00660" name="l00660"></a><span class="lineno">  660</span>        dimension.find(<span class="charliteral">&#39;\r&#39;</span>) == std::string::npos,</div>
+<div class="line"><a id="l00661" name="l00661"></a><span class="lineno">  661</span>        dealii::ExcMessage(</div>
+<div class="line"><a id="l00662" name="l00662"></a><span class="lineno">  662</span>          <span class="stringliteral">&quot;It appears that your input file uses Windows-style &quot;</span></div>
+<div class="line"><a id="l00663" name="l00663"></a><span class="lineno">  663</span>          <span class="stringliteral">&quot;line endings (&#39;\\r\\n&#39;) but you are running on a system where &quot;</span></div>
+<div class="line"><a id="l00664" name="l00664"></a><span class="lineno">  664</span>          <span class="stringliteral">&quot;the C++ run time environment expects input files to have &quot;</span></div>
+<div class="line"><a id="l00665" name="l00665"></a><span class="lineno">  665</span>          <span class="stringliteral">&quot;Unix-style line endings (&#39;\\n&#39;). You need to convert your &quot;</span></div>
+<div class="line"><a id="l00666" name="l00666"></a><span class="lineno">  666</span>          <span class="stringliteral">&quot;input file to use the correct line endings before running &quot;</span></div>
+<div class="line"><a id="l00667" name="l00667"></a><span class="lineno">  667</span>          <span class="stringliteral">&quot;ASPECT with it.&quot;</span>));</div>
+<div class="line"><a id="l00668" name="l00668"></a><span class="lineno">  668</span>      <span class="keywordflow">try</span></div>
+<div class="line"><a id="l00669" name="l00669"></a><span class="lineno">  669</span>        {</div>
+<div class="line"><a id="l00670" name="l00670"></a><span class="lineno">  670</span>          <span class="keywordflow">return</span> dealii::Utilities::string_to_int(dimension);</div>
+<div class="line"><a id="l00671" name="l00671"></a><span class="lineno">  671</span>        }</div>
+<div class="line"><a id="l00672" name="l00672"></a><span class="lineno">  672</span>      <span class="keywordflow">catch</span> (...)</div>
+<div class="line"><a id="l00673" name="l00673"></a><span class="lineno">  673</span>        {</div>
+<div class="line"><a id="l00674" name="l00674"></a><span class="lineno">  674</span>          AssertThrow(<span class="keyword">false</span>,</div>
+<div class="line"><a id="l00675" name="l00675"></a><span class="lineno">  675</span>                      dealii::ExcMessage(</div>
+<div class="line"><a id="l00676" name="l00676"></a><span class="lineno">  676</span>                        <span class="stringliteral">&quot;While reading the dimension from the input file, &quot;</span></div>
+<div class="line"><a id="l00677" name="l00677"></a><span class="lineno">  677</span>                        <span class="stringliteral">&quot;Lethe found a string that can not be converted to &quot;</span></div>
+<div class="line"><a id="l00678" name="l00678"></a><span class="lineno">  678</span>                        <span class="stringliteral">&quot;an integer: &lt;&quot;</span> +</div>
+<div class="line"><a id="l00679" name="l00679"></a><span class="lineno">  679</span>                        dimension + <span class="stringliteral">&quot;&gt;.&quot;</span>));</div>
+<div class="line"><a id="l00680" name="l00680"></a><span class="lineno">  680</span>          <span class="keywordflow">return</span> 0; <span class="comment">// we should never get here.</span></div>
+<div class="line"><a id="l00681" name="l00681"></a><span class="lineno">  681</span>        }</div>
+<div class="line"><a id="l00682" name="l00682"></a><span class="lineno">  682</span>    }</div>
+<div class="line"><a id="l00683" name="l00683"></a><span class="lineno">  683</span>  <span class="keywordflow">else</span></div>
+<div class="line"><a id="l00684" name="l00684"></a><span class="lineno">  684</span>    {</div>
+<div class="line"><a id="l00685" name="l00685"></a><span class="lineno">  685</span>      AssertThrow(</div>
+<div class="line"><a id="l00686" name="l00686"></a><span class="lineno">  686</span>        <span class="keyword">false</span>,</div>
+<div class="line"><a id="l00687" name="l00687"></a><span class="lineno">  687</span>        dealii::ExcMessage(</div>
+<div class="line"><a id="l00688" name="l00688"></a><span class="lineno">  688</span>          <span class="stringliteral">&quot;While reading the dimension from the input file, &quot;</span></div>
+<div class="line"><a id="l00689" name="l00689"></a><span class="lineno">  689</span>          <span class="stringliteral">&quot;Lethe found a value that is neither 2 or 3. Since August 2023, &quot;</span></div>
+<div class="line"><a id="l00690" name="l00690"></a><span class="lineno">  690</span>          <span class="stringliteral">&quot;Lethe requires that the user explicitly specify the dimension of the problem within the parameter file. This can be achieved by adding set dimension = 2 or set dimension = 3 within the parameter file&quot;</span>));</div>
+<div class="line"><a id="l00691" name="l00691"></a><span class="lineno">  691</span>    }</div>
+<div class="line"><a id="l00692" name="l00692"></a><span class="lineno">  692</span>}</div>
 </div>
+<div class="line"><a id="l00693" name="l00693"></a><span class="lineno">  693</span> </div>
 <div class="line"><a id="l00694" name="l00694"></a><span class="lineno">  694</span> </div>
-<div class="line"><a id="l00695" name="l00695"></a><span class="lineno">  695</span> </div>
-<div class="line"><a id="l00696" name="l00696"></a><span class="lineno">  696</span><span class="keywordtype">int</span></div>
-<div class="foldopen" id="foldopen00697" data-start="{" data-end="}">
-<div class="line"><a id="l00697" name="l00697"></a><span class="lineno"><a class="line" href="utilities_8h.html#a9be87343e816d07edaee585ada17cd4a">  697</a></span><a class="code hl_function" href="utilities_8cc.html#a9be87343e816d07edaee585ada17cd4a">get_max_subsection_size</a>(<span class="keyword">const</span> std::string &amp;file_name)</div>
-<div class="line"><a id="l00698" name="l00698"></a><span class="lineno">  698</span>{</div>
-<div class="line"><a id="l00699" name="l00699"></a><span class="lineno">  699</span>  <span class="keywordtype">int</span> max_number_of_boundary_conditions =</div>
-<div class="line"><a id="l00700" name="l00700"></a><span class="lineno">  700</span>    <a class="code hl_function" href="utilities_8cc.html#a9fc5d803036352e72efcd625b2466707">get_max_value_of_parameter</a>(file_name, <span class="stringliteral">&quot;number&quot;</span>);</div>
-<div class="line"><a id="l00701" name="l00701"></a><span class="lineno">  701</span> </div>
-<div class="line"><a id="l00702" name="l00702"></a><span class="lineno">  702</span>  AssertThrow(</div>
-<div class="line"><a id="l00703" name="l00703"></a><span class="lineno">  703</span>    max_number_of_boundary_conditions &gt;= 0,</div>
-<div class="line"><a id="l00704" name="l00704"></a><span class="lineno">  704</span>    dealii::ExcMessage(</div>
-<div class="line"><a id="l00705" name="l00705"></a><span class="lineno">  705</span>      <span class="stringliteral">&quot;Your parameter file does not contain any indication for the number of boundary conditions for any physics supported by Lethe. Since November 2023, Lethe requires that a \&quot;boundary conditions\&quot; subsection is present with at least \&quot;number=0\&quot; &quot;</span>));</div>
-<div class="line"><a id="l00706" name="l00706"></a><span class="lineno">  706</span> </div>
-<div class="line"><a id="l00707" name="l00707"></a><span class="lineno">  707</span>  <span class="keywordflow">return</span> std::max(max_number_of_boundary_conditions, 0);</div>
-<div class="line"><a id="l00708" name="l00708"></a><span class="lineno">  708</span>}</div>
+<div class="line"><a id="l00695" name="l00695"></a><span class="lineno">  695</span><span class="keywordtype">int</span></div>
+<div class="foldopen" id="foldopen00696" data-start="{" data-end="}">
+<div class="line"><a id="l00696" name="l00696"></a><span class="lineno"><a class="line" href="utilities_8h.html#a9be87343e816d07edaee585ada17cd4a">  696</a></span><a class="code hl_function" href="utilities_8cc.html#a9be87343e816d07edaee585ada17cd4a">get_max_subsection_size</a>(<span class="keyword">const</span> std::string &amp;file_name)</div>
+<div class="line"><a id="l00697" name="l00697"></a><span class="lineno">  697</span>{</div>
+<div class="line"><a id="l00698" name="l00698"></a><span class="lineno">  698</span>  <span class="keywordtype">int</span> max_number_of_boundary_conditions =</div>
+<div class="line"><a id="l00699" name="l00699"></a><span class="lineno">  699</span>    <a class="code hl_function" href="utilities_8cc.html#a9fc5d803036352e72efcd625b2466707">get_max_value_of_parameter</a>(file_name, <span class="stringliteral">&quot;number&quot;</span>);</div>
+<div class="line"><a id="l00700" name="l00700"></a><span class="lineno">  700</span> </div>
+<div class="line"><a id="l00701" name="l00701"></a><span class="lineno">  701</span>  AssertThrow(</div>
+<div class="line"><a id="l00702" name="l00702"></a><span class="lineno">  702</span>    max_number_of_boundary_conditions &gt;= 0,</div>
+<div class="line"><a id="l00703" name="l00703"></a><span class="lineno">  703</span>    dealii::ExcMessage(</div>
+<div class="line"><a id="l00704" name="l00704"></a><span class="lineno">  704</span>      <span class="stringliteral">&quot;Your parameter file does not contain any indication for the number of boundary conditions for any physics supported by Lethe. Since November 2023, Lethe requires that a \&quot;boundary conditions\&quot; subsection is present with at least \&quot;number=0\&quot; &quot;</span>));</div>
+<div class="line"><a id="l00705" name="l00705"></a><span class="lineno">  705</span> </div>
+<div class="line"><a id="l00706" name="l00706"></a><span class="lineno">  706</span>  <span class="keywordflow">return</span> std::max(max_number_of_boundary_conditions, 0);</div>
+<div class="line"><a id="l00707" name="l00707"></a><span class="lineno">  707</span>}</div>
 </div>
-<div class="line"><a id="l00709" name="l00709"></a><span class="lineno">  709</span><span class="comment"></span> </div>
-<div class="line"><a id="l00710" name="l00710"></a><span class="lineno">  710</span><span class="comment">/**</span></div>
-<div class="line"><a id="l00711" name="l00711"></a><span class="lineno">  711</span><span class="comment"> * @brief Concatenate words which are passed from the command line to a main function</span></div>
-<div class="line"><a id="l00712" name="l00712"></a><span class="lineno">  712</span><span class="comment"> * into a single string in which the words are seperated by space.</span></div>
-<div class="line"><a id="l00713" name="l00713"></a><span class="lineno">  713</span><span class="comment"> *</span></div>
-<div class="line"><a id="l00714" name="l00714"></a><span class="lineno">  714</span><span class="comment"> * @param[in] argc number of arguments in C style.</span></div>
-<div class="line"><a id="l00715" name="l00715"></a><span class="lineno">  715</span><span class="comment"> * @param[in] argv arguments themselves in C style.</span></div>
-<div class="line"><a id="l00716" name="l00716"></a><span class="lineno">  716</span><span class="comment"> */</span></div>
-<div class="line"><a id="l00717" name="l00717"></a><span class="lineno">  717</span> </div>
-<div class="line"><a id="l00718" name="l00718"></a><span class="lineno">  718</span>std::string</div>
-<div class="foldopen" id="foldopen00719" data-start="{" data-end="}">
-<div class="line"><a id="l00719" name="l00719"></a><span class="lineno"><a class="line" href="utilities_8h.html#aa2b435317e26c5fbf3f8f86b77c7fe4c">  719</a></span><a class="code hl_function" href="utilities_8cc.html#aa2b435317e26c5fbf3f8f86b77c7fe4c">concatenate_strings</a>(<span class="keyword">const</span> <span class="keywordtype">int</span> argc, <span class="keywordtype">char</span> **argv)</div>
-<div class="line"><a id="l00720" name="l00720"></a><span class="lineno">  720</span>{</div>
-<div class="line"><a id="l00721" name="l00721"></a><span class="lineno">  721</span>  std::string result = std::string(argv[0]);</div>
-<div class="line"><a id="l00722" name="l00722"></a><span class="lineno">  722</span> </div>
-<div class="line"><a id="l00723" name="l00723"></a><span class="lineno">  723</span>  <span class="keywordflow">for</span> (<span class="keywordtype">int</span> i = 1; i &lt; argc; ++i)</div>
-<div class="line"><a id="l00724" name="l00724"></a><span class="lineno">  724</span>    result = result + <span class="stringliteral">&quot; &quot;</span> + std::string(argv[i]);</div>
-<div class="line"><a id="l00725" name="l00725"></a><span class="lineno">  725</span> </div>
-<div class="line"><a id="l00726" name="l00726"></a><span class="lineno">  726</span>  <span class="keywordflow">return</span> result;</div>
-<div class="line"><a id="l00727" name="l00727"></a><span class="lineno">  727</span>}</div>
+<div class="line"><a id="l00708" name="l00708"></a><span class="lineno">  708</span><span class="comment"></span> </div>
+<div class="line"><a id="l00709" name="l00709"></a><span class="lineno">  709</span><span class="comment">/**</span></div>
+<div class="line"><a id="l00710" name="l00710"></a><span class="lineno">  710</span><span class="comment"> * @brief Concatenate words which are passed from the command line to a main function</span></div>
+<div class="line"><a id="l00711" name="l00711"></a><span class="lineno">  711</span><span class="comment"> * into a single string in which the words are seperated by space.</span></div>
+<div class="line"><a id="l00712" name="l00712"></a><span class="lineno">  712</span><span class="comment"> *</span></div>
+<div class="line"><a id="l00713" name="l00713"></a><span class="lineno">  713</span><span class="comment"> * @param[in] argc number of arguments in C style.</span></div>
+<div class="line"><a id="l00714" name="l00714"></a><span class="lineno">  714</span><span class="comment"> * @param[in] argv arguments themselves in C style.</span></div>
+<div class="line"><a id="l00715" name="l00715"></a><span class="lineno">  715</span><span class="comment"> */</span></div>
+<div class="line"><a id="l00716" name="l00716"></a><span class="lineno">  716</span> </div>
+<div class="line"><a id="l00717" name="l00717"></a><span class="lineno">  717</span>std::string</div>
+<div class="foldopen" id="foldopen00718" data-start="{" data-end="}">
+<div class="line"><a id="l00718" name="l00718"></a><span class="lineno"><a class="line" href="utilities_8h.html#aa2b435317e26c5fbf3f8f86b77c7fe4c">  718</a></span><a class="code hl_function" href="utilities_8cc.html#aa2b435317e26c5fbf3f8f86b77c7fe4c">concatenate_strings</a>(<span class="keyword">const</span> <span class="keywordtype">int</span> argc, <span class="keywordtype">char</span> **argv)</div>
+<div class="line"><a id="l00719" name="l00719"></a><span class="lineno">  719</span>{</div>
+<div class="line"><a id="l00720" name="l00720"></a><span class="lineno">  720</span>  std::string result = std::string(argv[0]);</div>
+<div class="line"><a id="l00721" name="l00721"></a><span class="lineno">  721</span> </div>
+<div class="line"><a id="l00722" name="l00722"></a><span class="lineno">  722</span>  <span class="keywordflow">for</span> (<span class="keywordtype">int</span> i = 1; i &lt; argc; ++i)</div>
+<div class="line"><a id="l00723" name="l00723"></a><span class="lineno">  723</span>    result = result + <span class="stringliteral">&quot; &quot;</span> + std::string(argv[i]);</div>
+<div class="line"><a id="l00724" name="l00724"></a><span class="lineno">  724</span> </div>
+<div class="line"><a id="l00725" name="l00725"></a><span class="lineno">  725</span>  <span class="keywordflow">return</span> result;</div>
+<div class="line"><a id="l00726" name="l00726"></a><span class="lineno">  726</span>}</div>
 </div>
-<div class="line"><a id="l00728" name="l00728"></a><span class="lineno">  728</span><span class="comment"></span> </div>
-<div class="line"><a id="l00729" name="l00729"></a><span class="lineno">  729</span><span class="comment">/**</span></div>
-<div class="line"><a id="l00730" name="l00730"></a><span class="lineno">  730</span><span class="comment"> * @brief Print the information of the deal.II and Lethe branches</span></div>
-<div class="line"><a id="l00731" name="l00731"></a><span class="lineno">  731</span><span class="comment"> * used to run an application in the &quot;git describe&quot; format.</span></div>
-<div class="line"><a id="l00732" name="l00732"></a><span class="lineno">  732</span><span class="comment"> *</span></div>
-<div class="line"><a id="l00733" name="l00733"></a><span class="lineno">  733</span><span class="comment"> * @param[in] pcout Parallel output stream</span></div>
-<div class="line"><a id="l00734" name="l00734"></a><span class="lineno">  734</span><span class="comment"> */</span></div>
-<div class="line"><a id="l00735" name="l00735"></a><span class="lineno">  735</span><span class="keywordtype">void</span></div>
-<div class="foldopen" id="foldopen00736" data-start="{" data-end="}">
-<div class="line"><a id="l00736" name="l00736"></a><span class="lineno"><a class="line" href="utilities_8h.html#a8f95af8244cc326628392a04517913c7">  736</a></span><a class="code hl_function" href="utilities_8cc.html#a8f95af8244cc326628392a04517913c7">print_version_info</a>(<span class="keyword">const</span> ConditionalOStream &amp;pcout)</div>
-<div class="line"><a id="l00737" name="l00737"></a><span class="lineno">  737</span>{</div>
-<div class="line"><a id="l00738" name="l00738"></a><span class="lineno">  738</span>  (void)pcout;</div>
-<div class="line"><a id="l00739" name="l00739"></a><span class="lineno">  739</span><span class="preprocessor">#if DEAL_II_VERSION_GTE(9, 7, 0)</span></div>
-<div class="line"><a id="l00740" name="l00740"></a><span class="lineno">  740</span>  <span class="comment">// Copy the tags to be able to delete the first v</span></div>
-<div class="line"><a id="l00741" name="l00741"></a><span class="lineno">  741</span>  std::string lethe_tag  = LETHE_GIT_FANCY_TAG;</div>
-<div class="line"><a id="l00742" name="l00742"></a><span class="lineno">  742</span>  std::string dealii_tag = DEAL_II_GIT_FANCY_TAG;</div>
-<div class="line"><a id="l00743" name="l00743"></a><span class="lineno">  743</span> </div>
-<div class="line"><a id="l00744" name="l00744"></a><span class="lineno">  744</span>  <span class="comment">// Print tags using the right format</span></div>
-<div class="line"><a id="l00745" name="l00745"></a><span class="lineno">  745</span>  pcout &lt;&lt; <span class="stringliteral">&quot;lethe/&quot;</span> &lt;&lt; lethe_tag.erase(0, 1) &lt;&lt; <span class="stringliteral">&quot; deal.II/&quot;</span></div>
-<div class="line"><a id="l00746" name="l00746"></a><span class="lineno">  746</span>        &lt;&lt; dealii_tag.erase(0, 1) &lt;&lt; std::endl;</div>
-<div class="line"><a id="l00747" name="l00747"></a><span class="lineno">  747</span>  pcout &lt;&lt; std::endl;</div>
-<div class="line"><a id="l00748" name="l00748"></a><span class="lineno">  748</span><span class="preprocessor">#else</span></div>
-<div class="line"><a id="l00749" name="l00749"></a><span class="lineno">  749</span>  AssertThrow(</div>
-<div class="line"><a id="l00750" name="l00750"></a><span class="lineno">  750</span>    <span class="keyword">false</span>,</div>
-<div class="line"><a id="l00751" name="l00751"></a><span class="lineno">  751</span>    ExcMessage(</div>
-<div class="line"><a id="l00752" name="l00752"></a><span class="lineno">  752</span>      <span class="stringliteral">&quot;To print version information using -V you need a version of deal.II &gt;= 9.7.0.&quot;</span>));</div>
-<div class="line"><a id="l00753" name="l00753"></a><span class="lineno">  753</span><span class="preprocessor">#endif</span></div>
-<div class="line"><a id="l00754" name="l00754"></a><span class="lineno">  754</span>}</div>
+<div class="line"><a id="l00727" name="l00727"></a><span class="lineno">  727</span><span class="comment"></span> </div>
+<div class="line"><a id="l00728" name="l00728"></a><span class="lineno">  728</span><span class="comment">/**</span></div>
+<div class="line"><a id="l00729" name="l00729"></a><span class="lineno">  729</span><span class="comment"> * @brief Print the information of the deal.II and Lethe branches</span></div>
+<div class="line"><a id="l00730" name="l00730"></a><span class="lineno">  730</span><span class="comment"> * used to run an application in the &quot;git describe&quot; format.</span></div>
+<div class="line"><a id="l00731" name="l00731"></a><span class="lineno">  731</span><span class="comment"> *</span></div>
+<div class="line"><a id="l00732" name="l00732"></a><span class="lineno">  732</span><span class="comment"> * @param[in] pcout Parallel output stream</span></div>
+<div class="line"><a id="l00733" name="l00733"></a><span class="lineno">  733</span><span class="comment"> */</span></div>
+<div class="line"><a id="l00734" name="l00734"></a><span class="lineno">  734</span><span class="keywordtype">void</span></div>
+<div class="foldopen" id="foldopen00735" data-start="{" data-end="}">
+<div class="line"><a id="l00735" name="l00735"></a><span class="lineno"><a class="line" href="utilities_8h.html#a8f95af8244cc326628392a04517913c7">  735</a></span><a class="code hl_function" href="utilities_8cc.html#a8f95af8244cc326628392a04517913c7">print_version_info</a>(<span class="keyword">const</span> ConditionalOStream &amp;pcout)</div>
+<div class="line"><a id="l00736" name="l00736"></a><span class="lineno">  736</span>{</div>
+<div class="line"><a id="l00737" name="l00737"></a><span class="lineno">  737</span>  (void)pcout;</div>
+<div class="line"><a id="l00738" name="l00738"></a><span class="lineno">  738</span><span class="preprocessor">#if DEAL_II_VERSION_GTE(9, 7, 0)</span></div>
+<div class="line"><a id="l00739" name="l00739"></a><span class="lineno">  739</span>  <span class="comment">// Copy the tags to be able to delete the first v</span></div>
+<div class="line"><a id="l00740" name="l00740"></a><span class="lineno">  740</span>  std::string lethe_tag  = LETHE_GIT_FANCY_TAG;</div>
+<div class="line"><a id="l00741" name="l00741"></a><span class="lineno">  741</span>  std::string dealii_tag = DEAL_II_GIT_FANCY_TAG;</div>
+<div class="line"><a id="l00742" name="l00742"></a><span class="lineno">  742</span> </div>
+<div class="line"><a id="l00743" name="l00743"></a><span class="lineno">  743</span>  <span class="comment">// Print tags using the right format</span></div>
+<div class="line"><a id="l00744" name="l00744"></a><span class="lineno">  744</span>  pcout &lt;&lt; <span class="stringliteral">&quot;lethe/&quot;</span> &lt;&lt; lethe_tag.erase(0, 1) &lt;&lt; <span class="stringliteral">&quot; deal.II/&quot;</span></div>
+<div class="line"><a id="l00745" name="l00745"></a><span class="lineno">  745</span>        &lt;&lt; dealii_tag.erase(0, 1) &lt;&lt; std::endl;</div>
+<div class="line"><a id="l00746" name="l00746"></a><span class="lineno">  746</span>  pcout &lt;&lt; std::endl;</div>
+<div class="line"><a id="l00747" name="l00747"></a><span class="lineno">  747</span><span class="preprocessor">#else</span></div>
+<div class="line"><a id="l00748" name="l00748"></a><span class="lineno">  748</span>  AssertThrow(</div>
+<div class="line"><a id="l00749" name="l00749"></a><span class="lineno">  749</span>    <span class="keyword">false</span>,</div>
+<div class="line"><a id="l00750" name="l00750"></a><span class="lineno">  750</span>    ExcMessage(</div>
+<div class="line"><a id="l00751" name="l00751"></a><span class="lineno">  751</span>      <span class="stringliteral">&quot;To print version information using -V you need a version of deal.II &gt;= 9.7.0.&quot;</span>));</div>
+<div class="line"><a id="l00752" name="l00752"></a><span class="lineno">  752</span><span class="preprocessor">#endif</span></div>
+<div class="line"><a id="l00753" name="l00753"></a><span class="lineno">  753</span>}</div>
 </div>
-<div class="line"><a id="l00755" name="l00755"></a><span class="lineno">  755</span><span class="comment"></span> </div>
-<div class="line"><a id="l00756" name="l00756"></a><span class="lineno">  756</span><span class="comment">/**</span></div>
-<div class="line"><a id="l00757" name="l00757"></a><span class="lineno">  757</span><span class="comment"> * @brief Parse the arguments given to the application</span></div>
-<div class="line"><a id="l00758" name="l00758"></a><span class="lineno">  758</span><span class="comment"> *</span></div>
-<div class="line"><a id="l00759" name="l00759"></a><span class="lineno">  759</span><span class="comment"> * @param[in] argc Number of arguments</span></div>
-<div class="line"><a id="l00760" name="l00760"></a><span class="lineno">  760</span><span class="comment"> * @param[in] argv Array of strings representing the arguments</span></div>
-<div class="line"><a id="l00761" name="l00761"></a><span class="lineno">  761</span><span class="comment"> * @return Tuple containing a map with the command line flags</span></div>
-<div class="line"><a id="l00762" name="l00762"></a><span class="lineno">  762</span><span class="comment"> * and a boolean set to 1 for the specific flag; and a vector of</span></div>
-<div class="line"><a id="l00763" name="l00763"></a><span class="lineno">  763</span><span class="comment"> * strings with the rest of the arguments that are not flags; in Lethe,</span></div>
-<div class="line"><a id="l00764" name="l00764"></a><span class="lineno">  764</span><span class="comment"> * this corresponds to the parameter file given to the application.</span></div>
-<div class="line"><a id="l00765" name="l00765"></a><span class="lineno">  765</span><span class="comment"> */</span></div>
-<div class="line"><a id="l00766" name="l00766"></a><span class="lineno">  766</span>std::tuple&lt;std::map&lt;std::string, bool&gt;, std::vector&lt;std::string&gt;&gt;</div>
-<div class="foldopen" id="foldopen00767" data-start="{" data-end="}">
-<div class="line"><a id="l00767" name="l00767"></a><span class="lineno"><a class="line" href="utilities_8h.html#a3badf505e17c1f77892888491dd53f5f">  767</a></span><a class="code hl_function" href="utilities_8cc.html#a3badf505e17c1f77892888491dd53f5f">parse_args</a>(<span class="keywordtype">int</span> argc, <span class="keywordtype">char</span> **argv)</div>
-<div class="line"><a id="l00768" name="l00768"></a><span class="lineno">  768</span>{</div>
-<div class="line"><a id="l00769" name="l00769"></a><span class="lineno">  769</span>  <span class="keywordtype">int</span>                         argi = 1; <span class="comment">// skip program name</span></div>
-<div class="line"><a id="l00770" name="l00770"></a><span class="lineno">  770</span>  std::map&lt;std::string, bool&gt; options{};</div>
-<div class="line"><a id="l00771" name="l00771"></a><span class="lineno">  771</span>  <span class="keywordflow">for</span> (; argi &lt; argc; ++argi)</div>
-<div class="line"><a id="l00772" name="l00772"></a><span class="lineno">  772</span>    {</div>
-<div class="line"><a id="l00773" name="l00773"></a><span class="lineno">  773</span>      std::string arg{argv[argi]};</div>
-<div class="line"><a id="l00774" name="l00774"></a><span class="lineno">  774</span>      <span class="keyword">auto</span>        n{arg.length()};</div>
-<div class="line"><a id="l00775" name="l00775"></a><span class="lineno">  775</span>      <span class="keywordflow">if</span> (n == 0 || arg[0] != <span class="charliteral">&#39;-&#39;</span> || n == 1)</div>
-<div class="line"><a id="l00776" name="l00776"></a><span class="lineno">  776</span>        { <span class="comment">// empty arg or single hyphen</span></div>
-<div class="line"><a id="l00777" name="l00777"></a><span class="lineno">  777</span>          <span class="keywordflow">break</span>;</div>
-<div class="line"><a id="l00778" name="l00778"></a><span class="lineno">  778</span>        }</div>
-<div class="line"><a id="l00779" name="l00779"></a><span class="lineno">  779</span>      <span class="keywordflow">if</span> (arg[1] != <span class="charliteral">&#39;-&#39;</span>)</div>
-<div class="line"><a id="l00780" name="l00780"></a><span class="lineno">  780</span>        { <span class="comment">// short option</span></div>
-<div class="line"><a id="l00781" name="l00781"></a><span class="lineno">  781</span>          <span class="keywordflow">for</span> (<span class="keyword">decltype</span>(n) i = 1; i &lt; n; ++i)</div>
-<div class="line"><a id="l00782" name="l00782"></a><span class="lineno">  782</span>            {</div>
-<div class="line"><a id="l00783" name="l00783"></a><span class="lineno">  783</span>              options[std::string{<span class="charliteral">&#39;-&#39;</span>} + std::string{arg[i]}] = <span class="keyword">true</span>;</div>
-<div class="line"><a id="l00784" name="l00784"></a><span class="lineno">  784</span>            }</div>
-<div class="line"><a id="l00785" name="l00785"></a><span class="lineno">  785</span>        }</div>
-<div class="line"><a id="l00786" name="l00786"></a><span class="lineno">  786</span>      <span class="keywordflow">else</span></div>
-<div class="line"><a id="l00787" name="l00787"></a><span class="lineno">  787</span>        { <span class="comment">// long option</span></div>
-<div class="line"><a id="l00788" name="l00788"></a><span class="lineno">  788</span>          <span class="keywordflow">if</span> (n == 2)</div>
-<div class="line"><a id="l00789" name="l00789"></a><span class="lineno">  789</span>            { <span class="comment">// done options on &quot;--&quot; and skip it</span></div>
-<div class="line"><a id="l00790" name="l00790"></a><span class="lineno">  790</span>              argi++;</div>
-<div class="line"><a id="l00791" name="l00791"></a><span class="lineno">  791</span>              <span class="keywordflow">break</span>;</div>
-<div class="line"><a id="l00792" name="l00792"></a><span class="lineno">  792</span>            }</div>
-<div class="line"><a id="l00793" name="l00793"></a><span class="lineno">  793</span>          options[arg] = <span class="keyword">true</span>;</div>
-<div class="line"><a id="l00794" name="l00794"></a><span class="lineno">  794</span>        }</div>
-<div class="line"><a id="l00795" name="l00795"></a><span class="lineno">  795</span>    }</div>
-<div class="line"><a id="l00796" name="l00796"></a><span class="lineno">  796</span>  std::vector&lt;std::string&gt; args{};</div>
-<div class="line"><a id="l00797" name="l00797"></a><span class="lineno">  797</span>  <span class="keywordflow">for</span> (; argi &lt; argc; ++argi)</div>
-<div class="line"><a id="l00798" name="l00798"></a><span class="lineno">  798</span>    {</div>
-<div class="line"><a id="l00799" name="l00799"></a><span class="lineno">  799</span>      std::string arg{argv[argi]};</div>
-<div class="line"><a id="l00800" name="l00800"></a><span class="lineno">  800</span>      args.push_back(arg);</div>
-<div class="line"><a id="l00801" name="l00801"></a><span class="lineno">  801</span>    }</div>
-<div class="line"><a id="l00802" name="l00802"></a><span class="lineno">  802</span>  <span class="keywordflow">return</span> {options, args};</div>
-<div class="line"><a id="l00803" name="l00803"></a><span class="lineno">  803</span>}</div>
+<div class="line"><a id="l00754" name="l00754"></a><span class="lineno">  754</span><span class="comment"></span> </div>
+<div class="line"><a id="l00755" name="l00755"></a><span class="lineno">  755</span><span class="comment">/**</span></div>
+<div class="line"><a id="l00756" name="l00756"></a><span class="lineno">  756</span><span class="comment"> * @brief Parse the arguments given to the application</span></div>
+<div class="line"><a id="l00757" name="l00757"></a><span class="lineno">  757</span><span class="comment"> *</span></div>
+<div class="line"><a id="l00758" name="l00758"></a><span class="lineno">  758</span><span class="comment"> * @param[in] argc Number of arguments</span></div>
+<div class="line"><a id="l00759" name="l00759"></a><span class="lineno">  759</span><span class="comment"> * @param[in] argv Array of strings representing the arguments</span></div>
+<div class="line"><a id="l00760" name="l00760"></a><span class="lineno">  760</span><span class="comment"> * @return Tuple containing a map with the command line flags</span></div>
+<div class="line"><a id="l00761" name="l00761"></a><span class="lineno">  761</span><span class="comment"> * and a boolean set to 1 for the specific flag; and a vector of</span></div>
+<div class="line"><a id="l00762" name="l00762"></a><span class="lineno">  762</span><span class="comment"> * strings with the rest of the arguments that are not flags; in Lethe,</span></div>
+<div class="line"><a id="l00763" name="l00763"></a><span class="lineno">  763</span><span class="comment"> * this corresponds to the parameter file given to the application.</span></div>
+<div class="line"><a id="l00764" name="l00764"></a><span class="lineno">  764</span><span class="comment"> */</span></div>
+<div class="line"><a id="l00765" name="l00765"></a><span class="lineno">  765</span>std::tuple&lt;std::map&lt;std::string, bool&gt;, std::vector&lt;std::string&gt;&gt;</div>
+<div class="foldopen" id="foldopen00766" data-start="{" data-end="}">
+<div class="line"><a id="l00766" name="l00766"></a><span class="lineno"><a class="line" href="utilities_8h.html#a3badf505e17c1f77892888491dd53f5f">  766</a></span><a class="code hl_function" href="utilities_8cc.html#a3badf505e17c1f77892888491dd53f5f">parse_args</a>(<span class="keywordtype">int</span> argc, <span class="keywordtype">char</span> **argv)</div>
+<div class="line"><a id="l00767" name="l00767"></a><span class="lineno">  767</span>{</div>
+<div class="line"><a id="l00768" name="l00768"></a><span class="lineno">  768</span>  <span class="keywordtype">int</span>                         argi = 1; <span class="comment">// skip program name</span></div>
+<div class="line"><a id="l00769" name="l00769"></a><span class="lineno">  769</span>  std::map&lt;std::string, bool&gt; options{};</div>
+<div class="line"><a id="l00770" name="l00770"></a><span class="lineno">  770</span>  <span class="keywordflow">for</span> (; argi &lt; argc; ++argi)</div>
+<div class="line"><a id="l00771" name="l00771"></a><span class="lineno">  771</span>    {</div>
+<div class="line"><a id="l00772" name="l00772"></a><span class="lineno">  772</span>      std::string arg{argv[argi]};</div>
+<div class="line"><a id="l00773" name="l00773"></a><span class="lineno">  773</span>      <span class="keyword">auto</span>        n{arg.length()};</div>
+<div class="line"><a id="l00774" name="l00774"></a><span class="lineno">  774</span>      <span class="keywordflow">if</span> (n == 0 || arg[0] != <span class="charliteral">&#39;-&#39;</span> || n == 1)</div>
+<div class="line"><a id="l00775" name="l00775"></a><span class="lineno">  775</span>        { <span class="comment">// empty arg or single hyphen</span></div>
+<div class="line"><a id="l00776" name="l00776"></a><span class="lineno">  776</span>          <span class="keywordflow">break</span>;</div>
+<div class="line"><a id="l00777" name="l00777"></a><span class="lineno">  777</span>        }</div>
+<div class="line"><a id="l00778" name="l00778"></a><span class="lineno">  778</span>      <span class="keywordflow">if</span> (arg[1] != <span class="charliteral">&#39;-&#39;</span>)</div>
+<div class="line"><a id="l00779" name="l00779"></a><span class="lineno">  779</span>        { <span class="comment">// short option</span></div>
+<div class="line"><a id="l00780" name="l00780"></a><span class="lineno">  780</span>          <span class="keywordflow">for</span> (<span class="keyword">decltype</span>(n) i = 1; i &lt; n; ++i)</div>
+<div class="line"><a id="l00781" name="l00781"></a><span class="lineno">  781</span>            {</div>
+<div class="line"><a id="l00782" name="l00782"></a><span class="lineno">  782</span>              options[std::string{<span class="charliteral">&#39;-&#39;</span>} + std::string{arg[i]}] = <span class="keyword">true</span>;</div>
+<div class="line"><a id="l00783" name="l00783"></a><span class="lineno">  783</span>            }</div>
+<div class="line"><a id="l00784" name="l00784"></a><span class="lineno">  784</span>        }</div>
+<div class="line"><a id="l00785" name="l00785"></a><span class="lineno">  785</span>      <span class="keywordflow">else</span></div>
+<div class="line"><a id="l00786" name="l00786"></a><span class="lineno">  786</span>        { <span class="comment">// long option</span></div>
+<div class="line"><a id="l00787" name="l00787"></a><span class="lineno">  787</span>          <span class="keywordflow">if</span> (n == 2)</div>
+<div class="line"><a id="l00788" name="l00788"></a><span class="lineno">  788</span>            { <span class="comment">// done options on &quot;--&quot; and skip it</span></div>
+<div class="line"><a id="l00789" name="l00789"></a><span class="lineno">  789</span>              argi++;</div>
+<div class="line"><a id="l00790" name="l00790"></a><span class="lineno">  790</span>              <span class="keywordflow">break</span>;</div>
+<div class="line"><a id="l00791" name="l00791"></a><span class="lineno">  791</span>            }</div>
+<div class="line"><a id="l00792" name="l00792"></a><span class="lineno">  792</span>          options[arg] = <span class="keyword">true</span>;</div>
+<div class="line"><a id="l00793" name="l00793"></a><span class="lineno">  793</span>        }</div>
+<div class="line"><a id="l00794" name="l00794"></a><span class="lineno">  794</span>    }</div>
+<div class="line"><a id="l00795" name="l00795"></a><span class="lineno">  795</span>  std::vector&lt;std::string&gt; args{};</div>
+<div class="line"><a id="l00796" name="l00796"></a><span class="lineno">  796</span>  <span class="keywordflow">for</span> (; argi &lt; argc; ++argi)</div>
+<div class="line"><a id="l00797" name="l00797"></a><span class="lineno">  797</span>    {</div>
+<div class="line"><a id="l00798" name="l00798"></a><span class="lineno">  798</span>      std::string arg{argv[argi]};</div>
+<div class="line"><a id="l00799" name="l00799"></a><span class="lineno">  799</span>      args.push_back(arg);</div>
+<div class="line"><a id="l00800" name="l00800"></a><span class="lineno">  800</span>    }</div>
+<div class="line"><a id="l00801" name="l00801"></a><span class="lineno">  801</span>  <span class="keywordflow">return</span> {options, args};</div>
+<div class="line"><a id="l00802" name="l00802"></a><span class="lineno">  802</span>}</div>
 </div>
-<div class="line"><a id="l00804" name="l00804"></a><span class="lineno">  804</span><span class="comment"></span> </div>
-<div class="line"><a id="l00805" name="l00805"></a><span class="lineno">  805</span><span class="comment">/**</span></div>
-<div class="line"><a id="l00806" name="l00806"></a><span class="lineno">  806</span><span class="comment"> * @brief Print the parameters given by the parameter file of the application</span></div>
-<div class="line"><a id="l00807" name="l00807"></a><span class="lineno">  807</span><span class="comment"> *</span></div>
-<div class="line"><a id="l00808" name="l00808"></a><span class="lineno">  808</span><span class="comment"> * @param[in] pcout Parallel output stream</span></div>
-<div class="line"><a id="l00809" name="l00809"></a><span class="lineno">  809</span><span class="comment"> * @param[in] prm Object containing the parameters parsed from the parameter</span></div>
-<div class="line"><a id="l00810" name="l00810"></a><span class="lineno">  810</span><span class="comment"> * file</span></div>
-<div class="line"><a id="l00811" name="l00811"></a><span class="lineno">  811</span><span class="comment"> */</span></div>
-<div class="line"><a id="l00812" name="l00812"></a><span class="lineno">  812</span><span class="keywordtype">void</span></div>
-<div class="foldopen" id="foldopen00813" data-start="{" data-end="}">
-<div class="line"><a id="l00813" name="l00813"></a><span class="lineno"><a class="line" href="utilities_8h.html#a5f8e2b4fdf7a2b6eceab3461c4edd221">  813</a></span><a class="code hl_function" href="utilities_8cc.html#a5f8e2b4fdf7a2b6eceab3461c4edd221">print_parameters_to_output_file</a>(<span class="keyword">const</span> ConditionalOStream &amp;pcout,</div>
-<div class="line"><a id="l00814" name="l00814"></a><span class="lineno">  814</span>                                <span class="keyword">const</span> ParameterHandler   &amp;prm,</div>
-<div class="line"><a id="l00815" name="l00815"></a><span class="lineno">  815</span>                                <span class="keyword">const</span> std::string        &amp;file_name)</div>
-<div class="line"><a id="l00816" name="l00816"></a><span class="lineno">  816</span>{</div>
-<div class="line"><a id="l00817" name="l00817"></a><span class="lineno">  817</span>  <span class="keyword">const</span> std::string print_parameters =</div>
-<div class="line"><a id="l00818" name="l00818"></a><span class="lineno">  818</span>    <a class="code hl_function" href="utilities_8cc.html#a34ac72c0df6c4a24f85c97b22d137520">get_last_value_of_parameter</a>(file_name, <span class="stringliteral">&quot;print parameters&quot;</span>);</div>
-<div class="line"><a id="l00819" name="l00819"></a><span class="lineno">  819</span> </div>
-<div class="line"><a id="l00820" name="l00820"></a><span class="lineno">  820</span>  <span class="keywordflow">if</span> (print_parameters == <span class="stringliteral">&quot;only changed&quot;</span>)</div>
-<div class="line"><a id="l00821" name="l00821"></a><span class="lineno">  821</span>    {</div>
-<div class="line"><a id="l00822" name="l00822"></a><span class="lineno">  822</span><span class="preprocessor">#if DEAL_II_VERSION_GTE(9, 7, 0)</span></div>
-<div class="line"><a id="l00823" name="l00823"></a><span class="lineno">  823</span>      prm.print_parameters(pcout.get_stream(),</div>
-<div class="line"><a id="l00824" name="l00824"></a><span class="lineno">  824</span>                           ParameterHandler::OutputStyle::PRM |</div>
-<div class="line"><a id="l00825" name="l00825"></a><span class="lineno">  825</span>                             ParameterHandler::OutputStyle::Short |</div>
-<div class="line"><a id="l00826" name="l00826"></a><span class="lineno">  826</span>                             ParameterHandler::KeepDeclarationOrder |</div>
-<div class="line"><a id="l00827" name="l00827"></a><span class="lineno">  827</span>                             ParameterHandler::KeepOnlyChanged);</div>
-<div class="line"><a id="l00828" name="l00828"></a><span class="lineno">  828</span>      pcout &lt;&lt; std::endl &lt;&lt; std::endl;</div>
-<div class="line"><a id="l00829" name="l00829"></a><span class="lineno">  829</span><span class="preprocessor">#else</span></div>
-<div class="line"><a id="l00830" name="l00830"></a><span class="lineno">  830</span>      AssertThrow(</div>
-<div class="line"><a id="l00831" name="l00831"></a><span class="lineno">  831</span>        <span class="keyword">false</span>,</div>
-<div class="line"><a id="l00832" name="l00832"></a><span class="lineno">  832</span>        ExcMessage(</div>
-<div class="line"><a id="l00833" name="l00833"></a><span class="lineno">  833</span>          <span class="stringliteral">&quot;To print only changed parameters you need a version of deal.II &gt;= 9.7.0.&quot;</span>));</div>
-<div class="line"><a id="l00834" name="l00834"></a><span class="lineno">  834</span><span class="preprocessor">#endif</span></div>
-<div class="line"><a id="l00835" name="l00835"></a><span class="lineno">  835</span>    }</div>
-<div class="line"><a id="l00836" name="l00836"></a><span class="lineno">  836</span>  <span class="keywordflow">else</span> <span class="keywordflow">if</span> (print_parameters == <span class="stringliteral">&quot;all&quot;</span>)</div>
-<div class="line"><a id="l00837" name="l00837"></a><span class="lineno">  837</span>    {</div>
-<div class="line"><a id="l00838" name="l00838"></a><span class="lineno">  838</span>      prm.print_parameters(pcout.get_stream(),</div>
-<div class="line"><a id="l00839" name="l00839"></a><span class="lineno">  839</span>                           ParameterHandler::OutputStyle::PRM |</div>
-<div class="line"><a id="l00840" name="l00840"></a><span class="lineno">  840</span>                             ParameterHandler::OutputStyle::Short |</div>
-<div class="line"><a id="l00841" name="l00841"></a><span class="lineno">  841</span>                             ParameterHandler::KeepDeclarationOrder);</div>
-<div class="line"><a id="l00842" name="l00842"></a><span class="lineno">  842</span>      pcout &lt;&lt; std::endl &lt;&lt; std::endl;</div>
-<div class="line"><a id="l00843" name="l00843"></a><span class="lineno">  843</span>    }</div>
-<div class="line"><a id="l00844" name="l00844"></a><span class="lineno">  844</span>}</div>
+<div class="line"><a id="l00803" name="l00803"></a><span class="lineno">  803</span><span class="comment"></span> </div>
+<div class="line"><a id="l00804" name="l00804"></a><span class="lineno">  804</span><span class="comment">/**</span></div>
+<div class="line"><a id="l00805" name="l00805"></a><span class="lineno">  805</span><span class="comment"> * @brief Print the parameters given by the parameter file of the application</span></div>
+<div class="line"><a id="l00806" name="l00806"></a><span class="lineno">  806</span><span class="comment"> *</span></div>
+<div class="line"><a id="l00807" name="l00807"></a><span class="lineno">  807</span><span class="comment"> * @param[in] pcout Parallel output stream</span></div>
+<div class="line"><a id="l00808" name="l00808"></a><span class="lineno">  808</span><span class="comment"> * @param[in] prm Object containing the parameters parsed from the parameter</span></div>
+<div class="line"><a id="l00809" name="l00809"></a><span class="lineno">  809</span><span class="comment"> * file</span></div>
+<div class="line"><a id="l00810" name="l00810"></a><span class="lineno">  810</span><span class="comment"> */</span></div>
+<div class="line"><a id="l00811" name="l00811"></a><span class="lineno">  811</span><span class="keywordtype">void</span></div>
+<div class="foldopen" id="foldopen00812" data-start="{" data-end="}">
+<div class="line"><a id="l00812" name="l00812"></a><span class="lineno"><a class="line" href="utilities_8h.html#a5f8e2b4fdf7a2b6eceab3461c4edd221">  812</a></span><a class="code hl_function" href="utilities_8cc.html#a5f8e2b4fdf7a2b6eceab3461c4edd221">print_parameters_to_output_file</a>(<span class="keyword">const</span> ConditionalOStream &amp;pcout,</div>
+<div class="line"><a id="l00813" name="l00813"></a><span class="lineno">  813</span>                                <span class="keyword">const</span> ParameterHandler   &amp;prm,</div>
+<div class="line"><a id="l00814" name="l00814"></a><span class="lineno">  814</span>                                <span class="keyword">const</span> std::string        &amp;file_name)</div>
+<div class="line"><a id="l00815" name="l00815"></a><span class="lineno">  815</span>{</div>
+<div class="line"><a id="l00816" name="l00816"></a><span class="lineno">  816</span>  <span class="keyword">const</span> std::string print_parameters =</div>
+<div class="line"><a id="l00817" name="l00817"></a><span class="lineno">  817</span>    <a class="code hl_function" href="utilities_8cc.html#a34ac72c0df6c4a24f85c97b22d137520">get_last_value_of_parameter</a>(file_name, <span class="stringliteral">&quot;print parameters&quot;</span>);</div>
+<div class="line"><a id="l00818" name="l00818"></a><span class="lineno">  818</span> </div>
+<div class="line"><a id="l00819" name="l00819"></a><span class="lineno">  819</span>  <span class="keywordflow">if</span> (print_parameters == <span class="stringliteral">&quot;only changed&quot;</span>)</div>
+<div class="line"><a id="l00820" name="l00820"></a><span class="lineno">  820</span>    {</div>
+<div class="line"><a id="l00821" name="l00821"></a><span class="lineno">  821</span><span class="preprocessor">#if DEAL_II_VERSION_GTE(9, 7, 0)</span></div>
+<div class="line"><a id="l00822" name="l00822"></a><span class="lineno">  822</span>      prm.print_parameters(pcout.get_stream(),</div>
+<div class="line"><a id="l00823" name="l00823"></a><span class="lineno">  823</span>                           ParameterHandler::OutputStyle::PRM |</div>
+<div class="line"><a id="l00824" name="l00824"></a><span class="lineno">  824</span>                             ParameterHandler::OutputStyle::Short |</div>
+<div class="line"><a id="l00825" name="l00825"></a><span class="lineno">  825</span>                             ParameterHandler::KeepDeclarationOrder |</div>
+<div class="line"><a id="l00826" name="l00826"></a><span class="lineno">  826</span>                             ParameterHandler::KeepOnlyChanged);</div>
+<div class="line"><a id="l00827" name="l00827"></a><span class="lineno">  827</span>      pcout &lt;&lt; std::endl &lt;&lt; std::endl;</div>
+<div class="line"><a id="l00828" name="l00828"></a><span class="lineno">  828</span><span class="preprocessor">#else</span></div>
+<div class="line"><a id="l00829" name="l00829"></a><span class="lineno">  829</span>      AssertThrow(</div>
+<div class="line"><a id="l00830" name="l00830"></a><span class="lineno">  830</span>        <span class="keyword">false</span>,</div>
+<div class="line"><a id="l00831" name="l00831"></a><span class="lineno">  831</span>        ExcMessage(</div>
+<div class="line"><a id="l00832" name="l00832"></a><span class="lineno">  832</span>          <span class="stringliteral">&quot;To print only changed parameters you need a version of deal.II &gt;= 9.7.0.&quot;</span>));</div>
+<div class="line"><a id="l00833" name="l00833"></a><span class="lineno">  833</span><span class="preprocessor">#endif</span></div>
+<div class="line"><a id="l00834" name="l00834"></a><span class="lineno">  834</span>    }</div>
+<div class="line"><a id="l00835" name="l00835"></a><span class="lineno">  835</span>  <span class="keywordflow">else</span> <span class="keywordflow">if</span> (print_parameters == <span class="stringliteral">&quot;all&quot;</span>)</div>
+<div class="line"><a id="l00836" name="l00836"></a><span class="lineno">  836</span>    {</div>
+<div class="line"><a id="l00837" name="l00837"></a><span class="lineno">  837</span>      prm.print_parameters(pcout.get_stream(),</div>
+<div class="line"><a id="l00838" name="l00838"></a><span class="lineno">  838</span>                           ParameterHandler::OutputStyle::PRM |</div>
+<div class="line"><a id="l00839" name="l00839"></a><span class="lineno">  839</span>                             ParameterHandler::OutputStyle::Short |</div>
+<div class="line"><a id="l00840" name="l00840"></a><span class="lineno">  840</span>                             ParameterHandler::KeepDeclarationOrder);</div>
+<div class="line"><a id="l00841" name="l00841"></a><span class="lineno">  841</span>      pcout &lt;&lt; std::endl &lt;&lt; std::endl;</div>
+<div class="line"><a id="l00842" name="l00842"></a><span class="lineno">  842</span>    }</div>
+<div class="line"><a id="l00843" name="l00843"></a><span class="lineno">  843</span>}</div>
 </div>
-<div class="line"><a id="l00845" name="l00845"></a><span class="lineno">  845</span> </div>
-<div class="line"><a id="l00846" name="l00846"></a><span class="lineno">  846</span><span class="keywordtype">void</span></div>
-<div class="foldopen" id="foldopen00847" data-start="{" data-end="}">
-<div class="line"><a id="l00847" name="l00847"></a><span class="lineno"><a class="line" href="utilities_8h.html#a6bff1c25176117effa0161cb4ebfc520">  847</a></span><a class="code hl_function" href="utilities_8cc.html#a6bff1c25176117effa0161cb4ebfc520">delete_vtu_and_pvd_files</a>(<span class="keyword">const</span> std::string &amp;output_path)</div>
-<div class="line"><a id="l00848" name="l00848"></a><span class="lineno">  848</span>{</div>
-<div class="line"><a id="l00849" name="l00849"></a><span class="lineno">  849</span><span class="preprocessor">#if __GNUC__ &gt; 7</span></div>
-<div class="line"><a id="l00850" name="l00850"></a><span class="lineno">  850</span>  <span class="keywordflow">for</span> (<span class="keyword">auto</span> <span class="keyword">const</span> &amp;filename : std::filesystem::directory_iterator{output_path})</div>
-<div class="line"><a id="l00851" name="l00851"></a><span class="lineno">  851</span>    {</div>
-<div class="line"><a id="l00852" name="l00852"></a><span class="lineno">  852</span>      <span class="keywordflow">if</span> (filename.path().extension() == <span class="stringliteral">&quot;.vtu&quot;</span> ||</div>
-<div class="line"><a id="l00853" name="l00853"></a><span class="lineno">  853</span>          filename.path().extension() == <span class="stringliteral">&quot;.pvd&quot;</span> ||</div>
-<div class="line"><a id="l00854" name="l00854"></a><span class="lineno">  854</span>          filename.path().extension() == <span class="stringliteral">&quot;.pvtu&quot;</span>)</div>
-<div class="line"><a id="l00855" name="l00855"></a><span class="lineno">  855</span>        std::filesystem::remove(filename.path());</div>
-<div class="line"><a id="l00856" name="l00856"></a><span class="lineno">  856</span>    }</div>
-<div class="line"><a id="l00857" name="l00857"></a><span class="lineno">  857</span><span class="preprocessor">#else</span></div>
-<div class="line"><a id="l00858" name="l00858"></a><span class="lineno">  858</span>  AssertThrow(</div>
-<div class="line"><a id="l00859" name="l00859"></a><span class="lineno">  859</span>    <span class="keyword">false</span>,</div>
-<div class="line"><a id="l00860" name="l00860"></a><span class="lineno">  860</span>    ExcMessage(</div>
-<div class="line"><a id="l00861" name="l00861"></a><span class="lineno">  861</span>      <span class="stringliteral">&quot;Deleting old vtu files is not possible with the current compiler version.&quot;</span>));</div>
-<div class="line"><a id="l00862" name="l00862"></a><span class="lineno">  862</span><span class="preprocessor">#endif</span></div>
-<div class="line"><a id="l00863" name="l00863"></a><span class="lineno">  863</span>}</div>
+<div class="line"><a id="l00844" name="l00844"></a><span class="lineno">  844</span> </div>
+<div class="line"><a id="l00845" name="l00845"></a><span class="lineno">  845</span><span class="keywordtype">void</span></div>
+<div class="foldopen" id="foldopen00846" data-start="{" data-end="}">
+<div class="line"><a id="l00846" name="l00846"></a><span class="lineno"><a class="line" href="utilities_8h.html#a6bff1c25176117effa0161cb4ebfc520">  846</a></span><a class="code hl_function" href="utilities_8cc.html#a6bff1c25176117effa0161cb4ebfc520">delete_vtu_and_pvd_files</a>(<span class="keyword">const</span> std::string &amp;output_path)</div>
+<div class="line"><a id="l00847" name="l00847"></a><span class="lineno">  847</span>{</div>
+<div class="line"><a id="l00848" name="l00848"></a><span class="lineno">  848</span><span class="preprocessor">#if __GNUC__ &gt; 7</span></div>
+<div class="line"><a id="l00849" name="l00849"></a><span class="lineno">  849</span>  <span class="keywordflow">for</span> (<span class="keyword">auto</span> <span class="keyword">const</span> &amp;filename : std::filesystem::directory_iterator{output_path})</div>
+<div class="line"><a id="l00850" name="l00850"></a><span class="lineno">  850</span>    {</div>
+<div class="line"><a id="l00851" name="l00851"></a><span class="lineno">  851</span>      <span class="keywordflow">if</span> (filename.path().extension() == <span class="stringliteral">&quot;.vtu&quot;</span> ||</div>
+<div class="line"><a id="l00852" name="l00852"></a><span class="lineno">  852</span>          filename.path().extension() == <span class="stringliteral">&quot;.pvd&quot;</span> ||</div>
+<div class="line"><a id="l00853" name="l00853"></a><span class="lineno">  853</span>          filename.path().extension() == <span class="stringliteral">&quot;.pvtu&quot;</span>)</div>
+<div class="line"><a id="l00854" name="l00854"></a><span class="lineno">  854</span>        std::filesystem::remove(filename.path());</div>
+<div class="line"><a id="l00855" name="l00855"></a><span class="lineno">  855</span>    }</div>
+<div class="line"><a id="l00856" name="l00856"></a><span class="lineno">  856</span><span class="preprocessor">#else</span></div>
+<div class="line"><a id="l00857" name="l00857"></a><span class="lineno">  857</span>  AssertThrow(</div>
+<div class="line"><a id="l00858" name="l00858"></a><span class="lineno">  858</span>    <span class="keyword">false</span>,</div>
+<div class="line"><a id="l00859" name="l00859"></a><span class="lineno">  859</span>    ExcMessage(</div>
+<div class="line"><a id="l00860" name="l00860"></a><span class="lineno">  860</span>      <span class="stringliteral">&quot;Deleting old vtu files is not possible with the current compiler version.&quot;</span>));</div>
+<div class="line"><a id="l00861" name="l00861"></a><span class="lineno">  861</span><span class="preprocessor">#endif</span></div>
+<div class="line"><a id="l00862" name="l00862"></a><span class="lineno">  862</span>}</div>
 </div>
 <div class="ttc" id="autilities_8cc_html_a0f8ab7bdfb51d1a2ab56c0c25a3b53a9"><div class="ttname"><a href="utilities_8cc.html#a0f8ab7bdfb51d1a2ab56c0c25a3b53a9">make_table_scalars_vectors</a></div><div class="ttdeci">TableHandler make_table_scalars_vectors(const std::vector&lt; T &gt; &amp;independent_values, const std::string &amp;independent_column_name, const std::vector&lt; std::vector&lt; double &gt; &gt; &amp;dependent_vector, const std::vector&lt; std::string &gt; &amp;dependent_column_names, const unsigned int display_precision, const bool display_scientific_notation)</div><div class="ttdoc">Generate a table from a vector of scalars (independent variable) and a vector of vectors of scalars (...</div><div class="ttdef"><b>Definition</b> <a href="utilities_8cc_source.html#l00013">utilities.cc:13</a></div></div>
 <div class="ttc" id="autilities_8cc_html_a26caf69c3015c7f933fff04bb7bd9ead"><div class="ttname"><a href="utilities_8cc.html#a26caf69c3015c7f933fff04bb7bd9ead">make_table_scalars_tensors</a></div><div class="ttdeci">TableHandler make_table_scalars_tensors(const std::vector&lt; T &gt; &amp;independent_vector, const std::string &amp;independent_column_name, const std::vector&lt; Tensor&lt; 1, dim &gt; &gt; &amp;dependent_vector, const std::vector&lt; std::string &gt; &amp;dependent_column_names, const unsigned int display_precision, const bool display_scientific_notation)</div><div class="ttdoc">Generate a table from a vector of scalars (independent variable) and a vector of Tensor&lt;1,...</div><div class="ttdef"><b>Definition</b> <a href="utilities_8cc_source.html#l00048">utilities.cc:48</a></div></div>
-<div class="ttc" id="autilities_8cc_html_a2f4c4c70d98da93b973297b97e085b90"><div class="ttname"><a href="utilities_8cc.html#a2f4c4c70d98da93b973297b97e085b90">get_dimension</a></div><div class="ttdeci">unsigned int get_dimension(const std::string &amp;file_name)</div><div class="ttdoc">Extract the dimension in which to run Lethe from the the contents of the parameter file....</div><div class="ttdef"><b>Definition</b> <a href="utilities_8cc_source.html#l00631">utilities.cc:631</a></div></div>
+<div class="ttc" id="autilities_8cc_html_a2f4c4c70d98da93b973297b97e085b90"><div class="ttname"><a href="utilities_8cc.html#a2f4c4c70d98da93b973297b97e085b90">get_dimension</a></div><div class="ttdeci">unsigned int get_dimension(const std::string &amp;file_name)</div><div class="ttdoc">Extract the dimension in which to run Lethe from the the contents of the parameter file....</div><div class="ttdef"><b>Definition</b> <a href="utilities_8cc_source.html#l00630">utilities.cc:630</a></div></div>
 <div class="ttc" id="autilities_8cc_html_a34ac72c0df6c4a24f85c97b22d137520"><div class="ttname"><a href="utilities_8cc.html#a34ac72c0df6c4a24f85c97b22d137520">get_last_value_of_parameter</a></div><div class="ttdeci">std::string get_last_value_of_parameter(const std::string &amp;file_name, const std::string &amp;parameter_name)</div><div class="ttdoc">get the value of a particular parameter from the contents of the input file. Return an empty string i...</div><div class="ttdef"><b>Definition</b> <a href="utilities_8cc_source.html#l00547">utilities.cc:547</a></div></div>
-<div class="ttc" id="autilities_8cc_html_a3badf505e17c1f77892888491dd53f5f"><div class="ttname"><a href="utilities_8cc.html#a3badf505e17c1f77892888491dd53f5f">parse_args</a></div><div class="ttdeci">std::tuple&lt; std::map&lt; std::string, bool &gt;, std::vector&lt; std::string &gt; &gt; parse_args(int argc, char **argv)</div><div class="ttdoc">Parse the arguments given to the application.</div><div class="ttdef"><b>Definition</b> <a href="utilities_8cc_source.html#l00767">utilities.cc:767</a></div></div>
+<div class="ttc" id="autilities_8cc_html_a3badf505e17c1f77892888491dd53f5f"><div class="ttname"><a href="utilities_8cc.html#a3badf505e17c1f77892888491dd53f5f">parse_args</a></div><div class="ttdeci">std::tuple&lt; std::map&lt; std::string, bool &gt;, std::vector&lt; std::string &gt; &gt; parse_args(int argc, char **argv)</div><div class="ttdoc">Parse the arguments given to the application.</div><div class="ttdef"><b>Definition</b> <a href="utilities_8cc_source.html#l00766">utilities.cc:766</a></div></div>
 <div class="ttc" id="autilities_8cc_html_a3da00f7bc4b8457a3b104895cc393e9e"><div class="ttname"><a href="utilities_8cc.html#a3da00f7bc4b8457a3b104895cc393e9e">make_table_tensors_scalars</a></div><div class="ttdeci">TableHandler make_table_tensors_scalars(const std::vector&lt; Tensor&lt; 1, dim &gt; &gt; &amp;independent_vector, const std::vector&lt; std::string &gt; &amp;independent_column_names, const std::vector&lt; double &gt; &amp;dependent_vector, const std::string &amp;dependent_column_name, const unsigned int display_precision, const bool display_scientific_notation)</div><div class="ttdoc">Generate a table from a vector of Tensor&lt;1,dim&gt; (independent variables) and a vector of scalars (depe...</div><div class="ttdef"><b>Definition</b> <a href="utilities_8cc_source.html#l00172">utilities.cc:172</a></div></div>
 <div class="ttc" id="autilities_8cc_html_a4a15c94c7b62291bc0451cfa1cb05449"><div class="ttname"><a href="utilities_8cc.html#a4a15c94c7b62291bc0451cfa1cb05449">fill_table_from_file</a></div><div class="ttdeci">void fill_table_from_file(TableHandler &amp;table, const std::string &amp;file_name, const std::string &amp;delimiter)</div><div class="ttdoc">Reads a file that was built by writing a deal.II TableHandler class, and refills a TableHandler with ...</div><div class="ttdef"><b>Definition</b> <a href="utilities_8cc_source.html#l00208">utilities.cc:208</a></div></div>
 <div class="ttc" id="autilities_8cc_html_a4b182f49ed10ffa3d2d50a9a309cd2f0"><div class="ttname"><a href="utilities_8cc.html#a4b182f49ed10ffa3d2d50a9a309cd2f0">create_output_folder</a></div><div class="ttdeci">void create_output_folder(const std::string &amp;dirname)</div><div class="ttdoc">Creates the simulation output folder.</div><div class="ttdef"><b>Definition</b> <a href="utilities_8cc_source.html#l00356">utilities.cc:356</a></div></div>
-<div class="ttc" id="autilities_8cc_html_a5f8e2b4fdf7a2b6eceab3461c4edd221"><div class="ttname"><a href="utilities_8cc.html#a5f8e2b4fdf7a2b6eceab3461c4edd221">print_parameters_to_output_file</a></div><div class="ttdeci">void print_parameters_to_output_file(const ConditionalOStream &amp;pcout, const ParameterHandler &amp;prm, const std::string &amp;file_name)</div><div class="ttdoc">Print the parameters given by the parameter file of the application.</div><div class="ttdef"><b>Definition</b> <a href="utilities_8cc_source.html#l00813">utilities.cc:813</a></div></div>
+<div class="ttc" id="autilities_8cc_html_a5f8e2b4fdf7a2b6eceab3461c4edd221"><div class="ttname"><a href="utilities_8cc.html#a5f8e2b4fdf7a2b6eceab3461c4edd221">print_parameters_to_output_file</a></div><div class="ttdeci">void print_parameters_to_output_file(const ConditionalOStream &amp;pcout, const ParameterHandler &amp;prm, const std::string &amp;file_name)</div><div class="ttdoc">Print the parameters given by the parameter file of the application.</div><div class="ttdef"><b>Definition</b> <a href="utilities_8cc_source.html#l00812">utilities.cc:812</a></div></div>
 <div class="ttc" id="autilities_8cc_html_a6761d32800de2739011760d71ae33c09"><div class="ttname"><a href="utilities_8cc.html#a6761d32800de2739011760d71ae33c09">delete_output_folder</a></div><div class="ttdeci">void delete_output_folder(const std::string &amp;dirname)</div><div class="ttdoc">Delete the output folder and its content.</div><div class="ttdef"><b>Definition</b> <a href="utilities_8cc_source.html#l00367">utilities.cc:367</a></div></div>
-<div class="ttc" id="autilities_8cc_html_a6bff1c25176117effa0161cb4ebfc520"><div class="ttname"><a href="utilities_8cc.html#a6bff1c25176117effa0161cb4ebfc520">delete_vtu_and_pvd_files</a></div><div class="ttdeci">void delete_vtu_and_pvd_files(const std::string &amp;output_path)</div><div class="ttdoc">Delete vtu and pvd files.</div><div class="ttdef"><b>Definition</b> <a href="utilities_8cc_source.html#l00847">utilities.cc:847</a></div></div>
+<div class="ttc" id="autilities_8cc_html_a6bff1c25176117effa0161cb4ebfc520"><div class="ttname"><a href="utilities_8cc.html#a6bff1c25176117effa0161cb4ebfc520">delete_vtu_and_pvd_files</a></div><div class="ttdeci">void delete_vtu_and_pvd_files(const std::string &amp;output_path)</div><div class="ttdoc">Delete vtu and pvd files.</div><div class="ttdef"><b>Definition</b> <a href="utilities_8cc_source.html#l00846">utilities.cc:846</a></div></div>
 <div class="ttc" id="autilities_8cc_html_a6eae881564cc80b005d6023feb6aa610"><div class="ttname"><a href="utilities_8cc.html#a6eae881564cc80b005d6023feb6aa610">fill_string_vectors_from_file</a></div><div class="ttdeci">void fill_string_vectors_from_file(std::map&lt; std::string, std::vector&lt; std::string &gt; &gt; &amp;map, const std::string &amp;file, const std::string &amp;delimiter)</div><div class="ttdoc">Function that read a file that was build from a dealii table and create a map with the key being the ...</div><div class="ttdef"><b>Definition</b> <a href="utilities_8cc_source.html#l00307">utilities.cc:307</a></div></div>
-<div class="ttc" id="autilities_8cc_html_a8f95af8244cc326628392a04517913c7"><div class="ttname"><a href="utilities_8cc.html#a8f95af8244cc326628392a04517913c7">print_version_info</a></div><div class="ttdeci">void print_version_info(const ConditionalOStream &amp;pcout)</div><div class="ttdoc">Print the information of the deal.II and Lethe branches used to run an application in the &quot;git descri...</div><div class="ttdef"><b>Definition</b> <a href="utilities_8cc_source.html#l00736">utilities.cc:736</a></div></div>
-<div class="ttc" id="autilities_8cc_html_a9be87343e816d07edaee585ada17cd4a"><div class="ttname"><a href="utilities_8cc.html#a9be87343e816d07edaee585ada17cd4a">get_max_subsection_size</a></div><div class="ttdeci">int get_max_subsection_size(const std::string &amp;file_name)</div><div class="ttdoc">Extract the maximum value between the number of boundary conditions and the number of manifolds from ...</div><div class="ttdef"><b>Definition</b> <a href="utilities_8cc_source.html#l00697">utilities.cc:697</a></div></div>
+<div class="ttc" id="autilities_8cc_html_a8f95af8244cc326628392a04517913c7"><div class="ttname"><a href="utilities_8cc.html#a8f95af8244cc326628392a04517913c7">print_version_info</a></div><div class="ttdeci">void print_version_info(const ConditionalOStream &amp;pcout)</div><div class="ttdoc">Print the information of the deal.II and Lethe branches used to run an application in the &quot;git descri...</div><div class="ttdef"><b>Definition</b> <a href="utilities_8cc_source.html#l00735">utilities.cc:735</a></div></div>
+<div class="ttc" id="autilities_8cc_html_a9be87343e816d07edaee585ada17cd4a"><div class="ttname"><a href="utilities_8cc.html#a9be87343e816d07edaee585ada17cd4a">get_max_subsection_size</a></div><div class="ttdeci">int get_max_subsection_size(const std::string &amp;file_name)</div><div class="ttdoc">Extract the maximum value between the number of boundary conditions and the number of manifolds from ...</div><div class="ttdef"><b>Definition</b> <a href="utilities_8cc_source.html#l00696">utilities.cc:696</a></div></div>
 <div class="ttc" id="autilities_8cc_html_a9f8ab927fc54de35560ce4d2734ea0b7"><div class="ttname"><a href="utilities_8cc.html#a9f8ab927fc54de35560ce4d2734ea0b7">fill_vectors_from_file</a></div><div class="ttdeci">void fill_vectors_from_file(std::map&lt; std::string, std::vector&lt; double &gt; &gt; &amp;map, const std::string &amp;file, const std::string &amp;delimiter)</div><div class="ttdoc">function that read a file that was build from a dealii table and fill 2 vectors. The first vector con...</div><div class="ttdef"><b>Definition</b> <a href="utilities_8cc_source.html#l00254">utilities.cc:254</a></div></div>
-<div class="ttc" id="autilities_8cc_html_a9fc5d803036352e72efcd625b2466707"><div class="ttname"><a href="utilities_8cc.html#a9fc5d803036352e72efcd625b2466707">get_max_value_of_parameter</a></div><div class="ttdeci">int get_max_value_of_parameter(const std::string &amp;file_name, const std::string &amp;parameter_name)</div><div class="ttdef"><b>Definition</b> <a href="utilities_8cc_source.html#l00587">utilities.cc:587</a></div></div>
-<div class="ttc" id="autilities_8cc_html_aa2b435317e26c5fbf3f8f86b77c7fe4c"><div class="ttname"><a href="utilities_8cc.html#aa2b435317e26c5fbf3f8f86b77c7fe4c">concatenate_strings</a></div><div class="ttdeci">std::string concatenate_strings(const int argc, char **argv)</div><div class="ttdoc">Concatenate words which are passed from the command line to a main function into a single string in w...</div><div class="ttdef"><b>Definition</b> <a href="utilities_8cc_source.html#l00719">utilities.cc:719</a></div></div>
+<div class="ttc" id="autilities_8cc_html_a9fc5d803036352e72efcd625b2466707"><div class="ttname"><a href="utilities_8cc.html#a9fc5d803036352e72efcd625b2466707">get_max_value_of_parameter</a></div><div class="ttdeci">int get_max_value_of_parameter(const std::string &amp;file_name, const std::string &amp;parameter_name)</div><div class="ttdef"><b>Definition</b> <a href="utilities_8cc_source.html#l00586">utilities.cc:586</a></div></div>
+<div class="ttc" id="autilities_8cc_html_aa2b435317e26c5fbf3f8f86b77c7fe4c"><div class="ttname"><a href="utilities_8cc.html#aa2b435317e26c5fbf3f8f86b77c7fe4c">concatenate_strings</a></div><div class="ttdeci">std::string concatenate_strings(const int argc, char **argv)</div><div class="ttdoc">Concatenate words which are passed from the command line to a main function into a single string in w...</div><div class="ttdef"><b>Definition</b> <a href="utilities_8cc_source.html#l00718">utilities.cc:718</a></div></div>
 <div class="ttc" id="autilities_8cc_html_ab495e04b159f3399bb29fa081ff68d9a"><div class="ttname"><a href="utilities_8cc.html#ab495e04b159f3399bb29fa081ff68d9a">make_table_tensors_tensors</a></div><div class="ttdeci">TableHandler make_table_tensors_tensors(const std::vector&lt; Tensor&lt; 1, dim &gt; &gt; &amp;independent_vector, const std::vector&lt; std::string &gt; &amp;independent_column_names, const std::vector&lt; Tensor&lt; 1, dim &gt; &gt; &amp;dependent_vector, const std::vector&lt; std::string &gt; &amp;dependent_column_names, const unsigned int display_precision, const bool display_scientific_notation)</div><div class="ttdoc">Generate a table from a vector of Tensor&lt;1,dim&gt; (independent variables) and a vector of Tensor&lt;1,...</div><div class="ttdef"><b>Definition</b> <a href="utilities_8cc_source.html#l00130">utilities.cc:130</a></div></div>
 <div class="ttc" id="autilities_8h_html"><div class="ttname"><a href="utilities_8h.html">utilities.h</a></div></div>
 </div><!-- fragment --></div><!-- contents -->

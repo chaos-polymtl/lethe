@@ -334,6 +334,8 @@ Functions</h2></td></tr>
 <tr class="separator:a7da95e1285b0d113c52cfaab83dbf006"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a0a24876ac89130c482872183aaabb619" id="r_a0a24876ac89130c482872183aaabb619"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="time__integration__utilities_8h.html#a0a24876ac89130c482872183aaabb619">is_bdf</a> (const <a class="el" href="structParameters_1_1SimulationControl.html#a75b33ae454da14bc72dbe078c121d7e9">Parameters::SimulationControl::TimeSteppingMethod</a> method)</td></tr>
 <tr class="separator:a0a24876ac89130c482872183aaabb619"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aa978da869c242558658db8bf49e8568e" id="r_aa978da869c242558658db8bf49e8568e"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="time__integration__utilities_8h.html#aa978da869c242558658db8bf49e8568e">is_sdirk</a> (const <a class="el" href="structParameters_1_1SimulationControl.html#a75b33ae454da14bc72dbe078c121d7e9">Parameters::SimulationControl::TimeSteppingMethod</a> method)</td></tr>
+<tr class="separator:aa978da869c242558658db8bf49e8568e"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a69f8bb4355f154e729d5c7994a7be273" id="r_a69f8bb4355f154e729d5c7994a7be273"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="time__integration__utilities_8h.html#a69f8bb4355f154e729d5c7994a7be273">is_bdf_high_order</a> (const <a class="el" href="structParameters_1_1SimulationControl.html#a75b33ae454da14bc72dbe078c121d7e9">Parameters::SimulationControl::TimeSteppingMethod</a> method)</td></tr>
 <tr class="separator:a69f8bb4355f154e729d5c7994a7be273"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:afba3537bc98e554f2ef4ca0ae49fc9cb" id="r_afba3537bc98e554f2ef4ca0ae49fc9cb"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="time__integration__utilities_8h.html#afba3537bc98e554f2ef4ca0ae49fc9cb">time_stepping_method_uses_two_previous_solutions</a> (const <a class="el" href="structParameters_1_1SimulationControl.html#a75b33ae454da14bc72dbe078c121d7e9">Parameters::SimulationControl::TimeSteppingMethod</a> method)</td></tr>
@@ -369,12 +371,13 @@ Functions</h2></td></tr>
 <p>Determines if the time integration method is within the bdf family. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">method</td><td>A time integration method </td></tr>
+    <tr><td class="paramname">method</td><td>A time integration method</td></tr>
   </table>
   </dd>
 </dl>
+<dl class="section return"><dt>Returns</dt><dd>true if the method is BDF1, BDF2, BDF3, or steady BDF, false otherwise. </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="time__integration__utilities_8h_source.html#l00040">40</a> of file <a class="el" href="time__integration__utilities_8h_source.html">time_integration_utilities.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="time__integration__utilities_8h_source.html#l00042">42</a> of file <a class="el" href="time__integration__utilities_8h_source.html">time_integration_utilities.h</a>.</p>
 
 <p class="reference">References <a class="el" href="structParameters_1_1SimulationControl.html#a75b33ae454da14bc72dbe078c121d7e9a0267dc6b1db4ed7cf48c60fa776c8843">Parameters::SimulationControl::bdf1</a>, <a class="el" href="structParameters_1_1SimulationControl.html#a75b33ae454da14bc72dbe078c121d7e9a7e23e875a6c062a276f90cb43a6280c0">Parameters::SimulationControl::bdf2</a>, <a class="el" href="structParameters_1_1SimulationControl.html#a75b33ae454da14bc72dbe078c121d7e9a62fd133dd9c35c94e867fc65606aeffe">Parameters::SimulationControl::bdf3</a>, and <a class="el" href="structParameters_1_1SimulationControl.html#a75b33ae454da14bc72dbe078c121d7e9ace68ebd29c010930ed70df3b718e02b9">Parameters::SimulationControl::steady_bdf</a>.</p>
 
@@ -450,9 +453,48 @@ Functions</h2></td></tr>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="time__integration__utilities_8h_source.html#l00055">55</a> of file <a class="el" href="time__integration__utilities_8h_source.html">time_integration_utilities.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="time__integration__utilities_8h_source.html#l00073">73</a> of file <a class="el" href="time__integration__utilities_8h_source.html">time_integration_utilities.h</a>.</p>
 
 <p class="reference">References <a class="el" href="structParameters_1_1SimulationControl.html#a75b33ae454da14bc72dbe078c121d7e9a7e23e875a6c062a276f90cb43a6280c0">Parameters::SimulationControl::bdf2</a>, and <a class="el" href="structParameters_1_1SimulationControl.html#a75b33ae454da14bc72dbe078c121d7e9a62fd133dd9c35c94e867fc65606aeffe">Parameters::SimulationControl::bdf3</a>.</p>
+
+</div>
+</div>
+<a id="aa978da869c242558658db8bf49e8568e" name="aa978da869c242558658db8bf49e8568e"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aa978da869c242558658db8bf49e8568e">&#9670;&#160;</a></span>is_sdirk()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">bool is_sdirk </td>
+          <td>(</td>
+          <td class="paramtype">const <a class="el" href="structParameters_1_1SimulationControl.html#a75b33ae454da14bc72dbe078c121d7e9">Parameters::SimulationControl::TimeSteppingMethod</a>&#160;</td>
+          <td class="paramname"><em>method</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Determines if the time integration method is within the sdirk family. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">method</td><td>A time integration method</td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>true if the method is SDIRK, false otherwise. </dd></dl>
+
+<p class="definition">Definition at line <a class="el" href="time__integration__utilities_8h_source.html#l00059">59</a> of file <a class="el" href="time__integration__utilities_8h_source.html">time_integration_utilities.h</a>.</p>
+
+<p class="reference">References <a class="el" href="structParameters_1_1SimulationControl.html#a75b33ae454da14bc72dbe078c121d7e9a0675922ff4c4a16ee033b34e48ee33ee">Parameters::SimulationControl::sdirk22</a>, <a class="el" href="structParameters_1_1SimulationControl.html#a75b33ae454da14bc72dbe078c121d7e9aaeba79e7430a4815eb11453c271ce6f4">Parameters::SimulationControl::sdirk33</a>, and <a class="el" href="structParameters_1_1SimulationControl.html#a75b33ae454da14bc72dbe078c121d7e9a7d1d28e0c34d45b88cd359397ba4ab23">Parameters::SimulationControl::sdirk43</a>.</p>
 
 </div>
 </div>
@@ -526,7 +568,7 @@ Functions</h2></td></tr>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="time__integration__utilities_8h_source.html#l00082">82</a> of file <a class="el" href="time__integration__utilities_8h_source.html">time_integration_utilities.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="time__integration__utilities_8h_source.html#l00100">100</a> of file <a class="el" href="time__integration__utilities_8h_source.html">time_integration_utilities.h</a>.</p>
 
 <p class="reference">References <a class="el" href="structParameters_1_1SimulationControl.html#a75b33ae454da14bc72dbe078c121d7e9a62fd133dd9c35c94e867fc65606aeffe">Parameters::SimulationControl::bdf3</a>.</p>
 
@@ -564,7 +606,7 @@ Functions</h2></td></tr>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="time__integration__utilities_8h_source.html#l00069">69</a> of file <a class="el" href="time__integration__utilities_8h_source.html">time_integration_utilities.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="time__integration__utilities_8h_source.html#l00087">87</a> of file <a class="el" href="time__integration__utilities_8h_source.html">time_integration_utilities.h</a>.</p>
 
 <p class="reference">References <a class="el" href="structParameters_1_1SimulationControl.html#a75b33ae454da14bc72dbe078c121d7e9a7e23e875a6c062a276f90cb43a6280c0">Parameters::SimulationControl::bdf2</a>, and <a class="el" href="structParameters_1_1SimulationControl.html#a75b33ae454da14bc72dbe078c121d7e9a62fd133dd9c35c94e867fc65606aeffe">Parameters::SimulationControl::bdf3</a>.</p>
 

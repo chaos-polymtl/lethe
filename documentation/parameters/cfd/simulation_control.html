@@ -561,11 +561,17 @@ end
 <li><p><code class="docutils literal notranslate"><span class="pre">bdf1</span></code>: 1st order backward differentiation</p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">bdf2</span></code>: 2nd order backward differentiation</p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">bdf3</span></code>: 3rd order backward differentiation</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">sdirk22</span></code>: 2nd order 2 stages singly diagonally implicit Runge-Kutta</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">sdirk33</span></code>: 3rd order 3 stages singly diagonally implicit Runge-Kutta</p></li>
 </ul>
 </dd>
 </dl>
 </li>
 </ul>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>For now, the SDIRK schemes are only available for a matrix based resolution and are not supported by any physics other than Navier-Stokes.</p>
+</div>
 <section id="steady-state-simulation-parameters">
 <h2>Steady-state simulation parameters<a class="headerlink" href="#steady-state-simulation-parameters" title="Link to this heading">#</a></h2>
 <ul class="simple">
@@ -590,6 +596,10 @@ end
 </li>
 <li><p><code class="docutils literal notranslate"><span class="pre">startup</span> <span class="pre">time</span> <span class="pre">scaling</span></code>: scaling factor used in the iterations necessary to startup the BDF schemes.</p></li>
 </ul>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>SDIRK schemes don’t require any additional parameter.</p>
+</div>
 </section>
 <section id="transient-simulations-parameters">
 <h2>Transient simulations parameters<a class="headerlink" href="#transient-simulations-parameters" title="Link to this heading">#</a></h2>
