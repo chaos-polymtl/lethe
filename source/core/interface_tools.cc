@@ -538,7 +538,10 @@ InterfaceTools::SignedDistanceSolver<dim, VectorType>::
 
   const MPI_Comm mpi_communicator = dof_handler.get_mpi_communicator();
 
-  // Initialization of connectivity data
+  // Initialization of connectivity data. We are interested in the opposite DoFs
+  // of each face of the cell. This reduces the number of calls to
+  // FEPointEvaluation.reinit() compared to a routine based on the opposite
+  // faces of each DoF of the cell.
   unsigned int n_opposite_dofs_per_faces = 2;
   if constexpr (dim == 3)
     n_opposite_dofs_per_faces = 4;
@@ -547,8 +550,6 @@ InterfaceTools::SignedDistanceSolver<dim, VectorType>::
   unsigned int              faces_per_cell = 4;
   if constexpr (dim == 3)
     faces_per_cell = 6;
-
-
 
   // Initialization of points and tensors
   Point<dim>     x_I_real;

@@ -3066,7 +3066,6 @@ VolumeOfFluid<dim>::reinitialize_interface_with_geometric_method()
 {
   TimerOutput::Scope t(this->computing_timer, "Geometric reinitialization");
 
-
   if (simulation_parameters.multiphysics.vof_parameters.regularization_method
         .verbosity != Parameters::Verbosity::quiet)
     {
