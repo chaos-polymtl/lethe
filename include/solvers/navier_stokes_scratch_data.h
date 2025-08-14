@@ -897,7 +897,7 @@ public:
         for (unsigned int particle_i = 0; particle_i < number_of_particles;
              ++particle_i)
           {
-            // Calculate the kinematic viscosity and density at the particle
+            // Get the kinematic viscosity and density at the particle
             // location assuming a constant kinematic viscosity and density in a
             // single fluid
             kinematic_viscosity_at_particle_location[particle_i] =
@@ -919,10 +919,6 @@ public:
     unsigned int particle_i                  = 0;
     average_fluid_particle_relative_velocity = 0;
 
-    // At the moment, the kinematic viscosity and density are taken to be
-    // constant in a given fluid. A variable density and/or kinematic viscosity
-    // are not supported currently in the VANS equations. This is verified in
-    // the Assertions in the solve() function of FluidDynamicsVans
     for (auto &particle : pic)
       {
         auto particle_properties = particle.get_properties();
