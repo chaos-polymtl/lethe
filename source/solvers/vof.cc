@@ -743,6 +743,8 @@ VolumeOfFluid<dim>::attach_solution_to_output(DataOut<dim> &data_out)
            0) ||
           (simulation_control->get_step_number() == 0))
         {
+          TimerOutput::Scope t(this->computing_timer, "Signed distance output");
+
           signed_distance_solver->setup_dofs();
 
           signed_distance_solver->set_level_set_from_background_mesh(
@@ -1606,21 +1608,24 @@ template <int dim>
 void
 VolumeOfFluid<dim>::modify_solution()
 {
-  TimerOutput::Scope t(this->computing_timer, "Modify solution");
+  {
+    TimerOutput::Scope t(this->computing_timer, "Modify solution");
 
-  auto vof_parameters = this->simulation_parameters.multiphysics.vof_parameters;
-  // Interface sharpening
-  if (vof_parameters.regularization_method.sharpening.enable)
-    {
-      // Interface sharpening is done at a constant frequency
-      if (this->simulation_control->get_step_number() %
-            this->simulation_parameters.multiphysics.vof_parameters
-              .regularization_method.frequency ==
-          0)
-        {
-          handle_interface_sharpening();
-        }
-    }
+    auto vof_parameters =
+      this->simulation_parameters.multiphysics.vof_parameters;
+    // Interface sharpening
+    if (vof_parameters.regularization_method.sharpening.enable)
+      {
+        // Interface sharpening is done at a constant frequency
+        if (this->simulation_control->get_step_number() %
+              this->simulation_parameters.multiphysics.vof_parameters
+                .regularization_method.frequency ==
+            0)
+          {
+            handle_interface_sharpening();
+          }
+      }
+  }
 
   // Apply algebraic interface reinitialization
   if (simulation_parameters.multiphysics.vof_parameters.regularization_method
@@ -2948,6 +2953,8 @@ template <int dim>
 void
 VolumeOfFluid<dim>::reinitialize_interface_with_algebraic_method()
 {
+  TimerOutput::Scope t(this->computing_timer, "Algebraic reinitialization");
+
   // Reinitialize previous VOF solution
   // (this is only coherent with BDF1 and BDF2)
   if (this->simulation_parameters.multiphysics.vof_parameters
@@ -3057,6 +3064,8 @@ template <int dim>
 void
 VolumeOfFluid<dim>::reinitialize_interface_with_geometric_method()
 {
+  TimerOutput::Scope t(this->computing_timer, "Geometric reinitialization");
+
   if (simulation_parameters.multiphysics.vof_parameters.regularization_method
         .verbosity != Parameters::Verbosity::quiet)
     {

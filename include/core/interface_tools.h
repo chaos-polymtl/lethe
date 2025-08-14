@@ -452,6 +452,7 @@ namespace InterfaceTools
               (Utilities::MPI::this_mpi_process(MPI_COMM_WORLD) == 0))
     {
       mapping = std::make_shared<MappingFE<dim>>(*fe);
+      set_face_opposite_dofs_map();
     }
 
     /**
@@ -610,7 +611,7 @@ namespace InterfaceTools
     conserve_global_volume();
 
     /**
-     * @brief Return the local id of the opposite faces to the given local DOF
+     * @brief Return the local id of the opposite faces to the given local Dof
      * (works for quad only).
      *
      * @param[in] local_dof_id Local id of the DoF in the cell
@@ -629,6 +630,48 @@ namespace InterfaceTools
 
       if constexpr (dim == 3)
         local_opposite_faces[2] = 5 - local_dof_id / 4;
+    };
+
+    /**
+     * @brief Set the map of local id of the opposite DoFs to the given face
+     * (works for quad only).
+     */
+    inline void
+    set_face_opposite_dofs_map()
+    {
+      if constexpr (dim == 2)
+        {
+          face_opposite_dofs_map[0] = {1, 3};
+          face_opposite_dofs_map[1] = {0, 2};
+          face_opposite_dofs_map[2] = {2, 3};
+          face_opposite_dofs_map[3] = {0, 1};
+        }
+
+      if constexpr (dim == 3)
+        {
+          face_opposite_dofs_map[0] = {1, 3, 5, 7};
+          face_opposite_dofs_map[1] = {0, 2, 4, 6};
+          face_opposite_dofs_map[2] = {2, 3, 6, 7};
+          face_opposite_dofs_map[3] = {0, 1, 4, 5};
+          face_opposite_dofs_map[4] = {4, 5, 6, 7};
+          face_opposite_dofs_map[5] = {0, 1, 2, 3};
+        }
+    }
+
+    /**
+     * @brief Return the local id of the opposite DoFs to the given face
+     * (works for quad only).
+     *
+     * @param[in] local_face_id Local id of the face in the cell
+     *
+     * @param[out] local_opposite_dofs The vector containing the id of the
+     * opposite faces
+     */
+    inline void
+    get_face_opposite_dofs(unsigned int               local_face_id,
+                           std::vector<unsigned int> &local_opposite_dofs)
+    {
+      local_opposite_dofs = face_opposite_dofs_map.at(local_face_id);
     };
 
     /**
@@ -751,12 +794,12 @@ namespace InterfaceTools
      *                                    3
      * The entry 0 is the current evaluation point x_ref
      */
-    inline std::vector<Point<dim>>
-    compute_numerical_jacobian_stencil(const Point<dim>   x_ref,
-                                       const unsigned int local_face_id,
-                                       const double       perturbation)
+    inline void
+    compute_numerical_jacobian_stencil(const Point<dim>         x_ref,
+                                       const unsigned int       local_face_id,
+                                       const double             perturbation,
+                                       std::vector<Point<dim>> &stencil)
     {
-      std::vector<Point<dim>> stencil(2 * dim - 1);
       for (unsigned int i = 0; i < 2 * dim - 1; ++i)
         {
           stencil[i] = x_ref;
@@ -782,8 +825,6 @@ namespace InterfaceTools
           stencil[2 * i - 1][j] -= perturbation;
           stencil[2 * i][j] += perturbation;
         }
-
-      return stencil;
     };
 
     /**
@@ -972,6 +1013,8 @@ namespace InterfaceTools
 
     /// PVDHandler for signed distance
     PVDHandler pvd_handler_signed_distance;
+
+    std::map<unsigned int, std::vector<unsigned int>> face_opposite_dofs_map;
   };
 } // namespace InterfaceTools
 

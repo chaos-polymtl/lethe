@@ -3,6 +3,10 @@
 All notable changes to the Lethe project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
+### Changed
+
+- MINOR The geometric reinitialization method was really expensive in terms of computational time. This PR improves the performances by reducing the number of cells in the layer's loop (only the cells in a corona around the interface are visited) and the number of calls to FEPointEvaluation.reinit(). [#1621](https://github.com/chaos-polymtl/lethe/pull/1621)
+
 ### [Master] - 2025-08-14
 
 ### Added
