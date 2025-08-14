@@ -1,4 +1,5 @@
 
+DEAL::This test returns the values of the Butcher's table associated with each SDIRK method
 DEAL::Testing SDIRK22 coefficients
 DEAL::
 Stage 1:
