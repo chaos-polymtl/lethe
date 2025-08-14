@@ -89,10 +89,10 @@ VANSAssemblerCoreModelB<dim>::assemble_matrix(
       const double tau =
         this->simulation_control->get_assembly_method() ==
             Parameters::SimulationControl::TimeSteppingMethod::steady ?
-          1. / std::sqrt(std::pow(2. * u_mag / h, 2) +
-                         9 * std::pow(4 * kinematic_viscosity / (h * h), 2)) :
-          1. / std::sqrt(std::pow(sdt, 2) + std::pow(2. * u_mag / h, 2) +
-                         9 * std::pow(4 * kinematic_viscosity / (h * h), 2));
+          1. / std::sqrt(Utilities::fixed_power<2>(2. * u_mag / h) +
+                         9 * Utilities::fixed_power<2>(4 * kinematic_viscosity / (h * h))) :
+          1. / std::sqrt(Utilities::fixed_power<2>(sdt) +Utilities::fixed_power<2>(2. * u_mag / h) +
+                         9 * Utilities::fixed_power<2>(4 * kinematic_viscosity / (h * h)));
 
       // Calculate the strong residual for GLS stabilization
       auto strong_residual = velocity_gradient * velocity * void_fraction +
@@ -296,10 +296,10 @@ VANSAssemblerCoreModelB<dim>::assemble_rhs(
       const double tau =
         this->simulation_control->get_assembly_method() ==
             Parameters::SimulationControl::TimeSteppingMethod::steady ?
-          1. / std::sqrt(std::pow(2. * u_mag / h, 2) +
-                         9 * std::pow(4 * kinematic_viscosity / (h * h), 2)) :
-          1. / std::sqrt(std::pow(sdt, 2) + std::pow(2. * u_mag / h, 2) +
-                         9 * std::pow(4 * kinematic_viscosity / (h * h), 2));
+          1. / std::sqrt(Utilities::fixed_power<2>(2. * u_mag / h) +
+                         9 * Utilities::fixed_power<2>(4 * kinematic_viscosity / (h * h))) :
+          1. / std::sqrt(Utilities::fixed_power<2>(sdt) + Utilities::fixed_power<2>(2. * u_mag / h) +
+                         9 * Utilities::fixed_power<2>(4 * kinematic_viscosity / (h * h)));
 
       // Calculate the strong residual for GLS stabilization
       auto strong_residual = velocity_gradient * velocity * void_fraction +
@@ -451,10 +451,10 @@ VANSAssemblerCoreModelA<dim>::assemble_matrix(
       const double tau =
         this->simulation_control->get_assembly_method() ==
             Parameters::SimulationControl::TimeSteppingMethod::steady ?
-          1. / std::sqrt(std::pow(2. * u_mag / h, 2) +
-                         9 * std::pow(4 * kinematic_viscosity / (h * h), 2)) :
-          1. / std::sqrt(std::pow(sdt, 2) + std::pow(2. * u_mag / h, 2) +
-                         9 * std::pow(4 * kinematic_viscosity / (h * h), 2));
+          1. / std::sqrt(Utilities::fixed_power<2>(2. * u_mag / h) +
+                         9 * Utilities::fixed_power<2>(4 * kinematic_viscosity / (h * h))) :
+          1. / std::sqrt(Utilities::fixed_power<2>(sdt) + Utilities::fixed_power<2>(2. * u_mag / h) +
+                         9 * Utilities::fixed_power<2>(4 * kinematic_viscosity / (h * h)));
 
       // Calculate the strong residual for GLS stabilization
       auto strong_residual =
@@ -658,10 +658,10 @@ VANSAssemblerCoreModelA<dim>::assemble_rhs(
       const double tau =
         this->simulation_control->get_assembly_method() ==
             Parameters::SimulationControl::TimeSteppingMethod::steady ?
-          1. / std::sqrt(std::pow(2. * u_mag / h, 2) +
-                         9 * std::pow(4 * kinematic_viscosity / (h * h), 2)) :
-          1. / std::sqrt(std::pow(sdt, 2) + std::pow(2. * u_mag / h, 2) +
-                         9 * std::pow(4 * kinematic_viscosity / (h * h), 2));
+          1. / std::sqrt(Utilities::fixed_power<2>(2. * u_mag / h) +
+                         9 * Utilities::fixed_power<2>(4 * kinematic_viscosity / (h * h))) :
+          1. / std::sqrt(Utilities::fixed_power<2>(sdt) + Utilities::fixed_power<2>(2. * u_mag / h) +
+                         9 * Utilities::fixed_power<2>(4 * kinematic_viscosity / (h * h)));
 
       // Calculate the strong residual for GLS stabilization
       auto strong_residual =
@@ -933,16 +933,15 @@ VANSAssemblerDiFelice<dim>::calculate_particle_fluid_interactions(
         std::min(scratch_data.cell_void_fraction[particle_number], 1.0);
 
       // Di Felice Drag Model CD Calculation
-      C_d = pow((0.63 + 4.8 / sqrt(Re_p[particle_number])), 2) *
+      C_d = Utilities::fixed_power<2>((0.63 + 4.8 / sqrt(Re_p[particle_number]))) *
             pow(cell_void_fraction,
                 2 - (3.7 -
                      0.65 *
-                       exp(-pow((1.5 - log10(Re_p[particle_number])), 2) / 2)));
+                       exp(-Utilities::fixed_power<2>(1.5 - log10(Re_p[particle_number])) / 2)));
 
       double momentum_transfer_coefficient =
         (0.5 * C_d * M_PI *
-         pow(particle_properties[DEM::CFDDEMProperties::PropertiesIndex::dp],
-             2) /
+         Utilities::fixed_power<2>(particle_properties[DEM::CFDDEMProperties::PropertiesIndex::dp]) /
          4) *
         relative_velocity[particle_number].norm();
 
@@ -1004,17 +1003,16 @@ VANSAssemblerRong<dim>::calculate_particle_fluid_interactions(
         std::min(scratch_data.cell_void_fraction[particle_number], 1.0);
 
       // Rong Drag Model CD Calculation
-      C_d = pow((0.63 + 4.8 / sqrt(Re_p[particle_number])), 2) *
+      C_d = Utilities::fixed_power<2>((0.63 + 4.8 / sqrt(Re_p[particle_number]))) *
             pow(cell_void_fraction,
                 2 - (2.65 * (cell_void_fraction + 1) -
                      (5.3 - (3.5 * cell_void_fraction)) *
-                       pow(cell_void_fraction, 2) *
-                       exp(-pow(1.5 - log10(Re_p[particle_number]), 2) / 2)));
+                       Utilities::fixed_power<2>(cell_void_fraction) *
+                       exp(-Utilities::fixed_power<2>(1.5 - log10(Re_p[particle_number])) / 2)));
 
       double momentum_transfer_coefficient =
         (0.5 * C_d * M_PI *
-         pow(particle_properties[DEM::CFDDEMProperties::PropertiesIndex::dp],
-             2) /
+         Utilities::fixed_power<2>(particle_properties[DEM::CFDDEMProperties::PropertiesIndex::dp]) /
          4) *
         relative_velocity[particle_number].norm();
 
@@ -1074,12 +1072,11 @@ VANSAssemblerDallavalle<dim>::calculate_particle_fluid_interactions(
       auto particle_properties = particle.get_properties();
 
       // Dallavalle Drag Model CD Calculation
-      C_d = pow((0.63 + 4.8 / sqrt(Re_p[particle_number])), 2);
+      C_d = Utilities::fixed_power<2>((0.63 + 4.8 / sqrt(Re_p[particle_number])));
 
       double momentum_transfer_coefficient =
         (0.5 * C_d * M_PI *
-         pow(particle_properties[DEM::CFDDEMProperties::PropertiesIndex::dp],
-             2) /
+         Utilities::fixed_power<2>(particle_properties[DEM::CFDDEMProperties::PropertiesIndex::dp]) /
          4) *
         relative_velocity[particle_number].norm();
 
@@ -1153,22 +1150,21 @@ VANSAssemblerKochHill<dim>::calculate_particle_fluid_interactions(
                   log(1 - cell_void_fraction + DBL_MIN) +
                 16.14 * (1 - cell_void_fraction)) /
                (1 + 0.681 * (1 - cell_void_fraction) -
-                8.48 * pow(1 - cell_void_fraction, 2) +
-                8.16 * pow(1 - cell_void_fraction, 3));
+                8.48 * Utilities::fixed_power<2>(1 - cell_void_fraction) +
+                8.16 * Utilities::fixed_power<3>(1 - cell_void_fraction));
         }
       else if ((1 - cell_void_fraction) >= 0.4)
         {
-          f0 = 10 * (1 - cell_void_fraction) / pow(cell_void_fraction, 3);
+          f0 = 10 * (1 - cell_void_fraction) / Utilities::fixed_power<3>(cell_void_fraction);
         }
 
       double f3 = 0.0673 + 0.212 * (1 - cell_void_fraction) +
-                  0.0232 / pow(cell_void_fraction, 5);
+                  0.0232 / Utilities::fixed_power<5>(cell_void_fraction);
 
       double momentum_transfer_coefficient =
         ((18 * kinematic_viscosity[particle_number] *
-          pow(cell_void_fraction, 2) * (1 - cell_void_fraction)) /
-         pow(particle_properties[DEM::CFDDEMProperties::PropertiesIndex::dp],
-             2)) *
+          Utilities::fixed_power<2>(cell_void_fraction) * (1 - cell_void_fraction)) /
+         Utilities::fixed_power<2>(particle_properties[DEM::CFDDEMProperties::PropertiesIndex::dp])) *
         (f0 + 0.5 * f3 * Re_p[particle_number]) *
         (M_PI *
          pow(particle_properties[DEM::CFDDEMProperties::PropertiesIndex::dp],
@@ -1238,10 +1234,10 @@ VANSAssemblerBeetstra<dim>::calculate_particle_fluid_interactions(
         std::min(scratch_data.cell_void_fraction[particle_number], 1.0);
 
       // Beetstra drag coefficient
-      F0 = 10 * (1 - cell_void_fraction) / pow(cell_void_fraction, 2) +
-           pow(cell_void_fraction, 2) *
+      F0 = 10 * (1 - cell_void_fraction) / Utilities::fixed_power<2>(cell_void_fraction) +
+           Utilities::fixed_power<2>(cell_void_fraction) *
              (1 + 1.5 * sqrt((1 - cell_void_fraction + DBL_MIN))) +
-           0.413 * (Re_p[particle_number]) / (24 * pow(cell_void_fraction, 2)) *
+           0.413 * (Re_p[particle_number]) / (24 * Utilities::fixed_power<2>(cell_void_fraction)) *
              ((1 / cell_void_fraction) +
               3 * (1 - cell_void_fraction) * cell_void_fraction +
               8.4 * pow((Re_p[particle_number]), -0.343)) /
@@ -1319,8 +1315,7 @@ VANSAssemblerGidaspow<dim>::calculate_particle_fluid_interactions(
       double particle_density =
         particle_properties[DEM::CFDDEMProperties::PropertiesIndex::mass] /
         (M_PI *
-         pow(particle_properties[DEM::CFDDEMProperties::PropertiesIndex::dp],
-             dim) /
+         Utilities::fixed_power<dim>(particle_properties[DEM::CFDDEMProperties::PropertiesIndex::dp]) /
          (2.0 * dim));
 
       if (cell_void_fraction > 0.8)
@@ -1653,8 +1648,7 @@ VANSAssemblerMagnus<dim>::calculate_particle_fluid_interactions(
           // Magnus Lift force
           lift_force =
             0.125 * M_PI *
-            pow(particle_properties[DEM::CFDDEMProperties::PropertiesIndex::dp],
-                2.0) *
+            Utilities::fixed_power<2>(particle_properties[DEM::CFDDEMProperties::PropertiesIndex::dp]) *
             C_m * density[particle_number] *
             relative_velocity[particle_number].norm() *
             (cross_product_3d(rotational_vector,
@@ -1809,9 +1803,8 @@ VANSAssemblerBuoyancy<dim>::calculate_particle_fluid_interactions(
       // Buoyancy Force
       buoyancy_force =
         -lagrangian_physical_properties.g * (4.0 / 3) * M_PI *
-        pow((particle_properties[DEM::CFDDEMProperties::PropertiesIndex::dp] /
-             2.0),
-            3);
+        Utilities::fixed_power<3>((particle_properties[DEM::CFDDEMProperties::PropertiesIndex::dp] /
+             2.0));
 
       for (int d = 0; d < dim; ++d)
         {
@@ -1855,8 +1848,7 @@ VANSAssemblerPressureForce<dim>::calculate_particle_fluid_interactions(
       // Pressure Force
       pressure_force =
         -(M_PI *
-          pow(particle_properties[DEM::CFDDEMProperties::PropertiesIndex::dp],
-              dim) /
+          Utilities::fixed_power<dim>(particle_properties[DEM::CFDDEMProperties::PropertiesIndex::dp]) /
           (2 * dim)) *
         pressure_gradients[particle_number];
 
@@ -1921,8 +1913,7 @@ VANSAssemblerShearForce<dim>::calculate_particle_fluid_interactions(
       // Shear Force
       shear_force =
         -(M_PI *
-          pow(particle_properties[DEM::CFDDEMProperties::PropertiesIndex::dp],
-              dim) /
+          Utilities::fixed_power<dim>(particle_properties[DEM::CFDDEMProperties::PropertiesIndex::dp]) /
           (2 * dim)) *
         kinematic_viscosity[particle_number] *
         velocity_laplacians[particle_number];
