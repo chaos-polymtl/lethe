@@ -2493,14 +2493,6 @@ FluidDynamicsMatrixFree<dim>::setup_dofs_fd()
                                              this->locally_relevant_dofs,
                                              this->mpi_communicator);
 
-  if (is_sdirk(this->simulation_control->get_assembly_method()))
-    this->multiphysics_previous_solutions.resize(1);
-  // Pre-allocate memory for the previous solutions using the information
-  // of the BDF schemes
-  else
-    this->multiphysics_previous_solutions.resize(
-      this->simulation_control->get_number_of_previous_solution_in_assembly());
-
   for (auto &solution : this->multiphysics_previous_solutions)
     solution.reinit(this->locally_owned_dofs,
                     this->locally_relevant_dofs,
