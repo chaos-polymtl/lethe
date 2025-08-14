@@ -656,6 +656,27 @@ public:
     const unsigned int n_global_max_particles_per_cell,
     const bool         enable_void_fraction_interpolation);
 
+  /** @brief Reinitializes the fluid forces and torques on the particles in the cell to zero
+   */
+
+  void
+  reinit_particle_fluid_forces()
+  { 
+    for (auto &particle : pic)
+      {
+        auto particle_properties = particle.get_properties();
+        // Set the particle_fluid_interactions properties and vectors to 0
+        for (int d = 0; d < dim; ++d)
+          {
+            particle_properties
+              [DEM::CFDDEMProperties::PropertiesIndex::fem_force_x + d] = 0.;
+            particle_properties
+              [DEM::CFDDEMProperties::PropertiesIndex::fem_torque_x + d] = 0.;
+            undisturbed_flow_force[d]                                    = 0.;
+          }
+      }
+  }
+
   /** @brief Extracts the velocity of the particles and calculates their total volume
    * in the cell
    * @return Total volume of the particles in the cell
@@ -672,16 +693,6 @@ public:
     for (auto &particle : pic)
       {
         auto particle_properties = particle.get_properties();
-        // Set the particle_fluid_interactions properties and vectors to 0
-        for (int d = 0; d < dim; ++d)
-          {
-            particle_properties
-              [DEM::CFDDEMProperties::PropertiesIndex::fem_force_x + d] = 0.;
-            particle_properties
-              [DEM::CFDDEMProperties::PropertiesIndex::fem_torque_x + d] = 0.;
-            undisturbed_flow_force[d]                                    = 0.;
-          }
-
         // Stores the values of particle velocity in a tensor
         particle_velocity[particle_i][0] =
           particle_properties[DEM::CFDDEMProperties::PropertiesIndex::v_x];
@@ -1002,6 +1013,7 @@ public:
 
     // Calculate the particles properties
     double total_particle_volume = 0;
+    reinit_particle_fluid_forces();
     total_particle_volume        = extract_particle_properties();
 
     calculate_cell_void_fraction(total_particle_volume);
@@ -1066,6 +1078,7 @@ public:
     // Calculate the particles properties
     double total_particle_volume = 0;
     total_particle_volume        = extract_particle_properties();
+    reinit_particle_fluid_forces();
     calculate_cell_void_fraction(total_particle_volume);
 
     if (number_of_particles == 0)
