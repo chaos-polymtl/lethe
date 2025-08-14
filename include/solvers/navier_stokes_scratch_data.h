@@ -801,12 +801,6 @@ public:
     fluid_velocity_curls_at_particle_location_3d.resize(number_of_particles);
     fluid_pressure_gradients_at_particle_location.resize(number_of_particles);
 
-    // // Evaluate the relevant information at the
-    // // quadrature points to do the interpolation.
-    // const auto &velocity_cell =
-    //   typename DoFHandler<dim>::cell_iterator(*this->fe_values.get_cell(),
-    //                                           &dof_handler);
-
     fe_values_local_particles.reinit(velocity_cell);
 
     // Calculate all fluid properties at the particle location
@@ -978,8 +972,12 @@ public:
   }
 
   /** @brief Calculates the variables needed to compute the particle fluid interactions
-   * in the vans equations.
+   * in the VANS equations.
    *
+   * @param velocity_cell The active cell associated with the velocity and pressure DoFHandler
+   * 
+   * @param void_fraction_cell The active cell associated with the void fraction DoFHandler
+   * 
    * @param previous_solution The solution at the previous time step for the fluid's velocity
    * and pressure
    *
@@ -988,10 +986,6 @@ public:
    *
    * @param particle_handler The particle handler object that stores and manages the
    *  particles in the simulations
-   *
-   * @param dof_handler The DoFHandler object for the Navier-Stokes problem
-   *
-   * @param void_fraction_dof_handler The DoFHandler object for the void fraction calculation
    */
 
   template <typename VectorType>
@@ -1034,9 +1028,15 @@ public:
 
   // Version of the function when VOF is used with CFD-DEM
   /** @brief Calculates the variables needed to compute the particle fluid interactions
-   * in the vans equations.This version of the function is used when VOF is used
+   * in the VANS equations.This version of the function is used when VOF is used
    * with CFD-DEM.
    *
+   * @param velocity_cell The active cell associated with the velocity and pressure DoFHandler
+   * 
+   * @param void_fraction_cell The active cell associated with the void fraction DoFHandler
+   * 
+   * @param phase_cell The active cell associated with the vof DoFHandler
+   * 
    * @param previous_solution The solution at the previous time step for the fluid's velocity
    * and pressure
    *
@@ -1045,12 +1045,6 @@ public:
    *
    * @param particle_handler The particle handler object that stores and manages the
    *  particles in the simulations
-   *
-   * @param dof_handler The DoFHandler object for the Navier-Stokes problem
-   *
-   * @param void_fraction_dof_handler The DoFHandler object for the void fraction calculation
-   *
-   * @param dof_handler_vof The DoFHandler object for the VOF equation
    *
    * @param current_filtered_solution The present value of the phase fraction at the dofs of the
    * cell
@@ -1076,8 +1070,6 @@ public:
 
     if (number_of_particles == 0)
       return;
-
-    average_particle_velocity = average_particle_velocity / number_of_particles;
 
     Quadrature<dim> q_particles = gather_particles_reference_location();
     calculate_fluid_fields_at_particle_location(q_particles,
