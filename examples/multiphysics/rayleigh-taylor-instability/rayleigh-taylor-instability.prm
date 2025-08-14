@@ -17,9 +17,9 @@ subsection simulation control
   set adapt            = true
   set max cfl          = 0.8
   set output control   = iteration
-  set output frequency = 10
+  set output frequency = 20
   set output name      = rayleigh-taylor-constant-sharpening
-  set output path      = ./output/constant/
+  set output path      = ./output/
 end
 
 #---------------------------------------------------
@@ -41,9 +41,8 @@ subsection initial conditions
     set Function expression = 0; 0; 0
   end
   subsection VOF
-    set Function expression = if (y>(0.5 + 0.1 * 0.25 * cos(2 *3.1415 * x / 0.25)) , 1, 0)
-    set smoothing type      = diffusive
-    set diffusion factor    = 1
+    set Function expression = y - (0.5 + 0.1 * 0.25 * cos(2 *3.1415 * x / 0.25)) + 0.5
+    set smoothing type      = geometric
   end
 end
 
@@ -104,14 +103,16 @@ end
 
 subsection VOF
   subsection interface regularization method
-    set type      = projection-based interface sharpening
-    set frequency = 25
-    subsection projection-based interface sharpening
-      set threshold           = 0.5
-      set interface sharpness = 1.5
-      set type                = constant
+    set type      = geometric interface reinitialization
+    set frequency = 20
+    set verbosity = verbose
+    subsection geometric interface reinitialization
+      set max reinitialization distance = 0.03
+      set transformation type           = tanh
+      set tanh thickness                = 0.015
     end
   end
+
   subsection phase filtration
     set type      = tanh
     set verbosity = quiet
@@ -164,6 +165,16 @@ subsection source term
   subsection fluid dynamics
     set Function expression = 0 ; -9.81 ; 0
   end
+end
+
+
+subsection timer
+  set type = end
+end
+
+
+subsection stabilization
+  set vof dcdd stabilization           = false
 end
 
 #---------------------------------------------------
