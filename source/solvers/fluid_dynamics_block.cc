@@ -254,6 +254,7 @@ FluidDynamicsBlock<dim>::assemble_local_system_matrix(
     cell,
     this->evaluation_point,
     this->previous_solutions,
+    this->sdirk_vectors.sum_over_previous_stages,
     this->forcing_function,
     this->flow_control.get_beta(),
     this->simulation_parameters.stabilization.pressure_scaling_factor);
@@ -386,6 +387,7 @@ FluidDynamicsBlock<dim>::assemble_local_system_rhs(
     cell,
     this->evaluation_point,
     this->previous_solutions,
+    this->sdirk_vectors.sum_over_previous_stages,
     this->forcing_function,
     this->flow_control.get_beta(),
     this->simulation_parameters.stabilization.pressure_scaling_factor);
@@ -602,10 +604,15 @@ FluidDynamicsBlock<dim>::setup_dofs_fd()
   // Zero constraints
   this->define_zero_constraints();
 
+  // Operations on the following vectors (addition,
+  // multiplication, etc.) can only be done if these are reinitialized WITHOUT
+  // locally_relevant_dofs (i.e. without ghost DoFs). This is why most of them
+  // are reinitialized both with and without locally_relevant_dofs.
   this->present_solution.reinit(this->locally_owned_dofs,
                                 this->locally_relevant_dofs,
                                 this->mpi_communicator);
-
+  this->local_evaluation_point.reinit(this->locally_owned_dofs,
+                                      this->mpi_communicator);
   this->evaluation_point.reinit(this->locally_owned_dofs,
                                 this->locally_relevant_dofs,
                                 this->mpi_communicator);
@@ -618,10 +625,35 @@ FluidDynamicsBlock<dim>::setup_dofs_fd()
                       this->mpi_communicator);
     }
 
+
+  if (this->simulation_control->is_sdirk())
+    {
+      // Reinitialize vectors used for the SDIRK methods
+      this->sdirk_vectors.sum_bi_ki.reinit(this->locally_owned_dofs,
+                                           this->locally_relevant_dofs,
+                                           this->mpi_communicator);
+      this->sdirk_vectors.local_sum_bi_ki.reinit(this->locally_owned_dofs,
+                                                 this->mpi_communicator);
+      this->sdirk_vectors.sum_over_previous_stages.reinit(
+        this->locally_owned_dofs,
+        this->locally_relevant_dofs,
+        this->mpi_communicator);
+      this->sdirk_vectors.local_sum_over_previous_stages.reinit(
+        this->locally_owned_dofs, this->mpi_communicator);
+      this->sdirk_vectors.locally_owned_for_calculation.reinit(
+        this->locally_owned_dofs, this->mpi_communicator);
+
+      for (auto &solution : this->sdirk_vectors.previous_k_j_solutions)
+        {
+          solution.reinit(this->locally_owned_dofs,
+                          this->locally_relevant_dofs,
+                          this->mpi_communicator);
+        }
+    }
+
+
   this->newton_update.reinit(this->locally_owned_dofs, this->mpi_communicator);
   this->system_rhs.reinit(this->locally_owned_dofs, this->mpi_communicator);
-  this->local_evaluation_point.reinit(this->locally_owned_dofs,
-                                      this->mpi_communicator);
 
 
   sparsity_pattern.reinit(this->locally_owned_dofs,

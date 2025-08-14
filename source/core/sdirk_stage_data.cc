@@ -18,20 +18,23 @@
 using namespace dealii;
 
 /// Function to construct the Butcher's table for a given SDIRK method
+// The coefficients are fixed data during the simulation.
 SDIRKTable
 sdirk_table(const Parameters::SimulationControl::TimeSteppingMethod method)
 {
   SDIRKTable table;
 
-  // Important note : the nomenclature used for the name of the SDIRK methods
-  // are sdirkOrderStage sdirk22 means SDIRK with order 2 and 2 stages, sdirk33
-  // means SDIRK with order 3 and 3 stages
+  // When referencing to SDIRK methods the pattern used is sdirkOrderStage. For
+  // instance, sdirk22 indicates SDIRK method with order 2 and 2 stages
   if (method == Parameters::SimulationControl::TimeSteppingMethod::sdirk22)
     {
       // SDIRK22 - Alexander's method (L-stable)
       // Reference: R. Alexander, Diagonally implicit Runge–Kutta methods for
       // stiff ODEs, SIAM Journal on Numerical Analysis, 14(6), 1006–1021, 1977.
       // DOI: https://doi.org/10.1137/0714068
+
+      // alpha is a constant coefficient chosen to ensure the method is stable
+      // and consistent
       const double alpha = (2. - std::sqrt(2.)) / 2.;
 
       table.A.reinit(2, 2);
@@ -50,9 +53,6 @@ sdirk_table(const Parameters::SimulationControl::TimeSteppingMethod method)
       return table;
     }
 
-  // Important note : the nomenclature used for the name of the SDIRK methods
-  // are sdirkOrderStage sdirk22 means SDIRK with order 2 and 2 stages, sdirk33
-  // means SDIRK with order 3 and 3 stages
   else if (method == Parameters::SimulationControl::TimeSteppingMethod::sdirk33)
     {
       // SDIRK33 - 3-stage, 3rd-order L-stable method (Kennedy-Carpenter)
@@ -60,18 +60,61 @@ sdirk_table(const Parameters::SimulationControl::TimeSteppingMethod method)
       // Runge-KuttaMethods for Ordinary Differential Equation"
       // NASA/TM–2016–219173 pp. 77, March 2016. No DOI available URL :
       // https://ntrs.nasa.gov/api/citations/20160005923/downloads/20160005923.pdf
+
+      // gamma is a constant coefficient chosen to ensure the method is stable
+      // and consistent
       const double gamma = 0.4358665215;
 
       table.A.reinit(3, 3);
       table.A(0, 0) = gamma;
       table.A(1, 0) = 0.2820667393;
       table.A(1, 1) = gamma;
-      table.A(2, 0) = 1 - 1.772630128 - gamma;
-      table.A(2, 1) = 1.772630128;
+      table.A(2, 0) = 1.208496649;
+      table.A(2, 1) = -0.6443631707;
       table.A(2, 2) = gamma;
 
-      table.c = {gamma, 0.7179332608, 1.0};
-      table.b = {1 - 1.772630128 - gamma, 1.772630128, gamma};
+      table.c.resize(3);
+      table.c[0] = gamma;
+      table.c[1] = 0.7179332608;
+      table.c[2] = 1.0;
+
+      table.b.resize(3);
+      table.b[0] = 1.208496649;
+      table.b[1] = -0.6443631707;
+      table.b[2] = gamma;
+
+      return table;
+    }
+
+  else if (method == Parameters::SimulationControl::TimeSteppingMethod::sdirk43)
+    {
+      // SDIRK43 - 3-stage, 4th-order method
+      // Reference: L. Ferracina, M.N. Spijker, "Strong stability of
+      // singly-diagonally-implicit Runge–Kutta methods" Applied Numerical
+      // Mathematics 58 (2008) 1675–1686 DOI: doi:10.1016/j.apnum.2007.10.004
+
+      // gamma is a constant coefficient chosen to ensure the method is stable
+      // and consistent const double gamma = 0.128886400515;
+      const double gamma = 1.068579021301629;
+
+      table.A.reinit(3, 3);
+      table.A(0, 0) = gamma;
+      table.A(1, 0) = 1.0 / 2.0 - gamma;
+      table.A(1, 1) = gamma;
+      table.A(2, 0) = 2 * gamma;
+      table.A(2, 1) = 1 - 4 * gamma;
+      table.A(2, 2) = gamma;
+
+      table.c.resize(3);
+      table.c[0] = gamma;
+      table.c[1] = 1.0 / 2.0;
+      table.c[2] = 1 - gamma;
+
+      table.b.resize(3);
+      table.b[0] = 1.0 / (6 * std::pow((2 * gamma - 1), 2.0));
+      table.b[1] = 2 * (6 * std::pow(gamma, 2.0) - 6 * gamma + 1) /
+                   (3 * std::pow((2 * gamma - 1), 2.0));
+      table.b[2] = 1 / (6 * std::pow((2 * gamma - 1), 2.0));
 
       return table;
     }

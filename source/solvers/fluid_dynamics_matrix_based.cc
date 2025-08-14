@@ -90,10 +90,16 @@ FluidDynamicsMatrixBased<dim>::setup_dofs_fd()
   // If enabled, create mortar operators
   this->reinit_mortar_operators();
 
+
+  // Operations on the following vectors (addition, multiplication, etc.) can
+  // only be done if these are reinitialized WITHOUT locally_relevant_dofs. This
+  // is why most of them are reinitialized both with and without
+  // locally_relevant_dofs.
   this->present_solution.reinit(this->locally_owned_dofs,
                                 this->locally_relevant_dofs,
                                 this->mpi_communicator);
-
+  this->local_evaluation_point.reinit(this->locally_owned_dofs,
+                                      this->mpi_communicator);
   this->evaluation_point.reinit(this->locally_owned_dofs,
                                 this->locally_relevant_dofs,
                                 this->mpi_communicator);
@@ -106,10 +112,35 @@ FluidDynamicsMatrixBased<dim>::setup_dofs_fd()
                       this->mpi_communicator);
     }
 
+  if (this->simulation_control->is_sdirk())
+    {
+      // Reinitialize vectors used for the SDIRK methods
+      this->sdirk_vectors.sum_bi_ki.reinit(this->locally_owned_dofs,
+                                           this->locally_relevant_dofs,
+                                           this->mpi_communicator);
+      this->sdirk_vectors.local_sum_bi_ki.reinit(this->locally_owned_dofs,
+                                                 this->mpi_communicator);
+      this->sdirk_vectors.sum_over_previous_stages.reinit(
+        this->locally_owned_dofs,
+        this->locally_relevant_dofs,
+        this->mpi_communicator);
+      this->sdirk_vectors.local_sum_over_previous_stages.reinit(
+        this->locally_owned_dofs, this->mpi_communicator);
+      this->sdirk_vectors.locally_owned_for_calculation.reinit(
+        this->locally_owned_dofs, this->mpi_communicator);
+
+      for (auto &solution : this->sdirk_vectors.previous_k_j_solutions)
+        {
+          solution.reinit(this->locally_owned_dofs,
+                          this->locally_relevant_dofs,
+                          this->mpi_communicator);
+        }
+    }
+
   this->newton_update.reinit(this->locally_owned_dofs, this->mpi_communicator);
   this->system_rhs.reinit(this->locally_owned_dofs, this->mpi_communicator);
-  this->local_evaluation_point.reinit(this->locally_owned_dofs,
-                                      this->mpi_communicator);
+
+
   auto                  &nonzero_constraints = this->get_nonzero_constraints();
   DynamicSparsityPattern dsp(this->locally_relevant_dofs);
   DoFTools::make_sparsity_pattern(this->dof_handler,
@@ -482,6 +513,14 @@ FluidDynamicsMatrixBased<dim>::setup_assemblers()
             }
         }
 
+      // sdirk methods
+      if (this->simulation_control->is_sdirk())
+        {
+          this->assemblers.emplace_back(
+            std::make_shared<GLSNavierStokesAssemblerSDIRK<dim>>(
+              this->simulation_control));
+        }
+
       // Rotating frame sources term
       if (this->simulation_parameters.velocity_sources.rotating_frame_type ==
           Parameters::VelocitySource::RotatingFrameType::srf)
@@ -662,6 +701,7 @@ FluidDynamicsMatrixBased<dim>::assemble_local_system_matrix(
     cell,
     this->evaluation_point,
     this->previous_solutions,
+    this->sdirk_vectors.sum_over_previous_stages,
     this->forcing_function,
     this->flow_control.get_beta(),
     this->simulation_parameters.stabilization.pressure_scaling_factor);
@@ -900,6 +940,7 @@ FluidDynamicsMatrixBased<dim>::assemble_local_system_rhs(
     cell,
     this->evaluation_point,
     this->previous_solutions,
+    this->sdirk_vectors.sum_over_previous_stages,
     this->forcing_function,
     this->flow_control.get_beta(),
     this->simulation_parameters.stabilization.pressure_scaling_factor);

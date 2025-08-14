@@ -2,6 +2,13 @@
 # Change Log
 All notable changes to the Lethe project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/).
+
+### [Master] - 2025-08-14
+
+### Added
+
+- MINOR A new time stepping scheme to solve the unsteady Navier-Stokes equations with a matrix based solver. Before, only BDF schemes were used in Lethe. This PR adds the Singly Diagonnaly Implicit Runge-Kutta (SDIRK) schemes with order 2, 3 and 4. [#1598](https://github.com/chaos-polymtl/lethe/pull/1598/)
+
 ### [Master] - 2025-08-13
 
 ### Added
@@ -59,7 +66,6 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/).
 ### Added
 
 - MINOR This PR adds a mortar Arbitrary Lagrangian Eulerian (ALE) asssembler to allow the simulation of rotor-stator transient problems. [#1597](https://github.com/chaos-polymtl/lethe/pull/1597)
-
 ### [Master] - 2025-07-31
 
 ### Fixed

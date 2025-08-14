@@ -168,6 +168,15 @@ NavierStokesBase<dim, VectorType, DofsType>::NavierStokesBase(
   multiphysics = std::make_shared<MultiphysicsInterface<dim>>(
     simulation_parameters, triangulation, simulation_control, this->pcout);
 
+
+  if (this->simulation_control->is_sdirk())
+    {
+      // Pre-allocate memory for the previous k_j solutions using the number of
+      // stages of the method
+      sdirk_vectors.previous_k_j_solutions.resize(
+        SimulationControl::get_number_of_stages(
+          this->simulation_control->get_assembly_method()));
+    }
   // Pre-allocate memory for the previous solutions using the information
   // of the BDF schemes
   previous_solutions.resize(maximum_number_of_previous_solutions());
@@ -530,6 +539,7 @@ NavierStokesBase<dim, VectorType, DofsType>::percolate_time_vectors_fd()
   previous_solutions[0] = this->present_solution;
 }
 
+
 template <int dim, typename VectorType, typename DofsType>
 void
 NavierStokesBase<dim, VectorType, DofsType>::finish_time_step()
@@ -567,6 +577,113 @@ NavierStokesBase<dim, VectorType, DofsType>::finish_time_step()
     }
 }
 
+
+template <int dim, typename VectorType, typename DofsType>
+void
+NavierStokesBase<dim, VectorType, DofsType>::multi_stage_preresolution(
+  unsigned int                                      stage,
+  Parameters::SimulationControl::TimeSteppingMethod method)
+{
+  // Copy the reference to some of the vectors to enhance readability below
+  auto &previous_k_j_solutions   = this->sdirk_vectors.previous_k_j_solutions;
+  auto &sum_over_previous_stages = this->sdirk_vectors.sum_over_previous_stages;
+  auto &local_sum_over_previous_stages =
+    this->sdirk_vectors.local_sum_over_previous_stages;
+  auto &locally_owned_for_calculation =
+    this->sdirk_vectors.locally_owned_for_calculation;
+
+  // If a SDIRK method is selected, we need to solve as many
+  // nonlinear systems as the number of stages.
+
+  // At each stage, the value of the (a_ij), (b_i) and (c_i)
+  // coefficients are differents
+
+  SDIRKTable     table = sdirk_table(method);
+  SDIRKStageData stage_data(table, stage + 1);
+  const double   a_ii = stage_data.a_ij[stage];
+
+  // At each stage, we need to recompute sum(a_{ij} * k_j)
+  // = sum_over_previous_stages
+  local_sum_over_previous_stages = 0;
+
+  if (stage > 0)
+    {
+      // At the first stage, the sum_over_previous_stages is set to
+      // 0. But for the next stages, we need to update this
+      // sum_over_previous_stages
+      for (unsigned int p = 0; p < stage; ++p)
+        {
+          locally_owned_for_calculation = previous_k_j_solutions[p];
+          local_sum_over_previous_stages.add(stage_data.a_ij[p] / a_ii,
+                                             locally_owned_for_calculation);
+        }
+    }
+
+  sum_over_previous_stages = local_sum_over_previous_stages;
+}
+
+template <int dim, typename VectorType, typename DofsType>
+void
+NavierStokesBase<dim, VectorType, DofsType>::multi_stage_postresolution(
+  unsigned int                                      stage,
+  Parameters::SimulationControl::TimeSteppingMethod method,
+  double                                            time_step)
+{
+  // Copy the reference to some of the vectors to enhance readability below
+  auto &present_solution       = this->present_solution;
+  auto &previous_solutions     = this->previous_solutions;
+  auto &local_evaluation_point = this->local_evaluation_point;
+  auto &local_sum_over_previous_stages =
+    this->sdirk_vectors.local_sum_over_previous_stages;
+  auto &locally_owned_for_calculation =
+    this->sdirk_vectors.locally_owned_for_calculation;
+  auto &previous_k_j_solutions = this->sdirk_vectors.previous_k_j_solutions;
+  auto &sum_bi_ki              = this->sdirk_vectors.sum_bi_ki;
+  auto &local_sum_bi_ki        = this->sdirk_vectors.local_sum_bi_ki;
+
+  SDIRKTable     table = sdirk_table(method);
+  SDIRKStageData stage_data(table, stage + 1);
+  const double   a_ii = stage_data.a_ij[stage];
+
+  // Once we have solved the nonlinear system for the velocity, we
+  // want to store the value of the coefficient k_i for the final
+  // sum b_i*k_i with k_i = (u*_{i} - u_{n})/(time_step*a_ii) -
+  // sum_over_previous_stages
+  locally_owned_for_calculation = previous_solutions[0];
+  local_evaluation_point        = present_solution;
+  local_evaluation_point.add(-1.0, locally_owned_for_calculation);
+  local_evaluation_point *= 1.0 / (time_step * a_ii);
+  local_evaluation_point.add(-1.0, local_sum_over_previous_stages);
+
+  // We store the value of the present_k_i_solution in the
+  // previous_k_j_solutions vector.
+  previous_k_j_solutions[stage] = local_evaluation_point;
+
+  // We update the sum of b_i*k_i
+  const double b_i = stage_data.b_i;
+  local_sum_bi_ki.add(b_i, local_evaluation_point);
+  sum_bi_ki = local_sum_bi_ki;
+}
+
+template <int dim, typename VectorType, typename DofsType>
+void
+NavierStokesBase<dim, VectorType, DofsType>::update_multi_stage_solution(
+  double time_step)
+{
+  // Copy the reference to some of the vectors to enhance readability below
+  auto &present_solution       = this->present_solution;
+  auto &previous_solutions     = this->previous_solutions;
+  auto &local_evaluation_point = this->local_evaluation_point;
+  auto &sum_bi_ki              = this->sdirk_vectors.sum_bi_ki;
+  auto &local_sum_bi_ki        = this->sdirk_vectors.local_sum_bi_ki;
+
+  // At each time iteration, we update the value of present_solution
+  local_sum_bi_ki        = sum_bi_ki;
+  local_evaluation_point = previous_solutions[0];
+  local_evaluation_point.add(time_step, local_sum_bi_ki);
+  present_solution = local_evaluation_point;
+}
+
 // Do an iteration with the NavierStokes Solver
 // Handles the fact that we may or may not be at a first
 // iteration with the solver and sets the initial condition
@@ -574,74 +691,116 @@ template <int dim, typename VectorType, typename DofsType>
 void
 NavierStokesBase<dim, VectorType, DofsType>::iterate()
 {
+  // The locally_relevant_dofs are used for the assembly,
+  // while the non-locally_relevant_dofs are used for the calculations on the
+  // vectors (addition, multiplication, etc.).
+  const auto         method = this->simulation_control->get_assembly_method();
+  const auto         time_step = this->simulation_control->get_time_step();
+  const unsigned int n_stages = SimulationControl::get_number_of_stages(method);
+
   auto &present_solution = this->present_solution;
 
-  if (simulation_parameters.multiphysics.fluid_dynamics)
+  // For a multi-stages method, at each time iteration, we reset the value of
+  // sum_bi_ki
+  if (n_stages > 1)
+    this->sdirk_vectors.local_sum_bi_ki = 0;
+
+  for (unsigned int stage = 0; stage < n_stages; ++stage)
     {
-      // Solve and percolate the auxiliary physics that should be treated BEFORE
-      // the fluid dynamics
-      multiphysics->solve(false,
-                          simulation_parameters.simulation_control.method);
-      multiphysics->percolate_time_vectors(false);
-
-      if (simulation_parameters.non_linear_solver.at(PhysicsID::fluid_dynamics)
-              .verbosity != Parameters::Verbosity::quiet ||
-          simulation_parameters.linear_solver.at(PhysicsID::fluid_dynamics)
-              .verbosity != Parameters::Verbosity::quiet)
-        announce_string(this->pcout, "Fluid Dynamics");
-      PhysicsSolver<VectorType>::solve_non_linear_system(false);
-
-      // If the physics need to be solved after the physics, the matrix free
-      // solver requires to update the value here. This is due to the different
-      // type of vectors.
-      if (this->multiphysics->get_active_physics().size() > 1)
-        this->update_solutions_for_multiphysics();
-
-      // Solve and percolate the auxiliary physics that should be treated AFTER
-      // the fluid dynamics
-      multiphysics->solve(true,
-                          simulation_parameters.simulation_control.method);
-      // Dear future Bruno, percolating auxiliary physics before fluid dynamics
-      // is necessary because of the checkpointing mechanism. You spent an
-      // evening debugging this, trust me.
-      multiphysics->percolate_time_vectors(true);
-    }
-  else
-    {
-      // Fluid dynamics is not to be solved, but rather specified. Update
-      // condition and move on.
-
-      // Solve and percolate the auxiliary physics that should be treated
-      // BEFORE the fluid dynamics
-      multiphysics->solve(false,
-                          simulation_parameters.simulation_control.method);
-      multiphysics->percolate_time_vectors(false);
-
-      if (this->simulation_parameters.initial_condition->type ==
-          Parameters::FluidDynamicsInitialConditionType::
-            average_velocity_profile)
+      if (simulation_parameters.multiphysics.fluid_dynamics)
         {
-          // We get the solution via the average solution
-          this->local_evaluation_point =
-            this->average_velocities->get_average_velocities();
-          present_solution = this->local_evaluation_point;
+          // Solve and percolate the auxiliary physics that should be treated
+          // BEFORE the fluid dynamics
+          multiphysics->solve(false,
+                              simulation_parameters.simulation_control.method);
+          multiphysics->percolate_time_vectors(false);
+
+          if (simulation_parameters.non_linear_solver
+                  .at(PhysicsID::fluid_dynamics)
+                  .verbosity != Parameters::Verbosity::quiet ||
+              simulation_parameters.linear_solver.at(PhysicsID::fluid_dynamics)
+                  .verbosity != Parameters::Verbosity::quiet)
+            announce_string(this->pcout, "Fluid Dynamics");
+
+          if (n_stages > 1)
+            {
+              // For SDIRK, some variables need to be updated before solving the
+              // non-linear system.
+              multi_stage_preresolution(stage, method);
+            }
+
+          PhysicsSolver<VectorType>::solve_non_linear_system(false);
+
+          if (n_stages > 1)
+            {
+              // For SDIRK, some variables need to be updated after solving the
+              // non-linear system.
+              multi_stage_postresolution(stage, method, time_step);
+            }
+
+
+          // If the physics need to be solved after the physics, the matrix free
+          // solver requires to update the value here. This is due to the
+          // different type of vectors.
+          if (this->multiphysics->get_active_physics().size() > 1)
+            {
+              this->update_solutions_for_multiphysics();
+            }
+
+          // Solve and percolate the auxiliary physics that should be treated
+          // AFTER the fluid dynamics
+          multiphysics->solve(true,
+                              simulation_parameters.simulation_control.method);
+          // Dear future Bruno, percolating auxiliary physics before fluid
+          // dynamics is necessary because of the checkpointing mechanism. You
+          // spent an evening debugging this, trust me.
+          multiphysics->percolate_time_vectors(true);
         }
       else
         {
-          // We get the solution via an initial condition
-          this->simulation_parameters.initial_condition->uvwp.set_time(
-            this->simulation_control->get_current_time());
-          set_initial_condition_fd(
-            this->simulation_parameters.initial_condition->type);
-        }
+          // Fluid dynamics is not to be solved, but rather specified. Update
+          // condition and move on.
 
-      // Solve and percolate the auxiliary physics that should be treated
-      // AFTER the fluid dynamics
-      multiphysics->solve(true,
-                          simulation_parameters.simulation_control.method);
-      multiphysics->percolate_time_vectors(true);
+          // Solve and percolate the auxiliary physics that should be treated
+          // BEFORE the fluid dynamics
+          multiphysics->solve(false,
+                              simulation_parameters.simulation_control.method);
+          multiphysics->percolate_time_vectors(false);
+
+          if (this->simulation_parameters.initial_condition->type ==
+              Parameters::FluidDynamicsInitialConditionType::
+                average_velocity_profile)
+            {
+              // We get the solution via the average solution
+              this->local_evaluation_point =
+                this->average_velocities->get_average_velocities();
+              present_solution = this->local_evaluation_point;
+            }
+          else
+            {
+              // We get the solution via an initial condition
+              this->simulation_parameters.initial_condition->uvwp.set_time(
+                this->simulation_control->get_current_time());
+              set_initial_condition_fd(
+                this->simulation_parameters.initial_condition->type);
+            }
+
+          // Solve and percolate the auxiliary physics that should be treated
+          // AFTER the fluid dynamics
+          multiphysics->solve(true,
+                              simulation_parameters.simulation_control.method);
+          multiphysics->percolate_time_vectors(true);
+        }
+    }
+  if (n_stages > 1)
+    {
+      // For SDIRK, the solution is not directly computed with the non-linear
+      // solver. Once we looped over all the stages, we can finally update the
+      // present_solution vector.
+      update_multi_stage_solution(time_step);
     }
 }
+
 
 template <int dim, typename VectorType, typename DofsType>
 void

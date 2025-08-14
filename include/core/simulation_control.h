@@ -6,6 +6,7 @@
 
 #include <core/bdf.h>
 #include <core/parameters.h>
+#include <core/sdirk_stage_data.h>
 
 /**
  * @brief The SimulationControl class is responsible for the control of steady-state and transient
@@ -133,8 +134,6 @@ protected:
     bdf_coefs = calculate_bdf_coefficients(assembly_method, time_step_vector);
   }
 
-
-
 public:
   /**
    * @brief The simulation control class is constructed by a simple parameter structure
@@ -219,6 +218,7 @@ public:
   /**
    * @brief Establish if the method is a bdf method
    *
+   * @return true if the method is BDF1, BDF2, BDF3, or steady BDF, false otherwise.
    */
   bool
   is_bdf()
@@ -228,6 +228,21 @@ public:
              Parameters::SimulationControl::TimeSteppingMethod::steady_bdf ||
            method == Parameters::SimulationControl::TimeSteppingMethod::bdf2 ||
            method == Parameters::SimulationControl::TimeSteppingMethod::bdf3;
+  }
+
+  /**
+   * @brief Establish if the method is a sdirk method
+   *
+   * @return true if the method is sdirk, false otherwise.
+   */
+  bool
+  is_sdirk()
+  {
+    return method ==
+             Parameters::SimulationControl::TimeSteppingMethod::sdirk22 ||
+           method ==
+             Parameters::SimulationControl::TimeSteppingMethod::sdirk33 ||
+           method == Parameters::SimulationControl::TimeSteppingMethod::sdirk43;
   }
 
 

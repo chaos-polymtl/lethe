@@ -11,6 +11,7 @@
 #include <core/parameters.h>
 #include <core/physics_solver.h>
 #include <core/pvd_handler.h>
+#include <core/sdirk_stage_data.h>
 #include <core/simulation_control.h>
 
 #include <solvers/flow_control.h>
@@ -177,9 +178,7 @@ protected:
    **/
 
   /**
-   * @brief finish_simulation
-   * Finish the simulation by calling all
-   * the post-processing elements that are required
+   * @brief Finish the simulation by calling all the post-processing elements that are required
    */
   void
   finish_simulation()
@@ -189,8 +188,7 @@ protected:
   }
 
   /**
-   * @brief postprocess
-   * Post-process simulation after an iteration
+   * @brief Post-process simulation after an iteration
    *
    * @param first_iteration Indicator if the simulation is at it's first simulation or not.
    */
@@ -207,10 +205,7 @@ protected:
   };
 
   /**
-   * @brief setup_dofs
-   *
-   * Initialize the degree of freedom and the memory
-   * associated with them for fluid dynamics and enabled auxiliary physics.
+   * @brief Initialize the degree of freedom and the memory associated with them for fluid dynamics and enabled auxiliary physics.
    */
   virtual void
   setup_dofs()
@@ -221,7 +216,7 @@ protected:
   };
 
   /**
-   * @brief set_initial_conditions
+   * @brief Set the initial condition
    *
    * @param initial_condition_type Type of method  use to impose initial condition.
    *
@@ -266,9 +261,7 @@ protected:
    **/
 
   /**
-   * @brief finish_time_step
-   * Finishes the time step of the fluid dynamics
-   * Post-processing and time stepping
+   * @brief Finishes the time step of the fluid dynamics. Post-processing and time stepping
    */
   virtual void
   finish_time_step();
@@ -282,24 +275,19 @@ protected:
   percolate_time_vectors_fd();
 
   /**
-   * @brief finish_simulation
-   * Finishes the simulation for fluid dynamics by calling
-   * the post-processing elements that are required
+   * @brief Finishes the simulation for fluid dynamics by calling the post-processing elements that are required
    */
   void
   finish_simulation_fd();
 
   /**
-   * @brief postprocess
-   * Post-process fluid dynamics after an iteration
+   * @brief Post-process fluid dynamics after an iteration
    */
   virtual void
   postprocess_fd(bool first_iteration);
 
   /**
-   * @brief setup_dofs
-   *
-   * Initialize the dofs for fluid dynamics
+   * @brief Initialize the dofs for fluid dynamics
    */
   virtual void
   setup_dofs_fd() = 0;
@@ -334,33 +322,60 @@ protected:
    **/
 
   /**
-   * @brief postprocessing_forces
-   * Post-processing function
+   * @brief Post-processing function
    * Outputs the forces acting on each boundary condition
    */
   void
   postprocessing_forces(const VectorType &evaluation_point);
 
   /**
-   * @brief postprocessing_torques
-   * Post-processing function
+   * @brief Post-processing function
    * Outputs the torque acting on each boundary condition
    */
   void
   postprocessing_torques(const VectorType &evaluation_point);
 
   /**
-   * @brief dynamic_flow_control
-   * If set to enable, dynamic_flow_control allows to control the flow by
-   * executing space-average velocity and beta coefficient force calculation at
-   * each time step.
+   * @brief If set to enable, dynamic_flow_control allows to control the flow by executing space-average velocity and beta coefficient force calculation at each time step.
    */
   virtual void
   dynamic_flow_control();
 
   /**
-   * @brief iterate
-   * Do a regular CFD iteration
+   * @brief Update the sum_over_previous_stages variable to use it in the solver.
+   *
+   * @param stage An unsigned integer which gives the index of the current stage
+   * @param method SDIRK method for now (BDF methods are single stage)
+   */
+  virtual void
+  multi_stage_preresolution(
+    unsigned int                                      stage,
+    Parameters::SimulationControl::TimeSteppingMethod method);
+
+  /**
+   * @brief Calculate \f$ k_i \f$ from \f$ u*_i : k_i = \frac{u*_i - u_n}{time_step*a_ii} - \sum{j=1}^{i-1} a_ij * k_j \f$
+   * Update \f$ \sum_{i=1}^{N_{stages}} b_i * k_i \f$
+   *
+   * @param stage An unsigned integer which gives the index of the current stage
+   * @param method SDIRK method for now (BDF methods are single stage)
+   * @param time_step The current time step to build the solution at the next time step
+   */
+  virtual void
+  multi_stage_postresolution(
+    unsigned int                                      stage,
+    Parameters::SimulationControl::TimeSteppingMethod method,
+    double                                            time_step);
+
+  /**
+   * @brief \f$ u_{n+1} = u_n + time_step * \sum_{i=1}^{N_{stages}} b_i * k_i \f$
+   *
+   * @param time_step The current time step to build the solution at the next time step
+   */
+  virtual void
+  update_multi_stage_solution(double time_step);
+
+  /**
+   * @brief Do a regular CFD iteration
    */
   virtual void
   iterate();
@@ -428,8 +443,7 @@ protected:
   set_solution_from_checkpoint(std::string checkpoint_file_prefix);
 
   /**
-   * @brief set_nodal_values
-   * Set the nodal values of velocity and pressure
+   * @brief Set the nodal values of velocity and pressure
    */
   void
   set_nodal_values();
@@ -833,50 +847,44 @@ protected:
                                         const DoFHandler<dim> *dof_handler_ht);
 
   /**
-   * @brief write_checkpoint
+   * @brief Write the checkpoint
    */
   virtual void
   write_checkpoint();
 
   /**
-   * @brief write_output_results
-   * Post-processing as parallel VTU files
+   * @brief Post-processing as parallel VTU files
    */
   void
   write_output_results(const VectorType &solution);
 
   /**
-   * @brief output_field_hook
-   * This function is to be redefined in specialized classes to adapt the output
+   * @brief This function is to be redefined in specialized classes to adapt the output
    * to each solver.
    */
   virtual void
   output_field_hook(DataOut<dim> &);
 
   /**
-   * @brief write_output_forces
-   * Writes the forces per boundary condition to a text file output
+   * @brief Writes the forces per boundary condition to a text file output
    */
   void
   write_output_forces();
 
   /**
-   * @brief write_output_torques
-   * Writes the torques per boundary condition to a text file output
+   * @brief Writes the torques per boundary condition to a text file output
    */
   void
   write_output_torques();
 
   /**
-   * @brief rescale_pressure_dofs_in_newton_update
-   * This function is used to rescale pressure DOFs in the newton correction
+   * @brief This function is used to rescale pressure DOFs in the newton correction
    */
   void
   rescale_pressure_dofs_in_newton_update();
 
   /**
-   * @brief init_temporary_vector
-   * This function initializes correctly a temporary vector depending on the
+   * @brief This function initializes correctly a temporary vector depending on the
    * vector type
    */
   inline VectorType
@@ -938,10 +946,37 @@ protected:
   VectorType local_evaluation_point;
   VectorType newton_update;
   VectorType present_solution;
+
   VectorType system_rhs;
 
   // Previous solutions vectors
   std::vector<VectorType> previous_solutions;
+
+  /**
+   * @brief Structure that stores all SDIRK-related vectors used during the time integration process.
+   */
+  struct SDIRKVectors
+  {
+    /// Vector to hold the locally non-relevant part of the solution (for
+    /// calculation purposes)
+    VectorType locally_owned_for_calculation;
+
+    /// Stores the previous k_j stage vectors (one per stage j < i)
+    std::vector<VectorType> previous_k_j_solutions;
+
+    /// Stores the sum of b_i * k_i across all stages
+    VectorType sum_bi_ki;
+    VectorType local_sum_bi_ki;
+
+    /// Stores the sum of a_ij * k_j for j < i
+    VectorType sum_over_previous_stages;
+    VectorType local_sum_over_previous_stages;
+  };
+
+  /**
+   * @brief Instance of SDIRK-related vectors.
+   */
+  SDIRKVectors sdirk_vectors;
 
   // Finite element order used
   const unsigned int velocity_fem_degree;

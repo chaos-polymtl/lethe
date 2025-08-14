@@ -1,7 +1,7 @@
 // SPDX-FileCopyrightText: Copyright (c) 2019-2024 The Lethe Authors
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
-#include "core/simulation_control.h"
+#include <core/simulation_control.h>
 
 #include <cfloat>
 #include <fstream>
@@ -151,13 +151,14 @@ SimulationControl::get_number_of_stages(
       case Method::bdf3:
         return 1;
 
-      // Important note : the nomenclature used for the name of the SDIRK
-      // methods are sdirkOrderStage sdirk22 means SDIRK with order 2 and 2
-      // stages, sdirk33 means SDIRK with order 3 and 3 stages
+      // When referencing to SDIRK methods the pattern used is
+      // sdirkOrderStage. For instance, sdirk22 indicates SDIRK method with
+      // order 2 and 2 stages
       case Method::sdirk22:
         return 2;
 
       case Method::sdirk33:
+      case Method::sdirk43:
         return 3;
 
       default:

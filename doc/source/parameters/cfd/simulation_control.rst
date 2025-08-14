@@ -107,6 +107,11 @@ This subsection is the most important in a simulation and therefore, the most co
 	* ``bdf1``: 1st order backward differentiation
 	* ``bdf2``: 2nd order backward differentiation
 	* ``bdf3``: 3rd order backward differentiation
+	* ``sdirk22``: 2nd order 2 stages singly diagonally implicit Runge-Kutta
+	* ``sdirk33``: 3rd order 3 stages singly diagonally implicit Runge-Kutta
+
+.. note::
+	For now, the SDIRK schemes are only available for a matrix based resolution and are not supported by any physics other than Navier-Stokes.
 
 -----------------------------------
 Steady-state simulation parameters
@@ -129,6 +134,9 @@ BDF scheme parameters
 	* ``initial solution``
 
 * ``startup time scaling``: scaling factor used in the iterations necessary to startup the BDF schemes.
+
+.. note::
+	SDIRK schemes don't require any additional parameter.
 
 ---------------------------------
 Transient simulations parameters
