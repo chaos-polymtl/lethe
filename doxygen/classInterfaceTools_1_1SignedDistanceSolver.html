@@ -141,14 +141,18 @@ Private Member Functions</h2></td></tr>
 <tr class="separator:a7e6f0491c1ee65376142a26be783d0fe"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ab66b5812b8f001c40e3001a41784cac0" id="r_ab66b5812b8f001c40e3001a41784cac0"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classInterfaceTools_1_1SignedDistanceSolver.html#ab66b5812b8f001c40e3001a41784cac0">get_dof_opposite_faces</a> (unsigned int local_dof_id, std::vector&lt; unsigned int &gt; &amp;local_opposite_faces)</td></tr>
 <tr class="separator:ab66b5812b8f001c40e3001a41784cac0"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:af97f0d53fcf547f88fe33537a7f93a02" id="r_af97f0d53fcf547f88fe33537a7f93a02"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classInterfaceTools_1_1SignedDistanceSolver.html#af97f0d53fcf547f88fe33537a7f93a02">set_face_opposite_dofs_map</a> ()</td></tr>
+<tr class="separator:af97f0d53fcf547f88fe33537a7f93a02"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a04349a3c2ae119be1d9b078b2014f06c" id="r_a04349a3c2ae119be1d9b078b2014f06c"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classInterfaceTools_1_1SignedDistanceSolver.html#a04349a3c2ae119be1d9b078b2014f06c">get_face_opposite_dofs</a> (unsigned int local_face_id, std::vector&lt; unsigned int &gt; &amp;local_opposite_dofs)</td></tr>
+<tr class="separator:a04349a3c2ae119be1d9b078b2014f06c"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a2f21d3cea84ad0329be4e22b6cb1b58d" id="r_a2f21d3cea84ad0329be4e22b6cb1b58d"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classInterfaceTools_1_1SignedDistanceSolver.html#a2f21d3cea84ad0329be4e22b6cb1b58d">get_face_transformation_jacobian</a> (const DerivativeForm&lt; 1, dim, dim &gt; &amp;cell_transformation_jac, const unsigned int local_face_id, DerivativeForm&lt; 1, dim - 1, dim &gt; &amp;face_transformation_jac)</td></tr>
 <tr class="separator:a2f21d3cea84ad0329be4e22b6cb1b58d"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a990037f6737a88ff53820c7f36fe3dde" id="r_a990037f6737a88ff53820c7f36fe3dde"><td class="memItemLeft" align="right" valign="top">Point&lt; dim &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classInterfaceTools_1_1SignedDistanceSolver.html#a990037f6737a88ff53820c7f36fe3dde">transform_ref_face_point_to_ref_cell</a> (const Point&lt; dim - 1 &gt; &amp;x_ref_face, const unsigned int local_face_id)</td></tr>
 <tr class="separator:a990037f6737a88ff53820c7f36fe3dde"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ad598739c1d9201c98fb216ca0323763e" id="r_ad598739c1d9201c98fb216ca0323763e"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classInterfaceTools_1_1SignedDistanceSolver.html#ad598739c1d9201c98fb216ca0323763e">compute_residual</a> (const Tensor&lt; 1, dim &gt; &amp;x_n_to_x_I_real, const Tensor&lt; 1, dim &gt; &amp;distance_gradient, const DerivativeForm&lt; 1, dim - 1, dim &gt; &amp;transformation_jac, Tensor&lt; 1, dim - 1 &gt; &amp;residual_ref)</td></tr>
 <tr class="separator:ad598739c1d9201c98fb216ca0323763e"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ab38bf64ca10a4165a5d07eac14c05622" id="r_ab38bf64ca10a4165a5d07eac14c05622"><td class="memItemLeft" align="right" valign="top">std::vector&lt; Point&lt; dim &gt; &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classInterfaceTools_1_1SignedDistanceSolver.html#ab38bf64ca10a4165a5d07eac14c05622">compute_numerical_jacobian_stencil</a> (const Point&lt; dim &gt; x_ref, const unsigned int local_face_id, const double perturbation)</td></tr>
-<tr class="separator:ab38bf64ca10a4165a5d07eac14c05622"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a31467261e35a5c038ecce13c22250226" id="r_a31467261e35a5c038ecce13c22250226"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classInterfaceTools_1_1SignedDistanceSolver.html#a31467261e35a5c038ecce13c22250226">compute_numerical_jacobian_stencil</a> (const Point&lt; dim &gt; x_ref, const unsigned int local_face_id, const double perturbation, std::vector&lt; Point&lt; dim &gt; &gt; &amp;stencil)</td></tr>
+<tr class="separator:a31467261e35a5c038ecce13c22250226"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a291569be3e0b2564b81a318d9ee3f6e6" id="r_a291569be3e0b2564b81a318d9ee3f6e6"><td class="memItemLeft" align="right" valign="top">Tensor&lt; 1, dim &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classInterfaceTools_1_1SignedDistanceSolver.html#a291569be3e0b2564b81a318d9ee3f6e6">transform_ref_face_correction_to_ref_cell</a> (const Vector&lt; double &gt; &amp;correction_ref_face, const unsigned int local_face_id)</td></tr>
 <tr class="separator:a291569be3e0b2564b81a318d9ee3f6e6"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a552aee87e6b924ca48446700fd3349c3" id="r_a552aee87e6b924ca48446700fd3349c3"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classInterfaceTools_1_1SignedDistanceSolver.html#a552aee87e6b924ca48446700fd3349c3">compute_numerical_jacobian</a> (const std::vector&lt; Point&lt; dim &gt; &gt; &amp;stencil_real, const Point&lt; dim &gt; &amp;x_I_real, const std::vector&lt; Tensor&lt; 1, dim &gt; &gt; &amp;distance_gradients, const std::vector&lt; DerivativeForm&lt; 1, dim - 1, dim &gt; &gt; &amp;transformation_jacobians, const double perturbation, LAPACKFullMatrix&lt; double &gt; &amp;jacobian_matrix)</td></tr>
@@ -202,6 +206,8 @@ Private Attributes</h2></td></tr>
 <tr class="separator:a7898ff4ca64e179159325e18e58392aa"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a3742aee48ae45e322bef4c31d8b071cd" id="r_a3742aee48ae45e322bef4c31d8b071cd"><td class="memItemLeft" align="right" valign="top"><a class="el" href="classPVDHandler.html">PVDHandler</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classInterfaceTools_1_1SignedDistanceSolver.html#a3742aee48ae45e322bef4c31d8b071cd">pvd_handler_signed_distance</a></td></tr>
 <tr class="separator:a3742aee48ae45e322bef4c31d8b071cd"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a0d3bdfd32806ede6556a7d755dad1529" id="r_a0d3bdfd32806ede6556a7d755dad1529"><td class="memItemLeft" align="right" valign="top">std::map&lt; unsigned int, std::vector&lt; unsigned int &gt; &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classInterfaceTools_1_1SignedDistanceSolver.html#a0d3bdfd32806ede6556a7d755dad1529">face_opposite_dofs_map</a></td></tr>
+<tr class="separator:a0d3bdfd32806ede6556a7d755dad1529"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><div class="compoundTemplParams">template&lt;int dim, typename VectorType&gt;<br />
@@ -291,7 +297,7 @@ template&lt;int dim, typename VectorType &gt; </div>
 
 <p class="definition">Definition at line <a class="el" href="interface__tools_8h_source.html#l00437">437</a> of file <a class="el" href="interface__tools_8h_source.html">interface_tools.h</a>.</p>
 
-<p class="reference">References <a class="el" href="interface__tools_8h_source.html#l00906">InterfaceTools::SignedDistanceSolver&lt; dim, VectorType &gt;::mapping</a>.</p>
+<p class="reference">References <a class="el" href="interface__tools_8h_source.html#l00947">InterfaceTools::SignedDistanceSolver&lt; dim, VectorType &gt;::mapping</a>, and <a class="el" href="interface__tools_8h_source.html#l00640">InterfaceTools::SignedDistanceSolver&lt; dim, VectorType &gt;::set_face_opposite_dofs_map()</a>.</p>
 
 </div>
 </div>
@@ -322,7 +328,7 @@ template&lt;int dim, typename VectorType &gt; </div>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="interface__tools_8cc_source.html#l01284">1284</a> of file <a class="el" href="interface__tools_8cc_source.html">interface_tools.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="interface__tools_8cc_source.html#l01384">1384</a> of file <a class="el" href="interface__tools_8cc_source.html">interface_tools.cc</a>.</p>
 
 </div>
 </div>
@@ -353,7 +359,7 @@ template&lt;int dim, typename VectorType &gt; </div>
 
 <p>Compute the cell-wise volume correction to match the volume englobed by the given level of the level_set field in each element. </p>
 
-<p class="definition">Definition at line <a class="el" href="interface__tools_8cc_source.html#l00908">908</a> of file <a class="el" href="interface__tools_8cc_source.html">interface_tools.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="interface__tools_8cc_source.html#l01008">1008</a> of file <a class="el" href="interface__tools_8cc_source.html">interface_tools.cc</a>.</p>
 
 <p class="reference">References <a class="el" href="interface__tools_8cc_source.html#l00008">InterfaceTools::compute_cell_wise_volume()</a>.</p>
 
@@ -405,9 +411,9 @@ template&lt;int dim, typename VectorType &gt; </div>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>distance between x_I and the interface </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="interface__tools_8h_source.html#l00896">896</a> of file <a class="el" href="interface__tools_8h_source.html">interface_tools.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="interface__tools_8h_source.html#l00937">937</a> of file <a class="el" href="interface__tools_8h_source.html">interface_tools.h</a>.</p>
 
-<p class="reference">References <a class="el" href="interface__tools_8h_source.html#l00944">InterfaceTools::SignedDistanceSolver&lt; dim, VectorType &gt;::distance</a>.</p>
+<p class="reference">References <a class="el" href="interface__tools_8h_source.html#l00985">InterfaceTools::SignedDistanceSolver&lt; dim, VectorType &gt;::distance</a>.</p>
 
 </div>
 </div>
@@ -438,7 +444,7 @@ template&lt;int dim, typename VectorType &gt; </div>
 
 <p>Compute the geometric distance (brute force) between the interface reconstruction and the DoFs of the intersected cells (first neighbors) </p>
 
-<p class="definition">Definition at line <a class="el" href="interface__tools_8cc_source.html#l00463">463</a> of file <a class="el" href="interface__tools_8cc_source.html">interface_tools.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="interface__tools_8cc_source.html#l00462">462</a> of file <a class="el" href="interface__tools_8cc_source.html">interface_tools.cc</a>.</p>
 
 <p class="reference">References <a class="el" href="lethe__grid__tools_8cc_source.html#l01511">LetheGridTools::find_point_triangle_distance()</a>.</p>
 
@@ -517,14 +523,14 @@ template&lt;int dim, typename VectorType &gt; </div>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="interface__tools_8h_source.html#l00846">846</a> of file <a class="el" href="interface__tools_8h_source.html">interface_tools.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="interface__tools_8h_source.html#l00887">887</a> of file <a class="el" href="interface__tools_8h_source.html">interface_tools.h</a>.</p>
 
-<p class="reference">References <a class="el" href="interface__tools_8h_source.html#l00715">InterfaceTools::SignedDistanceSolver&lt; dim, VectorType &gt;::compute_residual()</a>.</p>
+<p class="reference">References <a class="el" href="interface__tools_8h_source.html#l00758">InterfaceTools::SignedDistanceSolver&lt; dim, VectorType &gt;::compute_residual()</a>.</p>
 
 </div>
 </div>
-<a id="ab38bf64ca10a4165a5d07eac14c05622" name="ab38bf64ca10a4165a5d07eac14c05622"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ab38bf64ca10a4165a5d07eac14c05622">&#9670;&#160;</a></span>compute_numerical_jacobian_stencil()</h2>
+<a id="a31467261e35a5c038ecce13c22250226" name="a31467261e35a5c038ecce13c22250226"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a31467261e35a5c038ecce13c22250226">&#9670;&#160;</a></span>compute_numerical_jacobian_stencil()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -535,7 +541,7 @@ template&lt;int dim, typename VectorType &gt; </div>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">std::vector&lt; Point&lt; dim &gt; &gt; <a class="el" href="classInterfaceTools_1_1SignedDistanceSolver.html">InterfaceTools::SignedDistanceSolver</a>&lt; dim, VectorType &gt;::compute_numerical_jacobian_stencil </td>
+          <td class="memname">void <a class="el" href="classInterfaceTools_1_1SignedDistanceSolver.html">InterfaceTools::SignedDistanceSolver</a>&lt; dim, VectorType &gt;::compute_numerical_jacobian_stencil </td>
           <td>(</td>
           <td class="paramtype">const Point&lt; dim &gt;&#160;</td>
           <td class="paramname"><em>x_ref</em>, </td>
@@ -550,7 +556,13 @@ template&lt;int dim, typename VectorType &gt; </div>
           <td class="paramkey"></td>
           <td></td>
           <td class="paramtype">const double&#160;</td>
-          <td class="paramname"><em>perturbation</em>&#160;</td>
+          <td class="paramname"><em>perturbation</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">std::vector&lt; Point&lt; dim &gt; &gt; &amp;&#160;</td>
+          <td class="paramname"><em>stencil</em>&#160;</td>
         </tr>
         <tr>
           <td></td>
@@ -578,7 +590,7 @@ template&lt;int dim, typename VectorType &gt; </div>
 <p>1 0 2 </p><pre class="fragment"> 3
 </pre><p> The entry 0 is the current evaluation point x_ref </p>
 
-<p class="definition">Definition at line <a class="el" href="interface__tools_8h_source.html#l00755">755</a> of file <a class="el" href="interface__tools_8h_source.html">interface_tools.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="interface__tools_8h_source.html#l00798">798</a> of file <a class="el" href="interface__tools_8h_source.html">interface_tools.h</a>.</p>
 
 </div>
 </div>
@@ -641,7 +653,7 @@ template&lt;int dim, typename VectorType &gt; </div>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="interface__tools_8h_source.html#l00715">715</a> of file <a class="el" href="interface__tools_8h_source.html">interface_tools.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="interface__tools_8h_source.html#l00758">758</a> of file <a class="el" href="interface__tools_8h_source.html">interface_tools.h</a>.</p>
 
 </div>
 </div>
@@ -672,9 +684,9 @@ template&lt;int dim, typename VectorType &gt; </div>
 
 <p>Compute the geometric distance (marching method) between the interface reconstruction and the rest of the DoFs (second neighbors) </p>
 
-<p class="definition">Definition at line <a class="el" href="interface__tools_8cc_source.html#l00530">530</a> of file <a class="el" href="interface__tools_8cc_source.html">interface_tools.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="interface__tools_8cc_source.html#l00529">529</a> of file <a class="el" href="interface__tools_8cc_source.html">interface_tools.cc</a>.</p>
 
-<p class="reference">References <a class="el" href="namespaceParameters.html#ad408350a21239600add83c5e91fcfa26a556966c7830465dc4623d62e32cec31d">Parameters::quiet</a>.</p>
+<p class="reference">References <a class="el" href="namespaceParameters.html#ad408350a21239600add83c5e91fcfa26a556966c7830465dc4623d62e32cec31d">Parameters::quiet</a>, and <a class="el" href="lethe__grid__tools_8cc_source.html#l00020">LetheGridTools::vertices_cell_mapping()</a>.</p>
 
 </div>
 </div>
@@ -705,7 +717,7 @@ template&lt;int dim, typename VectorType &gt; </div>
 
 <p>Compute the signed_distance from the distance vector and the sign of the signed_distance vector entries. </p>
 
-<p class="definition">Definition at line <a class="el" href="interface__tools_8cc_source.html#l00877">877</a> of file <a class="el" href="interface__tools_8cc_source.html">interface_tools.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="interface__tools_8cc_source.html#l00977">977</a> of file <a class="el" href="interface__tools_8cc_source.html">interface_tools.cc</a>.</p>
 
 <p class="reference">References <a class="el" href="utilities_8h_source.html#l00300">sgn()</a>.</p>
 
@@ -738,7 +750,7 @@ template&lt;int dim, typename VectorType &gt; </div>
 
 <p>Correct the global volume to match the volume englobed by the given level of the level_set field. </p>
 
-<p class="definition">Definition at line <a class="el" href="interface__tools_8cc_source.html#l01085">1085</a> of file <a class="el" href="interface__tools_8cc_source.html">interface_tools.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="interface__tools_8cc_source.html#l01185">1185</a> of file <a class="el" href="interface__tools_8cc_source.html">interface_tools.cc</a>.</p>
 
 <p class="reference">References <a class="el" href="interface__tools_8cc_source.html#l00058">InterfaceTools::compute_surface_and_volume()</a>, and <a class="el" href="namespaceParameters.html#ad408350a21239600add83c5e91fcfa26a556966c7830465dc4623d62e32cec31d">Parameters::quiet</a>.</p>
 
@@ -771,7 +783,7 @@ template&lt;int dim, typename VectorType &gt; </div>
 
 <p>Exchange the distance and set it to the minimum value across the processors by using the compress(VectorOperation::min) function. </p>
 
-<p class="definition">Definition at line <a class="el" href="interface__tools_8cc_source.html#l00434">434</a> of file <a class="el" href="interface__tools_8cc_source.html">interface_tools.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="interface__tools_8cc_source.html#l00433">433</a> of file <a class="el" href="interface__tools_8cc_source.html">interface_tools.cc</a>.</p>
 
 </div>
 </div>
@@ -811,7 +823,7 @@ template&lt;int dim, typename VectorType &gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p>Return the local id of the opposite faces to the given local DOF (works for quad only). </p>
+<p>Return the local id of the opposite faces to the given local Dof (works for quad only). </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramdir">[in]</td><td class="paramname">local_dof_id</td><td>Local id of the DoF in the cell</td></tr>
@@ -820,7 +832,58 @@ template&lt;int dim, typename VectorType &gt; </div>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="interface__tools_8h_source.html#l00622">622</a> of file <a class="el" href="interface__tools_8h_source.html">interface_tools.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="interface__tools_8h_source.html#l00623">623</a> of file <a class="el" href="interface__tools_8h_source.html">interface_tools.h</a>.</p>
+
+</div>
+</div>
+<a id="a04349a3c2ae119be1d9b078b2014f06c" name="a04349a3c2ae119be1d9b078b2014f06c"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a04349a3c2ae119be1d9b078b2014f06c">&#9670;&#160;</a></span>get_face_opposite_dofs()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;int dim, typename VectorType &gt; </div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">void <a class="el" href="classInterfaceTools_1_1SignedDistanceSolver.html">InterfaceTools::SignedDistanceSolver</a>&lt; dim, VectorType &gt;::get_face_opposite_dofs </td>
+          <td>(</td>
+          <td class="paramtype">unsigned int&#160;</td>
+          <td class="paramname"><em>local_face_id</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">std::vector&lt; unsigned int &gt; &amp;&#160;</td>
+          <td class="paramname"><em>local_opposite_dofs</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span><span class="mlabel">private</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Return the local id of the opposite DoFs to the given face (works for quad only). </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramdir">[in]</td><td class="paramname">local_face_id</td><td>Local id of the face in the cell</td></tr>
+    <tr><td class="paramdir">[out]</td><td class="paramname">local_opposite_dofs</td><td>The vector containing the id of the opposite faces </td></tr>
+  </table>
+  </dd>
+</dl>
+
+<p class="definition">Definition at line <a class="el" href="interface__tools_8h_source.html#l00671">671</a> of file <a class="el" href="interface__tools_8h_source.html">interface_tools.h</a>.</p>
+
+<p class="reference">References <a class="el" href="interface__tools_8h_source.html#l01017">InterfaceTools::SignedDistanceSolver&lt; dim, VectorType &gt;::face_opposite_dofs_map</a>.</p>
 
 </div>
 </div>
@@ -876,7 +939,7 @@ template&lt;int dim, typename VectorType &gt; </div>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="interface__tools_8h_source.html#l00648">648</a> of file <a class="el" href="interface__tools_8h_source.html">interface_tools.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="interface__tools_8h_source.html#l00691">691</a> of file <a class="el" href="interface__tools_8h_source.html">interface_tools.h</a>.</p>
 
 </div>
 </div>
@@ -900,7 +963,7 @@ template&lt;int dim, typename VectorType &gt; </div>
 <p>Get the private attribute signed_distance. </p>
 <dl class="section return"><dt>Returns</dt><dd>vector storing the computed signed distance </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="interface__tools_8cc_source.html#l00388">388</a> of file <a class="el" href="interface__tools_8cc_source.html">interface_tools.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="interface__tools_8cc_source.html#l00387">387</a> of file <a class="el" href="interface__tools_8cc_source.html">interface_tools.cc</a>.</p>
 
 </div>
 </div>
@@ -931,7 +994,7 @@ template&lt;int dim, typename VectorType &gt; </div>
 
 <p>Initialize the distance solution vectors to the given max_distance. </p>
 
-<p class="definition">Definition at line <a class="el" href="interface__tools_8cc_source.html#l00369">369</a> of file <a class="el" href="interface__tools_8cc_source.html">interface_tools.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="interface__tools_8cc_source.html#l00368">368</a> of file <a class="el" href="interface__tools_8cc_source.html">interface_tools.cc</a>.</p>
 
 <p class="reference">References <a class="el" href="utilities_8h_source.html#l00300">sgn()</a>.</p>
 
@@ -988,7 +1051,7 @@ template&lt;int dim, typename VectorType &gt; </div>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="interface__tools_8cc_source.html#l01235">1235</a> of file <a class="el" href="interface__tools_8cc_source.html">interface_tools.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="interface__tools_8cc_source.html#l01335">1335</a> of file <a class="el" href="interface__tools_8cc_source.html">interface_tools.cc</a>.</p>
 
 <p class="reference">References <a class="el" href="interface__tools_8h_source.html#l00375">InterfaceTools::InterfaceReconstructionDataOut&lt; dim &gt;::build_patches()</a>, and <a class="el" href="solutions__output_8cc_source.html#l00020">write_vtu_and_pvd()</a>.</p>
 
@@ -1045,9 +1108,42 @@ template&lt;int dim, typename VectorType &gt; </div>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="interface__tools_8cc_source.html#l01258">1258</a> of file <a class="el" href="interface__tools_8cc_source.html">interface_tools.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="interface__tools_8cc_source.html#l01358">1358</a> of file <a class="el" href="interface__tools_8cc_source.html">interface_tools.cc</a>.</p>
 
 <p class="reference">References <a class="el" href="solutions__output_8cc_source.html#l00020">write_vtu_and_pvd()</a>.</p>
+
+</div>
+</div>
+<a id="af97f0d53fcf547f88fe33537a7f93a02" name="af97f0d53fcf547f88fe33537a7f93a02"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#af97f0d53fcf547f88fe33537a7f93a02">&#9670;&#160;</a></span>set_face_opposite_dofs_map()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;int dim, typename VectorType &gt; </div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">void <a class="el" href="classInterfaceTools_1_1SignedDistanceSolver.html">InterfaceTools::SignedDistanceSolver</a>&lt; dim, VectorType &gt;::set_face_opposite_dofs_map </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span><span class="mlabel">private</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Set the map of local id of the opposite DoFs to the given face (works for quad only). </p>
+
+<p class="definition">Definition at line <a class="el" href="interface__tools_8h_source.html#l00640">640</a> of file <a class="el" href="interface__tools_8h_source.html">interface_tools.h</a>.</p>
+
+<p class="reference">References <a class="el" href="interface__tools_8h_source.html#l01017">InterfaceTools::SignedDistanceSolver&lt; dim, VectorType &gt;::face_opposite_dofs_map</a>.</p>
 
 </div>
 </div>
@@ -1189,7 +1285,7 @@ template&lt;int dim, typename VectorType &gt; </div>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>tensor dim in the reference cell </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="interface__tools_8h_source.html#l00802">802</a> of file <a class="el" href="interface__tools_8h_source.html">interface_tools.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="interface__tools_8h_source.html#l00843">843</a> of file <a class="el" href="interface__tools_8h_source.html">interface_tools.h</a>.</p>
 
 </div>
 </div>
@@ -1239,7 +1335,7 @@ template&lt;int dim, typename VectorType &gt; </div>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>Point dim in the reference cell </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="interface__tools_8h_source.html#l00679">679</a> of file <a class="el" href="interface__tools_8h_source.html">interface_tools.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="interface__tools_8h_source.html#l00722">722</a> of file <a class="el" href="interface__tools_8h_source.html">interface_tools.h</a>.</p>
 
 </div>
 </div>
@@ -1270,7 +1366,7 @@ template&lt;int dim, typename VectorType &gt; </div>
 
 <p>Update the ghost DoFs entries of the solution vectors to gain read access to the ghost elements. </p>
 
-<p class="definition">Definition at line <a class="el" href="interface__tools_8cc_source.html#l00421">421</a> of file <a class="el" href="interface__tools_8cc_source.html">interface_tools.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="interface__tools_8cc_source.html#l00420">420</a> of file <a class="el" href="interface__tools_8cc_source.html">interface_tools.cc</a>.</p>
 
 </div>
 </div>
@@ -1301,7 +1397,7 @@ template&lt;int dim, typename VectorType &gt; </div>
 
 <p>Zero the ghost DoFs entries of the solution vectors to gain write access to the ghost elements. </p>
 
-<p class="definition">Definition at line <a class="el" href="interface__tools_8cc_source.html#l00408">408</a> of file <a class="el" href="interface__tools_8cc_source.html">interface_tools.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="interface__tools_8cc_source.html#l00407">407</a> of file <a class="el" href="interface__tools_8cc_source.html">interface_tools.cc</a>.</p>
 
 </div>
 </div>
@@ -1330,7 +1426,7 @@ template&lt;int dim, typename VectorType &gt; </div>
 
 <p>Hanging node constraints. </p>
 
-<p class="definition">Definition at line <a class="el" href="interface__tools_8h_source.html#l00955">955</a> of file <a class="el" href="interface__tools_8h_source.html">interface_tools.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="interface__tools_8h_source.html#l00996">996</a> of file <a class="el" href="interface__tools_8h_source.html">interface_tools.h</a>.</p>
 
 </div>
 </div>
@@ -1358,7 +1454,7 @@ template&lt;int dim, typename VectorType &gt; </div>
 
 <p>Solution vector of the distance (write only) </p>
 
-<p class="definition">Definition at line <a class="el" href="interface__tools_8h_source.html#l00944">944</a> of file <a class="el" href="interface__tools_8h_source.html">interface_tools.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="interface__tools_8h_source.html#l00985">985</a> of file <a class="el" href="interface__tools_8h_source.html">interface_tools.h</a>.</p>
 
 </div>
 </div>
@@ -1385,7 +1481,7 @@ template&lt;int dim, typename VectorType &gt; </div>
 </div><div class="memdoc">
 <p>Solution vector of the distance with ghost values (read-only version of distance) </p>
 
-<p class="definition">Definition at line <a class="el" href="interface__tools_8h_source.html#l00948">948</a> of file <a class="el" href="interface__tools_8h_source.html">interface_tools.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="interface__tools_8h_source.html#l00989">989</a> of file <a class="el" href="interface__tools_8h_source.html">interface_tools.h</a>.</p>
 
 </div>
 </div>
@@ -1405,7 +1501,33 @@ template&lt;int dim, typename VectorType &gt; </div>
 
 <p>DoFHandler describing the problem. </p>
 
-<p class="definition">Definition at line <a class="el" href="interface__tools_8h_source.html#l00547">547</a> of file <a class="el" href="interface__tools_8h_source.html">interface_tools.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="interface__tools_8h_source.html#l00548">548</a> of file <a class="el" href="interface__tools_8h_source.html">interface_tools.h</a>.</p>
+
+</div>
+</div>
+<a id="a0d3bdfd32806ede6556a7d755dad1529" name="a0d3bdfd32806ede6556a7d755dad1529"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a0d3bdfd32806ede6556a7d755dad1529">&#9670;&#160;</a></span>face_opposite_dofs_map</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;int dim, typename VectorType &gt; </div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">std::map&lt;unsigned int, std::vector&lt;unsigned int&gt; &gt; <a class="el" href="classInterfaceTools_1_1SignedDistanceSolver.html">InterfaceTools::SignedDistanceSolver</a>&lt; dim, VectorType &gt;::face_opposite_dofs_map</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">private</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p class="definition">Definition at line <a class="el" href="interface__tools_8h_source.html#l01017">1017</a> of file <a class="el" href="interface__tools_8h_source.html">interface_tools.h</a>.</p>
 
 </div>
 </div>
@@ -1433,7 +1555,7 @@ template&lt;int dim, typename VectorType &gt; </div>
 
 <p>Finite element discretizing the problem. </p>
 
-<p class="definition">Definition at line <a class="el" href="interface__tools_8h_source.html#l00903">903</a> of file <a class="el" href="interface__tools_8h_source.html">interface_tools.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="interface__tools_8h_source.html#l00944">944</a> of file <a class="el" href="interface__tools_8h_source.html">interface_tools.h</a>.</p>
 
 </div>
 </div>
@@ -1460,7 +1582,7 @@ template&lt;int dim, typename VectorType &gt; </div>
 </div><div class="memdoc">
 <p>Surface cells of the interface reconstruction stored in a cell-wise map (volume cell) </p>
 
-<p class="definition">Definition at line <a class="el" href="interface__tools_8h_source.html#l00965">965</a> of file <a class="el" href="interface__tools_8h_source.html">interface_tools.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="interface__tools_8h_source.html#l01006">1006</a> of file <a class="el" href="interface__tools_8h_source.html">interface_tools.h</a>.</p>
 
 </div>
 </div>
@@ -1487,7 +1609,7 @@ template&lt;int dim, typename VectorType &gt; </div>
 </div><div class="memdoc">
 <p>Surface vertices of the interface reconstruction stored in a cell-wise map (volume cell) </p>
 
-<p class="definition">Definition at line <a class="el" href="interface__tools_8h_source.html#l00960">960</a> of file <a class="el" href="interface__tools_8h_source.html">interface_tools.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="interface__tools_8h_source.html#l01001">1001</a> of file <a class="el" href="interface__tools_8h_source.html">interface_tools.h</a>.</p>
 
 </div>
 </div>
@@ -1515,7 +1637,7 @@ template&lt;int dim, typename VectorType &gt; </div>
 
 <p>Set of DoFs belonging to intersected cells. </p>
 
-<p class="definition">Definition at line <a class="el" href="interface__tools_8h_source.html#l00968">968</a> of file <a class="el" href="interface__tools_8h_source.html">interface_tools.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="interface__tools_8h_source.html#l01009">1009</a> of file <a class="el" href="interface__tools_8h_source.html">interface_tools.h</a>.</p>
 
 </div>
 </div>
@@ -1542,7 +1664,7 @@ template&lt;int dim, typename VectorType &gt; </div>
 </div><div class="memdoc">
 <p>Iso-level describing the interface from which the signed distance is computed (after scaling!!) </p>
 
-<p class="definition">Definition at line <a class="el" href="interface__tools_8h_source.html#l00913">913</a> of file <a class="el" href="interface__tools_8h_source.html">interface_tools.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="interface__tools_8h_source.html#l00954">954</a> of file <a class="el" href="interface__tools_8h_source.html">interface_tools.h</a>.</p>
 
 </div>
 </div>
@@ -1570,7 +1692,7 @@ template&lt;int dim, typename VectorType &gt; </div>
 
 <p>Level-set field coming from the main solver. </p>
 
-<p class="definition">Definition at line <a class="el" href="interface__tools_8h_source.html#l00934">934</a> of file <a class="el" href="interface__tools_8h_source.html">interface_tools.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="interface__tools_8h_source.html#l00975">975</a> of file <a class="el" href="interface__tools_8h_source.html">interface_tools.h</a>.</p>
 
 </div>
 </div>
@@ -1598,7 +1720,7 @@ template&lt;int dim, typename VectorType &gt; </div>
 
 <p>Set of locally active DoFs. </p>
 
-<p class="definition">Definition at line <a class="el" href="interface__tools_8h_source.html#l00931">931</a> of file <a class="el" href="interface__tools_8h_source.html">interface_tools.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="interface__tools_8h_source.html#l00972">972</a> of file <a class="el" href="interface__tools_8h_source.html">interface_tools.h</a>.</p>
 
 </div>
 </div>
@@ -1626,7 +1748,7 @@ template&lt;int dim, typename VectorType &gt; </div>
 
 <p>Set of locally owned DoFs. </p>
 
-<p class="definition">Definition at line <a class="el" href="interface__tools_8h_source.html#l00925">925</a> of file <a class="el" href="interface__tools_8h_source.html">interface_tools.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="interface__tools_8h_source.html#l00966">966</a> of file <a class="el" href="interface__tools_8h_source.html">interface_tools.h</a>.</p>
 
 </div>
 </div>
@@ -1654,7 +1776,7 @@ template&lt;int dim, typename VectorType &gt; </div>
 
 <p>Set of locally relevant DoFs. </p>
 
-<p class="definition">Definition at line <a class="el" href="interface__tools_8h_source.html#l00928">928</a> of file <a class="el" href="interface__tools_8h_source.html">interface_tools.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="interface__tools_8h_source.html#l00969">969</a> of file <a class="el" href="interface__tools_8h_source.html">interface_tools.h</a>.</p>
 
 </div>
 </div>
@@ -1682,7 +1804,7 @@ template&lt;int dim, typename VectorType &gt; </div>
 
 <p>Mapping between the real and reference space. </p>
 
-<p class="definition">Definition at line <a class="el" href="interface__tools_8h_source.html#l00906">906</a> of file <a class="el" href="interface__tools_8h_source.html">interface_tools.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="interface__tools_8h_source.html#l00947">947</a> of file <a class="el" href="interface__tools_8h_source.html">interface_tools.h</a>.</p>
 
 </div>
 </div>
@@ -1710,7 +1832,7 @@ template&lt;int dim, typename VectorType &gt; </div>
 
 <p>Maximum redistanciation distance. </p>
 
-<p class="definition">Definition at line <a class="el" href="interface__tools_8h_source.html#l00909">909</a> of file <a class="el" href="interface__tools_8h_source.html">interface_tools.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="interface__tools_8h_source.html#l00950">950</a> of file <a class="el" href="interface__tools_8h_source.html">interface_tools.h</a>.</p>
 
 </div>
 </div>
@@ -1738,7 +1860,7 @@ template&lt;int dim, typename VectorType &gt; </div>
 
 <p>Parallel output stream. </p>
 
-<p class="definition">Definition at line <a class="el" href="interface__tools_8h_source.html#l00922">922</a> of file <a class="el" href="interface__tools_8h_source.html">interface_tools.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="interface__tools_8h_source.html#l00963">963</a> of file <a class="el" href="interface__tools_8h_source.html">interface_tools.h</a>.</p>
 
 </div>
 </div>
@@ -1766,7 +1888,7 @@ template&lt;int dim, typename VectorType &gt; </div>
 
 <p><a class="el" href="classPVDHandler.html" title="The PVDHandler class manages the storage of the information required to write pvd file....">PVDHandler</a> for interface reconstruction. </p>
 
-<p class="definition">Definition at line <a class="el" href="interface__tools_8h_source.html#l00971">971</a> of file <a class="el" href="interface__tools_8h_source.html">interface_tools.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="interface__tools_8h_source.html#l01012">1012</a> of file <a class="el" href="interface__tools_8h_source.html">interface_tools.h</a>.</p>
 
 </div>
 </div>
@@ -1794,7 +1916,7 @@ template&lt;int dim, typename VectorType &gt; </div>
 
 <p><a class="el" href="classPVDHandler.html" title="The PVDHandler class manages the storage of the information required to write pvd file....">PVDHandler</a> for signed distance. </p>
 
-<p class="definition">Definition at line <a class="el" href="interface__tools_8h_source.html#l00974">974</a> of file <a class="el" href="interface__tools_8h_source.html">interface_tools.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="interface__tools_8h_source.html#l01015">1015</a> of file <a class="el" href="interface__tools_8h_source.html">interface_tools.h</a>.</p>
 
 </div>
 </div>
@@ -1822,7 +1944,7 @@ template&lt;int dim, typename VectorType &gt; </div>
 
 <p>Scaling factor to apply to the input level-set field. </p>
 
-<p class="definition">Definition at line <a class="el" href="interface__tools_8h_source.html#l00916">916</a> of file <a class="el" href="interface__tools_8h_source.html">interface_tools.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="interface__tools_8h_source.html#l00957">957</a> of file <a class="el" href="interface__tools_8h_source.html">interface_tools.h</a>.</p>
 
 </div>
 </div>
@@ -1850,7 +1972,7 @@ template&lt;int dim, typename VectorType &gt; </div>
 
 <p>Solution vector of the signed distance (write only) </p>
 
-<p class="definition">Definition at line <a class="el" href="interface__tools_8h_source.html#l00937">937</a> of file <a class="el" href="interface__tools_8h_source.html">interface_tools.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="interface__tools_8h_source.html#l00978">978</a> of file <a class="el" href="interface__tools_8h_source.html">interface_tools.h</a>.</p>
 
 </div>
 </div>
@@ -1877,7 +1999,7 @@ template&lt;int dim, typename VectorType &gt; </div>
 </div><div class="memdoc">
 <p>Solution vector of the signed distance with ghost values (read-only version of signed_distance) </p>
 
-<p class="definition">Definition at line <a class="el" href="interface__tools_8h_source.html#l00941">941</a> of file <a class="el" href="interface__tools_8h_source.html">interface_tools.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="interface__tools_8h_source.html#l00982">982</a> of file <a class="el" href="interface__tools_8h_source.html">interface_tools.h</a>.</p>
 
 </div>
 </div>
@@ -1905,7 +2027,7 @@ template&lt;int dim, typename VectorType &gt; </div>
 
 <p>Verbosity level. </p>
 
-<p class="definition">Definition at line <a class="el" href="interface__tools_8h_source.html#l00919">919</a> of file <a class="el" href="interface__tools_8h_source.html">interface_tools.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="interface__tools_8h_source.html#l00960">960</a> of file <a class="el" href="interface__tools_8h_source.html">interface_tools.h</a>.</p>
 
 </div>
 </div>
@@ -1932,7 +2054,7 @@ template&lt;int dim, typename VectorType &gt; </div>
 </div><div class="memdoc">
 <p>Value of the correction to apply to the signed_distance to match the cell-wise volume encompassed by the level 0 of level_set </p>
 
-<p class="definition">Definition at line <a class="el" href="interface__tools_8h_source.html#l00952">952</a> of file <a class="el" href="interface__tools_8h_source.html">interface_tools.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="interface__tools_8h_source.html#l00993">993</a> of file <a class="el" href="interface__tools_8h_source.html">interface_tools.h</a>.</p>
 
 </div>
 </div>
