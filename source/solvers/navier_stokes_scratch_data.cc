@@ -1,4 +1,4 @@
-// SPDX-FileCopyrightText: Copyright (c) 2021-2024 The Lethe Authors
+// SPDX-FileCopyrightText: Copyright (c) 2021-2025 The Lethe Authors
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
 #include <core/bdf.h>
@@ -485,6 +485,10 @@ NavierStokesScratchData<dim>::calculate_physical_properties()
               rheology_model->get_dynamic_viscosity_for_stabilization_vector(
                 density_ref, fields, dynamic_viscosity_for_stabilization);
             }
+          else
+            {
+              density_scale = properties_manager.get_density_scale();
+            }
 
           if (properties_manager.is_non_newtonian())
             {
@@ -575,6 +579,8 @@ NavierStokesScratchData<dim>::calculate_physical_properties()
                     calculate_point_property(filtered_phase_value,
                                              this->dynamic_viscosity_0[q],
                                              this->dynamic_viscosity_1[q]);
+
+                  kinematic_viscosity[q] = dynamic_viscosity[q] / density[q];
 
                   dynamic_viscosity_for_stabilization[q] =
                     calculate_point_property(
