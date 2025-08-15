@@ -38,6 +38,8 @@ add_library(lethe-dem
   particle_wall_contact_force.cc
   particle_wall_fine_search.cc
   periodic_boundaries_manipulator.cc
+  ray_tracing.cc
+  ray_tracing_solver_parameters.cc
   read_checkpoint.cc
   read_mesh.cc
   set_particle_particle_contact_force_model.cc
@@ -90,6 +92,8 @@ add_library(lethe-dem
   ../../include/dem/particle_wall_fine_search.h
   ../../include/dem/particle_wall_rolling_resistance_torque.h
   ../../include/dem/periodic_boundaries_manipulator.h
+  ../../include/dem/ray_tracing.h
+  ../../include/dem/ray_tracing_solver_parameters.h
   ../../include/dem/read_checkpoint.h
   ../../include/dem/read_mesh.h
   ../../include/dem/rolling_resistance_torque_models.h
