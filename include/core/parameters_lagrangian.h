@@ -645,6 +645,36 @@ namespace Parameters
       parse_parameters(ParameterHandler &prm);
     };
 
+    /**
+     * @brief ParticleRayTracing - Defines parameters used to construct particle
+     * ray tracing elements.
+     */
+    template <int dim>
+    struct ParticleRayTracing
+    {
+      Tensor<1, 3> first_direction;        // This is a unit vector
+      Tensor<1, 3> second_direction;       // This is a unit vector
+      Tensor<1, 3> displacement_direction; // This is a unit vector
+
+      // Number of photon inserted in each direction
+      unsigned int number_of_photon_first_direction;
+      unsigned int number_of_photon_second_direction;
+
+      // Distance between photons position (considering a max_offset equal to
+      // zero).
+      double step_between_photons_first_direction;
+      double step_between_photons_second_direction;
+
+      // Related to the offset
+      double max_offset;
+      unsigned int seed_for_photon_insertion;
+
+      static void
+      declare_parameters(ParameterHandler &prm);
+      void
+      parse_parameters(ParameterHandler &prm);
+    };
+
   } // namespace Lagrangian
 } // namespace Parameters
 #endif /* lethe_parameters_lagrangian_h */
