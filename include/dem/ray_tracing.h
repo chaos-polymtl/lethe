@@ -19,22 +19,23 @@ template <int dim, typename PropertiesIndex>
 class RayTracingSolver
 {
 public:
-  RayTracingSolver(RayTracingSolverParameters<dim> parameters)
+  RayTracingSolver(RayTracingSolverParameters<dim> parameters);
 
 
-    private :
-    /**
-     * @brief Set the parameters for the DEM simulation
-     */
-    void setup_parameters();
+private:
+  /**
+   * @brief Set the parameters for the DEM simulation
+   */
+  void
+  setup_parameters();
 
   /**
    * @brief Set the insertion method.
    *
-   * @return The pointer to the insertion object
+   * @return The pointer to the particle insertion object.
    */
   std::shared_ptr<Insertion<dim, PropertiesIndex>>
-  set_insertion_type();
+  set_particle_insertion_type();
 
   /**
    * @brief Set up the triangulation dependent parameters after the reading of
@@ -58,11 +59,19 @@ public:
   load_balance();
 
   /**
+   * @brief Insert particles and photons at the beginning of a ray tracing
+   * simulation.
+   */
+  void
+  insert_particles_and_photons();
+
+  /**
    * @brief Execute the last post-processing at the end of the simulation and
    * output test results if necessary.
    */
   void
   finish_simulation();
+
 
   /**
    * @brief Generate VTU file with particles information for visualization.
@@ -76,6 +85,15 @@ public:
    */
   void
   sort_particles_into_subdomains_and_cells();
+
+
+  /**
+   * @brief Calls all the necessary functions to set parameters, solve the intersection
+   * points between the photons and the particles, and finish the simulation.
+   */
+  void
+  solve();
+
 
   /**
    * @brief The MPI communicator used for the parallel simulation.
@@ -145,10 +163,5 @@ public:
    * @brief The particle insertion object.
    */
   std::shared_ptr<Insertion<dim, PropertiesIndex>> particle_insertion_object;
-
-  /**
-   * @brief The photon insertion object.
-   */
-  std::shared_ptr<Insertion<dim, PropertiesIndex>> photon_insertion_object;
-}
+};
 #endif // lethe_ray_tracing_h
