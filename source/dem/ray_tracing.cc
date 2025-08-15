@@ -65,12 +65,11 @@ RayTracingSolver<dim, PropertiesIndex>::setup_parameters()
 
 template <int dim, typename PropertiesIndex>
 std::shared_ptr<Insertion<dim, PropertiesIndex>>
-RayTracingSolver<dim, PropertiesIndex>::set_insertion_type()
+RayTracingSolver<dim, PropertiesIndex>::set_particle_insertion_type()
 {
   using namespace Parameters::Lagrangian;
   typename InsertionInfo<dim>::InsertionMethod insertion_method =
     parameters.insertion_info.insertion_method;
-
 
   std::vector<std::shared_ptr<Distribution>>
     dummy_size_distribution_object_container;
@@ -135,8 +134,9 @@ RayTracingSolver<dim, PropertiesIndex>::load_balance()
 
 template <int dim, typename PropertiesIndex>
 void
-RayTracingSolver<dim, PropertiesIndex>::insert_particles()
+RayTracingSolver<dim, PropertiesIndex>::insert_particles_and_photons()
 {
+  // Insert particles using the insertion object.
   particle_insertion_object->insert(particle_handler,
                                     triangulation,
                                     parameters);
@@ -155,4 +155,12 @@ RayTracingSolver<dim, PropertiesIndex>::finish_simulation()
     {
       // This needs to be coded later.
     }
+}
+
+template <int dim, typename PropertiesIndex>
+void
+RayTracingSolver<dim, PropertiesIndex>::solve()
+{
+  // Set up the parameters
+  setup_parameters();
 }
