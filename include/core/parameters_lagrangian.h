@@ -666,7 +666,7 @@ namespace Parameters
       double step_between_photons_second_direction;
 
       // Related to the offset
-      double max_offset;
+      double       max_offset;
       unsigned int seed_for_photon_insertion;
 
       static void
