@@ -781,24 +781,24 @@ public:
    * pressure gradient, and the laplacian, curl and gradient of the velocity, at
    * the locations of the particles.
    *
-   * @param q_particles Quadrature type object that contains the location of the particles
+   * @param q_particles_location Quadrature type object that contains the location of the particles
    * relative to the cell's frame of reference.
    *
    * @param velocity_cell The active cell associated with the velocity and pressure DoFHandler
    *
-   * @param vector_solution The solution (velocity and pressure) that is used to
+   * @param velocity_pressure_solution The solution (velocity and pressure) that is used to
    * interpolate the velocity and pressure at the particles locations.
    */
 
   template <typename VectorType>
   void
   calculate_fluid_fields_at_particle_location(
-    const Quadrature<dim>                                &q_particles,
+    const Quadrature<dim>                                &q_particles_location,
     const typename DoFHandler<dim>::active_cell_iterator &velocity_cell,
-    const VectorType                                     &vector_solution)
+    const VectorType                                     &velocity_pressure_solution)
   {
     FEValues<dim> fe_values_local_particles(this->fe_values.get_fe(),
-                                            q_particles,
+                                            q_particles_location,
                                             update_gradients | update_values |
                                               update_hessians);
 
@@ -816,29 +816,29 @@ public:
 
     // Calculate all fluid properties at the particle location
     fe_values_local_particles[velocities].get_function_values(
-      vector_solution, fluid_velocity_at_particle_location);
+      velocity_pressure_solution, fluid_velocity_at_particle_location);
 
     fe_values_local_particles[velocities].get_function_laplacians(
-      vector_solution, fluid_velocity_laplacian_at_particle_location);
+      velocity_pressure_solution, fluid_velocity_laplacian_at_particle_location);
 
     if constexpr (dim == 2)
       {
         fe_values_local_particles[velocities].get_function_curls(
-          vector_solution, fluid_velocity_curls_at_particle_location_2d);
+          velocity_pressure_solution, fluid_velocity_curls_at_particle_location_2d);
       }
     else if constexpr (dim == 3)
       {
         fe_values_local_particles[velocities].get_function_curls(
-          vector_solution, fluid_velocity_curls_at_particle_location_3d);
+          velocity_pressure_solution, fluid_velocity_curls_at_particle_location_3d);
       }
 
     fe_values_local_particles[pressure].get_function_gradients(
-      vector_solution, fluid_pressure_gradients_at_particle_location);
+      velocity_pressure_solution, fluid_pressure_gradients_at_particle_location);
   }
 
   /** @brief Interpolates the void fraction at the locations of the particles.
    *
-   * @param q_particles Quadrature type object that contains the location of the particles
+   * @param q_particles_location Quadrature type object that contains the location of the particles
    * relative to the cell's frame of reference.
    *
    * @param void_fraction_cell The active cell associated with the void fraction DoFHandler
@@ -850,12 +850,12 @@ public:
   template <typename VectorType>
   void
   calculate_void_fraction_at_particle_location(
-    const Quadrature<dim>                                &q_particles,
+    const Quadrature<dim>                                &q_particles_location,
     const typename DoFHandler<dim>::active_cell_iterator &void_fraction_cell,
     const VectorType &void_fraction_solution)
   {
     FEValues<dim> fe_values_particles_void_fraction(
-      this->fe_values_void_fraction->get_fe(), q_particles, update_values);
+      this->fe_values_void_fraction->get_fe(), q_particles_location, update_values);
 
     fe_values_particles_void_fraction.reinit(void_fraction_cell);
 
@@ -902,7 +902,7 @@ public:
         for (unsigned int particle_i = 0; particle_i < number_of_particles;
              ++particle_i)
           {
-            // Get the kinematic viscosity and density at the particle
+            // Gather the kinematic viscosity and density at the particle
             // location assuming a constant kinematic viscosity and density in a
             // single fluid
             kinematic_viscosity_at_particle_location[particle_i] =
@@ -952,24 +952,23 @@ public:
    * The latter values are used in calculating the density and viscosity of the
    * fluid at the particles' locations when VOF is used.
    *
-   * @param q_particles Quadrature type object that contains the location of the particles
+   * @param q_particles_location Quadrature type object that contains the location of the particles
    * relative to the cell's frame of reference.
    *
-   * @param phase_cell The active cell associated with the vof DoFHandler
+   * @param phase_cell The active cell associated with the VOF DoFHandler
    *
-   * @param current_filtered_solution The present value of the solution for the filtered phase
-   * fraction
+   * @param current_filtered_solution The present value of the filtered VOF solution
    */
 
   template <typename VectorType>
   void
   calculate_vof_at_particle_location(
-    const Quadrature<dim>                                &q_particles,
+    const Quadrature<dim>                                &q_particles_location,
     const typename DoFHandler<dim>::active_cell_iterator &phase_cell,
     const VectorType &current_filtered_solution)
   {
     FEValues<dim> fe_values_vof_local_particles((*this->fe_values_vof).get_fe(),
-                                                q_particles,
+                                                q_particles_location,
                                                 update_values |
                                                   update_quadrature_points |
                                                   update_JxW_values);
@@ -989,7 +988,7 @@ public:
    * 
    * @param void_fraction_cell The active cell associated with the void fraction DoFHandler
    * 
-   * @param previous_solution The solution at the previous time step for the fluid's velocity
+   * @param previous_velocity_pressure_solution The solution at the previous time step for the fluid's velocity
    * and pressure
    *
    * @param void_fraction_solution The void fraction value calculated with one of the methods of
@@ -1004,14 +1003,13 @@ public:
   reinit_particle_fluid_interactions(
     const typename DoFHandler<dim>::active_cell_iterator &velocity_cell,
     const typename DoFHandler<dim>::active_cell_iterator &void_fraction_cell,
-    const VectorType & /*current_solution*/,
-    const VectorType                      &previous_solution,
+    const VectorType & /*velocity_pressure_solution*/,
+    const VectorType                      &previous_velocity_pressure_solution,
     const VectorType                      &void_fraction_solution,
     const Particles::ParticleHandler<dim> &particle_handler)
   {
     pic = particle_handler.particles_in_cell(this->fe_values.get_cell());
 
-    // Calculate the particles properties
     double total_particle_volume = 0;
     reinit_particle_fluid_forces();
     total_particle_volume        = extract_particle_properties();
@@ -1021,16 +1019,14 @@ public:
     if (number_of_particles == 0)
       return;
 
-    Quadrature<dim> q_particles = gather_particles_reference_location();
-    calculate_fluid_fields_at_particle_location(q_particles,
+    Quadrature<dim> q_particles_location = gather_particles_reference_location();
+    calculate_fluid_fields_at_particle_location(q_particles_location,
                                                 velocity_cell,
-                                                previous_solution);
+                                                previous_velocity_pressure_solution);
 
-    // Create a quadrature for the void fraction that is based on the particle
-    // reference location
     if (this->interpolated_void_fraction)
       {
-        calculate_void_fraction_at_particle_location(q_particles,
+        calculate_void_fraction_at_particle_location(q_particles_location,
                                                      void_fraction_cell,
                                                      void_fraction_solution);
       }
@@ -1038,7 +1034,6 @@ public:
     calculate_force_parameters_at_particle_location();
   }
 
-  // Version of the function when VOF is used with CFD-DEM
   /** @brief Calculates the variables needed to compute the particle fluid interactions
    * in the VANS equations.This version of the function is used when VOF is used
    * with CFD-DEM.
@@ -1047,9 +1042,9 @@ public:
    * 
    * @param void_fraction_cell The active cell associated with the void fraction DoFHandler
    * 
-   * @param phase_cell The active cell associated with the vof DoFHandler
+   * @param phase_cell The active cell associated with the VOF DoFHandler
    * 
-   * @param previous_solution The solution at the previous time step for the fluid's velocity
+   * @param previous_velocity_pressure_solution The solution at the previous time step for the fluid's velocity
    * and pressure
    *
    * @param void_fraction_solution The void fraction value calculated with one of the methods of
@@ -1067,15 +1062,14 @@ public:
     const typename DoFHandler<dim>::active_cell_iterator &velocity_cell,
     const typename DoFHandler<dim>::active_cell_iterator &void_fraction_cell,
     const typename DoFHandler<dim>::active_cell_iterator &phase_cell,
-    const VectorType & /*current_solution*/,
-    const VectorType                      &previous_solution,
+    const VectorType & /*velocity_pressure_solution*/,
+    const VectorType                      &previous_velocity_pressure_solution,
     const VectorType                      &void_fraction_solution,
     const Particles::ParticleHandler<dim> &particle_handler,
     const VectorType                      &current_filtered_solution)
   {
     pic = particle_handler.particles_in_cell(this->fe_values.get_cell());
 
-    // Calculate the particles properties
     double total_particle_volume = 0;
     total_particle_volume        = extract_particle_properties();
     reinit_particle_fluid_forces();
@@ -1084,18 +1078,18 @@ public:
     if (number_of_particles == 0)
       return;
 
-    Quadrature<dim> q_particles = gather_particles_reference_location();
-    calculate_fluid_fields_at_particle_location(q_particles,
+    Quadrature<dim> q_particles_location = gather_particles_reference_location();
+    calculate_fluid_fields_at_particle_location(q_particles_location,
                                                 velocity_cell,
-                                                previous_solution);
+                                                previous_velocity_pressure_solution);
 
     if (this->interpolated_void_fraction)
       {
-        calculate_void_fraction_at_particle_location(q_particles,
+        calculate_void_fraction_at_particle_location(q_particles_location,
                                                      void_fraction_cell,
                                                      void_fraction_solution);
       }
-    calculate_vof_at_particle_location(q_particles,
+    calculate_vof_at_particle_location(q_particles_location,
                                        phase_cell,
                                        current_filtered_solution);
     calculate_fluid_properties_at_particle_location();
