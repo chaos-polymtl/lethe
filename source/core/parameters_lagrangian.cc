@@ -1891,9 +1891,8 @@ namespace Parameters
         step_between_photons_second_direction =
           prm.get_double("distance between photon second direction");
 
-        max_offset= prm.get_double("photon maximum offset");
+        max_offset                = prm.get_double("photon maximum offset");
         seed_for_photon_insertion = prm.get_double("photon insertion prn seed");
-        
       }
     }
 
