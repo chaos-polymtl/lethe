@@ -661,7 +661,7 @@ public:
 
   void
   reinit_particle_fluid_forces()
-  { 
+  {
     for (auto &particle : pic)
       {
         auto particle_properties = particle.get_properties();
@@ -795,7 +795,7 @@ public:
   calculate_fluid_fields_at_particle_location(
     const Quadrature<dim>                                &q_particles_location,
     const typename DoFHandler<dim>::active_cell_iterator &velocity_cell,
-    const VectorType                                     &velocity_pressure_solution)
+    const VectorType &velocity_pressure_solution)
   {
     FEValues<dim> fe_values_local_particles(this->fe_values.get_fe(),
                                             q_particles_location,
@@ -819,21 +819,25 @@ public:
       velocity_pressure_solution, fluid_velocity_at_particle_location);
 
     fe_values_local_particles[velocities].get_function_laplacians(
-      velocity_pressure_solution, fluid_velocity_laplacian_at_particle_location);
+      velocity_pressure_solution,
+      fluid_velocity_laplacian_at_particle_location);
 
     if constexpr (dim == 2)
       {
         fe_values_local_particles[velocities].get_function_curls(
-          velocity_pressure_solution, fluid_velocity_curls_at_particle_location_2d);
+          velocity_pressure_solution,
+          fluid_velocity_curls_at_particle_location_2d);
       }
     else if constexpr (dim == 3)
       {
         fe_values_local_particles[velocities].get_function_curls(
-          velocity_pressure_solution, fluid_velocity_curls_at_particle_location_3d);
+          velocity_pressure_solution,
+          fluid_velocity_curls_at_particle_location_3d);
       }
 
     fe_values_local_particles[pressure].get_function_gradients(
-      velocity_pressure_solution, fluid_pressure_gradients_at_particle_location);
+      velocity_pressure_solution,
+      fluid_pressure_gradients_at_particle_location);
   }
 
   /** @brief Interpolates the void fraction at the locations of the particles.
@@ -855,7 +859,9 @@ public:
     const VectorType &void_fraction_solution)
   {
     FEValues<dim> fe_values_particles_void_fraction(
-      this->fe_values_void_fraction->get_fe(), q_particles_location, update_values);
+      this->fe_values_void_fraction->get_fe(),
+      q_particles_location,
+      update_values);
 
     fe_values_particles_void_fraction.reinit(void_fraction_cell);
 
@@ -985,9 +991,9 @@ public:
    * in the VANS equations.
    *
    * @param velocity_cell The active cell associated with the velocity and pressure DoFHandler
-   * 
+   *
    * @param void_fraction_cell The active cell associated with the void fraction DoFHandler
-   * 
+   *
    * @param previous_velocity_pressure_solution The solution at the previous time step for the fluid's velocity
    * and pressure
    *
@@ -1012,17 +1018,17 @@ public:
 
     double total_particle_volume = 0;
     reinit_particle_fluid_forces();
-    total_particle_volume        = extract_particle_properties();
+    total_particle_volume = extract_particle_properties();
 
     calculate_cell_void_fraction(total_particle_volume);
 
     if (number_of_particles == 0)
       return;
 
-    Quadrature<dim> q_particles_location = gather_particles_reference_location();
-    calculate_fluid_fields_at_particle_location(q_particles_location,
-                                                velocity_cell,
-                                                previous_velocity_pressure_solution);
+    Quadrature<dim> q_particles_location =
+      gather_particles_reference_location();
+    calculate_fluid_fields_at_particle_location(
+      q_particles_location, velocity_cell, previous_velocity_pressure_solution);
 
     if (this->interpolated_void_fraction)
       {
@@ -1039,12 +1045,12 @@ public:
    * with CFD-DEM.
    *
    * @param velocity_cell The active cell associated with the velocity and pressure DoFHandler
-   * 
+   *
    * @param void_fraction_cell The active cell associated with the void fraction DoFHandler
-   * 
+   *
    * @param phase_cell The active cell associated with the VOF DoFHandler
-   * 
-   * @param previous_velocity_pressure_solution The solution at the previous time step for the fluid's 
+   *
+   * @param previous_velocity_pressure_solution The solution at the previous time step for the fluid's
    * velocity and pressure
    *
    * @param void_fraction_solution The void fraction value calculated with one of the methods of
@@ -1078,10 +1084,10 @@ public:
     if (number_of_particles == 0)
       return;
 
-    Quadrature<dim> q_particles_location = gather_particles_reference_location();
-    calculate_fluid_fields_at_particle_location(q_particles_location,
-                                                velocity_cell,
-                                                previous_velocity_pressure_solution);
+    Quadrature<dim> q_particles_location =
+      gather_particles_reference_location();
+    calculate_fluid_fields_at_particle_location(
+      q_particles_location, velocity_cell, previous_velocity_pressure_solution);
 
     if (this->interpolated_void_fraction)
       {
