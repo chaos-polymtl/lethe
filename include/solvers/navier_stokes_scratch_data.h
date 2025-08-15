@@ -688,18 +688,18 @@ public:
     average_particle_velocity = 0;
     // Loop over particles in cell
     double       total_particle_volume = 0;
-    unsigned int particle_i            = 0;
+    unsigned int i_particle            = 0;
 
     for (auto &particle : pic)
       {
         auto particle_properties = particle.get_properties();
         // Stores the values of particle velocity in a tensor
-        particle_velocity[particle_i][0] =
+        particle_velocity[i_particle][0] =
           particle_properties[DEM::CFDDEMProperties::PropertiesIndex::v_x];
-        particle_velocity[particle_i][1] =
+        particle_velocity[i_particle][1] =
           particle_properties[DEM::CFDDEMProperties::PropertiesIndex::v_y];
         if constexpr (dim == 3)
-          particle_velocity[particle_i][2] =
+          particle_velocity[i_particle][2] =
             particle_properties[DEM::CFDDEMProperties::PropertiesIndex::v_z];
 
         if (!interpolated_void_fraction)
@@ -709,10 +709,10 @@ public:
                 dim) /
             (2 * dim);
 
-        average_particle_velocity += particle_velocity[particle_i];
-        particle_i++;
+        average_particle_velocity += particle_velocity[i_particle];
+        i_particle++;
       }
-    number_of_particles = particle_i;
+    number_of_particles = i_particle;
     if (number_of_particles != 0)
       { // Calculate the average particle velocity within the cell
         average_particle_velocity =
@@ -760,16 +760,16 @@ public:
     // interpolate at the locations of the particles
     std::vector<Point<dim>> particle_reference_location(number_of_particles);
     std::vector<double>     particle_weights(number_of_particles, 1);
-    unsigned int            particle_i = 0;
+    unsigned int            i_particle = 0;
 
     // Loop over particles in cell and cache their reference location
     for (auto &particle : pic)
       {
         // Store particle positions and weights
         // Reference location of the particle
-        particle_reference_location[particle_i] =
+        particle_reference_location[i_particle] =
           particle.get_reference_location();
-        particle_i++;
+        i_particle++;
       }
 
     // Return a quadrature for the Navier-Stokes equations that is based on the
@@ -866,7 +866,7 @@ public:
   /** @brief Calculates the properties of the fluid at the locations of the particles.
    * At the moment, only constant properties within the same fluid are
    * supported. When two fluids are present and VOF is used, the properties are
-   * calculated based on the filtered phase fraction interpolated at the
+   * calculated based on the filtered VOF solution interpolated at the
    * location of the particles. These properties are used in the forces
    * calculations in the VANS equations.
    */
@@ -879,35 +879,35 @@ public:
 
     if (gather_vof)
       {
-        for (unsigned int particle_i = 0; particle_i < number_of_particles;
-             ++particle_i)
+        for (unsigned int i_particle = 0; i_particle < number_of_particles;
+             ++i_particle)
           {
-            density_at_particle_location[particle_i] = calculate_point_property(
-              filtered_phase_values_at_particle_location[particle_i],
+            density_at_particle_location[i_particle] = calculate_point_property(
+              filtered_phase_values_at_particle_location[i_particle],
               this->density_ref_0,
               this->density_ref_1);
             double dynamic_viscosity_at_particle_location =
               calculate_point_property(
-                filtered_phase_values_at_particle_location[particle_i],
+                filtered_phase_values_at_particle_location[i_particle],
                 this->kinematic_viscosity_scale_0 * this->density_ref_0,
                 this->kinematic_viscosity_scale_1 * this->density_ref_1);
 
-            kinematic_viscosity_at_particle_location[particle_i] =
+            kinematic_viscosity_at_particle_location[i_particle] =
               dynamic_viscosity_at_particle_location /
-              density_at_particle_location[particle_i];
+              density_at_particle_location[i_particle];
           }
       }
     else
       {
-        for (unsigned int particle_i = 0; particle_i < number_of_particles;
-             ++particle_i)
+        for (unsigned int i_particle = 0; i_particle < number_of_particles;
+             ++i_particle)
           {
             // Gather the kinematic viscosity and density at the particle
             // location assuming a constant kinematic viscosity and density in a
             // single fluid
-            kinematic_viscosity_at_particle_location[particle_i] =
+            kinematic_viscosity_at_particle_location[i_particle] =
               kinematic_viscosity_scale;
-            density_at_particle_location[particle_i] = density_scale;
+            density_at_particle_location[i_particle] = density_scale;
           }
       }
   }
@@ -921,34 +921,34 @@ public:
   calculate_force_parameters_at_particle_location()
 
   { // Relative velocity and particle Reynolds
-    unsigned int particle_i                  = 0;
+    unsigned int i_particle                  = 0;
     average_fluid_particle_relative_velocity = 0;
 
     for (auto &particle : pic)
       {
         auto particle_properties = particle.get_properties();
 
-        fluid_particle_relative_velocity_at_particle_location[particle_i] =
-          fluid_velocity_at_particle_location[particle_i] -
-          particle_velocity[particle_i];
+        fluid_particle_relative_velocity_at_particle_location[i_particle] =
+          fluid_velocity_at_particle_location[i_particle] -
+          particle_velocity[i_particle];
         average_fluid_particle_relative_velocity +=
-          fluid_particle_relative_velocity_at_particle_location[particle_i];
+          fluid_particle_relative_velocity_at_particle_location[i_particle];
 
-        Re_particle[particle_i] =
+        Re_particle[i_particle] =
           1e-3 +
-          cell_void_fraction[particle_i] *
-            fluid_particle_relative_velocity_at_particle_location[particle_i]
+          cell_void_fraction[i_particle] *
+            fluid_particle_relative_velocity_at_particle_location[i_particle]
               .norm() *
             particle_properties[DEM::CFDDEMProperties::PropertiesIndex::dp] /
-            (kinematic_viscosity_at_particle_location[particle_i] + DBL_MIN);
-        particle_i++;
+            (kinematic_viscosity_at_particle_location[i_particle] + DBL_MIN);
+        i_particle++;
       }
 
     average_fluid_particle_relative_velocity =
-      average_fluid_particle_relative_velocity / particle_i;
+      average_fluid_particle_relative_velocity / i_particle;
   }
 
-  /** @brief Interpolates the filtered phase fraction value at the location of the particles.
+  /** @brief Interpolates the filtered VOF solution at the location of the particles.
    * The latter values are used in calculating the density and viscosity of the
    * fluid at the particles' locations when VOF is used.
    *
@@ -1044,8 +1044,8 @@ public:
    * 
    * @param phase_cell The active cell associated with the VOF DoFHandler
    * 
-   * @param previous_velocity_pressure_solution The solution at the previous time step for the fluid's velocity
-   * and pressure
+   * @param previous_velocity_pressure_solution The solution at the previous time step for the fluid's 
+   * velocity and pressure
    *
    * @param void_fraction_solution The void fraction value calculated with one of the methods of
    * the VoidFractionBase class.
@@ -1053,7 +1053,7 @@ public:
    * @param particle_handler The particle handler object that stores and manages the
    *  particles in the simulations
    *
-   * @param current_filtered_solution The present value of the phase fraction at the dofs of the
+   * @param current_filtered_solution The present value of the VOF solution at the dofs of the
    * cell
    */
   template <typename VectorType>
@@ -1235,7 +1235,7 @@ public:
       .get_function_gradients(current_solution,
                               this->phase_order_cahn_hilliard_gradients);
 
-    // Gather filtered phase fraction (values, gradients)
+    // Gather filtered VOF solution (values, gradients)
     this->fe_values_cahn_hilliard->operator[](phase_order)
       .get_function_values(current_filtered_solution,
                            this->filtered_phase_order_cahn_hilliard_values);
