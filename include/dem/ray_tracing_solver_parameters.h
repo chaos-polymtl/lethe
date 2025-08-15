@@ -16,11 +16,12 @@ template <int dim>
 class RayTracingSolverParameters
 {
 public:
-  Parameters::Mesh              mesh;
-  Parameters::Timer             timer;
-  Parameters::SimulationControl simulation_control;
-
-  Parameters::Lagrangian::InsertionInfo<dim> particle_insertion_info;
+  Parameters::Mesh                                mesh;
+  Parameters::Testing                             test;
+  Parameters::Timer                               timer;
+  Parameters::SimulationControl                   simulation_control;
+  Parameters::Lagrangian::InsertionInfo<dim>      particle_insertion_info;
+  Parameters::Lagrangian::ParticleRayTracing<dim> particle_ray_tracing_info;
 
   // Maybe usefull later
   // Parameters::Lagrangian::FloatingWalls<dim>     floating_walls;
@@ -41,28 +42,23 @@ public:
                       "Print all the parameters, or only"
                       "the changed parameters or none");
 
-    Parameters::SimulationControl::declare_parameters(prm);
     Parameters::Mesh::declare_parameters(prm);
-    Parameters::Restart::declare_parameters(prm);
-    Parameters::Timer::declare_parameters(prm);
     Parameters::Testing::declare_parameters(prm);
+    Parameters::Timer::declare_parameters(prm);
+    Parameters::SimulationControl::declare_parameters(prm);
     Parameters::Lagrangian::InsertionInfo<dim>::declare_parameters(prm);
-    Parameters::Lagrangian::ModelParameters<dim>::declare_parameters(prm);
-    // floating_walls.declare_parameters(prm);
-    // floating_grid.declare_parameters(prm);
-    // solid_objects = std::make_shared<Parameters::DEMSolidObjects<dim>>();
-    // solid_objects->declare_parameters(prm);
+    Parameters::Lagrangian::ParticleRayTracing<dim>::declare_parameters(prm);
   }
 
   void
   parse(ParameterHandler &prm)
   {
     mesh.parse_parameters(prm);
+    test.parse_parameters(prm);
     timer.parse_parameters(prm);
     simulation_control.parse_parameters(prm);
-    // floating_walls.parse_parameters(prm);
-    // floating_grid.parse_parameters(prm);
-    // solid_objects->parse_parameters(prm);
+    particle_insertion_info.parse_parameters(prm);
+    particle_ray_tracing_info.parse_parameters(prm);
   }
 };
 
