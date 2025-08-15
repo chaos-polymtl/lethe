@@ -919,10 +919,11 @@ VANSAssemblerDiFelice<dim>::calculate_particle_fluid_interactions(
 
   const auto pic = scratch_data.pic;
   beta_drag      = 0;
-  // particle_number is an increment that goes from 0 to n_particles_in_cell.
-  // It is used to index vector of particle properties and is incremented while
-  // looping over the particles in the cell.
-  unsigned int particle_number = 0;
+// i_particle is an index that runs from 0 to n_particles_in_cell.
+// It is used to access vectors of particle-specific variables and dependent quantities 
+// needed to compute the fluid’s effect on each particle in the cell.
+
+  unsigned int i_particle = 0;
 
   // Loop over particles in cell
   for (auto &particle : pic)
@@ -930,25 +931,25 @@ VANSAssemblerDiFelice<dim>::calculate_particle_fluid_interactions(
       auto particle_properties = particle.get_properties();
 
       cell_void_fraction =
-        std::min(scratch_data.cell_void_fraction[particle_number], 1.0);
+        std::min(scratch_data.cell_void_fraction[i_particle], 1.0);
 
       // Di Felice Drag Model CD Calculation
-      C_d = Utilities::fixed_power<2>((0.63 + 4.8 / sqrt(Re_p[particle_number]))) *
+      C_d = Utilities::fixed_power<2>((0.63 + 4.8 / sqrt(Re_p[i_particle]))) *
             pow(cell_void_fraction,
                 2 - (3.7 -
                      0.65 *
-                       exp(-Utilities::fixed_power<2>(1.5 - log10(Re_p[particle_number])) / 2)));
+                       exp(-Utilities::fixed_power<2>(1.5 - log10(Re_p[i_particle])) / 2)));
 
       double momentum_transfer_coefficient =
         (0.5 * C_d * M_PI *
          Utilities::fixed_power<2>(particle_properties[DEM::CFDDEMProperties::PropertiesIndex::dp]) /
          4) *
-        relative_velocity[particle_number].norm();
+        relative_velocity[i_particle].norm();
 
       beta_drag += momentum_transfer_coefficient;
 
-      drag_force = density[particle_number] * momentum_transfer_coefficient *
-                   relative_velocity[particle_number];
+      drag_force = density[i_particle] * momentum_transfer_coefficient *
+                   relative_velocity[i_particle];
 
       for (int d = 0; d < dim; ++d)
         {
@@ -957,7 +958,7 @@ VANSAssemblerDiFelice<dim>::calculate_particle_fluid_interactions(
             drag_force[d];
         }
 
-      particle_number += 1;
+      i_particle += 1;
     }
 
   beta_drag = beta_drag / scratch_data.cell_volume;
@@ -992,7 +993,7 @@ VANSAssemblerRong<dim>::calculate_particle_fluid_interactions(
 
   const auto pic               = scratch_data.pic;
   beta_drag                    = 0;
-  unsigned int particle_number = 0;
+  unsigned int i_particle = 0;
 
   // Loop over particles in cell
   for (auto &particle : pic)
@@ -1000,26 +1001,26 @@ VANSAssemblerRong<dim>::calculate_particle_fluid_interactions(
       auto particle_properties = particle.get_properties();
 
       cell_void_fraction =
-        std::min(scratch_data.cell_void_fraction[particle_number], 1.0);
+        std::min(scratch_data.cell_void_fraction[i_particle], 1.0);
 
       // Rong Drag Model CD Calculation
-      C_d = Utilities::fixed_power<2>((0.63 + 4.8 / sqrt(Re_p[particle_number]))) *
+      C_d = Utilities::fixed_power<2>((0.63 + 4.8 / sqrt(Re_p[i_particle]))) *
             pow(cell_void_fraction,
                 2 - (2.65 * (cell_void_fraction + 1) -
                      (5.3 - (3.5 * cell_void_fraction)) *
                        Utilities::fixed_power<2>(cell_void_fraction) *
-                       exp(-Utilities::fixed_power<2>(1.5 - log10(Re_p[particle_number])) / 2)));
+                       exp(-Utilities::fixed_power<2>(1.5 - log10(Re_p[i_particle])) / 2)));
 
       double momentum_transfer_coefficient =
         (0.5 * C_d * M_PI *
          Utilities::fixed_power<2>(particle_properties[DEM::CFDDEMProperties::PropertiesIndex::dp]) /
          4) *
-        relative_velocity[particle_number].norm();
+        relative_velocity[i_particle].norm();
 
       beta_drag += momentum_transfer_coefficient;
 
-      drag_force = density[particle_number] * momentum_transfer_coefficient *
-                   relative_velocity[particle_number];
+      drag_force = density[i_particle] * momentum_transfer_coefficient *
+                   relative_velocity[i_particle];
 
       for (int d = 0; d < dim; ++d)
         {
@@ -1028,7 +1029,7 @@ VANSAssemblerRong<dim>::calculate_particle_fluid_interactions(
             drag_force[d];
         }
 
-      particle_number += 1;
+      i_particle += 1;
     }
 
   beta_drag = beta_drag / scratch_data.cell_volume;
@@ -1064,7 +1065,7 @@ VANSAssemblerDallavalle<dim>::calculate_particle_fluid_interactions(
 
   const auto pic               = scratch_data.pic;
   beta_drag                    = 0;
-  unsigned int particle_number = 0;
+  unsigned int i_particle = 0;
 
   // Loop over particles in cell
   for (auto &particle : pic)
@@ -1072,18 +1073,18 @@ VANSAssemblerDallavalle<dim>::calculate_particle_fluid_interactions(
       auto particle_properties = particle.get_properties();
 
       // Dallavalle Drag Model CD Calculation
-      C_d = Utilities::fixed_power<2>((0.63 + 4.8 / sqrt(Re_p[particle_number])));
+      C_d = Utilities::fixed_power<2>((0.63 + 4.8 / sqrt(Re_p[i_particle])));
 
       double momentum_transfer_coefficient =
         (0.5 * C_d * M_PI *
          Utilities::fixed_power<2>(particle_properties[DEM::CFDDEMProperties::PropertiesIndex::dp]) /
          4) *
-        relative_velocity[particle_number].norm();
+        relative_velocity[i_particle].norm();
 
       beta_drag += momentum_transfer_coefficient;
 
-      drag_force = density[particle_number] * momentum_transfer_coefficient *
-                   relative_velocity[particle_number];
+      drag_force = density[i_particle] * momentum_transfer_coefficient *
+                   relative_velocity[i_particle];
 
       for (int d = 0; d < dim; ++d)
         {
@@ -1092,7 +1093,7 @@ VANSAssemblerDallavalle<dim>::calculate_particle_fluid_interactions(
             drag_force[d];
         }
 
-      particle_number += 1;
+      i_particle += 1;
     }
 
   beta_drag = beta_drag / scratch_data.cell_volume;
@@ -1130,7 +1131,7 @@ VANSAssemblerKochHill<dim>::calculate_particle_fluid_interactions(
 
   const auto pic               = scratch_data.pic;
   beta_drag                    = 0;
-  unsigned int particle_number = 0;
+  unsigned int i_particle = 0;
 
   double f0 = 0;
 
@@ -1140,7 +1141,7 @@ VANSAssemblerKochHill<dim>::calculate_particle_fluid_interactions(
       auto particle_properties = particle.get_properties();
 
       cell_void_fraction =
-        std::min(scratch_data.cell_void_fraction[particle_number], 1.0);
+        std::min(scratch_data.cell_void_fraction[i_particle], 1.0);
 
       // Koch and Hill Drag Model Calculation
       if ((1 - cell_void_fraction) < 0.4)
@@ -1162,10 +1163,10 @@ VANSAssemblerKochHill<dim>::calculate_particle_fluid_interactions(
                   0.0232 / Utilities::fixed_power<5>(cell_void_fraction);
 
       double momentum_transfer_coefficient =
-        ((18 * kinematic_viscosity[particle_number] *
+        ((18 * kinematic_viscosity[i_particle] *
           Utilities::fixed_power<2>(cell_void_fraction) * (1 - cell_void_fraction)) /
          Utilities::fixed_power<2>(particle_properties[DEM::CFDDEMProperties::PropertiesIndex::dp])) *
-        (f0 + 0.5 * f3 * Re_p[particle_number]) *
+        (f0 + 0.5 * f3 * Re_p[i_particle]) *
         (M_PI *
          pow(particle_properties[DEM::CFDDEMProperties::PropertiesIndex::dp],
              dim) /
@@ -1174,8 +1175,8 @@ VANSAssemblerKochHill<dim>::calculate_particle_fluid_interactions(
 
       beta_drag += momentum_transfer_coefficient;
 
-      drag_force = density[particle_number] * momentum_transfer_coefficient *
-                   relative_velocity[particle_number];
+      drag_force = density[i_particle] * momentum_transfer_coefficient *
+                   relative_velocity[i_particle];
 
       for (int d = 0; d < dim; ++d)
         {
@@ -1184,7 +1185,7 @@ VANSAssemblerKochHill<dim>::calculate_particle_fluid_interactions(
             drag_force[d];
         }
 
-      particle_number += 1;
+      i_particle += 1;
     }
 
   beta_drag = beta_drag / scratch_data.cell_volume;
@@ -1223,7 +1224,7 @@ VANSAssemblerBeetstra<dim>::calculate_particle_fluid_interactions(
 
   const auto pic               = scratch_data.pic;
   beta_drag                    = 0;
-  unsigned int particle_number = 0;
+  unsigned int i_particle = 0;
 
   // Loop over particles in cell
   for (auto &particle : pic)
@@ -1231,29 +1232,29 @@ VANSAssemblerBeetstra<dim>::calculate_particle_fluid_interactions(
       auto particle_properties = particle.get_properties();
 
       cell_void_fraction =
-        std::min(scratch_data.cell_void_fraction[particle_number], 1.0);
+        std::min(scratch_data.cell_void_fraction[i_particle], 1.0);
 
       // Beetstra drag coefficient
       F0 = 10 * (1 - cell_void_fraction) / Utilities::fixed_power<2>(cell_void_fraction) +
            Utilities::fixed_power<2>(cell_void_fraction) *
              (1 + 1.5 * sqrt((1 - cell_void_fraction + DBL_MIN))) +
-           0.413 * (Re_p[particle_number]) / (24 * Utilities::fixed_power<2>(cell_void_fraction)) *
+           0.413 * (Re_p[i_particle]) / (24 * Utilities::fixed_power<2>(cell_void_fraction)) *
              ((1 / cell_void_fraction) +
               3 * (1 - cell_void_fraction) * cell_void_fraction +
-              8.4 * pow((Re_p[particle_number]), -0.343)) /
+              8.4 * pow((Re_p[i_particle]), -0.343)) /
              (1 + pow(10, 3 * (1 - cell_void_fraction)) *
-                    pow((Re_p[particle_number]),
+                    pow((Re_p[i_particle]),
                         -(1 + 4 * (1 - cell_void_fraction)) * 0.5));
 
       double momentum_transfer_coefficient =
-        F0 * 3 * M_PI * kinematic_viscosity[particle_number] *
+        F0 * 3 * M_PI * kinematic_viscosity[i_particle] *
         cell_void_fraction *
         particle_properties[DEM::CFDDEMProperties::PropertiesIndex::dp];
 
       beta_drag += momentum_transfer_coefficient;
 
-      drag_force = density[particle_number] * momentum_transfer_coefficient *
-                   relative_velocity[particle_number];
+      drag_force = density[i_particle] * momentum_transfer_coefficient *
+                   relative_velocity[i_particle];
 
       for (int d = 0; d < dim; ++d)
         {
@@ -1262,7 +1263,7 @@ VANSAssemblerBeetstra<dim>::calculate_particle_fluid_interactions(
             drag_force[d];
         }
 
-      particle_number += 1;
+      i_particle += 1;
     }
 
   beta_drag = beta_drag / scratch_data.cell_volume;
@@ -1301,7 +1302,7 @@ VANSAssemblerGidaspow<dim>::calculate_particle_fluid_interactions(
   const auto pic                           = scratch_data.pic;
   double     momentum_transfer_coefficient = 0;
   beta_drag                                = 0;
-  unsigned int particle_number             = 0;
+  unsigned int i_particle             = 0;
 
   // Loop over particles in cell
   for (auto &particle : pic)
@@ -1309,7 +1310,7 @@ VANSAssemblerGidaspow<dim>::calculate_particle_fluid_interactions(
       auto particle_properties = particle.get_properties();
 
       cell_void_fraction =
-        std::min(scratch_data.cell_void_fraction[particle_number], 1.0);
+        std::min(scratch_data.cell_void_fraction[i_particle], 1.0);
 
       // Gidaspow Drag Model
       double particle_density =
@@ -1322,9 +1323,9 @@ VANSAssemblerGidaspow<dim>::calculate_particle_fluid_interactions(
         {
           momentum_transfer_coefficient =
             (18 * pow(cell_void_fraction, -3.65) *
-             (1 + 0.15 * pow(Re_p[particle_number], 0.687))) *
+             (1 + 0.15 * pow(Re_p[i_particle], 0.687))) *
             (particle_properties[DEM::CFDDEMProperties::PropertiesIndex::mass] *
-             kinematic_viscosity[particle_number] /
+             kinematic_viscosity[i_particle] /
              (Utilities::fixed_power<2, double>(
                 particle_properties
                   [DEM::CFDDEMProperties::PropertiesIndex::dp]) *
@@ -1336,10 +1337,10 @@ VANSAssemblerGidaspow<dim>::calculate_particle_fluid_interactions(
           momentum_transfer_coefficient =
             (150 * (1 - cell_void_fraction) /
                Utilities::fixed_power<2, double>(cell_void_fraction) +
-             1.75 * Re_p[particle_number] /
+             1.75 * Re_p[i_particle] /
                Utilities::fixed_power<2, double>(cell_void_fraction)) *
             (particle_properties[DEM::CFDDEMProperties::PropertiesIndex::mass] *
-             kinematic_viscosity[particle_number] /
+             kinematic_viscosity[i_particle] /
              (Utilities::fixed_power<2, double>(
                 particle_properties
                   [DEM::CFDDEMProperties::PropertiesIndex::dp]) *
@@ -1348,8 +1349,8 @@ VANSAssemblerGidaspow<dim>::calculate_particle_fluid_interactions(
 
       beta_drag += momentum_transfer_coefficient;
 
-      drag_force = density[particle_number] * momentum_transfer_coefficient *
-                   relative_velocity[particle_number];
+      drag_force = density[i_particle] * momentum_transfer_coefficient *
+                   relative_velocity[i_particle];
 
       for (int d = 0; d < dim; ++d)
         {
@@ -1358,7 +1359,7 @@ VANSAssemblerGidaspow<dim>::calculate_particle_fluid_interactions(
             drag_force[d];
         }
 
-      particle_number += 1;
+      i_particle += 1;
     }
 
   beta_drag = beta_drag / scratch_data.cell_volume;
@@ -1383,12 +1384,6 @@ VANSAssemblerSaffmanMei<dim>::calculate_particle_fluid_interactions(
     RequiresConstantDensity(
       "VANSAssemblerSaffmanMei<dim>::calculate_particle_fluid_interactions"));
 
-  // particle_number is an increment that goes from 0 to n_particles_in_cell.
-  // It is incremented at the end of the loop over particles and is used to
-  // point to the element of the vectors relative_velocity and
-  // fluid_velocity_at_particle_location corresponding to the particle being
-  // looped over.
-
   // This implementation follows the formulation in the book "Multiphase Flows
   // with Droplets and Particles" by Crowe et al. (2011) and the brief
   // communication article "An approximate expression for the shear lift force
@@ -1412,7 +1407,7 @@ VANSAssemblerSaffmanMei<dim>::calculate_particle_fluid_interactions(
   Tensor<1, dim> lift_force;
 
   const auto   pic             = scratch_data.pic;
-  unsigned int particle_number = 0;
+  unsigned int i_particle = 0;
 
   if constexpr (dim == 2)
     {
@@ -1424,39 +1419,39 @@ VANSAssemblerSaffmanMei<dim>::calculate_particle_fluid_interactions(
           alpha =
             0.5 *
             particle_properties[DEM::CFDDEMProperties::PropertiesIndex::dp] /
-            relative_velocity[particle_number].norm() *
-            abs(vorticity_2d[particle_number][0] + 1e-12);
+            relative_velocity[i_particle].norm() *
+            abs(vorticity_2d[i_particle][0] + 1e-12);
 
-          if (Re_p[particle_number] <= 40)
+          if (Re_p[i_particle] <= 40)
             C_s =
-              (1 - 0.3314 * sqrt(alpha)) * exp(-0.1 * Re_p[particle_number]) +
+              (1 - 0.3314 * sqrt(alpha)) * exp(-0.1 * Re_p[i_particle]) +
               0.3314 * sqrt(alpha);
-          else if (Re_p[particle_number] > 40)
-            C_s = 0.0524 * sqrt(alpha * Re_p[particle_number]);
+          else if (Re_p[i_particle] > 40)
+            C_s = 0.0524 * sqrt(alpha * Re_p[i_particle]);
 
           // Vorticity vector
           Tensor<1, 2> vorticity;
-          vorticity[0] = vorticity_2d[particle_number][0];
-          vorticity[1] = vorticity_2d[particle_number][1];
+          vorticity[0] = vorticity_2d[i_particle][0];
+          vorticity[1] = vorticity_2d[i_particle][1];
 
           // Saffman Lift force
           lift_force[0] =
             C_s * 1.61 *
             particle_properties[DEM::CFDDEMProperties::PropertiesIndex::dp] *
             particle_properties[DEM::CFDDEMProperties::PropertiesIndex::dp] *
-            density[particle_number] *
-            sqrt(kinematic_viscosity[particle_number] + DBL_MIN) /
-            sqrt(vorticity_2d[particle_number].norm()) *
-            (relative_velocity[particle_number][0] * vorticity[1]);
+            density[i_particle] *
+            sqrt(kinematic_viscosity[i_particle] + DBL_MIN) /
+            sqrt(vorticity_2d[i_particle].norm()) *
+            (relative_velocity[i_particle][0] * vorticity[1]);
 
           lift_force[1] =
             C_s * 1.61 *
             particle_properties[DEM::CFDDEMProperties::PropertiesIndex::dp] *
             particle_properties[DEM::CFDDEMProperties::PropertiesIndex::dp] *
-            density[particle_number] *
-            sqrt(kinematic_viscosity[particle_number] + DBL_MIN) /
+            density[i_particle] *
+            sqrt(kinematic_viscosity[i_particle] + DBL_MIN) /
             sqrt(vorticity.norm() + 1e-12) *
-            (relative_velocity[particle_number][1] * vorticity[0]);
+            (relative_velocity[i_particle][1] * vorticity[0]);
 
           for (int d = 0; d < dim; ++d)
             {
@@ -1470,7 +1465,7 @@ VANSAssemblerSaffmanMei<dim>::calculate_particle_fluid_interactions(
                 lift_force[d] / scratch_data.cell_volume;
             }
 
-          particle_number += 1;
+          i_particle += 1;
         }
     }
   else if constexpr (dim == 3)
@@ -1483,27 +1478,27 @@ VANSAssemblerSaffmanMei<dim>::calculate_particle_fluid_interactions(
           alpha =
             0.5 *
             particle_properties[DEM::CFDDEMProperties::PropertiesIndex::dp] /
-            relative_velocity[particle_number].norm() *
-            (vorticity_3d[particle_number].norm() + 1e-12);
+            relative_velocity[i_particle].norm() *
+            (vorticity_3d[i_particle].norm() + 1e-12);
 
-          if (Re_p[particle_number] <= 40)
+          if (Re_p[i_particle] <= 40)
             C_s =
-              (1 - 0.3314 * sqrt(alpha)) * exp(-0.1 * Re_p[particle_number]) +
+              (1 - 0.3314 * sqrt(alpha)) * exp(-0.1 * Re_p[i_particle]) +
               0.3314 * sqrt(alpha);
-          else if (Re_p[particle_number] > 40)
-            C_s = 0.0524 * sqrt(alpha * Re_p[particle_number]);
+          else if (Re_p[i_particle] > 40)
+            C_s = 0.0524 * sqrt(alpha * Re_p[i_particle]);
 
           // Vorticity tensor
-          Tensor<1, 3> vorticity = vorticity_3d[particle_number];
+          Tensor<1, 3> vorticity = vorticity_3d[i_particle];
 
           lift_force =
             C_s * 1.61 *
             particle_properties[DEM::CFDDEMProperties::PropertiesIndex::dp] *
             particle_properties[DEM::CFDDEMProperties::PropertiesIndex::dp] *
-            density[particle_number] *
-            sqrt(kinematic_viscosity[particle_number] + DBL_MIN) /
+            density[i_particle] *
+            sqrt(kinematic_viscosity[i_particle] + DBL_MIN) /
             sqrt(vorticity.norm() + 1e-12) *
-            (cross_product_3d(relative_velocity[particle_number], vorticity));
+            (cross_product_3d(relative_velocity[i_particle], vorticity));
 
           for (int d = 0; d < dim; ++d)
             {
@@ -1516,7 +1511,7 @@ VANSAssemblerSaffmanMei<dim>::calculate_particle_fluid_interactions(
               undisturbed_flow_force[d] +=
                 lift_force[d] / scratch_data.cell_volume;
             }
-          particle_number += 1;
+          i_particle += 1;
         }
     }
 }
@@ -1548,7 +1543,7 @@ VANSAssemblerMagnus<dim>::calculate_particle_fluid_interactions(
   Tensor<1, dim> lift_force;
 
   const auto   pic             = scratch_data.pic;
-  unsigned int particle_number = 0;
+  unsigned int i_particle = 0;
 
   if constexpr (dim == 2)
     {
@@ -1566,16 +1561,16 @@ VANSAssemblerMagnus<dim>::calculate_particle_fluid_interactions(
           // Spin parameter
           double spin_parameter =
             particle_properties[DEM::CFDDEMProperties::PropertiesIndex::dp] *
-            omega_norm / (2.0 * relative_velocity[particle_number].norm());
+            omega_norm / (2.0 * relative_velocity[i_particle].norm());
 
           // Magnus lift coefficient
           if (spin_parameter > 1.0 && spin_parameter < 6.0 &&
-              Re_p[particle_number] > 10.0 && Re_p[particle_number] < 140.0)
+              Re_p[i_particle] > 10.0 && Re_p[i_particle] < 140.0)
             {
               // Oesterlé and Dinh (1998)
               C_m = 0.45 + (2 * spin_parameter - 0.45) *
                              exp(-0.075 * pow(spin_parameter, 0.4) *
-                                 pow(Re_p[particle_number], 0.7));
+                                 pow(Re_p[i_particle], 0.7));
             }
           else
             C_m = 2.0 * spin_parameter;
@@ -1584,16 +1579,16 @@ VANSAssemblerMagnus<dim>::calculate_particle_fluid_interactions(
           lift_force[0] =
             0.5 * C_m *
             particle_properties[DEM::CFDDEMProperties::PropertiesIndex::dp] *
-            density[particle_number] *
-            relative_velocity[particle_number].norm() *
-            (omega_z / omega_norm * relative_velocity[particle_number][1]);
+            density[i_particle] *
+            relative_velocity[i_particle].norm() *
+            (omega_z / omega_norm * relative_velocity[i_particle][1]);
 
           lift_force[1] =
             0.5 * C_m *
             particle_properties[DEM::CFDDEMProperties::PropertiesIndex::dp] *
-            density[particle_number] *
-            relative_velocity[particle_number].norm() *
-            (omega_z / omega_norm * relative_velocity[particle_number][0]);
+            density[i_particle] *
+            relative_velocity[i_particle].norm() *
+            (omega_z / omega_norm * relative_velocity[i_particle][0]);
 
           for (int d = 0; d < dim; ++d)
             {
@@ -1606,7 +1601,7 @@ VANSAssemblerMagnus<dim>::calculate_particle_fluid_interactions(
               undisturbed_flow_force[d] +=
                 lift_force[d] / scratch_data.cell_volume;
             }
-          particle_number += 1;
+          i_particle += 1;
         }
     }
 
@@ -1629,16 +1624,16 @@ VANSAssemblerMagnus<dim>::calculate_particle_fluid_interactions(
           // Spin parameter
           double spin_parameter =
             particle_properties[DEM::CFDDEMProperties::PropertiesIndex::dp] *
-            omega.norm() / (2.0 * relative_velocity[particle_number].norm());
+            omega.norm() / (2.0 * relative_velocity[i_particle].norm());
 
           // Magnus lift coefficient
           if (spin_parameter > 1.0 && spin_parameter < 6.0 &&
-              Re_p[particle_number] > 10.0 && Re_p[particle_number] < 140.0)
+              Re_p[i_particle] > 10.0 && Re_p[i_particle] < 140.0)
             {
               // Oesterlé and Dinh (1998)
               C_m = 0.45 + (2 * spin_parameter - 0.45) *
                              exp(-0.075 * pow(spin_parameter, 0.4) *
-                                 pow(Re_p[particle_number], 0.7));
+                                 pow(Re_p[i_particle], 0.7));
             }
           else
             C_m = 2.0 * spin_parameter;
@@ -1649,10 +1644,10 @@ VANSAssemblerMagnus<dim>::calculate_particle_fluid_interactions(
           lift_force =
             0.125 * M_PI *
             Utilities::fixed_power<2>(particle_properties[DEM::CFDDEMProperties::PropertiesIndex::dp]) *
-            C_m * density[particle_number] *
-            relative_velocity[particle_number].norm() *
+            C_m * density[i_particle] *
+            relative_velocity[i_particle].norm() *
             (cross_product_3d(rotational_vector,
-                              relative_velocity[particle_number]));
+                              relative_velocity[i_particle]));
 
           for (int d = 0; d < dim; ++d)
             {
@@ -1665,7 +1660,7 @@ VANSAssemblerMagnus<dim>::calculate_particle_fluid_interactions(
               undisturbed_flow_force[d] +=
                 lift_force[d] / scratch_data.cell_volume;
             }
-          particle_number += 1;
+          i_particle += 1;
         }
     }
 }
@@ -1694,7 +1689,7 @@ VANSAssemblerViscousTorque<dim>::calculate_particle_fluid_interactions(
     scratch_data.kinematic_viscosity_at_particle_location;
   const auto pic = scratch_data.pic;
 
-  unsigned int particle_number = 0;
+  unsigned int i_particle = 0;
 
   // Loop over particles in cell
   for (auto &particle : pic)
@@ -1706,7 +1701,7 @@ VANSAssemblerViscousTorque<dim>::calculate_particle_fluid_interactions(
         M_PI *
         Utilities::fixed_power<3, double>(
           particle_properties[DEM::CFDDEMProperties::PropertiesIndex::dp]) *
-        kinematic_viscosity[particle_number] * density[particle_number] * 0.5;
+        kinematic_viscosity[i_particle] * density[i_particle] * 0.5;
 
       for (unsigned int d = 0; d < dim; d++)
         {
@@ -1715,7 +1710,7 @@ VANSAssemblerViscousTorque<dim>::calculate_particle_fluid_interactions(
             factor * particle_properties
                        [DEM::CFDDEMProperties::PropertiesIndex::omega_x + d];
         }
-      particle_number += 1;
+      i_particle += 1;
     }
 }
 
@@ -1749,7 +1744,7 @@ VANSAssemblerVorticalTorque<dim>::calculate_particle_fluid_interactions(
 
   // Local index used to access the local fields calculated at the particle
   // location
-  unsigned int particle_number = 0;
+  unsigned int i_particle = 0;
 
   // Loop over particles in cell
   for (auto &particle : pic)
@@ -1761,16 +1756,16 @@ VANSAssemblerVorticalTorque<dim>::calculate_particle_fluid_interactions(
         M_PI *
         Utilities::fixed_power<3, double>(
           particle_properties[DEM::CFDDEMProperties::PropertiesIndex::dp]) *
-        kinematic_viscosity[particle_number] * density[particle_number] * 0.5;
+        kinematic_viscosity[i_particle] * density[i_particle] * 0.5;
 
       for (unsigned int d = 0; d < dim; d++)
         {
           // Calculate and apply viscous torque
           particle_properties
             [DEM::CFDDEMProperties::PropertiesIndex::fem_torque_x + d] +=
-            factor * vorticity_3d[particle_number][d];
+            factor * vorticity_3d[i_particle][d];
         }
-      particle_number += 1;
+      i_particle += 1;
     }
 }
 
@@ -1793,7 +1788,7 @@ VANSAssemblerBuoyancy<dim>::calculate_particle_fluid_interactions(
 
   const auto &density = scratch_data.density_at_particle_location;
 
-  unsigned int particle_number = 0;
+  unsigned int i_particle = 0;
 
   // Loop over particles in cell
   for (auto &particle : pic)
@@ -1810,9 +1805,9 @@ VANSAssemblerBuoyancy<dim>::calculate_particle_fluid_interactions(
         {
           particle_properties
             [DEM::CFDDEMProperties::PropertiesIndex::fem_force_x + d] +=
-            buoyancy_force[d] * density[particle_number];
+            buoyancy_force[d] * density[i_particle];
         }
-      particle_number += 1;
+      i_particle += 1;
     }
 }
 
@@ -1836,7 +1831,7 @@ VANSAssemblerPressureForce<dim>::calculate_particle_fluid_interactions(
     scratch_data.fluid_pressure_gradients_at_particle_location;
   Tensor<1, dim> pressure_force;
 
-  unsigned int particle_number = 0;
+  unsigned int i_particle = 0;
 
   const auto &density = scratch_data.density_at_particle_location;
 
@@ -1850,13 +1845,13 @@ VANSAssemblerPressureForce<dim>::calculate_particle_fluid_interactions(
         -(M_PI *
           Utilities::fixed_power<dim>(particle_properties[DEM::CFDDEMProperties::PropertiesIndex::dp]) /
           (2 * dim)) *
-        pressure_gradients[particle_number];
+        pressure_gradients[i_particle];
 
       for (int d = 0; d < dim; ++d)
         {
           particle_properties
             [DEM::CFDDEMProperties::PropertiesIndex::fem_force_x + d] +=
-            pressure_force[d] * density[particle_number];
+            pressure_force[d] * density[i_particle];
 
           // Apply pressure force to the particles only, when we are solving
           // model A of the VANS. When we are solving Model B, apply the
@@ -1869,7 +1864,7 @@ VANSAssemblerPressureForce<dim>::calculate_particle_fluid_interactions(
             }
         }
 
-      particle_number += 1;
+      i_particle += 1;
     }
 }
 
@@ -1899,7 +1894,7 @@ VANSAssemblerShearForce<dim>::calculate_particle_fluid_interactions(
     scratch_data.fluid_velocity_laplacian_at_particle_location;
   Tensor<1, dim> shear_force;
 
-  unsigned int particle_number = 0;
+  unsigned int i_particle = 0;
 
   const auto &density = scratch_data.density_at_particle_location;
   const std::vector<double> &kinematic_viscosity =
@@ -1915,14 +1910,14 @@ VANSAssemblerShearForce<dim>::calculate_particle_fluid_interactions(
         -(M_PI *
           Utilities::fixed_power<dim>(particle_properties[DEM::CFDDEMProperties::PropertiesIndex::dp]) /
           (2 * dim)) *
-        kinematic_viscosity[particle_number] *
-        velocity_laplacians[particle_number];
+        kinematic_viscosity[i_particle] *
+        velocity_laplacians[i_particle];
 
       for (int d = 0; d < dim; ++d)
         {
           particle_properties
             [DEM::CFDDEMProperties::PropertiesIndex::fem_force_x + d] +=
-            shear_force[d] * density[particle_number];
+            shear_force[d] * density[i_particle];
 
           // Apply shear force to the particles only, when we are solving
           // model A of the VANS. When we are solving Model B, apply the shear
@@ -1935,7 +1930,7 @@ VANSAssemblerShearForce<dim>::calculate_particle_fluid_interactions(
             }
         }
 
-      particle_number += 1;
+      i_particle += 1;
     }
 }
 
