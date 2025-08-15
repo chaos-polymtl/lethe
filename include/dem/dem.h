@@ -43,7 +43,6 @@
 #include <iostream>
 #include <unordered_set>
 
-using namespace DEM;
 
 /**
  * @brief Solver using the soft-sphere model of the discrete element method
