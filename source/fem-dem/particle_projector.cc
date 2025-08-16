@@ -1076,7 +1076,7 @@ ParticleProjector<dim>::solve_void_fraction_linear_system()
 #endif
 }
 
-// Pre-compile the 2D and 3D VoidFractionBase solver to ensure that the
+// Pre-compile the 2D and 3D ParticleProjector solver to ensure that the
 // library is valid before we actually compile the solver This greatly
 // helps with debugging
 template class ParticleProjector<2>;
