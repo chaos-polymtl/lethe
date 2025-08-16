@@ -548,7 +548,7 @@ private:
 
 
     // Declare the vectors for the shape function differently depending on the
-    // number of components We currently assume either 1 or dim components
+    // number of components. We currently assume either 1 or dim components.
     typename std::conditional<n_components == 1,
                               std::vector<double>,
                               std::vector<Tensor<1, dim>>>::type
