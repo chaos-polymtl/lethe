@@ -2753,37 +2753,39 @@ FluidDynamicsMatrixFree<dim>::update_solutions_for_fluid_dynamics()
   TimerOutput::Scope t(this->computing_timer,
                        "Update solutions for fluid dynamics");
 
-  // Get present solution and dof handler of the heat transfer
-  const auto &heat_solution =
-    *this->multiphysics->get_solution(PhysicsID::heat_transfer);
+  if (this->simulation_parameters.multiphysics.heat_transfer)
+    {
+      // Get present solution and dof handler of the heat transfer
+      const auto &heat_solution =
+        *this->multiphysics->get_solution(PhysicsID::heat_transfer);
 
 #ifndef LETHE_USE_LDV
-  const auto &heat_dof_handler =
-    *this->multiphysics->get_dof_handler(PhysicsID::heat_transfer);
+      const auto &heat_dof_handler =
+        *this->multiphysics->get_dof_handler(PhysicsID::heat_transfer);
 
-  // Copy solution to temporary vector
-  TrilinosWrappers::MPI::Vector temp_heat_solution;
-  temp_heat_solution.reinit(heat_dof_handler.locally_owned_dofs(),
-                            this->mpi_communicator);
-  temp_heat_solution = heat_solution;
+      // Copy solution to temporary vector
+      TrilinosWrappers::MPI::Vector temp_heat_solution;
+      temp_heat_solution.reinit(heat_dof_handler.locally_owned_dofs(),
+                                this->mpi_communicator);
+      temp_heat_solution = heat_solution;
 
-  // Initialize deal.II vector to store solution
-  this->temperature_present_solution.reinit(
-    heat_dof_handler.locally_owned_dofs(),
-    DoFTools::extract_locally_active_dofs(heat_dof_handler),
-    this->mpi_communicator);
+      // Initialize deal.II vector to store solution
+      this->temperature_present_solution.reinit(
+        heat_dof_handler.locally_owned_dofs(),
+        DoFTools::extract_locally_active_dofs(heat_dof_handler),
+        this->mpi_communicator);
 
-  // Perform copy between two vector types
-  convert_vector_trilinos_to_dealii(this->temperature_present_solution,
-                                    temp_heat_solution);
+      // Perform copy between two vector types
+      convert_vector_trilinos_to_dealii(this->temperature_present_solution,
+                                        temp_heat_solution);
 
 #else
-  this->temperature_present_solution = heat_solution;
+      this->temperature_present_solution = heat_solution;
 #endif
-  // Update ghost values for deal.II vector
-  this->temperature_present_solution.update_ghost_values();
+      // Update ghost values for deal.II vector
+      this->temperature_present_solution.update_ghost_values();
+    }
 }
-
 template <int dim>
 void
 FluidDynamicsMatrixFree<dim>::setup_preconditioner()
