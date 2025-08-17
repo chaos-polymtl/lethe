@@ -2252,7 +2252,7 @@ FluidDynamicsMatrixFree<dim>::multi_stage_postresolution(
     this->local_evaluation_point;
 
   // We update the sum of b_i*k_i
-  // The name 'temp' is just use to match the syntax of Matrix Based resolution
+  // The name 'temp' is just used to match the syntax of Matrix Based resolution
   const double b_i = stage_data.b_i;
   this->sdirk_vectors.local_sum_bi_ki.add(b_i, this->local_evaluation_point);
 }
