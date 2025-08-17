@@ -790,8 +790,8 @@ NavierStokesOperatorBase<dim, number>::
   // Define 1/dt if the simulation is transient
   double sdt = 0.0;
 
-  bool transient = is_bdf(simulation_control->get_assembly_method()) ||
-                   is_sdirk(simulation_control->get_assembly_method());
+  const bool transient = is_bdf(simulation_control->get_assembly_method()) ||
+                         is_sdirk(simulation_control->get_assembly_method());
 
   if (transient)
     {
@@ -1399,9 +1399,9 @@ NavierStokesStabilizedOperator<dim, number>::do_cell_integral_local(
 
   const unsigned int cell = integrator.get_current_cell_index();
 
-  // To identify whether the problem is transient or steady
-  bool transient = is_bdf(this->simulation_control->get_assembly_method()) ||
-                   is_sdirk(this->simulation_control->get_assembly_method());
+  const bool test_is_bdf = is_bdf(this->simulation_control->get_assembly_method());
+  const bool test_is_sdirk =
+    is_sdirk(this->simulation_control->get_assembly_method());
 
   const double kinematic_viscosity =
     this->properties_manager->get_rheology()->get_kinematic_viscosity();
@@ -1410,9 +1410,9 @@ NavierStokesStabilizedOperator<dim, number>::do_cell_integral_local(
   double dt   = 0.0;
   // Vector for BDF coefficients
   const Vector<double> *bdf_coefs = nullptr;
-  if (is_bdf(this->simulation_control->get_assembly_method()))
+  if (test_is_bdf)
     bdf_coefs = &this->simulation_control->get_bdf_coefficients();
-  else if (is_sdirk(this->simulation_control->get_assembly_method()))
+  if (test_is_sdirk)
     {
       SDIRKTable table =
         sdirk_table(this->simulation_control->get_assembly_method());
@@ -1458,7 +1458,7 @@ NavierStokesStabilizedOperator<dim, number>::do_cell_integral_local(
         this->nonlinear_previous_hessian_diagonal(cell, q);
 
       Tensor<1, dim + 1, VectorizedArray<number>> previous_time_derivatives;
-      if (transient)
+      if (test_is_bdf || test_is_sdirk)
         previous_time_derivatives =
           this->time_derivatives_previous_solutions(cell, q);
 
@@ -1483,9 +1483,9 @@ NavierStokesStabilizedOperator<dim, number>::do_cell_integral_local(
                                  previous_gradient[i][k] * value[k];
             }
           // +(v,∂t δu)
-          if (is_bdf(this->simulation_control->get_assembly_method()))
+          if (test_is_bdf)
             value_result[i] += (*bdf_coefs)[0] * value[i];
-          else if (is_sdirk(this->simulation_control->get_assembly_method()))
+          if (test_is_sdirk)
             {
               value_result[i] += (1.0 / (dt * a_ii)) * value[i];
             }
@@ -1503,9 +1503,9 @@ NavierStokesStabilizedOperator<dim, number>::do_cell_integral_local(
                        previous_gradient[i][k] * value[k]);
             }
           // +(∂t δu)·τ∇q
-          if (is_bdf(this->simulation_control->get_assembly_method()))
+          if (test_is_bdf)
             gradient_result[dim][i] += tau * (*bdf_coefs)[0] * value[i];
-          else if (is_sdirk(this->simulation_control->get_assembly_method()))
+          if (test_is_sdirk)
             {
               gradient_result[dim][i] += tau * (1.0 / (dt * a_ii)) * value[i];
             }
@@ -1533,12 +1533,11 @@ NavierStokesStabilizedOperator<dim, number>::do_cell_integral_local(
                 tau * previous_values[k] * (gradient[dim][i]);
 
               // +(∂t δu)τ(u·∇)v
-              if (is_bdf(this->simulation_control->get_assembly_method()))
+              if (test_is_bdf)
                 gradient_result[i][k] +=
                   tau * previous_values[k] * ((*bdf_coefs)[0] * value[i]);
 
-              else if (is_sdirk(
-                         this->simulation_control->get_assembly_method()))
+              if (test_is_sdirk)
                 {
                   gradient_result[i][k] +=
                     tau * previous_values[k] * ((1.0 / (dt * a_ii)) * value[i]);
@@ -1559,12 +1558,11 @@ NavierStokesStabilizedOperator<dim, number>::do_cell_integral_local(
                 tau * value[k] * (previous_gradient[dim][i] - source_value[i]);
 
               // +(∂t u)τ(δu·∇)v
-              if (is_bdf(this->simulation_control->get_assembly_method()))
+              if (test_is_bdf)
                 gradient_result[i][k] += tau * value[k] *
                                          ((*bdf_coefs)[0] * previous_values[i] +
                                           previous_time_derivatives[i]);
-              else if (is_sdirk(
-                         this->simulation_control->get_assembly_method()))
+              if (test_is_sdirk)
                 {
                   gradient_result[i][k] +=
                     tau * value[k] *
@@ -1599,12 +1597,10 @@ NavierStokesStabilizedOperator<dim, number>::do_cell_integral_local(
                         tau * -kinematic_viscosity * (gradient[dim][i]);
 
                       // +(∂t δu)τ(−ν∆v)
-                      if (is_bdf(
-                            this->simulation_control->get_assembly_method()))
+                      if (test_is_bdf)
                         hessian_result[i][k][k] += tau * -kinematic_viscosity *
                                                    ((*bdf_coefs)[0] * value[i]);
-                      else if (is_sdirk(this->simulation_control
-                                          ->get_assembly_method()))
+                      if (test_is_sdirk)
                         {
                           hessian_result[i][k][k] +=
                             tau * -kinematic_viscosity *
@@ -1669,18 +1665,18 @@ NavierStokesStabilizedOperator<dim, number>::local_evaluate_residual(
         integrator.evaluate(EvaluationFlags::values |
                             EvaluationFlags::gradients);
 
-      // To identify whether the problem is transient or steady
-      bool transient =
-        is_bdf(this->simulation_control->get_assembly_method()) ||
+      const bool test_is_bdf =
+        is_bdf(this->simulation_control->get_assembly_method());
+      const bool test_is_sdirk =
         is_sdirk(this->simulation_control->get_assembly_method());
 
       double a_ii = 0.0;
       double dt   = 0.0;
       // Vector for BDF coefficients
       const Vector<double> *bdf_coefs = nullptr;
-      if (is_bdf(this->simulation_control->get_assembly_method()))
+      if (test_is_bdf)
         bdf_coefs = &this->simulation_control->get_bdf_coefficients();
-      else if (is_sdirk(this->simulation_control->get_assembly_method()))
+      if (test_is_sdirk)
         {
           SDIRKTable table =
             sdirk_table(this->simulation_control->get_assembly_method());
@@ -1716,7 +1712,7 @@ NavierStokesStabilizedOperator<dim, number>::local_evaluate_residual(
 
           // Time derivatives of previous solutions
           Tensor<1, dim + 1, VectorizedArray<number>> previous_time_derivatives;
-          if (transient)
+          if (test_is_bdf || test_is_sdirk)
             previous_time_derivatives =
               this->time_derivatives_previous_solutions(cell, q);
 
@@ -1740,11 +1736,10 @@ NavierStokesStabilizedOperator<dim, number>::local_evaluate_residual(
               value_result[i] = -source_value[i];
 
               // +(v,∂t u)
-              if (is_bdf(this->simulation_control->get_assembly_method()))
+              if (test_is_bdf)
                 value_result[i] +=
                   (*bdf_coefs)[0] * value[i] + previous_time_derivatives[i];
-              else if (is_sdirk(
-                         this->simulation_control->get_assembly_method()))
+              if (test_is_sdirk)
                 {
                   value_result[i] += (1.0 / (dt * a_ii)) * value[i] +
                                      previous_time_derivatives[i];
@@ -1775,11 +1770,10 @@ NavierStokesStabilizedOperator<dim, number>::local_evaluate_residual(
               gradient_result[dim][i] += tau * (-source_value[i]);
 
               // +(∂t u)·τ∇q
-              if (is_bdf(this->simulation_control->get_assembly_method()))
+              if (test_is_bdf)
                 gradient_result[dim][i] += tau * ((*bdf_coefs)[0] * value[i] +
                                                   previous_time_derivatives[i]);
-              else if (is_sdirk(
-                         this->simulation_control->get_assembly_method()))
+              if (test_is_sdirk)
                 gradient_result[dim][i] +=
                   tau * ((1.0 / (dt * a_ii)) * value[i] +
                          previous_time_derivatives[i]);
@@ -1808,12 +1802,11 @@ NavierStokesStabilizedOperator<dim, number>::local_evaluate_residual(
                     tau * value[k] * (gradient[dim][i] - source_value[i]);
 
                   // + (∂t u)τ(u·∇)v
-                  if (is_bdf(this->simulation_control->get_assembly_method()))
+                  if (test_is_bdf)
                     gradient_result[i][k] += tau * value[k] *
                                              ((*bdf_coefs)[0] * value[i] +
                                               previous_time_derivatives[i]);
-                  else if (is_sdirk(
-                             this->simulation_control->get_assembly_method()))
+                  if (test_is_sdirk)
                     gradient_result[i][k] += tau * value[k] *
                                              ((1.0 / (dt * a_ii)) * value[i] +
                                               previous_time_derivatives[i]);
@@ -1844,15 +1837,13 @@ NavierStokesStabilizedOperator<dim, number>::local_evaluate_residual(
                             (gradient[dim][i] - source_value[i]);
 
                           // + (∂t u)τ(−ν∆v)
-                          if (is_bdf(this->simulation_control
-                                       ->get_assembly_method()))
+                          if (test_is_bdf)
                             hessian_result[i][k][k] +=
                               tau * -kinematic_viscosity *
                               ((*bdf_coefs)[0] * value[i] +
                                previous_time_derivatives[i]);
 
-                          else if (is_sdirk(this->simulation_control
-                                              ->get_assembly_method()))
+                          if (test_is_sdirk)
                             hessian_result[i][k][k] +=
                               tau * -kinematic_viscosity *
                               ((1.0 / (dt * a_ii)) * value[i] +
@@ -1920,17 +1911,17 @@ NavierStokesNonNewtonianStabilizedOperator<dim, number>::do_cell_integral_local(
 
   const unsigned int cell = integrator.get_current_cell_index();
 
-  // To identify whether the problem is transient or steady
-  bool transient = is_bdf(this->simulation_control->get_assembly_method()) ||
-                   is_sdirk(this->simulation_control->get_assembly_method());
+  const bool test_is_bdf = is_bdf(this->simulation_control->get_assembly_method());
+  const bool test_is_sdirk =
+    is_sdirk(this->simulation_control->get_assembly_method());
 
   double a_ii = 0.0;
   double dt   = 0.0;
   // Vector for BDF coefficients
   const Vector<double> *bdf_coefs = nullptr;
-  if (is_bdf(this->simulation_control->get_assembly_method()))
+  if (test_is_bdf)
     bdf_coefs = &this->simulation_control->get_bdf_coefficients();
-  else if (is_sdirk(this->simulation_control->get_assembly_method()))
+  if (test_is_sdirk)
     {
       SDIRKTable table =
         sdirk_table(this->simulation_control->get_assembly_method());
@@ -1974,7 +1965,7 @@ NavierStokesNonNewtonianStabilizedOperator<dim, number>::do_cell_integral_local(
         this->nonlinear_previous_hessian_diagonal(cell, q);
 
       Tensor<1, dim + 1, VectorizedArray<number>> previous_time_derivatives;
-      if (transient)
+      if (test_is_bdf || test_is_sdirk)
         previous_time_derivatives =
           this->time_derivatives_previous_solutions(cell, q);
 
@@ -2043,9 +2034,9 @@ NavierStokesNonNewtonianStabilizedOperator<dim, number>::do_cell_integral_local(
                                  previous_gradient[i][k] * value[k];
             }
           // +(v,∂t δu)
-          if (is_bdf(this->simulation_control->get_assembly_method()))
+          if (test_is_bdf)
             value_result[i] += (*bdf_coefs)[0] * value[i];
-          else if (is_sdirk(this->simulation_control->get_assembly_method()))
+          if (test_is_sdirk)
             {
               value_result[i] += (1.0 / (dt * a_ii)) * value[i];
             }
@@ -2064,9 +2055,9 @@ NavierStokesNonNewtonianStabilizedOperator<dim, number>::do_cell_integral_local(
                        previous_gradient[i][k] * value[k]);
             }
           // +(∂t δu)·τ∇q
-          if (is_bdf(this->simulation_control->get_assembly_method()))
+          if (test_is_bdf)
             gradient_result[dim][i] += tau * (*bdf_coefs)[0] * value[i];
-          else if (is_sdirk(this->simulation_control->get_assembly_method()))
+          if (test_is_sdirk)
             gradient_result[dim][i] += tau * (1.0 / (dt * a_ii)) * value[i];
         }
       // (∇δp)τ·∇q
@@ -2093,12 +2084,11 @@ NavierStokesNonNewtonianStabilizedOperator<dim, number>::do_cell_integral_local(
                 tau * previous_values[k] * (gradient[dim][i]);
 
               // +(∂t δu)τ(u·∇)v
-              if (is_bdf(this->simulation_control->get_assembly_method()))
+              if (test_is_bdf)
                 gradient_result[i][k] +=
                   tau * previous_values[k] * ((*bdf_coefs)[0] * value[i]);
 
-              else if (is_sdirk(
-                         this->simulation_control->get_assembly_method()))
+              if (test_is_sdirk)
                 gradient_result[i][k] +=
                   tau * previous_values[k] * ((1.0 / (dt * a_ii)) * value[i]);
 
@@ -2119,12 +2109,11 @@ NavierStokesNonNewtonianStabilizedOperator<dim, number>::do_cell_integral_local(
                 tau * value[k] * (previous_gradient[dim][i] - source_value[i]);
 
               // +(∂t u)τ(δu·∇)v
-              if (is_bdf(this->simulation_control->get_assembly_method()))
+              if (test_is_bdf)
                 gradient_result[i][k] += tau * value[k] *
                                          ((*bdf_coefs)[0] * previous_values[i] +
                                           previous_time_derivatives[i]);
-              else if (is_sdirk(
-                         this->simulation_control->get_assembly_method()))
+              if (test_is_sdirk)
                 gradient_result[i][k] +=
                   tau * value[k] *
                   ((1.0 / (dt * a_ii)) * previous_values[i] +
@@ -2177,18 +2166,18 @@ NavierStokesNonNewtonianStabilizedOperator<dim, number>::
         integrator.evaluate(EvaluationFlags::values |
                             EvaluationFlags::gradients);
 
-      // To identify whether the problem is transient or steady
-      bool transient =
-        is_bdf(this->simulation_control->get_assembly_method()) ||
+      const bool test_is_bdf =
+        is_bdf(this->simulation_control->get_assembly_method());
+      const bool test_is_sdirk =
         is_sdirk(this->simulation_control->get_assembly_method());
 
       double a_ii = 0.0;
       double dt   = 0.0;
       // Vector for BDF coefficients
       const Vector<double> *bdf_coefs = nullptr;
-      if (is_bdf(this->simulation_control->get_assembly_method()))
+      if (test_is_bdf)
         bdf_coefs = &this->simulation_control->get_bdf_coefficients();
-      else if (is_sdirk(this->simulation_control->get_assembly_method()))
+      if (test_is_sdirk)
         {
           SDIRKTable table =
             sdirk_table(this->simulation_control->get_assembly_method());
@@ -2222,7 +2211,7 @@ NavierStokesNonNewtonianStabilizedOperator<dim, number>::
 
           // Time derivatives of previous solutions
           Tensor<1, dim + 1, VectorizedArray<number>> previous_time_derivatives;
-          if (transient)
+          if (test_is_bdf || test_is_sdirk)
             previous_time_derivatives =
               this->time_derivatives_previous_solutions(cell, q);
 
@@ -2265,11 +2254,10 @@ NavierStokesNonNewtonianStabilizedOperator<dim, number>::
               value_result[i] = -source_value[i];
 
               // +(v,∂t u)
-              if (is_bdf(this->simulation_control->get_assembly_method()))
+              if (test_is_bdf)
                 value_result[i] +=
                   (*bdf_coefs)[0] * value[i] + previous_time_derivatives[i];
-              else if (is_sdirk(
-                         this->simulation_control->get_assembly_method()))
+              if (test_is_sdirk)
                 value_result[i] +=
                   (1.0 / (dt * a_ii)) * value[i] + previous_time_derivatives[i];
 
@@ -2299,11 +2287,10 @@ NavierStokesNonNewtonianStabilizedOperator<dim, number>::
               gradient_result[dim][i] += tau * (-source_value[i]);
 
               // +(∂t u)·τ∇q
-              if (is_bdf(this->simulation_control->get_assembly_method()))
+              if (test_is_bdf)
                 gradient_result[dim][i] += tau * ((*bdf_coefs)[0] * value[i] +
                                                   previous_time_derivatives[i]);
-              else if (is_sdirk(
-                         this->simulation_control->get_assembly_method()))
+              if (test_is_sdirk)
                 gradient_result[dim][i] +=
                   tau * ((1.0 / (dt * a_ii)) * value[i] +
                          previous_time_derivatives[i]);
@@ -2333,7 +2320,7 @@ NavierStokesNonNewtonianStabilizedOperator<dim, number>::
                     tau * value[k] * (gradient[dim][i] - source_value[i]);
 
                   // + (∂t u)τ(u·∇)v
-                  if (transient)
+                  if (test_is_bdf || test_is_sdirk)
                     gradient_result[i][k] += tau * value[k] *
                                              ((*bdf_coefs)[0] * value[i] +
                                               previous_time_derivatives[i]);
