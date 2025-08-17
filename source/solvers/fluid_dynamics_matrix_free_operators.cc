@@ -1399,7 +1399,8 @@ NavierStokesStabilizedOperator<dim, number>::do_cell_integral_local(
 
   const unsigned int cell = integrator.get_current_cell_index();
 
-  const bool test_is_bdf = is_bdf(this->simulation_control->get_assembly_method());
+  const bool test_is_bdf =
+    is_bdf(this->simulation_control->get_assembly_method());
   const bool test_is_sdirk =
     is_sdirk(this->simulation_control->get_assembly_method());
 
@@ -1911,7 +1912,8 @@ NavierStokesNonNewtonianStabilizedOperator<dim, number>::do_cell_integral_local(
 
   const unsigned int cell = integrator.get_current_cell_index();
 
-  const bool test_is_bdf = is_bdf(this->simulation_control->get_assembly_method());
+  const bool test_is_bdf =
+    is_bdf(this->simulation_control->get_assembly_method());
   const bool test_is_sdirk =
     is_sdirk(this->simulation_control->get_assembly_method());
 
