@@ -1989,6 +1989,8 @@ MFNavierStokesPreconditionGMG<dim>::initialize(
   const VectorType                         &present_solution,
   const VectorType                         &time_derivative_previous_solutions)
 {
+  const bool transient = is_bdf(simulation_control->get_assembly_method()) ||
+                         is_sdirk(simulation_control->get_assembly_method());
   // Local objects for the different levels
   MGLevelObject<MGVectorType> mg_solution(this->minlevel, this->maxlevel);
   MGLevelObject<MGVectorType> mg_time_derivative_previous_solutions(
@@ -1997,8 +1999,7 @@ MFNavierStokesPreconditionGMG<dim>::initialize(
   for (unsigned int level = this->minlevel; level <= this->maxlevel; ++level)
     {
       this->mg_operators[level]->initialize_dof_vector(mg_solution[level]);
-      if (is_bdf(simulation_control->get_assembly_method()) ||
-          is_sdirk(simulation_control->get_assembly_method()))
+      if (transient)
         this->mg_operators[level]->initialize_dof_vector(
           mg_time_derivative_previous_solutions[level]);
     }
@@ -2014,8 +2015,7 @@ MFNavierStokesPreconditionGMG<dim>::initialize(
                                               mg_solution,
                                               present_solution);
 
-      if (is_bdf(simulation_control->get_assembly_method()) ||
-          is_sdirk(simulation_control->get_assembly_method()))
+      if (transient)
         this->mg_transfer_ls->interpolate_to_mg(
           this->dof_handler,
           mg_time_derivative_previous_solutions,
@@ -2033,8 +2033,7 @@ MFNavierStokesPreconditionGMG<dim>::initialize(
                                               mg_solution,
                                               present_solution);
 
-      if (is_bdf(simulation_control->get_assembly_method()) ||
-          is_sdirk(simulation_control->get_assembly_method()))
+      if (transient)
         this->mg_transfer_gc->interpolate_to_mg(
           this->dof_handler,
           mg_time_derivative_previous_solutions,
@@ -2053,8 +2052,7 @@ MFNavierStokesPreconditionGMG<dim>::initialize(
       this->mg_operators[level]->evaluate_non_linear_term_and_calculate_tau(
         mg_solution[level]);
 
-      if (is_bdf(simulation_control->get_assembly_method()) ||
-          is_sdirk(simulation_control->get_assembly_method()))
+      if (transient)
         {
           mg_time_derivative_previous_solutions[level].update_ghost_values();
           this->mg_operators[level]
