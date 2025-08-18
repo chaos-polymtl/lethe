@@ -15,7 +15,6 @@
 #include <solvers/postprocessing_cfd.h>
 #include <solvers/postprocessing_velocities.h>
 #include <solvers/postprocessors.h>
-#include <solvers/postprocessors_smoothing.h>
 
 #include <deal.II/distributed/fully_distributed_tria.h>
 #include <deal.II/distributed/grid_refinement.h>

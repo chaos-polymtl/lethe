@@ -1045,9 +1045,6 @@ namespace Parameters
     /// Prefix for the VOF and Cahn-Hilliard barycenter output
     std::string barycenter_output_name;
 
-    /// Enable smoothing postprocessed vectors and scalars
-    bool smoothed_output_fields;
-
     /// Enable phase statistics
     bool calculate_phase_statistics;
 

@@ -22,7 +22,6 @@
 #include <solvers/postprocessing_scalar.h>
 #include <solvers/postprocessing_velocities.h>
 #include <solvers/postprocessors.h>
-#include <solvers/postprocessors_smoothing.h>
 #include <solvers/simulation_parameters.h>
 
 // Dealii Includes
