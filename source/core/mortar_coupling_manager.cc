@@ -69,13 +69,15 @@ MortarManagerBase<dim>::get_n_mortars() const
 
 template <int dim>
 std::vector<unsigned int>
-MortarManagerBase<dim>::get_mortar_indices(const Point<dim> &face_center) const
+MortarManagerBase<dim>::get_mortar_indices(const Point<dim> &face_center,
+                                           const bool        is_inner) const
 {
   if constexpr (dim == 1)
     return std::vector<unsigned int>{0};
 
   // Mesh alignment type and cell indexes
-  const auto [type, id_in_plane, id_out_plane] = get_config(face_center);
+  const auto [type, id_in_plane, id_out_plane] =
+    get_config(face_center, is_inner);
 
   if (type == 0) // aligned
     {
@@ -144,13 +146,15 @@ MortarManagerBase<dim>::get_n_points() const
 
 template <int dim>
 std::vector<Point<dim>>
-MortarManagerBase<dim>::get_points(const Point<dim> &face_center) const
+MortarManagerBase<dim>::get_points(const Point<dim> &face_center,
+                                   const bool        is_inner) const
 {
   if constexpr (dim == 1)
     return std::vector<Point<dim>>{face_center};
 
   // Mesh alignment type and cell index
-  const auto [type, id_in_plane, id_out_plane] = get_config(face_center);
+  const auto [type, id_in_plane, id_out_plane] =
+    get_config(face_center, is_inner);
   // Angle variation within each cell
   const double delta_0 = 2 * numbers::PI / n_subdivisions[0];
   double       delta_1 = 1.0;
@@ -232,13 +236,14 @@ MortarManagerBase<dim>::get_points(const Point<dim> &face_center) const
 
 template <int dim>
 std::vector<Point<std::max(1, dim - 1)>>
-MortarManagerBase<dim>::get_points_ref(const Point<dim> &face_center) const
+MortarManagerBase<dim>::get_points_ref(const Point<dim> &face_center,
+                                       const bool        is_inner) const
 {
   if (dim == 1)
     return std::vector<Point<std::max(1, dim - 1)>>{
       Point<std::max(1, dim - 1)>()};
 
-  const auto [type, _, __] = get_config(face_center);
+  const auto [type, _, __] = get_config(face_center, is_inner);
 
   const double delta_0 = 2 * numbers::PI / n_subdivisions[0];
 
@@ -300,13 +305,14 @@ MortarManagerBase<dim>::get_points_ref(const Point<dim> &face_center) const
 
 template <int dim>
 std::vector<double>
-MortarManagerBase<dim>::get_weights(const Point<dim> &face_center) const
+MortarManagerBase<dim>::get_weights(const Point<dim> &face_center,
+                                    const bool        is_inner) const
 {
   if (dim == 1)
     return std::vector<double>{1.0};
 
   // Mesh alignment type and cell index
-  const auto [type, id_in_plane, _] = get_config(face_center);
+  const auto [type, id_in_plane, _] = get_config(face_center, is_inner);
   // Angle variation within each cell
   const double delta_0 = 2 * numbers::PI / n_subdivisions[0];
   double       delta_1 = 1.0;
@@ -360,10 +366,11 @@ MortarManagerBase<dim>::get_weights(const Point<dim> &face_center) const
 
 template <int dim>
 std::vector<Tensor<1, dim, double>>
-MortarManagerBase<dim>::get_normals(const Point<dim> &face_center) const
+MortarManagerBase<dim>::get_normals(const Point<dim> &face_center,
+                                    const bool        is_inner) const
 {
   // Coordinates of cell quadrature points
-  const auto points = get_points(face_center);
+  const auto points = get_points(face_center, is_inner);
 
   std::vector<Tensor<1, dim, double>> result;
 
@@ -377,12 +384,11 @@ MortarManagerBase<dim>::get_normals(const Point<dim> &face_center) const
 
 template <int dim>
 std::tuple<unsigned int, unsigned int, unsigned int>
-MortarManagerBase<dim>::get_config(const Point<dim> &face_center) const
+MortarManagerBase<dim>::get_config(const Point<dim> &face_center,
+                                   const bool        is_inner) const
 {
   const auto angle_cell_center = to_1D(face_center);
 
-  // Alignment tolerance
-  const double tolerance = 1e-8;
   // Angular variation in each cell
   const double delta_0 = 2 * numbers::PI / n_subdivisions[0];
   // Minimum rotation angle
@@ -414,7 +420,7 @@ MortarManagerBase<dim>::get_config(const Point<dim> &face_center) const
   else
     {
       // Case 2: mesh is not aligned
-      if (std::abs(segment - std::round(segment)) < tolerance)
+      if (!is_inner)
         // outer (fixed) domain
         return {2,
                 static_cast<unsigned int>(std::round(segment)),
@@ -656,9 +662,11 @@ CouplingOperator<dim, Number>::CouplingOperator(
           {
             const auto face = cell->face(face_no);
 
+            const auto center = get_face_center(cell, face);
+
             // Indices of mortars on face of cell.
-            const auto indices =
-              mortar_manager->get_mortar_indices(get_face_center(cell, face));
+            const auto indices = mortar_manager->get_mortar_indices(
+              center, cell->face(face_no)->boundary_id() == bid_m);
 
             const auto local_dofs = this->get_dof_indices(cell);
 
@@ -694,7 +702,9 @@ CouplingOperator<dim, Number>::CouplingOperator(
 
             // Weights of quadrature points
             const auto weights =
-              mortar_manager->get_weights(get_face_center(cell, face));
+              mortar_manager->get_weights(get_face_center(cell, face),
+                                          cell->face(face_no)->boundary_id() ==
+                                            bid_m);
             data.all_weights.insert(data.all_weights.end(),
                                     weights.begin(),
                                     weights.end());
@@ -702,8 +712,9 @@ CouplingOperator<dim, Number>::CouplingOperator(
             // Normals of quadrature points
             if constexpr (dim == 3)
               {
-                const auto points =
-                  mortar_manager->get_points(get_face_center(cell, face));
+                const auto points = mortar_manager->get_points(
+                  get_face_center(cell, face),
+                  cell->face(face_no)->boundary_id() == bid_m);
                 std::vector<Point<dim, Number>> points_ref(points.size());
                 mapping.transform_points_real_to_unit_cell(cell,
                                                            points,
@@ -741,8 +752,9 @@ CouplingOperator<dim, Number>::CouplingOperator(
               }
             else
               {
-                auto normals =
-                  mortar_manager->get_normals(get_face_center(cell, face));
+                auto normals = mortar_manager->get_normals(
+                  get_face_center(cell, face),
+                  cell->face(face_no)->boundary_id() == bid_m);
                 if (face->boundary_id() == bid_p)
                   for (auto &normal : normals)
                     normal *= -1.0;
@@ -762,7 +774,8 @@ CouplingOperator<dim, Number>::CouplingOperator(
                 else if constexpr (dim == 2)
                   {
                     auto points = mortar_manager->get_points_ref(
-                      get_face_center(cell, face));
+                      get_face_center(cell, face),
+                      cell->face(face_no)->boundary_id() == bid_m);
 
                     const bool flip =
                       (face->vertex(0)[0] * face->vertex(1)[1] -
@@ -814,62 +827,65 @@ CouplingOperator<dim, Number>::CouplingOperator(
   std::set<unsigned int> vec_local_cells_0;
   std::set<unsigned int> vec_local_cells_2;
 
-  for (unsigned int i = 0; i < vec_local_cells.size(); ++i)
+  if (Utilities::MPI::this_mpi_process(dof_handler.get_mpi_communicator()) == 0)
     {
-      if (vec_local_cells[i] == 0)
-        vec_local_cells_0.insert(i);
-      if (vec_local_cells[i] > 1)
-        vec_local_cells_2.insert(i);
-    }
-
-  std::set<unsigned int> vec_ghost_cells_0;
-  std::set<unsigned int> vec_ghost_cells_2;
-
-  for (unsigned int i = 0; i < vec_ghost_cells.size(); ++i)
-    {
-      if (vec_ghost_cells[i] == 0)
-        vec_ghost_cells_0.insert(i);
-      if (vec_ghost_cells[i] > 1)
-        vec_ghost_cells_2.insert(i);
-    }
-
-  if (!(vec_local_cells_0.empty() && vec_local_cells_2.empty() &&
-        vec_ghost_cells_0.empty() && vec_ghost_cells_2.empty()))
-    {
-      std::cout << "CouplingOperator mortar matching failed:" << std::endl;
-
-      if (!vec_local_cells_0.empty())
+      for (unsigned int i = 0; i < vec_local_cells.size(); ++i)
         {
-          std::cout << " - some local cells are not owned: ";
-          for (const auto &i : vec_local_cells_0)
-            std::cout << i << " ";
-          std::cout << std::endl;
-        }
-      if (!vec_local_cells_2.empty())
-        {
-          std::cout << " - some local cells are owned multiple times: ";
-          for (const auto &i : vec_local_cells_2)
-            std::cout << i << " ";
-          std::cout << std::endl;
-        }
-      if (!vec_ghost_cells_0.empty())
-        {
-          std::cout << " - some ghost cells are not owned: ";
-          for (const auto &i : vec_ghost_cells_0)
-            std::cout << i << " ";
-          std::cout << std::endl;
-        }
-      if (!vec_ghost_cells_2.empty())
-        {
-          std::cout << " - some ghost cells are owned multiple times: ";
-          for (const auto &i : vec_ghost_cells_2)
-            std::cout << i << " ";
-          std::cout << std::endl;
+          if (vec_local_cells[i] == 0)
+            vec_local_cells_0.insert(i);
+          if (vec_local_cells[i] > 1)
+            vec_local_cells_2.insert(i);
         }
 
-      MPI_Barrier(dof_handler.get_mpi_communicator());
+      std::set<unsigned int> vec_ghost_cells_0;
+      std::set<unsigned int> vec_ghost_cells_2;
 
-      AssertThrow(false, ExcInternalError());
+      for (unsigned int i = 0; i < vec_ghost_cells.size(); ++i)
+        {
+          if (vec_ghost_cells[i] == 0)
+            vec_ghost_cells_0.insert(i);
+          if (vec_ghost_cells[i] > 1)
+            vec_ghost_cells_2.insert(i);
+        }
+
+      if (!(vec_local_cells_0.empty() && vec_local_cells_2.empty() &&
+            vec_ghost_cells_0.empty() && vec_ghost_cells_2.empty()))
+        {
+          std::cout << "CouplingOperator mortar matching failed:" << std::endl;
+
+          if (!vec_local_cells_0.empty())
+            {
+              std::cout << " - some local cells are not owned: ";
+              for (const auto &i : vec_local_cells_0)
+                std::cout << i << " ";
+              std::cout << std::endl;
+            }
+          if (!vec_local_cells_2.empty())
+            {
+              std::cout << " - some local cells are owned multiple times: ";
+              for (const auto &i : vec_local_cells_2)
+                std::cout << i << " ";
+              std::cout << std::endl;
+            }
+          if (!vec_ghost_cells_0.empty())
+            {
+              std::cout << " - some ghost cells are not owned: ";
+              for (const auto &i : vec_ghost_cells_0)
+                std::cout << i << " ";
+              std::cout << std::endl;
+            }
+          if (!vec_ghost_cells_2.empty())
+            {
+              std::cout << " - some ghost cells are owned multiple times: ";
+              for (const auto &i : vec_ghost_cells_2)
+                std::cout << i << " ";
+              std::cout << std::endl;
+            }
+
+          MPI_Barrier(dof_handler.get_mpi_communicator());
+
+          AssertThrow(false, ExcInternalError());
+        }
     }
 #  endif
 
