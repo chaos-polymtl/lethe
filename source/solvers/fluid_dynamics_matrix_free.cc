@@ -2541,12 +2541,12 @@ FluidDynamicsMatrixFree<dim>::solve()
       this->rotate_rotor_mapping(true);
     }
   else
-  read_mesh_and_manifolds(
-    *this->triangulation,
-    this->simulation_parameters.mesh,
-    this->simulation_parameters.manifolds_parameters,
-    this->simulation_parameters.restart_parameters.restart,
-    this->simulation_parameters.boundary_conditions);
+    read_mesh_and_manifolds(
+      *this->triangulation,
+      this->simulation_parameters.mesh,
+      this->simulation_parameters.manifolds_parameters,
+      this->simulation_parameters.restart_parameters.restart,
+      this->simulation_parameters.boundary_conditions);
 
   this->computing_timer.leave_subsection("Read mesh and manifolds");
 
@@ -2571,6 +2571,7 @@ FluidDynamicsMatrixFree<dim>::solve()
 
       this->simulation_control->print_progression(this->pcout);
       this->dynamic_flow_control();
+      this->update_mortar_configuration();
 
       if (!this->simulation_control->is_at_start())
         {
@@ -2766,6 +2767,53 @@ FluidDynamicsMatrixFree<dim>::setup_dofs_fd()
   // apart from fluid dynamics are enabled.
   if (this->multiphysics->get_active_physics().size() > 1)
     update_solutions_for_multiphysics();
+}
+
+template <int dim>
+void
+FluidDynamicsMatrixFree<dim>::update_mortar_configuration()
+{
+  if (!this->simulation_parameters.mortar_parameters.enable)
+    return;
+
+  TimerOutput::Scope t(this->computing_timer, "Update mortar configuration");
+
+  bool refinement_step;
+  if (this->simulation_parameters.mesh_adaptation.refinement_at_frequency)
+    refinement_step = this->simulation_control->get_step_number() %
+                        this->simulation_parameters.mesh_adaptation.frequency ==
+                      0;
+  else
+    refinement_step = this->simulation_control->get_step_number() == 0;
+
+  // We need to update the mortar operator/evaluator, as well as the sparsity
+  // pattern, at every iteration. Since this is already done within
+  // setup_dofs(), which is called in refine_mesh(), here we make sure that,
+  // when there is no mesh refinement, the mortar information is still updated
+  if (this->simulation_control->is_at_start() || !refinement_step ||
+      this->simulation_parameters.mesh_adaptation.type ==
+        Parameters::MeshAdaptation::Type::none)
+    {
+      // Clear the preconditioner before the matrix they are associated with is
+      // cleared
+      ilu_preconditioner.reset();
+      gmg_preconditioner.reset();
+
+      // Now reset system matrix
+      this->system_operator->clear();
+
+      // Rotate mapping
+      this->rotate_rotor_mapping(false);
+
+      // Non Zero constraints
+      this->define_non_zero_constraints();
+
+      // Zero constraints
+      this->define_zero_constraints();
+
+      // Create mortar manager, operator, and evaluator
+      this->reinit_mortar_operators();
+    }
 }
 
 template <int dim>
