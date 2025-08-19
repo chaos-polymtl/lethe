@@ -708,6 +708,11 @@ MFNavierStokesPreconditionGMGBase<dim>::reinit(
               /*already taken into account when mg_constrained_dofs is
                * initialized*/
             }
+          else if (type == BoundaryConditions::BoundaryType::periodic_neighbor)
+            {
+              /*already taken into account when mg_constrained_dofs is
+               * initialized*/
+            }
           else if (type == BoundaryConditions::BoundaryType::pressure)
             {
               Assert(
@@ -1137,6 +1142,12 @@ MFNavierStokesPreconditionGMGBase<dim>::reinit(
                     this->simulation_parameters.boundary_conditions
                       .periodic_direction.at(id),
                     level_constraint);
+                }
+              else if (type ==
+                       BoundaryConditions::BoundaryType::periodic_neighbor)
+                {
+                  /*already taken into account when mg_constrained_dofs is
+                   * initialized*/
                 }
               else if (type == BoundaryConditions::BoundaryType::pressure)
                 {
