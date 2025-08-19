@@ -2968,6 +2968,10 @@ NavierStokesBase<dim, VectorType, DofsType>::write_output_results(
                                    *postprocessor_struct->data_postprocessor);
         }
     }
+
+  // Since the subdomain is a cell data, we process it separately to avoid
+  // storing DataOut<dim>::type_dof_data for every DoF field in the solution
+  // output struct container.
   Vector<float> subdomain(this->triangulation->n_active_cells());
   for (unsigned int i = 0; i < subdomain.size(); ++i)
     subdomain(i) = this->triangulation->locally_owned_subdomain();
