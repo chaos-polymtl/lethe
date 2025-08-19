@@ -200,9 +200,7 @@ protected:
     multiphysics->postprocess(first_iteration);
 
     if (this->simulation_control->is_output_iteration())
-      {
-        this->write_output_results(this->present_solution);
-      }
+      this->write_output_results(this->present_solution);
   };
 
   /**
@@ -253,9 +251,7 @@ protected:
         this->postprocess_fd(true);
         multiphysics->postprocess(true);
         if (this->simulation_control->is_output_iteration())
-          {
-            this->write_output_results(this->present_solution);
-          }
+          this->write_output_results(this->present_solution);
       }
   }
 
