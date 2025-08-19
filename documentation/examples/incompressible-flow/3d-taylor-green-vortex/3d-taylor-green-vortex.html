@@ -511,7 +511,8 @@ end
 <h3>Boundary Conditions<a class="headerlink" href="#boundary-conditions" title="Link to this heading">#</a></h3>
 <p>The <code class="docutils literal notranslate"><span class="pre">boundary</span> <span class="pre">conditions</span></code> subsection establishes the constraints on different parts of the domain:</p>
 <div class="highlight-text notranslate"><div class="highlight"><pre><span></span>subsection boundary conditions
-  set number = 3
+  set number                = 3
+  set fix pressure constant = true
   subsection bc 0
     set type               = periodic
     set id                 = 0
@@ -534,6 +535,10 @@ end
 </pre></div>
 </div>
 <p>First, the <code class="docutils literal notranslate"><span class="pre">number</span></code> of boundary conditions to be applied must be specified. For each boundary condition, the <code class="docutils literal notranslate"><span class="pre">id</span></code> of the boundary as well as its <code class="docutils literal notranslate"><span class="pre">type</span></code> must be specified. All boundaries are <code class="docutils literal notranslate"><span class="pre">periodic</span></code>. The <code class="docutils literal notranslate"><span class="pre">x-</span></code> boundary (id=0) is periodic with the <code class="docutils literal notranslate"><span class="pre">x+</span></code> boundary (id=1), the <code class="docutils literal notranslate"><span class="pre">y-</span></code> boundary (id=2) is periodic with the <code class="docutils literal notranslate"><span class="pre">y+</span></code> boundary (id=3) and so on and so forth. For each periodic boundary condition, the periodic direction must be specified. A periodic direction of <code class="docutils literal notranslate"><span class="pre">0</span></code> implies that the normal direction of the wall is the <span class="math notranslate nohighlight">\(\mathbf{e}_x\)</span> vector, <code class="docutils literal notranslate"><span class="pre">1</span></code> implies that it’s the <span class="math notranslate nohighlight">\(\mathbf{e}_y\)</span>.</p>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>When using periodic boundary conditions and the <code class="docutils literal notranslate"><span class="pre">lethe-fluid-matrix-free</span></code> solver, it is important to set <code class="docutils literal notranslate"><span class="pre">fix</span> <span class="pre">pressure</span> <span class="pre">constant</span> <span class="pre">=</span> <span class="pre">true</span></code> to prevent the pressure from drifting by an arbitrary constant between the grids of the multigrid hierarchy. This is not required in the <code class="docutils literal notranslate"><span class="pre">lethe-fluid</span></code> solver.</p>
+</div>
 </section>
 <section id="physical-properties">
 <h3>Physical Properties<a class="headerlink" href="#physical-properties" title="Link to this heading">#</a></h3>
