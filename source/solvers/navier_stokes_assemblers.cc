@@ -261,7 +261,7 @@ PSPGSUPGNavierStokesAssemblerCore<dim>::assemble_rhs(
       auto strong_residual = velocity_gradient * velocity + pressure_gradient -
                              kinematic_viscosity * velocity_laplacian - force +
                              mass_source * velocity + strong_residual_vec[q];
-      std::cout << "strong residual before " << strong_residual << std::endl;
+      // std::cout << "strong residual before " << strong_residual << std::endl;
       // Assembly of the right-hand side
       for (unsigned int i = 0; i < n_dofs; ++i)
         {
@@ -2782,8 +2782,8 @@ NavierStokesAssemblerMortarALE<dim>::assemble_matrix(
 
   // Copy data elements
   // auto &strong_residual_vec = copy_data.strong_residual;
-  auto &strong_jacobian_vec = copy_data.strong_jacobian;
-  auto &local_matrix        = copy_data.local_matrix;
+  auto          &strong_jacobian_vec = copy_data.strong_jacobian;
+  auto          &local_matrix        = copy_data.local_matrix;
   Tensor<1, dim> strong_jac_ale;
 
   // Time steps and inverse time steps which is used for stabilization constant
@@ -2827,21 +2827,21 @@ NavierStokesAssemblerMortarALE<dim>::assemble_matrix(
 
       // ALE contribution to the strong residual
       const auto strong_residual_ale = -velocity_gradient * velocity_ale;
-      
+
       std::vector<Tensor<1, dim>> grad_phi_u_j_x_velocity(n_dofs);
       std::vector<Tensor<1, dim>> grad_phi_u_j_x_velocity_ale(n_dofs);
       std::vector<Tensor<1, dim>> velocity_gradient_x_phi_u_j(n_dofs);
-      
+
       // We loop over the column first to prevent recalculation
       // of the strong jacobian in the inner loop
       for (unsigned int j = 0; j < n_dofs; ++j)
-      {
-        // const auto &phi_u_j      = scratch_data.phi_u[q][j];
-        const auto &grad_phi_u_j = scratch_data.grad_phi_u[q][j];  
+        {
+          // const auto &phi_u_j      = scratch_data.phi_u[q][j];
+          const auto &grad_phi_u_j = scratch_data.grad_phi_u[q][j];
 
-        // ALE contribution to strong Jacobian
-        strong_jac_ale = -grad_phi_u_j * velocity_ale;        
-      }
+          // ALE contribution to strong Jacobian
+          strong_jac_ale = -grad_phi_u_j * velocity_ale;
+        }
 
       for (unsigned int i = 0; i < n_dofs; ++i)
         {
@@ -2850,10 +2850,8 @@ NavierStokesAssemblerMortarALE<dim>::assemble_matrix(
           const auto &grad_phi_p_i = scratch_data.grad_phi_p[q][i];
 
           // Store these temporary products in auxiliary variables for speed
-          const auto grad_phi_u_i_x_velocity =
-            grad_phi_u_i * velocity;
-          const auto grad_phi_u_i_x_velocity_ale =
-            grad_phi_u_i * velocity_ale;
+          const auto grad_phi_u_i_x_velocity     = grad_phi_u_i * velocity;
+          const auto grad_phi_u_i_x_velocity_ale = grad_phi_u_i * velocity_ale;
           const auto strong_residual_ale_x_grad_phi_u_i =
             strong_residual_ale * grad_phi_u_i;
 
@@ -2869,15 +2867,16 @@ NavierStokesAssemblerMortarALE<dim>::assemble_matrix(
                 -phi_u_i * (grad_phi_u_j * velocity_ale) * JxW;
 
               // ALE-PSPG term
-              // local_matrix(i, j) += tau * (strong_jac_ale * grad_phi_p_i) * JxW;
+              local_matrix(i, j) += tau * (strong_jac_ale * grad_phi_p_i) * JxW;
 
               // ALE-SUPG term
-              // local_matrix(i, j) += tau *
-              //                       (strong_jac_ale * grad_phi_u_i_x_velocity -
-              //                         strong_jac_ale * grad_phi_u_i_x_velocity_ale -
-              //                         strong_jac * grad_phi_u_i_x_velocity_ale +
-              //                        strong_residual_ale_x_grad_phi_u_i * phi_u_j) *
-              //                       JxW;
+              local_matrix(i, j) +=
+                tau *
+                (strong_jac_ale * grad_phi_u_i_x_velocity -
+                 strong_jac_ale * grad_phi_u_i_x_velocity_ale -
+                 strong_jac * grad_phi_u_i_x_velocity_ale +
+                 strong_residual_ale_x_grad_phi_u_i * phi_u_j) *
+                JxW;
             }
         }
 
@@ -2917,7 +2916,7 @@ NavierStokesAssemblerMortarALE<dim>::assemble_rhs(
     {
       // Physical properties
       const double kinematic_viscosity = viscosity_vector[q];
-      
+
       // Velocity
       const Tensor<1, dim> &velocity = scratch_data.velocity_values[q];
       const Tensor<1, dim> &velocity_ale =
@@ -2934,7 +2933,7 @@ NavierStokesAssemblerMortarALE<dim>::assemble_rhs(
       // Forcing term
       const Tensor<1, dim> force       = scratch_data.force[q];
       double               mass_source = scratch_data.mass_source[q];
-      
+
       // Calculation of the magnitude of the
       // velocity for the stabilization parameter
       const double u_mag = std::max(velocity.norm(), 1e-12);
@@ -2958,11 +2957,12 @@ NavierStokesAssemblerMortarALE<dim>::assemble_rhs(
       auto strong_residual = velocity_gradient * velocity + pressure_gradient -
                              kinematic_viscosity * velocity_laplacian - force +
                              mass_source * velocity + strong_residual_vec[q];
-      std::cout << "strong residual " << strong_residual << std::endl;
-      
+      // std::cout << "strong residual " << strong_residual << std::endl;
+
       // ALE contribution to the strong residual
       const auto strong_residual_ale = -velocity_gradient * velocity_ale;
-      std::cout << "strong residual ALE " << strong_residual_ale << std::endl;
+      // std::cout << "strong residual ALE " << strong_residual_ale <<
+      // std::endl;
 
       for (unsigned int i = 0; i < n_dofs; ++i)
         {
@@ -2970,24 +2970,19 @@ NavierStokesAssemblerMortarALE<dim>::assemble_rhs(
           const auto &grad_phi_u_i = scratch_data.grad_phi_u[q][i];
           const auto &grad_phi_p_i = scratch_data.grad_phi_p[q][i];
 
-          // std::cout << "local RHS before " << local_rhs[i] << " ";
           // ALE term: -u_ALE * gradu
-          local_rhs[i] +=
-            (velocity_gradient * velocity_ale * phi_u_i) * JxW;
+          local_rhs[i] += (velocity_gradient * velocity_ale * phi_u_i) * JxW;
 
           // ALE-PSPG term
           local_rhs[i] += -tau * (strong_residual_ale * grad_phi_p_i) * JxW;
 
           // ALE-SUPG term
-          local_rhs[i] +=
-            -tau *
-            (strong_residual_ale * grad_phi_u_i * velocity -
-            strong_residual * grad_phi_u_i * velocity_ale -
-            strong_residual_ale * grad_phi_u_i * velocity_ale) *
-            JxW;
-          // std::cout << "local RHS after " << local_rhs[i] << " ";
+          local_rhs[i] += -tau *
+                          (strong_residual_ale * grad_phi_u_i * velocity -
+                           strong_residual * grad_phi_u_i * velocity_ale -
+                           strong_residual_ale * grad_phi_u_i * velocity_ale) *
+                          JxW;
         }
-        std::cout << std::endl;
     } // end loop on quadrature points
 }
 
