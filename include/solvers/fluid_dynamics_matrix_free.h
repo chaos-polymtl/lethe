@@ -472,6 +472,15 @@ protected:
   assemble_system_rhs() override;
 
   /**
+   * @brief Update mortar configuration.
+   *
+   * When the rotor domain is rotated, the mortar cells need to be reinitialized
+   * according to the new rotor-stator interface configuration.
+   */
+  void
+  update_mortar_configuration();
+
+  /**
    * @brief  Update the average velocity field solution in the multiphyscics interface.
    */
   virtual void
