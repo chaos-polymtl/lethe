@@ -500,6 +500,8 @@ NavierStokesOperatorBase<dim, number>::vmult_interface_up(
   if (has_edge_constrained_indices == false)
     {
       dst = number(0.);
+
+      this->timer.leave_subsection("operator::vmult_interface_up");
       return;
     }
 
