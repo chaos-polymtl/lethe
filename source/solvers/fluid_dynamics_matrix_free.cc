@@ -253,7 +253,7 @@ public:
     if (mg_level == numbers::invalid_unsigned_int)
       for (const auto &cell : dof_handler.active_cell_iterators())
         {
-          if (cell->is_locally_owned() == false)
+          if (cell->is_locally_owned_on_level() == false)
             continue;
 
           std::vector<types::global_dof_index> local_dof_indices(
@@ -265,7 +265,7 @@ public:
     else
       for (const auto &cell : dof_handler.mg_cell_iterators_on_level(mg_level))
         {
-          if (cell->is_locally_owned() == false)
+          if (cell->is_locally_owned_on_level() == false)
             continue;
 
           std::vector<types::global_dof_index> local_dof_indices(
