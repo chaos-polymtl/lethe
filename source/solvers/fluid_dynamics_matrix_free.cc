@@ -1066,7 +1066,7 @@ MFNavierStokesPreconditionGMGBase<dim>::reinit(
 
           // Provide appropriate quadrature depending on the type of elements of
           // the level
-          Quadrature<dim> quadrature_mg = QGauss<dim>(levels[level].second);
+          Quadrature<dim> quadrature_mg = QGauss<dim>(levels[level].second + 1);
           if (this->simulation_parameters.linear_solver
                 .at(PhysicsID::fluid_dynamics)
                 .mg_use_fe_q_iso_q1 &&
