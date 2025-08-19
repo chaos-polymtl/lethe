@@ -7,7 +7,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
 ### Fixed
 
-- MINOR The matrix-free version of the TGV example did not use the fix pressure constant option. This prevented the prm file from being robust if you modified the CFL, the order or anything similar. I have added the fix pressure constant option to the exampel to ensure that it is now robust. [#1625](https://github.com/chaos-polymtl/lethe/pull/1625)
+- MINOR The matrix-free version of the TGV example did not use the fix pressure constant option. This prevented the prm file from being robust if you modified the CFL, the order or anything similar. I have added the fix pressure constant option to the example to ensure that it is now robust. [#1625](https://github.com/chaos-polymtl/lethe/pull/1625)
 
 ### [Master] - 2025-08-18
 
