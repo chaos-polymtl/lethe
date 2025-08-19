@@ -2526,6 +2526,21 @@ FluidDynamicsMatrixFree<dim>::solve()
 {
   this->computing_timer.enter_subsection("Read mesh and manifolds");
 
+  if (this->simulation_parameters.mortar_parameters.enable)
+    {
+      read_mesh_and_manifolds_for_stator_and_rotor(
+        *this->triangulation,
+        this->simulation_parameters.mesh,
+        this->simulation_parameters.manifolds_parameters,
+        this->simulation_parameters.restart_parameters.restart,
+        this->simulation_parameters.boundary_conditions,
+        this->simulation_parameters.mortar_parameters);
+      // Create and initialize mapping cache
+      this->mapping_cache =
+        std::make_shared<MappingQCache<dim>>(this->velocity_fem_degree);
+      this->rotate_rotor_mapping(true);
+    }
+  else
   read_mesh_and_manifolds(
     *this->triangulation,
     this->simulation_parameters.mesh,
