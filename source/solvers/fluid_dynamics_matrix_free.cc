@@ -737,13 +737,21 @@ MFNavierStokesPreconditionGMGBase<dim>::reinit(
               /*The directional do-nothing boundary condition is implemented in
                * the operators*/
             }
-          else
+          else if (type == BoundaryConditions::BoundaryType::noslip ||
+                   type == BoundaryConditions::BoundaryType::function)
             {
               std::set<types::boundary_id> dirichlet_boundary_id = {id};
               this->mg_constrained_dofs.make_zero_boundary_constraints(
                 this->dof_handler,
                 dirichlet_boundary_id,
                 fe->component_mask(velocities));
+            }
+          else
+            {
+              AssertThrow(
+                false,
+                ExcMessage(
+                  "The boundary condition specified is not supported."));
             }
         }
 
@@ -1172,7 +1180,8 @@ MFNavierStokesPreconditionGMGBase<dim>::reinit(
                   /*The directional do-nothing boundary condition is implemented
                    * in the operators*/
                 }
-              else
+              else if (type == BoundaryConditions::BoundaryType::noslip ||
+                       type == BoundaryConditions::BoundaryType::function)
                 {
                   VectorTools::interpolate_boundary_values(
                     *mapping,
@@ -1181,6 +1190,13 @@ MFNavierStokesPreconditionGMGBase<dim>::reinit(
                     dealii::Functions::ZeroFunction<dim, MGNumber>(dim + 1),
                     level_constraint,
                     fe->component_mask(velocities));
+                }
+              else
+                {
+                  AssertThrow(
+                    false,
+                    ExcMessage(
+                      "The boundary condition specified is not supported."));
                 }
             }
 
