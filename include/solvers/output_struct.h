@@ -10,7 +10,7 @@ using namespace dealii;
 
 /**
  * @brief Struct containing information about the solution output.
- * It is used to pass all the information required upon calling
+ * It is used to pass the information required upon calling
  * add_data_vector() for the DataOut instance without losing track of its
  * attributes such as name and data component interpretation. This version of
  * the struct uses Postprocessors.
@@ -20,7 +20,7 @@ struct OutputStructPostprocessor
 {
   /**
    * @brief Constructor for when data is in data_postprocessor.
-   *
+   * @param[in] dof_handler ...
    * @param[in] solution Solution field.
    *
    * @param[in] data_postprocessor Data postprocessor.
