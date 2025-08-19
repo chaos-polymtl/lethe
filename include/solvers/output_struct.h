@@ -21,6 +21,8 @@ struct OutputStructPostprocessor
   /**
    * @brief Constructor for when data is in data_postprocessor.
    * @param[in] dof_handler ...
+   * @param[in] dof_handler DoFHandler containing solution.
+   *
    * @param[in] solution Solution field.
    *
    * @param[in] data_postprocessor Data postprocessor.
