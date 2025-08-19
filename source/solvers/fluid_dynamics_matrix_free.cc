@@ -760,16 +760,6 @@ MFNavierStokesPreconditionGMGBase<dim>::reinit(
 
           level_constraints[level].reinit(owned_dofs, relevant_dofs);
 
-#if DEAL_II_VERSION_GTE(9, 6, 0)
-          this->mg_constrained_dofs.merge_constraints(
-            level_constraints[level], level, true, false, true, true);
-#else
-          AssertThrow(
-            false,
-            ExcMessage(
-              "The constraints for the lsmg preconditioner require a most recent version of deal.II."));
-#endif
-
           if (this->simulation_parameters.boundary_conditions
                 .fix_pressure_constant &&
               level == this->minlevel)
@@ -779,14 +769,15 @@ MFNavierStokesPreconditionGMGBase<dim>::reinit(
               std::vector<types::global_dof_index> dof_indices;
 
               // Loop over the cells to identify the min index
-              for (const auto &cell : this->dof_handler.active_cell_iterators())
+              for (const auto &cell :
+                   this->dof_handler.mg_cell_iterators_on_level(this->minlevel))
                 {
-                  if (cell->is_locally_owned())
+                  if (cell->is_locally_owned_on_level())
                     {
                       const auto &fe = cell->get_fe();
 
                       dof_indices.resize(fe.n_dofs_per_cell());
-                      cell->get_dof_indices(dof_indices);
+                      cell->get_mg_dof_indices(dof_indices);
 
                       for (unsigned int i = 0; i < dof_indices.size(); ++i)
                         if (fe.system_to_component_index(i).first == dim)
@@ -800,10 +791,24 @@ MFNavierStokesPreconditionGMGBase<dim>::reinit(
                                     this->dof_handler.get_mpi_communicator());
 
               if (relevant_dofs.is_element(min_index))
-                level_constraints[level].add_line(min_index);
+                {
+                  AffineConstraints<double> temp_constraints;
+                  temp_constraints.reinit(owned_dofs, relevant_dofs);
+                  temp_constraints.add_line(min_index);
+                  this->mg_constrained_dofs.add_user_constraints(
+                    level, temp_constraints);
+                }
             }
 
-          level_constraints[level].close();
+#if DEAL_II_VERSION_GTE(9, 6, 0)
+          this->mg_constrained_dofs.merge_constraints(
+            level_constraints[level], level, true, false, true, true);
+#else
+          AssertThrow(
+            false,
+            ExcMessage(
+              "The constraints for the lsmg preconditioner require a most recent version of deal.II."));
+#endif
 
           this->mg_setup_timer.enter_subsection("Set up operators");
 
