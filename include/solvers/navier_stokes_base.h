@@ -858,15 +858,14 @@ protected:
   /**
    * @brief Gather solution information to generate output results
    *
+   * @param[in] solution Vector of present solution
    * @param[out] solution_output_structs Vector of OutputStructs that will be
    * used to write the output results as VTU files
-   *
-   * @param[in] solution Vector of present solution
    */
   void
   gather_output_results(
-    std::vector<OutputStruct<dim, VectorType>> &solution_output_structs,
-    const VectorType                           &solution);
+    const VectorType                           &solution,
+    std::vector<OutputStruct<dim, VectorType>> &solution_output_structs);
 
   /**
    * @brief Generate post-processing parallel VTU files from vector of

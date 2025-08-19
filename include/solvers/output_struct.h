@@ -20,11 +20,9 @@ struct OutputStructPostprocessor
 {
   /**
    * @brief Constructor for when data is in data_postprocessor.
-   * @param[in] dof_handler ...
+   *
    * @param[in] dof_handler DoFHandler containing solution.
-   *
    * @param[in] solution Solution field.
-   *
    * @param[in] data_postprocessor Data postprocessor.
    *
    */
@@ -56,11 +54,8 @@ struct OutputStructSolution
    * @brief Constructor for when data is not related to a data_postprocessor.
    *
    * @param[in] dof_handler DoFHandler containing solution.
-   *
    * @param[in] solution Solution field.
-   *
    * @param[in] solution_names Vector with strings containing solution name.
-   *
    * @param[in] data_component_interpretation Vector with data component
    * interpretation of the solution.
    */

@@ -2709,8 +2709,8 @@ NavierStokesBase<dim, VectorType, DofsType>::output_field_hook(
 template <int dim, typename VectorType, typename DofsType>
 void
 NavierStokesBase<dim, VectorType, DofsType>::gather_output_results(
-  std::vector<OutputStruct<dim, VectorType>> &solution_output_structs,
-  const VectorType                           &solution)
+  const VectorType                           &solution,
+  std::vector<OutputStruct<dim, VectorType>> &solution_output_structs)
 {
   // Add the interpretation of the solution. The dim first components are the
   // velocity vectors and the following one is the pressure.
@@ -2931,7 +2931,7 @@ NavierStokesBase<dim, VectorType, DofsType>::write_output_results(
   std::vector<OutputStruct<dim, VectorType>> solution_output_structs;
 
   // Gather all results in vector container
-  gather_output_results(solution_output_structs, this->present_solution);
+  gather_output_results(this->present_solution, solution_output_structs);
 
   // Create data output object
   DataOut<dim> data_out;
