@@ -1146,8 +1146,7 @@ MFNavierStokesPreconditionGMGBase<dim>::reinit(
               else if (type ==
                        BoundaryConditions::BoundaryType::periodic_neighbor)
                 {
-                  /*already taken into account when mg_constrained_dofs is
-                   * initialized*/
+                  /*already taken into account in the previous else if*/
                 }
               else if (type == BoundaryConditions::BoundaryType::pressure)
                 {
