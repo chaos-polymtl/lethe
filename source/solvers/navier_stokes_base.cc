@@ -2801,21 +2801,24 @@ NavierStokesBase<dim, VectorType, DofsType>::gather_output_results(
   // that the objects still exist when the write output of DataOut is called
   // Regular discontinuous postprocessors
   // They are created as shared pointers to outlive the function
-  auto qcriterion = std::make_shared<QCriterionPostprocessor<dim>>();
+  std::shared_ptr<QCriterionPostprocessor<dim>> qcriterion =
+    std::make_shared<QCriterionPostprocessor<dim>>();
   solution_output_structs.emplace_back(
     std::in_place_type<OutputStructPostprocessor<dim, VectorType>>,
     this->dof_handler,
     solution,
     qcriterion);
 
-  auto divergence = std::make_shared<DivergencePostprocessor<dim>>();
+  std::shared_ptr<DivergencePostprocessor<dim>> divergence =
+    std::make_shared<DivergencePostprocessor<dim>>();
   solution_output_structs.emplace_back(
     std::in_place_type<OutputStructPostprocessor<dim, VectorType>>,
     this->dof_handler,
     solution,
     divergence);
 
-  auto vorticity = std::make_shared<VorticityPostprocessor<dim>>();
+  std::shared_ptr<VorticityPostprocessor<dim>> vorticity =
+    std::make_shared<VorticityPostprocessor<dim>>();
   solution_output_structs.emplace_back(
     std::in_place_type<OutputStructPostprocessor<dim, VectorType>>,
     this->dof_handler,
