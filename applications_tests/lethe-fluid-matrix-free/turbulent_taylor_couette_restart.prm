@@ -30,15 +30,10 @@ subsection physical properties
 end
 
 subsection restart
-  # Checkpointing parameters
   set checkpoint = false
   set frequency  = 10
-
-  # Output/input files
-  set filename = restart
-
-  # Restarting parameter
-  set restart = true
+  set filename   = restart
+  set restart    = true
 end
 
 #---------------------------------------------------
@@ -52,6 +47,16 @@ subsection initial conditions
     # B= ri * ri / (1. - kappa * kappa);
     set Function constants  = epsilon=0.1, ri=0.5, omega=1.0, d=0.5 , A= -0.3333333333333333, B= 0.3333333333333333
     set Function expression = cos(atan2(y,x))*(epsilon*omega*ri*cos(atan2(y,x))*sin(((sqrt(x*x+y*y)-ri)*pi)/ri)*sin(z/d)) - sin(atan2(y,x))*(A*(sqrt(x*x+y*y)) + B/(sqrt(x*x+y*y)) + epsilon*omega*ri*sin(atan2(y,x))*sin(((sqrt(x*x+y*y)-ri)*pi)/ri)*sin(z/d)); sin(atan2(y,x))*(epsilon*omega*ri*cos(atan2(y,x))*sin(((sqrt(x*x+y*y)-ri)*pi)/ri)*sin(z/d)) + cos(atan2(y,x))*(A*(sqrt(x*x+y*y)) + B/(sqrt(x*x+y*y)) + epsilon*omega*ri*sin(atan2(y,x))*sin(((sqrt(x*x+y*y)-ri)*pi)/ri)*sin(z/d)); 0.0; ((0.5*A*A*(x*x+y*y)) + (2*A*B*ln(sqrt(x*x+y*y)))) - (0.5*B*B/(x*x+y*y)) + (0.5*(epsilon*omega*ri)*(epsilon*omega*ri)*cos(2*atan2(y,x))*sin((2*(sqrt(x*x+y*y)-ri)*pi)/ri)*sin(2*z/d))
+  end
+end
+
+#---------------------------------------------------
+# Source term
+#---------------------------------------------------
+
+subsection source term
+  subsection fluid dynamics
+    set enable = false
   end
 end
 
@@ -71,8 +76,8 @@ end
 #---------------------------------------------------
 
 subsection FEM
-  set velocity order = 2 #3 for Q3
-  set pressure order = 2 #3 for Q3
+  set velocity order = 2
+  set pressure order = 2
 end
 
 #---------------------------------------------------
@@ -80,15 +85,9 @@ end
 #---------------------------------------------------
 
 subsection post-processing
-  set verbosity = verbose
-  # Kinetic energy calculation
+  set verbosity                = verbose
   set calculate kinetic energy = true
-
-  # Enstrophy calculation
-  set calculate enstrophy = true
-
-  set calculate average velocities      = false
-  set initial time for average velocity = 0.
+  set calculate enstrophy      = true
 end
 
 #---------------------------------------------------
@@ -98,11 +97,9 @@ end
 subsection boundary conditions
   set number                = 3
   set fix pressure constant = true
-  set time dependent        = true
   subsection bc 0
     set id   = 0
     set type = function
-    set beta = 1
     subsection u
       set Function expression = -y
     end
@@ -155,8 +152,7 @@ subsection linear solver
     set mg level min cells = 16
 
     # Smoother
-    set mg smoother iterations     = 10
-    set mg smoother eig estimation = true
+    set mg smoother iterations = 10
 
     # Eigenvalue estimation parameters
     set eig estimation smoothing range = 5
