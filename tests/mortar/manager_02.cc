@@ -30,7 +30,7 @@ main()
                                              QGauss<dim>(n_quadrature_points),
                                              rotate);
 
-      const auto print = [&](const double shift) {
+      const auto print = [&](const double shift, const bool is_inner) {
         for (unsigned int i = 0; i < n_subdivisions; ++i)
           {
             // center point of each cell (in radians)
@@ -41,11 +41,11 @@ main()
 
             const auto p = radius_to_point<dim>(radius, rad);
 
-            const auto indices = manager.get_mortar_indices(p);
+            const auto indices = manager.get_mortar_indices(p, is_inner);
 
-            const auto weights = manager.get_weights(p);
-            const auto points  = manager.get_points(p);
-            const auto normals = manager.get_normals(p);
+            const auto weights = manager.get_weights(p, is_inner);
+            const auto points  = manager.get_points(p, is_inner);
+            const auto normals = manager.get_normals(p, is_inner);
 
             for (unsigned int i = 0; i < weights.size(); ++i)
               {
@@ -65,14 +65,14 @@ main()
       };
 
       // print generated points for aligned mesh (scale = 0.0)
-      print(0.0);
+      print(0.0, false);
 
       // print generated points for non-aligned mesh
       if (scale != 0.0)
-        print(scale - std::floor(scale)); // outer (fixed) mesh
+        print(std::floor(scale), false); // outer (fixed) mesh
 
       if (scale != 0.0)
-        print(scale); // inner (rotated) mesh
+        print(scale, true); // inner (rotated) mesh
 
       std::cout << std::endl << std::endl << std::endl;
     }

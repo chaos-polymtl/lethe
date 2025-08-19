@@ -130,7 +130,8 @@ main(int argc, char *argv[])
         if ((face->boundary_id() == 0) || (face->boundary_id() == 2))
           {
             // get indices
-            const auto mortar_indices = mm.get_mortar_indices(face->center());
+            const auto mortar_indices =
+              mm.get_mortar_indices(face->center(), face->boundary_id() == 0);
 
             std::vector<types::global_dof_index> indices(mm.get_n_points());
 
@@ -175,7 +176,8 @@ main(int argc, char *argv[])
         if ((face->boundary_id() == 0) || (face->boundary_id() == 2))
           {
             // get indices
-            const auto mortar_indices = mm.get_mortar_indices(face->center());
+            const auto mortar_indices =
+              mm.get_mortar_indices(face->center(), face->boundary_id() == 0);
 
             std::vector<types::global_dof_index> indices(mm.get_n_points());
 
@@ -186,7 +188,8 @@ main(int argc, char *argv[])
                            (i % n_quadrature_points);
 
             // get points
-            const auto points = mm.get_points(face->center());
+            const auto points =
+              mm.get_points(face->center(), face->boundary_id() == 0);
 
             for (unsigned int i = 0; i < indices.size(); ++i)
               {

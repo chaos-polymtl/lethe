@@ -51,7 +51,7 @@ main()
               auto p     = radius_to_point<dim>(radius[0], rad);
               p[dim - 1] = radius[1] / n_subdivisions[1] * (j + 0.5);
 
-              const auto indices = manager.get_mortar_indices(p);
+              const auto indices = manager.get_mortar_indices(p, rotate != 0.0);
 
               for (const auto ii : indices)
                 std::cout << ii << " ";

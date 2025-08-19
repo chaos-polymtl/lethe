@@ -63,7 +63,7 @@ public:
    * @param[in] face_center Face center
    */
   std::vector<unsigned int>
-  get_mortar_indices(const Point<dim> &face_center) const;
+  get_mortar_indices(const Point<dim> &face_center, const bool is_inner) const;
 
   /**
    * @brief Returns the total number of quadrature points at the inner/outer boundary interface
@@ -85,7 +85,7 @@ public:
    * @return points Coordinate of quadrature points of the cell
    */
   std::vector<Point<dim>>
-  get_points(const Point<dim> &face_center) const;
+  get_points(const Point<dim> &face_center, const bool is_inner) const;
 
   /**
    * @brief Returns the coordinates of the quadrature points at the interface
@@ -95,7 +95,7 @@ public:
    * @return points Coordinate of quadrature points of the cell
    */
   std::vector<Point<std::max(1, dim - 1)>>
-  get_points_ref(const Point<dim> &face_center) const;
+  get_points_ref(const Point<dim> &face_center, const bool is_inner) const;
 
   /**
    * @brief Returns the weights of the quadrature points at both sides of the interface
@@ -105,7 +105,7 @@ public:
    * @return points Angular weights of quadrature points of the cell
    */
   std::vector<double>
-  get_weights(const Point<dim> &face_center) const;
+  get_weights(const Point<dim> &face_center, const bool is_inner) const;
 
   /**
    * @brief Returns the normal vector for the quadrature points
@@ -115,7 +115,7 @@ public:
    * @return result Normal vectors of the cell quadrature points
    */
   std::vector<Tensor<1, dim, double>>
-  get_normals(const Point<dim> &face_center) const;
+  get_normals(const Point<dim> &face_center, const bool is_inner) const;
 
   /// Number of cells at the interface between inner and outer domains
   std::vector<unsigned int> n_subdivisions;
@@ -140,7 +140,7 @@ protected:
    * and it is necessary only for 3D problems.
    */
   std::tuple<unsigned int, unsigned int, unsigned int>
-  get_config(const Point<dim> &face_center) const;
+  get_config(const Point<dim> &face_center, const bool is_inner) const;
 
   /**
    * @brief Convert radiant to quadrature point in real space.

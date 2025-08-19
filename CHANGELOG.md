@@ -11,6 +11,10 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
 ### [Master] - 2025-08-18
 
+- MINOR The mortar indices were being computed according to the cell face center, and not taking into account in which side of the mortar the cell was placed. This led to rounding issues for very refined meshes, when the distribution of local and ghost mortar cells would fail. This has been fixed by adding a bool is_inner to identify the mortar cell side. [#1623](https://github.com/chaos-polymtl/lethe/pull/1623)
+
+### [Master] - 2025-08-08
+
 ### Fixed
 
 - MAJOR Add check for heat transfer request when solving multiphysics simulations with the matrix-free solver. This is a tiny change, but without this check an error was triggered upon running a multiphysics simulation without heat transfer.[#1622](https://github.com/chaos-polymtl/lethe/pull/1622)
