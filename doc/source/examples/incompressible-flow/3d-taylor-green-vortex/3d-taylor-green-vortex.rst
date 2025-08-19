@@ -82,7 +82,8 @@ The ``boundary conditions`` subsection establishes the constraints on different 
 .. code-block:: text
 
   subsection boundary conditions
-    set number = 3
+    set number                = 3
+    set fix pressure constant = true
     subsection bc 0
       set type               = periodic
       set id                 = 0
@@ -104,6 +105,10 @@ The ``boundary conditions`` subsection establishes the constraints on different 
   end
 
 First, the ``number`` of boundary conditions to be applied must be specified. For each boundary condition, the ``id`` of the boundary as well as its ``type`` must be specified. All boundaries are ``periodic``. The ``x-`` boundary (id=0) is periodic with the ``x+`` boundary (id=1), the ``y-`` boundary (id=2) is periodic with the ``y+`` boundary (id=3) and so on and so forth. For each periodic boundary condition, the periodic direction must be specified. A periodic direction of ``0`` implies that the normal direction of the wall is the :math:`\mathbf{e}_x` vector, ``1`` implies that it's the :math:`\mathbf{e}_y`.
+
+.. warning::
+
+  When using periodic boundary conditions and the ``lethe-fluid-matrix-free`` solver, it is important to set ``fix pressure constant = true`` to prevent the pressure from drifting by an arbitrary constant between the grids of the multigrid hierarchy. This is not required in the ``lethe-fluid`` solver.
 
 Physical Properties
 ~~~~~~~~~~~~~~~~~~~
