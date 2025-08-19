@@ -3,17 +3,23 @@
 All notable changes to the Lethe project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
-### [Master] - 2025-08-08
+### [Master] - 2025-08-19
+
+### Fixed
+
+- MINOR The matrix-free version of the TGV example did not use the fix pressure constant option. This prevented the prm file from being robust if you modified the CFL, the order or anything similar. I have added the fix pressure constant option to the exampel to ensure that it is now robust. [#1625](https://github.com/chaos-polymtl/lethe/pull/1625)
+
+### [Master] - 2025-08-18
 
 ### Fixed
 
 - MAJOR Add check for heat transfer request when solving multiphysics simulations with the matrix-free solver. This is a tiny change, but without this check an error was triggered upon running a multiphysics simulation without heat transfer.[#1622](https://github.com/chaos-polymtl/lethe/pull/1622)
 
+### [Master] - 2025-08-14
+
 ### Changed
 
 - MINOR The geometric reinitialization method was really expensive in terms of computational time. This PR improves the performances by reducing the number of cells in the layer's loop (only the cells in a corona around the interface are visited) and the number of calls to FEPointEvaluation.reinit(). [#1621](https://github.com/chaos-polymtl/lethe/pull/1621)
-
-### [Master] - 2025-08-14
 
 ### Added
 
