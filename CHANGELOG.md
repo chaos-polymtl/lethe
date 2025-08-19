@@ -13,6 +13,8 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
 - MINOR The matrix-free version of the TGV example did not use the fix pressure constant option. This prevented the prm file from being robust if you modified the CFL, the order or anything similar. I have added the fix pressure constant option to the example to ensure that it is now robust. [#1625](https://github.com/chaos-polymtl/lethe/pull/1625)
 
+- MINOR The pressure constraint and the periodic boundary conditions were not working for the local smoothing multigrid preconditioner. This was fixed and a Taylor-Couette test was added for both multigrid variants. [#1626](https://github.com/chaos-polymtl/lethe/pull/1626) 
+
 ### [Master] - 2025-08-18
 
 - MINOR The mortar indices were being computed according to the cell face center, and not taking into account in which side of the mortar the cell was placed. This led to rounding issues for very refined meshes, when the distribution of local and ghost mortar cells would fail. This has been fixed by adding a bool is_inner to identify the mortar cell side. [#1623](https://github.com/chaos-polymtl/lethe/pull/1623)
