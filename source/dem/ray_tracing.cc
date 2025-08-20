@@ -441,7 +441,9 @@ RayTracingSolver<dim>::solve()
       // Since last pseudo time step, there is a high chance that the photons
       // have changed cell considering the size of their displacement relative
       // to the cell size. Thus, we sort them.
+      std::cout<<"Before (Proc : " <<this_mpi_process<< " ) " << std::endl;
       photon_handler.sort_particles_into_subdomains_and_cells();
+      std::cout<<"After  (Proc : " <<this_mpi_process<< " ) " << std::endl;
 
       // Loop over each local cell in the triangulation. To do this, we loop
       // over each cell neighbor list. Each local cell has a list and the first
