@@ -21,7 +21,8 @@ template <int dim>
 class RayTracingSolver
 {
 public:
-  RayTracingSolver(RayTracingSolverParameters<dim> parameters);
+  RayTracingSolver(RayTracingSolverParameters<dim> parameters,
+                   DEMSolverParameters<dim>        dem_parameters);
 
   /**
    * @brief Calls all the necessary functions to set parameters, solve the intersection
@@ -136,6 +137,10 @@ private:
   RayTracingSolverParameters<dim> parameters;
 
   /**
+   * @brief Dummy dem parameters need for some functions.
+   */
+  DEMSolverParameters<dim> dem_parameters;
+  /**
    * @brief The distributed triangulation used for the DEM simulation.
    */
   parallel::distributed::Triangulation<dim> triangulation;
@@ -173,9 +178,10 @@ private:
   LagrangianLoadBalancing<dim, DEMProperties::PropertiesIndex> load_balancing;
 
   /**
-   * @brief The manager of all the contact search operations.
+   * @brief The background degree of freedom handler uses for parallel grid
+   * processing.
    */
-  // DEMContactManager<dim, DEMProperties::PropertiesIndex> contact_manager;
+  DoFHandler<dim> background_dh;
 
   /**
    * @brief The simulation control (DEM Transient).

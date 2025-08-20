@@ -44,11 +44,15 @@ main(int argc, char *argv[])
         {
           ParameterHandler              prm;
           RayTracingSolverParameters<2> parameters;
+          DEMSolverParameters<2>        dem_parameters;
+
           parameters.declare(prm);
+          dem_parameters.declare(prm);
 
           // Parsing of the file
           prm.parse_input(file_name);
           parameters.parse(prm);
+          dem_parameters.parse(prm);
 
           // Remove old output files
           if (options["-R"])
@@ -62,12 +66,12 @@ main(int argc, char *argv[])
           if (Utilities::MPI::this_mpi_process(MPI_COMM_WORLD) == 0)
             print_parameters_to_output_file(pcout, prm, file_name);
 
-          const DEM::SolverType solver_type =
+          const SolverType solver_type =
             parameters.model_parameters.solver_type;
 
-          if (solver_type == DEM::SolverType::dem)
+          if (solver_type == dem)
             {
-              RayTracingSolver<2> problem(parameters);
+              RayTracingSolver<2> problem(parameters, dem_parameters);
               problem.solve();
             }
           else
@@ -84,11 +88,15 @@ main(int argc, char *argv[])
         {
           ParameterHandler              prm;
           RayTracingSolverParameters<3> parameters;
+          DEMSolverParameters<3>        dem_parameters;
+
           parameters.declare(prm);
+          dem_parameters.declare(prm);
 
           // Parsing of the file
           prm.parse_input(file_name);
           parameters.parse(prm);
+          dem_parameters.parse(prm);
 
           // Remove old output files
           if (options["-R"])
@@ -102,21 +110,8 @@ main(int argc, char *argv[])
           if (Utilities::MPI::this_mpi_process(MPI_COMM_WORLD) == 0)
             print_parameters_to_output_file(pcout, prm, file_name);
 
-          const DEM::SolverType solver_type =
-            parameters.model_parameters.solver_type;
-          if (solver_type == DEM::SolverType::dem)
-            {
-              RayTracingSolver<3> problem(parameters);
-              problem.solve();
-            }
-          else
-            {
-              AssertThrow(
-                false,
-                dealii::ExcMessage(
-                  "While reading the solver type from the input file, "
-                  "Lethe found a value different than \"dem\"."));
-            }
+          RayTracingSolver<3> problem(parameters, dem_parameters);
+          problem.solve();
         }
 
       else

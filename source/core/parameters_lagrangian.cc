@@ -1856,6 +1856,7 @@ namespace Parameters
                           "Pseudo random seed used to generate the "
                           "offset for the photon insertion.");
       }
+      prm.leave_subsection();
     }
 
     template <int dim>
@@ -1865,39 +1866,46 @@ namespace Parameters
       // value_string_to_tensor<3>
       prm.enter_subsection("particle ray tracing");
       {
-        starting_point =
-          value_string_to_tensor<3>("starting photon insertion position");
+        starting_point = value_string_to_tensor<dim>(
+          prm.get("starting photon insertion position"));
+
         first_direction =
-          value_string_to_tensor<3>("first insertion direction");
+          value_string_to_tensor<dim>(prm.get("first insertion direction"));
+        second_direction =
+          value_string_to_tensor<dim>(prm.get("second insertion direction"));
+        first_direction  = first_direction / first_direction.norm();
+        second_direction = second_direction / second_direction.norm();
+
         number_of_photon_first_direction =
           prm.get_integer("number of photon first direction");
+        number_of_photon_second_direction =
+          prm.get_integer("number of photon second direction");
         displacement_direction =
-          value_string_to_tensor<3>("displacement direction");
+          value_string_to_tensor<dim>(prm.get("displacement direction"));
 
-        if constexpr (dim == 2)
-          {
-            if (starting_point[2] != 0. || first_direction[2] != 0. ||
-                second_direction[2] != 0. || displacement_direction[2] != 0.)
-              throw(std::runtime_error(
-                "When launching a particle ray tracing simulation in 2D, the third "
-                "component of the \"starting photon insertion position\", "
-                "\"first insertion direction\", "
-                "\"second insertion direction\" and "
-                "\"displacement direction\" parameters needs to be "
-                "equal to 0."));
+        second_direction =
+          value_string_to_tensor<dim>(prm.get("second insertion direction"));
+        number_of_photon_second_direction =
+          prm.get_integer("number of photon second direction");
 
-            if (starting_point[2] != 0.)
-
-              second_direction = Tensor<1, 3>({0., 0., 1.});
-            number_of_photon_second_direction = 1;
-          }
-        if constexpr (dim == 3)
-          {
-            second_direction =
-              value_string_to_tensor<3>("second insertion direction");
-            number_of_photon_second_direction =
-              prm.get_integer("number of photon second direction");
-          }
+        // if constexpr (dim == 2)
+        //   {
+        //     if (starting_point[2] != 0. || first_direction[2] != 0. ||
+        //         second_direction[2] != 0. || displacement_direction[2] != 0.
+        //         || number_of_photon_second_direction != 1l)
+        //       {
+        //         throw(std::runtime_error(
+        //           "When launching a particle ray tracing simulation in 2D,
+        //           the third " "component of the \"starting photon insertion
+        //           position\", "
+        //           "\"first insertion direction\", "
+        //           "\"second insertion direction\" and "
+        //           "\"displacement direction\" parameters needs to be "
+        //           "equal to 0. Also, \"number_of_photon_second_direction\" "
+        //           "needs to be set to zero. "));
+        //
+        //       }
+        //   }
 
         step_between_photons_first_direction =
           prm.get_double("distance between photon first direction");
@@ -1907,6 +1915,7 @@ namespace Parameters
         max_offset                = prm.get_double("photon maximum offset");
         seed_for_photon_insertion = prm.get_double("photon insertion prn seed");
       }
+      prm.leave_subsection();
     }
 
     template class ForceTorqueOnWall<2>;
@@ -1921,6 +1930,8 @@ namespace Parameters
     template class GridMotion<3>;
     template class InsertionInfo<2>;
     template class InsertionInfo<3>;
+    template class ParticleRayTracing<2>;
+    template class ParticleRayTracing<3>;
 
   } // namespace Lagrangian
 } // namespace Parameters
