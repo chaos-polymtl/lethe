@@ -110,9 +110,9 @@ Public Types</h2></td></tr>
 Public Member Functions</h2></td></tr>
 <tr class="memitem:a8fcfdcda943d56f5c45d9b408d460020" id="r_a8fcfdcda943d56f5c45d9b408d460020"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classPreconditionASM.html#a8fcfdcda943d56f5c45d9b408d460020">PreconditionASM</a> ()</td></tr>
 <tr class="separator:a8fcfdcda943d56f5c45d9b408d460020"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ab25a084f5143efb94f9d913fee64b2a7" id="r_ab25a084f5143efb94f9d913fee64b2a7"><td class="memTemplParams" colspan="2">template&lt;int dim, typename GlobalSparseMatrixType , typename GlobalSparsityPattern , typename <a class="el" href="classPreconditionASM.html#a6a4a0386b137b1419b8d0430ae21706f">Number</a> &gt; </td></tr>
-<tr class="memitem:ab25a084f5143efb94f9d913fee64b2a7"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classPreconditionASM.html#ab25a084f5143efb94f9d913fee64b2a7">initialize</a> (const DoFHandler&lt; dim &gt; &amp;dof_handler, const GlobalSparseMatrixType &amp;global_sparse_matrix, const GlobalSparsityPattern &amp;global_sparsity_pattern, const AffineConstraints&lt; <a class="el" href="classPreconditionASM.html#a6a4a0386b137b1419b8d0430ae21706f">Number</a> &gt; &amp;constraints, const std::shared_ptr&lt; const Utilities::MPI::Partitioner &gt; &amp;partitioner)</td></tr>
-<tr class="separator:ab25a084f5143efb94f9d913fee64b2a7"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a14ea10732b137f5d5729d88c3cc386c3" id="r_a14ea10732b137f5d5729d88c3cc386c3"><td class="memTemplParams" colspan="2">template&lt;int dim, typename GlobalSparseMatrixType , typename GlobalSparsityPattern , typename <a class="el" href="classPreconditionASM.html#a6a4a0386b137b1419b8d0430ae21706f">Number</a> &gt; </td></tr>
+<tr class="memitem:a14ea10732b137f5d5729d88c3cc386c3"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classPreconditionASM.html#a14ea10732b137f5d5729d88c3cc386c3">initialize</a> (const DoFHandler&lt; dim &gt; &amp;dof_handler, const GlobalSparseMatrixType &amp;global_sparse_matrix, const GlobalSparsityPattern &amp;global_sparsity_pattern, const AffineConstraints&lt; <a class="el" href="classPreconditionASM.html#a6a4a0386b137b1419b8d0430ae21706f">Number</a> &gt; &amp;constraints, const std::shared_ptr&lt; const Utilities::MPI::Partitioner &gt; &amp;partitioner, const unsigned int mg_level)</td></tr>
+<tr class="separator:a14ea10732b137f5d5729d88c3cc386c3"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ad3a995485891c32eed9077b007f06a5e" id="r_ad3a995485891c32eed9077b007f06a5e"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classPreconditionASM.html#ad3a995485891c32eed9077b007f06a5e">vmult</a> (VectorType &amp;dst, const VectorType &amp;src) const override</td></tr>
 <tr class="separator:ad3a995485891c32eed9077b007f06a5e"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="inherit_header pub_methods_classPreconditionBase"><td colspan="2" onclick="javascript:toggleInherit('pub_methods_classPreconditionBase')"><img src="closed.png" alt="-"/>&#160;Public Member Functions inherited from <a class="el" href="classPreconditionBase.html">PreconditionBase&lt; VectorType &gt;</a></td></tr>
@@ -251,8 +251,8 @@ template&lt;typename VectorType &gt; </div>
 </div>
 </div>
 <h2 class="groupheader">Member Function Documentation</h2>
-<a id="ab25a084f5143efb94f9d913fee64b2a7" name="ab25a084f5143efb94f9d913fee64b2a7"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ab25a084f5143efb94f9d913fee64b2a7">&#9670;&#160;</a></span>initialize()</h2>
+<a id="a14ea10732b137f5d5729d88c3cc386c3" name="a14ea10732b137f5d5729d88c3cc386c3"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a14ea10732b137f5d5729d88c3cc386c3">&#9670;&#160;</a></span>initialize()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -292,7 +292,13 @@ template&lt;int dim, typename GlobalSparseMatrixType , typename GlobalSparsityPa
           <td class="paramkey"></td>
           <td></td>
           <td class="paramtype">const std::shared_ptr&lt; const Utilities::MPI::Partitioner &gt; &amp;&#160;</td>
-          <td class="paramname"><em>partitioner</em>&#160;</td>
+          <td class="paramname"><em>partitioner</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const unsigned int&#160;</td>
+          <td class="paramname"><em>mg_level</em>&#160;</td>
         </tr>
         <tr>
           <td></td>
@@ -311,7 +317,7 @@ template&lt;int dim, typename GlobalSparseMatrixType , typename GlobalSparsityPa
 
 <p class="definition">Definition at line <a class="el" href="fluid__dynamics__matrix__free_8cc_source.html#l00230">230</a> of file <a class="el" href="fluid__dynamics__matrix__free_8cc_source.html">fluid_dynamics_matrix_free.cc</a>.</p>
 
-<p class="reference">References <a class="el" href="fluid__dynamics__matrix__free_8cc_source.html#l00414">PreconditionASM&lt; VectorType &gt;::blocks</a>, <a class="el" href="fluid__dynamics__matrix__free_8cc_source.html#l00423">PreconditionASM&lt; VectorType &gt;::dst_internal</a>, <a class="el" href="classPreconditionASM.html#a4241842da7c0d26bd9a041745f2ea36fa334c4a4c42fdb79d7ebc3e73b517e6f8">PreconditionASM&lt; VectorType &gt;::none</a>, <a class="el" href="fluid__dynamics__matrix__free_8cc_source.html#l00411">PreconditionASM&lt; VectorType &gt;::patches</a>, <a class="el" href="fluid__dynamics__matrix__free_8cc_source.html#l00426">PreconditionASM&lt; VectorType &gt;::src_internal</a>, <a class="el" href="classPreconditionASM.html#a4241842da7c0d26bd9a041745f2ea36fa85ea10fd16066b9bc85c7b718ac98577">PreconditionASM&lt; VectorType &gt;::symm</a>, <a class="el" href="fluid__dynamics__matrix__free_8cc_source.html#l00085">PreconditionBase&lt; VectorType &gt;::timer</a>, <a class="el" href="fluid__dynamics__matrix__free_8cc_source.html#l00420">PreconditionASM&lt; VectorType &gt;::weighting_type</a>, and <a class="el" href="fluid__dynamics__matrix__free_8cc_source.html#l00417">PreconditionASM&lt; VectorType &gt;::weights</a>.</p>
+<p class="reference">References <a class="el" href="fluid__dynamics__matrix__free_8cc_source.html#l00434">PreconditionASM&lt; VectorType &gt;::blocks</a>, <a class="el" href="fluid__dynamics__matrix__free_8cc_source.html#l00443">PreconditionASM&lt; VectorType &gt;::dst_internal</a>, <a class="el" href="classPreconditionASM.html#a4241842da7c0d26bd9a041745f2ea36fa334c4a4c42fdb79d7ebc3e73b517e6f8">PreconditionASM&lt; VectorType &gt;::none</a>, <a class="el" href="fluid__dynamics__matrix__free_8cc_source.html#l00431">PreconditionASM&lt; VectorType &gt;::patches</a>, <a class="el" href="fluid__dynamics__matrix__free_8cc_source.html#l00446">PreconditionASM&lt; VectorType &gt;::src_internal</a>, <a class="el" href="classPreconditionASM.html#a4241842da7c0d26bd9a041745f2ea36fa85ea10fd16066b9bc85c7b718ac98577">PreconditionASM&lt; VectorType &gt;::symm</a>, <a class="el" href="fluid__dynamics__matrix__free_8cc_source.html#l00085">PreconditionBase&lt; VectorType &gt;::timer</a>, <a class="el" href="fluid__dynamics__matrix__free_8cc_source.html#l00440">PreconditionASM&lt; VectorType &gt;::weighting_type</a>, and <a class="el" href="fluid__dynamics__matrix__free_8cc_source.html#l00437">PreconditionASM&lt; VectorType &gt;::weights</a>.</p>
 
 </div>
 </div>
@@ -362,9 +368,9 @@ template&lt;typename VectorType &gt; </div>
 
 <p>Implements <a class="el" href="classPreconditionBase.html#a0426f8c36d5ec5f6871f7b6a230b66a3">PreconditionBase&lt; VectorType &gt;</a>.</p>
 
-<p class="definition">Definition at line <a class="el" href="fluid__dynamics__matrix__free_8cc_source.html#l00353">353</a> of file <a class="el" href="fluid__dynamics__matrix__free_8cc_source.html">fluid_dynamics_matrix_free.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="fluid__dynamics__matrix__free_8cc_source.html#l00373">373</a> of file <a class="el" href="fluid__dynamics__matrix__free_8cc_source.html">fluid_dynamics_matrix_free.cc</a>.</p>
 
-<p class="reference">References <a class="el" href="fluid__dynamics__matrix__free_8cc_source.html#l00414">PreconditionASM&lt; VectorType &gt;::blocks</a>, <a class="el" href="fluid__dynamics__matrix__free_8cc_source.html#l00423">PreconditionASM&lt; VectorType &gt;::dst_internal</a>, <a class="el" href="classPreconditionASM.html#a4241842da7c0d26bd9a041745f2ea36fa811882fecd5c7618d7099ebbd39ea254">PreconditionASM&lt; VectorType &gt;::left</a>, <a class="el" href="classPreconditionASM.html#a4241842da7c0d26bd9a041745f2ea36fa334c4a4c42fdb79d7ebc3e73b517e6f8">PreconditionASM&lt; VectorType &gt;::none</a>, <a class="el" href="fluid__dynamics__matrix__free_8cc_source.html#l00411">PreconditionASM&lt; VectorType &gt;::patches</a>, <a class="el" href="classPreconditionASM.html#a4241842da7c0d26bd9a041745f2ea36fa7c4f29407893c334a6cb7a87bf045c0d">PreconditionASM&lt; VectorType &gt;::right</a>, <a class="el" href="fluid__dynamics__matrix__free_8cc_source.html#l00426">PreconditionASM&lt; VectorType &gt;::src_internal</a>, <a class="el" href="classPreconditionASM.html#a4241842da7c0d26bd9a041745f2ea36fa85ea10fd16066b9bc85c7b718ac98577">PreconditionASM&lt; VectorType &gt;::symm</a>, <a class="el" href="fluid__dynamics__matrix__free_8cc_source.html#l00085">PreconditionBase&lt; VectorType &gt;::timer</a>, <a class="el" href="fluid__dynamics__matrix__free_8cc_source.html#l00420">PreconditionASM&lt; VectorType &gt;::weighting_type</a>, and <a class="el" href="fluid__dynamics__matrix__free_8cc_source.html#l00417">PreconditionASM&lt; VectorType &gt;::weights</a>.</p>
+<p class="reference">References <a class="el" href="fluid__dynamics__matrix__free_8cc_source.html#l00434">PreconditionASM&lt; VectorType &gt;::blocks</a>, <a class="el" href="fluid__dynamics__matrix__free_8cc_source.html#l00443">PreconditionASM&lt; VectorType &gt;::dst_internal</a>, <a class="el" href="classPreconditionASM.html#a4241842da7c0d26bd9a041745f2ea36fa811882fecd5c7618d7099ebbd39ea254">PreconditionASM&lt; VectorType &gt;::left</a>, <a class="el" href="classPreconditionASM.html#a4241842da7c0d26bd9a041745f2ea36fa334c4a4c42fdb79d7ebc3e73b517e6f8">PreconditionASM&lt; VectorType &gt;::none</a>, <a class="el" href="fluid__dynamics__matrix__free_8cc_source.html#l00431">PreconditionASM&lt; VectorType &gt;::patches</a>, <a class="el" href="classPreconditionASM.html#a4241842da7c0d26bd9a041745f2ea36fa7c4f29407893c334a6cb7a87bf045c0d">PreconditionASM&lt; VectorType &gt;::right</a>, <a class="el" href="fluid__dynamics__matrix__free_8cc_source.html#l00446">PreconditionASM&lt; VectorType &gt;::src_internal</a>, <a class="el" href="classPreconditionASM.html#a4241842da7c0d26bd9a041745f2ea36fa85ea10fd16066b9bc85c7b718ac98577">PreconditionASM&lt; VectorType &gt;::symm</a>, <a class="el" href="fluid__dynamics__matrix__free_8cc_source.html#l00085">PreconditionBase&lt; VectorType &gt;::timer</a>, <a class="el" href="fluid__dynamics__matrix__free_8cc_source.html#l00440">PreconditionASM&lt; VectorType &gt;::weighting_type</a>, and <a class="el" href="fluid__dynamics__matrix__free_8cc_source.html#l00437">PreconditionASM&lt; VectorType &gt;::weights</a>.</p>
 
 </div>
 </div>
@@ -393,7 +399,7 @@ template&lt;typename VectorType &gt; </div>
 
 <p>Inverse of patch matrices. </p>
 
-<p class="definition">Definition at line <a class="el" href="fluid__dynamics__matrix__free_8cc_source.html#l00414">414</a> of file <a class="el" href="fluid__dynamics__matrix__free_8cc_source.html">fluid_dynamics_matrix_free.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="fluid__dynamics__matrix__free_8cc_source.html#l00434">434</a> of file <a class="el" href="fluid__dynamics__matrix__free_8cc_source.html">fluid_dynamics_matrix_free.cc</a>.</p>
 
 </div>
 </div>
@@ -421,7 +427,7 @@ template&lt;typename VectorType &gt; </div>
 
 <p>Internal destination vector with correct ghosting. </p>
 
-<p class="definition">Definition at line <a class="el" href="fluid__dynamics__matrix__free_8cc_source.html#l00423">423</a> of file <a class="el" href="fluid__dynamics__matrix__free_8cc_source.html">fluid_dynamics_matrix_free.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="fluid__dynamics__matrix__free_8cc_source.html#l00443">443</a> of file <a class="el" href="fluid__dynamics__matrix__free_8cc_source.html">fluid_dynamics_matrix_free.cc</a>.</p>
 
 </div>
 </div>
@@ -449,7 +455,7 @@ template&lt;typename VectorType &gt; </div>
 
 <p>DoF indices of patches. </p>
 
-<p class="definition">Definition at line <a class="el" href="fluid__dynamics__matrix__free_8cc_source.html#l00411">411</a> of file <a class="el" href="fluid__dynamics__matrix__free_8cc_source.html">fluid_dynamics_matrix_free.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="fluid__dynamics__matrix__free_8cc_source.html#l00431">431</a> of file <a class="el" href="fluid__dynamics__matrix__free_8cc_source.html">fluid_dynamics_matrix_free.cc</a>.</p>
 
 </div>
 </div>
@@ -477,7 +483,7 @@ template&lt;typename VectorType &gt; </div>
 
 <p>Internal source vector with correct ghosting. </p>
 
-<p class="definition">Definition at line <a class="el" href="fluid__dynamics__matrix__free_8cc_source.html#l00426">426</a> of file <a class="el" href="fluid__dynamics__matrix__free_8cc_source.html">fluid_dynamics_matrix_free.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="fluid__dynamics__matrix__free_8cc_source.html#l00446">446</a> of file <a class="el" href="fluid__dynamics__matrix__free_8cc_source.html">fluid_dynamics_matrix_free.cc</a>.</p>
 
 </div>
 </div>
@@ -505,7 +511,7 @@ template&lt;typename VectorType &gt; </div>
 
 <p>Weighting type. </p>
 
-<p class="definition">Definition at line <a class="el" href="fluid__dynamics__matrix__free_8cc_source.html#l00420">420</a> of file <a class="el" href="fluid__dynamics__matrix__free_8cc_source.html">fluid_dynamics_matrix_free.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="fluid__dynamics__matrix__free_8cc_source.html#l00440">440</a> of file <a class="el" href="fluid__dynamics__matrix__free_8cc_source.html">fluid_dynamics_matrix_free.cc</a>.</p>
 
 </div>
 </div>
@@ -533,7 +539,7 @@ template&lt;typename VectorType &gt; </div>
 
 <p>Weights. </p>
 
-<p class="definition">Definition at line <a class="el" href="fluid__dynamics__matrix__free_8cc_source.html#l00417">417</a> of file <a class="el" href="fluid__dynamics__matrix__free_8cc_source.html">fluid_dynamics_matrix_free.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="fluid__dynamics__matrix__free_8cc_source.html#l00437">437</a> of file <a class="el" href="fluid__dynamics__matrix__free_8cc_source.html">fluid_dynamics_matrix_free.cc</a>.</p>
 
 </div>
 </div>
