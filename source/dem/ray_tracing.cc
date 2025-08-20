@@ -9,31 +9,33 @@
 #include <dem/insertion_file.h>
 #include <dem/insertion_list.h>
 #include <dem/ray_tracing.h>
+#include <dem/read_mesh.h>
 
 #include <sys/stat.h>
 
 
 template <int dim>
 RayTracingSolver<dim>::RayTracingSolver(
-  RayTracingSolverParameters<dim> parameters)
+  RayTracingSolverParameters<dim> parameters,
+  DEMSolverParameters<dim>        dem_parameters)
   : mpi_communicator(MPI_COMM_WORLD)
   , n_mpi_processes(Utilities::MPI::n_mpi_processes(mpi_communicator))
   , this_mpi_process(Utilities::MPI::this_mpi_process(mpi_communicator))
   , pcout(std::cout, Utilities::MPI::this_mpi_process(MPI_COMM_WORLD) == 0)
   , parameters(parameters)
+  , dem_parameters(dem_parameters)
   , triangulation(this->mpi_communicator)
   , mapping(1)
   , particle_handler(triangulation,
                      mapping,
                      DEMProperties::PropertiesIndex::n_properties)
-  , photon_handler(triangulation, mapping, 4)
+  , photon_handler(triangulation, mapping, dim)
   , computing_timer(this->mpi_communicator,
                     this->pcout,
                     TimerOutput::summary,
                     TimerOutput::wall_times)
-  , displacement_norm(GridTools::minimal_cell_diameter(triangulation, mapping))
-  , displacement_direction(
-      parameters.particle_ray_tracing_info.displacement_direction)
+  , background_dh(triangulation)
+  , displacement_direction(parameters.ray_tracing_info.displacement_direction)
 {
   if (parameters.model_parameters.load_balance_method ==
         Parameters::Lagrangian::ModelParameters<
@@ -97,7 +99,7 @@ RayTracingSolver<dim>::set_particle_insertion_type()
 {
   using namespace Parameters::Lagrangian;
   typename InsertionInfo<dim>::InsertionMethod insertion_method =
-    parameters.insertion_info.insertion_method;
+    parameters.particle_insertion_info.insertion_method;
 
   std::vector<std::shared_ptr<Distribution>>
     dummy_size_distribution_object_container;
@@ -110,7 +112,7 @@ RayTracingSolver<dim>::set_particle_insertion_type()
             InsertionFile<dim, DEMProperties::PropertiesIndex>>(
             dummy_size_distribution_object_container,
             triangulation,
-            parameters);
+            dem_parameters);
         }
       case InsertionInfo<dim>::InsertionMethod::list:
         {
@@ -118,11 +120,19 @@ RayTracingSolver<dim>::set_particle_insertion_type()
             InsertionList<dim, DEMProperties::PropertiesIndex>>(
             dummy_size_distribution_object_container,
             triangulation,
-            parameters);
+            dem_parameters);
         }
       default:
         throw(std::runtime_error("Invalid insertion method."));
     }
+}
+
+template <int dim>
+void
+RayTracingSolver<dim>::setup_background_dofs()
+{
+  FE_Q<dim> background_fe(1);
+  background_dh.distribute_dofs(background_fe);
 }
 
 template <int dim>
@@ -197,57 +207,55 @@ void
 RayTracingSolver<dim>::insert_particles_and_photons()
 {
   // Insert particles using the insertion object.
-  DEMSolverParameters<dim> dummy_parameters;
-  // dummy_parameters.lagrangian_physical_properties =
-  // parameters.lagrangian_physical_properties;
-  dummy_parameters.insertion_info = parameters.insertion_info;
-
   particle_insertion_object->insert(particle_handler,
                                     triangulation,
-                                    dummy_parameters);
+                                    dem_parameters);
 
-  // Create variable for readability
-  Point<dim> starting_insertion_point =
-    parameters.particle_ray_tracing_info.starting_point;
-  Tensor<1, dim> first_dir =
-    parameters.particle_ray_tracing_info.first_direction;
-  Tensor<1, dim> second_dir =
-    parameters.particle_ray_tracing_info.second_direction;
-
-  unsigned int max_n_photon_first_dir =
-    parameters.particle_ray_tracing_info.number_of_photon_first_direction;
-  unsigned int max_n_photon_second_dir =
-    parameters.particle_ray_tracing_info.number_of_photon_second_direction;
-  double step_first_dir =
-    parameters.particle_ray_tracing_info.step_between_photons_first_direction;
-  double step_second_dir =
-    parameters.particle_ray_tracing_info.step_between_photons_second_direction;
-
-  // Create needed variable
-  unsigned int n_total_photons_to_insert =
-    max_n_photon_first_dir * max_n_photon_second_dir;
-  std::vector<Point<3>> insertion_points;
-
-  // Processor 0 will be the only one inserting photon
-  const unsigned int n_particles_to_insert_this_proc =
-    this_mpi_process == 0 ? n_total_photons_to_insert : 0;
-
+  // A vector which contains all the insertion point of every photon.
   std::vector<Point<dim>> insertion_points_on_proc;
-  insertion_points_on_proc.reserve(n_particles_to_insert_this_proc);
+
+  unsigned int n_total_photons_to_insert = 0;
 
   // A vector of vectors, which contains all the properties of all particles
   // about to get inserted.
-  // Each photon has as its properties its insertion location. This way, when
-  // many intersection points will be found during a pseudo timestep, its
-  // properties will be used to identify the closest point from its insertion
-  // insertion point.
+  // Each photon has as its properties its insertion location. This way,
+  // when many intersection points will be found during a pseudo timestep,
+  // its properties will be used to identify the closest point from its
+  // insertion insertion point.
   std::vector<std::vector<double>> photon_properties;
-  photon_properties.reserve(n_particles_to_insert_this_proc);
 
   // Create the photon insertion location
   if (this_mpi_process == 0)
     {
-      Point<3> temp_point{};
+      // Create variable for readability
+      Point<dim> starting_insertion_point =
+        parameters.ray_tracing_info.starting_point;
+      Tensor<1, dim> first_dir  = parameters.ray_tracing_info.first_direction;
+      Tensor<1, dim> second_dir = parameters.ray_tracing_info.second_direction;
+
+      unsigned int max_n_photon_first_dir =
+        parameters.ray_tracing_info.number_of_photon_first_direction;
+      unsigned int max_n_photon_second_dir =
+        parameters.ray_tracing_info.number_of_photon_second_direction;
+      double step_first_dir =
+        parameters.ray_tracing_info.step_between_photons_first_direction;
+      double step_second_dir =
+        parameters.ray_tracing_info.step_between_photons_second_direction;
+
+      // Create needed variable
+      n_total_photons_to_insert =
+        max_n_photon_first_dir * max_n_photon_second_dir;
+
+      // Processor 0 will be the only one inserting photon
+      const unsigned int n_particles_to_insert_this_proc =
+        this_mpi_process == 0 ? n_total_photons_to_insert : 0;
+
+      insertion_points_on_proc.reserve(n_particles_to_insert_this_proc);
+
+      photon_properties.reserve(n_particles_to_insert_this_proc);
+
+      Point<dim> temp_point{};
+
       for (unsigned int n_first_dir = 0; n_first_dir < max_n_photon_first_dir;
            ++n_first_dir)
         {
@@ -256,17 +264,28 @@ RayTracingSolver<dim>::insert_particles_and_photons()
                ++n_second_dir)
             {
               // Create the insertion point and emplace it.
-              temp_point =
-                point_nd_to_3d(starting_insertion_point +
-                               n_first_dir * step_first_dir * first_dir +
-                               n_second_dir * step_second_dir * second_dir);
+              temp_point = [&]() {
+                if constexpr (dim == 2)
+                  return starting_insertion_point +
+                         n_first_dir * step_first_dir * step_first_dir *
+                           first_dir;
 
-              insertion_points.emplace_back(temp_point);
+                if constexpr (dim == 3)
+                  return starting_insertion_point +
+                         n_first_dir * step_first_dir * first_dir +
+                         n_second_dir * step_second_dir * second_dir;
+              }();
+
+              insertion_points_on_proc.emplace_back(temp_point);
 
               // Use the insertion point to create the property vector.
-              std::vector<double> properties_of_one_photon{temp_point[0],
-                                                           temp_point[1],
-                                                           temp_point[2]};
+              std::vector<double> properties_of_one_photon(dim);
+
+              properties_of_one_photon[0] = temp_point[0];
+              properties_of_one_photon[1] = temp_point[1];
+              if constexpr (dim == 3)
+                properties_of_one_photon[2] = temp_point[2];
+
               photon_properties.emplace_back(properties_of_one_photon);
               properties_of_one_photon.clear();
             }
@@ -296,14 +315,16 @@ RayTracingSolver<dim>::write_output_results(
   const std::string            &folder,
   const std::string            &file_name)
 {
+
   // Flatten local points into a buffer of chars (text format)
   std::ostringstream oss;
   for (const auto &p : points)
     {
-      for (unsigned int d = 0; d < dim; ++d)
+      for (unsigned int d = 0; d < 3; ++d)
         oss << p[d] << " ";
       oss << "\n";
     }
+
   std::string local_str  = oss.str();
   int         local_size = local_str.size();
 
@@ -363,15 +384,18 @@ RayTracingSolver<dim>::solve()
   // Set up the parameters
   setup_parameters();
 
-  pcout << "Reading triangulation" << std::endl;
-  attach_grid_to_triangulation<dim, dim>(triangulation, parameters.mesh);
-  pcout << std::endl << "Finished reading triangulation" << std::endl;
-
-  // Set particle insertion object
-  particle_insertion_object = set_particle_insertion_type();
+  // Reading mesh
+  read_mesh(parameters.mesh,
+            action_manager->check_restart_simulation(),
+            pcout,
+            triangulation,
+            dem_parameters.boundary_conditions);
 
   // Set up the parameter that need the triangulation :
   displacement_norm = GridTools::minimal_cell_diameter(triangulation);
+
+  // Set particle insertion object
+  particle_insertion_object = set_particle_insertion_type();
 
   // Insert photon and particles
   insert_particles_and_photons();
@@ -386,16 +410,31 @@ RayTracingSolver<dim>::solve()
   total_intersection_points.reserve(photon_handler.n_global_particles());
 
   // Map :
-  // <photon_iterator, (distance, point<dim>)>
-  ankerl::unordered_dense::map<types::particle_index,
-                               std::pair<double, Point<dim>>>
+  // <photon_iterator, (distance, intersection point<dim>, iterator to remove)>
+  ankerl::unordered_dense::map<
+    types::particle_index,
+    std::tuple<double, Point<dim>, Particles::ParticleIterator<dim>>>
     photon_intersection_points_map;
 
-  // std::vector<Particles::ParticleIterator<dim>> photon_to_remove;
+  photon_intersection_points_map.reserve(
+    photon_handler.n_locally_owned_particles());
 
+  // Update cell neighbors
+  find_cell_neighbors<dim, true>(triangulation,
+                                 cells_local_neighbor_list,
+                                 cells_ghost_neighbor_list);
+
+  // Particle don't move, thus we sort them at the end of a load balance.
+  // Photons are being sorted every pseudo time step, thus no need to sort them.
+  particle_handler.sort_particles_into_subdomains_and_cells();
+
+  // Exchange ghost particles
+  particle_handler.exchange_ghost_particles(true);
 
   while (photon_handler.n_global_particles() != 0)
     {
+      std::cout << "Remaining photon : " << photon_handler.n_global_particles()
+                << std::endl;
       // Load balancing (if needed)
       load_balance();
 
@@ -405,8 +444,8 @@ RayTracingSolver<dim>::solve()
       photon_handler.sort_particles_into_subdomains_and_cells();
 
       // Loop over each local cell in the triangulation. To do this, we loop
-      // over each cell neighbor list. In each list, the first iterator in the
-      // main cell.
+      // over each cell neighbor list. Each local cell has a list and the first
+      // iterator in the main cell itself.
       for (auto cell_neighbor_list_iterator = cells_local_neighbor_list.begin();
            cell_neighbor_list_iterator != cells_local_neighbor_list.end();
            ++cell_neighbor_list_iterator)
@@ -423,28 +462,35 @@ RayTracingSolver<dim>::solve()
                current_photon != photons_in_main_cell.end();
                ++current_photon)
             {
-              // Get the photon properties. We need to properties to find the
-              // insertion position of the current photon.
+              // Get the photon properties. We need the properties to find the
+              // insertion position of the current photon. This will be used to
+              // differentiate between intersection points when there's more
+              // than one.
               auto photon_properties = current_photon->get_properties();
 
-              // Insertion point
+              // Current photon insertion point.
               const Point<dim> photon_insertion_point = [&]() {
                 if constexpr (dim == 2)
                   return Point<dim>(
                     {photon_properties[0], photon_properties[1]});
-                else
+
+                if constexpr (dim == 3)
                   return Point<dim>({photon_properties[0],
                                      photon_properties[1],
                                      photon_properties[2]});
               }();
 
-              // Loop over the neighboring cells
+              const Point<dim> current_photon_location =
+                current_photon->get_location();
+
+              // Loop over the neighboring cells of the main cell. This includes
+              // the main cell itselft.
               auto &cell_neighbor_list = *cell_neighbor_list_iterator;
               for (auto current_neighboring_cell = cell_neighbor_list.begin();
                    current_neighboring_cell != cell_neighbor_list.end();
                    ++current_neighboring_cell)
                 {
-                  // Particle the current neighboring cell
+                  // Particle iterators in the current neighboring cell
                   typename Particles::ParticleHandler<
                     dim>::particle_iterator_range particle_in_neighboring_cell =
                     particle_handler.particles_in_cell(
@@ -466,10 +512,9 @@ RayTracingSolver<dim>::solve()
                       // particle
                       const Point<dim> particle_position =
                         current_particle->get_location();
-                      const auto particle_properties =
-                        current_particle->get_properties();
                       const double particle_diameter =
-                        particle_properties[DEMProperties::PropertiesIndex::dp];
+                        current_particle->get_properties()
+                          [DEMProperties::PropertiesIndex::dp];
 
                       current_intersection_points =
                         LetheGridTools::find_line_sphere_intersection(
@@ -478,20 +523,30 @@ RayTracingSolver<dim>::solve()
                           particle_position,
                           particle_diameter);
 
-                      double distance;
+                      // If the size of the vector is 0, there's no intersection
+                      // point, thus we go to the next particle.
+                      if (current_intersection_points.size() == 0)
+                        continue;
+
+                      // Otherwise, there is at least one intersection point.
+                      // Initializing the needed variables.
+                      double     new_distance;
+                      Point<dim> new_closest_point;
+
                       // If the size of the vector is 1, we have one
                       // intersection point.
                       if (current_intersection_points.size() == 1)
                         {
-                          distance = (photon_insertion_point -
-                                      current_intersection_points[0])
-                                       .norm();
+                          new_distance = (photon_insertion_point -
+                                          current_intersection_points[0])
+                                           .norm();
+                          new_closest_point = current_intersection_points[0];
                         }
 
                       // If the size is equal to 2, we need to find which one
-                      // between the two new intersection point is the closest.
-                      // to the photon insertion point.
-                      if (current_intersection_points.size() == 2)
+                      // between the two new intersection point is the closest
+                      // to the photon intersection point.
+                      else
                         {
                           const double distance_0 =
                             (photon_insertion_point -
@@ -502,32 +557,72 @@ RayTracingSolver<dim>::solve()
                              current_intersection_points[1])
                               .norm();
 
-                          Point<dim> closest_point;
                           if (distance_0 < distance_1)
                             {
-                              distance      = distance_0;
-                              closest_point = current_intersection_points[0];
+                              new_distance = distance_0;
+                              new_closest_point =
+                                current_intersection_points[0];
                             }
                           else
                             {
-                              distance      = distance_1;
-                              closest_point = current_intersection_points[1];
+                              new_distance = distance_1;
+                              new_closest_point =
+                                current_intersection_points[1];
                             }
                         }
-                      
+
+                      // We need to add the intersection point in the
+                      // photon_insertion_point map. We first need to check
+                      // if an intersection point already exist in the map
+                      // for that given photon.
+                      if (photon_intersection_points_map.find(
+                            current_photon->get_id()) ==
+                          photon_intersection_points_map.end())
+                        {
+                          // If it doesn't exist, we just add the new one.
+                          photon_intersection_points_map[current_photon
+                                                           ->get_id()] = {
+                            new_distance, new_closest_point, current_photon};
+                        }
+                      else
+                        {
+                          // If it does exist, we need to check which
+                          // intersection point is the closest to the
+                          // current photon insertion point. We replace the
+                          // value only if the new one is closer.
+                          const double old_distance = std::get<0>(
+                            photon_intersection_points_map[current_photon
+                                                             ->get_id()]);
+
+                          if (new_distance < old_distance)
+                            {
+                              // if the new distance is smaller, we replace the
+                              // old one in the map. Otherwise we do nothing.
+                              photon_intersection_points_map[current_photon
+                                                               ->get_id()] = {
+                                new_distance,
+                                new_closest_point,
+                                current_photon};
+                            }
+                        }
                     }
                 }
+              // Even if we are removing photon at the end on this pseudo-time
+              // step, we move the particle here since we are looping on each of
+              // them in this loop. This way, we don't need to loop on each of
+              // them at the end.
+              const Point<dim> new_photon_location =
+                current_photon_location +
+                displacement_norm * displacement_direction;
+              current_photon->set_location(new_photon_location);
             }
         }
 
-      // Loop over each ghost cell in the triangulation. To do this, we loop
-      // over each cell neighbor list. In each list, the first iterator in the
-      // main cell.
       for (auto cell_neighbor_list_iterator = cells_ghost_neighbor_list.begin();
            cell_neighbor_list_iterator != cells_ghost_neighbor_list.end();
            ++cell_neighbor_list_iterator)
         {
-          // The main cell (is local)
+          // The main cell
           const auto main_cell = cell_neighbor_list_iterator->begin();
 
           // Photons in main cell
@@ -539,34 +634,32 @@ RayTracingSolver<dim>::solve()
                current_photon != photons_in_main_cell.end();
                ++current_photon)
             {
-              // Get the photon properties. We need to properties to find the
-              // insertion position of the current photon.
+              // Get the photon properties. We need the properties to find the
+              // insertion position of the current photon. This will be used to
+              // differentiate between intersection points when there's more
+              // than one.
               auto photon_properties = current_photon->get_properties();
 
-              // Insertion point
-              const Point<dim> photon_insertion_point = [&]() {
-                if constexpr (dim == 2)
-                  return Point<dim>(
-                    {photon_properties[0], photon_properties[1]});
-                else
-                  return Point<dim>({photon_properties[0],
-                                     photon_properties[1],
-                                     photon_properties[2]});
-              }();
+              Point<dim> photon_insertion_point;
+              // Current photon insertion point.
+              photon_insertion_point[0] = photon_properties[0];
+              photon_insertion_point[1] = photon_properties[1];
+              if constexpr (dim == 3)
+                photon_insertion_point[2] = photon_properties[2];
 
-              // Loop over the neighboring ghost cells (skip the first one since
-              // it is the local one)
+
+              // Loop over the neighboring cells of the main cell. This includes
+              // the main cell itselft.
               auto &cell_neighbor_list = *cell_neighbor_list_iterator;
-              for (auto current_ghost_neighboring_cell =
-                     cell_neighbor_list.begin() + 1;
-                   current_ghost_neighboring_cell != cell_neighbor_list.end();
-                   ++current_ghost_neighboring_cell)
+              for (auto current_neighboring_cell = cell_neighbor_list.begin();
+                   current_neighboring_cell != cell_neighbor_list.end();
+                   ++current_neighboring_cell)
                 {
-                  // Particle the current neighboring cell
+                  // Particle iterators in the current neighboring cell
                   typename Particles::ParticleHandler<
                     dim>::particle_iterator_range particle_in_neighboring_cell =
                     particle_handler.particles_in_cell(
-                      *current_ghost_neighboring_cell);
+                      *current_neighboring_cell);
 
                   // This vector will be reused for every line-sphere
                   // intersection search. There is maximum 2 intersection points
@@ -584,10 +677,9 @@ RayTracingSolver<dim>::solve()
                       // particle
                       const Point<dim> particle_position =
                         current_particle->get_location();
-                      const auto particle_properties =
-                        current_particle->get_properties();
                       const double particle_diameter =
-                        particle_properties[DEMProperties::PropertiesIndex::dp];
+                        current_particle->get_properties()
+                          [DEMProperties::PropertiesIndex::dp];
 
                       current_intersection_points =
                         LetheGridTools::find_line_sphere_intersection(
@@ -596,44 +688,30 @@ RayTracingSolver<dim>::solve()
                           particle_position,
                           particle_diameter);
 
-                      double distance;
+                      // If the size of the vector is 0, there's no intersection
+                      // point, thus we go to the next particle.
+                      if (current_intersection_points.size() == 0)
+                        continue;
+
+                      // Otherwise, there is at least one intersection point.
+                      // Initializing the needed variables.
+                      double     new_distance;
+                      Point<dim> new_closest_point;
+
                       // If the size of the vector is 1, we have one
                       // intersection point.
                       if (current_intersection_points.size() == 1)
                         {
-                          distance = (photon_insertion_point -
-                                      current_intersection_points[0])
-                                       .norm();
-
-                          // We need to add the intersection point in the
-                          // photon_insertion_point map. We first need to check
-                          // if an intersection point already exist in the map
-                          // for that given photon.
-                          if (!photon_intersection_points_map.contains(
-                                current_photon))
-                            // If it doesn't exist, we just add it.
-                            photon_intersection_points_map[current_photon
-                                                             ->get_id()] = {
-                              distance, current_intersection_points[0]};
-                          else
-                            {
-                              auto photon_it =
-                                photon_intersection_points_map.find(
-                                  current_photon);
-                              // If it exist, we need to check which
-                              // intersection point is the closest to the
-                              // current photon insertion point. We replace the
-                              // value only if the new one is closer.
-                              if (distance < photon_it->second.first)
-                                photon_it->second = {
-                                  distance, current_intersection_points[0]};
-                            }
+                          new_distance = (photon_insertion_point -
+                                          current_intersection_points[0])
+                                           .norm();
+                          new_closest_point = current_intersection_points[0];
                         }
 
                       // If the size is equal to 2, we need to find which one
-                      // between the two new intersection point is the closest.
-                      // to the photon insertion point.
-                      if (current_intersection_points.size() == 2)
+                      // between the two new intersection point is the closest
+                      // to the photon intersection point.
+                      else
                         {
                           const double distance_0 =
                             (photon_insertion_point -
@@ -644,70 +722,78 @@ RayTracingSolver<dim>::solve()
                              current_intersection_points[1])
                               .norm();
 
-                          Point<dim> closest_point;
                           if (distance_0 < distance_1)
                             {
-                              distance      = distance_0;
-                              closest_point = current_intersection_points[0];
+                              new_distance = distance_0;
+                              new_closest_point =
+                                current_intersection_points[0];
                             }
                           else
                             {
-                              distance      = distance_1;
-                              closest_point = current_intersection_points[1];
+                              new_distance = distance_1;
+                              new_closest_point =
+                                current_intersection_points[1];
                             }
+                        }
 
-                          // We need to add the closest point in the
-                          // photon_insertion_point map. We first need to check
-                          // if an intersection point already exist in the map
-                          // for that given photon.
-                          if (!photon_intersection_points_map.contains(
-                                current_photon))
+                      // We need to add the intersection point in the
+                      // photon_insertion_point map. We first need to check
+                      // if an intersection point already exist in the map
+                      // for that given photon.
+                      if (photon_intersection_points_map.find(
+                            current_photon->get_id()) ==
+                          photon_intersection_points_map.end())
+                        {
+                          // If it doesn't exist, we just add the new one.
+                          photon_intersection_points_map[current_photon
+                                                           ->get_id()] = {
+                            new_distance, new_closest_point, current_photon};
+                        }
+                      else
+                        {
+                          // If it does exist, we need to check which
+                          // intersection point is the closest to the
+                          // current photon insertion point. We replace the
+                          // value only if the new one is closer.
+                          const double old_distance = std::get<0>(
+                            photon_intersection_points_map[current_photon
+                                                             ->get_id()]);
 
-                            // If it doesn't exist, we just add it.
-                            photon_intersection_points_map[current_photon] = {
-                              distance, closest_point};
-                          else
+                          if (new_distance < old_distance)
                             {
-                              auto photon_it =
-                                photon_intersection_points_map.find(
-                                  current_photon);
-                              // If it exist, we need to check which
-                              // intersection point is the closest to the
-                              // current photon insertion point. We replace the
-                              // value only if the new one is closer.
-                              if (distance < photon_it->second.first)
-                                photon_it->second = {distance, closest_point};
+                              // if the new distance is smaller, we replace the
+                              // old one in the map. Otherwise we do nothing.
+                              photon_intersection_points_map[current_photon
+                                                               ->get_id()] = {
+                                new_distance,
+                                new_closest_point,
+                                current_photon};
                             }
                         }
                     }
                 }
-              // Even if some of the photon will be removed at the end of the
-              // current pseudo time step, we still move every photon here. This
-              // way, we won't need to loop again on every remaining photon at
-              // the end on the pseudo time step.
-              Point<dim> photon_current_location =
-                current_photon->get_location();
-              current_photon->set_location(photon_current_location +
-                                           displacement_direction *
-                                             displacement_norm);
             }
         }
       // Remove all the photon that have found their intersection. In other
       // words, every photon that is present in the map. We also store the
       // intersection points in the appropriate vector.
-      std::vector<typename Particles::ParticleHandler<dim>::particle_iterator>
-        to_remove_photon_iterators;
-      to_remove_photon_iterators.reserve(photon_intersection_points_map.size());
+      std::vector<Particles::ParticleIterator<dim>> photon_iterators_to_remove;
+      photon_iterators_to_remove.reserve(photon_intersection_points_map.size());
 
-      for (auto photon_it : photon_intersection_points_map)
+      for (auto it = photon_intersection_points_map.begin();
+           it != photon_intersection_points_map.end();
+           ++it)
         {
-          to_remove_photon_iterators.push_back(photon_it.first);
-          total_intersection_points.push_back(photon_it.second.second);
+          auto photon_tuple = it->second;
+          total_intersection_points.push_back(std::get<1>(photon_tuple));
+          photon_iterators_to_remove.push_back(std::get<2>(photon_tuple));
         }
-      // Removes the photon and clear the map
-      photon_handler.remove_particles(to_remove_photon_iterators);
+
+      // Removes the photon and clear the containers.
+      photon_handler.remove_particles(photon_iterators_to_remove);
       photon_intersection_points_map.clear();
     }
+  std::cout<<__LINE__<<std::endl;
   write_output_results(total_intersection_points,
                        parameters.simulation_control.output_folder,
                        parameters.simulation_control.output_name);
