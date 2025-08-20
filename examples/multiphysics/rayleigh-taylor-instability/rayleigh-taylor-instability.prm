@@ -18,7 +18,6 @@ subsection simulation control
   set max cfl          = 0.8
   set output control   = iteration
   set output frequency = 20
-  set output name      = rayleigh-taylor-constant-sharpening
   set output path      = ./output/
 end
 
@@ -168,10 +167,17 @@ subsection source term
 end
 
 
+#---------------------------------------------------
+# Timer
+#---------------------------------------------------
+
 subsection timer
   set type = end
 end
 
+#---------------------------------------------------
+# Stabilization
+#---------------------------------------------------
 
 subsection stabilization
   set vof dcdd stabilization           = false
@@ -185,12 +191,10 @@ subsection non-linear solver
   subsection fluid dynamics
     set verbosity      = verbose
     set tolerance      = 1e-6
-    set max iterations = 5
   end
   subsection VOF
     set verbosity      = verbose
     set tolerance      = 1e-10
-    set max iterations = 2
   end
 end
 
@@ -202,8 +206,8 @@ subsection linear solver
   subsection fluid dynamics
     set verbosity                             = verbose
     set method                                = gmres
-    set max krylov vectors                    = 500
-    set max iters                             = 1000
+    set max krylov vectors                    = 200
+    set max iters                             = 200
     set relative residual                     = 1e-5
     set minimum residual                      = 1e-7
     set preconditioner                        = ilu
@@ -214,8 +218,8 @@ subsection linear solver
   subsection VOF
     set verbosity                             = verbose
     set method                                = gmres
-    set max krylov vectors                    = 500
-    set max iters                             = 1000
+    set max krylov vectors                    = 200
+    set max iters                             = 200
     set relative residual                     = 1e-8
     set minimum residual                      = 1e-11
     set preconditioner                        = ilu
