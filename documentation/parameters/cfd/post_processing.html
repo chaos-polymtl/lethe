@@ -496,9 +496,6 @@
   set calculate pressure power         = false
   set pressure power name              = pressure_power
 
-  # Others
-  set smoothed output fields           = false
-
   #---------------------------------------------------
   # Physical properties post-processing
   #---------------------------------------------------
@@ -650,7 +647,6 @@ end
 </dd>
 </dl>
 </li>
-<li><p><code class="docutils literal notranslate"><span class="pre">smoothed</span> <span class="pre">output</span> <span class="pre">fields</span></code>: controls if the Qcriterion field will be smoothed using an L2-projection over the nodes. The same will shortly be applied to the Vorticity.</p></li>
 <li><dl class="simple">
 <dt><code class="docutils literal notranslate"><span class="pre">calculate</span> <span class="pre">apparent</span> <span class="pre">viscosity</span></code>: controls if parameter calculation of an apparent viscosity is enabled, when using a non Newtonian flow (see section Physical properties - <a class="reference internal" href="physical_properties.html#rheological-models"><span class="std std-ref">Rheological Models</span></a>). This is mainly used to define the Reynolds number <cite>a posteriori</cite>.</dt><dd><ul class="simple">
 <li><p><code class="docutils literal notranslate"><span class="pre">apparent</span> <span class="pre">viscosity</span> <span class="pre">name</span></code>: output filename for apparent viscosity calculations.</p></li>

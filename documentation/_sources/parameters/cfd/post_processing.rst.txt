@@ -47,9 +47,6 @@ This subsection controls the post-processing other than the forces and torque on
     set calculate pressure power         = false
     set pressure power name              = pressure_power
 
-    # Others
-    set smoothed output fields           = false
-
     #---------------------------------------------------
     # Physical properties post-processing
     #---------------------------------------------------
@@ -163,8 +160,6 @@ This subsection controls the post-processing other than the forces and torque on
        \frac{1}{\Omega} \int_{\Omega}  \nabla p \cdot \mathbf{u} \mathrm{d} \Omega
 
     with :math:`\Omega` representing the volume of the domain, :math:`\mathbf{u}` the velocity  and :math:`p` the pressure.
-
-* ``smoothed output fields``: controls if the Qcriterion field will be smoothed using an L2-projection over the nodes. The same will shortly be applied to the Vorticity. 
 
 * ``calculate apparent viscosity``: controls if parameter calculation of an apparent viscosity is enabled, when using a non Newtonian flow (see section Physical properties - :ref:`rheological_models`). This is mainly used to define the Reynolds number `a posteriori`. 
     * ``apparent viscosity name``: output filename for apparent viscosity calculations.

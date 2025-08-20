@@ -46,12 +46,11 @@ var searchData=
   ['physicssubequationssolverbase_43',['PhysicsSubequationsSolverBase',['../classPhysicsSubequationsSolverBase.html',1,'']]],
   ['plane_44',['Plane',['../classPlane.html',1,'']]],
   ['postprocessing_45',['PostProcessing',['../structParameters_1_1PostProcessing.html',1,'Parameters']]],
-  ['postprocessorsmoothing_46',['PostProcessorSmoothing',['../classPostProcessorSmoothing.html',1,'']]],
-  ['powerlaw_47',['PowerLaw',['../classPowerLaw.html',1,'']]],
-  ['powerlawparameters_48',['PowerLawParameters',['../structParameters_1_1PowerLawParameters.html',1,'Parameters']]],
-  ['preconditionadapter_49',['PreconditionAdapter',['../classPreconditionAdapter.html',1,'']]],
-  ['preconditionasm_50',['PreconditionASM',['../classPreconditionASM.html',1,'']]],
-  ['preconditionbase_51',['PreconditionBase',['../classPreconditionBase.html',1,'']]],
-  ['pspgsupgnavierstokesassemblercore_52',['PSPGSUPGNavierStokesAssemblerCore',['../classPSPGSUPGNavierStokesAssemblerCore.html',1,'']]],
-  ['pvdhandler_53',['PVDHandler',['../classPVDHandler.html',1,'']]]
+  ['powerlaw_46',['PowerLaw',['../classPowerLaw.html',1,'']]],
+  ['powerlawparameters_47',['PowerLawParameters',['../structParameters_1_1PowerLawParameters.html',1,'Parameters']]],
+  ['preconditionadapter_48',['PreconditionAdapter',['../classPreconditionAdapter.html',1,'']]],
+  ['preconditionasm_49',['PreconditionASM',['../classPreconditionASM.html',1,'']]],
+  ['preconditionbase_50',['PreconditionBase',['../classPreconditionBase.html',1,'']]],
+  ['pspgsupgnavierstokesassemblercore_51',['PSPGSUPGNavierStokesAssemblerCore',['../classPSPGSUPGNavierStokesAssemblerCore.html',1,'']]],
+  ['pvdhandler_52',['PVDHandler',['../classPVDHandler.html',1,'']]]
 ];

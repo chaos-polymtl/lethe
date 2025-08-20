@@ -58,8 +58,6 @@ var searchData=
   ['postprocessing_5fvelocities_2ecc_55',['postprocessing_velocities.cc',['../postprocessing__velocities_8cc.html',1,'']]],
   ['postprocessing_5fvelocities_2eh_56',['postprocessing_velocities.h',['../postprocessing__velocities_8h.html',1,'']]],
   ['postprocessors_2eh_57',['postprocessors.h',['../postprocessors_8h.html',1,'']]],
-  ['postprocessors_5fsmoothing_2ecc_58',['postprocessors_smoothing.cc',['../postprocessors__smoothing_8cc.html',1,'']]],
-  ['postprocessors_5fsmoothing_2eh_59',['postprocessors_smoothing.h',['../postprocessors__smoothing_8h.html',1,'']]],
-  ['pvd_5fhandler_2ecc_60',['pvd_handler.cc',['../pvd__handler_8cc.html',1,'']]],
-  ['pvd_5fhandler_2eh_61',['pvd_handler.h',['../pvd__handler_8h.html',1,'']]]
+  ['pvd_5fhandler_2ecc_58',['pvd_handler.cc',['../pvd__handler_8cc.html',1,'']]],
+  ['pvd_5fhandler_2eh_59',['pvd_handler.h',['../pvd__handler_8h.html',1,'']]]
 ];
