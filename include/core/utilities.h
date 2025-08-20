@@ -253,8 +253,8 @@ make_table_tensors_tensors(
  * @param[in] independent_column_names Vector of strings representing labels of
  * the independent tensor.
  *
- * @param[in] dependent_values Vector of of doubles containing
- * dependent variables values (e.g., force).
+ * @param[in] dependent_values Vector of doubles containing dependent variables
+ * values (e.g., force).
  *
  * @param[in] dependent_column_name Label of the dependent variable.
  *
