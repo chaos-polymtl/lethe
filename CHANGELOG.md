@@ -3,6 +3,13 @@
 All notable changes to the Lethe project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
+
+### [Master] - 2025-08-20
+
+### Added
+
+- MINOR The additive Schwarz method (ASM) is now also working for local-smoothing multigrid. [#1628](https://github.com/chaos-polymtl/lethe/pull/1628)
+
 ### [Master] - 2025-08-19
 
 ### Changed
