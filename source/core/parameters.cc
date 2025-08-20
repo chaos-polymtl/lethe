@@ -2151,11 +2151,6 @@ namespace Parameters
                         "Fluid domain used for thermal postprocesses "
                         "in the heat equation <fluid 0|fluid 1|both>");
 
-      prm.declare_entry("smoothed output fields",
-                        "false",
-                        Patterns::Bool(),
-                        "Enable smoothing postprocessed vectors and scalars.");
-
       prm.declare_entry(
         "calculate barycenter",
         "false",
@@ -2279,8 +2274,6 @@ namespace Parameters
         throw(
           std::runtime_error("Invalid postprocessed fluid. "
                              "Options are 'fluid 0', 'fluid 1' or 'both'."));
-
-      smoothed_output_fields = prm.get_bool("smoothed output fields");
     }
     prm.leave_subsection();
   }

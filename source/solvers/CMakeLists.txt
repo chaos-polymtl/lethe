@@ -28,7 +28,6 @@ add_library(lethe-solvers
   postprocessing_cfd.cc
   postprocessing_velocities.cc
   postprocessing_scalar.cc
-  postprocessors_smoothing.cc
   signed_distance_transformation.cc
   simulation_parameters.cc
   source_terms.cc
@@ -79,7 +78,6 @@ add_library(lethe-solvers
   ../../include/solvers/physics_subequations_solver.h
   ../../include/solvers/postprocessing_cfd.h
   ../../include/solvers/postprocessing_velocities.h
-  ../../include/solvers/postprocessors_smoothing.h
   ../../include/solvers/postprocessors.h
   ../../include/solvers/signed_distance_transformation.h
   ../../include/solvers/simulation_parameters.h

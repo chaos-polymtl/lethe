@@ -48,7 +48,6 @@ end
 subsection post-processing
   set calculate average velocities      = true
   set initial time for average velocity = 2
-  set smoothed output fields            = true
 end
 
 #---------------------------------------------------

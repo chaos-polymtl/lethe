@@ -13,14 +13,15 @@
 #include <core/pvd_handler.h>
 #include <core/sdirk_stage_data.h>
 #include <core/simulation_control.h>
+#include <core/solutions_output.h>
 
 #include <solvers/flow_control.h>
 #include <solvers/multiphysics_interface.h>
 #include <solvers/navier_stokes_assemblers.h>
+#include <solvers/output_struct.h>
 #include <solvers/postprocessing_scalar.h>
 #include <solvers/postprocessing_velocities.h>
 #include <solvers/postprocessors.h>
-#include <solvers/postprocessors_smoothing.h>
 #include <solvers/simulation_parameters.h>
 
 // Dealii Includes
@@ -199,9 +200,7 @@ protected:
     multiphysics->postprocess(first_iteration);
 
     if (this->simulation_control->is_output_iteration())
-      {
-        this->write_output_results(this->present_solution);
-      }
+      this->write_output_results(this->present_solution);
   };
 
   /**
@@ -853,7 +852,22 @@ protected:
   write_checkpoint();
 
   /**
-   * @brief Post-processing as parallel VTU files
+   * @brief Gather solution information to generate output results
+   *
+   * @param[in] solution Vector of present solution
+   * @param[out] solution_output_structs Vector of OutputStructs that will be
+   * used to write the output results as VTU files
+   */
+  void
+  gather_output_results(
+    const VectorType                           &solution,
+    std::vector<OutputStruct<dim, VectorType>> &solution_output_structs);
+
+  /**
+   * @brief Generate post-processing parallel VTU files from vector of
+   * solution_output_struct
+   *
+   * @param[in] solution Vector of present solution
    */
   void
   write_output_results(const VectorType &solution);
@@ -946,7 +960,6 @@ protected:
   VectorType local_evaluation_point;
   VectorType newton_update;
   VectorType present_solution;
-
   VectorType system_rhs;
 
   // Previous solutions vectors

@@ -5,6 +5,10 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
 ### [Master] - 2025-08-19
 
+### Changed
+
+- MINOR Refactor write_output_results into two functions: one that gathers the outputs into a container (vector of structs) and another one that instantiates the DataOut object and fills it with the gathered data. The struct data structure is also created in this PR. Lastly, it deprecates the postprocessor smoothing feature. [#1624](https://github.com/chaos-polymtl/lethe/pull/1624)
+
 ### Fixed
 
 - MINOR The matrix-free version of the TGV example did not use the fix pressure constant option. This prevented the prm file from being robust if you modified the CFL, the order or anything similar. I have added the fix pressure constant option to the example to ensure that it is now robust. [#1625](https://github.com/chaos-polymtl/lethe/pull/1625)
