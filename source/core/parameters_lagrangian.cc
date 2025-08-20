@@ -1804,6 +1804,11 @@ namespace Parameters
     {
       prm.enter_subsection("particle ray tracing");
       {
+        prm.declare_entry("starting photon insertion position",
+                          "0.,0.,0.",
+                          Patterns::List(Patterns::Double()),
+                          "Location of the first photon being inserted.");
+
         prm.declare_entry("first insertion direction",
                           "1.,0.,0.",
                           Patterns::List(Patterns::Double()),
@@ -1860,6 +1865,8 @@ namespace Parameters
       // value_string_to_tensor<3>
       prm.enter_subsection("particle ray tracing");
       {
+        starting_point =
+          value_string_to_tensor<3>("starting photon insertion position");
         first_direction =
           value_string_to_tensor<3>("first insertion direction");
         number_of_photon_first_direction =
@@ -1869,13 +1876,19 @@ namespace Parameters
 
         if constexpr (dim == 2)
           {
-            if (displacement_direction[0] != 0.)
+            if (starting_point[2] != 0. || first_direction[2] != 0. ||
+                second_direction[2] != 0. || displacement_direction[2] != 0.)
               throw(std::runtime_error(
                 "When launching a particle ray tracing simulation in 2D, the third "
-                "component of the \"displacement direction\" parameter needs to be "
+                "component of the \"starting photon insertion position\", "
+                "\"first insertion direction\", "
+                "\"second insertion direction\" and "
+                "\"displacement direction\" parameters needs to be "
                 "equal to 0."));
 
-            second_direction                  = Tensor<1, 3>({0., 0., 1.});
+            if (starting_point[2] != 0.)
+
+              second_direction = Tensor<1, 3>({0., 0., 1.});
             number_of_photon_second_direction = 1;
           }
         if constexpr (dim == 3)

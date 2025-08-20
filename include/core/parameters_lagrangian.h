@@ -652,9 +652,10 @@ namespace Parameters
     template <int dim>
     struct ParticleRayTracing
     {
-      Tensor<1, 3> first_direction;        // This is a unit vector
-      Tensor<1, 3> second_direction;       // This is a unit vector
-      Tensor<1, 3> displacement_direction; // This is a unit vector
+      Point<dim>     starting_point;
+      Tensor<1, dim> first_direction;        // This is a unit vector
+      Tensor<1, dim> second_direction;       // This is a unit vector
+      Tensor<1, dim> displacement_direction; // This is a unit vector
 
       // Number of photon inserted in each direction
       unsigned int number_of_photon_first_direction;

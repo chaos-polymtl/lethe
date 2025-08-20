@@ -1,4 +1,5 @@
 foreach(_target IN ITEMS
+    lethe-dem-ray-tracing
     lethe-fluid-particles
     lethe-particles
     lethe-fluid-block

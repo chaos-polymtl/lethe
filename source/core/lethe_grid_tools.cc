@@ -1744,7 +1744,7 @@ LetheGridTools::find_line_sphere_intersection(
       const double t = -b / (2. * a);
       intersection_points.push_back(line_start + t * line_direction);
     }
-  else if (discriminant > 0.)
+  if (discriminant > 0.)
     {
       // Two intersection points
       const double sqrt_discriminant = std::sqrt(discriminant);

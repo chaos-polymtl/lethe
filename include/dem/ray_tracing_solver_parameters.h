@@ -22,6 +22,8 @@ public:
   Parameters::SimulationControl                   simulation_control;
   Parameters::Lagrangian::InsertionInfo<dim>      particle_insertion_info;
   Parameters::Lagrangian::ParticleRayTracing<dim> particle_ray_tracing_info;
+  Parameters::Lagrangian::InsertionInfo<dim>      insertion_info;
+  Parameters::Lagrangian::ModelParameters<dim>    model_parameters;
 
   // Maybe usefull later
   // Parameters::Lagrangian::FloatingWalls<dim>     floating_walls;
@@ -48,6 +50,7 @@ public:
     Parameters::SimulationControl::declare_parameters(prm);
     Parameters::Lagrangian::InsertionInfo<dim>::declare_parameters(prm);
     Parameters::Lagrangian::ParticleRayTracing<dim>::declare_parameters(prm);
+    Parameters::Lagrangian::ModelParameters<dim>::declare_parameters(prm);
   }
 
   void
