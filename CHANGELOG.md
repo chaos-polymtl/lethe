@@ -3,6 +3,11 @@
 All notable changes to the Lethe project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
+### [Master] - 2025-08-25
+
+### Added
+
+- MAJOR The void fraction manager has been refactored to become the particle_projector. This class now manages not only the calculation of the void fraction, but it can also project other particle fields onto the triangulation. Right now the only field that can be projected is the particle velocity, but additional fields can be easily added to the method. [#1614](https://github.com/chaos-polymtl/lethe/pull/1614)
 
 ### [Master] - 2025-08-20
 
@@ -26,13 +31,11 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
 - MINOR The mortar indices were being computed according to the cell face center, and not taking into account in which side of the mortar the cell was placed. This led to rounding issues for very refined meshes, when the distribution of local and ghost mortar cells would fail. This has been fixed by adding a bool is_inner to identify the mortar cell side. [#1623](https://github.com/chaos-polymtl/lethe/pull/1623)
 
-### [Master] - 2025-08-08
+### [Master] - 2025-08-14
 
 ### Fixed
 
 - MAJOR Add check for heat transfer request when solving multiphysics simulations with the matrix-free solver. This is a tiny change, but without this check an error was triggered upon running a multiphysics simulation without heat transfer.[#1622](https://github.com/chaos-polymtl/lethe/pull/1622)
-
-### [Master] - 2025-08-14
 
 ### Changed
 
@@ -58,6 +61,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
 - MINOR The function to write the collision logs is modified to manage the way MPI processes can access the .csv file to write the data. A forced synchronization of the MPI processes is imposed to avoid corrupting the data. The particle diameter and mass is added to the collision log, and a dem_current_time is calculated in CFD-DEM. [#1613](https://github.com/chaos-polymtl/lethe/pull/1613)
 
+
 ### [Master] - 2025-08-11
 
 ### Added
@@ -70,9 +74,6 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
 - MINOR The mortar update was not accounting for the updated constraints when rotating the mesh, and the initial condition was being erased when updating the mortar information. This has been fixed. This PR also changes the way msh files are read, so that two separate rotor/stator meshes are taken as input (the same way it was done for dealii grids). [#1614](https://github.com/chaos-polymtl/lethe/pull/1614)
 
-### [Master] - 2025-08-08
-
-### Fixed
 
 - MINOR Account for a reference rotation in the mortar coupling manager. This is nedded for cases where the initial mesh contain cells with edges not aligned with the x axis. [#1611](https://github.com/chaos-polymtl/lethe/pull/1611)
 

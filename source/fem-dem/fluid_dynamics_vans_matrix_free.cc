@@ -44,7 +44,7 @@ MFNavierStokesVANSPreconditionGMG<dim>::initialize(
   FlowControl<dim>                         &flow_control,
   const VectorType                         &present_solution,
   const VectorType                         &time_derivative_previous_solutions,
-  const VoidFractionBase<dim>              &void_fraction_manager)
+  const ParticleProjector<dim>             &void_fraction_manager)
 {
   if (this->simulation_parameters.linear_solver.at(PhysicsID::fluid_dynamics)
         .preconditioner == Parameters::LinearSolver::PreconditionerType::lsmg)
@@ -135,7 +135,7 @@ FluidDynamicsVANSMatrixFree<dim>::FluidDynamicsVANSMatrixFree(
   , particle_handler(*this->triangulation,
                      particle_mapping,
                      DEM::CFDDEMProperties::n_properties)
-  , void_fraction_manager(
+  , particle_projector(
       &(*this->triangulation),
       param.void_fraction,
       this->cfd_dem_simulation_parameters.cfd_parameters.linear_solver.at(
@@ -177,8 +177,8 @@ FluidDynamicsVANSMatrixFree<dim>::setup_dofs()
 {
   FluidDynamicsMatrixFree<dim>::setup_dofs();
 
-  void_fraction_manager.setup_dofs();
-  void_fraction_manager.setup_constraints(
+  particle_projector.setup_dofs();
+  particle_projector.setup_constraints(
     this->cfd_dem_simulation_parameters.cfd_parameters.boundary_conditions);
 }
 
@@ -269,7 +269,7 @@ FluidDynamicsVANSMatrixFree<dim>::finish_time_step_fd()
 {
   // Void fraction percolation must be done before the time step is finished to
   // ensure that the checkpointed information is correct
-  void_fraction_manager.percolate_void_fraction();
+  particle_projector.percolate_void_fraction();
 
   FluidDynamicsMatrixFree<dim>::finish_time_step();
 }
@@ -278,8 +278,8 @@ template <int dim>
 void
 FluidDynamicsVANSMatrixFree<dim>::output_field_hook(DataOut<dim> &data_out)
 {
-  data_out.add_data_vector(void_fraction_manager.dof_handler,
-                           void_fraction_manager.void_fraction_locally_relevant,
+  data_out.add_data_vector(particle_projector.dof_handler,
+                           particle_projector.void_fraction_locally_relevant,
                            "void_fraction");
 }
 
@@ -307,7 +307,7 @@ FluidDynamicsVANSMatrixFree<dim>::solve()
 
   this->setup_dofs();
 
-  void_fraction_manager.calculate_void_fraction(
+  particle_projector.calculate_void_fraction(
     this->simulation_control->get_current_time());
 
   this->set_initial_condition(
@@ -357,7 +357,7 @@ FluidDynamicsVANSMatrixFree<dim>::solve()
       // operator
       {
         TimerOutput::Scope t(this->computing_timer, "Calculate void fraction");
-        void_fraction_manager.calculate_void_fraction(
+        particle_projector.calculate_void_fraction(
           this->simulation_control->get_current_time());
 
         // The base matrix-free operator is not aware of the void fraction. We
@@ -365,8 +365,8 @@ FluidDynamicsVANSMatrixFree<dim>::solve()
         if (auto mf_operator = dynamic_cast<VANSOperator<dim, double> *>(
               this->system_operator.get()))
           mf_operator->compute_void_fraction(
-            void_fraction_manager.void_fraction_solution,
-            void_fraction_manager.dof_handler);
+            particle_projector.void_fraction_solution,
+            particle_projector.dof_handler);
       }
 
       this->iterate();
@@ -413,7 +413,7 @@ FluidDynamicsVANSMatrixFree<dim>::initialize_GMG()
                  this->flow_control,
                  this->present_solution,
                  this->time_derivative_previous_solutions,
-                 this->void_fraction_manager);
+                 this->particle_projector);
 }
 
 // Pre-compile the 2D and 3D solver to ensure that the

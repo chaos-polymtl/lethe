@@ -7,7 +7,7 @@
 #include <solvers/fluid_dynamics_matrix_free.h>
 
 #include <fem-dem/cfd_dem_simulation_parameters.h>
-#include <fem-dem/void_fraction.h>
+#include <fem-dem/particle_projector.h>
 
 
 /**
@@ -58,15 +58,15 @@ public:
    * @param[in] present_solution Current solution for the VANS equation.
    * @param[in] time_derivative_previous_solutions Pre-calculated time
    * derivative.
-   * @param[in] void_fraction_manager Manage for the void fraction. This is used
+   * @param[in] particle_projector Manage for the void fraction. This is used
    * to obtain the void fraction on the levels of the grid.
    */
   void
   initialize(const std::shared_ptr<SimulationControl> &simulation_control,
              FlowControl<dim>                         &flow_control,
              const VectorType                         &present_solution,
-             const VectorType            &time_derivative_previous_solutions,
-             const VoidFractionBase<dim> &void_fraction_manager);
+             const VectorType             &time_derivative_previous_solutions,
+             const ParticleProjector<dim> &particle_projector);
 
 private:
   /// Reference to the simulation parameters
@@ -170,7 +170,7 @@ protected:
 
   /// Object that manages the void fraction calculation from functions
   /// or from parameters.
-  VoidFractionBase<dim> void_fraction_manager;
+  ParticleProjector<dim> particle_projector;
 
   /// Member variables which are used to manage boundary conditions
   bool           has_periodic_boundaries;
