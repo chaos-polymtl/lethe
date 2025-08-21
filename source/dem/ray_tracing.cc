@@ -433,7 +433,7 @@ RayTracingSolver<dim>::solve()
 
   while (photon_handler.n_global_particles() != 0)
     {
-      std::cout << "Remaining photon : " << photon_handler.n_global_particles()
+      pcout << "Remaining photon : " << photon_handler.n_global_particles()
                 << std::endl;
       // Load balancing (if needed)
       load_balance();
