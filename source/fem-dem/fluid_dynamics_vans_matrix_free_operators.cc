@@ -2,7 +2,6 @@
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
 #include <fem-dem/fluid_dynamics_vans_matrix_free_operators.h>
-#include <fem-dem/particle_projector.h>
 
 template <int dim, typename number>
 void
