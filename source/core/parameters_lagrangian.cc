@@ -1817,10 +1817,10 @@ namespace Parameters
                           "0.,1.,0.",
                           Patterns::List(Patterns::Double()),
                           "photon displacement direction .");
-        prm.declare_entry("displacement direction",
+        prm.declare_entry("photon displacement vector",
                           "0.,0.,1.",
                           Patterns::List(Patterns::Double()),
-                          "Direction vector where the photon will move.");
+                          "Displacement vector of each photons.");
 
         prm.declare_entry("number of photon first direction",
                           "1",
@@ -1880,8 +1880,8 @@ namespace Parameters
           prm.get_integer("number of photon first direction");
         number_of_photon_second_direction =
           prm.get_integer("number of photon second direction");
-        displacement_direction =
-          value_string_to_tensor<dim>(prm.get("displacement direction"));
+        photon_displacement_vector =
+          value_string_to_tensor<dim>(prm.get("photon displacement vector"));
 
         second_direction =
           value_string_to_tensor<dim>(prm.get("second insertion direction"));
@@ -1891,7 +1891,8 @@ namespace Parameters
         // if constexpr (dim == 2)
         //   {
         //     if (starting_point[2] != 0. || first_direction[2] != 0. ||
-        //         second_direction[2] != 0. || displacement_direction[2] != 0.
+        //         second_direction[2] != 0. || photon_displacement_vector[2] !=
+        //         0.
         //         || number_of_photon_second_direction != 1l)
         //       {
         //         throw(std::runtime_error(

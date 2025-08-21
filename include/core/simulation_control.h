@@ -532,6 +532,12 @@ public:
    */
   std::vector<double>
   get_checkpointed_simulation_control_info(const std::string &prefix);
+
+  void
+  increment_iteration()
+  {
+    iteration_number++;
+  };
 };
 
 
