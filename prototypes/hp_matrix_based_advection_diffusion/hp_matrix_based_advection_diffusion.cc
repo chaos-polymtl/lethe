@@ -507,7 +507,15 @@ MatrixBasedAdvectionDiffusion<dim, fe_degree>::MatrixBasedAdvectionDiffusion(
       face_quadrature_collection.push_back(QGauss<dim - 1>(degree + 1));
     }
 
-  // TODO - In the dealii step 75, additional code is present in the constructor. During execution of refinement, a few hp-algorithms need to interfere with the actual refinement process on the Triangulation object. This is done by connecting several functions to Triangulation::Signals: signals will be called at different stages during the actual refinement process and trigger all connected functions. We require this functionality for load balancing and to limit the polynomial degrees of neighboring cells. this would need to be added here as well. The code is still functional without it.
+  // TODO - In the dealii step 75, additional code is present in the
+  // constructor. During execution of refinement, a few hp-algorithms need to
+  // interfere with the actual refinement process on the Triangulation object.
+  // This is done by connecting several functions to Triangulation::Signals:
+  // signals will be called at different stages during the actual refinement
+  // process and trigger all connected functions. We require this functionality
+  // for load balancing and to limit the polynomial degrees of neighboring
+  // cells. this would need to be added here as well. The code is still
+  // functional without it.
 }
 
 
