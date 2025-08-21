@@ -2427,7 +2427,7 @@ namespace Parameters
   void
   Mesh::declare_parameters(ParameterHandler &prm)
   {
-    prm.enter_subsection("mesh");
+      prm.enter_subsection("mesh");
     {
       prm.declare_entry("type",
                         "dealii",
@@ -2533,7 +2533,7 @@ namespace Parameters
   void
   Mesh::parse_parameters(ParameterHandler &prm)
   {
-    prm.enter_subsection("mesh");
+      prm.enter_subsection("mesh");
     {
       {
         const std::string op = prm.get("type");

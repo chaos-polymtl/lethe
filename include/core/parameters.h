@@ -1445,6 +1445,14 @@ namespace Parameters
   };
 
   /**
+ * @brief PatchMesh - Parameters that control patch mesh reading and patch mesh generation, which is used in the case of output slice is enabled.
+ */
+  struct PatchMesh : Mesh
+  {
+    bool enable;
+  };
+
+  /**
    * @brief Mesh Adaptation Parameters that can differ for each refinement variable
    */
   struct MultipleAdaptationParameters

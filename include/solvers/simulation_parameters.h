@@ -32,6 +32,7 @@ public:
                              vof_subequations_non_linear_solvers;
   Parameters::MeshAdaptation mesh_adaptation;
   Parameters::Mesh           mesh;
+  Parameters::PatchMesh     patch_mesh;
   Parameters::Dimensionality dimensionality;
   std::shared_ptr<Parameters::MeshBoxRefinement>    mesh_box_refinement;
   std::shared_ptr<Parameters::Nitsche<dim>>         nitsche;
@@ -85,6 +86,7 @@ public:
     Parameters::SimulationControl::declare_parameters(prm);
     physical_properties.declare_parameters(prm);
     Parameters::Mesh::declare_parameters(prm);
+    Parameters::PatchMesh::declare_parameters(prm);
     nitsche = std::make_shared<Parameters::Nitsche<dim>>();
     nitsche->declare_parameters(prm);
     Parameters::Restart::declare_parameters(prm);
@@ -174,6 +176,7 @@ public:
 
     mesh_adaptation.parse_parameters(prm);
     mesh.parse_parameters(prm);
+    patch_mesh.parse_parameters(prm);
     mesh_box_refinement->parse_parameters(prm);
     nitsche->parse_parameters(prm);
     physical_properties.parse_parameters(prm, dimensionality);

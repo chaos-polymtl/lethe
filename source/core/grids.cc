@@ -20,7 +20,6 @@ template <int dim, int spacedim>
 void
 attach_grid_to_triangulation(Triangulation<dim, spacedim> &triangulation,
                              const Parameters::Mesh       &mesh_parameters)
-
 {
   // GMSH input
   if (mesh_parameters.type == Parameters::Mesh::Type::gmsh)
@@ -630,6 +629,42 @@ read_mesh_and_manifolds_for_stator_and_rotor(
     }
 }
 
+template <int dim, int spacedim>
+void
+read_patch_mesh(
+  parallel::DistributedTriangulationBase<dim, spacedim> &triangulation,
+  const Parameters::Mesh                                &mesh_parameters,
+  const bool &restart)
+{
+  attach_grid_to_triangulation(triangulation, mesh_parameters);
+
+  if (mesh_parameters.simplex)
+    {
+      // Refinement isn't possible yet
+    }
+  else
+    {
+      if (mesh_parameters.refine_until_target_size)
+        {
+          double minimal_cell_size =
+            GridTools::minimal_cell_diameter(triangulation);
+          double       target_size = mesh_parameters.target_size;
+          unsigned int number_refinement =
+            floor(std::log(minimal_cell_size / target_size) / std::log(2));
+          triangulation.refine_global(number_refinement);
+        }
+      else if (!restart)
+        {
+          const int initial_refinement = mesh_parameters.initial_refinement;
+          triangulation.refine_global(initial_refinement);
+          refine_triangulation_at_boundaries(
+            mesh_parameters.boundaries_to_refine,
+            mesh_parameters.initial_refinement_at_boundaries,
+            triangulation);
+        }
+    }
+}
+
 template void
 attach_grid_to_triangulation(Triangulation<2>       &triangulation,
                              const Parameters::Mesh &mesh_parameters);
@@ -692,3 +727,8 @@ read_mesh_and_manifolds_for_stator_and_rotor(
   const bool                                   &restart,
   const BoundaryConditions::BoundaryConditions &boundary_conditions,
   const Parameters::Mortar<3>                  &mortar_parameters);
+
+template void
+read_patch_mesh(parallel::DistributedTriangulationBase<2, 3> &triangulation,
+                const Parameters::Mesh                       &mesh_parameters,
+                const bool                                   &restart);

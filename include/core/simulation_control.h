@@ -102,6 +102,9 @@ protected:
   // Output name
   std::string output_name;
 
+  // Patch output name - used for outputs of slices
+  std::string patch_output_name;
+
   // Output path
   std::string output_path;
 
@@ -394,6 +397,12 @@ public:
   get_output_name() const
   {
     return output_name;
+  }
+
+  std::string
+get_patch_output_name() const
+  {
+    return patch_output_name;
   }
 
   std::string

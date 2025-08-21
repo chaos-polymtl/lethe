@@ -873,6 +873,16 @@ protected:
   write_output_results(const VectorType &solution);
 
   /**
+   * @brief Generate post-processing parallel VTU files from vector of
+   * solution_output_struct
+   *
+   * @param[in] solution_output_structs Vector of OutputStructs that will be
+   * used to write the output results as VTU files
+   */
+  void
+  write_output_results_slice(const std::vector<OutputStruct<dim, VectorType>> &solution_output_structs);
+
+  /**
    * @brief This function is to be redefined in specialized classes to adapt the output
    * to each solver.
    */
@@ -936,6 +946,7 @@ protected:
   const unsigned int this_mpi_process;
 
   std::shared_ptr<parallel::DistributedTriangulationBase<dim>> triangulation;
+  std::shared_ptr<parallel::distributed::Triangulation<dim - 1, dim>> patch_triangulation;
   DoFHandler<dim>                                              dof_handler;
   std::shared_ptr<FESystem<dim>>                               fe;
 
@@ -943,6 +954,7 @@ protected:
 
   SimulationParameters<dim> simulation_parameters;
   PVDHandler                pvdhandler;
+  PVDHandler                patch_pvdhandler;
 
   // Functions used for source term and error analysis
   Function<dim>                 *exact_solution;
@@ -998,6 +1010,7 @@ protected:
 
   // Mappings and Quadratures
   std::shared_ptr<Mapping<dim>>        mapping;
+  std::shared_ptr<MappingQ<dim - 1, dim>>    patch_mapping;
   std::shared_ptr<Quadrature<dim>>     cell_quadrature;
   std::shared_ptr<Quadrature<dim - 1>> face_quadrature;
 

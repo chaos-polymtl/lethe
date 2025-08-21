@@ -3022,6 +3022,69 @@ NavierStokesBase<dim, VectorType, DofsType>::write_output_results(
 
 template <int dim, typename VectorType, typename DofsType>
 void
+NavierStokesBase<dim, VectorType, DofsType>::write_output_results_slice(
+  const std::vector<OutputStruct<dim, VectorType>> &solution_output_structs)
+{
+  TimerOutput::Scope t(this->computing_timer, "Output slice results");
+
+  const std::string  folder        = simulation_control->get_output_path();
+  const std::string  solution_name = simulation_control->get_patch_output_name();
+  const unsigned int iter          = simulation_control->get_step_number();
+  const double       time          = simulation_control->get_current_time();
+  const unsigned int subdivision = simulation_control->get_number_subdivision();
+  const unsigned int group_files = simulation_control->get_group_files();
+
+    // Create data output object
+  DataOutResample<dim, dim - 1, dim> data_out(*patch_triangulation,
+                                              *patch_mapping);
+
+  // Additional flag to enable the output of high-order elements
+  DataOutBase::VtkFlags flags;
+  if (this->velocity_fem_degree > 1)
+    flags.write_higher_order_cells = true;
+  data_out.set_flags(flags);
+
+  // Fill data out object with solutions in structs
+  for (const auto &solution_output_struct : solution_output_structs)
+    {
+      if (auto solution_struct =
+            std::get_if<OutputStructSolution<dim, VectorType>>(
+              &solution_output_struct))
+        {
+          // auto solution_output = *solution_struct;
+          data_out.add_data_vector(
+            solution_struct->dof_handler,
+            solution_struct->solution,
+            solution_struct->solution_names,
+            solution_struct->data_component_interpretation);
+        }
+      else if (auto postprocessor_struct =
+                 std::get_if<OutputStructPostprocessor<dim, VectorType>>(
+                   &solution_output_struct))
+        {
+          data_out.add_data_vector(postprocessor_struct->dof_handler,
+                                   postprocessor_struct->solution,
+                                   *postprocessor_struct->data_postprocessor);
+        }
+    }
+
+  // Build the patches and write the output
+  data_out.build_patches(*this->get_mapping(),
+                         subdivision,
+                         DataOut<dim -1, dim>::curved_inner_cells);
+
+  write_vtu_and_pvd<dim-1, dim>(this->patch_pvdhandler,
+                         data_out,
+                         folder,
+                         solution_name,
+                         time,
+                         iter,
+                         group_files,
+                         this->mpi_communicator);
+}
+
+template <int dim, typename VectorType, typename DofsType>
+void
 NavierStokesBase<dim, VectorType, DofsType>::write_output_forces()
 {
   TimerOutput::Scope t(this->computing_timer, "Output forces");
