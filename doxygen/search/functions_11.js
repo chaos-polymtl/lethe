@@ -1,7 +1,7 @@
 var searchData=
 [
   ['radioparticle_0',['RadioParticle',['../classRadioParticle.html#a2802bbe4d9567d04127349acc67e4279',1,'RadioParticle']]],
-  ['radius_5fsphere_5fequivalent_5fvolume_1',['radius_sphere_equivalent_volume',['../classVoidFractionBase.html#a4ceba620c04395d68a98c38e25914ebb',1,'VoidFractionBase']]],
+  ['radius_5fsphere_5fequivalent_5fvolume_1',['radius_sphere_equivalent_volume',['../classParticleProjector.html#a317c5f25d381d41b201d1509a4bdd61a',1,'ParticleProjector']]],
   ['radius_5fto_5fpoint_2',['radius_to_point',['../utilities_8h.html#a0bea60f70f692902d4d84d9cf118ccaf',1,'utilities.h']]],
   ['rbfshape_3',['RBFShape',['../classRBFShape.html#a13f71f237f94f59d7f400402c5c2ef94',1,'RBFShape']]],
   ['read_4',['read',['../classBufferRW.html#aad04419f0ce470df3fdb5671c7fa0863',1,'BufferRW::read(Tensor&lt; 1, dim, T &gt; &amp;out) const'],['../classBufferRW.html#abf7c09c365fc2a90c54718bc9b822b49',1,'BufferRW::read() const'],['../classAverageVelocities.html#ad018b134f104e2aa574f7d329f5f1a5e',1,'AverageVelocities::read()'],['../classAverageScalar.html#ae6187f27b7f02f394e5942a29ad4ff08',1,'AverageScalar::read()'],['../classFlowControl.html#a4421d3fa66392a41b0d800c36f6a9492',1,'FlowControl::read()'],['../classSimulationControl.html#a414fd0b7da77e067991b56af939ee66f',1,'SimulationControl::read()'],['../classPVDHandler.html#a30f3d5972ae0d04ceaf600789def6c11',1,'PVDHandler::read()'],['../classBufferRW.html#a0d2c30b41bb185a34adde8d1561c17fd',1,'BufferRW::read()'],['../classSimulationControlTransient.html#a429eb8571bdd48e1a9579435318296f0',1,'SimulationControlTransient::read()']]],

@@ -25,7 +25,5 @@ var searchData=
   ['vof_5fscratch_5fdata_2eh_22',['vof_scratch_data.h',['../vof__scratch__data_8h.html',1,'']]],
   ['vof_5fsubequations_2eh_23',['vof_subequations.h',['../vof__subequations_8h.html',1,'']]],
   ['vof_5fsubequations_5finterface_2ecc_24',['vof_subequations_interface.cc',['../vof__subequations__interface_8cc.html',1,'']]],
-  ['vof_5fsubequations_5finterface_2eh_25',['vof_subequations_interface.h',['../vof__subequations__interface_8h.html',1,'']]],
-  ['void_5ffraction_2ecc_26',['void_fraction.cc',['../void__fraction_8cc.html',1,'']]],
-  ['void_5ffraction_2eh_27',['void_fraction.h',['../void__fraction_8h.html',1,'']]]
+  ['vof_5fsubequations_5finterface_2eh_25',['vof_subequations_interface.h',['../vof__subequations__interface_8h.html',1,'']]]
 ];

@@ -94,17 +94,17 @@ Inheritance diagram for PhysicsLinearSubequationsSolver:</div>
 <div class="dyncontent">
 <div class="center"><img src="classPhysicsLinearSubequationsSolver__inherit__graph.png" border="0" usemap="#aPhysicsLinearSubequationsSolver_inherit__map" alt="Inheritance graph"/></div>
 <map name="aPhysicsLinearSubequationsSolver_inherit__map" id="aPhysicsLinearSubequationsSolver_inherit__map">
-<area shape="rect" title="Linear subequations solved inside a physics (or auxiliary physics) that are not part of the main set ..." alt="" coords="218,79,417,119"/>
-<area shape="rect" href="classVOFLinearSubequationsSolver.html" title="Generalized solver for VOF linear subequations." alt="" coords="95,167,313,207"/>
-<area shape="poly" title=" " alt="" coords="283,129,231,169,227,164,280,125"/>
-<area shape="rect" href="classVoidFractionBase.html" title="Void fraction calculator. This class manages the calculation of the void fraction which is used as an..." alt="" coords="337,174,527,199"/>
-<area shape="poly" title=" " alt="" coords="356,125,418,171,415,176,352,129"/>
-<area shape="rect" href="classPhysicsSubequationsSolverBase.html" title="Base class to solve subequations solved inside a physics (or auxiliary physics) that are not part of ..." alt="" coords="201,5,433,31"/>
-<area shape="poly" title=" " alt="" coords="320,44,320,79,315,79,315,44"/>
-<area shape="rect" href="classVOFCurvatureProjection.html" title="VOF curvature L2 projection solver." alt="" coords="5,255,184,295"/>
-<area shape="poly" title=" " alt="" coords="171,217,121,257,117,252,167,213"/>
-<area shape="rect" href="classVOFPhaseGradientProjection.html" title="VOF phase fraction gradient L2 projection solver." alt="" coords="209,255,418,295"/>
-<area shape="poly" title=" " alt="" coords="241,213,291,252,287,257,237,217"/>
+<area shape="rect" title="Linear subequations solved inside a physics (or auxiliary physics) that are not part of the main set ..." alt="" coords="77,79,275,119"/>
+<area shape="rect" href="classParticleProjector.html" title="Particle information projection. This class manages the calculation of the projection of the particle..." alt="" coords="5,167,144,207"/>
+<area shape="poly" title=" " alt="" coords="145,130,99,168,95,164,141,126"/>
+<area shape="rect" href="classVOFLinearSubequationsSolver.html" title="Generalized solver for VOF linear subequations." alt="" coords="168,167,387,207"/>
+<area shape="poly" title=" " alt="" coords="211,126,257,164,253,168,207,130"/>
+<area shape="rect" href="classPhysicsSubequationsSolverBase.html" title="Base class to solve subequations solved inside a physics (or auxiliary physics) that are not part of ..." alt="" coords="60,5,292,31"/>
+<area shape="poly" title=" " alt="" coords="179,44,179,79,173,79,173,44"/>
+<area shape="rect" href="classVOFCurvatureProjection.html" title="VOF curvature L2 projection solver." alt="" coords="79,255,257,295"/>
+<area shape="poly" title=" " alt="" coords="244,217,194,257,191,252,241,213"/>
+<area shape="rect" href="classVOFPhaseGradientProjection.html" title="VOF phase fraction gradient L2 projection solver." alt="" coords="282,255,491,295"/>
+<area shape="poly" title=" " alt="" coords="314,213,364,252,361,257,311,217"/>
 </map>
 <center><span class="legend">[<a href="graph_legend.html">legend</a>]</span></center></div>
 <table class="memberdecls">
@@ -122,8 +122,8 @@ Public Member Functions</h2></td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pro-methods" name="pro-methods"></a>
 Protected Member Functions</h2></td></tr>
-<tr class="memitem:ad07b8e3652412522f754006c783aa450" id="r_ad07b8e3652412522f754006c783aa450"><td class="memItemLeft" align="right" valign="top">virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classPhysicsLinearSubequationsSolver.html#ad07b8e3652412522f754006c783aa450">solve_linear_system_and_update_solution</a> ()=0</td></tr>
-<tr class="separator:ad07b8e3652412522f754006c783aa450"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a0ec6154318a4ec53bb688efad6b7580d" id="r_a0ec6154318a4ec53bb688efad6b7580d"><td class="memItemLeft" align="right" valign="top">virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classPhysicsLinearSubequationsSolver.html#a0ec6154318a4ec53bb688efad6b7580d">solve_void_fraction_linear_system</a> ()=0</td></tr>
+<tr class="separator:a0ec6154318a4ec53bb688efad6b7580d"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pro-attribs" name="pro-attribs"></a>
 Protected Attributes</h2></td></tr>
@@ -199,8 +199,8 @@ Protected Attributes</h2></td></tr>
 </div>
 </div>
 <h2 class="groupheader">Member Function Documentation</h2>
-<a id="ad07b8e3652412522f754006c783aa450" name="ad07b8e3652412522f754006c783aa450"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ad07b8e3652412522f754006c783aa450">&#9670;&#160;</a></span>solve_linear_system_and_update_solution()</h2>
+<a id="a0ec6154318a4ec53bb688efad6b7580d" name="a0ec6154318a4ec53bb688efad6b7580d"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a0ec6154318a4ec53bb688efad6b7580d">&#9670;&#160;</a></span>solve_void_fraction_linear_system()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -209,7 +209,7 @@ Protected Attributes</h2></td></tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">virtual void PhysicsLinearSubequationsSolver::solve_linear_system_and_update_solution </td>
+          <td class="memname">virtual void PhysicsLinearSubequationsSolver::solve_void_fraction_linear_system </td>
           <td>(</td>
           <td class="paramname"></td><td>)</td>
           <td></td>
@@ -224,7 +224,7 @@ Protected Attributes</h2></td></tr>
 
 <p>Solve the linear system associated with the equation to solve, when the equation is already linear. </p>
 
-<p>Implemented in <a class="el" href="classVoidFractionBase.html#a854f5030edd325f9778a801a02adff97">VoidFractionBase&lt; dim &gt;</a>, and <a class="el" href="classVOFLinearSubequationsSolver.html#a8d4c0e7c27d21c71bb400a3027b58f57">VOFLinearSubequationsSolver&lt; dim &gt;</a>.</p>
+<p>Implemented in <a class="el" href="classParticleProjector.html#a7be4e217e77a62656899e34f3ea5e40e">ParticleProjector&lt; dim &gt;</a>, and <a class="el" href="classVOFLinearSubequationsSolver.html#a9360fe6bf7d1a2c1e056efe21f28cd0b">VOFLinearSubequationsSolver&lt; dim &gt;</a>.</p>
 
 </div>
 </div>

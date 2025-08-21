@@ -294,8 +294,8 @@ Protected Attributes</h2></td></tr>
 <tr class="separator:aa995e084e506cada53a4fb82f68c3146"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a68668bec00e18be38c6a0f1937b29e19" id="r_a68668bec00e18be38c6a0f1937b29e19"><td class="memItemLeft" align="right" valign="top">Particles::ParticleHandler&lt; dim, dim &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classFluidDynamicsVANSMatrixFree.html#a68668bec00e18be38c6a0f1937b29e19">particle_handler</a></td></tr>
 <tr class="separator:a68668bec00e18be38c6a0f1937b29e19"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a12b15eef152eaa7d688f12561cdea087" id="r_a12b15eef152eaa7d688f12561cdea087"><td class="memItemLeft" align="right" valign="top"><a class="el" href="classVoidFractionBase.html">VoidFractionBase</a>&lt; dim &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classFluidDynamicsVANSMatrixFree.html#a12b15eef152eaa7d688f12561cdea087">void_fraction_manager</a></td></tr>
-<tr class="separator:a12b15eef152eaa7d688f12561cdea087"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a899b33fbf7b3134148beb4692963d0cd" id="r_a899b33fbf7b3134148beb4692963d0cd"><td class="memItemLeft" align="right" valign="top"><a class="el" href="classParticleProjector.html">ParticleProjector</a>&lt; dim &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classFluidDynamicsVANSMatrixFree.html#a899b33fbf7b3134148beb4692963d0cd">particle_projector</a></td></tr>
+<tr class="separator:a899b33fbf7b3134148beb4692963d0cd"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ac33a8c63495f78d28921f7584e822108" id="r_ac33a8c63495f78d28921f7584e822108"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classFluidDynamicsVANSMatrixFree.html#ac33a8c63495f78d28921f7584e822108">has_periodic_boundaries</a></td></tr>
 <tr class="separator:ac33a8c63495f78d28921f7584e822108"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a416ece969765f0c9d1ce21cd94419912" id="r_a416ece969765f0c9d1ce21cd94419912"><td class="memItemLeft" align="right" valign="top">Tensor&lt; 1, dim &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classFluidDynamicsVANSMatrixFree.html#a416ece969765f0c9d1ce21cd94419912">periodic_offset</a></td></tr>
@@ -835,6 +835,33 @@ template&lt;int dim&gt; </div>
 
 </div>
 </div>
+<a id="a899b33fbf7b3134148beb4692963d0cd" name="a899b33fbf7b3134148beb4692963d0cd"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a899b33fbf7b3134148beb4692963d0cd">&#9670;&#160;</a></span>particle_projector</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;int dim&gt; </div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="classParticleProjector.html">ParticleProjector</a>&lt;dim&gt; <a class="el" href="classFluidDynamicsVANSMatrixFree.html">FluidDynamicsVANSMatrixFree</a>&lt; dim &gt;::particle_projector</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">protected</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+<p>Object that manages the void fraction calculation from functions or from parameters. </p>
+
+<p class="definition">Definition at line <a class="el" href="fluid__dynamics__vans__matrix__free_8h_source.html#l00173">173</a> of file <a class="el" href="fluid__dynamics__vans__matrix__free_8h_source.html">fluid_dynamics_vans_matrix_free.h</a>.</p>
+
+</div>
+</div>
 <a id="a6b4df791060b759a497143d47d7c1211" name="a6b4df791060b759a497143d47d7c1211"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a6b4df791060b759a497143d47d7c1211">&#9670;&#160;</a></span>periodic_direction</h2>
 
@@ -884,33 +911,6 @@ template&lt;int dim&gt; </div>
 </div><div class="memdoc">
 
 <p class="definition">Definition at line <a class="el" href="fluid__dynamics__vans__matrix__free_8h_source.html#l00177">177</a> of file <a class="el" href="fluid__dynamics__vans__matrix__free_8h_source.html">fluid_dynamics_vans_matrix_free.h</a>.</p>
-
-</div>
-</div>
-<a id="a12b15eef152eaa7d688f12561cdea087" name="a12b15eef152eaa7d688f12561cdea087"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a12b15eef152eaa7d688f12561cdea087">&#9670;&#160;</a></span>void_fraction_manager</h2>
-
-<div class="memitem">
-<div class="memproto">
-<div class="memtemplate">
-template&lt;int dim&gt; </div>
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname"><a class="el" href="classVoidFractionBase.html">VoidFractionBase</a>&lt;dim&gt; <a class="el" href="classFluidDynamicsVANSMatrixFree.html">FluidDynamicsVANSMatrixFree</a>&lt; dim &gt;::void_fraction_manager</td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">protected</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-<p>Object that manages the void fraction calculation from functions or from parameters. </p>
-
-<p class="definition">Definition at line <a class="el" href="fluid__dynamics__vans__matrix__free_8h_source.html#l00173">173</a> of file <a class="el" href="fluid__dynamics__vans__matrix__free_8h_source.html">fluid_dynamics_vans_matrix_free.h</a>.</p>
 
 </div>
 </div>

@@ -8,12 +8,12 @@
 <area shape="poly" id="edge8_Node000001_Node000009" title=" " alt="" coords="192,102,316,131,315,136,191,108"/>
 <area shape="rect" id="Node000003" href="$classVOFAlgebraicInterfaceReinitialization.html" title="VOF algebraic reinitialization solver." alt="" coords="572,5,836,45"/>
 <area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="538,23,572,23,572,28,538,28"/>
-<area shape="rect" id="Node000005" href="$classVOFLinearSubequationsSolver.html" title="Generalized solver for VOF linear subequations." alt="" coords="595,69,813,109"/>
-<area shape="poly" id="edge4_Node000004_Node000005" title=" " alt="" coords="518,87,594,87,594,92,518,92"/>
-<area shape="rect" id="Node000008" href="$classVoidFractionBase.html" title="Void fraction calculator. This class manages the calculation of the void fraction which is used as an..." alt="" coords="609,134,799,159"/>
-<area shape="poly" id="edge7_Node000004_Node000008" title=" " alt="" coords="518,108,637,131,636,137,517,114"/>
-<area shape="rect" id="Node000006" href="$classVOFCurvatureProjection.html" title="VOF curvature L2 projection solver." alt="" coords="899,37,1078,77"/>
-<area shape="poly" id="edge5_Node000005_Node000006" title=" " alt="" coords="827,73,899,65,899,70,827,78"/>
-<area shape="rect" id="Node000007" href="$classVOFPhaseGradientProjection.html" title="VOF phase fraction gradient L2 projection solver." alt="" coords="884,101,1093,141"/>
-<area shape="poly" id="edge6_Node000005_Node000007" title=" " alt="" coords="827,101,884,107,883,112,827,106"/>
+<area shape="rect" id="Node000005" href="$classParticleProjector.html" title="Particle information projection. This class manages the calculation of the projection of the particle..." alt="" coords="635,69,773,109"/>
+<area shape="poly" id="edge4_Node000004_Node000005" title=" " alt="" coords="518,87,635,87,635,92,518,92"/>
+<area shape="rect" id="Node000006" href="$classVOFLinearSubequationsSolver.html" title="Generalized solver for VOF linear subequations." alt="" coords="595,133,813,173"/>
+<area shape="poly" id="edge5_Node000004_Node000006" title=" " alt="" coords="513,110,611,131,609,136,512,115"/>
+<area shape="rect" id="Node000007" href="$classVOFCurvatureProjection.html" title="VOF curvature L2 projection solver." alt="" coords="899,101,1078,141"/>
+<area shape="poly" id="edge6_Node000006_Node000007" title=" " alt="" coords="827,137,899,129,899,134,827,142"/>
+<area shape="rect" id="Node000008" href="$classVOFPhaseGradientProjection.html" title="VOF phase fraction gradient L2 projection solver." alt="" coords="884,165,1093,205"/>
+<area shape="poly" id="edge7_Node000006_Node000008" title=" " alt="" coords="827,165,884,171,883,176,827,170"/>
 </map>
