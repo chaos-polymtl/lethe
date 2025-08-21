@@ -35,7 +35,8 @@ RayTracingSolver<dim>::RayTracingSolver(
                     TimerOutput::summary,
                     TimerOutput::wall_times)
   , background_dh(triangulation)
-  , displacement_direction(parameters.ray_tracing_info.displacement_direction)
+  , photon_displacement_vector(
+      parameters.ray_tracing_info.photon_displacement_vector)
 {
   if (parameters.model_parameters.load_balance_method ==
         Parameters::Lagrangian::ModelParameters<
@@ -148,12 +149,14 @@ RayTracingSolver<dim>::load_balance()
   // Prepare particle handler for the adaptation of the triangulation to the
   // load
   photon_handler.prepare_for_coarsening_and_refinement();
+  particle_handler.prepare_for_coarsening_and_refinement();
 
   pcout << "-->Repartitionning triangulation" << std::endl;
   triangulation.repartition();
 
   // Unpack the photon handler after the mesh has been repartitioned
   photon_handler.unpack_after_coarsening_and_refinement();
+  particle_handler.unpack_after_coarsening_and_refinement();
 
   const auto average_minimum_maximum_cells =
     Utilities::MPI::min_max_avg(triangulation.n_active_cells(),
@@ -175,17 +178,21 @@ RayTracingSolver<dim>::load_balance()
 
   setup_background_dofs();
 
-  // Update cell neighbors
-  find_cell_neighbors<dim, true>(triangulation,
-                                 cells_local_neighbor_list,
-                                 cells_ghost_neighbor_list);
-
   // Particle don't move, thus we sort them at the end of a load balance.
   // Photons are being sorted every pseudo time step, thus no need to sort them.
   particle_handler.sort_particles_into_subdomains_and_cells();
 
   // Exchange ghost particles
   particle_handler.exchange_ghost_particles(true);
+
+  cells_local_neighbor_list.clear();
+  cells_ghost_neighbor_list.clear();
+
+  // Update cell neighbors
+  find_cell_neighbors<dim, true>(triangulation,
+                                 cells_local_neighbor_list,
+                                 cells_ghost_neighbor_list);
+
 }
 
 template <int dim>
@@ -214,7 +221,16 @@ RayTracingSolver<dim>::insert_particles_and_photons()
   // A vector which contains all the insertion point of every photon.
   std::vector<Point<dim>> insertion_points_on_proc;
 
-  unsigned int n_total_photons_to_insert = 0;
+  unsigned int max_n_photon_first_dir =
+    parameters.ray_tracing_info.number_of_photon_first_direction;
+
+  unsigned int max_n_photon_second_dir =
+    parameters.ray_tracing_info.number_of_photon_second_direction;
+
+  // Processor 0 will be the only one inserting photon
+  const unsigned int n_particles_to_insert_this_proc =
+    this_mpi_process == 0 ? max_n_photon_first_dir * max_n_photon_second_dir :
+                            0;
 
   // A vector of vectors, which contains all the properties of all particles
   // about to get inserted.
@@ -233,22 +249,10 @@ RayTracingSolver<dim>::insert_particles_and_photons()
       Tensor<1, dim> first_dir  = parameters.ray_tracing_info.first_direction;
       Tensor<1, dim> second_dir = parameters.ray_tracing_info.second_direction;
 
-      unsigned int max_n_photon_first_dir =
-        parameters.ray_tracing_info.number_of_photon_first_direction;
-      unsigned int max_n_photon_second_dir =
-        parameters.ray_tracing_info.number_of_photon_second_direction;
-      double step_first_dir =
+      const double step_first_dir =
         parameters.ray_tracing_info.step_between_photons_first_direction;
-      double step_second_dir =
+      const double step_second_dir =
         parameters.ray_tracing_info.step_between_photons_second_direction;
-
-      // Create needed variable
-      n_total_photons_to_insert =
-        max_n_photon_first_dir * max_n_photon_second_dir;
-
-      // Processor 0 will be the only one inserting photon
-      const unsigned int n_particles_to_insert_this_proc =
-        this_mpi_process == 0 ? n_total_photons_to_insert : 0;
 
       insertion_points_on_proc.reserve(n_particles_to_insert_this_proc);
 
@@ -260,15 +264,14 @@ RayTracingSolver<dim>::insert_particles_and_photons()
            ++n_first_dir)
         {
           for (unsigned int n_second_dir = 0;
-               n_second_dir < max_n_photon_first_dir;
+               n_second_dir < max_n_photon_second_dir;
                ++n_second_dir)
             {
               // Create the insertion point and emplace it.
               temp_point = [&]() {
                 if constexpr (dim == 2)
                   return starting_insertion_point +
-                         n_first_dir * step_first_dir * step_first_dir *
-                           first_dir;
+                         n_first_dir * step_first_dir * first_dir;
 
                 if constexpr (dim == 3)
                   return starting_insertion_point +
@@ -276,7 +279,7 @@ RayTracingSolver<dim>::insert_particles_and_photons()
                          n_second_dir * step_second_dir * second_dir;
               }();
 
-              insertion_points_on_proc.emplace_back(temp_point);
+              insertion_points_on_proc.push_back(temp_point);
 
               // Use the insertion point to create the property vector.
               std::vector<double> properties_of_one_photon(dim);
@@ -286,7 +289,7 @@ RayTracingSolver<dim>::insert_particles_and_photons()
               if constexpr (dim == 3)
                 properties_of_one_photon[2] = temp_point[2];
 
-              photon_properties.emplace_back(properties_of_one_photon);
+              photon_properties.push_back(properties_of_one_photon);
               properties_of_one_photon.clear();
             }
         }
@@ -305,7 +308,7 @@ RayTracingSolver<dim>::insert_particles_and_photons()
   ConditionalOStream pcout(std::cout,
                            Utilities::MPI::this_mpi_process(MPI_COMM_WORLD) ==
                              0);
-  this->print_insertion_info(n_total_photons_to_insert, pcout);
+  this->print_insertion_info(n_particles_to_insert_this_proc, pcout);
 }
 
 template <int dim>
@@ -315,7 +318,6 @@ RayTracingSolver<dim>::write_output_results(
   const std::string            &folder,
   const std::string            &file_name)
 {
-
   // Flatten local points into a buffer of chars (text format)
   std::ostringstream oss;
   for (const auto &p : points)
@@ -433,17 +435,18 @@ RayTracingSolver<dim>::solve()
 
   while (photon_handler.n_global_particles() != 0)
     {
+      simulation_control->increment_iteration();
+
       pcout << "Remaining photon : " << photon_handler.n_global_particles()
-                << std::endl;
+            << std::endl;
+
       // Load balancing (if needed)
       load_balance();
 
       // Since last pseudo time step, there is a high chance that the photons
       // have changed cell considering the size of their displacement relative
       // to the cell size. Thus, we sort them.
-      std::cout<<"Before (Proc : " <<this_mpi_process<< " ) " << std::endl;
       photon_handler.sort_particles_into_subdomains_and_cells();
-      std::cout<<"After  (Proc : " <<this_mpi_process<< " ) " << std::endl;
 
       // Loop over each local cell in the triangulation. To do this, we loop
       // over each cell neighbor list. Each local cell has a list and the first
@@ -486,7 +489,7 @@ RayTracingSolver<dim>::solve()
                 current_photon->get_location();
 
               // Loop over the neighboring cells of the main cell. This includes
-              // the main cell itselft.
+              // the main cell itself.
               auto &cell_neighbor_list = *cell_neighbor_list_iterator;
               for (auto current_neighboring_cell = cell_neighbor_list.begin();
                    current_neighboring_cell != cell_neighbor_list.end();
@@ -521,7 +524,7 @@ RayTracingSolver<dim>::solve()
                       current_intersection_points =
                         LetheGridTools::find_line_sphere_intersection(
                           photon_insertion_point,
-                          displacement_direction,
+                          photon_displacement_vector,
                           particle_position,
                           particle_diameter);
 
@@ -614,8 +617,7 @@ RayTracingSolver<dim>::solve()
               // them in this loop. This way, we don't need to loop on each of
               // them at the end.
               const Point<dim> new_photon_location =
-                current_photon_location +
-                displacement_norm * displacement_direction;
+                current_photon_location + photon_displacement_vector;
               current_photon->set_location(new_photon_location);
             }
         }
@@ -686,7 +688,7 @@ RayTracingSolver<dim>::solve()
                       current_intersection_points =
                         LetheGridTools::find_line_sphere_intersection(
                           photon_insertion_point,
-                          displacement_direction,
+                          photon_displacement_vector,
                           particle_position,
                           particle_diameter);
 
@@ -794,8 +796,9 @@ RayTracingSolver<dim>::solve()
       // Removes the photon and clear the containers.
       photon_handler.remove_particles(photon_iterators_to_remove);
       photon_intersection_points_map.clear();
+
+      action_manager->reset_triggers();
     }
-  std::cout<<__LINE__<<std::endl;
   write_output_results(total_intersection_points,
                        parameters.simulation_control.output_folder,
                        parameters.simulation_control.output_name);
