@@ -1011,6 +1011,324 @@ ParticleProjector<dim>::calculate_void_fraction_quadrature_centered_method()
   system_rhs_void_fraction.compress(VectorOperation::add);
 }
 
+// first: the template of the class
+template <int dim>
+// second: the template of the method
+template <int property_start_index, int n_components>
+void
+ParticleProjector<dim>::calculate_field_projection(
+  ParticleFieldQCM<dim, property_start_index, n_components> &field_qcm)
+{
+  AssertThrow(n_components == 1 || n_components == dim,
+              ExcMessage(
+                "QCM projection of a field only supports 1 or dim components"));
+
+  FEValues<dim> fe_values_velocity(*mapping,
+                                   *field_qcm.fe,
+                                   *quadrature,
+                                   update_values | update_quadrature_points |
+                                     update_JxW_values | update_gradients);
+
+  // Field extractor if dim components are used
+  FEValuesExtractors::Vector vector_extractor;
+  vector_extractor.first_vector_component = 0;
+
+  const unsigned int dofs_per_cell = field_qcm.fe->dofs_per_cell;
+  std::vector<types::global_dof_index> local_dof_indices(dofs_per_cell);
+  const unsigned int                   n_q_points = quadrature->size();
+  FullMatrix<double> local_matrix(dofs_per_cell, dofs_per_cell);
+  Vector<double>     local_rhs(dofs_per_cell);
+
+
+  // Declare the vectors for the shape function differently depending on the
+  // number of components. We currently assume either 1 or dim components.
+  typename std::conditional<n_components == 1,
+                            std::vector<double>,
+                            std::vector<Tensor<1, dim>>>::type
+    phi_vf(dofs_per_cell);
+  typename std::conditional<n_components == 1,
+                            std::vector<Tensor<1, dim>>,
+                            std::vector<Tensor<2, dim>>>::type
+    grad_phi_vf(dofs_per_cell);
+
+  double         r_sphere = 0.0;
+  double         total_volume_of_particle_in_sphere;
+  Tensor<1, dim> particles_velocity_in_sphere;
+  double qcm_sphere_diameter = void_fraction_parameters->qcm_sphere_diameter;
+
+  // If the reference sphere diameter is user-defined, the radius is
+  // calculated from it, otherwise, the value must be calculated while looping
+  // over the cells.
+  bool calculate_reference_sphere_radius = true;
+  if (qcm_sphere_diameter > 1e-16)
+    {
+      r_sphere                          = 0.5 * qcm_sphere_diameter;
+      calculate_reference_sphere_radius = false;
+    }
+
+  field_qcm.system_rhs    = 0;
+  field_qcm.system_matrix = 0;
+
+  for (const auto &cell : field_qcm.dof_handler.active_cell_iterators())
+    {
+      if (cell->is_locally_owned())
+        {
+          fe_values_velocity.reinit(cell);
+
+          local_matrix = 0;
+          local_rhs    = 0;
+
+          // Array of real locations for the quadrature points
+          std::vector<Point<dim>> quadrature_point_location;
+
+          quadrature_point_location =
+            fe_values_velocity.get_quadrature_points();
+
+          // Active neighbors include the current cell as well
+          auto active_neighbors =
+            LetheGridTools::find_cells_around_cell<dim>(vertices_to_cell, cell);
+
+          // Periodic neighbors of the current cell
+          auto active_periodic_neighbors =
+            LetheGridTools::find_cells_around_cell<dim>(
+              vertices_to_periodic_cell, cell);
+
+          // Define the volume of the reference sphere to be used as the
+          // averaging volume for the QCM
+          if (calculate_reference_sphere_radius)
+            {
+              r_sphere =
+                calculate_qcm_radius_from_cell_measure(cell->measure());
+            }
+
+          for (unsigned int q = 0; q < n_q_points; ++q)
+            {
+              total_volume_of_particle_in_sphere = 0;
+              particles_velocity_in_sphere       = 0;
+
+              for (unsigned int m = 0; m < active_neighbors.size(); m++)
+                {
+                  // Loop over particles in neighbor cell
+                  // Begin and end iterator for particles in neighbor cell
+                  const auto pic =
+                    particle_handler->particles_in_cell(active_neighbors[m]);
+                  for (auto &particle : pic)
+                    {
+                      double distance            = 0;
+                      auto   particle_properties = particle.get_properties();
+                      const double r_particle =
+                        particle_properties
+                          [DEM::CFDDEMProperties::PropertiesIndex::dp] *
+                        0.5;
+
+                      // Distance between particle and quadrature point
+                      // centers
+                      distance = particle.get_location().distance(
+                        quadrature_point_location[q]);
+
+                      const double particle_volume_in_sphere =
+                        calculate_intersection_measure(r_particle,
+                                                       r_sphere,
+                                                       distance);
+
+                      total_volume_of_particle_in_sphere +=
+                        particle_volume_in_sphere;
+                      for (unsigned int d = 0; d < n_components; ++d)
+                        {
+                          particles_velocity_in_sphere[d] +=
+                            particle_volume_in_sphere *
+                            particle_properties[property_start_index + d];
+                        }
+                    }
+                }
+
+              // Execute same operations for periodic neighbors, if the
+              // simulation has no periodic boundaries, the container is
+              // empty. Also, those operations cannot be done in the previous
+              // loop because the particles on the periodic side need a
+              // correction with an offset for the distance with the
+              // quadrature point
+              for (unsigned int m = 0; m < active_periodic_neighbors.size();
+                   m++)
+                {
+                  // Loop over particles in periodic neighbor cell
+                  const auto pic = particle_handler->particles_in_cell(
+                    active_periodic_neighbors[m]);
+                  for (auto &particle : pic)
+                    {
+                      double distance            = 0;
+                      auto   particle_properties = particle.get_properties();
+                      const double r_particle =
+                        particle_properties
+                          [DEM::CFDDEMProperties::PropertiesIndex::dp] *
+                        0.5;
+
+                      // Adjust the location of the particle in the cell to
+                      // account for the periodicity. If the position of the
+                      // periodic cell if greater than the position of the
+                      // current cell, the particle location needs a negative
+                      // correction, and vice versa. Since the particle is in
+                      // the periodic cell, this correction is the inverse of
+                      // the correction for the volumetric contribution
+                      const Point<dim> particle_location =
+                        (active_periodic_neighbors[m]
+                           ->center()[periodic_direction] >
+                         cell->center()[periodic_direction]) ?
+                          particle.get_location() - periodic_offset :
+                          particle.get_location() + periodic_offset;
+
+                      // Distance between particle and quadrature point
+                      // centers
+                      distance = particle_location.distance(
+                        quadrature_point_location[q]);
+
+                      const double particle_volume_in_sphere =
+                        calculate_intersection_measure(r_particle,
+                                                       r_sphere,
+                                                       distance);
+
+                      total_volume_of_particle_in_sphere +=
+                        particle_volume_in_sphere;
+                      for (unsigned int d = 0; d < n_components; ++d)
+                        {
+                          particles_velocity_in_sphere[d] +=
+                            particle_volume_in_sphere *
+                            particle_properties[property_start_index + d];
+                        }
+                    }
+                }
+
+              for (unsigned int k = 0; k < dofs_per_cell; ++k)
+                {
+                  if constexpr (n_components == dim)
+                    {
+                      phi_vf[k] =
+                        fe_values_velocity[vector_extractor].value(k, q);
+                      grad_phi_vf[k] =
+                        fe_values_velocity[vector_extractor].gradient(k, q);
+                    }
+                  if constexpr (n_components == 1)
+                    {
+                      phi_vf[k]      = fe_values_velocity.shape_value(k, q);
+                      grad_phi_vf[k] = fe_values_velocity.shape_gradient(k, q);
+                    }
+                }
+
+              for (unsigned int i = 0; i < dofs_per_cell; ++i)
+                {
+                  // We extract the component i and j to only calculate the
+                  // matrix when i and j are equal This is an optimization
+                  // that is only necessary when we have more than 1
+                  // component, but the cost is marginal when there is only
+                  // one component so might as well live with it.
+
+                  const unsigned int component_i =
+                    field_qcm.fe->system_to_component_index(i).first;
+                  // Assemble L2 projection
+                  // Matrix assembly
+                  for (unsigned int j = 0; j < dofs_per_cell; ++j)
+                    {
+                      const unsigned int component_j =
+                        field_qcm.fe->system_to_component_index(j).first;
+                      if (component_i == component_j)
+                        {
+                          // If there are particles, assemble a smoothed L2
+                          // projection
+                          if (field_qcm.neumann_boundaries == false ||
+                              total_volume_of_particle_in_sphere > 0)
+                            {
+                              local_matrix(i, j) += (phi_vf[j] * phi_vf[i]) *
+                                                    fe_values_velocity.JxW(q);
+                            }
+                          local_matrix(i, j) +=
+                            ((this->l2_smoothing_factor *
+                              scalar_product(grad_phi_vf[j], grad_phi_vf[i]))) *
+                            fe_values_velocity.JxW(q);
+                        }
+                    }
+
+                  if (total_volume_of_particle_in_sphere > 0)
+                    {
+                      local_rhs(i) += phi_vf[i] * particles_velocity_in_sphere /
+                                      total_volume_of_particle_in_sphere *
+                                      fe_values_velocity.JxW(q);
+                    }
+                }
+            }
+
+          cell->get_dof_indices(local_dof_indices);
+          field_qcm.particle_field_constraints.distribute_local_to_global(
+            local_matrix,
+            local_rhs,
+            local_dof_indices,
+            field_qcm.system_matrix,
+            field_qcm.system_rhs);
+        }
+    }
+
+  field_qcm.system_matrix.compress(VectorOperation::add);
+  field_qcm.system_rhs.compress(VectorOperation::add);
+
+  // Solve the L2 projection system
+  const double linear_solver_tolerance =
+    linear_solver_parameters.minimum_residual;
+
+  if (linear_solver_parameters.verbosity != Parameters::Verbosity::quiet)
+    {
+      this->pcout << "  -Tolerance of iterative solver is : "
+                  << linear_solver_tolerance << std::endl;
+    }
+
+  SolverControl solver_control(linear_solver_parameters.max_iterations,
+                               linear_solver_tolerance,
+                               true,
+                               true);
+
+  TrilinosWrappers::SolverCG solver(solver_control);
+
+  //**********************************************
+  // Trillinos Wrapper ILU Preconditioner
+  //*********************************************
+  const double ilu_fill = linear_solver_parameters.ilu_precond_fill;
+  const double ilu_atol = linear_solver_parameters.ilu_precond_atol;
+  const double ilu_rtol = linear_solver_parameters.ilu_precond_rtol;
+
+  TrilinosWrappers::PreconditionILU::AdditionalData preconditionerOptions(
+    ilu_fill, ilu_atol, ilu_rtol, 0);
+
+  ilu_preconditioner = std::make_shared<TrilinosWrappers::PreconditionILU>();
+
+  ilu_preconditioner->initialize(field_qcm.system_matrix,
+                                 preconditionerOptions);
+
+  solver.solve(field_qcm.system_matrix,
+               field_qcm.particle_field_locally_owned,
+               field_qcm.system_rhs,
+               *ilu_preconditioner);
+
+  if (linear_solver_parameters.verbosity != Parameters::Verbosity::quiet)
+    {
+      this->pcout << "  -Iterative solver took : " << solver_control.last_step()
+                  << " steps " << std::endl;
+    }
+
+  field_qcm.particle_field_constraints.distribute(
+    field_qcm.particle_field_locally_owned);
+  field_qcm.particle_field_locally_relevant =
+    field_qcm.particle_field_locally_owned;
+
+#ifndef LETHE_USE_LDV
+  // Perform copy between two vector types to ensure there is a deal.II vector
+  convert_vector_trilinos_to_dealii(field_qcm.particle_field_solution,
+                                    field_qcm.particle_field_locally_relevant);
+  field_qcm.particle_field_solution.update_ghost_values();
+#else
+  void_fraction_solution = void_fraction_locally_relevant;
+#endif
+}
+
+
+
 template <int dim>
 void
 ParticleProjector<dim>::solve_void_fraction_linear_system()
