@@ -277,6 +277,12 @@ public:
         void_fraction_parameters->l2_smoothing_length > 0,
       ExcMessage(
         "The projection of the particle velocity field requires that the l2 smoothing length be > 0. Otherwise, the Poisson equation used in the Neumann boundary is invalid."));
+
+    AssertThrow(
+      void_fraction_parameters->project_particle_velocity &&
+        void_fraction_parameters->mode == Parameters::VoidFractionMode::qcm,
+      ExcMessage(
+        "The projection of the particle velocity currently requires that the QCM method be used for the calculation of the void fraction."));
   }
 
   /**
