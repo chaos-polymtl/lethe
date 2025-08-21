@@ -87,6 +87,10 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
 ### Added
 
+- MINOR Add a prototype for HP-refinement. In HP-refinement, both the mesh (h-refinement) and the polynomial degree of the shape functions of a cell (p-refinement) can be modified to provide a better approximation of the solution. [#1608](https://github.com/chaos-polymtl/lethe/pull/1608)
+
+### Added
+
 - MINOR Refactors the way the initial conditions smoothing for VOF can be applied. On top of the diffusive smoothing, a new approach can be used to set up the initial condition using geometric redistanciation. This is great when using the geometric redistanciation strategy since the interface remains defined coherently throughout the simulation. [#1602](https://github.com/chaos-polymtl/lethe/pull/1602)
 
 ### [Master] - 2025-08-05
