@@ -562,9 +562,9 @@ FluidDynamicsVANS<dim>::assemble_system_rhs()
         *this->mapping,
         this->simulation_parameters.multiphysics.vof_parameters.phase_filter);
     }
-      scratch_data.enable_void_fraction(*particle_projector.fe,
-                                        *this->cell_quadrature,
-                                        *this->mapping);
+  scratch_data.enable_void_fraction(*particle_projector.fe,
+                                    *this->cell_quadrature,
+                                    *this->mapping);
 
   scratch_data.enable_particle_fluid_interactions(
     particle_handler.n_global_max_particles_per_cell(),
