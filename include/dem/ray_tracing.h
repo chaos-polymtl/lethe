@@ -13,6 +13,7 @@
 #include <dem/insertion.h>
 #include <dem/load_balancing.h>
 #include <dem/ray_tracing_solver_parameters.h>
+#include <dem/update_local_particle_containers.h>
 
 #include <deal.II/base/tensor.h>
 #include <deal.II/base/timer.h>
@@ -204,8 +205,7 @@ private:
    * line will be defined.
    *
    */
-  const Tensor<1, dim> displacement_direction;
-
+  const Tensor<1, dim> photon_displacement_vector;
 
   /**
    * @brief Container that shows the local/ghost neighbor cells of all local
@@ -218,10 +218,5 @@ private:
     cells_local_neighbor_list;
   typename dem_data_structures<dim>::cells_neighbor_list
     cells_ghost_neighbor_list;
-
-  // Container with all intersection candidate between photons and particle
-  // (local and ghost)
-  typename dem_data_structures<dim>::particle_particle_candidates
-    photon_particle_intersection_candidates;
 };
 #endif // lethe_ray_tracing_h
