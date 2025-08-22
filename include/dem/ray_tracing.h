@@ -5,15 +5,12 @@
 #define lethe_ray_tracing_h
 
 #include <core/dem_properties.h>
-#include <core/pvd_handler.h>
-#include <core/serial_solid.h>
 
 #include <dem/data_containers.h>
 #include <dem/dem_contact_manager.h>
 #include <dem/insertion.h>
 #include <dem/load_balancing.h>
 #include <dem/ray_tracing_solver_parameters.h>
-#include <dem/update_local_particle_containers.h>
 
 #include <deal.II/base/tensor.h>
 #include <deal.II/base/timer.h>
@@ -46,13 +43,6 @@ private:
    */
   std::shared_ptr<Insertion<dim, DEMProperties::PropertiesIndex>>
   set_particle_insertion_type();
-
-  /**
-   * @brief Set up the triangulation dependent parameters after the reading of
-   * the mesh and/or the simulation restart.
-   */
-  void
-  setup_triangulation_dependent_parameters();
 
   /**
    * @brief Set up the background degree of freedom used for parallel grid
@@ -91,9 +81,9 @@ private:
    * @brief Generate the output file of the particle ray tracing in parallel.
    */
   void
-  write_output_results(std::vector<Point<dim>> points,
-                       const std::string      &folder,
-                       const std::string      &file_prefix);
+  write_output_results(const std::vector<Point<dim>> &points,
+                       const std::string             &folder,
+                       const std::string             &file_name);
 
   /**
    * @brief Execute the last post-processing at the end of the simulation and
@@ -101,15 +91,6 @@ private:
    */
   void
   finish_simulation();
-
-  /**
-   * @brief Execute the sorting of particle into subdomains and cells, and
-   * reinitialize the containers dependent on the local particle ids.
-   */
-  void
-  sort_particles_into_subdomains_and_cells();
-
-
 
   /**
    * @brief The MPI communicator used for the parallel simulation.
@@ -164,7 +145,7 @@ private:
 
   /**
    * @brief The timer that keeps track of the time spent in some functions.
-   * Currently theses functions are: load balancing and VTU output.
+   * Currently, the only function implemented is load balancing.
    */
   TimerOutput computing_timer;
 
@@ -194,11 +175,6 @@ private:
    */
   std::shared_ptr<Insertion<dim, DEMProperties::PropertiesIndex>>
     particle_insertion_object;
-
-  /**
-   * @brief Norm of the displacement done by every photon at each pseudo time step.
-   */
-  double displacement_norm;
 
   /**
    * @brief Direction in which the photon will move and in which the intersection

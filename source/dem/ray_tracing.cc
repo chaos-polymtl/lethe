@@ -192,7 +192,6 @@ RayTracingSolver<dim>::load_balance()
   find_cell_neighbors<dim, true>(triangulation,
                                  cells_local_neighbor_list,
                                  cells_ghost_neighbor_list);
-
 }
 
 template <int dim>
@@ -221,6 +220,15 @@ RayTracingSolver<dim>::insert_particles_and_photons()
   // A vector which contains all the insertion point of every photon.
   std::vector<Point<dim>> insertion_points_on_proc;
 
+  // A vector of vectors, which contains all the properties of all particles
+  // about to get inserted.
+  // Each photon has as its properties its insertion location. This way,
+  // when many intersection points will be found during a pseudo timestep,
+  // its properties will be used to identify the closest point from its
+  // insertion insertion point.
+  std::vector<std::vector<double>> photon_properties;
+
+
   unsigned int max_n_photon_first_dir =
     parameters.ray_tracing_info.number_of_photon_first_direction;
 
@@ -232,13 +240,9 @@ RayTracingSolver<dim>::insert_particles_and_photons()
     this_mpi_process == 0 ? max_n_photon_first_dir * max_n_photon_second_dir :
                             0;
 
-  // A vector of vectors, which contains all the properties of all particles
-  // about to get inserted.
-  // Each photon has as its properties its insertion location. This way,
-  // when many intersection points will be found during a pseudo timestep,
-  // its properties will be used to identify the closest point from its
-  // insertion insertion point.
-  std::vector<std::vector<double>> photon_properties;
+  insertion_points_on_proc.reserve(n_particles_to_insert_this_proc);
+
+  photon_properties.reserve(n_particles_to_insert_this_proc);
 
   // Create the photon insertion location
   if (this_mpi_process == 0)
@@ -254,12 +258,8 @@ RayTracingSolver<dim>::insert_particles_and_photons()
       const double step_second_dir =
         parameters.ray_tracing_info.step_between_photons_second_direction;
 
-      insertion_points_on_proc.reserve(n_particles_to_insert_this_proc);
-
-      photon_properties.reserve(n_particles_to_insert_this_proc);
-
+      // Generation the photon insertion points.
       Point<dim> temp_point{};
-
       for (unsigned int n_first_dir = 0; n_first_dir < max_n_photon_first_dir;
            ++n_first_dir)
         {
@@ -291,14 +291,19 @@ RayTracingSolver<dim>::insert_particles_and_photons()
 
               photon_properties.push_back(properties_of_one_photon);
               properties_of_one_photon.clear();
+
             }
         }
+
     }
+  MPI_Comm communicator = triangulation.get_mpi_communicator();
   // Obtain global bounding boxes
   const auto my_bounding_box = GridTools::compute_mesh_predicate_bounding_box(
     triangulation, IteratorFilters::LocallyOwnedCell());
   const auto global_bounding_boxes =
-    Utilities::MPI::all_gather(mpi_communicator, my_bounding_box);
+    Utilities::MPI::all_gather(communicator, my_bounding_box);
+
+  pcout<<insertion_points_on_proc.size()<<photon_properties.size()<<std::endl;
 
   // Insert the photons using the points and the assigned properties.
   photon_handler.insert_global_particles(insertion_points_on_proc,
@@ -314,15 +319,15 @@ RayTracingSolver<dim>::insert_particles_and_photons()
 template <int dim>
 void
 RayTracingSolver<dim>::write_output_results(
-  const std::vector<Point<dim>> points,
-  const std::string            &folder,
-  const std::string            &file_name)
+  const std::vector<Point<dim>> &points,
+  const std::string             &folder,
+  const std::string             &file_name)
 {
   // Flatten local points into a buffer of chars (text format)
   std::ostringstream oss;
   for (const auto &p : points)
     {
-      for (unsigned int d = 0; d < 3; ++d)
+      for (unsigned int d = 0; d < dim; ++d)
         oss << p[d] << " ";
       oss << "\n";
     }
@@ -356,7 +361,7 @@ RayTracingSolver<dim>::write_output_results(
   MPI_File_write_at(fh,
                     off_set[this_mpi_process],
                     local_str.data(),
-                    local_size,
+                    (int)local_size,
                     MPI_CHAR,
                     MPI_STATUS_IGNORE);
 
@@ -392,9 +397,6 @@ RayTracingSolver<dim>::solve()
             pcout,
             triangulation,
             dem_parameters.boundary_conditions);
-
-  // Set up the parameter that need the triangulation :
-  displacement_norm = GridTools::minimal_cell_diameter(triangulation);
 
   // Set particle insertion object
   particle_insertion_object = set_particle_insertion_type();
