@@ -110,7 +110,7 @@ This subsection is the most important in a simulation and therefore, the most co
 	* ``sdirk22``: 2nd order 2 stages singly diagonally implicit Runge-Kutta
 	* ``sdirk33``: 3rd order 3 stages singly diagonally implicit Runge-Kutta
 
-.. note::
+.. warning::
 	For now, the SDIRK schemes are not supported by any physics other than Fluid Dynamics.
 
 -----------------------------------

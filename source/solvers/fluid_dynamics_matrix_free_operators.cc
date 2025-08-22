@@ -246,6 +246,32 @@ NavierStokesOperatorBase<dim, number>::reinit(
 }
 
 template <int dim, typename number>
+TimeSteppingData
+NavierStokesOperatorBase<dim, number>::initialize_time_stepping_data(const bool test_is_bdf, const bool test_is_sdirk) const
+{
+  TimeSteppingData data;
+
+  if (test_is_bdf)
+    {
+      data.bdf_coefs = &this->simulation_control->get_bdf_coefficients();
+    }
+
+  if (test_is_sdirk)
+    {
+      const SDIRKTable table =
+        sdirk_table(this->simulation_control->get_assembly_method());
+      const SDIRKStageData stage_data(table, 1);
+      data.a_ii = stage_data.a_ij[0];
+
+      const auto time_steps_vector =
+        this->simulation_control->get_time_steps_vector();
+      data.dt = time_steps_vector[0];
+    }
+
+  return data;
+}
+
+template <int dim, typename number>
 void
 NavierStokesOperatorBase<dim, number>::compute_element_size()
 {
@@ -1406,23 +1432,12 @@ NavierStokesStabilizedOperator<dim, number>::do_cell_integral_local(
 
   const double kinematic_viscosity =
     this->properties_manager->get_rheology()->get_kinematic_viscosity();
+  
+  auto time_stepping_data = initialize_time_stepping_data(test_is_bdf, test_is_sdirk);
 
-  double a_ii = 0.0;
-  double dt   = 0.0;
-  // Vector for BDF coefficients
-  const Vector<double> *bdf_coefs = nullptr;
-  if (test_is_bdf)
-    bdf_coefs = &this->simulation_control->get_bdf_coefficients();
-  if (test_is_sdirk)
-    {
-      SDIRKTable table =
-        sdirk_table(this->simulation_control->get_assembly_method());
-      SDIRKStageData stage_data(table, 1);
-      a_ii = stage_data.a_ij[0];
-      const auto time_steps_vector =
-        this->simulation_control->get_time_steps_vector();
-      dt = time_steps_vector[0];
-    }
+  double a_ii = time_stepping_data.a_ii;
+  double dt   = time_stepping_data.dt;
+  const Vector<double> *bdf_coefs = time_stepping_data.bdf_coefs;
 
   for (const auto q : integrator.quadrature_point_indices())
     {
@@ -1671,22 +1686,11 @@ NavierStokesStabilizedOperator<dim, number>::local_evaluate_residual(
       const bool test_is_sdirk =
         is_sdirk(this->simulation_control->get_assembly_method());
 
-      double a_ii = 0.0;
-      double dt   = 0.0;
-      // Vector for BDF coefficients
-      const Vector<double> *bdf_coefs = nullptr;
-      if (test_is_bdf)
-        bdf_coefs = &this->simulation_control->get_bdf_coefficients();
-      if (test_is_sdirk)
-        {
-          SDIRKTable table =
-            sdirk_table(this->simulation_control->get_assembly_method());
-          SDIRKStageData stage_data(table, 1);
-          a_ii = stage_data.a_ij[0];
-          const auto time_steps_vector =
-            this->simulation_control->get_time_steps_vector();
-          dt = time_steps_vector[0];
-        }
+      auto time_stepping_data = initialize_time_stepping_data(test_is_bdf, test_is_sdirk);
+
+      double a_ii = time_stepping_data.a_ii;
+      double dt   = time_stepping_data.dt;
+      const Vector<double> *bdf_coefs = time_stepping_data.bdf_coefs;
 
       for (const auto q : integrator.quadrature_point_indices())
         {
@@ -1917,22 +1921,11 @@ NavierStokesNonNewtonianStabilizedOperator<dim, number>::do_cell_integral_local(
   const bool test_is_sdirk =
     is_sdirk(this->simulation_control->get_assembly_method());
 
-  double a_ii = 0.0;
-  double dt   = 0.0;
-  // Vector for BDF coefficients
-  const Vector<double> *bdf_coefs = nullptr;
-  if (test_is_bdf)
-    bdf_coefs = &this->simulation_control->get_bdf_coefficients();
-  if (test_is_sdirk)
-    {
-      SDIRKTable table =
-        sdirk_table(this->simulation_control->get_assembly_method());
-      SDIRKStageData stage_data(table, 1);
-      a_ii = stage_data.a_ij[0];
-      const auto time_steps_vector =
-        this->simulation_control->get_time_steps_vector();
-      dt = time_steps_vector[0];
-    }
+  auto time_stepping_data = initialize_time_stepping_data(test_is_bdf, test_is_sdirk);
+
+  double a_ii = time_stepping_data.a_ii;
+  double dt   = time_stepping_data.dt;
+  const Vector<double> *bdf_coefs = time_stepping_data.bdf_coefs;
 
   for (const auto q : integrator.quadrature_point_indices())
     {
@@ -2173,22 +2166,11 @@ NavierStokesNonNewtonianStabilizedOperator<dim, number>::
       const bool test_is_sdirk =
         is_sdirk(this->simulation_control->get_assembly_method());
 
-      double a_ii = 0.0;
-      double dt   = 0.0;
-      // Vector for BDF coefficients
-      const Vector<double> *bdf_coefs = nullptr;
-      if (test_is_bdf)
-        bdf_coefs = &this->simulation_control->get_bdf_coefficients();
-      if (test_is_sdirk)
-        {
-          SDIRKTable table =
-            sdirk_table(this->simulation_control->get_assembly_method());
-          SDIRKStageData stage_data(table, 1);
-          a_ii = stage_data.a_ij[0];
-          const auto time_steps_vector =
-            this->simulation_control->get_time_steps_vector();
-          dt = time_steps_vector[0];
-        }
+      auto time_stepping_data = initialize_time_stepping_data(test_is_bdf, test_is_sdirk);
+
+      double a_ii = time_stepping_data.a_ii;
+      double dt   = time_stepping_data.dt;
+      const Vector<double> *bdf_coefs = time_stepping_data.bdf_coefs;
 
       for (const auto q : integrator.quadrature_point_indices())
         {
