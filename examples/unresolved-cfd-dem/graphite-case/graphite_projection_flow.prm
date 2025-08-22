@@ -1,0 +1,260 @@
+# SPDX-FileCopyrightText: Copyright (c) 2025 The Lethe Authors
+# SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
+
+# Listing of Parameters
+#----------------------
+
+set dimension = 3
+
+#---------------------------------------------------
+# Simulation Control
+#---------------------------------------------------
+
+subsection simulation control
+  set method           = bdf2
+  set output frequency = 2500
+  set time end         = 3
+  set adapt            = true
+  set max cfl          = 1
+  set time step        = 0.00005
+  set subdivision      = 1
+  set log precision    = 10
+  set output path      = ./output/
+end
+
+#---------------------------------------------------
+# Physical Properties
+#---------------------------------------------------
+
+subsection physical properties
+  subsection fluid 0
+    set kinematic viscosity = 0.0000181
+    set density             = 1
+  end
+end
+
+#---------------------------------------------------
+# Restart
+#---------------------------------------------------
+
+subsection restart
+  set checkpoint = true
+  set filename   = restart
+  set restart    = false
+end
+
+#---------------------------------------------------
+# Mesh
+#---------------------------------------------------
+
+subsection mesh
+  set type                                = gmsh
+  set file name                           = ./cylinder_mesh_experimental_dimensions_coarse/graphite_projection.msh
+  set expand particle-wall contact search = false
+  set initial refinement                  = 1
+  set initial boundary refinement         = 1
+  set boundaries refined                  = 2, 4
+end
+
+#---------------------------------------------------
+# Void Fraction
+#---------------------------------------------------
+
+subsection void fraction
+  set mode                = qcm
+  set read dem            = false
+  set l2 smoothing length = 0.00075
+end
+
+#---------------------------------------------------
+# CFD-DEM
+#---------------------------------------------------
+
+subsection cfd-dem
+  set grad div                      = true
+  set void fraction time derivative = false
+  set drag force                    = true
+  set buoyancy force                = true
+  set shear force                   = true
+  set pressure force                = true
+  set saffman lift force            = false
+  set drag model                    = rong
+  set coupling frequency            = 500
+  set implicit stabilization        = false
+  set grad-div length scale         = 0.0075
+  set vans model                    = modelA
+  set particle statistics           = true
+end
+
+#---------------------------------------------------
+# Boundary Conditions
+#---------------------------------------------------
+
+subsection boundary conditions
+  set time dependent = true
+  set number         = 5
+  subsection bc 0
+    set id   = 0
+    set type = function
+    subsection u
+      set Function expression = 0
+    end
+    subsection v
+      set Function expression = 0
+    end
+    subsection w
+      set Function expression = if(t<1, (5*t), 5)
+    end
+  end
+  subsection bc 1
+    set id   = 1
+    set type = function
+    subsection u
+      set Function expression = 0
+    end
+    subsection v
+      set Function expression = 0
+    end
+    subsection w
+      set Function expression = 0.10
+    end
+  end
+  subsection bc 2
+    set id   = 2
+    set type = noslip
+  end
+  subsection bc 3
+    set id   = 3
+    set type = noslip
+  end
+  subsection bc 4
+    set id   = 4
+    set type = outlet
+  end
+end
+
+#---------------------------------------------------
+# DEM Boundary Conditions
+#---------------------------------------------------
+
+subsection DEM boundary conditions
+  # Total number of boundary motion
+  set number of boundary conditions = 5
+
+  subsection boundary condition 0
+    set boundary id = 0
+    set type        = outlet
+  end
+  subsection boundary condition 1
+    set boundary id = 1
+    set type        = outlet
+  end
+  subsection boundary condition 2
+    set boundary id = 2
+    set type        = fixed_wall
+  end
+  subsection boundary condition 3
+    set boundary id = 3
+    set type        = fixed_wall
+  end
+  subsection boundary condition 4
+    set boundary id = 4
+    set type        = outlet
+  end
+end
+
+#---------------------------------------------------
+# Mesh Adaptation Control
+#---------------------------------------------------
+
+subsection mesh adaptation
+  set type = none
+end
+
+#---------------------------------------------------
+# Timer
+#---------------------------------------------------
+
+subsection timer
+  set type = iteration
+end
+
+#---------------------------------------------------
+# Model parameters
+#---------------------------------------------------
+
+subsection model parameters
+  subsection contact detection
+    set contact detection method                = dynamic
+    set dynamic contact search size coefficient = 0.9
+    set neighborhood threshold                  = 1.3
+  end
+  set particle particle contact force method = hertz_mindlin_limit_overlap
+  set particle wall contact force method     = nonlinear
+  set integration method                     = velocity_verlet
+end
+
+#---------------------------------------------------
+# Physical Properties
+#---------------------------------------------------
+
+subsection lagrangian physical properties
+  set g                        = 0, -9.81, 0
+  set number of particle types = 1
+  subsection particle type 0
+    set size distribution type            = custom
+    set custom diameters                  = 0.00005 , 0.000025, 0.000075, 0.0001
+    set custom volume fractions           = 0.25, 0.25, 0.25, 0.25
+    set number of particles               = 0
+    set density particles                 = 1781
+    set young modulus particles           = 8e6
+    set poisson ratio particles           = 0.16
+    set restitution coefficient particles = 0.9
+    set friction coefficient particles    = 0.3
+    set rolling friction particles        = 0
+  end
+  set young modulus wall           = 157.6e6
+  set poisson ratio wall           = 0.31
+  set restitution coefficient wall = 0.9
+  set friction coefficient wall    = 0.3
+  set rolling friction wall        = 0
+end
+
+#---------------------------------------------------
+# Non-Linear Solver Control
+#---------------------------------------------------
+
+subsection non-linear solver
+  subsection fluid dynamics
+    set solver         = inexact_newton
+    set tolerance      = 1e-7
+    set max iterations = 25
+    set verbosity      = verbose
+  end
+end
+
+#---------------------------------------------------
+# Linear Solver Control
+#---------------------------------------------------
+
+subsection linear solver
+  subsection void fraction
+    set method             = gmres
+    set max iters          = 200
+    set relative residual  = 1e-3
+    set minimum residual   = 1e-8
+    set preconditioner     = amg
+    set verbosity          = verbose
+    set max krylov vectors = 200
+  end
+  subsection fluid dynamics
+    set method                  = gmres
+    set max iters               = 1000
+    set relative residual       = 1e-3
+    set minimum residual        = 1e-9
+    set preconditioner          = ilu
+    set ilu preconditioner fill = 0
+    set verbosity               = verbose
+    set max krylov vectors      = 200
+  end
+end
