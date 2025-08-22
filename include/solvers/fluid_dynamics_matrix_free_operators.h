@@ -27,6 +27,18 @@
 using namespace dealii;
 
 /**
+ * @brief Data structure to store time-stepping data.
+ *
+ */
+struct TimeSteppingData
+{
+  double                a_ii      = 0.0;
+  double                dt        = 0.0;
+  const Vector<double> *bdf_coefs = nullptr;
+};
+
+
+/**
  * @brief Evaluate the value of a function at a batch of points to obtain a vectorized array of numbers
  *
  * @tparam dim An integer that denotes the number of spatial dimensions.
@@ -503,8 +515,9 @@ protected:
    * @param[out] dt The time step size.
    * @param[out] bdf_coefs The BDF coefficients if the BDF method is used.
    */
-  TimeSteppingData 
-  initialize_time_stepping_data(const bool test_is_bdf, const bool test_is_sdirk) const;
+  TimeSteppingData
+  initialize_time_stepping_data(const bool test_is_bdf,
+                                const bool test_is_sdirk) const;
 
 
 private:
@@ -790,16 +803,6 @@ protected:
    */
   ConditionalOStream pcout;
 
-  /**
-   * @brief Data structure to store time-stepping data.
-   *
-   */
-  struct TimeSteppingData
-  {
-    double a_ii = 0.0;
-    double dt   = 0.0;
-    const Vector<double> *bdf_coefs = nullptr;
-  };
 
 public:
   /**

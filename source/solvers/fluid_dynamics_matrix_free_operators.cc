@@ -247,7 +247,9 @@ NavierStokesOperatorBase<dim, number>::reinit(
 
 template <int dim, typename number>
 TimeSteppingData
-NavierStokesOperatorBase<dim, number>::initialize_time_stepping_data(const bool test_is_bdf, const bool test_is_sdirk) const
+NavierStokesOperatorBase<dim, number>::initialize_time_stepping_data(
+  const bool test_is_bdf,
+  const bool test_is_sdirk) const
 {
   TimeSteppingData data;
 
@@ -1432,11 +1434,12 @@ NavierStokesStabilizedOperator<dim, number>::do_cell_integral_local(
 
   const double kinematic_viscosity =
     this->properties_manager->get_rheology()->get_kinematic_viscosity();
-  
-  auto time_stepping_data = initialize_time_stepping_data(test_is_bdf, test_is_sdirk);
 
-  double a_ii = time_stepping_data.a_ii;
-  double dt   = time_stepping_data.dt;
+  auto time_stepping_data =
+    this->initialize_time_stepping_data(test_is_bdf, test_is_sdirk);
+
+  double                a_ii      = time_stepping_data.a_ii;
+  double                dt        = time_stepping_data.dt;
   const Vector<double> *bdf_coefs = time_stepping_data.bdf_coefs;
 
   for (const auto q : integrator.quadrature_point_indices())
@@ -1686,10 +1689,11 @@ NavierStokesStabilizedOperator<dim, number>::local_evaluate_residual(
       const bool test_is_sdirk =
         is_sdirk(this->simulation_control->get_assembly_method());
 
-      auto time_stepping_data = initialize_time_stepping_data(test_is_bdf, test_is_sdirk);
+      auto time_stepping_data =
+        this->initialize_time_stepping_data(test_is_bdf, test_is_sdirk);
 
-      double a_ii = time_stepping_data.a_ii;
-      double dt   = time_stepping_data.dt;
+      double                a_ii      = time_stepping_data.a_ii;
+      double                dt        = time_stepping_data.dt;
       const Vector<double> *bdf_coefs = time_stepping_data.bdf_coefs;
 
       for (const auto q : integrator.quadrature_point_indices())
@@ -1921,10 +1925,11 @@ NavierStokesNonNewtonianStabilizedOperator<dim, number>::do_cell_integral_local(
   const bool test_is_sdirk =
     is_sdirk(this->simulation_control->get_assembly_method());
 
-  auto time_stepping_data = initialize_time_stepping_data(test_is_bdf, test_is_sdirk);
+  auto time_stepping_data =
+    this->initialize_time_stepping_data(test_is_bdf, test_is_sdirk);
 
-  double a_ii = time_stepping_data.a_ii;
-  double dt   = time_stepping_data.dt;
+  double                a_ii      = time_stepping_data.a_ii;
+  double                dt        = time_stepping_data.dt;
   const Vector<double> *bdf_coefs = time_stepping_data.bdf_coefs;
 
   for (const auto q : integrator.quadrature_point_indices())
@@ -2166,10 +2171,11 @@ NavierStokesNonNewtonianStabilizedOperator<dim, number>::
       const bool test_is_sdirk =
         is_sdirk(this->simulation_control->get_assembly_method());
 
-      auto time_stepping_data = initialize_time_stepping_data(test_is_bdf, test_is_sdirk);
+      auto time_stepping_data =
+        this->initialize_time_stepping_data(test_is_bdf, test_is_sdirk);
 
-      double a_ii = time_stepping_data.a_ii;
-      double dt   = time_stepping_data.dt;
+      double                a_ii      = time_stepping_data.a_ii;
+      double                dt        = time_stepping_data.dt;
       const Vector<double> *bdf_coefs = time_stepping_data.bdf_coefs;
 
       for (const auto q : integrator.quadrature_point_indices())
