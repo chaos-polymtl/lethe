@@ -169,17 +169,19 @@ The job is sent using:
   sbatch job.sh
 
 .. important::
-    While using `Trillium <https://docs.alliancecan.ca/wiki/Trillium>`_, add the following line after ``source $HOME/.dealii`` in your ``.sh`` launching script:
-    .. code-block:: text
-      :class: copy-button
+  While using `Trillium <https://docs.alliancecan.ca/wiki/Trillium>`_, add the following line after ``source $HOME/.dealii`` in your ``.sh`` launching script:
 
-      source /scinet/vast/etc/vastpreload-openmpi.bash
+  .. code-block:: text
+    :class: copy-button
 
-    Additionally, instead of using ``srun``, use ``mpirun`` to launch your application:
-    .. code-block:: text
-        :class: copy-button
+    source /scinet/vast/etc/vastpreload-openmpi.bash
 
-        mpirun -np $(( $SLURM_NNODES * $SLURM_NTASKS_PER_NODE )) $HOME/lethe/inst/bin/$lethe_application_name_wanted $lethe_application_name_wanted $parameter_file_name.prm
+  Additionally, instead of using ``srun``, use ``mpirun`` to launch your application:
+
+  .. code-block:: text
+    :class: copy-button
+
+    mpirun -np $(( $SLURM_NNODES * $SLURM_NTASKS_PER_NODE )) $HOME/lethe/inst/bin/$lethe_application_name_wanted $lethe_application_name_wanted $parameter_file_name.prm
 
 Status can be followed with the ``sq`` command: under ``ST``, ``PD`` indicates a pending job, and ``R`` a running job.
 
