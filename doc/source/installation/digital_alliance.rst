@@ -181,7 +181,7 @@ The job is sent using:
   .. code-block:: text
     :class: copy-button
 
-    mpirun -np $(( $SLURM_NNODES * $SLURM_NTASKS_PER_NODE )) $HOME/lethe/inst/bin/$lethe_application_name_wanted $lethe_application_name_wanted $parameter_file_name.prm
+    mpirun $HOME/lethe/inst/bin/$lethe_application_name_wanted $lethe_application_name_wanted $parameter_file_name.prm
 
 Status can be followed with the ``sq`` command: under ``ST``, ``PD`` indicates a pending job, and ``R`` a running job.
 
