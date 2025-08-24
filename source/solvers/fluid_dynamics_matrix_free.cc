@@ -823,14 +823,13 @@ MFNavierStokesPreconditionGMGBase<dim>::reinit(
                 Utilities::MPI::min(min_index,
                                     this->dof_handler.get_mpi_communicator());
 
+              AffineConstraints<double> temp_constraints;
+              temp_constraints.reinit(owned_dofs, relevant_dofs);
               if (relevant_dofs.is_element(min_index))
-                {
-                  AffineConstraints<double> temp_constraints;
-                  temp_constraints.reinit(owned_dofs, relevant_dofs);
-                  temp_constraints.add_line(min_index);
-                  this->mg_constrained_dofs.add_user_constraints(
-                    level, temp_constraints);
-                }
+                temp_constraints.add_line(min_index);
+
+              this->mg_constrained_dofs.add_user_constraints(level,
+                                                             temp_constraints);
             }
 
 #if DEAL_II_VERSION_GTE(9, 6, 0)
