@@ -51,7 +51,8 @@ using namespace dealii;
  *
  * @tparam dim An integer that denotes the dimension of the space in which
  * the flow is solved
- *  @ingroup solvers
+ * 
+ * @ingroup solvers
  **/
 
 template <int dim>
@@ -78,7 +79,6 @@ public:
    *
    * @param mapping The mapping of the domain in which the Navier-Stokes
    * equations are solved
-   *
    */
   NavierStokesScratchData(
     const std::shared_ptr<SimulationControl> &simulation_control,
@@ -195,15 +195,16 @@ public:
     gather_hessian = sd.gather_hessian;
   }
 
-  /** @brief Allocates the memory for the scratch
+  /** 
+   * @brief Allocates the memory for the scratch
    *
    * This function allocates the necessary memory for all members of the scratch
-   *
    */
   void
   allocate() override;
 
-  /** @brief Reinitializes the content of the scratch.
+  /** 
+   * @brief Reinitializes the content of the scratch.
    *
    * Using the FeValues and the content of the solutions and previous solutions,
    * fills all of the class member of the scratch.
@@ -222,7 +223,6 @@ public:
    * @param[in] beta_force The additional force for flow control.
    * TODO : Deprecate this argument and pass it to the constructor of the
    * assembler
-   *
    */
 
   template <typename VectorType>
@@ -521,7 +521,8 @@ public:
                    const Quadrature<dim>    &quadrature,
                    const Mapping<dim>       &mapping);
 
-  /** @brief Reinitialize the content of the scratch for the vof
+  /** 
+   * @brief Reinitialize the content of the scratch for the vof
    *
    * @param cell The cell over which the assembly is being carried.
    * This cell must be compatible with the VOF FE and not the
@@ -532,8 +533,6 @@ public:
    * @param current_filtered_solution The present value of the solution for [alpha]_filtered
    *
    * @param previous_solutions The solutions at the previous time steps for [alpha]
-   *
-   *
    */
 
   template <typename VectorType>
@@ -592,7 +591,8 @@ public:
                                                    this->curvature_values);
   }
 
-  /** @brief enable_void_fraction Enables the collection of the void fraction
+  /** 
+   * @brief enable_void_fraction Enables the collection of the void fraction
    * data by the scratch
    *
    * @param fe FiniteElement associated with the void fraction
@@ -607,7 +607,8 @@ public:
                        const Quadrature<dim>    &quadrature,
                        const Mapping<dim>       &mapping);
 
-  /** @brief Reinitialize the content of the scratch for the void fraction
+  /**
+   *  @brief Reinitialize the content of the scratch for the void fraction
    *
    * @param cell The cell over which the assembly is being carried.
    * This cell must be compatible with the void fraction FE and not the
@@ -616,7 +617,6 @@ public:
    * @param current_solution The present value of the solution for [epsilon]
    *
    * @param previous_solutions The solutions at the previous time steps for [epsilon]
-   *
    */
 
   template <typename VectorType>
@@ -642,7 +642,8 @@ public:
       }
   }
 
-  /** @brief enable_particle_fluid_interactions Enables the calculation of the fluid information at the particle location for the scratch.
+  /** 
+   * @brief enable_particle_fluid_interactions Enables the calculation of the fluid information at the particle location for the scratch.
    *
    * @param fe FiniteElement associated with the void fraction
    *
@@ -656,7 +657,8 @@ public:
     const unsigned int n_global_max_particles_per_cell,
     const bool         enable_void_fraction_interpolation);
 
-  /** @brief Reinitializes the fluid forces and torques on the particles in the cell to zero
+  /** 
+   * @brief Reinitializes the fluid forces and torques on the particles in the cell to zero
    */
 
   void
@@ -677,8 +679,10 @@ public:
       }
   }
 
-  /** @brief Extracts the velocity of the particles and calculates their total volume
+  /** 
+   * @brief Extracts the velocity of the particles and calculates their total volume
    * in the cell
+   * 
    * @return Total volume of the particles in the cell
    */
 
@@ -721,9 +725,10 @@ public:
     return total_particle_volume;
   }
 
-  /** @brief Computes the cell void fraction
+  /** 
+   * @brief Computes the cell void fraction
    *
-   * @param total_particle_volume The total volume of the particles in the cell
+   * @param[in] total_particle_volume The total volume of the particles in the cell
    */
 
   void
@@ -746,9 +751,11 @@ public:
         cell_void_fraction[j] = 0;
   }
 
-  /** @brief Creates an object of type Quadrature<dim> that contains the
+  /** 
+   * @brief Creates an object of type Quadrature<dim> that contains the
    * particle reference location. This object can be used to interpolate any
    * function known at the dofs at the location of the particles.
+   * 
    * @return Quadrature type object that contains the location of the particles
    * relative to the cell's frame of reference.
    */
@@ -777,16 +784,17 @@ public:
     return Quadrature<dim>(particle_reference_location, particle_weights);
   }
 
-  /** @brief Interpolates the velocity and pressure of the fluid, as well as the
+  /** 
+   * @brief Interpolates the velocity and pressure of the fluid, as well as the
    * pressure gradient, and the laplacian, curl and gradient of the velocity, at
    * the locations of the particles.
    *
-   * @param q_particles_location Quadrature type object that contains the location of the particles
+   * @param[in] q_particles_location Quadrature type object that contains the location of the particles
    * relative to the cell's frame of reference.
    *
-   * @param velocity_cell The active cell associated with the velocity and pressure DoFHandler
+   * @param[in] velocity_cell The active cell associated with the velocity and pressure DoFHandler
    *
-   * @param velocity_pressure_solution The solution (velocity and pressure) that is used to
+   * @param[in] velocity_pressure_solution The solution (velocity and pressure) that is used to
    * interpolate the velocity and pressure at the particles locations.
    */
 
@@ -840,14 +848,15 @@ public:
       fluid_pressure_gradients_at_particle_location);
   }
 
-  /** @brief Interpolates the void fraction at the locations of the particles.
+  /** 
+   * @brief Interpolates the void fraction at the locations of the particles.
    *
-   * @param q_particles_location Quadrature type object that contains the location of the particles
+   * @param[in] q_particles_location Quadrature type object that contains the location of the particles
    * relative to the cell's frame of reference.
    *
-   * @param void_fraction_cell The active cell associated with the void fraction DoFHandler
+   * @param[in] void_fraction_cell The active cell associated with the void fraction DoFHandler
    *
-   * @param void_fraction_solution The void fraction calculated with one of the methods of
+   * @param[in] void_fraction_solution The void fraction calculated with one of the methods of
    * the VoidFractionBase class.
    */
 
@@ -869,7 +878,8 @@ public:
       void_fraction_solution, cell_void_fraction);
   }
 
-  /** @brief Calculates the properties of the fluid at the locations of the particles.
+  /** 
+   * @brief Calculates the properties of the fluid at the locations of the particles.
    * At the moment, only constant properties within the same fluid are
    * supported. When two fluids are present and VOF is used, the properties are
    * calculated based on the filtered VOF solution interpolated at the
@@ -918,7 +928,8 @@ public:
       }
   }
 
-  /** @brief Calculates the velocity of the fluid relative to that of the particle and
+  /** 
+   * @brief Calculates the velocity of the fluid relative to that of the particle and
    * the particle Reynolds number at the location of the particles. These will
    * be used in forces calculations in the vans equations.
    */
@@ -954,16 +965,17 @@ public:
       average_fluid_particle_relative_velocity / i_particle;
   }
 
-  /** @brief Interpolates the filtered VOF solution at the location of the particles.
+  /** 
+   * @brief Interpolates the filtered VOF solution at the location of the particles.
    * The latter values are used in calculating the density and viscosity of the
    * fluid at the particles' locations when VOF is used.
    *
-   * @param q_particles_location Quadrature type object that contains the location of the particles
+   * @param[in] q_particles_location Quadrature type object that contains the location of the particles
    * relative to the cell's frame of reference.
    *
-   * @param phase_cell The active cell associated with the VOF DoFHandler
+   * @param[in] phase_cell The active cell associated with the VOF DoFHandler
    *
-   * @param current_filtered_solution The present value of the filtered VOF solution
+   * @param[in] current_filtered_solution The present value of the filtered VOF solution
    */
 
   template <typename VectorType>
@@ -987,20 +999,21 @@ public:
       current_filtered_solution, filtered_phase_values_at_particle_location);
   }
 
-  /** @brief Calculates the variables needed to compute the particle fluid interactions
+  /** 
+   * @brief Calculates the variables needed to compute the particle fluid interactions
    * in the VANS equations.
    *
-   * @param velocity_cell The active cell associated with the velocity and pressure DoFHandler
+   * @param[in] velocity_cell The active cell associated with the velocity and pressure DoFHandler
    *
-   * @param void_fraction_cell The active cell associated with the void fraction DoFHandler
+   * @param[in] void_fraction_cell The active cell associated with the void fraction DoFHandler
    *
-   * @param previous_velocity_pressure_solution The solution at the previous time step for the fluid's velocity
+   * @param[in] previous_velocity_pressure_solution The solution at the previous time step for the fluid's velocity
    * and pressure
    *
-   * @param void_fraction_solution The void fraction value calculated with one of the methods of
+   * @param[in] void_fraction_solution The void fraction value calculated with one of the methods of
    * the VoidFractionBase class.
    *
-   * @param particle_handler The particle handler object that stores and manages the
+   * @param[in] particle_handler The particle handler object that stores and manages the
    *  particles in the simulations
    */
 
@@ -1040,26 +1053,27 @@ public:
     calculate_force_parameters_at_particle_location();
   }
 
-  /** @brief Calculates the variables needed to compute the particle fluid interactions
+  /** 
+   * @brief Calculates the variables needed to compute the particle fluid interactions
    * in the VANS equations.This version of the function is used when VOF is used
    * with CFD-DEM.
    *
-   * @param velocity_cell The active cell associated with the velocity and pressure DoFHandler
+   * @param[in] velocity_cell The active cell associated with the velocity and pressure DoFHandler
    *
-   * @param void_fraction_cell The active cell associated with the void fraction DoFHandler
+   * @param[in] void_fraction_cell The active cell associated with the void fraction DoFHandler
    *
-   * @param phase_cell The active cell associated with the VOF DoFHandler
+   * @param[in] phase_cell The active cell associated with the VOF DoFHandler
    *
-   * @param previous_velocity_pressure_solution The solution at the previous time step for the fluid's
+   * @param[in] previous_velocity_pressure_solution The solution at the previous time step for the fluid's
    * velocity and pressure
    *
-   * @param void_fraction_solution The void fraction value calculated with one of the methods of
+   * @param[in] void_fraction_solution The void fraction value calculated with one of the methods of
    * the VoidFractionBase class.
    *
-   * @param particle_handler The particle handler object that stores and manages the
+   * @param[in] particle_handler The particle handler object that stores and manages the
    *  particles in the simulations
    *
-   * @param current_filtered_solution The present value of the VOF solution at the dofs of the
+   * @param[in] current_filtered_solution The present value of the VOF solution at the dofs of the
    * cell
    */
   template <typename VectorType>
@@ -1118,7 +1132,8 @@ public:
                        const Quadrature<dim>    &quadrature,
                        const Mapping<dim>       &mapping);
 
-  /** @brief Reinitialize the content of the scratch for the heat transfer
+  /** 
+   * @brief Reinitialize the content of the scratch for the heat transfer
    * auxiliary physic
    *
    * @param cell The cell over which the assembly is being carried.
@@ -1130,7 +1145,6 @@ public:
    * @param previous_solutions Vector of \f$n\f$ @p VectorType containers of
    * previous temperature solutions. \f$n\f$ depends on the BDF scheme selected
    * for time-stepping.
-   *
    */
 
   template <typename VectorType>
@@ -1210,14 +1224,14 @@ public:
     const Mapping<dim>                            &mapping,
     const std::shared_ptr<CahnHilliardFilterBase> &cahn_hilliard_filter);
 
-  /** @brief Reinitialize the content of the scratch for CH
+  /** 
+   * @brief Reinitialize the content of the scratch for CH
    *
    * @param cell The cell over which the assembly is being carried.
    * This cell must be compatible with the CH FE and not the
    * Navier-Stokes FE
    *
    * @param current_solution The present value of the solution for [phi]
-   *
    */
   template <typename VectorType>
   void
@@ -1270,7 +1284,8 @@ public:
                 const Parameters::Mortar<dim> &mortar_parameters,
                 const double                  &radius);
 
-  /** @brief Calculates the physical properties. This function calculates the
+  /** 
+   * @brief Calculates the physical properties. This function calculates the
    * physical properties that may be required by the fluid dynamics problem.
    * Namely the kinematic viscosity and, when required, the density.
    */
