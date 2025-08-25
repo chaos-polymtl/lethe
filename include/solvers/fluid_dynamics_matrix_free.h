@@ -477,8 +477,11 @@ protected:
    * When the rotor domain is rotated, the mortar cells need to be reinitialized
    * according to the new rotor-stator interface configuration.
    */
+  virtual void
+  update_mortar_configuration() override;
+
   void
-  update_mortar_configuration();
+  reinit_mortar_operators_mf();
 
   /**
    * @brief  Update the average velocity field solution in the multiphyscics interface.

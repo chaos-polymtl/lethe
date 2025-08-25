@@ -291,6 +291,10 @@ protected:
   virtual void
   setup_dofs_fd() = 0;
 
+  virtual void
+  update_mortar_configuration()
+  {}
+
   /**
    * @brief  Update the time average velocity field solution
    */

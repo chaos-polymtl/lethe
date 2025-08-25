@@ -85,7 +85,8 @@ NavierStokesOperatorBase<dim, number>::NavierStokesOperatorBase(
   const std::shared_ptr<SimulationControl>         &simulation_control,
   const BoundaryConditions::NSBoundaryConditions<dim> &boundary_conditions,
   const bool                                          &enable_hessians_jacobian,
-  const bool                                          &enable_hessians_residual)
+  const bool                                          &enable_hessians_residual,
+  const bool                                          &enable_mortar)
   : pcout(std::cout, Utilities::MPI::this_mpi_process(MPI_COMM_WORLD) == 0)
   , timer(this->pcout, TimerOutput::never, TimerOutput::wall_times)
 {
@@ -100,7 +101,8 @@ NavierStokesOperatorBase<dim, number>::NavierStokesOperatorBase(
                simulation_control,
                boundary_conditions,
                enable_hessians_jacobian,
-               enable_hessians_residual);
+               enable_hessians_residual,
+               enable_mortar);
 }
 
 template <int dim, typename number>
@@ -117,11 +119,14 @@ NavierStokesOperatorBase<dim, number>::reinit(
   const std::shared_ptr<SimulationControl>         &simulation_control,
   const BoundaryConditions::NSBoundaryConditions<dim> &boundary_conditions,
   const bool                                          &enable_hessians_jacobian,
-  const bool                                          &enable_hessians_residual)
+  const bool                                          &enable_hessians_residual,
+  const bool                                          &enable_mortar)
 {
   this->enable_face_terms = false;
 
   this->boundary_conditions = boundary_conditions;
+
+  this->enable_mortar = enable_mortar;
 
   this->system_matrix.clear();
   this->constraints.copy_from(constraints);
@@ -689,6 +694,14 @@ NavierStokesOperatorBase<dim, number>::get_system_matrix() const
       {},
       boundary_function);
 
+  // If mortar is enabled, add system matrix entries
+  if (this->enable_mortar)
+    {
+      this->mortar_coupling_operator_mf->add_system_matrix_entries(
+        system_matrix);
+      system_matrix.compress(VectorOperation::add);
+    }
+
   // make sure that diagonal entries related to constrained dofs
   // have a value of 1.0 (note this is consistent to vmult() and
   // compute_inverse_diagonal())
@@ -1099,6 +1112,10 @@ NavierStokesOperatorBase<dim, number>::compute_inverse_diagonal(
       [&](auto &integrator) { this->do_cell_integral_local(integrator); },
       {},
       boundary_function);
+
+  // If mortar is enabled, add diagonal entries
+  if (this->enable_mortar)
+      this->mortar_coupling_operator_mf->add_diagonal_entries(diagonal);
 
   for (const auto &i : edge_constrained_indices)
     diagonal.local_element(i) = 0.0;
