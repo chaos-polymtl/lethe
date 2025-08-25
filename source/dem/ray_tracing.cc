@@ -303,7 +303,6 @@ RayTracingSolver<dim>::insert_particles_and_photons()
   const auto global_bounding_boxes =
     Utilities::MPI::all_gather(communicator, my_bounding_box);
 
-  pcout<<insertion_points_on_proc.size()<<photon_properties.size()<<std::endl;
 
   // Insert the photons using the points and the assigned properties.
   photon_handler.insert_global_particles(insertion_points_on_proc,
