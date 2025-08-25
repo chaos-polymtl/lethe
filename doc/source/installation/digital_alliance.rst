@@ -206,10 +206,3 @@ To upload this local key to your Compute Canada Database account (CCDB) use:
   :class: copy-button
 
     ssh-copy-id username@clustername.computecanada.ca
-
-.. code-block:: text
-  :class: copy-button
-
-  cat ~/.ssh/$KEY_ID.pub
-
-where ``$KEY_ID.pub`` is the public key file located in ``~/.ssh/``. For more information, see `SSH documentation <https://docs.scinet.utoronto.ca/index.php/SSH#SSH_Keys>`_.
