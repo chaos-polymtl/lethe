@@ -11,7 +11,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
 ### Added
 
-- MINOR Additional instructions for using Trillium. [#1632](https://github.com/chaos-polymtl/lethe/pull/1632)
+- MINOR Update instructions for using new clusters. [#1632](https://github.com/chaos-polymtl/lethe/pull/1632)
 
 ### [Master] - 2025-08-20
 
