@@ -113,8 +113,8 @@ protected:
    * When the rotor domain is rotated, the mortar cells need to be reinitialized
    * according to the new rotor-stator interface configuration.
    */
-  void
-  update_mortar_configuration();
+  virtual void
+  update_mortar_configuration() override;
 
   /**
    * @brief Assemble the local matrix for a given cell.

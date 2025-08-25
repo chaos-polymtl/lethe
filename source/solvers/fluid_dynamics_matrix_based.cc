@@ -223,15 +223,6 @@ FluidDynamicsMatrixBased<dim>::update_mortar_configuration()
       this->simulation_parameters.mesh_adaptation.type ==
         Parameters::MeshAdaptation::Type::none)
     {
-      // Clear the preconditioner before the matrix they are associated with is
-      // cleared
-      amg_preconditioner.reset();
-      ilu_preconditioner.reset();
-      current_preconditioner_fill_level = initial_preconditioner_fill_level;
-
-      // Now reset system matrix
-      system_matrix.clear();
-
       // Rotate mapping
       this->rotate_rotor_mapping(false);
 
@@ -908,6 +899,9 @@ FluidDynamicsMatrixBased<dim>::assemble_system_rhs()
     StabilizedMethodsTensorCopyData<dim>(this->fe->n_dofs_per_cell(),
                                          this->cell_quadrature->size()));
 
+
+  // std::cout << "residual before " << this->system_rhs.l2_norm() << std::endl;
+
   // Add mortar entries
   if (this->simulation_parameters.mortar_parameters.enable)
     {
@@ -921,6 +915,8 @@ FluidDynamicsMatrixBased<dim>::assemble_system_rhs()
     }
 
   this->system_rhs.compress(VectorOperation::add);
+
+  // std::cout << "residual after " << this->system_rhs.l2_norm() << std::endl;
 
   if (this->simulation_control->is_first_assembly())
     this->simulation_control->provide_residual(this->system_rhs.l2_norm());

@@ -111,6 +111,10 @@ NewtonNonLinearSolver<VectorType>::solve(const bool is_initial_step)
           local_evaluation_point.add(alpha, newton_update);
           solver->apply_constraints();
           evaluation_point = local_evaluation_point;
+
+          // std::cout << "evaluation point " << evaluation_point.l2_norm() << std::endl;
+          // std::cout << "newton update " << newton_update.l2_norm() << std::endl;
+          
           solver->assemble_system_rhs();
 
           auto &system_rhs = solver->get_system_rhs();
