@@ -90,9 +90,14 @@ VANSAssemblerCoreModelB<dim>::assemble_matrix(
       // value of the time-step
       const double tau =
         this->simulation_control->get_assembly_method() ==
-            Parameters::SimulationControl::TimeSteppingMethod::steady 
-          ? calculate_navier_stokes_gls_tau_steady(u_mag, kinematic_viscosity, h) 
-          : calculate_navier_stokes_gls_tau_transient(u_mag, kinematic_viscosity, h, sdt);
+            Parameters::SimulationControl::TimeSteppingMethod::steady ?
+          calculate_navier_stokes_gls_tau_steady(u_mag,
+                                                 kinematic_viscosity,
+                                                 h) :
+          calculate_navier_stokes_gls_tau_transient(u_mag,
+                                                    kinematic_viscosity,
+                                                    h,
+                                                    sdt);
 
       // Calculate the strong residual for GLS stabilization
       auto strong_residual = velocity_gradient * velocity * void_fraction +
@@ -293,11 +298,16 @@ VANSAssemblerCoreModelB<dim>::assemble_rhs(
       // stabilization parameter used is different if the simulation
       // is steady or unsteady. In the unsteady case it includes the
       // value of the time-step
-            const double tau =
+      const double tau =
         this->simulation_control->get_assembly_method() ==
-            Parameters::SimulationControl::TimeSteppingMethod::steady 
-          ? calculate_navier_stokes_gls_tau_steady(u_mag, kinematic_viscosity, h) 
-          : calculate_navier_stokes_gls_tau_transient(u_mag, kinematic_viscosity, h, sdt);
+            Parameters::SimulationControl::TimeSteppingMethod::steady ?
+          calculate_navier_stokes_gls_tau_steady(u_mag,
+                                                 kinematic_viscosity,
+                                                 h) :
+          calculate_navier_stokes_gls_tau_transient(u_mag,
+                                                    kinematic_viscosity,
+                                                    h,
+                                                    sdt);
 
       // Calculate the strong residual for GLS stabilization
       auto strong_residual = velocity_gradient * velocity * void_fraction +
@@ -446,11 +456,16 @@ VANSAssemblerCoreModelA<dim>::assemble_matrix(
       // stabilization parameter used is different if the simulation
       // is steady or unsteady. In the unsteady case it includes the
       // value of the time-step
-        const double tau =
+      const double tau =
         this->simulation_control->get_assembly_method() ==
-          Parameters::SimulationControl::TimeSteppingMethod::steady 
-          ? calculate_navier_stokes_gls_tau_steady(u_mag, kinematic_viscosity, h) 
-          : calculate_navier_stokes_gls_tau_transient(u_mag, kinematic_viscosity, h, sdt);
+            Parameters::SimulationControl::TimeSteppingMethod::steady ?
+          calculate_navier_stokes_gls_tau_steady(u_mag,
+                                                 kinematic_viscosity,
+                                                 h) :
+          calculate_navier_stokes_gls_tau_transient(u_mag,
+                                                    kinematic_viscosity,
+                                                    h,
+                                                    sdt);
 
       // Calculate the strong residual for GLS stabilization
       auto strong_residual =
@@ -651,11 +666,16 @@ VANSAssemblerCoreModelA<dim>::assemble_rhs(
       // stabilization parameter used is different if the simulation
       // is steady or unsteady. In the unsteady case it includes the
       // value of the time-step
-        const double tau =
+      const double tau =
         this->simulation_control->get_assembly_method() ==
-            Parameters::SimulationControl::TimeSteppingMethod::steady 
-          ? calculate_navier_stokes_gls_tau_steady(u_mag, kinematic_viscosity, h) 
-          : calculate_navier_stokes_gls_tau_transient(u_mag, kinematic_viscosity, h, sdt);
+            Parameters::SimulationControl::TimeSteppingMethod::steady ?
+          calculate_navier_stokes_gls_tau_steady(u_mag,
+                                                 kinematic_viscosity,
+                                                 h) :
+          calculate_navier_stokes_gls_tau_transient(u_mag,
+                                                    kinematic_viscosity,
+                                                    h,
+                                                    sdt);
 
       // Calculate the strong residual for GLS stabilization
       auto strong_residual =
@@ -932,7 +952,8 @@ VANSAssemblerDiFelice<dim>::calculate_particle_fluid_interactions(
       C_d = Utilities::fixed_power<2>((0.63 + 4.8 / sqrt(Re_p[i_particle]))) *
             pow(cell_void_fraction,
                 2 - (3.7 - 0.65 * exp(-Utilities::fixed_power<2>(
-                                        1.5 - log10(Re_p[i_particle])) * 0.5)));
+                                        1.5 - log10(Re_p[i_particle])) *
+                                      0.5)));
 
       double momentum_transfer_coefficient =
         (0.5 * C_d * M_PI *
@@ -1006,12 +1027,14 @@ VANSAssemblerRong<dim>::calculate_particle_fluid_interactions(
               (2.65 * (cell_void_fraction + 1) -
                (5.3 - (3.5 * cell_void_fraction)) *
                  Utilities::fixed_power<2>(cell_void_fraction) *
-                 exp(-Utilities::fixed_power<2>(1.5 - log10(Re_p[i_particle])) * 0.5)));
+                 exp(-Utilities::fixed_power<2>(1.5 - log10(Re_p[i_particle])) *
+                     0.5)));
 
       double momentum_transfer_coefficient =
         (0.5 * C_d * M_PI *
          Utilities::fixed_power<2>(
-           particle_properties[DEM::CFDDEMProperties::PropertiesIndex::dp]) * 0.25) *
+           particle_properties[DEM::CFDDEMProperties::PropertiesIndex::dp]) *
+         0.25) *
         relative_velocity[i_particle].norm();
 
       beta_drag += momentum_transfer_coefficient;
@@ -1075,7 +1098,8 @@ VANSAssemblerDallavalle<dim>::calculate_particle_fluid_interactions(
       double momentum_transfer_coefficient =
         (0.5 * C_d * M_PI *
          Utilities::fixed_power<2>(
-           particle_properties[DEM::CFDDEMProperties::PropertiesIndex::dp]) * 0.25 ) *
+           particle_properties[DEM::CFDDEMProperties::PropertiesIndex::dp]) *
+         0.25) *
         relative_velocity[i_particle].norm();
 
       beta_drag += momentum_transfer_coefficient;
