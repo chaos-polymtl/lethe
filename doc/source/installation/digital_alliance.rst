@@ -168,17 +168,17 @@ Clusters Specifications
 
 Please consult the documentation for the machine you are using for the specification of the nodes: 
 
-+-----------------+---------------------+---------------------+---------------------------------------------+
-| Cluster         | Tasks per Node      | Memory per Node     | URL                                         |
-+=================+=====================+=====================+=============================================+
-| Narval          | 64                  | 248 Go              | https://docs.alliancecan.ca/wiki/Narval/en  |
-+-----------------+---------------------+---------------------+---------------------------------------------+
-| Trillium        | 192                 | 755 Go              | https://docs.alliancecan.ca/wiki/Trillium/en|
-+-----------------+---------------------+---------------------+---------------------------------------------+
-| Rorqual         | 192                 | 760 Go              | https://docs.alliancecan.ca/wiki/Rorqual/en |
-+-----------------+---------------------+---------------------+---------------------------------------------+
-| Nibi            | 192                 | 754 Go              | https://docs.alliancecan.ca/wiki/Nibi/en    |
-+-----------------+---------------------+---------------------+---------------------------------------------+
++-----------------+---------------------+---------------------+----------------------------------------------+
+| Cluster         | Tasks per Node      | Memory per Node     | URL                                          |
++=================+=====================+=====================+==============================================+
+| Narval          | 64                  | 248 Go              | https://docs.alliancecan.ca/wiki/Narval/en   |
++-----------------+---------------------+---------------------+----------------------------------------------+
+| Trillium        | 192                 | 755 Go              | https://docs.alliancecan.ca/wiki/Trillium/en |
++-----------------+---------------------+---------------------+----------------------------------------------+
+| Rorqual         | 192                 | 760 Go              | https://docs.alliancecan.ca/wiki/Rorqual/en  |
++-----------------+---------------------+---------------------+----------------------------------------------+
+| Nibi            | 192                 | 754 Go              | https://docs.alliancecan.ca/wiki/Nibi/en     |
++-----------------+---------------------+---------------------+----------------------------------------------+
 
 Saving a SSH Key (Linux)
 ------------------------
@@ -205,11 +205,11 @@ To upload this local key to your Compute Canada Database account (CCDB) use:
 .. code-block:: text
   :class: copy-button
 
-  ssh-copy-id username@clustername.computecanada.ca
+    ssh-copy-id username@clustername.computecanada.ca
 
- .. code-block:: text
+.. code-block:: text
   :class: copy-button
 
   cat ~/.ssh/$KEY_ID.pub
 
- where ``$KEY_ID.pub`` is the public key file located in ``~/.ssh/``. For more information, see `SSH documentation <https://docs.scinet.utoronto.ca/index.php/SSH#SSH_Keys>`_.
+where ``$KEY_ID.pub`` is the public key file located in ``~/.ssh/``. For more information, see `SSH documentation <https://docs.scinet.utoronto.ca/index.php/SSH#SSH_Keys>`_.
