@@ -138,7 +138,7 @@ Simulations are sent to the scheduler via batch scripts. Visit the Digital Resea
   #SBATCH --mail-user=$your.email.adress@email.provider
 
   source $HOME/.dealii
-  mpirun $HOME/lethe/inst/bin/$lethe_application_name_wanted $lethe_application_name_wanted $parameter_file_name.prm
+  mpirun $HOME/lethe/inst/bin/$lethe_application_name_wanted $parameter_file_name.prm
 
 
 .. tip::
