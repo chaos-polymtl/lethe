@@ -122,7 +122,7 @@ We use `Globus <https://alliancecan.ca/en/services/advanced-research-computing/n
 Launching Simulations
 ---------------------
 
-Simulations are sent to the scheduler via batch scripts. Visit the Digital Research Alliance of Canada (Alliance) wiki page for more information about the `scheduler <https://docs.alliancecan.ca/wiki/What_is_a_scheduler%3F>`_ and `running jobs <https://docs.alliancecan.ca/wiki/Running_jobs>`_. For your convenience, an example of ``job.sh`` used on Beluga is given below:
+Simulations are sent to the scheduler via batch scripts. Visit the Digital Research Alliance of Canada (Alliance) wiki page for more information about the `scheduler <https://docs.alliancecan.ca/wiki/What_is_a_scheduler%3F>`_ and `running jobs <https://docs.alliancecan.ca/wiki/Running_jobs>`_. For your convenience, an example of ``job.sh`` is given below:
 
 .. code-block:: text
   :class: copy-button
@@ -143,6 +143,9 @@ Simulations are sent to the scheduler via batch scripts. Visit the Digital Resea
 
 .. tip::
   The ``--ntasks-per-node`` option is the number of parallel tasks per node. When using a full node, this should correspond to the number of cores available on the node. For example, on Narval, this should be set to 64.
+
+.. tip::
+    If you have jobs that need to be launched one after the other, you can add ``#SBATCH --dependency=$previous-slurm-job-id`` to your launching script. This will make sure that the job will only start once the previous job has finished.
 
 The job is sent using:
 
