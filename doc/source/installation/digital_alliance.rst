@@ -34,8 +34,7 @@ Load ``Trilinos``, ``Parmetis`` and ``P4est``, and their prerequisite modules an
 
 .. code-block:: text
   :class: copy-button
-  
-  module load CCEnv #Only if on the Niagara cluster
+
   module load StdEnv/2023
   module load trilinos/15.1.1
   module load parmetis/4.0.3
@@ -45,6 +44,7 @@ Load ``Trilinos``, ``Parmetis`` and ``P4est``, and their prerequisite modules an
   export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$EBROOTFLEXIBLAS/lib64/
   export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$EBROOTIMKL//mkl/2023.2.0/lib/intel64/
   export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$EBROOTOPENMPI/lib/
+  source /scinet/vast/etc/vastpreload-openmpi.bash # Only if on Trillium or Nibi
 
   export DEAL_II_DIR=$HOME/dealii/inst/
   export PATH=$PATH:$HOME/lethe/inst/bin/
@@ -74,7 +74,7 @@ We can compile ``dealii`` in the ``$HOME/dealii/build`` folder, by defining the 
 
 .. tip::
 
-  The -DCMAKE_CXX_FLAGS="-march=native" works on both Rorqual, Nibi and Niagara. To ensure that the flag has worked correctly, the cmake output should contain the following information : ``Vectorization level:    512 bit (sse2 avx2 avx512*)``.
+  The -DCMAKE_CXX_FLAGS="-march=native" works on both Rorqual, Nibi, and Trillium. To ensure that the flag has worked correctly, the cmake output should contain the following information : ``Vectorization level:    512 bit (sse2 avx2 avx512*)``.
 
 .. warning::
 
@@ -115,31 +115,14 @@ To install Lethe in the ``$HOME/lethe/inst`` directory (applications will be in 
 Copying Local Files
 -------------------
 
-On Linux, use ``scp`` (for secure copy) to copy needed files for the simulation (``prm``, ``msh``):
-
-.. code-block:: text
-  :class: copy-button
-
-  scp /home/path/in/your/computer/*.prm username@clustername.calculcanada.ca:/scratch/path/in/cluster
-
-If you need to copy a folder, use ``scp -r``.
-
-Simulation files must be in scratch. To get the address of your scratch folder, in your cluster account run:
-
-.. code-block:: text
-  :class: copy-button
-
-  cd $SCRATCH
-  pwd
-
-On Windows, use third-party, such as ``PuTTY`` or ``WSL`` (see the `wiki page on Transferring data <https://docs.computecanada.ca/wiki/Transferring_data>`_).
+We use `Globus <https://alliancecan.ca/en/services/advanced-research-computing/national-services/data-movement-globus>`_ to transfer files between your local machine and the cluster. For more information, visit the `Globus documentation <https://docs.alliancecan.ca/wiki/Globus>`_.
 
 .. _Launching Simulations:
 
 Launching Simulations
 ---------------------
 
-Simulations are sent to the scheduler via batch scripts. Visit the Digital Research Alliance of Canada (Alliance) wiki page for more information about the `scheduler <https://docs.alliancecan.ca/wiki/What_is_a_scheduler%3F>`_ and `running jobs <https://docs.alliancecan.ca/wiki/Running_jobs>`_. For your convenience, an example of ``job.sh`` used on Beluga is given below:
+Simulations are sent to the scheduler via batch scripts. Visit the Digital Research Alliance of Canada (Alliance) wiki page for more information about the `scheduler <https://docs.alliancecan.ca/wiki/What_is_a_scheduler%3F>`_ and `running jobs <https://docs.alliancecan.ca/wiki/Running_jobs>`_. For your convenience, an example of ``job.sh`` is given below:
 
 .. code-block:: text
   :class: copy-button
@@ -155,11 +138,14 @@ Simulations are sent to the scheduler via batch scripts. Visit the Digital Resea
   #SBATCH --mail-user=$your.email.adress@email.provider
 
   source $HOME/.dealii
-  srun $HOME/lethe/inst/bin/$lethe_application_name_wanted $parameter_file_name.prm
+  mpirun $HOME/lethe/inst/bin/$lethe_application_name_wanted $parameter_file_name.prm
 
 
 .. tip::
   The ``--ntasks-per-node`` option is the number of parallel tasks per node. When using a full node, this should correspond to the number of cores available on the node. For example, on Narval, this should be set to 64.
+
+.. tip::
+    If you have jobs that need to be launched one after the other, you can add ``#SBATCH --dependency=$previous-slurm-job-id`` to your launching script. This will make sure that the job will only start once the previous job has finished.
 
 The job is sent using:
 
@@ -182,20 +168,22 @@ Clusters Specifications
 
 Please consult the documentation for the machine you are using for the specification of the nodes: 
 
-+-----------------+---------------------+---------------------+---------------------------------------------+
-| Cluster         | Tasks per Node      | Memory per Node     | URL                                         |
-+=================+=====================+=====================+=============================================+
-| Narval          | 64                  | 248 Go              | https://docs.alliancecan.ca/wiki/Narval/en  |
-+-----------------+---------------------+---------------------+---------------------------------------------+
-| Niagara         | 40                  | 200 Go              | https://docs.alliancecan.ca/wiki/Niagara/en |
-+-----------------+---------------------+---------------------+---------------------------------------------+
-| Rorqual         | 192                 | 760 Go              | https://docs.alliancecan.ca/wiki/Rorqual/en |
-+-----------------+---------------------+---------------------+---------------------------------------------+
++-----------------+---------------------+---------------------+----------------------------------------------+
+| Cluster         | Tasks per Node      | Memory per Node     | URL                                          |
++=================+=====================+=====================+==============================================+
+| Narval          | 64                  | 248 Go              | https://docs.alliancecan.ca/wiki/Narval/en   |
++-----------------+---------------------+---------------------+----------------------------------------------+
+| Trillium        | 192                 | 755 Go              | https://docs.alliancecan.ca/wiki/Trillium/en |
++-----------------+---------------------+---------------------+----------------------------------------------+
+| Rorqual         | 192                 | 760 Go              | https://docs.alliancecan.ca/wiki/Rorqual/en  |
++-----------------+---------------------+---------------------+----------------------------------------------+
+| Nibi            | 192                 | 754 Go              | https://docs.alliancecan.ca/wiki/Nibi/en     |
++-----------------+---------------------+---------------------+----------------------------------------------+
 
 Saving a SSH Key (Linux)
 ------------------------
 
-To save your key on the cluster, so that it is not asked for each log or ``scp``, generate your ssh-key with:
+To save your key on the cluster, so that it is not asked for each log, generate your ssh-key with:
 
 .. code-block:: text
   :class: copy-button
@@ -217,14 +205,4 @@ To upload this local key to your Compute Canada Database account (CCDB) use:
 .. code-block:: text
   :class: copy-button
 
-  ssh-copy-id username@clustername.computecanada.ca
-
-.. warning::
- This command does not work on Niagara anymore. You may use the following:
-
- .. code-block:: text
-  :class: copy-button
-
-  cat ~/.ssh/$KEY_ID.pub
-
- where ``$KEY_ID.pub`` is the public key file located in ``~/.ssh/``. For more information, see `SSH documentation <https://docs.scinet.utoronto.ca/index.php/SSH#SSH_Keys>`_.
+    ssh-copy-id username@clustername.computecanada.ca
