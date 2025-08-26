@@ -39,7 +39,7 @@ namespace dealii
 }
 
 template <int dim, typename MGNumber>
-class MyMGTransferMatrixFree;
+class MGTransferMatrixFreeWrapper;
 
 /**
  * @brief A geometric multigrid preconditioner compatible with the
@@ -67,7 +67,7 @@ protected:
   using VectorType         = LinearAlgebra::distributed::Vector<Number>;
   using MGVectorType       = LinearAlgebra::distributed::Vector<MGNumber>;
   using TrilinosVectorType = LinearAlgebra::distributed::Vector<double>;
-  using LSTransferType     = MyMGTransferMatrixFree<dim, MGNumber>;
+  using LSTransferType     = MGTransferMatrixFreeWrapper<dim, MGNumber>;
   using GCTransferType     = MGTransferGlobalCoarsening<dim, MGVectorType>;
   using OperatorType       = NavierStokesOperatorBase<dim, MGNumber>;
   using SmootherPreconditionerType = PreconditionBase<MGVectorType>;

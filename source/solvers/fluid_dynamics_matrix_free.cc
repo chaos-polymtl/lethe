@@ -546,14 +546,18 @@ namespace dealii
   }
 } // namespace dealii
 
+/**
+ * A class that wraps MGTransferMatrixFree and MGTransferMF to allow
+ * hp-multigrid in the local-smoothing case.
+ */
 template <int dim, typename Number>
-class MyMGTransferMatrixFree
+class MGTransferMatrixFreeWrapper
   : public MGTransferBase<LinearAlgebra::distributed::Vector<Number>>
 {
 public:
   using VectorType = LinearAlgebra::distributed::Vector<Number>;
 
-  MyMGTransferMatrixFree(const unsigned int min_h_level)
+  MGTransferMatrixFreeWrapper(const unsigned int min_h_level)
     : min_h_level(min_h_level)
     , n_gc_levels(0)
   {}
