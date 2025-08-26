@@ -99,7 +99,7 @@ Settings::try_parse(const std::string &prm_filename)
                     Patterns::Bool(),
                     "Output vtu files <true|false>");
   prm.declare_entry("output slice",
-                    "true",
+                    "false",
                     Patterns::Bool(),
                     "Output slice vtu files <true|false>");
   prm.declare_entry("output name",

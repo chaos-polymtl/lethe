@@ -32,7 +32,7 @@ public:
                              vof_subequations_non_linear_solvers;
   Parameters::MeshAdaptation mesh_adaptation;
   Parameters::Mesh           mesh;
-  Parameters::PatchMesh     patch_mesh;
+  Parameters::PatchMesh      patch_mesh;
   Parameters::Dimensionality dimensionality;
   std::shared_ptr<Parameters::MeshBoxRefinement>    mesh_box_refinement;
   std::shared_ptr<Parameters::Nitsche<dim>>         nitsche;

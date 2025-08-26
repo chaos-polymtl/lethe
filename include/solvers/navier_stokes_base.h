@@ -819,19 +819,6 @@ protected:
   }
 
   /**
- * @brief Initialize patch mesh for output.
- *
- */
-  inline void
-  initialize_patch_triangulation()
-  {
-    if (this->simulation_parameters.patch_mesh.enable)
-      {
-        read_patch_mesh(*patch_triangulation, this->simulation_parameters.patch_mesh, this->simulation_parameters.restart_parameters.restart);
-      }
-  }
-
-  /**
    * @brief Constrain a fluid's subdomains according to the temperature field to null
    * velocity and pressure fields to model solid subdomains.
    *
@@ -868,8 +855,8 @@ protected:
    * @brief Gather solution information to generate output results
    *
    * @param[in] solution Vector of present solution
-   * @param[in, out] solution_output_structs Vector of OutputStructs that will be
-   * used to write the output results as VTU files
+   * @param[in, out] solution_output_structs Vector of OutputStructs that will
+   * be used to write the output results as VTU files
    */
   void
   gather_output_results(
@@ -893,7 +880,8 @@ protected:
    * used to write the output results as VTU files
    */
   void
-  write_output_results_slice(const std::vector<OutputStruct<dim, VectorType>> &solution_output_structs);
+  write_output_results_slice(
+    const std::vector<OutputStruct<dim, VectorType>> &solution_output_structs);
 
   /**
    * @brief This function is to be redefined in specialized classes to adapt the output
@@ -959,9 +947,10 @@ protected:
   const unsigned int this_mpi_process;
 
   std::shared_ptr<parallel::DistributedTriangulationBase<dim>> triangulation;
-  std::shared_ptr<parallel::distributed::Triangulation<dim - 1, dim>> patch_triangulation;
-  DoFHandler<dim>                                              dof_handler;
-  std::shared_ptr<FESystem<dim>>                               fe;
+  std::shared_ptr<parallel::distributed::Triangulation<dim - 1, dim>>
+                                 patch_triangulation;
+  DoFHandler<dim>                dof_handler;
+  std::shared_ptr<FESystem<dim>> fe;
 
   TimerOutput computing_timer;
 
@@ -1022,10 +1011,10 @@ protected:
   unsigned int       number_quadrature_points;
 
   // Mappings and Quadratures
-  std::shared_ptr<Mapping<dim>>        mapping;
-  std::shared_ptr<MappingQ<dim - 1, dim>>    patch_mapping;
-  std::shared_ptr<Quadrature<dim>>     cell_quadrature;
-  std::shared_ptr<Quadrature<dim - 1>> face_quadrature;
+  std::shared_ptr<Mapping<dim>>           mapping;
+  std::shared_ptr<MappingQ<dim - 1, dim>> patch_mapping;
+  std::shared_ptr<Quadrature<dim>>        cell_quadrature;
+  std::shared_ptr<Quadrature<dim - 1>>    face_quadrature;
 
   // Mortar coupling manager and operator
   std::shared_ptr<MortarManagerCircle<dim>>      mortar_manager;

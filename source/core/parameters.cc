@@ -2425,9 +2425,12 @@ namespace Parameters
     prm.leave_subsection();
   }
   void
-  Mesh::declare_parameters(ParameterHandler &prm)
+  MeshBase::declare_parameters(ParameterHandler &prm)
   {
-      prm.enter_subsection("mesh");
+    std::string mesh_subsection_name = is_patch_mesh ? "patch mesh" : "mesh";
+    // std::cout << "Mesh subsection name: " << mesh_subsection_name
+    //           << std::endl;
+    prm.enter_subsection(mesh_subsection_name);
     {
       prm.declare_entry("type",
                         "dealii",
@@ -2531,9 +2534,11 @@ namespace Parameters
   }
 
   void
-  Mesh::parse_parameters(ParameterHandler &prm)
+  MeshBase::parse_parameters(ParameterHandler &prm)
   {
-      prm.enter_subsection("mesh");
+    std::string mesh_subsection_name = is_patch_mesh ? "patch mesh" : "mesh";
+    std::cout << "Mesh subsection name: " << mesh_subsection_name << std::endl;
+    prm.enter_subsection(mesh_subsection_name);
     {
       {
         const std::string op = prm.get("type");

@@ -1375,9 +1375,9 @@ namespace Parameters
   };
 
   /**
-   * @brief Mesh - Parameters that control mesh reading and mesh generation.
+   * @brief Base Mesh - Base struct of parameters that control mesh reading and mesh generation.
    */
-  struct Mesh
+  struct MeshBase
   {
     // GMSH or dealii
     enum class Type
@@ -1438,6 +1438,8 @@ namespace Parameters
     /// Rescale the grid by the scale factor
     double scale;
 
+    static constexpr bool is_patch_mesh = false;
+
     static void
     declare_parameters(ParameterHandler &prm);
     void
@@ -1445,11 +1447,19 @@ namespace Parameters
   };
 
   /**
- * @brief PatchMesh - Parameters that control patch mesh reading and patch mesh generation, which is used in the case of output slice is enabled.
- */
-  struct PatchMesh : Mesh
+   * @brief Mesh - Parameters that control mesh reading and mesh generation.
+   */
+  struct Mesh : MeshBase
   {
-    bool enable;
+    static constexpr bool is_patch_mesh = false;
+  };
+
+  /**
+   * @brief PatchMesh - Parameters that control patch mesh reading and patch mesh generation, which is used in the case of output slice is enabled.
+   */
+  struct PatchMesh : MeshBase
+  {
+    static constexpr bool is_patch_mesh = true;
   };
 
   /**

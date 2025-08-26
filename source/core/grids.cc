@@ -19,7 +19,7 @@
 template <int dim, int spacedim, typename MeshParameterType>
 void
 attach_grid_to_triangulation(Triangulation<dim, spacedim> &triangulation,
-                             const MeshParameterType       &mesh_parameters)
+                             const MeshParameterType      &mesh_parameters)
 {
   // GMSH input
   if (mesh_parameters.type == Parameters::Mesh::Type::gmsh)
@@ -629,12 +629,10 @@ read_mesh_and_manifolds_for_stator_and_rotor(
     }
 }
 
-template <int dim, int spacedim>
 void
-read_patch_mesh(
-  parallel::DistributedTriangulationBase<dim, spacedim> &triangulation,
-  const Parameters::PatchMesh                           &mesh_parameters,
-  const bool &restart)
+read_patch_mesh(parallel::DistributedTriangulationBase<2, 3> &triangulation,
+                const Parameters::PatchMesh                  &mesh_parameters,
+                const bool                                   &restart)
 {
   attach_grid_to_triangulation(triangulation, mesh_parameters);
 
@@ -673,6 +671,9 @@ attach_grid_to_triangulation(Triangulation<3>       &triangulation,
                              const Parameters::Mesh &mesh_parameters);
 template void
 attach_grid_to_triangulation(Triangulation<2, 3>    &triangulation,
+                             const Parameters::Mesh &mesh_parameters);
+template void
+attach_grid_to_triangulation(Triangulation<2, 3>         &triangulation,
                              const Parameters::PatchMesh &mesh_parameters);
 
 
@@ -703,13 +704,6 @@ read_mesh_and_manifolds(
   const Parameters::Manifolds                  &manifolds_parameters,
   const bool                                   &restart,
   const BoundaryConditions::BoundaryConditions &boundary_conditions);
-template void
-read_mesh_and_manifolds(
-  parallel::DistributedTriangulationBase<2, 3> &triangulation,
-  const Parameters::Mesh                       &mesh_parameters,
-  const Parameters::Manifolds                  &manifolds_parameters,
-  const bool                                   &restart,
-  const BoundaryConditions::BoundaryConditions &boundary_conditions);
 
 template void
 read_mesh_and_manifolds_for_stator_and_rotor(
@@ -727,8 +721,3 @@ read_mesh_and_manifolds_for_stator_and_rotor(
   const bool                                   &restart,
   const BoundaryConditions::BoundaryConditions &boundary_conditions,
   const Parameters::Mortar<3>                  &mortar_parameters);
-
-template void
-read_patch_mesh(parallel::DistributedTriangulationBase<2, 3> &triangulation,
-                const Parameters::PatchMesh                       &mesh_parameters,
-                const bool                                   &restart);

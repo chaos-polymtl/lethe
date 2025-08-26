@@ -400,7 +400,7 @@ public:
   }
 
   std::string
-get_patch_output_name() const
+  get_patch_output_name() const
   {
     return patch_output_name;
   }

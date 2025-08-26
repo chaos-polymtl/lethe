@@ -1817,13 +1817,11 @@ FluidDynamicsMatrixBased<dim>::solve()
       this->simulation_parameters.restart_parameters.restart,
       this->simulation_parameters.boundary_conditions);
 
-  if (this->simulation_parameters.patch_mesh.enable)
-    {
-      read_patch_mesh(
-      *this->patch_triangulation,
-      this->simulation_parameters.patch_mesh,
-      this->simulation_parameters.restart_parameters.restart);
-    }
+  if constexpr (dim == 3)
+    if (this->simulation_parameters.patch_mesh.is_patch_mesh)
+      read_patch_mesh(*this->patch_triangulation,
+                      this->simulation_parameters.patch_mesh,
+                      this->simulation_parameters.restart_parameters.restart);
 
   this->computing_timer.leave_subsection("Read mesh and manifolds");
 

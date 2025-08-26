@@ -3027,14 +3027,14 @@ NavierStokesBase<dim, VectorType, DofsType>::write_output_results_slice(
 {
   TimerOutput::Scope t(this->computing_timer, "Output slice results");
 
-  const std::string  folder        = simulation_control->get_output_path();
-  const std::string  solution_name = simulation_control->get_patch_output_name();
-  const unsigned int iter          = simulation_control->get_step_number();
-  const double       time          = simulation_control->get_current_time();
+  const std::string folder        = simulation_control->get_output_path();
+  const std::string solution_name = simulation_control->get_patch_output_name();
+  const unsigned int iter         = simulation_control->get_step_number();
+  const double       time         = simulation_control->get_current_time();
   const unsigned int subdivision = simulation_control->get_number_subdivision();
   const unsigned int group_files = simulation_control->get_group_files();
 
-    // Create data output object
+  // Create data output object
   DataOutResample<dim, dim - 1, dim> data_out(*patch_triangulation,
                                               *patch_mapping);
 
@@ -3071,16 +3071,16 @@ NavierStokesBase<dim, VectorType, DofsType>::write_output_results_slice(
   // Build the patches and write the output
   data_out.build_patches(*this->get_mapping(),
                          subdivision,
-                         DataOut<dim -1, dim>::curved_inner_cells);
+                         DataOut<dim - 1, dim>::curved_inner_cells);
 
-  write_vtu_and_pvd<dim-1, dim>(this->patch_pvdhandler,
-                         data_out,
-                         folder,
-                         solution_name,
-                         time,
-                         iter,
-                         group_files,
-                         this->mpi_communicator);
+  write_vtu_and_pvd<dim - 1, dim>(this->patch_pvdhandler,
+                                  data_out,
+                                  folder,
+                                  solution_name,
+                                  time,
+                                  iter,
+                                  group_files,
+                                  this->mpi_communicator);
 }
 
 template <int dim, typename VectorType, typename DofsType>

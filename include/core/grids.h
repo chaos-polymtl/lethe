@@ -92,15 +92,15 @@ read_mesh_and_manifolds_for_stator_and_rotor(
  * @brief Read patch mesh and attach it to a triangulation.
  *
  * @param[in, out] triangulation The triangulation to which a grid is attached.
- * @param[in] mesh_parameters The mesh parameters input in the .prm file for the patch mesh.
- * @param[in] restart Boolean to indicate if the simulation is a restart or a new simulation.
+ * @param[in] mesh_parameters The mesh parameters input in the .prm file for the
+ * patch mesh.
+ * @param[in] restart Boolean to indicate if the simulation is a restart or a
+ * new simulation.
  */
-template <int dim, int spacedim>
 void
-read_patch_mesh(
-  parallel::DistributedTriangulationBase<dim, spacedim> &triangulation,
-  const Parameters::PatchMesh                           &mesh_parameters,
-  const bool &restart);
+read_patch_mesh(parallel::DistributedTriangulationBase<2, 3> &triangulation,
+                const Parameters::PatchMesh                  &mesh_parameters,
+                const bool                                   &restart);
 
 /**
  * @brief Refine a mesh around specific boundary ids
