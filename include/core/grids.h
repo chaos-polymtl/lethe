@@ -20,10 +20,10 @@ using namespace dealii;
  *
  * @param mesh_parameters The mesh parameters used to decide what type of mesh or primitive is  used
  */
-template <int dim, int spacedim = dim>
+template <int dim, int spacedim = dim, typename MeshParameterType>
 void
 attach_grid_to_triangulation(Triangulation<dim, spacedim> &triangulation,
-                             const Parameters::Mesh       &mesh_parameters);
+                             const MeshParameterType      &mesh_parameters);
 
 /**
  * @brief Modifies the triangulation to setup periodic boundary conditions in the case of CFD simulations
@@ -62,7 +62,7 @@ read_mesh_and_manifolds(
  * @brief Completely set up a mesh and its manifold for rotor-stator domains
  *
  * @param[in, out] triangulation The triangulation to which a grid is attached.
- * For dealii grids, this is intially the stator triangulation information,
+ * For deal.ii grids, this is initially the stator triangulation information,
  * which is later substituted by the merged rotor-stator triangulation. For gmsh
  * grids, this already refers to the merged configuration
  *
@@ -87,6 +87,20 @@ read_mesh_and_manifolds_for_stator_and_rotor(
   const bool                                            &restart,
   const BoundaryConditions::BoundaryConditions          &boundary_conditions,
   const Parameters::Mortar<dim>                         &mortar_parameters);
+
+/**
+ * @brief Read patch mesh and attach it to a triangulation.
+ *
+ * @param[in, out] triangulation The triangulation to which a grid is attached.
+ * @param[in] mesh_parameters The mesh parameters input in the .prm file for the patch mesh.
+ * @param[in] restart Boolean to indicate if the simulation is a restart or a new simulation.
+ */
+template <int dim, int spacedim>
+void
+read_patch_mesh(
+  parallel::DistributedTriangulationBase<dim, spacedim> &triangulation,
+  const Parameters::PatchMesh                           &mesh_parameters,
+  const bool &restart);
 
 /**
  * @brief Refine a mesh around specific boundary ids

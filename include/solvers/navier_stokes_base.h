@@ -819,6 +819,19 @@ protected:
   }
 
   /**
+ * @brief Initialize patch mesh for output.
+ *
+ */
+  inline void
+  initialize_patch_triangulation()
+  {
+    if (this->simulation_parameters.patch_mesh.enable)
+      {
+        read_patch_mesh(*patch_triangulation, this->simulation_parameters.patch_mesh, this->simulation_parameters.restart_parameters.restart);
+      }
+  }
+
+  /**
    * @brief Constrain a fluid's subdomains according to the temperature field to null
    * velocity and pressure fields to model solid subdomains.
    *
@@ -855,7 +868,7 @@ protected:
    * @brief Gather solution information to generate output results
    *
    * @param[in] solution Vector of present solution
-   * @param[out] solution_output_structs Vector of OutputStructs that will be
+   * @param[in, out] solution_output_structs Vector of OutputStructs that will be
    * used to write the output results as VTU files
    */
   void

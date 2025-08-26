@@ -16,10 +16,10 @@
 #include <fstream>
 
 
-template <int dim, int spacedim>
+template <int dim, int spacedim, typename MeshParameterType>
 void
 attach_grid_to_triangulation(Triangulation<dim, spacedim> &triangulation,
-                             const Parameters::Mesh       &mesh_parameters)
+                             const MeshParameterType       &mesh_parameters)
 {
   // GMSH input
   if (mesh_parameters.type == Parameters::Mesh::Type::gmsh)
@@ -633,7 +633,7 @@ template <int dim, int spacedim>
 void
 read_patch_mesh(
   parallel::DistributedTriangulationBase<dim, spacedim> &triangulation,
-  const Parameters::Mesh                                &mesh_parameters,
+  const Parameters::PatchMesh                           &mesh_parameters,
   const bool &restart)
 {
   attach_grid_to_triangulation(triangulation, mesh_parameters);
@@ -673,7 +673,7 @@ attach_grid_to_triangulation(Triangulation<3>       &triangulation,
                              const Parameters::Mesh &mesh_parameters);
 template void
 attach_grid_to_triangulation(Triangulation<2, 3>    &triangulation,
-                             const Parameters::Mesh &mesh_parameters);
+                             const Parameters::PatchMesh &mesh_parameters);
 
 
 template void
@@ -730,5 +730,5 @@ read_mesh_and_manifolds_for_stator_and_rotor(
 
 template void
 read_patch_mesh(parallel::DistributedTriangulationBase<2, 3> &triangulation,
-                const Parameters::Mesh                       &mesh_parameters,
+                const Parameters::PatchMesh                       &mesh_parameters,
                 const bool                                   &restart);
