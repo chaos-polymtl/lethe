@@ -291,10 +291,8 @@ RayTracingSolver<dim>::insert_particles_and_photons()
 
               photon_properties.push_back(properties_of_one_photon);
               properties_of_one_photon.clear();
-
             }
         }
-
     }
   MPI_Comm communicator = triangulation.get_mpi_communicator();
   // Obtain global bounding boxes
