@@ -31,7 +31,7 @@ public:
 
 private:
   /**
-   * @brief Set the parameters for the DEM simulation
+   * @brief Set the parameters for the ray tracing.
    */
   void
   setup_parameters();
