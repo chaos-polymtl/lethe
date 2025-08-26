@@ -1869,12 +1869,12 @@ namespace Parameters
         starting_point = value_string_to_tensor<dim>(
           prm.get("starting photon insertion position"));
 
-        first_direction =
+        first_direction_unit =
           value_string_to_tensor<dim>(prm.get("first insertion direction"));
-        second_direction =
+        second_direction_unit =
           value_string_to_tensor<dim>(prm.get("second insertion direction"));
-        first_direction  = first_direction / first_direction.norm();
-        second_direction = second_direction / second_direction.norm();
+        first_direction_unit  = first_direction_unit / first_direction_unit.norm();
+        second_direction_unit = second_direction_unit / second_direction_unit.norm();
 
         number_of_photon_first_direction =
           prm.get_integer("number of photon first direction");
@@ -1883,7 +1883,7 @@ namespace Parameters
         photon_displacement_vector =
           value_string_to_tensor<dim>(prm.get("photon displacement vector"));
 
-        second_direction =
+        second_direction_unit =
           value_string_to_tensor<dim>(prm.get("second insertion direction"));
         number_of_photon_second_direction =
           prm.get_integer("number of photon second direction");

@@ -76,7 +76,7 @@ RayTracingSolver<dim>::setup_parameters()
   action_manager = DEMActionManager::get_action_manager();
 
   // Set the simulation control as SimulationControlAdjointSteady
-  simulation_control = std::make_shared<SimulationControlAdjointSteady>(
+  simulation_control = std::make_shared<SimulationControlSteady>(
     parameters.simulation_control);
 
   // Setup load balancing parameters and attach the correct functions to the
@@ -228,7 +228,6 @@ RayTracingSolver<dim>::insert_particles_and_photons()
   // insertion insertion point.
   std::vector<std::vector<double>> photon_properties;
 
-
   unsigned int max_n_photon_first_dir =
     parameters.ray_tracing_info.number_of_photon_first_direction;
 
@@ -250,8 +249,8 @@ RayTracingSolver<dim>::insert_particles_and_photons()
       // Create variable for readability
       Point<dim> starting_insertion_point =
         parameters.ray_tracing_info.starting_point;
-      Tensor<1, dim> first_dir  = parameters.ray_tracing_info.first_direction;
-      Tensor<1, dim> second_dir = parameters.ray_tracing_info.second_direction;
+      Tensor<1, dim> first_dir  = parameters.ray_tracing_info.first_direction_unit;
+      Tensor<1, dim> second_dir = parameters.ray_tracing_info.second_direction_unit;
 
       const double step_first_dir =
         parameters.ray_tracing_info.step_between_photons_first_direction;
