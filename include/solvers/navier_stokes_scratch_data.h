@@ -660,7 +660,6 @@ public:
   /**
    * @brief Reinitializes the fluid forces and torques on the particles in the cell to zero
    */
-
   void
   reinit_particle_fluid_forces()
   {

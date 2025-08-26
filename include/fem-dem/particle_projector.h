@@ -6,6 +6,7 @@
 
 #include <core/vector.h>
 
+#include <solvers/navier_stokes_scratch_data.h>
 #include <solvers/physics_subequations_solver.h>
 
 #include <fem-dem/parameters_cfd_dem.h>
@@ -87,20 +88,25 @@ particle_sphere_intersection_3d(double r_particle,
 }
 
 /**
- * @brief Particle fieldy calculator.
- * This class stores the required information for the calculation of the
- * projection of a particle field onto a mesh. This class does not solve any
- * equation, but compartmentalize the necessary information for the projection
- * of the particle field onto a mesh. Multiple instances of this function can be
- * called to establish new particle fields.
+ * @brief ParticleFieldQCM calculator.
+ * This class stores the required information for the calculation of a
+ * field or a particle-fluid interaction onto a mesh. This class does not solve
+ * any equation, but compartmentalize the necessary information for the
+ * projection of the particle field or interaction onto a mesh. Multiple
+ * instances of this function can be called to establish new projections.In the
+ * case of a particle-fluid interaction, there is no particle field to project
+ * and, consequently, the property_start_index parameter is given an invalid
+ * default value (-1).
  *
  * @tparam dim An integer that denotes the number of spatial dimensions.
  *
- * @tparam property_start_index An integer that indicates at which particle property the field starts
- *
  * @tparam n_components The number of components in the field. This number should be either 1 (a scalar) or dim (a Tensor<1,dim>)
+ *
+ * @tparam property_start_index An integer that indicates at which particle property the field starts.
+ * If the propery_start_index is negative, then there is no property start and
+ * this project is not used to project a particle field.
  */
-template <int dim, int property_start_index, int n_components>
+template <int dim, int n_components, int property_start_index = -1>
 class ParticleFieldQCM
 {
 public:
@@ -114,13 +120,16 @@ public:
    * If the neumann_boundaries is set to true, then  cells without particles do
    * not have a mass matrix assembled. This corresponds to setting a neumann
    * boundary at the cells which do not contain particles.
+   * @param distribute_contribution A flag to indicate if the contribution is meant to be distributed using the volume of the particle divided by the total volume contribution of the particle.
    */
   ParticleFieldQCM(parallel::DistributedTriangulationBase<dim> *triangulation,
                    const unsigned int                           fe_degree,
                    const bool                                   simplex,
-                   const bool neumann_boundaries)
+                   const bool neumann_boundaries,
+                   const bool distribute_contribution)
     : dof_handler(*triangulation)
     , neumann_boundaries(neumann_boundaries)
+    , distribute_contribution(distribute_contribution)
   {
     if (simplex)
       {
@@ -182,6 +191,8 @@ public:
   /// which results in a no flux zone.
   const bool neumann_boundaries;
 
+  const bool distribute_contribution;
+
   /**
    * @brief Setup the degrees of freedom. This function allocates the necessary memory.
    *
@@ -235,7 +246,9 @@ public:
     , void_fraction_parameters(input_parameters)
     , linear_solver_parameters(linear_solver_parameters)
     , particle_handler(particle_handler)
-    , particle_velocity(triangulation, fe_degree, simplex, true)
+    , particle_have_been_projected(false)
+    , particle_velocity(triangulation, fe_degree, simplex, true, false)
+    , particle_fluid_force(triangulation, fe_degree, simplex, false, true)
   {
     if (simplex)
       {
@@ -642,13 +655,30 @@ private:
            std::set<typename DoFHandler<dim>::active_cell_iterator>>
     vertices_to_periodic_cell;
 
-  // Smoothing length factor for the void fraction calculation
+  /// Smoothing length factor for the void fraction calculation
   const double l2_smoothing_factor =
     Utilities::fixed_power<2>(void_fraction_parameters->l2_smoothing_length);
 
+  /// Boolean indicator used to check if the particle have at least been
+  /// projected once. This is mainly use for assertions and sanity checking
+  /// purposed
+  bool particle_have_been_projected;
+
 public:
-  ParticleFieldQCM<dim, DEM::CFDDEMProperties::PropertiesIndex::v_x, 3>
+  ParticleFieldQCM<dim, 3, DEM::CFDDEMProperties::PropertiesIndex::v_x>
     particle_velocity;
+
+  ParticleFieldQCM<dim, 3, DEM::CFDDEMProperties::PropertiesIndex::fem_force_x>
+    particle_fluid_force;
+
+  template <typename VectorType>
+  void
+  gather_particle_fluid_forces_onto_particles(
+    const Parameters::CFDDEM      &cfd_dem_parameters,
+    DoFHandler<dim>               &fluid_dof_handler,
+    const VectorType              &fluid_solution,
+    const std::vector<VectorType> &fluid_previous_solutions,
+    NavierStokesScratchData<dim>  &scratch_data);
 };
 
 
