@@ -474,8 +474,7 @@
 <h2>Installing deal.II<a class="headerlink" href="#installing-deal-ii" title="Link to this heading">#</a></h2>
 <p>All operations must be performed on login nodes.</p>
 <p>Load <code class="docutils literal notranslate"><span class="pre">Trilinos</span></code>, <code class="docutils literal notranslate"><span class="pre">Parmetis</span></code> and <code class="docutils literal notranslate"><span class="pre">P4est</span></code>, and their prerequisite modules and set the appropriate environment variables. It is convenient to create a <code class="docutils literal notranslate"><span class="pre">.dealii</span></code> file in your <code class="docutils literal notranslate"><span class="pre">$HOME</span></code> directory that contains the following lines to source the appropriate libraries:</p>
-<div class="copy-button highlight-text notranslate"><div class="highlight"><pre><span></span>module load CCEnv #Only if on the Niagara cluster
-module load StdEnv/2023
+<div class="copy-button highlight-text notranslate"><div class="highlight"><pre><span></span>module load StdEnv/2023
 module load trilinos/15.1.1
 module load parmetis/4.0.3
 module load p4est/2.8.6
@@ -484,6 +483,7 @@ export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$EBROOTP4EST/lib64/
 export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$EBROOTFLEXIBLAS/lib64/
 export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$EBROOTIMKL//mkl/2023.2.0/lib/intel64/
 export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$EBROOTOPENMPI/lib/
+source /scinet/vast/etc/vastpreload-openmpi.bash # Only if on Trillium or Nibi
 
 export DEAL_II_DIR=$HOME/dealii/inst/
 export PATH=$PATH:$HOME/lethe/inst/bin/
@@ -504,7 +504,7 @@ export PATH=$PATH:$HOME/lethe/inst/bin/
 </div>
 <div class="admonition tip">
 <p class="admonition-title">Tip</p>
-<p>The -DCMAKE_CXX_FLAGS=”-march=native” works on both Rorqual, Nibi and Niagara. To ensure that the flag has worked correctly, the cmake output should contain the following information : <code class="docutils literal notranslate"><span class="pre">Vectorization</span> <span class="pre">level:</span>&#160;&#160;&#160; <span class="pre">512</span> <span class="pre">bit</span> <span class="pre">(sse2</span> <span class="pre">avx2</span> <span class="pre">avx512*)</span></code>.</p>
+<p>The -DCMAKE_CXX_FLAGS=”-march=native” works on both Rorqual, Nibi, and Trillium. To ensure that the flag has worked correctly, the cmake output should contain the following information : <code class="docutils literal notranslate"><span class="pre">Vectorization</span> <span class="pre">level:</span>&#160;&#160;&#160; <span class="pre">512</span> <span class="pre">bit</span> <span class="pre">(sse2</span> <span class="pre">avx2</span> <span class="pre">avx512*)</span></code>.</p>
 </div>
 <div class="admonition warning">
 <p class="admonition-title">Warning</p>
@@ -531,21 +531,11 @@ nice ninja -j6 install
 </section>
 <section id="copying-local-files">
 <span id="id1"></span><h2>Copying Local Files<a class="headerlink" href="#copying-local-files" title="Link to this heading">#</a></h2>
-<p>On Linux, use <code class="docutils literal notranslate"><span class="pre">scp</span></code> (for secure copy) to copy needed files for the simulation (<code class="docutils literal notranslate"><span class="pre">prm</span></code>, <code class="docutils literal notranslate"><span class="pre">msh</span></code>):</p>
-<div class="copy-button highlight-text notranslate"><div class="highlight"><pre><span></span>scp /home/path/in/your/computer/*.prm username@clustername.calculcanada.ca:/scratch/path/in/cluster
-</pre></div>
-</div>
-<p>If you need to copy a folder, use <code class="docutils literal notranslate"><span class="pre">scp</span> <span class="pre">-r</span></code>.</p>
-<p>Simulation files must be in scratch. To get the address of your scratch folder, in your cluster account run:</p>
-<div class="copy-button highlight-text notranslate"><div class="highlight"><pre><span></span>cd $SCRATCH
-pwd
-</pre></div>
-</div>
-<p>On Windows, use third-party, such as <code class="docutils literal notranslate"><span class="pre">PuTTY</span></code> or <code class="docutils literal notranslate"><span class="pre">WSL</span></code> (see the <a class="reference external" href="https://docs.computecanada.ca/wiki/Transferring_data">wiki page on Transferring data</a>).</p>
+<p>We use <a class="reference external" href="https://alliancecan.ca/en/services/advanced-research-computing/national-services/data-movement-globus">Globus</a> to transfer files between your local machine and the cluster. For more information, visit the <a class="reference external" href="https://docs.alliancecan.ca/wiki/Globus">Globus documentation</a>.</p>
 </section>
 <section id="launching-simulations">
 <span id="id2"></span><h2>Launching Simulations<a class="headerlink" href="#launching-simulations" title="Link to this heading">#</a></h2>
-<p>Simulations are sent to the scheduler via batch scripts. Visit the Digital Research Alliance of Canada (Alliance) wiki page for more information about the <a class="reference external" href="https://docs.alliancecan.ca/wiki/What_is_a_scheduler%3F">scheduler</a> and <a class="reference external" href="https://docs.alliancecan.ca/wiki/Running_jobs">running jobs</a>. For your convenience, an example of <code class="docutils literal notranslate"><span class="pre">job.sh</span></code> used on Beluga is given below:</p>
+<p>Simulations are sent to the scheduler via batch scripts. Visit the Digital Research Alliance of Canada (Alliance) wiki page for more information about the <a class="reference external" href="https://docs.alliancecan.ca/wiki/What_is_a_scheduler%3F">scheduler</a> and <a class="reference external" href="https://docs.alliancecan.ca/wiki/Running_jobs">running jobs</a>. For your convenience, an example of <code class="docutils literal notranslate"><span class="pre">job.sh</span></code> is given below:</p>
 <div class="copy-button highlight-text notranslate"><div class="highlight"><pre><span></span>#!/bin/bash
 #SBATCH --account=$yourgroupaccount
 #SBATCH --ntasks-per-node=$X #number of parallel tasks per node.
@@ -557,12 +547,16 @@ pwd
 #SBATCH --mail-user=$your.email.adress@email.provider
 
 source $HOME/.dealii
-srun $HOME/lethe/inst/bin/$lethe_application_name_wanted $parameter_file_name.prm
+mpirun $HOME/lethe/inst/bin/$lethe_application_name_wanted $parameter_file_name.prm
 </pre></div>
 </div>
 <div class="admonition tip">
 <p class="admonition-title">Tip</p>
 <p>The <code class="docutils literal notranslate"><span class="pre">--ntasks-per-node</span></code> option is the number of parallel tasks per node. When using a full node, this should correspond to the number of cores available on the node. For example, on Narval, this should be set to 64.</p>
+</div>
+<div class="admonition tip">
+<p class="admonition-title">Tip</p>
+<p>If you have jobs that need to be launched one after the other, you can add <code class="docutils literal notranslate"><span class="pre">#SBATCH</span> <span class="pre">--dependency=$previous-slurm-job-id</span></code> to your launching script. This will make sure that the job will only start once the previous job has finished.</p>
 </div>
 <p>The job is sent using:</p>
 <div class="copy-button highlight-text notranslate"><div class="highlight"><pre><span></span>sbatch job.sh
@@ -592,15 +586,20 @@ srun $HOME/lethe/inst/bin/$lethe_application_name_wanted $parameter_file_name.pr
 <td><p>248 Go</p></td>
 <td><p><a class="reference external" href="https://docs.alliancecan.ca/wiki/Narval/en">https://docs.alliancecan.ca/wiki/Narval/en</a></p></td>
 </tr>
-<tr class="row-odd"><td><p>Niagara</p></td>
-<td><p>40</p></td>
-<td><p>200 Go</p></td>
-<td><p><a class="reference external" href="https://docs.alliancecan.ca/wiki/Niagara/en">https://docs.alliancecan.ca/wiki/Niagara/en</a></p></td>
+<tr class="row-odd"><td><p>Trillium</p></td>
+<td><p>192</p></td>
+<td><p>755 Go</p></td>
+<td><p><a class="reference external" href="https://docs.alliancecan.ca/wiki/Trillium/en">https://docs.alliancecan.ca/wiki/Trillium/en</a></p></td>
 </tr>
 <tr class="row-even"><td><p>Rorqual</p></td>
 <td><p>192</p></td>
 <td><p>760 Go</p></td>
 <td><p><a class="reference external" href="https://docs.alliancecan.ca/wiki/Rorqual/en">https://docs.alliancecan.ca/wiki/Rorqual/en</a></p></td>
+</tr>
+<tr class="row-odd"><td><p>Nibi</p></td>
+<td><p>192</p></td>
+<td><p>754 Go</p></td>
+<td><p><a class="reference external" href="https://docs.alliancecan.ca/wiki/Nibi/en">https://docs.alliancecan.ca/wiki/Nibi/en</a></p></td>
 </tr>
 </tbody>
 </table>
@@ -608,7 +607,7 @@ srun $HOME/lethe/inst/bin/$lethe_application_name_wanted $parameter_file_name.pr
 </section>
 <section id="saving-a-ssh-key-linux">
 <h2>Saving a SSH Key (Linux)<a class="headerlink" href="#saving-a-ssh-key-linux" title="Link to this heading">#</a></h2>
-<p>To save your key on the cluster, so that it is not asked for each log or <code class="docutils literal notranslate"><span class="pre">scp</span></code>, generate your ssh-key with:</p>
+<p>To save your key on the cluster, so that it is not asked for each log, generate your ssh-key with:</p>
 <div class="copy-button highlight-text notranslate"><div class="highlight"><pre><span></span>ssh-keygen
 </pre></div>
 </div>
@@ -621,16 +620,8 @@ srun $HOME/lethe/inst/bin/$lethe_application_name_wanted $parameter_file_name.pr
 <p>ED25519 keys are preferred to RSA keys since they are more secure and performant. Seek more information in the <a class="reference external" href="https://docs.gitlab.com/ee/user/ssh.html">GitLab Documentation</a>.</p>
 </div>
 <p>To upload this local key to your Compute Canada Database account (CCDB) use:</p>
-<div class="copy-button highlight-text notranslate"><div class="highlight"><pre><span></span>ssh-copy-id username@clustername.computecanada.ca
+<div class="copy-button highlight-text notranslate"><div class="highlight"><pre><span></span>  ssh-copy-id username@clustername.computecanada.ca
 </pre></div>
-</div>
-<div class="admonition warning">
-<p class="admonition-title">Warning</p>
-<p>This command does not work on Niagara anymore. You may use the following:</p>
-<div class="copy-button highlight-text notranslate"><div class="highlight"><pre><span></span>cat ~/.ssh/$KEY_ID.pub
-</pre></div>
-</div>
-<p>where <code class="docutils literal notranslate"><span class="pre">$KEY_ID.pub</span></code> is the public key file located in <code class="docutils literal notranslate"><span class="pre">~/.ssh/</span></code>. For more information, see <a class="reference external" href="https://docs.scinet.utoronto.ca/index.php/SSH#SSH_Keys">SSH documentation</a>.</p>
 </div>
 </section>
 </section>
