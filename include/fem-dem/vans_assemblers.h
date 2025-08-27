@@ -443,7 +443,7 @@ public:
   {}
 
   /**
-   * @brief calculate_particle_fluid_interactions calculates the saffman force.
+   * @brief calculate_particle_fluid_interactions calculates the Saffman force.
    * @param scratch_data (see base class)
    * @param copy_data (see base class)
    */
