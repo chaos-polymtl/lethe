@@ -475,7 +475,7 @@ public:
   {}
 
   /**
-   * @brief calculate_particle_fluid_interactions calculates the magnus force.
+   * @brief calculate_particle_fluid_interactions calculates the Magnus force.
    * @param scratch_data (see base class)
    * @param copy_data (see base class)
    */
