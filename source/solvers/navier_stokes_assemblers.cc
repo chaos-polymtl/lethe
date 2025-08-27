@@ -2858,7 +2858,7 @@ NavierStokesAssemblerMortarALE<dim>::assemble_matrix(
               const auto &strong_jac     = strong_jacobian_vec[q][j];
               const auto &strong_jac_ale = strong_jac_ale_vec[q][j];
 
-              // ALE term: -u_ALE * gradu
+              // ALE term: -u_ale·∇δu
               local_matrix(i, j) +=
                 -phi_u_i * (grad_phi_u_j * velocity_ale) * JxW;
 
