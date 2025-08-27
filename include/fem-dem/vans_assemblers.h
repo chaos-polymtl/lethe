@@ -569,7 +569,7 @@ public:
   /**
    * @brief Constructor. Keeps an internal copy of the gravity.
    *
-   * @param gravity the gravity applied to the particles.
+   * @param[in] gravity the gravity applied to the particles.
    */
 
   VANSAssemblerBuoyancy(const Tensor<1, 3> &p_gravity)
