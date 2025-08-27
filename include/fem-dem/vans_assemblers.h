@@ -443,7 +443,7 @@ public:
   {}
 
   /**
-   * @brief calculate_particle_fluid_interactions calculates the buoyancy force
+   * @brief calculate_particle_fluid_interactions calculates the saffman force.
    * @param scratch_data (see base class)
    * @param copy_data (see base class)
    */
@@ -475,7 +475,7 @@ public:
   {}
 
   /**
-   * @brief calculate_particle_fluid_interactions calculates the buoyancy force
+   * @brief calculate_particle_fluid_interactions calculates the magnus force.
    * @param scratch_data (see base class)
    * @param copy_data (see base class)
    */
@@ -578,7 +578,7 @@ public:
   {}
 
   /**
-   * @brief calculate_particle_fluid_interactions calculates the buoyancy force
+   * @brief calculate_particle_fluid_interactions calculates the buoyancy force.
    * @param scratch_data (see base class)
    * @param copy_data (see base class)
    */
@@ -587,13 +587,13 @@ public:
     NavierStokesScratchData<dim> &scratch_data) override;
 
   /// Gravity acceleration applied to the particles
-  Tensor<1, 3> gravity;
+  const Tensor<1, 3> gravity;
 };
 
 
 /**
  * @brief Class that assembles the particle pressure force that will then
- * be added to particle_fluid_interactions
+ * be added to particle_fluid_interactions.
  *
  * @tparam dim An integer that denotes the number of spatial dimensions
  *
