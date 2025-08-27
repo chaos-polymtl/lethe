@@ -23,7 +23,7 @@ var searchData=
   ['eig_5festimation_5fverbose_20',['eig_estimation_verbose',['../structParameters_1_1LinearSolver.html#af0e28141f596fde7667b800aaae50058',1,'Parameters::LinearSolver']]],
   ['el_21',['el',['../classNavierStokesOperatorBase.html#a162a5ebc0742593e2b2d10daf38418a2',1,'NavierStokesOperatorBase']]],
   ['element_5fsize_22',['element_size',['../classNavierStokesOperatorBase.html#a8eaefbeb15982fab2dfbf8ceb540baf4',1,'NavierStokesOperatorBase']]],
-  ['ellipsoid_23',['ellipsoid',['../classShape.html#a3e44e2b1f6fca48f7b7b2151977b3abda4bffc1780b0728178be01297b30d7568',1,'Shape::ellipsoid'],['../classEllipsoid.html#a459db84c2238f9e81c56b658fb9e7f6d',1,'Ellipsoid::Ellipsoid()'],['../classEllipsoid.html',1,'Ellipsoid&lt; dim &gt;']]],
+  ['ellipsoid_23',['ellipsoid',['../classEllipsoid.html#a459db84c2238f9e81c56b658fb9e7f6d',1,'Ellipsoid::Ellipsoid()'],['../classShape.html#a3e44e2b1f6fca48f7b7b2151977b3abda4bffc1780b0728178be01297b30d7568',1,'Shape::ellipsoid'],['../classEllipsoid.html',1,'Ellipsoid&lt; dim &gt;']]],
   ['emissivity_24',['emissivity',['../classBoundaryConditions_1_1HTBoundaryConditions.html#a8e22c2f4eef353bbd788dc789a4a2a83',1,'BoundaryConditions::HTBoundaryConditions::emissivity'],['../structParameters_1_1Laser__FreeSurfaceRadiation.html#a833225bb7c4b3081bcdf81e4aa3e0fc0',1,'Parameters::Laser_FreeSurfaceRadiation::emissivity']]],
   ['empty_25',['empty',['../classAdaptiveSparseContacts.html#a9cf65bd3e1a790313fcf3f6b708ab230a3eda417d81f41b3d282e2995f2daa8c9',1,'AdaptiveSparseContacts']]],
   ['empty_5fdof_5fhandler_26',['empty_dof_handler',['../classParticleVisualization.html#abe5fb61476c9d6aa76867e513b8e137e',1,'ParticleVisualization']]],
@@ -132,6 +132,7 @@ var searchData=
   ['export_5fpositions_5ffile_129',['export_positions_file',['../structParameters_1_1RPTFEMReconstructionParameters.html#ab8a93a14c66ca50d4f239fdf5f11f03a',1,'Parameters::RPTFEMReconstructionParameters']]],
   ['extra_5fverbose_130',['extra_verbose',['../namespaceParameters.html#ad408350a21239600add83c5e91fcfa26ae5cbb8171b496f26a4488b9e15a0fe52',1,'Parameters']]],
   ['extract_5fkeys_5ffrom_5fmap_131',['extract_keys_from_map',['../utilities_8h.html#aa7a3beaf194e7e21b6745c52b3695c4b',1,'utilities.h']]],
-  ['extract_5fvalues_5ffrom_5fmap_132',['extract_values_from_map',['../utilities_8h.html#a4a392cd214e737c300c8f727e465a409',1,'utilities.h']]],
-  ['extrapolation_5ftolerance_133',['extrapolation_tolerance',['../structParameters_1_1RPTFEMReconstructionParameters.html#aa0c092e8c94de07b1d4ac699d75bc446',1,'Parameters::RPTFEMReconstructionParameters']]]
+  ['extract_5fparticle_5fproperties_132',['extract_particle_properties',['../classNavierStokesScratchData.html#af8ac55b44d36bba2da5edb79754de69b',1,'NavierStokesScratchData']]],
+  ['extract_5fvalues_5ffrom_5fmap_133',['extract_values_from_map',['../utilities_8h.html#a4a392cd214e737c300c8f727e465a409',1,'utilities.h']]],
+  ['extrapolation_5ftolerance_134',['extrapolation_tolerance',['../structParameters_1_1RPTFEMReconstructionParameters.html#aa0c092e8c94de07b1d4ac699d75bc446',1,'Parameters::RPTFEMReconstructionParameters']]]
 ];

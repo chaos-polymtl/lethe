@@ -12,7 +12,7 @@ var searchData=
   ['weighting_5ftype_9',['weighting_type',['../classPreconditionASM.html#a8d85fcf5a96522fc5c8361b980f2d5f4',1,'PreconditionASM']]],
   ['weightingtype_10',['WeightingType',['../classPreconditionASM.html#a4241842da7c0d26bd9a041745f2ea36f',1,'PreconditionASM']]],
   ['weights_11',['weights',['../classRBFShape.html#a8cc4d4b1396d905f163cfa5851c27e48',1,'RBFShape::weights'],['../classPreconditionASM.html#abefaf957da70a206468f2ded86e84a7d',1,'PreconditionASM::weights']]],
-  ['wendlandc2_12',['wendlandc2',['../classRBFShape.html#a2060a8058a7a5a439d772319f39ec66ba526ec08dac621910633406c7dae04da4',1,'RBFShape::WENDLANDC2'],['../classRBFShape.html#ac4f98e19cc9b04913df4704f64c8c040',1,'RBFShape::wendlandc2(const double distance) const']]],
+  ['wendlandc2_12',['wendlandc2',['../classRBFShape.html#ac4f98e19cc9b04913df4704f64c8c040',1,'RBFShape::wendlandc2(const double distance) const'],['../classRBFShape.html#a2060a8058a7a5a439d772319f39ec66ba526ec08dac621910633406c7dae04da4',1,'RBFShape::WENDLANDC2']]],
   ['wendlandc2_5fderivative_13',['wendlandc2_derivative',['../classRBFShape.html#a0e6efac8271e7370c1cd8c0180e0d4a8',1,'RBFShape']]],
   ['will_20be_3a_14',['For example, if the string to be printed is &quot;Tracer&quot; the result will be:',['../utilities_8h.html#autotoc_md2',1,'']]],
   ['write_15',['write',['../classBufferRW.html#ac447b3d2282d05fefa68c63e4d9414c6',1,'BufferRW::write(const T &amp;in)'],['../classBufferRW.html#a515fe252b0aed835e777229ea4c7770b',1,'BufferRW::write(const Tensor&lt; 1, dim, T &gt; &amp;in)']]],
