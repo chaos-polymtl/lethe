@@ -436,10 +436,10 @@ template <int dim>
 class VANSAssemblerSaffmanMei : public ParticleFluidAssemblerBase<dim>
 {
 public:
-  VANSAssemblerSaffmanMei(Parameters::Lagrangian::LagrangianPhysicalProperties
-                            lagrangian_physical_properties)
-    : lagrangian_physical_properties(lagrangian_physical_properties)
-
+  /**
+   * @brief Constructor. Does not do anything.
+   */
+  VANSAssemblerSaffmanMei()
   {}
 
   /**
@@ -450,9 +450,6 @@ public:
   virtual void
   calculate_particle_fluid_interactions(
     NavierStokesScratchData<dim> &scratch_data) override;
-
-  Parameters::Lagrangian::LagrangianPhysicalProperties
-    lagrangian_physical_properties;
 };
 
 
@@ -471,10 +468,10 @@ template <int dim>
 class VANSAssemblerMagnus : public ParticleFluidAssemblerBase<dim>
 {
 public:
-  VANSAssemblerMagnus(Parameters::Lagrangian::LagrangianPhysicalProperties
-                        lagrangian_physical_properties)
-    : lagrangian_physical_properties(lagrangian_physical_properties)
-
+  /**
+   * @brief Constructor. Does not do anything.
+   */
+  VANSAssemblerMagnus()
   {}
 
   /**
@@ -485,9 +482,6 @@ public:
   virtual void
   calculate_particle_fluid_interactions(
     NavierStokesScratchData<dim> &scratch_data) override;
-
-  Parameters::Lagrangian::LagrangianPhysicalProperties
-    lagrangian_physical_properties;
 };
 
 /**
@@ -508,11 +502,10 @@ template <int dim>
 class VANSAssemblerViscousTorque : public ParticleFluidAssemblerBase<dim>
 {
 public:
-  VANSAssemblerViscousTorque(
-    Parameters::Lagrangian::LagrangianPhysicalProperties
-      lagrangian_physical_properties)
-    : lagrangian_physical_properties(lagrangian_physical_properties)
-
+  /**
+   * @brief Constructor. Does not do anything.
+   */
+  VANSAssemblerViscousTorque()
   {}
 
   /**
@@ -523,9 +516,6 @@ public:
   virtual void
   calculate_particle_fluid_interactions(
     NavierStokesScratchData<dim> &scratch_data) override;
-
-  Parameters::Lagrangian::LagrangianPhysicalProperties
-    lagrangian_physical_properties;
 };
 
 /**
@@ -545,11 +535,10 @@ template <int dim>
 class VANSAssemblerVorticalTorque : public ParticleFluidAssemblerBase<dim>
 {
 public:
-  VANSAssemblerVorticalTorque(
-    Parameters::Lagrangian::LagrangianPhysicalProperties
-      lagrangian_physical_properties)
-    : lagrangian_physical_properties(lagrangian_physical_properties)
-
+  /**
+   * @brief Constructor. Does not do anything.
+   */
+  VANSAssemblerVorticalTorque()
   {}
 
   /**
@@ -560,9 +549,6 @@ public:
   virtual void
   calculate_particle_fluid_interactions(
     NavierStokesScratchData<dim> &scratch_data) override;
-
-  Parameters::Lagrangian::LagrangianPhysicalProperties
-    lagrangian_physical_properties;
 };
 
 /**
@@ -580,9 +566,14 @@ template <int dim>
 class VANSAssemblerBuoyancy : public ParticleFluidAssemblerBase<dim>
 {
 public:
-  VANSAssemblerBuoyancy(Parameters::Lagrangian::LagrangianPhysicalProperties
-                          lagrangian_physical_properties)
-    : lagrangian_physical_properties(lagrangian_physical_properties)
+  /**
+   * @brief Constructor. Keeps an internal copy of the gravity.
+   *
+   * @param gravity the gravity applied to the particles.
+   */
+
+  VANSAssemblerBuoyancy(Tensor<1, 3> &p_gravity)
+    : gravity(p_gravity)
 
   {}
 
@@ -595,8 +586,8 @@ public:
   calculate_particle_fluid_interactions(
     NavierStokesScratchData<dim> &scratch_data) override;
 
-  Parameters::Lagrangian::LagrangianPhysicalProperties
-    lagrangian_physical_properties;
+  /// Gravity acceleration applied to the particles
+  Tensor<1, 3> gravity;
 };
 
 

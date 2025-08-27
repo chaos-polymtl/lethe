@@ -293,39 +293,31 @@ FluidDynamicsVANS<dim>::setup_assemblers()
   if (this->cfd_dem_simulation_parameters.cfd_dem.saffman_lift_force == true)
     // Saffman Mei Lift Force Assembler
     particle_fluid_assemblers.push_back(
-      std::make_shared<VANSAssemblerSaffmanMei<dim>>(
-        this->cfd_dem_simulation_parameters.dem_parameters
-          .lagrangian_physical_properties));
+      std::make_shared<VANSAssemblerSaffmanMei<dim>>());
 
   if (this->cfd_dem_simulation_parameters.cfd_dem.magnus_lift_force == true)
     // Magnus Lift Force Assembler
     particle_fluid_assemblers.push_back(
-      std::make_shared<VANSAssemblerMagnus<dim>>(
-        this->cfd_dem_simulation_parameters.dem_parameters
-          .lagrangian_physical_properties));
+      std::make_shared<VANSAssemblerMagnus<dim>>());
 
   if (this->cfd_dem_simulation_parameters.cfd_dem.rotational_viscous_torque ==
       true)
     // Viscous Torque Assembler
     particle_fluid_assemblers.push_back(
-      std::make_shared<VANSAssemblerViscousTorque<dim>>(
-        this->cfd_dem_simulation_parameters.dem_parameters
-          .lagrangian_physical_properties));
+      std::make_shared<VANSAssemblerViscousTorque<dim>>());
 
   if (this->cfd_dem_simulation_parameters.cfd_dem.vortical_viscous_torque ==
       true)
     // Vortical Torque Assembler
     particle_fluid_assemblers.push_back(
-      std::make_shared<VANSAssemblerVorticalTorque<dim>>(
-        this->cfd_dem_simulation_parameters.dem_parameters
-          .lagrangian_physical_properties));
+      std::make_shared<VANSAssemblerVorticalTorque<dim>>());
 
   if (this->cfd_dem_simulation_parameters.cfd_dem.buoyancy_force == true)
     // Buoyancy Force Assembler
     particle_fluid_assemblers.push_back(
       std::make_shared<VANSAssemblerBuoyancy<dim>>(
         this->cfd_dem_simulation_parameters.dem_parameters
-          .lagrangian_physical_properties));
+          .lagrangian_physical_properties.g));
 
   if (this->cfd_dem_simulation_parameters.cfd_dem.pressure_force == true)
     // Pressure Force

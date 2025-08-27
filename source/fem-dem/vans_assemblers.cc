@@ -1819,7 +1819,7 @@ VANSAssemblerBuoyancy<dim>::calculate_particle_fluid_interactions(
 
       // Buoyancy Force
       buoyancy_force =
-        -lagrangian_physical_properties.g * (4.0 / 3) * M_PI *
+        -gravity * (4.0 / 3) * M_PI *
         Utilities::fixed_power<3>(
           (particle_properties[DEM::CFDDEMProperties::PropertiesIndex::dp] /
            2.0));
