@@ -572,7 +572,7 @@ public:
    * @param gravity the gravity applied to the particles.
    */
 
-  VANSAssemblerBuoyancy(Tensor<1, 3> &p_gravity)
+  VANSAssemblerBuoyancy(const Tensor<1, 3> &p_gravity)
     : gravity(p_gravity)
 
   {}
