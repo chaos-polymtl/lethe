@@ -1,4 +1,4 @@
-// SPDX-FileCopyrightText: Copyright (c) 2021-2024 The Lethe Authors
+// SPDX-FileCopyrightText: Copyright (c) 2021-2025 The Lethe Authors
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
 #ifndef lethe_navier_stokes_scratch_data_h
@@ -33,7 +33,6 @@
 
 using namespace dealii;
 
-
 /**
  * @brief Class that stores the information required by the assembly procedure
  * for a Navier-Stokes equation. Consequently, this class calculates
@@ -52,7 +51,8 @@ using namespace dealii;
  *
  * @tparam dim An integer that denotes the dimension of the space in which
  * the flow is solved
- *  @ingroup solvers
+ *
+ * @ingroup solvers
  **/
 
 template <int dim>
@@ -79,7 +79,6 @@ public:
    *
    * @param mapping The mapping of the domain in which the Navier-Stokes
    * equations are solved
-   *
    */
   NavierStokesScratchData(
     const std::shared_ptr<SimulationControl> &simulation_control,
@@ -159,7 +158,6 @@ public:
     gather_mortar                            = false;
     gather_hessian = properties_manager.is_non_newtonian();
 
-
     if (sd.gather_vof)
       enable_vof(sd.fe_values_vof->get_fe(),
                  sd.fe_values_vof->get_quadrature(),
@@ -197,16 +195,16 @@ public:
     gather_hessian = sd.gather_hessian;
   }
 
-
-  /** @brief Allocates the memory for the scratch
+  /**
+   * @brief Allocates the memory for the scratch
    *
    * This function allocates the necessary memory for all members of the scratch
-   *
    */
   void
   allocate() override;
 
-  /** @brief Reinitializes the content of the scratch.
+  /**
+   * @brief Reinitializes the content of the scratch.
    *
    * Using the FeValues and the content of the solutions and previous solutions,
    * fills all of the class member of the scratch.
@@ -225,7 +223,6 @@ public:
    * @param[in] beta_force The additional force for flow control.
    * TODO : Deprecate this argument and pass it to the constructor of the
    * assembler
-   *
    */
 
   template <typename VectorType>
@@ -349,7 +346,6 @@ public:
 
         face_JxW = std::vector<std::vector<double>>(
           n_faces, std::vector<double>(n_faces_q_points));
-
 
         // Velocity and pressure values
         // First vector is face number, second quadrature point
@@ -478,7 +474,6 @@ public:
       }
   }
 
-
   /**
    * @brief enable_vof Enables the collection of the VOF data by the scratch
    *
@@ -526,7 +521,8 @@ public:
                    const Quadrature<dim>    &quadrature,
                    const Mapping<dim>       &mapping);
 
-  /** @brief Reinitialize the content of the scratch for the vof
+  /**
+   * @brief Reinitialize the content of the scratch for the vof
    *
    * @param cell The cell over which the assembly is being carried.
    * This cell must be compatible with the VOF FE and not the
@@ -537,8 +533,6 @@ public:
    * @param current_filtered_solution The present value of the solution for [alpha]_filtered
    *
    * @param previous_solutions The solutions at the previous time steps for [alpha]
-   *
-   *
    */
 
   template <typename VectorType>
@@ -613,7 +607,8 @@ public:
                        const Quadrature<dim>    &quadrature,
                        const Mapping<dim>       &mapping);
 
-  /** @brief Reinitialize the content of the scratch for the void fraction
+  /**
+   *  @brief Reinitialize the content of the scratch for the void fraction
    *
    * @param cell The cell over which the assembly is being carried.
    * This cell must be compatible with the void fraction FE and not the
@@ -622,7 +617,6 @@ public:
    * @param current_solution The present value of the solution for [epsilon]
    *
    * @param previous_solutions The solutions at the previous time steps for [epsilon]
-   *
    */
 
   template <typename VectorType>
@@ -649,7 +643,7 @@ public:
   }
 
   /**
-   * @brief enable_particle_fluid_interactions Enables the calculation of the drag force by the scratch
+   * @brief enable_particle_fluid_interactions Enables the calculation of the fluid information at the particle location for the scratch.
    *
    * @param fe FiniteElement associated with the void fraction
    *
@@ -663,79 +657,86 @@ public:
     const unsigned int n_global_max_particles_per_cell,
     const bool         enable_void_fraction_interpolation);
 
-  /** @brief Calculates the content of the scratch for the particle fluid
-   * interactions
-   *
-   * @param cell The cell over which the assembly is being carried.
-   * This cell must be compatible with the void fraction FE and not the
-   * Navier-Stokes FE
-   *
-   * @param current_solution The present value of the solution for [epsilon]
-   *
-   * @param previous_solutions The solutions at the previous time steps for
-   * [epsilon]
-   *
+  /**
+   * @brief Reinitializes the fluid forces and torques on the particles in the cell to zero
    */
 
-  template <typename VectorType>
   void
-  reinit_particle_fluid_interactions(
-    const typename DoFHandler<dim>::active_cell_iterator & /*cell*/,
-    const VectorType & /*current_solution*/,
-    const VectorType                      &previous_solution,
-    const VectorType                      &void_fraction_solution,
-    const Particles::ParticleHandler<dim> &particle_handler,
-    DoFHandler<dim>                       &dof_handler,
-    DoFHandler<dim>                       &void_fraction_dof_handler)
+  reinit_particle_fluid_forces()
   {
-    pic = particle_handler.particles_in_cell(this->fe_values.get_cell());
+    for (auto &particle : pic)
+      {
+        auto particle_properties = particle.get_properties();
+        // Set the particle_fluid_interactions properties and vectors to 0
+        for (int d = 0; d < dim; ++d)
+          {
+            particle_properties
+              [DEM::CFDDEMProperties::PropertiesIndex::fem_force_x + d] = 0.;
+            particle_properties
+              [DEM::CFDDEMProperties::PropertiesIndex::fem_torque_x + d] = 0.;
+            undisturbed_flow_force[d]                                    = 0.;
+          }
+      }
+  }
 
+  /**
+   * @brief Extracts the velocity of the particles and calculates their total volume
+   * in the cell
+   *
+   * @return Total volume of the particles in the cell
+   */
+
+  double
+  extract_particle_properties()
+  {
     average_particle_velocity = 0;
+    // Loop over particles in cell
+    double       total_particle_volume = 0;
+    unsigned int i_particle            = 0;
+
+    for (auto &particle : pic)
+      {
+        auto particle_properties = particle.get_properties();
+        // Stores the values of particle velocity in a tensor
+        particle_velocity[i_particle][0] =
+          particle_properties[DEM::CFDDEMProperties::PropertiesIndex::v_x];
+        particle_velocity[i_particle][1] =
+          particle_properties[DEM::CFDDEMProperties::PropertiesIndex::v_y];
+        if constexpr (dim == 3)
+          particle_velocity[i_particle][2] =
+            particle_properties[DEM::CFDDEMProperties::PropertiesIndex::v_z];
+
+        if (!interpolated_void_fraction)
+          total_particle_volume +=
+            M_PI *
+            pow(particle_properties[DEM::CFDDEMProperties::PropertiesIndex::dp],
+                dim) /
+            (2 * dim);
+
+        average_particle_velocity += particle_velocity[i_particle];
+        i_particle++;
+      }
+    number_of_particles = i_particle;
+    if (number_of_particles != 0)
+      { // Calculate the average particle velocity within the cell
+        average_particle_velocity =
+          average_particle_velocity / number_of_particles;
+      }
+    return total_particle_volume;
+  }
+
+  /**
+   * @brief Computes the cell void fraction
+   *
+   * @param[in] total_particle_volume The total volume of the particles in the
+   * cell
+   */
+
+  void
+  calculate_cell_void_fraction(const double &total_particle_volume)
+  {
     cell_volume =
       compute_cell_measure_with_JxW(this->fe_values.get_JxW_values());
-
-    // Loop over particles in cell
-    double total_particle_volume = 0;
-    {
-      unsigned int particle_i = 0;
-      for (auto &particle : pic)
-        {
-          auto particle_properties = particle.get_properties();
-          // Set the particle_fluid_interactions properties and vectors to 0
-          for (int d = 0; d < dim; ++d)
-            {
-              particle_properties
-                [DEM::CFDDEMProperties::PropertiesIndex::fem_force_x + d] = 0.;
-              particle_properties
-                [DEM::CFDDEMProperties::PropertiesIndex::fem_torque_x + d] = 0.;
-              undisturbed_flow_force[d]                                    = 0.;
-            }
-
-          // Stock the values of particle velocity in a tensor
-          particle_velocity[particle_i][0] =
-            particle_properties[DEM::CFDDEMProperties::PropertiesIndex::v_x];
-          particle_velocity[particle_i][1] =
-            particle_properties[DEM::CFDDEMProperties::PropertiesIndex::v_y];
-          if constexpr (dim == 3)
-            particle_velocity[particle_i][2] =
-              particle_properties[DEM::CFDDEMProperties::PropertiesIndex::v_z];
-
-          cell_void_fraction[particle_i] = 0;
-          if (!interpolated_void_fraction)
-            total_particle_volume +=
-              M_PI *
-              pow(
-                particle_properties[DEM::CFDDEMProperties::PropertiesIndex::dp],
-                dim) /
-              (2 * dim);
-
-          average_particle_velocity += particle_velocity[particle_i];
-          particle_i++;
-        }
-      number_of_particles = particle_i;
-    }
-
-
 
     if (!this->interpolated_void_fraction)
       {
@@ -746,34 +747,69 @@ public:
         for (unsigned int j = 0; j < number_of_particles; ++j)
           cell_void_fraction[j] = cell_void_fraction_bulk;
       }
+    else
+      for (unsigned int j = 0; j < number_of_particles; ++j)
+        cell_void_fraction[j] = 0;
+  }
 
-    if (number_of_particles == 0)
-      return;
+  /**
+   * @brief Creates an object of type Quadrature<dim> that contains the
+   * particle reference location. This object can be used to interpolate any
+   * function known at the dofs at the location of the particles.
+   *
+   * @return Quadrature type object that contains the location of the particles
+   * relative to the cell's frame of reference.
+   */
 
-
-    // Calculate the average particle velocity within
-    // the cell
-    average_particle_velocity = average_particle_velocity / number_of_particles;
-
+  Quadrature<dim>
+  gather_particles_reference_location()
+  {
     // Create local vector that will be used to spawn an in-situ quadrature to
-    // interpolate at the location of the particles
-    std::vector<Point<dim>> particle_reference_location;
+    // interpolate at the locations of the particles
+    std::vector<Point<dim>> particle_reference_location(number_of_particles);
     std::vector<double>     particle_weights(number_of_particles, 1);
+    unsigned int            i_particle = 0;
 
     // Loop over particles in cell and cache their reference location
     for (auto &particle : pic)
       {
         // Store particle positions and weights
         // Reference location of the particle
-        particle_reference_location.push_back(
-          particle.get_reference_location());
+        particle_reference_location[i_particle] =
+          particle.get_reference_location();
+        i_particle++;
       }
 
-    // Create a quadrature for the Navier-Stokes equations that is based on the
+    // Return a quadrature for the Navier-Stokes equations that is based on the
     // particle reference location
-    Quadrature<dim> q_local(particle_reference_location, particle_weights);
-    FEValues<dim>   fe_values_local_particles(this->fe_values.get_fe(),
-                                            q_local,
+    return Quadrature<dim>(particle_reference_location, particle_weights);
+  }
+
+  /**
+   * @brief Interpolates the velocity and pressure of the fluid, as well as the
+   * pressure gradient, and the laplacian, curl and gradient of the velocity, at
+   * the locations of the particles.
+   *
+   * @param[in] q_particles_location Quadrature type object that contains the
+   * location of the particles relative to the cell's frame of reference.
+   *
+   * @param[in] velocity_cell The active cell associated with the velocity and
+   * pressure DoFHandler
+   *
+   * @param[in] velocity_pressure_solution The solution (velocity and pressure)
+   * that is used to interpolate the velocity and pressure at the particles
+   * locations.
+   */
+
+  template <typename VectorType>
+  void
+  calculate_fluid_fields_at_particle_location(
+    const Quadrature<dim>                                &q_particles_location,
+    const typename DoFHandler<dim>::active_cell_iterator &velocity_cell,
+    const VectorType &velocity_pressure_solution)
+  {
+    FEValues<dim> fe_values_local_particles(this->fe_values.get_fe(),
+                                            q_particles_location,
                                             update_gradients | update_values |
                                               update_hessians);
 
@@ -787,84 +823,307 @@ public:
     fluid_velocity_curls_at_particle_location_3d.resize(number_of_particles);
     fluid_pressure_gradients_at_particle_location.resize(number_of_particles);
 
-    // Evaluate the relevant information at the
-    // quadrature points to do the interpolation.
-    const auto &velocity_cell =
-      typename DoFHandler<dim>::cell_iterator(*this->fe_values.get_cell(),
-                                              &dof_handler);
-
     fe_values_local_particles.reinit(velocity_cell);
 
     // Calculate all fluid properties at the particle location
     fe_values_local_particles[velocities].get_function_values(
-      previous_solution, fluid_velocity_at_particle_location);
+      velocity_pressure_solution, fluid_velocity_at_particle_location);
 
     fe_values_local_particles[velocities].get_function_laplacians(
-      previous_solution, fluid_velocity_laplacian_at_particle_location);
+      velocity_pressure_solution,
+      fluid_velocity_laplacian_at_particle_location);
 
     if constexpr (dim == 2)
       {
         fe_values_local_particles[velocities].get_function_curls(
-          previous_solution, fluid_velocity_curls_at_particle_location_2d);
+          velocity_pressure_solution,
+          fluid_velocity_curls_at_particle_location_2d);
       }
     else if constexpr (dim == 3)
       {
         fe_values_local_particles[velocities].get_function_curls(
-          previous_solution, fluid_velocity_curls_at_particle_location_3d);
+          velocity_pressure_solution,
+          fluid_velocity_curls_at_particle_location_3d);
       }
 
     fe_values_local_particles[pressure].get_function_gradients(
-      previous_solution, fluid_pressure_gradients_at_particle_location);
+      velocity_pressure_solution,
+      fluid_pressure_gradients_at_particle_location);
+  }
 
-    // Create a quadrature for the void fraction that is based on the particle
-    // reference location
-    if (this->interpolated_void_fraction)
+  /**
+   * @brief Interpolates the void fraction at the locations of the particles.
+   *
+   * @param[in] q_particles_location Quadrature type object that contains the
+   * location of the particles relative to the cell's frame of reference.
+   *
+   * @param[in] void_fraction_cell The active cell associated with the void
+   * fraction DoFHandler
+   *
+   * @param[in] void_fraction_solution The void fraction calculated with one of
+   * the methods of the VoidFractionBase class.
+   */
+
+  template <typename VectorType>
+  void
+  calculate_void_fraction_at_particle_location(
+    const Quadrature<dim>                                &q_particles_location,
+    const typename DoFHandler<dim>::active_cell_iterator &void_fraction_cell,
+    const VectorType &void_fraction_solution)
+  {
+    FEValues<dim> fe_values_particles_void_fraction(
+      this->fe_values_void_fraction->get_fe(),
+      q_particles_location,
+      update_values);
+
+    fe_values_particles_void_fraction.reinit(void_fraction_cell);
+
+    fe_values_particles_void_fraction.get_function_values(
+      void_fraction_solution, cell_void_fraction);
+  }
+
+  /**
+   * @brief Calculates the properties of the fluid at the locations of the particles.
+   * At the moment, only constant properties within the same fluid are
+   * supported. When two fluids are present and VOF is used, the properties are
+   * calculated based on the filtered VOF solution interpolated at the
+   * location of the particles. These properties are used in the forces
+   * calculations in the VANS equations.
+   */
+
+  void
+  calculate_fluid_properties_at_particle_location()
+  {
+    density_at_particle_location.resize(number_of_particles);
+    kinematic_viscosity_at_particle_location.resize(number_of_particles);
+
+    if (gather_vof)
       {
-        FEValues<dim> fe_values_particles_void_fraction(
-          this->fe_values_void_fraction->get_fe(), q_local, update_values);
+        for (unsigned int i_particle = 0; i_particle < number_of_particles;
+             ++i_particle)
+          {
+            density_at_particle_location[i_particle] = calculate_point_property(
+              filtered_phase_values_at_particle_location[i_particle],
+              this->density_ref_0,
+              this->density_ref_1);
+            double dynamic_viscosity_at_particle_location =
+              calculate_point_property(
+                filtered_phase_values_at_particle_location[i_particle],
+                this->kinematic_viscosity_scale_0 * this->density_ref_0,
+                this->kinematic_viscosity_scale_1 * this->density_ref_1);
 
-        const auto &void_fraction_dh_cell =
-          typename DoFHandler<dim>::cell_iterator(
-            *this->fe_values_void_fraction->get_cell(),
-            &void_fraction_dof_handler);
-
-        fe_values_particles_void_fraction.reinit(void_fraction_dh_cell);
-
-        fe_values_particles_void_fraction.get_function_values(
-          void_fraction_solution, cell_void_fraction);
+            kinematic_viscosity_at_particle_location[i_particle] =
+              dynamic_viscosity_at_particle_location /
+              density_at_particle_location[i_particle];
+          }
       }
+    else
+      {
+        for (unsigned int i_particle = 0; i_particle < number_of_particles;
+             ++i_particle)
+          {
+            // Gather the kinematic viscosity and density at the particle
+            // location assuming a constant kinematic viscosity and density in a
+            // single fluid
+            kinematic_viscosity_at_particle_location[i_particle] =
+              kinematic_viscosity_scale;
+            density_at_particle_location[i_particle] = density_scale;
+          }
+      }
+  }
 
-    // Relative velocity and particle Reynolds
-    unsigned int particle_i                  = 0;
+  /**
+   * @brief Calculates the velocity of the fluid relative to that of the particle and
+   * the particle Reynolds number at the location of the particles. These will
+   * be used in forces calculations in the vans equations.
+   */
+
+  void
+  calculate_force_parameters_at_particle_location()
+
+  { // Relative velocity and particle Reynolds
+    unsigned int i_particle                  = 0;
     average_fluid_particle_relative_velocity = 0;
-
-    // TODO, get the real viscosity at the particle localtion
-    double kinematic_viscosity =
-      properties_manager.get_kinematic_viscosity_scale();
 
     for (auto &particle : pic)
       {
         auto particle_properties = particle.get_properties();
-        fluid_particle_relative_velocity_at_particle_location[particle_i] =
-          fluid_velocity_at_particle_location[particle_i] -
-          particle_velocity[particle_i];
-        average_fluid_particle_relative_velocity +=
-          fluid_particle_relative_velocity_at_particle_location[particle_i];
 
-        Re_particle[particle_i] =
+        fluid_particle_relative_velocity_at_particle_location[i_particle] =
+          fluid_velocity_at_particle_location[i_particle] -
+          particle_velocity[i_particle];
+        average_fluid_particle_relative_velocity +=
+          fluid_particle_relative_velocity_at_particle_location[i_particle];
+
+        Re_particle[i_particle] =
           1e-3 +
-          cell_void_fraction[particle_i] *
-            fluid_particle_relative_velocity_at_particle_location[particle_i]
+          cell_void_fraction[i_particle] *
+            fluid_particle_relative_velocity_at_particle_location[i_particle]
               .norm() *
             particle_properties[DEM::CFDDEMProperties::PropertiesIndex::dp] /
-            (kinematic_viscosity + DBL_MIN);
-        particle_i++;
+            (kinematic_viscosity_at_particle_location[i_particle] + DBL_MIN);
+        i_particle++;
       }
 
     average_fluid_particle_relative_velocity =
-      average_fluid_particle_relative_velocity / particle_i;
+      average_fluid_particle_relative_velocity / i_particle;
   }
 
+  /**
+   * @brief Interpolates the filtered VOF solution at the location of the particles.
+   * The latter values are used in calculating the density and viscosity of the
+   * fluid at the particles' locations when VOF is used.
+   *
+   * @param[in] q_particles_location Quadrature type object that contains the
+   * location of the particles relative to the cell's frame of reference.
+   *
+   * @param[in] phase_cell The active cell associated with the VOF DoFHandler
+   *
+   * @param[in] current_filtered_solution The present value of the filtered VOF
+   * solution
+   */
+
+  template <typename VectorType>
+  void
+  calculate_vof_at_particle_location(
+    const Quadrature<dim>                                &q_particles_location,
+    const typename DoFHandler<dim>::active_cell_iterator &phase_cell,
+    const VectorType &current_filtered_solution)
+  {
+    FEValues<dim> fe_values_vof_local_particles((*this->fe_values_vof).get_fe(),
+                                                q_particles_location,
+                                                update_values |
+                                                  update_quadrature_points |
+                                                  update_JxW_values);
+
+    filtered_phase_values_at_particle_location.resize(number_of_particles);
+
+    fe_values_vof_local_particles.reinit(phase_cell);
+
+    fe_values_vof_local_particles.get_function_values(
+      current_filtered_solution, filtered_phase_values_at_particle_location);
+  }
+
+  /**
+   * @brief Calculates the variables needed to compute the particle fluid interactions
+   * in the VANS equations.
+   *
+   * @param[in] velocity_cell The active cell associated with the velocity and
+   * pressure DoFHandler
+   *
+   * @param[in] void_fraction_cell The active cell associated with the void
+   * fraction DoFHandler
+   *
+   * @param[in] previous_velocity_pressure_solution The solution at the previous
+   * time step for the fluid's velocity and pressure
+   *
+   * @param[in] void_fraction_solution The void fraction value calculated with
+   * one of the methods of the VoidFractionBase class.
+   *
+   * @param[in] particle_handler The particle handler object that stores and
+   * manages the particles in the simulations
+   */
+
+  template <typename VectorType>
+  void
+  reinit_particle_fluid_interactions(
+    const typename DoFHandler<dim>::active_cell_iterator &velocity_cell,
+    const typename DoFHandler<dim>::active_cell_iterator &void_fraction_cell,
+    const VectorType & /*velocity_pressure_solution*/,
+    const VectorType                      &previous_velocity_pressure_solution,
+    const VectorType                      &void_fraction_solution,
+    const Particles::ParticleHandler<dim> &particle_handler)
+  {
+    pic = particle_handler.particles_in_cell(this->fe_values.get_cell());
+
+    double total_particle_volume = 0;
+    reinit_particle_fluid_forces();
+    total_particle_volume = extract_particle_properties();
+
+    calculate_cell_void_fraction(total_particle_volume);
+
+    if (number_of_particles == 0)
+      return;
+
+    Quadrature<dim> q_particles_location =
+      gather_particles_reference_location();
+    calculate_fluid_fields_at_particle_location(
+      q_particles_location, velocity_cell, previous_velocity_pressure_solution);
+
+    if (this->interpolated_void_fraction)
+      {
+        calculate_void_fraction_at_particle_location(q_particles_location,
+                                                     void_fraction_cell,
+                                                     void_fraction_solution);
+      }
+    calculate_fluid_properties_at_particle_location();
+    calculate_force_parameters_at_particle_location();
+  }
+
+  /**
+   * @brief Calculates the variables needed to compute the particle fluid interactions
+   * in the VANS equations.This version of the function is used when VOF is used
+   * with CFD-DEM.
+   *
+   * @param[in] velocity_cell The active cell associated with the velocity and
+   * pressure DoFHandler
+   *
+   * @param[in] void_fraction_cell The active cell associated with the void
+   * fraction DoFHandler
+   *
+   * @param[in] phase_cell The active cell associated with the VOF DoFHandler
+   *
+   * @param[in] previous_velocity_pressure_solution The solution at the previous
+   * time step for the fluid's velocity and pressure
+   *
+   * @param[in] void_fraction_solution The void fraction value calculated with
+   * one of the methods of the VoidFractionBase class.
+   *
+   * @param[in] particle_handler The particle handler object that stores and
+   * manages the particles in the simulations
+   *
+   * @param[in] current_filtered_solution The present value of the VOF solution
+   * at the dofs of the cell
+   */
+  template <typename VectorType>
+  void
+  reinit_particle_fluid_interactions(
+    const typename DoFHandler<dim>::active_cell_iterator &velocity_cell,
+    const typename DoFHandler<dim>::active_cell_iterator &void_fraction_cell,
+    const typename DoFHandler<dim>::active_cell_iterator &phase_cell,
+    const VectorType & /*velocity_pressure_solution*/,
+    const VectorType                      &previous_velocity_pressure_solution,
+    const VectorType                      &void_fraction_solution,
+    const Particles::ParticleHandler<dim> &particle_handler,
+    const VectorType                      &current_filtered_solution)
+  {
+    pic = particle_handler.particles_in_cell(this->fe_values.get_cell());
+
+    double total_particle_volume = 0;
+    total_particle_volume        = extract_particle_properties();
+    reinit_particle_fluid_forces();
+    calculate_cell_void_fraction(total_particle_volume);
+
+    if (number_of_particles == 0)
+      return;
+
+    Quadrature<dim> q_particles_location =
+      gather_particles_reference_location();
+    calculate_fluid_fields_at_particle_location(
+      q_particles_location, velocity_cell, previous_velocity_pressure_solution);
+
+    if (this->interpolated_void_fraction)
+      {
+        calculate_void_fraction_at_particle_location(q_particles_location,
+                                                     void_fraction_cell,
+                                                     void_fraction_solution);
+      }
+    calculate_vof_at_particle_location(q_particles_location,
+                                       phase_cell,
+                                       current_filtered_solution);
+    calculate_fluid_properties_at_particle_location();
+    calculate_force_parameters_at_particle_location();
+  }
 
   /**
    * @brief enable_heat_transfer Enables the collection of the heat transfer
@@ -882,8 +1141,8 @@ public:
                        const Quadrature<dim>    &quadrature,
                        const Mapping<dim>       &mapping);
 
-
-  /** @brief Reinitialize the content of the scratch for the heat transfer
+  /**
+   * @brief Reinitialize the content of the scratch for the heat transfer
    * auxiliary physic
    *
    * @param cell The cell over which the assembly is being carried.
@@ -895,7 +1154,6 @@ public:
    * @param previous_solutions Vector of \f$n\f$ @p VectorType containers of
    * previous temperature solutions. \f$n\f$ depends on the BDF scheme selected
    * for time-stepping.
-   *
    */
 
   template <typename VectorType>
@@ -975,15 +1233,14 @@ public:
     const Mapping<dim>                            &mapping,
     const std::shared_ptr<CahnHilliardFilterBase> &cahn_hilliard_filter);
 
-
-  /** @brief Reinitialize the content of the scratch for CH
+  /**
+   * @brief Reinitialize the content of the scratch for CH
    *
    * @param cell The cell over which the assembly is being carried.
    * This cell must be compatible with the CH FE and not the
    * Navier-Stokes FE
    *
    * @param current_solution The present value of the solution for [phi]
-   *
    */
   template <typename VectorType>
   void
@@ -1007,7 +1264,7 @@ public:
       .get_function_gradients(current_solution,
                               this->phase_order_cahn_hilliard_gradients);
 
-    // Gather filtered phase fraction (values, gradients)
+    // Gather filtered VOF solution (values, gradients)
     this->fe_values_cahn_hilliard->operator[](phase_order)
       .get_function_values(current_filtered_solution,
                            this->filtered_phase_order_cahn_hilliard_values);
@@ -1036,7 +1293,8 @@ public:
                 const Parameters::Mortar<dim> &mortar_parameters,
                 const double                  &radius);
 
-  /** @brief Calculates the physical properties. This function calculates the
+  /**
+   * @brief Calculates the physical properties. This function calculates the
    * physical properties that may be required by the fluid dynamics problem.
    * Namely the kinematic viscosity and, when required, the density.
    */
@@ -1075,6 +1333,10 @@ public:
   double              density_ref_1;
   double              density_psi_0;
   double              density_psi_1;
+  double              density_scale;
+  // The density at the particles locations is used to calculate the forces
+  // between the fluid and the particles.
+  std::vector<double> density_at_particle_location;
   std::vector<double> compressibility_multiplier;
   std::vector<double> dynamic_viscosity_0;
   std::vector<double> dynamic_viscosity_1;
@@ -1084,6 +1346,9 @@ public:
   double kinematic_viscosity_scale_0;
   /// Scale of the kinematic viscosity for fluid 1.
   double kinematic_viscosity_scale_1;
+  /// Kinematic viscosity at the particles locations. This is used to calculate
+  /// the Reynolds number and the forces between the fluid and the particles.
+  std::vector<double> kinematic_viscosity_at_particle_location;
   /// Values of the dynamic viscosity used in the SUPG and PSPG stabilizations
   /// for fluid 0.
   std::vector<double> dynamic_viscosity_for_stabilization_0;
@@ -1144,6 +1409,7 @@ public:
   unsigned int                     n_dofs_vof;
   std::vector<double>              phase_values;
   std::vector<double>              filtered_phase_values;
+  std::vector<double>              filtered_phase_values_at_particle_location;
   std::vector<std::vector<double>> previous_phase_values;
   std::vector<Tensor<1, dim>>      filtered_phase_gradient_values;
   std::vector<Tensor<1, dim>>      phase_gradient_values;
