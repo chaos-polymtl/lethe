@@ -578,7 +578,7 @@ public:
   {}
 
   /**
-   * @brief calculate_particle_fluid_interactions calculates the buoyancy force.
+   * @brief Calculate the buoyancy force.
    * @param scratch_data (see base class)
    * @param copy_data (see base class)
    */
