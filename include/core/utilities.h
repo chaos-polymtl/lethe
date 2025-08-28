@@ -502,7 +502,6 @@ deserialize_table(TableHandler &table, const std::string &filename)
 
 /**
  * @brief Retrieves the value of a specific parameter from an input file.
- *
  * Returns an empty string if the parameter is not found. This function is
  * adapted from ASPECT and is mainly used to parse the dimension of the problem
  * before creating the full parameter parser.
