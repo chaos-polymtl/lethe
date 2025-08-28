@@ -7,7 +7,6 @@
 #include <deal.II/base/conditional_ostream.h>
 #include <deal.II/base/parameter_handler.h>
 #include <deal.II/base/point.h>
-#include <deal.II/base/revision.h>
 #include <deal.II/base/table_handler.h>
 #include <deal.II/base/tensor.h>
 
@@ -28,14 +27,23 @@
 using namespace dealii;
 
 /**
- * @brief Small class that is used to store statistics (min,max,total,average) of variables that are used in simulations.
- * This small class allows us to agglomerate the statistics instead of returning
- * tuples. For example, this class is used to store the kinetic energy of the
- * particles in the DEM model.
+ * @class statistics
+ * @brief A simple container for storing basic statistical values.
+ *
+ * This class holds the minimum, maximum, total, and average values
+ * of a dataset. It is initialized with zeros by default. This small class
+ * allows us to agglomerate the statistics instead of returning tuples. For
+ * example, this class is used to store the kinetic energy of the particles in
+ * the DEM model.
  */
 
 class statistics
 {
+  /**
+   * @brief Default constructor.
+   *
+   * Initializes all statistical values (min, max, total, average) to 0.
+   */
 public:
   statistics()
     : min(0)
@@ -44,21 +52,36 @@ public:
     , average(0)
   {}
 
+
+  /// The minimum value in the dataset.
   double min;
+
+  /// The maximum value in the dataset.
   double max;
+
+  /// The sum of all values in the dataset.
   double total;
+
+  /// The average value of the dataset.
   double average;
 };
 
 
 /**
- * @brief add_statistics_to_table_handler Add statistics to a TableHandler under the indicated variable name
+ * @brief Add statistical values to a TableHandler.
+ *
+ * This function inserts a variable name and its associated statistics
+ * (minimum, maximum, total, average) into a given TableHandler.
+ *
+ * @param[in]  variable The name of the variable being recorded.
+ * @param[in]  stats    The statistics associated with the variable.
+ * @param[in,out] table Reference to the TableHandler where the values will be
+ * added.
  */
-
 inline void
-add_statistics_to_table_handler(const std::string variable,
-                                const statistics  stats,
-                                TableHandler     &table)
+add_statistics_to_table_handler(const std::string &variable,
+                                const statistics  &stats,
+                                TableHandler      &table)
 {
   table.add_value("Variable", variable);
   table.add_value("Min", stats.min);
@@ -290,14 +313,18 @@ calculate_point_property(const double phase,
 }
 
 /**
- * @brief Used in the calculate_properties_ch to retrieve the sign of the phase parameter
- * @tparam T val argument's type
- * @param val value of the variable for which we want to evaluate the sign
- * @return an integer -1 or 1 depending of the sign of the phase parameter
+ * @brief Retrieve the sign of a value.
+ *
+ * Used in the calculate_properties_ch to determine the sign of the phase
+ * parameter.
+ *
+ * @tparam T The argument's type (must support comparison with zero).
+ * @param[in] val Value of the variable for which the sign is evaluated.
+ * @return int Returns -1 if the value is negative, +1 if the value is positive, or 0 if the value is zero.
  */
 template <typename T>
-int
-sgn(T val)
+[[nodiscard]] constexpr int
+sgn(const T val) noexcept
 {
   return (static_cast<T>(0) < val) - (val < static_cast<T>(0));
 }
@@ -320,16 +347,19 @@ clip(const T &n, const T &lower, const T &upper)
 }
 
 /**
- * @brief Calculate the equivalent properties for a given phase. Method called
- * in quadrature points loops in Cahn-Hilliard simulations.
+ * @brief Calculate the equivalent property for a given phase.
  *
- * @param phase_cahn_hilliard Phase value for the given quadrature point
+ * This method is called in quadrature point loops in Cahn-Hilliard simulations.
+ * It interpolates between two fluid properties based on the phase value.
  *
- * @param property0 Property value for the fluid with index 0 (fluid for phase = -1)
- *
- * @param property1 Property value for the fluid with index 1 (fluid for phase = 1)
+ * @param[in] phase_cahn_hilliard Phase value for the given quadrature point.
+ * @param[in] property0 Property value for the fluid with index 0 (fluid for
+ * phase = -1).
+ * @param[in] property1 Property value for the fluid with index 1 (fluid for
+ * phase = 1).
+ * @return double Equivalent property for the given phase.
  */
-inline double
+[[nodiscard]] inline double
 calculate_point_property_cahn_hilliard(const double phase_cahn_hilliard,
                                        const double property0,
                                        const double property1)
@@ -351,12 +381,16 @@ calculate_point_property_cahn_hilliard(const double phase_cahn_hilliard,
 
 
 /**
- * @brief Reads a file that was built by writing a deal.II TableHandler class, and refills a TableHandler with the data in the file.
- * @param table The table to be filled. Warning ! if the table is empty, it's content will be erased.
+ * @brief Reads a file generated by a deal.II TableHandler and fills a TableHandler with its data.
  *
- * @param file_name The path the file that will be use to fill up the table.
+ * This function reads a table from a file and populates the given TableHandler.
+ * Warning: If the table already contains data, it will be erased.
  *
- * @param delimiter The delimiter used to read the table.
+ * @param[in,out] table The table to be filled. Existing content will be
+ * overwritten.
+ * @param[in] file_name Path to the file to read the table from.
+ * @param[in] delimiter Delimiter used in the file to separate values. Default
+ * is a space (" ").
  */
 void
 fill_table_from_file(TableHandler      &table,
@@ -367,11 +401,11 @@ fill_table_from_file(TableHandler      &table,
  * @brief function that read a file that was build from a dealii table and fill 2 vectors.
  * The first vector contains all the columns names and the second one contained
  * all the column data.
- * @param map A map used to contain the data based on the columns name.
  *
- * @param file_name The path the file that will be use to fill up the table.
- *
- * @param delimiter The delimiter used to read the table.
+ * @param[in,out] map A map used to store the data based on column names.
+ * @param[in] file_name Path to the file to read the table from.
+ * @param[in] delimiter Delimiter used in the file to separate values. Default
+ * is a space (" ").
  */
 void
 fill_vectors_from_file(std::map<std::string, std::vector<double>> &map,
@@ -380,11 +414,11 @@ fill_vectors_from_file(std::map<std::string, std::vector<double>> &map,
 
 /**
  * @brief Function that read a file that was build from a dealii table and create a map with the key being the column name and the variable the vectors of data.
- * @param map Container to be filled with the information in the dealii table.
  *
- * @param file_name The path the file that will be use to fill up the table.
- *
- * @param delimiter The delimiter used to read the table.
+ * @param[in,out] map A map used to store the data based on column names.
+ * @param[in] file_name Path to the file to read the table from.
+ * @param[in] delimiter Delimiter used in the file to separate values. Default
+ * is a space (" ").
  */
 void
 fill_string_vectors_from_file(
@@ -394,7 +428,8 @@ fill_string_vectors_from_file(
 
 /**
  * @brief Creates the simulation output folder
- * @param dirname Output directory name
+ *
+ * @param[in] dirname Output directory name
  */
 void
 create_output_folder(const std::string &dirname);
@@ -415,13 +450,14 @@ delete_output_folder(const std::string &dirname);
  * Tracer
  * -------
  *
- * @param pcout the parallel cout used to print the information
- * @param expression string that will be printed
- * @param delimiter the character used to delimit the printing. Default value is "-"
+ * @param[in] pcout the parallel cout used to print the information
+ * @param[in] expression string that will be printed
+ * @param[in] delimiter the character used to delimit the printing. Default
+ * value is "-"
  */
 inline void
 announce_string(const ConditionalOStream &pcout,
-                const std::string         expression,
+                const std::string        &expression,
                 const char                delimiter = '-')
 {
   pcout << std::string(expression.size() + 1, delimiter) << std::endl;
@@ -430,29 +466,34 @@ announce_string(const ConditionalOStream &pcout,
 }
 
 /**
- * @brief Serializes a table using boost serialization feature
- * the filename should contain the desired extension
+ * @brief Serializes a TableHandler to a file using Boost serialization.
  *
- * @param table The table to be serialized
- * @param filename The file name (including the extension) to be used
+ * The filename should include the desired extension.
+ *
+ * @param[in] table The table to be serialized.
+ * @param[in] filename Path to the file (including extension) where the table
+ * will be saved.
  */
 inline void
-serialize_table(const TableHandler &table, const std::string filename)
+serialize_table(const TableHandler &table, const std::string &filename)
 {
   std::ofstream                 ofile(filename);
   boost::archive::text_oarchive oa(ofile, boost::archive::no_header);
   oa << table;
 }
 
+
 /**
- * @brief Loads a table using boost serialization feature
- * the filename should contain the desired extension
+ * @brief Loads a TableHandler from a file using Boost serialization.
  *
- * @param table The table to be deserialized
- * @param filename The file name (including the extension) to be used
+ * The filename should include the desired extension.
+ *
+ * @param[in,out] table    The table to be deserialized (will be overwritten).
+ * @param[in]     filename Path to the file (including extension) to read the
+ * table from.
  */
 inline void
-deserialize_table(TableHandler &table, const std::string filename)
+deserialize_table(TableHandler &table, const std::string &filename)
 {
   std::ifstream                 ifile(filename);
   boost::archive::text_iarchive ia(ifile, boost::archive::no_header);
@@ -460,20 +501,19 @@ deserialize_table(TableHandler &table, const std::string filename)
 }
 
 /**
- * @brief  get the value of a particular parameter from the contents of the input
- * file. Return an empty string if not found. This function is used to read an
- * individual parameter for an input file. This function is adapted from ASPECT
- * and is mainly used in parsing the dim of the problem before creating the
- * whole parameter parser
+ * @brief Retrieves the value of a specific parameter from an input file.
  *
- * @param file_name The file name from which to read a value
- * @param parameter_name The name of the parameter
+ * Returns an empty string if the parameter is not found. This function is
+ * adapted from ASPECT and is mainly used to parse the dimension of the problem
+ * before creating the full parameter parser.
+ *
+ * @param[in] file_name File from which we retrieve the parameter.
+ * @param[in] parameter_name  Name of the parameter to retrieve.
+ * @return std::string Value of the parameter, or an empty string if not found.
  */
-
 std::string
 get_last_value_of_parameter(const std::string &file_name,
                             const std::string &parameter_name);
-
 /**
  * @brief Extract the dimension in which to run Lethe from the
  * the contents of the parameter file. This is something that
@@ -481,7 +521,7 @@ get_last_value_of_parameter(const std::string &file_name,
  * need to know whether to use the dim=2 or dim=3 instantiation
  * of the main classes.
  *
- * @param file_name The file name from which dimension is read
+ * @param file_name[in] The file name from which dimension is read
  */
 unsigned int
 get_dimension(const std::string &file_name);
@@ -493,8 +533,12 @@ file. It provides an estimate for the amount of parameters or manifolds and is
 used to determine the size of the vectors that will store boundary conditions
 and manifold data. This feature will need to be monitored extensively in the
 future.
- * @param file_name The file name from which the number of boundary conditions
+*
+ * @param[in] file_name The file name from which the number of boundary
+conditions
  * is read
+ *
+ * @return the maximum number of boundary conditions or manifolds.
  */
 int
 get_max_subsection_size(const std::string &file_name);
