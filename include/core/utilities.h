@@ -315,12 +315,14 @@ calculate_point_property(const double phase,
 /**
  * @brief Retrieve the sign of a value.
  *
- * Used in the calculate_properties_ch to determine the sign of the phase
+ * Used in calculate_point_property_cahn_hilliard to determine the sign of the phase
  * parameter.
  *
  * @tparam T The argument's type (must support comparison with zero).
  * @param[in] val Value of the variable for which the sign is evaluated.
- * @return int Returns -1 if the value is negative, +1 if the value is positive, or 0 if the value is zero.
+ * @retval -1 if the value is negative.
+ * @retval +1 if the value is positive.
+ * @retval 0 if the value is zero.
  */
 template <typename T>
 [[nodiscard]] constexpr int
@@ -446,9 +448,11 @@ delete_output_folder(const std::string &dirname);
  * @brief Prints a string and then adds a line above and below made with dashes containing as many dashes as the string has characters+1
  *
  * For example, if the string to be printed is "Tracer" the result will be:
+ * @code
  * -------
  * Tracer
  * -------
+ * @endcode
  *
  * @param[in] pcout the parallel cout used to print the information
  * @param[in] expression string that will be printed

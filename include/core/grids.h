@@ -19,7 +19,7 @@ using namespace dealii;
  * @param[in,out] triangulation The triangulation to which a grid is attached
  *
  * @param[in] mesh_parameters The mesh parameters used to decide what type of
- * mesh or primitive is  used
+ * mesh or primitive is used
  */
 template <int dim, int spacedim = dim>
 void
@@ -27,12 +27,12 @@ attach_grid_to_triangulation(Triangulation<dim, spacedim> &triangulation,
                              const Parameters::Mesh       &mesh_parameters);
 
 /**
- * @brief Modifies the triangulation to setup periodic boundary conditions in the case of CFD simulations
+ * @brief Modifies the triangulation to set up periodic boundary conditions in the case of CFD simulations
  *
  * @param[in,out] triangulation The triangulation to which a grid is attached
  *
  * @param[in] boundary_conditions The information about the boundary conditions
- * id. This is used to set-up the periodicity of the domain
+ * id. This is used to set up the periodicity of the domain
  */
 template <int dim, int spacedim = dim>
 void
