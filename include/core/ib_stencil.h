@@ -6,8 +6,6 @@
 
 #include <core/ib_particle.h>
 
-#include <deal.II/base/tensor.h>
-
 #include <vector>
 
 

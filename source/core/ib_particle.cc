@@ -1,13 +1,9 @@
-// SPDX-FileCopyrightText: Copyright (c) 2020-2024 The Lethe Authors
+// SPDX-FileCopyrightText: Copyright (c) 2020-2025 The Lethe Authors
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
 #include <core/ib_particle.h>
 #include <core/shape_parsing.h>
 
-// Deal.II includes
-#include <deal.II/lac/lapack_full_matrix.h>
-
-#include <cfloat>
 
 template <int dim>
 void

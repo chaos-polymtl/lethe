@@ -335,7 +335,7 @@ read_mesh_and_manifolds(
   parallel::DistributedTriangulationBase<dim, spacedim> &triangulation,
   const Parameters::Mesh                                &mesh_parameters,
   const Parameters::Manifolds                           &manifolds_parameters,
-  const bool                                            &restart,
+  const bool                                             restart,
   const BoundaryConditions::BoundaryConditions          &boundary_conditions)
 {
   attach_grid_to_triangulation(triangulation, mesh_parameters);
@@ -413,7 +413,7 @@ read_mesh_and_manifolds_for_stator_and_rotor(
   parallel::DistributedTriangulationBase<dim, spacedim> &triangulation,
   const Parameters::Mesh                                &mesh_parameters,
   const Parameters::Manifolds                           &manifolds_parameters,
-  const bool                                            &restart,
+  const bool                                             restart,
   const BoundaryConditions::BoundaryConditions          &boundary_conditions,
   const Parameters::Mortar<dim>                         &mortar_parameters)
 {
@@ -659,21 +659,21 @@ read_mesh_and_manifolds(
   parallel::DistributedTriangulationBase<2>    &triangulation,
   const Parameters::Mesh                       &mesh_parameters,
   const Parameters::Manifolds                  &manifolds_parameters,
-  const bool                                   &restart,
+  const bool                                    restart,
   const BoundaryConditions::BoundaryConditions &boundary_conditions);
 template void
 read_mesh_and_manifolds(
   parallel::DistributedTriangulationBase<3>    &triangulation,
   const Parameters::Mesh                       &mesh_parameters,
   const Parameters::Manifolds                  &manifolds_parameters,
-  const bool                                   &restart,
+  const bool                                    restart,
   const BoundaryConditions::BoundaryConditions &boundary_conditions);
 template void
 read_mesh_and_manifolds(
   parallel::DistributedTriangulationBase<2, 3> &triangulation,
   const Parameters::Mesh                       &mesh_parameters,
   const Parameters::Manifolds                  &manifolds_parameters,
-  const bool                                   &restart,
+  const bool                                    restart,
   const BoundaryConditions::BoundaryConditions &boundary_conditions);
 
 template void
@@ -681,7 +681,7 @@ read_mesh_and_manifolds_for_stator_and_rotor(
   parallel::DistributedTriangulationBase<2>    &triangulation,
   const Parameters::Mesh                       &mesh_parameters,
   const Parameters::Manifolds                  &manifolds_parameters,
-  const bool                                   &restart,
+  const bool                                    restart,
   const BoundaryConditions::BoundaryConditions &boundary_conditions,
   const Parameters::Mortar<2>                  &mortar_parameters);
 template void
@@ -689,6 +689,6 @@ read_mesh_and_manifolds_for_stator_and_rotor(
   parallel::DistributedTriangulationBase<3>    &triangulation,
   const Parameters::Mesh                       &mesh_parameters,
   const Parameters::Manifolds                  &manifolds_parameters,
-  const bool                                   &restart,
+  const bool                                    restart,
   const BoundaryConditions::BoundaryConditions &boundary_conditions,
   const Parameters::Mortar<3>                  &mortar_parameters);

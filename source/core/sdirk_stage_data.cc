@@ -3,16 +3,11 @@
 
 #include <core/parameters.h>
 #include <core/sdirk_stage_data.h>
-#include <core/simulation_control.h>
 
 #include <deal.II/base/exceptions.h>
-#include <deal.II/base/logstream.h>
 
 #include <deal.II/lac/full_matrix.h>
 
-#include <iomanip>
-#include <iostream>
-#include <tuple>
 #include <vector>
 
 using namespace dealii;

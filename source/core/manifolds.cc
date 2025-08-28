@@ -11,6 +11,8 @@
 #include <deal.II/opencascade/manifold_lib.h>
 #include <deal.II/opencascade/utilities.h>
 
+#include <memory>
+
 namespace Parameters
 {
   void

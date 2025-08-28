@@ -12,7 +12,6 @@
 
 #include <deal.II/numerics/data_postprocessor.h>
 
-#include <memory>
 
 
 using namespace dealii;

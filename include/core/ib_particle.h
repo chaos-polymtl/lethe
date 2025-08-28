@@ -7,11 +7,8 @@
 #include <core/dem_properties.h>
 #include <core/shape.h>
 
-#include <deal.II/base/function_signed_distance.h>
 #include <deal.II/base/parsed_function.h>
 #include <deal.II/base/point.h>
-
-#include <deal.II/physics/transformations.h>
 
 #include <vector>
 

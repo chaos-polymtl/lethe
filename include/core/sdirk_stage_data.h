@@ -5,13 +5,9 @@
 #define SDIRK_STAGE_DATA_H
 
 #include <core/parameters.h>
-#include <core/simulation_control.h>
-
-#include <deal.II/base/exceptions.h>
 
 #include <deal.II/lac/full_matrix.h>
 
-#include <string>
 #include <vector>
 
 using namespace dealii;
