@@ -518,7 +518,7 @@ std::string
 get_last_value_of_parameter(const std::string &file_name,
                             const std::string &parameter_name);
 /**
- * @brief Extract the dimension in which to run Lethe from the
+ * @brief Extract the dimension in which to run Lethe from
  * the contents of the parameter file. This is something that
  * we need to do before processing the parameter file since we
  * need to know whether to use the dim=2 or dim=3 instantiation
@@ -530,12 +530,14 @@ unsigned int
 get_dimension(const std::string &file_name);
 
 /**
- * @brief Extract the maximum value between the number of boundary conditions and the number of manifolds from the file.
-This value is linked to the "number" string defined in the simulation parameter
-file. It provides an estimate for the amount of parameters or manifolds and is
-used to determine the size of the vectors that will store boundary conditions
-and manifold data. This feature will need to be monitored extensively in the
-future.
+ * @brief Extract the maximum value between the number of boundary conditions
+ * and the number of manifolds from the file.
+* This value is linked to the "number" string defined in the simulation
+parameter
+* file. It provides an estimate for the amount of parameters or manifolds and is
+* used to determine the size of the vectors that will store boundary conditions
+* and manifold data. This feature will need to be monitored extensively in the
+* future.
 *
  * @param[in] file_name The file name from which the number of boundary
 conditions
