@@ -538,6 +538,11 @@ public:
              const VectorType              &current_filtered_solution,
              const std::vector<VectorType> &previous_solutions)
   {
+    Assert(
+      gather_vof,
+      ExcMessage(
+        "You are trying to reinit the VOF model in a cell, but you did not enable VOF for the scratch data (gather_vof=false)."));
+
     this->fe_values_vof->reinit(cell);
     // Gather phase fraction (values, gradient)
     this->fe_values_vof->get_function_values(current_solution,
@@ -580,6 +585,11 @@ public:
     const typename DoFHandler<dim>::active_cell_iterator &curvature_cell,
     const VectorType &current_curvature_solution)
   {
+    Assert(
+      gather_curvature,
+      ExcMessage(
+        "You are trying to reinit the curvature in a cell, but you did not enable curvature for the scratch data (gather_curvature=false)."));
+
     this->fe_values_curvature->reinit(curvature_cell);
 
     // Gather phase fraction gradient
@@ -622,6 +632,11 @@ public:
     const VectorType                                     &current_solution,
     const std::vector<VectorType>                        &previous_solutions)
   {
+    Assert(
+      gather_void_fraction,
+      ExcMessage(
+        "You are trying to reinit the void fraction in a cell, but you did not enable void fraction for the scratch data (gather_void_fraction=false)."));
+
     this->fe_values_void_fraction->reinit(cell);
 
     // Gather void fraction (values, gradient)
@@ -940,7 +955,6 @@ public:
 
   void
   calculate_force_parameters_at_particle_location()
-
   {
     // Tolerance for the calculation of the particle Reynolds number.
     // TODO -> Revisit if that is not a too high value.
@@ -1043,6 +1057,11 @@ public:
     const VectorType                      &void_fraction_solution,
     const Particles::ParticleHandler<dim> &particle_handler)
   {
+    Assert(
+      gather_particles_information,
+      ExcMessage(
+        "You are trying to reinit the fluid information at the particle location within a cell, but you did not enable the gathering of the information at the particle location for the scratch data (gather_particles_information=false)."));
+
     pic = particle_handler.particles_in_cell(velocity_cell);
 
     double total_particle_volume = 0;
