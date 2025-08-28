@@ -315,8 +315,8 @@ calculate_point_property(const double phase,
 /**
  * @brief Retrieve the sign of a value.
  *
- * Used in calculate_point_property_cahn_hilliard to determine the sign of the phase
- * parameter.
+ * Used in calculate_point_property_cahn_hilliard to determine the sign of the
+ * phase parameter.
  *
  * @tparam T The argument's type (must support comparison with zero).
  * @param[in] val Value of the variable for which the sign is evaluated.
