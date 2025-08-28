@@ -531,10 +531,9 @@ get_dimension(const std::string &file_name);
 
 /**
  * @brief Extract the maximum value between the number of boundary conditions
- * and the number of manifolds from the file.
-* This value is linked to the "number" string defined in the simulation
-parameter
-* file. It provides an estimate for the amount of parameters or manifolds and is
+ * and the number of manifolds from the file. This value is linked to the
+ * "number" string defined in the simulation parameter file.
+ * It provides an estimate for the amount of parameters or manifolds and is
 * used to determine the size of the vectors that will store boundary conditions
 * and manifold data. This feature will need to be monitored extensively in the
 * future.
