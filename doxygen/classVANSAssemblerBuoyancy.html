@@ -101,15 +101,15 @@ Inheritance diagram for VANSAssemblerBuoyancy&lt; dim &gt;:</div>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pub-methods" name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
-<tr class="memitem:ae13152652b44406049bcb3320fb5959a" id="r_ae13152652b44406049bcb3320fb5959a"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classVANSAssemblerBuoyancy.html#ae13152652b44406049bcb3320fb5959a">VANSAssemblerBuoyancy</a> (<a class="el" href="structParameters_1_1Lagrangian_1_1LagrangianPhysicalProperties.html">Parameters::Lagrangian::LagrangianPhysicalProperties</a> <a class="el" href="classVANSAssemblerBuoyancy.html#ad3642164520c6cc28cb9961ac115ed59">lagrangian_physical_properties</a>)</td></tr>
-<tr class="separator:ae13152652b44406049bcb3320fb5959a"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a614290d0230a90c92dfc06d44e3c1d2e" id="r_a614290d0230a90c92dfc06d44e3c1d2e"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classVANSAssemblerBuoyancy.html#a614290d0230a90c92dfc06d44e3c1d2e">VANSAssemblerBuoyancy</a> (const Tensor&lt; 1, 3 &gt; &amp;p_gravity)</td></tr>
+<tr class="separator:a614290d0230a90c92dfc06d44e3c1d2e"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a116dac0207e2f9a89be2de9eb4af313f" id="r_a116dac0207e2f9a89be2de9eb4af313f"><td class="memItemLeft" align="right" valign="top">virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classVANSAssemblerBuoyancy.html#a116dac0207e2f9a89be2de9eb4af313f">calculate_particle_fluid_interactions</a> (<a class="el" href="classNavierStokesScratchData.html">NavierStokesScratchData</a>&lt; dim &gt; &amp;scratch_data) override</td></tr>
 <tr class="separator:a116dac0207e2f9a89be2de9eb4af313f"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pub-attribs" name="pub-attribs"></a>
 Public Attributes</h2></td></tr>
-<tr class="memitem:ad3642164520c6cc28cb9961ac115ed59" id="r_ad3642164520c6cc28cb9961ac115ed59"><td class="memItemLeft" align="right" valign="top"><a class="el" href="structParameters_1_1Lagrangian_1_1LagrangianPhysicalProperties.html">Parameters::Lagrangian::LagrangianPhysicalProperties</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classVANSAssemblerBuoyancy.html#ad3642164520c6cc28cb9961ac115ed59">lagrangian_physical_properties</a></td></tr>
-<tr class="separator:ad3642164520c6cc28cb9961ac115ed59"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a9ee4307377f3a0fe339a823f3bd3092f" id="r_a9ee4307377f3a0fe339a823f3bd3092f"><td class="memItemLeft" align="right" valign="top">const Tensor&lt; 1, 3 &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classVANSAssemblerBuoyancy.html#a9ee4307377f3a0fe339a823f3bd3092f">gravity</a></td></tr>
+<tr class="separator:a9ee4307377f3a0fe339a823f3bd3092f"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><div class="compoundTemplParams">template&lt;int dim&gt;<br />
@@ -121,10 +121,10 @@ class VANSAssemblerBuoyancy&lt; dim &gt;</div><p>Class that assembles the Buoyan
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="vans__assemblers_8h_source.html#l00580">580</a> of file <a class="el" href="vans__assemblers_8h_source.html">vans_assemblers.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="vans__assemblers_8h_source.html#l00566">566</a> of file <a class="el" href="vans__assemblers_8h_source.html">vans_assemblers.h</a>.</p>
 </div><h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
-<a id="ae13152652b44406049bcb3320fb5959a" name="ae13152652b44406049bcb3320fb5959a"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ae13152652b44406049bcb3320fb5959a">&#9670;&#160;</a></span>VANSAssemblerBuoyancy()</h2>
+<a id="a614290d0230a90c92dfc06d44e3c1d2e" name="a614290d0230a90c92dfc06d44e3c1d2e"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a614290d0230a90c92dfc06d44e3c1d2e">&#9670;&#160;</a></span>VANSAssemblerBuoyancy()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -137,8 +137,8 @@ template&lt;int dim&gt; </div>
         <tr>
           <td class="memname"><a class="el" href="classVANSAssemblerBuoyancy.html">VANSAssemblerBuoyancy</a>&lt; dim &gt;<a class="el" href="classVANSAssemblerBuoyancy.html">::VANSAssemblerBuoyancy</a> </td>
           <td>(</td>
-          <td class="paramtype"><a class="el" href="structParameters_1_1Lagrangian_1_1LagrangianPhysicalProperties.html">Parameters::Lagrangian::LagrangianPhysicalProperties</a>&#160;</td>
-          <td class="paramname"><em>lagrangian_physical_properties</em></td><td>)</td>
+          <td class="paramtype">const Tensor&lt; 1, 3 &gt; &amp;&#160;</td>
+          <td class="paramname"><em>p_gravity</em></td><td>)</td>
           <td></td>
         </tr>
       </table>
@@ -149,7 +149,15 @@ template&lt;int dim&gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="vans__assemblers_8h_source.html#l00583">583</a> of file <a class="el" href="vans__assemblers_8h_source.html">vans_assemblers.h</a>.</p>
+<p>Constructor. Keeps an internal copy of the gravity. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramdir">[in]</td><td class="paramname">gravity</td><td>the gravity applied to the particles. </td></tr>
+  </table>
+  </dd>
+</dl>
+
+<p class="definition">Definition at line <a class="el" href="vans__assemblers_8h_source.html#l00575">575</a> of file <a class="el" href="vans__assemblers_8h_source.html">vans_assemblers.h</a>.</p>
 
 </div>
 </div>
@@ -180,7 +188,7 @@ template&lt;int dim&gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p>calculate_particle_fluid_interactions calculates the buoyancy force </p>
+<p>Calculate the buoyancy force. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">scratch_data</td><td>(see base class) </td></tr>
@@ -198,8 +206,8 @@ template&lt;int dim&gt; </div>
 </div>
 </div>
 <h2 class="groupheader">Member Data Documentation</h2>
-<a id="ad3642164520c6cc28cb9961ac115ed59" name="ad3642164520c6cc28cb9961ac115ed59"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ad3642164520c6cc28cb9961ac115ed59">&#9670;&#160;</a></span>lagrangian_physical_properties</h2>
+<a id="a9ee4307377f3a0fe339a823f3bd3092f" name="a9ee4307377f3a0fe339a823f3bd3092f"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a9ee4307377f3a0fe339a823f3bd3092f">&#9670;&#160;</a></span>gravity</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -207,12 +215,14 @@ template&lt;int dim&gt; </div>
 template&lt;int dim&gt; </div>
       <table class="memname">
         <tr>
-          <td class="memname"><a class="el" href="structParameters_1_1Lagrangian_1_1LagrangianPhysicalProperties.html">Parameters::Lagrangian::LagrangianPhysicalProperties</a> <a class="el" href="classVANSAssemblerBuoyancy.html">VANSAssemblerBuoyancy</a>&lt; dim &gt;::lagrangian_physical_properties</td>
+          <td class="memname">const Tensor&lt;1, 3&gt; <a class="el" href="classVANSAssemblerBuoyancy.html">VANSAssemblerBuoyancy</a>&lt; dim &gt;::gravity</td>
         </tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="vans__assemblers_8h_source.html#l00599">599</a> of file <a class="el" href="vans__assemblers_8h_source.html">vans_assemblers.h</a>.</p>
+<p>Gravity acceleration applied to the particles. </p>
+
+<p class="definition">Definition at line <a class="el" href="vans__assemblers_8h_source.html#l00590">590</a> of file <a class="el" href="vans__assemblers_8h_source.html">vans_assemblers.h</a>.</p>
 
 </div>
 </div>
