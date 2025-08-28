@@ -4,6 +4,9 @@
 # Bash script for checking simulations on the cluster that have timed-out (TIMEOUT)
 # or failed (FAILED) and relaunching them if wished.
 #
+# SPDX-FileCopyrightText: Copyright (c) 2025 The Lethe Authors
+# SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
+#
 # Assumed structure and prerequisites:
 # - Each simulation must be contained in its own folder with a unique name.
 # - The simulation folder must contain:
