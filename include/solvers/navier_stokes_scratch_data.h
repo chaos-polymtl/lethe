@@ -673,22 +673,7 @@ public:
    */
 
   void
-  reinit_particle_fluid_forces()
-  {
-    for (auto &particle : pic)
-      {
-        auto particle_properties = particle.get_properties();
-        // Set the particle_fluid_interactions properties and vectors to 0
-        for (int d = 0; d < dim; ++d)
-          {
-            particle_properties
-              [DEM::CFDDEMProperties::PropertiesIndex::fem_force_x + d] = 0.;
-            particle_properties
-              [DEM::CFDDEMProperties::PropertiesIndex::fem_torque_x + d] = 0.;
-            undisturbed_flow_force[d]                                    = 0.;
-          }
-      }
-  }
+  reinit_particle_fluid_forces();
 
   /**
    * @brief Extracts the velocity of the particles and calculates their total volume
@@ -696,45 +681,8 @@ public:
    *
    * @return Total volume of the particles in the cell
    */
-
   double
-  extract_particle_properties()
-  {
-    average_particle_velocity = 0;
-    // Loop over particles in cell
-    double       total_particle_volume = 0;
-    unsigned int i_particle            = 0;
-
-    for (auto &particle : pic)
-      {
-        auto particle_properties = particle.get_properties();
-        // Stores the values of particle velocity in a tensor
-        particle_velocity[i_particle][0] =
-          particle_properties[DEM::CFDDEMProperties::PropertiesIndex::v_x];
-        particle_velocity[i_particle][1] =
-          particle_properties[DEM::CFDDEMProperties::PropertiesIndex::v_y];
-        if constexpr (dim == 3)
-          particle_velocity[i_particle][2] =
-            particle_properties[DEM::CFDDEMProperties::PropertiesIndex::v_z];
-
-        if (!interpolated_void_fraction)
-          total_particle_volume +=
-            M_PI *
-            pow(particle_properties[DEM::CFDDEMProperties::PropertiesIndex::dp],
-                dim) /
-            (2 * dim);
-
-        average_particle_velocity += particle_velocity[i_particle];
-        i_particle++;
-      }
-    number_of_particles = i_particle;
-    if (number_of_particles != 0)
-      { // Calculate the average particle velocity within the cell
-        average_particle_velocity =
-          average_particle_velocity / number_of_particles;
-      }
-    return total_particle_volume;
-  }
+  extract_particle_properties();
 
   /**
    * @brief Computes the cell void fraction
@@ -744,24 +692,7 @@ public:
    */
 
   void
-  calculate_cell_void_fraction(const double &total_particle_volume)
-  {
-    cell_volume =
-      compute_cell_measure_with_JxW(this->fe_values.get_JxW_values());
-
-    if (!this->interpolated_void_fraction)
-      {
-        double cell_void_fraction_bulk = 0;
-        cell_void_fraction_bulk =
-          (cell_volume - total_particle_volume) / cell_volume;
-
-        for (unsigned int j = 0; j < number_of_particles; ++j)
-          cell_void_fraction[j] = cell_void_fraction_bulk;
-      }
-    else
-      for (unsigned int j = 0; j < number_of_particles; ++j)
-        cell_void_fraction[j] = 0;
-  }
+  calculate_cell_void_fraction(const double &total_particle_volume);
 
   /**
    * @brief Creates an object of type Quadrature<dim> that contains the
@@ -773,33 +704,13 @@ public:
    */
 
   Quadrature<dim>
-  gather_particles_reference_location()
-  {
-    // Create local vector that will be used to spawn an in-situ quadrature to
-    // interpolate at the locations of the particles
-    std::vector<Point<dim>> particle_reference_location(number_of_particles);
-    std::vector<double>     particle_weights(number_of_particles, 1);
-    unsigned int            i_particle = 0;
+  gather_particles_reference_location();
 
-    // Loop over particles in cell and cache their reference location
-    for (auto &particle : pic)
-      {
-        // Store particle positions and weights
-        // Reference location of the particle
-        particle_reference_location[i_particle] =
-          particle.get_reference_location();
-        i_particle++;
-      }
-
-    // Return a quadrature for the Navier-Stokes equations that is based on the
-    // particle reference location
-    return Quadrature<dim>(particle_reference_location, particle_weights);
-  }
 
   /**
    * @brief Interpolates the velocity and pressure of the fluid, as well as the
-   * pressure gradient, and the laplacian, curl and gradient of the velocity, at
-   * the locations of the particles.
+   * pressure gradient, and the laplacian, curl and gradient of the velocity,
+   * at the locations of the particles.
    *
    * @param[in] q_particles_location Quadrature type object that contains the
    * location of the particles relative to the cell's frame of reference.
@@ -807,9 +718,9 @@ public:
    * @param[in] velocity_cell The active cell associated with the velocity and
    * pressure DoFHandler
    *
-   * @param[in] velocity_pressure_solution The solution (velocity and pressure)
-   * that is used to interpolate the velocity and pressure at the particles
-   * locations.
+   * @param[in] velocity_pressure_solution The solution (velocity and
+   * pressure) that is used to interpolate the velocity and pressure at the
+   * particles locations.
    */
 
   template <typename VectorType>
