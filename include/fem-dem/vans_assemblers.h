@@ -1,4 +1,4 @@
-// SPDX-FileCopyrightText: Copyright (c) 2021-2024 The Lethe Authors
+// SPDX-FileCopyrightText: Copyright (c) 2021-2025 The Lethe Authors
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
 #include <core/simulation_control.h>
@@ -436,23 +436,20 @@ template <int dim>
 class VANSAssemblerSaffmanMei : public ParticleFluidAssemblerBase<dim>
 {
 public:
-  VANSAssemblerSaffmanMei(Parameters::Lagrangian::LagrangianPhysicalProperties
-                            lagrangian_physical_properties)
-    : lagrangian_physical_properties(lagrangian_physical_properties)
-
+  /**
+   * @brief Constructor. Does not do anything.
+   */
+  VANSAssemblerSaffmanMei()
   {}
 
   /**
-   * @brief calculate_particle_fluid_interactions calculates the buoyancy force
+   * @brief calculate_particle_fluid_interactions calculates the Saffman force.
    * @param scratch_data (see base class)
    * @param copy_data (see base class)
    */
   virtual void
   calculate_particle_fluid_interactions(
     NavierStokesScratchData<dim> &scratch_data) override;
-
-  Parameters::Lagrangian::LagrangianPhysicalProperties
-    lagrangian_physical_properties;
 };
 
 
@@ -471,23 +468,20 @@ template <int dim>
 class VANSAssemblerMagnus : public ParticleFluidAssemblerBase<dim>
 {
 public:
-  VANSAssemblerMagnus(Parameters::Lagrangian::LagrangianPhysicalProperties
-                        lagrangian_physical_properties)
-    : lagrangian_physical_properties(lagrangian_physical_properties)
-
+  /**
+   * @brief Constructor. Does not do anything.
+   */
+  VANSAssemblerMagnus()
   {}
 
   /**
-   * @brief calculate_particle_fluid_interactions calculates the buoyancy force
+   * @brief calculate_particle_fluid_interactions calculates the Magnus force.
    * @param scratch_data (see base class)
    * @param copy_data (see base class)
    */
   virtual void
   calculate_particle_fluid_interactions(
     NavierStokesScratchData<dim> &scratch_data) override;
-
-  Parameters::Lagrangian::LagrangianPhysicalProperties
-    lagrangian_physical_properties;
 };
 
 /**
@@ -508,11 +502,10 @@ template <int dim>
 class VANSAssemblerViscousTorque : public ParticleFluidAssemblerBase<dim>
 {
 public:
-  VANSAssemblerViscousTorque(
-    Parameters::Lagrangian::LagrangianPhysicalProperties
-      lagrangian_physical_properties)
-    : lagrangian_physical_properties(lagrangian_physical_properties)
-
+  /**
+   * @brief Constructor. Does not do anything.
+   */
+  VANSAssemblerViscousTorque()
   {}
 
   /**
@@ -523,9 +516,6 @@ public:
   virtual void
   calculate_particle_fluid_interactions(
     NavierStokesScratchData<dim> &scratch_data) override;
-
-  Parameters::Lagrangian::LagrangianPhysicalProperties
-    lagrangian_physical_properties;
 };
 
 /**
@@ -545,11 +535,10 @@ template <int dim>
 class VANSAssemblerVorticalTorque : public ParticleFluidAssemblerBase<dim>
 {
 public:
-  VANSAssemblerVorticalTorque(
-    Parameters::Lagrangian::LagrangianPhysicalProperties
-      lagrangian_physical_properties)
-    : lagrangian_physical_properties(lagrangian_physical_properties)
-
+  /**
+   * @brief Constructor. Does not do anything.
+   */
+  VANSAssemblerVorticalTorque()
   {}
 
   /**
@@ -560,9 +549,6 @@ public:
   virtual void
   calculate_particle_fluid_interactions(
     NavierStokesScratchData<dim> &scratch_data) override;
-
-  Parameters::Lagrangian::LagrangianPhysicalProperties
-    lagrangian_physical_properties;
 };
 
 /**
@@ -580,14 +566,19 @@ template <int dim>
 class VANSAssemblerBuoyancy : public ParticleFluidAssemblerBase<dim>
 {
 public:
-  VANSAssemblerBuoyancy(Parameters::Lagrangian::LagrangianPhysicalProperties
-                          lagrangian_physical_properties)
-    : lagrangian_physical_properties(lagrangian_physical_properties)
+  /**
+   * @brief Constructor. Keeps an internal copy of the gravity.
+   *
+   * @param[in] gravity the gravity applied to the particles.
+   */
+
+  VANSAssemblerBuoyancy(const Tensor<1, 3> &p_gravity)
+    : gravity(p_gravity)
 
   {}
 
   /**
-   * @brief calculate_particle_fluid_interactions calculates the buoyancy force
+   * @brief Calculate the buoyancy force.
    * @param scratch_data (see base class)
    * @param copy_data (see base class)
    */
@@ -595,14 +586,14 @@ public:
   calculate_particle_fluid_interactions(
     NavierStokesScratchData<dim> &scratch_data) override;
 
-  Parameters::Lagrangian::LagrangianPhysicalProperties
-    lagrangian_physical_properties;
+  /// Gravity acceleration applied to the particles
+  const Tensor<1, 3> gravity;
 };
 
 
 /**
  * @brief Class that assembles the particle pressure force that will then
- * be added to particle_fluid_interactions
+ * be added to particle_fluid_interactions.
  *
  * @tparam dim An integer that denotes the number of spatial dimensions
  *

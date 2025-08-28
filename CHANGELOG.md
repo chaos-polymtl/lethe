@@ -3,6 +3,12 @@
 All notable changes to the Lethe project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
+### [Master] - 2025-08-27
+
+### Changed
+
+- MINOR The constructor for some of the particle-fluid force assemblers were taking as an argument the lagrangian particle properties, but never using them. As part of a refactor, these constructors have been cleaned out and streamlined to not take any argument. Furthermore, the buoyancy constructor took the full particle parameters whereas it only needs the particle gravity acceleration. This has also been fixed. [#1633](https://github.com/chaos-polymtl/lethe/pull/1633)
+
 ### [Master] - 2025-08-25
 
 ### Added
