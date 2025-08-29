@@ -39,10 +39,10 @@ main(int argc, char *argv[])
       const std::string file_name(args[0]);
 
       const unsigned int dim = get_dimension(file_name);
+      ParameterHandler   prm;
 
       if (dim == 2)
         {
-          ParameterHandler              prm;
           RayTracingSolverParameters<2> parameters;
           DEMSolverParameters<2>        dem_parameters;
 
@@ -80,13 +80,14 @@ main(int argc, char *argv[])
                 false,
                 dealii::ExcMessage(
                   "While reading the solver type from the input file, "
-                  "Lethe found a value different than \"dem\"."));
+                  "Lethe found a value different than \"dem\". "
+                  "lethe-particles-ray-tracing tracing does not support other "
+                  "solver type than \"dem\"."));
             }
         }
 
       else if (dim == 3)
         {
-          ParameterHandler              prm;
           RayTracingSolverParameters<3> parameters;
           DEMSolverParameters<3>        dem_parameters;
 

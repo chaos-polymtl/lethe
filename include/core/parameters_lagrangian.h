@@ -652,23 +652,30 @@ namespace Parameters
     template <int dim>
     struct ParticleRayTracing
     {
-      Point<dim>     starting_point;
-      Tensor<1, dim> first_direction_unit;  // This is a unit vector
-      Tensor<1, dim> second_direction_unit; // This is a unit vector
-      Tensor<1, dim> photon_displacement_vector;
+      // Location of the first photon to be inserted
+      Point<dim> starting_point;
 
-      // Number of photon inserted in each direction
-      unsigned int number_of_photon_first_direction;
-      unsigned int number_of_photon_second_direction;
+      // In which direction will photons be insertedrelative to the first
+      // photon.
+      std::vector<Tensor<1, 3>> insertion_directions_units_vector;
 
-      // Distance between photons position (considering a max_offset equal to
-      // zero).
-      double step_between_photons_first_direction;
-      double step_between_photons_second_direction;
+      // How many photon will be inserted in each of those directions.
+      std::vector<unsigned int> n_photons_each_directions;
 
-      // Related to the offset
-      double       max_offset;
-      unsigned int seed_for_photon_insertion;
+      // What is the distance between each photon in each of those directions
+      // considering an offset equal to 0.
+      std::vector<double> step_between_photons_each_directions;
+
+      // Reference displacement unit tensor
+      Tensor<1, 3> ref_displacement_tensor_unit;
+
+      // Related to the offset insertion position.
+      double       max_insertion_offset;
+      unsigned int prn_seed_photon_insertion;
+
+      // Related to the offset in the displacement direction.
+      double       max_angular_offset;
+      unsigned int prn_seed_photon_displacement;
 
       static void
       declare_parameters(ParameterHandler &prm);

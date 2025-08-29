@@ -1,7 +1,6 @@
 // SPDX-FileCopyrightText: Copyright (c) 2025 The Lethe Authors
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
-// core
 #include <core/grids.h>
 #include <core/lethe_grid_tools.h>
 
@@ -13,11 +12,10 @@
 
 #include <sys/stat.h>
 
-
 template <int dim>
 RayTracingSolver<dim>::RayTracingSolver(
-  RayTracingSolverParameters<dim> parameters,
-  DEMSolverParameters<dim>        dem_parameters)
+  RayTracingSolverParameters<dim> &parameters,
+  DEMSolverParameters<dim>        &dem_parameters)
   : mpi_communicator(MPI_COMM_WORLD)
   , n_mpi_processes(Utilities::MPI::n_mpi_processes(mpi_communicator))
   , this_mpi_process(Utilities::MPI::this_mpi_process(mpi_communicator))
@@ -38,15 +36,15 @@ RayTracingSolver<dim>::RayTracingSolver(
   , photon_displacement_vector(
       parameters.ray_tracing_info.photon_displacement_vector)
 {
-  if (parameters.model_parameters.load_balance_method ==
-        Parameters::Lagrangian::ModelParameters<
-          dim>::LoadBalanceMethod::dynamic_with_sparse_contacts ||
-      parameters.model_parameters.load_balance_method ==
-        Parameters::Lagrangian::ModelParameters<
-          dim>::LoadBalanceMethod::dynamic)
-    throw std::runtime_error(
-      "The \"dynamic\" and \"dynamic_with_sparse_contacts\""
-      "load balancing methods are not supported");
+  AssertThrow(parameters.model_parameters.load_balance_method ==
+                  Parameters::Lagrangian::ModelParameters<
+                    dim>::LoadBalanceMethod::dynamic_with_sparse_contacts ||
+                parameters.model_parameters.load_balance_method ==
+                  Parameters::Lagrangian::ModelParameters<
+                    dim>::LoadBalanceMethod::dynamic,
+              dealii::ExcMessage(
+                "The \"dynamic\" and \"dynamic_with_sparse_contacts\""
+                "load balancing methods are not supported"));
 }
 
 template <int dim>
@@ -76,8 +74,8 @@ RayTracingSolver<dim>::setup_parameters()
   action_manager = DEMActionManager::get_action_manager();
 
   // Set the simulation control as SimulationControlAdjointSteady
-  simulation_control = std::make_shared<SimulationControlSteady>(
-    parameters.simulation_control);
+  simulation_control =
+    std::make_shared<SimulationControlSteady>(parameters.simulation_control);
 
   // Setup load balancing parameters and attach the correct functions to the
   // signals inside the triangulation
@@ -123,8 +121,10 @@ RayTracingSolver<dim>::set_particle_insertion_type()
             triangulation,
             dem_parameters);
         }
-      default:
-        throw(std::runtime_error("Invalid insertion method."));
+        AssertThrow(
+          false,
+          dealii::ExcMessage(
+            "For lethe-particles-ray-tracing simulation, only the list and file insertion are supported."));
     }
 }
 
@@ -132,7 +132,7 @@ template <int dim>
 void
 RayTracingSolver<dim>::setup_background_dofs()
 {
-  FE_Q<dim> background_fe(1);
+  FE_Q<dim> background_fe(0);
   background_dh.distribute_dofs(background_fe);
 }
 
@@ -207,6 +207,13 @@ RayTracingSolver<dim>::print_insertion_info(const unsigned int &inserted_photon,
   announce_string(pcout, ss.str(), '*');
 }
 
+for (unsigned int i = 0; i < this->inserted_this_step; ++i)
+  {
+    srand(seed_for_insertion * (i + 1));
+    random_container.push_back((((double)rand()) / ((double)RAND_MAX)) *
+                               maximum_range);
+  }
+
 
 template <int dim>
 void
@@ -217,15 +224,15 @@ RayTracingSolver<dim>::insert_particles_and_photons()
                                     triangulation,
                                     dem_parameters);
 
-  // A vector which contains all the insertion point of every photon.
+  // A vector of vectors, which contains all the properties of every photons.
   std::vector<Point<dim>> insertion_points_on_proc;
 
-  // A vector of vectors, which contains all the properties of all particles
-  // about to get inserted.
-  // Each photon has as its properties its insertion location. This way,
-  // when many intersection points will be found during a pseudo timestep,
-  // its properties will be used to identify the closest point from its
-  // insertion insertion point.
+  // For each photon, we store the initial location of the photon as a particle
+  // property. This initial location is used to identify the right intersection
+  // point when multiple intersections are found. The logic used therein is that
+  // the intersection point which is closest to the initial location is the
+  // correct one. We also store the displacement direction unit vector in this
+  // vector since each photon has its own slightly off set from the
   std::vector<std::vector<double>> photon_properties;
 
   unsigned int max_n_photon_first_dir =
@@ -249,8 +256,10 @@ RayTracingSolver<dim>::insert_particles_and_photons()
       // Create variable for readability
       Point<dim> starting_insertion_point =
         parameters.ray_tracing_info.starting_point;
-      Tensor<1, dim> first_dir  = parameters.ray_tracing_info.first_direction_unit;
-      Tensor<1, dim> second_dir = parameters.ray_tracing_info.second_direction_unit;
+      Tensor<1, dim> first_dir =
+        parameters.ray_tracing_info.first_direction_unit;
+      Tensor<1, dim> second_dir =
+        parameters.ray_tracing_info.second_direction_unit;
 
       const double step_first_dir =
         parameters.ray_tracing_info.step_between_photons_first_direction;
@@ -805,5 +814,5 @@ RayTracingSolver<dim>::solve()
 }
 
 
-template class RayTracingSolver<2>;
+// template class RayTracingSolver<2>;
 template class RayTracingSolver<3>;
