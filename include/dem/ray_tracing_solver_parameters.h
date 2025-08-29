@@ -24,11 +24,6 @@ public:
   Parameters::Lagrangian::ParticleRayTracing<dim> ray_tracing_info;
   Parameters::Lagrangian::ModelParameters<dim>    model_parameters;
 
-  // Maybe usefull later
-  // Parameters::Lagrangian::FloatingWalls<dim>     floating_walls;
-  // Parameters::Lagrangian::FloatingGrid<dim>      floating_grid;
-  // std::shared_ptr<Parameters::DEMSolidObjects<dim>> solid_objects;
-
   void
   declare(ParameterHandler &prm)
   {
