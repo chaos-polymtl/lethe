@@ -302,21 +302,11 @@ to run the simulations using eight CPU cores. Feel free to use more.
 Results and Discussion
 -----------------------
 
-In the following picture, the boundary between the two fluids is compared with (right) and without (left) ``projection step``:
-
-+-----------------------------------------------------------------+
-| .. image:: images/smoothedInitialCondition.png                  |
-|     :alt: Schematic                                             |
-|     :align: center                                              |
-|     :width: 800                                                 |
-|                                                                 |
-+-----------------------------------------------------------------+
-
 The following animation shows the results of this simulation:
 
 .. raw:: html
 
-    <iframe width="560" height="315" src="https://www.youtube.com/embed/hZwbFob_Jj4" frameborder="0" allowfullscreen></iframe>
+    <iframe width="560" height="315" src="https://www.youtube.com/embed/RcJaU0GP7UI?si=LpsXNMFGmiqYBW1T" frameborder="0" allowfullscreen></iframe>
 
 
 In the following figure, we compare the simulation results with that of Garoosi and Hooman (2022) [#garoosi2022]_.
@@ -347,7 +337,7 @@ In the figure below, it can be seen that as :math:`t^*` increases, there is a gr
 |                                                                                       |
 +---------------------------------------------------------------------------------------+
 
-With higher levels of refinement, we can see a similar correspondence between the values and there is still a gap between the spike positions for larger values of :math:`t^*`.
+With one higher level of refinement, we can see a similar correspondence between the values and there is still a gap between the spike positions for larger values of :math:`t^*`.
 
 +---------------------------------------------------------------------------------------+
 |  .. image:: images/spike_and_bubble_evolution_ref_max_8_min_6.png                     |
@@ -359,15 +349,15 @@ With higher levels of refinement, we can see a similar correspondence between th
 |                                                                                       |
 +---------------------------------------------------------------------------------------+
 
-The following figures show the mass of ``fluid 1`` throughout the simulation from a geometric perspective and from the volumetric integral of the VOF field. We see that mass conservation is not fully preserved once the interface has been significantly stretched and deformed. 
+The following figures show the mass of ``fluid 1`` throughout the simulation from a geometric perspective and from the volumetric integral of the VOF field. The left figure displays the result for the mesh resolution of the example whereas the right figure shows mass conservation for the finer mesh. We see that mass conservation is not fully preserved once the interface has been significantly stretched and deformed, but that this improves as the mesh is refined.
 
-+---------------------------------------------+
-|  .. image:: images/mass_of_fluid_1.png      |
-|      :alt: Schematic                        |
-|      :align: center                         |
-|      :width: 800                            |
-|                                             |
-+---------------------------------------------+
++-----------------------------------------------+--------------------------------------------------------------+
+|  .. image:: images/mass_of_fluid_1.png        |  .. image:: images/mass_of_fluid_1_ref_max_8_min_6.png       |
+|      :alt: Schematic                          |      :alt: Schematic                                         |
+|      :align: center                           |      :align: center                                          |
+|      :width: 400                              |      :width: 400                                             |
+|                                               |                                                              |
++-----------------------------------------------+--------------------------------------------------------------+
 
 ****
 
