@@ -4,7 +4,7 @@
 
 ################################################################################
 # Bash script for checking simulations on the cluster that have timed-out
-# (TIMEOUT)or failed (FAILED) and relaunching them if wished.
+# (TIMEOUT) or failed (FAILED) and relaunching them if wished.
 #
 # * IMPORTANT *
 #   - Make sure that you have the proper permissions to execute the file before
@@ -154,10 +154,11 @@
 # Function that prints the message when no restart subsection is found
 print_no_restart_message() {
   local prm_file="$1"
-  echo "No \"subsection restart\" was found in $prm_file"
-  echo "The simulation cannot be restarted."
-  echo "Please add the subsection and relaunch the simulation with "
-  echo "checkpointing enabled."
+  echo " No \"subsection restart\" was found in $prm_file"
+  echo " The simulation cannot be restarted."
+  echo " Please add the subsection and relaunch the simulation with "
+  echo " checkpointing enabled."
+  echo " Aborting script execution."
   echo "************************************************************"
 }
 
@@ -318,7 +319,7 @@ rm -f "$found_timeout_file" "$found_failed_file" "$relaunched_simulations_file"
 while IFS= read -r simulation_folder
 do
   simulation_folder=$(echo "$simulation_folder" | tr -d '\r'| sed 's/[[:space:]]*$//')
-  echo "************************************************************"
+  echo "------------------------------------------------------------"
   echo " Checking simulation:"
   echo "  $simulation_folder"
 
@@ -353,7 +354,7 @@ do
 
             # Get prm file
             prm_file=$(ls | grep "\.prm$")
-            echo " Found prm file: $prm_file (Simulation: $simulation_folder)"
+            echo " Found prm file: ${simulation_folder}/${prm_file}"
 
             # Enable the restart feature in the parameter file
             enable_restart "$prm_file" "$simulation_folder"
@@ -385,7 +386,7 @@ do
             then
               # Get prm file
               prm_file=$(ls | grep "\.prm$")
-              echo " Found prm file: $prm_file (Simulation: $simulation_folder)"
+            echo " Found prm file: ${simulation_folder}/${prm_file}"
 
               # Enable the restart feature in the parameter file
               enable_restart "$prm_file" "$simulation_folder"
