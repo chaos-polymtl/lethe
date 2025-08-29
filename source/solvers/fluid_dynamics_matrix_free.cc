@@ -546,6 +546,184 @@ namespace dealii
   }
 } // namespace dealii
 
+/**
+ * A class that wraps MGTransferMatrixFree and MGTransferMF to allow
+ * hp-multigrid in the local-smoothing case.
+ */
+template <int dim, typename Number>
+class MGTransferMatrixFreeWrapper
+  : public MGTransferBase<LinearAlgebra::distributed::Vector<Number>>
+{
+public:
+  using VectorType = LinearAlgebra::distributed::Vector<Number>;
+
+  MGTransferMatrixFreeWrapper(const unsigned int min_h_level)
+    : min_h_level(min_h_level)
+    , n_gc_levels(0)
+  {}
+
+  void
+  build(const MGLevelObject<MGTwoLevelTransfer<dim, VectorType>> &transfers,
+        const DoFHandler<dim>                                    &dof_handler,
+        const MGConstrainedDoFs &mg_constrained_dofs,
+        const std::vector<std::shared_ptr<const Utilities::MPI::Partitioner>>
+          &external_partitioners_in)
+  {
+    if (transfers.min_level() != transfers.max_level())
+      {
+        this->n_gc_levels = transfers.max_level() - transfers.min_level();
+
+        std::vector<std::shared_ptr<const Utilities::MPI::Partitioner>>
+          external_partitioners;
+
+        for (unsigned int l = transfers.min_level(); l <= transfers.max_level();
+             ++l)
+          external_partitioners.emplace_back(external_partitioners_in[l]);
+
+        gc.initialize_two_level_transfers(transfers);
+        gc.build(external_partitioners);
+      }
+
+    ls.initialize_constraints(mg_constrained_dofs);
+
+    std::vector<std::shared_ptr<const Utilities::MPI::Partitioner>>
+      external_partitioners(min_h_level + external_partitioners_in.size() -
+                            n_gc_levels);
+
+    for (unsigned int i = n_gc_levels; i < external_partitioners_in.size(); ++i)
+      external_partitioners[min_h_level + i - n_gc_levels] =
+        external_partitioners_in[i];
+
+    ls.build(dof_handler, external_partitioners);
+  }
+
+  template <class InVector, int spacedim>
+  void
+  copy_to_mg(const DoFHandler<dim, spacedim> &dof_handler,
+             MGLevelObject<VectorType>       &dst,
+             const InVector                  &src) const
+  {
+    if ((n_gc_levels > 0) && (dst.max_level() <= n_gc_levels))
+      {
+        gc.copy_to_mg(dof_handler, dst, src);
+        return;
+      }
+
+    MGLevelObject<VectorType> dst_gc(0, n_gc_levels);
+    MGLevelObject<VectorType> dst_ls(min_h_level,
+                                     dst.max_level() + min_h_level -
+                                       n_gc_levels);
+
+    for (unsigned int l = dst.min_level(); l <= dst.max_level(); ++l)
+      {
+        if (l <= n_gc_levels)
+          dst_gc[l] = dst[l];
+
+        if (l >= n_gc_levels)
+          dst_ls[min_h_level + (l - n_gc_levels)] = dst[l];
+      }
+
+    ls.copy_to_mg(dof_handler, dst_ls, src);
+
+    if (n_gc_levels > 0)
+      gc.copy_to_mg(dof_handler, dst_gc, dst_ls[dst_ls.min_level()]);
+
+    for (unsigned int l = dst.min_level(); l <= dst.max_level(); ++l)
+      if (l < n_gc_levels)
+        dst[l] = dst_gc[l];
+      else
+        dst[l] = dst_ls[min_h_level + (l - n_gc_levels)];
+  }
+
+  template <class OutVector, int spacedim>
+  void
+  copy_from_mg(const DoFHandler<dim, spacedim> &dof_handler,
+               OutVector                       &dst,
+               const MGLevelObject<VectorType> &src) const
+  {
+    if ((n_gc_levels > 0) && (src.max_level() <= n_gc_levels))
+      {
+        gc.copy_from_mg(dof_handler, dst, src);
+        return;
+      }
+
+    MGLevelObject<VectorType> src_ls(min_h_level,
+                                     src.max_level() + min_h_level -
+                                       n_gc_levels);
+    for (unsigned int l = n_gc_levels; l <= src.max_level(); ++l)
+      src_ls[min_h_level + (l - n_gc_levels)] = src[l];
+
+    ls.copy_from_mg(dof_handler, dst, src_ls);
+  }
+
+  template <typename InVectorType>
+  void
+  interpolate_to_mg(const DoFHandler<dim>     &dof_handler,
+                    MGLevelObject<VectorType> &dst,
+                    const InVectorType        &src) const
+  {
+    if ((n_gc_levels > 0) && (dst.max_level() <= n_gc_levels))
+      {
+        gc.interpolate_to_mg(dof_handler, dst, src);
+        return;
+      }
+
+    MGLevelObject<VectorType> dst_gc(0, n_gc_levels);
+    MGLevelObject<VectorType> dst_ls(min_h_level,
+                                     dst.max_level() + min_h_level -
+                                       n_gc_levels);
+
+    for (unsigned int l = dst.min_level(); l <= dst.max_level(); ++l)
+      {
+        if (l <= n_gc_levels)
+          dst_gc[l] = dst[l];
+
+        if (l >= n_gc_levels)
+          dst_ls[min_h_level + (l - n_gc_levels)] = dst[l];
+      }
+
+    ls.interpolate_to_mg(dof_handler, dst_ls, src);
+
+    if (n_gc_levels > 0)
+      gc.interpolate_to_mg(dof_handler, dst_gc, dst_ls[dst_ls.min_level()]);
+
+    for (unsigned int l = dst.min_level(); l <= dst.max_level(); ++l)
+      if (l < n_gc_levels)
+        dst[l] = dst_gc[l];
+      else
+        dst[l] = dst_ls[min_h_level + (l - n_gc_levels)];
+  }
+
+  void
+  prolongate(const unsigned int to_level,
+             VectorType        &dst,
+             const VectorType  &src) const override
+  {
+    if (to_level <= n_gc_levels)
+      gc.prolongate(to_level, dst, src);
+    else
+      ls.prolongate(to_level + min_h_level - n_gc_levels, dst, src);
+  }
+
+  void
+  restrict_and_add(const unsigned int from_level,
+                   VectorType        &dst,
+                   const VectorType  &src) const override
+  {
+    if (from_level <= n_gc_levels)
+      gc.restrict_and_add(from_level, dst, src);
+    else
+      ls.restrict_and_add(from_level + min_h_level - n_gc_levels, dst, src);
+  }
+
+private:
+  const unsigned int min_h_level;
+  unsigned int       n_gc_levels;
+
+  MGTransferMatrixFree<dim, Number>           ls;
+  MGTransferGlobalCoarsening<dim, VectorType> gc;
+};
+
 template <int dim>
 MFNavierStokesPreconditionGMGBase<dim>::MFNavierStokesPreconditionGMGBase(
   const SimulationParameters<dim> &simulation_parameters,
@@ -554,10 +732,11 @@ MFNavierStokesPreconditionGMGBase<dim>::MFNavierStokesPreconditionGMGBase(
   : pcout(std::cout, Utilities::MPI::this_mpi_process(MPI_COMM_WORLD) == 0)
   , simulation_parameters(simulation_parameters)
   , dof_handler(dof_handler)
-  , dof_handler_fe_q_iso_q1(dof_handler_fe_q_iso_q1)
   , mg_setup_timer(this->pcout, TimerOutput::never, TimerOutput::wall_times)
   , mg_vmult_timer(this->pcout, TimerOutput::never, TimerOutput::wall_times)
-{}
+{
+  (void)dof_handler_fe_q_iso_q1; // TODO: remove
+}
 
 template <int dim>
 void
@@ -569,30 +748,30 @@ MFNavierStokesPreconditionGMGBase<dim>::reinit(
   const std::shared_ptr<PhysicalPropertiesManager> &physical_properties_manager,
   const std::shared_ptr<FESystem<dim>>              fe)
 {
+  AssertThrow(*cell_quadrature ==
+                QGauss<dim>(this->dof_handler.get_fe().degree + 1),
+              ExcNotImplemented());
+
   if (this->simulation_parameters.linear_solver.at(PhysicsID::fluid_dynamics)
         .preconditioner == Parameters::LinearSolver::PreconditionerType::lsmg)
     {
+      const auto &triangulation = dof_handler.get_triangulation();
+
       // Define maximum and minimum level according to triangulation
-      const unsigned int n_h_levels =
-        this->dof_handler.get_triangulation().n_global_levels();
-      this->minlevel = 0;
-      this->maxlevel = n_h_levels - 1;
+      const unsigned int n_h_levels  = triangulation.n_global_levels();
+      unsigned int       min_h_level = 0;
+      const unsigned int max_h_level = n_h_levels - 1;
 
       // If multigrid number of levels or minimum number of cells in level are
-      // specified, change the min level fnd print levels information
+      // specified, change the min level and print levels information
 
       int mg_min_level =
         this->simulation_parameters.linear_solver.at(PhysicsID::fluid_dynamics)
           .mg_min_level;
 
-      AssertThrow(
-        mg_min_level <= static_cast<int>(MGTools::max_level_for_coarse_mesh(
-                          this->dof_handler.get_triangulation())),
-        ExcMessage(std::string(
-          "The maximum level allowed for the coarse mesh (mg min level) is: " +
-          std::to_string(MGTools::max_level_for_coarse_mesh(
-            this->dof_handler.get_triangulation())) +
-          ".")));
+      int mg_int_level =
+        this->simulation_parameters.linear_solver.at(PhysicsID::fluid_dynamics)
+          .mg_int_level;
 
       int mg_level_min_cells =
         this->simulation_parameters.linear_solver.at(PhysicsID::fluid_dynamics)
@@ -600,38 +779,135 @@ MFNavierStokesPreconditionGMGBase<dim>::reinit(
 
 
       std::vector<unsigned int> n_cells_on_levels(
-        this->dof_handler.get_triangulation().n_global_levels(), 0);
+        triangulation.n_global_levels(), 0);
 
-      for (unsigned int l = 0;
-           l < this->dof_handler.get_triangulation().n_levels();
-           ++l)
-        for (const auto &cell :
-             this->dof_handler.get_triangulation().cell_iterators_on_level(l))
+      for (unsigned int l = 0; l < triangulation.n_levels(); ++l)
+        for (const auto &cell : triangulation.cell_iterators_on_level(l))
           if (cell->is_locally_owned_on_level())
             n_cells_on_levels[l]++;
 
       Utilities::MPI::sum(n_cells_on_levels,
                           this->dof_handler.get_mpi_communicator(),
                           n_cells_on_levels);
-      AssertThrow(
-        mg_level_min_cells <= static_cast<int>(n_cells_on_levels[maxlevel]),
-        ExcMessage(
-          "The mg level min cells specified are larger than the cells of the finest mg level."));
-
 
       if (mg_min_level != -1)
-        this->minlevel = mg_min_level;
-
-      if (mg_level_min_cells != -1)
         {
-          for (unsigned int level = this->minlevel; level <= this->maxlevel;
-               ++level)
+          AssertThrow(
+            mg_min_level <= static_cast<int>(MGTools::max_level_for_coarse_mesh(
+                              triangulation)),
+            ExcMessage(std::string(
+              "The maximum level allowed for the coarse mesh (mg min level) is: " +
+              std::to_string(
+                MGTools::max_level_for_coarse_mesh(triangulation)) +
+              ".")));
+
+          min_h_level = mg_min_level;
+        }
+      else if (mg_level_min_cells != -1)
+        {
+          AssertThrow(
+            mg_level_min_cells <=
+              static_cast<int>(
+                n_cells_on_levels[MGTools::max_level_for_coarse_mesh(
+                  triangulation)]),
+            ExcMessage(
+              "The mg level min cells specified are larger than the cells of the finest mg level."));
+
+          for (unsigned int level = min_h_level; level <= max_h_level; ++level)
             if (static_cast<int>(n_cells_on_levels[level]) >=
                 mg_level_min_cells)
               {
-                this->minlevel = level;
+                min_h_level = level;
                 break;
               }
+        }
+
+      // p-multigrid
+      const auto mg_coarsening_type =
+        this->simulation_parameters.linear_solver.at(PhysicsID::fluid_dynamics)
+          .mg_coarsening_type;
+
+      const auto polynomial_coarsening_sequence =
+        MGTransferGlobalCoarseningTools::create_polynomial_coarsening_sequence(
+          this->dof_handler.get_fe().degree,
+          this->simulation_parameters.linear_solver
+            .at(PhysicsID::fluid_dynamics)
+            .mg_p_coarsening_type);
+
+      std::vector<std::pair<unsigned int, unsigned int>> levels;
+
+      if (mg_coarsening_type ==
+          Parameters::LinearSolver::MultigridCoarseningSequenceType::hp)
+        {
+          // p
+          for (const auto i : polynomial_coarsening_sequence)
+            levels.emplace_back(min_h_level, i);
+
+          // h
+          for (unsigned int i = min_h_level + 1; i <= max_h_level; ++i)
+            levels.emplace_back(i, polynomial_coarsening_sequence.back());
+        }
+      else if (mg_coarsening_type ==
+               Parameters::LinearSolver::MultigridCoarseningSequenceType::ph)
+        {
+          AssertThrow(false, ExcNotImplemented());
+        }
+      else if (mg_coarsening_type ==
+               Parameters::LinearSolver::MultigridCoarseningSequenceType::p)
+        {
+          AssertThrow(false, ExcNotImplemented());
+        }
+      else if (mg_coarsening_type ==
+               Parameters::LinearSolver::MultigridCoarseningSequenceType::h)
+        {
+          // h
+          for (unsigned int i = min_h_level; i <= max_h_level; ++i)
+            levels.emplace_back(i, polynomial_coarsening_sequence.back());
+        }
+      else
+        {
+          AssertThrow(false, ExcNotImplemented());
+        }
+
+      this->minlevel = 0;
+      this->maxlevel = levels.size() - 1;
+
+      this->intlevel = (mg_int_level == -1) ? this->minlevel : mg_int_level;
+
+      std::map<unsigned int, unsigned int> p_map;
+      for (const auto &[_, p] : levels)
+        p_map.insert({p, p_map.size()});
+
+      dof_handlers.resize(0, p_map.size() - 1);
+
+      for (const auto [p, l] : p_map)
+        {
+          this->dof_handlers[l].reinit(triangulation);
+
+          // To use elements with linear interpolation for coarse-grid we need
+          // to create the min level dof handler with the appropriate element
+          // type
+          if (this->simulation_parameters.linear_solver
+                .at(PhysicsID::fluid_dynamics)
+                .mg_use_fe_q_iso_q1 &&
+              l == 0)
+            {
+              AssertThrow(
+                mg_coarsening_type ==
+                  Parameters::LinearSolver::MultigridCoarseningSequenceType::h,
+                ExcNotImplemented());
+
+              const auto points = QGaussLobatto<1>(p + 1).get_points();
+
+              this->dof_handler_fe_q_iso_q1.reinit(triangulation);
+              this->dof_handler_fe_q_iso_q1.distribute_dofs(
+                FESystem<dim>(FE_Q_iso_Q1<dim>(points), dim + 1));
+              this->dof_handler_fe_q_iso_q1.distribute_mg_dofs();
+            }
+
+          this->dof_handlers[l].distribute_dofs(
+            FESystem<dim>(FE_Q<dim>(p), dim + 1));
+          this->dof_handlers[l].distribute_mg_dofs();
         }
 
       if (this->simulation_parameters.linear_solver
@@ -642,9 +918,11 @@ MFNavierStokesPreconditionGMGBase<dim>::reinit(
           this->pcout << "  -Levels of MG preconditioner:" << std::endl;
           for (unsigned int level = this->minlevel; level <= this->maxlevel;
                ++level)
-            this->pcout << "    Level " << level - this->minlevel << ": "
-                        << this->dof_handler.n_dofs(level) << " DoFs, "
-                        << n_cells_on_levels[level] << " cells" << std::endl;
+            this->pcout << "    Level " << level << ": "
+                        << this->dof_handlers[p_map[levels[level].second]]
+                             .n_dofs(levels[level].first)
+                        << " DoFs, " << n_cells_on_levels[levels[level].first]
+                        << " cells" << std::endl;
           this->pcout << std::endl;
         }
 
@@ -654,17 +932,16 @@ MFNavierStokesPreconditionGMGBase<dim>::reinit(
         {
           this->pcout << "  -MG vertical communication efficiency: "
                       << MGTools::vertical_communication_efficiency(
-                           this->dof_handler.get_triangulation())
+                           triangulation)
                       << std::endl;
 
           this->pcout << "  -MG workload imbalance: "
-                      << MGTools::workload_imbalance(
-                           this->dof_handler.get_triangulation())
+                      << MGTools::workload_imbalance(triangulation)
                       << std::endl;
         }
 
       std::vector<std::shared_ptr<const Utilities::MPI::Partitioner>>
-        partitioners(this->dof_handler.get_triangulation().n_global_levels());
+        partitioners(this->maxlevel - this->minlevel + 1);
 
       // Local object for constraints of the different levels
       MGLevelObject<AffineConstraints<MGNumber>> level_constraints;
@@ -679,7 +956,13 @@ MFNavierStokesPreconditionGMGBase<dim>::reinit(
       this->mg_setup_timer.enter_subsection("Set boundary conditions");
 
       this->mg_constrained_dofs.clear();
-      this->mg_constrained_dofs.initialize(this->dof_handler);
+      this->mg_constrained_dofs.resize(dof_handlers.min_level(),
+                                       dof_handlers.max_level());
+
+      for (unsigned int l = mg_constrained_dofs.min_level();
+           l <= mg_constrained_dofs.max_level();
+           ++l)
+        this->mg_constrained_dofs[l].initialize(this->dof_handlers[l]);
 
       FEValuesExtractors::Vector velocities(0);
       FEValuesExtractors::Scalar pressure(dim);
@@ -694,33 +977,31 @@ MFNavierStokesPreconditionGMGBase<dim>::reinit(
               for (unsigned int level = this->minlevel; level <= this->maxlevel;
                    ++level)
                 {
+                  const unsigned int p_level = p_map[levels[level].second];
+
                   AffineConstraints<double> temp_constraints;
-                  temp_constraints.clear();
 
                   const IndexSet locally_owned_level_dofs =
-                    this->dof_handler.locally_owned_mg_dofs(level);
-
-
-
+                    this->dof_handlers[p_level].locally_owned_mg_dofs(
+                      levels[level].first);
                   const IndexSet locally_relevant_level_dofs =
                     DoFTools::extract_locally_relevant_level_dofs(
-                      this->dof_handler, level);
-
+                      this->dof_handlers[p_level], levels[level].first);
                   temp_constraints.reinit(locally_owned_level_dofs,
                                           locally_relevant_level_dofs);
 
                   VectorTools::compute_no_normal_flux_constraints_on_level(
-                    this->dof_handler,
+                    this->dof_handlers[p_level],
                     0,
                     no_normal_flux_boundaries,
                     temp_constraints,
                     *mapping,
-                    this->mg_constrained_dofs.get_refinement_edge_indices(
-                      level),
-                    level);
+                    this->mg_constrained_dofs[p_level]
+                      .get_refinement_edge_indices(levels[level].first),
+                    levels[level].first);
                   temp_constraints.close();
-                  this->mg_constrained_dofs.add_user_constraints(
-                    level, temp_constraints);
+                  this->mg_constrained_dofs[p_level].add_user_constraints(
+                    levels[level].first, temp_constraints);
                 }
             }
           else if (type == BoundaryConditions::BoundaryType::periodic)
@@ -761,10 +1042,12 @@ MFNavierStokesPreconditionGMGBase<dim>::reinit(
                    type == BoundaryConditions::BoundaryType::function)
             {
               std::set<types::boundary_id> dirichlet_boundary_id = {id};
-              this->mg_constrained_dofs.make_zero_boundary_constraints(
-                this->dof_handler,
-                dirichlet_boundary_id,
-                fe->component_mask(velocities));
+
+              for (const auto [_, l] : p_map)
+                this->mg_constrained_dofs[l].make_zero_boundary_constraints(
+                  this->dof_handlers[l],
+                  dirichlet_boundary_id,
+                  fe->component_mask(velocities));
             }
           else
             {
@@ -782,14 +1065,17 @@ MFNavierStokesPreconditionGMGBase<dim>::reinit(
       for (unsigned int level = this->minlevel; level <= this->maxlevel;
            ++level)
         {
+          const unsigned int p_level = p_map[levels[level].second];
+
           level_constraints[level].clear();
 
-          const IndexSet owned_dofs =
-            this->dof_handler.locally_owned_mg_dofs(level);
+          const auto &level_dof_handler = this->dof_handlers[p_level];
 
+          const IndexSet owned_dofs =
+            level_dof_handler.locally_owned_mg_dofs(levels[level].first);
           const IndexSet relevant_dofs =
-            DoFTools::extract_locally_relevant_level_dofs(this->dof_handler,
-                                                          level);
+            DoFTools::extract_locally_relevant_level_dofs(level_dof_handler,
+                                                          levels[level].first);
 
           level_constraints[level].reinit(owned_dofs, relevant_dofs);
 
@@ -803,7 +1089,7 @@ MFNavierStokesPreconditionGMGBase<dim>::reinit(
 
               // Loop over the cells to identify the min index
               for (const auto &cell :
-                   this->dof_handler.mg_cell_iterators_on_level(this->minlevel))
+                   level_dof_handler.mg_cell_iterators_on_level(this->minlevel))
                 {
                   if (cell->is_locally_owned_on_level())
                     {
@@ -821,20 +1107,25 @@ MFNavierStokesPreconditionGMGBase<dim>::reinit(
               // Necessary to find the min across all cores.
               min_index =
                 Utilities::MPI::min(min_index,
-                                    this->dof_handler.get_mpi_communicator());
+                                    level_dof_handler.get_mpi_communicator());
 
               AffineConstraints<double> temp_constraints;
               temp_constraints.reinit(owned_dofs, relevant_dofs);
               if (relevant_dofs.is_element(min_index))
                 temp_constraints.add_line(min_index);
 
-              this->mg_constrained_dofs.add_user_constraints(level,
-                                                             temp_constraints);
+              this->mg_constrained_dofs[p_level].add_user_constraints(
+                levels[level].first, temp_constraints);
             }
 
 #if DEAL_II_VERSION_GTE(9, 6, 0)
-          this->mg_constrained_dofs.merge_constraints(
-            level_constraints[level], level, true, false, true, true);
+          this->mg_constrained_dofs[p_level].merge_constraints(
+            level_constraints[level],
+            levels[level].first,
+            true,
+            false,
+            true,
+            true);
 #else
           AssertThrow(
             false,
@@ -846,14 +1137,20 @@ MFNavierStokesPreconditionGMGBase<dim>::reinit(
 
           // Provide appropriate quadrature depending on the type of elements of
           // the level
-          auto quadrature_mg = *cell_quadrature;
+          Quadrature<dim> quadrature_mg =
+            QGauss<dim>(level_dof_handler.get_fe().degree + 1);
           if (this->simulation_parameters.linear_solver
                 .at(PhysicsID::fluid_dynamics)
                 .mg_use_fe_q_iso_q1 &&
               level == this->minlevel)
             {
+              AssertThrow(
+                mg_coarsening_type ==
+                  Parameters::LinearSolver::MultigridCoarseningSequenceType::h,
+                ExcNotImplemented());
+
               const auto points =
-                QGaussLobatto<1>(this->dof_handler.get_fe().degree + 1)
+                QGaussLobatto<1>(level_dof_handler.get_fe().degree + 1)
                   .get_points();
 
               quadrature_mg = QIterated<dim>(QGauss<1>(2), points);
@@ -868,13 +1165,13 @@ MFNavierStokesPreconditionGMGBase<dim>::reinit(
                .mg_use_fe_q_iso_q1 &&
              level == this->minlevel) ?
               this->dof_handler_fe_q_iso_q1 :
-              this->dof_handler,
+              level_dof_handler,
             level_constraints[level],
             quadrature_mg,
             forcing_function,
             physical_properties_manager,
             this->simulation_parameters.stabilization.stabilization,
-            level,
+            levels[level].first,
             simulation_control,
             this->simulation_parameters.boundary_conditions,
             this->simulation_parameters.linear_solver
@@ -895,10 +1192,28 @@ MFNavierStokesPreconditionGMGBase<dim>::reinit(
       // Create transfer operators
       this->mg_setup_timer.enter_subsection("Create transfer operator");
 
-      this->mg_transfer_ls = std::make_shared<LSTransferType>();
+      this->mg_transfer_ls = std::make_shared<LSTransferType>(min_h_level);
 
-      this->mg_transfer_ls->initialize_constraints(this->mg_constrained_dofs);
-      this->mg_transfer_ls->build(this->dof_handler, partitioners);
+      if (p_map.size() > 1)
+        {
+          this->transfers.resize(0, p_map.size() - 1);
+
+          for (unsigned int level = transfers.min_level();
+               level < transfers.max_level();
+               ++level)
+            this->transfers[level + 1].reinit(this->dof_handlers[level + 1],
+                                              this->dof_handlers[level],
+                                              level_constraints[level + 1],
+                                              level_constraints[level],
+                                              min_h_level,
+                                              min_h_level);
+        }
+
+      this->mg_transfer_ls->build(
+        this->transfers,
+        this->dof_handlers[this->dof_handlers.max_level()],
+        this->mg_constrained_dofs[this->mg_constrained_dofs.max_level()],
+        partitioners);
 
       this->mg_setup_timer.leave_subsection("Create transfer operator");
     }
@@ -907,10 +1222,6 @@ MFNavierStokesPreconditionGMGBase<dim>::reinit(
              .preconditioner ==
            Parameters::LinearSolver::PreconditionerType::gcmg)
     {
-      AssertThrow(*cell_quadrature ==
-                    QGauss<dim>(this->dof_handler.get_fe().degree + 1),
-                  ExcNotImplemented());
-
       // Create triangulations
       this->mg_setup_timer.enter_subsection("Create level triangulations");
       this->coarse_grid_triangulations =
@@ -1076,8 +1387,7 @@ MFNavierStokesPreconditionGMGBase<dim>::reinit(
                 ExcNotImplemented());
 
               const auto points =
-                QGaussLobatto<1>(this->dof_handler.get_fe().degree + 1)
-                  .get_points();
+                QGaussLobatto<1>(levels[l].second + 1).get_points();
 
               this->dof_handlers[l].distribute_dofs(
                 FESystem<dim>(FE_Q_iso_Q1<dim>(points), dim + 1));
@@ -1272,7 +1582,7 @@ MFNavierStokesPreconditionGMGBase<dim>::reinit(
                 ExcNotImplemented());
 
               const auto points =
-                QGaussLobatto<1>(this->dof_handler.get_fe().degree + 1)
+                QGaussLobatto<1>(level_dof_handler.get_fe().degree + 1)
                   .get_points();
 
               quadrature_mg = QIterated<dim>(QGauss<1>(2), points);
@@ -1591,15 +1901,67 @@ MFNavierStokesPreconditionGMGBase<dim>::initialize()
       this->mg_interface_matrix_in =
         std::make_shared<mg::Matrix<MGVectorType>>(this->ls_mg_interface_in);
 
+
+      if (this->minlevel != this->intlevel)
+        {
+          // Create main MG object
+          this->mg_intermediate =
+            std::make_shared<Multigrid<MGVectorType>>(*this->mg_matrix,
+                                                      *this->mg_coarse,
+                                                      *this->mg_transfer_ls,
+                                                      *this->mg_smoother,
+                                                      *this->mg_smoother,
+                                                      this->minlevel,
+                                                      this->intlevel);
+
+          if (this->dof_handler.get_triangulation().has_hanging_nodes())
+            this->mg_intermediate->set_edge_in_matrix(
+              *this->mg_interface_matrix_in);
+
+          // Create MG preconditioner
+          this->ls_multigrid_preconditioner_intermediate =
+            std::make_shared<PreconditionMG<dim, MGVectorType, LSTransferType>>(
+              this->dof_handler, *this->mg_intermediate, *this->mg_transfer_ls);
+
+          const int max_iterations = this->simulation_parameters.linear_solver
+                                       .at(PhysicsID::fluid_dynamics)
+                                       .mg_gmres_max_iterations;
+          const double tolerance = this->simulation_parameters.linear_solver
+                                     .at(PhysicsID::fluid_dynamics)
+                                     .mg_gmres_tolerance;
+          const double reduce = this->simulation_parameters.linear_solver
+                                  .at(PhysicsID::fluid_dynamics)
+                                  .mg_gmres_reduce;
+
+          this->coarse_grid_solver_control_intermediate =
+            std::make_shared<ReductionControl>(
+              max_iterations, tolerance, reduce, false, false);
+
+          this->coarse_grid_solver_intermediate =
+            std::make_shared<SolverGMRES<MGVectorType>>(
+              *this->coarse_grid_solver_control_intermediate);
+
+          this->mg_coarse_intermediate =
+            std::make_shared<MGCoarseGridIterativeSolver<
+              MGVectorType,
+              SolverGMRES<MGVectorType>,
+              OperatorType,
+              PreconditionMG<dim, MGVectorType, LSTransferType>>>(
+              *this->coarse_grid_solver_intermediate,
+              *this->mg_operators[this->intlevel],
+              *this->ls_multigrid_preconditioner_intermediate);
+        }
+
       // Create main MG object
-      this->mg =
-        std::make_shared<Multigrid<MGVectorType>>(*this->mg_matrix,
-                                                  *this->mg_coarse,
-                                                  *this->mg_transfer_ls,
-                                                  *this->mg_smoother,
-                                                  *this->mg_smoother,
-                                                  this->minlevel,
-                                                  this->maxlevel);
+      this->mg = std::make_shared<Multigrid<MGVectorType>>(
+        *this->mg_matrix,
+        (this->minlevel != this->intlevel) ? (*this->mg_coarse_intermediate) :
+                                             (*this->mg_coarse),
+        *this->mg_transfer_ls,
+        *this->mg_smoother,
+        *this->mg_smoother,
+        this->intlevel,
+        this->maxlevel);
 
       if (this->dof_handler.get_triangulation().has_hanging_nodes())
         this->mg->set_edge_in_matrix(*this->mg_interface_matrix_in);
@@ -1861,10 +2223,14 @@ MFNavierStokesPreconditionGMGBase<dim>::setup_AMG()
         {
 #if DEAL_II_VERSION_GTE(9, 6, 0)
           // Constant modes for velocity and pressure
-          constant_modes =
-            DoFTools::extract_level_constant_modes(this->minlevel,
-                                                   this->dof_handler,
-                                                   components);
+          constant_modes = DoFTools::extract_level_constant_modes(
+            this->mg_operators[this->minlevel]
+              ->get_system_matrix_free()
+              .get_mg_level(),
+            this->mg_operators[this->minlevel]
+              ->get_system_matrix_free()
+              .get_dof_handler(),
+            components);
 #else
           AssertThrow(
             false,
