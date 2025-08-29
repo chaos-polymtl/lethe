@@ -457,6 +457,10 @@ compute_n_subdivisions_and_radius(
   double radius_max = 0;
   // Minimum rotation angle in initial mesh configuration
   double pre_rotation_min = std::numeric_limits<double>::max();
+  double coord_cell_0;
+  unsigned int n_subdivisions_plane_local = 0;
+  double vertex_min = std::numeric_limits<double>::max();
+  double vertex_max = 0;
 
   // Check number of faces and vertices at the rotor-stator interface
   for (const auto &cell : triangulation.active_cell_iterators())
@@ -474,6 +478,17 @@ compute_n_subdivisions_and_radius(
                     {
                       n_subdivisions_local++;
 
+                      if constexpr (dim == 3)
+                        {
+                          if (n_subdivisions_local == 1)
+                            {
+                              coord_cell_0 = cell->center()[2];
+                              std::cout << "face no " << face_no << ", z coord cell center 0: " << coord_cell_0 << std::endl;
+                            }
+                          
+                          if (cell->center()[2] - coord_cell_0 < tolerance)
+                            n_subdivisions_plane_local++;
+                        }
                       const auto vertices = mapping.get_vertices(cell, face_no);
 
                       for (unsigned int vertex_index = 0;
@@ -485,6 +500,8 @@ compute_n_subdivisions_and_radius(
                           double     radius_current =
                             v.distance(mortar_parameters.center_of_rotation);
 
+                          vertex_min = std::min(vertex_min, v[2]);
+                          vertex_max = std::max(vertex_max, v[2]);
                           // In 3D, the interface radius to be computed is
                           // actually with respect to the rotation axis. For
                           // this computation, we use the relation:
@@ -535,6 +552,12 @@ compute_n_subdivisions_and_radius(
   const unsigned int n_subdivisions =
     Utilities::MPI::sum(n_subdivisions_local,
                         triangulation.get_mpi_communicator());
+std::cout << "subdivisions: " << n_subdivisions << std::endl;
+
+const unsigned int n_subdivisions_plane =
+    Utilities::MPI::sum(n_subdivisions_plane_local,
+                        triangulation.get_mpi_communicator());
+std::cout << "subdivisions plane: " << n_subdivisions_plane << std::endl;
 
   // Min and max values over all processes
   radius_min =
@@ -545,6 +568,14 @@ compute_n_subdivisions_and_radius(
   pre_rotation_min =
     Utilities::MPI::min(pre_rotation_min, triangulation.get_mpi_communicator());
 
+  vertex_min =
+    Utilities::MPI::min(vertex_min, triangulation.get_mpi_communicator());
+  vertex_max =
+    Utilities::MPI::max(vertex_max, triangulation.get_mpi_communicator());
+
+  const double length_rot_axis = vertex_max - vertex_min;
+  std::cout << "length in z: " << length_rot_axis << std::endl;
+
   AssertThrow(
     std::abs(radius_max - radius_min) < tolerance,
     ExcMessage(
@@ -554,7 +585,7 @@ compute_n_subdivisions_and_radius(
 
   // Final radius value
   const double radius = radius_min;
-
+std::cout << "radius: " << radius << std::endl;
   return {n_subdivisions, radius, pre_rotation_min};
 }
 #else
