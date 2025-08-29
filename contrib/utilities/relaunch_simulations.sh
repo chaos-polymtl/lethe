@@ -156,7 +156,51 @@ print_no_restart_message() {
   local prm_file="$1"
   echo "No \"subsection restart\" was found in $prm_file"
   echo "The simulation cannot be restarted."
-  echo "Please add the subsection and relaunch the simulation with checkpointing enabled."
+  echo "Please add the subsection and relaunch the simulation with "
+  echo "checkpointing enabled."
+  echo "************************************************************"
+}
+
+# Function that prints the message when checkpoint is disabled
+print_disabled_checkpoint_message() {
+  local prm_file="$1"
+  local simulation_folder="$2"
+  echo " Checkpoint was not enabled in ${simulation_folder}/${prm_file}"
+  echo " Cannot restart without checkpoint"
+  echo " Aborting script execution."
+  echo "************************************************************"
+}
+
+# Function that enables the restart feature in the parameter file
+enable_restart() {
+  local prm_file="$1"
+  local simulation_folder="$2"
+
+  # Check if there is a restart subsection in the prm file
+  if grep -q "subsection.*restart" "$prm_file"
+  then
+    # Check if the simulation was previously checkpointed
+    if grep -q "set checkpoint\s*=\s*true" "$prm_file"
+    then
+      # Check if there is already a "set restart" line
+      if grep -q "set restart" "$prm_file"
+      then
+        # Set restart to "true"
+        sed -i 's/\(set restart\s*=\s*\)false/\1true/' "$prm_file"
+      else
+        # Add "set restart" line with argument "true"
+        sed -i '/set checkpoint\s*=\s*true/ {h;p;g;s/checkpoint/restart/}' "$prm_file"
+      fi
+    else
+      # Checkpoint is not enabled
+      print_disabled_checkpoint_message "$prm_file" "$simulation_folder"
+      exit 1
+    fi
+  else
+    # No restart subsection was found
+    print_no_restart_message "$prm_file" "$simulation_folder"
+    exit 1
+  fi
 }
 
 ################################################################################
@@ -239,7 +283,7 @@ echo " Slurm job file:                        $job_file"
 echo " Copy search file:                      $copy_search_file"
 echo " Launch timeout simulations:            $launch_restart"
 echo " Rerun failed simulations:              $rerun_failed"
-echo " Set restart of failed simulations to:  $set_restart_true"
+echo " Enable restart of failed simulations:  $set_restart_true"
 echo "************************************************************"
 echo "************************************************************"
 
@@ -309,19 +353,20 @@ do
 
             # Get prm file
             prm_file=$(ls | grep "\.prm$")
-            echo " prm file: $prm_file"
+            echo " Found prm file: $prm_file (Simulation: $simulation_folder)"
 
-            # Check if there is a restart subsection in the prm file
-            if grep -q "subsection.*restart" "$prm_file"
-            then
-              # TODO AA check set checkpoint line
-              # Set restart to "true"
-              sed -i 's/\(set restart\s*=\s*\)false/\1true/' $prm_file
-              sbatch -J $simulation_folder $job_file
-              echo "$simulation_folder" >> "../$relaunched_simulations_file"
-            else # No restart subsection was found
-              print_no_restart_message "$prm_file"
+            # Enable the restart feature in the parameter file
+            enable_restart "$prm_file" "$simulation_folder"
+
+            # Check if the job file exists
+            if [ ! -f "$job_file" ]; then
+              echo "File not found: ${simulation_folder}/${job_file}"
+              exit 1
             fi
+
+            # Launch job
+            sbatch -J $simulation_folder $job_file
+            echo "$simulation_folder" >> "../$relaunched_simulations_file"
           fi
 
         # Check if the simulation FAILED
@@ -335,29 +380,18 @@ do
           then
             echo " Re-running failed simulation"
 
-            # Get prm file
-            prm_file=$(ls | grep "\.prm$")
-            echo " prm file: $prm_file"
-
-            # TODO AA restructure this to check if restart is necessary first
-            # Check if there is a restart subsection in the prm file
-            if grep -q "subsection.*restart" "$prm_file"
+            # Check if restart parameter should be set to "true"
+            if [ "$set_restart_true" == "true"]
             then
-              # Check if restart parameter should be set to "true"
-              if [ "$set_restart_true" == "true" ]
-              then
-                # TODO AA check set checkpoint line
-                sed -i 's/\(set restart\s*=\s*\)false/\1true/' $prm_file
-              else # restart should be set to "false"
-                sed -i 's/\(set restart\s*=\s*\)true/\1false/' $prm_file
-              fi
-            else # No restart subsection was found
-              if [ "$set_restart_true" == "true" ]
-              then
-                print_no_restart_message "$prm_file"
-               # else, if it should be set to "false", there is no need to change anything
-              fi
+              # Get prm file
+              prm_file=$(ls | grep "\.prm$")
+              echo " Found prm file: $prm_file (Simulation: $simulation_folder)"
+
+              # Enable the restart feature in the parameter file
+              enable_restart "$prm_file" "$simulation_folder"
             fi
+
+            # Launch job
 	          sbatch -J $simulation_folder $job_file
 	          echo "$simulation_folder" >> "../$relaunched_simulations_file"
           fi
@@ -373,10 +407,12 @@ do
     done  < <(ls *.out 2>/dev/null | sort -r) # Sort logging files
 
     # Go back to parent folder
-    cd - >/dev/null || exit
+    cd - >/dev/null || exit 1
   else
     echo " Directory not found: $simulation_folder"
-    exit # TODO AA test this
+    echo " Aborting script execution."
+    echo "************************************************************"
+    exit
   fi
 done < "$search_file_copy"
 
