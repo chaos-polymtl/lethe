@@ -83,7 +83,8 @@ main(int argc, char *argv[])
                 false,
                 dealii::ExcMessage(
                   "While reading the solver type from the input file, "
-                  "Lethe found a value different than \"dem\" or \"dem_mp\"."));
+                  "Lethe found a value different than \"dem\" or \"dem_mp\"."
+                  "lethe-particles does not support other solver type."));
             }
         }
 
