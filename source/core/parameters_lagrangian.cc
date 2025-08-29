@@ -1772,6 +1772,128 @@ namespace Parameters
       prm.leave_subsection();
     }
 
+
+    template <int dim>
+    void
+    ParticleRayTracing<dim>::declare_parameters(ParameterHandler &prm)
+    {
+      prm.enter_subsection("particle ray tracing");
+      {
+        prm.declare_entry("starting photon insertion position",
+                          "0.,0.,0.",
+                          Patterns::List(Patterns::Double()),
+                          "Location of the first photon being inserted.");
+
+        prm.declare_entry("first insertion direction",
+                          "1.,0.,0.",
+                          Patterns::List(Patterns::Double()),
+                          "First direction used to insert photons.");
+        prm.declare_entry("second insertion direction",
+                          "0.,1.,0.",
+                          Patterns::List(Patterns::Double()),
+                          "photon displacement direction .");
+        prm.declare_entry("photon displacement vector",
+                          "0.,0.,1.",
+                          Patterns::List(Patterns::Double()),
+                          "Displacement vector of each photons.");
+
+        prm.declare_entry("number of photon first direction",
+                          "1",
+                          Patterns::Integer(),
+                          "Number of photons that will be inserted "
+                          "in the first direction.");
+        prm.declare_entry("number of photon second direction",
+                          "1",
+                          Patterns::Integer(),
+                          "Number of photons that will be inserted "
+                          "in the second direction.");
+
+        prm.declare_entry("distance between photon first direction",
+                          "1.",
+                          Patterns::Double(),
+                          "Distance between consecutive photon in "
+                          "the first direction.");
+
+        prm.declare_entry("distance between photon second direction",
+                          "1.",
+                          Patterns::Double(),
+                          "Distance between consecutive photon in "
+                          "the second direction.");
+
+        prm.declare_entry("photon maximum offset",
+                          "0.",
+                          Patterns::Double(),
+                          "Set the maximum offset applied one each "
+                          "photon position during they insertion.");
+        prm.declare_entry("photon insertion prn seed",
+                          "0",
+                          Patterns::Integer(),
+                          "Pseudo random seed used to generate the "
+                          "offset for the photon insertion.");
+      }
+      prm.leave_subsection();
+    }
+
+    template <int dim>
+    void
+    ParticleRayTracing<dim>::parse_parameters(ParameterHandler &prm)
+    {
+      // value_string_to_tensor<3>
+      prm.enter_subsection("particle ray tracing");
+      {
+        starting_point = value_string_to_tensor<dim>(
+          prm.get("starting photon insertion position"));
+
+        first_direction_unit =
+          value_string_to_tensor<dim>(prm.get("first insertion direction"));
+        second_direction_unit =
+          value_string_to_tensor<dim>(prm.get("second insertion direction"));
+        first_direction_unit  = first_direction_unit / first_direction_unit.norm();
+        second_direction_unit = second_direction_unit / second_direction_unit.norm();
+
+        number_of_photon_first_direction =
+          prm.get_integer("number of photon first direction");
+        number_of_photon_second_direction =
+          prm.get_integer("number of photon second direction");
+        photon_displacement_vector =
+          value_string_to_tensor<dim>(prm.get("photon displacement vector"));
+
+        second_direction_unit =
+          value_string_to_tensor<dim>(prm.get("second insertion direction"));
+        number_of_photon_second_direction =
+          prm.get_integer("number of photon second direction");
+
+        // if constexpr (dim == 2)
+        //   {
+        //     if (starting_point[2] != 0. || first_direction[2] != 0. ||
+        //         second_direction[2] != 0. || photon_displacement_vector[2] !=
+        //         0.
+        //         || number_of_photon_second_direction != 1l)
+        //       {
+        //         throw(std::runtime_error(
+        //           "When launching a particle ray tracing simulation in 2D,
+        //           the third " "component of the \"starting photon insertion
+        //           position\", "
+        //           "\"first insertion direction\", "
+        //           "\"second insertion direction\" and "
+        //           "\"displacement direction\" parameters needs to be "
+        //           "equal to 0. Also, \"number_of_photon_second_direction\" "
+        //           "needs to be set to zero. "));
+        //
+        //       }
+        //   }
+
+        step_between_photons_first_direction =
+          prm.get_double("distance between photon first direction");
+        step_between_photons_second_direction =
+          prm.get_double("distance between photon second direction");
+
+        max_offset                = prm.get_double("photon maximum offset");
+        seed_for_photon_insertion = prm.get_double("photon insertion prn seed");
+      }
+      prm.leave_subsection();
+    }
+
     template class ForceTorqueOnWall<2>;
     template class ForceTorqueOnWall<3>;
     template class FloatingWalls<2>;
@@ -1784,6 +1906,8 @@ namespace Parameters
     template class GridMotion<3>;
     template class InsertionInfo<2>;
     template class InsertionInfo<3>;
+    template class ParticleRayTracing<2>;
+    template class ParticleRayTracing<3>;
 
   } // namespace Lagrangian
 } // namespace Parameters
