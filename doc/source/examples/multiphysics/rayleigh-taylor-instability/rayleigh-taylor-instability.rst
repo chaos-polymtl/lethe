@@ -306,8 +306,9 @@ The following animation shows the results of this simulation:
 
 .. raw:: html
 
-    <iframe width="560" height="315" src="https://www.youtube.com/embed/RcJaU0GP7UI?si=LpsXNMFGmiqYBW1T" frameborder="0" allowfullscreen></iframe>
-
+  <div style="display: flex; justify-content: center;">
+    <iframe width="600" height="338" src="https://www.youtube.com/embed/RcJaU0GP7UI?si=LpsXNMFGmiqYBW1T" frameborder="0" allowfullscreen></iframe>
+  </div>
 
 In the following figure, we compare the simulation results with that of Garoosi and Hooman (2022) [#garoosi2022]_.
 
