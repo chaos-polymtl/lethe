@@ -19,8 +19,8 @@ template <int dim>
 class RayTracingSolver
 {
 public:
-  RayTracingSolver(RayTracingSolverParameters<dim> parameters,
-                   DEMSolverParameters<dim>        dem_parameters);
+  RayTracingSolver(RayTracingSolverParameters<dim> &parameters,
+                   DEMSolverParameters<dim>        &dem_parameters);
 
   /**
    * @brief Calls all the necessary functions to set parameters, solve the intersection
@@ -37,7 +37,7 @@ private:
   setup_parameters();
 
   /**
-   * @brief Set the insertion method.
+   * @brief Set the insertion method. Supported insertion method are list and file.
    *
    * @return The pointer to the particle insertion object.
    */
