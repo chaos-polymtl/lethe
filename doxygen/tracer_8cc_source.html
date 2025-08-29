@@ -903,7 +903,7 @@ $(document).ready(function() { init_codefold(0); });
 <div class="line"><a id="l00779" name="l00779"></a><span class="lineno">  779</span>      <span class="keywordflow">if</span> (this-&gt;simulation_parameters.post_processing.verbosity ==</div>
 <div class="line"><a id="l00780" name="l00780"></a><span class="lineno">  780</span>          <a class="code hl_enumvalue" href="namespaceParameters.html#ad408350a21239600add83c5e91fcfa26a2c7aea4237e25b4f8ee3b0bf77d6fed0">Parameters::Verbosity::verbose</a>)</div>
 <div class="line"><a id="l00781" name="l00781"></a><span class="lineno">  781</span>        {</div>
-<div class="line"><a id="l00782" name="l00782"></a><span class="lineno">  782</span>          <a class="code hl_function" href="utilities_8h.html#a56a967052620929f4db03cee351d6890">announce_string</a>(this-&gt;pcout, <span class="stringliteral">&quot;Tracer flow rates&quot;</span>);</div>
+<div class="line"><a id="l00782" name="l00782"></a><span class="lineno">  782</span>          <a class="code hl_function" href="utilities_8h.html#a9329b0f36d22e7ab552519cfd2846612">announce_string</a>(this-&gt;pcout, <span class="stringliteral">&quot;Tracer flow rates&quot;</span>);</div>
 <div class="line"><a id="l00783" name="l00783"></a><span class="lineno">  783</span>        }</div>
 <div class="line"><a id="l00784" name="l00784"></a><span class="lineno">  784</span> </div>
 <div class="line"><a id="l00785" name="l00785"></a><span class="lineno">  785</span>      std::map&lt;types::boundary_id, double&gt; tracer_flow_rates;</div>
@@ -923,7 +923,7 @@ $(document).ready(function() { init_codefold(0); });
 <div class="line"><a id="l00799" name="l00799"></a><span class="lineno">  799</span>  <span class="keywordflow">if</span> (this-&gt;simulation_parameters.timer.type ==</div>
 <div class="line"><a id="l00800" name="l00800"></a><span class="lineno">  800</span>      <a class="code hl_enumvalue" href="structParameters_1_1Timer.html#ae1d96ff22b9dbb46d965a0df44142f42a6f012ea8d7efd87146dd62db83f2ed99">Parameters::Timer::Type::iteration</a>)</div>
 <div class="line"><a id="l00801" name="l00801"></a><span class="lineno">  801</span>    {</div>
-<div class="line"><a id="l00802" name="l00802"></a><span class="lineno">  802</span>      <a class="code hl_function" href="utilities_8h.html#a56a967052620929f4db03cee351d6890">announce_string</a>(this-&gt;pcout, <span class="stringliteral">&quot;Tracer&quot;</span>);</div>
+<div class="line"><a id="l00802" name="l00802"></a><span class="lineno">  802</span>      <a class="code hl_function" href="utilities_8h.html#a9329b0f36d22e7ab552519cfd2846612">announce_string</a>(this-&gt;pcout, <span class="stringliteral">&quot;Tracer&quot;</span>);</div>
 <div class="line"><a id="l00803" name="l00803"></a><span class="lineno">  803</span>      this-&gt;computing_timer.print_summary();</div>
 <div class="line"><a id="l00804" name="l00804"></a><span class="lineno">  804</span>      this-&gt;computing_timer.reset();</div>
 <div class="line"><a id="l00805" name="l00805"></a><span class="lineno">  805</span>    }</div>
@@ -1280,12 +1280,12 @@ $(document).ready(function() { init_codefold(0); });
 <div class="line"><a id="l01142" name="l01142"></a><span class="lineno"> 1142</span>    this-&gt;simulation_parameters.simulation_control.output_folder;</div>
 <div class="line"><a id="l01143" name="l01143"></a><span class="lineno"> 1143</span>  std::string suffix = <span class="stringliteral">&quot;.checkpoint&quot;</span>;</div>
 <div class="line"><a id="l01144" name="l01144"></a><span class="lineno"> 1144</span>  <span class="keywordflow">if</span> (this-&gt;simulation_parameters.analytical_solution-&gt;calculate_error())</div>
-<div class="line"><a id="l01145" name="l01145"></a><span class="lineno"> 1145</span>    <a class="code hl_function" href="utilities_8h.html#a1169674c9744ed63bfb067efce02df5f">serialize_table</a>(</div>
+<div class="line"><a id="l01145" name="l01145"></a><span class="lineno"> 1145</span>    <a class="code hl_function" href="utilities_8h.html#aece7d4719e2044dbadc6ccfb1ea5e810">serialize_table</a>(</div>
 <div class="line"><a id="l01146" name="l01146"></a><span class="lineno"> 1146</span>      this-&gt;error_table,</div>
 <div class="line"><a id="l01147" name="l01147"></a><span class="lineno"> 1147</span>      prefix + this-&gt;simulation_parameters.analytical_solution-&gt;get_filename() +</div>
 <div class="line"><a id="l01148" name="l01148"></a><span class="lineno"> 1148</span>        <span class="stringliteral">&quot;_tracer&quot;</span> + suffix);</div>
 <div class="line"><a id="l01149" name="l01149"></a><span class="lineno"> 1149</span>  <span class="keywordflow">if</span> (this-&gt;simulation_parameters.post_processing.calculate_tracer_statistics)</div>
-<div class="line"><a id="l01150" name="l01150"></a><span class="lineno"> 1150</span>    <a class="code hl_function" href="utilities_8h.html#a1169674c9744ed63bfb067efce02df5f">serialize_table</a>(</div>
+<div class="line"><a id="l01150" name="l01150"></a><span class="lineno"> 1150</span>    <a class="code hl_function" href="utilities_8h.html#aece7d4719e2044dbadc6ccfb1ea5e810">serialize_table</a>(</div>
 <div class="line"><a id="l01151" name="l01151"></a><span class="lineno"> 1151</span>      this-&gt;statistics_table,</div>
 <div class="line"><a id="l01152" name="l01152"></a><span class="lineno"> 1152</span>      prefix + this-&gt;simulation_parameters.post_processing.tracer_output_name +</div>
 <div class="line"><a id="l01153" name="l01153"></a><span class="lineno"> 1153</span>        suffix);</div>
@@ -1327,12 +1327,12 @@ $(document).ready(function() { init_codefold(0); });
 <div class="line"><a id="l01187" name="l01187"></a><span class="lineno"> 1187</span>    this-&gt;simulation_parameters.simulation_control.output_folder;</div>
 <div class="line"><a id="l01188" name="l01188"></a><span class="lineno"> 1188</span>  std::string suffix = <span class="stringliteral">&quot;.checkpoint&quot;</span>;</div>
 <div class="line"><a id="l01189" name="l01189"></a><span class="lineno"> 1189</span>  <span class="keywordflow">if</span> (this-&gt;simulation_parameters.analytical_solution-&gt;calculate_error())</div>
-<div class="line"><a id="l01190" name="l01190"></a><span class="lineno"> 1190</span>    <a class="code hl_function" href="utilities_8h.html#a704ab7e8f1f853cd7433b31d571df760">deserialize_table</a>(</div>
+<div class="line"><a id="l01190" name="l01190"></a><span class="lineno"> 1190</span>    <a class="code hl_function" href="utilities_8h.html#a54219805b4de44c5e3247e315ae47c5c">deserialize_table</a>(</div>
 <div class="line"><a id="l01191" name="l01191"></a><span class="lineno"> 1191</span>      this-&gt;error_table,</div>
 <div class="line"><a id="l01192" name="l01192"></a><span class="lineno"> 1192</span>      prefix + this-&gt;simulation_parameters.analytical_solution-&gt;get_filename() +</div>
 <div class="line"><a id="l01193" name="l01193"></a><span class="lineno"> 1193</span>        <span class="stringliteral">&quot;_tracer&quot;</span> + suffix);</div>
 <div class="line"><a id="l01194" name="l01194"></a><span class="lineno"> 1194</span>  <span class="keywordflow">if</span> (this-&gt;simulation_parameters.post_processing.calculate_tracer_statistics)</div>
-<div class="line"><a id="l01195" name="l01195"></a><span class="lineno"> 1195</span>    <a class="code hl_function" href="utilities_8h.html#a704ab7e8f1f853cd7433b31d571df760">deserialize_table</a>(</div>
+<div class="line"><a id="l01195" name="l01195"></a><span class="lineno"> 1195</span>    <a class="code hl_function" href="utilities_8h.html#a54219805b4de44c5e3247e315ae47c5c">deserialize_table</a>(</div>
 <div class="line"><a id="l01196" name="l01196"></a><span class="lineno"> 1196</span>      this-&gt;statistics_table,</div>
 <div class="line"><a id="l01197" name="l01197"></a><span class="lineno"> 1197</span>      prefix + this-&gt;simulation_parameters.post_processing.tracer_output_name +</div>
 <div class="line"><a id="l01198" name="l01198"></a><span class="lineno"> 1198</span>        suffix);</div>
@@ -1723,9 +1723,9 @@ $(document).ready(function() { init_codefold(0); });
 <div class="ttc" id="atracer__assemblers_8h_html"><div class="ttname"><a href="tracer__assemblers_8h.html">tracer_assemblers.h</a></div></div>
 <div class="ttc" id="atracer__scratch__data_8h_html"><div class="ttname"><a href="tracer__scratch__data_8h.html">tracer_scratch_data.h</a></div></div>
 <div class="ttc" id="autilities_8h_html"><div class="ttname"><a href="utilities_8h.html">utilities.h</a></div></div>
-<div class="ttc" id="autilities_8h_html_a1169674c9744ed63bfb067efce02df5f"><div class="ttname"><a href="utilities_8h.html#a1169674c9744ed63bfb067efce02df5f">serialize_table</a></div><div class="ttdeci">void serialize_table(const TableHandler &amp;table, const std::string filename)</div><div class="ttdoc">Serializes a table using boost serialization feature the filename should contain the desired extensio...</div><div class="ttdef"><b>Definition</b> <a href="utilities_8h_source.html#l00440">utilities.h:440</a></div></div>
-<div class="ttc" id="autilities_8h_html_a56a967052620929f4db03cee351d6890"><div class="ttname"><a href="utilities_8h.html#a56a967052620929f4db03cee351d6890">announce_string</a></div><div class="ttdeci">void announce_string(const ConditionalOStream &amp;pcout, const std::string expression, const char delimiter='-')</div><div class="ttdoc">Prints a string and then adds a line above and below made with dashes containing as many dashes as th...</div><div class="ttdef"><b>Definition</b> <a href="utilities_8h_source.html#l00423">utilities.h:423</a></div></div>
-<div class="ttc" id="autilities_8h_html_a704ab7e8f1f853cd7433b31d571df760"><div class="ttname"><a href="utilities_8h.html#a704ab7e8f1f853cd7433b31d571df760">deserialize_table</a></div><div class="ttdeci">void deserialize_table(TableHandler &amp;table, const std::string filename)</div><div class="ttdoc">Loads a table using boost serialization feature the filename should contain the desired extension.</div><div class="ttdef"><b>Definition</b> <a href="utilities_8h_source.html#l00455">utilities.h:455</a></div></div>
+<div class="ttc" id="autilities_8h_html_a54219805b4de44c5e3247e315ae47c5c"><div class="ttname"><a href="utilities_8h.html#a54219805b4de44c5e3247e315ae47c5c">deserialize_table</a></div><div class="ttdeci">void deserialize_table(TableHandler &amp;table, const std::string &amp;filename)</div><div class="ttdoc">Loads a TableHandler from a file using Boost serialization.</div><div class="ttdef"><b>Definition</b> <a href="utilities_8h_source.html#l00500">utilities.h:500</a></div></div>
+<div class="ttc" id="autilities_8h_html_a9329b0f36d22e7ab552519cfd2846612"><div class="ttname"><a href="utilities_8h.html#a9329b0f36d22e7ab552519cfd2846612">announce_string</a></div><div class="ttdeci">void announce_string(const ConditionalOStream &amp;pcout, const std::string &amp;expression, const char delimiter='-')</div><div class="ttdoc">Prints a string and then adds a line above and below made with dashes containing as many dashes as th...</div><div class="ttdef"><b>Definition</b> <a href="utilities_8h_source.html#l00463">utilities.h:463</a></div></div>
+<div class="ttc" id="autilities_8h_html_aece7d4719e2044dbadc6ccfb1ea5e810"><div class="ttname"><a href="utilities_8h.html#aece7d4719e2044dbadc6ccfb1ea5e810">serialize_table</a></div><div class="ttdeci">void serialize_table(const TableHandler &amp;table, const std::string &amp;filename)</div><div class="ttdoc">Serializes a TableHandler to a file using Boost serialization.</div><div class="ttdef"><b>Definition</b> <a href="utilities_8h_source.html#l00482">utilities.h:482</a></div></div>
 <div class="ttc" id="avector_8h_html_a4ea4005d75c88e60bee47d4e79a13a39"><div class="ttname"><a href="vector_8h.html#a4ea4005d75c88e60bee47d4e79a13a39">GlobalVectorType</a></div><div class="ttdeci">dealii::TrilinosWrappers::MPI::Vector GlobalVectorType</div><div class="ttdef"><b>Definition</b> <a href="vector_8h_source.html#l00017">vector.h:17</a></div></div>
 </div><!-- fragment --></div><!-- contents -->
 <!-- start footer part -->
