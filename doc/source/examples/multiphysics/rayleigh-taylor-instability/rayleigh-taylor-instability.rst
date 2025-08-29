@@ -315,7 +315,7 @@ In the following figure, we compare the simulation results with that of Garoosi 
 .. image:: images/comparison.png
     :alt: Schematic
     :align: center
-    :width: 400
+    :width: 600
 
 By invoking the ``rayleigh-taylor_postprocess.py`` postprocessing script found within the example folder with
 
