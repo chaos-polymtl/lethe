@@ -542,7 +542,7 @@ get_dimension(const std::string &file_name);
 conditions
  * is read
  *
- * @return int the maximum number of boundary conditions or manifolds.
+ * @return The maximum number of boundary conditions or manifolds.
  */
 int
 get_max_subsection_size(const std::string &file_name);
