@@ -23,6 +23,12 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
 - MINOR The `create_random_number_container`, previously only used during the volume insertion in the DEM, has been moved to the `utilities.h` file. This way, this function will be accessible outside the volume insertion, which will limit duplicated code. [#1639](https://github.com/chaos-polymtl/lethe/pull/1639)
 
+## [Master] - 2025-08-29
+
+### Fixed
+
+- MINOR The ALE mortar assembler did not account for changes in the stabilization terms due to the introduction of the ALE velocity. This PR fixes this.[#1638](https://github.com/chaos-polymtl/lethe/pull/1638)
+
 ### [Master] - 2025-08-28
 
 ### Added
