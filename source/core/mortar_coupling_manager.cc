@@ -451,7 +451,7 @@ compute_n_subdivisions_and_radius(
   // Number of vertices at the boundary per process
   unsigned int n_vertices_local = 0;
   // Tolerance for rotor radius computation
-  const double tolerance = 1e-4;
+  const double tolerance = 1e-8;
   // Min and max values for rotor radius computation
   double radius_min = std::numeric_limits<double>::max();
   double radius_max = 0;
