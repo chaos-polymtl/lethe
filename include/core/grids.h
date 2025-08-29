@@ -1,4 +1,4 @@
-// SPDX-FileCopyrightText: Copyright (c) 2020-2024 The Lethe Authors
+// SPDX-FileCopyrightText: Copyright (c) 2020-2025 The Lethe Authors
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
 #ifndef lethe_grids_h
@@ -16,9 +16,10 @@ using namespace dealii;
 /**
  * @brief Attaches a grid to a triangulation using mesh parameters
  *
- * @param triangulation The triangulation to which a grid is attached
+ * @param[in,out] triangulation The triangulation to which a grid is attached
  *
- * @param mesh_parameters The mesh parameters used to decide what type of mesh or primitive is  used
+ * @param[in] mesh_parameters The mesh parameters used to decide what type of
+ * mesh or primitive is used
  */
 template <int dim, int spacedim = dim>
 void
@@ -26,11 +27,12 @@ attach_grid_to_triangulation(Triangulation<dim, spacedim> &triangulation,
                              const Parameters::Mesh       &mesh_parameters);
 
 /**
- * @brief Modifies the triangulation to setup periodic boundary conditions in the case of CFD simulations
+ * @brief Modifies the triangulation to set up periodic boundary conditions in the case of CFD simulations
  *
- * @param triangulation The triangulation to which a grid is attached
+ * @param[in,out] triangulation The triangulation to which a grid is attached
  *
- * @param boundary_conditions The information about the boundary conditions id. This is used to set-up the periodicity of the domain
+ * @param[in] boundary_conditions The information about the boundary conditions
+ * id. This is used to set up the periodicity of the domain
  */
 template <int dim, int spacedim = dim>
 void
@@ -39,15 +41,24 @@ setup_periodic_boundary_conditions(
   const BoundaryConditions::BoundaryConditions          &boundary_conditions);
 
 /**
- * @brief Completely set-up a mesh and its manifold
+ * @brief Completely sets up a mesh and its manifolds.
  *
- * @param triangulation The triangulation to which a grid is attached
+ * This function reads and constructs a mesh according to the given mesh
+ * parameters, sets up manifolds on boundaries, and applies boundary conditions.
+ * It is intended for distributed triangulations.
  *
- * @param mesh_parameters The mesh parameters used to decide what type of mesh or primitive is  used
- *
- * @param manifolds_parameters The information about the type of manifolds attached to the boundary conditions
- *
- * @param boundary_conditions The information about the boundary conditions id. This is used to set-up the periodicity of the domain
+ * @tparam dim        The topological dimension of the mesh.
+ * @tparam spacedim   The embedding space dimension (default = dim).
+ * @param[in,out] triangulation         The triangulation to which the grid will
+ * be attached.
+ * @param[in]     mesh_parameters      Parameters defining the mesh or primitive
+ * to use.
+ * @param[in]     manifolds_parameters Information about the manifolds attached
+ * to boundaries.
+ * @param[in]     restart              Flag indicating whether this is a
+ * restart.
+ * @param[in]     boundary_conditions  Boundary condition information, used for
+ * periodicity.
  */
 template <int dim, int spacedim = dim>
 void
@@ -55,28 +66,30 @@ read_mesh_and_manifolds(
   parallel::DistributedTriangulationBase<dim, spacedim> &triangulation,
   const Parameters::Mesh                                &mesh_parameters,
   const Parameters::Manifolds                           &manifolds_parameters,
-  const bool                                            &restart,
+  bool                                                   restart,
   const BoundaryConditions::BoundaryConditions          &boundary_conditions);
 
 /**
- * @brief Completely set up a mesh and its manifold for rotor-stator domains
+ * @brief Completely sets up a mesh and its manifolds for rotor-stator domains.
  *
- * @param[in, out] triangulation The triangulation to which a grid is attached.
- * For dealii grids, this is intially the stator triangulation information,
- * which is later substituted by the merged rotor-stator triangulation. For gmsh
- * grids, this already refers to the merged configuration
+ * The `triangulation` initially contains the stator
+ * triangulation, which is later replaced by the merged rotor-stator
+ * triangulation.
  *
- * @param[in] mesh_parameters The mesh parameters used to decide what type of
- * mesh or primitive is used
- *
- * @param[in] manifolds_parameters The information about the type of manifolds
- * attached to the boundary conditions
- *
- * @param[in] boundary_conditions The information about the boundary conditions
- * id. This is used to set-up the periodicity of the domain
- *
- * @param[in] mortar The information about the mortar method control, including
- * the rotor mesh parameters
+ * @tparam dim        The topological dimension of the mesh.
+ * @tparam spacedim   The embedding space dimension (default = dim).
+ * @param[in,out] triangulation        The triangulation to which the grid will
+ * be attached.
+ * @param[in]     mesh_parameters      Parameters defining the mesh or primitive
+ * to use.
+ * @param[in]     manifolds_parameters Information about the manifolds attached
+ * to boundaries.
+ * @param[in]     restart              Flag indicating whether this is a
+ * restart.
+ * @param[in]     boundary_conditions  Boundary condition information, used for
+ * periodicity.
+ * @param[in]     mortar_parameters    Parameters controlling the mortar method,
+ * including rotor mesh info.
  */
 template <int dim, int spacedim = dim>
 void
@@ -84,7 +97,7 @@ read_mesh_and_manifolds_for_stator_and_rotor(
   parallel::DistributedTriangulationBase<dim, spacedim> &triangulation,
   const Parameters::Mesh                                &mesh_parameters,
   const Parameters::Manifolds                           &manifolds_parameters,
-  const bool                                            &restart,
+  bool                                                   restart,
   const BoundaryConditions::BoundaryConditions          &boundary_conditions,
   const Parameters::Mortar<dim>                         &mortar_parameters);
 

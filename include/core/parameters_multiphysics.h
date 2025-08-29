@@ -11,7 +11,6 @@
 #define lethe_parameters_multiphysics_h
 
 #include <core/parameters.h>
-#include <core/utilities.h>
 
 #include <deal.II/base/parameter_handler.h>
 

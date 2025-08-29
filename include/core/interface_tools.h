@@ -16,31 +16,22 @@
 #include <deal.II/distributed/tria.h>
 
 #include <deal.II/dofs/dof_handler.h>
-#include <deal.II/dofs/dof_tools.h>
 
 #include <deal.II/fe/fe.h>
 #include <deal.II/fe/fe_q.h>
 #include <deal.II/fe/mapping_fe.h>
-#include <deal.II/fe/mapping_q.h>
 
 #include <deal.II/grid/grid_tools.h>
-
-#include <deal.II/hp/fe_collection.h>
-#include <deal.II/hp/q_collection.h>
 
 #include <deal.II/lac/lapack_full_matrix.h>
 
 #include <deal.II/matrix_free/fe_point_evaluation.h>
 
 #include <deal.II/non_matching/fe_immersed_values.h>
-#include <deal.II/non_matching/fe_values.h>
-#include <deal.II/non_matching/mesh_classifier.h>
-#include <deal.II/non_matching/quadrature_generator.h>
 
 #include <deal.II/numerics/data_out.h>
 #include <deal.II/numerics/vector_tools.h>
 
-#include <fstream>
 #include <iostream>
 
 using namespace dealii;

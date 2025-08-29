@@ -3,6 +3,12 @@
 All notable changes to the Lethe project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
+### [Master] - 2025-08-28
+
+### Changed
+
+- MINOR The core library had many included headers that were not required. These have been removed. I have also started to improve the doxygen documentation of many functions in utilities.h. This is an ongoing work that will be split into many small PRs. [#1635](https://github.com/chaos-polymtl/lethe/pull/1635)
+
 ### [Master] - 2025-08-27
 
 ### Changed

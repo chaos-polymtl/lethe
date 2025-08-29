@@ -14,18 +14,10 @@
 
 // Dealii Includes
 #include <deal.II/base/function.h>
-#include <deal.II/base/quadrature_lib.h>
 
-#include <deal.II/distributed/tria_base.h>
-
-#include <deal.II/dofs/dof_accessor.h>
 #include <deal.II/dofs/dof_handler.h>
 
-#include <deal.II/fe/fe_q.h>
-#include <deal.II/fe/fe_simplex_p.h>
 #include <deal.II/fe/mapping_fe.h>
-
-#include <deal.II/lac/trilinos_vector.h>
 
 #include <deal.II/particles/particle_handler.h>
 

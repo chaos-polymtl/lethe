@@ -1,4 +1,4 @@
-// SPDX-FileCopyrightText: Copyright (c) 2020-2024 The Lethe Authors
+// SPDX-FileCopyrightText: Copyright (c) 2020-2025 The Lethe Authors
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
 #ifndef lethe_manifolds_h
@@ -12,7 +12,6 @@
 
 #include <deal.II/numerics/data_postprocessor.h>
 
-#include <memory>
 
 
 using namespace dealii;

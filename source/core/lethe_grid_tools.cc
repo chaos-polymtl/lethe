@@ -7,11 +7,11 @@
 #include <core/tensors_and_points_dimension_manipulation.h>
 
 #include <deal.II/fe/fe_q.h>
+#include <deal.II/fe/mapping_manifold.h>
+#include <deal.II/fe/mapping_q1.h>
 #include <deal.II/fe/mapping_q_cache.h>
 
 #include <deal.II/grid/grid_tools.h>
-#include <deal.II/grid/manifold.h>
-#include <deal.II/grid/manifold_lib.h>
 
 #include <cmath>
 

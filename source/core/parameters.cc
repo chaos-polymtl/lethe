@@ -4,6 +4,7 @@
 #include <core/parameters.h>
 #include <core/utilities.h>
 
+#include <deal.II/base/conditional_ostream.h>
 #include <deal.II/base/exceptions.h>
 
 DeclException2(

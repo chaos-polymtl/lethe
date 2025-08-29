@@ -4,6 +4,8 @@
 #include <core/revision.h>
 #include <core/utilities.h>
 
+#include <deal.II/base/revision.h>
+
 #if __GNUC__ > 7
 #  include <filesystem>
 #endif

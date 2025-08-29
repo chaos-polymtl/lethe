@@ -1,4 +1,4 @@
-// SPDX-FileCopyrightText: Copyright (c) 2020-2024 The Lethe Authors
+// SPDX-FileCopyrightText: Copyright (c) 2020-2025 The Lethe Authors
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
 #ifndef lethe_ib_particle_h
@@ -7,11 +7,8 @@
 #include <core/dem_properties.h>
 #include <core/shape.h>
 
-#include <deal.II/base/function_signed_distance.h>
 #include <deal.II/base/parsed_function.h>
 #include <deal.II/base/point.h>
-
-#include <deal.II/physics/transformations.h>
 
 #include <vector>
 

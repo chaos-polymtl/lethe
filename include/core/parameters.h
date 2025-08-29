@@ -18,7 +18,6 @@
 #include <core/multiphysics.h>
 #include <core/utilities.h>
 
-#include <deal.II/base/conditional_ostream.h>
 #include <deal.II/base/parameter_handler.h>
 #include <deal.II/base/parsed_function.h>
 
