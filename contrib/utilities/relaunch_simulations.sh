@@ -1,17 +1,21 @@
 #!/bin/bash
-
-###############################################################################################
-# Bash script for checking simulations on the cluster that have timed-out (TIMEOUT)
-# or failed (FAILED) and relaunching them if wished.
-#
 # SPDX-FileCopyrightText: Copyright (c) 2025 The Lethe Authors
 # SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
+
+################################################################################
+# Bash script for checking simulations on the cluster that have timed-out
+# (TIMEOUT)or failed (FAILED) and relaunching them if wished.
+#
+# * IMPORTANT *
+#   - Make sure that you have the proper permissions to execute the file before
+#     calling it. If not, you can use "chmod" to change the files permissions.
 #
 # Assumed structure and prerequisites:
-# - Each simulation must be contained in its own folder with a unique name.
+# - Each simulation must be contained in its own folder.
 # - The simulation folder must contain:
 #   - A parameter file with the suffix ".prm". There can only be one parameter
-#     file in the folder.
+#     file in the folder. The name of the parameter files can be different from
+#     one simulation folder to another.
 #   - A job script for launching the simulation on the cluster.
 # - All parameter files must contain already the "restart" subsection if they
 #   have to be restarted from a checkpoint.
@@ -19,8 +23,9 @@
 #   (e.g. launch.sh or job.sh)
 # - All job output log files must have the suffix ".out" and have the job ID
 #   as part of their name.
+# - The cluster must have the "seff" command. Alliance Canada clusters have it.
 #
-# Tree:
+# Tree example 1:
 #   .
 #   ├── relaunch_simulations.sh
 #   ├── <search_file>
@@ -35,22 +40,70 @@
 #   │   └── <parameter_file>
 #   ...
 #
-# How does the script work:
-# - A search file (-sf|--search_file) and job file name (-j|--job_file) must be
-#   specified when calling the script. The search file contains the name of the
-#   simulation folders to be checked (1 folder = 1 line in the search file).
-#   Example content of a search file:
+#   The content of the search file would look like (1 folder = 1 line in
+#   the search file):
 #     simulation_00_folder
 #     simulation_01_folder
 #     simulation_02_folder
 #     ...
+#
+# The script can also be called with nested folders as long the relative paths
+# (originating from the call location) in the search file is well defined.
+#
+# Tree example 2:
+#   .
+#   ├── relaunch_simulations.sh
+#   ├── <search_file>
+#   ├── <subfolder_00>
+#   │   ├── <simulation_00_folder>
+#   │   │   ├── <job_file>
+#   │   │   └── <parameter_file>
+#   │   ├── <simulation_01_folder>
+#   │   │   ├── <job_file>
+#   │   │   └── <parameter_file>
+#   │   ├── <simulation_02_folder>
+#   │   │   ├── <job_file>
+#   │   │   └── <parameter_file>
+#   │   ...
+#   ├── <subfolder_01>
+#   │   ├── <simulation_00_folder>
+#   │   │   ├── <job_file>
+#   │   │   └── <parameter_file>
+#   │   ├── <simulation_01_folder>
+#   │   │   ├── <job_file>
+#   │   │   └── <parameter_file>
+#   │   ├── <simulation_02_folder>
+#   │   │   ├── <job_file>
+#   │   │   └── <parameter_file>
+#   │   ...
+#   ...
+#
+#   The content of the search file would look like (1 folder = 1 line in
+#   the search file):
+#     ./subfolder_00/simulation_00_folder
+#     ./subfolder_00/simulation_01_folder
+#     ./subfolder_00/simulation_02_folder
+#     ...
+#     ./subfolder_01/simulation_00_folder
+#     ./subfolder_01/simulation_01_folder
+#     ./subfolder_01/simulation_02_folder
+#     ...
+#
+#  * Note that in the examples above, "..." is added to signify the presence
+#    of more folders.
+#
+# How the script works:
+# - A search file (-sf|--search_file) and job file name (-j|--job_file) must be
+#   specified when calling the script. The search file contains the path to the
+#   simulation folders to be checked.
 # - The script checks the status of the latest launched job of the simulations
 #   in the search file.
 #   - If the status is "CANCELLED", check the previous job until a
 #     non-"CANCELLED" simulation is found.
 #     This way, user-stopped simulations are ignored.
 # - If the job was found to be "TIMEOUT":
-#   - The simulation folder name is saved in a file named "timeout_simulations.txt".
+#   - The simulation folder name is saved in a file named
+#     "timeout_simulations.txt".
 #   - If the user requested that the simulation should be rerun from checkpoint
 #     with (-lr|--launch_restart), then the scripts searches for the "set restart"
 #     in the "subsection restart" of the parameter file and changes its value to
@@ -62,7 +115,8 @@
 #     relaunch, a copy can be made by adding the argument (-cp|--copy_search_file)
 #     to the script call.
 # - If the job was found to be "FAILED":
-#   - The simulation folder name is saved in a file named "failed_simulations.txt".
+#   - The simulation folder name is saved in a file named
+#     "failed_simulations.txt".
 #   - If the user requested that the failed simulation should be rerun with
 #     (-rf|--rerun_failed), then the simulation is rerun without restart.
 #   - If the user wishes to rerun the simulation from the last checkpoint, the
@@ -73,15 +127,46 @@
 # For help on the different arguments and their default values, the user can
 # call the script with the flag (-h|--help).
 #
-###############################################################################################
+# How to call the script:
+# - Call example for only finding the simulations that are incomplete
+#   (TIMOUT or FAILED):
+#     ./relaunch_simulations -sf "./simulations_list.txt" -j "launch.sh"
+# - Call example for only finding the simulations that are incomplete
+#   (TIMOUT or FAILED) and launching TIMEOUT ones:
+#     ./relaunch_simulations -sf "./simulations_list.txt" -j "launch.sh" -lr
+# - Call example for only finding the simulations that are incomplete
+#   (TIMOUT or FAILED) and launching TIMEOUT and FAILED ones. The FAILED ones
+#   are launched without restart:
+#     ./relaunch_simulations -sf "./simulations_list.txt" -j "launch.sh" -lr -rf
+# - Call example for only finding the simulations that are incomplete
+#   (TIMOUT or FAILED) and launching TIMEOUT and FAILED ones. Where, the FAILED
+#   ones are launched with restart enabled :
+#     ./relaunch_simulations -sf "./simulations_list.txt" -j "launch.sh" -lr -rf -st
+# - Call example for relaunching from the previously relaunched list. Additionally,
+#   make a copy of the search file for comparing changes between launches:
+#     ./relaunch_simulations -sf "./relaunched_simulations.txt" -j "launch.sh" -lr -rf -st -cp
+#     or
+#     ./relaunch_simulations -j "launch.sh" -lr -rf -st -cp
+#   since "./relaunched_simulations.txt" is the default value for (-sf|--search_file).
+#
+################################################################################
 
+# Function that prints the message when no restart subsection is found
+print_no_restart_message() {
+  local prm_file="$1"
+  echo "No \"subsection restart\" was found in $prm_file"
+  echo "The simulation cannot be restarted."
+  echo "Please add the subsection and relaunch the simulation with checkpointing enabled."
+}
+
+################################################################################
 USAGE="Usage: \n
              $0 [-sf <path_to_files_with_folders_to_be_searched>] \n
              [-j <slurm_job_file_filename>] [-cp] [-lr] [-rf] [-st] \n
             \n
-             -sf|--search_file: Path to the file with the folders to be searched (default: ./simulations_list.txt)\n
+             -sf|--search_file: Path to the file with the folders to be searched (default: ./relaunched_simulations.txt)\n
                                 This file must be a \".txt\" text file containing only a list of folder names of the simulations to check.\n
-             -j|--job_file: Name of the slurm job file within each simulation folder (default: ./launch.sh)\n
+             -j|--job_file: Name of the slurm job file within each simulation folder (default: job.sh)\n
              -cp|--copy_search_file: Flag indicates to copy the search file with the suffix \"_old\" (deactivated by default)\n
 
              For TIMEOUT simulations:
@@ -133,8 +218,8 @@ while [[ "$#" -gt 0 ]]; do
 done
 
 # Assign default values if not set
-search_file="${search_file:-./simulations_list.txt}"
-job_file="${job_file:-launch.sh}"
+search_file="${search_file:-./relaunched_simulations.txt}"
+job_file="${job_file:-job.sh}"
 copy_search_file="${copy_search_file:-"false"}"
 launch_restart="${launch_restart:-"false"}"
 rerun_failed="${rerun_failed:-"false"}"
@@ -158,7 +243,7 @@ echo " Set restart of failed simulations to:  $set_restart_true"
 echo "************************************************************"
 echo "************************************************************"
 
-# Copy search file if requested otherwise, keep it as a temporary copy.
+# Copy search file if requested. Otherwise, keep it as a temporary copy.
 # The temporary copy is needed since "relaunched_simulations.txt" is overwritten.
 search_file_prefix=$(basename "$search_file" .txt)
 search_file_copy=$(echo "${search_file_prefix}_old.txt")
@@ -169,14 +254,6 @@ then
   echo "************************************************************"
 fi
 
-################################################################################
-# Function that prints the message when no restart subsection is found
-print_no_restart_message() {
-  local prm_file="$1"
-  echo "No \"subsection restart\" was found in $prm_file"
-  echo "The simulation cannot be restarted."
-  echo "Please add the subsection and relaunch the simulation with checkpointing enabled."
-}
 ################################################################################
 # List all folders to be checked
 echo -e " SIMULATIONS TO BE CHECKED: \n"
@@ -204,7 +281,7 @@ do
   # Move into folder if it exists
   if [ -d "$simulation_folder" ]
   then
-    cd "$simulation_folder" || exit
+    cd "$simulation_folder"
 
     # Loop over job output files
     while IFS= read -r file
@@ -237,6 +314,7 @@ do
             # Check if there is a restart subsection in the prm file
             if grep -q "subsection.*restart" "$prm_file"
             then
+              # TODO AA check set checkpoint line
               # Set restart to "true"
               sed -i 's/\(set restart\s*=\s*\)false/\1true/' $prm_file
               sbatch -J $simulation_folder $job_file
@@ -261,12 +339,14 @@ do
             prm_file=$(ls | grep "\.prm$")
             echo " prm file: $prm_file"
 
+            # TODO AA restructure this to check if restart is necessary first
             # Check if there is a restart subsection in the prm file
             if grep -q "subsection.*restart" "$prm_file"
             then
               # Check if restart parameter should be set to "true"
               if [ "$set_restart_true" == "true" ]
               then
+                # TODO AA check set checkpoint line
                 sed -i 's/\(set restart\s*=\s*\)false/\1true/' $prm_file
               else # restart should be set to "false"
                 sed -i 's/\(set restart\s*=\s*\)true/\1false/' $prm_file
@@ -283,7 +363,7 @@ do
           fi
         else
           echo "  The job status is not CANCELLED, TIMEOUT or FAILED."
-          echo "  No actions taken."
+          echo "  No action taken."
         fi
         break
       else
@@ -296,6 +376,7 @@ do
     cd - >/dev/null || exit
   else
     echo " Directory not found: $simulation_folder"
+    exit # TODO AA test this
   fi
 done < "$search_file_copy"
 
