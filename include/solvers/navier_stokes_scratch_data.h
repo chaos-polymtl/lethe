@@ -6,10 +6,8 @@
 
 #include <core/bdf.h>
 #include <core/dem_properties.h>
-#include <core/density_model.h>
 #include <core/parameters.h>
 #include <core/physical_property_model.h>
-#include <core/rheological_model.h>
 #include <core/sdirk_stage_data.h>
 #include <core/time_integration_utilities.h>
 
@@ -21,9 +19,7 @@
 #include <deal.II/base/quadrature.h>
 
 #include <deal.II/dofs/dof_renumbering.h>
-#include <deal.II/dofs/dof_tools.h>
 
-#include <deal.II/fe/fe_q.h>
 #include <deal.II/fe/fe_system.h>
 #include <deal.II/fe/mapping.h>
 
@@ -542,6 +538,11 @@ public:
              const VectorType              &current_filtered_solution,
              const std::vector<VectorType> &previous_solutions)
   {
+    Assert(
+      gather_vof,
+      ExcMessage(
+        "You are trying to reinit the VOF model in a cell, but you did not enable VOF for the scratch data (gather_vof=false)."));
+
     this->fe_values_vof->reinit(cell);
     // Gather phase fraction (values, gradient)
     this->fe_values_vof->get_function_values(current_solution,
@@ -584,6 +585,11 @@ public:
     const typename DoFHandler<dim>::active_cell_iterator &curvature_cell,
     const VectorType &current_curvature_solution)
   {
+    Assert(
+      gather_curvature,
+      ExcMessage(
+        "You are trying to reinit the curvature in a cell, but you did not enable curvature for the scratch data (gather_curvature=false)."));
+
     this->fe_values_curvature->reinit(curvature_cell);
 
     // Gather phase fraction gradient
@@ -626,6 +632,11 @@ public:
     const VectorType                                     &current_solution,
     const std::vector<VectorType>                        &previous_solutions)
   {
+    Assert(
+      gather_void_fraction,
+      ExcMessage(
+        "You are trying to reinit the void fraction in a cell, but you did not enable void fraction for the scratch data (gather_void_fraction=false)."));
+
     this->fe_values_void_fraction->reinit(cell);
 
     // Gather void fraction (values, gradient)
@@ -662,22 +673,7 @@ public:
    */
 
   void
-  reinit_particle_fluid_forces()
-  {
-    for (auto &particle : pic)
-      {
-        auto particle_properties = particle.get_properties();
-        // Set the particle_fluid_interactions properties and vectors to 0
-        for (int d = 0; d < dim; ++d)
-          {
-            particle_properties
-              [DEM::CFDDEMProperties::PropertiesIndex::fem_force_x + d] = 0.;
-            particle_properties
-              [DEM::CFDDEMProperties::PropertiesIndex::fem_torque_x + d] = 0.;
-            undisturbed_flow_force[d]                                    = 0.;
-          }
-      }
-  }
+  reinit_particle_fluid_forces();
 
   /**
    * @brief Extracts the velocity of the particles and calculates their total volume
@@ -685,45 +681,8 @@ public:
    *
    * @return Total volume of the particles in the cell
    */
-
   double
-  extract_particle_properties()
-  {
-    average_particle_velocity = 0;
-    // Loop over particles in cell
-    double       total_particle_volume = 0;
-    unsigned int i_particle            = 0;
-
-    for (auto &particle : pic)
-      {
-        auto particle_properties = particle.get_properties();
-        // Stores the values of particle velocity in a tensor
-        particle_velocity[i_particle][0] =
-          particle_properties[DEM::CFDDEMProperties::PropertiesIndex::v_x];
-        particle_velocity[i_particle][1] =
-          particle_properties[DEM::CFDDEMProperties::PropertiesIndex::v_y];
-        if constexpr (dim == 3)
-          particle_velocity[i_particle][2] =
-            particle_properties[DEM::CFDDEMProperties::PropertiesIndex::v_z];
-
-        if (!interpolated_void_fraction)
-          total_particle_volume +=
-            M_PI *
-            pow(particle_properties[DEM::CFDDEMProperties::PropertiesIndex::dp],
-                dim) /
-            (2 * dim);
-
-        average_particle_velocity += particle_velocity[i_particle];
-        i_particle++;
-      }
-    number_of_particles = i_particle;
-    if (number_of_particles != 0)
-      { // Calculate the average particle velocity within the cell
-        average_particle_velocity =
-          average_particle_velocity / number_of_particles;
-      }
-    return total_particle_volume;
-  }
+  extract_particle_properties();
 
   /**
    * @brief Computes the cell void fraction
@@ -733,24 +692,7 @@ public:
    */
 
   void
-  calculate_cell_void_fraction(const double &total_particle_volume)
-  {
-    cell_volume =
-      compute_cell_measure_with_JxW(this->fe_values.get_JxW_values());
-
-    if (!this->interpolated_void_fraction)
-      {
-        double cell_void_fraction_bulk = 0;
-        cell_void_fraction_bulk =
-          (cell_volume - total_particle_volume) / cell_volume;
-
-        for (unsigned int j = 0; j < number_of_particles; ++j)
-          cell_void_fraction[j] = cell_void_fraction_bulk;
-      }
-    else
-      for (unsigned int j = 0; j < number_of_particles; ++j)
-        cell_void_fraction[j] = 0;
-  }
+  calculate_cell_void_fraction(const double &total_particle_volume);
 
   /**
    * @brief Creates an object of type Quadrature<dim> that contains the
@@ -762,33 +704,13 @@ public:
    */
 
   Quadrature<dim>
-  gather_particles_reference_location()
-  {
-    // Create local vector that will be used to spawn an in-situ quadrature to
-    // interpolate at the locations of the particles
-    std::vector<Point<dim>> particle_reference_location(number_of_particles);
-    std::vector<double>     particle_weights(number_of_particles, 1);
-    unsigned int            i_particle = 0;
+  gather_particles_reference_location();
 
-    // Loop over particles in cell and cache their reference location
-    for (auto &particle : pic)
-      {
-        // Store particle positions and weights
-        // Reference location of the particle
-        particle_reference_location[i_particle] =
-          particle.get_reference_location();
-        i_particle++;
-      }
-
-    // Return a quadrature for the Navier-Stokes equations that is based on the
-    // particle reference location
-    return Quadrature<dim>(particle_reference_location, particle_weights);
-  }
 
   /**
    * @brief Interpolates the velocity and pressure of the fluid, as well as the
-   * pressure gradient, and the laplacian, curl and gradient of the velocity, at
-   * the locations of the particles.
+   * pressure gradient, and the laplacian, curl and gradient of the velocity,
+   * at the locations of the particles.
    *
    * @param[in] q_particles_location Quadrature type object that contains the
    * location of the particles relative to the cell's frame of reference.
@@ -796,9 +718,9 @@ public:
    * @param[in] velocity_cell The active cell associated with the velocity and
    * pressure DoFHandler
    *
-   * @param[in] velocity_pressure_solution The solution (velocity and pressure)
-   * that is used to interpolate the velocity and pressure at the particles
-   * locations.
+   * @param[in] velocity_pressure_solution The solution (velocity and
+   * pressure) that is used to interpolate the velocity and pressure at the
+   * particles locations.
    */
 
   template <typename VectorType>
@@ -871,6 +793,11 @@ public:
     const typename DoFHandler<dim>::active_cell_iterator &void_fraction_cell,
     const VectorType &void_fraction_solution)
   {
+    Assert(
+      gather_void_fraction,
+      ExcMessage(
+        "gather_void_fraction has been set to false, yet you are trying to gather the void fraction at the location of the particles. The scratch data is currently unaware of the finite element interpolation for the void fraction and the simulation will abort."));
+
     FEValues<dim> fe_values_particles_void_fraction(
       this->fe_values_void_fraction->get_fe(),
       q_particles_location,
@@ -894,9 +821,6 @@ public:
   void
   calculate_fluid_properties_at_particle_location()
   {
-    density_at_particle_location.resize(number_of_particles);
-    kinematic_viscosity_at_particle_location.resize(number_of_particles);
-
     if (gather_vof)
       {
         for (unsigned int i_particle = 0; i_particle < number_of_particles;
@@ -916,19 +840,21 @@ public:
               dynamic_viscosity_at_particle_location /
               density_at_particle_location[i_particle];
           }
+
+        // Properties have been calculated, return
+        return;
       }
-    else
+
+    // Regular case without VOF
+    for (unsigned int i_particle = 0; i_particle < number_of_particles;
+         ++i_particle)
       {
-        for (unsigned int i_particle = 0; i_particle < number_of_particles;
-             ++i_particle)
-          {
-            // Gather the kinematic viscosity and density at the particle
-            // location assuming a constant kinematic viscosity and density in a
-            // single fluid
-            kinematic_viscosity_at_particle_location[i_particle] =
-              kinematic_viscosity_scale;
-            density_at_particle_location[i_particle] = density_scale;
-          }
+        // Gather the kinematic viscosity and density at the particle
+        // location assuming a constant kinematic viscosity and density in a
+        // single fluid
+        kinematic_viscosity_at_particle_location[i_particle] =
+          kinematic_viscosity_scale;
+        density_at_particle_location[i_particle] = density_scale;
       }
   }
 
@@ -940,8 +866,10 @@ public:
 
   void
   calculate_force_parameters_at_particle_location()
-
-  { // Relative velocity and particle Reynolds
+  {
+    // Tolerance for the calculation of the particle Reynolds number.
+    // TODO -> Revisit if that is not a too high value.
+    const double Re_particle_tolerance       = 1e-3;
     unsigned int i_particle                  = 0;
     average_fluid_particle_relative_velocity = 0;
 
@@ -956,7 +884,7 @@ public:
           fluid_particle_relative_velocity_at_particle_location[i_particle];
 
         Re_particle[i_particle] =
-          1e-3 +
+          Re_particle_tolerance +
           cell_void_fraction[i_particle] *
             fluid_particle_relative_velocity_at_particle_location[i_particle]
               .norm() *
@@ -990,6 +918,12 @@ public:
     const typename DoFHandler<dim>::active_cell_iterator &phase_cell,
     const VectorType &current_filtered_solution)
   {
+    Assert(
+      gather_vof,
+      ExcMessage(
+        "gather_vof has been set to false, yet you are trying to gather the VOF at the location of the particles. The scratch data is currently unaware of the finite element interpolation for VOF and the simulation will abort."));
+
+
     FEValues<dim> fe_values_vof_local_particles((*this->fe_values_vof).get_fe(),
                                                 q_particles_location,
                                                 update_values |
@@ -1034,7 +968,12 @@ public:
     const VectorType                      &void_fraction_solution,
     const Particles::ParticleHandler<dim> &particle_handler)
   {
-    pic = particle_handler.particles_in_cell(this->fe_values.get_cell());
+    Assert(
+      gather_particles_information,
+      ExcMessage(
+        "You are trying to reinit the fluid information at the particle location within a cell, but you did not enable the gathering of the information at the particle location for the scratch data (gather_particles_information=false)."));
+
+    pic = particle_handler.particles_in_cell(velocity_cell);
 
     double total_particle_volume = 0;
     reinit_particle_fluid_forces();
@@ -1097,7 +1036,7 @@ public:
     const Particles::ParticleHandler<dim> &particle_handler,
     const VectorType                      &current_filtered_solution)
   {
-    pic = particle_handler.particles_in_cell(this->fe_values.get_cell());
+    pic = particle_handler.particles_in_cell(velocity_cell);
 
     double total_particle_volume = 0;
     total_particle_volume        = extract_particle_properties();

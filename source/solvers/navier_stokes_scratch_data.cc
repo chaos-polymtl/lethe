@@ -2,7 +2,6 @@
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
 #include <core/bdf.h>
-#include <core/dem_properties.h>
 #include <core/utilities.h>
 
 #include <solvers/navier_stokes_scratch_data.h>
@@ -352,6 +351,12 @@ NavierStokesScratchData<dim>::enable_particle_fluid_interactions(
   fluid_particle_relative_velocity_at_particle_location =
     std::vector<Tensor<1, dim>>(n_global_max_particles_per_cell);
   Re_particle = std::vector<double>(n_global_max_particles_per_cell);
+
+  // This table is not used within an FeValues so we can avoid resizing it
+  // dynamically
+  density_at_particle_location.resize(n_global_max_particles_per_cell);
+  kinematic_viscosity_at_particle_location.resize(
+    n_global_max_particles_per_cell);
 }
 
 template <int dim>
@@ -661,5 +666,109 @@ NavierStokesScratchData<dim>::calculate_physical_properties()
     }
 }
 
+template <int dim>
+void
+NavierStokesScratchData<dim>::reinit_particle_fluid_forces()
+{
+  for (auto &particle : pic)
+    {
+      auto particle_properties = particle.get_properties();
+      // Set the particle_fluid_interactions properties and vectors to 0
+      for (int d = 0; d < dim; ++d)
+        {
+          particle_properties
+            [DEM::CFDDEMProperties::PropertiesIndex::fem_force_x + d] = 0.;
+          particle_properties
+            [DEM::CFDDEMProperties::PropertiesIndex::fem_torque_x + d] = 0.;
+          undisturbed_flow_force[d]                                    = 0.;
+        }
+    }
+}
+
+template <int dim>
+double
+NavierStokesScratchData<dim>::extract_particle_properties()
+{
+  average_particle_velocity = 0;
+  // Loop over particles in cell
+  double       total_particle_volume = 0;
+  unsigned int i_particle            = 0;
+
+  for (auto &particle : pic)
+    {
+      auto particle_properties = particle.get_properties();
+      // Stores the values of particle velocity in a tensor
+      particle_velocity[i_particle][0] =
+        particle_properties[DEM::CFDDEMProperties::PropertiesIndex::v_x];
+      particle_velocity[i_particle][1] =
+        particle_properties[DEM::CFDDEMProperties::PropertiesIndex::v_y];
+      if constexpr (dim == 3)
+        particle_velocity[i_particle][2] =
+          particle_properties[DEM::CFDDEMProperties::PropertiesIndex::v_z];
+
+      if (!interpolated_void_fraction)
+        total_particle_volume +=
+          M_PI *
+          pow(particle_properties[DEM::CFDDEMProperties::PropertiesIndex::dp],
+              dim) /
+          (2 * dim);
+
+      average_particle_velocity += particle_velocity[i_particle];
+      i_particle++;
+    }
+  number_of_particles = i_particle;
+  if (number_of_particles != 0)
+    { // Calculate the average particle velocity within the cell
+      average_particle_velocity =
+        average_particle_velocity / number_of_particles;
+    }
+  return total_particle_volume;
+}
+
+template <int dim>
+void
+NavierStokesScratchData<dim>::calculate_cell_void_fraction(
+  const double &total_particle_volume)
+{
+  cell_volume = compute_cell_measure_with_JxW(this->fe_values.get_JxW_values());
+
+  if (!this->interpolated_void_fraction)
+    {
+      double cell_void_fraction_bulk = 0;
+      cell_void_fraction_bulk =
+        (cell_volume - total_particle_volume) / cell_volume;
+
+      for (unsigned int j = 0; j < number_of_particles; ++j)
+        cell_void_fraction[j] = cell_void_fraction_bulk;
+    }
+  else
+    for (unsigned int j = 0; j < number_of_particles; ++j)
+      cell_void_fraction[j] = 0;
+}
+
+template <int dim>
+Quadrature<dim>
+NavierStokesScratchData<dim>::gather_particles_reference_location()
+{
+  // Create local vector that will be used to spawn an in-situ quadrature to
+  // interpolate at the locations of the particles
+  std::vector<Point<dim>> particle_reference_location(number_of_particles);
+  std::vector<double>     particle_weights(number_of_particles, 1);
+  unsigned int            i_particle = 0;
+
+  // Loop over particles in cell and cache their reference location
+  for (auto &particle : pic)
+    {
+      // Store particle positions and weights
+      // Reference location of the particle
+      particle_reference_location[i_particle] =
+        particle.get_reference_location();
+      i_particle++;
+    }
+
+  // Return a quadrature for the Navier-Stokes equations that is based on the
+  // particle reference location
+  return Quadrature<dim>(particle_reference_location, particle_weights);
+}
 template class NavierStokesScratchData<2>;
 template class NavierStokesScratchData<3>;
