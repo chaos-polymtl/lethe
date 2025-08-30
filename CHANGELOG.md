@@ -5,6 +5,10 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
 ### [Master] - 2025-08-28
 
+### Added
+
+- MINOR A bash script for checking simulations on cluster that have timed-out (TIMEOUT) or failed (FAILED) and relaunching them (if requested) has been added to the utilities of Lethe. [#1636](https://github.com/chaos-polymtl/lethe/pull/1636)
+
 ### Changed
 
 - MINOR The core library had many included headers that were not required. These have been removed. I have also started to improve the doxygen documentation of many functions in utilities.h. This is an ongoing work that will be split into many small PRs. [#1635](https://github.com/chaos-polymtl/lethe/pull/1635)
