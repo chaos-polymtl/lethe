@@ -3,6 +3,12 @@
 All notable changes to the Lethe project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
+## [Master] - 2025-08-29
+
+### Fixed
+
+- MINOR The ALE mortar assembler did not account for changes in the stabilization terms due to the introduction of the ALE velocity. This PR fixes this.[#1638](https://github.com/chaos-polymtl/lethe/pull/1638)
+
 ### [Master] - 2025-08-28
 
 ### Changed
