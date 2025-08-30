@@ -84,10 +84,7 @@ NewtonNonLinearSolver<VectorType>::solve(const bool is_initial_step)
         solver->setup_preconditioner();
 
       if (this->params.force_rhs_calculation || this->outer_iteration == 0)
-        {
-          solver->apply_constraints();
-          solver->assemble_system_rhs();
-        }
+        solver->assemble_system_rhs();
 
       if (this->outer_iteration == 0)
         {
@@ -122,10 +119,6 @@ NewtonNonLinearSolver<VectorType>::solve(const bool is_initial_step)
           if (this->params.verbosity != Parameters::Verbosity::quiet)
             {
               solver->pcout << "\talpha = " << std::setw(6) << alpha
-                            << std::setw(0) << " res = "
-                            << std::setprecision(this->params.display_precision)
-                            << std::setw(6) << current_res;
-              solver->pcout << "\tlast res= " << std::setw(6) << last_res
                             << std::setw(0) << " res = "
                             << std::setprecision(this->params.display_precision)
                             << std::setw(6) << current_res;
