@@ -553,7 +553,7 @@ get_max_subsection_size(const std::string &file_name);
  * @p spacedim (either 2 or 3), an exception will be thrown. The delimiter
  * separating the elements of the @p value_string is a comma (",").
  *
- * @remark The function can be use to construct Point<spacedim> objects.
+ * @remark The function is used to construct Point<spacedim> objects.
  *
  * @tparam spacedim Number of spatial dimensions (2D or 3D).
  *
@@ -591,7 +591,7 @@ value_string_to_tensor(const std::string &value_string)
  * In the case of a single entry declaration, the delimiter separating the
  * elements of the @p value_string_0 is a comma (",").
  *
- * @remark The function can be use to construct Point<spacedim> objects.
+ * @remark The function is used to construct Point<spacedim> objects.
  *
  * @tparam spacedim Number of spatial dimensions (2D or 3D).
  *
@@ -748,9 +748,11 @@ identify_minimum_cell_size(const Mapping<dim>    &mapping,
 }
 
 /**
- * @brief Calculate the penalty factor for the SIPG method for the case when two cells are of different sizes. A harmonic mean is used to calculate an average cell extent.
+ * @brief Calculate the penalty factor for the SIPG method for the case when two
+ * cells are of different sizes. A harmonic mean is used to calculate an average
+ * cell extent.
  *
- * @param[in] fe_degree Finite element degree
+ * @param[in] fe_degree Finite element degree.
  * @param[in] cell_extent_here Distance of the here cell. The ratio between the
  * volume of the cell and the area of the face is generally used as a metric for
  * this distance.
@@ -845,7 +847,8 @@ parse_args(int argc, char **argv);
  *
  * @param[in] pcout Parallel output stream
  * @param[in] prm Object containing the parameters parsed from the parameter
- * file
+ * file.
+ * @param[in] file_name File name where the parameters will be written.
  */
 void
 print_parameters_to_output_file(const ConditionalOStream &pcout,
@@ -876,7 +879,13 @@ point_to_angle(const Point<dim> &point,
                    2 * numbers::PI);
 }
 
-
+/**
+ * @brief Converts radius to point in cartesian coordinates (in the x-y plane)
+ * @param[in] radius Radial distance.
+ * @param[in] rad Angle (in radians).
+ *
+ * @return point Point cartesian coordinates
+ */
 template <int dim>
 inline Point<dim>
 radius_to_point(const double radius, const double rad)
