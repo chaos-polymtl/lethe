@@ -1,4 +1,5 @@
 add_subdirectory(chorin_navier_stokes)
+add_subdirectory(dg_advection_moments)
 add_subdirectory(direct_gls_navier_stokes)
 add_subdirectory(direct_steady_navier_stokes)
 add_subdirectory(emdpg_waveguide)
