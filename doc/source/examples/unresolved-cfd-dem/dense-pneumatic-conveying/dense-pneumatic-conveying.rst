@@ -261,7 +261,7 @@ The model parameters are quite standard for a DEM simulation with the non-linear
      set particle particle contact force method = hertz_mindlin_limit_overlap
      set particle wall contact force method     = nonlinear
      set integration method                     = velocity_verlet
-     set rolling resistance torque method       = constant_resistance
+     set rolling resistance torque method       = constant
      subsection adaptive sparse contacts
        set enable adaptive sparse contacts = true
        set enable particle advection       = false
@@ -417,7 +417,7 @@ Model parameters are the same as in the DEM simulation, but without load balanci
      set particle particle contact force method = hertz_mindlin_limit_overlap
      set particle wall contact force method     = nonlinear
      set integration method                     = velocity_verlet
-     set rolling resistance torque method       = constant_resistance
+     set rolling resistance torque method       = constant
    end
 
 Simulation Control

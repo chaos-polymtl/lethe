@@ -99,7 +99,7 @@ In this example, we use the ``frequent`` load balancing method to ensure that th
       set threshold                               = 1.3
     end
     set particle particle contact force method  = hertz_mindlin_limit_overlap
-    set rolling resistance torque method        = constant_resistance
+    set rolling resistance torque method        = constant
     set particle wall contact force method      = nonlinear
     set integration method                      = velocity_verlet
   end

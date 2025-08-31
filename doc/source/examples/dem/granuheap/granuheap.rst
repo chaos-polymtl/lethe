@@ -162,7 +162,7 @@ The JKR contact model is used in this case because it has be shown to correctly 
     end
 
     set particle particle contact force method = hertz_JKR
-      set rolling resistance torque method       = constant_resistance
+      set rolling resistance torque method       = constant
       set particle wall contact force method     = JKR
       set integration method                     = velocity_verlet
     end

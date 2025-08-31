@@ -104,7 +104,7 @@ Model Parameters
       end
       set particle particle contact force method    = hertz_mindlin_limit_overlap
       set particle wall contact force method        = nonlinear
-      set rolling resistance torque method          = constant_resistance
+      set rolling resistance torque method          = constant
       set integration method                        = velocity_verlet
     end
 

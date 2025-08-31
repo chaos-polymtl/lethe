@@ -137,7 +137,7 @@ Model Parameters
       set particle particle contact force method = hertz_mindlin_limit_overlap
       set particle wall contact force method     = nonlinear
       set integration method                     = velocity_verlet
-      set rolling resistance torque method       = epsd_resistance
+      set rolling resistance torque method       = epsd
       set f coefficient                          = 0.0 
     end
 
@@ -145,7 +145,7 @@ Model Parameters
 
   The ``f coefficient`` is only specified when the EPSD rolling resistance model is selected, in this case in prm file ``sandpile-epsd.prm``. 
   
-  In ``sandpile-viscous.prm`` and ``sandpile-constant.prm``, the ``rolling resistance torque method`` is set to ``viscous_resistance`` and ``constant_resistance``, respectively.
+  In ``sandpile-viscous.prm`` and ``sandpile-constant.prm``, the ``rolling resistance torque method`` is set to ``viscous`` and ``constant``, respectively.
   
   More information regarding the DEM model parameters is given in the Lethe documentation, i.e. `DEM Model Parameters <../../../parameters/dem/model_parameters.html>`_.
 

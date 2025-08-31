@@ -223,7 +223,7 @@ The model parameters are quite standard for a DEM simulation with the non-linear
        set load balance method = none
      end
      set particle particle contact force method = hertz_mindlin_limit_overlap
-     set rolling resistance torque method       = constant_resistance
+     set rolling resistance torque method       = constant
      set particle wall contact force method     = nonlinear
      set integration method                     = velocity_verlet
      subsection adaptive sparse contacts
@@ -266,7 +266,7 @@ Here the ASC is enabled with a granular temperature threshold of :math:`0.0001 \
        set neighborhood threshold                  = 1.3
      end
      set particle particle contact force method = hertz_mindlin_limit_overlap
-     set rolling resistance torque method       = constant_resistance
+     set rolling resistance torque method       = constant
      set particle wall contact force method     = nonlinear
      set integration method                     = velocity_verlet
      subsection adaptive sparse contacts
@@ -299,7 +299,7 @@ Here, the dynamic load balancing checks if a load balancing is needed every :mat
        set neighborhood threshold                  = 1.3
      end
      set particle particle contact force method = hertz_mindlin_limit_overlap
-     set rolling resistance torque method       = constant_resistance
+     set rolling resistance torque method       = constant
      set particle wall contact force method     = nonlinear
      set integration method                     = velocity_verlet
      subsection adaptive sparse contacts
@@ -332,7 +332,7 @@ Here, we use the ASC with the dynamic load balancing, using the same load balanc
        set neighborhood threshold                  = 1.3
      end
      set particle particle contact force method = hertz_mindlin_limit_overlap
-     set rolling resistance torque method       = constant_resistance
+     set rolling resistance torque method       = constant
      set particle wall contact force method     = nonlinear
      set integration method                     = velocity_verlet
      subsection adaptive sparse contacts
