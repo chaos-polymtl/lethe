@@ -2,6 +2,7 @@
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
 #include <dem/insertion_volume.h>
+#include <core/utilities.h>
 
 using namespace DEM;
 
@@ -94,8 +95,9 @@ InsertionVolume<dim, PropertiesIndex>::insert(
       // Call random number generator
       std::vector<double> random_number_vector;
       random_number_vector.reserve(this->inserted_this_step_this_proc);
-      this->create_random_number_container(
+      create_random_number_container(
         random_number_vector,
+        this->inserted_this_step,
         dem_parameters.insertion_info.insertion_maximum_offset,
         dem_parameters.insertion_info.seed_for_insertion);
 
@@ -157,23 +159,6 @@ InsertionVolume<dim, PropertiesIndex>::insert(
                                  particles_of_each_type_remaining,
                                  current_inserting_particle_type,
                                  pcout);
-    }
-}
-
-// This function creates a vector of random doubles using the input parameters
-// in the parameter handler
-template <int dim, typename PropertiesIndex>
-void
-InsertionVolume<dim, PropertiesIndex>::create_random_number_container(
-  std::vector<double> &random_container,
-  const double         maximum_range,
-  const int            seed_for_insertion)
-{
-  for (unsigned int i = 0; i < this->inserted_this_step; ++i)
-    {
-      srand(seed_for_insertion * (i + 1));
-      random_container.push_back((((double)rand()) / ((double)RAND_MAX)) *
-                                 maximum_range);
     }
 }
 

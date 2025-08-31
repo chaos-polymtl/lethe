@@ -876,13 +876,7 @@ point_to_angle(const Point<dim> &point,
                    2 * numbers::PI);
 }
 
-/**
- * @brief Converts radius to point in cartesian coordinates (in the x-y plane)
- * @param[in] radius Radial distance
- * @param[in] angle Angle (in radians)
- *
- * @return point Point cartesian coordinates
- */
+
 template <int dim>
 inline Point<dim>
 radius_to_point(const double radius, const double rad)
@@ -893,6 +887,31 @@ radius_to_point(const double radius, const double rad)
   point[1] = radius * std::sin(rad);
 
   return point;
+}
+
+/**
+ * @brief Creates a vector of random doubles between 0 and a maximum value using
+ * a pseudo random seed.
+ * @param[in,out] random_container Container in which the doubles are stored.
+ * @param[in] number_of_elements Number of random doubles to generate.
+ * @param[in] maximum_range Maximum value that the random double can have.
+ * @param[in] prn_seed Pseudo random seed used to generate the random doubles.
+ *
+ */
+
+inline void
+create_random_number_container(std::vector<double> &random_container,
+                               const unsigned int   number_of_elements,
+                               const double         maximum_range,
+                               const unsigned int   prn_seed)
+{
+
+  for (unsigned int i = 0; i < number_of_elements; ++i)
+    {
+      srand(prn_seed* (i + 1));
+      random_container.push_back((((double)rand()) / ((double)RAND_MAX)) *
+                                 maximum_range);
+    }
 }
 
 

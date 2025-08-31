@@ -79,20 +79,6 @@ public:
 
 private:
   /**
-   * @brief Creates a vector of random numbers with size of particles which are
-   * going to be inserted at each insertion step
-   *
-   * @param random_container A vector of random numbers
-   * @param maximum_range The range in which the random numbers will be
-   * generated
-   * @param seed_for_insertion Prn seed for initial offset
-   */
-  void
-  create_random_number_container(std::vector<double> &random_container,
-                                 const double         maximum_range,
-                                 const int            seed_for_insertion);
-
-  /**
    * @brief Converts id of particles to volume insertion location
    *
    * @param insertion_location Insertion location of the particle
