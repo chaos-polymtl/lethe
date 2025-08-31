@@ -113,7 +113,7 @@ set_default_dem_parameters(const unsigned int        particle_type_number,
 
   // Rolling resistance method
   dem_parameters.model_parameters.rolling_resistance_method =
-    Parameters::Lagrangian::RollingResistanceMethod::constant_resistance;
+    Parameters::Lagrangian::RollingResistanceMethod::constant;
 
   // Particle parameters
   for (unsigned int i = 0; i < particle_type_number; ++i)

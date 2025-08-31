@@ -65,7 +65,7 @@ test()
   dem_parameters.lagrangian_physical_properties.density_particle[0] = 2500;
   double neighborhood_threshold = 1.3 * particle_diameter;
   dem_parameters.model_parameters.rolling_resistance_method =
-    Parameters::Lagrangian::RollingResistanceMethod::constant_resistance;
+    Parameters::Lagrangian::RollingResistanceMethod::constant;
 
   Particles::ParticleHandler<dim> particle_handler(
     triangulation, mapping, PropertiesIndex::n_properties);
@@ -86,7 +86,7 @@ test()
     PropertiesIndex,
     Parameters::Lagrangian::ParticleParticleContactForceModel::
       hertz_mindlin_limit_overlap,
-    Parameters::Lagrangian::RollingResistanceMethod::constant_resistance>
+    Parameters::Lagrangian::RollingResistanceMethod::constant>
     nonlinear_force_object(dem_parameters);
   VelocityVerletIntegrator<dim, PropertiesIndex> integrator_object;
 

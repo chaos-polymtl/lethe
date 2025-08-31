@@ -75,7 +75,7 @@ test(double coefficient_of_restitution)
   properties.rolling_friction_wall                           = 0.1;
   properties.density_particle[0]                             = 2500;
   dem_parameters.model_parameters.rolling_resistance_method =
-    Parameters::Lagrangian::RollingResistanceMethod::constant_resistance;
+    Parameters::Lagrangian::RollingResistanceMethod::constant;
 
   // Initializing motion of boundaries
   Tensor<1, dim> translational_and_rotational_veclocity;
@@ -147,7 +147,7 @@ test(double coefficient_of_restitution)
     dim,
     PropertiesIndex,
     Parameters::Lagrangian::ParticleWallContactForceModel::nonlinear,
-    Parameters::Lagrangian::RollingResistanceMethod::constant_resistance>
+    Parameters::Lagrangian::RollingResistanceMethod::constant>
     particle_wall_force_object(dem_parameters);
   VelocityVerletIntegrator<dim, PropertiesIndex> integrator_object;
 

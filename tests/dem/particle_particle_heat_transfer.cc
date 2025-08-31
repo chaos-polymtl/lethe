@@ -48,7 +48,7 @@ test()
   properties.surface_energy_particle[0]                      = 0.;
   properties.hamaker_constant_particle[0]                    = 0.;
   model_param.rolling_resistance_method =
-    Parameters::Lagrangian::RollingResistanceMethod::constant_resistance;
+    Parameters::Lagrangian::RollingResistanceMethod::constant;
 
   const double neighborhood_threshold = std::pow(1.3 * particle_diameter, 2);
 
@@ -140,7 +140,7 @@ test()
     PropertiesIndex,
     Parameters::Lagrangian::ParticleParticleContactForceModel::
       hertz_mindlin_limit_overlap,
-    Parameters::Lagrangian::RollingResistanceMethod::constant_resistance>
+    Parameters::Lagrangian::RollingResistanceMethod::constant>
     nonlinear_force_object(dem_parameters);
   nonlinear_force_object.calculate_particle_particle_contact(
     contact_manager.get_local_adjacent_particles(),

@@ -112,7 +112,7 @@ test()
     dim,
     PropertiesIndex,
     Parameters::Lagrangian::ParticleParticleContactForceModel::linear,
-    Parameters::Lagrangian::RollingResistanceMethod::constant_resistance>
+    Parameters::Lagrangian::RollingResistanceMethod::constant>
     linear_force_object(dem_parameters);
   linear_force_object.calculate_particle_particle_contact(
     contact_manager.get_local_adjacent_particles(),
