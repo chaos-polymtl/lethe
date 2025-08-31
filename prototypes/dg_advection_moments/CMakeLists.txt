@@ -1,0 +1,2 @@
+add_executable(dg_advection_moments dg_advection_moments.cc)
+deal_ii_setup_target(dg_advection_moments)
