@@ -905,10 +905,9 @@ create_random_number_container(std::vector<double> &random_container,
                                const double         maximum_range,
                                const unsigned int   prn_seed)
 {
-
   for (unsigned int i = 0; i < number_of_elements; ++i)
     {
-      srand(prn_seed* (i + 1));
+      srand(prn_seed * (i + 1));
       random_container.push_back((((double)rand()) / ((double)RAND_MAX)) *
                                  maximum_range);
     }
