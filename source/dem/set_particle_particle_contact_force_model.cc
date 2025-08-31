@@ -101,44 +101,44 @@ set_rolling_resistance_model(
 
   switch (rolling_resistance_method)
     {
-      case RollingResistanceMethod::no_resistance:
+      case RollingResistanceMethod::none:
         {
-          particle_particle_contact_force_object =
-            std::make_shared<ParticleParticleContactForce<
-              dim,
-              PropertiesIndex,
-              particle_particle_contact_force_model,
-              RollingResistanceMethod::no_resistance>>(dem_parameters);
+          particle_particle_contact_force_object = std::make_shared<
+            ParticleParticleContactForce<dim,
+                                         PropertiesIndex,
+                                         particle_particle_contact_force_model,
+                                         RollingResistanceMethod::none>>(
+            dem_parameters);
           break;
         }
-      case RollingResistanceMethod::constant_resistance:
+      case RollingResistanceMethod::constant:
         {
-          particle_particle_contact_force_object =
-            std::make_shared<ParticleParticleContactForce<
-              dim,
-              PropertiesIndex,
-              particle_particle_contact_force_model,
-              RollingResistanceMethod::constant_resistance>>(dem_parameters);
+          particle_particle_contact_force_object = std::make_shared<
+            ParticleParticleContactForce<dim,
+                                         PropertiesIndex,
+                                         particle_particle_contact_force_model,
+                                         RollingResistanceMethod::constant>>(
+            dem_parameters);
           break;
         }
-      case RollingResistanceMethod::viscous_resistance:
+      case RollingResistanceMethod::viscous:
         {
-          particle_particle_contact_force_object =
-            std::make_shared<ParticleParticleContactForce<
-              dim,
-              PropertiesIndex,
-              particle_particle_contact_force_model,
-              RollingResistanceMethod::viscous_resistance>>(dem_parameters);
+          particle_particle_contact_force_object = std::make_shared<
+            ParticleParticleContactForce<dim,
+                                         PropertiesIndex,
+                                         particle_particle_contact_force_model,
+                                         RollingResistanceMethod::viscous>>(
+            dem_parameters);
           break;
         }
-      case RollingResistanceMethod::epsd_resistance:
+      case RollingResistanceMethod::epsd:
         {
-          particle_particle_contact_force_object =
-            std::make_shared<ParticleParticleContactForce<
-              dim,
-              PropertiesIndex,
-              particle_particle_contact_force_model,
-              RollingResistanceMethod::epsd_resistance>>(dem_parameters);
+          particle_particle_contact_force_object = std::make_shared<
+            ParticleParticleContactForce<dim,
+                                         PropertiesIndex,
+                                         particle_particle_contact_force_model,
+                                         RollingResistanceMethod::epsd>>(
+            dem_parameters);
           break;
         }
       default:
@@ -239,43 +239,43 @@ set_rolling_resistance_model(
 
   switch (rolling_resistance_method)
     {
-      case RollingResistanceMethod::no_resistance:
+      case RollingResistanceMethod::none:
         {
           particles_force_chains_object = std::make_shared<
             ParticlesForceChains<dim,
                                  PropertiesIndex,
                                  particle_particle_contact_force_model,
-                                 RollingResistanceMethod::no_resistance>>(
+                                 RollingResistanceMethod::none>>(
             dem_parameters);
           break;
         }
-      case RollingResistanceMethod::constant_resistance:
+      case RollingResistanceMethod::constant:
         {
           particles_force_chains_object = std::make_shared<
             ParticlesForceChains<dim,
                                  PropertiesIndex,
                                  particle_particle_contact_force_model,
-                                 RollingResistanceMethod::constant_resistance>>(
+                                 RollingResistanceMethod::constant>>(
             dem_parameters);
           break;
         }
-      case RollingResistanceMethod::viscous_resistance:
+      case RollingResistanceMethod::viscous:
         {
           particles_force_chains_object = std::make_shared<
             ParticlesForceChains<dim,
                                  PropertiesIndex,
                                  particle_particle_contact_force_model,
-                                 RollingResistanceMethod::viscous_resistance>>(
+                                 RollingResistanceMethod::viscous>>(
             dem_parameters);
           break;
         }
-      case RollingResistanceMethod::epsd_resistance:
+      case RollingResistanceMethod::epsd:
         {
           particles_force_chains_object = std::make_shared<
             ParticlesForceChains<dim,
                                  PropertiesIndex,
                                  particle_particle_contact_force_model,
-                                 RollingResistanceMethod::epsd_resistance>>(
+                                 RollingResistanceMethod::epsd>>(
             dem_parameters);
           break;
         }

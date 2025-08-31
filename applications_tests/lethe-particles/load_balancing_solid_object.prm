@@ -32,7 +32,7 @@ subsection model parameters
     set frequency           = 1000
   end
   set particle particle contact force method = hertz_mindlin_limit_overlap
-  set rolling resistance torque method       = viscous_resistance
+  set rolling resistance torque method       = viscous
   set particle wall contact force method     = nonlinear
   set integration method                     = velocity_verlet
 end
