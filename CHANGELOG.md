@@ -7,7 +7,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
 ### Changed
 
-- MINOR The `create_random_number_container`, previously only used during the volume insertion in the DEM, has been moved to the `utilities.h` file. This way, this function will be accessible outside of the volume insertion, which will limit duplicated code. [#1636](https://github.com/chaos-polymtl/lethe/pull/1636)
+- MINOR The `create_random_number_container`, previously only used during the volume insertion in the DEM, has been moved to the `utilities.h` file. This way, this function will be accessible outside of the volume insertion, which will limit duplicated code. [#1639](https://github.com/chaos-polymtl/lethe/pull/1639)
 
 ### [Master] - 2025-08-28
 
