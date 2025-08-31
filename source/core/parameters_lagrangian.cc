@@ -1109,33 +1109,35 @@ namespace Parameters
         const std::string rolling_resistance_torque =
           prm.get("rolling resistance torque method");
 
-        if (rolling_resistance_torque == "no_resistance")
-          std::cout
-            << "Warning, the \"no_resistance\" entry to the \"rolling "
-               "resistance torque method\" parameter will be deprecated. "
-               "Please use \"none\" instead."
-            << std::endl;
+        if (Utilities::MPI::this_mpi_process(MPI_COMM_WORLD) == 0)
+          {
+            if (rolling_resistance_torque == "no_resistance")
+              std::cout
+                << "Warning, the \"no_resistance\" entry to the \"rolling "
+                   "resistance torque method\" parameter will be deprecated. "
+                   "Please use \"none\" instead."
+                << std::endl;
 
-        if (rolling_resistance_torque == "constant_resistance")
-          std::cout
-            << "Warning, the \"constant_resistance\" entry to the \"rolling"
-               " resistance torque method\" parameter will be deprecated."
-               " Please use \"constant\" instead."
-            << std::endl;
+            if (rolling_resistance_torque == "constant_resistance")
+              std::cout
+                << "Warning, the \"constant_resistance\" entry to the \"rolling"
+                   " resistance torque method\" parameter will be deprecated."
+                   " Please use \"constant\" instead."
+                << std::endl;
 
-        if (rolling_resistance_torque == "viscous_resistance")
-          std::cout
-            << "Warning, the \"viscous_resistance\" entry to the \"rolling"
-               " resistance torque method\" parameter will be deprecated. "
-               "Please use \"viscous\" instead."
-            << std::endl;
-        if (rolling_resistance_torque == "epsd_resistance")
-          std::cout
-            << "Warning, the \"epsd_resistance\" entry to the \"rolling "
-               "resistance torque method\" parameter will be deprecated. "
-               "Please use \"epsd\" instead."
-            << std::endl;
-
+            if (rolling_resistance_torque == "viscous_resistance")
+              std::cout
+                << "Warning, the \"viscous_resistance\" entry to the \"rolling"
+                   " resistance torque method\" parameter will be deprecated. "
+                   "Please use \"viscous\" instead."
+                << std::endl;
+            if (rolling_resistance_torque == "epsd_resistance")
+              std::cout
+                << "Warning, the \"epsd_resistance\" entry to the \"rolling "
+                   "resistance torque method\" parameter will be deprecated. "
+                   "Please use \"epsd\" instead."
+                << std::endl;
+          }
         if (rolling_resistance_torque == "no_resistance" ||
             rolling_resistance_torque == "none")
           {
