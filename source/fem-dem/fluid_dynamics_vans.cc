@@ -699,41 +699,6 @@ FluidDynamicsVANS<dim>::output_field_hook(DataOut<dim> &data_out)
         names,
         data_interpretation);
     }
-
-
-  // Create a dummy scratch data
-  auto scratch_data = NavierStokesScratchData<dim>(
-    this->simulation_control,
-    this->simulation_parameters.physical_properties_manager,
-    *this->fe,
-    *this->cell_quadrature,
-    *this->mapping,
-    *this->face_quadrature);
-
-  scratch_data.enable_void_fraction(*particle_projector.fe,
-                                    *this->cell_quadrature,
-                                    *this->mapping);
-
-  if (this->simulation_control->get_iteration_number() > 0)
-    {
-      particle_projector.gather_particle_fluid_forces_onto_particles(
-        this->cfd_dem_simulation_parameters.cfd_dem,
-        this->dof_handler,
-        this->present_solution,
-        this->previous_solutions,
-        scratch_data);
-
-      std::vector<std::string> names(dim, "solid_fluid_force");
-      std::vector<DataComponentInterpretation::DataComponentInterpretation>
-        data_interpretation(
-          dim, DataComponentInterpretation::component_is_part_of_vector);
-
-      data_out.add_data_vector(
-        particle_projector.particle_fluid_force.dof_handler,
-        particle_projector.particle_fluid_force.particle_field_solution,
-        names,
-        data_interpretation);
-    }
 }
 
 template <int dim>

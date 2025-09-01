@@ -1482,29 +1482,27 @@ ParticleProjector<dim>::gather_particle_fluid_forces_onto_particles(
           // the void fraction will not match the vector type of the velocity.
           // In that case, we need to use the deal.II vector version of the void
           // fraction to ensure consistency.
-          /*if constexpr (std::is_same_v<
+          if constexpr (std::is_same_v<
                           VectorType,
                           LinearAlgebra::distributed::Vector<double>>)
-            scratch_data.reinit_particle_fluid_information(
+            scratch_data.reinit_particle_fluid_interactions(
               cell,
+              void_fraction_cell,
               fluid_solution,
               fluid_previous_solutions[0],
               void_fraction_solution,
-              *particle_handler,
-              fluid_dof_handler,
-              this->dof_handler);
+              *particle_handler);
           else
             {
               // In this case the global vector type is not a deal.II vector.
-              scratch_data.reinit_particle_fluid_information(
+              scratch_data.reinit_particle_fluid_interactions(
                 cell,
+                void_fraction_cell,
                 fluid_solution,
                 fluid_previous_solutions[0],
                 void_fraction_locally_relevant,
-                *particle_handler,
-                fluid_dof_handler,
-                this->dof_handler);
-            }*/
+                *particle_handler);
+            }
 
           // B. We loop over the particle-fluid assembler and calculate the
           // total particle-fluid coupling force.
