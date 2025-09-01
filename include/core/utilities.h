@@ -553,7 +553,7 @@ get_max_subsection_size(const std::string &file_name);
  * @p spacedim (either 2 or 3), an exception will be thrown. The delimiter
  * separating the elements of the @p value_string is a comma (",").
  *
- * @remark The function can be use to construct Point<spacedim> objects.
+ * @remark The function is used to construct Point<spacedim> objects.
  *
  * @tparam spacedim Number of spatial dimensions (2D or 3D).
  *
@@ -591,7 +591,7 @@ value_string_to_tensor(const std::string &value_string)
  * In the case of a single entry declaration, the delimiter separating the
  * elements of the @p value_string_0 is a comma (",").
  *
- * @remark The function can be use to construct Point<spacedim> objects.
+ * @remark The function is used to construct Point<spacedim> objects.
  *
  * @tparam spacedim Number of spatial dimensions (2D or 3D).
  *
@@ -748,9 +748,11 @@ identify_minimum_cell_size(const Mapping<dim>    &mapping,
 }
 
 /**
- * @brief Calculate the penalty factor for the SIPG method for the case when two cells are of different sizes. A harmonic mean is used to calculate an average cell extent.
+ * @brief Calculate the penalty factor for the SIPG method for the case when two
+ * cells are of different sizes. A harmonic mean is used to calculate an average
+ * cell extent.
  *
- * @param[in] fe_degree Finite element degree
+ * @param[in] fe_degree Finite element degree.
  * @param[in] cell_extent_here Distance of the here cell. The ratio between the
  * volume of the cell and the area of the face is generally used as a metric for
  * this distance.
@@ -845,7 +847,8 @@ parse_args(int argc, char **argv);
  *
  * @param[in] pcout Parallel output stream
  * @param[in] prm Object containing the parameters parsed from the parameter
- * file
+ * file.
+ * @param[in] file_name File name where the parameters will be written.
  */
 void
 print_parameters_to_output_file(const ConditionalOStream &pcout,
@@ -878,8 +881,8 @@ point_to_angle(const Point<dim> &point,
 
 /**
  * @brief Converts radius to point in cartesian coordinates (in the x-y plane)
- * @param[in] radius Radial distance
- * @param[in] angle Angle (in radians)
+ * @param[in] radius Radial distance.
+ * @param[in] rad Angle (in radians).
  *
  * @return point Point cartesian coordinates
  */
@@ -893,6 +896,30 @@ radius_to_point(const double radius, const double rad)
   point[1] = radius * std::sin(rad);
 
   return point;
+}
+
+/**
+ * @brief Creates a vector of random doubles between 0 and a maximum value using
+ * a pseudo random seed.
+ * @param[in,out] random_container Container in which the doubles are stored.
+ * @param[in] number_of_elements Number of random doubles to generate.
+ * @param[in] maximum_range Maximum value that the random double can have.
+ * @param[in] prn_seed Pseudo random seed used to generate the random doubles.
+ *
+ */
+
+inline void
+create_random_number_container(std::vector<double> &random_container,
+                               const unsigned int   number_of_elements,
+                               const double         maximum_range,
+                               const unsigned int   prn_seed)
+{
+  for (unsigned int i = 0; i < number_of_elements; ++i)
+    {
+      srand(prn_seed * (i + 1));
+      random_container.push_back((((double)rand()) / ((double)RAND_MAX)) *
+                                 maximum_range);
+    }
 }
 
 
