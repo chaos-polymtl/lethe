@@ -3,6 +3,12 @@
 All notable changes to the Lethe project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
+### [Master] - 2025-09-01
+
+### Added
+
+- MINOR Adds the capability to project the particle-fluid forces within the ParticleProjector class. This is still an experimental feature that is not usable from the parameter file. [#1642](https://github.com/chaos-polymtl/lethe/pull/1642)
+
 ### [Master] - 2025-08-30
 
 ### Changed
