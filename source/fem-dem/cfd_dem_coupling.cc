@@ -1545,8 +1545,6 @@ CFDDEMSolver<dim>::solve()
 
   this->setup_dofs();
 
-
-  // Set the initial conditions for the navier-stokes solver.
   this->set_initial_condition(
     this->cfd_dem_simulation_parameters.cfd_parameters.initial_condition->type,
     this->cfd_dem_simulation_parameters.cfd_parameters.restart_parameters
