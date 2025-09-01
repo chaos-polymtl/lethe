@@ -28,8 +28,11 @@ class ParticleFluidAssemblerBase
 {
 public:
   /**
-   * @brief calculate_particle_fluid_interactions calculated the solid_fluid
-   * interactions
+   * @brief calculate_particle_fluid_interactions calculates the particle-fluid interaction for all of the particles.
+   * The forces calculated on the particles is stored within the fem_force. The
+   * overall beta coefficient for the cell, whcih is defined as the drag
+   * coefficient divided by the cell volume, is also calculated within this
+   * function.
    * @param scratch_data Scratch data containing the Navier-Stokes information.
    * It is important to note that the scratch data has to have been re-inited
    * before calling for matrix assembly.
