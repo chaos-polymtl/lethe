@@ -52,7 +52,7 @@ VANSOperator<dim, number>::evaluate_non_linear_term_and_calculate_tau(
 
 template <int dim, typename number>
 void
-VANSOperator<dim, number>::compute_void_fraction(
+VANSOperator<dim, number>::compute_particle_fluid_coupling(
   const LinearAlgebra::distributed::Vector<double> &void_fraction_solution,
   const DoFHandler<dim>                            &void_fraction_dof_handler)
 {

@@ -44,8 +44,9 @@ public:
   }
 
   /**
-   * @brief Compute the void fraction and the void fraction gradient
-   * at the quadrature points.
+   * @brief Compute the terms requires for the particle-fluid coupling at the fluid quadrature point.
+   * This is used to calculate not only the void fraction and the void fraction
+   * gradient, but also the particle-fluid forces.
    *
    * @param[in] void_fraction_solution The solution of the void fraction
    *
@@ -53,7 +54,7 @@ public:
    * void fraction
    */
   void
-  compute_void_fraction(
+  compute_particle_fluid_coupling(
     const LinearAlgebra::distributed::Vector<double> &void_fraction_solution,
     const DoFHandler<dim> &void_fraction_dof_handler);
 

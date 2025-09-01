@@ -113,7 +113,7 @@ MFNavierStokesVANSPreconditionGMG<dim>::initialize(
 
           if (auto mf_operator = dynamic_cast<VANSOperator<dim, double> *>(
                 &(*this->mg_operators[l])))
-            mf_operator->compute_void_fraction(
+            mf_operator->compute_particle_fluid_coupling(
               mg_void_fraction_solution[l],
               this->void_fraction_dof_handlers[l]);
         }
@@ -371,7 +371,7 @@ FluidDynamicsVANSMatrixFree<dim>::solve()
         // must do a cast here to ensure that the operator is of the right type
         if (auto mf_operator = dynamic_cast<VANSOperator<dim, double> *>(
               this->system_operator.get()))
-          mf_operator->compute_void_fraction(
+          mf_operator->compute_particle_fluid_coupling(
             particle_projector.void_fraction_solution,
             particle_projector.dof_handler);
       }
