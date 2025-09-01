@@ -1521,6 +1521,7 @@ ParticleProjector<dim>::gather_particle_fluid_forces_onto_particles(
   calculate_field_projection(particle_fluid_force);
 }
 
+
 template void
 ParticleProjector<2>::gather_particle_fluid_forces_onto_particles(
   const Parameters::CFDDEM            &cfd_dem_parameters,
@@ -1537,6 +1538,7 @@ ParticleProjector<3>::gather_particle_fluid_forces_onto_particles(
   const std::vector<GlobalVectorType> &fluid_previous_solutions,
   NavierStokesScratchData<3>          &scratch_data);
 
+#ifndef LETHE_USE_LDV
 template void
 ParticleProjector<2>::gather_particle_fluid_forces_onto_particles(
   const Parameters::CFDDEM                         &cfd_dem_parameters,
@@ -1554,6 +1556,7 @@ ParticleProjector<3>::gather_particle_fluid_forces_onto_particles(
   const std::vector<LinearAlgebra::distributed::Vector<double>>
                              &fluid_previous_solutions,
   NavierStokesScratchData<3> &scratch_data);
+#endif
 
 template <int dim>
 void
