@@ -592,6 +592,8 @@ FluidDynamicsMatrixBased<dim>::setup_assemblers()
     }
 
   // Mortar ALE
+  // This assembler is added last because it needs access to the strong
+  // Jacobian term computed in the core default assembler
   if (this->simulation_parameters.mortar_parameters.enable)
     {
       this->assemblers.emplace_back(
