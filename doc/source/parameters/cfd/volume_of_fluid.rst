@@ -243,7 +243,7 @@ Surface Tension Force
     where :math:`\bf{v}` is a piecewise continuous vector-valued test function, :math:`\bf{\psi}` is the projected phase fraction gradient, and :math:`\phi` is the phase fraction.
 
 
-  * ``curvature diffusion factor``: value of the factor :math:`\beta` in  :math:`\eta_\kappa = \beta h^2`, where :math:`h` is the cell size. This diffusion term is used in a `projection step <https://onlinelibrary.wiley.com/doi/full/10.1002/fld.2643>`_ to damp high frequency errors, that are magnified by differentiation, in the curvature :math:`\kappa`, following the equation:
+  * ``curvature diffusion factor``: value of the factor :math:`\beta` in  :math:`\eta_\kappa = \beta h^2`, where :math:`h` is the cell size. This diffusion coefficient (:math:`\eta_\kappa`) is used in a `projection step <https://onlinelibrary.wiley.com/doi/full/10.1002/fld.2643>`_ to damp high frequency errors, that are magnified by differentiation, in the curvature :math:`\kappa`, following the equation:
 
     .. math:: 
         \int_\Omega \left( v \kappa + \eta_\kappa \nabla v \cdot \nabla \kappa \right) d\Omega = \int_\Omega \left( \nabla v \cdot \frac{\bf{\psi}}{|\bf{\psi}|} \right) d\Omega
