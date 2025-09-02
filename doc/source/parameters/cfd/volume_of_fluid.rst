@@ -235,7 +235,7 @@ Surface Tension Force
   * ``verbosity``: enables the display of the output from the surface tension force calculations. Choices are: ``quiet`` (default, no output) and ``verbose``.
   * ``output auxiliary fields``: enables the display of the projected ``phase fraction gradient`` and projected ``curvature``. Used for debugging purposes.
 
-  * ``phase fraction gradient diffusion factor``: value of the factor :math:`\alpha` in :math:`\eta_n = \alpha h^2`, where :math:`h` is the cell size. This diffusion term is used in a `projection step <https://onlinelibrary.wiley.com/doi/full/10.1002/fld.2643>`_ to damp high frequency errors, that are magnified by differentiation, in the phase fraction gradient (:math:`\bf{\psi}`), following the equation:
+  * ``phase fraction gradient diffusion factor``: value of the factor :math:`\alpha` in :math:`\eta_n = \alpha h^2`, where :math:`h` is the cell size. This diffusion coefficient (:math:`\eta_n`) is used in a `projection step <https://onlinelibrary.wiley.com/doi/full/10.1002/fld.2643>`_ to damp high frequency errors, that are magnified by differentiation, in the phase fraction gradient (:math:`\bf{\psi}`), following the equation:
 
     .. math::
         \int_\Omega \left( {\bf{v}} \cdot {\bf{\psi}} + \eta_n \nabla {\bf{v}} \cdot \nabla {\bf{\psi}} \right) d\Omega = \int_\Omega \left( {\bf{v}} \cdot \nabla {\phi} \right) d\Omega
