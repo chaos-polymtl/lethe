@@ -3,18 +3,17 @@
 All notable changes to the Lethe project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
-<<<<<<< HEAD
+### [Master] - 2025-09-02
+
+### Changed
+
+- MAJOR The rolling resistance models naming convention was redundant. Every option had an extra \"_resistance\" at the end, which was not necessary. Options are now "none", "constant", "viscous" and "epsd". The old naming convention is still compatible for now, but will be deprecated down the line. Currently, a warning message is shown when using the previous naming convention. [#1640](https://github.com/chaos-polymtl/lethe/pull/1640)
+
 ### [Master] - 2025-09-01
 
 ### Added
 
 - MINOR Adds the capability to project the particle-fluid forces within the ParticleProjector class. This is still an experimental feature that is not usable from the parameter file. [#1642](https://github.com/chaos-polymtl/lethe/pull/1642)
-
-### [Master] - 2025-08-31
-
-### Changed
-
-- MAJOR The rolling resistance models naming convention was redundant. Every option had an extra \"_resistance\" at the end, which was not necessary. Options are now "none", "constant", "viscous" and "epsd". The old naming convention is still compatible for now, but will be deprecated down the line. Currently, a warning message is shown when using the previous naming convention. [#1640](https://github.com/chaos-polymtl/lethe/pull/1640)
 
 ### [Master] - 2025-08-30
 

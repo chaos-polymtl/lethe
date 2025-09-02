@@ -1158,12 +1158,6 @@ namespace Parameters
           {
             rolling_resistance_method = RollingResistanceMethod::epsd;
           }
-        else
-          {
-            throw(
-              std::runtime_error("Invalid rolling resistance torque method "));
-          }
-
 
 
         // Model parameter for the EPSD rolling resistance model

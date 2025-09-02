@@ -496,12 +496,12 @@ private:
   {
     using namespace Parameters::Lagrangian;
 
-    if constexpr (rolling_friction_model == RollingResistanceMethod::none)
+    if constexpr (rolling_friction_model == none)
       {
         return no_rolling_torque();
       }
 
-    if constexpr (rolling_friction_model == RollingResistanceMethod::constant)
+    if constexpr (rolling_friction_model == constant)
       {
         return constant_rolling_torque<PropertiesIndex>(particle_radius,
                                                         particle_properties,
