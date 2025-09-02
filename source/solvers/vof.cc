@@ -2134,6 +2134,8 @@ template <int dim>
 void
 VolumeOfFluid<dim>::write_checkpoint()
 {
+  auto mpi_communicator = this->triangulation->get_mpi_communicator();
+
   std::vector<const GlobalVectorType *> sol_set_transfer;
 
   solution_transfer =
@@ -2154,28 +2156,32 @@ VolumeOfFluid<dim>::write_checkpoint()
     serialize_table(
       this->error_table,
       prefix + this->simulation_parameters.analytical_solution->get_filename() +
-        "_VOF" + suffix);
+        "_VOF" + suffix,
+      mpi_communicator);
   if (this->simulation_parameters.post_processing.calculate_mass_conservation)
     {
       serialize_table(this->table_monitoring_vof,
                       prefix +
                         this->simulation_parameters.post_processing
                           .mass_conservation_output_name +
-                        suffix);
+                        suffix,
+                      mpi_communicator);
     }
   if (this->simulation_parameters.post_processing.calculate_barycenter)
     serialize_table(
       this->table_barycenter,
       prefix +
         this->simulation_parameters.post_processing.barycenter_output_name +
-        suffix);
+        suffix,
+      mpi_communicator);
 }
 
 template <int dim>
 void
 VolumeOfFluid<dim>::read_checkpoint()
 {
-  auto mpi_communicator        = this->triangulation->get_mpi_communicator();
+  auto mpi_communicator = this->triangulation->get_mpi_communicator();
+
   auto previous_solutions_size = this->previous_solutions.size();
   this->pcout << "Reading VOF checkpoint" << std::endl;
 
@@ -2213,21 +2219,24 @@ VolumeOfFluid<dim>::read_checkpoint()
     deserialize_table(
       this->error_table,
       prefix + this->simulation_parameters.analytical_solution->get_filename() +
-        "_VOF" + suffix);
+        "_VOF" + suffix,
+      mpi_communicator);
   if (this->simulation_parameters.post_processing.calculate_mass_conservation)
     {
       deserialize_table(this->table_monitoring_vof,
                         prefix +
                           this->simulation_parameters.post_processing
                             .mass_conservation_output_name +
-                          suffix);
+                          suffix,
+                        mpi_communicator);
     }
   if (this->simulation_parameters.post_processing.calculate_barycenter)
     deserialize_table(
       this->table_barycenter,
       prefix +
         this->simulation_parameters.post_processing.barycenter_output_name +
-        suffix);
+        suffix,
+      mpi_communicator);
 
   if (this->simulation_parameters.multiphysics.vof_parameters
         .regularization_method.sharpening.type ==

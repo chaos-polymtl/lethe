@@ -940,6 +940,7 @@ template <int dim>
 void
 CahnHilliard<dim>::write_checkpoint()
 {
+  auto mpi_communicator = this->triangulation->get_mpi_communicator();
   std::vector<const GlobalVectorType *> sol_set_transfer;
 
   solution_transfer =
@@ -960,12 +961,14 @@ CahnHilliard<dim>::write_checkpoint()
     serialize_table(
       this->error_table,
       prefix + this->simulation_parameters.analytical_solution->get_filename() +
-        "_CH" + suffix);
+        "_CH" + suffix,
+      mpi_communicator);
   if (this->simulation_parameters.post_processing.calculate_phase_statistics)
     serialize_table(
       this->statistics_table,
       prefix + this->simulation_parameters.post_processing.phase_output_name +
-        suffix);
+        suffix,
+      mpi_communicator);
 }
 
 template <int dim>
@@ -1005,12 +1008,14 @@ CahnHilliard<dim>::read_checkpoint()
     deserialize_table(
       this->error_table,
       prefix + this->simulation_parameters.analytical_solution->get_filename() +
-        "_CH" + suffix);
+        "_CH" + suffix,
+      mpi_communicator);
   if (this->simulation_parameters.post_processing.calculate_phase_statistics)
     deserialize_table(
       this->statistics_table,
       prefix + this->simulation_parameters.post_processing.phase_output_name +
-        suffix);
+        suffix,
+      mpi_communicator);
 }
 
 

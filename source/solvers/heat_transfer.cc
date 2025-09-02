@@ -1171,6 +1171,7 @@ template <int dim>
 void
 HeatTransfer<dim>::write_checkpoint()
 {
+  auto mpi_communicator = this->triangulation->get_mpi_communicator();
   std::vector<const GlobalVectorType *> sol_set_transfer;
 
   solution_transfer =
@@ -1206,27 +1207,31 @@ HeatTransfer<dim>::write_checkpoint()
     serialize_table(
       this->error_table,
       prefix + this->simulation_parameters.analytical_solution->get_filename() +
-        "_HT" + suffix);
+        "_HT" + suffix,
+      mpi_communicator);
   if (this->simulation_parameters.post_processing.calculate_heat_flux)
     serialize_table(
       this->heat_flux_table,
       prefix +
         this->simulation_parameters.post_processing.heat_flux_output_name +
-        suffix);
+        suffix,
+      mpi_communicator);
   if (this->simulation_parameters.post_processing
         .calculate_temperature_statistics)
     serialize_table(
       this->statistics_table,
       prefix +
         this->simulation_parameters.post_processing.temperature_output_name +
-        suffix);
+        suffix,
+      mpi_communicator);
 
   if (this->simulation_parameters.post_processing.calculate_liquid_fraction)
     serialize_table(this->liquid_fraction_table,
                     prefix +
                       this->simulation_parameters.post_processing
                         .liquid_fraction_output_name +
-                      suffix);
+                      suffix,
+                    mpi_communicator);
 }
 
 template <int dim>
@@ -1300,26 +1305,30 @@ HeatTransfer<dim>::read_checkpoint()
     deserialize_table(
       this->error_table,
       prefix + this->simulation_parameters.analytical_solution->get_filename() +
-        "_HT" + suffix);
+        "_HT" + suffix,
+      mpi_communicator);
   if (this->simulation_parameters.post_processing.calculate_heat_flux)
     deserialize_table(
       this->heat_flux_table,
       prefix +
         this->simulation_parameters.post_processing.heat_flux_output_name +
-        suffix);
+        suffix,
+      mpi_communicator);
   if (this->simulation_parameters.post_processing
         .calculate_temperature_statistics)
     deserialize_table(
       this->statistics_table,
       prefix +
         this->simulation_parameters.post_processing.temperature_output_name +
-        suffix);
+        suffix,
+      mpi_communicator);
   if (this->simulation_parameters.post_processing.calculate_liquid_fraction)
     deserialize_table(this->liquid_fraction_table,
                       prefix +
                         this->simulation_parameters.post_processing
                           .liquid_fraction_output_name +
-                        suffix);
+                        suffix,
+                      mpi_communicator);
 }
 
 

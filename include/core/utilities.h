@@ -253,8 +253,8 @@ make_table_tensors_tensors(
  * @param[in] independent_column_names Vector of strings representing labels of
  * the independent tensor.
  *
- * @param[in] dependent_values Vector of of doubles containing
- * dependent variables values (e.g., force).
+ * @param[in] dependent_values Vector of doubles containing dependent variables
+ * values (e.g., force).
  *
  * @param[in] dependent_column_name Label of the dependent variable.
  *
@@ -477,13 +477,25 @@ announce_string(const ConditionalOStream &pcout,
  * @param[in] table The table to be serialized.
  * @param[in] filename Path to the file (including extension) where the table
  * will be saved.
+ * @param[in] mpi_communicator The MPI communicator
+ * @param[in] serialize_on_rank_zero Boolean indicating if the table should only
+ * be serialized on rank 0 only. By default, it is set to `true`.
  */
 inline void
-serialize_table(const TableHandler &table, const std::string &filename)
+serialize_table(const TableHandler &table,
+                const std::string  &filename,
+                const MPI_Comm     &mpi_communicator,
+                const bool          serialize_on_rank_zero = true)
 {
-  std::ofstream                 ofile(filename);
-  boost::archive::text_oarchive oa(ofile, boost::archive::no_header);
-  oa << table;
+  unsigned int this_mpi_process(
+    Utilities::MPI::this_mpi_process(mpi_communicator));
+
+  if (!serialize_on_rank_zero || this_mpi_process == 0)
+    {
+      std::ofstream                 ofile(filename);
+      boost::archive::text_oarchive oa(ofile, boost::archive::no_header);
+      oa << table;
+    }
 }
 
 
@@ -493,15 +505,27 @@ serialize_table(const TableHandler &table, const std::string &filename)
  * The filename should include the desired extension.
  *
  * @param[in,out] table    The table to be deserialized (will be overwritten).
- * @param[in]     filename Path to the file (including extension) to read the
- * table from.
+ * @param[in] filename Path to the file (including extension) to read the table
+ * from.
+ * @param[in] mpi_communicator The MPI communicator
+ * @param[in] deserialize_on_rank_zero Boolean indicating if the table should
+ * only be deserialized on rank 0 only. By default, it is set to `true`.
  */
 inline void
-deserialize_table(TableHandler &table, const std::string &filename)
+deserialize_table(TableHandler      &table,
+                  const std::string &filename,
+                  const MPI_Comm    &mpi_communicator,
+                  const bool         deserialize_on_rank_zero = true)
 {
-  std::ifstream                 ifile(filename);
-  boost::archive::text_iarchive ia(ifile, boost::archive::no_header);
-  ia >> table;
+  unsigned int this_mpi_process(
+    Utilities::MPI::this_mpi_process(mpi_communicator));
+
+  if (!deserialize_on_rank_zero || this_mpi_process == 0)
+    {
+      std::ifstream                 ifile(filename);
+      boost::archive::text_iarchive ia(ifile, boost::archive::no_header);
+      ia >> table;
+    }
 }
 
 /**
