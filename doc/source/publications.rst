@@ -7,6 +7,8 @@ This section regroups the peer-reviewed journal articles that **describe** core 
 2025
 ----
 
+* `G. Mirakhori, J. Doucet, S. Chidami, B. Blais, and J. Chaouki, "AI-enhanced radioactive particle tracking: A practical methodology for accelerating industrial process development", Chemical Engineering Science, 2025 <https://doi.org/10.1016/j.ces.2025.122173>`_.
+
 * `L. Prieto Saavedra, J. Archambault, P. Munch, and B. Blais, "An implicit large-eddy simulation study of the turbulent Taylor-Couette flow with an inner rotating cylinder", Journal of Turbulence, 2025 <http://dx.doi.org/10.1080/14685248.2025.2524336>`_.
 
 * `L. Prieto Saavedra, P. Munch, and B. Blais, "A Matrix-Free Stabilized Solver for the Incompressible Navier-Stokes Equations", Journal of Computational Physics, p. 114186, 2025 <https://doi.org/10.1016/j.jcp.2025.114186>`_.
