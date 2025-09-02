@@ -68,7 +68,7 @@ subsection model parameters
   set particle particle contact force method = hertz_mindlin_limit_overlap
   set particle wall contact force method     = nonlinear
   set integration method                     = velocity_verlet
-  set rolling resistance torque method       = constant_resistance
+  set rolling resistance torque method       = constant
   subsection adaptive sparse contacts
     set enable adaptive sparse contacts = true
     set enable particle advection       = false

@@ -77,7 +77,7 @@ test()
   properties.rolling_viscous_damping_wall                    = 0.1;
   properties.density_particle[0]                             = 7850;
   dem_parameters.model_parameters.rolling_resistance_method =
-    Parameters::Lagrangian::RollingResistanceMethod::constant_resistance;
+    Parameters::Lagrangian::RollingResistanceMethod::constant;
 
   // Initializing motion of boundaries
   Tensor<1, dim> translational_and_rotational_velocity;
@@ -147,7 +147,7 @@ test()
     dim,
     PropertiesIndex,
     Parameters::Lagrangian::ParticleWallContactForceModel::nonlinear,
-    Parameters::Lagrangian::RollingResistanceMethod::constant_resistance>
+    Parameters::Lagrangian::RollingResistanceMethod::constant>
     particle_wall_force_object(dem_parameters);
   VelocityVerletIntegrator<dim, PropertiesIndex> integrator_object;
   double                                         distance;

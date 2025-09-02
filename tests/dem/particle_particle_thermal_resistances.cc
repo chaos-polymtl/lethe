@@ -142,7 +142,7 @@ test()
     PropertiesIndex,
     Parameters::Lagrangian::ParticleParticleContactForceModel::
       hertz_mindlin_limit_overlap,
-    Parameters::Lagrangian::RollingResistanceMethod::constant_resistance>
+    Parameters::Lagrangian::RollingResistanceMethod::constant>
     nonlinear_force_object(dem_parameters);
   nonlinear_force_object.calculate_particle_particle_contact(
     contact_manager.get_local_adjacent_particles(),

@@ -115,7 +115,7 @@ In the rotating drum simulation, we use a ``frequent`` load-balancing method and
       end
       set particle particle contact force method    = hertz_mindlin_limit_overlap
       set particle wall contact force method        = nonlinear
-      set rolling resistance torque method          = no_resistance
+      set rolling resistance torque method          = none
       set integration method                        = velocity_verlet
     end
 

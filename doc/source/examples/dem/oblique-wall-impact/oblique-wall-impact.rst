@@ -107,7 +107,7 @@ We use a non-linear wall contact force model based on Hertz law. Rolling resista
     set particle particle contact force method = hertz_mindlin_limit_overlap
     set particle wall contact force method     = nonlinear
     set integration method                     = velocity_verlet
-    set rolling resistance torque method       = no_resistance
+    set rolling resistance torque method       = none
   end
 
 

@@ -496,14 +496,12 @@ private:
   {
     using namespace Parameters::Lagrangian;
 
-    if constexpr (rolling_friction_model ==
-                  RollingResistanceMethod::no_resistance)
+    if constexpr (rolling_friction_model == none)
       {
         return no_rolling_torque();
       }
 
-    if constexpr (rolling_friction_model ==
-                  RollingResistanceMethod::constant_resistance)
+    if constexpr (rolling_friction_model == constant)
       {
         return constant_rolling_torque<PropertiesIndex>(particle_radius,
                                                         particle_properties,
@@ -511,7 +509,7 @@ private:
                                                         normal_force_norm);
       }
 
-    if constexpr (rolling_friction_model == viscous_resistance)
+    if constexpr (rolling_friction_model == viscous)
       {
         return viscous_rolling_torque<PropertiesIndex>(particle_radius,
                                                        particle_properties,
@@ -519,7 +517,7 @@ private:
                                                        normal_force_norm,
                                                        normal_unit_vector);
       }
-    if constexpr (rolling_friction_model == epsd_resistance)
+    if constexpr (rolling_friction_model == epsd)
       {
         return epsd_rolling_torque<dim, PropertiesIndex>(
           particle_radius,

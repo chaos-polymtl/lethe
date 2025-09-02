@@ -122,7 +122,7 @@ In this example, we use the ``dynamic`` load balancing method. This method check
       end
       set particle particle contact force method    = hertz_mindlin_limit_overlap
       set particle wall contact force method        = nonlinear
-      set rolling resistance torque method          = constant_resistance
+      set rolling resistance torque method          = constant
       set integration method                        = velocity_verlet
     end
 

@@ -71,8 +71,7 @@ test()
   lagrangian_prop.surface_energy_particle[0]                      = 0.;
   lagrangian_prop.hamaker_constant_particle[0]                    = 0.;
   lagrangian_prop.density_particle[0]                             = 2500;
-  model_param.rolling_resistance_method =
-    RollingResistanceMethod::constant_resistance;
+  model_param.rolling_resistance_method = RollingResistanceMethod::constant;
 
   const double neighborhood_threshold = std::pow(1.3 * particle_diameter, 2);
 
@@ -114,7 +113,7 @@ test()
     simulate_full_contact<dim,
                           PropertiesIndex,
                           ParticleParticleContactForceModel::linear,
-                          RollingResistanceMethod::constant_resistance>(
+                          RollingResistanceMethod::constant>(
       triangulation,
       particle_handler,
       contact_manager,
@@ -140,17 +139,17 @@ test()
     dim,
     PropertiesIndex,
     ParticleParticleContactForceModel::hertz_mindlin_limit_overlap,
-    RollingResistanceMethod::constant_resistance>(triangulation,
-                                                  particle_handler,
-                                                  contact_manager,
-                                                  dem_parameters,
-                                                  particle_properties,
-                                                  g,
-                                                  dt,
-                                                  output_frequency,
-                                                  neighborhood_threshold,
-                                                  0,
-                                                  "hmlo");
+    RollingResistanceMethod::constant>(triangulation,
+                                       particle_handler,
+                                       contact_manager,
+                                       dem_parameters,
+                                       particle_properties,
+                                       g,
+                                       dt,
+                                       output_frequency,
+                                       neighborhood_threshold,
+                                       0,
+                                       "hmlo");
 
   log_contact_output(hmlo_output);
 }

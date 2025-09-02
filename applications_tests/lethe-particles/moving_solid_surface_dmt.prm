@@ -32,7 +32,7 @@ subsection model parameters
     set frequency           = 10000
   end
   set particle particle contact force method = DMT
-  set rolling resistance torque method       = constant_resistance
+  set rolling resistance torque method       = constant
   set particle wall contact force method     = DMT
   set integration method                     = velocity_verlet
 end

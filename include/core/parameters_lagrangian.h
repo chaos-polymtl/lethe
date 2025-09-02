@@ -35,10 +35,10 @@ namespace Parameters
 
     enum RollingResistanceMethod
     {
-      no_resistance,
-      constant_resistance,
-      viscous_resistance,
-      epsd_resistance
+      none,
+      constant,
+      viscous,
+      epsd
     };
 
     enum class SizeDistributionType

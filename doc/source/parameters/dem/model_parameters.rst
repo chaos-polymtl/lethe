@@ -49,9 +49,9 @@ In this subsection, contact detection, force models, time integration, load bala
     set integration method                     = velocity_verlet
 
     # Rolling resistance method
-    # Choices are no_resistance|constant_resistance|viscous_resistance|epsd_resistance
-    set rolling resistance torque method       = constant_resistance
-    set f coefficient                          = 0.0 # if rolling resistance torque method = epsd_resistance
+    # Choices are none|constant|viscous|epsd
+    set rolling resistance torque method       = constant
+    set f coefficient                          = 0.0 # if rolling resistance torque method = epsd
 
     subsection adaptive sparse contacts
       set enable adaptive sparse contacts = false
@@ -115,9 +115,9 @@ All contact force models are described in the :doc:`../../theory/multiphase/cfd_
 .. note::
     The ``neighborhood threshold`` has to be large enough to correctly consider all non contact forces.
 
-* ``rolling resistance method`` controls the rolling resistance model used. Three rolling resistance models are available: ``no_resistance``, ``constant_resistance``, ``viscous_resistance`` and ``epsd_resistance``
+* ``rolling resistance method`` controls the rolling resistance model used. Three rolling resistance models are available: ``none``, ``constant``, ``viscous`` and ``epsd``
 
-* ``f coefficient`` is a model parameter used for the ``epsd_resistance`` model which controls the proportion of the viscous damping applied when full mobilization is reached.
+* ``f coefficient`` is a model parameter used for the ``epsd`` model which controls the proportion of the viscous damping applied when full mobilization is reached.
 
 -----------------------
 Load Balancing

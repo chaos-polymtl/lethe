@@ -159,7 +159,7 @@ For the first two stages, the model parameters are defined as:
         set frequency           = 100000
       end
       set particle particle contact force method = hertz_mindlin_limit_overlap
-      set rolling resistance torque method       = constant_resistance
+      set rolling resistance torque method       = constant
       set particle wall contact force method     = nonlinear
       set integration method                     = velocity_verlet
       set solver type                            = dem_mp
@@ -176,7 +176,7 @@ For the heating of the particles, the parameter ``disable position integration``
         set neighborhood threshold                  = 1.3
       end
       set particle particle contact force method = hertz_mindlin_limit_overlap
-      set rolling resistance torque method       = constant_resistance
+      set rolling resistance torque method       = constant
       set particle wall contact force method     = nonlinear
       set integration method                     = velocity_verlet
       set solver type                            = dem_mp

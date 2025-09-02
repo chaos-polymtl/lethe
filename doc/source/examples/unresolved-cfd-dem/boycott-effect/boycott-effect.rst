@@ -95,7 +95,7 @@ The section on model parameters is explained in the DEM examples. We show the ch
         set neighborhood threshold   = 1.3
         set frequency                = 1
       end
-      set rolling resistance torque method       = constant_resistance
+      set rolling resistance torque method       = constant
       set particle particle contact force method = hertz_mindlin_limit_force
       set particle wall contact force method     = nonlinear
       set integration method                     = velocity_verlet

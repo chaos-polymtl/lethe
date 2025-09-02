@@ -882,13 +882,14 @@ namespace Parameters
           "dmt cut-off threshold",
           "0.1",
           Patterns::Double(),
-          "Cut-off threshold above which the Van der Waal forces are ignored for the DMT model relative to the pull-off force");
+          "Cut-off threshold above which the Van der Waal forces are "
+          "ignored for the DMT model relative to the pull-off force");
 
         prm.declare_entry(
           "rolling resistance torque method",
-          "constant_resistance",
+          "constant",
           Patterns::Selection(
-            "no_resistance|constant_resistance|viscous_resistance|epsd_resistance"),
+            "none|no_resistance|constant|constant_resistance|viscous|viscous_resistance|epsd|epsd_resistance"),
           "Choosing rolling resistance torque model"
           "Choices are <no_resistance|constant_resistance|viscous_resistance|epsd_resistance>.");
 
@@ -1107,30 +1108,58 @@ namespace Parameters
 
         const std::string rolling_resistance_torque =
           prm.get("rolling resistance torque method");
-        if (rolling_resistance_torque == "no_resistance")
+
+        if (Utilities::MPI::this_mpi_process(MPI_COMM_WORLD) == 0)
           {
-            rolling_resistance_method = RollingResistanceMethod::no_resistance;
+            if (rolling_resistance_torque == "no_resistance")
+              std::cout
+                << "Warning, the \"no_resistance\" entry to the \"rolling "
+                   "resistance torque method\" parameter will be deprecated. "
+                   "Please use \"none\" instead."
+                << std::endl;
+
+            if (rolling_resistance_torque == "constant_resistance")
+              std::cout
+                << "Warning, the \"constant_resistance\" entry to the \"rolling"
+                   " resistance torque method\" parameter will be deprecated."
+                   " Please use \"constant\" instead."
+                << std::endl;
+
+            if (rolling_resistance_torque == "viscous_resistance")
+              std::cout
+                << "Warning, the \"viscous_resistance\" entry to the \"rolling"
+                   " resistance torque method\" parameter will be deprecated. "
+                   "Please use \"viscous\" instead."
+                << std::endl;
+            if (rolling_resistance_torque == "epsd_resistance")
+              std::cout
+                << "Warning, the \"epsd_resistance\" entry to the \"rolling "
+                   "resistance torque method\" parameter will be deprecated. "
+                   "Please use \"epsd\" instead."
+                << std::endl;
           }
-        else if (rolling_resistance_torque == "constant_resistance")
+        if (rolling_resistance_torque == "no_resistance" ||
+            rolling_resistance_torque == "none")
           {
-            rolling_resistance_method =
-              RollingResistanceMethod::constant_resistance;
+            rolling_resistance_method = RollingResistanceMethod::none;
           }
-        else if (rolling_resistance_torque == "viscous_resistance")
+        else if (rolling_resistance_torque == "constant_resistance" ||
+                 rolling_resistance_torque == "constant")
           {
-            rolling_resistance_method =
-              RollingResistanceMethod::viscous_resistance;
+            rolling_resistance_method = RollingResistanceMethod::constant;
           }
-        else if (rolling_resistance_torque == "epsd_resistance")
+        else if (rolling_resistance_torque == "viscous_resistance" ||
+                 rolling_resistance_torque == "viscous")
           {
-            rolling_resistance_method =
-              RollingResistanceMethod::epsd_resistance;
+            rolling_resistance_method = RollingResistanceMethod::viscous;
           }
-        else
+        else if (rolling_resistance_torque == "epsd_resistance" ||
+                 rolling_resistance_torque == "epsd")
           {
-            throw(
-              std::runtime_error("Invalid rolling resistance torque method "));
+            rolling_resistance_method = RollingResistanceMethod::epsd;
           }
+
+
         // Model parameter for the EPSD rolling resistance model
         f_coefficient_epsd = prm.get_double("f coefficient");
 

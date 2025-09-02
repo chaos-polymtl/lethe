@@ -3,6 +3,12 @@
 All notable changes to the Lethe project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
+### [Master] - 2025-09-02
+
+### Changed
+
+- MAJOR The rolling resistance models naming convention was redundant. Every option had an extra \"_resistance\" at the end, which was not necessary. Options are now "none", "constant", "viscous" and "epsd". The old naming convention is still compatible for now, but will be deprecated down the line. Currently, a warning message is shown when using the previous naming convention. [#1640](https://github.com/chaos-polymtl/lethe/pull/1640)
+
 ### [Master] - 2025-09-01
 
 ### Added
@@ -13,7 +19,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
 ### Changed
 
-- MINOR The `create_random_number_container`, previously only used during the volume insertion in the DEM, has been moved to the `utilities.h` file. This way, this function will be accessible outside of the volume insertion, which will limit duplicated code. [#1639](https://github.com/chaos-polymtl/lethe/pull/1639)
+- MINOR The `create_random_number_container`, previously only used during the volume insertion in the DEM, has been moved to the `utilities.h` file. This way, this function will be accessible outside the volume insertion, which will limit duplicated code. [#1639](https://github.com/chaos-polymtl/lethe/pull/1639)
 
 ### [Master] - 2025-08-28
 
