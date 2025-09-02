@@ -7,6 +7,8 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
 ### Changed
 
+- MINOR The checkpointing with TableHandler tables had some issues. When checkpointing and restarting, the tables were serialized and deserialized on all ranks. Since the tables were only owned on rank 0, this resulted in an overwriting of data in the tables, and data history was lost at restart. With this change, by default, only rank 0 serializes and deserializes the information. If wished in the future, with the current change it is also possible to serialize on multiple cores, by setting the default parameter `serialize_on_rank_zero`/`deserialize_on_rank_zero` to `false`. [#1652](https://github.com/chaos-polymtl/lethe/pull/1652)
+
 - MAJOR The rolling resistance models naming convention was redundant. Every option had an extra \"_resistance\" at the end, which was not necessary. Options are now "none", "constant", "viscous" and "epsd". The old naming convention is still compatible for now, but will be deprecated down the line. Currently, a warning message is shown when using the previous naming convention. [#1640](https://github.com/chaos-polymtl/lethe/pull/1640)
 
 ### [Master] - 2025-09-01

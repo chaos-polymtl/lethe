@@ -479,7 +479,7 @@ announce_string(const ConditionalOStream &pcout,
  * will be saved.
  * @param[in] mpi_communicator The MPI communicator
  * @param[in] serialize_on_rank_zero Boolean indicating if the table should only
- * be serialized on rank 0 only. By default, it is set to true.
+ * be serialized on rank 0 only. By default, it is set to `true`.
  */
 inline void
 serialize_table(const TableHandler &table,
@@ -509,7 +509,7 @@ serialize_table(const TableHandler &table,
  * from.
  * @param[in] mpi_communicator The MPI communicator
  * @param[in] deserialize_on_rank_zero Boolean indicating if the table should
- * only be deserialized on rank 0 only. By default, it is set to true.
+ * only be deserialized on rank 0 only. By default, it is set to `true`.
  */
 inline void
 deserialize_table(TableHandler      &table,

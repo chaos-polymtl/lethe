@@ -1146,14 +1146,14 @@ Tracer<dim>::write_checkpoint()
     serialize_table(
       this->error_table,
       prefix + this->simulation_parameters.analytical_solution->get_filename() +
-      "_tracer" + suffix,
-    mpi_communicator);
+        "_tracer" + suffix,
+      mpi_communicator);
   if (this->simulation_parameters.post_processing.calculate_tracer_statistics)
     serialize_table(
       this->statistics_table,
       prefix + this->simulation_parameters.post_processing.tracer_output_name +
-      suffix,
-    mpi_communicator);
+        suffix,
+      mpi_communicator);
 }
 
 template <int dim>
@@ -1193,14 +1193,14 @@ Tracer<dim>::read_checkpoint()
     deserialize_table(
       this->error_table,
       prefix + this->simulation_parameters.analytical_solution->get_filename() +
-      "_tracer" + suffix,
-    mpi_communicator);
+        "_tracer" + suffix,
+      mpi_communicator);
   if (this->simulation_parameters.post_processing.calculate_tracer_statistics)
     deserialize_table(
       this->statistics_table,
       prefix + this->simulation_parameters.post_processing.tracer_output_name +
-      suffix,
-    mpi_communicator);
+        suffix,
+      mpi_communicator);
 }
 
 

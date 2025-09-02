@@ -1231,7 +1231,7 @@ HeatTransfer<dim>::write_checkpoint()
                       this->simulation_parameters.post_processing
                         .liquid_fraction_output_name +
                       suffix,
-      mpi_communicator);
+                    mpi_communicator);
 }
 
 template <int dim>
@@ -1305,8 +1305,8 @@ HeatTransfer<dim>::read_checkpoint()
     deserialize_table(
       this->error_table,
       prefix + this->simulation_parameters.analytical_solution->get_filename() +
-      "_HT" + suffix,
-    mpi_communicator);
+        "_HT" + suffix,
+      mpi_communicator);
   if (this->simulation_parameters.post_processing.calculate_heat_flux)
     deserialize_table(
       this->heat_flux_table,
@@ -1327,8 +1327,8 @@ HeatTransfer<dim>::read_checkpoint()
                       prefix +
                         this->simulation_parameters.post_processing
                           .liquid_fraction_output_name +
-                          suffix,
-        mpi_communicator);
+                        suffix,
+                      mpi_communicator);
 }
 
 
