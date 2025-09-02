@@ -2134,9 +2134,7 @@ template <int dim>
 void
 VolumeOfFluid<dim>::write_checkpoint()
 {
-  auto         mpi_communicator = this->triangulation->get_mpi_communicator();
-  unsigned int this_mpi_process(
-    Utilities::MPI::this_mpi_process(mpi_communicator));
+  auto mpi_communicator = this->triangulation->get_mpi_communicator();
 
   std::vector<const GlobalVectorType *> sol_set_transfer;
 
@@ -2150,43 +2148,40 @@ VolumeOfFluid<dim>::write_checkpoint()
     }
   this->solution_transfer->prepare_for_serialization(sol_set_transfer);
 
-  if (this_mpi_process == 0)
+  // Serialize tables
+  std::string prefix =
+    this->simulation_parameters.simulation_control.output_folder;
+  std::string suffix = ".checkpoint";
+  if (this->simulation_parameters.analytical_solution->calculate_error())
+    serialize_table(
+      this->error_table,
+      prefix + this->simulation_parameters.analytical_solution->get_filename() +
+        "_VOF" + suffix,
+      mpi_communicator);
+  if (this->simulation_parameters.post_processing.calculate_mass_conservation)
     {
-      // Serialize tables
-      std::string prefix =
-        this->simulation_parameters.simulation_control.output_folder;
-      std::string suffix = ".checkpoint";
-      if (this->simulation_parameters.analytical_solution->calculate_error())
-        serialize_table(
-          this->error_table,
-          prefix +
-            this->simulation_parameters.analytical_solution->get_filename() +
-            "_VOF" + suffix);
-      if (this->simulation_parameters.post_processing
-            .calculate_mass_conservation)
-        {
-          serialize_table(this->table_monitoring_vof,
-                          prefix +
-                            this->simulation_parameters.post_processing
-                              .mass_conservation_output_name +
-                            suffix);
-        }
-      if (this->simulation_parameters.post_processing.calculate_barycenter)
-        serialize_table(
-          this->table_barycenter,
-          prefix +
-            this->simulation_parameters.post_processing.barycenter_output_name +
-            suffix);
+      serialize_table(this->table_monitoring_vof,
+                      prefix +
+                        this->simulation_parameters.post_processing
+                          .mass_conservation_output_name +
+                        suffix,
+                      mpi_communicator);
     }
+  if (this->simulation_parameters.post_processing.calculate_barycenter)
+    serialize_table(
+      this->table_barycenter,
+      prefix +
+        this->simulation_parameters.post_processing.barycenter_output_name +
+        suffix,
+      mpi_communicator);
 }
 
 template <int dim>
 void
 VolumeOfFluid<dim>::read_checkpoint()
 {
-  auto         mpi_communicator = this->triangulation->get_mpi_communicator();
-  unsigned int this_mpi_process(
-    Utilities::MPI::this_mpi_process(mpi_communicator));
+  auto mpi_communicator = this->triangulation->get_mpi_communicator();
+
   auto previous_solutions_size = this->previous_solutions.size();
   this->pcout << "Reading VOF checkpoint" << std::endl;
 
@@ -2216,47 +2211,45 @@ VolumeOfFluid<dim>::read_checkpoint()
   // Apply filter to phase fraction
   apply_phase_filter(this->present_solution, this->filtered_solution);
 
-  if (this_mpi_process == 0)
+  // Deserialize tables
+  const std::string prefix =
+    this->simulation_parameters.simulation_control.output_folder;
+  const std::string suffix = ".checkpoint";
+  if (this->simulation_parameters.analytical_solution->calculate_error())
+    deserialize_table(
+      this->error_table,
+      prefix + this->simulation_parameters.analytical_solution->get_filename() +
+        "_VOF" + suffix,
+      mpi_communicator);
+  if (this->simulation_parameters.post_processing.calculate_mass_conservation)
     {
-      // Deserialize tables
-      const std::string prefix =
-        this->simulation_parameters.simulation_control.output_folder;
-      const std::string suffix = ".checkpoint";
-      if (this->simulation_parameters.analytical_solution->calculate_error())
-        deserialize_table(
-          this->error_table,
-          prefix +
-            this->simulation_parameters.analytical_solution->get_filename() +
-            "_VOF" + suffix);
-      if (this->simulation_parameters.post_processing
-            .calculate_mass_conservation)
-        {
-          deserialize_table(this->table_monitoring_vof,
-                            prefix +
-                              this->simulation_parameters.post_processing
-                                .mass_conservation_output_name +
-                              suffix);
-        }
-      if (this->simulation_parameters.post_processing.calculate_barycenter)
-        deserialize_table(
-          this->table_barycenter,
-          prefix +
-            this->simulation_parameters.post_processing.barycenter_output_name +
-            suffix);
+      deserialize_table(this->table_monitoring_vof,
+                        prefix +
+                          this->simulation_parameters.post_processing
+                            .mass_conservation_output_name +
+                          suffix,
+                        mpi_communicator);
+    }
+  if (this->simulation_parameters.post_processing.calculate_barycenter)
+    deserialize_table(
+      this->table_barycenter,
+      prefix +
+        this->simulation_parameters.post_processing.barycenter_output_name +
+        suffix,
+      mpi_communicator);
 
-      if (this->simulation_parameters.multiphysics.vof_parameters
-            .regularization_method.sharpening.type ==
-          Parameters::SharpeningType::adaptive)
-        {
-          // Calculate volume and mass
-          calculate_volume_and_mass(
-            this->present_solution,
-            *multiphysics->get_solution(PhysicsID::fluid_dynamics),
-            this->simulation_parameters.multiphysics.vof_parameters
-              .regularization_method.sharpening.monitored_fluid);
+  if (this->simulation_parameters.multiphysics.vof_parameters
+        .regularization_method.sharpening.type ==
+      Parameters::SharpeningType::adaptive)
+    {
+      // Calculate volume and mass
+      calculate_volume_and_mass(
+        this->present_solution,
+        *multiphysics->get_solution(PhysicsID::fluid_dynamics),
+        this->simulation_parameters.multiphysics.vof_parameters
+          .regularization_method.sharpening.monitored_fluid);
 
-          this->mass_first_iteration = this->mass_monitored;
-        }
+      this->mass_first_iteration = this->mass_monitored;
     }
 }
 

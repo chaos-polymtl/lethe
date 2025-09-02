@@ -2298,33 +2298,40 @@ NavierStokesBase<dim, VectorType, DofsType>::read_checkpoint()
     if (post_processing.calculate_enstrophy)
       deserialize_table(this->enstrophy_table,
                         prefix + post_processing.enstrophy_output_name +
-                          suffix);
+                        suffix,
+    mpi_communicator);
     if (post_processing.calculate_pressure_power)
       deserialize_table(this->pressure_power_table,
                         prefix + post_processing.pressure_power_output_name +
-                          suffix);
+                        suffix,
+    mpi_communicator);
     if (post_processing.calculate_viscous_dissipation)
       deserialize_table(this->viscous_dissipation_table,
                         prefix +
                           post_processing.viscous_dissipation_output_name +
-                          suffix);
+                          suffix,
+      mpi_communicator);
     if (post_processing.calculate_kinetic_energy)
       deserialize_table(this->kinetic_energy_table,
                         prefix + post_processing.kinetic_energy_output_name +
-                          suffix);
+                        suffix,
+    mpi_communicator);
     if (post_processing.calculate_apparent_viscosity)
       deserialize_table(this->apparent_viscosity_table,
                         prefix +
                           post_processing.apparent_viscosity_output_name +
-                          suffix);
+                          suffix,
+      mpi_communicator);
     if (post_processing.calculate_flow_rate)
       deserialize_table(this->flow_rate_table,
                         prefix + post_processing.flow_rate_output_name +
-                          suffix);
+                        suffix,
+    mpi_communicator);
     if (post_processing.calculate_pressure_drop)
       deserialize_table(this->pressure_drop_table,
                         prefix + post_processing.pressure_drop_output_name +
-                          suffix);
+                        suffix,
+    mpi_communicator);
     if (this->simulation_parameters.forces_parameters.calculate_force)
       for (auto const &[id, type] :
            this->simulation_parameters.boundary_conditions.type)
@@ -2333,7 +2340,8 @@ NavierStokesBase<dim, VectorType, DofsType>::read_checkpoint()
             this->forces_tables[id],
             prefix +
               this->simulation_parameters.forces_parameters.force_output_name +
-              "_" + Utilities::int_to_string(id, 2) + suffix);
+              "_" + Utilities::int_to_string(id, 2) + suffix,
+      mpi_communicator);
         }
     if (this->simulation_parameters.forces_parameters.calculate_torque)
       for (auto const &[id, type] :
@@ -2343,14 +2351,16 @@ NavierStokesBase<dim, VectorType, DofsType>::read_checkpoint()
             this->torques_tables[id],
             prefix +
               this->simulation_parameters.forces_parameters.torque_output_name +
-              "_" + Utilities::int_to_string(id, 2) + suffix);
+              "_" + Utilities::int_to_string(id, 2) + suffix,
+      mpi_communicator);
         }
     if (this->simulation_parameters.analytical_solution->calculate_error())
       deserialize_table(
         this->error_table,
         prefix +
           this->simulation_parameters.analytical_solution->get_filename() +
-          "_FD" + suffix);
+          "_FD" + suffix,
+      mpi_communicator);
   }
 }
 
@@ -3120,30 +3130,37 @@ NavierStokesBase<dim, VectorType, DofsType>::write_checkpoint()
     std::string suffix = ".checkpoint";
     if (post_processing.calculate_enstrophy)
       serialize_table(this->enstrophy_table,
-                      prefix + post_processing.enstrophy_output_name + suffix);
+      prefix + post_processing.enstrophy_output_name + suffix,
+mpi_communicator);
     if (post_processing.calculate_kinetic_energy)
       serialize_table(this->kinetic_energy_table,
                       prefix + post_processing.kinetic_energy_output_name +
-                        suffix);
+                      suffix,
+    mpi_communicator);
     if (post_processing.calculate_pressure_power)
       serialize_table(this->pressure_power_table,
                       prefix + post_processing.pressure_power_output_name +
-                        suffix);
+                      suffix,
+    mpi_communicator);
     if (post_processing.calculate_viscous_dissipation)
       serialize_table(this->viscous_dissipation_table,
                       prefix + post_processing.viscous_dissipation_output_name +
-                        suffix);
+                      suffix,
+    mpi_communicator);
     if (post_processing.calculate_apparent_viscosity)
       serialize_table(this->apparent_viscosity_table,
                       prefix + post_processing.apparent_viscosity_output_name +
-                        suffix);
+                      suffix,
+    mpi_communicator);
     if (post_processing.calculate_flow_rate)
       serialize_table(this->flow_rate_table,
-                      prefix + post_processing.flow_rate_output_name + suffix);
+      prefix + post_processing.flow_rate_output_name + suffix,
+mpi_communicator);
     if (post_processing.calculate_pressure_drop)
       serialize_table(this->pressure_drop_table,
                       prefix + post_processing.pressure_drop_output_name +
-                        suffix);
+                      suffix,
+    mpi_communicator);
     if (this->simulation_parameters.forces_parameters.calculate_force)
       for (auto const &[boundary_id, type] :
            this->simulation_parameters.boundary_conditions.type)
@@ -3152,7 +3169,8 @@ NavierStokesBase<dim, VectorType, DofsType>::write_checkpoint()
             this->forces_tables[boundary_id],
             prefix +
               this->simulation_parameters.forces_parameters.force_output_name +
-              "_" + Utilities::int_to_string(boundary_id, 2) + suffix);
+              "_" + Utilities::int_to_string(boundary_id, 2) + suffix,
+      mpi_communicator);
         }
     if (this->simulation_parameters.forces_parameters.calculate_torque)
       for (auto const &[boundary_id, type] :
@@ -3162,14 +3180,16 @@ NavierStokesBase<dim, VectorType, DofsType>::write_checkpoint()
             this->torques_tables[boundary_id],
             prefix +
               this->simulation_parameters.forces_parameters.torque_output_name +
-              "_" + Utilities::int_to_string(boundary_id, 2) + suffix);
+              "_" + Utilities::int_to_string(boundary_id, 2) + suffix,
+      mpi_communicator);
         }
     if (this->simulation_parameters.analytical_solution->calculate_error())
       serialize_table(
         this->error_table,
         prefix +
           this->simulation_parameters.analytical_solution->get_filename() +
-          "_FD" + suffix);
+          "_FD" + suffix,
+      mpi_communicator);
   }
 }
 
