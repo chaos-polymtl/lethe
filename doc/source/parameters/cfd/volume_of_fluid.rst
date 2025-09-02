@@ -65,12 +65,12 @@ The default values of the VOF parameters are given in the text box below.
     end
 
     subsection surface tension force
-      set enable                                = false
-      set verbosity                             = quiet
-      set output auxiliary fields               = false
-      set phase fraction gradient filter factor = 4
-      set curvature filter factor               = 1
-      set enable marangoni effect               = false
+      set enable                                   = false
+      set verbosity                                = quiet
+      set output auxiliary fields                  = false
+      set phase fraction gradient diffusion factor = 4
+      set curvature diffusion factor               = 1
+      set enable marangoni effect                  = false
     end
 
   end
@@ -235,7 +235,7 @@ Surface Tension Force
   * ``verbosity``: enables the display of the output from the surface tension force calculations. Choices are: ``quiet`` (default, no output) and ``verbose``.
   * ``output auxiliary fields``: enables the display of the filtered ``phase fraction gradient`` and filtered ``curvature``. Used for debugging purposes.
 
-  * ``phase fraction gradient filter factor``: value of the factor :math:`\alpha` applied in the filter :math:`\eta_n = \alpha h^2`, where :math:`h` is the cell size. This filter is used to apply a `projection step <https://onlinelibrary.wiley.com/doi/full/10.1002/fld.2643>`_ to damp high frequency errors, that are magnified by differentiation, in the phase fraction gradient (:math:`\bf{\psi}`), following the equation:
+  * ``phase fraction gradient diffusion factor``: value of the factor :math:`\alpha` applied in the filter :math:`\eta_n = \alpha h^2`, where :math:`h` is the cell size. This filter is used to apply a `projection step <https://onlinelibrary.wiley.com/doi/full/10.1002/fld.2643>`_ to damp high frequency errors, that are magnified by differentiation, in the phase fraction gradient (:math:`\bf{\psi}`), following the equation:
 
     .. math::
         \int_\Omega \left( {\bf{v}} \cdot {\bf{\psi}} + \eta_n \nabla {\bf{v}} \cdot \nabla {\bf{\psi}} \right) d\Omega = \int_\Omega \left( {\bf{v}} \cdot \nabla {\phi} \right) d\Omega
@@ -243,7 +243,7 @@ Surface Tension Force
     where :math:`\bf{v}` is a piecewise continuous vector-valued test function, :math:`\bf{\psi}` is the filtered phase fraction gradient, and :math:`\phi` is the phase fraction.
 
 
-  * ``curvature filter factor``: value of the factor :math:`\beta` applied in the filter :math:`\eta_\kappa = \beta h^2`, where :math:`h` is the cell size. This filter is used to apply a `projection step <https://onlinelibrary.wiley.com/doi/full/10.1002/fld.2643>`_ to damp high frequency errors, that are magnified by differentiation, in the curvature :math:`\kappa`, following the equation:
+  * ``curvature diffusion factor``: value of the factor :math:`\beta` applied in the filter :math:`\eta_\kappa = \beta h^2`, where :math:`h` is the cell size. This filter is used to apply a `projection step <https://onlinelibrary.wiley.com/doi/full/10.1002/fld.2643>`_ to damp high frequency errors, that are magnified by differentiation, in the curvature :math:`\kappa`, following the equation:
 
     .. math:: 
         \int_\Omega \left( v \kappa + \eta_\kappa \nabla v \cdot \nabla \kappa \right) d\Omega = \int_\Omega \left( \nabla v \cdot \frac{\bf{\psi}}{|\bf{\psi}|} \right) d\Omega
@@ -265,7 +265,7 @@ Surface Tension Force
 Choosing Values for the Surface Tension Force Filters
 +++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
-The following procedure is recommended to choose proper values for the ``phase fraction gradient filter factor`` and ``curvature filter factor``:
+The following procedure is recommended to choose proper values for the ``phase fraction gradient diffusion factor`` and ``curvature diffusion factor``:
 
 1. Use ``set output auxiliary fields = true`` to write filtered phase fraction gradient and filtered curvature fields.
 2. Choose a value close to 1, for example, :math:`\alpha = 4` and :math:`\beta = 1`.
