@@ -320,19 +320,19 @@ When including the surface tension force in the resolution of the Navier-Stokes 
 Normal and Curvature Computations
 """""""""""""""""""""""""""""""""
 
-The following equations are used to compute the filtered phase fraction gradient and filtered curvature. They correspond to the projection steps previously mentioned.
+The following equations are used to compute the projected phase fraction gradient and projected curvature. They correspond to the projection steps previously mentioned.
 
 .. math::
 
     \int_\Omega \left( {\bf{v}} \cdot {\bf{\psi}} + \eta_n \nabla {\bf{v}} \cdot \nabla {\bf{\psi}} \right) d\Omega = \int_\Omega \left( {\bf{v}} \cdot \nabla {\phi} \right) d\Omega
 
-where :math:`{\bf{v}}` is a vector test function, :math:`\bf{\psi}` is the filtered phase fraction gradient, :math:`\eta_n` is the phase fraction gradient diffusion value, and :math:`\phi` is the phase fraction.
+where :math:`{\bf{v}}` is a vector test function, :math:`\bf{\psi}` is the projected phase fraction gradient, :math:`\eta_n` is the phase fraction gradient diffusion value, and :math:`\phi` is the phase fraction.
 
 .. math::
 
     \int_\Omega \left( v \kappa + \eta_\kappa \nabla v \cdot \nabla \kappa \right) d\Omega = \int_\Omega \left( \nabla v \cdot \frac{\bf{\psi}}{|\bf{\psi}|} \right) d\Omega
 
-where :math:`\kappa` is the filtered curvature, and :math:`\eta_\kappa` is the curvature diffusion value, and :math:`v` is a test function.
+where :math:`\kappa` is the projected curvature, and :math:`\eta_\kappa` is the curvature diffusion value, and :math:`v` is a test function.
 
 The phase fraction gradient diffusion :math:`\eta_n` and the curvature diffusion value :math:`\eta_\kappa` are respectively computed according to:
 
