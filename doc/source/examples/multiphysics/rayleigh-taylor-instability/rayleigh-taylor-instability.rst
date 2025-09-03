@@ -23,7 +23,7 @@ Files Used in This Example
 --------------------------
 All files mentioned below are located in the example's folder (``examples/multiphysics/rayleigh-taylor-instability``).
 
-- Parameter file for adaptive projection-based interface sharpening: ``rayleigh-taylor-instability.prm``
+- Parameter file: ``rayleigh-taylor-instability.prm``
 - Postprocessing Python script: ``rayleigh-taylor_postprocess.py``
 
 ****
