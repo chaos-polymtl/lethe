@@ -60,5 +60,6 @@ jobs:
         uses: JamesIves/github-pages-deploy-action@4.1.7
         if: github.ref == 'refs/heads/master'
         with:
-          branch: gh-pages-v2
+          branch: gh-pages-v3
           folder: doc/aggregate
+
