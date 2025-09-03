@@ -52,6 +52,7 @@ plt.rcParams['font.family']='DejaVu Serif'
 plt.rcParams['font.serif']='cm'
 plt.rcParams['savefig.bbox']='tight'
 plt.rcParams['legend.handlelength']=1
+plt.rcParams['text.usetex'] = True
 
 #--------------------------------------------
 # Main
