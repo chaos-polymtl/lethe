@@ -256,7 +256,6 @@ In the ``VOF`` subsection, we select the ``geometric interface reinitialization`
   
     subsection phase filtration
       set type      = tanh
-      set verbosity = quiet
       set beta      = 10
     end
   end
