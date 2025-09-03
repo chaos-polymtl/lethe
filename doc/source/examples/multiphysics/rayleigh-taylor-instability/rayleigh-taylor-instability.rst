@@ -350,7 +350,7 @@ With one higher level of refinement, we can see a similar correspondence between
 |                                                                                       |
 +---------------------------------------------------------------------------------------+
 
-The following figures show the mass of ``fluid 1`` throughout the simulation from a geometric perspective and from the volumetric integral of the VOF field. The left figure displays the result for the mesh resolution of the example whereas the right figure shows mass conservation for the finer mesh. We see that mass conservation is not fully preserved once the interface has been significantly stretched and deformed, but that this improves as the mesh is refined.
+The following figures show the mass of ``fluid 1`` throughout the simulation from a geometric perspective and from the volumetric integral of the VOF field. The left figure displays the result for the mesh resolution of the example whereas the right figure shows mass conservation for the finer mesh. We see that mass conservation is not fully preserved once the interface has been significantly stretched and deformed, but it improves as the mesh is refined.
 
 +-----------------------------------------------+--------------------------------------------------------------+
 |  .. image:: images/mass_of_fluid_1.png        |  .. image:: images/mass_of_fluid_1_ref_max_8_min_6.png       |
