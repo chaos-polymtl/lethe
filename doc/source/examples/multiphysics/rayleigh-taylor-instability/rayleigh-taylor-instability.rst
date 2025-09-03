@@ -266,7 +266,7 @@ We refer the reader to the :doc:`../../../../parameters/cfd/volume_of_fluid` doc
 Post-processing
 ~~~~~~~~~~~~~~~
 
-In the ``post-processing`` subsection, the output of the mass of each fluid is enabled and allows to track to mass conservation throughout the simulation. The mass conservation is tracked both from a geometric perspective and from the volumetric integral of the VOF field.
+In the ``post-processing`` subsection, the output of the area of each fluid is enabled and allows to track to mass conservation throughout the simulation. If the area is conserved in a 2D simulation, then the mass per unit length is too. The mass conservation is tracked both from a geometric perspective and from the volumetric integral of the VOF field.
 
 .. code-block:: text
 
