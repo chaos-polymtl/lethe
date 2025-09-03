@@ -163,7 +163,7 @@ fig0.savefig('./spike_and_bubble_evolution.png')
 plt.show()
 
 
-#Plot the mass of fluid throughout the simulation
+#Plot the relative area of fluid 1 throughout the simulation
 
 t,area,geo_area = np.loadtxt(sim.path_output+"mass_conservation_information.dat", usecols=(0,7,8),skiprows=1,unpack=True)
 plt.plot(t,area/area[0],label="Algebraic measure")
