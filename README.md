@@ -56,15 +56,10 @@ Follow the instructions in the
 
 ## Authors
 
-Main developer:
-
-- [Bruno Blais](https://www.polymtl.ca/expertises/en/blais-bruno)
-
-Contributors (in alphabetical order):
-
 - Amishga Alphonius
 - Antoine Avrit
 - Lucka Barbeau
+- [Bruno Blais](https://www.polymtl.ca/expertises/en/blais-bruno)
 - Valérie Bibeau
 - Bianca Bugeaud
 - Bruna Campos
