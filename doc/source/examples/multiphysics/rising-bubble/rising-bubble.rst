@@ -132,10 +132,10 @@ For the first part of this example, the ``projection-based interface sharpening`
     end
 
     subsection surface tension force
-      set enable                                = true
-      set phase fraction gradient filter factor = 4
-      set curvature filter factor               = 1
-      set output auxiliary fields               = true
+      set enable                                   = true
+      set phase fraction gradient difusion factor  = 4
+      set curvature diffusion factor               = 1
+      set output auxiliary fields                  = true
     end
   end
 
