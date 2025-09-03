@@ -125,22 +125,22 @@ defined as a circle with a radius :math:`R= 0.5` in the center of the computatio
 VOF
 ~~~
 
-The surface tension force computation is enabled in the ``VOF`` subsection. The value of the filter factors :math:`\alpha` and :math:`\beta` described in section :ref:`Normal and curvature computations` are controlled respectively by the parameters ``phase fraction gradient filter factor`` and ``curvature filter factor``. Finally, the parameter ``output auxiliary fields`` set at ``true`` enables the output of the filtered phase fraction gradient and filtered curvature fields.
+The surface tension force computation is enabled in the ``VOF`` subsection. The value of the diffusion factors :math:`\alpha` and :math:`\beta` described in section :ref:`Normal and curvature computations` are controlled respectively by the parameters ``phase fraction gradient diffusion factor`` and ``curvature diffusion factor``. Finally, the parameter ``output auxiliary fields`` set at ``true`` enables the output of the filtered phase fraction gradient and filtered curvature fields.
 
 .. code-block:: text
 
     subsection VOF
       subsection surface tension force
-        set enable                                = true
-        set phase fraction gradient filter factor = 4
-        set curvature filter factor               = 1
-        set output auxiliary fields               = true
+        set enable                                   = true
+        set phase fraction gradient diffusion factor = 4
+        set curvature diffusion factor               = 1
+        set output auxiliary fields                  = true
       end
     end
 
 .. tip::
 
-  The phase fraction gradient filter value :math:`\left(\eta_n = \alpha h^2\right)` and curvature filter value :math:`\left(\eta_\kappa = \beta h^2\right)` must be small values larger than 0. We recommend the following procedure to choose a proper value for these parameters:
+  The phase fraction gradient diffusion value :math:`\left(\eta_n = \alpha h^2\right)` and curvature diffusion value :math:`\left(\eta_\kappa = \beta h^2\right)` must be small values larger than 0. We recommend the following procedure to choose a proper value for these parameters:
 
   1. Enable ``output auxiliary fields`` to write filtered phase fraction gradient and filtered curvature fields.
   2. Choose a value close to 1, for example, the default values  :math:`\alpha = 4` and :math:`\beta = 1`.

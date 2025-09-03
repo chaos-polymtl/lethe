@@ -511,12 +511,12 @@
   end
 
   subsection surface tension force
-    set enable                                = false
-    set verbosity                             = quiet
-    set output auxiliary fields               = false
-    set phase fraction gradient filter factor = 4
-    set curvature filter factor               = 1
-    set enable marangoni effect               = false
+    set enable                                   = false
+    set verbosity                                = quiet
+    set output auxiliary fields                  = false
+    set phase fraction gradient diffusion factor = 4
+    set curvature diffusion factor               = 1
+    set enable marangoni effect                  = false
   end
 
 end
@@ -686,25 +686,25 @@ number of iterations to reach the mass conservation tolerance.
 </div>
 </li>
 <li><p><code class="docutils literal notranslate"><span class="pre">verbosity</span></code>: enables the display of the output from the surface tension force calculations. Choices are: <code class="docutils literal notranslate"><span class="pre">quiet</span></code> (default, no output) and <code class="docutils literal notranslate"><span class="pre">verbose</span></code>.</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">output</span> <span class="pre">auxiliary</span> <span class="pre">fields</span></code>: enables the display of the filtered <code class="docutils literal notranslate"><span class="pre">phase</span> <span class="pre">fraction</span> <span class="pre">gradient</span></code> and filtered <code class="docutils literal notranslate"><span class="pre">curvature</span></code>. Used for debugging purposes.</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">phase</span> <span class="pre">fraction</span> <span class="pre">gradient</span> <span class="pre">filter</span> <span class="pre">factor</span></code>: value of the factor <span class="math notranslate nohighlight">\(\alpha\)</span> applied in the filter <span class="math notranslate nohighlight">\(\eta_n = \alpha h^2\)</span>, where <span class="math notranslate nohighlight">\(h\)</span> is the cell size. This filter is used to apply a <a class="reference external" href="https://onlinelibrary.wiley.com/doi/full/10.1002/fld.2643">projection step</a> to damp high frequency errors, that are magnified by differentiation, in the phase fraction gradient (<span class="math notranslate nohighlight">\(\bf{\psi}\)</span>), following the equation:</p>
+<li><p><code class="docutils literal notranslate"><span class="pre">output</span> <span class="pre">auxiliary</span> <span class="pre">fields</span></code>: enables the display of the projected <code class="docutils literal notranslate"><span class="pre">phase</span> <span class="pre">fraction</span> <span class="pre">gradient</span></code> and projected <code class="docutils literal notranslate"><span class="pre">curvature</span></code>. Used for debugging purposes.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">phase</span> <span class="pre">fraction</span> <span class="pre">gradient</span> <span class="pre">diffusion</span> <span class="pre">factor</span></code>: value of the factor <span class="math notranslate nohighlight">\(\alpha\)</span> in <span class="math notranslate nohighlight">\(\eta_n = \alpha h^2\)</span>, where <span class="math notranslate nohighlight">\(h\)</span> is the cell size. This diffusion coefficient (<span class="math notranslate nohighlight">\(\eta_n\)</span>) is used in a <a class="reference external" href="https://onlinelibrary.wiley.com/doi/full/10.1002/fld.2643">projection step</a> to damp high frequency errors, that are magnified by differentiation, in the phase fraction gradient (<span class="math notranslate nohighlight">\(\bf{\psi}\)</span>), following the equation:</p>
 <div class="math-wrapper docutils container">
 <div class="math notranslate nohighlight">
 \[\int_\Omega \left( {\bf{v}} \cdot {\bf{\psi}} + \eta_n \nabla {\bf{v}} \cdot \nabla {\bf{\psi}} \right) d\Omega = \int_\Omega \left( {\bf{v}} \cdot \nabla {\phi} \right) d\Omega\]</div>
 </div>
-<p>where <span class="math notranslate nohighlight">\(\bf{v}\)</span> is a piecewise continuous vector-valued test function, <span class="math notranslate nohighlight">\(\bf{\psi}\)</span> is the filtered phase fraction gradient, and <span class="math notranslate nohighlight">\(\phi\)</span> is the phase fraction.</p>
+<p>where <span class="math notranslate nohighlight">\(\bf{v}\)</span> is a piecewise continuous vector-valued test function, <span class="math notranslate nohighlight">\(\bf{\psi}\)</span> is the projected phase fraction gradient, and <span class="math notranslate nohighlight">\(\phi\)</span> is the phase fraction.</p>
 </li>
-<li><p><code class="docutils literal notranslate"><span class="pre">curvature</span> <span class="pre">filter</span> <span class="pre">factor</span></code>: value of the factor <span class="math notranslate nohighlight">\(\beta\)</span> applied in the filter <span class="math notranslate nohighlight">\(\eta_\kappa = \beta h^2\)</span>, where <span class="math notranslate nohighlight">\(h\)</span> is the cell size. This filter is used to apply a <a class="reference external" href="https://onlinelibrary.wiley.com/doi/full/10.1002/fld.2643">projection step</a> to damp high frequency errors, that are magnified by differentiation, in the curvature <span class="math notranslate nohighlight">\(\kappa\)</span>, following the equation:</p>
+<li><p><code class="docutils literal notranslate"><span class="pre">curvature</span> <span class="pre">diffusion</span> <span class="pre">factor</span></code>: value of the factor <span class="math notranslate nohighlight">\(\beta\)</span> in  <span class="math notranslate nohighlight">\(\eta_\kappa = \beta h^2\)</span>, where <span class="math notranslate nohighlight">\(h\)</span> is the cell size. This diffusion coefficient (<span class="math notranslate nohighlight">\(\eta_\kappa\)</span>) is used in a <a class="reference external" href="https://onlinelibrary.wiley.com/doi/full/10.1002/fld.2643">projection step</a> to damp high frequency errors, that are magnified by differentiation, in the curvature <span class="math notranslate nohighlight">\(\kappa\)</span>, following the equation:</p>
 <div class="math-wrapper docutils container">
 <div class="math notranslate nohighlight">
 \[\int_\Omega \left( v \kappa + \eta_\kappa \nabla v \cdot \nabla \kappa \right) d\Omega = \int_\Omega \left( \nabla v \cdot \frac{\bf{\psi}}{|\bf{\psi}|} \right) d\Omega\]</div>
 </div>
-<p>where <span class="math notranslate nohighlight">\(v\)</span> is a test function, <span class="math notranslate nohighlight">\(\kappa\)</span> is the filtered curvature, and <span class="math notranslate nohighlight">\(\bf{\psi}\)</span> is the filtered phase fraction gradient.</p>
+<p>where <span class="math notranslate nohighlight">\(v\)</span> is a test function, <span class="math notranslate nohighlight">\(\kappa\)</span> is the projected curvature, and <span class="math notranslate nohighlight">\(\bf{\psi}\)</span> is the projected phase fraction gradient.</p>
 </li>
 </ul>
 <div class="admonition tip">
 <p class="admonition-title">Tip</p>
-<p>Use the procedure suggested in: <a class="reference internal" href="#choosing-values-for-the-surface-tension-force-filters"><span class="std std-ref">Choosing Values for the Surface Tension Force Filters</span></a>.</p>
+<p>Use the procedure suggested in: <a class="reference internal" href="#choosing-values-for-the-surface-tension-force-diffusion-factors"><span class="std std-ref">Choosing Values for the Surface Tension Force Diffusion Factors</span></a>.</p>
 </div>
 <ul class="simple">
 <li><p><code class="docutils literal notranslate"><span class="pre">enable</span> <span class="pre">marangoni</span> <span class="pre">effect</span></code>: Marangoni effect is a thermocapillary effect. It is considered in simulations if this parameter is set to <code class="docutils literal notranslate"><span class="pre">true</span></code>. Additionally, the <code class="docutils literal notranslate"><span class="pre">heat</span> <span class="pre">transfer</span></code> auxiliary physics must be enabled (see: <a class="reference internal" href="multiphysics.html"><span class="doc">Multiphysics</span></a>) and a non constant <code class="docutils literal notranslate"><span class="pre">surface</span> <span class="pre">tension</span> <span class="pre">model</span></code> with its parameters must be specified in the <code class="docutils literal notranslate"><span class="pre">physical</span> <span class="pre">properties</span></code> subsection (see: <a class="reference internal" href="physical_properties.html"><span class="doc">Physical Properties</span></a>).</p></li>
@@ -715,14 +715,14 @@ number of iterations to reach the mass conservation tolerance.
 <p class="admonition-title">See also</p>
 <p>The surface tension force is used in the <a class="reference internal" href="../../examples/multiphysics/rising-bubble/rising-bubble.html"><span class="doc">Rising Bubble</span></a> example.</p>
 </div>
-<section id="choosing-values-for-the-surface-tension-force-filters">
-<span id="id2"></span><h3>Choosing Values for the Surface Tension Force Filters<a class="headerlink" href="#choosing-values-for-the-surface-tension-force-filters" title="Link to this heading">#</a></h3>
-<p>The following procedure is recommended to choose proper values for the <code class="docutils literal notranslate"><span class="pre">phase</span> <span class="pre">fraction</span> <span class="pre">gradient</span> <span class="pre">filter</span> <span class="pre">factor</span></code> and <code class="docutils literal notranslate"><span class="pre">curvature</span> <span class="pre">filter</span> <span class="pre">factor</span></code>:</p>
+<section id="choosing-values-for-the-surface-tension-force-diffusion-factors">
+<span id="id2"></span><h3>Choosing Values for the Surface Tension Force Diffusion Factors<a class="headerlink" href="#choosing-values-for-the-surface-tension-force-diffusion-factors" title="Link to this heading">#</a></h3>
+<p>The following procedure is recommended to choose proper values for the <code class="docutils literal notranslate"><span class="pre">phase</span> <span class="pre">fraction</span> <span class="pre">gradient</span> <span class="pre">diffusion</span> <span class="pre">factor</span></code> and <code class="docutils literal notranslate"><span class="pre">curvature</span> <span class="pre">diffusion</span> <span class="pre">factor</span></code>:</p>
 <ol class="arabic simple">
-<li><p>Use <code class="docutils literal notranslate"><span class="pre">set</span> <span class="pre">output</span> <span class="pre">auxiliary</span> <span class="pre">fields</span> <span class="pre">=</span> <span class="pre">true</span></code> to write filtered phase fraction gradient and filtered curvature fields.</p></li>
+<li><p>Use <code class="docutils literal notranslate"><span class="pre">set</span> <span class="pre">output</span> <span class="pre">auxiliary</span> <span class="pre">fields</span> <span class="pre">=</span> <span class="pre">true</span></code> to write projected phase fraction gradient and projected curvature fields.</p></li>
 <li><p>Choose a value close to 1, for example, <span class="math notranslate nohighlight">\(\alpha = 4\)</span> and <span class="math notranslate nohighlight">\(\beta = 1\)</span>.</p></li>
-<li><p>Run the simulation and check whether the filtered phase fraction gradient field is smooth and without oscillation.</p></li>
-<li><p>If the filtered phase fraction gradient and filtered curvature fields show oscillations, increase the value <span class="math notranslate nohighlight">\(\alpha\)</span> and <span class="math notranslate nohighlight">\(\beta\)</span> to larger values, and repeat this process until reaching smooth filtered phase fraction gradient and filtered curvature fields without oscillations.</p></li>
+<li><p>Run the simulation and check whether the projected phase fraction gradient field is smooth and without oscillation.</p></li>
+<li><p>If the projected phase fraction gradient and projected curvature fields show oscillations, increase the value <span class="math notranslate nohighlight">\(\alpha\)</span> and <span class="math notranslate nohighlight">\(\beta\)</span>, and repeat this process until reaching smooth projected phase fraction gradient and projected curvature fields without oscillations.</p></li>
 </ol>
 </section>
 </section>
@@ -792,7 +792,7 @@ number of iterations to reach the mass conservation tolerance.
 </li>
 <li><a class="reference internal" href="#phase-filtration">Phase Filtration</a></li>
 <li><a class="reference internal" href="#surface-tension-force">Surface Tension Force</a><ul>
-<li><a class="reference internal" href="#choosing-values-for-the-surface-tension-force-filters">Choosing Values for the Surface Tension Force Filters</a></li>
+<li><a class="reference internal" href="#choosing-values-for-the-surface-tension-force-diffusion-factors">Choosing Values for the Surface Tension Force Diffusion Factors</a></li>
 </ul>
 </li>
 </ul>

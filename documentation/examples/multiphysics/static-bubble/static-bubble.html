@@ -547,20 +547,20 @@ end
 </section>
 <section id="vof">
 <h3>VOF<a class="headerlink" href="#vof" title="Link to this heading">#</a></h3>
-<p>The surface tension force computation is enabled in the <code class="docutils literal notranslate"><span class="pre">VOF</span></code> subsection. The value of the filter factors <span class="math notranslate nohighlight">\(\alpha\)</span> and <span class="math notranslate nohighlight">\(\beta\)</span> described in section <a class="reference internal" href="../../../theory/multiphase/cfd/vof.html#normal-and-curvature-computations"><span class="std std-ref">Normal and Curvature Computations</span></a> are controlled respectively by the parameters <code class="docutils literal notranslate"><span class="pre">phase</span> <span class="pre">fraction</span> <span class="pre">gradient</span> <span class="pre">filter</span> <span class="pre">factor</span></code> and <code class="docutils literal notranslate"><span class="pre">curvature</span> <span class="pre">filter</span> <span class="pre">factor</span></code>. Finally, the parameter <code class="docutils literal notranslate"><span class="pre">output</span> <span class="pre">auxiliary</span> <span class="pre">fields</span></code> set at <code class="docutils literal notranslate"><span class="pre">true</span></code> enables the output of the filtered phase fraction gradient and filtered curvature fields.</p>
+<p>The surface tension force computation is enabled in the <code class="docutils literal notranslate"><span class="pre">VOF</span></code> subsection. The value of the diffusion factors <span class="math notranslate nohighlight">\(\alpha\)</span> and <span class="math notranslate nohighlight">\(\beta\)</span> described in section <a class="reference internal" href="../../../theory/multiphase/cfd/vof.html#normal-and-curvature-computations"><span class="std std-ref">Normal and Curvature Computations</span></a> are controlled respectively by the parameters <code class="docutils literal notranslate"><span class="pre">phase</span> <span class="pre">fraction</span> <span class="pre">gradient</span> <span class="pre">diffusion</span> <span class="pre">factor</span></code> and <code class="docutils literal notranslate"><span class="pre">curvature</span> <span class="pre">diffusion</span> <span class="pre">factor</span></code>. Finally, the parameter <code class="docutils literal notranslate"><span class="pre">output</span> <span class="pre">auxiliary</span> <span class="pre">fields</span></code> set at <code class="docutils literal notranslate"><span class="pre">true</span></code> enables the output of the filtered phase fraction gradient and filtered curvature fields.</p>
 <div class="highlight-text notranslate"><div class="highlight"><pre><span></span>subsection VOF
   subsection surface tension force
-    set enable                                = true
-    set phase fraction gradient filter factor = 4
-    set curvature filter factor               = 1
-    set output auxiliary fields               = true
+    set enable                                   = true
+    set phase fraction gradient diffusion factor = 4
+    set curvature diffusion factor               = 1
+    set output auxiliary fields                  = true
   end
 end
 </pre></div>
 </div>
 <div class="admonition tip">
 <p class="admonition-title">Tip</p>
-<p>The phase fraction gradient filter value <span class="math notranslate nohighlight">\(\left(\eta_n = \alpha h^2\right)\)</span> and curvature filter value <span class="math notranslate nohighlight">\(\left(\eta_\kappa = \beta h^2\right)\)</span> must be small values larger than 0. We recommend the following procedure to choose a proper value for these parameters:</p>
+<p>The phase fraction gradient diffusion value <span class="math notranslate nohighlight">\(\left(\eta_n = \alpha h^2\right)\)</span> and curvature diffusion value <span class="math notranslate nohighlight">\(\left(\eta_\kappa = \beta h^2\right)\)</span> must be small values larger than 0. We recommend the following procedure to choose a proper value for these parameters:</p>
 <ol class="arabic simple">
 <li><p>Enable <code class="docutils literal notranslate"><span class="pre">output</span> <span class="pre">auxiliary</span> <span class="pre">fields</span></code> to write filtered phase fraction gradient and filtered curvature fields.</p></li>
 <li><p>Choose a value close to 1, for example, the default values  <span class="math notranslate nohighlight">\(\alpha = 4\)</span> and <span class="math notranslate nohighlight">\(\beta = 1\)</span>.</p></li>

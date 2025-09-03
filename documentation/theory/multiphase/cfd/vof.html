@@ -718,18 +718,18 @@ a phase fraction threshold (generally <span class="math notranslate nohighlight"
 <p>When including the surface tension force in the resolution of the Navier-Stokes equations, the numerical computation of the curvature can give rise to parasitic flows near the interface between the two fluids. To avoid such spurious currents, the phase fraction gradient and curvature are filtered using projection steps <a class="footnote-reference brackets" href="#zahedi2012" id="id9" role="doc-noteref"><span class="fn-bracket">[</span>6<span class="fn-bracket">]</span></a>, as presented in section <a class="reference internal" href="#normal-and-curvature-computations"><span class="std std-ref">Normal and Curvature Computations</span></a>.</p>
 <section id="normal-and-curvature-computations">
 <span id="id10"></span><h3>Normal and Curvature Computations<a class="headerlink" href="#normal-and-curvature-computations" title="Link to this heading">#</a></h3>
-<p>The following equations are used to compute the filtered phase fraction gradient and filtered curvature. They correspond to the projection steps previously mentioned.</p>
+<p>The following equations are used to compute the projected phase fraction gradient and projected curvature. They correspond to the projection steps previously mentioned.</p>
 <div class="math-wrapper docutils container">
 <div class="math notranslate nohighlight">
 \[\int_\Omega \left( {\bf{v}} \cdot {\bf{\psi}} + \eta_n \nabla {\bf{v}} \cdot \nabla {\bf{\psi}} \right) d\Omega = \int_\Omega \left( {\bf{v}} \cdot \nabla {\phi} \right) d\Omega\]</div>
 </div>
-<p>where <span class="math notranslate nohighlight">\({\bf{v}}\)</span> is a vector test function, <span class="math notranslate nohighlight">\(\bf{\psi}\)</span> is the filtered phase fraction gradient, <span class="math notranslate nohighlight">\(\eta_n\)</span> is the phase fraction gradient filter value, and <span class="math notranslate nohighlight">\(\phi\)</span> is the phase fraction.</p>
+<p>where <span class="math notranslate nohighlight">\({\bf{v}}\)</span> is a vector test function, <span class="math notranslate nohighlight">\(\bf{\psi}\)</span> is the projected phase fraction gradient, <span class="math notranslate nohighlight">\(\eta_n\)</span> is the phase fraction gradient diffusion value, and <span class="math notranslate nohighlight">\(\phi\)</span> is the phase fraction.</p>
 <div class="math-wrapper docutils container">
 <div class="math notranslate nohighlight">
 \[\int_\Omega \left( v \kappa + \eta_\kappa \nabla v \cdot \nabla \kappa \right) d\Omega = \int_\Omega \left( \nabla v \cdot \frac{\bf{\psi}}{|\bf{\psi}|} \right) d\Omega\]</div>
 </div>
-<p>where <span class="math notranslate nohighlight">\(\kappa\)</span> is the filtered curvature, and <span class="math notranslate nohighlight">\(\eta_\kappa\)</span> is the curvature filter value, and <span class="math notranslate nohighlight">\(v\)</span> is a test function.</p>
-<p>The phase fraction gradient filter <span class="math notranslate nohighlight">\(\eta_n\)</span> and the curvature filter value <span class="math notranslate nohighlight">\(\eta_\kappa\)</span> are respectively computed according to:</p>
+<p>where <span class="math notranslate nohighlight">\(\kappa\)</span> is the projected curvature, and <span class="math notranslate nohighlight">\(\eta_\kappa\)</span> is the curvature diffusion value, and <span class="math notranslate nohighlight">\(v\)</span> is a test function.</p>
+<p>The phase fraction gradient diffusion <span class="math notranslate nohighlight">\(\eta_n\)</span> and the curvature diffusion value <span class="math notranslate nohighlight">\(\eta_\kappa\)</span> are respectively computed according to:</p>
 <div class="math-wrapper docutils container">
 <div class="math notranslate nohighlight">
 \[ \begin{align}\begin{aligned}\eta_n = \alpha h^2\\\eta_\kappa = \beta h^2\end{aligned}\end{align} \]</div>

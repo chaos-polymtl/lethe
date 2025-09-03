@@ -65,12 +65,12 @@ The default values of the VOF parameters are given in the text box below.
     end
 
     subsection surface tension force
-      set enable                                = false
-      set verbosity                             = quiet
-      set output auxiliary fields               = false
-      set phase fraction gradient filter factor = 4
-      set curvature filter factor               = 1
-      set enable marangoni effect               = false
+      set enable                                   = false
+      set verbosity                                = quiet
+      set output auxiliary fields                  = false
+      set phase fraction gradient diffusion factor = 4
+      set curvature diffusion factor               = 1
+      set enable marangoni effect                  = false
     end
 
   end
@@ -233,26 +233,26 @@ Surface Tension Force
       When the surface tension force is enabled, a ``fluid-fluid`` material interaction and a ``surface tension model`` with its parameters must be specified in the :doc:`physical_properties` subsection.
 
   * ``verbosity``: enables the display of the output from the surface tension force calculations. Choices are: ``quiet`` (default, no output) and ``verbose``.
-  * ``output auxiliary fields``: enables the display of the filtered ``phase fraction gradient`` and filtered ``curvature``. Used for debugging purposes.
+  * ``output auxiliary fields``: enables the display of the projected ``phase fraction gradient`` and projected ``curvature``. Used for debugging purposes.
 
-  * ``phase fraction gradient filter factor``: value of the factor :math:`\alpha` applied in the filter :math:`\eta_n = \alpha h^2`, where :math:`h` is the cell size. This filter is used to apply a `projection step <https://onlinelibrary.wiley.com/doi/full/10.1002/fld.2643>`_ to damp high frequency errors, that are magnified by differentiation, in the phase fraction gradient (:math:`\bf{\psi}`), following the equation:
+  * ``phase fraction gradient diffusion factor``: value of the factor :math:`\alpha` in :math:`\eta_n = \alpha h^2`, where :math:`h` is the cell size. This diffusion coefficient (:math:`\eta_n`) is used in a `projection step <https://onlinelibrary.wiley.com/doi/full/10.1002/fld.2643>`_ to damp high frequency errors, that are magnified by differentiation, in the phase fraction gradient (:math:`\bf{\psi}`), following the equation:
 
     .. math::
         \int_\Omega \left( {\bf{v}} \cdot {\bf{\psi}} + \eta_n \nabla {\bf{v}} \cdot \nabla {\bf{\psi}} \right) d\Omega = \int_\Omega \left( {\bf{v}} \cdot \nabla {\phi} \right) d\Omega
 
-    where :math:`\bf{v}` is a piecewise continuous vector-valued test function, :math:`\bf{\psi}` is the filtered phase fraction gradient, and :math:`\phi` is the phase fraction.
+    where :math:`\bf{v}` is a piecewise continuous vector-valued test function, :math:`\bf{\psi}` is the projected phase fraction gradient, and :math:`\phi` is the phase fraction.
 
 
-  * ``curvature filter factor``: value of the factor :math:`\beta` applied in the filter :math:`\eta_\kappa = \beta h^2`, where :math:`h` is the cell size. This filter is used to apply a `projection step <https://onlinelibrary.wiley.com/doi/full/10.1002/fld.2643>`_ to damp high frequency errors, that are magnified by differentiation, in the curvature :math:`\kappa`, following the equation:
+  * ``curvature diffusion factor``: value of the factor :math:`\beta` in  :math:`\eta_\kappa = \beta h^2`, where :math:`h` is the cell size. This diffusion coefficient (:math:`\eta_\kappa`) is used in a `projection step <https://onlinelibrary.wiley.com/doi/full/10.1002/fld.2643>`_ to damp high frequency errors, that are magnified by differentiation, in the curvature :math:`\kappa`, following the equation:
 
     .. math:: 
         \int_\Omega \left( v \kappa + \eta_\kappa \nabla v \cdot \nabla \kappa \right) d\Omega = \int_\Omega \left( \nabla v \cdot \frac{\bf{\psi}}{|\bf{\psi}|} \right) d\Omega
 
-    where :math:`v` is a test function, :math:`\kappa` is the filtered curvature, and :math:`\bf{\psi}` is the filtered phase fraction gradient.
+    where :math:`v` is a test function, :math:`\kappa` is the projected curvature, and :math:`\bf{\psi}` is the projected phase fraction gradient.
 
   .. tip::
 
-    Use the procedure suggested in: :ref:`choosing values for the surface tension force filters`.
+    Use the procedure suggested in: :ref:`choosing values for the surface tension force diffusion factors`.
 
   * ``enable marangoni effect``: Marangoni effect is a thermocapillary effect. It is considered in simulations if this parameter is set to ``true``. Additionally, the ``heat transfer`` auxiliary physics must be enabled (see: :doc:`./multiphysics`) and a non constant ``surface tension model`` with its parameters must be specified in the ``physical properties`` subsection (see: :doc:`./physical_properties`).
 
@@ -260,14 +260,14 @@ Surface Tension Force
 
   The surface tension force is used in the :doc:`../../examples/multiphysics/rising-bubble/rising-bubble` example.
 
-.. _choosing values for the surface tension force filters:
+.. _choosing values for the surface tension force diffusion factors:
 
-Choosing Values for the Surface Tension Force Filters
-+++++++++++++++++++++++++++++++++++++++++++++++++++++++
+Choosing Values for the Surface Tension Force Diffusion Factors
++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
-The following procedure is recommended to choose proper values for the ``phase fraction gradient filter factor`` and ``curvature filter factor``:
+The following procedure is recommended to choose proper values for the ``phase fraction gradient diffusion factor`` and ``curvature diffusion factor``:
 
-1. Use ``set output auxiliary fields = true`` to write filtered phase fraction gradient and filtered curvature fields.
+1. Use ``set output auxiliary fields = true`` to write projected phase fraction gradient and projected curvature fields.
 2. Choose a value close to 1, for example, :math:`\alpha = 4` and :math:`\beta = 1`.
-3. Run the simulation and check whether the filtered phase fraction gradient field is smooth and without oscillation.
-4.  If the filtered phase fraction gradient and filtered curvature fields show oscillations, increase the value :math:`\alpha` and :math:`\beta` to larger values, and repeat this process until reaching smooth filtered phase fraction gradient and filtered curvature fields without oscillations.
+3. Run the simulation and check whether the projected phase fraction gradient field is smooth and without oscillation.
+4.  If the projected phase fraction gradient and projected curvature fields show oscillations, increase the value :math:`\alpha` and :math:`\beta`, and repeat this process until reaching smooth projected phase fraction gradient and projected curvature fields without oscillations.
