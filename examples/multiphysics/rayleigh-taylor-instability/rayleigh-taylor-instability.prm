@@ -196,14 +196,6 @@ subsection timer
 end
 
 #---------------------------------------------------
-# Stabilization
-#---------------------------------------------------
-
-subsection stabilization
-  set vof dcdd stabilization           = false
-end
-
-#---------------------------------------------------
 # Non-Linear Solver Control
 #---------------------------------------------------
 
