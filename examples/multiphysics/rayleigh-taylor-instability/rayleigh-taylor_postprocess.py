@@ -149,7 +149,7 @@ line.set_path_effects([pe.Stroke(linewidth=5.5, foreground='black'),
                        pe.Normal()])
 
 ax0.plot(time_list, y_spike_list,  label="Spike - Lethe")
-line, = ax0.plot(ref_time, ref_y_spike, linestyle="dotted",   label="Spike - He et al (1999)")
+line, = ax0.plot(ref_time, ref_y_spike, linestyle="dotted",   label=r"Spike - He \textit{et al.} (1999)")
 line.set_path_effects([pe.Stroke(linewidth=5.5, foreground='black'),
                        pe.Normal()])
 
