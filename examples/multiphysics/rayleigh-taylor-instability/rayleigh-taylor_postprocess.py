@@ -171,7 +171,7 @@ plt.plot(t,geo_area/geo_area[0],label="Geometric measure")
 plt.legend()
 
 plt.xlabel(r"Time $(t)$ [s]")
-plt.ylabel(r"Relative area $(\frac{A}{A_0})$")
+plt.ylabel(r"Relative area $\left(\frac{A}{A_0}\right)$")
 plt.tight_layout()
 plt.savefig('./mass_of_fluid_1.png')
 plt.show()
