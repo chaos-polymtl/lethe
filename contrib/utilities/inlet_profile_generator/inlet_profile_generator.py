@@ -1,3 +1,6 @@
+# SPDX-FileCopyrightText: Copyright (c) 2025 The Lethe Authors
+# SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
+
 import sympy as sp
 import argparse
 from math import ceil
@@ -5,14 +8,14 @@ from math import ceil
 # Parse arguments
 parser = argparse.ArgumentParser(description="Generate inlet polynomial velocity profile with given flow rate")
 parser.add_argument("--polynomial-degree", type=int, default=2, help="Degree k of the polynomial shape (k>=0)")
-parser.add_argument("--shape", type=str, default="rectangular", choices=["rectangular", "circular"],
+parser.add_argument("--shape", type=str, default="rectangle", choices=["rectangle", "circle"],
                     help="Inlet cross-section shape")
 parser.add_argument("--flow-rate", type=float, default=1.0, help="Desired volumetric flow rate Q")
 parser.add_argument("--center", type=float, nargs="+", default=[0.0, 0.0],
                     help="Center coordinates [x0, y0]")
 parser.add_argument("--length", type=float, nargs="+", default=[1.0, 1.0],
-                    help="Rectangular: lengths [ax, ay]. Circular: diameter [D]")
-parser.add_argument("--show", action="store_true", help="Show a 1D centerline plot (rectangular only)")
+                    help="Rectangle: lengths [ax, ay]. Circle: diameter [D]")
+parser.add_argument("--show", type=bool, default=False, help="Show a 1D centerline plot (rectangle only)")
 args = parser.parse_args()
 
 # Symbols
@@ -29,10 +32,10 @@ if k % 2 == 1:
     raise ValueError("Odd polynomial degrees are not supported.")
 
 # Build polynomial shape p(x,y) and integrate it over the inlet
-if args.shape == "rectangular":
+if args.shape == "rectangle":
     # length = [ax, ay] are lengths; domain is [x0-ax, x0+ax] x [y0-ay, y0+ay]
     if len(args.length) != 2:
-        raise ValueError("For rectangular, --length must be two numbers: [ax ay] (lengths).")
+        raise ValueError("For rectangle, --length must be two numbers: [ax ay] (lengths).")
     half_lengths = [l / 2 for l in args.length]
     ax, ay = half_lengths
     if ax <= 0 or ay <= 0:
@@ -52,10 +55,10 @@ if args.shape == "rectangular":
 
     u = sp.simplify(s * p)
 
-elif args.shape == "circular":
+elif args.shape == "circle":
     # length = [D] is DIAMETER; domain is disk of radius R centered at (x0,y0)
     if len(args.length) != 1:
-        raise ValueError("For circular, --length must be one number: [D] (diameter).")
+        raise ValueError("For circle, --length must be one number: [D] (diameter).")
     D = float(args.length[0])
     if D <= 0:
         raise ValueError("Diameter must be positive.")
@@ -82,17 +85,26 @@ else:
 print("\n=== Inlet velocity profile u(x,y) (SymPy expression) ===\n")
 print(u)
 
-# Optional: show a 1D cut along the centerline (rectangular only)
-if args.show and args.shape == "rectangular":
-    # Plot u(x, y0) across the width
-    ux_center = sp.simplify(sp.expand(u.subs(y, y0)))
-    print("\nPlotting centerline u(x, y0) with SymPy...")
-    sp.plot(ux_center, (x, x0 - ax, x0 + ax),
-            title="Centerline x velocity profile",
-            xlabel="x", ylabel="u(x, y0)")
+# Optional: show a 1D cut along the centerline (rectangle only)
+if args.show:
+    if args.shape == "rectangle":
+        # Plot u(x, y0) across the width
+        ux_center = sp.simplify(sp.expand(u.subs(y, y0)))
+        print("\nPlotting centerline u(x, y0) with SymPy...")
+        sp.plot(ux_center, (x, x0 - ax, x0 + ax),
+                title="Centerline x velocity profile",
+                xlabel="x", ylabel="u(x, y0)")
 
-    uy_center = sp.simplify(sp.expand(u.subs(x, x0)))
-    print("\nPlotting centerline u(x0, y) with SymPy...")
-    sp.plot(uy_center, (y, y0 - ay, y0 + ay),
-            title="Centerline y velocity profile",
-            xlabel="y", ylabel="u(x0, y)")
+        uy_center = sp.simplify(sp.expand(u.subs(x, x0)))
+        print("\nPlotting centerline u(x0, y) with SymPy...")
+        sp.plot(uy_center, (y, y0 - ay, y0 + ay),
+                title="Centerline y velocity profile",
+                xlabel="y", ylabel="u(x0, y)")
+
+    elif args.shape == "circle":
+        # Plot u(r)
+        ur_center = sp.simplify(sp.expand(u.subs(x, x0)))
+        print("\nPlotting centerline u(r) with SymPy...")
+        sp.plot(ur_center, (y, y0 - R, y0 + R),
+                title="Centerline velocity profile",
+                xlabel="r", ylabel="u(r)")
