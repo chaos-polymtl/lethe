@@ -145,7 +145,7 @@ fig0 = plt.figure()
 ax0 = fig0.add_subplot(111)
 
 ax0.plot(time_list, y_bubble_list,  label="Bubble - Lethe")
-line, = ax0.plot(ref_time, ref_y_bubble,linestyle="dotted", label="Bubble - He et al (1999)")
+line, = ax0.plot(ref_time, ref_y_bubble,linestyle="dotted", label=r"Bubble - He \textit{et al.} (1999)")
 line.set_path_effects([pe.Stroke(linewidth=5.5, foreground='black'),
                        pe.Normal()])
 
