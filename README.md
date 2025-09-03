@@ -59,8 +59,8 @@ Follow the instructions in the
 - Amishga Alphonius
 - Antoine Avrit
 - Lucka Barbeau
-- [Bruno Blais](https://www.polymtl.ca/expertises/en/blais-bruno)
 - Valérie Bibeau
+- [Bruno Blais](https://www.polymtl.ca/expertises/en/blais-bruno)
 - Bianca Bugeaud
 - Bruna Campos
 - Audrey Collard-Daigneault
