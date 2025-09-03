@@ -52,7 +52,6 @@ plt.rcParams['font.family']='DejaVu Serif'
 plt.rcParams['font.serif']='cm'
 plt.rcParams['savefig.bbox']='tight'
 plt.rcParams['legend.handlelength']=1
-plt.rcParams['text.usetex'] = True
 
 #--------------------------------------------
 # Main
@@ -145,12 +144,12 @@ fig0 = plt.figure()
 ax0 = fig0.add_subplot(111)
 
 ax0.plot(time_list, y_bubble_list,  label="Bubble - Lethe")
-line, = ax0.plot(ref_time, ref_y_bubble,linestyle="dotted", label=r"Bubble - He \textit{et al.} (1999)")
+line, = ax0.plot(ref_time, ref_y_bubble,linestyle="dotted", label=r"Bubble - He $\it{et\;al.}$ (1999)")
 line.set_path_effects([pe.Stroke(linewidth=5.5, foreground='black'),
                        pe.Normal()])
 
 ax0.plot(time_list, y_spike_list,  label="Spike - Lethe")
-line, = ax0.plot(ref_time, ref_y_spike, linestyle="dotted",   label=r"Spike - He \textit{et al.} (1999)")
+line, = ax0.plot(ref_time, ref_y_spike, linestyle="dotted",   label=r"Spike - He $\it{et\;al.}$ (1999)")
 line.set_path_effects([pe.Stroke(linewidth=5.5, foreground='black'),
                        pe.Normal()])
 
