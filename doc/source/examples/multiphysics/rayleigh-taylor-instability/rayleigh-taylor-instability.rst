@@ -190,7 +190,7 @@ We set ``initial refinement steps = 4`` to adapt the mesh to the initial value o
 Boundary Conditions
 ~~~~~~~~~~~~~~~~~~~
 
-The boundary conditions applied on the left and right boundaries are ``slip``, while a ``noslip`` boundary condition is used for the top and bottom walls.
+The boundary conditions applied on the left and right boundaries are ``periodic``, while a ``noslip`` boundary condition is used for the top and bottom walls.
 
 .. code-block:: text
 
@@ -212,7 +212,7 @@ The boundary conditions applied on the left and right boundaries are ``slip``, w
     end
   end
 
-For VOF, we specify the periodic boundary conditions and no-flux boundary conditions on the top and bottom.
+For VOF, we specify the periodic boundary conditions on the sides and no-flux boundary conditions on the top and bottom.
 
 
 .. code-block:: text
@@ -238,7 +238,7 @@ For VOF, we specify the periodic boundary conditions and no-flux boundary condit
 VOF
 ~~~
 
-In the ``VOF`` subsection, we select the ``geometric interface reinitislization`` method in the ``interface regularization method`` subsection to reconstruct the interface and keep it sharp during the simulation. This approach is currently the most robust method available in Lethe.
+In the ``VOF`` subsection, we select the ``geometric interface reinitialization`` method in the ``interface regularization method`` subsection to reconstruct the interface and keep it sharp during the simulation. This approach is currently the most robust method available in Lethe.
 
 .. code-block:: text
 
