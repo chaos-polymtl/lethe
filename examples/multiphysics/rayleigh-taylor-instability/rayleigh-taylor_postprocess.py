@@ -57,8 +57,7 @@ plt.rcParams['legend.handlelength']=1
 # Main
 #--------------------------------------------
 
-#To make it work, type "python3 rayleigh-taylor_postprocess.py ./output/adaptive/" or
-#"python3 rayleigh-taylor_postprocess.py ./output/constant/" into the terminal.
+#To make it work, type "python3 rayleigh-taylor_postprocess.py -f . -p rayleigh-taylor-instability.prm" into the terminal.
 parser = argparse.ArgumentParser(description='Arguments for the validation of the 2D rising bubble benchmark')
 parser.add_argument("-f", "--folder", type=str, help="Path to the folder in which the simulation is run. This is the folder that contains the prm file.", required=True)
 parser.add_argument("-p", "--prm", type=str, help="Name of the prm file", required=True)
