@@ -7,10 +7,11 @@ Tools
     :glob:
     :titlesonly:
 
-    updating-test-results
+    automatic_launch/automatic_launch
     command-line-interface-options
     gmsh/gmsh
+    inlet_profile_generator/inlet_profile_generator
     pointwise/pointwise
-    automatic_launch/automatic_launch
     postprocessing/postprocessing_paraview
     postprocessing/postprocessing_pyvista
+    updating-test-results
