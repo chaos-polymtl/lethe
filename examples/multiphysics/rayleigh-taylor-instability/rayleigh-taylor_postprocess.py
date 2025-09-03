@@ -1,4 +1,4 @@
-# SPDX-FileCopyrightText: Copyright (c) 2022-2024 The Lethe Authors
+# SPDX-FileCopyrightText: Copyright (c) 2022-2025 The Lethe Authors
 # SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
 """
@@ -11,19 +11,58 @@ to the results of He et al (1999)
 # Modules
 #-------------------------------------------
 import numpy as np
+import argparse
 import pandas as pd
 import matplotlib.pyplot as plt
+import matplotlib.patheffects as pe
 import pyvista as pv
+import tqdm
 
 import os
 import sys
+sys.path.append("$LETHE_PATH/contrib/postprocessing/")
+from lethe_pyvista_tools import *
+
+
+#--------------------------------------------
+# Plot parameters
+#--------------------------------------------
+from cycler import cycler
+
+colors=['#1b9e77','#d95f02','#7570b3','#e7298a','#66a61e','#e6ab02']
+
+plt.rcParams['axes.prop_cycle'] = cycler(color = colors)
+plt.rcParams['figure.facecolor'] = 'white'
+plt.rcParams['figure.figsize'] = (10,8)
+plt.rcParams['lines.linewidth'] = 4
+plt.rcParams['lines.markersize'] = '11'
+plt.rcParams['markers.fillstyle'] = "none"
+plt.rcParams['lines.markeredgewidth'] = 2
+plt.rcParams['legend.columnspacing'] = 2
+plt.rcParams['legend.handlelength'] = 3
+plt.rcParams['legend.handletextpad'] = 0.2
+plt.rcParams['legend.frameon'] = True
+plt.rcParams['legend.fancybox'] = False
+plt.rcParams['xtick.major.width'] = 2
+plt.rcParams['xtick.major.size'] = 5
+plt.rcParams['ytick.major.size'] = 5
+plt.rcParams['ytick.major.width'] = 2
+plt.rcParams['font.size'] = '25'
+plt.rcParams['font.family']='DejaVu Serif'
+plt.rcParams['font.serif']='cm'
+plt.rcParams['savefig.bbox']='tight'
+plt.rcParams['legend.handlelength']=1
 
 #--------------------------------------------
 # Main
 #--------------------------------------------
 
-#To make it work, type "python3 rayleigh-taylor_postprocess.py ./output/adaptive/" or
-#"python3 rayleigh-taylor_postprocess.py ./output/constant/" into the terminal.
+#To make it work, type "python3 rayleigh-taylor_postprocess.py -f . -p rayleigh-taylor-instability.prm" into the terminal.
+parser = argparse.ArgumentParser(description='Arguments for the validation of the 2D rising bubble benchmark')
+parser.add_argument("-f", "--folder", type=str, help="Path to the folder in which the simulation is run. This is the folder that contains the prm file.", required=True)
+parser.add_argument("-p", "--prm", type=str, help="Name of the prm file", required=True)
+
+args, leftovers=parser.parse_known_args()
 
 
 #Load reference data from He et al (1999)
@@ -41,23 +80,16 @@ g = 9.81
 phase_limit = 0.5
 
 #Take case path as argument and store it
-output_path = sys.argv[1]
+simulation_path = args.folder
+prm_file_name=args.prm
+pvd_file_name="out.pvd"
 
 #Define list of VTU files
-list_vtu = os.listdir(output_path)
-list_vtu = [x for x in list_vtu if ("pvtu" in x)]
-
-# Sort VTU files to ensure they are in the same order as the time step
-list_vtu = sorted(list_vtu)
-
-# Read the pvd file to extract the times
-if "constant" in list_vtu[0]:
-    reader = pv.get_reader("output/constant/rayleigh-taylor-constant-sharpening.pvd")
-else:
-    reader = pv.get_reader("output/adaptive/rayleigh-taylor-adaptive-sharpening.pvd")
+sim = lethe_pyvista_tools(simulation_path, prm_file_name, pvd_file_name)
 
 # Get active times
-time_list = reader.time_values
+time_list = sim.time_list
+
 time_list = [x * ((g/H)**0.5) for x in time_list]
 
 #Create a list to fill with maximum y in which phase < phase_limit
@@ -75,14 +107,17 @@ a_bubble = [0, 0, 0]
 b_bubble = [0, 1, 0]
 
 #Read VTU files
-for vtu_file in list_vtu:
-    sim = pv.read(f"{output_path}/{vtu_file}")
+pbar = tqdm(total = len(sim.list_vtu), desc="Calculate Spike and Bubble")
+for i in tqdm(range(len(sim.list_vtu))):
 
-    sampled_data_spike = sim.sample_over_line(a_spike, b_spike, resolution=1000)
+    step = sim.get_df(i)
+
+    # Extract the spike and the bubble
+    sampled_data_spike = step.sample_over_line(a_spike, b_spike, resolution=1000)
     phase_spike = pd.DataFrame((sampled_data_spike["filtered_phase"].copy()))
     points_spike = pd.DataFrame(sampled_data_spike.points.copy())
 
-    sampled_data_bubble = sim.sample_over_line(a_bubble, b_bubble, resolution=1000)
+    sampled_data_bubble = step.sample_over_line(a_bubble, b_bubble, resolution=1000)
     phase_bubble = pd.DataFrame(sampled_data_bubble["filtered_phase"].copy())
     points_bubble = pd.DataFrame(sampled_data_bubble.points.copy())
 
@@ -107,66 +142,36 @@ for vtu_file in list_vtu:
 #Figure
 fig0 = plt.figure()
 ax0 = fig0.add_subplot(111)
-ax0.plot(time_list, y_spike_list, '-k', linewidth=2, label="Spike - Lethe")
-ax0.plot(ref_time, ref_y_spike, 'r', linestyle="dashed",  linewidth=2.5,  label="Spike - He et al (1999)")
-ax0.plot(time_list, y_bubble_list, color='#2e62ff', linewidth=2, label="Bubble - Lethe")
-ax0.plot(ref_time, ref_y_bubble, color='#fc8c03',  linewidth=2.5, linestyle="dashed", label="Bubble - He et al (1999)")
+
+ax0.plot(time_list, y_bubble_list,  label="Bubble - Lethe")
+line, = ax0.plot(ref_time, ref_y_bubble,linestyle="dotted", label=r"Bubble - He $\it{et\;al.}$ (1999)")
+line.set_path_effects([pe.Stroke(linewidth=5.5, foreground='black'),
+                       pe.Normal()])
+
+ax0.plot(time_list, y_spike_list,  label="Spike - Lethe")
+line, = ax0.plot(ref_time, ref_y_spike, linestyle="dotted",   label=r"Spike - He $\it{et\;al.}$ (1999)")
+line.set_path_effects([pe.Stroke(linewidth=5.5, foreground='black'),
+                       pe.Normal()])
+
 ax0.set_ylabel(r'$y$')
 ax0.set_xlabel(r'$t^* = t \sqrt{g/H}$')
 ax0.set_xlim([0, 4.5])
-ax0.set_ylim([0.1, 0.8])
-ax0.legend(loc="upper left")
-plt.title("Spike and bubble evolution with {} interface sharpening\n".format(output_path[9:-1]))
-fig0.savefig('./spike_and_bubble_evolution_{}.png'.format(output_path[9:-1]))
+ax0.set_ylim([0., 1.2])
+ax0.legend()
+plt.tight_layout()
+fig0.savefig('./spike_and_bubble_evolution.png')
 plt.show()
 
 
-#Plot the mass of fluid along the simulation
+#Plot the relative area of fluid 1 throughout the simulation
 
-#Functions to turn .dat data in numpy array
-#Credits to Lucka Barbeau for the two functions below!
-def is_number(s):
-    try:
-        float(s)
-    except ValueError:
-        return False
-    return True
-def read_my_data(results_path):
-    force_file = open(results_path, 'r')
-    list_of_list_of_vars_name = [[]];
-    list_of_list_of_vars = [[]];
-    fix_vars_name = False
+t,area,geo_area = np.loadtxt(sim.path_output+"mass_conservation_information.dat", usecols=(0,7,8),skiprows=1,unpack=True)
+plt.plot(t,area/area[0],label="Algebraic measure")
+plt.plot(t,geo_area/geo_area[0],label="Geometric measure")
+plt.legend()
 
-    nb_set_of_vars = 0;
-    for line in force_file.readlines():
-        i = 0;
-        for word in line.split():
-            if is_number(word):
-                fix_vars_name = True
-                list_of_list_of_vars[nb_set_of_vars][i] = np.append(list_of_list_of_vars[nb_set_of_vars][i],
-                                                                    float(word))
-                i += 1
-            else:
-                if word != 'particle':
-                    if fix_vars_name:
-                        nb_set_of_vars += 1
-                        list_of_list_of_vars_name.append([])
-                        list_of_list_of_vars.append([])
-                        fix_vars_name = False
-                    list_of_list_of_vars_name[nb_set_of_vars].append(word)
-                    list_of_list_of_vars[nb_set_of_vars].append(np.array([]))
-    return list_of_list_of_vars_name, list_of_list_of_vars
-
-list_of_list_of_vars_name,list_of_list_of_vars=read_my_data(output_path + "/mass_conservation_information.dat")
-
-relative_mass_variation_fluid_1 = (list_of_list_of_vars[0][6]/list_of_list_of_vars[0][6][0]-1)*100
-
-dpi_val = 300
-fig0 = plt.figure(figsize=(1920/dpi_val, 1440/dpi_val))
-plt.plot(list_of_list_of_vars[0][0],relative_mass_variation_fluid_1)
-plt.title("Evolution of the mass of fluid 1 with {} interface sharpening\n".format(output_path[9:-1]))
 plt.xlabel(r"Time $(t)$ [s]")
-plt.ylabel(r"Relative mass variation percentage $\left(\frac{m_t-m_0}{m_0} \ 100\% \right)$")
-plt.ylim(-0.2,0.4)
-plt.savefig('./mass_of_fluid_1_{}.png'.format(output_path[9:-1]), dpi=dpi_val)
+plt.ylabel(r"Relative area $\left(\frac{A}{A_0}\right)$")
+plt.tight_layout()
+plt.savefig('./mass_of_fluid_1.png')
 plt.show()

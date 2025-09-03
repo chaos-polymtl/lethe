@@ -17,9 +17,8 @@ subsection simulation control
   set adapt            = true
   set max cfl          = 0.8
   set output control   = iteration
-  set output frequency = 10
-  set output name      = rayleigh-taylor-constant-sharpening
-  set output path      = ./output/constant/
+  set output frequency = 20
+  set output path      = ./output/
 end
 
 #---------------------------------------------------
@@ -41,9 +40,8 @@ subsection initial conditions
     set Function expression = 0; 0; 0
   end
   subsection VOF
-    set Function expression = if (y>(0.5 + 0.1 * 0.25 * cos(2 *3.1415 * x / 0.25)) , 1, 0)
-    set smoothing type      = diffusive
-    set diffusion factor    = 1
+    set Function expression = y - (0.5 + 0.1 * 0.25 * cos(2 *3.1415 * x / 0.25)) + 0.5
+    set smoothing type      = geometric
   end
 end
 
@@ -104,18 +102,19 @@ end
 
 subsection VOF
   subsection interface regularization method
-    set type      = projection-based interface sharpening
-    set frequency = 25
-    subsection projection-based interface sharpening
-      set threshold           = 0.5
-      set interface sharpness = 1.5
-      set type                = constant
+    set type      = geometric interface reinitialization
+    set frequency = 20
+    set verbosity = verbose
+    subsection geometric interface reinitialization
+      set max reinitialization distance = 0.03
+      set transformation type           = tanh
+      set tanh thickness                = 0.015
     end
   end
+
   subsection phase filtration
-    set type      = tanh
-    set verbosity = quiet
-    set beta      = 10
+    set type = tanh
+    set beta = 10
   end
 end
 
@@ -129,31 +128,51 @@ subsection post-processing
 end
 
 #---------------------------------------------------
+# Stabilization
+#---------------------------------------------------
+
+subsection stabilization
+  set vof dcdd stabilization = false
+end
+
+#---------------------------------------------------
 # Boundary Conditions
 #---------------------------------------------------
 
 subsection boundary conditions
-  set number = 4
+  set number = 3
   subsection bc 0
-    set id   = 0
-    set type = slip
+    set id                 = 0
+    set type               = periodic
+    set periodic_id        = 1
+    set periodic_direction = 0
   end
   subsection bc 1
-    set id   = 1
-    set type = slip
-  end
-  subsection bc 2
     set id   = 2
     set type = noslip
   end
-  subsection bc 3
+  subsection bc 2
     set id   = 3
     set type = noslip
   end
 end
 
 subsection boundary conditions VOF
-  set number = 4
+  set number = 3
+  subsection bc 0
+    set id                 = 0
+    set type               = periodic
+    set periodic_id        = 1
+    set periodic_direction = 0
+  end
+  subsection bc 1
+    set id   = 2
+    set type = none
+  end
+  subsection bc 2
+    set id   = 3
+    set type = none
+  end
 end
 
 #---------------------------------------------------
@@ -167,19 +186,25 @@ subsection source term
 end
 
 #---------------------------------------------------
+# Timer
+#---------------------------------------------------
+
+subsection timer
+  set type = end
+end
+
+#---------------------------------------------------
 # Non-Linear Solver Control
 #---------------------------------------------------
 
 subsection non-linear solver
   subsection fluid dynamics
-    set verbosity      = verbose
-    set tolerance      = 1e-6
-    set max iterations = 5
+    set verbosity = verbose
+    set tolerance = 1e-6
   end
   subsection VOF
-    set verbosity      = verbose
-    set tolerance      = 1e-10
-    set max iterations = 2
+    set verbosity = verbose
+    set tolerance = 1e-10
   end
 end
 
@@ -191,8 +216,8 @@ subsection linear solver
   subsection fluid dynamics
     set verbosity                             = verbose
     set method                                = gmres
-    set max krylov vectors                    = 500
-    set max iters                             = 1000
+    set max krylov vectors                    = 200
+    set max iters                             = 200
     set relative residual                     = 1e-5
     set minimum residual                      = 1e-7
     set preconditioner                        = ilu
@@ -203,8 +228,8 @@ subsection linear solver
   subsection VOF
     set verbosity                             = verbose
     set method                                = gmres
-    set max krylov vectors                    = 500
-    set max iters                             = 1000
+    set max krylov vectors                    = 200
+    set max iters                             = 200
     set relative residual                     = 1e-8
     set minimum residual                      = 1e-11
     set preconditioner                        = ilu
