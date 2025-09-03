@@ -352,13 +352,13 @@ With one higher level of refinement, we can see a similar correspondence between
 
 The following figures show the relative area of ``fluid 1`` throughout the simulation from a geometric perspective and from the volumetric integral of the VOF field. The left figure displays the result for the coarser mesh resolution of the example whereas the right figure shows area conservation for the finer mesh. We see that area conservation is not fully preserved once the interface has been significantly stretched and deformed, but it improves as the mesh is refined.
 
-+-----------------------------------------------+--------------------------------------------------------------+
-|  .. image:: images/mass_of_fluid_1.png        |  .. image:: images/mass_of_fluid_1_ref_max_8_min_6.png       |
-|      :alt: Schematic                          |      :alt: Schematic                                         |
-|      :align: center                           |      :align: center                                          |
-|      :width: 400                              |      :width: 400                                             |
-|                                               |                                                              |
-+-----------------------------------------------+--------------------------------------------------------------+
++--------------------------------------------------------------+--------------------------------------------------------------+
+|  .. image:: images/mass_of_fluid_1.png                       |  .. image:: images/mass_of_fluid_1_ref_max_8_min_6.png       |
+|      :alt: Schematic                                         |      :alt: Schematic                                         |
+|      :align: center                                          |      :align: center                                          |
+|      :width: 400                                             |      :width: 400                                             |
+|                                                              |                                                              |
++--------------------------------------------------------------+--------------------------------------------------------------+
 
 ****
 
