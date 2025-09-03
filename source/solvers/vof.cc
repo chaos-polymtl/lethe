@@ -1696,6 +1696,10 @@ VolumeOfFluid<dim>::modify_solution()
   if (simulation_parameters.multiphysics.vof_parameters.surface_tension_force
         .enable)
     {
+      // TODO AA test with unfiltered solution
+      // this->vof_subequations_interface
+      //   ->set_vof_filtered_solution_and_dof_handler(this->filtered_solution,
+      //                                               this->dof_handler);
       this->vof_subequations_interface
         ->set_vof_filtered_solution_and_dof_handler(*this->filtered_solution,
                                                     *this->dof_handler);
