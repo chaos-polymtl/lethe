@@ -379,15 +379,6 @@ FluidDynamicsMatrixBased<dim>::setup_assemblers()
           this->simulation_control, this->simulation_parameters.ale));
     }
 
-  // Mortar ALE
-  if (this->simulation_parameters.mortar_parameters.enable)
-    {
-      this->assemblers.emplace_back(
-        std::make_shared<NavierStokesAssemblerMortarALE<dim>>(
-          this->simulation_control,
-          this->simulation_parameters.mortar_parameters));
-    }
-
   if (this->simulation_parameters.multiphysics.cahn_hilliard)
     {
       // Time-stepping schemes
@@ -598,6 +589,17 @@ FluidDynamicsMatrixBased<dim>::setup_assemblers()
               "Using the GLS solver with a stabilization other than the pspg_supg or gls "
               "stabilization will lead to an unstable solver that is unable to converge");
         }
+    }
+
+  // Mortar ALE
+  // This assembler is added last because it needs access to the strong
+  // Jacobian term computed in the core default assembler
+  if (this->simulation_parameters.mortar_parameters.enable)
+    {
+      this->assemblers.emplace_back(
+        std::make_shared<NavierStokesAssemblerMortarALE<dim>>(
+          this->simulation_control,
+          this->simulation_parameters.mortar_parameters));
     }
 }
 

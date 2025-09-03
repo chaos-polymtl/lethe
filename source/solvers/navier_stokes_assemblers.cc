@@ -2770,48 +2770,113 @@ NavierStokesAssemblerMortarALE<dim>::assemble_matrix(
   const NavierStokesScratchData<dim>   &scratch_data,
   StabilizedMethodsTensorCopyData<dim> &copy_data)
 {
+  /// Physical properties
+  const std::vector<double> &viscosity_for_stabilization_vector =
+    scratch_data.kinematic_viscosity_for_stabilization;
+
   /// Loop and quadrature informations
   const auto        &JxW_vec    = scratch_data.JxW;
   const unsigned int n_q_points = scratch_data.n_q_points;
   const unsigned int n_dofs     = scratch_data.n_dofs;
+  const double       h          = scratch_data.cell_size;
 
   // Copy data elements
-  auto &strong_residual_vec = copy_data.strong_residual;
   auto &strong_jacobian_vec = copy_data.strong_jacobian;
   auto &local_matrix        = copy_data.local_matrix;
+  // ALE strong Jacobian
+  std::vector<std::vector<Tensor<1, dim>>> strong_jac_ale_vec(
+    n_q_points, std::vector<Tensor<1, dim>>(n_dofs));
 
-  // Mortar ALE components
-  const auto velocity_ale = scratch_data.rotor_linear_velocity_values;
+  // Time steps and inverse time steps which is used for stabilization constant
+  std::vector<double> time_steps_vector =
+    this->simulation_control->get_time_steps_vector();
+  const double dt  = time_steps_vector[0];
+  const double sdt = 1. / dt;
 
   // assembling local matrix and right hand side
   for (unsigned int q = 0; q < n_q_points; ++q)
     {
+      // Gather into local variables the relevant fields
+      const Tensor<1, dim> &velocity = scratch_data.velocity_values[q];
+      const Tensor<1, dim> &velocity_ale =
+        scratch_data.rotor_linear_velocity_values[q];
+      const Tensor<2, dim> &velocity_gradient =
+        scratch_data.velocity_gradients[q];
+
       // Store JxW in local variable for faster access
       const double JxW = JxW_vec[q];
 
-      // Calculate strong residual vector
-      strong_residual_vec[q] +=
-        -scratch_data.velocity_gradients[q] * velocity_ale[q];
+      // Calculation of the magnitude of the velocity for the
+      // stabilization parameter
+      const double u_mag = std::max(velocity.norm(), 1e-12);
 
-      // Strong residual jacobian calculation
+      // Calculation of the GLS stabilization parameter. The
+      // stabilization parameter used is different if the simulation
+      // is steady or unsteady. In the unsteady case it includes the
+      // value of the time-step
+      const double tau =
+        this->simulation_control->get_assembly_method() ==
+            Parameters::SimulationControl::TimeSteppingMethod::steady ?
+          calculate_navier_stokes_gls_tau_steady(
+            u_mag, viscosity_for_stabilization_vector[q], h) :
+          calculate_navier_stokes_gls_tau_transient(
+            u_mag, viscosity_for_stabilization_vector[q], h, sdt);
+
+      // ALE contribution to the strong residual
+      const auto strong_residual_ale = -velocity_gradient * velocity_ale;
+
+      std::vector<Tensor<1, dim>> grad_phi_u_j_x_velocity(n_dofs);
+      std::vector<Tensor<1, dim>> grad_phi_u_j_x_velocity_ale(n_dofs);
+      std::vector<Tensor<1, dim>> velocity_gradient_x_phi_u_j(n_dofs);
+
+      // We loop over the column first to prevent recalculation
+      // of the strong jacobian in the inner loop
       for (unsigned int j = 0; j < n_dofs; ++j)
         {
-          strong_jacobian_vec[q][j] +=
-            -scratch_data.grad_phi_u[q][j] * velocity_ale[q];
+          const auto &grad_phi_u_j = scratch_data.grad_phi_u[q][j];
+
+          // ALE contribution to strong Jacobian
+          strong_jac_ale_vec[q][j] += -grad_phi_u_j * velocity_ale;
         }
 
       for (unsigned int i = 0; i < n_dofs; ++i)
         {
-          const auto phi_u_i = scratch_data.phi_u[q][i];
+          const auto &phi_u_i      = scratch_data.phi_u[q][i];
+          const auto &grad_phi_u_i = scratch_data.grad_phi_u[q][i];
+          const auto &grad_phi_p_i = scratch_data.grad_phi_p[q][i];
+
+          // Store these temporary products in auxiliary variables for speed
+          const auto grad_phi_u_i_x_velocity     = grad_phi_u_i * velocity;
+          const auto grad_phi_u_i_x_velocity_ale = grad_phi_u_i * velocity_ale;
+          const auto strong_residual_ale_x_grad_phi_u_i =
+            strong_residual_ale * grad_phi_u_i;
 
           for (unsigned int j = 0; j < n_dofs; ++j)
             {
-              const Tensor<2, dim> &grad_phi_u_j =
-                scratch_data.grad_phi_u[q][j];
+              const auto &phi_u_j        = scratch_data.phi_u[q][j];
+              const auto &grad_phi_u_j   = scratch_data.grad_phi_u[q][j];
+              const auto &strong_jac     = strong_jacobian_vec[q][j];
+              const auto &strong_jac_ale = strong_jac_ale_vec[q][j];
 
-              // Weak form for : -u_ALE * gradu
+              // ALE term: -u_ale·∇δu
               local_matrix(i, j) +=
-                -phi_u_i * (grad_phi_u_j * velocity_ale[q]) * JxW;
+                -phi_u_i * (grad_phi_u_j * velocity_ale) * JxW;
+
+              // ALE-PSPG term: τ (∇δp, -u_ale·∇δu)
+              local_matrix(i, j) += tau * (strong_jac_ale * grad_phi_p_i) * JxW;
+
+              // ALE-SUPG term
+              local_matrix(i, j) +=
+                tau *
+                // (u·∇δu, -u_ale·∇δu)
+                (strong_jac_ale * grad_phi_u_i_x_velocity -
+                 // (-u_ale·∇δu, -u_ale·∇δu)
+                 strong_jac_ale * grad_phi_u_i_x_velocity_ale -
+                 // (-u_ale·∇δu, strong_jacobian)
+                 strong_jac * grad_phi_u_i_x_velocity_ale +
+                 // (δu·∇δu, -u_ale·∇u)
+                 strong_residual_ale_x_grad_phi_u_i * phi_u_j) *
+                JxW;
             }
         }
 
@@ -2824,37 +2889,103 @@ NavierStokesAssemblerMortarALE<dim>::assemble_rhs(
   const NavierStokesScratchData<dim>   &scratch_data,
   StabilizedMethodsTensorCopyData<dim> &copy_data)
 {
+  /// Physical properties
+  const std::vector<double> &viscosity_vector =
+    scratch_data.kinematic_viscosity;
+  const std::vector<double> &viscosity_for_stabilization_vector =
+    scratch_data.kinematic_viscosity_for_stabilization;
+
   // Loop and quadrature informations
   const auto        &JxW_vec    = scratch_data.JxW;
   const unsigned int n_q_points = scratch_data.n_q_points;
   const unsigned int n_dofs     = scratch_data.n_dofs;
+  const double       h          = scratch_data.cell_size;
 
   // Copy data elements
   auto &strong_residual_vec = copy_data.strong_residual;
   auto &local_rhs           = copy_data.local_rhs;
 
-  // ALE components
-  const auto velocity_ale = scratch_data.rotor_linear_velocity_values;
+  // Time steps and inverse time steps which is used for stabilization constant
+  std::vector<double> time_steps_vector =
+    this->simulation_control->get_time_steps_vector();
+  const double dt  = time_steps_vector[0];
+  const double sdt = 1. / dt;
 
   // assembling local matrix and right hand side
   for (unsigned int q = 0; q < n_q_points; ++q)
     {
+      // Physical properties
+      const double kinematic_viscosity = viscosity_vector[q];
+
+      // Velocity
+      const Tensor<1, dim> &velocity = scratch_data.velocity_values[q];
+      const Tensor<1, dim> &velocity_ale =
+        scratch_data.rotor_linear_velocity_values[q];
+      const Tensor<2, dim> &velocity_gradient =
+        scratch_data.velocity_gradients[q];
+      const Tensor<1, dim> &velocity_laplacian =
+        scratch_data.velocity_laplacians[q];
+
+      // Pressure
+      const Tensor<1, dim> pressure_gradient =
+        scratch_data.pressure_gradients[q];
+
+      // Forcing term
+      const Tensor<1, dim> force       = scratch_data.force[q];
+      double               mass_source = scratch_data.mass_source[q];
+
+      // Calculation of the magnitude of the
+      // velocity for the stabilization parameter
+      const double u_mag = std::max(velocity.norm(), 1e-12);
+
       // Store JxW in local variable for faster access
       const double JxW = JxW_vec[q];
 
-      // Calculate strong residual vector
-      strong_residual_vec[q] +=
-        -scratch_data.velocity_gradients[q] * velocity_ale[q];
+      // Calculation of the GLS stabilization parameter. The
+      // stabilization parameter used is different if the simulation
+      // is steady or unsteady. In the unsteady case it includes the
+      // value of the time-step
+      const double tau =
+        this->simulation_control->get_assembly_method() ==
+            Parameters::SimulationControl::TimeSteppingMethod::steady ?
+          calculate_navier_stokes_gls_tau_steady(
+            u_mag, viscosity_for_stabilization_vector[q], h) :
+          calculate_navier_stokes_gls_tau_transient(
+            u_mag, viscosity_for_stabilization_vector[q], h, sdt);
+
+      // Strong residual
+      const auto strong_residual =
+        velocity_gradient * velocity + pressure_gradient -
+        kinematic_viscosity * velocity_laplacian - force +
+        mass_source * velocity + strong_residual_vec[q];
+
+      // ALE contribution to the strong residual: (-u_ale * ∇u)
+      const auto strong_residual_ale = -velocity_gradient * velocity_ale;
 
       for (unsigned int i = 0; i < n_dofs; ++i)
         {
-          local_rhs[i] +=
-            (scratch_data.phi_u[q][i] *
-             (scratch_data.velocity_gradients[q] * velocity_ale[q])) *
-            JxW;
+          const auto &phi_u_i      = scratch_data.phi_u[q][i];
+          const auto &grad_phi_u_i = scratch_data.grad_phi_u[q][i];
+          const auto &grad_phi_p_i = scratch_data.grad_phi_p[q][i];
+
+          // ALE term: (δu, u_ale·∇u)
+          local_rhs[i] += (velocity_gradient * velocity_ale * phi_u_i) * JxW;
+
+          // ALE-PSPG term: - τ (∇δp, -u_ale·∇u)
+          local_rhs[i] += -tau * (strong_residual_ale * grad_phi_p_i) * JxW;
+
+          // ALE-SUPG term
+          local_rhs[i] += -tau *
+                          // (u·∇δu, -u_ale·∇u)
+                          (strong_residual_ale * grad_phi_u_i * velocity -
+                           // (-u_ale·∇δu, strong_residual)
+                           strong_residual * grad_phi_u_i * velocity_ale -
+                           // (-u_ale·∇δu, -u_ale·∇u)
+                           strong_residual_ale * grad_phi_u_i * velocity_ale) *
+                          JxW;
         }
     } // end loop on quadrature points
 }
 
-template class NavierStokesAssemblerMortarALE<3>;
 template class NavierStokesAssemblerMortarALE<2>;
+template class NavierStokesAssemblerMortarALE<3>;
