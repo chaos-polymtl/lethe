@@ -286,7 +286,7 @@ Call ``lethe-fluid`` by invoking:
 .. code-block:: text
   :class: copy-button
 
-  mpirun -np 8 lethe-fluid rayleigh-taylor-instability-adaptive-sharpening.prm
+  mpirun -np 8 lethe-fluid rayleigh-taylor-instability.prm
 
 
 to run the simulations using eight CPU cores. Feel free to use more.
@@ -322,7 +322,8 @@ By invoking the ``rayleigh-taylor_postprocess.py`` postprocessing script found w
 .. code-block:: text
   :class: copy-button
 
-  python3 rayleigh-taylor_postprocess.py ./output/adaptive/
+  python3 rayleigh-taylor_postprocess.py -f . -p ./rayleigh-taylor-instability.prm
+
 
 
 we compare the position of the spike and the bubble with the results of He *et al.* [#he1999]_
