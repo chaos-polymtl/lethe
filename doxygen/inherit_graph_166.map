@@ -1,0 +1,53 @@
+<map id="Graphical Class Hierarchy" name="Graphical Class Hierarchy">
+<area shape="rect" id="Node000000" href="$classPhysicalPropertyModel.html" title="Abstract class that defines the interface for a physical property model Physical property model provi..." alt="" coords="5,449,176,475"/>
+<area shape="rect" id="Node000001" href="$classDensityModel.html" title="Abstract class for calculating the density of materials." alt="" coords="277,55,389,80"/>
+<area shape="poly" id="edge94_Node000000_Node000001" title=" " alt="" coords="99,435,147,325,182,256,222,188,272,125,316,78,320,82,276,129,226,192,186,258,152,327,104,437"/>
+<area shape="rect" id="Node000004" href="$classRheologicalModel.html" title="Abstract class that allows to calculate the non&#45;newtonian viscosity on each quadrature point and the ..." alt="" coords="263,203,402,228"/>
+<area shape="poly" id="edge97_Node000000_Node000004" title=" " alt="" coords="112,438,317,226,321,230,116,441"/>
+<area shape="rect" id="Node000009" href="$classSpecificHeatModel.html" title="Abstract class for calculating the specific heat of materials on quadrature points using the temperat..." alt="" coords="261,351,404,376"/>
+<area shape="poly" id="edge102_Node000000_Node000009" title=" " alt="" coords="134,442,299,374,301,379,136,447"/>
+<area shape="rect" id="Node000012" href="$classThermalConductivityModel.html" title="Abstract class that allows to calculate the thermal conductivity on each quadrature point using the t..." alt="" coords="233,449,432,475"/>
+<area shape="poly" id="edge105_Node000000_Node000012" title=" " alt="" coords="190,459,233,459,233,465,190,465"/>
+<area shape="rect" id="Node000016" href="$classThermalExpansionModel.html" title="Abstract class that allows to calculate the thermal expansion coefficient (with unit of inverse tempe..." alt="" coords="241,564,424,589"/>
+<area shape="poly" id="edge109_Node000000_Node000016" title=" " alt="" coords="132,478,306,561,304,566,130,483"/>
+<area shape="rect" id="Node000019" href="$classTracerDiffusivityModel.html" title="Abstract class that allows to calculates the tracer diffusivity." alt="" coords="249,663,417,688"/>
+<area shape="poly" id="edge112_Node000000_Node000019" title=" " alt="" coords="113,483,162,538,226,599,271,633,312,660,309,665,268,638,222,603,159,541,109,487"/>
+<area shape="rect" id="Node000022" href="$classTracerReactionPrefactorModel.html" title="Abstract class to calculate the tracer reaction prefactor." alt="" coords="224,785,441,811"/>
+<area shape="poly" id="edge115_Node000000_Node000022" title=" " alt="" coords="105,486,152,582,187,641,226,698,273,747,316,783,312,787,269,751,222,701,182,644,148,585,100,488"/>
+<area shape="rect" id="Node000002" href="$classDensityConstant.html" title="Constant density model." alt="" coords="541,5,672,31"/>
+<area shape="poly" id="edge95_Node000001_Node000002" title=" " alt="" coords="402,52,540,27,541,32,403,58"/>
+<area shape="rect" id="Node000003" href="$classDensityIsothermalIdealGas.html" title="Isothermal ideal gas density." alt="" coords="507,55,706,80"/>
+<area shape="poly" id="edge96_Node000001_Node000003" title=" " alt="" coords="403,65,507,65,507,70,403,70"/>
+<area shape="rect" id="Node000005" href="$classCarreau.html" title=" " alt="" coords="570,104,643,129"/>
+<area shape="poly" id="edge98_Node000004_Node000005" title=" " alt="" coords="367,194,423,165,489,138,569,119,570,124,490,143,425,170,369,198"/>
+<area shape="rect" id="Node000006" href="$classNewtonian.html" title=" " alt="" coords="561,153,653,179"/>
+<area shape="poly" id="edge99_Node000004_Node000006" title=" " alt="" coords="415,198,560,172,561,177,416,203"/>
+<area shape="rect" id="Node000007" href="$classPhaseChangeRheology.html" title=" " alt="" coords="521,203,692,228"/>
+<area shape="poly" id="edge100_Node000004_Node000007" title=" " alt="" coords="416,213,521,213,521,218,416,218"/>
+<area shape="rect" id="Node000008" href="$classPowerLaw.html" title=" " alt="" coords="563,252,651,277"/>
+<area shape="poly" id="edge101_Node000004_Node000008" title=" " alt="" coords="416,228,563,254,562,260,415,233"/>
+<area shape="rect" id="Node000010" href="$classConstantSpecificHeat.html" title="Constant specific heat model." alt="" coords="526,301,687,327"/>
+<area shape="poly" id="edge103_Node000009_Node000010" title=" " alt="" coords="417,346,535,324,536,329,418,351"/>
+<area shape="rect" id="Node000011" href="$classPhaseChangeSpecificHeat.html" title="Phase change specific heat model." alt="" coords="511,351,702,376"/>
+<area shape="poly" id="edge104_Node000009_Node000011" title=" " alt="" coords="418,361,511,361,511,366,418,366"/>
+<area shape="rect" id="Node000013" href="$classConstantThermalConductivity.html" title="Constant thermal conductivity." alt="" coords="499,400,715,425"/>
+<area shape="poly" id="edge106_Node000012_Node000013" title=" " alt="" coords="417,444,535,423,536,428,418,449"/>
+<area shape="rect" id="Node000014" href="$classThermalConductivityLinear.html" title="Implements a linear temperature&#45;dependent thermal conductivity of the form k = A + BT." alt="" coords="507,449,706,475"/>
+<area shape="poly" id="edge107_Node000012_Node000014" title=" " alt="" coords="446,459,507,459,507,465,446,465"/>
+<area shape="rect" id="Node000015" href="$classThermalConductivityPhaseChange.html" title="Implements a phase&#45;dependent thermal conductivity." alt="" coords="508,499,705,539"/>
+<area shape="poly" id="edge108_Node000012_Node000015" title=" " alt="" coords="408,475,511,497,510,502,407,480"/>
+<area shape="rect" id="Node000017" href="$classConstantThermalExpansion.html" title="Constant thermal expansion coefficient." alt="" coords="506,564,707,589"/>
+<area shape="poly" id="edge110_Node000016_Node000017" title=" " alt="" coords="438,574,506,574,506,579,438,579"/>
+<area shape="rect" id="Node000018" href="$classThermalExpansionPhaseChange.html" title="Implements a phase&#45;dependent thermal expansion coefficient." alt="" coords="491,613,722,639"/>
+<area shape="poly" id="edge111_Node000016_Node000018" title=" " alt="" coords="418,589,536,611,535,616,417,594"/>
+<area shape="rect" id="Node000020" href="$classConstantTracerDiffusivity.html" title="Constant tracer diffusivity." alt="" coords="513,663,700,688"/>
+<area shape="poly" id="edge113_Node000019_Node000020" title=" " alt="" coords="430,673,513,673,513,678,430,678"/>
+<area shape="rect" id="Node000021" href="$classTanhLevelsetTracerDiffusivity.html" title="Diffusivity that depends on the level set." alt="" coords="500,712,713,737"/>
+<area shape="poly" id="edge114_Node000019_Node000021" title=" " alt="" coords="418,688,536,709,535,715,417,693"/>
+<area shape="rect" id="Node000023" href="$classConstantTracerReactionPrefactor.html" title="Constant tracer reaction prefactor." alt="" coords="489,761,724,787"/>
+<area shape="poly" id="edge116_Node000022_Node000023" title=" " alt="" coords="455,785,489,782,489,787,455,790"/>
+<area shape="rect" id="Node000024" href="$classNoneTracerReactionPrefactor.html" title="Dummy tracer reaction prefactor model." alt="" coords="501,811,712,836"/>
+<area shape="poly" id="edge117_Node000022_Node000024" title=" " alt="" coords="455,807,501,811,501,816,455,812"/>
+<area shape="rect" id="Node000025" href="$classTanhLevelsetTracerReactionPrefactor.html" title="Tanh level&#45;set&#45;dependent tracer reaction prefactor." alt="" coords="505,861,708,901"/>
+<area shape="poly" id="edge118_Node000022_Node000025" title=" " alt="" coords="385,813,490,846,531,858,530,863,489,851,384,818"/>
+</map>

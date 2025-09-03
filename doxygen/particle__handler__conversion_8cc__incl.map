@@ -1,0 +1,21 @@
+<map id="/home/runner/work/lethe/lethe/source/dem/particle_handler_conversion.cc" name="/home/runner/work/lethe/lethe/source/dem/particle_handler_conversion.cc">
+<area shape="rect" id="Node000001" title=" " alt="" coords="451,5,643,60"/>
+<area shape="rect" id="Node000002" href="$particle__handler__conversion_8h.html" title=" " alt="" coords="467,108,627,148"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="549,60,549,94,544,94,544,60"/>
+<area shape="rect" id="Node000003" href="$dem__properties_8h.html" title=" " alt="" coords="5,203,173,229"/>
+<area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="467,146,186,199,161,203,160,198,185,193,466,141"/>
+<area shape="rect" id="Node000006" title=" " alt="" coords="197,196,339,236"/>
+<area shape="poly" id="edge5_Node000002_Node000006" title=" " alt="" coords="486,151,343,195,341,189,485,146"/>
+<area shape="rect" id="Node000007" title=" " alt="" coords="363,203,533,229"/>
+<area shape="poly" id="edge6_Node000002_Node000007" title=" " alt="" coords="527,150,474,196,470,192,523,146"/>
+<area shape="rect" id="Node000008" title=" " alt="" coords="558,196,733,236"/>
+<area shape="poly" id="edge7_Node000002_Node000008" title=" " alt="" coords="570,146,615,185,612,189,567,150"/>
+<area shape="rect" id="Node000009" title=" " alt="" coords="757,196,931,236"/>
+<area shape="poly" id="edge8_Node000002_Node000009" title=" " alt="" coords="613,145,766,190,765,195,611,151"/>
+<area shape="rect" id="Node000010" title=" " alt="" coords="956,196,1137,236"/>
+<area shape="poly" id="edge9_Node000002_Node000010" title=" " alt="" coords="627,140,943,193,942,198,627,145"/>
+<area shape="rect" id="Node000004" title=" " alt="" coords="17,284,76,309"/>
+<area shape="poly" id="edge3_Node000003_Node000004" title=" " alt="" coords="85,230,62,273,57,271,81,228"/>
+<area shape="rect" id="Node000005" title=" " alt="" coords="101,284,163,309"/>
+<area shape="poly" id="edge4_Node000003_Node000005" title=" " alt="" coords="98,228,122,271,117,273,93,230"/>
+</map>

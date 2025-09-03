@@ -1,0 +1,15 @@
+<map id="FluidDynamicsMatrixBased&lt; dim &gt;" name="FluidDynamicsMatrixBased&lt; dim &gt;">
+<area shape="rect" id="Node000001" title="A solver class for the Navier&#45;Stokes equation using GLS stabilization." alt="" coords="533,69,735,109"/>
+<area shape="rect" id="Node000004" href="$classFluidDynamicsNitsche.html" title=" " alt="" coords="783,5,951,45"/>
+<area shape="poly" id="edge3_Node000001_Node000004" title=" " alt="" coords="720,63,793,43,794,48,721,68"/>
+<area shape="rect" id="Node000005" href="$classFluidDynamicsSharp.html" title=" " alt="" coords="789,69,945,109"/>
+<area shape="poly" id="edge4_Node000001_Node000005" title=" " alt="" coords="748,87,789,87,789,92,748,92"/>
+<area shape="rect" id="Node000006" href="$classFluidDynamicsVANS.html" title=" " alt="" coords="784,133,949,173"/>
+<area shape="poly" id="edge5_Node000001_Node000006" title=" " alt="" coords="721,110,794,131,793,136,720,116"/>
+<area shape="rect" id="Node000002" href="$classNavierStokesBase.html" title=" " alt="" coords="267,69,485,109"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="499,87,533,87,533,92,499,92"/>
+<area shape="rect" id="Node000003" href="$classPhysicsSolver.html" title="Contain all the common elements of a physics solver. It creates the non&#45;linear solver as specified by..." alt="" coords="5,77,219,102"/>
+<area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="232,87,267,87,267,92,232,92"/>
+<area shape="rect" id="Node000007" href="$classCFDDEMSolver.html" title="Solver using the GLS Volume&#45;averaged Navier&#45;Stokes (VANS) solver for fluid and the soft&#45;sphere model ..." alt="" coords="999,141,1173,166"/>
+<area shape="poly" id="edge6_Node000006_Node000007" title=" " alt="" coords="963,151,998,151,998,156,963,156"/>
+</map>

@@ -1,0 +1,7 @@
+<map id="SimulationControlTransientDEM" name="SimulationControlTransientDEM">
+<area shape="rect" id="Node000001" title="Transient simulation control tailored around the discrete element method." alt="" coords="5,152,233,177"/>
+<area shape="rect" id="Node000002" href="$classSimulationControlTransient.html" title=" " alt="" coords="20,79,219,104"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="122,118,122,152,117,152,117,118"/>
+<area shape="rect" id="Node000003" href="$classSimulationControl.html" title="The SimulationControl class is responsible for the control of steady&#45;state and transient simulations ..." alt="" coords="50,5,189,31"/>
+<area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="122,44,122,79,117,79,117,44"/>
+</map>

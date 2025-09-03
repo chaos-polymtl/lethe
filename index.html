@@ -1,0 +1,246 @@
+<!doctype html>
+<html>
+<head>
+	<meta charset="UTF-8" name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Lethe</title>
+	<link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+	<header>
+		<div class="row">
+			<div class="col">
+				<img class="style-logo" src="images/lethe-logo-white-without-bkgd.png" alt="Lethe Logo">
+<!--			Menu bar -->
+				<nav class="style-nav">
+					<ul>
+						<li><a href="https://chaos-polymtl.github.io/lethe/documentation/index.html" target="_blank">User Guide</a></li>
+						<li><a href="https://chaos-polymtl.github.io/lethe/doxygen/index.html" target="_blank">Developer Guide (doxygen)</a></li>
+						<li><a href="https://www.github.com/chaos-polymtl/lethe" target="_blank">Github Repository</a></li>
+					</ul>
+				</nav>
+			</div>
+		</div>
+	</header>
+
+	<br>
+
+	<main>
+		<div class="row">
+			<div class="col">
+				<div class="Lethe-meaning">
+					<h3> <strong>Lethe</strong> (pronounced /ˈliːθiː/) is an open-source computational fluid dynamics (CFD), discrete element method (DEM) and coupled CFD-DEM software which uses high-order continuous Galerkin formulations to simulate single and multiphase flows.</h3>
+
+					<br>
+
+					<p>	Lethe contains a family of solvers that are based on <a href="https://www.dealii.org/" target="_blank">deal.II</a>, a finite element library.
+						Through deal.II, Lethe uses <a href="https://trilinos.github.io/ " target="_blank">Trilinos</a>, for its sparse linear algebra routines and <a href="https://www.p4est.org/" target="_blank">p4est</a> for its distributed adaptative quadtrees and octrees.
+						Lethe is named after the river of forgetfulness, which, according to <a href="https://en.wikipedia.org/wiki/Lethe" target="_blank">Wikipedia</a>: </p>
+
+					<blockquote cite="https://en.wikipedia.org/wiki/Lethe">
+							<p>is one of the five rivers of the Greek underworld[,] the other four [being] Acheron (the river of sorrow), Cocytus (the river of lamentation), Phlegethon (the river of fire) and Styx (the river that separates Earth and the Underworld). […] The shades of the dead were required to drink the waters of the Lethe in order to forget their earthly life.</p>
+					</blockquote>
+
+					<p>Lethe is described <a href="https://doi.org/10.1016/j.softx.2020.100579" target="_blank">here</a>. It originally began as a weekend project, but slowly grew into a robust and efficient CFD, DEM and CFD-DEM software. Lethe is under active development.</p>
+
+					<br>
+
+					<div class="note">
+						<p>Lethe would not exist without the dedicated work of the deal.II authors. The authors of Lethe would like to emphasize that without deal.II, dedicated solvers like Lethe could not exist.</p>
+					</div>
+				</div>
+			</div>
+		</div>
+
+		<br>
+
+		<div class="row">
+			<div class="col">
+				<div class="getting-started">
+					<h1>Getting Started</h1>
+					<a href="https://chaos-polymtl.github.io/lethe/documentation/installation/installation.html" class="button" target="_blank">Installation Guide</a>
+					<a href="https://chaos-polymtl.github.io/lethe/documentation/first_simulation.html" class="button" target="_blank">Launch Your First Simulation</a>
+				</div>
+			</div>
+		</div>
+
+		<br>
+
+		<div class="row">
+			<div class="col">
+				<div class="latest-articles">
+					<h1>Latest Publications</h1>
+
+<!--				Add here the latest publications and delete from the bottom of the list; the current implementation allows 5 publications -->
+					<div class="article-slide fade">
+						<img src="images/publications/2024-Barbeau-et-al.png" alt="High-order moving immersed boundary and its application to a resolved CFD-DEM model">
+						<br>
+						<a href="https://doi.org/10.1016/j.compfluid.2023.106094" class="slide-button" target="_blank">View publication</a>
+					</div>
+
+					<div class="article-slide fade">
+						<img src="images/publications/2023-Fazli-et-al.png" alt="Application of immersed boundary methods to non-Newtonian yield-pseudoplastic flows">
+						<br>
+						<a href="https://doi.org/10.1016/j.apm.2023.07.034" class="slide-button" target="_blank">View publication</a>
+					</div>
+
+					<div class="article-slide fade">
+						<img src="images/publications/2023-Mirakhori-et-al.png" alt="An improved position reconstruction method for radioactive particle tracking">
+						<br>
+						<a href="https://doi.org/10.1016/j.nima.2023.168504" class="slide-button" target="_blank">View publication</a>
+					</div>
+
+					<div class="article-slide fade">
+					  	<img src="images/publications/2023-Joachim-et-al.png" alt="A parallel and adaptative Nitsche immersed boundary method to simulate viscous mixing">
+						<br>
+						<a href="https://doi.org/10.1016/j.jcp.2023.112189" class="slide-button" target="_blank">View publication</a>
+					</div>
+
+					<div class="article-slide fade">
+					  	<img src="images/publications/2023-Ferreira-et-al.png" alt="In-depth validation of unresolved CFD-DEM simulations of liquid fluidized beds">
+						<br>
+						<a href="https://doi.org/10.1016/j.powtec.2023.118652" class="slide-button" target="_blank">View publication</a>
+					</div>
+
+					<!-- Side buttons to travel through the slides -->
+					<a class="prev" onclick="plusSlides(-1,0)">&#10094;</a>
+					<a class="next" onclick="plusSlides(1,0)">&#10095;</a>
+
+					<!-- Navigation dots on the bottom of slides -->
+					<div style="text-align:center">
+						<span class="dot" onclick="currentSlide(1,0)"></span>
+						<span class="dot" onclick="currentSlide(2,0)"></span>
+						<span class="dot" onclick="currentSlide(3,0)"></span>
+						<span class="dot" onclick="currentSlide(4,0)"></span>
+						<span class="dot" onclick="currentSlide(5,0)"></span>
+					</div>
+				</div>
+			</div>
+
+			<br>
+
+			<div class="col">
+				<div class="benchmarks">
+					<h1>Explore Examples</h1>
+
+<!--				Add here new examples; the current implementation allows 6 examples -->
+					<div class="benchmark-slide fade">
+						<iframe src="https://www.youtube.com/embed/GGij2g_yz5g?rel=0&vq=hd720" title="Taylor-Green Vortex - Velocity
+						Contours" frameborder="0" allow="accelerometer; autoplay; clipboard-write;
+						encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
+						<br>
+						<a href="https://chaos-polymtl.github.io/lethe/documentation/examples/incompressible-flow/3d-taylor-green-vortex/3d-taylor-green-vortex.html" class="slide-button" target="_blank">View example</a>
+					</div>
+
+					<div class="benchmark-slide fade">
+						<iframe src="https://www.youtube.com/embed/GI_jfsO0ZeM?rel=0&vq=hd720" title="Bunny drill simulation" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+						<br>
+						<a href="https://chaos-polymtl.github.io/lethe/documentation/examples/dem/bunny-drill/bunny-drill.html" class="slide-button" target="_blank">View example</a>
+					</div>
+
+					<div class="benchmark-slide fade">
+						<iframe src="https://www.youtube.com/embed/kMp86PdZ6tU?rel=0&vq=hd720" title="Liquid-solid fluidized beds at different regimes" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+						<br>
+						<a href="https://chaos-polymtl.github.io/lethe/documentation/examples/unresolved-cfd-dem/liquid-solid-fluidized-bed/liquid-solid-fluidized-bed.html" class="slide-button" target="_blank">View example</a>
+					</div>
+
+					<div class="benchmark-slide fade">
+						<iframe src="https://www.youtube.com/embed/rt6PAvgMkio?rel=0&vq=hd720" title="Velocity magnitude pattern in a pitched-blade turbine at Re=300" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+						<br>
+						<a href="https://chaos-polymtl.github.io/lethe/documentation/examples/incompressible-flow/3d-nitsche-mixer-with-pbt-impeller/nitsche-mixer-with-pbt-impeller.html" class="slide-button" target="_blank">View example</a>
+					</div>
+
+					<div class="benchmark-slide fade">
+						<iframe src="https://www.youtube.com/embed/kftZ3lj6uTg?rel=0&vq=hd720" title="Melting gallium cavity: Velocity and temperature profiles" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+						<br>
+						<a href="https://chaos-polymtl.github.io/lethe/documentation/examples/multiphysics/melting-cavity/melting-cavity.html" class="slide-button" target="_blank">View example</a>
+					</div>
+
+					<div class="benchmark-slide fade">
+						<iframe src="https://www.youtube.com/embed/gaz4PiqhOzg?rel=0&vq=hd720" title="Dam-break with an obstacle - Lethe example" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+						<br>
+						<a href="https://chaos-polymtl.github.io/lethe/documentation/examples/multiphysics/3d-dam-break/3d-dam-break.html" class="slide-button" target="_blank">View example</a>
+					</div>
+
+					<!-- Side buttons to travel through the slides -->
+					<a class="prev" onclick="plusSlides(-1,1)">&#10094;</a>
+					<a class="next" onclick="plusSlides(1,1)">&#10095;</a>
+
+					<!-- Navigation dots on the bottom of slides -->
+					<div style="text-align:center">
+						<span class="dot" onclick="currentSlide(1,1)"></span>
+						<span class="dot" onclick="currentSlide(2,1)"></span>
+						<span class="dot" onclick="currentSlide(3,1)"></span>
+						<span class="dot" onclick="currentSlide(4,1)"></span>
+						<span class="dot" onclick="currentSlide(5,1)"></span>
+						<span class="dot" onclick="currentSlide(6,1)"></span>
+					</div>
+				</div>
+			</div>
+
+			<script>
+				let slideIndex = [1,1];
+				let number_of_slides = [5,6]
+				let count = [0,number_of_slides[0]]
+				// Class the members of each slideshow group with different CSS classes
+				let slideId = ["article-slide", "benchmark-slide"]
+				showSlides(1, 0);
+				showSlides(1, 1);
+
+				function plusSlides(n, no) {
+					showSlides(slideIndex[no] += n, no);
+				}
+
+				// Thumbnail image controls (dots)
+				function currentSlide(n, no) {
+					showSlides(slideIndex[no] = n, no);
+				}
+
+				function showSlides(n, no) {
+					let i;
+					let x = document.getElementsByClassName(slideId[no]);
+					let dots = document.getElementsByClassName("dot");
+
+					if (n > x.length) {
+						slideIndex[no] = 1
+					}
+					if (n < 1) {
+						slideIndex[no] = x.length
+					}
+
+					// Don't display anything
+					for (i = 0; i < x.length; i++) {
+						x[i].style.display = "none";
+					}
+					for (i = count[no]; i < count[no]+number_of_slides[no]; i++)
+					{
+						dots[i].className = dots[i].className.replace(" active", "");
+					}
+					// Display only selected slides
+					x[slideIndex[no]-1].style.display = "block";
+					// Activate only selected slides' dot for each slideshow group
+  					dots[(slideIndex[no]-1)+(count[no])].className += " active";
+				}
+			</script>
+		</div>
+		<br>
+	</main>
+
+	<footer>
+		<div class="row">
+			<div class="col-one-half">
+				<!-- Copyright on the left -->
+				<p class="footer-text"><img src="images/lethe-round-logo-white-without-bkgd.png" width="50px" alt="Lethe round logo"> &nbsp © 2024, Lethe </p>
+			</div>
+			<div class="col-one-half">
+				<!-- Icons on the right -->
+				<div class="icons">
+					<a href="https://www.github.com/chaos-polymtl/lethe" target="_blank"><img src="images/github-logo.png" width="50px" alt="Github repository"></a>
+					<a href="https://www.youtube.com/@lethecfd6431" target="_blank"><img src="images/youtube-icon.png" width="50px" alt="Youtube channel"></a>
+				</div>
+			</div>
+		</div>
+	</footer>
+
+</body>
+</html>

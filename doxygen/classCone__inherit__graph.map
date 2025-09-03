@@ -1,0 +1,7 @@
+<map id="Cone&lt; dim &gt;" name="Cone&lt; dim &gt;">
+<area shape="rect" id="Node000001" title=" " alt="" coords="37,167,148,192"/>
+<area shape="rect" id="Node000002" href="$classShape.html" title="A base class used to represent geometrical entities. Its main uses are to return signed distance and ..." alt="" coords="34,93,151,119"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="95,132,95,167,90,167,90,132"/>
+<area shape="rect" id="Node000003" title=" " alt="" coords="5,5,180,45"/>
+<area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="95,59,95,93,90,93,90,59"/>
+</map>

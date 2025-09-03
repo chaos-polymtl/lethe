@@ -1,0 +1,9 @@
+<map id="/home/runner/work/lethe/lethe/include/fem&#45;dem/fluid_dynamics_vans.h" name="/home/runner/work/lethe/lethe/include/fem&#45;dem/fluid_dynamics_vans.h">
+<area shape="rect" id="Node000001" title=" " alt="" coords="108,5,291,60"/>
+<area shape="rect" id="Node000002" href="$cfd__dem__coupling_8h.html" title=" " alt="" coords="5,108,188,163"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="165,72,125,110,122,106,161,68"/>
+<area shape="rect" id="Node000004" href="$fluid__dynamics__vans_8cc.html" title=" " alt="" coords="212,108,395,163"/>
+<area shape="poly" id="edge3_Node000001_Node000004" title=" " alt="" coords="238,68,278,106,274,110,235,72"/>
+<area shape="rect" id="Node000003" href="$cfd__dem__coupling_8cc.html" title=" " alt="" coords="5,211,188,265"/>
+<area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="99,176,99,211,94,211,94,176"/>
+</map>

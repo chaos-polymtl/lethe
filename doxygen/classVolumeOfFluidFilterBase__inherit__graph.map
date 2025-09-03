@@ -1,0 +1,7 @@
+<map id="VolumeOfFluidFilterBase" name="VolumeOfFluidFilterBase">
+<area shape="rect" id="Node000001" title="Abstract class for filtering phase fraction in volume of fluid (VOF) simulations." alt="" coords="99,5,281,31"/>
+<area shape="rect" id="Node000002" href="$classVolumeOfFluidNoFilter.html" title="Default filter applied to phase fraction. The VolumeOfFluidNoFilter filter does not modify the phase ..." alt="" coords="5,79,175,104"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="164,41,108,81,105,76,161,36"/>
+<area shape="rect" id="Node000003" href="$classVolumeOfFluidTanhFilter.html" title="Filter phase fraction with a hyperbolic tangent function for VOF simulations." alt="" coords="199,79,381,104"/>
+<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="219,36,275,76,272,81,216,41"/>
+</map>

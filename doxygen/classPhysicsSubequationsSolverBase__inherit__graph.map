@@ -1,0 +1,19 @@
+<map id="PhysicsSubequationsSolverBase" name="PhysicsSubequationsSolverBase">
+<area shape="rect" id="Node000001" title="Base class to solve subequations solved inside a physics (or auxiliary physics) that are not part of ..." alt="" coords="5,77,237,102"/>
+<area shape="rect" id="Node000002" href="$classPhysicsNonlinearSubequationsSolver.html" title=" " alt="" coords="285,5,524,45"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="191,71,315,43,316,48,192,76"/>
+<area shape="rect" id="Node000004" href="$classPhysicsLinearSubequationsSolver.html" title="Linear subequations solved inside a physics (or auxiliary physics) that are not part of the main set ..." alt="" coords="305,69,504,109"/>
+<area shape="poly" id="edge3_Node000001_Node000004" title=" " alt="" coords="251,87,305,87,305,92,251,92"/>
+<area shape="rect" id="Node000009" href="$classPhysicsNonlinearSubequationsSolver.html" title="Non&#45;linear subequations solved inside a physics (or auxiliary physics) that are not part of the main ..." alt="" coords="293,133,516,173"/>
+<area shape="poly" id="edge8_Node000001_Node000009" title=" " alt="" coords="192,102,316,131,315,136,191,108"/>
+<area shape="rect" id="Node000003" href="$classVOFAlgebraicInterfaceReinitialization.html" title="VOF algebraic reinitialization solver." alt="" coords="572,5,836,45"/>
+<area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="538,23,572,23,572,28,538,28"/>
+<area shape="rect" id="Node000005" href="$classParticleProjector.html" title="Particle information projection. This class manages the calculation of the projection of the particle..." alt="" coords="635,69,773,109"/>
+<area shape="poly" id="edge4_Node000004_Node000005" title=" " alt="" coords="518,87,635,87,635,92,518,92"/>
+<area shape="rect" id="Node000006" href="$classVOFLinearSubequationsSolver.html" title="Generalized solver for VOF linear subequations." alt="" coords="595,133,813,173"/>
+<area shape="poly" id="edge5_Node000004_Node000006" title=" " alt="" coords="513,110,611,131,609,136,512,115"/>
+<area shape="rect" id="Node000007" href="$classVOFCurvatureProjection.html" title="VOF curvature L2 projection solver." alt="" coords="899,101,1078,141"/>
+<area shape="poly" id="edge6_Node000006_Node000007" title=" " alt="" coords="827,137,899,129,899,134,827,142"/>
+<area shape="rect" id="Node000008" href="$classVOFPhaseGradientProjection.html" title="VOF phase fraction gradient L2 projection solver." alt="" coords="884,165,1093,205"/>
+<area shape="poly" id="edge7_Node000006_Node000008" title=" " alt="" coords="827,165,884,171,883,176,827,170"/>
+</map>

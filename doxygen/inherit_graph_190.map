@@ -1,0 +1,5 @@
+<map id="Graphical Class Hierarchy" name="Graphical Class Hierarchy">
+<area shape="rect" id="Node000000" href="$classStabilizedMethodsCopyData.html" title="Class responsible for storing the information calculated using the assembly of stabilized scalar equa..." alt="" coords="5,5,212,31"/>
+<area shape="rect" id="Node000001" href="$classStabilizedDGMethodsCopyData.html" title="Responsible for storing the information calculated using the discontinuous galerkin (DG) assembly of ..." alt="" coords="260,5,487,31"/>
+<area shape="poly" id="edge204_Node000000_Node000001" title=" " alt="" coords="226,15,260,15,260,21,226,21"/>
+</map>

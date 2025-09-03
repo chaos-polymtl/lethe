@@ -1,0 +1,5 @@
+<map id="PSPGSUPGNavierStokesAssemblerCore&lt; dim &gt;" name="PSPGSUPGNavierStokesAssemblerCore&lt; dim &gt;">
+<area shape="rect" id="Node000001" title="Class that assembles the core of the Navier&#45;Stokes equation. According to the following weak form: &#160;&#160;..." alt="" coords="5,93,252,133"/>
+<area shape="rect" id="Node000002" href="$classPhysicsAssemblerBase.html" title="Base class for assembler objects of physics and subequations." alt="" coords="24,5,233,45"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="131,59,131,93,126,93,126,59"/>
+</map>

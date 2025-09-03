@@ -1,0 +1,7 @@
+<map id="PhaseChangeSpecificHeat" name="PhaseChangeSpecificHeat">
+<area shape="rect" id="Node000001" title="Phase change specific heat model." alt="" coords="5,152,196,177"/>
+<area shape="rect" id="Node000002" href="$classSpecificHeatModel.html" title="Abstract class for calculating the specific heat of materials on quadrature points using the temperat..." alt="" coords="29,79,172,104"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="103,118,103,152,98,152,98,118"/>
+<area shape="rect" id="Node000003" href="$classPhysicalPropertyModel.html" title="Abstract class that defines the interface for a physical property model Physical property model provi..." alt="" coords="15,5,186,31"/>
+<area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="103,44,103,79,98,79,98,44"/>
+</map>

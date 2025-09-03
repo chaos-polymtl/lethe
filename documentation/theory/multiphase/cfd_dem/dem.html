@@ -1,0 +1,1177 @@
+<!doctype html>
+<html class="no-js" lang="en" data-content_root="../../../">
+  <head><meta charset="utf-8"/>
+    <meta name="viewport" content="width=device-width,initial-scale=1"/>
+    <meta name="color-scheme" content="light dark"><meta name="viewport" content="width=device-width, initial-scale=1" />
+<link rel="index" title="Index" href="../../../genindex.html" /><link rel="search" title="Search" href="../../../search.html" /><link rel="next" title="Resolved CFD-DEM" href="resolved_cfd-dem.html" /><link rel="prev" title="CFD-DEM" href="cfd_dem.html" />
+
+    <!-- Generated with Sphinx 7.2.6 and Furo 2023.09.10 -->
+        <title>Discrete Element Method (DEM) - Lethe documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=8f2a1f02" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/styles/furo.css?v=135e06be" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/graphviz.css?v=eafc0fe6" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/styles/furo-extensions.css?v=36a5483c" />
+    
+    
+
+
+<style>
+  body {
+    --color-code-background: #f8f8f8;
+  --color-code-foreground: black;
+  
+  }
+  @media not print {
+    body[data-theme="dark"] {
+      --color-code-background: #202020;
+  --color-code-foreground: #d0d0d0;
+  
+    }
+    @media (prefers-color-scheme: dark) {
+      body:not([data-theme="light"]) {
+        --color-code-background: #202020;
+  --color-code-foreground: #d0d0d0;
+  
+      }
+    }
+  }
+</style></head>
+  <body>
+    
+    <script>
+      document.body.dataset.theme = localStorage.getItem("theme") || "auto";
+    </script>
+    
+
+<svg xmlns="http://www.w3.org/2000/svg" style="display: none;">
+  <symbol id="svg-toc" viewBox="0 0 24 24">
+    <title>Contents</title>
+    <svg stroke="currentColor" fill="currentColor" stroke-width="0" viewBox="0 0 1024 1024">
+      <path d="M408 442h480c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8H408c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8zm-8 204c0 4.4 3.6 8 8 8h480c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8H408c-4.4 0-8 3.6-8 8v56zm504-486H120c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8h784c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8zm0 632H120c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8h784c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8zM115.4 518.9L271.7 642c5.8 4.6 14.4.5 14.4-6.9V388.9c0-7.4-8.5-11.5-14.4-6.9L115.4 505.1a8.74 8.74 0 0 0 0 13.8z"/>
+    </svg>
+  </symbol>
+  <symbol id="svg-menu" viewBox="0 0 24 24">
+    <title>Menu</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather-menu">
+      <line x1="3" y1="12" x2="21" y2="12"></line>
+      <line x1="3" y1="6" x2="21" y2="6"></line>
+      <line x1="3" y1="18" x2="21" y2="18"></line>
+    </svg>
+  </symbol>
+  <symbol id="svg-arrow-right" viewBox="0 0 24 24">
+    <title>Expand</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather-chevron-right">
+      <polyline points="9 18 15 12 9 6"></polyline>
+    </svg>
+  </symbol>
+  <symbol id="svg-sun" viewBox="0 0 24 24">
+    <title>Light mode</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="feather-sun">
+      <circle cx="12" cy="12" r="5"></circle>
+      <line x1="12" y1="1" x2="12" y2="3"></line>
+      <line x1="12" y1="21" x2="12" y2="23"></line>
+      <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+      <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+      <line x1="1" y1="12" x2="3" y2="12"></line>
+      <line x1="21" y1="12" x2="23" y2="12"></line>
+      <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+      <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+    </svg>
+  </symbol>
+  <symbol id="svg-moon" viewBox="0 0 24 24">
+    <title>Dark mode</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="icon-tabler-moon">
+      <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+      <path d="M12 3c.132 0 .263 0 .393 0a7.5 7.5 0 0 0 7.92 12.446a9 9 0 1 1 -8.313 -12.454z" />
+    </svg>
+  </symbol>
+  <symbol id="svg-sun-half" viewBox="0 0 24 24">
+    <title>Auto light/dark mode</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="icon-tabler-shadow">
+      <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+      <circle cx="12" cy="12" r="9" />
+      <path d="M13 12h5" />
+      <path d="M13 15h4" />
+      <path d="M13 18h1" />
+      <path d="M13 9h4" />
+      <path d="M13 6h1" />
+    </svg>
+  </symbol>
+</svg>
+
+<input type="checkbox" class="sidebar-toggle" name="__navigation" id="__navigation">
+<input type="checkbox" class="sidebar-toggle" name="__toc" id="__toc">
+<label class="overlay sidebar-overlay" for="__navigation">
+  <div class="visually-hidden">Hide navigation sidebar</div>
+</label>
+<label class="overlay toc-overlay" for="__toc">
+  <div class="visually-hidden">Hide table of contents sidebar</div>
+</label>
+
+
+
+<div class="page">
+  <header class="mobile-header">
+    <div class="header-left">
+      <label class="nav-overlay-icon" for="__navigation">
+        <div class="visually-hidden">Toggle site navigation sidebar</div>
+        <i class="icon"><svg><use href="#svg-menu"></use></svg></i>
+      </label>
+    </div>
+    <div class="header-center">
+      <a href="../../../index.html"><div class="brand">Lethe  documentation</div></a>
+    </div>
+    <div class="header-right">
+      <div class="theme-toggle-container theme-toggle-header">
+        <button class="theme-toggle">
+          <div class="visually-hidden">Toggle Light / Dark / Auto color theme</div>
+          <svg class="theme-icon-when-auto"><use href="#svg-sun-half"></use></svg>
+          <svg class="theme-icon-when-dark"><use href="#svg-moon"></use></svg>
+          <svg class="theme-icon-when-light"><use href="#svg-sun"></use></svg>
+        </button>
+      </div>
+      <label class="toc-overlay-icon toc-header-icon" for="__toc">
+        <div class="visually-hidden">Toggle table of contents sidebar</div>
+        <i class="icon"><svg><use href="#svg-toc"></use></svg></i>
+      </label>
+    </div>
+  </header>
+  <aside class="sidebar-drawer">
+    <div class="sidebar-container">
+      
+      <div class="sidebar-sticky"><a class="sidebar-brand" href="../../../index.html">
+  
+  
+  <span class="sidebar-brand-text">Lethe  documentation</span>
+  
+</a><form class="sidebar-search-container" method="get" action="../../../search.html" role="search">
+  <input class="sidebar-search" placeholder="Search" name="q" aria-label="Search">
+  <input type="hidden" name="check_keywords" value="yes">
+  <input type="hidden" name="area" value="default">
+</form>
+<div id="searchbox"></div><div class="sidebar-scroll"><div class="sidebar-tree">
+  <ul class="current">
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../../installation/installation.html">Installation</a><input class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" role="switch" type="checkbox"/><label for="toctree-checkbox-1"><div class="visually-hidden">Toggle navigation of Installation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../installation/regular_installation.html">Regular Installation on Linux</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../installation/windows_wsl.html">Windows with WSL</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../installation/apple_arm.html">Installation on Apple ARM</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../installation/docker.html">Docker</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../installation/digital_alliance.html">Running Lethe on Digital Research Alliance of Canada Clusters</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../../applications.html">Applications Overview</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../structure.html">Folder Structure of Lethe</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../first_simulation.html">Launching Your First Simulation</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../../parameters/parameters.html">Parameters Guide</a><input class="toctree-checkbox" id="toctree-checkbox-2" name="toctree-checkbox-2" role="switch" type="checkbox"/><label for="toctree-checkbox-2"><div class="visually-hidden">Toggle navigation of Parameters Guide</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../../parameters/cfd/cfd.html">General, CFD and Multiphysics</a><input class="toctree-checkbox" id="toctree-checkbox-3" name="toctree-checkbox-3" role="switch" type="checkbox"/><label for="toctree-checkbox-3"><div class="visually-hidden">Toggle navigation of General, CFD and Multiphysics</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../../parameters/cfd/ale.html">Arbitrary Lagrangian-Eulerian</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../parameters/cfd/analytical_solution.html">Analytical Solution</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../parameters/cfd/boundary_conditions_cfd.html">Boundary Conditions - CFD</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../parameters/cfd/boundary_conditions_multiphysics.html">Boundary Conditions - Multiphysics</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../parameters/cfd/box_refinement.html">Box Refinement</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../parameters/cfd/cahn_hilliard.html">Cahn-Hilliard</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../parameters/cfd/constrain_stasis.html">Constrain Stasis</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../parameters/cfd/dimensionality.html">Dimensionality</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../parameters/cfd/dynamic_flow_control.html">Dynamic Flow Control</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../parameters/cfd/fem.html">Finite Element Interpolation (FEM)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../parameters/cfd/force_and_torque.html">Force and Torque Calculation</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../parameters/cfd/initial_conditions.html">Initial Conditions</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../parameters/cfd/laser_heat_source.html">Laser Heat Source</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../parameters/cfd/linear_solver_control.html">Linear Solver</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../parameters/cfd/manifolds.html">Manifolds</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../parameters/cfd/mesh.html">Mesh</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../parameters/cfd/mesh_adaptation_control.html">Mesh Adaptation</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../parameters/cfd/mortar.html">Mortar</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../parameters/cfd/multiphysics.html">Multiphysics</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../parameters/cfd/nitsche.html">Nitsche Immersed Boundary</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../parameters/cfd/non-linear_solver_control.html">Non-linear Solver</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../parameters/cfd/physical_properties.html">Physical Properties</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../parameters/cfd/post_processing.html">Post-processing</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../parameters/cfd/restart.html">Restart</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../parameters/cfd/simulation_control.html">Simulation Control</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../parameters/cfd/source_term.html">Source Term</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../parameters/cfd/stabilization.html">Stabilization</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../parameters/cfd/timer.html">Timer</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../parameters/cfd/tracer_drift_velocity.html">Tracer Drift Velocity</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../parameters/cfd/velocity_source.html">Velocity Source</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../parameters/cfd/volume_of_fluid.html">Volume of Fluid (Multiphase Flow)</a></li>
+</ul>
+</li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../../parameters/dem/dem.html">Discrete Element Method (DEM)</a><input class="toctree-checkbox" id="toctree-checkbox-4" name="toctree-checkbox-4" role="switch" type="checkbox"/><label for="toctree-checkbox-4"><div class="visually-hidden">Toggle navigation of Discrete Element Method (DEM)</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../../parameters/dem/boundary_conditions.html">Boundary Conditions</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../parameters/dem/floating_wall.html">Floating Wall</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../parameters/dem/insertion_info.html">Insertion Info</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../parameters/dem/lagrangian_physical_properties.html">Lagrangian Physical Properties</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../parameters/dem/mesh.html">Mesh</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../parameters/dem/model_parameters.html">Model Parameters</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../parameters/dem/post-processing.html">Post-processing</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../parameters/dem/simulation_control.html">Simulation Control</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../parameters/dem/solid_objects.html">Solid Objects</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../parameters/dem/test.html">Test</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../parameters/dem/timer.html">Timer</a></li>
+</ul>
+</li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../../parameters/unresolved-cfd-dem/unresolved-cfd-dem.html">Unresolved CFD-DEM</a><input class="toctree-checkbox" id="toctree-checkbox-5" name="toctree-checkbox-5" role="switch" type="checkbox"/><label for="toctree-checkbox-5"><div class="visually-hidden">Toggle navigation of Unresolved CFD-DEM</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../../parameters/unresolved-cfd-dem/cfd-dem.html">CFD-DEM</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../parameters/unresolved-cfd-dem/void-fraction.html">Void Fraction</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../../parameters/sharp-immersed-boundary/sharp-immersed-boundary.html">Sharp-Immersed-Boundary</a></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../../parameters/rpt/rpt.html">Radioactive Particle Tracking (RPT)</a><input class="toctree-checkbox" id="toctree-checkbox-6" name="toctree-checkbox-6" role="switch" type="checkbox"/><label for="toctree-checkbox-6"><div class="visually-hidden">Toggle navigation of Radioactive Particle Tracking (RPT)</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../../parameters/rpt/detector_parameters.html">Detector Parameters</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../parameters/rpt/fem_reconstruction.html">FEM Reconstruction</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../parameters/rpt/parameter_tuning.html">Parameter Tuning</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../parameters/rpt/rpt_parameters.html">RPT Parameters</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../../examples/examples.html">Examples</a><input class="toctree-checkbox" id="toctree-checkbox-7" name="toctree-checkbox-7" role="switch" type="checkbox"/><label for="toctree-checkbox-7"><div class="visually-hidden">Toggle navigation of Examples</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../../examples/incompressible-flow/incompressible-flow.html">Incompressible Flow</a><input class="toctree-checkbox" id="toctree-checkbox-8" name="toctree-checkbox-8" role="switch" type="checkbox"/><label for="toctree-checkbox-8"><div class="visually-hidden">Toggle navigation of Incompressible Flow</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../../examples/incompressible-flow/2d-lid-driven-cavity-flow/lid-driven-cavity-flow.html">Lid-Driven Cavity Flow</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../examples/incompressible-flow/2d-flow-around-cylinder/2d-flow-around-cylinder.html">Flow around a Cylinder</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../examples/incompressible-flow/2d-taylor-couette-flow/2d-taylor-couette-flow.html">Taylor-Couette Flow</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../examples/incompressible-flow/2d-mms/2d-mms.html">Method of Manufactured Solutions</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../examples/incompressible-flow/2d-backward-facing-step/2d-backward-facing-step.html">Flow past a Backward-Facing Step</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../examples/incompressible-flow/2d-transient-flow-around-ahmed-body/2d-transient-flow-around-ahmed-body.html">Transient Flow around an Ahmed Body</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../examples/incompressible-flow/2d-transient-flow-around-cylinder/2d-transient-flow-around-cylinder.html">Transient Flow around a Cylinder</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../examples/incompressible-flow/2d-naca0012-low-reynolds/2d-naca0012-low-reynolds.html">Flow around NACA0012 at Low Reynolds Number</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../examples/incompressible-flow/2d-taylor-couette-flow-nitsche/2d-taylor-couette-flow-nitsche.html">Taylor-Couette Flow Using Nitsche Immersed Boundary</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../examples/incompressible-flow/2d-sudden-expansion-flow/2d-sudden-expansion-flow.html">Sudden-Expansion Flow</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../examples/incompressible-flow/3d-flow-around-sphere/flow-around-sphere.html">Flow around a Sphere</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../examples/incompressible-flow/3d-taylor-green-vortex/3d-taylor-green-vortex.html">Taylor-Green Vortex</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../examples/incompressible-flow/3d-turbulent-taylor-couette/3d-turbulent-taylor-couette.html">Turbulent Taylor-Couette Flow</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../examples/incompressible-flow/3d-flow-over-periodic-hills/3d-flow-over-periodic-hills.html">Flow over Periodic Hills</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../examples/incompressible-flow/3d-turbulent-flow-around-cylinder/3d-turbulent-flow-around-cylinder.html">Turbulent Flow Around a Cylinder</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../examples/incompressible-flow/3d-mixer-using-single-rotating-frame/3d-mixer-using-single-rotating-frame.html">Ribbon Mixer Using a Single Rotating Reference Frame</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../examples/incompressible-flow/3d-nitsche-mixer-with-pbt-impeller/nitsche-mixer-with-pbt-impeller.html">Mixer with Pitched-Blade Turbine Impeller Using Nitsche Immersed Boundary</a></li>
+</ul>
+</li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../../examples/multiphysics/multiphysics.html">Multiphysics</a><input class="toctree-checkbox" id="toctree-checkbox-9" name="toctree-checkbox-9" role="switch" type="checkbox"/><label for="toctree-checkbox-9"><div class="visually-hidden">Toggle navigation of Multiphysics</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l3 has-children"><a class="reference internal" href="../../../examples/multiphysics/vof.html">VOF</a><input class="toctree-checkbox" id="toctree-checkbox-10" name="toctree-checkbox-10" role="switch" type="checkbox"/><label for="toctree-checkbox-10"><div class="visually-hidden">Toggle navigation of VOF</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../../examples/multiphysics/dam-break/dam-break.html">Dam-Break</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../examples/multiphysics/rayleigh-taylor-instability/rayleigh-taylor-instability.html">Rayleigh-Taylor Instability</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../examples/multiphysics/static-bubble/static-bubble.html">Static Bubble</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../examples/multiphysics/rising-bubble/rising-bubble.html">Rising Bubble</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../examples/multiphysics/sloshing-in-rectangular-tank/sloshing-in-rectangular-tank.html">Sloshing in a Rectangular Tank</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../examples/multiphysics/capillary-wave/capillary-wave.html">Capillary Wave</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../examples/multiphysics/rayleigh-plateau-instability/rayleigh-plateau-instability.html">Rayleigh-Plateau Instability</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../examples/multiphysics/3d-dam-break/3d-dam-break.html">3D Dam-Break with an Obstacle</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../examples/multiphysics/water-injection-in-a-closed-cell/water-injection-in-a-closed-cell.html">Water Injection in a Closed Cell</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../examples/multiphysics/air-bubble-compression/air-bubble-compression.html">Air Bubble Compression</a></li>
+</ul>
+</li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="../../../examples/multiphysics/heat-transfer.html">Heat Transfer</a><input class="toctree-checkbox" id="toctree-checkbox-11" name="toctree-checkbox-11" role="switch" type="checkbox"/><label for="toctree-checkbox-11"><div class="visually-hidden">Toggle navigation of Heat Transfer</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../../examples/multiphysics/cooling-fin/cooling-fin.html">Cooling Fin</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../examples/multiphysics/rayleigh-benard-convection/rayleigh-benard-convection.html">Rayleigh-Bénard Convection</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../examples/multiphysics/stefan-problem/stefan-problem.html">Stefan Problem: Melting of a Solid</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../examples/multiphysics/warming-up-a-viscous-fluid/warming-up-a-viscous-fluid.html">Warming up a Viscous Fluid</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../examples/multiphysics/melting-cavity/melting-cavity.html">Melting Cavity</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../examples/multiphysics/static-irradiation/static-irradiation.html">Static Irradiation of a Bare Plate</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../examples/multiphysics/concentric-heat-exchanger/concentric-heat-exchanger.html">Concentric Heat Exchanger</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../examples/multiphysics/cylinder-cooling/cylinder-cooling.html">Cooling of a Cylinder</a></li>
+</ul>
+</li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="../../../examples/multiphysics/tracer.html">Tracer</a><input class="toctree-checkbox" id="toctree-checkbox-12" name="toctree-checkbox-12" role="switch" type="checkbox"/><label for="toctree-checkbox-12"><div class="visually-hidden">Toggle navigation of Tracer</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../../examples/multiphysics/tracer-in-static-mixer/tracer-in-static-mixer.html">Tracer in Static Mixer</a></li>
+</ul>
+</li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="../../../examples/multiphysics/chns.html">CHNS</a><input class="toctree-checkbox" id="toctree-checkbox-13" name="toctree-checkbox-13" role="switch" type="checkbox"/><label for="toctree-checkbox-13"><div class="visually-hidden">Toggle navigation of CHNS</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../../examples/multiphysics/jurins-law/jurins-law.html">Jurin’s Law</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../examples/multiphysics/bubble-detachment-shear-flow/bubble-detachment-shear-flow.html">Bubble detachment in shear flow</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../../examples/dem/dem.html">Discrete Element Method (DEM)</a><input class="toctree-checkbox" id="toctree-checkbox-14" name="toctree-checkbox-14" role="switch" type="checkbox"/><label for="toctree-checkbox-14"><div class="visually-hidden">Toggle navigation of Discrete Element Method (DEM)</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../../examples/dem/bouncing-particle/bouncing-particle.html">Bouncing Particle</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../examples/dem/oblique-wall-impact/oblique-wall-impact.html">Oblique Wall Impact</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../examples/dem/packing-in-circle/packing-in-circle.html">Packing in Circle</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../examples/dem/packing-in-ball/packing-in-ball.html">Packing in Ball</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../examples/dem/small-scale-rotating-drum/small-scale-rotating-drum.html">Small Scale Rotating Drum</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../examples/dem/small-scale-rotating-drum-postprocessing/small-scale-rotating-drum-postprocessing.html">Small Scale Rotating Drum Postprocessing</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../examples/dem/rotating-drum/rotating-drum.html">Rotating Drum</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../examples/dem/rotation-of-box/rotation-of-box.html">Rotation of Box</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../examples/dem/sandpile-formation/sandpile-formation.html">Sandpile Formation</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../examples/dem/silo/silo.html">Silo</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../examples/dem/rectangular-hopper/rectangular-hopper.html">Rectangular Hopper</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../examples/dem/granular-dam-break/granular-dam-break.html">Granular Dam-Break</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../examples/dem/plate-discharge/plate-discharge.html">Plate Discharge</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../examples/dem/bunny-drill/bunny-drill.html">Bunny Drill</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../examples/dem/granular-mixer/granular-mixer.html">Granular Mixer</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../examples/dem/granuheap/granuheap.html">Granuheap</a></li>
+</ul>
+</li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../../examples/dem-mp/dem-mp.html">DEM-Multiphysics</a><input class="toctree-checkbox" id="toctree-checkbox-15" name="toctree-checkbox-15" role="switch" type="checkbox"/><label for="toctree-checkbox-15"><div class="visually-hidden">Toggle navigation of DEM-Multiphysics</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../../examples/dem-mp/heat-transfer-in-aligned-particles/heat-transfer-in-aligned-particles.html">Heat Transfer in Aligned Particles</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../examples/dem-mp/heated-packed-bed/heated-packed-bed.html">Heated Packed Bed</a></li>
+</ul>
+</li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../../examples/unresolved-cfd-dem/unresolved-cfd-dem.html">Unresolved CFD-DEM</a><input class="toctree-checkbox" id="toctree-checkbox-16" name="toctree-checkbox-16" role="switch" type="checkbox"/><label for="toctree-checkbox-16"><div class="visually-hidden">Toggle navigation of Unresolved CFD-DEM</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../../examples/unresolved-cfd-dem/single-particle-sedimentation/single-particle-sedimentation.html">Single Particle Sedimentation</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../examples/unresolved-cfd-dem/cylindrical-packed-bed/cylindrical-packed-bed.html">Cylindrical Packed Bed</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../examples/unresolved-cfd-dem/gas-solid-fluidized-bed/gas-solid-fluidized-bed.html">Gas-Solid Fluidized Bed</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../examples/unresolved-cfd-dem/pseudo-2d-gas-solid-fluidized-bed/pseudo-2d-gas-solid-fluidized-bed.html">Pseudo-2D Gas-Solid Fluidized Bed</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../examples/unresolved-cfd-dem/gas-solid-spouted-rectangular-bed/gas-solid-spouted-rectangular-bed.html">Gas-Solid Spouted Rectangular Bed</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../examples/unresolved-cfd-dem/liquid-solid-fluidized-bed/liquid-solid-fluidized-bed.html">Liquid-Solid Fluidized Bed</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../examples/unresolved-cfd-dem/boycott-effect/boycott-effect.html">Boycott Effect</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../examples/unresolved-cfd-dem/gas-solid-spouted-cylinder-bed/gas-solid-spouted-cylinder-bed.html">Gas-Solid Spouted Cylinder Bed</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../examples/unresolved-cfd-dem/dense-pneumatic-conveying/dense-pneumatic-conveying.html">Dense Pneumatic Conveying</a></li>
+</ul>
+</li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../../examples/sharp-immersed-boundary/sharp-immersed-boundary.html">Sharp Immersed Boundary Solver</a><input class="toctree-checkbox" id="toctree-checkbox-17" name="toctree-checkbox-17" role="switch" type="checkbox"/><label for="toctree-checkbox-17"><div class="visually-hidden">Toggle navigation of Sharp Immersed Boundary Solver</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l3 has-children"><a class="reference internal" href="../../../examples/sharp-immersed-boundary/resolved-cfd-dem.html">Resolved CFD-DEM</a><input class="toctree-checkbox" id="toctree-checkbox-18" name="toctree-checkbox-18" role="switch" type="checkbox"/><label for="toctree-checkbox-18"><div class="visually-hidden">Toggle navigation of Resolved CFD-DEM</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../../examples/sharp-immersed-boundary/sedimentation-1-particle/sedimentation-1-particle.html">Sedimentation of One Particle</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../examples/sharp-immersed-boundary/sedimentation-64-particles/sedimentation-64-particles.html">Sedimentation of 64 Particles</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../examples/sharp-immersed-boundary/sedimentation-1-cuboid/sedimentation-1-cuboid.html">Sedimentation of One Cuboid Particle</a></li>
+</ul>
+</li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="../../../examples/sharp-immersed-boundary/incompressible-flow.html">Incompressible Flow</a><input class="toctree-checkbox" id="toctree-checkbox-19" name="toctree-checkbox-19" role="switch" type="checkbox"/><label for="toctree-checkbox-19"><div class="visually-hidden">Toggle navigation of Incompressible Flow</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../../examples/sharp-immersed-boundary/cylinder-with-sharp-interface/cylinder-with-sharp-interface.html">Flow around a Cylinder Using the Sharp Interface Method</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../examples/sharp-immersed-boundary/sphere-carreau-with-sharp-interface/sphere-carreau-with-sharp-interface.html">Non-Newtonian Flow past a Sphere</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../examples/sharp-immersed-boundary/3d-composite-mixer-with-pbt-impeller/3d-composite-mixer-with-pbt-impeller.html">3D Mixer with Pitched-Blade Turbine Impeller Using Composite Sharp-Immersed Boundary</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../examples/sharp-immersed-boundary/3d-opencascade-mixer-with-pbt-impeller/3d-opencascade-mixer-with-pbt-impeller.html">3D Mixer with Pitched-Blade Turbine Impeller Using OpenCascade Sharp-Immersed Boundary</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../examples/sharp-immersed-boundary/inclined-3d-composite-mixer-with-pbt-impeller/inclined-3d-composite-mixer-with-pbt-impeller.html">Inclined 3D Mixer with Pitched-Blade Turbine Impeller Using Composite Sharp-Immersed Boundary</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../examples/sharp-immersed-boundary/3d-rbf-static-mixer/3d-rbf-static-mixer.html">3D Static Mixer Using RBF Sharp Immersed Boundary</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../examples/sharp-immersed-boundary/cylindrical-particle-drag-evaluation-with-sharp-interface/cylindrical-particle-drag-evaluation-with-sharp-interface.html">Flow around a Finite Cylindrical Particle Using the Sharp Interface Method</a></li>
+</ul>
+</li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="../../../examples/sharp-immersed-boundary/geometry-definition.html">Geometry Definition</a><input class="toctree-checkbox" id="toctree-checkbox-20" name="toctree-checkbox-20" role="switch" type="checkbox"/><label for="toctree-checkbox-20"><div class="visually-hidden">Toggle navigation of Geometry Definition</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../../examples/sharp-immersed-boundary/simple-plane-model-from-composite/simple-plane-model-from-composite.html">Simple Plane Model From Composite</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../../examples/rpt/rpt.html">Radioactive Particle Tracking (RPT)</a><input class="toctree-checkbox" id="toctree-checkbox-21" name="toctree-checkbox-21" role="switch" type="checkbox"/><label for="toctree-checkbox-21"><div class="visually-hidden">Toggle navigation of Radioactive Particle Tracking (RPT)</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../../examples/rpt/photon-count-calculation-in-a-cylindrical-vessel/photon-count-calculation-in-a-cylindrical-vessel.html">Photon Count Calculation in a Cylindrical Vessel</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../examples/rpt/tuning-parameters-with-nomad/tuning-parameters-with-nomad.html">Tuning Count Calculation Model Parameters with NOMAD</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../examples/rpt/particle-fem-reconstruction/particle-fem-reconstruction.html">Particle FEM Reconstruction</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1 current has-children"><a class="reference internal" href="../../theory.html">Theory</a><input checked="" class="toctree-checkbox" id="toctree-checkbox-22" name="toctree-checkbox-22" role="switch" type="checkbox"/><label for="toctree-checkbox-22"><div class="visually-hidden">Toggle navigation of Theory</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul class="current">
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../multiphysics/multiphysics.html">Multiphysics</a><input class="toctree-checkbox" id="toctree-checkbox-23" name="toctree-checkbox-23" role="switch" type="checkbox"/><label for="toctree-checkbox-23"><div class="visually-hidden">Toggle navigation of Multiphysics</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l3 has-children"><a class="reference internal" href="../../multiphysics/fluid_dynamics/fluid_dynamics.html">Fluid Dynamics</a><input class="toctree-checkbox" id="toctree-checkbox-24" name="toctree-checkbox-24" role="switch" type="checkbox"/><label for="toctree-checkbox-24"><div class="visually-hidden">Toggle navigation of Fluid Dynamics</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../multiphysics/fluid_dynamics/navier-stokes.html">The Incompressible Navier-Stokes Equations</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../multiphysics/fluid_dynamics/fem_formulation.html">Origin of the Finite Element Formulation</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../multiphysics/fluid_dynamics/stabilization.html">On the Need for Stabilization</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../multiphysics/fluid_dynamics/linear_solvers.html">Linear Solvers</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../multiphysics/fluid_dynamics/rheology.html">Rheology and Non-Newtonian Fluids</a></li>
+</ul>
+</li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="../../multiphysics/heat_transfer/heat_transfer.html">Heat Transfer</a><input class="toctree-checkbox" id="toctree-checkbox-25" name="toctree-checkbox-25" role="switch" type="checkbox"/><label for="toctree-checkbox-25"><div class="visually-hidden">Toggle navigation of Heat Transfer</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../multiphysics/heat_transfer/heat_equation.html">Heat Transfer Equations</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../multiphysics/heat_transfer/heat_equation.html#finite-element-formulation">Finite Element Formulation</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../multiphysics/heat_transfer/heat_equation.html#stabilization-techniques">Stabilization Techniques</a></li>
+</ul>
+</li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="../../multiphysics/passive_tracer/passive_tracer.html">Passive Tracer</a><input class="toctree-checkbox" id="toctree-checkbox-26" name="toctree-checkbox-26" role="switch" type="checkbox"/><label for="toctree-checkbox-26"><div class="visually-hidden">Toggle navigation of Passive Tracer</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../multiphysics/passive_tracer/passive_tracer_equations.html">Passive Tracer Equations</a></li>
+</ul>
+</li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="../../multiphysics/electromagnetism/electromagnetism.html">Electromagnetism</a><input class="toctree-checkbox" id="toctree-checkbox-27" name="toctree-checkbox-27" role="switch" type="checkbox"/><label for="toctree-checkbox-27"><div class="visually-hidden">Toggle navigation of Electromagnetism</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../multiphysics/electromagnetism/time_harmonic.html">Time Harmonic Maxwell’s Equations</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../multiphysics/electromagnetism/time_harmonic_weak_form.html">Finite Element Method for Time-Harmonic Maxwell’s Equations</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../multiphysics/electromagnetism/magnetohydrodynamics.html">Magnetohydrodynamics Equations</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2 current has-children"><a class="reference internal" href="../multiphase.html">Multiphase</a><input checked="" class="toctree-checkbox" id="toctree-checkbox-28" name="toctree-checkbox-28" role="switch" type="checkbox"/><label for="toctree-checkbox-28"><div class="visually-hidden">Toggle navigation of Multiphase</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul class="current">
+<li class="toctree-l3 has-children"><a class="reference internal" href="../cfd/cfd.html">One-Fluid Models</a><input class="toctree-checkbox" id="toctree-checkbox-29" name="toctree-checkbox-29" role="switch" type="checkbox"/><label for="toctree-checkbox-29"><div class="visually-hidden">Toggle navigation of One-Fluid Models</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l4"><a class="reference internal" href="../cfd/vof.html">The Volume of Fluid (VOF) Method</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../cfd/cahn-hilliard.html">Cahn-Hilliard Method</a></li>
+</ul>
+</li>
+<li class="toctree-l3 current has-children"><a class="reference internal" href="cfd_dem.html">CFD-DEM</a><input checked="" class="toctree-checkbox" id="toctree-checkbox-30" name="toctree-checkbox-30" role="switch" type="checkbox"/><label for="toctree-checkbox-30"><div class="visually-hidden">Toggle navigation of CFD-DEM</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul class="current">
+<li class="toctree-l4 current current-page"><a class="current reference internal" href="#">Discrete Element Method (DEM)</a></li>
+<li class="toctree-l4"><a class="reference internal" href="resolved_cfd-dem.html">Resolved CFD-DEM</a></li>
+<li class="toctree-l4"><a class="reference internal" href="unresolved_cfd-dem.html">Unresolved CFD-DEM</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../../tools/tools.html">Tools</a><input class="toctree-checkbox" id="toctree-checkbox-31" name="toctree-checkbox-31" role="switch" type="checkbox"/><label for="toctree-checkbox-31"><div class="visually-hidden">Toggle navigation of Tools</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../tools/updating-test-results.html">Updating Test Results</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../tools/command-line-interface-options.html">Command-line Interface Options</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../tools/gmsh/gmsh.html">Introduction on How to Use GMSH</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../tools/pointwise/pointwise.html">Introduction on How to Use Pointwise</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../tools/automatic_launch/automatic_launch.html">How to Automatically Create and Launch Lethe Simulations</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../tools/postprocessing/postprocessing_paraview.html">Remote Data Visualization on ParaView</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../tools/postprocessing/postprocessing_pyvista.html">Post-processing Lethe with PyVista</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../../publications.html">Publications</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../referencing.html">Referencing Lethe</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../../contributing/contributing.html">Contributing</a><input class="toctree-checkbox" id="toctree-checkbox-32" name="toctree-checkbox-32" role="switch" type="checkbox"/><label for="toctree-checkbox-32"><div class="visually-hidden">Toggle navigation of Contributing</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../contributing/pull-requests.html">Pull Requests</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../contributing/documentation.html">Documentation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../contributing/animation-videos.html">Animation Videos</a></li>
+</ul>
+</li>
+</ul>
+
+</div>
+</div>
+
+      </div>
+      
+    </div>
+  </aside>
+  <div class="main">
+    <div class="content">
+      <div class="article-container">
+        <a href="#" class="back-to-top muted-link">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+            <path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8v12z"></path>
+          </svg>
+          <span>Back to top</span>
+        </a>
+        <div class="content-icon-container">
+          
+<div class="theme-toggle-container theme-toggle-content">
+            <button class="theme-toggle">
+              <div class="visually-hidden">Toggle Light / Dark / Auto color theme</div>
+              <svg class="theme-icon-when-auto"><use href="#svg-sun-half"></use></svg>
+              <svg class="theme-icon-when-dark"><use href="#svg-moon"></use></svg>
+              <svg class="theme-icon-when-light"><use href="#svg-sun"></use></svg>
+            </button>
+          </div>
+          <label class="toc-overlay-icon toc-content-icon" for="__toc">
+            <div class="visually-hidden">Toggle table of contents sidebar</div>
+            <i class="icon"><svg><use href="#svg-toc"></use></svg></i>
+          </label>
+        </div>
+        <article role="main">
+          <section id="discrete-element-method-dem">
+<h1>Discrete Element Method (DEM)<a class="headerlink" href="#discrete-element-method-dem" title="Link to this heading">#</a></h1>
+<p>In this guide, we summarize the theory behind DEM. For further details, we refer the reader to the article by Blais <em>et al.</em>  <a class="footnote-reference brackets" href="#blais2019" id="id1" role="doc-noteref"><span class="fn-bracket">[</span>1<span class="fn-bracket">]</span></a> and the one by Golshan <em>et al.</em> <a class="footnote-reference brackets" href="#golshan2023" id="id2" role="doc-noteref"><span class="fn-bracket">[</span>2<span class="fn-bracket">]</span></a></p>
+<div class="math-wrapper docutils container">
+<div class="math notranslate nohighlight">
+\[\begin{split}m_i\frac{d\mathbf{v_i}}{dt} &amp;= \sum_{j\in \mathcal C_i} (\mathbf{F}_{ij}^\mathrm{n} + \mathbf{F}_{ij}^\mathrm{t}) + m_i\mathbf{g} + \mathbf{F}_i^\mathrm{ext} \\
+I_i\frac{d\mathbf{\omega_i}}{dt} &amp;= \sum_{j\in \mathcal C_i} (\mathbf{M}_{ij}^\mathrm{t} + \mathbf{M}_{ij}^\mathrm{r}) +  \mathbf{M}_i^\mathrm{ext}\end{split}\]</div>
+</div>
+<p>Where:</p>
+<ul class="simple">
+<li><p><span class="math notranslate nohighlight">\(m_i\)</span> mass of the particule i;</p></li>
+<li><p><span class="math notranslate nohighlight">\(\mathbf{v_i}\)</span> velocity of the particule i;</p></li>
+<li><p><span class="math notranslate nohighlight">\(\mathcal C_i\)</span> particles in contact list;</p></li>
+<li><p><span class="math notranslate nohighlight">\(\mathbf{F}_{ij}^\mathrm{n}\)</span> normal contact force due to the contact between particles i and j;</p></li>
+<li><p><span class="math notranslate nohighlight">\(\mathbf{F}_{ij}^\mathrm{t}\)</span> tangential contact force due to the contact between particles i and j;</p></li>
+<li><p><span class="math notranslate nohighlight">\(\mathbf{g}\)</span> gravitationnal acceleration;</p></li>
+<li><p><span class="math notranslate nohighlight">\(\mathbf{F}_i^\mathrm{ext}\)</span> external forces;</p></li>
+<li><p><span class="math notranslate nohighlight">\(I_i\)</span> moment of inertia of particle i;</p></li>
+<li><p><span class="math notranslate nohighlight">\(\mathbf{\omega_i}\)</span> angular velocity of particle i;</p></li>
+<li><p><span class="math notranslate nohighlight">\(\mathbf{M}_{ij}^\mathrm{t}\)</span> tangential friction torque due to the contact between particles i and j;</p></li>
+<li><p><span class="math notranslate nohighlight">\(\mathbf{M}_{ij}^\mathrm{r}\)</span> rolling friction torque due to the contact between particles i and j;</p></li>
+<li><p><span class="math notranslate nohighlight">\(\mathbf{M}_i^\mathrm{ext}\)</span> external torques;</p></li>
+</ul>
+<section id="contact-force-and-torque-models">
+<h2>Contact Force and Torque Models<a class="headerlink" href="#contact-force-and-torque-models" title="Link to this heading">#</a></h2>
+<p>The normal and tangential contact forces use linear or nonlinear viscoelastic models and are calculated as followed:</p>
+<div class="math-wrapper docutils container">
+<div class="math notranslate nohighlight">
+\[\begin{split}\mathbf{F}_{ij}^\mathrm{n} &amp;= -(k_\mathrm{n}\delta_{\mathrm{n}})\mathbf{n}_{ij}-(\eta_\mathrm{n}\mathbf{v}_{rn}) \\
+\mathbf{F}_{ij}^\mathrm{t} &amp;= -(k_\mathrm{t}\mathbf{\delta}_\mathrm{t})-(\eta_\mathrm{t}\mathbf{v}_{rt})\end{split}\]</div>
+</div>
+<p>Where:</p>
+<ul class="simple">
+<li><p><span class="math notranslate nohighlight">\(\delta_{\mathrm{n}}\)</span> normal overlap;</p></li>
+<li><p><span class="math notranslate nohighlight">\(\mathbf{\delta_\mathrm{t}}\)</span> tangential displacement vector;</p></li>
+<li><p><span class="math notranslate nohighlight">\(\mathbf{n}_{ij}\)</span> contact normal vector;</p></li>
+<li><p><span class="math notranslate nohighlight">\(k_\mathrm{n}, k_\mathrm{t}\)</span> spring constants;</p></li>
+<li><p><span class="math notranslate nohighlight">\(\eta_\mathrm{n}, \eta_\mathrm{t}\)</span> damping model constants;</p></li>
+<li><p><span class="math notranslate nohighlight">\(\mathbf{v}_{rn}\)</span> relative velocity in the normal direction;</p></li>
+<li><p><span class="math notranslate nohighlight">\(\mathbf{v}_{tn}\)</span> relative velocity in the tangential direction;</p></li>
+</ul>
+<figure class="align-center" id="id24">
+<a class="reference internal image-reference" href="../../../_images/collision_particles.png"><img alt="particle-particle_collision" src="../../../_images/collision_particles.png" style="width: 400px;" /></a>
+<figcaption>
+<p><span class="caption-text">Representation of a typical particle-particle contact. <a class="footnote-reference brackets" href="#golshan2023" id="id3" role="doc-noteref"><span class="fn-bracket">[</span>2<span class="fn-bracket">]</span></a></span><a class="headerlink" href="#id24" title="Link to this image">#</a></p>
+</figcaption>
+</figure>
+<p>The contact normal vector <span class="math notranslate nohighlight">\(\mathbf{n}_{ij}\)</span> is computed as:</p>
+<div class="math-wrapper docutils container">
+<div class="math notranslate nohighlight">
+\[\mathbf{n}_{ij}=\frac{\mathbf{x}_{j}-\mathbf{x}_{i}}{\left|\mathbf{x}_{j}-\mathbf{x}_{i}\right|}\]</div>
+</div>
+<p>The normal overlap (<span class="math notranslate nohighlight">\(\delta_{\mathrm{n}}\)</span>) is the contact distance between the particles i and j. In the case of a collision between a particle and a wall, the wall is considered as j. The tangential displacement (<span class="math notranslate nohighlight">\(\delta_\mathrm{t}\)</span>) depends on the contact history and is updated during a contact.
+The normal and tangential displacements are calculated as follow:</p>
+<div class="math-wrapper docutils container">
+<div class="math notranslate nohighlight">
+\[\begin{split}\delta_{\mathrm{n}} =&amp; \:R_i + R_j - |\mathbf{x}_{j} - \mathbf{x}_{i}| \\
+\mathbf{\delta}_{ij}^{\mathrm{t,new}} &amp;= \mathbf{\delta}_{ij}^{\mathrm{t,old}}+\mathbf{v}_{ij,\mathrm{t}}dt\end{split}\]</div>
+</div>
+<section id="relative-velocities">
+<h3>Relative Velocities<a class="headerlink" href="#relative-velocities" title="Link to this heading">#</a></h3>
+<p>The relative velocities are calculated to update the tangential displacement and for their contribution in the force models:</p>
+<div class="math-wrapper docutils container">
+<div class="math notranslate nohighlight">
+\[\begin{split}\mathbf{v}_{ij} &amp;= \mathbf{v}_i-\mathbf{v}_j+\left(R_i\mathbf{\omega}_i+R_j\mathbf{\omega}_j\right)\times\mathbf{n}_{ij} \\
+\mathbf{v}_{ij,\mathrm{n}} &amp;= \left(\mathbf{v}_{ij}.\mathbf{n}_{ij}\right)\mathbf{n}_{ij} \\
+\mathbf{v}_{ij,\mathrm{t}} &amp;= \mathbf{v}_{ij}-\mathbf{v}_{ij,\mathrm{n}}\end{split}\]</div>
+</div>
+</section>
+<section id="spring-and-damping-constants">
+<h3>Spring and damping constants<a class="headerlink" href="#spring-and-damping-constants" title="Link to this heading">#</a></h3>
+<p>The spring and damping constants for the linear and nonlinear viscoelastic models are calculated as follows:</p>
+<div class="table-wrapper colwidths-given docutils container" id="id25">
+<table class="docutils align-default" id="id25">
+<caption><span class="caption-text">Spring and damping Models used in Lethe.</span><a class="headerlink" href="#id25" title="Link to this table">#</a></caption>
+<colgroup>
+<col style="width: 40.0%" />
+<col style="width: 30.0%" />
+<col style="width: 30.0%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Parameters</p></th>
+<th class="head"><p>Linear model definitions</p></th>
+<th class="head"><p>Nonlinear viscoelastic model definitions <a class="footnote-reference brackets" href="#garg2012" id="id4" role="doc-noteref"><span class="fn-bracket">[</span>3<span class="fn-bracket">]</span></a></p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>Normal spring constant</p></td>
+<td><p><span class="math notranslate nohighlight">\(k_\mathrm{n} = \frac{16}{15}\sqrt{R_{\mathrm{e}}}Y_{e}\left(\frac{15m_{e}V^2}{16\sqrt{R_{\mathrm{e}}}Y_{e}}\right)^{0.2}\)</span></p></td>
+<td><p><span class="math notranslate nohighlight">\(k_\mathrm{n} = \frac{4}{3}Y_{e}\sqrt{R_{\mathrm{e}}\delta_{\mathrm{n}}}\)</span></p></td>
+</tr>
+<tr class="row-odd"><td><p>Normal damping model constant</p></td>
+<td><p><span class="math notranslate nohighlight">\(\eta_\mathrm{n} = -2\beta\sqrt{m_{e} k_\mathrm{n}}\)</span></p></td>
+<td><p><span class="math notranslate nohighlight">\(\eta_\mathrm{n} = -2\sqrt{\frac{5}{6}}\beta\sqrt{S_\mathrm{n}m_{e}}\)</span></p></td>
+</tr>
+<tr class="row-even"><td><p>Tangential spring constant</p></td>
+<td><p><span class="math notranslate nohighlight">\(k_\mathrm{t} = 0.4 k_\mathrm{n}\)</span></p></td>
+<td><p><span class="math notranslate nohighlight">\(k_\mathrm{t} = 8G_{e}\sqrt{R_{\mathrm{e}}\delta_{\mathrm{n}}}\)</span></p></td>
+</tr>
+<tr class="row-odd"><td><p>Tangential damping model constant</p></td>
+<td><p><span class="math notranslate nohighlight">\(\eta_\mathrm{t} = -2\beta\sqrt{m_{e} k_\mathrm{t}}\)</span></p></td>
+<td><p><span class="math notranslate nohighlight">\(\eta_\mathrm{t} = -2\sqrt{\frac{5}{6}}\beta\sqrt{S_\mathrm{t}m_{e}}\)</span></p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<p>Where:</p>
+<ul class="simple">
+<li><p><span class="math notranslate nohighlight">\(R_{\mathrm{e}}\)</span> effective radius;</p></li>
+<li><p><span class="math notranslate nohighlight">\(Y_\mathrm{e}\)</span> effective Young’s modulus;</p></li>
+<li><p><span class="math notranslate nohighlight">\(m_\mathrm{e}\)</span> effective mass;</p></li>
+<li><p><span class="math notranslate nohighlight">\(V\)</span> characteristic impact velocity, this parameters is set to 1.0;</p></li>
+<li><p><span class="math notranslate nohighlight">\(e\)</span> coefficient of restitution;</p></li>
+<li><p><span class="math notranslate nohighlight">\(G_\mathrm{e}\)</span> effective shear modulus;</p></li>
+</ul>
+<p>These parameters are computed as follows:</p>
+<div class="math-wrapper docutils container">
+<div class="math notranslate nohighlight">
+\[\begin{split}\frac{1}{m_\mathrm{e}} &amp;= \frac{1}{m_i}+\frac{1}{m_j} \\
+\frac{1}{R_{\mathrm{e}}} &amp;= \frac{1}{R_i}+\frac{1}{R_j} \\
+\frac{1}{G_\mathrm{e}} &amp;= \frac{2(2-\nu_i)(1+\nu_i)}{Y_i}+\frac{2(2-\nu_j)(1+\nu_j)}{Y_j} \\
+\frac{1}{Y_\mathrm{e}} &amp;= \frac{\left(1-\nu_i^2\right)}{Y_i}+\frac{\left(1-\nu_j^2\right)}{Y_j} \\
+\beta &amp;= \frac{\ln{e}}{\sqrt{\ln^2{e}+\pi^2}} \\
+S_\mathrm{n} &amp;= 2Y_{e}\sqrt{R_{\mathrm{e}}\delta_{\mathrm{n}}} \\
+S_\mathrm{t} &amp;= 8G_{e}\sqrt{R_{\mathrm{e}}\delta_{\mathrm{n}}}\end{split}\]</div>
+</div>
+<p>Where:</p>
+<ul class="simple">
+<li><p><span class="math notranslate nohighlight">\(\nu_i, \nu_j\)</span> poisson coefficient of particle i or j;</p></li>
+</ul>
+</section>
+<section id="coulomb-s-limit">
+<h3>Coulomb’s limit<a class="headerlink" href="#coulomb-s-limit" title="Link to this heading">#</a></h3>
+<p>Coulomb’s criterion is breached when the following condition is broken during a collision:</p>
+<div class="math-wrapper docutils container">
+<div class="math notranslate nohighlight">
+\[|\mathbf{F}_{ij}^{\mathrm{t}}| \geq \mu |\mathbf{F}_{ij}^\mathrm{n}|\]</div>
+</div>
+<p>A breach means the collision is having gross sliding and tangential force needs to be limited to the Coulomb’s limit.
+To do so, the tangential displacement <span class="math notranslate nohighlight">\(\mathbf{\delta_\mathrm{t}}\)</span> is first limited and then the tangential force is recalculated.</p>
+<p>When using nonlinear viscoelastic contact model, the tangential displacement is computed from tangential spring force :</p>
+<div class="math-wrapper docutils container">
+<div class="math notranslate nohighlight">
+\[\begin{split}\mathbf{\delta_\mathrm{t}} &amp;= \frac{\mathbf{\tilde{F}_{ij}}}{-k_\mathrm{t}} \\
+\mathbf{\tilde{F}_{ij}} &amp;= \mathbf{\hat{F}_{ij}} + \eta_\mathrm{t}\mathbf{v}_{ij,\mathrm{t}} \\
+\mathbf{\hat{F}_{ij}^\mathrm{t}} &amp;= \mu |\mathbf{F}_{ij}^\mathrm{n}| \frac{\mathbf{F}_{ij}^\mathrm{t}}{|\mathbf{F}_{ij}^\mathrm{t}|}\end{split}\]</div>
+</div>
+<p>Regarding the particle-wall contacts, the applied models are the same as for particle-particle contacts.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>When using a cohesive force model, Coulomb’s criterion needs to be modified. For further information on cohesive force models, see <a class="reference internal" href="#cohesive-force-models">Cohesive force models</a> .</p>
+</div>
+</section>
+<section id="tangential-torque">
+<h3>Tangential torque<a class="headerlink" href="#tangential-torque" title="Link to this heading">#</a></h3>
+<p>Tangential torque is the torque generated by the tangential force. It can be calculated through:</p>
+<div class="math-wrapper docutils container">
+<div class="math notranslate nohighlight">
+\[\mathbf{M}_{\mathrm{t},ij} = R_{i}\mathbf{n}_{ij} \times \mathbf{F}_{\mathrm{t},ij}\]</div>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>As of now, the <code class="docutils literal notranslate"><span class="pre">lethe-particles</span></code> solver only uses spherical particles, thus the normal force does not generate a torque on the particle during a collision.</p>
+</div>
+</section>
+<section id="rolling-friction-models">
+<h3>Rolling friction models<a class="headerlink" href="#rolling-friction-models" title="Link to this heading">#</a></h3>
+<p>Rolling friction may be computed through a constant torque model, a viscous torque model or an elastic-plastic spring-dashpot torque model. It is also possible to ignore the rolling resistance by using the no-resistance model. The corresponding models are described by the following equations:</p>
+<div class="table-wrapper colwidths-given docutils container" id="id26">
+<table class="docutils align-center" id="id26" style="width: 80%">
+<caption><span class="caption-text">Rolling Friction Models used in Lethe.</span><a class="headerlink" href="#id26" title="Link to this table">#</a></caption>
+<colgroup>
+<col style="width: 50.0%" />
+<col style="width: 50.0%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Models</p></th>
+<th class="head"><p>Equations</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>Constant resistance</p></td>
+<td><p><span class="math notranslate nohighlight">\(\mathbf{M}_{\mathrm{r},ij} = -\mu_\mathrm{r}R_{\mathrm{e}}|\mathbf{F}_{\mathrm{n},ij}| \mathbf{\hat{\omega}}_{ij}\)</span></p></td>
+</tr>
+<tr class="row-odd"><td><p>Viscous resistance</p></td>
+<td><p><span class="math notranslate nohighlight">\(\mathbf{M}_{\mathrm{r},ij} = -\mu_\mathrm{r}R_{\mathrm{e}}|\mathbf{F}_{\mathrm{n},ij}||\mathbf{V}_{\omega}| \mathbf{\hat{\omega}}_{ij}\)</span></p></td>
+</tr>
+<tr class="row-even"><td><p>Elastic-plastic spring-dashpot resistance</p></td>
+<td><p><span class="math notranslate nohighlight">\(\mathbf{M}_{\mathrm{r},ij} = \mathbf{M}_{\mathrm{t+\Delta t}}^{k} + \mathbf{M}_{\mathrm{t+\Delta t}}^{d}\)</span></p></td>
+</tr>
+<tr class="row-odd"><td><p>No resistance</p></td>
+<td><p><span class="math notranslate nohighlight">\(\mathbf{M}_{\mathrm{r},ij} = 0\)</span></p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<p>Where:</p>
+<ul class="simple">
+<li><p><span class="math notranslate nohighlight">\(\mu_\mathrm{r}\)</span> rolling friction coefficient;</p></li>
+<li><p><span class="math notranslate nohighlight">\(\hat{\omega}_{ij}\)</span> relative angular velocity;</p></li>
+<li><p><span class="math notranslate nohighlight">\(V_{\omega}\)</span> contact point relative velocity caused by the angular velocities;</p></li>
+<li><p><span class="math notranslate nohighlight">\(\mathbf{M}_{\mathrm{r,t+\Delta t}}^{k}\)</span> elastic resistance torque at the end of the current time step;</p></li>
+<li><p><span class="math notranslate nohighlight">\(\mathbf{M}_{\mathrm{r,t+\Delta t}}^{d}\)</span> viscous damping resistance torque at the end of the current time step;</p></li>
+</ul>
+<p>The parameters for the constant and viscous models are computed as follows:</p>
+<div class="math-wrapper docutils container">
+<div class="math notranslate nohighlight">
+\[\begin{split}\mathbf{\hat{\omega}}_{ij} &amp;= \frac{\omega_{i} - \omega_{j}}{|\omega_{i} - \omega_{j}|} \\
+\mathbf{V}_{\omega} &amp;= \left( \omega_{i} \times R_{i}\mathbf{n}_{ij}-\omega_{j} \times R_{j}\mathbf{n}_{ji} \right).\end{split}\]</div>
+</div>
+<p>For the elastic-plastic spring-dashpot model, <span class="math notranslate nohighlight">\(\mathbf{M}_{\mathrm{r}}^{k}\)</span> and <span class="math notranslate nohighlight">\(\mathbf{M}_{\mathrm{r}}^{d}\)</span> are computed using the following algorithm:</p>
+<div class="math-wrapper docutils container">
+<div class="math notranslate nohighlight">
+\[\begin{split}\mathbf{\omega}_{ji} &amp;= \mathbf{\omega}_{i}- \mathbf{\omega}_{j}\\
+\mathbf{\omega}_{ji,\mathrm{plane}} &amp;= \mathbf{\omega}_{ij}- \left( \mathbf{\omega}_{ij}\cdot\mathbf{n}_{ij} \right) \mathbf{n}_{ij}\\
+\mathbf{\Delta\theta} &amp;= \Delta t \; \mathbf{\omega}_{ij,\mathrm{plane}}\\
+k_\mathrm{r} &amp;= 2.25 k_\mathrm{n} \left( \mu_\mathrm{r} R_\mathrm{e} \right)^2\\
+\mathbf{\Delta M}_{\mathrm{r},t}^k &amp;= -k_\mathrm{r}\mathbf{\Delta\theta}\\
+\mathbf{M}_{\mathrm{r},t+\Delta t}^\mathrm{k} &amp;= \mathbf{M}_{\mathrm{r},t}^\mathrm{k}+ \mathbf{\Delta M}_{\mathrm{r},t}^\mathrm{k} \\
+M\mathrm{^{m}_{r}} &amp;= \mu_\mathrm{r} R_\mathrm{e} |\mathbf{F}_{\mathrm{n},ij}|\\
+\mathbf{M}_{\mathrm{r},t+\Delta t}^{\mathrm{k}} &amp;= \begin{cases}
+     \mathbf{M}_{\mathrm{r},t+\Delta t}^{\mathrm{k}}, &amp; |\mathbf{M}_{\mathrm{r},t+\Delta t}^{\mathrm{k}}| &lt;  M\mathrm{^{m}_{r}} \\
+     \frac{ \mathbf{M}_{\mathrm{r},t+\Delta t}^{\mathrm{k}}}{| \mathbf{M}_{\mathrm{r},t+\Delta t}^{\mathrm{k}}|} M\mathrm{^{m}_{r}}, &amp; \text{else}
+\end{cases}\\
+I_\mathrm{e} &amp;= \left( \frac{1}{I_i + m_iR_i^2} + \frac{1}{I_j + m_jR_j^2} \right)\\
+C_r^{crit} &amp;= 2 \sqrt{I_\mathrm{e} k_\mathrm{r}} \\
+C_r &amp;= \eta_r C_r^{crit}\\
+\mathbf{M}_{\mathrm{r},t+\Delta t}^{\mathrm{e}} &amp;= \begin{cases}
+     -C_r \mathbf{\omega}_{ij,\mathrm{plane}} , &amp; |\mathbf{M}_{\mathrm{r},t+\Delta t}^{\mathrm{k}}| &lt;  M\mathrm{^{m}_{r}} \\
+     -f C_r \mathbf{\omega}_{ij,\mathrm{plane}}, &amp; \text{else}
+\end{cases}\end{split}\]</div>
+</div>
+<p>Where:</p>
+<ul class="simple">
+<li><p><span class="math notranslate nohighlight">\(\mathbf{\omega}_{ji}\)</span> relative angular velocity between particle j and i;</p></li>
+<li><p><span class="math notranslate nohighlight">\(\mathbf{\omega}_{ji,t}\)</span> relative angular velocity between particle j and i perpendicular to the normal contact vector (vector in the contact plane);</p></li>
+<li><p><span class="math notranslate nohighlight">\(\mathbf{\Delta\theta}\)</span> incremental relative rotation between particle j and i;</p></li>
+<li><p><span class="math notranslate nohighlight">\(k_\mathrm{r}\)</span> rolling stiffness;</p></li>
+<li><p><span class="math notranslate nohighlight">\(\mathbf{\Delta M}_{r,t}^\mathrm{k}\)</span> incremental elastic rolling resistance torque;</p></li>
+<li><p><span class="math notranslate nohighlight">\(M\mathrm{^{m}_{r}}\)</span> limiting spring torque which is achieved at a full angular mobilisation;</p></li>
+<li><p><span class="math notranslate nohighlight">\(I_\mathrm{e}\)</span> effective inertia;</p></li>
+<li><p><span class="math notranslate nohighlight">\(C_\mathrm{r}^{\mathrm{crit}}\)</span> rolling critical viscous damping constant;</p></li>
+<li><p><span class="math notranslate nohighlight">\(C_\mathrm{r}\)</span> rolling viscous damping constant;</p></li>
+<li><p><span class="math notranslate nohighlight">\(f\)</span> full mobilisation model parameter;</p></li>
+</ul>
+<p><span class="math notranslate nohighlight">\(\mathbf{M}_{t}^{\mathrm{k}}\)</span> starts at <span class="math notranslate nohighlight">\(\mathbf{0}\)</span> at the beginning of a contact and is set back to <span class="math notranslate nohighlight">\(\mathbf{0}\)</span> when the contact ends. <span class="math notranslate nohighlight">\(\mathbf{M}_{\mathrm{r},ij}\)</span> is applied on particle i. The rolling resistance torque applied on particle j can be found using Newton’s Third Law.</p>
+<p>For further details on all three rolling resistance model, we refer the reader to the article by Ai <em>et al.</em>  <a class="footnote-reference brackets" href="#ai2011" id="id5" role="doc-noteref"><span class="fn-bracket">[</span>4<span class="fn-bracket">]</span></a></p>
+</section>
+</section>
+<section id="cohesive-force-models">
+<h2>Cohesive force models<a class="headerlink" href="#cohesive-force-models" title="Link to this heading">#</a></h2>
+<p>Lethe supports two cohesive force models: the Johnson-Kendall-Roberts (JKR) and the Derjaguin-Muller-Toporov (DMT). Both models describe attractive forces due to van der Waals effects. Choosing the right model can be based on the Tabor parameter <span class="math notranslate nohighlight">\(\mathbf{\tau}\)</span> which represents the ratio between the normal elastic deformation caused by adhesion and the distance at which adhesion forces occur. <a class="footnote-reference brackets" href="#grierson2005" id="id6" role="doc-noteref"><span class="fn-bracket">[</span>5<span class="fn-bracket">]</span></a></p>
+<p>This parameter can be described as:</p>
+<div class="math-wrapper docutils container">
+<div class="math notranslate nohighlight">
+\[\mathbf{\tau} = \left( \frac{R_{\mathrm{e}} \gamma_{\mathrm{e}}^2}{Y_\mathrm{e}^2 z_{\mathrm{o}}^3}\right)^{1/3}\]</div>
+</div>
+<p>Where <span class="math notranslate nohighlight">\(\mathbf{z_{\mathrm{o}}}\)</span> is the equilibrium separation of the surfaces and <span class="math notranslate nohighlight">\(\mathbf{\gamma}_\mathrm{e}\)</span> the effective surface energy. The DMT model is applicable for low <span class="math notranslate nohighlight">\(\mathbf{\tau}\)</span> values (<span class="math notranslate nohighlight">\(\mathbf{\tau} &lt; 1\)</span>) while the JKR model is more appropriate for high <span class="math notranslate nohighlight">\(\mathbf{\tau}\)</span> values (<span class="math notranslate nohighlight">\(\mathbf{\tau} &gt; 1\)</span>) . In essence, the DMT model is preferred for small, hard particles (high <span class="math notranslate nohighlight">\(Y\)</span>) and the JKR model for large, soft particles.</p>
+<section id="johnson-kendall-roberts-force-model">
+<h3>Johnson-Kendall-Roberts force model<a class="headerlink" href="#johnson-kendall-roberts-force-model" title="Link to this heading">#</a></h3>
+<p>The Johnson-Kendall-Roberts (JKR) model describes attractive forces due to van der Waals effects. <a class="footnote-reference brackets" href="#coetzee2023" id="id7" role="doc-noteref"><span class="fn-bracket">[</span>6<span class="fn-bracket">]</span></a>
+This model modifies the Hertz formulation by defining a larger contact path radius (<span class="math notranslate nohighlight">\(\mathbf{a}\)</span>) and by taking into account the effective surface energy (<span class="math notranslate nohighlight">\(\mathbf{\gamma}_{e}\)</span>).
+The model is defined by:</p>
+<div class="math-wrapper docutils container">
+<div class="math notranslate nohighlight">
+\[a^{3} = \frac{3 R_{\mathrm{e}}}{4 Y_{\mathrm{e}}} \left[|\mathbf{F_{n}^{JKR}}| + 3\pi\gamma_{\mathrm{e}}R_{\mathrm{e}}  + \sqrt{6 |\mathbf{F_{n}^{JKR}}| \pi\gamma_{\mathrm{e}}R_{\mathrm{e}} + (3\pi\gamma_{\mathrm{e}}R_{\mathrm{e}})^2 }\right]\]</div>
+</div>
+<p>Where <span class="math notranslate nohighlight">\(\mathbf{F_{n}^\mathrm{JKR}}\)</span> corresponds to the normal spring force and attractive force combined and <span class="math notranslate nohighlight">\(\mathbf{\gamma_{\mathrm{e}}}\)</span> is the effective surface energy.
+Note that if the effective surface energy is equal to zero, the JKR model reverts to Hertz model.</p>
+<p>The effective surface energy can be computed as:</p>
+<div class="math-wrapper docutils container">
+<div class="math notranslate nohighlight">
+\[\gamma_{\mathrm{e}} = \gamma_{i} + \gamma_{j} - 2\gamma_{i,j}\]</div>
+</div>
+<p>Where <span class="math notranslate nohighlight">\(\gamma_{i}\)</span> and <span class="math notranslate nohighlight">\(\gamma_{j}\)</span> are the surface energy of each material (particle or wall) and where <span class="math notranslate nohighlight">\(\gamma_{i,j}\)</span> is the interface energy which is equal to zero when both surfaces are the same material.
+The interface energy term is approximated using <a class="footnote-reference brackets" href="#israelachvili2011" id="id8" role="doc-noteref"><span class="fn-bracket">[</span>7<span class="fn-bracket">]</span></a>:</p>
+<div class="math-wrapper docutils container">
+<div class="math notranslate nohighlight">
+\[\gamma_{i,j} \approx \left( \sqrt{\gamma_{i}} - \sqrt{\gamma_{j}}  \right)^{2}\]</div>
+</div>
+<p>To compute the <span class="math notranslate nohighlight">\(\mathbf{F_{n}^{JKR}}\)</span>, the contact patch radius needs to be determined. The contact patch radius can be related to the normal overlap as follows:</p>
+<div class="math-wrapper docutils container">
+<div class="math notranslate nohighlight">
+\[\delta_{\mathrm{n}} = \frac{ a^{2} }{ R_{\mathrm{e}} } -  \sqrt{ \frac{2 \pi \gamma_{\mathrm{e}} a }{ Y_\mathrm{e} }}\]</div>
+</div>
+<p>This equation can be rewritten as a fourth-order polynomial function with two complex and two real roots.</p>
+<div class="math-wrapper docutils container">
+<div class="math notranslate nohighlight">
+\[0 = a^{4} - 2R_{\mathrm{e}}\delta_{\mathrm{n}}a^{2} - 2\pi\gamma_{\mathrm{e}}R_{\mathrm{e}}^{2}a + R_{\mathrm{e}}^{2}\delta_{\mathrm{n}}^{2}\]</div>
+</div>
+<p>Since we are always solving for the same real root, a straightforward procedure, described by Parteli et al. can be used <a class="footnote-reference brackets" href="#parteli2014" id="id9" role="doc-noteref"><span class="fn-bracket">[</span>8<span class="fn-bracket">]</span></a>:</p>
+<div class="math-wrapper docutils container">
+<div class="math notranslate nohighlight">
+\[\begin{split}c_\mathrm{0} &amp;= R_{\mathrm{e}}^{2}\delta_{\mathrm{n}}^{2} \\
+c_\mathrm{1} &amp;= \frac{-2\pi\gamma_{\mathrm{e}}R_{\mathrm{e}}^{2}}{Y_{\mathrm{e}}}\\
+c_\mathrm{2} &amp;= -2R_{\mathrm{e}}\delta_{\mathrm{n}}\\
+P &amp;= -\frac{c_{\mathrm{2}}^{2}}{12} - c_{\mathrm{0}} \\
+Q &amp;= - \frac{c_{\mathrm{2}}^{3}}{108} + \frac{c_{\mathrm{0}}c_{\mathrm{2}}}{3} - \frac{c_{\mathrm{1}}^{2}}{8} \\
+U &amp;= \left[ -\frac{ Q }{ 2 } + \sqrt{  \frac{ Q^{2} } {4} + \frac{ P^{3} }{ 27 }  }  \right]^{ \frac{1}{3} } \\
+s &amp;=
+\begin{cases}
+-5c_{\mathrm{2}}/6 + U - \frac{P}{3U} &amp;{if}\: P \neq 0 \\
+-5c_{\mathrm{2}}/6 + Q^{\frac{1}{3}}  &amp;{if}\: P = 0
+\end{cases}\\
+\omega &amp;= \sqrt{c_{\mathrm{2}} + 2 s} \\
+\lambda &amp;= \frac{c_{\mathrm{1}} }{2 \omega}\\
+a &amp;= \frac{1}{2}\left(\omega + \sqrt{\omega^{2} - 4(c_{\mathrm{2}} + s + \lambda ) } \right)\end{split}\]</div>
+</div>
+<p>Finally, the <span class="math notranslate nohighlight">\(\mathbf{F_{\mathrm{n}}^{JKR}}\)</span> can be computed as follows:</p>
+<div class="math-wrapper docutils container">
+<div class="math notranslate nohighlight">
+\[\mathbf{F_{n}^{JKR}} = \left( \frac{4 Y_\mathrm{e} a^{3}}{3 R_{\mathrm{e}}} - \sqrt{8 \pi \gamma_{\mathrm{e}} Y_{\mathrm{e}} a^{3}} \right) \mathbf{n}_{ij}\]</div>
+</div>
+<p>The normal damping, tangential damping and tangential spring constants need to be computed using the same procedure as the nonlinear model.</p>
+<p>A simplified version of the JKR model (SJKR-A) is implemented in Lethe. Please refer to C. J. Coetzee and O. C. Scheffler for more information on the different versions of the JKR model and their specific features <a class="footnote-reference brackets" href="#coetzee2023" id="id10" role="doc-noteref"><span class="fn-bracket">[</span>6<span class="fn-bracket">]</span></a>.</p>
+<p>A modified Coulomb’s limit, based on the work of C. Thornton <a class="footnote-reference brackets" href="#thornton1991" id="id11" role="doc-noteref"><span class="fn-bracket">[</span>9<span class="fn-bracket">]</span></a>, is used for the JKR model. Using the usual limit can result in permanent slip since the total normal force can be equal to zero even when there is a substantial overlap between particles.</p>
+<p>The modified Coulomb’s criterion is breached when the following condition is broken during a collision:</p>
+<div class="math-wrapper docutils container">
+<div class="math notranslate nohighlight">
+\[|\mathbf{F}_{ij}^{t}| \geq \mu |\mathbf{F_{n}^{JKR} + 2F_{\mathrm{po}}}|.\]</div>
+</div>
+<p>Where <span class="math notranslate nohighlight">\(\mathbf{F_{\mathrm{po}}}\)</span> is the pull-off force, which can be computed as follows:</p>
+<div class="math-wrapper docutils container">
+<div class="math notranslate nohighlight">
+\[\mathbf{F_{\mathrm{po}}} = \left(1.5\pi\gamma_{\mathrm{e}}R_{\mathrm{e}}\right) \mathbf{n}_{ij}\]</div>
+</div>
+</section>
+<section id="derjaguin-muller-toporov-force-model">
+<h3>Derjaguin-Muller-Toporov force model<a class="headerlink" href="#derjaguin-muller-toporov-force-model" title="Link to this heading">#</a></h3>
+<p>The Derjaguin-Muller-Toporov (DMT) model describes attractive forces due to van der Waals effects. This model is more suitable for particles with smaller diameter, lower surface energy and higher Young’s modulus. In Lethe, the DMT model is implemented following the work of Meier <em>et al.</em> <a class="footnote-reference brackets" href="#meier2019" id="id12" role="doc-noteref"><span class="fn-bracket">[</span>10<span class="fn-bracket">]</span></a>. This implementation includes non-contact forces between particles. The model is described by the following equations:</p>
+<div class="math-wrapper docutils container">
+<div class="math notranslate nohighlight">
+\[\begin{split}\mathbf{F_{ad}^{DMT}} =    \begin{cases}
+    F_{\mathrm{po}} = -2\pi\gamma_{\mathrm{e}}R_{\mathrm{e}}, &amp; \delta_\mathrm{n} \leq \delta_{\mathrm{o}} \\
+    \frac{-AR_{\mathrm{e}}}{6 \delta_{n}^2}, &amp; \delta_{\mathrm{o}} &lt; \delta_\mathrm{n} &lt; \delta^* \\
+    0, &amp;  \delta^* \leq \delta_{\mathrm{n}}
+\end{cases}\end{split}\]</div>
+</div>
+<p>where <span class="math notranslate nohighlight">\(A\)</span> is the Hamaker constant which is used to quantify the strength of van der Waals forces. <span class="math notranslate nohighlight">\(\delta_{\mathrm{o}}\)</span> represents the distance at which the van der Waals force curve equals the pull-off force <span class="math notranslate nohighlight">\(F_{\mathrm{po}}\)</span> and <span class="math notranslate nohighlight">\(\delta^*\)</span> represents a cut-off radius at which the van der Waals has a relative decline of <span class="math notranslate nohighlight">\(C_{\mathrm{FPO}}\)</span> <a class="footnote-reference brackets" href="#meier2019" id="id13" role="doc-noteref"><span class="fn-bracket">[</span>10<span class="fn-bracket">]</span></a>. They are computed using:</p>
+<div class="math-wrapper docutils container">
+<div class="math notranslate nohighlight">
+\[\begin{split}\begin{align}
+    \delta_{\mathrm{o}} &amp;= - \sqrt{\frac{ -A R_{\mathrm{e}}}{6 F_{\mathrm{po}}}}\\
+    \delta^* &amp;= \frac{\delta_{\mathrm{o}}}{ \sqrt{C_{\mathrm{FPO}}}}
+\end{align}\end{split}\]</div>
+</div>
+<p>where <span class="math notranslate nohighlight">\(C_{\mathrm{FPO}}\)</span> is a user parameter used to determined the cut-off distance at which the non-contact forces are being performed.</p>
+<p>The Coulomb’s limit threshold for the DMT model is computed in the same way as for the non-linear viscoelastic model. This means that the adhesion force term is not taken into account when computing the norm of the normal force. For further information, see <a class="reference internal" href="#coulomb-s-limit">Coulomb’s limit</a> .</p>
+</section>
+</section>
+<section id="integration-methods">
+<h2>Integration Methods<a class="headerlink" href="#integration-methods" title="Link to this heading">#</a></h2>
+<p>Two types of integration methods are implemented in Lethe-DEM:</p>
+<ul class="simple">
+<li><p>Explicit Euler method;</p></li>
+<li><p>Velocity Verlet method</p></li>
+</ul>
+<p>Explicit Euler method is calculated as:</p>
+<div class="math-wrapper docutils container">
+<div class="math notranslate nohighlight">
+\[\begin{split}\mathbf{v}_{i}^{n+1} &amp;= \mathbf{v}_{i}^{n} + \mathbf{a}_{i}^{n}dt \\
+\mathbf{x}_{i}^{n+1} &amp;= \mathbf{x}_{i}^{n} + \mathbf{v}_{i}^{n}dt\end{split}\]</div>
+</div>
+<p>And velocity Verlet method is calculated with half-step velocity as:</p>
+<div class="math-wrapper docutils container">
+<div class="math notranslate nohighlight">
+\[\begin{split}\mathbf{v}_{i}^{n+\frac{1}{2}} &amp;= \mathbf{v}_{i}^{n} + \mathbf{a}_{i}^{n}\frac{dt}{2} \\
+\mathbf{x}_{i}^{n+1} &amp;= \mathbf{x}_{i}^{n} + \mathbf{v}_{i}^{n+\frac{1}{2}}dt \\
+\mathbf{v}_{i}^{n+1} &amp;= \mathbf{v}_{i}^{n+\frac{1}{2}} + \mathbf{a}_{i}^{n+1}\frac{dt}{2}\end{split}\]</div>
+</div>
+</section>
+<section id="thermal-dem-in-a-stagnant-gas">
+<h2>Thermal DEM in a Stagnant Gas<a class="headerlink" href="#thermal-dem-in-a-stagnant-gas" title="Link to this heading">#</a></h2>
+<dl class="simple">
+<dt>The heat transfer mechanisms considered are:</dt><dd><ul class="simple">
+<li><p>Conduction through the particles themselves</p></li>
+<li><p>Conduction between particles through the contact surface (microcontacts and macrocontacts)</p></li>
+<li><p>Conduction through the interstitial fluid (microgap and macrogap between particles)</p></li>
+</ul>
+</dd>
+</dl>
+<p>The solid microcontacts and gas-filled microgaps allow to take into account the roughness of the particles. Instead of being considered smooth, the particles can have microscopic asperities on their surfaces, which affect conduction.</p>
+<dl class="simple">
+<dt>Hypotheses:</dt><dd><ul class="simple">
+<li><p>The temperature is uniform within each particle.</p></li>
+<li><p>The temperature of each particle changes slowly enough that thermal disturbances do not propagate beyond immediate neighbors.</p></li>
+<li><p>Convection and radiation are neglected.</p></li>
+<li><p>The interstitial fluid is a stagnant gas (usually air), through which conduction occurs for contacting particles.</p></li>
+</ul>
+</dd>
+</dl>
+<p>The temperature of each particle <cite>i</cite> is computed as:</p>
+<div class="math-wrapper docutils container">
+<div class="math notranslate nohighlight">
+\[\frac{d T_i}{dt} = \frac{Q_i}{m_i c_i}\]</div>
+</div>
+<div class="math-wrapper docutils container">
+<div class="math notranslate nohighlight">
+\[Q_{i j} = H_{i j} (T_j - T_i)\]</div>
+</div>
+<p>where <span class="math notranslate nohighlight">\(Q_i \approx \sum Q_{ij} + Q_{Si}\)</span> is the total rate of heat transferred to particle <cite>i</cite>, <span class="math notranslate nohighlight">\(Q_{ij}\)</span> is the rate of heat transferred between particles <cite>i</cite> and <cite>j</cite>, <span class="math notranslate nohighlight">\(Q_{Si}\)</span> is a potential source term applied to particle <cite>i</cite> and <span class="math notranslate nohighlight">\(H_{ij}\)</span> is the thermal conductance between particles <cite>i</cite> and <cite>j</cite>.</p>
+<p>The thermal conductance, which is the inverse of the thermal resistance <span class="math notranslate nohighlight">\(R_{ij}\)</span>, is calculated as follows by Beaulieu <em>et al</em>. <a class="footnote-reference brackets" href="#beaulieu2020" id="id14" role="doc-noteref"><span class="fn-bracket">[</span>12<span class="fn-bracket">]</span></a>:</p>
+<div class="math-wrapper docutils container">
+<div class="math notranslate nohighlight">
+\[\frac{1}{R_{ij}} = \frac{1}{R_L + \left( \frac{1}{R_s} + \frac{1}{R_g} \right)^{-1}} + \frac{1}{R_c + R_G}\]</div>
+</div>
+<p>Where:</p>
+<ul class="simple">
+<li><p><span class="math notranslate nohighlight">\(R_L\)</span> resistance of the contact surface <a class="footnote-reference brackets" href="#batchelor1977" id="id15" role="doc-noteref"><span class="fn-bracket">[</span>11<span class="fn-bracket">]</span></a></p></li>
+<li><p><span class="math notranslate nohighlight">\(R_s\)</span> resistance of the microcontacts <a class="footnote-reference brackets" href="#vanlew2016" id="id16" role="doc-noteref"><span class="fn-bracket">[</span>13<span class="fn-bracket">]</span></a></p></li>
+<li><p><span class="math notranslate nohighlight">\(R_g\)</span> resistance of the interstitial gas microgap <a class="footnote-reference brackets" href="#bahrami2006" id="id17" role="doc-noteref"><span class="fn-bracket">[</span>14<span class="fn-bracket">]</span></a></p></li>
+<li><p><span class="math notranslate nohighlight">\(R_c\)</span> resistance of the solid layers of the particles <a class="footnote-reference brackets" href="#beaulieu2020" id="id18" role="doc-noteref"><span class="fn-bracket">[</span>12<span class="fn-bracket">]</span></a></p></li>
+<li><p><span class="math notranslate nohighlight">\(R_G\)</span> resistance of the interstitial gas macrogap <a class="footnote-reference brackets" href="#bahrami2006" id="id19" role="doc-noteref"><span class="fn-bracket">[</span>14<span class="fn-bracket">]</span></a></p></li>
+</ul>
+<figure class="align-center" id="id27">
+<a class="reference internal image-reference" href="../../../_images/particle_particle_resistances.png"><img alt="../../../_images/particle_particle_resistances.png" src="../../../_images/particle_particle_resistances.png" style="width: 700px;" /></a>
+<figcaption>
+<p><span class="caption-text">Modeling Heat transfer between two rough particles in contact. Adapted from <a class="footnote-reference brackets" href="#beaulieu2020" id="id20" role="doc-noteref"><span class="fn-bracket">[</span>12<span class="fn-bracket">]</span></a>.</span><a class="headerlink" href="#id27" title="Link to this image">#</a></p>
+</figcaption>
+</figure>
+<section id="thermal-resistances">
+<h3>Thermal Resistances<a class="headerlink" href="#thermal-resistances" title="Link to this heading">#</a></h3>
+<p>The thermal resistances, which model the heat transfer between particles are calculated as follows:</p>
+<div class="math-wrapper docutils container">
+<div class="math notranslate nohighlight">
+\[\begin{split}R_L &amp;= \frac{1}{2 k_h r_c } \\
+R_s &amp;= \left(\frac{H'}{P_0}\right)^{0.96} \frac{(1+0.96/2)}{1.25 \, \pi \, r_c^2 \, k_h}\left(\frac{\sigma}{\tau}\right) \\
+R_c &amp;= R_{c,i} +R_{c,j}, \quad R_{c,i} = \frac{L_i}{k_i A_i} \\
+R_g &amp;= \frac{2\sqrt{2}\sigma a_2}{\pi k_g r_c^2 \ln\left(1+\frac{a_2}{a_1+M/(2\sqrt{2}\sigma)}\right)} \\
+R_G &amp;= \frac{2}{\pi k_g \left[S \ln\left(\frac{S-B}{S-A}\right) + B - A\right]} \\\end{split}\]</div>
+</div>
+<p>The contact radius <span class="math notranslate nohighlight">\(r_c\)</span> is calculated as follows:</p>
+<div class="math-wrapper docutils container">
+<div class="math notranslate nohighlight">
+\[r_c = \left( \frac{3F_n R_{\mathrm{e}} }{4 Y_\mathrm{e} }\right)^{1/3}\]</div>
+</div>
+<p>The Young’s modulus in the simulation can sometimes be underestimated for computational efficiency and that can cause the contact radius and the overlap to be overestimated. To correct the contact radius, a factor c introduced by Zhou <em>et al.</em> <a class="footnote-reference brackets" href="#zhou2010" id="id21" role="doc-noteref"><span class="fn-bracket">[</span>15<span class="fn-bracket">]</span></a> is used:</p>
+<div class="math-wrapper docutils container">
+<div class="math notranslate nohighlight">
+\[r_c' = r_c \, c \quad, \quad c = \left( \frac{Y_{\mathrm{e},Sim}}{Y_{\mathrm{e},Real}} \right)^{1/5}\]</div>
+</div>
+<p>The parameters used to calculate the resistances are summed up in the following table:</p>
+<div class="table-wrapper docutils container">
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p><strong>Parameter</strong></p></th>
+<th class="head"><p><strong>Notation</strong></p></th>
+<th class="head"><p><strong>Definition</strong></p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>Characteristic area (perpendicular to heat flux)</p></td>
+<td><p><span class="math notranslate nohighlight">\(A_i\)</span></p></td>
+<td><p><span class="math notranslate nohighlight">\(\pi(r_i^2 - r_c^2)\)</span></p></td>
+</tr>
+<tr class="row-odd"><td><p>Characteristic length (parallel to heat flux)</p></td>
+<td><p><span class="math notranslate nohighlight">\(L_i\)</span></p></td>
+<td><p><span class="math notranslate nohighlight">\(\frac{\pi r_i}{4}\)</span></p></td>
+</tr>
+<tr class="row-even"><td><p>Harmonic mean thermal conductivity</p></td>
+<td><p><span class="math notranslate nohighlight">\(k_h\)</span></p></td>
+<td><p><span class="math notranslate nohighlight">\(\frac{2k_i k_j}{k_i + k_j}\)</span></p></td>
+</tr>
+<tr class="row-odd"><td><p>Effective microhardness</p></td>
+<td><p><span class="math notranslate nohighlight">\(H'\)</span></p></td>
+<td><p><span class="math notranslate nohighlight">\(\frac{2H_i H_j}{H_i + H_j}\)</span></p></td>
+</tr>
+<tr class="row-even"><td><p>Effective radius</p></td>
+<td><p><span class="math notranslate nohighlight">\(R_{\mathrm{e}} = \frac{1}{2} \, r_h\)</span></p></td>
+<td><p><span class="math notranslate nohighlight">\(\frac{r_i r_j}{r_i + r_j}\)</span></p></td>
+</tr>
+<tr class="row-odd"><td><p>Effective Young’s modulus</p></td>
+<td><p><span class="math notranslate nohighlight">\(Y_\mathrm{e}\)</span></p></td>
+<td><p><span class="math notranslate nohighlight">\(\left( \frac{(1 - \nu_i^2)}{E_i} + \frac{(1 - \nu_j^2)}{E_j} \right)^{-1}\)</span></p></td>
+</tr>
+<tr class="row-even"><td><p>Equivalent surface roughness</p></td>
+<td><p><span class="math notranslate nohighlight">\(\sigma\)</span></p></td>
+<td><p><span class="math notranslate nohighlight">\(\sqrt{\sigma_i^2 + \sigma_j^2}\)</span></p></td>
+</tr>
+<tr class="row-odd"><td><p>Equivalent surface slope</p></td>
+<td><p><span class="math notranslate nohighlight">\(\tau\)</span></p></td>
+<td><p><span class="math notranslate nohighlight">\(\sqrt{\tau_i^2 + \tau_j^2}\)</span></p></td>
+</tr>
+<tr class="row-even"><td><p>Maximum Hertzian contact pressure</p></td>
+<td><p><span class="math notranslate nohighlight">\(P_0\)</span></p></td>
+<td><p><span class="math notranslate nohighlight">\(\frac{2Y_\mathrm{e} \delta_n}{\pi r_c}\)</span></p></td>
+</tr>
+<tr class="row-odd"><td><p>Error parameter 1</p></td>
+<td><p><span class="math notranslate nohighlight">\(a_1\)</span></p></td>
+<td><p><span class="math notranslate nohighlight">\(\operatorname{erfc}^{-1}(2P_0/H')\)</span></p></td>
+</tr>
+<tr class="row-even"><td><p>Error parameter 2</p></td>
+<td><p><span class="math notranslate nohighlight">\(a_2\)</span></p></td>
+<td><p><span class="math notranslate nohighlight">\(\operatorname{erfc}^{-1}(0.03P_0/H') - a_1\)</span></p></td>
+</tr>
+<tr class="row-odd"><td><p>Thermal accommodation coefficients</p></td>
+<td><p><span class="math notranslate nohighlight">\(\alpha_{T_i}, \, \alpha_{T_j}\)</span></p></td>
+<td><p>values depend on the particles and gas</p></td>
+</tr>
+<tr class="row-even"><td><p>Gas specific heats ratio</p></td>
+<td><p><span class="math notranslate nohighlight">\(\gamma_g\)</span></p></td>
+<td><p>value depends on the gas</p></td>
+</tr>
+<tr class="row-odd"><td><p>Gas thermal conductivity</p></td>
+<td><p><span class="math notranslate nohighlight">\(k_g\)</span></p></td>
+<td><p>value depends on the gas</p></td>
+</tr>
+<tr class="row-even"><td><p>Gas molecular mean free path</p></td>
+<td><p><span class="math notranslate nohighlight">\(\Lambda\)</span></p></td>
+<td><p>value depends on the gas</p></td>
+</tr>
+<tr class="row-odd"><td><p>Gas Prandtl number</p></td>
+<td><p><span class="math notranslate nohighlight">\(Pr\)</span></p></td>
+<td><p><span class="math notranslate nohighlight">\(\frac{\mu_g c_g}{k_g}\)</span></p></td>
+</tr>
+<tr class="row-even"><td><p>Gas parameter</p></td>
+<td><p><span class="math notranslate nohighlight">\(M\)</span></p></td>
+<td><p><span class="math notranslate nohighlight">\(\left( \frac{2 - \alpha_{T_i}}{\alpha_{T_i}} + \frac{2 - \alpha_{T_j}}{\alpha_{T_j}} \right)\left( \frac{2 \gamma_g}{1 + \gamma_g} \right)\frac{\Lambda}{Pr}\)</span></p></td>
+</tr>
+<tr class="row-odd"><td><p>Gas parameter</p></td>
+<td><p><span class="math notranslate nohighlight">\(S\)</span></p></td>
+<td><p><span class="math notranslate nohighlight">\(2\left(r_h - \frac{r_c^2}{2r_h}\right) + M\)</span></p></td>
+</tr>
+<tr class="row-even"><td><p>Geometrical parameter</p></td>
+<td><p><span class="math notranslate nohighlight">\(A\)</span></p></td>
+<td><p><span class="math notranslate nohighlight">\(2\sqrt{r_h^2 - r_c^2}\)</span></p></td>
+</tr>
+<tr class="row-odd"><td><p>Geometrical parameter</p></td>
+<td><p><span class="math notranslate nohighlight">\(B\)</span></p></td>
+<td><p><span class="math notranslate nohighlight">\(0\)</span> (for simple cubic packing)</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</section>
+<section id="particle-wall-resistances">
+<h3>Particle-wall Resistances<a class="headerlink" href="#particle-wall-resistances" title="Link to this heading">#</a></h3>
+<p>For particle-wall contacts, conduction is mostly computed the same way, except for minor differences.
+For the macrocontact and the solid layers resistances, they are only considered for the particle. In the same way,
+the interstitial gas macrogap resistance is halved as there is only a macrogap around the particle and not the wall.</p>
+<div class="math-wrapper docutils container">
+<div class="math notranslate nohighlight">
+\[\begin{split}R_L &amp;= \frac{1}{4 k_j r_c } \\
+R_c &amp;= R_{c,j} = \frac{L_j}{k_j A_j} \\
+R_G &amp;= \frac{1}{2} \, \frac{2}{\pi k_g \left[S \ln\left(\frac{S-B}{S-A}\right) + B - A\right]} \\\end{split}\]</div>
+</div>
+<p>As the radius of the wall can be seen as infinite, <span class="math notranslate nohighlight">\(r_h\)</span> and <span class="math notranslate nohighlight">\(R_{\mathrm{e}}\)</span> are taken equal to <span class="math notranslate nohighlight">\(2r_j\)</span> and <span class="math notranslate nohighlight">\(r_j\)</span> respectively.</p>
+<figure class="align-center" id="id28">
+<a class="reference internal image-reference" href="../../../_images/particle_wall_resistances.png"><img alt="../../../_images/particle_wall_resistances.png" src="../../../_images/particle_wall_resistances.png" style="width: 700px;" /></a>
+<figcaption>
+<p><span class="caption-text">Modeling Heat transfer between a rough wall and rough particle in contact.</span><a class="headerlink" href="#id28" title="Link to this image">#</a></p>
+</figcaption>
+</figure>
+</section>
+</section>
+<section id="references">
+<h2>References<a class="headerlink" href="#references" title="Link to this heading">#</a></h2>
+<aside class="footnote-list brackets">
+<aside class="footnote brackets" id="blais2019" role="doc-footnote">
+<span class="label"><span class="fn-bracket">[</span><a role="doc-backlink" href="#id1">1</a><span class="fn-bracket">]</span></span>
+<p>B. Blais, D. Vidal, F. Bertrand, G. S. Patience and J. Chaouki, “Experimental Methods in Chemical Engineering: Discrete Element Method—DEM,” <em>Can. J. Chem. Eng.</em>, vol. 97, pp. 1964-1973, 2019, doi: <a class="reference external" href="https://doi.org/10.1002/cjce.23501">10.1002/cjce.23501</a>.</p>
+</aside>
+<aside class="footnote brackets" id="golshan2023" role="doc-footnote">
+<span class="label"><span class="fn-bracket">[</span>2<span class="fn-bracket">]</span></span>
+<span class="backrefs">(<a role="doc-backlink" href="#id2">1</a>,<a role="doc-backlink" href="#id3">2</a>)</span>
+<p>S. Golshan, P. Munch, R. Gassmöller, M. Kronbichler, and B. Blais, “Lethe-DEM: an open-source parallel discrete element solver with load balancing,” <em>Comput. Part. Mech.</em>, vol. 10, no. 1, pp. 77–96, Feb. 2023, doi: <a class="reference external" href="https://doi.org/10.1007/s40571-022-00478-6">10.1007/s40571-022-00478-6</a>.</p>
+</aside>
+<aside class="footnote brackets" id="garg2012" role="doc-footnote">
+<span class="label"><span class="fn-bracket">[</span><a role="doc-backlink" href="#id4">3</a><span class="fn-bracket">]</span></span>
+<p>R. Garg, J. Galvin-Carney, T. Li, and S. Pannala, “Documentation of open-source MFIX–DEM software for gas-solids flows,” Tingwen Li Dr., p. 10, Accessed: Sep. 2012, Available: <a class="reference external" href="https://mfix.netl.doe.gov/doc/mfix-archive/mfix_current_documentation/dem_doc_2012-1.pdf">https://mfix.netl.doe.gov/doc/mfix-archive/mfix_current_documentation/dem_doc_2012-1.pdf</a>.</p>
+</aside>
+<aside class="footnote brackets" id="ai2011" role="doc-footnote">
+<span class="label"><span class="fn-bracket">[</span><a role="doc-backlink" href="#id5">4</a><span class="fn-bracket">]</span></span>
+<p>R J. Ai, J.-F. Chen, J. M. Rotter, and J. Y. Ooi, “Assessment of rolling resistance models in discrete element simulations,” Powder Technology, vol. 206, no. 3, pp. 269–282, Jan. 2011, doi: 10.1016/j.powtec.2010.09.030.</p>
+</aside>
+<aside class="footnote brackets" id="grierson2005" role="doc-footnote">
+<span class="label"><span class="fn-bracket">[</span><a role="doc-backlink" href="#id6">5</a><span class="fn-bracket">]</span></span>
+<p>D. S. Grierson, E. E. Flater, and R. W. Carpick, “Accounting for the JKR–DMT transition in adhesion and friction measurements with atomic force microscopy,” <em>Journal of Adhesion Science and Technology</em>, vol. 19, no. 3–5, pp. 291–311, Jan. 2005, doi: <a class="reference external" href="https://doi.org/10.1163/1568561054352685">10.1163/1568561054352685</a>.</p>
+</aside>
+<aside class="footnote brackets" id="coetzee2023" role="doc-footnote">
+<span class="label"><span class="fn-bracket">[</span>6<span class="fn-bracket">]</span></span>
+<span class="backrefs">(<a role="doc-backlink" href="#id7">1</a>,<a role="doc-backlink" href="#id10">2</a>)</span>
+<p>C. J. Coetzee and O. C. Scheffler, “Review: The Calibration of DEM Parameters for the Bulk Modelling of Cohesive Materials,” <em>Processes</em>, vol. 11, no. 1, Art. no. 1, Jan. 2023, doi: <a class="reference external" href="https://doi.org/10.3390/pr11010005">10.3390/pr11010005</a>.</p>
+</aside>
+<aside class="footnote brackets" id="israelachvili2011" role="doc-footnote">
+<span class="label"><span class="fn-bracket">[</span><a role="doc-backlink" href="#id8">7</a><span class="fn-bracket">]</span></span>
+<p>J. N. Israelachvili, “Chapter 13 - Van der Waals Forces between Particles and Surfaces,” in <em>Intermolecular and Surface Forces</em>, 3rd ed., J. N. Israelachvili, Ed., Boston: Academic Press, 2011, pp. 253–289, doi: <a class="reference external" href="https://doi.org/10.1016/B978-0-12-391927-4.10013-1">10.1016/B978-0-12-391927-4.10013-1</a>.</p>
+</aside>
+<aside class="footnote brackets" id="parteli2014" role="doc-footnote">
+<span class="label"><span class="fn-bracket">[</span><a role="doc-backlink" href="#id9">8</a><span class="fn-bracket">]</span></span>
+<p>E. J. R. Parteli, J. Schmidt, C. Blümel, K.-E. Wirth, W. Peukert, and T. Pöschel, “Attractive particle interaction forces and packing density of fine glass powders,” <em>Sci Rep</em>, vol. 4, no. 1, Art. no. 1, Sep. 2014, doi: <a class="reference external" href="https://doi.org/10.1038/srep06227">10.1038/srep06227</a>.</p>
+</aside>
+<aside class="footnote brackets" id="thornton1991" role="doc-footnote">
+<span class="label"><span class="fn-bracket">[</span><a role="doc-backlink" href="#id11">9</a><span class="fn-bracket">]</span></span>
+<p>C. Thornton, “ Interparticle sliding in the presence of adhesion,” <em>Journal of Physics D: Applied Physics</em>, vol. 24, no. 11, pp. 1942–1946, 1991, doi: <a class="reference external" href="https://doi.org/10.1088/0022-3727/24/11/007">10.1088/0022-3727/24/11/007</a>.</p>
+</aside>
+<aside class="footnote brackets" id="meier2019" role="doc-footnote">
+<span class="label"><span class="fn-bracket">[</span>10<span class="fn-bracket">]</span></span>
+<span class="backrefs">(<a role="doc-backlink" href="#id12">1</a>,<a role="doc-backlink" href="#id13">2</a>)</span>
+<p>C. Meier, R. Weissbach, J. Weinberg, W. A. Wall, and A. John Hart, “Modeling and characterization of cohesion in fine metal powders with a focus on additive manufacturing process simulations,” <em>Powder Technology</em>, vol. 343, pp. 855–866, Feb. 2019, doi: <a class="reference external" href="https://doi.org/10.1016/j.powtec.2018.11.072">10.1016/j.powtec.2018.11.072</a>.</p>
+</aside>
+<aside class="footnote brackets" id="batchelor1977" role="doc-footnote">
+<span class="label"><span class="fn-bracket">[</span><a role="doc-backlink" href="#id15">11</a><span class="fn-bracket">]</span></span>
+<p>G. K. Batchelor and R. W. O’Brien, “Thermal or electrical conduction through a granular material,” Proc. R. Soc. Lond. A Math. Phys. Sci., vol. 355, no. 1682, pp. 313–333, Jul. 1977, doi: <a class="reference external" href="https://doi.org/10.1098/rspa.1977.0100">10.1098/rspa.1977.0100</a>.</p>
+</aside>
+<aside class="footnote brackets" id="beaulieu2020" role="doc-footnote">
+<span class="label"><span class="fn-bracket">[</span>12<span class="fn-bracket">]</span></span>
+<span class="backrefs">(<a role="doc-backlink" href="#id14">1</a>,<a role="doc-backlink" href="#id18">2</a>,<a role="doc-backlink" href="#id20">3</a>)</span>
+<p>C. Beaulieu, “Impact de la ségrégation granulaire sur le transfert de chaleur dans un lit rotatif,” (Order No. 28990310), Ph.D. thesis, Polytechnique Montréal, 2020. Available: <a class="reference external" href="https://www.proquest.com/dissertations-thèses/impact-de-la-ségrégation-granulaire-sur-le/docview/2626891455/se-2">https://www.proquest.com/dissertations-thèses/impact-de-la-ségrégation-granulaire-sur-le/docview/2626891455/se-2</a>.</p>
+</aside>
+<aside class="footnote brackets" id="vanlew2016" role="doc-footnote">
+<span class="label"><span class="fn-bracket">[</span><a role="doc-backlink" href="#id16">13</a><span class="fn-bracket">]</span></span>
+<p>J. T. Van Lew, “On thermal characterization of breeder pebble beds with microscale numerical modeling of thermofluid and pebble-pebble interactions,” (Order No. 10158428), Ph.D. thesis, University of California, Los Angeles, 2016. Available: <a class="reference external" href="https://www.proquest.com/dissertations-theses/on-thermal-characterization-breeder-pebble-beds/docview/1839265662/se-2">https://www.proquest.com/dissertations-theses/on-thermal-characterization-breeder-pebble-beds/docview/1839265662/se-2</a>.</p>
+</aside>
+<aside class="footnote brackets" id="bahrami2006" role="doc-footnote">
+<span class="label"><span class="fn-bracket">[</span>14<span class="fn-bracket">]</span></span>
+<span class="backrefs">(<a role="doc-backlink" href="#id17">1</a>,<a role="doc-backlink" href="#id19">2</a>)</span>
+<p>M. Bahrami, M. M. Yovanovich, and J. R. Culham, “Effective thermal conductivity of rough spherical packed beds,” Int. J. Heat Mass Transf., vol. 49, no. 19–20, pp. 3691–3701, Sep. 2006, doi: <a class="reference external" href="https://doi.org/10.1016/j.ijheatmasstransfer.2006.02.021">10.1016/j.ijheatmasstransfer.2006.02.021</a>.</p>
+</aside>
+<aside class="footnote brackets" id="zhou2010" role="doc-footnote">
+<span class="label"><span class="fn-bracket">[</span><a role="doc-backlink" href="#id21">15</a><span class="fn-bracket">]</span></span>
+<p>Z. Y. Zhou, A. B. Yu, and P. Zulli, “A new computational method for studying heat transfer in fluid bed reactors,” Powder Technol., vol. 197, no. 1–2, pp. 102–110, Sep. 2010, doi: <a class="reference external" href="https://doi.org/10.1016/j.powtec.2009.09.002">10.1016/j.powtec.2009.09.002</a>.</p>
+</aside>
+</aside>
+</section>
+</section>
+
+        </article>
+      </div>
+      <footer>
+        
+        <div class="related-pages">
+          <a class="next-page" href="resolved_cfd-dem.html">
+              <div class="page-info">
+                <div class="context">
+                  <span>Next</span>
+                </div>
+                <div class="title">Resolved CFD-DEM</div>
+              </div>
+              <svg class="furo-related-icon"><use href="#svg-arrow-right"></use></svg>
+            </a>
+          <a class="prev-page" href="cfd_dem.html">
+              <svg class="furo-related-icon"><use href="#svg-arrow-right"></use></svg>
+              <div class="page-info">
+                <div class="context">
+                  <span>Previous</span>
+                </div>
+                
+                <div class="title">CFD-DEM</div>
+                
+              </div>
+            </a>
+        </div>
+        <div class="bottom-of-page">
+          <div class="left-details">
+            <div class="copyright">
+                Copyright &#169; 2021, Lethe
+            </div>
+            Made with <a href="https://www.sphinx-doc.org/">Sphinx</a> and <a class="muted-link" href="https://pradyunsg.me">@pradyunsg</a>'s
+            
+            <a href="https://github.com/pradyunsg/furo">Furo</a>
+            
+          </div>
+          <div class="right-details">
+            
+          </div>
+        </div>
+        
+      </footer>
+    </div>
+    <aside class="toc-drawer">
+      
+      
+      <div class="toc-sticky toc-scroll">
+        <div class="toc-title-container">
+          <span class="toc-title">
+            On this page
+          </span>
+        </div>
+        <div class="toc-tree-container">
+          <div class="toc-tree">
+            <ul>
+<li><a class="reference internal" href="#">Discrete Element Method (DEM)</a><ul>
+<li><a class="reference internal" href="#contact-force-and-torque-models">Contact Force and Torque Models</a><ul>
+<li><a class="reference internal" href="#relative-velocities">Relative Velocities</a></li>
+<li><a class="reference internal" href="#spring-and-damping-constants">Spring and damping constants</a></li>
+<li><a class="reference internal" href="#coulomb-s-limit">Coulomb’s limit</a></li>
+<li><a class="reference internal" href="#tangential-torque">Tangential torque</a></li>
+<li><a class="reference internal" href="#rolling-friction-models">Rolling friction models</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#cohesive-force-models">Cohesive force models</a><ul>
+<li><a class="reference internal" href="#johnson-kendall-roberts-force-model">Johnson-Kendall-Roberts force model</a></li>
+<li><a class="reference internal" href="#derjaguin-muller-toporov-force-model">Derjaguin-Muller-Toporov force model</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#integration-methods">Integration Methods</a></li>
+<li><a class="reference internal" href="#thermal-dem-in-a-stagnant-gas">Thermal DEM in a Stagnant Gas</a><ul>
+<li><a class="reference internal" href="#thermal-resistances">Thermal Resistances</a></li>
+<li><a class="reference internal" href="#particle-wall-resistances">Particle-wall Resistances</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#references">References</a></li>
+</ul>
+</li>
+</ul>
+
+          </div>
+        </div>
+      </div>
+      
+      
+    </aside>
+  </div>
+</div><script src="../../../_static/documentation_options.js?v=5929fcd5"></script>
+    <script src="../../../_static/doctools.js?v=888ff710"></script>
+    <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../../_static/scripts/furo.js?v=32e29ea5"></script>
+    <script src="../../../_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="../../../_static/copybutton.js?v=7cec7674"></script>
+    <script async="async" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    </body>
+</html>

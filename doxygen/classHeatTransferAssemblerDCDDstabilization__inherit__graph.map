@@ -1,0 +1,5 @@
+<map id="HeatTransferAssemblerDCDDstabilization&lt; dim &gt;" name="HeatTransferAssemblerDCDDstabilization&lt; dim &gt;">
+<area shape="rect" id="Node000001" title="Class that assembles the Discontinuity&#45;Capturing Directional Dissipation stabilization term for the h..." alt="" coords="5,93,299,133"/>
+<area shape="rect" id="Node000002" href="$classPhysicsAssemblerBase.html" title="Base class for assembler objects of physics and subequations." alt="" coords="49,5,255,45"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="155,59,155,93,149,93,149,59"/>
+</map>

@@ -1,0 +1,9 @@
+<map id="ThermalExpansionModel" name="ThermalExpansionModel">
+<area shape="rect" id="Node000001" title="Abstract class that allows to calculate the thermal expansion coefficient (with unit of inverse tempe..." alt="" coords="135,79,317,104"/>
+<area shape="rect" id="Node000003" href="$classConstantThermalExpansion.html" title="Constant thermal expansion coefficient." alt="" coords="5,152,207,177"/>
+<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="196,113,127,154,124,149,193,109"/>
+<area shape="rect" id="Node000004" href="$classThermalExpansionPhaseChange.html" title="Implements a phase&#45;dependent thermal expansion coefficient." alt="" coords="231,152,461,177"/>
+<area shape="poly" id="edge3_Node000001_Node000004" title=" " alt="" coords="259,109,328,149,325,154,256,113"/>
+<area shape="rect" id="Node000002" href="$classPhysicalPropertyModel.html" title="Abstract class that defines the interface for a physical property model Physical property model provi..." alt="" coords="141,5,311,31"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="229,44,229,79,223,79,223,44"/>
+</map>

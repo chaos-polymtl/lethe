@@ -1,0 +1,15 @@
+<map id="/home/runner/work/lethe/lethe/include/core/periodic_hills_grid.h" name="/home/runner/work/lethe/lethe/include/core/periodic_hills_grid.h">
+<area shape="rect" id="Node000001" title=" " alt="" coords="498,5,697,60"/>
+<area shape="rect" id="Node000002" title=" " alt="" coords="5,115,168,141"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="498,54,180,111,156,115,155,110,180,105,497,48"/>
+<area shape="rect" id="Node000003" title=" " alt="" coords="193,115,394,141"/>
+<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="513,63,344,114,343,109,511,58"/>
+<area shape="rect" id="Node000004" title=" " alt="" coords="419,115,589,141"/>
+<area shape="poly" id="edge3_Node000001_Node000004" title=" " alt="" coords="573,62,528,107,524,103,569,58"/>
+<area shape="rect" id="Node000005" title=" " alt="" coords="614,108,767,148"/>
+<area shape="poly" id="edge4_Node000001_Node000005" title=" " alt="" coords="626,58,664,96,660,100,622,62"/>
+<area shape="rect" id="Node000006" title=" " alt="" coords="791,115,921,141"/>
+<area shape="poly" id="edge5_Node000001_Node000006" title=" " alt="" coords="671,58,812,108,811,113,669,63"/>
+<area shape="rect" id="Node000007" title=" " alt="" coords="945,115,1020,141"/>
+<area shape="poly" id="edge6_Node000001_Node000007" title=" " alt="" coords="697,49,812,74,934,105,943,108,941,113,933,111,810,79,696,55"/>
+</map>

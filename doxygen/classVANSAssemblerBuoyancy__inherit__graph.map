@@ -1,0 +1,5 @@
+<map id="VANSAssemblerBuoyancy&lt; dim &gt;" name="VANSAssemblerBuoyancy&lt; dim &gt;">
+<area shape="rect" id="Node000001" title="Class that assembles the Buoyancy force for the VANS equations whe F_b = &#45;g * density * (4...." alt="" coords="11,93,202,133"/>
+<area shape="rect" id="Node000002" href="$classParticleFluidAssemblerBase.html" title="A pure virtual class that serves as an interface for all of the assemblers for the particle_fluid int..." alt="" coords="5,5,208,45"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="109,59,109,93,104,93,104,59"/>
+</map>

@@ -1,0 +1,5 @@
+<map id="CahnHilliardTanhFilter" name="CahnHilliardTanhFilter">
+<area shape="rect" id="Node000001" title="Calculate a filtered phase fraction for Cahn&#45;Hilliard simulations." alt="" coords="6,79,171,104"/>
+<area shape="rect" id="Node000002" href="$classCahnHilliardFilterBase.html" title="Filter phase fraction according to the selected filtering method." alt="" coords="5,5,172,31"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="91,44,91,79,86,79,86,44"/>
+</map>

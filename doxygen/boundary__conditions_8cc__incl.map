@@ -1,0 +1,15 @@
+<map id="/home/runner/work/lethe/lethe/source/core/boundary_conditions.cc" name="/home/runner/work/lethe/lethe/source/core/boundary_conditions.cc">
+<area shape="rect" id="Node000001" title=" " alt="" coords="361,5,563,60"/>
+<area shape="rect" id="Node000002" href="$boundary__conditions_8h.html" title=" " alt="" coords="361,108,563,133"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="465,60,465,94,459,94,459,60"/>
+<area shape="rect" id="Node000003" title=" " alt="" coords="5,189,172,214"/>
+<area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="408,136,157,188,156,183,407,131"/>
+<area shape="rect" id="Node000004" title=" " alt="" coords="196,181,365,221"/>
+<area shape="poly" id="edge3_Node000002_Node000004" title=" " alt="" coords="437,136,338,178,336,173,435,131"/>
+<area shape="rect" id="Node000005" title=" " alt="" coords="389,181,535,221"/>
+<area shape="poly" id="edge4_Node000002_Node000005" title=" " alt="" coords="465,134,465,168,459,168,459,134"/>
+<area shape="rect" id="Node000006" title=" " alt="" coords="559,189,725,214"/>
+<area shape="poly" id="edge5_Node000002_Node000006" title=" " alt="" coords="489,131,604,181,602,186,487,136"/>
+<area shape="rect" id="Node000007" title=" " alt="" coords="750,189,801,214"/>
+<area shape="poly" id="edge6_Node000002_Node000007" title=" " alt="" coords="541,131,636,150,739,179,743,180,741,185,737,184,635,155,540,136"/>
+</map>

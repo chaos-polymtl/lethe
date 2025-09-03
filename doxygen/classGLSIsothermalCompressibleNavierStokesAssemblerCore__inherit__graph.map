@@ -1,0 +1,5 @@
+<map id="GLSIsothermalCompressibleNavierStokesAssemblerCore&lt; dim &gt;" name="GLSIsothermalCompressibleNavierStokesAssemblerCore&lt; dim &gt;">
+<area shape="rect" id="Node000001" title="Class that assembles the core of the isothermal compressible Navier&#45;Stokes equations...." alt="" coords="5,93,268,133"/>
+<area shape="rect" id="Node000002" href="$classPhysicsAssemblerBase.html" title="Base class for assembler objects of physics and subequations." alt="" coords="32,5,241,45"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="139,59,139,93,134,93,134,59"/>
+</map>

@@ -1,0 +1,35 @@
+<map id="Shape&lt; dim &gt;" name="Shape&lt; dim &gt;">
+<area shape="rect" id="Node000001" title="A base class used to represent geometrical entities. Its main uses are to return signed distance and ..." alt="" coords="228,351,345,376"/>
+<area shape="rect" id="Node000003" href="$classCompositeShape.html" title="This class was designed so that specific composite shapes could be defined through the parameter file..." alt="" coords="403,5,590,31"/>
+<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="286,337,291,276,306,196,320,153,338,112,362,74,392,40,408,29,411,33,395,44,366,77,343,115,325,155,312,197,296,277,291,337"/>
+<area shape="rect" id="Node000004" href="$classCone.html" title=" " alt="" coords="441,55,552,80"/>
+<area shape="poly" id="edge3_Node000001_Node000004" title=" " alt="" coords="288,336,296,284,313,217,327,182,344,148,366,117,392,89,415,75,440,68,442,73,417,80,395,93,370,120,349,151,332,184,318,219,301,285,293,337"/>
+<area shape="rect" id="Node000005" href="$classCutHollowSphere.html" title=" " alt="" coords="402,104,591,129"/>
+<area shape="poly" id="edge4_Node000001_Node000005" title=" " alt="" coords="290,336,301,293,321,239,350,185,369,160,392,139,410,127,413,132,395,143,373,164,355,188,325,242,306,295,295,338"/>
+<area shape="rect" id="Node000006" href="$classCylinder.html" title=" " alt="" coords="431,153,562,179"/>
+<area shape="poly" id="edge5_Node000001_Node000006" title=" " alt="" coords="294,337,308,302,328,262,356,222,392,188,410,177,430,170,432,176,412,182,395,192,360,225,333,265,312,305,299,339"/>
+<area shape="rect" id="Node000007" href="$classCylindricalHelix.html" title=" " alt="" coords="407,203,587,228"/>
+<area shape="poly" id="edge6_Node000001_Node000007" title=" " alt="" coords="300,337,337,286,363,259,392,237,416,226,419,231,395,242,366,263,341,289,304,340"/>
+<area shape="rect" id="Node000008" href="$classCylindricalTube.html" title=" " alt="" coords="409,252,585,277"/>
+<area shape="poly" id="edge7_Node000001_Node000008" title=" " alt="" coords="311,340,348,312,392,286,424,275,426,280,394,291,351,316,314,344"/>
+<area shape="rect" id="Node000009" href="$classDeathStar.html" title=" " alt="" coords="425,301,568,327"/>
+<area shape="poly" id="edge8_Node000001_Node000009" title=" " alt="" coords="353,345,393,335,440,324,441,329,394,341,354,350"/>
+<area shape="rect" id="Node000010" href="$classEllipsoid.html" title=" " alt="" coords="431,351,563,376"/>
+<area shape="poly" id="edge9_Node000001_Node000010" title=" " alt="" coords="359,361,431,361,431,366,359,366"/>
+<area shape="rect" id="Node000011" href="$classHyperRectangle.html" title=" " alt="" coords="406,400,587,425"/>
+<area shape="poly" id="edge10_Node000001_Node000011" title=" " alt="" coords="354,377,394,386,441,397,440,402,393,391,353,382"/>
+<area shape="rect" id="Node000012" href="$classOpenCascadeShape.html" title=" " alt="" coords="393,449,600,475"/>
+<area shape="poly" id="edge11_Node000001_Node000012" title=" " alt="" coords="314,383,351,410,394,436,426,447,424,452,392,440,348,415,311,387"/>
+<area shape="rect" id="Node000013" href="$classPlane.html" title=" " alt="" coords="440,499,553,524"/>
+<area shape="poly" id="edge12_Node000001_Node000013" title=" " alt="" coords="304,386,341,437,366,463,395,485,417,496,441,502,439,507,415,500,392,490,363,467,337,441,300,389"/>
+<area shape="rect" id="Node000014" href="$classRBFShape.html" title="RBF Shapes express the signed distance function as a linear combination of Radial Basis Functions (RB..." alt="" coords="425,548,568,573"/>
+<area shape="poly" id="edge13_Node000001_Node000014" title=" " alt="" coords="299,388,312,422,333,462,360,501,395,534,426,550,424,554,392,539,356,505,328,465,308,424,294,390"/>
+<area shape="rect" id="Node000015" href="$classSphere.html" title=" " alt="" coords="435,597,558,623"/>
+<area shape="poly" id="edge14_Node000001_Node000015" title=" " alt="" coords="295,389,306,432,325,485,355,539,373,563,395,584,414,595,436,603,434,608,412,600,392,588,369,567,350,542,321,487,301,434,290,390"/>
+<area shape="rect" id="Node000016" href="$classSuperquadric.html" title="This class defines superquadric shapes. Their signed distance function is: ." alt="" coords="415,647,578,672"/>
+<area shape="poly" id="edge15_Node000001_Node000016" title=" " alt="" coords="293,390,301,442,318,508,332,542,349,576,370,607,395,633,417,646,414,651,392,637,366,610,344,578,327,544,313,509,296,443,288,390"/>
+<area shape="rect" id="Node000017" href="$classTorus.html" title=" " alt="" coords="441,696,552,721"/>
+<area shape="poly" id="edge16_Node000001_Node000017" title=" " alt="" coords="291,389,296,450,312,529,325,571,343,612,366,650,395,683,417,696,442,704,440,709,415,701,392,687,362,653,338,615,320,573,306,531,291,451,286,390"/>
+<area shape="rect" id="Node000002" title=" " alt="" coords="5,343,180,383"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="194,361,228,361,228,366,194,366"/>
+</map>

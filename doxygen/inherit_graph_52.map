@@ -1,0 +1,11 @@
+<map id="Graphical Class Hierarchy" name="Graphical Class Hierarchy">
+<area shape="rect" id="Node000000" href="$classInsertion.html" title="Base interface for classes that carry out the insertion of particles in the system." alt="" coords="5,101,199,141"/>
+<area shape="rect" id="Node000001" href="$classInsertionFile.html" title=" " alt="" coords="259,5,406,45"/>
+<area shape="poly" id="edge55_Node000000_Node000001" title=" " alt="" coords="158,93,246,55,276,43,278,48,248,60,160,98"/>
+<area shape="rect" id="Node000002" href="$classInsertionList.html" title=" " alt="" coords="259,69,406,109"/>
+<area shape="poly" id="edge56_Node000000_Node000002" title=" " alt="" coords="212,103,259,97,260,102,212,109"/>
+<area shape="rect" id="Node000003" href="$classInsertionPlane.html" title="Insertion of particles using cells cut by a plane. Particle insertion using cells cut by a plane...." alt="" coords="253,133,412,173"/>
+<area shape="poly" id="edge57_Node000000_Node000003" title=" " alt="" coords="212,134,254,140,253,145,212,139"/>
+<area shape="rect" id="Node000004" href="$classInsertionVolume.html" title=" " alt="" coords="247,197,419,237"/>
+<area shape="poly" id="edge58_Node000000_Node000004" title=" " alt="" coords="160,145,248,183,278,195,276,200,246,188,158,150"/>
+</map>

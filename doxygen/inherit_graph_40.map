@@ -1,0 +1,7 @@
+<map id="Graphical Class Hierarchy" name="Graphical Class Hierarchy">
+<area shape="rect" id="Node000000" href="$classEvaporationModel.html" title="EvaporationModel. Abstract class that allows to calculate the evaporation mass, heat and momentum flu..." alt="" coords="5,31,145,56"/>
+<area shape="rect" id="Node000001" href="$classEvaporationModelConstant.html" title="EvaporationModelConstant. Class that allows to calculate the evaporation mass, heat,..." alt="" coords="205,5,404,31"/>
+<area shape="poly" id="edge49_Node000000_Node000001" title=" " alt="" coords="159,31,205,26,206,32,160,37"/>
+<area shape="rect" id="Node000002" href="$classEvaporationModelTemperature.html" title="EvaporationModelTemperature. Class that allows to calculate the evaporation mass, heat,..." alt="" coords="193,55,416,80"/>
+<area shape="poly" id="edge50_Node000000_Node000002" title=" " alt="" coords="160,49,193,53,193,58,159,55"/>
+</map>

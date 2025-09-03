@@ -1,0 +1,21 @@
+<map id="/home/runner/work/lethe/lethe/include/solvers/fluid_dynamics_matrix_based.h" name="/home/runner/work/lethe/lethe/include/solvers/fluid_dynamics_matrix_based.h">
+<area shape="rect" id="Node000001" title=" " alt="" coords="423,5,605,75"/>
+<area shape="rect" id="Node000002" href="$fluid__dynamics__sharp_8h.html" title=" " alt="" coords="7,130,189,185"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="410,73,190,133,189,128,408,68"/>
+<area shape="rect" id="Node000004" href="$fluid__dynamics__vans_8h.html" title=" " alt="" coords="317,130,500,185"/>
+<area shape="poly" id="edge3_Node000001_Node000004" title=" " alt="" coords="476,87,435,132,431,128,472,83"/>
+<area shape="rect" id="Node000008" href="$fluid__dynamics__nitsche_8h.html" title=" " alt="" coords="524,130,715,185"/>
+<area shape="poly" id="edge7_Node000001_Node000008" title=" " alt="" coords="556,83,597,128,593,132,552,87"/>
+<area shape="rect" id="Node000010" href="$fluid__dynamics__matrix__based_8cc.html" title=" " alt="" coords="739,123,921,192"/>
+<area shape="poly" id="edge9_Node000001_Node000010" title=" " alt="" coords="619,77,739,120,737,125,617,82"/>
+<area shape="rect" id="Node000003" href="$fluid__dynamics__sharp_8cc.html" title=" " alt="" coords="5,240,191,295"/>
+<area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="101,199,101,240,95,240,95,199"/>
+<area shape="rect" id="Node000005" href="$cfd__dem__coupling_8h.html" title=" " alt="" coords="215,240,397,295"/>
+<area shape="poly" id="edge4_Node000004_Node000005" title=" " alt="" coords="376,197,333,242,329,238,372,193"/>
+<area shape="rect" id="Node000007" href="$fluid__dynamics__vans_8cc.html" title=" " alt="" coords="421,240,604,295"/>
+<area shape="poly" id="edge6_Node000004_Node000007" title=" " alt="" coords="446,193,489,238,485,242,442,197"/>
+<area shape="rect" id="Node000006" href="$cfd__dem__coupling_8cc.html" title=" " alt="" coords="215,343,397,397"/>
+<area shape="poly" id="edge5_Node000005_Node000006" title=" " alt="" coords="309,308,309,343,303,343,303,308"/>
+<area shape="rect" id="Node000009" href="$fluid__dynamics__nitsche_8cc.html" title=" " alt="" coords="628,240,824,295"/>
+<area shape="poly" id="edge8_Node000008_Node000009" title=" " alt="" coords="657,193,702,238,698,242,654,197"/>
+</map>

@@ -1,0 +1,5 @@
+<map id="Graphical Class Hierarchy" name="Graphical Class Hierarchy">
+<area shape="rect" id="Node000000" href="$classPhysicsFaceAssemblerBase.html" title="Base class for assembler objects of physics and subequations that require a face assembly...." alt="" coords="5,5,268,45"/>
+<area shape="rect" id="Node000001" href="$classVOFAssemblerSIPG.html" title="Assembles the symmetric interior penalty Galerkin (SIPG) method (or Nitsche&#39;s method) for internal fa..." alt="" coords="316,13,517,38"/>
+<area shape="poly" id="edge164_Node000000_Node000001" title=" " alt="" coords="282,23,316,23,316,28,282,28"/>
+</map>
