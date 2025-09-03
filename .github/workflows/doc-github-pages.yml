@@ -6,8 +6,6 @@ on:
     branches:
       - master
   pull_request:
-    paths-ignore:
-      - 'doc/**'
       
 # Cancels running instances when a pull request is updated by a commit
 concurrency:
@@ -53,6 +51,7 @@ jobs:
 
       - name: Upload artifacts
         uses: actions/upload-artifact@v4
+        if: github.ref == 'refs/heads/master'
         with:
           name: html-doc
           path: doc/aggregate/

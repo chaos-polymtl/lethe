@@ -3,6 +3,12 @@
 All notable changes to the Lethe project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
+### [Master] - 2025-09-03
+
+### Fixed
+
+- MINOR The webpage CI would still upload the artifacts to the webpage branch even when not on the master branch which would increase the size of the repository. This has been fixed now and the artifacts will only be uploaded from the master branch. [#1654](https://github.com/chaos-polymtl/lethe/pull/1654)
+
 ### [Master] - 2025-09-02
 
 ### Changed
