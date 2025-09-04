@@ -63,6 +63,9 @@ html_theme = 'furo'
 # so a file named "default.css" will overwrite the builtin "default.css".
 html_static_path = ['_static']
 
+# Set favicon
+html_favicon = '_static/lethe_favicon.ico'
+
 latex_engine = 'xelatex'
 latex_elements = {
     'preamble': r'''
