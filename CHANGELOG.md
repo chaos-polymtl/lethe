@@ -3,6 +3,12 @@
 All notable changes to the Lethe project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
+### [Master] - 2025-09-04
+
+### Fixed
+
+- MAJOR The sharp-edge solver used in resolved CFD-DEM would crash at the first VTU output produced. This is because no dof handler was being attached to the output hook. This PR temporarily fixes that by attaching the dof handler of the main problem. A better solution will be implemented soon. [#1658](https://github.com/chaos-polymtl/lethe/pull/1658)
+
 ### [Master] - 2025-09-03
 
 ### Fixed
