@@ -22,11 +22,13 @@ n_proc=16
 parse_command_line "$@"
 
 folder="$output_root/pseudo-2d-gas-solid-fluidized-bed"
+action_create_gmsh="gmsh structure.geo -1 -2 -3 -format msh2 -o structure.msh"
 action_packing="mpirun -np $n_proc lethe-particles packing-particles.prm" 
 action_cfddem="mpirun -np $n_proc lethe-fluid-particles gas-solid-fluidized-bed.prm" 
 
 recreate_folder "$folder"
 
+{ time $action_create_gmsh ; } &> "$folder/log-mesh-conversion"
 { time $action_packing ; } &> "$folder/log-packing"
 { time $action_cfddem ; } &> "$folder/log-cfddem"
 
