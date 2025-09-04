@@ -333,7 +333,7 @@ private:
   inline bool
   continue_iterating(const double time_step_inv, const unsigned int step_number)
   {
-    if (step_number == 1)
+    if (step_number == 1) // Initial condition
       {
         return (step_number <
                 this->simulation_parameters.multiphysics.vof_parameters
@@ -349,18 +349,26 @@ private:
             .regularization_method.algebraic_interface_reinitialization
             .steady_state_criterion;
 
+        /*// Evaluate the solution difference between the 2 last solutions
+        auto solution_diff = local_evaluation_point;
+        solution_diff -= previous_local_evaluation_point;
+
+        // Evaluate the current steady-state criterion value
+        double stop_criterion = time_step_inv * solution_diff.l2_norm();*/
+
         // Evaluate the solution difference between the 2 last solutions
         auto solution_diff = local_evaluation_point;
         solution_diff -= previous_local_evaluation_point;
 
         // Evaluate the current steady-state criterion value
-        double stop_criterion = time_step_inv * solution_diff.l2_norm();
+        double stop_criterion = solution_diff.l2_norm()/previous_local_evaluation_point.l2_norm();
 
         if (this->subequation_verbosity == Parameters::Verbosity::extra_verbose)
           {
             this->pcout
               << "Algebraic reinitialization solution norm difference = "
               << solution_diff.l2_norm() << std::endl;
+              // << solution_diff.linfty_norm() << std::endl;
             this->pcout
               << "Algebraic reinitialization steady-state criterion value = "
               << stop_criterion << std::endl;
