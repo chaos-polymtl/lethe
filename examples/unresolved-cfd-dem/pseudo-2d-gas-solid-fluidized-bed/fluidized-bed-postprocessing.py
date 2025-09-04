@@ -40,12 +40,14 @@ plt.rcParams['legend.handlelength']=1
 
 ######################################################################
 
+import numpy as np
 import sys
 sys.path.append("$LETHE_PATH/contrib/postprocessing/")
 from lethe_pyvista_tools import *
 
 parser = argparse.ArgumentParser(description='Arguments for the post-processing of the Pseudo-2d gas solid fluidized bed example')
 parser.add_argument("-f", "--folder", type=str, help="Folder path. This folder is the folder which contains the .prm file.", required=True)
+parser.add_argument("--validate", action="store_true", help="Launches the script in validation mode. This will log the content of the graph and prevent the display of figures", default=False)
 args, leftovers=parser.parse_known_args()
 
 # Simulation folder
@@ -94,8 +96,13 @@ plt.xlim(3,6)
 plt.ylim(-300,300)
 plt.grid()
 plt.subplots_adjust(left=0.2)
-plt.savefig('pressure-fluctuations')
-plt.show()
+if (args.validate):
+    plt.savefig("pressure-fluctuations.pdf")
+    solution = np.column_stack((time[start:end], pressure-np.mean(pressure)))
+    np.savetxt("solution-relative-pressure.dat", solution, header="t(s) Pressure fluctuations from its temporal mean 45 mm above the floating wall(Pa)") 
+else:
+    plt.savefig("pressure-fluctuations.png", dpi=300)
+    plt.show()  
 
 # Plot void fraction over time
 reference_voidage = pd.read_csv('reference/voidage.csv')
@@ -108,8 +115,13 @@ plt.ylabel('Void fraction [-]')
 plt.xlim(2,4)
 plt.ylim(0.1,1.0)
 plt.grid()
-plt.savefig('void-fraction-fluctuations')
-plt.show()
+if (args.validate):
+    plt.savefig("void-fraction-fluctuations.pdf")
+    solution = np.column_stack((time[start:end], void_fraction))
+    np.savetxt("solution-void-fraction.dat", solution, header="t(s) Void fraction 45 mm above the floating wall") 
+else:
+    plt.savefig("void-fraction-fluctuations.png", dpi=300)
+    plt.show()
 
 # Plot bed height
 reference_height = pd.read_csv('reference/height.csv')
@@ -123,8 +135,13 @@ plt.xlim(2,4)
 plt.ylim(0.08,0.18)
 plt.grid()
 plt.subplots_adjust(left=0.2)
-plt.savefig('bed-height')
-plt.show()
+if (args.validate):
+    plt.savefig("bed-height.pdf")
+    solution = np.column_stack((time[start:end], bed_height))
+    np.savetxt("solution-bed-height.dat", solution, header="t(s) Height(m)") 
+else:
+    plt.savefig("bed-height.png", dpi=300)
+    plt.show()
 
 # Calculate Power Spectral Density of pressure
 plt.rcParams['lines.linewidth'] = 3
@@ -149,7 +166,8 @@ plt.legend()
 plt.title("Cubic interpolation of pressure signal")
 plt.grid()
 plt.tight_layout()
-plt.show()
+if (not args.validate):
+    plt.show()
 
 # Calculate PSD with fft
 Y = rfft(y_new)
@@ -177,5 +195,10 @@ plt.grid()
 plt.subplots_adjust(left=0.2, bottom=0.15)
 plt.tight_layout()
 plt.legend()
-plt.savefig('pressure-psd')
-plt.show() 
+if (args.validate):
+    plt.savefig("pressure-psd.pdf")
+    solution = np.column_stack((frequencies, psd, psd_smoothed))
+    np.savetxt("solution-pressure-power-spectral-density.dat", solution, header="Frequency(Hz) PSD(Pa^2/Hz) Smoothed PSD(Pa^2/Hz)") 
+else:
+    plt.savefig("pressure-psd.png", dpi=300)
+    plt.show() 
