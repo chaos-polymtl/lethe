@@ -18,7 +18,7 @@
 # -- Project information -----------------------------------------------------
 
 project = 'Lethe'
-copyright = '2021, Lethe'
+copyright = '2021-2025, Lethe'
 author = 'Lethe-CFD'
 
 # The full version, including alpha/beta/rc tags
@@ -62,6 +62,9 @@ html_theme = 'furo'
 # relative to this directory. They are copied after the builtin static files,
 # so a file named "default.css" will overwrite the builtin "default.css".
 html_static_path = ['_static']
+
+# Set favicon
+html_favicon = '_static/lethe_favicon.ico'
 
 latex_engine = 'xelatex'
 latex_elements = {
