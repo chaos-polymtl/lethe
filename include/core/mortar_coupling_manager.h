@@ -214,12 +214,12 @@ public:
                       const double            pre_rotation_angle = 0.0);
 
   template <int dim2>
-  MortarManagerCircle(std::vector<unsigned int>            n_subdivisions,
-                      std::vector<double>                  radius,
-                      const Quadrature<dim2> &quadrature,
-                      const double            rotation_angle,
-                      const Point<dim>       &center_of_rotation = Point<dim>(),
-                      const double            pre_rotation_angle = 0.0);
+  MortarManagerCircle(std::vector<unsigned int> n_subdivisions,
+                      std::vector<double>       radius,
+                      const Quadrature<dim2>   &quadrature,
+                      const double              rotation_angle,
+                      const Point<dim> &center_of_rotation = Point<dim>(),
+                      const double      pre_rotation_angle = 0.0);
 
   template <int dim2>
   MortarManagerCircle(const Quadrature<dim2>        &quadrature,
@@ -291,12 +291,12 @@ MortarManagerCircle<dim>::MortarManagerCircle(
 template <int dim>
 template <int dim2>
 MortarManagerCircle<dim>::MortarManagerCircle(
-  std::vector<unsigned int>            n_subdivisions,
-  std::vector<double>                  radius,
-  const Quadrature<dim2> &quadrature,
-  const double            rotation_angle,
-  const Point<dim>       &center_of_rotation,
-  const double            pre_rotation_angle)
+  std::vector<unsigned int> n_subdivisions,
+  std::vector<double>       radius,
+  const Quadrature<dim2>   &quadrature,
+  const double              rotation_angle,
+  const Point<dim>         &center_of_rotation,
+  const double              pre_rotation_angle)
   : MortarManagerBase<dim>(n_subdivisions, radius, quadrature, rotation_angle)
   , pre_rotation_angle(pre_rotation_angle)
   , center_of_rotation(center_of_rotation)

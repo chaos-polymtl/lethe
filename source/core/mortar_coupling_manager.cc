@@ -448,6 +448,8 @@ compute_n_subdivisions_and_radius(
 {
   // Number of subdivisions per process
   unsigned int n_subdivisions_local = 0;
+  // Number of subdivisions in the radial direction per process
+  unsigned int n_subdivisions_plane_local = 0;
   // Number of vertices at the boundary per process
   [[maybe_unused]] unsigned int n_vertices_local = 0;
   // Tolerance for rotor radius computation
@@ -456,30 +458,38 @@ compute_n_subdivisions_and_radius(
   double radius_min = std::numeric_limits<double>::max();
   double radius_max = 0;
   // Minimum rotation angle in initial mesh configuration
-  double       pre_rotation_min = std::numeric_limits<double>::max();
-  double       coord_cell_0;
-  unsigned int n_subdivisions_plane_local = 0;
-  double       vertex_min                 = std::numeric_limits<double>::max();
-  double       vertex_max                 = 0;
+  double pre_rotation_min = std::numeric_limits<double>::max();
+  
+  // Coordinate in the rotation axis direction of the reference cell. In 3D,
+  // used to compute the number of subdivisions in the radial direction
+  double coord_cell_ref;
+  // Identifier of the reference cell
+  bool save_first_cell = true;
+
+  // Min and max vertex coordinatees for length computation in the rotation axis
+  // direction
+  double vertex_min = std::numeric_limits<double>::max();
+  double vertex_max = 0;
 
   // Verify if rotation axis is a unit vector in x, y, or z
   bool is_unit_axis =
     mortar_parameters.rotation_axis.norm() == 1 ? true : false;
+
   for (unsigned int i = 0; i < dim; i++)
-    if (mortar_parameters.rotation_axis[i] != 0. ||
+    if (mortar_parameters.rotation_axis[i] != 0. &&
         mortar_parameters.rotation_axis[i] != 1.)
       is_unit_axis = false;
 
-  // AssertThrow(
-  //   is_unit_axis,
-  //   ExcMessage(
-  //     " The rotation axis must be a unit vector in x, y, or z direction."));
+  AssertThrow(
+    is_unit_axis,
+    ExcMessage(
+      " The rotation axis must be a unit vector in x, y, or z direction."));
 
   // Find the direction of the rotation axis
   unsigned int direction = 0;
   for (unsigned int d = 0; d < dim; d++)
     if (mortar_parameters.rotation_axis[d] != 0.0)
-      direction = mortar_parameters.rotation_axis[d];
+      direction = d;
 
   // Check number of faces and vertices at the rotor-stator interface
   for (const auto &cell : triangulation.active_cell_iterators())
@@ -503,13 +513,10 @@ compute_n_subdivisions_and_radius(
                           // at boundary to use as a reference for the
                           // computation of the number of subdivisions along the
                           // rotation axis
-                          if (n_subdivisions_local == 1)
+                          if (n_subdivisions_local == 1 && save_first_cell)
                             {
-                              coord_cell_0 = cell->center()[direction];
-                              std::cout
-                                << "face no " << face_no
-                                << ", z coord cell center 0: " << coord_cell_0
-                                << std::endl;
+                              coord_cell_ref    = cell->center()[direction];
+                              save_first_cell = false;
                             }
 
                           // Check if the current cell is in the same alignment
@@ -581,12 +588,11 @@ compute_n_subdivisions_and_radius(
   const unsigned int n_subdivisions =
     Utilities::MPI::sum(n_subdivisions_local,
                         triangulation.get_mpi_communicator());
-  std::cout << "subdivisions: " << n_subdivisions << std::endl;
 
+  // Total number of faces at the radial direction
   const unsigned int n_subdivisions_plane =
     Utilities::MPI::sum(n_subdivisions_plane_local,
                         triangulation.get_mpi_communicator());
-  std::cout << "subdivisions plane: " << n_subdivisions_plane << std::endl;
 
   // Min and max values over all processes
   radius_min =
@@ -602,9 +608,8 @@ compute_n_subdivisions_and_radius(
   vertex_max =
     Utilities::MPI::max(vertex_max, triangulation.get_mpi_communicator());
 
-  // Length along the rotation axis
+  // Length along the rotation axis  
   const double length_rot_axis = vertex_max - vertex_min;
-  std::cout << "length in z: " << length_rot_axis << std::endl;
 
   AssertThrow(
     std::abs(radius_max - radius_min) < tolerance,
@@ -615,8 +620,10 @@ compute_n_subdivisions_and_radius(
 
   // Final radius value
   const double radius = radius_min;
-  std::cout << "radius: " << radius << std::endl;
-  return {{n_subdivisions, n_subdivisions_plane}, {radius, length_rot_axis}, pre_rotation_min};
+
+  return {{n_subdivisions_plane, n_subdivisions / n_subdivisions_plane},
+          {radius, length_rot_axis},
+          pre_rotation_min};
 }
 #else
 template <int dim>
@@ -629,7 +636,7 @@ compute_n_subdivisions_and_radius(const Triangulation<dim> &,
               ExcMessage(
                 "The mortar coupling requires deal.II 9.7 or more recent."));
 
-  return {{1,1}, {1.0,1.0}, 0.0};
+  return {{1, 1}, {1.0, 1.0}, 0.0};
 }
 #endif
 
