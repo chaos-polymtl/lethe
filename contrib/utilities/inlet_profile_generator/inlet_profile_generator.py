@@ -118,7 +118,7 @@ elif args.dimensions == 2:
 
 # Output
 print("\n=== Inlet velocity profile u (SymPy expression) ===\n")
-print(u.evalf(n=args.n_significant_digits))
+print(str(u.evalf(n=args.n_significant_digits)).replace("**", "^"))
 
 # Optional: plot a 1D cut along the centerline (rectangle only)
 if args.plot:
