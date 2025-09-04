@@ -382,7 +382,7 @@ do
             echo " Re-running failed simulation"
 
             # Check if restart parameter should be set to "true"
-            if [ "$set_restart_true" == "true"]
+            if [ "$set_restart_true" == "true" ]
             then
               # Get prm file
               prm_file=$(ls | grep "\.prm$")
