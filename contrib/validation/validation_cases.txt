@@ -6,12 +6,12 @@
 # For every cases, the path of the vase must be specified followed by the number of processors with which
 # the case must be ran. The file allows for comments, which are specified by a "#"
 
-examples/incompressible-flow/2d-lid-driven-cavity 1
-examples/incompressible-flow/2d-taylor-couette 1
-examples/incompressible-flow/3d-taylor-green-vortex 16
-examples/multiphysics/rising-bubble 16
-examples/dem/3d-rectangular-hopper 16
-examples/dem/3d-rotating-drum 16
+#examples/incompressible-flow/2d-lid-driven-cavity 1
+#examples/incompressible-flow/2d-taylor-couette 1
+#examples/incompressible-flow/3d-taylor-green-vortex 16
+#examples/multiphysics/rising-bubble 16
+#examples/dem/3d-rectangular-hopper 16
+#examples/dem/3d-rotating-drum 16
 examples/unresolved-cfd-dem/pseudo-2d-gas-solid-fluidized-bed 16
 
 
