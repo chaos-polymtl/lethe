@@ -34,7 +34,7 @@ The output of this command is:
 
     === Inlet velocity profile u(x,y) (SymPy expression) ===
 
-    (-192.0*x**4 - 384.0*x**2*y**2 - 192.0*y**4 + 12.0)/pi
+    (-192.0*x^4 - 384.0*x^2*y^2 - 192.0*y^4 + 12.0)/pi
 
     Plotting centerline u(r) with SymPy...
 
