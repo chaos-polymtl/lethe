@@ -18,7 +18,7 @@
 # -- Project information -----------------------------------------------------
 
 project = 'Lethe'
-copyright = '2021, Lethe'
+copyright = '2021-2025, Lethe'
 author = 'Lethe-CFD'
 
 # The full version, including alpha/beta/rc tags
