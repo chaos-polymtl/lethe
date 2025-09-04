@@ -2207,7 +2207,7 @@ NavierStokesBase<dim, VectorType, DofsType>::rotate_rotor_mapping(
     std::get<1>(compute_n_subdivisions_and_radius(
       *this->triangulation,
       *this->mapping,
-      this->simulation_parameters.mortar_parameters)),
+      this->simulation_parameters.mortar_parameters))[0],
     rotation_angle,
     this->simulation_parameters.mortar_parameters.center_of_rotation,
     this->simulation_parameters.mortar_parameters.rotation_axis);
