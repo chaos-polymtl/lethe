@@ -2953,6 +2953,9 @@ NavierStokesBase<dim, VectorType, DofsType>::write_output_results(
     flags.write_higher_order_cells = true;
   data_out.set_flags(flags);
 
+  // Attach DoF handler to data output object
+  data_out.attach_dof_handler(this->dof_handler);
+
   // Fill data out object with solutions in structs
   for (const auto &solution_output_struct : solution_output_structs)
     {
