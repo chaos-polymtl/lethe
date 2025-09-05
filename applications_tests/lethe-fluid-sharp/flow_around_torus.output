@@ -11,7 +11,7 @@ Initial refinement around IB particles - Step : 1 of 1
 Steady iteration:        1/1
 *****************************
 +------------------------------------------+
-|  Force  summary particles                |
+|  Force summary particles                 |
 +------------------------------------------+
-particle_ID  time     T_x        T_y        T_z        f_x      f_y       f_z       f_xv      f_yv      f_zv      f_xp      f_yp      f_zp    
-          0 1.0000 -45.046800 -56.583090 -38.752022 61.084700 2.230158 -44.936232 32.246668 -1.253914 -0.157118 28.838032 3.484073 -44.779115 
+particle_ID  time     T_x     omega_x  theta_x     T_y     omega_y  theta_y     T_z     omega_z  theta_z     f_x      v_x      p_x      f_y      v_y      p_y       f_z       v_z      p_z      f_xv      f_yv      f_zv      f_xp      f_yp      f_zp    
+          0 1.0000 -45.046800 0.000000 1.000000 -56.583090 0.000000 1.000000 -38.752022 0.000000 1.000000 61.084700 0.000000 0.010000 2.230158 0.000000 0.010000 -44.936232 0.000000 0.010000 32.246668 -1.253914 -0.157118 28.838032 3.484073 -44.779115 
