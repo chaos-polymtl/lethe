@@ -1545,6 +1545,16 @@ FluidDynamicsMatrixBased<dim>::solve_system_GMRES(
     this->simulation_parameters.linear_solver.at(PhysicsID::fluid_dynamics)
       .max_krylov_vectors);
 
+  // std::cout << "matrix " << system_matrix.frobenius_norm() << std::endl;
+  // system_matrix.print(std::cout);
+  // std::cout << "\n \n";
+
+  std::cout << "RHS " << this->system_rhs.l2_norm() << std::endl;
+  // for (unsigned int i = 0; i < this->system_rhs.size(); i++)
+  //   std::cout << this->system_rhs[i] << std::endl;
+  
+  // std::cout << std::endl;
+
   // The solver starts from the initial fill level for the ILU(n) or the ILU
   // smoother provided in the parameter file. If for any reason the linear
   // solver crashes, it will restart with a fill level increased by 1. This
@@ -1631,6 +1641,13 @@ FluidDynamicsMatrixBased<dim>::solve_system_GMRES(
         }
       iter += 1;
     }
+  
+  std::cout << "newton update " << this->newton_update.l2_norm() << std::endl;
+  for (unsigned int i = 0; i < this->newton_update.size(); i++)
+    std::cout << this->newton_update[i] << std::endl;
+  
+  std::cout << std::endl;
+
   current_preconditioner_fill_level = initial_preconditioner_fill_level;
 }
 

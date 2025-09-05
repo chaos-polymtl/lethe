@@ -106,9 +106,36 @@ NewtonNonLinearSolver<VectorType>::solve(const bool is_initial_step)
       for (double alpha = 1.0; alpha > 1e-1; alpha *= 0.5)
         {
           auto &local_evaluation_point = solver->get_local_evaluation_point();
+          // std::cout << "local eval point " << std::endl;
+          // for (unsigned int i = 0; i < local_evaluation_point.size(); i++)
+          //   std::cout << local_evaluation_point[i] << std::endl;
+
+          // std::cout << std::endl;
+
           auto &newton_update          = solver->get_newton_update();
+          
+          // std::cout << "newton update " << std::endl;
+          // for (unsigned int i = 0; i < newton_update.size(); i++)
+          //   std::cout << newton_update[i] << std::endl;
+          
+          // std::cout << std::endl;
+
           local_evaluation_point       = present_solution;
+
+          // std::cout << "local eval point again " << std::endl;
+          // for (unsigned int i = 0; i < local_evaluation_point.size(); i++)
+          //   std::cout << local_evaluation_point[i] << std::endl;
+          
+          // std::cout << std::endl;
+
           local_evaluation_point.add(alpha, newton_update);
+
+          // std::cout << "local eval point after newton update " << std::endl;
+          // for (unsigned int i = 0; i < local_evaluation_point.size(); i++)
+          //   std::cout << local_evaluation_point[i] << std::endl;
+          
+          // std::cout << std::endl;
+
           solver->apply_constraints();
           evaluation_point = local_evaluation_point;
 
@@ -119,6 +146,12 @@ NewtonNonLinearSolver<VectorType>::solve(const bool is_initial_step)
 
           auto &system_rhs = solver->get_system_rhs();
           current_res      = system_rhs.l2_norm();
+
+          // std::cout << "system rhs " << std::endl;
+          // for (unsigned int i = 0; i < system_rhs.size(); i++)
+          //   std::cout << system_rhs[i] << std::endl;
+          
+          // std::cout << std::endl;
 
           if (this->params.verbosity != Parameters::Verbosity::quiet)
             {

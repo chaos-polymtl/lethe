@@ -2803,6 +2803,11 @@ FluidDynamicsMatrixFree<dim>::update_mortar_configuration()
       this->simulation_parameters.mesh_adaptation.type ==
         Parameters::MeshAdaptation::Type::none)
     {
+      // Clear the preconditioner before the matrix they are associated with is
+      // cleared
+      // gmg_preconditioner.reset();
+      // ilu_preconditioner.reset();
+
       // Rotate mapping
       this->rotate_rotor_mapping(false);
 
@@ -3403,6 +3408,16 @@ FluidDynamicsMatrixFree<dim>::solve_system_GMRES(const bool   initial_step,
 
   this->computing_timer.enter_subsection("Solve linear system");
 
+  // std::cout << "matrix " << this->system_operator->get_system_matrix().frobenius_norm() << std::endl;
+  // this->system_operator->get_system_matrix().print(std::cout);
+  // std::cout << "\n \n";
+
+  std::cout << "RHS " << this->system_rhs.l2_norm() << std::endl;
+  // for (unsigned int i = 0; i < this->system_rhs.size(); i++)
+  //   std::cout << this->system_rhs[i] << std::endl;
+  
+  // std::cout << std::endl;
+
   if ((this->simulation_parameters.linear_solver.at(PhysicsID::fluid_dynamics)
          .preconditioner ==
        Parameters::LinearSolver::PreconditionerType::lsmg) ||
@@ -3463,6 +3478,13 @@ FluidDynamicsMatrixFree<dim>::solve_system_GMRES(const bool   initial_step,
 
   this->computing_timer.leave_subsection(
     "Distribute constraints after linear solve");
+
+  
+  std::cout << "newton update " << this->newton_update.l2_norm() << std::endl;
+  for (unsigned int i = 0; i < this->newton_update.size(); i++)
+    std::cout << this->newton_update[i] << std::endl;
+  
+  std::cout << std::endl;
 }
 
 template class FluidDynamicsMatrixFree<2>;
