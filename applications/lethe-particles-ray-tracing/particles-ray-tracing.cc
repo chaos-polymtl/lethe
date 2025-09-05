@@ -1,9 +1,9 @@
-// SPDX-FileCopyrightText: Copyright (c) 2020, 2023-2025 The Lethe Authors
+// SPDX-FileCopyrightText: Copyright (c) 2025 The Lethe Authors
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
-#include "dem/dem.h"
-
 #include "core/dem_properties.h"
+
+#include "dem/ray_tracing.h"
 
 using namespace dealii;
 
@@ -39,22 +39,26 @@ main(int argc, char *argv[])
       const std::string file_name(args[0]);
 
       const unsigned int dim = get_dimension(file_name);
+      ParameterHandler   prm;
 
       if (dim == 2)
         {
-          ParameterHandler       prm;
-          DEMSolverParameters<2> dem_parameters;
+          RayTracingSolverParameters<2> parameters;
+          DEMSolverParameters<2>        dem_parameters;
+
+          parameters.declare(prm);
           dem_parameters.declare(prm);
 
           // Parsing of the file
           prm.parse_input(file_name);
+          parameters.parse(prm);
           dem_parameters.parse(prm);
 
           // Remove old output files
           if (options["-R"])
             {
               std::string output_path =
-                dem_parameters.simulation_control.output_folder;
+                parameters.simulation_control.output_folder;
               delete_vtu_and_pvd_files(output_path);
             }
 
@@ -62,19 +66,12 @@ main(int argc, char *argv[])
           if (Utilities::MPI::this_mpi_process(MPI_COMM_WORLD) == 0)
             print_parameters_to_output_file(pcout, prm, file_name);
 
-          const DEM::SolverType solver_type =
-            dem_parameters.model_parameters.solver_type;
+          const SolverType solver_type =
+            parameters.model_parameters.solver_type;
 
-          if (solver_type == DEM::SolverType::dem)
+          if (solver_type == dem)
             {
-              DEMSolver<2, DEM::DEMProperties::PropertiesIndex> problem(
-                dem_parameters);
-              problem.solve();
-            }
-          else if (solver_type == DEM::SolverType::dem_mp)
-            {
-              DEMSolver<2, DEM::DEMMPProperties::PropertiesIndex> problem(
-                dem_parameters);
+              RayTracingSolver<2> problem(parameters, dem_parameters);
               problem.solve();
             }
           else
@@ -83,26 +80,30 @@ main(int argc, char *argv[])
                 false,
                 dealii::ExcMessage(
                   "While reading the solver type from the input file, "
-                  "Lethe found a value different than \"dem\" or \"dem_mp\"."
-                  "lethe-particles does not support other solver type."));
+                  "Lethe found a value different than \"dem\". "
+                  "lethe-particles-ray-tracing tracing does not support other "
+                  "solver type than \"dem\"."));
             }
         }
 
       else if (dim == 3)
         {
-          ParameterHandler       prm;
-          DEMSolverParameters<3> dem_parameters;
+          RayTracingSolverParameters<3> parameters;
+          DEMSolverParameters<3>        dem_parameters;
+
+          parameters.declare(prm);
           dem_parameters.declare(prm);
 
           // Parsing of the file
           prm.parse_input(file_name);
+          parameters.parse(prm);
           dem_parameters.parse(prm);
 
           // Remove old output files
           if (options["-R"])
             {
               std::string output_path =
-                dem_parameters.simulation_control.output_folder;
+                parameters.simulation_control.output_folder;
               delete_vtu_and_pvd_files(output_path);
             }
 
@@ -110,28 +111,8 @@ main(int argc, char *argv[])
           if (Utilities::MPI::this_mpi_process(MPI_COMM_WORLD) == 0)
             print_parameters_to_output_file(pcout, prm, file_name);
 
-          const DEM::SolverType solver_type =
-            dem_parameters.model_parameters.solver_type;
-          if (solver_type == DEM::SolverType::dem)
-            {
-              DEMSolver<3, DEM::DEMProperties::PropertiesIndex> problem(
-                dem_parameters);
-              problem.solve();
-            }
-          else if (solver_type == DEM::SolverType::dem_mp)
-            {
-              DEMSolver<3, DEM::DEMMPProperties::PropertiesIndex> problem(
-                dem_parameters);
-              problem.solve();
-            }
-          else
-            {
-              AssertThrow(
-                false,
-                dealii::ExcMessage(
-                  "While reading the solver type from the input file, "
-                  "Lethe found a value different than \"dem\" or \"dem_mp\"."));
-            }
+          RayTracingSolver<3> problem(parameters, dem_parameters);
+          problem.solve();
         }
 
       else
