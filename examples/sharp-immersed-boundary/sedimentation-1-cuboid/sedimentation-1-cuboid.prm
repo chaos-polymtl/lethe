@@ -15,7 +15,7 @@ subsection simulation control
   set bdf startup method = multiple step bdf
   set time step          = 0.0005
   set time end           = 0.6
-  set output path        = out/
+  set output path        = ./out/
 end
 
 #---------------------------------------------------
