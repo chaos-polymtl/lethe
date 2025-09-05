@@ -113,7 +113,7 @@ test()
   LetheGridTools::rotate_mapping(dof_handler,
                                  mapping_cache,
                                  mapping,
-                                 radius,
+                                 radius[0],
                                  rotation_angle,
                                  mortar_parameters.center_of_rotation,
                                  mortar_parameters.rotation_axis);
@@ -122,9 +122,12 @@ test()
   if (Utilities::MPI::this_mpi_process(comm) == 0)
     {
       deallog << "Rotation angle (rad) : " << rotation_angle << std::endl;
-      deallog << "Number of subdivisions at interface : " << n_subdivisions
+      deallog << "Radial direction subdivisions: " << n_subdivisions[0]
               << std::endl;
-      deallog << "Radius : " << radius << std::endl;
+      deallog << "Out-of-plane subdivisions : " << n_subdivisions[1]
+              << std::endl;
+      deallog << "Radius : " << radius[0] << std::endl;
+      deallog << "Out-of-plane length : " << radius[1] << std::endl;
     }
 }
 
