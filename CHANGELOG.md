@@ -2,6 +2,11 @@
 # Change Log
 All notable changes to the Lethe project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/).
+### [Master] - 2025-08-15
+
+### Added
+
+- MINOR Add the SDIRK method to the lethe-fluid-matrix-free solver. The SDIRK scheme is now available for both MatrixBased and MatrixFree [#1616](https://github.com/chaos-polymtl/lethe/pull/1616/)
 
 ### [Master] - 2025-09-04
 
@@ -129,6 +134,11 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/).
 ### Added
 
 - MINOR Prototype of slice output feature using deal.II's [DataOutputResample](https://dealii.org/current/doxygen/deal.II/classDataOutResample.html). The prototype works in parallel for the cases tested. This is the first step towards having a slice output feature, which will allow users to output only a slice or a region of the domain. [#1612](https://github.com/chaos-polymtl/lethe/pull/1612)
+### [Master] - 2025-08-03
+
+### Added
+
+- MINOR A new time stepping scheme to solve the unsteady Navier-Stokes equations with a matrix based solver. Before, only BDF schemes were used in Lethe. This PR adds the Singly Diagonnaly Implicit Runge-Kutta (SDIRK) schemes with order 2, 3 and 4. [#1598](https://github.com/chaos-polymtl/lethe/pull/1598/)
 
 ### [Master] - 2025-08-08
 

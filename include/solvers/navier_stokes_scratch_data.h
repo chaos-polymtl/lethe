@@ -1477,6 +1477,7 @@ public:
   std::vector<std::vector<std::vector<double>>>         face_phi_p;
   std::vector<std::vector<std::vector<Tensor<1, dim>>>> face_grad_phi_p;
 
+  // Butcher table with coefficients for the SDIRK time-stepping method
   SDIRKTable sdirk_table;
 };
 
