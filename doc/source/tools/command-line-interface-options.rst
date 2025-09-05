@@ -2,7 +2,6 @@
 Command-line Interface Options
 ==============================
 
-
 --------------------------------
 Print deal.II and Lethe Versions
 --------------------------------
