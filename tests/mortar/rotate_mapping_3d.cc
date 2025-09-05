@@ -72,7 +72,7 @@ test()
   mortar_parameters.rotor_mesh->type = Parameters::Mesh::Type::dealii;
   mortar_parameters.rotor_mesh->grid_type = "cylinder_shell";
   mortar_parameters.rotor_mesh->grid_arguments =
-    "2.0 : 0.25 : 0.5 : 4 : 4 : true";
+    "2.0 : 0.25 : 0.5 : 4 : 6 : true";
   mortar_parameters.rotor_mesh->scale          = 1;
   mortar_parameters.rotor_mesh->simplex        = false;
   mortar_parameters.rotor_mesh->translation    = Tensor<1, dim>({0, 0, 0});
