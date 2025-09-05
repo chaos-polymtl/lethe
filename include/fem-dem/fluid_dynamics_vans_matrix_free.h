@@ -145,7 +145,8 @@ protected:
    * additional results. In this case, the void fraction field is added.
    */
   virtual void
-  output_field_hook(DataOut<dim> &data_out) override;
+  output_field_hook(std::vector<OutputStruct<dim, GlobalVectorType>>
+                      &solution_output_structs) override;
 
   /**
    * @brief Create geometric multigrid preconditioner.
