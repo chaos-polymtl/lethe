@@ -1810,26 +1810,25 @@ namespace Parameters
                           Patterns::List(Patterns::Double()),
                           "Location of the first photon being inserted.");
 
-        // In which direction will photons be insertedrelative to the first
-        // photon.
+        // In which direction will the photons be inserted  relative to the
+        // first photon.
         prm.declare_entry("insertion unit tensors",
                           "1.,0.,0. : 0., 1., 0. : 0., 0., 1.",
                           Patterns::List(Patterns::List(Patterns::Double())),
                           "Directions used to insert photons.");
 
         // How many photon will be inserted in each of those directions.
-        prm.declare_entry("number of inserted photons per directions",
+        prm.declare_entry("number of inserted photons per direction",
                           "1 :  1 : 1",
                           Patterns::List(Patterns::Integer()),
                           "Number of inserted photon in each direction.");
 
         // What is the distance between each photon in each of those directions
         // considering an offset equal to 0.
-        prm.declare_entry(
-          "distance between photons on insertion per directions",
-          "1. :  1. : 1.",
-          Patterns::List(Patterns::Double()),
-          "Number of inserted photon in each direction.");
+        prm.declare_entry("distance between photons on insertion per direction",
+                          "1. :  1. : 1.",
+                          Patterns::List(Patterns::Double()),
+                          "Number of inserted photon in each direction.");
 
 
         // In which direction photons will move considering a photon maximum
@@ -1845,7 +1844,7 @@ namespace Parameters
           "0.",
           Patterns::Double(),
           "Set the maximum offset applied on each photon position during their "
-          "insertion. If set to 0., photons will be perfectly align "
+          "insertion. If set to 0., photons will be perfectly aligned."
           "respectively to the insertion unit tensors ");
 
         prm.declare_entry(
@@ -1862,11 +1861,11 @@ namespace Parameters
           Patterns::Double(),
           "Used to introduce randomness in the displacement direction of each "
           "photon. This parameter defines the maximum angle between a given "
-          "photon displacement vector and the prescribe displacement vector "
+          "photon displacement vector and the prescribed displacement vector "
           "parameter. If set to zero, every photon will move in the same "
           "direction defined by the prescribed displacement vector parameter."
           "Otherwise, the offset is applied in a random orientation relative to "
-          "the normal plane of this prescribed displacement vector parameter.");
+          "the reference displacement vector parameter.");
 
         prm.declare_entry("photon angle offset prn seed",
                           "1",
@@ -1902,7 +1901,7 @@ namespace Parameters
 
 
         // We always use 3d tensor even in a dim=2 simulation. Still, we want to
-        // make sure the user write 2d tensore in the prm when the simulation is
+        // make sure the user write 2d tensor in the prm when the simulation is
         // in 2d. Those tensors will be but in 3d afterward.
         AssertThrow(
           insertion_unit_tensors_string.size() == dim &&
@@ -1910,13 +1909,13 @@ namespace Parameters
             step_between_photon_per_direction_strings.size() == dim,
           dealii::ExcMessage(
             "The \"insertion unit tensors\", \"distance between photons on"
-            " insertion per directions\" and \"number of inserted photons per "
-            "directions\" all need to have a number of dimension equal to the "
+            " insertion per direction\" and \"number of inserted photons per "
+            "direction\" all need to have a number of dimension equal to the "
             "\"dimension\" parameter."));
 
-        // Always of size 3. We also want at least 1 photon per direction.
+        // Always of size 3.
         insertion_directions_units_vector.reserve(3);
-        n_photons_each_directions = std::vector<unsigned int>(3, 1);
+        n_photons_each_directions.reserve(3);
         step_between_photons_each_directions.reserve(3);
         for (unsigned int i = 0; i < dim; i++)
           {

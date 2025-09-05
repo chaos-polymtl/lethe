@@ -655,7 +655,7 @@ namespace Parameters
       // Location of the first photon to be inserted
       Point<dim> starting_point;
 
-      // In which direction will photons be insertedrelative to the first
+      // In which directions will the photons be inserted relative to the first
       // photon.
       std::vector<Tensor<1, 3>> insertion_directions_units_vector;
 
