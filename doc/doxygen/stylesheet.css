@@ -13,3 +13,8 @@ div.doxygen-generated-exception-message {
     padding: 5px;
     font-size: 95%;
 }
+
+#projectlogo img {
+    width: 360px;
+    height: auto; /* keeps aspect ratio */
+}
