@@ -25,7 +25,7 @@ action_sharp="mpirun -np $n_proc lethe-fluid-sharp sedimentation-1-cuboid.prm"
 
 recreate_folder "$folder"
 
-{ time $action_cfddem ; } &> "$folder/log-sharp"
+{ time $action_sharp ; } &> "$folder/log-sharp"
 
 
 # Process the simulation
