@@ -877,7 +877,8 @@ protected:
    * to each solver.
    */
   virtual void
-  output_field_hook(DataOut<dim> &);
+  output_field_hook(
+    std::vector<OutputStruct<dim, VectorType>> &solution_output_structs);
 
   /**
    * @brief Writes the forces per boundary condition to a text file output

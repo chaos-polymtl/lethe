@@ -276,11 +276,19 @@ FluidDynamicsVANSMatrixFree<dim>::finish_time_step_fd()
 
 template <int dim>
 void
-FluidDynamicsVANSMatrixFree<dim>::output_field_hook(DataOut<dim> &data_out)
+FluidDynamicsVANSMatrixFree<dim>::output_field_hook(
+  std::vector<OutputStruct<dim, GlobalVectorType>> &solution_output_structs)
 {
-  data_out.add_data_vector(particle_projector.dof_handler,
-                           particle_projector.void_fraction_locally_relevant,
-                           "void_fraction");
+  std::vector<std::string> name = {"void_fraction"};
+  std::vector<DataComponentInterpretation::DataComponentInterpretation>
+    component_interpretation = {
+      DataComponentInterpretation::component_is_scalar};
+  solution_output_structs.emplace_back(
+    std::in_place_type < OutputStructSolution<dim, GlobalVectorType>,
+    particle_projector.dof_handler,
+    particle_projector.void_fraction_locally_relevant,
+    name,
+    component_interpretation);
 }
 
 template <int dim>

@@ -681,11 +681,16 @@ FluidDynamicsVANS<dim>::copy_local_rhs_to_global_rhs(
 
 template <int dim>
 void
-FluidDynamicsVANS<dim>::output_field_hook(DataOut<dim> &data_out)
+FluidDynamicsVANS<dim>::output_field_hook(
+  std::vector<OutputStruct<dim, GlobalVectorType>> &solution_output_structs)
 {
-  data_out.add_data_vector(particle_projector.dof_handler,
-                           particle_projector.void_fraction_locally_relevant,
-                           "void_fraction");
+  solution_output_structs.emplace_back(
+    std::in_place_type<OutputStructSolution<dim, GlobalVectorType>>,
+    particle_projector.dof_handler,
+    particle_projector.void_fraction_locally_relevant,
+    std::vector<std::string>{"void_fraction"},
+    std::vector<DataComponentInterpretation::DataComponentInterpretation>{
+      DataComponentInterpretation::component_is_scalar});
   if (this->cfd_dem_simulation_parameters.void_fraction
         ->project_particle_velocity)
     {
@@ -693,9 +698,10 @@ FluidDynamicsVANS<dim>::output_field_hook(DataOut<dim> &data_out)
       std::vector<DataComponentInterpretation::DataComponentInterpretation>
         data_interpretation(
           dim, DataComponentInterpretation::component_is_part_of_vector);
-      data_out.add_data_vector(
+      solution_output_structs.emplace_back(
+        std::in_place_type<OutputStructSolution<dim, GlobalVectorType>>,
         particle_projector.particle_velocity.dof_handler,
-        particle_projector.particle_velocity.particle_field_solution,
+        particle_projector.particle_velocity.particle_field_locally_relevant,
         names,
         data_interpretation);
     }

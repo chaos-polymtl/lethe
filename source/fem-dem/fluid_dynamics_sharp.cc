@@ -1680,13 +1680,19 @@ FluidDynamicsSharp<dim>::write_force_ib()
 
 template <int dim>
 void
-FluidDynamicsSharp<dim>::output_field_hook(DataOut<dim> &data_out)
+FluidDynamicsSharp<dim>::output_field_hook(
+  std::vector<OutputStruct<dim, GlobalVectorType>> &solution_output_structs)
 {
   // If the particles have moved, the combined shapes will have been cleared by
   // the particle integration routines.
   levelset_postprocessor =
     std::make_shared<LevelsetPostprocessor<dim>>(combined_shapes);
-  data_out.add_data_vector(this->present_solution, *levelset_postprocessor);
+  solution_output_structs.emplace_back(
+    std::in_place_type<OutputStructPostprocessor<dim, GlobalVectorType>>,
+    this->dof_handler,
+    this->present_solution,
+    levelset_postprocessor);
+
   Vector<float> cell_cuts(this->triangulation->n_active_cells());
   Vector<float> cell_overconstrained(this->triangulation->n_active_cells());
   const unsigned int                   dofs_per_cell = this->fe->dofs_per_cell;
@@ -1731,13 +1737,20 @@ FluidDynamicsSharp<dim>::output_field_hook(DataOut<dim> &data_out)
             }
           i += 1;
         }
-      data_out.add_data_vector(cell_cuts, "cell_cut");
-      data_out.add_data_vector(cell_overconstrained, "cell_overconstrained");
+      solution_output_structs.emplace_back(
+        std::in_place_type<OutputStructCellVector>, cell_cuts, "cell_cut");
+      solution_output_structs.emplace_back(
+        std::in_place_type<OutputStructCellVector>,
+        cell_overconstrained,
+        "overconstrained");
 
       levelset_gradient_postprocessor =
         std::make_shared<LevelsetGradientPostprocessor<dim>>(combined_shapes);
-      data_out.add_data_vector(this->present_solution,
-                               *levelset_gradient_postprocessor);
+      solution_output_structs.emplace_back(
+        std::in_place_type<OutputStructPostprocessor<dim, GlobalVectorType>>,
+        this->dof_handler,
+        this->present_solution,
+        levelset_gradient_postprocessor);
     }
 }
 
