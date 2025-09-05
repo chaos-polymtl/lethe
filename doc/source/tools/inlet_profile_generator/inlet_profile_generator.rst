@@ -12,7 +12,7 @@ To run the script you just need to have `SymPy <https://www.sympy.org/en/index.h
 
 The script has the following arguments:
 
-* ``--dimension`` or ``-d``: Dimensions of the profile. Supported dimensions are ``1`` and ``2``. Default is ``2``.
+* ``--dimension`` or ``-d``: Dimensions of the profile. This variable stands for the dimensions of the boundary. For instance, in a 2D simulation, your boundary face is 1D, so this argument should be 1. Supported dimensions are ``1`` and ``2``. Default is ``2``.
 * ``--polynomial-degree`` or ``-pd``: Degree of the polynomial to be generated. Default is ``2``. To prevent negative flow velocities, we always use even degrees.
 * ``--shape`` or ``-s``: Shape of the inlet. Supported shapes are ``rectangle`` and ``circle``. Default is rectangle.
 * ``--flow-rate`` or ``-fr``: Volumetric flow rate to be imposed at the inlet. Default is ``1``.
