@@ -5,7 +5,6 @@ on:
     # Runs on every push on master branch
     branches:
       - master
-      - add_favicon_to_doxygen
   pull_request:
       
 # Cancels running instances when a pull request is updated by a commit
@@ -44,7 +43,7 @@ jobs:
           cp -r build/html/ aggregate/documentation
 
           cd doxygen
-          bash ./compile_doxygen_documentation.sh
+          doxygen doxygen-config-file
           cd ..
           ls -lh
           ls -lh doxygen
@@ -52,14 +51,14 @@ jobs:
 
       - name: Upload artifacts
         uses: actions/upload-artifact@v4
-        #if: github.ref == 'refs/heads/master'
+        if: github.ref == 'refs/heads/master'
         with:
           name: html-doc
           path: doc/aggregate/
 
       - name: Deploy to GitHub Pages
         uses: JamesIves/github-pages-deploy-action@4.1.7
-        #if: github.ref == 'refs/heads/master'
+        if: github.ref == 'refs/heads/master'
         with:
           branch: gh-pages-v3
           folder: doc/aggregate
