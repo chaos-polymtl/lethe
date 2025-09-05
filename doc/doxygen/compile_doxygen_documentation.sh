@@ -3,7 +3,7 @@
 # SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
 ################################################################################
-# Bash that generates the appropriate header file and compiles doxygen
+# Bash script that generates the appropriate header file and compiles doxygen
 # documentation
 #
 # * IMPORTANT *
@@ -17,7 +17,7 @@ doxygen -w html header.html dummy.html dummy.css
 # Remove unnecessary files
 rm -f dummy*
 
-# Add favicon to the header file
+# Add favicon to the header template file
 sed -i '/<\/head>/i <link rel="icon" type="image/x-icon" href="lethe_favicon.ico"/>' header.html
 
 # Compile doxygen documentation
