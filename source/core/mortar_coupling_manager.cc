@@ -521,7 +521,7 @@ compute_n_subdivisions_and_radius(
 
                           // Check if the current cell is in the same alignment
                           // as the reference cell
-                          if (cell->center()[direction] - coord_cell_0 <
+                          if (cell->center()[direction] - coord_cell_ref <
                               tolerance)
                             n_subdivisions_plane_local++;
                         }
