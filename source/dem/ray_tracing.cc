@@ -235,22 +235,19 @@ RayTracingSolver<dim>::insert_particles_and_photons()
   // vector since each photon has its own slightly off set from the
   std::vector<std::vector<double>> photon_properties;
 
-  unsigned int max_n_photon_first_dir =
-    parameters.ray_tracing_info.number_of_photon_first_direction;
 
-  unsigned int max_n_photon_second_dir =
-    parameters.ray_tracing_info.number_of_photon_second_direction;
 
-  // Processor 0 will be the only one inserting photon
-  const unsigned int n_particles_to_insert_this_proc =
+  // Processor 0 will be the only one creating photons. Other processor are set
+  // to 0.
+  const unsigned int n_photons_to_insert_this_proc =
     this_mpi_process == 0 ? max_n_photon_first_dir * max_n_photon_second_dir :
                             0;
 
-  insertion_points_on_proc.reserve(n_particles_to_insert_this_proc);
+  // Prepare the containers.
+  insertion_points_on_proc.reserve(n_photons_to_insert_this_proc);
+  photon_properties.reserve(n_photons_to_insert_this_proc);
 
-  photon_properties.reserve(n_particles_to_insert_this_proc);
-
-  // Create the photon insertion location
+  // Create the insertion location of every photons
   if (this_mpi_process == 0)
     {
       // Create variable for readability
@@ -262,19 +259,26 @@ RayTracingSolver<dim>::insert_particles_and_photons()
         parameters.ray_tracing_info.second_direction_unit;
 
       const double step_first_dir =
-        parameters.ray_tracing_info.step_between_photons_first_direction;
+        parameters.ray_tracing_info.step_between_photons_each_directions[0];
       const double step_second_dir =
-        parameters.ray_tracing_info.step_between_photons_second_direction;
+        parameters.ray_tracing_info.step_between_photons_each_directions[1];
+      const double step_third_dir =
+        parameters.ray_tracing_info.step_between_photons_each_directions[2];
 
-      // Generation the photon insertion points.
-      Point<dim> temp_point{};
-      for (unsigned int n_first_dir = 0; n_first_dir < max_n_photon_first_dir;
-           ++n_first_dir)
-        {
-          for (unsigned int n_second_dir = 0;
-               n_second_dir < max_n_photon_second_dir;
-               ++n_second_dir)
+      // Temporary variable
+      Point<dim> temp_point;
+
+      // Generation of the photon insertion points.
+      const auto &n_photons = parameters.ray_tracing_info.n_photons_each_directions;
+      for (unsigned int n_first_dir = 0; n_first_dir < n_photons[0]; ++n_first_dir)
+        for (unsigned int n_second_dir = 0; n_second_dir < n_photons[1]; ++n_second_dir)
+          for (unsigned int n_third_dir = 0; n_third_dir < n_photons[2]; ++n_third_dir)
             {
+              // Insert your loop body here
+            }
+
+
+
               // Create the insertion point and emplace it.
               temp_point = [&]() {
                 if constexpr (dim == 2)
@@ -318,7 +322,7 @@ RayTracingSolver<dim>::insert_particles_and_photons()
   ConditionalOStream pcout(std::cout,
                            Utilities::MPI::this_mpi_process(MPI_COMM_WORLD) ==
                              0);
-  this->print_insertion_info(n_particles_to_insert_this_proc, pcout);
+  this->print_insertion_info(n_photons_to_insert_this_proc, pcout);
 }
 
 template <int dim>
