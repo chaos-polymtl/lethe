@@ -119,10 +119,10 @@ PeriodicHillsGrid<dim, spacedim>::PeriodicHillsGrid(
     dealii::Utilities::string_to_double(arguments);
   spacing_y     = arguments_double[0];
   alpha         = arguments_double[1];
-  repetitions_x = arguments_double[2];
-  repetitions_y = arguments_double[3];
+  repetitions_x = static_cast<int>(arguments_double[2]);
+  repetitions_y = static_cast<int>(arguments_double[3]);
   if (dim == 3)
-    repetitions_z = arguments_double[4];
+    repetitions_z = static_cast<int>(arguments_double[4]);
 
   if (abs(alpha - 1) < 1e-6)
     alpha = int(alpha);

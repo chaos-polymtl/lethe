@@ -235,8 +235,9 @@ namespace Parameters
     };
 
     template <int dim>
-    struct InsertionInfo
+    class InsertionInfo
     {
+    public:
       // Insertion method
       enum class InsertionMethod
       {
@@ -296,8 +297,9 @@ namespace Parameters
     };
 
     template <int dim>
-    struct ModelParameters
+    class ModelParameters
     {
+    public:
       // Load balance method
       enum class LoadBalanceMethod
       {
@@ -585,8 +587,9 @@ namespace Parameters
     };
 
     template <int dim>
-    struct FloatingGrid
+    class FloatingGrid
     {
+    public:
       // Floating mesh motion information
       Parameters::Mesh mesh;
 

@@ -2061,7 +2061,6 @@ RBFShape<dim>::determine_likely_nodes_for_one_cell(
 
   double     distance, max_distance;
   double     cell_diameter = cell->diameter();
-  Point<dim> centered_support_point;
   Point<dim> temp_cell_barycenter;
   double     temp_cell_diameter;
 

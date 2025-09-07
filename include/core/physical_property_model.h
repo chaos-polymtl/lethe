@@ -75,7 +75,7 @@ class PhysicalPropertyModel
 {
 public:
   /**
-   * @brief PhysicalPropertyModel Default constructor. Set the model_depends_on to false for all variables.
+   * @brief Default constructor. Set the model_depends_on to false for all variables.
    */
   PhysicalPropertyModel()
   {
@@ -88,6 +88,11 @@ public:
     model_depends_on[levelset]                  = false;
     model_depends_on[tracer_concentration]      = false;
   }
+
+  /**
+   * @brief Default virtual destructor. Does not do anything.
+   */
+  virtual ~PhysicalPropertyModel(){};
 
   /**
    * @brief Returns true if the PhysicalPropertyModel depends on a field, false if not.

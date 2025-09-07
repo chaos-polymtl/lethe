@@ -24,7 +24,7 @@ class InterfacePropertyModel
 {
 public:
   /**
-   * @brief class InterfacePropertyModel Default constructor. Set the model_depends_on to false for all variables.
+   * @brief class Default constructor. Set the model_depends_on to false for all variables.
    */
   InterfacePropertyModel()
   {
@@ -34,6 +34,11 @@ public:
     model_depends_on[pressure]                  = false;
     model_depends_on[phase_order_cahn_hilliard] = false;
   }
+
+  /**
+   * @brief  Default destructor.
+   */
+  virtual ~InterfacePropertyModel(){};
 
   /**
    * @brief Returns true if the InterfacePropertyModel depends on a field, false if not.

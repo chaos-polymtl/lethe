@@ -329,7 +329,7 @@ Parameters::VOF_InterfaceSharpening::parse_parameters(ParameterHandler &prm)
 
     // Parameters for adaptive sharpening
     threshold_max_deviation = prm.get_double("threshold max deviation");
-    max_iterations          = prm.get_double("max iterations");
+    max_iterations          = prm.get_integer("max iterations");
     monitoring              = prm.get_bool("monitoring");
     tolerance               = prm.get_double("tolerance");
 

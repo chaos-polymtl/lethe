@@ -225,8 +225,7 @@ public:
           {
             // Initialize variables used in the calculation.
             Point<dim> current_point = candidate_points[i];
-            Point<dim> dx{}, distance_gradient{}, previous_position{},
-              previous_gradient{};
+            Point<dim> dx{}, distance_gradient{}, previous_position{};
             // Initialize the iteration counter.
             unsigned int       iteration     = 0;
             const unsigned int iteration_max = 2e2;
@@ -321,7 +320,7 @@ public:
                         current_distance = best_dist;
                         current_point    = best_point;
                       }
-                    Point<dim> extra_guess;
+
                     // If none of the cartesian candidates are better, we use
                     // the value to find the point that minimizes the numerical
                     // gradient we evaluated with the cartesian guess.
@@ -528,8 +527,7 @@ public:
           {
             // Initialize variable used in the calculation.
             Point<dim> current_point = candidate_points[i];
-            Point<dim> dx{}, distance_gradient{}, previous_position{},
-              previous_gradient{};
+            Point<dim> dx{}, distance_gradient{}, previous_position{};
             // Initialize the iteration counter. We limit the number of
             // iterations to 200.
             unsigned int       iteration     = 0;
@@ -618,7 +616,7 @@ public:
                         current_distance = best_dist;
                         current_point    = best_point;
                       }
-                    Point<dim> extra_guess;
+
                     // If none of the cartesian candidates are better, we use
                     // the value to find the point that minimizes the numerical
                     // gradient we evaluated with the cartesian guess.
@@ -2142,7 +2140,8 @@ public:
         this->effective_radius =
           std::max(this->effective_radius, constituent->effective_radius);
         constituent->set_part_of_a_composite(true);
-        std::vector<Point<3>> component_bounding_box_vertex(std::pow(2, dim));
+        std::vector<Point<3>> component_bounding_box_vertex(
+          Utilities::fixed_power<dim>(2));
         // For each of the components update the bounding box.
         if constexpr (dim == 2)
           {

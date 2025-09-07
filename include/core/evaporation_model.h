@@ -38,6 +38,11 @@ public:
   {}
 
   /**
+   * @brief Default virual destructor. Does not do anything.
+   */
+  virtual ~EvaporationModel(){};
+
+  /**
    * @brief Instantiates and returns a pointer to an EvaporationModel
    * object by casting it to the proper child class.
    *
@@ -397,8 +402,6 @@ public:
     , boiling_temperature_inv(1.0 / p_evaporation.boiling_temperature)
     , latent_heat_evaporation(p_evaporation.latent_heat_evaporation)
     , ambient_pressure(p_evaporation.ambient_pressure)
-    , ambient_gas_density_inv(1.0 / p_evaporation.ambient_gas_density)
-    , liquid_density_inv(1.0 / p_evaporation.liquid_density)
     , universal_gas_constant(p_evaporation.universal_gas_constant)
   {
     model_depends_on[field::temperature] = true;
@@ -729,8 +732,6 @@ private:
   const double boiling_temperature_inv;
   const double latent_heat_evaporation;
   const double ambient_pressure;
-  const double ambient_gas_density_inv;
-  const double liquid_density_inv;
 
   const double universal_gas_constant;
 };

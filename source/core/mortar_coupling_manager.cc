@@ -449,7 +449,7 @@ compute_n_subdivisions_and_radius(
   // Number of subdivisions per process
   unsigned int n_subdivisions_local = 0;
   // Number of vertices at the boundary per process
-  unsigned int n_vertices_local = 0;
+  [[maybe_unused]] unsigned int n_vertices_local = 0;
   // Tolerance for rotor radius computation
   const double tolerance = 1e-8;
   // Min and max values for rotor radius computation
@@ -577,7 +577,8 @@ Quadrature<dim>
 construct_quadrature(const Quadrature<dim>         &quadrature,
                      const Parameters::Mortar<dim> &mortar_parameters)
 {
-  const double oversampling_factor = mortar_parameters.oversampling_factor;
+  const int oversampling_factor =
+    static_cast<int>(mortar_parameters.oversampling_factor);
 
   for (unsigned int i = 1; i <= 10; ++i)
     if (quadrature == QGauss<dim>(i))
