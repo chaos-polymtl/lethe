@@ -680,10 +680,10 @@ FluidDynamicsVANS<dim>::copy_local_rhs_to_global_rhs(
 }
 
 template <int dim>
-void
-FluidDynamicsVANS<dim>::output_field_hook(
-  std::vector<OutputStruct<dim, GlobalVectorType>> &solution_output_structs)
+std::vector<OutputStruct<dim, GlobalVectorType>>
+FluidDynamicsVANS<dim>::get_output_struct_hook()
 {
+  std::vector<OutputStruct<dim, GlobalVectorType>> solution_output_structs;
   solution_output_structs.emplace_back(
     std::in_place_type<OutputStructSolution<dim, GlobalVectorType>>,
     particle_projector.dof_handler,
@@ -705,6 +705,7 @@ FluidDynamicsVANS<dim>::output_field_hook(
         names,
         data_interpretation);
     }
+  return solution_output_structs;
 }
 
 template <int dim>

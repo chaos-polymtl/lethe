@@ -282,9 +282,8 @@ private:
    * @brief output_field_hook
    * Adds the level set output field to the output
    */
-  virtual void
-  output_field_hook(std::vector<OutputStruct<dim, GlobalVectorType>>
-                      &solution_output_structs) override;
+  virtual std::vector<OutputStruct<dim, GlobalVectorType>>
+  get_output_struct_hook() override;
 
   /**
    * @brief

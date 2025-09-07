@@ -161,9 +161,8 @@ protected:
    * @brief a function for adding data vectors to the data_out object for
    * post_processing additional results
    */
-  virtual void
-  output_field_hook(std::vector<OutputStruct<dim, GlobalVectorType>>
-                      &solution_output_structs) override;
+  virtual std::vector<OutputStruct<dim, GlobalVectorType>>
+  get_output_struct_hook() override;
 
 
   /**

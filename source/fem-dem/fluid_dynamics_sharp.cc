@@ -1679,10 +1679,10 @@ FluidDynamicsSharp<dim>::write_force_ib()
 }
 
 template <int dim>
-void
-FluidDynamicsSharp<dim>::output_field_hook(
-  std::vector<OutputStruct<dim, GlobalVectorType>> &solution_output_structs)
+std::vector<OutputStruct<dim, GlobalVectorType>>
+FluidDynamicsSharp<dim>::get_output_struct_hook()
 {
+  std::vector<OutputStruct<dim, GlobalVectorType>> solution_output_structs;
   // If the particles have moved, the combined shapes will have been cleared by
   // the particle integration routines.
   levelset_postprocessor =
@@ -1752,6 +1752,7 @@ FluidDynamicsSharp<dim>::output_field_hook(
         this->present_solution,
         levelset_gradient_postprocessor);
     }
+  return solution_output_structs;
 }
 
 template <int dim>

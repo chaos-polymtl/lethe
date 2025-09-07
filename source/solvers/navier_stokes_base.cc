@@ -2709,10 +2709,12 @@ NavierStokesBase<dim, VectorType, DofsType>::
 }
 
 template <int dim, typename VectorType, typename DofsType>
-void
-NavierStokesBase<dim, VectorType, DofsType>::output_field_hook(
-  std::vector<OutputStruct<dim, VectorType>> & /*solution_output_structs*/)
-{}
+std::vector<OutputStruct<dim, VectorType>>
+NavierStokesBase<dim, VectorType, DofsType>::get_output_struct_hook()
+{
+  std::vector<OutputStruct<dim, VectorType>> output_structs;
+  return output_structs;
+}
 
 template <int dim, typename VectorType, typename DofsType>
 void
@@ -2931,7 +2933,11 @@ NavierStokesBase<dim, VectorType, DofsType>::gather_output_results(
   solution_output_structs.emplace_back(
     std::in_place_type<OutputStructCellVector>, subdomain, "subdomain");
 
-  output_field_hook(solution_output_structs);
+  std::vector<OutputStruct<dim, VectorType>> additional_output_structs =
+    get_output_struct_hook();
+
+  for (const auto &output_struct : additional_output_structs)
+    solution_output_structs.push_back(output_struct);
 }
 
 template <int dim, typename VectorType, typename DofsType>
