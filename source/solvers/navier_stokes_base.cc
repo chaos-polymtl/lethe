@@ -2934,7 +2934,7 @@ NavierStokesBase<dim, VectorType, DofsType>::gather_output_results(
 
   // Add fields specific to other physics
   std::vector<OutputStruct<dim, VectorType>> additional_output_structs =
-    this->get_output_struct_hook();
+    this->gather_output_hook();
 
   for (const auto &output_struct : additional_output_structs)
     solution_output_structs.emplace_back(output_struct);
