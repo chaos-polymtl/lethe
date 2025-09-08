@@ -55,10 +55,10 @@ test()
   // Stator mesh parameters
   mesh_parameters.type                     = Parameters::Mesh::Type::dealii;
   mesh_parameters.grid_type                = "cylinder_shell";
-  mesh_parameters.grid_arguments           = "2.0 : 0.5 : 1.0 : 4 : 4 : true";
+  mesh_parameters.grid_arguments           = "2.0 : 0.5 : 1.0 : 4 : 6 : true";
   mesh_parameters.scale                    = 1;
   mesh_parameters.simplex                  = false;
-  mesh_parameters.initial_refinement       = 2;
+  mesh_parameters.initial_refinement       = 1;
   mesh_parameters.refine_until_target_size = false;
   mesh_parameters.boundaries_to_refine     = std::vector<int>();
   mesh_parameters.initial_refinement_at_boundaries = 0;
@@ -124,10 +124,10 @@ test()
       deallog << "Rotation angle (rad) : " << rotation_angle << std::endl;
       deallog << "Radial direction subdivisions: " << n_subdivisions[0]
               << std::endl;
-      deallog << "Out-of-plane subdivisions : " << n_subdivisions[1]
+      deallog << "Axial direction subdivisions : " << n_subdivisions[1]
               << std::endl;
       deallog << "Radius : " << radius[0] << std::endl;
-      deallog << "Out-of-plane length : " << radius[1] << std::endl;
+      deallog << "Axial direction length : " << radius[1] << std::endl;
     }
 }
 

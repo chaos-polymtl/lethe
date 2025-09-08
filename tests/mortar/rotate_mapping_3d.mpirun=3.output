@@ -1,8 +1,8 @@
 
 DEAL::Rotation angle (rad) : 0.100000
-DEAL::Radial direction subdivisions: 16
-DEAL::Out-of-plane subdivisions : 16
+DEAL::Radial direction subdivisions: 8
+DEAL::Axial direction subdivisions : 12
 DEAL::Radius : 0.500000
-DEAL::Out-of-plane length : 2.00000
+DEAL::Axial direction length : 2.00000
 
 
