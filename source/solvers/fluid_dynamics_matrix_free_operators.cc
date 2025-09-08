@@ -430,6 +430,13 @@ NavierStokesOperatorBase<dim, number>::vmult(VectorType       &dst,
     this->matrix_free.cell_loop(
       &NavierStokesOperatorBase::do_cell_integral_range, this, dst, src, true);
 
+  // If enabled, add mortar entries
+  if (this->enable_mortar)
+    {
+      this->mortar_coupling_operator_mf->vmult_add(dst, src);
+      dst.compress(VectorOperation::add);
+    }
+
   // copy constrained dofs from src to dst (corresponding to diagonal
   // entries with value 1.0)
   for (const auto &constrained_index : constrained_indices)
