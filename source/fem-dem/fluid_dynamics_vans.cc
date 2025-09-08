@@ -681,7 +681,7 @@ FluidDynamicsVANS<dim>::copy_local_rhs_to_global_rhs(
 
 template <int dim>
 std::vector<OutputStruct<dim, GlobalVectorType>>
-FluidDynamicsVANS<dim>::get_output_struct_hook()
+FluidDynamicsVANS<dim>::gather_output_hook()
 {
   std::vector<OutputStruct<dim, GlobalVectorType>> solution_output_structs;
   solution_output_structs.emplace_back(

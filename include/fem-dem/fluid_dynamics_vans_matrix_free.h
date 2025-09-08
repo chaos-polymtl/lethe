@@ -141,11 +141,12 @@ protected:
   finish_time_step_fd();
 
   /**
-   * @brief Add data vectors to the data_out object for post_processing
-   * additional results. In this case, the void fraction field is added.
+   * @brief Add void fraction field to output files.
+   *
+   * @return Vector of OutputStructs that will be used to write the output results as VTU files.
    */
   std::vector<OutputStruct<dim, LinearAlgebra::distributed::Vector<double>>>
-  get_output_struct_hook() override;
+  gather_output_hook() override;
 
   /**
    * @brief Create geometric multigrid preconditioner.
@@ -154,7 +155,7 @@ protected:
   create_GMG() override;
 
   /**
-   * Initializes (or re-initializes) geometric multigrid preconditioneré
+   * Initializes (or re-initializes) geometric multigrid preconditioner
    */
   void
   initialize_GMG() override;

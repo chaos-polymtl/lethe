@@ -276,7 +276,7 @@ FluidDynamicsVANSMatrixFree<dim>::finish_time_step_fd()
 
 template <int dim>
 std::vector<OutputStruct<dim, LinearAlgebra::distributed::Vector<double>>>
-FluidDynamicsVANSMatrixFree<dim>::get_output_struct_hook()
+FluidDynamicsVANSMatrixFree<dim>::gather_output_hook()
 {
   std::vector<std::string> name = {"void_fraction"};
   std::vector<DataComponentInterpretation::DataComponentInterpretation>

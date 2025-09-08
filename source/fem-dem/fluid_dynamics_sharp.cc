@@ -1680,7 +1680,7 @@ FluidDynamicsSharp<dim>::write_force_ib()
 
 template <int dim>
 std::vector<OutputStruct<dim, GlobalVectorType>>
-FluidDynamicsSharp<dim>::get_output_struct_hook()
+FluidDynamicsSharp<dim>::gather_output_hook()
 {
   std::vector<OutputStruct<dim, GlobalVectorType>> solution_output_structs;
   // If the particles have moved, the combined shapes will have been cleared by

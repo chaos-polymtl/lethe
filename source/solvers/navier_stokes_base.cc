@@ -2710,7 +2710,7 @@ NavierStokesBase<dim, VectorType, DofsType>::
 
 template <int dim, typename VectorType, typename DofsType>
 std::vector<OutputStruct<dim, VectorType>>
-NavierStokesBase<dim, VectorType, DofsType>::get_output_struct_hook()
+NavierStokesBase<dim, VectorType, DofsType>::gather_output_hook()
 {
   return std::vector<OutputStruct<dim, VectorType>>();
 }
