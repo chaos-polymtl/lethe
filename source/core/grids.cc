@@ -126,6 +126,17 @@ attach_grid_to_triangulation(Triangulation<dim, spacedim> &triangulation,
             mesh_parameters.grid_arguments);
 
           GridTools::scale(mesh_parameters.scale, triangulation);
+
+          if constexpr (dim == 3)
+            {
+              // Initial mesh translation
+              GridTools::shift(mesh_parameters.translation, triangulation);
+
+              // Initial mesh rotation
+              GridTools::rotate(mesh_parameters.rotation_axis,
+                                mesh_parameters.rotation_angle,
+                                triangulation);
+            }
         }
     }
   // Customizable cylinder mesh
