@@ -82,7 +82,7 @@ struct OutputStructSolution
  * It is used to pass all the information required upon calling
  * add_data_vector() for the DataOut instance without losing track of its
  * attributes such as name and data component interpretation. This version of
- * the struct uses a cell based field parsed as a Vector and the solution name.
+ * the struct uses a cell-based field parsed as a Vector and the solution name.
  */
 struct OutputStructCellVector
 {
