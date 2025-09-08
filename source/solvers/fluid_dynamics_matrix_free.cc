@@ -3423,9 +3423,7 @@ FluidDynamicsMatrixFree<dim>::solve_system_GMRES(const bool   initial_step,
                                linear_solver_tolerance,
                                true,
                                true);
-  // DEBUG delete later
-  // solver_control.enable_history_data();
-  
+
   SolverGMRES<VectorType>::AdditionalData solver_parameters;
 
   solver_parameters.max_n_tmp_vectors =
@@ -3438,16 +3436,6 @@ FluidDynamicsMatrixFree<dim>::solve_system_GMRES(const bool   initial_step,
   this->newton_update = 0.0;
 
   this->computing_timer.enter_subsection("Solve linear system");
-
-  // std::cout << "matrix " << this->system_operator->get_system_matrix().frobenius_norm() << std::endl;
-  // this->system_operator->get_system_matrix().print(std::cout);
-  // std::cout << "\n \n";
-
-  std::cout << "RHS " << this->system_rhs.l2_norm() << std::endl;
-  // for (unsigned int i = 0; i < this->system_rhs.size(); i++)
-  //   std::cout << this->system_rhs[i] << std::endl;
-  
-  // std::cout << std::endl;
 
   if ((this->simulation_parameters.linear_solver.at(PhysicsID::fluid_dynamics)
          .preconditioner ==
@@ -3496,11 +3484,6 @@ FluidDynamicsMatrixFree<dim>::solve_system_GMRES(const bool   initial_step,
                   << " steps to reach a residual norm of "
                   << solver_control.last_value() << std::endl;
     }
-    
-  // DEBUG delete later
-  // const auto result = solver_control.get_history_data();
-  // for (unsigned int i = 0; i < result.size(); i++)
-  //   std::cout << result[i] << std::endl;
 
   this->computing_timer.enter_subsection(
     "Distribute constraints after linear solve");
@@ -3509,13 +3492,6 @@ FluidDynamicsMatrixFree<dim>::solve_system_GMRES(const bool   initial_step,
 
   this->computing_timer.leave_subsection(
     "Distribute constraints after linear solve");
-
-  
-  std::cout << "newton update " << this->newton_update.l2_norm() << std::endl;
-  for (unsigned int i = 0; i < this->newton_update.size(); i++)
-    std::cout << this->newton_update[i] << std::endl;
-  
-  std::cout << std::endl;
 }
 
 template class FluidDynamicsMatrixFree<2>;
