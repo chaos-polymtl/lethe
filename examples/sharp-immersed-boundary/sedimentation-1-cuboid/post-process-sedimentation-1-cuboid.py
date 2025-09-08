@@ -27,6 +27,7 @@ plt.rcParams['savefig.bbox']='tight'
 
 parser = argparse.ArgumentParser(description='Arguments for the post-processing')
 parser.add_argument("--validate", action="store_true", help="Launches the script in validation mode. This will log the content of the graph and prevent the display of figures", default=False)
+args, leftovers=parser.parse_known_args()
 
 B = 2
 vol = B**3
@@ -52,7 +53,7 @@ plt.plot(t*t_fact,vy,color=colors[0],lw=3, label="Lethe")
 plt.ylabel("Sedimentation velocity, $v_y$ [cm/s]")
 plt.xlabel("Dimensionless time, $t^*$ [-]")
 plt.legend()
-if (parser.validate):
+if (args.validate):
     plt.savefig("cuboid-sedimentation-velocity.pdf")
     plt.close()
 
