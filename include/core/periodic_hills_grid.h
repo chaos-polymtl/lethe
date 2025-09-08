@@ -1,4 +1,4 @@
-// SPDX-FileCopyrightText: Copyright (c) 2020, 2023 The Lethe Authors
+// SPDX-FileCopyrightText: Copyright (c) 2020-2025 The Lethe Authors
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
 #ifndef lethe_per_hills_grid_h
@@ -119,10 +119,10 @@ PeriodicHillsGrid<dim, spacedim>::PeriodicHillsGrid(
     dealii::Utilities::string_to_double(arguments);
   spacing_y     = arguments_double[0];
   alpha         = arguments_double[1];
-  repetitions_x = arguments_double[2];
-  repetitions_y = arguments_double[3];
+  repetitions_x = static_cast<int>(arguments_double[2]);
+  repetitions_y = static_cast<int>(arguments_double[3]);
   if (dim == 3)
-    repetitions_z = arguments_double[4];
+    repetitions_z = static_cast<int>(arguments_double[4]);
 
   if (abs(alpha - 1) < 1e-6)
     alpha = int(alpha);

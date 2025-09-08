@@ -1,4 +1,4 @@
-// SPDX-FileCopyrightText: Copyright (c) 2023 The Lethe Authors
+// SPDX-FileCopyrightText: Copyright (c) 2023-2025 The Lethe Authors
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
 #ifndef lethe_interface_property_model_h
@@ -24,7 +24,7 @@ class InterfacePropertyModel
 {
 public:
   /**
-   * @brief class InterfacePropertyModel Default constructor. Set the model_depends_on to false for all variables.
+   * @brief class Default constructor. Set the model_depends_on to false for all variables.
    */
   InterfacePropertyModel()
   {
@@ -34,6 +34,11 @@ public:
     model_depends_on[pressure]                  = false;
     model_depends_on[phase_order_cahn_hilliard] = false;
   }
+
+  /**
+   * @brief  Default destructor.
+   */
+  virtual ~InterfacePropertyModel(){};
 
   /**
    * @brief Returns true if the InterfacePropertyModel depends on a field, false if not.

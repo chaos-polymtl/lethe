@@ -3788,7 +3788,7 @@ namespace Parameters
         contact_search_frequency = prm.get_integer("contact search frequency");
         particle_nonlinear_tolerance =
           prm.get_double("particle nonlinear tolerance");
-        coupling_frequency       = prm.get_double("DEM coupling frequency");
+        coupling_frequency       = prm.get_integer("DEM coupling frequency");
         enable_lubrication_force = prm.get_bool("enable lubrication force");
         lubrication_range_max    = prm.get_double("lubrication range max");
         lubrication_range_min    = prm.get_double("lubrication range min");
