@@ -6,7 +6,7 @@ var searchData=
   ['fem_5ftorque_5fx_3',['fem_torque_x',['../namespaceDEM_1_1CFDDEMProperties.html#ae9734b9d29480269e4764c5092d87b2fa0b120504b8591bd6814e4291c614e7ae',1,'DEM::CFDDEMProperties']]],
   ['fem_5ftorque_5fy_4',['fem_torque_y',['../namespaceDEM_1_1CFDDEMProperties.html#ae9734b9d29480269e4764c5092d87b2faf5cd455a2868dda49123bf78e84fd05a',1,'DEM::CFDDEMProperties']]],
   ['fem_5ftorque_5fz_5',['fem_torque_z',['../namespaceDEM_1_1CFDDEMProperties.html#ae9734b9d29480269e4764c5092d87b2fa602b0e0a4adad5b2e0601326ae811dfb',1,'DEM::CFDDEMProperties']]],
-  ['file_6',['file',['../structParameters_1_1Lagrangian_1_1InsertionInfo.html#a8935f71b97c7cce069b63a2e28949a4ba8c7dd922ad47494fc02c388e12c00eac',1,'Parameters::Lagrangian::InsertionInfo']]],
+  ['file_6',['file',['../classParameters_1_1Lagrangian_1_1InsertionInfo.html#a8935f71b97c7cce069b63a2e28949a4ba8c7dd922ad47494fc02c388e12c00eac',1,'Parameters::Lagrangian::InsertionInfo']]],
   ['fixed_5fwall_7',['fixed_wall',['../structParameters_1_1Lagrangian_1_1BCDEM.html#ac65d80d2721f9155291c2622d9261555a891f9e808d010b039f9d0aed411b7dee',1,'Parameters::Lagrangian::BCDEM']]],
   ['fluid0_8',['fluid0',['../namespaceParameters.html#a978815f8cf26f3c77304639e1786aec1a1e86df18a83727e4a5dc8dc2859a097c',1,'Parameters']]],
   ['fluid1_9',['fluid1',['../namespaceParameters.html#a978815f8cf26f3c77304639e1786aec1a1e04d9b58aa70e6fb6501fde7608fd13',1,'Parameters']]],
@@ -14,7 +14,7 @@ var searchData=
   ['fluid_5ffluid_11',['fluid_fluid',['../classParameters_1_1MaterialInteractions.html#ab6935d2b352966e8d463e888086002aea1b2190c742f3b972ffbe02752ba4f8b2',1,'Parameters::MaterialInteractions::fluid_fluid'],['../physical__properties__manager_8h.html#a3374dca42581d32444eb366feb9f3189afca154035ca3d8f1e45a9b648a2d6ef6',1,'fluid_fluid:&#160;physical_properties_manager.h']]],
   ['fluid_5fsolid_12',['fluid_solid',['../classParameters_1_1MaterialInteractions.html#ab6935d2b352966e8d463e888086002aea7426537cf506209635da9eebebd9886a',1,'Parameters::MaterialInteractions::fluid_solid'],['../physical__properties__manager_8h.html#a3374dca42581d32444eb366feb9f3189a2116a68bfe5535ddc1f83113fcede062',1,'fluid_solid:&#160;physical_properties_manager.h']]],
   ['fraction_13',['fraction',['../structParameters_1_1MeshAdaptation.html#a0351d569653bf8e1cac39326ac10f606a03f0356d2d1c334d3567c9d67818f5d0',1,'Parameters::MeshAdaptation']]],
-  ['frequent_14',['frequent',['../structParameters_1_1Lagrangian_1_1ModelParameters.html#a3e6eb8f5729483f84a436e4222d86e66a030bb043d582f8f5569a8be85ea51911',1,'Parameters::Lagrangian::ModelParameters']]],
+  ['frequent_14',['frequent',['../classParameters_1_1Lagrangian_1_1ModelParameters.html#a3e6eb8f5729483f84a436e4222d86e66a030bb043d582f8f5569a8be85ea51911',1,'Parameters::Lagrangian::ModelParameters']]],
   ['function_15',['function',['../namespaceBoundaryConditions.html#a07df76d63cde5cb5bcbea0d9c25a54b8ac1c425268e68385d1ab5074c17a94f14',1,'BoundaryConditions::function'],['../namespaceParameters.html#a59bccd897a552f378b3da967e9fa803fac1c425268e68385d1ab5074c17a94f14',1,'Parameters::function']]],
   ['function_5fweak_16',['function_weak',['../namespaceBoundaryConditions.html#a07df76d63cde5cb5bcbea0d9c25a54b8add95ffdcea64b1eaaa9244611678ed38',1,'BoundaryConditions']]]
 ];

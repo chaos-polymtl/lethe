@@ -490,9 +490,9 @@ $(document).ready(function() { init_codefold(0); });
 <div class="line"><a id="l00390" name="l00390"></a><span class="lineno">  390</span>        {</div>
 <div class="line"><a id="l00391" name="l00391"></a><span class="lineno">  391</span>          <span class="keywordtype">double</span> minimal_cell_size =</div>
 <div class="line"><a id="l00392" name="l00392"></a><span class="lineno">  392</span>            GridTools::minimal_cell_diameter(triangulation);</div>
-<div class="line"><a id="l00393" name="l00393"></a><span class="lineno">  393</span>          <span class="keywordtype">double</span>       target_size = mesh_parameters.<a class="code hl_variable" href="structParameters_1_1Mesh.html#a7c9263403cce63ebf61587e6d7abc3d1">target_size</a>;</div>
-<div class="line"><a id="l00394" name="l00394"></a><span class="lineno">  394</span>          <span class="keywordtype">unsigned</span> <span class="keywordtype">int</span> number_refinement =</div>
-<div class="line"><a id="l00395" name="l00395"></a><span class="lineno">  395</span>            floor(std::log(minimal_cell_size / target_size) / std::log(2));</div>
+<div class="line"><a id="l00393" name="l00393"></a><span class="lineno">  393</span>          <span class="keywordtype">double</span>       target_size       = mesh_parameters.<a class="code hl_variable" href="structParameters_1_1Mesh.html#a7c9263403cce63ebf61587e6d7abc3d1">target_size</a>;</div>
+<div class="line"><a id="l00394" name="l00394"></a><span class="lineno">  394</span>          <span class="keywordtype">unsigned</span> <span class="keywordtype">int</span> number_refinement = <span class="keyword">static_cast&lt;</span><span class="keywordtype">unsigned</span> <span class="keywordtype">int</span><span class="keyword">&gt;</span>(</div>
+<div class="line"><a id="l00395" name="l00395"></a><span class="lineno">  395</span>            floor(std::log(minimal_cell_size / target_size) / std::log(2)));</div>
 <div class="line"><a id="l00396" name="l00396"></a><span class="lineno">  396</span>          triangulation.refine_global(number_refinement);</div>
 <div class="line"><a id="l00397" name="l00397"></a><span class="lineno">  397</span>        }</div>
 <div class="line"><a id="l00398" name="l00398"></a><span class="lineno">  398</span>      <span class="keywordflow">else</span> <span class="keywordflow">if</span> (!restart)</div>
@@ -715,9 +715,9 @@ $(document).ready(function() { init_codefold(0); });
 <div class="line"><a id="l00613" name="l00613"></a><span class="lineno">  613</span>        {</div>
 <div class="line"><a id="l00614" name="l00614"></a><span class="lineno">  614</span>          <span class="keyword">const</span> <span class="keywordtype">double</span> minimal_cell_size =</div>
 <div class="line"><a id="l00615" name="l00615"></a><span class="lineno">  615</span>            GridTools::minimal_cell_diameter(triangulation);</div>
-<div class="line"><a id="l00616" name="l00616"></a><span class="lineno">  616</span>          <span class="keyword">const</span> <span class="keywordtype">double</span>       target_size = mesh_parameters.<a class="code hl_variable" href="structParameters_1_1Mesh.html#a7c9263403cce63ebf61587e6d7abc3d1">target_size</a>;</div>
-<div class="line"><a id="l00617" name="l00617"></a><span class="lineno">  617</span>          <span class="keyword">const</span> <span class="keywordtype">unsigned</span> <span class="keywordtype">int</span> number_refinement =</div>
-<div class="line"><a id="l00618" name="l00618"></a><span class="lineno">  618</span>            floor(std::log(minimal_cell_size / target_size) / std::log(2));</div>
+<div class="line"><a id="l00616" name="l00616"></a><span class="lineno">  616</span>          <span class="keyword">const</span> <span class="keywordtype">double</span>       target_size       = mesh_parameters.<a class="code hl_variable" href="structParameters_1_1Mesh.html#a7c9263403cce63ebf61587e6d7abc3d1">target_size</a>;</div>
+<div class="line"><a id="l00617" name="l00617"></a><span class="lineno">  617</span>          <span class="keyword">const</span> <span class="keywordtype">unsigned</span> <span class="keywordtype">int</span> number_refinement = <span class="keyword">static_cast&lt;</span><span class="keywordtype">unsigned</span> <span class="keywordtype">int</span><span class="keyword">&gt;</span>(</div>
+<div class="line"><a id="l00618" name="l00618"></a><span class="lineno">  618</span>            floor(std::log(minimal_cell_size / target_size) / std::log(2)));</div>
 <div class="line"><a id="l00619" name="l00619"></a><span class="lineno">  619</span>          triangulation.refine_global(number_refinement);</div>
 <div class="line"><a id="l00620" name="l00620"></a><span class="lineno">  620</span>        }</div>
 <div class="line"><a id="l00621" name="l00621"></a><span class="lineno">  621</span>      <span class="keywordflow">else</span> <span class="keywordflow">if</span> (!restart)</div>

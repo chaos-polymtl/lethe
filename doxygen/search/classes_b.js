@@ -16,7 +16,7 @@ var searchData=
   ['mobilitycahnhilliardmodelconstant_13',['MobilityCahnHilliardModelConstant',['../classMobilityCahnHilliardModelConstant.html',1,'']]],
   ['mobilitycahnhilliardmodelquartic_14',['MobilityCahnHilliardModelQuartic',['../classMobilityCahnHilliardModelQuartic.html',1,'']]],
   ['mobilitycahnhilliardparameters_15',['MobilityCahnHilliardParameters',['../structParameters_1_1MobilityCahnHilliardParameters.html',1,'Parameters']]],
-  ['modelparameters_16',['ModelParameters',['../structParameters_1_1Lagrangian_1_1ModelParameters.html',1,'Parameters::Lagrangian']]],
+  ['modelparameters_16',['ModelParameters',['../classParameters_1_1Lagrangian_1_1ModelParameters.html',1,'Parameters::Lagrangian']]],
   ['mortar_17',['Mortar',['../structParameters_1_1Mortar.html',1,'Parameters']]],
   ['mortarmanagerbase_18',['MortarManagerBase',['../classMortarManagerBase.html',1,'']]],
   ['mortarmanagercircle_19',['MortarManagerCircle',['../classMortarManagerCircle.html',1,'']]],

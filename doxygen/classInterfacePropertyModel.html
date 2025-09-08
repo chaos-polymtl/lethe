@@ -117,6 +117,8 @@ Inheritance diagram for InterfacePropertyModel:</div>
 Public Member Functions</h2></td></tr>
 <tr class="memitem:ad5a30d304ce21abf3baf295b20b81598" id="r_ad5a30d304ce21abf3baf295b20b81598"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classInterfacePropertyModel.html#ad5a30d304ce21abf3baf295b20b81598">InterfacePropertyModel</a> ()</td></tr>
 <tr class="separator:ad5a30d304ce21abf3baf295b20b81598"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a96bafb6099c6a8ef37766fc5097d7454" id="r_a96bafb6099c6a8ef37766fc5097d7454"><td class="memItemLeft" align="right" valign="top">virtual&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classInterfacePropertyModel.html#a96bafb6099c6a8ef37766fc5097d7454">~InterfacePropertyModel</a> ()</td></tr>
+<tr class="separator:a96bafb6099c6a8ef37766fc5097d7454"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a6d1199d83373229d6b249fd83811baf1" id="r_a6d1199d83373229d6b249fd83811baf1"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classInterfacePropertyModel.html#a6d1199d83373229d6b249fd83811baf1">depends_on</a> (const <a class="el" href="physical__property__model_8h.html#a0b2c854385812ebfac83689a5c3ead58">field</a> &amp;id)</td></tr>
 <tr class="separator:a6d1199d83373229d6b249fd83811baf1"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aa62a1d4d9fe1ab5ccc430fb78310bfaa" id="r_aa62a1d4d9fe1ab5ccc430fb78310bfaa"><td class="memItemLeft" align="right" valign="top">virtual double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classInterfacePropertyModel.html#aa62a1d4d9fe1ab5ccc430fb78310bfaa">value</a> (const std::map&lt; <a class="el" href="physical__property__model_8h.html#a0b2c854385812ebfac83689a5c3ead58">field</a>, double &gt; &amp;fields_value)=0</td></tr>
@@ -165,11 +167,40 @@ Protected Attributes</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p>class <a class="el" href="classInterfacePropertyModel.html" title="Abstract class that defines the interface for a interface property model. Interface property model pr...">InterfacePropertyModel</a> Default constructor. Set the model_depends_on to false for all variables. </p>
+<p>class Default constructor. Set the model_depends_on to false for all variables. </p>
 
 <p class="definition">Definition at line <a class="el" href="interface__property__model_8h_source.html#l00029">29</a> of file <a class="el" href="interface__property__model_8h_source.html">interface_property_model.h</a>.</p>
 
-<p class="reference">References <a class="el" href="interface__property__model_8h_source.html#l00155">model_depends_on</a>, <a class="el" href="physical__property__model_8h_source.html#l00044">phase_order_cahn_hilliard</a>, <a class="el" href="physical__property__model_8h_source.html#l00043">pressure</a>, <a class="el" href="physical__property__model_8h_source.html#l00039">shear_rate</a>, <a class="el" href="physical__property__model_8h_source.html#l00040">temperature</a>, and <a class="el" href="physical__property__model_8h_source.html#l00041">temperature_p1</a>.</p>
+<p class="reference">References <a class="el" href="interface__property__model_8h_source.html#l00160">model_depends_on</a>, <a class="el" href="physical__property__model_8h_source.html#l00044">phase_order_cahn_hilliard</a>, <a class="el" href="physical__property__model_8h_source.html#l00043">pressure</a>, <a class="el" href="physical__property__model_8h_source.html#l00039">shear_rate</a>, <a class="el" href="physical__property__model_8h_source.html#l00040">temperature</a>, and <a class="el" href="physical__property__model_8h_source.html#l00041">temperature_p1</a>.</p>
+
+</div>
+</div>
+<a id="a96bafb6099c6a8ef37766fc5097d7454" name="a96bafb6099c6a8ef37766fc5097d7454"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a96bafb6099c6a8ef37766fc5097d7454">&#9670;&#160;</a></span>~InterfacePropertyModel()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">virtual InterfacePropertyModel::~InterfacePropertyModel </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span><span class="mlabel">virtual</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Default destructor. </p>
+
+<p class="definition">Definition at line <a class="el" href="interface__property__model_8h_source.html#l00041">41</a> of file <a class="el" href="interface__property__model_8h_source.html">interface_property_model.h</a>.</p>
 
 </div>
 </div>
@@ -200,9 +231,9 @@ Protected Attributes</h2></td></tr>
 
 <p>Returns true if the <a class="el" href="classInterfacePropertyModel.html" title="Abstract class that defines the interface for a interface property model. Interface property model pr...">InterfacePropertyModel</a> depends on a field, false if not. </p>
 
-<p class="definition">Definition at line <a class="el" href="interface__property__model_8h_source.html#l00043">43</a> of file <a class="el" href="interface__property__model_8h_source.html">interface_property_model.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="interface__property__model_8h_source.html#l00048">48</a> of file <a class="el" href="interface__property__model_8h_source.html">interface_property_model.h</a>.</p>
 
-<p class="reference">References <a class="el" href="interface__property__model_8h_source.html#l00155">model_depends_on</a>.</p>
+<p class="reference">References <a class="el" href="interface__property__model_8h_source.html#l00160">model_depends_on</a>.</p>
 
 </div>
 </div>
@@ -298,7 +329,7 @@ Protected Attributes</h2></td></tr>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd></dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="interface__property__model_8h_source.html#l00099">99</a> of file <a class="el" href="interface__property__model_8h_source.html">interface_property_model.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="interface__property__model_8h_source.html#l00104">104</a> of file <a class="el" href="interface__property__model_8h_source.html">interface_property_model.h</a>.</p>
 
 <p class="reference">References <a class="el" href="classInterfacePropertyModel.html#aa62a1d4d9fe1ab5ccc430fb78310bfaa">value()</a>.</p>
 
@@ -446,7 +477,7 @@ Protected Attributes</h2></td></tr>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd></dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="interface__property__model_8h_source.html#l00120">120</a> of file <a class="el" href="interface__property__model_8h_source.html">interface_property_model.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="interface__property__model_8h_source.html#l00125">125</a> of file <a class="el" href="interface__property__model_8h_source.html">interface_property_model.h</a>.</p>
 
 <p class="reference">References <a class="el" href="classInterfacePropertyModel.html#abc8d04bb0981eda0c4ba069359511bf6">vector_value()</a>.</p>
 
@@ -519,7 +550,7 @@ Protected Attributes</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="interface__property__model_8h_source.html#l00155">155</a> of file <a class="el" href="interface__property__model_8h_source.html">interface_property_model.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="interface__property__model_8h_source.html#l00160">160</a> of file <a class="el" href="interface__property__model_8h_source.html">interface_property_model.h</a>.</p>
 
 </div>
 </div>

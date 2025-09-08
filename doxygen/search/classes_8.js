@@ -9,7 +9,7 @@ var searchData=
   ['initialconditions_6',['InitialConditions',['../classParameters_1_1InitialConditions.html',1,'Parameters']]],
   ['insertion_7',['Insertion',['../classInsertion.html',1,'']]],
   ['insertionfile_8',['InsertionFile',['../classInsertionFile.html',1,'']]],
-  ['insertioninfo_9',['InsertionInfo',['../structParameters_1_1Lagrangian_1_1InsertionInfo.html',1,'Parameters::Lagrangian']]],
+  ['insertioninfo_9',['InsertionInfo',['../classParameters_1_1Lagrangian_1_1InsertionInfo.html',1,'Parameters::Lagrangian']]],
   ['insertionlist_10',['InsertionList',['../classInsertionList.html',1,'']]],
   ['insertionplane_11',['InsertionPlane',['../classInsertionPlane.html',1,'']]],
   ['insertionvolume_12',['InsertionVolume',['../classInsertionVolume.html',1,'']]],

@@ -1,7 +1,7 @@
 var searchData=
 [
   ['fem_0',['FEM',['../structParameters_1_1FEM.html',1,'Parameters']]],
-  ['floatinggrid_1',['FloatingGrid',['../structParameters_1_1Lagrangian_1_1FloatingGrid.html',1,'Parameters::Lagrangian']]],
+  ['floatinggrid_1',['FloatingGrid',['../classParameters_1_1Lagrangian_1_1FloatingGrid.html',1,'Parameters::Lagrangian']]],
   ['floatingwalls_2',['FloatingWalls',['../classParameters_1_1Lagrangian_1_1FloatingWalls.html',1,'Parameters::Lagrangian']]],
   ['flowcontrol_3',['FlowControl',['../classFlowControl.html',1,'']]],
   ['fluiddynamicsblock_4',['FluidDynamicsBlock',['../classFluidDynamicsBlock.html',1,'']]],

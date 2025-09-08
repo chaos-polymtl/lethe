@@ -155,6 +155,8 @@ Inheritance diagram for PhysicalPropertyModel:</div>
 Public Member Functions</h2></td></tr>
 <tr class="memitem:a790b73800189af9ff8d80f1e6f8c9306" id="r_a790b73800189af9ff8d80f1e6f8c9306"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classPhysicalPropertyModel.html#a790b73800189af9ff8d80f1e6f8c9306">PhysicalPropertyModel</a> ()</td></tr>
 <tr class="separator:a790b73800189af9ff8d80f1e6f8c9306"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:acdd7c41d2e455a1c896a7ea21f75c865" id="r_acdd7c41d2e455a1c896a7ea21f75c865"><td class="memItemLeft" align="right" valign="top">virtual&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classPhysicalPropertyModel.html#acdd7c41d2e455a1c896a7ea21f75c865">~PhysicalPropertyModel</a> ()</td></tr>
+<tr class="separator:acdd7c41d2e455a1c896a7ea21f75c865"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:af8211e3c849e87d2efa5c732e8a4678b" id="r_af8211e3c849e87d2efa5c732e8a4678b"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classPhysicalPropertyModel.html#af8211e3c849e87d2efa5c732e8a4678b">depends_on</a> (const <a class="el" href="physical__property__model_8h.html#a0b2c854385812ebfac83689a5c3ead58">field</a> &amp;id)</td></tr>
 <tr class="separator:af8211e3c849e87d2efa5c732e8a4678b"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a23d2b90f4f05ee9de4be96f6f9989a37" id="r_a23d2b90f4f05ee9de4be96f6f9989a37"><td class="memItemLeft" align="right" valign="top">virtual double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classPhysicalPropertyModel.html#a23d2b90f4f05ee9de4be96f6f9989a37">value</a> (const std::map&lt; <a class="el" href="physical__property__model_8h.html#a0b2c854385812ebfac83689a5c3ead58">field</a>, double &gt; &amp;fields_value)=0</td></tr>
@@ -215,11 +217,40 @@ Private Attributes</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p><a class="el" href="classPhysicalPropertyModel.html" title="Abstract class that defines the interface for a physical property model Physical property model provi...">PhysicalPropertyModel</a> Default constructor. Set the model_depends_on to false for all variables. </p>
+<p>Default constructor. Set the model_depends_on to false for all variables. </p>
 
 <p class="definition">Definition at line <a class="el" href="physical__property__model_8h_source.html#l00080">80</a> of file <a class="el" href="physical__property__model_8h_source.html">physical_property_model.h</a>.</p>
 
-<p class="reference">References <a class="el" href="physical__property__model_8h_source.html#l00046">levelset</a>, <a class="el" href="physical__property__model_8h_source.html#l00230">model_depends_on</a>, <a class="el" href="physical__property__model_8h_source.html#l00044">phase_order_cahn_hilliard</a>, <a class="el" href="physical__property__model_8h_source.html#l00043">pressure</a>, <a class="el" href="physical__property__model_8h_source.html#l00039">shear_rate</a>, <a class="el" href="physical__property__model_8h_source.html#l00040">temperature</a>, <a class="el" href="physical__property__model_8h_source.html#l00041">temperature_p1</a>, <a class="el" href="physical__property__model_8h_source.html#l00042">temperature_p2</a>, and <a class="el" href="physical__property__model_8h_source.html#l00047">tracer_concentration</a>.</p>
+<p class="reference">References <a class="el" href="physical__property__model_8h_source.html#l00046">levelset</a>, <a class="el" href="physical__property__model_8h_source.html#l00235">model_depends_on</a>, <a class="el" href="physical__property__model_8h_source.html#l00044">phase_order_cahn_hilliard</a>, <a class="el" href="physical__property__model_8h_source.html#l00043">pressure</a>, <a class="el" href="physical__property__model_8h_source.html#l00039">shear_rate</a>, <a class="el" href="physical__property__model_8h_source.html#l00040">temperature</a>, <a class="el" href="physical__property__model_8h_source.html#l00041">temperature_p1</a>, <a class="el" href="physical__property__model_8h_source.html#l00042">temperature_p2</a>, and <a class="el" href="physical__property__model_8h_source.html#l00047">tracer_concentration</a>.</p>
+
+</div>
+</div>
+<a id="acdd7c41d2e455a1c896a7ea21f75c865" name="acdd7c41d2e455a1c896a7ea21f75c865"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#acdd7c41d2e455a1c896a7ea21f75c865">&#9670;&#160;</a></span>~PhysicalPropertyModel()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">virtual PhysicalPropertyModel::~PhysicalPropertyModel </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span><span class="mlabel">virtual</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Default virtual destructor. Does not do anything. </p>
+
+<p class="definition">Definition at line <a class="el" href="physical__property__model_8h_source.html#l00095">95</a> of file <a class="el" href="physical__property__model_8h_source.html">physical_property_model.h</a>.</p>
 
 </div>
 </div>
@@ -250,9 +281,9 @@ Private Attributes</h2></td></tr>
 
 <p>Returns true if the <a class="el" href="classPhysicalPropertyModel.html" title="Abstract class that defines the interface for a physical property model Physical property model provi...">PhysicalPropertyModel</a> depends on a field, false if not. </p>
 
-<p class="definition">Definition at line <a class="el" href="physical__property__model_8h_source.html#l00097">97</a> of file <a class="el" href="physical__property__model_8h_source.html">physical_property_model.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="physical__property__model_8h_source.html#l00102">102</a> of file <a class="el" href="physical__property__model_8h_source.html">physical_property_model.h</a>.</p>
 
-<p class="reference">References <a class="el" href="physical__property__model_8h_source.html#l00230">model_depends_on</a>.</p>
+<p class="reference">References <a class="el" href="physical__property__model_8h_source.html#l00235">model_depends_on</a>.</p>
 
 </div>
 </div>
@@ -279,9 +310,9 @@ Private Attributes</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="physical__property__model_8h_source.html#l00223">223</a> of file <a class="el" href="physical__property__model_8h_source.html">physical_property_model.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="physical__property__model_8h_source.html#l00228">228</a> of file <a class="el" href="physical__property__model_8h_source.html">physical_property_model.h</a>.</p>
 
-<p class="reference">References <a class="el" href="physical__property__model_8h_source.html#l00237">simulation_control</a>.</p>
+<p class="reference">References <a class="el" href="physical__property__model_8h_source.html#l00242">simulation_control</a>.</p>
 
 </div>
 </div>
@@ -377,7 +408,7 @@ Private Attributes</h2></td></tr>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd></dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="physical__property__model_8h_source.html#l00167">167</a> of file <a class="el" href="physical__property__model_8h_source.html">physical_property_model.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="physical__property__model_8h_source.html#l00172">172</a> of file <a class="el" href="physical__property__model_8h_source.html">physical_property_model.h</a>.</p>
 
 <p class="reference">References <a class="el" href="classPhysicalPropertyModel.html#a23d2b90f4f05ee9de4be96f6f9989a37">value()</a>.</p>
 
@@ -415,9 +446,9 @@ Private Attributes</h2></td></tr>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="physical__property__model_8h_source.html#l00152">152</a> of file <a class="el" href="physical__property__model_8h_source.html">physical_property_model.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="physical__property__model_8h_source.html#l00157">157</a> of file <a class="el" href="physical__property__model_8h_source.html">physical_property_model.h</a>.</p>
 
-<p class="reference">References <a class="el" href="physical__property__model_8h_source.html#l00237">simulation_control</a>.</p>
+<p class="reference">References <a class="el" href="physical__property__model_8h_source.html#l00242">simulation_control</a>.</p>
 
 </div>
 </div>
@@ -563,7 +594,7 @@ Private Attributes</h2></td></tr>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd></dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="physical__property__model_8h_source.html#l00188">188</a> of file <a class="el" href="physical__property__model_8h_source.html">physical_property_model.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="physical__property__model_8h_source.html#l00193">193</a> of file <a class="el" href="physical__property__model_8h_source.html">physical_property_model.h</a>.</p>
 
 <p class="reference">References <a class="el" href="classPhysicalPropertyModel.html#abd11737cff6dd346fc7bd238e59ceac6">vector_value()</a>.</p>
 
@@ -636,7 +667,7 @@ Private Attributes</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="physical__property__model_8h_source.html#l00230">230</a> of file <a class="el" href="physical__property__model_8h_source.html">physical_property_model.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="physical__property__model_8h_source.html#l00235">235</a> of file <a class="el" href="physical__property__model_8h_source.html">physical_property_model.h</a>.</p>
 
 </div>
 </div>
@@ -660,7 +691,7 @@ Private Attributes</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="physical__property__model_8h_source.html#l00237">237</a> of file <a class="el" href="physical__property__model_8h_source.html">physical_property_model.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="physical__property__model_8h_source.html#l00242">242</a> of file <a class="el" href="physical__property__model_8h_source.html">physical_property_model.h</a>.</p>
 
 </div>
 </div>

@@ -93,7 +93,7 @@ $(document).ready(function() { init_codefold(0); });
   <div class="headertitle"><div class="title">periodic_hills_grid.h</div></div>
 </div><!--header-->
 <div class="contents">
-<a href="periodic__hills__grid_8h.html">Go to the documentation of this file.</a><div class="fragment"><div class="line"><a id="l00001" name="l00001"></a><span class="lineno">    1</span><span class="comment">// SPDX-FileCopyrightText: Copyright (c) 2020, 2023 The Lethe Authors</span></div>
+<a href="periodic__hills__grid_8h.html">Go to the documentation of this file.</a><div class="fragment"><div class="line"><a id="l00001" name="l00001"></a><span class="lineno">    1</span><span class="comment">// SPDX-FileCopyrightText: Copyright (c) 2020-2025 The Lethe Authors</span></div>
 <div class="line"><a id="l00002" name="l00002"></a><span class="lineno">    2</span><span class="comment">// SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later</span></div>
 <div class="line"><a id="l00003" name="l00003"></a><span class="lineno">    3</span> </div>
 <div class="line"><a id="l00004" name="l00004"></a><span class="lineno">    4</span><span class="preprocessor">#ifndef lethe_per_hills_grid_h</span></div>
@@ -225,13 +225,13 @@ $(document).ready(function() { init_codefold(0); });
 <div class="line"><a id="l00119" name="l00119"></a><span class="lineno">  119</span>    dealii::Utilities::string_to_double(arguments);</div>
 <div class="line"><a id="l00120" name="l00120"></a><span class="lineno">  120</span>  spacing_y     = arguments_double[0];</div>
 <div class="line"><a id="l00121" name="l00121"></a><span class="lineno">  121</span>  alpha         = arguments_double[1];</div>
-<div class="line"><a id="l00122" name="l00122"></a><span class="lineno">  122</span>  repetitions_x = arguments_double[2];</div>
-<div class="line"><a id="l00123" name="l00123"></a><span class="lineno">  123</span>  repetitions_y = arguments_double[3];</div>
+<div class="line"><a id="l00122" name="l00122"></a><span class="lineno">  122</span>  repetitions_x = <span class="keyword">static_cast&lt;</span><span class="keywordtype">int</span><span class="keyword">&gt;</span>(arguments_double[2]);</div>
+<div class="line"><a id="l00123" name="l00123"></a><span class="lineno">  123</span>  repetitions_y = <span class="keyword">static_cast&lt;</span><span class="keywordtype">int</span><span class="keyword">&gt;</span>(arguments_double[3]);</div>
 <div class="line"><a id="l00124" name="l00124"></a><span class="lineno">  124</span>  <span class="keywordflow">if</span> (dim == 3)</div>
-<div class="line"><a id="l00125" name="l00125"></a><span class="lineno">  125</span>    repetitions_z = arguments_double[4];</div>
+<div class="line"><a id="l00125" name="l00125"></a><span class="lineno">  125</span>    repetitions_z = <span class="keyword">static_cast&lt;</span><span class="keywordtype">int</span><span class="keyword">&gt;</span>(arguments_double[4]);</div>
 <div class="line"><a id="l00126" name="l00126"></a><span class="lineno">  126</span> </div>
 <div class="line"><a id="l00127" name="l00127"></a><span class="lineno">  127</span>  <span class="keywordflow">if</span> (abs(alpha - 1) &lt; 1e-6)</div>
-<div class="line"><a id="l00128" name="l00128"></a><span class="lineno">  128</span>    alpha = int(alpha);</div>
+<div class="line"><a id="l00128" name="l00128"></a><span class="lineno">  128</span>    alpha = <span class="keywordtype">int</span>(alpha);</div>
 <div class="line"><a id="l00129" name="l00129"></a><span class="lineno">  129</span>}</div>
 </div>
 <div class="line"><a id="l00130" name="l00130"></a><span class="lineno">  130</span><span class="comment"></span> </div>
