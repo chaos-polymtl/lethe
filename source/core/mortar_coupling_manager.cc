@@ -1854,6 +1854,16 @@ CouplingOperator<3, double>::vmult_add(
   const TrilinosWrappers::MPI::Vector &) const;
 
 template void
+CouplingOperator<2, double>::vmult_add(
+  LinearAlgebra::distributed::Vector<float> &,
+  const LinearAlgebra::distributed::Vector<float> &) const;
+
+template void
+CouplingOperator<3, double>::vmult_add(
+  LinearAlgebra::distributed::Vector<float> &,
+  const LinearAlgebra::distributed::Vector<float> &) const;
+
+template void
 CouplingOperator<1, double>::add_diagonal_entries(
   LinearAlgebra::distributed::Vector<double> &) const;
 template void
