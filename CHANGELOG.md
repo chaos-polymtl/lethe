@@ -3,6 +3,12 @@
 All notable changes to the Lethe project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
+### [Master] - 2025-09-08
+
+### Fixed
+
+- MINOR The parameters for initial translation and rotation of the mesh were included in the Parameters::Mesh structure, but not used in attach_grid_to_triangulation. This PR fixes this. [#1668](https://github.com/chaos-polymtl/lethe/pull/1668)
+
 ### [Master] - 2025-09-07
 
 ### Fixed

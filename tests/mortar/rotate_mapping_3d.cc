@@ -62,6 +62,9 @@ test()
   mesh_parameters.refine_until_target_size = false;
   mesh_parameters.boundaries_to_refine     = std::vector<int>();
   mesh_parameters.initial_refinement_at_boundaries = 0;
+  mesh_parameters.translation                      = Tensor<1, dim>({0, 0, 0});
+  mesh_parameters.rotation_axis                    = Tensor<1, dim>({0, 0, 1});
+  mesh_parameters.rotation_angle                   = 0.0;
 
   // Rotor mesh parameters
   mortar_parameters.enable           = "true";
@@ -70,13 +73,16 @@ test()
   mortar_parameters.rotor_mesh->grid_type = "cylinder_shell";
   mortar_parameters.rotor_mesh->grid_arguments =
     "2.0 : 0.25 : 0.5 : 4 : 4 : true";
-  mortar_parameters.rotor_mesh->scale   = 1;
-  mortar_parameters.rotor_mesh->simplex = false;
-  mortar_parameters.stator_boundary_id  = 0;
-  mortar_parameters.rotor_boundary_id   = 5; // after shifting
-  mortar_parameters.rotation_axis       = Tensor<1, dim>({0, 0, 1});
-  mortar_parameters.center_of_rotation  = Point<dim>();
-  const double rotation_angle           = 0.1;
+  mortar_parameters.rotor_mesh->scale          = 1;
+  mortar_parameters.rotor_mesh->simplex        = false;
+  mortar_parameters.rotor_mesh->translation    = Tensor<1, dim>({0, 0, 0});
+  mortar_parameters.rotor_mesh->rotation_axis  = Tensor<1, dim>({0, 0, 1});
+  mortar_parameters.rotor_mesh->rotation_angle = 0.0;
+  mortar_parameters.stator_boundary_id         = 0;
+  mortar_parameters.rotor_boundary_id          = 5; // after shifting
+  mortar_parameters.rotation_axis              = Tensor<1, dim>({0, 0, 1});
+  mortar_parameters.center_of_rotation         = Point<dim>();
+  const double rotation_angle                  = 0.1;
 
   // Initialized merged triangulation
   parallel::distributed::Triangulation<dim> triangulation(comm);
