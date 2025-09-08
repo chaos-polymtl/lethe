@@ -463,7 +463,7 @@ compute_n_subdivisions_and_radius(
   double coord_ref_local = std::numeric_limits<double>::max();
   // Rotation axis direction. Used in 3D case
   unsigned int direction = 0;
-  // Min and max vertex coordinates for length computation in the rotation axis
+  // Min and max vertex coordinates for length computation in the axial
   // direction. Used in 3D case
   double vertex_min = std::numeric_limits<double>::max();
   double vertex_max = 0;
@@ -494,8 +494,8 @@ compute_n_subdivisions_and_radius(
 
       // To compute the number of subdivisions in the radial direction, we will
       // use a reference cell. Its coordinate in the direction of the rotation
-      // axis is stored; then, all the cells with the same coordinate (i.e. at
-      // the same level) will be counted as an "in-plane" subdivision
+      // axis is stored; then, all the cells at the same plane will be counted
+      // as an "in-plane" (radial direction) subdivision
       for (const auto &cell : triangulation.active_cell_iterators())
         {
           if (cell->is_locally_owned())
@@ -535,11 +535,10 @@ compute_n_subdivisions_and_radius(
                       n_subdivisions_local++;
 
                       // Store the number of sudivisions in the radial direction
-                      // (in-plane)
                       if constexpr (dim == 3)
                         {
-                          // Check if the current cell is in the same alignment
-                          // as the reference cell
+                          // Check if the current cell is contained in the same
+                          // plane as the reference cell
                           if (std::abs(cell->center()[direction] - coord_ref) <
                               tolerance)
                             n_subdivisions_plane_local++;
@@ -640,7 +639,7 @@ compute_n_subdivisions_and_radius(
 
   // Final radius value
   const double radius = radius_min;
-  // Length along the rotation axis
+  // Length along the axial direction
   const double length_rot_axis = dim == 3 ? vertex_max - vertex_min : 0;
 
   return {{n_subdivisions_plane, n_subdivisions / n_subdivisions_plane},
