@@ -114,3 +114,28 @@ using OutputStruct = std::variant<OutputStructPostprocessor<dim, VectorType>,
                                   OutputStructCellVector>;
 
 #endif
+
+/**
+ * @brief Struct containing information about the table handlers to be written/read.
+ * It is used to pass a vector of references to TableHandler objects that should 
+ * be serialized/deserialized at the writing/reading of a checkpoint by the solver 
+ * used, and a vector of references to strings containing the names of the 
+ * corresponding files.
+ */
+struct OutputStructTableHandler
+{
+/**
+ * @brief Constructor
+ *
+ * @param[in] table A reference to a TableHandler objects that needs to be serialized/
+ * deserialized.
+ * @param[in] table_name A string with the corresponding file name.
+ */
+  OutputStructTableHandler(const TableHandler &table,
+                           const std::string  &table_name)
+    : table(table)
+    , table_name(table_name)
+  {}
+  const TableHandler &table;
+  const std::string  table_name;
+};
