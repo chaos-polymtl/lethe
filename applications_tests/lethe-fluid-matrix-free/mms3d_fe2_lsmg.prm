@@ -128,8 +128,8 @@ subsection linear solver
     set verbosity         = quiet
 
     #MG parameters
-    set mg min level = 1
-    set mg verbosity = quiet
+    set mg min level       = 1
+    set mg verbosity       = quiet
     set mg coarsening type = hp
   end
 end
