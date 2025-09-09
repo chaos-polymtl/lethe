@@ -99,7 +99,7 @@ plt.subplots_adjust(left=0.2)
 if (args.validate):
     plt.savefig("pressure-fluctuations.pdf")
     solution = np.column_stack((time[start:end], pressure-np.mean(pressure)))
-    np.savetxt("solution-relative-pressure.dat", solution, header="t(s) Pressure fluctuations from its temporal mean 45 mm above the floating wall(Pa)") 
+    np.savetxt("solution-relative-pressure.dat", solution, header="t(s) Pressure_fluctuations(Pa)") 
 else:
     plt.savefig("pressure-fluctuations.png", dpi=300)
     plt.show()  
@@ -118,7 +118,7 @@ plt.grid()
 if (args.validate):
     plt.savefig("void-fraction-fluctuations.pdf")
     solution = np.column_stack((time[start:end], void_fraction))
-    np.savetxt("solution-void-fraction.dat", solution, header="t(s) Void fraction 45 mm above the floating wall") 
+    np.savetxt("solution-void-fraction.dat", solution, header="t(s) Void_fraction") 
 else:
     plt.savefig("void-fraction-fluctuations.png", dpi=300)
     plt.show()
@@ -198,7 +198,7 @@ plt.legend()
 if (args.validate):
     plt.savefig("pressure-psd.pdf")
     solution = np.column_stack((frequencies, psd, psd_smoothed))
-    np.savetxt("solution-pressure-power-spectral-density.dat", solution, header="Frequency(Hz) PSD(Pa^2/Hz) Smoothed PSD(Pa^2/Hz)") 
+    np.savetxt("solution-pressure-power-spectral-density.dat", solution, header="Frequency(Hz) PSD(Pa^2/Hz) Smoothed_PSD(Pa^2/Hz)") 
 else:
     plt.savefig("pressure-psd.png", dpi=300)
     plt.show() 
