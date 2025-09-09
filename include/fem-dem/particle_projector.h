@@ -270,8 +270,8 @@ public:
               quadrature = std::make_shared<QGauss<dim>>(
                 this->void_fraction_parameters->n_quadrature_points);
           }
-        if (this->void_fraction_parameters->quadrature_rule ==
-            Parameters::VoidFractionQuadratureRule::gauss_lobatto)
+        else if (this->void_fraction_parameters->quadrature_rule ==
+                 Parameters::VoidFractionQuadratureRule::gauss_lobatto)
           {
             if (this->void_fraction_parameters->n_quadrature_points == 0)
               quadrature = std::make_shared<QGaussLobatto<dim>>(fe->degree + 2);
@@ -281,6 +281,13 @@ public:
             else
               throw(std::runtime_error(
                 "For void fraction using Gauss-Lobatto ('gauss-lobatto') quadrature rule, the minimum number of quadrature points is 3"));
+          }
+        else
+          {
+            AssertThrow(
+              false,
+              ExcMessage(
+                "An invalid quadrature rule was provided to the ParticleProject class."));
           }
       }
 
