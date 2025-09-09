@@ -571,7 +571,8 @@ compute_n_subdivisions_and_radius(
 
                               const auto aux = cross_product_3d(
                                 (v - mortar_parameters.center_of_rotation),
-                                mortar_parameters.rotation_axis);
+                                mortar_parameters.rotation_axis /
+                                  mortar_parameters.rotation_axis.norm());
                               const double num = aux.norm();
                               const double den =
                                 mortar_parameters.rotation_axis.norm();
