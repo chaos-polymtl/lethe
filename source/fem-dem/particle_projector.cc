@@ -1159,6 +1159,19 @@ ParticleProjector<dim>::calculate_field_projection(
                             volumetric_contribution *
                             particle_properties[property_start_index + d];
                         }
+                      // std::cout << " --------------" << std::endl;
+                      // std::cout << "ID: " << particle.get_id() << std::endl;
+                      // std::cout << std::scientific <<
+                      // particle_field_in_sphere
+                      //           << std::endl;
+                      // std::cout << volumetric_contribution << std::endl;
+                      // std::cout
+                      //   << particle_properties[property_start_index] << " "
+                      //   << particle_properties[property_start_index + 1] << "
+                      //   "
+                      //   << particle_properties[property_start_index + 2]
+                      //   << std::endl;
+                      // std::cout << " --------------" << std::endl;
                     }
                 }
 
@@ -1295,7 +1308,8 @@ ParticleProjector<dim>::calculate_field_projection(
                     {
                       local_rhs(i) += phi_vf[i] * particle_field_in_sphere *
                                       fe_values_field.JxW(q);
-                      // std::cout << particle_field_in_sphere << std::endl;
+                      std::cout << std::scientific << particle_field_in_sphere
+                                << std::endl;
                     }
                 }
             }
@@ -1345,11 +1359,11 @@ ParticleProjector<dim>::calculate_field_projection(
   ilu_preconditioner->initialize(field_qcm.system_matrix,
                                  preconditionerOptions);
 
-  std::cout << " The L1 norm of the RHS is : " << field_qcm.system_rhs.l1_norm()
-            << std::endl;
-  std::cout << " The L2 norm of the RHS is : " << field_qcm.system_rhs.l2_norm()
-            << std::endl;
-  std::cout << " The Linf norm of the RHS is : "
+  std::cout << " The L1 norm of the RHS is : " << std::scientific
+            << field_qcm.system_rhs.l1_norm() << std::endl;
+  std::cout << " The L2 norm of the RHS is : " << std::scientific
+            << field_qcm.system_rhs.l2_norm() << std::endl;
+  std::cout << " The Linf norm of the RHS is : " << std::scientific
             << field_qcm.system_rhs.linfty_norm() << std::endl;
 
 
