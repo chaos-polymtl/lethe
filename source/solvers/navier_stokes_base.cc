@@ -2709,10 +2709,11 @@ NavierStokesBase<dim, VectorType, DofsType>::
 }
 
 template <int dim, typename VectorType, typename DofsType>
-void
-NavierStokesBase<dim, VectorType, DofsType>::output_field_hook(
-  DataOut<dim> & /*data_out*/)
-{}
+std::vector<OutputStruct<dim, VectorType>>
+NavierStokesBase<dim, VectorType, DofsType>::gather_output_hook()
+{
+  return std::vector<OutputStruct<dim, VectorType>>();
+}
 
 template <int dim, typename VectorType, typename DofsType>
 void
@@ -2922,6 +2923,21 @@ NavierStokesBase<dim, VectorType, DofsType>::gather_output_results(
       this->dof_handler,
       solution,
       std::make_shared<SRFPostprocessor<dim>>(srf));
+
+  // Add subdomain id output
+  Vector<float> subdomain(this->triangulation->n_active_cells());
+  for (unsigned int i = 0; i < subdomain.size(); ++i)
+    subdomain(i) = this->triangulation->locally_owned_subdomain();
+
+  solution_output_structs.emplace_back(
+    std::in_place_type<OutputStructCellVector>, subdomain, "subdomain");
+
+  // Add fields specific to other physics
+  std::vector<OutputStruct<dim, VectorType>> additional_output_structs =
+    this->gather_output_hook();
+
+  for (const auto &output_struct : additional_output_structs)
+    solution_output_structs.emplace_back(output_struct);
 }
 
 template <int dim, typename VectorType, typename DofsType>
@@ -2953,6 +2969,9 @@ NavierStokesBase<dim, VectorType, DofsType>::write_output_results(
     flags.write_higher_order_cells = true;
   data_out.set_flags(flags);
 
+  // Attach DoF handler to data output object
+  data_out.attach_dof_handler(this->dof_handler);
+
   // Fill data out object with solutions in structs
   for (const auto &solution_output_struct : solution_output_structs)
     {
@@ -2960,12 +2979,17 @@ NavierStokesBase<dim, VectorType, DofsType>::write_output_results(
             std::get_if<OutputStructSolution<dim, VectorType>>(
               &solution_output_struct))
         {
-          // auto solution_output = *solution_struct;
           data_out.add_data_vector(
             solution_struct->dof_handler,
             solution_struct->solution,
             solution_struct->solution_names,
             solution_struct->data_component_interpretation);
+        }
+      else if (auto vector_struct =
+                 std::get_if<OutputStructCellVector>(&solution_output_struct))
+        {
+          data_out.add_data_vector(vector_struct->solution,
+                                   vector_struct->solution_name);
         }
       else if (auto postprocessor_struct =
                  std::get_if<OutputStructPostprocessor<dim, VectorType>>(
@@ -2976,18 +3000,6 @@ NavierStokesBase<dim, VectorType, DofsType>::write_output_results(
                                    *postprocessor_struct->data_postprocessor);
         }
     }
-
-  // Since the subdomain is a cell data, we process it separately to avoid
-  // storing DataOut<dim>::type_dof_data for every DoF field in the solution
-  // output struct container.
-  Vector<float> subdomain(this->triangulation->n_active_cells());
-  for (unsigned int i = 0; i < subdomain.size(); ++i)
-    subdomain(i) = this->triangulation->locally_owned_subdomain();
-  data_out.add_data_vector(subdomain,
-                           "subdomain",
-                           DataOut<dim>::type_cell_data);
-
-  output_field_hook(data_out);
 
   multiphysics->attach_solution_to_output(data_out);
 
@@ -3004,7 +3016,6 @@ NavierStokesBase<dim, VectorType, DofsType>::write_output_results(
                          iter,
                          group_files,
                          this->mpi_communicator);
-
 
   if (simulation_control->get_output_boundaries() &&
       simulation_control->get_step_number() == 0)

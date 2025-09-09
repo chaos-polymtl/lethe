@@ -279,11 +279,12 @@ private:
 
 
   /**
-   * @brief output_field_hook
-   * Adds the level set output field to the output
+   * @brief Adds levelset to output files.
+   *
+   * @return Vector of OutputStructs that will be used to write the output results as VTU files.
    */
-  virtual void
-  output_field_hook(DataOut<dim> &data_out) override;
+  virtual std::vector<OutputStruct<dim, GlobalVectorType>>
+  gather_output_hook() override;
 
   /**
    * @brief

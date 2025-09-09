@@ -852,10 +852,18 @@ protected:
   write_checkpoint();
 
   /**
+   * @brief Gather and return vector of output structs that are particular to some applications.
+   *
+   * @return Vector of OutputStructs that will be used to write the output results as VTU files.
+   */
+  virtual std::vector<OutputStruct<dim, VectorType>>
+  gather_output_hook();
+
+  /**
    * @brief Gather solution information to generate output results
    *
    * @param[in] solution Vector of present solution
-   * @param[out] solution_output_structs Vector of OutputStructs that will be
+   * @param[in,out] solution_output_structs Vector of OutputStructs that will be
    * used to write the output results as VTU files
    */
   void
@@ -871,13 +879,6 @@ protected:
    */
   void
   write_output_results(const VectorType &solution);
-
-  /**
-   * @brief This function is to be redefined in specialized classes to adapt the output
-   * to each solver.
-   */
-  virtual void
-  output_field_hook(DataOut<dim> &);
 
   /**
    * @brief Writes the forces per boundary condition to a text file output

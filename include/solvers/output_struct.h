@@ -78,12 +78,37 @@ struct OutputStructSolution
 };
 
 /**
+ * @brief Struct containing information about the solution output.
+ * It is used to pass all the information required upon calling
+ * add_data_vector() for the DataOut instance without losing track of its
+ * attributes such as name and data component interpretation. This version of
+ * the struct uses a cell-based field parsed as a Vector and the solution name.
+ */
+struct OutputStructCellVector
+{
+  /**
+   * @brief Constructor for when data is not related to a data_postprocessor.
+   *
+   * @param[in] solution Solution Vector<float>, which is stored as a copy.
+   * @param[in] solution_name String containing solution name.
+   */
+  OutputStructCellVector(const Vector<float> &solution,
+                         const std::string   &solution_name)
+    : solution(solution)
+    , solution_name(solution_name)
+  {}
+  const Vector<float> solution;
+  const std::string   solution_name;
+};
+
+/**
  * @brief Variant handler of the two output structs (OutputStructPostprocessor and OutputStructDoFHandler).
  * This is used to allow the output of both postprocessors and DoF handlers in a
  * single vector of OutputStruct.
  */
 template <int dim, typename VectorType>
 using OutputStruct = std::variant<OutputStructPostprocessor<dim, VectorType>,
-                                  OutputStructSolution<dim, VectorType>>;
+                                  OutputStructSolution<dim, VectorType>,
+                                  OutputStructCellVector>;
 
 #endif

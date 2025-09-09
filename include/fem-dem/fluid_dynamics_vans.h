@@ -158,12 +158,12 @@ protected:
     const StabilizedMethodsTensorCopyData<dim> &copy_data) override;
 
   /**
-   * @brief a function for adding data vectors to the data_out object for
-   * post_processing additional results
+   * @brief Add void fractio and particle velocity field to output files.
+   *
+   * @return Vector of OutputStructs that will be used to write the output results as VTU files.
    */
-  virtual void
-  output_field_hook(DataOut<dim> &data_out) override;
-
+  virtual std::vector<OutputStruct<dim, GlobalVectorType>>
+  gather_output_hook() override;
 
 
   /**

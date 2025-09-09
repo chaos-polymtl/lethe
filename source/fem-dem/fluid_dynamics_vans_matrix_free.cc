@@ -275,12 +275,19 @@ FluidDynamicsVANSMatrixFree<dim>::finish_time_step_fd()
 }
 
 template <int dim>
-void
-FluidDynamicsVANSMatrixFree<dim>::output_field_hook(DataOut<dim> &data_out)
+std::vector<OutputStruct<dim, LinearAlgebra::distributed::Vector<double>>>
+FluidDynamicsVANSMatrixFree<dim>::gather_output_hook()
 {
-  data_out.add_data_vector(particle_projector.dof_handler,
-                           particle_projector.void_fraction_locally_relevant,
-                           "void_fraction");
+  std::vector<std::string> name = {"void_fraction"};
+  std::vector<DataComponentInterpretation::DataComponentInterpretation>
+    component_interpretation = {
+      DataComponentInterpretation::component_is_scalar};
+  OutputStructSolution<dim, LinearAlgebra::distributed::Vector<double>>
+    void_fraction_struct(particle_projector.dof_handler,
+                         particle_projector.void_fraction_solution,
+                         name,
+                         component_interpretation);
+  return {void_fraction_struct};
 }
 
 template <int dim>
