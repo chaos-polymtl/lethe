@@ -266,6 +266,7 @@ ParticleProjector<dim>::calculate_void_fraction(const double time)
     }
 }
 
+
 template <int dim>
 void
 ParticleProjector<dim>::calculate_void_fraction_function(const double time)
@@ -1224,16 +1225,12 @@ ParticleProjector<dim>::calculate_field_projection(
                                   volumetric_contribution]) :
                           particle_volume_in_sphere;
 
-                      std::cout << "Volumetric contribution "
-                                << volumetric_contribution << std::endl;
                       for (unsigned int d = 0; d < n_components; ++d)
                         {
                           particle_field_in_sphere[d] +=
                             volumetric_contribution *
                             particle_properties[property_start_index + d];
                         }
-                      std::cout << "Particle field in sphere "
-                                << particle_field_in_sphere << std::endl;
                     }
                 }
 
@@ -1253,7 +1250,7 @@ ParticleProjector<dim>::calculate_field_projection(
                 }
 
               // Normalize the field
-              // B.If the field to project is a field in which we want a
+              // If the field to project is a field in which we want a
               // continuous representation, then the normalisation is
               // 1/total_volume_particle_in_sphere.
 
@@ -1298,6 +1295,7 @@ ParticleProjector<dim>::calculate_field_projection(
                     {
                       local_rhs(i) += phi_vf[i] * particle_field_in_sphere *
                                       fe_values_field.JxW(q);
+                      // std::cout << particle_field_in_sphere << std::endl;
                     }
                 }
             }
@@ -1347,6 +1345,15 @@ ParticleProjector<dim>::calculate_field_projection(
   ilu_preconditioner->initialize(field_qcm.system_matrix,
                                  preconditionerOptions);
 
+  std::cout << " The L1 norm of the RHS is : " << field_qcm.system_rhs.l1_norm()
+            << std::endl;
+  std::cout << " The L2 norm of the RHS is : " << field_qcm.system_rhs.l2_norm()
+            << std::endl;
+  std::cout << " The Linf norm of the RHS is : "
+            << field_qcm.system_rhs.linfty_norm() << std::endl;
+
+
+
   solver.solve(field_qcm.system_matrix,
                field_qcm.particle_field_locally_owned,
                field_qcm.system_rhs,
@@ -1373,16 +1380,34 @@ ParticleProjector<dim>::calculate_field_projection(
 #endif
 }
 
+
+
 template <int dim>
 template <typename VectorType>
 void
-ParticleProjector<dim>::gather_particle_fluid_forces_onto_particles(
+ParticleProjector<dim>::calculate_particle_fluid_forces_projection(
   const Parameters::CFDDEM      &cfd_dem_parameters,
   DoFHandler<dim>               &fluid_dof_handler,
   const VectorType              &fluid_solution,
   const std::vector<VectorType> &fluid_previous_solutions,
-  NavierStokesScratchData<dim>  &scratch_data)
+  NavierStokesScratchData<dim>   scratch_data)
 {
+  // If the mode to calculate the void fraction is function, then the VANS
+  // solver is running with a user defined function so there are no
+  // particle-fluid force yet the simulation is a valid simulation.
+  if (void_fraction_parameters->mode == Parameters::VoidFractionMode::function)
+    return;
+
+  // If the mode is either SPM or PCM, then information required for the
+  // projection is not available. Consequently, we should throw and not
+  // continue.
+  AssertThrow(
+    void_fraction_parameters->mode == Parameters::VoidFractionMode::qcm,
+    ExcMessage(
+      "The projection of the particle-fluid force onto the mesh requires that the QCM method be used for the calculation of the void fraction."));
+
+  announce_string(this->pcout, "Particle-fluid forces");
+
   // We aim to project the particle-fluid forces. To maximize code reuse, we
   // currently reuse the particle-fluid force model architecture. The projection
   // follows the following steps:
@@ -1457,6 +1482,8 @@ ParticleProjector<dim>::gather_particle_fluid_forces_onto_particles(
     particle_fluid_assemblers.push_back(
       std::make_shared<VANSAssemblerShearForce<dim>>(cfd_dem_parameters));
 
+  scratch_data.enable_void_fraction(*fe, *quadrature, *mapping);
+
   scratch_data.enable_particle_fluid_interactions(
     particle_handler->n_global_max_particles_per_cell(), true);
 
@@ -1523,39 +1550,39 @@ ParticleProjector<dim>::gather_particle_fluid_forces_onto_particles(
 
 
 template void
-ParticleProjector<2>::gather_particle_fluid_forces_onto_particles(
+ParticleProjector<2>::calculate_particle_fluid_forces_projection(
   const Parameters::CFDDEM            &cfd_dem_parameters,
   DoFHandler<2>                       &dof_handler,
   const GlobalVectorType              &fluid_solution,
   const std::vector<GlobalVectorType> &fluid_previous_solutions,
-  NavierStokesScratchData<2>          &scratch_data);
+  NavierStokesScratchData<2>           scratch_data);
 
 template void
-ParticleProjector<3>::gather_particle_fluid_forces_onto_particles(
+ParticleProjector<3>::calculate_particle_fluid_forces_projection(
   const Parameters::CFDDEM            &cfd_dem_parameters,
   DoFHandler<3>                       &dof_handler,
   const GlobalVectorType              &fluid_solution,
   const std::vector<GlobalVectorType> &fluid_previous_solutions,
-  NavierStokesScratchData<3>          &scratch_data);
+  NavierStokesScratchData<3>           scratch_data);
 
 #ifndef LETHE_USE_LDV
 template void
-ParticleProjector<2>::gather_particle_fluid_forces_onto_particles(
+ParticleProjector<2>::calculate_particle_fluid_forces_projection(
   const Parameters::CFDDEM                         &cfd_dem_parameters,
   DoFHandler<2>                                    &dof_handler,
   const LinearAlgebra::distributed::Vector<double> &fluid_solution,
   const std::vector<LinearAlgebra::distributed::Vector<double>>
-                             &fluid_previous_solutions,
-  NavierStokesScratchData<2> &scratch_data);
+                            &fluid_previous_solutions,
+  NavierStokesScratchData<2> scratch_data);
 
 template void
-ParticleProjector<3>::gather_particle_fluid_forces_onto_particles(
+ParticleProjector<3>::calculate_particle_fluid_forces_projection(
   const Parameters::CFDDEM                         &cfd_dem_parameters,
   DoFHandler<3>                                    &dof_handler,
   const LinearAlgebra::distributed::Vector<double> &fluid_solution,
   const std::vector<LinearAlgebra::distributed::Vector<double>>
-                             &fluid_previous_solutions,
-  NavierStokesScratchData<3> &scratch_data);
+                            &fluid_previous_solutions,
+  NavierStokesScratchData<3> scratch_data);
 #endif
 
 template <int dim>

@@ -331,6 +331,21 @@ public:
 
 
   /**
+   * @brief Calculate all the necessary information for the particle-fluid coupling.
+   * This means calculating the projection of the particle-fluid interaction
+   * forces as well as the solid velociy onto the CFD mesh.
+   *
+   */
+  template <typename VectorType>
+  void
+  calculate_particle_fluid_forces_projection(
+    const Parameters::CFDDEM      &cfd_dem_parameters,
+    DoFHandler<dim>               &fluid_dof_handler,
+    const VectorType              &fluid_solution,
+    const std::vector<VectorType> &fluid_previous_solutions,
+    NavierStokesScratchData<dim>   scratch_data);
+
+  /**
    * @brief Assemble and solve the system.
    */
   void
@@ -670,15 +685,6 @@ public:
 
   ParticleFieldQCM<dim, 3, DEM::CFDDEMProperties::PropertiesIndex::fem_force_x>
     particle_fluid_force;
-
-  template <typename VectorType>
-  void
-  gather_particle_fluid_forces_onto_particles(
-    const Parameters::CFDDEM      &cfd_dem_parameters,
-    DoFHandler<dim>               &fluid_dof_handler,
-    const VectorType              &fluid_solution,
-    const std::vector<VectorType> &fluid_previous_solutions,
-    NavierStokesScratchData<dim>  &scratch_data);
 };
 
 

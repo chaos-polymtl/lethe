@@ -970,7 +970,8 @@ public:
     Assert(
       gather_particles_information,
       ExcMessage(
-        "You are trying to reinit the fluid information at the particle location within a cell, but you did not enable the gathering of the information at the particle location for the scratch data (gather_particles_information=false)."));
+        "You are trying to reinit the fluid information at the particle location within a cell,"
+        " but you did not enable the gathering of the information at the particle location for the scratch data (gather_particles_information=false)."));
 
     pic = particle_handler.particles_in_cell(velocity_cell);
 
