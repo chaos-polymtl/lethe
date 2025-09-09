@@ -417,6 +417,9 @@ NavierStokesOperatorBase<dim, number>::vmult(VectorType       &dst,
         .local_element(edge_constrained_indices[i]) = 0.;
     }
 
+  if (this->enable_mortar)
+    src.update_ghost_values();
+
 #if DEAL_II_VERSION_GTE(9, 6, 0)
   if (this->enable_face_terms)
     this->matrix_free.loop(
@@ -440,6 +443,7 @@ NavierStokesOperatorBase<dim, number>::vmult(VectorType       &dst,
     {
       this->mortar_coupling_operator_mf->vmult_add(dst, src);
       dst.compress(VectorOperation::add);
+      src.zero_out_ghost_values();
     }
 
   // copy constrained dofs from src to dst (corresponding to diagonal
