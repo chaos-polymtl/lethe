@@ -164,8 +164,8 @@ Protected Member Functions</h2></td></tr>
 <tr class="separator:a598c913184dc932e57ed9881854b90c9"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a7814ef8cf6e8485f27172113ca76515d" id="r_a7814ef8cf6e8485f27172113ca76515d"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classFluidDynamicsVANS.html#a7814ef8cf6e8485f27172113ca76515d">copy_local_rhs_to_global_rhs</a> (const <a class="el" href="classStabilizedMethodsTensorCopyData.html">StabilizedMethodsTensorCopyData</a>&lt; dim &gt; &amp;copy_data) override</td></tr>
 <tr class="separator:a7814ef8cf6e8485f27172113ca76515d"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ada706ffe0b4975e60189325f6a4c1d88" id="r_ada706ffe0b4975e60189325f6a4c1d88"><td class="memItemLeft" align="right" valign="top">virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classFluidDynamicsVANS.html#ada706ffe0b4975e60189325f6a4c1d88">output_field_hook</a> (DataOut&lt; dim &gt; &amp;data_out) override</td></tr>
-<tr class="separator:ada706ffe0b4975e60189325f6a4c1d88"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a14ae4d028338147c577739d43e0e5df6" id="r_a14ae4d028338147c577739d43e0e5df6"><td class="memItemLeft" align="right" valign="top">virtual std::vector&lt; <a class="el" href="output__struct_8h.html#a24c1f4e015db04387ac9c28a58ee7378">OutputStruct</a>&lt; dim, <a class="el" href="vector_8h.html#a4ea4005d75c88e60bee47d4e79a13a39">GlobalVectorType</a> &gt; &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classFluidDynamicsVANS.html#a14ae4d028338147c577739d43e0e5df6">gather_output_hook</a> () override</td></tr>
+<tr class="separator:a14ae4d028338147c577739d43e0e5df6"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="inherit_header pro_methods_classFluidDynamicsMatrixBased"><td colspan="2" onclick="javascript:toggleInherit('pro_methods_classFluidDynamicsMatrixBased')"><img src="closed.png" alt="-"/>&#160;Protected Member Functions inherited from <a class="el" href="classFluidDynamicsMatrixBased.html">FluidDynamicsMatrixBased&lt; dim &gt;</a></td></tr>
 <tr class="memitem:ac035aa99d51ac1f199c37de0d96a8afc inherit pro_methods_classFluidDynamicsMatrixBased" id="r_ac035aa99d51ac1f199c37de0d96a8afc"><td class="memItemLeft" align="right" valign="top">virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classFluidDynamicsMatrixBased.html#ac035aa99d51ac1f199c37de0d96a8afc">setup_dofs_fd</a> () override</td></tr>
 <tr class="separator:ac035aa99d51ac1f199c37de0d96a8afc inherit pro_methods_classFluidDynamicsMatrixBased"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -288,7 +288,7 @@ Protected Member Functions</h2></td></tr>
 <tr class="separator:a42a93d1b332da6a4bd52b9540b24012c inherit pro_methods_classNavierStokesBase"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:af311920c0b819b973d410db4fa5e8924 inherit pro_methods_classNavierStokesBase" id="r_af311920c0b819b973d410db4fa5e8924"><td class="memItemLeft" align="right" valign="top">virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classNavierStokesBase.html#af311920c0b819b973d410db4fa5e8924">write_checkpoint</a> ()</td></tr>
 <tr class="separator:af311920c0b819b973d410db4fa5e8924 inherit pro_methods_classNavierStokesBase"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a73730111a45fabb5bcc26e950ed5bbe6 inherit pro_methods_classNavierStokesBase" id="r_a73730111a45fabb5bcc26e950ed5bbe6"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classNavierStokesBase.html#a73730111a45fabb5bcc26e950ed5bbe6">gather_output_results</a> (const <a class="el" href="vector_8h.html#a4ea4005d75c88e60bee47d4e79a13a39">GlobalVectorType</a> &amp;solution, std::vector&lt; <a class="el" href="output__struct_8h.html#a182ecebe01bc65dd24b4785174e0c11b">OutputStruct</a>&lt; dim, <a class="el" href="vector_8h.html#a4ea4005d75c88e60bee47d4e79a13a39">GlobalVectorType</a> &gt; &gt; &amp;solution_output_structs)</td></tr>
+<tr class="memitem:a73730111a45fabb5bcc26e950ed5bbe6 inherit pro_methods_classNavierStokesBase" id="r_a73730111a45fabb5bcc26e950ed5bbe6"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classNavierStokesBase.html#a73730111a45fabb5bcc26e950ed5bbe6">gather_output_results</a> (const <a class="el" href="vector_8h.html#a4ea4005d75c88e60bee47d4e79a13a39">GlobalVectorType</a> &amp;solution, std::vector&lt; <a class="el" href="output__struct_8h.html#a24c1f4e015db04387ac9c28a58ee7378">OutputStruct</a>&lt; dim, <a class="el" href="vector_8h.html#a4ea4005d75c88e60bee47d4e79a13a39">GlobalVectorType</a> &gt; &gt; &amp;solution_output_structs)</td></tr>
 <tr class="separator:a73730111a45fabb5bcc26e950ed5bbe6 inherit pro_methods_classNavierStokesBase"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a18c2b29088f98ef45c04212bc5f2d33c inherit pro_methods_classNavierStokesBase" id="r_a18c2b29088f98ef45c04212bc5f2d33c"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classNavierStokesBase.html#a18c2b29088f98ef45c04212bc5f2d33c">write_output_results</a> (const <a class="el" href="vector_8h.html#a4ea4005d75c88e60bee47d4e79a13a39">GlobalVectorType</a> &amp;solution)</td></tr>
 <tr class="separator:a18c2b29088f98ef45c04212bc5f2d33c inherit pro_methods_classNavierStokesBase"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -875,6 +875,42 @@ template&lt;int dim&gt; </div>
 
 </div>
 </div>
+<a id="a14ae4d028338147c577739d43e0e5df6" name="a14ae4d028338147c577739d43e0e5df6"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a14ae4d028338147c577739d43e0e5df6">&#9670;&#160;</a></span>gather_output_hook()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;int dim&gt; </div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">std::vector&lt; <a class="el" href="output__struct_8h.html#a24c1f4e015db04387ac9c28a58ee7378">OutputStruct</a>&lt; dim, <a class="el" href="vector_8h.html#a4ea4005d75c88e60bee47d4e79a13a39">GlobalVectorType</a> &gt; &gt; <a class="el" href="classFluidDynamicsVANS.html">FluidDynamicsVANS</a>&lt; dim &gt;::gather_output_hook </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">override</span><span class="mlabel">protected</span><span class="mlabel">virtual</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Add void fractio and particle velocity field to output files. </p>
+<dl class="section return"><dt>Returns</dt><dd>Vector of OutputStructs that will be used to write the output results as VTU files. </dd></dl>
+
+<p>Reimplemented from <a class="el" href="classNavierStokesBase.html#ab51c98b276b35c1d5861fba16b724914">NavierStokesBase&lt; dim, GlobalVectorType, IndexSet &gt;</a>.</p>
+
+<p class="definition">Definition at line <a class="el" href="fluid__dynamics__vans_8cc_source.html#l00684">684</a> of file <a class="el" href="fluid__dynamics__vans_8cc_source.html">fluid_dynamics_vans.cc</a>.</p>
+
+<p class="reference">References <a class="el" href="output__struct_8h_source.html#l00073">OutputStructSolution&lt; dim, VectorType &gt;::dof_handler</a>.</p>
+
+</div>
+</div>
 <a id="af5702dddac75fa2e12d67391c95b0ccd" name="af5702dddac75fa2e12d67391c95b0ccd"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#af5702dddac75fa2e12d67391c95b0ccd">&#9670;&#160;</a></span>iterate()</h2>
 
@@ -935,43 +971,9 @@ template&lt;int dim&gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="fluid__dynamics__vans_8cc_source.html#l00706">706</a> of file <a class="el" href="fluid__dynamics__vans_8cc_source.html">fluid_dynamics_vans.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="fluid__dynamics__vans_8cc_source.html#l00713">713</a> of file <a class="el" href="fluid__dynamics__vans_8cc_source.html">fluid_dynamics_vans.cc</a>.</p>
 
 <p class="reference">References <a class="el" href="structParameters_1_1SimulationControl.html#a75b33ae454da14bc72dbe078c121d7e9a0267dc6b1db4ed7cf48c60fa776c8843">Parameters::SimulationControl::bdf1</a>, <a class="el" href="structParameters_1_1SimulationControl.html#a75b33ae454da14bc72dbe078c121d7e9a7e23e875a6c062a276f90cb43a6280c0">Parameters::SimulationControl::bdf2</a>, <a class="el" href="structParameters_1_1SimulationControl.html#a75b33ae454da14bc72dbe078c121d7e9a62fd133dd9c35c94e867fc65606aeffe">Parameters::SimulationControl::bdf3</a>, and <a class="el" href="structParameters_1_1SimulationControl.html#a75b33ae454da14bc72dbe078c121d7e9a4f997f546b68779b58e9f6f19dc2b9e5">Parameters::SimulationControl::steady</a>.</p>
-
-</div>
-</div>
-<a id="ada706ffe0b4975e60189325f6a4c1d88" name="ada706ffe0b4975e60189325f6a4c1d88"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ada706ffe0b4975e60189325f6a4c1d88">&#9670;&#160;</a></span>output_field_hook()</h2>
-
-<div class="memitem">
-<div class="memproto">
-<div class="memtemplate">
-template&lt;int dim&gt; </div>
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">void <a class="el" href="classFluidDynamicsVANS.html">FluidDynamicsVANS</a>&lt; dim &gt;::output_field_hook </td>
-          <td>(</td>
-          <td class="paramtype">DataOut&lt; dim &gt; &amp;&#160;</td>
-          <td class="paramname"><em>data_out</em></td><td>)</td>
-          <td></td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">override</span><span class="mlabel">protected</span><span class="mlabel">virtual</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p>a function for adding data vectors to the data_out object for post_processing additional results </p>
-
-<p>Reimplemented from <a class="el" href="classNavierStokesBase.html#a964e80e99870334447ac9859c4f1980d">NavierStokesBase&lt; dim, GlobalVectorType, IndexSet &gt;</a>.</p>
-
-<p class="definition">Definition at line <a class="el" href="fluid__dynamics__vans_8cc_source.html#l00684">684</a> of file <a class="el" href="fluid__dynamics__vans_8cc_source.html">fluid_dynamics_vans.cc</a>.</p>
 
 </div>
 </div>
@@ -1108,7 +1110,7 @@ template&lt;int dim&gt; </div>
 
 <p>Reimplemented in <a class="el" href="classCFDDEMSolver.html#aaebd11ac00952aaaa99ebd66c43f7d87">CFDDEMSolver&lt; dim &gt;</a>.</p>
 
-<p class="definition">Definition at line <a class="el" href="fluid__dynamics__vans_8cc_source.html#l00882">882</a> of file <a class="el" href="fluid__dynamics__vans_8cc_source.html">fluid_dynamics_vans.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="fluid__dynamics__vans_8cc_source.html#l00889">889</a> of file <a class="el" href="fluid__dynamics__vans_8cc_source.html">fluid_dynamics_vans.cc</a>.</p>
 
 <p class="reference">References <a class="el" href="grids_8cc_source.html#l00345">read_mesh_and_manifolds()</a>, and <a class="el" href="navier__stokes__base_8cc_source.html#l00855">NavierStokesBase&lt; dim, VectorType, DofsType &gt;::refine_mesh()</a>.</p>
 

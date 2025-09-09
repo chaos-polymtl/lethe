@@ -210,16 +210,18 @@ Classes</h2></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structOutputStructSolution.html">OutputStructSolution&lt; dim, VectorType &gt;</a></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structOutputStructCellVector.html">OutputStructCellVector</a></td></tr>
+<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="typedef-members" name="typedef-members"></a>
 Typedefs</h2></td></tr>
-<tr class="memitem:a182ecebe01bc65dd24b4785174e0c11b" id="r_a182ecebe01bc65dd24b4785174e0c11b"><td class="memTemplParams" colspan="2">template&lt;int dim, typename VectorType &gt; </td></tr>
-<tr class="memitem:a182ecebe01bc65dd24b4785174e0c11b"><td class="memTemplItemLeft" align="right" valign="top">using&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="output__struct_8h.html#a182ecebe01bc65dd24b4785174e0c11b">OutputStruct</a> = std::variant&lt; <a class="el" href="structOutputStructPostprocessor.html">OutputStructPostprocessor</a>&lt; dim, VectorType &gt;, <a class="el" href="structOutputStructSolution.html">OutputStructSolution</a>&lt; dim, VectorType &gt; &gt;</td></tr>
-<tr class="separator:a182ecebe01bc65dd24b4785174e0c11b"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a24c1f4e015db04387ac9c28a58ee7378" id="r_a24c1f4e015db04387ac9c28a58ee7378"><td class="memTemplParams" colspan="2">template&lt;int dim, typename VectorType &gt; </td></tr>
+<tr class="memitem:a24c1f4e015db04387ac9c28a58ee7378"><td class="memTemplItemLeft" align="right" valign="top">using&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="output__struct_8h.html#a24c1f4e015db04387ac9c28a58ee7378">OutputStruct</a> = std::variant&lt; <a class="el" href="structOutputStructPostprocessor.html">OutputStructPostprocessor</a>&lt; dim, VectorType &gt;, <a class="el" href="structOutputStructSolution.html">OutputStructSolution</a>&lt; dim, VectorType &gt;, <a class="el" href="structOutputStructCellVector.html">OutputStructCellVector</a> &gt;</td></tr>
+<tr class="separator:a24c1f4e015db04387ac9c28a58ee7378"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <h2 class="groupheader">Typedef Documentation</h2>
-<a id="a182ecebe01bc65dd24b4785174e0c11b" name="a182ecebe01bc65dd24b4785174e0c11b"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a182ecebe01bc65dd24b4785174e0c11b">&#9670;&#160;</a></span>OutputStruct</h2>
+<a id="a24c1f4e015db04387ac9c28a58ee7378" name="a24c1f4e015db04387ac9c28a58ee7378"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a24c1f4e015db04387ac9c28a58ee7378">&#9670;&#160;</a></span>OutputStruct</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -227,14 +229,14 @@ Typedefs</h2></td></tr>
 template&lt;int dim, typename VectorType &gt; </div>
       <table class="memname">
         <tr>
-          <td class="memname">using <a class="el" href="output__struct_8h.html#a182ecebe01bc65dd24b4785174e0c11b">OutputStruct</a> =  std::variant&lt;<a class="el" href="structOutputStructPostprocessor.html">OutputStructPostprocessor</a>&lt;dim, VectorType&gt;, <a class="el" href="structOutputStructSolution.html">OutputStructSolution</a>&lt;dim, VectorType&gt; &gt;</td>
+          <td class="memname">using <a class="el" href="output__struct_8h.html#a24c1f4e015db04387ac9c28a58ee7378">OutputStruct</a> =  std::variant&lt;<a class="el" href="structOutputStructPostprocessor.html">OutputStructPostprocessor</a>&lt;dim, VectorType&gt;, <a class="el" href="structOutputStructSolution.html">OutputStructSolution</a>&lt;dim, VectorType&gt;, <a class="el" href="structOutputStructCellVector.html">OutputStructCellVector</a>&gt;</td>
         </tr>
       </table>
 </div><div class="memdoc">
 
 <p>Variant handler of the two output structs (<a class="el" href="structOutputStructPostprocessor.html" title="Struct containing information about the solution output. It is used to pass the information required ...">OutputStructPostprocessor</a> and OutputStructDoFHandler). This is used to allow the output of both postprocessors and DoF handlers in a single vector of OutputStruct. </p>
 
-<p class="definition">Definition at line <a class="el" href="output__struct_8h_source.html#l00086">86</a> of file <a class="el" href="output__struct_8h_source.html">output_struct.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="output__struct_8h_source.html#l00110">110</a> of file <a class="el" href="output__struct_8h_source.html">output_struct.h</a>.</p>
 
 </div>
 </div>

@@ -139,8 +139,8 @@ Protected Member Functions</h2></td></tr>
 <tr class="separator:ab69c54228f25ad4d57f48366413a3128"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a8ddf18a791e68e2d8cb48ef97ddb47aa" id="r_a8ddf18a791e68e2d8cb48ef97ddb47aa"><td class="memItemLeft" align="right" valign="top">virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classFluidDynamicsVANSMatrixFree.html#a8ddf18a791e68e2d8cb48ef97ddb47aa">finish_time_step_fd</a> ()</td></tr>
 <tr class="separator:a8ddf18a791e68e2d8cb48ef97ddb47aa"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a0ccf48d6341680091960892f38433a28" id="r_a0ccf48d6341680091960892f38433a28"><td class="memItemLeft" align="right" valign="top">virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classFluidDynamicsVANSMatrixFree.html#a0ccf48d6341680091960892f38433a28">output_field_hook</a> (DataOut&lt; dim &gt; &amp;data_out) override</td></tr>
-<tr class="separator:a0ccf48d6341680091960892f38433a28"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a565378c53e79e0dd166e6328ded1f7b2" id="r_a565378c53e79e0dd166e6328ded1f7b2"><td class="memItemLeft" align="right" valign="top">std::vector&lt; <a class="el" href="output__struct_8h.html#a24c1f4e015db04387ac9c28a58ee7378">OutputStruct</a>&lt; dim, LinearAlgebra::distributed::Vector&lt; double &gt; &gt; &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classFluidDynamicsVANSMatrixFree.html#a565378c53e79e0dd166e6328ded1f7b2">gather_output_hook</a> () override</td></tr>
+<tr class="separator:a565378c53e79e0dd166e6328ded1f7b2"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a29d058b88593e0c40e69b31d0a466c96" id="r_a29d058b88593e0c40e69b31d0a466c96"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classFluidDynamicsVANSMatrixFree.html#a29d058b88593e0c40e69b31d0a466c96">create_GMG</a> () override</td></tr>
 <tr class="separator:a29d058b88593e0c40e69b31d0a466c96"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a057a90a8ff9caa259574b2645f07beb3" id="r_a057a90a8ff9caa259574b2645f07beb3"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classFluidDynamicsVANSMatrixFree.html#a057a90a8ff9caa259574b2645f07beb3">initialize_GMG</a> () override</td></tr>
@@ -273,7 +273,7 @@ Protected Member Functions</h2></td></tr>
 <tr class="separator:a42a93d1b332da6a4bd52b9540b24012c inherit pro_methods_classNavierStokesBase"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:af311920c0b819b973d410db4fa5e8924 inherit pro_methods_classNavierStokesBase" id="r_af311920c0b819b973d410db4fa5e8924"><td class="memItemLeft" align="right" valign="top">virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classNavierStokesBase.html#af311920c0b819b973d410db4fa5e8924">write_checkpoint</a> ()</td></tr>
 <tr class="separator:af311920c0b819b973d410db4fa5e8924 inherit pro_methods_classNavierStokesBase"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a73730111a45fabb5bcc26e950ed5bbe6 inherit pro_methods_classNavierStokesBase" id="r_a73730111a45fabb5bcc26e950ed5bbe6"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classNavierStokesBase.html#a73730111a45fabb5bcc26e950ed5bbe6">gather_output_results</a> (const LinearAlgebra::distributed::Vector&lt; double &gt; &amp;solution, std::vector&lt; <a class="el" href="output__struct_8h.html#a182ecebe01bc65dd24b4785174e0c11b">OutputStruct</a>&lt; dim, LinearAlgebra::distributed::Vector&lt; double &gt; &gt; &gt; &amp;solution_output_structs)</td></tr>
+<tr class="memitem:a73730111a45fabb5bcc26e950ed5bbe6 inherit pro_methods_classNavierStokesBase" id="r_a73730111a45fabb5bcc26e950ed5bbe6"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classNavierStokesBase.html#a73730111a45fabb5bcc26e950ed5bbe6">gather_output_results</a> (const LinearAlgebra::distributed::Vector&lt; double &gt; &amp;solution, std::vector&lt; <a class="el" href="output__struct_8h.html#a24c1f4e015db04387ac9c28a58ee7378">OutputStruct</a>&lt; dim, LinearAlgebra::distributed::Vector&lt; double &gt; &gt; &gt; &amp;solution_output_structs)</td></tr>
 <tr class="separator:a73730111a45fabb5bcc26e950ed5bbe6 inherit pro_methods_classNavierStokesBase"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a18c2b29088f98ef45c04212bc5f2d33c inherit pro_methods_classNavierStokesBase" id="r_a18c2b29088f98ef45c04212bc5f2d33c"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classNavierStokesBase.html#a18c2b29088f98ef45c04212bc5f2d33c">write_output_results</a> (const LinearAlgebra::distributed::Vector&lt; double &gt; &amp;solution)</td></tr>
 <tr class="separator:a18c2b29088f98ef45c04212bc5f2d33c inherit pro_methods_classNavierStokesBase"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -484,7 +484,7 @@ template&lt;int dim&gt; </div>
 
 <p class="definition">Definition at line <a class="el" href="fluid__dynamics__vans__matrix__free_8cc_source.html#l00130">130</a> of file <a class="el" href="fluid__dynamics__vans__matrix__free_8cc_source.html">fluid_dynamics_vans_matrix_free.cc</a>.</p>
 
-<p class="reference">References <a class="el" href="fluid__dynamics__vans__matrix__free_8h_source.html#l00163">FluidDynamicsVANSMatrixFree&lt; dim &gt;::cfd_dem_simulation_parameters</a>, <a class="el" href="fluid__dynamics__vans__matrix__free_8h_source.html#l00176">FluidDynamicsVANSMatrixFree&lt; dim &gt;::has_periodic_boundaries</a>, <a class="el" href="namespaceBoundaryConditions.html#a07df76d63cde5cb5bcbea0d9c25a54b8ae6ffdec5e14fce371eb7ae99edebbbee">BoundaryConditions::periodic</a>, and <a class="el" href="fluid__dynamics__matrix__free_8h_source.html#l00585">FluidDynamicsMatrixFree&lt; dim &gt;::system_operator</a>.</p>
+<p class="reference">References <a class="el" href="fluid__dynamics__vans__matrix__free_8h_source.html#l00164">FluidDynamicsVANSMatrixFree&lt; dim &gt;::cfd_dem_simulation_parameters</a>, <a class="el" href="fluid__dynamics__vans__matrix__free_8h_source.html#l00177">FluidDynamicsVANSMatrixFree&lt; dim &gt;::has_periodic_boundaries</a>, <a class="el" href="namespaceBoundaryConditions.html#a07df76d63cde5cb5bcbea0d9c25a54b8ae6ffdec5e14fce371eb7ae99edebbbee">BoundaryConditions::periodic</a>, and <a class="el" href="fluid__dynamics__matrix__free_8h_source.html#l00585">FluidDynamicsMatrixFree&lt; dim &gt;::system_operator</a>.</p>
 
 </div>
 </div>
@@ -518,7 +518,7 @@ template&lt;int dim&gt; </div>
 
 <p>Reimplemented from <a class="el" href="classFluidDynamicsMatrixFree.html#aa3eb3958aca07db73e8f6a4df2ddd6a8">FluidDynamicsMatrixFree&lt; dim &gt;</a>.</p>
 
-<p class="definition">Definition at line <a class="el" href="fluid__dynamics__vans__matrix__free_8cc_source.html#l00390">390</a> of file <a class="el" href="fluid__dynamics__vans__matrix__free_8cc_source.html">fluid_dynamics_vans_matrix_free.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="fluid__dynamics__vans__matrix__free_8cc_source.html#l00397">397</a> of file <a class="el" href="fluid__dynamics__vans__matrix__free_8cc_source.html">fluid_dynamics_vans_matrix_free.cc</a>.</p>
 
 </div>
 </div>
@@ -555,6 +555,40 @@ template&lt;int dim&gt; </div>
 
 </div>
 </div>
+<a id="a565378c53e79e0dd166e6328ded1f7b2" name="a565378c53e79e0dd166e6328ded1f7b2"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a565378c53e79e0dd166e6328ded1f7b2">&#9670;&#160;</a></span>gather_output_hook()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;int dim&gt; </div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">std::vector&lt; <a class="el" href="output__struct_8h.html#a24c1f4e015db04387ac9c28a58ee7378">OutputStruct</a>&lt; dim, LinearAlgebra::distributed::Vector&lt; double &gt; &gt; &gt; <a class="el" href="classFluidDynamicsVANSMatrixFree.html">FluidDynamicsVANSMatrixFree</a>&lt; dim &gt;::gather_output_hook </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">override</span><span class="mlabel">protected</span><span class="mlabel">virtual</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Add void fraction field to output files. </p>
+<dl class="section return"><dt>Returns</dt><dd>Vector of OutputStructs that will be used to write the output results as VTU files. </dd></dl>
+
+<p>Reimplemented from <a class="el" href="classNavierStokesBase.html#ab51c98b276b35c1d5861fba16b724914">NavierStokesBase&lt; dim, LinearAlgebra::distributed::Vector&lt; double &gt;, IndexSet &gt;</a>.</p>
+
+<p class="definition">Definition at line <a class="el" href="fluid__dynamics__vans__matrix__free_8cc_source.html#l00279">279</a> of file <a class="el" href="fluid__dynamics__vans__matrix__free_8cc_source.html">fluid_dynamics_vans_matrix_free.cc</a>.</p>
+
+</div>
+</div>
 <a id="a057a90a8ff9caa259574b2645f07beb3" name="a057a90a8ff9caa259574b2645f07beb3"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a057a90a8ff9caa259574b2645f07beb3">&#9670;&#160;</a></span>initialize_GMG()</h2>
 
@@ -579,45 +613,11 @@ template&lt;int dim&gt; </div>
   </tr>
 </table>
 </div><div class="memdoc">
-<p>Initializes (or re-initializes) geometric multigrid preconditioneré </p>
+<p>Initializes (or re-initializes) geometric multigrid preconditioner </p>
 
 <p>Reimplemented from <a class="el" href="classFluidDynamicsMatrixFree.html#a0a5851a571798217680e13a127e074e5">FluidDynamicsMatrixFree&lt; dim &gt;</a>.</p>
 
-<p class="definition">Definition at line <a class="el" href="fluid__dynamics__vans__matrix__free_8cc_source.html#l00408">408</a> of file <a class="el" href="fluid__dynamics__vans__matrix__free_8cc_source.html">fluid_dynamics_vans_matrix_free.cc</a>.</p>
-
-</div>
-</div>
-<a id="a0ccf48d6341680091960892f38433a28" name="a0ccf48d6341680091960892f38433a28"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a0ccf48d6341680091960892f38433a28">&#9670;&#160;</a></span>output_field_hook()</h2>
-
-<div class="memitem">
-<div class="memproto">
-<div class="memtemplate">
-template&lt;int dim&gt; </div>
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">void <a class="el" href="classFluidDynamicsVANSMatrixFree.html">FluidDynamicsVANSMatrixFree</a>&lt; dim &gt;::output_field_hook </td>
-          <td>(</td>
-          <td class="paramtype">DataOut&lt; dim &gt; &amp;&#160;</td>
-          <td class="paramname"><em>data_out</em></td><td>)</td>
-          <td></td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">override</span><span class="mlabel">protected</span><span class="mlabel">virtual</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p>Add data vectors to the data_out object for post_processing additional results. In this case, the void fraction field is added. </p>
-
-<p>Reimplemented from <a class="el" href="classNavierStokesBase.html#a964e80e99870334447ac9859c4f1980d">NavierStokesBase&lt; dim, LinearAlgebra::distributed::Vector&lt; double &gt;, IndexSet &gt;</a>.</p>
-
-<p class="definition">Definition at line <a class="el" href="fluid__dynamics__vans__matrix__free_8cc_source.html#l00279">279</a> of file <a class="el" href="fluid__dynamics__vans__matrix__free_8cc_source.html">fluid_dynamics_vans_matrix_free.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="fluid__dynamics__vans__matrix__free_8cc_source.html#l00415">415</a> of file <a class="el" href="fluid__dynamics__vans__matrix__free_8cc_source.html">fluid_dynamics_vans_matrix_free.cc</a>.</p>
 
 </div>
 </div>
@@ -718,7 +718,7 @@ template&lt;int dim&gt; </div>
 
 <p>Reimplemented from <a class="el" href="classFluidDynamicsMatrixFree.html#a112c8d96533da22791584cda7e730257">FluidDynamicsMatrixFree&lt; dim &gt;</a>.</p>
 
-<p class="definition">Definition at line <a class="el" href="fluid__dynamics__vans__matrix__free_8cc_source.html#l00288">288</a> of file <a class="el" href="fluid__dynamics__vans__matrix__free_8cc_source.html">fluid_dynamics_vans_matrix_free.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="fluid__dynamics__vans__matrix__free_8cc_source.html#l00295">295</a> of file <a class="el" href="fluid__dynamics__vans__matrix__free_8cc_source.html">fluid_dynamics_vans_matrix_free.cc</a>.</p>
 
 <p class="reference">References <a class="el" href="structParameters_1_1Timer.html#ae1d96ff22b9dbb46d965a0df44142f42a7f021a1415b86f2d013b2618fb31ae53">Parameters::Timer::end</a>, <a class="el" href="time__integration__utilities_8h_source.html#l00042">is_bdf()</a>, <a class="el" href="structParameters_1_1Timer.html#ae1d96ff22b9dbb46d965a0df44142f42a6f012ea8d7efd87146dd62db83f2ed99">Parameters::Timer::iteration</a>, and <a class="el" href="grids_8cc_source.html#l00345">read_mesh_and_manifolds()</a>.</p>
 
@@ -749,7 +749,7 @@ template&lt;int dim&gt; </div>
 
 <p>Simulation parameters for CFD-DEM simulations. </p>
 
-<p class="definition">Definition at line <a class="el" href="fluid__dynamics__vans__matrix__free_8h_source.html#l00163">163</a> of file <a class="el" href="fluid__dynamics__vans__matrix__free_8h_source.html">fluid_dynamics_vans_matrix_free.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="fluid__dynamics__vans__matrix__free_8h_source.html#l00164">164</a> of file <a class="el" href="fluid__dynamics__vans__matrix__free_8h_source.html">fluid_dynamics_vans_matrix_free.h</a>.</p>
 
 </div>
 </div>
@@ -777,7 +777,7 @@ template&lt;int dim&gt; </div>
 
 <p>Member variables which are used to manage boundary conditions. </p>
 
-<p class="definition">Definition at line <a class="el" href="fluid__dynamics__vans__matrix__free_8h_source.html#l00176">176</a> of file <a class="el" href="fluid__dynamics__vans__matrix__free_8h_source.html">fluid_dynamics_vans_matrix_free.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="fluid__dynamics__vans__matrix__free_8h_source.html#l00177">177</a> of file <a class="el" href="fluid__dynamics__vans__matrix__free_8h_source.html">fluid_dynamics_vans_matrix_free.h</a>.</p>
 
 </div>
 </div>
@@ -805,7 +805,7 @@ template&lt;int dim&gt; </div>
 
 <p>Particle-handler used to store particles in CFD-DEM simulations. </p>
 
-<p class="definition">Definition at line <a class="el" href="fluid__dynamics__vans__matrix__free_8h_source.html#l00169">169</a> of file <a class="el" href="fluid__dynamics__vans__matrix__free_8h_source.html">fluid_dynamics_vans_matrix_free.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="fluid__dynamics__vans__matrix__free_8h_source.html#l00170">170</a> of file <a class="el" href="fluid__dynamics__vans__matrix__free_8h_source.html">fluid_dynamics_vans_matrix_free.h</a>.</p>
 
 </div>
 </div>
@@ -833,7 +833,7 @@ template&lt;int dim&gt; </div>
 
 <p>Mapping used for the particles. </p>
 
-<p class="definition">Definition at line <a class="el" href="fluid__dynamics__vans__matrix__free_8h_source.html#l00166">166</a> of file <a class="el" href="fluid__dynamics__vans__matrix__free_8h_source.html">fluid_dynamics_vans_matrix_free.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="fluid__dynamics__vans__matrix__free_8h_source.html#l00167">167</a> of file <a class="el" href="fluid__dynamics__vans__matrix__free_8h_source.html">fluid_dynamics_vans_matrix_free.h</a>.</p>
 
 </div>
 </div>
@@ -860,7 +860,7 @@ template&lt;int dim&gt; </div>
 </div><div class="memdoc">
 <p>Object that manages the void fraction calculation from functions or from parameters. </p>
 
-<p class="definition">Definition at line <a class="el" href="fluid__dynamics__vans__matrix__free_8h_source.html#l00173">173</a> of file <a class="el" href="fluid__dynamics__vans__matrix__free_8h_source.html">fluid_dynamics_vans_matrix_free.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="fluid__dynamics__vans__matrix__free_8h_source.html#l00174">174</a> of file <a class="el" href="fluid__dynamics__vans__matrix__free_8h_source.html">fluid_dynamics_vans_matrix_free.h</a>.</p>
 
 </div>
 </div>
@@ -886,7 +886,7 @@ template&lt;int dim&gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="fluid__dynamics__vans__matrix__free_8h_source.html#l00178">178</a> of file <a class="el" href="fluid__dynamics__vans__matrix__free_8h_source.html">fluid_dynamics_vans_matrix_free.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="fluid__dynamics__vans__matrix__free_8h_source.html#l00179">179</a> of file <a class="el" href="fluid__dynamics__vans__matrix__free_8h_source.html">fluid_dynamics_vans_matrix_free.h</a>.</p>
 
 </div>
 </div>
@@ -912,7 +912,7 @@ template&lt;int dim&gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="fluid__dynamics__vans__matrix__free_8h_source.html#l00177">177</a> of file <a class="el" href="fluid__dynamics__vans__matrix__free_8h_source.html">fluid_dynamics_vans_matrix_free.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="fluid__dynamics__vans__matrix__free_8h_source.html#l00178">178</a> of file <a class="el" href="fluid__dynamics__vans__matrix__free_8h_source.html">fluid_dynamics_vans_matrix_free.h</a>.</p>
 
 </div>
 </div>
