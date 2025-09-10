@@ -562,7 +562,7 @@ PhaseChangeDarcyVOFAssembler<dim>::assemble_rhs(
   auto &local_rhs       = copy_data.local_rhs;
   auto &strong_residual = copy_data.strong_residual;
 
-  const unsigned int        number_of_fluids = phase_change_parameters_vector.size();
+  const unsigned int  number_of_fluids = phase_change_parameters_vector.size();
   std::vector<double> liquid_fractions;
   std::vector<double> darcy_penalties;
   liquid_fractions.reserve(number_of_fluids);

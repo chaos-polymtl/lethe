@@ -28,9 +28,9 @@ VOFPhaseGradientProjection<dim>::assemble_system_matrix_and_rhs()
                               update_gradients);
 
   // Initialize size of arrays
-  const double n_q_points =
+  const unsigned int n_q_points =
     fe_values_phase_gradient_projection.get_quadrature().size();
-  const double n_dofs_per_cell =
+  const unsigned int n_dofs_per_cell =
     fe_values_phase_gradient_projection.get_fe().n_dofs_per_cell();
 
   // Initialize local matrix and rhs

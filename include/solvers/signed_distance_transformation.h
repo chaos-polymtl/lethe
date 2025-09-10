@@ -17,7 +17,7 @@ public:
   /**
    * @brief Default destructor.
    */
-virtual ~SignedDistanceTransformationBase()=default;
+  virtual ~SignedDistanceTransformationBase() = default;
 
 
   /**

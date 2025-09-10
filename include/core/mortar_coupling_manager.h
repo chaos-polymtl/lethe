@@ -42,7 +42,7 @@ public:
   /**
    * @brief Default destructor.
    */
-  virtual ~MortarManagerBase()=default;
+  virtual ~MortarManagerBase() = default;
 
   /**
    * @brief Verify if cells of the inner and outer domains are aligned
@@ -876,7 +876,7 @@ public:
   /**
    *    @brief Default destructor.
    */
-  virtual ~NavierStokesCouplingEvaluation()=default;
+  virtual ~NavierStokesCouplingEvaluation() = default;
 
   unsigned int
   data_size() const override;

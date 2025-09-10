@@ -147,10 +147,10 @@ public:
   SimulationControl(const Parameters::SimulationControl &param);
 
   /**
- * @brief Default destructor.
- **/
+   * @brief Default destructor.
+   **/
 
-  virtual ~SimulationControl()=default;
+  virtual ~SimulationControl() = default;
 
 
   /**

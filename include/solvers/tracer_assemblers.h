@@ -24,7 +24,7 @@ using TracerAssemblerBase =
   PhysicsAssemblerBase<TracerScratchData<dim>, StabilizedMethodsCopyData>;
 
 /**
-* @brief A pure virtual class that serves as an interface for boundary and
+ * @brief A pure virtual class that serves as an interface for boundary and
  * internal faces that occur when using a discontinuous Galerkin discretization.
  * The main difference between the TracerFaceAssembler and the TracerAssembler
  * is that the TracerFaceAssembler assembles the matrix and rhs for internal
@@ -92,11 +92,10 @@ template <int dim>
 class TracerAssemblerDGCore : public TracerAssemblerBase<dim>
 {
 public:
-
   /**
    * @brief Default destructor.
    */
-  virtual ~TracerAssemblerDGCore()=default;
+  virtual ~TracerAssemblerDGCore() = default;
 
   /**
    * @brief Assembles the matrix
