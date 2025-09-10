@@ -3350,6 +3350,10 @@ FluidDynamicsMatrixFree<dim>::solve_linear_system(
   if (this->simulation_parameters.linear_solver.at(PhysicsID::fluid_dynamics)
         .solver == Parameters::LinearSolver::SolverType::gmres)
     solve_system_GMRES(initial_step, absolute_residual, relative_residual);
+  else if (this->simulation_parameters.linear_solver
+             .at(PhysicsID::fluid_dynamics)
+             .solver == Parameters::LinearSolver::SolverType::direct)
+    solve_system_direct(initial_step, absolute_residual, relative_residual);
   else
     AssertThrow(false, ExcMessage("This solver is not allowed"));
   this->rescale_pressure_dofs_in_newton_update();
@@ -3450,6 +3454,48 @@ FluidDynamicsMatrixFree<dim>::solve_system_GMRES(const bool   initial_step,
                   << " steps to reach a residual norm of "
                   << solver_control.last_value() << std::endl;
     }
+
+  this->computing_timer.enter_subsection(
+    "Distribute constraints after linear solve");
+
+  constraints_used.distribute(this->newton_update);
+
+  this->computing_timer.leave_subsection(
+    "Distribute constraints after linear solve");
+}
+
+template <int dim>
+void
+FluidDynamicsMatrixFree<dim>::solve_system_direct(
+  const bool   initial_step,
+  const double absolute_residual,
+  const double relative_residual)
+{
+  auto &system_rhs          = this->system_rhs;
+  auto &nonzero_constraints = this->nonzero_constraints;
+
+  const AffineConstraints<double> &constraints_used =
+    initial_step ? nonzero_constraints : this->zero_constraints;
+  const double linear_solver_tolerance =
+    std::max(relative_residual * system_rhs.l2_norm(), absolute_residual);
+
+  SolverControl solver_control(this->simulation_parameters.linear_solver
+                                 .at(PhysicsID::fluid_dynamics)
+                                 .max_iterations,
+                               linear_solver_tolerance,
+                               true,
+                               true);
+
+  TrilinosWrappers::SolverDirect solver(solver_control);
+
+  this->newton_update = 0.0;
+
+  this->computing_timer.enter_subsection("Solve linear system");
+
+  solver.initialize(this->system_operator->get_system_matrix());
+  solver.solve(this->newton_update, this->system_rhs);
+
+  this->computing_timer.leave_subsection("Solve linear system");
 
   this->computing_timer.enter_subsection(
     "Distribute constraints after linear solve");

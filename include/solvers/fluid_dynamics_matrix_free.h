@@ -560,6 +560,10 @@ private:
                      const double absolute_residual,
                      const double relative_residual);
 
+  void
+  solve_system_direct(const bool   initial_step,
+                      const double absolute_residual,
+                      const double relative_residual);
   /**
    * @brief  Create the geometric multigrid preconditioner.
    */
