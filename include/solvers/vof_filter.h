@@ -1,4 +1,4 @@
-// SPDX-FileCopyrightText: Copyright (c) 2023-2024 The Lethe Authors
+// SPDX-FileCopyrightText: Copyright (c) 2023-2025 The Lethe Authors
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
 #ifndef lethe_vof_filter_h
@@ -14,6 +14,11 @@
 class VolumeOfFluidFilterBase
 {
 public:
+  /**
+   * @brief Default destructor.
+   */
+  virtual ~VolumeOfFluidFilterBase() = default;
+
   /**
    * @brief Instantiate and return a pointer to a VolumeOfFluidFilterBase
    * object by casting it to the proper child class.

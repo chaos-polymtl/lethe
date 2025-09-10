@@ -40,6 +40,11 @@ public:
                     const double                     rotation_angle);
 
   /**
+   * @brief Default destructor.
+   */
+  virtual ~MortarManagerBase() = default;
+
+  /**
    * @brief Verify if cells of the inner and outer domains are aligned
    */
   bool
@@ -867,6 +872,11 @@ public:
   NavierStokesCouplingEvaluation(const Mapping<dim>    &mapping,
                                  const DoFHandler<dim> &dof_handler,
                                  const double           kinematic_viscosity);
+
+  /**
+   *    @brief Default destructor.
+   */
+  virtual ~NavierStokesCouplingEvaluation() = default;
 
   unsigned int
   data_size() const override;

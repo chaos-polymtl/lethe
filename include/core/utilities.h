@@ -747,7 +747,7 @@ identify_minimum_cell_size(const Mapping<dim>    &mapping,
   double h = DBL_MAX;
 
   // Element degree
-  const double degree = double(fe_values.get_fe().degree);
+  const unsigned int degree = fe_values.get_fe().degree;
 
   for (const auto &cell : dof_handler.active_cell_iterators())
     {

@@ -3,6 +3,12 @@
 All notable changes to the Lethe project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
+### [Master] - 2025-09-10
+
+### Fixed
+
+- MINOR When compiling Lethe with Clang, multiple warning arise throughout the code. In the long term, we aim to remove these warnings so that Lethe compiles on both GCC and Clang without any warnings. All of the warnings of the solver library were removed. The majority of the warnings were related to some virtual classes not having a virtual distructors and some odd integers to double or double to integers conversions that were implicit. The type for the fill level in the ILU preconditioners was changed from double to integer since this is the actualy type required by the Trilinos library. [#1672](https://github.com/chaos-polymtl/lethe/pull/1672)
+
 ### [Master] - 2025-09-08
 
 ### Fixed

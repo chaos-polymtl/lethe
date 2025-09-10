@@ -1,4 +1,4 @@
-// SPDX-FileCopyrightText: Copyright (c) 2021-2024 The Lethe Authors
+// SPDX-FileCopyrightText: Copyright (c) 2021-2025 The Lethe Authors
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
 #ifndef lethe_tracer_assemblers_h
@@ -23,6 +23,20 @@ template <int dim>
 using TracerAssemblerBase =
   PhysicsAssemblerBase<TracerScratchData<dim>, StabilizedMethodsCopyData>;
 
+/**
+ * @brief A pure virtual class that serves as an interface for boundary and
+ * internal faces that occur when using a discontinuous Galerkin discretization.
+ * The main difference between the TracerFaceAssembler and the TracerAssembler
+ * is that the TracerFaceAssembler assembles the matrix and rhs for internal
+ * faces and thus requires the StabilizedDGMethodsCopyData class.
+ *
+ * @tparam dim An integer that denotes the number of spatial dimensions
+ *
+ * @ingroup assemblers
+ */
+template <int dim>
+using TracerFaceAssemblerBase =
+  PhysicsFaceAssemblerBase<TracerScratchData<dim>, StabilizedDGMethodsCopyData>;
 
 /**
  * @brief Class that assembles the core of the Tracer equation.
@@ -78,8 +92,10 @@ template <int dim>
 class TracerAssemblerDGCore : public TracerAssemblerBase<dim>
 {
 public:
-  TracerAssemblerDGCore()
-  {}
+  /**
+   * @brief Default destructor.
+   */
+  virtual ~TracerAssemblerDGCore() = default;
 
   /**
    * @brief Assembles the matrix
@@ -144,51 +160,6 @@ public:
   const std::shared_ptr<SimulationControl> simulation_control;
 };
 
-
-/**
- * @brief A pure virtual class that serves as an interface for boundary and
- * internal faces that occur when using a discontinuous Galerkin discretization.
- * The main difference between the TracerFaceAssembler and the TracerAssembler
- * is that the TracerFaceAssembler assembles the matrix and rhs for internal
- * faces and thus requires the StabilizedDGMethodsCopyData class.
- *
- * @tparam dim An integer that denotes the number of spatial dimensions
- *
- * @ingroup assemblers
- */
-template <int dim>
-class TracerFaceAssembler
-{
-public:
-  /**
-   * @brief Interface for the call to matrix assembly
-   * @param[in]  scratch_data Scratch data containing the Tracer
-   * information. It is important to note that the scratch data has to have been
-   * re-inited before calling for matrix assembly.
-   * @param[in,out]  copy_data Destination where the local_rhs and local_matrix
-   * should be copied
-   */
-
-  virtual void
-  assemble_matrix(const TracerScratchData<dim> &scratch_data,
-                  StabilizedDGMethodsCopyData  &copy_data) = 0;
-
-
-  /**
-   * @brief Interface for the call to rhs
-   * @param[in]  scratch_data Scratch data containing the Tracer
-   * information. It is important to note that the scratch data has to have been
-   * re-inited before calling for matrix assembly.
-   * @param[in,out] copy_data Destination where the local_rhs and local_matrix
-   * should be copied
-   */
-
-  virtual void
-  assemble_rhs(const TracerScratchData<dim> &scratch_data,
-               StabilizedDGMethodsCopyData  &copy_data) = 0;
-};
-
-
 /**
  * @brief Assembles the symmetric interior penalty (SIPG) method (or
  * Nitsche's method) for internal faces. This assembler is only required
@@ -200,7 +171,7 @@ public:
  * @ingroup assemblers
  */
 template <int dim>
-class TracerAssemblerSIPG : public TracerFaceAssembler<dim>
+class TracerAssemblerSIPG : public TracerFaceAssemblerBase<dim>
 {
 public:
   TracerAssemblerSIPG()
@@ -243,7 +214,7 @@ public:
  * @ingroup assemblers
  */
 template <int dim>
-class TracerAssemblerBoundaryNitsche : public TracerFaceAssembler<dim>
+class TracerAssemblerBoundaryNitsche : public TracerFaceAssemblerBase<dim>
 {
 public:
   TracerAssemblerBoundaryNitsche(

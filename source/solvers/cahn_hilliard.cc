@@ -1025,9 +1025,6 @@ CahnHilliard<dim>::setup_dofs()
 {
   verify_consistency_of_boundary_conditions();
 
-  FEValuesExtractors::Scalar phase_order(0);
-  FEValuesExtractors::Scalar chemical_potential(1);
-
   dof_handler.distribute_dofs(*fe);
   DoFRenumbering::Cuthill_McKee(this->dof_handler);
 
@@ -1280,9 +1277,9 @@ CahnHilliard<dim>::solve_linear_system(const bool initial_step,
                   << linear_solver_tolerance << std::endl;
     }
 
-  const double ilu_fill =
+  const unsigned int ilu_fill = static_cast<unsigned int>(
     simulation_parameters.linear_solver.at(PhysicsID::cahn_hilliard)
-      .ilu_precond_fill;
+      .ilu_precond_fill);
   const double ilu_atol =
     simulation_parameters.linear_solver.at(PhysicsID::cahn_hilliard)
       .ilu_precond_atol;
@@ -1435,8 +1432,6 @@ CahnHilliard<dim>::apply_phase_filter()
                           *cell_quadrature,
                           update_values | update_gradients |
                             update_quadrature_points | update_JxW_values);
-
-  const FEValuesExtractors::Scalar phase_order(0);
 
   GlobalVectorType filtered_solution_owned(this->locally_owned_dofs,
                                            mpi_communicator);

@@ -15,6 +15,12 @@ class SignedDistanceTransformationBase
 {
 public:
   /**
+   * @brief Default destructor.
+   */
+  virtual ~SignedDistanceTransformationBase() = default;
+
+
+  /**
    * @brief Instantiate and return a pointer to a
    * SignedDistanceTransformationBase object by casting it to the proper child
    * class.

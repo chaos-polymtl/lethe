@@ -1,4 +1,4 @@
-// SPDX-FileCopyrightText: Copyright (c) 2025-2025 The Lethe Authors
+// SPDX-FileCopyrightText: Copyright (c) 2024-2025 The Lethe Authors
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
 #include <core/bdf.h>
@@ -35,7 +35,7 @@
  * @brief A base class of preconditioners used by the smoother.
  */
 template <typename VectorType>
-class PreconditionBase : public Subscriptor
+class PreconditionBase : public EnableObserverPointer
 {
 public:
   /**

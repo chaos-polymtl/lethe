@@ -2904,13 +2904,13 @@ namespace Parameters
             "Error, invalid preconditioner type. Choices are amg, ilu, lsmg or gcmg.");
 
 
-        ilu_precond_fill = prm.get_double("ilu preconditioner fill");
+        ilu_precond_fill = prm.get_integer("ilu preconditioner fill");
         ilu_precond_atol =
           prm.get_double("ilu preconditioner absolute tolerance");
         ilu_precond_rtol =
           prm.get_double("ilu preconditioner relative tolerance");
 
-        amg_precond_ilu_fill = prm.get_double("amg preconditioner ilu fill");
+        amg_precond_ilu_fill = prm.get_integer("amg preconditioner ilu fill");
         amg_precond_ilu_atol =
           prm.get_double("amg preconditioner ilu absolute tolerance");
         amg_precond_ilu_rtol =

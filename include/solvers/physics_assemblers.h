@@ -44,6 +44,12 @@ public:
   virtual void
   assemble_rhs(const ScratchDataType &scratch_data,
                CopyDataType          &copy_data) = 0;
+
+  /**
+   * @brief Default destructor
+   */
+
+  virtual ~PhysicsAssemblerBase() = default;
 };
 
 
@@ -87,6 +93,12 @@ public:
   virtual void
   assemble_rhs(const ScratchDataType &scratch_data,
                CopyDataType          &copy_data) = 0;
+
+  /**
+   * @brief Default destructor
+   */
+
+  virtual ~PhysicsFaceAssemblerBase() = default;
 };
 
 #endif

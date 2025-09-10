@@ -146,6 +146,12 @@ public:
 
   SimulationControl(const Parameters::SimulationControl &param);
 
+  /**
+   * @brief Default destructor.
+   **/
+
+  virtual ~SimulationControl() = default;
+
 
   /**
    * @brief Return the number of stages associated with the time-stepping method.

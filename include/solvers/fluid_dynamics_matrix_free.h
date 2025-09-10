@@ -1,4 +1,4 @@
-// SPDX-FileCopyrightText: Copyright (c) 2023-2024 The Lethe Authors
+// SPDX-FileCopyrightText: Copyright (c) 2023-2025 The Lethe Authors
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
 #ifndef lethe_fluid_dynamics_matrix_free_h
@@ -103,6 +103,12 @@ public:
     const SimulationParameters<dim> &simulation_parameters,
     const DoFHandler<dim>           &dof_handler,
     const DoFHandler<dim>           &dof_handler_fe_q_iso_q1);
+
+  /**
+   * @brief Default destructor.
+   */
+
+  virtual ~MFNavierStokesPreconditionGMGBase() = default;
 
   /**
    * @brief Initializes geometric multigrid preconditioner and pre-calculate terms that are constant.

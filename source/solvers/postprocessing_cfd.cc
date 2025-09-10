@@ -254,7 +254,7 @@ calculate_CFL(const DoFHandler<dim> &dof_handler,
   double h;
 
   // Element degree
-  double degree = double(fe.degree);
+  const unsigned int degree = fe.degree;
 
   // CFL
   double CFL = 0;
@@ -1070,8 +1070,7 @@ calculate_torques(
   Tensor<2, dim>                   shear_rate;
   Tensor<2, dim>                   fluid_stress;
   Tensor<2, dim>                   fluid_pressure;
-  // torque tensor had to be considered in 3D at all time...
-  Tensor<1, 3> torque;
+
 
   std::map<types::boundary_id, Tensor<1, 3>> torque_map;
 
@@ -1564,7 +1563,6 @@ calculate_average_velocity(const DoFHandler<dim> &dof_handler,
   const unsigned int               n_q_points = quadrature_formula.size();
   const FEValuesExtractors::Vector velocities(0);
   std::vector<Tensor<1, dim>>      velocity_values(n_q_points);
-  Tensor<1, dim>                   normal_vector;
 
   FEValues<dim> fe_values(mapping,
                           fe,

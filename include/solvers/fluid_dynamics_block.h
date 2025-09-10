@@ -1,4 +1,4 @@
-// SPDX-FileCopyrightText: Copyright (c) 2019-2024 The Lethe Authors
+// SPDX-FileCopyrightText: Copyright (c) 2019-2025 The Lethe Authors
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
 #ifndef lethe_fluid_dynamics_block_h
@@ -23,7 +23,7 @@
 using namespace dealii;
 
 template <class BSPreconditioner>
-class BlockSchurPreconditioner : public Subscriptor
+class BlockSchurPreconditioner : public EnableObserverPointer
 {
 public:
   BlockSchurPreconditioner(double gamma,
@@ -335,7 +335,7 @@ BlockSchurPreconditioner<BSPreconditioner>::vmult(
 
 
 template <class PreconditionerMp>
-class BlockDiagPreconditioner : public Subscriptor
+class BlockDiagPreconditioner : public EnableObserverPointer
 {
 public:
   BlockDiagPreconditioner(const TrilinosWrappers::BlockSparseMatrix &S,

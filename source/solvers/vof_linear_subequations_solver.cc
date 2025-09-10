@@ -130,7 +130,7 @@ VOFLinearSubequationsSolver<dim>::solve_void_fraction_linear_system()
     }
 
   // ILU preconditioner
-  const double ilu_fill =
+  const unsigned int ilu_fill =
     this->simulation_parameters.linear_solver.at(PhysicsID::VOF)
       .ilu_precond_fill;
   const double ilu_atol =

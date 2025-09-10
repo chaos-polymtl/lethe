@@ -1,4 +1,4 @@
-// SPDX-FileCopyrightText: Copyright (c) 2023-2024 The Lethe Authors
+// SPDX-FileCopyrightText: Copyright (c) 2023-2025 The Lethe Authors
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
 #ifndef lethe_fluid_dynamics_matrix_free_operators_h
@@ -114,7 +114,7 @@ evaluate_function(const Function<dim>                       &function,
  * @tparam number Abstract type for number across the class (i.e., double).
  */
 template <int dim, typename number>
-class NavierStokesOperatorBase : public Subscriptor
+class NavierStokesOperatorBase : public EnableObserverPointer
 {
 public:
   using FECellIntegrator = FEEvaluation<dim, -1, 0, dim + 1, number>;

@@ -230,9 +230,9 @@ VOFAlgebraicInterfaceReinitialization<dim>::assemble_system_matrix()
                                                update_values);
 
   // Initialize size of arrays
-  const double n_q_points =
+  const unsigned int n_q_points =
     fe_values_algebraic_reinitialization.get_quadrature().size();
-  const double n_dofs_per_cell =
+  const unsigned int n_dofs_per_cell =
     fe_values_algebraic_reinitialization.get_fe().n_dofs_per_cell();
 
   // Initialize local matrix
@@ -425,9 +425,9 @@ VOFAlgebraicInterfaceReinitialization<dim>::assemble_system_rhs()
                                                update_values);
 
   // Initialize size of arrays
-  const double n_q_points =
+  const unsigned int n_q_points =
     fe_values_algebraic_reinitialization.get_quadrature().size();
-  const double n_dofs_per_cell =
+  const unsigned int n_dofs_per_cell =
     fe_values_algebraic_reinitialization.get_fe().n_dofs_per_cell();
 
   //  Initialize local rhs
@@ -629,7 +629,7 @@ VOFAlgebraicInterfaceReinitialization<dim>::solve_linear_system(
     }
 
   // ILU preconditioner
-  const double ilu_fill =
+  const unsigned int ilu_fill =
     this->simulation_parameters.vof_subequations_linear_solvers
       .at(VOFSubequationsID::algebraic_interface_reinitialization)
       .ilu_precond_fill;
