@@ -80,7 +80,8 @@ generate_particle_grid(const Point<dim>          pt1,
 }
 
 void
-test()
+test_void_fraction_qcm(const unsigned int fe_degree,
+                       const unsigned int number_quadrature_points)
 {
   const auto         my_rank = Utilities::MPI::this_mpi_process(MPI_COMM_WORLD);
   const unsigned int n_procs = Utilities::MPI::n_mpi_processes(MPI_COMM_WORLD);
@@ -130,11 +131,17 @@ test()
 
   // Setup the ParticleProjector. For this we need VoidFractionParameters,
   // LinearSolverParameters and a conditional OSStream.
+
+  // Setup default VoidFractionParameters
   std::shared_ptr<Parameters::VoidFractionParameters<3>>
     void_fraction_parameters = make_default_void_fraction_parameters();
+  void_fraction_parameters->n_quadrature_points = number_quadrature_points;
 
+  // Setup a default linear solver.
   Parameters::LinearSolver linear_solver_parameters =
     make_default_linear_solver();
+
+  // Setup a pcout which is required by the ParticleProjector.
 
   ConditionalOStream pcout(deallog.get_file_stream(),
                            Utilities::MPI::this_mpi_process(MPI_COMM_WORLD) ==
@@ -146,7 +153,7 @@ test()
                                           void_fraction_parameters,
                                           linear_solver_parameters,
                                           &particle_handler,
-                                          1,
+                                          fe_degree,
                                           false,
                                           pcout);
 
@@ -212,7 +219,15 @@ main(int argc, char *argv[])
 
       Utilities::MPI::MPI_InitFinalize mpi_initialization(argc, argv, 1);
 
-      test();
+      deallog << "Void fraction: fe_degree=1    number_quadrature_points=2"
+              << std::endl;
+      test_void_fraction_qcm(1, 2);
+      deallog << "Void fraction: fe_degree=1    number_quadrature_points=3"
+              << std::endl;
+      test_void_fraction_qcm(1, 3);
+      deallog << "Void fraction: fe_degree=2    number_quadrature_points=3"
+              << std::endl;
+      test_void_fraction_qcm(2, 3);
     }
   catch (std::exception &exc)
     {
