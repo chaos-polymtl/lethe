@@ -23,7 +23,7 @@
 using namespace dealii;
 
 template <class BSPreconditioner>
-class BlockSchurPreconditioner : public Subscriptor
+class BlockSchurPreconditioner : public EnableObserverPointer
 {
 public:
   BlockSchurPreconditioner(double gamma,
@@ -335,7 +335,7 @@ BlockSchurPreconditioner<BSPreconditioner>::vmult(
 
 
 template <class PreconditionerMp>
-class BlockDiagPreconditioner : public Subscriptor
+class BlockDiagPreconditioner : public EnableObserverPointer
 {
 public:
   BlockDiagPreconditioner(const TrilinosWrappers::BlockSparseMatrix &S,

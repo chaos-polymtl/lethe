@@ -35,7 +35,7 @@
  * @brief A base class of preconditioners used by the smoother.
  */
 template <typename VectorType>
-class PreconditionBase : public Subscriptor
+class PreconditionBase : public EnableObserverPointer
 {
 public:
   /**

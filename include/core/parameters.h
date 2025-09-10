@@ -1243,7 +1243,7 @@ namespace Parameters
     PreconditionerType preconditioner;
 
     /// ILU or ILUT fill
-    double ilu_precond_fill;
+    unsigned int ilu_precond_fill;
 
     /// ILU or ILUT absolute tolerance
     double ilu_precond_atol;
@@ -1255,7 +1255,7 @@ namespace Parameters
     /// preconditioner of a coarse-grid solver for LSMG or GCMG
 
     /// ILU or ILUT fill for smoother
-    double amg_precond_ilu_fill;
+    unsigned int amg_precond_ilu_fill;
 
     /// ILU or ILUT absolute tolerance for smoother
     double amg_precond_ilu_atol;

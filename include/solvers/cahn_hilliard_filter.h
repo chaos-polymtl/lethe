@@ -16,6 +16,11 @@ public:
   {}
 
   /**
+   * @brief Default destructor.
+   */
+  virtual ~CahnHilliardFilterBase() = default;
+
+  /**
    * @brief Instantiate and return a pointer to a CahnHilliardFilterBase
    * object by casting it to the proper child class.
    *

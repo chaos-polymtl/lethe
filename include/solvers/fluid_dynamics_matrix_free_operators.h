@@ -114,7 +114,7 @@ evaluate_function(const Function<dim>                       &function,
  * @tparam number Abstract type for number across the class (i.e., double).
  */
 template <int dim, typename number>
-class NavierStokesOperatorBase : public Subscriptor
+class NavierStokesOperatorBase : public EnableObserverPointer
 {
 public:
   using FECellIntegrator = FEEvaluation<dim, -1, 0, dim + 1, number>;

@@ -580,8 +580,6 @@ FluidDynamicsBlock<dim>::setup_dofs_fd()
   this->locally_relevant_dofs[1] =
     locally_relevant_dofs_acquisition.get_view(dof_u, dof_u + dof_p);
 
-  FEValuesExtractors::Vector velocities(0);
-
   // Non-zero constraints
   this->define_non_zero_constraints();
 
@@ -823,7 +821,7 @@ FluidDynamicsBlock<dim>::setup_ILU()
   //**********************************************
   // Trillinos Wrapper ILU Preconditioner
   //*********************************************
-  const double ilu_fill =
+  const unsigned int ilu_fill =
     this->simulation_parameters.linear_solver.at(PhysicsID::fluid_dynamics)
       .ilu_precond_fill;
   const double ilu_atol =
@@ -1109,7 +1107,7 @@ FluidDynamicsBlock<dim>::solve_L2_system(const bool initial_step,
   //**********************************************
   // Trillinos Wrapper ILU Preconditioner
   //*********************************************
-  const double ilu_fill =
+  const unsigned int ilu_fill =
     this->simulation_parameters.linear_solver.at(PhysicsID::fluid_dynamics)
       .ilu_precond_fill;
   const double ilu_atol =

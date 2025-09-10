@@ -105,6 +105,12 @@ public:
     const DoFHandler<dim>           &dof_handler_fe_q_iso_q1);
 
   /**
+   * @brief Default destructor.
+   */
+
+  virtual ~MFNavierStokesPreconditionGMGBase() = default;
+
+  /**
    * @brief Initializes geometric multigrid preconditioner and pre-calculate terms that are constant.
    *
    * @param[in] mapping Describes the transformations from unit to real cell.

@@ -15,6 +15,11 @@ class VolumeOfFluidFilterBase
 {
 public:
   /**
+   * @brief Default destructor.
+   */
+  virtual ~VolumeOfFluidFilterBase() = default;
+
+  /**
    * @brief Instantiate and return a pointer to a VolumeOfFluidFilterBase
    * object by casting it to the proper child class.
    *

@@ -76,8 +76,6 @@ FluidDynamicsMatrixBased<dim>::setup_dofs_fd()
   this->locally_relevant_dofs =
     DoFTools::extract_locally_relevant_dofs(this->dof_handler);
 
-  FEValuesExtractors::Vector velocities(0);
-
   // If enabled, rotate rotor mapping
   this->rotate_rotor_mapping(false);
 
@@ -89,7 +87,6 @@ FluidDynamicsMatrixBased<dim>::setup_dofs_fd()
 
   // If enabled, create mortar operators
   this->reinit_mortar_operators();
-
 
   // Operations on the following vectors (addition, multiplication, etc.) can
   // only be done if these are reinitialized WITHOUT locally_relevant_dofs. This
