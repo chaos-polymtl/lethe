@@ -997,8 +997,6 @@ NavierStokesBase<dim, VectorType, DofsType>::box_refine_mesh(const bool restart)
 
 
       Vector<float> estimated_error_per_cell(tria.n_active_cells());
-      const FEValuesExtractors::Vector velocity(0);
-      const FEValuesExtractors::Scalar pressure(dim);
       auto &present_solution = this->present_solution;
 
       const auto &cell_iterator =
@@ -2842,7 +2840,7 @@ NavierStokesBase<dim, VectorType, DofsType>::gather_output_results(
     this->simulation_parameters.physical_properties_manager
       .get_rheology_vector();
 
-  const double n_fluids = this->simulation_parameters
+  const unsigned int n_fluids = this->simulation_parameters
                             .physical_properties_manager.get_number_of_fluids();
 
   std::vector<std::shared_ptr<DensityPostprocessor<dim>>>

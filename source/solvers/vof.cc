@@ -2026,7 +2026,7 @@ VolumeOfFluid<dim>::solve_projection_phase_fraction(GlobalVectorType &solution)
 
   TrilinosWrappers::SolverCG solver(solver_control);
 
-  const double ilu_fill =
+  const unsigned int ilu_fill =
     this->simulation_parameters.linear_solver.at(PhysicsID::VOF)
       .ilu_precond_fill;
   const double ilu_atol =
@@ -2606,7 +2606,7 @@ VolumeOfFluid<dim>::solve_linear_system(const bool initial_step,
                   << linear_solver_tolerance << std::endl;
     }
 
-  const double ilu_fill =
+  const unsigned int ilu_fill =
     simulation_parameters.linear_solver.at(PhysicsID::VOF).ilu_precond_fill;
   const double ilu_atol =
     simulation_parameters.linear_solver.at(PhysicsID::VOF).ilu_precond_atol;
@@ -2850,7 +2850,7 @@ VolumeOfFluid<dim>::solve_interface_sharpening(GlobalVectorType &solution)
   //**********************************************
   // Trillinos Wrapper ILU Preconditioner
   //*********************************************
-  const double ilu_fill =
+  const unsigned int ilu_fill =
     this->simulation_parameters.linear_solver.at(PhysicsID::VOF)
       .ilu_precond_fill;
   const double ilu_atol =

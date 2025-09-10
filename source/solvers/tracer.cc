@@ -1455,7 +1455,7 @@ Tracer<dim>::solve_linear_system(const bool initial_step,
                   << linear_solver_tolerance << std::endl;
     }
 
-  const double ilu_fill =
+  const unsigned int ilu_fill =
     simulation_parameters.linear_solver.at(PhysicsID::tracer).ilu_precond_fill;
   const double ilu_atol =
     simulation_parameters.linear_solver.at(PhysicsID::tracer).ilu_precond_atol;
