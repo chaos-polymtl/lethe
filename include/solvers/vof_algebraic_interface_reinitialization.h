@@ -279,7 +279,10 @@ private:
                                  *this->cell_quadrature,
                                  this->triangulation->get_mpi_communicator());
 
-    return h_min * cfl;
+    // Compute diffusivity
+    const double diffusivity_inv = 1.0 / compute_diffusivity(h_min);
+
+    return h_min * h_min * 0.25 * diffusivity_inv * cfl;
   }
 
   /**
@@ -361,14 +364,15 @@ private:
         solution_diff -= previous_local_evaluation_point;
 
         // Evaluate the current steady-state criterion value
-        double stop_criterion = solution_diff.l2_norm()/previous_local_evaluation_point.l2_norm();
+        double stop_criterion =
+          solution_diff.l2_norm() / previous_local_evaluation_point.l2_norm();
 
         if (this->subequation_verbosity == Parameters::Verbosity::extra_verbose)
           {
             this->pcout
               << "Algebraic reinitialization solution norm difference = "
               << solution_diff.l2_norm() << std::endl;
-              // << solution_diff.linfty_norm() << std::endl;
+            // << solution_diff.linfty_norm() << std::endl;
             this->pcout
               << "Algebraic reinitialization steady-state criterion value = "
               << stop_criterion << std::endl;
