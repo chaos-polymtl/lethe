@@ -714,11 +714,6 @@ CFDDEMSolver<dim>::read_checkpoint()
     std::vector<OutputStructTableHandler> table_output_structs =
       this->Base::gather_tables();
       this->deserialize_tables_vector(table_output_structs);
-    std::ofstream output("Test_table_after_checkpoint");
-    this->enstrophy_table.write_text(output);
-    output.close();
-    output.open("Test_table_after_checkpoint_CFDDEM");
-    table_phase_volumes.write_text(output);
   }
 }
 
