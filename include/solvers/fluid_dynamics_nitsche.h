@@ -135,6 +135,15 @@ private:
   virtual void
   refine_mesh() override;
 
+   /**
+   * @brief Returns a vector of references to TableHandler objects that needs to be serialized/
+   * deserialized for a given solver. This function overrides the one in NavierStokesBase.
+   *
+   * @return Structure containing a vector of references to TableHandler objects that needs to be
+   * serialized/deserialized for a given solver, and their corresponding file names.
+   */                                      
+  std::vector<OutputStructTableHandler> gather_tables() override;
+
   /**
    * @brief Write a gls_nitsche simulation checkpointing to allow for gls_nitsche simulation restart
    */
