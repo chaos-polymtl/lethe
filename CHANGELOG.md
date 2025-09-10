@@ -76,7 +76,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
 ### Added
 
-- MINOR A new time stepping scheme to solve the unsteady Navier-Stokes equations with a matrix based solver. Before, only BDF schemes were used in Lethe. This PR adds the Singly Diagonnaly Implicit Runge-Kutta (SDIRK) schemes with order 2, 3 and 4. [#1598](https://github.com/chaos-polymtl/lethe/pull/1598/)
+- MINOR A new time stepping scheme to solve the unsteady Navier-Stokes equations with a matrix-based solver. Before, only BDF schemes were used in Lethe. This PR adds the Singly Diagonally Implicit Runge-Kutta (SDIRK) schemes with order 2, 3 and 4. [#1598](https://github.com/chaos-polymtl/lethe/pull/1598/)
 
 ### [Master] - 2025-08-08
 
