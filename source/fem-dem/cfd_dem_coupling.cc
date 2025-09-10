@@ -440,14 +440,14 @@ CFDDEMSolver<dim>::gather_tables()
   std::vector<OutputStructTableHandler> table_output_structs;
 
   const Parameters::PostProcessing post_processing =
-      this->simulation_parameters.post_processing;
-    std::string prefix =
-      this->simulation_parameters.simulation_control.output_folder;
-    std::string suffix = ".checkpoint";
+    this->simulation_parameters.post_processing;
+  std::string prefix =
+    this->simulation_parameters.simulation_control.output_folder;
+  std::string suffix = ".checkpoint";
   if (post_processing.calculate_phase_volumes)
-          table_output_structs.emplace_back(
-            this->table_phase_volumes,
-            prefix + post_processing.phase_volumes_output_name + suffix);
+    table_output_structs.emplace_back(
+      this->table_phase_volumes,
+      prefix + post_processing.phase_volumes_output_name + suffix);
   return table_output_structs;
 }
 
@@ -542,11 +542,12 @@ CFDDEMSolver<dim>::write_checkpoint()
     // Serialize the post-processing tables that are particular to this solver
     const std::vector<OutputStructTableHandler> &table_output_structs_add =
       this->gather_tables();
-      this->serialize_tables_vector(table_output_structs_add);
-    // Serialize the default post-processing tables that are members of NavierStokesBase
+    this->serialize_tables_vector(table_output_structs_add);
+    // Serialize the default post-processing tables that are members of
+    // NavierStokesBase
     const std::vector<OutputStructTableHandler> &table_output_structs =
       this->Base::gather_tables();
-      this->serialize_tables_vector(table_output_structs);
+    this->serialize_tables_vector(table_output_structs);
   }
 }
 
@@ -709,11 +710,12 @@ CFDDEMSolver<dim>::read_checkpoint()
     // Deserialize the post-processing tables that are particular to this solver
     std::vector<OutputStructTableHandler> table_output_structs_add =
       this->gather_tables();
-      this->deserialize_tables_vector(table_output_structs_add);
-    // Deserialize the default post-processing tables that are members of NavierStokesBase
+    this->deserialize_tables_vector(table_output_structs_add);
+    // Deserialize the default post-processing tables that are members of
+    // NavierStokesBase
     std::vector<OutputStructTableHandler> table_output_structs =
       this->Base::gather_tables();
-      this->deserialize_tables_vector(table_output_structs);
+    this->deserialize_tables_vector(table_output_structs);
   }
 }
 

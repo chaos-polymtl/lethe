@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
 #ifndef lethe_output_struct_h
-#define lethe_output_struct_h
+#  define lethe_output_struct_h
 
 #include <deal.II/numerics/data_postprocessor.h>
 
@@ -117,25 +117,25 @@ using OutputStruct = std::variant<OutputStructPostprocessor<dim, VectorType>,
 
 /**
  * @brief Struct containing information about the table handlers to be written/read.
- * It is used to pass a vector of references to TableHandler objects that should 
- * be serialized/deserialized at the writing/reading of a checkpoint by the solver 
- * used, and a vector of references to strings containing the names of the 
- * corresponding files.
+ * It is used to pass a vector of references to TableHandler objects that should
+ * be serialized/deserialized at the writing/reading of a checkpoint by the
+ * solver used, and a vector of references to strings containing the names of
+ * the corresponding files.
  */
 struct OutputStructTableHandler
 {
-/**
- * @brief Constructor
- *
- * @param[in] table A reference to a TableHandler objects that needs to be serialized/
- * deserialized.
- * @param[in] table_filename A string with the corresponding file name.
- */
-  OutputStructTableHandler(TableHandler &table,
-                           const std::string  &table_filename)
+  /**
+   * @brief Constructor
+   *
+   * @param[in] table A reference to a TableHandler objects that needs to be
+   * serialized/ deserialized.
+   * @param[in] table_filename A string with the corresponding file name.
+   */
+  OutputStructTableHandler(TableHandler      &table,
+                           const std::string &table_filename)
     : table(table)
     , table_filename(table_filename)
   {}
-  TableHandler &table;
-  const std::string  table_filename;
+  TableHandler     &table;
+  const std::string table_filename;
 };
