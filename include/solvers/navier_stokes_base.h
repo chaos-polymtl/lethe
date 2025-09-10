@@ -845,35 +845,38 @@ protected:
   constrain_stasis_with_temperature_vof(const DoFHandler<dim> *dof_handler_vof,
                                         const DoFHandler<dim> *dof_handler_ht);
 
-   /**
+  /**
    * @brief Returns a vector of references to TableHandler objects that needs to be serialized/
    * deserialized for a given solver.
    *
    * @return Structure containing a vector of references to TableHandler objects that needs to be
-   * serialized/deserialized for a given solver, and their corresponding file names.
-   */                                      
+   * serialized/deserialized for a given solver, and their corresponding file
+   * names.
+   */
   virtual std::vector<OutputStructTableHandler>
   gather_tables();
-  
+
   /**
    * @brief Serializes all the TableHandler objects in table_output_structs.
    *
-   * @param[in] table_output_structs Vector of structures containing references 
-   * to TableHandler objects that needs to be serialized/deserialized for a given
-   * solver, and their corresponding file names.
-   */ 
+   * @param[in] table_output_structs Vector of structures containing references
+   * to TableHandler objects that needs to be serialized/deserialized for a
+   * given solver, and their corresponding file names.
+   */
   void
-  serialize_tables_vector(const std::vector<OutputStructTableHandler> &table_output_structs);
+  serialize_tables_vector(
+    const std::vector<OutputStructTableHandler> &table_output_structs);
 
-    /**
+  /**
    * @brief Deserializes all the TableHandler objects in table_output_structs.
    *
-   * @param[in] table_output_structs Vector of structures containing references 
-   * to TableHandler objects that needs to be serialized/deserialized for a given
-   * solver, and their corresponding file names.
-   */ 
+   * @param[in] table_output_structs Vector of structures containing references
+   * to TableHandler objects that needs to be serialized/deserialized for a
+   * given solver, and their corresponding file names.
+   */
   void
-  deserialize_tables_vector(std::vector<OutputStructTableHandler> &table_output_structs);
+  deserialize_tables_vector(
+    std::vector<OutputStructTableHandler> &table_output_structs);
 
   /**
    * @brief Write the checkpoint

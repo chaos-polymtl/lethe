@@ -1,4 +1,4 @@
-// SPDX-FileCopyrightText: Copyright (c) 2020-2022, 2024 The Lethe Authors
+// SPDX-FileCopyrightText: Copyright (c) 2020-2025 The Lethe Authors
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
 #ifndef lethe_fluid_dynamics_nitsche_h
@@ -135,14 +135,17 @@ private:
   virtual void
   refine_mesh() override;
 
-   /**
+  /**
    * @brief Returns a vector of references to TableHandler objects that needs to be serialized/
-   * deserialized for a given solver. This function overrides the one in NavierStokesBase.
+   * deserialized for a given solver. This function overrides the one in
+   * NavierStokesBase.
    *
    * @return Structure containing a vector of references to TableHandler objects that needs to be
-   * serialized/deserialized for a given solver, and their corresponding file names.
-   */                                      
-  std::vector<OutputStructTableHandler> gather_tables() override;
+   * serialized/deserialized for a given solver, and their corresponding file
+   * names.
+   */
+  std::vector<OutputStructTableHandler>
+  gather_tables() override;
 
   /**
    * @brief Write a gls_nitsche simulation checkpointing to allow for gls_nitsche simulation restart
