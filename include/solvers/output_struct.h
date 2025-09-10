@@ -2,9 +2,9 @@
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
 #ifndef lethe_output_struct_h
-#define lethe_output_struct_h
+#  define lethe_output_struct_h
 
-#include <solvers/postprocessors.h>
+#  include <solvers/postprocessors.h>
 
 using namespace dealii;
 
