@@ -20,7 +20,6 @@ var searchData=
   ['tracerboundaryconditions_17',['TracerBoundaryConditions',['../classBoundaryConditions_1_1TracerBoundaryConditions.html',1,'BoundaryConditions']]],
   ['tracerdiffusivitymodel_18',['TracerDiffusivityModel',['../classTracerDiffusivityModel.html',1,'']]],
   ['tracerdriftvelocity_19',['TracerDriftVelocity',['../classParameters_1_1TracerDriftVelocity.html',1,'Parameters']]],
-  ['tracerfaceassembler_20',['TracerFaceAssembler',['../classTracerFaceAssembler.html',1,'']]],
-  ['tracerreactionprefactormodel_21',['TracerReactionPrefactorModel',['../classTracerReactionPrefactorModel.html',1,'']]],
-  ['tracerscratchdata_22',['TracerScratchData',['../classTracerScratchData.html',1,'']]]
+  ['tracerreactionprefactormodel_20',['TracerReactionPrefactorModel',['../classTracerReactionPrefactorModel.html',1,'']]],
+  ['tracerscratchdata_21',['TracerScratchData',['../classTracerScratchData.html',1,'']]]
 ];

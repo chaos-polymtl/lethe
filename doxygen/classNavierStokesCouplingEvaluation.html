@@ -115,6 +115,8 @@ Public Types</h2></td></tr>
 Public Member Functions</h2></td></tr>
 <tr class="memitem:a255e2a67225589ccf1a8e8a39a8d490d" id="r_a255e2a67225589ccf1a8e8a39a8d490d"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classNavierStokesCouplingEvaluation.html#a255e2a67225589ccf1a8e8a39a8d490d">NavierStokesCouplingEvaluation</a> (const Mapping&lt; dim &gt; &amp;mapping, const DoFHandler&lt; dim &gt; &amp;dof_handler, const double <a class="el" href="classNavierStokesCouplingEvaluation.html#abc46c6236f52e08f1383b9e67fc08b2c">kinematic_viscosity</a>)</td></tr>
 <tr class="separator:a255e2a67225589ccf1a8e8a39a8d490d"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ab390a27c2415ce09a23cfa05113edf6b" id="r_ab390a27c2415ce09a23cfa05113edf6b"><td class="memItemLeft" align="right" valign="top">virtual&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classNavierStokesCouplingEvaluation.html#ab390a27c2415ce09a23cfa05113edf6b">~NavierStokesCouplingEvaluation</a> ()=default</td></tr>
+<tr class="separator:ab390a27c2415ce09a23cfa05113edf6b"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a906cf61e4a065e6abf79ca811f9b04d4" id="r_a906cf61e4a065e6abf79ca811f9b04d4"><td class="memItemLeft" align="right" valign="top">unsigned int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classNavierStokesCouplingEvaluation.html#a906cf61e4a065e6abf79ca811f9b04d4">data_size</a> () const override</td></tr>
 <tr class="separator:a906cf61e4a065e6abf79ca811f9b04d4"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a5986f39ed8f28971249df24671e36951" id="r_a5986f39ed8f28971249df24671e36951"><td class="memItemLeft" align="right" valign="top">const std::vector&lt; unsigned int &gt; &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classNavierStokesCouplingEvaluation.html#a5986f39ed8f28971249df24671e36951">get_relevant_dof_indices</a> () const override</td></tr>
@@ -144,7 +146,7 @@ Public Attributes</h2></td></tr>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><div class="compoundTemplParams">template&lt;int dim, typename Number&gt;<br />
 class NavierStokesCouplingEvaluation&lt; dim, Number &gt;</div>
-<p class="definition">Definition at line <a class="el" href="mortar__coupling__manager_8h_source.html#l00858">858</a> of file <a class="el" href="mortar__coupling__manager_8h_source.html">mortar_coupling_manager.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="mortar__coupling__manager_8h_source.html#l00863">863</a> of file <a class="el" href="mortar__coupling__manager_8h_source.html">mortar_coupling_manager.h</a>.</p>
 </div><h2 class="groupheader">Member Typedef Documentation</h2>
 <a id="a61298464226b9fd4c0fae275d11d1854" name="a61298464226b9fd4c0fae275d11d1854"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a61298464226b9fd4c0fae275d11d1854">&#9670;&#160;</a></span>FEPointIntegratorP</h2>
@@ -160,7 +162,7 @@ template&lt;int dim, typename Number &gt; </div>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="mortar__coupling__manager_8h_source.html#l00863">863</a> of file <a class="el" href="mortar__coupling__manager_8h_source.html">mortar_coupling_manager.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="mortar__coupling__manager_8h_source.html#l00868">868</a> of file <a class="el" href="mortar__coupling__manager_8h_source.html">mortar_coupling_manager.h</a>.</p>
 
 </div>
 </div>
@@ -178,7 +180,7 @@ template&lt;int dim, typename Number &gt; </div>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="mortar__coupling__manager_8h_source.html#l00862">862</a> of file <a class="el" href="mortar__coupling__manager_8h_source.html">mortar_coupling_manager.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="mortar__coupling__manager_8h_source.html#l00867">867</a> of file <a class="el" href="mortar__coupling__manager_8h_source.html">mortar_coupling_manager.h</a>.</p>
 
 </div>
 </div>
@@ -196,7 +198,7 @@ template&lt;int dim, typename Number &gt; </div>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="mortar__coupling__manager_8h_source.html#l00865">865</a> of file <a class="el" href="mortar__coupling__manager_8h_source.html">mortar_coupling_manager.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="mortar__coupling__manager_8h_source.html#l00870">870</a> of file <a class="el" href="mortar__coupling__manager_8h_source.html">mortar_coupling_manager.h</a>.</p>
 
 </div>
 </div>
@@ -237,7 +239,36 @@ template&lt;int dim, typename Number &gt; </div>
 
 <p class="definition">Definition at line <a class="el" href="mortar__coupling__manager_8cc_source.html#l01544">1544</a> of file <a class="el" href="mortar__coupling__manager_8cc_source.html">mortar_coupling_manager.cc</a>.</p>
 
-<p class="reference">References <a class="el" href="mortar__coupling__manager_8h_source.html#l00907">NavierStokesCouplingEvaluation&lt; dim, Number &gt;::relevant_dof_indices</a>.</p>
+<p class="reference">References <a class="el" href="mortar__coupling__manager_8h_source.html#l00917">NavierStokesCouplingEvaluation&lt; dim, Number &gt;::relevant_dof_indices</a>.</p>
+
+</div>
+</div>
+<a id="ab390a27c2415ce09a23cfa05113edf6b" name="ab390a27c2415ce09a23cfa05113edf6b"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ab390a27c2415ce09a23cfa05113edf6b">&#9670;&#160;</a></span>~NavierStokesCouplingEvaluation()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;int dim, typename Number &gt; </div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">virtual <a class="el" href="classNavierStokesCouplingEvaluation.html">NavierStokesCouplingEvaluation</a>&lt; dim, Number &gt;::~<a class="el" href="classNavierStokesCouplingEvaluation.html">NavierStokesCouplingEvaluation</a> </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">virtual</span><span class="mlabel">default</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Default destructor. </p>
 
 </div>
 </div>
@@ -376,7 +407,7 @@ template&lt;int dim, typename Number &gt; </div>
 
 <p class="definition">Definition at line <a class="el" href="mortar__coupling__manager_8cc_source.html#l01596">1596</a> of file <a class="el" href="mortar__coupling__manager_8cc_source.html">mortar_coupling_manager.cc</a>.</p>
 
-<p class="reference">References <a class="el" href="mortar__coupling__manager_8h_source.html#l00500">CouplingEvaluationData&lt; dim, Number &gt;::all_normals</a>, <a class="el" href="mortar__coupling__manager_8h_source.html#l00320">contract()</a>, and <a class="el" href="mortar__coupling__manager_8h_source.html#l00758">BufferRW&lt; T &gt;::write()</a>.</p>
+<p class="reference">References <a class="el" href="mortar__coupling__manager_8h_source.html#l00505">CouplingEvaluationData&lt; dim, Number &gt;::all_normals</a>, <a class="el" href="mortar__coupling__manager_8h_source.html#l00325">contract()</a>, and <a class="el" href="mortar__coupling__manager_8h_source.html#l00763">BufferRW&lt; T &gt;::write()</a>.</p>
 
 </div>
 </div>
@@ -457,7 +488,7 @@ template&lt;int dim, typename Number &gt; </div>
 
 <p class="definition">Definition at line <a class="el" href="mortar__coupling__manager_8cc_source.html#l01642">1642</a> of file <a class="el" href="mortar__coupling__manager_8cc_source.html">mortar_coupling_manager.cc</a>.</p>
 
-<p class="reference">References <a class="el" href="mortar__coupling__manager_8h_source.html#l00500">CouplingEvaluationData&lt; dim, Number &gt;::all_normals</a>, <a class="el" href="mortar__coupling__manager_8h_source.html#l00496">CouplingEvaluationData&lt; dim, Number &gt;::all_penalty_parameter</a>, <a class="el" href="mortar__coupling__manager_8h_source.html#l00498">CouplingEvaluationData&lt; dim, Number &gt;::all_weights</a>, <a class="el" href="mortar__coupling__manager_8h_source.html#l00320">contract()</a>, <a class="el" href="mortar__coupling__manager_8h_source.html#l00374">outer()</a>, and <a class="el" href="mortar__coupling__manager_8h_source.html#l00494">CouplingEvaluationData&lt; dim, Number &gt;::penalty_factor</a>.</p>
+<p class="reference">References <a class="el" href="mortar__coupling__manager_8h_source.html#l00505">CouplingEvaluationData&lt; dim, Number &gt;::all_normals</a>, <a class="el" href="mortar__coupling__manager_8h_source.html#l00501">CouplingEvaluationData&lt; dim, Number &gt;::all_penalty_parameter</a>, <a class="el" href="mortar__coupling__manager_8h_source.html#l00503">CouplingEvaluationData&lt; dim, Number &gt;::all_weights</a>, <a class="el" href="mortar__coupling__manager_8h_source.html#l00325">contract()</a>, <a class="el" href="mortar__coupling__manager_8h_source.html#l00379">outer()</a>, and <a class="el" href="mortar__coupling__manager_8h_source.html#l00499">CouplingEvaluationData&lt; dim, Number &gt;::penalty_factor</a>.</p>
 
 </div>
 </div>
@@ -527,7 +558,7 @@ template&lt;int dim, typename Number &gt; </div>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="mortar__coupling__manager_8h_source.html#l00900">900</a> of file <a class="el" href="mortar__coupling__manager_8h_source.html">mortar_coupling_manager.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="mortar__coupling__manager_8h_source.html#l00910">910</a> of file <a class="el" href="mortar__coupling__manager_8h_source.html">mortar_coupling_manager.h</a>.</p>
 
 </div>
 </div>
@@ -546,7 +577,7 @@ template&lt;int dim, typename Number &gt; </div>
 </div><div class="memdoc">
 <p>Finite element that matches the components <code>n_components</code> components starting at component with index <code>first_selected_component</code>. </p>
 
-<p class="definition">Definition at line <a class="el" href="mortar__coupling__manager_8h_source.html#l00899">899</a> of file <a class="el" href="mortar__coupling__manager_8h_source.html">mortar_coupling_manager.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="mortar__coupling__manager_8h_source.html#l00909">909</a> of file <a class="el" href="mortar__coupling__manager_8h_source.html">mortar_coupling_manager.h</a>.</p>
 
 </div>
 </div>
@@ -566,7 +597,7 @@ template&lt;int dim, typename Number &gt; </div>
 
 <p>Kinematic viscosity. </p>
 
-<p class="definition">Definition at line <a class="el" href="mortar__coupling__manager_8h_source.html#l00910">910</a> of file <a class="el" href="mortar__coupling__manager_8h_source.html">mortar_coupling_manager.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="mortar__coupling__manager_8h_source.html#l00920">920</a> of file <a class="el" href="mortar__coupling__manager_8h_source.html">mortar_coupling_manager.h</a>.</p>
 
 </div>
 </div>
@@ -592,7 +623,7 @@ template&lt;int dim, typename Number &gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="mortar__coupling__manager_8h_source.html#l00904">904</a> of file <a class="el" href="mortar__coupling__manager_8h_source.html">mortar_coupling_manager.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="mortar__coupling__manager_8h_source.html#l00914">914</a> of file <a class="el" href="mortar__coupling__manager_8h_source.html">mortar_coupling_manager.h</a>.</p>
 
 </div>
 </div>
@@ -620,7 +651,7 @@ template&lt;int dim, typename Number &gt; </div>
 
 <p>Interface to the evaluation of mortar coupling interpolated solution. </p>
 
-<p class="definition">Definition at line <a class="el" href="mortar__coupling__manager_8h_source.html#l00903">903</a> of file <a class="el" href="mortar__coupling__manager_8h_source.html">mortar_coupling_manager.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="mortar__coupling__manager_8h_source.html#l00913">913</a> of file <a class="el" href="mortar__coupling__manager_8h_source.html">mortar_coupling_manager.h</a>.</p>
 
 </div>
 </div>
@@ -640,7 +671,7 @@ template&lt;int dim, typename Number &gt; </div>
 
 <p>Relevant dof indices. </p>
 
-<p class="definition">Definition at line <a class="el" href="mortar__coupling__manager_8h_source.html#l00907">907</a> of file <a class="el" href="mortar__coupling__manager_8h_source.html">mortar_coupling_manager.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="mortar__coupling__manager_8h_source.html#l00917">917</a> of file <a class="el" href="mortar__coupling__manager_8h_source.html">mortar_coupling_manager.h</a>.</p>
 
 </div>
 </div>

@@ -871,7 +871,7 @@ $(document).ready(function() { init_codefold(0); });
 <div class="line"><a id="l00747" name="l00747"></a><span class="lineno">  747</span>  <span class="keywordtype">double</span> h = DBL_MAX;</div>
 <div class="line"><a id="l00748" name="l00748"></a><span class="lineno">  748</span> </div>
 <div class="line"><a id="l00749" name="l00749"></a><span class="lineno">  749</span>  <span class="comment">// Element degree</span></div>
-<div class="line"><a id="l00750" name="l00750"></a><span class="lineno">  750</span>  <span class="keyword">const</span> <span class="keywordtype">double</span> degree = double(fe_values.get_fe().degree);</div>
+<div class="line"><a id="l00750" name="l00750"></a><span class="lineno">  750</span>  <span class="keyword">const</span> <span class="keywordtype">unsigned</span> <span class="keywordtype">int</span> degree = fe_values.get_fe().degree;</div>
 <div class="line"><a id="l00751" name="l00751"></a><span class="lineno">  751</span> </div>
 <div class="line"><a id="l00752" name="l00752"></a><span class="lineno">  752</span>  <span class="keywordflow">for</span> (<span class="keyword">const</span> <span class="keyword">auto</span> &amp;cell : dof_handler.active_cell_iterators())</div>
 <div class="line"><a id="l00753" name="l00753"></a><span class="lineno">  753</span>    {</div>

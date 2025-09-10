@@ -1,5 +1,7 @@
 <map id="Graphical Class Hierarchy" name="Graphical Class Hierarchy">
-<area shape="rect" id="Node000000" title=" " alt="" coords="5,20,153,45"/>
-<area shape="rect" id="Node000001" href="$classdealii_1_1MGCoarseGridApplyPreconditioner.html" title=" " alt="" coords="201,5,408,60"/>
-<area shape="poly" id="edge70_Node000000_Node000001" title=" " alt="" coords="167,30,201,30,201,35,167,35"/>
+<area shape="rect" id="Node000000" href="$classMFNavierStokesPreconditionGMGBase.html" title="A geometric multigrid preconditioner compatible with the matrix&#45;free solver." alt="" coords="5,5,215,45"/>
+<area shape="rect" id="Node000001" href="$classMFNavierStokesPreconditionGMG.html" title="A geometric multigrid preconditioner implementation for incompressible flow." alt="" coords="263,5,472,45"/>
+<area shape="poly" id="edge78_Node000000_Node000001" title=" " alt="" coords="228,23,263,23,263,28,228,28"/>
+<area shape="rect" id="Node000002" href="$classMFNavierStokesVANSPreconditionGMG.html" title="A geometric multigrid preconditioner implementation for incompressible VANS equations." alt="" coords="520,5,764,45"/>
+<area shape="poly" id="edge79_Node000001_Node000002" title=" " alt="" coords="486,23,520,23,520,28,486,28"/>
 </map>

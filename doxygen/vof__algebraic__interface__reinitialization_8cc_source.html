@@ -334,9 +334,9 @@ $(document).ready(function() { init_codefold(0); });
 <div class="line"><a id="l00230" name="l00230"></a><span class="lineno">  230</span>                                               update_values);</div>
 <div class="line"><a id="l00231" name="l00231"></a><span class="lineno">  231</span> </div>
 <div class="line"><a id="l00232" name="l00232"></a><span class="lineno">  232</span>  <span class="comment">// Initialize size of arrays</span></div>
-<div class="line"><a id="l00233" name="l00233"></a><span class="lineno">  233</span>  <span class="keyword">const</span> <span class="keywordtype">double</span> n_q_points =</div>
+<div class="line"><a id="l00233" name="l00233"></a><span class="lineno">  233</span>  <span class="keyword">const</span> <span class="keywordtype">unsigned</span> <span class="keywordtype">int</span> n_q_points =</div>
 <div class="line"><a id="l00234" name="l00234"></a><span class="lineno">  234</span>    fe_values_algebraic_reinitialization.get_quadrature().size();</div>
-<div class="line"><a id="l00235" name="l00235"></a><span class="lineno">  235</span>  <span class="keyword">const</span> <span class="keywordtype">double</span> n_dofs_per_cell =</div>
+<div class="line"><a id="l00235" name="l00235"></a><span class="lineno">  235</span>  <span class="keyword">const</span> <span class="keywordtype">unsigned</span> <span class="keywordtype">int</span> n_dofs_per_cell =</div>
 <div class="line"><a id="l00236" name="l00236"></a><span class="lineno">  236</span>    fe_values_algebraic_reinitialization.get_fe().n_dofs_per_cell();</div>
 <div class="line"><a id="l00237" name="l00237"></a><span class="lineno">  237</span> </div>
 <div class="line"><a id="l00238" name="l00238"></a><span class="lineno">  238</span>  <span class="comment">// Initialize local matrix</span></div>
@@ -531,9 +531,9 @@ $(document).ready(function() { init_codefold(0); });
 <div class="line"><a id="l00425" name="l00425"></a><span class="lineno">  425</span>                                               update_values);</div>
 <div class="line"><a id="l00426" name="l00426"></a><span class="lineno">  426</span> </div>
 <div class="line"><a id="l00427" name="l00427"></a><span class="lineno">  427</span>  <span class="comment">// Initialize size of arrays</span></div>
-<div class="line"><a id="l00428" name="l00428"></a><span class="lineno">  428</span>  <span class="keyword">const</span> <span class="keywordtype">double</span> n_q_points =</div>
+<div class="line"><a id="l00428" name="l00428"></a><span class="lineno">  428</span>  <span class="keyword">const</span> <span class="keywordtype">unsigned</span> <span class="keywordtype">int</span> n_q_points =</div>
 <div class="line"><a id="l00429" name="l00429"></a><span class="lineno">  429</span>    fe_values_algebraic_reinitialization.get_quadrature().size();</div>
-<div class="line"><a id="l00430" name="l00430"></a><span class="lineno">  430</span>  <span class="keyword">const</span> <span class="keywordtype">double</span> n_dofs_per_cell =</div>
+<div class="line"><a id="l00430" name="l00430"></a><span class="lineno">  430</span>  <span class="keyword">const</span> <span class="keywordtype">unsigned</span> <span class="keywordtype">int</span> n_dofs_per_cell =</div>
 <div class="line"><a id="l00431" name="l00431"></a><span class="lineno">  431</span>    fe_values_algebraic_reinitialization.get_fe().n_dofs_per_cell();</div>
 <div class="line"><a id="l00432" name="l00432"></a><span class="lineno">  432</span> </div>
 <div class="line"><a id="l00433" name="l00433"></a><span class="lineno">  433</span>  <span class="comment">//  Initialize local rhs</span></div>
@@ -737,7 +737,7 @@ $(document).ready(function() { init_codefold(0); });
 <div class="line"><a id="l00629" name="l00629"></a><span class="lineno">  629</span>    }</div>
 <div class="line"><a id="l00630" name="l00630"></a><span class="lineno">  630</span> </div>
 <div class="line"><a id="l00631" name="l00631"></a><span class="lineno">  631</span>  <span class="comment">// ILU preconditioner</span></div>
-<div class="line"><a id="l00632" name="l00632"></a><span class="lineno">  632</span>  <span class="keyword">const</span> <span class="keywordtype">double</span> ilu_fill =</div>
+<div class="line"><a id="l00632" name="l00632"></a><span class="lineno">  632</span>  <span class="keyword">const</span> <span class="keywordtype">unsigned</span> <span class="keywordtype">int</span> ilu_fill =</div>
 <div class="line"><a id="l00633" name="l00633"></a><span class="lineno">  633</span>    this-&gt;simulation_parameters.vof_subequations_linear_solvers</div>
 <div class="line"><a id="l00634" name="l00634"></a><span class="lineno">  634</span>      .at(<a class="code hl_enumvalue" href="vof__subequations_8h.html#a24bad343f5052b85d1cc3dbd877b3a12a95a3deae4fb177241e3f65f1193835cd">VOFSubequationsID::algebraic_interface_reinitialization</a>)</div>
 <div class="line"><a id="l00635" name="l00635"></a><span class="lineno">  635</span>      .ilu_precond_fill;</div>

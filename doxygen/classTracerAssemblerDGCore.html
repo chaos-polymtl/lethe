@@ -102,8 +102,8 @@ Inheritance diagram for TracerAssemblerDGCore&lt; dim &gt;:</div>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pub-methods" name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
-<tr class="memitem:a6a26b1e01b7120d9264a436ad4ceb35c" id="r_a6a26b1e01b7120d9264a436ad4ceb35c"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classTracerAssemblerDGCore.html#a6a26b1e01b7120d9264a436ad4ceb35c">TracerAssemblerDGCore</a> ()</td></tr>
-<tr class="separator:a6a26b1e01b7120d9264a436ad4ceb35c"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:adf32c1ee600bc75fbafe7e026c367ce7" id="r_adf32c1ee600bc75fbafe7e026c367ce7"><td class="memItemLeft" align="right" valign="top">virtual&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classTracerAssemblerDGCore.html#adf32c1ee600bc75fbafe7e026c367ce7">~TracerAssemblerDGCore</a> ()=default</td></tr>
+<tr class="separator:adf32c1ee600bc75fbafe7e026c367ce7"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a9d39b9cedb5816a5117d623634733d49" id="r_a9d39b9cedb5816a5117d623634733d49"><td class="memItemLeft" align="right" valign="top">virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classTracerAssemblerDGCore.html#a9d39b9cedb5816a5117d623634733d49">assemble_matrix</a> (const <a class="el" href="classTracerScratchData.html">TracerScratchData</a>&lt; dim &gt; &amp;scratch_data, <a class="el" href="classStabilizedMethodsCopyData.html">StabilizedMethodsCopyData</a> &amp;copy_data) override</td></tr>
 <tr class="separator:a9d39b9cedb5816a5117d623634733d49"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a39031c686ee4a6487ade2a582a6afd1f" id="r_a39031c686ee4a6487ade2a582a6afd1f"><td class="memItemLeft" align="right" valign="top">virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classTracerAssemblerDGCore.html#a39031c686ee4a6487ade2a582a6afd1f">assemble_rhs</a> (const <a class="el" href="classTracerScratchData.html">TracerScratchData</a>&lt; dim &gt; &amp;scratch_data, <a class="el" href="classStabilizedMethodsCopyData.html">StabilizedMethodsCopyData</a> &amp;copy_data) override</td></tr>
@@ -113,6 +113,8 @@ Public Member Functions</h2></td></tr>
 <tr class="separator:a93134cecb4a4408c88b596b99c18886d inherit pub_methods_classPhysicsAssemblerBase"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aeaa14d0a42eca7f74da5af2dd41b2262 inherit pub_methods_classPhysicsAssemblerBase" id="r_aeaa14d0a42eca7f74da5af2dd41b2262"><td class="memItemLeft" align="right" valign="top">virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classPhysicsAssemblerBase.html#aeaa14d0a42eca7f74da5af2dd41b2262">assemble_rhs</a> (const ScratchDataType &amp;scratch_data, CopyDataType &amp;copy_data)=0</td></tr>
 <tr class="separator:aeaa14d0a42eca7f74da5af2dd41b2262 inherit pub_methods_classPhysicsAssemblerBase"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a7478f193daaca59020c4e84e2e87b9e0 inherit pub_methods_classPhysicsAssemblerBase" id="r_a7478f193daaca59020c4e84e2e87b9e0"><td class="memItemLeft" align="right" valign="top">virtual&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classPhysicsAssemblerBase.html#a7478f193daaca59020c4e84e2e87b9e0">~PhysicsAssemblerBase</a> ()=default</td></tr>
+<tr class="separator:a7478f193daaca59020c4e84e2e87b9e0 inherit pub_methods_classPhysicsAssemblerBase"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><div class="compoundTemplParams">template&lt;int dim&gt;<br />
@@ -124,10 +126,10 @@ class TracerAssemblerDGCore&lt; dim &gt;</div><p>Class that assembles the core (
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="tracer__assemblers_8h_source.html#l00078">78</a> of file <a class="el" href="tracer__assemblers_8h_source.html">tracer_assemblers.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="tracer__assemblers_8h_source.html#l00092">92</a> of file <a class="el" href="tracer__assemblers_8h_source.html">tracer_assemblers.h</a>.</p>
 </div><h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
-<a id="a6a26b1e01b7120d9264a436ad4ceb35c" name="a6a26b1e01b7120d9264a436ad4ceb35c"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a6a26b1e01b7120d9264a436ad4ceb35c">&#9670;&#160;</a></span>TracerAssemblerDGCore()</h2>
+<a id="adf32c1ee600bc75fbafe7e026c367ce7" name="adf32c1ee600bc75fbafe7e026c367ce7"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#adf32c1ee600bc75fbafe7e026c367ce7">&#9670;&#160;</a></span>~TracerAssemblerDGCore()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -138,7 +140,7 @@ template&lt;int dim&gt; </div>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname"><a class="el" href="classTracerAssemblerDGCore.html">TracerAssemblerDGCore</a>&lt; dim &gt;<a class="el" href="classTracerAssemblerDGCore.html">::TracerAssemblerDGCore</a> </td>
+          <td class="memname">virtual <a class="el" href="classTracerAssemblerDGCore.html">TracerAssemblerDGCore</a>&lt; dim &gt;::~<a class="el" href="classTracerAssemblerDGCore.html">TracerAssemblerDGCore</a> </td>
           <td>(</td>
           <td class="paramname"></td><td>)</td>
           <td></td>
@@ -146,12 +148,12 @@ template&lt;int dim&gt; </div>
       </table>
   </td>
   <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+<span class="mlabels"><span class="mlabel">virtual</span><span class="mlabel">default</span></span>  </td>
   </tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="tracer__assemblers_8h_source.html#l00081">81</a> of file <a class="el" href="tracer__assemblers_8h_source.html">tracer_assemblers.h</a>.</p>
+<p>Default destructor. </p>
 
 </div>
 </div>

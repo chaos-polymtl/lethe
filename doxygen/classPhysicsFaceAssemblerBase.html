@@ -94,9 +94,13 @@ Inheritance diagram for PhysicsFaceAssemblerBase&lt; ScratchDataType, CopyDataTy
 <div class="dyncontent">
 <div class="center"><img src="classPhysicsFaceAssemblerBase__inherit__graph.png" border="0" usemap="#aPhysicsFaceAssemblerBase_3_01ScratchDataType_00_01CopyDataType_01_4_inherit__map" alt="Inheritance graph"/></div>
 <map name="aPhysicsFaceAssemblerBase_3_01ScratchDataType_00_01CopyDataType_01_4_inherit__map" id="aPhysicsFaceAssemblerBase_3_01ScratchDataType_00_01CopyDataType_01_4_inherit__map">
-<area shape="rect" title="Base class for assembler objects of physics and subequations that require a face assembly...." alt="" coords="5,5,268,45"/>
-<area shape="rect" href="classVOFAssemblerSIPG.html" title="Assembles the symmetric interior penalty Galerkin (SIPG) method (or Nitsche&#39;s method) for internal fa..." alt="" coords="36,93,237,119"/>
-<area shape="poly" title=" " alt="" coords="139,59,139,93,134,93,134,59"/>
+<area shape="rect" title="Base class for assembler objects of physics and subequations that require a face assembly...." alt="" coords="5,69,268,109"/>
+<area shape="rect" href="classTracerAssemblerBoundaryNitsche.html" title="Assembles Nitsche&#39;s method for boundary faces. This assembler is only required when solving the Trace..." alt="" coords="316,5,557,45"/>
+<area shape="poly" title=" " alt="" coords="244,64,342,43,343,48,245,69"/>
+<area shape="rect" href="classTracerAssemblerSIPG.html" title="Assembles the symmetric interior penalty (SIPG) method (or Nitsche&#39;s method) for internal faces...." alt="" coords="357,69,517,109"/>
+<area shape="poly" title=" " alt="" coords="282,87,356,87,356,92,282,92"/>
+<area shape="rect" href="classVOFAssemblerSIPG.html" title="Assembles the symmetric interior penalty Galerkin (SIPG) method (or Nitsche&#39;s method) for internal fa..." alt="" coords="336,134,537,159"/>
+<area shape="poly" title=" " alt="" coords="256,109,370,131,369,137,255,115"/>
 </map>
 <center><span class="legend">[<a href="graph_legend.html">legend</a>]</span></center></div>
 <table class="memberdecls">
@@ -106,6 +110,8 @@ Public Member Functions</h2></td></tr>
 <tr class="separator:afabcf94424da573383867ffcf2f249a9"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a7964653cb17821599aeb36856c47318b" id="r_a7964653cb17821599aeb36856c47318b"><td class="memItemLeft" align="right" valign="top">virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classPhysicsFaceAssemblerBase.html#a7964653cb17821599aeb36856c47318b">assemble_rhs</a> (const ScratchDataType &amp;scratch_data, CopyDataType &amp;copy_data)=0</td></tr>
 <tr class="separator:a7964653cb17821599aeb36856c47318b"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ad0f214377d2b06afc0e08e6b08fe6cea" id="r_ad0f214377d2b06afc0e08e6b08fe6cea"><td class="memItemLeft" align="right" valign="top">virtual&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classPhysicsFaceAssemblerBase.html#ad0f214377d2b06afc0e08e6b08fe6cea">~PhysicsFaceAssemblerBase</a> ()=default</td></tr>
+<tr class="separator:ad0f214377d2b06afc0e08e6b08fe6cea"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><div class="compoundTemplParams">template&lt;typename ScratchDataType, typename CopyDataType&gt;<br />
@@ -118,8 +124,38 @@ class PhysicsFaceAssemblerBase&lt; ScratchDataType, CopyDataType &gt;</div><p>Ba
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="physics__assemblers_8h_source.html#l00061">61</a> of file <a class="el" href="physics__assemblers_8h_source.html">physics_assemblers.h</a>.</p>
-</div><h2 class="groupheader">Member Function Documentation</h2>
+<p class="definition">Definition at line <a class="el" href="physics__assemblers_8h_source.html#l00067">67</a> of file <a class="el" href="physics__assemblers_8h_source.html">physics_assemblers.h</a>.</p>
+</div><h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
+<a id="ad0f214377d2b06afc0e08e6b08fe6cea" name="ad0f214377d2b06afc0e08e6b08fe6cea"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ad0f214377d2b06afc0e08e6b08fe6cea">&#9670;&#160;</a></span>~PhysicsFaceAssemblerBase()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename ScratchDataType , typename CopyDataType &gt; </div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">virtual <a class="el" href="classPhysicsFaceAssemblerBase.html">PhysicsFaceAssemblerBase</a>&lt; ScratchDataType, CopyDataType &gt;::~<a class="el" href="classPhysicsFaceAssemblerBase.html">PhysicsFaceAssemblerBase</a> </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">virtual</span><span class="mlabel">default</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Default destructor. </p>
+
+</div>
+</div>
+<h2 class="groupheader">Member Function Documentation</h2>
 <a id="afabcf94424da573383867ffcf2f249a9" name="afabcf94424da573383867ffcf2f249a9"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#afabcf94424da573383867ffcf2f249a9">&#9670;&#160;</a></span>assemble_matrix()</h2>
 

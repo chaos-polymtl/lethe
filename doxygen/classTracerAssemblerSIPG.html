@@ -94,9 +94,9 @@ Inheritance diagram for TracerAssemblerSIPG&lt; dim &gt;:</div>
 <div class="dyncontent">
 <div class="center"><img src="classTracerAssemblerSIPG__inherit__graph.png" border="0" usemap="#aTracerAssemblerSIPG_3_01dim_01_4_inherit__map" alt="Inheritance graph"/></div>
 <map name="aTracerAssemblerSIPG_3_01dim_01_4_inherit__map" id="aTracerAssemblerSIPG_3_01dim_01_4_inherit__map">
-<area shape="rect" title="Assembles the symmetric interior penalty (SIPG) method (or Nitsche&#39;s method) for internal faces...." alt="" coords="5,93,165,133"/>
-<area shape="rect" href="classTracerFaceAssembler.html" title="A pure virtual class that serves as an interface for boundary and internal faces that occur when usin..." alt="" coords="6,5,165,45"/>
-<area shape="poly" title=" " alt="" coords="88,59,88,93,83,93,83,59"/>
+<area shape="rect" title="Assembles the symmetric interior penalty (SIPG) method (or Nitsche&#39;s method) for internal faces...." alt="" coords="21,93,181,133"/>
+<area shape="rect" href="classPhysicsFaceAssemblerBase.html" title="Base class for assembler objects of physics and subequations that require a face assembly...." alt="" coords="5,5,196,45"/>
+<area shape="poly" title=" " alt="" coords="103,59,103,93,98,93,98,59"/>
 </map>
 <center><span class="legend">[<a href="graph_legend.html">legend</a>]</span></center></div>
 <table class="memberdecls">
@@ -108,6 +108,13 @@ Public Member Functions</h2></td></tr>
 <tr class="separator:a39df9258afa3a36185c3fd870f920345"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ad1a3a22596fa59ab5894bc33f3dfba08" id="r_ad1a3a22596fa59ab5894bc33f3dfba08"><td class="memItemLeft" align="right" valign="top">virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classTracerAssemblerSIPG.html#ad1a3a22596fa59ab5894bc33f3dfba08">assemble_rhs</a> (const <a class="el" href="classTracerScratchData.html">TracerScratchData</a>&lt; dim &gt; &amp;scratch_data, <a class="el" href="classStabilizedDGMethodsCopyData.html">StabilizedDGMethodsCopyData</a> &amp;copy_data) override</td></tr>
 <tr class="separator:ad1a3a22596fa59ab5894bc33f3dfba08"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="inherit_header pub_methods_classPhysicsFaceAssemblerBase"><td colspan="2" onclick="javascript:toggleInherit('pub_methods_classPhysicsFaceAssemblerBase')"><img src="closed.png" alt="-"/>&#160;Public Member Functions inherited from <a class="el" href="classPhysicsFaceAssemblerBase.html">PhysicsFaceAssemblerBase&lt; ScratchDataType, CopyDataType &gt;</a></td></tr>
+<tr class="memitem:afabcf94424da573383867ffcf2f249a9 inherit pub_methods_classPhysicsFaceAssemblerBase" id="r_afabcf94424da573383867ffcf2f249a9"><td class="memItemLeft" align="right" valign="top">virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classPhysicsFaceAssemblerBase.html#afabcf94424da573383867ffcf2f249a9">assemble_matrix</a> (const ScratchDataType &amp;scratch_data, CopyDataType &amp;copy_data)=0</td></tr>
+<tr class="separator:afabcf94424da573383867ffcf2f249a9 inherit pub_methods_classPhysicsFaceAssemblerBase"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a7964653cb17821599aeb36856c47318b inherit pub_methods_classPhysicsFaceAssemblerBase" id="r_a7964653cb17821599aeb36856c47318b"><td class="memItemLeft" align="right" valign="top">virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classPhysicsFaceAssemblerBase.html#a7964653cb17821599aeb36856c47318b">assemble_rhs</a> (const ScratchDataType &amp;scratch_data, CopyDataType &amp;copy_data)=0</td></tr>
+<tr class="separator:a7964653cb17821599aeb36856c47318b inherit pub_methods_classPhysicsFaceAssemblerBase"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ad0f214377d2b06afc0e08e6b08fe6cea inherit pub_methods_classPhysicsFaceAssemblerBase" id="r_ad0f214377d2b06afc0e08e6b08fe6cea"><td class="memItemLeft" align="right" valign="top">virtual&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classPhysicsFaceAssemblerBase.html#ad0f214377d2b06afc0e08e6b08fe6cea">~PhysicsFaceAssemblerBase</a> ()=default</td></tr>
+<tr class="separator:ad0f214377d2b06afc0e08e6b08fe6cea inherit pub_methods_classPhysicsFaceAssemblerBase"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><div class="compoundTemplParams">template&lt;int dim&gt;<br />
@@ -119,7 +126,7 @@ class TracerAssemblerSIPG&lt; dim &gt;</div><p>Assembles the symmetric interior 
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="tracer__assemblers_8h_source.html#l00203">203</a> of file <a class="el" href="tracer__assemblers_8h_source.html">tracer_assemblers.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="tracer__assemblers_8h_source.html#l00174">174</a> of file <a class="el" href="tracer__assemblers_8h_source.html">tracer_assemblers.h</a>.</p>
 </div><h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
 <a id="a432bb439660de716b91af286717bd846" name="a432bb439660de716b91af286717bd846"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a432bb439660de716b91af286717bd846">&#9670;&#160;</a></span>TracerAssemblerSIPG()</h2>
@@ -146,7 +153,7 @@ template&lt;int dim&gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="tracer__assemblers_8h_source.html#l00206">206</a> of file <a class="el" href="tracer__assemblers_8h_source.html">tracer_assemblers.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="tracer__assemblers_8h_source.html#l00177">177</a> of file <a class="el" href="tracer__assemblers_8h_source.html">tracer_assemblers.h</a>.</p>
 
 </div>
 </div>
@@ -195,8 +202,6 @@ template&lt;int dim&gt; </div>
   </table>
   </dd>
 </dl>
-
-<p>Implements <a class="el" href="classTracerFaceAssembler.html#a23f46f166853889f552e7b95163f2ea8">TracerFaceAssembler&lt; dim &gt;</a>.</p>
 
 <p class="definition">Definition at line <a class="el" href="tracer__assemblers_8cc_source.html#l00454">454</a> of file <a class="el" href="tracer__assemblers_8cc_source.html">tracer_assemblers.cc</a>.</p>
 
@@ -248,8 +253,6 @@ template&lt;int dim&gt; </div>
   </table>
   </dd>
 </dl>
-
-<p>Implements <a class="el" href="classTracerFaceAssembler.html#a9869ecb414953338c5f5283369d0b1ca">TracerFaceAssembler&lt; dim &gt;</a>.</p>
 
 <p class="definition">Definition at line <a class="el" href="tracer__assemblers_8cc_source.html#l00501">501</a> of file <a class="el" href="tracer__assemblers_8cc_source.html">tracer_assemblers.cc</a>.</p>
 

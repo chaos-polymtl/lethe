@@ -266,8 +266,6 @@ Classes</h2></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classTracerAssemblerBDF.html">TracerAssemblerBDF&lt; dim &gt;</a></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classTracerFaceAssembler.html">TracerFaceAssembler&lt; dim &gt;</a></td></tr>
-<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classTracerAssemblerSIPG.html">TracerAssemblerSIPG&lt; dim &gt;</a></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classTracerAssemblerBoundaryNitsche.html">TracerAssemblerBoundaryNitsche&lt; dim &gt;</a></td></tr>
@@ -280,6 +278,9 @@ Typedefs</h2></td></tr>
 <tr class="memitem:ae69204c613d22f6e847f26b03d788d03" id="r_ae69204c613d22f6e847f26b03d788d03"><td class="memTemplParams" colspan="2">template&lt;int dim&gt; </td></tr>
 <tr class="memitem:ae69204c613d22f6e847f26b03d788d03"><td class="memTemplItemLeft" align="right" valign="top">using&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="tracer__assemblers_8h.html#ae69204c613d22f6e847f26b03d788d03">TracerAssemblerBase</a> = <a class="el" href="classPhysicsAssemblerBase.html">PhysicsAssemblerBase</a>&lt; <a class="el" href="classTracerScratchData.html">TracerScratchData</a>&lt; dim &gt;, <a class="el" href="classStabilizedMethodsCopyData.html">StabilizedMethodsCopyData</a> &gt;</td></tr>
 <tr class="separator:ae69204c613d22f6e847f26b03d788d03"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:af30d45f7b30987fea894650e384c317c" id="r_af30d45f7b30987fea894650e384c317c"><td class="memTemplParams" colspan="2">template&lt;int dim&gt; </td></tr>
+<tr class="memitem:af30d45f7b30987fea894650e384c317c"><td class="memTemplItemLeft" align="right" valign="top">using&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="tracer__assemblers_8h.html#af30d45f7b30987fea894650e384c317c">TracerFaceAssemblerBase</a> = <a class="el" href="classPhysicsFaceAssemblerBase.html">PhysicsFaceAssemblerBase</a>&lt; <a class="el" href="classTracerScratchData.html">TracerScratchData</a>&lt; dim &gt;, <a class="el" href="classStabilizedDGMethodsCopyData.html">StabilizedDGMethodsCopyData</a> &gt;</td></tr>
+<tr class="separator:af30d45f7b30987fea894650e384c317c"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <h2 class="groupheader">Typedef Documentation</h2>
 <a id="ae69204c613d22f6e847f26b03d788d03" name="ae69204c613d22f6e847f26b03d788d03"></a>
@@ -305,6 +306,32 @@ template&lt;int dim&gt; </div>
 </dl>
 
 <p class="definition">Definition at line <a class="el" href="tracer__assemblers_8h_source.html#l00023">23</a> of file <a class="el" href="tracer__assemblers_8h_source.html">tracer_assemblers.h</a>.</p>
+
+</div>
+</div>
+<a id="af30d45f7b30987fea894650e384c317c" name="af30d45f7b30987fea894650e384c317c"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#af30d45f7b30987fea894650e384c317c">&#9670;&#160;</a></span>TracerFaceAssemblerBase</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;int dim&gt; </div>
+      <table class="memname">
+        <tr>
+          <td class="memname">using <a class="el" href="tracer__assemblers_8h.html#af30d45f7b30987fea894650e384c317c">TracerFaceAssemblerBase</a> =  <a class="el" href="classPhysicsFaceAssemblerBase.html">PhysicsFaceAssemblerBase</a>&lt;<a class="el" href="classTracerScratchData.html">TracerScratchData</a>&lt;dim&gt;, <a class="el" href="classStabilizedDGMethodsCopyData.html">StabilizedDGMethodsCopyData</a>&gt;</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>A pure virtual class that serves as an interface for boundary and internal faces that occur when using a discontinuous Galerkin discretization. The main difference between the TracerFaceAssembler and the TracerAssembler is that the TracerFaceAssembler assembles the matrix and rhs for internal faces and thus requires the <a class="el" href="classStabilizedDGMethodsCopyData.html" title="Responsible for storing the information calculated using the discontinuous galerkin (DG) assembly of ...">StabilizedDGMethodsCopyData</a> class. </p>
+<dl class="tparams"><dt>Template Parameters</dt><dd>
+  <table class="tparams">
+    <tr><td class="paramname">dim</td><td>An integer that denotes the number of spatial dimensions </td></tr>
+  </table>
+  </dd>
+</dl>
+
+<p class="definition">Definition at line <a class="el" href="tracer__assemblers_8h_source.html#l00038">38</a> of file <a class="el" href="tracer__assemblers_8h_source.html">tracer_assemblers.h</a>.</p>
 
 </div>
 </div>

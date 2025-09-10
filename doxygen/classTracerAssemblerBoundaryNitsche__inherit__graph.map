@@ -1,5 +1,5 @@
 <map id="TracerAssemblerBoundaryNitsche&lt; dim &gt;" name="TracerAssemblerBoundaryNitsche&lt; dim &gt;">
 <area shape="rect" id="Node000001" title="Assembles Nitsche&#39;s method for boundary faces. This assembler is only required when solving the Trace..." alt="" coords="5,93,247,133"/>
-<area shape="rect" id="Node000002" href="$classTracerFaceAssembler.html" title="A pure virtual class that serves as an interface for boundary and internal faces that occur when usin..." alt="" coords="47,5,205,45"/>
+<area shape="rect" id="Node000002" href="$classPhysicsFaceAssemblerBase.html" title="Base class for assembler objects of physics and subequations that require a face assembly...." alt="" coords="31,5,221,45"/>
 <area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="129,59,129,93,123,93,123,59"/>
 </map>

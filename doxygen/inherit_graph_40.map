@@ -1,7 +1,23 @@
 <map id="Graphical Class Hierarchy" name="Graphical Class Hierarchy">
-<area shape="rect" id="Node000000" href="$classEvaporationModel.html" title="EvaporationModel. Abstract class that allows to calculate the evaporation mass, heat and momentum flu..." alt="" coords="5,31,145,56"/>
-<area shape="rect" id="Node000001" href="$classEvaporationModelConstant.html" title="EvaporationModelConstant. Class that allows to calculate the evaporation mass, heat,..." alt="" coords="205,5,404,31"/>
-<area shape="poly" id="edge49_Node000000_Node000001" title=" " alt="" coords="159,31,205,26,206,32,160,37"/>
-<area shape="rect" id="Node000002" href="$classEvaporationModelTemperature.html" title="EvaporationModelTemperature. Class that allows to calculate the evaporation mass, heat,..." alt="" coords="193,55,416,80"/>
-<area shape="poly" id="edge50_Node000000_Node000002" title=" " alt="" coords="160,49,193,53,193,58,159,55"/>
+<area shape="rect" id="Node000000" title=" " alt="" coords="5,111,176,136"/>
+<area shape="rect" id="Node000001" href="$classBlockDiagPreconditioner.html" title=" " alt="" coords="231,7,414,47"/>
+<area shape="poly" id="edge49_Node000000_Node000001" title=" " alt="" coords="127,102,223,57,255,45,257,50,225,62,129,107"/>
+<area shape="rect" id="Node000002" href="$classBlockSchurPreconditioner.html" title=" " alt="" coords="229,71,417,111"/>
+<area shape="poly" id="edge50_Node000000_Node000002" title=" " alt="" coords="189,107,228,102,229,107,190,112"/>
+<area shape="rect" id="Node000003" href="$classNavierStokesOperatorBase.html" title="A class that serves as base for all the matrix&#45;free Navier&#45;Stokes operators." alt="" coords="224,135,421,175"/>
+<area shape="poly" id="edge51_Node000000_Node000003" title=" " alt="" coords="190,134,224,139,223,144,189,140"/>
+<area shape="rect" id="Node000007" href="$classPreconditionBase.html" title="A base class of preconditioners used by the smoother." alt="" coords="227,227,418,267"/>
+<area shape="poly" id="edge55_Node000000_Node000007" title=" " alt="" coords="129,140,285,225,283,230,127,145"/>
+<area shape="rect" id="Node000004" href="$classNavierStokesNonNewtonianStabilizedOperator.html" title="Implements the matrix&#45;free operator to solve steady/transient non&#45;Newtonian Navier&#45;Stokes equations u..." alt="" coords="509,5,713,60"/>
+<area shape="poly" id="edge52_Node000003_Node000004" title=" " alt="" coords="409,127,420,121,434,109,443,96,452,83,468,70,508,52,510,57,471,75,456,87,447,99,438,112,423,126,412,132"/>
+<area shape="rect" id="Node000005" href="$classNavierStokesStabilizedOperator.html" title="Implements the matrix&#45;free operator to solve steady/transient Navier&#45;Stokes equations using stabiliza..." alt="" coords="496,85,725,125"/>
+<area shape="poly" id="edge53_Node000003_Node000005" title=" " alt="" coords="434,133,496,122,497,127,435,138"/>
+<area shape="rect" id="Node000006" href="$classVANSOperator.html" title="Implements the matrix&#45;free operator for the VANS equations." alt="" coords="531,149,690,189"/>
+<area shape="poly" id="edge54_Node000003_Node000006" title=" " alt="" coords="435,158,531,162,531,168,435,163"/>
+<area shape="rect" id="Node000008" href="$classMyDiagonalMatrix.html" title="A wrapper class around DiagonalMatrix class from deal.II." alt="" coords="511,213,710,253"/>
+<area shape="poly" id="edge56_Node000007_Node000008" title=" " alt="" coords="432,239,511,235,511,240,432,244"/>
+<area shape="rect" id="Node000009" href="$classPreconditionASM.html" title="An Additive Schwarz preconditioner." alt="" coords="494,277,727,303"/>
+<area shape="poly" id="edge57_Node000007_Node000009" title=" " alt="" coords="432,261,525,275,524,280,431,266"/>
+<area shape="rect" id="Node000010" href="$classPreconditionAdapter.html" title="A wrapper class around a preconditioner to be able to handle vector types that are not supported by t..." alt="" coords="469,327,752,367"/>
+<area shape="poly" id="edge58_Node000007_Node000010" title=" " alt="" coords="375,271,420,293,470,313,510,325,509,330,468,318,418,298,372,276"/>
 </map>
