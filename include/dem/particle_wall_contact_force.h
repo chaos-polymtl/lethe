@@ -566,7 +566,7 @@ private:
     // convention (i -> j), the forces are thus calculated on the wall
     const Tensor<1, 3> normal_vector = -contact_info.normal_vector;
     const unsigned int particle_type =
-      particle_properties[PropertiesIndex::type];
+      static_cast<unsigned int>(particle_properties[PropertiesIndex::type]);
     const double particle_radius =
       particle_properties[PropertiesIndex::dp] * 0.5;
 
@@ -682,7 +682,7 @@ private:
     const double       particle_radius =
       particle_properties[PropertiesIndex::dp] * 0.5;
     const unsigned int particle_type =
-      particle_properties[PropertiesIndex::type];
+      static_cast<unsigned int>(particle_properties[PropertiesIndex::type]);
 
     const double youngs_modulus = this->effective_youngs_modulus[particle_type];
     const double shear_modulus  = this->effective_shear_modulus[particle_type];
@@ -809,7 +809,7 @@ private:
     const double       particle_radius =
       0.5 * particle_properties[PropertiesIndex::dp];
     const unsigned int particle_type =
-      particle_properties[PropertiesIndex::type];
+      static_cast<unsigned int>(particle_properties[PropertiesIndex::type]);
 
     const double youngs_modulus = this->effective_youngs_modulus[particle_type];
     const double shear_modulus  = this->effective_shear_modulus[particle_type];
@@ -975,7 +975,7 @@ private:
     const double       particle_radius =
       0.5 * particle_properties[PropertiesIndex::dp];
     const unsigned int particle_type =
-      particle_properties[PropertiesIndex::type];
+      static_cast<unsigned int>(particle_properties[PropertiesIndex::type]);
 
     const double surface_energy = this->effective_surface_energy[particle_type];
     const double hamaker_constant =

@@ -65,7 +65,7 @@ public:
    * @brief Carries out the destruction of the insertion class.
    *
    */
-  ~Insertion()
+  virtual ~Insertion()
   {
     // This boost signal needs to be disconnected before being destroyed,
     // otherwise a segfault could occur when the triangulation will be

@@ -178,7 +178,7 @@ public:
   inline void
   set_parameters(const double granular_temperature,
                  const double solid_fraction,
-                 const double advect_particles)
+                 const bool   advect_particles)
   {
     // If the function is reached, the adaptive sparse contacts is enabled.
     sparse_contacts_enabled = true;

@@ -16,6 +16,11 @@ public:
   std::vector<double> particle_sizes;
 
   /**
+   * @brief Default destructor.
+   */
+  virtual ~Distribution() = default;
+
+  /**
    * @brief Carries out the size sampling of particles. This is the base class of
    * NormalDistribution, UniformDistribution and CustomDistribution classes.
    * @param particle_number Number of particle inserted at a given insertion time step.

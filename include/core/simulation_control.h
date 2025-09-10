@@ -148,8 +148,7 @@ public:
 
   /**
    * @brief Default destructor.
-   **/
-
+   */
   virtual ~SimulationControl() = default;
 
 
