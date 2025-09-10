@@ -434,6 +434,24 @@ CFDDEMSolver<dim>::read_dem()
 }
 
 template <int dim>
+std::vector<OutputStructTableHandler>
+CFDDEMSolver<dim>::gather_tables()
+{
+  std::vector<OutputStructTableHandler> table_output_structs;
+
+  const Parameters::PostProcessing post_processing =
+      this->simulation_parameters.post_processing;
+    std::string prefix =
+      this->simulation_parameters.simulation_control.output_folder;
+    std::string suffix = ".checkpoint";
+  if (post_processing.calculate_phase_volumes)
+          table_output_structs.emplace_back(
+            this->table_phase_volumes,
+            prefix + post_processing.phase_volumes_output_name + suffix);
+  return table_output_structs;
+}
+
+template <int dim>
 void
 CFDDEMSolver<dim>::write_checkpoint()
 {
@@ -519,6 +537,17 @@ CFDDEMSolver<dim>::write_checkpoint()
       std::string triangulationName = prefix + ".triangulation";
       parallel_triangulation->save(prefix + ".triangulation");
     }
+  // Serialize all post-processing tables that are currently used
+  {
+    // Serialize the post-processing tables that are particular to this solver
+    const std::vector<OutputStructTableHandler> &table_output_structs_add =
+      this->gather_tables();
+      this->serialize_tables_vector(table_output_structs_add);
+    // Serialize the default post-processing tables that are members of NavierStokesBase
+    const std::vector<OutputStructTableHandler> &table_output_structs =
+      this->Base::gather_tables();
+      this->serialize_tables_vector(table_output_structs);
+  }
 }
 
 template <int dim>
@@ -674,6 +703,23 @@ CFDDEMSolver<dim>::read_checkpoint()
 
   // Deserialize particles have the triangulation has been read
   this->particle_handler.deserialize();
+
+  // Deserialize all post-processing tables that are currently used
+  {
+    // Deserialize the post-processing tables that are particular to this solver
+    std::vector<OutputStructTableHandler> table_output_structs_add =
+      this->gather_tables();
+      this->deserialize_tables_vector(table_output_structs_add);
+    // Deserialize the default post-processing tables that are members of NavierStokesBase
+    std::vector<OutputStructTableHandler> table_output_structs =
+      this->Base::gather_tables();
+      this->deserialize_tables_vector(table_output_structs);
+    std::ofstream output("Test_table_after_checkpoint");
+    this->enstrophy_table.write_text(output);
+    output.close();
+    output.open("Test_table_after_checkpoint_CFDDEM");
+    table_phase_volumes.write_text(output);
+  }
 }
 
 template <int dim>
