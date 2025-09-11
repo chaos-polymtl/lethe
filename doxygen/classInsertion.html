@@ -113,8 +113,8 @@ Inheritance diagram for Insertion&lt; dim, PropertiesIndex &gt;:</div>
 Public Member Functions</h2></td></tr>
 <tr class="memitem:af090756dc0183fd28606caa33ae805da" id="r_af090756dc0183fd28606caa33ae805da"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classInsertion.html#af090756dc0183fd28606caa33ae805da">Insertion</a> (const std::vector&lt; std::shared_ptr&lt; <a class="el" href="classDistribution.html">Distribution</a> &gt; &gt; &amp;size_distribution_object_container, const parallel::distributed::Triangulation&lt; dim &gt; &amp;triangulation, const <a class="el" href="classDEMSolverParameters.html">DEMSolverParameters</a>&lt; dim &gt; &amp;dem_parameters)</td></tr>
 <tr class="separator:af090756dc0183fd28606caa33ae805da"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ad8e3623a113b16ab3fb9c1293b7846e0" id="r_ad8e3623a113b16ab3fb9c1293b7846e0"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classInsertion.html#ad8e3623a113b16ab3fb9c1293b7846e0">~Insertion</a> ()</td></tr>
-<tr class="separator:ad8e3623a113b16ab3fb9c1293b7846e0"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a34184f95f72ccb6bfb764c87b40cdc6b" id="r_a34184f95f72ccb6bfb764c87b40cdc6b"><td class="memItemLeft" align="right" valign="top">virtual&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classInsertion.html#a34184f95f72ccb6bfb764c87b40cdc6b">~Insertion</a> ()</td></tr>
+<tr class="separator:a34184f95f72ccb6bfb764c87b40cdc6b"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:acc31a2b8a42ff47cd608039dd3c6e063" id="r_acc31a2b8a42ff47cd608039dd3c6e063"><td class="memItemLeft" align="right" valign="top">virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classInsertion.html#acc31a2b8a42ff47cd608039dd3c6e063">insert</a> (Particles::ParticleHandler&lt; dim &gt; &amp;particle_handler, const parallel::distributed::Triangulation&lt; dim &gt; &amp;triangulation, const <a class="el" href="classDEMSolverParameters.html">DEMSolverParameters</a>&lt; dim &gt; &amp;dem_parameters)=0</td></tr>
 <tr class="separator:acc31a2b8a42ff47cd608039dd3c6e063"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:addda914be05260ece7ad5c1f9b6e53ed" id="r_addda914be05260ece7ad5c1f9b6e53ed"><td class="memItemLeft" align="right" valign="top">virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classInsertion.html#addda914be05260ece7ad5c1f9b6e53ed">serialize</a> (boost::archive::text_oarchive &amp;ar)=0</td></tr>
@@ -234,8 +234,8 @@ template&lt;int dim, typename PropertiesIndex &gt; </div>
 
 </div>
 </div>
-<a id="ad8e3623a113b16ab3fb9c1293b7846e0" name="ad8e3623a113b16ab3fb9c1293b7846e0"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ad8e3623a113b16ab3fb9c1293b7846e0">&#9670;&#160;</a></span>~Insertion()</h2>
+<a id="a34184f95f72ccb6bfb764c87b40cdc6b" name="a34184f95f72ccb6bfb764c87b40cdc6b"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a34184f95f72ccb6bfb764c87b40cdc6b">&#9670;&#160;</a></span>~Insertion()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -246,7 +246,7 @@ template&lt;int dim, typename PropertiesIndex &gt; </div>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname"><a class="el" href="classInsertion.html">Insertion</a>&lt; dim, PropertiesIndex &gt;::~<a class="el" href="classInsertion.html">Insertion</a> </td>
+          <td class="memname">virtual <a class="el" href="classInsertion.html">Insertion</a>&lt; dim, PropertiesIndex &gt;::~<a class="el" href="classInsertion.html">Insertion</a> </td>
           <td>(</td>
           <td class="paramname"></td><td>)</td>
           <td></td>
@@ -254,7 +254,7 @@ template&lt;int dim, typename PropertiesIndex &gt; </div>
       </table>
   </td>
   <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+<span class="mlabels"><span class="mlabel">inline</span><span class="mlabel">virtual</span></span>  </td>
   </tr>
 </table>
 </div><div class="memdoc">

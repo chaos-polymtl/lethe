@@ -111,8 +111,8 @@ Public Types</h2></td></tr>
 Public Member Functions</h2></td></tr>
 <tr class="memitem:a83daf0d5fdbae5c6e8fd0cc80f9deb6b" id="r_a83daf0d5fdbae5c6e8fd0cc80f9deb6b"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classAdaptiveSparseContacts.html#a83daf0d5fdbae5c6e8fd0cc80f9deb6b">AdaptiveSparseContacts</a> ()</td></tr>
 <tr class="separator:a83daf0d5fdbae5c6e8fd0cc80f9deb6b"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ad1742608d24cc42fd2c300264a8d4cf9" id="r_ad1742608d24cc42fd2c300264a8d4cf9"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classAdaptiveSparseContacts.html#ad1742608d24cc42fd2c300264a8d4cf9">set_parameters</a> (const double granular_temperature, const double solid_fraction, const double advect_particles)</td></tr>
-<tr class="separator:ad1742608d24cc42fd2c300264a8d4cf9"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a1230c247d689a1fb07922c5c26f6c1e2" id="r_a1230c247d689a1fb07922c5c26f6c1e2"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classAdaptiveSparseContacts.html#a1230c247d689a1fb07922c5c26f6c1e2">set_parameters</a> (const double granular_temperature, const double solid_fraction, const bool advect_particles)</td></tr>
+<tr class="separator:a1230c247d689a1fb07922c5c26f6c1e2"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a959c3b6dc84d54cd7c93ef42f5c5569c" id="r_a959c3b6dc84d54cd7c93ef42f5c5569c"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classAdaptiveSparseContacts.html#a959c3b6dc84d54cd7c93ef42f5c5569c">update_local_and_ghost_cell_set</a> (const DoFHandler&lt; dim &gt; &amp;background_dh)</td></tr>
 <tr class="separator:a959c3b6dc84d54cd7c93ef42f5c5569c"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aac4ed9dc54776e093f6b9096bc33d6c4" id="r_aac4ed9dc54776e093f6b9096bc33d6c4"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classAdaptiveSparseContacts.html#aac4ed9dc54776e093f6b9096bc33d6c4">update_average_velocities_acceleration</a> (Particles::ParticleHandler&lt; dim &gt; &amp;particle_handler, const Tensor&lt; 1, 3 &gt; &amp;g, const std::vector&lt; Tensor&lt; 1, 3 &gt; &gt; &amp;force, const double dt)</td></tr>
@@ -698,8 +698,8 @@ template&lt;int dim, typename PropertiesIndex &gt; </div>
 
 </div>
 </div>
-<a id="ad1742608d24cc42fd2c300264a8d4cf9" name="ad1742608d24cc42fd2c300264a8d4cf9"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ad1742608d24cc42fd2c300264a8d4cf9">&#9670;&#160;</a></span>set_parameters()</h2>
+<a id="a1230c247d689a1fb07922c5c26f6c1e2" name="a1230c247d689a1fb07922c5c26f6c1e2"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a1230c247d689a1fb07922c5c26f6c1e2">&#9670;&#160;</a></span>set_parameters()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -724,7 +724,7 @@ template&lt;int dim, typename PropertiesIndex &gt; </div>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">const double&#160;</td>
+          <td class="paramtype">const bool&#160;</td>
           <td class="paramname"><em>advect_particles</em>&#160;</td>
         </tr>
         <tr>
