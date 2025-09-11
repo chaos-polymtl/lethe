@@ -12,7 +12,7 @@ examples/incompressible-flow/3d-taylor-green-vortex 128
 examples/multiphysics/rising-bubble 128
 examples/dem/3d-rectangular-hopper 64
 examples/dem/3d-rotating-drum 128
-examples/sharp-immersed-boundary/sedimentation-1-cuboid 128
 examples/unresolved-cfd-dem/pseudo-2d-gas-solid-fluidized-bed 128
+examples/sharp-immersed-boundary/sedimentation-1-cuboid 128
 
 
