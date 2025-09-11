@@ -546,7 +546,7 @@ CFDDEMSolver<dim>::write_checkpoint()
     // Serialize the default post-processing tables that are members of
     // NavierStokesBase
     const std::vector<OutputStructTableHandler> &table_output_structs =
-      this->Base::gather_tables();
+      NavierStokesBase<dim, GlobalVectorType, IndexSet>::gather_tables();
     this->serialize_tables_vector(table_output_structs);
   }
 }
@@ -711,10 +711,11 @@ CFDDEMSolver<dim>::read_checkpoint()
     std::vector<OutputStructTableHandler> table_output_structs_add =
       this->gather_tables();
     this->deserialize_tables_vector(table_output_structs_add);
+
     // Deserialize the default post-processing tables that are members of
     // NavierStokesBase
     std::vector<OutputStructTableHandler> table_output_structs =
-      this->Base::gather_tables();
+      NavierStokesBase<dim, GlobalVectorType, IndexSet>::gather_tables();
     this->deserialize_tables_vector(table_output_structs);
   }
 }
