@@ -142,7 +142,7 @@ PeriodicBoundariesManipulator<dim>::check_and_move_particles(
 
       // Initialize points and normal vector related of the cell that contains
       // the particle
-      Point<dim>     point_on_face, point_on_periodic_face;
+      Point<dim>     point_on_face;
       Tensor<1, dim> normal_vector, distance_between_faces;
 
       if (particles_in_pb0_cell)

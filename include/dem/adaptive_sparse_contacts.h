@@ -1,4 +1,4 @@
-// SPDX-FileCopyrightText: Copyright (c) 2024 The Lethe Authors
+// SPDX-FileCopyrightText: Copyright (c) 2024-2025 The Lethe Authors
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
 #ifndef lethe_adaptive_sparse_contacts_h
@@ -178,7 +178,7 @@ public:
   inline void
   set_parameters(const double granular_temperature,
                  const double solid_fraction,
-                 const double advect_particles)
+                 const bool   advect_particles)
   {
     // If the function is reached, the adaptive sparse contacts is enabled.
     sparse_contacts_enabled = true;

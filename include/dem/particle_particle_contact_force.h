@@ -663,9 +663,9 @@ private:
     // Get the reference of the effective properties according to the particle
     // types in vectors for easy-to-read equations.
     const unsigned int particle_one_type =
-      particle_one_properties[PropertiesIndex::type];
+      static_cast<unsigned int>(particle_one_properties[PropertiesIndex::type]);
     const unsigned int particle_two_type =
-      particle_two_properties[PropertiesIndex::type];
+      static_cast<unsigned int>(particle_two_properties[PropertiesIndex::type]);
     const unsigned int pair_index =
       vec_particle_type_index(particle_one_type, particle_two_type);
 
@@ -816,9 +816,9 @@ private:
                                      particle_two_properties);
 
     const unsigned int particle_one_type =
-      particle_one_properties[PropertiesIndex::type];
+      static_cast<unsigned int>(particle_one_properties[PropertiesIndex::type]);
     const unsigned int particle_two_type =
-      particle_two_properties[PropertiesIndex::type];
+      static_cast<unsigned int>(particle_two_properties[PropertiesIndex::type]);
     const unsigned int pair_index =
       vec_particle_type_index(particle_one_type, particle_two_type);
 
@@ -973,9 +973,9 @@ private:
                                      particle_two_properties);
 
     const unsigned int particle_one_type =
-      particle_one_properties[PropertiesIndex::type];
+      static_cast<unsigned int>(particle_one_properties[PropertiesIndex::type]);
     const unsigned int particle_two_type =
-      particle_two_properties[PropertiesIndex::type];
+      static_cast<unsigned int>(particle_two_properties[PropertiesIndex::type]);
     const unsigned int pair_index =
       vec_particle_type_index(particle_one_type, particle_two_type);
 
@@ -1113,9 +1113,9 @@ private:
                                      particle_two_properties);
 
     const unsigned int particle_one_type =
-      particle_one_properties[PropertiesIndex::type];
+      static_cast<unsigned int>(particle_one_properties[PropertiesIndex::type]);
     const unsigned int particle_two_type =
-      particle_two_properties[PropertiesIndex::type];
+      static_cast<unsigned int>(particle_two_properties[PropertiesIndex::type]);
     const unsigned int pair_index =
       vec_particle_type_index(particle_one_type, particle_two_type);
 
@@ -1241,9 +1241,9 @@ private:
                                      particle_two_properties);
 
     const unsigned int particle_one_type =
-      particle_one_properties[PropertiesIndex::type];
+      static_cast<unsigned int>(particle_one_properties[PropertiesIndex::type]);
     const unsigned int particle_two_type =
-      particle_two_properties[PropertiesIndex::type];
+      static_cast<unsigned int>(particle_two_properties[PropertiesIndex::type]);
     const unsigned int pair_index =
       vec_particle_type_index(particle_one_type, particle_two_type);
 
@@ -1403,9 +1403,9 @@ private:
                                      particle_two_properties);
 
     const unsigned int particle_one_type =
-      particle_one_properties[PropertiesIndex::type];
+      static_cast<unsigned int>(particle_one_properties[PropertiesIndex::type]);
     const unsigned int particle_two_type =
-      particle_two_properties[PropertiesIndex::type];
+      static_cast<unsigned int>(particle_two_properties[PropertiesIndex::type]);
     const unsigned int pair_index =
       vec_particle_type_index(particle_one_type, particle_two_type);
 
@@ -1910,9 +1910,11 @@ private:
             if (normal_overlap > 0)
               {
                 const unsigned int particle_one_type =
-                  particle_one_properties[PropertiesIndex::type];
+                  static_cast<unsigned int>(
+                    particle_one_properties[PropertiesIndex::type]);
                 const unsigned int particle_two_type =
-                  particle_two_properties[PropertiesIndex::type];
+                  static_cast<unsigned int>(
+                    particle_two_properties[PropertiesIndex::type]);
                 const unsigned int pair_index =
                   vec_particle_type_index(particle_one_type, particle_two_type);
                 const double temperature_one =

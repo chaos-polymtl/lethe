@@ -223,7 +223,8 @@ LagrangianLoadBalancing<dim, PropertiesIndex>::
         {
           const unsigned int n_particles_in_cell =
             particle_handler->n_particles_in_cell(cell);
-          return alpha * n_particles_in_cell * particle_weight;
+          return static_cast<int>(alpha * n_particles_in_cell *
+                                  particle_weight);
         }
       case dealii::CellStatus::cell_invalid:
         break;
@@ -237,7 +238,8 @@ LagrangianLoadBalancing<dim, PropertiesIndex>::
             n_particles_in_cell +=
               particle_handler->n_particles_in_cell(cell->child(child_index));
 
-          return alpha * n_particles_in_cell * particle_weight;
+          return static_cast<int>(alpha * n_particles_in_cell *
+                                  particle_weight);
         }
       default:
         Assert(false, ExcInternalError());

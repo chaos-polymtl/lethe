@@ -1,4 +1,4 @@
-// SPDX-FileCopyrightText: Copyright (c) 2020-2024 The Lethe Authors
+// SPDX-FileCopyrightText: Copyright (c) 2020-2025 The Lethe Authors
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
 #include <core/tensors_and_points_dimension_manipulation.h>
@@ -780,12 +780,13 @@ BoundaryCellsInformation<dim>::add_boundary_neighbors_of_boundary_cells(
                           // the main boundary cell and the neighbor boundary
                           // cell.
                           int imaginary_face_id =
-                            -0.5 *
+                            static_cast<int>(
+                              -0.5 *
                               (boundary_cells_info.global_face_id +
                                boundary_neighbor_information.global_face_id) *
                               (boundary_cells_info.global_face_id +
                                boundary_neighbor_information.global_face_id +
-                               1) +
+                               1)) +
                             boundary_neighbor_information.global_face_id;
 
                           // Create a cell info object which is a copy of all

@@ -1,4 +1,4 @@
-// SPDX-FileCopyrightText: Copyright (c) 2023-2024 The Lethe Authors
+// SPDX-FileCopyrightText: Copyright (c) 2023-2025 The Lethe Authors
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
 #ifndef lethe_distributions_h
@@ -14,6 +14,11 @@ class Distribution
 {
 public:
   std::vector<double> particle_sizes;
+
+  /**
+   * @brief Default destructor.
+   */
+  virtual ~Distribution() = default;
 
   /**
    * @brief Carries out the size sampling of particles. This is the base class of

@@ -916,8 +916,8 @@ RPTFEMReconstruction<dim>::trajectory()
     {
       if (fem_reconstruction_parameters.extrapolation_tolerance == 0.005)
         {
-          const unsigned int power =
-            pow(2, fem_reconstruction_parameters.mesh_refinement);
+          const unsigned int power = static_cast<unsigned int>(
+            pow(2, fem_reconstruction_parameters.mesh_refinement));
           const unsigned int n_cell_z =
             2 * fem_reconstruction_parameters.z_subdivisions * power;
           tol_reference_location = parameters.reactor_height / n_cell_z * 1.15;

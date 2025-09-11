@@ -42,6 +42,12 @@ public:
   virtual void
   calculate_particle_fluid_interactions(
     NavierStokesScratchData<dim> &scratch_data) = 0;
+
+
+  /**
+   * @brief Default destructor.
+   */
+  virtual ~ParticleFluidAssemblerBase() = default;
 };
 
 

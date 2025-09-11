@@ -312,7 +312,8 @@ ParticleWallContactForce<dim,
                               (normal_overlap > 0))
                             {
                               const unsigned int particle_type =
-                                particle_properties[PropertiesIndex::type];
+                                static_cast<unsigned int>(
+                                  particle_properties[PropertiesIndex::type]);
                               const double temperature_particle =
                                 particle_properties[PropertiesIndex::T];
                               double &particle_heat_transfer_rate =

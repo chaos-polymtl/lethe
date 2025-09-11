@@ -1335,9 +1335,9 @@ ParticleProjector<dim>::calculate_field_projection(
   //**********************************************
   // Trillinos Wrapper ILU Preconditioner
   //*********************************************
-  const double ilu_fill = linear_solver_parameters.ilu_precond_fill;
-  const double ilu_atol = linear_solver_parameters.ilu_precond_atol;
-  const double ilu_rtol = linear_solver_parameters.ilu_precond_rtol;
+  const unsigned int ilu_fill = linear_solver_parameters.ilu_precond_fill;
+  const double       ilu_atol = linear_solver_parameters.ilu_precond_atol;
+  const double       ilu_rtol = linear_solver_parameters.ilu_precond_rtol;
 
   TrilinosWrappers::PreconditionILU::AdditionalData preconditionerOptions(
     ilu_fill, ilu_atol, ilu_rtol, 0);
@@ -1587,9 +1587,9 @@ ParticleProjector<dim>::solve_void_fraction_linear_system()
   //**********************************************
   // Trillinos Wrapper ILU Preconditioner
   //*********************************************
-  const double ilu_fill = linear_solver_parameters.ilu_precond_fill;
-  const double ilu_atol = linear_solver_parameters.ilu_precond_atol;
-  const double ilu_rtol = linear_solver_parameters.ilu_precond_rtol;
+  const unsigned int ilu_fill = linear_solver_parameters.ilu_precond_fill;
+  const double       ilu_atol = linear_solver_parameters.ilu_precond_atol;
+  const double       ilu_rtol = linear_solver_parameters.ilu_precond_rtol;
 
   TrilinosWrappers::PreconditionILU::AdditionalData preconditionerOptions(
     ilu_fill, ilu_atol, ilu_rtol, 0);

@@ -37,9 +37,9 @@ read_mesh(const Parameters::Mesh   &mesh_parameters,
         {
           double minimal_cell_size =
             GridTools::minimal_cell_diameter(triangulation);
-          double       target_size = mesh_parameters.target_size;
-          unsigned int number_refinement =
-            floor(std::log(minimal_cell_size / target_size) / std::log(2));
+          double       target_size       = mesh_parameters.target_size;
+          unsigned int number_refinement = static_cast<unsigned int>(
+            floor(std::log(minimal_cell_size / target_size) / std::log(2)));
           pcout << "Automatically refining grid until target size: "
                 << target_size << std::endl;
           triangulation.refine_global(number_refinement);

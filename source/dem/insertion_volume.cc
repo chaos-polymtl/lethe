@@ -86,12 +86,13 @@ InsertionVolume<dim, PropertiesIndex>::insert(
         Utilities::MPI::all_gather(communicator, my_bounding_box);
 
       // Distributing particles between processors
-      this->inserted_this_step_this_proc =
-        floor(this->inserted_this_step / n_mpi_process);
+      this->inserted_this_step_this_proc = static_cast<unsigned int>(
+        floor(this->inserted_this_step / n_mpi_process));
       if (this_mpi_process == (n_mpi_process - 1))
-        this->inserted_this_step_this_proc =
+        this->inserted_this_step_this_proc = static_cast<unsigned int>(
           this->inserted_this_step -
-          (n_mpi_process - 1) * floor(this->inserted_this_step / n_mpi_process);
+          (n_mpi_process - 1) *
+            floor(this->inserted_this_step / n_mpi_process));
 
       // Call random number generator
       std::vector<double> random_number_vector;
