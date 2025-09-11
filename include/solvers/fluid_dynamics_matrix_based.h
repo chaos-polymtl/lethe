@@ -33,7 +33,6 @@ class FluidDynamicsMatrixBased
   : public NavierStokesBase<dim, GlobalVectorType, IndexSet>
 {
 public:
-
   FluidDynamicsMatrixBased(SimulationParameters<dim> &nsparam);
   ~FluidDynamicsMatrixBased();
 
