@@ -107,6 +107,9 @@ Public Member Functions</h2></td></tr>
 <tr class="memitem:a6c1f1c1a467b61ec2e6b3d4bbf1a4995" id="r_a6c1f1c1a467b61ec2e6b3d4bbf1a4995"><td class="memTemplParams" colspan="2">template&lt;int dim2&gt; </td></tr>
 <tr class="memitem:a6c1f1c1a467b61ec2e6b3d4bbf1a4995"><td class="memTemplItemLeft" align="right" valign="top">&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classMortarManagerCircle.html#a6c1f1c1a467b61ec2e6b3d4bbf1a4995">MortarManagerCircle</a> (unsigned int <a class="el" href="classMortarManagerBase.html#a82351709e16139d2710de101304a6210">n_subdivisions</a>, double <a class="el" href="classMortarManagerBase.html#a97b7ade36316049de4b1295837c61615">radius</a>, const Quadrature&lt; dim2 &gt; &amp;<a class="el" href="classMortarManagerBase.html#ab1dd55d876be2dcd20494e2d3ea1b4f7">quadrature</a>, const double <a class="el" href="classMortarManagerBase.html#a6d7c8dd63b74c16890b3682754a75d67">rotation_angle</a>, const Point&lt; dim &gt; &amp;<a class="el" href="classMortarManagerCircle.html#a5aee9837108de2a9b4c91597a8d0bee8">center_of_rotation</a>=Point&lt; dim &gt;(), const double <a class="el" href="classMortarManagerCircle.html#a9dd2183158e914eb9edcf8d7e1368d12">pre_rotation_angle</a>=0.0)</td></tr>
 <tr class="separator:a6c1f1c1a467b61ec2e6b3d4bbf1a4995"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a7b057945935599b1b697b44b2bdc6e26" id="r_a7b057945935599b1b697b44b2bdc6e26"><td class="memTemplParams" colspan="2">template&lt;int dim2&gt; </td></tr>
+<tr class="memitem:a7b057945935599b1b697b44b2bdc6e26"><td class="memTemplItemLeft" align="right" valign="top">&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classMortarManagerCircle.html#a7b057945935599b1b697b44b2bdc6e26">MortarManagerCircle</a> (std::vector&lt; unsigned int &gt; <a class="el" href="classMortarManagerBase.html#a82351709e16139d2710de101304a6210">n_subdivisions</a>, std::vector&lt; double &gt; <a class="el" href="classMortarManagerBase.html#a97b7ade36316049de4b1295837c61615">radius</a>, const Quadrature&lt; dim2 &gt; &amp;<a class="el" href="classMortarManagerBase.html#ab1dd55d876be2dcd20494e2d3ea1b4f7">quadrature</a>, const double <a class="el" href="classMortarManagerBase.html#a6d7c8dd63b74c16890b3682754a75d67">rotation_angle</a>, const Point&lt; dim &gt; &amp;<a class="el" href="classMortarManagerCircle.html#a5aee9837108de2a9b4c91597a8d0bee8">center_of_rotation</a>=Point&lt; dim &gt;(), const double <a class="el" href="classMortarManagerCircle.html#a9dd2183158e914eb9edcf8d7e1368d12">pre_rotation_angle</a>=0.0)</td></tr>
+<tr class="separator:a7b057945935599b1b697b44b2bdc6e26"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aa51afe0458b96a0448f7a3c73888f4aa" id="r_aa51afe0458b96a0448f7a3c73888f4aa"><td class="memTemplParams" colspan="2">template&lt;int dim2&gt; </td></tr>
 <tr class="memitem:aa51afe0458b96a0448f7a3c73888f4aa"><td class="memTemplItemLeft" align="right" valign="top">&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classMortarManagerCircle.html#aa51afe0458b96a0448f7a3c73888f4aa">MortarManagerCircle</a> (const Quadrature&lt; dim2 &gt; &amp;<a class="el" href="classMortarManagerBase.html#ab1dd55d876be2dcd20494e2d3ea1b4f7">quadrature</a>, const Mapping&lt; dim &gt; &amp;mapping, const DoFHandler&lt; dim &gt; &amp;dof_handler, const <a class="el" href="structParameters_1_1Mortar.html">Parameters::Mortar</a>&lt; dim &gt; &amp;mortar_parameters)</td></tr>
 <tr class="separator:aa51afe0458b96a0448f7a3c73888f4aa"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -180,7 +183,7 @@ class MortarManagerCircle&lt; dim &gt;</div>
 <p class="definition">Definition at line <a class="el" href="mortar__coupling__manager_8h_source.html#l00210">210</a> of file <a class="el" href="mortar__coupling__manager_8h_source.html">mortar_coupling_manager.h</a>.</p>
 </div><h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
 <a id="a6c1f1c1a467b61ec2e6b3d4bbf1a4995" name="a6c1f1c1a467b61ec2e6b3d4bbf1a4995"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a6c1f1c1a467b61ec2e6b3d4bbf1a4995">&#9670;&#160;</a></span>MortarManagerCircle() <span class="overload">[1/2]</span></h2>
+<h2 class="memtitle"><span class="permalink"><a href="#a6c1f1c1a467b61ec2e6b3d4bbf1a4995">&#9670;&#160;</a></span>MortarManagerCircle() <span class="overload">[1/3]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -233,12 +236,70 @@ template&lt;int dim2&gt; </div>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="mortar__coupling__manager_8h_source.html#l00276">276</a> of file <a class="el" href="mortar__coupling__manager_8h_source.html">mortar_coupling_manager.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="mortar__coupling__manager_8h_source.html#l00284">284</a> of file <a class="el" href="mortar__coupling__manager_8h_source.html">mortar_coupling_manager.h</a>.</p>
+
+</div>
+</div>
+<a id="a7b057945935599b1b697b44b2bdc6e26" name="a7b057945935599b1b697b44b2bdc6e26"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a7b057945935599b1b697b44b2bdc6e26">&#9670;&#160;</a></span>MortarManagerCircle() <span class="overload">[2/3]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;int dim&gt; </div>
+<div class="memtemplate">
+template&lt;int dim2&gt; </div>
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="classMortarManagerCircle.html">MortarManagerCircle</a>&lt; dim &gt;<a class="el" href="classMortarManagerCircle.html">::MortarManagerCircle</a> </td>
+          <td>(</td>
+          <td class="paramtype">std::vector&lt; unsigned int &gt;&#160;</td>
+          <td class="paramname"><em>n_subdivisions</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">std::vector&lt; double &gt;&#160;</td>
+          <td class="paramname"><em>radius</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const Quadrature&lt; dim2 &gt; &amp;&#160;</td>
+          <td class="paramname"><em>quadrature</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const double&#160;</td>
+          <td class="paramname"><em>rotation_angle</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const Point&lt; dim &gt; &amp;&#160;</td>
+          <td class="paramname"><em>center_of_rotation</em> = <code>Point&lt;dim&gt;()</code>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const double&#160;</td>
+          <td class="paramname"><em>pre_rotation_angle</em> = <code>0.0</code>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p class="definition">Definition at line <a class="el" href="mortar__coupling__manager_8h_source.html#l00298">298</a> of file <a class="el" href="mortar__coupling__manager_8h_source.html">mortar_coupling_manager.h</a>.</p>
 
 </div>
 </div>
 <a id="aa51afe0458b96a0448f7a3c73888f4aa" name="aa51afe0458b96a0448f7a3c73888f4aa"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#aa51afe0458b96a0448f7a3c73888f4aa">&#9670;&#160;</a></span>MortarManagerCircle() <span class="overload">[2/2]</span></h2>
+<h2 class="memtitle"><span class="permalink"><a href="#aa51afe0458b96a0448f7a3c73888f4aa">&#9670;&#160;</a></span>MortarManagerCircle() <span class="overload">[3/3]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -279,7 +340,7 @@ template&lt;int dim2&gt; </div>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="mortar__coupling__manager_8h_source.html#l00291">291</a> of file <a class="el" href="mortar__coupling__manager_8h_source.html">mortar_coupling_manager.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="mortar__coupling__manager_8h_source.html#l00313">313</a> of file <a class="el" href="mortar__coupling__manager_8h_source.html">mortar_coupling_manager.h</a>.</p>
 
 </div>
 </div>
@@ -314,7 +375,7 @@ template&lt;int dim&gt; </div>
 
 <p>Implements <a class="el" href="classMortarManagerBase.html#a23079f9952ce138420ee90d7d160e56d">MortarManagerBase&lt; dim &gt;</a>.</p>
 
-<p class="definition">Definition at line <a class="el" href="mortar__coupling__manager_8cc_source.html#l00597">597</a> of file <a class="el" href="mortar__coupling__manager_8cc_source.html">mortar_coupling_manager.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="mortar__coupling__manager_8cc_source.html#l00687">687</a> of file <a class="el" href="mortar__coupling__manager_8cc_source.html">mortar_coupling_manager.cc</a>.</p>
 
 </div>
 </div>
@@ -348,7 +409,7 @@ template&lt;int dim&gt; </div>
 
 <p>Implements <a class="el" href="classMortarManagerBase.html#a5f88e0afa02fed23556106c9cb91514c">MortarManagerBase&lt; dim &gt;</a>.</p>
 
-<p class="definition">Definition at line <a class="el" href="mortar__coupling__manager_8cc_source.html#l00613">613</a> of file <a class="el" href="mortar__coupling__manager_8cc_source.html">mortar_coupling_manager.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="mortar__coupling__manager_8cc_source.html#l00703">703</a> of file <a class="el" href="mortar__coupling__manager_8cc_source.html">mortar_coupling_manager.cc</a>.</p>
 
 </div>
 </div>
@@ -382,7 +443,7 @@ template&lt;int dim&gt; </div>
 
 <p>Implements <a class="el" href="classMortarManagerBase.html#a2d293bd209c2953085ed86c37e9935ae">MortarManagerBase&lt; dim &gt;</a>.</p>
 
-<p class="definition">Definition at line <a class="el" href="mortar__coupling__manager_8cc_source.html#l00604">604</a> of file <a class="el" href="mortar__coupling__manager_8cc_source.html">mortar_coupling_manager.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="mortar__coupling__manager_8cc_source.html#l00694">694</a> of file <a class="el" href="mortar__coupling__manager_8cc_source.html">mortar_coupling_manager.cc</a>.</p>
 
 <p class="reference">References <a class="el" href="utilities_8h_source.html#l00897">point_to_angle()</a>.</p>
 
@@ -413,7 +474,7 @@ template&lt;int dim&gt; </div>
 
 <p>Center of rotation. </p>
 
-<p class="definition">Definition at line <a class="el" href="mortar__coupling__manager_8h_source.html#l00242">242</a> of file <a class="el" href="mortar__coupling__manager_8h_source.html">mortar_coupling_manager.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="mortar__coupling__manager_8h_source.html#l00250">250</a> of file <a class="el" href="mortar__coupling__manager_8h_source.html">mortar_coupling_manager.h</a>.</p>
 
 </div>
 </div>
@@ -440,7 +501,7 @@ template&lt;int dim&gt; </div>
 </div><div class="memdoc">
 <p>Initial rotation angle used for computing mortar locations, accounting for cases here the element edges are not aligned with the x axis </p>
 
-<p class="definition">Definition at line <a class="el" href="mortar__coupling__manager_8h_source.html#l00239">239</a> of file <a class="el" href="mortar__coupling__manager_8h_source.html">mortar_coupling_manager.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="mortar__coupling__manager_8h_source.html#l00247">247</a> of file <a class="el" href="mortar__coupling__manager_8h_source.html">mortar_coupling_manager.h</a>.</p>
 
 </div>
 </div>
