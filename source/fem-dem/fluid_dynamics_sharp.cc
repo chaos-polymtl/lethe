@@ -719,7 +719,6 @@ FluidDynamicsSharp<dim>::generate_cut_cell_candidates(
                                                     position);
 
           bool           projected_point_over_face = true;
-          Point<dim>     unit_cell_projected_point;
           Tensor<1, dim> projected_point_tensor(projected_point);
 
           // Check whether the projected point is within the cell
@@ -1859,7 +1858,6 @@ FluidDynamicsSharp<dim>::calculate_L2_error_particles()
 
   Function<dim> *l_exact_solution = this->exact_solution;
 
-  Point<dim>                                    center_immersed;
   std::map<types::global_dof_index, Point<dim>> support_points =
     DoFTools::map_dofs_to_support_points(*this->mapping, this->dof_handler);
 
@@ -3119,8 +3117,6 @@ FluidDynamicsSharp<dim>::sharp_edge()
 
   TimerOutput::Scope t(this->computing_timer, "Assemble sharp");
   using dealii::numbers::PI;
-  Point<dim>                                                  center_immersed;
-  Point<dim>                                                  pressure_bridge;
   std::vector<typename DoFHandler<dim>::active_cell_iterator> active_neighbors;
   std::vector<typename DoFHandler<dim>::active_cell_iterator>
     active_neighbors_set;

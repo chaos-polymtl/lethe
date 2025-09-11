@@ -252,7 +252,6 @@ ParticleDetectorInteractions<dim>::calculate_reactor_path_length()
 {
   Tensor<1, dim> h_vector, detector_particle_origin,
     particle_position_translation, particle_position_rotation;
-  Point<dim> intersection_position;
 
   // Calculate translated particle position (eq 59 - 63)
   h_vector                      = h * detector_orientation_z;

@@ -60,8 +60,12 @@ namespace Parameters
   public:
     VoidFractionParameters()
       : void_fraction(1)
-
     {}
+
+    /**
+     * Default destructor.
+     */
+    virtual ~VoidFractionParameters() = default;
 
     virtual void
     declare_parameters(ParameterHandler &prm);
