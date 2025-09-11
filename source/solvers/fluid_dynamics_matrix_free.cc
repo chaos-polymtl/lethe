@@ -2805,8 +2805,8 @@ FluidDynamicsMatrixFree<dim>::update_mortar_configuration()
     {
       // Clear the preconditioner before the matrix they are associated with is
       // cleared
-      // gmg_preconditioner.reset();
-      // ilu_preconditioner.reset();
+      gmg_preconditioner.reset();
+      ilu_preconditioner.reset();
 
       // Rotate mapping
       this->rotate_rotor_mapping(false);
