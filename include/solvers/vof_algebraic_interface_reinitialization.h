@@ -282,7 +282,7 @@ private:
     // Compute diffusivity
     const double diffusivity_inv = 1.0 / compute_diffusivity(h_min);
 
-    return h_min * h_min * 0.25 * diffusivity_inv * cfl;
+    return h_min * h_min * 0.5 * diffusivity_inv * cfl;
   }
 
   /**
