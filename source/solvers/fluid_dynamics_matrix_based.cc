@@ -220,6 +220,15 @@ FluidDynamicsMatrixBased<dim>::update_mortar_configuration()
       this->simulation_parameters.mesh_adaptation.type ==
         Parameters::MeshAdaptation::Type::none)
     {
+      // Clear the preconditioner before the matrix they are associated with is
+      // cleared
+      amg_preconditioner.reset();
+      ilu_preconditioner.reset();
+      current_preconditioner_fill_level = initial_preconditioner_fill_level;
+
+      // Now reset system matrix
+      system_matrix.clear();
+      
       // Rotate mapping
       this->rotate_rotor_mapping(false);
 
