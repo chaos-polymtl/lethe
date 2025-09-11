@@ -55,10 +55,10 @@ test()
   // Stator mesh parameters
   mesh_parameters.type                     = Parameters::Mesh::Type::dealii;
   mesh_parameters.grid_type                = "cylinder_shell";
-  mesh_parameters.grid_arguments           = "2.0 : 0.5 : 1.0 : 4 : 4 : true";
+  mesh_parameters.grid_arguments           = "2.0 : 0.5 : 1.0 : 4 : 6 : true";
   mesh_parameters.scale                    = 1;
   mesh_parameters.simplex                  = false;
-  mesh_parameters.initial_refinement       = 2;
+  mesh_parameters.initial_refinement       = 1;
   mesh_parameters.refine_until_target_size = false;
   mesh_parameters.boundaries_to_refine     = std::vector<int>();
   mesh_parameters.initial_refinement_at_boundaries = 0;
@@ -72,7 +72,7 @@ test()
   mortar_parameters.rotor_mesh->type = Parameters::Mesh::Type::dealii;
   mortar_parameters.rotor_mesh->grid_type = "cylinder_shell";
   mortar_parameters.rotor_mesh->grid_arguments =
-    "2.0 : 0.25 : 0.5 : 4 : 4 : true";
+    "2.0 : 0.25 : 0.5 : 4 : 6 : true";
   mortar_parameters.rotor_mesh->scale          = 1;
   mortar_parameters.rotor_mesh->simplex        = false;
   mortar_parameters.rotor_mesh->translation    = Tensor<1, dim>({0, 0, 0});
@@ -113,7 +113,7 @@ test()
   LetheGridTools::rotate_mapping(dof_handler,
                                  mapping_cache,
                                  mapping,
-                                 radius,
+                                 radius[0],
                                  rotation_angle,
                                  mortar_parameters.center_of_rotation,
                                  mortar_parameters.rotation_axis);
@@ -122,9 +122,12 @@ test()
   if (Utilities::MPI::this_mpi_process(comm) == 0)
     {
       deallog << "Rotation angle (rad) : " << rotation_angle << std::endl;
-      deallog << "Number of subdivisions at interface : " << n_subdivisions
+      deallog << "Radial direction subdivisions: " << n_subdivisions[0]
               << std::endl;
-      deallog << "Radius : " << radius << std::endl;
+      deallog << "Axial direction subdivisions : " << n_subdivisions[1]
+              << std::endl;
+      deallog << "Radius : " << radius[0] << std::endl;
+      deallog << "Axial direction length : " << radius[1] << std::endl;
     }
 }
 

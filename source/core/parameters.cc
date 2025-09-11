@@ -4200,7 +4200,8 @@ namespace Parameters
       prm.declare_entry("rotation axis",
                         "0.0, 0.0, 1.0",
                         Patterns::List(Patterns::Double()),
-                        "Unit vector representing the rotor rotation axis");
+                        "Unit vector representing the rotor rotation axis."
+                        "Choices are <1, 0, 0 | 0, 1, 0 | 0, 0, 1>.");
 
       prm.enter_subsection("rotor rotation angle");
       rotor_rotation_angle = std::make_shared<Functions::ParsedFunction<dim>>();

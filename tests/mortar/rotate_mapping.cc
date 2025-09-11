@@ -74,6 +74,7 @@ test()
   mortar_parameters.rotor_mesh->simplex        = false;
   mortar_parameters.stator_boundary_id         = 4;
   mortar_parameters.rotor_boundary_id          = 5; // after shifting
+  mortar_parameters.rotation_axis              = Tensor<1, dim>({0, 0});
   const double rotation_angle =
     2 * numbers::PI * mortar_parameters.rotor_mesh->rotation_angle / 360.0;
 
@@ -106,27 +107,27 @@ test()
 
   // Rotate mapping
   LetheGridTools::rotate_mapping(
-    dof_handler, mapping_cache, mapping, radius, rotation_angle);
+    dof_handler, mapping_cache, mapping, radius[0], rotation_angle);
 
   // Print information
   if (Utilities::MPI::this_mpi_process(comm) == 0)
     {
       deallog << "Rotation angle (rad) : " << rotation_angle << std::endl;
-      deallog << "Number of subdivisions at interface : " << n_subdivisions
+      deallog << "Number of subdivisions at interface : " << n_subdivisions[0]
               << std::endl;
-      deallog << "Radius : " << radius << std::endl;
+      deallog << "Radius : " << radius[0] << std::endl;
     }
   // Rotate mapping
   LetheGridTools::rotate_mapping(
-    dof_handler, mapping_cache, mapping, radius * 10, rotation_angle);
+    dof_handler, mapping_cache, mapping, radius[0] * 10, rotation_angle);
 
   const auto [n_subdivisions1, radius1, prerotation1] =
     compute_n_subdivisions_and_radius(triangulation,
                                       mapping_cache,
                                       mortar_parameters);
 
-  AssertDimension(n_subdivisions, n_subdivisions1);
-  AssertDimension(radius, radius);
+  AssertDimension(n_subdivisions[0], n_subdivisions1[0]);
+  AssertDimension(radius[0], radius[0]);
   Assert(std::abs(rotation_angle - prerotation1) < 1.e-8, ExcInternalError());
 }
 

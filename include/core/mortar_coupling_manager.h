@@ -185,7 +185,7 @@ protected:
  * @return radius Radius at the interface between inner and outer domains
  */
 template <int dim>
-std::tuple<unsigned int, double, double>
+std::tuple<std::vector<unsigned int>, std::vector<double>, double>
 compute_n_subdivisions_and_radius(
   const Triangulation<dim>      &triangulation,
   const Mapping<dim>            &mapping,
@@ -217,6 +217,14 @@ public:
                       const double            rotation_angle,
                       const Point<dim>       &center_of_rotation = Point<dim>(),
                       const double            pre_rotation_angle = 0.0);
+
+  template <int dim2>
+  MortarManagerCircle(std::vector<unsigned int> n_subdivisions,
+                      std::vector<double>       radius,
+                      const Quadrature<dim2>   &quadrature,
+                      const double              rotation_angle,
+                      const Point<dim> &center_of_rotation = Point<dim>(),
+                      const double      pre_rotation_angle = 0.0);
 
   template <int dim2>
   MortarManagerCircle(const Quadrature<dim2>        &quadrature,
@@ -280,6 +288,20 @@ MortarManagerCircle<dim>::MortarManagerCircle(
   const double            rotation_angle,
   const Point<dim>       &center_of_rotation,
   const double            pre_rotation_angle)
+  : MortarManagerBase<dim>(n_subdivisions, radius, quadrature, rotation_angle)
+  , pre_rotation_angle(pre_rotation_angle)
+  , center_of_rotation(center_of_rotation)
+{}
+
+template <int dim>
+template <int dim2>
+MortarManagerCircle<dim>::MortarManagerCircle(
+  std::vector<unsigned int> n_subdivisions,
+  std::vector<double>       radius,
+  const Quadrature<dim2>   &quadrature,
+  const double              rotation_angle,
+  const Point<dim>         &center_of_rotation,
+  const double              pre_rotation_angle)
   : MortarManagerBase<dim>(n_subdivisions, radius, quadrature, rotation_angle)
   , pre_rotation_angle(pre_rotation_angle)
   , center_of_rotation(center_of_rotation)
