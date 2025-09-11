@@ -994,7 +994,7 @@ FluidDynamicsNitsche<dim, spacedim>::write_checkpoint()
     // Serialize the default post-processing tables that are members of
     // NavierStokesBase
     const std::vector<OutputStructTableHandler> &table_output_structs =
-      this->Base::gather_tables();
+       NavierStokesBase<spacedim, GlobalVectorType, IndexSet>::gather_tables();
     this->serialize_tables_vector(table_output_structs);
   }
 }
@@ -1067,7 +1067,7 @@ FluidDynamicsNitsche<dim, spacedim>::read_checkpoint()
     // Deserialize the default post-processing tables that are members of
     // NavierStokesBase
     std::vector<OutputStructTableHandler> table_output_structs =
-      this->Base::gather_tables();
+       NavierStokesBase<spacedim, GlobalVectorType, IndexSet>::gather_tables();
     this->deserialize_tables_vector(table_output_structs);
   }
 }

@@ -33,9 +33,6 @@ class FluidDynamicsMatrixBased
   : public NavierStokesBase<dim, GlobalVectorType, IndexSet>
 {
 public:
-  // Alias for NavierStokesBase to use its version of overridden classes when
-  // needed
-  using Base = NavierStokesBase<dim, GlobalVectorType, IndexSet>;
 
   FluidDynamicsMatrixBased(SimulationParameters<dim> &nsparam);
   ~FluidDynamicsMatrixBased();
