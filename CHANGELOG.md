@@ -7,7 +7,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
 ### Fixed
 
-- MINOR When compiling Lethe with Clang, multiple warning arise throughout the code. This removes the last remaining warningin the dem, fem-dem and rpt library. The majority of the warnings left were related to some virtual classes not having a virtual distructors and static_cast missing when using the type properties from the article. Lethe now compiles without any warning on modern Clang. [#1674](https://github.com/chaos-polymtl/lethe/pull/1674)
+- MINOR When compiling Lethe with Clang, multiple warning arise throughout the code. This removes the last remaining warning in the dem, fem-dem and rpt library. The majority of the warnings left were related to some virtual classes not having virtual destructors and static_cast missing when using the type properties from the article. Lethe now compiles without any warning on modern Clang. [#1674](https://github.com/chaos-polymtl/lethe/pull/1674)
 
 
 ### [Master] - 2025-09-10
