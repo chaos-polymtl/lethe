@@ -14,11 +14,11 @@ Fluid Dynamics
 Newton iteration: 0  - Residual:  0.0265378
 	alpha =      1 res = 6.56e-05
 	||du||_L2 = 0.1651	||du||_Linfty = 0.03109
-	||dp||_L2 =  15.61	||dp||_Linfty = 2.67
+	||dp||_L2 =  9.737	||dp||_Linfty = 1.929
 Newton iteration: 1  - Residual:  6.56e-05
-	alpha =      1 res = 8.9e-09
-	||du||_L2 = 4.892e-06	||du||_Linfty = 7.509e-07
-	||dp||_L2 = 0.001183	||dp||_Linfty = 0.0002545
+	alpha =      1 res = 7.959e-09
+	||du||_L2 = 4.892e-06	||du||_Linfty = 7.425e-07
+	||dp||_L2 = 0.001191	||dp||_Linfty = 0.0002595
 Enstrophy: 0.2359
 Kinetic energy: 0.02691
 
@@ -29,13 +29,13 @@ Transient iteration: 2        Time: 0.01325  Time step: 0.00825  CFL: 0.00521966
 Fluid Dynamics
 ---------------
 Newton iteration: 0  - Residual:  1.136
-	alpha =      1 res = 0.0001205
-	||du||_L2 = 0.09641	||du||_Linfty = 0.01884
-	||dp||_L2 =  15.97	||dp||_Linfty = 2.778
-Newton iteration: 1  - Residual:  0.0001205
-	alpha =      1 res = 1.523e-08
-	||du||_L2 = 8.038e-05	||du||_Linfty = 2.122e-05
-	||dp||_L2 = 0.009717	||dp||_Linfty = 0.001238
+	alpha =      1 res = 0.0001213
+	||du||_L2 = 0.09642	||du||_Linfty = 0.01884
+	||dp||_L2 =  10.41	||dp||_Linfty = 2.05
+Newton iteration: 1  - Residual:  0.0001213
+	alpha =      1 res = 2.59e-08
+	||du||_L2 = 9.834e-05	||du||_Linfty = 2.394e-05
+	||dp||_L2 = 0.006993	||dp||_Linfty = 0.001276
 Enstrophy: 0.2355
 Kinetic energy: 0.0269
 
@@ -46,9 +46,9 @@ Transient iteration: 3        Time: 0.027    Time step: 0.01375  CFL: 0.0085918
 Fluid Dynamics
 ---------------
 Newton iteration: 0  - Residual:  0.1269
-	alpha =      1 res = 5.475e-06
-	||du||_L2 = 0.02573	||du||_Linfty = 0.005567
-	||dp||_L2 =  0.799	||dp||_Linfty = 0.1631
+	alpha =      1 res = 5.497e-06
+	||du||_L2 = 0.02574	||du||_Linfty = 0.005567
+	||dp||_L2 = 0.6784	||dp||_Linfty = 0.1374
 Enstrophy: 0.2355
 Kinetic energy: 0.0269
 
@@ -58,10 +58,10 @@ Transient iteration: 4        Time: 0.042125 Time step: 0.015125 CFL: 0.0143128
 ---------------
 Fluid Dynamics
 ---------------
-Newton iteration: 0  - Residual:  0.07154
-	alpha =      1 res = 2.218e-06
+Newton iteration: 0  - Residual:  0.07153
+	alpha =      1 res = 2.312e-06
 	||du||_L2 = 0.01331	||du||_Linfty = 0.002568
-	||dp||_L2 =  1.076	||dp||_Linfty = 0.1793
+	||dp||_L2 = 0.6609	||dp||_Linfty = 0.1277
 Enstrophy: 0.2355
 Kinetic energy: 0.0269
 
@@ -71,10 +71,10 @@ Transient iteration: 5        Time: 0.0587625 Time step: 0.0166375 CFL: 0.015750
 ---------------
 Fluid Dynamics
 ---------------
-Newton iteration: 0  - Residual:  0.05862
-	alpha =      1 res = 1.742e-06
+Newton iteration: 0  - Residual:  0.05863
+	alpha =      1 res = 1.792e-06
 	||du||_L2 = 0.01261	||du||_Linfty = 0.002563
-	||dp||_L2 = 0.7123	||dp||_Linfty = 0.1258
+	||dp||_L2 = 0.4697	||dp||_Linfty = 0.09319
 Enstrophy: 0.2355
 Kinetic energy: 0.0269
 
@@ -85,9 +85,9 @@ Transient iteration: 6        Time: 0.0770638 Time step: 0.0183013 CFL: 0.017330
 Fluid Dynamics
 ---------------
 Newton iteration: 0  - Residual:  0.02368
-	alpha =      1 res = 3.824e-07
+	alpha =      1 res = 4.1e-07
 	||du||_L2 = 0.005787	||du||_Linfty = 0.001248
-	||dp||_L2 = 0.2391	||dp||_Linfty = 0.04444
+	||dp||_L2 = 0.1699	||dp||_Linfty = 0.03466
 Enstrophy: 0.2355
 Kinetic energy: 0.0269
 
@@ -97,10 +97,10 @@ Transient iteration: 7        Time: 0.0971951 Time step: 0.0201314 CFL: 0.019065
 ---------------
 Fluid Dynamics
 ---------------
-Newton iteration: 0  - Residual:  0.005857
-	alpha =      1 res = 5.507e-08
+Newton iteration: 0  - Residual:  0.005856
+	alpha =      1 res = 6.166e-08
 	||du||_L2 = 0.002024	||du||_Linfty = 0.0004127
-	||dp||_L2 = 0.03742	||dp||_Linfty = 0.007485
+	||dp||_L2 = 0.03188	||dp||_Linfty = 0.006548
 Enstrophy: 0.2355
 Kinetic energy: 0.0269
 
@@ -111,9 +111,9 @@ Transient iteration: 8        Time: 0.11934  Time step: 0.0221445 CFL: 0.020973
 Fluid Dynamics
 ---------------
 Newton iteration: 0  - Residual:  0.002723
-	alpha =      1 res = 1.895e-08
-	||du||_L2 = 0.00163	||du||_Linfty = 0.0002192
-	||dp||_L2 = 0.01317	||dp||_Linfty = 0.001845
+	alpha =      1 res = 2.149e-08
+	||du||_L2 = 0.00163	||du||_Linfty = 0.0002193
+	||dp||_L2 = 0.007198	||dp||_Linfty = 0.00119
 Enstrophy: 0.2355
 Kinetic energy: 0.0269
 
@@ -124,9 +124,9 @@ Transient iteration: 9        Time: 0.143699 Time step: 0.024359 CFL: 0.0230703
 Fluid Dynamics
 ---------------
 Newton iteration: 0  - Residual:  0.002878
-	alpha =      1 res = 2.086e-08
-	||du||_L2 = 0.001823	||du||_Linfty = 0.0002682
-	||dp||_L2 = 0.01127	||dp||_Linfty = 0.002044
+	alpha =      1 res = 2.272e-08
+	||du||_L2 = 0.001823	||du||_Linfty = 0.0002683
+	||dp||_L2 = 0.007615	||dp||_Linfty = 0.001552
 Enstrophy: 0.2355
 Kinetic energy: 0.02689
 
@@ -137,9 +137,9 @@ Transient iteration: 10       Time: 0.170493 Time step: 0.0267949 CFL: 0.0253774
 Fluid Dynamics
 ---------------
 Newton iteration: 0  - Residual:  0.002765
-	alpha =      1 res = 1.799e-07
+	alpha =      1 res = 1.954e-07
 	||du||_L2 = 0.001988	||du||_Linfty = 0.0002779
-	||dp||_L2 = 0.004698	||dp||_Linfty = 0.0009157
+	||dp||_L2 = 0.003543	||dp||_Linfty = 0.0007402
 Enstrophy: 0.2355
 Kinetic energy: 0.02689
 
@@ -150,9 +150,9 @@ Transient iteration: 11       Time: 0.199968 Time step: 0.0294743 CFL: 0.0279152
 Fluid Dynamics
 ---------------
 Newton iteration: 0  - Residual:  0.002723
-	alpha =      1 res = 6.073e-08
+	alpha =      1 res = 6.389e-08
 	||du||_L2 = 0.002179	||du||_Linfty = 0.0002915
-	||dp||_L2 = 0.001317	||dp||_Linfty = 0.0002675
+	||dp||_L2 = 0.001115	||dp||_Linfty = 0.0002358
 Enstrophy: 0.2355
 Kinetic energy: 0.02689
 
@@ -163,9 +163,9 @@ Transient iteration: 12       Time: 0.23239  Time step: 0.0324218 CFL: 0.0307069
 Fluid Dynamics
 ---------------
 Newton iteration: 0  - Residual:  0.002718
-	alpha =      1 res = 2.101e-08
+	alpha =      1 res = 2.151e-08
 	||du||_L2 = 0.002396	||du||_Linfty = 0.0003165
-	||dp||_L2 = 0.0003152	||dp||_Linfty = 5.821e-05
+	||dp||_L2 = 0.0003568	||dp||_Linfty = 6.334e-05
 Enstrophy: 0.2355
 Kinetic energy: 0.02689
 
@@ -176,9 +176,9 @@ Transient iteration: 13       Time: 0.268054 Time step: 0.035664 CFL: 0.0337777
 Fluid Dynamics
 ---------------
 Newton iteration: 0  - Residual:  0.002718
-	alpha =      1 res = 2.721e-08
+	alpha =      1 res = 2.771e-08
 	||du||_L2 = 0.002636	||du||_Linfty = 0.0003501
-	||dp||_L2 = 0.0001878	||dp||_Linfty = 3.048e-05
+	||dp||_L2 = 0.0002683	||dp||_Linfty = 3.866e-05
 Enstrophy: 0.2355
 Kinetic energy: 0.02689
 
@@ -189,9 +189,9 @@ Transient iteration: 14       Time: 0.307284 Time step: 0.0392304 CFL: 0.0371555
 Fluid Dynamics
 ---------------
 Newton iteration: 0  - Residual:  0.00272
-	alpha =      1 res = 2.96e-08
+	alpha =      1 res = 2.99e-08
 	||du||_L2 = 0.002901	||du||_Linfty = 0.0003897
-	||dp||_L2 = 0.0002328	||dp||_Linfty = 3.731e-05
+	||dp||_L2 = 0.0002812	||dp||_Linfty = 4.2e-05
 Enstrophy: 0.2355
 Kinetic energy: 0.02688
 
@@ -202,9 +202,9 @@ Transient iteration: 15       Time: 0.350437 Time step: 0.0431534 CFL: 0.040871
 Fluid Dynamics
 ---------------
 Newton iteration: 0  - Residual:  0.002722
-	alpha =      1 res = 3.497e-08
+	alpha =      1 res = 3.515e-08
 	||du||_L2 = 0.003193	||du||_Linfty = 0.0004342
-	||dp||_L2 = 0.0002855	||dp||_Linfty = 4.843e-05
+	||dp||_L2 = 0.0003119	||dp||_Linfty = 5.125e-05
 Enstrophy: 0.2355
 Kinetic energy: 0.02688
 
@@ -215,9 +215,9 @@ Transient iteration: 16       Time: 0.397906 Time step: 0.0474687 CFL: 0.0449579
 Fluid Dynamics
 ---------------
 Newton iteration: 0  - Residual:  0.002724
-	alpha =      1 res = 4.278e-08
+	alpha =      1 res = 4.286e-08
 	||du||_L2 = 0.003515	||du||_Linfty = 0.000484
-	||dp||_L2 = 0.0003157	||dp||_Linfty = 5.315e-05
+	||dp||_L2 = 0.0003375	||dp||_Linfty = 5.577e-05
 Enstrophy: 0.2355
 Kinetic energy: 0.02687
 
@@ -228,9 +228,9 @@ Transient iteration: 17       Time: 0.450122 Time step: 0.0522156 CFL: 0.0494532
 Fluid Dynamics
 ---------------
 Newton iteration: 0  - Residual:  0.002727
-	alpha =      1 res = 5.326e-08
+	alpha =      1 res = 5.327e-08
 	||du||_L2 = 0.00387	||du||_Linfty = 0.0005399
-	||dp||_L2 = 0.0003365	||dp||_Linfty = 5.815e-05
+	||dp||_L2 = 0.000359	||dp||_Linfty = 5.754e-05
 Enstrophy: 0.2355
 Kinetic energy: 0.02687
 
@@ -241,9 +241,9 @@ Transient iteration: 18       Time: 0.507559 Time step: 0.0574372 CFL: 0.0543976
 Fluid Dynamics
 ---------------
 Newton iteration: 0  - Residual:  0.002731
-	alpha =      1 res = 6.729e-08
+	alpha =      1 res = 6.723e-08
 	||du||_L2 = 0.004262	||du||_Linfty = 0.0006027
-	||dp||_L2 = 0.0003592	||dp||_Linfty = 6.488e-05
+	||dp||_L2 = 0.0003821	||dp||_Linfty = 6.114e-05
 Enstrophy: 0.2355
 Kinetic energy: 0.02686
 
@@ -254,9 +254,9 @@ Transient iteration: 19       Time: 0.57074  Time step: 0.0631809 CFL: 0.0598358
 Fluid Dynamics
 ---------------
 Newton iteration: 0  - Residual:  0.002735
-	alpha =      1 res = 8.605e-08
+	alpha =      1 res = 8.594e-08
 	||du||_L2 = 0.004694	||du||_Linfty = 0.0006734
-	||dp||_L2 = 0.0003889	||dp||_Linfty = 7.252e-05
+	||dp||_L2 = 0.0004106	||dp||_Linfty = 6.815e-05
 Enstrophy: 0.2355
 Kinetic energy: 0.02685
 
@@ -267,9 +267,9 @@ Transient iteration: 20       Time: 0.640239 Time step: 0.069499 CFL: 0.0658171
 Fluid Dynamics
 ---------------
 Newton iteration: 0  - Residual:  0.00274
-	alpha =      1 res = 1.112e-07
+	alpha =      1 res = 1.11e-07
 	||du||_L2 = 0.005172	||du||_Linfty = 0.0007531
-	||dp||_L2 = 0.0004275	||dp||_Linfty = 8.138e-05
+	||dp||_L2 = 0.0004464	||dp||_Linfty = 7.639e-05
 Enstrophy: 0.2355
 Kinetic energy: 0.02684
 
@@ -280,9 +280,9 @@ Transient iteration: 21       Time: 0.716687 Time step: 0.0764489 CFL: 0.0723952
 Fluid Dynamics
 ---------------
 Newton iteration: 0  - Residual:  0.002746
-	alpha =      1 res = 1.45e-07
+	alpha =      1 res = 1.448e-07
 	||du||_L2 = 0.0057	||du||_Linfty = 0.000843
-	||dp||_L2 = 0.0004761	||dp||_Linfty = 9.199e-05
+	||dp||_L2 = 0.000491	||dp||_Linfty = 8.638e-05
 Enstrophy: 0.2355
 Kinetic energy: 0.02683
 
@@ -293,9 +293,9 @@ Transient iteration: 22       Time: 0.800781 Time step: 0.0840937 CFL: 0.0796296
 Fluid Dynamics
 ---------------
 Newton iteration: 0  - Residual:  0.002754
-	alpha =      1 res = 1.905e-07
+	alpha =      1 res = 1.903e-07
 	||du||_L2 = 0.006285	||du||_Linfty = 0.0009446
-	||dp||_L2 = 0.0005362	||dp||_Linfty = 0.000105
+	||dp||_L2 = 0.0005459	||dp||_Linfty = 9.877e-05
 Enstrophy: 0.2355
 Kinetic energy: 0.02681
 
@@ -306,9 +306,9 @@ Transient iteration: 23       Time: 0.893284 Time step: 0.0925031 CFL: 0.087585
 Fluid Dynamics
 ---------------
 Newton iteration: 0  - Residual:  0.002763
-	alpha =      1 res = 2.522e-07
+	alpha =      1 res = 2.521e-07
 	||du||_L2 = 0.006934	||du||_Linfty = 0.001059
-	||dp||_L2 = 0.0006093	||dp||_Linfty = 0.00012
+	||dp||_L2 = 0.0006132	||dp||_Linfty = 0.0001131
 Enstrophy: 0.2355
 Kinetic energy: 0.0268
 
@@ -319,9 +319,9 @@ Transient iteration: 24       Time: 0.995038 Time step: 0.101753 CFL: 0.0963329
 Fluid Dynamics
 ---------------
 Newton iteration: 0  - Residual:  0.002773
-	alpha =      1 res = 3.362e-07
+	alpha =      1 res = 3.361e-07
 	||du||_L2 = 0.007653	||du||_Linfty = 0.001189
-	||dp||_L2 = 0.0006974	||dp||_Linfty = 0.0001372
+	||dp||_L2 = 0.0006949	||dp||_Linfty = 0.0001298
 Enstrophy: 0.2355
 Kinetic energy: 0.02677
 
@@ -334,6 +334,6 @@ Fluid Dynamics
 Newton iteration: 0  - Residual:  0.002786
 	alpha =      1 res = 4.511e-07
 	||du||_L2 = 0.008454	||du||_Linfty = 0.001335
-	||dp||_L2 = 0.0008028	||dp||_Linfty = 0.0001569
+	||dp||_L2 = 0.0007937	||dp||_Linfty = 0.000149
 Enstrophy: 0.2356
 Kinetic energy: 0.02675
