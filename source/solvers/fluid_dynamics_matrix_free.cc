@@ -903,13 +903,11 @@ MFNavierStokesPreconditionGMGBase<dim>::reinit(
               this->dof_handler_fe_q_iso_q1.distribute_dofs(
                 FESystem<dim>(FE_Q_iso_Q1<dim>(points), dim + 1));
               this->dof_handler_fe_q_iso_q1.distribute_mg_dofs();
-              DoFRenumbering::Cuthill_McKee(this->dof_handler_fe_q_iso_q1);
             }
 
           this->dof_handlers[l].distribute_dofs(
             FESystem<dim>(FE_Q<dim>(p), dim + 1));
           this->dof_handlers[l].distribute_mg_dofs();
-          DoFRenumbering::Cuthill_McKee(this->dof_handlers[l]);
         }
 
       if (this->simulation_parameters.linear_solver
@@ -1393,14 +1391,10 @@ MFNavierStokesPreconditionGMGBase<dim>::reinit(
 
               this->dof_handlers[l].distribute_dofs(
                 FESystem<dim>(FE_Q_iso_Q1<dim>(points), dim + 1));
-              DoFRenumbering::Cuthill_McKee(this->dof_handlers[l]);
             }
           else
-            {
-              this->dof_handlers[l].distribute_dofs(
-                FESystem<dim>(FE_Q<dim>(levels[l].second), dim + 1));
-              DoFRenumbering::Cuthill_McKee(this->dof_handlers[l]);
-            }
+            this->dof_handlers[l].distribute_dofs(
+              FESystem<dim>(FE_Q<dim>(levels[l].second), dim + 1));
         }
 
       this->mg_setup_timer.leave_subsection(
@@ -2463,7 +2457,6 @@ MFNavierStokesPreconditionGMG<dim>::initialize_auxiliary_physics(
             this->dof_handlers[l].get_triangulation());
           this->temperature_dof_handlers[l].distribute_dofs(
             temperature_dof_handler.get_fe());
-          DoFRenumbering::Cuthill_McKee(this->temperature_dof_handlers[l]);
         }
 
       this->transfers_temperature.resize(min_level, max_level);
@@ -2651,7 +2644,6 @@ FluidDynamicsMatrixFree<dim>::setup_dofs_fd()
 
   // Fill the dof handler and initialize vectors
   this->dof_handler.distribute_dofs(*this->fe);
-  DoFRenumbering::Cuthill_McKee(this->dof_handler);
 
   if (this->simulation_parameters.linear_solver.at(PhysicsID::fluid_dynamics)
         .preconditioner == Parameters::LinearSolver::PreconditionerType::lsmg)
@@ -2673,7 +2665,6 @@ FluidDynamicsMatrixFree<dim>::setup_dofs_fd()
           this->dof_handler_fe_q_iso_q1.distribute_dofs(
             FESystem<dim>(FE_Q_iso_Q1<dim>(points), dim + 1));
           this->dof_handler_fe_q_iso_q1.distribute_mg_dofs();
-          DoFRenumbering::Cuthill_McKee(this->dof_handler_fe_q_iso_q1);
         }
     }
 

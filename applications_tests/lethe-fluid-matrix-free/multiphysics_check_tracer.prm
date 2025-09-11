@@ -12,7 +12,7 @@ set dimension = 2
 #---------------------------------------------------
 
 subsection simulation control
-  set method = steady
+  set method            = steady
 end
 
 #---------------------------------------------------
@@ -76,5 +76,5 @@ end
 
 subsection multiphysics
   set fluid dynamics = true
-  set tracer         = true
+  set tracer = true
 end

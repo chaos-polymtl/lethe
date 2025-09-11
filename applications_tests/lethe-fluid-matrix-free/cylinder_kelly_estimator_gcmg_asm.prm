@@ -169,7 +169,7 @@ subsection linear solver
     set mg verbosity = quiet
 
     #smoother
-    set mg smoother iterations          = 2
+    set mg smoother iterations     = 2
     set mg smoother preconditioner type = additive schwarz method
 
     # Eigenvalue estimation parameters

@@ -16,8 +16,8 @@ Transient iteration: 1052     Time: 10.51    Time step: 0.01     CFL: 0.0219661
 Fluid Dynamics
 ---------------
 Newton iteration: 0  - Residual:  0.00353962
-	alpha =      1 res = 7.239e-09
+	alpha =      1 res = 7.232e-09
 	||du||_L2 = 0.004831	||du||_Linfty = 0.0003414
-	||dp||_L2 = 0.0005057	||dp||_Linfty = 4.427e-05
+	||dp||_L2 = 0.0007674	||dp||_Linfty = 5.893e-05
 Enstrophy: 0.3507
 Kinetic energy: 0.02601
