@@ -2638,6 +2638,7 @@ FluidDynamicsMatrixFree<dim>::setup_dofs_fd()
 
   // Fill the dof handler and initialize vectors
   this->dof_handler.distribute_dofs(*this->fe);
+  DoFRenumbering::Cuthill_McKee(this->dof_handler);
 
   if (this->simulation_parameters.linear_solver.at(PhysicsID::fluid_dynamics)
         .preconditioner == Parameters::LinearSolver::PreconditionerType::lsmg)
