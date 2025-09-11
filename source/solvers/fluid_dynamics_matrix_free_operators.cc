@@ -628,18 +628,15 @@ NavierStokesOperatorBase<dim, number>::get_system_matrix() const
               }
         }
 
+      // If mortar is enabled, add sparsity pattern entries
+      if (this->enable_mortar)
+        this->mortar_coupling_operator_mf->add_sparsity_pattern_entries(dsp);
+
       SparsityTools::distribute_sparsity_pattern(
         dsp,
         locally_owned_dofs,
         dof_handler.get_triangulation().get_mpi_communicator(),
         locally_relevant_dofs);
-
-      // If mortar is enabled, add sparsity pattern entries
-      if (this->enable_mortar)
-        {
-          this->mortar_coupling_operator_mf->add_sparsity_pattern_entries(dsp);
-          dsp.compress();
-        }
 
       system_matrix.reinit(
         locally_owned_dofs,
