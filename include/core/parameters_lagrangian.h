@@ -653,7 +653,7 @@ namespace Parameters
     struct ParticleRayTracing
     {
       // Location of the first photon to be inserted
-      Point<dim> starting_point;
+      Point<3> starting_point;
 
       // In which directions will the photons be inserted relative to the first
       // photon.

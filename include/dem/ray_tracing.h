@@ -12,7 +12,6 @@
 #include <dem/load_balancing.h>
 #include <dem/ray_tracing_solver_parameters.h>
 
-#include <deal.II/base/tensor.h>
 #include <deal.II/base/timer.h>
 
 template <int dim>
@@ -91,6 +90,16 @@ private:
    */
   void
   finish_simulation();
+
+
+  template <bool move_photon>
+  void
+  find_intersection(
+    typename dem_data_structures<dim>::cells_neighbor_list &cell_list,
+    ankerl::unordered_dense::map<
+      types::particle_index,
+      std::tuple<double, Point<dim>, Particles::ParticleIterator<dim>>>
+      &photon_intersection_points_map);
 
   /**
    * @brief The MPI communicator used for the parallel simulation.
@@ -176,12 +185,8 @@ private:
   std::shared_ptr<Insertion<dim, DEMProperties::PropertiesIndex>>
     particle_insertion_object;
 
-  /**
-   * @brief Direction in which the photon will move and in which the intersection
-   * line will be defined.
-   *
-   */
-  const Tensor<1, dim> photon_displacement_vector;
+  double displacement_distance;
+
 
   /**
    * @brief Container that shows the local/ghost neighbor cells of all local
