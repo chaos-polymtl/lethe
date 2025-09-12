@@ -43,47 +43,12 @@ main(int argc, char *argv[])
 
       if (dim == 2)
         {
-          RayTracingSolverParameters<2> parameters;
-          DEMSolverParameters<2>        dem_parameters;
-
-          parameters.declare(prm);
-          dem_parameters.declare(prm);
-
-          // Parsing of the file
-          prm.parse_input(file_name);
-          parameters.parse(prm);
-          dem_parameters.parse(prm);
-
-          // Remove old output files
-          if (options["-R"])
-            {
-              std::string output_path =
-                parameters.simulation_control.output_folder;
-              delete_vtu_and_pvd_files(output_path);
-            }
-
-          // Print parameters if needed
-          if (Utilities::MPI::this_mpi_process(MPI_COMM_WORLD) == 0)
-            print_parameters_to_output_file(pcout, prm, file_name);
-
-          const SolverType solver_type =
-            parameters.model_parameters.solver_type;
-
-          if (solver_type == dem)
-            {
-              RayTracingSolver<2> problem(parameters, dem_parameters);
-              problem.solve();
-            }
-          else
-            {
-              AssertThrow(
-                false,
-                dealii::ExcMessage(
-                  "While reading the solver type from the input file, "
-                  "Lethe found a value different than \"dem\". "
-                  "lethe-particles-ray-tracing tracing does not support other "
-                  "solver type than \"dem\"."));
-            }
+          AssertThrow(
+            false,
+            dealii::ExcMessage(
+              "While reading the dimension parameter from the input file, "
+              "Lethe found a value of 2 . lethe-particles-ray-tracing tracing"
+              " does not support other dimension than 3."));
         }
 
       else if (dim == 3)
