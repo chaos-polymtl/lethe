@@ -747,10 +747,18 @@ HeatTransfer<dim>::copy_local_rhs_to_global_rhs(
 }
 
 template <int dim>
-void
-HeatTransfer<dim>::attach_solution_to_output(DataOut<dim> &data_out)
+std::vector<OutputStruct<dim, GlobalVectorType>>
+HeatTransfer<dim>::gather_output_hook()
+
 {
-  data_out.add_data_vector(dof_handler, present_solution, "temperature");
+  std::vector<OutputStruct<dim, GlobalVectorType>> solution_output_structs;
+  solution_output_structs.emplace_back(
+    std::in_place_type<OutputStructSolution<dim, GlobalVectorType>>,
+    this->dof_handler,
+    this->present_solution,
+    std::vector<std::string>{"temperature"},
+    std::vector<DataComponentInterpretation::DataComponentInterpretation>{
+      DataComponentInterpretation::component_is_scalar});
 
   // Get number of fluids and solids
   const unsigned int n_fluids =
@@ -776,9 +784,12 @@ HeatTransfer<dim>::attach_solution_to_output(DataOut<dim> &data_out)
                                    f_id,
                                    mesh_m_id,
                                    solid_phase_present));
-      data_out.add_data_vector(this->dof_handler,
-                               this->present_solution,
-                               heat_flux_postprocessors[f_id]);
+      solution_output_structs.emplace_back(
+        std::in_place_type<OutputStructPostprocessor<dim, GlobalVectorType>>,
+        this->dof_handler,
+        this->present_solution,
+        std::make_shared<HeatFluxPostprocessor<dim>>(
+          heat_flux_postprocessors[f_id]));
     }
   // Heat fluxes in solids
   for (unsigned int m_id = n_fluids; m_id < n_fluids + n_solids; ++m_id)
@@ -790,9 +801,12 @@ HeatTransfer<dim>::attach_solution_to_output(DataOut<dim> &data_out)
                                    m_id - n_fluids,
                                    mesh_m_id,
                                    solid_phase_present));
-      data_out.add_data_vector(this->dof_handler,
-                               this->present_solution,
-                               heat_flux_postprocessors[m_id]);
+      solution_output_structs.emplace_back(
+        std::in_place_type<OutputStructPostprocessor<dim, GlobalVectorType>>,
+        this->dof_handler,
+        this->present_solution,
+        std::make_shared<HeatFluxPostprocessor<dim>>(
+          heat_flux_postprocessors[m_id]));
     }
 
   // Ouput the time average temperature and time average heat flux
@@ -800,9 +814,13 @@ HeatTransfer<dim>::attach_solution_to_output(DataOut<dim> &data_out)
     {
       this->average_temperature_to_output =
         this->average_temperature->get_average_scalar();
-      data_out.add_data_vector(dof_handler,
-                               this->average_temperature_to_output,
-                               "temperature_average");
+      solution_output_structs.emplace_back(
+        std::in_place_type<OutputStructSolution<dim, GlobalVectorType>>,
+        this->dof_handler,
+        this->average_temperature_to_output,
+        std::vector<std::string>{"average_temperature"},
+        std::vector<DataComponentInterpretation::DataComponentInterpretation>{
+          DataComponentInterpretation::component_is_scalar});
 
       // Output the time average heat flux
       average_heat_flux_postprocessors.clear();
@@ -817,10 +835,13 @@ HeatTransfer<dim>::attach_solution_to_output(DataOut<dim> &data_out)
                                        f_id,
                                        mesh_m_id,
                                        solid_phase_present));
-
-          data_out.add_data_vector(this->dof_handler,
-                                   this->average_temperature_to_output,
-                                   average_heat_flux_postprocessors[f_id]);
+          solution_output_structs.emplace_back(
+            std::in_place_type<
+              OutputStructPostprocessor<dim, GlobalVectorType>>,
+            this->dof_handler,
+            this->average_temperature_to_output,
+            std::make_shared<HeatFluxPostprocessor<dim>>(
+              average_heat_flux_postprocessors[f_id]));
         }
       // Heat fluxes in solids
       for (unsigned int m_id = n_fluids; m_id < n_fluids + n_solids; ++m_id)
@@ -832,12 +853,16 @@ HeatTransfer<dim>::attach_solution_to_output(DataOut<dim> &data_out)
                                        m_id - n_fluids,
                                        mesh_m_id,
                                        solid_phase_present));
-
-          data_out.add_data_vector(this->dof_handler,
-                                   this->average_temperature_to_output,
-                                   average_heat_flux_postprocessors[m_id]);
+          solution_output_structs.emplace_back(
+            std::in_place_type<
+              OutputStructPostprocessor<dim, GlobalVectorType>>,
+            this->dof_handler,
+            this->average_temperature_to_output,
+            std::make_shared<HeatFluxPostprocessor<dim>>(
+              average_heat_flux_postprocessors[m_id]));
         }
     }
+  return solution_output_structs;
 }
 
 template <int dim>

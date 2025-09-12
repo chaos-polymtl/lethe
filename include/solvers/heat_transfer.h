@@ -163,14 +163,12 @@ public:
   assemble_nitsche_heat_restriction(const bool assemble_matrix);
 
   /**
-   * @brief Attach the solution vector to the DataOut provided. This function
-   * enable the auxiliary physics to output their solution via the core solver.
+   * @brief Gather and return vector of output structs that are particular to some applications.
    *
-   * @param data_out Provide output of data described by finite element fields
-   * defined on a collection of cells.
+   * @return Vector of OutputStructs that will be used to write the output results as VTU files.
    */
-  void
-  attach_solution_to_output(DataOut<dim> &data_out) override;
+  std::vector<OutputStruct<dim, GlobalVectorType>>
+  gather_output_hook() override;
 
   /**
    * @brief Calculate delta_T_ref for the DCDD shock capture mechanism. delta_T_ref = T_max - T_min.

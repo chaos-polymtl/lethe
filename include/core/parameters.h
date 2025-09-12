@@ -1536,6 +1536,7 @@ namespace Parameters
    *brief Output Patch Mesh Parameters which is used to define the mesh used to
    *output resampled results
    **/
+  template <int dim>
   struct OutputPatchMesh
   {
     /// If true, the patch mesh is used to output resampled results
@@ -1548,10 +1549,10 @@ namespace Parameters
     std::vector<unsigned int> n_subdivisions;
 
     /// Point 0 of the plane
-    Point<3> point_0;
+    Point<dim - 1> point_0;
 
     /// Point 1 of the plane
-    Point<3> point_1;
+    Point<dim - 1> point_1;
 
     static void
     declare_parameters(ParameterHandler &prm);
@@ -1892,6 +1893,13 @@ namespace Parameters
       {
         return vector_of_string;
       }
+    else
+      {
+        AssertThrow(false,
+                    ExcMessage("Error: convert_string_to_vector only works for "
+                               "int, double and string types."));
+      }
+    return std::vector<T>();
   }
 
 } // namespace Parameters

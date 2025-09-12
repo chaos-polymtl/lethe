@@ -2612,8 +2612,9 @@ namespace Parameters
     prm.leave_subsection();
   }
 
+  template <int dim>
   void
-  OutputPatchMesh::declare_parameters(ParameterHandler &prm)
+  OutputPatchMesh<dim>::declare_parameters(ParameterHandler &prm)
   {
     prm.enter_subsection("output patch mesh");
     {
@@ -2631,28 +2632,32 @@ namespace Parameters
         Patterns::List(Patterns::Integer()),
         "Number of mesh refinements in each direction of the patch mesh");
       prm.declare_entry("point 0",
-                        "0,0,0",
+                        "0,0",
                         Patterns::List(Patterns::Double()),
                         "Coordinates of the first corner of the patch mesh");
       prm.declare_entry("point 1",
-                        "1,1,1",
+                        "1,1",
                         Patterns::List(Patterns::Double()),
                         "Coordinates of the second corner of the patch mesh");
     }
     prm.leave_subsection();
   }
 
+  template <int dim>
   void
-  OutputPatchMesh::parse_parameters(ParameterHandler &prm)
+  OutputPatchMesh<dim>::parse_parameters(ParameterHandler &prm)
   {
     prm.enter_subsection("output patch mesh");
     {
       enable    = prm.get_bool("enable");
       file_name = prm.get("file name");
-      n_subdivisions =
-        convert_string_to_vector<unsigned int>(prm, "n subdivisions");
-      point_0 = value_string_to_tensor<3>(prm.get("point 0"));
-      point_1 = value_string_to_tensor<3>(prm.get("point 1"));
+      std::vector<int> n_subdivisions_int =
+        convert_string_to_vector<int>(prm, "n subdivisions");
+      // Convert to unsigned int
+      n_subdivisions = std::vector<unsigned int>(n_subdivisions_int.begin(),
+                                                 n_subdivisions_int.end());
+      point_0        = value_string_to_tensor<dim - 1>(prm.get("point 0"));
+      point_1        = value_string_to_tensor<dim - 1>(prm.get("point 1"));
     }
     prm.leave_subsection();
   }
@@ -4322,5 +4327,7 @@ namespace Parameters
   template struct ConstrainSolidDomain<3>;
   template struct Mortar<2>;
   template struct Mortar<3>;
+  template struct OutputPatchMesh<2>;
+  template struct OutputPatchMesh<3>;
 
 } // namespace Parameters

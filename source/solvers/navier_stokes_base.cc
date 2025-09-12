@@ -79,8 +79,6 @@ NavierStokesBase<dim, VectorType, DofsType>::NavierStokesBase(
           "Bubble enrichment functions are not compatible with simplex meshes."));
 
       mapping = std::make_shared<MappingFE<dim>>(velocity_fe);
-      output_patch_mapping =
-        std::make_shared<MappingQ<dim - 1, dim>>(velocity_fe);
       cell_quadrature =
         std::make_shared<QGaussSimplex<dim>>(number_quadrature_points);
       face_quadrature =
@@ -1387,11 +1385,15 @@ NavierStokesBase<dim, VectorType, DofsType>::generate_output_patch_mesh()
                 "Patch mesh output only implemented in 3D simulations"));
   TimerOutput::Scope t(this->computing_timer, "Patch mesh generation");
 
-  GridGenerator::subdivided_hyper_rectangle(
-    *this->output_patch_triangulation,
-    this->simulation_parameters.output_patch_mesh.n_subdivisions,
-    this->simulation_parameters.output_patch_mesh.point_0,
-    this->simulation_parameters.output_patch_mesh.point_1);
+  *this->output_patch_mapping = MappingQ<dim - 1, dim>(
+    this->simulation_parameters.fem_parameters.velocity_order);
+
+  if constexpr (dim == 3)
+    GridGenerator::subdivided_hyper_rectangle(
+      *this->output_patch_triangulation,
+      this->simulation_parameters.output_patch_mesh.n_subdivisions,
+      this->simulation_parameters.output_patch_mesh.point_0,
+      this->simulation_parameters.output_patch_mesh.point_1);
 }
 
 template <int dim, typename VectorType, typename DofsType>
@@ -3024,6 +3026,8 @@ NavierStokesBase<dim, VectorType, DofsType>::write_output_results(
         }
     }
 
+
+  // Add multiphysics outputs
   multiphysics->attach_solution_to_output(data_out);
 
   // Build the patches and write the output
@@ -3072,7 +3076,12 @@ NavierStokesBase<dim, VectorType, DofsType>::write_output_patch_mesh(
     dim == 3,
     ExcMessage(
       "Patch mesh output is currently implemented for 3D simulations only."));
-  // TODO: Make this work for when patch mesh is dim and not dim-1
+  AssertThrow(this->triangulation->all_reference_cells_are_hyper_cube(),
+              ExcMessage("Patch mesh output is currently implemented for "
+                         "simulations with quad/hex elements only."));
+
+  if (!simulation_parameters.output_patch_mesh.enable)
+    return;
 
   // Victor: Create check for output patch parameter
   TimerOutput::Scope t(this->computing_timer, "Output results patch mesh");
@@ -3086,8 +3095,8 @@ NavierStokesBase<dim, VectorType, DofsType>::write_output_patch_mesh(
   const unsigned int group_files = simulation_control->get_group_files();
 
   // Create data output object
-  DataOutResample<dim, dim - 1, dim> data_out(this->output_patch_triangulation,
-                                              this->output_patch_mapping);
+  DataOutResample<dim, dim - 1, dim> data_out(*this->output_patch_triangulation,
+                                              *this->output_patch_mapping);
 
   // Additional flag to enable the output of high-order elements
   DataOutBase::VtkFlags flags;
@@ -3127,7 +3136,7 @@ NavierStokesBase<dim, VectorType, DofsType>::write_output_patch_mesh(
         }
     }
 
-  multiphysics->attach_solution_to_output(data_out);
+  // multiphysics->attach_solution_to_output(data_out);
 
   // Build the patches and write the output
   data_out.build_patches(*this->get_mapping(),

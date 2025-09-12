@@ -284,34 +284,40 @@ CahnHilliard<dim>::copy_local_rhs_to_global_rhs(
 }
 
 template <int dim>
-void
-CahnHilliard<dim>::attach_solution_to_output(DataOut<dim> &data_out)
+std::vector<OutputStruct<dim, GlobalVectorType>>
+CahnHilliard<dim>::gather_output_hook()
 {
+  std::vector<OutputStruct<dim, GlobalVectorType>> solution_output_structs;
   // Add the interpretation of the solution. The first component is the
   // phase order (Phi) and the following one is the chemical potential (eta)
-
   std::vector<std::string> solution_names;
   solution_names.emplace_back("phase_order");
   solution_names.emplace_back("chemical_potential");
-
-  std::vector<std::string> solution_names_filtered;
-  solution_names_filtered.emplace_back("phase_order_filtered");
-  solution_names_filtered.emplace_back("chemical_potential_filtered");
 
   std::vector<DataComponentInterpretation::DataComponentInterpretation>
     data_component_interpretation(
       2, DataComponentInterpretation::component_is_scalar);
 
-  data_out.add_data_vector(dof_handler,
-                           present_solution,
-                           solution_names,
-                           data_component_interpretation);
+  solution_output_structs.emplace_back(
+    std::in_place_type<OutputStructSolution<dim, GlobalVectorType>>,
+    dof_handler,
+    present_solution,
+    solution_names,
+    data_component_interpretation);
+
+  std::vector<std::string> solution_names_filtered;
+  solution_names_filtered.emplace_back("phase_order_filtered");
+  solution_names_filtered.emplace_back("chemical_potential_filtered");
 
   // Filter phase fraction
-  data_out.add_data_vector(dof_handler,
-                           filtered_solution,
-                           solution_names_filtered,
-                           data_component_interpretation);
+  solution_output_structs.emplace_back(
+    std::in_place_type<OutputStructSolution<dim, GlobalVectorType>>,
+    dof_handler,
+    filtered_solution,
+    solution_names_filtered,
+    data_component_interpretation);
+
+  return solution_output_structs;
 }
 
 template <int dim>
