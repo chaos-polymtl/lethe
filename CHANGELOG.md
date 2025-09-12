@@ -25,6 +25,12 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
 ### Fixed
 
+- MINOR The code is modified so the TableHandler objects are properly restored when writing checkpoints and restarting simulations for lethe-fluid, lethe-fluid-particles and lethe-fluid-nitsche [#1673] (https://github.com/chaos-polymtl/lethe/pull/1673). This feature was only working for lethe-fluid before.
+
+### [Master] - 2025-09-12
+
+### Fixed
+
 - MINOR A missing include "deal.II/multigrid/mg_transfer_matrix_free.templates.h" was added to enable compilation on deal.II master version (9.8-pre). It will not be impossible to compile Lethe with a deal.II 9.8-pre version that predates 10/09/2025. [#1676](https://github.com/chaos-polymtl/lethe/pull/1676). The initial version of this PR was partially wrong and is updated in [#1677](https://github.com/chaos-polymtl/lethe/pull/1677) to adequately account for the 9.7 version check.
 
 - MINOR Prevent termination of the CI when it is running on master.  cancel-in-progress is only called if ${{github.event_name == 'pull_request'}} which prevents cancellation on events other than pull request (e.g. merge to master). [#1675](https://github.com/chaos-polymtl/lethe/pull/1675)
