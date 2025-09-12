@@ -506,7 +506,6 @@ RayTracingSolver<dim>::find_intersection(
               // between a line and a sphere.
               std::vector<Point<dim>> current_intersection_points;
               current_intersection_points.reserve(2);
-              std::cout << __LINE__ << " " << photon_displacement_vector << std::endl;
 
               // Loop of the particles in the current neighboring cells
               for (auto current_particle = particle_in_neighboring_cell.begin();
@@ -521,7 +520,6 @@ RayTracingSolver<dim>::find_intersection(
                     current_particle
                       ->get_properties()[DEMProperties::PropertiesIndex::dp];
 
-                  std::cout << __LINE__ << " " << photon_displacement_vector << std::endl;
 
                   current_intersection_points =
                     LetheGridTools::find_line_sphere_intersection(
@@ -615,6 +613,7 @@ RayTracingSolver<dim>::find_intersection(
                 current_photon_location +
                 photon_displacement_vector * displacement_distance;
               current_photon->set_location(new_photon_location);
+              std::cout<< new_photon_location << std::endl;
             }
         }
     }
@@ -688,20 +687,10 @@ RayTracingSolver<dim>::solve()
       // to the cell size. Thus, we sort them.
 
       photon_handler.sort_particles_into_subdomains_and_cells();
+
       // Loop over each local cell in the triangulation. To do this, we loop
       // over each cell neighbor list. Each local cell has a list and the first
       // iterator in the main cell itself.
-
-      std::cout << this_mpi_process << " : N local cell "
-                << cells_local_neighbor_list.size() << std::endl;
-      std::cout << this_mpi_process << " : N ghost cell "
-                << cells_ghost_neighbor_list.size() << std::endl;
-
-      std::cout << this_mpi_process << " : N photons    "
-                << photon_handler.n_locally_owned_particles() << std::endl;
-      std::cout << this_mpi_process << " : N particles  "
-                << particle_handler.n_locally_owned_particles() << std::endl;
-
       find_intersection<true>(cells_local_neighbor_list,
                               photon_intersection_points_map);
 
@@ -725,6 +714,7 @@ RayTracingSolver<dim>::solve()
 
       // Removes the photon and clear the containers.
       photon_handler.remove_particles(photon_iterators_to_remove);
+      photon_iterators_to_remove.clear();
       photon_intersection_points_map.clear();
 
       action_manager->reset_triggers();
