@@ -1308,8 +1308,6 @@ ParticleProjector<dim>::calculate_field_projection(
                     {
                       local_rhs(i) += phi_vf[i] * particle_field_in_sphere *
                                       fe_values_field.JxW(q);
-                      std::cout << std::scientific << particle_field_in_sphere
-                                << std::endl;
                     }
                 }
             }
