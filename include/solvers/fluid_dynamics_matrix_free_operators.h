@@ -5,6 +5,7 @@
 #define lethe_fluid_dynamics_matrix_free_operators_h
 
 #include <core/bdf.h>
+#include <core/sdirk_stage_data.h>
 #include <core/simulation_control.h>
 #include <core/time_integration_utilities.h>
 
@@ -24,6 +25,18 @@
 #include <deal.II/multigrid/mg_tools.h>
 
 using namespace dealii;
+
+/**
+ * @brief Data structure to store time-stepping data.
+ *
+ */
+struct TimeSteppingData
+{
+  double                a_ii      = 0.0;
+  double                dt        = 0.0;
+  const Vector<double> *bdf_coefs = nullptr;
+};
+
 
 /**
  * @brief Evaluate the value of a function at a batch of points to obtain a vectorized array of numbers
@@ -495,6 +508,17 @@ protected:
     const VectorType                            &src,
     const std::pair<unsigned int, unsigned int> &range) const = 0;
 
+  /**
+   * @brief Initialize time stepping data such as the time step size and BDF
+   * coefficients.
+   * @param[out] a_ii The diagonal coefficient of the time stepping method.
+   * @param[out] dt The time step size.
+   * @param[out] bdf_coefs The BDF coefficients if the BDF method is used.
+   */
+  TimeSteppingData
+  initialize_time_stepping_data(const bool test_is_bdf,
+                                const bool test_is_sdirk) const;
+
 
 private:
   /**
@@ -778,6 +802,7 @@ protected:
    *
    */
   ConditionalOStream pcout;
+
 
 public:
   /**
