@@ -1812,22 +1812,24 @@ namespace Parameters
 
         // In which direction will the photons be inserted  relative to the
         // first photon.
-        prm.declare_entry("insertion unit tensors",
-                          "1.,0.,0. : 0., 1., 0. : 0., 0., 1.",
-                          Patterns::List(Patterns::List(Patterns::Double())),
-                          "Directions used to insert photons.");
+        prm.declare_entry(
+          "insertion unit tensors",
+          "1.,0.,0. : 0., 1., 0. : 0., 0., 1.",
+          Patterns::List(
+            Patterns::List(Patterns::Double(), 3, 3, ","), 3, 3, ":"),
+          "Directions used to insert photons.");
 
         // How many photon will be inserted in each of those directions.
         prm.declare_entry("number of inserted photons per direction",
-                          "1 :  1 : 1",
-                          Patterns::List(Patterns::Integer()),
+                          "1 : 1 : 1",
+                          Patterns::List(Patterns::Integer(), 3, 3, ":"),
                           "Number of inserted photon in each direction.");
 
         // What is the distance between each photon in each of those directions
         // considering an offset equal to 0.
         prm.declare_entry("distance between photons on insertion per direction",
                           "1. :  1. : 1.",
-                          Patterns::List(Patterns::Double()),
+                          Patterns::List(Patterns::Double(), 3, 3, ":"),
                           "Number of inserted photon in each direction.");
 
 
@@ -1856,7 +1858,7 @@ namespace Parameters
 
         // Displacement unit vector
         prm.declare_entry(
-          "photon maximum angle offset",
+          "photon maximum angular offset",
           "0.",
           Patterns::Double(),
           "Used to introduce randomness in the displacement direction of each "
@@ -1867,7 +1869,7 @@ namespace Parameters
           "Otherwise, the offset is applied in a random orientation relative to "
           "the reference displacement vector parameter.");
 
-        prm.declare_entry("photon angle offset prn seed",
+        prm.declare_entry("photon angular offset prn seed",
                           "1",
                           Patterns::Integer(),
                           "Pseudo random seed used to generated the angle "
@@ -1883,20 +1885,19 @@ namespace Parameters
       prm.enter_subsection("particle ray tracing");
       {
         // Location of the first photon to be inserted
-        starting_point = point_nd_to_3d(value_string_to_tensor<dim>(
-          prm.get("starting photon insertion position")));
+        starting_point = point_nd_to_3d(Point<dim>(value_string_to_tensor<dim>(
+          prm.get("starting photon insertion position"))));
 
         // Extract the strings related to the three std::vector
         const std::vector<std::string> insertion_unit_tensors_string(
           Utilities::split_string_list(prm.get("insertion unit tensors"), ":"));
         const std::vector<std::string> n_photons_per_directions_strings(
           Utilities::split_string_list(
-            prm.get("distance between photons on insertion per directions"),
-            ":"));
+            prm.get("number of inserted photons per direction"), ":"));
         const std::vector<std::string>
           step_between_photon_per_direction_strings(
             Utilities::split_string_list(
-              prm.get("distance between photons on insertion per directions"),
+              prm.get("distance between photons on insertion per direction"),
               ":"));
 
 
@@ -1934,13 +1935,16 @@ namespace Parameters
                 step_between_photon_per_direction_strings.at(i)));
           }
 
-        ref_displacement_tensor_unit = tensor_nd_to_3d(
-          value_string_to_tensor<dim>("reference displacement vector"));
+
+        ref_displacement_tensor_unit =
+          tensor_nd_to_3d(value_string_to_tensor<dim>(
+            prm.get("reference displacement vector")));
         ref_displacement_tensor_unit =
           ref_displacement_tensor_unit / ref_displacement_tensor_unit.norm();
 
         // Insertion offset
-        max_insertion_offset = prm.get_double("photon maximum offset");
+        max_insertion_offset =
+          prm.get_double("photon insertion maximum offset");
         prn_seed_photon_insertion =
           prm.get_integer("photon insertion prn seed");
 
