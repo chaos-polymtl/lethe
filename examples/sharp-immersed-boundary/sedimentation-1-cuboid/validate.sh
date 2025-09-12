@@ -6,10 +6,10 @@
 # Load the validation functions
 . ../../../contrib/validation/validation_functions.sh
 
-# Store filenames of all plots in a variable (space-seperated)
+# Store filenames of all plots in a variable (space-separated)
 plots="cuboid-sedimentation-velocity.pdf"
 
-# Store filenames of all data files in a variable (space-seperated)
+# Store filenames of all data files in a variable (space-separated)
 data="cuboid-sedimentation-velocity.dat"
 
 # Default path
