@@ -2613,6 +2613,51 @@ namespace Parameters
   }
 
   void
+  OutputPatchMesh::declare_parameters(ParameterHandler &prm)
+  {
+    prm.enter_subsection("output patch mesh");
+    {
+      prm.declare_entry("enable",
+                        "false",
+                        Patterns::Bool(),
+                        "Enable patch mesh output");
+      prm.declare_entry("file name",
+                        "patch_output",
+                        Patterns::FileName(),
+                        "File name for patch mesh output");
+      prm.declare_entry(
+        "n subdivisions",
+        "2,2",
+        Patterns::List(Patterns::Integer()),
+        "Number of mesh refinements in each direction of the patch mesh");
+      prm.declare_entry("point 0",
+                        "0,0,0",
+                        Patterns::List(Patterns::Double()),
+                        "Coordinates of the first corner of the patch mesh");
+      prm.declare_entry("point 1",
+                        "1,1,1",
+                        Patterns::List(Patterns::Double()),
+                        "Coordinates of the second corner of the patch mesh");
+    }
+    prm.leave_subsection();
+  }
+
+  void
+  OutputPatchMesh::parse_parameters(ParameterHandler &prm)
+  {
+    prm.enter_subsection("output patch mesh");
+    {
+      enable    = prm.get_bool("enable");
+      file_name = prm.get("file name");
+      n_subdivisions =
+        convert_string_to_vector<unsigned int>(prm, "n subdivisions");
+      point_0 = value_string_to_tensor<3>(prm.get("point 0"));
+      point_1 = value_string_to_tensor<3>(prm.get("point 1"));
+    }
+    prm.leave_subsection();
+  }
+
+  void
   LinearSolver::declare_parameters(ParameterHandler  &prm,
                                    const std::string &physics_name)
   {

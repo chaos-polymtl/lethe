@@ -422,6 +422,14 @@ protected:
   refine_mesh_uniform();
 
   /**
+   * @brief Generate the output patch mesh used for outputting the solution on a
+   * different mesh than the computational one. The current implementation only
+   * supports 2D slices of 3D problems.
+   */
+  void
+  generate_output_patch_mesh();
+
+  /**
    * @brief Transfer solution after mesh refinement
    */
   void
@@ -881,6 +889,16 @@ protected:
   write_output_results(const VectorType &solution);
 
   /**
+   * @brief Generate post-processing parallel VTU files from vector of
+   * solution_output_struct
+   *
+   * @param[in] solution Vector of present solution
+   */
+  void
+  write_output_patch_mesh(
+    const std::vector<OutputStruct<dim, VectorType>> &solution_output_structs);
+
+  /**
    * @brief Writes the forces per boundary condition to a text file output
    */
   void
@@ -937,13 +955,16 @@ protected:
   const unsigned int this_mpi_process;
 
   std::shared_ptr<parallel::DistributedTriangulationBase<dim>> triangulation;
-  DoFHandler<dim>                                              dof_handler;
-  std::shared_ptr<FESystem<dim>>                               fe;
+  std::shared_ptr<parallel::DistributedTriangulationBase<dim - 1, dim>>
+                                 output_patch_triangulation;
+  DoFHandler<dim>                dof_handler;
+  std::shared_ptr<FESystem<dim>> fe;
 
   TimerOutput computing_timer;
 
   SimulationParameters<dim> simulation_parameters;
   PVDHandler                pvdhandler;
+  PVDHandler                output_patch_pvdhandler;
 
   // Functions used for source term and error analysis
   Function<dim>                 *exact_solution;
@@ -998,9 +1019,10 @@ protected:
   unsigned int       number_quadrature_points;
 
   // Mappings and Quadratures
-  std::shared_ptr<Mapping<dim>>        mapping;
-  std::shared_ptr<Quadrature<dim>>     cell_quadrature;
-  std::shared_ptr<Quadrature<dim - 1>> face_quadrature;
+  std::shared_ptr<Mapping<dim>>          mapping;
+  std::shared_ptr<Mapping<dim - 1, dim>> output_patch_mapping;
+  std::shared_ptr<Quadrature<dim>>       cell_quadrature;
+  std::shared_ptr<Quadrature<dim - 1>>   face_quadrature;
 
   // Mortar coupling manager and operator
   std::shared_ptr<MortarManagerCircle<dim>>      mortar_manager;
