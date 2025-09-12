@@ -40,6 +40,10 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
 ### [Master] - 2025-09-04
 
+### Added
+
+- MINOR Add validation case for the sharp application. [#1663](https://github.com/chaos-polymtl/lethe/pull/1663)
+
 ### Fixed
 
 - MAJOR This PR fixes the bug patched in [#1658](https://github.com/chaos-polymtl/lethe/pull/1658). It attaches a DoF handler to the DataOut instance, which prevents calls for add_solution_vector without DoF handler. This is a more robust solution than the previous one. More tests will be carried out, but this solution reproduces what the code had before the refactoring in [#1624](https://github.com/chaos-polymtl/lethe/pull/1624). Additionally, this PR finishes the refactoring of the "write output" function, unifying cell and DoF output data into the same container of structs. [#1661](https://github.com/chaos-polymtl/lethe/pull/1661)
