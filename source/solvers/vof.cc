@@ -691,15 +691,34 @@ VolumeOfFluid<dim>::copy_local_rhs_to_global_rhs(
 }
 
 template <int dim>
-void
-VolumeOfFluid<dim>::attach_solution_to_output(DataOut<dim> &data_out)
+std::vector<OutputStruct<dim, GlobalVectorType>>
+VolumeOfFluid<dim>::gather_output_hook()
 {
-  data_out.add_data_vector(this->dof_handler, this->present_solution, "phase");
+  std::vector<OutputStruct<dim, GlobalVectorType>> solution_output_structs;
+  std::vector<std::string>                         solution_names(1, "phase");
+  std::vector<DataComponentInterpretation::DataComponentInterpretation>
+    solution_component_interpretation(
+      1, DataComponentInterpretation::component_is_scalar);
+
+  // Phase fraction
+  solution_output_structs.emplace_back(
+    std::in_place_type<OutputStructSolution<dim, GlobalVectorType>>,
+    this->dof_handler,
+    this->present_solution,
+    solution_names,
+    solution_component_interpretation);
 
   // Filter phase fraction
-  data_out.add_data_vector(this->dof_handler,
-                           this->filtered_solution,
-                           "filtered_phase");
+  std::vector<std::string> filtered_solution_names(1, "filtered_phase");
+  std::vector<DataComponentInterpretation::DataComponentInterpretation>
+    filtered_solution_component_interpretation(
+      1, DataComponentInterpretation::component_is_scalar);
+  solution_output_structs.emplace_back(
+    std::in_place_type<OutputStructSolution<dim, GlobalVectorType>>,
+    this->dof_handler,
+    this->filtered_solution,
+    filtered_solution_names,
+    filtered_solution_component_interpretation);
 
   auto vof_parameters = this->simulation_parameters.multiphysics.vof_parameters;
 
@@ -718,7 +737,8 @@ VolumeOfFluid<dim>::attach_solution_to_output(DataOut<dim> &data_out)
       std::vector<std::string> solution_names_new(dim,
                                                   "phase_fraction_gradient");
 
-      data_out.add_data_vector(
+      solution_output_structs.emplace_back(
+        std::in_place_type<OutputStructSolution<dim, GlobalVectorType>>,
         this->vof_subequations_interface->get_dof_handler(
           VOFSubequationsID::phase_gradient_projection),
         this->vof_subequations_interface->get_solution(
@@ -726,41 +746,46 @@ VolumeOfFluid<dim>::attach_solution_to_output(DataOut<dim> &data_out)
         solution_names_new,
         projected_phase_fraction_gradient_component_interpretation);
 
-      data_out.add_data_vector(
+      solution_output_structs.emplace_back(
+        std::in_place_type<OutputStructSolution<dim, GlobalVectorType>>,
         this->vof_subequations_interface->get_dof_handler(
           VOFSubequationsID::curvature_projection),
         this->vof_subequations_interface->get_solution(
           VOFSubequationsID::curvature_projection),
-        "curvature");
+        std::vector<std::string>(1, "curvature"),
+        std::vector<DataComponentInterpretation::DataComponentInterpretation>(
+          1, DataComponentInterpretation::component_is_scalar));
     }
 
-  if (simulation_parameters.multiphysics.vof_parameters.regularization_method
-        .geometric_interface_reinitialization.enable)
-    {
-      if ((simulation_control->get_step_number() %
-             simulation_parameters.multiphysics.vof_parameters
-               .regularization_method.frequency !=
-           0) ||
-          (simulation_control->get_step_number() == 0))
-        {
-          TimerOutput::Scope t(this->computing_timer, "Signed distance output");
-
-          signed_distance_solver->setup_dofs();
-
-          signed_distance_solver->set_level_set_from_background_mesh(
-            dof_handler, this->present_solution);
-
-          signed_distance_solver->solve();
-        }
-      signed_distance_solver->attach_solution_to_output(data_out);
-
-      signed_distance_solver->output_interface_reconstruction(
-        "interface_reconstruction_" +
-          this->simulation_parameters.simulation_control.output_name,
-        this->simulation_parameters.simulation_control.output_folder,
-        simulation_control->get_current_time(),
-        simulation_control->get_step_number());
-    }
+  // if (simulation_parameters.multiphysics.vof_parameters.regularization_method
+  //       .geometric_interface_reinitialization.enable)
+  //   {
+  //     if ((simulation_control->get_step_number() %
+  //            simulation_parameters.multiphysics.vof_parameters
+  //              .regularization_method.frequency !=
+  //          0) ||
+  //         (simulation_control->get_step_number() == 0))
+  //       {
+  //         TimerOutput::Scope t(this->computing_timer, "Signed distance
+  //         output");
+  //
+  //         signed_distance_solver->setup_dofs();
+  //
+  //         signed_distance_solver->set_level_set_from_background_mesh(
+  //           dof_handler, this->present_solution);
+  //
+  //         signed_distance_solver->solve();
+  //       }
+  //     signed_distance_solver->attach_solution_to_output(data_out);
+  //
+  //     signed_distance_solver->output_interface_reconstruction(
+  //       "interface_reconstruction_" +
+  //         this->simulation_parameters.simulation_control.output_name,
+  //       this->simulation_parameters.simulation_control.output_folder,
+  //       simulation_control->get_current_time(),
+  //       simulation_control->get_step_number());
+  //   }
+  return solution_output_structs;
 }
 
 template <int dim>

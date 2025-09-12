@@ -29,11 +29,11 @@ public:
   std::map<VOFSubequationsID, Parameters::LinearSolver>
     vof_subequations_linear_solvers;
   std::map<VOFSubequationsID, Parameters::NonLinearSolver>
-                              vof_subequations_non_linear_solvers;
-  Parameters::MeshAdaptation  mesh_adaptation;
-  Parameters::Mesh            mesh;
-  Parameters::OutputPatchMesh output_patch_mesh;
-  Parameters::Dimensionality  dimensionality;
+                                   vof_subequations_non_linear_solvers;
+  Parameters::MeshAdaptation       mesh_adaptation;
+  Parameters::Mesh                 mesh;
+  Parameters::OutputPatchMesh<dim> output_patch_mesh;
+  Parameters::Dimensionality       dimensionality;
   std::shared_ptr<Parameters::MeshBoxRefinement>    mesh_box_refinement;
   std::shared_ptr<Parameters::Nitsche<dim>>         nitsche;
   Parameters::SimulationControl                     simulation_control;
@@ -86,7 +86,7 @@ public:
     Parameters::SimulationControl::declare_parameters(prm);
     physical_properties.declare_parameters(prm);
     Parameters::Mesh::declare_parameters(prm);
-    Parameters::OutputPatchMesh::declare_parameters(prm);
+    Parameters::OutputPatchMesh<dim>::declare_parameters(prm);
     nitsche = std::make_shared<Parameters::Nitsche<dim>>();
     nitsche->declare_parameters(prm);
     Parameters::Restart::declare_parameters(prm);

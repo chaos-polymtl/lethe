@@ -7,6 +7,7 @@
 #include <core/parameters.h>
 #include <core/physics_solver.h>
 
+#include <solvers/output_struct.h>
 #include <solvers/simulation_parameters.h>
 
 #include <deal.II/dofs/dof_handler.h>
@@ -65,23 +66,15 @@ public:
   {}
 
   /**
-   * @brief Attach the solution vector to the DataOut provided. This function
-   * enable the auxiliary physics to output their solution via the core solver.
+   * @brief Gather and return vector of output structs that are particular to some applications.
    *
-   * @param[in,out] data_out DataOut object to which the solution is attached
+   * @return Vector of OutputStructs that will be used to write the output results as VTU files.
    */
-  virtual void
-  attach_solution_to_output(DataOut<dim> &data_out) = 0;
-
-  /**
-   * @brief Attach the solution vector to the DataOut provided. This function
-   * enable the auxiliary physics to output their solution via the core solver.
-   *
-   * @param[in,out] data_out DataOutResample object to which the solution is
-   * attached
-   */
-  virtual void
-  attach_solution_to_output(DataOutResample<dim, dim - 1, dim> &data_out) = 0;
+  virtual std::vector<OutputStruct<dim, VectorType>>
+  gather_output_hook()
+  {
+    return std::vector<OutputStruct<dim, VectorType>>();
+  };
 
   /**
    * @brief Carry out the operations required to finish a simulation correctly.
