@@ -27,6 +27,8 @@
 #include <deal.II/lac/trilinos_parallel_block_vector.h>
 #include <deal.II/lac/trilinos_vector.h>
 
+#include <deal.II/numerics/data_out_resample.h>
+
 #include <map>
 #include <memory>
 
@@ -184,9 +186,32 @@ public:
   /**
    * @brief Call the attachment of the solution vector to the data out for enabled
    * auxiliary physics.
+   *
+   * @param[in,out] data_out DataOut object to which the solution is attached
    */
   void
   attach_solution_to_output(DataOut<dim> &data_out)
+
+  {
+    for (auto &iphys : physics)
+      {
+        iphys.second->attach_solution_to_output(data_out);
+      }
+    for (auto &iphys : block_physics)
+      {
+        iphys.second->attach_solution_to_output(data_out);
+      }
+  }
+
+  /**
+   * @brief Call the attachment of the solution vector to the data out for enabled
+   * auxiliary physics.
+   *
+   * @param[in,out] data_out DataOutResample object to which the solution is
+   * attached
+   */
+  void
+  attach_solution_to_output(DataOutResample<dim, dim - 1, dim> &data_out)
 
   {
     for (auto &iphys : physics)

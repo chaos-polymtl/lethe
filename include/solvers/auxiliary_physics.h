@@ -12,6 +12,7 @@
 #include <deal.II/dofs/dof_handler.h>
 
 #include <deal.II/numerics/data_out.h>
+#include <deal.II/numerics/data_out_resample.h>
 
 
 /**
@@ -66,9 +67,21 @@ public:
   /**
    * @brief Attach the solution vector to the DataOut provided. This function
    * enable the auxiliary physics to output their solution via the core solver.
+   *
+   * @param[in,out] data_out DataOut object to which the solution is attached
    */
   virtual void
   attach_solution_to_output(DataOut<dim> &data_out) = 0;
+
+  /**
+   * @brief Attach the solution vector to the DataOut provided. This function
+   * enable the auxiliary physics to output their solution via the core solver.
+   *
+   * @param[in,out] data_out DataOutResample object to which the solution is
+   * attached
+   */
+  virtual void
+  attach_solution_to_output(DataOutResample<dim, dim - 1, dim> &data_out) = 0;
 
   /**
    * @brief Carry out the operations required to finish a simulation correctly.
