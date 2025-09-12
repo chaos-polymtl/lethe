@@ -2,9 +2,9 @@
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
 #ifndef lethe_output_struct_h
-#  define lethe_output_struct_h
+#define lethe_output_struct_h
 
-#  include <solvers/postprocessors.h>
+#include <solvers/postprocessors.h>
 
 using namespace dealii;
 
@@ -111,8 +111,6 @@ using OutputStruct = std::variant<OutputStructPostprocessor<dim, VectorType>,
                                   OutputStructSolution<dim, VectorType>,
                                   OutputStructCellVector>;
 
-#endif
-
 /**
  * @brief Struct containing information about the table handlers to be written/read.
  * It is used to pass a vector of references to TableHandler objects that should
@@ -137,3 +135,4 @@ struct OutputStructTableHandler
   TableHandler     &table;
   const std::string table_filename;
 };
+#endif
