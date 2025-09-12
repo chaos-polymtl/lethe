@@ -25,10 +25,11 @@
 #include <deal.II/multigrid/mg_smoother.h>
 #include <deal.II/multigrid/mg_tools.h>
 #include <deal.II/multigrid/mg_transfer_global_coarsening.h>
-#include <deal.II/multigrid/mg_transfer_global_coarsening.templates.h>
 #include <deal.II/multigrid/mg_transfer_matrix_free.h>
-#if DEAL_II_VERSION_GTE(9, 6, 0)
+#if DEAL_II_VERSION_GTE(9, 8, 0)
 #  include <deal.II/multigrid/mg_transfer_matrix_free.templates.h>
+#else
+#  include <deal.II/multigrid/mg_transfer_global_coarsening.templates.h>
 #endif
 #include <deal.II/multigrid/multigrid.h>
 
