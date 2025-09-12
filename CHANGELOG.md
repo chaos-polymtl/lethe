@@ -9,12 +9,13 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
 - MINOR A missing include "deal.II/multigrid/mg_transfer_matrix_free.templates.h" was added to enable compilation on deal.II master version (9.8-pre). It will not be impossible to compile Lethe with a deal.II 9.8-pre version that predates 10/09/2025. [#1676](https://github.com/chaos-polymtl/lethe/pull/1676). The initial version of this PR was partially wrong and is updated in [#1677](https://github.com/chaos-polymtl/lethe/pull/1677) to adequately account for the 9.7 version check.
 
+- MINOR Prevent termination of the CI when it is running on master.  cancel-in-progress is only called if ${{github.event_name == 'pull_request'}} which prevents cancellation on events other than pull request (e.g. merge to master). [#1675](https://github.com/chaos-polymtl/lethe/pull/1675)
+
 ### [Master] - 2025-09-11
 
 ### Fixed
 
 - MINOR When compiling Lethe with Clang, multiple warning arise throughout the code. This removes the last remaining warning in the dem, fem-dem and rpt library. The majority of the warnings left were related to some virtual classes not having virtual destructors and static_cast missing when using the type properties from the article. Lethe now compiles without any warning on modern Clang. [#1674](https://github.com/chaos-polymtl/lethe/pull/1674)
-
 
 ### [Master] - 2025-09-10
 
