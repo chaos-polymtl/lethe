@@ -3,6 +3,12 @@
 All notable changes to the Lethe project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
+### [Master] - 2025-09-12
+
+### Fixed
+
+- MINOR A missing include "deal.II/multigrid/mg_transfer_matrix_free.templates.h" was added to enable compilation on deal.II master version (9.8-pre). It will not be impossible to compile Lethe with a deal.II 9.8-pre version that predates 10/09/2025. [#1676](https://github.com/chaos-polymtl/lethe/pull/1676)
+
 ### [Master] - 2025-09-11
 
 ### Fixed

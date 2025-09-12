@@ -27,6 +27,9 @@
 #include <deal.II/multigrid/mg_transfer_global_coarsening.h>
 #include <deal.II/multigrid/mg_transfer_global_coarsening.templates.h>
 #include <deal.II/multigrid/mg_transfer_matrix_free.h>
+#if DEAL_II_VERSION_GTE(9, 6, 0)
+#  include <deal.II/multigrid/mg_transfer_matrix_free.templates.h>
+#endif
 #include <deal.II/multigrid/multigrid.h>
 
 #include <deal.II/numerics/vector_tools.h>
