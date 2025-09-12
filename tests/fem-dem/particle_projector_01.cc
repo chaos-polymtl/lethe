@@ -2,10 +2,11 @@
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
 /**
- * @brief Test if the particle projector gives a valid solution for a constant forcing field onto the particles.
- * A constant force is stored within the DEM particles which are distributed
- * along a series of line. The QCM approach is applied to calculate the void
- * fraction and the resulting QCM force field.
+ * @brief Test if the particle projector gives a valid solution for a constant void fraction.
+ * The constant void fraction is defined by homogenously placing particles in a
+ * grid within a cubic triangulation and averaging at a significantly largert
+ * volume than the volume of the particles. Right now, the void fraction is not
+ * that homogenous due to the effect of the walls on the QCM averaging volume
  */
 
 // Deal.II includes

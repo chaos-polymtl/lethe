@@ -53,7 +53,6 @@ generate_particle_grid(const Point<dim>          pt1,
   parallel::distributed::Triangulation<dim> particle_triangulation(
     MPI_COMM_WORLD);
 
-
   GridGenerator::hyper_rectangle(particle_triangulation, pt1, pt2, false);
   particle_triangulation.refine_global(n_refinements);
 
@@ -120,13 +119,20 @@ test_void_fraction_qcm(const unsigned int fe_degree,
 
   deallog << "dp = " << dp << std::endl;
 
+  Tensor<1, 3> force({0., 1., 0.});
   // Loop over all the particles and set their diameter to dp
+  // and the force to a constant value
   for (auto particle = particle_handler.begin();
        particle != particle_handler.end();
        ++particle)
     {
       auto particle_properties = particle->get_properties();
       particle_properties[DEM::CFDDEMProperties::dp] = dp;
+      for (unsigned int d = 0; d < 3; ++d)
+        {
+          particle_properties[DEM::CFDDEMProperties::fem_force_x + d] =
+            force[d];
+        }
     }
 
   // Setup the ParticleProjector. For this we need VoidFractionParameters,
@@ -140,6 +146,8 @@ test_void_fraction_qcm(const unsigned int fe_degree,
   // Setup a default linear solver.
   Parameters::LinearSolver linear_solver_parameters =
     make_default_linear_solver();
+
+  linear_solver_parameters.verbosity = Parameters::Verbosity::verbose;
 
   // Setup a pcout which is required by the ParticleProjector.
 
@@ -164,45 +172,30 @@ test_void_fraction_qcm(const unsigned int fe_degree,
   particle_projector.setup_dofs();
   particle_projector.setup_constraints(boundary_conditions);
 
-  // Calculate the void fraction and print the DOF values
+  // Calculate the void fraction to initialize the QCM weights
   particle_projector.calculate_void_fraction(0.);
+
+  // Calculate the force projection
+  // For this we only need to calculate the field projection!
+  particle_projector.calculate_field_projection(
+    particle_projector.particle_fluid_force);
+
 
   for (unsigned int r = 0; r < n_procs; ++r)
     {
       if (my_rank == r)
         {
           deallog << "Rank " << r << " owns: ";
-          for (auto i = particle_projector.void_fraction_solution.begin();
-               i < particle_projector.void_fraction_solution.end();
+          for (auto i = particle_projector.particle_fluid_force
+                          .particle_field_solution.begin();
+               i < particle_projector.particle_fluid_force
+                     .particle_field_solution.end();
                ++i)
             deallog << *i << " ";
           deallog << std::endl;
         }
       MPI_Barrier(MPI_COMM_WORLD);
     }
-
-
-  // Integrate the void fraction field over the cells to ensure void fraction
-  // conservation
-  FEValues<3> fe_values_void_fraction(*particle_projector.mapping,
-                                      *particle_projector.fe,
-                                      *particle_projector.quadrature,
-                                      update_values | update_JxW_values);
-
-  double              total_particle_volume = 0;
-  std::vector<double> void_fraction_values(
-    fe_values_void_fraction.n_quadrature_points);
-  for (auto cell : particle_projector.dof_handler.active_cell_iterators())
-    {
-      fe_values_void_fraction.reinit((cell));
-      fe_values_void_fraction.get_function_values(
-        particle_projector.void_fraction_solution, void_fraction_values);
-      for (unsigned int q = 0; q < fe_values_void_fraction.n_quadrature_points;
-           ++q)
-        total_particle_volume += fe_values_void_fraction.get_JxW_values()[q] *
-                                 (1. - void_fraction_values[q]);
-    }
-  deallog << "Total particle volume " << total_particle_volume << std::endl;
 }
 
 int

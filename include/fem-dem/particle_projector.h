@@ -389,6 +389,24 @@ public:
       previous_solution = void_fraction_locally_relevant;
   }
 
+
+  /**
+   * @brief Calculates the projection of a particle field onto the mesh.
+   *
+   * @tparam property_start_index An integer for the particle_property that will be projected
+   *
+   * @tparam n_components The number of components of the field. This should be either 1 (scalar) or dim (a Tensor<1,dim>).
+   *
+   * @param field_qcm The container for the field that will be projected.
+   *
+   */
+
+  template <int property_start_index, int n_components>
+  void
+  calculate_field_projection(
+    ParticleFieldQCM<dim, property_start_index, n_components> &field_qcm);
+
+
   /// DoFHandler that manages the void fraction
   DoFHandler<dim> dof_handler;
 
@@ -550,21 +568,6 @@ private:
   virtual void
   solve_void_fraction_linear_system() override;
 
-  /**
-  * @brief Calculates the projection of a particle field onto the mesh.
-  *
-  * @tparam property_start_index An integer for the particle_property that will be projected
-  *
-  * @tparam n_components The number of components of the field. This should be either 1 (scalar) or dim (a Tensor<1,dim>).
-  *
-  * @param field_qcm The container for the field that will be projected.
-
-   *
-   */
-  template <int property_start_index, int n_components>
-  void
-  calculate_field_projection(
-    ParticleFieldQCM<dim, property_start_index, n_components> &field_qcm);
 
   /**
    * @brief Calculate and return the periodic offset distance vector of the domain which is needed
@@ -627,7 +630,6 @@ private:
   /// Triangulation
   parallel::DistributedTriangulationBase<dim> *triangulation;
 
-private:
   /// Parameters for the calculation of the void fraction
   /// Right now this is used for the VANS matrix-free solver
   /// to directly calculate the void fraction from the function itself.
