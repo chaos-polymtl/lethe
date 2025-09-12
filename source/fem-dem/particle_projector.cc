@@ -1145,12 +1145,17 @@ ParticleProjector<dim>::calculate_field_projection(
                       // volume of the sphere which will be later divided by the
                       // total volume of particles in the QCM sphere.
 
-                      const double volumetric_contribution =
+                      /*const double volumetric_contribution =
                         field_qcm.distribute_contribution ?
                           particle_volume_in_sphere /
                             (particle_properties
                                [DEM::CFDDEMProperties::PropertiesIndex::
                                   volumetric_contribution]) :
+                          particle_volume_in_sphere;*/
+
+                      const double volumetric_contribution =
+                        field_qcm.distribute_contribution ?
+                          particle_volume_in_sphere :
                           particle_volume_in_sphere;
 
                       for (unsigned int d = 0; d < n_components; ++d)

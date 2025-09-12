@@ -120,6 +120,7 @@ test_void_fraction_qcm(const unsigned int fe_degree,
   deallog << "dp = " << dp << std::endl;
 
   Tensor<1, 3> force({0., 1., 0.});
+  Tensor<1, 3> total_particle_force_on_particles({0., 0., 0.});
   // Loop over all the particles and set their diameter to dp
   // and the force to a constant value
   for (auto particle = particle_handler.begin();
@@ -132,6 +133,7 @@ test_void_fraction_qcm(const unsigned int fe_degree,
         {
           particle_properties[DEM::CFDDEMProperties::fem_force_x + d] =
             force[d];
+          total_particle_force_on_particles[d] += particle_properties[d];
         }
     }
 
@@ -147,7 +149,7 @@ test_void_fraction_qcm(const unsigned int fe_degree,
   Parameters::LinearSolver linear_solver_parameters =
     make_default_linear_solver();
 
-  linear_solver_parameters.verbosity = Parameters::Verbosity::verbose;
+  linear_solver_parameters.minimum_residual = 1e-10;
 
   // Setup a pcout which is required by the ParticleProjector.
 
@@ -196,6 +198,33 @@ test_void_fraction_qcm(const unsigned int fe_degree,
         }
       MPI_Barrier(MPI_COMM_WORLD);
     }
+
+  // Integrate the force field over the cells to check force conservation
+  FEValues<3> fe_values(*particle_projector.mapping,
+                        *particle_projector.particle_fluid_force.fe,
+                        *particle_projector.quadrature,
+                        update_values | update_JxW_values);
+
+  // Field extractor if dim components are used
+  FEValuesExtractors::Vector vector_extractor;
+  vector_extractor.first_vector_component = 0;
+  Tensor<1, 3>              total_particle_force_on_fluid({0, 0, 0});
+  std::vector<Tensor<1, 3>> force_values(fe_values.n_quadrature_points);
+  for (auto cell : particle_projector.particle_fluid_force.dof_handler
+                     .active_cell_iterators())
+    {
+      fe_values.reinit((cell));
+      fe_values[vector_extractor].get_function_values(
+        particle_projector.particle_fluid_force.particle_field_solution,
+        force_values);
+      for (unsigned int q = 0; q < fe_values.n_quadrature_points; ++q)
+        total_particle_force_on_fluid +=
+          fe_values.get_JxW_values()[q] * force_values[q];
+    }
+  deallog << "Total particle force on the fluid mesh "
+          << total_particle_force_on_fluid << std::endl;
+  deallog << "Total particle force on the particles "
+          << total_particle_force_on_particles << std::endl;
 }
 
 int
@@ -207,15 +236,22 @@ main(int argc, char *argv[])
 
       Utilities::MPI::MPI_InitFinalize mpi_initialization(argc, argv, 1);
 
-      deallog << "Void fraction: fe_degree=1    number_quadrature_points=2"
-              << std::endl;
+      deallog
+        << "Particle-fluid force: fe_degree=1    number_quadrature_points=2"
+        << std::endl;
       test_void_fraction_qcm(1, 2);
-      deallog << "Void fraction: fe_degree=1    number_quadrature_points=3"
-              << std::endl;
+      deallog
+        << "Particle-fluid force: fe_degree=1    number_quadrature_points=3"
+        << std::endl;
       test_void_fraction_qcm(1, 3);
-      deallog << "Void fraction: fe_degree=2    number_quadrature_points=3"
-              << std::endl;
-      test_void_fraction_qcm(2, 3);
+      deallog
+        << "Particle-fluid force: fe_degree=2    number_quadrature_points=4"
+        << std::endl;
+      test_void_fraction_qcm(1, 4);
+      deallog
+        << "Particle-fluid force: fe_degree=2    number_quadrature_points=4"
+        << std::endl;
+      test_void_fraction_qcm(1, 5);
     }
   catch (std::exception &exc)
     {
