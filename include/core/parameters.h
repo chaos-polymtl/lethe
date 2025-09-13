@@ -1533,35 +1533,6 @@ namespace Parameters
 
 
   /**
-   *brief Output Patch Mesh Parameters which is used to define the mesh used to
-   *output resampled results
-   **/
-  template <int dim>
-  struct OutputPatchMesh
-  {
-    /// If true, the patch mesh is used to output resampled results
-    bool enable;
-
-    /// Filename of the patch mesh output file
-    std::string file_name;
-
-    /// Initial refinement of the patch mesh
-    std::vector<unsigned int> n_subdivisions;
-
-    /// Point 0 of the plane
-    Point<dim - 1> point_0;
-
-    /// Point 1 of the plane
-    Point<dim - 1> point_1;
-
-    static void
-    declare_parameters(ParameterHandler &prm);
-    void
-    parse_parameters(ParameterHandler &prm);
-  };
-
-
-  /**
    * @brief Testing - Some solvers have a specific testing
    * mode that can be enabled to output more variables to the
    * terminal. This is enabled using the Testing parameters.
