@@ -9,7 +9,7 @@
 #include <core/utilities.h>
 #include <core/vector.h>
 
-#include "solvers/output_struct.h"
+#include <solvers/output_struct.h>
 
 #include <deal.II/base/conditional_ostream.h>
 #include <deal.II/base/data_out_base.h>

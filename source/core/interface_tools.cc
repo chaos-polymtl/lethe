@@ -3,7 +3,7 @@
 
 #include <core/interface_tools.h>
 
-#include "solvers/output_struct.h"
+#include <solvers/output_struct.h>
 
 #include <deal.II/dofs/dof_tools.h>
 

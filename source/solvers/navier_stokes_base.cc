@@ -2931,12 +2931,12 @@ NavierStokesBase<dim, VectorType, DofsType>::gather_output_results(
   solution_output_structs.emplace_back(
     std::in_place_type<OutputStructCellVector>, subdomain, "subdomain");
 
-  // Add fields specific to other physics
-  std::vector<OutputStruct<dim, VectorType>> additional_output_structs =
-    this->gather_output_hook();
-
-  for (const auto &output_struct : additional_output_structs)
-    solution_output_structs.emplace_back(output_struct);
+  // // Add fields specific to other physics
+  // std::vector<OutputStruct<dim, VectorType>> additional_output_structs =
+  //   this->gather_output_hook();
+  //
+  // for (const auto &output_struct : additional_output_structs)
+  //   solution_output_structs.emplace_back(output_struct);
 }
 
 template <int dim, typename VectorType, typename DofsType>
@@ -2999,66 +2999,67 @@ NavierStokesBase<dim, VectorType, DofsType>::write_output_results(
                                    *postprocessor_struct->data_postprocessor);
         }
     }
-
-  // Add multiphysics output
-  std::vector<OutputStruct<dim, GlobalVectorType>> multiphysics_output_structs =
-    multiphysics->gather_output_hook_global_vector();
-
-  for (const auto &output_struct : multiphysics_output_structs)
-    if (auto solution_struct =
-          std::get_if<OutputStructSolution<dim, GlobalVectorType>>(
-            &output_struct))
-      {
-        data_out.add_data_vector(
-          solution_struct->dof_handler,
-          solution_struct->solution,
-          solution_struct->solution_names,
-          solution_struct->data_component_interpretation);
-      }
-    else if (auto vector_struct =
-               std::get_if<OutputStructCellVector>(&output_struct))
-      {
-        data_out.add_data_vector(vector_struct->solution,
-                                 vector_struct->solution_name);
-      }
-    else if (auto postprocessor_struct =
-               std::get_if<OutputStructPostprocessor<dim, GlobalVectorType>>(
-                 &output_struct))
-      {
-        data_out.add_data_vector(postprocessor_struct->dof_handler,
-                                 postprocessor_struct->solution,
-                                 *postprocessor_struct->data_postprocessor);
-      }
-
-  // Add multiphysics block vector solution
-  std::vector<OutputStruct<dim, GlobalBlockVectorType>>
-    multiphysics_output_structs_block =
-      multiphysics->gather_output_hook_global_block_vector();
-  for (const auto &output_struct : multiphysics_output_structs_block)
-    if (auto solution_struct =
-          std::get_if<OutputStructSolution<dim, GlobalBlockVectorType>>(
-            &output_struct))
-      {
-        data_out.add_data_vector(
-          solution_struct->dof_handler,
-          solution_struct->solution,
-          solution_struct->solution_names,
-          solution_struct->data_component_interpretation);
-      }
-    else if (auto vector_struct =
-               std::get_if<OutputStructCellVector>(&output_struct))
-      {
-        data_out.add_data_vector(vector_struct->solution,
-                                 vector_struct->solution_name);
-      }
-    else if (auto postprocessor_struct = std::get_if<
-               OutputStructPostprocessor<dim, GlobalBlockVectorType>>(
-               &output_struct))
-      {
-        data_out.add_data_vector(postprocessor_struct->dof_handler,
-                                 postprocessor_struct->solution,
-                                 *postprocessor_struct->data_postprocessor);
-      }
+  //
+  // // Add multiphysics output
+  // std::vector<OutputStruct<dim, GlobalVectorType>>
+  // multiphysics_output_structs =
+  //   multiphysics->gather_output_hook_global_vector();
+  //
+  // for (const auto &output_struct : multiphysics_output_structs)
+  //   if (auto solution_struct =
+  //         std::get_if<OutputStructSolution<dim, GlobalVectorType>>(
+  //           &output_struct))
+  //     {
+  //       data_out.add_data_vector(
+  //         solution_struct->dof_handler,
+  //         solution_struct->solution,
+  //         solution_struct->solution_names,
+  //         solution_struct->data_component_interpretation);
+  //     }
+  //   else if (auto vector_struct =
+  //              std::get_if<OutputStructCellVector>(&output_struct))
+  //     {
+  //       data_out.add_data_vector(vector_struct->solution,
+  //                                vector_struct->solution_name);
+  //     }
+  //   else if (auto postprocessor_struct =
+  //              std::get_if<OutputStructPostprocessor<dim, GlobalVectorType>>(
+  //                &output_struct))
+  //     {
+  //       data_out.add_data_vector(postprocessor_struct->dof_handler,
+  //                                postprocessor_struct->solution,
+  //                                *postprocessor_struct->data_postprocessor);
+  //     }
+  //
+  // // Add multiphysics block vector solution
+  // std::vector<OutputStruct<dim, GlobalBlockVectorType>>
+  //   multiphysics_output_structs_block =
+  //     multiphysics->gather_output_hook_global_block_vector();
+  // for (const auto &output_struct : multiphysics_output_structs_block)
+  //   if (auto solution_struct =
+  //         std::get_if<OutputStructSolution<dim, GlobalBlockVectorType>>(
+  //           &output_struct))
+  //     {
+  //       data_out.add_data_vector(
+  //         solution_struct->dof_handler,
+  //         solution_struct->solution,
+  //         solution_struct->solution_names,
+  //         solution_struct->data_component_interpretation);
+  //     }
+  //   else if (auto vector_struct =
+  //              std::get_if<OutputStructCellVector>(&output_struct))
+  //     {
+  //       data_out.add_data_vector(vector_struct->solution,
+  //                                vector_struct->solution_name);
+  //     }
+  //   else if (auto postprocessor_struct = std::get_if<
+  //              OutputStructPostprocessor<dim, GlobalBlockVectorType>>(
+  //              &output_struct))
+  //     {
+  //       data_out.add_data_vector(postprocessor_struct->dof_handler,
+  //                                postprocessor_struct->solution,
+  //                                *postprocessor_struct->data_postprocessor);
+  //     }
 
 
   // Build the patches and write the output

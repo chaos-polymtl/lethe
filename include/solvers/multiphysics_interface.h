@@ -195,7 +195,7 @@ public:
         std::vector<OutputStruct<dim, GlobalVectorType>> output_structs =
           iphys.second->gather_output_hook();
         for (auto &output_struct : output_structs)
-          solution_output_structs.emplace_back(output_struct);
+          solution_output_structs.push_back(output_struct);
       }
 
     return solution_output_structs;
@@ -216,7 +216,7 @@ public:
         std::vector<OutputStruct<dim, GlobalBlockVectorType>> output_structs =
           iphys.second->gather_output_hook();
         for (auto &output_struct : output_structs)
-          solution_output_structs.emplace_back(output_struct);
+          solution_output_structs.push_back(output_struct);
       }
 
     return solution_output_structs;
