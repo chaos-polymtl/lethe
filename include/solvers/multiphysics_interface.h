@@ -28,8 +28,6 @@
 #include <deal.II/lac/trilinos_parallel_block_vector.h>
 #include <deal.II/lac/trilinos_vector.h>
 
-#include <deal.II/numerics/data_out_resample.h>
-
 #include <map>
 #include <memory>
 

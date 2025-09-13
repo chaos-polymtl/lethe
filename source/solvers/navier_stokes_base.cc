@@ -86,10 +86,6 @@ NavierStokesBase<dim, VectorType, DofsType>::NavierStokesBase(
       triangulation =
         std::make_shared<parallel::fullydistributed::Triangulation<dim>>(
           this->mpi_communicator);
-      output_patch_triangulation = std::make_shared<
-        parallel::fullydistributed::Triangulation<dim - 1, dim>>(
-        this->mpi_communicator);
-      ;
       dof_handler.clear();
       dof_handler.reinit(*this->triangulation);
     }
@@ -1372,28 +1368,6 @@ NavierStokesBase<dim, VectorType, DofsType>::refine_mesh_uniform()
 
   // Transfer solution
   transfer_solution(solution_transfer, previous_solutions_transfer);
-}
-
-template <int dim, typename VectorType, typename DofsType>
-void
-NavierStokesBase<dim, VectorType, DofsType>::generate_output_patch_mesh()
-{
-  if (!this->simulation_parameters.output_patch_mesh.enable)
-    return;
-  AssertThrow(dim == 3,
-              ExcMessage(
-                "Patch mesh output only implemented in 3D simulations"));
-  TimerOutput::Scope t(this->computing_timer, "Patch mesh generation");
-
-  *this->output_patch_mapping = MappingQ<dim - 1, dim>(
-    this->simulation_parameters.fem_parameters.velocity_order);
-
-  if constexpr (dim == 3)
-    GridGenerator::subdivided_hyper_rectangle(
-      *this->output_patch_triangulation,
-      this->simulation_parameters.output_patch_mesh.n_subdivisions,
-      this->simulation_parameters.output_patch_mesh.point_0,
-      this->simulation_parameters.output_patch_mesh.point_1);
 }
 
 template <int dim, typename VectorType, typename DofsType>
@@ -3121,96 +3095,6 @@ NavierStokesBase<dim, VectorType, DofsType>::write_output_results(
       write_boundaries_vtu<dim>(
         data_out_faces, folder, time, iter, this->mpi_communicator);
     }
-  write_output_patch_mesh(solution_output_structs);
-}
-
-template <int dim, typename VectorType, typename DofsType>
-void
-NavierStokesBase<dim, VectorType, DofsType>::write_output_patch_mesh(
-  const std::vector<OutputStruct<dim, VectorType>> &solution_output_structs)
-{
-  AssertThrow(
-    dim == 3,
-    ExcMessage(
-      "Patch mesh output is currently implemented for 3D simulations only."));
-  AssertThrow(this->triangulation->all_reference_cells_are_hyper_cube(),
-              ExcMessage("Patch mesh output is currently implemented for "
-                         "simulations with quad/hex elements only."));
-
-  if (!simulation_parameters.output_patch_mesh.enable)
-    return;
-
-  // Victor: Create check for output patch parameter
-  TimerOutput::Scope t(this->computing_timer, "Output results patch mesh");
-
-  const std::string folder = simulation_control->get_output_path();
-  const std::string solution_name =
-    simulation_control->get_output_name() + "_patch";
-  const unsigned int iter        = simulation_control->get_step_number();
-  const double       time        = simulation_control->get_current_time();
-  const unsigned int subdivision = simulation_control->get_number_subdivision();
-  const unsigned int group_files = simulation_control->get_group_files();
-
-  // Create mesh on patch triangulation
-  this->generate_output_patch_mesh();
-
-  // Create data output object
-  DataOutResample<dim, dim - 1, dim> data_out(*this->output_patch_triangulation,
-                                              *this->output_patch_mapping);
-
-  // Additional flag to enable the output of high-order elements
-  DataOutBase::VtkFlags flags;
-  if (this->velocity_fem_degree > 1)
-    flags.write_higher_order_cells = true;
-  data_out.set_flags(flags);
-
-  // Attach DoF handler to data output object
-  data_out.attach_dof_handler(this->dof_handler);
-
-  // Fill data out object with solutions in structs
-  for (const auto &solution_output_struct : solution_output_structs)
-    {
-      if (auto solution_struct =
-            std::get_if<OutputStructSolution<dim, VectorType>>(
-              &solution_output_struct))
-        {
-          data_out.add_data_vector(
-            solution_struct->dof_handler,
-            solution_struct->solution,
-            solution_struct->solution_names,
-            solution_struct->data_component_interpretation);
-        }
-      else if (auto vector_struct =
-                 std::get_if<OutputStructCellVector>(&solution_output_struct))
-        {
-          data_out.add_data_vector(vector_struct->solution,
-                                   vector_struct->solution_name);
-        }
-      else if (auto postprocessor_struct =
-                 std::get_if<OutputStructPostprocessor<dim, VectorType>>(
-                   &solution_output_struct))
-        {
-          data_out.add_data_vector(postprocessor_struct->dof_handler,
-                                   postprocessor_struct->solution,
-                                   *postprocessor_struct->data_postprocessor);
-        }
-    }
-
-  // multiphysics->attach_solution_to_output(data_out);
-
-  // Build the patches and write the output
-  data_out.build_patches(*this->get_mapping(),
-                         subdivision,
-                         DataOut<dim - 1, dim>::curved_inner_cells);
-
-  write_vtu_and_pvd(this->output_patch_pvdhandler,
-                    data_out,
-                    folder,
-                    solution_name,
-                    time,
-                    iter,
-                    group_files,
-                    this->mpi_communicator);
 }
 
 template <int dim, typename VectorType, typename DofsType>
