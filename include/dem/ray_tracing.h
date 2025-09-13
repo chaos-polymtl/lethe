@@ -89,7 +89,7 @@ private:
    * output test results if necessary.
    */
   void
-  finish_simulation();
+  finish_simulation(std::vector<Point<3>> &intersection_points);
 
 
   template <bool move_photon>
