@@ -9,6 +9,8 @@
 #include <core/utilities.h>
 #include <core/vector.h>
 
+#include "solvers/output_struct.h"
+
 #include <deal.II/base/conditional_ostream.h>
 #include <deal.II/base/data_out_base.h>
 #include <deal.II/base/function.h>
@@ -527,13 +529,12 @@ namespace InterfaceTools
                            const unsigned int it);
 
     /**
-     * @brief Attach the solution vector to the DataOut provided. This function
-     * enables to output the signed distance solution via the background solver.
+     * @brief Gather and return vector of output structs that are particular to some applications.
      *
-     * @param[in,out] data_out DataOut responsible for solution output
+     * @return Vector of OutputStructs that will be used to write the output results as VTU files.
      */
-    void
-    attach_solution_to_output(DataOut<dim> &data_out);
+    std::vector<OutputStruct<dim, GlobalVectorType>>
+    gather_output_hook();
 
     /// DoFHandler describing the problem
     DoFHandler<dim> dof_handler;
@@ -967,6 +968,9 @@ namespace InterfaceTools
 
     /// Solution vector of the signed distance (write only)
     LinearAlgebra::distributed::Vector<double> signed_distance;
+
+    /// Solution vector of the signed distance as used for output only
+    GlobalVectorType signed_distance_output;
 
     /// Solution vector of the signed distance with ghost values (read-only
     /// version of signed_distance)

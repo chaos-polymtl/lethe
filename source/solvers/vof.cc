@@ -757,34 +757,34 @@ VolumeOfFluid<dim>::gather_output_hook()
           1, DataComponentInterpretation::component_is_scalar));
     }
 
-  // if (simulation_parameters.multiphysics.vof_parameters.regularization_method
-  //       .geometric_interface_reinitialization.enable)
-  //   {
-  //     if ((simulation_control->get_step_number() %
-  //            simulation_parameters.multiphysics.vof_parameters
-  //              .regularization_method.frequency !=
-  //          0) ||
-  //         (simulation_control->get_step_number() == 0))
-  //       {
-  //         TimerOutput::Scope t(this->computing_timer, "Signed distance
-  //         output");
-  //
-  //         signed_distance_solver->setup_dofs();
-  //
-  //         signed_distance_solver->set_level_set_from_background_mesh(
-  //           dof_handler, this->present_solution);
-  //
-  //         signed_distance_solver->solve();
-  //       }
-  //     signed_distance_solver->attach_solution_to_output(data_out);
-  //
-  //     signed_distance_solver->output_interface_reconstruction(
-  //       "interface_reconstruction_" +
-  //         this->simulation_parameters.simulation_control.output_name,
-  //       this->simulation_parameters.simulation_control.output_folder,
-  //       simulation_control->get_current_time(),
-  //       simulation_control->get_step_number());
-  //   }
+  if (simulation_parameters.multiphysics.vof_parameters.regularization_method
+        .geometric_interface_reinitialization.enable)
+    {
+      if ((simulation_control->get_step_number() %
+             simulation_parameters.multiphysics.vof_parameters
+               .regularization_method.frequency !=
+           0) ||
+          (simulation_control->get_step_number() == 0))
+        {
+          TimerOutput::Scope t(this->computing_timer, "Signed distance output");
+
+          signed_distance_solver->setup_dofs();
+
+          signed_distance_solver->set_level_set_from_background_mesh(
+            dof_handler, this->present_solution);
+
+          signed_distance_solver->solve();
+        }
+      for (auto &output_struct : signed_distance_solver->gather_output_hook())
+        solution_output_structs.push_back(output_struct);
+
+      signed_distance_solver->output_interface_reconstruction(
+        "interface_reconstruction_" +
+          this->simulation_parameters.simulation_control.output_name,
+        this->simulation_parameters.simulation_control.output_folder,
+        simulation_control->get_current_time(),
+        simulation_control->get_step_number());
+    }
   return solution_output_structs;
 }
 
