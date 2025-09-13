@@ -429,11 +429,10 @@ RayTracingSolver<dim>::write_output_results(
 
   MPI_File_close(&fh);
 }
-
-
 template <int dim>
 void
-RayTracingSolver<dim>::finish_simulation()
+RayTracingSolver<dim>::finish_simulation(
+  std::vector<Point<3>> &intersection_points)
 {
   // Timer output
   if (parameters.timer.type == Parameters::Timer::Type::end)
@@ -442,7 +441,17 @@ RayTracingSolver<dim>::finish_simulation()
   // Testing
   if (parameters.test.enabled)
     {
-      // This needs to be coded later.
+      // Proc 0 gathers all intersection points
+      std::vector<std::vector<Point<3>>> all_intersection_points =
+        Utilities::MPI::gather(mpi_communicator, intersection_points, 0);
+
+      pcout << "x, y, z" << std::endl;
+      // Loop over all intersection points
+      for (const std::vector<Point<3>> &sub_vector : all_intersection_points)
+        {
+          for (const Point<3> &p : sub_vector)
+            pcout << p << std::endl;
+        }
     }
 }
 
@@ -613,7 +622,7 @@ RayTracingSolver<dim>::find_intersection(
                 current_photon_location +
                 photon_displacement_vector * displacement_distance;
               current_photon->set_location(new_photon_location);
-              std::cout<< new_photon_location << std::endl;
+              // std::cout<< new_photon_location << std::endl;
             }
         }
     }
@@ -634,7 +643,7 @@ RayTracingSolver<dim>::solve()
             triangulation,
             dem_parameters.boundary_conditions);
 
-  displacement_distance = GridTools::minimal_cell_diameter(triangulation);
+  displacement_distance = 0.5 * GridTools::minimal_cell_diameter(triangulation);
 
   // Set particle insertion object
   particle_insertion_object = set_particle_insertion_type();
@@ -719,13 +728,13 @@ RayTracingSolver<dim>::solve()
 
       action_manager->reset_triggers();
     }
-  std::cout << this_mpi_process << " " << total_intersection_points.size()
-            << std::endl;
+  // std::cout << this_mpi_process << " " << total_intersection_points.size()
+  //           << std::endl;
   write_output_results(total_intersection_points,
                        parameters.simulation_control.output_folder,
                        parameters.simulation_control.output_name);
 
-  finish_simulation();
+  finish_simulation(total_intersection_points);
 }
 
 
