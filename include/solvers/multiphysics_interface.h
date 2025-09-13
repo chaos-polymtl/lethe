@@ -182,8 +182,9 @@ public:
   }
 
   /**
-   * @brief Call the attachment of the solution vector to the data out for enabled
-   * auxiliary physics.
+   * @brief Gather and return vector of output structs that are particular to some applications.
+   *
+   * @return Vector of OutputStructs that will be used to write the output results as VTU files. This is a variant for GlobalVectorType.
    */
   std::vector<OutputStruct<dim, GlobalVectorType>>
   gather_output_hook_global_vector()
@@ -201,8 +202,9 @@ public:
   }
 
   /**
-   * @brief Call the attachment of the solution vector to the data out for enabled
-   * auxiliary physics.
+   * @brief Gather and return vector of output structs that are particular to some applications.
+   *
+   * @return Vector of OutputStructs that will be used to write the output results as VTU files. This is a variant for GlobalBlockVectorType.
    */
   std::vector<OutputStruct<dim, GlobalBlockVectorType>>
   gather_output_hook_global_block_vector()
