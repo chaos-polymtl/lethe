@@ -624,7 +624,7 @@ private:
   MultiphysicsInterface<dim> *multiphysics;
 
   /**
-   * @brief Store information related to the the computing time such as CPU times or
+   * @brief Store information related to the computing time such as CPU times or
    * wall time.
    */
   TimerOutput computing_timer;

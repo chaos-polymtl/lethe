@@ -3026,9 +3026,66 @@ NavierStokesBase<dim, VectorType, DofsType>::write_output_results(
         }
     }
 
+  // Add multiphysics output
+  std::vector<OutputStruct<dim, GlobalVectorType>> multiphysics_output_structs =
+    multiphysics->gather_output_hook_global_vector();
 
-  // Add multiphysics outputs
-  multiphysics->attach_solution_to_output(data_out);
+  for (const auto &output_struct : multiphysics_output_structs)
+    if (auto solution_struct =
+          std::get_if<OutputStructSolution<dim, GlobalVectorType>>(
+            &output_struct))
+      {
+        data_out.add_data_vector(
+          solution_struct->dof_handler,
+          solution_struct->solution,
+          solution_struct->solution_names,
+          solution_struct->data_component_interpretation);
+      }
+    else if (auto vector_struct =
+               std::get_if<OutputStructCellVector>(&output_struct))
+      {
+        data_out.add_data_vector(vector_struct->solution,
+                                 vector_struct->solution_name);
+      }
+    else if (auto postprocessor_struct =
+               std::get_if<OutputStructPostprocessor<dim, GlobalVectorType>>(
+                 &output_struct))
+      {
+        data_out.add_data_vector(postprocessor_struct->dof_handler,
+                                 postprocessor_struct->solution,
+                                 *postprocessor_struct->data_postprocessor);
+      }
+
+  // Add multiphysics block vector solution
+  std::vector<OutputStruct<dim, GlobalBlockVectorType>>
+    multiphysics_output_structs_block =
+      multiphysics->gather_output_hook_global_block_vector();
+  for (const auto &output_struct : multiphysics_output_structs_block)
+    if (auto solution_struct =
+          std::get_if<OutputStructSolution<dim, GlobalBlockVectorType>>(
+            &output_struct))
+      {
+        data_out.add_data_vector(
+          solution_struct->dof_handler,
+          solution_struct->solution,
+          solution_struct->solution_names,
+          solution_struct->data_component_interpretation);
+      }
+    else if (auto vector_struct =
+               std::get_if<OutputStructCellVector>(&output_struct))
+      {
+        data_out.add_data_vector(vector_struct->solution,
+                                 vector_struct->solution_name);
+      }
+    else if (auto postprocessor_struct = std::get_if<
+               OutputStructPostprocessor<dim, GlobalBlockVectorType>>(
+               &output_struct))
+      {
+        data_out.add_data_vector(postprocessor_struct->dof_handler,
+                                 postprocessor_struct->solution,
+                                 *postprocessor_struct->data_postprocessor);
+      }
+
 
   // Build the patches and write the output
   data_out.build_patches(*this->get_mapping(),
@@ -3093,6 +3150,9 @@ NavierStokesBase<dim, VectorType, DofsType>::write_output_patch_mesh(
   const double       time        = simulation_control->get_current_time();
   const unsigned int subdivision = simulation_control->get_number_subdivision();
   const unsigned int group_files = simulation_control->get_group_files();
+
+  // Create mesh on patch triangulation
+  this->generate_output_patch_mesh();
 
   // Create data output object
   DataOutResample<dim, dim - 1, dim> data_out(*this->output_patch_triangulation,

@@ -19,6 +19,7 @@
 #include <core/vector.h>
 
 #include <solvers/auxiliary_physics.h>
+#include <solvers/output_struct.h>
 
 #include <deal.II/base/exceptions.h>
 
@@ -182,84 +183,43 @@ public:
     block_physics[physics_id]->modify_solution();
   }
 
+  /**
+   * @brief Call the attachment of the solution vector to the data out for enabled
+   * auxiliary physics.
+   */
+  std::vector<OutputStruct<dim, GlobalVectorType>>
+  gather_output_hook_global_vector()
+  {
+    std::vector<OutputStruct<dim, GlobalVectorType>> solution_output_structs;
+    for (auto &iphys : physics)
+      {
+        std::vector<OutputStruct<dim, GlobalVectorType>> output_structs =
+          iphys.second->gather_output_hook();
+        for (auto &output_struct : output_structs)
+          solution_output_structs.emplace_back(output_struct);
+      }
+
+    return solution_output_structs;
+  }
 
   /**
    * @brief Call the attachment of the solution vector to the data out for enabled
    * auxiliary physics.
-   *
-   * @param[in,out] data_out DataOut object to which the solution is attached
    */
-  void
-  attach_solution_to_output(DataOut<dim> &data_out)
+  std::vector<OutputStruct<dim, GlobalBlockVectorType>>
+  gather_output_hook_global_block_vector()
   {
-    for (auto &iphys : physics)
-      {
-        std::vector<OutputStruct<dim, GlobalVectorType>>
-          solution_output_structs = iphys.second->gather_output_hook();
-        // Fill data out object with solutions in structs
-        for (const auto &solution_output_struct : solution_output_structs)
-          {
-            if (auto solution_struct =
-                  std::get_if<OutputStructSolution<dim, GlobalVectorType>>(
-                    &solution_output_struct))
-              {
-                data_out.add_data_vector(
-                  solution_struct->dof_handler,
-                  solution_struct->solution,
-                  solution_struct->solution_names,
-                  solution_struct->data_component_interpretation);
-              }
-            else if (auto vector_struct = std::get_if<OutputStructCellVector>(
-                       &solution_output_struct))
-              {
-                data_out.add_data_vector(vector_struct->solution,
-                                         vector_struct->solution_name);
-              }
-            else if (auto postprocessor_struct = std::get_if<
-                       OutputStructPostprocessor<dim, GlobalVectorType>>(
-                       &solution_output_struct))
-              {
-                data_out.add_data_vector(
-                  postprocessor_struct->dof_handler,
-                  postprocessor_struct->solution,
-                  *postprocessor_struct->data_postprocessor);
-              }
-          }
-      }
+    std::vector<OutputStruct<dim, GlobalBlockVectorType>>
+      solution_output_structs;
     for (auto &iphys : block_physics)
       {
-        std::vector<OutputStruct<dim, GlobalBlockVectorType>>
-          solution_output_structs = iphys.second->gather_output_hook();
-        // Fill data out object with solutions in structs
-        for (const auto &solution_output_struct : solution_output_structs)
-          {
-            if (auto solution_struct =
-                  std::get_if<OutputStructSolution<dim, GlobalBlockVectorType>>(
-                    &solution_output_struct))
-              {
-                data_out.add_data_vector(
-                  solution_struct->dof_handler,
-                  solution_struct->solution,
-                  solution_struct->solution_names,
-                  solution_struct->data_component_interpretation);
-              }
-            else if (auto vector_struct = std::get_if<OutputStructCellVector>(
-                       &solution_output_struct))
-              {
-                data_out.add_data_vector(vector_struct->solution,
-                                         vector_struct->solution_name);
-              }
-            else if (auto postprocessor_struct = std::get_if<
-                       OutputStructPostprocessor<dim, GlobalBlockVectorType>>(
-                       &solution_output_struct))
-              {
-                data_out.add_data_vector(
-                  postprocessor_struct->dof_handler,
-                  postprocessor_struct->solution,
-                  *postprocessor_struct->data_postprocessor);
-              }
-          }
+        std::vector<OutputStruct<dim, GlobalBlockVectorType>> output_structs =
+          iphys.second->gather_output_hook();
+        for (auto &output_struct : output_structs)
+          solution_output_structs.emplace_back(output_struct);
       }
+
+    return solution_output_structs;
   }
 
   /**

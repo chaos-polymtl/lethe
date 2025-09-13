@@ -4,7 +4,7 @@
 #ifndef lethe_output_struct_h
 #define lethe_output_struct_h
 
-#include <solvers/postprocessors.h>
+#include <deal.II/numerics/data_postprocessor.h>
 
 using namespace dealii;
 
