@@ -1401,7 +1401,7 @@ InterfaceTools::SignedDistanceSolver<dim, VectorType>::gather_output_hook()
   convert_vector_dealii_to_trilinos(this->signed_distance_output,
                                     this->signed_distance);
 #else
-  this->signed_distance_output = this->signed_distance
+  this->signed_distance_output = this->signed_distance;
 #endif
   std::vector<OutputStruct<dim, GlobalVectorType>> solution_output_structs;
   std::vector<std::string> solution_names(1, "signed_distance");
