@@ -282,6 +282,9 @@ InterfaceTools::SignedDistanceSolver<dim, VectorType>::setup_dofs()
   signed_distance.reinit(locally_owned_dofs,
                          locally_active_dofs,
                          mpi_communicator);
+  signed_distance_output.reinit(locally_owned_dofs,
+                                locally_active_dofs,
+                                mpi_communicator);
   signed_distance_with_ghost.reinit(locally_owned_dofs,
                                     locally_active_dofs,
                                     mpi_communicator);
@@ -1394,8 +1397,12 @@ template <int dim, typename VectorType>
 std::vector<OutputStruct<dim, GlobalVectorType>>
 InterfaceTools::SignedDistanceSolver<dim, VectorType>::gather_output_hook()
 {
+#ifndef LETHE_USE_LDV
   convert_vector_dealii_to_trilinos(this->signed_distance_output,
                                     this->signed_distance);
+#else
+  this->signed_distance_output = this->signed_distance
+#endif
   std::vector<OutputStruct<dim, GlobalVectorType>> solution_output_structs;
   std::vector<std::string> solution_names(1, "signed_distance");
   std::vector<DataComponentInterpretation::DataComponentInterpretation>
