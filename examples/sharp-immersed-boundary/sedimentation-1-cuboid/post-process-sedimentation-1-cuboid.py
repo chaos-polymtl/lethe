@@ -1,6 +1,7 @@
 import numpy as np
 import matplotlib.pyplot as plt
 from cycler import cycler
+import argparse
 
 colors=['#1b9e77','#d95f02','#7570b3','#e7298a','#66a61e','#e6ab02']
 plt.rcParams['axes.prop_cycle'] = cycler(color = colors)
@@ -23,6 +24,10 @@ plt.rcParams['font.size'] = '25'
 plt.rcParams['font.family']='DejaVu Serif'
 plt.rcParams['font.serif']='cm'
 plt.rcParams['savefig.bbox']='tight'
+
+parser = argparse.ArgumentParser(description='Arguments for the post-processing')
+parser.add_argument("--validate", action="store_true", help="Launches the script in validation mode. This will log the content of the graph and prevent the display of figures", default=False)
+args, leftovers=parser.parse_known_args()
 
 B = 2
 vol = B**3
@@ -48,6 +53,12 @@ plt.plot(t*t_fact,vy,color=colors[0],lw=3, label="Lethe")
 plt.ylabel("Sedimentation velocity, $v_y$ [cm/s]")
 plt.xlabel("Dimensionless time, $t^*$ [-]")
 plt.legend()
+if (args.validate):
+    plt.savefig("cuboid-sedimentation-velocity.pdf")
+    plt.close()
 
-plt.savefig("velocity-comparison.png", dpi=300)
-plt.show()
+    lethe_validation_data = np.column_stack((t*t_fact, vy))
+    np.savetxt("cuboid-sedimentation-velocity.dat", lethe_validation_data, header="t* vy")
+else:
+    plt.savefig("velocity-comparison.png", dpi=300)
+    plt.show()
