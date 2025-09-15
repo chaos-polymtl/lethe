@@ -96,7 +96,7 @@ private:
   read_dem();
 
   /**
-   * @brief Returns a vector of references to TableHandler objects that needs to be serialized/
+   * @brief Returns a vector of references to TableHandler objects that need to be serialized/
    * deserialized for a given solver. This function overrides the one in
    * NavierStokesBase.
    *

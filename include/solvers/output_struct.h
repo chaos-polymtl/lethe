@@ -125,7 +125,7 @@ struct OutputStructTableHandler
   /**
    * @brief Constructor
    *
-   * @param[in] table A reference to a TableHandler objects that needs to be
+   * @param[in] table A reference to a TableHandler object that needs to be
    * serialized/ deserialized.
    * @param[in] table_filename A string with the corresponding file name.
    */
