@@ -1864,12 +1864,11 @@ namespace Parameters
       {
         return vector_of_string;
       }
-    else
-      {
+
         AssertThrow(false,
                     ExcMessage("Error: convert_string_to_vector only works for "
                                "int, double and string types."));
-      }
+      
     return std::vector<T>();
   }
 
