@@ -609,7 +609,7 @@ namespace Parameters
 
     /**
      * @brief ParticleRayTracing - Defines parameters used to construct particle
-     * ray tracing elements.
+     * ray tracing class.
      */
     template <int dim>
     struct ParticleRayTracing
@@ -639,6 +639,7 @@ namespace Parameters
       double       max_angular_offset;
       unsigned int prn_seed_photon_displacement;
 
+      // Declare and parse function
       static void
       declare_parameters(ParameterHandler &prm);
       void
