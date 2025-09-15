@@ -106,8 +106,8 @@ Public Member Functions</h2></td></tr>
 <tr class="separator:afe5c8707f20900ab81eae0526156dc82"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a5559d192bb50405effa6e5ef52ca3a1e" id="r_a5559d192bb50405effa6e5ef52ca3a1e"><td class="memItemLeft" align="right" valign="top">virtual&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classAuxiliaryPhysics.html#a5559d192bb50405effa6e5ef52ca3a1e">~AuxiliaryPhysics</a> ()</td></tr>
 <tr class="separator:a5559d192bb50405effa6e5ef52ca3a1e"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:adf185a85398b75121b700d94b49fac05" id="r_adf185a85398b75121b700d94b49fac05"><td class="memItemLeft" align="right" valign="top">virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classAuxiliaryPhysics.html#adf185a85398b75121b700d94b49fac05">attach_solution_to_output</a> (DataOut&lt; dim &gt; &amp;data_out)=0</td></tr>
-<tr class="separator:adf185a85398b75121b700d94b49fac05"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a4ebbb78aa057532aae3143b3a1f5647a" id="r_a4ebbb78aa057532aae3143b3a1f5647a"><td class="memItemLeft" align="right" valign="top">virtual std::vector&lt; <a class="el" href="output__struct_8h.html#a24c1f4e015db04387ac9c28a58ee7378">OutputStruct</a>&lt; dim, VectorType &gt; &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classAuxiliaryPhysics.html#a4ebbb78aa057532aae3143b3a1f5647a">gather_output_hook</a> ()</td></tr>
+<tr class="separator:a4ebbb78aa057532aae3143b3a1f5647a"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aa917fdacf48dbefe7657aa7978edd53a" id="r_aa917fdacf48dbefe7657aa7978edd53a"><td class="memItemLeft" align="right" valign="top">virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classAuxiliaryPhysics.html#aa917fdacf48dbefe7657aa7978edd53a">finish_simulation</a> ()=0</td></tr>
 <tr class="separator:aa917fdacf48dbefe7657aa7978edd53a"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a0e74925e0067b4bcf2578f18a2f15204" id="r_a0e74925e0067b4bcf2578f18a2f15204"><td class="memItemLeft" align="right" valign="top">virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classAuxiliaryPhysics.html#a0e74925e0067b4bcf2578f18a2f15204">percolate_time_vectors</a> ()=0</td></tr>
@@ -191,7 +191,7 @@ class AuxiliaryPhysics&lt; dim, VectorType &gt;</div><p>Au auxiliary physics is 
 <li>Support for interaction between auxiliary physics is supported but has not been tested </li>
 </ul>
 
-<p class="definition">Definition at line <a class="el" href="auxiliary__physics_8h_source.html#l00046">46</a> of file <a class="el" href="auxiliary__physics_8h_source.html">auxiliary_physics.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="auxiliary__physics_8h_source.html#l00047">47</a> of file <a class="el" href="auxiliary__physics_8h_source.html">auxiliary_physics.h</a>.</p>
 </div><h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
 <a id="afe5c8707f20900ab81eae0526156dc82" name="afe5c8707f20900ab81eae0526156dc82"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#afe5c8707f20900ab81eae0526156dc82">&#9670;&#160;</a></span>AuxiliaryPhysics()</h2>
@@ -221,7 +221,7 @@ template&lt;int dim, typename VectorType &gt; </div>
 
 <p><a class="el" href="classAuxiliaryPhysics.html">AuxiliaryPhysics</a> - Base constructor for Auxiliary physics. At the present moment this is an interface with nothing. The auxiliary physics is a pure virtual class. </p>
 
-<p class="definition">Definition at line <a class="el" href="auxiliary__physics_8h_source.html#l00054">54</a> of file <a class="el" href="auxiliary__physics_8h_source.html">auxiliary_physics.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="auxiliary__physics_8h_source.html#l00055">55</a> of file <a class="el" href="auxiliary__physics_8h_source.html">auxiliary_physics.h</a>.</p>
 
 </div>
 </div>
@@ -252,43 +252,11 @@ template&lt;int dim, typename VectorType &gt; </div>
 
 <p><a class="el" href="classAuxiliaryPhysics.html">AuxiliaryPhysics</a> - Base destructor. At the present moment this is an interface with nothing. </p>
 
-<p class="definition">Definition at line <a class="el" href="auxiliary__physics_8h_source.html#l00063">63</a> of file <a class="el" href="auxiliary__physics_8h_source.html">auxiliary_physics.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="auxiliary__physics_8h_source.html#l00064">64</a> of file <a class="el" href="auxiliary__physics_8h_source.html">auxiliary_physics.h</a>.</p>
 
 </div>
 </div>
 <h2 class="groupheader">Member Function Documentation</h2>
-<a id="adf185a85398b75121b700d94b49fac05" name="adf185a85398b75121b700d94b49fac05"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#adf185a85398b75121b700d94b49fac05">&#9670;&#160;</a></span>attach_solution_to_output()</h2>
-
-<div class="memitem">
-<div class="memproto">
-<div class="memtemplate">
-template&lt;int dim, typename VectorType &gt; </div>
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">virtual void <a class="el" href="classAuxiliaryPhysics.html">AuxiliaryPhysics</a>&lt; dim, VectorType &gt;::attach_solution_to_output </td>
-          <td>(</td>
-          <td class="paramtype">DataOut&lt; dim &gt; &amp;&#160;</td>
-          <td class="paramname"><em>data_out</em></td><td>)</td>
-          <td></td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">pure virtual</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p>Attach the solution vector to the DataOut provided. This function enable the auxiliary physics to output their solution via the core solver. </p>
-
-<p>Implemented in <a class="el" href="classCahnHilliard.html#af56ea0db69002200c35099b710677727">CahnHilliard&lt; dim &gt;</a>, <a class="el" href="classHeatTransfer.html#af2d9b3b3b73b759f3b6077b49a16b8c4">HeatTransfer&lt; dim &gt;</a>, <a class="el" href="classTracer.html#a6955ae103f6915c54838a8a168cf34ab">Tracer&lt; dim &gt;</a>, and <a class="el" href="classVolumeOfFluid.html#a463bc13b582623393aba7167da3859d8">VolumeOfFluid&lt; dim &gt;</a>.</p>
-
-</div>
-</div>
 <a id="a8f6a9984eba0d0dcf53468843eb39e45" name="a8f6a9984eba0d0dcf53468843eb39e45"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a8f6a9984eba0d0dcf53468843eb39e45">&#9670;&#160;</a></span>compute_kelly()</h2>
 
@@ -369,6 +337,40 @@ template&lt;int dim, typename VectorType &gt; </div>
 
 </div>
 </div>
+<a id="a4ebbb78aa057532aae3143b3a1f5647a" name="a4ebbb78aa057532aae3143b3a1f5647a"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a4ebbb78aa057532aae3143b3a1f5647a">&#9670;&#160;</a></span>gather_output_hook()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;int dim, typename VectorType &gt; </div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">virtual std::vector&lt; <a class="el" href="output__struct_8h.html#a24c1f4e015db04387ac9c28a58ee7378">OutputStruct</a>&lt; dim, VectorType &gt; &gt; <a class="el" href="classAuxiliaryPhysics.html">AuxiliaryPhysics</a>&lt; dim, VectorType &gt;::gather_output_hook </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span><span class="mlabel">virtual</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Gather and return vector of output structs that are particular to some applications. </p>
+<dl class="section return"><dt>Returns</dt><dd>Vector of OutputStructs that will be used to write the output results as VTU files. </dd></dl>
+
+<p>Reimplemented in <a class="el" href="classCahnHilliard.html#afce4ed0d7f29285c9a96f5257db89f48">CahnHilliard&lt; dim &gt;</a>, <a class="el" href="classHeatTransfer.html#a7447e2540ba5d2c11c4320c8388fa0fa">HeatTransfer&lt; dim &gt;</a>, <a class="el" href="classTracer.html#aed23220122e490c3ebda3336276adf3a">Tracer&lt; dim &gt;</a>, and <a class="el" href="classVolumeOfFluid.html#aa1048badcbcc1dda01162e1449e7c689">VolumeOfFluid&lt; dim &gt;</a>.</p>
+
+<p class="definition">Definition at line <a class="el" href="auxiliary__physics_8h_source.html#l00073">73</a> of file <a class="el" href="auxiliary__physics_8h_source.html">auxiliary_physics.h</a>.</p>
+
+</div>
+</div>
 <a id="af12247ba26a29f99e637d62ed93d1e92" name="af12247ba26a29f99e637d62ed93d1e92"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#af12247ba26a29f99e637d62ed93d1e92">&#9670;&#160;</a></span>get_dof_handler()</h2>
 
@@ -429,7 +431,7 @@ template&lt;int dim, typename VectorType &gt; </div>
 
 <p>Reimplemented in <a class="el" href="classCahnHilliard.html#a66eb728bcf77d15809adb397558f0681">CahnHilliard&lt; dim &gt;</a>, <a class="el" href="classTracer.html#a896e2a2c869162a258cf3258aabdb4a9">Tracer&lt; dim &gt;</a>, and <a class="el" href="classVolumeOfFluid.html#a29ca82046f032548ac60d4ad4f8c5c4c">VolumeOfFluid&lt; dim &gt;</a>.</p>
 
-<p class="definition">Definition at line <a class="el" href="auxiliary__physics_8h_source.html#l00091">91</a> of file <a class="el" href="auxiliary__physics_8h_source.html">auxiliary_physics.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="auxiliary__physics_8h_source.html#l00096">96</a> of file <a class="el" href="auxiliary__physics_8h_source.html">auxiliary_physics.h</a>.</p>
 
 </div>
 </div>
@@ -680,7 +682,7 @@ template&lt;int dim, typename VectorType &gt; </div>
 
 <p>Implements <a class="el" href="classPhysicsSolver.html#a566177a0569619dcf0c3a5f2fb1cdf4d">PhysicsSolver&lt; VectorType &gt;</a>.</p>
 
-<p class="definition">Definition at line <a class="el" href="auxiliary__physics_8h_source.html#l00174">174</a> of file <a class="el" href="auxiliary__physics_8h_source.html">auxiliary_physics.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="auxiliary__physics_8h_source.html#l00179">179</a> of file <a class="el" href="auxiliary__physics_8h_source.html">auxiliary_physics.h</a>.</p>
 
 </div>
 </div>
@@ -713,7 +715,7 @@ template&lt;int dim, typename VectorType &gt; </div>
 
 <p>Reimplemented in <a class="el" href="classCahnHilliard.html#af92cd0dbe8d21a2b38062e4fa49e39b1">CahnHilliard&lt; dim &gt;</a>, <a class="el" href="classHeatTransfer.html#aae39576731dcd9328bf2c3b7c72db6ac">HeatTransfer&lt; dim &gt;</a>, <a class="el" href="classTracer.html#aa403435dbd466e2e896452662bb16ade">Tracer&lt; dim &gt;</a>, and <a class="el" href="classVolumeOfFluid.html#ac16c051531902a4be73dcdeb6d348115">VolumeOfFluid&lt; dim &gt;</a>.</p>
 
-<p class="definition">Definition at line <a class="el" href="auxiliary__physics_8h_source.html#l00097">97</a> of file <a class="el" href="auxiliary__physics_8h_source.html">auxiliary_physics.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="auxiliary__physics_8h_source.html#l00102">102</a> of file <a class="el" href="auxiliary__physics_8h_source.html">auxiliary_physics.h</a>.</p>
 
 </div>
 </div>

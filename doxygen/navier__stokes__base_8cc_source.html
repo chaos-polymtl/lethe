@@ -3194,391 +3194,450 @@ $(document).ready(function() { init_codefold(0); });
 <div class="line"><a id="l03000" name="l03000"></a><span class="lineno"> 3000</span>        }</div>
 <div class="line"><a id="l03001" name="l03001"></a><span class="lineno"> 3001</span>    }</div>
 <div class="line"><a id="l03002" name="l03002"></a><span class="lineno"> 3002</span> </div>
-<div class="line"><a id="l03003" name="l03003"></a><span class="lineno"> 3003</span>  multiphysics-&gt;attach_solution_to_output(data_out);</div>
-<div class="line"><a id="l03004" name="l03004"></a><span class="lineno"> 3004</span> </div>
-<div class="line"><a id="l03005" name="l03005"></a><span class="lineno"> 3005</span>  <span class="comment">// Build the patches and write the output</span></div>
-<div class="line"><a id="l03006" name="l03006"></a><span class="lineno"> 3006</span>  data_out.build_patches(*this-&gt;get_mapping(),</div>
-<div class="line"><a id="l03007" name="l03007"></a><span class="lineno"> 3007</span>                         subdivision,</div>
-<div class="line"><a id="l03008" name="l03008"></a><span class="lineno"> 3008</span>                         DataOut&lt;dim&gt;::curved_inner_cells);</div>
-<div class="line"><a id="l03009" name="l03009"></a><span class="lineno"> 3009</span> </div>
-<div class="line"><a id="l03010" name="l03010"></a><span class="lineno"> 3010</span>  write_vtu_and_pvd&lt;dim&gt;(this-&gt;pvdhandler,</div>
-<div class="line"><a id="l03011" name="l03011"></a><span class="lineno"> 3011</span>                         data_out,</div>
-<div class="line"><a id="l03012" name="l03012"></a><span class="lineno"> 3012</span>                         folder,</div>
-<div class="line"><a id="l03013" name="l03013"></a><span class="lineno"> 3013</span>                         solution_name,</div>
-<div class="line"><a id="l03014" name="l03014"></a><span class="lineno"> 3014</span>                         time,</div>
-<div class="line"><a id="l03015" name="l03015"></a><span class="lineno"> 3015</span>                         iter,</div>
-<div class="line"><a id="l03016" name="l03016"></a><span class="lineno"> 3016</span>                         group_files,</div>
-<div class="line"><a id="l03017" name="l03017"></a><span class="lineno"> 3017</span>                         this-&gt;mpi_communicator);</div>
-<div class="line"><a id="l03018" name="l03018"></a><span class="lineno"> 3018</span> </div>
-<div class="line"><a id="l03019" name="l03019"></a><span class="lineno"> 3019</span>  <span class="keywordflow">if</span> (simulation_control-&gt;get_output_boundaries() &amp;&amp;</div>
-<div class="line"><a id="l03020" name="l03020"></a><span class="lineno"> 3020</span>      simulation_control-&gt;get_step_number() == 0)</div>
-<div class="line"><a id="l03021" name="l03021"></a><span class="lineno"> 3021</span>    {</div>
-<div class="line"><a id="l03022" name="l03022"></a><span class="lineno"> 3022</span>      DataOutFaces&lt;dim&gt; data_out_faces;</div>
-<div class="line"><a id="l03023" name="l03023"></a><span class="lineno"> 3023</span> </div>
-<div class="line"><a id="l03024" name="l03024"></a><span class="lineno"> 3024</span>      <span class="comment">// Add the additional flag to enable high-order cells output when the</span></div>
-<div class="line"><a id="l03025" name="l03025"></a><span class="lineno"> 3025</span>      <span class="comment">// velocity interpolation order is larger than 1</span></div>
-<div class="line"><a id="l03026" name="l03026"></a><span class="lineno"> 3026</span>      DataOutBase::VtkFlags flags;</div>
-<div class="line"><a id="l03027" name="l03027"></a><span class="lineno"> 3027</span>      <span class="keywordflow">if</span> (this-&gt;velocity_fem_degree &gt; 1)</div>
-<div class="line"><a id="l03028" name="l03028"></a><span class="lineno"> 3028</span>        flags.write_higher_order_cells = <span class="keyword">true</span>;</div>
-<div class="line"><a id="l03029" name="l03029"></a><span class="lineno"> 3029</span>      data_out_faces.set_flags(flags);</div>
-<div class="line"><a id="l03030" name="l03030"></a><span class="lineno"> 3030</span> </div>
-<div class="line"><a id="l03031" name="l03031"></a><span class="lineno"> 3031</span>      <a class="code hl_class" href="classBoundaryPostprocessor.html">BoundaryPostprocessor&lt;dim&gt;</a> boundary_id;</div>
-<div class="line"><a id="l03032" name="l03032"></a><span class="lineno"> 3032</span>      data_out_faces.attach_dof_handler(this-&gt;dof_handler);</div>
-<div class="line"><a id="l03033" name="l03033"></a><span class="lineno"> 3033</span>      data_out_faces.add_data_vector(solution, boundary_id);</div>
-<div class="line"><a id="l03034" name="l03034"></a><span class="lineno"> 3034</span>      data_out_faces.build_patches(*this-&gt;get_mapping(), subdivision);</div>
-<div class="line"><a id="l03035" name="l03035"></a><span class="lineno"> 3035</span> </div>
-<div class="line"><a id="l03036" name="l03036"></a><span class="lineno"> 3036</span>      write_boundaries_vtu&lt;dim&gt;(</div>
-<div class="line"><a id="l03037" name="l03037"></a><span class="lineno"> 3037</span>        data_out_faces, folder, time, iter, this-&gt;mpi_communicator);</div>
-<div class="line"><a id="l03038" name="l03038"></a><span class="lineno"> 3038</span>    }</div>
-<div class="line"><a id="l03039" name="l03039"></a><span class="lineno"> 3039</span>}</div>
-</div>
-<div class="line"><a id="l03040" name="l03040"></a><span class="lineno"> 3040</span> </div>
-<div class="line"><a id="l03041" name="l03041"></a><span class="lineno"> 3041</span><span class="keyword">template</span> &lt;<span class="keywordtype">int</span> dim, <span class="keyword">typename</span> VectorType, <span class="keyword">typename</span> DofsType&gt;</div>
-<div class="line"><a id="l03042" name="l03042"></a><span class="lineno"> 3042</span><span class="keywordtype">void</span></div>
-<div class="foldopen" id="foldopen03043" data-start="{" data-end="}">
-<div class="line"><a id="l03043" name="l03043"></a><span class="lineno"><a class="line" href="classNavierStokesBase.html#a4e9feead6145031632d44698801fb644"> 3043</a></span><a class="code hl_function" href="classNavierStokesBase.html#a4e9feead6145031632d44698801fb644">NavierStokesBase&lt;dim, VectorType, DofsType&gt;::write_output_forces</a>()</div>
-<div class="line"><a id="l03044" name="l03044"></a><span class="lineno"> 3044</span>{</div>
-<div class="line"><a id="l03045" name="l03045"></a><span class="lineno"> 3045</span>  TimerOutput::Scope t(this-&gt;computing_timer, <span class="stringliteral">&quot;Output forces&quot;</span>);</div>
-<div class="line"><a id="l03046" name="l03046"></a><span class="lineno"> 3046</span>  <span class="keywordflow">if</span> (this-&gt;this_mpi_process == 0)</div>
-<div class="line"><a id="l03047" name="l03047"></a><span class="lineno"> 3047</span>    {</div>
-<div class="line"><a id="l03048" name="l03048"></a><span class="lineno"> 3048</span>      <span class="keywordflow">for</span> (<span class="keyword">auto</span> <span class="keyword">const</span> &amp;[boundary_id, type] :</div>
-<div class="line"><a id="l03049" name="l03049"></a><span class="lineno"> 3049</span>           simulation_parameters.boundary_conditions.type)</div>
-<div class="line"><a id="l03050" name="l03050"></a><span class="lineno"> 3050</span>        {</div>
-<div class="line"><a id="l03051" name="l03051"></a><span class="lineno"> 3051</span>          std::string filename =</div>
-<div class="line"><a id="l03052" name="l03052"></a><span class="lineno"> 3052</span>            simulation_parameters.simulation_control.output_folder +</div>
-<div class="line"><a id="l03053" name="l03053"></a><span class="lineno"> 3053</span>            simulation_parameters.forces_parameters.force_output_name + <span class="stringliteral">&quot;.&quot;</span> +</div>
-<div class="line"><a id="l03054" name="l03054"></a><span class="lineno"> 3054</span>            Utilities::int_to_string(boundary_id, 2) + <span class="stringliteral">&quot;.dat&quot;</span>;</div>
-<div class="line"><a id="l03055" name="l03055"></a><span class="lineno"> 3055</span>          std::ofstream output(filename.c_str());</div>
-<div class="line"><a id="l03056" name="l03056"></a><span class="lineno"> 3056</span> </div>
-<div class="line"><a id="l03057" name="l03057"></a><span class="lineno"> 3057</span>          forces_tables[boundary_id].write_text(output);</div>
-<div class="line"><a id="l03058" name="l03058"></a><span class="lineno"> 3058</span>        }</div>
-<div class="line"><a id="l03059" name="l03059"></a><span class="lineno"> 3059</span>    }</div>
-<div class="line"><a id="l03060" name="l03060"></a><span class="lineno"> 3060</span>}</div>
-</div>
-<div class="line"><a id="l03061" name="l03061"></a><span class="lineno"> 3061</span> </div>
-<div class="line"><a id="l03062" name="l03062"></a><span class="lineno"> 3062</span><span class="keyword">template</span> &lt;<span class="keywordtype">int</span> dim, <span class="keyword">typename</span> VectorType, <span class="keyword">typename</span> DofsType&gt;</div>
-<div class="line"><a id="l03063" name="l03063"></a><span class="lineno"> 3063</span><span class="keywordtype">void</span></div>
-<div class="foldopen" id="foldopen03064" data-start="{" data-end="}">
-<div class="line"><a id="l03064" name="l03064"></a><span class="lineno"><a class="line" href="classNavierStokesBase.html#a48c7c046a1b2395bcc368792b7deca13"> 3064</a></span><a class="code hl_function" href="classNavierStokesBase.html#a48c7c046a1b2395bcc368792b7deca13">NavierStokesBase&lt;dim, VectorType, DofsType&gt;::write_output_torques</a>()</div>
-<div class="line"><a id="l03065" name="l03065"></a><span class="lineno"> 3065</span>{</div>
-<div class="line"><a id="l03066" name="l03066"></a><span class="lineno"> 3066</span>  TimerOutput::Scope t(this-&gt;computing_timer, <span class="stringliteral">&quot;Output torques&quot;</span>);</div>
-<div class="line"><a id="l03067" name="l03067"></a><span class="lineno"> 3067</span>  <span class="keywordflow">if</span> (this-&gt;this_mpi_process == 0)</div>
-<div class="line"><a id="l03068" name="l03068"></a><span class="lineno"> 3068</span>    {</div>
-<div class="line"><a id="l03069" name="l03069"></a><span class="lineno"> 3069</span>      <span class="keywordflow">for</span> (<span class="keyword">auto</span> <span class="keyword">const</span> &amp;[boundary_id, type] :</div>
-<div class="line"><a id="l03070" name="l03070"></a><span class="lineno"> 3070</span>           simulation_parameters.boundary_conditions.type)</div>
-<div class="line"><a id="l03071" name="l03071"></a><span class="lineno"> 3071</span>        {</div>
-<div class="line"><a id="l03072" name="l03072"></a><span class="lineno"> 3072</span>          std::string filename =</div>
-<div class="line"><a id="l03073" name="l03073"></a><span class="lineno"> 3073</span>            simulation_parameters.simulation_control.output_folder +</div>
-<div class="line"><a id="l03074" name="l03074"></a><span class="lineno"> 3074</span>            simulation_parameters.forces_parameters.torque_output_name + <span class="stringliteral">&quot;.&quot;</span> +</div>
-<div class="line"><a id="l03075" name="l03075"></a><span class="lineno"> 3075</span>            Utilities::int_to_string(boundary_id, 2) + <span class="stringliteral">&quot;.dat&quot;</span>;</div>
-<div class="line"><a id="l03076" name="l03076"></a><span class="lineno"> 3076</span>          std::ofstream output(filename.c_str());</div>
+<div class="line"><a id="l03003" name="l03003"></a><span class="lineno"> 3003</span>  <span class="comment">// Add multiphysics output</span></div>
+<div class="line"><a id="l03004" name="l03004"></a><span class="lineno"> 3004</span>  std::vector&lt;OutputStruct&lt;dim, GlobalVectorType&gt;&gt; multiphysics_output_structs =</div>
+<div class="line"><a id="l03005" name="l03005"></a><span class="lineno"> 3005</span>    multiphysics-&gt;gather_output_hook_global_vector();</div>
+<div class="line"><a id="l03006" name="l03006"></a><span class="lineno"> 3006</span> </div>
+<div class="line"><a id="l03007" name="l03007"></a><span class="lineno"> 3007</span>  <span class="keywordflow">for</span> (<span class="keyword">const</span> <span class="keyword">auto</span> &amp;output_struct : multiphysics_output_structs)</div>
+<div class="line"><a id="l03008" name="l03008"></a><span class="lineno"> 3008</span>    <span class="keywordflow">if</span> (<span class="keyword">auto</span> solution_struct =</div>
+<div class="line"><a id="l03009" name="l03009"></a><span class="lineno"> 3009</span>          std::get_if&lt;<a class="code hl_struct" href="structOutputStructSolution.html">OutputStructSolution&lt;dim, GlobalVectorType&gt;</a>&gt;(</div>
+<div class="line"><a id="l03010" name="l03010"></a><span class="lineno"> 3010</span>            &amp;output_struct))</div>
+<div class="line"><a id="l03011" name="l03011"></a><span class="lineno"> 3011</span>      {</div>
+<div class="line"><a id="l03012" name="l03012"></a><span class="lineno"> 3012</span>        data_out.add_data_vector(</div>
+<div class="line"><a id="l03013" name="l03013"></a><span class="lineno"> 3013</span>          solution_struct-&gt;dof_handler,</div>
+<div class="line"><a id="l03014" name="l03014"></a><span class="lineno"> 3014</span>          solution_struct-&gt;solution,</div>
+<div class="line"><a id="l03015" name="l03015"></a><span class="lineno"> 3015</span>          solution_struct-&gt;solution_names,</div>
+<div class="line"><a id="l03016" name="l03016"></a><span class="lineno"> 3016</span>          solution_struct-&gt;data_component_interpretation);</div>
+<div class="line"><a id="l03017" name="l03017"></a><span class="lineno"> 3017</span>      }</div>
+<div class="line"><a id="l03018" name="l03018"></a><span class="lineno"> 3018</span>    <span class="keywordflow">else</span> <span class="keywordflow">if</span> (<span class="keyword">auto</span> vector_struct =</div>
+<div class="line"><a id="l03019" name="l03019"></a><span class="lineno"> 3019</span>               std::get_if&lt;OutputStructCellVector&gt;(&amp;output_struct))</div>
+<div class="line"><a id="l03020" name="l03020"></a><span class="lineno"> 3020</span>      {</div>
+<div class="line"><a id="l03021" name="l03021"></a><span class="lineno"> 3021</span>        data_out.add_data_vector(vector_struct-&gt;solution,</div>
+<div class="line"><a id="l03022" name="l03022"></a><span class="lineno"> 3022</span>                                 vector_struct-&gt;solution_name);</div>
+<div class="line"><a id="l03023" name="l03023"></a><span class="lineno"> 3023</span>      }</div>
+<div class="line"><a id="l03024" name="l03024"></a><span class="lineno"> 3024</span>    <span class="keywordflow">else</span> <span class="keywordflow">if</span> (<span class="keyword">auto</span> postprocessor_struct =</div>
+<div class="line"><a id="l03025" name="l03025"></a><span class="lineno"> 3025</span>               std::get_if&lt;<a class="code hl_struct" href="structOutputStructPostprocessor.html">OutputStructPostprocessor&lt;dim, GlobalVectorType&gt;</a>&gt;(</div>
+<div class="line"><a id="l03026" name="l03026"></a><span class="lineno"> 3026</span>                 &amp;output_struct))</div>
+<div class="line"><a id="l03027" name="l03027"></a><span class="lineno"> 3027</span>      {</div>
+<div class="line"><a id="l03028" name="l03028"></a><span class="lineno"> 3028</span>        data_out.add_data_vector(postprocessor_struct-&gt;dof_handler,</div>
+<div class="line"><a id="l03029" name="l03029"></a><span class="lineno"> 3029</span>                                 postprocessor_struct-&gt;solution,</div>
+<div class="line"><a id="l03030" name="l03030"></a><span class="lineno"> 3030</span>                                 *postprocessor_struct-&gt;data_postprocessor);</div>
+<div class="line"><a id="l03031" name="l03031"></a><span class="lineno"> 3031</span>      }</div>
+<div class="line"><a id="l03032" name="l03032"></a><span class="lineno"> 3032</span> </div>
+<div class="line"><a id="l03033" name="l03033"></a><span class="lineno"> 3033</span>  <span class="comment">// Add multiphysics block vector solution</span></div>
+<div class="line"><a id="l03034" name="l03034"></a><span class="lineno"> 3034</span>  std::vector&lt;OutputStruct&lt;dim, GlobalBlockVectorType&gt;&gt;</div>
+<div class="line"><a id="l03035" name="l03035"></a><span class="lineno"> 3035</span>    multiphysics_output_structs_block =</div>
+<div class="line"><a id="l03036" name="l03036"></a><span class="lineno"> 3036</span>      multiphysics-&gt;gather_output_hook_global_block_vector();</div>
+<div class="line"><a id="l03037" name="l03037"></a><span class="lineno"> 3037</span>  <span class="keywordflow">for</span> (<span class="keyword">const</span> <span class="keyword">auto</span> &amp;output_struct : multiphysics_output_structs_block)</div>
+<div class="line"><a id="l03038" name="l03038"></a><span class="lineno"> 3038</span>    <span class="keywordflow">if</span> (<span class="keyword">auto</span> solution_struct =</div>
+<div class="line"><a id="l03039" name="l03039"></a><span class="lineno"> 3039</span>          std::get_if&lt;<a class="code hl_struct" href="structOutputStructSolution.html">OutputStructSolution&lt;dim, GlobalBlockVectorType&gt;</a>&gt;(</div>
+<div class="line"><a id="l03040" name="l03040"></a><span class="lineno"> 3040</span>            &amp;output_struct))</div>
+<div class="line"><a id="l03041" name="l03041"></a><span class="lineno"> 3041</span>      {</div>
+<div class="line"><a id="l03042" name="l03042"></a><span class="lineno"> 3042</span>        data_out.add_data_vector(</div>
+<div class="line"><a id="l03043" name="l03043"></a><span class="lineno"> 3043</span>          solution_struct-&gt;dof_handler,</div>
+<div class="line"><a id="l03044" name="l03044"></a><span class="lineno"> 3044</span>          solution_struct-&gt;solution,</div>
+<div class="line"><a id="l03045" name="l03045"></a><span class="lineno"> 3045</span>          solution_struct-&gt;solution_names,</div>
+<div class="line"><a id="l03046" name="l03046"></a><span class="lineno"> 3046</span>          solution_struct-&gt;data_component_interpretation);</div>
+<div class="line"><a id="l03047" name="l03047"></a><span class="lineno"> 3047</span>      }</div>
+<div class="line"><a id="l03048" name="l03048"></a><span class="lineno"> 3048</span>    <span class="keywordflow">else</span> <span class="keywordflow">if</span> (<span class="keyword">auto</span> vector_struct =</div>
+<div class="line"><a id="l03049" name="l03049"></a><span class="lineno"> 3049</span>               std::get_if&lt;OutputStructCellVector&gt;(&amp;output_struct))</div>
+<div class="line"><a id="l03050" name="l03050"></a><span class="lineno"> 3050</span>      {</div>
+<div class="line"><a id="l03051" name="l03051"></a><span class="lineno"> 3051</span>        data_out.add_data_vector(vector_struct-&gt;solution,</div>
+<div class="line"><a id="l03052" name="l03052"></a><span class="lineno"> 3052</span>                                 vector_struct-&gt;solution_name);</div>
+<div class="line"><a id="l03053" name="l03053"></a><span class="lineno"> 3053</span>      }</div>
+<div class="line"><a id="l03054" name="l03054"></a><span class="lineno"> 3054</span>    <span class="keywordflow">else</span> <span class="keywordflow">if</span> (<span class="keyword">auto</span> postprocessor_struct = std::get_if&lt;</div>
+<div class="line"><a id="l03055" name="l03055"></a><span class="lineno"> 3055</span>               <a class="code hl_struct" href="structOutputStructPostprocessor.html">OutputStructPostprocessor&lt;dim, GlobalBlockVectorType&gt;</a>&gt;(</div>
+<div class="line"><a id="l03056" name="l03056"></a><span class="lineno"> 3056</span>               &amp;output_struct))</div>
+<div class="line"><a id="l03057" name="l03057"></a><span class="lineno"> 3057</span>      {</div>
+<div class="line"><a id="l03058" name="l03058"></a><span class="lineno"> 3058</span>        data_out.add_data_vector(postprocessor_struct-&gt;dof_handler,</div>
+<div class="line"><a id="l03059" name="l03059"></a><span class="lineno"> 3059</span>                                 postprocessor_struct-&gt;solution,</div>
+<div class="line"><a id="l03060" name="l03060"></a><span class="lineno"> 3060</span>                                 *postprocessor_struct-&gt;data_postprocessor);</div>
+<div class="line"><a id="l03061" name="l03061"></a><span class="lineno"> 3061</span>      }</div>
+<div class="line"><a id="l03062" name="l03062"></a><span class="lineno"> 3062</span> </div>
+<div class="line"><a id="l03063" name="l03063"></a><span class="lineno"> 3063</span> </div>
+<div class="line"><a id="l03064" name="l03064"></a><span class="lineno"> 3064</span>  <span class="comment">// Build the patches and write the output</span></div>
+<div class="line"><a id="l03065" name="l03065"></a><span class="lineno"> 3065</span>  data_out.build_patches(*this-&gt;get_mapping(),</div>
+<div class="line"><a id="l03066" name="l03066"></a><span class="lineno"> 3066</span>                         subdivision,</div>
+<div class="line"><a id="l03067" name="l03067"></a><span class="lineno"> 3067</span>                         DataOut&lt;dim&gt;::curved_inner_cells);</div>
+<div class="line"><a id="l03068" name="l03068"></a><span class="lineno"> 3068</span> </div>
+<div class="line"><a id="l03069" name="l03069"></a><span class="lineno"> 3069</span>  write_vtu_and_pvd&lt;dim&gt;(this-&gt;pvdhandler,</div>
+<div class="line"><a id="l03070" name="l03070"></a><span class="lineno"> 3070</span>                         data_out,</div>
+<div class="line"><a id="l03071" name="l03071"></a><span class="lineno"> 3071</span>                         folder,</div>
+<div class="line"><a id="l03072" name="l03072"></a><span class="lineno"> 3072</span>                         solution_name,</div>
+<div class="line"><a id="l03073" name="l03073"></a><span class="lineno"> 3073</span>                         time,</div>
+<div class="line"><a id="l03074" name="l03074"></a><span class="lineno"> 3074</span>                         iter,</div>
+<div class="line"><a id="l03075" name="l03075"></a><span class="lineno"> 3075</span>                         group_files,</div>
+<div class="line"><a id="l03076" name="l03076"></a><span class="lineno"> 3076</span>                         this-&gt;mpi_communicator);</div>
 <div class="line"><a id="l03077" name="l03077"></a><span class="lineno"> 3077</span> </div>
-<div class="line"><a id="l03078" name="l03078"></a><span class="lineno"> 3078</span>          this-&gt;torques_tables[boundary_id].write_text(output);</div>
-<div class="line"><a id="l03079" name="l03079"></a><span class="lineno"> 3079</span>        }</div>
-<div class="line"><a id="l03080" name="l03080"></a><span class="lineno"> 3080</span>    }</div>
-<div class="line"><a id="l03081" name="l03081"></a><span class="lineno"> 3081</span>}</div>
-</div>
+<div class="line"><a id="l03078" name="l03078"></a><span class="lineno"> 3078</span>  <span class="keywordflow">if</span> (simulation_control-&gt;get_output_boundaries() &amp;&amp;</div>
+<div class="line"><a id="l03079" name="l03079"></a><span class="lineno"> 3079</span>      simulation_control-&gt;get_step_number() == 0)</div>
+<div class="line"><a id="l03080" name="l03080"></a><span class="lineno"> 3080</span>    {</div>
+<div class="line"><a id="l03081" name="l03081"></a><span class="lineno"> 3081</span>      DataOutFaces&lt;dim&gt; data_out_faces;</div>
 <div class="line"><a id="l03082" name="l03082"></a><span class="lineno"> 3082</span> </div>
-<div class="line"><a id="l03083" name="l03083"></a><span class="lineno"> 3083</span><span class="keyword">template</span> &lt;<span class="keywordtype">int</span> dim, <span class="keyword">typename</span> VectorType, <span class="keyword">typename</span> DofsType&gt;</div>
-<div class="line"><a id="l03084" name="l03084"></a><span class="lineno"> 3084</span><span class="keywordtype">void</span></div>
-<div class="foldopen" id="foldopen03085" data-start="{" data-end="}">
-<div class="line"><a id="l03085" name="l03085"></a><span class="lineno"><a class="line" href="classNavierStokesBase.html#af311920c0b819b973d410db4fa5e8924"> 3085</a></span><a class="code hl_function" href="classNavierStokesBase.html#af311920c0b819b973d410db4fa5e8924">NavierStokesBase&lt;dim, VectorType, DofsType&gt;::write_checkpoint</a>()</div>
-<div class="line"><a id="l03086" name="l03086"></a><span class="lineno"> 3086</span>{</div>
-<div class="line"><a id="l03087" name="l03087"></a><span class="lineno"> 3087</span>  TimerOutput::Scope timer(this-&gt;computing_timer, <span class="stringliteral">&quot;Write checkpoint&quot;</span>);</div>
-<div class="line"><a id="l03088" name="l03088"></a><span class="lineno"> 3088</span>  std::string        prefix =</div>
-<div class="line"><a id="l03089" name="l03089"></a><span class="lineno"> 3089</span>    this-&gt;simulation_parameters.simulation_control.output_folder +</div>
-<div class="line"><a id="l03090" name="l03090"></a><span class="lineno"> 3090</span>    this-&gt;simulation_parameters.restart_parameters.filename;</div>
-<div class="line"><a id="l03091" name="l03091"></a><span class="lineno"> 3091</span>  <span class="keywordflow">if</span> (Utilities::MPI::this_mpi_process(this-&gt;mpi_communicator) == 0)</div>
-<div class="line"><a id="l03092" name="l03092"></a><span class="lineno"> 3092</span>    {</div>
-<div class="line"><a id="l03093" name="l03093"></a><span class="lineno"> 3093</span>      simulation_control-&gt;save(prefix);</div>
-<div class="line"><a id="l03094" name="l03094"></a><span class="lineno"> 3094</span>      this-&gt;pvdhandler.save(prefix);</div>
-<div class="line"><a id="l03095" name="l03095"></a><span class="lineno"> 3095</span> </div>
-<div class="line"><a id="l03096" name="l03096"></a><span class="lineno"> 3096</span>      <span class="keywordflow">if</span> (simulation_parameters.flow_control.enable_flow_control)</div>
-<div class="line"><a id="l03097" name="l03097"></a><span class="lineno"> 3097</span>        this-&gt;flow_control.save(prefix);</div>
-<div class="line"><a id="l03098" name="l03098"></a><span class="lineno"> 3098</span>    }</div>
+<div class="line"><a id="l03083" name="l03083"></a><span class="lineno"> 3083</span>      <span class="comment">// Add the additional flag to enable high-order cells output when the</span></div>
+<div class="line"><a id="l03084" name="l03084"></a><span class="lineno"> 3084</span>      <span class="comment">// velocity interpolation order is larger than 1</span></div>
+<div class="line"><a id="l03085" name="l03085"></a><span class="lineno"> 3085</span>      DataOutBase::VtkFlags flags;</div>
+<div class="line"><a id="l03086" name="l03086"></a><span class="lineno"> 3086</span>      <span class="keywordflow">if</span> (this-&gt;velocity_fem_degree &gt; 1)</div>
+<div class="line"><a id="l03087" name="l03087"></a><span class="lineno"> 3087</span>        flags.write_higher_order_cells = <span class="keyword">true</span>;</div>
+<div class="line"><a id="l03088" name="l03088"></a><span class="lineno"> 3088</span>      data_out_faces.set_flags(flags);</div>
+<div class="line"><a id="l03089" name="l03089"></a><span class="lineno"> 3089</span> </div>
+<div class="line"><a id="l03090" name="l03090"></a><span class="lineno"> 3090</span>      <a class="code hl_class" href="classBoundaryPostprocessor.html">BoundaryPostprocessor&lt;dim&gt;</a> boundary_id;</div>
+<div class="line"><a id="l03091" name="l03091"></a><span class="lineno"> 3091</span>      data_out_faces.attach_dof_handler(this-&gt;dof_handler);</div>
+<div class="line"><a id="l03092" name="l03092"></a><span class="lineno"> 3092</span>      data_out_faces.add_data_vector(solution, boundary_id);</div>
+<div class="line"><a id="l03093" name="l03093"></a><span class="lineno"> 3093</span>      data_out_faces.build_patches(*this-&gt;get_mapping(), subdivision);</div>
+<div class="line"><a id="l03094" name="l03094"></a><span class="lineno"> 3094</span> </div>
+<div class="line"><a id="l03095" name="l03095"></a><span class="lineno"> 3095</span>      write_boundaries_vtu&lt;dim&gt;(</div>
+<div class="line"><a id="l03096" name="l03096"></a><span class="lineno"> 3096</span>        data_out_faces, folder, time, iter, this-&gt;mpi_communicator);</div>
+<div class="line"><a id="l03097" name="l03097"></a><span class="lineno"> 3097</span>    }</div>
+<div class="line"><a id="l03098" name="l03098"></a><span class="lineno"> 3098</span>}</div>
+</div>
 <div class="line"><a id="l03099" name="l03099"></a><span class="lineno"> 3099</span> </div>
-<div class="line"><a id="l03100" name="l03100"></a><span class="lineno"> 3100</span>  std::vector&lt;const VectorType *&gt; sol_set_transfer;</div>
-<div class="line"><a id="l03101" name="l03101"></a><span class="lineno"> 3101</span>  sol_set_transfer.emplace_back(&amp;this-&gt;present_solution);</div>
-<div class="line"><a id="l03102" name="l03102"></a><span class="lineno"> 3102</span>  <span class="keywordflow">for</span> (<span class="keywordtype">unsigned</span> <span class="keywordtype">int</span> i = 0; i &lt; previous_solutions.size(); ++i)</div>
-<div class="line"><a id="l03103" name="l03103"></a><span class="lineno"> 3103</span>    {</div>
-<div class="line"><a id="l03104" name="l03104"></a><span class="lineno"> 3104</span>      sol_set_transfer.emplace_back(&amp;previous_solutions[i]);</div>
-<div class="line"><a id="l03105" name="l03105"></a><span class="lineno"> 3105</span>    }</div>
-<div class="line"><a id="l03106" name="l03106"></a><span class="lineno"> 3106</span> </div>
-<div class="line"><a id="l03107" name="l03107"></a><span class="lineno"> 3107</span>  <span class="keywordflow">if</span> (simulation_parameters.post_processing.calculate_average_velocities ||</div>
-<div class="line"><a id="l03108" name="l03108"></a><span class="lineno"> 3108</span>      this-&gt;simulation_parameters.initial_condition-&gt;type ==</div>
-<div class="line"><a id="l03109" name="l03109"></a><span class="lineno"> 3109</span>        <a class="code hl_enumvalue" href="namespaceParameters.html#a87f2367892b0cda4800d7fac3b21fc12a322f09c14d8c26231fdc7ee2a82f1427">Parameters::FluidDynamicsInitialConditionType::average_velocity_profile</a>)</div>
-<div class="line"><a id="l03110" name="l03110"></a><span class="lineno"> 3110</span>    {</div>
-<div class="line"><a id="l03111" name="l03111"></a><span class="lineno"> 3111</span>      std::vector&lt;const VectorType *&gt; av_set_transfer =</div>
-<div class="line"><a id="l03112" name="l03112"></a><span class="lineno"> 3112</span>        this-&gt;average_velocities-&gt;save(prefix);</div>
-<div class="line"><a id="l03113" name="l03113"></a><span class="lineno"> 3113</span> </div>
-<div class="line"><a id="l03114" name="l03114"></a><span class="lineno"> 3114</span>      <span class="comment">// Insert average velocities vectors into the set transfer vector</span></div>
-<div class="line"><a id="l03115" name="l03115"></a><span class="lineno"> 3115</span>      sol_set_transfer.insert(sol_set_transfer.end(),</div>
-<div class="line"><a id="l03116" name="l03116"></a><span class="lineno"> 3116</span>                              av_set_transfer.begin(),</div>
-<div class="line"><a id="l03117" name="l03117"></a><span class="lineno"> 3117</span>                              av_set_transfer.end());</div>
+<div class="line"><a id="l03100" name="l03100"></a><span class="lineno"> 3100</span><span class="keyword">template</span> &lt;<span class="keywordtype">int</span> dim, <span class="keyword">typename</span> VectorType, <span class="keyword">typename</span> DofsType&gt;</div>
+<div class="line"><a id="l03101" name="l03101"></a><span class="lineno"> 3101</span><span class="keywordtype">void</span></div>
+<div class="foldopen" id="foldopen03102" data-start="{" data-end="}">
+<div class="line"><a id="l03102" name="l03102"></a><span class="lineno"><a class="line" href="classNavierStokesBase.html#a4e9feead6145031632d44698801fb644"> 3102</a></span><a class="code hl_function" href="classNavierStokesBase.html#a4e9feead6145031632d44698801fb644">NavierStokesBase&lt;dim, VectorType, DofsType&gt;::write_output_forces</a>()</div>
+<div class="line"><a id="l03103" name="l03103"></a><span class="lineno"> 3103</span>{</div>
+<div class="line"><a id="l03104" name="l03104"></a><span class="lineno"> 3104</span>  TimerOutput::Scope t(this-&gt;computing_timer, <span class="stringliteral">&quot;Output forces&quot;</span>);</div>
+<div class="line"><a id="l03105" name="l03105"></a><span class="lineno"> 3105</span>  <span class="keywordflow">if</span> (this-&gt;this_mpi_process == 0)</div>
+<div class="line"><a id="l03106" name="l03106"></a><span class="lineno"> 3106</span>    {</div>
+<div class="line"><a id="l03107" name="l03107"></a><span class="lineno"> 3107</span>      <span class="keywordflow">for</span> (<span class="keyword">auto</span> <span class="keyword">const</span> &amp;[boundary_id, type] :</div>
+<div class="line"><a id="l03108" name="l03108"></a><span class="lineno"> 3108</span>           simulation_parameters.boundary_conditions.type)</div>
+<div class="line"><a id="l03109" name="l03109"></a><span class="lineno"> 3109</span>        {</div>
+<div class="line"><a id="l03110" name="l03110"></a><span class="lineno"> 3110</span>          std::string filename =</div>
+<div class="line"><a id="l03111" name="l03111"></a><span class="lineno"> 3111</span>            simulation_parameters.simulation_control.output_folder +</div>
+<div class="line"><a id="l03112" name="l03112"></a><span class="lineno"> 3112</span>            simulation_parameters.forces_parameters.force_output_name + <span class="stringliteral">&quot;.&quot;</span> +</div>
+<div class="line"><a id="l03113" name="l03113"></a><span class="lineno"> 3113</span>            Utilities::int_to_string(boundary_id, 2) + <span class="stringliteral">&quot;.dat&quot;</span>;</div>
+<div class="line"><a id="l03114" name="l03114"></a><span class="lineno"> 3114</span>          std::ofstream output(filename.c_str());</div>
+<div class="line"><a id="l03115" name="l03115"></a><span class="lineno"> 3115</span> </div>
+<div class="line"><a id="l03116" name="l03116"></a><span class="lineno"> 3116</span>          forces_tables[boundary_id].write_text(output);</div>
+<div class="line"><a id="l03117" name="l03117"></a><span class="lineno"> 3117</span>        }</div>
 <div class="line"><a id="l03118" name="l03118"></a><span class="lineno"> 3118</span>    }</div>
-<div class="line"><a id="l03119" name="l03119"></a><span class="lineno"> 3119</span> </div>
-<div class="line"><a id="l03120" name="l03120"></a><span class="lineno"> 3120</span>  SolutionTransfer&lt;dim, VectorType&gt; system_trans_vectors(this-&gt;dof_handler);</div>
-<div class="line"><a id="l03121" name="l03121"></a><span class="lineno"> 3121</span>  system_trans_vectors.prepare_for_serialization(sol_set_transfer);</div>
-<div class="line"><a id="l03122" name="l03122"></a><span class="lineno"> 3122</span> </div>
-<div class="line"><a id="l03123" name="l03123"></a><span class="lineno"> 3123</span>  multiphysics-&gt;write_checkpoint();</div>
-<div class="line"><a id="l03124" name="l03124"></a><span class="lineno"> 3124</span> </div>
-<div class="line"><a id="l03125" name="l03125"></a><span class="lineno"> 3125</span>  <span class="keywordflow">if</span> (<span class="keyword">auto</span> tria = <span class="keyword">dynamic_cast&lt;</span>parallel::distributed::Triangulation&lt;dim&gt; *<span class="keyword">&gt;</span>(</div>
-<div class="line"><a id="l03126" name="l03126"></a><span class="lineno"> 3126</span>        this-&gt;triangulation.get()))</div>
+<div class="line"><a id="l03119" name="l03119"></a><span class="lineno"> 3119</span>}</div>
+</div>
+<div class="line"><a id="l03120" name="l03120"></a><span class="lineno"> 3120</span> </div>
+<div class="line"><a id="l03121" name="l03121"></a><span class="lineno"> 3121</span><span class="keyword">template</span> &lt;<span class="keywordtype">int</span> dim, <span class="keyword">typename</span> VectorType, <span class="keyword">typename</span> DofsType&gt;</div>
+<div class="line"><a id="l03122" name="l03122"></a><span class="lineno"> 3122</span><span class="keywordtype">void</span></div>
+<div class="foldopen" id="foldopen03123" data-start="{" data-end="}">
+<div class="line"><a id="l03123" name="l03123"></a><span class="lineno"><a class="line" href="classNavierStokesBase.html#a48c7c046a1b2395bcc368792b7deca13"> 3123</a></span><a class="code hl_function" href="classNavierStokesBase.html#a48c7c046a1b2395bcc368792b7deca13">NavierStokesBase&lt;dim, VectorType, DofsType&gt;::write_output_torques</a>()</div>
+<div class="line"><a id="l03124" name="l03124"></a><span class="lineno"> 3124</span>{</div>
+<div class="line"><a id="l03125" name="l03125"></a><span class="lineno"> 3125</span>  TimerOutput::Scope t(this-&gt;computing_timer, <span class="stringliteral">&quot;Output torques&quot;</span>);</div>
+<div class="line"><a id="l03126" name="l03126"></a><span class="lineno"> 3126</span>  <span class="keywordflow">if</span> (this-&gt;this_mpi_process == 0)</div>
 <div class="line"><a id="l03127" name="l03127"></a><span class="lineno"> 3127</span>    {</div>
-<div class="line"><a id="l03128" name="l03128"></a><span class="lineno"> 3128</span>      std::string triangulationName = prefix + <span class="stringliteral">&quot;.triangulation&quot;</span>;</div>
-<div class="line"><a id="l03129" name="l03129"></a><span class="lineno"> 3129</span>      tria-&gt;save(prefix + <span class="stringliteral">&quot;.triangulation&quot;</span>);</div>
-<div class="line"><a id="l03130" name="l03130"></a><span class="lineno"> 3130</span>    }</div>
-<div class="line"><a id="l03131" name="l03131"></a><span class="lineno"> 3131</span> </div>
-<div class="line"><a id="l03132" name="l03132"></a><span class="lineno"> 3132</span>  <span class="comment">// Serialize all post-processing tables that are currently used</span></div>
-<div class="line"><a id="l03133" name="l03133"></a><span class="lineno"> 3133</span>  {</div>
-<div class="line"><a id="l03134" name="l03134"></a><span class="lineno"> 3134</span>    <span class="keyword">const</span> <a class="code hl_struct" href="structParameters_1_1PostProcessing.html">Parameters::PostProcessing</a> post_processing =</div>
-<div class="line"><a id="l03135" name="l03135"></a><span class="lineno"> 3135</span>      this-&gt;simulation_parameters.post_processing;</div>
-<div class="line"><a id="l03136" name="l03136"></a><span class="lineno"> 3136</span>    std::string prefix =</div>
-<div class="line"><a id="l03137" name="l03137"></a><span class="lineno"> 3137</span>      this-&gt;simulation_parameters.simulation_control.output_folder;</div>
-<div class="line"><a id="l03138" name="l03138"></a><span class="lineno"> 3138</span>    std::string suffix = <span class="stringliteral">&quot;.checkpoint&quot;</span>;</div>
-<div class="line"><a id="l03139" name="l03139"></a><span class="lineno"> 3139</span>    <span class="keywordflow">if</span> (post_processing.<a class="code hl_variable" href="structParameters_1_1PostProcessing.html#a8a50942c2ab00d0d43e0847b129ee0e3">calculate_enstrophy</a>)</div>
-<div class="line"><a id="l03140" name="l03140"></a><span class="lineno"> 3140</span>      <a class="code hl_function" href="utilities_8h.html#a5b78e809b34030d2be858fbc29e69267">serialize_table</a>(this-&gt;enstrophy_table,</div>
-<div class="line"><a id="l03141" name="l03141"></a><span class="lineno"> 3141</span>                      prefix + post_processing.<a class="code hl_variable" href="structParameters_1_1PostProcessing.html#a722c889ae44dd8d66a22477282e77bea">enstrophy_output_name</a> + suffix,</div>
-<div class="line"><a id="l03142" name="l03142"></a><span class="lineno"> 3142</span>                      mpi_communicator);</div>
-<div class="line"><a id="l03143" name="l03143"></a><span class="lineno"> 3143</span>    <span class="keywordflow">if</span> (post_processing.<a class="code hl_variable" href="structParameters_1_1PostProcessing.html#a7c40e900b19cf49d56c63fb0b4a3abde">calculate_kinetic_energy</a>)</div>
-<div class="line"><a id="l03144" name="l03144"></a><span class="lineno"> 3144</span>      <a class="code hl_function" href="utilities_8h.html#a5b78e809b34030d2be858fbc29e69267">serialize_table</a>(this-&gt;kinetic_energy_table,</div>
-<div class="line"><a id="l03145" name="l03145"></a><span class="lineno"> 3145</span>                      prefix + post_processing.<a class="code hl_variable" href="structParameters_1_1PostProcessing.html#a9bc91c5ebc9e3ecb9bd89aa1431ac6b1">kinetic_energy_output_name</a> +</div>
-<div class="line"><a id="l03146" name="l03146"></a><span class="lineno"> 3146</span>                        suffix,</div>
-<div class="line"><a id="l03147" name="l03147"></a><span class="lineno"> 3147</span>                      mpi_communicator);</div>
-<div class="line"><a id="l03148" name="l03148"></a><span class="lineno"> 3148</span>    <span class="keywordflow">if</span> (post_processing.<a class="code hl_variable" href="structParameters_1_1PostProcessing.html#a01032169fdab07b424db94962105f98d">calculate_pressure_power</a>)</div>
-<div class="line"><a id="l03149" name="l03149"></a><span class="lineno"> 3149</span>      <a class="code hl_function" href="utilities_8h.html#a5b78e809b34030d2be858fbc29e69267">serialize_table</a>(this-&gt;pressure_power_table,</div>
-<div class="line"><a id="l03150" name="l03150"></a><span class="lineno"> 3150</span>                      prefix + post_processing.<a class="code hl_variable" href="structParameters_1_1PostProcessing.html#a1dbadc53d00fd10b005f3ef6ebe2f31c">pressure_power_output_name</a> +</div>
-<div class="line"><a id="l03151" name="l03151"></a><span class="lineno"> 3151</span>                        suffix,</div>
-<div class="line"><a id="l03152" name="l03152"></a><span class="lineno"> 3152</span>                      mpi_communicator);</div>
-<div class="line"><a id="l03153" name="l03153"></a><span class="lineno"> 3153</span>    <span class="keywordflow">if</span> (post_processing.<a class="code hl_variable" href="structParameters_1_1PostProcessing.html#a03125dd5ea6ff8a90780d5fc3670dd13">calculate_viscous_dissipation</a>)</div>
-<div class="line"><a id="l03154" name="l03154"></a><span class="lineno"> 3154</span>      <a class="code hl_function" href="utilities_8h.html#a5b78e809b34030d2be858fbc29e69267">serialize_table</a>(this-&gt;viscous_dissipation_table,</div>
-<div class="line"><a id="l03155" name="l03155"></a><span class="lineno"> 3155</span>                      prefix + post_processing.<a class="code hl_variable" href="structParameters_1_1PostProcessing.html#a06fc5f93ff7a2742bdf9b5d6bc637e38">viscous_dissipation_output_name</a> +</div>
-<div class="line"><a id="l03156" name="l03156"></a><span class="lineno"> 3156</span>                        suffix,</div>
-<div class="line"><a id="l03157" name="l03157"></a><span class="lineno"> 3157</span>                      mpi_communicator);</div>
-<div class="line"><a id="l03158" name="l03158"></a><span class="lineno"> 3158</span>    <span class="keywordflow">if</span> (post_processing.<a class="code hl_variable" href="structParameters_1_1PostProcessing.html#a1f97478541aa1b6bd67a5f8d7a3f5ef4">calculate_apparent_viscosity</a>)</div>
-<div class="line"><a id="l03159" name="l03159"></a><span class="lineno"> 3159</span>      <a class="code hl_function" href="utilities_8h.html#a5b78e809b34030d2be858fbc29e69267">serialize_table</a>(this-&gt;apparent_viscosity_table,</div>
-<div class="line"><a id="l03160" name="l03160"></a><span class="lineno"> 3160</span>                      prefix + post_processing.<a class="code hl_variable" href="structParameters_1_1PostProcessing.html#a123689413f0db3cb459a130ddc83d54c">apparent_viscosity_output_name</a> +</div>
-<div class="line"><a id="l03161" name="l03161"></a><span class="lineno"> 3161</span>                        suffix,</div>
-<div class="line"><a id="l03162" name="l03162"></a><span class="lineno"> 3162</span>                      mpi_communicator);</div>
-<div class="line"><a id="l03163" name="l03163"></a><span class="lineno"> 3163</span>    <span class="keywordflow">if</span> (post_processing.<a class="code hl_variable" href="structParameters_1_1PostProcessing.html#a306a0fcc26d2688b59a113e8499ed3ab">calculate_flow_rate</a>)</div>
-<div class="line"><a id="l03164" name="l03164"></a><span class="lineno"> 3164</span>      <a class="code hl_function" href="utilities_8h.html#a5b78e809b34030d2be858fbc29e69267">serialize_table</a>(this-&gt;flow_rate_table,</div>
-<div class="line"><a id="l03165" name="l03165"></a><span class="lineno"> 3165</span>                      prefix + post_processing.<a class="code hl_variable" href="structParameters_1_1PostProcessing.html#a4dfddbb4bc08063e305f05d7ec340fbe">flow_rate_output_name</a> + suffix,</div>
-<div class="line"><a id="l03166" name="l03166"></a><span class="lineno"> 3166</span>                      mpi_communicator);</div>
-<div class="line"><a id="l03167" name="l03167"></a><span class="lineno"> 3167</span>    <span class="keywordflow">if</span> (post_processing.<a class="code hl_variable" href="structParameters_1_1PostProcessing.html#a01950cf092ed9d0a8c9d7ac77aabe6c8">calculate_pressure_drop</a>)</div>
-<div class="line"><a id="l03168" name="l03168"></a><span class="lineno"> 3168</span>      <a class="code hl_function" href="utilities_8h.html#a5b78e809b34030d2be858fbc29e69267">serialize_table</a>(this-&gt;pressure_drop_table,</div>
-<div class="line"><a id="l03169" name="l03169"></a><span class="lineno"> 3169</span>                      prefix + post_processing.<a class="code hl_variable" href="structParameters_1_1PostProcessing.html#a1f6d534f91725b393556d8141abe4935">pressure_drop_output_name</a> +</div>
-<div class="line"><a id="l03170" name="l03170"></a><span class="lineno"> 3170</span>                        suffix,</div>
-<div class="line"><a id="l03171" name="l03171"></a><span class="lineno"> 3171</span>                      mpi_communicator);</div>
-<div class="line"><a id="l03172" name="l03172"></a><span class="lineno"> 3172</span>    <span class="keywordflow">if</span> (this-&gt;simulation_parameters.forces_parameters.calculate_force)</div>
-<div class="line"><a id="l03173" name="l03173"></a><span class="lineno"> 3173</span>      <span class="keywordflow">for</span> (<span class="keyword">auto</span> <span class="keyword">const</span> &amp;[boundary_id, type] :</div>
-<div class="line"><a id="l03174" name="l03174"></a><span class="lineno"> 3174</span>           this-&gt;simulation_parameters.boundary_conditions.type)</div>
-<div class="line"><a id="l03175" name="l03175"></a><span class="lineno"> 3175</span>        {</div>
-<div class="line"><a id="l03176" name="l03176"></a><span class="lineno"> 3176</span>          <a class="code hl_function" href="utilities_8h.html#a5b78e809b34030d2be858fbc29e69267">serialize_table</a>(</div>
-<div class="line"><a id="l03177" name="l03177"></a><span class="lineno"> 3177</span>            this-&gt;forces_tables[boundary_id],</div>
-<div class="line"><a id="l03178" name="l03178"></a><span class="lineno"> 3178</span>            prefix +</div>
-<div class="line"><a id="l03179" name="l03179"></a><span class="lineno"> 3179</span>              this-&gt;simulation_parameters.forces_parameters.force_output_name +</div>
-<div class="line"><a id="l03180" name="l03180"></a><span class="lineno"> 3180</span>              <span class="stringliteral">&quot;_&quot;</span> + Utilities::int_to_string(boundary_id, 2) + suffix,</div>
-<div class="line"><a id="l03181" name="l03181"></a><span class="lineno"> 3181</span>            mpi_communicator);</div>
-<div class="line"><a id="l03182" name="l03182"></a><span class="lineno"> 3182</span>        }</div>
-<div class="line"><a id="l03183" name="l03183"></a><span class="lineno"> 3183</span>    <span class="keywordflow">if</span> (this-&gt;simulation_parameters.forces_parameters.calculate_torque)</div>
-<div class="line"><a id="l03184" name="l03184"></a><span class="lineno"> 3184</span>      <span class="keywordflow">for</span> (<span class="keyword">auto</span> <span class="keyword">const</span> &amp;[boundary_id, type] :</div>
-<div class="line"><a id="l03185" name="l03185"></a><span class="lineno"> 3185</span>           this-&gt;simulation_parameters.boundary_conditions.type)</div>
-<div class="line"><a id="l03186" name="l03186"></a><span class="lineno"> 3186</span>        {</div>
-<div class="line"><a id="l03187" name="l03187"></a><span class="lineno"> 3187</span>          <a class="code hl_function" href="utilities_8h.html#a5b78e809b34030d2be858fbc29e69267">serialize_table</a>(</div>
-<div class="line"><a id="l03188" name="l03188"></a><span class="lineno"> 3188</span>            this-&gt;torques_tables[boundary_id],</div>
-<div class="line"><a id="l03189" name="l03189"></a><span class="lineno"> 3189</span>            prefix +</div>
-<div class="line"><a id="l03190" name="l03190"></a><span class="lineno"> 3190</span>              this-&gt;simulation_parameters.forces_parameters.torque_output_name +</div>
-<div class="line"><a id="l03191" name="l03191"></a><span class="lineno"> 3191</span>              <span class="stringliteral">&quot;_&quot;</span> + Utilities::int_to_string(boundary_id, 2) + suffix,</div>
-<div class="line"><a id="l03192" name="l03192"></a><span class="lineno"> 3192</span>            mpi_communicator);</div>
-<div class="line"><a id="l03193" name="l03193"></a><span class="lineno"> 3193</span>        }</div>
-<div class="line"><a id="l03194" name="l03194"></a><span class="lineno"> 3194</span>    <span class="keywordflow">if</span> (this-&gt;simulation_parameters.analytical_solution-&gt;calculate_error())</div>
-<div class="line"><a id="l03195" name="l03195"></a><span class="lineno"> 3195</span>      <a class="code hl_function" href="utilities_8h.html#a5b78e809b34030d2be858fbc29e69267">serialize_table</a>(</div>
-<div class="line"><a id="l03196" name="l03196"></a><span class="lineno"> 3196</span>        this-&gt;error_table,</div>
-<div class="line"><a id="l03197" name="l03197"></a><span class="lineno"> 3197</span>        prefix +</div>
-<div class="line"><a id="l03198" name="l03198"></a><span class="lineno"> 3198</span>          this-&gt;simulation_parameters.analytical_solution-&gt;get_filename() +</div>
-<div class="line"><a id="l03199" name="l03199"></a><span class="lineno"> 3199</span>          <span class="stringliteral">&quot;_FD&quot;</span> + suffix,</div>
-<div class="line"><a id="l03200" name="l03200"></a><span class="lineno"> 3200</span>        mpi_communicator);</div>
-<div class="line"><a id="l03201" name="l03201"></a><span class="lineno"> 3201</span>  }</div>
-<div class="line"><a id="l03202" name="l03202"></a><span class="lineno"> 3202</span>}</div>
+<div class="line"><a id="l03128" name="l03128"></a><span class="lineno"> 3128</span>      <span class="keywordflow">for</span> (<span class="keyword">auto</span> <span class="keyword">const</span> &amp;[boundary_id, type] :</div>
+<div class="line"><a id="l03129" name="l03129"></a><span class="lineno"> 3129</span>           simulation_parameters.boundary_conditions.type)</div>
+<div class="line"><a id="l03130" name="l03130"></a><span class="lineno"> 3130</span>        {</div>
+<div class="line"><a id="l03131" name="l03131"></a><span class="lineno"> 3131</span>          std::string filename =</div>
+<div class="line"><a id="l03132" name="l03132"></a><span class="lineno"> 3132</span>            simulation_parameters.simulation_control.output_folder +</div>
+<div class="line"><a id="l03133" name="l03133"></a><span class="lineno"> 3133</span>            simulation_parameters.forces_parameters.torque_output_name + <span class="stringliteral">&quot;.&quot;</span> +</div>
+<div class="line"><a id="l03134" name="l03134"></a><span class="lineno"> 3134</span>            Utilities::int_to_string(boundary_id, 2) + <span class="stringliteral">&quot;.dat&quot;</span>;</div>
+<div class="line"><a id="l03135" name="l03135"></a><span class="lineno"> 3135</span>          std::ofstream output(filename.c_str());</div>
+<div class="line"><a id="l03136" name="l03136"></a><span class="lineno"> 3136</span> </div>
+<div class="line"><a id="l03137" name="l03137"></a><span class="lineno"> 3137</span>          this-&gt;torques_tables[boundary_id].write_text(output);</div>
+<div class="line"><a id="l03138" name="l03138"></a><span class="lineno"> 3138</span>        }</div>
+<div class="line"><a id="l03139" name="l03139"></a><span class="lineno"> 3139</span>    }</div>
+<div class="line"><a id="l03140" name="l03140"></a><span class="lineno"> 3140</span>}</div>
 </div>
-<div class="line"><a id="l03203" name="l03203"></a><span class="lineno"> 3203</span> </div>
-<div class="line"><a id="l03204" name="l03204"></a><span class="lineno"> 3204</span><span class="keyword">template</span> &lt;<span class="keywordtype">int</span> dim, <span class="keyword">typename</span> VectorType, <span class="keyword">typename</span> DofsType&gt;</div>
-<div class="line"><a id="l03205" name="l03205"></a><span class="lineno"> 3205</span><span class="keywordtype">void</span></div>
-<div class="foldopen" id="foldopen03206" data-start="{" data-end="}">
-<div class="line"><a id="l03206" name="l03206"></a><span class="lineno"><a class="line" href="classNavierStokesBase.html#a3f9917c78ef75a806167db64cfd2227a"> 3206</a></span><a class="code hl_function" href="classNavierStokesBase.html#a3f9917c78ef75a806167db64cfd2227a">NavierStokesBase&lt;dim, VectorType, DofsType&gt;::</a></div>
-<div class="line"><a id="l03207" name="l03207"></a><span class="lineno"> 3207</span><a class="code hl_function" href="classNavierStokesBase.html#a3f9917c78ef75a806167db64cfd2227a">  rescale_pressure_dofs_in_newton_update</a>()</div>
-<div class="line"><a id="l03208" name="l03208"></a><span class="lineno"> 3208</span>{</div>
-<div class="line"><a id="l03209" name="l03209"></a><span class="lineno"> 3209</span>  <span class="keyword">const</span> <span class="keywordtype">double</span> pressure_scaling_factor =</div>
-<div class="line"><a id="l03210" name="l03210"></a><span class="lineno"> 3210</span>    simulation_parameters.stabilization.pressure_scaling_factor;</div>
-<div class="line"><a id="l03211" name="l03211"></a><span class="lineno"> 3211</span> </div>
-<div class="line"><a id="l03212" name="l03212"></a><span class="lineno"> 3212</span>  <span class="comment">// We skip the function if the factor has a value of 1</span></div>
-<div class="line"><a id="l03213" name="l03213"></a><span class="lineno"> 3213</span>  <span class="keywordflow">if</span> (abs(pressure_scaling_factor - 1) &lt; 1e-8)</div>
-<div class="line"><a id="l03214" name="l03214"></a><span class="lineno"> 3214</span>    <span class="keywordflow">return</span>;</div>
-<div class="line"><a id="l03215" name="l03215"></a><span class="lineno"> 3215</span> </div>
-<div class="line"><a id="l03216" name="l03216"></a><span class="lineno"> 3216</span>  TimerOutput::Scope t(this-&gt;computing_timer, <span class="stringliteral">&quot;Rescale pressure&quot;</span>);</div>
-<div class="line"><a id="l03217" name="l03217"></a><span class="lineno"> 3217</span> </div>
-<div class="line"><a id="l03218" name="l03218"></a><span class="lineno"> 3218</span>  <span class="keyword">const</span> <span class="keywordtype">unsigned</span> <span class="keywordtype">int</span>                   dofs_per_cell = this-&gt;fe-&gt;dofs_per_cell;</div>
-<div class="line"><a id="l03219" name="l03219"></a><span class="lineno"> 3219</span>  std::vector&lt;types::global_dof_index&gt; local_dof_indices(dofs_per_cell);</div>
-<div class="line"><a id="l03220" name="l03220"></a><span class="lineno"> 3220</span>  <span class="comment">// Map used to keep track of which DOFs have been looped over</span></div>
-<div class="line"><a id="l03221" name="l03221"></a><span class="lineno"> 3221</span>  std::unordered_set&lt;unsigned int&gt; rescaled_dofs_set;</div>
-<div class="line"><a id="l03222" name="l03222"></a><span class="lineno"> 3222</span>  rescaled_dofs_set.clear();</div>
-<div class="line"><a id="l03223" name="l03223"></a><span class="lineno"> 3223</span>  <span class="keywordflow">for</span> (<span class="keyword">const</span> <span class="keyword">auto</span> &amp;cell : dof_handler.active_cell_iterators())</div>
-<div class="line"><a id="l03224" name="l03224"></a><span class="lineno"> 3224</span>    {</div>
-<div class="line"><a id="l03225" name="l03225"></a><span class="lineno"> 3225</span>      <span class="keywordflow">if</span> (cell-&gt;is_locally_owned() || cell-&gt;is_ghost())</div>
-<div class="line"><a id="l03226" name="l03226"></a><span class="lineno"> 3226</span>        {</div>
-<div class="line"><a id="l03227" name="l03227"></a><span class="lineno"> 3227</span>          cell-&gt;get_dof_indices(local_dof_indices);</div>
-<div class="line"><a id="l03228" name="l03228"></a><span class="lineno"> 3228</span>          <span class="keywordflow">for</span> (<span class="keywordtype">unsigned</span> <span class="keywordtype">int</span> j = 0; j &lt; local_dof_indices.size(); ++j)</div>
-<div class="line"><a id="l03229" name="l03229"></a><span class="lineno"> 3229</span>            {</div>
-<div class="line"><a id="l03230" name="l03230"></a><span class="lineno"> 3230</span>              <span class="keyword">const</span> <span class="keywordtype">unsigned</span> <span class="keywordtype">int</span> global_id = local_dof_indices[j];</div>
-<div class="line"><a id="l03231" name="l03231"></a><span class="lineno"> 3231</span>              <span class="comment">// We check if we have already checked this DOF</span></div>
-<div class="line"><a id="l03232" name="l03232"></a><span class="lineno"> 3232</span>              <span class="keyword">auto</span> iterator = rescaled_dofs_set.find(global_id);</div>
-<div class="line"><a id="l03233" name="l03233"></a><span class="lineno"> 3233</span>              <span class="keywordflow">if</span> (iterator == rescaled_dofs_set.end())</div>
-<div class="line"><a id="l03234" name="l03234"></a><span class="lineno"> 3234</span>                {</div>
-<div class="line"><a id="l03235" name="l03235"></a><span class="lineno"> 3235</span>                  <span class="keyword">const</span> <span class="keywordtype">unsigned</span> <span class="keywordtype">int</span> component_index =</div>
-<div class="line"><a id="l03236" name="l03236"></a><span class="lineno"> 3236</span>                    this-&gt;fe-&gt;system_to_component_index(j).first;</div>
-<div class="line"><a id="l03237" name="l03237"></a><span class="lineno"> 3237</span>                  <span class="keywordflow">if</span> (this-&gt;dof_handler.locally_owned_dofs().is_element(</div>
-<div class="line"><a id="l03238" name="l03238"></a><span class="lineno"> 3238</span>                        global_id) &amp;&amp;</div>
-<div class="line"><a id="l03239" name="l03239"></a><span class="lineno"> 3239</span>                      component_index == dim)</div>
-<div class="line"><a id="l03240" name="l03240"></a><span class="lineno"> 3240</span>                    {</div>
-<div class="line"><a id="l03241" name="l03241"></a><span class="lineno"> 3241</span>                      this-&gt;newton_update(global_id) =</div>
-<div class="line"><a id="l03242" name="l03242"></a><span class="lineno"> 3242</span>                        this-&gt;newton_update(global_id) *</div>
-<div class="line"><a id="l03243" name="l03243"></a><span class="lineno"> 3243</span>                        pressure_scaling_factor;</div>
-<div class="line"><a id="l03244" name="l03244"></a><span class="lineno"> 3244</span>                    }</div>
-<div class="line"><a id="l03245" name="l03245"></a><span class="lineno"> 3245</span>                  rescaled_dofs_set.insert(global_id);</div>
-<div class="line"><a id="l03246" name="l03246"></a><span class="lineno"> 3246</span>                }</div>
-<div class="line"><a id="l03247" name="l03247"></a><span class="lineno"> 3247</span>            }</div>
-<div class="line"><a id="l03248" name="l03248"></a><span class="lineno"> 3248</span>        }</div>
-<div class="line"><a id="l03249" name="l03249"></a><span class="lineno"> 3249</span>    }</div>
-<div class="line"><a id="l03250" name="l03250"></a><span class="lineno"> 3250</span>}</div>
+<div class="line"><a id="l03141" name="l03141"></a><span class="lineno"> 3141</span> </div>
+<div class="line"><a id="l03142" name="l03142"></a><span class="lineno"> 3142</span><span class="keyword">template</span> &lt;<span class="keywordtype">int</span> dim, <span class="keyword">typename</span> VectorType, <span class="keyword">typename</span> DofsType&gt;</div>
+<div class="line"><a id="l03143" name="l03143"></a><span class="lineno"> 3143</span><span class="keywordtype">void</span></div>
+<div class="foldopen" id="foldopen03144" data-start="{" data-end="}">
+<div class="line"><a id="l03144" name="l03144"></a><span class="lineno"><a class="line" href="classNavierStokesBase.html#af311920c0b819b973d410db4fa5e8924"> 3144</a></span><a class="code hl_function" href="classNavierStokesBase.html#af311920c0b819b973d410db4fa5e8924">NavierStokesBase&lt;dim, VectorType, DofsType&gt;::write_checkpoint</a>()</div>
+<div class="line"><a id="l03145" name="l03145"></a><span class="lineno"> 3145</span>{</div>
+<div class="line"><a id="l03146" name="l03146"></a><span class="lineno"> 3146</span>  TimerOutput::Scope timer(this-&gt;computing_timer, <span class="stringliteral">&quot;Write checkpoint&quot;</span>);</div>
+<div class="line"><a id="l03147" name="l03147"></a><span class="lineno"> 3147</span>  std::string        prefix =</div>
+<div class="line"><a id="l03148" name="l03148"></a><span class="lineno"> 3148</span>    this-&gt;simulation_parameters.simulation_control.output_folder +</div>
+<div class="line"><a id="l03149" name="l03149"></a><span class="lineno"> 3149</span>    this-&gt;simulation_parameters.restart_parameters.filename;</div>
+<div class="line"><a id="l03150" name="l03150"></a><span class="lineno"> 3150</span>  <span class="keywordflow">if</span> (Utilities::MPI::this_mpi_process(this-&gt;mpi_communicator) == 0)</div>
+<div class="line"><a id="l03151" name="l03151"></a><span class="lineno"> 3151</span>    {</div>
+<div class="line"><a id="l03152" name="l03152"></a><span class="lineno"> 3152</span>      simulation_control-&gt;save(prefix);</div>
+<div class="line"><a id="l03153" name="l03153"></a><span class="lineno"> 3153</span>      this-&gt;pvdhandler.save(prefix);</div>
+<div class="line"><a id="l03154" name="l03154"></a><span class="lineno"> 3154</span> </div>
+<div class="line"><a id="l03155" name="l03155"></a><span class="lineno"> 3155</span>      <span class="keywordflow">if</span> (simulation_parameters.flow_control.enable_flow_control)</div>
+<div class="line"><a id="l03156" name="l03156"></a><span class="lineno"> 3156</span>        this-&gt;flow_control.save(prefix);</div>
+<div class="line"><a id="l03157" name="l03157"></a><span class="lineno"> 3157</span>    }</div>
+<div class="line"><a id="l03158" name="l03158"></a><span class="lineno"> 3158</span> </div>
+<div class="line"><a id="l03159" name="l03159"></a><span class="lineno"> 3159</span>  std::vector&lt;const VectorType *&gt; sol_set_transfer;</div>
+<div class="line"><a id="l03160" name="l03160"></a><span class="lineno"> 3160</span>  sol_set_transfer.emplace_back(&amp;this-&gt;present_solution);</div>
+<div class="line"><a id="l03161" name="l03161"></a><span class="lineno"> 3161</span>  <span class="keywordflow">for</span> (<span class="keywordtype">unsigned</span> <span class="keywordtype">int</span> i = 0; i &lt; previous_solutions.size(); ++i)</div>
+<div class="line"><a id="l03162" name="l03162"></a><span class="lineno"> 3162</span>    {</div>
+<div class="line"><a id="l03163" name="l03163"></a><span class="lineno"> 3163</span>      sol_set_transfer.emplace_back(&amp;previous_solutions[i]);</div>
+<div class="line"><a id="l03164" name="l03164"></a><span class="lineno"> 3164</span>    }</div>
+<div class="line"><a id="l03165" name="l03165"></a><span class="lineno"> 3165</span> </div>
+<div class="line"><a id="l03166" name="l03166"></a><span class="lineno"> 3166</span>  <span class="keywordflow">if</span> (simulation_parameters.post_processing.calculate_average_velocities ||</div>
+<div class="line"><a id="l03167" name="l03167"></a><span class="lineno"> 3167</span>      this-&gt;simulation_parameters.initial_condition-&gt;type ==</div>
+<div class="line"><a id="l03168" name="l03168"></a><span class="lineno"> 3168</span>        <a class="code hl_enumvalue" href="namespaceParameters.html#a87f2367892b0cda4800d7fac3b21fc12a322f09c14d8c26231fdc7ee2a82f1427">Parameters::FluidDynamicsInitialConditionType::average_velocity_profile</a>)</div>
+<div class="line"><a id="l03169" name="l03169"></a><span class="lineno"> 3169</span>    {</div>
+<div class="line"><a id="l03170" name="l03170"></a><span class="lineno"> 3170</span>      std::vector&lt;const VectorType *&gt; av_set_transfer =</div>
+<div class="line"><a id="l03171" name="l03171"></a><span class="lineno"> 3171</span>        this-&gt;average_velocities-&gt;save(prefix);</div>
+<div class="line"><a id="l03172" name="l03172"></a><span class="lineno"> 3172</span> </div>
+<div class="line"><a id="l03173" name="l03173"></a><span class="lineno"> 3173</span>      <span class="comment">// Insert average velocities vectors into the set transfer vector</span></div>
+<div class="line"><a id="l03174" name="l03174"></a><span class="lineno"> 3174</span>      sol_set_transfer.insert(sol_set_transfer.end(),</div>
+<div class="line"><a id="l03175" name="l03175"></a><span class="lineno"> 3175</span>                              av_set_transfer.begin(),</div>
+<div class="line"><a id="l03176" name="l03176"></a><span class="lineno"> 3176</span>                              av_set_transfer.end());</div>
+<div class="line"><a id="l03177" name="l03177"></a><span class="lineno"> 3177</span>    }</div>
+<div class="line"><a id="l03178" name="l03178"></a><span class="lineno"> 3178</span> </div>
+<div class="line"><a id="l03179" name="l03179"></a><span class="lineno"> 3179</span>  SolutionTransfer&lt;dim, VectorType&gt; system_trans_vectors(this-&gt;dof_handler);</div>
+<div class="line"><a id="l03180" name="l03180"></a><span class="lineno"> 3180</span>  system_trans_vectors.prepare_for_serialization(sol_set_transfer);</div>
+<div class="line"><a id="l03181" name="l03181"></a><span class="lineno"> 3181</span> </div>
+<div class="line"><a id="l03182" name="l03182"></a><span class="lineno"> 3182</span>  multiphysics-&gt;write_checkpoint();</div>
+<div class="line"><a id="l03183" name="l03183"></a><span class="lineno"> 3183</span> </div>
+<div class="line"><a id="l03184" name="l03184"></a><span class="lineno"> 3184</span>  <span class="keywordflow">if</span> (<span class="keyword">auto</span> tria = <span class="keyword">dynamic_cast&lt;</span>parallel::distributed::Triangulation&lt;dim&gt; *<span class="keyword">&gt;</span>(</div>
+<div class="line"><a id="l03185" name="l03185"></a><span class="lineno"> 3185</span>        this-&gt;triangulation.get()))</div>
+<div class="line"><a id="l03186" name="l03186"></a><span class="lineno"> 3186</span>    {</div>
+<div class="line"><a id="l03187" name="l03187"></a><span class="lineno"> 3187</span>      std::string triangulationName = prefix + <span class="stringliteral">&quot;.triangulation&quot;</span>;</div>
+<div class="line"><a id="l03188" name="l03188"></a><span class="lineno"> 3188</span>      tria-&gt;save(prefix + <span class="stringliteral">&quot;.triangulation&quot;</span>);</div>
+<div class="line"><a id="l03189" name="l03189"></a><span class="lineno"> 3189</span>    }</div>
+<div class="line"><a id="l03190" name="l03190"></a><span class="lineno"> 3190</span> </div>
+<div class="line"><a id="l03191" name="l03191"></a><span class="lineno"> 3191</span>  <span class="comment">// Serialize all post-processing tables that are currently used</span></div>
+<div class="line"><a id="l03192" name="l03192"></a><span class="lineno"> 3192</span>  {</div>
+<div class="line"><a id="l03193" name="l03193"></a><span class="lineno"> 3193</span>    <span class="keyword">const</span> <a class="code hl_struct" href="structParameters_1_1PostProcessing.html">Parameters::PostProcessing</a> post_processing =</div>
+<div class="line"><a id="l03194" name="l03194"></a><span class="lineno"> 3194</span>      this-&gt;simulation_parameters.post_processing;</div>
+<div class="line"><a id="l03195" name="l03195"></a><span class="lineno"> 3195</span>    std::string prefix =</div>
+<div class="line"><a id="l03196" name="l03196"></a><span class="lineno"> 3196</span>      this-&gt;simulation_parameters.simulation_control.output_folder;</div>
+<div class="line"><a id="l03197" name="l03197"></a><span class="lineno"> 3197</span>    std::string suffix = <span class="stringliteral">&quot;.checkpoint&quot;</span>;</div>
+<div class="line"><a id="l03198" name="l03198"></a><span class="lineno"> 3198</span>    <span class="keywordflow">if</span> (post_processing.<a class="code hl_variable" href="structParameters_1_1PostProcessing.html#a8a50942c2ab00d0d43e0847b129ee0e3">calculate_enstrophy</a>)</div>
+<div class="line"><a id="l03199" name="l03199"></a><span class="lineno"> 3199</span>      <a class="code hl_function" href="utilities_8h.html#a5b78e809b34030d2be858fbc29e69267">serialize_table</a>(this-&gt;enstrophy_table,</div>
+<div class="line"><a id="l03200" name="l03200"></a><span class="lineno"> 3200</span>                      prefix + post_processing.<a class="code hl_variable" href="structParameters_1_1PostProcessing.html#a722c889ae44dd8d66a22477282e77bea">enstrophy_output_name</a> + suffix,</div>
+<div class="line"><a id="l03201" name="l03201"></a><span class="lineno"> 3201</span>                      mpi_communicator);</div>
+<div class="line"><a id="l03202" name="l03202"></a><span class="lineno"> 3202</span>    <span class="keywordflow">if</span> (post_processing.<a class="code hl_variable" href="structParameters_1_1PostProcessing.html#a7c40e900b19cf49d56c63fb0b4a3abde">calculate_kinetic_energy</a>)</div>
+<div class="line"><a id="l03203" name="l03203"></a><span class="lineno"> 3203</span>      <a class="code hl_function" href="utilities_8h.html#a5b78e809b34030d2be858fbc29e69267">serialize_table</a>(this-&gt;kinetic_energy_table,</div>
+<div class="line"><a id="l03204" name="l03204"></a><span class="lineno"> 3204</span>                      prefix + post_processing.<a class="code hl_variable" href="structParameters_1_1PostProcessing.html#a9bc91c5ebc9e3ecb9bd89aa1431ac6b1">kinetic_energy_output_name</a> +</div>
+<div class="line"><a id="l03205" name="l03205"></a><span class="lineno"> 3205</span>                        suffix,</div>
+<div class="line"><a id="l03206" name="l03206"></a><span class="lineno"> 3206</span>                      mpi_communicator);</div>
+<div class="line"><a id="l03207" name="l03207"></a><span class="lineno"> 3207</span>    <span class="keywordflow">if</span> (post_processing.<a class="code hl_variable" href="structParameters_1_1PostProcessing.html#a01032169fdab07b424db94962105f98d">calculate_pressure_power</a>)</div>
+<div class="line"><a id="l03208" name="l03208"></a><span class="lineno"> 3208</span>      <a class="code hl_function" href="utilities_8h.html#a5b78e809b34030d2be858fbc29e69267">serialize_table</a>(this-&gt;pressure_power_table,</div>
+<div class="line"><a id="l03209" name="l03209"></a><span class="lineno"> 3209</span>                      prefix + post_processing.<a class="code hl_variable" href="structParameters_1_1PostProcessing.html#a1dbadc53d00fd10b005f3ef6ebe2f31c">pressure_power_output_name</a> +</div>
+<div class="line"><a id="l03210" name="l03210"></a><span class="lineno"> 3210</span>                        suffix,</div>
+<div class="line"><a id="l03211" name="l03211"></a><span class="lineno"> 3211</span>                      mpi_communicator);</div>
+<div class="line"><a id="l03212" name="l03212"></a><span class="lineno"> 3212</span>    <span class="keywordflow">if</span> (post_processing.<a class="code hl_variable" href="structParameters_1_1PostProcessing.html#a03125dd5ea6ff8a90780d5fc3670dd13">calculate_viscous_dissipation</a>)</div>
+<div class="line"><a id="l03213" name="l03213"></a><span class="lineno"> 3213</span>      <a class="code hl_function" href="utilities_8h.html#a5b78e809b34030d2be858fbc29e69267">serialize_table</a>(this-&gt;viscous_dissipation_table,</div>
+<div class="line"><a id="l03214" name="l03214"></a><span class="lineno"> 3214</span>                      prefix + post_processing.<a class="code hl_variable" href="structParameters_1_1PostProcessing.html#a06fc5f93ff7a2742bdf9b5d6bc637e38">viscous_dissipation_output_name</a> +</div>
+<div class="line"><a id="l03215" name="l03215"></a><span class="lineno"> 3215</span>                        suffix,</div>
+<div class="line"><a id="l03216" name="l03216"></a><span class="lineno"> 3216</span>                      mpi_communicator);</div>
+<div class="line"><a id="l03217" name="l03217"></a><span class="lineno"> 3217</span>    <span class="keywordflow">if</span> (post_processing.<a class="code hl_variable" href="structParameters_1_1PostProcessing.html#a1f97478541aa1b6bd67a5f8d7a3f5ef4">calculate_apparent_viscosity</a>)</div>
+<div class="line"><a id="l03218" name="l03218"></a><span class="lineno"> 3218</span>      <a class="code hl_function" href="utilities_8h.html#a5b78e809b34030d2be858fbc29e69267">serialize_table</a>(this-&gt;apparent_viscosity_table,</div>
+<div class="line"><a id="l03219" name="l03219"></a><span class="lineno"> 3219</span>                      prefix + post_processing.<a class="code hl_variable" href="structParameters_1_1PostProcessing.html#a123689413f0db3cb459a130ddc83d54c">apparent_viscosity_output_name</a> +</div>
+<div class="line"><a id="l03220" name="l03220"></a><span class="lineno"> 3220</span>                        suffix,</div>
+<div class="line"><a id="l03221" name="l03221"></a><span class="lineno"> 3221</span>                      mpi_communicator);</div>
+<div class="line"><a id="l03222" name="l03222"></a><span class="lineno"> 3222</span>    <span class="keywordflow">if</span> (post_processing.<a class="code hl_variable" href="structParameters_1_1PostProcessing.html#a306a0fcc26d2688b59a113e8499ed3ab">calculate_flow_rate</a>)</div>
+<div class="line"><a id="l03223" name="l03223"></a><span class="lineno"> 3223</span>      <a class="code hl_function" href="utilities_8h.html#a5b78e809b34030d2be858fbc29e69267">serialize_table</a>(this-&gt;flow_rate_table,</div>
+<div class="line"><a id="l03224" name="l03224"></a><span class="lineno"> 3224</span>                      prefix + post_processing.<a class="code hl_variable" href="structParameters_1_1PostProcessing.html#a4dfddbb4bc08063e305f05d7ec340fbe">flow_rate_output_name</a> + suffix,</div>
+<div class="line"><a id="l03225" name="l03225"></a><span class="lineno"> 3225</span>                      mpi_communicator);</div>
+<div class="line"><a id="l03226" name="l03226"></a><span class="lineno"> 3226</span>    <span class="keywordflow">if</span> (post_processing.<a class="code hl_variable" href="structParameters_1_1PostProcessing.html#a01950cf092ed9d0a8c9d7ac77aabe6c8">calculate_pressure_drop</a>)</div>
+<div class="line"><a id="l03227" name="l03227"></a><span class="lineno"> 3227</span>      <a class="code hl_function" href="utilities_8h.html#a5b78e809b34030d2be858fbc29e69267">serialize_table</a>(this-&gt;pressure_drop_table,</div>
+<div class="line"><a id="l03228" name="l03228"></a><span class="lineno"> 3228</span>                      prefix + post_processing.<a class="code hl_variable" href="structParameters_1_1PostProcessing.html#a1f6d534f91725b393556d8141abe4935">pressure_drop_output_name</a> +</div>
+<div class="line"><a id="l03229" name="l03229"></a><span class="lineno"> 3229</span>                        suffix,</div>
+<div class="line"><a id="l03230" name="l03230"></a><span class="lineno"> 3230</span>                      mpi_communicator);</div>
+<div class="line"><a id="l03231" name="l03231"></a><span class="lineno"> 3231</span>    <span class="keywordflow">if</span> (this-&gt;simulation_parameters.forces_parameters.calculate_force)</div>
+<div class="line"><a id="l03232" name="l03232"></a><span class="lineno"> 3232</span>      <span class="keywordflow">for</span> (<span class="keyword">auto</span> <span class="keyword">const</span> &amp;[boundary_id, type] :</div>
+<div class="line"><a id="l03233" name="l03233"></a><span class="lineno"> 3233</span>           this-&gt;simulation_parameters.boundary_conditions.type)</div>
+<div class="line"><a id="l03234" name="l03234"></a><span class="lineno"> 3234</span>        {</div>
+<div class="line"><a id="l03235" name="l03235"></a><span class="lineno"> 3235</span>          <a class="code hl_function" href="utilities_8h.html#a5b78e809b34030d2be858fbc29e69267">serialize_table</a>(</div>
+<div class="line"><a id="l03236" name="l03236"></a><span class="lineno"> 3236</span>            this-&gt;forces_tables[boundary_id],</div>
+<div class="line"><a id="l03237" name="l03237"></a><span class="lineno"> 3237</span>            prefix +</div>
+<div class="line"><a id="l03238" name="l03238"></a><span class="lineno"> 3238</span>              this-&gt;simulation_parameters.forces_parameters.force_output_name +</div>
+<div class="line"><a id="l03239" name="l03239"></a><span class="lineno"> 3239</span>              <span class="stringliteral">&quot;_&quot;</span> + Utilities::int_to_string(boundary_id, 2) + suffix,</div>
+<div class="line"><a id="l03240" name="l03240"></a><span class="lineno"> 3240</span>            mpi_communicator);</div>
+<div class="line"><a id="l03241" name="l03241"></a><span class="lineno"> 3241</span>        }</div>
+<div class="line"><a id="l03242" name="l03242"></a><span class="lineno"> 3242</span>    <span class="keywordflow">if</span> (this-&gt;simulation_parameters.forces_parameters.calculate_torque)</div>
+<div class="line"><a id="l03243" name="l03243"></a><span class="lineno"> 3243</span>      <span class="keywordflow">for</span> (<span class="keyword">auto</span> <span class="keyword">const</span> &amp;[boundary_id, type] :</div>
+<div class="line"><a id="l03244" name="l03244"></a><span class="lineno"> 3244</span>           this-&gt;simulation_parameters.boundary_conditions.type)</div>
+<div class="line"><a id="l03245" name="l03245"></a><span class="lineno"> 3245</span>        {</div>
+<div class="line"><a id="l03246" name="l03246"></a><span class="lineno"> 3246</span>          <a class="code hl_function" href="utilities_8h.html#a5b78e809b34030d2be858fbc29e69267">serialize_table</a>(</div>
+<div class="line"><a id="l03247" name="l03247"></a><span class="lineno"> 3247</span>            this-&gt;torques_tables[boundary_id],</div>
+<div class="line"><a id="l03248" name="l03248"></a><span class="lineno"> 3248</span>            prefix +</div>
+<div class="line"><a id="l03249" name="l03249"></a><span class="lineno"> 3249</span>              this-&gt;simulation_parameters.forces_parameters.torque_output_name +</div>
+<div class="line"><a id="l03250" name="l03250"></a><span class="lineno"> 3250</span>              <span class="stringliteral">&quot;_&quot;</span> + Utilities::int_to_string(boundary_id, 2) + suffix,</div>
+<div class="line"><a id="l03251" name="l03251"></a><span class="lineno"> 3251</span>            mpi_communicator);</div>
+<div class="line"><a id="l03252" name="l03252"></a><span class="lineno"> 3252</span>        }</div>
+<div class="line"><a id="l03253" name="l03253"></a><span class="lineno"> 3253</span>    <span class="keywordflow">if</span> (this-&gt;simulation_parameters.analytical_solution-&gt;calculate_error())</div>
+<div class="line"><a id="l03254" name="l03254"></a><span class="lineno"> 3254</span>      <a class="code hl_function" href="utilities_8h.html#a5b78e809b34030d2be858fbc29e69267">serialize_table</a>(</div>
+<div class="line"><a id="l03255" name="l03255"></a><span class="lineno"> 3255</span>        this-&gt;error_table,</div>
+<div class="line"><a id="l03256" name="l03256"></a><span class="lineno"> 3256</span>        prefix +</div>
+<div class="line"><a id="l03257" name="l03257"></a><span class="lineno"> 3257</span>          this-&gt;simulation_parameters.analytical_solution-&gt;get_filename() +</div>
+<div class="line"><a id="l03258" name="l03258"></a><span class="lineno"> 3258</span>          <span class="stringliteral">&quot;_FD&quot;</span> + suffix,</div>
+<div class="line"><a id="l03259" name="l03259"></a><span class="lineno"> 3259</span>        mpi_communicator);</div>
+<div class="line"><a id="l03260" name="l03260"></a><span class="lineno"> 3260</span>  }</div>
+<div class="line"><a id="l03261" name="l03261"></a><span class="lineno"> 3261</span>}</div>
 </div>
-<div class="line"><a id="l03251" name="l03251"></a><span class="lineno"> 3251</span> </div>
-<div class="line"><a id="l03252" name="l03252"></a><span class="lineno"> 3252</span><span class="keyword">template</span> &lt;<span class="keywordtype">int</span> dim, <span class="keyword">typename</span> VectorType, <span class="keyword">typename</span> DofsType&gt;</div>
-<div class="line"><a id="l03253" name="l03253"></a><span class="lineno"> 3253</span><span class="keywordtype">void</span></div>
-<div class="foldopen" id="foldopen03254" data-start="{" data-end="}">
-<div class="line"><a id="l03254" name="l03254"></a><span class="lineno"><a class="line" href="classNavierStokesBase.html#ae9931f481332d3cd539f3d69b748bb3c"> 3254</a></span><a class="code hl_function" href="classNavierStokesBase.html#ae9931f481332d3cd539f3d69b748bb3c">NavierStokesBase&lt;dim, VectorType, DofsType&gt;::output_newton_update_norms</a>(</div>
-<div class="line"><a id="l03255" name="l03255"></a><span class="lineno"> 3255</span>  <span class="keyword">const</span> <span class="keywordtype">unsigned</span> <span class="keywordtype">int</span> display_precision)</div>
-<div class="line"><a id="l03256" name="l03256"></a><span class="lineno"> 3256</span>{</div>
-<div class="line"><a id="l03257" name="l03257"></a><span class="lineno"> 3257</span>  TimerOutput::Scope t(this-&gt;computing_timer,</div>
-<div class="line"><a id="l03258" name="l03258"></a><span class="lineno"> 3258</span>                       <span class="stringliteral">&quot;Calculate and output norms after Newton its&quot;</span>);</div>
-<div class="line"><a id="l03259" name="l03259"></a><span class="lineno"> 3259</span> </div>
-<div class="line"><a id="l03260" name="l03260"></a><span class="lineno"> 3260</span>  <span class="keywordflow">if</span> <span class="keyword">constexpr</span> (std::is_same_v&lt;VectorType, GlobalVectorType&gt; ||</div>
-<div class="line"><a id="l03261" name="l03261"></a><span class="lineno"> 3261</span>                std::is_same_v&lt;VectorType,</div>
-<div class="line"><a id="l03262" name="l03262"></a><span class="lineno"> 3262</span>                               LinearAlgebra::distributed::Vector&lt;double&gt;&gt;)</div>
-<div class="line"><a id="l03263" name="l03263"></a><span class="lineno"> 3263</span>    {</div>
-<div class="line"><a id="l03264" name="l03264"></a><span class="lineno"> 3264</span>      FEValuesExtractors::Vector velocities(0);</div>
-<div class="line"><a id="l03265" name="l03265"></a><span class="lineno"> 3265</span>      FEValuesExtractors::Scalar <a class="code hl_enumvalue" href="physical__property__model_8h.html#a0b2c854385812ebfac83689a5c3ead58a8e7f8389b914e827058d694b31468b3a">pressure</a>(dim);</div>
-<div class="line"><a id="l03266" name="l03266"></a><span class="lineno"> 3266</span> </div>
-<div class="line"><a id="l03267" name="l03267"></a><span class="lineno"> 3267</span>      ComponentMask velocity_mask = fe-&gt;component_mask(velocities);</div>
-<div class="line"><a id="l03268" name="l03268"></a><span class="lineno"> 3268</span>      ComponentMask pressure_mask = fe-&gt;component_mask(<a class="code hl_enumvalue" href="physical__property__model_8h.html#a0b2c854385812ebfac83689a5c3ead58a8e7f8389b914e827058d694b31468b3a">pressure</a>);</div>
-<div class="line"><a id="l03269" name="l03269"></a><span class="lineno"> 3269</span> </div>
-<div class="line"><a id="l03270" name="l03270"></a><span class="lineno"> 3270</span>      <span class="keyword">const</span> std::vector&lt;IndexSet&gt; index_set_velocity =</div>
-<div class="line"><a id="l03271" name="l03271"></a><span class="lineno"> 3271</span>        DoFTools::locally_owned_dofs_per_component(dof_handler, velocity_mask);</div>
-<div class="line"><a id="l03272" name="l03272"></a><span class="lineno"> 3272</span>      <span class="keyword">const</span> std::vector&lt;IndexSet&gt; index_set_pressure =</div>
-<div class="line"><a id="l03273" name="l03273"></a><span class="lineno"> 3273</span>        DoFTools::locally_owned_dofs_per_component(dof_handler, pressure_mask);</div>
+<div class="line"><a id="l03262" name="l03262"></a><span class="lineno"> 3262</span> </div>
+<div class="line"><a id="l03263" name="l03263"></a><span class="lineno"> 3263</span><span class="keyword">template</span> &lt;<span class="keywordtype">int</span> dim, <span class="keyword">typename</span> VectorType, <span class="keyword">typename</span> DofsType&gt;</div>
+<div class="line"><a id="l03264" name="l03264"></a><span class="lineno"> 3264</span><span class="keywordtype">void</span></div>
+<div class="foldopen" id="foldopen03265" data-start="{" data-end="}">
+<div class="line"><a id="l03265" name="l03265"></a><span class="lineno"><a class="line" href="classNavierStokesBase.html#a3f9917c78ef75a806167db64cfd2227a"> 3265</a></span><a class="code hl_function" href="classNavierStokesBase.html#a3f9917c78ef75a806167db64cfd2227a">NavierStokesBase&lt;dim, VectorType, DofsType&gt;::</a></div>
+<div class="line"><a id="l03266" name="l03266"></a><span class="lineno"> 3266</span><a class="code hl_function" href="classNavierStokesBase.html#a3f9917c78ef75a806167db64cfd2227a">  rescale_pressure_dofs_in_newton_update</a>()</div>
+<div class="line"><a id="l03267" name="l03267"></a><span class="lineno"> 3267</span>{</div>
+<div class="line"><a id="l03268" name="l03268"></a><span class="lineno"> 3268</span>  <span class="keyword">const</span> <span class="keywordtype">double</span> pressure_scaling_factor =</div>
+<div class="line"><a id="l03269" name="l03269"></a><span class="lineno"> 3269</span>    simulation_parameters.stabilization.pressure_scaling_factor;</div>
+<div class="line"><a id="l03270" name="l03270"></a><span class="lineno"> 3270</span> </div>
+<div class="line"><a id="l03271" name="l03271"></a><span class="lineno"> 3271</span>  <span class="comment">// We skip the function if the factor has a value of 1</span></div>
+<div class="line"><a id="l03272" name="l03272"></a><span class="lineno"> 3272</span>  <span class="keywordflow">if</span> (abs(pressure_scaling_factor - 1) &lt; 1e-8)</div>
+<div class="line"><a id="l03273" name="l03273"></a><span class="lineno"> 3273</span>    <span class="keywordflow">return</span>;</div>
 <div class="line"><a id="l03274" name="l03274"></a><span class="lineno"> 3274</span> </div>
-<div class="line"><a id="l03275" name="l03275"></a><span class="lineno"> 3275</span>      <span class="keywordtype">double</span> local_sum = 0.0;</div>
-<div class="line"><a id="l03276" name="l03276"></a><span class="lineno"> 3276</span>      <span class="keywordtype">double</span> local_max = std::numeric_limits&lt;double&gt;::lowest();</div>
-<div class="line"><a id="l03277" name="l03277"></a><span class="lineno"> 3277</span> </div>
-<div class="line"><a id="l03278" name="l03278"></a><span class="lineno"> 3278</span>      <span class="keywordflow">for</span> (<span class="keywordtype">unsigned</span> <span class="keywordtype">int</span> d = 0; d &lt; dim; ++d)</div>
-<div class="line"><a id="l03279" name="l03279"></a><span class="lineno"> 3279</span>        {</div>
-<div class="line"><a id="l03280" name="l03280"></a><span class="lineno"> 3280</span>          <span class="keywordflow">for</span> (<span class="keyword">const</span> <span class="keyword">auto</span> &amp;j : index_set_velocity[d])</div>
-<div class="line"><a id="l03281" name="l03281"></a><span class="lineno"> 3281</span>            {</div>
-<div class="line"><a id="l03282" name="l03282"></a><span class="lineno"> 3282</span>              <span class="keywordtype">double</span> dof_newton_update = newton_update[j];</div>
-<div class="line"><a id="l03283" name="l03283"></a><span class="lineno"> 3283</span>              local_sum += dof_newton_update * dof_newton_update;</div>
-<div class="line"><a id="l03284" name="l03284"></a><span class="lineno"> 3284</span>              local_max = std::max(local_max, std::abs(dof_newton_update));</div>
-<div class="line"><a id="l03285" name="l03285"></a><span class="lineno"> 3285</span>            }</div>
-<div class="line"><a id="l03286" name="l03286"></a><span class="lineno"> 3286</span>        }</div>
-<div class="line"><a id="l03287" name="l03287"></a><span class="lineno"> 3287</span> </div>
-<div class="line"><a id="l03288" name="l03288"></a><span class="lineno"> 3288</span>      <span class="keywordtype">double</span> global_velocity_l2_norm =</div>
-<div class="line"><a id="l03289" name="l03289"></a><span class="lineno"> 3289</span>        std::sqrt(Utilities::MPI::sum(local_sum, this-&gt;mpi_communicator));</div>
-<div class="line"><a id="l03290" name="l03290"></a><span class="lineno"> 3290</span>      <span class="keywordtype">double</span> global_velocity_linfty_norm =</div>
-<div class="line"><a id="l03291" name="l03291"></a><span class="lineno"> 3291</span>        Utilities::MPI::max(local_max, this-&gt;mpi_communicator);</div>
-<div class="line"><a id="l03292" name="l03292"></a><span class="lineno"> 3292</span> </div>
-<div class="line"><a id="l03293" name="l03293"></a><span class="lineno"> 3293</span>      local_sum = 0.0;</div>
-<div class="line"><a id="l03294" name="l03294"></a><span class="lineno"> 3294</span>      local_max = std::numeric_limits&lt;double&gt;::lowest();</div>
-<div class="line"><a id="l03295" name="l03295"></a><span class="lineno"> 3295</span> </div>
-<div class="line"><a id="l03296" name="l03296"></a><span class="lineno"> 3296</span>      <span class="keywordflow">for</span> (<span class="keyword">const</span> <span class="keyword">auto</span> &amp;j : index_set_pressure[dim])</div>
-<div class="line"><a id="l03297" name="l03297"></a><span class="lineno"> 3297</span>        {</div>
-<div class="line"><a id="l03298" name="l03298"></a><span class="lineno"> 3298</span>          <span class="keywordtype">double</span> dof_newton_update = newton_update[j];</div>
-<div class="line"><a id="l03299" name="l03299"></a><span class="lineno"> 3299</span>          local_sum += dof_newton_update * dof_newton_update;</div>
-<div class="line"><a id="l03300" name="l03300"></a><span class="lineno"> 3300</span>          local_max = std::max(local_max, std::abs(dof_newton_update));</div>
-<div class="line"><a id="l03301" name="l03301"></a><span class="lineno"> 3301</span>        }</div>
-<div class="line"><a id="l03302" name="l03302"></a><span class="lineno"> 3302</span> </div>
-<div class="line"><a id="l03303" name="l03303"></a><span class="lineno"> 3303</span>      <span class="keywordtype">double</span> global_pressure_l2_norm =</div>
-<div class="line"><a id="l03304" name="l03304"></a><span class="lineno"> 3304</span>        std::sqrt(Utilities::MPI::sum(local_sum, this-&gt;mpi_communicator));</div>
-<div class="line"><a id="l03305" name="l03305"></a><span class="lineno"> 3305</span>      <span class="keywordtype">double</span> global_pressure_linfty_norm =</div>
-<div class="line"><a id="l03306" name="l03306"></a><span class="lineno"> 3306</span>        Utilities::MPI::max(local_max, this-&gt;mpi_communicator);</div>
-<div class="line"><a id="l03307" name="l03307"></a><span class="lineno"> 3307</span> </div>
-<div class="line"><a id="l03308" name="l03308"></a><span class="lineno"> 3308</span>      this-&gt;pcout &lt;&lt; std::setprecision(display_precision)</div>
-<div class="line"><a id="l03309" name="l03309"></a><span class="lineno"> 3309</span>                  &lt;&lt; <span class="stringliteral">&quot;\n\t||du||_L2 = &quot;</span> &lt;&lt; std::setw(6)</div>
-<div class="line"><a id="l03310" name="l03310"></a><span class="lineno"> 3310</span>                  &lt;&lt; global_velocity_l2_norm &lt;&lt; std::setw(6)</div>
-<div class="line"><a id="l03311" name="l03311"></a><span class="lineno"> 3311</span>                  &lt;&lt; <span class="stringliteral">&quot;\t||du||_Linfty = &quot;</span></div>
-<div class="line"><a id="l03312" name="l03312"></a><span class="lineno"> 3312</span>                  &lt;&lt; std::setprecision(display_precision)</div>
-<div class="line"><a id="l03313" name="l03313"></a><span class="lineno"> 3313</span>                  &lt;&lt; global_velocity_linfty_norm &lt;&lt; std::endl;</div>
-<div class="line"><a id="l03314" name="l03314"></a><span class="lineno"> 3314</span>      this-&gt;pcout &lt;&lt; std::setprecision(display_precision)</div>
-<div class="line"><a id="l03315" name="l03315"></a><span class="lineno"> 3315</span>                  &lt;&lt; <span class="stringliteral">&quot;\t||dp||_L2 = &quot;</span> &lt;&lt; std::setw(6) &lt;&lt; global_pressure_l2_norm</div>
-<div class="line"><a id="l03316" name="l03316"></a><span class="lineno"> 3316</span>                  &lt;&lt; std::setw(6) &lt;&lt; <span class="stringliteral">&quot;\t||dp||_Linfty = &quot;</span></div>
-<div class="line"><a id="l03317" name="l03317"></a><span class="lineno"> 3317</span>                  &lt;&lt; std::setprecision(display_precision)</div>
-<div class="line"><a id="l03318" name="l03318"></a><span class="lineno"> 3318</span>                  &lt;&lt; global_pressure_linfty_norm &lt;&lt; std::endl;</div>
-<div class="line"><a id="l03319" name="l03319"></a><span class="lineno"> 3319</span>    }</div>
-<div class="line"><a id="l03320" name="l03320"></a><span class="lineno"> 3320</span>  <span class="keywordflow">if</span> <span class="keyword">constexpr</span> (std::is_same_v&lt;VectorType, GlobalBlockVectorType&gt;)</div>
-<div class="line"><a id="l03321" name="l03321"></a><span class="lineno"> 3321</span>    {</div>
-<div class="line"><a id="l03322" name="l03322"></a><span class="lineno"> 3322</span>      this-&gt;pcout &lt;&lt; std::setprecision(display_precision)</div>
-<div class="line"><a id="l03323" name="l03323"></a><span class="lineno"> 3323</span>                  &lt;&lt; <span class="stringliteral">&quot;\t||du||_L2 = &quot;</span> &lt;&lt; std::setw(6)</div>
-<div class="line"><a id="l03324" name="l03324"></a><span class="lineno"> 3324</span>                  &lt;&lt; newton_update.block(0).l2_norm() &lt;&lt; std::setw(6)</div>
-<div class="line"><a id="l03325" name="l03325"></a><span class="lineno"> 3325</span>                  &lt;&lt; <span class="stringliteral">&quot;\t||du||_Linfty = &quot;</span></div>
-<div class="line"><a id="l03326" name="l03326"></a><span class="lineno"> 3326</span>                  &lt;&lt; std::setprecision(display_precision)</div>
-<div class="line"><a id="l03327" name="l03327"></a><span class="lineno"> 3327</span>                  &lt;&lt; newton_update.block(0).linfty_norm() &lt;&lt; std::endl;</div>
-<div class="line"><a id="l03328" name="l03328"></a><span class="lineno"> 3328</span>      this-&gt;pcout &lt;&lt; std::setprecision(display_precision)</div>
-<div class="line"><a id="l03329" name="l03329"></a><span class="lineno"> 3329</span>                  &lt;&lt; <span class="stringliteral">&quot;\t||dp||_L2 = &quot;</span> &lt;&lt; std::setw(6)</div>
-<div class="line"><a id="l03330" name="l03330"></a><span class="lineno"> 3330</span>                  &lt;&lt; newton_update.block(1).l2_norm() &lt;&lt; std::setw(6)</div>
-<div class="line"><a id="l03331" name="l03331"></a><span class="lineno"> 3331</span>                  &lt;&lt; <span class="stringliteral">&quot;\t||dp||_Linfty = &quot;</span></div>
-<div class="line"><a id="l03332" name="l03332"></a><span class="lineno"> 3332</span>                  &lt;&lt; std::setprecision(display_precision)</div>
-<div class="line"><a id="l03333" name="l03333"></a><span class="lineno"> 3333</span>                  &lt;&lt; newton_update.block(1).linfty_norm() &lt;&lt; std::endl;</div>
-<div class="line"><a id="l03334" name="l03334"></a><span class="lineno"> 3334</span>    }</div>
-<div class="line"><a id="l03335" name="l03335"></a><span class="lineno"> 3335</span>}</div>
+<div class="line"><a id="l03275" name="l03275"></a><span class="lineno"> 3275</span>  TimerOutput::Scope t(this-&gt;computing_timer, <span class="stringliteral">&quot;Rescale pressure&quot;</span>);</div>
+<div class="line"><a id="l03276" name="l03276"></a><span class="lineno"> 3276</span> </div>
+<div class="line"><a id="l03277" name="l03277"></a><span class="lineno"> 3277</span>  <span class="keyword">const</span> <span class="keywordtype">unsigned</span> <span class="keywordtype">int</span>                   dofs_per_cell = this-&gt;fe-&gt;dofs_per_cell;</div>
+<div class="line"><a id="l03278" name="l03278"></a><span class="lineno"> 3278</span>  std::vector&lt;types::global_dof_index&gt; local_dof_indices(dofs_per_cell);</div>
+<div class="line"><a id="l03279" name="l03279"></a><span class="lineno"> 3279</span>  <span class="comment">// Map used to keep track of which DOFs have been looped over</span></div>
+<div class="line"><a id="l03280" name="l03280"></a><span class="lineno"> 3280</span>  std::unordered_set&lt;unsigned int&gt; rescaled_dofs_set;</div>
+<div class="line"><a id="l03281" name="l03281"></a><span class="lineno"> 3281</span>  rescaled_dofs_set.clear();</div>
+<div class="line"><a id="l03282" name="l03282"></a><span class="lineno"> 3282</span>  <span class="keywordflow">for</span> (<span class="keyword">const</span> <span class="keyword">auto</span> &amp;cell : dof_handler.active_cell_iterators())</div>
+<div class="line"><a id="l03283" name="l03283"></a><span class="lineno"> 3283</span>    {</div>
+<div class="line"><a id="l03284" name="l03284"></a><span class="lineno"> 3284</span>      <span class="keywordflow">if</span> (cell-&gt;is_locally_owned() || cell-&gt;is_ghost())</div>
+<div class="line"><a id="l03285" name="l03285"></a><span class="lineno"> 3285</span>        {</div>
+<div class="line"><a id="l03286" name="l03286"></a><span class="lineno"> 3286</span>          cell-&gt;get_dof_indices(local_dof_indices);</div>
+<div class="line"><a id="l03287" name="l03287"></a><span class="lineno"> 3287</span>          <span class="keywordflow">for</span> (<span class="keywordtype">unsigned</span> <span class="keywordtype">int</span> j = 0; j &lt; local_dof_indices.size(); ++j)</div>
+<div class="line"><a id="l03288" name="l03288"></a><span class="lineno"> 3288</span>            {</div>
+<div class="line"><a id="l03289" name="l03289"></a><span class="lineno"> 3289</span>              <span class="keyword">const</span> <span class="keywordtype">unsigned</span> <span class="keywordtype">int</span> global_id = local_dof_indices[j];</div>
+<div class="line"><a id="l03290" name="l03290"></a><span class="lineno"> 3290</span>              <span class="comment">// We check if we have already checked this DOF</span></div>
+<div class="line"><a id="l03291" name="l03291"></a><span class="lineno"> 3291</span>              <span class="keyword">auto</span> iterator = rescaled_dofs_set.find(global_id);</div>
+<div class="line"><a id="l03292" name="l03292"></a><span class="lineno"> 3292</span>              <span class="keywordflow">if</span> (iterator == rescaled_dofs_set.end())</div>
+<div class="line"><a id="l03293" name="l03293"></a><span class="lineno"> 3293</span>                {</div>
+<div class="line"><a id="l03294" name="l03294"></a><span class="lineno"> 3294</span>                  <span class="keyword">const</span> <span class="keywordtype">unsigned</span> <span class="keywordtype">int</span> component_index =</div>
+<div class="line"><a id="l03295" name="l03295"></a><span class="lineno"> 3295</span>                    this-&gt;fe-&gt;system_to_component_index(j).first;</div>
+<div class="line"><a id="l03296" name="l03296"></a><span class="lineno"> 3296</span>                  <span class="keywordflow">if</span> (this-&gt;dof_handler.locally_owned_dofs().is_element(</div>
+<div class="line"><a id="l03297" name="l03297"></a><span class="lineno"> 3297</span>                        global_id) &amp;&amp;</div>
+<div class="line"><a id="l03298" name="l03298"></a><span class="lineno"> 3298</span>                      component_index == dim)</div>
+<div class="line"><a id="l03299" name="l03299"></a><span class="lineno"> 3299</span>                    {</div>
+<div class="line"><a id="l03300" name="l03300"></a><span class="lineno"> 3300</span>                      this-&gt;newton_update(global_id) =</div>
+<div class="line"><a id="l03301" name="l03301"></a><span class="lineno"> 3301</span>                        this-&gt;newton_update(global_id) *</div>
+<div class="line"><a id="l03302" name="l03302"></a><span class="lineno"> 3302</span>                        pressure_scaling_factor;</div>
+<div class="line"><a id="l03303" name="l03303"></a><span class="lineno"> 3303</span>                    }</div>
+<div class="line"><a id="l03304" name="l03304"></a><span class="lineno"> 3304</span>                  rescaled_dofs_set.insert(global_id);</div>
+<div class="line"><a id="l03305" name="l03305"></a><span class="lineno"> 3305</span>                }</div>
+<div class="line"><a id="l03306" name="l03306"></a><span class="lineno"> 3306</span>            }</div>
+<div class="line"><a id="l03307" name="l03307"></a><span class="lineno"> 3307</span>        }</div>
+<div class="line"><a id="l03308" name="l03308"></a><span class="lineno"> 3308</span>    }</div>
+<div class="line"><a id="l03309" name="l03309"></a><span class="lineno"> 3309</span>}</div>
 </div>
+<div class="line"><a id="l03310" name="l03310"></a><span class="lineno"> 3310</span> </div>
+<div class="line"><a id="l03311" name="l03311"></a><span class="lineno"> 3311</span><span class="keyword">template</span> &lt;<span class="keywordtype">int</span> dim, <span class="keyword">typename</span> VectorType, <span class="keyword">typename</span> DofsType&gt;</div>
+<div class="line"><a id="l03312" name="l03312"></a><span class="lineno"> 3312</span><span class="keywordtype">void</span></div>
+<div class="foldopen" id="foldopen03313" data-start="{" data-end="}">
+<div class="line"><a id="l03313" name="l03313"></a><span class="lineno"><a class="line" href="classNavierStokesBase.html#ae9931f481332d3cd539f3d69b748bb3c"> 3313</a></span><a class="code hl_function" href="classNavierStokesBase.html#ae9931f481332d3cd539f3d69b748bb3c">NavierStokesBase&lt;dim, VectorType, DofsType&gt;::output_newton_update_norms</a>(</div>
+<div class="line"><a id="l03314" name="l03314"></a><span class="lineno"> 3314</span>  <span class="keyword">const</span> <span class="keywordtype">unsigned</span> <span class="keywordtype">int</span> display_precision)</div>
+<div class="line"><a id="l03315" name="l03315"></a><span class="lineno"> 3315</span>{</div>
+<div class="line"><a id="l03316" name="l03316"></a><span class="lineno"> 3316</span>  TimerOutput::Scope t(this-&gt;computing_timer,</div>
+<div class="line"><a id="l03317" name="l03317"></a><span class="lineno"> 3317</span>                       <span class="stringliteral">&quot;Calculate and output norms after Newton its&quot;</span>);</div>
+<div class="line"><a id="l03318" name="l03318"></a><span class="lineno"> 3318</span> </div>
+<div class="line"><a id="l03319" name="l03319"></a><span class="lineno"> 3319</span>  <span class="keywordflow">if</span> <span class="keyword">constexpr</span> (std::is_same_v&lt;VectorType, GlobalVectorType&gt; ||</div>
+<div class="line"><a id="l03320" name="l03320"></a><span class="lineno"> 3320</span>                std::is_same_v&lt;VectorType,</div>
+<div class="line"><a id="l03321" name="l03321"></a><span class="lineno"> 3321</span>                               LinearAlgebra::distributed::Vector&lt;double&gt;&gt;)</div>
+<div class="line"><a id="l03322" name="l03322"></a><span class="lineno"> 3322</span>    {</div>
+<div class="line"><a id="l03323" name="l03323"></a><span class="lineno"> 3323</span>      FEValuesExtractors::Vector velocities(0);</div>
+<div class="line"><a id="l03324" name="l03324"></a><span class="lineno"> 3324</span>      FEValuesExtractors::Scalar <a class="code hl_enumvalue" href="physical__property__model_8h.html#a0b2c854385812ebfac83689a5c3ead58a8e7f8389b914e827058d694b31468b3a">pressure</a>(dim);</div>
+<div class="line"><a id="l03325" name="l03325"></a><span class="lineno"> 3325</span> </div>
+<div class="line"><a id="l03326" name="l03326"></a><span class="lineno"> 3326</span>      ComponentMask velocity_mask = fe-&gt;component_mask(velocities);</div>
+<div class="line"><a id="l03327" name="l03327"></a><span class="lineno"> 3327</span>      ComponentMask pressure_mask = fe-&gt;component_mask(<a class="code hl_enumvalue" href="physical__property__model_8h.html#a0b2c854385812ebfac83689a5c3ead58a8e7f8389b914e827058d694b31468b3a">pressure</a>);</div>
+<div class="line"><a id="l03328" name="l03328"></a><span class="lineno"> 3328</span> </div>
+<div class="line"><a id="l03329" name="l03329"></a><span class="lineno"> 3329</span>      <span class="keyword">const</span> std::vector&lt;IndexSet&gt; index_set_velocity =</div>
+<div class="line"><a id="l03330" name="l03330"></a><span class="lineno"> 3330</span>        DoFTools::locally_owned_dofs_per_component(dof_handler, velocity_mask);</div>
+<div class="line"><a id="l03331" name="l03331"></a><span class="lineno"> 3331</span>      <span class="keyword">const</span> std::vector&lt;IndexSet&gt; index_set_pressure =</div>
+<div class="line"><a id="l03332" name="l03332"></a><span class="lineno"> 3332</span>        DoFTools::locally_owned_dofs_per_component(dof_handler, pressure_mask);</div>
+<div class="line"><a id="l03333" name="l03333"></a><span class="lineno"> 3333</span> </div>
+<div class="line"><a id="l03334" name="l03334"></a><span class="lineno"> 3334</span>      <span class="keywordtype">double</span> local_sum = 0.0;</div>
+<div class="line"><a id="l03335" name="l03335"></a><span class="lineno"> 3335</span>      <span class="keywordtype">double</span> local_max = std::numeric_limits&lt;double&gt;::lowest();</div>
 <div class="line"><a id="l03336" name="l03336"></a><span class="lineno"> 3336</span> </div>
-<div class="line"><a id="l03337" name="l03337"></a><span class="lineno"> 3337</span><span class="keyword">template</span> &lt;<span class="keywordtype">int</span> dim, <span class="keyword">typename</span> VectorType, <span class="keyword">typename</span> DofsType&gt;</div>
-<div class="line"><a id="l03338" name="l03338"></a><span class="lineno"> 3338</span><span class="keyword">inline</span> VectorType</div>
-<div class="foldopen" id="foldopen03339" data-start="{" data-end="}">
-<div class="line"><a id="l03339" name="l03339"></a><span class="lineno"><a class="line" href="classNavierStokesBase.html#aafccb927a868ab52abb8411752067137"> 3339</a></span><a class="code hl_function" href="classNavierStokesBase.html#aafccb927a868ab52abb8411752067137">NavierStokesBase&lt;dim, VectorType, DofsType&gt;::init_temporary_vector</a>()</div>
-<div class="line"><a id="l03340" name="l03340"></a><span class="lineno"> 3340</span>{</div>
-<div class="line"><a id="l03341" name="l03341"></a><span class="lineno"> 3341</span>  VectorType tmp;</div>
-<div class="line"><a id="l03342" name="l03342"></a><span class="lineno"> 3342</span> </div>
-<div class="line"><a id="l03343" name="l03343"></a><span class="lineno"> 3343</span>  <span class="keywordflow">if</span> <span class="keyword">constexpr</span> (std::is_same_v&lt;VectorType, GlobalVectorType&gt; ||</div>
-<div class="line"><a id="l03344" name="l03344"></a><span class="lineno"> 3344</span>                std::is_same_v&lt;VectorType, GlobalBlockVectorType&gt;)</div>
-<div class="line"><a id="l03345" name="l03345"></a><span class="lineno"> 3345</span>    tmp.reinit(locally_owned_dofs, this-&gt;mpi_communicator);</div>
+<div class="line"><a id="l03337" name="l03337"></a><span class="lineno"> 3337</span>      <span class="keywordflow">for</span> (<span class="keywordtype">unsigned</span> <span class="keywordtype">int</span> d = 0; d &lt; dim; ++d)</div>
+<div class="line"><a id="l03338" name="l03338"></a><span class="lineno"> 3338</span>        {</div>
+<div class="line"><a id="l03339" name="l03339"></a><span class="lineno"> 3339</span>          <span class="keywordflow">for</span> (<span class="keyword">const</span> <span class="keyword">auto</span> &amp;j : index_set_velocity[d])</div>
+<div class="line"><a id="l03340" name="l03340"></a><span class="lineno"> 3340</span>            {</div>
+<div class="line"><a id="l03341" name="l03341"></a><span class="lineno"> 3341</span>              <span class="keywordtype">double</span> dof_newton_update = newton_update[j];</div>
+<div class="line"><a id="l03342" name="l03342"></a><span class="lineno"> 3342</span>              local_sum += dof_newton_update * dof_newton_update;</div>
+<div class="line"><a id="l03343" name="l03343"></a><span class="lineno"> 3343</span>              local_max = std::max(local_max, std::abs(dof_newton_update));</div>
+<div class="line"><a id="l03344" name="l03344"></a><span class="lineno"> 3344</span>            }</div>
+<div class="line"><a id="l03345" name="l03345"></a><span class="lineno"> 3345</span>        }</div>
 <div class="line"><a id="l03346" name="l03346"></a><span class="lineno"> 3346</span> </div>
-<div class="line"><a id="l03347" name="l03347"></a><span class="lineno"> 3347</span>  <span class="keywordflow">else</span> <span class="keywordflow">if</span> <span class="keyword">constexpr</span> (std::is_same_v&lt;VectorType,</div>
-<div class="line"><a id="l03348" name="l03348"></a><span class="lineno"> 3348</span>                                    LinearAlgebra::distributed::Vector&lt;double&gt;&gt;)</div>
-<div class="line"><a id="l03349" name="l03349"></a><span class="lineno"> 3349</span>    tmp.reinit(locally_owned_dofs,</div>
-<div class="line"><a id="l03350" name="l03350"></a><span class="lineno"> 3350</span>               locally_relevant_dofs,</div>
-<div class="line"><a id="l03351" name="l03351"></a><span class="lineno"> 3351</span>               this-&gt;mpi_communicator);</div>
-<div class="line"><a id="l03352" name="l03352"></a><span class="lineno"> 3352</span> </div>
-<div class="line"><a id="l03353" name="l03353"></a><span class="lineno"> 3353</span>  <span class="keywordflow">return</span> tmp;</div>
-<div class="line"><a id="l03354" name="l03354"></a><span class="lineno"> 3354</span>}</div>
+<div class="line"><a id="l03347" name="l03347"></a><span class="lineno"> 3347</span>      <span class="keywordtype">double</span> global_velocity_l2_norm =</div>
+<div class="line"><a id="l03348" name="l03348"></a><span class="lineno"> 3348</span>        std::sqrt(Utilities::MPI::sum(local_sum, this-&gt;mpi_communicator));</div>
+<div class="line"><a id="l03349" name="l03349"></a><span class="lineno"> 3349</span>      <span class="keywordtype">double</span> global_velocity_linfty_norm =</div>
+<div class="line"><a id="l03350" name="l03350"></a><span class="lineno"> 3350</span>        Utilities::MPI::max(local_max, this-&gt;mpi_communicator);</div>
+<div class="line"><a id="l03351" name="l03351"></a><span class="lineno"> 3351</span> </div>
+<div class="line"><a id="l03352" name="l03352"></a><span class="lineno"> 3352</span>      local_sum = 0.0;</div>
+<div class="line"><a id="l03353" name="l03353"></a><span class="lineno"> 3353</span>      local_max = std::numeric_limits&lt;double&gt;::lowest();</div>
+<div class="line"><a id="l03354" name="l03354"></a><span class="lineno"> 3354</span> </div>
+<div class="line"><a id="l03355" name="l03355"></a><span class="lineno"> 3355</span>      <span class="keywordflow">for</span> (<span class="keyword">const</span> <span class="keyword">auto</span> &amp;j : index_set_pressure[dim])</div>
+<div class="line"><a id="l03356" name="l03356"></a><span class="lineno"> 3356</span>        {</div>
+<div class="line"><a id="l03357" name="l03357"></a><span class="lineno"> 3357</span>          <span class="keywordtype">double</span> dof_newton_update = newton_update[j];</div>
+<div class="line"><a id="l03358" name="l03358"></a><span class="lineno"> 3358</span>          local_sum += dof_newton_update * dof_newton_update;</div>
+<div class="line"><a id="l03359" name="l03359"></a><span class="lineno"> 3359</span>          local_max = std::max(local_max, std::abs(dof_newton_update));</div>
+<div class="line"><a id="l03360" name="l03360"></a><span class="lineno"> 3360</span>        }</div>
+<div class="line"><a id="l03361" name="l03361"></a><span class="lineno"> 3361</span> </div>
+<div class="line"><a id="l03362" name="l03362"></a><span class="lineno"> 3362</span>      <span class="keywordtype">double</span> global_pressure_l2_norm =</div>
+<div class="line"><a id="l03363" name="l03363"></a><span class="lineno"> 3363</span>        std::sqrt(Utilities::MPI::sum(local_sum, this-&gt;mpi_communicator));</div>
+<div class="line"><a id="l03364" name="l03364"></a><span class="lineno"> 3364</span>      <span class="keywordtype">double</span> global_pressure_linfty_norm =</div>
+<div class="line"><a id="l03365" name="l03365"></a><span class="lineno"> 3365</span>        Utilities::MPI::max(local_max, this-&gt;mpi_communicator);</div>
+<div class="line"><a id="l03366" name="l03366"></a><span class="lineno"> 3366</span> </div>
+<div class="line"><a id="l03367" name="l03367"></a><span class="lineno"> 3367</span>      this-&gt;pcout &lt;&lt; std::setprecision(display_precision)</div>
+<div class="line"><a id="l03368" name="l03368"></a><span class="lineno"> 3368</span>                  &lt;&lt; <span class="stringliteral">&quot;\n\t||du||_L2 = &quot;</span> &lt;&lt; std::setw(6)</div>
+<div class="line"><a id="l03369" name="l03369"></a><span class="lineno"> 3369</span>                  &lt;&lt; global_velocity_l2_norm &lt;&lt; std::setw(6)</div>
+<div class="line"><a id="l03370" name="l03370"></a><span class="lineno"> 3370</span>                  &lt;&lt; <span class="stringliteral">&quot;\t||du||_Linfty = &quot;</span></div>
+<div class="line"><a id="l03371" name="l03371"></a><span class="lineno"> 3371</span>                  &lt;&lt; std::setprecision(display_precision)</div>
+<div class="line"><a id="l03372" name="l03372"></a><span class="lineno"> 3372</span>                  &lt;&lt; global_velocity_linfty_norm &lt;&lt; std::endl;</div>
+<div class="line"><a id="l03373" name="l03373"></a><span class="lineno"> 3373</span>      this-&gt;pcout &lt;&lt; std::setprecision(display_precision)</div>
+<div class="line"><a id="l03374" name="l03374"></a><span class="lineno"> 3374</span>                  &lt;&lt; <span class="stringliteral">&quot;\t||dp||_L2 = &quot;</span> &lt;&lt; std::setw(6) &lt;&lt; global_pressure_l2_norm</div>
+<div class="line"><a id="l03375" name="l03375"></a><span class="lineno"> 3375</span>                  &lt;&lt; std::setw(6) &lt;&lt; <span class="stringliteral">&quot;\t||dp||_Linfty = &quot;</span></div>
+<div class="line"><a id="l03376" name="l03376"></a><span class="lineno"> 3376</span>                  &lt;&lt; std::setprecision(display_precision)</div>
+<div class="line"><a id="l03377" name="l03377"></a><span class="lineno"> 3377</span>                  &lt;&lt; global_pressure_linfty_norm &lt;&lt; std::endl;</div>
+<div class="line"><a id="l03378" name="l03378"></a><span class="lineno"> 3378</span>    }</div>
+<div class="line"><a id="l03379" name="l03379"></a><span class="lineno"> 3379</span>  <span class="keywordflow">if</span> <span class="keyword">constexpr</span> (std::is_same_v&lt;VectorType, GlobalBlockVectorType&gt;)</div>
+<div class="line"><a id="l03380" name="l03380"></a><span class="lineno"> 3380</span>    {</div>
+<div class="line"><a id="l03381" name="l03381"></a><span class="lineno"> 3381</span>      this-&gt;pcout &lt;&lt; std::setprecision(display_precision)</div>
+<div class="line"><a id="l03382" name="l03382"></a><span class="lineno"> 3382</span>                  &lt;&lt; <span class="stringliteral">&quot;\t||du||_L2 = &quot;</span> &lt;&lt; std::setw(6)</div>
+<div class="line"><a id="l03383" name="l03383"></a><span class="lineno"> 3383</span>                  &lt;&lt; newton_update.block(0).l2_norm() &lt;&lt; std::setw(6)</div>
+<div class="line"><a id="l03384" name="l03384"></a><span class="lineno"> 3384</span>                  &lt;&lt; <span class="stringliteral">&quot;\t||du||_Linfty = &quot;</span></div>
+<div class="line"><a id="l03385" name="l03385"></a><span class="lineno"> 3385</span>                  &lt;&lt; std::setprecision(display_precision)</div>
+<div class="line"><a id="l03386" name="l03386"></a><span class="lineno"> 3386</span>                  &lt;&lt; newton_update.block(0).linfty_norm() &lt;&lt; std::endl;</div>
+<div class="line"><a id="l03387" name="l03387"></a><span class="lineno"> 3387</span>      this-&gt;pcout &lt;&lt; std::setprecision(display_precision)</div>
+<div class="line"><a id="l03388" name="l03388"></a><span class="lineno"> 3388</span>                  &lt;&lt; <span class="stringliteral">&quot;\t||dp||_L2 = &quot;</span> &lt;&lt; std::setw(6)</div>
+<div class="line"><a id="l03389" name="l03389"></a><span class="lineno"> 3389</span>                  &lt;&lt; newton_update.block(1).l2_norm() &lt;&lt; std::setw(6)</div>
+<div class="line"><a id="l03390" name="l03390"></a><span class="lineno"> 3390</span>                  &lt;&lt; <span class="stringliteral">&quot;\t||dp||_Linfty = &quot;</span></div>
+<div class="line"><a id="l03391" name="l03391"></a><span class="lineno"> 3391</span>                  &lt;&lt; std::setprecision(display_precision)</div>
+<div class="line"><a id="l03392" name="l03392"></a><span class="lineno"> 3392</span>                  &lt;&lt; newton_update.block(1).linfty_norm() &lt;&lt; std::endl;</div>
+<div class="line"><a id="l03393" name="l03393"></a><span class="lineno"> 3393</span>    }</div>
+<div class="line"><a id="l03394" name="l03394"></a><span class="lineno"> 3394</span>}</div>
+</div>
+<div class="line"><a id="l03395" name="l03395"></a><span class="lineno"> 3395</span> </div>
+<div class="line"><a id="l03396" name="l03396"></a><span class="lineno"> 3396</span><span class="keyword">template</span> &lt;<span class="keywordtype">int</span> dim, <span class="keyword">typename</span> VectorType, <span class="keyword">typename</span> DofsType&gt;</div>
+<div class="line"><a id="l03397" name="l03397"></a><span class="lineno"> 3397</span><span class="keyword">inline</span> VectorType</div>
+<div class="foldopen" id="foldopen03398" data-start="{" data-end="}">
+<div class="line"><a id="l03398" name="l03398"></a><span class="lineno"><a class="line" href="classNavierStokesBase.html#aafccb927a868ab52abb8411752067137"> 3398</a></span><a class="code hl_function" href="classNavierStokesBase.html#aafccb927a868ab52abb8411752067137">NavierStokesBase&lt;dim, VectorType, DofsType&gt;::init_temporary_vector</a>()</div>
+<div class="line"><a id="l03399" name="l03399"></a><span class="lineno"> 3399</span>{</div>
+<div class="line"><a id="l03400" name="l03400"></a><span class="lineno"> 3400</span>  VectorType tmp;</div>
+<div class="line"><a id="l03401" name="l03401"></a><span class="lineno"> 3401</span> </div>
+<div class="line"><a id="l03402" name="l03402"></a><span class="lineno"> 3402</span>  <span class="keywordflow">if</span> <span class="keyword">constexpr</span> (std::is_same_v&lt;VectorType, GlobalVectorType&gt; ||</div>
+<div class="line"><a id="l03403" name="l03403"></a><span class="lineno"> 3403</span>                std::is_same_v&lt;VectorType, GlobalBlockVectorType&gt;)</div>
+<div class="line"><a id="l03404" name="l03404"></a><span class="lineno"> 3404</span>    tmp.reinit(locally_owned_dofs, this-&gt;mpi_communicator);</div>
+<div class="line"><a id="l03405" name="l03405"></a><span class="lineno"> 3405</span> </div>
+<div class="line"><a id="l03406" name="l03406"></a><span class="lineno"> 3406</span>  <span class="keywordflow">else</span> <span class="keywordflow">if</span> <span class="keyword">constexpr</span> (std::is_same_v&lt;VectorType,</div>
+<div class="line"><a id="l03407" name="l03407"></a><span class="lineno"> 3407</span>                                    LinearAlgebra::distributed::Vector&lt;double&gt;&gt;)</div>
+<div class="line"><a id="l03408" name="l03408"></a><span class="lineno"> 3408</span>    tmp.reinit(locally_owned_dofs,</div>
+<div class="line"><a id="l03409" name="l03409"></a><span class="lineno"> 3409</span>               locally_relevant_dofs,</div>
+<div class="line"><a id="l03410" name="l03410"></a><span class="lineno"> 3410</span>               this-&gt;mpi_communicator);</div>
+<div class="line"><a id="l03411" name="l03411"></a><span class="lineno"> 3411</span> </div>
+<div class="line"><a id="l03412" name="l03412"></a><span class="lineno"> 3412</span>  <span class="keywordflow">return</span> tmp;</div>
+<div class="line"><a id="l03413" name="l03413"></a><span class="lineno"> 3413</span>}</div>
 </div>
 </div>
-<div class="line"><a id="l03355" name="l03355"></a><span class="lineno"> 3355</span> </div>
-<div class="line"><a id="l03356" name="l03356"></a><span class="lineno"> 3356</span><span class="comment">// Pre-compile the 2D and 3D version with the types that can occur</span></div>
-<div class="line"><a id="l03357" name="l03357"></a><span class="lineno"> 3357</span><span class="keyword">template</span> <span class="keyword">class </span><a class="code hl_class" href="classNavierStokesBase.html">NavierStokesBase&lt;2, GlobalVectorType, IndexSet&gt;</a>;</div>
-<div class="line"><a id="l03358" name="l03358"></a><span class="lineno"> 3358</span><span class="keyword">template</span> <span class="keyword">class </span><a class="code hl_class" href="classNavierStokesBase.html">NavierStokesBase&lt;3, GlobalVectorType, IndexSet&gt;</a>;</div>
-<div class="line"><a id="l03359" name="l03359"></a><span class="lineno"> 3359</span><span class="keyword">template</span> <span class="keyword">class </span><a class="code hl_class" href="classNavierStokesBase.html">NavierStokesBase</a>&lt;2,</div>
-<div class="line"><a id="l03360" name="l03360"></a><span class="lineno"> 3360</span>                                <a class="code hl_typedef" href="vector_8h.html#ac71ba75c5119edae876800f9e80b59e7">GlobalBlockVectorType</a>,</div>
-<div class="line"><a id="l03361" name="l03361"></a><span class="lineno"> 3361</span>                                std::vector&lt;IndexSet&gt;&gt;;</div>
-<div class="line"><a id="l03362" name="l03362"></a><span class="lineno"> 3362</span><span class="keyword">template</span> <span class="keyword">class </span><a class="code hl_class" href="classNavierStokesBase.html">NavierStokesBase</a>&lt;3,</div>
-<div class="line"><a id="l03363" name="l03363"></a><span class="lineno"> 3363</span>                                <a class="code hl_typedef" href="vector_8h.html#ac71ba75c5119edae876800f9e80b59e7">GlobalBlockVectorType</a>,</div>
-<div class="line"><a id="l03364" name="l03364"></a><span class="lineno"> 3364</span>                                std::vector&lt;IndexSet&gt;&gt;;</div>
-<div class="line"><a id="l03365" name="l03365"></a><span class="lineno"> 3365</span> </div>
-<div class="line"><a id="l03366" name="l03366"></a><span class="lineno"> 3366</span><span class="preprocessor">#ifndef LETHE_USE_LDV</span></div>
-<div class="line"><a id="l03367" name="l03367"></a><span class="lineno"> 3367</span><span class="keyword">template</span> <span class="keyword">class </span><a class="code hl_class" href="classNavierStokesBase.html">NavierStokesBase</a>&lt;2,</div>
-<div class="line"><a id="l03368" name="l03368"></a><span class="lineno"> 3368</span>                                LinearAlgebra::distributed::Vector&lt;double&gt;,</div>
-<div class="line"><a id="l03369" name="l03369"></a><span class="lineno"> 3369</span>                                IndexSet&gt;;</div>
-<div class="line"><a id="l03370" name="l03370"></a><span class="lineno"> 3370</span><span class="keyword">template</span> <span class="keyword">class </span><a class="code hl_class" href="classNavierStokesBase.html">NavierStokesBase</a>&lt;3,</div>
-<div class="line"><a id="l03371" name="l03371"></a><span class="lineno"> 3371</span>                                LinearAlgebra::distributed::Vector&lt;double&gt;,</div>
-<div class="line"><a id="l03372" name="l03372"></a><span class="lineno"> 3372</span>                                IndexSet&gt;;</div>
-<div class="line"><a id="l03373" name="l03373"></a><span class="lineno"> 3373</span><span class="preprocessor">#endif</span></div>
+<div class="line"><a id="l03414" name="l03414"></a><span class="lineno"> 3414</span> </div>
+<div class="line"><a id="l03415" name="l03415"></a><span class="lineno"> 3415</span><span class="comment">// Pre-compile the 2D and 3D version with the types that can occur</span></div>
+<div class="line"><a id="l03416" name="l03416"></a><span class="lineno"> 3416</span><span class="keyword">template</span> <span class="keyword">class </span><a class="code hl_class" href="classNavierStokesBase.html">NavierStokesBase&lt;2, GlobalVectorType, IndexSet&gt;</a>;</div>
+<div class="line"><a id="l03417" name="l03417"></a><span class="lineno"> 3417</span><span class="keyword">template</span> <span class="keyword">class </span><a class="code hl_class" href="classNavierStokesBase.html">NavierStokesBase&lt;3, GlobalVectorType, IndexSet&gt;</a>;</div>
+<div class="line"><a id="l03418" name="l03418"></a><span class="lineno"> 3418</span><span class="keyword">template</span> <span class="keyword">class </span><a class="code hl_class" href="classNavierStokesBase.html">NavierStokesBase</a>&lt;2,</div>
+<div class="line"><a id="l03419" name="l03419"></a><span class="lineno"> 3419</span>                                <a class="code hl_typedef" href="vector_8h.html#ac71ba75c5119edae876800f9e80b59e7">GlobalBlockVectorType</a>,</div>
+<div class="line"><a id="l03420" name="l03420"></a><span class="lineno"> 3420</span>                                std::vector&lt;IndexSet&gt;&gt;;</div>
+<div class="line"><a id="l03421" name="l03421"></a><span class="lineno"> 3421</span><span class="keyword">template</span> <span class="keyword">class </span><a class="code hl_class" href="classNavierStokesBase.html">NavierStokesBase</a>&lt;3,</div>
+<div class="line"><a id="l03422" name="l03422"></a><span class="lineno"> 3422</span>                                <a class="code hl_typedef" href="vector_8h.html#ac71ba75c5119edae876800f9e80b59e7">GlobalBlockVectorType</a>,</div>
+<div class="line"><a id="l03423" name="l03423"></a><span class="lineno"> 3423</span>                                std::vector&lt;IndexSet&gt;&gt;;</div>
+<div class="line"><a id="l03424" name="l03424"></a><span class="lineno"> 3424</span> </div>
+<div class="line"><a id="l03425" name="l03425"></a><span class="lineno"> 3425</span><span class="preprocessor">#ifndef LETHE_USE_LDV</span></div>
+<div class="line"><a id="l03426" name="l03426"></a><span class="lineno"> 3426</span><span class="keyword">template</span> <span class="keyword">class </span><a class="code hl_class" href="classNavierStokesBase.html">NavierStokesBase</a>&lt;2,</div>
+<div class="line"><a id="l03427" name="l03427"></a><span class="lineno"> 3427</span>                                LinearAlgebra::distributed::Vector&lt;double&gt;,</div>
+<div class="line"><a id="l03428" name="l03428"></a><span class="lineno"> 3428</span>                                IndexSet&gt;;</div>
+<div class="line"><a id="l03429" name="l03429"></a><span class="lineno"> 3429</span><span class="keyword">template</span> <span class="keyword">class </span><a class="code hl_class" href="classNavierStokesBase.html">NavierStokesBase</a>&lt;3,</div>
+<div class="line"><a id="l03430" name="l03430"></a><span class="lineno"> 3430</span>                                LinearAlgebra::distributed::Vector&lt;double&gt;,</div>
+<div class="line"><a id="l03431" name="l03431"></a><span class="lineno"> 3431</span>                                IndexSet&gt;;</div>
+<div class="line"><a id="l03432" name="l03432"></a><span class="lineno"> 3432</span><span class="preprocessor">#endif</span></div>
 </div>
 </div>
 </div>
@@ -3647,11 +3706,11 @@ $(document).ready(function() { init_codefold(0); });
 <div class="ttc" id="aclassNavierStokesBase_html_a2e70d0d25d79a976fc1e7525a929387f"><div class="ttname"><a href="classNavierStokesBase.html#a2e70d0d25d79a976fc1e7525a929387f">NavierStokesBase::sdirk_vectors</a></div><div class="ttdeci">SDIRKVectors sdirk_vectors</div><div class="ttdoc">Instance of SDIRK-related vectors.</div><div class="ttdef"><b>Definition</b> <a href="navier__stokes__base_8h_source.html#l00993">navier_stokes_base.h:993</a></div></div>
 <div class="ttc" id="aclassNavierStokesBase_html_a32a985422800ef01885690e3f73b84a4"><div class="ttname"><a href="classNavierStokesBase.html#a32a985422800ef01885690e3f73b84a4">NavierStokesBase::NavierStokesBase</a></div><div class="ttdeci">NavierStokesBase(SimulationParameters&lt; dim &gt; &amp;nsparam)</div><div class="ttdef"><b>Definition</b> <a href="navier__stokes__base_8cc_source.html#l00047">navier_stokes_base.cc:47</a></div></div>
 <div class="ttc" id="aclassNavierStokesBase_html_a35c9c6536d1c7c4f7dc905de1a6eb630"><div class="ttname"><a href="classNavierStokesBase.html#a35c9c6536d1c7c4f7dc905de1a6eb630">NavierStokesBase::number_quadrature_points</a></div><div class="ttdeci">unsigned int number_quadrature_points</div><div class="ttdef"><b>Definition</b> <a href="navier__stokes__base_8h_source.html#l00998">navier_stokes_base.h:998</a></div></div>
-<div class="ttc" id="aclassNavierStokesBase_html_a3f9917c78ef75a806167db64cfd2227a"><div class="ttname"><a href="classNavierStokesBase.html#a3f9917c78ef75a806167db64cfd2227a">NavierStokesBase::rescale_pressure_dofs_in_newton_update</a></div><div class="ttdeci">void rescale_pressure_dofs_in_newton_update()</div><div class="ttdoc">This function is used to rescale pressure DOFs in the newton correction.</div><div class="ttdef"><b>Definition</b> <a href="navier__stokes__base_8cc_source.html#l03206">navier_stokes_base.cc:3207</a></div></div>
+<div class="ttc" id="aclassNavierStokesBase_html_a3f9917c78ef75a806167db64cfd2227a"><div class="ttname"><a href="classNavierStokesBase.html#a3f9917c78ef75a806167db64cfd2227a">NavierStokesBase::rescale_pressure_dofs_in_newton_update</a></div><div class="ttdeci">void rescale_pressure_dofs_in_newton_update()</div><div class="ttdoc">This function is used to rescale pressure DOFs in the newton correction.</div><div class="ttdef"><b>Definition</b> <a href="navier__stokes__base_8cc_source.html#l03265">navier_stokes_base.cc:3266</a></div></div>
 <div class="ttc" id="aclassNavierStokesBase_html_a42a93d1b332da6a4bd52b9540b24012c"><div class="ttname"><a href="classNavierStokesBase.html#a42a93d1b332da6a4bd52b9540b24012c">NavierStokesBase::constrain_stasis_with_temperature_vof</a></div><div class="ttdeci">void constrain_stasis_with_temperature_vof(const DoFHandler&lt; dim &gt; *dof_handler_vof, const DoFHandler&lt; dim &gt; *dof_handler_ht)</div><div class="ttdoc">Constrain fluids' subdomains according to the temperature field to null velocity and pressure fields ...</div><div class="ttdef"><b>Definition</b> <a href="navier__stokes__base_8cc_source.html#l02600">navier_stokes_base.cc:2601</a></div></div>
-<div class="ttc" id="aclassNavierStokesBase_html_a48c7c046a1b2395bcc368792b7deca13"><div class="ttname"><a href="classNavierStokesBase.html#a48c7c046a1b2395bcc368792b7deca13">NavierStokesBase::write_output_torques</a></div><div class="ttdeci">void write_output_torques()</div><div class="ttdoc">Writes the torques per boundary condition to a text file output.</div><div class="ttdef"><b>Definition</b> <a href="navier__stokes__base_8cc_source.html#l03064">navier_stokes_base.cc:3064</a></div></div>
+<div class="ttc" id="aclassNavierStokesBase_html_a48c7c046a1b2395bcc368792b7deca13"><div class="ttname"><a href="classNavierStokesBase.html#a48c7c046a1b2395bcc368792b7deca13">NavierStokesBase::write_output_torques</a></div><div class="ttdeci">void write_output_torques()</div><div class="ttdoc">Writes the torques per boundary condition to a text file output.</div><div class="ttdef"><b>Definition</b> <a href="navier__stokes__base_8cc_source.html#l03123">navier_stokes_base.cc:3123</a></div></div>
 <div class="ttc" id="aclassNavierStokesBase_html_a490b6390dbe8b3ad9b045f6127e5406e"><div class="ttname"><a href="classNavierStokesBase.html#a490b6390dbe8b3ad9b045f6127e5406e">NavierStokesBase::face_quadrature</a></div><div class="ttdeci">std::shared_ptr&lt; Quadrature&lt; dim - 1 &gt; &gt; face_quadrature</div><div class="ttdef"><b>Definition</b> <a href="navier__stokes__base_8h_source.html#l01003">navier_stokes_base.h:1003</a></div></div>
-<div class="ttc" id="aclassNavierStokesBase_html_a4e9feead6145031632d44698801fb644"><div class="ttname"><a href="classNavierStokesBase.html#a4e9feead6145031632d44698801fb644">NavierStokesBase::write_output_forces</a></div><div class="ttdeci">void write_output_forces()</div><div class="ttdoc">Writes the forces per boundary condition to a text file output.</div><div class="ttdef"><b>Definition</b> <a href="navier__stokes__base_8cc_source.html#l03043">navier_stokes_base.cc:3043</a></div></div>
+<div class="ttc" id="aclassNavierStokesBase_html_a4e9feead6145031632d44698801fb644"><div class="ttname"><a href="classNavierStokesBase.html#a4e9feead6145031632d44698801fb644">NavierStokesBase::write_output_forces</a></div><div class="ttdeci">void write_output_forces()</div><div class="ttdoc">Writes the forces per boundary condition to a text file output.</div><div class="ttdef"><b>Definition</b> <a href="navier__stokes__base_8cc_source.html#l03102">navier_stokes_base.cc:3102</a></div></div>
 <div class="ttc" id="aclassNavierStokesBase_html_a4ee71a3ce475f7e264274eae9b2e57f8"><div class="ttname"><a href="classNavierStokesBase.html#a4ee71a3ce475f7e264274eae9b2e57f8">NavierStokesBase::transfer_solution</a></div><div class="ttdeci">void transfer_solution(SolutionTransfer&lt; dim, VectorType &gt; &amp;solution_transfer, std::vector&lt; SolutionTransfer&lt; dim, VectorType &gt; &gt; &amp;previous_solutions_transfer)</div><div class="ttdoc">Transfer solution after mesh refinement.</div><div class="ttdef"><b>Definition</b> <a href="navier__stokes__base_8cc_source.html#l01375">navier_stokes_base.cc:1375</a></div></div>
 <div class="ttc" id="aclassNavierStokesBase_html_a5507a275572e5e3b51da1afdc6ca2765"><div class="ttname"><a href="classNavierStokesBase.html#a5507a275572e5e3b51da1afdc6ca2765">NavierStokesBase::dof_handler</a></div><div class="ttdeci">DoFHandler&lt; dim &gt; dof_handler</div><div class="ttdef"><b>Definition</b> <a href="navier__stokes__base_8h_source.html#l00940">navier_stokes_base.h:940</a></div></div>
 <div class="ttc" id="aclassNavierStokesBase_html_a57ffa198f9fabb15e3af4c9fa2921e18"><div class="ttname"><a href="classNavierStokesBase.html#a57ffa198f9fabb15e3af4c9fa2921e18">NavierStokesBase::refine_mesh</a></div><div class="ttdeci">virtual void refine_mesh()</div><div class="ttdoc">Allow the refinement of the mesh according to one of the 2 methods proposed.</div><div class="ttdef"><b>Definition</b> <a href="navier__stokes__base_8cc_source.html#l00855">navier_stokes_base.cc:855</a></div></div>
@@ -3673,7 +3732,7 @@ $(document).ready(function() { init_codefold(0); });
 <div class="ttc" id="aclassNavierStokesBase_html_aab5e1ddc5b125318c547187f880e5fad"><div class="ttname"><a href="classNavierStokesBase.html#aab5e1ddc5b125318c547187f880e5fad">NavierStokesBase::establish_solid_domain</a></div><div class="ttdeci">void establish_solid_domain(const bool non_zero_constraints)</div><div class="ttdoc">Turn regions of the mesh where the material_id&gt;0 into a solid block by injecting velocity and pressur...</div><div class="ttdef"><b>Definition</b> <a href="navier__stokes__base_8cc_source.html#l02470">navier_stokes_base.cc:2470</a></div></div>
 <div class="ttc" id="aclassNavierStokesBase_html_aae8593566e552e78506f88d9d9ca9885"><div class="ttname"><a href="classNavierStokesBase.html#aae8593566e552e78506f88d9d9ca9885">NavierStokesBase::forcing_function</a></div><div class="ttdeci">std::shared_ptr&lt; Function&lt; dim &gt; &gt; forcing_function</div><div class="ttdef"><b>Definition</b> <a href="navier__stokes__base_8h_source.html#l00950">navier_stokes_base.h:950</a></div></div>
 <div class="ttc" id="aclassNavierStokesBase_html_aaebb2c81bd4185fe345831f6eefe4f19"><div class="ttname"><a href="classNavierStokesBase.html#aaebb2c81bd4185fe345831f6eefe4f19">NavierStokesBase::previous_solutions</a></div><div class="ttdeci">std::vector&lt; VectorType &gt; previous_solutions</div><div class="ttdef"><b>Definition</b> <a href="navier__stokes__base_8h_source.html#l00967">navier_stokes_base.h:967</a></div></div>
-<div class="ttc" id="aclassNavierStokesBase_html_aafccb927a868ab52abb8411752067137"><div class="ttname"><a href="classNavierStokesBase.html#aafccb927a868ab52abb8411752067137">NavierStokesBase::init_temporary_vector</a></div><div class="ttdeci">VectorType init_temporary_vector()</div><div class="ttdoc">This function initializes correctly a temporary vector depending on the vector type.</div><div class="ttdef"><b>Definition</b> <a href="navier__stokes__base_8cc_source.html#l03339">navier_stokes_base.cc:3339</a></div></div>
+<div class="ttc" id="aclassNavierStokesBase_html_aafccb927a868ab52abb8411752067137"><div class="ttname"><a href="classNavierStokesBase.html#aafccb927a868ab52abb8411752067137">NavierStokesBase::init_temporary_vector</a></div><div class="ttdeci">VectorType init_temporary_vector()</div><div class="ttdoc">This function initializes correctly a temporary vector depending on the vector type.</div><div class="ttdef"><b>Definition</b> <a href="navier__stokes__base_8cc_source.html#l03398">navier_stokes_base.cc:3398</a></div></div>
 <div class="ttc" id="aclassNavierStokesBase_html_ab038a3890e972dcf3fbcd8b57f4b06a1"><div class="ttname"><a href="classNavierStokesBase.html#ab038a3890e972dcf3fbcd8b57f4b06a1">NavierStokesBase::simulation_control</a></div><div class="ttdeci">std::shared_ptr&lt; SimulationControl &gt; simulation_control</div><div class="ttdef"><b>Definition</b> <a href="navier__stokes__base_8h_source.html#l01021">navier_stokes_base.h:1021</a></div></div>
 <div class="ttc" id="aclassNavierStokesBase_html_ab16d1c2bea5ff819500595d94ef240ae"><div class="ttname"><a href="classNavierStokesBase.html#ab16d1c2bea5ff819500595d94ef240ae">NavierStokesBase::update_boundary_conditions</a></div><div class="ttdeci">void update_boundary_conditions()</div><div class="ttdoc">Update non-zero constraints if the boundary is time dependent. Note: not implemented for the block fl...</div><div class="ttdef"><b>Definition</b> <a href="navier__stokes__base_8cc_source.html#l02216">navier_stokes_base.cc:2216</a></div></div>
 <div class="ttc" id="aclassNavierStokesBase_html_ab51c98b276b35c1d5861fba16b724914"><div class="ttname"><a href="classNavierStokesBase.html#ab51c98b276b35c1d5861fba16b724914">NavierStokesBase::gather_output_hook</a></div><div class="ttdeci">virtual std::vector&lt; OutputStruct&lt; dim, VectorType &gt; &gt; gather_output_hook()</div><div class="ttdoc">Gather and return vector of output structs that are particular to some applications.</div><div class="ttdef"><b>Definition</b> <a href="navier__stokes__base_8cc_source.html#l02711">navier_stokes_base.cc:2711</a></div></div>
@@ -3684,10 +3743,10 @@ $(document).ready(function() { init_codefold(0); });
 <div class="ttc" id="aclassNavierStokesBase_html_adec3bd335a2baef8a6409cf34ffd8a02"><div class="ttname"><a href="classNavierStokesBase.html#adec3bd335a2baef8a6409cf34ffd8a02">NavierStokesBase::average_velocities</a></div><div class="ttdeci">std::shared_ptr&lt; AverageVelocities&lt; dim, VectorType, DofsType &gt; &gt; average_velocities</div><div class="ttdef"><b>Definition</b> <a href="navier__stokes__base_8h_source.html#l01032">navier_stokes_base.h:1032</a></div></div>
 <div class="ttc" id="aclassNavierStokesBase_html_ae031b81c4ac8c604c2ed5537a99b8525"><div class="ttname"><a href="classNavierStokesBase.html#ae031b81c4ac8c604c2ed5537a99b8525">NavierStokesBase::mapping</a></div><div class="ttdeci">std::shared_ptr&lt; Mapping&lt; dim &gt; &gt; mapping</div><div class="ttdef"><b>Definition</b> <a href="navier__stokes__base_8h_source.html#l01001">navier_stokes_base.h:1001</a></div></div>
 <div class="ttc" id="aclassNavierStokesBase_html_ae7e650e71ee42e4afc19a6c3de676d47"><div class="ttname"><a href="classNavierStokesBase.html#ae7e650e71ee42e4afc19a6c3de676d47">NavierStokesBase::identify_cell_and_constrain_velocity</a></div><div class="ttdeci">void identify_cell_and_constrain_velocity(const std::vector&lt; types::global_dof_index &gt; &amp;local_dof_indices, const std::vector&lt; double &gt; &amp;local_temperature_values, StasisConstraintWithTemperature &amp;stasis_constraint_struct)</div><div class="ttdoc">Identify if temperature DOFs of the cell are within the constraining range. If they are,...</div><div class="ttdef"><b>Definition</b> <a href="navier__stokes__base_8cc_source.html#l02691">navier_stokes_base.cc:2692</a></div></div>
-<div class="ttc" id="aclassNavierStokesBase_html_ae9931f481332d3cd539f3d69b748bb3c"><div class="ttname"><a href="classNavierStokesBase.html#ae9931f481332d3cd539f3d69b748bb3c">NavierStokesBase::output_newton_update_norms</a></div><div class="ttdeci">virtual void output_newton_update_norms(const unsigned int display_precision) override</div><div class="ttdoc">Output the L2 and Linfty norms of the correction vector.</div><div class="ttdef"><b>Definition</b> <a href="navier__stokes__base_8cc_source.html#l03254">navier_stokes_base.cc:3254</a></div></div>
+<div class="ttc" id="aclassNavierStokesBase_html_ae9931f481332d3cd539f3d69b748bb3c"><div class="ttname"><a href="classNavierStokesBase.html#ae9931f481332d3cd539f3d69b748bb3c">NavierStokesBase::output_newton_update_norms</a></div><div class="ttdeci">virtual void output_newton_update_norms(const unsigned int display_precision) override</div><div class="ttdoc">Output the L2 and Linfty norms of the correction vector.</div><div class="ttdef"><b>Definition</b> <a href="navier__stokes__base_8cc_source.html#l03313">navier_stokes_base.cc:3313</a></div></div>
 <div class="ttc" id="aclassNavierStokesBase_html_aeac63e5c8291a3e2314914f1605969ff"><div class="ttname"><a href="classNavierStokesBase.html#aeac63e5c8291a3e2314914f1605969ff">NavierStokesBase::postprocessing_forces</a></div><div class="ttdeci">void postprocessing_forces(const VectorType &amp;evaluation_point)</div><div class="ttdoc">Post-processing function Outputs the forces acting on each boundary condition.</div><div class="ttdef"><b>Definition</b> <a href="navier__stokes__base_8cc_source.html#l00269">navier_stokes_base.cc:269</a></div></div>
 <div class="ttc" id="aclassNavierStokesBase_html_aeb87f64fdec14f17932119507195c5d4"><div class="ttname"><a href="classNavierStokesBase.html#aeb87f64fdec14f17932119507195c5d4">NavierStokesBase::set_nodal_values</a></div><div class="ttdeci">void set_nodal_values()</div><div class="ttdoc">Set the nodal values of velocity and pressure.</div><div class="ttdef"><b>Definition</b> <a href="navier__stokes__base_8cc_source.html#l01862">navier_stokes_base.cc:1862</a></div></div>
-<div class="ttc" id="aclassNavierStokesBase_html_af311920c0b819b973d410db4fa5e8924"><div class="ttname"><a href="classNavierStokesBase.html#af311920c0b819b973d410db4fa5e8924">NavierStokesBase::write_checkpoint</a></div><div class="ttdeci">virtual void write_checkpoint()</div><div class="ttdoc">Write the checkpoint.</div><div class="ttdef"><b>Definition</b> <a href="navier__stokes__base_8cc_source.html#l03085">navier_stokes_base.cc:3085</a></div></div>
+<div class="ttc" id="aclassNavierStokesBase_html_af311920c0b819b973d410db4fa5e8924"><div class="ttname"><a href="classNavierStokesBase.html#af311920c0b819b973d410db4fa5e8924">NavierStokesBase::write_checkpoint</a></div><div class="ttdeci">virtual void write_checkpoint()</div><div class="ttdoc">Write the checkpoint.</div><div class="ttdef"><b>Definition</b> <a href="navier__stokes__base_8cc_source.html#l03144">navier_stokes_base.cc:3144</a></div></div>
 <div class="ttc" id="aclassNavierStokesBase_html_af492303f9bc9d2d0dea209d9670d488e"><div class="ttname"><a href="classNavierStokesBase.html#af492303f9bc9d2d0dea209d9670d488e">NavierStokesBase::triangulation</a></div><div class="ttdeci">std::shared_ptr&lt; parallel::DistributedTriangulationBase&lt; dim &gt; &gt; triangulation</div><div class="ttdef"><b>Definition</b> <a href="navier__stokes__base_8h_source.html#l00939">navier_stokes_base.h:939</a></div></div>
 <div class="ttc" id="aclassNavierStokesBase_html_afa90a27f0f9f032a90a50ee3cda0b0c4"><div class="ttname"><a href="classNavierStokesBase.html#afa90a27f0f9f032a90a50ee3cda0b0c4">NavierStokesBase::reinit_mortar_operators</a></div><div class="ttdeci">void reinit_mortar_operators()</div><div class="ttdoc">Initialize mortar coupling manager, operator, and evaluator.</div><div class="ttdef"><b>Definition</b> <a href="navier__stokes__base_8cc_source.html#l02128">navier_stokes_base.cc:2128</a></div></div>
 <div class="ttc" id="aclassNavierStokesBase_html_afaf7533591c43bdf8ad840a7338dda74"><div class="ttname"><a href="classNavierStokesBase.html#afaf7533591c43bdf8ad840a7338dda74">NavierStokesBase::velocity_fem_degree</a></div><div class="ttdeci">const unsigned int velocity_fem_degree</div><div class="ttdef"><b>Definition</b> <a href="navier__stokes__base_8h_source.html#l00996">navier_stokes_base.h:996</a></div></div>
@@ -3731,7 +3790,7 @@ $(document).ready(function() { init_codefold(0); });
 <div class="ttc" id="anamespaceParameters_html_ad408350a21239600add83c5e91fcfa26a2c7aea4237e25b4f8ee3b0bf77d6fed0"><div class="ttname"><a href="namespaceParameters.html#ad408350a21239600add83c5e91fcfa26a2c7aea4237e25b4f8ee3b0bf77d6fed0">Parameters::Verbosity::verbose</a></div><div class="ttdeci">@ verbose</div></div>
 <div class="ttc" id="anamespaceParameters_html_ad408350a21239600add83c5e91fcfa26a556966c7830465dc4623d62e32cec31d"><div class="ttname"><a href="namespaceParameters.html#ad408350a21239600add83c5e91fcfa26a556966c7830465dc4623d62e32cec31d">Parameters::Verbosity::quiet</a></div><div class="ttdeci">@ quiet</div></div>
 <div class="ttc" id="anavier__stokes__base_8h_html"><div class="ttname"><a href="navier__stokes__base_8h.html">navier_stokes_base.h</a></div></div>
-<div class="ttc" id="aoutput__struct_8h_html_a24c1f4e015db04387ac9c28a58ee7378"><div class="ttname"><a href="output__struct_8h.html#a24c1f4e015db04387ac9c28a58ee7378">OutputStruct</a></div><div class="ttdeci">std::variant&lt; OutputStructPostprocessor&lt; dim, VectorType &gt;, OutputStructSolution&lt; dim, VectorType &gt;, OutputStructCellVector &gt; OutputStruct</div><div class="ttdoc">Variant handler of the two output structs (OutputStructPostprocessor and OutputStructDoFHandler)....</div><div class="ttdef"><b>Definition</b> <a href="output__struct_8h_source.html#l00110">output_struct.h:112</a></div></div>
+<div class="ttc" id="aoutput__struct_8h_html_a24c1f4e015db04387ac9c28a58ee7378"><div class="ttname"><a href="output__struct_8h.html#a24c1f4e015db04387ac9c28a58ee7378">OutputStruct</a></div><div class="ttdeci">std::variant&lt; OutputStructPostprocessor&lt; dim, VectorType &gt;, OutputStructSolution&lt; dim, VectorType &gt;, OutputStructCellVector &gt; OutputStruct</div><div class="ttdoc">Variant handler of the three output structs (OutputStructPostprocessor, OutputStructSolution and Outp...</div><div class="ttdef"><b>Definition</b> <a href="output__struct_8h_source.html#l00112">output_struct.h:114</a></div></div>
 <div class="ttc" id="aphysical__property__model_8h_html_a0b2c854385812ebfac83689a5c3ead58a8e7f8389b914e827058d694b31468b3a"><div class="ttname"><a href="physical__property__model_8h.html#a0b2c854385812ebfac83689a5c3ead58a8e7f8389b914e827058d694b31468b3a">pressure</a></div><div class="ttdeci">@ pressure</div><div class="ttdef"><b>Definition</b> <a href="physical__property__model_8h_source.html#l00043">physical_property_model.h:43</a></div></div>
 <div class="ttc" id="aphysical__property__model_8h_html_a0b2c854385812ebfac83689a5c3ead58a9922a43d37bee3212593f77ce4ec82f3"><div class="ttname"><a href="physical__property__model_8h.html#a0b2c854385812ebfac83689a5c3ead58a9922a43d37bee3212593f77ce4ec82f3">temperature</a></div><div class="ttdeci">@ temperature</div><div class="ttdef"><b>Definition</b> <a href="physical__property__model_8h_source.html#l00040">physical_property_model.h:40</a></div></div>
 <div class="ttc" id="apostprocessing__cfd_8h_html"><div class="ttname"><a href="postprocessing__cfd_8h.html">postprocessing_cfd.h</a></div></div>
