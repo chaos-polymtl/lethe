@@ -149,7 +149,7 @@ RayTracingSolver<dim>::load_balance()
   photon_handler.prepare_for_coarsening_and_refinement();
   particle_handler.prepare_for_coarsening_and_refinement();
 
-  pcout << "-->Repartitionning triangulation" << std::endl;
+  pcout << "-->Repartitioning triangulation" << std::endl;
   triangulation.repartition();
 
   // Unpack the photon handler after the mesh has been repartitioned
@@ -214,7 +214,7 @@ RayTracingSolver<dim>::insert_particles_and_photons()
                                     triangulation,
                                     dem_parameters);
 
-  // A vector of vectors, which contains all the properties of every photons.
+  // A vector of vectors, which contains all the properties of every photon.
   std::vector<Point<3>> insertion_points_on_proc;
 
   // For each photon, we store the initial location of the photon as a particle
@@ -302,7 +302,7 @@ RayTracingSolver<dim>::insert_particles_and_photons()
     parameters.ray_tracing_info.max_insertion_offset,
     parameters.ray_tracing_info.prn_seed_photon_insertion);
 
-  // Create the insertion location of every photons from their IDs.
+  // Create the insertion location of every photon from their IDs.
   // Temporary variable
   Point<3>            temp_point;
   Tensor<1, 3>        temp_dir;
@@ -387,11 +387,12 @@ RayTracingSolver<dim>::write_output_results(
 {
   // Flatten local points into a buffer of chars (text format)
   std::ostringstream oss;
+  if (this_mpi_process == 0)
+    oss << "x, y, z\n";
+
   for (const auto &p : points)
     {
-      for (unsigned int d = 0; d < dim; ++d)
-        oss << p[d] << " ";
-      oss << "\n";
+      oss << p[0] << "," <<  p[1] << "," << p[2] << "\n";
     }
 
   std::string local_str  = oss.str();
