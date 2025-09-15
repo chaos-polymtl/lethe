@@ -19,7 +19,6 @@
 #include <core/vector.h>
 
 #include <solvers/auxiliary_physics.h>
-#include <solvers/output_struct.h>
 
 #include <deal.II/base/exceptions.h>
 
