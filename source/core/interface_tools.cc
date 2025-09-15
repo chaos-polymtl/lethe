@@ -1408,12 +1408,12 @@ InterfaceTools::SignedDistanceSolver<dim, VectorType>::gather_output_hook()
   std::vector<DataComponentInterpretation::DataComponentInterpretation>
     solution_data_component_interpretation(
       1, DataComponentInterpretation::component_is_scalar);
-  OutputStructSolution<dim, GlobalVectorType> output_struct(
+  solution_output_structs.emplace_back(
+    std::in_place_type<OutputStructSolution<dim, GlobalVectorType>>,
     this->dof_handler,
     this->signed_distance_output,
     solution_names,
     solution_data_component_interpretation);
-  solution_output_structs.push_back(output_struct);
 
   return solution_output_structs;
 }

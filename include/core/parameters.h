@@ -1865,10 +1865,10 @@ namespace Parameters
         return vector_of_string;
       }
 
-        AssertThrow(false,
-                    ExcMessage("Error: convert_string_to_vector only works for "
-                               "int, double and string types."));
-      
+    AssertThrow(false,
+                ExcMessage("Error: convert_string_to_vector only works for "
+                           "int, double and string types."));
+
     return std::vector<T>();
   }
 
