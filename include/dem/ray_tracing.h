@@ -61,9 +61,9 @@ private:
    * @brief Print information about the photons that have been inserted during an
    * insertion time step.
    *
-   * @param inserted_photon Number of inserted photon at the start of the
+   * @param[in] inserted_photon Number of inserted photon at the start of the
    * simulation.
-   * @param pcout Printing in parallel
+   * @param[in] pcout Printing in parallel
    */
   void
   print_insertion_info(const unsigned int       &inserted_photon,
@@ -78,6 +78,11 @@ private:
 
   /**
    * @brief Generate the output file of the particle ray tracing in parallel.
+   *
+   * @param[in] points Vector of points containing every intersection points
+   * between photons and particles.
+   * @param[in] folder The folder where the output file is written.
+   * @param[in] file_name The name of the output file.
    */
   void
   write_output_results(const std::vector<Point<dim>> &points,
@@ -87,10 +92,30 @@ private:
   /**
    * @brief Execute the last post-processing at the end of the simulation and
    * output test results if necessary.
+   *
+   * @param[in] intersection_points Vector of points containing every intersection
+   * between photons and particles.
    */
   void
   finish_simulation(std::vector<Point<3>> &intersection_points);
 
+  /**
+   * @brief Execute the ray tracing algorithm to find intersection points between
+   * photons and particles.
+   *
+   * @tparam move_photon Boolean to indicate if the photon should move at the
+   * end of the loop. This is set to true when the loop is done on the local cell
+   * neighboring list.
+   *
+   * @param[in] cell_list Data structure containing the local or ghost neighboring cell
+   * to each local cell in the triangulation.
+   * @param[in,out] photon_intersection_points_map A map containing information
+   * about each intersection point found during the ray tracing. The key of the
+   * map is the particle index of the photon. The value is a tuple containing
+   * the distance between the initial location of the photon and the intersection
+   * point, the intersection point and an iterator to the photon that needs to be
+   * removed.
+   */
 
   template <bool move_photon>
   void
