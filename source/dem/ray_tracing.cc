@@ -266,7 +266,6 @@ RayTracingSolver<dim>::insert_particles_and_photons()
   const unsigned int n_photons_to_insert_this_proc =
     base_photons_per_proc + (this_mpi_process < remainder ? 1 : 0);
 
-
   // First and last photon id on this processor. This will be used to find the
   // position of the photons.
   const unsigned int first_id =
@@ -365,7 +364,6 @@ RayTracingSolver<dim>::insert_particles_and_photons()
     triangulation, IteratorFilters::LocallyOwnedCell());
   const auto global_bounding_boxes =
     Utilities::MPI::all_gather(communicator, my_bounding_box);
-
 
   // Insert the photons using the points and the assigned properties.
   photon_handler.insert_global_particles(insertion_points_on_proc,
@@ -529,8 +527,7 @@ RayTracingSolver<dim>::find_intersection(
                   const double particle_diameter =
                     current_particle
                       ->get_properties()[DEMProperties::PropertiesIndex::dp];
-
-
+                  
                   current_intersection_points =
                     LetheGridTools::find_line_sphere_intersection(
                       photon_insertion_point,
