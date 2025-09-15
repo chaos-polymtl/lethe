@@ -116,7 +116,6 @@ private:
    * point, the intersection point and an iterator to the photon that needs to be
    * removed.
    */
-
   template <bool move_photon>
   void
   find_intersection(
@@ -211,7 +210,6 @@ private:
     particle_insertion_object;
 
   double displacement_distance;
-
 
   /**
    * @brief Container that shows the local/ghost neighbor cells of all local
