@@ -102,9 +102,11 @@ struct OutputStructCellVector
 };
 
 /**
- * @brief Variant handler of the two output structs (OutputStructPostprocessor and OutputStructDoFHandler).
- * This is used to allow the output of both postprocessors and DoF handlers in a
- * single vector of OutputStruct.
+ * @brief Variant handler of the three output structs
+ * (OutputStructPostprocessor, OutputStructSolution and OutputStructCellVector).
+ * This is used to allow the output of both postprocessors with their respective
+ * DoF handlers, and the straightforward cell data struct in a single vector of
+ * OutputStruct.
  */
 template <int dim, typename VectorType>
 using OutputStruct = std::variant<OutputStructPostprocessor<dim, VectorType>,
