@@ -1836,7 +1836,6 @@ namespace Parameters
                           Patterns::List(Patterns::Double(), 3, 3, ":"),
                           "Number of inserted photon in each direction.");
 
-
         // In which direction photons will move considering a photon maximum
         // angle offset equal to 0.
         prm.declare_entry("reference displacement vector",
@@ -1904,7 +1903,6 @@ namespace Parameters
               prm.get("distance between photons on insertion per direction"),
               ":"));
 
-
         // We always use 3d tensor even in a dim=2 simulation. Still, we want to
         // make sure the user write 2d tensor in the prm when the simulation is
         // in 2d. Those tensors will be but in 3d afterward.
@@ -1938,8 +1936,7 @@ namespace Parameters
               Utilities::string_to_double(
                 step_between_photon_per_direction_strings.at(i)));
           }
-
-
+        // Reference displacement unit tensor
         ref_displacement_tensor_unit =
           tensor_nd_to_3d(value_string_to_tensor<dim>(
             prm.get("reference displacement vector")));
