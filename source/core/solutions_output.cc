@@ -1,4 +1,4 @@
-// SPDX-FileCopyrightText: Copyright (c) 2020, 2022-2024 The Lethe Authors
+// SPDX-FileCopyrightText: Copyright (c) 2020, 2022-2025 The Lethe Authors
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
 // dealii includes
@@ -9,7 +9,6 @@
 #include <core/manifolds.h>
 #include <core/pvd_handler.h>
 #include <core/solutions_output.h>
-
 
 // Std
 #include <fstream>

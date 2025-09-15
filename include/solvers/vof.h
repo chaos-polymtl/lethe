@@ -89,11 +89,12 @@ public:
   assemble_rhs();
 
   /**
-   * @brief Attach the solution vector to the DataOut provided. This function
-   * enable the auxiliary physics to output their solution via the core solver.
+   * @brief Gather and return vector of output structs that are particular to some applications.
+   *
+   * @return Vector of OutputStructs that will be used to write the output results as VTU files.
    */
-  void
-  attach_solution_to_output(DataOut<dim> &data_out) override;
+  virtual std::vector<OutputStruct<dim, GlobalVectorType>>
+  gather_output_hook() override;
 
   /**
    * @brief Calculates the L2 error of the solution

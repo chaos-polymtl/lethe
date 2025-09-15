@@ -1,4 +1,4 @@
-// SPDX-FileCopyrightText: Copyright (c) 2021-2024 The Lethe Authors
+// SPDX-FileCopyrightText: Copyright (c) 2021-2025 The Lethe Authors
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
 /*
@@ -180,23 +180,45 @@ public:
     block_physics[physics_id]->modify_solution();
   }
 
-
   /**
-   * @brief Call the attachment of the solution vector to the data out for enabled
-   * auxiliary physics.
+   * @brief Gather and return vector of output structs that are particular to some applications.
+   *
+   * @return Vector of OutputStructs that will be used to write the output results as VTU files. This is a variant for GlobalVectorType.
    */
-  void
-  attach_solution_to_output(DataOut<dim> &data_out)
-
+  std::vector<OutputStruct<dim, GlobalVectorType>>
+  gather_output_hook_global_vector()
   {
+    std::vector<OutputStruct<dim, GlobalVectorType>> solution_output_structs;
     for (auto &iphys : physics)
       {
-        iphys.second->attach_solution_to_output(data_out);
+        std::vector<OutputStruct<dim, GlobalVectorType>> output_structs =
+          iphys.second->gather_output_hook();
+        for (auto &output_struct : output_structs)
+          solution_output_structs.push_back(output_struct);
       }
+
+    return solution_output_structs;
+  }
+
+  /**
+   * @brief Gather and return vector of output structs that are particular to some applications.
+   *
+   * @return Vector of OutputStructs that will be used to write the output results as VTU files. This is a variant for GlobalBlockVectorType.
+   */
+  std::vector<OutputStruct<dim, GlobalBlockVectorType>>
+  gather_output_hook_global_block_vector()
+  {
+    std::vector<OutputStruct<dim, GlobalBlockVectorType>>
+      solution_output_structs;
     for (auto &iphys : block_physics)
       {
-        iphys.second->attach_solution_to_output(data_out);
+        std::vector<OutputStruct<dim, GlobalBlockVectorType>> output_structs =
+          iphys.second->gather_output_hook();
+        for (auto &output_struct : output_structs)
+          solution_output_structs.push_back(output_struct);
       }
+
+    return solution_output_structs;
   }
 
   /**

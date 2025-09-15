@@ -3,6 +3,8 @@
 
 #include <core/interface_tools.h>
 
+#include <solvers/output_struct.h>
+
 #include <deal.II/dofs/dof_tools.h>
 
 #include <deal.II/hp/fe_collection.h>
@@ -280,6 +282,9 @@ InterfaceTools::SignedDistanceSolver<dim, VectorType>::setup_dofs()
   signed_distance.reinit(locally_owned_dofs,
                          locally_active_dofs,
                          mpi_communicator);
+  signed_distance_output.reinit(locally_owned_dofs,
+                                locally_active_dofs,
+                                mpi_communicator);
   signed_distance_with_ghost.reinit(locally_owned_dofs,
                                     locally_active_dofs,
                                     mpi_communicator);
@@ -1389,13 +1394,28 @@ InterfaceTools::SignedDistanceSolver<dim, VectorType>::output_signed_distance(
 }
 
 template <int dim, typename VectorType>
-void
-InterfaceTools::SignedDistanceSolver<dim, VectorType>::
-  attach_solution_to_output(DataOut<dim> &data_out)
+std::vector<OutputStruct<dim, GlobalVectorType>>
+InterfaceTools::SignedDistanceSolver<dim, VectorType>::gather_output_hook()
 {
-  data_out.add_data_vector(this->dof_handler,
-                           this->signed_distance,
-                           "signed_distance");
+#ifndef LETHE_USE_LDV
+  convert_vector_dealii_to_trilinos(this->signed_distance_output,
+                                    this->signed_distance);
+#else
+  this->signed_distance_output = this->signed_distance;
+#endif
+  std::vector<OutputStruct<dim, GlobalVectorType>> solution_output_structs;
+  std::vector<std::string> solution_names(1, "signed_distance");
+  std::vector<DataComponentInterpretation::DataComponentInterpretation>
+    solution_data_component_interpretation(
+      1, DataComponentInterpretation::component_is_scalar);
+  solution_output_structs.emplace_back(
+    std::in_place_type<OutputStructSolution<dim, GlobalVectorType>>,
+    this->dof_handler,
+    this->signed_distance_output,
+    solution_names,
+    solution_data_component_interpretation);
+
+  return solution_output_structs;
 }
 
 template class InterfaceTools::SignedDistanceSolver<2, GlobalVectorType>;

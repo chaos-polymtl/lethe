@@ -653,10 +653,21 @@ Tracer<dim>::copy_local_rhs_to_global_rhs(
 }
 
 template <int dim>
-void
-Tracer<dim>::attach_solution_to_output(DataOut<dim> &data_out)
+std::vector<OutputStruct<dim, GlobalVectorType>>
+Tracer<dim>::gather_output_hook()
 {
-  data_out.add_data_vector(dof_handler, present_solution, "tracer");
+  std::vector<OutputStruct<dim, GlobalVectorType>> solution_output_structs;
+  std::vector<std::string>                         solution_names(1, "tracer");
+  std::vector<DataComponentInterpretation::DataComponentInterpretation>
+    component_interpretation(1,
+                             DataComponentInterpretation::component_is_scalar);
+  solution_output_structs.emplace_back(
+    std::in_place_type<OutputStructSolution<dim, GlobalVectorType>>,
+    dof_handler,
+    present_solution,
+    solution_names,
+    component_interpretation);
+  return solution_output_structs;
 }
 
 template <int dim>

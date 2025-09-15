@@ -1,4 +1,4 @@
-// SPDX-FileCopyrightText: Copyright (c) 2021-2024 The Lethe Authors
+// SPDX-FileCopyrightText: Copyright (c) 2021-2025 The Lethe Authors
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
 #ifndef lethe_auxiliary_physics_h
@@ -7,6 +7,7 @@
 #include <core/parameters.h>
 #include <core/physics_solver.h>
 
+#include <solvers/output_struct.h>
 #include <solvers/simulation_parameters.h>
 
 #include <deal.II/dofs/dof_handler.h>
@@ -64,11 +65,15 @@ public:
   {}
 
   /**
-   * @brief Attach the solution vector to the DataOut provided. This function
-   * enable the auxiliary physics to output their solution via the core solver.
+   * @brief Gather and return vector of output structs that are particular to some applications.
+   *
+   * @return Vector of OutputStructs that will be used to write the output results as VTU files.
    */
-  virtual void
-  attach_solution_to_output(DataOut<dim> &data_out) = 0;
+  virtual std::vector<OutputStruct<dim, VectorType>>
+  gather_output_hook()
+  {
+    return std::vector<OutputStruct<dim, VectorType>>();
+  };
 
   /**
    * @brief Carry out the operations required to finish a simulation correctly.

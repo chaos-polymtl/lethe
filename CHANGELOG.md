@@ -3,6 +3,12 @@
 All notable changes to the Lethe project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
+### [Master] - 2025-09-13
+
+### Changed
+
+- MAJOR This is the last PR of the output refactoring started in #1624(https://github.com/chaos-polymtl/lethe/pull/1624) and fixed in #1661(https://github.com/chaos-polymtl/lethe/pull/1661). It includes using the new output struct to replace the previous "attach output" to DataOut pattern. [#1678](https://github.com/chaos-polymtl/lethe/pull/1678)
+
 ### [Master] - 2025-09-12
 
 ### Fixed
