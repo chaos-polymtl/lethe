@@ -444,7 +444,7 @@ evaluate_function(const Function<dim>                       &function,
 // Matrix-free differential operator for a vector-valued problem.
 // It "replaces" the traditional assemble_matrix() function.
 template <int dim, typename number>
-class NavierStokesOperator : public Subscriptor
+class NavierStokesOperator : public EnableObserverPointer
 {
 public:
   using FECellIntegrator = FEEvaluation<dim, -1, 0, dim + 1, number>;

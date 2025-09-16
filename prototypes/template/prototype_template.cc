@@ -7,6 +7,8 @@
 #include <deal.II/base/logstream.h>
 #include <deal.II/base/tensor.h>
 
+#include <iostream>
+
 
 using namespace dealii;
 

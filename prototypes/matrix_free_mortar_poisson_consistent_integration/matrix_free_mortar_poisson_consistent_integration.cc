@@ -179,7 +179,7 @@ compute_quadrature(
 template <int dim,
           typename Number,
           typename VectorizedArrayType = VectorizedArray<Number>>
-class PoissonOperator : public Subscriptor
+class PoissonOperator : public EnableObserverPointer
 {
 public:
   using FECellIntegrator =
