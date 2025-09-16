@@ -332,39 +332,6 @@ LetheGridTools::find_boundary_cells_in_sphere(
   return cells_at_boundary_v;
 }
 
-template <int dim>
-std::set<Point<dim>>
-LetheGridTools::find_boundary_vertices(
-  const DoFHandler<dim> &dof_handler,
-  const Point<dim>      &center,
-  const double           radius)
-{
-   std::set<Point<dim>> boundary_vertices;
-
-   for (const auto &face : dof_handler.active_face_iterators())
-    {
-      if (face->at_boundary())
-        {
-          for (unsigned int i = 0; i < GeometryInfo<dim>::vertices_per_face; ++i)
-            {
-               boundary_vertices.insert(face->vertex(i));
-            }
-        }
-    } 
-
-    // Convert the std:set into a vector to be able to do MPI_gather
-    std::vector<Point<dim>> local_vector(boundary_vertices.begin(), boundary_vertices.end());
-
-    std::vector<std::vector<Point<dim>>> gathered =
-        Utilities::MPI::all_gather(dof_handler.get_communicator(), local_vector);
-
-    // Merge into global set without repeating vertices
-    std::set<Point<dim>> global_boundary_vertices;
-    for (const auto &vec : gathered)
-        global_boundary_vertices.insert(vec.begin(), vec.end());
-
-    return global_boundary_vertices; 
-}
 
 template <int dim>
 typename DoFHandler<dim>::active_cell_iterator
