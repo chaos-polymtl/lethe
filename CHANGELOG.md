@@ -3,6 +3,12 @@
 All notable changes to the Lethe project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
+### [Master] - 2025-09-23
+
+### Added
+
+- MAJOR A new application called lethe-particle-ray-tracing has been added. This application allows to trace rays through a domain containing particle and to extract the intersection point between those rays and particles. [#1629](https://github.com/chaos-polymtl/lethe/pull/1629)
+
 ### [Master] - 2025-09-18
 
 ### Added
@@ -15,7 +21,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
 ### [Master] - 2025-09-16
 
-### Fixed
+## Fixed
 
 - MINOR There was a typo in the code when load balancing. "Repartitioning" was written with two "n". [#1681](https://github.com/chaos-polymtl/lethe/pull/1681)
 
