@@ -241,24 +241,6 @@ namespace LetheGridTools
 
   /**
    * @brief
-   * Function returns all the cells vertices in a sphere.
-   *
-   * @param dof_handler the dof handler containing all the elements.
-   *
-   * @param center The center of the sphere.
-   *
-   * @param radius The radius of the sphere.
-   *
-   */
-  template <int dim>
-  std::vector<typename DoFHandler<dim>::active_cell_iterator>
-  find_boundary_vertices(const DoFHandler<dim> &dof_handler,
-                                const Point<dim>      &center,
-                                const double           radius);
-
-
-  /**
-   * @brief
    * Function returns all the cells cut by a list of object defined by a mesh
    *
    * @param dof_handler the dof handler containing all the elements.
