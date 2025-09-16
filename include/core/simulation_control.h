@@ -6,7 +6,8 @@
 
 #include <core/bdf.h>
 #include <core/parameters.h>
-#include <core/sdirk_stage_data.h>
+
+#include <deal.II/particles/particle_handler.h>
 
 /**
  * @brief The SimulationControl class is responsible for the control of steady-state and transient
@@ -525,12 +526,6 @@ public:
    */
   std::vector<double>
   get_checkpointed_simulation_control_info(const std::string &prefix);
-
-  void
-  increment_iteration()
-  {
-    iteration_number++;
-  };
 };
 
 
@@ -674,6 +669,30 @@ public:
    */
   virtual bool
   is_at_end() override;
+};
+
+class SimulationControlRayTracing : public SimulationControl
+{
+public:
+  SimulationControlRayTracing(
+    const Parameters::SimulationControl &param,
+    Particles::ParticleHandler<3>       &input_photon_handler);
+
+  bool
+  integrate();
+
+  /**
+   * @brief Ends the simulation when there is no longer photon in the triangulation.
+   */
+  bool
+  is_at_end() override;
+
+  // The particle_handler is a reference the photon handler used during the
+  // ray-tracing simulation.
+  Particles::ParticleHandler<3> &particle_handler;
+
+  void
+  print_progression(const ConditionalOStream &pcout) override;
 };
 
 #endif
