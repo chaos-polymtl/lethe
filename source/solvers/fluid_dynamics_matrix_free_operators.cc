@@ -417,6 +417,8 @@ NavierStokesOperatorBase<dim, number>::vmult(VectorType       &dst,
         .local_element(edge_constrained_indices[i]) = 0.;
     }
 
+  // If mortar is enabled, we need to make the ghost values available so that
+  // they can be accessed by the mortar operator
   if (this->enable_mortar)
     src.update_ghost_values();
 
