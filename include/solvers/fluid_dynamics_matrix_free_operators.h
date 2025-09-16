@@ -404,7 +404,10 @@ public:
   evaluate_residual(VectorType &dst, const VectorType &src);
 
   /**
-   * @brief Mortar coupling manager, operator, and evaluator
+   * @brief Mortar coupling manager, operator, and evaluator used in the matrix-free
+   * solver. The matrix-based solver uses the shared pointers created in the NS
+   * base. Because we have a different system_operator here, we need to create
+   * new pointers.
    */
   std::shared_ptr<MortarManagerCircle<dim>>      mortar_manager_mf;
   std::shared_ptr<CouplingOperator<dim, double>> mortar_coupling_operator_mf;
@@ -740,6 +743,9 @@ protected:
    */
   Table<1, VectorizedArray<number>> effective_beta_face;
 
+  /**
+   * @brief Flag to turn the computation of mortar coupling terms on or off.
+   */
   bool enable_mortar;
 
   /**

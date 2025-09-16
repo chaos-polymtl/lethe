@@ -480,6 +480,10 @@ protected:
   virtual void
   update_mortar_configuration() override;
 
+  /**
+   * @brief Initialize mortar coupling manager, operator, and evaluator for the matrix-free
+   * solver.
+   */
   void
   reinit_mortar_operators_mf();
 

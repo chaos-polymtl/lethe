@@ -905,9 +905,6 @@ FluidDynamicsMatrixBased<dim>::assemble_system_rhs()
     StabilizedMethodsTensorCopyData<dim>(this->fe->n_dofs_per_cell(),
                                          this->cell_quadrature->size()));
 
-
-  // std::cout << "residual before " << this->system_rhs.l2_norm() << std::endl;
-
   // Add mortar entries
   if (this->simulation_parameters.mortar_parameters.enable)
     {
@@ -921,8 +918,6 @@ FluidDynamicsMatrixBased<dim>::assemble_system_rhs()
     }
 
   this->system_rhs.compress(VectorOperation::add);
-
-  // std::cout << "residual after " << this->system_rhs.l2_norm() << std::endl;
 
   if (this->simulation_control->is_first_assembly())
     this->simulation_control->provide_residual(this->system_rhs.l2_norm());
@@ -1640,13 +1635,6 @@ FluidDynamicsMatrixBased<dim>::solve_system_GMRES(
         }
       iter += 1;
     }
-
-  // std::cout << "newton update " << this->newton_update.l2_norm() <<
-  // std::endl; for (unsigned int i = 0; i < this->newton_update.size(); i++)
-  //   std::cout << this->newton_update[i] << std::endl;
-
-  // std::cout << std::endl;
-
   current_preconditioner_fill_level = initial_preconditioner_fill_level;
 }
 
