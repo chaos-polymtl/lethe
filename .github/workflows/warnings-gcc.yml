@@ -18,13 +18,14 @@ concurrency:
   cancel-in-progress: ${{github.event_name == 'pull_request'}}
 
 env:
-  COMPILE_JOBS: 4
-  MULTI_CORE_TESTS_REGEX: "mpirun=2"
+  COMPILE_JOBS: 18
+  TEST_JOBS: 12
 
 jobs:
   build:
     name: Build (deal.ii:${{ matrix.dealii_version }})
-    runs-on: ubuntu-latest
+    runs-on: self-hosted
+
 
     strategy:
       fail-fast: false
