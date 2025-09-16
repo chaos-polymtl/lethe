@@ -3,6 +3,12 @@
 All notable changes to the Lethe project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
+### [Master] - 2025-09-16
+
+### Changed
+
+- MINOR There was a warning that would be triggered in some of the Kokkos prototypes. These are now fixed by using the new syntax for the matrix-free operators. Furthermore, I took the opportunity to remove all the Clang warnings that would appear in prototypes. [#1679](https://github.com/chaos-polymtl/lethe/pull/1679)
+
 ### [Master] - 2025-09-13
 
 ### Changed
