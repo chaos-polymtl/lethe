@@ -426,7 +426,7 @@ DEMSolver<dim, PropertiesIndex>::load_balance()
   // load
   particle_handler.prepare_for_coarsening_and_refinement();
 
-  pcout << "-->Repartitionning triangulation" << std::endl;
+  pcout << "-->Repartitioning triangulation" << std::endl;
   triangulation.repartition();
 
   // Unpack the particle handler after the mesh has been repartitioned

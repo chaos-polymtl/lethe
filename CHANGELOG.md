@@ -5,6 +5,10 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
 ### [Master] - 2025-09-16
 
+## Fixed
+
+- MINOR There was a typo in the code when load balancing. "Repartitioning" was written with two "n". [#1681](https://github.com/chaos-polymtl/lethe/pull/1681)
+
 ### Changed
 
 - MINOR Remove dealii 9.6 version checks in matrix-free solver. [#1680](https://github.com/chaos-polymtl/lethe/pull/1680)

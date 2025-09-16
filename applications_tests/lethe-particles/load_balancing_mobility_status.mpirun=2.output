@@ -52,7 +52,7 @@ Transient iteration: 400      Time: 0.4      Time step: 0.001
 | Angular velocity magnitude   | 1.6006e-02 | 2.6957e+01 | 4.2493e+00 | 5.6091e+02 | 
 | Translational kinetic energy | 2.1064e-07 | 1.1348e-01 | 1.5114e-02 | 1.9950e+00 | 
 | Rotational kinetic energy    | 3.4339e-09 | 9.7407e-03 | 6.9569e-04 | 9.1832e-02 | 
--->Repartitionning triangulation
+-->Repartitioning triangulation
 Load balance finished
 Average, minimum and maximum number of particles on the processors are 66 , 62 and 70
 Minimum and maximum number of cells owned by the processors are 48 and 48
@@ -76,7 +76,7 @@ Transient iteration: 600      Time: 0.6      Time step: 0.001
 | Angular velocity magnitude   | 6.1211e-02 | 1.7212e+01 | 1.5850e+00 | 2.0922e+02 |
 | Translational kinetic energy | 2.1396e-08 | 6.5137e-03 | 1.8957e-04 | 2.5023e-02 |
 | Rotational kinetic energy    | 5.0222e-08 | 3.9711e-03 | 1.4555e-04 | 1.9212e-02 |
--->Repartitionning triangulation
+-->Repartitioning triangulation
 Load balance finished
 Average, minimum and maximum number of particles on the processors are 66 , 44 and 88
 Minimum and maximum number of cells owned by the processors are 48 and 48

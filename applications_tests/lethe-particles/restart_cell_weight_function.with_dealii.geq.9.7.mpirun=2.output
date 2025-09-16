@@ -8,7 +8,7 @@ Reading triangulation
 Finished reading triangulation
 Warning: expansion of particle-wall contact list is disabled. 
 This feature is useful in geometries with concave boundaries. 
--->Repartitionning triangulation
+-->Repartitioning triangulation
 Load balance finished 
 Average, minimum and maximum number of particles on the processors are 500 , 0 and 1000
 Minimum and maximum number of cells owned by the processors are 5325 and 16875
