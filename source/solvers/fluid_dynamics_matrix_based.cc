@@ -228,7 +228,7 @@ FluidDynamicsMatrixBased<dim>::update_mortar_configuration()
 
       // Now reset system matrix
       system_matrix.clear();
-      
+
       // Rotate mapping
       this->rotate_rotor_mapping(false);
 
