@@ -813,11 +813,43 @@ ParticleProjector<dim>::calculate_void_fraction_quadrature_centered_method()
 
                       // Add the intersection volume to the particle
                       // contribution
-                      particle_properties
-                        [DEM::CFDDEMProperties::PropertiesIndex::
-                           volumetric_contribution] +=
-                        calculate_intersection_measure(
-                          r_particle, r_sphere, periodic_neighbor_distance);
+                      if (active_periodic_neighbors[n]->at_boundary())
+                        {
+                          for (const auto f : cell->face_indices())
+                          {
+                            if (active_periodic_neighbors[n]->face(f)->at_boundary())
+                            {
+                              // Create a quadrature point the center of the face where we want 
+                              // to calculate the normal vector (this is needed for the FEFaceValues)
+                              std::vector<Point<dim-1>> quad(1); 
+                              quad[0] = Point<dim-1>(0.5, 0.5);
+
+                              FEFaceValues<dim> fe_face_values(*mapping,
+                                                active_periodic_neighbors[n]->get_fe(),
+                                                 quad,
+                                                 update_normal_vectors);
+
+                              fe_face_values.reinit(active_periodic_neighbors[n], f);
+                              // Calculate the normal vector at the center of the face
+                              Tensor<1,dim> normal_vector = fe_face_values.normal_vector(0);
+                              double V_sphere_out = plane_sphere_intersection (periodic_neighbor_quadrature_point_location[n][k], r_sphere, normal_vector, active_periodic_neighbors[n]->face(f)->center());
+                              double V_sphere = (M_PI * Utilities::fixed_power<dim>(r_sphere * 2.0) / (2 * dim));
+                            particle_properties
+                              [DEM::CFDDEMProperties::PropertiesIndex::
+                                volumetric_contribution] +=
+                              calculate_intersection_measure(
+                                r_particle, r_sphere, periodic_neighbor_distance) * V_sphere / (V_sphere - V_sphere_out);
+                            }
+                          }
+                        }
+                      else
+                        {
+                          particle_properties
+                            [DEM::CFDDEMProperties::PropertiesIndex::
+                               volumetric_contribution] +=
+                            calculate_intersection_measure(
+                              r_particle, r_sphere, periodic_neighbor_distance);
+                        }
                     }
                 }
             }
