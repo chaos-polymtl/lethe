@@ -629,4 +629,3 @@ SimulationControlRayTracing::print_progression(const ConditionalOStream &pcout)
   // Announce string
   announce_string(pcout, ss.str(), '*');
 }
-
