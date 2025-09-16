@@ -73,7 +73,8 @@ RayTracingSolver<dim>::setup_parameters()
 
   // Set the simulation control as SimulationControlAdjointSteady
   simulation_control =
-    std::make_shared<SimulationControlSteady>(parameters.simulation_control);
+    std::make_shared<SimulationControlRayTracing>(parameters.simulation_control,
+                                                  photon_handler);
 
   // Setup load balancing parameters and attach the correct functions to the
   // signals inside the triangulation
@@ -680,10 +681,8 @@ RayTracingSolver<dim>::solve()
   // Exchange ghost particles
   particle_handler.exchange_ghost_particles(true);
 
-  while (photon_handler.n_global_particles() != 0)
+  while (simulation_control->integrate())
     {
-      simulation_control->increment_iteration();
-
       pcout << "Remaining photon : " << photon_handler.n_global_particles()
             << std::endl;
 
@@ -726,8 +725,7 @@ RayTracingSolver<dim>::solve()
 
       action_manager->reset_triggers();
     }
-  // std::cout << this_mpi_process << " " << total_intersection_points.size()
-  //           << std::endl;
+
   write_output_results(total_intersection_points,
                        parameters.simulation_control.output_folder,
                        parameters.simulation_control.output_name);
