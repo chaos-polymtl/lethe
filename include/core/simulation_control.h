@@ -678,8 +678,8 @@ public:
     const Parameters::SimulationControl &param,
     Particles::ParticleHandler<3>       &input_photon_handler);
 
-  bool
-  integrate();
+  virtual bool
+  integrate() override;
 
   /**
    * @brief Ends the simulation when there is no longer photon in the triangulation.
