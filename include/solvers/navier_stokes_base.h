@@ -291,6 +291,12 @@ protected:
   virtual void
   setup_dofs_fd() = 0;
 
+  /**
+   * @brief Update mortar configuration.
+   *
+   * When the rotor domain is rotated, the mortar cells need to be reinitialized
+   * according to the new rotor-stator interface configuration.
+   */
   virtual void
   update_mortar_configuration()
   {}
