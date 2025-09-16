@@ -412,7 +412,6 @@ NavierStokesOperatorBase<dim, number>::vmult(VectorType       &dst,
         .local_element(edge_constrained_indices[i]) = 0.;
     }
 
-#if DEAL_II_VERSION_GTE(9, 6, 0)
   if (this->enable_face_terms)
     this->matrix_free.loop(
       &NavierStokesOperatorBase::do_cell_integral_range,
@@ -425,10 +424,6 @@ NavierStokesOperatorBase<dim, number>::vmult(VectorType       &dst,
   else
     this->matrix_free.cell_loop(
       &NavierStokesOperatorBase::do_cell_integral_range, this, dst, src, true);
-#else
-  this->matrix_free.cell_loop(
-    &NavierStokesOperatorBase::do_cell_integral_range, this, dst, src, true);
-#endif
 
   // copy constrained dofs from src to dst (corresponding to diagonal
   // entries with value 1.0)
@@ -463,8 +458,6 @@ NavierStokesOperatorBase<dim, number>::vmult_interface_down(
   VectorType       &dst,
   VectorType const &src) const
 {
-#if DEAL_II_VERSION_GTE(9, 6, 0)
-
   if (this->enable_face_terms)
     this->matrix_free.loop(
       &NavierStokesOperatorBase::do_cell_integral_range,
@@ -477,10 +470,6 @@ NavierStokesOperatorBase<dim, number>::vmult_interface_down(
   else
     this->matrix_free.cell_loop(
       &NavierStokesOperatorBase::do_cell_integral_range, this, dst, src, true);
-#else
-  this->matrix_free.cell_loop(
-    &NavierStokesOperatorBase::do_cell_integral_range, this, dst, src, true);
-#endif
 
   // set constrained dofs as the sum of current dst value and src value
   for (const auto i : constrained_indices)
@@ -515,7 +504,6 @@ NavierStokesOperatorBase<dim, number>::vmult_interface_up(
   for (const auto i : edge_constrained_indices)
     src_cpy.local_element(i) = src.local_element(i);
 
-#if DEAL_II_VERSION_GTE(9, 6, 0)
   // do loop with copy of src
   if (this->enable_face_terms)
     this->matrix_free.loop(
@@ -533,13 +521,6 @@ NavierStokesOperatorBase<dim, number>::vmult_interface_up(
       dst,
       src_cpy,
       false);
-#else
-  this->matrix_free.cell_loop(&NavierStokesOperatorBase::do_cell_integral_range,
-                              this,
-                              dst,
-                              src_cpy,
-                              false);
-#endif
 
   this->timer.leave_subsection("operator::vmult_interface_up");
 }
@@ -657,7 +638,6 @@ NavierStokesOperatorBase<dim, number>::get_system_matrix() const
   unsigned int face   = numbers::invalid_unsigned_int;
   unsigned int column = numbers::invalid_unsigned_int;
 
-#if DEAL_II_VERSION_GTE(9, 6, 0)
   std::function<void(FEFaceIntegrator &)> boundary_function;
 
   if (enable_face_terms)
@@ -708,14 +688,6 @@ NavierStokesOperatorBase<dim, number>::get_system_matrix() const
       },
       {},
       boundary_function);
-#else
-  (void)cell;
-  (void)face;
-  (void)column;
-  Assert(false,
-         ExcNotImplemented(
-           "The matrix free solver is not supported in deal.II 9.5 and below"));
-#endif
 
   // make sure that diagonal entries related to constrained dofs
   // have a value of 1.0 (note this is consistent to vmult() and
@@ -1089,7 +1061,6 @@ NavierStokesOperatorBase<dim, number>::evaluate_residual(VectorType       &dst,
 {
   this->timer.enter_subsection("operator::evaluate_residual");
 
-#if DEAL_II_VERSION_GTE(9, 6, 0)
   if (enable_face_terms)
     this->matrix_free.loop(
       &NavierStokesOperatorBase::local_evaluate_residual,
@@ -1102,10 +1073,6 @@ NavierStokesOperatorBase<dim, number>::evaluate_residual(VectorType       &dst,
   else
     this->matrix_free.cell_loop(
       &NavierStokesOperatorBase::local_evaluate_residual, this, dst, src, true);
-#else
-  this->matrix_free.cell_loop(
-    &NavierStokesOperatorBase::local_evaluate_residual, this, dst, src, true);
-#endif
 
   this->timer.leave_subsection("operator::evaluate_residual");
 }
@@ -1117,7 +1084,6 @@ NavierStokesOperatorBase<dim, number>::compute_inverse_diagonal(
 {
   this->timer.enter_subsection("operator::compute_inverse_diagonal");
 
-#if DEAL_II_VERSION_GTE(9, 6, 0)
   std::function<void(FEFaceIntegrator &)> boundary_function;
 
   if ((enable_face_terms))
@@ -1133,7 +1099,6 @@ NavierStokesOperatorBase<dim, number>::compute_inverse_diagonal(
       [&](auto &integrator) { this->do_cell_integral_local(integrator); },
       {},
       boundary_function);
-#endif
 
   for (const auto &i : edge_constrained_indices)
     diagonal.local_element(i) = 0.0;
@@ -1191,8 +1156,6 @@ NavierStokesOperatorBase<dim, number>::do_boundary_face_integral_range(
   const VectorType                            &src,
   const std::pair<unsigned int, unsigned int> &range) const
 {
-#if DEAL_II_VERSION_GTE(9, 6, 0)
-
   FEFaceIntegrator phi(matrix_free, true, 0);
 
   for (auto cell = range.first; cell < range.second; ++cell)
@@ -1208,7 +1171,6 @@ NavierStokesOperatorBase<dim, number>::do_boundary_face_integral_range(
 
       phi.distribute_local_to_global(dst);
     }
-#endif
 }
 
 
@@ -1225,7 +1187,6 @@ void
 NavierStokesOperatorBase<dim, number>::do_boundary_face_integral_local(
   FEFaceIntegrator &integrator) const
 {
-#if DEAL_II_VERSION_GTE(9, 6, 0)
   if (!enable_face_terms)
     return;
 
@@ -1339,8 +1300,6 @@ NavierStokesOperatorBase<dim, number>::do_boundary_face_integral_local(
 
       integrator.integrate(EvaluationFlags::EvaluationFlags::values);
     }
-
-#endif
 }
 
 

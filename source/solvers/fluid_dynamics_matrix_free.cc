@@ -1124,7 +1124,6 @@ MFNavierStokesPreconditionGMGBase<dim>::reinit(
                 levels[level].first, temp_constraints);
             }
 
-#if DEAL_II_VERSION_GTE(9, 6, 0)
           this->mg_constrained_dofs[p_level].merge_constraints(
             level_constraints[level],
             levels[level].first,
@@ -1132,12 +1131,6 @@ MFNavierStokesPreconditionGMGBase<dim>::reinit(
             false,
             true,
             true);
-#else
-          AssertThrow(
-            false,
-            ExcMessage(
-              "The constraints for the lsmg preconditioner require a most recent version of deal.II."));
-#endif
 
           this->mg_setup_timer.enter_subsection("Set up operators");
 
@@ -1703,7 +1696,6 @@ MFNavierStokesPreconditionGMGBase<dim>::initialize()
             .at(PhysicsID::fluid_dynamics)
             .mg_smoother_eig_estimation)
         {
-#if DEAL_II_VERSION_GTE(9, 6, 0)
           // Set relaxation to zero so that eigenvalues are estimated
           // internally
           smoother_data[level].relaxation = 0.0;
@@ -1721,12 +1713,6 @@ MFNavierStokesPreconditionGMGBase<dim>::initialize()
             this->mg_operators[level]
               ->get_system_matrix_free()
               .get_affine_constraints());
-#else
-          AssertThrow(
-            false,
-            ExcMessage(
-              "The estimation of eigenvalues within LSMG requires a version of deal.II >= 9.6.0"));
-#endif
         }
       else
         smoother_data[level].relaxation =
@@ -1737,7 +1723,6 @@ MFNavierStokesPreconditionGMGBase<dim>::initialize()
 
   mg_smoother->initialize(this->mg_operators, smoother_data);
 
-#if DEAL_II_VERSION_GTE(9, 6, 0)
   if (this->simulation_parameters.linear_solver.at(PhysicsID::fluid_dynamics)
         .mg_smoother_eig_estimation &&
       this->simulation_parameters.linear_solver.at(PhysicsID::fluid_dynamics)
@@ -1765,12 +1750,6 @@ MFNavierStokesPreconditionGMGBase<dim>::initialize()
           this->pcout << std::endl;
         }
     }
-#else
-  AssertThrow(
-    false,
-    ExcMessage(
-      "The estimation of eigenvalues within LSMG requires a version of deal.II >= 9.6.0"));
-#endif
 
   this->mg_setup_timer.leave_subsection("Set up and initialize smoother");
 
@@ -1859,7 +1838,6 @@ MFNavierStokesPreconditionGMGBase<dim>::initialize()
              .mg_coarse_grid_solver ==
            Parameters::LinearSolver::CoarseGridSolverType::direct)
     {
-#if DEAL_II_VERSION_GTE(9, 6, 0)
       TrilinosWrappers::SolverDirect::AdditionalData data;
       this->direct_solver_control =
         std::make_shared<SolverControl>(100, 1.e-10);
@@ -1877,12 +1855,6 @@ MFNavierStokesPreconditionGMGBase<dim>::initialize()
 
       this->mg_coarse = std::make_shared<CoarseGridSolverApply>(
         *this->coarse_grid_precondition);
-#else
-      AssertThrow(
-        false,
-        ExcMessage(
-          "The usage of a direct solver as coarse grid solver requires a version of deal.II >= 9.6.0"));
-#endif
     }
   else
     AssertThrow(
@@ -2231,7 +2203,6 @@ MFNavierStokesPreconditionGMGBase<dim>::setup_AMG()
           Parameters::LinearSolver::PreconditionerType::lsmg)
 
         {
-#if DEAL_II_VERSION_GTE(9, 6, 0)
           // Constant modes for velocity and pressure
           constant_modes = DoFTools::extract_level_constant_modes(
             this->mg_operators[this->minlevel]
@@ -2241,12 +2212,6 @@ MFNavierStokesPreconditionGMGBase<dim>::setup_AMG()
               ->get_system_matrix_free()
               .get_dof_handler(),
             components);
-#else
-          AssertThrow(
-            false,
-            ExcMessage(
-              "The extraction of constant modes for the AMG coarse-grid solver requires a version of deal.II >= 9.6.0"));
-#endif
         }
       else if (this->simulation_parameters.linear_solver
                  .at(PhysicsID::fluid_dynamics)
