@@ -24,7 +24,7 @@ end
 subsection physical properties
   set number of fluids = 1
   subsection fluid 0
-    set kinematic viscosity = 1.0000
+    set kinematic viscosity = 1.0
   end
 end
 
@@ -67,7 +67,6 @@ subsection mortar
   end
   set rotor boundary id  = 3
   set stator boundary id = 0
-  set penalty factor     = 1
   subsection rotor rotation angle
     set Function expression = 0.024
   end
@@ -88,8 +87,7 @@ end
 #---------------------------------------------------
 
 subsection boundary conditions
-  set number                = 4
-  set fix pressure constant = false
+  set number = 4
   subsection bc 0
     set id   = 0
     set type = none
