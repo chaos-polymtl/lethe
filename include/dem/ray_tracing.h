@@ -81,13 +81,9 @@ private:
    *
    * @param[in] points Vector of points containing every intersection points
    * between photons and particles.
-   * @param[in] folder The folder where the output file is written.
-   * @param[in] file_name The name of the output file.
    */
   void
-  write_output_results(const std::vector<Point<dim>> &points,
-                       const std::string             &folder,
-                       const std::string             &file_name);
+  write_output_results(const std::vector<Point<dim>> &points);
 
   /**
    * @brief Execute the last post-processing at the end of the simulation and
