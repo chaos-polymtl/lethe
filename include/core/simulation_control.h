@@ -677,4 +677,28 @@ public:
   is_at_end() override;
 };
 
+class SimulationControlRayTracing : public SimulationControl
+{
+public:
+  SimulationControlRayTracing(
+    const Parameters::SimulationControl &param,
+    Particles::ParticleHandler<3>       &input_photon_handler);
+
+  virtual bool
+  integrate() override;
+
+  /**
+   * @brief Ends the simulation when there is no longer photon in the triangulation.
+   */
+  bool
+  is_at_end() override;
+
+  // The particle_handler is a reference the photon handler used during the
+  // ray-tracing simulation.
+  Particles::ParticleHandler<3> &particle_handler;
+
+  void
+  print_progression(const ConditionalOStream &pcout) override;
+};
+
 #endif
