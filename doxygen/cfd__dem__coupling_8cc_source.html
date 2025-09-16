@@ -873,7 +873,7 @@ $(document).ready(function() { init_codefold(0); });
 <div class="line"><a id="l00757" name="l00757"></a><span class="lineno">  757</span>  <span class="comment">// Prepare particle handle for serialization</span></div>
 <div class="line"><a id="l00758" name="l00758"></a><span class="lineno">  758</span>  this-&gt;particle_handler.prepare_for_coarsening_and_refinement();</div>
 <div class="line"><a id="l00759" name="l00759"></a><span class="lineno">  759</span> </div>
-<div class="line"><a id="l00760" name="l00760"></a><span class="lineno">  760</span>  this-&gt;pcout &lt;&lt; <span class="stringliteral">&quot;--&gt;Repartitionning triangulation&quot;</span> &lt;&lt; std::endl;</div>
+<div class="line"><a id="l00760" name="l00760"></a><span class="lineno">  760</span>  this-&gt;pcout &lt;&lt; <span class="stringliteral">&quot;--&gt;Repartitioning triangulation&quot;</span> &lt;&lt; std::endl;</div>
 <div class="line"><a id="l00761" name="l00761"></a><span class="lineno">  761</span> </div>
 <div class="line"><a id="l00762" name="l00762"></a><span class="lineno">  762</span>  <span class="keyword">const</span> <span class="keyword">auto</span> parallel_triangulation =</div>
 <div class="line"><a id="l00763" name="l00763"></a><span class="lineno">  763</span>    <span class="keyword">dynamic_cast&lt;</span>parallel::distributed::Triangulation&lt;dim&gt; *<span class="keyword">&gt;</span>(</div>
