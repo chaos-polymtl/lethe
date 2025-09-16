@@ -9,6 +9,9 @@
 #include <dem/insertion_list.h>
 #include <dem/ray_tracing.h>
 #include <dem/read_mesh.h>
+#include <dem/visualization.h>
+
+#include <deal.II/particles/data_out.h>
 
 #include <sys/stat.h>
 
@@ -380,55 +383,84 @@ RayTracingSolver<dim>::insert_particles_and_photons()
 template <int dim>
 void
 RayTracingSolver<dim>::write_output_results(
-  const std::vector<Point<dim>> &points,
-  const std::string             &folder,
-  const std::string             &file_name)
+  const std::vector<Point<dim>> &points)
 {
-  // Flatten local points into a buffer of chars (text format)
-  std::ostringstream oss;
-  if (this_mpi_process == 0)
-    oss << "x, y, z\n";
+  TimerOutput::Scope t(this->computing_timer, "Output VTU");
 
-  for (const auto &p : points)
-    {
-      oss << p[0] << "," << p[1] << "," << p[2] << "\n";
-    }
+  // Create a temporary particle handler on the existing triangulation
+  Particles::ParticleHandler<dim> temp_handler(triangulation, mapping, 0);
 
-  std::string local_str  = oss.str();
-  int         local_size = local_str.size();
+  MPI_Comm communicator = triangulation.get_mpi_communicator();
+  // Obtain global bounding boxes
+  const auto my_bounding_box = GridTools::compute_mesh_predicate_bounding_box(
+    triangulation, IteratorFilters::LocallyOwnedCell());
+  const auto global_bounding_boxes =
+    Utilities::MPI::all_gather(communicator, my_bounding_box);
 
-  // Gather sizes to compute offsets
-  auto recv_counts = Utilities::MPI::all_gather(mpi_communicator, local_size);
+  std::vector<std::vector<double>> photon_properties(points.size());
 
-  std::vector<int> off_set(n_mpi_processes, 0);
-  int              total_size = 0;
-  for (unsigned int i = 0; i < n_mpi_processes; ++i)
-    {
-      off_set[i] = total_size;
-      total_size += recv_counts[i];
-    }
+  // Insert the photons using the points and the assigned properties.
+  temp_handler.insert_global_particles(points,
+                                         global_bounding_boxes,
+                                         photon_properties);
 
-  // Build full filename (same for all ranks)
-  std::string full_filename = folder + "/" + file_name + ".xyz";
+  // Write particles to a VTU file
+  Particles::DataOut<dim> data_out;
+  data_out.build_patches(temp_handler);
 
-  // Open MPI file
-  MPI_File fh;
-  MPI_File_open(mpi_communicator,
-                full_filename.c_str(),
-                MPI_MODE_CREATE | MPI_MODE_WRONLY,
-                MPI_INFO_NULL,
-                &fh);
+  const std::string filename = parameters.simulation_control.output_folder +
+                               "/" + parameters.simulation_control.output_name +
+                               ".vtu";
 
-  // Each rank writes at its own offset
-  MPI_File_write_at(fh,
-                    off_set[this_mpi_process],
-                    local_str.data(),
-                    (int)local_size,
-                    MPI_CHAR,
-                    MPI_STATUS_IGNORE);
-
-  MPI_File_close(&fh);
+  data_out.write_vtu_in_parallel(filename, this->mpi_communicator);
 }
+
+// // Flatten local points into a buffer of chars (text format)
+// std::ostringstream oss;
+// if (this_mpi_process == 0)
+//   oss << "x, y, z\n";
+//
+// for (const auto &p : points)
+//   {
+//     oss << p[0] << "," << p[1] << "," << p[2] << "\n";
+//   }
+//
+// std::string local_str  = oss.str();
+// int         local_size = local_str.size();
+//
+// // Gather sizes to compute offsets
+// auto recv_counts = Utilities::MPI::all_gather(mpi_communicator,
+// local_size);
+//
+// std::vector<int> off_set(n_mpi_processes, 0);
+// int              total_size = 0;
+// for (unsigned int i = 0; i < n_mpi_processes; ++i)
+//   {
+//     off_set[i] = total_size;
+//     total_size += recv_counts[i];
+//   }
+//
+// // Build full filename (same for all ranks)
+// std::string full_filename = folder + "/" + file_name + ".xyz";
+//
+// // Open MPI file
+// MPI_File fh;
+// MPI_File_open(mpi_communicator,
+//               full_filename.c_str(),
+//               MPI_MODE_CREATE | MPI_MODE_WRONLY,
+//               MPI_INFO_NULL,
+//               &fh);
+//
+// // Each rank writes at its own offset
+// MPI_File_write_at(fh,
+//                   off_set[this_mpi_process],
+//                   local_str.data(),
+//                   (int)local_size,
+//                   MPI_CHAR,
+//                   MPI_STATUS_IGNORE);
+//
+// MPI_File_close(&fh);
+//}
 template <int dim>
 void
 RayTracingSolver<dim>::finish_simulation(
@@ -726,9 +758,7 @@ RayTracingSolver<dim>::solve()
       action_manager->reset_triggers();
     }
 
-  write_output_results(total_intersection_points,
-                       parameters.simulation_control.output_folder,
-                       parameters.simulation_control.output_name);
+  write_output_results(total_intersection_points);
 
   finish_simulation(total_intersection_points);
 }
