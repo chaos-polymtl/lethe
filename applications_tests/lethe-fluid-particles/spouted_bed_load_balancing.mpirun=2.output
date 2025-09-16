@@ -28,7 +28,7 @@ Volume-Averaged Fluid Dynamics
 ----
 DEM
 ----
--->Repartitionning triangulation
+-->Repartitioning triangulation
 
 Warning: There are diamond-shaped cells in the input triangulation. It is strongly recommended to use a different triangulation without such cells. It should be mentioned that these cells are not detected if you have grid motion
 Load balance finished

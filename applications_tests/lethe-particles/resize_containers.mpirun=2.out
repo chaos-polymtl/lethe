@@ -11,11 +11,11 @@ This feature is useful in geometries with concave boundaries.
 ***********************************************************************
 485 particles of type 0 were inserted, 0 particles of type 0 remaining
 ***********************************************************************
--->Repartitionning triangulation
+-->Repartitioning triangulation
 Load balance finished 
 Average, minimum and maximum number of particles on the processors are 242.5 , 202 and 283
 Minimum and maximum number of cells owned by the processors are 1127 and 1841
--->Repartitionning triangulation
+-->Repartitioning triangulation
 Load balance finished 
 Average, minimum and maximum number of particles on the processors are 242.5 , 230 and 255
 Minimum and maximum number of cells owned by the processors are 1463 and 1526

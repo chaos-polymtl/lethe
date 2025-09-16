@@ -757,7 +757,7 @@ CFDDEMSolver<dim>::load_balance()
   // Prepare particle handle for serialization
   this->particle_handler.prepare_for_coarsening_and_refinement();
 
-  this->pcout << "-->Repartitionning triangulation" << std::endl;
+  this->pcout << "-->Repartitioning triangulation" << std::endl;
 
   const auto parallel_triangulation =
     dynamic_cast<parallel::distributed::Triangulation<dim> *>(
