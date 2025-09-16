@@ -53,15 +53,14 @@ void
 ExactSolutionTaylorCouette<dim>::vector_value(const Point<dim> &p,
                                               Vector<double>   &values) const
 {
-  const double a      = M_PI;
-  double       x      = p[0];
-  double       y      = p[1];
-  double       r      = std::sqrt(x * x + y * y);
-  double       theta  = std::atan2(y, x);
-  double       A      = -(eta_ * eta_) / (1. - eta_ * eta_);
-  double       B      = ri_ * ri_ / (1. - eta_ * eta_);
-  double       utheta = A * r + B / r;
-  values(0)           = -std::sin(theta) * utheta;
-  values(1)           = std::cos(theta) * utheta;
-  values(2)           = 0.;
+  double x      = p[0];
+  double y      = p[1];
+  double r      = std::sqrt(x * x + y * y);
+  double theta  = std::atan2(y, x);
+  double A      = -(eta_ * eta_) / (1. - eta_ * eta_);
+  double B      = ri_ * ri_ / (1. - eta_ * eta_);
+  double utheta = A * r + B / r;
+  values(0)     = -std::sin(theta) * utheta;
+  values(1)     = std::cos(theta) * utheta;
+  values(2)     = 0.;
 }

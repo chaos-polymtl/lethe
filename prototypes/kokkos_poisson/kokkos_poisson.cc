@@ -131,7 +131,7 @@ public:
   }
 
 private:
-  const MGTransferMF<dim, Number, dealii::MemorySpace::Host> transfer;
+  const MGTransferMatrixFree<dim, Number, dealii::MemorySpace::Host> transfer;
 
   template <typename Number2>
   void
