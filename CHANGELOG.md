@@ -7,6 +7,8 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
 ### Changed
 
+- MINOR Remove dealii 9.6 version checks in matrix-free solver. [#1680](https://github.com/chaos-polymtl/lethe/pull/1680)
+
 - MINOR There was a warning that would be triggered in some of the Kokkos prototypes. These are now fixed by using the new syntax for the matrix-free operators. Furthermore, I took the opportunity to remove all the Clang warnings that would appear in prototypes. [#1679](https://github.com/chaos-polymtl/lethe/pull/1679)
 
 ### [Master] - 2025-09-13
