@@ -88,6 +88,49 @@ particle_sphere_intersection_3d(double r_particle,
 }
 
 /**
+ * @brief Calculate the volume of intersection between a sphere, defined by its
+ * center and radius, and a plane (line in 2D) defined by a point and a normal.
+ *
+ * @param[in] c_sphere Position vector of the center of the sphere
+ *
+ * @param[in] r_sphere Radius of the sphere
+ *
+ * @param[in] normal_vector Normal to the plane (line in 2D)
+ * 
+ * @param[in] p_plane Point on the plane (line in 2D)
+ */
+
+template <int dim>
+inline double
+plane_sphere_intersection (const Point<dim> &c_sphere,
+                           const double r_sphere,
+                           const Tensor<1,dim> &normal_vector,
+                           const Point<dim> &p_plane)
+{
+  // Compute the unit normal vector
+  const Tensor<1,dim> n_unit = normal_vector / normal_vector.norm();
+  // Compute the distance from the center of the sphere to the place
+  double d = n_unit * (c_sphere - p_plane);
+  
+  if (std::abs(d) >= r_sphere)
+    Assert(false, dealii::ExcMessage("You are calculating the intersection between a sphere in QCM and a boundary, where there is none."));
+  // Compute height of the spherical cap (segment in 2D) height (in our case d is always negative since the sphere center is always in the fluid domain and the normal to a face points outwards)
+  const double h = r_sphere + d;
+  if constexpr(dim==2)
+    {
+     if (h <= r_sphere)
+       return (Utilities::fixed_power<2, double> (r_sphere) * std::acos(1-h/r_sphere) - (r_sphere-h)*sqrt(Utilities::fixed_power<2, double> (r_sphere) - Utilities::fixed_power<2, double> (r_sphere-h)));
+     else
+      {
+        Assert(false, dealii::ExcMessage("Your reference sphere center is outside of the domain"));
+        return 0;
+      }
+    }
+  if constexpr(dim==3)
+     return (M_PI * h*h * (3*r_sphere - h)/3);
+}
+
+/**
  * @brief ParticleFieldQCM calculator.
  * This class stores the required information for the calculation of a
  * field or a particle-fluid interaction onto a mesh. This class does not solve
