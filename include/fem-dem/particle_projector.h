@@ -131,6 +131,54 @@ plane_sphere_intersection (const Point<dim> &c_sphere,
 }
 
 /**
+ * @brief Calculate the volume of a QCM reference sphere that falls outside of
+ * computation domain.
+ *
+ * @param[in] mapping Pointer to the mapping object for the void fraction
+ *
+ * @param[in] cell Cell on which the reference sphere is defined (on one of its
+ * quadrature points)
+ *
+ * @param[in] c_sphere Center of the sphere
+ * 
+ * @param[in] r_sphere Radius of the sphere
+ */
+
+template <int dim>
+double 
+sphere_boundary_intersection (std::shared_ptr<Mapping<dim>> & mapping,
+                    const typename DoFHandler<dim>::active_cell_iterator &cell,
+                    const Point<dim> c_sphere,
+                    double r_sphere)
+  {
+    Tensor<1,dim> normal_vector;
+    for (const auto f : cell->face_indices())
+      {
+        if (cell->face(f)->at_boundary())
+        {
+          // Create a quadrature point at the center of the face where we want 
+          // to calculate the normal vector (this is needed for the FEFaceValues)
+          std::vector<Point<dim-1>> quad(1); 
+          // Take a random point on the face. Here, it is the point at the origin
+          quad[0] = Point<dim-1>();
+
+          Quadrature<dim-1> face_quad(quad);
+          FEFaceValues<dim> fe_face_values(*mapping,
+                                            cell->get_fe(),
+                                            face_quad,
+                                            update_normal_vectors);
+          fe_face_values.reinit( cell , f);
+          
+          // Calculate the normal vector at the face
+          normal_vector = fe_face_values.normal_vector(0);
+
+           return plane_sphere_intersection (c_sphere, r_sphere, normal_vector, cell->face(f)->center());
+        }
+      }   
+    return 0;  
+  }
+
+/**
  * @brief ParticleFieldQCM calculator.
  * This class stores the required information for the calculation of a
  * field or a particle-fluid interaction onto a mesh. This class does not solve

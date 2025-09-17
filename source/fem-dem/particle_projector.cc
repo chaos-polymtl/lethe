@@ -655,6 +655,7 @@ ParticleProjector<dim>::calculate_void_fraction_quadrature_centered_method()
   std::vector<Tensor<1, dim>> grad_phi_vf(dofs_per_cell);
 
   double r_sphere = 0.0;
+  double V_sphere = 0.0;
   double particles_volume_in_sphere;
   double quadrature_void_fraction;
   double qcm_sphere_diameter = void_fraction_parameters->qcm_sphere_diameter;
@@ -666,6 +667,7 @@ ParticleProjector<dim>::calculate_void_fraction_quadrature_centered_method()
   if (qcm_sphere_diameter > 1e-16)
     {
       r_sphere                          = 0.5 * qcm_sphere_diameter;
+      V_sphere                          = (M_PI * Utilities::fixed_power<dim>(r_sphere * 2.0) / (2 * dim));
       calculate_reference_sphere_radius = false;
     }
 
@@ -742,9 +744,9 @@ ParticleProjector<dim>::calculate_void_fraction_quadrature_centered_method()
                 0.5 *
                 particle_properties[DEM::CFDDEMProperties::PropertiesIndex::dp];
 
-              // Loop over neighboring cells to determine if a given
-              // neighboring particle contributes to the solid volume of the
-              // current reference sphere
+              // Loop over neighboring cells to determine if the particle in the
+              // current cell contributes to the reference sphere of the neighboring
+              // cells
               //***********************************************************************
               for (unsigned int n = 0; n < active_neighbors.size(); n++)
                 {
@@ -769,18 +771,35 @@ ParticleProjector<dim>::calculate_void_fraction_quadrature_centered_method()
 
                       // Add the intersection volume to the particle
                       // contribution
-                      particle_properties
-                        [DEM::CFDDEMProperties::PropertiesIndex::
-                           volumetric_contribution] +=
-                        calculate_intersection_measure(r_particle,
-                                                       r_sphere,
-                                                       neighbor_distance);
+                      
+                      // First check if the cell is at the boundary. If so, scale the volumetric particle contribution by the ratio of the volume of the sphere and the volume of the sphere that is inside the domain
+                      if (active_neighbors[n]->at_boundary())
+                        {
+
+                          double V_sphere_out = sphere_boundary_intersection (mapping, active_neighbors[n],
+                          neighbor_quadrature_point_location[n][k],
+                          r_sphere);
+
+                          particle_properties
+                            [DEM::CFDDEMProperties::PropertiesIndex::
+                              volumetric_contribution] +=
+                            calculate_intersection_measure(
+                              r_particle, r_sphere, neighbor_distance) * V_sphere / (V_sphere - V_sphere_out);
+                        }
+                      else
+                        {
+                          particle_properties
+                            [DEM::CFDDEMProperties::PropertiesIndex::
+                               volumetric_contribution] +=
+                            calculate_intersection_measure(
+                              r_particle, r_sphere, neighbor_distance);
+                        }
                     }
                 }
 
-              // Loop over periodic neighboring cells to determine if a given
-              // neighboring particle contributes to the solid volume of the
-              // current reference sphere
+              // Loop over periodic neighboring cells to determine if the particle
+              // in the current cell contributes to the reference sphere of the 
+              // periodic neighboring cells
               //***********************************************************************
               for (unsigned int n = 0; n < active_periodic_neighbors.size();
                    n++)
@@ -789,6 +808,7 @@ ParticleProjector<dim>::calculate_void_fraction_quadrature_centered_method()
                     {
                       r_sphere = calculate_qcm_radius_from_cell_measure(
                         active_periodic_neighbors[n]->measure());
+                       V_sphere = (M_PI * Utilities::fixed_power<dim>(r_sphere * 2.0) / (2 * dim));
                     }
 
                   // Loop over quadrature points
@@ -810,46 +830,15 @@ ParticleProjector<dim>::calculate_void_fraction_quadrature_centered_method()
                       double periodic_neighbor_distance =
                         particle_location.distance(
                           periodic_neighbor_quadrature_point_location[n][k]);
-
+                       
                       // Add the intersection volume to the particle
                       // contribution
-                      if (active_periodic_neighbors[n]->at_boundary())
-                        {
-                          for (const auto f : cell->face_indices())
-                          {
-                            if (active_periodic_neighbors[n]->face(f)->at_boundary())
-                            {
-                              // Create a quadrature point the center of the face where we want 
-                              // to calculate the normal vector (this is needed for the FEFaceValues)
-                              std::vector<Point<dim-1>> quad(1); 
-                              quad[0] = Point<dim-1>(0.5, 0.5);
 
-                              FEFaceValues<dim> fe_face_values(*mapping,
-                                                active_periodic_neighbors[n]->get_fe(),
-                                                 quad,
-                                                 update_normal_vectors);
-
-                              fe_face_values.reinit(active_periodic_neighbors[n], f);
-                              // Calculate the normal vector at the center of the face
-                              Tensor<1,dim> normal_vector = fe_face_values.normal_vector(0);
-                              double V_sphere_out = plane_sphere_intersection (periodic_neighbor_quadrature_point_location[n][k], r_sphere, normal_vector, active_periodic_neighbors[n]->face(f)->center());
-                              double V_sphere = (M_PI * Utilities::fixed_power<dim>(r_sphere * 2.0) / (2 * dim));
-                            particle_properties
-                              [DEM::CFDDEMProperties::PropertiesIndex::
-                                volumetric_contribution] +=
-                              calculate_intersection_measure(
-                                r_particle, r_sphere, periodic_neighbor_distance) * V_sphere / (V_sphere - V_sphere_out);
-                            }
-                          }
-                        }
-                      else
-                        {
-                          particle_properties
-                            [DEM::CFDDEMProperties::PropertiesIndex::
-                               volumetric_contribution] +=
-                            calculate_intersection_measure(
-                              r_particle, r_sphere, periodic_neighbor_distance);
-                        }
+                       particle_properties
+                        [DEM::CFDDEMProperties::PropertiesIndex::
+                           volumetric_contribution] +=
+                        calculate_intersection_measure(
+                          r_particle, r_sphere, periodic_neighbor_distance);
                     }
                 }
             }
@@ -931,14 +920,28 @@ ParticleProjector<dim>::calculate_void_fraction_quadrature_centered_method()
                       // Distance between particle and quadrature point
                       // centers
                       distance = particle.get_location().distance(
-                        quadrature_point_location[q]);
+                        quadrature_point_location[q]);   
+                      
+                      // First check if the cell is at the boundary. If so, scale the volumetric particle contribution by the ratio of the volume of the sphere and the volume of the sphere that is inside the domain
+                      if (active_neighbors[m]->at_boundary())
+                        { 
+                          double V_sphere_out = sphere_boundary_intersection (mapping, active_neighbors[m],
+                          quadrature_point_location[q], r_sphere);
 
-                      // Calculate the normalized particle contribution
-                      particles_volume_in_sphere +=
+                          particles_volume_in_sphere +=
+                        particle_volume_ratio *
+                        calculate_intersection_measure(r_particle,
+                                                       r_sphere,
+                                                       distance)* V_sphere / (V_sphere - V_sphere_out);
+                        }
+                      else
+                        {
+                          particles_volume_in_sphere +=
                         particle_volume_ratio *
                         calculate_intersection_measure(r_particle,
                                                        r_sphere,
                                                        distance);
+                        }
                     }
                 }
 
