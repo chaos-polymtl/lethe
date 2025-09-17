@@ -1,0 +1,2 @@
+Intersection volume of 3D sphere of center (0 0 0) and radius 0.5 with the plane going through point (0 0 0.4) and normal to the vector (0 0 1) : 0.0146608
+Intersection area of 2D circle of center (0 0) and radius 0.5 with the line going through point (0 0.4) and normal to the vector (0 1) : 0.0408753
