@@ -820,6 +820,13 @@ public:
   void
   calculate_fluid_properties_at_particle_location()
   {
+    AssertThrow(
+      physical_properties_have_been_gathered,
+      ExcMessage(
+        "You are trying to gather the physical properties at the particle location, "
+        "but they ave not been gathered at the cell level yet. This is currently not supported. "
+        "The simulation will now abort."));
+
     if (gather_vof)
       {
         for (unsigned int i_particle = 0; i_particle < number_of_particles;
@@ -1377,8 +1384,13 @@ public:
   /**
    * Scratch component for the particle fluid interaction auxiliary physics
    */
-  bool                        gather_particles_information;
-  bool                        interpolated_void_fraction;
+  bool gather_particles_information;
+  bool interpolated_void_fraction;
+
+  /// boolean variable used to ensure that physical properties have been
+  /// gathered at the cell level before being gathered at the particle level
+  bool physical_properties_have_been_gathered = false;
+
   std::vector<Tensor<1, dim>> particle_velocity;
   Tensor<1, dim>              average_particle_velocity;
   std::vector<Tensor<1, dim>> fluid_velocity_at_particle_location;
@@ -1399,6 +1411,7 @@ public:
   double                                                            cell_volume;
   double                                                            beta_drag;
   Tensor<1, dim> undisturbed_flow_force;
+
 
   /**
    * Scratch component for the heat transfer
