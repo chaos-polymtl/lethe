@@ -1,0 +1,14 @@
+#include <fem-dem/particle_projector.h>
+
+int
+main()
+{
+  Point<3> c_sphere(0,0,0);
+  double r_sphere = 0.5;
+  Tensor<1,3> normal_vector;
+  normal_vector[0] = 1.0; normal_vector[1] = 0.0; normal_vector[2] = 0.0;
+  Point<3> p_plane(0,0,0);
+
+double volume = plane_sphere_intersection (c_sphere, r_sphere, normal_vector, p_plane);
+ std::cout << "Intersection volume: " << volume << std::endl;
+}
