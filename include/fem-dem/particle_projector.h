@@ -171,7 +171,6 @@ sphere_boundary_intersection (std::shared_ptr<Mapping<dim>> & mapping,
           
           // Calculate the normal vector at the face
           normal_vector = fe_face_values.normal_vector(0);
-
            return plane_sphere_intersection (c_sphere, r_sphere, normal_vector, cell->face(f)->center());
         }
       }   
