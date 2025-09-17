@@ -78,9 +78,31 @@ generate_particle_grid(const Point<dim>          pt1,
           << particle_handler.n_global_particles() << std::endl;
 }
 
+template <int dim>
+class LinearForce : public Function<dim>
+{
+public:
+  LinearForce()
+    : Function<dim>(dim)
+  {}
+  virtual double
+  value(const Point<dim> &p, const unsigned int component) const override
+  {
+    if (component == 0)
+      return p[1];
+    if (component == 1)
+      return p[2];
+    else
+      return p[0];
+  }
+};
+
 void
 test_void_fraction_qcm(const unsigned int fe_degree,
-                       const unsigned int number_quadrature_points)
+                       const unsigned int number_quadrature_points,
+                       Function<3>       &force_distribution,
+                       const bool         output_vtu,
+                       const std::string  vtu_label)
 {
   const auto         my_rank = Utilities::MPI::this_mpi_process(MPI_COMM_WORLD);
   const unsigned int n_procs = Utilities::MPI::n_mpi_processes(MPI_COMM_WORLD);
@@ -119,7 +141,6 @@ test_void_fraction_qcm(const unsigned int fe_degree,
 
   deallog << "dp = " << dp << std::endl;
 
-  Tensor<1, 3> force({0., 1., 0.});
   Tensor<1, 3> total_particle_force_on_particles({0., 0., 0.});
   // Loop over all the particles and set their diameter to dp
   // and the force to a constant value
@@ -132,7 +153,7 @@ test_void_fraction_qcm(const unsigned int fe_degree,
       for (unsigned int d = 0; d < 3; ++d)
         {
           particle_properties[DEM::CFDDEMProperties::fem_force_x + d] =
-            force[d];
+            force_distribution.value(particle->get_location(), d);
           total_particle_force_on_particles[d] +=
             particle_properties[DEM::CFDDEMProperties::fem_force_x + d];
         }
@@ -226,6 +247,22 @@ test_void_fraction_qcm(const unsigned int fe_degree,
           << total_particle_force_on_fluid << std::endl;
   deallog << "Total particle force on the particles "
           << total_particle_force_on_particles << std::endl;
+
+  if (output_vtu)
+    {
+      DataOut<3> data_out;
+      data_out.add_data_vector(particle_projector.dof_handler,
+                               particle_projector.void_fraction_solution,
+                               "void_fraction");
+      data_out.add_data_vector(
+        particle_projector.particle_fluid_force.dof_handler,
+        particle_projector.particle_fluid_force.particle_field_solution,
+        "force_pf");
+      data_out.build_patches();
+
+      data_out.write_vtu_with_pvtu_record(
+        "./", vtu_label, number_quadrature_points, MPI_COMM_WORLD, 2, 8);
+    }
 }
 
 int
@@ -238,21 +275,25 @@ main(int argc, char *argv[])
       Utilities::MPI::MPI_InitFinalize mpi_initialization(argc, argv, 1);
 
       deallog
-        << "Particle-fluid force: fe_degree=1    number_quadrature_points=2"
+        << "Particle-fluid Constant Force: fe_degree=1    number_quadrature_points=2"
         << std::endl;
-      test_void_fraction_qcm(1, 2);
+      Functions::ConstantFunction<3> constant_func({0, 1., 0});
+      test_void_fraction_qcm(1, 2, constant_func, true, "constant");
       deallog
-        << "Particle-fluid force: fe_degree=1    number_quadrature_points=3"
+        << "Particle-fluid Constant Force: fe_degree=1    number_quadrature_points=3"
         << std::endl;
-      test_void_fraction_qcm(1, 3);
+      test_void_fraction_qcm(1, 3, constant_func, true, "constant");
+
       deallog
-        << "Particle-fluid force: fe_degree=2    number_quadrature_points=4"
+        << "Particle-fluid Constant Force: fe_degree=1    number_quadrature_points=2"
         << std::endl;
-      test_void_fraction_qcm(1, 4);
+      LinearForce<3> linear_func;
+      test_void_fraction_qcm(1, 2, linear_func, true, "linear");
+
       deallog
-        << "Particle-fluid force: fe_degree=2    number_quadrature_points=4"
+        << "Particle-fluid Constant Force: fe_degree=1    number_quadrature_points=3"
         << std::endl;
-      test_void_fraction_qcm(1, 5);
+      test_void_fraction_qcm(1, 3, linear_func, true, "linear");
     }
   catch (std::exception &exc)
     {
