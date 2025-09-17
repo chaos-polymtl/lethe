@@ -401,8 +401,8 @@ RayTracingSolver<dim>::write_output_results(
 
   // Insert the photons using the points and the assigned properties.
   temp_handler.insert_global_particles(points,
-                                         global_bounding_boxes,
-                                         photon_properties);
+                                       global_bounding_boxes,
+                                       photon_properties);
 
   // Write particles to a VTU file
   Particles::DataOut<dim> data_out;
