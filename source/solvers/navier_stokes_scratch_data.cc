@@ -439,6 +439,8 @@ template <int dim>
 void
 NavierStokesScratchData<dim>::calculate_physical_properties()
 {
+  physical_properties_have_been_gathered = true;
+
   if (properties_manager.field_is_required(field::temperature) &&
       gather_temperature)
     {

@@ -126,7 +126,7 @@ VANSOperator<dim, number>::compute_particle_fluid_force(
   FEValues<dim> fe_values(*(this->matrix_free.get_mapping_info().mapping),
                           pf_force_dof_handler.get_fe(),
                           this->matrix_free.get_quadrature(),
-                          update_values | update_JxW_values);
+                          update_values);
 
   std::vector<Tensor<1, dim>> cell_pf_force(fe_values.n_quadrature_points);
   constexpr FEValuesExtractors::Vector force(0);
@@ -140,12 +140,6 @@ VANSOperator<dim, number>::compute_particle_fluid_force(
           fe_values.reinit(this->matrix_free.get_cell_iterator(cell, lane)
                              ->as_dof_handler_iterator(pf_force_dof_handler));
 
-          // We need to calculate the cell volume since we need acceleration per
-          // unit of volume.
-          const std::vector<double> &JxW_values = fe_values.get_JxW_values();
-          const double               cell_volume =
-            std::accumulate(JxW_values.begin(), JxW_values.end(), 0.0);
-
           fe_values[force].get_function_values(pf_force_solution,
                                                cell_pf_force);
 
@@ -153,8 +147,7 @@ VANSOperator<dim, number>::compute_particle_fluid_force(
             {
               for (unsigned int c = 0; c < dim; ++c)
                 {
-                  particle_fluid_force[cell][q][c][lane] =
-                    cell_pf_force[q][c] / cell_volume;
+                  particle_fluid_force[cell][q][c][lane] = cell_pf_force[q][c];
                 }
             }
         }
@@ -218,8 +211,7 @@ VANSOperator<dim, number>::do_cell_integral_local(
       // enabled)
       source_value += this->beta_force;
 
-      // Add to source term the particle-fluid force (zero if not enabled)
-      source_value += -pf_value;
+
 
       // Gather the original value/gradient
       typename FECellIntegrator::value_type    value = integrator.get_value(q);
@@ -244,6 +236,11 @@ VANSOperator<dim, number>::do_cell_integral_local(
       // Gather void fraction value and gradient
       auto vf_value    = this->void_fraction(cell, q);
       auto vf_gradient = this->void_fraction_gradient(cell, q);
+
+      // Add to source term the particle-fluid force (zero if not enabled)
+      // We divide this source by the void fraction value since it is multiplied
+      // by the void fraction value within the assembler.
+      source_value += -pf_value / vf_value;
 
       Tensor<1, dim + 1, VectorizedArray<number>> previous_time_derivatives;
       if (transient)
@@ -440,10 +437,6 @@ VANSOperator<dim, number>::local_evaluate_residual(
           // not enabled)
           source_value += this->beta_force;
 
-          // Add to source term the particle-fluid force (zero if not
-          // enabled)
-          source_value += -pf_value;
-
           // Gather the original value/gradient
           typename FECellIntegrator::value_type value = integrator.get_value(q);
           typename FECellIntegrator::gradient_type gradient =
@@ -457,7 +450,10 @@ VANSOperator<dim, number>::local_evaluate_residual(
           auto vf_value    = this->void_fraction(cell, q);
           auto vf_gradient = this->void_fraction_gradient(cell, q);
 
-
+          // Add to source term the particle-fluid force (zero if not enabled)
+          // We divide this source by the void fraction value since it is
+          // multiplied by the void fraction value within the assembler.
+          source_value += -pf_value / vf_value;
 
           // Time derivatives of previous solutions
           Tensor<1, dim + 1, VectorizedArray<number>> previous_time_derivatives;

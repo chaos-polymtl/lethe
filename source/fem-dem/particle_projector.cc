@@ -1545,6 +1545,8 @@ ParticleProjector<dim>::calculate_particle_fluid_forces_projection(
                 *particle_handler);
             }
 
+          scratch_data.calculate_physical_properties();
+
           // B. We loop over the particle-fluid assembler and calculate the
           // total particle-fluid coupling force.
           for (auto &pf_assembler : particle_fluid_assemblers)
