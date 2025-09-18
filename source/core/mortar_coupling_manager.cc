@@ -1874,9 +1874,6 @@ CouplingOperator<3, double>::add_diagonal_entries(
   LinearAlgebra::distributed::Vector<double> &) const;
 
 template void
-CouplingOperator<1, double>::add_diagonal_entries(
-  LinearAlgebra::distributed::Vector<float> &) const;
-template void
 CouplingOperator<2, double>::add_diagonal_entries(
   LinearAlgebra::distributed::Vector<float> &) const;
 template void
