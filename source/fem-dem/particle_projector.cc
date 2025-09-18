@@ -1161,19 +1161,6 @@ ParticleProjector<dim>::calculate_field_projection(
                             volumetric_contribution *
                             particle_properties[property_start_index + d];
                         }
-                      // std::cout << " --------------" << std::endl;
-                      // std::cout << "ID: " << particle.get_id() << std::endl;
-                      // std::cout << std::scientific <<
-                      // particle_field_in_sphere
-                      //           << std::endl;
-                      // std::cout << volumetric_contribution << std::endl;
-                      // std::cout
-                      //   << particle_properties[property_start_index] << " "
-                      //   << particle_properties[property_start_index + 1] << "
-                      //   "
-                      //   << particle_properties[property_start_index + 2]
-                      //   << std::endl;
-                      // std::cout << " --------------" << std::endl;
                     }
                 }
 
