@@ -37,6 +37,14 @@ read_checkpoint(
     prefix + ".checkpoint_controller";
   std::ifstream iss_checkpoint_controller_obj(
     checkpoint_controller_object_filename);
+
+  AssertThrow(false,
+                ExcMessage(
+                  std::string(
+                    "You are trying to restart a previous computation, "
+                    "but the restart file <") +
+                  checkpoint_controller_object_filename + "> does not appear to exist!"));
+
   boost::archive::text_iarchive ia_checkpoint_controller_obj(
     iss_checkpoint_controller_obj, boost::archive::no_header);
   checkpoint_controller.deserialize(ia_checkpoint_controller_obj);
@@ -57,7 +65,12 @@ read_checkpoint(
   // Gather particle serialization information
   std::string   particle_filename = prefix + ".particles";
   std::ifstream input(particle_filename.c_str());
-  AssertThrow(input, ExcFileNotOpen(particle_filename));
+  AssertThrow(false,
+                ExcMessage(
+                  std::string(
+                    "You are trying to restart a previous computation, "
+                    "but the restart file <") +
+                  particle_filename + "> does not appear to exist!"));
 
   std::string buffer;
   std::getline(input, buffer);
