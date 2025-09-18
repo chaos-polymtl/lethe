@@ -112,7 +112,7 @@ plane_sphere_intersection (const Point<dim> &c_sphere,
   // Compute the distance from the center of the sphere to the place
   double d = n_unit * (c_sphere - p_plane);
   std::cout<<"Distance from sphere center to the plane is : " << d << std::endl;
-  // If the distance is greater than the radius of the sphere, there is no intersection (this should not happen in the CFD-DEM simulations, since we look in boundary cells that contain the sphere center)
+  // If the distance is greater than the radius of the sphere, there is no intersection (this should not happen in the CFD-DEM simulations, since we look in boundary cells that contain the sphere center, and the sphere radius is equal to or larger than the cell size)
   if (std::abs(d) >= r_sphere)
   {
     return 0;
@@ -156,6 +156,7 @@ sphere_boundary_intersection (std::shared_ptr<Mapping<dim>> & mapping,
                     double r_sphere)
   {
     Tensor<1,dim> normal_vector;
+    double V_sphere_out = 0.0;
     for (const auto f : cell->face_indices())
       {
         if (cell->face(f)->at_boundary())
@@ -177,9 +178,14 @@ sphere_boundary_intersection (std::shared_ptr<Mapping<dim>> & mapping,
           normal_vector = fe_face_values.normal_vector(0);
           std::cout << std::endl;
           std::cout << "The face normal is : (" << normal_vector << ") " << "at the face centered at (" << cell->face(f)->center() << ") " << std::endl;
-          return plane_sphere_intersection (c_sphere, r_sphere, normal_vector, cell->face(f)->center());
+          V_sphere_out = plane_sphere_intersection (c_sphere, r_sphere, normal_vector, cell->face(f)->center());
+          // The loop over faces will loop starting from face 0, to face 1. In case of a corner cell, if the sphere intersects face 3 but not face 0, V_sphere_out will be 0 for face 0, adn then the function will return a zero value. To avoid this, we return the volume of intersection as soon as it is found to be non-zero.
+          if (V_sphere_out != 0)
+             return V_sphere_out;
         }
       }   
+    // If we looped over all boundary faces of the cell and the intersection was zero for all of them, then we return zero. This should not happen if the sphere diameter is equal to or larger than the cell size.
+    Assert(false, dealii::ExcMessage("Your reference sphere size may be too small"));
     return 0;  
   }
 

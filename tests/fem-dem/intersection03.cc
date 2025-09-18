@@ -15,7 +15,7 @@ main()
   const unsigned int mapping_degree       = 1;
   const unsigned int dim                  = 2;
   const unsigned int n_global_refinements = 1;
-  Point<2> c_sphere(1,0.5);
+  Point<2> c_sphere(0.5,1);
   double r_sphere = 0.5;
 
   double V_sphere_out = 0.0;
@@ -37,12 +37,15 @@ main()
 
   for (const auto &cell : dof_handler.active_cell_iterators())
       {
-        if (cell-> at_boundary()){
-          V_sphere_out = sphere_boundary_intersection (mapping, cell, c_sphere, r_sphere);
-          if (V_sphere_out != 0)
-            {std::cout << "Volume of intersection with the boundary for cell with center at (" << cell->center() << ") is : " << V_sphere_out;
-            std::cout << std::endl;
-            }
-        }   
+        if (cell->point_inside(c_sphere))
+          {
+            if (cell-> at_boundary()){
+              V_sphere_out = sphere_boundary_intersection (mapping, cell, c_sphere, r_sphere);
+              if (V_sphere_out != 0)
+                {std::cout << "Volume of intersection with the boundary for cell with center at (" << cell->center() << ") is : " << V_sphere_out;
+                std::cout << std::endl;
+                }
+             }
+          }   
       }
 }
