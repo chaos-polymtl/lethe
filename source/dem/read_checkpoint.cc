@@ -38,8 +38,8 @@ read_checkpoint(
   std::ifstream iss_checkpoint_controller_obj(
     checkpoint_controller_object_filename);
 
-  assert_restart_file_exists(iss_checkpoint_controller_obj,
-                             checkpoint_controller_object_filename);
+  AssertThrow(iss_checkpoint_controller_obj,
+              ExcFileNotOpen(checkpoint_controller_object_filename));
 
   boost::archive::text_iarchive ia_checkpoint_controller_obj(
     iss_checkpoint_controller_obj, boost::archive::no_header);
@@ -62,7 +62,7 @@ read_checkpoint(
   std::string   particle_filename = prefix + ".particles";
   std::ifstream input(particle_filename.c_str());
 
-  assert_restart_file_exists(input, particle_filename);
+  AssertThrow(input, ExcFileNotOpen(particle_filename));
 
   std::string buffer;
   std::getline(input, buffer);
@@ -74,7 +74,7 @@ read_checkpoint(
   const std::string filename = prefix + ".triangulation";
   std::ifstream     in(filename.c_str());
 
-  assert_restart_file_exists(in, filename);
+  AssertThrow(in, ExcFileNotOpen(filename));
 
   try
     {
