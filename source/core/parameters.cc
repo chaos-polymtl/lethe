@@ -1154,7 +1154,8 @@ namespace Parameters
       prm.declare_entry(
         "tracer diffusivity model",
         "constant",
-        Patterns::Selection("constant|immersed solid tanh|immersed solid gaussian"),
+        Patterns::Selection(
+          "constant|immersed solid tanh|immersed solid gaussian"),
         "Model used for the calculation of the tracer diffusivity"
         "Choices are <constant|immersed solid tanh|immersed solid gaussian>.");
 
@@ -1168,7 +1169,8 @@ namespace Parameters
       prm.declare_entry(
         "tracer reaction constant model",
         "constant",
-        Patterns::Selection("none|constant|immersed solid tanh|immersed solid gaussian"),
+        Patterns::Selection(
+          "none|constant|immersed solid tanh|immersed solid gaussian"),
         "Model used for the calculation of the tracer reaction constant"
         "Choices are <none|constant|immersed solid tanh|immersed solid gaussian>.");
 
