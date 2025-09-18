@@ -278,22 +278,22 @@ main(int argc, char *argv[])
         << "Particle-fluid Constant Force: fe_degree=1    number_quadrature_points=2"
         << std::endl;
       Functions::ConstantFunction<3> constant_func({0, 1., 0});
-      test_void_fraction_qcm(1, 2, constant_func, true, "constant");
+      test_void_fraction_qcm(1, 2, constant_func, false, "constant");
       deallog
         << "Particle-fluid Constant Force: fe_degree=1    number_quadrature_points=3"
         << std::endl;
-      test_void_fraction_qcm(1, 3, constant_func, true, "constant");
+      test_void_fraction_qcm(1, 3, constant_func, false, "constant");
 
       deallog
         << "Particle-fluid Constant Force: fe_degree=1    number_quadrature_points=2"
         << std::endl;
       LinearForce<3> linear_func;
-      test_void_fraction_qcm(1, 2, linear_func, true, "linear");
+      test_void_fraction_qcm(1, 2, linear_func, false, "linear");
 
       deallog
         << "Particle-fluid Constant Force: fe_degree=1    number_quadrature_points=3"
         << std::endl;
-      test_void_fraction_qcm(1, 3, linear_func, true, "linear");
+      test_void_fraction_qcm(1, 3, linear_func, false, "linear");
     }
   catch (std::exception &exc)
     {
