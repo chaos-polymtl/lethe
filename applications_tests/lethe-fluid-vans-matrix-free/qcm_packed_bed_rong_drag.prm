@@ -167,19 +167,20 @@ subsection linear solver
   subsection void fraction
     set relative residual = 1e-15
     set minimum residual  = 1e-15
-    set verbosity         = quiet
   end
   subsection fluid dynamics
-    set method             = gmres
-    set max iters          = 1000
-    set relative residual  = 1e-2
-    set minimum residual   = 1e-11
-    set preconditioner     = gcmg
-    set verbosity          = quiet
-    set max krylov vectors = 1000
-
-    #MG parameters
-    set mg verbosity             = verbose
-    set eig estimation verbosity = quiet
+    set method                          = gmres
+    set relative residual               = 1e-3
+    set minimum residual                = 1e-9
+    set preconditioner                  = gcmg
+    set verbosity                       = quiet
+    set mg verbosity                    = quiet
+    set mg smoother iterations          = 1
+    set mg smoother eig estimation      = true
+    set mg smoother preconditioner type = additive schwarz method
+    set eig estimation verbosity        = verbose
+    set mg coarse grid solver           = direct
+    set max krylov vectors              = 400
+    set max iters                       = 400
   end
 end
