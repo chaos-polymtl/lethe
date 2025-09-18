@@ -416,18 +416,22 @@ FluidDynamicsVANSMatrixFree<dim>::solve()
         particle_projector.calculate_void_fraction(
           this->simulation_control->get_current_time());
 
-        particle_projector.calculate_particle_fluid_forces_projection(
-          this->cfd_dem_simulation_parameters.cfd_dem,
-          this->dof_handler,
-          this->present_solution,
-          this->previous_solutions,
-          NavierStokesScratchData<dim>(
-            this->simulation_control,
-            this->simulation_parameters.physical_properties_manager,
-            *this->fe,
-            *this->cell_quadrature,
-            *this->mapping,
-            *this->face_quadrature));
+        // We only calculte the particle-fluid forces if read DEM is enabled,
+        // otherwise it makes no sense
+        if (cfd_dem_simulation_parameters.void_fraction->read_dem == true)
+          particle_projector.calculate_particle_fluid_forces_projection(
+            this->cfd_dem_simulation_parameters.cfd_dem,
+            this->dof_handler,
+            this->present_solution,
+            this->previous_solutions,
+            NavierStokesScratchData<dim>(
+              this->simulation_control,
+              this->simulation_parameters.physical_properties_manager,
+              *this->fe,
+              *this->cell_quadrature,
+              *this->mapping,
+              *this->face_quadrature));
+
         // The base matrix-free operator is not aware of the various VANS
         // coupling term. We must do a cast here to ensure that the operator is
         // of the right type.
@@ -440,9 +444,13 @@ FluidDynamicsVANSMatrixFree<dim>::solve()
               particle_projector.dof_handler,
               particle_projector.void_fraction_solution);
 
-            mf_operator->compute_particle_fluid_force(
-              particle_projector.particle_fluid_force.dof_handler,
-              particle_projector.particle_fluid_force.particle_field_solution);
+            // We only calculte the particle-fluid forces if read DEM is
+            // enabled, otherwise it makes no sense
+            if (cfd_dem_simulation_parameters.void_fraction->read_dem == true)
+              mf_operator->compute_particle_fluid_force(
+                particle_projector.particle_fluid_force.dof_handler,
+                particle_projector.particle_fluid_force
+                  .particle_field_solution);
           }
       }
 
