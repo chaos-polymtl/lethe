@@ -1,4 +1,4 @@
-// SPDX-FileCopyrightText: Copyright (c) 2021, 2023-2024 The Lethe Authors
+// SPDX-FileCopyrightText: Copyright (c) 2021, 2023-2025 The Lethe Authors
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
 #ifndef lethe_write_checkpoint_h
@@ -13,8 +13,6 @@
 #include <deal.II/base/timer.h>
 
 #include <deal.II/distributed/tria.h>
-
-#include <deal.II/particles/particle_handler.h>
 
 /**
  * @brief Write_checkpoint Write a DEM simulation checkpointing to allow for DEM

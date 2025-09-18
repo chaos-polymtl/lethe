@@ -20,7 +20,7 @@ class InsertionPlane : public Insertion<dim, PropertiesIndex>
 public:
   /**
    * The plane insertion class insert particles using a plane
-   * define by a point an a normal vector. This method of insertion can be
+   * define by a point and a normal vector. This method of insertion can be
    * useful when dealing with a domain close to be fully filled with particle.
    * In this situation, other insertion method have a high risk to create a big
    * overlap between particles on insertion. The plane insertion method mitigate
@@ -87,8 +87,8 @@ private:
   void
   find_inplane_cells(
     const parallel::distributed::Triangulation<dim> &triangulation,
-    Point<3>                                         plane_point,
-    Tensor<1, 3>                                     plane_normal_vector);
+    const Point<3>                                  &plane_point,
+    const Tensor<1, 3>                              &plane_normal_vector);
 
   /**
    * @brief Store the location of the centers of all the cells that are in the plane

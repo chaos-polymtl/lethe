@@ -1,16 +1,13 @@
-// SPDX-FileCopyrightText: Copyright (c) 2020-2024 The Lethe Authors
+// SPDX-FileCopyrightText: Copyright (c) 2020-2025 The Lethe Authors
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
 #ifndef lethe_visualization_h
 #define lethe_visualization_h
 
-#include <core/dem_properties.h>
-
 #include <dem/dem_solver_parameters.h>
 
 #include <deal.II/base/data_out_base.h>
 
-#include <deal.II/particles/particle.h>
 #include <deal.II/particles/particle_handler.h>
 
 #include <tuple>
@@ -20,7 +17,7 @@ using namespace dealii;
 
 /**
  * @brief Building patches of particle properties for visualization.
- * This function is taken from Aspect and dealii and implemented here.
+ * This function is taken from Aspect and deal.ii and implemented here.
  *
  * @tparam dim An integer that denotes the number of spatial dimensions.
  * @tparam PropertiesIndex Index of the properties used within the ParticleHandler.
@@ -44,8 +41,8 @@ public:
    * dimension.
    */
   void
-  build_patches(Particles::ParticleHandler<dim>         &particle_handler,
-                std::vector<std::pair<std::string, int>> properties);
+  build_patches(Particles::ParticleHandler<dim>          &particle_handler,
+                const std::vector<std::pair<std::string, int>> &properties);
 
   /**
    * @brief Print the data of particles in the xyz format.

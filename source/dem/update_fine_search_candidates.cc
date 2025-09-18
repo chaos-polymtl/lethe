@@ -1,7 +1,7 @@
-// SPDX-FileCopyrightText: Copyright (c) 2020, 2022-2024 The Lethe Authors
+// SPDX-FileCopyrightText: Copyright (c) 2020, 2022-2025 The Lethe Authors
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
-#include <dem/contact_info.h>
+#include <dem/data_containers.h>
 #include <dem/update_fine_search_candidates.h>
 
 using namespace dealii;
@@ -74,8 +74,8 @@ update_fine_search_candidates(pairs_structure      &pairs_in_contact,
 
                       // To prevent searching through the contact_candidates a
                       // second time if there is a deletion in the first search,
-                      // we continue here instead of use an if / else if / else
-                      // statement
+                      // we continue here instead of using an if, else if or
+                      // else statement
                       continue;
                     }
                 }
@@ -196,184 +196,168 @@ update_fine_search_candidates(pairs_structure      &pairs_in_contact,
 template void
 update_fine_search_candidates<
   2,
-  typename DEM::dem_data_structures<2>::adjacent_particle_pairs,
-  typename DEM::dem_data_structures<2>::particle_particle_candidates,
+  DEM::dem_data_structures<2>::adjacent_particle_pairs,
+  DEM::dem_data_structures<2>::particle_particle_candidates,
   ContactType::local_particle_particle>(
-  typename DEM::dem_data_structures<2>::adjacent_particle_pairs
-    &adjacent_particles,
-  typename DEM::dem_data_structures<2>::particle_particle_candidates
+  DEM::dem_data_structures<2>::adjacent_particle_pairs &adjacent_particles,
+  DEM::dem_data_structures<2>::particle_particle_candidates
     &contact_pair_candidates);
 
 template void
 update_fine_search_candidates<
   3,
-  typename DEM::dem_data_structures<3>::adjacent_particle_pairs,
-  typename DEM::dem_data_structures<3>::particle_particle_candidates,
+  DEM::dem_data_structures<3>::adjacent_particle_pairs,
+  DEM::dem_data_structures<3>::particle_particle_candidates,
   ContactType::local_particle_particle>(
-  typename DEM::dem_data_structures<3>::adjacent_particle_pairs
-    &pairs_in_contact,
-  typename DEM::dem_data_structures<3>::particle_particle_candidates
+  DEM::dem_data_structures<3>::adjacent_particle_pairs &pairs_in_contact,
+  DEM::dem_data_structures<3>::particle_particle_candidates
     &contact_candidates);
 
 // Ghost particle-particle contacts
 template void
 update_fine_search_candidates<
   2,
-  typename DEM::dem_data_structures<2>::adjacent_particle_pairs,
-  typename DEM::dem_data_structures<2>::particle_particle_candidates,
+  DEM::dem_data_structures<2>::adjacent_particle_pairs,
+  DEM::dem_data_structures<2>::particle_particle_candidates,
   ContactType::ghost_particle_particle>(
-  typename DEM::dem_data_structures<2>::adjacent_particle_pairs
-    &adjacent_particles,
-  typename DEM::dem_data_structures<2>::particle_particle_candidates
+  DEM::dem_data_structures<2>::adjacent_particle_pairs &adjacent_particles,
+  DEM::dem_data_structures<2>::particle_particle_candidates
     &contact_pair_candidates);
 
 template void
 update_fine_search_candidates<
   3,
-  typename DEM::dem_data_structures<3>::adjacent_particle_pairs,
-  typename DEM::dem_data_structures<3>::particle_particle_candidates,
+  DEM::dem_data_structures<3>::adjacent_particle_pairs,
+  DEM::dem_data_structures<3>::particle_particle_candidates,
   ContactType::ghost_particle_particle>(
-  typename DEM::dem_data_structures<3>::adjacent_particle_pairs
-    &pairs_in_contact,
-  typename DEM::dem_data_structures<3>::particle_particle_candidates
+  DEM::dem_data_structures<3>::adjacent_particle_pairs &pairs_in_contact,
+  DEM::dem_data_structures<3>::particle_particle_candidates
     &contact_candidates);
 
 // Local periodic particle-particle contacts
 template void
 update_fine_search_candidates<
   2,
-  typename DEM::dem_data_structures<2>::adjacent_particle_pairs,
-  typename DEM::dem_data_structures<2>::particle_particle_candidates,
+  DEM::dem_data_structures<2>::adjacent_particle_pairs,
+  DEM::dem_data_structures<2>::particle_particle_candidates,
   ContactType::local_periodic_particle_particle>(
-  typename DEM::dem_data_structures<2>::adjacent_particle_pairs
-    &adjacent_particles,
-  typename DEM::dem_data_structures<2>::particle_particle_candidates
+  DEM::dem_data_structures<2>::adjacent_particle_pairs &adjacent_particles,
+  DEM::dem_data_structures<2>::particle_particle_candidates
     &contact_pair_candidates);
 
 template void
 update_fine_search_candidates<
   3,
-  typename DEM::dem_data_structures<3>::adjacent_particle_pairs,
-  typename DEM::dem_data_structures<3>::particle_particle_candidates,
+  DEM::dem_data_structures<3>::adjacent_particle_pairs,
+  DEM::dem_data_structures<3>::particle_particle_candidates,
   ContactType::local_periodic_particle_particle>(
-  typename DEM::dem_data_structures<3>::adjacent_particle_pairs
-    &pairs_in_contact,
-  typename DEM::dem_data_structures<3>::particle_particle_candidates
+  DEM::dem_data_structures<3>::adjacent_particle_pairs &pairs_in_contact,
+  DEM::dem_data_structures<3>::particle_particle_candidates
     &contact_candidates);
 
 // Local-ghost particle-particle contacts
 template void
 update_fine_search_candidates<
   2,
-  typename DEM::dem_data_structures<2>::adjacent_particle_pairs,
-  typename DEM::dem_data_structures<2>::particle_particle_candidates,
+  DEM::dem_data_structures<2>::adjacent_particle_pairs,
+  DEM::dem_data_structures<2>::particle_particle_candidates,
   ContactType::ghost_periodic_particle_particle>(
-  typename DEM::dem_data_structures<2>::adjacent_particle_pairs
-    &adjacent_particles,
-  typename DEM::dem_data_structures<2>::particle_particle_candidates
+  DEM::dem_data_structures<2>::adjacent_particle_pairs &adjacent_particles,
+  DEM::dem_data_structures<2>::particle_particle_candidates
     &contact_pair_candidates);
 
 template void
 update_fine_search_candidates<
   3,
-  typename DEM::dem_data_structures<3>::adjacent_particle_pairs,
-  typename DEM::dem_data_structures<3>::particle_particle_candidates,
+  DEM::dem_data_structures<3>::adjacent_particle_pairs,
+  DEM::dem_data_structures<3>::particle_particle_candidates,
   ContactType::ghost_periodic_particle_particle>(
-  typename DEM::dem_data_structures<3>::adjacent_particle_pairs
-    &pairs_in_contact,
-  typename DEM::dem_data_structures<3>::particle_particle_candidates
+  DEM::dem_data_structures<3>::adjacent_particle_pairs &pairs_in_contact,
+  DEM::dem_data_structures<3>::particle_particle_candidates
     &contact_candidates);
 
 // Ghost-local particle-particle contacts
 template void
 update_fine_search_candidates<
   2,
-  typename DEM::dem_data_structures<2>::adjacent_particle_pairs,
-  typename DEM::dem_data_structures<2>::particle_particle_candidates,
+  DEM::dem_data_structures<2>::adjacent_particle_pairs,
+  DEM::dem_data_structures<2>::particle_particle_candidates,
   ContactType::ghost_local_periodic_particle_particle>(
-  typename DEM::dem_data_structures<2>::adjacent_particle_pairs
-    &adjacent_particles,
-  typename DEM::dem_data_structures<2>::particle_particle_candidates
+  DEM::dem_data_structures<2>::adjacent_particle_pairs &adjacent_particles,
+  DEM::dem_data_structures<2>::particle_particle_candidates
     &contact_pair_candidates);
 
 template void
 update_fine_search_candidates<
   3,
-  typename DEM::dem_data_structures<3>::adjacent_particle_pairs,
-  typename DEM::dem_data_structures<3>::particle_particle_candidates,
+  DEM::dem_data_structures<3>::adjacent_particle_pairs,
+  DEM::dem_data_structures<3>::particle_particle_candidates,
   ContactType::ghost_local_periodic_particle_particle>(
-  typename DEM::dem_data_structures<3>::adjacent_particle_pairs
-    &pairs_in_contact,
-  typename DEM::dem_data_structures<3>::particle_particle_candidates
+  DEM::dem_data_structures<3>::adjacent_particle_pairs &pairs_in_contact,
+  DEM::dem_data_structures<3>::particle_particle_candidates
     &contact_candidates);
 
 // Particle-wall contacts
 template void
 update_fine_search_candidates<
   2,
-  typename DEM::dem_data_structures<2>::particle_wall_in_contact,
-  typename DEM::dem_data_structures<2>::particle_wall_candidates,
+  DEM::dem_data_structures<2>::particle_wall_in_contact,
+  DEM::dem_data_structures<2>::particle_wall_candidates,
   ContactType::particle_wall>(
-  typename DEM::dem_data_structures<2>::particle_wall_in_contact
-    &adjacent_particles,
-  typename DEM::dem_data_structures<2>::particle_wall_candidates
+  DEM::dem_data_structures<2>::particle_wall_in_contact &adjacent_particles,
+  DEM::dem_data_structures<2>::particle_wall_candidates
     &contact_pair_candidates);
 
 template void
 update_fine_search_candidates<
   3,
-  typename DEM::dem_data_structures<3>::particle_wall_in_contact,
-  typename DEM::dem_data_structures<3>::particle_wall_candidates,
+  DEM::dem_data_structures<3>::particle_wall_in_contact,
+  DEM::dem_data_structures<3>::particle_wall_candidates,
   ContactType::particle_wall>(
-  typename DEM::dem_data_structures<3>::particle_wall_in_contact
-    &adjacent_particles,
-  typename DEM::dem_data_structures<3>::particle_wall_candidates
+  DEM::dem_data_structures<3>::particle_wall_in_contact &adjacent_particles,
+  DEM::dem_data_structures<3>::particle_wall_candidates
     &contact_pair_candidates);
 
 // Particle-floating wall contacts
 template void
 update_fine_search_candidates<
   2,
-  typename DEM::dem_data_structures<2>::particle_wall_in_contact,
-  typename DEM::dem_data_structures<2>::particle_floating_wall_candidates,
+  DEM::dem_data_structures<2>::particle_wall_in_contact,
+  DEM::dem_data_structures<2>::particle_floating_wall_candidates,
   ContactType::particle_floating_wall>(
-  typename DEM::dem_data_structures<2>::particle_wall_in_contact
-    &adjacent_particles,
-  typename DEM::dem_data_structures<2>::particle_floating_wall_candidates
+  DEM::dem_data_structures<2>::particle_wall_in_contact &adjacent_particles,
+  DEM::dem_data_structures<2>::particle_floating_wall_candidates
     &contact_pair_candidates);
 
 template void
 update_fine_search_candidates<
   3,
-  typename DEM::dem_data_structures<3>::particle_wall_in_contact,
-  typename DEM::dem_data_structures<3>::particle_floating_wall_candidates,
+  DEM::dem_data_structures<3>::particle_wall_in_contact,
+  DEM::dem_data_structures<3>::particle_floating_wall_candidates,
   ContactType::particle_floating_wall>(
-  typename DEM::dem_data_structures<3>::particle_wall_in_contact
-    &adjacent_particles,
-  typename DEM::dem_data_structures<3>::particle_floating_wall_candidates
+  DEM::dem_data_structures<3>::particle_wall_in_contact &adjacent_particles,
+  DEM::dem_data_structures<3>::particle_floating_wall_candidates
     &contact_pair_candidates);
 
 // Particle-floating mesh contacts
 template void
-update_fine_search_candidates<2,
-                              typename DEM::dem_data_structures<
-                                2>::particle_floating_wall_from_mesh_in_contact,
-                              typename DEM::dem_data_structures<
-                                2>::particle_floating_wall_from_mesh_candidates,
-                              ContactType::particle_floating_mesh>(
-  typename DEM::dem_data_structures<
-    2>::particle_floating_wall_from_mesh_in_contact &adjacent_particles,
-  typename DEM::dem_data_structures<
-    2>::particle_floating_wall_from_mesh_candidates &contact_pair_candidates);
+update_fine_search_candidates<
+  2,
+  DEM::dem_data_structures<2>::particle_floating_wall_from_mesh_in_contact,
+  DEM::dem_data_structures<2>::particle_floating_wall_from_mesh_candidates,
+  ContactType::particle_floating_mesh>(
+  DEM::dem_data_structures<2>::particle_floating_wall_from_mesh_in_contact
+    &adjacent_particles,
+  DEM::dem_data_structures<2>::particle_floating_wall_from_mesh_candidates
+    &contact_pair_candidates);
 
 template void
-update_fine_search_candidates<3,
-                              typename DEM::dem_data_structures<
-                                3>::particle_floating_wall_from_mesh_in_contact,
-                              typename DEM::dem_data_structures<
-                                3>::particle_floating_wall_from_mesh_candidates,
-                              ContactType::particle_floating_mesh>(
-  typename DEM::dem_data_structures<
-    3>::particle_floating_wall_from_mesh_in_contact &adjacent_particles,
-  typename DEM::dem_data_structures<
-    3>::particle_floating_wall_from_mesh_candidates &contact_pair_candidates);
+update_fine_search_candidates<
+  3,
+  DEM::dem_data_structures<3>::particle_floating_wall_from_mesh_in_contact,
+  DEM::dem_data_structures<3>::particle_floating_wall_from_mesh_candidates,
+  ContactType::particle_floating_mesh>(
+  DEM::dem_data_structures<3>::particle_floating_wall_from_mesh_in_contact
+    &adjacent_particles,
+  DEM::dem_data_structures<3>::particle_floating_wall_from_mesh_candidates
+    &contact_pair_candidates);

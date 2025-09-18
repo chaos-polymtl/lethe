@@ -8,7 +8,6 @@
 #include <core/simulation_control.h>
 
 #include <dem/adaptive_sparse_contacts.h>
-#include <dem/data_containers.h>
 
 #include <deal.II/distributed/tria.h>
 
@@ -66,13 +65,10 @@ public:
    *
    * @param[in] simulation_control The simulation control object (accesses to
    * the time step)
-   *
    * @param[in] triangulation The triangulation object (for dynamics connexion
    * of signals with ASC)
-   *
    * @param[in] particle_handler The particle handler object (accesses to the
    * particles in cells)
-   *
    * @param[in] adaptive_sparse_contacts The adaptive sparse contacts object
    * (accesses to the mobility status of the cells)
    */

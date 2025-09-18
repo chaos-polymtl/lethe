@@ -1,4 +1,4 @@
-// SPDX-FileCopyrightText: Copyright (c) 2022-2024 The Lethe Authors
+// SPDX-FileCopyrightText: Copyright (c) 2022-2025 The Lethe Authors
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
 #ifndef lethe_data_containers_h
@@ -13,9 +13,6 @@
 
 #include <deal.II/particles/particle_iterator.h>
 
-#include <boost/range/adaptor/map.hpp>
-
-#include <iostream>
 #include <unordered_map>
 #include <vector>
 

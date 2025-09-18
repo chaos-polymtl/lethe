@@ -178,29 +178,29 @@ write_collision_stats(const DEMSolverParameters<dim>   &parameters,
     filename += ".csv";
 
   // Open the file for writing or appending based on the MPI process.
-  // This forces a barrier after MPI processes and will undoubtly be slow in
+  // This forces a barrier after MPI processes and will undoubtedly be slow in
   // large parallel simulations. If this becomes an issue, the function should
   // be ported to use MPI I/O or a format like HDF5.
   for (unsigned int i = 0; i < n_mpi_processes; ++i)
     {
       if (this_mpi_process == i)
         {
-          std::ofstream myfile;
+          std::ofstream my_file;
 
           if (this_mpi_process == 0)
             {
               // If this is the first MPI process, we write the header
-              myfile.open(filename);
+              my_file.open(filename);
               if (filename.substr(filename.find_last_of('.') + 1) == ".dat")
                 {
-                  myfile
+                  my_file
                     << "particle_id diameter mass boundary_id start_time end_time start_particle_velocity_x start_particle_velocity_y start_particle_velocity_z start_particle_angular_velocity_x start_particle_angular_velocity_y start_particle_angular_velocity_z end_particle_velocity_x end_particle_velocity_y end_particle_velocity_z end_particle_angular_velocity_x end_particle_angular_velocity_y end_particle_angular_velocity_z"
                     << std::endl;
                   sep = " ";
                 }
               else // .csv is default
                 {
-                  myfile
+                  my_file
                     << "particle_id,diameter,mass,boundary_id,start_time,end_time,start_particle_velocity_x,start_particle_velocity_y,start_particle_velocity_z,start_particle_angular_velocity_x,start_particle_angular_velocity_y,start_particle_angular_velocity_z,end_particle_velocity_x,end_particle_velocity_y,end_particle_velocity_z,end_particle_angular_velocity_x,end_particle_angular_velocity_y,end_particle_angular_velocity_z"
                     << std::endl;
                   sep = ",";
@@ -210,7 +210,7 @@ write_collision_stats(const DEMSolverParameters<dim>   &parameters,
             {
               // If this is not the first MPI process, we open the file for
               // appending
-              myfile.open(filename, std::ios::app);
+              my_file.open(filename, std::ios::app);
               if (filename.substr(filename.find_last_of('.') + 1) == ".dat")
                 sep = " ";
               else // .csv is default
@@ -224,17 +224,18 @@ write_collision_stats(const DEMSolverParameters<dim>   &parameters,
               const auto &end   = event.end_log;
 
               // Write the collision data to the file
-              myfile << start.particle_id << sep << start.dp << sep
-                     << start.mass << sep << static_cast<int>(start.boundary_id)
-                     << sep << start.time << sep << end.time << sep
-                     << start.velocity[0] << sep << start.velocity[1] << sep
-                     << start.velocity[2] << sep << start.omega[0] << sep
-                     << start.omega[1] << sep << start.omega[2] << sep
-                     << end.velocity[0] << sep << end.velocity[1] << sep
-                     << end.velocity[2] << sep << end.omega[0] << sep
-                     << end.omega[1] << sep << end.omega[2] << std::endl;
+              my_file << start.particle_id << sep << start.dp << sep
+                      << start.mass << sep
+                      << static_cast<int>(start.boundary_id) << sep
+                      << start.time << sep << end.time << sep
+                      << start.velocity[0] << sep << start.velocity[1] << sep
+                      << start.velocity[2] << sep << start.omega[0] << sep
+                      << start.omega[1] << sep << start.omega[2] << sep
+                      << end.velocity[0] << sep << end.velocity[1] << sep
+                      << end.velocity[2] << sep << end.omega[0] << sep
+                      << end.omega[1] << sep << end.omega[2] << std::endl;
             }
-          myfile.close();
+          my_file.close();
         }
       // Ensure all MPI processes reach this point before continuing.
       // The barrier forces the synchronisation of the processes.
@@ -245,7 +246,7 @@ write_collision_stats(const DEMSolverParameters<dim>   &parameters,
 template void
 log_collision_data<2, DEM::DEMProperties::PropertiesIndex>(
   const DEMSolverParameters<2> &parameters,
-  typename DEM::dem_data_structures<2>::particle_wall_in_contact
+  dem_data_structures<2>::particle_wall_in_contact
                            &particle_wall_pairs_in_contact,
   const double              current_time,
   OngoingCollisionLog<2>   &ongoing_collision_log,
@@ -254,7 +255,7 @@ log_collision_data<2, DEM::DEMProperties::PropertiesIndex>(
 template void
 log_collision_data<3, DEM::DEMProperties::PropertiesIndex>(
   const DEMSolverParameters<3> &parameters,
-  typename DEM::dem_data_structures<3>::particle_wall_in_contact
+  dem_data_structures<3>::particle_wall_in_contact
                            &particle_wall_pairs_in_contact,
   const double              current_time,
   OngoingCollisionLog<3>   &ongoing_collision_log,
@@ -263,7 +264,7 @@ log_collision_data<3, DEM::DEMProperties::PropertiesIndex>(
 template void
 log_collision_data<2, DEM::CFDDEMProperties::PropertiesIndex>(
   const DEMSolverParameters<2> &parameters,
-  typename DEM::dem_data_structures<2>::particle_wall_in_contact
+  dem_data_structures<2>::particle_wall_in_contact
                            &particle_wall_pairs_in_contact,
   const double              current_time,
   OngoingCollisionLog<2>   &ongoing_collision_log,
@@ -272,7 +273,7 @@ log_collision_data<2, DEM::CFDDEMProperties::PropertiesIndex>(
 template void
 log_collision_data<3, DEM::CFDDEMProperties::PropertiesIndex>(
   const DEMSolverParameters<3> &parameters,
-  typename DEM::dem_data_structures<3>::particle_wall_in_contact
+  dem_data_structures<3>::particle_wall_in_contact
                            &particle_wall_pairs_in_contact,
   const double              current_time,
   OngoingCollisionLog<3>   &ongoing_collision_log,
@@ -281,7 +282,7 @@ log_collision_data<3, DEM::CFDDEMProperties::PropertiesIndex>(
 template void
 log_collision_data<2, DEM::DEMMPProperties::PropertiesIndex>(
   const DEMSolverParameters<2> &parameters,
-  typename DEM::dem_data_structures<2>::particle_wall_in_contact
+  dem_data_structures<2>::particle_wall_in_contact
                            &particle_wall_pairs_in_contact,
   const double              current_time,
   OngoingCollisionLog<2>   &ongoing_collision_log,
@@ -290,7 +291,7 @@ log_collision_data<2, DEM::DEMMPProperties::PropertiesIndex>(
 template void
 log_collision_data<3, DEM::DEMMPProperties::PropertiesIndex>(
   const DEMSolverParameters<3> &parameters,
-  typename DEM::dem_data_structures<3>::particle_wall_in_contact
+  dem_data_structures<3>::particle_wall_in_contact
                            &particle_wall_pairs_in_contact,
   const double              current_time,
   OngoingCollisionLog<3>   &ongoing_collision_log,

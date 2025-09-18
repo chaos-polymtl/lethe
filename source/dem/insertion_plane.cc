@@ -8,7 +8,7 @@
 using namespace DEM;
 
 // The constructor of plane insertion class. In the constructor, we find which
-// cells are going to be use for the insertion and we also find the centers of
+// cells are going to be used for the insertion, and we also find the centers of
 // those cells.
 template <int dim, typename PropertiesIndex>
 InsertionPlane<dim, PropertiesIndex>::InsertionPlane(
@@ -44,8 +44,8 @@ template <int dim, typename PropertiesIndex>
 void
 InsertionPlane<dim, PropertiesIndex>::find_inplane_cells(
   const parallel::distributed::Triangulation<dim> &triangulation,
-  Point<3>                                         plane_point,
-  Tensor<1, 3>                                     plane_normal_vector)
+  const Point<3>                                  &plane_point,
+  const Tensor<1, 3>                              &plane_normal_vector)
 {
   plane_cells_for_insertion.clear();
 

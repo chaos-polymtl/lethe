@@ -1,4 +1,4 @@
-// SPDX-FileCopyrightText: Copyright (c) 2020, 2022-2024 The Lethe Authors
+// SPDX-FileCopyrightText: Copyright (c) 2020, 2022-2025 The Lethe Authors
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
 #ifndef lethe_update_local_particle_containers_h

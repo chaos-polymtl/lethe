@@ -8,15 +8,14 @@
 
 using namespace dealii;
 
-
 template <int dim, typename PropertiesIndex>
 class InsertionVolume : public Insertion<dim, PropertiesIndex>
 {
 public:
   /**
    * @brief The constructor investigates if the insertion box is large enough
-   * to handleto insert the desired number of particles with the specified
-   * insertion parameters.
+   * to handle the desired number of particles with the specified insertion
+   * parameters.
    * If the insertion box is not adequately large, the number of
    * inserted particles at each insertion step is updated. It also finds the
    * insertion points in each direction (number_of_particles_x_direction,

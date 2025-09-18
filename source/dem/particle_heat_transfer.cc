@@ -1,7 +1,15 @@
 // SPDX-FileCopyrightText: Copyright (c) 2025 The Lethe Authors
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
+#include <core/auxiliary_math_functions.h>
+
 #include <dem/particle_heat_transfer.h>
+
+#include <boost/math/special_functions/erf.hpp>
+
+#include <float.h>
+
+#include <cmath>
 
 double
 calculate_corrected_contact_radius(const double effective_radius,

@@ -1,10 +1,10 @@
-// SPDX-FileCopyrightText: Copyright (c) 2021-2024 The Lethe Authors
+// SPDX-FileCopyrightText: Copyright (c) 2021-2025 The Lethe Authors
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
 #ifndef lethe_lagrangian_post_processing_h
 #define lethe_lagrangian_post_processing_h
 
-#include <core/dem_properties.h>
+
 #include <core/pvd_handler.h>
 
 #include <dem/adaptive_sparse_contacts.h>
@@ -12,11 +12,6 @@
 #include <dem/dem_solver_parameters.h>
 
 #include <deal.II/distributed/tria.h>
-
-#include <deal.II/particles/particle_handler.h>
-
-#include <iostream>
-#include <vector>
 
 using namespace dealii;
 

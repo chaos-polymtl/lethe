@@ -6,8 +6,6 @@
 
 #include <deal.II/grid/grid_tools.h>
 
-#include <boost/range/adaptor/map.hpp>
-
 using namespace dealii;
 
 template <int dim, int spacedim>

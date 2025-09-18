@@ -5,7 +5,6 @@
 
 #include <dem/insertion_file.h>
 
-
 using namespace DEM;
 
 template <int dim, typename PropertiesIndex>

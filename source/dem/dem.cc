@@ -8,12 +8,15 @@
 #include <dem/dem.h>
 #include <dem/dem_post_processing.h>
 #include <dem/explicit_euler_integrator.h>
+#include <dem/find_contact_detection_step.h>
 #include <dem/input_parameter_inspection.h>
 #include <dem/insertion_file.h>
 #include <dem/insertion_list.h>
 #include <dem/insertion_plane.h>
 #include <dem/insertion_volume.h>
+#include <dem/lagrangian_post_processing.h>
 #include <dem/multiphysics_integrator.h>
+#include <dem/output_force_torque_calculation.h>
 #include <dem/read_checkpoint.h>
 #include <dem/read_mesh.h>
 #include <dem/set_particle_particle_contact_force_model.h>
@@ -23,13 +26,12 @@
 
 #include <deal.II/base/table_handler.h>
 
-#include <deal.II/fe/mapping_q_generic.h>
-
 #include <deal.II/grid/grid_out.h>
 
 #include <sys/stat.h>
 
 #include <sstream>
+#include <utility>
 
 template <int dim, typename PropertiesIndex>
 DEMSolver<dim, PropertiesIndex>::DEMSolver(
@@ -336,7 +338,7 @@ DEMSolver<dim, PropertiesIndex>::setup_triangulation_dependent_parameters()
 {
   // Find the smallest contact search frequency criterion between (smallest
   // cell size - largest particle radius) and (security factor * (blob
-  // diameter - 1) * largest particle radius). This value is used in
+  // diameter - 1) * the largest particle radius). This value is used in
   // find_contact_detection_frequency function
   smallest_contact_search_criterion =
     std::min((GridTools::minimal_cell_diameter(triangulation) -
@@ -347,7 +349,7 @@ DEMSolver<dim, PropertiesIndex>::setup_triangulation_dependent_parameters()
 
   // Find the smallest cell size and use this as the floating mesh mapping
   // criterion. The edge case comes when the cell are completely square/cubic.
-  // In that case, every sides of a cell are 2^-0.5 or 3^-0.5 times the
+  // In that case, every side of a cell are 2^-0.5 or 3^-0.5 times the
   // cell_diameter. We want to refresh the mapping each time the solid-objet
   // pass through a cell or there will be late contact detection. Thus, we use
   // this value.
@@ -1043,7 +1045,7 @@ DEMSolver<dim, PropertiesIndex>::solve()
       // particle-wall contact candidate if it exists in the contact list.
       // As a result, when we update the points on boundary faces and their
       // normal vectors, update_contacts deletes it from the output of broad
-      // search and they are not updated in the contact force calculations.
+      // search, and they are not updated in the contact force calculations.
       grid_motion_object
         ->update_boundary_points_and_normal_vectors_in_contact_list(
           contact_manager.get_particle_wall_in_contact(),

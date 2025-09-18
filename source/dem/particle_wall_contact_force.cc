@@ -1,6 +1,10 @@
 // SPDX-FileCopyrightText: Copyright (c) 2020-2025 The Lethe Authors
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
+#include <core/auxiliary_math_functions.h>
+
+#include <dem/contact_type.h>
+#include <dem/particle_heat_transfer.h>
 #include <dem/particle_wall_contact_force.h>
 
 using namespace DEM;
@@ -381,7 +385,7 @@ ParticleWallContactForce<dim,
   effective_surface_energy.resize(n_particle_types);
   effective_hamaker_constant.resize(n_particle_types);
 
-  // Intialize wall variables and boundary conditions
+  // Initialize wall variables and boundary conditions
   this->center_mass_container = dem_parameters.forces_torques.point_center_mass;
   this->boundary_translational_velocity_map =
     dem_parameters.boundary_conditions.boundary_translational_velocity;

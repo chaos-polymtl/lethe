@@ -9,14 +9,11 @@
 
 #include <deal.II/distributed/tria.h>
 
-#include <deal.II/dofs/dof_handler.h>
-
 #include <deal.II/grid/grid_generator.h>
 #include <deal.II/grid/grid_tools.h>
 #include <deal.II/grid/tria.h>
 
 #include <boost/range/adaptor/map.hpp>
-
 
 using namespace dealii;
 
@@ -295,7 +292,7 @@ BoundaryCellsInformation<dim>::find_particle_point_and_line_contact_cells(
   // Here, we first loop through all the non-boundary faces of the local cells
   // and find (add them to all cells_with_boundary_lines container) all boundary
   // lines of these faces. Then the boundary lines which are the borders of two
-  // boundary faces should be removed from this container. Finally the remained
+  // boundary faces should be removed from this container. Finally, the remained
   // elements of this container are added to boundary_cells_with_lines
 
   // Boundary lines only exist in three-dimensional cases

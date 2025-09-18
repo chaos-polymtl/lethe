@@ -4,7 +4,6 @@
 #ifndef lethe_collision_log_data_h
 #define lethe_collision_log_data_h
 
-#include <core/dem_properties.h>
 #include <core/tensors_and_points_dimension_manipulation.h>
 
 #include <dem/dem_contact_manager.h>

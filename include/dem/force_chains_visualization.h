@@ -4,8 +4,6 @@
 #ifndef lethe_force_chains_visualization_h
 #define lethe_force_chains_visualization_h
 
-#include <core/auxiliary_math_functions.h>
-#include <core/dem_properties.h>
 #include <core/pvd_handler.h>
 
 #include <dem/contact_type.h>
@@ -13,9 +11,6 @@
 #include <dem/dem_contact_manager.h>
 #include <dem/dem_solver_parameters.h>
 #include <dem/particle_particle_contact_force.h>
-#include <dem/rolling_resistance_torque_models.h>
-
-#include <deal.II/particles/particle_handler.h>
 
 #include <boost/range/adaptor/map.hpp>
 
@@ -27,10 +22,9 @@ using namespace DEM;
 /**
  * @brief Base class for the particles force chains contact force models.
  * This class does not implement any of the models, but ensures that
- * an interface without template specialization is available. All of the
- * actual implementation of the models are carried out in the
- * ParticlesForceChains class which is templated by the contact model
- * type.
+ * an interface without template specialization is available. Every model
+ * implementation are carried out in the ParticlesForceChains class which is
+ * templated by the contact model type.
  * @tparam dim An integer that denotes the number of spatial dimensions.
  * @tparam PropertiesIndex Index of the properties used within the ParticleHandler.
  */
@@ -63,6 +57,7 @@ protected:
     std::vector<double>   &normal_forces_vector) = 0;
 
 public:
+  virtual ~ParticlesForceChainsBase() = default;
   /**
    * @brief Output the force chains in VTU and PVTU files for each iteration and
    * a PVD file.
@@ -75,6 +70,11 @@ public:
    * be saved
    * @param[in] iter the iteration number associated with the file
    * @param[in] time the time associated with the file
+   * @param[in] local_adjacent_particles Container of the contact pair
+   * candidates information for calculation of the local particle-particle
+   * contact forces.
+   * @param[in] ghost_adjacent_particles Container of the contact pair
+   * candidates information for calculation of the local-ghost particle-particle
    */
   virtual void
   write_force_chains(const DEMSolverParameters<dim> &dem_parameters,
@@ -92,7 +92,7 @@ public:
 /**
  * @brief Class that carries out the calculation of
  * particle-particle contact force and the visualization of force chains
- * by writing vtu files, pvtu files and a pvd file. Instead of using a
+ * by writing vtu files, pvtu files and a pvd file. Instead of using an
  * inheritance hierarchy to distinguish between the contact model, the class is
  * templated with the type of force model and rolling friction model.
  * Consequently, the code for each combination of force model is generated at
@@ -184,7 +184,7 @@ private:
    * particle-particle contact forces class, without the other contact types and
    * the update of the particles forces, torques and tangential displacement.
    *
-   * @tparam force_model The particle-particle contact force model.
+   * @tparam contact_type The type of contact to be calculated.
    * @param[in] adjacent_particles_list Container of the adjacent particles of a
    * particles.
    * @param[out] vertices the vector of positions of touching particles.

@@ -12,7 +12,6 @@
 
 #include <cmath>
 #include <fstream>
-#include <iostream>
 
 using namespace DEM;
 using namespace Parameters::Lagrangian;

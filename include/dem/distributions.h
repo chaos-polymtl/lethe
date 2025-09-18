@@ -4,11 +4,7 @@
 #ifndef lethe_distributions_h
 #define lethe_distributions_h
 
-#include <cmath>
-#include <fstream>
-#include <iostream>
 #include <random>
-#include <string>
 
 class Distribution
 {

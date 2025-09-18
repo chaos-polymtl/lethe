@@ -7,8 +7,6 @@
 #include <dem/dem_solver_parameters.h>
 #include <dem/particle_wall_contact_force.h>
 
-#include <deal.II/distributed/tria.h>
-
 /**
  * @brief Return the particle-wall contact force model based on the
  * spring-dashpot model and the rolling resistance model (and the cohesive

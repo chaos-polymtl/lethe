@@ -3,6 +3,14 @@
 
 #include <dem/dem_action_manager.h>
 #include <dem/dem_contact_manager.h>
+#include <dem/find_cell_neighbors.h>
+#include <dem/particle_particle_fine_search.h>
+#include <dem/particle_point_line_broad_search.h>
+#include <dem/particle_point_line_fine_search.h>
+#include <dem/particle_wall_fine_search.h>
+#include <dem/update_fine_search_candidates.h>
+#include <dem/update_local_particle_containers.h>
+
 
 using namespace DEM;
 

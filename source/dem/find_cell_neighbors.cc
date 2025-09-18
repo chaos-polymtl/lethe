@@ -3,6 +3,8 @@
 
 #include <dem/find_cell_neighbors.h>
 
+#include <deal.II/grid/grid_tools.h>
+
 using namespace DEM;
 
 template <int dim, bool reciprocal>
@@ -171,7 +173,7 @@ find_cell_periodic_neighbors(
 
                   // Check if the neighbor cell is in already in the
                   // local_periodic_neighbor_vector
-                  // Note from Gabo: I don't understand how this could happened
+                  // Note from Gabo: I don't understand how this could happen
                   // since we are looping over cell on boundary 1.
                   // I think the only case would be if periodic_neighbor_list
                   // has duplicate cell. If this is the case, it is weird that
@@ -368,67 +370,57 @@ get_periodic_neighbor_list(
 template void
 find_cell_neighbors<2, false>(
   const parallel::distributed::Triangulation<2> &triangulation,
-  typename dem_data_structures<2>::cells_neighbor_list
-    &cells_local_neighbor_list,
-  typename dem_data_structures<2>::cells_neighbor_list
-    &cells_ghost_neighbor_list);
+  dem_data_structures<2>::cells_neighbor_list   &cells_local_neighbor_list,
+  dem_data_structures<2>::cells_neighbor_list   &cells_ghost_neighbor_list);
 
 template void
 find_cell_neighbors<3, false>(
   const parallel::distributed::Triangulation<3> &triangulation,
-  typename dem_data_structures<3>::cells_neighbor_list
-    &cells_local_neighbor_list,
-  typename dem_data_structures<3>::cells_neighbor_list
-    &cells_ghost_neighbor_list);
+  dem_data_structures<3>::cells_neighbor_list   &cells_local_neighbor_list,
+  dem_data_structures<3>::cells_neighbor_list   &cells_ghost_neighbor_list);
 
 template void
 find_cell_neighbors<2, true>(
   const parallel::distributed::Triangulation<2> &triangulation,
-  typename dem_data_structures<2>::cells_neighbor_list
-    &cells_local_neighbor_list,
-  typename dem_data_structures<2>::cells_neighbor_list
-    &cells_ghost_neighbor_list);
+  dem_data_structures<2>::cells_neighbor_list   &cells_local_neighbor_list,
+  dem_data_structures<2>::cells_neighbor_list   &cells_ghost_neighbor_list);
 
 template void
 find_cell_neighbors<3, true>(
   const parallel::distributed::Triangulation<3> &triangulation,
-  typename dem_data_structures<3>::cells_neighbor_list
-    &cells_local_neighbor_list,
-  typename dem_data_structures<3>::cells_neighbor_list
-    &cells_ghost_neighbor_list);
+  dem_data_structures<3>::cells_neighbor_list   &cells_local_neighbor_list,
+  dem_data_structures<3>::cells_neighbor_list   &cells_ghost_neighbor_list);
 
 template void
 find_cell_periodic_neighbors<2>(
   const parallel::distributed::Triangulation<2> &triangulation,
-  const typename dem_data_structures<2>::periodic_boundaries_cells_info
+  const dem_data_structures<2>::periodic_boundaries_cells_info
     &periodic_boundaries_cells_information,
-  typename dem_data_structures<2>::cells_neighbor_list
+  dem_data_structures<2>::cells_neighbor_list
     &cells_local_periodic_neighbor_list,
-  typename dem_data_structures<2>::cells_neighbor_list
+  dem_data_structures<2>::cells_neighbor_list
     &cells_ghost_periodic_neighbor_list,
-  typename dem_data_structures<2>::cells_neighbor_list
+  dem_data_structures<2>::cells_neighbor_list
     &cells_ghost_local_periodic_neighbor_list);
 
 template void
 find_cell_periodic_neighbors<3>(
   const parallel::distributed::Triangulation<3> &triangulation,
-  const typename dem_data_structures<3>::periodic_boundaries_cells_info
+  const dem_data_structures<3>::periodic_boundaries_cells_info
     &periodic_boundaries_cells_information,
-  typename dem_data_structures<3>::cells_neighbor_list
+  dem_data_structures<3>::cells_neighbor_list
     &cells_local_periodic_neighbor_list,
-  typename dem_data_structures<3>::cells_neighbor_list
+  dem_data_structures<3>::cells_neighbor_list
     &cells_ghost_periodic_neighbor_list,
-  typename dem_data_structures<3>::cells_neighbor_list
+  dem_data_structures<3>::cells_neighbor_list
     &cells_ghost_local_periodic_neighbor_list);
 
 template void
 find_full_cell_neighbors<2>(
-  const parallel::distributed::Triangulation<2> &triangulation,
-  typename dem_data_structures<2>::cells_total_neighbor_list
-    &cells_total_neighbor_list);
+  const parallel::distributed::Triangulation<2>     &triangulation,
+  dem_data_structures<2>::cells_total_neighbor_list &cells_total_neighbor_list);
 
 template void
 find_full_cell_neighbors<3>(
-  const parallel::distributed::Triangulation<3> &triangulation,
-  typename dem_data_structures<3>::cells_total_neighbor_list
-    &cells_total_neighbor_list);
+  const parallel::distributed::Triangulation<3>     &triangulation,
+  dem_data_structures<3>::cells_total_neighbor_list &cells_total_neighbor_list);

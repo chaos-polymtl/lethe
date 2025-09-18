@@ -7,10 +7,8 @@
 #include <dem/read_checkpoint.h>
 
 #include <boost/archive/text_iarchive.hpp>
-#include <boost/archive/text_oarchive.hpp>
 
 #include <fstream>
-#include <iostream>
 
 using namespace dealii;
 

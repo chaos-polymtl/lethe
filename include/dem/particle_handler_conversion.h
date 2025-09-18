@@ -4,19 +4,16 @@
 #ifndef particle_handler_conversion_h
 #define particle_handler_conversion_h
 
-#include <core/dem_properties.h>
 
 #include <deal.II/grid/filtered_iterator.h>
 #include <deal.II/grid/grid_tools.h>
 
 #include <deal.II/particles/particle_handler.h>
 #include <deal.II/particles/particle_iterator.h>
-#include <deal.II/particles/property_pool.h>
-
 
 using namespace dealii;
 
-/* @brief Converts an input particle handler with a given set of input properties
+/** @brief Converts an input particle handler with a given set of input properties
  * into an output particle handler with a different set of output properties.
  * This is used, notably, to convert DEM simulation particle_handlers into
  * CFD-DEM particle_handlers.
@@ -24,11 +21,13 @@ using namespace dealii;
  * @tparam dim the number of dimensions
  * @tparam input the properties index used for the ph_in
  * @tparam output the properties index used for the ph_out
- * @param triangulation The triangulation on which the ph_out is stored
- * @param ph_in The input particle_handler that has properties indified by the input
- * @param ph_out The output partcile_handler that has properties identified by the output
+ *
+ * @param[in] triangulation The triangulation on which the ph_out is stored
+ * @param[in] ph_in The input particle_handler that has properties indified by
+ * the input.
+ * @param[out] ph_out The output partcile_handler that has properties identified
+ *by the output.
  */
-
 template <int dim, typename input, typename output>
 void
 convert_particle_handler(

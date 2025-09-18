@@ -4,16 +4,8 @@
 #ifndef lethe_particle_heat_transfer_h
 #define lethe_particle_heat_transfer_h
 
-#include <core/auxiliary_math_functions.h>
-
 #include <dem/contact_type.h>
 
-#include <boost/math/special_functions/erf.hpp>
-
-#include <float.h>
-
-#include <cmath>
-#include <iostream>
 
 
 /**

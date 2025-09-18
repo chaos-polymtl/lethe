@@ -19,7 +19,7 @@ using namespace dealii;
  * pairs_in_contact and also its information from pairs_in_contact_info.
  * Then it iterates over the contact candidates from broad search to see if
  * they already exist in the pairs_in_contact or not, if they are not in the
- * pairs_in_contact and they have overlap, the pair will be added to the
+ * pairs_in_contact and have an overlap, the pair will be added to the
  * pairs_in_contact and its contact information will be stored in the
  * corresponding element of the pairs_in_contact_info
  *
