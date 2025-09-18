@@ -111,20 +111,24 @@ plane_sphere_intersection (const Point<dim> &c_sphere,
   const Tensor<1,dim> n_unit = normal_vector / normal_vector.norm();
   // Compute the distance from the center of the sphere to the place
   double d = n_unit * (c_sphere - p_plane);
-  
+  std::cout<<"Distance from sphere center to the plane is : " << d << std::endl;
+  // If the distance is greater than the radius of the sphere, there is no intersection (this should not happen in the CFD-DEM simulations, since we look in boundary cells that contain the sphere center)
   if (std::abs(d) >= r_sphere)
-    Assert(false, dealii::ExcMessage("You are calculating the intersection between a sphere in QCM and a boundary, where there is none."));
+  {
+    return 0;
+  }
+
+  // If the major part of the sphere is outside of the domain, in other terms, the sphere center is outside of the domain.  
+  if (d > 0)
+  {
+    Assert(false, dealii::ExcMessage("Your reference sphere center is outside of the domain"));
+  }
+
   // Compute height of the spherical cap (segment in 2D) height (in our case d is always negative since the sphere center is always in the fluid domain and the normal to a face points outwards)
   const double h = r_sphere + d;
   if constexpr(dim==2)
-    {
-     if (h <= r_sphere)
+    {  // This assumes that we are calculating the area if the minor circular segment. In other terms, the sphere center is inside the domain.
        return (Utilities::fixed_power<2, double> (r_sphere) * std::acos(1-h/r_sphere) - (r_sphere-h)*sqrt(Utilities::fixed_power<2, double> (r_sphere) - Utilities::fixed_power<2, double> (r_sphere-h)));
-     else
-      {
-        Assert(false, dealii::ExcMessage("Your reference sphere center is outside of the domain"));
-        return 0;
-      }
     }
   if constexpr(dim==3)
      return (M_PI * h*h * (3*r_sphere - h)/3);
@@ -171,7 +175,9 @@ sphere_boundary_intersection (std::shared_ptr<Mapping<dim>> & mapping,
           
           // Calculate the normal vector at the face
           normal_vector = fe_face_values.normal_vector(0);
-           return plane_sphere_intersection (c_sphere, r_sphere, normal_vector, cell->face(f)->center());
+          std::cout << std::endl;
+          std::cout << "The face normal is : (" << normal_vector << ") " << "at the face centered at (" << cell->face(f)->center() << ") " << std::endl;
+          return plane_sphere_intersection (c_sphere, r_sphere, normal_vector, cell->face(f)->center());
         }
       }   
     return 0;  
