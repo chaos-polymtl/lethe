@@ -48,10 +48,11 @@ public:
    * This essentially calculates the void fraction and the void fraction
    * gradient.
    *
-   * @param[in] void_fraction_solution The solution of the void fraction
-   *
    * @param[in] void_fraction_dof_handler The dof handler associated with the
    * void fraction
+   *
+   * @param[in] void_fraction_solution The solution of the void fraction
+   *
    */
   void
   compute_void_fraction(
