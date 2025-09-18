@@ -2,6 +2,7 @@
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
 #include <core/checkpoint_control.h>
+#include <core/utilities.h>
 
 #include <dem/dem_action_manager.h>
 #include <dem/read_checkpoint.h>
@@ -38,12 +39,8 @@ read_checkpoint(
   std::ifstream iss_checkpoint_controller_obj(
     checkpoint_controller_object_filename);
 
-  AssertThrow(false,
-              ExcMessage(
-                std::string("You are trying to restart a previous computation, "
-                            "but the restart file <") +
-                checkpoint_controller_object_filename +
-                "> does not appear to exist!"));
+  assert_restart_file_exists(iss_checkpoint_controller_obj,
+                             checkpoint_controller_object_filename);
 
   boost::archive::text_iarchive ia_checkpoint_controller_obj(
     iss_checkpoint_controller_obj, boost::archive::no_header);
@@ -65,11 +62,8 @@ read_checkpoint(
   // Gather particle serialization information
   std::string   particle_filename = prefix + ".particles";
   std::ifstream input(particle_filename.c_str());
-  AssertThrow(false,
-              ExcMessage(
-                std::string("You are trying to restart a previous computation, "
-                            "but the restart file <") +
-                particle_filename + "> does not appear to exist!"));
+
+  assert_restart_file_exists(input, particle_filename);
 
   std::string buffer;
   std::getline(input, buffer);
@@ -80,13 +74,8 @@ read_checkpoint(
 
   const std::string filename = prefix + ".triangulation";
   std::ifstream     in(filename.c_str());
-  if (!in)
-    AssertThrow(false,
-                ExcMessage(
-                  std::string(
-                    "You are trying to restart a previous computation, "
-                    "but the restart file <") +
-                  filename + "> does not appear to exist!"));
+
+  assert_restart_file_exists(in, filename);
 
   try
     {

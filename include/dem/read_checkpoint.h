@@ -43,4 +43,20 @@ read_checkpoint(
   std::vector<std::shared_ptr<SerialSolid<dim - 1, dim>>> &solid_surfaces,
   CheckpointControl &checkpoint_controller);
 
+/**
+ * @brief Asserts that a file exists. If the file does not exist, an exception is
+ * @param[in] f Object associated with the file to check. The file
+ * should be opened before passing it to this function.
+ * @param[in] filename Name of the file that is not found.
+ *
+ */
+inline void
+assert_restart_file_exists(std::ifstream &f, const std::string &filename)
+{
+  AssertThrow(f.is_open(),
+              ExcMessage(
+                std::string("You are trying to restart a previous computation, "
+                            "but the restart file <") +
+                filename + "> does not appear to exist!"));
+}
 #endif
