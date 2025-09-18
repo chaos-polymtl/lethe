@@ -416,7 +416,8 @@ public:
     , squared_thickness(pow(p_thickness, 2))
     , tracer_reaction_order(p_tracer_reaction_order)
   {
-    this->model_depends_on[field::levelset] = true;
+    this->model_depends_on[field::levelset]             = true;
+    this->model_depends_on[field::tracer_concentration] = true;
   }
 
   /**
@@ -434,11 +435,16 @@ public:
     Assert(field_values.find(field::levelset) != field_values.end(),
            PhysicialPropertyModelFieldUndefined(
              "GaussianLevelsetTracerReactionPrefactor", "levelset"));
-    double levelset = field_values.at(field::levelset);
-
-    return tracer_reaction_constant_bulk +
-           delta_reaction_constant *
-             exp(-(pow(levelset, 2)) / squared_thickness);
+    Assert(field_values.find(field::tracer_concentration) != field_values.end(),
+           PhysicialPropertyModelFieldUndefined(
+             "GaussianLevelsetTracerReactionPrefactor",
+             "tracer_concentration"));
+    const double levelset_val  = field_values.at(field::levelset);
+    const double concentration = field_values.at(field::tracer_concentration);
+    const double k =
+      tracer_reaction_constant_bulk +
+      delta_reaction_constant * exp(-pow(levelset_val, 2) / squared_thickness);
+    return k * pow(concentration, tracer_reaction_order - 1.);
   }
 
   /**
@@ -457,21 +463,27 @@ public:
     Assert(field_vectors.find(field::levelset) != field_vectors.end(),
            PhysicialPropertyModelFieldUndefined(
              "GaussianLevelsetTracerReactionPrefactor", "levelset"));
+    Assert(field_vectors.find(field::tracer_concentration) !=
+             field_vectors.end(),
+           PhysicialPropertyModelFieldUndefined(
+             "GaussianLevelsetTracerReactionPrefactor",
+             "tracer_concentration"));
 
     const std::vector<double> &levelset_vec = field_vectors.at(field::levelset);
+    const std::vector<double> &concentration_vec =
+      field_vectors.at(field::tracer_concentration);
 
-    const unsigned int n_values = property_vector.size();
-
+    const unsigned int n_values = levelset_vec.size();
     Assert(n_values == levelset_vec.size(),
            SizeOfFields(n_values, levelset_vec.size()));
-
     for (unsigned int i = 0; i < n_values; ++i)
       {
-        const double levelset = levelset_vec[i];
-        property_vector[i]    = tracer_reaction_constant_bulk +
-                             delta_reaction_constant *
-                               exp(-(pow(levelset, 2)) / squared_thickness);
-        ;
+        const double k = tracer_reaction_constant_bulk +
+                         delta_reaction_constant *
+                           exp(-pow(levelset_vec[i], 2) / squared_thickness);
+
+        property_vector[i] =
+          k * pow(concentration_vec[i], tracer_reaction_order - 1.);
       }
   }
 
@@ -503,12 +515,14 @@ public:
       }
     else if (id == field::tracer_concentration)
       {
+        const double levelset_val = field_values.at(field::levelset);
+        const double concentration_val =
+          field_values.at(field::tracer_concentration);
         const double k = tracer_reaction_constant_bulk +
                          delta_reaction_constant *
-                           exp(-(levelset * levelset) / squared_thickness);
+                           exp(-pow(levelset_val, 2) / squared_thickness);
         return k * (tracer_reaction_order - 1.) *
-               pow(field_values.at(field::tracer_concentration),
-                   tracer_reaction_order - 2.);
+               pow(concentration_val, tracer_reaction_order - 2.);
       }
     else
       return 0;
@@ -551,9 +565,10 @@ public:
         const unsigned int n_values = levelset_vec.size();
         for (unsigned int i = 0; i < n_values; ++i)
           {
-            const double k = tracer_reaction_constant_bulk +
-                             delta_reaction_constant *
-                               exp(-(levelset * levelset) / squared_thickness);
+            const double k =
+              tracer_reaction_constant_bulk +
+              delta_reaction_constant *
+                exp(-pow(levelset_vec[i], 2) / squared_thickness);
             jacobian_vector[i] =
               k * (tracer_reaction_order - 1.) *
               pow(concentration_vec[i], tracer_reaction_order - 2.);
