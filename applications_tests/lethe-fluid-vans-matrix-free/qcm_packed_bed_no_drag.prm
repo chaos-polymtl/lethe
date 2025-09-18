@@ -11,9 +11,9 @@ set dimension = 3
 #---------------------------------------------------
 
 subsection simulation control
-  set method            = steady
-  set output frequency  = 0
-  set log precision     = 10
+  set method           = steady
+  set output frequency = 0
+  set log precision    = 10
 end
 
 #---------------------------------------------------
