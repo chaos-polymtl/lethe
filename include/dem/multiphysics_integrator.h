@@ -4,7 +4,6 @@
 #ifndef multiphysics_integrator_h
 #define multiphysics_integrator_h
 
-// Deal.ii
 #include <dem/dem_solver_parameters.h>
 
 #include <deal.II/particles/particle_handler.h>
