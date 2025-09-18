@@ -1,0 +1,23 @@
+Running on 1 MPI rank(s)...
+   Number of active cells:       640
+   Number of degrees of freedom: 3300
+   Volume of triangulation:      5.656854249e-05
+--------------
+Void Fraction
+--------------
+Pressure drop: 0 Pa
+Total pressure drop: 0 Pa
+
+*****************************
+Steady iteration:        1/1
+*****************************
+--------------
+Void Fraction
+--------------
+
+  -Levels of MG preconditioner:
+    Level 0: 544 DoFs, 80 cells
+    Level 1: 3300 DoFs, 640 cells
+
+Pressure drop: -0.7498551485 Pa
+Total pressure drop: -0.7498552055 Pa
