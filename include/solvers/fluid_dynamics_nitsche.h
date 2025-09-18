@@ -35,7 +35,7 @@ public:
 
 private:
   /**
-   * @brief Adds the nitsche restriction to the global matrix and global rhs on 
+   * @brief Adds the nitsche restriction to the global matrix and global rhs on
    * the cells surrounding the immersed solid
    */
   template <bool assemble_matrix>
@@ -51,7 +51,7 @@ private:
 
   /**
    * @brief Calculates the torque due to the fluid motion on the solid
-   * @return Tensor of torque on the solid. This is always a 3D tensor even in 
+   * @return Tensor of torque on the solid. This is always a 3D tensor even in
    * 2D
    */
   Tensor<1, 3>
@@ -59,7 +59,7 @@ private:
 
   /**
    * @brief Calculates the torque due to the fluid motion on the solid
-   * @return Tensor of torque on the solid. This is always a 3D tensor even in 
+   * @return Tensor of torque on the solid. This is always a 3D tensor even in
    * 2D
    */
   Tensor<1, 3>
@@ -68,7 +68,7 @@ private:
   /**
    * @brief Post-process for forces on solid after an iteration
    * @param i_solid is the solid index
-   * @param first_solid_forces is a boolean set to true for the first call of 
+   * @param first_solid_forces is a boolean set to true for the first call of
    * this method, used for table output formatting
    */
   void
@@ -78,7 +78,7 @@ private:
   /**
    * @brief Post-process for torques on solid after an iteration
    * @param i_solid is the solid index
-   * @param first_solid_torques is a boolean set to true for the first call of 
+   * @param first_solid_torques is a boolean set to true for the first call of
    * this method, used for table output formatting
    */
   void
@@ -104,20 +104,20 @@ private:
   }
 
   /**
-   * @brief Same as in fluid_dynamics_matrix_based, but calls 
+   * @brief Same as in fluid_dynamics_matrix_based, but calls
    * assemble_nitsche_restriction() when global matrix and rhs are assembled
    *
-   * @deprecated This function is to be deprecated when the new assembly 
+   * @deprecated This function is to be deprecated when the new assembly
    * mechanism is integrated to this solver
    */
   void
   assemble_matrix_and_rhs();
 
   /**
-   * @brief Same as in fluid_dynamics_matrix_based, but calls 
+   * @brief Same as in fluid_dynamics_matrix_based, but calls
    * assemble_nitsche_restriction() when rhs is assembled
    *
-   * @deprecated This function is to be deprecated when the new assembly 
+   * @deprecated This function is to be deprecated when the new assembly
    * mechanism is integrated to this solver
    */
   void
@@ -129,40 +129,40 @@ private:
   void
   output_solid_particles(const unsigned int i_solid);
   /**
-   * @brief Outputs a vtu file for each output frequency of the solid 
+   * @brief Outputs a vtu file for each output frequency of the solid
    * triangulation
    */
   void
   output_solid_triangulation(const unsigned int i_solid);
 
   /**
-   * @brief Allow the refinement of the mesh according to one of the 2 methods 
-   * proposed. Overrides the regular mesh adaptation by ensuring that the 
+   * @brief Allow the refinement of the mesh according to one of the 2 methods
+   * proposed. Overrides the regular mesh adaptation by ensuring that the
    * Nitsche solids are prepared for adaptation.
    */
   virtual void
   refine_mesh() override;
 
   /**
-   * @brief Returns a vector of references to TableHandler objects that needs 
+   * @brief Returns a vector of references to TableHandler objects that needs
    * to be serialized/deserialized for a given solver.
    *
    * @return Structure containing a vector of references to TableHandler objects
-   * that needs to be serialized/deserialized for a given solver, and their 
+   * that needs to be serialized/deserialized for a given solver, and their
    * corresponding file names.
    */
   std::vector<OutputStructTableHandler>
   gather_tables() override;
 
   /**
-   * @brief Write a gls_nitsche simulation checkpointing to allow for 
+   * @brief Write a gls_nitsche simulation checkpointing to allow for
    * gls_nitsche simulation restart
    */
   virtual void
   write_checkpoint() override;
 
   /**
-   * @brief Read a gls_nitsche simulation checkpoint and initiate simulation 
+   * @brief Read a gls_nitsche simulation checkpoint and initiate simulation
    * restart
    */
   virtual void

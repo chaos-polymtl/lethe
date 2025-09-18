@@ -912,16 +912,16 @@ template <int dim, int spacedim>
 std::vector<OutputStructTableHandler>
 FluidDynamicsNitsche<dim, spacedim>::gather_tables()
 {
-  // Initilization of the structure that will contain the references to the 
-  // tables that are additional in this solver and their associated filenames 
+  // Initilization of the structure that will contain the references to the
+  // tables that are additional in this solver and their associated filenames
   std::vector<OutputStructTableHandler> table_output_structs;
-  
+
   // Prefix and suffix for the table checkpoint file name
   std::string prefix =
     this->simulation_parameters.simulation_control.output_folder;
   std::string suffix = ".checkpoint";
-  
-  // Add the tables of the forces and torques calculated on each solid, one 
+
+  // Add the tables of the forces and torques calculated on each solid, one
   // table per solid
   for (unsigned int i_solid = 0;
        i_solid < this->simulation_parameters.nitsche->number_solids;

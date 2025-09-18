@@ -114,10 +114,10 @@ using OutputStruct = std::variant<OutputStructPostprocessor<dim, VectorType>,
                                   OutputStructCellVector>;
 
 /**
- * @brief Struct containing information about the table handlers to be 
- * written/read. It is used to pass a vector of references to TableHandler 
- * objects that should be serialized/deserialized at the writing/reading of a 
- * checkpoint by the solver used, and a vector of references to strings 
+ * @brief Struct containing information about the table handlers to be
+ * written/read. It is used to pass a vector of references to TableHandler
+ * objects that should be serialized/deserialized at the writing/reading of a
+ * checkpoint by the solver used, and a vector of references to strings
  * containing the names of the corresponding files.
  */
 struct OutputStructTableHandler
@@ -135,7 +135,7 @@ struct OutputStructTableHandler
     , table_filename(table_filename)
   {}
   /// Reference to the TableHandler object to be serialized/deserialized
-  TableHandler     &table;
+  TableHandler &table;
   /// Name of the file associated with the TableHandler for input/output
   const std::string table_filename;
 };
