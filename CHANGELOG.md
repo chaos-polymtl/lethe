@@ -3,6 +3,12 @@
 All notable changes to the Lethe project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
+### [Master] - 2025-09-18
+
+## Added
+
+- MINOR A new reaction prefactor Gaussian model to be used with the lethe-fluid-sharp solver with the tracer physics. This new model imposes different properties at the interface and in the bulk of each phase, with a tunable width. It has been added to the tracer diffusivity as well.
+
 ### [Master] - 2025-09-16
 
 ## Fixed
