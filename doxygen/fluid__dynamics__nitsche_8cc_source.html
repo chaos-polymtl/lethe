@@ -1030,145 +1030,212 @@ $(document).ready(function() { init_codefold(0); });
 </div>
 <div class="line"><a id="l00910" name="l00910"></a><span class="lineno">  910</span> </div>
 <div class="line"><a id="l00911" name="l00911"></a><span class="lineno">  911</span><span class="keyword">template</span> &lt;<span class="keywordtype">int</span> dim, <span class="keywordtype">int</span> spacedim&gt;</div>
-<div class="line"><a id="l00912" name="l00912"></a><span class="lineno">  912</span><span class="keywordtype">void</span></div>
+<div class="line"><a id="l00912" name="l00912"></a><span class="lineno">  912</span>std::vector&lt;OutputStructTableHandler&gt;</div>
 <div class="foldopen" id="foldopen00913" data-start="{" data-end="}">
-<div class="line"><a id="l00913" name="l00913"></a><span class="lineno"><a class="line" href="classFluidDynamicsNitsche.html#ae1d624e0643d99abd921cf3306df2f74">  913</a></span><a class="code hl_function" href="classFluidDynamicsNitsche.html#ae1d624e0643d99abd921cf3306df2f74">FluidDynamicsNitsche&lt;dim, spacedim&gt;::write_checkpoint</a>()</div>
+<div class="line"><a id="l00913" name="l00913"></a><span class="lineno"><a class="line" href="classFluidDynamicsNitsche.html#a70db00a80d2713ea91311020ce472ca3">  913</a></span><a class="code hl_function" href="classFluidDynamicsNitsche.html#a70db00a80d2713ea91311020ce472ca3">FluidDynamicsNitsche&lt;dim, spacedim&gt;::gather_tables</a>()</div>
 <div class="line"><a id="l00914" name="l00914"></a><span class="lineno">  914</span>{</div>
-<div class="line"><a id="l00915" name="l00915"></a><span class="lineno">  915</span>  <span class="comment">// Write solid base checkpoint</span></div>
-<div class="line"><a id="l00916" name="l00916"></a><span class="lineno">  916</span>  <span class="keywordflow">for</span> (<span class="keywordtype">unsigned</span> <span class="keywordtype">int</span> i_solid = 0; i_solid &lt; solids.size(); ++i_solid)</div>
-<div class="line"><a id="l00917" name="l00917"></a><span class="lineno">  917</span>    {</div>
-<div class="line"><a id="l00918" name="l00918"></a><span class="lineno">  918</span>      std::string filename =</div>
-<div class="line"><a id="l00919" name="l00919"></a><span class="lineno">  919</span>        this-&gt;simulation_parameters.simulation_control.output_folder +</div>
-<div class="line"><a id="l00920" name="l00920"></a><span class="lineno">  920</span>        this-&gt;simulation_parameters.restart_parameters.filename + <span class="stringliteral">&quot;_solid_&quot;</span> +</div>
-<div class="line"><a id="l00921" name="l00921"></a><span class="lineno">  921</span>        Utilities::int_to_string(i_solid, 2);</div>
-<div class="line"><a id="l00922" name="l00922"></a><span class="lineno">  922</span> </div>
-<div class="line"><a id="l00923" name="l00923"></a><span class="lineno">  923</span>      this-&gt;solids[i_solid]-&gt;write_checkpoint(filename);</div>
-<div class="line"><a id="l00924" name="l00924"></a><span class="lineno">  924</span>    }</div>
-<div class="line"><a id="l00925" name="l00925"></a><span class="lineno">  925</span> </div>
-<div class="line"><a id="l00926" name="l00926"></a><span class="lineno">  926</span>  <span class="comment">// Call regular checkpointing routine</span></div>
-<div class="line"><a id="l00927" name="l00927"></a><span class="lineno">  927</span>  this-&gt;<a class="code hl_function" href="classNavierStokesBase.html#af311920c0b819b973d410db4fa5e8924">FluidDynamicsMatrixBased&lt;spacedim&gt;::write_checkpoint</a>();</div>
-<div class="line"><a id="l00928" name="l00928"></a><span class="lineno">  928</span> </div>
-<div class="line"><a id="l00929" name="l00929"></a><span class="lineno">  929</span>  std::string prefix =</div>
-<div class="line"><a id="l00930" name="l00930"></a><span class="lineno">  930</span>    this-&gt;simulation_parameters.simulation_control.output_folder +</div>
-<div class="line"><a id="l00931" name="l00931"></a><span class="lineno">  931</span>    this-&gt;simulation_parameters.restart_parameters.filename;</div>
-<div class="line"><a id="l00932" name="l00932"></a><span class="lineno">  932</span> </div>
-<div class="line"><a id="l00933" name="l00933"></a><span class="lineno">  933</span>  <span class="comment">// Write data about paraview format (pvd)</span></div>
-<div class="line"><a id="l00934" name="l00934"></a><span class="lineno">  934</span>  <span class="keywordflow">if</span> (Utilities::MPI::this_mpi_process(this-&gt;mpi_communicator) == 0)</div>
-<div class="line"><a id="l00935" name="l00935"></a><span class="lineno">  935</span>    {</div>
-<div class="line"><a id="l00936" name="l00936"></a><span class="lineno">  936</span>      this-&gt;simulation_control-&gt;save(prefix);</div>
-<div class="line"><a id="l00937" name="l00937"></a><span class="lineno">  937</span>      <span class="comment">// Navier-Stokes</span></div>
-<div class="line"><a id="l00938" name="l00938"></a><span class="lineno">  938</span>      this-&gt;pvdhandler.save(prefix);</div>
-<div class="line"><a id="l00939" name="l00939"></a><span class="lineno">  939</span>      <span class="comment">// Nitche</span></div>
-<div class="line"><a id="l00940" name="l00940"></a><span class="lineno">  940</span>      <span class="keywordflow">for</span> (<span class="keywordtype">unsigned</span> <span class="keywordtype">int</span> i_solid = 0; i_solid &lt; solids.size(); ++i_solid)</div>
-<div class="line"><a id="l00941" name="l00941"></a><span class="lineno">  941</span>        {</div>
-<div class="line"><a id="l00942" name="l00942"></a><span class="lineno">  942</span>          pvdhandler_solid_particles[i_solid].save(</div>
-<div class="line"><a id="l00943" name="l00943"></a><span class="lineno">  943</span>            prefix + <span class="stringliteral">&quot;_solid_particles_&quot;</span> +</div>
-<div class="line"><a id="l00944" name="l00944"></a><span class="lineno">  944</span>            Utilities::int_to_string(i_solid, 2));</div>
-<div class="line"><a id="l00945" name="l00945"></a><span class="lineno">  945</span>          pvdhandler_solid_triangulation[i_solid].save(</div>
-<div class="line"><a id="l00946" name="l00946"></a><span class="lineno">  946</span>            prefix + <span class="stringliteral">&quot;_solid_triangulation_&quot;</span> +</div>
-<div class="line"><a id="l00947" name="l00947"></a><span class="lineno">  947</span>            Utilities::int_to_string(i_solid, 2));</div>
-<div class="line"><a id="l00948" name="l00948"></a><span class="lineno">  948</span>        }</div>
-<div class="line"><a id="l00949" name="l00949"></a><span class="lineno">  949</span>    }</div>
-<div class="line"><a id="l00950" name="l00950"></a><span class="lineno">  950</span>}</div>
+<div class="line"><a id="l00915" name="l00915"></a><span class="lineno">  915</span>  <span class="comment">// Initilization of the structure that will contain the references to the</span></div>
+<div class="line"><a id="l00916" name="l00916"></a><span class="lineno">  916</span>  <span class="comment">// tables that are additional in this solver and their associated filenames</span></div>
+<div class="line"><a id="l00917" name="l00917"></a><span class="lineno">  917</span>  std::vector&lt;OutputStructTableHandler&gt; table_output_structs;</div>
+<div class="line"><a id="l00918" name="l00918"></a><span class="lineno">  918</span> </div>
+<div class="line"><a id="l00919" name="l00919"></a><span class="lineno">  919</span>  <span class="comment">// Prefix and suffix for the table checkpoint file name</span></div>
+<div class="line"><a id="l00920" name="l00920"></a><span class="lineno">  920</span>  std::string prefix =</div>
+<div class="line"><a id="l00921" name="l00921"></a><span class="lineno">  921</span>    this-&gt;simulation_parameters.simulation_control.output_folder;</div>
+<div class="line"><a id="l00922" name="l00922"></a><span class="lineno">  922</span>  std::string suffix = <span class="stringliteral">&quot;.checkpoint&quot;</span>;</div>
+<div class="line"><a id="l00923" name="l00923"></a><span class="lineno">  923</span> </div>
+<div class="line"><a id="l00924" name="l00924"></a><span class="lineno">  924</span>  <span class="comment">// Add the tables of the forces and torques calculated on each solid, one</span></div>
+<div class="line"><a id="l00925" name="l00925"></a><span class="lineno">  925</span>  <span class="comment">// table per solid</span></div>
+<div class="line"><a id="l00926" name="l00926"></a><span class="lineno">  926</span>  <span class="keywordflow">for</span> (<span class="keywordtype">unsigned</span> <span class="keywordtype">int</span> i_solid = 0;</div>
+<div class="line"><a id="l00927" name="l00927"></a><span class="lineno">  927</span>       i_solid &lt; this-&gt;simulation_parameters.nitsche-&gt;number_solids;</div>
+<div class="line"><a id="l00928" name="l00928"></a><span class="lineno">  928</span>       ++i_solid)</div>
+<div class="line"><a id="l00929" name="l00929"></a><span class="lineno">  929</span>    {</div>
+<div class="line"><a id="l00930" name="l00930"></a><span class="lineno">  930</span>      <span class="keywordflow">if</span> (this-&gt;simulation_parameters.nitsche-&gt;nitsche_solids[i_solid]</div>
+<div class="line"><a id="l00931" name="l00931"></a><span class="lineno">  931</span>            -&gt;calculate_force_on_solid)</div>
+<div class="line"><a id="l00932" name="l00932"></a><span class="lineno">  932</span>        {</div>
+<div class="line"><a id="l00933" name="l00933"></a><span class="lineno">  933</span>          table_output_structs.emplace_back(</div>
+<div class="line"><a id="l00934" name="l00934"></a><span class="lineno">  934</span>            this-&gt;solid_forces_table[i_solid],</div>
+<div class="line"><a id="l00935" name="l00935"></a><span class="lineno">  935</span>            prefix +</div>
+<div class="line"><a id="l00936" name="l00936"></a><span class="lineno">  936</span>              this-&gt;simulation_parameters.nitsche-&gt;nitsche_solids[i_solid]</div>
+<div class="line"><a id="l00937" name="l00937"></a><span class="lineno">  937</span>                -&gt;force_output_name +</div>
+<div class="line"><a id="l00938" name="l00938"></a><span class="lineno">  938</span>              <span class="stringliteral">&quot;_&quot;</span> + Utilities::int_to_string(i_solid, 2) + suffix);</div>
+<div class="line"><a id="l00939" name="l00939"></a><span class="lineno">  939</span>        }</div>
+<div class="line"><a id="l00940" name="l00940"></a><span class="lineno">  940</span>      <span class="keywordflow">if</span> (this-&gt;simulation_parameters.nitsche-&gt;nitsche_solids[i_solid]</div>
+<div class="line"><a id="l00941" name="l00941"></a><span class="lineno">  941</span>            -&gt;calculate_torque_on_solid)</div>
+<div class="line"><a id="l00942" name="l00942"></a><span class="lineno">  942</span>        {</div>
+<div class="line"><a id="l00943" name="l00943"></a><span class="lineno">  943</span>          table_output_structs.emplace_back(</div>
+<div class="line"><a id="l00944" name="l00944"></a><span class="lineno">  944</span>            this-&gt;solid_torques_table[i_solid],</div>
+<div class="line"><a id="l00945" name="l00945"></a><span class="lineno">  945</span>            prefix +</div>
+<div class="line"><a id="l00946" name="l00946"></a><span class="lineno">  946</span>              this-&gt;simulation_parameters.nitsche-&gt;nitsche_solids[i_solid]</div>
+<div class="line"><a id="l00947" name="l00947"></a><span class="lineno">  947</span>                -&gt;torque_output_name +</div>
+<div class="line"><a id="l00948" name="l00948"></a><span class="lineno">  948</span>              <span class="stringliteral">&quot;_&quot;</span> + Utilities::int_to_string(i_solid, 2) + suffix);</div>
+<div class="line"><a id="l00949" name="l00949"></a><span class="lineno">  949</span>        }</div>
+<div class="line"><a id="l00950" name="l00950"></a><span class="lineno">  950</span>    }</div>
+<div class="line"><a id="l00951" name="l00951"></a><span class="lineno">  951</span>  <span class="keywordflow">return</span> table_output_structs;</div>
+<div class="line"><a id="l00952" name="l00952"></a><span class="lineno">  952</span>}</div>
 </div>
-<div class="line"><a id="l00951" name="l00951"></a><span class="lineno">  951</span> </div>
-<div class="line"><a id="l00952" name="l00952"></a><span class="lineno">  952</span><span class="keyword">template</span> &lt;<span class="keywordtype">int</span> dim, <span class="keywordtype">int</span> spacedim&gt;</div>
-<div class="line"><a id="l00953" name="l00953"></a><span class="lineno">  953</span><span class="keywordtype">void</span></div>
-<div class="foldopen" id="foldopen00954" data-start="{" data-end="}">
-<div class="line"><a id="l00954" name="l00954"></a><span class="lineno"><a class="line" href="classFluidDynamicsNitsche.html#a88be8f986d3c498385efe4595c152bd4">  954</a></span><a class="code hl_function" href="classFluidDynamicsNitsche.html#a88be8f986d3c498385efe4595c152bd4">FluidDynamicsNitsche&lt;dim, spacedim&gt;::read_checkpoint</a>()</div>
-<div class="line"><a id="l00955" name="l00955"></a><span class="lineno">  955</span>{</div>
-<div class="line"><a id="l00956" name="l00956"></a><span class="lineno">  956</span>  this-&gt;<a class="code hl_function" href="classNavierStokesBase.html#a582b5a5fd99b3e8e1c2b21c17bb1b21a">FluidDynamicsMatrixBased&lt;spacedim&gt;::read_checkpoint</a>();</div>
-<div class="line"><a id="l00957" name="l00957"></a><span class="lineno">  957</span> </div>
-<div class="line"><a id="l00958" name="l00958"></a><span class="lineno">  958</span>  TimerOutput::Scope t(this-&gt;computing_timer,</div>
-<div class="line"><a id="l00959" name="l00959"></a><span class="lineno">  959</span>                       <span class="stringliteral">&quot;Nitsche reload solid mesh and particles&quot;</span>);</div>
-<div class="line"><a id="l00960" name="l00960"></a><span class="lineno">  960</span> </div>
-<div class="line"><a id="l00961" name="l00961"></a><span class="lineno">  961</span>  <span class="comment">// Reload initial configurations</span></div>
-<div class="line"><a id="l00962" name="l00962"></a><span class="lineno">  962</span>  <span class="comment">// This must be done after the background triangulation is read</span></div>
-<div class="line"><a id="l00963" name="l00963"></a><span class="lineno">  963</span>  <span class="comment">// because the solid particle_handler is deserialized physically</span></div>
-<div class="line"><a id="l00964" name="l00964"></a><span class="lineno">  964</span>  <span class="comment">// after the triangulation is read.</span></div>
-<div class="line"><a id="l00965" name="l00965"></a><span class="lineno">  965</span>  <span class="keywordflow">for</span> (<span class="keywordtype">unsigned</span> <span class="keywordtype">int</span> i_solid = 0; i_solid &lt; solids.size(); ++i_solid)</div>
-<div class="line"><a id="l00966" name="l00966"></a><span class="lineno">  966</span>    {</div>
-<div class="line"><a id="l00967" name="l00967"></a><span class="lineno">  967</span>      std::string prefix =</div>
-<div class="line"><a id="l00968" name="l00968"></a><span class="lineno">  968</span>        this-&gt;simulation_parameters.simulation_control.output_folder +</div>
-<div class="line"><a id="l00969" name="l00969"></a><span class="lineno">  969</span>        this-&gt;simulation_parameters.restart_parameters.filename + <span class="stringliteral">&quot;_solid_&quot;</span> +</div>
-<div class="line"><a id="l00970" name="l00970"></a><span class="lineno">  970</span>        Utilities::int_to_string(i_solid, 2);</div>
+<div class="line"><a id="l00953" name="l00953"></a><span class="lineno">  953</span> </div>
+<div class="line"><a id="l00954" name="l00954"></a><span class="lineno">  954</span><span class="keyword">template</span> &lt;<span class="keywordtype">int</span> dim, <span class="keywordtype">int</span> spacedim&gt;</div>
+<div class="line"><a id="l00955" name="l00955"></a><span class="lineno">  955</span><span class="keywordtype">void</span></div>
+<div class="foldopen" id="foldopen00956" data-start="{" data-end="}">
+<div class="line"><a id="l00956" name="l00956"></a><span class="lineno"><a class="line" href="classFluidDynamicsNitsche.html#ae1d624e0643d99abd921cf3306df2f74">  956</a></span><a class="code hl_function" href="classFluidDynamicsNitsche.html#ae1d624e0643d99abd921cf3306df2f74">FluidDynamicsNitsche&lt;dim, spacedim&gt;::write_checkpoint</a>()</div>
+<div class="line"><a id="l00957" name="l00957"></a><span class="lineno">  957</span>{</div>
+<div class="line"><a id="l00958" name="l00958"></a><span class="lineno">  958</span>  <span class="comment">// Write solid base checkpoint</span></div>
+<div class="line"><a id="l00959" name="l00959"></a><span class="lineno">  959</span>  <span class="keywordflow">for</span> (<span class="keywordtype">unsigned</span> <span class="keywordtype">int</span> i_solid = 0; i_solid &lt; solids.size(); ++i_solid)</div>
+<div class="line"><a id="l00960" name="l00960"></a><span class="lineno">  960</span>    {</div>
+<div class="line"><a id="l00961" name="l00961"></a><span class="lineno">  961</span>      std::string filename =</div>
+<div class="line"><a id="l00962" name="l00962"></a><span class="lineno">  962</span>        this-&gt;simulation_parameters.simulation_control.output_folder +</div>
+<div class="line"><a id="l00963" name="l00963"></a><span class="lineno">  963</span>        this-&gt;simulation_parameters.restart_parameters.filename + <span class="stringliteral">&quot;_solid_&quot;</span> +</div>
+<div class="line"><a id="l00964" name="l00964"></a><span class="lineno">  964</span>        Utilities::int_to_string(i_solid, 2);</div>
+<div class="line"><a id="l00965" name="l00965"></a><span class="lineno">  965</span> </div>
+<div class="line"><a id="l00966" name="l00966"></a><span class="lineno">  966</span>      this-&gt;solids[i_solid]-&gt;write_checkpoint(filename);</div>
+<div class="line"><a id="l00967" name="l00967"></a><span class="lineno">  967</span>    }</div>
+<div class="line"><a id="l00968" name="l00968"></a><span class="lineno">  968</span> </div>
+<div class="line"><a id="l00969" name="l00969"></a><span class="lineno">  969</span>  <span class="comment">// Call regular checkpointing routine</span></div>
+<div class="line"><a id="l00970" name="l00970"></a><span class="lineno">  970</span>  this-&gt;<a class="code hl_function" href="classNavierStokesBase.html#af311920c0b819b973d410db4fa5e8924">FluidDynamicsMatrixBased&lt;spacedim&gt;::write_checkpoint</a>();</div>
 <div class="line"><a id="l00971" name="l00971"></a><span class="lineno">  971</span> </div>
-<div class="line"><a id="l00972" name="l00972"></a><span class="lineno">  972</span>      solids[i_solid]-&gt;read_checkpoint(prefix);</div>
-<div class="line"><a id="l00973" name="l00973"></a><span class="lineno">  973</span>    }</div>
-<div class="line"><a id="l00974" name="l00974"></a><span class="lineno">  974</span> </div>
+<div class="line"><a id="l00972" name="l00972"></a><span class="lineno">  972</span>  std::string prefix =</div>
+<div class="line"><a id="l00973" name="l00973"></a><span class="lineno">  973</span>    this-&gt;simulation_parameters.simulation_control.output_folder +</div>
+<div class="line"><a id="l00974" name="l00974"></a><span class="lineno">  974</span>    this-&gt;simulation_parameters.restart_parameters.filename;</div>
 <div class="line"><a id="l00975" name="l00975"></a><span class="lineno">  975</span> </div>
-<div class="line"><a id="l00976" name="l00976"></a><span class="lineno">  976</span>  <span class="comment">// Reload particle and solid pvd handlers</span></div>
-<div class="line"><a id="l00977" name="l00977"></a><span class="lineno">  977</span>  std::string prefix =</div>
-<div class="line"><a id="l00978" name="l00978"></a><span class="lineno">  978</span>    this-&gt;simulation_parameters.simulation_control.output_folder +</div>
-<div class="line"><a id="l00979" name="l00979"></a><span class="lineno">  979</span>    this-&gt;simulation_parameters.restart_parameters.filename;</div>
-<div class="line"><a id="l00980" name="l00980"></a><span class="lineno">  980</span>  <span class="keywordflow">for</span> (<span class="keywordtype">unsigned</span> <span class="keywordtype">int</span> i_solid = 0; i_solid &lt; solids.size(); ++i_solid)</div>
-<div class="line"><a id="l00981" name="l00981"></a><span class="lineno">  981</span>    {</div>
-<div class="line"><a id="l00982" name="l00982"></a><span class="lineno">  982</span>      <span class="comment">// Load Paraview pvd handler for solid triangulation and particles</span></div>
-<div class="line"><a id="l00983" name="l00983"></a><span class="lineno">  983</span>      pvdhandler_solid_particles[i_solid].read(</div>
-<div class="line"><a id="l00984" name="l00984"></a><span class="lineno">  984</span>        prefix + <span class="stringliteral">&quot;_solid_particles_&quot;</span> + Utilities::int_to_string(i_solid, 2));</div>
-<div class="line"><a id="l00985" name="l00985"></a><span class="lineno">  985</span>      pvdhandler_solid_triangulation[i_solid].read(</div>
-<div class="line"><a id="l00986" name="l00986"></a><span class="lineno">  986</span>        prefix + <span class="stringliteral">&quot;_solid_triangulation_&quot;</span> +</div>
-<div class="line"><a id="l00987" name="l00987"></a><span class="lineno">  987</span>        Utilities::int_to_string(i_solid, 2));</div>
-<div class="line"><a id="l00988" name="l00988"></a><span class="lineno">  988</span> </div>
-<div class="line"><a id="l00989" name="l00989"></a><span class="lineno">  989</span>      <span class="comment">// Refill force and torque table from checkpoint</span></div>
-<div class="line"><a id="l00990" name="l00990"></a><span class="lineno">  990</span>      <span class="keywordflow">if</span> (this-&gt;simulation_parameters.nitsche-&gt;nitsche_solids[i_solid]</div>
-<div class="line"><a id="l00991" name="l00991"></a><span class="lineno">  991</span>            -&gt;calculate_force_on_solid)</div>
-<div class="line"><a id="l00992" name="l00992"></a><span class="lineno">  992</span>        {</div>
-<div class="line"><a id="l00993" name="l00993"></a><span class="lineno">  993</span>          std::string filename_force =</div>
-<div class="line"><a id="l00994" name="l00994"></a><span class="lineno">  994</span>            this-&gt;simulation_parameters.simulation_control.output_folder +</div>
-<div class="line"><a id="l00995" name="l00995"></a><span class="lineno">  995</span>            this-&gt;simulation_parameters.nitsche-&gt;nitsche_solids[i_solid]</div>
-<div class="line"><a id="l00996" name="l00996"></a><span class="lineno">  996</span>              -&gt;force_output_name +</div>
-<div class="line"><a id="l00997" name="l00997"></a><span class="lineno">  997</span>            <span class="stringliteral">&quot;_&quot;</span> + Utilities::int_to_string(i_solid, 2) + <span class="stringliteral">&quot;.dat&quot;</span>;</div>
-<div class="line"><a id="l00998" name="l00998"></a><span class="lineno">  998</span>          <a class="code hl_function" href="utilities_8h.html#af36ab9d4f26f349b1558ce2a12719c6e">fill_table_from_file</a>(solid_forces_table[i_solid], filename_force);</div>
-<div class="line"><a id="l00999" name="l00999"></a><span class="lineno">  999</span>        }</div>
-<div class="line"><a id="l01000" name="l01000"></a><span class="lineno"> 1000</span>      <span class="keywordflow">if</span> (this-&gt;simulation_parameters.nitsche-&gt;nitsche_solids[i_solid]</div>
-<div class="line"><a id="l01001" name="l01001"></a><span class="lineno"> 1001</span>            -&gt;calculate_torque_on_solid)</div>
-<div class="line"><a id="l01002" name="l01002"></a><span class="lineno"> 1002</span>        {</div>
-<div class="line"><a id="l01003" name="l01003"></a><span class="lineno"> 1003</span>          std::string filename_torque =</div>
-<div class="line"><a id="l01004" name="l01004"></a><span class="lineno"> 1004</span>            this-&gt;simulation_parameters.simulation_control.output_folder +</div>
-<div class="line"><a id="l01005" name="l01005"></a><span class="lineno"> 1005</span>            this-&gt;simulation_parameters.nitsche-&gt;nitsche_solids[i_solid]</div>
-<div class="line"><a id="l01006" name="l01006"></a><span class="lineno"> 1006</span>              -&gt;torque_output_name +</div>
-<div class="line"><a id="l01007" name="l01007"></a><span class="lineno"> 1007</span>            <span class="stringliteral">&quot;_&quot;</span> + Utilities::int_to_string(i_solid, 2) + <span class="stringliteral">&quot;.dat&quot;</span>;</div>
-<div class="line"><a id="l01008" name="l01008"></a><span class="lineno"> 1008</span>          <a class="code hl_function" href="utilities_8h.html#af36ab9d4f26f349b1558ce2a12719c6e">fill_table_from_file</a>(solid_torques_table[i_solid], filename_torque);</div>
-<div class="line"><a id="l01009" name="l01009"></a><span class="lineno"> 1009</span>        }</div>
-<div class="line"><a id="l01010" name="l01010"></a><span class="lineno"> 1010</span>    }</div>
-<div class="line"><a id="l01011" name="l01011"></a><span class="lineno"> 1011</span>}</div>
+<div class="line"><a id="l00976" name="l00976"></a><span class="lineno">  976</span>  <span class="comment">// Write data about paraview format (pvd)</span></div>
+<div class="line"><a id="l00977" name="l00977"></a><span class="lineno">  977</span>  <span class="keywordflow">if</span> (Utilities::MPI::this_mpi_process(this-&gt;mpi_communicator) == 0)</div>
+<div class="line"><a id="l00978" name="l00978"></a><span class="lineno">  978</span>    {</div>
+<div class="line"><a id="l00979" name="l00979"></a><span class="lineno">  979</span>      this-&gt;simulation_control-&gt;save(prefix);</div>
+<div class="line"><a id="l00980" name="l00980"></a><span class="lineno">  980</span>      <span class="comment">// Navier-Stokes</span></div>
+<div class="line"><a id="l00981" name="l00981"></a><span class="lineno">  981</span>      this-&gt;pvdhandler.save(prefix);</div>
+<div class="line"><a id="l00982" name="l00982"></a><span class="lineno">  982</span>      <span class="comment">// Nitche</span></div>
+<div class="line"><a id="l00983" name="l00983"></a><span class="lineno">  983</span>      <span class="keywordflow">for</span> (<span class="keywordtype">unsigned</span> <span class="keywordtype">int</span> i_solid = 0; i_solid &lt; solids.size(); ++i_solid)</div>
+<div class="line"><a id="l00984" name="l00984"></a><span class="lineno">  984</span>        {</div>
+<div class="line"><a id="l00985" name="l00985"></a><span class="lineno">  985</span>          pvdhandler_solid_particles[i_solid].save(</div>
+<div class="line"><a id="l00986" name="l00986"></a><span class="lineno">  986</span>            prefix + <span class="stringliteral">&quot;_solid_particles_&quot;</span> +</div>
+<div class="line"><a id="l00987" name="l00987"></a><span class="lineno">  987</span>            Utilities::int_to_string(i_solid, 2));</div>
+<div class="line"><a id="l00988" name="l00988"></a><span class="lineno">  988</span>          pvdhandler_solid_triangulation[i_solid].save(</div>
+<div class="line"><a id="l00989" name="l00989"></a><span class="lineno">  989</span>            prefix + <span class="stringliteral">&quot;_solid_triangulation_&quot;</span> +</div>
+<div class="line"><a id="l00990" name="l00990"></a><span class="lineno">  990</span>            Utilities::int_to_string(i_solid, 2));</div>
+<div class="line"><a id="l00991" name="l00991"></a><span class="lineno">  991</span>        }</div>
+<div class="line"><a id="l00992" name="l00992"></a><span class="lineno">  992</span>    }</div>
+<div class="line"><a id="l00993" name="l00993"></a><span class="lineno">  993</span>  <span class="comment">// Serialize all post-processing tables that are currently used</span></div>
+<div class="line"><a id="l00994" name="l00994"></a><span class="lineno">  994</span>  <span class="comment">// Serialize the post-processing tables that are additional in this solver</span></div>
+<div class="line"><a id="l00995" name="l00995"></a><span class="lineno">  995</span>  <span class="keyword">const</span> std::vector&lt;OutputStructTableHandler&gt; &amp;table_output_structs_add =</div>
+<div class="line"><a id="l00996" name="l00996"></a><span class="lineno">  996</span>    this-&gt;gather_tables();</div>
+<div class="line"><a id="l00997" name="l00997"></a><span class="lineno">  997</span>  this-&gt;serialize_tables_vector(table_output_structs_add);</div>
+<div class="line"><a id="l00998" name="l00998"></a><span class="lineno">  998</span>  <span class="comment">// Serialize the default post-processing tables that are members of</span></div>
+<div class="line"><a id="l00999" name="l00999"></a><span class="lineno">  999</span>  <span class="comment">// NavierStokesBase</span></div>
+<div class="line"><a id="l01000" name="l01000"></a><span class="lineno"> 1000</span>  <span class="keyword">const</span> std::vector&lt;OutputStructTableHandler&gt; &amp;table_output_structs =</div>
+<div class="line"><a id="l01001" name="l01001"></a><span class="lineno"> 1001</span>    <a class="code hl_function" href="classNavierStokesBase.html#a2932cb8c662806e38471f5e388fe4e65">NavierStokesBase&lt;spacedim, GlobalVectorType, IndexSet&gt;::gather_tables</a>();</div>
+<div class="line"><a id="l01002" name="l01002"></a><span class="lineno"> 1002</span>  this-&gt;serialize_tables_vector(table_output_structs);</div>
+<div class="line"><a id="l01003" name="l01003"></a><span class="lineno"> 1003</span>}</div>
 </div>
-<div class="line"><a id="l01012" name="l01012"></a><span class="lineno"> 1012</span> </div>
+<div class="line"><a id="l01004" name="l01004"></a><span class="lineno"> 1004</span> </div>
+<div class="line"><a id="l01005" name="l01005"></a><span class="lineno"> 1005</span><span class="keyword">template</span> &lt;<span class="keywordtype">int</span> dim, <span class="keywordtype">int</span> spacedim&gt;</div>
+<div class="line"><a id="l01006" name="l01006"></a><span class="lineno"> 1006</span><span class="keywordtype">void</span></div>
+<div class="foldopen" id="foldopen01007" data-start="{" data-end="}">
+<div class="line"><a id="l01007" name="l01007"></a><span class="lineno"><a class="line" href="classFluidDynamicsNitsche.html#a88be8f986d3c498385efe4595c152bd4"> 1007</a></span><a class="code hl_function" href="classFluidDynamicsNitsche.html#a88be8f986d3c498385efe4595c152bd4">FluidDynamicsNitsche&lt;dim, spacedim&gt;::read_checkpoint</a>()</div>
+<div class="line"><a id="l01008" name="l01008"></a><span class="lineno"> 1008</span>{</div>
+<div class="line"><a id="l01009" name="l01009"></a><span class="lineno"> 1009</span>  this-&gt;<a class="code hl_function" href="classNavierStokesBase.html#a582b5a5fd99b3e8e1c2b21c17bb1b21a">FluidDynamicsMatrixBased&lt;spacedim&gt;::read_checkpoint</a>();</div>
+<div class="line"><a id="l01010" name="l01010"></a><span class="lineno"> 1010</span> </div>
+<div class="line"><a id="l01011" name="l01011"></a><span class="lineno"> 1011</span>  TimerOutput::Scope t(this-&gt;computing_timer,</div>
+<div class="line"><a id="l01012" name="l01012"></a><span class="lineno"> 1012</span>                       <span class="stringliteral">&quot;Nitsche reload solid mesh and particles&quot;</span>);</div>
 <div class="line"><a id="l01013" name="l01013"></a><span class="lineno"> 1013</span> </div>
-<div class="line"><a id="l01014" name="l01014"></a><span class="lineno"> 1014</span><span class="comment">// Pre-compile the 2D and 3D Navier-Stokes solver to ensure that the library</span></div>
-<div class="line"><a id="l01015" name="l01015"></a><span class="lineno"> 1015</span><span class="comment">// is valid before we actually compile the solver This greatly helps with</span></div>
-<div class="line"><a id="l01016" name="l01016"></a><span class="lineno"> 1016</span><span class="comment">// debugging</span></div>
-<div class="line"><a id="l01017" name="l01017"></a><span class="lineno"> 1017</span><span class="keyword">template</span> <span class="keyword">class </span><a class="code hl_class" href="classFluidDynamicsNitsche.html">FluidDynamicsNitsche&lt;2&gt;</a>;</div>
-<div class="line"><a id="l01018" name="l01018"></a><span class="lineno"> 1018</span><span class="keyword">template</span> <span class="keyword">class </span><a class="code hl_class" href="classFluidDynamicsNitsche.html">FluidDynamicsNitsche&lt;2, 3&gt;</a>;</div>
-<div class="line"><a id="l01019" name="l01019"></a><span class="lineno"> 1019</span><span class="keyword">template</span> <span class="keyword">class </span><a class="code hl_class" href="classFluidDynamicsNitsche.html">FluidDynamicsNitsche&lt;3&gt;</a>;</div>
+<div class="line"><a id="l01014" name="l01014"></a><span class="lineno"> 1014</span>  <span class="comment">// Reload initial configurations</span></div>
+<div class="line"><a id="l01015" name="l01015"></a><span class="lineno"> 1015</span>  <span class="comment">// This must be done after the background triangulation is read</span></div>
+<div class="line"><a id="l01016" name="l01016"></a><span class="lineno"> 1016</span>  <span class="comment">// because the solid particle_handler is deserialized physically</span></div>
+<div class="line"><a id="l01017" name="l01017"></a><span class="lineno"> 1017</span>  <span class="comment">// after the triangulation is read.</span></div>
+<div class="line"><a id="l01018" name="l01018"></a><span class="lineno"> 1018</span>  <span class="keywordflow">for</span> (<span class="keywordtype">unsigned</span> <span class="keywordtype">int</span> i_solid = 0; i_solid &lt; solids.size(); ++i_solid)</div>
+<div class="line"><a id="l01019" name="l01019"></a><span class="lineno"> 1019</span>    {</div>
+<div class="line"><a id="l01020" name="l01020"></a><span class="lineno"> 1020</span>      std::string prefix =</div>
+<div class="line"><a id="l01021" name="l01021"></a><span class="lineno"> 1021</span>        this-&gt;simulation_parameters.simulation_control.output_folder +</div>
+<div class="line"><a id="l01022" name="l01022"></a><span class="lineno"> 1022</span>        this-&gt;simulation_parameters.restart_parameters.filename + <span class="stringliteral">&quot;_solid_&quot;</span> +</div>
+<div class="line"><a id="l01023" name="l01023"></a><span class="lineno"> 1023</span>        Utilities::int_to_string(i_solid, 2);</div>
+<div class="line"><a id="l01024" name="l01024"></a><span class="lineno"> 1024</span> </div>
+<div class="line"><a id="l01025" name="l01025"></a><span class="lineno"> 1025</span>      solids[i_solid]-&gt;read_checkpoint(prefix);</div>
+<div class="line"><a id="l01026" name="l01026"></a><span class="lineno"> 1026</span>    }</div>
+<div class="line"><a id="l01027" name="l01027"></a><span class="lineno"> 1027</span> </div>
+<div class="line"><a id="l01028" name="l01028"></a><span class="lineno"> 1028</span> </div>
+<div class="line"><a id="l01029" name="l01029"></a><span class="lineno"> 1029</span>  <span class="comment">// Reload particle and solid pvd handlers</span></div>
+<div class="line"><a id="l01030" name="l01030"></a><span class="lineno"> 1030</span>  std::string prefix =</div>
+<div class="line"><a id="l01031" name="l01031"></a><span class="lineno"> 1031</span>    this-&gt;simulation_parameters.simulation_control.output_folder +</div>
+<div class="line"><a id="l01032" name="l01032"></a><span class="lineno"> 1032</span>    this-&gt;simulation_parameters.restart_parameters.filename;</div>
+<div class="line"><a id="l01033" name="l01033"></a><span class="lineno"> 1033</span>  <span class="keywordflow">for</span> (<span class="keywordtype">unsigned</span> <span class="keywordtype">int</span> i_solid = 0; i_solid &lt; solids.size(); ++i_solid)</div>
+<div class="line"><a id="l01034" name="l01034"></a><span class="lineno"> 1034</span>    {</div>
+<div class="line"><a id="l01035" name="l01035"></a><span class="lineno"> 1035</span>      <span class="comment">// Load Paraview pvd handler for solid triangulation and particles</span></div>
+<div class="line"><a id="l01036" name="l01036"></a><span class="lineno"> 1036</span>      pvdhandler_solid_particles[i_solid].read(</div>
+<div class="line"><a id="l01037" name="l01037"></a><span class="lineno"> 1037</span>        prefix + <span class="stringliteral">&quot;_solid_particles_&quot;</span> + Utilities::int_to_string(i_solid, 2));</div>
+<div class="line"><a id="l01038" name="l01038"></a><span class="lineno"> 1038</span>      pvdhandler_solid_triangulation[i_solid].read(</div>
+<div class="line"><a id="l01039" name="l01039"></a><span class="lineno"> 1039</span>        prefix + <span class="stringliteral">&quot;_solid_triangulation_&quot;</span> +</div>
+<div class="line"><a id="l01040" name="l01040"></a><span class="lineno"> 1040</span>        Utilities::int_to_string(i_solid, 2));</div>
+<div class="line"><a id="l01041" name="l01041"></a><span class="lineno"> 1041</span> </div>
+<div class="line"><a id="l01042" name="l01042"></a><span class="lineno"> 1042</span>      <span class="comment">// Refill force and torque table from checkpoint</span></div>
+<div class="line"><a id="l01043" name="l01043"></a><span class="lineno"> 1043</span>      <span class="keywordflow">if</span> (this-&gt;simulation_parameters.nitsche-&gt;nitsche_solids[i_solid]</div>
+<div class="line"><a id="l01044" name="l01044"></a><span class="lineno"> 1044</span>            -&gt;calculate_force_on_solid)</div>
+<div class="line"><a id="l01045" name="l01045"></a><span class="lineno"> 1045</span>        {</div>
+<div class="line"><a id="l01046" name="l01046"></a><span class="lineno"> 1046</span>          std::string filename_force =</div>
+<div class="line"><a id="l01047" name="l01047"></a><span class="lineno"> 1047</span>            this-&gt;simulation_parameters.simulation_control.output_folder +</div>
+<div class="line"><a id="l01048" name="l01048"></a><span class="lineno"> 1048</span>            this-&gt;simulation_parameters.nitsche-&gt;nitsche_solids[i_solid]</div>
+<div class="line"><a id="l01049" name="l01049"></a><span class="lineno"> 1049</span>              -&gt;force_output_name +</div>
+<div class="line"><a id="l01050" name="l01050"></a><span class="lineno"> 1050</span>            <span class="stringliteral">&quot;_&quot;</span> + Utilities::int_to_string(i_solid, 2) + <span class="stringliteral">&quot;.dat&quot;</span>;</div>
+<div class="line"><a id="l01051" name="l01051"></a><span class="lineno"> 1051</span>          <a class="code hl_function" href="utilities_8h.html#af36ab9d4f26f349b1558ce2a12719c6e">fill_table_from_file</a>(solid_forces_table[i_solid], filename_force);</div>
+<div class="line"><a id="l01052" name="l01052"></a><span class="lineno"> 1052</span>        }</div>
+<div class="line"><a id="l01053" name="l01053"></a><span class="lineno"> 1053</span>      <span class="keywordflow">if</span> (this-&gt;simulation_parameters.nitsche-&gt;nitsche_solids[i_solid]</div>
+<div class="line"><a id="l01054" name="l01054"></a><span class="lineno"> 1054</span>            -&gt;calculate_torque_on_solid)</div>
+<div class="line"><a id="l01055" name="l01055"></a><span class="lineno"> 1055</span>        {</div>
+<div class="line"><a id="l01056" name="l01056"></a><span class="lineno"> 1056</span>          std::string filename_torque =</div>
+<div class="line"><a id="l01057" name="l01057"></a><span class="lineno"> 1057</span>            this-&gt;simulation_parameters.simulation_control.output_folder +</div>
+<div class="line"><a id="l01058" name="l01058"></a><span class="lineno"> 1058</span>            this-&gt;simulation_parameters.nitsche-&gt;nitsche_solids[i_solid]</div>
+<div class="line"><a id="l01059" name="l01059"></a><span class="lineno"> 1059</span>              -&gt;torque_output_name +</div>
+<div class="line"><a id="l01060" name="l01060"></a><span class="lineno"> 1060</span>            <span class="stringliteral">&quot;_&quot;</span> + Utilities::int_to_string(i_solid, 2) + <span class="stringliteral">&quot;.dat&quot;</span>;</div>
+<div class="line"><a id="l01061" name="l01061"></a><span class="lineno"> 1061</span>          <a class="code hl_function" href="utilities_8h.html#af36ab9d4f26f349b1558ce2a12719c6e">fill_table_from_file</a>(solid_torques_table[i_solid], filename_torque);</div>
+<div class="line"><a id="l01062" name="l01062"></a><span class="lineno"> 1062</span>        }</div>
+<div class="line"><a id="l01063" name="l01063"></a><span class="lineno"> 1063</span>    }</div>
+<div class="line"><a id="l01064" name="l01064"></a><span class="lineno"> 1064</span>  <span class="comment">// Deserialize all post-processing tables that are currently used</span></div>
+<div class="line"><a id="l01065" name="l01065"></a><span class="lineno"> 1065</span>  <span class="comment">// Deserialize the post-processing tables that are particular to this solver</span></div>
+<div class="line"><a id="l01066" name="l01066"></a><span class="lineno"> 1066</span>  std::vector&lt;OutputStructTableHandler&gt; table_output_structs_add =</div>
+<div class="line"><a id="l01067" name="l01067"></a><span class="lineno"> 1067</span>    this-&gt;gather_tables();</div>
+<div class="line"><a id="l01068" name="l01068"></a><span class="lineno"> 1068</span>  this-&gt;deserialize_tables_vector(table_output_structs_add);</div>
+<div class="line"><a id="l01069" name="l01069"></a><span class="lineno"> 1069</span>  <span class="comment">// Deserialize the default post-processing tables that are members of</span></div>
+<div class="line"><a id="l01070" name="l01070"></a><span class="lineno"> 1070</span>  <span class="comment">// NavierStokesBase</span></div>
+<div class="line"><a id="l01071" name="l01071"></a><span class="lineno"> 1071</span>  std::vector&lt;OutputStructTableHandler&gt; table_output_structs =</div>
+<div class="line"><a id="l01072" name="l01072"></a><span class="lineno"> 1072</span>    <a class="code hl_function" href="classNavierStokesBase.html#a2932cb8c662806e38471f5e388fe4e65">NavierStokesBase&lt;spacedim, GlobalVectorType, IndexSet&gt;::gather_tables</a>();</div>
+<div class="line"><a id="l01073" name="l01073"></a><span class="lineno"> 1073</span>  this-&gt;deserialize_tables_vector(table_output_structs);</div>
+<div class="line"><a id="l01074" name="l01074"></a><span class="lineno"> 1074</span>}</div>
+</div>
+<div class="line"><a id="l01075" name="l01075"></a><span class="lineno"> 1075</span> </div>
+<div class="line"><a id="l01076" name="l01076"></a><span class="lineno"> 1076</span> </div>
+<div class="line"><a id="l01077" name="l01077"></a><span class="lineno"> 1077</span><span class="comment">// Pre-compile the 2D and 3D Navier-Stokes solver to ensure that the library</span></div>
+<div class="line"><a id="l01078" name="l01078"></a><span class="lineno"> 1078</span><span class="comment">// is valid before we actually compile the solver This greatly helps with</span></div>
+<div class="line"><a id="l01079" name="l01079"></a><span class="lineno"> 1079</span><span class="comment">// debugging</span></div>
+<div class="line"><a id="l01080" name="l01080"></a><span class="lineno"> 1080</span><span class="keyword">template</span> <span class="keyword">class </span><a class="code hl_class" href="classFluidDynamicsNitsche.html">FluidDynamicsNitsche&lt;2&gt;</a>;</div>
+<div class="line"><a id="l01081" name="l01081"></a><span class="lineno"> 1081</span><span class="keyword">template</span> <span class="keyword">class </span><a class="code hl_class" href="classFluidDynamicsNitsche.html">FluidDynamicsNitsche&lt;2, 3&gt;</a>;</div>
+<div class="line"><a id="l01082" name="l01082"></a><span class="lineno"> 1082</span><span class="keyword">template</span> <span class="keyword">class </span><a class="code hl_class" href="classFluidDynamicsNitsche.html">FluidDynamicsNitsche&lt;3&gt;</a>;</div>
 <div class="ttc" id="abdf_8h_html"><div class="ttname"><a href="bdf_8h.html">bdf.h</a></div></div>
 <div class="ttc" id="aclassFluidDynamicsMatrixBased_html"><div class="ttname"><a href="classFluidDynamicsMatrixBased.html">FluidDynamicsMatrixBased</a></div><div class="ttdoc">A solver class for the Navier-Stokes equation using GLS stabilization.</div><div class="ttdef"><b>Definition</b> <a href="fluid__dynamics__matrix__based_8h_source.html#l00032">fluid_dynamics_matrix_based.h:34</a></div></div>
 <div class="ttc" id="aclassFluidDynamicsMatrixBased_html_a8e89abd997c09d50fad2eb8e2e092443"><div class="ttname"><a href="classFluidDynamicsMatrixBased.html#a8e89abd997c09d50fad2eb8e2e092443">FluidDynamicsMatrixBased::assemble_system_matrix</a></div><div class="ttdeci">virtual void assemble_system_matrix() override</div><div class="ttdoc">Assembles the matrix associated with the solver.</div><div class="ttdef"><b>Definition</b> <a href="fluid__dynamics__matrix__based_8cc_source.html#l00605">fluid_dynamics_matrix_based.cc:605</a></div></div>
 <div class="ttc" id="aclassFluidDynamicsMatrixBased_html_ae20a8b3537aef54c5c53f26688c6667a"><div class="ttname"><a href="classFluidDynamicsMatrixBased.html#ae20a8b3537aef54c5c53f26688c6667a">FluidDynamicsMatrixBased::assemble_system_rhs</a></div><div class="ttdeci">virtual void assemble_system_rhs() override</div><div class="ttdoc">Assemble the rhs associated with the solver.</div><div class="ttdef"><b>Definition</b> <a href="fluid__dynamics__matrix__based_8cc_source.html#l00831">fluid_dynamics_matrix_based.cc:831</a></div></div>
 <div class="ttc" id="aclassFluidDynamicsNitsche_html"><div class="ttname"><a href="classFluidDynamicsNitsche.html">FluidDynamicsNitsche</a></div><div class="ttdef"><b>Definition</b> <a href="fluid__dynamics__nitsche_8h_source.html#l00028">fluid_dynamics_nitsche.h:29</a></div></div>
 <div class="ttc" id="aclassFluidDynamicsNitsche_html_a009bf21e725298f066f01dcdc60c13f5"><div class="ttname"><a href="classFluidDynamicsNitsche.html#a009bf21e725298f066f01dcdc60c13f5">FluidDynamicsNitsche::FluidDynamicsNitsche</a></div><div class="ttdeci">FluidDynamicsNitsche(SimulationParameters&lt; spacedim &gt; &amp;nsparam)</div><div class="ttdef"><b>Definition</b> <a href="fluid__dynamics__nitsche_8cc_source.html#l00024">fluid_dynamics_nitsche.cc:24</a></div></div>
-<div class="ttc" id="aclassFluidDynamicsNitsche_html_a1cf9d7c4b9bbf80e1f95bd25b1b3d83e"><div class="ttname"><a href="classFluidDynamicsNitsche.html#a1cf9d7c4b9bbf80e1f95bd25b1b3d83e">FluidDynamicsNitsche::solids</a></div><div class="ttdeci">std::vector&lt; std::shared_ptr&lt; SolidBase&lt; dim, spacedim &gt; &gt; &gt; solids</div><div class="ttdef"><b>Definition</b> <a href="fluid__dynamics__nitsche_8h_source.html#l00150">fluid_dynamics_nitsche.h:150</a></div></div>
+<div class="ttc" id="aclassFluidDynamicsNitsche_html_a1cf9d7c4b9bbf80e1f95bd25b1b3d83e"><div class="ttname"><a href="classFluidDynamicsNitsche.html#a1cf9d7c4b9bbf80e1f95bd25b1b3d83e">FluidDynamicsNitsche::solids</a></div><div class="ttdeci">std::vector&lt; std::shared_ptr&lt; SolidBase&lt; dim, spacedim &gt; &gt; &gt; solids</div><div class="ttdef"><b>Definition</b> <a href="fluid__dynamics__nitsche_8h_source.html#l00171">fluid_dynamics_nitsche.h:171</a></div></div>
 <div class="ttc" id="aclassFluidDynamicsNitsche_html_a2ee428784546633b74a38d72dd22a240"><div class="ttname"><a href="classFluidDynamicsNitsche.html#a2ee428784546633b74a38d72dd22a240">FluidDynamicsNitsche::output_solid_triangulation</a></div><div class="ttdeci">void output_solid_triangulation(const unsigned int i_solid)</div><div class="ttdoc">Outputs a vtu file for each output frequency of the solid triangulation.</div><div class="ttdef"><b>Definition</b> <a href="fluid__dynamics__nitsche_8cc_source.html#l00804">fluid_dynamics_nitsche.cc:804</a></div></div>
 <div class="ttc" id="aclassFluidDynamicsNitsche_html_a5d142e2faaa64289b81d7317688d1030"><div class="ttname"><a href="classFluidDynamicsNitsche.html#a5d142e2faaa64289b81d7317688d1030">FluidDynamicsNitsche::assemble_nitsche_restriction</a></div><div class="ttdeci">void assemble_nitsche_restriction()</div><div class="ttdoc">Adds the nitsche restriction to the global matrix and global rhs on the cells surrounding the immerse...</div><div class="ttdef"><b>Definition</b> <a href="fluid__dynamics__nitsche_8cc_source.html#l00050">fluid_dynamics_nitsche.cc:50</a></div></div>
 <div class="ttc" id="aclassFluidDynamicsNitsche_html_a6d59f648f0608cd90e25f780935218de"><div class="ttname"><a href="classFluidDynamicsNitsche.html#a6d59f648f0608cd90e25f780935218de">FluidDynamicsNitsche::postprocess_solid_torques</a></div><div class="ttdeci">void postprocess_solid_torques(const unsigned int i_solid, bool first_solid_torques)</div><div class="ttdoc">Post-process for torques on solid after an iteration.</div><div class="ttdef"><b>Definition</b> <a href="fluid__dynamics__nitsche_8cc_source.html#l00566">fluid_dynamics_nitsche.cc:566</a></div></div>
-<div class="ttc" id="aclassFluidDynamicsNitsche_html_a6d9ca16aa669641e67d01a7e4b519c27"><div class="ttname"><a href="classFluidDynamicsNitsche.html#a6d9ca16aa669641e67d01a7e4b519c27">FluidDynamicsNitsche::pvdhandler_solid_triangulation</a></div><div class="ttdeci">std::vector&lt; PVDHandler &gt; pvdhandler_solid_triangulation</div><div class="ttdef"><b>Definition</b> <a href="fluid__dynamics__nitsche_8h_source.html#l00151">fluid_dynamics_nitsche.h:151</a></div></div>
+<div class="ttc" id="aclassFluidDynamicsNitsche_html_a6d9ca16aa669641e67d01a7e4b519c27"><div class="ttname"><a href="classFluidDynamicsNitsche.html#a6d9ca16aa669641e67d01a7e4b519c27">FluidDynamicsNitsche::pvdhandler_solid_triangulation</a></div><div class="ttdeci">std::vector&lt; PVDHandler &gt; pvdhandler_solid_triangulation</div><div class="ttdef"><b>Definition</b> <a href="fluid__dynamics__nitsche_8h_source.html#l00172">fluid_dynamics_nitsche.h:172</a></div></div>
+<div class="ttc" id="aclassFluidDynamicsNitsche_html_a70db00a80d2713ea91311020ce472ca3"><div class="ttname"><a href="classFluidDynamicsNitsche.html#a70db00a80d2713ea91311020ce472ca3">FluidDynamicsNitsche::gather_tables</a></div><div class="ttdeci">std::vector&lt; OutputStructTableHandler &gt; gather_tables() override</div><div class="ttdoc">Returns a vector of references to TableHandler objects that needs to be serialized/deserialized for a...</div><div class="ttdef"><b>Definition</b> <a href="fluid__dynamics__nitsche_8cc_source.html#l00913">fluid_dynamics_nitsche.cc:913</a></div></div>
 <div class="ttc" id="aclassFluidDynamicsNitsche_html_a715ad9e0c39957d6fe77245b04a7f911"><div class="ttname"><a href="classFluidDynamicsNitsche.html#a715ad9e0c39957d6fe77245b04a7f911">FluidDynamicsNitsche::calculate_torque_on_solid</a></div><div class="ttdeci">Tensor&lt; 1, 3 &gt; calculate_torque_on_solid()</div><div class="ttdoc">Calculates the torque due to the fluid motion on the solid.</div></div>
-<div class="ttc" id="aclassFluidDynamicsNitsche_html_a88be8f986d3c498385efe4595c152bd4"><div class="ttname"><a href="classFluidDynamicsNitsche.html#a88be8f986d3c498385efe4595c152bd4">FluidDynamicsNitsche::read_checkpoint</a></div><div class="ttdeci">virtual void read_checkpoint() override</div><div class="ttdoc">Read a gls_nitsche simulation checkpoint and initiate simulation restart.</div><div class="ttdef"><b>Definition</b> <a href="fluid__dynamics__nitsche_8cc_source.html#l00954">fluid_dynamics_nitsche.cc:954</a></div></div>
+<div class="ttc" id="aclassFluidDynamicsNitsche_html_a88be8f986d3c498385efe4595c152bd4"><div class="ttname"><a href="classFluidDynamicsNitsche.html#a88be8f986d3c498385efe4595c152bd4">FluidDynamicsNitsche::read_checkpoint</a></div><div class="ttdeci">virtual void read_checkpoint() override</div><div class="ttdoc">Read a gls_nitsche simulation checkpoint and initiate simulation restart.</div><div class="ttdef"><b>Definition</b> <a href="fluid__dynamics__nitsche_8cc_source.html#l01007">fluid_dynamics_nitsche.cc:1007</a></div></div>
 <div class="ttc" id="aclassFluidDynamicsNitsche_html_a96a45ab0012452c1e9848c7c05a7ed3c"><div class="ttname"><a href="classFluidDynamicsNitsche.html#a96a45ab0012452c1e9848c7c05a7ed3c">FluidDynamicsNitsche::output_solid_particles</a></div><div class="ttdeci">void output_solid_particles(const unsigned int i_solid)</div><div class="ttdoc">Outputs a vtu file for each output frequency of the particles.</div><div class="ttdef"><b>Definition</b> <a href="fluid__dynamics__nitsche_8cc_source.html#l00776">fluid_dynamics_nitsche.cc:776</a></div></div>
-<div class="ttc" id="aclassFluidDynamicsNitsche_html_aa71737d19a026c5b7533769ef220e190"><div class="ttname"><a href="classFluidDynamicsNitsche.html#aa71737d19a026c5b7533769ef220e190">FluidDynamicsNitsche::solid_forces_table</a></div><div class="ttdeci">std::vector&lt; TableHandler &gt; solid_forces_table</div><div class="ttdef"><b>Definition</b> <a href="fluid__dynamics__nitsche_8h_source.html#l00154">fluid_dynamics_nitsche.h:154</a></div></div>
+<div class="ttc" id="aclassFluidDynamicsNitsche_html_aa71737d19a026c5b7533769ef220e190"><div class="ttname"><a href="classFluidDynamicsNitsche.html#aa71737d19a026c5b7533769ef220e190">FluidDynamicsNitsche::solid_forces_table</a></div><div class="ttdeci">std::vector&lt; TableHandler &gt; solid_forces_table</div><div class="ttdef"><b>Definition</b> <a href="fluid__dynamics__nitsche_8h_source.html#l00175">fluid_dynamics_nitsche.h:175</a></div></div>
 <div class="ttc" id="aclassFluidDynamicsNitsche_html_aaa20d7828d4b09a84fefb655b514a1ce"><div class="ttname"><a href="classFluidDynamicsNitsche.html#aaa20d7828d4b09a84fefb655b514a1ce">FluidDynamicsNitsche::assemble_matrix_and_rhs</a></div><div class="ttdeci">void assemble_matrix_and_rhs()</div><div class="ttdoc">Same as in fluid_dynamics_matrix_based, but calls assemble_nitsche_restriction() when global matrix a...</div><div class="ttdef"><b>Definition</b> <a href="fluid__dynamics__nitsche_8cc_source.html#l00893">fluid_dynamics_nitsche.cc:893</a></div></div>
 <div class="ttc" id="aclassFluidDynamicsNitsche_html_aac89d96117231627627a7186f594c721"><div class="ttname"><a href="classFluidDynamicsNitsche.html#aac89d96117231627627a7186f594c721">FluidDynamicsNitsche::calculate_forces_on_solid</a></div><div class="ttdeci">Tensor&lt; 1, spacedim &gt; calculate_forces_on_solid(const unsigned int i_solid)</div><div class="ttdoc">Calculates the force due to the fluid motion on the solid.</div><div class="ttdef"><b>Definition</b> <a href="fluid__dynamics__nitsche_8cc_source.html#l00309">fluid_dynamics_nitsche.cc:309</a></div></div>
 <div class="ttc" id="aclassFluidDynamicsNitsche_html_ab4ab3f511025e1c27b9957d38c9229c3"><div class="ttname"><a href="classFluidDynamicsNitsche.html#ab4ab3f511025e1c27b9957d38c9229c3">FluidDynamicsNitsche::solve</a></div><div class="ttdeci">virtual void solve() override</div><div class="ttdoc">solve Solves the Navier-Stokes problem</div><div class="ttdef"><b>Definition</b> <a href="fluid__dynamics__nitsche_8cc_source.html#l00650">fluid_dynamics_nitsche.cc:650</a></div></div>
-<div class="ttc" id="aclassFluidDynamicsNitsche_html_abd838581c2d01afe8f02cef6efb62de2"><div class="ttname"><a href="classFluidDynamicsNitsche.html#abd838581c2d01afe8f02cef6efb62de2">FluidDynamicsNitsche::pvdhandler_solid_particles</a></div><div class="ttdeci">std::vector&lt; PVDHandler &gt; pvdhandler_solid_particles</div><div class="ttdef"><b>Definition</b> <a href="fluid__dynamics__nitsche_8h_source.html#l00152">fluid_dynamics_nitsche.h:152</a></div></div>
+<div class="ttc" id="aclassFluidDynamicsNitsche_html_abd838581c2d01afe8f02cef6efb62de2"><div class="ttname"><a href="classFluidDynamicsNitsche.html#abd838581c2d01afe8f02cef6efb62de2">FluidDynamicsNitsche::pvdhandler_solid_particles</a></div><div class="ttdeci">std::vector&lt; PVDHandler &gt; pvdhandler_solid_particles</div><div class="ttdef"><b>Definition</b> <a href="fluid__dynamics__nitsche_8h_source.html#l00173">fluid_dynamics_nitsche.h:173</a></div></div>
 <div class="ttc" id="aclassFluidDynamicsNitsche_html_abe7213b302258dcf1f654597d971a745"><div class="ttname"><a href="classFluidDynamicsNitsche.html#abe7213b302258dcf1f654597d971a745">FluidDynamicsNitsche::refine_mesh</a></div><div class="ttdeci">virtual void refine_mesh() override</div><div class="ttdoc">Allow the refinement of the mesh according to one of the 2 methods proposed. Overrides the regular me...</div><div class="ttdef"><b>Definition</b> <a href="fluid__dynamics__nitsche_8cc_source.html#l00852">fluid_dynamics_nitsche.cc:852</a></div></div>
-<div class="ttc" id="aclassFluidDynamicsNitsche_html_ae1d624e0643d99abd921cf3306df2f74"><div class="ttname"><a href="classFluidDynamicsNitsche.html#ae1d624e0643d99abd921cf3306df2f74">FluidDynamicsNitsche::write_checkpoint</a></div><div class="ttdeci">virtual void write_checkpoint() override</div><div class="ttdoc">Write a gls_nitsche simulation checkpointing to allow for gls_nitsche simulation restart.</div><div class="ttdef"><b>Definition</b> <a href="fluid__dynamics__nitsche_8cc_source.html#l00913">fluid_dynamics_nitsche.cc:913</a></div></div>
+<div class="ttc" id="aclassFluidDynamicsNitsche_html_ae1d624e0643d99abd921cf3306df2f74"><div class="ttname"><a href="classFluidDynamicsNitsche.html#ae1d624e0643d99abd921cf3306df2f74">FluidDynamicsNitsche::write_checkpoint</a></div><div class="ttdeci">virtual void write_checkpoint() override</div><div class="ttdoc">Write a gls_nitsche simulation checkpointing to allow for gls_nitsche simulation restart.</div><div class="ttdef"><b>Definition</b> <a href="fluid__dynamics__nitsche_8cc_source.html#l00956">fluid_dynamics_nitsche.cc:956</a></div></div>
 <div class="ttc" id="aclassFluidDynamicsNitsche_html_aec4e63543b8e49913e4401d39974b92f"><div class="ttname"><a href="classFluidDynamicsNitsche.html#aec4e63543b8e49913e4401d39974b92f">FluidDynamicsNitsche::postprocess_solid_forces</a></div><div class="ttdeci">void postprocess_solid_forces(const unsigned int i_solid, bool first_solid_forces)</div><div class="ttdoc">Post-process for forces on solid after an iteration.</div><div class="ttdef"><b>Definition</b> <a href="fluid__dynamics__nitsche_8cc_source.html#l00481">fluid_dynamics_nitsche.cc:481</a></div></div>
 <div class="ttc" id="aclassFluidDynamicsNitsche_html_af77760b8062ddb48c82954afd33b26fa"><div class="ttname"><a href="classFluidDynamicsNitsche.html#af77760b8062ddb48c82954afd33b26fa">FluidDynamicsNitsche::assemble_rhs</a></div><div class="ttdeci">void assemble_rhs()</div><div class="ttdoc">Same as in fluid_dynamics_matrix_based, but calls assemble_nitsche_restriction() when rhs is assemble...</div><div class="ttdef"><b>Definition</b> <a href="fluid__dynamics__nitsche_8cc_source.html#l00904">fluid_dynamics_nitsche.cc:904</a></div></div>
-<div class="ttc" id="aclassFluidDynamicsNitsche_html_afa77adde92f255d3908d7beeedbec3a2"><div class="ttname"><a href="classFluidDynamicsNitsche.html#afa77adde92f255d3908d7beeedbec3a2">FluidDynamicsNitsche::solid_torques_table</a></div><div class="ttdeci">std::vector&lt; TableHandler &gt; solid_torques_table</div><div class="ttdef"><b>Definition</b> <a href="fluid__dynamics__nitsche_8h_source.html#l00155">fluid_dynamics_nitsche.h:155</a></div></div>
+<div class="ttc" id="aclassFluidDynamicsNitsche_html_afa77adde92f255d3908d7beeedbec3a2"><div class="ttname"><a href="classFluidDynamicsNitsche.html#afa77adde92f255d3908d7beeedbec3a2">FluidDynamicsNitsche::solid_torques_table</a></div><div class="ttdeci">std::vector&lt; TableHandler &gt; solid_torques_table</div><div class="ttdef"><b>Definition</b> <a href="fluid__dynamics__nitsche_8h_source.html#l00176">fluid_dynamics_nitsche.h:176</a></div></div>
+<div class="ttc" id="aclassNavierStokesBase_html_a2932cb8c662806e38471f5e388fe4e65"><div class="ttname"><a href="classNavierStokesBase.html#a2932cb8c662806e38471f5e388fe4e65">NavierStokesBase::gather_tables</a></div><div class="ttdeci">virtual std::vector&lt; OutputStructTableHandler &gt; gather_tables()</div><div class="ttdoc">Returns a vector of references to TableHandler objects that needs to be serialized/ deserialized for ...</div><div class="ttdef"><b>Definition</b> <a href="navier__stokes__base_8cc_source.html#l03076">navier_stokes_base.cc:3076</a></div></div>
 <div class="ttc" id="aclassNavierStokesBase_html_a582b5a5fd99b3e8e1c2b21c17bb1b21a"><div class="ttname"><a href="classNavierStokesBase.html#a582b5a5fd99b3e8e1c2b21c17bb1b21a">NavierStokesBase&lt; dim, GlobalVectorType, IndexSet &gt;::read_checkpoint</a></div><div class="ttdeci">virtual void read_checkpoint()</div><div class="ttdoc">Restart a previous simulation from a checkpoint file.</div><div class="ttdef"><b>Definition</b> <a href="navier__stokes__base_8cc_source.html#l00436">navier_stokes_base.cc:2261</a></div></div>
-<div class="ttc" id="aclassNavierStokesBase_html_a888b30d921a5a6beb3883cbaa3f8fa28"><div class="ttname"><a href="classNavierStokesBase.html#a888b30d921a5a6beb3883cbaa3f8fa28">NavierStokesBase&lt; dim, GlobalVectorType, IndexSet &gt;::simulation_parameters</a></div><div class="ttdeci">SimulationParameters&lt; dim &gt; simulation_parameters</div><div class="ttdef"><b>Definition</b> <a href="navier__stokes__base_8h_source.html#l00945">navier_stokes_base.h:945</a></div></div>
-<div class="ttc" id="aclassNavierStokesBase_html_af311920c0b819b973d410db4fa5e8924"><div class="ttname"><a href="classNavierStokesBase.html#af311920c0b819b973d410db4fa5e8924">NavierStokesBase&lt; dim, GlobalVectorType, IndexSet &gt;::write_checkpoint</a></div><div class="ttdeci">virtual void write_checkpoint()</div><div class="ttdoc">Write the checkpoint.</div><div class="ttdef"><b>Definition</b> <a href="navier__stokes__base_8cc_source.html#l00852">navier_stokes_base.cc:3144</a></div></div>
+<div class="ttc" id="aclassNavierStokesBase_html_a888b30d921a5a6beb3883cbaa3f8fa28"><div class="ttname"><a href="classNavierStokesBase.html#a888b30d921a5a6beb3883cbaa3f8fa28">NavierStokesBase&lt; dim, GlobalVectorType, IndexSet &gt;::simulation_parameters</a></div><div class="ttdeci">SimulationParameters&lt; dim &gt; simulation_parameters</div><div class="ttdef"><b>Definition</b> <a href="navier__stokes__base_8h_source.html#l00978">navier_stokes_base.h:978</a></div></div>
+<div class="ttc" id="aclassNavierStokesBase_html_af311920c0b819b973d410db4fa5e8924"><div class="ttname"><a href="classNavierStokesBase.html#af311920c0b819b973d410db4fa5e8924">NavierStokesBase&lt; dim, GlobalVectorType, IndexSet &gt;::write_checkpoint</a></div><div class="ttdeci">virtual void write_checkpoint()</div><div class="ttdoc">Write the checkpoint.</div><div class="ttdef"><b>Definition</b> <a href="navier__stokes__base_8cc_source.html#l00885">navier_stokes_base.cc:3172</a></div></div>
 <div class="ttc" id="aclassSimulationParameters_html"><div class="ttname"><a href="classSimulationParameters.html">SimulationParameters</a></div><div class="ttdef"><b>Definition</b> <a href="simulation__parameters_8h_source.html#l00023">simulation_parameters.h:24</a></div></div>
 <div class="ttc" id="aclassSolidBase_html"><div class="ttname"><a href="classSolidBase.html">SolidBase</a></div><div class="ttdef"><b>Definition</b> <a href="solid__base_8h_source.html#l00046">solid_base.h:47</a></div></div>
 <div class="ttc" id="afluid__dynamics__nitsche_8h_html"><div class="ttname"><a href="fluid__dynamics__nitsche_8h.html">fluid_dynamics_nitsche.h</a></div></div>
