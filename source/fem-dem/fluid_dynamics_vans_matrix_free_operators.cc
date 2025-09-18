@@ -194,7 +194,8 @@ VANSOperator<dim, number>::do_cell_integral_local(
     {
       Tensor<1, dim, VectorizedArray<number>> source_value;
 
-      // Gather particle-fluid force
+      // Gather particle-fluid force, will be zero if they have not been
+      // gathered.
       auto pf_value = this->particle_fluid_force(cell, q);
 
       // Evaluate source term function if enabled
@@ -231,9 +232,10 @@ VANSOperator<dim, number>::do_cell_integral_local(
       auto vf_value    = this->void_fraction(cell, q);
       auto vf_gradient = this->void_fraction_gradient(cell, q);
 
-      // Add to source term the particle-fluid force (zero if not enabled)
+      // Add to source term the particle-fluid force (if it is enabled)
       // We divide this source by the void fraction value since it is multiplied
       // by the void fraction value within the assembler.
+
       source_value += -pf_value / vf_value;
 
       Tensor<1, dim + 1, VectorizedArray<number>> previous_time_derivatives;
@@ -420,7 +422,8 @@ VANSOperator<dim, number>::local_evaluate_residual(
         {
           Tensor<1, dim, VectorizedArray<number>> source_value;
 
-          // Gather particle-fluid force
+          // Gather particle-fluid force, will be zero if they have not been
+          // gathered.
           auto pf_value = this->particle_fluid_force(cell, q);
 
           // Evaluate source term function if enabled
