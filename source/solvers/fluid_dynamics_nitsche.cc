@@ -912,12 +912,17 @@ template <int dim, int spacedim>
 std::vector<OutputStructTableHandler>
 FluidDynamicsNitsche<dim, spacedim>::gather_tables()
 {
+  // Initilization of the structure that will contain the references to the 
+  // tables that are additional in this solver and their associated filenames 
   std::vector<OutputStructTableHandler> table_output_structs;
-
+  
+  // Prefix and suffix for the table checkpoint file name
   std::string prefix =
     this->simulation_parameters.simulation_control.output_folder;
   std::string suffix = ".checkpoint";
-
+  
+  // Add the tables of the forces and torques calculated on each solid, one 
+  // table per solid
   for (unsigned int i_solid = 0;
        i_solid < this->simulation_parameters.nitsche->number_solids;
        ++i_solid)
@@ -986,17 +991,15 @@ FluidDynamicsNitsche<dim, spacedim>::write_checkpoint()
         }
     }
   // Serialize all post-processing tables that are currently used
-  {
-    // Serialize the post-processing tables that are particular to this solver
-    const std::vector<OutputStructTableHandler> &table_output_structs_add =
-      this->gather_tables();
-    this->serialize_tables_vector(table_output_structs_add);
-    // Serialize the default post-processing tables that are members of
-    // NavierStokesBase
-    const std::vector<OutputStructTableHandler> &table_output_structs =
-      NavierStokesBase<spacedim, GlobalVectorType, IndexSet>::gather_tables();
-    this->serialize_tables_vector(table_output_structs);
-  }
+  // Serialize the post-processing tables that are additional in this solver
+  const std::vector<OutputStructTableHandler> &table_output_structs_add =
+    this->gather_tables();
+  this->serialize_tables_vector(table_output_structs_add);
+  // Serialize the default post-processing tables that are members of
+  // NavierStokesBase
+  const std::vector<OutputStructTableHandler> &table_output_structs =
+    NavierStokesBase<spacedim, GlobalVectorType, IndexSet>::gather_tables();
+  this->serialize_tables_vector(table_output_structs);
 }
 
 template <int dim, int spacedim>
@@ -1059,17 +1062,15 @@ FluidDynamicsNitsche<dim, spacedim>::read_checkpoint()
         }
     }
   // Deserialize all post-processing tables that are currently used
-  {
-    // Deserialize the post-processing tables that are particular to this solver
-    std::vector<OutputStructTableHandler> table_output_structs_add =
-      this->gather_tables();
-    this->deserialize_tables_vector(table_output_structs_add);
-    // Deserialize the default post-processing tables that are members of
-    // NavierStokesBase
-    std::vector<OutputStructTableHandler> table_output_structs =
-      NavierStokesBase<spacedim, GlobalVectorType, IndexSet>::gather_tables();
-    this->deserialize_tables_vector(table_output_structs);
-  }
+  // Deserialize the post-processing tables that are particular to this solver
+  std::vector<OutputStructTableHandler> table_output_structs_add =
+    this->gather_tables();
+  this->deserialize_tables_vector(table_output_structs_add);
+  // Deserialize the default post-processing tables that are members of
+  // NavierStokesBase
+  std::vector<OutputStructTableHandler> table_output_structs =
+    NavierStokesBase<spacedim, GlobalVectorType, IndexSet>::gather_tables();
+  this->deserialize_tables_vector(table_output_structs);
 }
 
 

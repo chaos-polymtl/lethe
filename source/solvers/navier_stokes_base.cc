@@ -2287,11 +2287,9 @@ NavierStokesBase<dim, VectorType, DofsType>::read_checkpoint()
   multiphysics->read_checkpoint();
 
   // Deserialize all post-processing tables that are currently used
-  {
-    std::vector<OutputStructTableHandler> table_output_structs =
-      this->gather_tables();
-    this->deserialize_tables_vector(table_output_structs);
-  }
+  std::vector<OutputStructTableHandler> table_output_structs =
+    this->gather_tables();
+  this->deserialize_tables_vector(table_output_structs);
 }
 
 template <int dim, typename VectorType, typename DofsType>
@@ -3219,11 +3217,9 @@ NavierStokesBase<dim, VectorType, DofsType>::write_checkpoint()
     }
 
   // Serialize all post-processing tables that are currently used
-  {
-    const std::vector<OutputStructTableHandler> &table_output_structs =
-      this->gather_tables();
-    this->serialize_tables_vector(table_output_structs);
-  }
+  const std::vector<OutputStructTableHandler> &table_output_structs =
+    this->gather_tables();
+  this->serialize_tables_vector(table_output_structs);
 }
 
 template <int dim, typename VectorType, typename DofsType>

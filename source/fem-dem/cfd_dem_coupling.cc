@@ -538,17 +538,15 @@ CFDDEMSolver<dim>::write_checkpoint()
       parallel_triangulation->save(prefix + ".triangulation");
     }
   // Serialize all post-processing tables that are currently used
-  {
-    // Serialize the post-processing tables that are particular to this solver
-    const std::vector<OutputStructTableHandler> &table_output_structs_add =
-      this->gather_tables();
-    this->serialize_tables_vector(table_output_structs_add);
-    // Serialize the default post-processing tables that are members of
-    // NavierStokesBase
-    const std::vector<OutputStructTableHandler> &table_output_structs =
-      NavierStokesBase<dim, GlobalVectorType, IndexSet>::gather_tables();
-    this->serialize_tables_vector(table_output_structs);
-  }
+  // Serialize the post-processing tables that are additional in this solver
+  const std::vector<OutputStructTableHandler> &table_output_structs_add =
+    this->gather_tables();
+  this->serialize_tables_vector(table_output_structs_add);
+  // Serialize the default post-processing tables that are members of
+  // NavierStokesBase
+  const std::vector<OutputStructTableHandler> &table_output_structs =
+    NavierStokesBase<dim, GlobalVectorType, IndexSet>::gather_tables();
+  this->serialize_tables_vector(table_output_structs);
 }
 
 template <int dim>
@@ -706,18 +704,16 @@ CFDDEMSolver<dim>::read_checkpoint()
   this->particle_handler.deserialize();
 
   // Deserialize all post-processing tables that are currently used
-  {
-    // Deserialize the post-processing tables that are particular to this solver
-    std::vector<OutputStructTableHandler> table_output_structs_add =
-      this->gather_tables();
-    this->deserialize_tables_vector(table_output_structs_add);
+  // Deserialize the post-processing tables that are particular to this solver
+  std::vector<OutputStructTableHandler> table_output_structs_add =
+    this->gather_tables();
+  this->deserialize_tables_vector(table_output_structs_add);
 
-    // Deserialize the default post-processing tables that are members of
-    // NavierStokesBase
-    std::vector<OutputStructTableHandler> table_output_structs =
-      NavierStokesBase<dim, GlobalVectorType, IndexSet>::gather_tables();
-    this->deserialize_tables_vector(table_output_structs);
-  }
+  // Deserialize the default post-processing tables that are members of
+  // NavierStokesBase
+  std::vector<OutputStructTableHandler> table_output_structs =
+    NavierStokesBase<dim, GlobalVectorType, IndexSet>::gather_tables();
+  this->deserialize_tables_vector(table_output_structs);
 }
 
 template <int dim>

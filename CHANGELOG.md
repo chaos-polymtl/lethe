@@ -3,6 +3,12 @@
 All notable changes to the Lethe project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
+### [Master] - 2025-09-18
+
+### Fixed
+
+- MINOR The code is modified so that the TableHandler objects are properly restored when writing checkpoints and restarting simulations for the lethe-fluid, lethe-fluid-particles and lethe-fluid-nitsche solvers. This feature was only working for the lethe-fluid/lethe-fluid-block/lethe-fluid-matrix-free solvers before. [#1673] (https://github.com/chaos-polymtl/lethe/pull/1673)
+
 ### [Master] - 2025-09-16
 
 ## Fixed
@@ -20,12 +26,6 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/).
 ### Changed
 
 - MAJOR This is the last PR of the output refactoring started in #1624(https://github.com/chaos-polymtl/lethe/pull/1624) and fixed in #1661(https://github.com/chaos-polymtl/lethe/pull/1661). It includes using the new output struct to replace the previous "attach output" to DataOut pattern. [#1678](https://github.com/chaos-polymtl/lethe/pull/1678)
-
-### [Master] - 2025-09-12
-
-### Fixed
-
-- MINOR The code is modified so that the TableHandler objects are properly restored when writing checkpoints and restarting simulations for the lethe-fluid, lethe-fluid-particles and lethe-fluid-nitsche solvers. This feature was only working for the lethe-fluid solver before. [#1673] (https://github.com/chaos-polymtl/lethe/pull/1673)
 
 ### [Master] - 2025-09-12
 
