@@ -1,19 +1,16 @@
 // SPDX-FileCopyrightText: Copyright (c) 2025 The Lethe Authors
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
-
 /**
- * @brief This test checks the order of the temperature integrator by solving mcdT/dt = -T for two time steps.
- *
+ * @brief This test checks the order of the temperature integrator by solving
+ * mcdT/dt = -T for two time steps.
  */
-
 
 // Tests (with common definitions)
 #include <../tests/dem/test_particles_functions.h>
 #include <dem/multiphysics_integrator.h>
 
 #include <cmath>
-
 
 template <int dim, typename PropertiesIndex>
 void

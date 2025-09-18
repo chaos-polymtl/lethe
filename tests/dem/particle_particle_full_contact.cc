@@ -3,7 +3,8 @@
 
 
 #include <../tests/dem/full_contact_functions.h>
-
+#include <dem/adaptive_sparse_contacts.h>
+#include <dem/dem_contact_manager.h>
 
 /**
  * @brief Write time, force, torque and overlap on the log for the full duration of contact.

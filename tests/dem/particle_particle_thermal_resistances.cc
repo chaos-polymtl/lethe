@@ -9,9 +9,13 @@
 
 
 #include <../tests/dem/test_particles_functions.h>
+#include <dem/dem_contact_manager.h>
 #include <dem/particle_heat_transfer.h>
 #include <dem/particle_particle_contact_force.h>
 
+#include <deal.II/base/logstream.h>
+
+#include <../tests/tests.h>
 
 template <int dim, typename PropertiesIndex>
 void

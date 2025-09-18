@@ -1,4 +1,4 @@
-// SPDX-FileCopyrightText: Copyright (c) 2021-2022 The Lethe Authors
+// SPDX-FileCopyrightText: Copyright (c) 2021-2022, 2025 The Lethe Authors
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
 /**
@@ -18,7 +18,6 @@
 #include <deal.II/particles/particle.h>
 #include <deal.II/particles/particle_handler.h>
 #include <deal.II/particles/particle_iterator.h>
-#include <deal.II/particles/property_pool.h>
 
 // Lethe
 #include <core/dem_properties.h>
@@ -52,7 +51,7 @@ test()
   double             dt2             = 0.05;
   const unsigned int time_step_ratio = dt1 / dt2;
 
-  // Defning particle handler
+  // Defining particle handler
   Particles::ParticleHandler<dim> particle_handler(
     tr, mapping, PropertiesIndex::n_properties);
 
