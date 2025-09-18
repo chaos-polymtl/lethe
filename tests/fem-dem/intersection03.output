@@ -1,0 +1,15 @@
+Number of degrees of freedom: 9
+
+The face normal is : (-1 -0) at the face centered at (0 0.25) 
+Distance from sphere center to the plane is : -1
+
+The face normal is : (1 -0) at the face centered at (1 0.25) 
+Distance from sphere center to the plane is : 0
+Volume of intersection with the boundary for cell with center at (0.75 0.25) is : 0.392699
+
+The face normal is : (-1 -0) at the face centered at (0 0.75) 
+Distance from sphere center to the plane is : -1
+
+The face normal is : (1 -0) at the face centered at (1 0.75) 
+Distance from sphere center to the plane is : 0
+Volume of intersection with the boundary for cell with center at (0.75 0.75) is : 0.392699
