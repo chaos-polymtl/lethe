@@ -416,8 +416,8 @@ FluidDynamicsVANSMatrixFree<dim>::solve()
         particle_projector.calculate_void_fraction(
           this->simulation_control->get_current_time());
 
-        // We only calculate the particle-fluid force projection
-        // which will be trivially zero if there are no particles in
+        // The particle-fluid force projection
+        // will be zero if there are no particles in
         // the particle handler
         particle_projector.calculate_particle_fluid_forces_projection(
           this->cfd_dem_simulation_parameters.cfd_dem,
@@ -444,9 +444,6 @@ FluidDynamicsVANSMatrixFree<dim>::solve()
               particle_projector.dof_handler,
               particle_projector.void_fraction_solution);
 
-            // We only calculate the particle-fluid force projection
-            // which will be trivially zero if there are no particles in
-            // the particle handler
             mf_operator->compute_particle_fluid_force(
               particle_projector.particle_fluid_force.dof_handler,
               particle_projector.particle_fluid_force.particle_field_solution);
