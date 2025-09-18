@@ -59,7 +59,7 @@ struct periodic_boundaries_cells_info_struct
   // Normal vector of the periodic boundary face
   Tensor<1, dim> periodic_normal_vector;
 
-  // A point on the peridic boundary face
+  // A point on the periodic boundary face
   Point<dim> point_on_periodic_face;
 };
 

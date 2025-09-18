@@ -13,8 +13,8 @@ Visualization<dim, PropertiesIndex>::Visualization() = default;
 template <int dim, typename PropertiesIndex>
 void
 Visualization<dim, PropertiesIndex>::build_patches(
-  dealii::Particles::ParticleHandler<dim> &particle_handler,
-  std::vector<std::pair<std::string, int>> properties)
+  dealii::Particles::ParticleHandler<dim>        &particle_handler,
+  const std::vector<std::pair<std::string, int>> &properties)
 {
   // We reserve 1 more name than the number of properties, since we will also be
   // writing the ID of the particles
@@ -39,9 +39,9 @@ Visualization<dim, PropertiesIndex>::build_patches(
       // even for 2D simulations
       if (n_components == 3)
         {
-          // The proeprty is a vector, thus we set that the components
+          // The property is a vector, thus we set that the components
           // are part of a vector. Do not forget that since we added the ID
-          // of the particles, we need to shift the field_position by 1. Hence
+          // of the particles, we need to shift the field_position by 1. Hence,
           // we add 1 to field_position
           vector_datasets.emplace_back(std::make_tuple(
             field_position + 1,
@@ -100,7 +100,7 @@ Visualization<dim, PropertiesIndex>::print_xyz(
       pcout << ", T";
     }
   pcout << " " << std::endl;
-  // Agressively force synchronization of the header line
+  // Aggressively force synchronization of the header line
   usleep(500);
   MPI_Barrier(mpi_communicator);
   usleep(500);
@@ -177,8 +177,8 @@ Visualization<dim, PropertiesIndex>::print_intermediate_format(
 
   std::stringstream out;
 
-  // Add data in deal.II intermediate format to the stringstream buffer for each
-  // processor in order
+  // Add data in deal.II intermediate format to the string stream buffer for
+  // each processor in order
   for (unsigned int processor_number = 0; processor_number < n_mpi_processes;
        ++processor_number)
     {

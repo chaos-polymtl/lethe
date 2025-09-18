@@ -1,10 +1,9 @@
-// SPDX-FileCopyrightText: Copyright (c) 2020-2024 The Lethe Authors
+// SPDX-FileCopyrightText: Copyright (c) 2020-2025 The Lethe Authors
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
 #ifndef lethe_find_contact_detection_step_h
 #define lethe_find_contact_detection_step_h
 
-#include <core/dem_properties.h>
 #include <core/serial_solid.h>
 
 #include <deal.II/particles/particle_handler.h>

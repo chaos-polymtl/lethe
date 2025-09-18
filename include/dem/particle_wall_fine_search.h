@@ -1,4 +1,4 @@
-// SPDX-FileCopyrightText: Copyright (c) 2020, 2022, 2024 The Lethe Authors
+// SPDX-FileCopyrightText: Copyright (c) 2020, 2022, 2024-2025 The Lethe Authors
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
 #ifndef lethe_particle_wall_fine_search_h
@@ -32,12 +32,12 @@ particle_wall_fine_search(
  * search (particle_floating_wall_candidates) to add new contact pairs to the
  * particle_floating_wall_pairs_in_contact container
  *
- * @param particle_floating_wall_pair_candidates The output of particle-floating wall
+ * @param particle_floating_wall_contact_candidates The output of particle-floating wall
  * broad search which shows contact pair candidates
  * @param floating_wall_properties Properties of floating walls defined in the
  * parameter handler
  * @param simulation_time Simulation time
- * @param particle_floating_wall_pairs_in_contact An unordered_map of maps which stores
+ * @param particle_floating_wall_in_contact An unordered_map of maps which stores
  * all the particle-floating wall pairs which are in contact, and
  * the contact information in a struct. Note that the size of this unordered
  * map is equal to the number of particles
@@ -60,7 +60,7 @@ particle_floating_wall_fine_search(
  *
  * @param particle_floating_mesh_contact_candidates The output of particle-floating mesh
  * broad search which shows contact pair candidates
- * @param particle_floating_mesh_in_contact An map of maps which stores
+ * @param particle_floating_mesh_in_contact A map of maps which stores
  * all the particle-floating mesh pairs which are in contact
  */
 template <int dim>

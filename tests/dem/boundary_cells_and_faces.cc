@@ -1,4 +1,4 @@
-// SPDX-FileCopyrightText: Copyright (c) 2020-2021, 2023-2024 The Lethe Authors
+// SPDX-FileCopyrightText: Copyright (c) 2020-2021, 2023-2025 The Lethe Authors
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
 /**
@@ -37,7 +37,7 @@ test()
   triangulation.refine_global(refinement_number);
   std::vector<unsigned int> outlet_boundaries;
 
-  // Fining boundary cellds information
+  // Fining boundary cells information
   BoundaryCellsInformation<dim> boundary_cells_object;
   boundary_cells_object.build(
     triangulation,

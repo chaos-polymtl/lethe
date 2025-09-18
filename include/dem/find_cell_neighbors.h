@@ -8,14 +8,12 @@
 
 #include <deal.II/distributed/tria.h>
 
-#include <deal.II/grid/grid_tools.h>
-
 using namespace dealii;
 
 /**
  * @brief Finds the neighbor list (without repetition) of all the active
  * cells in the triangulation. It gets the vertices of the cells to get lists
- * of the neighbor for each cells. There is some check to prevent repetition
+ * of the neighbor for each cell. There is some check to prevent repetition
  * of a cell in a list (up to 8 vertices can have the same cell in common in
  * 3D).
  * 2 types of container are used for cell neighbors : local-local cells
@@ -23,7 +21,7 @@ using namespace dealii;
  *
  * @tparam dim An integer that denotes the dimension of the space in which
  * the problem is solved.
- * @tparam reciprocal An boolean that denotes if the cells_local_neighbor_list of
+ * @tparam reciprocal A boolean that denotes if the cells_local_neighbor_list of
  * cell i and j contains cell j and i, respectively.
  *
  * @param triangulation Triangulation to access the information of the cells
@@ -47,7 +45,7 @@ find_cell_neighbors(
  * @brief Finds the periodic neighbor list (without repetition) of all the
  * active cells in the triangulation. It gets the coinciding vertices of the
  * cells at the periodic boundary 0 to get lists of the periodic neighbor
- * cells on the periodic boundary 1 for each cells. There is some check to
+ * cells on the periodic boundary 1 for each cell. There is some check to
  * prevent repetition of a cell in a list (up to 8 vertices can have the
  * same cell in common in 3D).
  * 3 types of container are used for periodic mapping of cell neighbors :
@@ -111,7 +109,7 @@ find_full_cell_neighbors(
  * Cell 8 have vertices 0, 1, 2, 3 on the periodic boundary. First,
  * it checks in the coinciding_vertex_groups if the vertex 0 is a key in the
  * map, and if it is, it gets a label, let's say label is 10. In the
- * vertex_to_coinciding_vertex_group, it can finds the the coinciding vertices
+ * vertex_to_coinciding_vertex_group, it can find the coinciding vertices
  * with the label. Using the label 10, it gets the vertices 0 and 34, which
  * means that vertices 0 and 34 are periodic. We do not want the cells
  * attached to the vertex 0 since they are already found with the regular

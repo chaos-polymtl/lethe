@@ -1,17 +1,14 @@
 // SPDX-FileCopyrightText: Copyright (c) 2021-2024 The Lethe Authors
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
+#include <core/dem_properties.h>
 #include <core/solutions_output.h>
 
 #include <dem/lagrangian_post_processing.h>
 
 #include <deal.II/dofs/dof_handler.h>
 
-#include <deal.II/lac/block_vector.h>
-
 #include <deal.II/numerics/data_out.h>
-
-#include <fstream>
 
 using namespace dealii;
 
@@ -341,39 +338,39 @@ write_post_processing_results<3, DEM::DEMMPProperties::PropertiesIndex>(
 template Tensor<1, 2>
 calculate_cell_average_particles_velocity<2,
                                           DEM::DEMProperties::PropertiesIndex>(
-  const typename parallel::distributed::Triangulation<2>::cell_iterator &cell,
+  const parallel::distributed::Triangulation<2>::cell_iterator &cell,
   const Particles::ParticleHandler<2> &particle_handler);
 
 template Tensor<1, 2>
 calculate_cell_average_particles_velocity<
   2,
   DEM::CFDDEMProperties::PropertiesIndex>(
-  const typename parallel::distributed::Triangulation<2>::cell_iterator &cell,
+  const parallel::distributed::Triangulation<2>::cell_iterator &cell,
   const Particles::ParticleHandler<2> &particle_handler);
 
 template Tensor<1, 2>
 calculate_cell_average_particles_velocity<
   2,
   DEM::DEMMPProperties::PropertiesIndex>(
-  const typename parallel::distributed::Triangulation<2>::cell_iterator &cell,
+  const parallel::distributed::Triangulation<2>::cell_iterator &cell,
   const Particles::ParticleHandler<2> &particle_handler);
 
 template Tensor<1, 3>
 calculate_cell_average_particles_velocity<3,
                                           DEM::DEMProperties::PropertiesIndex>(
-  const typename parallel::distributed::Triangulation<3>::cell_iterator &cell,
+  const parallel::distributed::Triangulation<3>::cell_iterator &cell,
   const Particles::ParticleHandler<3> &particle_handler);
 
 template Tensor<1, 3>
 calculate_cell_average_particles_velocity<
   3,
   DEM::CFDDEMProperties::PropertiesIndex>(
-  const typename parallel::distributed::Triangulation<3>::cell_iterator &cell,
+  const parallel::distributed::Triangulation<3>::cell_iterator &cell,
   const Particles::ParticleHandler<3> &particle_handler);
 
 template Tensor<1, 3>
 calculate_cell_average_particles_velocity<
   3,
   DEM::DEMMPProperties::PropertiesIndex>(
-  const typename parallel::distributed::Triangulation<3>::cell_iterator &cell,
+  const parallel::distributed::Triangulation<3>::cell_iterator &cell,
   const Particles::ParticleHandler<3> &particle_handler);

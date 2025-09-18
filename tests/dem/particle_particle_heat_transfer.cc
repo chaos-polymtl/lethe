@@ -8,7 +8,8 @@
  */
 
 #include <../tests/dem/test_particles_functions.h>
-#include <dem/particle_heat_transfer.h>
+#include <dem/adaptive_sparse_contacts.h>
+#include <dem/dem_contact_manager.h>
 #include <dem/particle_particle_contact_force.h>
 
 template <int dim, typename PropertiesIndex>

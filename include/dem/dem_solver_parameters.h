@@ -6,7 +6,6 @@
 
 #include <core/parameters.h>
 #include <core/parameters_lagrangian.h>
-#include <core/simulation_control.h>
 #include <core/solid_objects_parameters.h>
 
 /**

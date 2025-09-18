@@ -1,15 +1,11 @@
-// SPDX-FileCopyrightText: Copyright (c) 2020-2022, 2024 The Lethe Authors
+// SPDX-FileCopyrightText: Copyright (c) 2020-2022, 2024-2025 The Lethe Authors
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
 #ifndef lethe_particle_particle_broad_search_h
 #define lethe_particle_particle_broad_search_h
 
 #include <dem/adaptive_sparse_contacts.h>
-#include <dem/contact_info.h>
 #include <dem/data_containers.h>
-#include <dem/find_boundary_cells_information.h>
-
-#include <deal.II/distributed/tria.h>
 
 #include <deal.II/particles/particle.h>
 #include <deal.II/particles/particle_handler.h>
@@ -73,6 +69,9 @@ find_particle_particle_contact_pairs(
  * @param[out] local_contact_pair_candidates Ankerl unordered dense map. Stores
  * potential pairs of local-local particles in contact without redundancy.
  * Keys are particle ids and mapped types are vectors of particle ids.
+ * @param[in] ghost_contact_pair_candidates Ankerl unordered dense map. Stores
+ * potential pairs of local-ghost particle in contact. Keys are particle ids and
+ * mapped types are vectors of particle ids.
  * @param[in] sparse_contacts_object The object that contains the
  * information about the mobility status of cells
  */
@@ -105,6 +104,11 @@ find_particle_particle_contact_pairs(
  * the number of local periodic cells at boundary 0) of vectors. Each sub-vector
  * have a size equal to the number of adjacent ghost cells of the main cell plus
  * one. The first element of each sub-vector shows the main cell itself.
+ * @param[in] cells_ghost_local_periodic_neighbor_list A vector (with size equal
+ * to the number of ghost periodic cells at boundary 0) of vectors. Each
+ * sub-vector have a size equal to the number of adjacent local cells of the
+ * main ghost cell plus one. The first element of each sub-vector shows the main
+ * ghost cell itself.
  * @param[out] local_contact_pair_periodic_candidates Ankerl unordered dense
  * map. Stores potential pairs of local-local periodic particles in contact.
  * Keys are local particle ids at boundary 0 and mapped types are vectors of
@@ -152,6 +156,11 @@ find_particle_particle_periodic_contact_pairs(
  * the number of local periodic cells at boundary 0) of vectors. Each sub-vector
  * have a size equal to the number of adjacent ghost cells of the main cell plus
  * one. The first element of each sub-vector shows the main cell itself.
+ * @param[in] cells_ghost_local_periodic_neighbor_list A vector (with size equal
+ * to the number of ghost periodic cells at boundary 0) of vectors. Each
+ * sub-vector have a size equal to the number of adjacent local cells of the
+ * main ghost cell plus one. The first element of each sub-vector shows the main
+ * ghost cell itself.
  * @param[out] local_contact_pair_periodic_candidates Ankerl unordered dense
  * map. Stores potential pairs of local-local periodic particles in contact.
  * Keys are local particle ids at boundary 0 and mapped types are vectors of

@@ -4,22 +4,18 @@
 #ifndef lethe_particle_wall_contact_force_h
 #define lethe_particle_wall_contact_force_h
 
-#include <core/auxiliary_math_functions.h>
 #include <core/dem_properties.h>
 #include <core/lethe_grid_tools.h>
 #include <core/serial_solid.h>
 
 #include <dem/contact_info.h>
-#include <dem/contact_type.h>
 #include <dem/data_containers.h>
 #include <dem/dem_contact_manager.h>
 #include <dem/dem_solver_parameters.h>
-#include <dem/particle_heat_transfer.h>
 #include <dem/particle_interaction_outcomes.h>
 #include <dem/particle_wall_rolling_resistance_torque.h>
 
 #include <boost/math/special_functions.hpp>
-#include <boost/range/adaptor/map.hpp>
 
 #include <vector>
 
@@ -28,7 +24,7 @@ using namespace dealii;
 /**
  * @brief Base class for the particle-wall contact force models
  * This class does not implement any of the models, but ensures that
- * an interface without template specialization is available. All of the
+ * an interface without template specialization is available. All the
  * actual implementation of the models are carried out in the
  * ParticleWallContactForce class which is templated by the contact model
  * type.
@@ -221,7 +217,7 @@ protected:
    * @param[in] dt DEM time step.
    * @param[in] cut_cell_translational_velocity Translational velocity of the
    * cut cell.
-   * @param[in] cut_cell_rotational_velocity Rotational veclocity of the cut
+   * @param[in] cut_cell_rotational_velocity Rotational velocity of the cut
    * cell.
    * @param[in] center_of_rotation_particle_distance Distance between the
    * particle and the center of rotation of the floating mesh.
@@ -238,7 +234,7 @@ protected:
     const double                     center_of_rotation_particle_distance)
   {
     // i is the particle, j is the wall.
-    // we need to put a minus sign infront of the normal_vector to respect the
+    // we need to put a minus sign in front of the normal_vector to respect the
     // convention (i -> j)
     const Tensor<1, 3> normal_vector = -contact_info.normal_vector;
 
@@ -458,7 +454,7 @@ private:
     // Updating force and torque on particle in the particle handler
     // Since the force was calculated on the wall, we use -= operator
     particle_force -= total_force;
-    // Since the torque was direcly calculated on the particle, we use +=
+    // Since the torque was directly calculated on the particle, we use +=
     // operator
     particle_torque += tangential_torque + rolling_resistance_torque;
   }
@@ -659,7 +655,7 @@ private:
    * @param[in] particle_properties Properties of particle.
    * @param[out] normal_force Contact normal force.
    * @param[out] tangential_force Contact tangential force.
-   * @param[out] tangential_torque Contact tangential torque..
+   * @param[out] tangential_torque Contact tangential torque.
    * @param[out] rolling_resistance_torque Contact rolling resistance torque.
    */
   inline void
@@ -1025,7 +1021,7 @@ private:
 
 
   /**
-   * @brief Set every containers needed to carry the particle-wall force
+   * @brief Set every container needed to carry the particle-wall force
    * calculation.
    *
    * @param[in] dem_parameters DEM parameters declared in the .prm file.

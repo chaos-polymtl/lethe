@@ -1,4 +1,4 @@
-// SPDX-FileCopyrightText: Copyright (c) 2020-2024 The Lethe Authors
+// SPDX-FileCopyrightText: Copyright (c) 2020-2025 The Lethe Authors
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
 #ifndef lethe_velocity_verlet_integrator_h
@@ -7,18 +7,16 @@
 #include <dem/dem_solver_parameters.h>
 #include <dem/integrator.h>
 
-#include <deal.II/particles/particle_handler.h>
-
 using namespace dealii;
 
 /**
  * @brief Implementation of a classical velocity verlet scheme for the
- * integration of the particle motion. Note that reinitilization of force and
+ * integration of the particle motion. Note that reinitialization of force and
  * torque is also integrated into integration class.
  *
  * Velocity Verlet is a second-order integration scheme.
  *
- * Calculation precedure:
+ * Calculation procedure:
  *
  * Calculation of half-step velocity
  * v(n+1/2) = v(n)     + 1/2 * a(n)   * dt

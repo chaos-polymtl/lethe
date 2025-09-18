@@ -1,3 +1,5 @@
+#include <core/dem_properties.h>
+
 #include <dem/integrator.h>
 
 template class Integrator<2, DEM::DEMProperties::PropertiesIndex>;

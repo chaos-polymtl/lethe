@@ -1,26 +1,16 @@
-// SPDX-FileCopyrightText: Copyright (c) 2022-2024 The Lethe Authors
+// SPDX-FileCopyrightText: Copyright (c) 2022-2025 The Lethe Authors
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
 #ifndef lethe_dem_contact_manager_h
 #define lethe_dem_contact_manager_h
 
-#include <core/serial_solid.h>
 
 #include <dem/adaptive_sparse_contacts.h>
-#include <dem/boundary_cells_info_struct.h>
 #include <dem/data_containers.h>
 #include <dem/find_boundary_cells_information.h>
-#include <dem/find_cell_neighbors.h>
 #include <dem/particle_particle_broad_search.h>
-#include <dem/particle_particle_fine_search.h>
-#include <dem/particle_point_line_broad_search.h>
-#include <dem/particle_point_line_fine_search.h>
 #include <dem/particle_wall_broad_search.h>
-#include <dem/particle_wall_fine_search.h>
-#include <dem/update_fine_search_candidates.h>
-#include <dem/update_local_particle_containers.h>
 
-#include <deal.II/particles/particle_handler.h>
 
 using namespace DEM;
 

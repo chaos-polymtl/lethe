@@ -1,4 +1,4 @@
-// SPDX-FileCopyrightText: Copyright (c) 2020-2024 The Lethe Authors
+// SPDX-FileCopyrightText: Copyright (c) 2020-2025 The Lethe Authors
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
 #ifndef lethe_integrator_h
@@ -6,10 +6,7 @@
 
 #include <dem/adaptive_sparse_contacts.h>
 #include <dem/data_containers.h>
-#include <dem/dem_action_manager.h>
 #include <dem/dem_solver_parameters.h>
-
-#include <deal.II/particles/particle_handler.h>
 
 using namespace dealii;
 

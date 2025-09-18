@@ -1,4 +1,4 @@
-// SPDX-FileCopyrightText: Copyright (c) 2020-2022, 2024 The Lethe Authors
+// SPDX-FileCopyrightText: Copyright (c) 2020-2022, 2024-2025 The Lethe Authors
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
 #ifndef lethe_particle_wall_broad_search_h
@@ -10,13 +10,9 @@
 #include <dem/data_containers.h>
 #include <dem/dem_solver_parameters.h>
 
-#include <deal.II/distributed/tria.h>
-
 #include <deal.II/particles/particle_handler.h>
 
-#include <iostream>
 #include <map>
-#include <vector>
 
 using namespace dealii;
 
@@ -63,6 +59,8 @@ find_particle_wall_contact_pairs(
  * tuple contains a particle located near boundaries, the normal vector of
  * the corresponding face boundary, a point on the boundary and the boundary
  * cell. The contact pair is used in the fine search.
+ * @param sparse_contacts_object The object that contains the
+ * information about the mobility status of cells
  */
 template <int dim, typename PropertiesIndex>
 void
@@ -123,6 +121,8 @@ find_particle_floating_wall_contact_pairs(
  * @param particle_floating_wall_candidates Output of particle-floating wall
  * broad search which contains all the particle-floating wall collision
  * candidates
+ * @param sparse_contacts_object The object that contains the
+ * information about the mobility status of cells
  */
 template <int dim, typename PropertiesIndex>
 void
@@ -149,11 +149,9 @@ find_particle_floating_wall_contact_pairs(
  * in the background triangulation.
  * @param particle_handler
  * @param particle_floating_mesh_contact_candidates Particle-floating mesh contact
- * candidates
+ * candidates.
  * @param cells_total_neighbor_list A container in which all the neighbor cells
- * of the local cells are stored
- * @param sparse_contacts_object The object that contains the
- * information about the mobility status of cells
+ * of the local cells are stored.
  */
 template <int dim>
 void

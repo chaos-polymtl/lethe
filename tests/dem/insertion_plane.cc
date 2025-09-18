@@ -10,8 +10,6 @@
 
 #include <deal.II/grid/grid_generator.h>
 
-#include <deal.II/particles/particle.h>
-
 // Lethe
 #include <dem/dem_solver_parameters.h>
 #include <dem/insertion_plane.h>

@@ -1,4 +1,4 @@
-// SPDX-FileCopyrightText: Copyright (c) 2022-2024 The Lethe Authors
+// SPDX-FileCopyrightText: Copyright (c) 2022-2025 The Lethe Authors
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
 #ifndef lethe_periodic_boundaries_manipulator_h
@@ -7,17 +7,11 @@
 #include <dem/boundary_cells_info_struct.h>
 #include <dem/data_containers.h>
 #include <dem/dem_action_manager.h>
-#include <dem/dem_contact_manager.h>
-#include <dem/dem_solver_parameters.h>
 
 #include <deal.II/distributed/tria.h>
 
-#include <deal.II/particles/particle.h>
 #include <deal.II/particles/particle_handler.h>
-#include <deal.II/particles/particle_iterator.h>
 
-#include <iostream>
-#include <vector>
 
 using namespace dealii;
 
@@ -43,7 +37,7 @@ public:
   /**
    * @brief Sets the periodic boundaries parameters.
    *
-   * @param[in] periodic_boundary_id_0 Id of the first periodic boundary.
+   * @param[in] periodic_boundary_id_0 ID of the first periodic boundary.
    * @param[in] periodic_direction Perpendicular axis of PB.
    */
   void
@@ -116,7 +110,7 @@ private:
    * @param[in] cell Current cell on boundary.
    * @param[in] face_id Face located on boundary.
    * @param[out] boundaries_information Reference to the object with periodic
-   * boundaries information.
+   * boundary information.
    */
   void
   get_periodic_boundaries_info(
@@ -125,12 +119,12 @@ private:
     periodic_boundaries_cells_info_struct<dim> &boundaries_information);
 
   /**
-   * @brief Checks if particle is outside of the cell, if so, modifies the
+   * @brief Checks if particle is outside the cell, if so, modifies the
    * location of the particle with the distance (offset) between the periodic
    * faces.
    *
    * @param[in] boundaries_cells_content Reference to the object with periodic
-   * boundaries information.
+   * boundary information.
    * @param[in] particles_in_pb0_cell If the particles are linked to a cell on
    * the periodic boundary 0 (true) or the periodic boundary 1 (false).
    * @param[in,out] particles_in_cell Iterator to the particles in cell.
@@ -152,7 +146,7 @@ private:
   bool periodic_boundaries_enabled;
 
   /**
-   * @brief Id of the first periodic boundary. No needs to store the second one
+   * @brief ID of the first periodic boundary. No needs to store the second one
    * since there are linked on the triangulation, and accessible through
    * functions on cells on the boundary condition 0.
    */

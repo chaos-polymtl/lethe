@@ -1,4 +1,4 @@
-// SPDX-FileCopyrightText: Copyright (c) 2020, 2022-2024 The Lethe Authors
+// SPDX-FileCopyrightText: Copyright (c) 2020, 2022-2025 The Lethe Authors
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
 #include <core/dem_properties.h>
@@ -150,96 +150,96 @@ find_projection_point(const Point<3> &point_p,
 
 template void
 particle_point_fine_search<2, DEM::DEMProperties::PropertiesIndex>(
-  const typename DEM::dem_data_structures<2>::particle_point_candidates
+  const DEM::dem_data_structures<2>::particle_point_candidates
               &particle_point_contact_candidates,
   const double neighborhood_threshold,
-  typename DEM::dem_data_structures<2>::particle_point_in_contact
+  DEM::dem_data_structures<2>::particle_point_in_contact
     &particle_point_pairs_in_contact);
 
 template void
 particle_point_fine_search<3, DEM::DEMProperties::PropertiesIndex>(
-  const typename DEM::dem_data_structures<3>::particle_point_candidates
+  const DEM::dem_data_structures<3>::particle_point_candidates
               &particle_point_contact_candidates,
   const double neighborhood_threshold,
-  typename DEM::dem_data_structures<3>::particle_point_in_contact
+  DEM::dem_data_structures<3>::particle_point_in_contact
     &particle_point_pairs_in_contact);
 
 template void
 particle_line_fine_search<2, DEM::DEMProperties::PropertiesIndex>(
-  const typename DEM::dem_data_structures<2>::particle_line_candidates
+  const DEM::dem_data_structures<2>::particle_line_candidates
               &particle_line_contact_candidates,
   const double neighborhood_threshold,
-  typename DEM::dem_data_structures<2>::particle_line_in_contact
+  DEM::dem_data_structures<2>::particle_line_in_contact
     &particle_line_pairs_in_contact);
 
 template void
 particle_line_fine_search<3, DEM::DEMProperties::PropertiesIndex>(
-  const typename DEM::dem_data_structures<3>::particle_line_candidates
+  const DEM::dem_data_structures<3>::particle_line_candidates
               &particle_line_contact_candidates,
   const double neighborhood_threshold,
-  typename DEM::dem_data_structures<3>::particle_line_in_contact
+  DEM::dem_data_structures<3>::particle_line_in_contact
     &particle_line_pairs_in_contact);
 
 template void
 particle_point_fine_search<2, DEM::CFDDEMProperties::PropertiesIndex>(
-  const typename DEM::dem_data_structures<2>::particle_point_candidates
+  const DEM::dem_data_structures<2>::particle_point_candidates
               &particle_point_contact_candidates,
   const double neighborhood_threshold,
-  typename DEM::dem_data_structures<2>::particle_point_in_contact
+  DEM::dem_data_structures<2>::particle_point_in_contact
     &particle_point_pairs_in_contact);
 
 template void
 particle_point_fine_search<3, DEM::CFDDEMProperties::PropertiesIndex>(
-  const typename DEM::dem_data_structures<3>::particle_point_candidates
+  const DEM::dem_data_structures<3>::particle_point_candidates
               &particle_point_contact_candidates,
   const double neighborhood_threshold,
-  typename DEM::dem_data_structures<3>::particle_point_in_contact
+  DEM::dem_data_structures<3>::particle_point_in_contact
     &particle_point_pairs_in_contact);
 
 template void
 particle_line_fine_search<2, DEM::CFDDEMProperties::PropertiesIndex>(
-  const typename DEM::dem_data_structures<2>::particle_line_candidates
+  const DEM::dem_data_structures<2>::particle_line_candidates
               &particle_line_contact_candidates,
   const double neighborhood_threshold,
-  typename DEM::dem_data_structures<2>::particle_line_in_contact
+  DEM::dem_data_structures<2>::particle_line_in_contact
     &particle_line_pairs_in_contact);
 
 template void
 particle_line_fine_search<3, DEM::CFDDEMProperties::PropertiesIndex>(
-  const typename DEM::dem_data_structures<3>::particle_line_candidates
+  const DEM::dem_data_structures<3>::particle_line_candidates
               &particle_line_contact_candidates,
   const double neighborhood_threshold,
-  typename DEM::dem_data_structures<3>::particle_line_in_contact
+  DEM::dem_data_structures<3>::particle_line_in_contact
     &particle_line_pairs_in_contact);
 
 template void
 particle_point_fine_search<2, DEM::DEMMPProperties::PropertiesIndex>(
-  const typename DEM::dem_data_structures<2>::particle_point_candidates
+  const DEM::dem_data_structures<2>::particle_point_candidates
               &particle_point_contact_candidates,
   const double neighborhood_threshold,
-  typename DEM::dem_data_structures<2>::particle_point_in_contact
+  DEM::dem_data_structures<2>::particle_point_in_contact
     &particle_point_pairs_in_contact);
 
 template void
 particle_point_fine_search<3, DEM::DEMMPProperties::PropertiesIndex>(
-  const typename DEM::dem_data_structures<3>::particle_point_candidates
+  const DEM::dem_data_structures<3>::particle_point_candidates
               &particle_point_contact_candidates,
   const double neighborhood_threshold,
-  typename DEM::dem_data_structures<3>::particle_point_in_contact
+  DEM::dem_data_structures<3>::particle_point_in_contact
     &particle_point_pairs_in_contact);
 
 template void
 particle_line_fine_search<2, DEM::DEMMPProperties::PropertiesIndex>(
-  const typename DEM::dem_data_structures<2>::particle_line_candidates
+  const DEM::dem_data_structures<2>::particle_line_candidates
               &particle_line_contact_candidates,
   const double neighborhood_threshold,
-  typename DEM::dem_data_structures<2>::particle_line_in_contact
+  DEM::dem_data_structures<2>::particle_line_in_contact
     &particle_line_pairs_in_contact);
 
 template void
 particle_line_fine_search<3, DEM::DEMMPProperties::PropertiesIndex>(
-  const typename DEM::dem_data_structures<3>::particle_line_candidates
+  const DEM::dem_data_structures<3>::particle_line_candidates
               &particle_line_contact_candidates,
   const double neighborhood_threshold,
-  typename DEM::dem_data_structures<3>::particle_line_in_contact
+  DEM::dem_data_structures<3>::particle_line_in_contact
     &particle_line_pairs_in_contact);

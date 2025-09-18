@@ -6,6 +6,7 @@
 #define full_contact_functions_h
 
 #include <../tests/dem/test_particles_functions.h>
+#include <dem/dem_contact_manager.h>
 #include <dem/explicit_euler_integrator.h>
 #include <dem/velocity_verlet_integrator.h>
 

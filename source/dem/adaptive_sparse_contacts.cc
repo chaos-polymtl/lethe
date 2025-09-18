@@ -1,6 +1,8 @@
 // SPDX-FileCopyrightText: Copyright (c) 2023-2024 The Lethe Authors
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
+#include <core/dem_properties.h>
+
 #include <dem/adaptive_sparse_contacts.h>
 
 #include <deal.II/dofs/dof_tools.h>

@@ -4,14 +4,9 @@
 #ifndef multiphysics_integrator_h
 #define multiphysics_integrator_h
 
-// Deal.ii
-#include <deal.II/particles/particle_handler.h>
-
-// Lethe
-#include <core/dem_properties.h>
-#include <core/parameters_lagrangian.h>
-
 #include <dem/dem_solver_parameters.h>
+
+#include <deal.II/particles/particle_handler.h>
 
 /**
  * @brief Implementation of an explicit euler time-stepping scheme for the integration

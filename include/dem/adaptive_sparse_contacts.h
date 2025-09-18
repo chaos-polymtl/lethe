@@ -4,14 +4,11 @@
 #ifndef lethe_adaptive_sparse_contacts_h
 #define lethe_adaptive_sparse_contacts_h
 
-#include <core/dem_properties.h>
 
 #include <dem/data_containers.h>
 #include <dem/dem_action_manager.h>
 
 #include <deal.II/base/tensor.h>
-
-#include <deal.II/distributed/tria.h>
 
 #include <deal.II/dofs/dof_handler.h>
 
@@ -59,8 +56,9 @@ template class LinearAlgebra::distributed::Vector<int>;
  * particles are not moving.
  *
  * Particles in cells with an advected status results in skipping the fine
- * contact search, the p-p & p-w forces computations but they do have a velocity
- * and position update through the advection term. This is critical for CFD-DEM.
+ * contact search, the p-p & p-w forces computations, but they do have a
+ * velocity and position update through the advection term. This is critical for
+ * CFD-DEM.
  *
  * In summary, cells are flagged using a mobility status:
  * - mobile (all contacts are calculated, same as if the feature is not enabled)
@@ -80,7 +78,7 @@ template class LinearAlgebra::distributed::Vector<int>;
  *
  * 2. Empty cell neighbor
  * Cell having empty cell neighbor: it means that particles are next to a
- * floating wall/mesh and they may have a change of contact forces from it if
+ * floating wall/mesh, and they may have a change of contact forces from it if
  * the wall moves or disappears.
  *
  * 3. Additional mobile cell layer
@@ -210,7 +208,7 @@ public:
    * of the cells. This is used for the advection of particles during
    * integration and the velocities and accelerations map is fully updated at
    * least at each CFD time step since the first DEM iteration computes every
-   * contacts. This map is also partially updated when cell is mobile in the
+   * contact. This map is also partially updated when cell is mobile in the
    * Verlet integration (not implemented for other scheme).
    * Since this step loops over all the particles of mobile cells and new values
    * of velocities are computed, this helps to have a more accurate value of the
@@ -388,10 +386,11 @@ private:
    * @param[in] node_status The current mobility status of the node.
    */
   inline void
-  assign_mobility_status(unsigned int                          cell_id,
-                         std::vector<types::global_dof_index> &dof_indices,
-                         const int                             cell_status,
-                         const int                             node_status)
+  assign_mobility_status(
+    unsigned int                                cell_id,
+    const std::vector<types::global_dof_index> &dof_indices,
+    const int                                   cell_status,
+    const int                                   node_status)
   {
     cell_mobility_status.insert({cell_id, cell_status});
 

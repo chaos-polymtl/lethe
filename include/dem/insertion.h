@@ -4,35 +4,22 @@
 #ifndef lethe_insertion_h
 #define lethe_insertion_h
 
-#include <core/dem_properties.h>
-
 #include <dem/dem_solver_parameters.h>
 #include <dem/distributions.h>
 
-#include <deal.II/base/array_view.h>
 #include <deal.II/base/data_out_base.h>
 
 #include <deal.II/distributed/tria.h>
-
-#include <deal.II/fe/mapping_q.h>
 
 #include <deal.II/grid/filtered_iterator.h>
 #include <deal.II/grid/grid_generator.h>
 #include <deal.II/grid/grid_tools.h>
 
-#include <deal.II/particles/particle.h>
 #include <deal.II/particles/particle_handler.h>
 #include <deal.II/particles/particle_iterator.h>
-#include <deal.II/particles/property_pool.h>
 
 #include <boost/archive/text_iarchive.hpp>
 #include <boost/archive/text_oarchive.hpp>
-
-#include <cmath>
-#include <fstream>
-#include <iostream>
-#include <random>
-#include <string>
 
 using namespace dealii;
 
@@ -134,12 +121,15 @@ protected:
   /**
    * @brief Carries out assigning the properties of inserted particles.
    *
-   * @param dem_parameters DEM parameters declared in the .prm file
-   * @param inserted_this_step_this_proc Number of particles that are inserted
+   * @param dem_parameters DEM parameters declared in the prm file.
+   * @param inserted_this_step_this_proc Number of particles that are inserted.
    * at each insertion step on each processor. This value can change in the last
-   * insertion step to reach the desired number of particles
-   * @param current_inserting_particle_type Type of inserting particles
-   * @param particle_properties Properties of all inserted particles at each insertion step
+   * insertion step to reach the desired number of particles.
+   * @param current_inserting_particle_type Type of inserting particles.
+   * @param insertion_points Insertion points of all inserted particles at this
+   * insertion step.
+   * @param particle_properties Properties of all inserted particles at this
+   * insertion step.
    */
   void
   assign_particle_properties(
@@ -195,7 +185,7 @@ protected:
 
   // Minimum and maximum number of inserted particles based on the insertion box
   // size and the direction order (it means that axis 0 is not necessarily x
-  // etc...) It depends of the order of the insertion direction.
+  // etc...) It depends on the order of the insertion direction.
   std::vector<double> axis_min, axis_max;
 
   // Maximum particle diameter

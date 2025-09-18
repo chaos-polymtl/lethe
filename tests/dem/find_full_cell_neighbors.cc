@@ -1,8 +1,8 @@
-// SPDX-FileCopyrightText: Copyright (c) 2022-2024 The Lethe Authors
+// SPDX-FileCopyrightText: Copyright (c) 2022-2025 The Lethe Authors
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
 /**
- * @brief This test generates a triangulation that is twiced refined and check
+ * @brief This test generates a triangulation that is refined twice and check
  * if the cells neighbors with repetition are the correct ones.
  */
 

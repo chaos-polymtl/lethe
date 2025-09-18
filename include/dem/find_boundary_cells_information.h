@@ -1,4 +1,4 @@
-// SPDX-FileCopyrightText: Copyright (c) 2020-2024 The Lethe Authors
+// SPDX-FileCopyrightText: Copyright (c) 2020-2025 The Lethe Authors
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
 #ifndef lethe_find_boundary_cells_information_h
@@ -9,17 +9,10 @@
 #include <dem/data_containers.h>
 #include <dem/dem_solver_parameters.h>
 
-#include <deal.II/base/quadrature_lib.h>
-
 #include <deal.II/distributed/tria.h>
-
-#include <deal.II/fe/fe_q.h>
-#include <deal.II/fe/fe_values.h>
 
 #include <deal.II/grid/grid_tools.h>
 
-#include <iostream>
-#include <unordered_set>
 #include <vector>
 
 using namespace dealii;

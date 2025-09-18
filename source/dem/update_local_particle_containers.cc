@@ -4,6 +4,8 @@
 #include <dem/dem_action_manager.h>
 #include <dem/update_local_particle_containers.h>
 
+#include <deal.II/particles/particle_handler.h>
+
 using namespace dealii;
 
 template <int dim>
@@ -189,224 +191,202 @@ update_contact_container_iterators(
 // Particle container
 template void
 update_particle_container(
-  typename DEM::dem_data_structures<2>::particle_index_iterator_map
-                                      &particle_container,
-  const Particles::ParticleHandler<2> *particle_handler);
+  DEM::dem_data_structures<2>::particle_index_iterator_map &particle_container,
+  const Particles::ParticleHandler<2>                      *particle_handler);
 
 template void
 update_particle_container(
-  typename DEM::dem_data_structures<3>::particle_index_iterator_map
-                                      &particle_container,
-  const Particles::ParticleHandler<3> *particle_handler);
+  DEM::dem_data_structures<3>::particle_index_iterator_map &particle_container,
+  const Particles::ParticleHandler<3>                      *particle_handler);
 
 // Local particle-particle contact container
 template void
 update_contact_container_iterators<
   2,
-  typename DEM::dem_data_structures<2>::adjacent_particle_pairs,
+  DEM::dem_data_structures<2>::adjacent_particle_pairs,
   ContactType::local_particle_particle>(
-  typename DEM::dem_data_structures<2>::adjacent_particle_pairs
-    &pairs_in_contact,
-  const typename DEM::dem_data_structures<2>::particle_index_iterator_map
+  DEM::dem_data_structures<2>::adjacent_particle_pairs &pairs_in_contact,
+  const DEM::dem_data_structures<2>::particle_index_iterator_map
     &particle_container);
 
 template void
 update_contact_container_iterators<
   3,
-  typename DEM::dem_data_structures<3>::adjacent_particle_pairs,
+  DEM::dem_data_structures<3>::adjacent_particle_pairs,
   ContactType::local_particle_particle>(
-  typename DEM::dem_data_structures<3>::adjacent_particle_pairs
-    &pairs_in_contact,
-  const typename DEM::dem_data_structures<3>::particle_index_iterator_map
+  DEM::dem_data_structures<3>::adjacent_particle_pairs &pairs_in_contact,
+  const DEM::dem_data_structures<3>::particle_index_iterator_map
     &particle_container);
 
 // Ghost particle-particle contact container
 template void
 update_contact_container_iterators<
   2,
-  typename DEM::dem_data_structures<2>::adjacent_particle_pairs,
+  DEM::dem_data_structures<2>::adjacent_particle_pairs,
   ContactType::ghost_particle_particle>(
-  typename DEM::dem_data_structures<2>::adjacent_particle_pairs
-    &pairs_in_contact,
-  const typename DEM::dem_data_structures<2>::particle_index_iterator_map
+  DEM::dem_data_structures<2>::adjacent_particle_pairs &pairs_in_contact,
+  const DEM::dem_data_structures<2>::particle_index_iterator_map
     &particle_container);
 
 template void
 update_contact_container_iterators<
   3,
-  typename DEM::dem_data_structures<3>::adjacent_particle_pairs,
+  DEM::dem_data_structures<3>::adjacent_particle_pairs,
   ContactType::ghost_particle_particle>(
-  typename DEM::dem_data_structures<3>::adjacent_particle_pairs
-    &pairs_in_contact,
-  const typename DEM::dem_data_structures<3>::particle_index_iterator_map
+  DEM::dem_data_structures<3>::adjacent_particle_pairs &pairs_in_contact,
+  const DEM::dem_data_structures<3>::particle_index_iterator_map
     &particle_container);
 
 // Local-local particle-particle periodic contact container
 template void
 update_contact_container_iterators<
   2,
-  typename DEM::dem_data_structures<2>::adjacent_particle_pairs,
+  DEM::dem_data_structures<2>::adjacent_particle_pairs,
   ContactType::local_periodic_particle_particle>(
-  typename DEM::dem_data_structures<2>::adjacent_particle_pairs
-    &pairs_in_contact,
-  const typename DEM::dem_data_structures<2>::particle_index_iterator_map
+  DEM::dem_data_structures<2>::adjacent_particle_pairs &pairs_in_contact,
+  const DEM::dem_data_structures<2>::particle_index_iterator_map
     &particle_container);
 
 template void
 update_contact_container_iterators<
   3,
-  typename DEM::dem_data_structures<3>::adjacent_particle_pairs,
+  DEM::dem_data_structures<3>::adjacent_particle_pairs,
   ContactType::local_periodic_particle_particle>(
-  typename DEM::dem_data_structures<3>::adjacent_particle_pairs
-    &pairs_in_contact,
-  const typename DEM::dem_data_structures<3>::particle_index_iterator_map
+  DEM::dem_data_structures<3>::adjacent_particle_pairs &pairs_in_contact,
+  const DEM::dem_data_structures<3>::particle_index_iterator_map
     &particle_container);
 
 // Local-ghost particle-particle periodic contact container
 template void
 update_contact_container_iterators<
   2,
-  typename DEM::dem_data_structures<2>::adjacent_particle_pairs,
+  DEM::dem_data_structures<2>::adjacent_particle_pairs,
   ContactType::ghost_periodic_particle_particle>(
-  typename DEM::dem_data_structures<2>::adjacent_particle_pairs
-    &pairs_in_contact,
-  const typename DEM::dem_data_structures<2>::particle_index_iterator_map
+  DEM::dem_data_structures<2>::adjacent_particle_pairs &pairs_in_contact,
+  const DEM::dem_data_structures<2>::particle_index_iterator_map
     &particle_container);
 
 template void
 update_contact_container_iterators<
   3,
-  typename DEM::dem_data_structures<3>::adjacent_particle_pairs,
+  DEM::dem_data_structures<3>::adjacent_particle_pairs,
   ContactType::ghost_periodic_particle_particle>(
-  typename DEM::dem_data_structures<3>::adjacent_particle_pairs
-    &pairs_in_contact,
-  const typename DEM::dem_data_structures<3>::particle_index_iterator_map
+  DEM::dem_data_structures<3>::adjacent_particle_pairs &pairs_in_contact,
+  const DEM::dem_data_structures<3>::particle_index_iterator_map
     &particle_container);
 
 // Ghost-local particle-particle periodic contact container
 template void
 update_contact_container_iterators<
   2,
-  typename DEM::dem_data_structures<2>::adjacent_particle_pairs,
+  DEM::dem_data_structures<2>::adjacent_particle_pairs,
   ContactType::ghost_local_periodic_particle_particle>(
-  typename DEM::dem_data_structures<2>::adjacent_particle_pairs
-    &pairs_in_contact,
-  const typename DEM::dem_data_structures<2>::particle_index_iterator_map
+  DEM::dem_data_structures<2>::adjacent_particle_pairs &pairs_in_contact,
+  const DEM::dem_data_structures<2>::particle_index_iterator_map
     &particle_container);
 
 template void
 update_contact_container_iterators<
   3,
-  typename DEM::dem_data_structures<3>::adjacent_particle_pairs,
+  DEM::dem_data_structures<3>::adjacent_particle_pairs,
   ContactType::ghost_local_periodic_particle_particle>(
-  typename DEM::dem_data_structures<3>::adjacent_particle_pairs
-    &pairs_in_contact,
-  const typename DEM::dem_data_structures<3>::particle_index_iterator_map
+  DEM::dem_data_structures<3>::adjacent_particle_pairs &pairs_in_contact,
+  const DEM::dem_data_structures<3>::particle_index_iterator_map
     &particle_container);
 
 // Particle-wall contact container
 template void
 update_contact_container_iterators<
   2,
-  typename DEM::dem_data_structures<2>::particle_wall_in_contact,
+  DEM::dem_data_structures<2>::particle_wall_in_contact,
   ContactType::particle_wall>(
-  typename DEM::dem_data_structures<2>::particle_wall_in_contact
-    &pairs_in_contact,
-  const typename DEM::dem_data_structures<2>::particle_index_iterator_map
+  DEM::dem_data_structures<2>::particle_wall_in_contact &pairs_in_contact,
+  const DEM::dem_data_structures<2>::particle_index_iterator_map
     &particle_container);
 
 template void
 update_contact_container_iterators<
   3,
-  typename DEM::dem_data_structures<3>::particle_wall_in_contact,
+  DEM::dem_data_structures<3>::particle_wall_in_contact,
   ContactType::particle_wall>(
-  typename DEM::dem_data_structures<3>::particle_wall_in_contact
-    &pairs_in_contact,
-  const typename DEM::dem_data_structures<3>::particle_index_iterator_map
+  DEM::dem_data_structures<3>::particle_wall_in_contact &pairs_in_contact,
+  const DEM::dem_data_structures<3>::particle_index_iterator_map
     &particle_container);
 
 // Particle-floating wall contact container
 template void
 update_contact_container_iterators<
   2,
-  typename DEM::dem_data_structures<2>::particle_wall_in_contact,
+  DEM::dem_data_structures<2>::particle_wall_in_contact,
   ContactType::particle_floating_wall>(
-  typename DEM::dem_data_structures<2>::particle_wall_in_contact
-    &pairs_in_contact,
-  const typename DEM::dem_data_structures<2>::particle_index_iterator_map
+  DEM::dem_data_structures<2>::particle_wall_in_contact &pairs_in_contact,
+  const DEM::dem_data_structures<2>::particle_index_iterator_map
     &particle_container);
 
 template void
 update_contact_container_iterators<
   3,
-  typename DEM::dem_data_structures<3>::particle_wall_in_contact,
+  DEM::dem_data_structures<3>::particle_wall_in_contact,
   ContactType::particle_floating_wall>(
-  typename DEM::dem_data_structures<3>::particle_wall_in_contact
-    &pairs_in_contact,
-  const typename DEM::dem_data_structures<3>::particle_index_iterator_map
+  DEM::dem_data_structures<3>::particle_wall_in_contact &pairs_in_contact,
+  const DEM::dem_data_structures<3>::particle_index_iterator_map
     &particle_container);
 
 // Particle-floating mesh contact container
 template void
 update_contact_container_iterators<
   2,
-  typename DEM::dem_data_structures<
-    2>::particle_floating_wall_from_mesh_in_contact,
+  DEM::dem_data_structures<2>::particle_floating_wall_from_mesh_in_contact,
   ContactType::particle_floating_mesh>(
-  typename DEM::dem_data_structures<
-    2>::particle_floating_wall_from_mesh_in_contact &pairs_in_contact,
-  const typename DEM::dem_data_structures<2>::particle_index_iterator_map
+  DEM::dem_data_structures<2>::particle_floating_wall_from_mesh_in_contact
+    &pairs_in_contact,
+  const DEM::dem_data_structures<2>::particle_index_iterator_map
     &particle_container);
 
 template void
 update_contact_container_iterators<
   3,
-  typename DEM::dem_data_structures<
-    3>::particle_floating_wall_from_mesh_in_contact,
+  DEM::dem_data_structures<3>::particle_floating_wall_from_mesh_in_contact,
   ContactType::particle_floating_mesh>(
-  typename DEM::dem_data_structures<
-    3>::particle_floating_wall_from_mesh_in_contact &pairs_in_contact,
-  const typename DEM::dem_data_structures<3>::particle_index_iterator_map
+  DEM::dem_data_structures<3>::particle_floating_wall_from_mesh_in_contact
+    &pairs_in_contact,
+  const DEM::dem_data_structures<3>::particle_index_iterator_map
     &particle_container);
 
 // Particle-point contact container
 template void
 update_contact_container_iterators<
   2,
-  typename DEM::dem_data_structures<2>::particle_point_in_contact,
+  DEM::dem_data_structures<2>::particle_point_in_contact,
   ContactType::particle_point>(
-  typename DEM::dem_data_structures<2>::particle_point_in_contact
-    &pairs_in_contact,
-  const typename DEM::dem_data_structures<2>::particle_index_iterator_map
+  DEM::dem_data_structures<2>::particle_point_in_contact &pairs_in_contact,
+  const DEM::dem_data_structures<2>::particle_index_iterator_map
     &particle_container);
 
 template void
 update_contact_container_iterators<
   3,
-  typename DEM::dem_data_structures<3>::particle_point_in_contact,
+  DEM::dem_data_structures<3>::particle_point_in_contact,
   ContactType::particle_point>(
-  typename DEM::dem_data_structures<3>::particle_point_in_contact
-    &pairs_in_contact,
-  const typename DEM::dem_data_structures<3>::particle_index_iterator_map
+  DEM::dem_data_structures<3>::particle_point_in_contact &pairs_in_contact,
+  const DEM::dem_data_structures<3>::particle_index_iterator_map
     &particle_container);
 
 // Particle-line contact container
 template void
 update_contact_container_iterators<
   2,
-  typename DEM::dem_data_structures<2>::particle_line_in_contact,
+  DEM::dem_data_structures<2>::particle_line_in_contact,
   ContactType::particle_line>(
-  typename DEM::dem_data_structures<2>::particle_line_in_contact
-    &pairs_in_contact,
-  const typename DEM::dem_data_structures<2>::particle_index_iterator_map
+  DEM::dem_data_structures<2>::particle_line_in_contact &pairs_in_contact,
+  const DEM::dem_data_structures<2>::particle_index_iterator_map
     &particle_container);
 
 template void
 update_contact_container_iterators<
   3,
-  typename DEM::dem_data_structures<3>::particle_line_in_contact,
+  DEM::dem_data_structures<3>::particle_line_in_contact,
   ContactType::particle_line>(
-  typename DEM::dem_data_structures<3>::particle_line_in_contact
-    &pairs_in_contact,
-  const typename DEM::dem_data_structures<3>::particle_index_iterator_map
+  DEM::dem_data_structures<3>::particle_line_in_contact &pairs_in_contact,
+  const DEM::dem_data_structures<3>::particle_index_iterator_map
     &particle_container);

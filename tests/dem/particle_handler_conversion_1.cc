@@ -13,6 +13,8 @@
 #include <deal.II/particles/particle.h>
 
 // Lethe
+#include <core/dem_properties.h>
+
 #include <dem/particle_handler_conversion.h>
 
 // Tests (with common definitions)

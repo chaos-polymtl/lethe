@@ -9,7 +9,6 @@
 #include <dem/contact_info.h>
 #include <dem/contact_type.h>
 #include <dem/data_containers.h>
-#include <dem/dem_contact_manager.h>
 #include <dem/dem_solver_parameters.h>
 #include <dem/particle_heat_transfer.h>
 #include <dem/particle_interaction_outcomes.h>
@@ -24,7 +23,7 @@ using namespace dealii;
 /**
  * @brief Base class for the particle-particle contact force models
  * This class does not implement any of the models, but ensures that
- * an interface without template specialization is available. All of the
+ * an interface without template specialization is available. All the
  * actual implementation of the models are carried out in the
  * ParticleParticleContactForce class which is templated by the contact model
  * type.
@@ -85,7 +84,7 @@ protected:
  * @brief Execute calculation of particle-particle contact forces including
  * linear, non-linear contact models, and non-linear with cohesive forces.
  *
- * Instead of using a inheritance hierarchy to distinguish between
+ * Instead of using an inheritance hierarchy to distinguish between
  * the contact model, the class is templated with the type of force model
  * and rolling friction model. Consequently, the code for each
  * combination of force model is generated at compile time.
@@ -225,7 +224,7 @@ protected:
       contact_relative_velocity -
       (normal_relative_velocity_value * normal_unit_vector);
 
-    // Calculation of new tangential_displacement, since this value is history-
+    // Calculation of new tangential_displacement, since this value is history
     // dependent it needs the value at previous time-step. This variable is the
     // main reason that we have iteration over  two different vectors :
     // tangential_displacement of the particles which were already in contact
@@ -426,7 +425,7 @@ protected:
     if constexpr (contact_model == Parameters::Lagrangian::
                                      ParticleParticleContactForceModel::DMT)
       {
-        // We are looking for the maximum hamaker constant and minimum surface
+        // We are looking for the maximum Hamaker constant and minimum surface
         // energy to compute the biggest distance at which force will be
         // computed. In other words, we are maximising the delta_0.
         // This way, force_calculation_threshold_distance can be set

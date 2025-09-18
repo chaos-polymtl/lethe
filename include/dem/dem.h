@@ -15,15 +15,12 @@
 #include <dem/dem_contact_manager.h>
 #include <dem/dem_solver_parameters.h>
 #include <dem/find_boundary_cells_information.h>
-#include <dem/find_contact_detection_step.h>
 #include <dem/force_chains_visualization.h>
 #include <dem/grid_motion.h>
 #include <dem/insertion.h>
 #include <dem/integrator.h>
-#include <dem/lagrangian_post_processing.h>
 #include <dem/load_balancing.h>
 #include <dem/log_collision_data.h>
-#include <dem/output_force_torque_calculation.h>
 #include <dem/particle_particle_contact_force.h>
 #include <dem/particle_point_line_contact_force.h>
 #include <dem/particle_wall_contact_force.h>
@@ -38,10 +35,6 @@
 #include <deal.II/fe/mapping_q.h>
 
 #include <deal.II/particles/particle_handler.h>
-
-#include <fstream>
-#include <iostream>
-#include <unordered_set>
 
 using namespace DEM;
 
