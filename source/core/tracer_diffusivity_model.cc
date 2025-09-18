@@ -16,7 +16,8 @@ TracerDiffusivityModel::model_cast(
         .tracer_diffusivity_inside,
       material_properties.immersed_solid_tanh_parameters.thickness);
   else if (material_properties.tracer_diffusivity_model ==
-         Parameters::Material::TracerDiffusivityModel::immersed_boundary_gaussian)
+           Parameters::Material::TracerDiffusivityModel::
+             immersed_boundary_gaussian)
     return std::make_shared<GaussianLevelsetTracerDiffusivity>(
       material_properties.immersed_solid_gaussian_parameters
         .tracer_diffusivity_interface,
