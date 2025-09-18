@@ -1359,15 +1359,6 @@ ParticleProjector<dim>::calculate_field_projection(
   ilu_preconditioner->initialize(field_qcm.system_matrix,
                                  preconditionerOptions);
 
-  std::cout << " The L1 norm of the RHS is : " << std::scientific
-            << field_qcm.system_rhs.l1_norm() << std::endl;
-  std::cout << " The L2 norm of the RHS is : " << std::scientific
-            << field_qcm.system_rhs.l2_norm() << std::endl;
-  std::cout << " The Linf norm of the RHS is : " << std::scientific
-            << field_qcm.system_rhs.linfty_norm() << std::endl;
-
-
-
   solver.solve(field_qcm.system_matrix,
                field_qcm.particle_field_locally_owned,
                field_qcm.system_rhs,
@@ -1518,6 +1509,11 @@ ParticleProjector<dim>::calculate_particle_fluid_forces_projection(
                                             void_fraction_locally_relevant,
                                             previous_void_fraction);
 
+
+          // Physics properties must be calculated before the particle-fluid
+          // interaction is calculated.
+          scratch_data.calculate_physical_properties();
+
           // We need to check if the function is called with deal.II vectors or
           // not. If it is called with deal.II vectors, then the vector type of
           // the void fraction will not match the vector type of the velocity.
@@ -1545,7 +1541,6 @@ ParticleProjector<dim>::calculate_particle_fluid_forces_projection(
                 *particle_handler);
             }
 
-          scratch_data.calculate_physical_properties();
 
           // B. We loop over the particle-fluid assembler and calculate the
           // total particle-fluid coupling force.

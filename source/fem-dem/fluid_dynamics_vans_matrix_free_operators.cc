@@ -112,12 +112,6 @@ VANSOperator<dim, number>::compute_particle_fluid_force(
 {
   this->timer.enter_subsection("operator::compute_particle_fluid_forces");
 
-  std::cout << "Printing norms " << std::endl;
-  std::cout << pf_force_solution.l1_norm() << std::endl;
-  std::cout << pf_force_solution.l2_norm() << std::endl;
-  std::cout << pf_force_solution.linfty_norm() << std::endl;
-  std::cout << "-------------------------------" << std::endl;
-
   const unsigned int n_cells = this->matrix_free.n_cell_batches();
   FECellIntegrator   integrator(this->matrix_free);
 
