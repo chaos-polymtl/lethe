@@ -3,6 +3,12 @@
 All notable changes to the Lethe project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
+### [Master] - 2025-09-18
+
+### Fixed
+
+- MINOR The code is modified so that the TableHandler objects are properly restored when writing checkpoints and restarting simulations for the lethe-fluid, lethe-fluid-particles and lethe-fluid-nitsche solvers. This feature was only working for the lethe-fluid/lethe-fluid-block/lethe-fluid-matrix-free solvers before. [#1673] (https://github.com/chaos-polymtl/lethe/pull/1673)
+
 ### [Master] - 2025-09-16
 
 ## Fixed

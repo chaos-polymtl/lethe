@@ -16,6 +16,7 @@ subsection simulation control
   set output frequency  = 0
   set time end          = 0.005
   set time step         = 0.00025
+  set output path       = ../restart_fluidized_bed_files/
 end
 
 #---------------------------------------------------
