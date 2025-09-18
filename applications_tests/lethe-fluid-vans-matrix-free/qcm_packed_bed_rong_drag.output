@@ -5,22 +5,1367 @@ Running on 1 MPI rank(s)...
 --------------
 Void Fraction
 --------------
+  -Tolerance of iterative solver is : 1e-12
+  -Iterative solver took : 5 steps 
 Pressure drop: 0 Pa
 Total pressure drop: 0 Pa
 
+*********************************************************************************
+Transient iteration: 1        Time: 0.0001   Time step: 0.0001   CFL: 0.00337154
+*********************************************************************************
+--------------
+Void Fraction
+--------------
+  -Tolerance of iterative solver is : 1e-12
+  -Iterative solver took : 5 steps 
+----------------------
+Particle-fluid forces
+----------------------
+  -Tolerance of iterative solver is : 1e-12
+  -Iterative solver took : 3 steps 
+
+  -Eigenvalue estimation level 0:
+    Relaxation parameter: 1.38637
+    Minimum eigenvalue: 1.09289
+    Maximum eigenvalue: 1.31147
+
+
+  -Eigenvalue estimation level 1:
+    Relaxation parameter: 0.982364
+    Minimum eigenvalue: 1.54235
+    Maximum eigenvalue: 1.85082
+
+
+  -Eigenvalue estimation level 0:
+    Relaxation parameter: 1.11396
+    Minimum eigenvalue: 1.36015
+    Maximum eigenvalue: 1.63218
+
+
+  -Eigenvalue estimation level 1:
+    Relaxation parameter: 0.884528
+    Minimum eigenvalue: 1.71295
+    Maximum eigenvalue: 2.05554
+
+
+  -Eigenvalue estimation level 0:
+    Relaxation parameter: 1.08483
+    Minimum eigenvalue: 1.39667
+    Maximum eigenvalue: 1.676
+
+
+  -Eigenvalue estimation level 1:
+    Relaxation parameter: 0.838359
+    Minimum eigenvalue: 1.80728
+    Maximum eigenvalue: 2.16874
+
+
+  -Eigenvalue estimation level 0:
+    Relaxation parameter: 1.0849
+    Minimum eigenvalue: 1.39658
+    Maximum eigenvalue: 1.67589
+
+
+  -Eigenvalue estimation level 1:
+    Relaxation parameter: 0.838222
+    Minimum eigenvalue: 1.80758
+    Maximum eigenvalue: 2.16909
+
+
+  -Eigenvalue estimation level 0:
+    Relaxation parameter: 1.08491
+    Minimum eigenvalue: 1.39657
+    Maximum eigenvalue: 1.67589
+
+
+  -Eigenvalue estimation level 1:
+    Relaxation parameter: 0.838219
+    Minimum eigenvalue: 1.80759
+    Maximum eigenvalue: 2.1691
+
+
+  -Eigenvalue estimation level 0:
+    Relaxation parameter: 1.08491
+    Minimum eigenvalue: 1.39657
+    Maximum eigenvalue: 1.67589
+
+
+  -Eigenvalue estimation level 1:
+    Relaxation parameter: 0.838218
+    Minimum eigenvalue: 1.80759
+    Maximum eigenvalue: 2.1691
+
+
+  -Eigenvalue estimation level 0:
+    Relaxation parameter: 1.08491
+    Minimum eigenvalue: 1.39657
+    Maximum eigenvalue: 1.67589
+
+
+  -Eigenvalue estimation level 1:
+    Relaxation parameter: 0.838218
+    Minimum eigenvalue: 1.80759
+    Maximum eigenvalue: 2.1691
+
+
+  -Eigenvalue estimation level 0:
+    Relaxation parameter: 1.08491
+    Minimum eigenvalue: 1.39657
+    Maximum eigenvalue: 1.67589
+
+
+  -Eigenvalue estimation level 1:
+    Relaxation parameter: 0.838218
+    Minimum eigenvalue: 1.80759
+    Maximum eigenvalue: 2.1691
+
+
+  -Eigenvalue estimation level 0:
+    Relaxation parameter: 1.08491
+    Minimum eigenvalue: 1.39657
+    Maximum eigenvalue: 1.67589
+
+
+  -Eigenvalue estimation level 1:
+    Relaxation parameter: 0.838218
+    Minimum eigenvalue: 1.80759
+    Maximum eigenvalue: 2.1691
+
+
+  -Eigenvalue estimation level 0:
+    Relaxation parameter: 1.08491
+    Minimum eigenvalue: 1.39657
+    Maximum eigenvalue: 1.67589
+
+
+  -Eigenvalue estimation level 1:
+    Relaxation parameter: 0.838218
+    Minimum eigenvalue: 1.80759
+    Maximum eigenvalue: 2.1691
+
+Pressure drop: 473.388 Pa
+Total pressure drop: 473.388 Pa
+
 ********************************************************************************
-Transient iteration: 1        Time: 0.001    Time step: 0.001    CFL: 0.0337154
+Transient iteration: 2        Time: 0.0002   Time step: 0.0001   CFL: 0.0108719
 ********************************************************************************
 --------------
 Void Fraction
 --------------
+  -Tolerance of iterative solver is : 1e-12
+  -Iterative solver took : 5 steps 
 ----------------------
 Particle-fluid forces
 ----------------------
+  -Tolerance of iterative solver is : 1e-12
+  -Iterative solver took : 6 steps 
 
-  -Levels of MG preconditioner:
-    Level 0: 544 DoFs, 80 cells
-    Level 1: 3300 DoFs, 640 cells
+  -Eigenvalue estimation level 0:
+    Relaxation parameter: 1.08492
+    Minimum eigenvalue: 1.39656
+    Maximum eigenvalue: 1.67587
 
-Pressure drop: 46.7093 Pa
-Total pressure drop: 46.7093 Pa
+
+  -Eigenvalue estimation level 1:
+    Relaxation parameter: 0.838345
+    Minimum eigenvalue: 1.80731
+    Maximum eigenvalue: 2.16878
+
+
+  -Eigenvalue estimation level 0:
+    Relaxation parameter: 1.08494
+    Minimum eigenvalue: 1.39653
+    Maximum eigenvalue: 1.67583
+
+
+  -Eigenvalue estimation level 1:
+    Relaxation parameter: 0.838918
+    Minimum eigenvalue: 1.80608
+    Maximum eigenvalue: 2.16729
+
+
+  -Eigenvalue estimation level 0:
+    Relaxation parameter: 1.08498
+    Minimum eigenvalue: 1.39648
+    Maximum eigenvalue: 1.67578
+
+
+  -Eigenvalue estimation level 1:
+    Relaxation parameter: 0.838944
+    Minimum eigenvalue: 1.80602
+    Maximum eigenvalue: 2.16723
+
+
+  -Eigenvalue estimation level 0:
+    Relaxation parameter: 1.08498
+    Minimum eigenvalue: 1.39648
+    Maximum eigenvalue: 1.67578
+
+
+  -Eigenvalue estimation level 1:
+    Relaxation parameter: 0.838944
+    Minimum eigenvalue: 1.80602
+    Maximum eigenvalue: 2.16723
+
+
+  -Eigenvalue estimation level 0:
+    Relaxation parameter: 1.08498
+    Minimum eigenvalue: 1.39648
+    Maximum eigenvalue: 1.67578
+
+
+  -Eigenvalue estimation level 1:
+    Relaxation parameter: 0.838944
+    Minimum eigenvalue: 1.80602
+    Maximum eigenvalue: 2.16723
+
+
+  -Eigenvalue estimation level 0:
+    Relaxation parameter: 1.08498
+    Minimum eigenvalue: 1.39648
+    Maximum eigenvalue: 1.67578
+
+
+  -Eigenvalue estimation level 1:
+    Relaxation parameter: 0.838944
+    Minimum eigenvalue: 1.80602
+    Maximum eigenvalue: 2.16723
+
+
+  -Eigenvalue estimation level 0:
+    Relaxation parameter: 1.08498
+    Minimum eigenvalue: 1.39648
+    Maximum eigenvalue: 1.67578
+
+
+  -Eigenvalue estimation level 1:
+    Relaxation parameter: 0.838944
+    Minimum eigenvalue: 1.80602
+    Maximum eigenvalue: 2.16723
+
+
+  -Eigenvalue estimation level 0:
+    Relaxation parameter: 1.08498
+    Minimum eigenvalue: 1.39648
+    Maximum eigenvalue: 1.67578
+
+
+  -Eigenvalue estimation level 1:
+    Relaxation parameter: 0.838944
+    Minimum eigenvalue: 1.80602
+    Maximum eigenvalue: 2.16723
+
+
+  -Eigenvalue estimation level 0:
+    Relaxation parameter: 1.08498
+    Minimum eigenvalue: 1.39648
+    Maximum eigenvalue: 1.67578
+
+
+  -Eigenvalue estimation level 1:
+    Relaxation parameter: 0.838944
+    Minimum eigenvalue: 1.80602
+    Maximum eigenvalue: 2.16723
+
+
+  -Eigenvalue estimation level 0:
+    Relaxation parameter: 1.08498
+    Minimum eigenvalue: 1.39648
+    Maximum eigenvalue: 1.67578
+
+
+  -Eigenvalue estimation level 1:
+    Relaxation parameter: 0.838944
+    Minimum eigenvalue: 1.80602
+    Maximum eigenvalue: 2.16723
+
+Pressure drop: 49.865 Pa
+Total pressure drop: 49.865 Pa
+
+********************************************************************************
+Transient iteration: 3        Time: 0.0003   Time step: 0.0001   CFL: 0.0105467
+********************************************************************************
+--------------
+Void Fraction
+--------------
+  -Tolerance of iterative solver is : 1e-12
+  -Iterative solver took : 5 steps 
+----------------------
+Particle-fluid forces
+----------------------
+  -Tolerance of iterative solver is : 1e-12
+  -Iterative solver took : 5 steps 
+
+  -Eigenvalue estimation level 0:
+    Relaxation parameter: 1.08498
+    Minimum eigenvalue: 1.39648
+    Maximum eigenvalue: 1.67578
+
+
+  -Eigenvalue estimation level 1:
+    Relaxation parameter: 0.838945
+    Minimum eigenvalue: 1.80602
+    Maximum eigenvalue: 2.16723
+
+
+  -Eigenvalue estimation level 0:
+    Relaxation parameter: 1.08505
+    Minimum eigenvalue: 1.39638
+    Maximum eigenvalue: 1.67566
+
+
+  -Eigenvalue estimation level 1:
+    Relaxation parameter: 0.839684
+    Minimum eigenvalue: 1.80443
+    Maximum eigenvalue: 2.16532
+
+
+  -Eigenvalue estimation level 0:
+    Relaxation parameter: 1.08505
+    Minimum eigenvalue: 1.39639
+    Maximum eigenvalue: 1.67566
+
+
+  -Eigenvalue estimation level 1:
+    Relaxation parameter: 0.839686
+    Minimum eigenvalue: 1.80443
+    Maximum eigenvalue: 2.16531
+
+
+  -Eigenvalue estimation level 0:
+    Relaxation parameter: 1.08505
+    Minimum eigenvalue: 1.39639
+    Maximum eigenvalue: 1.67566
+
+
+  -Eigenvalue estimation level 1:
+    Relaxation parameter: 0.839686
+    Minimum eigenvalue: 1.80443
+    Maximum eigenvalue: 2.16531
+
+
+  -Eigenvalue estimation level 0:
+    Relaxation parameter: 1.08505
+    Minimum eigenvalue: 1.39639
+    Maximum eigenvalue: 1.67566
+
+
+  -Eigenvalue estimation level 1:
+    Relaxation parameter: 0.839686
+    Minimum eigenvalue: 1.80443
+    Maximum eigenvalue: 2.16531
+
+
+  -Eigenvalue estimation level 0:
+    Relaxation parameter: 1.08505
+    Minimum eigenvalue: 1.39639
+    Maximum eigenvalue: 1.67566
+
+
+  -Eigenvalue estimation level 1:
+    Relaxation parameter: 0.839686
+    Minimum eigenvalue: 1.80443
+    Maximum eigenvalue: 2.16531
+
+
+  -Eigenvalue estimation level 0:
+    Relaxation parameter: 1.08505
+    Minimum eigenvalue: 1.39639
+    Maximum eigenvalue: 1.67566
+
+
+  -Eigenvalue estimation level 1:
+    Relaxation parameter: 0.839686
+    Minimum eigenvalue: 1.80443
+    Maximum eigenvalue: 2.16531
+
+
+  -Eigenvalue estimation level 0:
+    Relaxation parameter: 1.08505
+    Minimum eigenvalue: 1.39639
+    Maximum eigenvalue: 1.67566
+
+
+  -Eigenvalue estimation level 1:
+    Relaxation parameter: 0.839686
+    Minimum eigenvalue: 1.80443
+    Maximum eigenvalue: 2.16531
+
+
+  -Eigenvalue estimation level 0:
+    Relaxation parameter: 1.08505
+    Minimum eigenvalue: 1.39639
+    Maximum eigenvalue: 1.67566
+
+
+  -Eigenvalue estimation level 1:
+    Relaxation parameter: 0.839686
+    Minimum eigenvalue: 1.80443
+    Maximum eigenvalue: 2.16531
+
+
+  -Eigenvalue estimation level 0:
+    Relaxation parameter: 1.08505
+    Minimum eigenvalue: 1.39639
+    Maximum eigenvalue: 1.67566
+
+
+  -Eigenvalue estimation level 1:
+    Relaxation parameter: 0.839686
+    Minimum eigenvalue: 1.80443
+    Maximum eigenvalue: 2.16531
+
+Pressure drop: 48.8517 Pa
+Total pressure drop: 48.8518 Pa
+
+********************************************************************************
+Transient iteration: 4        Time: 0.0004   Time step: 0.0001   CFL: 0.0103276
+********************************************************************************
+--------------
+Void Fraction
+--------------
+  -Tolerance of iterative solver is : 1e-12
+  -Iterative solver took : 5 steps 
+----------------------
+Particle-fluid forces
+----------------------
+  -Tolerance of iterative solver is : 1e-12
+  -Iterative solver took : 5 steps 
+
+  -Eigenvalue estimation level 0:
+    Relaxation parameter: 1.08505
+    Minimum eigenvalue: 1.39639
+    Maximum eigenvalue: 1.67566
+
+
+  -Eigenvalue estimation level 1:
+    Relaxation parameter: 0.839687
+    Minimum eigenvalue: 1.80442
+    Maximum eigenvalue: 2.16531
+
+
+  -Eigenvalue estimation level 0:
+    Relaxation parameter: 1.08513
+    Minimum eigenvalue: 1.39628
+    Maximum eigenvalue: 1.67554
+
+
+  -Eigenvalue estimation level 1:
+    Relaxation parameter: 0.840292
+    Minimum eigenvalue: 1.80312
+    Maximum eigenvalue: 2.16375
+
+
+  -Eigenvalue estimation level 0:
+    Relaxation parameter: 1.08513
+    Minimum eigenvalue: 1.39628
+    Maximum eigenvalue: 1.67554
+
+
+  -Eigenvalue estimation level 1:
+    Relaxation parameter: 0.840294
+    Minimum eigenvalue: 1.80312
+    Maximum eigenvalue: 2.16374
+
+
+  -Eigenvalue estimation level 0:
+    Relaxation parameter: 1.08513
+    Minimum eigenvalue: 1.39628
+    Maximum eigenvalue: 1.67554
+
+
+  -Eigenvalue estimation level 1:
+    Relaxation parameter: 0.840294
+    Minimum eigenvalue: 1.80312
+    Maximum eigenvalue: 2.16374
+
+
+  -Eigenvalue estimation level 0:
+    Relaxation parameter: 1.08513
+    Minimum eigenvalue: 1.39628
+    Maximum eigenvalue: 1.67554
+
+
+  -Eigenvalue estimation level 1:
+    Relaxation parameter: 0.840294
+    Minimum eigenvalue: 1.80312
+    Maximum eigenvalue: 2.16374
+
+
+  -Eigenvalue estimation level 0:
+    Relaxation parameter: 1.08513
+    Minimum eigenvalue: 1.39628
+    Maximum eigenvalue: 1.67554
+
+
+  -Eigenvalue estimation level 1:
+    Relaxation parameter: 0.840294
+    Minimum eigenvalue: 1.80312
+    Maximum eigenvalue: 2.16374
+
+
+  -Eigenvalue estimation level 0:
+    Relaxation parameter: 1.08513
+    Minimum eigenvalue: 1.39628
+    Maximum eigenvalue: 1.67554
+
+
+  -Eigenvalue estimation level 1:
+    Relaxation parameter: 0.840294
+    Minimum eigenvalue: 1.80312
+    Maximum eigenvalue: 2.16374
+
+
+  -Eigenvalue estimation level 0:
+    Relaxation parameter: 1.08513
+    Minimum eigenvalue: 1.39628
+    Maximum eigenvalue: 1.67554
+
+
+  -Eigenvalue estimation level 1:
+    Relaxation parameter: 0.840294
+    Minimum eigenvalue: 1.80312
+    Maximum eigenvalue: 2.16374
+
+
+  -Eigenvalue estimation level 0:
+    Relaxation parameter: 1.08513
+    Minimum eigenvalue: 1.39628
+    Maximum eigenvalue: 1.67554
+
+
+  -Eigenvalue estimation level 1:
+    Relaxation parameter: 0.840294
+    Minimum eigenvalue: 1.80312
+    Maximum eigenvalue: 2.16374
+
+
+  -Eigenvalue estimation level 0:
+    Relaxation parameter: 1.08513
+    Minimum eigenvalue: 1.39628
+    Maximum eigenvalue: 1.67554
+
+
+  -Eigenvalue estimation level 1:
+    Relaxation parameter: 0.840294
+    Minimum eigenvalue: 1.80312
+    Maximum eigenvalue: 2.16374
+
+Pressure drop: 48.6848 Pa
+Total pressure drop: 48.6849 Pa
+
+********************************************************************************
+Transient iteration: 5        Time: 0.0005   Time step: 0.0001   CFL: 0.0101801
+********************************************************************************
+--------------
+Void Fraction
+--------------
+  -Tolerance of iterative solver is : 1e-12
+  -Iterative solver took : 5 steps 
+----------------------
+Particle-fluid forces
+----------------------
+  -Tolerance of iterative solver is : 1e-12
+  -Iterative solver took : 5 steps 
+
+  -Eigenvalue estimation level 0:
+    Relaxation parameter: 1.08513
+    Minimum eigenvalue: 1.39628
+    Maximum eigenvalue: 1.67554
+
+
+  -Eigenvalue estimation level 1:
+    Relaxation parameter: 0.840295
+    Minimum eigenvalue: 1.80312
+    Maximum eigenvalue: 2.16374
+
+
+  -Eigenvalue estimation level 0:
+    Relaxation parameter: 1.08522
+    Minimum eigenvalue: 1.39617
+    Maximum eigenvalue: 1.6754
+
+
+  -Eigenvalue estimation level 1:
+    Relaxation parameter: 0.84079
+    Minimum eigenvalue: 1.80206
+    Maximum eigenvalue: 2.16247
+
+
+  -Eigenvalue estimation level 0:
+    Relaxation parameter: 1.08522
+    Minimum eigenvalue: 1.39617
+    Maximum eigenvalue: 1.67541
+
+
+  -Eigenvalue estimation level 1:
+    Relaxation parameter: 0.840792
+    Minimum eigenvalue: 1.80205
+    Maximum eigenvalue: 2.16246
+
+
+  -Eigenvalue estimation level 0:
+    Relaxation parameter: 1.08522
+    Minimum eigenvalue: 1.39617
+    Maximum eigenvalue: 1.67541
+
+
+  -Eigenvalue estimation level 1:
+    Relaxation parameter: 0.840792
+    Minimum eigenvalue: 1.80205
+    Maximum eigenvalue: 2.16246
+
+
+  -Eigenvalue estimation level 0:
+    Relaxation parameter: 1.08522
+    Minimum eigenvalue: 1.39617
+    Maximum eigenvalue: 1.67541
+
+
+  -Eigenvalue estimation level 1:
+    Relaxation parameter: 0.840792
+    Minimum eigenvalue: 1.80205
+    Maximum eigenvalue: 2.16246
+
+
+  -Eigenvalue estimation level 0:
+    Relaxation parameter: 1.08522
+    Minimum eigenvalue: 1.39617
+    Maximum eigenvalue: 1.67541
+
+
+  -Eigenvalue estimation level 1:
+    Relaxation parameter: 0.840792
+    Minimum eigenvalue: 1.80205
+    Maximum eigenvalue: 2.16246
+
+
+  -Eigenvalue estimation level 0:
+    Relaxation parameter: 1.08522
+    Minimum eigenvalue: 1.39617
+    Maximum eigenvalue: 1.67541
+
+
+  -Eigenvalue estimation level 1:
+    Relaxation parameter: 0.840792
+    Minimum eigenvalue: 1.80205
+    Maximum eigenvalue: 2.16246
+
+
+  -Eigenvalue estimation level 0:
+    Relaxation parameter: 1.08522
+    Minimum eigenvalue: 1.39617
+    Maximum eigenvalue: 1.67541
+
+
+  -Eigenvalue estimation level 1:
+    Relaxation parameter: 0.840792
+    Minimum eigenvalue: 1.80205
+    Maximum eigenvalue: 2.16246
+
+
+  -Eigenvalue estimation level 0:
+    Relaxation parameter: 1.08522
+    Minimum eigenvalue: 1.39617
+    Maximum eigenvalue: 1.67541
+
+
+  -Eigenvalue estimation level 1:
+    Relaxation parameter: 0.840792
+    Minimum eigenvalue: 1.80205
+    Maximum eigenvalue: 2.16246
+
+
+  -Eigenvalue estimation level 0:
+    Relaxation parameter: 1.08522
+    Minimum eigenvalue: 1.39617
+    Maximum eigenvalue: 1.67541
+
+
+  -Eigenvalue estimation level 1:
+    Relaxation parameter: 0.840792
+    Minimum eigenvalue: 1.80205
+    Maximum eigenvalue: 2.16246
+
+Pressure drop: 48.5761 Pa
+Total pressure drop: 48.5761 Pa
+
+********************************************************************************
+Transient iteration: 6        Time: 0.0006   Time step: 0.0001   CFL: 0.0100833
+********************************************************************************
+--------------
+Void Fraction
+--------------
+  -Tolerance of iterative solver is : 1e-12
+  -Iterative solver took : 5 steps 
+----------------------
+Particle-fluid forces
+----------------------
+  -Tolerance of iterative solver is : 1e-12
+  -Iterative solver took : 5 steps 
+
+  -Eigenvalue estimation level 0:
+    Relaxation parameter: 1.08522
+    Minimum eigenvalue: 1.39617
+    Maximum eigenvalue: 1.67541
+
+
+  -Eigenvalue estimation level 1:
+    Relaxation parameter: 0.840792
+    Minimum eigenvalue: 1.80205
+    Maximum eigenvalue: 2.16246
+
+
+  -Eigenvalue estimation level 0:
+    Relaxation parameter: 1.08531
+    Minimum eigenvalue: 1.39606
+    Maximum eigenvalue: 1.67527
+
+
+  -Eigenvalue estimation level 1:
+    Relaxation parameter: 0.841201
+    Minimum eigenvalue: 1.80118
+    Maximum eigenvalue: 2.16141
+
+
+  -Eigenvalue estimation level 0:
+    Relaxation parameter: 1.08531
+    Minimum eigenvalue: 1.39606
+    Maximum eigenvalue: 1.67527
+
+
+  -Eigenvalue estimation level 1:
+    Relaxation parameter: 0.841202
+    Minimum eigenvalue: 1.80117
+    Maximum eigenvalue: 2.16141
+
+
+  -Eigenvalue estimation level 0:
+    Relaxation parameter: 1.08531
+    Minimum eigenvalue: 1.39606
+    Maximum eigenvalue: 1.67527
+
+
+  -Eigenvalue estimation level 1:
+    Relaxation parameter: 0.841202
+    Minimum eigenvalue: 1.80117
+    Maximum eigenvalue: 2.16141
+
+
+  -Eigenvalue estimation level 0:
+    Relaxation parameter: 1.08531
+    Minimum eigenvalue: 1.39606
+    Maximum eigenvalue: 1.67527
+
+
+  -Eigenvalue estimation level 1:
+    Relaxation parameter: 0.841202
+    Minimum eigenvalue: 1.80117
+    Maximum eigenvalue: 2.16141
+
+
+  -Eigenvalue estimation level 0:
+    Relaxation parameter: 1.08531
+    Minimum eigenvalue: 1.39606
+    Maximum eigenvalue: 1.67527
+
+
+  -Eigenvalue estimation level 1:
+    Relaxation parameter: 0.841202
+    Minimum eigenvalue: 1.80117
+    Maximum eigenvalue: 2.16141
+
+
+  -Eigenvalue estimation level 0:
+    Relaxation parameter: 1.08531
+    Minimum eigenvalue: 1.39606
+    Maximum eigenvalue: 1.67527
+
+
+  -Eigenvalue estimation level 1:
+    Relaxation parameter: 0.841202
+    Minimum eigenvalue: 1.80117
+    Maximum eigenvalue: 2.16141
+
+
+  -Eigenvalue estimation level 0:
+    Relaxation parameter: 1.08531
+    Minimum eigenvalue: 1.39606
+    Maximum eigenvalue: 1.67527
+
+
+  -Eigenvalue estimation level 1:
+    Relaxation parameter: 0.841202
+    Minimum eigenvalue: 1.80117
+    Maximum eigenvalue: 2.16141
+
+
+  -Eigenvalue estimation level 0:
+    Relaxation parameter: 1.08531
+    Minimum eigenvalue: 1.39606
+    Maximum eigenvalue: 1.67527
+
+
+  -Eigenvalue estimation level 1:
+    Relaxation parameter: 0.841202
+    Minimum eigenvalue: 1.80117
+    Maximum eigenvalue: 2.16141
+
+
+  -Eigenvalue estimation level 0:
+    Relaxation parameter: 1.08531
+    Minimum eigenvalue: 1.39606
+    Maximum eigenvalue: 1.67527
+
+
+  -Eigenvalue estimation level 1:
+    Relaxation parameter: 0.841202
+    Minimum eigenvalue: 1.80117
+    Maximum eigenvalue: 2.16141
+
+Pressure drop: 48.4886 Pa
+Total pressure drop: 48.4886 Pa
+
+********************************************************************************
+Transient iteration: 7        Time: 0.0007   Time step: 0.0001   CFL: 0.0100247
+********************************************************************************
+--------------
+Void Fraction
+--------------
+  -Tolerance of iterative solver is : 1e-12
+  -Iterative solver took : 5 steps 
+----------------------
+Particle-fluid forces
+----------------------
+  -Tolerance of iterative solver is : 1e-12
+  -Iterative solver took : 5 steps 
+
+  -Eigenvalue estimation level 0:
+    Relaxation parameter: 1.08531
+    Minimum eigenvalue: 1.39606
+    Maximum eigenvalue: 1.67527
+
+
+  -Eigenvalue estimation level 1:
+    Relaxation parameter: 0.841202
+    Minimum eigenvalue: 1.80117
+    Maximum eigenvalue: 2.16141
+
+
+  -Eigenvalue estimation level 0:
+    Relaxation parameter: 1.0854
+    Minimum eigenvalue: 1.39594
+    Maximum eigenvalue: 1.67513
+
+
+  -Eigenvalue estimation level 1:
+    Relaxation parameter: 0.841541
+    Minimum eigenvalue: 1.80045
+    Maximum eigenvalue: 2.16054
+
+
+  -Eigenvalue estimation level 0:
+    Relaxation parameter: 1.0854
+    Minimum eigenvalue: 1.39594
+    Maximum eigenvalue: 1.67513
+
+
+  -Eigenvalue estimation level 1:
+    Relaxation parameter: 0.841542
+    Minimum eigenvalue: 1.80045
+    Maximum eigenvalue: 2.16054
+
+
+  -Eigenvalue estimation level 0:
+    Relaxation parameter: 1.0854
+    Minimum eigenvalue: 1.39594
+    Maximum eigenvalue: 1.67513
+
+
+  -Eigenvalue estimation level 1:
+    Relaxation parameter: 0.841542
+    Minimum eigenvalue: 1.80045
+    Maximum eigenvalue: 2.16054
+
+
+  -Eigenvalue estimation level 0:
+    Relaxation parameter: 1.0854
+    Minimum eigenvalue: 1.39594
+    Maximum eigenvalue: 1.67513
+
+
+  -Eigenvalue estimation level 1:
+    Relaxation parameter: 0.841542
+    Minimum eigenvalue: 1.80045
+    Maximum eigenvalue: 2.16054
+
+
+  -Eigenvalue estimation level 0:
+    Relaxation parameter: 1.0854
+    Minimum eigenvalue: 1.39594
+    Maximum eigenvalue: 1.67513
+
+
+  -Eigenvalue estimation level 1:
+    Relaxation parameter: 0.841542
+    Minimum eigenvalue: 1.80045
+    Maximum eigenvalue: 2.16054
+
+
+  -Eigenvalue estimation level 0:
+    Relaxation parameter: 1.0854
+    Minimum eigenvalue: 1.39594
+    Maximum eigenvalue: 1.67513
+
+
+  -Eigenvalue estimation level 1:
+    Relaxation parameter: 0.841542
+    Minimum eigenvalue: 1.80045
+    Maximum eigenvalue: 2.16054
+
+
+  -Eigenvalue estimation level 0:
+    Relaxation parameter: 1.0854
+    Minimum eigenvalue: 1.39594
+    Maximum eigenvalue: 1.67513
+
+
+  -Eigenvalue estimation level 1:
+    Relaxation parameter: 0.841542
+    Minimum eigenvalue: 1.80045
+    Maximum eigenvalue: 2.16054
+
+
+  -Eigenvalue estimation level 0:
+    Relaxation parameter: 1.0854
+    Minimum eigenvalue: 1.39594
+    Maximum eigenvalue: 1.67513
+
+
+  -Eigenvalue estimation level 1:
+    Relaxation parameter: 0.841542
+    Minimum eigenvalue: 1.80045
+    Maximum eigenvalue: 2.16054
+
+
+  -Eigenvalue estimation level 0:
+    Relaxation parameter: 1.0854
+    Minimum eigenvalue: 1.39594
+    Maximum eigenvalue: 1.67513
+
+
+  -Eigenvalue estimation level 1:
+    Relaxation parameter: 0.841542
+    Minimum eigenvalue: 1.80045
+    Maximum eigenvalue: 2.16054
+
+Pressure drop: 48.4154 Pa
+Total pressure drop: 48.4154 Pa
+
+*********************************************************************************
+Transient iteration: 8        Time: 0.0008   Time step: 0.0001   CFL: 0.00999515
+*********************************************************************************
+--------------
+Void Fraction
+--------------
+  -Tolerance of iterative solver is : 1e-12
+  -Iterative solver took : 5 steps 
+----------------------
+Particle-fluid forces
+----------------------
+  -Tolerance of iterative solver is : 1e-12
+  -Iterative solver took : 5 steps 
+
+  -Eigenvalue estimation level 0:
+    Relaxation parameter: 1.0854
+    Minimum eigenvalue: 1.39594
+    Maximum eigenvalue: 1.67513
+
+
+  -Eigenvalue estimation level 1:
+    Relaxation parameter: 0.841542
+    Minimum eigenvalue: 1.80045
+    Maximum eigenvalue: 2.16054
+
+
+  -Eigenvalue estimation level 0:
+    Relaxation parameter: 1.08549
+    Minimum eigenvalue: 1.39583
+    Maximum eigenvalue: 1.67499
+
+
+  -Eigenvalue estimation level 1:
+    Relaxation parameter: 0.841825
+    Minimum eigenvalue: 1.79984
+    Maximum eigenvalue: 2.15981
+
+
+  -Eigenvalue estimation level 0:
+    Relaxation parameter: 1.08549
+    Minimum eigenvalue: 1.39583
+    Maximum eigenvalue: 1.67499
+
+
+  -Eigenvalue estimation level 1:
+    Relaxation parameter: 0.841826
+    Minimum eigenvalue: 1.79984
+    Maximum eigenvalue: 2.15981
+
+
+  -Eigenvalue estimation level 0:
+    Relaxation parameter: 1.08549
+    Minimum eigenvalue: 1.39583
+    Maximum eigenvalue: 1.67499
+
+
+  -Eigenvalue estimation level 1:
+    Relaxation parameter: 0.841826
+    Minimum eigenvalue: 1.79984
+    Maximum eigenvalue: 2.15981
+
+
+  -Eigenvalue estimation level 0:
+    Relaxation parameter: 1.08549
+    Minimum eigenvalue: 1.39583
+    Maximum eigenvalue: 1.67499
+
+
+  -Eigenvalue estimation level 1:
+    Relaxation parameter: 0.841826
+    Minimum eigenvalue: 1.79984
+    Maximum eigenvalue: 2.15981
+
+
+  -Eigenvalue estimation level 0:
+    Relaxation parameter: 1.08549
+    Minimum eigenvalue: 1.39583
+    Maximum eigenvalue: 1.67499
+
+
+  -Eigenvalue estimation level 1:
+    Relaxation parameter: 0.841826
+    Minimum eigenvalue: 1.79984
+    Maximum eigenvalue: 2.15981
+
+
+  -Eigenvalue estimation level 0:
+    Relaxation parameter: 1.08549
+    Minimum eigenvalue: 1.39583
+    Maximum eigenvalue: 1.67499
+
+
+  -Eigenvalue estimation level 1:
+    Relaxation parameter: 0.841826
+    Minimum eigenvalue: 1.79984
+    Maximum eigenvalue: 2.15981
+
+
+  -Eigenvalue estimation level 0:
+    Relaxation parameter: 1.08549
+    Minimum eigenvalue: 1.39583
+    Maximum eigenvalue: 1.67499
+
+
+  -Eigenvalue estimation level 1:
+    Relaxation parameter: 0.841826
+    Minimum eigenvalue: 1.79984
+    Maximum eigenvalue: 2.15981
+
+
+  -Eigenvalue estimation level 0:
+    Relaxation parameter: 1.08549
+    Minimum eigenvalue: 1.39583
+    Maximum eigenvalue: 1.67499
+
+
+  -Eigenvalue estimation level 1:
+    Relaxation parameter: 0.841826
+    Minimum eigenvalue: 1.79984
+    Maximum eigenvalue: 2.15981
+
+
+  -Eigenvalue estimation level 0:
+    Relaxation parameter: 1.08549
+    Minimum eigenvalue: 1.39583
+    Maximum eigenvalue: 1.67499
+
+
+  -Eigenvalue estimation level 1:
+    Relaxation parameter: 0.841826
+    Minimum eigenvalue: 1.79984
+    Maximum eigenvalue: 2.15981
+
+Pressure drop: 48.353 Pa
+Total pressure drop: 48.353 Pa
+
+*********************************************************************************
+Transient iteration: 9        Time: 0.0009   Time step: 0.0001   CFL: 0.00998538
+*********************************************************************************
+--------------
+Void Fraction
+--------------
+  -Tolerance of iterative solver is : 1e-12
+  -Iterative solver took : 5 steps 
+----------------------
+Particle-fluid forces
+----------------------
+  -Tolerance of iterative solver is : 1e-12
+  -Iterative solver took : 5 steps 
+
+  -Eigenvalue estimation level 0:
+    Relaxation parameter: 1.08549
+    Minimum eigenvalue: 1.39583
+    Maximum eigenvalue: 1.67499
+
+
+  -Eigenvalue estimation level 1:
+    Relaxation parameter: 0.841826
+    Minimum eigenvalue: 1.79984
+    Maximum eigenvalue: 2.15981
+
+
+  -Eigenvalue estimation level 0:
+    Relaxation parameter: 1.08558
+    Minimum eigenvalue: 1.39571
+    Maximum eigenvalue: 1.67485
+
+
+  -Eigenvalue estimation level 1:
+    Relaxation parameter: 0.842063
+    Minimum eigenvalue: 1.79933
+    Maximum eigenvalue: 2.1592
+
+
+  -Eigenvalue estimation level 0:
+    Relaxation parameter: 1.08558
+    Minimum eigenvalue: 1.39571
+    Maximum eigenvalue: 1.67485
+
+
+  -Eigenvalue estimation level 1:
+    Relaxation parameter: 0.842063
+    Minimum eigenvalue: 1.79933
+    Maximum eigenvalue: 2.1592
+
+
+  -Eigenvalue estimation level 0:
+    Relaxation parameter: 1.08558
+    Minimum eigenvalue: 1.39571
+    Maximum eigenvalue: 1.67485
+
+
+  -Eigenvalue estimation level 1:
+    Relaxation parameter: 0.842063
+    Minimum eigenvalue: 1.79933
+    Maximum eigenvalue: 2.1592
+
+
+  -Eigenvalue estimation level 0:
+    Relaxation parameter: 1.08558
+    Minimum eigenvalue: 1.39571
+    Maximum eigenvalue: 1.67485
+
+
+  -Eigenvalue estimation level 1:
+    Relaxation parameter: 0.842063
+    Minimum eigenvalue: 1.79933
+    Maximum eigenvalue: 2.1592
+
+
+  -Eigenvalue estimation level 0:
+    Relaxation parameter: 1.08558
+    Minimum eigenvalue: 1.39571
+    Maximum eigenvalue: 1.67485
+
+
+  -Eigenvalue estimation level 1:
+    Relaxation parameter: 0.842063
+    Minimum eigenvalue: 1.79933
+    Maximum eigenvalue: 2.1592
+
+
+  -Eigenvalue estimation level 0:
+    Relaxation parameter: 1.08558
+    Minimum eigenvalue: 1.39571
+    Maximum eigenvalue: 1.67485
+
+
+  -Eigenvalue estimation level 1:
+    Relaxation parameter: 0.842063
+    Minimum eigenvalue: 1.79933
+    Maximum eigenvalue: 2.1592
+
+
+  -Eigenvalue estimation level 0:
+    Relaxation parameter: 1.08558
+    Minimum eigenvalue: 1.39571
+    Maximum eigenvalue: 1.67485
+
+
+  -Eigenvalue estimation level 1:
+    Relaxation parameter: 0.842063
+    Minimum eigenvalue: 1.79933
+    Maximum eigenvalue: 2.1592
+
+
+  -Eigenvalue estimation level 0:
+    Relaxation parameter: 1.08558
+    Minimum eigenvalue: 1.39571
+    Maximum eigenvalue: 1.67485
+
+
+  -Eigenvalue estimation level 1:
+    Relaxation parameter: 0.842063
+    Minimum eigenvalue: 1.79933
+    Maximum eigenvalue: 2.1592
+
+
+  -Eigenvalue estimation level 0:
+    Relaxation parameter: 1.08558
+    Minimum eigenvalue: 1.39571
+    Maximum eigenvalue: 1.67485
+
+
+  -Eigenvalue estimation level 1:
+    Relaxation parameter: 0.842063
+    Minimum eigenvalue: 1.79933
+    Maximum eigenvalue: 2.1592
+
+Pressure drop: 48.299 Pa
+Total pressure drop: 48.299 Pa
+
+*********************************************************************************
+Transient iteration: 10       Time: 0.001    Time step: 0.0001   CFL: 0.00999241
+*********************************************************************************
+--------------
+Void Fraction
+--------------
+  -Tolerance of iterative solver is : 1e-12
+  -Iterative solver took : 5 steps 
+----------------------
+Particle-fluid forces
+----------------------
+  -Tolerance of iterative solver is : 1e-12
+  -Iterative solver took : 5 steps 
+
+  -Eigenvalue estimation level 0:
+    Relaxation parameter: 1.08558
+    Minimum eigenvalue: 1.39571
+    Maximum eigenvalue: 1.67485
+
+
+  -Eigenvalue estimation level 1:
+    Relaxation parameter: 0.842064
+    Minimum eigenvalue: 1.79933
+    Maximum eigenvalue: 2.1592
+
+
+  -Eigenvalue estimation level 0:
+    Relaxation parameter: 1.08567
+    Minimum eigenvalue: 1.3956
+    Maximum eigenvalue: 1.67472
+
+
+  -Eigenvalue estimation level 1:
+    Relaxation parameter: 0.842263
+    Minimum eigenvalue: 1.79891
+    Maximum eigenvalue: 2.15869
+
+
+  -Eigenvalue estimation level 0:
+    Relaxation parameter: 1.08567
+    Minimum eigenvalue: 1.3956
+    Maximum eigenvalue: 1.67472
+
+
+  -Eigenvalue estimation level 1:
+    Relaxation parameter: 0.842263
+    Minimum eigenvalue: 1.79891
+    Maximum eigenvalue: 2.15869
+
+
+  -Eigenvalue estimation level 0:
+    Relaxation parameter: 1.08567
+    Minimum eigenvalue: 1.3956
+    Maximum eigenvalue: 1.67472
+
+
+  -Eigenvalue estimation level 1:
+    Relaxation parameter: 0.842263
+    Minimum eigenvalue: 1.79891
+    Maximum eigenvalue: 2.15869
+
+
+  -Eigenvalue estimation level 0:
+    Relaxation parameter: 1.08567
+    Minimum eigenvalue: 1.3956
+    Maximum eigenvalue: 1.67472
+
+
+  -Eigenvalue estimation level 1:
+    Relaxation parameter: 0.842263
+    Minimum eigenvalue: 1.79891
+    Maximum eigenvalue: 2.15869
+
+
+  -Eigenvalue estimation level 0:
+    Relaxation parameter: 1.08567
+    Minimum eigenvalue: 1.3956
+    Maximum eigenvalue: 1.67472
+
+
+  -Eigenvalue estimation level 1:
+    Relaxation parameter: 0.842263
+    Minimum eigenvalue: 1.79891
+    Maximum eigenvalue: 2.15869
+
+
+  -Eigenvalue estimation level 0:
+    Relaxation parameter: 1.08567
+    Minimum eigenvalue: 1.3956
+    Maximum eigenvalue: 1.67472
+
+
+  -Eigenvalue estimation level 1:
+    Relaxation parameter: 0.842263
+    Minimum eigenvalue: 1.79891
+    Maximum eigenvalue: 2.15869
+
+
+  -Eigenvalue estimation level 0:
+    Relaxation parameter: 1.08567
+    Minimum eigenvalue: 1.3956
+    Maximum eigenvalue: 1.67472
+
+
+  -Eigenvalue estimation level 1:
+    Relaxation parameter: 0.842263
+    Minimum eigenvalue: 1.79891
+    Maximum eigenvalue: 2.15869
+
+
+  -Eigenvalue estimation level 0:
+    Relaxation parameter: 1.08567
+    Minimum eigenvalue: 1.3956
+    Maximum eigenvalue: 1.67472
+
+
+  -Eigenvalue estimation level 1:
+    Relaxation parameter: 0.842263
+    Minimum eigenvalue: 1.79891
+    Maximum eigenvalue: 2.15869
+
+
+  -Eigenvalue estimation level 0:
+    Relaxation parameter: 1.08567
+    Minimum eigenvalue: 1.3956
+    Maximum eigenvalue: 1.67472
+
+
+  -Eigenvalue estimation level 1:
+    Relaxation parameter: 0.842263
+    Minimum eigenvalue: 1.79891
+    Maximum eigenvalue: 2.15869
+
+Pressure drop: 48.2517 Pa
+Total pressure drop: 48.2517 Pa
