@@ -41,7 +41,7 @@ public:
    * dimension.
    */
   void
-  build_patches(Particles::ParticleHandler<dim>          &particle_handler,
+  build_patches(Particles::ParticleHandler<dim> &particle_handler,
                 const std::vector<std::pair<std::string, int>> &properties);
 
   /**

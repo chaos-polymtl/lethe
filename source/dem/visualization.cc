@@ -13,7 +13,7 @@ Visualization<dim, PropertiesIndex>::Visualization() = default;
 template <int dim, typename PropertiesIndex>
 void
 Visualization<dim, PropertiesIndex>::build_patches(
-  dealii::Particles::ParticleHandler<dim>  &particle_handler,
+  dealii::Particles::ParticleHandler<dim>        &particle_handler,
   const std::vector<std::pair<std::string, int>> &properties)
 {
   // We reserve 1 more name than the number of properties, since we will also be
@@ -177,8 +177,8 @@ Visualization<dim, PropertiesIndex>::print_intermediate_format(
 
   std::stringstream out;
 
-  // Add data in deal.II intermediate format to the string stream buffer for each
-  // processor in order
+  // Add data in deal.II intermediate format to the string stream buffer for
+  // each processor in order
   for (unsigned int processor_number = 0; processor_number < n_mpi_processes;
        ++processor_number)
     {
