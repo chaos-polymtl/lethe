@@ -74,6 +74,7 @@ subsection void fraction
   set qcm sphere equal cell volume = false
   set read dem                     = true
   set dem file name                = dem
+  set qcm sphere diameter          = 0.003 #3 times the particle diameter
   set l2 smoothing length          = 0.003 #3 times the particle diameter
 end
 
