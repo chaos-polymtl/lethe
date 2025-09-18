@@ -108,9 +108,9 @@ $(document).ready(function() { init_codefold(0); });
 <div class="line"><a id="l00013" name="l00013"></a><span class="lineno">   13</span><span class="keyword">template</span> &lt;<span class="keywordtype">int</span> dim, <span class="keyword">typename</span> PropertiesIndex&gt;</div>
 <div class="line"><a id="l00014" name="l00014"></a><span class="lineno">   14</span><span class="keywordtype">void</span></div>
 <div class="foldopen" id="foldopen00015" data-start="{" data-end="}">
-<div class="line"><a id="l00015" name="l00015"></a><span class="lineno"><a class="line" href="classVisualization.html#a29014b0590114f94ecd7786ae984de93">   15</a></span><a class="code hl_function" href="classVisualization.html#a29014b0590114f94ecd7786ae984de93">Visualization&lt;dim, PropertiesIndex&gt;::build_patches</a>(</div>
-<div class="line"><a id="l00016" name="l00016"></a><span class="lineno">   16</span>  dealii::Particles::ParticleHandler&lt;dim&gt; &amp;particle_handler,</div>
-<div class="line"><a id="l00017" name="l00017"></a><span class="lineno">   17</span>  std::vector&lt;std::pair&lt;std::string, int&gt;&gt; properties)</div>
+<div class="line"><a id="l00015" name="l00015"></a><span class="lineno"><a class="line" href="classVisualization.html#a72b92b019f14c1bea6afd79a09f0661f">   15</a></span><a class="code hl_function" href="classVisualization.html#a72b92b019f14c1bea6afd79a09f0661f">Visualization&lt;dim, PropertiesIndex&gt;::build_patches</a>(</div>
+<div class="line"><a id="l00016" name="l00016"></a><span class="lineno">   16</span>  dealii::Particles::ParticleHandler&lt;dim&gt;        &amp;particle_handler,</div>
+<div class="line"><a id="l00017" name="l00017"></a><span class="lineno">   17</span>  <span class="keyword">const</span> std::vector&lt;std::pair&lt;std::string, int&gt;&gt; &amp;properties)</div>
 <div class="line"><a id="l00018" name="l00018"></a><span class="lineno">   18</span>{</div>
 <div class="line"><a id="l00019" name="l00019"></a><span class="lineno">   19</span>  <span class="comment">// We reserve 1 more name than the number of properties, since we will also be</span></div>
 <div class="line"><a id="l00020" name="l00020"></a><span class="lineno">   20</span>  <span class="comment">// writing the ID of the particles</span></div>
@@ -135,24 +135,24 @@ $(document).ready(function() { init_codefold(0); });
 <div class="line"><a id="l00039" name="l00039"></a><span class="lineno">   39</span>      <span class="comment">// even for 2D simulations</span></div>
 <div class="line"><a id="l00040" name="l00040"></a><span class="lineno">   40</span>      <span class="keywordflow">if</span> (n_components == 3)</div>
 <div class="line"><a id="l00041" name="l00041"></a><span class="lineno">   41</span>        {</div>
-<div class="line"><a id="l00042" name="l00042"></a><span class="lineno">   42</span>          <span class="comment">// The proeprty is a vector, thus we set that the components</span></div>
+<div class="line"><a id="l00042" name="l00042"></a><span class="lineno">   42</span>          <span class="comment">// The property is a vector, thus we set that the components</span></div>
 <div class="line"><a id="l00043" name="l00043"></a><span class="lineno">   43</span>          <span class="comment">// are part of a vector. Do not forget that since we added the ID</span></div>
-<div class="line"><a id="l00044" name="l00044"></a><span class="lineno">   44</span>          <span class="comment">// of the particles, we need to shift the field_position by 1. Hence</span></div>
+<div class="foldopen" id="foldopen00044" data-start="{" data-end="}">
+<div class="line"><a id="l00044" name="l00044"></a><span class="lineno"><a class="line" href="classVisualization.html#a72b92b019f14c1bea6afd79a09f0661f">   44</a></span>          <span class="comment">// of the particles, we need to shift the field_position by 1. Hence,</span></div>
 <div class="line"><a id="l00045" name="l00045"></a><span class="lineno">   45</span>          <span class="comment">// we add 1 to field_position</span></div>
 <div class="line"><a id="l00046" name="l00046"></a><span class="lineno">   46</span>          vector_datasets.emplace_back(std::make_tuple(</div>
-<div class="foldopen" id="foldopen00047" data-start="{" data-end="}">
-<div class="line"><a id="l00047" name="l00047"></a><span class="lineno"><a class="line" href="classVisualization.html#a29014b0590114f94ecd7786ae984de93">   47</a></span>            field_position + 1,</div>
+<div class="line"><a id="l00047" name="l00047"></a><span class="lineno">   47</span>            field_position + 1,</div>
 <div class="line"><a id="l00048" name="l00048"></a><span class="lineno">   48</span>            field_position + n_components,</div>
 <div class="line"><a id="l00049" name="l00049"></a><span class="lineno">   49</span>            field_name,</div>
 <div class="line"><a id="l00050" name="l00050"></a><span class="lineno">   50</span>            DataComponentInterpretation::component_is_part_of_vector));</div>
 <div class="line"><a id="l00051" name="l00051"></a><span class="lineno">   51</span>        }</div>
 <div class="line"><a id="l00052" name="l00052"></a><span class="lineno">   52</span>      dataset_names.emplace_back(field_name);</div>
 <div class="line"><a id="l00053" name="l00053"></a><span class="lineno">   53</span>    }</div>
-<div class="line"><a id="l00054" name="l00054"></a><span class="lineno">   54</span> </div>
+<div class="foldopen" id="foldopen00054" data-start="{" data-end="}">
+<div class="line"><a id="l00054" name="l00054"></a><span class="lineno"><a class="line" href="classVisualization.html#afbe7be953d1cc3d22da0f466e810b0ee">   54</a></span> </div>
 <div class="line"><a id="l00055" name="l00055"></a><span class="lineno">   55</span>  <span class="comment">// Building the patch data</span></div>
 <div class="line"><a id="l00056" name="l00056"></a><span class="lineno">   56</span>  patches.resize(particle_handler.n_locally_owned_particles());</div>
-<div class="foldopen" id="foldopen00057" data-start="{" data-end="}">
-<div class="line"><a id="l00057" name="l00057"></a><span class="lineno"><a class="line" href="classVisualization.html#afbe7be953d1cc3d22da0f466e810b0ee">   57</a></span> </div>
+<div class="line"><a id="l00057" name="l00057"></a><span class="lineno">   57</span> </div>
 <div class="line"><a id="l00058" name="l00058"></a><span class="lineno">   58</span>  <span class="keyword">typename</span> dealii::Particles::ParticleHandler&lt;dim&gt;::particle_iterator particle =</div>
 <div class="line"><a id="l00059" name="l00059"></a><span class="lineno">   59</span>    particle_handler.begin();</div>
 <div class="line"><a id="l00060" name="l00060"></a><span class="lineno">   60</span> </div>
@@ -161,11 +161,11 @@ $(document).ready(function() { init_codefold(0); });
 <div class="line"><a id="l00063" name="l00063"></a><span class="lineno">   63</span>    {</div>
 <div class="line"><a id="l00064" name="l00064"></a><span class="lineno">   64</span>      <span class="comment">// Particle location</span></div>
 <div class="line"><a id="l00065" name="l00065"></a><span class="lineno">   65</span>      patches[i].vertices[0] = particle-&gt;get_location();</div>
-<div class="line"><a id="l00066" name="l00066"></a><span class="lineno">   66</span>      patches[i].patch_index = i;</div>
+<div class="foldopen" id="foldopen00066" data-start="{" data-end="}">
+<div class="line"><a id="l00066" name="l00066"></a><span class="lineno"><a class="line" href="classVisualization.html#a6c35eeed4d8e69907a854fc3d4156d02">   66</a></span>      patches[i].patch_index = i;</div>
 <div class="line"><a id="l00067" name="l00067"></a><span class="lineno">   67</span>      patches[i].data.reinit(PropertiesIndex::n_properties + 1, 1);</div>
 <div class="line"><a id="l00068" name="l00068"></a><span class="lineno">   68</span> </div>
-<div class="foldopen" id="foldopen00069" data-start="{" data-end="}">
-<div class="line"><a id="l00069" name="l00069"></a><span class="lineno"><a class="line" href="classVisualization.html#a6c35eeed4d8e69907a854fc3d4156d02">   69</a></span>      <span class="comment">// ID and other properties</span></div>
+<div class="line"><a id="l00069" name="l00069"></a><span class="lineno">   69</span>      <span class="comment">// ID and other properties</span></div>
 <div class="line"><a id="l00070" name="l00070"></a><span class="lineno">   70</span>      <span class="keywordflow">if</span> (particle-&gt;has_properties())</div>
 <div class="line"><a id="l00071" name="l00071"></a><span class="lineno">   71</span>        {</div>
 <div class="line"><a id="l00072" name="l00072"></a><span class="lineno">   72</span>          <span class="keyword">auto</span> particle_properties = particle-&gt;get_properties();</div>
@@ -173,27 +173,26 @@ $(document).ready(function() { init_codefold(0); });
 <div class="line"><a id="l00074" name="l00074"></a><span class="lineno">   74</span>          <span class="comment">// Adding ID to patches</span></div>
 <div class="line"><a id="l00075" name="l00075"></a><span class="lineno">   75</span>          patches[i].data(0, 0) = particle-&gt;get_id();</div>
 <div class="line"><a id="l00076" name="l00076"></a><span class="lineno">   76</span> </div>
-<div class="line"><a id="l00077" name="l00077"></a><span class="lineno">   77</span>          <span class="comment">// We need to offset the data we write by one since we have one more</span></div>
+<div class="foldopen" id="foldopen00077" data-start="{" data-end="}">
+<div class="line"><a id="l00077" name="l00077"></a><span class="lineno"><a class="line" href="classVisualization.html#aac0d7ad2dbf0b4d2bf3a986033f20aca">   77</a></span>          <span class="comment">// We need to offset the data we write by one since we have one more</span></div>
 <div class="line"><a id="l00078" name="l00078"></a><span class="lineno">   78</span>          <span class="comment">// property due to the fact that we save the ID of the particles.</span></div>
 <div class="line"><a id="l00079" name="l00079"></a><span class="lineno">   79</span>          <span class="keywordflow">for</span> (<span class="keywordtype">unsigned</span> <span class="keywordtype">int</span> property_index = 0;</div>
-<div class="foldopen" id="foldopen00080" data-start="{" data-end="}">
-<div class="line"><a id="l00080" name="l00080"></a><span class="lineno"><a class="line" href="classVisualization.html#aac0d7ad2dbf0b4d2bf3a986033f20aca">   80</a></span>               property_index &lt; PropertiesIndex::n_properties;</div>
+<div class="line"><a id="l00080" name="l00080"></a><span class="lineno">   80</span>               property_index &lt; PropertiesIndex::n_properties;</div>
 <div class="line"><a id="l00081" name="l00081"></a><span class="lineno">   81</span>               ++property_index)</div>
 <div class="line"><a id="l00082" name="l00082"></a><span class="lineno">   82</span>            patches[i].data(property_index + 1, 0) =</div>
-<div class="line"><a id="l00083" name="l00083"></a><span class="lineno">   83</span>              particle_properties[property_index];</div>
+<div class="foldopen" id="foldopen00083" data-start="{" data-end="}">
+<div class="line"><a id="l00083" name="l00083"></a><span class="lineno"><a class="line" href="classVisualization.html#a9089d867d60c119c3ac548182671b024">   83</a></span>              particle_properties[property_index];</div>
 <div class="line"><a id="l00084" name="l00084"></a><span class="lineno">   84</span>        }</div>
 <div class="line"><a id="l00085" name="l00085"></a><span class="lineno">   85</span>    }</div>
-<div class="foldopen" id="foldopen00086" data-start="{" data-end="}">
-<div class="line"><a id="l00086" name="l00086"></a><span class="lineno"><a class="line" href="classVisualization.html#a9089d867d60c119c3ac548182671b024">   86</a></span>}</div>
+<div class="line"><a id="l00086" name="l00086"></a><span class="lineno">   86</span>}</div>
 <div class="line"><a id="l00087" name="l00087"></a><span class="lineno">   87</span> </div>
 <div class="line"><a id="l00088" name="l00088"></a><span class="lineno">   88</span><span class="keyword">template</span> &lt;<span class="keywordtype">int</span> dim, <span class="keyword">typename</span> PropertiesIndex&gt;</div>
 <div class="line"><a id="l00089" name="l00089"></a><span class="lineno">   89</span><span class="keywordtype">void</span></div>
 <div class="foldopen" id="foldopen00090" data-start="{" data-end="}">
-<div class="line"><a id="l00090" name="l00090"></a><span class="lineno"><a class="line" href="classVisualization.html#afbe7be953d1cc3d22da0f466e810b0ee">   90</a></span><a class="code hl_function" href="classVisualization.html#afbe7be953d1cc3d22da0f466e810b0ee">Visualization&lt;dim, PropertiesIndex&gt;::print_xyz</a>(</div>
+<div class="line"><a id="l00090" name="l00090"></a><span class="lineno"><a class="line" href="classVisualization.html#a09955106b4d6c9bc0db9393a2cbd1884">   90</a></span><a class="code hl_function" href="classVisualization.html#afbe7be953d1cc3d22da0f466e810b0ee">Visualization&lt;dim, PropertiesIndex&gt;::print_xyz</a>(</div>
 <div class="line"><a id="l00091" name="l00091"></a><span class="lineno">   91</span>  dealii::Particles::ParticleHandler&lt;dim&gt; &amp;particle_handler,</div>
 <div class="line"><a id="l00092" name="l00092"></a><span class="lineno">   92</span>  <span class="keyword">const</span> MPI_Comm                          &amp;mpi_communicator,</div>
-<div class="foldopen" id="foldopen00093" data-start="{" data-end="}">
-<div class="line"><a id="l00093" name="l00093"></a><span class="lineno"><a class="line" href="classVisualization.html#a09955106b4d6c9bc0db9393a2cbd1884">   93</a></span>  <span class="keyword">const</span> ConditionalOStream                &amp;pcout)</div>
+<div class="line"><a id="l00093" name="l00093"></a><span class="lineno">   93</span>  <span class="keyword">const</span> ConditionalOStream                &amp;pcout)</div>
 <div class="line"><a id="l00094" name="l00094"></a><span class="lineno">   94</span>{</div>
 <div class="line"><a id="l00095" name="l00095"></a><span class="lineno">   95</span>  <span class="keyword">const</span> <span class="keywordtype">bool</span> is_dem_mp =</div>
 <div class="line"><a id="l00096" name="l00096"></a><span class="lineno">   96</span>    std::is_same_v&lt;PropertiesIndex, DEM::DEMMPProperties::PropertiesIndex&gt;;</div>
@@ -203,7 +202,7 @@ $(document).ready(function() { init_codefold(0); });
 <div class="line"><a id="l00100" name="l00100"></a><span class="lineno">  100</span>      pcout &lt;&lt; <span class="stringliteral">&quot;, T&quot;</span>;</div>
 <div class="line"><a id="l00101" name="l00101"></a><span class="lineno">  101</span>    }</div>
 <div class="line"><a id="l00102" name="l00102"></a><span class="lineno">  102</span>  pcout &lt;&lt; <span class="stringliteral">&quot; &quot;</span> &lt;&lt; std::endl;</div>
-<div class="line"><a id="l00103" name="l00103"></a><span class="lineno">  103</span>  <span class="comment">// Agressively force synchronization of the header line</span></div>
+<div class="line"><a id="l00103" name="l00103"></a><span class="lineno">  103</span>  <span class="comment">// Aggressively force synchronization of the header line</span></div>
 <div class="line"><a id="l00104" name="l00104"></a><span class="lineno">  104</span>  usleep(500);</div>
 <div class="line"><a id="l00105" name="l00105"></a><span class="lineno">  105</span>  MPI_Barrier(mpi_communicator);</div>
 <div class="line"><a id="l00106" name="l00106"></a><span class="lineno">  106</span>  usleep(500);</div>
@@ -281,8 +280,8 @@ $(document).ready(function() { init_codefold(0); });
 <div class="line"><a id="l00177" name="l00177"></a><span class="lineno">  177</span> </div>
 <div class="line"><a id="l00178" name="l00178"></a><span class="lineno">  178</span>  std::stringstream out;</div>
 <div class="line"><a id="l00179" name="l00179"></a><span class="lineno">  179</span> </div>
-<div class="line"><a id="l00180" name="l00180"></a><span class="lineno">  180</span>  <span class="comment">// Add data in deal.II intermediate format to the stringstream buffer for each</span></div>
-<div class="line"><a id="l00181" name="l00181"></a><span class="lineno">  181</span>  <span class="comment">// processor in order</span></div>
+<div class="line"><a id="l00180" name="l00180"></a><span class="lineno">  180</span>  <span class="comment">// Add data in deal.II intermediate format to the string stream buffer for</span></div>
+<div class="line"><a id="l00181" name="l00181"></a><span class="lineno">  181</span>  <span class="comment">// each processor in order</span></div>
 <div class="line"><a id="l00182" name="l00182"></a><span class="lineno">  182</span>  <span class="keywordflow">for</span> (<span class="keywordtype">unsigned</span> <span class="keywordtype">int</span> processor_number = 0; processor_number &lt; n_mpi_processes;</div>
 <div class="line"><a id="l00183" name="l00183"></a><span class="lineno">  183</span>       ++processor_number)</div>
 <div class="line"><a id="l00184" name="l00184"></a><span class="lineno">  184</span>    {</div>
@@ -354,13 +353,12 @@ $(document).ready(function() { init_codefold(0); });
 </div>
 </div>
 </div>
-</div>
-<div class="ttc" id="aclassVisualization_html"><div class="ttname"><a href="classVisualization.html">Visualization</a></div><div class="ttdoc">Building patches of particle properties for visualization. This function is taken from Aspect and dea...</div><div class="ttdef"><b>Definition</b> <a href="visualization_8h_source.html#l00030">visualization.h:31</a></div></div>
+<div class="ttc" id="aclassVisualization_html"><div class="ttname"><a href="classVisualization.html">Visualization</a></div><div class="ttdoc">Building patches of particle properties for visualization. This function is taken from Aspect and dea...</div><div class="ttdef"><b>Definition</b> <a href="visualization_8h_source.html#l00027">visualization.h:28</a></div></div>
 <div class="ttc" id="aclassVisualization_html_a09955106b4d6c9bc0db9393a2cbd1884"><div class="ttname"><a href="classVisualization.html#a09955106b4d6c9bc0db9393a2cbd1884">Visualization::get_nonscalar_data_ranges</a></div><div class="ttdeci">virtual std::vector&lt; std::tuple&lt; unsigned int, unsigned int, std::string, DataComponentInterpretation::DataComponentInterpretation &gt; &gt; get_nonscalar_data_ranges() const override</div><div class="ttdef"><b>Definition</b> <a href="visualization_8cc_source.html#l00225">visualization.cc:225</a></div></div>
 <div class="ttc" id="aclassVisualization_html_a0f0ca336cb4fd5e5d77cadb3ff7c9a89"><div class="ttname"><a href="classVisualization.html#a0f0ca336cb4fd5e5d77cadb3ff7c9a89">Visualization::~Visualization</a></div><div class="ttdeci">~Visualization()</div></div>
 <div class="ttc" id="aclassVisualization_html_a224b321112adf262d0a78a9c61b18e4b"><div class="ttname"><a href="classVisualization.html#a224b321112adf262d0a78a9c61b18e4b">Visualization::Visualization</a></div><div class="ttdeci">Visualization()</div></div>
-<div class="ttc" id="aclassVisualization_html_a29014b0590114f94ecd7786ae984de93"><div class="ttname"><a href="classVisualization.html#a29014b0590114f94ecd7786ae984de93">Visualization::build_patches</a></div><div class="ttdeci">void build_patches(Particles::ParticleHandler&lt; dim &gt; &amp;particle_handler, std::vector&lt; std::pair&lt; std::string, int &gt; &gt; properties)</div><div class="ttdoc">Build the patches of properties of particles for visualization.</div><div class="ttdef"><b>Definition</b> <a href="visualization_8cc_source.html#l00015">visualization.cc:15</a></div></div>
 <div class="ttc" id="aclassVisualization_html_a6c35eeed4d8e69907a854fc3d4156d02"><div class="ttname"><a href="classVisualization.html#a6c35eeed4d8e69907a854fc3d4156d02">Visualization::print_intermediate_format</a></div><div class="ttdeci">void print_intermediate_format(const Vector&lt; float &gt; &amp;data_to_print, const DoFHandler&lt; dim &gt; &amp;background_dh, const MPI_Comm &amp;mpi_communicator)</div><div class="ttdoc">Print the data of particles in the deal.II intermediate format.</div><div class="ttdef"><b>Definition</b> <a href="visualization_8cc_source.html#l00159">visualization.cc:159</a></div></div>
+<div class="ttc" id="aclassVisualization_html_a72b92b019f14c1bea6afd79a09f0661f"><div class="ttname"><a href="classVisualization.html#a72b92b019f14c1bea6afd79a09f0661f">Visualization::build_patches</a></div><div class="ttdeci">void build_patches(Particles::ParticleHandler&lt; dim &gt; &amp;particle_handler, const std::vector&lt; std::pair&lt; std::string, int &gt; &gt; &amp;properties)</div><div class="ttdoc">Build the patches of properties of particles for visualization.</div><div class="ttdef"><b>Definition</b> <a href="visualization_8cc_source.html#l00015">visualization.cc:15</a></div></div>
 <div class="ttc" id="aclassVisualization_html_a9089d867d60c119c3ac548182671b024"><div class="ttname"><a href="classVisualization.html#a9089d867d60c119c3ac548182671b024">Visualization::get_dataset_names</a></div><div class="ttdeci">virtual std::vector&lt; std::string &gt; get_dataset_names() const override</div><div class="ttdoc">Implementation of the corresponding function of the base class.</div><div class="ttdef"><b>Definition</b> <a href="visualization_8cc_source.html#l00214">visualization.cc:214</a></div></div>
 <div class="ttc" id="aclassVisualization_html_aac0d7ad2dbf0b4d2bf3a986033f20aca"><div class="ttname"><a href="classVisualization.html#aac0d7ad2dbf0b4d2bf3a986033f20aca">Visualization::get_patches</a></div><div class="ttdeci">virtual const std::vector&lt; DataOutBase::Patch&lt; 0, dim &gt; &gt; &amp; get_patches() const override</div><div class="ttdoc">Implementation of the corresponding function of the base class.</div><div class="ttdef"><b>Definition</b> <a href="visualization_8cc_source.html#l00207">visualization.cc:207</a></div></div>
 <div class="ttc" id="aclassVisualization_html_afbe7be953d1cc3d22da0f466e810b0ee"><div class="ttname"><a href="classVisualization.html#afbe7be953d1cc3d22da0f466e810b0ee">Visualization::print_xyz</a></div><div class="ttdeci">void print_xyz(dealii::Particles::ParticleHandler&lt; dim &gt; &amp;particle_handler, const MPI_Comm &amp;mpi_communicator, const ConditionalOStream &amp;pcout)</div><div class="ttdoc">Print the data of particles in the xyz format.</div><div class="ttdef"><b>Definition</b> <a href="visualization_8cc_source.html#l00090">visualization.cc:90</a></div></div>

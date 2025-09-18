@@ -1,18 +1,7 @@
 <map id="/home/runner/work/lethe/lethe/include/dem/output_force_torque_calculation.h" name="/home/runner/work/lethe/lethe/include/dem/output_force_torque_calculation.h">
-<area shape="rect" id="Node000001" title=" " alt="" coords="236,5,437,60"/>
-<area shape="rect" id="Node000002" href="$dem_8h.html" title=" " alt="" coords="132,115,320,155"/>
-<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="299,72,249,117,245,113,296,68"/>
-<area shape="rect" id="Node000008" href="$output__force__torque__calculation_8cc.html" title=" " alt="" coords="344,108,551,163"/>
-<area shape="poly" id="edge8_Node000001_Node000008" title=" " alt="" coords="377,67,420,106,417,110,374,71"/>
-<area shape="rect" id="Node000003" href="$cfd__dem__coupling_8h.html" title=" " alt="" coords="5,313,188,368"/>
-<area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="177,165,149,186,126,212,113,237,105,264,99,313,94,313,100,263,108,235,121,209,145,182,174,160"/>
-<area shape="rect" id="Node000005" href="$fluid__dynamics__vans_8h.html" title=" " alt="" coords="135,211,317,265"/>
-<area shape="poly" id="edge4_Node000002_Node000005" title=" " alt="" coords="229,169,229,210,223,210,223,169"/>
-<area shape="rect" id="Node000007" href="$dem_8cc.html" title=" " alt="" coords="341,218,532,258"/>
-<area shape="poly" id="edge7_Node000002_Node000007" title=" " alt="" coords="279,159,398,216,396,220,277,164"/>
-<area shape="rect" id="Node000004" href="$cfd__dem__coupling_8cc.html" title=" " alt="" coords="5,416,188,471"/>
-<area shape="poly" id="edge3_Node000003_Node000004" title=" " alt="" coords="99,382,99,416,94,416,94,382"/>
-<area shape="poly" id="edge5_Node000005_Node000003" title=" " alt="" coords="183,276,132,315,129,311,180,271"/>
-<area shape="rect" id="Node000006" href="$fluid__dynamics__vans_8cc.html" title=" " alt="" coords="212,313,395,368"/>
-<area shape="poly" id="edge6_Node000005_Node000006" title=" " alt="" coords="257,275,285,312,281,315,253,278"/>
+<area shape="rect" id="Node000001" title=" " alt="" coords="111,5,312,60"/>
+<area shape="rect" id="Node000002" href="$dem_8cc.html" title=" " alt="" coords="5,115,196,155"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="174,72,123,117,120,113,170,68"/>
+<area shape="rect" id="Node000003" href="$output__force__torque__calculation_8cc.html" title=" " alt="" coords="220,108,427,163"/>
+<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="253,67,296,106,292,110,249,71"/>
 </map>

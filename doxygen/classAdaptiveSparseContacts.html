@@ -136,8 +136,8 @@ Public Member Functions</h2></td></tr>
 Private Member Functions</h2></td></tr>
 <tr class="memitem:a09117df0c762ec6b8199b68313d706b0" id="r_a09117df0c762ec6b8199b68313d706b0"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classAdaptiveSparseContacts.html#a09117df0c762ec6b8199b68313d706b0">calculate_granular_temperature_and_solid_fraction</a> (const Particles::ParticleHandler&lt; dim &gt; &amp;particle_handler, const std::set&lt; typename DoFHandler&lt; dim &gt;::active_cell_iterator &gt; &amp;local_and_ghost_cells_with_particles, Vector&lt; double &gt; &amp;cell_granular_temperature, Vector&lt; double &gt; &amp;cell_solid_fraction)</td></tr>
 <tr class="separator:a09117df0c762ec6b8199b68313d706b0"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a167ab54076fb2b1387d45bdd23886119" id="r_a167ab54076fb2b1387d45bdd23886119"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classAdaptiveSparseContacts.html#a167ab54076fb2b1387d45bdd23886119">assign_mobility_status</a> (unsigned int cell_id, std::vector&lt; types::global_dof_index &gt; &amp;dof_indices, const int cell_status, const int node_status)</td></tr>
-<tr class="separator:a167ab54076fb2b1387d45bdd23886119"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ac29f32c9e59076d579e4808a1244ae02" id="r_ac29f32c9e59076d579e4808a1244ae02"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classAdaptiveSparseContacts.html#ac29f32c9e59076d579e4808a1244ae02">assign_mobility_status</a> (unsigned int cell_id, const std::vector&lt; types::global_dof_index &gt; &amp;dof_indices, const int cell_status, const int node_status)</td></tr>
+<tr class="separator:ac29f32c9e59076d579e4808a1244ae02"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a15a61b49d28fb5e590a8a147e0464080" id="r_a15a61b49d28fb5e590a8a147e0464080"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classAdaptiveSparseContacts.html#a15a61b49d28fb5e590a8a147e0464080">assign_mobility_status</a> (unsigned int cell_id, const int cell_status)</td></tr>
 <tr class="separator:a15a61b49d28fb5e590a8a147e0464080"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
@@ -169,7 +169,7 @@ class AdaptiveSparseContacts&lt; dim, PropertiesIndex &gt;</div><p>Mechanism tha
 <p>It uses the granular temperature to determinate if particles in a cell are sufficiently mobile that the contact forces are worth computation. A cell having a granular temperature under a threshold (default is 1e-4) will have an inactive or advected status which makes them rejected in the broad search step. There is also an extra layer of mobile cells around the current mobile cells to propagate the motion of particles. Additionally, there is another layer of cells around those mobile cells that are flagged as static_active or advected_active cells.</p>
 <p>While the inactive status makes the particles static (no further handling), the advected status will lead to computation and application of a cell-averaged advected term. This term is computed from the last average velocity and acceleration of the particles when the cell had a mobile status, or at the first <a class="el" href="namespaceDEM.html" title="This namespace defines all the data containers and required operations on these containers for the DE...">DEM</a> time step of a CFD iteration in CFD-DEM (ensures an update of the hydrodynamic forces). Those forces are reapplied after each <a class="el" href="namespaceDEM.html" title="This namespace defines all the data containers and required operations on these containers for the DE...">DEM</a> time step.</p>
 <p>Particles in cells with an inactive status results in skipping the fine contact search, the p-p &amp; p-w forces computation and the velocity and position update. It reduces the computational cost of the simulation when particles are not moving.</p>
-<p>Particles in cells with an advected status results in skipping the fine contact search, the p-p &amp; p-w forces computations but they do have a velocity and position update through the advection term. This is critical for CFD-DEM.</p>
+<p>Particles in cells with an advected status results in skipping the fine contact search, the p-p &amp; p-w forces computations, but they do have a velocity and position update through the advection term. This is critical for CFD-DEM.</p>
 <p>In summary, cells are flagged using a mobility status:</p><ul>
 <li>mobile (all contacts are calculated, same as if the feature is not enabled)</li>
 <li>static_active (particles with low velocity variance next to mobile particles)</li>
@@ -180,7 +180,7 @@ class AdaptiveSparseContacts&lt; dim, PropertiesIndex &gt;</div><p>Mechanism tha
 <p>There are some edge cases that need some attention. In these cases, particles in cells cannot be deactivated:</p>
 <ol type="1">
 <li>Solid fraction The solid fraction of the cell is under a value (default = 40%): particles in the cell are not consolidated (packed) and may move freely.</li>
-<li>Empty cell neighbor Cell having empty cell neighbor: it means that particles are next to a floating wall/mesh and they may have a change of contact forces from it if the wall moves or disappears.</li>
+<li>Empty cell neighbor Cell having empty cell neighbor: it means that particles are next to a floating wall/mesh, and they may have a change of contact forces from it if the wall moves or disappears.</li>
 <li>Additional mobile cell layer The cell has at least one cell neighbor flagged as mobile from the 3 criteria mentioned above (granular temperature, solid fractions or floating walls): this is because motion is badly propagated to particles to the cell around without this additional "layer" of mobile cells.</li>
 <li>Active cell layer The cell has at least one cell neighbor flagged as mobile from the previous criterion (additional layer of mobile cells): again, this is to allow the motion propagation, but only the particles in contact with particles from the mobile cells are considered for the contact force calculation but their position is not computed at the integration step. Those cells are flagged as active cells. It works with the assignment and verification of the mobility status at nodes to check the status of the neighboring cells.</li>
 </ol>
@@ -192,7 +192,7 @@ class AdaptiveSparseContacts&lt; dim, PropertiesIndex &gt;</div><p>Mechanism tha
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="adaptive__sparse__contacts_8h_source.html#l00105">105</a> of file <a class="el" href="adaptive__sparse__contacts_8h_source.html">adaptive_sparse_contacts.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="adaptive__sparse__contacts_8h_source.html#l00103">103</a> of file <a class="el" href="adaptive__sparse__contacts_8h_source.html">adaptive_sparse_contacts.h</a>.</p>
 </div><h2 class="groupheader">Member Enumeration Documentation</h2>
 <a id="a9cf65bd3e1a790313fcf3f6b708ab230" name="a9cf65bd3e1a790313fcf3f6b708ab230"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a9cf65bd3e1a790313fcf3f6b708ab230">&#9670;&#160;</a></span>mobility_status</h2>
@@ -223,7 +223,7 @@ template&lt;int dim, typename PropertiesIndex &gt; </div>
 <tr><td class="fieldname"><a id="a9cf65bd3e1a790313fcf3f6b708ab230a3eda417d81f41b3d282e2995f2daa8c9" name="a9cf65bd3e1a790313fcf3f6b708ab230a3eda417d81f41b3d282e2995f2daa8c9"></a>empty&#160;</td><td class="fielddoc"></td></tr>
 </table>
 
-<p class="definition">Definition at line <a class="el" href="adaptive__sparse__contacts_8h_source.html#l00156">156</a> of file <a class="el" href="adaptive__sparse__contacts_8h_source.html">adaptive_sparse_contacts.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="adaptive__sparse__contacts_8h_source.html#l00154">154</a> of file <a class="el" href="adaptive__sparse__contacts_8h_source.html">adaptive_sparse_contacts.h</a>.</p>
 
 </div>
 </div>
@@ -245,7 +245,7 @@ template&lt;int dim, typename PropertiesIndex &gt; </div>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="adaptive__sparse__contacts_8cc_source.html#l00011">11</a> of file <a class="el" href="adaptive__sparse__contacts_8cc_source.html">adaptive_sparse_contacts.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="adaptive__sparse__contacts_8cc_source.html#l00013">13</a> of file <a class="el" href="adaptive__sparse__contacts_8cc_source.html">adaptive_sparse_contacts.cc</a>.</p>
 
 </div>
 </div>
@@ -295,12 +295,12 @@ template&lt;int dim, typename PropertiesIndex &gt; </div>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="adaptive__sparse__contacts_8h_source.html#l00426">426</a> of file <a class="el" href="adaptive__sparse__contacts_8h_source.html">adaptive_sparse_contacts.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="adaptive__sparse__contacts_8h_source.html#l00425">425</a> of file <a class="el" href="adaptive__sparse__contacts_8h_source.html">adaptive_sparse_contacts.h</a>.</p>
 
 </div>
 </div>
-<a id="a167ab54076fb2b1387d45bdd23886119" name="a167ab54076fb2b1387d45bdd23886119"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a167ab54076fb2b1387d45bdd23886119">&#9670;&#160;</a></span>assign_mobility_status() <span class="overload">[2/2]</span></h2>
+<a id="ac29f32c9e59076d579e4808a1244ae02" name="ac29f32c9e59076d579e4808a1244ae02"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ac29f32c9e59076d579e4808a1244ae02">&#9670;&#160;</a></span>assign_mobility_status() <span class="overload">[2/2]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -319,7 +319,7 @@ template&lt;int dim, typename PropertiesIndex &gt; </div>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">std::vector&lt; types::global_dof_index &gt; &amp;&#160;</td>
+          <td class="paramtype">const std::vector&lt; types::global_dof_index &gt; &amp;&#160;</td>
           <td class="paramname"><em>dof_indices</em>, </td>
         </tr>
         <tr>
@@ -358,7 +358,7 @@ template&lt;int dim, typename PropertiesIndex &gt; </div>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="adaptive__sparse__contacts_8h_source.html#l00391">391</a> of file <a class="el" href="adaptive__sparse__contacts_8h_source.html">adaptive_sparse_contacts.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="adaptive__sparse__contacts_8h_source.html#l00389">389</a> of file <a class="el" href="adaptive__sparse__contacts_8h_source.html">adaptive_sparse_contacts.h</a>.</p>
 
 </div>
 </div>
@@ -421,7 +421,7 @@ template&lt;int dim, typename PropertiesIndex &gt; </div>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="adaptive__sparse__contacts_8cc_source.html#l00034">34</a> of file <a class="el" href="adaptive__sparse__contacts_8cc_source.html">adaptive_sparse_contacts.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="adaptive__sparse__contacts_8cc_source.html#l00036">36</a> of file <a class="el" href="adaptive__sparse__contacts_8cc_source.html">adaptive_sparse_contacts.cc</a>.</p>
 
 </div>
 </div>
@@ -459,7 +459,7 @@ template&lt;int dim, typename PropertiesIndex &gt; </div>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="adaptive__sparse__contacts_8h_source.html#l00305">305</a> of file <a class="el" href="adaptive__sparse__contacts_8h_source.html">adaptive_sparse_contacts.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="adaptive__sparse__contacts_8h_source.html#l00303">303</a> of file <a class="el" href="adaptive__sparse__contacts_8h_source.html">adaptive_sparse_contacts.h</a>.</p>
 
 </div>
 </div>
@@ -490,7 +490,7 @@ template&lt;int dim, typename PropertiesIndex &gt; </div>
 
 <p>Give the map of the mobility status of the cells. </p>
 
-<p class="definition">Definition at line <a class="el" href="adaptive__sparse__contacts_8h_source.html#l00332">332</a> of file <a class="el" href="adaptive__sparse__contacts_8h_source.html">adaptive_sparse_contacts.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="adaptive__sparse__contacts_8h_source.html#l00330">330</a> of file <a class="el" href="adaptive__sparse__contacts_8h_source.html">adaptive_sparse_contacts.h</a>.</p>
 
 </div>
 </div>
@@ -528,7 +528,7 @@ template&lt;int dim, typename PropertiesIndex &gt; </div>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="adaptive__sparse__contacts_8h_source.html#l00320">320</a> of file <a class="el" href="adaptive__sparse__contacts_8h_source.html">adaptive_sparse_contacts.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="adaptive__sparse__contacts_8h_source.html#l00318">318</a> of file <a class="el" href="adaptive__sparse__contacts_8h_source.html">adaptive_sparse_contacts.h</a>.</p>
 
 </div>
 </div>
@@ -559,7 +559,7 @@ template&lt;int dim, typename PropertiesIndex &gt; </div>
 
 <p>Give the map of the cell-averaged velocities and accelerations * dt. </p>
 
-<p class="definition">Definition at line <a class="el" href="adaptive__sparse__contacts_8h_source.html#l00342">342</a> of file <a class="el" href="adaptive__sparse__contacts_8h_source.html">adaptive_sparse_contacts.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="adaptive__sparse__contacts_8h_source.html#l00340">340</a> of file <a class="el" href="adaptive__sparse__contacts_8h_source.html">adaptive_sparse_contacts.h</a>.</p>
 
 </div>
 </div>
@@ -590,7 +590,7 @@ template&lt;int dim, typename PropertiesIndex &gt; </div>
 
 <p>Give the advected particles flag. </p>
 
-<p class="definition">Definition at line <a class="el" href="adaptive__sparse__contacts_8h_source.html#l00351">351</a> of file <a class="el" href="adaptive__sparse__contacts_8h_source.html">adaptive_sparse_contacts.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="adaptive__sparse__contacts_8h_source.html#l00349">349</a> of file <a class="el" href="adaptive__sparse__contacts_8h_source.html">adaptive_sparse_contacts.h</a>.</p>
 
 </div>
 </div>
@@ -653,7 +653,7 @@ template&lt;int dim, typename PropertiesIndex &gt; </div>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="adaptive__sparse__contacts_8cc_source.html#l00127">127</a> of file <a class="el" href="adaptive__sparse__contacts_8cc_source.html">adaptive_sparse_contacts.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="adaptive__sparse__contacts_8cc_source.html#l00129">129</a> of file <a class="el" href="adaptive__sparse__contacts_8cc_source.html">adaptive_sparse_contacts.cc</a>.</p>
 
 <p class="reference">References <a class="el" href="dem__action__manager_8cc_source.html#l00009">DEMActionManager::get_action_manager()</a>.</p>
 
@@ -694,7 +694,7 @@ template&lt;int dim, typename PropertiesIndex &gt; </div>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="adaptive__sparse__contacts_8h_source.html#l00281">281</a> of file <a class="el" href="adaptive__sparse__contacts_8h_source.html">adaptive_sparse_contacts.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="adaptive__sparse__contacts_8h_source.html#l00279">279</a> of file <a class="el" href="adaptive__sparse__contacts_8h_source.html">adaptive_sparse_contacts.h</a>.</p>
 
 </div>
 </div>
@@ -750,7 +750,7 @@ template&lt;int dim, typename PropertiesIndex &gt; </div>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="adaptive__sparse__contacts_8h_source.html#l00179">179</a> of file <a class="el" href="adaptive__sparse__contacts_8h_source.html">adaptive_sparse_contacts.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="adaptive__sparse__contacts_8h_source.html#l00177">177</a> of file <a class="el" href="adaptive__sparse__contacts_8h_source.html">adaptive_sparse_contacts.h</a>.</p>
 
 <p class="reference">References <a class="el" href="dem__action__manager_8cc_source.html#l00009">DEMActionManager::get_action_manager()</a>, and <a class="el" href="dem__action__manager_8h_source.html#l00128">DEMActionManager::set_sparse_contacts_enabled()</a>.</p>
 
@@ -796,7 +796,7 @@ template&lt;int dim, typename PropertiesIndex &gt; </div>
       </table>
 </div><div class="memdoc">
 
-<p>Calculate or update the cell-averaged velocities and accelerations of the cells. This is used for the advection of particles during integration and the velocities and accelerations map is fully updated at least at each CFD time step since the first <a class="el" href="namespaceDEM.html" title="This namespace defines all the data containers and required operations on these containers for the DE...">DEM</a> iteration computes every contacts. This map is also partially updated when cell is mobile in the Verlet integration (not implemented for other scheme). Since this step loops over all the particles of mobile cells and new values of velocities are computed, this helps to have a more accurate value of the average velocities and accelerations when applied to the particles in next <a class="el" href="namespaceDEM.html" title="This namespace defines all the data containers and required operations on these containers for the DE...">DEM</a> time steps. </p>
+<p>Calculate or update the cell-averaged velocities and accelerations of the cells. This is used for the advection of particles during integration and the velocities and accelerations map is fully updated at least at each CFD time step since the first <a class="el" href="namespaceDEM.html" title="This namespace defines all the data containers and required operations on these containers for the DE...">DEM</a> iteration computes every contact. This map is also partially updated when cell is mobile in the Verlet integration (not implemented for other scheme). Since this step loops over all the particles of mobile cells and new values of velocities are computed, this helps to have a more accurate value of the average velocities and accelerations when applied to the particles in next <a class="el" href="namespaceDEM.html" title="This namespace defines all the data containers and required operations on these containers for the DE...">DEM</a> time steps. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramdir">[in]</td><td class="paramname">particle_handler</td><td>The particle handler that contains all the particles. </td></tr>
@@ -807,7 +807,7 @@ template&lt;int dim, typename PropertiesIndex &gt; </div>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="adaptive__sparse__contacts_8cc_source.html#l00360">360</a> of file <a class="el" href="adaptive__sparse__contacts_8cc_source.html">adaptive_sparse_contacts.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="adaptive__sparse__contacts_8cc_source.html#l00362">362</a> of file <a class="el" href="adaptive__sparse__contacts_8cc_source.html">adaptive_sparse_contacts.cc</a>.</p>
 
 </div>
 </div>
@@ -837,7 +837,7 @@ template&lt;int dim, typename PropertiesIndex &gt; </div>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="adaptive__sparse__contacts_8cc_source.html#l00018">18</a> of file <a class="el" href="adaptive__sparse__contacts_8cc_source.html">adaptive_sparse_contacts.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="adaptive__sparse__contacts_8cc_source.html#l00020">20</a> of file <a class="el" href="adaptive__sparse__contacts_8cc_source.html">adaptive_sparse_contacts.cc</a>.</p>
 
 </div>
 </div>
@@ -866,7 +866,7 @@ template&lt;int dim, typename PropertiesIndex &gt; </div>
 
 <p>Flag for the advection of particles. </p>
 
-<p class="definition">Definition at line <a class="el" href="adaptive__sparse__contacts_8h_source.html#l00473">473</a> of file <a class="el" href="adaptive__sparse__contacts_8h_source.html">adaptive_sparse_contacts.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="adaptive__sparse__contacts_8h_source.html#l00472">472</a> of file <a class="el" href="adaptive__sparse__contacts_8h_source.html">adaptive_sparse_contacts.h</a>.</p>
 
 </div>
 </div>
@@ -894,7 +894,7 @@ template&lt;int dim, typename PropertiesIndex &gt; </div>
 
 <p>Map of cell mobility status: &lt;cell index: mobility status&gt; </p>
 
-<p class="definition">Definition at line <a class="el" href="adaptive__sparse__contacts_8h_source.html#l00443">443</a> of file <a class="el" href="adaptive__sparse__contacts_8h_source.html">adaptive_sparse_contacts.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="adaptive__sparse__contacts_8h_source.html#l00442">442</a> of file <a class="el" href="adaptive__sparse__contacts_8h_source.html">adaptive_sparse_contacts.h</a>.</p>
 
 </div>
 </div>
@@ -922,7 +922,7 @@ template&lt;int dim, typename PropertiesIndex &gt; </div>
 
 <p>Map of cell velocities and accelerations * dt: &lt;cell iterator: &lt;velocity, acceleration * dt&gt;&gt; </p>
 
-<p class="definition">Definition at line <a class="el" href="adaptive__sparse__contacts_8h_source.html#l00463">463</a> of file <a class="el" href="adaptive__sparse__contacts_8h_source.html">adaptive_sparse_contacts.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="adaptive__sparse__contacts_8h_source.html#l00462">462</a> of file <a class="el" href="adaptive__sparse__contacts_8h_source.html">adaptive_sparse_contacts.h</a>.</p>
 
 </div>
 </div>
@@ -950,7 +950,7 @@ template&lt;int dim, typename PropertiesIndex &gt; </div>
 
 <p>Threshold value for granular temperature. </p>
 
-<p class="definition">Definition at line <a class="el" href="adaptive__sparse__contacts_8h_source.html#l00478">478</a> of file <a class="el" href="adaptive__sparse__contacts_8h_source.html">adaptive_sparse_contacts.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="adaptive__sparse__contacts_8h_source.html#l00477">477</a> of file <a class="el" href="adaptive__sparse__contacts_8h_source.html">adaptive_sparse_contacts.h</a>.</p>
 
 </div>
 </div>
@@ -978,7 +978,7 @@ template&lt;int dim, typename PropertiesIndex &gt; </div>
 
 <p>Set of locally owned and ghost cells: &lt;local/ghost cells&gt; Used to loop over only the locally owned and ghost cells without looping over all the cells in the triangulation numerous times. </p>
 
-<p class="definition">Definition at line <a class="el" href="adaptive__sparse__contacts_8h_source.html#l00437">437</a> of file <a class="el" href="adaptive__sparse__contacts_8h_source.html">adaptive_sparse_contacts.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="adaptive__sparse__contacts_8h_source.html#l00436">436</a> of file <a class="el" href="adaptive__sparse__contacts_8h_source.html">adaptive_sparse_contacts.h</a>.</p>
 
 </div>
 </div>
@@ -1006,7 +1006,7 @@ template&lt;int dim, typename PropertiesIndex &gt; </div>
 
 <p>Vector of mobility status at nodes: [mobility status] Used to check the value at node to determine the mobility status of the cell, this type of vector is used to allow update values in parallel. </p>
 
-<p class="definition">Definition at line <a class="el" href="adaptive__sparse__contacts_8h_source.html#l00450">450</a> of file <a class="el" href="adaptive__sparse__contacts_8h_source.html">adaptive_sparse_contacts.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="adaptive__sparse__contacts_8h_source.html#l00449">449</a> of file <a class="el" href="adaptive__sparse__contacts_8h_source.html">adaptive_sparse_contacts.h</a>.</p>
 
 </div>
 </div>
@@ -1034,7 +1034,7 @@ template&lt;int dim, typename PropertiesIndex &gt; </div>
 
 <p>Map of periodic nodes: &lt;periodic node index: coinciding node index&gt; </p>
 
-<p class="definition">Definition at line <a class="el" href="adaptive__sparse__contacts_8h_source.html#l00455">455</a> of file <a class="el" href="adaptive__sparse__contacts_8h_source.html">adaptive_sparse_contacts.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="adaptive__sparse__contacts_8h_source.html#l00454">454</a> of file <a class="el" href="adaptive__sparse__contacts_8h_source.html">adaptive_sparse_contacts.h</a>.</p>
 
 </div>
 </div>
@@ -1062,7 +1062,7 @@ template&lt;int dim, typename PropertiesIndex &gt; </div>
 
 <p>Threshold value for solid fraction. </p>
 
-<p class="definition">Definition at line <a class="el" href="adaptive__sparse__contacts_8h_source.html#l00483">483</a> of file <a class="el" href="adaptive__sparse__contacts_8h_source.html">adaptive_sparse_contacts.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="adaptive__sparse__contacts_8h_source.html#l00482">482</a> of file <a class="el" href="adaptive__sparse__contacts_8h_source.html">adaptive_sparse_contacts.h</a>.</p>
 
 </div>
 </div>
@@ -1090,7 +1090,7 @@ template&lt;int dim, typename PropertiesIndex &gt; </div>
 
 <p>Flag for adaptive sparse contacts enabling. Useful to exit functions. </p>
 
-<p class="definition">Definition at line <a class="el" href="adaptive__sparse__contacts_8h_source.html#l00468">468</a> of file <a class="el" href="adaptive__sparse__contacts_8h_source.html">adaptive_sparse_contacts.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="adaptive__sparse__contacts_8h_source.html#l00467">467</a> of file <a class="el" href="adaptive__sparse__contacts_8h_source.html">adaptive_sparse_contacts.h</a>.</p>
 
 </div>
 </div>

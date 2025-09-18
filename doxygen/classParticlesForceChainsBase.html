@@ -103,6 +103,8 @@ Inheritance diagram for ParticlesForceChainsBase&lt; dim, PropertiesIndex &gt;:<
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pub-methods" name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
+<tr class="memitem:a0d57b63ce139642e77066f817da74f35" id="r_a0d57b63ce139642e77066f817da74f35"><td class="memItemLeft" align="right" valign="top">virtual&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classParticlesForceChainsBase.html#a0d57b63ce139642e77066f817da74f35">~ParticlesForceChainsBase</a> ()=default</td></tr>
+<tr class="separator:a0d57b63ce139642e77066f817da74f35"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a54f6a9f73d75e7bdad4c3fbd68b1a942" id="r_a54f6a9f73d75e7bdad4c3fbd68b1a942"><td class="memItemLeft" align="right" valign="top">virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classParticlesForceChainsBase.html#a54f6a9f73d75e7bdad4c3fbd68b1a942">write_force_chains</a> (const <a class="el" href="classDEMSolverParameters.html">DEMSolverParameters</a>&lt; dim &gt; &amp;dem_parameters, <a class="el" href="classPVDHandler.html">PVDHandler</a> &amp;pvd_handler, const MPI_Comm mpi_communicator, const std::string folder, const unsigned int iter, const double time, typename <a class="el" href="structDEM_1_1dem__data__structures.html">dem_data_structures</a>&lt; dim &gt;::adjacent_particle_pairs &amp;local_adjacent_particles, typename <a class="el" href="structDEM_1_1dem__data__structures.html">dem_data_structures</a>&lt; dim &gt;::adjacent_particle_pairs &amp;ghost_adjacent_particles)=0</td></tr>
 <tr class="separator:a54f6a9f73d75e7bdad4c3fbd68b1a942"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
@@ -113,7 +115,7 @@ Protected Member Functions</h2></td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><div class="compoundTemplParams">template&lt;int dim, typename PropertiesIndex&gt;<br />
-class ParticlesForceChainsBase&lt; dim, PropertiesIndex &gt;</div><p>Base class for the particles force chains contact force models. This class does not implement any of the models, but ensures that an interface without template specialization is available. All of the actual implementation of the models are carried out in the <a class="el" href="classParticlesForceChains.html" title="Class that carries out the calculation of particle-particle contact force and the visualization of fo...">ParticlesForceChains</a> class which is templated by the contact model type. </p>
+class ParticlesForceChainsBase&lt; dim, PropertiesIndex &gt;</div><p>Base class for the particles force chains contact force models. This class does not implement any of the models, but ensures that an interface without template specialization is available. Every model implementation are carried out in the <a class="el" href="classParticlesForceChains.html" title="Class that carries out the calculation of particle-particle contact force and the visualization of fo...">ParticlesForceChains</a> class which is templated by the contact model type. </p>
 <dl class="tparams"><dt>Template Parameters</dt><dd>
   <table class="tparams">
     <tr><td class="paramname">dim</td><td>An integer that denotes the number of spatial dimensions. </td></tr>
@@ -122,8 +124,36 @@ class ParticlesForceChainsBase&lt; dim, PropertiesIndex &gt;</div><p>Base class 
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="force__chains__visualization_8h_source.html#l00038">38</a> of file <a class="el" href="force__chains__visualization_8h_source.html">force_chains_visualization.h</a>.</p>
-</div><h2 class="groupheader">Member Function Documentation</h2>
+<p class="definition">Definition at line <a class="el" href="force__chains__visualization_8h_source.html#l00032">32</a> of file <a class="el" href="force__chains__visualization_8h_source.html">force_chains_visualization.h</a>.</p>
+</div><h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
+<a id="a0d57b63ce139642e77066f817da74f35" name="a0d57b63ce139642e77066f817da74f35"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a0d57b63ce139642e77066f817da74f35">&#9670;&#160;</a></span>~ParticlesForceChainsBase()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;int dim, typename PropertiesIndex &gt; </div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">virtual <a class="el" href="classParticlesForceChainsBase.html">ParticlesForceChainsBase</a>&lt; dim, PropertiesIndex &gt;::~<a class="el" href="classParticlesForceChainsBase.html">ParticlesForceChainsBase</a> </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">virtual</span><span class="mlabel">default</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<h2 class="groupheader">Member Function Documentation</h2>
 <a id="a5c89d7f114fee961a61af43f88ef3c45" name="a5c89d7f114fee961a61af43f88ef3c45"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a5c89d7f114fee961a61af43f88ef3c45">&#9670;&#160;</a></span>calculate_force_chains()</h2>
 
@@ -268,6 +298,8 @@ template&lt;int dim, typename PropertiesIndex &gt; </div>
     <tr><td class="paramdir">[in]</td><td class="paramname">folder</td><td>a string that contains the path where the results are to be saved </td></tr>
     <tr><td class="paramdir">[in]</td><td class="paramname">iter</td><td>the iteration number associated with the file </td></tr>
     <tr><td class="paramdir">[in]</td><td class="paramname">time</td><td>the time associated with the file </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">local_adjacent_particles</td><td>Container of the contact pair candidates information for calculation of the local particle-particle contact forces. </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">ghost_adjacent_particles</td><td>Container of the contact pair candidates information for calculation of the local-ghost particle-particle </td></tr>
   </table>
   </dd>
 </dl>

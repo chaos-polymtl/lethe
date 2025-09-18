@@ -106,8 +106,8 @@ Inheritance diagram for Visualization&lt; dim, PropertiesIndex &gt;:</div>
 Public Member Functions</h2></td></tr>
 <tr class="memitem:a224b321112adf262d0a78a9c61b18e4b" id="r_a224b321112adf262d0a78a9c61b18e4b"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classVisualization.html#a224b321112adf262d0a78a9c61b18e4b">Visualization</a> ()</td></tr>
 <tr class="separator:a224b321112adf262d0a78a9c61b18e4b"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a29014b0590114f94ecd7786ae984de93" id="r_a29014b0590114f94ecd7786ae984de93"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classVisualization.html#a29014b0590114f94ecd7786ae984de93">build_patches</a> (Particles::ParticleHandler&lt; dim &gt; &amp;particle_handler, std::vector&lt; std::pair&lt; std::string, int &gt; &gt; properties)</td></tr>
-<tr class="separator:a29014b0590114f94ecd7786ae984de93"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a72b92b019f14c1bea6afd79a09f0661f" id="r_a72b92b019f14c1bea6afd79a09f0661f"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classVisualization.html#a72b92b019f14c1bea6afd79a09f0661f">build_patches</a> (Particles::ParticleHandler&lt; dim &gt; &amp;particle_handler, const std::vector&lt; std::pair&lt; std::string, int &gt; &gt; &amp;properties)</td></tr>
+<tr class="separator:a72b92b019f14c1bea6afd79a09f0661f"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:afbe7be953d1cc3d22da0f466e810b0ee" id="r_afbe7be953d1cc3d22da0f466e810b0ee"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classVisualization.html#afbe7be953d1cc3d22da0f466e810b0ee">print_xyz</a> (dealii::Particles::ParticleHandler&lt; dim &gt; &amp;particle_handler, const MPI_Comm &amp;mpi_communicator, const ConditionalOStream &amp;pcout)</td></tr>
 <tr class="separator:afbe7be953d1cc3d22da0f466e810b0ee"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a6c35eeed4d8e69907a854fc3d4156d02" id="r_a6c35eeed4d8e69907a854fc3d4156d02"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classVisualization.html#a6c35eeed4d8e69907a854fc3d4156d02">print_intermediate_format</a> (const Vector&lt; float &gt; &amp;data_to_print, const DoFHandler&lt; dim &gt; &amp;background_dh, const MPI_Comm &amp;mpi_communicator)</td></tr>
@@ -137,7 +137,7 @@ Private Attributes</h2></td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><div class="compoundTemplParams">template&lt;int dim, typename PropertiesIndex&gt;<br />
-class Visualization&lt; dim, PropertiesIndex &gt;</div><p>Building patches of particle properties for visualization. This function is taken from Aspect and dealii and implemented here. </p>
+class Visualization&lt; dim, PropertiesIndex &gt;</div><p>Building patches of particle properties for visualization. This function is taken from Aspect and deal.ii and implemented here. </p>
 <dl class="tparams"><dt>Template Parameters</dt><dd>
   <table class="tparams">
     <tr><td class="paramname">dim</td><td>An integer that denotes the number of spatial dimensions. </td></tr>
@@ -146,7 +146,7 @@ class Visualization&lt; dim, PropertiesIndex &gt;</div><p>Building patches of pa
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="visualization_8h_source.html#l00030">30</a> of file <a class="el" href="visualization_8h_source.html">visualization.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="visualization_8h_source.html#l00027">27</a> of file <a class="el" href="visualization_8h_source.html">visualization.h</a>.</p>
 </div><h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
 <a id="a224b321112adf262d0a78a9c61b18e4b" name="a224b321112adf262d0a78a9c61b18e4b"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a224b321112adf262d0a78a9c61b18e4b">&#9670;&#160;</a></span>Visualization()</h2>
@@ -203,8 +203,8 @@ template&lt;int dim, typename PropertiesIndex &gt; </div>
 </div>
 </div>
 <h2 class="groupheader">Member Function Documentation</h2>
-<a id="a29014b0590114f94ecd7786ae984de93" name="a29014b0590114f94ecd7786ae984de93"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a29014b0590114f94ecd7786ae984de93">&#9670;&#160;</a></span>build_patches()</h2>
+<a id="a72b92b019f14c1bea6afd79a09f0661f" name="a72b92b019f14c1bea6afd79a09f0661f"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a72b92b019f14c1bea6afd79a09f0661f">&#9670;&#160;</a></span>build_patches()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -220,7 +220,7 @@ template&lt;int dim, typename PropertiesIndex &gt; </div>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">std::vector&lt; std::pair&lt; std::string, int &gt; &gt;&#160;</td>
+          <td class="paramtype">const std::vector&lt; std::pair&lt; std::string, int &gt; &gt; &amp;&#160;</td>
           <td class="paramname"><em>properties</em>&#160;</td>
         </tr>
         <tr>
@@ -455,7 +455,7 @@ template&lt;int dim, typename PropertiesIndex &gt; </div>
 
 <p>A list of field names for all data components stored in patches. </p>
 
-<p class="definition">Definition at line <a class="el" href="visualization_8h_source.html#l00104">104</a> of file <a class="el" href="visualization_8h_source.html">visualization.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="visualization_8h_source.html#l00101">101</a> of file <a class="el" href="visualization_8h_source.html">visualization.h</a>.</p>
 
 </div>
 </div>
@@ -481,9 +481,9 @@ template&lt;int dim, typename PropertiesIndex &gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p>Output information that is filled by <a class="el" href="classVisualization.html#a29014b0590114f94ecd7786ae984de93" title="Build the patches of properties of particles for visualization.">build_patches()</a> and written by the write function of the base class. </p>
+<p>Output information that is filled by <a class="el" href="classVisualization.html#a72b92b019f14c1bea6afd79a09f0661f" title="Build the patches of properties of particles for visualization.">build_patches()</a> and written by the write function of the base class. </p>
 
-<p class="definition">Definition at line <a class="el" href="visualization_8h_source.html#l00099">99</a> of file <a class="el" href="visualization_8h_source.html">visualization.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="visualization_8h_source.html#l00096">96</a> of file <a class="el" href="visualization_8h_source.html">visualization.h</a>.</p>
 
 </div>
 </div>
@@ -511,7 +511,7 @@ template&lt;int dim, typename PropertiesIndex &gt; </div>
 
 <p>Particle properties that are written in output files. </p>
 
-<p class="definition">Definition at line <a class="el" href="visualization_8h_source.html#l00119">119</a> of file <a class="el" href="visualization_8h_source.html">visualization.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="visualization_8h_source.html#l00116">116</a> of file <a class="el" href="visualization_8h_source.html">visualization.h</a>.</p>
 
 </div>
 </div>
@@ -539,7 +539,7 @@ template&lt;int dim, typename PropertiesIndex &gt; </div>
 
 <p>Store which of the data fields are vectors. </p>
 
-<p class="definition">Definition at line <a class="el" href="visualization_8h_source.html#l00114">114</a> of file <a class="el" href="visualization_8h_source.html">visualization.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="visualization_8h_source.html#l00111">111</a> of file <a class="el" href="visualization_8h_source.html">visualization.h</a>.</p>
 
 </div>
 </div>

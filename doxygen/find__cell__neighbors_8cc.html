@@ -91,46 +91,43 @@ $(function() {
 </div><!--header-->
 <div class="contents">
 <div class="textblock"><code>#include &lt;<a class="el" href="find__cell__neighbors_8h_source.html">dem/find_cell_neighbors.h</a>&gt;</code><br />
+<code>#include &lt;deal.II/grid/grid_tools.h&gt;</code><br />
 </div><div class="textblock"><div class="dynheader">
 Include dependency graph for find_cell_neighbors.cc:</div>
 <div class="dyncontent">
 <div class="center"><img src="find__cell__neighbors_8cc__incl.png" border="0" usemap="#a_2home_2runner_2work_2lethe_2lethe_2source_2dem_2find__cell__neighbors_8cc" alt=""/></div>
 <map name="a_2home_2runner_2work_2lethe_2lethe_2source_2dem_2find__cell__neighbors_8cc" id="a_2home_2runner_2work_2lethe_2lethe_2source_2dem_2find__cell__neighbors_8cc">
-<area shape="rect" title=" " alt="" coords="415,5,598,60"/>
-<area shape="rect" href="find__cell__neighbors_8h.html" title=" " alt="" coords="411,108,603,133"/>
-<area shape="poly" title=" " alt="" coords="509,60,509,94,504,94,504,60"/>
-<area shape="rect" href="data__containers_8h.html" title=" " alt="" coords="421,181,592,207"/>
-<area shape="poly" title=" " alt="" coords="509,134,509,168,504,168,504,134"/>
-<area shape="rect" title=" " alt="" coords="5,343,141,383"/>
-<area shape="poly" title=" " alt="" coords="411,129,334,141,249,163,207,180,167,201,130,226,98,256,87,273,80,291,75,330,69,329,75,290,82,270,94,253,127,222,164,196,205,175,247,158,333,135,410,124"/>
-<area shape="rect" title=" " alt="" coords="616,181,787,207"/>
-<area shape="poly" title=" " alt="" coords="539,131,658,174,656,179,537,136"/>
-<area shape="rect" href="boundary__cells__info__struct_8h.html" title=" " alt="" coords="894,255,1047,295"/>
-<area shape="poly" title=" " alt="" coords="587,204,881,252,880,257,586,209"/>
-<area shape="rect" title=" " alt="" coords="819,350,973,375"/>
-<area shape="poly" title=" " alt="" coords="421,200,344,205,263,215,194,232,168,243,151,256,143,275,145,284,151,293,163,301,183,308,244,322,327,333,423,341,629,352,806,357,805,363,629,357,423,346,326,338,243,327,182,314,161,306,147,297,140,286,138,275,147,253,166,239,192,227,262,210,343,200,421,195"/>
-<area shape="poly" title=" " alt="" coords="421,203,260,221,187,237,158,246,138,257,120,272,106,291,86,331,81,329,101,288,116,269,134,252,156,241,186,232,259,216,421,198"/>
-<area shape="rect" href="contact__info_8h.html" title=" " alt="" coords="1072,262,1219,287"/>
-<area shape="poly" title=" " alt="" coords="592,203,604,204,833,224,933,234,1060,252,1085,256,1084,262,1060,257,932,239,832,230,604,209,592,208"/>
-<area shape="rect" title=" " alt="" coords="1169,343,1343,383"/>
-<area shape="poly" title=" " alt="" coords="592,203,604,204,924,214,1120,226,1192,237,1217,244,1232,253,1246,269,1254,289,1260,329,1255,329,1249,290,1241,272,1229,257,1215,249,1191,242,1120,232,923,219,604,209,592,208"/>
-<area shape="rect" title=" " alt="" coords="162,255,315,295"/>
-<area shape="poly" title=" " alt="" coords="468,209,317,253,315,248,467,204"/>
-<area shape="rect" title=" " alt="" coords="340,262,420,287"/>
-<area shape="poly" title=" " alt="" coords="489,209,412,257,409,252,487,205"/>
-<area shape="rect" title=" " alt="" coords="445,262,569,287"/>
-<area shape="poly" title=" " alt="" coords="509,207,509,248,504,248,504,207"/>
-<area shape="rect" title=" " alt="" coords="593,262,655,287"/>
-<area shape="poly" title=" " alt="" coords="525,205,597,252,594,256,523,209"/>
-<area shape="rect" href="unordered__dense_8h.html" title=" " alt="" coords="679,262,870,287"/>
-<area shape="poly" title=" " alt="" coords="546,204,723,256,722,261,545,209"/>
-<area shape="rect" title=" " alt="" coords="997,350,1144,375"/>
-<area shape="poly" title=" " alt="" coords="995,293,1048,339,1045,343,991,297"/>
-<area shape="poly" title=" " alt="" coords="956,297,917,341,913,338,952,293"/>
-<area shape="poly" title=" " alt="" coords="894,295,883,297,678,323,475,341,155,361,155,355,474,336,678,317,882,292,894,290"/>
-<area shape="poly" title=" " alt="" coords="1137,289,1092,341,1088,337,1133,286"/>
-<area shape="poly" title=" " alt="" coords="1113,290,943,348,942,343,1111,285"/>
-<area shape="poly" title=" " alt="" coords="1162,285,1222,332,1219,336,1159,290"/>
+<area shape="rect" title=" " alt="" coords="793,5,976,60"/>
+<area shape="rect" href="find__cell__neighbors_8h.html" title=" " alt="" coords="686,108,878,133"/>
+<area shape="poly" title=" " alt="" coords="855,62,808,101,805,97,852,58"/>
+<area shape="rect" title=" " alt="" coords="902,108,1073,133"/>
+<area shape="poly" title=" " alt="" coords="918,58,965,97,961,101,914,62"/>
+<area shape="rect" href="data__containers_8h.html" title=" " alt="" coords="490,181,661,207"/>
+<area shape="poly" title=" " alt="" coords="750,136,623,179,621,174,748,131"/>
+<area shape="rect" title=" " alt="" coords="895,343,1031,383"/>
+<area shape="poly" title=" " alt="" coords="806,131,839,150,878,177,917,212,948,253,962,291,967,329,961,330,957,293,944,256,913,216,875,181,836,155,804,136"/>
+<area shape="rect" href="boundary__cells__info__struct_8h.html" title=" " alt="" coords="747,255,900,295"/>
+<area shape="poly" title=" " alt="" coords="612,204,751,248,750,253,611,209"/>
+<area shape="rect" title=" " alt="" coords="547,350,700,375"/>
+<area shape="poly" title=" " alt="" coords="618,204,655,223,672,236,686,254,691,278,684,302,669,324,651,343,647,339,664,321,679,300,686,277,681,256,668,240,652,227,616,209"/>
+<area shape="poly" title=" " alt="" coords="661,199,805,217,870,232,895,242,914,253,931,269,943,289,959,328,954,330,939,291,927,272,911,257,893,247,868,238,804,223,661,204"/>
+<area shape="rect" href="contact__info_8h.html" title=" " alt="" coords="74,262,221,287"/>
+<area shape="poly" title=" " alt="" coords="505,209,233,257,211,262,210,256,232,252,504,204"/>
+<area shape="rect" title=" " alt="" coords="5,343,180,383"/>
+<area shape="poly" title=" " alt="" coords="490,202,368,209,235,220,122,236,84,246,64,257,56,273,56,292,63,311,73,330,68,332,58,313,51,292,51,272,60,253,82,241,121,231,234,215,368,204,489,196"/>
+<area shape="rect" title=" " alt="" coords="245,262,369,287"/>
+<area shape="poly" title=" " alt="" coords="537,209,360,261,359,256,536,204"/>
+<area shape="rect" title=" " alt="" coords="393,262,456,287"/>
+<area shape="poly" title=" " alt="" coords="554,209,460,258,458,253,552,204"/>
+<area shape="rect" href="unordered__dense_8h.html" title=" " alt="" coords="480,262,671,287"/>
+<area shape="poly" title=" " alt="" coords="578,207,578,248,573,248,573,207"/>
+<area shape="rect" title=" " alt="" coords="725,350,871,375"/>
+<area shape="poly" title=" " alt="" coords="820,296,808,337,803,336,815,294"/>
+<area shape="poly" title=" " alt="" coords="780,297,664,347,661,342,778,292"/>
+<area shape="poly" title=" " alt="" coords="855,292,923,333,920,338,853,297"/>
+<area shape="poly" title=" " alt="" coords="195,285,233,292,367,309,473,316,578,323,713,340,738,345,737,350,712,345,578,328,472,321,367,314,232,297,194,290"/>
+<area shape="poly" title=" " alt="" coords="198,285,233,292,538,345,537,350,232,297,197,290"/>
+<area shape="poly" title=" " alt="" coords="142,289,114,332,110,329,138,286"/>
 </map>
 </div>
 </div>
@@ -150,22 +147,22 @@ Functions</h2></td></tr>
 <tr class="memitem:a731e2a83e6f794eaa925b425da893adc" id="r_a731e2a83e6f794eaa925b425da893adc"><td class="memTemplParams" colspan="2">template&lt;int dim&gt; </td></tr>
 <tr class="memitem:a731e2a83e6f794eaa925b425da893adc"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="find__cell__neighbors_8cc.html#a731e2a83e6f794eaa925b425da893adc">get_periodic_neighbor_list</a> (const typename Triangulation&lt; dim &gt;::active_cell_iterator &amp;cell, const std::map&lt; unsigned int, std::vector&lt; unsigned int &gt; &gt; &amp;coinciding_vertex_groups, const std::map&lt; unsigned int, unsigned int &gt; &amp;vertex_to_coinciding_vertex_group, const std::vector&lt; std::set&lt; typename Triangulation&lt; dim &gt;::active_cell_iterator &gt; &gt; &amp;v_to_c, typename <a class="el" href="structDEM_1_1dem__data__structures.html">dem_data_structures</a>&lt; dim &gt;::cell_vector &amp;periodic_neighbor_list)</td></tr>
 <tr class="separator:a731e2a83e6f794eaa925b425da893adc"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a43f4a47345c19f90c9802c1cd9d140f1" id="r_a43f4a47345c19f90c9802c1cd9d140f1"><td class="memItemLeft" align="right" valign="top">template void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="find__cell__neighbors_8cc.html#a43f4a47345c19f90c9802c1cd9d140f1">find_cell_neighbors&lt; 2, false &gt;</a> (const parallel::distributed::Triangulation&lt; 2 &gt; &amp;triangulation, typename <a class="el" href="structDEM_1_1dem__data__structures.html">dem_data_structures</a>&lt; 2 &gt;::cells_neighbor_list &amp;cells_local_neighbor_list, typename <a class="el" href="structDEM_1_1dem__data__structures.html">dem_data_structures</a>&lt; 2 &gt;::cells_neighbor_list &amp;cells_ghost_neighbor_list)</td></tr>
-<tr class="separator:a43f4a47345c19f90c9802c1cd9d140f1"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:acf41aa57a5706a50433e472e106dbbcb" id="r_acf41aa57a5706a50433e472e106dbbcb"><td class="memItemLeft" align="right" valign="top">template void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="find__cell__neighbors_8cc.html#acf41aa57a5706a50433e472e106dbbcb">find_cell_neighbors&lt; 3, false &gt;</a> (const parallel::distributed::Triangulation&lt; 3 &gt; &amp;triangulation, typename <a class="el" href="structDEM_1_1dem__data__structures.html">dem_data_structures</a>&lt; 3 &gt;::cells_neighbor_list &amp;cells_local_neighbor_list, typename <a class="el" href="structDEM_1_1dem__data__structures.html">dem_data_structures</a>&lt; 3 &gt;::cells_neighbor_list &amp;cells_ghost_neighbor_list)</td></tr>
-<tr class="separator:acf41aa57a5706a50433e472e106dbbcb"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a98b10b316ff7958608d80781579e7a8d" id="r_a98b10b316ff7958608d80781579e7a8d"><td class="memItemLeft" align="right" valign="top">template void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="find__cell__neighbors_8cc.html#a98b10b316ff7958608d80781579e7a8d">find_cell_neighbors&lt; 2, true &gt;</a> (const parallel::distributed::Triangulation&lt; 2 &gt; &amp;triangulation, typename <a class="el" href="structDEM_1_1dem__data__structures.html">dem_data_structures</a>&lt; 2 &gt;::cells_neighbor_list &amp;cells_local_neighbor_list, typename <a class="el" href="structDEM_1_1dem__data__structures.html">dem_data_structures</a>&lt; 2 &gt;::cells_neighbor_list &amp;cells_ghost_neighbor_list)</td></tr>
-<tr class="separator:a98b10b316ff7958608d80781579e7a8d"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ad65d130bea14460f558e2daec61bc9c4" id="r_ad65d130bea14460f558e2daec61bc9c4"><td class="memItemLeft" align="right" valign="top">template void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="find__cell__neighbors_8cc.html#ad65d130bea14460f558e2daec61bc9c4">find_cell_neighbors&lt; 3, true &gt;</a> (const parallel::distributed::Triangulation&lt; 3 &gt; &amp;triangulation, typename <a class="el" href="structDEM_1_1dem__data__structures.html">dem_data_structures</a>&lt; 3 &gt;::cells_neighbor_list &amp;cells_local_neighbor_list, typename <a class="el" href="structDEM_1_1dem__data__structures.html">dem_data_structures</a>&lt; 3 &gt;::cells_neighbor_list &amp;cells_ghost_neighbor_list)</td></tr>
-<tr class="separator:ad65d130bea14460f558e2daec61bc9c4"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a8fc6b14d5af3455456227a61c6622251" id="r_a8fc6b14d5af3455456227a61c6622251"><td class="memItemLeft" align="right" valign="top">template void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="find__cell__neighbors_8cc.html#a8fc6b14d5af3455456227a61c6622251">find_cell_periodic_neighbors&lt; 2 &gt;</a> (const parallel::distributed::Triangulation&lt; 2 &gt; &amp;triangulation, const typename <a class="el" href="structDEM_1_1dem__data__structures.html">dem_data_structures</a>&lt; 2 &gt;::periodic_boundaries_cells_info &amp;periodic_boundaries_cells_information, typename <a class="el" href="structDEM_1_1dem__data__structures.html">dem_data_structures</a>&lt; 2 &gt;::cells_neighbor_list &amp;cells_local_periodic_neighbor_list, typename <a class="el" href="structDEM_1_1dem__data__structures.html">dem_data_structures</a>&lt; 2 &gt;::cells_neighbor_list &amp;cells_ghost_periodic_neighbor_list, typename <a class="el" href="structDEM_1_1dem__data__structures.html">dem_data_structures</a>&lt; 2 &gt;::cells_neighbor_list &amp;cells_ghost_local_periodic_neighbor_list)</td></tr>
-<tr class="separator:a8fc6b14d5af3455456227a61c6622251"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ac4de2f832ee59fb07ed8be95240048c5" id="r_ac4de2f832ee59fb07ed8be95240048c5"><td class="memItemLeft" align="right" valign="top">template void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="find__cell__neighbors_8cc.html#ac4de2f832ee59fb07ed8be95240048c5">find_cell_periodic_neighbors&lt; 3 &gt;</a> (const parallel::distributed::Triangulation&lt; 3 &gt; &amp;triangulation, const typename <a class="el" href="structDEM_1_1dem__data__structures.html">dem_data_structures</a>&lt; 3 &gt;::periodic_boundaries_cells_info &amp;periodic_boundaries_cells_information, typename <a class="el" href="structDEM_1_1dem__data__structures.html">dem_data_structures</a>&lt; 3 &gt;::cells_neighbor_list &amp;cells_local_periodic_neighbor_list, typename <a class="el" href="structDEM_1_1dem__data__structures.html">dem_data_structures</a>&lt; 3 &gt;::cells_neighbor_list &amp;cells_ghost_periodic_neighbor_list, typename <a class="el" href="structDEM_1_1dem__data__structures.html">dem_data_structures</a>&lt; 3 &gt;::cells_neighbor_list &amp;cells_ghost_local_periodic_neighbor_list)</td></tr>
-<tr class="separator:ac4de2f832ee59fb07ed8be95240048c5"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a0b34684fb951d5b68bff560e441a8157" id="r_a0b34684fb951d5b68bff560e441a8157"><td class="memItemLeft" align="right" valign="top">template void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="find__cell__neighbors_8cc.html#a0b34684fb951d5b68bff560e441a8157">find_full_cell_neighbors&lt; 2 &gt;</a> (const parallel::distributed::Triangulation&lt; 2 &gt; &amp;triangulation, typename <a class="el" href="structDEM_1_1dem__data__structures.html">dem_data_structures</a>&lt; 2 &gt;::cells_total_neighbor_list &amp;cells_total_neighbor_list)</td></tr>
-<tr class="separator:a0b34684fb951d5b68bff560e441a8157"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aac7c65d265ca25e13e866c55502762dc" id="r_aac7c65d265ca25e13e866c55502762dc"><td class="memItemLeft" align="right" valign="top">template void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="find__cell__neighbors_8cc.html#aac7c65d265ca25e13e866c55502762dc">find_full_cell_neighbors&lt; 3 &gt;</a> (const parallel::distributed::Triangulation&lt; 3 &gt; &amp;triangulation, typename <a class="el" href="structDEM_1_1dem__data__structures.html">dem_data_structures</a>&lt; 3 &gt;::cells_total_neighbor_list &amp;cells_total_neighbor_list)</td></tr>
-<tr class="separator:aac7c65d265ca25e13e866c55502762dc"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a31c0bcd13df50f2196e54463b602ad3a" id="r_a31c0bcd13df50f2196e54463b602ad3a"><td class="memItemLeft" align="right" valign="top">template void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="find__cell__neighbors_8cc.html#a31c0bcd13df50f2196e54463b602ad3a">find_cell_neighbors&lt; 2, false &gt;</a> (const parallel::distributed::Triangulation&lt; 2 &gt; &amp;triangulation, <a class="el" href="structDEM_1_1dem__data__structures.html">dem_data_structures</a>&lt; 2 &gt;::cells_neighbor_list &amp;cells_local_neighbor_list, <a class="el" href="structDEM_1_1dem__data__structures.html">dem_data_structures</a>&lt; 2 &gt;::cells_neighbor_list &amp;cells_ghost_neighbor_list)</td></tr>
+<tr class="separator:a31c0bcd13df50f2196e54463b602ad3a"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a936c77399fb1aa8cb2f15380688de85d" id="r_a936c77399fb1aa8cb2f15380688de85d"><td class="memItemLeft" align="right" valign="top">template void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="find__cell__neighbors_8cc.html#a936c77399fb1aa8cb2f15380688de85d">find_cell_neighbors&lt; 3, false &gt;</a> (const parallel::distributed::Triangulation&lt; 3 &gt; &amp;triangulation, <a class="el" href="structDEM_1_1dem__data__structures.html">dem_data_structures</a>&lt; 3 &gt;::cells_neighbor_list &amp;cells_local_neighbor_list, <a class="el" href="structDEM_1_1dem__data__structures.html">dem_data_structures</a>&lt; 3 &gt;::cells_neighbor_list &amp;cells_ghost_neighbor_list)</td></tr>
+<tr class="separator:a936c77399fb1aa8cb2f15380688de85d"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a1052185b24935e8ab8d67d05356d3ac3" id="r_a1052185b24935e8ab8d67d05356d3ac3"><td class="memItemLeft" align="right" valign="top">template void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="find__cell__neighbors_8cc.html#a1052185b24935e8ab8d67d05356d3ac3">find_cell_neighbors&lt; 2, true &gt;</a> (const parallel::distributed::Triangulation&lt; 2 &gt; &amp;triangulation, <a class="el" href="structDEM_1_1dem__data__structures.html">dem_data_structures</a>&lt; 2 &gt;::cells_neighbor_list &amp;cells_local_neighbor_list, <a class="el" href="structDEM_1_1dem__data__structures.html">dem_data_structures</a>&lt; 2 &gt;::cells_neighbor_list &amp;cells_ghost_neighbor_list)</td></tr>
+<tr class="separator:a1052185b24935e8ab8d67d05356d3ac3"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a3da47af093a2c7cc7921c738132b8d5e" id="r_a3da47af093a2c7cc7921c738132b8d5e"><td class="memItemLeft" align="right" valign="top">template void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="find__cell__neighbors_8cc.html#a3da47af093a2c7cc7921c738132b8d5e">find_cell_neighbors&lt; 3, true &gt;</a> (const parallel::distributed::Triangulation&lt; 3 &gt; &amp;triangulation, <a class="el" href="structDEM_1_1dem__data__structures.html">dem_data_structures</a>&lt; 3 &gt;::cells_neighbor_list &amp;cells_local_neighbor_list, <a class="el" href="structDEM_1_1dem__data__structures.html">dem_data_structures</a>&lt; 3 &gt;::cells_neighbor_list &amp;cells_ghost_neighbor_list)</td></tr>
+<tr class="separator:a3da47af093a2c7cc7921c738132b8d5e"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ad9073fd523f3e7847bb28089905603eb" id="r_ad9073fd523f3e7847bb28089905603eb"><td class="memItemLeft" align="right" valign="top">template void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="find__cell__neighbors_8cc.html#ad9073fd523f3e7847bb28089905603eb">find_cell_periodic_neighbors&lt; 2 &gt;</a> (const parallel::distributed::Triangulation&lt; 2 &gt; &amp;triangulation, const <a class="el" href="structDEM_1_1dem__data__structures.html">dem_data_structures</a>&lt; 2 &gt;::periodic_boundaries_cells_info &amp;periodic_boundaries_cells_information, <a class="el" href="structDEM_1_1dem__data__structures.html">dem_data_structures</a>&lt; 2 &gt;::cells_neighbor_list &amp;cells_local_periodic_neighbor_list, <a class="el" href="structDEM_1_1dem__data__structures.html">dem_data_structures</a>&lt; 2 &gt;::cells_neighbor_list &amp;cells_ghost_periodic_neighbor_list, <a class="el" href="structDEM_1_1dem__data__structures.html">dem_data_structures</a>&lt; 2 &gt;::cells_neighbor_list &amp;cells_ghost_local_periodic_neighbor_list)</td></tr>
+<tr class="separator:ad9073fd523f3e7847bb28089905603eb"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a39af674ff3e0711e5c318419c33ffb78" id="r_a39af674ff3e0711e5c318419c33ffb78"><td class="memItemLeft" align="right" valign="top">template void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="find__cell__neighbors_8cc.html#a39af674ff3e0711e5c318419c33ffb78">find_cell_periodic_neighbors&lt; 3 &gt;</a> (const parallel::distributed::Triangulation&lt; 3 &gt; &amp;triangulation, const <a class="el" href="structDEM_1_1dem__data__structures.html">dem_data_structures</a>&lt; 3 &gt;::periodic_boundaries_cells_info &amp;periodic_boundaries_cells_information, <a class="el" href="structDEM_1_1dem__data__structures.html">dem_data_structures</a>&lt; 3 &gt;::cells_neighbor_list &amp;cells_local_periodic_neighbor_list, <a class="el" href="structDEM_1_1dem__data__structures.html">dem_data_structures</a>&lt; 3 &gt;::cells_neighbor_list &amp;cells_ghost_periodic_neighbor_list, <a class="el" href="structDEM_1_1dem__data__structures.html">dem_data_structures</a>&lt; 3 &gt;::cells_neighbor_list &amp;cells_ghost_local_periodic_neighbor_list)</td></tr>
+<tr class="separator:a39af674ff3e0711e5c318419c33ffb78"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a967bdab7e27ba64b4a09f66953718b2f" id="r_a967bdab7e27ba64b4a09f66953718b2f"><td class="memItemLeft" align="right" valign="top">template void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="find__cell__neighbors_8cc.html#a967bdab7e27ba64b4a09f66953718b2f">find_full_cell_neighbors&lt; 2 &gt;</a> (const parallel::distributed::Triangulation&lt; 2 &gt; &amp;triangulation, <a class="el" href="structDEM_1_1dem__data__structures.html">dem_data_structures</a>&lt; 2 &gt;::cells_total_neighbor_list &amp;cells_total_neighbor_list)</td></tr>
+<tr class="separator:a967bdab7e27ba64b4a09f66953718b2f"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:acf80ed69d66ed13e62a165df3e23a33b" id="r_acf80ed69d66ed13e62a165df3e23a33b"><td class="memItemLeft" align="right" valign="top">template void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="find__cell__neighbors_8cc.html#acf80ed69d66ed13e62a165df3e23a33b">find_full_cell_neighbors&lt; 3 &gt;</a> (const parallel::distributed::Triangulation&lt; 3 &gt; &amp;triangulation, <a class="el" href="structDEM_1_1dem__data__structures.html">dem_data_structures</a>&lt; 3 &gt;::cells_total_neighbor_list &amp;cells_total_neighbor_list)</td></tr>
+<tr class="separator:acf80ed69d66ed13e62a165df3e23a33b"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <h2 class="groupheader">Function Documentation</h2>
 <a id="ae6840210ea5c1fc75cb9e291c1b2f5e4" name="ae6840210ea5c1fc75cb9e291c1b2f5e4"></a>
@@ -202,11 +199,11 @@ template&lt;int dim, bool reciprocal&gt; </div>
       </table>
 </div><div class="memdoc">
 
-<p>Finds the neighbor list (without repetition) of all the active cells in the triangulation. It gets the vertices of the cells to get lists of the neighbor for each cells. There is some check to prevent repetition of a cell in a list (up to 8 vertices can have the same cell in common in 3D). 2 types of container are used for cell neighbors : local-local cells and local-ghost cells. </p>
+<p>Finds the neighbor list (without repetition) of all the active cells in the triangulation. It gets the vertices of the cells to get lists of the neighbor for each cell. There is some check to prevent repetition of a cell in a list (up to 8 vertices can have the same cell in common in 3D). 2 types of container are used for cell neighbors : local-local cells and local-ghost cells. </p>
 <dl class="tparams"><dt>Template Parameters</dt><dd>
   <table class="tparams">
     <tr><td class="paramname">dim</td><td>An integer that denotes the dimension of the space in which the problem is solved. </td></tr>
-    <tr><td class="paramname">reciprocal</td><td>An boolean that denotes if the cells_local_neighbor_list of cell i and j contains cell j and i, respectively.</td></tr>
+    <tr><td class="paramname">reciprocal</td><td>A boolean that denotes if the cells_local_neighbor_list of cell i and j contains cell j and i, respectively.</td></tr>
   </table>
   </dd>
 </dl>
@@ -219,12 +216,12 @@ template&lt;int dim, bool reciprocal&gt; </div>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="find__cell__neighbors_8cc_source.html#l00010">10</a> of file <a class="el" href="find__cell__neighbors_8cc_source.html">find_cell_neighbors.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="find__cell__neighbors_8cc_source.html#l00012">12</a> of file <a class="el" href="find__cell__neighbors_8cc_source.html">find_cell_neighbors.cc</a>.</p>
 
 </div>
 </div>
-<a id="a43f4a47345c19f90c9802c1cd9d140f1" name="a43f4a47345c19f90c9802c1cd9d140f1"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a43f4a47345c19f90c9802c1cd9d140f1">&#9670;&#160;</a></span>find_cell_neighbors&lt; 2, false &gt;()</h2>
+<a id="a31c0bcd13df50f2196e54463b602ad3a" name="a31c0bcd13df50f2196e54463b602ad3a"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a31c0bcd13df50f2196e54463b602ad3a">&#9670;&#160;</a></span>find_cell_neighbors&lt; 2, false &gt;()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -238,13 +235,13 @@ template&lt;int dim, bool reciprocal&gt; </div>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">typename <a class="el" href="structDEM_1_1dem__data__structures.html">dem_data_structures</a>&lt; 2 &gt;::cells_neighbor_list &amp;&#160;</td>
+          <td class="paramtype"><a class="el" href="structDEM_1_1dem__data__structures.html">dem_data_structures</a>&lt; 2 &gt;::cells_neighbor_list &amp;&#160;</td>
           <td class="paramname"><em>cells_local_neighbor_list</em>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">typename <a class="el" href="structDEM_1_1dem__data__structures.html">dem_data_structures</a>&lt; 2 &gt;::cells_neighbor_list &amp;&#160;</td>
+          <td class="paramtype"><a class="el" href="structDEM_1_1dem__data__structures.html">dem_data_structures</a>&lt; 2 &gt;::cells_neighbor_list &amp;&#160;</td>
           <td class="paramname"><em>cells_ghost_neighbor_list</em>&#160;</td>
         </tr>
         <tr>
@@ -257,8 +254,8 @@ template&lt;int dim, bool reciprocal&gt; </div>
 
 </div>
 </div>
-<a id="a98b10b316ff7958608d80781579e7a8d" name="a98b10b316ff7958608d80781579e7a8d"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a98b10b316ff7958608d80781579e7a8d">&#9670;&#160;</a></span>find_cell_neighbors&lt; 2, true &gt;()</h2>
+<a id="a1052185b24935e8ab8d67d05356d3ac3" name="a1052185b24935e8ab8d67d05356d3ac3"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a1052185b24935e8ab8d67d05356d3ac3">&#9670;&#160;</a></span>find_cell_neighbors&lt; 2, true &gt;()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -272,13 +269,13 @@ template&lt;int dim, bool reciprocal&gt; </div>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">typename <a class="el" href="structDEM_1_1dem__data__structures.html">dem_data_structures</a>&lt; 2 &gt;::cells_neighbor_list &amp;&#160;</td>
+          <td class="paramtype"><a class="el" href="structDEM_1_1dem__data__structures.html">dem_data_structures</a>&lt; 2 &gt;::cells_neighbor_list &amp;&#160;</td>
           <td class="paramname"><em>cells_local_neighbor_list</em>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">typename <a class="el" href="structDEM_1_1dem__data__structures.html">dem_data_structures</a>&lt; 2 &gt;::cells_neighbor_list &amp;&#160;</td>
+          <td class="paramtype"><a class="el" href="structDEM_1_1dem__data__structures.html">dem_data_structures</a>&lt; 2 &gt;::cells_neighbor_list &amp;&#160;</td>
           <td class="paramname"><em>cells_ghost_neighbor_list</em>&#160;</td>
         </tr>
         <tr>
@@ -291,8 +288,8 @@ template&lt;int dim, bool reciprocal&gt; </div>
 
 </div>
 </div>
-<a id="acf41aa57a5706a50433e472e106dbbcb" name="acf41aa57a5706a50433e472e106dbbcb"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#acf41aa57a5706a50433e472e106dbbcb">&#9670;&#160;</a></span>find_cell_neighbors&lt; 3, false &gt;()</h2>
+<a id="a936c77399fb1aa8cb2f15380688de85d" name="a936c77399fb1aa8cb2f15380688de85d"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a936c77399fb1aa8cb2f15380688de85d">&#9670;&#160;</a></span>find_cell_neighbors&lt; 3, false &gt;()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -306,13 +303,13 @@ template&lt;int dim, bool reciprocal&gt; </div>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">typename <a class="el" href="structDEM_1_1dem__data__structures.html">dem_data_structures</a>&lt; 3 &gt;::cells_neighbor_list &amp;&#160;</td>
+          <td class="paramtype"><a class="el" href="structDEM_1_1dem__data__structures.html">dem_data_structures</a>&lt; 3 &gt;::cells_neighbor_list &amp;&#160;</td>
           <td class="paramname"><em>cells_local_neighbor_list</em>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">typename <a class="el" href="structDEM_1_1dem__data__structures.html">dem_data_structures</a>&lt; 3 &gt;::cells_neighbor_list &amp;&#160;</td>
+          <td class="paramtype"><a class="el" href="structDEM_1_1dem__data__structures.html">dem_data_structures</a>&lt; 3 &gt;::cells_neighbor_list &amp;&#160;</td>
           <td class="paramname"><em>cells_ghost_neighbor_list</em>&#160;</td>
         </tr>
         <tr>
@@ -325,8 +322,8 @@ template&lt;int dim, bool reciprocal&gt; </div>
 
 </div>
 </div>
-<a id="ad65d130bea14460f558e2daec61bc9c4" name="ad65d130bea14460f558e2daec61bc9c4"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ad65d130bea14460f558e2daec61bc9c4">&#9670;&#160;</a></span>find_cell_neighbors&lt; 3, true &gt;()</h2>
+<a id="a3da47af093a2c7cc7921c738132b8d5e" name="a3da47af093a2c7cc7921c738132b8d5e"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a3da47af093a2c7cc7921c738132b8d5e">&#9670;&#160;</a></span>find_cell_neighbors&lt; 3, true &gt;()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -340,13 +337,13 @@ template&lt;int dim, bool reciprocal&gt; </div>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">typename <a class="el" href="structDEM_1_1dem__data__structures.html">dem_data_structures</a>&lt; 3 &gt;::cells_neighbor_list &amp;&#160;</td>
+          <td class="paramtype"><a class="el" href="structDEM_1_1dem__data__structures.html">dem_data_structures</a>&lt; 3 &gt;::cells_neighbor_list &amp;&#160;</td>
           <td class="paramname"><em>cells_local_neighbor_list</em>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">typename <a class="el" href="structDEM_1_1dem__data__structures.html">dem_data_structures</a>&lt; 3 &gt;::cells_neighbor_list &amp;&#160;</td>
+          <td class="paramtype"><a class="el" href="structDEM_1_1dem__data__structures.html">dem_data_structures</a>&lt; 3 &gt;::cells_neighbor_list &amp;&#160;</td>
           <td class="paramname"><em>cells_ghost_neighbor_list</em>&#160;</td>
         </tr>
         <tr>
@@ -405,7 +402,7 @@ template&lt;int dim&gt; </div>
       </table>
 </div><div class="memdoc">
 
-<p>Finds the periodic neighbor list (without repetition) of all the active cells in the triangulation. It gets the coinciding vertices of the cells at the periodic boundary 0 to get lists of the periodic neighbor cells on the periodic boundary 1 for each cells. There is some check to prevent repetition of a cell in a list (up to 8 vertices can have the same cell in common in 3D). 3 types of container are used for periodic mapping of cell neighbors : local-local cells, local-ghost cells and ghost-local cells. The last container is necessary since the mapping are only from periodic boundary 0 to periodic boundary 1 and the ghost-local particle pairs need distinction for proper handling of search of particle pairs and contact forces. </p>
+<p>Finds the periodic neighbor list (without repetition) of all the active cells in the triangulation. It gets the coinciding vertices of the cells at the periodic boundary 0 to get lists of the periodic neighbor cells on the periodic boundary 1 for each cell. There is some check to prevent repetition of a cell in a list (up to 8 vertices can have the same cell in common in 3D). 3 types of container are used for periodic mapping of cell neighbors : local-local cells, local-ghost cells and ghost-local cells. The last container is necessary since the mapping are only from periodic boundary 0 to periodic boundary 1 and the ghost-local particle pairs need distinction for proper handling of search of particle pairs and contact forces. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">triangulation</td><td>Triangulation to access the information of the cells </td></tr>
@@ -417,12 +414,12 @@ template&lt;int dim&gt; </div>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="find__cell__neighbors_8cc_source.html#l00104">104</a> of file <a class="el" href="find__cell__neighbors_8cc_source.html">find_cell_neighbors.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="find__cell__neighbors_8cc_source.html#l00106">106</a> of file <a class="el" href="find__cell__neighbors_8cc_source.html">find_cell_neighbors.cc</a>.</p>
 
 </div>
 </div>
-<a id="a8fc6b14d5af3455456227a61c6622251" name="a8fc6b14d5af3455456227a61c6622251"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a8fc6b14d5af3455456227a61c6622251">&#9670;&#160;</a></span>find_cell_periodic_neighbors&lt; 2 &gt;()</h2>
+<a id="ad9073fd523f3e7847bb28089905603eb" name="ad9073fd523f3e7847bb28089905603eb"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ad9073fd523f3e7847bb28089905603eb">&#9670;&#160;</a></span>find_cell_periodic_neighbors&lt; 2 &gt;()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -436,25 +433,25 @@ template&lt;int dim&gt; </div>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">const typename <a class="el" href="structDEM_1_1dem__data__structures.html">dem_data_structures</a>&lt; 2 &gt;::periodic_boundaries_cells_info &amp;&#160;</td>
+          <td class="paramtype">const <a class="el" href="structDEM_1_1dem__data__structures.html">dem_data_structures</a>&lt; 2 &gt;::periodic_boundaries_cells_info &amp;&#160;</td>
           <td class="paramname"><em>periodic_boundaries_cells_information</em>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">typename <a class="el" href="structDEM_1_1dem__data__structures.html">dem_data_structures</a>&lt; 2 &gt;::cells_neighbor_list &amp;&#160;</td>
+          <td class="paramtype"><a class="el" href="structDEM_1_1dem__data__structures.html">dem_data_structures</a>&lt; 2 &gt;::cells_neighbor_list &amp;&#160;</td>
           <td class="paramname"><em>cells_local_periodic_neighbor_list</em>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">typename <a class="el" href="structDEM_1_1dem__data__structures.html">dem_data_structures</a>&lt; 2 &gt;::cells_neighbor_list &amp;&#160;</td>
+          <td class="paramtype"><a class="el" href="structDEM_1_1dem__data__structures.html">dem_data_structures</a>&lt; 2 &gt;::cells_neighbor_list &amp;&#160;</td>
           <td class="paramname"><em>cells_ghost_periodic_neighbor_list</em>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">typename <a class="el" href="structDEM_1_1dem__data__structures.html">dem_data_structures</a>&lt; 2 &gt;::cells_neighbor_list &amp;&#160;</td>
+          <td class="paramtype"><a class="el" href="structDEM_1_1dem__data__structures.html">dem_data_structures</a>&lt; 2 &gt;::cells_neighbor_list &amp;&#160;</td>
           <td class="paramname"><em>cells_ghost_local_periodic_neighbor_list</em>&#160;</td>
         </tr>
         <tr>
@@ -467,8 +464,8 @@ template&lt;int dim&gt; </div>
 
 </div>
 </div>
-<a id="ac4de2f832ee59fb07ed8be95240048c5" name="ac4de2f832ee59fb07ed8be95240048c5"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ac4de2f832ee59fb07ed8be95240048c5">&#9670;&#160;</a></span>find_cell_periodic_neighbors&lt; 3 &gt;()</h2>
+<a id="a39af674ff3e0711e5c318419c33ffb78" name="a39af674ff3e0711e5c318419c33ffb78"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a39af674ff3e0711e5c318419c33ffb78">&#9670;&#160;</a></span>find_cell_periodic_neighbors&lt; 3 &gt;()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -482,25 +479,25 @@ template&lt;int dim&gt; </div>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">const typename <a class="el" href="structDEM_1_1dem__data__structures.html">dem_data_structures</a>&lt; 3 &gt;::periodic_boundaries_cells_info &amp;&#160;</td>
+          <td class="paramtype">const <a class="el" href="structDEM_1_1dem__data__structures.html">dem_data_structures</a>&lt; 3 &gt;::periodic_boundaries_cells_info &amp;&#160;</td>
           <td class="paramname"><em>periodic_boundaries_cells_information</em>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">typename <a class="el" href="structDEM_1_1dem__data__structures.html">dem_data_structures</a>&lt; 3 &gt;::cells_neighbor_list &amp;&#160;</td>
+          <td class="paramtype"><a class="el" href="structDEM_1_1dem__data__structures.html">dem_data_structures</a>&lt; 3 &gt;::cells_neighbor_list &amp;&#160;</td>
           <td class="paramname"><em>cells_local_periodic_neighbor_list</em>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">typename <a class="el" href="structDEM_1_1dem__data__structures.html">dem_data_structures</a>&lt; 3 &gt;::cells_neighbor_list &amp;&#160;</td>
+          <td class="paramtype"><a class="el" href="structDEM_1_1dem__data__structures.html">dem_data_structures</a>&lt; 3 &gt;::cells_neighbor_list &amp;&#160;</td>
           <td class="paramname"><em>cells_ghost_periodic_neighbor_list</em>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">typename <a class="el" href="structDEM_1_1dem__data__structures.html">dem_data_structures</a>&lt; 3 &gt;::cells_neighbor_list &amp;&#160;</td>
+          <td class="paramtype"><a class="el" href="structDEM_1_1dem__data__structures.html">dem_data_structures</a>&lt; 3 &gt;::cells_neighbor_list &amp;&#160;</td>
           <td class="paramname"><em>cells_ghost_local_periodic_neighbor_list</em>&#160;</td>
         </tr>
         <tr>
@@ -550,12 +547,12 @@ template&lt;int dim&gt; </div>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="find__cell__neighbors_8cc_source.html#l00281">281</a> of file <a class="el" href="find__cell__neighbors_8cc_source.html">find_cell_neighbors.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="find__cell__neighbors_8cc_source.html#l00283">283</a> of file <a class="el" href="find__cell__neighbors_8cc_source.html">find_cell_neighbors.cc</a>.</p>
 
 </div>
 </div>
-<a id="a0b34684fb951d5b68bff560e441a8157" name="a0b34684fb951d5b68bff560e441a8157"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a0b34684fb951d5b68bff560e441a8157">&#9670;&#160;</a></span>find_full_cell_neighbors&lt; 2 &gt;()</h2>
+<a id="a967bdab7e27ba64b4a09f66953718b2f" name="a967bdab7e27ba64b4a09f66953718b2f"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a967bdab7e27ba64b4a09f66953718b2f">&#9670;&#160;</a></span>find_full_cell_neighbors&lt; 2 &gt;()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -569,7 +566,7 @@ template&lt;int dim&gt; </div>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">typename <a class="el" href="structDEM_1_1dem__data__structures.html">dem_data_structures</a>&lt; 2 &gt;::cells_total_neighbor_list &amp;&#160;</td>
+          <td class="paramtype"><a class="el" href="structDEM_1_1dem__data__structures.html">dem_data_structures</a>&lt; 2 &gt;::cells_total_neighbor_list &amp;&#160;</td>
           <td class="paramname"><em>cells_total_neighbor_list</em>&#160;</td>
         </tr>
         <tr>
@@ -582,8 +579,8 @@ template&lt;int dim&gt; </div>
 
 </div>
 </div>
-<a id="aac7c65d265ca25e13e866c55502762dc" name="aac7c65d265ca25e13e866c55502762dc"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#aac7c65d265ca25e13e866c55502762dc">&#9670;&#160;</a></span>find_full_cell_neighbors&lt; 3 &gt;()</h2>
+<a id="acf80ed69d66ed13e62a165df3e23a33b" name="acf80ed69d66ed13e62a165df3e23a33b"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#acf80ed69d66ed13e62a165df3e23a33b">&#9670;&#160;</a></span>find_full_cell_neighbors&lt; 3 &gt;()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -597,7 +594,7 @@ template&lt;int dim&gt; </div>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">typename <a class="el" href="structDEM_1_1dem__data__structures.html">dem_data_structures</a>&lt; 3 &gt;::cells_total_neighbor_list &amp;&#160;</td>
+          <td class="paramtype"><a class="el" href="structDEM_1_1dem__data__structures.html">dem_data_structures</a>&lt; 3 &gt;::cells_total_neighbor_list &amp;&#160;</td>
           <td class="paramname"><em>cells_total_neighbor_list</em>&#160;</td>
         </tr>
         <tr>
@@ -657,7 +654,7 @@ template&lt;int dim&gt; </div>
 </div><div class="memdoc">
 
 <p>Generate a periodic neighbor cells list of the cell. With the coinciding_vertex_groups and the vertex_to_coinciding_vertex_group, we can get the coinciding vertices on a periodic boundary and with v_to_c we can get the list of the periodic neighbor cells to the main cell. </p>
-<p>Here is an example to understand how the search works : Cell 8 have vertices 0, 1, 2, 3 on the periodic boundary. First, it checks in the coinciding_vertex_groups if the vertex 0 is a key in the map, and if it is, it gets a label, let's say label is 10. In the vertex_to_coinciding_vertex_group, it can finds the the coinciding vertices with the label. Using the label 10, it gets the vertices 0 and 34, which means that vertices 0 and 34 are periodic. We do not want the cells attached to the vertex 0 since they are already found with the regular find_cell_neighbor function, so it skips vertex 0, but gets the cells 21, 22, 23, 24 attached to the vertex 34. The same checks are done for vertices 1, 2 and 3 and all periodic cells are return as a vector.</p>
+<p>Here is an example to understand how the search works : Cell 8 have vertices 0, 1, 2, 3 on the periodic boundary. First, it checks in the coinciding_vertex_groups if the vertex 0 is a key in the map, and if it is, it gets a label, let's say label is 10. In the vertex_to_coinciding_vertex_group, it can find the coinciding vertices with the label. Using the label 10, it gets the vertices 0 and 34, which means that vertices 0 and 34 are periodic. We do not want the cells attached to the vertex 0 since they are already found with the regular find_cell_neighbor function, so it skips vertex 0, but gets the cells 21, 22, 23, 24 attached to the vertex 34. The same checks are done for vertices 1, 2 and 3 and all periodic cells are return as a vector.</p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">cell</td><td>The cell that needs the periodic neighbor list </td></tr>
@@ -669,7 +666,7 @@ template&lt;int dim&gt; </div>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="find__cell__neighbors_8cc_source.html#l00326">326</a> of file <a class="el" href="find__cell__neighbors_8cc_source.html">find_cell_neighbors.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="find__cell__neighbors_8cc_source.html#l00328">328</a> of file <a class="el" href="find__cell__neighbors_8cc_source.html">find_cell_neighbors.cc</a>.</p>
 
 </div>
 </div>

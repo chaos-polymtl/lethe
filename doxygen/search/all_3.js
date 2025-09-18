@@ -1,6 +1,6 @@
 var searchData=
 [
-  ['b_0',['b',['../structSDIRKTable.html#a8dffb0a6775b20ebc05ab9950fd83948',1,'SDIRKTable::b'],['../classThermalConductivityLinear.html#a65bdace70d96173f07f99231031daeb6',1,'ThermalConductivityLinear::B']]],
+  ['b_0',['b',['../classThermalConductivityLinear.html#a65bdace70d96173f07f99231031daeb6',1,'ThermalConductivityLinear::B'],['../structSDIRKTable.html#a8dffb0a6775b20ebc05ab9950fd83948',1,'SDIRKTable::b']]],
   ['b_201_20b_20gamma_20gamma_1',['|   b    1-b-gamma  gamma|',['../sdirk_8cc.html#autotoc_md1',1,'']]],
   ['b_5fi_2',['b_i',['../classSDIRKStageData.html#a3d7c3a736a0cdc2529e9d705e84ea427',1,'SDIRKStageData']]],
   ['background_5fconstraints_3',['background_constraints',['../classDEMSolver.html#a3926006d70a9fb14cfffe6f79bdce0d4',1,'DEMSolver']]],
@@ -98,7 +98,7 @@ var searchData=
   ['box_5frefine_5fmesh_95',['box_refine_mesh',['../classNavierStokesBase.html#a035087ab1aa51daa4d7bcee2aeb6c16d',1,'NavierStokesBase']]],
   ['bufferrw_96',['bufferrw',['../classBufferRW.html#a2f5425aab11f6a768ae8def0bf8a0f85',1,'BufferRW::BufferRW()'],['../classBufferRW.html',1,'BufferRW&lt; T &gt;']]],
   ['build_97',['build',['../classBoundaryCellsInformation.html#a3ecae648fb75f5cc23a3d4b0458acceb',1,'BoundaryCellsInformation::build()'],['../classMGTransferMatrixFreeWrapper.html#a74828793a7e8f99cea5e172d40ddd991',1,'MGTransferMatrixFreeWrapper::build()'],['../classBoundaryCellsInformation.html#a532ac1be691e42d5e003e06b3c3c4a7c',1,'BoundaryCellsInformation::build()']]],
-  ['build_5fpatches_98',['build_patches',['../classInterfaceTools_1_1InterfaceReconstructionDataOut.html#a98db2dc3c7bd7d170c7e5be049707fd9',1,'InterfaceTools::InterfaceReconstructionDataOut::build_patches()'],['../classVisualization.html#a29014b0590114f94ecd7786ae984de93',1,'Visualization::build_patches()'],['../structFluidDynamicsSharp_1_1Visualization__IB.html#a5f9d51b970b73a7f4fe82da9fe14f979',1,'FluidDynamicsSharp::Visualization_IB::build_patches()']]],
+  ['build_5fpatches_98',['build_patches',['../classInterfaceTools_1_1InterfaceReconstructionDataOut.html#a98db2dc3c7bd7d170c7e5be049707fd9',1,'InterfaceTools::InterfaceReconstructionDataOut::build_patches()'],['../classVisualization.html#a72b92b019f14c1bea6afd79a09f0661f',1,'Visualization::build_patches()'],['../structFluidDynamicsSharp_1_1Visualization__IB.html#a5f9d51b970b73a7f4fe82da9fe14f979',1,'FluidDynamicsSharp::Visualization_IB::build_patches()']]],
   ['build_5fvisualization_5ffiles_99',['build_visualization_files',['../classParticleVisualization.html#aea9ea51cf103b1416de0a5e11ae2ba22',1,'ParticleVisualization']]],
   ['buoyancy_5fforce_100',['buoyancy_force',['../structParameters_1_1Multiphysics.html#aaa334803b65e6ea0092588f8aa78c31b',1,'Parameters::Multiphysics::buoyancy_force'],['../structParameters_1_1CFDDEM.html#a7199b79f866744d36b1001b7d3a56acf',1,'Parameters::CFDDEM::buoyancy_force']]],
   ['buoyancy_5fterm_101',['buoyancy_term',['../classNavierStokesOperatorBase.html#aa9199e8db697c18155a310ae4d0200ee',1,'NavierStokesOperatorBase']]],

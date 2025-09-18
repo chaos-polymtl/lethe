@@ -90,29 +90,31 @@ $(function() {
   <div class="headertitle"><div class="title">particle_heat_transfer.cc File Reference</div></div>
 </div><!--header-->
 <div class="contents">
-<div class="textblock"><code>#include &lt;<a class="el" href="particle__heat__transfer_8h_source.html">dem/particle_heat_transfer.h</a>&gt;</code><br />
+<div class="textblock"><code>#include &lt;<a class="el" href="auxiliary__math__functions_8h_source.html">core/auxiliary_math_functions.h</a>&gt;</code><br />
+<code>#include &lt;<a class="el" href="particle__heat__transfer_8h_source.html">dem/particle_heat_transfer.h</a>&gt;</code><br />
+<code>#include &lt;boost/math/special_functions/erf.hpp&gt;</code><br />
+<code>#include &lt;float.h&gt;</code><br />
+<code>#include &lt;cmath&gt;</code><br />
 </div><div class="textblock"><div class="dynheader">
 Include dependency graph for particle_heat_transfer.cc:</div>
 <div class="dyncontent">
 <div class="center"><img src="particle__heat__transfer_8cc__incl.png" border="0" usemap="#a_2home_2runner_2work_2lethe_2lethe_2source_2dem_2particle__heat__transfer_8cc" alt=""/></div>
 <map name="a_2home_2runner_2work_2lethe_2lethe_2source_2dem_2particle__heat__transfer_8cc" id="a_2home_2runner_2work_2lethe_2lethe_2source_2dem_2particle__heat__transfer_8cc">
-<area shape="rect" title=" " alt="" coords="399,5,591,60"/>
-<area shape="rect" href="particle__heat__transfer_8h.html" title=" " alt="" coords="390,108,599,133"/>
-<area shape="poly" title=" " alt="" coords="497,60,497,94,492,94,492,60"/>
-<area shape="rect" href="auxiliary__math__functions_8h.html" title=" " alt="" coords="5,181,157,221"/>
-<area shape="poly" title=" " alt="" coords="431,136,171,184,171,184,170,179,170,179,430,131"/>
-<area shape="rect" href="contact__type_8h.html" title=" " alt="" coords="182,189,333,214"/>
-<area shape="poly" title=" " alt="" coords="461,136,306,187,304,182,459,131"/>
-<area shape="rect" title=" " alt="" coords="357,181,504,221"/>
-<area shape="poly" title=" " alt="" coords="487,135,457,172,453,169,483,132"/>
-<area shape="rect" title=" " alt="" coords="529,189,591,214"/>
-<area shape="poly" title=" " alt="" coords="506,132,544,176,539,180,502,135"/>
-<area shape="rect" title=" " alt="" coords="615,189,678,214"/>
-<area shape="poly" title=" " alt="" coords="518,131,613,180,611,185,516,136"/>
-<area shape="rect" title=" " alt="" coords="703,189,783,214"/>
-<area shape="poly" title=" " alt="" coords="535,131,691,179,699,181,698,186,690,184,533,136"/>
-<area shape="rect" title=" " alt="" coords="52,269,111,295"/>
-<area shape="poly" title=" " alt="" coords="84,222,84,255,79,255,79,222"/>
+<area shape="rect" title=" " alt="" coords="393,5,585,60"/>
+<area shape="rect" href="auxiliary__math__functions_8h.html" title=" " alt="" coords="5,108,157,148"/>
+<area shape="poly" title=" " alt="" coords="394,58,172,109,170,104,393,53"/>
+<area shape="rect" href="particle__heat__transfer_8h.html" title=" " alt="" coords="182,115,391,141"/>
+<area shape="poly" title=" " alt="" coords="433,62,325,112,322,107,431,58"/>
+<area shape="rect" title=" " alt="" coords="416,108,563,148"/>
+<area shape="poly" title=" " alt="" coords="492,60,492,94,487,94,487,60"/>
+<area shape="rect" title=" " alt="" coords="587,115,650,141"/>
+<area shape="poly" title=" " alt="" coords="527,58,593,105,590,110,524,62"/>
+<area shape="rect" title=" " alt="" coords="674,115,737,141"/>
+<area shape="poly" title=" " alt="" coords="552,58,664,106,668,107,666,112,662,110,550,63"/>
+<area shape="rect" title=" " alt="" coords="52,196,111,221"/>
+<area shape="poly" title=" " alt="" coords="84,148,84,182,79,182,79,148"/>
+<area shape="rect" href="contact__type_8h.html" title=" " alt="" coords="211,196,362,221"/>
+<area shape="poly" title=" " alt="" coords="289,141,289,182,284,182,284,141"/>
 </map>
 </div>
 </div>
@@ -209,7 +211,7 @@ Functions</h2></td></tr>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="particle__heat__transfer_8cc_source.html#l00256">256</a> of file <a class="el" href="particle__heat__transfer_8cc_source.html">particle_heat_transfer.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="particle__heat__transfer_8cc_source.html#l00264">264</a> of file <a class="el" href="particle__heat__transfer_8cc_source.html">particle_heat_transfer.cc</a>.</p>
 
 </div>
 </div>
@@ -262,7 +264,7 @@ Functions</h2></td></tr>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="particle__heat__transfer_8cc_source.html#l00269">269</a> of file <a class="el" href="particle__heat__transfer_8cc_source.html">particle_heat_transfer.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="particle__heat__transfer_8cc_source.html#l00277">277</a> of file <a class="el" href="particle__heat__transfer_8cc_source.html">particle_heat_transfer.cc</a>.</p>
 
 </div>
 </div>
@@ -393,9 +395,9 @@ template&lt;<a class="el" href="contact__type_8h.html#a280ac7ff91d81eba6f834d2de
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="particle__heat__transfer_8cc_source.html#l00131">131</a> of file <a class="el" href="particle__heat__transfer_8cc_source.html">particle_heat_transfer.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="particle__heat__transfer_8cc_source.html#l00139">139</a> of file <a class="el" href="particle__heat__transfer_8cc_source.html">particle_heat_transfer.cc</a>.</p>
 
-<p class="reference">References <a class="el" href="particle__heat__transfer_8cc_source.html#l00007">calculate_corrected_contact_radius()</a>, <a class="el" href="particle__heat__transfer_8cc_source.html#l00111">calculate_interstitial_gas_macrogap_resistance()</a>, <a class="el" href="particle__heat__transfer_8cc_source.html#l00074">calculate_interstitial_gas_microgap_resistance()</a>, <a class="el" href="particle__heat__transfer_8cc_source.html#l00027">calculate_macrocontact_resistance()</a>, <a class="el" href="particle__heat__transfer_8cc_source.html#l00038">calculate_microcontact_resistance()</a>, <a class="el" href="particle__heat__transfer_8cc_source.html#l00057">calculate_solid_macrogap_resistance()</a>, <a class="el" href="auxiliary__math__functions_8h_source.html#l00018">harmonic_mean()</a>, and <a class="el" href="contact__type_8h_source.html#l00019">particle_floating_mesh</a>.</p>
+<p class="reference">References <a class="el" href="particle__heat__transfer_8cc_source.html#l00015">calculate_corrected_contact_radius()</a>, <a class="el" href="particle__heat__transfer_8cc_source.html#l00119">calculate_interstitial_gas_macrogap_resistance()</a>, <a class="el" href="particle__heat__transfer_8cc_source.html#l00082">calculate_interstitial_gas_microgap_resistance()</a>, <a class="el" href="particle__heat__transfer_8cc_source.html#l00035">calculate_macrocontact_resistance()</a>, <a class="el" href="particle__heat__transfer_8cc_source.html#l00046">calculate_microcontact_resistance()</a>, <a class="el" href="particle__heat__transfer_8cc_source.html#l00065">calculate_solid_macrogap_resistance()</a>, <a class="el" href="auxiliary__math__functions_8h_source.html#l00018">harmonic_mean()</a>, and <a class="el" href="contact__type_8h_source.html#l00019">particle_floating_mesh</a>.</p>
 
 </div>
 </div>
@@ -1049,7 +1051,7 @@ template&lt;<a class="el" href="contact__type_8h.html#a280ac7ff91d81eba6f834d2de
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>Corrected contact radius of the pair in contact. </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="particle__heat__transfer_8cc_source.html#l00007">7</a> of file <a class="el" href="particle__heat__transfer_8cc_source.html">particle_heat_transfer.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="particle__heat__transfer_8cc_source.html#l00015">15</a> of file <a class="el" href="particle__heat__transfer_8cc_source.html">particle_heat_transfer.cc</a>.</p>
 
 </div>
 </div>
@@ -1103,7 +1105,7 @@ template&lt;<a class="el" href="contact__type_8h.html#a280ac7ff91d81eba6f834d2de
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>Interstitial gas microgap thermal resistance for the pair in contact. </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="particle__heat__transfer_8cc_source.html#l00111">111</a> of file <a class="el" href="particle__heat__transfer_8cc_source.html">particle_heat_transfer.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="particle__heat__transfer_8cc_source.html#l00119">119</a> of file <a class="el" href="particle__heat__transfer_8cc_source.html">particle_heat_transfer.cc</a>.</p>
 
 </div>
 </div>
@@ -1171,7 +1173,7 @@ template&lt;<a class="el" href="contact__type_8h.html#a280ac7ff91d81eba6f834d2de
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>Interstitial gas microgap thermal resistance for the pair in contact. </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="particle__heat__transfer_8cc_source.html#l00074">74</a> of file <a class="el" href="particle__heat__transfer_8cc_source.html">particle_heat_transfer.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="particle__heat__transfer_8cc_source.html#l00082">82</a> of file <a class="el" href="particle__heat__transfer_8cc_source.html">particle_heat_transfer.cc</a>.</p>
 
 </div>
 </div>
@@ -1211,7 +1213,7 @@ template&lt;<a class="el" href="contact__type_8h.html#a280ac7ff91d81eba6f834d2de
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>Macrocontact thermal resistance for the pair in contact. </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="particle__heat__transfer_8cc_source.html#l00027">27</a> of file <a class="el" href="particle__heat__transfer_8cc_source.html">particle_heat_transfer.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="particle__heat__transfer_8cc_source.html#l00035">35</a> of file <a class="el" href="particle__heat__transfer_8cc_source.html">particle_heat_transfer.cc</a>.</p>
 
 </div>
 </div>
@@ -1279,7 +1281,7 @@ template&lt;<a class="el" href="contact__type_8h.html#a280ac7ff91d81eba6f834d2de
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>Microcontact thermal resistance for the pair in contact. </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="particle__heat__transfer_8cc_source.html#l00038">38</a> of file <a class="el" href="particle__heat__transfer_8cc_source.html">particle_heat_transfer.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="particle__heat__transfer_8cc_source.html#l00046">46</a> of file <a class="el" href="particle__heat__transfer_8cc_source.html">particle_heat_transfer.cc</a>.</p>
 
 </div>
 </div>
@@ -1326,7 +1328,7 @@ template&lt;<a class="el" href="contact__type_8h.html#a280ac7ff91d81eba6f834d2de
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>Solid macrogap thermal resistance for one particle. </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="particle__heat__transfer_8cc_source.html#l00057">57</a> of file <a class="el" href="particle__heat__transfer_8cc_source.html">particle_heat_transfer.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="particle__heat__transfer_8cc_source.html#l00065">65</a> of file <a class="el" href="particle__heat__transfer_8cc_source.html">particle_heat_transfer.cc</a>.</p>
 
 </div>
 </div>

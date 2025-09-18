@@ -128,7 +128,7 @@ Private Attributes</h2></td></tr>
 class PeriodicBoundariesManipulator&lt; dim &gt;</div><p>This class corresponds to a manipulator of the particles crossing periodic cells in <a class="el" href="namespaceDEM.html" title="This namespace defines all the data containers and required operations on these containers for the DE...">DEM</a>. It maps cell information of the pairs of periodic cells and manipulate the particles location when they cross periodic boundaries, i.e. when a particle cross a periodic boundary (0 or 1) its location is modified with the offset between faces of periodic cells on periodic boundaries.</p>
 <dl class="section note"><dt>Note</dt><dd>Currently the code only supports one pair of periodic boundaries and those boundaries must be parallel and aligned with an axis of the domain (e.g., x axis). </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="periodic__boundaries__manipulator_8h_source.html#l00038">38</a> of file <a class="el" href="periodic__boundaries__manipulator_8h_source.html">periodic_boundaries_manipulator.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="periodic__boundaries__manipulator_8h_source.html#l00032">32</a> of file <a class="el" href="periodic__boundaries__manipulator_8h_source.html">periodic_boundaries_manipulator.h</a>.</p>
 </div><h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
 <a id="a3af23a12e5a5fde913de8e983fd9398a" name="a3af23a12e5a5fde913de8e983fd9398a"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a3af23a12e5a5fde913de8e983fd9398a">&#9670;&#160;</a></span>PeriodicBoundariesManipulator()</h2>
@@ -200,10 +200,10 @@ template&lt;int dim&gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p>Checks if particle is outside of the cell, if so, modifies the location of the particle with the distance (offset) between the periodic faces. </p>
+<p>Checks if particle is outside the cell, if so, modifies the location of the particle with the distance (offset) between the periodic faces. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramdir">[in]</td><td class="paramname">boundaries_cells_content</td><td>Reference to the object with periodic boundaries information. </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">boundaries_cells_content</td><td>Reference to the object with periodic boundary information. </td></tr>
     <tr><td class="paramdir">[in]</td><td class="paramname">particles_in_pb0_cell</td><td>If the particles are linked to a cell on the periodic boundary 0 (true) or the periodic boundary 1 (false). </td></tr>
     <tr><td class="paramdir">[in,out]</td><td class="paramname">particles_in_cell</td><td>Iterator to the particles in cell. </td></tr>
     <tr><td class="paramdir">[out]</td><td class="paramname">particle_has_been_moved</td><td>Flag the particle has been moved to the other periodic cell. </td></tr>
@@ -306,7 +306,7 @@ template&lt;int dim&gt; </div>
   <table class="params">
     <tr><td class="paramdir">[in]</td><td class="paramname">cell</td><td>Current cell on boundary. </td></tr>
     <tr><td class="paramdir">[in]</td><td class="paramname">face_id</td><td>Face located on boundary. </td></tr>
-    <tr><td class="paramdir">[out]</td><td class="paramname">boundaries_information</td><td>Reference to the object with periodic boundaries information. </td></tr>
+    <tr><td class="paramdir">[out]</td><td class="paramname">boundaries_information</td><td>Reference to the object with periodic boundary information. </td></tr>
   </table>
   </dd>
 </dl>
@@ -345,9 +345,9 @@ template&lt;int dim&gt; </div>
 <p>Return the periodic offset distance, it is calculated from the first pair of cells on periodic boundaries, all pair of cells are assumed to have the same offset. </p>
 <dl class="section return"><dt>Returns</dt><dd>Offset distance between periodic boundaries. </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="periodic__boundaries__manipulator_8h_source.html#l00105">105</a> of file <a class="el" href="periodic__boundaries__manipulator_8h_source.html">periodic_boundaries_manipulator.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="periodic__boundaries__manipulator_8h_source.html#l00099">99</a> of file <a class="el" href="periodic__boundaries__manipulator_8h_source.html">periodic_boundaries_manipulator.h</a>.</p>
 
-<p class="reference">References <a class="el" href="periodic__boundaries__manipulator_8h_source.html#l00172">PeriodicBoundariesManipulator&lt; dim &gt;::constant_periodic_offset</a>.</p>
+<p class="reference">References <a class="el" href="periodic__boundaries__manipulator_8h_source.html#l00166">PeriodicBoundariesManipulator&lt; dim &gt;::constant_periodic_offset</a>.</p>
 
 </div>
 </div>
@@ -433,15 +433,15 @@ template&lt;int dim&gt; </div>
 <p>Sets the periodic boundaries parameters. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramdir">[in]</td><td class="paramname">periodic_boundary_id_0</td><td>Id of the first periodic boundary. </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">periodic_boundary_id_0</td><td>ID of the first periodic boundary. </td></tr>
     <tr><td class="paramdir">[in]</td><td class="paramname">periodic_direction</td><td>Perpendicular axis of PB. </td></tr>
   </table>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="periodic__boundaries__manipulator_8h_source.html#l00050">50</a> of file <a class="el" href="periodic__boundaries__manipulator_8h_source.html">periodic_boundaries_manipulator.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="periodic__boundaries__manipulator_8h_source.html#l00044">44</a> of file <a class="el" href="periodic__boundaries__manipulator_8h_source.html">periodic_boundaries_manipulator.h</a>.</p>
 
-<p class="reference">References <a class="el" href="periodic__boundaries__manipulator_8h_source.html#l00165">PeriodicBoundariesManipulator&lt; dim &gt;::direction</a>, <a class="el" href="dem__action__manager_8cc_source.html#l00009">DEMActionManager::get_action_manager()</a>, <a class="el" href="periodic__boundaries__manipulator_8h_source.html#l00152">PeriodicBoundariesManipulator&lt; dim &gt;::periodic_boundaries_enabled</a>, <a class="el" href="periodic__boundaries__manipulator_8h_source.html#l00159">PeriodicBoundariesManipulator&lt; dim &gt;::periodic_boundary_0</a>, and <a class="el" href="dem__action__manager_8h_source.html#l00081">DEMActionManager::set_periodic_boundaries_enabled()</a>.</p>
+<p class="reference">References <a class="el" href="periodic__boundaries__manipulator_8h_source.html#l00159">PeriodicBoundariesManipulator&lt; dim &gt;::direction</a>, <a class="el" href="dem__action__manager_8cc_source.html#l00009">DEMActionManager::get_action_manager()</a>, <a class="el" href="periodic__boundaries__manipulator_8h_source.html#l00146">PeriodicBoundariesManipulator&lt; dim &gt;::periodic_boundaries_enabled</a>, <a class="el" href="periodic__boundaries__manipulator_8h_source.html#l00153">PeriodicBoundariesManipulator&lt; dim &gt;::periodic_boundary_0</a>, and <a class="el" href="dem__action__manager_8h_source.html#l00081">DEMActionManager::set_periodic_boundaries_enabled()</a>.</p>
 
 </div>
 </div>
@@ -470,7 +470,7 @@ template&lt;int dim&gt; </div>
 
 <p>Offset distance between periodic boundaries, it is calculated from the first pair of cells on periodic boundaries, all pair of cells are assumed to have the same offset. </p>
 
-<p class="definition">Definition at line <a class="el" href="periodic__boundaries__manipulator_8h_source.html#l00172">172</a> of file <a class="el" href="periodic__boundaries__manipulator_8h_source.html">periodic_boundaries_manipulator.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="periodic__boundaries__manipulator_8h_source.html#l00166">166</a> of file <a class="el" href="periodic__boundaries__manipulator_8h_source.html">periodic_boundaries_manipulator.h</a>.</p>
 
 </div>
 </div>
@@ -498,7 +498,7 @@ template&lt;int dim&gt; </div>
 
 <p>Direction of the periodic boundary, it is the perpendicular axis of the periodic boundaries. </p>
 
-<p class="definition">Definition at line <a class="el" href="periodic__boundaries__manipulator_8h_source.html#l00165">165</a> of file <a class="el" href="periodic__boundaries__manipulator_8h_source.html">periodic_boundaries_manipulator.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="periodic__boundaries__manipulator_8h_source.html#l00159">159</a> of file <a class="el" href="periodic__boundaries__manipulator_8h_source.html">periodic_boundaries_manipulator.h</a>.</p>
 
 </div>
 </div>
@@ -526,7 +526,7 @@ template&lt;int dim&gt; </div>
 
 <p>Flag for periodic boundary conditions in simulation. Useful to exit function when there are no periodic boundaries. </p>
 
-<p class="definition">Definition at line <a class="el" href="periodic__boundaries__manipulator_8h_source.html#l00152">152</a> of file <a class="el" href="periodic__boundaries__manipulator_8h_source.html">periodic_boundaries_manipulator.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="periodic__boundaries__manipulator_8h_source.html#l00146">146</a> of file <a class="el" href="periodic__boundaries__manipulator_8h_source.html">periodic_boundaries_manipulator.h</a>.</p>
 
 </div>
 </div>
@@ -552,9 +552,9 @@ template&lt;int dim&gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p>Id of the first periodic boundary. No needs to store the second one since there are linked on the triangulation, and accessible through functions on cells on the boundary condition 0. </p>
+<p>ID of the first periodic boundary. No needs to store the second one since there are linked on the triangulation, and accessible through functions on cells on the boundary condition 0. </p>
 
-<p class="definition">Definition at line <a class="el" href="periodic__boundaries__manipulator_8h_source.html#l00159">159</a> of file <a class="el" href="periodic__boundaries__manipulator_8h_source.html">periodic_boundaries_manipulator.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="periodic__boundaries__manipulator_8h_source.html#l00153">153</a> of file <a class="el" href="periodic__boundaries__manipulator_8h_source.html">periodic_boundaries_manipulator.h</a>.</p>
 
 </div>
 </div>

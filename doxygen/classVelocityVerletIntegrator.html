@@ -120,9 +120,9 @@ Public Member Functions</h2></td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><div class="compoundTemplParams">template&lt;int dim, typename PropertiesIndex&gt;<br />
-class VelocityVerletIntegrator&lt; dim, PropertiesIndex &gt;</div><p>Implementation of a classical velocity verlet scheme for the integration of the particle motion. Note that reinitilization of force and torque is also integrated into integration class. </p>
+class VelocityVerletIntegrator&lt; dim, PropertiesIndex &gt;</div><p>Implementation of a classical velocity verlet scheme for the integration of the particle motion. Note that reinitialization of force and torque is also integrated into integration class. </p>
 <p>Velocity Verlet is a second-order integration scheme.</p>
-<p>Calculation precedure:</p>
+<p>Calculation procedure:</p>
 <p>Calculation of half-step velocity v(n+1/2) = v(n) + 1/2 * a(n) * dt</p>
 <p>Updating particle position x(n+1) = x(n) + v(n+1/2) * dt</p>
 <p>Updating acceleration and velocity of particle a(n+1) = F(n+1) / m v(n+1) = v(n+1/2) + 1/2 * a(n+1) * dt</p>
@@ -134,7 +134,7 @@ class VelocityVerletIntegrator&lt; dim, PropertiesIndex &gt;</div><p>Implementat
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="velocity__verlet__integrator_8h_source.html#l00038">38</a> of file <a class="el" href="velocity__verlet__integrator_8h_source.html">velocity_verlet_integrator.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="velocity__verlet__integrator_8h_source.html#l00036">36</a> of file <a class="el" href="velocity__verlet__integrator_8h_source.html">velocity_verlet_integrator.h</a>.</p>
 </div><h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
 <a id="a53e433c21292e2cb775cfc86c0836572" name="a53e433c21292e2cb775cfc86c0836572"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a53e433c21292e2cb775cfc86c0836572">&#9670;&#160;</a></span>VelocityVerletIntegrator()</h2>
@@ -161,7 +161,7 @@ template&lt;int dim, typename PropertiesIndex &gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="velocity__verlet__integrator_8h_source.html#l00041">41</a> of file <a class="el" href="velocity__verlet__integrator_8h_source.html">velocity_verlet_integrator.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="velocity__verlet__integrator_8h_source.html#l00039">39</a> of file <a class="el" href="velocity__verlet__integrator_8h_source.html">velocity_verlet_integrator.h</a>.</p>
 
 </div>
 </div>
@@ -323,7 +323,7 @@ template&lt;int dim, typename PropertiesIndex &gt; </div>
 
 <p class="definition">Definition at line <a class="el" href="velocity__verlet__integrator_8cc_source.html#l00139">139</a> of file <a class="el" href="velocity__verlet__integrator_8cc_source.html">velocity_verlet_integrator.cc</a>.</p>
 
-<p class="reference">References <a class="el" href="dem__action__manager_8cc_source.html#l00009">DEMActionManager::get_action_manager()</a>, <a class="el" href="adaptive__sparse__contacts_8h_source.html#l00332">AdaptiveSparseContacts&lt; dim, PropertiesIndex &gt;::get_mobility_status()</a>, <a class="el" href="adaptive__sparse__contacts_8h_source.html#l00351">AdaptiveSparseContacts&lt; dim, PropertiesIndex &gt;::has_advected_particles()</a>, and <a class="el" href="tensors__and__points__dimension__manipulation_8h_source.html#l00069">point_nd_to_3d()</a>.</p>
+<p class="reference">References <a class="el" href="dem__action__manager_8cc_source.html#l00009">DEMActionManager::get_action_manager()</a>, <a class="el" href="adaptive__sparse__contacts_8h_source.html#l00330">AdaptiveSparseContacts&lt; dim, PropertiesIndex &gt;::get_mobility_status()</a>, <a class="el" href="adaptive__sparse__contacts_8h_source.html#l00349">AdaptiveSparseContacts&lt; dim, PropertiesIndex &gt;::has_advected_particles()</a>, and <a class="el" href="tensors__and__points__dimension__manipulation_8h_source.html#l00069">point_nd_to_3d()</a>.</p>
 
 </div>
 </div>
@@ -472,7 +472,7 @@ template&lt;int dim, typename PropertiesIndex &gt; </div>
 
 <p class="definition">Definition at line <a class="el" href="velocity__verlet__integrator_8cc_source.html#l00284">284</a> of file <a class="el" href="velocity__verlet__integrator_8cc_source.html">velocity_verlet_integrator.cc</a>.</p>
 
-<p class="reference">References <a class="el" href="adaptive__sparse__contacts_8h_source.html#l00332">AdaptiveSparseContacts&lt; dim, PropertiesIndex &gt;::get_mobility_status()</a>, <a class="el" href="adaptive__sparse__contacts_8h_source.html#l00342">AdaptiveSparseContacts&lt; dim, PropertiesIndex &gt;::get_velocities_accelerations()</a>, and <a class="el" href="tensors__and__points__dimension__manipulation_8h_source.html#l00069">point_nd_to_3d()</a>.</p>
+<p class="reference">References <a class="el" href="adaptive__sparse__contacts_8h_source.html#l00330">AdaptiveSparseContacts&lt; dim, PropertiesIndex &gt;::get_mobility_status()</a>, <a class="el" href="adaptive__sparse__contacts_8h_source.html#l00340">AdaptiveSparseContacts&lt; dim, PropertiesIndex &gt;::get_velocities_accelerations()</a>, and <a class="el" href="tensors__and__points__dimension__manipulation_8h_source.html#l00069">point_nd_to_3d()</a>.</p>
 
 </div>
 </div>

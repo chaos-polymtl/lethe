@@ -90,34 +90,24 @@ $(function() {
   <div class="headertitle"><div class="title">particle_handler_conversion.h File Reference</div></div>
 </div><!--header-->
 <div class="contents">
-<div class="textblock"><code>#include &lt;<a class="el" href="dem__properties_8h_source.html">core/dem_properties.h</a>&gt;</code><br />
-<code>#include &lt;deal.II/grid/filtered_iterator.h&gt;</code><br />
+<div class="textblock"><code>#include &lt;deal.II/grid/filtered_iterator.h&gt;</code><br />
 <code>#include &lt;deal.II/grid/grid_tools.h&gt;</code><br />
 <code>#include &lt;deal.II/particles/particle_handler.h&gt;</code><br />
 <code>#include &lt;deal.II/particles/particle_iterator.h&gt;</code><br />
-<code>#include &lt;deal.II/particles/property_pool.h&gt;</code><br />
 </div><div class="textblock"><div class="dynheader">
 Include dependency graph for particle_handler_conversion.h:</div>
 <div class="dyncontent">
 <div class="center"><img src="particle__handler__conversion_8h__incl.png" border="0" usemap="#a_2home_2runner_2work_2lethe_2lethe_2include_2dem_2particle__handler__conversion_8h" alt=""/></div>
 <map name="a_2home_2runner_2work_2lethe_2lethe_2include_2dem_2particle__handler__conversion_8h" id="a_2home_2runner_2work_2lethe_2lethe_2include_2dem_2particle__handler__conversion_8h">
-<area shape="rect" title=" " alt="" coords="449,5,645,60"/>
-<area shape="rect" href="dem__properties_8h.html" title=" " alt="" coords="5,115,173,141"/>
-<area shape="poly" title=" " alt="" coords="449,56,159,115,158,110,448,51"/>
-<area shape="rect" title=" " alt="" coords="197,108,339,148"/>
-<area shape="poly" title=" " alt="" coords="469,63,338,106,336,101,467,58"/>
-<area shape="rect" title=" " alt="" coords="363,115,533,141"/>
-<area shape="poly" title=" " alt="" coords="520,62,472,107,469,104,517,58"/>
-<area shape="rect" title=" " alt="" coords="558,108,733,148"/>
-<area shape="poly" title=" " alt="" coords="577,58,617,97,614,101,573,62"/>
-<area shape="rect" title=" " alt="" coords="757,108,931,148"/>
-<area shape="poly" title=" " alt="" coords="631,58,772,101,770,107,629,63"/>
-<area shape="rect" title=" " alt="" coords="956,108,1137,148"/>
-<area shape="poly" title=" " alt="" coords="645,50,943,105,942,110,644,55"/>
-<area shape="rect" title=" " alt="" coords="17,196,76,221"/>
-<area shape="poly" title=" " alt="" coords="85,142,62,185,57,183,81,140"/>
-<area shape="rect" title=" " alt="" coords="101,196,163,221"/>
-<area shape="poly" title=" " alt="" coords="98,140,122,183,117,185,93,142"/>
+<area shape="rect" title=" " alt="" coords="257,5,453,60"/>
+<area shape="rect" title=" " alt="" coords="5,108,147,148"/>
+<area shape="poly" title=" " alt="" coords="277,63,146,106,144,101,275,58"/>
+<area shape="rect" title=" " alt="" coords="171,115,341,141"/>
+<area shape="poly" title=" " alt="" coords="328,62,280,107,277,104,325,58"/>
+<area shape="rect" title=" " alt="" coords="366,108,541,148"/>
+<area shape="poly" title=" " alt="" coords="385,58,425,97,422,101,381,62"/>
+<area shape="rect" title=" " alt="" coords="565,108,739,148"/>
+<area shape="poly" title=" " alt="" coords="439,58,580,101,578,107,437,63"/>
 </map>
 </div>
 </div><div class="textblock"><div class="dynheader">
@@ -180,7 +170,25 @@ template&lt;int dim, typename input , typename output &gt; </div>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="particle__handler__conversion_8h_source.html#l00034">34</a> of file <a class="el" href="particle__handler__conversion_8h_source.html">particle_handler_conversion.h</a>.</p>
+<p>Converts an input particle handler with a given set of input properties into an output particle handler with a different set of output properties. This is used, notably, to convert <a class="el" href="namespaceDEM.html" title="This namespace defines all the data containers and required operations on these containers for the DE...">DEM</a> simulation particle_handlers into CFD-DEM particle_handlers. </p>
+<dl class="tparams"><dt>Template Parameters</dt><dd>
+  <table class="tparams">
+    <tr><td class="paramname">dim</td><td>the number of dimensions </td></tr>
+    <tr><td class="paramname">input</td><td>the properties index used for the ph_in </td></tr>
+    <tr><td class="paramname">output</td><td>the properties index used for the ph_out</td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramdir">[in]</td><td class="paramname">triangulation</td><td>The triangulation on which the ph_out is stored </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">ph_in</td><td>The input particle_handler that has properties indified by the input. </td></tr>
+    <tr><td class="paramdir">[out]</td><td class="paramname">ph_out</td><td>The output partcile_handler that has properties identified by the output. </td></tr>
+  </table>
+  </dd>
+</dl>
+
+<p class="definition">Definition at line <a class="el" href="particle__handler__conversion_8h_source.html#l00033">33</a> of file <a class="el" href="particle__handler__conversion_8h_source.html">particle_handler_conversion.h</a>.</p>
 
 </div>
 </div>
