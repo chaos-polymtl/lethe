@@ -487,8 +487,8 @@ VANSOperator<dim, number>::local_evaluate_residual(
 
               // +(v,ɛ∂t u)
               if (transient)
-                value_result[i] += vf_value * (*bdf_coefs)[0] * value[i] +
-                                   previous_time_derivatives[i];
+                value_result[i] += vf_value * ((*bdf_coefs)[0] * value[i] +
+                                               previous_time_derivatives[i]);
 
               // +(q,ɛ∇·u)
               value_result[dim] += vf_value * gradient[i][i];
@@ -522,8 +522,8 @@ VANSOperator<dim, number>::local_evaluate_residual(
               // +(ɛ∂t u)·τ∇q
               if (transient)
                 gradient_result[dim][i] +=
-                  tau * (vf_value * (*bdf_coefs)[0] * value[i] +
-                         previous_time_derivatives[i]);
+                  tau * vf_value *
+                  ((*bdf_coefs)[0] * value[i] + previous_time_derivatives[i]);
             }
           // +ɛ(∇p)τ∇·q
           gradient_result[dim] += tau * vf_value * gradient[dim];
@@ -565,10 +565,9 @@ VANSOperator<dim, number>::local_evaluate_residual(
 
                   // + (ɛ∂t u)τ(u·∇)v
                   if (transient)
-                    gradient_result[i][k] +=
-                      tau * value[k] *
-                      (vf_value * (*bdf_coefs)[0] * value[i] +
-                       previous_time_derivatives[i]);
+                    gradient_result[i][k] += tau * value[k] * vf_value *
+                                             ((*bdf_coefs)[0] * value[i] +
+                                              previous_time_derivatives[i]);
                 }
             }
 
