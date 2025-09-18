@@ -37,6 +37,10 @@ read_checkpoint(
     prefix + ".checkpoint_controller";
   std::ifstream iss_checkpoint_controller_obj(
     checkpoint_controller_object_filename);
+
+  AssertThrow(iss_checkpoint_controller_obj,
+              ExcFileNotOpen(checkpoint_controller_object_filename));
+
   boost::archive::text_iarchive ia_checkpoint_controller_obj(
     iss_checkpoint_controller_obj, boost::archive::no_header);
   checkpoint_controller.deserialize(ia_checkpoint_controller_obj);
@@ -57,6 +61,7 @@ read_checkpoint(
   // Gather particle serialization information
   std::string   particle_filename = prefix + ".particles";
   std::ifstream input(particle_filename.c_str());
+
   AssertThrow(input, ExcFileNotOpen(particle_filename));
 
   std::string buffer;
@@ -68,13 +73,8 @@ read_checkpoint(
 
   const std::string filename = prefix + ".triangulation";
   std::ifstream     in(filename.c_str());
-  if (!in)
-    AssertThrow(false,
-                ExcMessage(
-                  std::string(
-                    "You are trying to restart a previous computation, "
-                    "but the restart file <") +
-                  filename + "> does not appear to exist!"));
+
+  AssertThrow(in, ExcFileNotOpen(filename));
 
   try
     {
