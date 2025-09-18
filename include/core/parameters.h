@@ -309,6 +309,25 @@ namespace Parameters
   };
 
   /**
+   * @brief Gaussian-based physical properties model to handle properties at the
+   * interface of immersed solids and in the bulk of each phase
+   */
+  struct ImmersedSolidGaussianParameters
+  {
+    // Properties that apply to the tracer physics with immersed solids
+    double tracer_diffusivity_interface;
+    double tracer_diffusivity_bulk;
+    double tracer_reaction_constant_interface;
+    double tracer_reaction_constant_bulk;
+    double thickness;
+
+    static void
+    declare_parameters(ParameterHandler &prm);
+    void
+    parse_parameters(ParameterHandler &prm, const Dimensionality dimensions);
+  };
+
+  /**
    * @brief Isothermal ideal gas model to solve for isothermal weakly
    * compressible fluid flows.
    */
@@ -481,19 +500,25 @@ namespace Parameters
     enum class TracerDiffusivityModel
     {
       constant,
-      immersed_boundary_tanh
+      immersed_boundary_tanh,
+      immersed_boundary_gaussian
     } tracer_diffusivity_model;
 
     enum class TracerReactionPrefactorModel
     {
       none,
       constant,
-      immersed_boundary_tanh
+      immersed_boundary_tanh,
+      immersed_boundary_gaussian
     } tracer_reaction_prefactor_model;
 
     // Struct that contains the parameters to handle physical properties when
-    // immersed solids models are used
+    // immersed solids tanh models are used
     ImmersedSolidTanhParameters immersed_solid_tanh_parameters;
+
+    // Struct that contains the parameters to handle physical properties when
+    // immersed solids Gaussian models are used
+    ImmersedSolidGaussianParameters immersed_solid_gaussian_parameters;
 
     // Linear thermal conductivity parameters: k = k_A0 + k_A1 * T
     double k_A0;

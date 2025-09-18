@@ -98,7 +98,7 @@ private:
 };
 
 /**
- * @brief Diffusivity that depends on the level set
+ * @brief Diffusivity that depends on the tanh of the level set
  */
 class TanhLevelsetTracerDiffusivity : public TracerDiffusivityModel
 {
@@ -237,6 +237,167 @@ private:
   const double tracer_diffusivity_inside;
   const double thickness;
   const double delta_diffusivity;
+};
+
+/**
+ * @brief Diffusivity that depends on the Gaussian of the level set
+ */
+class GaussianLevelsetTracerDiffusivity : public TracerDiffusivityModel
+{
+public:
+  /**
+   * @brief Constructor of the Gaussian level set-dependent diffusivity model.
+   *
+   * @param[in] p_tracer_diffusivity_interface Diffusivity at the fluid-solid
+   * interface the solid
+   * @param[in] p_tracer_diffusivity_bulk Diffusivity in the bulk of the phases
+   * @param[in] p_thickness Thickness of the Gaussian function used to smooth
+   * the property jump
+   */
+  GaussianLevelsetTracerDiffusivity(const double p_tracer_diffusivity_interface,
+                                    const double p_tracer_diffusivity_bulk,
+                                    const double p_thickness)
+    : tracer_diffusivity_interface(p_tracer_diffusivity_interface)
+    , tracer_diffusivity_bulk(p_tracer_diffusivity_bulk)
+    , delta_diffusivity(tracer_diffusivity_interface - tracer_diffusivity_bulk)
+    , squared_thickness(pow(p_thickness, 2))
+  {
+    this->model_depends_on[field::levelset] = true;
+  }
+
+  /**
+   * @brief Compute the diffusivity.
+   *
+   * @param[in] field_values Values of the various fields on which the property
+   * may depend. In this case, the diffusivity depends on the level set.
+   * The map stores a single value per field.
+   *
+   * @return Value of the diffusivity computed with the @p field_values.
+   */
+  double
+  value(const std::map<field, double> &field_values) override
+  {
+    Assert(field_values.find(field::levelset) != field_values.end(),
+           PhysicialPropertyModelFieldUndefined(
+             "GaussianLevelsetTracerDiffusivity", "levelset"));
+    double levelset = field_values.at(field::levelset);
+
+    return tracer_diffusivity_bulk +
+           delta_diffusivity * exp(-(pow(levelset, 2)) / squared_thickness);
+  }
+
+  /**
+   * @brief Compute a vector of diffusivity.
+   *
+   * @param[in] field_vectors Vectors of the fields on which the diffusivity
+   * may depend. In this case, the diffusivity depends on the level set. The map
+   * stores a vector of values per field.
+   *
+   * @param[out] property_vector Vectors of computed diffusivities.
+   */
+  void
+  vector_value(const std::map<field, std::vector<double>> &field_vectors,
+               std::vector<double> &property_vector) override
+  {
+    Assert(field_vectors.find(field::levelset) != field_vectors.end(),
+           PhysicialPropertyModelFieldUndefined(
+             "GaussianLevelsetTracerDiffusivity", "levelset"));
+
+    const std::vector<double> &levelset_vec = field_vectors.at(field::levelset);
+
+    const unsigned int n_values = property_vector.size();
+
+    Assert(n_values == levelset_vec.size(),
+           SizeOfFields(n_values, levelset_vec.size()));
+
+    for (unsigned int i = 0; i < n_values; ++i)
+      {
+        const double levelset = levelset_vec[i];
+        property_vector[i] =
+          tracer_diffusivity_bulk +
+          delta_diffusivity * exp(-(pow(levelset, 2)) / squared_thickness);
+        ;
+      }
+  }
+
+  /**
+   * @brief Compute the jacobian (the partial derivative) of the diffusivity
+   * with respect to a specified field.
+   *
+   * @param[in] field_values Values of the various fields on which the specific
+   * heat may depend. The map stores a single value per field.
+   *
+   * @param[in] id Indicator of the field with respect to which the jacobian
+   * should be computed.
+   *
+   * @return Value of the derivative of the diffusivity with respect to the
+   * specified field.
+   */
+  double
+  jacobian(const std::map<field, double> &field_values, field id) override
+  {
+    if (id == field::levelset)
+      {
+        Assert(field_values.find(field::levelset) != field_values.end(),
+               PhysicialPropertyModelFieldUndefined(
+                 "GaussianLevelsetTracerDiffusivity", "levelset"));
+
+        const double levelset = field_values.at(field::levelset);
+        const double exponential =
+          std::exp(-(levelset * levelset) / squared_thickness);
+
+        return delta_diffusivity * exponential *
+               (-2.0 * levelset / squared_thickness);
+      }
+    else
+      return 0.0;
+  }
+
+  /**
+   * @brief Compute the derivative of the diffusivity with respect to a field.
+   *
+   * @param[in] field_vectors Vector of values of the fields used to evaluate
+   * the diffusivity. The map stores a vector of values per field.
+   *
+   * @param[in] id Identifier of the field with respect to which a derivative
+   * should be computed.
+   *
+   * @param[out] jacobian Vector of computed derivative values of the
+   * diffusivity with respect to the field of the specified @p id.
+   */
+  void
+  vector_jacobian(const std::map<field, std::vector<double>> &field_vectors,
+                  const field                                 id,
+                  std::vector<double> &jacobian_vector) override
+  {
+    if (id == field::levelset)
+      {
+        Assert(field_vectors.find(field::levelset) != field_vectors.end(),
+               PhysicialPropertyModelFieldUndefined(
+                 "GaussianLevelsetTracerDiffusivity", "levelset"));
+
+        const std::vector<double> &levelset_vec =
+          field_vectors.at(field::levelset);
+        const unsigned int n = jacobian_vector.size();
+
+        for (unsigned int i = 0; i < n; ++i)
+          {
+            const double levelset = levelset_vec[i];
+            const double exponential =
+              std::exp(-pow(levelset, 2) / squared_thickness);
+            jacobian_vector[i] = delta_diffusivity * exponential *
+                                 (-2.0 * levelset / squared_thickness);
+          }
+      }
+    else
+      std::fill(jacobian_vector.begin(), jacobian_vector.end(), 0.0);
+  }
+
+private:
+  const double tracer_diffusivity_interface;
+  const double tracer_diffusivity_bulk;
+  const double delta_diffusivity;
+  const double squared_thickness;
 };
 
 #endif

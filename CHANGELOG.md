@@ -3,9 +3,15 @@
 All notable changes to the Lethe project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
+### [Master] - 2025-09-18
+
+### Added
+
+- MINOR A new reaction prefactor Gaussian model to be used with the lethe-fluid-sharp solver with the tracer physics. This new model imposes different properties at the interface and in the bulk of each phase, with a tunable width. It has been added to the tracer diffusivity as well. [#1688](https://github.com/chaos-polymtl/lethe/pull/1688)
+
 ### [Master] - 2025-09-16
 
-## Fixed
+### Fixed
 
 - MINOR There was a typo in the code when load balancing. "Repartitioning" was written with two "n". [#1681](https://github.com/chaos-polymtl/lethe/pull/1681)
 

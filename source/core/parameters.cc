@@ -476,6 +476,59 @@ namespace Parameters
   }
 
   void
+  ImmersedSolidGaussianParameters::declare_parameters(ParameterHandler &prm)
+  {
+    prm.enter_subsection("immersed solid gaussian");
+    {
+      prm.declare_entry("tracer diffusivity interface",
+                        "0.0",
+                        Patterns::Double(),
+                        "Tracer diffusivity at the immersed solid interface");
+      prm.declare_entry("tracer diffusivity bulk",
+                        "1.0",
+                        Patterns::Double(),
+                        "Tracer diffusivity in the phase bulk");
+      prm.declare_entry(
+        "tracer reaction constant interface",
+        "0.0",
+        Patterns::Double(),
+        "Tracer reaction constant at the immersed solid interface");
+      prm.declare_entry("tracer reaction constant bulk",
+                        "0.0",
+                        Patterns::Double(),
+                        "Tracer reaction constant in the phase bulk");
+      prm.declare_entry("thickness",
+                        "1.0",
+                        Patterns::Double(),
+                        "Thickness to be used with the Gaussian function");
+    }
+    prm.leave_subsection();
+  }
+
+  void
+  ImmersedSolidGaussianParameters::parse_parameters(
+    ParameterHandler    &prm,
+    const Dimensionality dimensions)
+  {
+    prm.enter_subsection("immersed solid gaussian");
+    {
+      tracer_diffusivity_interface =
+        prm.get_double("tracer diffusivity interface");
+      tracer_diffusivity_bulk = prm.get_double("tracer diffusivity bulk");
+      tracer_reaction_constant_interface =
+        prm.get_double("tracer reaction constant interface");
+      tracer_reaction_constant_bulk =
+        prm.get_double("tracer reaction constant bulk");
+      thickness = prm.get_double("thickness");
+
+      // Diffusivity is in L^2 T^-1
+      tracer_diffusivity_interface *= dimensions.diffusivity_scaling;
+      tracer_diffusivity_bulk *= dimensions.diffusivity_scaling;
+    }
+    prm.leave_subsection();
+  }
+
+  void
   IsothermalIdealGasDensityParameters::declare_parameters(ParameterHandler &prm)
   {
     prm.enter_subsection("isothermal_ideal_gas");
@@ -1101,9 +1154,10 @@ namespace Parameters
       prm.declare_entry(
         "tracer diffusivity model",
         "constant",
-        Patterns::Selection("constant|immersed solid tanh"),
+        Patterns::Selection(
+          "constant|immersed solid tanh|immersed solid gaussian"),
         "Model used for the calculation of the tracer diffusivity"
-        "Choices are <constant|immersed solid tanh>.");
+        "Choices are <constant|immersed solid tanh|immersed solid gaussian>.");
 
       prm.declare_entry(
         "tracer diffusivity",
@@ -1115,9 +1169,10 @@ namespace Parameters
       prm.declare_entry(
         "tracer reaction constant model",
         "constant",
-        Patterns::Selection("none|constant|immersed solid tanh"),
+        Patterns::Selection(
+          "none|constant|immersed solid tanh|immersed solid gaussian"),
         "Model used for the calculation of the tracer reaction constant"
-        "Choices are <none|constant|immersed solid tanh>.");
+        "Choices are <none|constant|immersed solid tanh|immersed solid gaussian>.");
 
       prm.declare_entry(
         "tracer reaction constant",
@@ -1135,6 +1190,7 @@ namespace Parameters
 
       // Declaration of the immersed solids models parameters
       immersed_solid_tanh_parameters.declare_parameters(prm);
+      immersed_solid_gaussian_parameters.declare_parameters(prm);
 
       prm.declare_entry(
         "rheological model",
@@ -1304,6 +1360,9 @@ namespace Parameters
       if (op == "immersed solid tanh")
         tracer_diffusivity_model =
           TracerDiffusivityModel::immersed_boundary_tanh;
+      else if (op == "immersed solid gaussian")
+        tracer_diffusivity_model =
+          TracerDiffusivityModel::immersed_boundary_gaussian;
       else
         tracer_diffusivity_model = TracerDiffusivityModel::constant;
       tracer_diffusivity = prm.get_double("tracer diffusivity");
@@ -1319,6 +1378,9 @@ namespace Parameters
       else if (op == "immersed solid tanh")
         tracer_reaction_prefactor_model =
           TracerReactionPrefactorModel::immersed_boundary_tanh;
+      else if (op == "immersed solid gaussian")
+        tracer_reaction_prefactor_model =
+          TracerReactionPrefactorModel::immersed_boundary_gaussian;
       else
         tracer_reaction_prefactor_model =
           TracerReactionPrefactorModel::constant;
@@ -1327,6 +1389,7 @@ namespace Parameters
 
       // Parsing of the immersed solids models parameters
       immersed_solid_tanh_parameters.parse_parameters(prm, dimensions);
+      immersed_solid_gaussian_parameters.parse_parameters(prm, dimensions);
 
       //--------------------------------
       // Phase change properties
