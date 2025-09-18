@@ -2,7 +2,6 @@
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
 #include <core/checkpoint_control.h>
-#include <core/utilities.h>
 
 #include <dem/dem_action_manager.h>
 #include <dem/read_checkpoint.h>
