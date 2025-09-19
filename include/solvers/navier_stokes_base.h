@@ -292,6 +292,16 @@ protected:
   setup_dofs_fd() = 0;
 
   /**
+   * @brief Update mortar configuration.
+   *
+   * When the rotor domain is rotated, the mortar cells need to be reinitialized
+   * according to the new rotor-stator interface configuration.
+   */
+  virtual void
+  update_mortar_configuration()
+  {}
+
+  /**
    * @brief  Update the time average velocity field solution
    */
   virtual void

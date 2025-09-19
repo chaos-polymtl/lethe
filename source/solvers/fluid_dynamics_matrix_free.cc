@@ -1176,7 +1176,8 @@ MFNavierStokesPreconditionGMGBase<dim>::reinit(
             this->simulation_parameters.linear_solver
               .at(PhysicsID::fluid_dynamics)
               .mg_enable_hessians_jacobian,
-            true);
+            true,
+            this->simulation_parameters.mortar_parameters.enable);
 
           this->ls_mg_operators[level].initialize(*(this->mg_operators)[level]);
           this->ls_mg_interface_in[level].initialize(
@@ -1607,7 +1608,8 @@ MFNavierStokesPreconditionGMGBase<dim>::reinit(
             this->simulation_parameters.linear_solver
               .at(PhysicsID::fluid_dynamics)
               .mg_enable_hessians_jacobian,
-            true);
+            true,
+            this->simulation_parameters.mortar_parameters.enable);
 
           this->mg_setup_timer.leave_subsection("Set up operators");
         }
@@ -2526,12 +2528,27 @@ FluidDynamicsMatrixFree<dim>::solve()
 {
   this->computing_timer.enter_subsection("Read mesh and manifolds");
 
-  read_mesh_and_manifolds(
-    *this->triangulation,
-    this->simulation_parameters.mesh,
-    this->simulation_parameters.manifolds_parameters,
-    this->simulation_parameters.restart_parameters.restart,
-    this->simulation_parameters.boundary_conditions);
+  if (this->simulation_parameters.mortar_parameters.enable)
+    {
+      read_mesh_and_manifolds_for_stator_and_rotor(
+        *this->triangulation,
+        this->simulation_parameters.mesh,
+        this->simulation_parameters.manifolds_parameters,
+        this->simulation_parameters.restart_parameters.restart,
+        this->simulation_parameters.boundary_conditions,
+        this->simulation_parameters.mortar_parameters);
+      // Create and initialize mapping cache
+      this->mapping_cache =
+        std::make_shared<MappingQCache<dim>>(this->velocity_fem_degree);
+      this->rotate_rotor_mapping(true);
+    }
+  else
+    read_mesh_and_manifolds(
+      *this->triangulation,
+      this->simulation_parameters.mesh,
+      this->simulation_parameters.manifolds_parameters,
+      this->simulation_parameters.restart_parameters.restart,
+      this->simulation_parameters.boundary_conditions);
 
   this->computing_timer.leave_subsection("Read mesh and manifolds");
 
@@ -2556,6 +2573,7 @@ FluidDynamicsMatrixFree<dim>::solve()
 
       this->simulation_control->print_progression(this->pcout);
       this->dynamic_flow_control();
+      this->update_mortar_configuration();
 
       if (!this->simulation_control->is_at_start())
         {
@@ -2650,6 +2668,9 @@ FluidDynamicsMatrixFree<dim>::setup_dofs_fd()
   this->locally_relevant_dofs =
     DoFTools::extract_locally_relevant_dofs(this->dof_handler);
 
+  // If enabled, rotate rotor mapping
+  this->rotate_rotor_mapping(false);
+
   // Non-zero constraints
   this->define_non_zero_constraints();
 
@@ -2672,6 +2693,9 @@ FluidDynamicsMatrixFree<dim>::setup_dofs_fd()
   // Zero constraints
   this->define_zero_constraints();
 
+  // If enabled, create mortar operators
+  this->reinit_mortar_operators_mf();
+
   // Initialize matrix-free object
   unsigned int mg_level = numbers::invalid_unsigned_int;
   this->system_operator->reinit(
@@ -2688,7 +2712,8 @@ FluidDynamicsMatrixFree<dim>::setup_dofs_fd()
     this->simulation_parameters.linear_solver.at(PhysicsID::fluid_dynamics)
       .enable_hessians_jacobian,
     this->simulation_parameters.linear_solver.at(PhysicsID::fluid_dynamics)
-      .enable_hessians_residual);
+      .enable_hessians_residual,
+    this->simulation_parameters.mortar_parameters.enable);
 
 
   // Initialize vectors using operator
@@ -2751,6 +2776,87 @@ FluidDynamicsMatrixFree<dim>::setup_dofs_fd()
   // apart from fluid dynamics are enabled.
   if (this->multiphysics->get_active_physics().size() > 1)
     update_solutions_for_multiphysics();
+}
+
+template <int dim>
+void
+FluidDynamicsMatrixFree<dim>::update_mortar_configuration()
+{
+  if (!this->simulation_parameters.mortar_parameters.enable)
+    return;
+
+  TimerOutput::Scope t(this->computing_timer, "Update mortar configuration");
+
+  bool refinement_step;
+  if (this->simulation_parameters.mesh_adaptation.refinement_at_frequency)
+    refinement_step = this->simulation_control->get_step_number() %
+                        this->simulation_parameters.mesh_adaptation.frequency ==
+                      0;
+  else
+    refinement_step = this->simulation_control->get_step_number() == 0;
+
+  // We need to update the mortar operator/evaluator, as well as the sparsity
+  // pattern, at every iteration. Since this is already done within
+  // setup_dofs(), which is called in refine_mesh(), here we make sure that,
+  // when there is no mesh refinement, the mortar information is still updated
+  if (this->simulation_control->is_at_start() || !refinement_step ||
+      this->simulation_parameters.mesh_adaptation.type ==
+        Parameters::MeshAdaptation::Type::none)
+    {
+      // Clear the preconditioner before the matrix they are associated with is
+      // cleared
+      gmg_preconditioner.reset();
+      ilu_preconditioner.reset();
+
+      // Rotate mapping
+      this->rotate_rotor_mapping(false);
+
+      // Non Zero constraints
+      this->define_non_zero_constraints();
+
+      // Zero constraints
+      this->define_zero_constraints();
+
+      // Create mortar manager, operator, and evaluator
+      this->reinit_mortar_operators_mf();
+    }
+}
+
+template <int dim>
+void
+FluidDynamicsMatrixFree<dim>::reinit_mortar_operators_mf()
+{
+  if (!this->simulation_parameters.mortar_parameters.enable)
+    return;
+
+  TimerOutput::Scope t(this->computing_timer, "Reinit mortar operators");
+
+  // Create mortar manager
+  this->system_operator->mortar_manager_mf =
+    std::make_shared<MortarManagerCircle<dim>>(
+      *this->cell_quadrature,
+      *this->get_mapping(),
+      this->dof_handler,
+      this->simulation_parameters.mortar_parameters);
+
+  // Create mortar coupling evaluator
+  this->system_operator->mortar_coupling_evaluator_mf =
+    std::make_shared<NavierStokesCouplingEvaluation<dim, double>>(
+      *this->get_mapping(),
+      this->dof_handler,
+      this->physical_properties_manager->get_rheology()
+        ->get_kinematic_viscosity());
+
+  this->system_operator->mortar_coupling_operator_mf =
+    std::make_shared<CouplingOperator<dim, double>>(
+      *this->get_mapping(),
+      this->dof_handler,
+      this->zero_constraints,
+      this->system_operator->mortar_coupling_evaluator_mf,
+      this->system_operator->mortar_manager_mf,
+      this->simulation_parameters.mortar_parameters.rotor_boundary_id,
+      this->simulation_parameters.mortar_parameters.stator_boundary_id,
+      this->simulation_parameters.mortar_parameters.sip_factor);
 }
 
 template <int dim>
@@ -2907,6 +3013,14 @@ FluidDynamicsMatrixFree<dim>::assemble_system_rhs()
 
   this->system_operator->evaluate_residual(this->system_rhs,
                                            this->evaluation_point);
+
+  // If mortar is enabled, add RHS entries
+  if (this->simulation_parameters.mortar_parameters.enable)
+    {
+      this->system_operator->mortar_coupling_operator_mf->vmult_add(
+        this->system_rhs, this->evaluation_point);
+      this->system_rhs.compress(VectorOperation::add);
+    }
 
   this->system_rhs *= -1.0;
 
@@ -3236,6 +3350,10 @@ FluidDynamicsMatrixFree<dim>::solve_linear_system(
   if (this->simulation_parameters.linear_solver.at(PhysicsID::fluid_dynamics)
         .solver == Parameters::LinearSolver::SolverType::gmres)
     solve_system_GMRES(initial_step, absolute_residual, relative_residual);
+  else if (this->simulation_parameters.linear_solver
+             .at(PhysicsID::fluid_dynamics)
+             .solver == Parameters::LinearSolver::SolverType::direct)
+    solve_system_direct(initial_step, absolute_residual, relative_residual);
   else
     AssertThrow(false, ExcMessage("This solver is not allowed"));
   this->rescale_pressure_dofs_in_newton_update();
@@ -3336,6 +3454,48 @@ FluidDynamicsMatrixFree<dim>::solve_system_GMRES(const bool   initial_step,
                   << " steps to reach a residual norm of "
                   << solver_control.last_value() << std::endl;
     }
+
+  this->computing_timer.enter_subsection(
+    "Distribute constraints after linear solve");
+
+  constraints_used.distribute(this->newton_update);
+
+  this->computing_timer.leave_subsection(
+    "Distribute constraints after linear solve");
+}
+
+template <int dim>
+void
+FluidDynamicsMatrixFree<dim>::solve_system_direct(
+  const bool   initial_step,
+  const double absolute_residual,
+  const double relative_residual)
+{
+  auto &system_rhs          = this->system_rhs;
+  auto &nonzero_constraints = this->nonzero_constraints;
+
+  const AffineConstraints<double> &constraints_used =
+    initial_step ? nonzero_constraints : this->zero_constraints;
+  const double linear_solver_tolerance =
+    std::max(relative_residual * system_rhs.l2_norm(), absolute_residual);
+
+  SolverControl solver_control(this->simulation_parameters.linear_solver
+                                 .at(PhysicsID::fluid_dynamics)
+                                 .max_iterations,
+                               linear_solver_tolerance,
+                               true,
+                               true);
+
+  TrilinosWrappers::SolverDirect solver(solver_control);
+
+  this->newton_update = 0.0;
+
+  this->computing_timer.enter_subsection("Solve linear system");
+
+  solver.initialize(this->system_operator->get_system_matrix());
+  solver.solve(this->newton_update, this->system_rhs);
+
+  this->computing_timer.leave_subsection("Solve linear system");
 
   this->computing_timer.enter_subsection(
     "Distribute constraints after linear solve");

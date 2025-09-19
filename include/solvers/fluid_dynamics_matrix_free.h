@@ -472,6 +472,22 @@ protected:
   assemble_system_rhs() override;
 
   /**
+   * @brief Update mortar configuration.
+   *
+   * When the rotor domain is rotated, the mortar cells need to be reinitialized
+   * according to the new rotor-stator interface configuration.
+   */
+  virtual void
+  update_mortar_configuration() override;
+
+  /**
+   * @brief Initialize mortar coupling manager, operator, and evaluator for the matrix-free
+   * solver.
+   */
+  void
+  reinit_mortar_operators_mf();
+
+  /**
    * @brief  Update the average velocity field solution in the multiphyscics interface.
    */
   virtual void
@@ -548,6 +564,21 @@ private:
                      const double absolute_residual,
                      const double relative_residual);
 
+  /**
+   * @brief Direct solver using TrilinosWrappers::SolverDirect
+   *
+   * @param[in] initial_step Indicates if this is the first solution of the
+   * linear system. If this is the case, the non_zero version of the
+   * constraints are used for the Dirichlet boundary conditions
+   *
+   * @param[in] absolute_residual Used to define the linear solver tolerance.
+   *
+   * @param[in] relative_residual Used to define the linear solver tolerance.
+   */
+  void
+  solve_system_direct(const bool   initial_step,
+                      const double absolute_residual,
+                      const double relative_residual);
   /**
    * @brief  Create the geometric multigrid preconditioner.
    */

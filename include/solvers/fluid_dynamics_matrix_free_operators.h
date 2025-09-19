@@ -5,6 +5,7 @@
 #define lethe_fluid_dynamics_matrix_free_operators_h
 
 #include <core/bdf.h>
+#include <core/mortar_coupling_manager.h>
 #include <core/simulation_control.h>
 #include <core/time_integration_utilities.h>
 
@@ -152,6 +153,7 @@ public:
    * jacobian on or off.
    * @param[in] enable_hessians_residual Flag to turn hessian terms from
    * residual on or off.
+   * @param[in] enable_mortar Flag to turn mortar parameters on or off.
 
    */
   NavierStokesOperatorBase(
@@ -167,7 +169,8 @@ public:
     const std::shared_ptr<SimulationControl> &simulation_control,
     const BoundaryConditions::NSBoundaryConditions<dim> &boundary_conditions,
     const bool &enable_hessians_jacobian,
-    const bool &enable_hessians_residual);
+    const bool &enable_hessians_residual,
+    const bool &enable_mortar);
 
   /**
    * @brief Initialize the main matrix free object that contains all data and is
@@ -192,6 +195,7 @@ public:
    * jacobian on or off.
    * @param[in] enable_hessians_residual Flag to turn hessian terms from
    * residual on or off.
+   * @param[in] enable_mortar Flag to turn mortar parameters on or off.
    */
   void
   reinit(
@@ -207,7 +211,8 @@ public:
     const std::shared_ptr<SimulationControl> &simulation_control,
     const BoundaryConditions::NSBoundaryConditions<dim> &boundary_conditions,
     const bool &enable_hessians_jacobian,
-    const bool &enable_hessians_residual);
+    const bool &enable_hessians_residual,
+    const bool &enable_mortar);
 
   /**
    * @brief Compute the element size h of the cells required to calculate
@@ -397,6 +402,17 @@ public:
    */
   void
   evaluate_residual(VectorType &dst, const VectorType &src);
+
+  /**
+   * @brief Mortar coupling manager, operator, and evaluator used in the matrix-free
+   * solver. The matrix-based solver uses the shared pointers created in the NS
+   * base. Because we have a different system_operator here, we need to create
+   * new pointers.
+   */
+  std::shared_ptr<MortarManagerCircle<dim>>      mortar_manager_mf;
+  std::shared_ptr<CouplingOperator<dim, double>> mortar_coupling_operator_mf;
+  std::shared_ptr<NavierStokesCouplingEvaluation<dim, double>>
+    mortar_coupling_evaluator_mf;
 
 protected:
   /**
@@ -726,6 +742,11 @@ protected:
    *
    */
   Table<1, VectorizedArray<number>> effective_beta_face;
+
+  /**
+   * @brief Flag to turn the computation of mortar coupling terms on or off.
+   */
+  bool enable_mortar;
 
   /**
    * @brief Vector with the constrained indices used for the local smoothing approach.
