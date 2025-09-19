@@ -1055,6 +1055,10 @@ MFNavierStokesPreconditionGMGBase<dim>::reinit(
                   dirichlet_boundary_id,
                   fe->component_mask(velocities));
             }
+          else if (type == BoundaryConditions::BoundaryType::none)
+            {
+              /*Default boundary condition*/
+            }
           else
             {
               AssertThrow(
@@ -1523,6 +1527,10 @@ MFNavierStokesPreconditionGMGBase<dim>::reinit(
                     dealii::Functions::ZeroFunction<dim, MGNumber>(dim + 1),
                     level_constraint,
                     fe->component_mask(velocities));
+                }
+              else if (type == BoundaryConditions::BoundaryType::none)
+                {
+                  /*Default boundary condition*/
                 }
               else
                 {
