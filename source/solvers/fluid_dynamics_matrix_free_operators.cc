@@ -1130,6 +1130,8 @@ NavierStokesOperatorBase<dim, number>::compute_inverse_diagonal(
       {},
       boundary_function);
 
+  std::cout << "constraints \n";
+  constraints.print(std::cout);
   // If mortar is enabled, add diagonal entries
   if (this->enable_mortar)
     this->mortar_coupling_operator_mf->add_diagonal_entries(diagonal);

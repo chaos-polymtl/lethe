@@ -1289,6 +1289,12 @@ CouplingOperator<dim, Number>::add_diagonal_entries(VectorType &diagonal) const
               }
 
             const auto local_dofs = this->get_dof_indices(cell);
+            std::cout << "local dofs: ";
+            for (unsigned int i = 0; i < local_dofs.size(); i++)
+              std::cout << local_dofs[i] << " ";
+
+            std::cout << std::endl;
+
             constraints.distribute_local_to_global(diagonal_local,
                                                    local_dofs,
                                                    diagonal);
