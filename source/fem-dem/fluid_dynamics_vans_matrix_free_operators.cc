@@ -53,13 +53,14 @@ VANSOperator<dim, number>::evaluate_non_linear_term_and_calculate_tau(
 template <int dim, typename number>
 void
 VANSOperator<dim, number>::compute_void_fraction(
-  const LinearAlgebra::distributed::Vector<double> &void_fraction_solution,
-  const DoFHandler<dim>                            &void_fraction_dof_handler)
+  const DoFHandler<dim>                            &void_fraction_dof_handler,
+  const LinearAlgebra::distributed::Vector<double> &void_fraction_solution)
 {
   this->timer.enter_subsection("operator::compute_void_fraction");
 
   const unsigned int n_cells = this->matrix_free.n_cell_batches();
   FECellIntegrator   integrator(this->matrix_free);
+
 
   void_fraction.reinit(n_cells, integrator.n_q_points);
   void_fraction_gradient.reinit(n_cells, integrator.n_q_points);
@@ -103,6 +104,52 @@ VANSOperator<dim, number>::compute_void_fraction(
   this->timer.leave_subsection("operator::compute_void_fraction");
 }
 
+template <int dim, typename number>
+void
+VANSOperator<dim, number>::compute_particle_fluid_force(
+  const DoFHandler<dim>                            &pf_force_dof_handler,
+  const LinearAlgebra::distributed::Vector<double> &pf_force_solution)
+{
+  this->timer.enter_subsection("operator::compute_particle_fluid_forces");
+
+  const unsigned int n_cells = this->matrix_free.n_cell_batches();
+  FECellIntegrator   integrator(this->matrix_free);
+
+  particle_fluid_force.reinit(n_cells, integrator.n_q_points);
+
+  FEValues<dim> fe_values(*(this->matrix_free.get_mapping_info().mapping),
+                          pf_force_dof_handler.get_fe(),
+                          this->matrix_free.get_quadrature(),
+                          update_values);
+
+  std::vector<Tensor<1, dim>> cell_pf_force(fe_values.n_quadrature_points);
+  constexpr FEValuesExtractors::Vector force(0);
+
+  for (unsigned int cell = 0; cell < n_cells; ++cell)
+    {
+      for (auto lane = 0u;
+           lane < this->matrix_free.n_active_entries_per_cell_batch(cell);
+           lane++)
+        {
+          fe_values.reinit(this->matrix_free.get_cell_iterator(cell, lane)
+                             ->as_dof_handler_iterator(pf_force_dof_handler));
+
+          fe_values[force].get_function_values(pf_force_solution,
+                                               cell_pf_force);
+
+          for (const auto q : fe_values.quadrature_point_indices())
+            {
+              for (unsigned int c = 0; c < dim; ++c)
+                {
+                  particle_fluid_force[cell][q][c][lane] = cell_pf_force[q][c];
+                }
+            }
+        }
+    }
+
+  this->timer.leave_subsection("operator::compute_particle_fluid_forces");
+}
+
 /**
  * The expressions calculated in this cell integral are:
  * (q,ε∇·δu) + (q,δu·∇ε)  (Continuity equation)
@@ -110,10 +157,12 @@ VANSOperator<dim, number>::compute_void_fraction(
  * \- (∇·v, ε δp) - (v,p∇ε)
  * \+ ε*ν(∇v,∇δu)  +  ν(v,∇ε·∇δu)   (VANS equations),
  * plus three additional terms in the case of SUPG-PSPG stabilization:
- * \+ (ε ∂t δu + ε(u·∇)δu +  ε(δu·∇)u +  ε∇δp -  εν∆δu)τ·∇q (PSPG Jacobian)
- * \+ (ε ∂t δu + ε(u·∇)δu +  ε(δu·∇)u +  ε∇δp -  εν∆δu)τu·∇v (SUPG Jacobian P.1)
- * \+ (ε ∂t u  + ε(u·∇)u  +  ε∇p -  εν∆u -  εf )τδu·∇v (SUPG Jacobian P.2),
- * in the case of additional grad-div stabilization
+ * \+ (ε ∂t δu + ε(u·∇)δu +  ε(δu·∇)u +  ε∇δp -  εν∆δu)τ·∇q (PSPG
+ * Jacobian)
+ * \+ (ε ∂t δu + ε(u·∇)δu +  ε(δu·∇)u +  ε∇δp -  εν∆δu)τu·∇v (SUPG
+ * Jacobian P.1)
+ * \+ (ε ∂t u  + ε(u·∇)u  +  ε∇p -  εν∆u -  εf )τδu·∇v (SUPG Jacobian
+ * P.2), in the case of additional grad-div stabilization
  * \+ (∇·v,γ(ɛ∇·δu+δu·∇ɛ)) (grad-div term)
  */
 template <int dim, typename number>
@@ -145,6 +194,10 @@ VANSOperator<dim, number>::do_cell_integral_local(
     {
       Tensor<1, dim, VectorizedArray<number>> source_value;
 
+      // Gather particle-fluid force, will be zero if they have not been
+      // gathered.
+      auto pf_value = this->particle_fluid_force(cell, q);
+
       // Evaluate source term function if enabled
       if (this->forcing_function)
         source_value = this->forcing_terms(cell, q);
@@ -152,6 +205,8 @@ VANSOperator<dim, number>::do_cell_integral_local(
       // Add to source term the dynamic flow control force (zero if not
       // enabled)
       source_value += this->beta_force;
+
+
 
       // Gather the original value/gradient
       typename FECellIntegrator::value_type    value = integrator.get_value(q);
@@ -176,6 +231,12 @@ VANSOperator<dim, number>::do_cell_integral_local(
       // Gather void fraction value and gradient
       auto vf_value    = this->void_fraction(cell, q);
       auto vf_gradient = this->void_fraction_gradient(cell, q);
+
+      // Add to source term the particle-fluid force (if it is enabled)
+      // We divide this source by the void fraction value since it is multiplied
+      // by the void fraction value within the assembler.
+
+      source_value += -pf_value / vf_value;
 
       Tensor<1, dim + 1, VectorizedArray<number>> previous_time_derivatives;
       if (transient)
@@ -361,12 +422,16 @@ VANSOperator<dim, number>::local_evaluate_residual(
         {
           Tensor<1, dim, VectorizedArray<number>> source_value;
 
+          // Gather particle-fluid force, will be zero if they have not been
+          // gathered.
+          auto pf_value = this->particle_fluid_force(cell, q);
+
           // Evaluate source term function if enabled
           if (this->forcing_function)
             source_value = this->forcing_terms(cell, q);
 
-          // Add to source term the dynamic flow control force (zero if not
-          // enabled)
+          // Add to source term the dynamic flow control force (zero if
+          // not enabled)
           source_value += this->beta_force;
 
           // Gather the original value/gradient
@@ -381,6 +446,11 @@ VANSOperator<dim, number>::local_evaluate_residual(
           // Gather void fraction value and gradient
           auto vf_value    = this->void_fraction(cell, q);
           auto vf_gradient = this->void_fraction_gradient(cell, q);
+
+          // Add to source term the particle-fluid force (zero if not enabled)
+          // We divide this source by the void fraction value since it is
+          // multiplied by the void fraction value within the assembler.
+          source_value += -pf_value / vf_value;
 
           // Time derivatives of previous solutions
           Tensor<1, dim + 1, VectorizedArray<number>> previous_time_derivatives;
@@ -414,8 +484,8 @@ VANSOperator<dim, number>::local_evaluate_residual(
 
               // +(v,ɛ∂t u)
               if (transient)
-                value_result[i] += vf_value * (*bdf_coefs)[0] * value[i] +
-                                   previous_time_derivatives[i];
+                value_result[i] += vf_value * ((*bdf_coefs)[0] * value[i] +
+                                               previous_time_derivatives[i]);
 
               // +(q,ɛ∇·u)
               value_result[dim] += vf_value * gradient[i][i];
@@ -449,8 +519,8 @@ VANSOperator<dim, number>::local_evaluate_residual(
               // +(ɛ∂t u)·τ∇q
               if (transient)
                 gradient_result[dim][i] +=
-                  tau * (vf_value * (*bdf_coefs)[0] * value[i] +
-                         previous_time_derivatives[i]);
+                  tau * vf_value *
+                  ((*bdf_coefs)[0] * value[i] + previous_time_derivatives[i]);
             }
           // +ɛ(∇p)τ∇·q
           gradient_result[dim] += tau * vf_value * gradient[dim];
@@ -492,10 +562,9 @@ VANSOperator<dim, number>::local_evaluate_residual(
 
                   // + (ɛ∂t u)τ(u·∇)v
                   if (transient)
-                    gradient_result[i][k] +=
-                      tau * value[k] *
-                      (vf_value * (*bdf_coefs)[0] * value[i] +
-                       previous_time_derivatives[i]);
+                    gradient_result[i][k] += tau * value[k] * vf_value *
+                                             ((*bdf_coefs)[0] * value[i] +
+                                              previous_time_derivatives[i]);
                 }
             }
 
