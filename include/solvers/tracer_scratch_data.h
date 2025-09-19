@@ -74,7 +74,7 @@ public:
                                  update_values | update_gradients |
                                    update_quadrature_points |
                                    update_JxW_values | update_normal_vectors)
-    , fe_values_fd(mapping, fe_fd, quadrature, update_values)
+    , fe_values_fd(mapping, fe_fd, quadrature, update_values | update_gradients)
     , fe_face_values_fd(mapping, fe_fd, face_quadrature, update_values)
   {
     allocate();
@@ -109,7 +109,7 @@ public:
     , fe_values_fd(sd.fe_values_fd.get_mapping(),
                    sd.fe_values_fd.get_fe(),
                    sd.fe_values_fd.get_quadrature(),
-                   update_values)
+                   update_values | update_gradients)
     , fe_face_values_fd(sd.fe_face_values_fd.get_mapping(),
                         sd.fe_face_values_fd.get_fe(),
                         sd.fe_face_values_fd.get_quadrature(),
@@ -283,6 +283,9 @@ public:
 
     this->fe_values_fd[velocities].get_function_values(velocity_solution,
                                                        velocity_values);
+
+    this->fe_values_fd[velocities].get_function_divergences(velocity_solution,
+                                                   velocity_divergences);
 
     // Add the drift velocity to the velocity to account for tracer drift flux
     // modeling
@@ -585,6 +588,7 @@ public:
   FEValues<dim>               fe_values_fd;
   FEFaceValues<dim>           fe_face_values_fd;
   std::vector<Tensor<1, dim>> velocity_values;
+  std::vector<double> velocity_divergences;
   std::vector<Tensor<1, dim>> face_velocity_values;
 };
 
