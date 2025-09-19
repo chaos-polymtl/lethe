@@ -152,8 +152,8 @@ Protected Member Functions</h2></td></tr>
 <tr class="separator:aa9d4082f8100a4be7481c4a7b80121a7"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a01fd5496793c44c9889381ab54f7d6ba" id="r_a01fd5496793c44c9889381ab54f7d6ba"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classFluidDynamicsMatrixBased.html#a01fd5496793c44c9889381ab54f7d6ba">define_dynamic_zero_constraints</a> ()</td></tr>
 <tr class="separator:a01fd5496793c44c9889381ab54f7d6ba"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ac95ee9d38109d2248756e7ea8c78205b" id="r_ac95ee9d38109d2248756e7ea8c78205b"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classFluidDynamicsMatrixBased.html#ac95ee9d38109d2248756e7ea8c78205b">update_mortar_configuration</a> ()</td></tr>
-<tr class="separator:ac95ee9d38109d2248756e7ea8c78205b"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a7eb538079a51e71748469cfca0d20bf7" id="r_a7eb538079a51e71748469cfca0d20bf7"><td class="memItemLeft" align="right" valign="top">virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classFluidDynamicsMatrixBased.html#a7eb538079a51e71748469cfca0d20bf7">update_mortar_configuration</a> () override</td></tr>
+<tr class="separator:a7eb538079a51e71748469cfca0d20bf7"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:af16a439b2d5157717df92d004d1b41c8" id="r_af16a439b2d5157717df92d004d1b41c8"><td class="memItemLeft" align="right" valign="top">virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classFluidDynamicsMatrixBased.html#af16a439b2d5157717df92d004d1b41c8">assemble_local_system_matrix</a> (const typename DoFHandler&lt; dim &gt;::active_cell_iterator &amp;cell, <a class="el" href="classNavierStokesScratchData.html">NavierStokesScratchData</a>&lt; dim &gt; &amp;scratch_data, <a class="el" href="classStabilizedMethodsTensorCopyData.html">StabilizedMethodsTensorCopyData</a>&lt; dim &gt; &amp;copy_data)</td></tr>
 <tr class="separator:af16a439b2d5157717df92d004d1b41c8"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a7241a134f0e9ec373c83b5f68469926a" id="r_a7241a134f0e9ec373c83b5f68469926a"><td class="memItemLeft" align="right" valign="top">virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classFluidDynamicsMatrixBased.html#a7241a134f0e9ec373c83b5f68469926a">assemble_local_system_rhs</a> (const typename DoFHandler&lt; dim &gt;::active_cell_iterator &amp;cell, <a class="el" href="classNavierStokesScratchData.html">NavierStokesScratchData</a>&lt; dim &gt; &amp;scratch_data, <a class="el" href="classStabilizedMethodsTensorCopyData.html">StabilizedMethodsTensorCopyData</a>&lt; dim &gt; &amp;copy_data)</td></tr>
@@ -482,7 +482,7 @@ template&lt;int dim&gt; </div>
 
 <p class="definition">Definition at line <a class="el" href="fluid__dynamics__matrix__based_8cc_source.html#l00037">37</a> of file <a class="el" href="fluid__dynamics__matrix__based_8cc_source.html">fluid_dynamics_matrix_based.cc</a>.</p>
 
-<p class="reference">References <a class="el" href="structParameters_1_1LinearSolver.html#a704cb5844fa228c463633aafdc87a482a0b65af7f2357d3fa0ee8d8972d7e0646">Parameters::LinearSolver::amg</a>, <a class="el" href="multiphysics_8h_source.html#l00009">fluid_dynamics</a>, <a class="el" href="fluid__dynamics__matrix__based_8h_source.html#l00259">FluidDynamicsMatrixBased&lt; dim &gt;::initial_preconditioner_fill_level</a>, and <a class="el" href="navier__stokes__base_8h_source.html#l00978">NavierStokesBase&lt; dim, GlobalVectorType, IndexSet &gt;::simulation_parameters</a>.</p>
+<p class="reference">References <a class="el" href="structParameters_1_1LinearSolver.html#a704cb5844fa228c463633aafdc87a482a0b65af7f2357d3fa0ee8d8972d7e0646">Parameters::LinearSolver::amg</a>, <a class="el" href="multiphysics_8h_source.html#l00009">fluid_dynamics</a>, <a class="el" href="fluid__dynamics__matrix__based_8h_source.html#l00259">FluidDynamicsMatrixBased&lt; dim &gt;::initial_preconditioner_fill_level</a>, and <a class="el" href="navier__stokes__base_8h_source.html#l00988">NavierStokesBase&lt; dim, GlobalVectorType, IndexSet &gt;::simulation_parameters</a>.</p>
 
 </div>
 </div>
@@ -1308,8 +1308,8 @@ template&lt;int dim&gt; </div>
 
 </div>
 </div>
-<a id="ac95ee9d38109d2248756e7ea8c78205b" name="ac95ee9d38109d2248756e7ea8c78205b"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ac95ee9d38109d2248756e7ea8c78205b">&#9670;&#160;</a></span>update_mortar_configuration()</h2>
+<a id="a7eb538079a51e71748469cfca0d20bf7" name="a7eb538079a51e71748469cfca0d20bf7"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a7eb538079a51e71748469cfca0d20bf7">&#9670;&#160;</a></span>update_mortar_configuration()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -1328,13 +1328,15 @@ template&lt;int dim&gt; </div>
       </table>
   </td>
   <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">protected</span></span>  </td>
+<span class="mlabels"><span class="mlabel">override</span><span class="mlabel">protected</span><span class="mlabel">virtual</span></span>  </td>
   </tr>
 </table>
 </div><div class="memdoc">
 
 <p>Update mortar configuration. </p>
 <p>When the rotor domain is rotated, the mortar cells need to be reinitialized according to the new rotor-stator interface configuration. </p>
+
+<p>Reimplemented from <a class="el" href="classNavierStokesBase.html#ae963d69775a2a430c974fe56315574a2">NavierStokesBase&lt; dim, GlobalVectorType, IndexSet &gt;</a>.</p>
 
 <p class="definition">Definition at line <a class="el" href="fluid__dynamics__matrix__based_8cc_source.html#l00200">200</a> of file <a class="el" href="fluid__dynamics__matrix__based_8cc_source.html">fluid_dynamics_matrix_based.cc</a>.</p>
 
