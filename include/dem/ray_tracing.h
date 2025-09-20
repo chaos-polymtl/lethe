@@ -14,6 +14,12 @@
 
 #include <deal.II/base/timer.h>
 
+
+/**
+ * @brief Solver that uses ray tracing to find intersection points between photons
+ * and particles.
+ * @tparam dim An integer that denotes the number of spatial dimensions.
+ */
 template <int dim>
 class RayTracingSolver
 {
@@ -148,7 +154,7 @@ private:
   RayTracingSolverParameters<dim> parameters;
 
   /**
-   * @brief Dummy dem parameters need for some functions.
+   * @brief DEM parameters needed for some functions related to the DEM particles.
    */
   DEMSolverParameters<dim> dem_parameters;
   /**
@@ -174,7 +180,8 @@ private:
 
   /**
    * @brief The timer that keeps track of the time spent in some functions.
-   * Currently, the only function implemented is load balancing.
+   * Currently, the only function for which timing is monitored is load
+   * balancing.
    */
   TimerOutput computing_timer;
 
@@ -210,12 +217,13 @@ private:
   /**
    * @brief Container that shows the local/ghost neighbor cells of all local
    * cells in the triangulation. Note that they are reciprocal.
-   *
    */
-  typename dem_data_structures<dim>::cells_total_neighbor_list
-    total_neighbor_list;
+
+  /// Local neighbor list
   typename dem_data_structures<dim>::cells_neighbor_list
     cells_local_neighbor_list;
+
+  /// Ghost neighbor list
   typename dem_data_structures<dim>::cells_neighbor_list
     cells_ghost_neighbor_list;
 };
