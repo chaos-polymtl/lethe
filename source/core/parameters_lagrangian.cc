@@ -196,7 +196,7 @@ namespace Parameters
     }
 
     void
-    LagrangianPhysicalProperties::declare_parameters(ParameterHandler &prm)
+    LagrangianPhysicalProperties::declare_parameters(ParameterHandler &prm) const
     {
       prm.enter_subsection("lagrangian physical properties");
       {
@@ -423,6 +423,7 @@ namespace Parameters
       std::unordered_map<unsigned int, double> &surface_roughness_particle,
       std::unordered_map<unsigned int, double> &thermal_accommodation_particle,
       std::unordered_map<unsigned int, double> &real_youngs_modulus_particle)
+      const
     {
       for (unsigned int counter = 0; counter < particle_type_maximum_number;
            ++counter)
@@ -1306,7 +1307,7 @@ namespace Parameters
 
     template <int dim>
     void
-    FloatingWalls<dim>::declare_parameters(ParameterHandler &prm)
+    FloatingWalls<dim>::declare_parameters(ParameterHandler &prm) const
     {
       prm.enter_subsection("floating walls");
       {
@@ -1477,7 +1478,7 @@ namespace Parameters
     }
 
     void
-    BCDEM::parse_boundary_conditions(ParameterHandler &prm)
+    BCDEM::parse_boundary_conditions(const ParameterHandler &prm)
     {
       const unsigned int boundary_id   = prm.get_integer("boundary id");
       const std::string  boundary_type = prm.get("type");
@@ -1539,7 +1540,7 @@ namespace Parameters
     }
 
     void
-    BCDEM::declare_parameters(ParameterHandler &prm)
+    BCDEM::declare_parameters(ParameterHandler &prm) const
     {
       prm.enter_subsection("DEM boundary conditions");
       {
@@ -1596,7 +1597,7 @@ namespace Parameters
                                                  &boundary_rotational_vector,
       std::unordered_map<unsigned int, Point<3>> &point_on_rotation_axis,
       std::vector<unsigned int>                  &outlet_boundaries,
-      std::vector<BoundaryType>                  &bc_types)
+      std::vector<BoundaryType>                  &bc_types) const
     {
       Tensor<1, 3> zero_tensor({0.0, 0.0, 0.0});
 
@@ -1831,10 +1832,11 @@ namespace Parameters
 
         // What is the distance between each photon in each of those directions
         // considering an offset equal to 0.
-        prm.declare_entry("distance between photons on insertion per direction",
-                          "1. :  1. : 1.",
-                          Patterns::List(Patterns::Double(), 3, 3, ":"),
-                          "Number of inserted photon in each direction.");
+        prm.declare_entry(
+          "distance between photons on insertion per direction",
+          "1. :  1. : 1.",
+          Patterns::List(Patterns::Double(0.0), 3, 3, ":"),
+          "Number of inserted photon in each direction. Each number must be > 0.");
 
         // In which direction photons will move considering a photon maximum
         // angle offset equal to 0.
@@ -1903,9 +1905,6 @@ namespace Parameters
               prm.get("distance between photons on insertion per direction"),
               ":"));
 
-        // We always use 3d tensor even in a dim=2 simulation. Still, we want to
-        // make sure the user write 2d tensor in the prm when the simulation is
-        // in 2d. Those tensors will be but in 3d afterward.
         AssertThrow(
           insertion_unit_tensors_string.size() == dim &&
             step_between_photon_per_direction_strings.size() == dim &&
@@ -1924,6 +1923,12 @@ namespace Parameters
           {
             Tensor<1, dim> temp_direction_tensor =
               value_string_to_tensor<dim>(insertion_unit_tensors_string.at(i));
+
+            AssertThrow(
+              temp_direction_tensor.norm() != 0.,
+              dealii::ExcMessage(
+                "The insertion unit tensors norm cannot be equal to zero."));
+
             temp_direction_tensor =
               temp_direction_tensor / temp_direction_tensor.norm();
             insertion_directions_units_vector.emplace_back(
@@ -1969,7 +1974,6 @@ namespace Parameters
     template class GridMotion<3>;
     template class InsertionInfo<2>;
     template class InsertionInfo<3>;
-    template class ParticleRayTracing<2>;
     template class ParticleRayTracing<3>;
 
   } // namespace Lagrangian
