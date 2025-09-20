@@ -74,7 +74,7 @@ RayTracingSolver<dim>::setup_parameters()
   // Get the pointer of the only instance of the action manager
   action_manager = DEMActionManager::get_action_manager();
 
-  // Set the simulation control as SimulationControlAdjointSteady
+  // Set the simulation control as SimulationControlRayTracing
   simulation_control =
     std::make_shared<SimulationControlRayTracing>(parameters.simulation_control,
                                                   photon_handler);
@@ -180,8 +180,9 @@ RayTracingSolver<dim>::load_balance()
 
   setup_background_dofs();
 
-  // Particle don't move, thus we sort them at the end of a load balance.
-  // Photons are being sorted every pseudo time step, thus no need to sort them.
+  // Particles don't move, thus we sort them at the end of a load balance.
+  // Photons are being sorted every pseudo time step, thus no need to sort them
+  // here.
   particle_handler.sort_particles_into_subdomains_and_cells();
 
   // Exchange ghost particles
@@ -218,15 +219,17 @@ RayTracingSolver<dim>::insert_particles_and_photons()
                                     triangulation,
                                     dem_parameters);
 
-  // A vector of vectors, which contains all the properties of every photon.
+  // A vector of points where the insertion location of every photon will be
+  // stored.
   std::vector<Point<3>> insertion_points_on_proc;
 
-  // For each photon, we store the initial location of the photon as a particle
-  // property. This initial location is used to identify the right intersection
+  // For each photon, we store its insertion/initial location as a property.
+  // This initial location is used to identify the right intersection
   // point when multiple intersections are found. The logic used therein is that
   // the intersection point which is closest to the initial location is the
   // correct one. We also store the displacement direction unit vector in this
-  // vector since each photon has its own slightly off set from the
+  // vector since each photon has its own slightly off set from the reference
+  // displacement direction.
   std::vector<std::vector<double>> photon_properties;
 
   // Create variables for readability
@@ -275,10 +278,14 @@ RayTracingSolver<dim>::insert_particles_and_photons()
   const unsigned int first_id =
     this_mpi_process * base_photons_per_proc +
     (this_mpi_process < remainder ? this_mpi_process : remainder);
-  const unsigned int last_id = first_id + n_photons_to_insert_this_proc;
+  const unsigned int last_id = first_id + n_photons_to_insert_this_proc - 1;
 
-  // Generate the random offset in the insertion position and the
-  // displacement direction
+  // Generate the random offsets for the insertion position and the displacement
+  // direction. For the position, the offset uses the same logic as other
+  // insertion mechanism in Lethe. For the displacement direction of each
+  // photon, we need to generate one random angular offset (theta) relative to
+  // reference displacement vector. We then need to decide in which direction (phi)
+  // around this reference displacement direction vector the offset will be applied.
   std::vector<double> random_number_angular_1; // From 0 to 2*pi
   std::vector<double> random_number_angular_2; // From 0 to max_angular_offset
   std::vector<double> random_number_position;  // From 0 to max_insertion_offset
@@ -315,7 +322,7 @@ RayTracingSolver<dim>::insert_particles_and_photons()
   insertion_points_on_proc.reserve(n_photons_to_insert_this_proc);
   photon_properties.resize(n_photons_to_insert_this_proc,
                            std::vector<double>(6));
-  for (unsigned int id = first_id; id < last_id; ++id)
+  for (unsigned int id = first_id; id <= last_id; ++id)
     {
       const unsigned int iz = id / (n_photons_each_directions.at(0) *
                                     n_photons_each_directions.at(1));
@@ -339,6 +346,9 @@ RayTracingSolver<dim>::insert_particles_and_photons()
 
       // For the displacement direction randomness, we need to find a vector
       // normal to ref_displacement_dir.
+
+      // We make sure that our first vector is not parallel to the
+      // ref_displacement_dir.
       const Tensor<1, 3> temp_normal_vector =
         (std::fabs(ref_displacement_dir[0]) < 0.9) ? Tensor<1, 3>({1, 0, 0}) :
                                                      Tensor<1, 3>({0, 1, 0});
@@ -351,7 +361,7 @@ RayTracingSolver<dim>::insert_particles_and_photons()
 
       const Tensor<1, 3> v = cross_product_3d(ref_displacement_dir, u);
       temp_dir             = ref_displacement_dir +
-                 random_number_angular_2.at(id_on_proc) *
+                 std::sin(random_number_angular_2.at(id_on_proc)) *
                    (std::cos(random_number_angular_1.at(id_on_proc)) * u +
                     std::sin(random_number_angular_1.at(id_on_proc)) * v);
 
@@ -414,53 +424,6 @@ RayTracingSolver<dim>::write_output_results(
 
   data_out.write_vtu_in_parallel(filename, this->mpi_communicator);
 }
-
-// // Flatten local points into a buffer of chars (text format)
-// std::ostringstream oss;
-// if (this_mpi_process == 0)
-//   oss << "x, y, z\n";
-//
-// for (const auto &p : points)
-//   {
-//     oss << p[0] << "," << p[1] << "," << p[2] << "\n";
-//   }
-//
-// std::string local_str  = oss.str();
-// int         local_size = local_str.size();
-//
-// // Gather sizes to compute offsets
-// auto recv_counts = Utilities::MPI::all_gather(mpi_communicator,
-// local_size);
-//
-// std::vector<int> off_set(n_mpi_processes, 0);
-// int              total_size = 0;
-// for (unsigned int i = 0; i < n_mpi_processes; ++i)
-//   {
-//     off_set[i] = total_size;
-//     total_size += recv_counts[i];
-//   }
-//
-// // Build full filename (same for all ranks)
-// std::string full_filename = folder + "/" + file_name + ".xyz";
-//
-// // Open MPI file
-// MPI_File fh;
-// MPI_File_open(mpi_communicator,
-//               full_filename.c_str(),
-//               MPI_MODE_CREATE | MPI_MODE_WRONLY,
-//               MPI_INFO_NULL,
-//               &fh);
-//
-// // Each rank writes at its own offset
-// MPI_File_write_at(fh,
-//                   off_set[this_mpi_process],
-//                   local_str.data(),
-//                   (int)local_size,
-//                   MPI_CHAR,
-//                   MPI_STATUS_IGNORE);
-//
-// MPI_File_close(&fh);
-//}
 template <int dim>
 void
 RayTracingSolver<dim>::finish_simulation(
@@ -497,6 +460,9 @@ RayTracingSolver<dim>::find_intersection(
     std::tuple<double, Point<dim>, Particles::ParticleIterator<dim>>>
     &photon_intersection_points_map)
 {
+  // Loop over each local cell in the triangulation. To do this, we loop
+  // over each cell neighbor list. Each local cell has a list and the first
+  // iterator in the main cell itself.
   for (auto cell_neighbor_list_iterator = cell_list.begin();
        cell_neighbor_list_iterator != cell_list.end();
        ++cell_neighbor_list_iterator)
@@ -588,8 +554,8 @@ RayTracingSolver<dim>::find_intersection(
                       new_closest_point = current_intersection_points[0];
                     }
                   // If the size is equal to 2, we need to find which one
-                  // between the two new intersection point is the closest
-                  // to the photon intersection point.
+                  // between the two new intersection points is the closest
+                  // to the photon insertion point.
                   else
                     {
                       const double distance_0 = (photon_insertion_point -
@@ -644,7 +610,7 @@ RayTracingSolver<dim>::find_intersection(
                 }
             }
           // Even if we are removing photon at the end on this pseudo-time
-          // step, we move the particle here since we are looping on each of
+          // step, we move the photons here since we are looping on each of
           // them in this loop. This way, we don't need to loop on each of
           // them at the end.
           if constexpr (move_photon)
@@ -653,7 +619,6 @@ RayTracingSolver<dim>::find_intersection(
                 current_photon_location +
                 photon_displacement_vector * displacement_distance;
               current_photon->set_location(new_photon_location);
-              // std::cout<< new_photon_location << std::endl;
             }
         }
     }
@@ -707,7 +672,8 @@ RayTracingSolver<dim>::solve()
                                  cells_ghost_neighbor_list);
 
   // Particle don't move, thus we sort them at the end of a load balance.
-  // Photons are being sorted every pseudo time step, thus no need to sort them.
+  // Photons are being sorted every pseudo time step, thus no need to sort them
+  // here.
   particle_handler.sort_particles_into_subdomains_and_cells();
 
   // Exchange ghost particles
@@ -726,9 +692,6 @@ RayTracingSolver<dim>::solve()
 
       photon_handler.sort_particles_into_subdomains_and_cells();
 
-      // Loop over each local cell in the triangulation. To do this, we loop
-      // over each cell neighbor list. Each local cell has a list and the first
-      // iterator in the main cell itself.
       find_intersection<true>(cells_local_neighbor_list,
                               photon_intersection_points_map);
 
@@ -762,7 +725,4 @@ RayTracingSolver<dim>::solve()
 
   finish_simulation(total_intersection_points);
 }
-
-
-// template class RayTracingSolver<2>;
 template class RayTracingSolver<3>;
