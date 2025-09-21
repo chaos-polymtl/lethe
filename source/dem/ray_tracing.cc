@@ -274,8 +274,9 @@ RayTracingSolver<dim>::insert_particles_and_photons()
   // direction. For the position, the offset uses the same logic as other
   // insertion mechanism in Lethe. For the displacement direction of each
   // photon, we need to generate one random angular offset (theta) relative to
-  // reference displacement vector. We then need to decide in which direction (phi)
-  // around this reference displacement direction vector the offset will be applied.
+  // reference displacement vector. We then need to decide in which direction
+  // (phi) around this reference displacement direction vector the offset will
+  // be applied.
   std::vector<double> random_number_angular_1; // From 0 to 2*pi
   std::vector<double> random_number_angular_2; // From 0 to max_angular_offset
   std::vector<double> random_number_position;  // From 0 to max_insertion_offset
