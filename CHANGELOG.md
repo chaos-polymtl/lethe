@@ -50,7 +50,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
 - MINOR The mortar implementation is added in the matrix-free solver. This PR also adds a direct MF solver to be used for debugging purposes.[#1682](https://github.com/chaos-polymtl/lethe/pull/1682)
 
-### Fixed
+## Fixed
 
 - MINOR The code is modified so that the TableHandler objects are properly restored when writing checkpoints and restarting simulations for the lethe-fluid, lethe-fluid-particles and lethe-fluid-nitsche solvers. This feature was only working for the lethe-fluid/lethe-fluid-block/lethe-fluid-matrix-free solvers before. [#1673] (https://github.com/chaos-polymtl/lethe/pull/1673)
 
