@@ -196,7 +196,8 @@ namespace Parameters
     }
 
     void
-    LagrangianPhysicalProperties::declare_parameters(ParameterHandler &prm) const
+    LagrangianPhysicalProperties::declare_parameters(
+      ParameterHandler &prm) const
     {
       prm.enter_subsection("lagrangian physical properties");
       {
