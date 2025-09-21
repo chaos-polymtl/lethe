@@ -58,18 +58,8 @@ RayTracingSolver<dim>::setup_parameters()
   ss << "Running on " << n_mpi_processes << " rank(s)";
   announce_string(pcout, ss.str(), '*');
 
-  // Check if the output directory exists
-  std::string output_dir_name = parameters.simulation_control.output_folder;
-  struct stat buffer;
-
-  // If output directory does not exist, create it
-  if (this_mpi_process == 0)
-    {
-      if (stat(output_dir_name.c_str(), &buffer) != 0)
-        {
-          create_output_folder(output_dir_name);
-        }
-    }
+  if (parameters.timer.type == Parameters::Timer::Type::none)
+    computing_timer.disable_output();
 
   // Get the pointer of the only instance of the action manager
   action_manager = DEMActionManager::get_action_manager();
@@ -397,6 +387,19 @@ RayTracingSolver<dim>::write_output_results(
 {
   TimerOutput::Scope t(this->computing_timer, "Output VTU");
 
+  // Check if the output directory exists
+  std::string output_dir_name = parameters.simulation_control.output_folder;
+  struct stat buffer;
+
+  // If output directory does not exist, create it
+  if (this_mpi_process == 0)
+    {
+      if (stat(output_dir_name.c_str(), &buffer) != 0)
+        {
+          create_output_folder(output_dir_name);
+        }
+    }
+
   // Create a temporary particle handler on the existing triangulation
   Particles::ParticleHandler<dim> temp_handler(triangulation, mapping, 0);
 
@@ -721,7 +724,9 @@ RayTracingSolver<dim>::solve()
       action_manager->reset_triggers();
     }
 
-  write_output_results(total_intersection_points);
+  // We don't want to write an output file if we are in test mode.
+  if (!parameters.test.enabled)
+    write_output_results(total_intersection_points);
 
   finish_simulation(total_intersection_points);
 }
