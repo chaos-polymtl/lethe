@@ -140,6 +140,7 @@ MFNavierStokesVANSPreconditionGMG<dim>::initialize(
 
       particle_projector.particle_fluid_force.particle_field_solution
         .update_ghost_values();
+
       this->mg_transfer_gc_pf_force->interpolate_to_mg(
         particle_projector.particle_fluid_force.dof_handler,
         mg_pf_forces_solution,
@@ -445,6 +446,9 @@ FluidDynamicsVANSMatrixFree<dim>::solve()
             mf_operator->compute_void_fraction(
               particle_projector.dof_handler,
               particle_projector.void_fraction_solution);
+
+            particle_projector.particle_fluid_force.particle_field_solution
+              .update_ghost_values();
 
             mf_operator->compute_particle_fluid_force(
               particle_projector.particle_fluid_force.dof_handler,
