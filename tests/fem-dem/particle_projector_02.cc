@@ -4,7 +4,7 @@
 /**
  * @brief Test if the particle projector gives a valid solution for a constant forcing field onto the particles.
  * A constant force is stored within the DEM particles which are distributed
- * along a series of line. The QCM approach is applied to calculate the void
+ * along a series of lines. The QCM approach is applied to calculate the void
  * fraction and the resulting QCM force field.
  */
 
@@ -191,7 +191,7 @@ test_void_fraction_qcm(const unsigned int fe_degree,
 
 
 
-  // The particle projector requires that it's DOF values be set-up and the
+  // The particle projector requires that its DOF values be set-up and the
   // constraints as well.
   particle_projector.setup_dofs();
   particle_projector.setup_constraints(boundary_conditions);

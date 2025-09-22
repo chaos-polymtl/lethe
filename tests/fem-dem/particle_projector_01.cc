@@ -4,7 +4,7 @@
 /**
  * @brief Test if the particle projector gives a valid solution for a constant void fraction.
  * The constant void fraction is defined by homogenously placing particles in a
- * grid within a cubic triangulation and averaging at a significantly largert
+ * grid within a cubic triangulation and averaging at a significantly larger
  * volume than the volume of the particles. Right now, the void fraction is not
  * that homogenous due to the effect of the walls on the QCM averaging volume
  */
@@ -160,7 +160,7 @@ test_void_fraction_qcm(const unsigned int fe_degree,
 
 
 
-  // The particle projector requires that it's DOF values be set-up and the
+  // The particle projector requires that its DOF values be set-up and the
   // constraints as well.
   particle_projector.setup_dofs();
   particle_projector.setup_constraints(boundary_conditions);

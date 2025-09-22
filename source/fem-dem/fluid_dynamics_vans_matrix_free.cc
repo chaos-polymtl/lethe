@@ -131,7 +131,7 @@ MFNavierStokesVANSPreconditionGMG<dim>::initialize(
         mg_pf_forces_solution(this->minlevel, this->maxlevel);
 
       // A deal.II vector is required here, so we take the deal.II vector
-      // solution from the void fraction manager instead of the trilinos vector
+      // solution from the particle projector instead of the trilinos vector
       // one.
       this->mg_transfer_gc_void_fraction->interpolate_to_mg(
         particle_projector.dof_handler,

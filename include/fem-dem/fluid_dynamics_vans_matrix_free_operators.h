@@ -122,7 +122,7 @@ protected:
   Table<2, Tensor<1, dim, VectorizedArray<number>>> void_fraction_gradient;
 
   /// Table with correct alignment for vectorization to store the values of the
-  /// particle-fluid forces. These are the resulting forces applieds on the
+  /// particle-fluid forces. These are the resulting forces applied on the
   /// particles due to hydrodynamic interaction, normalized by the volume
   /// of the cells.
   Table<2, Tensor<1, dim, VectorizedArray<number>>> particle_fluid_force;
