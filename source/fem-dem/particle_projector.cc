@@ -292,7 +292,7 @@ ParticleProjector<dim>::calculate_void_fraction_function(const double time)
                                     void_fraction_locally_relevant);
   void_fraction_solution.update_ghost_values();
 #else
-  void_fraction_solution = void_fraction_locally_relevant;
+  void_fraction_solution            = void_fraction_locally_relevant;
 #endif
 }
 
@@ -1368,7 +1368,7 @@ ParticleProjector<dim>::calculate_field_projection(
                                     field_qcm.particle_field_locally_relevant);
   field_qcm.particle_field_solution.update_ghost_values();
 #else
-  field_qcm.particle_field_solution= field_qcm.particle_field_locally_relevant;
+  field_qcm.particle_field_solution = field_qcm.particle_field_locally_relevant;
   field_qcm.particle_field_solution.update_ghost_values();
 #endif
 }
