@@ -15,7 +15,7 @@ main()
   const unsigned int mapping_degree       = 1;
   const unsigned int dim                  = 2;
   const unsigned int n_global_refinements = 1;
-  Point<2> c_sphere(0.5,1);
+  Point<2> c_sphere(0.5,0.8);
   double r_sphere = 0.5;
 
   double V_sphere_out = 0.0;

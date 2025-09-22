@@ -667,7 +667,8 @@ ParticleProjector<dim>::calculate_void_fraction_quadrature_centered_method()
   if (qcm_sphere_diameter > 1e-16)
     {
       r_sphere                          = 0.5 * qcm_sphere_diameter;
-      V_sphere                          = (M_PI * Utilities::fixed_power<dim>(r_sphere * 2.0) / (2 * dim));
+      V_sphere                          = (M_PI * Utilities::fixed_power<dim>(
+        r_sphere * 2.0) / (2 * dim));
       calculate_reference_sphere_radius = false;
     }
 
@@ -705,7 +706,7 @@ ParticleProjector<dim>::calculate_void_fraction_quadrature_centered_method()
 
           auto active_periodic_neighbors =
             LetheGridTools::find_cells_around_cell<dim>(
-              vertices_to_periodic_cell, cell);
+              vertices_to_periodic_cell, cell); 
 
           // Array of real locations for the quadrature points
           std::vector<std::vector<Point<dim>>>
@@ -808,7 +809,8 @@ ParticleProjector<dim>::calculate_void_fraction_quadrature_centered_method()
                     {
                       r_sphere = calculate_qcm_radius_from_cell_measure(
                         active_periodic_neighbors[n]->measure());
-                       V_sphere = (M_PI * Utilities::fixed_power<dim>(r_sphere * 2.0) / (2 * dim));
+                       V_sphere = (M_PI * Utilities::fixed_power<dim>(
+                        r_sphere * 2.0) / (2 * dim));
                     }
 
                   // Loop over quadrature points
@@ -922,7 +924,10 @@ ParticleProjector<dim>::calculate_void_fraction_quadrature_centered_method()
                       distance = particle.get_location().distance(
                         quadrature_point_location[q]);   
                       
-                      // First check if the cell is at the boundary. If so, scale the volumetric particle contribution by the ratio of the volume of the sphere and the volume of the sphere that is inside the domain
+                      // First check if the cell is at the boundary. If so, 
+                      //scale the volumetric particle contribution by the ratio 
+                      // of the volume of the sphere and the volume of the 
+                      // sphere that is inside the domain
                       if (active_neighbors[m]->at_boundary())
                         { 
                           double V_sphere_out = sphere_boundary_intersection (mapping, active_neighbors[m],

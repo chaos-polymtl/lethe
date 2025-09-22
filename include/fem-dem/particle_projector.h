@@ -90,6 +90,7 @@ particle_sphere_intersection_3d(double r_particle,
 /**
  * @brief Calculate the volume of intersection between a sphere, defined by its
  * center and radius, and a plane (line in 2D) defined by a point and a normal.
+ * This function is implemented such as it used for boundary cells.
  *
  * @param[in] c_sphere Position vector of the center of the sphere
  *
@@ -159,7 +160,7 @@ sphere_boundary_intersection (std::shared_ptr<Mapping<dim>> & mapping,
     double V_sphere_out = 0.0;
     for (const auto f : cell->face_indices())
       {
-        if (cell->face(f)->at_boundary())
+        if (cell->face(f)->at_boundary() && cell->has_periodic_neighbor(f) == false)
         {
           // Create a quadrature point at the center of the face where we want 
           // to calculate the normal vector (this is needed for the FEFaceValues)
@@ -179,7 +180,7 @@ sphere_boundary_intersection (std::shared_ptr<Mapping<dim>> & mapping,
           std::cout << std::endl;
           std::cout << "The face normal is : (" << normal_vector << ") " << "at the face centered at (" << cell->face(f)->center() << ") " << std::endl;
           V_sphere_out = plane_sphere_intersection (c_sphere, r_sphere, normal_vector, cell->face(f)->center());
-          // The loop over faces will loop starting from face 0, to face 1. In case of a corner cell, if the sphere intersects face 3 but not face 0, V_sphere_out will be 0 for face 0, adn then the function will return a zero value. To avoid this, we return the volume of intersection as soon as it is found to be non-zero.
+          // The loop over faces will loop starting from face 0, to face 3. In case of a corner cell, if the sphere intersects face 3 but not face 0, V_sphere_out will be 0 for face 0, adn then the function will return a zero value. To avoid this, we return the volume of intersection as soon as it is found to be non-zero.
           if (V_sphere_out != 0)
              return V_sphere_out;
         }
