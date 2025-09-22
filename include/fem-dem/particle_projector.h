@@ -120,16 +120,22 @@ public:
    * If the neumann_boundaries is set to true, then  cells without particles do
    * not have a mass matrix assembled. This corresponds to setting a neumann
    * boundary at the cells which do not contain particles.
-   * @param distribute_contribution A flag to indicate if the contribution is meant to be distributed using the volume of the particle divided by the total volume contribution of the particle.
+   * @param conservative_projection A flag to indicate if the projection
+   * of the field is conservative. When a projection is conservative,
+   * the integral of the field over the triangulation will be strictly
+   * equal to the field summed over all particles. This is useful when
+   * projecting a quantity such as the force acting on the particles. When
+   * conservative is put to false, the projection is meant to be a smooth
+   * representation of the particle information and does not conserve it.
    */
   ParticleFieldQCM(parallel::DistributedTriangulationBase<dim> *triangulation,
                    const unsigned int                           fe_degree,
                    const bool                                   simplex,
                    const bool neumann_boundaries,
-                   const bool distribute_contribution)
+                   const bool conservative_projection)
     : dof_handler(*triangulation)
     , neumann_boundaries(neumann_boundaries)
-    , distribute_contribution(distribute_contribution)
+    , conservative_projection(conservative_projection)
   {
     if (simplex)
       {
@@ -191,7 +197,7 @@ public:
   /// which results in a no flux zone.
   const bool neumann_boundaries;
 
-  const bool distribute_contribution;
+  const bool conservative_projection;
 
   /**
    * @brief Setup the degrees of freedom. This function allocates the necessary memory.

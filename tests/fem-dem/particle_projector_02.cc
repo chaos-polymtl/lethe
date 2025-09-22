@@ -1,11 +1,15 @@
-// SPDX-FileCopyrightText: Copyright (c) 2019 The Lethe Authors
+// SPDX-FileCopyrightText: Copyright (c) 2015 The Lethe Authors
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
 /**
- * @brief Test if the particle projector gives a valid solution for a constant forcing field onto the particles.
- * A constant force is stored within the DEM particles which are distributed
- * along a series of lines. The QCM approach is applied to calculate the void
- * fraction and the resulting QCM force field.
+ * @brief Test if the particle projector gives a valid solution for a constant
+ * and a linear forcing field stored onto the particles.
+ * First, the test is run with a constant forcing applied ot the paticle.
+ * The goal of the test is to verify if the forcing is conservative.
+ * Afterward, the test is run with a linear force function. The goal of the
+ * test is then to ensure that the forcing is conservative, but also that
+ * it preserves the function that originally described the forcing (in this
+ * case a linear profile).
  */
 
 // Deal.II includes

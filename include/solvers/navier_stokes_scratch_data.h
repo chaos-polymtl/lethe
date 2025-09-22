@@ -820,6 +820,18 @@ public:
   void
   calculate_fluid_properties_at_particle_location()
   {
+    AssertThrow(
+      properties_manager.density_is_constant(),
+      ExcMessage(
+        "The lethe-fluid-particles solver only supports constant densities"));
+    AssertThrow(
+      !properties_manager.get_rheology()
+          ->is_non_newtonian_rheological_model() &&
+        !properties_manager.get_rheology()
+           ->is_non_newtonian_rheological_model(),
+      ExcMessage(
+        "The lethe-fluid-particles solver only supports constant rheology model"));
+
     if (gather_vof)
       {
         for (unsigned int i_particle = 0; i_particle < number_of_particles;

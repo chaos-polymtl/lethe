@@ -1,4 +1,4 @@
-// SPDX-FileCopyrightText: Copyright (c) 2019 The Lethe Authors
+// SPDX-FileCopyrightText: Copyright (c) 2025 The Lethe Authors
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
 /**
@@ -115,8 +115,8 @@ test_void_fraction_qcm(const unsigned int fe_degree,
   // a solid fraction of 0.1. The volume of the underlying grid is 1.
   const double target_eps_solid = 0.1;
   const double dp =
-    std::pow(target_eps_solid * 1. / particle_handler.n_global_particles() * 3 *
-               8. / 4. / numbers::PI,
+    std::pow(target_eps_solid * 1. / particle_handler.n_global_particles() * 6 /
+               numbers::PI,
              1. / 3.);
 
   deallog << "dp = " << dp << std::endl;

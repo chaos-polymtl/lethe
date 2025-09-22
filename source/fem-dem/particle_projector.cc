@@ -1146,7 +1146,7 @@ ParticleProjector<dim>::calculate_field_projection(
                       // total volume of particles in the QCM sphere.
 
                       const double volumetric_contribution =
-                        field_qcm.distribute_contribution ?
+                        field_qcm.conservative_projection ?
                           particle_volume_in_sphere /
                             (particle_properties
                                [DEM::CFDDEMProperties::PropertiesIndex::
@@ -1220,7 +1220,7 @@ ParticleProjector<dim>::calculate_field_projection(
                       // total volume of particles in the QCM sphere.
 
                       const double volumetric_contribution =
-                        field_qcm.distribute_contribution ?
+                        field_qcm.conservative_projection ?
                           particle_volume_in_sphere /
                             (particle_properties
                                [DEM::CFDDEMProperties::PropertiesIndex::
@@ -1256,7 +1256,7 @@ ParticleProjector<dim>::calculate_field_projection(
               // continuous representation, then the normalisation is
               // 1/total_volume_particle_in_sphere.
 
-              if (field_qcm.distribute_contribution == false)
+              if (field_qcm.conservative_projection == false)
                 particle_field_in_sphere =
                   particle_field_in_sphere / total_volume_of_particle_in_sphere;
 
@@ -1295,8 +1295,24 @@ ParticleProjector<dim>::calculate_field_projection(
 
                   if (total_volume_of_particle_in_sphere > 0)
                     {
-                      local_rhs(i) += phi_vf[i] * particle_field_in_sphere; // *
-                      //    fe_values_field.JxW(q);
+                      // If the contribution is to be distributed,
+                      // the volume integral over the domain of the field should
+                      // give back the sum of the field over all particles.
+                      // Consequently, the Jacobian of the transformation
+                      // does not appear on the RHS in that case to ensure
+                      // that the integral of the field over the domain
+                      // gives the field to be conserved.
+                      if (field_qcm.conservative_projection)
+                        local_rhs(i) += phi_vf[i] * particle_field_in_sphere;
+
+                      // Else, the field is not a field for which we which to
+                      // conserve the total quantity, but a field for whcih we
+                      // need a smooth reprentation (e.g. the particle
+                      // velocity). Consequently, we need the jacobian on the
+                      // RHS.
+                      else
+                        local_rhs(i) += phi_vf[i] * particle_field_in_sphere *
+                                        fe_values_field.JxW(q);
                     }
                 }
             }

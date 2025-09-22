@@ -1048,13 +1048,6 @@ VANSAssemblerRong<dim>::calculate_particle_fluid_interactions(
             [DEM::CFDDEMProperties::PropertiesIndex::fem_force_x + d] +=
             drag_force[d];
         }
-      /*std::cout << "----Test----" << std::endl;
-      std::cout << density[i_particle] << std::endl;
-      std::cout << drag_force << std::endl;
-      std::cout << momentum_transfer_coefficient << std::endl;
-      std::cout << relative_velocity[i_particle] << std::endl;
-      std::cout << "------------" << std::endl;*/
-
 
       i_particle += 1;
     }
