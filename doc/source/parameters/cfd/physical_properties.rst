@@ -289,13 +289,13 @@ The equation of the ``immersed solid gaussian`` model is defined as follows. :ma
       end
     end
 
-* The ``tracer diffusivity inside`` and ``tracer diffusivity outside`` parameters represent the desired diffusivity inside and outside of the solid.
+* The ``tracer diffusivity inside`` and ``tracer diffusivity outside`` parameters are the desired diffusivities inside and outside of the solid.
 
-* The ``tracer reaction constant inside`` and ``tracer reaction constant outside`` parameters represent the desired reaction constant inside and outside of the solid.
+* The ``tracer reaction constant inside`` and ``tracer reaction constant outside`` parameters are the desired reaction constants inside and outside of the solid.
 
-* The ``tracer diffusivity interface`` and ``tracer diffusivity bulk`` parameters represent the desired diffusivity at the fluid-solid interface of the immersed solid and in the bulk of each phase, respectively. It can be used to allow diffusion in each phase while blocking interphase exchange, for example.
+* The ``tracer diffusivity interface`` and ``tracer diffusivity bulk`` parameters are the desired diffusivities at the fluid-solid interface of the immersed solid and in the bulk of each phase, respectively. It can be used to allow diffusion in each phase while blocking interphase exchange, for example.
 
-* The ``tracer reaction constant interface`` and ``tracer reaction constant bulk`` parameters represent the desired reaction constant at the fluid-solid interface of the immersed solid and in the bulk of each phase, respectively. It can be used to enable localized reaction, for example when active catalytic sites are only at the surface of a solid.
+* The ``tracer reaction constant interface`` and ``tracer reaction constant bulk`` parameters are the desired reaction constants at the fluid-solid interface of the immersed solid and in the bulk of each phase, respectively. It can be used to enable localized reaction, for example when active catalytic sites are only at the surface of a solid.
 
 * The ``thickness`` parameters in ``immersed solid tanh`` and ``immersed solid gaussian`` subsections represent the thickness of the applied models. They can be different.
 

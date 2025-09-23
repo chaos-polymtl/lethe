@@ -289,7 +289,7 @@ public:
 
     const unsigned int n_values = levelset_vec.size();
     Assert(n_values == levelset_vec.size(),
-           SizeOfFields(n_values, levelset_vec.size()));
+           SizeOfFields(n_values, concentration_vec.size()));
     for (unsigned int i = 0; i < n_values; ++i)
       {
         const double k = tracer_reaction_constant_inside +
