@@ -128,7 +128,7 @@ plane_sphere_intersection (const Point<dim> &c_sphere,
   // Compute height of the spherical cap (segment in 2D) height (in our case d is always negative since the sphere center is always in the fluid domain and the normal to a face points outwards)
   const double h = r_sphere + d;
   if constexpr(dim==2)
-    {  // This assumes that we are calculating the area if the minor circular segment. In other terms, the sphere center is inside the domain.
+    {  // This assumes that we are calculating the area of the minor circular segment. In other terms, the sphere center is inside the domain.
        return (Utilities::fixed_power<2, double> (r_sphere) * std::acos(1-h/r_sphere) - (r_sphere-h)*sqrt(Utilities::fixed_power<2, double> (r_sphere) - Utilities::fixed_power<2, double> (r_sphere-h)));
     }
   if constexpr(dim==3)

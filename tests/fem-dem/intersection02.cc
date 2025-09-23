@@ -39,13 +39,16 @@ main()
       {
         if (cell->point_inside(c_sphere))
           {
-            if (cell-> at_boundary()){
+            if (cell-> at_boundary())
+            {
             V_sphere_out = sphere_boundary_intersection (mapping, cell, c_sphere, r_sphere);
+
+            }
             if (V_sphere_out != 0)
-              {std::cout << "Volume of intersection with the boundary for cell with center at (" << cell->center() << ") is : " << V_sphere_out;
+              {
+              std::cout << "Volume of intersection with the boundary for cell with center at (" << cell->center() << ") is : " << V_sphere_out;
               std::cout << std::endl;
               }
-            } 
-          }  
-      }
+          } 
+      }  
 }
