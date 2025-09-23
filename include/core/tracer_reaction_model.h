@@ -316,19 +316,26 @@ public:
     Assert(field_values.find(field::tracer_concentration) != field_values.end(),
            PhysicialPropertyModelFieldUndefined(
              "TanhLevelsetTracerReactionPrefactor", "tracer_concentration"));
-    if (id == field::levelset)
+    const double levelset_val = field_values.at(field::levelset);
+    const double concentration_val =
+      field_values.at(field::tracer_concentration);
+    if (id == field::levelset) // level set: lambda; thickness: sigma
       {
-        return numerical_jacobian(field_values, field::levelset);
+        // dk/dlambda for tanh profile: Δk * 0.5 * (1 - tanh^2(lambda/sigma)) *
+        // (1/sigma)
+        const double tanh = std::tanh(levelset_val / thickness);
+        const double dkdlambda =
+          delta_reaction_constant * 0.5 * (1.0 - pow(tanh, 2)) / thickness;
+        return dkdlambda *
+               std::pow(concentration_val, tracer_reaction_order - 1.);
       }
     else if (id == field::tracer_concentration)
       {
-        const double k =
-          tracer_reaction_constant_inside +
-          delta_reaction_constant *
-            (0.5 + 0.5 * tanh(field_values.at(field::levelset) / thickness));
+        const double k = tracer_reaction_constant_inside +
+                         delta_reaction_constant *
+                           (0.5 + 0.5 * tanh(levelset_val) / thickness);
         return k * (tracer_reaction_order - 1.) *
-               pow(field_values.at(field::tracer_concentration),
-                   tracer_reaction_order - 2.);
+               pow(concentration_val, tracer_reaction_order - 2.);
       }
     else
       return 0;
@@ -353,17 +360,24 @@ public:
              field_vectors.end(),
            PhysicialPropertyModelFieldUndefined(
              "TanhLevelsetTracerReactionPrefactor", "tracer_concentration"));
-    if (id == field::levelset)
+    const std::vector<double> &levelset_vec = field_vectors.at(field::levelset);
+    const std::vector<double> &concentration_vec =
+      field_vectors.at(field::tracer_concentration);
+    const unsigned int n_values = levelset_vec.size();
+    if (id == field::levelset) // level set: lambda; thickness: sigma
       {
-        vector_numerical_jacobian(field_vectors, id, jacobian_vector);
+        for (unsigned int i = 0; i < n_values; ++i)
+          {
+            const double tanh = std::tanh(levelset_vec[i] / thickness);
+            const double dkdlambda =
+              delta_reaction_constant * 0.5 * (1.0 - pow(tanh, 2)) / thickness;
+            jacobian_vector[i] =
+              dkdlambda *
+              std::pow(concentration_vec[i], tracer_reaction_order - 1.);
+          }
       }
     else if (id == field::tracer_concentration)
       {
-        const std::vector<double> &levelset_vec =
-          field_vectors.at(field::levelset);
-        const std::vector<double> &concentration_vec =
-          field_vectors.at(field::tracer_concentration);
-        const unsigned int n_values = levelset_vec.size();
         for (unsigned int i = 0; i < n_values; ++i)
           {
             const double k = tracer_reaction_constant_inside +
@@ -509,15 +523,22 @@ public:
     Assert(field_values.find(field::tracer_concentration) != field_values.end(),
            PhysicialPropertyModelFieldUndefined(
              "TanhLevelsetTracerReactionPrefactor", "tracer_concentration"));
-    if (id == field::levelset)
+    const double levelset_val = field_values.at(field::levelset);
+    const double concentration_val =
+      field_values.at(field::tracer_concentration);
+    if (id == field::levelset) // level set: lambda; thickness: sigma
       {
-        return numerical_jacobian(field_values, field::levelset);
+        // dk/dlambda = Δk * exp(-lambda^2/sigma^2) * (-2*lambda/sigma^2)
+        const double exponential =
+          std::exp(-pow(levelset_val, 2) / squared_thickness);
+        const double dkdlambda = delta_reaction_constant * exponential *
+                                 (-2.0 * levelset_val / squared_thickness);
+
+        return dkdlambda *
+               std::pow(concentration_val, tracer_reaction_order - 1.);
       }
     else if (id == field::tracer_concentration)
       {
-        const double levelset_val = field_values.at(field::levelset);
-        const double concentration_val =
-          field_values.at(field::tracer_concentration);
         const double k = tracer_reaction_constant_bulk +
                          delta_reaction_constant *
                            exp(-pow(levelset_val, 2) / squared_thickness);
@@ -552,17 +573,26 @@ public:
              field_vectors.end(),
            PhysicialPropertyModelFieldUndefined(
              "TanhLevelsetTracerReactionPrefactor", "tracer_concentration"));
+    const std::vector<double> &levelset_vec = field_vectors.at(field::levelset);
+    const std::vector<double> &concentration_vec =
+      field_vectors.at(field::tracer_concentration);
+    const unsigned int n_values = levelset_vec.size();
     if (id == field::levelset)
       {
-        vector_numerical_jacobian(field_vectors, id, jacobian_vector);
+        for (unsigned int i = 0; i < n_values; ++i)
+          {
+            const double exponential =
+              std::exp(-pow(levelset_vec[i], 2) / squared_thickness);
+            const double dkdlambda =
+              delta_reaction_constant * exponential *
+              (-2.0 * levelset_vec[i] / squared_thickness);
+            jacobian_vector[i] =
+              dkdlambda *
+              std::pow(concentration_vec[i], tracer_reaction_order - 1.);
+          }
       }
     else if (id == field::tracer_concentration)
       {
-        const std::vector<double> &levelset_vec =
-          field_vectors.at(field::levelset);
-        const std::vector<double> &concentration_vec =
-          field_vectors.at(field::tracer_concentration);
-        const unsigned int n_values = levelset_vec.size();
         for (unsigned int i = 0; i < n_values; ++i)
           {
             const double k =
