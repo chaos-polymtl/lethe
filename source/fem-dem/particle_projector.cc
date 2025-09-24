@@ -1057,7 +1057,7 @@ ParticleProjector<dim>::calculate_field_projection(
     grad_phi_vf(dofs_per_cell);
 
   double r_sphere = 0.0;
-  double total_volume_of_particle_in_sphere;
+  double total_volume_of_particles_in_sphere;
   typename std::conditional<n_components == 1, double, Tensor<1, dim>>::type
          particle_field_in_sphere;
   double qcm_sphere_diameter = void_fraction_parameters->qcm_sphere_diameter;
@@ -1108,8 +1108,8 @@ ParticleProjector<dim>::calculate_field_projection(
 
           for (unsigned int q = 0; q < n_q_points; ++q)
             {
-              total_volume_of_particle_in_sphere = 0;
-              particle_field_in_sphere           = 0;
+              total_volume_of_particles_in_sphere = 0;
+              particle_field_in_sphere            = 0;
 
               for (unsigned int m = 0; m < active_neighbors.size(); m++)
                 {
@@ -1136,7 +1136,7 @@ ParticleProjector<dim>::calculate_field_projection(
                                                        r_sphere,
                                                        distance);
 
-                      total_volume_of_particle_in_sphere +=
+                      total_volume_of_particles_in_sphere +=
                         particle_volume_in_sphere;
                       // If the projection is to be conservative, then the
                       // volumetric distribution is equal to the volume of the
@@ -1209,15 +1209,17 @@ ParticleProjector<dim>::calculate_field_projection(
                                                        r_sphere,
                                                        distance);
 
-                      total_volume_of_particle_in_sphere +=
+                      total_volume_of_particles_in_sphere +=
                         particle_volume_in_sphere;
 
                       // If the projection is to be conservative, then the
                       // volumetric contribution is equal to the volume of the
-                      // particle in the sphere divided by the sum of the volumetric contribution
-                      // of the particle in all spheres in the domain. Otherwise, the contribution is just the
-                      // volume of the particle in the sphere which will be later divided by the
-                      // total volume of particles in the QCM sphere.
+                      // particle in the sphere divided by the sum of the
+                      // volumetric contribution of the particle in all spheres
+                      // in the domain. Otherwise, the contribution is just the
+                      // volume of the particle in the sphere which will be
+                      // later divided by the total volume of particles in the
+                      // QCM sphere.
 
                       const double volumetric_contribution =
                         field_qcm.conservative_projection ?
@@ -1257,8 +1259,8 @@ ParticleProjector<dim>::calculate_field_projection(
               // 1/total_volume_particle_in_sphere.
 
               if (field_qcm.conservative_projection == false)
-                particle_field_in_sphere =
-                  particle_field_in_sphere / total_volume_of_particle_in_sphere;
+                particle_field_in_sphere = particle_field_in_sphere /
+                                           total_volume_of_particles_in_sphere;
 
               for (unsigned int i = 0; i < dofs_per_cell; ++i)
                 {
@@ -1281,7 +1283,7 @@ ParticleProjector<dim>::calculate_field_projection(
                           // If there are particles, assemble a smoothed L2
                           // projection
                           if (field_qcm.neumann_boundaries == false ||
-                              total_volume_of_particle_in_sphere > 0)
+                              total_volume_of_particles_in_sphere > 0)
                             {
                               local_matrix(i, j) += (phi_vf[j] * phi_vf[i]) *
                                                     fe_values_field.JxW(q);
@@ -1293,7 +1295,7 @@ ParticleProjector<dim>::calculate_field_projection(
                         }
                     }
 
-                  if (total_volume_of_particle_in_sphere > 0)
+                  if (total_volume_of_particles_in_sphere > 0)
                     {
                       // If the contribution is to be distributed,
                       // the volume integral over the domain of the field should
