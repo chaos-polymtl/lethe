@@ -1213,10 +1213,10 @@ ParticleProjector<dim>::calculate_field_projection(
                         particle_volume_in_sphere;
 
                       // If the projection is to be conservative, then the
-                      // volumetric distribution is equal to the volume of the
-                      // sphere divided by the volumetric contribution of the
-                      // particle. Otherwise, the contribution is just the
-                      // volume of the sphere which will be later divided by the
+                      // volumetric contribution is equal to the volume of the
+                      // particle in the sphere divided by the sum of the volumetric contribution
+                      // of the particle in all spheres in the domain. Otherwise, the contribution is just the
+                      // volume of the particle in the sphere which will be later divided by the
                       // total volume of particles in the QCM sphere.
 
                       const double volumetric_contribution =
