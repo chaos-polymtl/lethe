@@ -131,8 +131,10 @@ Public Types</h2></td></tr>
 Public Member Functions</h2></td></tr>
 <tr class="memitem:a63dd3fd2a8f0139b14e95b802112105d" id="r_a63dd3fd2a8f0139b14e95b802112105d"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classVANSOperator.html#a63dd3fd2a8f0139b14e95b802112105d">VANSOperator</a> (const <a class="el" href="structParameters_1_1CFDDEM.html">Parameters::CFDDEM</a> &amp;<a class="el" href="classVANSOperator.html#a862213bec194764b66b4b72c932bf87e">cfd_dem_parameters</a>)</td></tr>
 <tr class="separator:a63dd3fd2a8f0139b14e95b802112105d"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ae67d8e965b1ad8370d64ac504e5991df" id="r_ae67d8e965b1ad8370d64ac504e5991df"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classVANSOperator.html#ae67d8e965b1ad8370d64ac504e5991df">compute_void_fraction</a> (const LinearAlgebra::distributed::Vector&lt; double &gt; &amp;void_fraction_solution, const DoFHandler&lt; dim &gt; &amp;void_fraction_dof_handler)</td></tr>
-<tr class="separator:ae67d8e965b1ad8370d64ac504e5991df"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a79d4a6f3a52aea56bdb567d57d3efa5a" id="r_a79d4a6f3a52aea56bdb567d57d3efa5a"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classVANSOperator.html#a79d4a6f3a52aea56bdb567d57d3efa5a">compute_void_fraction</a> (const DoFHandler&lt; dim &gt; &amp;void_fraction_dof_handler, const LinearAlgebra::distributed::Vector&lt; double &gt; &amp;void_fraction_solution)</td></tr>
+<tr class="separator:a79d4a6f3a52aea56bdb567d57d3efa5a"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a8b2e267844cd6df427a8153abf1f9712" id="r_a8b2e267844cd6df427a8153abf1f9712"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classVANSOperator.html#a8b2e267844cd6df427a8153abf1f9712">compute_particle_fluid_force</a> (const DoFHandler&lt; dim &gt; &amp;pf_dof_handler, const LinearAlgebra::distributed::Vector&lt; double &gt; &amp;pf_solution)</td></tr>
+<tr class="separator:a8b2e267844cd6df427a8153abf1f9712"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="inherit_header pub_methods_classNavierStokesOperatorBase"><td colspan="2" onclick="javascript:toggleInherit('pub_methods_classNavierStokesOperatorBase')"><img src="closed.png" alt="-"/>&#160;Public Member Functions inherited from <a class="el" href="classNavierStokesOperatorBase.html">NavierStokesOperatorBase&lt; dim, number &gt;</a></td></tr>
 <tr class="memitem:ac7568c9fc9b3fec66af8d8093ad77222 inherit pub_methods_classNavierStokesOperatorBase" id="r_ac7568c9fc9b3fec66af8d8093ad77222"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classNavierStokesOperatorBase.html#ac7568c9fc9b3fec66af8d8093ad77222">NavierStokesOperatorBase</a> ()</td></tr>
 <tr class="separator:ac7568c9fc9b3fec66af8d8093ad77222 inherit pub_methods_classNavierStokesOperatorBase"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -207,6 +209,8 @@ Protected Attributes</h2></td></tr>
 <tr class="separator:ac3f142d45fcefe115588ec9e3a305c00"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a696e1eca97adcfce9f4893f22472f514" id="r_a696e1eca97adcfce9f4893f22472f514"><td class="memItemLeft" align="right" valign="top">Table&lt; 2, Tensor&lt; 1, dim, VectorizedArray&lt; number &gt; &gt; &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classVANSOperator.html#a696e1eca97adcfce9f4893f22472f514">void_fraction_gradient</a></td></tr>
 <tr class="separator:a696e1eca97adcfce9f4893f22472f514"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a34695b17980cfa6c0fc915025960319f" id="r_a34695b17980cfa6c0fc915025960319f"><td class="memItemLeft" align="right" valign="top">Table&lt; 2, Tensor&lt; 1, dim, VectorizedArray&lt; number &gt; &gt; &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classVANSOperator.html#a34695b17980cfa6c0fc915025960319f">particle_fluid_force</a></td></tr>
+<tr class="separator:a34695b17980cfa6c0fc915025960319f"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a3259e11505baf670d385fffcad8e83d2" id="r_a3259e11505baf670d385fffcad8e83d2"><td class="memItemLeft" align="right" valign="top">Table&lt; 2, VectorizedArray&lt; number &gt; &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classVANSOperator.html#a3259e11505baf670d385fffcad8e83d2">grad_div_gamma</a></td></tr>
 <tr class="separator:a3259e11505baf670d385fffcad8e83d2"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a862213bec194764b66b4b72c932bf87e" id="r_a862213bec194764b66b4b72c932bf87e"><td class="memItemLeft" align="right" valign="top">const <a class="el" href="structParameters_1_1CFDDEM.html">Parameters::CFDDEM</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classVANSOperator.html#a862213bec194764b66b4b72c932bf87e">cfd_dem_parameters</a></td></tr>
@@ -414,8 +418,8 @@ template&lt;int dim, typename number &gt; </div>
 </div>
 </div>
 <h2 class="groupheader">Member Function Documentation</h2>
-<a id="ae67d8e965b1ad8370d64ac504e5991df" name="ae67d8e965b1ad8370d64ac504e5991df"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ae67d8e965b1ad8370d64ac504e5991df">&#9670;&#160;</a></span>compute_void_fraction()</h2>
+<a id="a8b2e267844cd6df427a8153abf1f9712" name="a8b2e267844cd6df427a8153abf1f9712"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a8b2e267844cd6df427a8153abf1f9712">&#9670;&#160;</a></span>compute_particle_fluid_force()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -423,16 +427,16 @@ template&lt;int dim, typename number &gt; </div>
 template&lt;int dim, typename number &gt; </div>
       <table class="memname">
         <tr>
-          <td class="memname">void <a class="el" href="classVANSOperator.html">VANSOperator</a>&lt; dim, number &gt;::compute_void_fraction </td>
+          <td class="memname">void <a class="el" href="classVANSOperator.html">VANSOperator</a>&lt; dim, number &gt;::compute_particle_fluid_force </td>
           <td>(</td>
-          <td class="paramtype">const LinearAlgebra::distributed::Vector&lt; double &gt; &amp;&#160;</td>
-          <td class="paramname"><em>void_fraction_solution</em>, </td>
+          <td class="paramtype">const DoFHandler&lt; dim &gt; &amp;&#160;</td>
+          <td class="paramname"><em>pf_dof_handler</em>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">const DoFHandler&lt; dim &gt; &amp;&#160;</td>
-          <td class="paramname"><em>void_fraction_dof_handler</em>&#160;</td>
+          <td class="paramtype">const LinearAlgebra::distributed::Vector&lt; double &gt; &amp;&#160;</td>
+          <td class="paramname"><em>pf_solution</em>&#160;</td>
         </tr>
         <tr>
           <td></td>
@@ -442,11 +446,52 @@ template&lt;int dim, typename number &gt; </div>
       </table>
 </div><div class="memdoc">
 
-<p>Compute the void fraction and the void fraction gradient at the quadrature points. </p>
+<p>Compute the terms the particle-fluid (pf) forces at the fluid quadrature points. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramdir">[in]</td><td class="paramname">void_fraction_solution</td><td>The solution of the void fraction</td></tr>
-    <tr><td class="paramdir">[in]</td><td class="paramname">void_fraction_dof_handler</td><td>The dof handler associated with the void fraction </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">pf_dof_handler</td><td>The dof handler associated with the particle-fluid forces</td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">pf_solution</td><td>The solution of the particle-fluid forces </td></tr>
+  </table>
+  </dd>
+</dl>
+
+<p class="definition">Definition at line <a class="el" href="fluid__dynamics__vans__matrix__free__operators_8cc_source.html#l00109">109</a> of file <a class="el" href="fluid__dynamics__vans__matrix__free__operators_8cc_source.html">fluid_dynamics_vans_matrix_free_operators.cc</a>.</p>
+
+</div>
+</div>
+<a id="a79d4a6f3a52aea56bdb567d57d3efa5a" name="a79d4a6f3a52aea56bdb567d57d3efa5a"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a79d4a6f3a52aea56bdb567d57d3efa5a">&#9670;&#160;</a></span>compute_void_fraction()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;int dim, typename number &gt; </div>
+      <table class="memname">
+        <tr>
+          <td class="memname">void <a class="el" href="classVANSOperator.html">VANSOperator</a>&lt; dim, number &gt;::compute_void_fraction </td>
+          <td>(</td>
+          <td class="paramtype">const DoFHandler&lt; dim &gt; &amp;&#160;</td>
+          <td class="paramname"><em>void_fraction_dof_handler</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const LinearAlgebra::distributed::Vector&lt; double &gt; &amp;&#160;</td>
+          <td class="paramname"><em>void_fraction_solution</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Compute the void fraction at the fluid quadrature point. This essentially calculates the void fraction and the void fraction gradient. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramdir">[in]</td><td class="paramname">void_fraction_dof_handler</td><td>The dof handler associated with the void fraction</td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">void_fraction_solution</td><td>The solution of the void fraction </td></tr>
   </table>
   </dd>
 </dl>
@@ -494,7 +539,7 @@ template&lt;int dim, typename number &gt; </div>
 
 <p>Implements <a class="el" href="classNavierStokesOperatorBase.html#a9f3bb8de4716c95844cbdf35272b30a6">NavierStokesOperatorBase&lt; dim, number &gt;</a>.</p>
 
-<p class="definition">Definition at line <a class="el" href="fluid__dynamics__vans__matrix__free__operators_8cc_source.html#l00121">121</a> of file <a class="el" href="fluid__dynamics__vans__matrix__free__operators_8cc_source.html">fluid_dynamics_vans_matrix_free_operators.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="fluid__dynamics__vans__matrix__free__operators_8cc_source.html#l00170">170</a> of file <a class="el" href="fluid__dynamics__vans__matrix__free__operators_8cc_source.html">fluid_dynamics_vans_matrix_free_operators.cc</a>.</p>
 
 <p class="reference">References <a class="el" href="time__integration__utilities_8h_source.html#l00042">is_bdf()</a>, and <a class="el" href="multiphysics_8h_source.html#l00014">void_fraction</a>.</p>
 
@@ -604,7 +649,7 @@ template&lt;int dim, typename number &gt; </div>
 
 <p>Implements <a class="el" href="classNavierStokesOperatorBase.html#a1d289e3cf780010e8be1f75d4b027194">NavierStokesOperatorBase&lt; dim, number &gt;</a>.</p>
 
-<p class="definition">Definition at line <a class="el" href="fluid__dynamics__vans__matrix__free__operators_8cc_source.html#l00326">326</a> of file <a class="el" href="fluid__dynamics__vans__matrix__free__operators_8cc_source.html">fluid_dynamics_vans_matrix_free_operators.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="fluid__dynamics__vans__matrix__free__operators_8cc_source.html#l00387">387</a> of file <a class="el" href="fluid__dynamics__vans__matrix__free__operators_8cc_source.html">fluid_dynamics_vans_matrix_free_operators.cc</a>.</p>
 
 <p class="reference">References <a class="el" href="time__integration__utilities_8h_source.html#l00042">is_bdf()</a>, and <a class="el" href="multiphysics_8h_source.html#l00014">void_fraction</a>.</p>
 
@@ -634,7 +679,7 @@ template&lt;int dim, typename number &gt; </div>
 </div><div class="memdoc">
 <p>Internal copy of the CFD-DEM parameters. This is used for grad-div stabilization, but also to switch between form A and B of the VANS equations. </p>
 
-<p class="definition">Definition at line <a class="el" href="fluid__dynamics__vans__matrix__free__operators_8h_source.html#l00115">115</a> of file <a class="el" href="fluid__dynamics__vans__matrix__free__operators_8h_source.html">fluid_dynamics_vans_matrix_free_operators.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="fluid__dynamics__vans__matrix__free__operators_8h_source.html#l00137">137</a> of file <a class="el" href="fluid__dynamics__vans__matrix__free__operators_8h_source.html">fluid_dynamics_vans_matrix_free_operators.h</a>.</p>
 
 </div>
 </div>
@@ -661,7 +706,34 @@ template&lt;int dim, typename number &gt; </div>
 </div><div class="memdoc">
 <p>Table with correct alignment for vectorization to store the values of the grad-div gamma parameter </p>
 
-<p class="definition">Definition at line <a class="el" href="fluid__dynamics__vans__matrix__free__operators_8h_source.html#l00110">110</a> of file <a class="el" href="fluid__dynamics__vans__matrix__free__operators_8h_source.html">fluid_dynamics_vans_matrix_free_operators.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="fluid__dynamics__vans__matrix__free__operators_8h_source.html#l00132">132</a> of file <a class="el" href="fluid__dynamics__vans__matrix__free__operators_8h_source.html">fluid_dynamics_vans_matrix_free_operators.h</a>.</p>
+
+</div>
+</div>
+<a id="a34695b17980cfa6c0fc915025960319f" name="a34695b17980cfa6c0fc915025960319f"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a34695b17980cfa6c0fc915025960319f">&#9670;&#160;</a></span>particle_fluid_force</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;int dim, typename number &gt; </div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">Table&lt;2, Tensor&lt;1, dim, VectorizedArray&lt;number&gt; &gt; &gt; <a class="el" href="classVANSOperator.html">VANSOperator</a>&lt; dim, number &gt;::particle_fluid_force</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">protected</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+<p>Table with correct alignment for vectorization to store the values of the particle-fluid forces. These are the resulting forces applied on the particles due to hydrodynamic interaction, normalized by the volume of the cells. </p>
+
+<p class="definition">Definition at line <a class="el" href="fluid__dynamics__vans__matrix__free__operators_8h_source.html#l00128">128</a> of file <a class="el" href="fluid__dynamics__vans__matrix__free__operators_8h_source.html">fluid_dynamics_vans_matrix_free_operators.h</a>.</p>
 
 </div>
 </div>
@@ -688,7 +760,7 @@ template&lt;int dim, typename number &gt; </div>
 </div><div class="memdoc">
 <p>Table with correct alignment for vectorization to store the values of the void fraction </p>
 
-<p class="definition">Definition at line <a class="el" href="fluid__dynamics__vans__matrix__free__operators_8h_source.html#l00102">102</a> of file <a class="el" href="fluid__dynamics__vans__matrix__free__operators_8h_source.html">fluid_dynamics_vans_matrix_free_operators.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="fluid__dynamics__vans__matrix__free__operators_8h_source.html#l00118">118</a> of file <a class="el" href="fluid__dynamics__vans__matrix__free__operators_8h_source.html">fluid_dynamics_vans_matrix_free_operators.h</a>.</p>
 
 </div>
 </div>
@@ -715,7 +787,7 @@ template&lt;int dim, typename number &gt; </div>
 </div><div class="memdoc">
 <p>Table with correct alignment for vectorization to store the values of the void fraction gradient </p>
 
-<p class="definition">Definition at line <a class="el" href="fluid__dynamics__vans__matrix__free__operators_8h_source.html#l00106">106</a> of file <a class="el" href="fluid__dynamics__vans__matrix__free__operators_8h_source.html">fluid_dynamics_vans_matrix_free_operators.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="fluid__dynamics__vans__matrix__free__operators_8h_source.html#l00122">122</a> of file <a class="el" href="fluid__dynamics__vans__matrix__free__operators_8h_source.html">fluid_dynamics_vans_matrix_free_operators.h</a>.</p>
 
 </div>
 </div>
