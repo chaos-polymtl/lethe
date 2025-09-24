@@ -87,7 +87,7 @@ private:
   /// coarsening algorithm
   MGLevelObject<DoFHandler<dim>> pf_force_dof_handlers;
 
-  /// Particle-fluid force  transfers for each of the levels of the global
+  /// Particle-fluid force transfers for each of the levels of the global
   /// coarsening algorithm
   MGLevelObject<MGTwoLevelTransfer<dim, MGVectorType>> transfers_pf_force;
 
