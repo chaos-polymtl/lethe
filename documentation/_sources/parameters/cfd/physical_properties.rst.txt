@@ -109,11 +109,11 @@ Physical Properties
 
     where :math:`F_B` denotes the buoyant force source term, :math:`\beta` is the thermal expansion coefficient, :math:`T` is temperature, and :math:`T_\text{ref}` is the reference temperature. This is only used when a constant thermal expansion model is used.
 
-* The ``tracer diffusivity model`` specifies the model used to calculate the tracer diffusivity. At the moment, a constant tracer diffusivity and level set based :math:`\tanh` model are supported. The ``immersed solid tanh`` model is intended to be used with immersed solids with the ``lethe-fluid-sharp`` executable as a way to set diffusivity inside solids as well (described more in `Immersed Solid Models`_).
+* The ``tracer diffusivity model`` specifies the model used to calculate the tracer diffusivity. At the moment, a constant tracer diffusivity, a level set based :math:`\tanh` model and a Gaussian level set based models are supported. The ``immersed solid tanh`` and ``immersed solid gaussian`` models are intended to be used with immersed solids with the ``lethe-fluid-sharp`` executable as a way to set diffusivity inside solids as well (described more in `Immersed Solid Models`_).
 
 * The ``tracer diffusivity`` parameter is the diffusivity coefficient of the tracer in units of :math:`\text{Length}^{2} \cdot \text{Time}^{-1}` . In SI, this is :math:`\text{m}^{2} \cdot \text{s}^{-1}`.
 
-* The ``tracer reaction constant model`` specifies the model used to calculate the tracer reaction constant :math:`\alpha`. At the moment, a constant tracer reaction constant and level set based :math:`\tanh` model are supported, as well as no reaction. The alternatives are therefore <``none``, ``constant``, ``immersed solid tanh``>. The ``immersed solid tanh`` model is intended to be used with immersed solids with the ``lethe-fluid-sharp`` executable as a way to set reaction constant inside solids as well (described more in `Immersed Solid Models`_). At the moment, only power law reaction consumption rates (:math:`-R`) are implemented:
+* The ``tracer reaction constant model`` specifies the model used to calculate the tracer reaction constant :math:`\alpha`. At the moment, a constant tracer reaction constant, a level set based :math:`\tanh` model and a Gaussian level set based models are supported, as well as no reaction. The alternatives are therefore <``none``, ``constant``, ``immersed solid tanh``, ``immersed solid gaussian``>. The ``immersed solid tanh`` and ``immersed solid gaussian`` models are intended to be used with immersed solids with the ``lethe-fluid-sharp`` executable as a way to set reaction constant inside solids as well (described more in `Immersed Solid Models`_). At the moment, only power law reaction consumption rates (:math:`-R`) are implemented:
 
   .. math::
 
@@ -250,11 +250,19 @@ Immersed solid models can be used to affect specific behavior to immersed solids
 
 The immersed solid properties models are based on the signed distance function of the immersed solids, and therefore depend on the depth inside the solid. The intent behind these models is to define physical properties in the fluid and solid phases as well as in the transition regions.
 
-The ``tracer diffusivity model`` and ``tracer reaction constant model`` parameters set which models are used. The default models are ``constant``, which use constant ``tracer diffusivity`` and ``tracer reaction constant``. The equation of the ``immersed solid tanh`` model is defined as follows. :math:`D` is the tracer property (outside and inside), :math:`\lambda` is the signed distance and :math:`t` the thickness of the transition zone between both property values:
+The ``tracer diffusivity model`` and ``tracer reaction constant model`` parameters set which models are used. The default models are ``constant``, which use constant ``tracer diffusivity`` and ``tracer reaction constant``.
+
+The equation of the ``immersed solid tanh`` model is defined as follows. :math:`D` is the tracer property (outside and inside), :math:`\lambda` is the signed distance and :math:`\sigma` the thickness of the transition zone between both property values:
 
 .. math::
 
-  D(\lambda) = D_\text{inside} + \left(D_\text{outside} - D_\text{inside}\right) \left( 0.5 + 0.5 \tanh \left(\frac{\lambda}{t}\right)\right)
+  D(\lambda) = D_\text{inside} + \left(D_\text{outside} - D_\text{inside}\right) \left( 0.5 + 0.5 \tanh \left(\frac{\lambda}{\sigma}\right)\right)
+
+The equation of the ``immersed solid gaussian`` model is defined as follows. :math:`D` is the tracer property (interface and bulk), :math:`\lambda` is the signed distance and :math:`\sigma` the thickness (standard deviation) of the Gaussian function:
+
+.. math::
+
+  D(\lambda) = D_\text{bulk} + \left(D_\text{interface} - D_\text{bulk}\right) \exp \left( - \frac{\lambda^2}{\sigma^2}\right)
 
 .. code-block:: text
 
@@ -262,7 +270,7 @@ The ``tracer diffusivity model`` and ``tracer reaction constant model`` paramete
       set number of fluids = 1
       subsection fluid 0
         set kinematic viscosity      = 0.01
-        set tracer diffusivity model = immersed solid tanh
+        set tracer diffusivity model = immersed solid tanh # or immersed solid gaussian
         set tracer reaction order    = 1
         subsection immersed solid tanh
           set tracer diffusivity inside        = 1
@@ -271,18 +279,25 @@ The ``tracer diffusivity model`` and ``tracer reaction constant model`` paramete
           set tracer reaction constant outside = 0
           set thickness                        = 1
         end
+        subsection immersed solid gaussian
+          set tracer diffusivity interface       = 0
+          set tracer diffusivity bulk            = 1
+          set tracer reaction constant interface = 0
+          set tracer reaction constant bulk      = 0
+          set thickness                          = 1
+        end
       end
     end
 
-* The ``tracer diffusivity inside`` parameter represents the desired diffusivity inside of the solid.
+* The ``tracer diffusivity inside`` and ``tracer diffusivity outside`` parameters are the desired diffusivities inside and outside of the solid.
 
-* The ``tracer diffusivity outside`` parameter represents the desired diffusivity outside of the solid.
+* The ``tracer reaction constant inside`` and ``tracer reaction constant outside`` parameters are the desired reaction constants inside and outside of the solid.
 
-* The ``tracer reaction constant inside`` parameter represents the desired reaction constant inside of the solid.
+* The ``tracer diffusivity interface`` and ``tracer diffusivity bulk`` parameters are the desired diffusivities at the fluid-solid interface of the immersed solid and in the bulk of each phase, respectively. It can be used to allow diffusion in each phase while blocking interphase exchange, for example.
 
-* The ``tracer reaction constant outside`` parameter represents the desired reaction constant outside of the solid.
+* The ``tracer reaction constant interface`` and ``tracer reaction constant bulk`` parameters are the desired reaction constants at the fluid-solid interface of the immersed solid and in the bulk of each phase, respectively. It can be used to enable localized reaction, for example when active catalytic sites are only at the surface of a solid.
 
-* The ``thickness`` parameter represents thickness of the applied :math:`\tanh` function.
+* The ``thickness`` parameters in ``immersed solid tanh`` and ``immersed solid gaussian`` subsections represent the thickness of the applied models. They can be different.
 
 .. _rheological_models:
 

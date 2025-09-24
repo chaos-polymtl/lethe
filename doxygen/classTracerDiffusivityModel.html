@@ -94,13 +94,15 @@ Inheritance diagram for TracerDiffusivityModel:</div>
 <div class="dyncontent">
 <div class="center"><img src="classTracerDiffusivityModel__inherit__graph.png" border="0" usemap="#aTracerDiffusivityModel_inherit__map" alt="Inheritance graph"/></div>
 <map name="aTracerDiffusivityModel_inherit__map" id="aTracerDiffusivityModel_inherit__map">
-<area shape="rect" title="Abstract class that allows to calculates the tracer diffusivity." alt="" coords="127,79,295,104"/>
-<area shape="rect" href="classConstantTracerDiffusivity.html" title="Constant tracer diffusivity." alt="" coords="5,152,192,177"/>
-<area shape="poly" title=" " alt="" coords="182,114,118,154,116,150,179,109"/>
-<area shape="rect" href="classTanhLevelsetTracerDiffusivity.html" title="Diffusivity that depends on the level set." alt="" coords="216,152,429,177"/>
-<area shape="poly" title=" " alt="" coords="242,109,306,150,303,154,239,114"/>
-<area shape="rect" href="classPhysicalPropertyModel.html" title="Abstract class that defines the interface for a physical property model Physical property model provi..." alt="" coords="125,5,296,31"/>
-<area shape="poly" title=" " alt="" coords="213,44,213,79,208,79,208,44"/>
+<area shape="rect" title="Abstract class that allows to calculates the tracer diffusivity." alt="" coords="224,55,392,80"/>
+<area shape="rect" href="classConstantTracerDiffusivity.html" title="Constant tracer diffusivity." alt="" coords="468,5,655,31"/>
+<area shape="poly" title=" " alt="" coords="387,49,495,28,496,33,388,55"/>
+<area shape="rect" href="classGaussianLevelsetTracerDiffusivity.html" title="Diffusivity that depends on the Gaussian of the level set." alt="" coords="440,55,683,80"/>
+<area shape="poly" title=" " alt="" coords="406,65,440,65,440,70,406,70"/>
+<area shape="rect" href="classTanhLevelsetTracerDiffusivity.html" title="Diffusivity that depends on the tanh of the level set." alt="" coords="455,104,668,129"/>
+<area shape="poly" title=" " alt="" coords="388,80,496,101,495,107,387,85"/>
+<area shape="rect" href="classPhysicalPropertyModel.html" title="Abstract class that defines the interface for a physical property model Physical property model provi..." alt="" coords="5,55,176,80"/>
+<area shape="poly" title=" " alt="" coords="190,65,224,65,224,70,190,70"/>
 </map>
 <center><span class="legend">[<a href="graph_legend.html">legend</a>]</span></center></div>
 <table class="memberdecls">
@@ -178,7 +180,7 @@ Additional Inherited Members</h2></td></tr>
 
 <p class="definition">Definition at line <a class="el" href="tracer__diffusivity__model_8cc_source.html#l00007">7</a> of file <a class="el" href="tracer__diffusivity__model_8cc_source.html">tracer_diffusivity_model.cc</a>.</p>
 
-<p class="reference">References <a class="el" href="classParameters_1_1Material.html#a66662d34dd196af7f5845330c47752bda192644cfea8ad845bf0e958e58e471d6">Parameters::Material::immersed_boundary_tanh</a>, <a class="el" href="parameters_8h_source.html#l00496">Parameters::Material::immersed_solid_tanh_parameters</a>, <a class="el" href="parameters_8h_source.html#l00303">Parameters::ImmersedSolidTanhParameters::thickness</a>, <a class="el" href="parameters_8h_source.html#l00435">Parameters::Material::tracer_diffusivity</a>, <a class="el" href="parameters_8h_source.html#l00299">Parameters::ImmersedSolidTanhParameters::tracer_diffusivity_inside</a>, <a class="el" href="classParameters_1_1Material.html#a6a95a5c2976c8556d47e0dbbb5b68874">Parameters::Material::tracer_diffusivity_model</a>, and <a class="el" href="parameters_8h_source.html#l00300">Parameters::ImmersedSolidTanhParameters::tracer_diffusivity_outside</a>.</p>
+<p class="reference">References <a class="el" href="classParameters_1_1Material.html#a66662d34dd196af7f5845330c47752bda192644cfea8ad845bf0e958e58e471d6">Parameters::Material::immersed_boundary_tanh</a>, <a class="el" href="parameters_8h_source.html#l00521">Parameters::Material::immersed_solid_gaussian_parameters</a>, <a class="el" href="parameters_8h_source.html#l00517">Parameters::Material::immersed_solid_tanh_parameters</a>, <a class="el" href="parameters_8h_source.html#l00303">Parameters::ImmersedSolidTanhParameters::thickness</a>, <a class="el" href="parameters_8h_source.html#l00322">Parameters::ImmersedSolidGaussianParameters::thickness</a>, <a class="el" href="parameters_8h_source.html#l00454">Parameters::Material::tracer_diffusivity</a>, <a class="el" href="parameters_8h_source.html#l00319">Parameters::ImmersedSolidGaussianParameters::tracer_diffusivity_bulk</a>, <a class="el" href="parameters_8h_source.html#l00299">Parameters::ImmersedSolidTanhParameters::tracer_diffusivity_inside</a>, <a class="el" href="parameters_8h_source.html#l00318">Parameters::ImmersedSolidGaussianParameters::tracer_diffusivity_interface</a>, <a class="el" href="classParameters_1_1Material.html#a6a95a5c2976c8556d47e0dbbb5b68874">Parameters::Material::tracer_diffusivity_model</a>, and <a class="el" href="parameters_8h_source.html#l00300">Parameters::ImmersedSolidTanhParameters::tracer_diffusivity_outside</a>.</p>
 
 </div>
 </div>
