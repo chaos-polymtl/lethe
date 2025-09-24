@@ -82,6 +82,17 @@ private:
 
   /// Transfer operator for global coarsening for the void fraction
   std::shared_ptr<GCTransferType> mg_transfer_gc_void_fraction;
+
+  /// Particle-fluid force DoF handlers for each of the levels of the global
+  /// coarsening algorithm
+  MGLevelObject<DoFHandler<dim>> pf_force_dof_handlers;
+
+  /// Particle-fluid force transfers for each of the levels of the global
+  /// coarsening algorithm
+  MGLevelObject<MGTwoLevelTransfer<dim, MGVectorType>> transfers_pf_force;
+
+  /// Transfer operator for global coarsening for the particle-fluid forces
+  std::shared_ptr<GCTransferType> mg_transfer_gc_pf_force;
 };
 
 /**

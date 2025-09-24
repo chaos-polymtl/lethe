@@ -820,6 +820,18 @@ public:
   void
   calculate_fluid_properties_at_particle_location()
   {
+    AssertThrow(
+      properties_manager.density_is_constant(),
+      ExcMessage(
+        "The lethe-fluid-particles solver only supports constant densities"));
+    AssertThrow(
+      !properties_manager.get_rheology()
+          ->is_non_newtonian_rheological_model() &&
+        !properties_manager.get_rheology()
+           ->is_non_newtonian_rheological_model(),
+      ExcMessage(
+        "The lethe-fluid-particles solver only supports constant rheology model"));
+
     if (gather_vof)
       {
         for (unsigned int i_particle = 0; i_particle < number_of_particles;
@@ -970,7 +982,8 @@ public:
     Assert(
       gather_particles_information,
       ExcMessage(
-        "You are trying to reinit the fluid information at the particle location within a cell, but you did not enable the gathering of the information at the particle location for the scratch data (gather_particles_information=false)."));
+        "You are trying to reinit the fluid information at the particle location within a cell,"
+        " but you did not enable the gathering of the information at the particle location for the scratch data (gather_particles_information=false)."));
 
     pic = particle_handler.particles_in_cell(velocity_cell);
 
@@ -1376,8 +1389,9 @@ public:
   /**
    * Scratch component for the particle fluid interaction auxiliary physics
    */
-  bool                        gather_particles_information;
-  bool                        interpolated_void_fraction;
+  bool gather_particles_information;
+  bool interpolated_void_fraction;
+
   std::vector<Tensor<1, dim>> particle_velocity;
   Tensor<1, dim>              average_particle_velocity;
   std::vector<Tensor<1, dim>> fluid_velocity_at_particle_location;
@@ -1398,6 +1412,7 @@ public:
   double                                                            cell_volume;
   double                                                            beta_drag;
   Tensor<1, dim> undisturbed_flow_force;
+
 
   /**
    * Scratch component for the heat transfer

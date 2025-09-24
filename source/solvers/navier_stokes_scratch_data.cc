@@ -319,9 +319,16 @@ NavierStokesScratchData<dim>::enable_void_fraction(
   const Quadrature<dim>    &quadrature,
   const Mapping<dim>       &mapping)
 {
-  gather_void_fraction    = true;
-  fe_values_void_fraction = std::make_shared<FEValues<dim>>(
-    mapping, fe, quadrature, update_values | update_gradients);
+  gather_void_fraction = true;
+
+  // Contrary to the other physics, we enable the calculation of the JxW values
+  // on the void fraction
+  fe_values_void_fraction =
+    std::make_shared<FEValues<dim>>(mapping,
+                                    fe,
+                                    quadrature,
+                                    update_values | update_gradients |
+                                      update_JxW_values);
 
   // Void Fraction
   void_fraction_values = std::vector<double>(this->n_q_points);
@@ -730,7 +737,8 @@ void
 NavierStokesScratchData<dim>::calculate_cell_void_fraction(
   const double &total_particle_volume)
 {
-  cell_volume = compute_cell_measure_with_JxW(this->fe_values.get_JxW_values());
+  cell_volume = compute_cell_measure_with_JxW(
+    this->fe_values_void_fraction->get_JxW_values());
 
   if (!this->interpolated_void_fraction)
     {

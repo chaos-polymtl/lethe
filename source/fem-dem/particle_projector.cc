@@ -266,6 +266,7 @@ ParticleProjector<dim>::calculate_void_fraction(const double time)
     }
 }
 
+
 template <int dim>
 void
 ParticleProjector<dim>::calculate_void_fraction_function(const double time)
@@ -291,7 +292,7 @@ ParticleProjector<dim>::calculate_void_fraction_function(const double time)
                                     void_fraction_locally_relevant);
   void_fraction_solution.update_ghost_values();
 #else
-  void_fraction_solution = void_fraction_locally_relevant;
+  void_fraction_solution            = void_fraction_locally_relevant;
 #endif
 }
 
@@ -1056,7 +1057,7 @@ ParticleProjector<dim>::calculate_field_projection(
     grad_phi_vf(dofs_per_cell);
 
   double r_sphere = 0.0;
-  double total_volume_of_particle_in_sphere;
+  double total_volume_of_particles_in_sphere;
   typename std::conditional<n_components == 1, double, Tensor<1, dim>>::type
          particle_field_in_sphere;
   double qcm_sphere_diameter = void_fraction_parameters->qcm_sphere_diameter;
@@ -1107,8 +1108,8 @@ ParticleProjector<dim>::calculate_field_projection(
 
           for (unsigned int q = 0; q < n_q_points; ++q)
             {
-              total_volume_of_particle_in_sphere = 0;
-              particle_field_in_sphere           = 0;
+              total_volume_of_particles_in_sphere = 0;
+              particle_field_in_sphere            = 0;
 
               for (unsigned int m = 0; m < active_neighbors.size(); m++)
                 {
@@ -1135,7 +1136,7 @@ ParticleProjector<dim>::calculate_field_projection(
                                                        r_sphere,
                                                        distance);
 
-                      total_volume_of_particle_in_sphere +=
+                      total_volume_of_particles_in_sphere +=
                         particle_volume_in_sphere;
                       // If the projection is to be conservative, then the
                       // volumetric distribution is equal to the volume of the
@@ -1145,12 +1146,14 @@ ParticleProjector<dim>::calculate_field_projection(
                       // total volume of particles in the QCM sphere.
 
                       const double volumetric_contribution =
-                        field_qcm.distribute_contribution ?
+                        field_qcm.conservative_projection ?
                           particle_volume_in_sphere /
                             (particle_properties
                                [DEM::CFDDEMProperties::PropertiesIndex::
                                   volumetric_contribution]) :
                           particle_volume_in_sphere;
+
+
 
                       for (unsigned int d = 0; d < n_components; ++d)
                         {
@@ -1206,34 +1209,32 @@ ParticleProjector<dim>::calculate_field_projection(
                                                        r_sphere,
                                                        distance);
 
-                      total_volume_of_particle_in_sphere +=
+                      total_volume_of_particles_in_sphere +=
                         particle_volume_in_sphere;
 
                       // If the projection is to be conservative, then the
-                      // volumetric distribution is equal to the volume of the
-                      // sphere divided by the volumetric contribution of the
-                      // particle. Otherwise, the contribution is just the
-                      // volume of the sphere which will be later divided by the
-                      // total volume of particles in the QCM sphere.
+                      // volumetric contribution is equal to the volume of the
+                      // particle in the sphere divided by the sum of the
+                      // volumetric contribution of the particle in all spheres
+                      // in the domain. Otherwise, the contribution is just the
+                      // volume of the particle in the sphere which will be
+                      // later divided by the total volume of particles in the
+                      // QCM sphere.
 
                       const double volumetric_contribution =
-                        field_qcm.distribute_contribution ?
+                        field_qcm.conservative_projection ?
                           particle_volume_in_sphere /
                             (particle_properties
                                [DEM::CFDDEMProperties::PropertiesIndex::
                                   volumetric_contribution]) :
                           particle_volume_in_sphere;
 
-                      std::cout << "Volumetric contribution "
-                                << volumetric_contribution << std::endl;
                       for (unsigned int d = 0; d < n_components; ++d)
                         {
                           particle_field_in_sphere[d] +=
                             volumetric_contribution *
                             particle_properties[property_start_index + d];
                         }
-                      std::cout << "Particle field in sphere "
-                                << particle_field_in_sphere << std::endl;
                     }
                 }
 
@@ -1253,13 +1254,13 @@ ParticleProjector<dim>::calculate_field_projection(
                 }
 
               // Normalize the field
-              // B.If the field to project is a field in which we want a
+              // If the field to project is a field in which we want a
               // continuous representation, then the normalisation is
               // 1/total_volume_particle_in_sphere.
 
-              if (field_qcm.distribute_contribution == false)
-                particle_field_in_sphere =
-                  particle_field_in_sphere / total_volume_of_particle_in_sphere;
+              if (field_qcm.conservative_projection == false)
+                particle_field_in_sphere = particle_field_in_sphere /
+                                           total_volume_of_particles_in_sphere;
 
               for (unsigned int i = 0; i < dofs_per_cell; ++i)
                 {
@@ -1282,7 +1283,7 @@ ParticleProjector<dim>::calculate_field_projection(
                           // If there are particles, assemble a smoothed L2
                           // projection
                           if (field_qcm.neumann_boundaries == false ||
-                              total_volume_of_particle_in_sphere > 0)
+                              total_volume_of_particles_in_sphere > 0)
                             {
                               local_matrix(i, j) += (phi_vf[j] * phi_vf[i]) *
                                                     fe_values_field.JxW(q);
@@ -1294,10 +1295,26 @@ ParticleProjector<dim>::calculate_field_projection(
                         }
                     }
 
-                  if (total_volume_of_particle_in_sphere > 0)
+                  if (total_volume_of_particles_in_sphere > 0)
                     {
-                      local_rhs(i) += phi_vf[i] * particle_field_in_sphere *
-                                      fe_values_field.JxW(q);
+                      // If the contribution is to be distributed,
+                      // the volume integral over the domain of the field should
+                      // give back the sum of the field over all particles.
+                      // Consequently, the Jacobian of the transformation
+                      // does not appear on the RHS in that case to ensure
+                      // that the integral of the field over the domain
+                      // gives the field to be conserved.
+                      if (field_qcm.conservative_projection)
+                        local_rhs(i) += phi_vf[i] * particle_field_in_sphere;
+
+                      // Else, the field is not a field for which we whish to
+                      // conserve the total quantity, but a field for which we
+                      // need a smooth representation (e.g. the particle
+                      // velocity). Consequently, we need the jacobian on the
+                      // RHS.
+                      else
+                        local_rhs(i) += phi_vf[i] * particle_field_in_sphere *
+                                        fe_values_field.JxW(q);
                     }
                 }
             }
@@ -1369,20 +1386,39 @@ ParticleProjector<dim>::calculate_field_projection(
                                     field_qcm.particle_field_locally_relevant);
   field_qcm.particle_field_solution.update_ghost_values();
 #else
-  void_fraction_solution = void_fraction_locally_relevant;
+  field_qcm.particle_field_solution = field_qcm.particle_field_locally_relevant;
+  field_qcm.particle_field_solution.update_ghost_values();
 #endif
 }
+
+
 
 template <int dim>
 template <typename VectorType>
 void
-ParticleProjector<dim>::gather_particle_fluid_forces_onto_particles(
+ParticleProjector<dim>::calculate_particle_fluid_forces_projection(
   const Parameters::CFDDEM      &cfd_dem_parameters,
   DoFHandler<dim>               &fluid_dof_handler,
   const VectorType              &fluid_solution,
   const std::vector<VectorType> &fluid_previous_solutions,
-  NavierStokesScratchData<dim>  &scratch_data)
+  NavierStokesScratchData<dim>   scratch_data)
 {
+  // If the mode to calculate the void fraction is function, then the VANS
+  // solver is running with a user defined function so there are no
+  // particle-fluid force yet the simulation is a valid simulation.
+  if (void_fraction_parameters->mode == Parameters::VoidFractionMode::function)
+    return;
+
+  // If the mode is either SPM or PCM, then information required for the
+  // projection is not available. Consequently, we should throw and not
+  // continue.
+  AssertThrow(
+    void_fraction_parameters->mode == Parameters::VoidFractionMode::qcm,
+    ExcMessage(
+      "The projection of the particle-fluid force onto the mesh requires that the QCM method be used for the calculation of the void fraction."));
+
+  announce_string(this->pcout, "Particle-fluid forces");
+
   // We aim to project the particle-fluid forces. To maximize code reuse, we
   // currently reuse the particle-fluid force model architecture. The projection
   // follows the following steps:
@@ -1457,6 +1493,8 @@ ParticleProjector<dim>::gather_particle_fluid_forces_onto_particles(
     particle_fluid_assemblers.push_back(
       std::make_shared<VANSAssemblerShearForce<dim>>(cfd_dem_parameters));
 
+  scratch_data.enable_void_fraction(*fe, *quadrature, *mapping);
+
   scratch_data.enable_particle_fluid_interactions(
     particle_handler->n_global_max_particles_per_cell(), true);
 
@@ -1476,6 +1514,11 @@ ParticleProjector<dim>::gather_particle_fluid_forces_onto_particles(
           scratch_data.reinit_void_fraction(void_fraction_cell,
                                             void_fraction_locally_relevant,
                                             previous_void_fraction);
+
+
+          // Physics properties must be calculated before the particle-fluid
+          // interaction is calculated.
+          scratch_data.calculate_physical_properties();
 
           // We need to check if the function is called with deal.II vectors or
           // not. If it is called with deal.II vectors, then the vector type of
@@ -1504,6 +1547,7 @@ ParticleProjector<dim>::gather_particle_fluid_forces_onto_particles(
                 *particle_handler);
             }
 
+
           // B. We loop over the particle-fluid assembler and calculate the
           // total particle-fluid coupling force.
           for (auto &pf_assembler : particle_fluid_assemblers)
@@ -1523,39 +1567,39 @@ ParticleProjector<dim>::gather_particle_fluid_forces_onto_particles(
 
 
 template void
-ParticleProjector<2>::gather_particle_fluid_forces_onto_particles(
+ParticleProjector<2>::calculate_particle_fluid_forces_projection(
   const Parameters::CFDDEM            &cfd_dem_parameters,
   DoFHandler<2>                       &dof_handler,
   const GlobalVectorType              &fluid_solution,
   const std::vector<GlobalVectorType> &fluid_previous_solutions,
-  NavierStokesScratchData<2>          &scratch_data);
+  NavierStokesScratchData<2>           scratch_data);
 
 template void
-ParticleProjector<3>::gather_particle_fluid_forces_onto_particles(
+ParticleProjector<3>::calculate_particle_fluid_forces_projection(
   const Parameters::CFDDEM            &cfd_dem_parameters,
   DoFHandler<3>                       &dof_handler,
   const GlobalVectorType              &fluid_solution,
   const std::vector<GlobalVectorType> &fluid_previous_solutions,
-  NavierStokesScratchData<3>          &scratch_data);
+  NavierStokesScratchData<3>           scratch_data);
 
 #ifndef LETHE_USE_LDV
 template void
-ParticleProjector<2>::gather_particle_fluid_forces_onto_particles(
+ParticleProjector<2>::calculate_particle_fluid_forces_projection(
   const Parameters::CFDDEM                         &cfd_dem_parameters,
   DoFHandler<2>                                    &dof_handler,
   const LinearAlgebra::distributed::Vector<double> &fluid_solution,
   const std::vector<LinearAlgebra::distributed::Vector<double>>
-                             &fluid_previous_solutions,
-  NavierStokesScratchData<2> &scratch_data);
+                            &fluid_previous_solutions,
+  NavierStokesScratchData<2> scratch_data);
 
 template void
-ParticleProjector<3>::gather_particle_fluid_forces_onto_particles(
+ParticleProjector<3>::calculate_particle_fluid_forces_projection(
   const Parameters::CFDDEM                         &cfd_dem_parameters,
   DoFHandler<3>                                    &dof_handler,
   const LinearAlgebra::distributed::Vector<double> &fluid_solution,
   const std::vector<LinearAlgebra::distributed::Vector<double>>
-                             &fluid_previous_solutions,
-  NavierStokesScratchData<3> &scratch_data);
+                            &fluid_previous_solutions,
+  NavierStokesScratchData<3> scratch_data);
 #endif
 
 template <int dim>
@@ -1620,6 +1664,7 @@ ParticleProjector<dim>::solve_void_fraction_linear_system()
   void_fraction_solution.update_ghost_values();
 #else
   void_fraction_solution = void_fraction_locally_relevant;
+  void_fraction_solution.update_ghost_values();
 #endif
 }
 

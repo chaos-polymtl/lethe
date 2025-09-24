@@ -44,7 +44,7 @@ MFNavierStokesVANSPreconditionGMG<dim>::initialize(
   FlowControl<dim>                         &flow_control,
   const VectorType                         &present_solution,
   const VectorType                         &time_derivative_previous_solutions,
-  const ParticleProjector<dim>             &void_fraction_manager)
+  const ParticleProjector<dim>             &particle_projector)
 {
   if (this->simulation_parameters.linear_solver.at(PhysicsID::fluid_dynamics)
         .preconditioner == Parameters::LinearSolver::PreconditionerType::lsmg)
@@ -60,16 +60,25 @@ MFNavierStokesVANSPreconditionGMG<dim>::initialize(
       const unsigned int max_level = this->maxlevel;
 
       this->void_fraction_dof_handlers.resize(min_level, max_level);
+      this->pf_force_dof_handlers.resize(min_level, max_level);
+
 
       for (unsigned int l = min_level; l <= max_level; l++)
         {
           this->void_fraction_dof_handlers[l].reinit(
             this->dof_handlers[l].get_triangulation());
           this->void_fraction_dof_handlers[l].distribute_dofs(
-            void_fraction_manager.dof_handler.get_fe());
+            particle_projector.dof_handler.get_fe());
+
+          this->pf_force_dof_handlers[l].reinit(
+            this->dof_handlers[l].get_triangulation());
+          this->pf_force_dof_handlers[l].distribute_dofs(
+            particle_projector.particle_fluid_force.dof_handler.get_fe());
         }
 
       this->transfers_void_fraction.resize(min_level, max_level);
+      this->transfers_pf_force.resize(min_level, max_level);
+
 
       for (unsigned int l = min_level; l < max_level; l++)
         {
@@ -78,44 +87,82 @@ MFNavierStokesVANSPreconditionGMG<dim>::initialize(
             this->void_fraction_dof_handlers[l],
             {},
             {});
+
+
+          this->transfers_pf_force[l + 1].reinit(
+            this->pf_force_dof_handlers[l + 1],
+            this->pf_force_dof_handlers[l],
+            {},
+            {});
         }
 
       this->mg_transfer_gc_void_fraction =
         std::make_shared<MFNavierStokesVANSPreconditionGMG::GCTransferType>(
           this->transfers_void_fraction);
 
+      this->mg_transfer_gc_pf_force =
+        std::make_shared<MFNavierStokesVANSPreconditionGMG::GCTransferType>(
+          this->transfers_pf_force);
+
 #if DEAL_II_VERSION_GTE(9, 7, 0)
       this->mg_transfer_gc_void_fraction->build(
-        void_fraction_manager.dof_handler, [&](const auto l, auto &vec) {
+        particle_projector.dof_handler, [&](const auto l, auto &vec) {
           vec.reinit(
             this->void_fraction_dof_handlers[l].locally_owned_dofs(),
             DoFTools::extract_locally_active_dofs(
               this->void_fraction_dof_handlers[l]),
             this->void_fraction_dof_handlers[l].get_mpi_communicator());
         });
+
+      this->mg_transfer_gc_pf_force->build(
+        particle_projector.particle_fluid_force.dof_handler,
+        [&](const auto l, auto &vec) {
+          vec.reinit(this->pf_force_dof_handlers[l].locally_owned_dofs(),
+                     DoFTools::extract_locally_active_dofs(
+                       this->pf_force_dof_handlers[l]),
+                     this->pf_force_dof_handlers[l].get_mpi_communicator());
+        });
 #endif
 
       MGLevelObject<MFNavierStokesVANSPreconditionGMG::MGVectorType>
         mg_void_fraction_solution(this->minlevel, this->maxlevel);
 
+      MGLevelObject<MFNavierStokesVANSPreconditionGMG::MGVectorType>
+        mg_pf_forces_solution(this->minlevel, this->maxlevel);
 
       // A deal.II vector is required here, so we take the deal.II vector
-      // solution from the void fraction manager instead of the trilinos vector
+      // solution from the particle projector instead of the trilinos vector
       // one.
       this->mg_transfer_gc_void_fraction->interpolate_to_mg(
-        void_fraction_manager.dof_handler,
+        particle_projector.dof_handler,
         mg_void_fraction_solution,
-        void_fraction_manager.void_fraction_solution);
+        particle_projector.void_fraction_solution);
+
+      particle_projector.particle_fluid_force.particle_field_solution
+        .update_ghost_values();
+
+      this->mg_transfer_gc_pf_force->interpolate_to_mg(
+        particle_projector.particle_fluid_force.dof_handler,
+        mg_pf_forces_solution,
+        particle_projector.particle_fluid_force.particle_field_solution);
+
 
       for (unsigned int l = min_level; l <= max_level; l++)
         {
           mg_void_fraction_solution[l].update_ghost_values();
+          mg_pf_forces_solution[l].update_ghost_values();
+
 
           if (auto mf_operator = dynamic_cast<VANSOperator<dim, double> *>(
                 &(*this->mg_operators[l])))
-            mf_operator->compute_void_fraction(
-              mg_void_fraction_solution[l],
-              this->void_fraction_dof_handlers[l]);
+            {
+              mf_operator->compute_void_fraction(
+                this->void_fraction_dof_handlers[l],
+                mg_void_fraction_solution[l]);
+
+              mf_operator->compute_particle_fluid_force(
+                this->pf_force_dof_handlers[l], mg_pf_forces_solution[l]);
+            }
         }
     }
 
@@ -254,6 +301,11 @@ FluidDynamicsVANSMatrixFree<dim>::read_dem()
                                DEM::DEMProperties::PropertiesIndex,
                                DEM::CFDDEMProperties::PropertiesIndex>(
         *parallel_triangulation, temporary_particle_handler, particle_handler);
+
+      // Exchange the ghost particles so that the particle handler is ready to
+      // be used to calculate the initial conditions of the void fraction or
+      // anything that requires the ghost particles.
+      particle_handler.exchange_ghost_particles(true);
     }
   else
     {
@@ -360,21 +412,50 @@ FluidDynamicsVANSMatrixFree<dim>::solve()
               this->flow_control.get_beta());
         }
 
-      // Calculate the void fraction and evaluate it within the matrix-free
-      // operator
       {
-        TimerOutput::Scope t(this->computing_timer, "Calculate void fraction");
+        TimerOutput::Scope t(this->computing_timer,
+                             "Calculate particle-fluid projection");
+
         particle_projector.calculate_void_fraction(
           this->simulation_control->get_current_time());
 
-        // The base matrix-free operator is not aware of the void fraction. We
-        // must do a cast here to ensure that the operator is of the right type
+        // The particle-fluid force projection
+        // will be zero if there are no particles in
+        // the particle handler
+        particle_projector.calculate_particle_fluid_forces_projection(
+          this->cfd_dem_simulation_parameters.cfd_dem,
+          this->dof_handler,
+          this->present_solution,
+          this->previous_solutions,
+          NavierStokesScratchData<dim>(
+            this->simulation_control,
+            this->simulation_parameters.physical_properties_manager,
+            *this->fe,
+            *this->cell_quadrature,
+            *this->mapping,
+            *this->face_quadrature));
+
+        // The base matrix-free operator is not aware of the various VANS
+        // coupling term. We must do a cast here to ensure that the operator is
+        // of the right type.
         if (auto mf_operator = dynamic_cast<VANSOperator<dim, double> *>(
               this->system_operator.get()))
-          mf_operator->compute_void_fraction(
-            particle_projector.void_fraction_solution,
-            particle_projector.dof_handler);
+          {
+            TimerOutput::Scope t(this->computing_timer,
+                                 "Prepare MF operator for VANS");
+            mf_operator->compute_void_fraction(
+              particle_projector.dof_handler,
+              particle_projector.void_fraction_solution);
+
+            particle_projector.particle_fluid_force.particle_field_solution
+              .update_ghost_values();
+
+            mf_operator->compute_particle_fluid_force(
+              particle_projector.particle_fluid_force.dof_handler,
+              particle_projector.particle_fluid_force.particle_field_solution);
+          }
       }
+
 
       this->iterate();
       this->postprocess(false);
@@ -384,7 +465,6 @@ FluidDynamicsVANSMatrixFree<dim>::solve()
           Parameters::Timer::Type::iteration)
         this->print_mg_setup_times();
     }
-
   if (this->simulation_parameters.timer.type == Parameters::Timer::Type::end)
     this->print_mg_setup_times();
 

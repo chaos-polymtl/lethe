@@ -44,18 +44,34 @@ public:
   }
 
   /**
-   * @brief Compute the void fraction and the void fraction gradient
-   * at the quadrature points.
-   *
-   * @param[in] void_fraction_solution The solution of the void fraction
+   * @brief Compute the void fraction at the fluid quadrature point.
+   * This essentially calculates the void fraction and the void fraction
+   * gradient.
    *
    * @param[in] void_fraction_dof_handler The dof handler associated with the
    * void fraction
+   *
+   * @param[in] void_fraction_solution The solution of the void fraction
+   *
    */
   void
   compute_void_fraction(
-    const LinearAlgebra::distributed::Vector<double> &void_fraction_solution,
-    const DoFHandler<dim> &void_fraction_dof_handler);
+    const DoFHandler<dim>                            &void_fraction_dof_handler,
+    const LinearAlgebra::distributed::Vector<double> &void_fraction_solution);
+
+  /**
+   * @brief Compute the terms the particle-fluid (pf) forces at the fluid quadrature points.
+   *
+   * @param[in] pf_dof_handler The dof handler associated with the
+   * particle-fluid forces
+   *
+   * @param[in] pf_solution The solution of the particle-fluid forces
+   *
+   */
+  void
+  compute_particle_fluid_force(
+    const DoFHandler<dim>                            &pf_dof_handler,
+    const LinearAlgebra::distributed::Vector<double> &pf_solution);
 
 protected:
   /**
@@ -104,6 +120,12 @@ protected:
   /// Table with correct alignment for vectorization to store the values of the
   /// void fraction gradient
   Table<2, Tensor<1, dim, VectorizedArray<number>>> void_fraction_gradient;
+
+  /// Table with correct alignment for vectorization to store the values of the
+  /// particle-fluid forces. These are the resulting forces applied on the
+  /// particles due to hydrodynamic interaction, normalized by the volume
+  /// of the cells.
+  Table<2, Tensor<1, dim, VectorizedArray<number>>> particle_fluid_force;
 
   /// Table with correct alignment for vectorization to store the values of the
   /// grad-div gamma parameter

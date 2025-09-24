@@ -120,16 +120,22 @@ public:
    * If the neumann_boundaries is set to true, then  cells without particles do
    * not have a mass matrix assembled. This corresponds to setting a neumann
    * boundary at the cells which do not contain particles.
-   * @param distribute_contribution A flag to indicate if the contribution is meant to be distributed using the volume of the particle divided by the total volume contribution of the particle.
+   * @param conservative_projection A flag to indicate if the projection
+   * of the field must be conservative. When a projection is conservative,
+   * the integral of the field over the triangulation will be strictly
+   * equal to the field summed over all particles. This is useful when
+   * projecting a quantity such as the force acting on the particles. When
+   * conservative is put to false, the projection is meant to be a smooth
+   * representation of the particle information and does not conserve it.
    */
   ParticleFieldQCM(parallel::DistributedTriangulationBase<dim> *triangulation,
                    const unsigned int                           fe_degree,
                    const bool                                   simplex,
                    const bool neumann_boundaries,
-                   const bool distribute_contribution)
+                   const bool conservative_projection)
     : dof_handler(*triangulation)
     , neumann_boundaries(neumann_boundaries)
-    , distribute_contribution(distribute_contribution)
+    , conservative_projection(conservative_projection)
   {
     if (simplex)
       {
@@ -191,7 +197,7 @@ public:
   /// which results in a no flux zone.
   const bool neumann_boundaries;
 
-  const bool distribute_contribution;
+  const bool conservative_projection;
 
   /**
    * @brief Setup the degrees of freedom. This function allocates the necessary memory.
@@ -270,8 +276,8 @@ public:
               quadrature = std::make_shared<QGauss<dim>>(
                 this->void_fraction_parameters->n_quadrature_points);
           }
-        if (this->void_fraction_parameters->quadrature_rule ==
-            Parameters::VoidFractionQuadratureRule::gauss_lobatto)
+        else if (this->void_fraction_parameters->quadrature_rule ==
+                 Parameters::VoidFractionQuadratureRule::gauss_lobatto)
           {
             if (this->void_fraction_parameters->n_quadrature_points == 0)
               quadrature = std::make_shared<QGaussLobatto<dim>>(fe->degree + 2);
@@ -281,6 +287,13 @@ public:
             else
               throw(std::runtime_error(
                 "For void fraction using Gauss-Lobatto ('gauss-lobatto') quadrature rule, the minimum number of quadrature points is 3"));
+          }
+        else
+          {
+            AssertThrow(
+              false,
+              ExcMessage(
+                "An invalid quadrature rule was provided to the ParticleProject class."));
           }
       }
 
@@ -331,6 +344,21 @@ public:
 
 
   /**
+   * @brief Calculate all the necessary information for the particle-fluid coupling.
+   * This means calculating the projection of the particle-fluid interaction
+   * forces as well as the solid velociy onto the CFD mesh.
+   *
+   */
+  template <typename VectorType>
+  void
+  calculate_particle_fluid_forces_projection(
+    const Parameters::CFDDEM      &cfd_dem_parameters,
+    DoFHandler<dim>               &fluid_dof_handler,
+    const VectorType              &fluid_solution,
+    const std::vector<VectorType> &fluid_previous_solutions,
+    NavierStokesScratchData<dim>   scratch_data);
+
+  /**
    * @brief Assemble and solve the system.
    */
   void
@@ -366,6 +394,24 @@ public:
     for (auto &previous_solution : this->previous_void_fraction)
       previous_solution = void_fraction_locally_relevant;
   }
+
+
+  /**
+   * @brief Calculates the projection of a particle field onto the mesh.
+   *
+   * @tparam property_start_index An integer for the particle_property that will be projected
+   *
+   * @tparam n_components The number of components of the field. This should be either 1 (scalar) or dim (a Tensor<1,dim>).
+   *
+   * @param field_qcm The container for the field that will be projected.
+   *
+   */
+
+  template <int property_start_index, int n_components>
+  void
+  calculate_field_projection(
+    ParticleFieldQCM<dim, property_start_index, n_components> &field_qcm);
+
 
   /// DoFHandler that manages the void fraction
   DoFHandler<dim> dof_handler;
@@ -528,21 +574,6 @@ private:
   virtual void
   solve_void_fraction_linear_system() override;
 
-  /**
-  * @brief Calculates the projection of a particle field onto the mesh.
-  *
-  * @tparam property_start_index An integer for the particle_property that will be projected
-  *
-  * @tparam n_components The number of components of the field. This should be either 1 (scalar) or dim (a Tensor<1,dim>).
-  *
-  * @param field_qcm The container for the field that will be projected.
-
-   *
-   */
-  template <int property_start_index, int n_components>
-  void
-  calculate_field_projection(
-    ParticleFieldQCM<dim, property_start_index, n_components> &field_qcm);
 
   /**
    * @brief Calculate and return the periodic offset distance vector of the domain which is needed
@@ -605,7 +636,6 @@ private:
   /// Triangulation
   parallel::DistributedTriangulationBase<dim> *triangulation;
 
-private:
   /// Parameters for the calculation of the void fraction
   /// Right now this is used for the VANS matrix-free solver
   /// to directly calculate the void fraction from the function itself.
@@ -670,15 +700,6 @@ public:
 
   ParticleFieldQCM<dim, 3, DEM::CFDDEMProperties::PropertiesIndex::fem_force_x>
     particle_fluid_force;
-
-  template <typename VectorType>
-  void
-  gather_particle_fluid_forces_onto_particles(
-    const Parameters::CFDDEM      &cfd_dem_parameters,
-    DoFHandler<dim>               &fluid_dof_handler,
-    const VectorType              &fluid_solution,
-    const std::vector<VectorType> &fluid_previous_solutions,
-    NavierStokesScratchData<dim>  &scratch_data);
 };
 
 
