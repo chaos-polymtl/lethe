@@ -18,6 +18,16 @@ TracerReactionPrefactorModel::model_cast(
       material_properties.immersed_solid_tanh_parameters.thickness,
       material_properties.tracer_reaction_order);
   else if (material_properties.tracer_reaction_prefactor_model ==
+           Parameters::Material::TracerReactionPrefactorModel::
+             immersed_boundary_gaussian)
+    return std::make_shared<GaussianLevelsetTracerReactionPrefactor>(
+      material_properties.immersed_solid_gaussian_parameters
+        .tracer_reaction_constant_interface,
+      material_properties.immersed_solid_gaussian_parameters
+        .tracer_reaction_constant_bulk,
+      material_properties.immersed_solid_gaussian_parameters.thickness,
+      material_properties.tracer_reaction_order);
+  else if (material_properties.tracer_reaction_prefactor_model ==
            Parameters::Material::TracerReactionPrefactorModel::constant)
     return std::make_shared<ConstantTracerReactionPrefactor>(
       material_properties.tracer_reaction_constant,

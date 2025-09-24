@@ -1,0 +1,172 @@
+# SPDX-FileCopyrightText: Copyright (c) 2025 The Lethe Authors
+# SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
+# This MMS tests a 1.3th-order heterogeneous reaction across a disk.
+
+set dimension = 2
+
+subsection simulation control
+  set method            = steady
+  set output frequency  = 0
+  set number mesh adapt = 2
+end
+
+subsection multiphysics
+  set fluid dynamics = true
+  set tracer         = true
+end
+
+subsection FEM
+  set velocity order = 1
+  set pressure order = 1
+  set tracer order   = 1
+end
+
+subsection mesh
+  set type               = dealii
+  set grid type          = subdivided_hyper_rectangle
+  set grid arguments     = 1,  1: 0, 0: 1, 1 : true
+  set initial refinement = 5
+end
+
+subsection mesh adaptation
+  set type = uniform
+end
+
+subsection boundary conditions
+  set number = 4
+  subsection bc 0
+    set id   = 0
+    set type = function weak
+  end
+  subsection bc 1
+    set id   = 1
+    set type = function weak
+  end
+  subsection bc 2
+    set id   = 2
+    set type = function weak
+  end
+  subsection bc 3
+    set id   = 3
+    set type = function weak
+  end
+end
+
+subsection boundary conditions tracer
+  set number         = 4
+  set time dependent = false
+  subsection bc 0
+    set id   = 0
+    set type = dirichlet
+    subsection dirichlet
+      set Function expression = (sin(pi*x)*cos(pi*y) + 1)*(0.5*tanh(2.0*((x - 0.5)^2 + (y - 0.5)^2)^0.5 - 0.2) + 0.5)/2
+    end
+  end
+  subsection bc 1
+    set id   = 1
+    set type = dirichlet
+    subsection dirichlet
+      set Function expression = (sin(pi*x)*cos(pi*y) + 1)*(0.5*tanh(2.0*((x - 0.5)^2 + (y - 0.5)^2)^0.5 - 0.2) + 0.5)/2
+    end
+  end
+  subsection bc 2
+    set id   = 2
+    set type = dirichlet
+    subsection dirichlet
+      set Function expression = (sin(pi*x)*cos(pi*y) + 1)*(0.5*tanh(2.0*((x - 0.5)^2 + (y - 0.5)^2)^0.5 - 0.2) + 0.5)/2
+    end
+  end
+  subsection bc 3
+    set id   = 3
+    set type = dirichlet
+    subsection dirichlet
+      set Function expression = (sin(pi*x)*cos(pi*y) + 1)*(0.5*tanh(2.0*((x - 0.5)^2 + (y - 0.5)^2)^0.5 - 0.2) + 0.5)/2
+    end
+  end
+end
+
+subsection initial conditions
+  set type = nodal
+  subsection uvwp
+    set Function expression = (((x - 0.5)^2 + (y - 0.5)^2)^0.5 - 0.1)*sin(pi*x)^2*sin(pi*y)*cos(pi*y); -(((x - 0.5)^2 + (y - 0.5)^2)^0.5 - 0.1)*sin(pi*x)*sin(pi*y)^2*cos(pi*x); sin(pi*x) + sin(pi*y)
+  end
+  subsection tracer
+    set Function expression = 1
+  end
+end
+
+subsection particles
+  set assemble Navier-Stokes inside particles = true
+  set number of particles                     = 1
+  subsection particle info 0
+    set type            = sphere
+    set shape arguments = 0.1
+    subsection position
+      set Function expression = 0.5; 0.5
+    end
+  end
+end
+
+subsection physical properties
+  set number of fluids = 1
+  subsection fluid 0
+    set tracer diffusivity model       = constant
+    set tracer reaction constant model = immersed solid gaussian
+    set tracer reaction order          = 1.3
+    set tracer diffusivity             = 1
+    subsection immersed solid gaussian
+      set tracer reaction constant interface = 9.86960440109
+      set tracer reaction constant bulk      = 0
+      set thickness                          = 0.1
+    end
+  end
+end
+
+subsection analytical solution
+  set enable    = true
+  set verbosity = verbose
+  subsection uvwp
+    set Function expression = (((x - 0.5)^2 + (y - 0.5)^2)^0.5 - 0.1)*sin(pi*x)^2*sin(pi*y)*cos(pi*y); -(((x - 0.5)^2 + (y - 0.5)^2)^0.5 - 0.1)*sin(pi*x)*sin(pi*y)^2*cos(pi*x); sin(pi*x) + sin(pi*y)
+  end
+  subsection tracer
+    set Function expression = (sin(pi*x)*cos(pi*y) + 1)*(0.5*tanh(2.0*((x - 0.5)^2 + (y - 0.5)^2)^0.5 - 0.2) + 0.5)/2
+  end
+end
+
+subsection source term
+  subsection tracer
+    set Function expression = 4.0083049129367*((sin(pi*x)*cos(pi*y) + 1)*(0.5*tanh(2.0*((x - 0.5)^2 + (y - 0.5)^2)^0.5 - 0.2) + 0.5))^1.3*exp(-100.0*(((x - 0.5)^2 + (y - 0.5)^2)^0.5 - 0.1)^2) + (0.5*(1 - tanh(2.0*((x - 0.5)^2 + (y - 0.5)^2)^0.5 - 0.2)^2)*(1.0*x - 0.5)*(sin(pi*x)*cos(pi*y) + 1)/((x - 0.5)^2 + (y - 0.5)^2)^0.5 + pi*(0.5*tanh(2.0*((x - 0.5)^2 + (y - 0.5)^2)^0.5 - 0.2) + 0.5)*cos(pi*x)*cos(pi*y)/2)*(((x - 0.5)^2 + (y - 0.5)^2)^0.5 - 0.1)*sin(pi*x)^2*sin(pi*y)*cos(pi*y) - (0.5*(1 - tanh(2.0*((x - 0.5)^2 + (y - 0.5)^2)^0.5 - 0.2)^2)*(1.0*y - 0.5)*(sin(pi*x)*cos(pi*y) + 1)/((x - 0.5)^2 + (y - 0.5)^2)^0.5 - pi*(0.5*tanh(2.0*((x - 0.5)^2 + (y - 0.5)^2)^0.5 - 0.2) + 0.5)*sin(pi*x)*sin(pi*y)/2)*(((x - 0.5)^2 + (y - 0.5)^2)^0.5 - 0.1)*sin(pi*x)*sin(pi*y)^2*cos(pi*x) - (-2.0*pi*(1.0*x - 0.5)*(tanh(2.0*((x - 0.5)^2 + (y - 0.5)^2)^0.5 - 0.2)^2 - 1)*cos(pi*x)*cos(pi*y)/((x - 0.5)^2 + (y - 0.5)^2)^0.5 + (sin(pi*x)*cos(pi*y) + 1)*(tanh(2.0*((x - 0.5)^2 + (y - 0.5)^2)^0.5 - 0.2)^2 - 1)*(1.0*(1.0*x - 0.5)^2/((x - 0.5)^2 + (y - 0.5)^2)^1.5 + 4.0*(1.0*x - 0.5)^2*tanh(2.0*((x - 0.5)^2 + (y - 0.5)^2)^0.5 - 0.2)/((x - 0.5)^2 + (y - 0.5)^2)^1.0 - 1.0/((x - 0.5)^2 + (y - 0.5)^2)^0.5) - 0.5*pi^2*(tanh(2.0*((x - 0.5)^2 + (y - 0.5)^2)^0.5 - 0.2) + 1)*sin(pi*x)*cos(pi*y))/2 - (2.0*pi*(1.0*y - 0.5)*(tanh(2.0*((x - 0.5)^2 + (y - 0.5)^2)^0.5 - 0.2)^2 - 1)*sin(pi*x)*sin(pi*y)/((x - 0.5)^2 + (y - 0.5)^2)^0.5 + (sin(pi*x)*cos(pi*y) + 1)*(tanh(2.0*((x - 0.5)^2 + (y - 0.5)^2)^0.5 - 0.2)^2 - 1)*(1.0*(1.0*y - 0.5)^2/((x - 0.5)^2 + (y - 0.5)^2)^1.5 + 4.0*(1.0*y - 0.5)^2*tanh(2.0*((x - 0.5)^2 + (y - 0.5)^2)^0.5 - 0.2)/((x - 0.5)^2 + (y - 0.5)^2)^1.0 - 1.0/((x - 0.5)^2 + (y - 0.5)^2)^0.5) - 0.5*pi^2*(tanh(2.0*((x - 0.5)^2 + (y - 0.5)^2)^0.5 - 0.2) + 1)*sin(pi*x)*cos(pi*y))/2
+  end
+  subsection fluid dynamics
+    set Function expression = ((1.0*x - 0.5)*sin(pi*x)^2*sin(pi*y)*cos(pi*y)/((x - 0.5)^2 + (y - 0.5)^2)^0.5 + 2*pi*(((x - 0.5)^2 + (y - 0.5)^2)^0.5 - 0.1)*sin(pi*x)*sin(pi*y)*cos(pi*x)*cos(pi*y))*(((x - 0.5)^2 + (y - 0.5)^2)^0.5 - 0.1)*sin(pi*x)^2*sin(pi*y)*cos(pi*y) - (((x - 0.5)^2 + (y - 0.5)^2)^0.5 - 0.1)*((1.0*y - 0.5)*sin(pi*x)^2*sin(pi*y)*cos(pi*y)/((x - 0.5)^2 + (y - 0.5)^2)^0.5 - pi*(((x - 0.5)^2 + (y - 0.5)^2)^0.5 - 0.1)*sin(pi*x)^2*sin(pi*y)^2 + pi*(((x - 0.5)^2 + (y - 0.5)^2)^0.5 - 0.1)*sin(pi*x)^2*cos(pi*y)^2)*sin(pi*x)*sin(pi*y)^2*cos(pi*x) - (4*pi*(1.0*x - 0.5)*sin(pi*x)*cos(pi*x)/((x - 0.5)^2 + (y - 0.5)^2)^0.5 - ((1.0*x - 0.5)^2/((x - 0.5)^2 + (y - 0.5)^2)^1.5 - 1.0/((x - 0.5)^2 + (y - 0.5)^2)^0.5)*sin(pi*x)^2 - 2*pi^2*(((x - 0.5)^2 + (y - 0.5)^2)^0.5 - 0.1)*(sin(pi*x)^2 - cos(pi*x)^2))*sin(pi*y)*cos(pi*y) - (-2*pi*(1.0*y - 0.5)*sin(pi*y)^2/((x - 0.5)^2 + (y - 0.5)^2)^0.5 + 2*pi*(1.0*y - 0.5)*cos(pi*y)^2/((x - 0.5)^2 + (y - 0.5)^2)^0.5 - ((1.0*y - 0.5)^2/((x - 0.5)^2 + (y - 0.5)^2)^1.5 - 1.0/((x - 0.5)^2 + (y - 0.5)^2)^0.5)*sin(pi*y)*cos(pi*y) - 4*pi^2*(((x - 0.5)^2 + (y - 0.5)^2)^0.5 - 0.1)*sin(pi*y)*cos(pi*y))*sin(pi*x)^2 + pi*cos(pi*x); -(-(1.0*y - 0.5)*sin(pi*x)*sin(pi*y)^2*cos(pi*x)/((x - 0.5)^2 + (y - 0.5)^2)^0.5 - 2*pi*(((x - 0.5)^2 + (y - 0.5)^2)^0.5 - 0.1)*sin(pi*x)*sin(pi*y)*cos(pi*x)*cos(pi*y))*(((x - 0.5)^2 + (y - 0.5)^2)^0.5 - 0.1)*sin(pi*x)*sin(pi*y)^2*cos(pi*x) + (((x - 0.5)^2 + (y - 0.5)^2)^0.5 - 0.1)*(-(1.0*x - 0.5)*sin(pi*x)*sin(pi*y)^2*cos(pi*x)/((x - 0.5)^2 + (y - 0.5)^2)^0.5 + pi*(((x - 0.5)^2 + (y - 0.5)^2)^0.5 - 0.1)*sin(pi*x)^2*sin(pi*y)^2 - pi*(((x - 0.5)^2 + (y - 0.5)^2)^0.5 - 0.1)*sin(pi*y)^2*cos(pi*x)^2)*sin(pi*x)^2*sin(pi*y)*cos(pi*y) - (-4*pi*(1.0*y - 0.5)*sin(pi*y)*cos(pi*y)/((x - 0.5)^2 + (y - 0.5)^2)^0.5 + ((1.0*y - 0.5)^2/((x - 0.5)^2 + (y - 0.5)^2)^1.5 - 1.0/((x - 0.5)^2 + (y - 0.5)^2)^0.5)*sin(pi*y)^2 + 2*pi^2*(((x - 0.5)^2 + (y - 0.5)^2)^0.5 - 0.1)*(sin(pi*y)^2 - cos(pi*y)^2))*sin(pi*x)*cos(pi*x) - (2*pi*(1.0*x - 0.5)*sin(pi*x)^2/((x - 0.5)^2 + (y - 0.5)^2)^0.5 - 2*pi*(1.0*x - 0.5)*cos(pi*x)^2/((x - 0.5)^2 + (y - 0.5)^2)^0.5 + ((1.0*x - 0.5)^2/((x - 0.5)^2 + (y - 0.5)^2)^1.5 - 1.0/((x - 0.5)^2 + (y - 0.5)^2)^0.5)*sin(pi*x)*cos(pi*x) + 4*pi^2*(((x - 0.5)^2 + (y - 0.5)^2)^0.5 - 0.1)*sin(pi*x)*cos(pi*x))*sin(pi*y)^2 + pi*cos(pi*y); (1.0*x - 0.5)*sin(pi*x)^2*sin(pi*y)*cos(pi*y)/((x - 0.5)^2 + (y - 0.5)^2)^0.5 - (1.0*y - 0.5)*sin(pi*x)*sin(pi*y)^2*cos(pi*x)/((x - 0.5)^2 + (y - 0.5)^2)^0.5
+  end
+end
+
+subsection non-linear solver
+  subsection fluid dynamics
+    set verbosity      = quiet
+    set tolerance      = 1e-6
+    set max iterations = 10
+  end
+  subsection tracer
+    set verbosity      = quiet
+    set tolerance      = 1e-7
+    set max iterations = 10
+  end
+end
+
+subsection linear solver
+  subsection fluid dynamics
+    set verbosity          = quiet
+    set method             = gmres
+    set relative residual  = 1e-3
+    set minimum residual   = 1e-10
+    set max krylov vectors = 200
+  end
+  subsection tracer
+    set verbosity         = quiet
+    set method            = gmres
+    set relative residual = 1e-3
+    set minimum residual  = 1e-8
+  end
+end

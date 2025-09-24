@@ -3,6 +3,12 @@
 All notable changes to the Lethe project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
+### [Master] - 2025-09-23
+
+### Added
+
+- MINOR A new reaction prefactor Gaussian model to be used with the lethe-fluid-sharp solver with the tracer physics. This new model imposes different properties at the interface and in the bulk of each phase, with a tunable width. It has been added to the tracer diffusivity as well. [#1688](https://github.com/chaos-polymtl/lethe/pull/1688)
+
 ### [Master] - 2025-09-18
 
 ### Added
@@ -12,6 +18,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/).
 ### Fixed
 
 - MINOR The code is modified so that the TableHandler objects are properly restored when writing checkpoints and restarting simulations for the lethe-fluid, lethe-fluid-particles and lethe-fluid-nitsche solvers. This feature was only working for the lethe-fluid/lethe-fluid-block/lethe-fluid-matrix-free solvers before. [#1673] (https://github.com/chaos-polymtl/lethe/pull/1673)
+
 
 ### [Master] - 2025-09-16
 
