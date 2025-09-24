@@ -121,7 +121,7 @@ public:
    * not have a mass matrix assembled. This corresponds to setting a neumann
    * boundary at the cells which do not contain particles.
    * @param conservative_projection A flag to indicate if the projection
-   * of the field is conservative. When a projection is conservative,
+   * of the field must be conservative. When a projection is conservative,
    * the integral of the field over the triangulation will be strictly
    * equal to the field summed over all particles. This is useful when
    * projecting a quantity such as the force acting on the particles. When

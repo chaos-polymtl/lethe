@@ -4,7 +4,7 @@
 /**
  * @brief Test if the particle projector gives a valid solution for a constant
  * and a linear forcing field stored onto the particles.
- * First, the test is run with a constant forcing applied ot the paticle.
+ * First, the test is run with a constant forcing applied to the particles.
  * The goal of the test is to verify if the forcing is conservative.
  * Afterward, the test is run with a linear force function. The goal of the
  * test is then to ensure that the forcing is conservative, but also that
@@ -289,13 +289,13 @@ main(int argc, char *argv[])
       test_void_fraction_qcm(1, 3, constant_func, false, "constant");
 
       deallog
-        << "Particle-fluid Constant Force: fe_degree=1    number_quadrature_points=2"
+        << "Particle-fluid Linear Force: fe_degree=1    number_quadrature_points=2"
         << std::endl;
       LinearForce<3> linear_func;
       test_void_fraction_qcm(1, 2, linear_func, false, "linear");
 
       deallog
-        << "Particle-fluid Constant Force: fe_degree=1    number_quadrature_points=3"
+        << "Particle-fluid Linear Force: fe_degree=1    number_quadrature_points=3"
         << std::endl;
       test_void_fraction_qcm(1, 3, linear_func, false, "linear");
     }

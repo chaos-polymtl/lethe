@@ -1305,9 +1305,9 @@ ParticleProjector<dim>::calculate_field_projection(
                       if (field_qcm.conservative_projection)
                         local_rhs(i) += phi_vf[i] * particle_field_in_sphere;
 
-                      // Else, the field is not a field for which we which to
-                      // conserve the total quantity, but a field for whcih we
-                      // need a smooth reprentation (e.g. the particle
+                      // Else, the field is not a field for which we whish to
+                      // conserve the total quantity, but a field for which we
+                      // need a smooth representation (e.g. the particle
                       // velocity). Consequently, we need the jacobian on the
                       // RHS.
                       else
