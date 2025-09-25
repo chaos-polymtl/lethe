@@ -1055,10 +1055,6 @@ MFNavierStokesPreconditionGMGBase<dim>::reinit(
                   dirichlet_boundary_id,
                   fe->component_mask(velocities));
             }
-          else if (type == BoundaryConditions::BoundaryType::none)
-            {
-              /*Default boundary condition*/
-            }
           else
             {
               AssertThrow(
@@ -1191,47 +1187,6 @@ MFNavierStokesPreconditionGMGBase<dim>::reinit(
             this->mg_operators[level]->get_vector_partitioner();
 
           this->mg_setup_timer.leave_subsection("Set up operators");
-
-          // If enabled, create mortar operators
-          if (this->simulation_parameters.mortar_parameters.enable)
-            {
-              this->mg_setup_timer.enter_subsection("Set up mortar operators");
-
-              std::cout << "\n constraints in level \n";
-              level_constraints[level].print(std::cout);
-
-              std::cout << "\n Constraints closed: " << level_constraints[level].is_closed() << std::endl;
-              // Create mortar manager
-              this->mg_operators[level]->mortar_manager_mf =
-                std::make_shared<MortarManagerCircle<dim>>(
-                  quadrature_mg,
-                  *mapping,
-                  level_dof_handler,
-                  this->simulation_parameters.mortar_parameters);
-
-              // Create mortar coupling evaluator
-              this->mg_operators[level]->mortar_coupling_evaluator_mf =
-                std::make_shared<NavierStokesCouplingEvaluation<dim, double>>(
-                  *mapping,
-                  level_dof_handler,
-                  physical_properties_manager->get_rheology()
-                    ->get_kinematic_viscosity());
-
-              this->mg_operators[level]->mortar_coupling_operator_mf =
-                std::make_shared<CouplingOperator<dim, double>>(
-                  *mapping,
-                  level_dof_handler,
-                  level_constraints[level],
-                  this->mg_operators[level]->mortar_coupling_evaluator_mf,
-                  this->mg_operators[level]->mortar_manager_mf,
-                  this->simulation_parameters.mortar_parameters
-                    .rotor_boundary_id,
-                  this->simulation_parameters.mortar_parameters
-                    .stator_boundary_id,
-                  this->simulation_parameters.mortar_parameters.sip_factor);
-
-              this->mg_setup_timer.leave_subsection("Set up mortar operators");
-            }
         }
 
       // Create transfer operators
