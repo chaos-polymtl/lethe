@@ -1280,8 +1280,6 @@ CouplingOperator<dim, Number>::add_diagonal_entries(VectorType &diagonal) const
 
   unsigned int ptr_q = 0;
 
-  const auto constraints = &constraints_extended;
-
   Vector<Number>      buffer, diagonal_local;
   std::vector<Number> all_values_local, all_values_ghost;
 
@@ -1488,17 +1486,6 @@ CouplingOperator<dim, Number>::add_system_matrix_entries(
                       dof_indices.begin() + ptr_dofs,
                       dof_indices.begin() + ptr_dofs + n_dofs_per_cell);
 
-                    std::cout << __LINE__ << std::endl;
-                    std::cout << "local dof indices: \n";
-
-                    for (unsigned int i = 0; i < local_dof_indices.size(); i++)
-                      std::cout << local_dof_indices[i] << " ";
-
-                    std::cout << std::endl;
-
-                    std::cout << "constraints at add system entries: \n";
-                    constraints->print(std::cout);
-                    std::cout << std::endl;  
                     if (b == 0) // local cell -> local-local block
                       {
                         constraints_extended.distribute_local_to_global(
