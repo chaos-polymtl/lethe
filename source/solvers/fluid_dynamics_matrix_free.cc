@@ -1622,10 +1622,7 @@ MFNavierStokesPreconditionGMGBase<dim>::reinit(
             {
               this->mg_setup_timer.enter_subsection("Set up mortar operators");
 
-              std::cout << "\n constraints in level \n";
-              level_constraint.print(std::cout);
-
-              // Create mortar manager
+              // Manager
               this->mg_operators[level]->mortar_manager_mf =
                 std::make_shared<MortarManagerCircle<dim>>(
                   quadrature_mg,
@@ -1633,7 +1630,7 @@ MFNavierStokesPreconditionGMGBase<dim>::reinit(
                   level_dof_handler,
                   this->simulation_parameters.mortar_parameters);
 
-              // Create mortar coupling evaluator
+              // Coupling evaluator
               this->mg_operators[level]->mortar_coupling_evaluator_mf =
                 std::make_shared<NavierStokesCouplingEvaluation<dim, double>>(
                   *mapping,
@@ -1641,6 +1638,7 @@ MFNavierStokesPreconditionGMGBase<dim>::reinit(
                   physical_properties_manager->get_rheology()
                     ->get_kinematic_viscosity());
 
+              // Coupling operator
               this->mg_operators[level]->mortar_coupling_operator_mf =
                 std::make_shared<CouplingOperator<dim, double>>(
                   *mapping,
