@@ -11,6 +11,11 @@ class PhysicsScratchDataBase
 {
 public:
   /**
+   * @brief Default virtual destructor
+   */
+  virtual ~PhysicsScratchDataBase() = default;
+
+  /**
    * @brief Allocate the memory necessary memory for all members of the
    * scratch.
    */
