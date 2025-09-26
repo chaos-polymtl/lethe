@@ -95,7 +95,7 @@ $(function() {
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pub-methods" name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
-<tr class="memitem:a0ec58bc77b07f196be27f90ede1b67ce" id="r_a0ec58bc77b07f196be27f90ede1b67ce"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classCouplingOperator.html#a0ec58bc77b07f196be27f90ede1b67ce">CouplingOperator</a> (const Mapping&lt; dim &gt; &amp;<a class="el" href="classCouplingOperator.html#a829d3fb8587a232f553cc21e9ab5cc0d">mapping</a>, const DoFHandler&lt; dim &gt; &amp;<a class="el" href="classCouplingOperator.html#a1d785ec7fb3c8a420d3f137445e9b375">dof_handler</a>, const AffineConstraints&lt; Number &gt; &amp;<a class="el" href="classCouplingOperator.html#a767e57e9c9544376aff113daf642d096">constraints</a>, const std::shared_ptr&lt; <a class="el" href="classCouplingEvaluationBase.html">CouplingEvaluationBase</a>&lt; dim, Number &gt; &gt; <a class="el" href="classCouplingOperator.html#a00933a37cb259c17ff00d1c649712913">evaluator</a>, const std::shared_ptr&lt; <a class="el" href="classMortarManagerBase.html">MortarManagerBase</a>&lt; dim &gt; &gt; <a class="el" href="classCouplingOperator.html#ac8d0f82cab25af0924e874ff5a8ff64a">mortar_manager</a>, const unsigned int <a class="el" href="classCouplingOperator.html#a61a85523024c8ff056563795c569b44c">bid_m</a>, const unsigned int <a class="el" href="classCouplingOperator.html#affde6eff25b1739c6f49f1d1b912bc93">bid_p</a>, const double sip_factor)</td></tr>
+<tr class="memitem:a0ec58bc77b07f196be27f90ede1b67ce" id="r_a0ec58bc77b07f196be27f90ede1b67ce"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classCouplingOperator.html#a0ec58bc77b07f196be27f90ede1b67ce">CouplingOperator</a> (const Mapping&lt; dim &gt; &amp;<a class="el" href="classCouplingOperator.html#a829d3fb8587a232f553cc21e9ab5cc0d">mapping</a>, const DoFHandler&lt; dim &gt; &amp;<a class="el" href="classCouplingOperator.html#a1d785ec7fb3c8a420d3f137445e9b375">dof_handler</a>, const AffineConstraints&lt; Number &gt; &amp;constraints, const std::shared_ptr&lt; <a class="el" href="classCouplingEvaluationBase.html">CouplingEvaluationBase</a>&lt; dim, Number &gt; &gt; <a class="el" href="classCouplingOperator.html#a00933a37cb259c17ff00d1c649712913">evaluator</a>, const std::shared_ptr&lt; <a class="el" href="classMortarManagerBase.html">MortarManagerBase</a>&lt; dim &gt; &gt; <a class="el" href="classCouplingOperator.html#ac8d0f82cab25af0924e874ff5a8ff64a">mortar_manager</a>, const unsigned int <a class="el" href="classCouplingOperator.html#a61a85523024c8ff056563795c569b44c">bid_m</a>, const unsigned int <a class="el" href="classCouplingOperator.html#affde6eff25b1739c6f49f1d1b912bc93">bid_p</a>, const double sip_factor)</td></tr>
 <tr class="separator:a0ec58bc77b07f196be27f90ede1b67ce"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a29c8fe9170e542463d5b277febfa17a4" id="r_a29c8fe9170e542463d5b277febfa17a4"><td class="memItemLeft" align="right" valign="top">const AffineConstraints&lt; Number &gt; &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classCouplingOperator.html#a29c8fe9170e542463d5b277febfa17a4">get_affine_constraints</a> () const</td></tr>
 <tr class="separator:a29c8fe9170e542463d5b277febfa17a4"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -134,6 +134,8 @@ Protected Attributes</h2></td></tr>
 <tr class="separator:a01a1bd98be7fd0da8836c23f4a78fc1b"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aa2ebd6acf81b77ed1099bdec607e8009" id="r_aa2ebd6acf81b77ed1099bdec607e8009"><td class="memItemLeft" align="right" valign="top">AffineConstraints&lt; Number &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classCouplingOperator.html#aa2ebd6acf81b77ed1099bdec607e8009">constraints_extended</a></td></tr>
 <tr class="separator:aa2ebd6acf81b77ed1099bdec607e8009"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a61e548c46be82baac0d2b7996e8e20ea" id="r_a61e548c46be82baac0d2b7996e8e20ea"><td class="memItemLeft" align="right" valign="top">std::shared_ptr&lt; const Utilities::MPI::Partitioner &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classCouplingOperator.html#a61e548c46be82baac0d2b7996e8e20ea">partitioner_extended</a></td></tr>
+<tr class="separator:a61e548c46be82baac0d2b7996e8e20ea"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a00933a37cb259c17ff00d1c649712913" id="r_a00933a37cb259c17ff00d1c649712913"><td class="memItemLeft" align="right" valign="top">std::shared_ptr&lt; <a class="el" href="classCouplingEvaluationBase.html">CouplingEvaluationBase</a>&lt; dim, Number &gt; &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classCouplingOperator.html#a00933a37cb259c17ff00d1c649712913">evaluator</a></td></tr>
 <tr class="separator:a00933a37cb259c17ff00d1c649712913"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ac8d0f82cab25af0924e874ff5a8ff64a" id="r_ac8d0f82cab25af0924e874ff5a8ff64a"><td class="memItemLeft" align="right" valign="top">std::shared_ptr&lt; <a class="el" href="classMortarManagerBase.html">MortarManagerBase</a>&lt; dim &gt; &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classCouplingOperator.html#ac8d0f82cab25af0924e874ff5a8ff64a">mortar_manager</a></td></tr>
@@ -156,8 +158,6 @@ Private Attributes</h2></td></tr>
 <tr class="separator:a829d3fb8587a232f553cc21e9ab5cc0d"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a1d785ec7fb3c8a420d3f137445e9b375" id="r_a1d785ec7fb3c8a420d3f137445e9b375"><td class="memItemLeft" align="right" valign="top">const DoFHandler&lt; dim &gt; &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classCouplingOperator.html#a1d785ec7fb3c8a420d3f137445e9b375">dof_handler</a></td></tr>
 <tr class="separator:a1d785ec7fb3c8a420d3f137445e9b375"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a767e57e9c9544376aff113daf642d096" id="r_a767e57e9c9544376aff113daf642d096"><td class="memItemLeft" align="right" valign="top">const AffineConstraints&lt; Number &gt; &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classCouplingOperator.html#a767e57e9c9544376aff113daf642d096">constraints</a></td></tr>
-<tr class="separator:a767e57e9c9544376aff113daf642d096"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a73569c128058087d7f93f00ffe9d023f" id="r_a73569c128058087d7f93f00ffe9d023f"><td class="memItemLeft" align="right" valign="top">std::vector&lt; std::tuple&lt; std::vector&lt; double &gt;, typename Triangulation&lt; dim &gt;::active_cell_iterator, std::vector&lt; Point&lt; dim &gt; &gt;, typename Triangulation&lt; dim &gt;::active_cell_iterator, std::vector&lt; Point&lt; dim &gt; &gt;, std::vector&lt; Tensor&lt; 1, dim, Number &gt; &gt;, Number &gt; &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classCouplingOperator.html#a73569c128058087d7f93f00ffe9d023f">all_intersections</a></td></tr>
 <tr class="separator:a73569c128058087d7f93f00ffe9d023f"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
@@ -240,7 +240,7 @@ template&lt;int dim, typename Number &gt; </div>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="mortar__coupling__manager_8cc_source.html#l01030">1030</a> of file <a class="el" href="mortar__coupling__manager_8cc_source.html">mortar_coupling_manager.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="mortar__coupling__manager_8cc_source.html#l01034">1034</a> of file <a class="el" href="mortar__coupling__manager_8cc_source.html">mortar_coupling_manager.cc</a>.</p>
 
 </div>
 </div>
@@ -273,7 +273,7 @@ template&lt;typename VectorType &gt; </div>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="mortar__coupling__manager_8cc_source.html#l01241">1241</a> of file <a class="el" href="mortar__coupling__manager_8cc_source.html">mortar_coupling_manager.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="mortar__coupling__manager_8cc_source.html#l01268">1268</a> of file <a class="el" href="mortar__coupling__manager_8cc_source.html">mortar_coupling_manager.cc</a>.</p>
 
 </div>
 </div>
@@ -303,7 +303,7 @@ template&lt;int dim, typename Number &gt; </div>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="mortar__coupling__manager_8cc_source.html#l01304">1304</a> of file <a class="el" href="mortar__coupling__manager_8cc_source.html">mortar_coupling_manager.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="mortar__coupling__manager_8cc_source.html#l01343">1343</a> of file <a class="el" href="mortar__coupling__manager_8cc_source.html">mortar_coupling_manager.cc</a>.</p>
 
 </div>
 </div>
@@ -333,7 +333,7 @@ template&lt;int dim, typename Number &gt; </div>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="mortar__coupling__manager_8cc_source.html#l01487">1487</a> of file <a class="el" href="mortar__coupling__manager_8cc_source.html">mortar_coupling_manager.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="mortar__coupling__manager_8cc_source.html#l01522">1522</a> of file <a class="el" href="mortar__coupling__manager_8cc_source.html">mortar_coupling_manager.cc</a>.</p>
 
 </div>
 </div>
@@ -383,7 +383,7 @@ template&lt;int dim, typename Number &gt; </div>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>penalty factor value penalty_factor = (degree + 1)^2 </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="mortar__coupling__manager_8cc_source.html#l01062">1062</a> of file <a class="el" href="mortar__coupling__manager_8cc_source.html">mortar_coupling_manager.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="mortar__coupling__manager_8cc_source.html#l01065">1065</a> of file <a class="el" href="mortar__coupling__manager_8cc_source.html">mortar_coupling_manager.cc</a>.</p>
 
 </div>
 </div>
@@ -424,7 +424,7 @@ template&lt;int dim, typename Number &gt; </div>
 <dd>
 penalty parameter value from SIPG method penalty_parameter = (A(∂Ω_e \ Γ_h)/2 + A(∂Ω_e ∩ Γ_h))/V(Ω_e) </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="mortar__coupling__manager_8cc_source.html#l01070">1070</a> of file <a class="el" href="mortar__coupling__manager_8cc_source.html">mortar_coupling_manager.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="mortar__coupling__manager_8cc_source.html#l01073">1073</a> of file <a class="el" href="mortar__coupling__manager_8cc_source.html">mortar_coupling_manager.cc</a>.</p>
 
 </div>
 </div>
@@ -448,7 +448,7 @@ template&lt;int dim, typename Number &gt; </div>
 <p>Return object containing problem constraints. </p>
 <dl class="section return"><dt>Returns</dt><dd>AffineConstraints </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="mortar__coupling__manager_8cc_source.html#l01055">1055</a> of file <a class="el" href="mortar__coupling__manager_8cc_source.html">mortar_coupling_manager.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="mortar__coupling__manager_8cc_source.html#l01058">1058</a> of file <a class="el" href="mortar__coupling__manager_8cc_source.html">mortar_coupling_manager.cc</a>.</p>
 
 </div>
 </div>
@@ -486,7 +486,7 @@ template&lt;int dim, typename Number &gt; </div>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="mortar__coupling__manager_8cc_source.html#l01126">1126</a> of file <a class="el" href="mortar__coupling__manager_8cc_source.html">mortar_coupling_manager.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="mortar__coupling__manager_8cc_source.html#l01129">1129</a> of file <a class="el" href="mortar__coupling__manager_8cc_source.html">mortar_coupling_manager.cc</a>.</p>
 
 </div>
 </div>
@@ -536,7 +536,7 @@ template&lt;int dim, typename Number &gt; </div>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>Angle in radians </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="mortar__coupling__manager_8cc_source.html#l01116">1116</a> of file <a class="el" href="mortar__coupling__manager_8cc_source.html">mortar_coupling_manager.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="mortar__coupling__manager_8cc_source.html#l01119">1119</a> of file <a class="el" href="mortar__coupling__manager_8cc_source.html">mortar_coupling_manager.cc</a>.</p>
 
 </div>
 </div>
@@ -579,7 +579,7 @@ template&lt;typename VectorType &gt; </div>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="mortar__coupling__manager_8cc_source.html#l01234">1234</a> of file <a class="el" href="mortar__coupling__manager_8cc_source.html">mortar_coupling_manager.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="mortar__coupling__manager_8cc_source.html#l01261">1261</a> of file <a class="el" href="mortar__coupling__manager_8cc_source.html">mortar_coupling_manager.cc</a>.</p>
 
 </div>
 </div>
@@ -606,7 +606,7 @@ template&lt;int dim, typename Number &gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="mortar__coupling__manager_8h_source.html#l00742">742</a> of file <a class="el" href="mortar__coupling__manager_8h_source.html">mortar_coupling_manager.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="mortar__coupling__manager_8h_source.html#l00740">740</a> of file <a class="el" href="mortar__coupling__manager_8h_source.html">mortar_coupling_manager.h</a>.</p>
 
 </div>
 </div>
@@ -633,7 +633,7 @@ template&lt;int dim, typename Number &gt; </div>
 </div><div class="memdoc">
 <p>Vectors storing information at quadrature points for all cells at the rotor-stator interface </p>
 
-<p class="definition">Definition at line <a class="el" href="mortar__coupling__manager_8h_source.html#l00765">765</a> of file <a class="el" href="mortar__coupling__manager_8h_source.html">mortar_coupling_manager.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="mortar__coupling__manager_8h_source.html#l00763">763</a> of file <a class="el" href="mortar__coupling__manager_8h_source.html">mortar_coupling_manager.h</a>.</p>
 
 </div>
 </div>
@@ -661,7 +661,7 @@ template&lt;int dim, typename Number &gt; </div>
 
 <p>Boundary ID of the inner domain (rotor) </p>
 
-<p class="definition">Definition at line <a class="el" href="mortar__coupling__manager_8h_source.html#l00749">749</a> of file <a class="el" href="mortar__coupling__manager_8h_source.html">mortar_coupling_manager.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="mortar__coupling__manager_8h_source.html#l00747">747</a> of file <a class="el" href="mortar__coupling__manager_8h_source.html">mortar_coupling_manager.h</a>.</p>
 
 </div>
 </div>
@@ -689,35 +689,7 @@ template&lt;int dim, typename Number &gt; </div>
 
 <p>Boundary ID of the outer domain (stator) </p>
 
-<p class="definition">Definition at line <a class="el" href="mortar__coupling__manager_8h_source.html#l00751">751</a> of file <a class="el" href="mortar__coupling__manager_8h_source.html">mortar_coupling_manager.h</a>.</p>
-
-</div>
-</div>
-<a id="a767e57e9c9544376aff113daf642d096" name="a767e57e9c9544376aff113daf642d096"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a767e57e9c9544376aff113daf642d096">&#9670;&#160;</a></span>constraints</h2>
-
-<div class="memitem">
-<div class="memproto">
-<div class="memtemplate">
-template&lt;int dim, typename Number &gt; </div>
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">const AffineConstraints&lt;Number&gt;&amp; <a class="el" href="classCouplingOperator.html">CouplingOperator</a>&lt; dim, Number &gt;::constraints</td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">private</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p>Object with the constrains according to DoFs. </p>
-
-<p class="definition">Definition at line <a class="el" href="mortar__coupling__manager_8h_source.html#l00733">733</a> of file <a class="el" href="mortar__coupling__manager_8h_source.html">mortar_coupling_manager.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="mortar__coupling__manager_8h_source.html#l00749">749</a> of file <a class="el" href="mortar__coupling__manager_8h_source.html">mortar_coupling_manager.h</a>.</p>
 
 </div>
 </div>
@@ -745,7 +717,7 @@ template&lt;int dim, typename Number &gt; </div>
 
 <p>Constraints extended according to mortar entries. </p>
 
-<p class="definition">Definition at line <a class="el" href="mortar__coupling__manager_8h_source.html#l00769">769</a> of file <a class="el" href="mortar__coupling__manager_8h_source.html">mortar_coupling_manager.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="mortar__coupling__manager_8h_source.html#l00767">767</a> of file <a class="el" href="mortar__coupling__manager_8h_source.html">mortar_coupling_manager.h</a>.</p>
 
 </div>
 </div>
@@ -771,7 +743,7 @@ template&lt;int dim, typename Number &gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="mortar__coupling__manager_8h_source.html#l00766">766</a> of file <a class="el" href="mortar__coupling__manager_8h_source.html">mortar_coupling_manager.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="mortar__coupling__manager_8h_source.html#l00764">764</a> of file <a class="el" href="mortar__coupling__manager_8h_source.html">mortar_coupling_manager.h</a>.</p>
 
 </div>
 </div>
@@ -825,7 +797,7 @@ template&lt;int dim, typename Number &gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="mortar__coupling__manager_8h_source.html#l00760">760</a> of file <a class="el" href="mortar__coupling__manager_8h_source.html">mortar_coupling_manager.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="mortar__coupling__manager_8h_source.html#l00758">758</a> of file <a class="el" href="mortar__coupling__manager_8h_source.html">mortar_coupling_manager.h</a>.</p>
 
 </div>
 </div>
@@ -851,7 +823,7 @@ template&lt;int dim, typename Number &gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="mortar__coupling__manager_8h_source.html#l00761">761</a> of file <a class="el" href="mortar__coupling__manager_8h_source.html">mortar_coupling_manager.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="mortar__coupling__manager_8h_source.html#l00759">759</a> of file <a class="el" href="mortar__coupling__manager_8h_source.html">mortar_coupling_manager.h</a>.</p>
 
 </div>
 </div>
@@ -877,7 +849,7 @@ template&lt;int dim, typename Number &gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="mortar__coupling__manager_8h_source.html#l00771">771</a> of file <a class="el" href="mortar__coupling__manager_8h_source.html">mortar_coupling_manager.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="mortar__coupling__manager_8h_source.html#l00770">770</a> of file <a class="el" href="mortar__coupling__manager_8h_source.html">mortar_coupling_manager.h</a>.</p>
 
 </div>
 </div>
@@ -931,7 +903,7 @@ template&lt;int dim, typename Number &gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="mortar__coupling__manager_8h_source.html#l00772">772</a> of file <a class="el" href="mortar__coupling__manager_8h_source.html">mortar_coupling_manager.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="mortar__coupling__manager_8h_source.html#l00771">771</a> of file <a class="el" href="mortar__coupling__manager_8h_source.html">mortar_coupling_manager.h</a>.</p>
 
 </div>
 </div>
@@ -959,7 +931,7 @@ template&lt;int dim, typename Number &gt; </div>
 
 <p>Number of DoFs per cell. </p>
 
-<p class="definition">Definition at line <a class="el" href="mortar__coupling__manager_8h_source.html#l00756">756</a> of file <a class="el" href="mortar__coupling__manager_8h_source.html">mortar_coupling_manager.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="mortar__coupling__manager_8h_source.html#l00754">754</a> of file <a class="el" href="mortar__coupling__manager_8h_source.html">mortar_coupling_manager.h</a>.</p>
 
 </div>
 </div>
@@ -985,7 +957,33 @@ template&lt;int dim, typename Number &gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="mortar__coupling__manager_8h_source.html#l00758">758</a> of file <a class="el" href="mortar__coupling__manager_8h_source.html">mortar_coupling_manager.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="mortar__coupling__manager_8h_source.html#l00756">756</a> of file <a class="el" href="mortar__coupling__manager_8h_source.html">mortar_coupling_manager.h</a>.</p>
+
+</div>
+</div>
+<a id="a61e548c46be82baac0d2b7996e8e20ea" name="a61e548c46be82baac0d2b7996e8e20ea"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a61e548c46be82baac0d2b7996e8e20ea">&#9670;&#160;</a></span>partitioner_extended</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;int dim, typename Number &gt; </div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">std::shared_ptr&lt;const Utilities::MPI::Partitioner&gt; <a class="el" href="classCouplingOperator.html">CouplingOperator</a>&lt; dim, Number &gt;::partitioner_extended</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">protected</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p class="definition">Definition at line <a class="el" href="mortar__coupling__manager_8h_source.html#l00768">768</a> of file <a class="el" href="mortar__coupling__manager_8h_source.html">mortar_coupling_manager.h</a>.</p>
 
 </div>
 </div>
@@ -1013,7 +1011,7 @@ template&lt;int dim, typename Number &gt; </div>
 
 <p>Number of data points per quadrature point. </p>
 
-<p class="definition">Definition at line <a class="el" href="mortar__coupling__manager_8h_source.html#l00746">746</a> of file <a class="el" href="mortar__coupling__manager_8h_source.html">mortar_coupling_manager.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="mortar__coupling__manager_8h_source.html#l00744">744</a> of file <a class="el" href="mortar__coupling__manager_8h_source.html">mortar_coupling_manager.h</a>.</p>
 
 </div>
 </div>
@@ -1041,7 +1039,7 @@ template&lt;int dim, typename Number &gt; </div>
 
 <p>List of relevant DoF indices per cell. </p>
 
-<p class="definition">Definition at line <a class="el" href="mortar__coupling__manager_8h_source.html#l00754">754</a> of file <a class="el" href="mortar__coupling__manager_8h_source.html">mortar_coupling_manager.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="mortar__coupling__manager_8h_source.html#l00752">752</a> of file <a class="el" href="mortar__coupling__manager_8h_source.html">mortar_coupling_manager.h</a>.</p>
 
 </div>
 </div>

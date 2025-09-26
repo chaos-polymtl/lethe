@@ -343,7 +343,7 @@ var searchData=
   ['specific_5fheat_5fscaling_340',['specific_heat_scaling',['../classParameters_1_1Dimensionality.html#a1240b4f88b9058e5b5fc3ae8cf28cbb7',1,'Parameters::Dimensionality']]],
   ['specific_5fheats_5fratio_5fgas_341',['specific_heats_ratio_gas',['../structParameters_1_1Lagrangian_1_1LagrangianPhysicalProperties.html#a1312a1592dd2e698109e2422c0c855a5',1,'Parameters::Lagrangian::LagrangianPhysicalProperties']]],
   ['specificheatmodel_342',['specificheatmodel',['../classSpecificHeatModel.html',1,'SpecificHeatModel'],['../classParameters_1_1Material.html#acc7336ee0289363a01ec2df5d5f1f2c7',1,'Parameters::Material::SpecificHeatModel']]],
-  ['sphere_343',['sphere',['../classSphere.html#a7773cf5d7d1316f1bdc33b00f1682a5f',1,'Sphere::Sphere()'],['../classShape.html#a3e44e2b1f6fca48f7b7b2151977b3abdaa9f2d0e0ebfe9aaa1e10b43015fa3710',1,'Shape::sphere'],['../classSphere.html',1,'Sphere&lt; dim &gt;']]],
+  ['sphere_343',['sphere',['../classShape.html#a3e44e2b1f6fca48f7b7b2151977b3abdaa9f2d0e0ebfe9aaa1e10b43015fa3710',1,'Shape::sphere'],['../classSphere.html#a7773cf5d7d1316f1bdc33b00f1682a5f',1,'Sphere::Sphere()'],['../classSphere.html',1,'Sphere&lt; dim &gt;']]],
   ['sphere_5ffunction_344',['sphere_function',['../classSphere.html#a9114f9f8a22542f721378a1a222d08d4',1,'Sphere']]],
   ['spheres_5fdistance_345',['spheres_distance',['../classDeathStar.html#ab5ee866340ad03baff8f4ec808faad4a',1,'DeathStar']]],
   ['spherical_346',['spherical',['../classParameters_1_1Manifolds.html#a104ef04cd60eac47ebd1636a0a9fe68aa6683a3be9c0472d8c680cc93a424c198',1,'Parameters::Manifolds']]],
