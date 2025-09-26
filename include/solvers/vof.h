@@ -380,6 +380,22 @@ private:
       }
   }
 
+// TODO Document the function
+  bool
+  check_existance_of_bc(
+  BoundaryConditions::BoundaryType bc)
+  {
+    bool bc_exist = false;
+    // Loop over the boundary to check if they need assembler on their face.
+    for (auto const &[id, type] :
+         this->simulation_parameters.boundary_conditions_vof.type)
+      {
+        if (type == bc)
+          bc_exist = true;
+      }
+    return bc_exist;
+  }
+
   /**
    *  @brief Assembles the matrix associated with the solver.
    */

@@ -1235,9 +1235,9 @@ namespace BoundaryConditions
   {
     prm.declare_entry("type",
                       "none",
-                      Patterns::Selection("none|dirichlet|periodic"),
+                      Patterns::Selection("none|dirichlet|periodic|inlet-outlet"),
                       "Type of boundary condition for VOF"
-                      "Choices are <none|dirichlet|periodic>.");
+                      "Choices are <none|dirichlet|periodic|inlet-outlet>.");
 
     prm.declare_entry("id",
                       Utilities::int_to_string(default_boundary_id, 2),
@@ -1256,7 +1256,7 @@ namespace BoundaryConditions
       Patterns::Double(),
       "Value of the SIPG penalization coefficient when there is an inflow.");
 
-    // Beta value for inlet-outlet boundary conditions
+    // Phase value for inlet-outlet boundary conditions
     prm.declare_entry(
       "inlet phase",
       "0",
@@ -1369,8 +1369,8 @@ namespace BoundaryConditions
       {
         this->type[boundary_id] = BoundaryType::vof_inlet_outlet;
         this->beta[boundary_id] = prm.get_double("beta");
-        prm.enter_subsection("dirichlet");
         this->inlet_phase[boundary_id] = prm.get_double("inlet phase");
+        prm.enter_subsection("dirichlet");
         phase_fraction[boundary_id] =
           std::make_shared<Functions::ParsedFunction<dim>>();
         phase_fraction[boundary_id]->parse_parameters(prm);

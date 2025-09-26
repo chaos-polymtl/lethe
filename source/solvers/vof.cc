@@ -11,6 +11,7 @@
 
 #include <sys/stat.h>
 
+#include <map>
 #include <cmath>
 
 template <int dim>
@@ -171,6 +172,11 @@ VolumeOfFluid<dim>::setup_assemblers()
     {
       this->assemblers.emplace_back(
         std::make_shared<VOFAssemblerBDF<dim>>(this->simulation_control));
+    }
+
+  if (check_existance_of_bc(BoundaryConditions::BoundaryType::vof_inlet_outlet))
+    {
+      this->assemblers.emplace_back(std::make_shared<VOFAssemblerInletOutlet<dim>>(simulation_parameters.boundary_conditions_vof));
     }
 
   // If the VOF solver uses DG, a different set of assemblers is used

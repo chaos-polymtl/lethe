@@ -1,0 +1,174 @@
+# SPDX-FileCopyrightText: Copyright (c) 2022-2025 The Lethe Authors
+# SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
+
+# Listing of Parameters
+#----------------------
+
+set dimension = 2
+
+#---------------------------------------------------
+# Simulation Control
+#---------------------------------------------------
+
+subsection simulation control
+  set method           = bdf2
+  set time end         = 0.5
+  set time step        = 0.01
+  set adapt            = true
+  set max cfl          = 0.5
+  set output frequency = 0
+end
+
+#---------------------------------------------------
+# Multiphysics
+#---------------------------------------------------
+
+subsection multiphysics
+  set VOF = true
+end
+
+
+#---------------------------------------------------
+# Initial Conditions
+#---------------------------------------------------
+
+subsection initial conditions
+  set type = nodal
+  subsection uvwp
+    set Function expression = 1; 0; 0
+  end
+  subsection VOF
+    set Function expression = 1
+  end
+end
+
+
+
+#---------------------------------------------------
+# Physical Properties
+#---------------------------------------------------
+
+subsection physical properties
+  set number of fluids = 2
+  subsection fluid 0
+    set density             = 1
+    set kinematic viscosity = 1
+  end
+  subsection fluid 1
+    set density             = 1
+    set kinematic viscosity = 11
+  end
+end
+
+#---------------------------------------------------
+# Mesh
+#---------------------------------------------------
+
+subsection mesh
+  set type               = dealii
+  set grid type          = subdivided_hyper_rectangle
+  set grid arguments     = 10, 1 : 0, 0 : 1, 0.1 : true
+  set initial refinement = 3
+end
+
+
+#---------------------------------------------------
+# Boundary Conditions
+#---------------------------------------------------
+
+subsection boundary conditions
+  set number = 4
+  subsection bc 0
+    set id   = 0
+    set type = function 
+    subsection u
+      set Function expression = 1
+    end
+    subsection v
+      set Function expression = 0
+    end
+    subsection w
+      set Function expression = 0
+    end
+  end
+  subsection bc 1
+    set id   = 1
+    set type = outlet
+  end
+  subsection bc 2
+    set id   = 2
+    set type = slip
+  end
+  subsection bc 3
+    set id   = 3
+    set type = slip
+  end
+end
+
+subsection boundary conditions VOF
+  set number = 4
+  subsection bc 0
+    set id   = 0
+    set type = inlet-outlet
+    set inlet phase= 0
+  end 
+end
+
+#---------------------------------------------------
+# FEM
+#---------------------------------------------------
+
+subsection FEM
+  set velocity order = 1
+  set pressure order = 1
+end
+
+#---------------------------------------------------
+# Non-Linear Solver Control
+#---------------------------------------------------
+
+subsection non-linear solver
+  subsection fluid dynamics
+    set tolerance      = 1e-4
+    set max iterations = 2
+    set verbosity      = quiet
+  end
+  subsection VOF
+    set tolerance      = 1e-7
+    set max iterations = 2
+    set verbosity      = quiet
+  end
+end
+
+#---------------------------------------------------
+# Post-Processing
+#---------------------------------------------------
+
+subsection post-processing
+  set verbosity                        = verbose
+  set calculate barycenter             = true
+end
+
+#---------------------------------------------------
+# Linear Solver Control
+#---------------------------------------------------
+
+subsection linear solver
+  subsection fluid dynamics
+    set verbosity                             = quiet
+    set method                                = gmres
+    set max iters                             = 1000
+    set relative residual                     = 1e-3
+    set minimum residual                      = 1e-12
+    set preconditioner                        = ilu
+    set ilu preconditioner fill               = 0
+  end
+  subsection VOF
+    set verbosity                             = quiet
+    set method                                = gmres
+    set max iters                             = 1000
+    set relative residual                     = 1e-3
+    set minimum residual                      = 1e-12
+    set preconditioner                        = ilu
+  end
+end

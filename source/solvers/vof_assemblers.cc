@@ -571,7 +571,7 @@ VOFAssemblerInletOutlet<dim>::assemble_rhs(
                         {
                           local_rhs(i) +=
                             penalty_parameter * beta * normal_outflow *
-                            ((scratch_data.face_phase_values[f][q] -
+                            ((-scratch_data.face_phase_values[f][q] +
                               inlet_phase) *
                              scratch_data.face_phi[f][q][i]) *
                             JxW;

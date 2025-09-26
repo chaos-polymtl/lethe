@@ -247,7 +247,7 @@ n_faces, std::vector<Tensor<1,dim>>(n_faces_q_points));
 
                     this->face_normal[face][q] =
                       this->fe_face_values_vof.normal_vector(q);
-                    
+
                     for (const unsigned int k : fe_face_values_vof.dof_indices())
                       {
                         this->face_phi[face][q][k] = this->fe_face_values_vof.shape_value(k, q);
