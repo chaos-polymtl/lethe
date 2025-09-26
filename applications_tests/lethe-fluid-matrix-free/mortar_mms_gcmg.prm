@@ -1,0 +1,157 @@
+# SPDX-FileCopyrightText: Copyright (c) 2025 The Lethe Authors
+# SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
+
+# Listing of Parameters
+#----------------------
+
+set dimension = 2
+
+#---------------------------------------------------
+# Simulation Control
+#---------------------------------------------------
+
+subsection simulation control
+  set method            = steady
+  set output frequency  = 0
+  set number mesh adapt = 2
+end
+
+#---------------------------------------------------
+# Physical Properties
+#---------------------------------------------------
+
+subsection physical properties
+  set number of fluids = 1
+  subsection fluid 0
+    set kinematic viscosity = 1.0
+  end
+end
+
+#---------------------------------------------------
+# Mesh
+#---------------------------------------------------
+
+subsection mesh
+  set type               = dealii
+  set grid type          = hyper_cube_with_cylindrical_hole
+  set grid arguments     = 0.5 : 1 : 0 : 1 : false
+  set initial refinement = 1
+end
+
+#---------------------------------------------------
+# Mortar
+#---------------------------------------------------
+
+subsection mortar
+  set enable = true
+  subsection mesh
+    set type           = dealii
+    set grid type      = hyper_ball_balanced
+    set grid arguments = 0.0, 0.0 : 0.5
+  end
+  set rotor boundary id  = 2
+  set stator boundary id = 1
+  subsection rotor rotation angle
+    set Function expression = 0.47
+  end
+  set verbosity = verbose
+end
+
+#---------------------------------------------------
+# FEM
+#---------------------------------------------------
+
+subsection FEM
+  set velocity order = 2
+  set pressure order = 2
+end
+
+#---------------------------------------------------
+# Boundary Conditions
+#---------------------------------------------------
+
+subsection boundary conditions
+  set number = 3
+  subsection bc 0
+    set id   = 0
+    set type = noslip
+  end
+  subsection bc 1
+    set id   = 1
+    set type = none
+  end
+  subsection bc 2
+    set id   = 2
+    set type = none
+  end
+end
+
+# --------------------------------------------------
+# Source term
+#---------------------------------------------------
+
+subsection source term
+  subsection fluid dynamics
+    set enable              = true
+    set Function constants  = nu=1
+    set Function expression = pi*sin(pi*y)*(-16*pi*nu*sin(pi*x)*sin(pi*x)*cos(pi*y)+ 4*pi*nu*cos(pi*y)+4*sin(pi*x)*sin(pi*x)*sin(pi*x)*sin(pi*y)*cos(pi*x)+cos(pi*x)); pi*sin(pi*x)*(16*pi*nu*sin(pi*y)*sin(pi*y)*cos(pi*x)- 4*pi*nu*cos(pi*x)+4*sin(pi*x)*sin(pi*y)*sin(pi*y)*sin(pi*y)*cos(pi*y)+cos(pi*y)); 0
+  end
+end
+
+# --------------------------------------------------
+# Analytical Solution
+#---------------------------------------------------
+
+subsection analytical solution
+  set enable = true
+  subsection uvwp
+    set Function expression = -2*sin(pi*x) * sin(pi*x) * cos(pi*y) * sin(pi*y) ; 2*cos(pi*x) * sin(pi*x) * sin(pi*y) * sin(pi*y); sin(pi*x)*sin(pi*y)
+  end
+end
+
+#---------------------------------------------------
+# Mesh Adaptation Control
+#---------------------------------------------------
+
+subsection mesh adaptation
+  set type = uniform
+end
+
+#---------------------------------------------------
+# Non-Linear Solver Control
+#---------------------------------------------------
+
+subsection non-linear solver
+  subsection fluid dynamics
+    set verbosity = quiet
+    set tolerance = 1e-10
+  end
+end
+
+#---------------------------------------------------
+# Linear Solver Control
+#---------------------------------------------------
+
+subsection linear solver
+  subsection fluid dynamics
+    set method            = gmres
+    set max iters         = 1000
+    set relative residual = 1e-7
+    set minimum residual  = 1e-11
+    set preconditioner    = gcmg
+    set verbosity         = quiet
+
+    # MG parameters
+    set mg verbosity = quiet
+
+    # Smoother
+    set mg smoother iterations     = 10
+    set mg smoother eig estimation = false
+    set mg smoother relaxation     = 0.5
+
+    # Eigenvalue estimation parameters
+    #set eig estimation smoothing range = 5
+    #set eig estimation cg n iterations = 10
+    #set eig estimation verbosity       = quiet
+  end
+end
