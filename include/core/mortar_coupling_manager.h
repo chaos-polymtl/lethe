@@ -729,8 +729,6 @@ private:
   const Mapping<dim> &mapping;
   /// DoFHandler associated to the triangulation
   const DoFHandler<dim> &dof_handler;
-  /// Object with the constrains according to DoFs
-  const AffineConstraints<Number> &constraints;
 
   std::vector<std::tuple<std::vector<double>,
                          typename Triangulation<dim>::active_cell_iterator,
@@ -766,7 +764,8 @@ protected:
   CouplingEvaluationData<dim, Number> data;
 
   /// Constraints extended according to mortar entries
-  AffineConstraints<Number> constraints_extended;
+  AffineConstraints<Number>                          constraints_extended;
+  std::shared_ptr<const Utilities::MPI::Partitioner> partitioner_extended;
 
   std::shared_ptr<CouplingEvaluationBase<dim, Number>> evaluator;
   std::shared_ptr<MortarManagerBase<dim>>              mortar_manager;

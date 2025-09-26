@@ -721,7 +721,6 @@ CouplingOperator<dim, Number>::CouplingOperator(
   const double                                               sip_factor)
   : mapping(mapping)
   , dof_handler(dof_handler)
-  , constraints(constraints)
   , bid_m(bid_m)
   , bid_p(bid_p)
   , evaluator(evaluator)
@@ -1023,6 +1022,11 @@ CouplingOperator<dim, Number>::CouplingOperator(
       locally_owned_dofs,
       constraints_to_make_consistent,
       dof_handler.get_mpi_communicator());
+
+    partitioner_extended = std::make_shared<const Utilities::MPI::Partitioner>(
+      locally_owned_dofs,
+      constraints_extended.get_local_lines(),
+      dof_handler.get_mpi_communicator());
   }
 }
 #else
@@ -1038,7 +1042,6 @@ CouplingOperator<dim, Number>::CouplingOperator(
   const double)
   : mapping(mapping)
   , dof_handler(dof_handler)
-  , constraints(constraints)
   , bid_m(bid_m)
   , bid_p(bid_p)
   , evaluator(evaluator)
@@ -1145,6 +1148,26 @@ void
 CouplingOperator<dim, Number>::vmult_add(VectorType       &dst,
                                          const VectorType &src) const
 {
+  VectorType dst_internal;
+
+  if constexpr (std::is_same_v<VectorType, TrilinosWrappers::MPI::Vector>)
+    {
+      dst_internal.reinit(this->partitioner_extended->locally_owned_range(),
+                          this->partitioner_extended->get_mpi_communicator());
+    }
+  else
+    dst_internal.reinit(this->partitioner_extended);
+
+  VectorType src_internal;
+  if constexpr (std::is_same_v<VectorType, TrilinosWrappers::MPI::Vector>)
+    src_internal.reinit(this->partitioner_extended->locally_owned_range(),
+                        this->partitioner_extended->ghost_indices(),
+                        this->partitioner_extended->get_mpi_communicator());
+  else
+    src_internal.reinit(this->partitioner_extended);
+  src_internal = src;
+  src_internal.update_ghost_values();
+
   // 1) Evaluate
   unsigned int ptr_q = 0;
 
@@ -1172,7 +1195,7 @@ CouplingOperator<dim, Number>::vmult_add(VectorType       &dst,
             const auto local_dofs = this->get_dof_indices(cell);
 
             for (unsigned int i = 0; i < local_dofs.size(); ++i)
-              buffer[i] = src[local_dofs[i]];
+              buffer[i] = src_internal[local_dofs[i]];
 
             evaluator->local_evaluate(data,
                                       buffer,
@@ -1221,11 +1244,15 @@ CouplingOperator<dim, Number>::vmult_add(VectorType       &dst,
                                          ptr_q * q_data_size);
 
             const auto local_dofs = this->get_dof_indices(cell);
-            constraints.distribute_local_to_global(buffer, local_dofs, dst);
+            constraints_extended.distribute_local_to_global(buffer,
+                                                            local_dofs,
+                                                            dst_internal);
 
             ptr_q += n_q_points;
           }
-  dst.compress(VectorOperation::add);
+
+  dst_internal.compress(VectorOperation::add);
+  dst.add(1.0, dst_internal);
 }
 #else
 template <int dim, typename Number>
@@ -1240,6 +1267,17 @@ template <typename VectorType>
 void
 CouplingOperator<dim, Number>::add_diagonal_entries(VectorType &diagonal) const
 {
+  VectorType diagonal_internal;
+
+  if constexpr (std::is_same_v<VectorType, TrilinosWrappers::MPI::Vector>)
+    {
+      diagonal_internal.reinit(
+        this->partitioner_extended->locally_owned_range(),
+        this->partitioner_extended->get_mpi_communicator());
+    }
+  else
+    diagonal_internal.reinit(this->partitioner_extended);
+
   unsigned int ptr_q = 0;
 
   Vector<Number>      buffer, diagonal_local;
@@ -1289,14 +1327,15 @@ CouplingOperator<dim, Number>::add_diagonal_entries(VectorType &diagonal) const
               }
 
             const auto local_dofs = this->get_dof_indices(cell);
-            constraints.distribute_local_to_global(diagonal_local,
-                                                   local_dofs,
-                                                   diagonal);
+            constraints_extended.distribute_local_to_global(diagonal_local,
+                                                            local_dofs,
+                                                            diagonal_internal);
 
             ptr_q += n_q_points;
           }
 
-  diagonal.compress(VectorOperation::add);
+  diagonal_internal.compress(VectorOperation::add);
+  diagonal.add(1.0, diagonal_internal);
 }
 
 template <int dim, typename Number>
@@ -1304,8 +1343,6 @@ void
 CouplingOperator<dim, Number>::add_sparsity_pattern_entries(
   SparsityPatternBase &dsp) const
 {
-  const auto constraints = &constraints_extended;
-
   for (unsigned int i = 0; i < dof_indices.size(); i += n_dofs_per_cell)
     {
       std::vector<types::global_dof_index> a(dof_indices.begin() + i,
@@ -1315,8 +1352,8 @@ CouplingOperator<dim, Number>::add_sparsity_pattern_entries(
                                              dof_indices_ghost.begin() + i +
                                                n_dofs_per_cell);
 
-      constraints->add_entries_local_to_global(a, b, dsp);
-      constraints->add_entries_local_to_global(b, a, dsp);
+      constraints_extended.add_entries_local_to_global(a, b, dsp);
+      constraints_extended.add_entries_local_to_global(b, a, dsp);
     }
 }
 
@@ -1326,8 +1363,6 @@ void
 CouplingOperator<dim, Number>::add_system_matrix_entries(
   TrilinosWrappers::SparseMatrix &system_matrix) const
 {
-  const auto constraints = &constraints_extended;
-
   std::vector<Number> all_values_local(data.all_normals.size() *
                                        n_dofs_per_cell * q_data_size);
   std::vector<Number> all_values_ghost(data.all_normals.size() *
@@ -1453,7 +1488,7 @@ CouplingOperator<dim, Number>::add_system_matrix_entries(
 
                     if (b == 0) // local cell -> local-local block
                       {
-                        constraints->distribute_local_to_global(
+                        constraints_extended.distribute_local_to_global(
                           cell_matrix, local_dof_indices, system_matrix);
                       }
                     else // ghost cell -> local-ghost block
@@ -1464,7 +1499,7 @@ CouplingOperator<dim, Number>::add_system_matrix_entries(
                                                   dof_indices_ghost.begin() +
                                                     ptr_dofs + n_dofs_per_cell);
 
-                        constraints->distribute_local_to_global(
+                        constraints_extended.distribute_local_to_global(
                           cell_matrix,
                           local_dof_indices,
                           local_dof_indices_ghost,
