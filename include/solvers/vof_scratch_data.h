@@ -78,13 +78,13 @@ public:
                     update_values | update_gradients |
                       update_quadrature_points | update_hessians |
                       update_JxW_values)
+    , fe_face_values_vof(mapping, fe_vof, face_quadrature, update_values| update_quadrature_points |
+                          update_JxW_values | update_normal_vectors)
     , fe_interface_values_vof(mapping,
                               fe_vof,
                               face_quadrature,
                               update_values | update_quadrature_points |
                                 update_JxW_values | update_normal_vectors)
-    , fe_face_values_vof(mapping, fe_vof, face_quadrature, update_values| update_quadrature_points |
-                              update_JxW_values | update_normal_vectors)
     , fe_values_fd(mapping, fe_fd, quadrature, update_values | update_gradients)
     , fe_face_values_fd(mapping, fe_fd, face_quadrature, update_values)
   {
@@ -109,14 +109,14 @@ public:
                     update_values | update_gradients |
                       update_quadrature_points | update_hessians |
                       update_JxW_values)
-    , fe_interface_values_vof(sd.fe_interface_values_vof.get_mapping(),
-                              sd.fe_interface_values_vof.get_fe(),
-                              sd.fe_interface_values_vof.get_quadrature(),
-                              update_values | update_quadrature_points |
-                                update_JxW_values | update_normal_vectors)
   , fe_face_values_vof(sd.fe_face_values_vof.get_mapping(),
                           sd.fe_face_values_vof.get_fe(),
                           sd.fe_face_values_vof.get_quadrature(),
+                          update_values | update_quadrature_points |
+                            update_JxW_values | update_normal_vectors)
+  , fe_interface_values_vof(sd.fe_interface_values_vof.get_mapping(),
+                          sd.fe_interface_values_vof.get_fe(),
+                          sd.fe_interface_values_vof.get_quadrature(),
                           update_values | update_quadrature_points |
                             update_JxW_values | update_normal_vectors)
     , fe_values_fd(sd.fe_values_fd.get_mapping(),
@@ -203,7 +203,7 @@ public:
       }
 
 
-    // If cell is a boundary cell, then the boundary information must be reinited.
+    // If cell is a boundary cell, then the boundary information must be reinitialized.
     is_boundary_cell = cell->at_boundary();
     if (is_boundary_cell)
       {
@@ -213,9 +213,48 @@ public:
         boundary_face_id = std::vector<unsigned int>(n_faces);
 
         // Phase values
+
+        this->face_JxW = std::vector<std::vector<double>>(
+  n_faces, std::vector<double>(n_faces_q_points));
+
+        this->face_normal = std::vector<std::vector<Tensor<1,dim>>>(
+n_faces, std::vector<Tensor<1,dim>>(n_faces_q_points));
+
         // First vector is face number, second quadrature point
-        this->fe_face_values_vof = std::vector<std::vector<double>>>(
-          n_faces, std::vector<Tensor<1, dim>>(n_faces_q_points));
+        this->face_phase_values = std::vector<std::vector<double>>(
+          n_faces, std::vector<double>(n_faces_q_points));
+
+        // First vector is face number, second quadrature point, third dof index
+        this->face_phi = std::vector<std::vector<std::vector<double>>>(
+            n_faces,
+            std::vector<std::vector<double>>(
+              n_faces_q_points, std::vector<double>(n_dofs)));
+
+        for (const auto face : cell->face_indices())
+          {
+            is_boundary_face[face] = cell->face(face)->at_boundary();
+            if (is_boundary_face[face])
+              {
+                fe_face_values_vof.reinit(cell, face);
+                n_dofs = fe_face_values_vof.get_fe().n_dofs_per_cell();
+
+                boundary_face_id[face] = cell->face(face)->boundary_id();
+                this->fe_face_values_vof.get_function_values(current_solution, this->face_phase_values[face]);
+
+                for (unsigned int q = 0; q < n_faces_q_points; ++q)
+                  {
+                    this->face_JxW[face][q] = this->fe_face_values_vof.JxW(q);
+
+                    this->face_normal[face][q] =
+                      this->fe_face_values_vof.normal_vector(q);
+                    
+                    for (const unsigned int k : fe_face_values_vof.dof_indices())
+                      {
+                        this->face_phi[face][q][k] = this->fe_face_values_vof.shape_value(k, q);
+                      }
+                  }
+              }
+          }
       }
   }
 
@@ -355,6 +394,48 @@ public:
                         number_of_previous_solutions(method),
                         this->velocity_values);
       }
+
+
+    /// If it is a boundary cell, check if there is or not mass inflow
+    if (is_boundary_cell)
+      {
+
+        this->boundary_face_velocity_values = std::vector<std::vector<Tensor<1, dim>>>(
+          n_faces, std::vector<Tensor<1, dim>>(n_faces_q_points));
+
+        std::vector<std::vector<Tensor<1, dim>>> previous_face_velocity_values =  std::vector<std::vector<Tensor<1, dim>>>(
+          previous_solutions.size(), std::vector<Tensor<1, dim>>(n_faces_q_points));
+
+        for (const auto face : cell->face_indices())
+          {
+            if (is_boundary_face[face])
+              {
+                fe_face_values_fd.reinit(cell,face);
+                fe_face_values_fd[velocities_fd].get_function_values(current_solution,
+                                                                     boundary_face_velocity_values[face]);
+
+                // Gather previous velocity values
+                for (unsigned int p = 0; p < previous_solutions.size(); ++p)
+                  {
+                    previous_face_velocity_values[p].resize(n_faces_q_points);
+
+
+                    fe_face_values_fd[velocities_fd].get_function_values(previous_solutions[p],
+                                                                         previous_face_velocity_values[p]);
+                  }
+                if (is_bdf(method))
+                  {
+                    // Extrapolate velocity
+                    std::vector<double> time_vector =
+                      this->simulation_control->get_simulation_times();
+                    bdf_extrapolate(time_vector,
+                                    previous_face_velocity_values,
+                                    number_of_previous_solutions(method),
+                                    this->boundary_face_velocity_values[face]);
+                  }
+              }
+          }
+      }
   }
 
 
@@ -463,6 +544,10 @@ public:
   /// Phase value at the face
   std::vector<std::vector<double>> face_phase_values;
 
+  /// Velocity values at the boundary faces
+  std::vector<std::vector<Tensor<1, dim>>> boundary_face_velocity_values;
+
+
   // Shape functions
   std::vector<std::vector<double>>         phi;
   std::vector<std::vector<Tensor<1, dim>>> grad_phi;
@@ -470,15 +555,14 @@ public:
   std::vector<std::vector<double>>         laplacian_phi;
 
   /// Shape function at the faces
-  std::vector<std::vector<double>> face_phi;
-
-
+  std::vector<std::vector<std::vector<double>>> face_phi;
 
   /**
    * Scratch component for the Navier-Stokes component
    */
   FEValues<dim>     fe_values_fd;
   FEFaceValues<dim> fe_face_values_fd;
+
 
   FEValuesExtractors::Vector velocities_fd;
   // This FEValues must be instantiated for the velocity
@@ -487,8 +571,9 @@ public:
   std::vector<Tensor<2, dim>>              velocity_gradient_values;
   std::vector<double>                      velocity_divergences;
 
-  // Face velocity value for DG
+  // Face velocity value for DG and for boundary conditions
   std::vector<Tensor<1, dim>> face_velocity_values;
+
 };
 
 #endif

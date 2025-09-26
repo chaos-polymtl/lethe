@@ -1206,6 +1206,8 @@ namespace BoundaryConditions
              std::shared_ptr<Functions::ParsedFunction<dim>>>
       phase_fraction;
 
+    std::map<types::boundary_id, double> inlet_phase;
+
     void
     declare_default_entry(ParameterHandler  &prm,
                           types::boundary_id default_boundary_id);
@@ -1253,6 +1255,13 @@ namespace BoundaryConditions
       "1",
       Patterns::Double(),
       "Value of the SIPG penalization coefficient when there is an inflow.");
+
+    // Beta value for inlet-outlet boundary conditions
+    prm.declare_entry(
+      "inlet phase",
+      "0",
+      Patterns::Double(),
+      "Value of the phase to introduce in inlet-outlet boundary conditions");
 
 
     // Periodic boundary condition parameters for VOF physics
@@ -1361,6 +1370,7 @@ namespace BoundaryConditions
         this->type[boundary_id] = BoundaryType::vof_inlet_outlet;
         this->beta[boundary_id] = prm.get_double("beta");
         prm.enter_subsection("dirichlet");
+        this->inlet_phase[boundary_id] = prm.get_double("inlet phase");
         phase_fraction[boundary_id] =
           std::make_shared<Functions::ParsedFunction<dim>>();
         phase_fraction[boundary_id]->parse_parameters(prm);

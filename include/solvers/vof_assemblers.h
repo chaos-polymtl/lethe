@@ -221,7 +221,9 @@ public:
    *
 
    */
-  VOFAssemblerInletOutlet()
+  VOFAssemblerInletOutlet(
+    const BoundaryConditions::VOFBoundaryConditions<dim> &p_boundary_conditions)
+    : boundary_conditions(p_boundary_conditions)
   {}
 
   /**
@@ -245,6 +247,9 @@ public:
   virtual void
   assemble_rhs(const VOFScratchData<dim> &scratch_data,
                StabilizedMethodsCopyData &copy_data) override;
+
+
+  const BoundaryConditions::VOFBoundaryConditions<dim> boundary_conditions;
 };
 
 
