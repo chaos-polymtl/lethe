@@ -83,6 +83,8 @@ public:
                               face_quadrature,
                               update_values | update_quadrature_points |
                                 update_JxW_values | update_normal_vectors)
+    , fe_face_values_vof(mapping, fe_vof, face_quadrature, update_values| update_quadrature_points |
+                              update_JxW_values | update_normal_vectors)
     , fe_values_fd(mapping, fe_fd, quadrature, update_values | update_gradients)
     , fe_face_values_fd(mapping, fe_fd, face_quadrature, update_values)
   {
@@ -112,6 +114,11 @@ public:
                               sd.fe_interface_values_vof.get_quadrature(),
                               update_values | update_quadrature_points |
                                 update_JxW_values | update_normal_vectors)
+  , fe_face_values_vof(sd.fe_face_values_vof.get_mapping(),
+                          sd.fe_face_values_vof.get_fe(),
+                          sd.fe_face_values_vof.get_quadrature(),
+                          update_values | update_quadrature_points |
+                            update_JxW_values | update_normal_vectors)
     , fe_values_fd(sd.fe_values_fd.get_mapping(),
                    sd.fe_values_fd.get_fe(),
                    sd.fe_values_fd.get_quadrature(),
@@ -193,6 +200,22 @@ public:
             this->hess_phi[q][k]      = fe_values_vof.shape_hessian(k, q);
             this->laplacian_phi[q][k] = trace(this->hess_phi[q][k]);
           }
+      }
+
+
+    // If cell is a boundary cell, then the boundary information must be reinited.
+    is_boundary_cell = cell->at_boundary();
+    if (is_boundary_cell)
+      {
+        n_faces          = cell->n_faces();
+        is_boundary_face = std::vector<bool>(n_faces, false);
+        n_faces_q_points = fe_face_values_vof.get_quadrature().size();
+        boundary_face_id = std::vector<unsigned int>(n_faces);
+
+        // Phase values
+        // First vector is face number, second quadrature point
+        this->fe_face_values_vof = std::vector<std::vector<double>>>(
+          n_faces, std::vector<Tensor<1, dim>>(n_faces_q_points));
       }
   }
 
@@ -388,8 +411,16 @@ public:
   const PhysicalPropertiesManager      properties_manager;
   std::map<field, std::vector<double>> fields;
 
-  // FEValues for the VOF problem
+  /// FEValues for the VOF problem
   FEValues<dim>          fe_values_vof;
+
+  /// FeFaceValues which is used for the inlet-outlet boundary conditions
+  FEFaceValues<dim>      fe_face_values_vof;
+  unsigned int n_faces;
+  unsigned int n_faces_q_points;
+  unsigned int face_n_dofs;
+
+
   FEInterfaceValues<dim> fe_interface_values_vof;
   unsigned int           n_dofs;
   unsigned int           n_interface_dofs;
@@ -409,16 +440,38 @@ public:
   std::vector<double>              phase_laplacians;
   std::vector<std::vector<double>> previous_phase_values;
 
-  // VOF values at the faces
+  // VOF values at the faces for the DG version of the solver.
   std::vector<double> values_here;
   std::vector<double> values_there;
   std::vector<double> phase_value_jump;
+
+  /// Boundary cell indicator
+  bool is_boundary_cell;
+
+  /// Boundary face indicator
+  std::vector<bool>         is_boundary_face;
+
+  /// List of the boundary face ids
+  std::vector<unsigned int> boundary_face_id;
+
+  /// Quadrature weight on the face
+  std::vector<std::vector<double>>         face_JxW;
+
+  /// Normal vector on the faces
+  std::vector<std::vector<Tensor<1, dim>>> face_normal;
+
+  /// Phase value at the face
+  std::vector<std::vector<double>> face_phase_values;
 
   // Shape functions
   std::vector<std::vector<double>>         phi;
   std::vector<std::vector<Tensor<1, dim>>> grad_phi;
   std::vector<std::vector<Tensor<2, dim>>> hess_phi;
   std::vector<std::vector<double>>         laplacian_phi;
+
+  /// Shape function at the faces
+  std::vector<std::vector<double>> face_phi;
+
 
 
   /**

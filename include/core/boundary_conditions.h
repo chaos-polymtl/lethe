@@ -74,6 +74,7 @@ namespace BoundaryConditions
     tracer_dirichlet,
     // for vof
     vof_dirichlet,
+    vof_inlet_outlet,
     // for cahn hilliard
     cahn_hilliard_noflux,
     cahn_hilliard_dirichlet_phase_order,
@@ -1246,6 +1247,14 @@ namespace BoundaryConditions
     temporary_function.declare_parameters(prm);
     prm.leave_subsection();
 
+    // Beta value for inlet-outlet boundary conditions
+    prm.declare_entry(
+      "beta",
+      "1",
+      Patterns::Double(),
+      "Value of the SIPG penalization coefficient when there is an inflow.");
+
+
     // Periodic boundary condition parameters for VOF physics
     prm.declare_entry(
       "periodic_id",
@@ -1346,6 +1355,16 @@ namespace BoundaryConditions
         this->periodic_neighbor_id[boundary_id] = periodic_boundary_id;
         this->periodic_direction[boundary_id] =
           prm.get_integer("periodic_direction");
+      }
+    if (auto const option = prm.get("type"); option == "inlet-outlet")
+      {
+        this->type[boundary_id] = BoundaryType::vof_inlet_outlet;
+        this->beta[boundary_id] = prm.get_double("beta");
+        prm.enter_subsection("dirichlet");
+        phase_fraction[boundary_id] =
+          std::make_shared<Functions::ParsedFunction<dim>>();
+        phase_fraction[boundary_id]->parse_parameters(prm);
+        prm.leave_subsection();
       }
   }
 

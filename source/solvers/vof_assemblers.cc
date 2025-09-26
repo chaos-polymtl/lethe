@@ -461,6 +461,136 @@ template class VOFAssemblerDCDDStabilization<3>;
 
 template <int dim>
 void
+VOFAssemblerInletOutlet<dim>::assemble_matrix(
+  const VOFScratchData<dim> &scratch_data,
+  StabilizedMethodsCopyData &copy_data)
+{
+  if (!scratch_data.is_boundary_cell)
+    return;
+
+  const FiniteElement<dim> &fe = scratch_data.fe_face_values.get_fe();
+
+  const double penalty_parameter =
+    1. / std::pow(scratch_data.cell_size, fe.degree + 1);
+  auto &local_matrix = copy_data.local_matrix;
+
+  // Loop over the faces of the cell.
+  for (unsigned int f = 0; f < scratch_data.n_faces; ++f)
+    {
+      // Check if the face is on a boundary
+      if (scratch_data.is_boundary_face[f])
+        {
+          types::boundary_id boundary_id = scratch_data.boundary_face_id[f];
+          // Check if the face is part of a boundary on which we apply an
+          // inlet-outlet
+          if (this->boundary_conditions.type.at(boundary_id) ==
+              BoundaryConditions::BoundaryType::vof_inlet_outlet)
+            {
+              const double beta =
+                this->boundary_conditions.beta.at(boundary_id);
+
+
+              // Assemble the matrix of the BC
+              for (unsigned int q = 0; q < scratch_data.n_faces_q_points; ++q)
+                {
+                  const double JxW = scratch_data.face_JxW[f][q];
+                  for (const unsigned int i :
+                       scratch_data.fe_face_values.dof_indices())
+                    {
+                      double normal_outflow =
+                        std::min(0.,
+                                 scratch_data.face_velocity_values[f][q] *
+                                   scratch_data.face_normal[f][q]);
+
+                      for (const unsigned int j :
+                           scratch_data.fe_face_values.dof_indices())
+                        {
+                          {
+                            double beta_terms =
+                              penalty_parameter * beta *
+                              normal_outflow(scratch_data.face_phi_u[f][q][j] *
+                                             scratch_data.face_phi_u[f][q][i]) *
+                              JxW;
+
+                            local_matrix(i, j) += -beta_terms;
+                          }
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
+
+template <int dim>
+void
+VOFAssemblerInletOutlet<dim>::assemble_rhs(
+  const VOFScratchData<dim> &scratch_data,
+  StabilizedMethodsCopyData &copy_data)
+{
+  if (!scratch_data.is_boundary_cell)
+    return;
+
+  const FiniteElement<dim> &fe = scratch_data.fe_face_values.get_fe();
+
+  const double penalty_parameter =
+    1. / std::pow(scratch_data.cell_size, fe.degree + 1);
+  auto &local_rhs = copy_data.local_rhs;
+
+  // Loop over the faces of the cell.
+  for (unsigned int f = 0; f < scratch_data.n_faces; ++f)
+    {
+      // Check if the face is on a boundary
+      if (scratch_data.is_boundary_face[f])
+        {
+          types::boundary_id boundary_id = scratch_data.boundary_face_id[f];
+
+          // Check if the face is part of the boundary that has a
+          // weakly imposed Dirichlet BC.
+          if (this->boundary_conditions.type.at(boundary_id) ==
+              BoundaryConditions::BoundaryType::outlet)
+            {
+              const double beta = this->boundary_conditions.beta.at(boundary_id);
+              const double inlet_phase = this->boundary_conditions.inlet_phase.at(boundary_id);
+
+              for (unsigned int q = 0; q < scratch_data.n_faces_q_points; ++q)
+                {
+                  const double JxW = scratch_data.face_JxW[f][q];
+                  for (const unsigned int i :
+                       scratch_data.fe_face_values.dof_indices())
+                    {
+                      // Calculate beta term depending on the
+                      // value of  u*n. If it is positive (outgoing
+                      // flow) then no penalization is applied.
+                      // If it is negative (inflow) then we penalize then
+                      // we penalize the phase value to adhere to the
+                      // prescribed inlet phase
+                      const double normal_outflow =
+                        std::min(0.,
+                                 (scratch_data.face_velocity_values[f][q] *
+                                  scratch_data.face_normal[f][q]));
+
+                      const double beta_terms =
+                        penalty_parameter * beta * normal_outflow *
+                          ((scratch_data.face_value_vof[f][q] - inlet_phase) *
+                          scratch_data.face_phi_u[f][q][i]) *JxW;
+
+                          local_rhs(i) += +beta_terms;
+
+                    }
+                }
+            }
+        }
+    }
+}
+
+template class VOFAssemblerInletOutlet<2>;
+template class VOFAssemblerInletOutlet<3>;
+
+
+
+template <int dim>
+void
 VOFAssemblerDGCore<dim>::assemble_matrix(
   const VOFScratchData<dim> &scratch_data,
   StabilizedMethodsCopyData &copy_data)
