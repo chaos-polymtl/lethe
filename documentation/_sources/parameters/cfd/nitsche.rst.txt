@@ -5,7 +5,7 @@ Nitsche Immersed Boundary
 These parameters are used for simulations using the Nitsche immersed boundary method. Nitsche immersed boundary method works by forcing the fluid at the location of the Gauss points of the solid triangulation in order to apply the ``noslip`` boundary condition within the solid object.
 
 .. seealso::
-	For further understanding about the numerical method used and advanced parameters, the interested reader is referred to this article (to be published).
+	For further understanding about the numerical method used and advanced parameters, the interested reader is referred to `this article <https://doi.org/10.1016/j.jcp.2023.112189>`_.
 
 .. warning::
 	The ``lethe-fluid-nitsche`` solver must be used for the Nitsche solid to be accounted for.
