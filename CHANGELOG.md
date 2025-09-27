@@ -3,6 +3,12 @@
 All notable changes to the Lethe project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
+### [Master] - 2025-09-26
+
+### Added
+
+- MINOR Add a virtual destructor to PhysicsScratchDataBase to remove some clang warnings. [#1695](https://github.com/chaos-polymtl/lethe/pull/1695)
+
 ### [Master] - 2025-09-23
 
 ### Added
