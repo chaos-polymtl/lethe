@@ -395,35 +395,62 @@ FluidDynamicsSharp<dim>::refinement_control(const bool initial_refinement)
            this->simulation_parameters.particlesParameters->initial_refinement;
            ++i)
         {
+          this->pcout << __LINE__ << std::endl;
+
           update_precalculations_flag = false;
           this->pcout << "Initial refinement around IB particles - Step : "
                       << i + 1 << " of "
                       << this->simulation_parameters.particlesParameters
                            ->initial_refinement
                       << std::endl;
+          this->pcout << __LINE__ << std::endl;
           refine_ib(initial_refinement);
-          NavierStokesBase<dim, GlobalVectorType, IndexSet>::refine_mesh();
+
+            this->pcout << __LINE__ << std::endl;
+            NavierStokesBase<dim, GlobalVectorType, IndexSet>::refine_mesh();
           if (update_precalculations_flag)
             {
+              this->pcout << __LINE__ << std::endl;
+
               remove_superfluous_data_flag = true;
+              this->pcout << __LINE__ << std::endl;
+
               update_precalculations_for_ib();
+              this->pcout << __LINE__ << std::endl;
+
             }
         }
+      this->pcout << __LINE__ << std::endl;
+
       this->simulation_parameters.mesh_adaptation.variables.begin()
         ->second.refinement_fraction = temp_refine;
+      this->pcout << __LINE__ << std::endl;
+
       this->simulation_parameters.mesh_adaptation.variables.begin()
         ->second.coarsening_fraction = temp_coarse;
+      this->pcout << __LINE__ << std::endl;
+
     }
   if (initial_refinement == false)
     {
       update_precalculations_flag = false;
       refine_ib(initial_refinement);
+      this->pcout << __LINE__ << std::endl;
+
       NavierStokesBase<dim, GlobalVectorType, IndexSet>::refine_mesh();
+      this->pcout << __LINE__ << std::endl;
+
       if (update_precalculations_flag)
         {
           remove_superfluous_data_flag = true;
+          this->pcout << __LINE__ << std::endl;
+
           update_precalculations_for_ib();
+          this->pcout << __LINE__ << std::endl;
+
         }
+      this->pcout << __LINE__ << std::endl;
+
     }
   if (remove_superfluous_data_flag || initial_refinement)
     {
@@ -847,10 +874,15 @@ FluidDynamicsSharp<dim>::refine_ib(const bool initial_refinement)
   TimerOutput::Scope                            t(this->computing_timer,
                        "Refine around immersed boundary");
   Point<dim>                                    center_immersed;
+  this->pcout << __LINE__ << std::endl;
   std::map<types::global_dof_index, Point<dim>> support_points =
     DoFTools::map_dofs_to_support_points(*this->mapping, this->dof_handler);
 
+  this->pcout << __LINE__ << std::endl;
+
   double dt = this->simulation_control->get_time_steps_vector()[0];
+
+  this->pcout << __LINE__ << std::endl;
 
   const unsigned int                   dofs_per_cell = this->fe->dofs_per_cell;
   std::vector<types::global_dof_index> local_dof_indices(dofs_per_cell);
@@ -859,14 +891,21 @@ FluidDynamicsSharp<dim>::refine_ib(const bool initial_refinement)
     this->simulation_parameters.particlesParameters
       ->time_extrapolation_of_refinement_zone;
 
+
+  this->pcout << __LINE__ << std::endl;
+
   double smallest_cut_cell = std::numeric_limits<double>::max();
   bool   minimal_crown_refinement_enabled =
     abs(this->simulation_parameters.particlesParameters->outside_radius - 1) <
       1e-16 &&
     abs(this->simulation_parameters.particlesParameters->inside_radius - 1) <
       1e-16;
+  this->pcout << __LINE__ << std::endl;
+
   if (minimal_crown_refinement_enabled)
     {
+      this->pcout << __LINE__ << std::endl;
+
       const auto &cell_iterator_smallest_cell =
         this->dof_handler.active_cell_iterators();
       for (const auto &cell : cell_iterator_smallest_cell)
@@ -874,9 +913,13 @@ FluidDynamicsSharp<dim>::refine_ib(const bool initial_refinement)
           if (cell->is_locally_owned())
             smallest_cut_cell = std::min(smallest_cut_cell, cell->diameter());
         }
+      this->pcout << __LINE__ << std::endl;
+
       smallest_cut_cell =
         Utilities::MPI::min(smallest_cut_cell, this->mpi_communicator);
     }
+
+  this->pcout << __LINE__ << std::endl;
 
   const auto &cell_iterator = this->dof_handler.active_cell_iterators();
   for (const auto &cell : cell_iterator)
@@ -886,6 +929,8 @@ FluidDynamicsSharp<dim>::refine_ib(const bool initial_refinement)
           cell->get_dof_indices(local_dof_indices);
           for (unsigned int p = 0; p < particles.size(); ++p)
             {
+              this->pcout << __LINE__ << std::endl;
+
               unsigned int count_small = 0;
               center_immersed          = particles[p].position;
               Tensor<1, dim> r;
@@ -912,6 +957,8 @@ FluidDynamicsSharp<dim>::refine_ib(const bool initial_refinement)
                   particles[p].set_position(particles[p].position);
                   particles[p].set_orientation(particles[p].orientation);
                 }
+              this->pcout << __LINE__ << std::endl;
+
               // Check if a point on the random point on the IB is contained in
               // that cell. If the particle is much smaller than the cell, all
               // its vertices may be outside of the particle. In that case the
@@ -963,6 +1010,7 @@ FluidDynamicsSharp<dim>::refine_ib(const bool initial_refinement)
                         ++count_small;
                     }
                 }
+              this->pcout << __LINE__ << std::endl;
 
               if (extrapolate_particle_position)
                 {
@@ -977,8 +1025,14 @@ FluidDynamicsSharp<dim>::refine_ib(const bool initial_refinement)
                   break;
                 }
             }
+          this->pcout << __LINE__ << std::endl;
+
         }
+      this->pcout << __LINE__ << std::endl;
+
     }
+  this->pcout << __LINE__ << std::endl;
+
 }
 
 
