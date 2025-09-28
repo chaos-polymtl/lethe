@@ -1193,7 +1193,7 @@ NavierStokesBase<dim, VectorType, DofsType>::refine_mesh_kelly()
           ivar.second.refinement_fraction,
           ivar_coarsening_factor,
           maximal_number_of_elements);
-      
+
       else if (this->simulation_parameters.mesh_adaptation.fractionType ==
                Parameters::MeshAdaptation::FractionType::fraction)
         parallel::distributed::GridRefinement::
@@ -1346,19 +1346,28 @@ NavierStokesBase<dim, VectorType, DofsType>::refine_mesh_kelly()
   this->pcout << "BASE" << __LINE__ << std::endl;
 
   multiphysics->prepare_for_mesh_adaptation();
+  this->pcout << "BASE" << __LINE__ << std::endl;
+
   if (this->simulation_parameters.post_processing
         .calculate_average_velocities ||
       this->simulation_parameters.initial_condition->type ==
         Parameters::FluidDynamicsInitialConditionType::average_velocity_profile)
     average_velocities->prepare_for_mesh_adaptation();
 
+  this->pcout << "BASE" << __LINE__ << std::endl;
+
   tria.execute_coarsening_and_refinement();
+
+  this->pcout << "BASE" << __LINE__ << std::endl;
+
   setup_dofs();
 
   this->pcout << "BASE" << __LINE__ << std::endl;
 
   // Transfer solution
   transfer_solution(solution_transfer, previous_solutions_transfer);
+  this->pcout << "BASE" << __LINE__ << std::endl;
+
 }
 
 template <int dim, typename VectorType, typename DofsType>
