@@ -11,7 +11,9 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
 ### [Master] - 2025-09-26
 
-### Added
+### Fixed
+
+- MAJOR Fixed a bug in which an additional sparsity pattern was generated which would prevent the matrix-based code from refining past 80M cells or so on the cluster. This sparsity pattern has been removed. [#1696](https://github.com/chaos-polymtl/lethe/pull/1696)
 
 - MINOR Add a virtual destructor to PhysicsScratchDataBase to remove some clang warnings. [#1695](https://github.com/chaos-polymtl/lethe/pull/1695)
 
