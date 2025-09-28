@@ -57,57 +57,82 @@ template <int dim>
 void
 FluidDynamicsMatrixBased<dim>::setup_dofs_fd()
 {
+  this->pcout << "FluidDynamicsMatrixBased" << __LINE__ << std::endl;
   TimerOutput::Scope t(this->computing_timer, "Setup DOFs");
 
   // Clear the preconditioner before the matrix they are associated with is
   // cleared
-  amg_preconditioner.reset();
-  ilu_preconditioner.reset();
-  current_preconditioner_fill_level = initial_preconditioner_fill_level;
+  this->pcout << "FluidDynamicsMatrixBased" << __LINE__ << std::endl;
 
+  amg_preconditioner.reset();
+
+  this->pcout << "FluidDynamicsMatrixBased" << __LINE__ << std::endl;
+  ilu_preconditioner.reset();
+
+    this->pcout << "FluidDynamicsMatrixBased" << __LINE__ << std::endl;
+current_preconditioner_fill_level = initial_preconditioner_fill_level;
+
+  this->pcout << "FluidDynamicsMatrixBased" << __LINE__ << std::endl;
 
   // Now reset system matrix
   system_matrix.clear();
+  this->pcout << "FluidDynamicsMatrixBased" << __LINE__ << std::endl;
 
   this->dof_handler.distribute_dofs(*this->fe);
-  DoFRenumbering::Cuthill_McKee(this->dof_handler);
+
+    this->pcout << "FluidDynamicsMatrixBased" << __LINE__ << std::endl;
+DoFRenumbering::Cuthill_McKee(this->dof_handler);
+  this->pcout << "FluidDynamicsMatrixBased" << __LINE__ << std::endl;
 
   this->locally_owned_dofs = this->dof_handler.locally_owned_dofs();
+  this->pcout << "FluidDynamicsMatrixBased" << __LINE__ << std::endl;
+
   this->locally_relevant_dofs =
     DoFTools::extract_locally_relevant_dofs(this->dof_handler);
+  this->pcout << "FluidDynamicsMatrixBased" << __LINE__ << std::endl;
 
   // If enabled, rotate rotor mapping
-  this->rotate_rotor_mapping(false);
+
+    this->pcout << "FluidDynamicsMatrixBased" << __LINE__ << std::endl;
+this->rotate_rotor_mapping(false);
 
   // Non Zero constraints
+  this->pcout << "FluidDynamicsMatrixBased" << __LINE__ << std::endl;
   this->define_non_zero_constraints();
 
   // Zero constraints
+  this->pcout << "FluidDynamicsMatrixBased" << __LINE__ << std::endl;
   this->define_zero_constraints();
 
   // If enabled, create mortar operators
+  this->pcout << "FluidDynamicsMatrixBased" << __LINE__ << std::endl;
   this->reinit_mortar_operators();
 
   // Operations on the following vectors (addition, multiplication, etc.) can
   // only be done if these are reinitialized WITHOUT locally_relevant_dofs. This
   // is why most of them are reinitialized both with and without
   // locally_relevant_dofs.
+  this->pcout << "FluidDynamicsMatrixBased" << __LINE__ << std::endl;
   this->present_solution.reinit(this->locally_owned_dofs,
                                 this->locally_relevant_dofs,
                                 this->mpi_communicator);
+  this->pcout << "FluidDynamicsMatrixBased" << __LINE__ << std::endl;
   this->local_evaluation_point.reinit(this->locally_owned_dofs,
                                       this->mpi_communicator);
+  this->pcout << "FluidDynamicsMatrixBased" << __LINE__ << std::endl;
   this->evaluation_point.reinit(this->locally_owned_dofs,
                                 this->locally_relevant_dofs,
                                 this->mpi_communicator);
 
   // Initialize vector of previous solutions
+  this->pcout << "FluidDynamicsMatrixBased" << __LINE__ << std::endl;
   for (auto &solution : this->previous_solutions)
     {
       solution.reinit(this->locally_owned_dofs,
                       this->locally_relevant_dofs,
                       this->mpi_communicator);
     }
+  this->pcout << "FluidDynamicsMatrixBased" << __LINE__ << std::endl;
 
   if (this->simulation_control->is_sdirk())
     {
@@ -134,34 +159,47 @@ FluidDynamicsMatrixBased<dim>::setup_dofs_fd()
         }
     }
 
+  this->pcout << "FluidDynamicsMatrixBased" << __LINE__ << std::endl;
   this->newton_update.reinit(this->locally_owned_dofs, this->mpi_communicator);
+  this->pcout << "FluidDynamicsMatrixBased" << __LINE__ << std::endl;
   this->system_rhs.reinit(this->locally_owned_dofs, this->mpi_communicator);
 
+  this->pcout << "FluidDynamicsMatrixBased" << __LINE__ << std::endl;
 
   auto                  &nonzero_constraints = this->get_nonzero_constraints();
+  this->pcout << "FluidDynamicsMatrixBased" << __LINE__ << std::endl;
   DynamicSparsityPattern dsp(this->locally_relevant_dofs);
+  this->pcout << "FluidDynamicsMatrixBased" << __LINE__ << std::endl;
   DoFTools::make_sparsity_pattern(this->dof_handler,
                                   dsp,
                                   nonzero_constraints,
                                   false);
+  this->pcout << "FluidDynamicsMatrixBased" << __LINE__ << std::endl;
 
   // Add sparsity pattern entries
+  this->pcout << "FluidDynamicsMatrixBased" << __LINE__ << std::endl;
   if (this->simulation_parameters.mortar_parameters.enable)
     this->mortar_coupling_operator->add_sparsity_pattern_entries(dsp);
+  this->pcout << "FluidDynamicsMatrixBased" << __LINE__ << std::endl;
 
+  this->pcout << "FluidDynamicsMatrixBased" << __LINE__ << std::endl;
   sparsity_pattern.copy_from(dsp);
 
+  this->pcout << "FluidDynamicsMatrixBased" << __LINE__ << std::endl;
   SparsityTools::distribute_sparsity_pattern(
     dsp,
     this->dof_handler.locally_owned_dofs(),
     this->mpi_communicator,
     this->locally_relevant_dofs);
+  this->pcout << "FluidDynamicsMatrixBased" << __LINE__ << std::endl;
 
+  this->pcout << "FluidDynamicsMatrixBased" << __LINE__ << std::endl;
   system_matrix.reinit(this->locally_owned_dofs,
                        this->locally_owned_dofs,
                        dsp,
                        this->mpi_communicator);
 
+  this->pcout << "FluidDynamicsMatrixBased" << __LINE__ << std::endl;
   if (this->simulation_parameters.post_processing
         .calculate_average_velocities ||
       this->simulation_parameters.initial_condition->type ==
@@ -174,6 +212,7 @@ FluidDynamicsMatrixBased<dim>::setup_dofs_fd()
         this->mpi_communicator);
     }
 
+  this->pcout << "FluidDynamicsMatrixBased" << __LINE__ << std::endl;
   double global_volume =
     GridTools::volume(*this->triangulation, *this->get_mapping());
 
