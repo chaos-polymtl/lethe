@@ -179,11 +179,14 @@ this->rotate_rotor_mapping(false);
   // Add sparsity pattern entries
   this->pcout << "FluidDynamicsMatrixBased" << __LINE__ << std::endl;
   if (this->simulation_parameters.mortar_parameters.enable)
-    this->mortar_coupling_operator->add_sparsity_pattern_entries(dsp);
+    {
+      sparsity_pattern.copy_from(dsp);
+
+      this->mortar_coupling_operator->add_sparsity_pattern_entries(dsp);
+    }
   this->pcout << "FluidDynamicsMatrixBased" << __LINE__ << std::endl;
 
   this->pcout << "FluidDynamicsMatrixBased" << __LINE__ << std::endl;
-  sparsity_pattern.copy_from(dsp);
 
   this->pcout << "FluidDynamicsMatrixBased" << __LINE__ << std::endl;
   SparsityTools::distribute_sparsity_pattern(
