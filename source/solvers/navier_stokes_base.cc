@@ -1193,10 +1193,7 @@ NavierStokesBase<dim, VectorType, DofsType>::refine_mesh_kelly()
           ivar.second.refinement_fraction,
           ivar_coarsening_factor,
           maximal_number_of_elements);
-
-
-      this->pcout << "BASE" << __LINE__ << std::endl;
-
+      
       else if (this->simulation_parameters.mesh_adaptation.fractionType ==
                Parameters::MeshAdaptation::FractionType::fraction)
         parallel::distributed::GridRefinement::
