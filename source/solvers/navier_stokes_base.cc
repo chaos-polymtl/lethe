@@ -1100,26 +1100,40 @@ NavierStokesBase<dim, VectorType, DofsType>::refine_mesh_kelly()
   // Time monitoring
   TimerOutput::Scope t(this->computing_timer, "Refine");
 
+  this->pcout << "BASE" << __LINE__ << std::endl;
   Vector<float> estimated_error_per_cell(tria.n_active_cells());
   const FEValuesExtractors::Vector velocity(0);
   const FEValuesExtractors::Scalar pressure(dim);
+  this->pcout << "BASE" << __LINE__ << std::endl;
+
   auto                            &present_solution = this->present_solution;
   VectorType                       locally_relevant_solution;
   locally_relevant_solution.reinit(this->locally_owned_dofs,
                                    this->locally_relevant_dofs,
                                    this->mpi_communicator);
+
+  this->pcout << "BASE" << __LINE__ << std::endl;
+
   locally_relevant_solution = this->present_solution;
   locally_relevant_solution.update_ghost_values();
 
   // Global flags
   // Their dimension is consistent with the dimension returned by
   // save_refine_flags(), in order to be able to use load_refine_flags()
+  this->pcout << "BASE" << __LINE__ << std::endl;
+
   std::vector<bool> global_refine_flags(dim * tria.n_active_cells(), false);
   std::vector<bool> global_coarsen_flags(dim * tria.n_active_cells(), false);
+
+
+  this->pcout << "BASE" << __LINE__ << std::endl;
 
   bool         first_variable(true);
   const double coarsening_factor = mesh_controller.calculate_coarsening_factor(
     this->triangulation->n_global_active_cells());
+
+
+  this->pcout << "BASE" << __LINE__ << std::endl;
 
   unsigned int maximal_number_of_elements =
     this->simulation_parameters.mesh_adaptation.maximum_number_elements;
@@ -1128,6 +1142,8 @@ NavierStokesBase<dim, VectorType, DofsType>::refine_mesh_kelly()
   // maximal_number_of_elements.
   if (this->simulation_parameters.mesh_adaptation.mesh_controller_is_enabled)
     maximal_number_of_elements = INT_MAX;
+
+  this->pcout << "BASE" << __LINE__ << std::endl;
 
   for (const std::pair<const Variable, Parameters::MultipleAdaptationParameters>
          &ivar : this->simulation_parameters.mesh_adaptation.variables)
@@ -1167,6 +1183,8 @@ NavierStokesBase<dim, VectorType, DofsType>::refine_mesh_kelly()
           multiphysics->compute_kelly(ivar, estimated_error_per_cell);
         }
 
+      this->pcout << "BASE" << __LINE__ << std::endl;
+
       if (this->simulation_parameters.mesh_adaptation.fractionType ==
           Parameters::MeshAdaptation::FractionType::number)
         parallel::distributed::GridRefinement::refine_and_coarsen_fixed_number(
@@ -1176,6 +1194,9 @@ NavierStokesBase<dim, VectorType, DofsType>::refine_mesh_kelly()
           ivar_coarsening_factor,
           maximal_number_of_elements);
 
+
+      this->pcout << "BASE" << __LINE__ << std::endl;
+
       else if (this->simulation_parameters.mesh_adaptation.fractionType ==
                Parameters::MeshAdaptation::FractionType::fraction)
         parallel::distributed::GridRefinement::
@@ -1183,6 +1204,8 @@ NavierStokesBase<dim, VectorType, DofsType>::refine_mesh_kelly()
                                             estimated_error_per_cell,
                                             ivar.second.refinement_fraction,
                                             ivar_coarsening_factor);
+
+      this->pcout << "BASE" << __LINE__ << std::endl;
 
       // Remove the flags if the cell is at the boundary and is set as do not
       // touch in the parameter file
@@ -1208,20 +1231,30 @@ NavierStokesBase<dim, VectorType, DofsType>::refine_mesh_kelly()
                   }
             }
 
+      this->pcout << "BASE" << __LINE__ << std::endl;
+
       std::vector<bool> current_refine_flags;
       std::vector<bool> current_coarsen_flags;
+
+      this->pcout << "BASE" << __LINE__ << std::endl;
 
       tria.save_refine_flags(current_refine_flags);
       tria.save_coarsen_flags(current_coarsen_flags);
 
+      this->pcout << "BASE" << __LINE__ << std::endl;
+
       // Fill global flags
       if (first_variable)
         {
+          this->pcout << "BASE" << __LINE__ << std::endl;
+
           // special case of the first refinement variable
           global_refine_flags  = current_refine_flags;
           global_coarsen_flags = current_coarsen_flags;
 
           first_variable = false;
+          this->pcout << "BASE" << __LINE__ << std::endl;
+
         }
       else
         {
@@ -1254,9 +1287,14 @@ NavierStokesBase<dim, VectorType, DofsType>::refine_mesh_kelly()
         }
     }
 
+  this->pcout << "BASE" << __LINE__ << std::endl;
+
   // Load global flags
   tria.load_refine_flags(global_refine_flags);
   tria.load_coarsen_flags(global_coarsen_flags);
+
+
+  this->pcout << "BASE" << __LINE__ << std::endl;
 
   if (tria.n_levels() >
       this->simulation_parameters.mesh_adaptation.maximum_refinement_level)
@@ -1275,11 +1313,19 @@ NavierStokesBase<dim, VectorType, DofsType>::refine_mesh_kelly()
        ++cell)
     cell->clear_coarsen_flag();
 
+  this->pcout << "BASE" << __LINE__ << std::endl;
+
+
   tria.prepare_coarsening_and_refinement();
+
+  this->pcout << "BASE" << __LINE__ << std::endl;
 
   // Solution transfer objects for all the solutions
   SolutionTransfer<dim, VectorType> solution_transfer(this->dof_handler, true);
   std::vector<SolutionTransfer<dim, VectorType>> previous_solutions_transfer;
+
+  this->pcout << "BASE" << __LINE__ << std::endl;
+
   // Important to reserve to prevent pointer dangling
   previous_solutions_transfer.reserve(previous_solutions.size());
   for (unsigned int i = 0; i < previous_solutions.size(); ++i)
@@ -1293,10 +1339,14 @@ NavierStokesBase<dim, VectorType, DofsType>::refine_mesh_kelly()
         previous_solutions[i]);
     }
 
+  this->pcout << "BASE" << __LINE__ << std::endl;
+
   if constexpr (std::is_same_v<VectorType,
                                LinearAlgebra::distributed::Vector<double>>)
     present_solution.update_ghost_values();
   solution_transfer.prepare_for_coarsening_and_refinement(present_solution);
+
+  this->pcout << "BASE" << __LINE__ << std::endl;
 
   multiphysics->prepare_for_mesh_adaptation();
   if (this->simulation_parameters.post_processing
@@ -1307,6 +1357,8 @@ NavierStokesBase<dim, VectorType, DofsType>::refine_mesh_kelly()
 
   tria.execute_coarsening_and_refinement();
   setup_dofs();
+
+  this->pcout << "BASE" << __LINE__ << std::endl;
 
   // Transfer solution
   transfer_solution(solution_transfer, previous_solutions_transfer);
