@@ -11,7 +11,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
 ### Added
 
-- MAJOR The id for the boundary condition used to support a single value unsigned integer value, which meant that applying the same boundary condition to multiple ids would require setting up a large amount of boundary condition sections. This PR adds the support to specify a list of boundary id on which a boundary condition is applied. This list of boundary is only used at the level of the parameter file and each id is still considered seperately in the simulation itself. [#1697](https://github.com/chaos-polymtl/lethe/pull/1697)
+- MAJOR The id for the boundary condition used to support a single unsigned integer value, which meant that applying the same boundary condition to multiple ids would require setting up a large amount of boundary condition sections. This PR adds the support to specify a list of boundary id on which a boundary condition is applied. This list of boundary id is only used at the level of the parameter file and each id is still considered seperately in the simulation itself. [#1697](https://github.com/chaos-polymtl/lethe/pull/1697)
 
 ### [Master] - 2025-09-26
 
