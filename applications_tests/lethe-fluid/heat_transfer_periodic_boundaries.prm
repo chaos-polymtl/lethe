@@ -69,13 +69,13 @@ subsection boundary conditions heat transfer
     set id                 = 0
     set type               = periodic
     set periodic id        = 1
-    set periodic_direction = 0
+    set periodic direction = 0
   end
   subsection bc 1
     set id                 = 2
     set type               = periodic
     set periodic id        = 3
-    set periodic_direction = 1
+    set periodic direction = 1
   end
 end
 

@@ -477,7 +477,7 @@ The boundary condition at the wall of the pipe is a weak function where the Diri
         set id                 = 1
         set type               = periodic
         set periodic id        = 2
-        set periodic_direction = 0
+        set periodic direction = 0
       end
     end
 

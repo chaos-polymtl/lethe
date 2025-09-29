@@ -123,7 +123,7 @@ subsection boundary conditions
     set id                 = 0
     set type               = periodic
     set periodic id        = 1
-    set periodic_direction = 0
+    set periodic direction = 0
   end
   subsection bc 1
     set id   = 2

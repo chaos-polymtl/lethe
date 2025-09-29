@@ -125,7 +125,7 @@ The ``boundary conditions`` subsection establishes the boundary conditions:
     subsection bc 5
       set type               = periodic
       set periodic id        = 6
-      set periodic_direction = 2
+      set periodic direction = 2
     end
   end
 

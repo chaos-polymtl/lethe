@@ -108,7 +108,7 @@ subsection boundary conditions
     set id                 = 2
     set type               = periodic
     set periodic id        = 3
-    set periodic_direction = 1
+    set periodic direction = 1
   end
   subsection bc 1
     set id   = 0

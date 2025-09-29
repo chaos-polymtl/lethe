@@ -147,7 +147,7 @@ The ``boundary conditions`` subsection establishes the constraints on different 
       set type               = periodic
       set id                 = 2
       set periodic id        = 3
-      set periodic_direction = 2
+      set periodic direction = 2
     end
   end
 

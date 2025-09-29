@@ -124,7 +124,7 @@ In this section, we specify the boundary conditions taking into account the IDs 
         set type               = periodic
         set id                 = 0
         set periodic id        = 1
-        set periodic_direction = 0
+        set periodic direction = 0
       end
       subsection bc 1
         set id   = 2
@@ -138,7 +138,7 @@ In this section, we specify the boundary conditions taking into account the IDs 
         set type               = periodic
         set id                 = 4
         set periodic id        = 5
-        set periodic_direction = 2
+        set periodic direction = 2
       end
     end
 

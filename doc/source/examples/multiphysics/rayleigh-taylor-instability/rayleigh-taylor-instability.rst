@@ -200,7 +200,7 @@ The boundary conditions applied on the left and right boundaries are ``periodic`
       set id                 = 0
       set type               = periodic
       set periodic id        = 1
-      set periodic_direction = 0
+      set periodic direction = 0
     end
     subsection bc 1
       set id   = 2
@@ -223,7 +223,7 @@ For VOF, we specify the periodic boundary conditions on the sides and no-flux bo
       set id   = 0
       set type = periodic
       set periodic id = 1
-      set periodic_direction = 0
+      set periodic direction = 0
     end
     subsection bc 1
      set id = 2

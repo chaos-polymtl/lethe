@@ -135,7 +135,7 @@ subsection boundary conditions
     set id                 = 2
     set type               = periodic
     set periodic id        = 3
-    set periodic_direction = 1
+    set periodic direction = 1
   end
   subsection bc 2
     set id   = 1
@@ -161,7 +161,7 @@ subsection boundary conditions VOF
     set id                 = 2
     set type               = periodic
     set periodic id        = 3
-    set periodic_direction = 1
+    set periodic direction = 1
   end
   subsection bc 2
     set id   = 1
