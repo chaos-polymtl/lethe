@@ -245,10 +245,14 @@ namespace BoundaryConditions
       Patterns::Integer(),
       "Mesh id for periodic face matching. Default entry is -1 to ensure that the periodic id is set by the user");
 
+    prm.declare_alias("periodic id", "periodic_id", true);
+
     prm.declare_entry("periodic direction",
                       "0",
                       Patterns::Integer(),
                       "Direction for periodic boundary condition");
+
+    prm.declare_alias("periodic direction", "periodic_direction", true);
 
 
     // Create a dummy NSBoundaryFunctions object to declare the appropriate
@@ -607,10 +611,14 @@ namespace BoundaryConditions
       Patterns::Integer(),
       "Mesh id for periodic face matching. Default entry is -1 to ensure that the periodic id is set by the user");
 
+    prm.declare_alias("periodic id", "periodic_id", true);
+
     prm.declare_entry("periodic direction",
                       "0",
                       Patterns::Integer(),
                       "Direction for periodic boundary condition");
+
+    prm.declare_alias("periodic direction", "periodic_direction", true);
   }
 
   /**
@@ -838,10 +846,15 @@ namespace BoundaryConditions
       Patterns::Integer(),
       "Mesh id for periodic face matching. Default entry is -1 to ensure that the periodic id is set by the user");
 
+    prm.declare_alias("periodic id", "periodic_id", true);
+
+
     prm.declare_entry("periodic direction",
                       "0",
                       Patterns::Integer(),
                       "Direction for periodic boundary condition");
+
+    prm.declare_alias("periodic direction", "periodic_direction", true);
   }
 
   /**
@@ -1042,10 +1055,14 @@ namespace BoundaryConditions
       Patterns::Integer(),
       "Mesh id for periodic face matching. Default entry is -1 to ensure that the periodic id is set by the user");
 
+    prm.declare_alias("periodic id", "periodic_id", true);
+
     prm.declare_entry("periodic direction",
                       "0",
                       Patterns::Integer(),
                       "Direction for periodic boundary condition");
+
+    prm.declare_alias("periodic direction", "periodic_direction", true);
   }
 
   /**
@@ -1253,10 +1270,14 @@ namespace BoundaryConditions
       Patterns::Integer(),
       "Mesh id for periodic face matching. Default entry is -1 to ensure that the periodic id is set by the user");
 
+    prm.declare_alias("periodic id", "periodic_id", true);
+
     prm.declare_entry("periodic direction",
                       "0",
                       Patterns::Integer(),
                       "Direction for periodic boundary condition");
+
+    prm.declare_alias("periodic direction", "periodic_direction", true);
   }
 
   /**
