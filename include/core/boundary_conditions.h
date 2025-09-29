@@ -319,7 +319,6 @@ namespace BoundaryConditions
       ExcMessage(
         "A boundary id has not been set for one of the fluid dynamics boundary conditions. Please ensure that the id is set for every boundary condition."));
 
-    // Loop through all boundary ids to ensure that they are all non-negative
     // and unique
     for (const auto boundary_id : boundary_ids)
       {
