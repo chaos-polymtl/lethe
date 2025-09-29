@@ -86,25 +86,17 @@ The last parameter specifies the ``initial refinement`` of the grid. Most deal.I
 Boundary Conditions
 ~~~~~~~~~~~~~~~~~~~
 
-The ``boundary conditions`` subsection establishes the constraints on different parts of the domain:
+The ``boundary conditions`` subsection establishes the boundary conditions on different parts of the domain:
 
 .. code-block:: text
 
     subsection boundary conditions
-      set number = 4
+      set number = 2
       subsection bc 0
-        set id   = 0
+        set id   = 0, 1, 2
         set type = noslip
       end
       subsection bc 1
-        set id   = 1
-        set type = noslip
-      end
-      subsection bc 2
-        set id   = 2
-        set type = noslip
-      end
-      subsection bc 3
         set id   = 3
         set type = function
         subsection u
@@ -249,7 +241,7 @@ It can be used by modifying the ``simulation control`` subsection:
       set method                       = steady_bdf
       set adapt                        = true
       set max cfl                      = 1000
-      set stop tolerance               = 1e-6
+      set stop tolerance               = 1e-7
       set adaptative time step scaling = 1.1
       set time step                    = 0.001
     end
