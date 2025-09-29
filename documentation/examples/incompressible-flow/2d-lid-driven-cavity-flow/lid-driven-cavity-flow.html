@@ -510,22 +510,14 @@ end
 </section>
 <section id="boundary-conditions">
 <h3>Boundary Conditions<a class="headerlink" href="#boundary-conditions" title="Link to this heading">#</a></h3>
-<p>The <code class="docutils literal notranslate"><span class="pre">boundary</span> <span class="pre">conditions</span></code> subsection establishes the constraints on different parts of the domain:</p>
+<p>The <code class="docutils literal notranslate"><span class="pre">boundary</span> <span class="pre">conditions</span></code> subsection establishes the boundary conditions on different parts of the domain:</p>
 <div class="highlight-text notranslate"><div class="highlight"><pre><span></span>subsection boundary conditions
-  set number = 4
+  set number = 2
   subsection bc 0
-    set id   = 0
+    set id   = 0, 1, 2
     set type = noslip
   end
   subsection bc 1
-    set id   = 1
-    set type = noslip
-  end
-  subsection bc 2
-    set id   = 2
-    set type = noslip
-  end
-  subsection bc 3
     set id   = 3
     set type = function
     subsection u
@@ -638,7 +630,7 @@ end
   set method                       = steady_bdf
   set adapt                        = true
   set max cfl                      = 1000
-  set stop tolerance               = 1e-6
+  set stop tolerance               = 1e-7
   set adaptative time step scaling = 1.1
   set time step                    = 0.001
 end

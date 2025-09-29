@@ -2094,54 +2094,10 @@ $(document).ready(function() { init_codefold(0); });
 <div class="line"><a id="l01854" name="l01854"></a><span class="lineno"> 1854</span>    <a class="code hl_function" href="structParameters_1_1Mortar.html#af5442ef0871c207bbadf1b9f699ed4eb">parse_parameters</a>(ParameterHandler &amp;prm);</div>
 <div class="line"><a id="l01855" name="l01855"></a><span class="lineno"> 1855</span>  };</div>
 </div>
-<div class="line"><a id="l01856" name="l01856"></a><span class="lineno"> 1856</span><span class="comment"></span> </div>
-<div class="line"><a id="l01857" name="l01857"></a><span class="lineno"> 1857</span><span class="comment">  /**</span></div>
-<div class="line"><a id="l01858" name="l01858"></a><span class="lineno"> 1858</span><span class="comment">   * @brief Return the vector of size N of entry @entry_string. If the entry is</span></div>
-<div class="line"><a id="l01859" name="l01859"></a><span class="lineno"> 1859</span><span class="comment">   * specified in the .prm file, then the changed value is returned, otherwise</span></div>
-<div class="line"><a id="l01860" name="l01860"></a><span class="lineno"> 1860</span><span class="comment">   * the default value is returned. If the entry is not equivalent to a vector,</span></div>
-<div class="line"><a id="l01861" name="l01861"></a><span class="lineno"> 1861</span><span class="comment">   * an error will be thrown.</span></div>
-<div class="line"><a id="l01862" name="l01862"></a><span class="lineno"> 1862</span><span class="comment">   *</span></div>
-<div class="line"><a id="l01863" name="l01863"></a><span class="lineno"> 1863</span><span class="comment">   * @tparam T The type of vector (int, unsigned int or double)</span></div>
-<div class="line"><a id="l01864" name="l01864"></a><span class="lineno"> 1864</span><span class="comment">   * @param prm A parameter handler which is currently used to parse the simulation</span></div>
-<div class="line"><a id="l01865" name="l01865"></a><span class="lineno"> 1865</span><span class="comment">   * information.</span></div>
-<div class="line"><a id="l01866" name="l01866"></a><span class="lineno"> 1866</span><span class="comment">   * @param entry_string A declare string in the parameter file.</span></div>
-<div class="line"><a id="l01867" name="l01867"></a><span class="lineno"> 1867</span><span class="comment">   *</span></div>
-<div class="line"><a id="l01868" name="l01868"></a><span class="lineno"> 1868</span><span class="comment">   * @return A std::vector&lt;double&gt; corresponding to the entry_string in the prm file.</span></div>
-<div class="line"><a id="l01869" name="l01869"></a><span class="lineno"> 1869</span><span class="comment">   */</span></div>
-<div class="line"><a id="l01870" name="l01870"></a><span class="lineno"> 1870</span>  <span class="keyword">template</span> &lt;<span class="keyword">typename</span> T&gt;</div>
-<div class="line"><a id="l01871" name="l01871"></a><span class="lineno"> 1871</span>  std::vector&lt;T&gt;</div>
-<div class="foldopen" id="foldopen01872" data-start="{" data-end="}">
-<div class="line"><a id="l01872" name="l01872"></a><span class="lineno"><a class="line" href="namespaceParameters.html#a02d149c948bc699c8e870d020b10988e"> 1872</a></span>  <a class="code hl_function" href="namespaceParameters.html#a02d149c948bc699c8e870d020b10988e">convert_string_to_vector</a>(ParameterHandler  &amp;prm,</div>
-<div class="line"><a id="l01873" name="l01873"></a><span class="lineno"> 1873</span>                           <span class="keyword">const</span> std::string &amp;entry_string)</div>
-<div class="line"><a id="l01874" name="l01874"></a><span class="lineno"> 1874</span>  {</div>
-<div class="line"><a id="l01875" name="l01875"></a><span class="lineno"> 1875</span>    std::string              full_str = prm.get(entry_string);</div>
-<div class="line"><a id="l01876" name="l01876"></a><span class="lineno"> 1876</span>    std::vector&lt;std::string&gt; vector_of_string(</div>
-<div class="line"><a id="l01877" name="l01877"></a><span class="lineno"> 1877</span>      Utilities::split_string_list(full_str));</div>
-<div class="line"><a id="l01878" name="l01878"></a><span class="lineno"> 1878</span>    <span class="keywordflow">if</span> <span class="keyword">constexpr</span> (std::is_same&lt;T, int&gt;::value)</div>
-<div class="line"><a id="l01879" name="l01879"></a><span class="lineno"> 1879</span>      {</div>
-<div class="line"><a id="l01880" name="l01880"></a><span class="lineno"> 1880</span>        std::vector&lt;T&gt; vector = Utilities::string_to_int(vector_of_string);</div>
-<div class="line"><a id="l01881" name="l01881"></a><span class="lineno"> 1881</span>        <span class="keywordflow">return</span> vector;</div>
-<div class="line"><a id="l01882" name="l01882"></a><span class="lineno"> 1882</span>      }</div>
-<div class="line"><a id="l01883" name="l01883"></a><span class="lineno"> 1883</span>    <span class="keywordflow">if</span> <span class="keyword">constexpr</span> (std::is_same&lt;T, double&gt;::value)</div>
-<div class="line"><a id="l01884" name="l01884"></a><span class="lineno"> 1884</span>      {</div>
-<div class="line"><a id="l01885" name="l01885"></a><span class="lineno"> 1885</span>        std::vector&lt;T&gt; vector = Utilities::string_to_double(vector_of_string);</div>
-<div class="line"><a id="l01886" name="l01886"></a><span class="lineno"> 1886</span>        <span class="keywordflow">return</span> vector;</div>
-<div class="line"><a id="l01887" name="l01887"></a><span class="lineno"> 1887</span>      }</div>
-<div class="line"><a id="l01888" name="l01888"></a><span class="lineno"> 1888</span>    <span class="keywordflow">if</span> <span class="keyword">constexpr</span> (std::is_same&lt;T, std::string&gt;::value)</div>
-<div class="line"><a id="l01889" name="l01889"></a><span class="lineno"> 1889</span>      {</div>
-<div class="line"><a id="l01890" name="l01890"></a><span class="lineno"> 1890</span>        <span class="keywordflow">return</span> vector_of_string;</div>
-<div class="line"><a id="l01891" name="l01891"></a><span class="lineno"> 1891</span>      }</div>
-<div class="line"><a id="l01892" name="l01892"></a><span class="lineno"> 1892</span> </div>
-<div class="line"><a id="l01893" name="l01893"></a><span class="lineno"> 1893</span>    AssertThrow(<span class="keyword">false</span>,</div>
-<div class="line"><a id="l01894" name="l01894"></a><span class="lineno"> 1894</span>                ExcMessage(<span class="stringliteral">&quot;Error: convert_string_to_vector only works for &quot;</span></div>
-<div class="line"><a id="l01895" name="l01895"></a><span class="lineno"> 1895</span>                           <span class="stringliteral">&quot;int, double and string types.&quot;</span>));</div>
-<div class="line"><a id="l01896" name="l01896"></a><span class="lineno"> 1896</span> </div>
-<div class="line"><a id="l01897" name="l01897"></a><span class="lineno"> 1897</span>    <span class="keywordflow">return</span> std::vector&lt;T&gt;();</div>
-<div class="line"><a id="l01898" name="l01898"></a><span class="lineno"> 1898</span>  }</div>
-</div>
-<div class="line"><a id="l01899" name="l01899"></a><span class="lineno"> 1899</span> </div>
-<div class="line"><a id="l01900" name="l01900"></a><span class="lineno"> 1900</span>} <span class="comment">// namespace Parameters</span></div>
-<div class="line"><a id="l01901" name="l01901"></a><span class="lineno"> 1901</span><span class="preprocessor">#endif</span></div>
+<div class="line"><a id="l01856" name="l01856"></a><span class="lineno"> 1856</span> </div>
+<div class="line"><a id="l01857" name="l01857"></a><span class="lineno"> 1857</span> </div>
+<div class="line"><a id="l01858" name="l01858"></a><span class="lineno"> 1858</span>} <span class="comment">// namespace Parameters</span></div>
+<div class="line"><a id="l01859" name="l01859"></a><span class="lineno"> 1859</span><span class="preprocessor">#endif</span></div>
 <div class="ttc" id="aclassDensityModel_html"><div class="ttname"><a href="classDensityModel.html">DensityModel</a></div><div class="ttdoc">Abstract class for calculating the density of materials.</div><div class="ttdef"><b>Definition</b> <a href="density__model_8h_source.html#l00012">density_model.h:13</a></div></div>
 <div class="ttc" id="aclassMobilityCahnHilliardModel_html"><div class="ttname"><a href="classMobilityCahnHilliardModel.html">MobilityCahnHilliardModel</a></div><div class="ttdoc">Implementation of the computation of the mobility for Cahn-Hilliard equations.</div><div class="ttdef"><b>Definition</b> <a href="mobility__cahn__hilliard__model_8h_source.html#l00013">mobility_cahn_hilliard_model.h:14</a></div></div>
 <div class="ttc" id="aclassParameters_1_1Dimensionality_html"><div class="ttname"><a href="classParameters_1_1Dimensionality.html">Parameters::Dimensionality</a></div><div class="ttdoc">Class used to rescale physical properties for cases where the main dimensions of the problems (Length...</div><div class="ttdef"><b>Definition</b> <a href="dimensionality_8h_source.html#l00023">dimensionality.h:24</a></div></div>
@@ -2299,7 +2255,6 @@ $(document).ready(function() { init_codefold(0); });
 <div class="ttc" id="amultiphysics_8h_html"><div class="ttname"><a href="multiphysics_8h.html">multiphysics.h</a></div></div>
 <div class="ttc" id="amultiphysics_8h_html_a2cbb04ef215561a69b48772159577fdd"><div class="ttname"><a href="multiphysics_8h.html#a2cbb04ef215561a69b48772159577fdd">Variable</a></div><div class="ttdeci">Variable</div><div class="ttdoc">Solution fields of the different physics that are used as an indicator for multiple purposes (e....</div><div class="ttdef"><b>Definition</b> <a href="multiphysics_8h_source.html#l00022">multiphysics.h:23</a></div></div>
 <div class="ttc" id="anamespaceParameters_html"><div class="ttname"><a href="namespaceParameters.html">Parameters</a></div><div class="ttdef"><b>Definition</b> <a href="ale_8h_source.html#l00015">ale.h:16</a></div></div>
-<div class="ttc" id="anamespaceParameters_html_a02d149c948bc699c8e870d020b10988e"><div class="ttname"><a href="namespaceParameters.html#a02d149c948bc699c8e870d020b10988e">Parameters::convert_string_to_vector</a></div><div class="ttdeci">std::vector&lt; T &gt; convert_string_to_vector(ParameterHandler &amp;prm, const std::string &amp;entry_string)</div><div class="ttdoc">Return the vector of size N of entry @entry_string. If the entry is specified in the ....</div><div class="ttdef"><b>Definition</b> <a href="parameters_8h_source.html#l01872">parameters.h:1872</a></div></div>
 <div class="ttc" id="anamespaceParameters_html_a978815f8cf26f3c77304639e1786aec1"><div class="ttname"><a href="namespaceParameters.html#a978815f8cf26f3c77304639e1786aec1">Parameters::FluidIndicator</a></div><div class="ttdeci">FluidIndicator</div><div class="ttdoc">Class to account for different fluid indicator:</div><div class="ttdef"><b>Definition</b> <a href="parameters_8h_source.html#l00060">parameters.h:61</a></div></div>
 <div class="ttc" id="anamespaceParameters_html_a978815f8cf26f3c77304639e1786aec1a1e04d9b58aa70e6fb6501fde7608fd13"><div class="ttname"><a href="namespaceParameters.html#a978815f8cf26f3c77304639e1786aec1a1e04d9b58aa70e6fb6501fde7608fd13">Parameters::FluidIndicator::fluid1</a></div><div class="ttdeci">@ fluid1</div></div>
 <div class="ttc" id="anamespaceParameters_html_a978815f8cf26f3c77304639e1786aec1a1e86df18a83727e4a5dc8dc2859a097c"><div class="ttname"><a href="namespaceParameters.html#a978815f8cf26f3c77304639e1786aec1a1e86df18a83727e4a5dc8dc2859a097c">Parameters::FluidIndicator::fluid0</a></div><div class="ttdeci">@ fluid0</div></div>

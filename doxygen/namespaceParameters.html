@@ -315,9 +315,6 @@ Enumerations</h2></td></tr>
 Functions</h2></td></tr>
 <tr class="memitem:abf9a3d883f67a19bea80ba4d93ad1c1c" id="r_abf9a3d883f67a19bea80ba4d93ad1c1c"><td class="memItemLeft" align="right" valign="top"><a class="el" href="structParameters_1_1SizeOfSubsections.html">SizeOfSubsections</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceParameters.html#abf9a3d883f67a19bea80ba4d93ad1c1c">get_size_of_subsections</a> (const std::string &amp;file_name)</td></tr>
 <tr class="separator:abf9a3d883f67a19bea80ba4d93ad1c1c"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a02d149c948bc699c8e870d020b10988e" id="r_a02d149c948bc699c8e870d020b10988e"><td class="memTemplParams" colspan="2">template&lt;typename T &gt; </td></tr>
-<tr class="memitem:a02d149c948bc699c8e870d020b10988e"><td class="memTemplItemLeft" align="right" valign="top">std::vector&lt; T &gt;&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespaceParameters.html#a02d149c948bc699c8e870d020b10988e">convert_string_to_vector</a> (ParameterHandler &amp;prm, const std::string &amp;entry_string)</td></tr>
-<tr class="separator:a02d149c948bc699c8e870d020b10988e"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>The analytical solution class provides an interface for all common elementS required for the calculation of analytical solution All equation-specific analytical solution should derive from the base class but also call it's declare_parameters and parse_parameters routine. This allows specialize class to focus on their specificity and forget about other non-specific elements that are generic to the calculation of analytical solutions</p>
@@ -793,54 +790,6 @@ Functions</h2></td></tr>
 </div>
 </div>
 <h2 class="groupheader">Function Documentation</h2>
-<a id="a02d149c948bc699c8e870d020b10988e" name="a02d149c948bc699c8e870d020b10988e"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a02d149c948bc699c8e870d020b10988e">&#9670;&#160;</a></span>convert_string_to_vector()</h2>
-
-<div class="memitem">
-<div class="memproto">
-<div class="memtemplate">
-template&lt;typename T &gt; </div>
-      <table class="memname">
-        <tr>
-          <td class="memname">std::vector&lt; T &gt; Parameters::convert_string_to_vector </td>
-          <td>(</td>
-          <td class="paramtype">ParameterHandler &amp;&#160;</td>
-          <td class="paramname"><em>prm</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">const std::string &amp;&#160;</td>
-          <td class="paramname"><em>entry_string</em>&#160;</td>
-        </tr>
-        <tr>
-          <td></td>
-          <td>)</td>
-          <td></td><td></td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-<p>Return the vector of size N of entry @entry_string. If the entry is specified in the .prm file, then the changed value is returned, otherwise the default value is returned. If the entry is not equivalent to a vector, an error will be thrown. </p>
-<dl class="tparams"><dt>Template Parameters</dt><dd>
-  <table class="tparams">
-    <tr><td class="paramname">T</td><td>The type of vector (int, unsigned int or double) </td></tr>
-  </table>
-  </dd>
-</dl>
-<dl class="params"><dt>Parameters</dt><dd>
-  <table class="params">
-    <tr><td class="paramname">prm</td><td>A parameter handler which is currently used to parse the simulation information. </td></tr>
-    <tr><td class="paramname">entry_string</td><td>A declare string in the parameter file.</td></tr>
-  </table>
-  </dd>
-</dl>
-<dl class="section return"><dt>Returns</dt><dd>A std::vector&lt;double&gt; corresponding to the entry_string in the prm file. </dd></dl>
-
-<p class="definition">Definition at line <a class="el" href="parameters_8h_source.html#l01872">1872</a> of file <a class="el" href="parameters_8h_source.html">parameters.h</a>.</p>
-
-</div>
-</div>
 <a id="abf9a3d883f67a19bea80ba4d93ad1c1c" name="abf9a3d883f67a19bea80ba4d93ad1c1c"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#abf9a3d883f67a19bea80ba4d93ad1c1c">&#9670;&#160;</a></span>get_size_of_subsections()</h2>
 

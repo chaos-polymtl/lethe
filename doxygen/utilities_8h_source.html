@@ -1082,10 +1082,69 @@ $(document).ready(function() { init_codefold(0); });
 <div class="line"><a id="l00946" name="l00946"></a><span class="lineno">  946</span>    }</div>
 <div class="line"><a id="l00947" name="l00947"></a><span class="lineno">  947</span>}</div>
 </div>
-<div class="line"><a id="l00948" name="l00948"></a><span class="lineno">  948</span> </div>
-<div class="line"><a id="l00949" name="l00949"></a><span class="lineno">  949</span> </div>
-<div class="line"><a id="l00950" name="l00950"></a><span class="lineno">  950</span> </div>
-<div class="line"><a id="l00951" name="l00951"></a><span class="lineno">  951</span><span class="preprocessor">#endif</span></div>
+<div class="line"><a id="l00948" name="l00948"></a><span class="lineno">  948</span><span class="comment"></span> </div>
+<div class="line"><a id="l00949" name="l00949"></a><span class="lineno">  949</span><span class="comment">/**</span></div>
+<div class="line"><a id="l00950" name="l00950"></a><span class="lineno">  950</span><span class="comment"> * @brief Return the vector of size N of entry @entry_string. If the entry is</span></div>
+<div class="line"><a id="l00951" name="l00951"></a><span class="lineno">  951</span><span class="comment"> * specified in the .prm file, then the changed value is returned, otherwise</span></div>
+<div class="line"><a id="l00952" name="l00952"></a><span class="lineno">  952</span><span class="comment"> * the default value is returned. If the entry is not equivalent to a vector,</span></div>
+<div class="line"><a id="l00953" name="l00953"></a><span class="lineno">  953</span><span class="comment"> * an error will be thrown.</span></div>
+<div class="line"><a id="l00954" name="l00954"></a><span class="lineno">  954</span><span class="comment"> *</span></div>
+<div class="line"><a id="l00955" name="l00955"></a><span class="lineno">  955</span><span class="comment"> * @tparam T The type of vector (int, unsigned int or double)</span></div>
+<div class="line"><a id="l00956" name="l00956"></a><span class="lineno">  956</span><span class="comment"> * @param[in] prm A parameter handler which is currently used to parse the</span></div>
+<div class="line"><a id="l00957" name="l00957"></a><span class="lineno">  957</span><span class="comment"> * simulation information.</span></div>
+<div class="line"><a id="l00958" name="l00958"></a><span class="lineno">  958</span><span class="comment"> * @param[in] entry_string A declare string in the parameter file.</span></div>
+<div class="line"><a id="l00959" name="l00959"></a><span class="lineno">  959</span><span class="comment"> *</span></div>
+<div class="line"><a id="l00960" name="l00960"></a><span class="lineno">  960</span><span class="comment"> * @return A std::vector&lt;double&gt; corresponding to the entry_string in the prm file.</span></div>
+<div class="line"><a id="l00961" name="l00961"></a><span class="lineno">  961</span><span class="comment"> */</span></div>
+<div class="line"><a id="l00962" name="l00962"></a><span class="lineno">  962</span><span class="keyword">template</span> &lt;<span class="keyword">typename</span> T&gt;</div>
+<div class="line"><a id="l00963" name="l00963"></a><span class="lineno">  963</span>std::vector&lt;T&gt;</div>
+<div class="foldopen" id="foldopen00964" data-start="{" data-end="}">
+<div class="line"><a id="l00964" name="l00964"></a><span class="lineno"><a class="line" href="utilities_8h.html#a642bc9ef98dbdbc0a480ea1a3b840b7a">  964</a></span><a class="code hl_function" href="utilities_8h.html#a642bc9ef98dbdbc0a480ea1a3b840b7a">convert_string_to_vector</a>(<span class="keyword">const</span> ParameterHandler &amp;prm,</div>
+<div class="line"><a id="l00965" name="l00965"></a><span class="lineno">  965</span>                         <span class="keyword">const</span> std::string      &amp;entry_string)</div>
+<div class="line"><a id="l00966" name="l00966"></a><span class="lineno">  966</span>{</div>
+<div class="line"><a id="l00967" name="l00967"></a><span class="lineno">  967</span>  std::string              full_str = prm.get(entry_string);</div>
+<div class="line"><a id="l00968" name="l00968"></a><span class="lineno">  968</span>  std::vector&lt;std::string&gt; vector_of_string(</div>
+<div class="line"><a id="l00969" name="l00969"></a><span class="lineno">  969</span>    Utilities::split_string_list(full_str));</div>
+<div class="line"><a id="l00970" name="l00970"></a><span class="lineno">  970</span>  <span class="keywordflow">if</span> <span class="keyword">constexpr</span> (std::is_same&lt;T, int&gt;::value)</div>
+<div class="line"><a id="l00971" name="l00971"></a><span class="lineno">  971</span>    {</div>
+<div class="line"><a id="l00972" name="l00972"></a><span class="lineno">  972</span>      std::vector&lt;T&gt; vector = Utilities::string_to_int(vector_of_string);</div>
+<div class="line"><a id="l00973" name="l00973"></a><span class="lineno">  973</span>      <span class="keywordflow">return</span> vector;</div>
+<div class="line"><a id="l00974" name="l00974"></a><span class="lineno">  974</span>    }</div>
+<div class="line"><a id="l00975" name="l00975"></a><span class="lineno">  975</span>  <span class="keywordflow">if</span> <span class="keyword">constexpr</span> (std::is_same&lt;T, double&gt;::value)</div>
+<div class="line"><a id="l00976" name="l00976"></a><span class="lineno">  976</span>    {</div>
+<div class="line"><a id="l00977" name="l00977"></a><span class="lineno">  977</span>      std::vector&lt;T&gt; vector = Utilities::string_to_double(vector_of_string);</div>
+<div class="line"><a id="l00978" name="l00978"></a><span class="lineno">  978</span>      <span class="keywordflow">return</span> vector;</div>
+<div class="line"><a id="l00979" name="l00979"></a><span class="lineno">  979</span>    }</div>
+<div class="line"><a id="l00980" name="l00980"></a><span class="lineno">  980</span>  <span class="keywordflow">if</span> <span class="keyword">constexpr</span> (std::is_same&lt;T, std::string&gt;::value)</div>
+<div class="line"><a id="l00981" name="l00981"></a><span class="lineno">  981</span>    {</div>
+<div class="line"><a id="l00982" name="l00982"></a><span class="lineno">  982</span>      <span class="keywordflow">return</span> vector_of_string;</div>
+<div class="line"><a id="l00983" name="l00983"></a><span class="lineno">  983</span>    }</div>
+<div class="line"><a id="l00984" name="l00984"></a><span class="lineno">  984</span>  <span class="keywordflow">if</span> <span class="keyword">constexpr</span> (std::is_same&lt;T, types::boundary_id&gt;::value)</div>
+<div class="line"><a id="l00985" name="l00985"></a><span class="lineno">  985</span>    {</div>
+<div class="line"><a id="l00986" name="l00986"></a><span class="lineno">  986</span>      std::vector&lt;int&gt; vector_int = Utilities::string_to_int(vector_of_string);</div>
+<div class="line"><a id="l00987" name="l00987"></a><span class="lineno">  987</span>      std::vector&lt;T&gt;   vector;</div>
+<div class="line"><a id="l00988" name="l00988"></a><span class="lineno">  988</span>      <span class="keywordflow">for</span> (<span class="keyword">const</span> <span class="keyword">auto</span> var_int : vector_int)</div>
+<div class="line"><a id="l00989" name="l00989"></a><span class="lineno">  989</span>        {</div>
+<div class="line"><a id="l00990" name="l00990"></a><span class="lineno">  990</span>          AssertThrow(</div>
+<div class="line"><a id="l00991" name="l00991"></a><span class="lineno">  991</span>            var_int &gt;= 0,</div>
+<div class="line"><a id="l00992" name="l00992"></a><span class="lineno">  992</span>            ExcMessage(</div>
+<div class="line"><a id="l00993" name="l00993"></a><span class="lineno">  993</span>              <span class="stringliteral">&quot;You are trying to convert a negative integer to a boundary id. Lethe does not support negative boundary id.&quot;</span>));</div>
+<div class="line"><a id="l00994" name="l00994"></a><span class="lineno">  994</span>          vector.push_back(<span class="keyword">static_cast&lt;</span>types::boundary_id<span class="keyword">&gt;</span>(var_int));</div>
+<div class="line"><a id="l00995" name="l00995"></a><span class="lineno">  995</span>        }</div>
+<div class="line"><a id="l00996" name="l00996"></a><span class="lineno">  996</span>      <span class="keywordflow">return</span> vector;</div>
+<div class="line"><a id="l00997" name="l00997"></a><span class="lineno">  997</span>    }</div>
+<div class="line"><a id="l00998" name="l00998"></a><span class="lineno">  998</span> </div>
+<div class="line"><a id="l00999" name="l00999"></a><span class="lineno">  999</span>  AssertThrow(<span class="keyword">false</span>,</div>
+<div class="line"><a id="l01000" name="l01000"></a><span class="lineno"> 1000</span>              ExcMessage(<span class="stringliteral">&quot;Error: convert_string_to_vector only works for &quot;</span></div>
+<div class="line"><a id="l01001" name="l01001"></a><span class="lineno"> 1001</span>                         <span class="stringliteral">&quot;int, double and string types.&quot;</span>));</div>
+<div class="line"><a id="l01002" name="l01002"></a><span class="lineno"> 1002</span> </div>
+<div class="line"><a id="l01003" name="l01003"></a><span class="lineno"> 1003</span>  <span class="keywordflow">return</span> std::vector&lt;T&gt;();</div>
+<div class="line"><a id="l01004" name="l01004"></a><span class="lineno"> 1004</span>}</div>
+</div>
+<div class="line"><a id="l01005" name="l01005"></a><span class="lineno"> 1005</span> </div>
+<div class="line"><a id="l01006" name="l01006"></a><span class="lineno"> 1006</span> </div>
+<div class="line"><a id="l01007" name="l01007"></a><span class="lineno"> 1007</span> </div>
+<div class="line"><a id="l01008" name="l01008"></a><span class="lineno"> 1008</span><span class="preprocessor">#endif</span></div>
 <div class="ttc" id="aclassstatistics_html"><div class="ttname"><a href="classstatistics.html">statistics</a></div><div class="ttdoc">A simple container for storing basic statistical values.</div><div class="ttdef"><b>Definition</b> <a href="utilities_8h_source.html#l00040">utilities.h:41</a></div></div>
 <div class="ttc" id="aclassstatistics_html_a0288afba1bf979183eed4fe63c9d6677"><div class="ttname"><a href="classstatistics.html#a0288afba1bf979183eed4fe63c9d6677">statistics::average</a></div><div class="ttdeci">double average</div><div class="ttdoc">The average value of the dataset.</div><div class="ttdef"><b>Definition</b> <a href="utilities_8h_source.html#l00066">utilities.h:66</a></div></div>
 <div class="ttc" id="aclassstatistics_html_a04dec28f738b790becb32245ef23a1d0"><div class="ttname"><a href="classstatistics.html#a04dec28f738b790becb32245ef23a1d0">statistics::max</a></div><div class="ttdeci">double max</div><div class="ttdoc">The maximum value in the dataset.</div><div class="ttdef"><b>Definition</b> <a href="utilities_8h_source.html#l00060">utilities.h:60</a></div></div>
@@ -1114,6 +1173,7 @@ $(document).ready(function() { init_codefold(0); });
 <div class="ttc" id="autilities_8h_html_a5b78e809b34030d2be858fbc29e69267"><div class="ttname"><a href="utilities_8h.html#a5b78e809b34030d2be858fbc29e69267">serialize_table</a></div><div class="ttdeci">void serialize_table(const TableHandler &amp;table, const std::string &amp;filename, const MPI_Comm &amp;mpi_communicator, const bool serialize_on_rank_zero=true)</div><div class="ttdoc">Serializes a TableHandler to a file using Boost serialization.</div><div class="ttdef"><b>Definition</b> <a href="utilities_8h_source.html#l00485">utilities.h:485</a></div></div>
 <div class="ttc" id="autilities_8h_html_a5df21d5e2572a5711790ce28e326a07d"><div class="ttname"><a href="utilities_8h.html#a5df21d5e2572a5711790ce28e326a07d">point_to_angle</a></div><div class="ttdeci">double point_to_angle(const Point&lt; dim &gt; &amp;point, const Point&lt; dim &gt; &amp;center_of_rotation=Point&lt; dim &gt;())</div><div class="ttdoc">Converts point to angle (in radians)</div><div class="ttdef"><b>Definition</b> <a href="utilities_8h_source.html#l00897">utilities.h:897</a></div></div>
 <div class="ttc" id="autilities_8h_html_a5f8e2b4fdf7a2b6eceab3461c4edd221"><div class="ttname"><a href="utilities_8h.html#a5f8e2b4fdf7a2b6eceab3461c4edd221">print_parameters_to_output_file</a></div><div class="ttdeci">void print_parameters_to_output_file(const ConditionalOStream &amp;pcout, const ParameterHandler &amp;prm, const std::string &amp;file_name)</div><div class="ttdoc">Print the parameters given by the parameter file of the application.</div><div class="ttdef"><b>Definition</b> <a href="utilities_8cc_source.html#l00814">utilities.cc:814</a></div></div>
+<div class="ttc" id="autilities_8h_html_a642bc9ef98dbdbc0a480ea1a3b840b7a"><div class="ttname"><a href="utilities_8h.html#a642bc9ef98dbdbc0a480ea1a3b840b7a">convert_string_to_vector</a></div><div class="ttdeci">std::vector&lt; T &gt; convert_string_to_vector(const ParameterHandler &amp;prm, const std::string &amp;entry_string)</div><div class="ttdoc">Return the vector of size N of entry @entry_string. If the entry is specified in the ....</div><div class="ttdef"><b>Definition</b> <a href="utilities_8h_source.html#l00964">utilities.h:964</a></div></div>
 <div class="ttc" id="autilities_8h_html_a6761d32800de2739011760d71ae33c09"><div class="ttname"><a href="utilities_8h.html#a6761d32800de2739011760d71ae33c09">delete_output_folder</a></div><div class="ttdeci">void delete_output_folder(const std::string &amp;dirname)</div><div class="ttdoc">Delete the output folder and its content.</div><div class="ttdef"><b>Definition</b> <a href="utilities_8cc_source.html#l00369">utilities.cc:369</a></div></div>
 <div class="ttc" id="autilities_8h_html_a6bff1c25176117effa0161cb4ebfc520"><div class="ttname"><a href="utilities_8h.html#a6bff1c25176117effa0161cb4ebfc520">delete_vtu_and_pvd_files</a></div><div class="ttdeci">void delete_vtu_and_pvd_files(const std::string &amp;output_path)</div><div class="ttdoc">Delete vtu and pvd files.</div><div class="ttdef"><b>Definition</b> <a href="utilities_8cc_source.html#l00848">utilities.cc:848</a></div></div>
 <div class="ttc" id="autilities_8h_html_a775e285833b01fbf0f476f77f0478432"><div class="ttname"><a href="utilities_8h.html#a775e285833b01fbf0f476f77f0478432">fill_vectors_from_file</a></div><div class="ttdeci">void fill_vectors_from_file(std::map&lt; std::string, std::vector&lt; double &gt; &gt; &amp;map, const std::string &amp;file_name, const std::string &amp;delimiter=&quot; &quot;)</div><div class="ttdoc">function that read a file that was build from a dealii table and fill 2 vectors. The first vector con...</div><div class="ttdef"><b>Definition</b> <a href="utilities_8cc_source.html#l00256">utilities.cc:256</a></div></div>
