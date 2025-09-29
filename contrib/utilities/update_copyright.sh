@@ -1,5 +1,7 @@
 #!/usr/bin/env bash
-# .git/hooks/pre-commit
+# SPDX-FileCopyrightText: Copyright (c) 2023-2025 The Lethe Authors
+# SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
+#
 # Update SPDX copyright years in files changed since the split from master/main.
 # To run this script in debug mode, run DEBUG=1 contrib/utilities/update_copyright.sh from the 
 # repository root.
