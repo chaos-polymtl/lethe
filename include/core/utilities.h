@@ -953,9 +953,9 @@ create_random_number_container(std::vector<double> &random_container,
  * an error will be thrown.
  *
  * @tparam T The type of vector (int, unsigned int or double)
- * @param prm A parameter handler which is currently used to parse the simulation
+ * @param[in] prm A parameter handler which is currently used to parse the simulation
  * information.
- * @param entry_string A declare string in the parameter file.
+ * @param[in] entry_string A declare string in the parameter file.
  *
  * @return A std::vector<double> corresponding to the entry_string in the prm file.
  */
