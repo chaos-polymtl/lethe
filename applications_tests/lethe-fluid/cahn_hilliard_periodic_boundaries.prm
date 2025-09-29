@@ -120,13 +120,13 @@ subsection boundary conditions cahn hilliard
   subsection bc 0
     set id                 = 0
     set type               = periodic
-    set periodic_id        = 1
+    set periodic id        = 1
     set periodic_direction = 0
   end
   subsection bc 1
     set id                 = 2
     set type               = periodic
-    set periodic_id        = 3
+    set periodic id        = 3
     set periodic_direction = 1
   end
 end
