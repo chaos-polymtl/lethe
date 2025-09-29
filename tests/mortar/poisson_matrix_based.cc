@@ -109,7 +109,6 @@ public:
     // add coupling entries in sparsity pattern
     mortar_coupling_operator->add_sparsity_pattern_entries(dsp);
     constraints.close();
-    sparsity_pattern.copy_from(dsp);
 
     SparsityTools::distribute_sparsity_pattern(dsp,
                                                dof_handler.locally_owned_dofs(),
@@ -241,7 +240,6 @@ private:
   AffineConstraints<double> constraints;
 
   TrilinosWrappers::SparseMatrix                 system_matrix;
-  TrilinosWrappers::SparsityPattern              sparsity_pattern;
   TrilinosWrappers::MPI::Vector                  solution;
   TrilinosWrappers::MPI::Vector                  system_rhs;
   std::shared_ptr<CouplingOperator<dim, double>> mortar_coupling_operator;

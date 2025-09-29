@@ -132,7 +132,6 @@ public:
     // add coupling entries in sparsity pattern
     mortar_coupling_operator->add_sparsity_pattern_entries(dsp);
     constraints.close();
-    sparsity_pattern.copy_from(dsp);
 
     // distribute sparsity pattern in MPI
     SparsityTools::distribute_sparsity_pattern(dsp,
@@ -330,7 +329,6 @@ private:
   AffineConstraints<double> zero_constraints;
 
   TrilinosWrappers::SparseMatrix                 system_matrix;
-  SparsityPattern                                sparsity_pattern;
   TrilinosWrappers::MPI::Vector                  solution;
   TrilinosWrappers::MPI::Vector                  delta_solution;
   TrilinosWrappers::MPI::Vector                  system_rhs;
