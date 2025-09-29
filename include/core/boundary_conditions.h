@@ -1,12 +1,10 @@
-// SPDX-FileCopyrightText: Copyright (c) 2019-2024 The Lethe Authors
+// SPDX-FileCopyrightText: Copyright (c) 2019-2054 The Lethe Authors
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
 #ifndef lethe_boundary_conditions_h
 #define lethe_boundary_conditions_h
 
 #include <core/utilities.h>
-
-#include "dem/find_boundary_cells_information.h"
 
 #include <deal.II/base/function.h>
 #include <deal.II/base/parameter_handler.h>
