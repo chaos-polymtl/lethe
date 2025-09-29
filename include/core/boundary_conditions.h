@@ -1,8 +1,10 @@
-// SPDX-FileCopyrightText: Copyright (c) 2019-2024 The Lethe Authors
+// SPDX-FileCopyrightText: Copyright (c) 2019-2025 The Lethe Authors
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
 #ifndef lethe_boundary_conditions_h
 #define lethe_boundary_conditions_h
+
+#include <core/utilities.h>
 
 #include <deal.II/base/function.h>
 #include <deal.II/base/parameter_handler.h>
@@ -38,7 +40,6 @@ DeclException1(CahnHilliardBoundaryDuplicated,
                types::boundary_id,
                << "Cahn Hilliard boundary id: " << arg1
                << " has already been declared as a boundary condition");
-
 
 DeclException1(VOFBoundaryDuplicated,
                types::boundary_id,
@@ -236,7 +237,7 @@ namespace BoundaryConditions
     prm.declare_entry(
       "id",
       Utilities::to_string(default_boundary_id, 2),
-      Patterns::Integer(),
+      Patterns::List(Patterns::Integer()),
       "Mesh id for boundary conditions. Default entry is -1 to ensure that the id is set by the user");
 
     prm.declare_entry(
@@ -306,127 +307,139 @@ namespace BoundaryConditions
   void
   NSBoundaryConditions<dim>::parse_boundary(ParameterHandler &prm)
   {
+    // Parse the list of boundary ids
+    std::vector<types::boundary_id> boundary_ids =
+      convert_string_to_vector<types::boundary_id>(prm, "id");
+
+    // Check if the list contains at least one boundary id
     AssertThrow(
-      prm.get_integer("id") >= 0,
+      boundary_ids.size() > 0,
       ExcMessage(
-        "A boundary id has not been set for one of the fluid dynamics boundary condition. Please ensure that the id is set for every boundary condition."));
+        "A boundary id has not been set for one of the fluid dynamics boundary conditions. Please ensure that the id is set for every boundary condition."));
 
-    types::boundary_id boundary_id = prm.get_integer("id");
-
-    AssertThrow(this->type.find(boundary_id) == this->type.end(),
-                NavierStokesBoundaryDuplicated(boundary_id));
-
-
-    // Allocate the navier_stokes_functions object for every boundary condition
-    // to ensure that they have a defined function and a center of rotation.
-    navier_stokes_functions[boundary_id] =
-      std::make_shared<NSBoundaryFunctions<dim>>();
-
-    prm.enter_subsection("u");
-    navier_stokes_functions[boundary_id]->u.parse_parameters(prm);
-    prm.leave_subsection();
-
-    prm.enter_subsection("v");
-    navier_stokes_functions[boundary_id]->v.parse_parameters(prm);
-    prm.leave_subsection();
-
-    prm.enter_subsection("w");
-    navier_stokes_functions[boundary_id]->w.parse_parameters(prm);
-    prm.leave_subsection();
-
-    prm.enter_subsection("p");
-    navier_stokes_functions[boundary_id]->p.parse_parameters(prm);
-    prm.leave_subsection();
-
-    prm.enter_subsection("center of rotation");
-    navier_stokes_functions[boundary_id]->center_of_rotation[0] =
-      prm.get_double("x");
-    navier_stokes_functions[boundary_id]->center_of_rotation[1] =
-      prm.get_double("y");
-
-    if (dim == 3)
-      navier_stokes_functions[boundary_id]->center_of_rotation[2] =
-        prm.get_double("z");
-    prm.leave_subsection();
-
-    // Establish the type of boundary condition
-    const std::string op = prm.get("type");
-    if (op == "none")
-      this->type[boundary_id] = BoundaryType::none;
-    if (op == "noslip")
-      this->type[boundary_id] = BoundaryType::noslip;
-    if (op == "slip")
-      this->type[boundary_id] = BoundaryType::slip;
-    if (op == "function" || op == "function weak" || op == "partial slip")
+    // and unique
+    for (const auto boundary_id : boundary_ids)
       {
-        if (op == "function")
-          this->type[boundary_id] = BoundaryType::function;
-        else if (op == "partial slip")
-          this->type[boundary_id] = BoundaryType::partial_slip;
-        else
-          this->type[boundary_id] = BoundaryType::function_weak;
-      }
-    if (op == "pressure")
-      {
-        this->type[boundary_id] = BoundaryType::pressure;
-      }
-    if (op == "periodic")
-      {
-        types::boundary_id periodic_boundary_id =
-          prm.get_integer("periodic id");
+        AssertThrow(this->type.find(boundary_id) == this->type.end(),
+                    NavierStokesBoundaryDuplicated(boundary_id));
 
-        this->type[boundary_id] = BoundaryType::periodic;
-
-        // We attribute a periodic neighbor boundary type to the neighbor
-        // boundary to ensure that all boundaries have a defined type
-        this->type[periodic_boundary_id] = BoundaryType::periodic_neighbor;
-
-        // We store the periodic id and direction
-        this->periodic_neighbor_id[boundary_id] = periodic_boundary_id;
-        this->periodic_direction[boundary_id] =
-          prm.get_integer("periodic direction");
-
-        // Allocate the navier_stokes_functions object for the periodic neighbor
+        // Allocate the navier_stokes_functions object for every boundary
         // condition to ensure that they have a defined function and a center of
-        // rotation. Parse the information of the boundary id to duplicate it.
-        navier_stokes_functions[periodic_boundary_id] =
+        // rotation.
+        navier_stokes_functions[boundary_id] =
           std::make_shared<NSBoundaryFunctions<dim>>();
 
         prm.enter_subsection("u");
-        navier_stokes_functions[periodic_boundary_id]->u.parse_parameters(prm);
+        navier_stokes_functions[boundary_id]->u.parse_parameters(prm);
         prm.leave_subsection();
 
         prm.enter_subsection("v");
-        navier_stokes_functions[periodic_boundary_id]->v.parse_parameters(prm);
+        navier_stokes_functions[boundary_id]->v.parse_parameters(prm);
         prm.leave_subsection();
 
         prm.enter_subsection("w");
-        navier_stokes_functions[periodic_boundary_id]->w.parse_parameters(prm);
+        navier_stokes_functions[boundary_id]->w.parse_parameters(prm);
         prm.leave_subsection();
 
         prm.enter_subsection("p");
-        navier_stokes_functions[periodic_boundary_id]->p.parse_parameters(prm);
+        navier_stokes_functions[boundary_id]->p.parse_parameters(prm);
         prm.leave_subsection();
 
         prm.enter_subsection("center of rotation");
-        navier_stokes_functions[periodic_boundary_id]->center_of_rotation[0] =
+        navier_stokes_functions[boundary_id]->center_of_rotation[0] =
           prm.get_double("x");
-        navier_stokes_functions[periodic_boundary_id]->center_of_rotation[1] =
+        navier_stokes_functions[boundary_id]->center_of_rotation[1] =
           prm.get_double("y");
 
         if (dim == 3)
-          navier_stokes_functions[periodic_boundary_id]->center_of_rotation[2] =
+          navier_stokes_functions[boundary_id]->center_of_rotation[2] =
             prm.get_double("z");
         prm.leave_subsection();
-      }
-    if (op == "outlet")
-      {
-        this->type[boundary_id] = BoundaryType::outlet;
-      }
 
-    this->beta[boundary_id] = prm.get_double("beta");
-    this->boundary_layer_thickness[boundary_id] =
-      prm.get_double("boundary layer thickness");
+        // Establish the type of boundary condition
+        const std::string op = prm.get("type");
+        if (op == "none")
+          this->type[boundary_id] = BoundaryType::none;
+        if (op == "noslip")
+          this->type[boundary_id] = BoundaryType::noslip;
+        if (op == "slip")
+          this->type[boundary_id] = BoundaryType::slip;
+        if (op == "function" || op == "function weak" || op == "partial slip")
+          {
+            if (op == "function")
+              this->type[boundary_id] = BoundaryType::function;
+            else if (op == "partial slip")
+              this->type[boundary_id] = BoundaryType::partial_slip;
+            else
+              this->type[boundary_id] = BoundaryType::function_weak;
+          }
+        if (op == "pressure")
+          {
+            this->type[boundary_id] = BoundaryType::pressure;
+          }
+        if (op == "periodic")
+          {
+            types::boundary_id periodic_boundary_id =
+              prm.get_integer("periodic id");
+
+            this->type[boundary_id] = BoundaryType::periodic;
+
+            // We attribute a periodic neighbor boundary type to the neighbor
+            // boundary to ensure that all boundaries have a defined type
+            this->type[periodic_boundary_id] = BoundaryType::periodic_neighbor;
+
+            // We store the periodic id and direction
+            this->periodic_neighbor_id[boundary_id] = periodic_boundary_id;
+            this->periodic_direction[boundary_id] =
+              prm.get_integer("periodic direction");
+
+            // Allocate the navier_stokes_functions object for the periodic
+            // neighbor condition to ensure that they have a defined function
+            // and a center of rotation. Parse the information of the boundary
+            // id to duplicate it.
+            navier_stokes_functions[periodic_boundary_id] =
+              std::make_shared<NSBoundaryFunctions<dim>>();
+
+            prm.enter_subsection("u");
+            navier_stokes_functions[periodic_boundary_id]->u.parse_parameters(
+              prm);
+            prm.leave_subsection();
+
+            prm.enter_subsection("v");
+            navier_stokes_functions[periodic_boundary_id]->v.parse_parameters(
+              prm);
+            prm.leave_subsection();
+
+            prm.enter_subsection("w");
+            navier_stokes_functions[periodic_boundary_id]->w.parse_parameters(
+              prm);
+            prm.leave_subsection();
+
+            prm.enter_subsection("p");
+            navier_stokes_functions[periodic_boundary_id]->p.parse_parameters(
+              prm);
+            prm.leave_subsection();
+
+            prm.enter_subsection("center of rotation");
+            navier_stokes_functions[periodic_boundary_id]
+              ->center_of_rotation[0] = prm.get_double("x");
+            navier_stokes_functions[periodic_boundary_id]
+              ->center_of_rotation[1] = prm.get_double("y");
+
+            if (dim == 3)
+              navier_stokes_functions[periodic_boundary_id]
+                ->center_of_rotation[2] = prm.get_double("z");
+            prm.leave_subsection();
+          }
+        if (op == "outlet")
+          {
+            this->type[boundary_id] = BoundaryType::outlet;
+          }
+
+        this->beta[boundary_id] = prm.get_double("beta");
+        this->boundary_layer_thickness[boundary_id] =
+          prm.get_double("boundary layer thickness");
+      }
   }
 
 
@@ -674,81 +687,92 @@ namespace BoundaryConditions
   void
   HTBoundaryConditions<dim>::parse_boundary(ParameterHandler &prm)
   {
+    // Parse the list of boundary ids
+    std::vector<types::boundary_id> boundary_ids =
+      convert_string_to_vector<types::boundary_id>(prm, "id");
+
+    // Check if the list contains at least one boundary id
     AssertThrow(
-      prm.get_integer("id") >= 0,
+      boundary_ids.size() > 0,
       ExcMessage(
-        "An invalid boundary id has been given for a heat transfer boundary condition."));
+        "A boundary id has not been set for one of the heat transfer boundary conditions. Please ensure that the id is set for every boundary condition."));
 
-    types::boundary_id boundary_id = prm.get_integer("id");
-
-    AssertThrow(this->type.find(boundary_id) == this->type.end(),
-                HeatTransferBoundaryDuplicated(boundary_id));
-
-    const std::string op = prm.get("type");
-    if (op == "noflux")
+    // Loop through all boundary ids to ensure that they are all non-negative
+    // and unique
+    for (const auto boundary_id : boundary_ids)
       {
-        this->type[boundary_id] = BoundaryType::noflux;
-      }
-    else if (op == "temperature")
-      {
-        this->type[boundary_id] = BoundaryType::temperature;
-      }
-    else if (op == "convection-radiation-flux")
-      {
-        this->type[boundary_id]           = BoundaryType::convection_radiation;
-        this->has_convection_radiation_bc = true;
+        AssertThrow(this->type.find(boundary_id) == this->type.end(),
+                    HeatTransferBoundaryDuplicated(boundary_id));
 
-        // Emissivity validity (0 <= emissivity <= 1) will be checked at
-        // evaluation.
+
+        const std::string op = prm.get("type");
+        if (op == "noflux")
+          {
+            this->type[boundary_id] = BoundaryType::noflux;
+          }
+        else if (op == "temperature")
+          {
+            this->type[boundary_id] = BoundaryType::temperature;
+          }
+        else if (op == "convection-radiation-flux")
+          {
+            this->type[boundary_id] = BoundaryType::convection_radiation;
+            this->has_convection_radiation_bc = true;
+
+            // Emissivity validity (0 <= emissivity <= 1) will be checked at
+            // evaluation.
+          }
+        else if (op == "periodic")
+          {
+            types::boundary_id periodic_boundary_id =
+              prm.get_integer("periodic id");
+
+            this->type[boundary_id] = BoundaryType::periodic;
+
+            // We attribute a periodic neighbor boundary type to the neighbor
+            // boundary to ensure that all boundaries have a defined type
+            this->type[periodic_boundary_id] = BoundaryType::periodic_neighbor;
+
+            // We store the periodic id and direction
+            this->periodic_neighbor_id[boundary_id] = periodic_boundary_id;
+            this->periodic_direction[boundary_id] =
+              prm.get_integer("periodic direction");
+          }
+        else
+          {
+            AssertThrow(
+              false,
+              ExcMessage("Unknown boundary condition type for heat transfer."));
+          }
+
+        // All the functions are parsed since they might be used for
+        // post-processing
+        prm.enter_subsection("value");
+        this->dirichlet_value[boundary_id] =
+          std::make_shared<Functions::ParsedFunction<dim>>();
+        this->dirichlet_value[boundary_id]->parse_parameters(prm);
+        prm.leave_subsection();
+        prm.enter_subsection("h");
+        this->h[boundary_id] =
+          std::make_shared<Functions::ParsedFunction<dim>>();
+        this->h[boundary_id]->parse_parameters(prm);
+        prm.leave_subsection();
+        prm.enter_subsection("Tinf");
+        this->Tinf[boundary_id] =
+          std::make_shared<Functions::ParsedFunction<dim>>();
+        this->Tinf[boundary_id]->parse_parameters(prm);
+        prm.leave_subsection();
+        prm.enter_subsection("emissivity");
+        this->emissivity[boundary_id] =
+          std::make_shared<Functions::ParsedFunction<dim>>();
+        this->emissivity[boundary_id]->parse_parameters(prm);
+        prm.leave_subsection();
+        prm.enter_subsection("heat_flux");
+        this->heat_flux_bc[boundary_id] =
+          std::make_shared<Functions::ParsedFunction<dim>>();
+        this->heat_flux_bc[boundary_id]->parse_parameters(prm);
+        prm.leave_subsection();
       }
-    else if (op == "periodic")
-      {
-        types::boundary_id periodic_boundary_id =
-          prm.get_integer("periodic id");
-
-        this->type[boundary_id] = BoundaryType::periodic;
-
-        // We attribute a periodic neighbor boundary type to the neighbor
-        // boundary to ensure that all boundaries have a defined type
-        this->type[periodic_boundary_id] = BoundaryType::periodic_neighbor;
-
-        // We store the periodic id and direction
-        this->periodic_neighbor_id[boundary_id] = periodic_boundary_id;
-        this->periodic_direction[boundary_id] =
-          prm.get_integer("periodic direction");
-      }
-    else
-      {
-        AssertThrow(false,
-                    ExcMessage(
-                      "Unknown boundary condition type for heat transfer."));
-      }
-
-    // All the functions are parsed since they might be used for post-processing
-    prm.enter_subsection("value");
-    this->dirichlet_value[boundary_id] =
-      std::make_shared<Functions::ParsedFunction<dim>>();
-    this->dirichlet_value[boundary_id]->parse_parameters(prm);
-    prm.leave_subsection();
-    prm.enter_subsection("h");
-    this->h[boundary_id] = std::make_shared<Functions::ParsedFunction<dim>>();
-    this->h[boundary_id]->parse_parameters(prm);
-    prm.leave_subsection();
-    prm.enter_subsection("Tinf");
-    this->Tinf[boundary_id] =
-      std::make_shared<Functions::ParsedFunction<dim>>();
-    this->Tinf[boundary_id]->parse_parameters(prm);
-    prm.leave_subsection();
-    prm.enter_subsection("emissivity");
-    this->emissivity[boundary_id] =
-      std::make_shared<Functions::ParsedFunction<dim>>();
-    this->emissivity[boundary_id]->parse_parameters(prm);
-    prm.leave_subsection();
-    prm.enter_subsection("heat_flux");
-    this->heat_flux_bc[boundary_id] =
-      std::make_shared<Functions::ParsedFunction<dim>>();
-    this->heat_flux_bc[boundary_id]->parse_parameters(prm);
-    prm.leave_subsection();
   }
 
   /**
@@ -907,51 +931,62 @@ namespace BoundaryConditions
   void
   TracerBoundaryConditions<dim>::parse_boundary(ParameterHandler &prm)
   {
+    // Parse the list of boundary ids
+    std::vector<types::boundary_id> boundary_ids =
+      convert_string_to_vector<types::boundary_id>(prm, "id");
+
+    // Check if the list contains at least one boundary id
     AssertThrow(
-      prm.get_integer("id") >= 0,
+      boundary_ids.size() > 0,
       ExcMessage(
-        "An invalid boundary id has been given for a tracer boundary condition."));
+        "A boundary id has not been set for one of the tracer boundary conditions. Please ensure that the id is set for every boundary condition."));
 
-    types::boundary_id boundary_id = prm.get_integer("id");
 
-    AssertThrow(this->type.find(boundary_id) == this->type.end(),
-                TracerBoundaryDuplicated(boundary_id));
-
-    // Allocate function for tracer
-    tracer[boundary_id]  = std::make_shared<Functions::ParsedFunction<dim>>();
-    const std::string op = prm.get("type");
-    if (op == "dirichlet")
+    // Loop through all boundary ids to ensure that they are all non-negative
+    // and unique
+    for (const auto boundary_id : boundary_ids)
       {
-        this->type[boundary_id] = BoundaryType::tracer_dirichlet;
-        prm.enter_subsection("dirichlet");
+        AssertThrow(this->type.find(boundary_id) == this->type.end(),
+                    TracerBoundaryDuplicated(boundary_id));
 
-        tracer[boundary_id]->parse_parameters(prm);
-        prm.leave_subsection();
-      }
-    else if (op == "outlet")
-      {
-        this->type[boundary_id] = BoundaryType::outlet;
-      }
-    else if (op == "periodic")
-      {
-        types::boundary_id periodic_boundary_id =
-          prm.get_integer("periodic id");
+        // Allocate function for tracer
+        tracer[boundary_id] =
+          std::make_shared<Functions::ParsedFunction<dim>>();
+        const std::string op = prm.get("type");
+        if (op == "dirichlet")
+          {
+            this->type[boundary_id] = BoundaryType::tracer_dirichlet;
+            prm.enter_subsection("dirichlet");
 
-        this->type[boundary_id] = BoundaryType::periodic;
+            tracer[boundary_id]->parse_parameters(prm);
+            prm.leave_subsection();
+          }
+        else if (op == "outlet")
+          {
+            this->type[boundary_id] = BoundaryType::outlet;
+          }
+        else if (op == "periodic")
+          {
+            types::boundary_id periodic_boundary_id =
+              prm.get_integer("periodic id");
 
-        // We attribute a periodic neighbor boundary type to the neighbor
-        // boundary to ensure that all boundaries have a defined type
-        this->type[periodic_boundary_id] = BoundaryType::periodic_neighbor;
+            this->type[boundary_id] = BoundaryType::periodic;
 
-        // We store the periodic id and direction
-        this->periodic_neighbor_id[boundary_id] = periodic_boundary_id;
-        this->periodic_direction[boundary_id] =
-          prm.get_integer("periodic direction");
-      }
-    else
-      {
-        AssertThrow(false,
-                    ExcMessage("Unknown boundary condition type for tracers."));
+            // We attribute a periodic neighbor boundary type to the neighbor
+            // boundary to ensure that all boundaries have a defined type
+            this->type[periodic_boundary_id] = BoundaryType::periodic_neighbor;
+
+            // We store the periodic id and direction
+            this->periodic_neighbor_id[boundary_id] = periodic_boundary_id;
+            this->periodic_direction[boundary_id] =
+              prm.get_integer("periodic direction");
+          }
+        else
+          {
+            AssertThrow(false,
+                        ExcMessage(
+                          "Unknown boundary condition type for tracers."));
+          }
       }
   }
 
@@ -1114,69 +1149,77 @@ namespace BoundaryConditions
   void
   CahnHilliardBoundaryConditions<dim>::parse_boundary(ParameterHandler &prm)
   {
+    // Parse the list of boundary ids
+    std::vector<types::boundary_id> boundary_ids =
+      convert_string_to_vector<types::boundary_id>(prm, "id");
+
+    // Check if the list contains at least one boundary id
     AssertThrow(
-      prm.get_integer("id") >= 0,
+      boundary_ids.size() > 0,
       ExcMessage(
-        "An invalid boundary id has been given for a Cahn Hilliard boundary condition."));
-
-    types::boundary_id boundary_id = prm.get_integer("id");
-
-    AssertThrow(this->type.find(boundary_id) == this->type.end(),
-                CahnHilliardBoundaryDuplicated(boundary_id));
-
-    // Create and parse the phase order boundary condition for all cases.
-    prm.enter_subsection("phi");
-    this->bcFunctions[boundary_id] =
-      std::make_shared<CahnHilliardBoundaryFunctions<dim>>();
-    bcFunctions[boundary_id]->phi.parse_parameters(prm);
-    prm.leave_subsection();
-
-    // Do the same with the angle of contact
-    this->angle_of_contact[boundary_id] = prm.get_double("angle value");
-
-    const std::string op = prm.get("type");
-    if (op == "none")
+        "A boundary id has not been set for one of the Cahn Hilliard boundary conditions. Please ensure that the id is set for every boundary condition."));
+    // Loop through all boundary ids to ensure that they are all non-negative
+    // and unique
+    for (const auto boundary_id : boundary_ids)
       {
-        this->type[boundary_id] = BoundaryType::none;
-      }
-    else if (op == "noflux")
-      {
-        this->type[boundary_id] = BoundaryType::cahn_hilliard_noflux;
-      }
-    else if (op == "dirichlet")
-      {
-        this->type[boundary_id] =
-          BoundaryType::cahn_hilliard_dirichlet_phase_order;
-      }
-    else if (op == "angle_of_contact")
-      {
-        this->type[boundary_id] = BoundaryType::cahn_hilliard_angle_of_contact;
-      }
-    else if (op == "free_angle")
-      {
-        this->type[boundary_id] = BoundaryType::cahn_hilliard_free_angle;
-      }
-    else if (op == "periodic")
-      {
-        types::boundary_id periodic_boundary_id =
-          prm.get_integer("periodic id");
+        AssertThrow(this->type.find(boundary_id) == this->type.end(),
+                    CahnHilliardBoundaryDuplicated(boundary_id));
 
-        this->type[boundary_id] = BoundaryType::periodic;
+        // Create and parse the phase order boundary condition for all cases.
+        prm.enter_subsection("phi");
+        this->bcFunctions[boundary_id] =
+          std::make_shared<CahnHilliardBoundaryFunctions<dim>>();
+        bcFunctions[boundary_id]->phi.parse_parameters(prm);
+        prm.leave_subsection();
 
-        // We attribute a periodic neighbor boundary type to the neighbor
-        // boundary to ensure that all boundaries have a defined type
-        this->type[periodic_boundary_id] = BoundaryType::periodic_neighbor;
+        // Do the same with the angle of contact
+        this->angle_of_contact[boundary_id] = prm.get_double("angle value");
 
-        // We store the periodic id and direction
-        this->periodic_neighbor_id[boundary_id] = periodic_boundary_id;
-        this->periodic_direction[boundary_id] =
-          prm.get_integer("periodic direction");
-      }
-    else
-      {
-        AssertThrow(false,
-                    ExcMessage(
-                      "Unknown boundary condition type for Cahn-Hilliard."));
+        const std::string op = prm.get("type");
+        if (op == "none")
+          {
+            this->type[boundary_id] = BoundaryType::none;
+          }
+        else if (op == "noflux")
+          {
+            this->type[boundary_id] = BoundaryType::cahn_hilliard_noflux;
+          }
+        else if (op == "dirichlet")
+          {
+            this->type[boundary_id] =
+              BoundaryType::cahn_hilliard_dirichlet_phase_order;
+          }
+        else if (op == "angle_of_contact")
+          {
+            this->type[boundary_id] =
+              BoundaryType::cahn_hilliard_angle_of_contact;
+          }
+        else if (op == "free_angle")
+          {
+            this->type[boundary_id] = BoundaryType::cahn_hilliard_free_angle;
+          }
+        else if (op == "periodic")
+          {
+            types::boundary_id periodic_boundary_id =
+              prm.get_integer("periodic id");
+
+            this->type[boundary_id] = BoundaryType::periodic;
+
+            // We attribute a periodic neighbor boundary type to the neighbor
+            // boundary to ensure that all boundaries have a defined type
+            this->type[periodic_boundary_id] = BoundaryType::periodic_neighbor;
+
+            // We store the periodic id and direction
+            this->periodic_neighbor_id[boundary_id] = periodic_boundary_id;
+            this->periodic_direction[boundary_id] =
+              prm.get_integer("periodic direction");
+          }
+        else
+          {
+            AssertThrow(
+              false,
+              ExcMessage("Unknown boundary condition type for Cahn-Hilliard."));
+          }
       }
   }
 
@@ -1328,45 +1371,53 @@ namespace BoundaryConditions
   void
   VOFBoundaryConditions<dim>::parse_boundary(ParameterHandler &prm)
   {
+    // Parse the list of boundary ids
+    std::vector<types::boundary_id> boundary_ids =
+      convert_string_to_vector<types::boundary_id>(prm, "id");
+
+    // Check if the list contains at least one boundary id
     AssertThrow(
-      prm.get_integer("id") >= 0,
+      boundary_ids.size() > 0,
       ExcMessage(
-        "An invalid boundary id has been given for a VOF boundary condition."));
+        "A boundary id has not been set for one of the VOF boundary conditions. Please ensure that the id is set for every boundary condition."));
 
-    types::boundary_id boundary_id = prm.get_integer("id");
-
-    AssertThrow(this->type.find(boundary_id) == this->type.end(),
-                VOFBoundaryDuplicated(boundary_id));
-
-    if (auto const option = prm.get("type"); option == "none")
+    // Loop through all boundary ids to ensure that they are all non-negative
+    // and unique
+    for (const auto boundary_id : boundary_ids)
       {
-        this->type[boundary_id] = BoundaryType::none;
-      }
+        AssertThrow(this->type.find(boundary_id) == this->type.end(),
+                    VOFBoundaryDuplicated(boundary_id));
 
-    if (auto const option = prm.get("type"); option == "dirichlet")
-      {
-        this->type[boundary_id] = BoundaryType::vof_dirichlet;
-        prm.enter_subsection("dirichlet");
-        phase_fraction[boundary_id] =
-          std::make_shared<Functions::ParsedFunction<dim>>();
-        phase_fraction[boundary_id]->parse_parameters(prm);
-        prm.leave_subsection();
-      }
-    if (auto const option = prm.get("type"); option == "periodic")
-      {
-        types::boundary_id periodic_boundary_id =
-          prm.get_integer("periodic id");
+        if (auto const option = prm.get("type"); option == "none")
+          {
+            this->type[boundary_id] = BoundaryType::none;
+          }
 
-        this->type[boundary_id] = BoundaryType::periodic;
+        if (auto const option = prm.get("type"); option == "dirichlet")
+          {
+            this->type[boundary_id] = BoundaryType::vof_dirichlet;
+            prm.enter_subsection("dirichlet");
+            phase_fraction[boundary_id] =
+              std::make_shared<Functions::ParsedFunction<dim>>();
+            phase_fraction[boundary_id]->parse_parameters(prm);
+            prm.leave_subsection();
+          }
+        if (auto const option = prm.get("type"); option == "periodic")
+          {
+            types::boundary_id periodic_boundary_id =
+              prm.get_integer("periodic id");
 
-        // We attribute a periodic neighbor boundary type to the neighbor
-        // boundary to ensure that all boundaries have a defined type
-        this->type[periodic_boundary_id] = BoundaryType::periodic_neighbor;
+            this->type[boundary_id] = BoundaryType::periodic;
 
-        // We store the periodic id and direction
-        this->periodic_neighbor_id[boundary_id] = periodic_boundary_id;
-        this->periodic_direction[boundary_id] =
-          prm.get_integer("periodic direction");
+            // We attribute a periodic neighbor boundary type to the neighbor
+            // boundary to ensure that all boundaries have a defined type
+            this->type[periodic_boundary_id] = BoundaryType::periodic_neighbor;
+
+            // We store the periodic id and direction
+            this->periodic_neighbor_id[boundary_id] = periodic_boundary_id;
+            this->periodic_direction[boundary_id] =
+              prm.get_integer("periodic direction");
+          }
       }
   }
 
@@ -1499,7 +1550,8 @@ NavierStokesPressureFunctionDefined<dim>::value(
 
 /**
  * @brief Class that implements a boundary conditions for the Cahn-Hilliard equation
- * where the phase and chemical potential are defined using individual functions
+ * where the phase and chemical potential are defined using individual
+ * functions
  */
 template <int dim>
 class CahnHilliardFunctionDefined : public Function<dim>

@@ -1854,48 +1854,6 @@ namespace Parameters
     parse_parameters(ParameterHandler &prm);
   };
 
-  /**
-   * @brief Return the vector of size N of entry @entry_string. If the entry is
-   * specified in the .prm file, then the changed value is returned, otherwise
-   * the default value is returned. If the entry is not equivalent to a vector,
-   * an error will be thrown.
-   *
-   * @tparam T The type of vector (int, unsigned int or double)
-   * @param prm A parameter handler which is currently used to parse the simulation
-   * information.
-   * @param entry_string A declare string in the parameter file.
-   *
-   * @return A std::vector<double> corresponding to the entry_string in the prm file.
-   */
-  template <typename T>
-  std::vector<T>
-  convert_string_to_vector(ParameterHandler  &prm,
-                           const std::string &entry_string)
-  {
-    std::string              full_str = prm.get(entry_string);
-    std::vector<std::string> vector_of_string(
-      Utilities::split_string_list(full_str));
-    if constexpr (std::is_same<T, int>::value)
-      {
-        std::vector<T> vector = Utilities::string_to_int(vector_of_string);
-        return vector;
-      }
-    if constexpr (std::is_same<T, double>::value)
-      {
-        std::vector<T> vector = Utilities::string_to_double(vector_of_string);
-        return vector;
-      }
-    if constexpr (std::is_same<T, std::string>::value)
-      {
-        return vector_of_string;
-      }
-
-    AssertThrow(false,
-                ExcMessage("Error: convert_string_to_vector only works for "
-                           "int, double and string types."));
-
-    return std::vector<T>();
-  }
 
 } // namespace Parameters
 #endif
