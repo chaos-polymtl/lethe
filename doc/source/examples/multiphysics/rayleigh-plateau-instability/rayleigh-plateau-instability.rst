@@ -202,7 +202,7 @@ In the ``boundary conditions`` subsection, the inlet velocity perturbation is sp
       subsection bc 1
         set id                 = 2
         set type               = periodic
-        set periodic_id        = 3
+        set periodic id        = 3
         set periodic_direction = 1
       end
       subsection bc 2
@@ -231,7 +231,7 @@ Lasty, in the ``boundary conditions VOF`` subsection we ensure that ``fluid 1`` 
       subsection bc 1
         set id                 = 2
         set type               = periodic
-        set periodic_id        = 3
+        set periodic id        = 3
         set periodic_direction = 1
       end
       subsection bc 2
