@@ -147,11 +147,7 @@ FluidDynamicsMatrixBased<dim>::setup_dofs_fd()
 
   // Add sparsity pattern entries
   if (this->simulation_parameters.mortar_parameters.enable)
-    {
-      this->mortar_coupling_operator->add_sparsity_pattern_entries(dsp);
-      sparsity_pattern.copy_from(dsp);
-    }
-
+    this->mortar_coupling_operator->add_sparsity_pattern_entries(dsp);
 
   SparsityTools::distribute_sparsity_pattern(
     dsp,
@@ -252,7 +248,6 @@ FluidDynamicsMatrixBased<dim>::update_mortar_configuration()
 
       // Add mortar sparsity pattern entries
       this->mortar_coupling_operator->add_sparsity_pattern_entries(dsp);
-      sparsity_pattern.copy_from(dsp);
 
       SparsityTools::distribute_sparsity_pattern(
         dsp,
