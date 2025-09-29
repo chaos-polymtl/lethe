@@ -467,8 +467,8 @@ The default parameters for <code class="docutils literal notranslate"><span clas
   subsection bc 0
     set id                 = 0
     set type               = periodic
-    set periodic_id        = 1
-    set periodic_direction = 0
+    set periodic id        = 1
+    set periodic direction = 0
   end
   subsection bc 1
     set id   = 1
@@ -516,7 +516,7 @@ end
 <dt><code class="docutils literal notranslate"><span class="pre">type</span></code>: type of boundary condition being imposed. At the moment, choices are:</dt><dd><ul class="simple">
 <li><p><code class="docutils literal notranslate"><span class="pre">noflux</span></code> (default) so that there is no heat transfer boundary condition,</p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">temperature</span></code> (Dirichlet BC), to impose a given temperature <code class="docutils literal notranslate"><span class="pre">value</span></code> at the boundary,</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">periodic</span></code> to impose periodicity between boundaries. <code class="docutils literal notranslate"><span class="pre">periodic</span> <span class="pre">id</span></code> and <code class="docutils literal notranslate"><span class="pre">periodic_direction</span></code> specify the id and direction of the matching periodic boundary condition. For example, if boundary id 0 (located at xmin) is matched with boundary id 1 (located at xmax), we would set <code class="docutils literal notranslate"><span class="pre">id</span> <span class="pre">=</span> <span class="pre">0</span></code>, <code class="docutils literal notranslate"><span class="pre">periodic_id</span> <span class="pre">=</span> <span class="pre">1</span></code> and <code class="docutils literal notranslate"><span class="pre">periodic_direction</span> <span class="pre">=</span> <span class="pre">0</span></code>;</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">periodic</span></code> to impose periodicity between boundaries. <code class="docutils literal notranslate"><span class="pre">periodic</span> <span class="pre">id</span></code> and <code class="docutils literal notranslate"><span class="pre">periodic</span> <span class="pre">direction</span></code> specify the id and direction of the matching periodic boundary condition. For example, if boundary id 0 (located at xmin) is matched with boundary id 1 (located at xmax), we would set <code class="docutils literal notranslate"><span class="pre">id</span> <span class="pre">=</span> <span class="pre">0</span></code>, <code class="docutils literal notranslate"><span class="pre">periodic</span> <span class="pre">id</span> <span class="pre">=</span> <span class="pre">1</span></code> and <code class="docutils literal notranslate"><span class="pre">periodic</span> <span class="pre">direction</span> <span class="pre">=</span> <span class="pre">0</span></code>;</p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">convection-radiation-flux</span></code> (Robin BC) for cooling/heating, depending on the environment temperature at the boundary <code class="docutils literal notranslate"><span class="pre">Tinf</span></code>, with a given heat transfer coefficient <code class="docutils literal notranslate"><span class="pre">h</span></code> and <code class="docutils literal notranslate"><span class="pre">emissivity</span></code> of the boundary <span class="math notranslate nohighlight">\(\mathbf{\epsilon}\)</span> following Newton’s law of cooling (and heating) and Stefan-Boltzmann law of radiation. It is also possible to impose a given heat flux (<span class="math notranslate nohighlight">\(q_0\)</span>) by using the parameter <code class="docutils literal notranslate"><span class="pre">heat_flux</span></code>. This BC can be represented by:</p></li>
 </ul>
 <div class="math-wrapper docutils container">
@@ -546,8 +546,8 @@ end
   subsection bc 0
     set id                 = 0
     set type               = periodic
-    set periodic_id        = 1
-    set periodic_direction = 0
+    set periodic id        = 1
+    set periodic direction = 0
   end
   subsection bc 1
     set id   = 1
@@ -566,7 +566,7 @@ end
 <li><dl class="simple">
 <dt><code class="docutils literal notranslate"><span class="pre">type</span></code>: This is the type of boundary condition being imposed:</dt><dd><ul>
 <li><p><code class="docutils literal notranslate"><span class="pre">dirichlet</span></code> to impose specific values;</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">periodic</span></code> to impose periodicity between boundaries. <code class="docutils literal notranslate"><span class="pre">periodic</span> <span class="pre">id</span></code> and <code class="docutils literal notranslate"><span class="pre">periodic_direction</span></code> specify the id and direction of the matching periodic boundary condition. For example, if boundary id 0 (located at xmin) is matched with boundary id 1 (located at xmax), we would set <code class="docutils literal notranslate"><span class="pre">id</span> <span class="pre">=</span> <span class="pre">0</span></code>, <code class="docutils literal notranslate"><span class="pre">periodic_id</span> <span class="pre">=</span> <span class="pre">1</span></code> and <code class="docutils literal notranslate"><span class="pre">periodic_direction</span> <span class="pre">=</span> <span class="pre">0</span></code>.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">periodic</span></code> to impose periodicity between boundaries. <code class="docutils literal notranslate"><span class="pre">periodic</span> <span class="pre">id</span></code> and <code class="docutils literal notranslate"><span class="pre">periodic</span> <span class="pre">direction</span></code> specify the id and direction of the matching periodic boundary condition. For example, if boundary id 0 (located at xmin) is matched with boundary id 1 (located at xmax), we would set <code class="docutils literal notranslate"><span class="pre">id</span> <span class="pre">=</span> <span class="pre">0</span></code>, <code class="docutils literal notranslate"><span class="pre">periodic</span> <span class="pre">id</span> <span class="pre">=</span> <span class="pre">1</span></code> and <code class="docutils literal notranslate"><span class="pre">periodic</span> <span class="pre">direction</span> <span class="pre">=</span> <span class="pre">0</span></code>.</p></li>
 </ul>
 </dd>
 </dl>
@@ -582,8 +582,8 @@ end
   subsection bc 0
     set id                 = 0
     set type               = periodic
-    set periodic_id        = 1
-    set periodic_direction = 0
+    set periodic id        = 1
+    set periodic direction = 0
   end
   subsection bc 1
     set id   = 1
@@ -616,7 +616,7 @@ end
 <dt><code class="docutils literal notranslate"><span class="pre">type</span></code>: This is the type of boundary condition being imposed. At the moment, choices are:</dt><dd><ul>
 <li><p><code class="docutils literal notranslate"><span class="pre">none</span></code> for which nothing happens;</p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">dirichlet</span></code> for inlet and outlet boundary conditions, to specify which fluid should be at the selected boundary;</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">periodic</span></code> to impose periodicity between boundaries. <code class="docutils literal notranslate"><span class="pre">periodic</span> <span class="pre">id</span></code> and <code class="docutils literal notranslate"><span class="pre">periodic_direction</span></code> specify the id and direction of the matching periodic boundary condition. For example, if boundary id 0 (located at xmin) is matched with boundary id 1 (located at xmax), we would set <code class="docutils literal notranslate"><span class="pre">id</span> <span class="pre">=</span> <span class="pre">0</span></code>, <code class="docutils literal notranslate"><span class="pre">periodic_id</span> <span class="pre">=</span> <span class="pre">1</span></code> and <code class="docutils literal notranslate"><span class="pre">periodic_direction</span> <span class="pre">=</span> <span class="pre">0</span></code>.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">periodic</span></code> to impose periodicity between boundaries. <code class="docutils literal notranslate"><span class="pre">periodic</span> <span class="pre">id</span></code> and <code class="docutils literal notranslate"><span class="pre">periodic</span> <span class="pre">direction</span></code> specify the id and direction of the matching periodic boundary condition. For example, if boundary id 0 (located at xmin) is matched with boundary id 1 (located at xmax), we would set <code class="docutils literal notranslate"><span class="pre">id</span> <span class="pre">=</span> <span class="pre">0</span></code>, <code class="docutils literal notranslate"><span class="pre">periodic</span> <span class="pre">id</span> <span class="pre">=</span> <span class="pre">1</span></code> and <code class="docutils literal notranslate"><span class="pre">periodic</span> <span class="pre">direction</span> <span class="pre">=</span> <span class="pre">0</span></code>.</p></li>
 </ul>
 </dd>
 </dl>
@@ -632,8 +632,8 @@ end
   subsection bc 0
     set id                 = 0
     set type               = periodic
-    set periodic_id        = 1
-    set periodic_direction = 0
+    set periodic id        = 1
+    set periodic direction = 0
   end
   subsection bc 1
     set id   = 1
@@ -669,7 +669,7 @@ end
 <li><p><code class="docutils literal notranslate"><span class="pre">dirichlet</span></code>: Imposes a given phase order parameter function on the boundary. This function can depend on position (<span class="math notranslate nohighlight">\(x,y,z\)</span>) and on time (<span class="math notranslate nohighlight">\(t\)</span>).</p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">angle_of_contact</span></code>: Imposes a given angle of contact <code class="docutils literal notranslate"><span class="pre">angle</span> <span class="pre">value</span></code> between the two phases at the boundary. It refers to the inner angle of contact, in degrees (°).</p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">free_angle</span></code>: Leaves the angle as a free variable to be solved.</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">periodic</span></code>: Imposes periodicity between boundaries. <code class="docutils literal notranslate"><span class="pre">periodic</span> <span class="pre">id</span></code> and <code class="docutils literal notranslate"><span class="pre">periodic_direction</span></code> specify the id and direction of the matching periodic boundary condition. For example, if boundary id 0 (located at xmin) is matched with boundary id 1 (located at xmax), we would set <code class="docutils literal notranslate"><span class="pre">id</span> <span class="pre">=</span> <span class="pre">0</span></code>, <code class="docutils literal notranslate"><span class="pre">periodic_id</span> <span class="pre">=</span> <span class="pre">1</span></code> and <code class="docutils literal notranslate"><span class="pre">periodic_direction</span> <span class="pre">=</span> <span class="pre">0</span></code>.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">periodic</span></code>: Imposes periodicity between boundaries. <code class="docutils literal notranslate"><span class="pre">periodic</span> <span class="pre">id</span></code> and <code class="docutils literal notranslate"><span class="pre">periodic</span> <span class="pre">direction</span></code> specify the id and direction of the matching periodic boundary condition. For example, if boundary id 0 (located at xmin) is matched with boundary id 1 (located at xmax), we would set <code class="docutils literal notranslate"><span class="pre">id</span> <span class="pre">=</span> <span class="pre">0</span></code>, <code class="docutils literal notranslate"><span class="pre">periodic</span> <span class="pre">id</span> <span class="pre">=</span> <span class="pre">1</span></code> and <code class="docutils literal notranslate"><span class="pre">periodic</span> <span class="pre">direction</span> <span class="pre">=</span> <span class="pre">0</span></code>.</p></li>
 </ul>
 </dd>
 </dl>
