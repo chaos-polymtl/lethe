@@ -21,8 +21,8 @@ The default parameters for ``temperature`` and ``convection-radiation-flux`` are
     subsection bc 0
       set id                 = 0
       set type               = periodic
-      set periodic_id        = 1
-      set periodic_direction = 0
+      set periodic id        = 1
+      set periodic direction = 0
     end
     subsection bc 1
       set id   = 1
@@ -68,7 +68,7 @@ The default parameters for ``temperature`` and ``convection-radiation-flux`` are
 * ``type``: type of boundary condition being imposed. At the moment, choices are:
     * ``noflux`` (default) so that there is no heat transfer boundary condition,
     * ``temperature`` (Dirichlet BC), to impose a given temperature ``value`` at the boundary,
-    * ``periodic`` to impose periodicity between boundaries. ``periodic id`` and ``periodic_direction`` specify the id and direction of the matching periodic boundary condition. For example, if boundary id 0 (located at xmin) is matched with boundary id 1 (located at xmax), we would set ``id = 0``, ``periodic_id = 1`` and ``periodic_direction = 0``;
+    * ``periodic`` to impose periodicity between boundaries. ``periodic id`` and ``periodic direction`` specify the id and direction of the matching periodic boundary condition. For example, if boundary id 0 (located at xmin) is matched with boundary id 1 (located at xmax), we would set ``id = 0``, ``periodic id = 1`` and ``periodic direction = 0``;
     * ``convection-radiation-flux`` (Robin BC) for cooling/heating, depending on the environment temperature at the boundary ``Tinf``, with a given heat transfer coefficient ``h`` and ``emissivity`` of the boundary :math:`\mathbf{\epsilon}` following Newton's law of cooling (and heating) and Stefan-Boltzmann law of radiation. It is also possible to impose a given heat flux (:math:`q_0`) by using the parameter ``heat_flux``. This BC can be represented by:
 
     .. math::
@@ -98,8 +98,8 @@ For tracer boundary conditions, the defaults parameters are:
     subsection bc 0
       set id                 = 0
       set type               = periodic
-      set periodic_id        = 1
-      set periodic_direction = 0
+      set periodic id        = 1
+      set periodic direction = 0
     end
     subsection bc 1
       set id   = 1
@@ -118,7 +118,7 @@ For tracer boundary conditions, the defaults parameters are:
 
 * ``type``: This is the type of boundary condition being imposed:
     * ``dirichlet`` to impose specific values;
-    * ``periodic`` to impose periodicity between boundaries. ``periodic id`` and ``periodic_direction`` specify the id and direction of the matching periodic boundary condition. For example, if boundary id 0 (located at xmin) is matched with boundary id 1 (located at xmax), we would set ``id = 0``, ``periodic_id = 1`` and ``periodic_direction = 0``.
+    * ``periodic`` to impose periodicity between boundaries. ``periodic id`` and ``periodic direction`` specify the id and direction of the matching periodic boundary condition. For example, if boundary id 0 (located at xmin) is matched with boundary id 1 (located at xmax), we would set ``id = 0``, ``periodic id = 1`` and ``periodic direction = 0``.
 
 VOF
 ^^^
@@ -133,8 +133,8 @@ For VOF boundary conditions (multiphase flow), the possible ``types`` are ``none
     subsection bc 0
       set id                 = 0
       set type               = periodic
-      set periodic_id        = 1
-      set periodic_direction = 0
+      set periodic id        = 1
+      set periodic direction = 0
     end
     subsection bc 1
       set id   = 1
@@ -166,7 +166,7 @@ For VOF boundary conditions (multiphase flow), the possible ``types`` are ``none
 * ``type``: This is the type of boundary condition being imposed. At the moment, choices are:
     * ``none`` for which nothing happens;
     * ``dirichlet`` for inlet and outlet boundary conditions, to specify which fluid should be at the selected boundary;
-    * ``periodic`` to impose periodicity between boundaries. ``periodic id`` and ``periodic_direction`` specify the id and direction of the matching periodic boundary condition. For example, if boundary id 0 (located at xmin) is matched with boundary id 1 (located at xmax), we would set ``id = 0``, ``periodic_id = 1`` and ``periodic_direction = 0``.
+    * ``periodic`` to impose periodicity between boundaries. ``periodic id`` and ``periodic direction`` specify the id and direction of the matching periodic boundary condition. For example, if boundary id 0 (located at xmin) is matched with boundary id 1 (located at xmax), we would set ``id = 0``, ``periodic id = 1`` and ``periodic direction = 0``.
 
     
 Cahn-Hilliard
@@ -182,8 +182,8 @@ For Cahn-Hilliard boundary conditions, the available ``types`` are ``none`` (def
     subsection bc 0
       set id                 = 0
       set type               = periodic
-      set periodic_id        = 1
-      set periodic_direction = 0
+      set periodic id        = 1
+      set periodic direction = 0
     end
     subsection bc 1
       set id   = 1
@@ -220,4 +220,4 @@ For Cahn-Hilliard boundary conditions, the available ``types`` are ``none`` (def
     * ``dirichlet``: Imposes a given phase order parameter function on the boundary. This function can depend on position (:math:`x,y,z`) and on time (:math:`t`).
     * ``angle_of_contact``: Imposes a given angle of contact ``angle value`` between the two phases at the boundary. It refers to the inner angle of contact, in degrees (°).
     * ``free_angle``: Leaves the angle as a free variable to be solved.
-    * ``periodic``: Imposes periodicity between boundaries. ``periodic id`` and ``periodic_direction`` specify the id and direction of the matching periodic boundary condition. For example, if boundary id 0 (located at xmin) is matched with boundary id 1 (located at xmax), we would set ``id = 0``, ``periodic_id = 1`` and ``periodic_direction = 0``.
+    * ``periodic``: Imposes periodicity between boundaries. ``periodic id`` and ``periodic direction`` specify the id and direction of the matching periodic boundary condition. For example, if boundary id 0 (located at xmin) is matched with boundary id 1 (located at xmax), we would set ``id = 0``, ``periodic id = 1`` and ``periodic direction = 0``.

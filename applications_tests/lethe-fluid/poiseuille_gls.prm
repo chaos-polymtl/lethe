@@ -102,8 +102,8 @@ subsection boundary conditions
   subsection bc 0
     set type               = periodic
     set id                 = 0
-    set periodic_id        = 1
-    set periodic_direction = 0
+    set periodic id        = 1
+    set periodic direction = 0
   end
   subsection bc 1
     set type = noslip

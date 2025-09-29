@@ -240,15 +240,19 @@ namespace BoundaryConditions
       "Mesh id for boundary conditions. Default entry is -1 to ensure that the id is set by the user");
 
     prm.declare_entry(
-      "periodic_id",
+      "periodic id",
       "-1",
       Patterns::Integer(),
       "Mesh id for periodic face matching. Default entry is -1 to ensure that the periodic id is set by the user");
 
-    prm.declare_entry("periodic_direction",
+    prm.declare_alias("periodic id", "periodic_id", true);
+
+    prm.declare_entry("periodic direction",
                       "0",
                       Patterns::Integer(),
                       "Direction for periodic boundary condition");
+
+    prm.declare_alias("periodic direction", "periodic_direction", true);
 
 
     // Create a dummy NSBoundaryFunctions object to declare the appropriate
@@ -369,7 +373,7 @@ namespace BoundaryConditions
     if (op == "periodic")
       {
         types::boundary_id periodic_boundary_id =
-          prm.get_integer("periodic_id");
+          prm.get_integer("periodic id");
 
         this->type[boundary_id] = BoundaryType::periodic;
 
@@ -380,7 +384,7 @@ namespace BoundaryConditions
         // We store the periodic id and direction
         this->periodic_neighbor_id[boundary_id] = periodic_boundary_id;
         this->periodic_direction[boundary_id] =
-          prm.get_integer("periodic_direction");
+          prm.get_integer("periodic direction");
 
         // Allocate the navier_stokes_functions object for the periodic neighbor
         // condition to ensure that they have a defined function and a center of
@@ -602,15 +606,19 @@ namespace BoundaryConditions
 
     // Periodic boundary condition parameters for HT physics
     prm.declare_entry(
-      "periodic_id",
+      "periodic id",
       "-1",
       Patterns::Integer(),
       "Mesh id for periodic face matching. Default entry is -1 to ensure that the periodic id is set by the user");
 
-    prm.declare_entry("periodic_direction",
+    prm.declare_alias("periodic id", "periodic_id", true);
+
+    prm.declare_entry("periodic direction",
                       "0",
                       Patterns::Integer(),
                       "Direction for periodic boundary condition");
+
+    prm.declare_alias("periodic direction", "periodic_direction", true);
   }
 
   /**
@@ -696,7 +704,7 @@ namespace BoundaryConditions
     else if (op == "periodic")
       {
         types::boundary_id periodic_boundary_id =
-          prm.get_integer("periodic_id");
+          prm.get_integer("periodic id");
 
         this->type[boundary_id] = BoundaryType::periodic;
 
@@ -707,7 +715,7 @@ namespace BoundaryConditions
         // We store the periodic id and direction
         this->periodic_neighbor_id[boundary_id] = periodic_boundary_id;
         this->periodic_direction[boundary_id] =
-          prm.get_integer("periodic_direction");
+          prm.get_integer("periodic direction");
       }
     else
       {
@@ -833,15 +841,20 @@ namespace BoundaryConditions
 
     // Periodic boundary condition parameters for Tracer physics
     prm.declare_entry(
-      "periodic_id",
+      "periodic id",
       "-1",
       Patterns::Integer(),
       "Mesh id for periodic face matching. Default entry is -1 to ensure that the periodic id is set by the user");
 
-    prm.declare_entry("periodic_direction",
+    prm.declare_alias("periodic id", "periodic_id", true);
+
+
+    prm.declare_entry("periodic direction",
                       "0",
                       Patterns::Integer(),
                       "Direction for periodic boundary condition");
+
+    prm.declare_alias("periodic direction", "periodic_direction", true);
   }
 
   /**
@@ -922,7 +935,7 @@ namespace BoundaryConditions
     else if (op == "periodic")
       {
         types::boundary_id periodic_boundary_id =
-          prm.get_integer("periodic_id");
+          prm.get_integer("periodic id");
 
         this->type[boundary_id] = BoundaryType::periodic;
 
@@ -933,7 +946,7 @@ namespace BoundaryConditions
         // We store the periodic id and direction
         this->periodic_neighbor_id[boundary_id] = periodic_boundary_id;
         this->periodic_direction[boundary_id] =
-          prm.get_integer("periodic_direction");
+          prm.get_integer("periodic direction");
       }
     else
       {
@@ -1037,15 +1050,19 @@ namespace BoundaryConditions
 
     // Periodic boundary condition parameters for Cahn-Hilliards physics
     prm.declare_entry(
-      "periodic_id",
+      "periodic id",
       "-1",
       Patterns::Integer(),
       "Mesh id for periodic face matching. Default entry is -1 to ensure that the periodic id is set by the user");
 
-    prm.declare_entry("periodic_direction",
+    prm.declare_alias("periodic id", "periodic_id", true);
+
+    prm.declare_entry("periodic direction",
                       "0",
                       Patterns::Integer(),
                       "Direction for periodic boundary condition");
+
+    prm.declare_alias("periodic direction", "periodic_direction", true);
   }
 
   /**
@@ -1142,7 +1159,7 @@ namespace BoundaryConditions
     else if (op == "periodic")
       {
         types::boundary_id periodic_boundary_id =
-          prm.get_integer("periodic_id");
+          prm.get_integer("periodic id");
 
         this->type[boundary_id] = BoundaryType::periodic;
 
@@ -1153,7 +1170,7 @@ namespace BoundaryConditions
         // We store the periodic id and direction
         this->periodic_neighbor_id[boundary_id] = periodic_boundary_id;
         this->periodic_direction[boundary_id] =
-          prm.get_integer("periodic_direction");
+          prm.get_integer("periodic direction");
       }
     else
       {
@@ -1248,15 +1265,19 @@ namespace BoundaryConditions
 
     // Periodic boundary condition parameters for VOF physics
     prm.declare_entry(
-      "periodic_id",
+      "periodic id",
       "-1",
       Patterns::Integer(),
       "Mesh id for periodic face matching. Default entry is -1 to ensure that the periodic id is set by the user");
 
-    prm.declare_entry("periodic_direction",
+    prm.declare_alias("periodic id", "periodic_id", true);
+
+    prm.declare_entry("periodic direction",
                       "0",
                       Patterns::Integer(),
                       "Direction for periodic boundary condition");
+
+    prm.declare_alias("periodic direction", "periodic_direction", true);
   }
 
   /**
@@ -1334,7 +1355,7 @@ namespace BoundaryConditions
     if (auto const option = prm.get("type"); option == "periodic")
       {
         types::boundary_id periodic_boundary_id =
-          prm.get_integer("periodic_id");
+          prm.get_integer("periodic id");
 
         this->type[boundary_id] = BoundaryType::periodic;
 
@@ -1345,7 +1366,7 @@ namespace BoundaryConditions
         // We store the periodic id and direction
         this->periodic_neighbor_id[boundary_id] = periodic_boundary_id;
         this->periodic_direction[boundary_id] =
-          prm.get_integer("periodic_direction");
+          prm.get_integer("periodic direction");
       }
   }
 

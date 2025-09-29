@@ -50,8 +50,8 @@ where :math:`\beta` is a constant  and :math:`(\mathbf{u}\cdot \mathbf{n})_{-}` 
         set z = 0
       end
 
-      set periodic_id        = 1
-      set periodic_direction = 0
+      set periodic id        = 1
+      set periodic direction = 0
       set beta               = 1
     end
     subsection bc 1
@@ -82,7 +82,7 @@ where :math:`\beta` is a constant  and :math:`(\mathbf{u}\cdot \mathbf{n})_{-}` 
 
     * The ``center of rotation`` subsection is only necessary when calculating the torque applied on a boundary. See  See :doc:`force_and_torque` for more information.
 
-    * ``periodic id`` and ``periodic_direction`` specify the id and direction of the matching periodic boundary condition. For example, if boundary id 0 (located at xmin) is matched with boundary id 1 (located at xmax), we would set ``id = 0``, ``periodic_id = 1`` and ``periodic_direction = 0``.
+    * ``periodic id`` and ``periodic direction`` specify the id and direction of the matching periodic boundary condition. For example, if boundary id 0 (located at xmin) is matched with boundary id 1 (located at xmax), we would set ``id = 0``, ``periodic id = 1`` and ``periodic direction = 0``.
 
     * ``beta`` is a penalization parameter used for both the ``outlet``, ``partial slip``, and ``function weak`` boundary conditions. For the outlet boundary conditions ``beta`` should be close to unity, whereas ``beta`` of 10 or a 100 can be appropriate for the ``function weak`` boundary condition. For the ``partial slip`` condition, use high values of ``beta`` (`i.e.` > 50).
 

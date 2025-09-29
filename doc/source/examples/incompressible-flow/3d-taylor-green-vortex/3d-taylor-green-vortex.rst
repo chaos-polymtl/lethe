@@ -87,20 +87,20 @@ The ``boundary conditions`` subsection establishes the constraints on different 
     subsection bc 0
       set type               = periodic
       set id                 = 0
-      set periodic_id        = 1
-      set periodic_direction = 0
+      set periodic id        = 1
+      set periodic direction = 0
     end
     subsection bc 1
       set type               = periodic
       set id                 = 2
-      set periodic_id        = 3
-      set periodic_direction = 1
+      set periodic id        = 3
+      set periodic direction = 1
     end
     subsection bc 2
       set type               = periodic
       set id                 = 4
-      set periodic_id        = 5
-      set periodic_direction = 2
+      set periodic id        = 5
+      set periodic direction = 2
     end
   end
 
