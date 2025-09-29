@@ -7,6 +7,42 @@ Running on 3 MPI rank(s)...
 Steady iteration:        1/3
 *****************************
 
+  -Eigenvalue estimation level 0:
+    Relaxation parameter: 0.65602
+    Minimum eigenvalue: 2.11714
+    Maximum eigenvalue: 2.54057
+
+
+  -Eigenvalue estimation level 1:
+    Relaxation parameter: 0.608457
+    Minimum eigenvalue: 2.28264
+    Maximum eigenvalue: 2.73917
+
+
+  -Eigenvalue estimation level 0:
+    Relaxation parameter: 0.656134
+    Minimum eigenvalue: 2.11678
+    Maximum eigenvalue: 2.54013
+
+
+  -Eigenvalue estimation level 1:
+    Relaxation parameter: 0.608466
+    Minimum eigenvalue: 2.28261
+    Maximum eigenvalue: 2.73913
+
+
+  -Eigenvalue estimation level 0:
+    Relaxation parameter: 0.656134
+    Minimum eigenvalue: 2.11678
+    Maximum eigenvalue: 2.54013
+
+
+  -Eigenvalue estimation level 1:
+    Relaxation parameter: 0.608466
+    Minimum eigenvalue: 2.28261
+    Maximum eigenvalue: 2.73913
+
+
 *****************************
 Steady iteration:        2/3
 *****************************
@@ -14,13 +50,97 @@ Steady iteration:        2/3
    Number of degrees of freedom: 1728
    Volume of triangulation:      2.9451
 
+  -Eigenvalue estimation level 0:
+    Relaxation parameter: 0.656134
+    Minimum eigenvalue: 2.11678
+    Maximum eigenvalue: 2.54013
+
+
+  -Eigenvalue estimation level 1:
+    Relaxation parameter: 0.608466
+    Minimum eigenvalue: 2.28261
+    Maximum eigenvalue: 2.73913
+
+
+  -Eigenvalue estimation level 2:
+    Relaxation parameter: 0.653924
+    Minimum eigenvalue: 2.12393
+    Maximum eigenvalue: 2.54872
+
+
+  -Eigenvalue estimation level 0:
+    Relaxation parameter: 0.656134
+    Minimum eigenvalue: 2.11678
+    Maximum eigenvalue: 2.54013
+
+
+  -Eigenvalue estimation level 1:
+    Relaxation parameter: 0.608466
+    Minimum eigenvalue: 2.28261
+    Maximum eigenvalue: 2.73913
+
+
+  -Eigenvalue estimation level 2:
+    Relaxation parameter: 0.653923
+    Minimum eigenvalue: 2.12393
+    Maximum eigenvalue: 2.54872
+
+
 *****************************
 Steady iteration:        3/3
 *****************************
    Number of active cells:       512
    Number of degrees of freedom: 6528
    Volume of triangulation:      2.94523
+
+  -Eigenvalue estimation level 0:
+    Relaxation parameter: 0.656134
+    Minimum eigenvalue: 2.11678
+    Maximum eigenvalue: 2.54013
+
+
+  -Eigenvalue estimation level 1:
+    Relaxation parameter: 0.608466
+    Minimum eigenvalue: 2.28261
+    Maximum eigenvalue: 2.73913
+
+
+  -Eigenvalue estimation level 2:
+    Relaxation parameter: 0.653923
+    Minimum eigenvalue: 2.12393
+    Maximum eigenvalue: 2.54872
+
+
+  -Eigenvalue estimation level 3:
+    Relaxation parameter: 0.654148
+    Minimum eigenvalue: 2.1232
+    Maximum eigenvalue: 2.54784
+
+
+  -Eigenvalue estimation level 0:
+    Relaxation parameter: 0.656134
+    Minimum eigenvalue: 2.11678
+    Maximum eigenvalue: 2.54013
+
+
+  -Eigenvalue estimation level 1:
+    Relaxation parameter: 0.608466
+    Minimum eigenvalue: 2.28261
+    Maximum eigenvalue: 2.73913
+
+
+  -Eigenvalue estimation level 2:
+    Relaxation parameter: 0.653923
+    Minimum eigenvalue: 2.12393
+    Maximum eigenvalue: 2.54872
+
+
+  -Eigenvalue estimation level 3:
+    Relaxation parameter: 0.654148
+    Minimum eigenvalue: 2.1232
+    Maximum eigenvalue: 2.54784
+
 cells  error_velocity    error_pressure   
    32 3.528672e-04    - 6.996453e-05    - 
   128 4.215035e-05 3.07 1.119138e-05 2.64 
-  512 5.292412e-06 2.99 1.599019e-06 2.81 
+  513 5.292412e-06 2.99 1.599019e-06 2.81 

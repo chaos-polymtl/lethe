@@ -151,6 +151,6 @@ subsection linear solver
     # Eigenvalue estimation parameters
     set eig estimation smoothing range = 5
     set eig estimation cg n iterations = 10
-    set eig estimation verbosity       = quiet
+    set eig estimation verbosity       = verbose
   end
 end

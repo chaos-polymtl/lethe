@@ -148,10 +148,5 @@ subsection linear solver
     set mg smoother iterations     = 10
     set mg smoother eig estimation = false
     set mg smoother relaxation     = 0.5
-
-    # Eigenvalue estimation parameters
-    #set eig estimation smoothing range = 5
-    #set eig estimation cg n iterations = 10
-    #set eig estimation verbosity       = quiet
   end
 end
