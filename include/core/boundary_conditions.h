@@ -1159,7 +1159,7 @@ namespace BoundaryConditions
     AssertThrow(
       boundary_ids.size() > 0,
       ExcMessage(
-        "A boundary id has not been set for one of the fluid dynamics boundary condition. Please ensure that the id is set for every boundary condition."));
+        "A boundary id has not been set for one of the Cahn Hilliard boundary conditions. Please ensure that the id is set for every boundary condition."));
     // Loop through all boundary ids to ensure that they are all non-negative
     // and unique
     for (const auto boundary_id : boundary_ids)
