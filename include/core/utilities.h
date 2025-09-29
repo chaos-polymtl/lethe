@@ -961,7 +961,7 @@ create_random_number_container(std::vector<double> &random_container,
  */
 template <typename T>
 std::vector<T>
-convert_string_to_vector(ParameterHandler &prm, const std::string &entry_string)
+convert_string_to_vector(const ParameterHandler &prm, const std::string &entry_string)
 {
   std::string              full_str = prm.get(entry_string);
   std::vector<std::string> vector_of_string(
