@@ -953,15 +953,16 @@ create_random_number_container(std::vector<double> &random_container,
  * an error will be thrown.
  *
  * @tparam T The type of vector (int, unsigned int or double)
- * @param[in] prm A parameter handler which is currently used to parse the simulation
- * information.
+ * @param[in] prm A parameter handler which is currently used to parse the
+ * simulation information.
  * @param[in] entry_string A declare string in the parameter file.
  *
  * @return A std::vector<double> corresponding to the entry_string in the prm file.
  */
 template <typename T>
 std::vector<T>
-convert_string_to_vector(const ParameterHandler &prm, const std::string &entry_string)
+convert_string_to_vector(const ParameterHandler &prm,
+                         const std::string      &entry_string)
 {
   std::string              full_str = prm.get(entry_string);
   std::vector<std::string> vector_of_string(
