@@ -689,13 +689,15 @@ private:
 
     // Pre-calculate common terms to reduce computations
     const double sqrt_effective_radius = sqrt(effective_radius);
-    const double effective_mass_times_vel_sq = effective_mass * characteristic_velocity * characteristic_velocity;
-    
+    const double effective_mass_times_vel_sq =
+      effective_mass * characteristic_velocity * characteristic_velocity;
+
     // Calculate the normal spring constant using the following formula:
     // kn = 16/15 * sqrt(Re) * Ye * (15/16 * (me * vc^2 / (sqrt(R) * Ye))^0.2
     const double normal_spring_constant =
       1.0667 * sqrt_effective_radius * youngs_modulus *
-      pow((0.9375 * effective_mass_times_vel_sq / (sqrt_effective_radius * youngs_modulus)),
+      pow((0.9375 * effective_mass_times_vel_sq /
+           (sqrt_effective_radius * youngs_modulus)),
           0.2);
 
     // Calculate the tangential spring constant
@@ -845,7 +847,8 @@ private:
       sqrt(effective_radius * normal_overlap);
     const double model_parameter_sn =
       2.0 * youngs_modulus * radius_times_overlap_sqrt;
-    const double model_parameter_st = 8.0 * shear_modulus * radius_times_overlap_sqrt;
+    const double model_parameter_st =
+      8.0 * shear_modulus * radius_times_overlap_sqrt;
 
     // Calculation of normal and tangential spring and dashpot constants
     // using particle properties
