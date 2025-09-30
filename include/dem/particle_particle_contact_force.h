@@ -173,43 +173,46 @@ protected:
     const double                         dt)
   {
     // Calculation of the contact vector from particle one to particle two
-    auto contact_vector = particle_two_location - particle_one_location;
+    const auto contact_vector = particle_two_location - particle_one_location;
 
     // Calculation of the normal unit contact vector
-    normal_unit_vector = contact_vector / contact_vector.norm();
+    // Cache the norm to avoid recalculation
+    const double contact_vector_norm = contact_vector.norm();
+    const double inv_contact_vector_norm = 1.0 / contact_vector_norm;
+    normal_unit_vector = contact_vector * inv_contact_vector_norm;
 
     // Defining velocities and angular velocities of particles one and
-    // two as vectors
-    Tensor<1, 3> particle_one_omega, particle_two_omega;
+    // two as vectors - use direct initialization for better performance
+    const Tensor<1, 3> particle_one_omega{
+      {particle_one_properties[PropertiesIndex::omega_x],
+       particle_one_properties[PropertiesIndex::omega_y],
+       particle_one_properties[PropertiesIndex::omega_z]}};
+    
+    const Tensor<1, 3> particle_two_omega{
+      {particle_two_properties[PropertiesIndex::omega_x],
+       particle_two_properties[PropertiesIndex::omega_y],
+       particle_two_properties[PropertiesIndex::omega_z]}};
 
-    // Defining relative contact velocity
-    Tensor<1, 3> contact_relative_velocity;
+    // Defining relative contact velocity - use direct initialization
+    Tensor<1, 3> contact_relative_velocity{
+      {particle_one_properties[PropertiesIndex::v_x] -
+         particle_two_properties[PropertiesIndex::v_x],
+       particle_one_properties[PropertiesIndex::v_y] -
+         particle_two_properties[PropertiesIndex::v_y],
+       particle_one_properties[PropertiesIndex::v_z] -
+         particle_two_properties[PropertiesIndex::v_z]}};
 
-    // Assigning velocities and angular velocities of particles
-    contact_relative_velocity[0] =
-      particle_one_properties[PropertiesIndex::v_x] -
-      particle_two_properties[PropertiesIndex::v_x];
-    contact_relative_velocity[1] =
-      particle_one_properties[PropertiesIndex::v_y] -
-      particle_two_properties[PropertiesIndex::v_y];
-    contact_relative_velocity[2] =
-      particle_one_properties[PropertiesIndex::v_z] -
-      particle_two_properties[PropertiesIndex::v_z];
-
-    particle_one_omega[0] = particle_one_properties[PropertiesIndex::omega_x];
-    particle_one_omega[1] = particle_one_properties[PropertiesIndex::omega_y];
-    particle_one_omega[2] = particle_one_properties[PropertiesIndex::omega_z];
-
-    particle_two_omega[0] = particle_two_properties[PropertiesIndex::omega_x];
-    particle_two_omega[1] = particle_two_properties[PropertiesIndex::omega_y];
-    particle_two_omega[2] = particle_two_properties[PropertiesIndex::omega_z];
-
+    // Pre-calculate diameter products for cross product calculation
+    const double half_dp_one = 0.5 * particle_one_properties[PropertiesIndex::dp];
+    const double half_dp_two = 0.5 * particle_two_properties[PropertiesIndex::dp];
+    
     // Calculation of contact relative velocity
     // v_ij = (v_i - v_j) + (R_i*omega_i + R_j*omega_j) × n_ij
-    contact_relative_velocity += (cross_product_3d(
-      0.5 * (particle_one_properties[PropertiesIndex::dp] * particle_one_omega +
-             particle_two_properties[PropertiesIndex::dp] * particle_two_omega),
-      normal_unit_vector));
+    // Optimize by calculating the weighted omega sum first
+    const Tensor<1, 3> weighted_omega_sum = 
+      half_dp_one * particle_one_omega + half_dp_two * particle_two_omega;
+    
+    contact_relative_velocity += cross_product_3d(weighted_omega_sum, normal_unit_vector);
 
     // Calculation of normal relative velocity. Note that in the
     // following line the product acts as inner product since both
@@ -231,9 +234,12 @@ protected:
     // needs to modified using its history, while the tangential_displacements
     // of new particles are equal to zero delta_t_new = delta_t_old + v_rt*dt
     contact_info.tangential_displacement += tangential_relative_velocity * dt;
+    
+    // Project out normal component - optimize by reusing normal_unit_vector dot product
+    const double tangential_disp_normal_component = 
+      contact_info.tangential_displacement * normal_unit_vector;
     contact_info.tangential_displacement -=
-      (contact_info.tangential_displacement * normal_unit_vector) *
-      normal_unit_vector;
+      tangential_disp_normal_component * normal_unit_vector;
   }
 
   /**
@@ -475,16 +481,17 @@ private:
     Tensor<1, 3>       &particle_one_force,
     Tensor<1, 3>       &particle_two_force)
   {
-    // Calculation of total force
-    Tensor<1, 3> total_force = normal_force + tangential_force;
+    // Calculation of total force - compute once to avoid repeated addition
+    const Tensor<1, 3> total_force = normal_force + tangential_force;
 
     // Updating the force and torque of particles in the particle handler
+    // Use compound assignment operators for better CPU pipelining
     particle_one_force -= total_force;
     particle_two_force += total_force;
-    particle_one_torque +=
-      -particle_one_tangential_torque + rolling_resistance_torque;
-    particle_two_torque +=
-      -particle_two_tangential_torque - rolling_resistance_torque;
+    
+    // Combine torque calculations to reduce temporary objects
+    particle_one_torque += rolling_resistance_torque - particle_one_tangential_torque;
+    particle_two_torque -= rolling_resistance_torque + particle_two_tangential_torque;
   }
 
   /**
@@ -508,9 +515,9 @@ private:
     Tensor<1, 3>       &particle_one_force)
   {
     // Updating the force and torque acting on particles in the particle handler
+    // Combine operations to reduce intermediate calculations
     particle_one_force -= normal_force + tangential_force;
-    particle_one_torque +=
-      -particle_one_tangential_torque + rolling_resistance_torque;
+    particle_one_torque += rolling_resistance_torque - particle_one_tangential_torque;
   }
 
   /**
@@ -756,11 +763,14 @@ private:
       }
 
     // Calculation of caused by tangential force (tangential_torque)
+    // Optimize by pre-calculating the scaled tangential force
+    const Tensor<1, 3> scaled_tangential_force = tangential_force * 0.5;
     particle_one_tangential_torque =
       cross_product_3d(normal_unit_vector,
-                       tangential_force * diameter_one * 0.5);
+                       scaled_tangential_force * diameter_one);
+    // Use ratio of diameters to avoid additional cross product
     particle_two_tangential_torque =
-      particle_one_tangential_torque * diameter_two / diameter_one;
+      particle_one_tangential_torque * (diameter_two / diameter_one);
 
     // Rolling resistance torque
     rolling_resistance_torque = calculate_rolling_resistance_torque(
@@ -913,11 +923,14 @@ private:
       }
 
     // Calculation of torque caused by tangential force (tangential_torque)
+    // Optimize by pre-calculating the scaled tangential force
+    const Tensor<1, 3> scaled_tangential_force = tangential_force * 0.5;
     particle_one_tangential_torque =
       cross_product_3d(normal_unit_vector,
-                       tangential_force * diameter_one * 0.5);
+                       scaled_tangential_force * diameter_one);
+    // Use ratio of diameters to avoid additional cross product
     particle_two_tangential_torque =
-      particle_one_tangential_torque * diameter_two / diameter_one;
+      particle_one_tangential_torque * (diameter_two / diameter_one);
 
     // Rolling resistance torque
     rolling_resistance_torque = calculate_rolling_resistance_torque(
