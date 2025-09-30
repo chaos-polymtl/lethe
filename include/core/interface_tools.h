@@ -151,7 +151,8 @@ namespace InterfaceTools
    * @tparam dim Spatial dimension of the problem.
    * @tparam VectorType Type of the vector storing DOF values.
    * @tparam FEType Type of the finite element.
-   * @param[in] in_local_dof_values Vector containing the DOF values for the current cell.
+   * @param[in] in_local_dof_values Vector containing the DOF values for the
+   * current cell.
    */
   template <int dim, typename VectorType, typename FEType>
   inline void
@@ -164,7 +165,8 @@ namespace InterfaceTools
   /**
    * @brief Implementation of value function for CellWiseFunction.
    *
-   * Evaluates the function value at a given point using shape functions and DOF values.
+   * Evaluates the function value at a given point using shape functions and DOF
+   * values.
    *
    * @tparam dim Spatial dimension of the problem.
    * @tparam VectorType Type of the vector storing DOF values.
@@ -190,7 +192,8 @@ namespace InterfaceTools
   /**
    * @brief Implementation of gradient function for CellWiseFunction.
    *
-   * Evaluates the function gradient at a given point using shape function gradients and DOF values.
+   * Evaluates the function gradient at a given point using shape function
+   * gradients and DOF values.
    *
    * @tparam dim Spatial dimension of the problem.
    * @tparam VectorType Type of the vector storing DOF values.
@@ -216,7 +219,8 @@ namespace InterfaceTools
   /**
    * @brief Implementation of hessian function for CellWiseFunction.
    *
-   * Evaluates the function Hessian at a given point using shape function second derivatives and DOF values.
+   * Evaluates the function Hessian at a given point using shape function second
+   * derivatives and DOF values.
    *
    * @tparam dim Spatial dimension of the problem.
    * @tparam VectorType Type of the vector storing DOF values.
@@ -420,12 +424,13 @@ namespace InterfaceTools
   /**
    * @brief Implementation of build_patches for InterfaceReconstructionDataOut.
    *
-   * Converts interface reconstruction vertices into DataOut patches for visualization.
-   * Each vertex becomes a point patch for rendering in visualization software.
+   * Converts interface reconstruction vertices into DataOut patches for
+   * visualization. Each vertex becomes a point patch for rendering in
+   * visualization software.
    *
    * @tparam dim Spatial dimension of the problem.
-   * @param[in] interface_reconstruction_vertices Cell-wise map containing the reconstructed
-   * interface vertices.
+   * @param[in] interface_reconstruction_vertices Cell-wise map containing the
+   * reconstructed interface vertices.
    */
   template <int dim>
   void
@@ -553,9 +558,9 @@ namespace InterfaceTools
     /**
      * @brief Solve for the signed distance from the given level of the level-set vector.
      *
-     * This function computes the signed distance field using the method described
-     * in Ausas et al. (2011). The algorithm preserves the interface location
-     * while computing accurate distances throughout the domain.
+     * This function computes the signed distance field using the method
+     * described in Ausas et al. (2011). The algorithm preserves the interface
+     * location while computing accurate distances throughout the domain.
      */
     void
     solve();
@@ -571,8 +576,8 @@ namespace InterfaceTools
     /**
      * @brief Output the interface reconstruction used for signed distance computations.
      *
-     * This function writes the reconstructed interface vertices and cells to VTU
-     * files for visualization purposes.
+     * This function writes the reconstructed interface vertices and cells to
+     * VTU files for visualization purposes.
      *
      * @param[in] output_name Name of the output file.
      * @param[in] output_path Path to the output directory.
