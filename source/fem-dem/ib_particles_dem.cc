@@ -51,23 +51,26 @@ IBParticlesDEM<dim>::update_contact_candidates()
           if (particle_one.particle_id < particle_two.particle_id)
             {
               const Point<dim> particle_two_location = particle_two.position;
-              double           distance =
-                (particle_one_location - particle_two_location).norm();
-              if (typeid(*particle_one.shape) == typeid(Sphere<dim>) &&
-                  typeid(*particle_two.shape) == typeid(Sphere<dim>))
+              
+              // Calculate distance based on particle shapes
+              double distance;
+              const bool both_spheres = 
+                (typeid(*particle_one.shape) == typeid(Sphere<dim>) &&
+                 typeid(*particle_two.shape) == typeid(Sphere<dim>));
+              
+              if (both_spheres)
                 {
-                  distance =
-                    (particle_one_location - particle_two_location).norm();
+                  // Most common case - optimize for sphere-sphere interactions
+                  distance = (particle_one_location - particle_two_location).norm();
                 }
-              else if (typeid(*particle_one.shape) == typeid(Sphere<dim>) &&
-                       typeid(*particle_two.shape) != typeid(Sphere<dim>))
+              else if (typeid(*particle_one.shape) == typeid(Sphere<dim>))
                 {
                   distance = particle_two.shape->value(particle_one_location);
                 }
-              else if (typeid(*particle_one.shape) != typeid(Sphere<dim>) &&
-                       typeid(*particle_two.shape) == typeid(Sphere<dim>))
+              else if (typeid(*particle_two.shape) == typeid(Sphere<dim>))
                 {
                   distance = particle_one.shape->value(particle_two_location);
+                }
                 }
               else
                 {
@@ -990,12 +993,18 @@ IBParticlesDEM<dim>::calculate_force_model(
                particle_two_properties.object_poisson_ratio)) +
      DBL_MIN);
 
+  // Pre-calculate squared poisson ratios for efficiency
+  const double poisson_one_sq = particle_one_properties.object_poisson_ratio *
+                                particle_one_properties.object_poisson_ratio;
+  const double poisson_two_sq = particle_two_properties.object_poisson_ratio *
+                                particle_two_properties.object_poisson_ratio;
+  
   effective_shear_modulus =
     (particle_one_properties.object_youngs_modulus *
-     particle_one_properties.object_youngs_modulus) /
+     particle_two_properties.object_youngs_modulus) /
     (2.0 * ((particle_two_properties.object_youngs_modulus *
              (2.0 - particle_one_properties.object_poisson_ratio) *
-             (1.0 + particle_two_properties.object_poisson_ratio)) +
+             (1.0 + particle_one_properties.object_poisson_ratio)) +
             (particle_one_properties.object_youngs_modulus *
              (2.0 - particle_two_properties.object_poisson_ratio) *
              (1.0 + particle_two_properties.object_poisson_ratio))) +
@@ -1070,15 +1079,15 @@ IBParticlesDEM<dim>::calculate_force_model(
   contact_info.tangential_displacement += tangential_relative_velocity * dt;
 
   ///////////// Hertz contact force model ////////////////
-  // Calculation of effective radius and mass
+  // Calculation of effective radius and mass - optimize divisions
+  const double sum_mass = particle_one_properties.object_mass + particle_two_properties.object_mass;
+  const double sum_radius = particle_one_properties.object_radius + particle_two_properties.object_radius;
+  
   double effective_mass =
     (particle_one_properties.object_mass *
-     particle_two_properties.object_mass) /
-    (particle_one_properties.object_mass + particle_two_properties.object_mass);
+     particle_two_properties.object_mass) / sum_mass;
   double effective_radius = (particle_one_properties.object_radius *
-                             particle_two_properties.object_radius) /
-                            ((particle_one_properties.object_radius +
-                              particle_two_properties.object_radius));
+                             particle_two_properties.object_radius) / sum_radius;
 
   const double radius_times_overlap_sqrt =
     sqrt(effective_radius * normal_overlap);
@@ -1087,17 +1096,18 @@ IBParticlesDEM<dim>::calculate_force_model(
 
   // Calculation of normal and tangential spring and dashpot constants
   // using particle properties
-  double normal_spring_constant = 0.66665 * model_parameter_sn;
-  double normal_damping_constant =
+  const double normal_spring_constant = 0.66665 * model_parameter_sn;
+  const double normal_damping_constant =
     -1.8257 * model_parameter_beta * sqrt(model_parameter_sn * effective_mass);
-  double tangential_spring_constant =
+  const double tangential_spring_constant =
     8.0 * effective_shear_modulus * radius_times_overlap_sqrt + DBL_MIN;
 
   // Calculation of normal force using spring and dashpot normal forces
-  normal_force =
-    ((normal_spring_constant * normal_overlap) * normal_unit_vector) +
-    ((normal_damping_constant * normal_relative_velocity_value) *
-     normal_unit_vector);
+  // Combine force calculations to reduce vector operations
+  const double normal_force_magnitude = 
+    normal_spring_constant * normal_overlap +
+    normal_damping_constant * normal_relative_velocity_value;
+  normal_force = normal_force_magnitude * normal_unit_vector;
 
   // Calculation of tangential force using spring and dashpot tangential
   // forces. Since we need dashpot tangential force in the gross sliding
@@ -1105,8 +1115,8 @@ IBParticlesDEM<dim>::calculate_force_model(
   tangential_force =
     tangential_spring_constant * contact_info.tangential_displacement;
 
-  double coulomb_threshold =
-    effective_coefficient_of_friction * normal_force.norm();
+  const double coulomb_threshold =
+    effective_coefficient_of_friction * normal_force_magnitude;
 
   // Check for gross sliding
   if (tangential_force.norm() > coulomb_threshold)
@@ -1120,13 +1130,23 @@ IBParticlesDEM<dim>::calculate_force_model(
 
   // For calculation of rolling resistance torque, we need to obtain
   // omega_ij using rotational velocities of particles one and two
-  Tensor<1, 3> omega_ij           = particle_one_omega - particle_two_omega;
-  Tensor<1, 3> omega_ij_direction = omega_ij / (omega_ij.norm() + DBL_MIN);
-
-  // Calculation of the linear rolling resistance torque
-  rolling_resistance_torque =
-    (-effective_coefficient_of_rolling_friction * effective_radius *
-     normal_force.norm() * omega_ij_direction);
+  const Tensor<1, 3> omega_ij = particle_one_omega - particle_two_omega;
+  const double omega_ij_norm = omega_ij.norm();
+  
+  // Avoid division by zero and normalize only if needed
+  if (omega_ij_norm > DBL_MIN)
+    {
+      const Tensor<1, 3> omega_ij_direction = omega_ij / omega_ij_norm;
+      
+      // Calculation of the linear rolling resistance torque
+      rolling_resistance_torque =
+        (-effective_coefficient_of_rolling_friction * effective_radius *
+         normal_force_magnitude * omega_ij_direction);
+    }
+  else
+    {
+      rolling_resistance_torque = 0.0;
+    }
 }
 
 

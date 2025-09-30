@@ -528,13 +528,15 @@ private:
     // Calculate the effective radius
     const double diameter_one = particle_one_properties[PropertiesIndex::dp];
     const double diameter_two = particle_two_properties[PropertiesIndex::dp];
+    const double sum_diameter = diameter_one + diameter_two;
     double       effective_radius =
-      (diameter_one * diameter_two) / (2 * (diameter_one + diameter_two));
+      (diameter_one * diameter_two) / (2 * sum_diameter);
 
     // Calculate the effective mass
     const double mass_one = particle_one_properties[PropertiesIndex::mass];
     const double mass_two = particle_two_properties[PropertiesIndex::mass];
-    double       effective_mass = (mass_one * mass_two) / (mass_one + mass_two);
+    const double sum_mass = mass_one + mass_two;
+    double       effective_mass = (mass_one * mass_two) / sum_mass;
 
     return std::make_tuple(effective_radius, effective_mass);
   }
@@ -685,12 +687,15 @@ private:
     // spring constant remain constant throughout a simulation.
     constexpr double characteristic_velocity = 1.0;
 
+    // Pre-calculate common terms to reduce computations
+    const double sqrt_effective_radius = sqrt(effective_radius);
+    const double effective_mass_times_vel_sq = effective_mass * characteristic_velocity * characteristic_velocity;
+    
     // Calculate the normal spring constant using the following formula:
     // kn = 16/15 * sqrt(Re) * Ye * (15/16 * (me * vc^2 / (sqrt(R) * Ye))^0.2
-    double normal_spring_constant =
-      1.0667 * sqrt(effective_radius) * youngs_modulus *
-      pow((0.9375 * effective_mass * characteristic_velocity *
-           characteristic_velocity / (sqrt(effective_radius) * youngs_modulus)),
+    const double normal_spring_constant =
+      1.0667 * sqrt_effective_radius * youngs_modulus *
+      pow((0.9375 * effective_mass_times_vel_sq / (sqrt_effective_radius * youngs_modulus)),
           0.2);
 
     // Calculate the tangential spring constant
@@ -840,7 +845,7 @@ private:
       sqrt(effective_radius * normal_overlap);
     const double model_parameter_sn =
       2.0 * youngs_modulus * radius_times_overlap_sqrt;
-    double model_parameter_st = 8.0 * shear_modulus * radius_times_overlap_sqrt;
+    const double model_parameter_st = 8.0 * shear_modulus * radius_times_overlap_sqrt;
 
     // Calculation of normal and tangential spring and dashpot constants
     // using particle properties
@@ -848,22 +853,21 @@ private:
     // Calculate the normal spring constant using the following formula:
     // kn = 4/3 * Ye * sqrt(Re * delta_n)
     // TODO this is 0.66667
-    double normal_spring_constant = 0.66665 * model_parameter_sn;
+    const double normal_spring_constant = 0.66665 * model_parameter_sn;
 
     // Calculate the normal damping constants from the following equation:
     // eta_n = -2 * sqrt(5/6) * beta * sqrt(Sn * me)
-    double normal_damping_constant =
+    const double normal_damping_constant =
       -1.8257 * beta * sqrt(model_parameter_sn * effective_mass);
 
     // Calculate the tangential spring constant
     // kt = 8 * Ge * sqrt(Re * delta_n)
-    double tangential_spring_constant =
-      8.0 * shear_modulus * radius_times_overlap_sqrt;
+    const double tangential_spring_constant = model_parameter_st;
 
     // Calculate the tangential damping constant from ratio with the normal
     // damping constant, but the equation is:
     // eta_t = -2 * sqrt(5/6) * beta * sqrt(St * me)
-    double tangential_damping_constant =
+    const double tangential_damping_constant =
       normal_damping_constant * sqrt(model_parameter_st / model_parameter_sn);
 
     // Calculation of normal force
@@ -874,13 +878,13 @@ private:
 
     // Calculation of tangential force. Since we need damping tangential force
     // in the gross sliding again, we define it as a separate variable
-    Tensor<1, 3> damping_tangential_force =
+    const Tensor<1, 3> damping_tangential_force =
       tangential_damping_constant * tangential_relative_velocity;
     tangential_force =
       (tangential_spring_constant * contact_info.tangential_displacement) +
       damping_tangential_force;
 
-    double coulomb_threshold = friction_coeff * normal_force_value;
+    const double coulomb_threshold = friction_coeff * normal_force_value;
 
     // Check for gross sliding
     if (tangential_force.norm() > coulomb_threshold)
