@@ -2435,6 +2435,12 @@ MFNavierStokesPreconditionGMG<dim>::initialize(
       this->mg_operators[level]->evaluate_non_linear_term_and_calculate_tau(
         mg_solution[level]);
 
+      if (this->simulation_parameters.mortar_parameters.enable)
+        this->mg_operators[level]->evaluate_velocity_ale(
+          this->mg_operators[level]->mortar_manager_mf->radius[0],
+          this->simulation_parameters.mortar_parameters.center_of_rotation,
+          this->simulation_parameters.mortar_parameters.rotor_angular_velocity);
+
       if (is_bdf(simulation_control->get_assembly_method()))
         {
           mg_time_derivative_previous_solutions[level].update_ghost_values();
@@ -3055,6 +3061,12 @@ FluidDynamicsMatrixFree<dim>::assemble_system_rhs()
   this->system_operator->evaluate_non_linear_term_and_calculate_tau(
     this->evaluation_point);
 
+  if (this->simulation_parameters.mortar_parameters.enable)
+    this->system_operator->evaluate_velocity_ale(
+      this->system_operator->mortar_manager_mf->radius[0],
+      this->simulation_parameters.mortar_parameters.center_of_rotation,
+      this->simulation_parameters.mortar_parameters.rotor_angular_velocity);
+
   this->system_operator->evaluate_residual(this->system_rhs,
                                            this->evaluation_point);
 
@@ -3351,6 +3363,12 @@ FluidDynamicsMatrixFree<dim>::setup_preconditioner()
 
   this->system_operator->evaluate_non_linear_term_and_calculate_tau(
     this->present_solution);
+
+  if (this->simulation_parameters.mortar_parameters.enable)
+    this->system_operator->evaluate_velocity_ale(
+      this->system_operator->mortar_manager_mf->radius[0],
+      this->simulation_parameters.mortar_parameters.center_of_rotation,
+      this->simulation_parameters.mortar_parameters.rotor_angular_velocity);
 
   this->computing_timer.leave_subsection("Evaluate non linear term and tau");
 

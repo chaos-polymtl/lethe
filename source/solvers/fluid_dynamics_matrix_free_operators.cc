@@ -192,6 +192,9 @@ NavierStokesOperatorBase<dim, number>::reinit(
 
   this->compute_element_size();
 
+  if (enable_mortar)
+    this->compute_element_center();
+
   this->compute_forcing_term();
 
   bool_dof_mask = create_bool_dof_mask(dof_handler.get_fe(), quadrature);
@@ -275,6 +278,24 @@ NavierStokesOperatorBase<dim, number>::compute_element_size()
 
           element_size[cell][lane] = compute_cell_diameter<dim>(h_k, fe_degree);
         }
+    }
+}
+
+template <int dim, typename number>
+void
+NavierStokesOperatorBase<dim, number>::compute_element_center()
+{
+  const unsigned int n_cells =
+    matrix_free.n_cell_batches() + matrix_free.n_ghost_cell_batches();
+  element_center.resize(n_cells);
+
+  for (unsigned int cell = 0; cell < n_cells; ++cell)
+    {
+      for (auto lane = 0u;
+           lane < matrix_free.n_active_entries_per_cell_batch(cell);
+           lane++)
+        element_center[cell][lane] =
+          matrix_free.get_cell_iterator(cell, lane)->center();
     }
 }
 
@@ -764,6 +785,13 @@ NavierStokesOperatorBase<dim, number>::get_element_size() const
 }
 
 template <int dim, typename number>
+const std::vector<Point<dim>>
+NavierStokesOperatorBase<dim, number>::get_element_center() const
+{
+  return this->element_center;
+}
+
+template <int dim, typename number>
 void
 NavierStokesOperatorBase<dim, number>::
   evaluate_non_linear_term_and_calculate_tau(const VectorType &newton_step)
@@ -1076,6 +1104,59 @@ NavierStokesOperatorBase<dim, number>::
 
   this->timer.leave_subsection(
     "operator::evaluate_time_derivative_previous_solutions");
+}
+
+template <int dim, typename number>
+void
+NavierStokesOperatorBase<dim, number>::evaluate_velocity_ale(
+  const double                                    radius,
+  const Point<dim>                                center_of_rotation,
+  std::shared_ptr<Functions::ParsedFunction<dim>> rotor_angular_velocity)
+{
+  this->timer.enter_subsection("operator::evaluate_velocity_ale");
+
+  const unsigned int n_cells = matrix_free.n_cell_batches();
+
+  FECellIntegrator integrator(matrix_free);
+
+  // 1. Precompute values on cells:
+
+  // Set appropriate size for tables
+  velocity_ale.reinit(n_cells, integrator.n_q_points);
+
+  for (unsigned int cell = 0; cell < n_cells; ++cell)
+    {
+      // Get previously stored cell center
+      const auto cell_center =
+        integrator.read_cell_data(this->get_element_center());
+
+      // Compute radius between center of rotation and current cell center
+      const double radius_current = cell_center.distance(center_of_rotation);
+
+      // Get updated rotor angular velocity
+      rotor_angular_velocity->set_time(
+        this->simulation_control->get_current_time());
+      const double rotor_angular_velocity_value =
+        rotor_angular_velocity->value(Point<dim>());
+
+      // Use prescribed rotor angular velocity only if cell is part of the rotor
+      double cell_rotor_angular_velocity;
+      if (radius_current > radius)
+        cell_rotor_angular_velocity = 0.0;
+      else
+        cell_rotor_angular_velocity = rotor_angular_velocity_value;
+
+      for (const auto q : integrator.quadrature_point_indices())
+        {
+          const auto x = integrator.quadrature_point(q)[0];
+          const auto y = integrator.quadrature_point(q)[1];
+
+          this->velocity_ale[cell][q][0] = -cell_rotor_angular_velocity * y;
+          this->velocity_ale[cell][q][1] = cell_rotor_angular_velocity * x;
+        }
+    }
+
+  this->timer.leave_subsection("operator::evaluate_velocity_ale");
 }
 
 template <int dim, typename number>
