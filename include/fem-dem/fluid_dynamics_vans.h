@@ -23,10 +23,21 @@
 using namespace dealii;
 
 /**
- * A solver class for the VANS equation using GLS stabilization
+ * @brief Solver class for Volume-Averaged Navier-Stokes (VANS) equations with GLS stabilization.
  *
- * @tparam dim An integer that denotes the dimension of the space in which
- * the flow is solved
+ * This class implements a computational fluid dynamics solver for the VANS
+ * equations, which are used to model fluid flow in porous media or multiphase
+ * systems where the presence of solid particles affects the fluid motion. The
+ * solver uses Galerkin Least Squares (GLS) stabilization techniques including
+ * SUPG (Streamline Upwind Petrov-Galerkin) and PSPG (Pressure Stabilizing
+ * Petrov-Galerkin) methods.
+ *
+ * The VANS equations account for the volume fraction of the fluid phase (void
+ * fraction) and incorporate particle-fluid interactions through appropriate
+ * source terms. This solver forms the foundation for CFD-DEM simulations where
+ * particle dynamics are coupled with fluid flow.
+ *
+ * @tparam dim Spatial dimension of the simulation (2 or 3)
  *
  * @ingroup solvers
  */
@@ -35,79 +46,150 @@ template <int dim>
 class FluidDynamicsVANS : public FluidDynamicsMatrixBased<dim>
 {
 public:
+  /**
+   * @brief Constructor for the VANS solver.
+   *
+   * @param[in] nsparam CFD-DEM simulation parameters containing all
+   * configuration options for the coupled fluid-particle simulation
+   */
   FluidDynamicsVANS(CFDDEMSimulationParameters<dim> &nsparam);
 
+  /**
+   * @brief Destructor for the VANS solver.
+   */
   ~FluidDynamicsVANS();
 
+  /**
+   * @brief Main solver loop for the VANS equations.
+   *
+   * Executes the complete solution procedure for the VANS equations including
+   * time stepping, matrix assembly, linear system solution, and convergence
+   * checking.
+   */
   virtual void
   solve() override;
 
 private:
+  /**
+   * @brief Assemble the diagonal mass matrix for the VANS system.
+   *
+   * Constructs the diagonal mass matrix used in time-dependent VANS
+   * calculations, incorporating void fraction effects.
+   *
+   * @param[out] mass_matrix Sparse matrix to store the assembled mass matrix
+   */
   void
   assemble_mass_matrix_diagonal(TrilinosWrappers::SparseMatrix &mass_matrix);
 
+  /**
+   * @brief Update solution vectors and constraint objects.
+   *
+   * Updates the solution vectors and applies constraints after each
+   * iteration or time step in the VANS solution process.
+   */
   void
   update_solution_and_constraints();
 
+  /**
+   * @brief Read DEM data for particle-fluid coupling.
+   *
+   * Loads particle information from DEM simulation for use in computing
+   * void fraction and particle-fluid interaction terms.
+   */
   void
   read_dem();
 
 protected:
   /**
-   * @brief associates the degrees of freedom to each vertex of the finite elements
-   * and initialize the void fraction
+   * @brief Set up degrees of freedom and initialize void fraction field.
+   *
+   * Associates degrees of freedom to each vertex of the finite elements
+   * and initializes the void fraction field that represents the local
+   * volume fraction available to the fluid phase.
    */
   virtual void
   setup_dofs() override;
 
+  /**
+   * @brief Execute a single VANS iteration.
+   *
+   * Performs one iteration of the VANS solution procedure including
+   * assembly, solution of the linear system, and solution update.
+   */
   virtual void
   iterate() override;
 
+  /**
+   * @brief Calculate void fraction field based on particle positions.
+   *
+   * Computes the local void fraction (porosity) at each point in the
+   * computational domain based on the current particle configuration.
+   *
+   * @param[in] time Current simulation time for time-dependent calculations
+   */
   void
   calculate_void_fraction(const double time);
 
+  /**
+   * @brief Create mapping between vertices and cells.
+   *
+   * Establishes the relationship between mesh vertices and the cells
+   * that contain them, which is needed for efficient void fraction
+   * and particle-fluid coupling calculations.
+   */
   void
   vertices_cell_mapping();
 
+  /**
+   * @brief Monitor mass conservation in the VANS system.
+   *
+   * Calculates and reports mass conservation metrics for the VANS
+   * solution, taking into account the void fraction field.
+   */
   virtual void
   monitor_mass_conservation();
 
   /**
-   * @brief finish_time_step
-   * Finishes the time step
-   * Post-processing and time stepping
+   * @brief Complete operations at the end of a time step.
+   *
+   * Performs final operations required at the completion of each time
+   * step including post-processing and time advancement for fluid dynamics.
    */
-
   virtual void
   finish_time_step_fd();
 
   /**
-   *  @brief Assembles the matrix associated with the solver
+   * @brief Assemble the global system matrix for the VANS equations.
+   *
+   * Constructs the global system matrix by assembling contributions from
+   * all cells, including fluid dynamics terms modified by void fraction
+   * and particle-fluid interaction terms.
    */
   void
   assemble_system_matrix() override;
 
   /**
-   * @brief Assembles the rhs associated with the solver
+   * @brief Assemble the global right-hand side vector for the VANS equations.
+   *
+   * Constructs the global right-hand side vector including all source terms,
+   * boundary conditions, and particle-fluid coupling contributions.
    */
   void
   assemble_system_rhs() override;
 
   /**
-   * @brief Assembles the local matrix for a given cell.
+   * @brief Assemble the local system matrix for a given cell.
    *
-   * This function is used by the WorkStream class to assemble
-   * the system matrix. It is a thread safe function.
+   * Computes the local contributions to the global system matrix for a
+   * single cell, including VANS-specific terms with void fraction effects
+   * and GLS stabilization terms. This function is used by WorkStream
+   * for thread-safe parallel assembly.
    *
-   * @param cell The cell for which the local matrix is assembled.
-   *
-   * @param scratch_data The scratch data which is used to store
-   * the calculated finite element information at the gauss point.
-   * See the documentation for NavierStokesScratchData for more
-   * information
-   *
-   * @param copy_data The copy data which is used to store
-   * the results of the assembly over a cell
+   * @param[in] cell Iterator pointing to the current active cell
+   * @param[in,out] scratch_data Scratch data containing finite element
+   * information at quadrature points for efficient assembly
+   * @param[out] copy_data Copy data structure for storing local assembly
+   * results before copying to global structures
    */
   void
   assemble_local_system_matrix(
@@ -116,17 +198,17 @@ protected:
     StabilizedMethodsTensorCopyData<dim>                 &copy_data) override;
 
   /**
-   * @brief Assembles the local rhs for a given cell
+   * @brief Assemble the local right-hand side vector for a given cell.
    *
-   * @param cell The cell for which the local matrix is assembled.
+   * Computes the local contributions to the global right-hand side vector
+   * for a single cell, including source terms, boundary conditions, and
+   * particle-fluid interaction terms modified by void fraction.
    *
-   * @param scratch_data The scratch data which is used to store
-   * the calculated finite element information at the gauss point.
-   * See the documentation for NavierStokesScratchData for more
-   * information
-   *
-   * @param copy_data The copy data which is used to store
-   * the results of the assembly over a cell
+   * @param[in] cell Iterator pointing to the current active cell
+   * @param[in,out] scratch_data Scratch data containing finite element
+   * information at quadrature points for efficient assembly
+   * @param[out] copy_data Copy data structure for storing local assembly
+   * results before copying to global structures
    */
   void
   assemble_local_system_rhs(
@@ -135,69 +217,108 @@ protected:
     StabilizedMethodsTensorCopyData<dim>                 &copy_data) override;
 
   /**
-   * @brief sets up the vector of assembler functions
+   * @brief Set up the vector of assembler functions for VANS equations.
+   *
+   * Initializes the assembler objects responsible for computing different
+   * terms in the VANS equations, including particle-fluid interaction
+   * assemblers and void fraction-dependent terms.
    */
   void
   setup_assemblers() override;
 
-
   /**
-   * @brief Copies local cell information to global matrix
+   * @brief Copy local matrix contributions to the global system matrix.
+   *
+   * Transfers the locally assembled matrix contributions from a single
+   * cell to the appropriate locations in the global system matrix,
+   * handling constraint applications and matrix sparsity patterns.
+   *
+   * @param[in] copy_data Local assembly data containing matrix contributions
+   * and associated degree of freedom indices
    */
-
   void
   copy_local_matrix_to_global_matrix(
     const StabilizedMethodsTensorCopyData<dim> &copy_data) override;
 
   /**
-   * @brief Copies local cell rhs information to global rhs
+   * @brief Copy local right-hand side contributions to the global vector.
+   *
+   * Transfers the locally assembled right-hand side contributions from
+   * a single cell to the appropriate locations in the global right-hand
+   * side vector, handling constraint applications.
+   *
+   * @param[in] copy_data Local assembly data containing right-hand side
+   * contributions and associated degree of freedom indices
    */
-
   void
   copy_local_rhs_to_global_rhs(
     const StabilizedMethodsTensorCopyData<dim> &copy_data) override;
 
   /**
-   * @brief Add void fractio and particle velocity field to output files.
+   * @brief Gather additional output fields for visualization.
    *
-   * @return Vector of OutputStructs that will be used to write the output results as VTU files.
+   * Adds void fraction and particle velocity fields to the standard
+   * fluid dynamics output for comprehensive visualization of the
+   * coupled CFD-DEM system.
+   *
+   * @return Vector of OutputStruct objects containing additional fields
+   * for VTU output file generation
    */
   virtual std::vector<OutputStruct<dim, GlobalVectorType>>
   gather_output_hook() override;
 
 
   /**
-   * Member Variables
+   * @brief Member Variables
    */
 
+  /// CFD-DEM simulation parameters containing all configuration options
   CFDDEMSimulationParameters<dim> cfd_dem_simulation_parameters;
 
+  /// Mapping object for particle position calculations and projections
   MappingQGeneric<dim> particle_mapping;
 
-  // Assemblers for the particle_fluid interactions
+  /// Vector of assembler objects for particle-fluid interaction terms
   std::vector<std::shared_ptr<ParticleFluidAssemblerBase<dim>>>
     particle_fluid_assemblers;
 
+  /// Flag enabling Pressure Stabilizing Petrov-Galerkin (PSPG) stabilization
+  const bool PSPG = true;
 
-  const bool   PSPG        = true;
-  const bool   SUPG        = true;
+  /// Flag enabling Streamline Upwind Petrov-Galerkin (SUPG) stabilization
+  const bool SUPG = true;
+
+  /// Scaling factor for GLS velocity stabilization terms
   const double GLS_u_scale = 1;
-  double       pressure_drop;
 
+  /// Pressure drop across the computational domain
+  double pressure_drop;
+
+  /// Mapping from vertex indices to sets of cells containing each vertex
   std::map<unsigned int,
            std::set<typename DoFHandler<dim>::active_cell_iterator>>
     vertices_to_cell;
+
+  /// Mapping from vertex indices to sets of periodic cells containing each
+  /// vertex
   std::map<unsigned int,
            std::set<typename DoFHandler<dim>::active_cell_iterator>>
     vertices_to_periodic_cell;
 
+  /// Particle handler for managing particle data and operations
   Particles::ParticleHandler<dim, dim> particle_handler;
 
+  /// Particle projector for calculating void fraction and particle effects
   ParticleProjector<dim> particle_projector;
 
-  bool           has_periodic_boundaries;
+  /// Flag indicating whether the domain has periodic boundary conditions
+  bool has_periodic_boundaries;
+
+  /// Offset vector for periodic boundary condition calculations
   Tensor<1, dim> periodic_offset;
-  unsigned int   periodic_direction;
+
+  /// Direction index for periodic boundary conditions
+  unsigned int periodic_direction;
 };
 
 #endif
