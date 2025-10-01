@@ -217,6 +217,9 @@ public:
   void
   compute_element_size();
 
+  void
+  compute_element_center();
+
   /**
    * @brief Precompute forcing term.
    */
@@ -353,6 +356,14 @@ public:
   get_element_size() const;
 
   /**
+   * @brief Get the element size object.
+   *
+   * @return Aligned vector with the size of all elements.
+   */
+  const std::vector<Point<dim>>
+  get_element_center() const;
+
+  /**
    * @brief Compute the diagonal of the operator using an optimized MatrixFree
    * function. Needed for preconditioners.
    *
@@ -380,6 +391,12 @@ public:
   void
   evaluate_time_derivative_previous_solutions(
     const VectorType &time_derivative_previous_solutions);
+
+  void
+  evaluate_velocity_ale(
+    const double                                    radius,
+    const Point<dim>                                center_of_rotation,
+    std::shared_ptr<Functions::ParsedFunction<dim>> rotor_angular_velocity);
 
   /**
    * @brief Store the values of the source term calculated if dynamic control
@@ -552,6 +569,12 @@ protected:
    *
    */
   AlignedVector<VectorizedArray<number>> element_size;
+
+  /**
+   * @brief Aligned vector to store the element center of all the elements.
+   *
+   */
+  std::vector<Point<dim>> element_center;
 
   /**
    * @brief Finite element degree for the operator.
@@ -743,6 +766,13 @@ protected:
    * @brief Flag to turn the computation of mortar coupling terms on or off.
    */
   bool enable_mortar;
+
+  /**
+   * @brief Table with correct alignment for vectorization to store the values
+   * of the ALE velocity used in mortar coupling terms.
+   *
+   */
+  Table<2, Tensor<1, dim, VectorizedArray<number>>> velocity_ale;
 
   /**
    * @brief Vector with the constrained indices used for the local smoothing approach.
