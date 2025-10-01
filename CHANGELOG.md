@@ -3,6 +3,12 @@
 All notable changes to the Lethe project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
+### [Master] - 2025-10-01
+
+### Added
+
+- MINOR Added doxygen documentation for VANS and CFD-DEM solvers. [#1702](https://github.com/chaos-polymtl/lethe/pull/1702)
+
 ### [Master] - 2025-09-29
 
 ### Added
