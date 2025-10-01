@@ -25,16 +25,17 @@ using namespace dealii;
 /**
  * @brief Solver class for Volume-Averaged Navier-Stokes (VANS) equations with GLS stabilization.
  *
- * This class implements a computational fluid dynamics solver for the VANS equations,
- * which are used to model fluid flow in porous media or multiphase systems where
- * the presence of solid particles affects the fluid motion. The solver uses
- * Galerkin Least Squares (GLS) stabilization techniques including SUPG (Streamline
- * Upwind Petrov-Galerkin) and PSPG (Pressure Stabilizing Petrov-Galerkin) methods.
+ * This class implements a computational fluid dynamics solver for the VANS
+ * equations, which are used to model fluid flow in porous media or multiphase
+ * systems where the presence of solid particles affects the fluid motion. The
+ * solver uses Galerkin Least Squares (GLS) stabilization techniques including
+ * SUPG (Streamline Upwind Petrov-Galerkin) and PSPG (Pressure Stabilizing
+ * Petrov-Galerkin) methods.
  *
- * The VANS equations account for the volume fraction of the fluid phase (void fraction)
- * and incorporate particle-fluid interactions through appropriate source terms.
- * This solver forms the foundation for CFD-DEM simulations where particle dynamics
- * are coupled with fluid flow.
+ * The VANS equations account for the volume fraction of the fluid phase (void
+ * fraction) and incorporate particle-fluid interactions through appropriate
+ * source terms. This solver forms the foundation for CFD-DEM simulations where
+ * particle dynamics are coupled with fluid flow.
  *
  * @tparam dim Spatial dimension of the simulation (2 or 3)
  *
@@ -48,8 +49,8 @@ public:
   /**
    * @brief Constructor for the VANS solver.
    *
-   * @param[in] nsparam CFD-DEM simulation parameters containing all configuration
-   * options for the coupled fluid-particle simulation
+   * @param[in] nsparam CFD-DEM simulation parameters containing all
+   * configuration options for the coupled fluid-particle simulation
    */
   FluidDynamicsVANS(CFDDEMSimulationParameters<dim> &nsparam);
 
@@ -282,23 +283,24 @@ protected:
     particle_fluid_assemblers;
 
   /// Flag enabling Pressure Stabilizing Petrov-Galerkin (PSPG) stabilization
-  const bool   PSPG        = true;
-  
+  const bool PSPG = true;
+
   /// Flag enabling Streamline Upwind Petrov-Galerkin (SUPG) stabilization
-  const bool   SUPG        = true;
-  
+  const bool SUPG = true;
+
   /// Scaling factor for GLS velocity stabilization terms
   const double GLS_u_scale = 1;
-  
+
   /// Pressure drop across the computational domain
-  double       pressure_drop;
+  double pressure_drop;
 
   /// Mapping from vertex indices to sets of cells containing each vertex
   std::map<unsigned int,
            std::set<typename DoFHandler<dim>::active_cell_iterator>>
     vertices_to_cell;
-    
-  /// Mapping from vertex indices to sets of periodic cells containing each vertex
+
+  /// Mapping from vertex indices to sets of periodic cells containing each
+  /// vertex
   std::map<unsigned int,
            std::set<typename DoFHandler<dim>::active_cell_iterator>>
     vertices_to_periodic_cell;
@@ -310,13 +312,13 @@ protected:
   ParticleProjector<dim> particle_projector;
 
   /// Flag indicating whether the domain has periodic boundary conditions
-  bool           has_periodic_boundaries;
-  
+  bool has_periodic_boundaries;
+
   /// Offset vector for periodic boundary condition calculations
   Tensor<1, dim> periodic_offset;
-  
+
   /// Direction index for periodic boundary conditions
-  unsigned int   periodic_direction;
+  unsigned int periodic_direction;
 };
 
 #endif

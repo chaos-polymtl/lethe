@@ -56,7 +56,8 @@ public:
   /**
    * @brief Constructor for the CFD-DEM solver.
    *
-   * @param[in] nsparam Simulation parameters containing all CFD-DEM configuration options
+   * @param[in] nsparam Simulation parameters containing all CFD-DEM
+   * configuration options
    */
   CFDDEMSolver(CFDDEMSimulationParameters<dim> &nsparam);
 
@@ -324,41 +325,41 @@ private:
 
   /// Frequency of coupling between CFD and DEM solvers (in DEM time steps)
   unsigned int coupling_frequency;
-  
+
   /// Gravitational acceleration vector
   Tensor<1, 3> g;
-  
+
   /// Container for particle interaction outcomes (forces and torques)
   ParticleInteractionOutcomes<DEM::CFDDEMProperties::PropertiesIndex>
-                                             contact_outcome;
-                                             
+    contact_outcome;
+
   /// Reference to torque vector from contact outcomes
-  std::vector<Tensor<1, 3>>                 &torque = contact_outcome.torque;
-  
-  /// Reference to force vector from contact outcomes  
-  std::vector<Tensor<1, 3>>                 &force  = contact_outcome.force;
-  
+  std::vector<Tensor<1, 3>> &torque = contact_outcome.torque;
+
+  /// Reference to force vector from contact outcomes
+  std::vector<Tensor<1, 3>> &force = contact_outcome.force;
+
   /// Displacement vector for particle motion calculations
-  std::vector<double>                        displacement;
-  
+  std::vector<double> displacement;
+
   /// Moment of inertia values for all particles
-  std::vector<double>                        MOI;
-  
+  std::vector<double> MOI;
+
   /// Squared threshold distance for neighborhood particle detection
-  double                                     neighborhood_threshold_squared;
-  
+  double neighborhood_threshold_squared;
+
   /// Container for particle size distribution objects
   std::vector<std::shared_ptr<Distribution>> size_distribution_object_container;
-  
+
   /// Maximum diameter among all particles in the simulation
-  double                                     maximum_particle_diameter;
-  
+  double maximum_particle_diameter;
+
   /// Smallest criterion used for contact search algorithms
-  double                                     smallest_contact_search_criterion;
+  double smallest_contact_search_criterion;
 
   /**
    * @brief Object to store ongoing collision information.
-   * 
+   *
    * Stores particle ID, boundary ID, velocity tensor, angular velocity
    * tensor, and collision time for collisions currently in progress.
    */
@@ -366,66 +367,67 @@ private:
 
   /**
    * @brief Object to store completed collision events.
-   * 
+   *
    * Stores complete collision event data including start and end information
    * for post-processing and analysis purposes.
    */
   CompletedCollisionLog<dim> collision_event_log;
 
-  /// Manager for particle-particle and particle-wall contact detection and handling
+  /// Manager for particle-particle and particle-wall contact detection and
+  /// handling
   DEMContactManager<dim, DEM::CFDDEMProperties::PropertiesIndex>
     contact_manager;
-    
-  /// Load balancing handler for distributing particles across MPI processes  
+
+  /// Load balancing handler for distributing particles across MPI processes
   LagrangianLoadBalancing<dim, DEM::CFDDEMProperties::PropertiesIndex>
     load_balancing;
-    
+
   /// Handler for point and line contact forces between particles
   ParticlePointLineForce<dim, DEM::CFDDEMProperties::PropertiesIndex>
     particle_point_line_contact_force_object;
-    
+
   /// Time integration scheme for particle motion equations
   std::shared_ptr<Integrator<dim, DEM::CFDDEMProperties::PropertiesIndex>>
     integrator_object;
-    
+
   /// Particle insertion method handler
   std::shared_ptr<Insertion<dim, DEM::CFDDEMProperties::PropertiesIndex>>
     insertion_object;
-    
+
   /// Contact force model for particle-particle interactions
   std::shared_ptr<
     ParticleParticleContactForceBase<dim,
                                      DEM::CFDDEMProperties::PropertiesIndex>>
     particle_particle_contact_force_object;
-    
+
   /// Contact force model for particle-wall interactions
   std::shared_ptr<
     ParticleWallContactForceBase<dim, DEM::CFDDEMProperties::PropertiesIndex>>
     particle_wall_contact_force_object;
-    
+
   /// Visualization handler for DEM output generation
   Visualization<dim, DEM::CFDDEMProperties::PropertiesIndex>
-                                visualization_object;
-                                
+    visualization_object;
+
   /// Information about boundary cells for contact detection
   BoundaryCellsInformation<dim> boundary_cell_object;
 
   /// Mesh information for solid surfaces in contact with particles
   typename dem_data_structures<dim>::solid_surfaces_mesh_information
     solid_surfaces_mesh_info;
-    
+
   /// Updated boundary points and their corresponding normal vectors
   typename dem_data_structures<dim>::boundary_points_and_normal_vectors
     updated_boundary_points_and_normal_vectors;
-    
+
   /// Force information stored on boundary elements
   typename dem_data_structures<dim>::vector_on_boundary
     forces_boundary_information;
-    
+
   /// Torque information stored on boundary elements
   typename dem_data_structures<dim>::vector_on_boundary
     torques_boundary_information;
-    
+
   /// Information about cells involved in periodic boundary conditions
   typename DEM::dem_data_structures<dim>::periodic_boundaries_cells_info
     periodic_boundaries_cells_information;
@@ -452,21 +454,21 @@ private:
 
   /// PVD handler for grid visualization output
   PVDHandler grid_pvdhandler;
-  
+
   /// PVD handler for particle visualization output
   PVDHandler particles_pvdhandler;
 
   /// DEM simulation parameters container
   DEMSolverParameters<dim> dem_parameters;
-  
+
   /// Time step size for DEM integration
-  double                   dem_time_step;
-  
+  double dem_time_step;
+
   /// Current MPI process identifier
-  const unsigned int       this_mpi_process;
-  
+  const unsigned int this_mpi_process;
+
   /// Total number of MPI processes
-  const unsigned int       n_mpi_processes;
+  const unsigned int n_mpi_processes;
 
   /// TableHandler for post-processing phase volume calculations
   /// Stores total fluid volume and total particle volume data
