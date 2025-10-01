@@ -32,9 +32,9 @@
 <area shape="poly" id="edge10_Node000010_Node000011" title=" " alt="" coords="779,265,816,253,864,232,900,220,902,225,866,236,818,258,781,270"/>
 <area shape="rect" id="Node000012" href="$classFluidDynamicsSharp.html" title=" " alt="" coords="899,246,1055,286"/>
 <area shape="poly" id="edge11_Node000010_Node000012" title=" " alt="" coords="800,279,899,270,899,275,800,284"/>
-<area shape="rect" id="Node000013" href="$classFluidDynamicsVANS.html" title=" " alt="" coords="895,310,1060,350"/>
+<area shape="rect" id="Node000013" href="$classFluidDynamicsVANS.html" title="Solver class for Volume&#45;Averaged Navier&#45;Stokes (VANS) equations with GLS stabilization." alt="" coords="895,310,1060,350"/>
 <area shape="poly" id="edge12_Node000010_Node000013" title=" " alt="" coords="800,304,895,316,894,322,799,309"/>
-<area shape="rect" id="Node000014" href="$classCFDDEMSolver.html" title="Solver using the GLS Volume&#45;averaged Navier&#45;Stokes (VANS) solver for fluid and the soft&#45;sphere model ..." alt="" coords="1137,317,1312,343"/>
+<area shape="rect" id="Node000014" href="$classCFDDEMSolver.html" title="Solver class for coupled Computational Fluid Dynamics and Discrete Element Method (CFD&#45;DEM) simulatio..." alt="" coords="1137,317,1312,343"/>
 <area shape="poly" id="edge13_Node000013_Node000014" title=" " alt="" coords="1074,327,1137,327,1137,333,1074,333"/>
 <area shape="rect" id="Node000016" href="$classFluidDynamicsMatrixFree.html" title="A solver for the incompressible Navier&#45;Stokes equations implemented in a matrix&#45;free fashion." alt="" coords="591,349,780,389"/>
 <area shape="poly" id="edge15_Node000015_Node000016" title=" " alt="" coords="513,364,590,365,590,370,513,369"/>
