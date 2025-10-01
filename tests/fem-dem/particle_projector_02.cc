@@ -286,7 +286,7 @@ main(int argc, char *argv[])
       deallog
         << "Particle-fluid Constant Force: fe_degree=1    number_quadrature_points=3"
         << std::endl;
-      test_void_fraction_qcm(1, 3, constant_func, false, "constant");
+      test_void_fraction_qcm(1, 3, constant_func, true, "constant");
 
       deallog
         << "Particle-fluid Linear Force: fe_degree=1    number_quadrature_points=2"

@@ -849,6 +849,28 @@ ParticleProjector<dim>::calculate_void_fraction_quadrature_centered_method()
 
   particle_handler->update_ghost_particles();
 
+ std::string base_name = "quadrature_data.csv";
+    std::string filename = base_name;
+    int counter = 1;
+
+    // Check if file exists
+    std::ifstream infile(filename);
+    while (infile.is_open()) {
+        infile.close();  // close the currently open file before generating new name
+
+        std::ostringstream ss;
+        ss << base_name.substr(0, base_name.find_last_of('.'))  // base name without extension
+           << "_" << counter
+           << base_name.substr(base_name.find_last_of('.'));    // extension
+        filename = ss.str();
+        counter++;
+
+        infile.open(filename);  // try opening the new filename
+    }
+  std::ofstream csv_file(filename);
+              // Header line
+  csv_file << "x,y,z,void_fraction, Particle_volume\n";
+
   // After the particles' contributions have been determined, calculate and
   // normalize the void fraction
   for (const auto &cell : dof_handler.active_cell_iterators())
@@ -1008,14 +1030,16 @@ ParticleProjector<dim>::calculate_void_fraction_quadrature_centered_method()
                     }
                 }
 
-              // We use the volume of the cell as it is equal to the volume
-              // of the sphere
               quadrature_void_fraction =
                 ((fe_values_void_fraction.JxW(q) * cell->measure() /
                   sum_quadrature_weights) -
                  particles_volume_in_sphere) /
                 (fe_values_void_fraction.JxW(q) * cell->measure() /
                  sum_quadrature_weights);
+  
+              auto qp = quadrature_point_location[q];
+              csv_file << qp[0] << "," << qp[1] << "," << qp[2] << "," << quadrature_void_fraction << "," << particles_volume_in_sphere << "\n";
+
 
               for (unsigned int k = 0; k < dofs_per_cell; ++k)
                 {
@@ -1051,6 +1075,7 @@ ParticleProjector<dim>::calculate_void_fraction_quadrature_centered_method()
             system_rhs_void_fraction);
         }
     }
+  csv_file.close();
 
   system_matrix_void_fraction.compress(VectorOperation::add);
   system_rhs_void_fraction.compress(VectorOperation::add);
