@@ -2,7 +2,7 @@
 Particle Ray Tracing
 =====================
 
-In this subsection, is used when using the `lethe-particles-ray-tracing` application. This application simulates the trajectories of photons, or rays, as they propagate through a simulation domain to extract the surface made by particle using the same principal as profilometry. The parameters defined here control the initial conditions for photon insertion, including their starting positions, directions, and any random offsets applied to their trajectories.
+In this subsection, is used when using the ``lethe-particles-ray-tracing`` application. This application simulates the trajectories of photons, or rays, as they propagate through a simulation domain to extract the surface made by particle using the same principal as profilometry. The parameters defined here control the initial conditions for photon insertion, including their starting positions, directions, and any random offsets applied to their trajectories.
 
 .. code-block:: text
 
@@ -18,7 +18,7 @@ In this subsection, is used when using the `lethe-particles-ray-tracing` applica
     set photon angular offset prn seed                      = 1
   end
 
--  ``starting photon insertion position``  is the location of the first photon being inserted, given as a 3D coordinate \((x,y,z)\).
+-  ``starting photon insertion position`` is the location of the first photon being inserted, given as a 3D coordinate (x,y,z).
 
 -  ``insertion unit tensors`` are three vectors defining the insertion grid directions relative to the ``starting photon position``. By default, these correspond to the Cartesian axes. The vectors do not need to be orthogonal or normalized, but they must not be zero vectors. The insertion grid is formed by creating insertion point relative to the ``starting photon insertion position`` using these three vectors.
 
@@ -26,7 +26,7 @@ In this subsection, is used when using the `lethe-particles-ray-tracing` applica
 
 -  ``distance between photons on insertion per direction`` is the spacing between photons along each insertion direction when the ``photon insertion maximum offset`` is zero. All values must be strictly greater than zero.
 
--  ``reference displacement vector`` is the prescribed displacement vector that defines the nominal direction of photon propagation. If the ``photon maximum angular offset``is zero, photons travel exactly in this direction.
+-  ``reference displacement vector`` is the prescribed displacement vector that defines the nominal direction of photon propagation. If the ``photon maximum angular offset`` is zero, photons travel exactly in this direction.
 
 -  ``photon insertion maximum offset`` is the maximum positional offset applied randomly to the initial location of each photon in each direction defined by the ``insertion unit tensors``. If set to zero, photons are perfectly aligned.
 
