@@ -2383,6 +2383,11 @@ namespace Parameters
                           Patterns::Integer(),
                           "Maximum number of Newton Iterations");
         prm.declare_entry(
+          "normalize residual",
+          "false",
+          Patterns::Bool(),
+          "Normalize the residuals by the volume of the triangulation");
+        prm.declare_entry(
           "step tolerance",
           "0.9",
           Patterns::Double(),

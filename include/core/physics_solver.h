@@ -122,6 +122,18 @@ public:
     return system_rhs.l2_norm();
   }
 
+  inline double
+  get_global_volume() const
+  {
+    return global_volume;
+  }
+
+  inline void
+  set_global_volume(const double &volume)
+  {
+    global_volume = volume;
+  }
+
   /**
    * @brief Return the current newton iteration of this physics solver.
    */
@@ -136,6 +148,10 @@ public:
 
 private:
   NonLinearSolver<VectorType> *non_linear_solver;
+
+  /// Volume of the entire triangulation. Set as 1. as default to avoid
+  /// indetermination.
+  double global_volume = 1.;
 };
 
 template <typename VectorType>

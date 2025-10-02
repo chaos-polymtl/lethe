@@ -697,8 +697,8 @@ FluidDynamicsBlock<dim>::setup_dofs_fd()
     }
 
 
-  double global_volume =
-    GridTools::volume(*this->triangulation, *this->mapping);
+  this->calculate_global_volume();
+  double global_volume = this->get_global_volume();
 
   this->pcout << "   Number of active cells:       "
               << this->triangulation->n_global_active_cells() << std::endl
