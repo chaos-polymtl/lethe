@@ -1152,6 +1152,9 @@ namespace Parameters
     // Kinsol solver strategy
     KinsolStrategy kinsol_strategy;
 
+    // Normalize residual by triangulation volume
+    bool normalize_residual_by_volume;
+
     // Tolerance
     double tolerance;
 

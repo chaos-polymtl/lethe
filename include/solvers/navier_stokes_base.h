@@ -41,6 +41,7 @@
 #include <deal.II/fe/mapping_q_cache.h>
 
 #include <deal.II/grid/grid_out.h>
+#include <deal.II/grid/grid_tools.h>
 
 #include <deal.II/lac/affine_constraints.h>
 
@@ -464,6 +465,13 @@ protected:
    */
   void
   reinit_mortar_operators();
+
+  virtual void
+  calculate_global_volume()
+  {
+    this->set_global_volume(
+      GridTools::volume(*this->triangulation, *this->mapping));
+  }
 
   /**
    * @brief Returns the mapping shared pointer. A MappingQCache is
