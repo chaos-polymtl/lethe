@@ -18,6 +18,7 @@ In the ``solid objects`` section, surface meshes can defined and their motion ca
    lagrangian_physical_properties
    mesh
    model_parameters
+   particle_ray_tracing
    post-processing
    simulation_control
    solid_objects
