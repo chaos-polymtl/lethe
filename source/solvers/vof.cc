@@ -3,6 +3,8 @@
 
 #include <solvers/vof.h>
 
+#include <deal.II/fe/fe_simplex_p.h>
+
 #include <deal.II/lac/solver_control.h>
 #include <deal.II/lac/sparsity_tools.h>
 #include <deal.II/lac/trilinos_solver.h>

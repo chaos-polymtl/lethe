@@ -8,8 +8,6 @@
 #include <deal.II/base/parameter_handler.h>
 #include <deal.II/base/parsed_function.h>
 
-#include <deal.II/lac/vector.h>
-
 using namespace dealii;
 
 namespace Parameters

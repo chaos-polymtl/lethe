@@ -9,7 +9,6 @@
 template <typename VectorType>
 class PhysicsSolver;
 
-
 /**
  * @brief Base class that works as an interface for all non-linear solvers for all non-linear systems of equations.
  *

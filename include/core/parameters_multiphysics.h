@@ -6,7 +6,6 @@
  * that pertain to multiphysics simulations
  */
 
-
 #ifndef lethe_parameters_multiphysics_h
 #define lethe_parameters_multiphysics_h
 

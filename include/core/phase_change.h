@@ -4,7 +4,7 @@
 #ifndef lethe_phase_change_h
 #define lethe_phase_change_h
 
-#include <core/physical_property_model.h>
+#include <core/parameters.h>
 
 using namespace dealii;
 

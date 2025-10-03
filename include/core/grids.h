@@ -12,7 +12,6 @@
 
 using namespace dealii;
 
-
 /**
  * @brief Attaches a grid to a triangulation using mesh parameters
  *

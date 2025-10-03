@@ -6,8 +6,6 @@
 #include <deal.II/lac/full_matrix.h>
 #include <deal.II/lac/vector.h>
 
-
-
 template <int dim>
 unsigned int
 IBStencil<dim>::number_of_interpolation_support_points(const unsigned int order)
