@@ -4,8 +4,6 @@
 #ifndef lethe_navier_stokes_base_h
 #define lethe_navier_stokes_base_h
 
-
-// Lethe Includes
 #include <core/mesh_controller.h>
 #include <core/mortar_coupling_manager.h>
 #include <core/parameters.h>

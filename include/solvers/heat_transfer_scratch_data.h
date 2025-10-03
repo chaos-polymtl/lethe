@@ -4,11 +4,7 @@
 #ifndef lethe_heat_transfer_scratch_data_h
 #define lethe_heat_transfer_scratch_data_h
 
-#include <core/density_model.h>
-#include <core/multiphysics.h>
 #include <core/physical_property_model.h>
-#include <core/specific_heat_model.h>
-#include <core/thermal_conductivity_model.h>
 #include <core/vector.h>
 
 #include <solvers/multiphysics_interface.h>
@@ -16,19 +12,14 @@
 #include <solvers/vof_filter.h>
 
 #include <deal.II/base/exceptions.h>
-#include <deal.II/base/quadrature.h>
 
 #include <deal.II/dofs/dof_renumbering.h>
-#include <deal.II/dofs/dof_tools.h>
 
-#include <deal.II/fe/fe_q.h>
 #include <deal.II/fe/fe_system.h>
-#include <deal.II/fe/mapping.h>
 
 #include <deal.II/numerics/vector_tools.h>
 
 using namespace dealii;
-
 
 /**
  * @brief Class that stores the information required by the assembly procedure

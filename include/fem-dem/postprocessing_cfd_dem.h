@@ -4,13 +4,6 @@
 #ifndef lethe_postprocessing_cfd_dem_h
 #define lethe_postprocessing_cfd_dem_h
 
-// Dofs
-#include <deal.II/dofs/dof_handler.h>
-
-// Fe
-#include <deal.II/fe/fe.h>
-#include <deal.II/fe/mapping_fe.h>
-
 // Lethe includes
 #include <solvers/physical_properties_manager.h>
 
@@ -22,9 +15,9 @@
  * where \f$ \varepsilon \f$ is the void fraction and \f$ d \Omega \f$ is the
  * volume of the cell.
  *
- * @param void_fraction_dof_handler. Used to calculate the void fraction at quadrature points
- * @param present_void_fraction_solution. Void fraction solution vector
- * @param quadrature_formula. Quadrature formula.
+ * @param void_fraction_dof_handler Used to calculate the void fraction at quadrature points
+ * @param present_void_fraction_solution Void fraction solution vector
+ * @param quadrature_formula Quadrature formula.
  * @param mapping The mapping of the simulation
  */
 template <int dim, typename VectorType>

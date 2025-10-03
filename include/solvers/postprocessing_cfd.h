@@ -4,24 +4,11 @@
 #ifndef lethe_postprocessing_cfd_h
 #define lethe_postprocessing_cfd_h
 
-
-// Base
 #include <deal.II/base/quadrature_lib.h>
 
-// Lac
-#include <deal.II/lac/dynamic_sparsity_pattern.h>
-#include <deal.II/lac/vector.h>
-
-// Dofs
 #include <deal.II/dofs/dof_handler.h>
 
-// Fe
-#include <deal.II/fe/fe.h>
-#include <deal.II/fe/mapping_fe.h>
-
-// Lethe includes
 #include <core/boundary_conditions.h>
-#include <core/parameters.h>
 
 #include <solvers/physical_properties_manager.h>
 

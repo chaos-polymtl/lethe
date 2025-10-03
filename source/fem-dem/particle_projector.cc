@@ -13,7 +13,6 @@
 
 #include <deal.II/grid/grid_generator.h>
 
-#include <deal.II/lac/sparsity_pattern.h>
 #include <deal.II/lac/sparsity_tools.h>
 #include <deal.II/lac/trilinos_solver.h>
 

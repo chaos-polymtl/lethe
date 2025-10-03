@@ -6,6 +6,7 @@
 
 #include <dem/dem_post_processing.h>
 #include <dem/explicit_euler_integrator.h>
+#include <dem/find_contact_detection_step.h>
 #include <dem/insertion_file.h>
 #include <dem/insertion_list.h>
 #include <dem/insertion_plane.h>
@@ -15,6 +16,7 @@
 #include <dem/set_particle_wall_contact_force_model.h>
 #include <dem/velocity_verlet_integrator.h>
 #include <fem-dem/cfd_dem_coupling.h>
+#include <fem-dem/postprocessing_cfd_dem.h>
 
 #include <fstream>
 #include <sstream>
@@ -293,7 +295,7 @@ CFDDEMSolver<dim>::initialize_dem_parameters()
 
   // Finding the smallest contact search frequency criterion between (smallest
   // cell size - largest particle radius) and (security factor * (blob diameter
-  // - 1) *  largest particle radius). This value is used in
+  // - 1) *  the largest particle radius). This value is used in
   // find_contact_detection_frequency function
   smallest_contact_search_criterion =
     std::min((GridTools::minimal_cell_diameter(*this->triangulation) -
@@ -412,7 +414,7 @@ CFDDEMSolver<dim>::read_dem()
 
       // Fill the existing particle handler using the temporary one
       // This is done during the dynamic cast for the convert_particle_handler
-      // function which requires a pararallel::distributed::triangulation
+      // function which requires a parallel::distributed::triangulation
       convert_particle_handler<dim,
                                DEM::DEMProperties::PropertiesIndex,
                                DEM::CFDDEMProperties::PropertiesIndex>(
@@ -978,7 +980,7 @@ void
 CFDDEMSolver<dim>::insert_particles()
 {
   // If the insertion frequency is set to 0, then no particles are going
-  // to be inserted inside of the CFD-DEM simulation and the function returns
+  // to be inserted in the CFD-DEM simulation and the function returns
   if (dem_parameters.insertion_info.insertion_frequency == 0)
     return;
 
@@ -1162,7 +1164,7 @@ CFDDEMSolver<dim>::print_particles_summary()
 {
   const int display_width = this->simulation_control->get_log_precision() + 8;
   this->pcout << "Particle Summary" << std::endl;
-  //  this->pcout << "id, x, y, z, v_x, v_y, v_z" << std::endl;
+
   this->pcout << std::setw(display_width) << std::left << "id, "
               << std::setw(display_width) << std::left << "x, "
               << std::setw(display_width) << std::left << "y, "
@@ -1170,7 +1172,7 @@ CFDDEMSolver<dim>::print_particles_summary()
               << std::setw(display_width) << std::left << "v_x, "
               << std::setw(display_width) << std::left << "v_y, "
               << std::setw(display_width) << std::left << "v_z" << std::endl;
-  // Agressively force synchronization of the header line
+  // Aggressively force synchronization of the header line
   usleep(500);
   MPI_Barrier(this->mpi_communicator);
   usleep(500);
@@ -1602,7 +1604,7 @@ CFDDEMSolver<dim>::solve()
   // Initialize the DEM parameters and generate the required ghost particles
   initialize_dem_parameters();
 
-  // Calculate first instance of void fraction once particles are set-up
+  // Calculate first instance of void fraction once particles are set up
   this->vertices_cell_mapping();
   if (!dem_action_manager->check_restart_simulation())
     this->particle_projector.initialize_void_fraction(

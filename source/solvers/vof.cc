@@ -9,6 +9,8 @@
 
 #include <deal.II/meshworker/mesh_loop.h>
 
+#include <deal.II/numerics/error_estimator.h>
+
 #include <sys/stat.h>
 
 #include <cmath>

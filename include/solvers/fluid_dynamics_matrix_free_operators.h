@@ -4,10 +4,8 @@
 #ifndef lethe_fluid_dynamics_matrix_free_operators_h
 #define lethe_fluid_dynamics_matrix_free_operators_h
 
-#include <core/bdf.h>
 #include <core/mortar_coupling_manager.h>
 #include <core/simulation_control.h>
-#include <core/time_integration_utilities.h>
 
 #include <solvers/simulation_parameters.h>
 
@@ -21,8 +19,6 @@
 #include <deal.II/matrix_free/matrix_free.h>
 #include <deal.II/matrix_free/operators.h>
 #include <deal.II/matrix_free/tools.h>
-
-#include <deal.II/multigrid/mg_tools.h>
 
 using namespace dealii;
 

@@ -9,7 +9,6 @@
 #include <fem-dem/cfd_dem_simulation_parameters.h>
 #include <fem-dem/particle_projector.h>
 
-
 /**
  * @brief A geometric multigrid preconditioner implementation for
  * incompressible VANS equations.
@@ -127,7 +126,7 @@ public:
    * @brief Solve the problem defined by simulation parameters by iterating
    * through time or through the mesh refinements.
    */
-  virtual void
+  void
   solve() override;
 
 protected:
@@ -141,7 +140,7 @@ protected:
    * @brief Setup the degree of freedom of the flow solver and the degrees of freedom
    * and constraints for the void fraction.
    */
-  virtual void
+  void
   setup_dofs() override;
 
   /**

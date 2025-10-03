@@ -4,19 +4,8 @@
 #ifndef lethe_postprocessing_velocities_h
 #define lethe_postprocessing_velocities_h
 
-// Lac - Trilinos includes
-#include <deal.II/lac/la_parallel_vector.h>
-#include <deal.II/lac/trilinos_parallel_block_vector.h>
-#include <deal.II/lac/trilinos_vector.h>
-
-// Dofs
-#include <deal.II/dofs/dof_handler.h>
-
-// Distributed
 #include <deal.II/distributed/solution_transfer.h>
 
-
-// Lethe Includes
 #include <core/parameters.h>
 
 using namespace dealii;

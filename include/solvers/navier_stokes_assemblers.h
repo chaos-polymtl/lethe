@@ -6,7 +6,6 @@
 
 #include <core/ale.h>
 #include <core/boundary_conditions.h>
-#include <core/rheological_model.h>
 #include <core/simulation_control.h>
 
 #include <solvers/copy_data.h>

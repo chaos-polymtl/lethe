@@ -7,7 +7,6 @@
 #include <core/pvd_handler.h>
 
 #include <solvers/physics_subequations_solver.h>
-#include <solvers/vof_assemblers.h>
 #include <solvers/vof_scratch_data.h>
 #include <solvers/vof_subequations_interface.h>
 
@@ -21,7 +20,6 @@
 #include <deal.II/fe/mapping_fe.h>
 #include <deal.II/fe/mapping_q.h>
 
-#include <deal.II/lac/trilinos_precondition.h>
 #include <deal.II/lac/trilinos_sparse_matrix.h>
 #include <deal.II/lac/trilinos_vector.h>
 

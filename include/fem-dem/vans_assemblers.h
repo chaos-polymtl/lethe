@@ -28,9 +28,9 @@ class ParticleFluidAssemblerBase
 {
 public:
   /**
-   * @brief calculate_particle_fluid_interactions calculates the particle-fluid interaction for all of the particles.
+   * @brief Calculates the particle-fluid interaction for all of the particles.
    * The forces calculated on the particles is stored within the fem_force. The
-   * overall beta coefficient for the cell, whcih is defined as the drag
+   * overall beta coefficient for the cell, which is defined as the drag
    * coefficient divided by the cell volume, is also calculated within this
    * function.
    * @param scratch_data Scratch data containing the Navier-Stokes information.
@@ -42,7 +42,6 @@ public:
   virtual void
   calculate_particle_fluid_interactions(
     NavierStokesScratchData<dim> &scratch_data) = 0;
-
 
   /**
    * @brief Default destructor.
@@ -112,7 +111,7 @@ public:
   {}
 
   /**
-   * @brief assemble_matrix Assembles the matrix
+   * @brief Assembles the matrix
    * @param scratch_data (see base class)
    * @param copy_data (see base class)
    */
@@ -158,7 +157,7 @@ public:
   {}
 
   /**
-   * @brief assemble_matrix Assembles the matrix
+   * @brief Assembles the matrix
    * @param scratch_data (see base class)
    * @param copy_data (see base class)
    */
@@ -167,7 +166,7 @@ public:
                   StabilizedMethodsTensorCopyData<dim> &copy_data) override;
 
   /**
-   * @brief assemble_rhs Assembles the rhs
+   * @brief Assembles the rhs
    * @param scratch_data (see base class)
    * @param copy_data (see base class)
    */
@@ -203,9 +202,8 @@ public:
   {}
 
   /**
-   * @brief calculate_particle_fluid_interactions calculated the solid_fluid interactions
+   * @brief Calculated the solid_fluid interactions
    * @param scratch_data (see base class)
-   * @param copy_data (see base class)
    */
   virtual void
   calculate_particle_fluid_interactions(
@@ -217,15 +215,15 @@ public:
 /**
  * @brief Class that assembles the drag force using Rong model for the
  * VANS equations where the drag coefficient c_d =
-        pow((0.63 + 4.8 / sqrt(re)), 2) *
-        pow(cell_void_fraction,
-            -(2.65 * (cell_void_fraction + 1) -
-              (5.3 - (3.5 * cell_void_fraction)) * pow(cell_void_fraction, 2) *
-                exp(-pow(1.5 - log10(re), 2) / 2)))
+ *      pow((0.63 + 4.8 / sqrt(re)), 2) *
+ *      pow(cell_void_fraction,
+ *          -(2.65 * (cell_void_fraction + 1) -
+ *            (5.3 - (3.5 * cell_void_fraction)) * pow(cell_void_fraction, 2) *
+ *              exp(-pow(1.5 - log10(re), 2) / 2)))
  * and the momentum exchange coefficient
  *  beta =(0.5 * c_d * M_PI *
-         pow(particle_properties[DEM::CFDDEMProperties::PropertiesIndex::dp],
- 2) / 4) * relative_velocity.norm()
+ *       pow(particle_properties[DEM::CFDDEMProperties::PropertiesIndex::dp],
+ *       2) / 4) * relative_velocity.norm()
  * @tparam dim An integer that denotes the number of spatial dimensions
  *
  * @ingroup assemblers
@@ -240,9 +238,9 @@ public:
   {}
 
   /**
-   * @brief calculate_particle_fluid_interactions calculated the solid_fluid interactions
+   * @brief Calculated the solid_fluid interactions.
+   *
    * @param scratch_data (see base class)
-   * @param copy_data (see base class)
    */
   virtual void
   calculate_particle_fluid_interactions(
@@ -273,9 +271,9 @@ public:
   {}
 
   /**
-   * @brief calculate_particle_fluid_interactions calculted the solid_fluid interactions
+   * @brief Calculted the solid_fluid interactions
+   *
    * @param scratch_data (see base class)
-   * @param copy_data (see base class)
    */
   virtual void
   calculate_particle_fluid_interactions(
@@ -288,26 +286,25 @@ public:
  * @brief Class that assembles the drag force using the Koch and Hill drag model for the
  * VANS equations where the momentum exchange coefficient
  *  beta =   ((18 * mu * cell_void_fraction^2 *
-          (1 - cell_void_fraction)) / pow(dp, 2)) *
-        (f0 + 0.5 * f3 * cell_void_fraction * re) *
-        Vp /(1 - cell_void_fraction) where f0 and f3 are functions given by:
-      if ((1 - cell_void_fraction) < 0.4)
-        {
-          f0 = (1 + 3 * sqrt((1 - cell_void_fraction) / 2) +
-                (135.0 / 64) * (1 - cell_void_fraction) *
-                  log(1 - cell_void_fraction) +
-                16.14 * (1 - cell_void_fraction)) /
-               (1 + 0.681 * (1 - cell_void_fraction) -
-                8.48 * (1 - cell_void_fraction)^2 +
-                8.14 * (1 - cell_void_fraction)^3);
-        }
-      else if ((1 - cell_void_fraction) >= 0.4)
-        {
-          f0 = 10 * (1 - cell_void_fraction) / cell_void_fraction^3;
-        }
-
-      f3 = 0.0673 + 0.212 * (1 - cell_void_fraction) +
-           0.0232 / pow(cell_void_fraction, 5);
+ *        (1 - cell_void_fraction)) / pow(dp, 2)) *
+ *      (f0 + 0.5 * f3 * cell_void_fraction * re) *
+ *      Vp /(1 - cell_void_fraction) where f0 and f3 are functions given by:
+ *    if ((1 - cell_void_fraction) < 0.4)
+ *      {
+ *        f0 = (1 + 3 * sqrt((1 - cell_void_fraction) / 2) +
+ *              (135.0 / 64) * (1 - cell_void_fraction) *
+ *                log(1 - cell_void_fraction) +
+ *              16.14 * (1 - cell_void_fraction)) /
+ *             (1 + 0.681 * (1 - cell_void_fraction) -
+ *              8.48 * (1 - cell_void_fraction)^2 +
+ *              8.14 * (1 - cell_void_fraction)^3);
+ *      }
+ *    else if ((1 - cell_void_fraction) >= 0.4)
+ *      {
+ *        f0 = 10 * (1 - cell_void_fraction) / cell_void_fraction^3;
+ *      }
+ *    f3 = 0.0673 + 0.212 * (1 - cell_void_fraction) +
+ *         0.0232 / pow(cell_void_fraction, 5);
  * @tparam dim An integer that denotes the number of spatial dimensions
  *
  * @ingroup assemblers
@@ -322,7 +319,9 @@ public:
   {}
 
   /**
-   * @brief calculate_particle_fluid_interactions  calculates the solid-fluid interaction of the Koch-Hill drag model.
+   * @brief calculate_particle_fluid_interactions  calculates the solid-fluid
+   * interaction of the Koch-Hill drag model.
+   *
    * @param scratch_data (see base class)
    */
   virtual void
@@ -336,19 +335,20 @@ public:
  * @brief Class that assembles the drag force using Beetstra model for the
  * VANS equations where the
  * normalized drag force = 10 * (1 - cell_void_fraction) /
-          (pow(cell_void_fraction, 2)) + pow(cell_void_fraction, 2) * (1 + 1.5 *
- pow((1 - cell_void_fraction), 0.5)) + 0.413 * re / (24 *
- pow(cell_void_fraction, 2)) *
-          ((1 / cell_void_fraction) + 3 * (1 - cell_void_fraction) *
- cell_void_fraction
-          + 8.4 * pow(re, -0.343)) / (1 + pow(10, 3 * (1 - cell_void_fraction))
+ *         (pow(cell_void_fraction, 2)) + pow(cell_void_fraction, 2) * (1 + 1.5 *
+ * pow((1 - cell_void_fraction), 0.5)) + 0.413 * re / (24 *
+ * pow(cell_void_fraction, 2)) *
+ *         ((1 / cell_void_fraction) + 3 * (1 - cell_void_fraction) *
+ * cell_void_fraction
+ *         + 8.4 * pow(re, -0.343)) / (1 + pow(10, 3 * (1 - cell_void_fraction))
  * pow(re,
-          -(1 + 4 * (1 - cell_void_fraction)) * 0.5));
- *the drag coefficient = normalized_drag_force * 24 / Re_p
- *The reference for this formulation of the Beestra model is given in the
- article *Complete liquid-solid momentum coupling for unresolved CFD-DEM
- simulations:
- https://www.sciencedirect.com/science/article/pii/S0301932220305346
+ *         -(1 + 4 * (1 - cell_void_fraction)) * 0.5));
+ * the drag coefficient = normalized_drag_force * 24 / Re_p
+ * The reference for this formulation of the Beestra model is given in the
+ * article *Complete liquid-solid momentum coupling for unresolved CFD-DEM
+ * simulations:
+ * https://www.sciencedirect.com/science/article/pii/S0301932220305346
+ *
  * @tparam dim An integer that denotes the number of spatial dimensions
  *
  * @ingroup assemblers
@@ -365,7 +365,6 @@ public:
   /**
    * @brief calculate_particle_fluid_interactions calculates the solid_fluid interactions
    * @param scratch_data (see base class)
-   * @param copy_data (see base class)
    */
   virtual void
   calculate_particle_fluid_interactions(
@@ -416,6 +415,7 @@ public:
 
   /**
    * @brief calculate_particle_fluid_interactions calculted the solid_fluid interactions
+   *
    * @param scratch_data (see base class)
    * @param copy_data (see base class)
    */
@@ -425,8 +425,6 @@ public:
 
   const Parameters::CFDDEM cfd_dem;
 };
-
-
 
 /**
  * @brief Class that assembles the Lift force using Saffman-Mei model
@@ -454,13 +452,11 @@ public:
   /**
    * @brief calculate_particle_fluid_interactions calculates the Saffman force.
    * @param scratch_data (see base class)
-   * @param copy_data (see base class)
    */
   virtual void
   calculate_particle_fluid_interactions(
     NavierStokesScratchData<dim> &scratch_data) override;
 };
-
 
 /**
  * @brief Class that assembles the Lift force using Magnus model
@@ -486,7 +482,6 @@ public:
   /**
    * @brief calculate_particle_fluid_interactions calculates the Magnus force.
    * @param scratch_data (see base class)
-   * @param copy_data (see base class)
    */
   virtual void
   calculate_particle_fluid_interactions(
@@ -520,7 +515,6 @@ public:
   /**
    * @brief calculate_particle_fluid_interactions calculates the viscous torque dissipation
    * @param scratch_data (see base class)
-   * @param copy_data (see base class)
    */
   virtual void
   calculate_particle_fluid_interactions(
@@ -553,7 +547,6 @@ public:
   /**
    * @brief calculate_particle_fluid_interactions calculates the viscous torque dissipation
    * @param scratch_data (see base class)
-   * @param copy_data (see base class)
    */
   virtual void
   calculate_particle_fluid_interactions(
@@ -578,7 +571,7 @@ public:
   /**
    * @brief Constructor. Keeps an internal copy of the gravity.
    *
-   * @param[in] gravity the gravity applied to the particles.
+   * @param[in] p_gravity the gravity applied to the particles.
    */
 
   VANSAssemblerBuoyancy(const Tensor<1, 3> &p_gravity)
@@ -589,7 +582,6 @@ public:
   /**
    * @brief Calculate the buoyancy force.
    * @param scratch_data (see base class)
-   * @param copy_data (see base class)
    */
   virtual void
   calculate_particle_fluid_interactions(
@@ -598,7 +590,6 @@ public:
   /// Gravity acceleration applied to the particles
   const Tensor<1, 3> gravity;
 };
-
 
 /**
  * @brief Class that assembles the particle pressure force that will then
@@ -618,9 +609,9 @@ public:
   {}
 
   /**
-   * @brief calculate_particle_fluid_interactions calculates the pressure force
+   * @brief calculate_particle_fluid_interactions calculates the pressure force.
+   *
    * @param scratch_data (see base class)
-   * @param copy_data (see base class)
    */
   virtual void
   calculate_particle_fluid_interactions(
@@ -631,7 +622,7 @@ public:
 
 /**
  * @brief Class that assembles the particle shear force that will then
- * be added to particle_fluid_interactions
+ * be added to particle_fluid_interactions.
  *
  * @tparam dim An integer that denotes the number of spatial dimensions
  *
@@ -647,9 +638,9 @@ public:
   {}
 
   /**
-   * @brief calculate_particle_fluid_interactions calculates the shear force
+   * @brief calculate_particle_fluid_interactions calculates the shear force.
+   *
    * @param scratch_data (see base class)
-   * @param copy_data (see base class)
    */
   virtual void
   calculate_particle_fluid_interactions(
@@ -677,7 +668,8 @@ public:
   {}
 
   /**
-   * @brief assemble_matrix Assembles the matrix
+   * @brief assemble_matrix Assembles the matrix.
+   *
    * @param scratch_data (see base class)
    * @param copy_data (see base class)
    */
@@ -686,7 +678,8 @@ public:
                   StabilizedMethodsTensorCopyData<dim> &copy_data) override;
 
   /**
-   * @brief assemble_rhs Assembles the rhs
+   * @brief assemble_rhs Assembles the rhs.
+   *
    * @param scratch_data (see base class)
    * @param copy_data (see base class)
    */
@@ -698,11 +691,10 @@ public:
 };
 
 /**
- * @brief Calculate gamma grad-div stabilization constant for the VANS equations
+ * @brief Calculate gamma grad-div stabilization constant for the VANS equations.
  *
  * @param[in] velocity Magnitude of the velocity at the quadrature point
  * @param[in] kinematic_viscosity
- * @param[in] h The element size
  * @param[in] c_star Scaling constant with units of length
  */
 inline double
@@ -713,5 +705,4 @@ calculate_gamma(double velocity,
 {
   return kinematic_viscosity + c_star * velocity;
 }
-
 #endif
