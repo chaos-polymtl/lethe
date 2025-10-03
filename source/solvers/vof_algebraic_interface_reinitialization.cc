@@ -4,9 +4,11 @@
 #include <core/solutions_output.h>
 
 #include <solvers/vof_algebraic_interface_reinitialization.h>
+#include <solvers/vof_assemblers.h>
 
 #include <deal.II/lac/solver_control.h>
 #include <deal.II/lac/sparsity_tools.h>
+#include <deal.II/lac/trilinos_precondition.h>
 #include <deal.II/lac/trilinos_solver.h>
 
 template <int dim>

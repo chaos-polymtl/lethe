@@ -95,8 +95,6 @@ IBParticlesDEM<dim>::update_contact_candidates()
     }
 }
 
-
-
 template <int dim>
 void
 IBParticlesDEM<dim>::calculate_pp_contact_force(
@@ -283,7 +281,6 @@ IBParticlesDEM<dim>::calculate_pp_contact_force(
                                         particle_two_properties,
                                         dt_dem);
 
-
                   contact_force[particle_one.particle_id] -=
                     (normal_force + tangential_force);
                   contact_force[particle_two.particle_id] +=
@@ -301,7 +298,6 @@ IBParticlesDEM<dim>::calculate_pp_contact_force(
                     cross_product_3d((contact_point_3d -
                                       point_nd_to_3d(particle_two.position)),
                                      (normal_force + tangential_force));
-                  ;
                 }
 
               else
@@ -419,7 +415,6 @@ IBParticlesDEM<dim>::update_particles_boundary_contact(
         particles[p_i].position,
         particles[p_i].radius * parameters->contact_search_radius_factor);
 
-
       // Loop over the cells at the boundary.
       for (unsigned int i = 0; i < cells_at_boundary.size(); ++i)
         {
@@ -473,14 +468,12 @@ IBParticlesDEM<dim>::update_particles_boundary_contact(
                             }
                         }
                       else
-                        {
-                          boundary_cells[p_i]
-                                        [boundary_information.boundary_index] =
-                                          boundary_information;
-                          best_contact_candidate[p_i][boundary_information
-                                                        .boundary_index] =
-                            level_set;
-                        }
+                        boundary_cells[p_i]
+                                      [boundary_information.boundary_index] =
+                                        boundary_information;
+                      best_contact_candidate[p_i][boundary_information
+                                                    .boundary_index] =
+                        level_set;
                     }
                 }
             }
@@ -756,7 +749,6 @@ IBParticlesDEM<dim>::calculate_pw_contact_force(
                   // the particle that contacts it.
                   wall_properties.object_radius = particle.radius * 100;
 
-
                   calculate_force_model(normal_overlap,
                                         contact_info,
                                         contact_point,
@@ -850,7 +842,6 @@ IBParticlesDEM<dim>::calculate_pw_lubrication_force(
                 }
               boundary_index += 1;
             }
-
 
           // Add all the floating wall has contact candidate. Their indices
           // start from 1M (define in the definition of:
@@ -962,7 +953,6 @@ IBParticlesDEM<dim>::calculate_force_model(
   double effective_coefficient_of_friction;
   double effective_coefficient_of_rolling_friction;
   double model_parameter_beta;
-
 
   // Define local variables which will be used within the contact calculation
   //  Namely: normal and tangential contact forces, tangential and rolling
@@ -1128,8 +1118,6 @@ IBParticlesDEM<dim>::calculate_force_model(
     (-effective_coefficient_of_rolling_friction * effective_radius *
      normal_force.norm() * omega_ij_direction);
 }
-
-
 
 template <int dim>
 void
@@ -1299,13 +1287,11 @@ IBParticlesDEM<dim>::integrate_particles_motion(const double dt,
                   // We consider only the force at t+dt so the scheme is
                   // consistent to a BDFn scheme on the fluid side. If there is
                   // no contact.
-
                   current_fluid_force[p_i]  = dem_particles[p_i].fluid_forces;
                   current_fluid_torque[p_i] = dem_particles[p_i].fluid_torque;
 
                   // Store each rk step of the variable we integrate in its
                   // respective vector.
-
                   k_velocity[p_i][step] =
                     (current_fluid_force[p_i] + contact_force[p_i] +
                      contact_wall_force[p_i] + gravity +
@@ -1559,7 +1545,6 @@ IBParticlesDEM<dim>::integrate_particles_motion(const double dt,
             }
         }
 
-
       for (unsigned int p_i = 0; p_i < dem_particles.size(); ++p_i)
         {
           if (dem_particles[p_i].integrate_motion)
@@ -1696,7 +1681,6 @@ IBParticlesDEM<dim>::integrate_particles_motion(const double dt,
                   contact_info.tangential_displacement = 0;
                 }
 
-
               // clear the vector for the next set of 4 Rk steps
               contact_info.tangential_relative_velocity.clear();
             }
@@ -1761,8 +1745,6 @@ IBParticlesDEM<dim>::integrate_particles_motion(const double dt,
       t += dt_dem;
     }
 }
-
-
 
 template class IBParticlesDEM<2>;
 template class IBParticlesDEM<3>;

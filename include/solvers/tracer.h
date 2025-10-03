@@ -1,13 +1,5 @@
 // SPDX-FileCopyrightText: Copyright (c) 2021-2025 The Lethe Authors
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
-
-/*
- * Implementation of tracer as an auxiliary physics.
- * Equation solved:
- * dT/dt +  u * gradT = D * div(grad T) + f
- * with T the tracer function, D the diffusivity and f the forcing
- */
-
 #ifndef lethe_tracer_h
 #define lethe_tracer_h
 
@@ -37,6 +29,14 @@
 #include <deal.II/lac/trilinos_vector.h>
 
 #include <map>
+
+/*
+ * Implementation of tracer as an auxiliary physics.
+ * Equation solved:
+ * dT/dt +  u * gradT = D * div(grad T) + f
+ * with T the tracer function, D the diffusivity and f the forcing
+ */
+
 DeclException1(
   TracerBoundaryConditionMissing,
   types::boundary_id,
@@ -189,7 +189,7 @@ public:
   write_checkpoint() override;
 
   /**
-   * @brief Allows tracer physics to set-up solution vector from checkpoint file;
+   * @brief Allows tracer physics to set up solution vector from checkpoint file;
    */
   void
   read_checkpoint() override;
@@ -298,7 +298,7 @@ private:
   void
   verify_consistency_of_boundary_conditions()
   {
-    // Sanity check all of the boundary conditions of the triangulation to
+    // Sanity check all the boundary conditions of the triangulation to
     // ensure that they have a type.
     std::vector<types::boundary_id> boundary_ids_in_triangulation =
       this->triangulation->get_boundary_ids();

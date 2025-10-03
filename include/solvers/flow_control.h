@@ -4,17 +4,9 @@
 #ifndef lethe_flow_control_h
 #define lethe_flow_control_h
 
-// Lethe includes
 #include <core/parameters.h>
 
 #include <deal.II/base/tensor.h>
-
-#include <deal.II/dofs/dof_handler.h>
-
-#include <deal.II/fe/fe_values.h>
-#include <deal.II/fe/mapping_q.h>
-
-
 
 using namespace dealii;
 

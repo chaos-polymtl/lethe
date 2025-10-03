@@ -10,8 +10,6 @@
 #include <solvers/output_struct.h>
 #include <solvers/simulation_parameters.h>
 
-#include <deal.II/dofs/dof_handler.h>
-
 #include <deal.II/numerics/data_out.h>
 
 

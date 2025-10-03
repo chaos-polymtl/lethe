@@ -8,6 +8,7 @@
 
 #include <solvers/navier_stokes_scratch_data.h>
 #include <solvers/physics_subequations_solver.h>
+#include <solvers/simulation_parameters.h>
 
 #include <fem-dem/parameters_cfd_dem.h>
 
@@ -25,8 +26,9 @@
 
 #include <deal.II/lac/affine_constraints.h>
 #include <deal.II/lac/trilinos_precondition.h>
-#include <deal.II/lac/trilinos_solver.h>
 #include <deal.II/lac/trilinos_sparse_matrix.h>
+
+#include <deal.II/numerics/data_out.h>
 
 #include <deal.II/particles/particle_handler.h>
 
@@ -65,9 +67,7 @@ particle_circle_intersection_2d(double r_particle,
  * @brief Calculate the volume of intersection between a spherical (3D) particle and a sphere.
  *
  * @param[in] r_particle Radius of the particle
- *
  * @param[in] r_sphere Radius of the sphere
- *
  * @param[in] neighbor_distance Distance between the particle and the sphere
  */
 
@@ -99,9 +99,7 @@ particle_sphere_intersection_3d(double r_particle,
  * default value (-1).
  *
  * @tparam dim An integer that denotes the number of spatial dimensions.
- *
  * @tparam n_components The number of components in the field. This number should be either 1 (a scalar) or dim (a Tensor<1,dim>)
- *
  * @tparam property_start_index An integer that indicates at which particle property the field starts.
  * If the propery_start_index is negative, then there is no property start and
  * this project is not used to project a particle field.
@@ -201,7 +199,6 @@ public:
 
   /**
    * @brief Setup the degrees of freedom. This function allocates the necessary memory.
-   *
    */
   void
   setup_dofs();
@@ -318,7 +315,6 @@ public:
   void
   setup_dofs() override;
 
-
   /**
    * @brief Establish the constraints of the void fraction systems.
    *
@@ -331,7 +327,6 @@ public:
   setup_constraints(
     const BoundaryConditions::NSBoundaryConditions<dim> &boundary_conditions);
 
-
   /**
    * @brief Calculate the void fraction.
    *
@@ -341,7 +336,6 @@ public:
    */
   void
   calculate_void_fraction(const double time);
-
 
   /**
    * @brief Calculate all the necessary information for the particle-fluid coupling.
@@ -365,7 +359,6 @@ public:
   solve() override
   {}
 
-
   /**
    * @brief Percolate the time vector for the void fraction. This operation is called at the end of a time-step.
    *
@@ -380,7 +373,6 @@ public:
     previous_void_fraction[0] = void_fraction_locally_relevant;
   }
 
-
   /**
    * @brief Initialize the void fraction at the beginning of a simulation.
    *
@@ -394,7 +386,6 @@ public:
     for (auto &previous_solution : this->previous_void_fraction)
       previous_solution = void_fraction_locally_relevant;
   }
-
 
   /**
    * @brief Calculates the projection of a particle field onto the mesh.
@@ -446,8 +437,6 @@ public:
   /// object has to be made public because the boundary conditions are set
   /// outside of the object for now.
   AffineConstraints<double> void_fraction_constraints;
-
-
 
 private:
   /**
@@ -701,7 +690,4 @@ public:
   ParticleFieldQCM<dim, 3, DEM::CFDDEMProperties::PropertiesIndex::fem_force_x>
     particle_fluid_force;
 };
-
-
-
 #endif

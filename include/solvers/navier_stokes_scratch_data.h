@@ -21,7 +21,6 @@
 #include <deal.II/dofs/dof_renumbering.h>
 
 #include <deal.II/fe/fe_system.h>
-#include <deal.II/fe/mapping.h>
 
 #include <deal.II/numerics/vector_tools.h>
 

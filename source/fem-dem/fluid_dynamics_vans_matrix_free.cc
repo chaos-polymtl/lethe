@@ -13,10 +13,6 @@
 
 #include <deal.II/grid/grid_tools.h>
 
-#include <deal.II/lac/precondition.h>
-#include <deal.II/lac/solver_gmres.h>
-
-
 template <int dim>
 MFNavierStokesVANSPreconditionGMG<dim>::MFNavierStokesVANSPreconditionGMG(
   const CFDDEMSimulationParameters<dim> &param,

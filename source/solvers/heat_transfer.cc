@@ -11,8 +11,6 @@
 
 #include <deal.II/dofs/dof_tools.h>
 
-#include <deal.II/fe/mapping.h>
-
 #include <deal.II/lac/affine_constraints.h>
 #include <deal.II/lac/dynamic_sparsity_pattern.h>
 #include <deal.II/lac/solver_control.h>

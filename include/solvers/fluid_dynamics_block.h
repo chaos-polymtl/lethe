@@ -4,7 +4,6 @@
 #ifndef lethe_fluid_dynamics_block_h
 #define lethe_fluid_dynamics_block_h
 
-#include <core/exceptions.h>
 #include <core/vector.h>
 
 #include <solvers/navier_stokes_base.h>
@@ -14,7 +13,6 @@
 #include <deal.II/lac/solver_cg.h>
 #include <deal.II/lac/solver_gmres.h>
 #include <deal.II/lac/sparse_direct.h>
-#include <deal.II/lac/sparse_ilu.h>
 #include <deal.II/lac/trilinos_block_sparse_matrix.h>
 #include <deal.II/lac/trilinos_parallel_block_vector.h>
 #include <deal.II/lac/trilinos_precondition.h>

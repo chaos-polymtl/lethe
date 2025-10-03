@@ -31,6 +31,8 @@
 #else
 #  include <deal.II/multigrid/mg_transfer_global_coarsening.templates.h>
 #endif
+#include <deal.II/lac/trilinos_solver.h>
+
 #include <deal.II/multigrid/multigrid.h>
 
 #include <deal.II/numerics/vector_tools.h>
