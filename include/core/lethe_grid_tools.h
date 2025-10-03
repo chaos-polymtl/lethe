@@ -12,8 +12,6 @@
 
 #include <deal.II/fe/mapping_q_cache.h>
 
-#include <unordered_set>
-
 using namespace dealii;
 namespace LetheGridTools
 {

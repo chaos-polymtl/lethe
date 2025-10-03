@@ -15,8 +15,6 @@
 #include <deal.II/base/data_out_base.h>
 #include <deal.II/base/function.h>
 
-#include <deal.II/distributed/tria.h>
-
 #include <deal.II/dofs/dof_handler.h>
 
 #include <deal.II/fe/fe.h>
@@ -31,7 +29,6 @@
 
 #include <deal.II/non_matching/fe_immersed_values.h>
 
-#include <deal.II/numerics/data_out.h>
 #include <deal.II/numerics/vector_tools.h>
 
 #include <iostream>

@@ -4,15 +4,11 @@
 #ifndef lethe_serial_solid_h
 #define lethe_serial_solid_h
 
-
-// Lethe Includes
-#include <core/parameters.h>
 #include <core/pvd_handler.h>
 #include <core/simulation_control.h>
 #include <core/solid_objects_parameters.h>
 #include <core/tensors_and_points_dimension_manipulation.h>
 
-// Dealii Includes
 #include <deal.II/base/function.h>
 
 #include <deal.II/dofs/dof_handler.h>
@@ -20,7 +16,6 @@
 #include <deal.II/fe/mapping_fe.h>
 
 #include <deal.II/particles/particle_handler.h>
-
 
 using namespace dealii;
 

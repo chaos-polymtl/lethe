@@ -8,8 +8,6 @@
 
 #include <vector>
 
-
-
 using namespace dealii;
 
 /**

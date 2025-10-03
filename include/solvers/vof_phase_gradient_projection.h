@@ -6,6 +6,8 @@
 
 #include <solvers/vof_linear_subequations_solver.h>
 
+#include <deal.II/fe/fe_simplex_p.h>
+
 DeclException1(
   SameFilteredVOFSolution,
   std::string,

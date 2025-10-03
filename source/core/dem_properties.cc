@@ -5,7 +5,6 @@
 
 #include <type_traits>
 
-
 namespace DEM
 {
   template <int dim, typename PropertiesIndex>

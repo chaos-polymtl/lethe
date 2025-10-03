@@ -4,7 +4,6 @@
 #ifndef lethe_specific_heat_model_h
 #define lethe_specific_heat_model_h
 
-
 #include <core/parameters.h>
 #include <core/phase_change.h>
 #include <core/physical_property_model.h>

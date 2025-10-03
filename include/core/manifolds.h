@@ -12,8 +12,6 @@
 
 #include <deal.II/numerics/data_postprocessor.h>
 
-
-
 using namespace dealii;
 
 namespace Parameters
