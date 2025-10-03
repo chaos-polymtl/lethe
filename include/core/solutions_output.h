@@ -4,10 +4,10 @@
 #ifndef lethe_solutions_output_h
 #define lethe_solutions_output_h
 
+#include <core/pvd_handler.h>
+
 #include <deal.II/numerics/data_out.h>
 #include <deal.II/numerics/data_out_faces.h>
-
-#include <core/pvd_handler.h>
 
 using namespace dealii;
 

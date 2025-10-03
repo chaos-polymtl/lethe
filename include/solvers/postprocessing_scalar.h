@@ -4,9 +4,9 @@
 #ifndef lethe_average_scalar_in_time_h
 #define lethe_average_scalar_in_time_h
 
-#include <deal.II/distributed/solution_transfer.h>
-
 #include <core/parameters.h>
+
+#include <deal.II/distributed/solution_transfer.h>
 
 using namespace dealii;
 

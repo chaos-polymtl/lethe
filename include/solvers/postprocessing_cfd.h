@@ -4,13 +4,13 @@
 #ifndef lethe_postprocessing_cfd_h
 #define lethe_postprocessing_cfd_h
 
-#include <deal.II/base/quadrature_lib.h>
-
-#include <deal.II/dofs/dof_handler.h>
-
 #include <core/boundary_conditions.h>
 
 #include <solvers/physical_properties_manager.h>
+
+#include <deal.II/base/quadrature_lib.h>
+
+#include <deal.II/dofs/dof_handler.h>
 
 /**
  * @brief Calculate the pressure drop and total pressure drop between two boundaries.
