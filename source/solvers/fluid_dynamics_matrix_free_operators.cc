@@ -287,15 +287,17 @@ NavierStokesOperatorBase<dim, number>::compute_element_center()
 {
   const unsigned int n_cells =
     matrix_free.n_cell_batches() + matrix_free.n_ghost_cell_batches();
-  element_center.resize(n_cells);
+  for (unsigned int d = 0; d < dim; d++)
+    element_center[d].resize(n_cells);
 
   for (unsigned int cell = 0; cell < n_cells; ++cell)
     {
       for (auto lane = 0u;
            lane < matrix_free.n_active_entries_per_cell_batch(cell);
            lane++)
-        element_center[cell][lane] =
-          matrix_free.get_cell_iterator(cell, lane)->center();
+           for (unsigned int d = 0; d < dim; d++)
+            element_center[d][cell][lane] =
+              matrix_free.get_cell_iterator(cell, lane)->center()[d];
     }
 }
 
@@ -784,12 +786,12 @@ NavierStokesOperatorBase<dim, number>::get_element_size() const
   return this->element_size;
 }
 
-template <int dim, typename number>
-const std::vector<Point<dim>>
-NavierStokesOperatorBase<dim, number>::get_element_center() const
-{
-  return this->element_center;
-}
+// template <int dim, typename number>
+// const AlignedVector<VectorizedArray<number>>
+// NavierStokesOperatorBase<dim, number>::get_element_center() const
+// {
+//   return this->element_center[dim];
+// }
 
 template <int dim, typename number>
 void
@@ -1123,21 +1125,28 @@ NavierStokesOperatorBase<dim, number>::evaluate_velocity_ale(
 
   // Set appropriate size for tables
   velocity_ale.reinit(n_cells, integrator.n_q_points);
+  
+  // Get updated rotor angular velocity
+  rotor_angular_velocity->set_time(
+    this->simulation_control->get_current_time());
+  const double rotor_angular_velocity_value =
+    rotor_angular_velocity->value(Point<dim>());
 
   for (unsigned int cell = 0; cell < n_cells; ++cell)
     {
       // Get previously stored cell center
-      const auto cell_center =
-        integrator.read_cell_data(this->get_element_center());
-
       // Compute radius between center of rotation and current cell center
-      const double radius_current = cell_center.distance(center_of_rotation);
-
-      // Get updated rotor angular velocity
-      rotor_angular_velocity->set_time(
-        this->simulation_control->get_current_time());
-      const double rotor_angular_velocity_value =
-        rotor_angular_velocity->value(Point<dim>());
+      Tensor<1, dim, VectorizedArray<number>> cell_center;
+      VectorizedArray<number> dist;
+      for (unsigned int d = 0; d < dim; d++)
+        {
+          cell_center[d] =
+            integrator.read_cell_data(this->element_center[d]);
+          VectorizedArray<number> aux = cell_center[d] - center_of_rotation[d];
+          dist += aux * aux;
+        }
+      
+      auto radius_current = std::sqrt(dist);
 
       // Use prescribed rotor angular velocity only if cell is part of the rotor
       double cell_rotor_angular_velocity;
