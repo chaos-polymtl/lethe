@@ -5,6 +5,7 @@
 #include <core/utilities.h>
 
 #include <solvers/fluid_dynamics_block.h>
+
 #include <deal.II/lac/sparse_ilu.h>
 
 int

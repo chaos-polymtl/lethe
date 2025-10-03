@@ -1,14 +1,14 @@
 // SPDX-FileCopyrightText: Copyright (c) 2024-2025 The Lethe Authors
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
-#include <deal.II/lac/trilinos_parallel_block_vector.h>
+#include <core/vector.h>
+
+#include <fem-dem/postprocessing_cfd_dem.h>
 
 #include <deal.II/fe/fe_system.h>
 #include <deal.II/fe/fe_values.h>
 
-#include <core/vector.h>
-
-#include <fem-dem/postprocessing_cfd_dem.h>
+#include <deal.II/lac/trilinos_parallel_block_vector.h>
 
 using namespace dealii;
 
