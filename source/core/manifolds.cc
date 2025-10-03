@@ -7,6 +7,9 @@
 
 #include <deal.II/grid/manifold_lib.h>
 
+#include <deal.II/opencascade/manifold_lib.h>
+#include <deal.II/opencascade/utilities.h>
+
 namespace Parameters
 {
   void
