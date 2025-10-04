@@ -7,6 +7,8 @@
 #include <core/non_linear_solver.h>
 #include <core/parameters.h>
 
+#include <deal.II/sundials/kinsol.h>
+
 /**
  * @brief Non-linear Newton solver for non-linear systems of equations implemented
  * in the SUNDIALS suite, specifically the KINSOL package. This solver has
