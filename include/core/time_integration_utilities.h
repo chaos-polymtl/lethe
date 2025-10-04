@@ -6,7 +6,6 @@
 
 #include <core/parameters.h>
 
-
 /**
  * @brief Determines if the time integration method is a steady-state method
  *

@@ -1,21 +1,18 @@
 // SPDX-FileCopyrightText: Copyright (c) 2021-2025 The Lethe Authors
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
+#ifndef lethe_cfd_dem_simulation_parameters_h
+#define lethe_cfd_dem_simulation_parameters_h
+
 #include <core/boundary_conditions.h>
 #include <core/manifolds.h>
 #include <core/parameters.h>
-#include <core/parameters_multiphysics.h>
 
-#include <solvers/analytical_solutions.h>
-#include <solvers/initial_conditions.h>
 #include <solvers/simulation_parameters.h>
-#include <solvers/source_terms.h>
 
 #include <dem/dem_solver_parameters.h>
 #include <fem-dem/parameters_cfd_dem.h>
 
-#ifndef lethe_cfd_dem_simulation_parameters_h
-#  define lethe_cfd_dem_simulation_parameters_h
 
 template <int dim>
 class CFDDEMSimulationParameters

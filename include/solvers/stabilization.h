@@ -8,8 +8,6 @@
 
 #include <deal.II/base/utilities.h>
 
-#include <deal.II/dofs/dof_handler.h>
-
 #include <cmath>
 
 using namespace dealii;
@@ -20,9 +18,7 @@ using namespace dealii;
  * @return Value of the stabilization parameter - tau
  *
  * @param u_mag Magnitude of the velocity
- *
  * @param kinematic_viscosity Kinematic viscosity
- *
  * @param h Cell size; it should be calculated using the diameter of a sphere of
  * equal volume to that of the cell.
  */
@@ -39,16 +35,14 @@ calculate_navier_stokes_gls_tau_steady(const double u_mag,
 /**
  * @brief Calculate the stabilization parameter for the transient Navier-Stokes
  * equations
- * @return Value of the stabilization parameter - tau
  *
  * @param u_mag Magnitude of the velocity
- *
  * @param kinematic_viscosity Kinematic viscosity
- *
  * @param h Cell size; it should be calculated using the diameter of a sphere of
  * equal volume to that of the cell.
- *
  * @param sdt Inverse of the time-step (1/dt)
+ *
+ * @return Value of the stabilization parameter - tau
  */
 
 inline double
@@ -77,9 +71,7 @@ calculate_navier_stokes_gls_tau_transient(const double u_mag,
  * integrator.
  *
  * @param dof_handler The DoFHandler used in the scalar simulation. This DOFHandler must have only a single component (a scalar equation).
- *
  * @param locally_relevant_vector A solution vector that contains the locally_relevant solution. This vector is used to read the solution on the ghost cells and will be modified at the end.
- *
  * @param locally_owned_vector A solution vector that contains the locally_owned solution. This vector will be used to write the new limited solution.
  */
 template <int dim>

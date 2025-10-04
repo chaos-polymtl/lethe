@@ -4,7 +4,6 @@
 #ifndef lethe_fluid_dynamics_vans_h
 #define lethe_fluid_dynamics_vans_h
 
-#include <core/manifolds.h>
 #include <core/parameters.h>
 
 #include <solvers/fluid_dynamics_matrix_based.h>
@@ -96,7 +95,7 @@ private:
    * Loads particle information from DEM simulation for use in computing
    * void fraction and particle-fluid interaction terms.
    */
-  void
+  virtual void
   read_dem();
 
 protected:

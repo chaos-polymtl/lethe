@@ -4,12 +4,9 @@
 #ifndef lethe_fluid_dynamics_nitsche_h
 #define lethe_fluid_dynamics_nitsche_h
 
-#include <core/exceptions.h>
 #include <core/solid_base.h>
 
 #include <solvers/fluid_dynamics_matrix_based.h>
-
-#include <deal.II/lac/trilinos_vector.h>
 
 using namespace dealii;
 

@@ -41,7 +41,6 @@
 #include <deal.II/lac/trilinos_sparse_matrix.h>
 #include <deal.II/lac/trilinos_vector.h>
 
-#include <map>
 DeclException1(
   CahnHilliardBoundaryConditionMissing,
   types::boundary_id,

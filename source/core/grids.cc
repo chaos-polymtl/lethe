@@ -1,18 +1,15 @@
 // SPDX-FileCopyrightText: Copyright (c) 2020-2025 The Lethe Authors
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
-// Lethe includes
 #include <core/boundary_conditions.h>
 #include <core/grids.h>
 #include <core/periodic_hills_grid.h>
 
-// Deal.II includes
 #include <deal.II/grid/grid_generator.h>
 #include <deal.II/grid/grid_in.h>
 #include <deal.II/grid/grid_tools.h>
 #include <deal.II/grid/tria.h>
 
-// Std
 #include <fstream>
 
 

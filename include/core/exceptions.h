@@ -6,13 +6,10 @@
  * to avoid code repetition.
  */
 
-
-
 #ifndef lethe_exceptions_h
 #define lethe_exceptions_h
 
 #include <deal.II/base/exceptions.h>
-
 
 using namespace dealii;
 

@@ -12,17 +12,14 @@
 #include <deal.II/lac/precondition.h>
 #include <deal.II/lac/solver_gmres.h>
 #include <deal.II/lac/trilinos_precondition.h>
-#include <deal.II/lac/trilinos_solver.h>
 
 #include <deal.II/multigrid/mg_coarse.h>
 #include <deal.II/multigrid/mg_constrained_dofs.h>
 #include <deal.II/multigrid/mg_matrix.h>
 #include <deal.II/multigrid/mg_smoother.h>
-#include <deal.II/multigrid/mg_tools.h>
 #include <deal.II/multigrid/mg_transfer_global_coarsening.h>
 #include <deal.II/multigrid/mg_transfer_matrix_free.h>
 #include <deal.II/multigrid/multigrid.h>
-
 
 using namespace dealii;
 

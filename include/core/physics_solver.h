@@ -6,7 +6,6 @@
 
 #include <core/inexact_newton_non_linear_solver.h>
 #include <core/kinsol_newton_non_linear_solver.h>
-#include <core/multiphysics.h>
 #include <core/newton_non_linear_solver.h>
 #include <core/non_linear_solver.h>
 #include <core/parameters.h>

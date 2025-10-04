@@ -5,16 +5,11 @@
 #define lethe_ib_particles_dem_h
 
 #include <core/ib_particle.h>
-#include <core/ib_stencil.h>
-#include <core/lethe_grid_tools.h>
 
 #include <dem/particle_particle_contact_force.h>
 #include <dem/particle_wall_contact_force.h>
 
 #include <deal.II/base/tensor.h>
-
-#include <deal.II/dofs/dof_handler.h>
-#include <deal.II/dofs/dof_tools.h>
 
 using namespace dealii;
 
@@ -69,9 +64,8 @@ public:
    * communicator and the particles.
    *
    * @param p_nsparam The parameters for the immersed boundary particles
-   * @param dem_parameters
+   * @param floating_walls_parameters The parameters for the floating walls.
    * @param mpi_communicator_input The mpi communicator of the simulation.
-   *
    * @param particles The particles vector containing all the IB particles.
    */
   void
@@ -88,7 +82,6 @@ public:
    * particles.
    *
    * @param particles The particles vector containing all the IB particles.
-   *
    * @param time The current CFD time.
    */
   void
@@ -101,15 +94,10 @@ public:
    * between particles and between particles and walls.
    *
    * @param dt The CFD time step.
-   *
    * @param h_max The gap between the two particle.
-   *
    * @param h_min The minimal gap distance considered in the force calculation to avoid the singularity of the model.
-   *
    * @param rho The fluid density.
-   *
    * @param mu The fluid viscosity.
-   *
    */
   void
   integrate_particles_motion(const double dt,
@@ -122,10 +110,8 @@ public:
    * @brief Calculates non-linear (Hertzian) particle-particle contact force
    *
    * @param dt_dem The sub time stepping time step.
-   *
    * @param contact_force a vector containing the contact force between particles
-   *
-   * @param contact_force a vector containing the contact torques between particles
+   * @param contact_torque a vector containing the contact torques between particles
    */
   void
   calculate_pp_contact_force(const double               dt_dem,
@@ -143,10 +129,8 @@ public:
    * @brief Calculates non-linear (Hertzian) particle-wall contact force
    *
    * @param dt_dem The sub time stepping time step.
-   *
    * @param contact_force a vector containing the contact force between particles
-   *
-   * @param contact_force a vector containing the contact torques between particles
+   * @param contact_torque a vector containing the contact torques between particles
    */
   void
   calculate_pw_contact_force(const double               dt_dem,
@@ -200,15 +184,10 @@ public:
    * Karrila, Seppo J. ISBN 13: 9780750691734
    *
    * @param dt_dem The sub time stepping time step.
-   *
    * @param h_max The gap between the two particle.
-   *
    * @param h_min The minimal gap distance considered in the force calculation to avoid the singularity of the model.
-   *
    * @param mu The fluid viscosity.
-   *
    * @param lubrication_force a vector containing the lubrication force on the particles.
-   *
    * @param lubrication_torque a vector containing the lubrication torques on the particles.
    */
   void
@@ -224,15 +203,10 @@ public:
    * @brief Calculates particle-wall lubrication force
    *
    * @param dt_dem The sub time stepping time step.
-   *
    * @param h_max The gap between particle and the wall below which we evaluate the force.
-   *
    * @param h_min The minimal gap distance considered in the force calculation to avoid the singularity of the model.
-   *
    * @param mu The fluid viscosity.
-   *
    * @param lubrication_force a vector containing the lubrication force on the particles.
-   *
    * @param lubrication_torque a vector containing the lubrication torques on the particles.
    */
   void
@@ -249,11 +223,8 @@ public:
    * Karrila, Seppo J. ISBN 13: 9780750691734
    *
    * @param particles The particles vector containing all the IB particles.
-   *
    * @param dof_handler The dof handler of the mesh used for the fluid simulation.
-   *
    * @param face_quadrature_formula The face quadrature formula used in the elements.
-   *
    * @param mapping The FEM mapping of the face element.
    */
 

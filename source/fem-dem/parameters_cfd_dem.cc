@@ -103,7 +103,6 @@ namespace Parameters
 
     project_particle_velocity = prm.get_bool("project particle velocity");
 
-
     prm.leave_subsection();
   }
 
@@ -190,7 +189,6 @@ namespace Parameters
 
     prm.leave_subsection();
   }
-
 
   void
   CFDDEM::parse_parameters(ParameterHandler &prm)

@@ -3,7 +3,6 @@
 
 #include <core/dimensionality.h>
 
-
 using namespace dealii;
 namespace Parameters
 {

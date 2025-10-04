@@ -3,11 +3,15 @@
 
 #include <solvers/vof.h>
 
+#include <deal.II/fe/fe_simplex_p.h>
+
 #include <deal.II/lac/solver_control.h>
 #include <deal.II/lac/sparsity_tools.h>
 #include <deal.II/lac/trilinos_solver.h>
 
 #include <deal.II/meshworker/mesh_loop.h>
+
+#include <deal.II/numerics/error_estimator.h>
 
 #include <sys/stat.h>
 

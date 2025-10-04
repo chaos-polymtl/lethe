@@ -31,7 +31,6 @@ public:
    * @param[in] cfd_dem_parameters The CFD-DEM parameters used for the
    * simulation. These parameters are notably used to distinguish between
    * model A and model B as well as to establish grad-div stabilization.
-
    */
   VANSOperator(const Parameters::CFDDEM &cfd_dem_parameters)
     : NavierStokesOperatorBase<dim, number>()

@@ -4,15 +4,12 @@
 #ifndef lethe_solutions_output_h
 #define lethe_solutions_output_h
 
+#include <core/pvd_handler.h>
+
 #include <deal.II/numerics/data_out.h>
 #include <deal.II/numerics/data_out_faces.h>
 
-
-// Lethe includes
-#include <core/pvd_handler.h>
-
 using namespace dealii;
-
 
 /**
  * @brief Output the data out to "group_files" vtu files, with a pvtu file and a pvd to store the timing

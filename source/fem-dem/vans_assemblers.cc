@@ -3,7 +3,6 @@
 
 #include <core/bdf.h>
 #include <core/simulation_control.h>
-#include <core/time_integration_utilities.h>
 #include <core/utilities.h>
 
 #include <solvers/stabilization.h>
@@ -2090,6 +2089,5 @@ VANSAssemblerFPI<dim>::assemble_rhs(
         }
     }
 }
-
 template class VANSAssemblerFPI<2>;
 template class VANSAssemblerFPI<3>;
