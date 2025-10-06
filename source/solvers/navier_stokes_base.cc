@@ -1780,8 +1780,11 @@ NavierStokesBase<dim, VectorType, DofsType>::postprocess_fd(bool firstIter)
       // Calculate error with respect to analytical solution
       if (this->simulation_parameters.analytical_solution->calculate_error())
         {
-          TimerOutput::Scope t(this->computing_timer,
-                               "Calculate error w.r.t. analytical solution");
+          // For the timer here, we manually enter and leave the subsection to
+          // ensure that the timer is not monitoring time when we will output
+          // the time later on.
+          computing_timer.enter_subsection(
+            "Calculate error w.r.t. analytical solution");
 
           // Update the time of the exact solution to the actual time
           this->exact_solution->set_time(
@@ -1797,6 +1800,11 @@ NavierStokesBase<dim, VectorType, DofsType>::postprocess_fd(bool firstIter)
                                *this->get_mapping());
           const double error_velocity = errors.first;
           const double error_pressure = errors.second;
+
+          // Manually close the subsection so we can use the timer output
+          computing_timer.leave_subsection(
+            "Calculate error w.r.t. analytical solution");
+
           if (simulation_parameters.simulation_control.method ==
               Parameters::SimulationControl::TimeSteppingMethod::steady)
             {
