@@ -1826,8 +1826,8 @@ VANSAssemblerBuoyancy<dim>::calculate_particle_fluid_interactions(
       for (int d = 0; d < dim; ++d)
         {
           particle_properties
-            [DEM::CFDDEMProperties::PropertiesIndex::fem_force_x + d] +=
-            buoyancy_force[d] * density[i_particle];
+            [DEM::CFDDEMProperties::PropertiesIndex::fem_force_particle_only_x +
+             d] += buoyancy_force[d] * density[i_particle];
         }
       i_particle += 1;
     }
@@ -1872,16 +1872,21 @@ VANSAssemblerPressureForce<dim>::calculate_particle_fluid_interactions(
 
       for (int d = 0; d < dim; ++d)
         {
-          particle_properties
-            [DEM::CFDDEMProperties::PropertiesIndex::fem_force_x + d] +=
-            pressure_force[d] * density[i_particle];
-
           // Apply pressure force to the particles only, when we are solving
           // model A of the VANS. When we are solving Model B, apply the
           // pressure force back on the fluid by lumping it in the
           // undisturbed_flow_force.
+          if (cfd_dem.vans_model == Parameters::VANSModel::modelA)
+            {
+              particle_properties[DEM::CFDDEMProperties::PropertiesIndex::
+                                    fem_force_particle_only_x +
+                                  d] += pressure_force[d] * density[i_particle];
+            }
           if (cfd_dem.vans_model == Parameters::VANSModel::modelB)
             {
+              particle_properties
+                [DEM::CFDDEMProperties::PropertiesIndex::fem_force_x + d] +=
+                pressure_force[d] * density[i_particle];
               undisturbed_flow_force[d] +=
                 pressure_force[d] / scratch_data.cell_volume;
             }
@@ -1938,16 +1943,22 @@ VANSAssemblerShearForce<dim>::calculate_particle_fluid_interactions(
 
       for (int d = 0; d < dim; ++d)
         {
-          particle_properties
-            [DEM::CFDDEMProperties::PropertiesIndex::fem_force_x + d] +=
-            shear_force[d] * density[i_particle];
-
           // Apply shear force to the particles only, when we are solving
           // model A of the VANS. When we are solving Model B, apply the shear
           // force back on the fluid by lumping it in the
           // undisturbed_flow_force.
+
+          if (cfd_dem.vans_model == Parameters::VANSModel::modelA)
+            {
+              particle_properties[DEM::CFDDEMProperties::PropertiesIndex::
+                                    fem_force_particle_only_x +
+                                  d] += shear_force[d] * density[i_particle];
+            }
           if (cfd_dem.vans_model == Parameters::VANSModel::modelB)
             {
+              particle_properties
+                [DEM::CFDDEMProperties::PropertiesIndex::fem_force_x + d] +=
+                shear_force[d] * density[i_particle];
               undisturbed_flow_force[d] +=
                 shear_force[d] / scratch_data.cell_volume;
             }

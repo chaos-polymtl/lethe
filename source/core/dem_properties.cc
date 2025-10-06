@@ -33,6 +33,12 @@ namespace DEM
           std::make_pair("fem_force", 1);
         properties[PropertiesIndex::fem_force_z] =
           std::make_pair("fem_force", 1);
+        properties[PropertiesIndex::fem_force_particle_only_x] =
+          std::make_pair("fem_force_particle_only", 3);
+        properties[PropertiesIndex::fem_force_particle_only_y] =
+          std::make_pair("fem_force_particle_only", 1);
+        properties[PropertiesIndex::fem_force_particle_only_z] =
+          std::make_pair("fem_force_particle_only", 1);
         properties[PropertiesIndex::fem_drag_x] = std::make_pair("fem_drag", 3);
         properties[PropertiesIndex::fem_drag_y] = std::make_pair("fem_drag", 1);
         properties[PropertiesIndex::fem_drag_z] = std::make_pair("fem_drag", 1);

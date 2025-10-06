@@ -67,12 +67,13 @@ namespace DEM
       omega_y = 7,
       omega_z = 8,
       // FEM forces which are applied on both the FEM and the fluid side
-      fem_force_x           = 9,
-      fem_force_y           = 10,
-      fem_force_z           = 11,
-      fem_force_part_only_x = 12,
-      fem_force_part_only_y = 13,
-      fem_force_part_only_z = 14,
+      fem_force_x = 9,
+      fem_force_y = 10,
+      fem_force_z = 11,
+      // FEM forces which are applied only on the particle
+      fem_force_particle_only_x = 12,
+      fem_force_particle_only_y = 13,
+      fem_force_particle_only_z = 14,
       // Drag force that derives from an interaction between an FEM fluid and
       // the particles
       fem_drag_x              = 15,
