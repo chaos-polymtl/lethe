@@ -61,7 +61,10 @@ namespace InterfaceTools
      * want to convert to a CellWiseFunction.
      *
      */
-    CellWiseFunction(const unsigned int p_fe_degree);
+    CellWiseFunction(const unsigned int p_fe_degree)
+      : fe(p_fe_degree)
+      , n_cell_wise_dofs(fe.dofs_per_cell)
+    {}
 
     /**
      * @brief Set the cell that the function should be evaluated on.
@@ -70,7 +73,10 @@ namespace InterfaceTools
      *
      */
     void
-    set_active_cell(const VectorType &in_local_dof_values);
+    set_active_cell(const VectorType &in_local_dof_values)
+    {
+      cell_dof_values = in_local_dof_values;
+    }
 
     /**
      * @brief Return the value of the function at the given point in the reference cell.
@@ -129,21 +135,6 @@ namespace InterfaceTools
     VectorType cell_dof_values;
   };
 
-  template <int dim, typename VectorType, typename FEType>
-  CellWiseFunction<dim, VectorType, FEType>::CellWiseFunction(
-    const unsigned int p_fe_degree)
-    : fe(p_fe_degree)
-  {
-    n_cell_wise_dofs = fe.dofs_per_cell;
-  }
-
-  template <int dim, typename VectorType, typename FEType>
-  inline void
-  CellWiseFunction<dim, VectorType, FEType>::set_active_cell(
-    const VectorType &in_local_dof_values)
-  {
-    cell_dof_values = in_local_dof_values;
-  }
 
   template <int dim, typename VectorType, typename FEType>
   inline double
@@ -319,7 +310,8 @@ namespace InterfaceTools
     /**
      * @brief Default constructor.
      */
-    InterfaceReconstructionDataOut();
+    InterfaceReconstructionDataOut()
+    {}
 
     /**
      * @brief Build the patches of the interface reconstruction vertices for
@@ -340,13 +332,19 @@ namespace InterfaceTools
      * @brief Implementation of the corresponding function of the base class.
      */
     const std::vector<DataOutBase::Patch<0, dim>> &
-    get_patches() const override;
+    get_patches() const override
+    {
+      return patches;
+    }
 
     /**
      * @brief Implementation of the corresponding function of the base class.
      */
     std::vector<std::string>
-    get_dataset_names() const override;
+    get_dataset_names() const override
+    {
+      return dataset_names;
+    }
 
     /// Output information that is filled by build_patches() and
     /// written by the write function of the base class.
@@ -355,10 +353,6 @@ namespace InterfaceTools
     /// A list of field names for all data components stored in patches.
     std::vector<std::string> dataset_names;
   };
-
-  template <int dim>
-  InterfaceReconstructionDataOut<dim>::InterfaceReconstructionDataOut()
-  {}
 
   template <int dim>
   void
@@ -376,20 +370,6 @@ namespace InterfaceTools
             patches.push_back(temp);
           }
       }
-  }
-
-  template <int dim>
-  const std::vector<DataOutBase::Patch<0, dim>> &
-  InterfaceReconstructionDataOut<dim>::get_patches() const
-  {
-    return patches;
-  }
-
-  template <int dim>
-  std::vector<std::string>
-  InterfaceReconstructionDataOut<dim>::get_dataset_names() const
-  {
-    return dataset_names;
   }
 
   /**
@@ -446,25 +426,25 @@ namespace InterfaceTools
     }
 
     /**
-     * @brief setup_dofs
+     * @brief Initialize the degrees of freedom and associated memory.
      *
-     * Initialize the DoFs and the memory associated with them
+     * This function sets up the DoF handler, initializes the solution vectors,
+     * and configures the constraints for the signed distance solver.
      */
     void
     setup_dofs();
 
     /**
-     * @brief set_level_set_from_background_mesh
+     * @brief Set the level-set field from the background mesh solver.
      *
-     * Set the level-set field from the main solver. For example, when using the
-     * current SignedDistanceSolver for the geometric redistanciation of the VOF
-     * phase fraction, the level-set field comes from the VOF solver and is
-     * described by the corresponding VOF DoFHandler.
+     * This function transfers the level-set field from the main solver to the
+     * signed distance solver. For example, when using geometric redistanciation
+     * of the VOF phase fraction, the level-set field comes from the VOF solver.
      *
      * @param[in] background_dof_handler DoFHandler corresponding to the
-     * level-set field solver
-     *
-     * @param[in] background_level_set_vector level-set solution vector
+     * level-set field solver.
+     * @param[in] background_level_set_vector Level-set solution vector from
+     * the background solver.
      */
     void
     set_level_set_from_background_mesh(
@@ -472,34 +452,33 @@ namespace InterfaceTools
       const VectorType      &background_level_set_vector);
 
     /**
-     * @brief solve
+     * @brief Solve for the signed distance from the given level of the level-set vector.
      *
-     * Solve for the signed distance from the given level of the level-set
-     * vector.
+     * This function computes the signed distance field using the method
+     * described in Ausas et al. (2011). The algorithm preserves the interface
+     * location while computing accurate distances throughout the domain.
      */
     void
     solve();
 
     /**
-     * @brief Get the private attribute signed_distance
+     * @brief Get the computed signed distance field.
      *
-     * @return vector storing the computed signed distance
+     * @return Reference to the vector storing the computed signed distance values.
      */
     VectorType &
     get_signed_distance();
 
     /**
-     * @brief Output the interface reconstruction used for the signed distance
-     * computations
+     * @brief Output the interface reconstruction used for signed distance computations.
      *
-     * @param[in] output_name name of the output file
+     * This function writes the reconstructed interface vertices and cells to
+     * VTU files for visualization purposes.
      *
-     * @param[in] output_path path to the output file
-     *
-     * @param[in] time current time
-     *
-     * @param[in] it iteration number
-     *
+     * @param[in] output_name Name of the output file.
+     * @param[in] output_path Path to the output directory.
+     * @param[in] time Current simulation time.
+     * @param[in] it Iteration number for file naming.
      */
     void
     output_interface_reconstruction(const std::string &output_name,
@@ -508,16 +487,15 @@ namespace InterfaceTools
                                     const unsigned int it);
 
     /**
-     * @brief Output the signed distance field
+     * @brief Output the signed distance field for visualization.
      *
-     * @param[in] output_name name of the output file
+     * This function writes the computed signed distance field to VTU files
+     * for post-processing and visualization.
      *
-     * @param[in] output_path path to the output file
-     *
-     * @param[in] time current time
-     *
-     * @param[in] it iteration number
-     *
+     * @param[in] output_name Name of the output file.
+     * @param[in] output_path Path to the output directory.
+     * @param[in] time Current simulation time.
+     * @param[in] it Iteration number for file naming.
      */
     void
     output_signed_distance(const std::string &output_name,
