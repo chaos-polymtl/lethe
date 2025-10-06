@@ -3,7 +3,12 @@
 All notable changes to the Lethe project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
+
 ### [Master] - 2025-10-06
+
+### Changed
+
+- MINOR Unnecessary included files were removed from most ``.h`` and ``.cc`` files from the repository. This should speed up the compilation on clusters. [#1704](https://github.com/chaos-polymtl/lethe/pull/1704)
 
 ### Fixed
 
