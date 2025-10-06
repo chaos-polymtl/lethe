@@ -375,7 +375,8 @@ namespace InterfaceTools
     /**
      * @brief Default constructor.
      */
-    InterfaceReconstructionDataOut();
+    InterfaceReconstructionDataOut()
+    {}
 
     /**
      * @brief Build the patches of the interface reconstruction vertices for
@@ -396,13 +397,19 @@ namespace InterfaceTools
      * @brief Implementation of the corresponding function of the base class.
      */
     const std::vector<DataOutBase::Patch<0, dim>> &
-    get_patches() const override;
+    get_patches() const override
+    {
+      return patches;
+    }
 
     /**
      * @brief Implementation of the corresponding function of the base class.
      */
     std::vector<std::string>
-    get_dataset_names() const override;
+    get_dataset_names() const override
+    {
+      return dataset_names;
+    }
 
     /// Output information that is filled by build_patches() and
     /// written by the write function of the base class.
@@ -412,26 +419,6 @@ namespace InterfaceTools
     std::vector<std::string> dataset_names;
   };
 
-  /**
-   * @brief Default constructor implementation for InterfaceReconstructionDataOut.
-   *
-   * @tparam dim Spatial dimension of the problem.
-   */
-  template <int dim>
-  InterfaceReconstructionDataOut<dim>::InterfaceReconstructionDataOut()
-  {}
-
-  /**
-   * @brief Implementation of build_patches for InterfaceReconstructionDataOut.
-   *
-   * Converts interface reconstruction vertices into DataOut patches for
-   * visualization. Each vertex becomes a point patch for rendering in
-   * visualization software.
-   *
-   * @tparam dim Spatial dimension of the problem.
-   * @param[in] interface_reconstruction_vertices Cell-wise map containing the
-   * reconstructed interface vertices.
-   */
   template <int dim>
   void
   InterfaceReconstructionDataOut<dim>::build_patches(
@@ -448,32 +435,6 @@ namespace InterfaceTools
             patches.push_back(temp);
           }
       }
-  }
-
-  /**
-   * @brief Implementation of get_patches for InterfaceReconstructionDataOut.
-   *
-   * @tparam dim Spatial dimension of the problem.
-   * @return Constant reference to the vector of patches for visualization.
-   */
-  template <int dim>
-  const std::vector<DataOutBase::Patch<0, dim>> &
-  InterfaceReconstructionDataOut<dim>::get_patches() const
-  {
-    return patches;
-  }
-
-  /**
-   * @brief Implementation of get_dataset_names for InterfaceReconstructionDataOut.
-   *
-   * @tparam dim Spatial dimension of the problem.
-   * @return Vector of dataset names for the visualization data.
-   */
-  template <int dim>
-  std::vector<std::string>
-  InterfaceReconstructionDataOut<dim>::get_dataset_names() const
-  {
-    return dataset_names;
   }
 
   /**
