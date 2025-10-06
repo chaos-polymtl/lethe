@@ -969,7 +969,7 @@ VANSAssemblerDiFelice<dim>::calculate_particle_fluid_interactions(
       for (int d = 0; d < dim; ++d)
         {
           particle_properties
-            [DEM::CFDDEMProperties::PropertiesIndex::fem_force_x + d] +=
+            [DEM::CFDDEMProperties::PropertiesIndex::fem_drag_x + d] +=
             drag_force[d];
         }
 
@@ -1044,7 +1044,7 @@ VANSAssemblerRong<dim>::calculate_particle_fluid_interactions(
       for (int d = 0; d < dim; ++d)
         {
           particle_properties
-            [DEM::CFDDEMProperties::PropertiesIndex::fem_force_x + d] +=
+            [DEM::CFDDEMProperties::PropertiesIndex::fem_drag_x + d] +=
             drag_force[d];
         }
 
@@ -1109,7 +1109,7 @@ VANSAssemblerDallavalle<dim>::calculate_particle_fluid_interactions(
       for (int d = 0; d < dim; ++d)
         {
           particle_properties
-            [DEM::CFDDEMProperties::PropertiesIndex::fem_force_x + d] +=
+            [DEM::CFDDEMProperties::PropertiesIndex::fem_drag_x + d] +=
             drag_force[d];
         }
 
@@ -1204,7 +1204,7 @@ VANSAssemblerKochHill<dim>::calculate_particle_fluid_interactions(
       for (int d = 0; d < dim; ++d)
         {
           particle_properties
-            [DEM::CFDDEMProperties::PropertiesIndex::fem_force_x + d] +=
+            [DEM::CFDDEMProperties::PropertiesIndex::fem_drag_x + d] +=
             drag_force[d];
         }
 
@@ -1283,7 +1283,7 @@ VANSAssemblerBeetstra<dim>::calculate_particle_fluid_interactions(
       for (int d = 0; d < dim; ++d)
         {
           particle_properties
-            [DEM::CFDDEMProperties::PropertiesIndex::fem_force_x + d] +=
+            [DEM::CFDDEMProperties::PropertiesIndex::fem_drag_x + d] +=
             drag_force[d];
         }
 
@@ -1380,7 +1380,7 @@ VANSAssemblerGidaspow<dim>::calculate_particle_fluid_interactions(
       for (int d = 0; d < dim; ++d)
         {
           particle_properties
-            [DEM::CFDDEMProperties::PropertiesIndex::fem_force_x + d] +=
+            [DEM::CFDDEMProperties::PropertiesIndex::fem_drag_x + d] +=
             drag_force[d];
         }
 

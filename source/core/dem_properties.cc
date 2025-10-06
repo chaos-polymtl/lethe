@@ -33,6 +33,9 @@ namespace DEM
           std::make_pair("fem_force", 1);
         properties[PropertiesIndex::fem_force_z] =
           std::make_pair("fem_force", 1);
+        properties[PropertiesIndex::fem_drag_x] = std::make_pair("fem_drag", 3);
+        properties[PropertiesIndex::fem_drag_y] = std::make_pair("fem_drag", 1);
+        properties[PropertiesIndex::fem_drag_z] = std::make_pair("fem_drag", 1);
         properties[PropertiesIndex::fem_torque_x] =
           std::make_pair("fem_torque", 3);
         properties[PropertiesIndex::fem_torque_y] =

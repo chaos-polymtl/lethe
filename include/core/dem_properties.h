@@ -51,7 +51,7 @@ namespace DEM
   namespace CFDDEMProperties
   {
     /* @brief Manage the specific particle indices of the particle properties
-     * within the PropertyPool of the ParticleHandler for pure DEM simulations.
+     * within the PropertyPool of the ParticleHandler for CFD-DEM simulations.
      * A regular enum must be used here since an int is required to the particle
      * properties.
      */
@@ -69,11 +69,14 @@ namespace DEM
       fem_force_x             = 9,
       fem_force_y             = 10,
       fem_force_z             = 11,
-      fem_torque_x            = 12,
-      fem_torque_y            = 13,
-      fem_torque_z            = 14,
-      volumetric_contribution = 15,
-      n_properties            = 16,
+      fem_drag_x              = 12,
+      fem_drag_y              = 13,
+      fem_drag_z              = 14,
+      fem_torque_x            = 15,
+      fem_torque_y            = 16,
+      fem_torque_z            = 17,
+      volumetric_contribution = 18,
+      n_properties            = 19
     };
   } // namespace CFDDEMProperties
 

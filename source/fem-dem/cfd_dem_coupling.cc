@@ -945,12 +945,18 @@ CFDDEMSolver<dim>::add_fluid_particle_interaction_force()
 
       types::particle_index particle_id = particle->get_local_index();
 
-      force[particle_id][0] += particle_properties
-        [DEM::CFDDEMProperties::PropertiesIndex::fem_force_x];
-      force[particle_id][1] += particle_properties
-        [DEM::CFDDEMProperties::PropertiesIndex::fem_force_y];
-      force[particle_id][2] += particle_properties
-        [DEM::CFDDEMProperties::PropertiesIndex::fem_force_z];
+      force[particle_id][0] +=
+        particle_properties
+          [DEM::CFDDEMProperties::PropertiesIndex::fem_force_x] +
+        particle_properties[DEM::CFDDEMProperties::PropertiesIndex::fem_drag_x];
+      force[particle_id][1] +=
+        particle_properties
+          [DEM::CFDDEMProperties::PropertiesIndex::fem_force_y] +
+        particle_properties[DEM::CFDDEMProperties::PropertiesIndex::fem_drag_y];
+      force[particle_id][2] +=
+        particle_properties
+          [DEM::CFDDEMProperties::PropertiesIndex::fem_force_z] +
+        particle_properties[DEM::CFDDEMProperties::PropertiesIndex::fem_drag_z];
     }
 }
 

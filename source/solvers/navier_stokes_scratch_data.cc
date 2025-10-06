@@ -686,6 +686,8 @@ NavierStokesScratchData<dim>::reinit_particle_fluid_forces()
           particle_properties
             [DEM::CFDDEMProperties::PropertiesIndex::fem_force_x + d] = 0.;
           particle_properties
+            [DEM::CFDDEMProperties::PropertiesIndex::fem_drag_x + d] = 0.;
+          particle_properties
             [DEM::CFDDEMProperties::PropertiesIndex::fem_torque_x + d] = 0.;
           undisturbed_flow_force[d]                                    = 0.;
         }
