@@ -3,6 +3,12 @@
 All notable changes to the Lethe project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
+### [Master] - 2025-10-06
+
+### Fixed
+
+- MINOR The timer in navier_stokes_base post_process_fd was requesting the time summary while the timer itself was running. In the recent deal.II change, this undefined behavior is asserted for. This  manually opens and closes the timing at the right locations to ensure that the timer is not running anymore when the time is requested. [#1705](https://github.com/chaos-polymtl/lethe/pull/1693)
+
 ### [Master] - 2025-10-01
 
 ### Added
