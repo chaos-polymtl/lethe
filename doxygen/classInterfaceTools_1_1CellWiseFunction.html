@@ -147,7 +147,10 @@ class InterfaceTools::CellWiseFunction&lt; dim, VectorType, FEType &gt;</div><p>
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;int dim, typename VectorType , typename FEType &gt; </div>
+template&lt;int dim, typename VectorType  = Vector&lt;double&gt;, typename FEType  = FE_Q&lt;dim&gt;&gt; </div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
       <table class="memname">
         <tr>
           <td class="memname"><a class="el" href="classInterfaceTools_1_1CellWiseFunction.html">InterfaceTools::CellWiseFunction</a>&lt; dim, VectorType, FEType &gt;::CellWiseFunction </td>
@@ -157,6 +160,11 @@ template&lt;int dim, typename VectorType , typename FEType &gt; </div>
           <td></td>
         </tr>
       </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
 </div><div class="memdoc">
 
 <p>Constructor. </p>
@@ -167,9 +175,7 @@ template&lt;int dim, typename VectorType , typename FEType &gt; </div>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="interface__tools_8h_source.html#l00133">133</a> of file <a class="el" href="interface__tools_8h_source.html">interface_tools.h</a>.</p>
-
-<p class="reference">References <a class="el" href="interface__tools_8h_source.html#l00123">InterfaceTools::CellWiseFunction&lt; dim, VectorType, FEType &gt;::fe</a>, and <a class="el" href="interface__tools_8h_source.html#l00126">InterfaceTools::CellWiseFunction&lt; dim, VectorType, FEType &gt;::n_cell_wise_dofs</a>.</p>
+<p class="definition">Definition at line <a class="el" href="interface__tools_8h_source.html#l00064">64</a> of file <a class="el" href="interface__tools_8h_source.html">interface_tools.h</a>.</p>
 
 </div>
 </div>
@@ -220,7 +226,7 @@ template&lt;int dim, typename VectorType , typename FEType &gt; </div>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>Value of the gradient of the specified component at the given point </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="interface__tools_8h_source.html#l00164">164</a> of file <a class="el" href="interface__tools_8h_source.html">interface_tools.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="interface__tools_8h_source.html#l00155">155</a> of file <a class="el" href="interface__tools_8h_source.html">interface_tools.h</a>.</p>
 
 </div>
 </div>
@@ -270,7 +276,7 @@ template&lt;int dim, typename VectorType , typename FEType &gt; </div>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>Value of the Hessian of the specified component at the given point </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="interface__tools_8h_source.html#l00178">178</a> of file <a class="el" href="interface__tools_8h_source.html">interface_tools.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="interface__tools_8h_source.html#l00169">169</a> of file <a class="el" href="interface__tools_8h_source.html">interface_tools.h</a>.</p>
 
 </div>
 </div>
@@ -280,7 +286,7 @@ template&lt;int dim, typename VectorType , typename FEType &gt; </div>
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;int dim, typename VectorType , typename FEType &gt; </div>
+template&lt;int dim, typename VectorType  = Vector&lt;double&gt;, typename FEType  = FE_Q&lt;dim&gt;&gt; </div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
@@ -308,7 +314,9 @@ template&lt;int dim, typename VectorType , typename FEType &gt; </div>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="interface__tools_8h_source.html#l00142">142</a> of file <a class="el" href="interface__tools_8h_source.html">interface_tools.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="interface__tools_8h_source.html#l00076">76</a> of file <a class="el" href="interface__tools_8h_source.html">interface_tools.h</a>.</p>
+
+<p class="reference">References <a class="el" href="interface__tools_8h_source.html#l00135">InterfaceTools::CellWiseFunction&lt; dim, VectorType, FEType &gt;::cell_dof_values</a>.</p>
 
 </div>
 </div>
@@ -358,7 +366,7 @@ template&lt;int dim, typename VectorType , typename FEType &gt; </div>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>Value of the function (or the component of interest) at the given point </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="interface__tools_8h_source.html#l00150">150</a> of file <a class="el" href="interface__tools_8h_source.html">interface_tools.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="interface__tools_8h_source.html#l00141">141</a> of file <a class="el" href="interface__tools_8h_source.html">interface_tools.h</a>.</p>
 
 </div>
 </div>
@@ -387,7 +395,7 @@ template&lt;int dim, typename VectorType  = Vector&lt;double&gt;, typename FETyp
 
 <p>Value of the level-set field at the DoFs of the cell. </p>
 
-<p class="definition">Definition at line <a class="el" href="interface__tools_8h_source.html#l00129">129</a> of file <a class="el" href="interface__tools_8h_source.html">interface_tools.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="interface__tools_8h_source.html#l00135">135</a> of file <a class="el" href="interface__tools_8h_source.html">interface_tools.h</a>.</p>
 
 </div>
 </div>
@@ -415,7 +423,7 @@ template&lt;int dim, typename VectorType  = Vector&lt;double&gt;, typename FETyp
 
 <p>Finite element discretizing the field of interest. </p>
 
-<p class="definition">Definition at line <a class="el" href="interface__tools_8h_source.html#l00123">123</a> of file <a class="el" href="interface__tools_8h_source.html">interface_tools.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="interface__tools_8h_source.html#l00129">129</a> of file <a class="el" href="interface__tools_8h_source.html">interface_tools.h</a>.</p>
 
 </div>
 </div>
@@ -443,7 +451,7 @@ template&lt;int dim, typename VectorType  = Vector&lt;double&gt;, typename FETyp
 
 <p>Number of DoFs per element. </p>
 
-<p class="definition">Definition at line <a class="el" href="interface__tools_8h_source.html#l00126">126</a> of file <a class="el" href="interface__tools_8h_source.html">interface_tools.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="interface__tools_8h_source.html#l00132">132</a> of file <a class="el" href="interface__tools_8h_source.html">interface_tools.h</a>.</p>
 
 </div>
 </div>
