@@ -1,4 +1,4 @@
-// SPDX-FileCopyrightText: Copyright (c) 2019-2024 The Lethe Authors
+// SPDX-FileCopyrightText: Copyright (c) 2019-2025 The Lethe Authors
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
 #ifndef lethe_physics_solver_h
@@ -6,7 +6,6 @@
 
 #include <core/inexact_newton_non_linear_solver.h>
 #include <core/kinsol_newton_non_linear_solver.h>
-#include <core/multiphysics.h>
 #include <core/newton_non_linear_solver.h>
 #include <core/non_linear_solver.h>
 #include <core/parameters.h>

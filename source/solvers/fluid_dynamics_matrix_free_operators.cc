@@ -1,9 +1,15 @@
 // SPDX-FileCopyrightText: Copyright (c) 2023-2025 The Lethe Authors
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
-#include "solvers/fluid_dynamics_matrix_free_operators.h"
+#include <core/bdf.h>
+#include <core/time_integration_utilities.h>
+
+#include <solvers/fluid_dynamics_matrix_free_operators.h>
 
 #include <deal.II/grid/grid_generator.h>
+
+#include <deal.II/multigrid/mg_tools.h>
+
 /**
  * @brief Creates and fills a table that works as bool dof mask object
  * needed for the sparsity pattern and computation of the system matrix

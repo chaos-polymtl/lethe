@@ -1,4 +1,4 @@
-// SPDX-FileCopyrightText: Copyright (c) 2019-2024 The Lethe Authors
+// SPDX-FileCopyrightText: Copyright (c) 2019-2025 The Lethe Authors
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
 // TODO : Refactor so the class itself is not a pointer, but contains a pointer
@@ -11,8 +11,6 @@
 #include <deal.II/base/parameter_handler.h>
 #include <deal.II/base/parsed_function.h>
 
-#include <deal.II/lac/vector.h>
-
 #include <memory>
 
 using namespace dealii;
@@ -21,9 +19,9 @@ using namespace dealii;
  * Element required for the introduction of a source term in equations
  * All equation-specific source term should derive
  * from the base class but also call it's declare_parameters and
- *parse_parameters routine. This allows specialize class to focus on their
- *specificity and forget about other non-specific elements that are generic to
- *the calculation of analytical solutions
+ * parse_parameters routine. This allows specialized classes to focus on their
+ * specificity and forget about other non-specific elements that are generic to
+ * the calculation of analytical solutions
  **/
 
 namespace SourceTerms

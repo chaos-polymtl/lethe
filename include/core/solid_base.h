@@ -1,33 +1,24 @@
-// SPDX-FileCopyrightText: Copyright (c) 2020-2024 The Lethe Authors
+// SPDX-FileCopyrightText: Copyright (c) 2020-2025 The Lethe Authors
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
 #ifndef lethe_solid_base_h
 #define lethe_solid_base_h
 
-
-// Lethe Includes
 #include <core/parameters.h>
 #include <core/solid_objects_parameters.h>
 #include <core/vector.h>
 
-// Dealii Includes
-
 #include <deal.II/base/function.h>
-#include <deal.II/base/quadrature_lib.h>
 
 #include <deal.II/distributed/tria_base.h>
 
-#include <deal.II/dofs/dof_accessor.h>
 #include <deal.II/dofs/dof_handler.h>
 
-#include <deal.II/fe/fe_q.h>
-#include <deal.II/fe/fe_simplex_p.h>
 #include <deal.II/fe/mapping_fe.h>
 
 #include <deal.II/lac/trilinos_vector.h>
 
 #include <deal.II/particles/particle_handler.h>
-
 
 using namespace dealii;
 

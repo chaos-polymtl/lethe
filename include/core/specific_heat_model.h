@@ -1,9 +1,8 @@
-// SPDX-FileCopyrightText: Copyright (c) 2021-2024 The Lethe Authors
+// SPDX-FileCopyrightText: Copyright (c) 2021-2025 The Lethe Authors
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
 #ifndef lethe_specific_heat_model_h
 #define lethe_specific_heat_model_h
-
 
 #include <core/parameters.h>
 #include <core/phase_change.h>

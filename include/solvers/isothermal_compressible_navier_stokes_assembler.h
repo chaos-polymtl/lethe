@@ -1,11 +1,9 @@
-// SPDX-FileCopyrightText: Copyright (c) 2023-2024 The Lethe Authors
+// SPDX-FileCopyrightText: Copyright (c) 2023-2025 The Lethe Authors
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
 #ifndef lethe_isothermal_compressible_navier_stokes_assembler_h
 #define lethe_isothermal_compressible_navier_stokes_assembler_h
 
-#include <core/boundary_conditions.h>
-#include <core/rheological_model.h>
 #include <core/simulation_control.h>
 
 #include <solvers/copy_data.h>

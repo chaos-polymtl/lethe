@@ -6,7 +6,6 @@
 
 #include <core/bdf.h>
 #include <core/parameters.h>
-#include <core/sdirk_stage_data.h>
 
 /**
  * @brief The SimulationControl class is responsible for the control of steady-state and transient

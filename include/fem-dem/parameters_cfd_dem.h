@@ -1,14 +1,11 @@
-// SPDX-FileCopyrightText: Copyright (c) 2020-2024 The Lethe Authors
+// SPDX-FileCopyrightText: Copyright (c) 2020-2025 The Lethe Authors
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
-#include <core/parameters.h>
-#include <core/parameters_lagrangian.h>
+#ifndef lethe_parameters_cfd_dem_h
+#define lethe_parameters_cfd_dem_h
 
 #include <deal.II/base/parameter_handler.h>
 #include <deal.II/base/parsed_function.h>
-
-#ifndef lethe_parameters_cfd_dem_h
-#  define lethe_parameters_cfd_dem_h
 
 using namespace dealii;
 /**
@@ -20,7 +17,6 @@ using namespace dealii;
  *specificity and forget about other non-specific elements that are generic to
  *the calculation of analytical solutions
  **/
-
 namespace Parameters
 {
   enum class VoidFractionMode
@@ -72,7 +68,6 @@ namespace Parameters
     virtual void
     parse_parameters(ParameterHandler &prm);
 
-
   public:
     VoidFractionMode               mode;
     Functions::ParsedFunction<dim> void_fraction;
@@ -113,5 +108,4 @@ namespace Parameters
     parse_parameters(ParameterHandler &prm);
   };
 } // namespace Parameters
-
 #endif

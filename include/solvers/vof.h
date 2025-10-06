@@ -19,26 +19,16 @@
 #include <solvers/vof_subequations_interface.h>
 
 #include <deal.II/base/convergence_table.h>
-#include <deal.II/base/quadrature_lib.h>
 #include <deal.II/base/table_handler.h>
 #include <deal.II/base/timer.h>
 
 #include <deal.II/distributed/solution_transfer.h>
 #include <deal.II/distributed/tria_base.h>
 
-#include <deal.II/fe/fe_q.h>
-#include <deal.II/fe/fe_simplex_p.h>
-#include <deal.II/fe/fe_tools.h>
-#include <deal.II/fe/mapping_fe.h>
-#include <deal.II/fe/mapping_q.h>
-
 #include <deal.II/lac/trilinos_precondition.h>
 #include <deal.II/lac/trilinos_sparse_matrix.h>
 #include <deal.II/lac/trilinos_vector.h>
 
-#include <deal.II/numerics/error_estimator.h>
-
-#include <map>
 
 DeclException1(
   InvalidNumberOfFluid,

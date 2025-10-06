@@ -6,6 +6,8 @@
 
 #include <solvers/vof_linear_subequations_solver.h>
 
+#include <deal.II/fe/fe_simplex_p.h>
+
 /**
  * @brief VOF curvature L2 projection solver.
  *

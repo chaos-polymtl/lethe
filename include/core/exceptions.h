@@ -1,4 +1,4 @@
-// SPDX-FileCopyrightText: Copyright (c) 2022 The Lethe Authors
+// SPDX-FileCopyrightText: Copyright (c) 2022-2025 The Lethe Authors
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
 /*
@@ -6,13 +6,10 @@
  * to avoid code repetition.
  */
 
-
-
 #ifndef lethe_exceptions_h
 #define lethe_exceptions_h
 
 #include <deal.II/base/exceptions.h>
-
 
 using namespace dealii;
 

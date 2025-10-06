@@ -1,4 +1,4 @@
-// SPDX-FileCopyrightText: Copyright (c) 2020-2021 The Lethe Authors
+// SPDX-FileCopyrightText: Copyright (c) 2020-2025 The Lethe Authors
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
 #ifndef lethe_sdirk_h
@@ -7,8 +7,6 @@
 #include <core/parameters.h>
 
 #include <deal.II/lac/full_matrix.h>
-
-#include <vector>
 
 using namespace dealii;
 

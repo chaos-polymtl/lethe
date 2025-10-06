@@ -1,4 +1,4 @@
-// SPDX-FileCopyrightText: Copyright (c) 2020-2024 The Lethe Authors
+// SPDX-FileCopyrightText: Copyright (c) 2020-2025 The Lethe Authors
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
 #include <fem-dem/parameters_cfd_dem.h>
@@ -103,7 +103,6 @@ namespace Parameters
 
     project_particle_velocity = prm.get_bool("project particle velocity");
 
-
     prm.leave_subsection();
   }
 
@@ -190,7 +189,6 @@ namespace Parameters
 
     prm.leave_subsection();
   }
-
 
   void
   CFDDEM::parse_parameters(ParameterHandler &prm)

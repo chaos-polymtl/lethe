@@ -20,7 +20,6 @@
 #include <deal.II/fe/fe_q.h>
 
 #include <deal.II/grid/grid_tools.h>
-#include <deal.II/grid/manifold_lib.h>
 
 #include <deal.II/lac/full_matrix.h>
 
@@ -42,7 +41,7 @@ template <int dim>
 void
 FluidDynamicsSharp<dim>::vertices_cell_mapping()
 {
-  // Find all the cells around each vertices
+  // Find all the cells around each vertex
   TimerOutput::Scope t(this->computing_timer, "Map vertices to cell");
 
   LetheGridTools::vertices_cell_mapping(this->dof_handler, vertices_to_cell);
@@ -54,7 +53,7 @@ FluidDynamicsSharp<dim>::check_whether_all_particles_are_sphere()
 {
   all_spheres = false;
 
-  // WIP The optimized cut-cell mapping seems to lead to instability
+  // TODO The optimized cut-cell mapping seems to lead to instability
   /*
   for (unsigned int p_i = 0; p_i < particles.size(); ++p_i)
     {
@@ -191,7 +190,7 @@ FluidDynamicsSharp<dim>::generate_cut_cells_map()
                   if (nb_dof_inside != 0)
                     {
                       // If all the DOFs are inside the boundary this cell is
-                      // inside the particle. Otherwise the particle is cut.
+                      // inside the particle. Otherwise, the particle is cut.
                       if (nb_dof_inside == dofs_per_cell_local_v_x)
                         {
                           //  We register only the particle with the lowest id
@@ -436,8 +435,6 @@ FluidDynamicsSharp<dim>::refinement_control(const bool initial_refinement)
     }
 }
 
-
-
 template <int dim>
 bool
 FluidDynamicsSharp<dim>::cell_cut_by_p_absolute_distance(
@@ -674,8 +671,8 @@ FluidDynamicsSharp<dim>::generate_cut_cell_candidates(
       return {cell_is_inside, cell_is_cut};
     }
 
-  // If the particles is inside the cell and it is not known whether all
-  // vertices are inside the particles or not, set all true by default
+  // If the particle intersect the cell and is not known whether all
+  // vertices are inside the particles, set all true by default
   if (point_inside_cell)
     {
       cell_is_inside = true;
@@ -1137,7 +1134,7 @@ FluidDynamicsSharp<dim>::force_on_ib()
                             ++nb_dof_inside;
                         }
 
-                      // If the face is not cut and the face is outside of the
+                      // If the face is not cut and the face is outside the
                       // IB, the face of the cell is on the boundary of the
                       // computational domain.
                       if (nb_dof_inside == 0)
@@ -1237,7 +1234,7 @@ FluidDynamicsSharp<dim>::force_on_ib()
                                         ib_done[local_face_dof_indices[i]]
                                           .second;
                                       // Check if we already have the cell used
-                                      // to defined the IB constraint of that
+                                      // to define the IB constraint of that
                                       // dof. We always have that information
                                       // except if the dof is not owned.
                                       if (ib_done[local_face_dof_indices[i]]
@@ -2090,11 +2087,10 @@ FluidDynamicsSharp<dim>::integrate_particles()
 {
   particle_residual = 0;
 
-
   TimerOutput::Scope t(this->computing_timer, "Integrate particles");
   // Integrate the velocity of the particle. If integrate motion is set to
   // true in the parameter this function will also integrate the force to update
-  // the velocity. Otherwise the velocity is kept constant
+  // the velocity. Otherwise, the velocity is kept constant
 
   // To integrate the forces and update the velocity, this function uses the
   // implicit Euler algorithm. To find the force at t+dt the function use the
@@ -2109,7 +2105,6 @@ FluidDynamicsSharp<dim>::integrate_particles()
 
   const auto rheological_model =
     this->simulation_parameters.physical_properties_manager.get_rheology();
-
 
   ib_dem.update_particles(particles, time - dt);
 
@@ -2136,9 +2131,7 @@ FluidDynamicsSharp<dim>::integrate_particles()
   // Deactivated the lubrication force if the fluid is Non-newtonian.
   if (this->simulation_parameters.particlesParameters
         ->enable_lubrication_force == false)
-    {
-      h_max = 0;
-    }
+    h_max = 0;
 
   particle_residual = 0;
   if (some_particles_are_coupled && time > 0)
@@ -2162,8 +2155,7 @@ FluidDynamicsSharp<dim>::integrate_particles()
       unsigned int current_newton_iteration =
         this->get_current_newton_iteration();
 
-
-      // Do the DEM if only if it’s the first newton iteration or both the
+      // Do the DEM only if it’s the first newton iteration or both the
       // explicit calculation of the impulsion and position are false.
       if (current_newton_iteration == 0 ||
           (this->simulation_parameters.particlesParameters
@@ -2203,7 +2195,7 @@ FluidDynamicsSharp<dim>::integrate_particles()
                 g * (particles[p].mass / volume - fluid_density) * volume;
 
               // Transfers the impulsion evaluated in the sub-time-stepping
-              // scheme to the particle at the CFD time scale.
+              // scheme to the particle at the CFD timescale.
               particles[p].impulsion = ib_dem.dem_particles[p].impulsion;
               particles[p].omega_impulsion =
                 ib_dem.dem_particles[p].omega_impulsion;
@@ -2277,19 +2269,16 @@ FluidDynamicsSharp<dim>::integrate_particles()
                     inverse_of_relaxation_coefficient_velocity;
                 }
               else
-                {
-                  velocity_correction_vector = residual_velocity;
-                }
+                velocity_correction_vector = residual_velocity;
+
               // Update the particle state and keep in memory the last iteration
               // information.
-
               particles[p].velocity_iter = particles[p].velocity;
               particles[p].velocity =
                 particles[p].velocity_iter -
                 velocity_correction_vector * alpha * local_alpha;
               particles[p].impulsion_iter             = particles[p].impulsion;
               particles[p].previous_velocity_residual = residual_velocity;
-
 
               // If the particles have impacted a wall or another particle, we
               // want to use the sub-time step position. Otherwise, we solve the
@@ -2590,7 +2579,6 @@ FluidDynamicsSharp<dim>::integrate_particles()
       if (clear_combined_shape_cache)
         combined_shapes->clear_cache();
 
-
       if (this->simulation_parameters.non_linear_solver
             .at(PhysicsID::fluid_dynamics)
             .verbosity != Parameters::Verbosity::quiet)
@@ -2659,9 +2647,7 @@ FluidDynamicsSharp<dim>::integrate_particles()
             }
           if (particles[p].position != particles[p].previous_positions[0] ||
               particles[p].orientation != particles[p].previous_orientation[0])
-            {
-              particles[p].clear_shape_cache();
-            }
+            particles[p].clear_shape_cache();
 
           particles[p].set_position(particles[p].position);
           particles[p].set_orientation(particles[p].orientation);
@@ -2678,9 +2664,7 @@ FluidDynamicsSharp<dim>::Visualization_IB::build_patches(
   std::vector<IBParticle<dim>> particles)
 {
   properties_to_write = particles[0].get_properties_name();
-  /**
-   * A list of field names for all data components stored in patches.
-   */
+  // A list of field names for all data components stored in patches.
   vector_datasets.clear();
   dataset_names.clear();
   // Defining property field position
@@ -2711,7 +2695,6 @@ FluidDynamicsSharp<dim>::Visualization_IB::build_patches(
   patches.resize(particles.size());
 
   // Looping over particle to get the properties from the particle_handler
-
   for (unsigned int p = 0; p < particles.size(); ++p)
     {
       // Particle location
@@ -2810,7 +2793,6 @@ FluidDynamicsSharp<dim>::finish_time_step_particles()
         }
     }
 
-
   table_all_p.clear();
   for (unsigned int p = 0; p < particles.size(); ++p)
     {
@@ -2844,8 +2826,6 @@ FluidDynamicsSharp<dim>::finish_time_step_particles()
       particles[p].omega_impulsion_iter       = particles[p].omega_impulsion;
       particles[p].previous_velocity_residual = 0;
       particles[p].previous_omega_residual    = 0;
-
-
 
       if (some_particles_are_coupled &&
           this->simulation_parameters.particlesParameters->print_dem)
@@ -3106,8 +3086,6 @@ FluidDynamicsSharp<dim>::finish_time_step_particles()
     }
 }
 
-
-
 template <int dim>
 void
 FluidDynamicsSharp<dim>::sharp_edge()
@@ -3141,8 +3119,6 @@ FluidDynamicsSharp<dim>::sharp_edge()
   double length_ratio =
     this->simulation_parameters.particlesParameters->length_ratio;
 
-
-
   IBStencil<dim>      stencil;
   std::vector<double> ib_coef = stencil.coefficients(order, length_ratio);
 
@@ -3151,7 +3127,6 @@ FluidDynamicsSharp<dim>::sharp_edge()
   // Define multiple local_dof_indices one for the cell iterator one for the
   // cell with the second point for the sharp edge stencil and one for
   // manipulation on the neighbour’s cell.
-
   std::vector<types::global_dof_index> local_dof_indices(dofs_per_cell);
   std::vector<types::global_dof_index> local_dof_indices_2(dofs_per_cell);
   std::vector<types::global_dof_index> local_dof_indices_3(dofs_per_cell);
@@ -3216,7 +3191,6 @@ FluidDynamicsSharp<dim>::sharp_edge()
                       break;
                     }
                 }
-
               this->system_matrix.clear_row(inside_index);
               // this->system_matrix.clear_row(inside_index)
               // is not reliable on edge case
@@ -3224,7 +3198,6 @@ FluidDynamicsSharp<dim>::sharp_edge()
               // Set the new equation for the first pressure DOFs of the
               // cell. this is the new reference pressure inside a
               // particle
-
               this->system_matrix.add(inside_index, inside_index, sum_line);
               this->system_rhs(inside_index) =
                 0 - this->evaluation_point(inside_index) * sum_line;
@@ -3667,7 +3640,6 @@ FluidDynamicsSharp<dim>::sharp_edge()
                             }
 
                           // Define the RHS of the equation.
-
                           double rhs_add = 0;
                           // Different boundary conditions depending
                           // on the component index of the DOF and
@@ -3981,8 +3953,6 @@ FluidDynamicsSharp<dim>::setup_assemblers()
     std::make_shared<LaplaceAssembly<dim>>(this->simulation_control));
 }
 
-
-
 template <int dim>
 void
 FluidDynamicsSharp<dim>::assemble_local_system_matrix(
@@ -4057,8 +4027,6 @@ FluidDynamicsSharp<dim>::assemble_local_system_matrix(
           assembler->assemble_matrix(scratch_data, copy_data);
         }
     }
-
-
   cell->get_dof_indices(copy_data.local_dof_indices);
 }
 
@@ -4075,8 +4043,6 @@ FluidDynamicsSharp<dim>::copy_local_matrix_to_global_matrix(
                                               copy_data.local_dof_indices,
                                               this->system_matrix);
 }
-
-
 
 template <int dim>
 void
@@ -4177,7 +4143,6 @@ void
 FluidDynamicsSharp<dim>::write_checkpoint()
 {
   this->FluidDynamicsMatrixBased<dim>::write_checkpoint();
-
 
   // Write a table with all the relevant properties of the particle in a table.
   if (Utilities::MPI::this_mpi_process(this->mpi_communicator) == 0)
@@ -4456,7 +4421,6 @@ FluidDynamicsSharp<dim>::read_checkpoint()
                   particles[p_i].fluid_torque[1] = restart_data["T_y"][row];
                   particles[p_i].fluid_torque[2] = restart_data["T_z"][row];
 
-
                   // fill previous time step
                   particles[p_i].previous_positions[j][0] =
                     restart_data["p_x"][row];
@@ -4482,7 +4446,6 @@ FluidDynamicsSharp<dim>::read_checkpoint()
                     restart_data["theta_y"][row];
                   particles[p_i].previous_orientation[j][2] =
                     restart_data["theta_z"][row];
-
 
                   particles[p_i].set_position(particles[p_i].position);
                   particles[p_i].set_orientation(particles[p_i].orientation);
@@ -4613,7 +4576,6 @@ FluidDynamicsSharp<dim>::load_particles_from_file()
 
           particles[p_i].radius = particles[p_i].shape->effective_radius;
 
-
           double volume =
             Utilities::string_to_double(particles_data["volume"][p_i]);
           if (volume == 0)
@@ -4742,7 +4704,6 @@ FluidDynamicsSharp<dim>::load_particles_from_file()
           particles[p_i].orientation[2] =
             Utilities::string_to_double(particles_data["orientation_z"][p_i]);
 
-
           std::string shape_type = particles_data["type"][p_i];
           std::string shape_arguments_str =
             particles_data["shape_argument"][p_i];
@@ -4849,7 +4810,6 @@ FluidDynamicsSharp<dim>::update_precalculations_for_ib()
         this->dof_handler, particles[p_i].mesh_based_precalculations);
     }
 }
-
 
 template <int dim>
 void

@@ -1,30 +1,21 @@
-// SPDX-FileCopyrightText: Copyright (c) 2023-2024 The Lethe Authors
+// SPDX-FileCopyrightText: Copyright (c) 2023-2025 The Lethe Authors
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
 #ifndef lethe_cahn_hilliard_scratch_data_h
 #define lethe_cahn_hilliard_scratch_data_h
 
-#include <core/multiphysics.h>
 
 #include <solvers/multiphysics_interface.h>
 #include <solvers/physical_properties_manager.h>
 #include <solvers/physics_scratch_data.h>
 
-#include <deal.II/base/quadrature.h>
-
 #include <deal.II/dofs/dof_renumbering.h>
-#include <deal.II/dofs/dof_tools.h>
 
-#include <deal.II/fe/fe_q.h>
 #include <deal.II/fe/fe_system.h>
-#include <deal.II/fe/mapping.h>
 
 #include <deal.II/numerics/vector_tools.h>
 
-
 using namespace dealii;
-
-
 /**
  * @brief Class that stores the information required by the assembly procedure
  * for the Cahn-Hilliard equations. Consequently, this class
@@ -59,13 +50,9 @@ public:
    * evaluation, since this needs to be done at the cell level.
    *
    * @param properties_manager The physical properties manager (see physical_properties_manager.h)
-   *
    * @param fe_cahn_hilliard The FESystem used to solve the Cahn-Hilliard equations
-   *
    * @param quadrature The quadrature to use for the assembly
-   *
    * @param mapping The mapping of the domain in which the Cahn-Hilliard equations are solved
-   *
    * @param fe_fd The FESystem used to solve the Fluid Dynamics equations
    *
    */
@@ -100,11 +87,7 @@ public:
    * definition of the WorkStream mechanism it is assumed that the content of
    * the scratch will be reset on a cell basis.
    *
-   * @param fe The FESystem used to solve the Navier-Stokes equations
-   *
-   * @param quadrature The quadrature to use for the assembly
-   *
-   * @param mapping The mapping of the domain in which the Navier-Stokes equations are solved
+   * @param sd
    */
   CahnHilliardScratchData(const CahnHilliardScratchData<dim> &sd)
     : properties_manager(sd.properties_manager)
@@ -129,10 +112,7 @@ public:
   }
 
 
-  /** @brief Allocates the memory for the scratch
-   *
-   * This function allocates the necessary memory for all members of the scratch
-   *
+  /** @brief Allocates the necessary memory for all members of the scratch
    */
   void
   allocate() override;
@@ -195,7 +175,6 @@ public:
       current_solution, this->chemical_potential_gradients);
     this->fe_values_cahn_hilliard[chemical_potential].get_function_laplacians(
       current_solution, this->chemical_potential_laplacians);
-
 
     // Gather previous phase order values
     for (unsigned int p = 0; p < previous_solutions.size(); ++p)

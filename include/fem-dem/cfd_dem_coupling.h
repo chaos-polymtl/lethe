@@ -1,8 +1,8 @@
 // SPDX-FileCopyrightText: Copyright (c) 2021-2025 The Lethe Authors
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
-#ifndef lethe_dem_cfd_coupling_h
-#define lethe_dem_cfd_coupling_h
+#ifndef lethe_cfd_dem_coupling_h
+#define lethe_cfd_dem_coupling_h
 
 #include <solvers/navier_stokes_scratch_data.h>
 
@@ -12,23 +12,14 @@
 #include <dem/dem_action_manager.h>
 #include <dem/dem_contact_manager.h>
 #include <dem/dem_solver_parameters.h>
-#include <dem/find_contact_detection_step.h>
 #include <dem/lagrangian_post_processing.h>
 #include <dem/periodic_boundaries_manipulator.h>
 #include <fem-dem/cfd_dem_simulation_parameters.h>
 #include <fem-dem/fluid_dynamics_vans.h>
-#include <fem-dem/postprocessing_cfd_dem.h>
 
 #include <deal.II/base/work_stream.h>
 
-#include <deal.II/dofs/dof_tools.h>
 
-#include <deal.II/fe/mapping_q.h>
-
-#include <deal.II/grid/grid_generator.h>
-#include <deal.II/grid/grid_in.h>
-
-#include <deal.II/numerics/vector_tools.h>
 
 using namespace dealii;
 
@@ -64,7 +55,7 @@ public:
   /**
    * @brief Destructor for the CFD-DEM solver.
    */
-  ~CFDDEMSolver();
+  ~CFDDEMSolver() override;
 
   /**
    * @brief Engine of the CFD-DEM solver. Calls all the necessary functions to
@@ -132,7 +123,7 @@ private:
    * from checkpoint files to continue a previously interrupted simulation.
    */
   void
-  read_dem();
+  read_dem() override;
 
   /**
    * @brief Gather TableHandler objects for serialization during checkpointing.
@@ -292,7 +283,7 @@ private:
    * @brief Sort particles into subdomains and cells for efficient processing.
    *
    * Redistributes particles among computational subdomains and associates
-   * them with their containing cells, then reinitializes containers that
+   * them with their containing cells, then reinitialize containers that
    * depend on local particle identifiers.
    */
   void

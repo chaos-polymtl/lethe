@@ -6,9 +6,7 @@
 
 #include <core/physics_solver.h>
 
-#include <solvers/simulation_parameters.h>
 
-#include <deal.II/numerics/data_out.h>
 
 /**
  * @brief Base class to solve subequations solved inside a physics (or auxiliary

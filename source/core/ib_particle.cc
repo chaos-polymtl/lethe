@@ -4,7 +4,6 @@
 #include <core/ib_particle.h>
 #include <core/shape_parsing.h>
 
-
 template <int dim>
 void
 IBParticle<dim>::initialize_all()

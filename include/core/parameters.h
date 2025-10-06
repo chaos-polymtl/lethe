@@ -23,7 +23,6 @@
 
 #include <deal.II/multigrid/mg_transfer_global_coarsening.h>
 
-
 using namespace dealii;
 
 namespace Parameters

@@ -1,9 +1,8 @@
-// SPDX-FileCopyrightText: Copyright (c) 2021-2024 The Lethe Authors
+// SPDX-FileCopyrightText: Copyright (c) 2021-2025 The Lethe Authors
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
 #include <core/bdf.h>
 #include <core/simulation_control.h>
-#include <core/time_integration_utilities.h>
 #include <core/utilities.h>
 
 #include <solvers/navier_stokes_vof_assemblers.h>

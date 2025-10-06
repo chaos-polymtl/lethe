@@ -1,6 +1,9 @@
 // SPDX-FileCopyrightText: Copyright (c) 2020-2025 The Lethe Authors
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
+#ifndef lethe_gls_sharp_h
+#define lethe_gls_sharp_h
+
 #include <core/ib_particle.h>
 #include <core/ib_stencil.h>
 #include <core/shape.h>
@@ -10,11 +13,6 @@
 
 #include <fem-dem/cfd_dem_simulation_parameters.h>
 #include <fem-dem/ib_particles_dem.h>
-
-#include <deal.II/dofs/dof_tools.h>
-
-#ifndef LETHE_GLSSHARPNS_H
-#  define LETHE_GLSSHARPNS_H
 
 using namespace dealii;
 
