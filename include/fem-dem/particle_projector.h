@@ -692,7 +692,10 @@ public:
   ParticleFieldQCM<dim, 3, DEM::CFDDEMProperties::PropertiesIndex::v_x>
     particle_velocity;
 
-  ParticleFieldQCM<dim, 3, DEM::CFDDEMProperties::PropertiesIndex::fem_force_x>
+  ParticleFieldQCM<
+    dim,
+    3,
+    DEM::CFDDEMProperties::PropertiesIndex::fem_force_two_way_coupling_x>
     particle_fluid_force_without_drag;
 
   ParticleFieldQCM<dim, 3, DEM::CFDDEMProperties::PropertiesIndex::fem_drag_x>

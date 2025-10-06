@@ -156,10 +156,11 @@ test_void_fraction_qcm(const unsigned int fe_degree,
       particle_properties[DEM::CFDDEMProperties::dp] = dp;
       for (unsigned int d = 0; d < 3; ++d)
         {
-          particle_properties[DEM::CFDDEMProperties::fem_force_x + d] =
-            force_distribution.value(particle->get_location(), d);
-          total_particle_force_on_particles[d] +=
-            particle_properties[DEM::CFDDEMProperties::fem_force_x + d];
+          particle_properties
+            [DEM::CFDDEMProperties::fem_force_two_way_coupling_x + d] =
+              force_distribution.value(particle->get_location(), d);
+          total_particle_force_on_particles[d] += particle_properties
+            [DEM::CFDDEMProperties::fem_force_two_way_coupling_x + d];
         }
     }
 

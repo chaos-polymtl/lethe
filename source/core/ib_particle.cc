@@ -140,10 +140,12 @@ IBParticle<dim>::get_properties()
   properties[DEM::CFDDEMProperties::PropertiesIndex::omega_x] = omega[0];
   properties[DEM::CFDDEMProperties::PropertiesIndex::omega_y] = omega[1];
   properties[DEM::CFDDEMProperties::PropertiesIndex::omega_z] = omega[2];
-  properties[DEM::CFDDEMProperties::PropertiesIndex::fem_force_x] =
-    fluid_forces[0];
-  properties[DEM::CFDDEMProperties::PropertiesIndex::fem_force_y] =
-    fluid_forces[1];
+  properties
+    [DEM::CFDDEMProperties::PropertiesIndex::fem_force_two_way_coupling_x] =
+      fluid_forces[0];
+  properties
+    [DEM::CFDDEMProperties::PropertiesIndex::fem_force_two_way_coupling_y] =
+      fluid_forces[1];
   properties[DEM::CFDDEMProperties::PropertiesIndex::fem_torque_x] =
     fluid_torque[0];
   properties[DEM::CFDDEMProperties::PropertiesIndex::fem_torque_y] =
@@ -154,14 +156,17 @@ IBParticle<dim>::get_properties()
 
   if (dim == 2)
     {
-      properties[DEM::CFDDEMProperties::PropertiesIndex::v_z]         = 0.;
-      properties[DEM::CFDDEMProperties::PropertiesIndex::fem_force_z] = 0.;
+      properties[DEM::CFDDEMProperties::PropertiesIndex::v_z] = 0.;
+      properties
+        [DEM::CFDDEMProperties::PropertiesIndex::fem_force_two_way_coupling_z] =
+          0.;
     }
   if (dim == 3)
     {
       properties[DEM::CFDDEMProperties::PropertiesIndex::v_z] = velocity[2];
-      properties[DEM::CFDDEMProperties::PropertiesIndex::fem_force_z] =
-        fluid_forces[2];
+      properties
+        [DEM::CFDDEMProperties::PropertiesIndex::fem_force_two_way_coupling_z] =
+          fluid_forces[2];
     }
 
   return properties;

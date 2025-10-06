@@ -1480,9 +1480,9 @@ VANSAssemblerSaffmanMei<dim>::calculate_particle_fluid_interactions(
           for (int d = 0; d < dim; ++d)
             {
               // Apply lift force on the particle
-              particle_properties
-                [DEM::CFDDEMProperties::PropertiesIndex::fem_force_x + d] +=
-                lift_force[d];
+              particle_properties[DEM::CFDDEMProperties::PropertiesIndex::
+                                    fem_force_two_way_coupling_x +
+                                  d] += lift_force[d];
 
               // Apply lift force on the fluid
               undisturbed_flow_force[d] +=
@@ -1526,9 +1526,9 @@ VANSAssemblerSaffmanMei<dim>::calculate_particle_fluid_interactions(
           for (int d = 0; d < dim; ++d)
             {
               // Apply lift force on the particle
-              particle_properties
-                [DEM::CFDDEMProperties::PropertiesIndex::fem_force_x + d] +=
-                lift_force[d];
+              particle_properties[DEM::CFDDEMProperties::PropertiesIndex::
+                                    fem_force_two_way_coupling_x +
+                                  d] += lift_force[d];
 
               // Apply lift force on the fluid
               undisturbed_flow_force[d] +=
@@ -1614,9 +1614,9 @@ VANSAssemblerMagnus<dim>::calculate_particle_fluid_interactions(
           for (int d = 0; d < dim; ++d)
             {
               // Apply lift force on the particle
-              particle_properties
-                [DEM::CFDDEMProperties::PropertiesIndex::fem_force_x + d] +=
-                lift_force[d];
+              particle_properties[DEM::CFDDEMProperties::PropertiesIndex::
+                                    fem_force_two_way_coupling_x +
+                                  d] += lift_force[d];
 
               // Apply lift force on the fluid
               undisturbed_flow_force[d] +=
@@ -1673,9 +1673,9 @@ VANSAssemblerMagnus<dim>::calculate_particle_fluid_interactions(
           for (int d = 0; d < dim; ++d)
             {
               // Apply lift force on the particle
-              particle_properties
-                [DEM::CFDDEMProperties::PropertiesIndex::fem_force_x + d] +=
-                lift_force[d];
+              particle_properties[DEM::CFDDEMProperties::PropertiesIndex::
+                                    fem_force_two_way_coupling_x +
+                                  d] += lift_force[d];
 
               // Apply lift force on the fluid
               undisturbed_flow_force[d] +=
@@ -1825,9 +1825,9 @@ VANSAssemblerBuoyancy<dim>::calculate_particle_fluid_interactions(
 
       for (int d = 0; d < dim; ++d)
         {
-          particle_properties
-            [DEM::CFDDEMProperties::PropertiesIndex::fem_force_particle_only_x +
-             d] += buoyancy_force[d] * density[i_particle];
+          particle_properties[DEM::CFDDEMProperties::PropertiesIndex::
+                                fem_force_one_way_coupling_x +
+                              d] += buoyancy_force[d] * density[i_particle];
         }
       i_particle += 1;
     }
@@ -1879,14 +1879,14 @@ VANSAssemblerPressureForce<dim>::calculate_particle_fluid_interactions(
           if (cfd_dem.vans_model == Parameters::VANSModel::modelA)
             {
               particle_properties[DEM::CFDDEMProperties::PropertiesIndex::
-                                    fem_force_particle_only_x +
+                                    fem_force_one_way_coupling_x +
                                   d] += pressure_force[d] * density[i_particle];
             }
           if (cfd_dem.vans_model == Parameters::VANSModel::modelB)
             {
-              particle_properties
-                [DEM::CFDDEMProperties::PropertiesIndex::fem_force_x + d] +=
-                pressure_force[d] * density[i_particle];
+              particle_properties[DEM::CFDDEMProperties::PropertiesIndex::
+                                    fem_force_two_way_coupling_x +
+                                  d] += pressure_force[d] * density[i_particle];
               undisturbed_flow_force[d] +=
                 pressure_force[d] / scratch_data.cell_volume;
             }
@@ -1951,14 +1951,14 @@ VANSAssemblerShearForce<dim>::calculate_particle_fluid_interactions(
           if (cfd_dem.vans_model == Parameters::VANSModel::modelA)
             {
               particle_properties[DEM::CFDDEMProperties::PropertiesIndex::
-                                    fem_force_particle_only_x +
+                                    fem_force_one_way_coupling_x +
                                   d] += shear_force[d] * density[i_particle];
             }
           if (cfd_dem.vans_model == Parameters::VANSModel::modelB)
             {
-              particle_properties
-                [DEM::CFDDEMProperties::PropertiesIndex::fem_force_x + d] +=
-                shear_force[d] * density[i_particle];
+              particle_properties[DEM::CFDDEMProperties::PropertiesIndex::
+                                    fem_force_two_way_coupling_x +
+                                  d] += shear_force[d] * density[i_particle];
               undisturbed_flow_force[d] +=
                 shear_force[d] / scratch_data.cell_volume;
             }

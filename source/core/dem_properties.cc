@@ -27,17 +27,17 @@ namespace DEM
     if constexpr (std::is_same_v<PropertiesIndex,
                                  DEM::CFDDEMProperties::PropertiesIndex>)
       {
-        properties[PropertiesIndex::fem_force_x] =
+        properties[PropertiesIndex::fem_force_two_way_coupling_x] =
           std::make_pair("fem_force", 3);
-        properties[PropertiesIndex::fem_force_y] =
+        properties[PropertiesIndex::fem_force_two_way_coupling_y] =
           std::make_pair("fem_force", 1);
-        properties[PropertiesIndex::fem_force_z] =
+        properties[PropertiesIndex::fem_force_two_way_coupling_z] =
           std::make_pair("fem_force", 1);
-        properties[PropertiesIndex::fem_force_particle_only_x] =
+        properties[PropertiesIndex::fem_force_one_way_coupling_x] =
           std::make_pair("fem_force_particle_only", 3);
-        properties[PropertiesIndex::fem_force_particle_only_y] =
+        properties[PropertiesIndex::fem_force_one_way_coupling_y] =
           std::make_pair("fem_force_particle_only", 1);
-        properties[PropertiesIndex::fem_force_particle_only_z] =
+        properties[PropertiesIndex::fem_force_one_way_coupling_z] =
           std::make_pair("fem_force_particle_only", 1);
         properties[PropertiesIndex::fem_drag_x] = std::make_pair("fem_drag", 3);
         properties[PropertiesIndex::fem_drag_y] = std::make_pair("fem_drag", 1);

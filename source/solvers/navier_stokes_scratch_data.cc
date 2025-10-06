@@ -683,11 +683,12 @@ NavierStokesScratchData<dim>::reinit_particle_fluid_forces()
       // Set the particle_fluid_interactions properties and vectors to 0
       for (int d = 0; d < dim; ++d)
         {
-          particle_properties
-            [DEM::CFDDEMProperties::PropertiesIndex::fem_force_x + d] = 0.;
-          particle_properties
-            [DEM::CFDDEMProperties::PropertiesIndex::fem_force_particle_only_x +
-             d] = 0.;
+          particle_properties[DEM::CFDDEMProperties::PropertiesIndex::
+                                fem_force_two_way_coupling_x +
+                              d] = 0.;
+          particle_properties[DEM::CFDDEMProperties::PropertiesIndex::
+                                fem_force_one_way_coupling_x +
+                              d] = 0.;
           particle_properties
             [DEM::CFDDEMProperties::PropertiesIndex::fem_drag_x + d] = 0.;
           particle_properties
