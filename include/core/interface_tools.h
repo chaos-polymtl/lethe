@@ -61,7 +61,10 @@ namespace InterfaceTools
      * want to convert to a CellWiseFunction.
      *
      */
-    CellWiseFunction(const unsigned int p_fe_degree);
+    CellWiseFunction(const unsigned int p_fe_degree)
+      : fe(p_fe_degree)
+      , n_cell_wise_dofs(fe.dofs_per_cell)
+    {}
 
     /**
      * @brief Set the cell that the function should be evaluated on.
@@ -70,7 +73,10 @@ namespace InterfaceTools
      *
      */
     void
-    set_active_cell(const VectorType &in_local_dof_values);
+    set_active_cell(const VectorType &in_local_dof_values)
+    {
+      cell_dof_values = in_local_dof_values;
+    }
 
     /**
      * @brief Return the value of the function at the given point in the reference cell.
@@ -129,52 +135,7 @@ namespace InterfaceTools
     VectorType cell_dof_values;
   };
 
-  /**
-   * @brief Constructor implementation for CellWiseFunction.
-   *
-   * @tparam dim Spatial dimension of the problem.
-   * @tparam VectorType Type of the vector storing DOF values.
-   * @tparam FEType Type of the finite element.
-   * @param[in] p_fe_degree Polynomial degree of the finite element.
-   */
-  template <int dim, typename VectorType, typename FEType>
-  CellWiseFunction<dim, VectorType, FEType>::CellWiseFunction(
-    const unsigned int p_fe_degree)
-    : fe(p_fe_degree)
-  {
-    n_cell_wise_dofs = fe.dofs_per_cell;
-  }
 
-  /**
-   * @brief Implementation of set_active_cell for CellWiseFunction.
-   *
-   * @tparam dim Spatial dimension of the problem.
-   * @tparam VectorType Type of the vector storing DOF values.
-   * @tparam FEType Type of the finite element.
-   * @param[in] in_local_dof_values Vector containing the DOF values for the
-   * current cell.
-   */
-  template <int dim, typename VectorType, typename FEType>
-  inline void
-  CellWiseFunction<dim, VectorType, FEType>::set_active_cell(
-    const VectorType &in_local_dof_values)
-  {
-    cell_dof_values = in_local_dof_values;
-  }
-
-  /**
-   * @brief Implementation of value function for CellWiseFunction.
-   *
-   * Evaluates the function value at a given point using shape functions and DOF
-   * values.
-   *
-   * @tparam dim Spatial dimension of the problem.
-   * @tparam VectorType Type of the vector storing DOF values.
-   * @tparam FEType Type of the finite element.
-   * @param[in] point Coordinates of the evaluation point in the reference cell.
-   * @param[in] component Component index for vector-valued functions.
-   * @return Function value at the specified point.
-   */
   template <int dim, typename VectorType, typename FEType>
   inline double
   CellWiseFunction<dim, VectorType, FEType>::value(
@@ -189,19 +150,6 @@ namespace InterfaceTools
     return value;
   }
 
-  /**
-   * @brief Implementation of gradient function for CellWiseFunction.
-   *
-   * Evaluates the function gradient at a given point using shape function
-   * gradients and DOF values.
-   *
-   * @tparam dim Spatial dimension of the problem.
-   * @tparam VectorType Type of the vector storing DOF values.
-   * @tparam FEType Type of the finite element.
-   * @param[in] point Coordinates of the evaluation point in the reference cell.
-   * @param[in] component Component index for vector-valued functions.
-   * @return Function gradient tensor at the specified point.
-   */
   template <int dim, typename VectorType, typename FEType>
   inline Tensor<1, dim>
   CellWiseFunction<dim, VectorType, FEType>::gradient(
@@ -216,19 +164,6 @@ namespace InterfaceTools
     return gradient;
   }
 
-  /**
-   * @brief Implementation of hessian function for CellWiseFunction.
-   *
-   * Evaluates the function Hessian at a given point using shape function second
-   * derivatives and DOF values.
-   *
-   * @tparam dim Spatial dimension of the problem.
-   * @tparam VectorType Type of the vector storing DOF values.
-   * @tparam FEType Type of the finite element.
-   * @param[in] point Coordinates of the evaluation point in the reference cell.
-   * @param[in] component Component index for vector-valued functions.
-   * @return Symmetric Hessian tensor at the specified point.
-   */
   template <int dim, typename VectorType, typename FEType>
   inline SymmetricTensor<2, dim>
   CellWiseFunction<dim, VectorType, FEType>::hessian(
