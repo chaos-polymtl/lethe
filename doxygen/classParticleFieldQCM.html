@@ -130,14 +130,14 @@ Public Attributes</h2></td></tr>
 class ParticleFieldQCM&lt; dim, n_components, property_start_index &gt;</div><p><a class="el" href="classParticleFieldQCM.html" title="ParticleFieldQCM calculator. This class stores the required information for the calculation of a fiel...">ParticleFieldQCM</a> calculator. This class stores the required information for the calculation of a field or a particle-fluid interaction onto a mesh. This class does not solve any equation, but compartmentalize the necessary information for the projection of the particle field or interaction onto a mesh. Multiple instances of this function can be called to establish new projections.In the case of a particle-fluid interaction, there is no particle field to project and, consequently, the property_start_index parameter is given an invalid default value (-1). </p>
 <dl class="tparams"><dt>Template Parameters</dt><dd>
   <table class="tparams">
-    <tr><td class="paramname">dim</td><td>An integer that denotes the number of spatial dimensions.</td></tr>
-    <tr><td class="paramname">n_components</td><td>The number of components in the field. This number should be either 1 (a scalar) or dim (a Tensor&lt;1,dim&gt;)</td></tr>
+    <tr><td class="paramname">dim</td><td>An integer that denotes the number of spatial dimensions. </td></tr>
+    <tr><td class="paramname">n_components</td><td>The number of components in the field. This number should be either 1 (a scalar) or dim (a Tensor&lt;1,dim&gt;) </td></tr>
     <tr><td class="paramname">property_start_index</td><td>An integer that indicates at which particle property the field starts. If the propery_start_index is negative, then there is no property start and this project is not used to project a particle field. </td></tr>
   </table>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="particle__projector_8h_source.html#l00110">110</a> of file <a class="el" href="particle__projector_8h_source.html">particle_projector.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="particle__projector_8h_source.html#l00108">108</a> of file <a class="el" href="particle__projector_8h_source.html">particle_projector.h</a>.</p>
 </div><h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
 <a id="ad5e39fb0167a04dcdc2efbb9a2de4bc7" name="ad5e39fb0167a04dcdc2efbb9a2de4bc7"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#ad5e39fb0167a04dcdc2efbb9a2de4bc7">&#9670;&#160;</a></span>ParticleFieldQCM()</h2>
@@ -205,9 +205,9 @@ template&lt;int dim, int n_components, int property_start_index = -1&gt; </div>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="particle__projector_8h_source.html#l00131">131</a> of file <a class="el" href="particle__projector_8h_source.html">particle_projector.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="particle__projector_8h_source.html#l00129">129</a> of file <a class="el" href="particle__projector_8h_source.html">particle_projector.h</a>.</p>
 
-<p class="reference">References <a class="el" href="particle__projector_8h_source.html#l00172">ParticleFieldQCM&lt; dim, n_components, property_start_index &gt;::fe</a>.</p>
+<p class="reference">References <a class="el" href="particle__projector_8h_source.html#l00170">ParticleFieldQCM&lt; dim, n_components, property_start_index &gt;::fe</a>.</p>
 
 </div>
 </div>
@@ -231,7 +231,7 @@ template&lt;int dim, int n_components, int component_start&gt; </div>
 
 <p>Setup the degrees of freedom. This function allocates the necessary memory. </p>
 
-<p class="definition">Definition at line <a class="el" href="particle__projector_8cc_source.html#l00026">26</a> of file <a class="el" href="particle__projector_8cc_source.html">particle_projector.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="particle__projector_8cc_source.html#l00025">25</a> of file <a class="el" href="particle__projector_8cc_source.html">particle_projector.cc</a>.</p>
 
 </div>
 </div>
@@ -250,7 +250,7 @@ template&lt;int dim, int n_components, int property_start_index = -1&gt; </div>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="particle__projector_8h_source.html#l00200">200</a> of file <a class="el" href="particle__projector_8h_source.html">particle_projector.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="particle__projector_8h_source.html#l00198">198</a> of file <a class="el" href="particle__projector_8h_source.html">particle_projector.h</a>.</p>
 
 </div>
 </div>
@@ -270,7 +270,7 @@ template&lt;int dim, int n_components, int property_start_index = -1&gt; </div>
 
 <p>DoFHandler that manages the void fraction. </p>
 
-<p class="definition">Definition at line <a class="el" href="particle__projector_8h_source.html#l00163">163</a> of file <a class="el" href="particle__projector_8h_source.html">particle_projector.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="particle__projector_8h_source.html#l00161">161</a> of file <a class="el" href="particle__projector_8h_source.html">particle_projector.h</a>.</p>
 
 </div>
 </div>
@@ -290,7 +290,7 @@ template&lt;int dim, int n_components, int property_start_index = -1&gt; </div>
 
 <p>Finite element for the particle field. </p>
 
-<p class="definition">Definition at line <a class="el" href="particle__projector_8h_source.html#l00172">172</a> of file <a class="el" href="particle__projector_8h_source.html">particle_projector.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="particle__projector_8h_source.html#l00170">170</a> of file <a class="el" href="particle__projector_8h_source.html">particle_projector.h</a>.</p>
 
 </div>
 </div>
@@ -310,7 +310,7 @@ template&lt;int dim, int n_components, int property_start_index = -1&gt; </div>
 
 <p>Index set for the locally owned degree of freedoms. </p>
 
-<p class="definition">Definition at line <a class="el" href="particle__projector_8h_source.html#l00175">175</a> of file <a class="el" href="particle__projector_8h_source.html">particle_projector.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="particle__projector_8h_source.html#l00173">173</a> of file <a class="el" href="particle__projector_8h_source.html">particle_projector.h</a>.</p>
 
 </div>
 </div>
@@ -330,7 +330,7 @@ template&lt;int dim, int n_components, int property_start_index = -1&gt; </div>
 
 <p>Index set for the locally relevant degree of freedoms. </p>
 
-<p class="definition">Definition at line <a class="el" href="particle__projector_8h_source.html#l00178">178</a> of file <a class="el" href="particle__projector_8h_source.html">particle_projector.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="particle__projector_8h_source.html#l00176">176</a> of file <a class="el" href="particle__projector_8h_source.html">particle_projector.h</a>.</p>
 
 </div>
 </div>
@@ -349,7 +349,7 @@ template&lt;int dim, int n_components, int property_start_index = -1&gt; </div>
 </div><div class="memdoc">
 <p>Boolean that indicates if Neumann boundary conditions are used during the projection In this case, instead of assuming a value of zero if there are no particles, the mass matrix is cancelled in region without particles which results in a no flux zone. </p>
 
-<p class="definition">Definition at line <a class="el" href="particle__projector_8h_source.html#l00198">198</a> of file <a class="el" href="particle__projector_8h_source.html">particle_projector.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="particle__projector_8h_source.html#l00196">196</a> of file <a class="el" href="particle__projector_8h_source.html">particle_projector.h</a>.</p>
 
 </div>
 </div>
@@ -369,7 +369,7 @@ template&lt;int dim, int n_components, int property_start_index = -1&gt; </div>
 
 <p>Constraints used for the boundary conditions of the particle field. </p>
 
-<p class="definition">Definition at line <a class="el" href="particle__projector_8h_source.html#l00192">192</a> of file <a class="el" href="particle__projector_8h_source.html">particle_projector.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="particle__projector_8h_source.html#l00190">190</a> of file <a class="el" href="particle__projector_8h_source.html">particle_projector.h</a>.</p>
 
 </div>
 </div>
@@ -389,7 +389,7 @@ template&lt;int dim, int n_components, int property_start_index = -1&gt; </div>
 
 <p>Locally owned solution of particle field. </p>
 
-<p class="definition">Definition at line <a class="el" href="particle__projector_8h_source.html#l00181">181</a> of file <a class="el" href="particle__projector_8h_source.html">particle_projector.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="particle__projector_8h_source.html#l00179">179</a> of file <a class="el" href="particle__projector_8h_source.html">particle_projector.h</a>.</p>
 
 </div>
 </div>
@@ -409,7 +409,7 @@ template&lt;int dim, int n_components, int property_start_index = -1&gt; </div>
 
 <p>Fully distributed (including locally relevant) solution. </p>
 
-<p class="definition">Definition at line <a class="el" href="particle__projector_8h_source.html#l00166">166</a> of file <a class="el" href="particle__projector_8h_source.html">particle_projector.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="particle__projector_8h_source.html#l00164">164</a> of file <a class="el" href="particle__projector_8h_source.html">particle_projector.h</a>.</p>
 
 </div>
 </div>
@@ -429,7 +429,7 @@ template&lt;int dim, int n_components, int property_start_index = -1&gt; </div>
 
 <p>deal.II vector for the particle velocity </p>
 
-<p class="definition">Definition at line <a class="el" href="particle__projector_8h_source.html#l00169">169</a> of file <a class="el" href="particle__projector_8h_source.html">particle_projector.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="particle__projector_8h_source.html#l00167">167</a> of file <a class="el" href="particle__projector_8h_source.html">particle_projector.h</a>.</p>
 
 </div>
 </div>
@@ -448,7 +448,7 @@ template&lt;int dim, int n_components, int property_start_index = -1&gt; </div>
 </div><div class="memdoc">
 <p>System matrix used to assemble the smoothed L2 projection of the void fraction </p>
 
-<p class="definition">Definition at line <a class="el" href="particle__projector_8h_source.html#l00185">185</a> of file <a class="el" href="particle__projector_8h_source.html">particle_projector.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="particle__projector_8h_source.html#l00183">183</a> of file <a class="el" href="particle__projector_8h_source.html">particle_projector.h</a>.</p>
 
 </div>
 </div>
@@ -467,7 +467,7 @@ template&lt;int dim, int n_components, int property_start_index = -1&gt; </div>
 </div><div class="memdoc">
 <p>Right-hand side used to assemble the smoothed L2 projection of the void fraction </p>
 
-<p class="definition">Definition at line <a class="el" href="particle__projector_8h_source.html#l00189">189</a> of file <a class="el" href="particle__projector_8h_source.html">particle_projector.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="particle__projector_8h_source.html#l00187">187</a> of file <a class="el" href="particle__projector_8h_source.html">particle_projector.h</a>.</p>
 
 </div>
 </div>

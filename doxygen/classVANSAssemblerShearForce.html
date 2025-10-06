@@ -126,7 +126,7 @@ class VANSAssemblerShearForce&lt; dim &gt;</div><p>Class that assembles the part
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="vans__assemblers_8h_source.html#l00642">642</a> of file <a class="el" href="vans__assemblers_8h_source.html">vans_assemblers.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="vans__assemblers_8h_source.html#l00633">633</a> of file <a class="el" href="vans__assemblers_8h_source.html">vans_assemblers.h</a>.</p>
 </div><h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
 <a id="a38b1162a0aa9eaaee314daf076a91dcd" name="a38b1162a0aa9eaaee314daf076a91dcd"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a38b1162a0aa9eaaee314daf076a91dcd">&#9670;&#160;</a></span>VANSAssemblerShearForce()</h2>
@@ -154,7 +154,7 @@ template&lt;int dim&gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="vans__assemblers_8h_source.html#l00645">645</a> of file <a class="el" href="vans__assemblers_8h_source.html">vans_assemblers.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="vans__assemblers_8h_source.html#l00636">636</a> of file <a class="el" href="vans__assemblers_8h_source.html">vans_assemblers.h</a>.</p>
 
 </div>
 </div>
@@ -185,20 +185,19 @@ template&lt;int dim&gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p>calculate_particle_fluid_interactions calculates the shear force </p>
+<p>calculate_particle_fluid_interactions calculates the shear force. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">scratch_data</td><td>(see base class) </td></tr>
-    <tr><td class="paramname">copy_data</td><td>(see base class) </td></tr>
   </table>
   </dd>
 </dl>
 
 <p>Implements <a class="el" href="classParticleFluidAssemblerBase.html#a273a79d7265d8eaf8af65287186f4fea">ParticleFluidAssemblerBase&lt; dim &gt;</a>.</p>
 
-<p class="definition">Definition at line <a class="el" href="vans__assemblers_8cc_source.html#l01900">1900</a> of file <a class="el" href="vans__assemblers_8cc_source.html">vans_assemblers.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="vans__assemblers_8cc_source.html#l01899">1899</a> of file <a class="el" href="vans__assemblers_8cc_source.html">vans_assemblers.cc</a>.</p>
 
-<p class="reference">References <a class="el" href="navier__stokes__scratch__data_8h_source.html#l01412">NavierStokesScratchData&lt; dim &gt;::cell_volume</a>, <a class="el" href="navier__stokes__scratch__data_8h_source.html#l01290">NavierStokesScratchData&lt; dim &gt;::density_at_particle_location</a>, <a class="el" href="physical__properties__manager_8h_source.html#l00278">PhysicalPropertiesManager::density_is_constant()</a>, <a class="el" href="dem__properties_8h_source.html#l00061">DEM::CFDDEMProperties::dp</a>, <a class="el" href="dem__properties_8h_source.html#l00069">DEM::CFDDEMProperties::fem_force_x</a>, <a class="el" href="navier__stokes__scratch__data_8h_source.html#l01402">NavierStokesScratchData&lt; dim &gt;::fluid_velocity_laplacian_at_particle_location</a>, <a class="el" href="physical__properties__manager_8h_source.html#l00266">PhysicalPropertiesManager::is_non_newtonian()</a>, <a class="el" href="navier__stokes__scratch__data_8h_source.html#l01302">NavierStokesScratchData&lt; dim &gt;::kinematic_viscosity_at_particle_location</a>, <a class="el" href="namespaceParameters.html#a885ce66c74635a68dd078d94aedddac6ab35bb34924c70e61eec8a8bae8cac690">Parameters::modelB</a>, <a class="el" href="navier__stokes__scratch__data_8h_source.html#l01411">NavierStokesScratchData&lt; dim &gt;::pic</a>, <a class="el" href="navier__stokes__scratch__data_8h_source.html#l01259">NavierStokesScratchData&lt; dim &gt;::properties_manager</a>, and <a class="el" href="navier__stokes__scratch__data_8h_source.html#l01414">NavierStokesScratchData&lt; dim &gt;::undisturbed_flow_force</a>.</p>
+<p class="reference">References <a class="el" href="navier__stokes__scratch__data_8h_source.html#l01411">NavierStokesScratchData&lt; dim &gt;::cell_volume</a>, <a class="el" href="navier__stokes__scratch__data_8h_source.html#l01289">NavierStokesScratchData&lt; dim &gt;::density_at_particle_location</a>, <a class="el" href="physical__properties__manager_8h_source.html#l00278">PhysicalPropertiesManager::density_is_constant()</a>, <a class="el" href="dem__properties_8h_source.html#l00061">DEM::CFDDEMProperties::dp</a>, <a class="el" href="dem__properties_8h_source.html#l00069">DEM::CFDDEMProperties::fem_force_x</a>, <a class="el" href="navier__stokes__scratch__data_8h_source.html#l01401">NavierStokesScratchData&lt; dim &gt;::fluid_velocity_laplacian_at_particle_location</a>, <a class="el" href="physical__properties__manager_8h_source.html#l00266">PhysicalPropertiesManager::is_non_newtonian()</a>, <a class="el" href="navier__stokes__scratch__data_8h_source.html#l01301">NavierStokesScratchData&lt; dim &gt;::kinematic_viscosity_at_particle_location</a>, <a class="el" href="namespaceParameters.html#a885ce66c74635a68dd078d94aedddac6ab35bb34924c70e61eec8a8bae8cac690">Parameters::modelB</a>, <a class="el" href="navier__stokes__scratch__data_8h_source.html#l01410">NavierStokesScratchData&lt; dim &gt;::pic</a>, <a class="el" href="navier__stokes__scratch__data_8h_source.html#l01258">NavierStokesScratchData&lt; dim &gt;::properties_manager</a>, and <a class="el" href="navier__stokes__scratch__data_8h_source.html#l01413">NavierStokesScratchData&lt; dim &gt;::undisturbed_flow_force</a>.</p>
 
 </div>
 </div>
@@ -217,7 +216,7 @@ template&lt;int dim&gt; </div>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="vans__assemblers_8h_source.html#l00658">658</a> of file <a class="el" href="vans__assemblers_8h_source.html">vans_assemblers.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="vans__assemblers_8h_source.html#l00649">649</a> of file <a class="el" href="vans__assemblers_8h_source.html">vans_assemblers.h</a>.</p>
 
 </div>
 </div>

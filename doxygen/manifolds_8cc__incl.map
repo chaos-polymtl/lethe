@@ -1,17 +1,15 @@
 <map id="/home/runner/work/lethe/lethe/source/core/manifolds.cc" name="/home/runner/work/lethe/lethe/source/core/manifolds.cc">
-<area shape="rect" id="Node000001" title=" " alt="" coords="2007,5,2232,45"/>
+<area shape="rect" id="Node000001" title=" " alt="" coords="1919,5,2144,45"/>
 <area shape="rect" id="Node000002" href="$manifolds_8h.html" title=" " alt="" coords="1446,101,1577,126"/>
-<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="2007,45,1591,104,1590,98,2006,40"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="1919,48,1591,102,1590,96,1918,43"/>
 <area shape="rect" id="Node000006" title=" " alt="" coords="1961,277,2107,302"/>
-<area shape="poly" id="edge21_Node000001_Node000006" title=" " alt="" coords="2010,48,1973,67,1957,79,1944,95,1934,117,1933,140,1938,163,1949,187,1980,231,2012,265,2008,269,1975,234,1944,189,1933,165,1928,140,1929,115,1940,92,1954,76,1970,62,2008,43"/>
+<area shape="poly" id="edge21_Node000001_Node000006" title=" " alt="" coords="1993,48,1965,68,1944,94,1940,113,1945,133,1959,171,1978,207,2018,264,2013,267,1973,210,1954,173,1939,134,1935,113,1940,92,1962,64,1990,43"/>
 <area shape="rect" id="Node000021" title=" " alt="" coords="1955,93,2108,133"/>
-<area shape="poly" id="edge22_Node000001_Node000021" title=" " alt="" coords="2102,48,2062,86,2059,82,2098,44"/>
+<area shape="poly" id="edge22_Node000001_Node000021" title=" " alt="" coords="2034,46,2034,79,2029,79,2029,46"/>
 <area shape="rect" id="Node000022" title=" " alt="" coords="2132,93,2283,133"/>
-<area shape="poly" id="edge23_Node000001_Node000022" title=" " alt="" coords="2141,44,2180,82,2176,86,2137,48"/>
+<area shape="poly" id="edge23_Node000001_Node000022" title=" " alt="" coords="2071,43,2158,85,2155,90,2069,48"/>
 <area shape="rect" id="Node000023" title=" " alt="" coords="2307,93,2457,133"/>
-<area shape="poly" id="edge24_Node000001_Node000023" title=" " alt="" coords="2178,43,2313,87,2311,92,2176,48"/>
-<area shape="rect" id="Node000024" title=" " alt="" coords="2482,101,2559,126"/>
-<area shape="poly" id="edge25_Node000001_Node000024" title=" " alt="" coords="2233,41,2348,62,2471,91,2480,94,2479,99,2469,96,2347,67,2232,46"/>
+<area shape="poly" id="edge24_Node000001_Node000023" title=" " alt="" coords="2109,43,2294,88,2293,93,2108,48"/>
 <area shape="rect" id="Node000003" href="$utilities_8h.html" title=" " alt="" coords="1305,189,1419,214"/>
 <area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="1493,128,1395,184,1393,179,1490,124"/>
 <area shape="rect" id="Node000005" title=" " alt="" coords="5,269,175,309"/>

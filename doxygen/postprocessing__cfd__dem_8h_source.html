@@ -93,46 +93,39 @@ $(document).ready(function() { init_codefold(0); });
   <div class="headertitle"><div class="title">postprocessing_cfd_dem.h</div></div>
 </div><!--header-->
 <div class="contents">
-<a href="postprocessing__cfd__dem_8h.html">Go to the documentation of this file.</a><div class="fragment"><div class="line"><a id="l00001" name="l00001"></a><span class="lineno">    1</span><span class="comment">// SPDX-FileCopyrightText: Copyright (c) 2024 The Lethe Authors</span></div>
+<a href="postprocessing__cfd__dem_8h.html">Go to the documentation of this file.</a><div class="fragment"><div class="line"><a id="l00001" name="l00001"></a><span class="lineno">    1</span><span class="comment">// SPDX-FileCopyrightText: Copyright (c) 2024-2025 The Lethe Authors</span></div>
 <div class="line"><a id="l00002" name="l00002"></a><span class="lineno">    2</span><span class="comment">// SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later</span></div>
 <div class="line"><a id="l00003" name="l00003"></a><span class="lineno">    3</span> </div>
 <div class="line"><a id="l00004" name="l00004"></a><span class="lineno">    4</span><span class="preprocessor">#ifndef lethe_postprocessing_cfd_dem_h</span></div>
 <div class="line"><a id="l00005" name="l00005"></a><span class="lineno">    5</span><span class="preprocessor">#define lethe_postprocessing_cfd_dem_h</span></div>
 <div class="line"><a id="l00006" name="l00006"></a><span class="lineno">    6</span> </div>
-<div class="line"><a id="l00007" name="l00007"></a><span class="lineno">    7</span><span class="comment">// Dofs</span></div>
-<div class="line"><a id="l00008" name="l00008"></a><span class="lineno">    8</span><span class="preprocessor">#include &lt;deal.II/dofs/dof_handler.h&gt;</span></div>
-<div class="line"><a id="l00009" name="l00009"></a><span class="lineno">    9</span> </div>
-<div class="line"><a id="l00010" name="l00010"></a><span class="lineno">   10</span><span class="comment">// Fe</span></div>
-<div class="line"><a id="l00011" name="l00011"></a><span class="lineno">   11</span><span class="preprocessor">#include &lt;deal.II/fe/fe.h&gt;</span></div>
-<div class="line"><a id="l00012" name="l00012"></a><span class="lineno">   12</span><span class="preprocessor">#include &lt;deal.II/fe/mapping_fe.h&gt;</span></div>
-<div class="line"><a id="l00013" name="l00013"></a><span class="lineno">   13</span> </div>
-<div class="line"><a id="l00014" name="l00014"></a><span class="lineno">   14</span><span class="comment">// Lethe includes</span></div>
-<div class="line"><a id="l00015" name="l00015"></a><span class="lineno">   15</span><span class="preprocessor">#include &lt;<a class="code" href="physical__properties__manager_8h.html">solvers/physical_properties_manager.h</a>&gt;</span></div>
-<div class="line"><a id="l00016" name="l00016"></a><span class="lineno">   16</span><span class="comment"></span> </div>
-<div class="line"><a id="l00017" name="l00017"></a><span class="lineno">   17</span><span class="comment">/**</span></div>
-<div class="line"><a id="l00018" name="l00018"></a><span class="lineno">   18</span><span class="comment"> * @brief This function calculates total volume of fluid and total volume of particles in cfd-dem simulation.</span></div>
-<div class="line"><a id="l00019" name="l00019"></a><span class="lineno">   19</span><span class="comment"> *</span></div>
-<div class="line"><a id="l00020" name="l00020"></a><span class="lineno">   20</span><span class="comment"> * \f$V_{fluid} = \int \varepsilon d \Omega \f$,</span></div>
-<div class="line"><a id="l00021" name="l00021"></a><span class="lineno">   21</span><span class="comment"> * \f$V_{particles} = \int (1- \varepsilon) d \Omega \f$</span></div>
-<div class="line"><a id="l00022" name="l00022"></a><span class="lineno">   22</span><span class="comment"> * where \f$ \varepsilon \f$ is the void fraction and \f$ d \Omega \f$ is the</span></div>
-<div class="line"><a id="l00023" name="l00023"></a><span class="lineno">   23</span><span class="comment"> * volume of the cell.</span></div>
-<div class="line"><a id="l00024" name="l00024"></a><span class="lineno">   24</span><span class="comment"> *</span></div>
-<div class="line"><a id="l00025" name="l00025"></a><span class="lineno">   25</span><span class="comment"> * @param void_fraction_dof_handler. Used to calculate the void fraction at quadrature points</span></div>
-<div class="line"><a id="l00026" name="l00026"></a><span class="lineno">   26</span><span class="comment"> * @param present_void_fraction_solution. Void fraction solution vector</span></div>
-<div class="line"><a id="l00027" name="l00027"></a><span class="lineno">   27</span><span class="comment"> * @param quadrature_formula. Quadrature formula.</span></div>
-<div class="line"><a id="l00028" name="l00028"></a><span class="lineno">   28</span><span class="comment"> * @param mapping The mapping of the simulation</span></div>
-<div class="line"><a id="l00029" name="l00029"></a><span class="lineno">   29</span><span class="comment"> */</span></div>
-<div class="line"><a id="l00030" name="l00030"></a><span class="lineno">   30</span><span class="keyword">template</span> &lt;<span class="keywordtype">int</span> dim, <span class="keyword">typename</span> VectorType&gt;</div>
-<div class="line"><a id="l00031" name="l00031"></a><span class="lineno">   31</span>std::pair&lt;double, double&gt;</div>
-<div class="line"><a id="l00032" name="l00032"></a><span class="lineno">   32</span><a class="code hl_function" href="postprocessing__cfd__dem_8h.html#a1ee6b8e55653fc306f9a7a8919043cbf">calculate_fluid_and_particle_volumes</a>(</div>
-<div class="line"><a id="l00033" name="l00033"></a><span class="lineno">   33</span>  <span class="keyword">const</span> DoFHandler&lt;dim&gt; &amp;void_fraction_dof_handler,</div>
-<div class="line"><a id="l00034" name="l00034"></a><span class="lineno">   34</span>  <span class="keyword">const</span> VectorType      &amp;present_void_fraction_solution,</div>
-<div class="line"><a id="l00035" name="l00035"></a><span class="lineno">   35</span>  <span class="keyword">const</span> Quadrature&lt;dim&gt; &amp;quadrature_formula,</div>
-<div class="line"><a id="l00036" name="l00036"></a><span class="lineno">   36</span>  <span class="keyword">const</span> Mapping&lt;dim&gt;    &amp;mapping);</div>
-<div class="line"><a id="l00037" name="l00037"></a><span class="lineno">   37</span> </div>
-<div class="line"><a id="l00038" name="l00038"></a><span class="lineno">   38</span><span class="preprocessor">#endif</span></div>
+<div class="line"><a id="l00007" name="l00007"></a><span class="lineno">    7</span><span class="comment">// Lethe includes</span></div>
+<div class="line"><a id="l00008" name="l00008"></a><span class="lineno">    8</span><span class="preprocessor">#include &lt;<a class="code" href="physical__properties__manager_8h.html">solvers/physical_properties_manager.h</a>&gt;</span></div>
+<div class="line"><a id="l00009" name="l00009"></a><span class="lineno">    9</span><span class="comment"></span> </div>
+<div class="line"><a id="l00010" name="l00010"></a><span class="lineno">   10</span><span class="comment">/**</span></div>
+<div class="line"><a id="l00011" name="l00011"></a><span class="lineno">   11</span><span class="comment"> * @brief This function calculates total volume of fluid and total volume of particles in cfd-dem simulation.</span></div>
+<div class="line"><a id="l00012" name="l00012"></a><span class="lineno">   12</span><span class="comment"> *</span></div>
+<div class="line"><a id="l00013" name="l00013"></a><span class="lineno">   13</span><span class="comment"> * \f$V_{fluid} = \int \varepsilon d \Omega \f$,</span></div>
+<div class="line"><a id="l00014" name="l00014"></a><span class="lineno">   14</span><span class="comment"> * \f$V_{particles} = \int (1- \varepsilon) d \Omega \f$</span></div>
+<div class="line"><a id="l00015" name="l00015"></a><span class="lineno">   15</span><span class="comment"> * where \f$ \varepsilon \f$ is the void fraction and \f$ d \Omega \f$ is the</span></div>
+<div class="line"><a id="l00016" name="l00016"></a><span class="lineno">   16</span><span class="comment"> * volume of the cell.</span></div>
+<div class="line"><a id="l00017" name="l00017"></a><span class="lineno">   17</span><span class="comment"> *</span></div>
+<div class="line"><a id="l00018" name="l00018"></a><span class="lineno">   18</span><span class="comment"> * @param void_fraction_dof_handler Used to calculate the void fraction at quadrature points</span></div>
+<div class="line"><a id="l00019" name="l00019"></a><span class="lineno">   19</span><span class="comment"> * @param present_void_fraction_solution Void fraction solution vector</span></div>
+<div class="line"><a id="l00020" name="l00020"></a><span class="lineno">   20</span><span class="comment"> * @param quadrature_formula Quadrature formula.</span></div>
+<div class="line"><a id="l00021" name="l00021"></a><span class="lineno">   21</span><span class="comment"> * @param mapping The mapping of the simulation</span></div>
+<div class="line"><a id="l00022" name="l00022"></a><span class="lineno">   22</span><span class="comment"> */</span></div>
+<div class="line"><a id="l00023" name="l00023"></a><span class="lineno">   23</span><span class="keyword">template</span> &lt;<span class="keywordtype">int</span> dim, <span class="keyword">typename</span> VectorType&gt;</div>
+<div class="line"><a id="l00024" name="l00024"></a><span class="lineno">   24</span>std::pair&lt;double, double&gt;</div>
+<div class="line"><a id="l00025" name="l00025"></a><span class="lineno">   25</span><a class="code hl_function" href="postprocessing__cfd__dem_8h.html#a1ee6b8e55653fc306f9a7a8919043cbf">calculate_fluid_and_particle_volumes</a>(</div>
+<div class="line"><a id="l00026" name="l00026"></a><span class="lineno">   26</span>  <span class="keyword">const</span> DoFHandler&lt;dim&gt; &amp;void_fraction_dof_handler,</div>
+<div class="line"><a id="l00027" name="l00027"></a><span class="lineno">   27</span>  <span class="keyword">const</span> VectorType      &amp;present_void_fraction_solution,</div>
+<div class="line"><a id="l00028" name="l00028"></a><span class="lineno">   28</span>  <span class="keyword">const</span> Quadrature&lt;dim&gt; &amp;quadrature_formula,</div>
+<div class="line"><a id="l00029" name="l00029"></a><span class="lineno">   29</span>  <span class="keyword">const</span> Mapping&lt;dim&gt;    &amp;mapping);</div>
+<div class="line"><a id="l00030" name="l00030"></a><span class="lineno">   30</span> </div>
+<div class="line"><a id="l00031" name="l00031"></a><span class="lineno">   31</span><span class="preprocessor">#endif</span></div>
 <div class="ttc" id="aphysical__properties__manager_8h_html"><div class="ttname"><a href="physical__properties__manager_8h.html">physical_properties_manager.h</a></div></div>
-<div class="ttc" id="apostprocessing__cfd__dem_8h_html_a1ee6b8e55653fc306f9a7a8919043cbf"><div class="ttname"><a href="postprocessing__cfd__dem_8h.html#a1ee6b8e55653fc306f9a7a8919043cbf">calculate_fluid_and_particle_volumes</a></div><div class="ttdeci">std::pair&lt; double, double &gt; calculate_fluid_and_particle_volumes(const DoFHandler&lt; dim &gt; &amp;void_fraction_dof_handler, const VectorType &amp;present_void_fraction_solution, const Quadrature&lt; dim &gt; &amp;quadrature_formula, const Mapping&lt; dim &gt; &amp;mapping)</div><div class="ttdoc">This function calculates total volume of fluid and total volume of particles in cfd-dem simulation.</div><div class="ttdef"><b>Definition</b> <a href="postprocessing__cfd__dem_8cc_source.html#l00027">postprocessing_cfd_dem.cc:27</a></div></div>
+<div class="ttc" id="apostprocessing__cfd__dem_8h_html_a1ee6b8e55653fc306f9a7a8919043cbf"><div class="ttname"><a href="postprocessing__cfd__dem_8h.html#a1ee6b8e55653fc306f9a7a8919043cbf">calculate_fluid_and_particle_volumes</a></div><div class="ttdeci">std::pair&lt; double, double &gt; calculate_fluid_and_particle_volumes(const DoFHandler&lt; dim &gt; &amp;void_fraction_dof_handler, const VectorType &amp;present_void_fraction_solution, const Quadrature&lt; dim &gt; &amp;quadrature_formula, const Mapping&lt; dim &gt; &amp;mapping)</div><div class="ttdoc">This function calculates total volume of fluid and total volume of particles in cfd-dem simulation.</div><div class="ttdef"><b>Definition</b> <a href="postprocessing__cfd__dem_8cc_source.html#l00018">postprocessing_cfd_dem.cc:18</a></div></div>
 </div><!-- fragment --></div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>

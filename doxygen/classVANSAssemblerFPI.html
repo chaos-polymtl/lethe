@@ -132,7 +132,7 @@ class VANSAssemblerFPI&lt; dim &gt;</div><p>Class that assembles the fluid_parti
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="vans__assemblers_8h_source.html#l00671">671</a> of file <a class="el" href="vans__assemblers_8h_source.html">vans_assemblers.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="vans__assemblers_8h_source.html#l00662">662</a> of file <a class="el" href="vans__assemblers_8h_source.html">vans_assemblers.h</a>.</p>
 </div><h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
 <a id="a8cbccf997391afa14bab4c8ad9aaf679" name="a8cbccf997391afa14bab4c8ad9aaf679"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a8cbccf997391afa14bab4c8ad9aaf679">&#9670;&#160;</a></span>VANSAssemblerFPI()</h2>
@@ -160,7 +160,7 @@ template&lt;int dim&gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="vans__assemblers_8h_source.html#l00674">674</a> of file <a class="el" href="vans__assemblers_8h_source.html">vans_assemblers.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="vans__assemblers_8h_source.html#l00665">665</a> of file <a class="el" href="vans__assemblers_8h_source.html">vans_assemblers.h</a>.</p>
 
 </div>
 </div>
@@ -201,7 +201,7 @@ template&lt;int dim&gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p>assemble_matrix Assembles the matrix </p>
+<p>assemble_matrix Assembles the matrix. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">scratch_data</td><td>(see base class) </td></tr>
@@ -210,9 +210,9 @@ template&lt;int dim&gt; </div>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="vans__assemblers_8cc_source.html#l01966">1966</a> of file <a class="el" href="vans__assemblers_8cc_source.html">vans_assemblers.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="vans__assemblers_8cc_source.html#l01965">1965</a> of file <a class="el" href="vans__assemblers_8cc_source.html">vans_assemblers.cc</a>.</p>
 
-<p class="reference">References <a class="el" href="navier__stokes__scratch__data_8h_source.html#l01396">NavierStokesScratchData&lt; dim &gt;::average_particle_velocity</a>, <a class="el" href="navier__stokes__scratch__data_8h_source.html#l01413">NavierStokesScratchData&lt; dim &gt;::beta_drag</a>, <a class="el" href="navier__stokes__scratch__data_8h_source.html#l01328">NavierStokesScratchData&lt; dim &gt;::JxW</a>, <a class="el" href="copy__data_8h_source.html#l00205">StabilizedMethodsTensorCopyData&lt; dim &gt;::local_matrix</a>, <a class="el" href="namespaceParameters.html#a885ce66c74635a68dd078d94aedddac6aaab653aeeee220006e2b9f692569492c">Parameters::modelA</a>, <a class="el" href="namespaceParameters.html#a885ce66c74635a68dd078d94aedddac6ab35bb34924c70e61eec8a8bae8cac690">Parameters::modelB</a>, <a class="el" href="navier__stokes__scratch__data_8h_source.html#l01316">NavierStokesScratchData&lt; dim &gt;::n_dofs</a>, <a class="el" href="navier__stokes__scratch__data_8h_source.html#l01317">NavierStokesScratchData&lt; dim &gt;::n_q_points</a>, <a class="el" href="navier__stokes__scratch__data_8h_source.html#l01349">NavierStokesScratchData&lt; dim &gt;::phi_u</a>, <a class="el" href="copy__data_8h_source.html#l00209">StabilizedMethodsTensorCopyData&lt; dim &gt;::strong_jacobian</a>, <a class="el" href="copy__data_8h_source.html#l00208">StabilizedMethodsTensorCopyData&lt; dim &gt;::strong_residual</a>, <a class="el" href="navier__stokes__scratch__data_8h_source.html#l01414">NavierStokesScratchData&lt; dim &gt;::undisturbed_flow_force</a>, <a class="el" href="multiphysics_8h.html#a2cbb04ef215561a69b48772159577fddaac1a453d0cdc1f19d9479ccfaa8b082c">velocity</a>, and <a class="el" href="navier__stokes__scratch__data_8h_source.html#l01335">NavierStokesScratchData&lt; dim &gt;::velocity_values</a>.</p>
+<p class="reference">References <a class="el" href="navier__stokes__scratch__data_8h_source.html#l01395">NavierStokesScratchData&lt; dim &gt;::average_particle_velocity</a>, <a class="el" href="navier__stokes__scratch__data_8h_source.html#l01412">NavierStokesScratchData&lt; dim &gt;::beta_drag</a>, <a class="el" href="navier__stokes__scratch__data_8h_source.html#l01327">NavierStokesScratchData&lt; dim &gt;::JxW</a>, <a class="el" href="copy__data_8h_source.html#l00203">StabilizedMethodsTensorCopyData&lt; dim &gt;::local_matrix</a>, <a class="el" href="namespaceParameters.html#a885ce66c74635a68dd078d94aedddac6aaab653aeeee220006e2b9f692569492c">Parameters::modelA</a>, <a class="el" href="namespaceParameters.html#a885ce66c74635a68dd078d94aedddac6ab35bb34924c70e61eec8a8bae8cac690">Parameters::modelB</a>, <a class="el" href="navier__stokes__scratch__data_8h_source.html#l01315">NavierStokesScratchData&lt; dim &gt;::n_dofs</a>, <a class="el" href="navier__stokes__scratch__data_8h_source.html#l01316">NavierStokesScratchData&lt; dim &gt;::n_q_points</a>, <a class="el" href="navier__stokes__scratch__data_8h_source.html#l01348">NavierStokesScratchData&lt; dim &gt;::phi_u</a>, <a class="el" href="copy__data_8h_source.html#l00207">StabilizedMethodsTensorCopyData&lt; dim &gt;::strong_jacobian</a>, <a class="el" href="copy__data_8h_source.html#l00206">StabilizedMethodsTensorCopyData&lt; dim &gt;::strong_residual</a>, <a class="el" href="navier__stokes__scratch__data_8h_source.html#l01413">NavierStokesScratchData&lt; dim &gt;::undisturbed_flow_force</a>, <a class="el" href="multiphysics_8h.html#a2cbb04ef215561a69b48772159577fddaac1a453d0cdc1f19d9479ccfaa8b082c">velocity</a>, and <a class="el" href="navier__stokes__scratch__data_8h_source.html#l01334">NavierStokesScratchData&lt; dim &gt;::velocity_values</a>.</p>
 
 </div>
 </div>
@@ -252,7 +252,7 @@ template&lt;int dim&gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p>assemble_rhs Assembles the rhs </p>
+<p>assemble_rhs Assembles the rhs. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">scratch_data</td><td>(see base class) </td></tr>
@@ -261,9 +261,9 @@ template&lt;int dim&gt; </div>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="vans__assemblers_8cc_source.html#l02031">2031</a> of file <a class="el" href="vans__assemblers_8cc_source.html">vans_assemblers.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="vans__assemblers_8cc_source.html#l02030">2030</a> of file <a class="el" href="vans__assemblers_8cc_source.html">vans_assemblers.cc</a>.</p>
 
-<p class="reference">References <a class="el" href="navier__stokes__scratch__data_8h_source.html#l01396">NavierStokesScratchData&lt; dim &gt;::average_particle_velocity</a>, <a class="el" href="navier__stokes__scratch__data_8h_source.html#l01413">NavierStokesScratchData&lt; dim &gt;::beta_drag</a>, <a class="el" href="navier__stokes__scratch__data_8h_source.html#l01328">NavierStokesScratchData&lt; dim &gt;::JxW</a>, <a class="el" href="copy__data_8h_source.html#l00206">StabilizedMethodsTensorCopyData&lt; dim &gt;::local_rhs</a>, <a class="el" href="namespaceParameters.html#a885ce66c74635a68dd078d94aedddac6aaab653aeeee220006e2b9f692569492c">Parameters::modelA</a>, <a class="el" href="namespaceParameters.html#a885ce66c74635a68dd078d94aedddac6ab35bb34924c70e61eec8a8bae8cac690">Parameters::modelB</a>, <a class="el" href="navier__stokes__scratch__data_8h_source.html#l01316">NavierStokesScratchData&lt; dim &gt;::n_dofs</a>, <a class="el" href="navier__stokes__scratch__data_8h_source.html#l01317">NavierStokesScratchData&lt; dim &gt;::n_q_points</a>, <a class="el" href="navier__stokes__scratch__data_8h_source.html#l01349">NavierStokesScratchData&lt; dim &gt;::phi_u</a>, <a class="el" href="copy__data_8h_source.html#l00208">StabilizedMethodsTensorCopyData&lt; dim &gt;::strong_residual</a>, <a class="el" href="navier__stokes__scratch__data_8h_source.html#l01414">NavierStokesScratchData&lt; dim &gt;::undisturbed_flow_force</a>, <a class="el" href="multiphysics_8h.html#a2cbb04ef215561a69b48772159577fddaac1a453d0cdc1f19d9479ccfaa8b082c">velocity</a>, and <a class="el" href="navier__stokes__scratch__data_8h_source.html#l01335">NavierStokesScratchData&lt; dim &gt;::velocity_values</a>.</p>
+<p class="reference">References <a class="el" href="navier__stokes__scratch__data_8h_source.html#l01395">NavierStokesScratchData&lt; dim &gt;::average_particle_velocity</a>, <a class="el" href="navier__stokes__scratch__data_8h_source.html#l01412">NavierStokesScratchData&lt; dim &gt;::beta_drag</a>, <a class="el" href="navier__stokes__scratch__data_8h_source.html#l01327">NavierStokesScratchData&lt; dim &gt;::JxW</a>, <a class="el" href="copy__data_8h_source.html#l00204">StabilizedMethodsTensorCopyData&lt; dim &gt;::local_rhs</a>, <a class="el" href="namespaceParameters.html#a885ce66c74635a68dd078d94aedddac6aaab653aeeee220006e2b9f692569492c">Parameters::modelA</a>, <a class="el" href="namespaceParameters.html#a885ce66c74635a68dd078d94aedddac6ab35bb34924c70e61eec8a8bae8cac690">Parameters::modelB</a>, <a class="el" href="navier__stokes__scratch__data_8h_source.html#l01315">NavierStokesScratchData&lt; dim &gt;::n_dofs</a>, <a class="el" href="navier__stokes__scratch__data_8h_source.html#l01316">NavierStokesScratchData&lt; dim &gt;::n_q_points</a>, <a class="el" href="navier__stokes__scratch__data_8h_source.html#l01348">NavierStokesScratchData&lt; dim &gt;::phi_u</a>, <a class="el" href="copy__data_8h_source.html#l00206">StabilizedMethodsTensorCopyData&lt; dim &gt;::strong_residual</a>, <a class="el" href="navier__stokes__scratch__data_8h_source.html#l01413">NavierStokesScratchData&lt; dim &gt;::undisturbed_flow_force</a>, <a class="el" href="multiphysics_8h.html#a2cbb04ef215561a69b48772159577fddaac1a453d0cdc1f19d9479ccfaa8b082c">velocity</a>, and <a class="el" href="navier__stokes__scratch__data_8h_source.html#l01334">NavierStokesScratchData&lt; dim &gt;::velocity_values</a>.</p>
 
 </div>
 </div>
@@ -282,7 +282,7 @@ template&lt;int dim&gt; </div>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="vans__assemblers_8h_source.html#l00697">697</a> of file <a class="el" href="vans__assemblers_8h_source.html">vans_assemblers.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="vans__assemblers_8h_source.html#l00690">690</a> of file <a class="el" href="vans__assemblers_8h_source.html">vans_assemblers.h</a>.</p>
 
 </div>
 </div>

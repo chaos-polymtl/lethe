@@ -1,13 +1,9 @@
 <map id="/home/runner/work/lethe/lethe/include/solvers/initial_conditions.h" name="/home/runner/work/lethe/lethe/include/solvers/initial_conditions.h">
-<area shape="rect" id="Node000001" title=" " alt="" coords="387,5,570,60"/>
-<area shape="rect" id="Node000002" title=" " alt="" coords="5,108,179,148"/>
-<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="388,59,184,107,183,102,386,53"/>
-<area shape="rect" id="Node000003" title=" " alt="" coords="203,115,370,141"/>
-<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="426,62,324,112,321,107,424,58"/>
-<area shape="rect" id="Node000004" title=" " alt="" coords="394,108,563,148"/>
-<area shape="poly" id="edge3_Node000001_Node000004" title=" " alt="" coords="481,60,481,94,476,94,476,60"/>
-<area shape="rect" id="Node000005" title=" " alt="" coords="587,108,757,148"/>
-<area shape="poly" id="edge4_Node000001_Node000005" title=" " alt="" coords="534,58,622,100,619,104,532,62"/>
-<area shape="rect" id="Node000006" title=" " alt="" coords="781,108,926,148"/>
-<area shape="poly" id="edge5_Node000001_Node000006" title=" " alt="" coords="571,54,768,103,767,108,570,59"/>
+<area shape="rect" id="Node000001" title=" " alt="" coords="192,5,375,60"/>
+<area shape="rect" id="Node000002" title=" " alt="" coords="5,108,175,148"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="230,62,143,104,140,100,228,58"/>
+<area shape="rect" id="Node000003" title=" " alt="" coords="199,108,368,148"/>
+<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="286,60,286,94,281,94,281,60"/>
+<area shape="rect" id="Node000004" title=" " alt="" coords="392,108,537,148"/>
+<area shape="poly" id="edge3_Node000001_Node000004" title=" " alt="" coords="336,58,417,99,415,104,333,62"/>
 </map>

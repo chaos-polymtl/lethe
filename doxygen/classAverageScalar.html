@@ -155,7 +155,7 @@ class AverageScalar&lt; dim &gt;</div><p>Calculates the time-averaged scalar fie
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="postprocessing__scalar_8h_source.html#l00032">32</a> of file <a class="el" href="postprocessing__scalar_8h_source.html">postprocessing_scalar.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="postprocessing__scalar_8h_source.html#l00027">27</a> of file <a class="el" href="postprocessing__scalar_8h_source.html">postprocessing_scalar.h</a>.</p>
 </div><h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
 <a id="aaa4af605c91ba0fb4b1ef6eec76db15b" name="aaa4af605c91ba0fb4b1ef6eec76db15b"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#aaa4af605c91ba0fb4b1ef6eec76db15b">&#9670;&#160;</a></span>AverageScalar()</h2>
@@ -241,7 +241,7 @@ template&lt;int dim&gt; </div>
 
 <p class="definition">Definition at line <a class="el" href="postprocessing__scalar_8cc_source.html#l00019">19</a> of file <a class="el" href="postprocessing__scalar_8cc_source.html">postprocessing_scalar.cc</a>.</p>
 
-<p class="reference">References <a class="el" href="parameters_8h_source.html#l01006">Parameters::PostProcessing::initial_time_for_average_temp_and_hf</a>.</p>
+<p class="reference">References <a class="el" href="parameters_8h_source.html#l01005">Parameters::PostProcessing::initial_time_for_average_temp_and_hf</a>.</p>
 
 </div>
 </div>
@@ -272,9 +272,9 @@ template&lt;int dim&gt; </div>
 
 <p>Getter for the average scalar. </p>
 
-<p class="definition">Definition at line <a class="el" href="postprocessing__scalar_8h_source.html#l00085">85</a> of file <a class="el" href="postprocessing__scalar_8h_source.html">postprocessing_scalar.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="postprocessing__scalar_8h_source.html#l00080">80</a> of file <a class="el" href="postprocessing__scalar_8h_source.html">postprocessing_scalar.h</a>.</p>
 
-<p class="reference">References <a class="el" href="postprocessing__scalar_8h_source.html#l00176">AverageScalar&lt; dim &gt;::average_scalar</a>.</p>
+<p class="reference">References <a class="el" href="postprocessing__scalar_8h_source.html#l00171">AverageScalar&lt; dim &gt;::average_scalar</a>.</p>
 
 </div>
 </div>
@@ -430,9 +430,9 @@ template&lt;int dim&gt; </div>
 
 <p>Sanitize the average scalar object after a checkpoint has been read by resetting all of the locally_owned vectors using the locally_relevant vectors. This is necessary because only the locally_relevant_vectors are saved, but the calculation routines expect that the content of the locally_owned vectors match that of the locally_relevant vectors. </p>
 
-<p class="definition">Definition at line <a class="el" href="postprocessing__scalar_8h_source.html#l00137">137</a> of file <a class="el" href="postprocessing__scalar_8h_source.html">postprocessing_scalar.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="postprocessing__scalar_8h_source.html#l00132">132</a> of file <a class="el" href="postprocessing__scalar_8h_source.html">postprocessing_scalar.h</a>.</p>
 
-<p class="reference">References <a class="el" href="postprocessing__scalar_8h_source.html#l00159">AverageScalar&lt; dim &gt;::sum_scalar_dt</a>, and <a class="el" href="postprocessing__scalar_8h_source.html#l00165">AverageScalar&lt; dim &gt;::sum_scalar_dt_with_ghost_cells</a>.</p>
+<p class="reference">References <a class="el" href="postprocessing__scalar_8h_source.html#l00154">AverageScalar&lt; dim &gt;::sum_scalar_dt</a>, and <a class="el" href="postprocessing__scalar_8h_source.html#l00160">AverageScalar&lt; dim &gt;::sum_scalar_dt_with_ghost_cells</a>.</p>
 
 </div>
 </div>
@@ -538,7 +538,7 @@ template&lt;int dim&gt; </div>
 
 <p>Time averaged scalar. </p>
 
-<p class="definition">Definition at line <a class="el" href="postprocessing__scalar_8h_source.html#l00176">176</a> of file <a class="el" href="postprocessing__scalar_8h_source.html">postprocessing_scalar.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="postprocessing__scalar_8h_source.html#l00171">171</a> of file <a class="el" href="postprocessing__scalar_8h_source.html">postprocessing_scalar.h</a>.</p>
 
 </div>
 </div>
@@ -566,7 +566,7 @@ template&lt;int dim&gt; </div>
 
 <p>Time averaged scalar containing the locally owned and locally relevant dofs for all processes. </p>
 
-<p class="definition">Definition at line <a class="el" href="postprocessing__scalar_8h_source.html#l00181">181</a> of file <a class="el" href="postprocessing__scalar_8h_source.html">postprocessing_scalar.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="postprocessing__scalar_8h_source.html#l00176">176</a> of file <a class="el" href="postprocessing__scalar_8h_source.html">postprocessing_scalar.h</a>.</p>
 
 </div>
 </div>
@@ -594,7 +594,7 @@ template&lt;int dim&gt; </div>
 
 <p>Time step. </p>
 
-<p class="definition">Definition at line <a class="el" href="postprocessing__scalar_8h_source.html#l00198">198</a> of file <a class="el" href="postprocessing__scalar_8h_source.html">postprocessing_scalar.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="postprocessing__scalar_8h_source.html#l00193">193</a> of file <a class="el" href="postprocessing__scalar_8h_source.html">postprocessing_scalar.h</a>.</p>
 
 </div>
 </div>
@@ -622,7 +622,7 @@ template&lt;int dim&gt; </div>
 
 <p>First time step is stored in dt_0 and added to total_time_for_average to ensure the first average calculation does not result in a division by zero. </p>
 
-<p class="definition">Definition at line <a class="el" href="postprocessing__scalar_8h_source.html#l00204">204</a> of file <a class="el" href="postprocessing__scalar_8h_source.html">postprocessing_scalar.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="postprocessing__scalar_8h_source.html#l00199">199</a> of file <a class="el" href="postprocessing__scalar_8h_source.html">postprocessing_scalar.h</a>.</p>
 
 </div>
 </div>
@@ -650,7 +650,7 @@ template&lt;int dim&gt; </div>
 
 <p>Track whether we are within the averaging time period. </p>
 
-<p class="definition">Definition at line <a class="el" href="postprocessing__scalar_8h_source.html#l00216">216</a> of file <a class="el" href="postprocessing__scalar_8h_source.html">postprocessing_scalar.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="postprocessing__scalar_8h_source.html#l00211">211</a> of file <a class="el" href="postprocessing__scalar_8h_source.html">postprocessing_scalar.h</a>.</p>
 
 </div>
 </div>
@@ -678,7 +678,7 @@ template&lt;int dim&gt; </div>
 
 <p>Inverse of the total time for averaging. </p>
 
-<p class="definition">Definition at line <a class="el" href="postprocessing__scalar_8h_source.html#l00210">210</a> of file <a class="el" href="postprocessing__scalar_8h_source.html">postprocessing_scalar.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="postprocessing__scalar_8h_source.html#l00205">205</a> of file <a class="el" href="postprocessing__scalar_8h_source.html">postprocessing_scalar.h</a>.</p>
 
 </div>
 </div>
@@ -706,7 +706,7 @@ template&lt;int dim&gt; </div>
 
 <p>Difference between the simulation starting time and the initial averaging time. </p>
 
-<p class="definition">Definition at line <a class="el" href="postprocessing__scalar_8h_source.html#l00186">186</a> of file <a class="el" href="postprocessing__scalar_8h_source.html">postprocessing_scalar.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="postprocessing__scalar_8h_source.html#l00181">181</a> of file <a class="el" href="postprocessing__scalar_8h_source.html">postprocessing_scalar.h</a>.</p>
 
 </div>
 </div>
@@ -734,7 +734,7 @@ template&lt;int dim&gt; </div>
 
 <p>Vector to store the scalar field multiplied by time step. </p>
 
-<p class="definition">Definition at line <a class="el" href="postprocessing__scalar_8h_source.html#l00153">153</a> of file <a class="el" href="postprocessing__scalar_8h_source.html">postprocessing_scalar.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="postprocessing__scalar_8h_source.html#l00148">148</a> of file <a class="el" href="postprocessing__scalar_8h_source.html">postprocessing_scalar.h</a>.</p>
 
 </div>
 </div>
@@ -762,7 +762,7 @@ template&lt;int dim&gt; </div>
 
 <p>Object to transfer the averaged scalar in case of mesh adaptation. </p>
 
-<p class="definition">Definition at line <a class="el" href="postprocessing__scalar_8h_source.html#l00171">171</a> of file <a class="el" href="postprocessing__scalar_8h_source.html">postprocessing_scalar.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="postprocessing__scalar_8h_source.html#l00166">166</a> of file <a class="el" href="postprocessing__scalar_8h_source.html">postprocessing_scalar.h</a>.</p>
 
 </div>
 </div>
@@ -790,7 +790,7 @@ template&lt;int dim&gt; </div>
 
 <p>Vector to store the sum of all the scalar multiplied by time step. </p>
 
-<p class="definition">Definition at line <a class="el" href="postprocessing__scalar_8h_source.html#l00159">159</a> of file <a class="el" href="postprocessing__scalar_8h_source.html">postprocessing_scalar.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="postprocessing__scalar_8h_source.html#l00154">154</a> of file <a class="el" href="postprocessing__scalar_8h_source.html">postprocessing_scalar.h</a>.</p>
 
 </div>
 </div>
@@ -818,7 +818,7 @@ template&lt;int dim&gt; </div>
 
 <p>Ghosted vector to store the sum of all the scalar multiplied by time step. </p>
 
-<p class="definition">Definition at line <a class="el" href="postprocessing__scalar_8h_source.html#l00165">165</a> of file <a class="el" href="postprocessing__scalar_8h_source.html">postprocessing_scalar.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="postprocessing__scalar_8h_source.html#l00160">160</a> of file <a class="el" href="postprocessing__scalar_8h_source.html">postprocessing_scalar.h</a>.</p>
 
 </div>
 </div>
@@ -846,7 +846,7 @@ template&lt;int dim&gt; </div>
 
 <p>Vector to store the sum of all the scalar field multiplied by time step. </p>
 
-<p class="definition">Definition at line <a class="el" href="postprocessing__scalar_8h_source.html#l00192">192</a> of file <a class="el" href="postprocessing__scalar_8h_source.html">postprocessing_scalar.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="postprocessing__scalar_8h_source.html#l00187">187</a> of file <a class="el" href="postprocessing__scalar_8h_source.html">postprocessing_scalar.h</a>.</p>
 
 </div>
 </div>

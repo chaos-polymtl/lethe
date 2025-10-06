@@ -458,7 +458,7 @@ Private Member Functions</h2></td></tr>
 <tr class="separator:a6cad37a42da47ba33ff03456b8bae53e"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a6f087afdfb431839cf7d89421d9c0efd" id="r_a6f087afdfb431839cf7d89421d9c0efd"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classFluidDynamicsVANS.html#a6f087afdfb431839cf7d89421d9c0efd">update_solution_and_constraints</a> ()</td></tr>
 <tr class="separator:a6f087afdfb431839cf7d89421d9c0efd"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a9ebb387a23a295e689d0ef9c6d428321" id="r_a9ebb387a23a295e689d0ef9c6d428321"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classFluidDynamicsVANS.html#a9ebb387a23a295e689d0ef9c6d428321">read_dem</a> ()</td></tr>
+<tr class="memitem:a9ebb387a23a295e689d0ef9c6d428321" id="r_a9ebb387a23a295e689d0ef9c6d428321"><td class="memItemLeft" align="right" valign="top">virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classFluidDynamicsVANS.html#a9ebb387a23a295e689d0ef9c6d428321">read_dem</a> ()</td></tr>
 <tr class="separator:a9ebb387a23a295e689d0ef9c6d428321"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="inherited" name="inherited"></a>
@@ -481,7 +481,7 @@ class FluidDynamicsVANS&lt; dim &gt;</div><p>Solver class for Volume-Averaged Na
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="fluid__dynamics__vans_8h_source.html#l00046">46</a> of file <a class="el" href="fluid__dynamics__vans_8h_source.html">fluid_dynamics_vans.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="fluid__dynamics__vans_8h_source.html#l00045">45</a> of file <a class="el" href="fluid__dynamics__vans_8h_source.html">fluid_dynamics_vans.h</a>.</p>
 </div><h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
 <a id="a8d3a93bf74d6adb68024be2143e97d18" name="a8d3a93bf74d6adb68024be2143e97d18"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a8d3a93bf74d6adb68024be2143e97d18">&#9670;&#160;</a></span>FluidDynamicsVANS()</h2>
@@ -511,7 +511,7 @@ template&lt;int dim&gt; </div>
 
 <p class="definition">Definition at line <a class="el" href="fluid__dynamics__vans_8cc_source.html#l00015">15</a> of file <a class="el" href="fluid__dynamics__vans_8cc_source.html">fluid_dynamics_vans.cc</a>.</p>
 
-<p class="reference">References <a class="el" href="fluid__dynamics__vans_8h_source.html#l00276">FluidDynamicsVANS&lt; dim &gt;::cfd_dem_simulation_parameters</a>, <a class="el" href="fluid__dynamics__vans_8h_source.html#l00315">FluidDynamicsVANS&lt; dim &gt;::has_periodic_boundaries</a>, and <a class="el" href="namespaceBoundaryConditions.html#a07df76d63cde5cb5bcbea0d9c25a54b8ae6ffdec5e14fce371eb7ae99edebbbee">BoundaryConditions::periodic</a>.</p>
+<p class="reference">References <a class="el" href="fluid__dynamics__vans_8h_source.html#l00275">FluidDynamicsVANS&lt; dim &gt;::cfd_dem_simulation_parameters</a>, <a class="el" href="fluid__dynamics__vans_8h_source.html#l00314">FluidDynamicsVANS&lt; dim &gt;::has_periodic_boundaries</a>, and <a class="el" href="namespaceBoundaryConditions.html#a07df76d63cde5cb5bcbea0d9c25a54b8ae6ffdec5e14fce371eb7ae99edebbbee">BoundaryConditions::periodic</a>.</p>
 
 </div>
 </div>
@@ -596,7 +596,7 @@ template&lt;int dim&gt; </div>
 
 <p class="definition">Definition at line <a class="el" href="fluid__dynamics__vans_8cc_source.html#l00429">429</a> of file <a class="el" href="fluid__dynamics__vans_8cc_source.html">fluid_dynamics_vans.cc</a>.</p>
 
-<p class="reference">References <a class="el" href="navier__stokes__scratch__data_8cc_source.html#l00440">NavierStokesScratchData&lt; dim &gt;::calculate_physical_properties()</a>, <a class="el" href="copy__data_8h_source.html#l00215">StabilizedMethodsTensorCopyData&lt; dim &gt;::cell_is_local</a>, <a class="el" href="copy__data_8h_source.html#l00207">StabilizedMethodsTensorCopyData&lt; dim &gt;::local_dof_indices</a>, <a class="el" href="navier__stokes__scratch__data_8h_source.html#l00226">NavierStokesScratchData&lt; dim &gt;::reinit()</a>, <a class="el" href="navier__stokes__scratch__data_8h_source.html#l00974">NavierStokesScratchData&lt; dim &gt;::reinit_particle_fluid_interactions()</a>, <a class="el" href="navier__stokes__scratch__data_8h_source.html#l00536">NavierStokesScratchData&lt; dim &gt;::reinit_vof()</a>, <a class="el" href="navier__stokes__scratch__data_8h_source.html#l00630">NavierStokesScratchData&lt; dim &gt;::reinit_void_fraction()</a>, <a class="el" href="copy__data_8h_source.html#l00191">StabilizedMethodsTensorCopyData&lt; dim &gt;::reset()</a>, and <a class="el" href="multiphysics_8h_source.html#l00012">VOF</a>.</p>
+<p class="reference">References <a class="el" href="navier__stokes__scratch__data_8cc_source.html#l00440">NavierStokesScratchData&lt; dim &gt;::calculate_physical_properties()</a>, <a class="el" href="copy__data_8h_source.html#l00213">StabilizedMethodsTensorCopyData&lt; dim &gt;::cell_is_local</a>, <a class="el" href="copy__data_8h_source.html#l00205">StabilizedMethodsTensorCopyData&lt; dim &gt;::local_dof_indices</a>, <a class="el" href="navier__stokes__scratch__data_8h_source.html#l00225">NavierStokesScratchData&lt; dim &gt;::reinit()</a>, <a class="el" href="navier__stokes__scratch__data_8h_source.html#l00973">NavierStokesScratchData&lt; dim &gt;::reinit_particle_fluid_interactions()</a>, <a class="el" href="navier__stokes__scratch__data_8h_source.html#l00535">NavierStokesScratchData&lt; dim &gt;::reinit_vof()</a>, <a class="el" href="navier__stokes__scratch__data_8h_source.html#l00629">NavierStokesScratchData&lt; dim &gt;::reinit_void_fraction()</a>, <a class="el" href="copy__data_8h_source.html#l00189">StabilizedMethodsTensorCopyData&lt; dim &gt;::reset()</a>, and <a class="el" href="multiphysics_8h_source.html#l00012">VOF</a>.</p>
 
 </div>
 </div>
@@ -657,7 +657,7 @@ template&lt;int dim&gt; </div>
 
 <p class="definition">Definition at line <a class="el" href="fluid__dynamics__vans_8cc_source.html#l00583">583</a> of file <a class="el" href="fluid__dynamics__vans_8cc_source.html">fluid_dynamics_vans.cc</a>.</p>
 
-<p class="reference">References <a class="el" href="navier__stokes__scratch__data_8cc_source.html#l00440">NavierStokesScratchData&lt; dim &gt;::calculate_physical_properties()</a>, <a class="el" href="copy__data_8h_source.html#l00215">StabilizedMethodsTensorCopyData&lt; dim &gt;::cell_is_local</a>, <a class="el" href="copy__data_8h_source.html#l00207">StabilizedMethodsTensorCopyData&lt; dim &gt;::local_dof_indices</a>, <a class="el" href="navier__stokes__scratch__data_8h_source.html#l00226">NavierStokesScratchData&lt; dim &gt;::reinit()</a>, <a class="el" href="navier__stokes__scratch__data_8h_source.html#l00974">NavierStokesScratchData&lt; dim &gt;::reinit_particle_fluid_interactions()</a>, <a class="el" href="navier__stokes__scratch__data_8h_source.html#l00536">NavierStokesScratchData&lt; dim &gt;::reinit_vof()</a>, <a class="el" href="navier__stokes__scratch__data_8h_source.html#l00630">NavierStokesScratchData&lt; dim &gt;::reinit_void_fraction()</a>, <a class="el" href="copy__data_8h_source.html#l00191">StabilizedMethodsTensorCopyData&lt; dim &gt;::reset()</a>, and <a class="el" href="multiphysics_8h_source.html#l00012">VOF</a>.</p>
+<p class="reference">References <a class="el" href="navier__stokes__scratch__data_8cc_source.html#l00440">NavierStokesScratchData&lt; dim &gt;::calculate_physical_properties()</a>, <a class="el" href="copy__data_8h_source.html#l00213">StabilizedMethodsTensorCopyData&lt; dim &gt;::cell_is_local</a>, <a class="el" href="copy__data_8h_source.html#l00205">StabilizedMethodsTensorCopyData&lt; dim &gt;::local_dof_indices</a>, <a class="el" href="navier__stokes__scratch__data_8h_source.html#l00225">NavierStokesScratchData&lt; dim &gt;::reinit()</a>, <a class="el" href="navier__stokes__scratch__data_8h_source.html#l00973">NavierStokesScratchData&lt; dim &gt;::reinit_particle_fluid_interactions()</a>, <a class="el" href="navier__stokes__scratch__data_8h_source.html#l00535">NavierStokesScratchData&lt; dim &gt;::reinit_vof()</a>, <a class="el" href="navier__stokes__scratch__data_8h_source.html#l00629">NavierStokesScratchData&lt; dim &gt;::reinit_void_fraction()</a>, <a class="el" href="copy__data_8h_source.html#l00189">StabilizedMethodsTensorCopyData&lt; dim &gt;::reset()</a>, and <a class="el" href="multiphysics_8h_source.html#l00012">VOF</a>.</p>
 
 </div>
 </div>
@@ -848,7 +848,7 @@ template&lt;int dim&gt; </div>
 
 <p class="definition">Definition at line <a class="el" href="fluid__dynamics__vans_8cc_source.html#l00516">516</a> of file <a class="el" href="fluid__dynamics__vans_8cc_source.html">fluid_dynamics_vans.cc</a>.</p>
 
-<p class="reference">References <a class="el" href="copy__data_8h_source.html#l00215">StabilizedMethodsTensorCopyData&lt; dim &gt;::cell_is_local</a>, <a class="el" href="copy__data_8h_source.html#l00207">StabilizedMethodsTensorCopyData&lt; dim &gt;::local_dof_indices</a>, and <a class="el" href="copy__data_8h_source.html#l00205">StabilizedMethodsTensorCopyData&lt; dim &gt;::local_matrix</a>.</p>
+<p class="reference">References <a class="el" href="copy__data_8h_source.html#l00213">StabilizedMethodsTensorCopyData&lt; dim &gt;::cell_is_local</a>, <a class="el" href="copy__data_8h_source.html#l00205">StabilizedMethodsTensorCopyData&lt; dim &gt;::local_dof_indices</a>, and <a class="el" href="copy__data_8h_source.html#l00203">StabilizedMethodsTensorCopyData&lt; dim &gt;::local_matrix</a>.</p>
 
 </div>
 </div>
@@ -891,7 +891,7 @@ template&lt;int dim&gt; </div>
 
 <p class="definition">Definition at line <a class="el" href="fluid__dynamics__vans_8cc_source.html#l00670">670</a> of file <a class="el" href="fluid__dynamics__vans_8cc_source.html">fluid_dynamics_vans.cc</a>.</p>
 
-<p class="reference">References <a class="el" href="copy__data_8h_source.html#l00215">StabilizedMethodsTensorCopyData&lt; dim &gt;::cell_is_local</a>, <a class="el" href="copy__data_8h_source.html#l00207">StabilizedMethodsTensorCopyData&lt; dim &gt;::local_dof_indices</a>, and <a class="el" href="copy__data_8h_source.html#l00206">StabilizedMethodsTensorCopyData&lt; dim &gt;::local_rhs</a>.</p>
+<p class="reference">References <a class="el" href="copy__data_8h_source.html#l00213">StabilizedMethodsTensorCopyData&lt; dim &gt;::cell_is_local</a>, <a class="el" href="copy__data_8h_source.html#l00205">StabilizedMethodsTensorCopyData&lt; dim &gt;::local_dof_indices</a>, and <a class="el" href="copy__data_8h_source.html#l00204">StabilizedMethodsTensorCopyData&lt; dim &gt;::local_rhs</a>.</p>
 
 </div>
 </div>
@@ -998,7 +998,7 @@ template&lt;int dim&gt; </div>
 
 <p class="definition">Definition at line <a class="el" href="fluid__dynamics__vans_8cc_source.html#l00191">191</a> of file <a class="el" href="fluid__dynamics__vans_8cc_source.html">fluid_dynamics_vans.cc</a>.</p>
 
-<p class="reference">References <a class="el" href="utilities_8h_source.html#l00463">announce_string()</a>, and <a class="el" href="physics__solver_8h_source.html#l00169">PhysicsSolver&lt; VectorType &gt;::solve_non_linear_system()</a>.</p>
+<p class="reference">References <a class="el" href="utilities_8h_source.html#l00463">announce_string()</a>, and <a class="el" href="physics__solver_8h_source.html#l00168">PhysicsSolver&lt; VectorType &gt;::solve_non_linear_system()</a>.</p>
 
 </div>
 </div>
@@ -1056,13 +1056,15 @@ template&lt;int dim&gt; </div>
       </table>
   </td>
   <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">private</span></span>  </td>
+<span class="mlabels"><span class="mlabel">private</span><span class="mlabel">virtual</span></span>  </td>
   </tr>
 </table>
 </div><div class="memdoc">
 
 <p>Read <a class="el" href="namespaceDEM.html" title="This namespace defines all the data containers and required operations on these containers for the DE...">DEM</a> data for particle-fluid coupling. </p>
 <p>Loads particle information from <a class="el" href="namespaceDEM.html" title="This namespace defines all the data containers and required operations on these containers for the DE...">DEM</a> simulation for use in computing void fraction and particle-fluid interaction terms. </p>
+
+<p>Reimplemented in <a class="el" href="classCFDDEMSolver.html#a851571bba2e51badf4ef10387c5e3bb9">CFDDEMSolver&lt; dim &gt;</a>.</p>
 
 <p class="definition">Definition at line <a class="el" href="fluid__dynamics__vans_8cc_source.html#l00084">84</a> of file <a class="el" href="fluid__dynamics__vans_8cc_source.html">fluid_dynamics_vans.cc</a>.</p>
 
@@ -1102,7 +1104,7 @@ template&lt;int dim&gt; </div>
 
 <p class="definition">Definition at line <a class="el" href="fluid__dynamics__vans_8cc_source.html#l00202">202</a> of file <a class="el" href="fluid__dynamics__vans_8cc_source.html">fluid_dynamics_vans.cc</a>.</p>
 
-<p class="reference">References <a class="el" href="namespaceParameters.html#a8b408c8f42632c3dd96b69b720ace6f6a8efa8d4f5786679eabd0fdb325bad76b">Parameters::beetstra</a>, <a class="el" href="namespaceParameters.html#a8b408c8f42632c3dd96b69b720ace6f6a0d3593f2d6bf48e3e2700f0bc2a1e970">Parameters::dallavalle</a>, <a class="el" href="namespaceParameters.html#a8b408c8f42632c3dd96b69b720ace6f6ab1f1e7a3c1ddcf75366181531f51873a">Parameters::difelice</a>, <a class="el" href="namespaceBoundaryConditions.html#a07df76d63cde5cb5bcbea0d9c25a54b8add95ffdcea64b1eaaa9244611678ed38">BoundaryConditions::function_weak</a>, <a class="el" href="namespaceParameters.html#a8b408c8f42632c3dd96b69b720ace6f6a5b11eff46b4ff2d0e186789cb3a402ed">Parameters::gidaspow</a>, <a class="el" href="time__integration__utilities_8h_source.html#l00042">is_bdf()</a>, <a class="el" href="namespaceParameters.html#a8b408c8f42632c3dd96b69b720ace6f6a9e42d27391c1851954ee4d7795d713cf">Parameters::kochhill</a>, <a class="el" href="namespaceParameters.html#a885ce66c74635a68dd078d94aedddac6aaab653aeeee220006e2b9f692569492c">Parameters::modelA</a>, <a class="el" href="namespaceParameters.html#a885ce66c74635a68dd078d94aedddac6ab35bb34924c70e61eec8a8bae8cac690">Parameters::modelB</a>, <a class="el" href="namespaceBoundaryConditions.html#a07df76d63cde5cb5bcbea0d9c25a54b8ab0ba1623558e169131cb513037504286">BoundaryConditions::outlet</a>, <a class="el" href="namespaceBoundaryConditions.html#a07df76d63cde5cb5bcbea0d9c25a54b8ac6bda74f8a2d6e410535eaa3dca28e9d">BoundaryConditions::partial_slip</a>, <a class="el" href="namespaceBoundaryConditions.html#a07df76d63cde5cb5bcbea0d9c25a54b8ad99fad96a5d0a7cb2eb41341ea556093">BoundaryConditions::pressure</a>, and <a class="el" href="namespaceParameters.html#a8b408c8f42632c3dd96b69b720ace6f6a08279be0e2c1aba70f92cd04058b995a">Parameters::rong</a>.</p>
+<p class="reference">References <a class="el" href="namespaceParameters.html#a8b408c8f42632c3dd96b69b720ace6f6a8efa8d4f5786679eabd0fdb325bad76b">Parameters::beetstra</a>, <a class="el" href="namespaceParameters.html#a8b408c8f42632c3dd96b69b720ace6f6a0d3593f2d6bf48e3e2700f0bc2a1e970">Parameters::dallavalle</a>, <a class="el" href="namespaceParameters.html#a8b408c8f42632c3dd96b69b720ace6f6ab1f1e7a3c1ddcf75366181531f51873a">Parameters::difelice</a>, <a class="el" href="namespaceBoundaryConditions.html#a07df76d63cde5cb5bcbea0d9c25a54b8add95ffdcea64b1eaaa9244611678ed38">BoundaryConditions::function_weak</a>, <a class="el" href="namespaceParameters.html#a8b408c8f42632c3dd96b69b720ace6f6a5b11eff46b4ff2d0e186789cb3a402ed">Parameters::gidaspow</a>, <a class="el" href="time__integration__utilities_8h_source.html#l00041">is_bdf()</a>, <a class="el" href="namespaceParameters.html#a8b408c8f42632c3dd96b69b720ace6f6a9e42d27391c1851954ee4d7795d713cf">Parameters::kochhill</a>, <a class="el" href="namespaceParameters.html#a885ce66c74635a68dd078d94aedddac6aaab653aeeee220006e2b9f692569492c">Parameters::modelA</a>, <a class="el" href="namespaceParameters.html#a885ce66c74635a68dd078d94aedddac6ab35bb34924c70e61eec8a8bae8cac690">Parameters::modelB</a>, <a class="el" href="namespaceBoundaryConditions.html#a07df76d63cde5cb5bcbea0d9c25a54b8ab0ba1623558e169131cb513037504286">BoundaryConditions::outlet</a>, <a class="el" href="namespaceBoundaryConditions.html#a07df76d63cde5cb5bcbea0d9c25a54b8ac6bda74f8a2d6e410535eaa3dca28e9d">BoundaryConditions::partial_slip</a>, <a class="el" href="namespaceBoundaryConditions.html#a07df76d63cde5cb5bcbea0d9c25a54b8ad99fad96a5d0a7cb2eb41341ea556093">BoundaryConditions::pressure</a>, and <a class="el" href="namespaceParameters.html#a8b408c8f42632c3dd96b69b720ace6f6a08279be0e2c1aba70f92cd04058b995a">Parameters::rong</a>.</p>
 
 </div>
 </div>
@@ -1138,7 +1140,7 @@ template&lt;int dim&gt; </div>
 
 <p class="definition">Definition at line <a class="el" href="fluid__dynamics__vans_8cc_source.html#l00062">62</a> of file <a class="el" href="fluid__dynamics__vans_8cc_source.html">fluid_dynamics_vans.cc</a>.</p>
 
-<p class="reference">References <a class="el" href="navier__stokes__base_8h_source.html#l00210">NavierStokesBase&lt; dim, GlobalVectorType, IndexSet &gt;::setup_dofs()</a>.</p>
+<p class="reference">References <a class="el" href="navier__stokes__base_8h_source.html#l00208">NavierStokesBase&lt; dim, GlobalVectorType, IndexSet &gt;::setup_dofs()</a>.</p>
 
 </div>
 </div>
@@ -1176,7 +1178,7 @@ template&lt;int dim&gt; </div>
 
 <p class="definition">Definition at line <a class="el" href="fluid__dynamics__vans_8cc_source.html#l00889">889</a> of file <a class="el" href="fluid__dynamics__vans_8cc_source.html">fluid_dynamics_vans.cc</a>.</p>
 
-<p class="reference">References <a class="el" href="grids_8cc_source.html#l00345">read_mesh_and_manifolds()</a>, and <a class="el" href="navier__stokes__base_8cc_source.html#l00855">NavierStokesBase&lt; dim, VectorType, DofsType &gt;::refine_mesh()</a>.</p>
+<p class="reference">References <a class="el" href="grids_8cc_source.html#l00342">read_mesh_and_manifolds()</a>, and <a class="el" href="navier__stokes__base_8cc_source.html#l00855">NavierStokesBase&lt; dim, VectorType, DofsType &gt;::refine_mesh()</a>.</p>
 
 </div>
 </div>
@@ -1270,7 +1272,7 @@ template&lt;int dim&gt; </div>
 <p>Member Variables. </p>
 <p>CFD-DEM simulation parameters containing all configuration options </p>
 
-<p class="definition">Definition at line <a class="el" href="fluid__dynamics__vans_8h_source.html#l00276">276</a> of file <a class="el" href="fluid__dynamics__vans_8h_source.html">fluid_dynamics_vans.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="fluid__dynamics__vans_8h_source.html#l00275">275</a> of file <a class="el" href="fluid__dynamics__vans_8h_source.html">fluid_dynamics_vans.h</a>.</p>
 
 </div>
 </div>
@@ -1298,7 +1300,7 @@ template&lt;int dim&gt; </div>
 
 <p>Scaling factor for GLS velocity stabilization terms. </p>
 
-<p class="definition">Definition at line <a class="el" href="fluid__dynamics__vans_8h_source.html#l00292">292</a> of file <a class="el" href="fluid__dynamics__vans_8h_source.html">fluid_dynamics_vans.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="fluid__dynamics__vans_8h_source.html#l00291">291</a> of file <a class="el" href="fluid__dynamics__vans_8h_source.html">fluid_dynamics_vans.h</a>.</p>
 
 </div>
 </div>
@@ -1326,7 +1328,7 @@ template&lt;int dim&gt; </div>
 
 <p>Flag indicating whether the domain has periodic boundary conditions. </p>
 
-<p class="definition">Definition at line <a class="el" href="fluid__dynamics__vans_8h_source.html#l00315">315</a> of file <a class="el" href="fluid__dynamics__vans_8h_source.html">fluid_dynamics_vans.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="fluid__dynamics__vans_8h_source.html#l00314">314</a> of file <a class="el" href="fluid__dynamics__vans_8h_source.html">fluid_dynamics_vans.h</a>.</p>
 
 </div>
 </div>
@@ -1354,7 +1356,7 @@ template&lt;int dim&gt; </div>
 
 <p>Vector of assembler objects for particle-fluid interaction terms. </p>
 
-<p class="definition">Definition at line <a class="el" href="fluid__dynamics__vans_8h_source.html#l00283">283</a> of file <a class="el" href="fluid__dynamics__vans_8h_source.html">fluid_dynamics_vans.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="fluid__dynamics__vans_8h_source.html#l00282">282</a> of file <a class="el" href="fluid__dynamics__vans_8h_source.html">fluid_dynamics_vans.h</a>.</p>
 
 </div>
 </div>
@@ -1382,7 +1384,7 @@ template&lt;int dim&gt; </div>
 
 <p>Particle handler for managing particle data and operations. </p>
 
-<p class="definition">Definition at line <a class="el" href="fluid__dynamics__vans_8h_source.html#l00309">309</a> of file <a class="el" href="fluid__dynamics__vans_8h_source.html">fluid_dynamics_vans.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="fluid__dynamics__vans_8h_source.html#l00308">308</a> of file <a class="el" href="fluid__dynamics__vans_8h_source.html">fluid_dynamics_vans.h</a>.</p>
 
 </div>
 </div>
@@ -1410,7 +1412,7 @@ template&lt;int dim&gt; </div>
 
 <p>Mapping object for particle position calculations and projections. </p>
 
-<p class="definition">Definition at line <a class="el" href="fluid__dynamics__vans_8h_source.html#l00279">279</a> of file <a class="el" href="fluid__dynamics__vans_8h_source.html">fluid_dynamics_vans.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="fluid__dynamics__vans_8h_source.html#l00278">278</a> of file <a class="el" href="fluid__dynamics__vans_8h_source.html">fluid_dynamics_vans.h</a>.</p>
 
 </div>
 </div>
@@ -1438,7 +1440,7 @@ template&lt;int dim&gt; </div>
 
 <p>Particle projector for calculating void fraction and particle effects. </p>
 
-<p class="definition">Definition at line <a class="el" href="fluid__dynamics__vans_8h_source.html#l00312">312</a> of file <a class="el" href="fluid__dynamics__vans_8h_source.html">fluid_dynamics_vans.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="fluid__dynamics__vans_8h_source.html#l00311">311</a> of file <a class="el" href="fluid__dynamics__vans_8h_source.html">fluid_dynamics_vans.h</a>.</p>
 
 </div>
 </div>
@@ -1466,7 +1468,7 @@ template&lt;int dim&gt; </div>
 
 <p>Direction index for periodic boundary conditions. </p>
 
-<p class="definition">Definition at line <a class="el" href="fluid__dynamics__vans_8h_source.html#l00321">321</a> of file <a class="el" href="fluid__dynamics__vans_8h_source.html">fluid_dynamics_vans.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="fluid__dynamics__vans_8h_source.html#l00320">320</a> of file <a class="el" href="fluid__dynamics__vans_8h_source.html">fluid_dynamics_vans.h</a>.</p>
 
 </div>
 </div>
@@ -1494,7 +1496,7 @@ template&lt;int dim&gt; </div>
 
 <p>Offset vector for periodic boundary condition calculations. </p>
 
-<p class="definition">Definition at line <a class="el" href="fluid__dynamics__vans_8h_source.html#l00318">318</a> of file <a class="el" href="fluid__dynamics__vans_8h_source.html">fluid_dynamics_vans.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="fluid__dynamics__vans_8h_source.html#l00317">317</a> of file <a class="el" href="fluid__dynamics__vans_8h_source.html">fluid_dynamics_vans.h</a>.</p>
 
 </div>
 </div>
@@ -1522,7 +1524,7 @@ template&lt;int dim&gt; </div>
 
 <p>Pressure drop across the computational domain. </p>
 
-<p class="definition">Definition at line <a class="el" href="fluid__dynamics__vans_8h_source.html#l00295">295</a> of file <a class="el" href="fluid__dynamics__vans_8h_source.html">fluid_dynamics_vans.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="fluid__dynamics__vans_8h_source.html#l00294">294</a> of file <a class="el" href="fluid__dynamics__vans_8h_source.html">fluid_dynamics_vans.h</a>.</p>
 
 </div>
 </div>
@@ -1550,7 +1552,7 @@ template&lt;int dim&gt; </div>
 
 <p>Flag enabling Pressure Stabilizing Petrov-Galerkin (PSPG) stabilization. </p>
 
-<p class="definition">Definition at line <a class="el" href="fluid__dynamics__vans_8h_source.html#l00286">286</a> of file <a class="el" href="fluid__dynamics__vans_8h_source.html">fluid_dynamics_vans.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="fluid__dynamics__vans_8h_source.html#l00285">285</a> of file <a class="el" href="fluid__dynamics__vans_8h_source.html">fluid_dynamics_vans.h</a>.</p>
 
 </div>
 </div>
@@ -1578,7 +1580,7 @@ template&lt;int dim&gt; </div>
 
 <p>Flag enabling Streamline Upwind Petrov-Galerkin (SUPG) stabilization. </p>
 
-<p class="definition">Definition at line <a class="el" href="fluid__dynamics__vans_8h_source.html#l00289">289</a> of file <a class="el" href="fluid__dynamics__vans_8h_source.html">fluid_dynamics_vans.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="fluid__dynamics__vans_8h_source.html#l00288">288</a> of file <a class="el" href="fluid__dynamics__vans_8h_source.html">fluid_dynamics_vans.h</a>.</p>
 
 </div>
 </div>
@@ -1606,7 +1608,7 @@ template&lt;int dim&gt; </div>
 
 <p>Mapping from vertex indices to sets of cells containing each vertex. </p>
 
-<p class="definition">Definition at line <a class="el" href="fluid__dynamics__vans_8h_source.html#l00300">300</a> of file <a class="el" href="fluid__dynamics__vans_8h_source.html">fluid_dynamics_vans.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="fluid__dynamics__vans_8h_source.html#l00299">299</a> of file <a class="el" href="fluid__dynamics__vans_8h_source.html">fluid_dynamics_vans.h</a>.</p>
 
 </div>
 </div>
@@ -1633,7 +1635,7 @@ template&lt;int dim&gt; </div>
 </div><div class="memdoc">
 <p>Mapping from vertex indices to sets of periodic cells containing each vertex </p>
 
-<p class="definition">Definition at line <a class="el" href="fluid__dynamics__vans_8h_source.html#l00306">306</a> of file <a class="el" href="fluid__dynamics__vans_8h_source.html">fluid_dynamics_vans.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="fluid__dynamics__vans_8h_source.html#l00305">305</a> of file <a class="el" href="fluid__dynamics__vans_8h_source.html">fluid_dynamics_vans.h</a>.</p>
 
 </div>
 </div>

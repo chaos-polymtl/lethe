@@ -93,7 +93,7 @@ $(document).ready(function() { init_codefold(0); });
   <div class="headertitle"><div class="title">exceptions.h</div></div>
 </div><!--header-->
 <div class="contents">
-<a href="exceptions_8h.html">Go to the documentation of this file.</a><div class="fragment"><div class="line"><a id="l00001" name="l00001"></a><span class="lineno">    1</span><span class="comment">// SPDX-FileCopyrightText: Copyright (c) 2022 The Lethe Authors</span></div>
+<a href="exceptions_8h.html">Go to the documentation of this file.</a><div class="fragment"><div class="line"><a id="l00001" name="l00001"></a><span class="lineno">    1</span><span class="comment">// SPDX-FileCopyrightText: Copyright (c) 2022-2025 The Lethe Authors</span></div>
 <div class="line"><a id="l00002" name="l00002"></a><span class="lineno">    2</span><span class="comment">// SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later</span></div>
 <div class="line"><a id="l00003" name="l00003"></a><span class="lineno">    3</span> </div>
 <div class="line"><a id="l00004" name="l00004"></a><span class="lineno">    4</span><span class="comment">/*</span></div>
@@ -101,34 +101,31 @@ $(document).ready(function() { init_codefold(0); });
 <div class="line"><a id="l00006" name="l00006"></a><span class="lineno">    6</span><span class="comment"> * to avoid code repetition.</span></div>
 <div class="line"><a id="l00007" name="l00007"></a><span class="lineno">    7</span><span class="comment"> */</span></div>
 <div class="line"><a id="l00008" name="l00008"></a><span class="lineno">    8</span> </div>
-<div class="line"><a id="l00009" name="l00009"></a><span class="lineno">    9</span> </div>
-<div class="line"><a id="l00010" name="l00010"></a><span class="lineno">   10</span> </div>
-<div class="line"><a id="l00011" name="l00011"></a><span class="lineno">   11</span><span class="preprocessor">#ifndef lethe_exceptions_h</span></div>
-<div class="line"><a id="l00012" name="l00012"></a><span class="lineno">   12</span><span class="preprocessor">#define lethe_exceptions_h</span></div>
+<div class="line"><a id="l00009" name="l00009"></a><span class="lineno">    9</span><span class="preprocessor">#ifndef lethe_exceptions_h</span></div>
+<div class="line"><a id="l00010" name="l00010"></a><span class="lineno">   10</span><span class="preprocessor">#define lethe_exceptions_h</span></div>
+<div class="line"><a id="l00011" name="l00011"></a><span class="lineno">   11</span> </div>
+<div class="line"><a id="l00012" name="l00012"></a><span class="lineno">   12</span><span class="preprocessor">#include &lt;deal.II/base/exceptions.h&gt;</span></div>
 <div class="line"><a id="l00013" name="l00013"></a><span class="lineno">   13</span> </div>
-<div class="line"><a id="l00014" name="l00014"></a><span class="lineno">   14</span><span class="preprocessor">#include &lt;deal.II/base/exceptions.h&gt;</span></div>
+<div class="line"><a id="l00014" name="l00014"></a><span class="lineno">   14</span><span class="keyword">using namespace </span><a class="code hl_namespace" href="namespacedealii.html">dealii</a>;</div>
 <div class="line"><a id="l00015" name="l00015"></a><span class="lineno">   15</span> </div>
-<div class="line"><a id="l00016" name="l00016"></a><span class="lineno">   16</span> </div>
-<div class="line"><a id="l00017" name="l00017"></a><span class="lineno">   17</span><span class="keyword">using namespace </span><a class="code hl_namespace" href="namespacedealii.html">dealii</a>;</div>
-<div class="line"><a id="l00018" name="l00018"></a><span class="lineno">   18</span> </div>
-<div class="line"><a id="l00019" name="l00019"></a><span class="lineno"><a class="line" href="exceptions_8h.html#a3dac88f65ceb8fd470561f959e5a7ea2">   19</a></span><a class="code hl_function" href="exceptions_8h.html#a3dac88f65ceb8fd470561f959e5a7ea2">DeclException3</a>(SolidWarning,</div>
-<div class="line"><a id="l00020" name="l00020"></a><span class="lineno">   20</span>               <span class="keywordtype">unsigned</span> <span class="keywordtype">int</span>,</div>
-<div class="line"><a id="l00021" name="l00021"></a><span class="lineno">   21</span>               std::string,</div>
-<div class="line"><a id="l00022" name="l00022"></a><span class="lineno">   22</span>               std::string,</div>
-<div class="line"><a id="l00023" name="l00023"></a><span class="lineno">   23</span>               &lt;&lt; <span class="stringliteral">&quot;&#39;number of solids = &quot;</span> &lt;&lt; arg1 &lt;&lt; <span class="stringliteral">&quot;&#39; but &quot;</span> &lt;&lt; arg2</div>
-<div class="line"><a id="l00024" name="l00024"></a><span class="lineno">   24</span>               &lt;&lt; <span class="stringliteral">&quot; solver does not support nitsche restriction. Use &quot;</span> &lt;&lt; arg3</div>
-<div class="line"><a id="l00025" name="l00025"></a><span class="lineno">   25</span>               &lt;&lt; <span class="stringliteral">&quot; solver instead.&quot;</span>);</div>
-<div class="line"><a id="l00026" name="l00026"></a><span class="lineno">   26</span> </div>
-<div class="line"><a id="l00027" name="l00027"></a><span class="lineno"><a class="line" href="exceptions_8h.html#ab5d93ae5c63eea113e8c4fb89bfbad26">   27</a></span><a class="code hl_function" href="exceptions_8h.html#ab5d93ae5c63eea113e8c4fb89bfbad26">DeclException1</a>(</div>
-<div class="line"><a id="l00028" name="l00028"></a><span class="lineno">   28</span>  NoSolidWarning,</div>
-<div class="line"><a id="l00029" name="l00029"></a><span class="lineno">   29</span>  std::string,</div>
-<div class="line"><a id="l00030" name="l00030"></a><span class="lineno">   30</span>  &lt;&lt; <span class="stringliteral">&quot;No solid defined: impossible to assemble nitsche restriction in &quot;</span> &lt;&lt; arg1</div>
-<div class="line"><a id="l00031" name="l00031"></a><span class="lineno">   31</span>  &lt;&lt; <span class="stringliteral">&quot; solver. Change the &#39;number of solids&#39; parameter.&quot;</span>);</div>
-<div class="line"><a id="l00032" name="l00032"></a><span class="lineno">   32</span> </div>
-<div class="line"><a id="l00033" name="l00033"></a><span class="lineno">   33</span><span class="preprocessor">#endif</span></div>
+<div class="line"><a id="l00016" name="l00016"></a><span class="lineno"><a class="line" href="exceptions_8h.html#a3dac88f65ceb8fd470561f959e5a7ea2">   16</a></span><a class="code hl_function" href="exceptions_8h.html#a3dac88f65ceb8fd470561f959e5a7ea2">DeclException3</a>(SolidWarning,</div>
+<div class="line"><a id="l00017" name="l00017"></a><span class="lineno">   17</span>               <span class="keywordtype">unsigned</span> <span class="keywordtype">int</span>,</div>
+<div class="line"><a id="l00018" name="l00018"></a><span class="lineno">   18</span>               std::string,</div>
+<div class="line"><a id="l00019" name="l00019"></a><span class="lineno">   19</span>               std::string,</div>
+<div class="line"><a id="l00020" name="l00020"></a><span class="lineno">   20</span>               &lt;&lt; <span class="stringliteral">&quot;&#39;number of solids = &quot;</span> &lt;&lt; arg1 &lt;&lt; <span class="stringliteral">&quot;&#39; but &quot;</span> &lt;&lt; arg2</div>
+<div class="line"><a id="l00021" name="l00021"></a><span class="lineno">   21</span>               &lt;&lt; <span class="stringliteral">&quot; solver does not support nitsche restriction. Use &quot;</span> &lt;&lt; arg3</div>
+<div class="line"><a id="l00022" name="l00022"></a><span class="lineno">   22</span>               &lt;&lt; <span class="stringliteral">&quot; solver instead.&quot;</span>);</div>
+<div class="line"><a id="l00023" name="l00023"></a><span class="lineno">   23</span> </div>
+<div class="line"><a id="l00024" name="l00024"></a><span class="lineno"><a class="line" href="exceptions_8h.html#ab5d93ae5c63eea113e8c4fb89bfbad26">   24</a></span><a class="code hl_function" href="exceptions_8h.html#ab5d93ae5c63eea113e8c4fb89bfbad26">DeclException1</a>(</div>
+<div class="line"><a id="l00025" name="l00025"></a><span class="lineno">   25</span>  NoSolidWarning,</div>
+<div class="line"><a id="l00026" name="l00026"></a><span class="lineno">   26</span>  std::string,</div>
+<div class="line"><a id="l00027" name="l00027"></a><span class="lineno">   27</span>  &lt;&lt; <span class="stringliteral">&quot;No solid defined: impossible to assemble nitsche restriction in &quot;</span> &lt;&lt; arg1</div>
+<div class="line"><a id="l00028" name="l00028"></a><span class="lineno">   28</span>  &lt;&lt; <span class="stringliteral">&quot; solver. Change the &#39;number of solids&#39; parameter.&quot;</span>);</div>
+<div class="line"><a id="l00029" name="l00029"></a><span class="lineno">   29</span> </div>
+<div class="line"><a id="l00030" name="l00030"></a><span class="lineno">   30</span><span class="preprocessor">#endif</span></div>
 <div class="ttc" id="aexceptions_8h_html_a3dac88f65ceb8fd470561f959e5a7ea2"><div class="ttname"><a href="exceptions_8h.html#a3dac88f65ceb8fd470561f959e5a7ea2">DeclException3</a></div><div class="ttdeci">DeclException3(SolidWarning, unsigned int, std::string, std::string,&lt;&lt; &quot;'number of solids = &quot;&lt;&lt; arg1&lt;&lt; &quot;' but &quot;&lt;&lt; arg2&lt;&lt; &quot; solver does not support nitsche restriction. Use &quot;&lt;&lt; arg3&lt;&lt; &quot; solver instead.&quot;)</div></div>
 <div class="ttc" id="aexceptions_8h_html_ab5d93ae5c63eea113e8c4fb89bfbad26"><div class="ttname"><a href="exceptions_8h.html#ab5d93ae5c63eea113e8c4fb89bfbad26">DeclException1</a></div><div class="ttdeci">DeclException1(NoSolidWarning, std::string,&lt;&lt; &quot;No solid defined: impossible to assemble nitsche restriction in &quot;&lt;&lt; arg1&lt;&lt; &quot; solver. Change the 'number of solids' parameter.&quot;)</div></div>
-<div class="ttc" id="anamespacedealii_html"><div class="ttname"><a href="namespacedealii.html">dealii</a></div><div class="ttdef"><b>Definition</b> <a href="fluid__dynamics__matrix__free_8h_source.html#l00035">fluid_dynamics_matrix_free.h:36</a></div></div>
+<div class="ttc" id="anamespacedealii_html"><div class="ttname"><a href="namespacedealii.html">dealii</a></div><div class="ttdef"><b>Definition</b> <a href="fluid__dynamics__matrix__free_8h_source.html#l00032">fluid_dynamics_matrix_free.h:33</a></div></div>
 </div><!-- fragment --></div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>

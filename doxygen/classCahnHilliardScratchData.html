@@ -232,7 +232,7 @@ class CahnHilliardScratchData&lt; dim &gt;</div><p>Class that stores the informa
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="cahn__hilliard__scratch__data_8h_source.html#l00052">52</a> of file <a class="el" href="cahn__hilliard__scratch__data_8h_source.html">cahn_hilliard_scratch_data.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cahn__hilliard__scratch__data_8h_source.html#l00043">43</a> of file <a class="el" href="cahn__hilliard__scratch__data_8h_source.html">cahn_hilliard_scratch_data.h</a>.</p>
 </div><h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
 <a id="abf1135d9526e6c5b429d23b91377af69" name="abf1135d9526e6c5b429d23b91377af69"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#abf1135d9526e6c5b429d23b91377af69">&#9670;&#160;</a></span>CahnHilliardScratchData() <span class="overload">[1/2]</span></h2>
@@ -297,16 +297,16 @@ template&lt;int dim&gt; </div>
 <p>Constructor. The constructor creates the fe_values that will be used to fill the member variables of the scratch. It also allocated the necessary memory for all member variables. However, it does not do any evaluation, since this needs to be done at the cell level. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">properties_manager</td><td>The physical properties manager (see <a class="el" href="physical__properties__manager_8h.html">physical_properties_manager.h</a>)</td></tr>
-    <tr><td class="paramname">fe_cahn_hilliard</td><td>The FESystem used to solve the Cahn-Hilliard equations</td></tr>
-    <tr><td class="paramname">quadrature</td><td>The quadrature to use for the assembly</td></tr>
-    <tr><td class="paramname">mapping</td><td>The mapping of the domain in which the Cahn-Hilliard equations are solved</td></tr>
+    <tr><td class="paramname">properties_manager</td><td>The physical properties manager (see <a class="el" href="physical__properties__manager_8h.html">physical_properties_manager.h</a>) </td></tr>
+    <tr><td class="paramname">fe_cahn_hilliard</td><td>The FESystem used to solve the Cahn-Hilliard equations </td></tr>
+    <tr><td class="paramname">quadrature</td><td>The quadrature to use for the assembly </td></tr>
+    <tr><td class="paramname">mapping</td><td>The mapping of the domain in which the Cahn-Hilliard equations are solved </td></tr>
     <tr><td class="paramname">fe_fd</td><td>The FESystem used to solve the Fluid Dynamics equations </td></tr>
   </table>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="cahn__hilliard__scratch__data_8h_source.html#l00072">72</a> of file <a class="el" href="cahn__hilliard__scratch__data_8h_source.html">cahn_hilliard_scratch_data.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cahn__hilliard__scratch__data_8h_source.html#l00059">59</a> of file <a class="el" href="cahn__hilliard__scratch__data_8h_source.html">cahn_hilliard_scratch_data.h</a>.</p>
 
 <p class="reference">References <a class="el" href="cahn__hilliard__scratch__data_8cc_source.html#l00009">CahnHilliardScratchData&lt; dim &gt;::allocate()</a>.</p>
 
@@ -341,14 +341,12 @@ template&lt;int dim&gt; </div>
 <p>Copy Constructor. Same as the main constructor. This constructor only uses the other scratch to build the FeValues, it does not copy the content of the other scratch into itself since, by definition of the WorkStream mechanism it is assumed that the content of the scratch will be reset on a cell basis. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">fe</td><td>The FESystem used to solve the Navier-Stokes equations</td></tr>
-    <tr><td class="paramname">quadrature</td><td>The quadrature to use for the assembly</td></tr>
-    <tr><td class="paramname">mapping</td><td>The mapping of the domain in which the Navier-Stokes equations are solved </td></tr>
+    <tr><td class="paramname">sd</td><td></td></tr>
   </table>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="cahn__hilliard__scratch__data_8h_source.html#l00109">109</a> of file <a class="el" href="cahn__hilliard__scratch__data_8h_source.html">cahn_hilliard_scratch_data.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cahn__hilliard__scratch__data_8h_source.html#l00092">92</a> of file <a class="el" href="cahn__hilliard__scratch__data_8h_source.html">cahn_hilliard_scratch_data.h</a>.</p>
 
 <p class="reference">References <a class="el" href="cahn__hilliard__scratch__data_8cc_source.html#l00009">CahnHilliardScratchData&lt; dim &gt;::allocate()</a>.</p>
 
@@ -380,8 +378,7 @@ template&lt;int dim&gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p>Allocates the memory for the scratch. </p>
-<p>This function allocates the necessary memory for all members of the scratch </p>
+<p>Allocates the necessary memory for all members of the scratch. </p>
 
 <p>Implements <a class="el" href="classPhysicsScratchDataBase.html#a9cfc31b987c334f3ebc6006b69889ea9">PhysicsScratchDataBase</a>.</p>
 
@@ -478,9 +475,9 @@ template&lt;typename VectorType &gt; </div>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="cahn__hilliard__scratch__data_8h_source.html#l00160">160</a> of file <a class="el" href="cahn__hilliard__scratch__data_8h_source.html">cahn_hilliard_scratch_data.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cahn__hilliard__scratch__data_8h_source.html#l00140">140</a> of file <a class="el" href="cahn__hilliard__scratch__data_8h_source.html">cahn_hilliard_scratch_data.h</a>.</p>
 
-<p class="reference">References <a class="el" href="cahn__hilliard__scratch__data_8h_source.html#l00410">CahnHilliardScratchData&lt; dim &gt;::boundary_face_id</a>, <a class="el" href="cahn__hilliard__scratch__data_8h_source.html#l00360">CahnHilliardScratchData&lt; dim &gt;::cell_size</a>, <a class="el" href="cahn__hilliard__scratch__data_8h_source.html#l00354">CahnHilliardScratchData&lt; dim &gt;::chemical_potential</a>, <a class="el" href="cahn__hilliard__scratch__data_8h_source.html#l00372">CahnHilliardScratchData&lt; dim &gt;::chemical_potential_gradients</a>, <a class="el" href="cahn__hilliard__scratch__data_8h_source.html#l00373">CahnHilliardScratchData&lt; dim &gt;::chemical_potential_laplacians</a>, <a class="el" href="cahn__hilliard__scratch__data_8h_source.html#l00371">CahnHilliardScratchData&lt; dim &gt;::chemical_potential_values</a>, <a class="el" href="utilities_8h_source.html#l00708">compute_cell_measure_with_JxW()</a>, <a class="el" href="cahn__hilliard__scratch__data_8h_source.html#l00402">CahnHilliardScratchData&lt; dim &gt;::face_JxW</a>, <a class="el" href="cahn__hilliard__scratch__data_8h_source.html#l00417">CahnHilliardScratchData&lt; dim &gt;::face_normal</a>, <a class="el" href="cahn__hilliard__scratch__data_8h_source.html#l00415">CahnHilliardScratchData&lt; dim &gt;::face_phase_grad_values</a>, <a class="el" href="cahn__hilliard__scratch__data_8h_source.html#l00401">CahnHilliardScratchData&lt; dim &gt;::fe_face_values_cahn_hilliard</a>, <a class="el" href="cahn__hilliard__scratch__data_8h_source.html#l00357">CahnHilliardScratchData&lt; dim &gt;::fe_values_cahn_hilliard</a>, <a class="el" href="cahn__hilliard__scratch__data_8h_source.html#l00413">CahnHilliardScratchData&lt; dim &gt;::grad_phi_face_phase</a>, <a class="el" href="cahn__hilliard__scratch__data_8h_source.html#l00384">CahnHilliardScratchData&lt; dim &gt;::grad_phi_phase</a>, <a class="el" href="cahn__hilliard__scratch__data_8h_source.html#l00388">CahnHilliardScratchData&lt; dim &gt;::grad_phi_potential</a>, <a class="el" href="cahn__hilliard__scratch__data_8h_source.html#l00382">CahnHilliardScratchData&lt; dim &gt;::hess_phi_phase</a>, <a class="el" href="cahn__hilliard__scratch__data_8h_source.html#l00386">CahnHilliardScratchData&lt; dim &gt;::hess_phi_potential</a>, <a class="el" href="cahn__hilliard__scratch__data_8h_source.html#l00408">CahnHilliardScratchData&lt; dim &gt;::is_boundary_cell</a>, <a class="el" href="cahn__hilliard__scratch__data_8h_source.html#l00409">CahnHilliardScratchData&lt; dim &gt;::is_boundary_face</a>, <a class="el" href="cahn__hilliard__scratch__data_8h_source.html#l00363">CahnHilliardScratchData&lt; dim &gt;::JxW</a>, <a class="el" href="cahn__hilliard__scratch__data_8h_source.html#l00383">CahnHilliardScratchData&lt; dim &gt;::laplacian_phi_phase</a>, <a class="el" href="cahn__hilliard__scratch__data_8h_source.html#l00387">CahnHilliardScratchData&lt; dim &gt;::laplacian_phi_potential</a>, <a class="el" href="cahn__hilliard__scratch__data_8h_source.html#l00358">CahnHilliardScratchData&lt; dim &gt;::n_dofs</a>, <a class="el" href="cahn__hilliard__scratch__data_8h_source.html#l00404">CahnHilliardScratchData&lt; dim &gt;::n_faces</a>, <a class="el" href="cahn__hilliard__scratch__data_8h_source.html#l00405">CahnHilliardScratchData&lt; dim &gt;::n_faces_q_points</a>, <a class="el" href="cahn__hilliard__scratch__data_8h_source.html#l00359">CahnHilliardScratchData&lt; dim &gt;::n_q_points</a>, <a class="el" href="cahn__hilliard__scratch__data_8h_source.html#l00353">CahnHilliardScratchData&lt; dim &gt;::phase_order</a>, <a class="el" href="cahn__hilliard__scratch__data_8h_source.html#l00368">CahnHilliardScratchData&lt; dim &gt;::phase_order_gradients</a>, <a class="el" href="cahn__hilliard__scratch__data_8h_source.html#l00369">CahnHilliardScratchData&lt; dim &gt;::phase_order_laplacians</a>, <a class="el" href="cahn__hilliard__scratch__data_8h_source.html#l00367">CahnHilliardScratchData&lt; dim &gt;::phase_order_values</a>, <a class="el" href="cahn__hilliard__scratch__data_8h_source.html#l00381">CahnHilliardScratchData&lt; dim &gt;::phi_phase</a>, <a class="el" href="cahn__hilliard__scratch__data_8h_source.html#l00385">CahnHilliardScratchData&lt; dim &gt;::phi_potential</a>, <a class="el" href="cahn__hilliard__scratch__data_8h_source.html#l00374">CahnHilliardScratchData&lt; dim &gt;::previous_chemical_potential_values</a>, <a class="el" href="cahn__hilliard__scratch__data_8h_source.html#l00370">CahnHilliardScratchData&lt; dim &gt;::previous_phase_order_values</a>, <a class="el" href="cahn__hilliard__scratch__data_8h_source.html#l00364">CahnHilliardScratchData&lt; dim &gt;::quadrature_points</a>, <a class="el" href="cahn__hilliard__scratch__data_8h_source.html#l00378">CahnHilliardScratchData&lt; dim &gt;::source_chemical_potential</a>, and <a class="el" href="cahn__hilliard__scratch__data_8h_source.html#l00377">CahnHilliardScratchData&lt; dim &gt;::source_phase_order</a>.</p>
+<p class="reference">References <a class="el" href="cahn__hilliard__scratch__data_8h_source.html#l00389">CahnHilliardScratchData&lt; dim &gt;::boundary_face_id</a>, <a class="el" href="cahn__hilliard__scratch__data_8h_source.html#l00339">CahnHilliardScratchData&lt; dim &gt;::cell_size</a>, <a class="el" href="cahn__hilliard__scratch__data_8h_source.html#l00333">CahnHilliardScratchData&lt; dim &gt;::chemical_potential</a>, <a class="el" href="cahn__hilliard__scratch__data_8h_source.html#l00351">CahnHilliardScratchData&lt; dim &gt;::chemical_potential_gradients</a>, <a class="el" href="cahn__hilliard__scratch__data_8h_source.html#l00352">CahnHilliardScratchData&lt; dim &gt;::chemical_potential_laplacians</a>, <a class="el" href="cahn__hilliard__scratch__data_8h_source.html#l00350">CahnHilliardScratchData&lt; dim &gt;::chemical_potential_values</a>, <a class="el" href="utilities_8h_source.html#l00708">compute_cell_measure_with_JxW()</a>, <a class="el" href="cahn__hilliard__scratch__data_8h_source.html#l00381">CahnHilliardScratchData&lt; dim &gt;::face_JxW</a>, <a class="el" href="cahn__hilliard__scratch__data_8h_source.html#l00396">CahnHilliardScratchData&lt; dim &gt;::face_normal</a>, <a class="el" href="cahn__hilliard__scratch__data_8h_source.html#l00394">CahnHilliardScratchData&lt; dim &gt;::face_phase_grad_values</a>, <a class="el" href="cahn__hilliard__scratch__data_8h_source.html#l00380">CahnHilliardScratchData&lt; dim &gt;::fe_face_values_cahn_hilliard</a>, <a class="el" href="cahn__hilliard__scratch__data_8h_source.html#l00336">CahnHilliardScratchData&lt; dim &gt;::fe_values_cahn_hilliard</a>, <a class="el" href="cahn__hilliard__scratch__data_8h_source.html#l00392">CahnHilliardScratchData&lt; dim &gt;::grad_phi_face_phase</a>, <a class="el" href="cahn__hilliard__scratch__data_8h_source.html#l00363">CahnHilliardScratchData&lt; dim &gt;::grad_phi_phase</a>, <a class="el" href="cahn__hilliard__scratch__data_8h_source.html#l00367">CahnHilliardScratchData&lt; dim &gt;::grad_phi_potential</a>, <a class="el" href="cahn__hilliard__scratch__data_8h_source.html#l00361">CahnHilliardScratchData&lt; dim &gt;::hess_phi_phase</a>, <a class="el" href="cahn__hilliard__scratch__data_8h_source.html#l00365">CahnHilliardScratchData&lt; dim &gt;::hess_phi_potential</a>, <a class="el" href="cahn__hilliard__scratch__data_8h_source.html#l00387">CahnHilliardScratchData&lt; dim &gt;::is_boundary_cell</a>, <a class="el" href="cahn__hilliard__scratch__data_8h_source.html#l00388">CahnHilliardScratchData&lt; dim &gt;::is_boundary_face</a>, <a class="el" href="cahn__hilliard__scratch__data_8h_source.html#l00342">CahnHilliardScratchData&lt; dim &gt;::JxW</a>, <a class="el" href="cahn__hilliard__scratch__data_8h_source.html#l00362">CahnHilliardScratchData&lt; dim &gt;::laplacian_phi_phase</a>, <a class="el" href="cahn__hilliard__scratch__data_8h_source.html#l00366">CahnHilliardScratchData&lt; dim &gt;::laplacian_phi_potential</a>, <a class="el" href="cahn__hilliard__scratch__data_8h_source.html#l00337">CahnHilliardScratchData&lt; dim &gt;::n_dofs</a>, <a class="el" href="cahn__hilliard__scratch__data_8h_source.html#l00383">CahnHilliardScratchData&lt; dim &gt;::n_faces</a>, <a class="el" href="cahn__hilliard__scratch__data_8h_source.html#l00384">CahnHilliardScratchData&lt; dim &gt;::n_faces_q_points</a>, <a class="el" href="cahn__hilliard__scratch__data_8h_source.html#l00338">CahnHilliardScratchData&lt; dim &gt;::n_q_points</a>, <a class="el" href="cahn__hilliard__scratch__data_8h_source.html#l00332">CahnHilliardScratchData&lt; dim &gt;::phase_order</a>, <a class="el" href="cahn__hilliard__scratch__data_8h_source.html#l00347">CahnHilliardScratchData&lt; dim &gt;::phase_order_gradients</a>, <a class="el" href="cahn__hilliard__scratch__data_8h_source.html#l00348">CahnHilliardScratchData&lt; dim &gt;::phase_order_laplacians</a>, <a class="el" href="cahn__hilliard__scratch__data_8h_source.html#l00346">CahnHilliardScratchData&lt; dim &gt;::phase_order_values</a>, <a class="el" href="cahn__hilliard__scratch__data_8h_source.html#l00360">CahnHilliardScratchData&lt; dim &gt;::phi_phase</a>, <a class="el" href="cahn__hilliard__scratch__data_8h_source.html#l00364">CahnHilliardScratchData&lt; dim &gt;::phi_potential</a>, <a class="el" href="cahn__hilliard__scratch__data_8h_source.html#l00353">CahnHilliardScratchData&lt; dim &gt;::previous_chemical_potential_values</a>, <a class="el" href="cahn__hilliard__scratch__data_8h_source.html#l00349">CahnHilliardScratchData&lt; dim &gt;::previous_phase_order_values</a>, <a class="el" href="cahn__hilliard__scratch__data_8h_source.html#l00343">CahnHilliardScratchData&lt; dim &gt;::quadrature_points</a>, <a class="el" href="cahn__hilliard__scratch__data_8h_source.html#l00357">CahnHilliardScratchData&lt; dim &gt;::source_chemical_potential</a>, and <a class="el" href="cahn__hilliard__scratch__data_8h_source.html#l00356">CahnHilliardScratchData&lt; dim &gt;::source_phase_order</a>.</p>
 
 </div>
 </div>
@@ -528,9 +525,9 @@ template&lt;typename VectorType &gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="cahn__hilliard__scratch__data_8h_source.html#l00301">301</a> of file <a class="el" href="cahn__hilliard__scratch__data_8h_source.html">cahn_hilliard_scratch_data.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cahn__hilliard__scratch__data_8h_source.html#l00280">280</a> of file <a class="el" href="cahn__hilliard__scratch__data_8h_source.html">cahn_hilliard_scratch_data.h</a>.</p>
 
-<p class="reference">References <a class="el" href="ale_8h_source.html#l00066">Parameters::ALE&lt; dim &gt;::enabled()</a>, <a class="el" href="cahn__hilliard__scratch__data_8h_source.html#l00395">CahnHilliardScratchData&lt; dim &gt;::fe_values_fd</a>, <a class="el" href="cahn__hilliard__scratch__data_8h_source.html#l00359">CahnHilliardScratchData&lt; dim &gt;::n_q_points</a>, <a class="el" href="cahn__hilliard__scratch__data_8h_source.html#l00364">CahnHilliardScratchData&lt; dim &gt;::quadrature_points</a>, <a class="el" href="cahn__hilliard__scratch__data_8h_source.html#l00393">CahnHilliardScratchData&lt; dim &gt;::velocities</a>, <a class="el" href="ale_8h_source.html#l00058">Parameters::ALE&lt; dim &gt;::velocity</a>, and <a class="el" href="cahn__hilliard__scratch__data_8h_source.html#l00396">CahnHilliardScratchData&lt; dim &gt;::velocity_values</a>.</p>
+<p class="reference">References <a class="el" href="ale_8h_source.html#l00064">Parameters::ALE&lt; dim &gt;::enabled()</a>, <a class="el" href="cahn__hilliard__scratch__data_8h_source.html#l00374">CahnHilliardScratchData&lt; dim &gt;::fe_values_fd</a>, <a class="el" href="cahn__hilliard__scratch__data_8h_source.html#l00338">CahnHilliardScratchData&lt; dim &gt;::n_q_points</a>, <a class="el" href="cahn__hilliard__scratch__data_8h_source.html#l00343">CahnHilliardScratchData&lt; dim &gt;::quadrature_points</a>, <a class="el" href="cahn__hilliard__scratch__data_8h_source.html#l00372">CahnHilliardScratchData&lt; dim &gt;::velocities</a>, <a class="el" href="ale_8h_source.html#l00056">Parameters::ALE&lt; dim &gt;::velocity</a>, and <a class="el" href="cahn__hilliard__scratch__data_8h_source.html#l00375">CahnHilliardScratchData&lt; dim &gt;::velocity_values</a>.</p>
 
 </div>
 </div>
@@ -549,7 +546,7 @@ template&lt;int dim&gt; </div>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="cahn__hilliard__scratch__data_8h_source.html#l00410">410</a> of file <a class="el" href="cahn__hilliard__scratch__data_8h_source.html">cahn_hilliard_scratch_data.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cahn__hilliard__scratch__data_8h_source.html#l00389">389</a> of file <a class="el" href="cahn__hilliard__scratch__data_8h_source.html">cahn_hilliard_scratch_data.h</a>.</p>
 
 </div>
 </div>
@@ -567,7 +564,7 @@ template&lt;int dim&gt; </div>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="cahn__hilliard__scratch__data_8h_source.html#l00360">360</a> of file <a class="el" href="cahn__hilliard__scratch__data_8h_source.html">cahn_hilliard_scratch_data.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cahn__hilliard__scratch__data_8h_source.html#l00339">339</a> of file <a class="el" href="cahn__hilliard__scratch__data_8h_source.html">cahn_hilliard_scratch_data.h</a>.</p>
 
 </div>
 </div>
@@ -585,7 +582,7 @@ template&lt;int dim&gt; </div>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="cahn__hilliard__scratch__data_8h_source.html#l00354">354</a> of file <a class="el" href="cahn__hilliard__scratch__data_8h_source.html">cahn_hilliard_scratch_data.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cahn__hilliard__scratch__data_8h_source.html#l00333">333</a> of file <a class="el" href="cahn__hilliard__scratch__data_8h_source.html">cahn_hilliard_scratch_data.h</a>.</p>
 
 </div>
 </div>
@@ -603,7 +600,7 @@ template&lt;int dim&gt; </div>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="cahn__hilliard__scratch__data_8h_source.html#l00372">372</a> of file <a class="el" href="cahn__hilliard__scratch__data_8h_source.html">cahn_hilliard_scratch_data.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cahn__hilliard__scratch__data_8h_source.html#l00351">351</a> of file <a class="el" href="cahn__hilliard__scratch__data_8h_source.html">cahn_hilliard_scratch_data.h</a>.</p>
 
 </div>
 </div>
@@ -621,7 +618,7 @@ template&lt;int dim&gt; </div>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="cahn__hilliard__scratch__data_8h_source.html#l00373">373</a> of file <a class="el" href="cahn__hilliard__scratch__data_8h_source.html">cahn_hilliard_scratch_data.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cahn__hilliard__scratch__data_8h_source.html#l00352">352</a> of file <a class="el" href="cahn__hilliard__scratch__data_8h_source.html">cahn_hilliard_scratch_data.h</a>.</p>
 
 </div>
 </div>
@@ -639,7 +636,7 @@ template&lt;int dim&gt; </div>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="cahn__hilliard__scratch__data_8h_source.html#l00371">371</a> of file <a class="el" href="cahn__hilliard__scratch__data_8h_source.html">cahn_hilliard_scratch_data.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cahn__hilliard__scratch__data_8h_source.html#l00350">350</a> of file <a class="el" href="cahn__hilliard__scratch__data_8h_source.html">cahn_hilliard_scratch_data.h</a>.</p>
 
 </div>
 </div>
@@ -657,7 +654,7 @@ template&lt;int dim&gt; </div>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="cahn__hilliard__scratch__data_8h_source.html#l00346">346</a> of file <a class="el" href="cahn__hilliard__scratch__data_8h_source.html">cahn_hilliard_scratch_data.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cahn__hilliard__scratch__data_8h_source.html#l00325">325</a> of file <a class="el" href="cahn__hilliard__scratch__data_8h_source.html">cahn_hilliard_scratch_data.h</a>.</p>
 
 </div>
 </div>
@@ -675,7 +672,7 @@ template&lt;int dim&gt; </div>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="cahn__hilliard__scratch__data_8h_source.html#l00402">402</a> of file <a class="el" href="cahn__hilliard__scratch__data_8h_source.html">cahn_hilliard_scratch_data.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cahn__hilliard__scratch__data_8h_source.html#l00381">381</a> of file <a class="el" href="cahn__hilliard__scratch__data_8h_source.html">cahn_hilliard_scratch_data.h</a>.</p>
 
 </div>
 </div>
@@ -693,7 +690,7 @@ template&lt;int dim&gt; </div>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="cahn__hilliard__scratch__data_8h_source.html#l00417">417</a> of file <a class="el" href="cahn__hilliard__scratch__data_8h_source.html">cahn_hilliard_scratch_data.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cahn__hilliard__scratch__data_8h_source.html#l00396">396</a> of file <a class="el" href="cahn__hilliard__scratch__data_8h_source.html">cahn_hilliard_scratch_data.h</a>.</p>
 
 </div>
 </div>
@@ -711,7 +708,7 @@ template&lt;int dim&gt; </div>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="cahn__hilliard__scratch__data_8h_source.html#l00415">415</a> of file <a class="el" href="cahn__hilliard__scratch__data_8h_source.html">cahn_hilliard_scratch_data.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cahn__hilliard__scratch__data_8h_source.html#l00394">394</a> of file <a class="el" href="cahn__hilliard__scratch__data_8h_source.html">cahn_hilliard_scratch_data.h</a>.</p>
 
 </div>
 </div>
@@ -729,7 +726,7 @@ template&lt;int dim&gt; </div>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="cahn__hilliard__scratch__data_8h_source.html#l00401">401</a> of file <a class="el" href="cahn__hilliard__scratch__data_8h_source.html">cahn_hilliard_scratch_data.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cahn__hilliard__scratch__data_8h_source.html#l00380">380</a> of file <a class="el" href="cahn__hilliard__scratch__data_8h_source.html">cahn_hilliard_scratch_data.h</a>.</p>
 
 </div>
 </div>
@@ -747,7 +744,7 @@ template&lt;int dim&gt; </div>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="cahn__hilliard__scratch__data_8h_source.html#l00357">357</a> of file <a class="el" href="cahn__hilliard__scratch__data_8h_source.html">cahn_hilliard_scratch_data.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cahn__hilliard__scratch__data_8h_source.html#l00336">336</a> of file <a class="el" href="cahn__hilliard__scratch__data_8h_source.html">cahn_hilliard_scratch_data.h</a>.</p>
 
 </div>
 </div>
@@ -765,7 +762,7 @@ template&lt;int dim&gt; </div>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="cahn__hilliard__scratch__data_8h_source.html#l00395">395</a> of file <a class="el" href="cahn__hilliard__scratch__data_8h_source.html">cahn_hilliard_scratch_data.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cahn__hilliard__scratch__data_8h_source.html#l00374">374</a> of file <a class="el" href="cahn__hilliard__scratch__data_8h_source.html">cahn_hilliard_scratch_data.h</a>.</p>
 
 </div>
 </div>
@@ -783,7 +780,7 @@ template&lt;int dim&gt; </div>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="cahn__hilliard__scratch__data_8h_source.html#l00344">344</a> of file <a class="el" href="cahn__hilliard__scratch__data_8h_source.html">cahn_hilliard_scratch_data.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cahn__hilliard__scratch__data_8h_source.html#l00323">323</a> of file <a class="el" href="cahn__hilliard__scratch__data_8h_source.html">cahn_hilliard_scratch_data.h</a>.</p>
 
 </div>
 </div>
@@ -801,7 +798,7 @@ template&lt;int dim&gt; </div>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="cahn__hilliard__scratch__data_8h_source.html#l00413">413</a> of file <a class="el" href="cahn__hilliard__scratch__data_8h_source.html">cahn_hilliard_scratch_data.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cahn__hilliard__scratch__data_8h_source.html#l00392">392</a> of file <a class="el" href="cahn__hilliard__scratch__data_8h_source.html">cahn_hilliard_scratch_data.h</a>.</p>
 
 </div>
 </div>
@@ -819,7 +816,7 @@ template&lt;int dim&gt; </div>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="cahn__hilliard__scratch__data_8h_source.html#l00384">384</a> of file <a class="el" href="cahn__hilliard__scratch__data_8h_source.html">cahn_hilliard_scratch_data.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cahn__hilliard__scratch__data_8h_source.html#l00363">363</a> of file <a class="el" href="cahn__hilliard__scratch__data_8h_source.html">cahn_hilliard_scratch_data.h</a>.</p>
 
 </div>
 </div>
@@ -837,7 +834,7 @@ template&lt;int dim&gt; </div>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="cahn__hilliard__scratch__data_8h_source.html#l00388">388</a> of file <a class="el" href="cahn__hilliard__scratch__data_8h_source.html">cahn_hilliard_scratch_data.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cahn__hilliard__scratch__data_8h_source.html#l00367">367</a> of file <a class="el" href="cahn__hilliard__scratch__data_8h_source.html">cahn_hilliard_scratch_data.h</a>.</p>
 
 </div>
 </div>
@@ -855,7 +852,7 @@ template&lt;int dim&gt; </div>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="cahn__hilliard__scratch__data_8h_source.html#l00382">382</a> of file <a class="el" href="cahn__hilliard__scratch__data_8h_source.html">cahn_hilliard_scratch_data.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cahn__hilliard__scratch__data_8h_source.html#l00361">361</a> of file <a class="el" href="cahn__hilliard__scratch__data_8h_source.html">cahn_hilliard_scratch_data.h</a>.</p>
 
 </div>
 </div>
@@ -873,7 +870,7 @@ template&lt;int dim&gt; </div>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="cahn__hilliard__scratch__data_8h_source.html#l00386">386</a> of file <a class="el" href="cahn__hilliard__scratch__data_8h_source.html">cahn_hilliard_scratch_data.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cahn__hilliard__scratch__data_8h_source.html#l00365">365</a> of file <a class="el" href="cahn__hilliard__scratch__data_8h_source.html">cahn_hilliard_scratch_data.h</a>.</p>
 
 </div>
 </div>
@@ -891,7 +888,7 @@ template&lt;int dim&gt; </div>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="cahn__hilliard__scratch__data_8h_source.html#l00408">408</a> of file <a class="el" href="cahn__hilliard__scratch__data_8h_source.html">cahn_hilliard_scratch_data.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cahn__hilliard__scratch__data_8h_source.html#l00387">387</a> of file <a class="el" href="cahn__hilliard__scratch__data_8h_source.html">cahn_hilliard_scratch_data.h</a>.</p>
 
 </div>
 </div>
@@ -909,7 +906,7 @@ template&lt;int dim&gt; </div>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="cahn__hilliard__scratch__data_8h_source.html#l00409">409</a> of file <a class="el" href="cahn__hilliard__scratch__data_8h_source.html">cahn_hilliard_scratch_data.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cahn__hilliard__scratch__data_8h_source.html#l00388">388</a> of file <a class="el" href="cahn__hilliard__scratch__data_8h_source.html">cahn_hilliard_scratch_data.h</a>.</p>
 
 </div>
 </div>
@@ -927,7 +924,7 @@ template&lt;int dim&gt; </div>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="cahn__hilliard__scratch__data_8h_source.html#l00363">363</a> of file <a class="el" href="cahn__hilliard__scratch__data_8h_source.html">cahn_hilliard_scratch_data.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cahn__hilliard__scratch__data_8h_source.html#l00342">342</a> of file <a class="el" href="cahn__hilliard__scratch__data_8h_source.html">cahn_hilliard_scratch_data.h</a>.</p>
 
 </div>
 </div>
@@ -945,7 +942,7 @@ template&lt;int dim&gt; </div>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="cahn__hilliard__scratch__data_8h_source.html#l00347">347</a> of file <a class="el" href="cahn__hilliard__scratch__data_8h_source.html">cahn_hilliard_scratch_data.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cahn__hilliard__scratch__data_8h_source.html#l00326">326</a> of file <a class="el" href="cahn__hilliard__scratch__data_8h_source.html">cahn_hilliard_scratch_data.h</a>.</p>
 
 </div>
 </div>
@@ -963,7 +960,7 @@ template&lt;int dim&gt; </div>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="cahn__hilliard__scratch__data_8h_source.html#l00383">383</a> of file <a class="el" href="cahn__hilliard__scratch__data_8h_source.html">cahn_hilliard_scratch_data.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cahn__hilliard__scratch__data_8h_source.html#l00362">362</a> of file <a class="el" href="cahn__hilliard__scratch__data_8h_source.html">cahn_hilliard_scratch_data.h</a>.</p>
 
 </div>
 </div>
@@ -981,7 +978,7 @@ template&lt;int dim&gt; </div>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="cahn__hilliard__scratch__data_8h_source.html#l00387">387</a> of file <a class="el" href="cahn__hilliard__scratch__data_8h_source.html">cahn_hilliard_scratch_data.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cahn__hilliard__scratch__data_8h_source.html#l00366">366</a> of file <a class="el" href="cahn__hilliard__scratch__data_8h_source.html">cahn_hilliard_scratch_data.h</a>.</p>
 
 </div>
 </div>
@@ -999,7 +996,7 @@ template&lt;int dim&gt; </div>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="cahn__hilliard__scratch__data_8h_source.html#l00345">345</a> of file <a class="el" href="cahn__hilliard__scratch__data_8h_source.html">cahn_hilliard_scratch_data.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cahn__hilliard__scratch__data_8h_source.html#l00324">324</a> of file <a class="el" href="cahn__hilliard__scratch__data_8h_source.html">cahn_hilliard_scratch_data.h</a>.</p>
 
 </div>
 </div>
@@ -1017,7 +1014,7 @@ template&lt;int dim&gt; </div>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="cahn__hilliard__scratch__data_8h_source.html#l00349">349</a> of file <a class="el" href="cahn__hilliard__scratch__data_8h_source.html">cahn_hilliard_scratch_data.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cahn__hilliard__scratch__data_8h_source.html#l00328">328</a> of file <a class="el" href="cahn__hilliard__scratch__data_8h_source.html">cahn_hilliard_scratch_data.h</a>.</p>
 
 </div>
 </div>
@@ -1035,7 +1032,7 @@ template&lt;int dim&gt; </div>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="cahn__hilliard__scratch__data_8h_source.html#l00350">350</a> of file <a class="el" href="cahn__hilliard__scratch__data_8h_source.html">cahn_hilliard_scratch_data.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cahn__hilliard__scratch__data_8h_source.html#l00329">329</a> of file <a class="el" href="cahn__hilliard__scratch__data_8h_source.html">cahn_hilliard_scratch_data.h</a>.</p>
 
 </div>
 </div>
@@ -1053,7 +1050,7 @@ template&lt;int dim&gt; </div>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="cahn__hilliard__scratch__data_8h_source.html#l00358">358</a> of file <a class="el" href="cahn__hilliard__scratch__data_8h_source.html">cahn_hilliard_scratch_data.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cahn__hilliard__scratch__data_8h_source.html#l00337">337</a> of file <a class="el" href="cahn__hilliard__scratch__data_8h_source.html">cahn_hilliard_scratch_data.h</a>.</p>
 
 </div>
 </div>
@@ -1071,7 +1068,7 @@ template&lt;int dim&gt; </div>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="cahn__hilliard__scratch__data_8h_source.html#l00404">404</a> of file <a class="el" href="cahn__hilliard__scratch__data_8h_source.html">cahn_hilliard_scratch_data.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cahn__hilliard__scratch__data_8h_source.html#l00383">383</a> of file <a class="el" href="cahn__hilliard__scratch__data_8h_source.html">cahn_hilliard_scratch_data.h</a>.</p>
 
 </div>
 </div>
@@ -1089,7 +1086,7 @@ template&lt;int dim&gt; </div>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="cahn__hilliard__scratch__data_8h_source.html#l00405">405</a> of file <a class="el" href="cahn__hilliard__scratch__data_8h_source.html">cahn_hilliard_scratch_data.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cahn__hilliard__scratch__data_8h_source.html#l00384">384</a> of file <a class="el" href="cahn__hilliard__scratch__data_8h_source.html">cahn_hilliard_scratch_data.h</a>.</p>
 
 </div>
 </div>
@@ -1107,7 +1104,7 @@ template&lt;int dim&gt; </div>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="cahn__hilliard__scratch__data_8h_source.html#l00359">359</a> of file <a class="el" href="cahn__hilliard__scratch__data_8h_source.html">cahn_hilliard_scratch_data.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cahn__hilliard__scratch__data_8h_source.html#l00338">338</a> of file <a class="el" href="cahn__hilliard__scratch__data_8h_source.html">cahn_hilliard_scratch_data.h</a>.</p>
 
 </div>
 </div>
@@ -1125,7 +1122,7 @@ template&lt;int dim&gt; </div>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="cahn__hilliard__scratch__data_8h_source.html#l00353">353</a> of file <a class="el" href="cahn__hilliard__scratch__data_8h_source.html">cahn_hilliard_scratch_data.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cahn__hilliard__scratch__data_8h_source.html#l00332">332</a> of file <a class="el" href="cahn__hilliard__scratch__data_8h_source.html">cahn_hilliard_scratch_data.h</a>.</p>
 
 </div>
 </div>
@@ -1143,7 +1140,7 @@ template&lt;int dim&gt; </div>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="cahn__hilliard__scratch__data_8h_source.html#l00368">368</a> of file <a class="el" href="cahn__hilliard__scratch__data_8h_source.html">cahn_hilliard_scratch_data.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cahn__hilliard__scratch__data_8h_source.html#l00347">347</a> of file <a class="el" href="cahn__hilliard__scratch__data_8h_source.html">cahn_hilliard_scratch_data.h</a>.</p>
 
 </div>
 </div>
@@ -1161,7 +1158,7 @@ template&lt;int dim&gt; </div>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="cahn__hilliard__scratch__data_8h_source.html#l00369">369</a> of file <a class="el" href="cahn__hilliard__scratch__data_8h_source.html">cahn_hilliard_scratch_data.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cahn__hilliard__scratch__data_8h_source.html#l00348">348</a> of file <a class="el" href="cahn__hilliard__scratch__data_8h_source.html">cahn_hilliard_scratch_data.h</a>.</p>
 
 </div>
 </div>
@@ -1179,7 +1176,7 @@ template&lt;int dim&gt; </div>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="cahn__hilliard__scratch__data_8h_source.html#l00367">367</a> of file <a class="el" href="cahn__hilliard__scratch__data_8h_source.html">cahn_hilliard_scratch_data.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cahn__hilliard__scratch__data_8h_source.html#l00346">346</a> of file <a class="el" href="cahn__hilliard__scratch__data_8h_source.html">cahn_hilliard_scratch_data.h</a>.</p>
 
 </div>
 </div>
@@ -1197,7 +1194,7 @@ template&lt;int dim&gt; </div>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="cahn__hilliard__scratch__data_8h_source.html#l00381">381</a> of file <a class="el" href="cahn__hilliard__scratch__data_8h_source.html">cahn_hilliard_scratch_data.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cahn__hilliard__scratch__data_8h_source.html#l00360">360</a> of file <a class="el" href="cahn__hilliard__scratch__data_8h_source.html">cahn_hilliard_scratch_data.h</a>.</p>
 
 </div>
 </div>
@@ -1215,7 +1212,7 @@ template&lt;int dim&gt; </div>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="cahn__hilliard__scratch__data_8h_source.html#l00385">385</a> of file <a class="el" href="cahn__hilliard__scratch__data_8h_source.html">cahn_hilliard_scratch_data.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cahn__hilliard__scratch__data_8h_source.html#l00364">364</a> of file <a class="el" href="cahn__hilliard__scratch__data_8h_source.html">cahn_hilliard_scratch_data.h</a>.</p>
 
 </div>
 </div>
@@ -1233,7 +1230,7 @@ template&lt;int dim&gt; </div>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="cahn__hilliard__scratch__data_8h_source.html#l00374">374</a> of file <a class="el" href="cahn__hilliard__scratch__data_8h_source.html">cahn_hilliard_scratch_data.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cahn__hilliard__scratch__data_8h_source.html#l00353">353</a> of file <a class="el" href="cahn__hilliard__scratch__data_8h_source.html">cahn_hilliard_scratch_data.h</a>.</p>
 
 </div>
 </div>
@@ -1251,7 +1248,7 @@ template&lt;int dim&gt; </div>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="cahn__hilliard__scratch__data_8h_source.html#l00370">370</a> of file <a class="el" href="cahn__hilliard__scratch__data_8h_source.html">cahn_hilliard_scratch_data.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cahn__hilliard__scratch__data_8h_source.html#l00349">349</a> of file <a class="el" href="cahn__hilliard__scratch__data_8h_source.html">cahn_hilliard_scratch_data.h</a>.</p>
 
 </div>
 </div>
@@ -1269,7 +1266,7 @@ template&lt;int dim&gt; </div>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="cahn__hilliard__scratch__data_8h_source.html#l00397">397</a> of file <a class="el" href="cahn__hilliard__scratch__data_8h_source.html">cahn_hilliard_scratch_data.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cahn__hilliard__scratch__data_8h_source.html#l00376">376</a> of file <a class="el" href="cahn__hilliard__scratch__data_8h_source.html">cahn_hilliard_scratch_data.h</a>.</p>
 
 </div>
 </div>
@@ -1287,7 +1284,7 @@ template&lt;int dim&gt; </div>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="cahn__hilliard__scratch__data_8h_source.html#l00343">343</a> of file <a class="el" href="cahn__hilliard__scratch__data_8h_source.html">cahn_hilliard_scratch_data.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cahn__hilliard__scratch__data_8h_source.html#l00322">322</a> of file <a class="el" href="cahn__hilliard__scratch__data_8h_source.html">cahn_hilliard_scratch_data.h</a>.</p>
 
 </div>
 </div>
@@ -1305,7 +1302,7 @@ template&lt;int dim&gt; </div>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="cahn__hilliard__scratch__data_8h_source.html#l00364">364</a> of file <a class="el" href="cahn__hilliard__scratch__data_8h_source.html">cahn_hilliard_scratch_data.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cahn__hilliard__scratch__data_8h_source.html#l00343">343</a> of file <a class="el" href="cahn__hilliard__scratch__data_8h_source.html">cahn_hilliard_scratch_data.h</a>.</p>
 
 </div>
 </div>
@@ -1323,7 +1320,7 @@ template&lt;int dim&gt; </div>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="cahn__hilliard__scratch__data_8h_source.html#l00378">378</a> of file <a class="el" href="cahn__hilliard__scratch__data_8h_source.html">cahn_hilliard_scratch_data.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cahn__hilliard__scratch__data_8h_source.html#l00357">357</a> of file <a class="el" href="cahn__hilliard__scratch__data_8h_source.html">cahn_hilliard_scratch_data.h</a>.</p>
 
 </div>
 </div>
@@ -1341,7 +1338,7 @@ template&lt;int dim&gt; </div>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="cahn__hilliard__scratch__data_8h_source.html#l00377">377</a> of file <a class="el" href="cahn__hilliard__scratch__data_8h_source.html">cahn_hilliard_scratch_data.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cahn__hilliard__scratch__data_8h_source.html#l00356">356</a> of file <a class="el" href="cahn__hilliard__scratch__data_8h_source.html">cahn_hilliard_scratch_data.h</a>.</p>
 
 </div>
 </div>
@@ -1359,7 +1356,7 @@ template&lt;int dim&gt; </div>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="cahn__hilliard__scratch__data_8h_source.html#l00348">348</a> of file <a class="el" href="cahn__hilliard__scratch__data_8h_source.html">cahn_hilliard_scratch_data.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cahn__hilliard__scratch__data_8h_source.html#l00327">327</a> of file <a class="el" href="cahn__hilliard__scratch__data_8h_source.html">cahn_hilliard_scratch_data.h</a>.</p>
 
 </div>
 </div>
@@ -1378,7 +1375,7 @@ template&lt;int dim&gt; </div>
 </div><div class="memdoc">
 <p>Scratch component for the Navier-Stokes component </p>
 
-<p class="definition">Definition at line <a class="el" href="cahn__hilliard__scratch__data_8h_source.html#l00393">393</a> of file <a class="el" href="cahn__hilliard__scratch__data_8h_source.html">cahn_hilliard_scratch_data.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cahn__hilliard__scratch__data_8h_source.html#l00372">372</a> of file <a class="el" href="cahn__hilliard__scratch__data_8h_source.html">cahn_hilliard_scratch_data.h</a>.</p>
 
 </div>
 </div>
@@ -1396,7 +1393,7 @@ template&lt;int dim&gt; </div>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="cahn__hilliard__scratch__data_8h_source.html#l00398">398</a> of file <a class="el" href="cahn__hilliard__scratch__data_8h_source.html">cahn_hilliard_scratch_data.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cahn__hilliard__scratch__data_8h_source.html#l00377">377</a> of file <a class="el" href="cahn__hilliard__scratch__data_8h_source.html">cahn_hilliard_scratch_data.h</a>.</p>
 
 </div>
 </div>
@@ -1414,7 +1411,7 @@ template&lt;int dim&gt; </div>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="cahn__hilliard__scratch__data_8h_source.html#l00396">396</a> of file <a class="el" href="cahn__hilliard__scratch__data_8h_source.html">cahn_hilliard_scratch_data.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cahn__hilliard__scratch__data_8h_source.html#l00375">375</a> of file <a class="el" href="cahn__hilliard__scratch__data_8h_source.html">cahn_hilliard_scratch_data.h</a>.</p>
 
 </div>
 </div>
