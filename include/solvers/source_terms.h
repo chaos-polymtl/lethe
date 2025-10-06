@@ -1,4 +1,4 @@
-// SPDX-FileCopyrightText: Copyright (c) 2019-2024 The Lethe Authors
+// SPDX-FileCopyrightText: Copyright (c) 2019-2025 The Lethe Authors
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
 // TODO : Refactor so the class itself is not a pointer, but contains a pointer

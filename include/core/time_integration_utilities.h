@@ -1,4 +1,4 @@
-// SPDX-FileCopyrightText: Copyright (c) 2020-2021 The Lethe Authors
+// SPDX-FileCopyrightText: Copyright (c) 2020-2025 The Lethe Authors
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
 #ifndef lethe_time_integration_utilities_h
