@@ -69,7 +69,8 @@ MFNavierStokesVANSPreconditionGMG<dim>::initialize(
           this->pf_force_dof_handlers[l].reinit(
             this->dof_handlers[l].get_triangulation());
           this->pf_force_dof_handlers[l].distribute_dofs(
-            particle_projector.particle_fluid_force.dof_handler.get_fe());
+            particle_projector.particle_fluid_force_without_drag.dof_handler
+              .get_fe());
         }
 
       this->transfers_void_fraction.resize(min_level, max_level);
@@ -111,7 +112,7 @@ MFNavierStokesVANSPreconditionGMG<dim>::initialize(
         });
 
       this->mg_transfer_gc_pf_force->build(
-        particle_projector.particle_fluid_force.dof_handler,
+        particle_projector.particle_fluid_force_without_drag.dof_handler,
         [&](const auto l, auto &vec) {
           vec.reinit(this->pf_force_dof_handlers[l].locally_owned_dofs(),
                      DoFTools::extract_locally_active_dofs(
@@ -134,13 +135,14 @@ MFNavierStokesVANSPreconditionGMG<dim>::initialize(
         mg_void_fraction_solution,
         particle_projector.void_fraction_solution);
 
-      particle_projector.particle_fluid_force.particle_field_solution
-        .update_ghost_values();
+      particle_projector.particle_fluid_force_without_drag
+        .particle_field_solution.update_ghost_values();
 
       this->mg_transfer_gc_pf_force->interpolate_to_mg(
-        particle_projector.particle_fluid_force.dof_handler,
+        particle_projector.particle_fluid_force_without_drag.dof_handler,
         mg_pf_forces_solution,
-        particle_projector.particle_fluid_force.particle_field_solution);
+        particle_projector.particle_fluid_force_without_drag
+          .particle_field_solution);
 
 
       for (unsigned int l = min_level; l <= max_level; l++)
@@ -443,12 +445,13 @@ FluidDynamicsVANSMatrixFree<dim>::solve()
               particle_projector.dof_handler,
               particle_projector.void_fraction_solution);
 
-            particle_projector.particle_fluid_force.particle_field_solution
-              .update_ghost_values();
+            particle_projector.particle_fluid_force_without_drag
+              .particle_field_solution.update_ghost_values();
 
             mf_operator->compute_particle_fluid_force(
-              particle_projector.particle_fluid_force.dof_handler,
-              particle_projector.particle_fluid_force.particle_field_solution);
+              particle_projector.particle_fluid_force_without_drag.dof_handler,
+              particle_projector.particle_fluid_force_without_drag
+                .particle_field_solution);
           }
       }
 

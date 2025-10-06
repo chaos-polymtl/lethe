@@ -57,26 +57,32 @@ namespace DEM
      */
     enum PropertiesIndex : int
     {
-      type                    = 0,
-      dp                      = 1,
-      mass                    = 2,
-      v_x                     = 3,
-      v_y                     = 4,
-      v_z                     = 5,
-      omega_x                 = 6,
-      omega_y                 = 7,
-      omega_z                 = 8,
-      fem_force_x             = 9,
-      fem_force_y             = 10,
-      fem_force_z             = 11,
-      fem_drag_x              = 12,
-      fem_drag_y              = 13,
-      fem_drag_z              = 14,
-      fem_torque_x            = 15,
-      fem_torque_y            = 16,
-      fem_torque_z            = 17,
-      volumetric_contribution = 18,
-      n_properties            = 19
+      type    = 0,
+      dp      = 1,
+      mass    = 2,
+      v_x     = 3,
+      v_y     = 4,
+      v_z     = 5,
+      omega_x = 6,
+      omega_y = 7,
+      omega_z = 8,
+      // FEM forces which are applied on both the FEM and the fluid side
+      fem_force_x           = 9,
+      fem_force_y           = 10,
+      fem_force_z           = 11,
+      fem_force_part_only_x = 12,
+      fem_force_part_only_y = 13,
+      fem_force_part_only_z = 14,
+      // Drag force that derives from an interaction between an FEM fluid and
+      // the particles
+      fem_drag_x              = 15,
+      fem_drag_y              = 16,
+      fem_drag_z              = 17,
+      fem_torque_x            = 18,
+      fem_torque_y            = 19,
+      fem_torque_z            = 20,
+      volumetric_contribution = 21,
+      n_properties            = 22
     };
   } // namespace CFDDEMProperties
 

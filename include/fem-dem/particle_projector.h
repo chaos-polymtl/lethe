@@ -251,7 +251,12 @@ public:
     , particle_handler(particle_handler)
     , particle_have_been_projected(false)
     , particle_velocity(triangulation, fe_degree, simplex, true, false)
-    , particle_fluid_force(triangulation, fe_degree, simplex, false, true)
+    , particle_fluid_force_without_drag(triangulation,
+                                        fe_degree,
+                                        simplex,
+                                        false,
+                                        true)
+    , particle_drag(triangulation, fe_degree, simplex, false, true)
   {
     if (simplex)
       {
@@ -688,6 +693,9 @@ public:
     particle_velocity;
 
   ParticleFieldQCM<dim, 3, DEM::CFDDEMProperties::PropertiesIndex::fem_force_x>
-    particle_fluid_force;
+    particle_fluid_force_without_drag;
+
+  ParticleFieldQCM<dim, 3, DEM::CFDDEMProperties::PropertiesIndex::fem_drag_x>
+    particle_drag;
 };
 #endif
