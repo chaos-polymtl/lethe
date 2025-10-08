@@ -218,13 +218,6 @@ public:
   compute_element_size();
 
   /**
-   * @brief Compute the element center of the cells required to calculate
-   * the rotor radius when mortar is enablede.
-   */
-  void
-  compute_element_center();
-
-  /**
    * @brief Precompute forcing term.
    */
   void
@@ -358,14 +351,6 @@ public:
    */
   const AlignedVector<VectorizedArray<number>>
   get_element_size() const;
-
-  // /**
-  //  * @brief Get the element center object.
-  //  *
-  //  * @return Aligned vector with the cell center of all elements.
-  //  */
-  // const AlignedVector<VectorizedArray<number>>
-  // get_element_center() const;
 
   /**
    * @brief Compute the diagonal of the operator using an optimized MatrixFree
@@ -573,12 +558,6 @@ protected:
    *
    */
   AlignedVector<VectorizedArray<number>> element_size;
-
-  /**
-   * @brief Aligned vector to store the element center of all the elements.
-   *
-   */
-  AlignedVector<VectorizedArray<number>> element_center[dim];
 
   /**
    * @brief Finite element degree for the operator.

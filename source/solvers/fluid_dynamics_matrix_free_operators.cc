@@ -192,9 +192,6 @@ NavierStokesOperatorBase<dim, number>::reinit(
 
   this->compute_element_size();
 
-  if (enable_mortar)
-    this->compute_element_center();
-
   this->compute_forcing_term();
 
   bool_dof_mask = create_bool_dof_mask(dof_handler.get_fe(), quadrature);
@@ -278,26 +275,6 @@ NavierStokesOperatorBase<dim, number>::compute_element_size()
 
           element_size[cell][lane] = compute_cell_diameter<dim>(h_k, fe_degree);
         }
-    }
-}
-
-template <int dim, typename number>
-void
-NavierStokesOperatorBase<dim, number>::compute_element_center()
-{
-  const unsigned int n_cells =
-    matrix_free.n_cell_batches() + matrix_free.n_ghost_cell_batches();
-  for (unsigned int d = 0; d < dim; d++)
-    element_center[d].resize(n_cells);
-
-  for (unsigned int cell = 0; cell < n_cells; ++cell)
-    {
-      for (auto lane = 0u;
-           lane < matrix_free.n_active_entries_per_cell_batch(cell);
-           lane++)
-           for (unsigned int d = 0; d < dim; d++)
-            element_center[d][cell][lane] =
-              matrix_free.get_cell_iterator(cell, lane)->center()[d];
     }
 }
 
@@ -1117,7 +1094,8 @@ NavierStokesOperatorBase<dim, number>::evaluate_velocity_ale(
 {
   this->timer.enter_subsection("operator::evaluate_velocity_ale");
 
-  const unsigned int n_cells = matrix_free.n_cell_batches();
+  const unsigned int n_cells =
+    matrix_free.n_cell_batches() + matrix_free.n_ghost_cell_batches();
 
   FECellIntegrator integrator(matrix_free);
 
@@ -1125,7 +1103,7 @@ NavierStokesOperatorBase<dim, number>::evaluate_velocity_ale(
 
   // Set appropriate size for tables
   velocity_ale.reinit(n_cells, integrator.n_q_points);
-  
+
   // Get updated rotor angular velocity
   rotor_angular_velocity->set_time(
     this->simulation_control->get_current_time());
@@ -1134,34 +1112,35 @@ NavierStokesOperatorBase<dim, number>::evaluate_velocity_ale(
 
   for (unsigned int cell = 0; cell < n_cells; ++cell)
     {
-      // Get previously stored cell center
-      // Compute radius between center of rotation and current cell center
-      Tensor<1, dim, VectorizedArray<number>> cell_center;
-      VectorizedArray<number> dist;
-      for (unsigned int d = 0; d < dim; d++)
+      integrator.reinit(cell);
+      for (auto lane = 0u;
+           lane < matrix_free.n_active_entries_per_cell_batch(cell);
+           lane++)
         {
-          cell_center[d] =
-            integrator.read_cell_data(this->element_center[d]);
-          VectorizedArray<number> aux = cell_center[d] - center_of_rotation[d];
-          dist += aux * aux;
-        }
-      
-      auto radius_current = std::sqrt(dist);
+          // Compute radial distance from the current cell
+          const auto cell_center =
+            matrix_free.get_cell_iterator(cell, lane)->center();
+          const auto radius_current = cell_center.distance(center_of_rotation);
 
-      // Use prescribed rotor angular velocity only if cell is part of the rotor
-      double cell_rotor_angular_velocity;
-      if (radius_current > radius)
-        cell_rotor_angular_velocity = 0.0;
-      else
-        cell_rotor_angular_velocity = rotor_angular_velocity_value;
+          // Use prescribed rotor angular velocity only if cell is part of the
+          // rotor
+          double cell_rotor_angular_velocity;
+          if (radius_current > radius)
+            cell_rotor_angular_velocity = 0.0;
+          else
+            cell_rotor_angular_velocity = rotor_angular_velocity_value;
 
-      for (const auto q : integrator.quadrature_point_indices())
-        {
-          const auto x = integrator.quadrature_point(q)[0];
-          const auto y = integrator.quadrature_point(q)[1];
+          // Compute linear velocity at quadrature points
+          for (const auto q : integrator.quadrature_point_indices())
+            {
+              const auto x = integrator.quadrature_point(q)[0][lane];
+              const auto y = integrator.quadrature_point(q)[1][lane];
 
-          this->velocity_ale[cell][q][0] = -cell_rotor_angular_velocity * y;
-          this->velocity_ale[cell][q][1] = cell_rotor_angular_velocity * x;
+              this->velocity_ale[cell][q][0][lane] =
+                -cell_rotor_angular_velocity * y;
+              this->velocity_ale[cell][q][1][lane] =
+                cell_rotor_angular_velocity * x;
+            }
         }
     }
 
