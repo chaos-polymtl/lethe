@@ -1420,7 +1420,6 @@ ParticleProjector<dim>::calculate_particle_fluid_forces_projection(
     ExcMessage(
       "The projection of the particle-fluid force onto the mesh requires that the QCM method be used for the calculation of the void fraction."));
 
-  announce_string(this->pcout, "Particle-fluid forces");
 
   // We aim to project the particle-fluid forces. To maximize code reuse, we
   // currently reuse the particle-fluid force model architecture. The projection
@@ -1596,7 +1595,9 @@ ParticleProjector<dim>::calculate_particle_fluid_forces_projection(
   particle_handler->update_ghost_particles();
 
   // We project both the fluid force (without drag) and the drag force.
+  announce_string(this->pcout, "Particle-fluid forces");
   calculate_field_projection(particle_fluid_force_two_way_coupling);
+  announce_string(this->pcout, "Particle-fluid drag");
   calculate_field_projection(particle_fluid_drag);
 }
 
