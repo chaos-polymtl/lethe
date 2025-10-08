@@ -189,16 +189,10 @@ InsertionFile<dim, PropertiesIndex>::
                                    DEM::CFDDEMProperties::PropertiesIndex>)
         {
           // Push back all zero variables for the CFD-DEM coupling properties
-          // fem_force variable
-          for (unsigned int d = 0; d < dim; ++d)
+          for (unsigned int i = properties_of_one_particle.size();
+               i < PropertiesIndex::n_properties;
+               ++i)
             properties_of_one_particle.push_back(0.);
-
-          // fem_torque variable
-          for (unsigned int d = 0; d < dim; ++d)
-            properties_of_one_particle.push_back(0.);
-
-          // volumetric contribution
-          properties_of_one_particle.push_back(0.);
         }
 
       particle_properties.push_back(properties_of_one_particle);

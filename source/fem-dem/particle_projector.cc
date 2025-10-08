@@ -148,8 +148,12 @@ ParticleProjector<dim>::setup_dofs()
   if (void_fraction_parameters->project_particle_velocity)
     particle_velocity.setup_dofs();
 
-  // BB right now this is hardcoded to be true, but it should not be.
-  particle_fluid_force.setup_dofs();
+  // TODO BB both these fields are always set-up even if they are not used. This
+  // is ok since this will just take a little bit of extra memory. If this
+  // becomes an issue, we can enable/disable their allocation with an additional
+  // bool parameter inside the CFD-DEM parameters.
+  particle_fluid_force_two_way_coupling.setup_dofs();
+  particle_fluid_drag.setup_dofs();
 }
 
 
@@ -1416,7 +1420,6 @@ ParticleProjector<dim>::calculate_particle_fluid_forces_projection(
     ExcMessage(
       "The projection of the particle-fluid force onto the mesh requires that the QCM method be used for the calculation of the void fraction."));
 
-  announce_string(this->pcout, "Particle-fluid forces");
 
   // We aim to project the particle-fluid forces. To maximize code reuse, we
   // currently reuse the particle-fluid force model architecture. The projection
@@ -1482,15 +1485,47 @@ ParticleProjector<dim>::calculate_particle_fluid_forces_projection(
         }
     }
 
-  if (cfd_dem_parameters.pressure_force == true)
-    // Pressure Force
+  if (cfd_dem_parameters.saffman_lift_force == true)
+    // Saffman Mei Lift Force Assembler
     particle_fluid_assemblers.push_back(
-      std::make_shared<VANSAssemblerPressureForce<dim>>(cfd_dem_parameters));
+      std::make_shared<VANSAssemblerSaffmanMei<dim>>());
 
-  if (cfd_dem_parameters.shear_force == true)
-    // Shear Force
+  if (cfd_dem_parameters.magnus_lift_force == true)
+    // Magnus Lift Force Assembler
     particle_fluid_assemblers.push_back(
-      std::make_shared<VANSAssemblerShearForce<dim>>(cfd_dem_parameters));
+      std::make_shared<VANSAssemblerMagnus<dim>>());
+
+  if (cfd_dem_parameters.rotational_viscous_torque == true)
+    // Viscous Torque Assembler
+    particle_fluid_assemblers.push_back(
+      std::make_shared<VANSAssemblerViscousTorque<dim>>());
+
+  if (cfd_dem_parameters.vortical_viscous_torque == true)
+    // Vortical Torque Assembler
+    particle_fluid_assemblers.push_back(
+      std::make_shared<VANSAssemblerVorticalTorque<dim>>());
+
+  // If the VANS model if model B, then the pressure and shear forces
+  // will be applied on both the particles and the fluid. Otherwise,
+  // they will be applied only on the particles
+  if (cfd_dem_parameters.vans_model == Parameters::VANSModel::modelB)
+    {
+      if (cfd_dem_parameters.pressure_force == true)
+        // Pressure Force
+        particle_fluid_assemblers.push_back(
+          std::make_shared<VANSAssemblerPressureForce<dim>>(
+            cfd_dem_parameters));
+
+      if (cfd_dem_parameters.shear_force == true)
+        // Shear Force
+        particle_fluid_assemblers.push_back(
+          std::make_shared<VANSAssemblerShearForce<dim>>(cfd_dem_parameters));
+    }
+
+  AssertThrow(
+    cfd_dem_parameters.buoyancy_force == false,
+    ExcMessage(
+      "The use of the buoyancy force is currently not supported with the volume-projection mechanism for the particle-fluid forces."));
 
   scratch_data.enable_void_fraction(*fe, *quadrature, *mapping);
 
@@ -1559,9 +1594,11 @@ ParticleProjector<dim>::calculate_particle_fluid_forces_projection(
   // Ghost particles need to be updated to take into account the new drag force
   particle_handler->update_ghost_particles();
 
-  // In the present time, we just do the projection of the field after this
-  // calculation using the existing function
-  calculate_field_projection(particle_fluid_force);
+  // We project both the fluid force (without drag) and the drag force.
+  announce_string(this->pcout, "Particle-fluid forces");
+  calculate_field_projection(particle_fluid_force_two_way_coupling);
+  announce_string(this->pcout, "Particle-fluid drag");
+  calculate_field_projection(particle_fluid_drag);
 }
 
 

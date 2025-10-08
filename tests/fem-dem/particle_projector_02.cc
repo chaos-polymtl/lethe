@@ -1,4 +1,4 @@
-// SPDX-FileCopyrightText: Copyright (c) 2015 The Lethe Authors
+// SPDX-FileCopyrightText: Copyright (c) 2015-2025 The Lethe Authors
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
 /**
@@ -156,10 +156,11 @@ test_void_fraction_qcm(const unsigned int fe_degree,
       particle_properties[DEM::CFDDEMProperties::dp] = dp;
       for (unsigned int d = 0; d < 3; ++d)
         {
-          particle_properties[DEM::CFDDEMProperties::fem_force_x + d] =
-            force_distribution.value(particle->get_location(), d);
-          total_particle_force_on_particles[d] +=
-            particle_properties[DEM::CFDDEMProperties::fem_force_x + d];
+          particle_properties
+            [DEM::CFDDEMProperties::fem_force_two_way_coupling_x + d] =
+              force_distribution.value(particle->get_location(), d);
+          total_particle_force_on_particles[d] += particle_properties
+            [DEM::CFDDEMProperties::fem_force_two_way_coupling_x + d];
         }
     }
 
@@ -206,7 +207,7 @@ test_void_fraction_qcm(const unsigned int fe_degree,
   // Calculate the force projection
   // For this we only need to calculate the field projection!
   particle_projector.calculate_field_projection(
-    particle_projector.particle_fluid_force);
+    particle_projector.particle_fluid_force_two_way_coupling);
 
 
   for (unsigned int r = 0; r < n_procs; ++r)
@@ -214,9 +215,9 @@ test_void_fraction_qcm(const unsigned int fe_degree,
       if (my_rank == r)
         {
           deallog << "Rank " << r << " owns: ";
-          for (auto i = particle_projector.particle_fluid_force
+          for (auto i = particle_projector.particle_fluid_force_two_way_coupling
                           .particle_field_solution.begin();
-               i < particle_projector.particle_fluid_force
+               i < particle_projector.particle_fluid_force_two_way_coupling
                      .particle_field_solution.end();
                ++i)
             deallog << *i << " ";
@@ -226,22 +227,24 @@ test_void_fraction_qcm(const unsigned int fe_degree,
     }
 
   // Integrate the force field over the cells to check force conservation
-  FEValues<3> fe_values(*particle_projector.mapping,
-                        *particle_projector.particle_fluid_force.fe,
-                        *particle_projector.quadrature,
-                        update_values | update_JxW_values);
+  FEValues<3> fe_values(
+    *particle_projector.mapping,
+    *particle_projector.particle_fluid_force_two_way_coupling.fe,
+    *particle_projector.quadrature,
+    update_values | update_JxW_values);
 
   // Field extractor if dim components are used
   FEValuesExtractors::Vector vector_extractor;
   vector_extractor.first_vector_component = 0;
   Tensor<1, 3>              total_particle_force_on_fluid({0, 0, 0});
   std::vector<Tensor<1, 3>> force_values(fe_values.n_quadrature_points);
-  for (auto cell : particle_projector.particle_fluid_force.dof_handler
-                     .active_cell_iterators())
+  for (auto cell : particle_projector.particle_fluid_force_two_way_coupling
+                     .dof_handler.active_cell_iterators())
     {
       fe_values.reinit((cell));
       fe_values[vector_extractor].get_function_values(
-        particle_projector.particle_fluid_force.particle_field_solution,
+        particle_projector.particle_fluid_force_two_way_coupling
+          .particle_field_solution,
         force_values);
       for (unsigned int q = 0; q < fe_values.n_quadrature_points; ++q)
         total_particle_force_on_fluid +=
@@ -259,8 +262,9 @@ test_void_fraction_qcm(const unsigned int fe_degree,
                                particle_projector.void_fraction_solution,
                                "void_fraction");
       data_out.add_data_vector(
-        particle_projector.particle_fluid_force.dof_handler,
-        particle_projector.particle_fluid_force.particle_field_solution,
+        particle_projector.particle_fluid_force_two_way_coupling.dof_handler,
+        particle_projector.particle_fluid_force_two_way_coupling
+          .particle_field_solution,
         "force_pf");
       data_out.build_patches();
 

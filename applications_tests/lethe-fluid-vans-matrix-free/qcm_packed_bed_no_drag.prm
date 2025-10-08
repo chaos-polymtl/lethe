@@ -86,6 +86,7 @@ subsection cfd-dem
   set vans model     = modelA
   set pressure force = false
   set shear force    = false
+  set buoyancy force = false
 end
 
 #---------------------------------------------------

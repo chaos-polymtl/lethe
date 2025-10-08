@@ -22,6 +22,11 @@ Void Fraction
 Particle-fluid forces
 ----------------------
   -Tolerance of iterative solver is : 1e-12
+  -Iterative solver took : 0 steps 
+--------------------
+Particle-fluid drag
+--------------------
+  -Tolerance of iterative solver is : 1e-12
   -Iterative solver took : 3 steps 
 
   -Eigenvalue estimation level 0:
@@ -157,6 +162,11 @@ Void Fraction
 ----------------------
 Particle-fluid forces
 ----------------------
+  -Tolerance of iterative solver is : 1e-12
+  -Iterative solver took : 0 steps 
+--------------------
+Particle-fluid drag
+--------------------
   -Tolerance of iterative solver is : 1e-12
   -Iterative solver took : 6 steps 
 
@@ -294,6 +304,11 @@ Void Fraction
 Particle-fluid forces
 ----------------------
   -Tolerance of iterative solver is : 1e-12
+  -Iterative solver took : 0 steps 
+--------------------
+Particle-fluid drag
+--------------------
+  -Tolerance of iterative solver is : 1e-12
   -Iterative solver took : 5 steps 
 
   -Eigenvalue estimation level 0:
@@ -429,6 +444,11 @@ Void Fraction
 ----------------------
 Particle-fluid forces
 ----------------------
+  -Tolerance of iterative solver is : 1e-12
+  -Iterative solver took : 0 steps 
+--------------------
+Particle-fluid drag
+--------------------
   -Tolerance of iterative solver is : 1e-12
   -Iterative solver took : 5 steps 
 
@@ -566,6 +586,11 @@ Void Fraction
 Particle-fluid forces
 ----------------------
   -Tolerance of iterative solver is : 1e-12
+  -Iterative solver took : 0 steps 
+--------------------
+Particle-fluid drag
+--------------------
+  -Tolerance of iterative solver is : 1e-12
   -Iterative solver took : 5 steps 
 
   -Eigenvalue estimation level 0:
@@ -701,6 +726,11 @@ Void Fraction
 ----------------------
 Particle-fluid forces
 ----------------------
+  -Tolerance of iterative solver is : 1e-12
+  -Iterative solver took : 0 steps 
+--------------------
+Particle-fluid drag
+--------------------
   -Tolerance of iterative solver is : 1e-12
   -Iterative solver took : 5 steps 
 
@@ -838,6 +868,11 @@ Void Fraction
 Particle-fluid forces
 ----------------------
   -Tolerance of iterative solver is : 1e-12
+  -Iterative solver took : 0 steps 
+--------------------
+Particle-fluid drag
+--------------------
+  -Tolerance of iterative solver is : 1e-12
   -Iterative solver took : 5 steps 
 
   -Eigenvalue estimation level 0:
@@ -973,6 +1008,11 @@ Void Fraction
 ----------------------
 Particle-fluid forces
 ----------------------
+  -Tolerance of iterative solver is : 1e-12
+  -Iterative solver took : 0 steps 
+--------------------
+Particle-fluid drag
+--------------------
   -Tolerance of iterative solver is : 1e-12
   -Iterative solver took : 5 steps 
 
@@ -1110,6 +1150,11 @@ Void Fraction
 Particle-fluid forces
 ----------------------
   -Tolerance of iterative solver is : 1e-12
+  -Iterative solver took : 0 steps 
+--------------------
+Particle-fluid drag
+--------------------
+  -Tolerance of iterative solver is : 1e-12
   -Iterative solver took : 5 steps 
 
   -Eigenvalue estimation level 0:
@@ -1245,6 +1290,11 @@ Void Fraction
 ----------------------
 Particle-fluid forces
 ----------------------
+  -Tolerance of iterative solver is : 1e-12
+  -Iterative solver took : 0 steps 
+--------------------
+Particle-fluid drag
+--------------------
   -Tolerance of iterative solver is : 1e-12
   -Iterative solver took : 5 steps 
 
