@@ -251,12 +251,12 @@ public:
     , particle_handler(particle_handler)
     , particle_have_been_projected(false)
     , particle_velocity(triangulation, fe_degree, simplex, true, false)
-    , particle_fluid_force_without_drag(triangulation,
-                                        fe_degree,
-                                        simplex,
-                                        false,
-                                        true)
-    , particle_drag(triangulation, fe_degree, simplex, false, true)
+    , particle_fluid_force_two_way_coupling(triangulation,
+                                            fe_degree,
+                                            simplex,
+                                            false,
+                                            true)
+    , particle_fluid_drag(triangulation, fe_degree, simplex, false, true)
   {
     if (simplex)
       {
@@ -689,16 +689,21 @@ private:
   bool particle_have_been_projected;
 
 public:
+  /// Projector used to save the particle velocity field onto the mesh
   ParticleFieldQCM<dim, 3, DEM::CFDDEMProperties::PropertiesIndex::v_x>
     particle_velocity;
 
+  /// Projector used to save the forces used in the two-way coupling scheme,
+  /// without drag.
   ParticleFieldQCM<
     dim,
     3,
     DEM::CFDDEMProperties::PropertiesIndex::fem_force_two_way_coupling_x>
-    particle_fluid_force_without_drag;
+    particle_fluid_force_two_way_coupling;
 
+  /// Projector used to store the drag force. The drag is stored as a seperate
+  /// field since we may want to make implicit calculations of it.
   ParticleFieldQCM<dim, 3, DEM::CFDDEMProperties::PropertiesIndex::fem_drag_x>
-    particle_drag;
+    particle_fluid_drag;
 };
 #endif

@@ -152,8 +152,8 @@ ParticleProjector<dim>::setup_dofs()
   // is ok since this will just take a little bit of extra memory If this
   // becomes an issue, we can enable/disable their allocation with an additional
   // bool parameter inside the CFD-DEM parameters.
-  particle_fluid_force_without_drag.setup_dofs();
-  particle_drag.setup_dofs();
+  particle_fluid_force_two_way_coupling.setup_dofs();
+  particle_fluid_drag.setup_dofs();
 }
 
 
@@ -1596,8 +1596,8 @@ ParticleProjector<dim>::calculate_particle_fluid_forces_projection(
   particle_handler->update_ghost_particles();
 
   // We project both the fluid force (without drag) and the drag force.
-  calculate_field_projection(particle_fluid_force_without_drag);
-  calculate_field_projection(particle_drag);
+  calculate_field_projection(particle_fluid_force_two_way_coupling);
+  calculate_field_projection(particle_fluid_drag);
 }
 
 

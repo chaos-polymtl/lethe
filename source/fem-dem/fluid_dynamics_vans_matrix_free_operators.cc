@@ -108,7 +108,9 @@ template <int dim, typename number>
 void
 VANSOperator<dim, number>::compute_particle_fluid_force(
   const DoFHandler<dim>                            &pf_force_dof_handler,
-  const LinearAlgebra::distributed::Vector<double> &pf_force_solution)
+  const LinearAlgebra::distributed::Vector<double> &pf_force_solution,
+  const DoFHandler<dim>                            &pf_drag_dof_handler,
+  const LinearAlgebra::distributed::Vector<double> &pf_drag_solution)
 {
   this->timer.enter_subsection("operator::compute_particle_fluid_forces");
 
@@ -117,12 +119,20 @@ VANSOperator<dim, number>::compute_particle_fluid_force(
 
   particle_fluid_force.reinit(n_cells, integrator.n_q_points);
 
-  FEValues<dim> fe_values(*(this->matrix_free.get_mapping_info().mapping),
-                          pf_force_dof_handler.get_fe(),
-                          this->matrix_free.get_quadrature(),
-                          update_values);
+  FEValues<dim> fe_values_force(*(this->matrix_free.get_mapping_info().mapping),
+                                pf_force_dof_handler.get_fe(),
+                                this->matrix_free.get_quadrature(),
+                                update_values);
 
-  std::vector<Tensor<1, dim>> cell_pf_force(fe_values.n_quadrature_points);
+  FEValues<dim> fe_values_drag(*(this->matrix_free.get_mapping_info().mapping),
+                               pf_force_dof_handler.get_fe(),
+                               this->matrix_free.get_quadrature(),
+                               update_values);
+
+  std::vector<Tensor<1, dim>> cell_pf_force(
+    fe_values_force.n_quadrature_points);
+  std::vector<Tensor<1, dim>> cell_pf_drag(fe_values_force.n_quadrature_points);
+
   constexpr FEValuesExtractors::Vector force(0);
 
   for (unsigned int cell = 0; cell < n_cells; ++cell)
@@ -131,17 +141,26 @@ VANSOperator<dim, number>::compute_particle_fluid_force(
            lane < this->matrix_free.n_active_entries_per_cell_batch(cell);
            lane++)
         {
-          fe_values.reinit(this->matrix_free.get_cell_iterator(cell, lane)
-                             ->as_dof_handler_iterator(pf_force_dof_handler));
+          fe_values_force.reinit(
+            this->matrix_free.get_cell_iterator(cell, lane)
+              ->as_dof_handler_iterator(pf_force_dof_handler));
 
-          fe_values[force].get_function_values(pf_force_solution,
-                                               cell_pf_force);
+          fe_values_force[force].get_function_values(pf_force_solution,
+                                                     cell_pf_force);
 
-          for (const auto q : fe_values.quadrature_point_indices())
+          fe_values_drag.reinit(
+            this->matrix_free.get_cell_iterator(cell, lane)
+              ->as_dof_handler_iterator(pf_drag_dof_handler));
+
+          fe_values_force[force].get_function_values(pf_drag_solution,
+                                                     cell_pf_drag);
+
+          for (const auto q : fe_values_force.quadrature_point_indices())
             {
               for (unsigned int c = 0; c < dim; ++c)
                 {
-                  particle_fluid_force[cell][q][c][lane] = cell_pf_force[q][c];
+                  particle_fluid_force[cell][q][c][lane] =
+                    cell_pf_force[q][c] + cell_pf_drag[q][c];
                 }
             }
         }

@@ -61,16 +61,20 @@ public:
   /**
    * @brief Compute the terms the particle-fluid (pf) forces at the fluid quadrature points.
    *
-   * @param[in] pf_dof_handler The dof handler associated with the
-   * particle-fluid forces
-   *
-   * @param[in] pf_solution The solution of the particle-fluid forces
+   * @param[in] pf_force_dof_handler The dof handler associated with the
+   * particle-fluid forces.
+   * @param[in] pf_force_solution The solution of the particle-fluid forces.
+   * @param[in] pf_drag_dof_handler The dof handler associated with the
+   * drag force.
+   * @param[in] pf_drag_solution The solution of the drag force.
    *
    */
   void
   compute_particle_fluid_force(
-    const DoFHandler<dim>                            &pf_dof_handler,
-    const LinearAlgebra::distributed::Vector<double> &pf_solution);
+    const DoFHandler<dim>                            &pf_force_dof_handler,
+    const LinearAlgebra::distributed::Vector<double> &pf_force_solution,
+    const DoFHandler<dim>                            &pf_drag_dof_handler,
+    const LinearAlgebra::distributed::Vector<double> &pf_drag_solution);
 
 protected:
   /**
