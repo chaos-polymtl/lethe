@@ -149,7 +149,7 @@ ParticleProjector<dim>::setup_dofs()
     particle_velocity.setup_dofs();
 
   // TODO BB both these fields are always set-up even if they are not used. This
-  // is ok since this will just take a little bit of extra memory If this
+  // is ok since this will just take a little bit of extra memory. If this
   // becomes an issue, we can enable/disable their allocation with an additional
   // bool parameter inside the CFD-DEM parameters.
   particle_fluid_force_two_way_coupling.setup_dofs();
