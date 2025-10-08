@@ -488,6 +488,9 @@ FluidDynamicsVANSMatrixFree<dim>::solve()
             particle_projector.particle_fluid_force_two_way_coupling
               .particle_field_solution.update_ghost_values();
 
+            particle_projector.particle_fluid_drag.particle_field_solution
+              .update_ghost_values();
+
             mf_operator->compute_particle_fluid_force(
               particle_projector.particle_fluid_force_two_way_coupling
                 .dof_handler,
