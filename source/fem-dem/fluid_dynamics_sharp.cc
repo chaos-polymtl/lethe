@@ -1664,10 +1664,6 @@ FluidDynamicsSharp<dim>::write_force_ib()
             std::ofstream output(filename.c_str());
 
             table_p[p].write_text(output);
-            std::string filename_residual =
-              this->simulation_parameters.simulation_control.output_folder +
-              "residual" + ".dat";
-            std::ofstream output_residual(filename_residual.c_str());
           }
         MPI_Barrier(this->mpi_communicator);
       }
@@ -2759,8 +2755,10 @@ FluidDynamicsSharp<dim>::finish_time_step_particles()
   const unsigned int group_files =
     this->simulation_parameters.simulation_control.group_files;
 
-  // We only write the particle pvd when outputs are enabled
-  if (this->simulation_control->output_enabled())
+  // We only write the particle pvd when outputs are enabled and the current
+  // iteration is an output iteration. (same as the fluid pvd)
+  if (this->simulation_control->output_enabled() &&
+      this->simulation_control->is_output_iteration())
     {
       // If the processor id is id=0 we write the particles pvd
       if (Utilities::MPI::this_mpi_process(this->mpi_communicator) == 0)
@@ -2862,25 +2860,22 @@ FluidDynamicsSharp<dim>::finish_time_step_particles()
           table_all_p.set_precision(
             "T_x",
             this->simulation_parameters.simulation_control.log_precision);
-          if (some_particles_are_coupled)
-            {
-              table_p[p].add_value("omega_x", particles[p].omega[0]);
-              table_p[p].set_precision(
-                "omega_x",
-                this->simulation_parameters.simulation_control.log_precision);
-              table_p[p].add_value("theta_x", particles[p].orientation[0]);
-              table_p[p].set_precision(
-                "theta_x",
-                this->simulation_parameters.simulation_control.log_precision);
-              table_all_p.add_value("omega_x", particles[p].omega[0]);
-              table_all_p.set_precision(
-                "omega_x",
-                this->simulation_parameters.simulation_control.log_precision);
-              table_all_p.add_value("theta_x", particles[p].orientation[0]);
-              table_all_p.set_precision(
-                "theta_x",
-                this->simulation_parameters.simulation_control.log_precision);
-            }
+          table_p[p].add_value("omega_x", particles[p].omega[0]);
+          table_p[p].set_precision(
+            "omega_x",
+            this->simulation_parameters.simulation_control.log_precision);
+          table_p[p].add_value("theta_x", particles[p].orientation[0]);
+          table_p[p].set_precision(
+            "theta_x",
+            this->simulation_parameters.simulation_control.log_precision);
+          table_all_p.add_value("omega_x", particles[p].omega[0]);
+          table_all_p.set_precision(
+            "omega_x",
+            this->simulation_parameters.simulation_control.log_precision);
+          table_all_p.add_value("theta_x", particles[p].orientation[0]);
+          table_all_p.set_precision(
+            "theta_x",
+            this->simulation_parameters.simulation_control.log_precision);
 
           table_p[p].add_value("T_y", particles[p].fluid_torque[1]);
           table_p[p].set_precision(
@@ -2890,25 +2885,23 @@ FluidDynamicsSharp<dim>::finish_time_step_particles()
           table_all_p.set_precision(
             "T_y",
             this->simulation_parameters.simulation_control.log_precision);
-          if (some_particles_are_coupled)
-            {
-              table_p[p].add_value("omega_y", particles[p].omega[1]);
-              table_p[p].set_precision(
-                "omega_y",
-                this->simulation_parameters.simulation_control.log_precision);
-              table_p[p].add_value("theta_y", particles[p].orientation[1]);
-              table_p[p].set_precision(
-                "theta_y",
-                this->simulation_parameters.simulation_control.log_precision);
-              table_all_p.add_value("omega_y", particles[p].omega[1]);
-              table_all_p.set_precision(
-                "omega_y",
-                this->simulation_parameters.simulation_control.log_precision);
-              table_all_p.add_value("theta_y", particles[p].orientation[1]);
-              table_all_p.set_precision(
-                "theta_y",
-                this->simulation_parameters.simulation_control.log_precision);
-            }
+
+          table_p[p].add_value("omega_y", particles[p].omega[1]);
+          table_p[p].set_precision(
+            "omega_y",
+            this->simulation_parameters.simulation_control.log_precision);
+          table_p[p].add_value("theta_y", particles[p].orientation[1]);
+          table_p[p].set_precision(
+            "theta_y",
+            this->simulation_parameters.simulation_control.log_precision);
+          table_all_p.add_value("omega_y", particles[p].omega[1]);
+          table_all_p.set_precision(
+            "omega_y",
+            this->simulation_parameters.simulation_control.log_precision);
+          table_all_p.add_value("theta_y", particles[p].orientation[1]);
+          table_all_p.set_precision(
+            "theta_y",
+            this->simulation_parameters.simulation_control.log_precision);
         }
 
       table_p[p].add_value("T_z", particles[p].fluid_torque[2]);
@@ -2917,25 +2910,22 @@ FluidDynamicsSharp<dim>::finish_time_step_particles()
       table_all_p.add_value("T_z", particles[p].fluid_torque[2]);
       table_all_p.set_precision(
         "T_z", this->simulation_parameters.simulation_control.log_precision);
-      if (some_particles_are_coupled)
-        {
-          table_p[p].add_value("omega_z", particles[p].omega[2]);
-          table_p[p].set_precision(
-            "omega_z",
-            this->simulation_parameters.simulation_control.log_precision);
-          table_p[p].add_value("theta_z", particles[p].orientation[2]);
-          table_p[p].set_precision(
-            "theta_z",
-            this->simulation_parameters.simulation_control.log_precision);
-          table_all_p.add_value("omega_z", particles[p].omega[2]);
-          table_all_p.set_precision(
-            "omega_z",
-            this->simulation_parameters.simulation_control.log_precision);
-          table_all_p.add_value("theta_z", particles[p].orientation[2]);
-          table_all_p.set_precision(
-            "theta_z",
-            this->simulation_parameters.simulation_control.log_precision);
-        }
+      table_p[p].add_value("omega_z", particles[p].omega[2]);
+      table_p[p].set_precision(
+        "omega_z",
+        this->simulation_parameters.simulation_control.log_precision);
+      table_p[p].add_value("theta_z", particles[p].orientation[2]);
+      table_p[p].set_precision(
+        "theta_z",
+        this->simulation_parameters.simulation_control.log_precision);
+      table_all_p.add_value("omega_z", particles[p].omega[2]);
+      table_all_p.set_precision(
+        "omega_z",
+        this->simulation_parameters.simulation_control.log_precision);
+      table_all_p.add_value("theta_z", particles[p].orientation[2]);
+      table_all_p.set_precision(
+        "theta_z",
+        this->simulation_parameters.simulation_control.log_precision);
 
       table_p[p].add_value("f_x", particles[p].fluid_forces[0]);
       table_all_p.add_value("f_x", particles[p].fluid_forces[0]);
@@ -2943,26 +2933,19 @@ FluidDynamicsSharp<dim>::finish_time_step_particles()
         "f_x", this->simulation_parameters.simulation_control.log_precision);
       table_all_p.set_precision(
         "f_x", this->simulation_parameters.simulation_control.log_precision);
-      if (some_particles_are_coupled)
-        {
-          table_p[p].add_value("v_x", particles[p].velocity[0]);
-          table_p[p].add_value("p_x", particles[p].position[0]);
-          table_all_p.add_value("v_x", particles[p].velocity[0]);
-          table_all_p.add_value("p_x", particles[p].position[0]);
-          table_p[p].set_precision(
-            "v_x",
-            this->simulation_parameters.simulation_control.log_precision);
+      table_p[p].add_value("v_x", particles[p].velocity[0]);
+      table_p[p].add_value("p_x", particles[p].position[0]);
+      table_all_p.add_value("v_x", particles[p].velocity[0]);
+      table_all_p.add_value("p_x", particles[p].position[0]);
 
-          table_p[p].set_precision(
-            "p_x",
-            this->simulation_parameters.simulation_control.log_precision);
-          table_all_p.set_precision(
-            "v_x",
-            this->simulation_parameters.simulation_control.log_precision);
-          table_all_p.set_precision(
-            "p_x",
-            this->simulation_parameters.simulation_control.log_precision);
-        }
+      table_p[p].set_precision(
+        "v_x", this->simulation_parameters.simulation_control.log_precision);
+      table_p[p].set_precision(
+        "p_x", this->simulation_parameters.simulation_control.log_precision);
+      table_all_p.set_precision(
+        "v_x", this->simulation_parameters.simulation_control.log_precision);
+      table_all_p.set_precision(
+        "p_x", this->simulation_parameters.simulation_control.log_precision);
 
       table_p[p].add_value("f_y", particles[p].fluid_forces[1]);
       table_p[p].set_precision(
@@ -2970,25 +2953,18 @@ FluidDynamicsSharp<dim>::finish_time_step_particles()
       table_all_p.add_value("f_y", particles[p].fluid_forces[1]);
       table_all_p.set_precision(
         "f_y", this->simulation_parameters.simulation_control.log_precision);
-      if (some_particles_are_coupled)
-        {
-          table_p[p].add_value("v_y", particles[p].velocity[1]);
-          table_p[p].add_value("p_y", particles[p].position[1]);
-          table_all_p.add_value("v_y", particles[p].velocity[1]);
-          table_all_p.add_value("p_y", particles[p].position[1]);
-          table_p[p].set_precision(
-            "v_y",
-            this->simulation_parameters.simulation_control.log_precision);
-          table_p[p].set_precision(
-            "p_y",
-            this->simulation_parameters.simulation_control.log_precision);
-          table_all_p.set_precision(
-            "v_y",
-            this->simulation_parameters.simulation_control.log_precision);
-          table_all_p.set_precision(
-            "p_y",
-            this->simulation_parameters.simulation_control.log_precision);
-        }
+      table_p[p].add_value("v_y", particles[p].velocity[1]);
+      table_p[p].add_value("p_y", particles[p].position[1]);
+      table_all_p.add_value("v_y", particles[p].velocity[1]);
+      table_all_p.add_value("p_y", particles[p].position[1]);
+      table_p[p].set_precision(
+        "v_y", this->simulation_parameters.simulation_control.log_precision);
+      table_p[p].set_precision(
+        "p_y", this->simulation_parameters.simulation_control.log_precision);
+      table_all_p.set_precision(
+        "v_y", this->simulation_parameters.simulation_control.log_precision);
+      table_all_p.set_precision(
+        "p_y", this->simulation_parameters.simulation_control.log_precision);
 
       if constexpr (dim == 3)
         {
@@ -3000,25 +2976,22 @@ FluidDynamicsSharp<dim>::finish_time_step_particles()
           table_all_p.set_precision(
             "f_z",
             this->simulation_parameters.simulation_control.log_precision);
-          if (some_particles_are_coupled)
-            {
-              table_p[p].add_value("v_z", particles[p].velocity[2]);
-              table_p[p].add_value("p_z", particles[p].position[2]);
-              table_all_p.add_value("v_z", particles[p].velocity[2]);
-              table_all_p.add_value("p_z", particles[p].position[2]);
-              table_p[p].set_precision(
-                "v_z",
-                this->simulation_parameters.simulation_control.log_precision);
-              table_p[p].set_precision(
-                "p_z",
-                this->simulation_parameters.simulation_control.log_precision);
-              table_all_p.set_precision(
-                "v_z",
-                this->simulation_parameters.simulation_control.log_precision);
-              table_all_p.set_precision(
-                "p_z",
-                this->simulation_parameters.simulation_control.log_precision);
-            }
+          table_p[p].add_value("v_z", particles[p].velocity[2]);
+          table_p[p].add_value("p_z", particles[p].position[2]);
+          table_all_p.add_value("v_z", particles[p].velocity[2]);
+          table_all_p.add_value("p_z", particles[p].position[2]);
+          table_p[p].set_precision(
+            "v_z",
+            this->simulation_parameters.simulation_control.log_precision);
+          table_p[p].set_precision(
+            "p_z",
+            this->simulation_parameters.simulation_control.log_precision);
+          table_all_p.set_precision(
+            "v_z",
+            this->simulation_parameters.simulation_control.log_precision);
+          table_all_p.set_precision(
+            "p_z",
+            this->simulation_parameters.simulation_control.log_precision);
         }
 
       table_p[p].add_value("f_xv", particles[p].fluid_viscous_forces[0]);
