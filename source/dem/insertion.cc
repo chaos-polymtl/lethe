@@ -119,7 +119,7 @@ Insertion<dim, PropertiesIndex>::assign_particle_properties(
                                    DEM::CFDDEMProperties::PropertiesIndex>)
         {
           // Push back all zero variables for the CFD-DEM coupling properties
-          for (unsigned int i = properties_of_one_particle.size() - 1;
+          for (unsigned int i = properties_of_one_particle.size();
                i < PropertiesIndex::n_properties;
                ++i)
             properties_of_one_particle.push_back(0.);
