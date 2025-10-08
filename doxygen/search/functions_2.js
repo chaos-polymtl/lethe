@@ -294,7 +294,7 @@ var searchData=
   ['compute_5fn_5fsubdivisions_5fand_5fradius_3c_203_20_3e_291',['compute_n_subdivisions_and_radius&lt; 3 &gt;',['../mortar__coupling__manager_8cc.html#afe5f4809bde73073457c15066818d026',1,'mortar_coupling_manager.cc']]],
   ['compute_5fnumerical_5fjacobian_292',['compute_numerical_jacobian',['../classInterfaceTools_1_1SignedDistanceSolver.html#a552aee87e6b924ca48446700fd3349c3',1,'InterfaceTools::SignedDistanceSolver']]],
   ['compute_5fnumerical_5fjacobian_5fstencil_293',['compute_numerical_jacobian_stencil',['../classInterfaceTools_1_1SignedDistanceSolver.html#a31467261e35a5c038ecce13c22250226',1,'InterfaceTools::SignedDistanceSolver']]],
-  ['compute_5fparticle_5ffluid_5fforce_294',['compute_particle_fluid_force',['../classVANSOperator.html#a8b2e267844cd6df427a8153abf1f9712',1,'VANSOperator']]],
+  ['compute_5fparticle_5ffluid_5fforce_294',['compute_particle_fluid_force',['../classVANSOperator.html#a6de1d8e31801af5236cb78eee5d51c85',1,'VANSOperator']]],
   ['compute_5fpenalty_5ffactor_295',['compute_penalty_factor',['../classCouplingOperator.html#a7e4e57f60cf624de2d8b9ba9f7c61331',1,'CouplingOperator']]],
   ['compute_5fpenalty_5fparameter_296',['compute_penalty_parameter',['../classCouplingOperator.html#ad0e787892434c7fe0ca9a82bf7c8929c',1,'CouplingOperator']]],
   ['compute_5fphase_5ffraction_5ffrom_5flevel_5fset_297',['compute_phase_fraction_from_level_set',['../classVolumeOfFluid.html#a01e70c1e7fb401356237237373aeb4ec',1,'VolumeOfFluid']]],
