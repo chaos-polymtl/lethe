@@ -60,8 +60,11 @@ jobs:
           mkdir build-debug
           cd build-debug
           git config --global --add safe.directory /__w/lethe/lethe
-          cmake ../ -DCMAKE_BUILD_TYPE=Debug -G Ninja
-          ninja -j${{ env.COMPILE_JOBS }}
+          cmake ../ -DCMAKE_BUILD_TYPE=Debug -
+          make -j${{ env.COMPILE_JOBS }}
+
+          #cmake ../ -DCMAKE_BUILD_TYPE=Debug -G Ninja
+          #ninja -j${{ env.COMPILE_JOBS }}
 
       # These tests require a single core each so we will run them in parallel
       - name: Run Lethe tests (Debug-deal.ii:${{ matrix.dealii_version }})
