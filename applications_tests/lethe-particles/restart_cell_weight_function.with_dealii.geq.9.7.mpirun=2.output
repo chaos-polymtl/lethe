@@ -28,1378 +28,1378 @@ Transient iteration: 1500     Time: 0.075    Time step: 5e-05
 *****************************************************************
 | Variable                     | Min        | Max        | Average    | Total      | 
 | Contact list generation      | 0.0000e+00 | 1.1000e+01 | 6.0000e+00 | 1.8000e+01 | 
-| Velocity magnitude           | 2.2837e-03 | 5.1132e-01 | 1.0735e-01 | 1.0735e+02 | 
-| Angular velocity magnitude   | 1.9523e-02 | 3.5370e+00 | 1.4946e+00 | 1.4946e+03 | 
-| Translational kinetic energy | 3.4953e-09 | 1.7522e-04 | 1.3705e-05 | 1.3705e-02 | 
-| Rotational kinetic energy    | 5.1089e-12 | 1.6769e-07 | 3.3978e-08 | 3.3978e-05 | 
+| Velocity magnitude           | 2.1102e-03 | 5.0710e-01 | 1.0678e-01 | 1.0678e+02 | 
+| Angular velocity magnitude   | 3.5896e-02 | 3.8416e+00 | 1.5003e+00 | 1.5003e+03 | 
+| Translational kinetic energy | 2.9844e-09 | 1.7235e-04 | 1.3712e-05 | 1.3712e-02 | 
+| Rotational kinetic energy    | 1.7271e-11 | 1.9782e-07 | 3.4468e-08 | 3.4468e-05 | 
 
 *****************************************************************
 Transient iteration: 2000     Time: 0.1      Time step: 5e-05   
 *****************************************************************
 | Variable                     | Min        | Max        | Average    | Total      | 
 | Contact list generation      | 0.0000e+00 | 1.1000e+01 | 5.7500e+00 | 2.3000e+01 | 
-| Velocity magnitude           | 6.2679e-03 | 3.6381e-01 | 2.4876e-01 | 2.4876e+02 | 
-| Angular velocity magnitude   | 3.7018e-02 | 9.4430e+00 | 1.6652e+00 | 1.6652e+03 | 
-| Translational kinetic energy | 2.6331e-08 | 8.8706e-05 | 4.9163e-05 | 4.9163e-02 | 
-| Rotational kinetic energy    | 1.8368e-11 | 1.1953e-06 | 5.4848e-08 | 5.4848e-05 | 
+| Velocity magnitude           | 8.7517e-03 | 3.6028e-01 | 2.4873e-01 | 2.4873e+02 | 
+| Angular velocity magnitude   | 1.1955e-02 | 7.8004e+00 | 1.6004e+00 | 1.6004e+03 | 
+| Translational kinetic energy | 5.1333e-08 | 8.6993e-05 | 4.9194e-05 | 4.9194e-02 | 
+| Rotational kinetic energy    | 1.9159e-12 | 8.1558e-07 | 5.0167e-08 | 5.0167e-05 | 
 
 *****************************************************************
 Transient iteration: 2500     Time: 0.125    Time step: 5e-05   
 *****************************************************************
 | Variable                     | Min        | Max        | Average    | Total      | 
 | Contact list generation      | 0.0000e+00 | 1.1000e+01 | 6.2000e+00 | 3.1000e+01 | 
-| Velocity magnitude           | 1.9364e-03 | 3.4901e-01 | 1.0680e-01 | 1.0680e+02 | 
-| Angular velocity magnitude   | 3.2137e-02 | 1.7948e+01 | 1.9999e+00 | 1.9999e+03 | 
-| Translational kinetic energy | 2.5131e-09 | 8.1637e-05 | 1.2169e-05 | 1.2169e-02 | 
-| Rotational kinetic energy    | 1.3844e-11 | 4.3178e-06 | 9.9217e-08 | 9.9217e-05 | 
+| Velocity magnitude           | 1.8133e-03 | 3.4428e-01 | 1.0669e-01 | 1.0669e+02 | 
+| Angular velocity magnitude   | 2.4294e-02 | 1.6412e+01 | 1.8143e+00 | 1.8143e+03 | 
+| Translational kinetic energy | 2.2037e-09 | 7.9438e-05 | 1.2221e-05 | 1.2221e-02 | 
+| Rotational kinetic energy    | 7.9113e-12 | 3.6103e-06 | 8.1120e-08 | 8.1120e-05 | 
 
 *****************************************************************
 Transient iteration: 3000     Time: 0.15     Time step: 5e-05   
 *****************************************************************
 | Variable                     | Min        | Max        | Average    | Total      | 
 | Contact list generation      | 0.0000e+00 | 1.1000e+01 | 6.0000e+00 | 3.6000e+01 | 
-| Velocity magnitude           | 1.3517e-03 | 3.2810e-01 | 9.0376e-02 | 9.0376e+01 | 
-| Angular velocity magnitude   | 3.2137e-02 | 2.1601e+01 | 2.3696e+00 | 2.3696e+03 | 
-| Translational kinetic energy | 1.2245e-09 | 7.2149e-05 | 8.6099e-06 | 8.6099e-03 | 
-| Rotational kinetic energy    | 1.3844e-11 | 6.2545e-06 | 1.4675e-07 | 1.4675e-04 | 
+| Velocity magnitude           | 1.7696e-03 | 3.2044e-01 | 9.0684e-02 | 9.0684e+01 | 
+| Angular velocity magnitude   | 2.4294e-02 | 2.9284e+01 | 2.2439e+00 | 2.2439e+03 | 
+| Translational kinetic energy | 2.0986e-09 | 6.8820e-05 | 8.5897e-06 | 8.5897e-03 | 
+| Rotational kinetic energy    | 7.9113e-12 | 1.1494e-05 | 1.3715e-07 | 1.3715e-04 | 
 
 *****************************************************************
 Transient iteration: 3500     Time: 0.175    Time step: 5e-05   
 *****************************************************************
 | Variable                     | Min        | Max        | Average    | Total      | 
 | Contact list generation      | 0.0000e+00 | 1.1000e+01 | 6.2857e+00 | 4.4000e+01 | 
-| Velocity magnitude           | 2.8306e-03 | 5.4859e-01 | 1.8497e-01 | 1.8497e+02 | 
-| Angular velocity magnitude   | 4.2812e-02 | 3.4083e+01 | 4.4219e+00 | 4.4219e+03 | 
-| Translational kinetic energy | 5.3699e-09 | 2.0170e-04 | 3.1925e-05 | 3.1925e-02 | 
-| Rotational kinetic energy    | 2.4568e-11 | 1.5571e-05 | 6.2392e-07 | 6.2392e-04 | 
+| Velocity magnitude           | 5.6638e-03 | 5.4870e-01 | 1.8427e-01 | 1.8427e+02 | 
+| Angular velocity magnitude   | 3.8686e-02 | 3.2304e+01 | 4.4036e+00 | 4.4036e+03 | 
+| Translational kinetic energy | 2.1499e-08 | 2.0178e-04 | 3.1532e-05 | 3.1532e-02 | 
+| Rotational kinetic energy    | 2.0061e-11 | 1.3988e-05 | 6.2690e-07 | 6.2690e-04 | 
 
 *****************************************************************
 Transient iteration: 4000     Time: 0.2      Time step: 5e-05   
 *****************************************************************
 | Variable                     | Min        | Max        | Average    | Total      | 
 | Contact list generation      | 0.0000e+00 | 1.2000e+01 | 7.0000e+00 | 5.6000e+01 | 
-| Velocity magnitude           | 3.1315e-03 | 7.6733e-01 | 2.9234e-01 | 2.9234e+02 | 
-| Angular velocity magnitude   | 4.2812e-02 | 3.8677e+01 | 7.6147e+00 | 7.6147e+03 | 
-| Translational kinetic energy | 6.5721e-09 | 3.9461e-04 | 7.9807e-05 | 7.9807e-02 | 
-| Rotational kinetic energy    | 2.4568e-11 | 2.0052e-05 | 1.5697e-06 | 1.5697e-03 | 
+| Velocity magnitude           | 1.7411e-03 | 7.9394e-01 | 2.9540e-01 | 2.9540e+02 | 
+| Angular velocity magnitude   | 7.3731e-03 | 4.0526e+01 | 8.2312e+00 | 8.2312e+03 | 
+| Translational kinetic energy | 2.0317e-09 | 4.2246e-04 | 7.9942e-05 | 7.9942e-02 | 
+| Rotational kinetic energy    | 7.2869e-13 | 2.2014e-05 | 1.8251e-06 | 1.8251e-03 | 
 
 *****************************************************************
 Transient iteration: 4500     Time: 0.225    Time step: 5e-05   
 *****************************************************************
 | Variable                     | Min        | Max        | Average    | Total      | 
-| Contact list generation      | 0.0000e+00 | 1.5000e+01 | 7.8889e+00 | 7.1000e+01 | 
-| Velocity magnitude           | 2.4181e-03 | 9.5870e-01 | 4.3469e-01 | 4.3469e+02 | 
-| Angular velocity magnitude   | 4.4916e-04 | 7.5900e+01 | 1.1514e+01 | 1.1514e+04 | 
-| Translational kinetic energy | 3.9187e-09 | 6.1599e-04 | 1.6608e-04 | 1.6608e-01 | 
-| Rotational kinetic energy    | 2.7042e-15 | 7.7219e-05 | 3.4444e-06 | 3.4444e-03 | 
+| Contact list generation      | 0.0000e+00 | 1.6000e+01 | 8.0000e+00 | 7.2000e+01 | 
+| Velocity magnitude           | 1.1713e-03 | 9.7620e-01 | 4.4296e-01 | 4.4296e+02 | 
+| Angular velocity magnitude   | 9.6727e-03 | 9.1680e+01 | 1.1068e+01 | 1.1068e+04 | 
+| Translational kinetic energy | 9.1947e-10 | 6.3869e-04 | 1.6963e-04 | 1.6963e-01 | 
+| Rotational kinetic energy    | 1.2541e-12 | 1.1266e-04 | 3.2487e-06 | 3.2487e-03 | 
 
 *****************************************************************
 Transient iteration: 5000     Time: 0.25     Time step: 5e-05   
 *****************************************************************
 | Variable                     | Min        | Max        | Average    | Total      | 
-| Contact list generation      | 0.0000e+00 | 2.0000e+01 | 9.1000e+00 | 9.1000e+01 | 
-| Velocity magnitude           | 1.4318e-03 | 1.1345e+00 | 5.6762e-01 | 5.6762e+02 | 
-| Angular velocity magnitude   | 3.8043e-03 | 1.6383e+02 | 1.5732e+01 | 1.5732e+04 | 
-| Translational kinetic energy | 1.3739e-09 | 8.6254e-04 | 2.7703e-04 | 2.7703e-01 | 
-| Rotational kinetic energy    | 1.9400e-13 | 3.5976e-04 | 6.9061e-06 | 6.9061e-03 | 
+| Contact list generation      | 0.0000e+00 | 1.9000e+01 | 9.1000e+00 | 9.1000e+01 | 
+| Velocity magnitude           | 3.9739e-03 | 1.0872e+00 | 5.8610e-01 | 5.8610e+02 | 
+| Angular velocity magnitude   | 1.1593e-02 | 1.1711e+02 | 1.5459e+01 | 1.5459e+04 | 
+| Translational kinetic energy | 1.0584e-08 | 7.9218e-04 | 2.8745e-04 | 2.8745e-01 | 
+| Rotational kinetic energy    | 1.8015e-12 | 1.8384e-04 | 6.5896e-06 | 6.5896e-03 | 
 
 *****************************************************************
 Transient iteration: 5500     Time: 0.275    Time step: 5e-05   
 *****************************************************************
 | Variable                     | Min        | Max        | Average    | Total      | 
-| Contact list generation      | 0.0000e+00 | 2.1000e+01 | 1.0182e+01 | 1.1200e+02 | 
-| Velocity magnitude           | 1.8135e-03 | 1.3056e+00 | 6.5616e-01 | 6.5616e+02 | 
-| Angular velocity magnitude   | 1.6927e-02 | 1.5161e+02 | 2.3048e+01 | 2.3048e+04 | 
-| Translational kinetic energy | 2.2042e-09 | 1.1425e-03 | 3.6357e-04 | 3.6357e-01 | 
-| Rotational kinetic energy    | 3.8405e-12 | 3.0811e-04 | 1.3606e-05 | 1.3606e-02 | 
+| Contact list generation      | 0.0000e+00 | 2.2000e+01 | 1.0273e+01 | 1.1300e+02 | 
+| Velocity magnitude           | 3.8852e-03 | 1.2676e+00 | 6.6956e-01 | 6.6956e+02 | 
+| Angular velocity magnitude   | 3.4272e-03 | 1.3856e+02 | 2.1889e+01 | 2.1889e+04 | 
+| Translational kinetic energy | 1.0116e-08 | 1.0769e-03 | 3.7950e-04 | 3.7950e-01 | 
+| Rotational kinetic energy    | 1.5744e-13 | 2.5733e-04 | 1.1640e-05 | 1.1640e-02 | 
 
 *****************************************************************
 Transient iteration: 6000     Time: 0.3      Time step: 5e-05   
 *****************************************************************
 | Variable                     | Min        | Max        | Average    | Total      | 
-| Contact list generation      | 0.0000e+00 | 2.5000e+01 | 1.1417e+01 | 1.3700e+02 | 
-| Velocity magnitude           | 3.9497e-03 | 1.4407e+00 | 6.4328e-01 | 6.4328e+02 | 
-| Angular velocity magnitude   | 3.9110e-02 | 1.7060e+02 | 2.8633e+01 | 2.8633e+04 | 
-| Translational kinetic energy | 1.0456e-08 | 1.3911e-03 | 3.6591e-04 | 3.6591e-01 | 
-| Rotational kinetic energy    | 2.0503e-11 | 3.9012e-04 | 1.7979e-05 | 1.7979e-02 | 
+| Contact list generation      | 0.0000e+00 | 2.4000e+01 | 1.1417e+01 | 1.3700e+02 | 
+| Velocity magnitude           | 1.6837e-02 | 1.4476e+00 | 6.3650e-01 | 6.3650e+02 | 
+| Angular velocity magnitude   | 6.4040e-02 | 1.8417e+02 | 3.1039e+01 | 3.1039e+04 | 
+| Translational kinetic energy | 1.8999e-07 | 1.4044e-03 | 3.6262e-04 | 3.6262e-01 | 
+| Rotational kinetic energy    | 5.4972e-11 | 4.5467e-04 | 2.0833e-05 | 2.0833e-02 | 
 
 *****************************************************************
 Transient iteration: 6500     Time: 0.325    Time step: 5e-05   
 *****************************************************************
 | Variable                     | Min        | Max        | Average    | Total      | 
 | Contact list generation      | 0.0000e+00 | 2.6000e+01 | 1.2538e+01 | 1.6300e+02 | 
-| Velocity magnitude           | 6.9292e-03 | 1.4270e+00 | 5.6231e-01 | 5.6231e+02 | 
-| Angular velocity magnitude   | 2.5954e-01 | 1.3486e+02 | 3.3415e+01 | 3.3415e+04 | 
-| Translational kinetic energy | 3.2179e-08 | 1.3647e-03 | 3.0122e-04 | 3.0122e-01 | 
-| Rotational kinetic energy    | 9.0290e-10 | 2.4378e-04 | 2.2859e-05 | 2.2859e-02 | 
+| Velocity magnitude           | 1.3209e-02 | 1.4496e+00 | 5.3734e-01 | 5.3734e+02 | 
+| Angular velocity magnitude   | 3.2796e-01 | 1.8839e+02 | 3.4991e+01 | 3.4991e+04 | 
+| Translational kinetic energy | 1.1694e-07 | 1.4083e-03 | 2.8087e-04 | 2.8087e-01 | 
+| Rotational kinetic energy    | 1.4417e-09 | 4.7574e-04 | 2.6212e-05 | 2.6212e-02 | 
 
 *****************************************************************
 Transient iteration: 7000     Time: 0.35     Time step: 5e-05   
 *****************************************************************
 | Variable                     | Min        | Max        | Average    | Total      | 
 | Contact list generation      | 0.0000e+00 | 2.7000e+01 | 1.3571e+01 | 1.9000e+02 | 
-| Velocity magnitude           | 4.8775e-03 | 1.4856e+00 | 4.6605e-01 | 4.6605e+02 | 
-| Angular velocity magnitude   | 2.7298e-01 | 1.5372e+02 | 3.4676e+01 | 3.4676e+04 | 
-| Translational kinetic energy | 1.5944e-08 | 1.4791e-03 | 2.1955e-04 | 2.1955e-01 | 
-| Rotational kinetic energy    | 9.9886e-10 | 3.1674e-04 | 2.5438e-05 | 2.5438e-02 | 
+| Velocity magnitude           | 6.3984e-03 | 1.4904e+00 | 4.3256e-01 | 4.3256e+02 | 
+| Angular velocity magnitude   | 2.7007e-02 | 1.7513e+02 | 3.4429e+01 | 3.4429e+04 | 
+| Translational kinetic energy | 2.7438e-08 | 1.4887e-03 | 1.8688e-04 | 1.8688e-01 | 
+| Rotational kinetic energy    | 9.7768e-12 | 4.1109e-04 | 2.4798e-05 | 2.4798e-02 | 
 
 *****************************************************************
 Transient iteration: 7500     Time: 0.375    Time step: 5e-05   
 *****************************************************************
 | Variable                     | Min        | Max        | Average    | Total      | 
-| Contact list generation      | 0.0000e+00 | 2.7000e+01 | 1.4467e+01 | 2.1700e+02 | 
-| Velocity magnitude           | 5.1279e-03 | 1.5076e+00 | 3.6328e-01 | 3.6328e+02 | 
-| Angular velocity magnitude   | 5.0780e-02 | 1.4487e+02 | 3.0842e+01 | 3.0842e+04 | 
-| Translational kinetic energy | 1.7623e-08 | 1.5233e-03 | 1.3453e-04 | 1.3453e-01 | 
-| Rotational kinetic energy    | 3.4565e-11 | 2.8133e-04 | 2.0184e-05 | 2.0184e-02 | 
+| Contact list generation      | 0.0000e+00 | 2.7000e+01 | 1.4400e+01 | 2.1600e+02 | 
+| Velocity magnitude           | 3.6101e-03 | 1.4130e+00 | 3.5233e-01 | 3.5233e+02 | 
+| Angular velocity magnitude   | 4.5448e-02 | 1.7513e+02 | 3.1396e+01 | 3.1396e+04 | 
+| Translational kinetic energy | 8.7348e-09 | 1.3381e-03 | 1.2797e-04 | 1.2797e-01 | 
+| Rotational kinetic energy    | 2.7687e-11 | 4.1109e-04 | 2.1263e-05 | 2.1263e-02 | 
 
 *****************************************************************
 Transient iteration: 8000     Time: 0.4      Time step: 5e-05   
 *****************************************************************
 | Variable                     | Min        | Max        | Average    | Total      | 
-| Contact list generation      | 0.0000e+00 | 2.7000e+01 | 1.5062e+01 | 2.4100e+02 | 
-| Velocity magnitude           | 7.4777e-03 | 1.2579e+00 | 2.8772e-01 | 2.8772e+02 | 
-| Angular velocity magnitude   | 9.7302e-03 | 1.4296e+02 | 2.6976e+01 | 2.6976e+04 | 
-| Translational kinetic energy | 3.7475e-08 | 1.0605e-03 | 8.7239e-05 | 8.7239e-02 | 
-| Rotational kinetic energy    | 1.2691e-12 | 2.7394e-04 | 1.6781e-05 | 1.6781e-02 | 
+| Contact list generation      | 0.0000e+00 | 2.7000e+01 | 1.4938e+01 | 2.3900e+02 | 
+| Velocity magnitude           | 3.5741e-03 | 1.1919e+00 | 2.9869e-01 | 2.9869e+02 | 
+| Angular velocity magnitude   | 4.3353e-02 | 1.7513e+02 | 2.7297e+01 | 2.7297e+04 | 
+| Translational kinetic energy | 8.5613e-09 | 9.5207e-04 | 9.4873e-05 | 9.4873e-02 | 
+| Rotational kinetic energy    | 2.5193e-11 | 4.1109e-04 | 1.7518e-05 | 1.7518e-02 | 
 
 *****************************************************************
 Transient iteration: 8500     Time: 0.425    Time step: 5e-05   
 *****************************************************************
 | Variable                     | Min        | Max        | Average    | Total      | 
 | Contact list generation      | 0.0000e+00 | 2.7000e+01 | 1.5353e+01 | 2.6100e+02 | 
-| Velocity magnitude           | 4.8083e-03 | 1.1378e+00 | 2.5015e-01 | 2.5015e+02 | 
-| Angular velocity magnitude   | 1.7118e-02 | 1.4296e+02 | 2.3808e+01 | 2.3808e+04 | 
-| Translational kinetic energy | 1.5495e-08 | 8.6758e-04 | 6.9234e-05 | 6.9234e-02 | 
-| Rotational kinetic energy    | 3.9280e-12 | 2.7394e-04 | 1.4527e-05 | 1.4527e-02 | 
+| Velocity magnitude           | 2.7344e-03 | 1.2677e+00 | 2.5581e-01 | 2.5581e+02 | 
+| Angular velocity magnitude   | 2.3552e-03 | 1.3166e+02 | 2.4459e+01 | 2.4459e+04 | 
+| Translational kinetic energy | 5.0111e-09 | 1.0770e-03 | 7.4852e-05 | 7.4852e-02 | 
+| Rotational kinetic energy    | 7.4352e-14 | 2.3235e-04 | 1.4815e-05 | 1.4815e-02 | 
 
 *****************************************************************
 Transient iteration: 9000     Time: 0.45     Time step: 5e-05   
 *****************************************************************
 | Variable                     | Min        | Max        | Average    | Total      | 
-| Contact list generation      | 0.0000e+00 | 2.7000e+01 | 1.5722e+01 | 2.8300e+02 | 
-| Velocity magnitude           | 1.9094e-03 | 1.2115e+00 | 2.1712e-01 | 2.1712e+02 | 
-| Angular velocity magnitude   | 2.3197e-02 | 1.4006e+02 | 2.1505e+01 | 2.1505e+04 | 
-| Translational kinetic energy | 2.4434e-09 | 9.8376e-04 | 5.5215e-05 | 5.5215e-02 | 
-| Rotational kinetic energy    | 7.2130e-12 | 2.6296e-04 | 1.2391e-05 | 1.2391e-02 | 
+| Contact list generation      | 0.0000e+00 | 2.7000e+01 | 1.5611e+01 | 2.8100e+02 | 
+| Velocity magnitude           | 1.9606e-03 | 1.0216e+00 | 2.1701e-01 | 2.1701e+02 | 
+| Angular velocity magnitude   | 6.6787e-03 | 1.4303e+02 | 2.2341e+01 | 2.2341e+04 | 
+| Translational kinetic energy | 2.5762e-09 | 6.9941e-04 | 5.5943e-05 | 5.5943e-02 | 
+| Rotational kinetic energy    | 5.9790e-13 | 2.7421e-04 | 1.3371e-05 | 1.3371e-02 | 
 
 *****************************************************************
 Transient iteration: 9500     Time: 0.475    Time step: 5e-05   
 *****************************************************************
 | Variable                     | Min        | Max        | Average    | Total      | 
-| Contact list generation      | 0.0000e+00 | 2.7000e+01 | 1.5947e+01 | 3.0300e+02 | 
-| Velocity magnitude           | 1.4807e-03 | 1.0341e+00 | 1.8018e-01 | 1.8018e+02 | 
-| Angular velocity magnitude   | 1.6357e-02 | 1.4006e+02 | 1.9554e+01 | 1.9554e+04 | 
-| Translational kinetic energy | 1.4694e-09 | 7.1674e-04 | 4.1165e-05 | 4.1165e-02 | 
-| Rotational kinetic energy    | 3.5864e-12 | 2.6296e-04 | 1.1241e-05 | 1.1241e-02 | 
+| Contact list generation      | 0.0000e+00 | 2.7000e+01 | 1.5789e+01 | 3.0000e+02 | 
+| Velocity magnitude           | 1.0893e-03 | 1.0962e+00 | 1.8007e-01 | 1.8007e+02 | 
+| Angular velocity magnitude   | 3.4856e-03 | 1.3499e+02 | 1.9556e+01 | 1.9556e+04 | 
+| Translational kinetic energy | 7.9520e-10 | 8.0530e-04 | 4.2720e-05 | 4.2720e-02 | 
+| Rotational kinetic energy    | 1.6285e-13 | 2.4424e-04 | 1.1339e-05 | 1.1339e-02 | 
 
 *****************************************************************
 Transient iteration: 10000    Time: 0.5      Time step: 5e-05   
 *****************************************************************
 | Variable                     | Min        | Max        | Average    | Total      | 
-| Contact list generation      | 0.0000e+00 | 2.7000e+01 | 1.6100e+01 | 3.2200e+02 | 
-| Velocity magnitude           | 1.0776e-03 | 9.6371e-01 | 1.4320e-01 | 1.4320e+02 | 
-| Angular velocity magnitude   | 5.0249e-02 | 1.2241e+02 | 1.6007e+01 | 1.6007e+04 | 
-| Translational kinetic energy | 7.7826e-10 | 6.2244e-04 | 2.8457e-05 | 2.8457e-02 | 
-| Rotational kinetic energy    | 3.3846e-11 | 2.0086e-04 | 8.5882e-06 | 8.5882e-03 | 
+| Contact list generation      | 0.0000e+00 | 2.7000e+01 | 1.6050e+01 | 3.2100e+02 | 
+| Velocity magnitude           | 1.0656e-03 | 1.2474e+00 | 1.4890e-01 | 1.4890e+02 | 
+| Angular velocity magnitude   | 7.3290e-03 | 1.3499e+02 | 1.6417e+01 | 1.6417e+04 | 
+| Translational kinetic energy | 7.6102e-10 | 1.0428e-03 | 3.2453e-05 | 3.2453e-02 | 
+| Rotational kinetic energy    | 7.2000e-13 | 2.4424e-04 | 8.9369e-06 | 8.9369e-03 | 
 
 *****************************************************************
 Transient iteration: 10500    Time: 0.525    Time step: 5e-05   
 *****************************************************************
 | Variable                     | Min        | Max        | Average    | Total      | 
-| Contact list generation      | 0.0000e+00 | 2.7000e+01 | 1.6238e+01 | 3.4100e+02 | 
-| Velocity magnitude           | 5.7427e-04 | 9.4148e-01 | 1.1291e-01 | 1.1291e+02 | 
-| Angular velocity magnitude   | 5.9341e-03 | 1.1927e+02 | 1.3166e+01 | 1.3166e+04 | 
-| Translational kinetic energy | 2.2103e-10 | 5.9406e-04 | 2.0015e-05 | 2.0015e-02 | 
-| Rotational kinetic energy    | 4.7200e-13 | 1.9068e-04 | 6.5274e-06 | 6.5274e-03 | 
+| Contact list generation      | 0.0000e+00 | 2.7000e+01 | 1.6381e+01 | 3.4400e+02 | 
+| Velocity magnitude           | 2.6251e-04 | 9.1906e-01 | 1.1612e-01 | 1.1612e+02 | 
+| Angular velocity magnitude   | 6.3303e-03 | 1.3106e+02 | 1.3636e+01 | 1.3636e+04 | 
+| Translational kinetic energy | 4.6186e-11 | 5.6611e-04 | 2.1451e-05 | 2.1451e-02 | 
+| Rotational kinetic energy    | 5.3715e-13 | 2.3022e-04 | 7.2038e-06 | 7.2038e-03 | 
 
 *****************************************************************
 Transient iteration: 11000    Time: 0.55     Time step: 5e-05   
 *****************************************************************
 | Variable                     | Min        | Max        | Average    | Total      | 
-| Contact list generation      | 0.0000e+00 | 2.7000e+01 | 1.6273e+01 | 3.5800e+02 | 
-| Velocity magnitude           | 5.3013e-04 | 1.0131e+00 | 9.5434e-02 | 9.5434e+01 | 
-| Angular velocity magnitude   | 3.2645e-03 | 1.0789e+02 | 1.0697e+01 | 1.0697e+04 | 
-| Translational kinetic energy | 1.8835e-10 | 6.8791e-04 | 1.5317e-05 | 1.5317e-02 | 
-| Rotational kinetic energy    | 1.4285e-13 | 1.5602e-04 | 4.9481e-06 | 4.9481e-03 | 
+| Contact list generation      | 0.0000e+00 | 2.7000e+01 | 1.6318e+01 | 3.5900e+02 | 
+| Velocity magnitude           | 5.5941e-04 | 8.6595e-01 | 9.7184e-02 | 9.7184e+01 | 
+| Angular velocity magnitude   | 6.0990e-04 | 1.3106e+02 | 1.1439e+01 | 1.1439e+04 | 
+| Translational kinetic energy | 2.0974e-10 | 5.0257e-04 | 1.5863e-05 | 1.5863e-02 | 
+| Rotational kinetic energy    | 4.9860e-15 | 2.3022e-04 | 5.5546e-06 | 5.5546e-03 | 
 
 *****************************************************************
 Transient iteration: 11500    Time: 0.575    Time step: 5e-05   
 *****************************************************************
 | Variable                     | Min        | Max        | Average    | Total      | 
-| Contact list generation      | 0.0000e+00 | 2.7000e+01 | 1.6435e+01 | 3.7800e+02 | 
-| Velocity magnitude           | 5.0128e-04 | 1.2008e+00 | 7.8323e-02 | 7.8323e+01 | 
-| Angular velocity magnitude   | 4.2357e-03 | 1.0789e+02 | 8.3515e+00 | 8.3515e+03 | 
-| Translational kinetic energy | 1.6841e-10 | 9.6638e-04 | 1.1662e-05 | 1.1662e-02 | 
-| Rotational kinetic energy    | 2.4048e-13 | 1.5602e-04 | 3.4188e-06 | 3.4188e-03 | 
+| Contact list generation      | 0.0000e+00 | 2.7000e+01 | 1.6261e+01 | 3.7400e+02 | 
+| Velocity magnitude           | 6.3530e-04 | 7.4112e-01 | 7.9846e-02 | 7.9846e+01 | 
+| Angular velocity magnitude   | 1.4349e-03 | 1.0255e+02 | 8.8486e+00 | 8.8486e+03 | 
+| Translational kinetic energy | 2.7050e-10 | 3.6812e-04 | 1.1604e-05 | 1.1604e-02 | 
+| Rotational kinetic energy    | 2.7597e-14 | 1.4096e-04 | 3.9635e-06 | 3.9635e-03 | 
 
 *****************************************************************
 Transient iteration: 12000    Time: 0.6      Time step: 5e-05   
 *****************************************************************
 | Variable                     | Min        | Max        | Average    | Total      | 
-| Contact list generation      | 0.0000e+00 | 2.7000e+01 | 1.6625e+01 | 3.9900e+02 | 
-| Velocity magnitude           | 3.7699e-04 | 9.6846e-01 | 6.2904e-02 | 6.2904e+01 | 
-| Angular velocity magnitude   | 5.1201e-04 | 1.0789e+02 | 6.3818e+00 | 6.3818e+03 | 
-| Translational kinetic energy | 9.5251e-11 | 6.2859e-04 | 9.0826e-06 | 9.0826e-03 | 
-| Rotational kinetic energy    | 3.5139e-15 | 1.5602e-04 | 2.4098e-06 | 2.4098e-03 | 
+| Contact list generation      | 0.0000e+00 | 2.7000e+01 | 1.6125e+01 | 3.8700e+02 | 
+| Velocity magnitude           | 4.8719e-04 | 7.4892e-01 | 6.4226e-02 | 6.4226e+01 | 
+| Angular velocity magnitude   | 5.3441e-04 | 9.1108e+01 | 6.7232e+00 | 6.7232e+03 | 
+| Translational kinetic energy | 1.5908e-10 | 3.7591e-04 | 8.7676e-06 | 8.7676e-03 | 
+| Rotational kinetic energy    | 3.8281e-15 | 1.1126e-04 | 2.8714e-06 | 2.8714e-03 | 
 
 *****************************************************************
 Transient iteration: 12500    Time: 0.625    Time step: 5e-05   
 *****************************************************************
 | Variable                     | Min        | Max        | Average    | Total      | 
-| Contact list generation      | 0.0000e+00 | 2.7000e+01 | 1.6600e+01 | 4.1500e+02 | 
-| Velocity magnitude           | 1.1522e-04 | 7.2509e-01 | 4.9777e-02 | 4.9777e+01 | 
-| Angular velocity magnitude   | 1.9114e-03 | 8.6700e+01 | 4.8014e+00 | 4.8014e+03 | 
-| Translational kinetic energy | 8.8974e-12 | 3.5237e-04 | 6.0685e-06 | 6.0685e-03 | 
-| Rotational kinetic energy    | 4.8969e-14 | 1.0076e-04 | 1.6967e-06 | 1.6967e-03 | 
+| Contact list generation      | 0.0000e+00 | 2.7000e+01 | 1.5920e+01 | 3.9800e+02 | 
+| Velocity magnitude           | 1.2754e-04 | 6.3303e-01 | 5.2364e-02 | 5.2364e+01 | 
+| Angular velocity magnitude   | 7.2188e-04 | 9.1108e+01 | 5.0238e+00 | 5.0238e+03 | 
+| Translational kinetic energy | 1.0902e-11 | 2.6857e-04 | 6.7272e-06 | 6.7272e-03 | 
+| Rotational kinetic energy    | 6.9851e-15 | 1.1126e-04 | 1.8980e-06 | 1.8980e-03 | 
 
 *****************************************************************
 Transient iteration: 13000    Time: 0.65     Time step: 5e-05   
 *****************************************************************
 | Variable                     | Min        | Max        | Average    | Total      | 
-| Contact list generation      | 0.0000e+00 | 2.7000e+01 | 1.6385e+01 | 4.2600e+02 | 
-| Velocity magnitude           | 1.0982e-04 | 5.8306e-01 | 4.4334e-02 | 4.4334e+01 | 
-| Angular velocity magnitude   | 4.8341e-04 | 8.6700e+01 | 3.2633e+00 | 3.2633e+03 | 
-| Translational kinetic energy | 8.0837e-12 | 2.2784e-04 | 5.5649e-06 | 5.5649e-03 | 
-| Rotational kinetic energy    | 3.1323e-15 | 1.0076e-04 | 1.1134e-06 | 1.1134e-03 | 
+| Contact list generation      | 0.0000e+00 | 2.7000e+01 | 1.5808e+01 | 4.1100e+02 | 
+| Velocity magnitude           | 1.4640e-04 | 7.5825e-01 | 4.5531e-02 | 4.5531e+01 | 
+| Angular velocity magnitude   | 2.4921e-04 | 8.1603e+01 | 3.5416e+00 | 3.5416e+03 | 
+| Translational kinetic energy | 1.4365e-11 | 3.8533e-04 | 6.3747e-06 | 6.3747e-03 | 
+| Rotational kinetic energy    | 8.3249e-16 | 8.9260e-05 | 1.3130e-06 | 1.3130e-03 | 
 
 *****************************************************************
 Transient iteration: 13500    Time: 0.675    Time step: 5e-05   
 *****************************************************************
 | Variable                     | Min        | Max        | Average    | Total      | 
-| Contact list generation      | 0.0000e+00 | 2.7000e+01 | 1.6111e+01 | 4.3500e+02 | 
-| Velocity magnitude           | 9.6179e-05 | 5.5047e-01 | 3.6171e-02 | 3.6171e+01 | 
-| Angular velocity magnitude   | 2.8141e-04 | 5.6824e+01 | 2.2654e+00 | 2.2654e+03 | 
-| Translational kinetic energy | 6.1997e-12 | 2.0308e-04 | 3.9973e-06 | 3.9973e-03 | 
-| Rotational kinetic energy    | 1.0615e-15 | 4.3281e-05 | 6.1061e-07 | 6.1061e-04 | 
+| Contact list generation      | 0.0000e+00 | 2.7000e+01 | 1.5741e+01 | 4.2500e+02 | 
+| Velocity magnitude           | 2.9603e-05 | 7.4888e-01 | 4.0497e-02 | 4.0497e+01 | 
+| Angular velocity magnitude   | 1.5255e-03 | 8.1603e+01 | 2.6036e+00 | 2.6036e+03 | 
+| Translational kinetic energy | 5.8735e-13 | 3.7587e-04 | 5.7307e-06 | 5.7307e-03 | 
+| Rotational kinetic energy    | 3.1195e-14 | 8.9260e-05 | 8.7391e-07 | 8.7391e-04 | 
 
 *****************************************************************
 Transient iteration: 14000    Time: 0.7      Time step: 5e-05   
 *****************************************************************
 | Variable                     | Min        | Max        | Average    | Total      | 
-| Contact list generation      | 0.0000e+00 | 2.7000e+01 | 1.6000e+01 | 4.4800e+02 | 
-| Velocity magnitude           | 1.2711e-04 | 7.9172e-01 | 3.1821e-02 | 3.1821e+01 | 
-| Angular velocity magnitude   | 4.3351e-04 | 4.7275e+01 | 1.6680e+00 | 1.6680e+03 | 
-| Translational kinetic energy | 1.0828e-11 | 4.2010e-04 | 3.6692e-06 | 3.6692e-03 | 
-| Rotational kinetic energy    | 2.5191e-15 | 2.9958e-05 | 4.0158e-07 | 4.0158e-04 | 
+| Contact list generation      | 0.0000e+00 | 2.7000e+01 | 1.5750e+01 | 4.4100e+02 | 
+| Velocity magnitude           | 7.0940e-05 | 9.6534e-01 | 3.4323e-02 | 3.4323e+01 | 
+| Angular velocity magnitude   | 2.0525e-04 | 8.1250e+01 | 1.8815e+00 | 1.8815e+03 | 
+| Translational kinetic energy | 3.3728e-12 | 6.2455e-04 | 5.1118e-06 | 5.1118e-03 | 
+| Rotational kinetic energy    | 5.6466e-16 | 8.8489e-05 | 6.3770e-07 | 6.3770e-04 | 
 
 *****************************************************************
 Transient iteration: 14500    Time: 0.725    Time step: 5e-05   
 *****************************************************************
 | Variable                     | Min        | Max        | Average    | Total      | 
-| Contact list generation      | 0.0000e+00 | 2.7000e+01 | 1.5897e+01 | 4.6100e+02 | 
-| Velocity magnitude           | 5.5036e-05 | 5.9486e-01 | 2.8608e-02 | 2.8608e+01 | 
-| Angular velocity magnitude   | 1.5372e-05 | 5.4249e+01 | 1.2819e+00 | 1.2819e+03 | 
-| Translational kinetic energy | 2.0300e-12 | 2.3716e-04 | 3.2755e-06 | 3.2755e-03 | 
-| Rotational kinetic energy    | 3.1673e-18 | 3.9448e-05 | 3.1588e-07 | 3.1588e-04 | 
+| Contact list generation      | 0.0000e+00 | 2.7000e+01 | 1.5690e+01 | 4.5500e+02 | 
+| Velocity magnitude           | 6.5797e-06 | 6.6651e-01 | 3.0986e-02 | 3.0986e+01 | 
+| Angular velocity magnitude   | 1.3684e-04 | 5.8817e+01 | 1.2673e+00 | 1.2673e+03 | 
+| Translational kinetic energy | 2.9015e-14 | 2.9773e-04 | 4.0624e-06 | 4.0624e-03 | 
+| Rotational kinetic energy    | 2.5100e-16 | 4.6371e-05 | 3.0508e-07 | 3.0508e-04 | 
 
 *****************************************************************
 Transient iteration: 15000    Time: 0.75     Time step: 5e-05   
 *****************************************************************
 | Variable                     | Min        | Max        | Average    | Total      | 
-| Contact list generation      | 0.0000e+00 | 2.7000e+01 | 1.5700e+01 | 4.7100e+02 | 
-| Velocity magnitude           | 4.9425e-05 | 6.0366e-01 | 2.5745e-02 | 2.5745e+01 | 
-| Angular velocity magnitude   | 8.6772e-05 | 5.4249e+01 | 8.3963e-01 | 8.3963e+02 | 
-| Translational kinetic energy | 1.6372e-12 | 2.4422e-04 | 2.9663e-06 | 2.9663e-03 | 
-| Rotational kinetic energy    | 1.0093e-16 | 3.9448e-05 | 1.9738e-07 | 1.9738e-04 | 
+| Contact list generation      | 0.0000e+00 | 2.7000e+01 | 1.5500e+01 | 4.6500e+02 | 
+| Velocity magnitude           | 1.4209e-05 | 5.1456e-01 | 2.5888e-02 | 2.5888e+01 | 
+| Angular velocity magnitude   | 9.4286e-05 | 5.8817e+01 | 9.8818e-01 | 9.8818e+02 | 
+| Translational kinetic energy | 1.3531e-13 | 1.7745e-04 | 3.1178e-06 | 3.1178e-03 | 
+| Rotational kinetic energy    | 1.1916e-16 | 4.6371e-05 | 2.7344e-07 | 2.7344e-04 | 
 
 *****************************************************************
 Transient iteration: 15500    Time: 0.775    Time step: 5e-05   
 *****************************************************************
 | Variable                     | Min        | Max        | Average    | Total      | 
-| Contact list generation      | 0.0000e+00 | 2.7000e+01 | 1.5581e+01 | 4.8300e+02 | 
-| Velocity magnitude           | 1.4195e-05 | 7.6097e-01 | 2.2827e-02 | 2.2827e+01 | 
-| Angular velocity magnitude   | 4.8975e-04 | 5.4249e+01 | 5.7880e-01 | 5.7880e+02 | 
-| Translational kinetic energy | 1.3504e-13 | 3.8810e-04 | 2.4389e-06 | 2.4389e-03 | 
-| Rotational kinetic energy    | 3.2151e-15 | 3.9448e-05 | 1.1370e-07 | 1.1370e-04 | 
+| Contact list generation      | 0.0000e+00 | 2.7000e+01 | 1.5323e+01 | 4.7500e+02 | 
+| Velocity magnitude           | 4.6463e-06 | 5.5852e-01 | 2.5357e-02 | 2.5357e+01 | 
+| Angular velocity magnitude   | 1.6910e-04 | 4.8935e+01 | 7.4026e-01 | 7.4026e+02 | 
+| Translational kinetic energy | 1.4469e-14 | 2.0907e-04 | 2.8819e-06 | 2.8819e-03 | 
+| Rotational kinetic energy    | 3.8331e-16 | 3.2098e-05 | 1.6451e-07 | 1.6451e-04 | 
 
 *****************************************************************
 Transient iteration: 16000    Time: 0.8      Time step: 5e-05   
 *****************************************************************
 | Variable                     | Min        | Max        | Average    | Total      | 
-| Contact list generation      | 0.0000e+00 | 2.7000e+01 | 1.5594e+01 | 4.9900e+02 | 
-| Velocity magnitude           | 2.8809e-05 | 1.0045e+00 | 2.0955e-02 | 2.0955e+01 | 
-| Angular velocity magnitude   | 7.8154e-05 | 5.4249e+01 | 3.8500e-01 | 3.8500e+02 | 
-| Translational kinetic energy | 5.5624e-13 | 6.7623e-04 | 2.7040e-06 | 2.7040e-03 | 
-| Rotational kinetic energy    | 8.1873e-17 | 3.9448e-05 | 8.5715e-08 | 8.5715e-05 | 
+| Contact list generation      | 0.0000e+00 | 2.7000e+01 | 1.5188e+01 | 4.8600e+02 | 
+| Velocity magnitude           | 4.2616e-06 | 6.1782e-01 | 2.1855e-02 | 2.1855e+01 | 
+| Angular velocity magnitude   | 5.8911e-04 | 4.8935e+01 | 4.7241e-01 | 4.7241e+02 | 
+| Translational kinetic energy | 1.2172e-14 | 2.5582e-04 | 2.8085e-06 | 2.8085e-03 | 
+| Rotational kinetic energy    | 4.6520e-15 | 3.2098e-05 | 1.0229e-07 | 1.0229e-04 | 
 
 *****************************************************************
 Transient iteration: 16500    Time: 0.825    Time step: 5e-05   
 *****************************************************************
 | Variable                     | Min        | Max        | Average    | Total      | 
-| Contact list generation      | 0.0000e+00 | 2.7000e+01 | 1.5576e+01 | 5.1400e+02 | 
-| Velocity magnitude           | 1.6987e-05 | 7.1864e-01 | 1.8264e-02 | 1.8264e+01 | 
-| Angular velocity magnitude   | 8.8691e-05 | 5.4249e+01 | 2.7988e-01 | 2.7988e+02 | 
-| Translational kinetic energy | 1.9339e-13 | 3.4612e-04 | 1.9705e-06 | 1.9705e-03 | 
-| Rotational kinetic energy    | 1.0544e-16 | 3.9448e-05 | 6.2948e-08 | 6.2948e-05 | 
+| Contact list generation      | 0.0000e+00 | 2.7000e+01 | 1.5091e+01 | 4.9800e+02 | 
+| Velocity magnitude           | 2.0065e-05 | 6.3696e-01 | 1.9332e-02 | 1.9332e+01 | 
+| Angular velocity magnitude   | 8.1887e-05 | 4.8935e+01 | 4.2587e-01 | 4.2587e+02 | 
+| Translational kinetic energy | 2.6982e-13 | 2.7191e-04 | 2.5125e-06 | 2.5125e-03 | 
+| Rotational kinetic energy    | 8.9882e-17 | 3.2098e-05 | 9.4316e-08 | 9.4316e-05 | 
 
 *****************************************************************
 Transient iteration: 17000    Time: 0.85     Time step: 5e-05   
 *****************************************************************
 | Variable                     | Min        | Max        | Average    | Total      | 
-| Contact list generation      | 0.0000e+00 | 2.7000e+01 | 1.5441e+01 | 5.2500e+02 | 
-| Velocity magnitude           | 9.5656e-06 | 4.7449e-01 | 1.6859e-02 | 1.6859e+01 | 
-| Angular velocity magnitude   | 8.7449e-06 | 2.8072e+01 | 2.1925e-01 | 2.1925e+02 | 
-| Translational kinetic energy | 6.1325e-14 | 1.5089e-04 | 1.9130e-06 | 1.9130e-03 | 
-| Rotational kinetic energy    | 1.0251e-18 | 1.0563e-05 | 2.6991e-08 | 2.6991e-05 | 
+| Contact list generation      | 0.0000e+00 | 2.7000e+01 | 1.4941e+01 | 5.0800e+02 | 
+| Velocity magnitude           | 6.3477e-06 | 6.4503e-01 | 1.9660e-02 | 1.9660e+01 | 
+| Angular velocity magnitude   | 1.1786e-04 | 4.8935e+01 | 3.5152e-01 | 3.5152e+02 | 
+| Translational kinetic energy | 2.7005e-14 | 2.7885e-04 | 2.5625e-06 | 2.5625e-03 | 
+| Rotational kinetic energy    | 1.8620e-16 | 3.2098e-05 | 8.0369e-08 | 8.0369e-05 | 
 
 *****************************************************************
 Transient iteration: 17500    Time: 0.875    Time step: 5e-05   
 *****************************************************************
 | Variable                     | Min        | Max        | Average    | Total      | 
-| Contact list generation      | 0.0000e+00 | 2.7000e+01 | 1.5257e+01 | 5.3400e+02 | 
-| Velocity magnitude           | 7.2742e-06 | 4.9423e-01 | 1.4948e-02 | 1.4948e+01 | 
-| Angular velocity magnitude   | 5.1529e-05 | 1.5422e+01 | 1.5484e-01 | 1.5484e+02 | 
-| Translational kinetic energy | 3.5463e-14 | 1.6370e-04 | 1.4978e-06 | 1.4978e-03 | 
-| Rotational kinetic energy    | 3.5591e-17 | 3.1880e-06 | 8.0946e-09 | 8.0946e-06 | 
+| Contact list generation      | 0.0000e+00 | 2.7000e+01 | 1.4914e+01 | 5.2200e+02 | 
+| Velocity magnitude           | 2.3212e-06 | 7.3049e-01 | 1.6298e-02 | 1.6298e+01 | 
+| Angular velocity magnitude   | 2.3216e-04 | 3.0462e+01 | 1.9384e-01 | 1.9384e+02 | 
+| Translational kinetic energy | 3.6110e-15 | 3.5764e-04 | 1.9775e-06 | 1.9775e-03 | 
+| Rotational kinetic energy    | 7.2243e-16 | 1.2438e-05 | 2.1490e-08 | 2.1490e-05 | 
 
 *****************************************************************
 Transient iteration: 18000    Time: 0.9      Time step: 5e-05   
 *****************************************************************
 | Variable                     | Min        | Max        | Average    | Total      | 
-| Contact list generation      | 0.0000e+00 | 2.7000e+01 | 1.5056e+01 | 5.4200e+02 | 
-| Velocity magnitude           | 4.7654e-06 | 3.8988e-01 | 1.3298e-02 | 1.3298e+01 | 
-| Angular velocity magnitude   | 6.2070e-05 | 1.5422e+01 | 1.4063e-01 | 1.4063e+02 | 
-| Translational kinetic energy | 1.5220e-14 | 1.0188e-04 | 1.1857e-06 | 1.1857e-03 | 
-| Rotational kinetic energy    | 5.1643e-17 | 3.1880e-06 | 8.8205e-09 | 8.8205e-06 | 
+| Contact list generation      | 0.0000e+00 | 2.7000e+01 | 1.4806e+01 | 5.3300e+02 | 
+| Velocity magnitude           | 1.5293e-06 | 5.0971e-01 | 1.5295e-02 | 1.5295e+01 | 
+| Angular velocity magnitude   | 7.3539e-05 | 1.6374e+01 | 2.1024e-01 | 2.1024e+02 | 
+| Translational kinetic energy | 1.5675e-15 | 1.7412e-04 | 1.9307e-06 | 1.9307e-03 | 
+| Rotational kinetic energy    | 7.2490e-17 | 3.5937e-06 | 1.9996e-08 | 1.9996e-05 | 
 
 *****************************************************************
 Transient iteration: 18500    Time: 0.925    Time step: 5e-05   
 *****************************************************************
 | Variable                     | Min        | Max        | Average    | Total      | 
-| Contact list generation      | 0.0000e+00 | 2.7000e+01 | 1.4811e+01 | 5.4800e+02 | 
-| Velocity magnitude           | 1.6219e-06 | 3.4735e-01 | 1.1900e-02 | 1.1900e+01 | 
-| Angular velocity magnitude   | 2.5266e-04 | 1.5422e+01 | 1.1207e-01 | 1.1207e+02 | 
-| Translational kinetic energy | 1.7630e-15 | 8.0861e-05 | 1.0790e-06 | 1.0790e-03 | 
-| Rotational kinetic energy    | 8.5568e-16 | 3.1880e-06 | 4.8262e-09 | 4.8262e-06 | 
+| Contact list generation      | 0.0000e+00 | 2.7000e+01 | 1.4676e+01 | 5.4300e+02 | 
+| Velocity magnitude           | 3.8047e-06 | 5.6929e-01 | 1.3349e-02 | 1.3349e+01 | 
+| Angular velocity magnitude   | 9.2963e-04 | 1.1992e+01 | 1.4848e-01 | 1.4848e+02 | 
+| Translational kinetic energy | 9.7015e-15 | 2.1721e-04 | 1.5674e-06 | 1.5674e-03 | 
+| Rotational kinetic energy    | 1.1584e-14 | 1.9275e-06 | 7.5932e-09 | 7.5932e-06 | 
 
 *****************************************************************
 Transient iteration: 19000    Time: 0.95     Time step: 5e-05   
 *****************************************************************
 | Variable                     | Min        | Max        | Average    | Total      | 
-| Contact list generation      | 0.0000e+00 | 2.7000e+01 | 1.4605e+01 | 5.5500e+02 | 
-| Velocity magnitude           | 3.2596e-06 | 5.1272e-01 | 1.0975e-02 | 1.0975e+01 | 
-| Angular velocity magnitude   | 1.8659e-04 | 9.2797e+00 | 9.2267e-02 | 9.2267e+01 | 
-| Translational kinetic energy | 7.1211e-15 | 1.7619e-04 | 1.0522e-06 | 1.0522e-03 | 
-| Rotational kinetic energy    | 4.6667e-16 | 1.1543e-06 | 1.5152e-09 | 1.5152e-06 | 
+| Contact list generation      | 0.0000e+00 | 2.7000e+01 | 1.4553e+01 | 5.5300e+02 | 
+| Velocity magnitude           | 2.2385e-06 | 5.8962e-01 | 1.2490e-02 | 1.2490e+01 | 
+| Angular velocity magnitude   | 3.6379e-06 | 2.2339e+01 | 1.5340e-01 | 1.5340e+02 | 
+| Translational kinetic energy | 3.3583e-15 | 2.3300e-04 | 1.4860e-06 | 1.4860e-03 | 
+| Rotational kinetic energy    | 1.7739e-19 | 6.6888e-06 | 1.3296e-08 | 1.3296e-05 | 
 
 *****************************************************************
 Transient iteration: 19500    Time: 0.975    Time step: 5e-05   
 *****************************************************************
 | Variable                     | Min        | Max        | Average    | Total      | 
-| Contact list generation      | 0.0000e+00 | 2.7000e+01 | 1.4513e+01 | 5.6600e+02 | 
-| Velocity magnitude           | 2.0691e-06 | 7.5701e-01 | 1.2048e-02 | 1.2048e+01 | 
-| Angular velocity magnitude   | 7.3161e-06 | 1.6306e+01 | 1.1260e-01 | 1.1260e+02 | 
-| Translational kinetic energy | 2.8694e-15 | 3.8407e-04 | 1.5558e-06 | 1.5558e-03 | 
-| Rotational kinetic energy    | 7.1745e-19 | 3.5639e-06 | 4.8412e-09 | 4.8412e-06 | 
+| Contact list generation      | 0.0000e+00 | 2.7000e+01 | 1.4410e+01 | 5.6200e+02 | 
+| Velocity magnitude           | 7.4159e-07 | 4.2586e-01 | 1.1087e-02 | 1.1087e+01 | 
+| Angular velocity magnitude   | 3.3809e-04 | 2.2339e+01 | 1.1597e-01 | 1.1597e+02 | 
+| Translational kinetic energy | 3.6859e-16 | 1.2154e-04 | 1.2339e-06 | 1.2339e-03 | 
+| Rotational kinetic energy    | 1.5321e-15 | 6.6888e-06 | 7.6510e-09 | 7.6510e-06 | 
 
 *****************************************************************
 Transient iteration: 20000    Time: 1        Time step: 5e-05   
 *****************************************************************
 | Variable                     | Min        | Max        | Average    | Total      | 
-| Contact list generation      | 0.0000e+00 | 2.7000e+01 | 1.4525e+01 | 5.8100e+02 | 
-| Velocity magnitude           | 1.7153e-06 | 7.6650e-01 | 8.6773e-03 | 8.6773e+00 | 
-| Angular velocity magnitude   | 2.2085e-05 | 1.6306e+01 | 9.3549e-02 | 9.3549e+01 | 
-| Translational kinetic energy | 1.9720e-15 | 3.9376e-04 | 9.9520e-07 | 9.9520e-04 | 
-| Rotational kinetic energy    | 6.5381e-18 | 3.5639e-06 | 3.7574e-09 | 3.7574e-06 | 
+| Contact list generation      | 0.0000e+00 | 2.7000e+01 | 1.4275e+01 | 5.7100e+02 | 
+| Velocity magnitude           | 4.3760e-07 | 5.6702e-01 | 1.0504e-02 | 1.0504e+01 | 
+| Angular velocity magnitude   | 1.1040e-04 | 6.5359e+00 | 9.9283e-02 | 9.9283e+01 | 
+| Translational kinetic energy | 1.2834e-16 | 2.1548e-04 | 1.1843e-06 | 1.1843e-03 | 
+| Rotational kinetic energy    | 1.6337e-16 | 5.7259e-07 | 1.7995e-09 | 1.7995e-06 | 
 id, type, dp, x, y, z 
-0 0 0.01000 0.0084 0.0049 0.0081
-1 0 0.01000 0.0193 0.0049 0.0095
-2 0 0.01000 0.0287 0.0049 0.0063
-3 0 0.01000 0.0446 0.0049 0.0084
-4 0 0.01000 0.0545 0.0049 0.0150
-5 0 0.01000 0.0636 0.0049 0.0077
-6 0 0.01000 0.0736 0.0049 0.0084
-7 0 0.01000 0.0838 0.0049 0.0085
-8 0 0.01000 0.0939 0.0049 0.0083
-9 0 0.01000 0.1036 0.0049 0.0060
-10 0 0.01000 0.1132 0.0049 0.0089
-11 0 0.01000 0.1274 0.0049 0.0136
-12 0 0.01000 0.1380 0.0049 0.0119
-13 0 0.01000 0.1478 0.0049 0.0098
-14 0 0.01000 0.1578 0.0049 0.0094
-15 0 0.01000 0.1680 0.0049 0.0063
-16 0 0.01000 0.1787 0.0049 0.0090
-17 0 0.01000 0.1913 0.0049 0.0129
-18 0 0.01000 0.2002 0.0049 0.0074
-19 0 0.01000 0.2121 0.0049 0.0072
-20 0 0.01000 0.2222 0.0049 0.0075
-21 0 0.01000 0.2320 0.0049 0.0099
-22 0 0.01000 0.2423 0.0049 0.0074
-23 0 0.01000 0.2560 0.0049 0.0085
-24 0 0.01000 0.2668 0.0049 0.0112
-25 0 0.01000 0.2764 0.0049 0.0060
-26 0 0.01000 0.2884 0.0049 0.0052
-27 0 0.01000 0.2974 0.0049 0.0097
-28 0 0.01000 0.3080 0.0049 0.0100
-29 0 0.01000 0.3185 0.0049 0.0088
-30 0 0.01000 0.3275 0.0049 0.0130
-31 0 0.01000 0.3392 0.0049 0.0076
-32 0 0.01000 0.3490 0.0049 0.0101
-33 0 0.01000 0.3586 0.0049 0.0056
-34 0 0.01000 0.3727 0.0049 0.0102
-35 0 0.01000 0.3828 0.0049 0.0071
-36 0 0.01000 0.3936 0.0049 0.0062
-37 0 0.01000 0.4035 0.0049 0.0052
-38 0 0.01000 0.4171 0.0049 0.0075
-39 0 0.01000 0.4269 0.0049 0.0089
-40 0 0.01000 0.4368 0.0049 0.0120
-41 0 0.01000 0.4493 0.0049 0.0138
-42 0 0.01000 0.4592 0.0049 0.0122
-43 0 0.01000 0.4691 0.0049 0.0112
-44 0 0.01000 0.4790 0.0049 0.0113
-45 0 0.01000 0.4938 0.0049 0.0162
-46 0 0.01000 0.5041 0.0049 0.0147
-47 0 0.01000 0.5132 0.0049 0.0107
-48 0 0.01000 0.5224 0.0049 0.0068
-49 0 0.01000 0.5373 0.0049 0.0112
-50 0 0.01000 0.5467 0.0049 0.0077
-51 0 0.01000 0.5581 0.0049 0.0057
-52 0 0.01000 0.5753 0.0049 0.0129
-53 0 0.01000 0.5855 0.0049 0.0108
-54 0 0.01000 0.6268 0.0050 0.0157
-55 0 0.01000 0.0049 0.0136 0.0050
-56 0 0.01000 0.0160 0.0049 0.0216
-57 0 0.01000 0.0260 0.0049 0.0188
-58 0 0.01000 0.0352 0.0049 0.0149
-59 0 0.01000 0.0451 0.0049 0.0185
-60 0 0.01000 0.0635 0.0049 0.0258
-61 0 0.01000 0.0784 0.0134 0.0101
-62 0 0.01000 0.0888 0.0128 0.0050
-63 0 0.01000 0.0914 0.0049 0.0179
-64 0 0.01000 0.0987 0.0135 0.0050
-65 0 0.01000 0.1091 0.0131 0.0050
-66 0 0.01000 0.1333 0.0049 0.0386
-67 0 0.01000 0.1390 0.0049 0.0303
-68 0 0.01000 0.1416 0.0110 0.0049
-69 0 0.01000 0.1508 0.0107 0.0174
-70 0 0.01000 0.1582 0.0049 0.0205
-71 0 0.01000 0.1747 0.0049 0.0184
-72 0 0.01000 0.1819 0.0121 0.0150
-73 0 0.01000 0.1968 0.0049 0.0219
-74 0 0.01000 0.2050 0.0049 0.0162
-75 0 0.01000 0.2172 0.0132 0.0050
-76 0 0.01000 0.2270 0.0135 0.0085
-77 0 0.01000 0.2362 0.0124 0.0050
-78 0 0.01000 0.2594 0.0049 0.0188
-79 0 0.01000 0.2733 0.0049 0.0194
-80 0 0.01000 0.2762 0.0120 0.0130
-81 0 0.01000 0.2826 0.0049 0.0156
-82 0 0.01000 0.2918 0.0084 0.0173
-83 0 0.01000 0.3010 0.0049 0.0190
-84 0 0.01000 0.3107 0.0049 0.0217
-85 0 0.01000 0.3209 0.0049 0.0209
-86 0 0.01000 0.3308 0.0096 0.0049
-87 0 0.01000 0.3395 0.0049 0.0188
-88 0 0.01000 0.3593 0.0049 0.0187
-89 0 0.01000 0.3908 0.0049 0.0470
-90 0 0.01000 0.3881 0.0131 0.0049
-91 0 0.01000 0.3985 0.0135 0.0050
-92 0 0.01000 0.4012 0.0095 0.0137
-93 0 0.01000 0.4210 0.0110 0.0144
-94 0 0.01000 0.4264 0.0049 0.0200
-95 0 0.01000 0.4347 0.0049 0.0269
-96 0 0.01000 0.4447 0.0049 0.0235
-97 0 0.01000 0.4498 0.0049 0.0324
-98 0 0.01000 0.4648 0.0049 0.0218
-99 0 0.01000 0.4735 0.0049 0.0420
-100 0 0.01000 0.4835 0.0049 0.0412
-101 0 0.01000 0.5046 0.0049 0.0285
-102 0 0.01000 0.5060 0.0086 0.0050
-103 0 0.01000 0.5281 0.0049 0.0171
-104 0 0.01000 0.5464 0.0049 0.0178
-105 0 0.01000 0.5521 0.0128 0.0050
-106 0 0.01000 0.5702 0.0049 0.0330
-107 0 0.01000 0.5844 0.0049 0.0222
-108 0 0.01000 0.5829 0.0050 0.0330
-109 0 0.01000 0.6299 0.0051 0.0478
-110 0 0.01000 0.0049 0.0049 0.0244
-111 0 0.01000 0.0153 0.0049 0.0645
-112 0 0.01000 0.0345 0.0049 0.0445
-113 0 0.01000 0.0244 0.0138 0.0068
-114 0 0.01000 0.0461 0.0049 0.0644
-115 0 0.01000 0.0536 0.0049 0.0272
-116 0 0.01000 0.0688 0.0129 0.0050
-117 0 0.01000 0.0829 0.0208 0.0051
-118 0 0.01000 0.0915 0.0049 0.0420
-119 0 0.01000 0.1041 0.0049 0.0174
-120 0 0.01000 0.1133 0.0049 0.0296
-121 0 0.01000 0.1513 0.0050 0.1134
-122 0 0.01000 0.1221 0.0049 0.0248
-123 0 0.01000 0.1317 0.0082 0.0049
-124 0 0.01000 0.1412 0.0079 0.0208
-125 0 0.01000 0.1580 0.0138 0.0050
-126 0 0.01000 0.1679 0.0147 0.0050
-127 0 0.01000 0.1778 0.0139 0.0050
-128 0 0.01000 0.1965 0.0049 0.0394
-129 0 0.01000 0.2058 0.0049 0.0429
-130 0 0.01000 0.2061 0.0125 0.0050
-131 0 0.01000 0.2205 0.0194 0.0132
-132 0 0.01000 0.2320 0.0214 0.0050
-133 0 0.01000 0.2490 0.0115 0.0107
-134 0 0.01000 0.2822 0.0049 0.0367
-135 0 0.01000 0.2683 0.0182 0.0132
-136 0 0.01000 0.2767 0.0049 0.0457
-137 0 0.01000 0.2824 0.0128 0.0053
-138 0 0.01000 0.3045 0.0050 0.0858
-139 0 0.01000 0.3183 0.0049 0.0432
-140 0 0.01000 0.3126 0.0121 0.0151
-141 0 0.01000 0.3430 0.0122 0.0131
-142 0 0.01000 0.3491 0.0135 0.0050
-143 0 0.01000 0.3627 0.0049 0.0537
-144 0 0.01000 0.4191 0.0053 0.1978
-145 0 0.01000 0.3930 0.0176 0.0123
-146 0 0.01000 0.4059 0.0180 0.0114
-147 0 0.01000 0.4011 0.0049 0.0300
-148 0 0.01000 0.4105 0.0119 0.0050
-149 0 0.01000 0.4412 0.0049 0.0514
-150 0 0.01000 0.4201 0.0095 0.0262
-151 0 0.01000 0.4379 0.0111 0.0198
-152 0 0.01000 0.4548 0.0050 0.0225
-153 0 0.01000 0.4646 0.0126 0.0155
-154 0 0.01000 0.4662 0.0120 0.0049
-155 0 0.01000 0.4851 0.0049 0.0214
-156 0 0.01000 0.5091 0.0050 0.0908
-157 0 0.01000 0.5182 0.0050 0.0544
-158 0 0.01000 0.5267 0.0050 0.0944
-159 0 0.01000 0.5438 0.0050 0.0819
-160 0 0.01000 0.5428 0.0132 0.0117
-161 0 0.01000 0.5703 0.0081 0.0049
-162 0 0.01000 0.5814 0.0123 0.0162
-163 0 0.01000 0.5885 0.0049 0.0496
-164 0 0.01000 0.6188 0.0099 0.0949
-165 0 0.01000 0.0149 0.0049 0.0404
-166 0 0.01000 0.0175 0.0049 0.0881
-167 0 0.01000 0.0390 0.0049 0.1033
-168 0 0.01000 0.0148 0.0125 0.0050
-169 0 0.01000 0.0433 0.0049 0.0365
-170 0 0.01000 0.0462 0.0113 0.0288
-171 0 0.01000 0.0631 0.0097 0.0166
-172 0 0.01000 0.0781 0.0049 0.0288
-173 0 0.01000 0.0492 0.0063 0.1371
-174 0 0.01000 0.0846 0.0049 0.0560
-175 0 0.01000 0.1051 0.0049 0.0542
-176 0 0.01000 0.1039 0.0050 0.1157
-177 0 0.01000 0.1224 0.0049 0.0050
-178 0 0.01000 0.1318 0.0049 0.0227
-179 0 0.01000 0.1495 0.0049 0.0254
-180 0 0.01000 0.1489 0.0178 0.0053
-181 0 0.01000 0.1622 0.0221 0.0085
-182 0 0.01000 0.1735 0.0229 0.0053
-183 0 0.01000 0.2009 0.0050 0.1237
-184 0 0.01000 0.2160 0.0050 0.0852
-185 0 0.01000 0.1956 0.0134 0.0098
-186 0 0.01000 0.2123 0.0112 0.0184
-187 0 0.01000 0.2287 0.0049 0.0264
-188 0 0.01000 0.2402 0.0129 0.0152
-189 0 0.01000 0.2944 0.0050 0.0845
-190 0 0.01000 0.2647 0.0224 0.0050
-191 0 0.01000 0.2737 0.0050 0.0741
-192 0 0.01000 0.2749 0.0193 0.0050
-193 0 0.01000 0.3208 0.0049 0.1016
-194 0 0.01000 0.3277 0.0050 0.0466
-195 0 0.01000 0.3306 0.0049 0.0234
-196 0 0.01000 0.3544 0.0049 0.0331
-197 0 0.01000 0.3495 0.0050 0.0207
-198 0 0.01000 0.4023 0.0050 0.1159
-199 0 0.01000 0.4013 0.0049 0.0463
-200 0 0.01000 0.3820 0.0199 0.0089
-201 0 0.01000 0.4100 0.0049 0.0150
-202 0 0.01000 0.3889 0.0066 0.0148
-203 0 0.01000 0.4173 0.0192 0.0050
-204 0 0.01000 0.4581 0.0053 0.1506
-205 0 0.01000 0.4123 0.0141 0.0181
-206 0 0.01000 0.4337 0.0111 0.0049
-207 0 0.01000 0.4447 0.0049 0.0050
-208 0 0.01000 0.4554 0.0106 0.0050
-209 0 0.01000 0.4742 0.0135 0.0258
-210 0 0.01000 0.4762 0.0120 0.0049
-211 0 0.01000 0.5322 0.0052 0.1132
-212 0 0.01000 0.5316 0.0050 0.0850
-213 0 0.01000 0.5203 0.0105 0.0149
-214 0 0.01000 0.5443 0.0053 0.1296
-215 0 0.01000 0.5569 0.0049 0.0177
-216 0 0.01000 0.5622 0.0139 0.0050
-217 0 0.01000 0.5917 0.0049 0.0378
-218 0 0.01000 0.6049 0.0050 0.0672
-219 0 0.01000 0.6610 0.0050 0.1202
-220 0 0.01000 0.0137 0.0050 0.0763
-221 0 0.01000 0.0208 0.0049 0.1434
-222 0 0.01000 0.0087 0.0057 0.0979
-223 0 0.01000 0.0205 0.0049 0.0310
-224 0 0.01000 0.0178 0.0202 0.0106
-225 0 0.01000 0.0540 0.0049 0.0050
-226 0 0.01000 0.0365 0.0050 0.0723
-227 0 0.01000 0.0202 0.0063 0.1196
-228 0 0.01000 0.0845 0.0146 0.0537
-229 0 0.01000 0.0867 0.0050 0.1346
-230 0 0.01000 0.1382 0.0050 0.1912
-231 0 0.01000 0.1139 0.0049 0.0192
-232 0 0.01000 0.1272 0.0049 0.0487
-233 0 0.01000 0.1469 0.0049 0.0367
-234 0 0.01000 0.1606 0.0050 0.0986
-235 0 0.01000 0.1704 0.0049 0.0875
-236 0 0.01000 0.1652 0.0050 0.0511
-237 0 0.01000 0.1869 0.0090 0.0050
-238 0 0.01000 0.2695 0.0100 0.1776
-239 0 0.01000 0.2296 0.0050 0.0999
-240 0 0.01000 0.2199 0.0049 0.0195
-241 0 0.01000 0.2283 0.0099 0.0177
-242 0 0.01000 0.2383 0.0049 0.0445
-243 0 0.01000 0.2444 0.0182 0.0050
-244 0 0.01000 0.2840 0.0049 0.0917
-245 0 0.01000 0.2672 0.0134 0.0345
-246 0 0.01000 0.2659 0.0049 0.0276
-247 0 0.01000 0.2870 0.0217 0.0052
-248 0 0.01000 0.2758 0.0059 0.1638
-249 0 0.01000 0.3632 0.0050 0.0861
-250 0 0.01000 0.3360 0.0049 0.0318
-251 0 0.01000 0.3522 0.0050 0.0568
-252 0 0.01000 0.3534 0.0214 0.0128
-253 0 0.01000 0.3793 0.0050 0.0789
-254 0 0.01000 0.3964 0.0049 0.0211
-255 0 0.01000 0.3743 0.0186 0.0344
-256 0 0.01000 0.4542 0.0049 0.1777
-257 0 0.01000 0.3955 0.0049 0.0382
-258 0 0.01000 0.3998 0.0195 0.0193
-259 0 0.01000 0.4465 0.0050 0.1227
-260 0 0.01000 0.4264 0.0168 0.0084
-261 0 0.01000 0.4363 0.0173 0.0122
-262 0 0.01000 0.4429 0.0147 0.0051
-263 0 0.01000 0.4501 0.0147 0.0125
-264 0 0.01000 0.4709 0.0124 0.0360
-265 0 0.01000 0.4846 0.0173 0.0050
-266 0 0.01000 0.4740 0.0050 0.1380
-267 0 0.01000 0.5105 0.0050 0.2189
-268 0 0.01000 0.5156 0.0127 0.0050
-269 0 0.01000 0.6090 0.0051 0.1369
-270 0 0.01000 0.5634 0.0050 0.0560
-271 0 0.01000 0.5695 0.0049 0.0211
-272 0 0.01000 0.5662 0.0049 0.0421
-273 0 0.01000 0.6154 0.0050 0.0318
-274 0 0.01000 0.6541 0.0055 0.0850
-275 0 0.01000 0.0183 0.0050 0.1715
-276 0 0.01000 0.0102 0.0049 0.0516
-277 0 0.01000 0.0252 0.0049 0.0748
-278 0 0.01000 0.0225 0.0049 0.0530
-279 0 0.01000 0.0370 0.0103 0.0050
-280 0 0.01000 0.0581 0.0131 0.0087
-281 0 0.01000 0.0467 0.0049 0.0476
-282 0 0.01000 0.0773 0.0108 0.0395
-283 0 0.01000 0.0881 0.0049 0.0293
-284 0 0.01000 0.1113 0.0050 0.0940
-285 0 0.01000 0.1013 0.0049 0.0450
-286 0 0.01000 0.1161 0.0201 0.0059
-287 0 0.01000 0.1231 0.0059 0.1738
-288 0 0.01000 0.1343 0.0178 0.0061
-289 0 0.01000 0.1539 0.0050 0.1231
-290 0 0.01000 0.1592 0.0157 0.0155
-291 0 0.01000 0.1725 0.0119 0.0265
-292 0 0.01000 0.1906 0.0124 0.0199
-293 0 0.01000 0.1882 0.0050 0.1484
-294 0 0.01000 0.2300 0.0050 0.1105
-295 0 0.01000 0.2256 0.0050 0.0563
-296 0 0.01000 0.2366 0.0049 0.0199
-297 0 0.01000 0.2486 0.0049 0.0392
-298 0 0.01000 0.2464 0.0049 0.0177
-299 0 0.01000 0.2601 0.0049 0.0483
-300 0 0.01000 0.2922 0.0049 0.0266
-301 0 0.01000 0.3073 0.0131 0.0546
-302 0 0.01000 0.2930 0.0137 0.0050
-303 0 0.01000 0.2892 0.0050 0.1172
-304 0 0.01000 0.3126 0.0049 0.0621
-305 0 0.01000 0.3386 0.0158 0.0049
-306 0 0.01000 0.3467 0.0050 0.0814
-307 0 0.01000 0.3232 0.0049 0.0695
-308 0 0.01000 0.3320 0.0053 0.1392
-309 0 0.01000 0.3876 0.0049 0.0258
-310 0 0.01000 0.3712 0.0049 0.0482
-311 0 0.01000 0.3876 0.0050 0.1011
-312 0 0.01000 0.3925 0.0119 0.0539
-313 0 0.01000 0.4166 0.0223 0.0144
-314 0 0.01000 0.4101 0.0049 0.0356
-315 0 0.01000 0.4293 0.0134 0.0244
-316 0 0.01000 0.4397 0.0049 0.0355
-317 0 0.01000 0.4472 0.0050 0.0422
-318 0 0.01000 0.4602 0.0199 0.0050
-319 0 0.01000 0.4750 0.0049 0.0207
-320 0 0.01000 0.4848 0.0058 0.0313
-321 0 0.01000 0.4968 0.0049 0.0052
-322 0 0.01000 0.5203 0.0050 0.0645
-323 0 0.01000 0.5169 0.0195 0.0122
-324 0 0.01000 0.5191 0.0076 0.1577
-325 0 0.01000 0.5913 0.0070 0.1320
-326 0 0.01000 0.5944 0.0050 0.0676
-327 0 0.01000 0.5845 0.0047 0.0856
-328 0 0.01000 0.6381 0.0048 0.0050
-329 0 0.01000 0.6386 0.0053 0.0729
-330 0 0.01000 0.0050 0.0236 0.0050
-331 0 0.01000 0.0089 0.0098 0.0167
-332 0 0.01000 0.0055 0.0050 0.0604
-333 0 0.01000 0.0733 0.0060 0.1290
-334 0 0.01000 0.0607 0.0050 0.0620
-335 0 0.01000 0.0598 0.0049 0.0359
-336 0 0.01000 0.0696 0.0115 0.0459
-337 0 0.01000 0.0976 0.0049 0.0257
-338 0 0.01000 0.0706 0.0114 0.0284
-339 0 0.01000 0.0762 0.0050 0.0983
-340 0 0.01000 0.0976 0.0120 0.0148
-341 0 0.01000 0.1201 0.0049 0.0369
-342 0 0.01000 0.1243 0.0145 0.0067
-343 0 0.01000 0.1477 0.0050 0.0878
-344 0 0.01000 0.1655 0.0049 0.0279
-345 0 0.01000 0.1776 0.0049 0.0314
-346 0 0.01000 0.1888 0.0049 0.0304
-347 0 0.01000 0.2185 0.0049 0.0477
-348 0 0.01000 0.2217 0.0050 0.0667
-349 0 0.01000 0.2389 0.0050 0.1036
-350 0 0.01000 0.2901 0.0050 0.1324
-351 0 0.01000 0.2609 0.0053 0.1512
-352 0 0.01000 0.2657 0.0049 0.0669
-353 0 0.01000 0.2687 0.0050 0.0548
-354 0 0.01000 0.2675 0.0126 0.0050
-355 0 0.01000 0.2999 0.0066 0.1172
-356 0 0.01000 0.3074 0.0206 0.0152
-357 0 0.01000 0.2822 0.0049 0.0256
-358 0 0.01000 0.2961 0.0049 0.0381
-359 0 0.01000 0.3144 0.0050 0.0827
-360 0 0.01000 0.3454 0.0073 0.0294
-361 0 0.01000 0.3420 0.0050 0.1319
-362 0 0.01000 0.3918 0.0050 0.1582
-363 0 0.01000 0.3558 0.0118 0.0124
-364 0 0.01000 0.3795 0.0049 0.0175
-365 0 0.01000 0.4246 0.0049 0.1139
-366 0 0.01000 0.3952 0.0049 0.0606
-367 0 0.01000 0.3935 0.0113 0.0308
-368 0 0.01000 0.4196 0.0190 0.0233
-369 0 0.01000 0.4113 0.0049 0.0255
-370 0 0.01000 0.4276 0.0049 0.0699
-371 0 0.01000 0.4555 0.0050 0.0542
-372 0 0.01000 0.4525 0.0049 0.0914
-373 0 0.01000 0.4546 0.0115 0.0385
-374 0 0.01000 0.4781 0.0202 0.0196
-375 0 0.01000 0.4833 0.0128 0.0156
-376 0 0.01000 0.4960 0.0049 0.0364
-377 0 0.01000 0.4893 0.0049 0.0512
-378 0 0.01000 0.5182 0.0049 0.0372
-379 0 0.01000 0.5311 0.0094 0.0050
-380 0 0.01000 0.5545 0.0050 0.1016
-381 0 0.01000 0.5636 0.0050 0.0759
-382 0 0.01000 0.6984 0.0121 0.1101
-383 0 0.01000 0.5934 0.0049 0.0178
-384 0 0.01000 0.5965 0.0050 0.0052
-385 0 0.01000 0.0056 0.0231 0.0314
-386 0 0.01000 0.0079 0.0191 0.0133
-387 0 0.01000 0.0198 0.0123 0.0162
-388 0 0.01000 0.0458 0.0050 0.0760
-389 0 0.01000 0.0665 0.0049 0.0527
-390 0 0.01000 0.0715 0.0049 0.0188
-391 0 0.01000 0.0730 0.0220 0.0052
-392 0 0.01000 0.0702 0.0070 0.1689
-393 0 0.01000 0.0930 0.0049 0.1108
-394 0 0.01000 0.0865 0.0133 0.0159
-395 0 0.01000 0.1018 0.0049 0.0641
-396 0 0.01000 0.1175 0.0138 0.0282
-397 0 0.01000 0.1333 0.0125 0.0163
-398 0 0.01000 0.1561 0.0049 0.0329
-399 0 0.01000 0.1696 0.0050 0.1825
-400 0 0.01000 0.1908 0.0049 0.0713
-401 0 0.01000 0.1870 0.0050 0.0574
-402 0 0.01000 0.2017 0.0049 0.0527
-403 0 0.01000 0.1978 0.0050 0.0899
-404 0 0.01000 0.2189 0.0050 0.1020
-405 0 0.01000 0.2289 0.0050 0.0738
-406 0 0.01000 0.2379 0.0061 0.1422
-407 0 0.01000 0.2525 0.0049 0.0261
-408 0 0.01000 0.2775 0.0050 0.1007
-409 0 0.01000 0.2589 0.0049 0.0363
-410 0 0.01000 0.2649 0.0050 0.0918
-411 0 0.01000 0.2979 0.0223 0.0055
-412 0 0.01000 0.3056 0.0049 0.0759
-413 0 0.01000 0.3028 0.0117 0.0049
-414 0 0.01000 0.3127 0.0120 0.0050
-415 0 0.01000 0.3548 0.0052 0.1100
-416 0 0.01000 0.3239 0.0063 0.1315
-417 0 0.01000 0.3388 0.0049 0.0881
-418 0 0.01000 0.3666 0.0108 0.0050
-419 0 0.01000 0.3863 0.0050 0.0860
-420 0 0.01000 0.3732 0.0050 0.0868
-421 0 0.01000 0.3810 0.0049 0.0448
-422 0 0.01000 0.4152 0.0050 0.0875
-423 0 0.01000 0.4394 0.0183 0.0268
-424 0 0.01000 0.4201 0.0049 0.0350
-425 0 0.01000 0.4353 0.0050 0.1032
-426 0 0.01000 0.4554 0.0050 0.1168
-427 0 0.01000 0.4599 0.0049 0.0328
-428 0 0.01000 0.4749 0.0049 0.0308
-429 0 0.01000 0.4949 0.0102 0.0448
-430 0 0.01000 0.4917 0.0122 0.0098
-431 0 0.01000 0.4868 0.0049 0.0050
-432 0 0.01000 0.5007 0.0142 0.0135
-433 0 0.01000 0.5452 0.0050 0.1112
-434 0 0.01000 0.5567 0.0050 0.0460
-435 0 0.01000 0.5560 0.0049 0.0359
-436 0 0.01000 0.6180 0.0049 0.1096
-437 0 0.01000 0.5744 0.0049 0.0554
-438 0 0.01000 0.6358 0.0095 0.1076
-439 0 0.01000 0.6166 0.0049 0.0832
-440 0 0.01000 0.0069 0.0051 0.1191
-441 0 0.01000 0.0199 0.0135 0.0406
-442 0 0.01000 0.0305 0.0049 0.0317
-443 0 0.01000 0.0551 0.0050 0.1047
-444 0 0.01000 0.0689 0.0050 0.0679
-445 0 0.01000 0.0701 0.0052 0.0801
-446 0 0.01000 0.0814 0.0050 0.0183
-447 0 0.01000 0.0809 0.0049 0.0467
-448 0 0.01000 0.1116 0.0050 0.0822
-449 0 0.01000 0.1042 0.0218 0.0050
-450 0 0.01000 0.1042 0.0050 0.0347
-451 0 0.01000 0.1340 0.0119 0.0509
-452 0 0.01000 0.1318 0.0075 0.0640
-453 0 0.01000 0.1612 0.0050 0.1104
-454 0 0.01000 0.1648 0.0049 0.0710
-455 0 0.01000 0.1764 0.0049 0.0492
-456 0 0.01000 0.1840 0.0050 0.1170
-457 0 0.01000 0.2015 0.0049 0.0307
-458 0 0.01000 0.1941 0.0220 0.0050
-459 0 0.01000 0.2107 0.0184 0.0116
-460 0 0.01000 0.2058 0.0049 0.1426
-461 0 0.01000 0.2569 0.0050 0.1160
-462 0 0.01000 0.2626 0.0050 0.0785
-463 0 0.01000 0.2729 0.0050 0.0848
-464 0 0.01000 0.2890 0.0050 0.1071
-465 0 0.01000 0.3021 0.0049 0.0572
-466 0 0.01000 0.2875 0.0049 0.0757
-467 0 0.01000 0.3409 0.0049 0.0732
-468 0 0.01000 0.3021 0.0049 0.0290
-469 0 0.01000 0.3077 0.0206 0.0051
-470 0 0.01000 0.3207 0.0050 0.0913
-471 0 0.01000 0.3304 0.0050 0.0960
-472 0 0.01000 0.2004 0.0074 0.2675
-473 0 0.01000 0.3448 0.0050 0.0501
-474 0 0.01000 0.3767 0.0124 0.0050
-475 0 0.01000 0.3762 0.0068 0.1658
-476 0 0.01000 0.3569 0.0115 0.0489
-477 0 0.01000 0.4031 0.0050 0.1317
-478 0 0.01000 0.4250 0.0049 0.0513
-479 0 0.01000 0.4298 0.0049 0.0375
-480 0 0.01000 0.4933 0.0085 0.1939
-481 0 0.01000 0.4700 0.0050 0.1254
-482 0 0.01000 0.4186 0.0065 0.1272
-483 0 0.01000 0.4758 0.0050 0.0612
-484 0 0.01000 0.4867 0.0050 0.0608
-485 0 0.01000 0.5033 0.0049 0.0444
-486 0 0.01000 0.4940 0.0049 0.0262
-487 0 0.01000 0.5120 0.0049 0.0213
-488 0 0.01000 0.5762 0.0049 0.1605
-489 0 0.01000 0.5246 0.0169 0.0052
-490 0 0.01000 0.5371 0.0050 0.0214
-491 0 0.01000 0.5920 0.0050 0.1055
-492 0 0.01000 0.6025 0.0053 0.0770
-493 0 0.01000 0.6432 0.0049 0.0451
-494 0 0.01000 0.6392 0.0050 0.0352
-495 0 0.01000 0.0051 0.0146 0.0262
-496 0 0.01000 0.0248 0.0049 0.0421
-497 0 0.01000 0.0307 0.0050 0.0832
-498 0 0.01000 0.0517 0.0090 0.0400
-499 0 0.01000 0.0579 0.0050 0.0814
-500 0 0.01000 0.0408 0.0050 0.1164
-501 0 0.01000 0.0512 0.0121 0.1155
-502 0 0.01000 0.0847 0.0065 0.1686
-503 0 0.01000 0.1349 0.0050 0.1813
-504 0 0.01000 0.0944 0.0049 0.0573
-505 0 0.01000 0.1274 0.0094 0.0319
-506 0 0.01000 0.1313 0.0049 0.0737
-507 0 0.01000 0.1381 0.0049 0.0567
-508 0 0.01000 0.1330 0.0052 0.1387
-509 0 0.01000 0.1659 0.0084 0.0153
-510 0 0.01000 0.1842 0.0049 0.0216
-511 0 0.01000 0.1976 0.0050 0.1023
-512 0 0.01000 0.1836 0.0124 0.0345
-513 0 0.01000 0.2015 0.0135 0.0200
-514 0 0.01000 0.1974 0.0050 0.1333
-515 0 0.01000 0.2576 0.0140 0.0050
-516 0 0.01000 0.2451 0.0050 0.1183
-517 0 0.01000 0.2440 0.0050 0.0894
-518 0 0.01000 0.2559 0.0049 0.0574
-519 0 0.01000 0.2577 0.0140 0.0150
-520 0 0.01000 0.3104 0.0050 0.1060
-521 0 0.01000 0.2545 0.0050 0.2227
-522 0 0.01000 0.3169 0.0053 0.1194
-523 0 0.01000 0.3091 0.0049 0.0394
-524 0 0.01000 0.3225 0.0131 0.0154
-525 0 0.01000 0.3125 0.0051 0.2170
-526 0 0.01000 0.3666 0.0049 0.0723
-527 0 0.01000 0.3933 0.0050 0.1922
-528 0 0.01000 0.3789 0.0049 0.0307
-529 0 0.01000 0.3819 0.0145 0.0173
-530 0 0.01000 0.3608 0.0050 0.0959
-531 0 0.01000 0.3864 0.0050 0.0653
-532 0 0.01000 0.3995 0.0049 0.0754
-533 0 0.01000 0.4097 0.0050 0.1077
-534 0 0.01000 0.4504 0.0212 0.0050
-535 0 0.01000 0.4671 0.0052 0.1594
-536 0 0.01000 0.4361 0.0054 0.1684
-537 0 0.01000 0.4821 0.0051 0.0722
-538 0 0.01000 0.5104 0.0050 0.0777
-539 0 0.01000 0.4967 0.0050 0.0602
-540 0 0.01000 0.4884 0.0050 0.0944
-541 0 0.01000 0.5075 0.0183 0.0066
-542 0 0.01000 0.5303 0.0116 0.0242
-543 0 0.01000 0.5535 0.0050 0.0772
-544 0 0.01000 0.5303 0.0049 0.0316
-545 0 0.01000 0.5425 0.0049 0.0304
-546 0 0.01000 0.5739 0.0050 0.0739
-547 0 0.01000 0.6040 0.0049 0.0448
-548 0 0.01000 0.6379 0.0070 0.0605
-549 0 0.01000 0.6748 0.0050 0.0241
-550 0 0.01000 0.0110 0.0077 0.0317
-551 0 0.01000 0.0050 0.0049 0.0395
-552 0 0.01000 0.0284 0.0050 0.1007
-553 0 0.01000 0.0488 0.0133 0.0050
-554 0 0.01000 0.0808 0.0049 0.1143
-555 0 0.01000 0.0823 0.0049 0.0731
-556 0 0.01000 0.0915 0.0051 0.1524
-557 0 0.01000 0.1249 0.0097 0.0571
-558 0 0.01000 0.0667 0.0050 0.1074
-559 0 0.01000 0.0844 0.0050 0.0829
-560 0 0.01000 0.1109 0.0049 0.0425
-561 0 0.01000 0.1215 0.0050 0.0938
-562 0 0.01000 0.1424 0.0050 0.1241
-563 0 0.01000 0.1476 0.0050 0.0597
-564 0 0.01000 0.1404 0.0118 0.0397
-565 0 0.01000 0.1823 0.0049 0.0409
-566 0 0.01000 0.2201 0.0049 0.1147
-567 0 0.01000 0.1781 0.0050 0.0803
-568 0 0.01000 0.1741 0.0057 0.1167
-569 0 0.01000 0.2330 0.0049 0.0360
-570 0 0.01000 0.2274 0.0125 0.0328
-571 0 0.01000 0.1704 0.0051 0.2724
-572 0 0.01000 0.2403 0.0049 0.0292
-573 0 0.01000 0.2495 0.0134 0.0219
-574 0 0.01000 0.2663 0.0119 0.0206
-575 0 0.01000 0.2450 0.0124 0.0450
-576 0 0.01000 0.2758 0.0050 0.1148
-577 0 0.01000 0.3111 0.0050 0.0942
-578 0 0.01000 0.3019 0.0049 0.0463
-579 0 0.01000 0.3209 0.0049 0.0552
-580 0 0.01000 0.3210 0.0049 0.1512
-581 0 0.01000 0.3384 0.0205 0.0161
-582 0 0.01000 0.3565 0.0050 0.0787
-583 0 0.01000 0.3430 0.0049 0.0394
-584 0 0.01000 0.3701 0.0049 0.0209
-585 0 0.01000 0.3750 0.0049 0.0576
-586 0 0.01000 0.4055 0.0049 0.0577
-587 0 0.01000 0.3916 0.0048 0.1334
-588 0 0.01000 0.4526 0.0050 0.1024
-589 0 0.01000 0.4472 0.0144 0.0221
-590 0 0.01000 0.4412 0.0050 0.0845
-591 0 0.01000 0.4719 0.0181 0.0115
-592 0 0.01000 0.4650 0.0047 0.1802
-593 0 0.01000 0.5195 0.0055 0.1102
-594 0 0.01000 0.5052 0.0050 0.1199
-595 0 0.01000 0.5694 0.0144 0.1291
-596 0 0.01000 0.5103 0.0129 0.0157
-597 0 0.01000 0.5217 0.0049 0.0251
-598 0 0.01000 0.4892 0.0051 0.0814
-599 0 0.01000 0.5362 0.0179 0.0053
-600 0 0.01000 0.5764 0.0050 0.0409
-601 0 0.01000 0.5678 0.0050 0.0658
-602 0 0.01000 0.6024 0.0050 0.0133
-603 0 0.01000 0.5941 0.0063 0.0922
-604 0 0.01000 0.6755 0.0050 0.0123
-605 0 0.01000 0.0050 0.0280 0.0166
-606 0 0.01000 0.0051 0.0060 0.1511
-607 0 0.01000 0.0311 0.0210 0.0053
-608 0 0.01000 0.0342 0.0050 0.0926
-609 0 0.01000 0.0389 0.0049 0.0264
-610 0 0.01000 0.0748 0.0050 0.0594
-611 0 0.01000 0.0860 0.0130 0.0439
-612 0 0.01000 0.0794 0.0213 0.0161
-613 0 0.01000 0.0955 0.0097 0.0342
-614 0 0.01000 0.0913 0.0050 0.0986
-615 0 0.01000 0.1198 0.0119 0.0152
-616 0 0.01000 0.1219 0.0050 0.0806
-617 0 0.01000 0.1603 0.0057 0.2129
-618 0 0.01000 0.1620 0.0064 0.1337
-619 0 0.01000 0.1590 0.0124 0.0270
-620 0 0.01000 0.1551 0.0050 0.0669
-621 0 0.01000 0.1845 0.0107 0.0494
-622 0 0.01000 0.1707 0.0049 0.0410
-623 0 0.01000 0.1842 0.0214 0.0051
-624 0 0.01000 0.2041 0.0223 0.0052
-625 0 0.01000 0.2319 0.0191 0.0187
-626 0 0.01000 0.2351 0.0050 0.1559
-627 0 0.01000 0.2452 0.0050 0.0630
-628 0 0.01000 0.2501 0.0049 0.0492
-629 0 0.01000 0.2723 0.0049 0.0352
-630 0 0.01000 0.2743 0.0108 0.0274
-631 0 0.01000 0.2943 0.0050 0.0665
-632 0 0.01000 0.2678 0.0086 0.0433
-633 0 0.01000 0.3114 0.0049 0.0506
-634 0 0.01000 0.3312 0.0050 0.0755
-635 0 0.01000 0.2980 0.0050 0.1009
-636 0 0.01000 0.3356 0.0049 0.0549
-637 0 0.01000 0.3605 0.0184 0.0200
-638 0 0.01000 0.3657 0.0115 0.0149
-639 0 0.01000 0.3838 0.0135 0.0294
-640 0 0.01000 0.3729 0.0178 0.0124
-641 0 0.01000 0.3741 0.0244 0.0050
-642 0 0.01000 0.4127 0.0050 0.0648
-643 0 0.01000 0.3926 0.0049 0.1795
-644 0 0.01000 0.4200 0.0050 0.0766
-645 0 0.01000 0.4637 0.0049 0.0759
-646 0 0.01000 0.4586 0.0049 0.0447
-647 0 0.01000 0.4638 0.0050 0.1079
-648 0 0.01000 0.4793 0.0050 0.0503
-649 0 0.01000 0.5005 0.0065 0.0975
-650 0 0.01000 0.5263 0.0102 0.1360
-651 0 0.01000 0.5140 0.0133 0.0404
-652 0 0.01000 0.5282 0.0050 0.0548
-653 0 0.01000 0.5320 0.0050 0.0656
-654 0 0.01000 0.5517 0.0049 0.0262
-655 0 0.01000 0.5648 0.0089 0.0132
-656 0 0.01000 0.5474 0.0049 0.0411
-657 0 0.01000 0.5766 0.0092 0.0266
-658 0 0.01000 0.6171 0.0054 0.0661
-659 0 0.01000 0.6884 0.0050 0.1447
-660 0 0.01000 0.0050 0.0050 0.0706
-661 0 0.01000 0.0141 0.0275 0.0050
-662 0 0.01000 0.0299 0.0133 0.0151
-663 0 0.01000 0.0273 0.0054 0.1661
-664 0 0.01000 0.0641 0.0051 0.1176
-665 0 0.01000 0.0721 0.0148 0.0183
-666 0 0.01000 0.0695 0.0049 0.0384
-667 0 0.01000 0.0922 0.0050 0.0671
-668 0 0.01000 0.0829 0.0212 0.0393
-669 0 0.01000 0.0956 0.0268 0.0050
-670 0 0.01000 0.1164 0.0050 0.0508
-671 0 0.01000 0.1362 0.0050 0.0927
-672 0 0.01000 0.1426 0.0150 0.0140
-673 0 0.01000 0.1399 0.0049 0.0469
-674 0 0.01000 0.1593 0.0050 0.0877
-675 0 0.01000 0.1659 0.0188 0.0236
-676 0 0.01000 0.1691 0.0050 0.1040
-677 0 0.01000 0.1728 0.0155 0.0172
-678 0 0.01000 0.1887 0.0265 0.0124
-679 0 0.01000 0.2060 0.0050 0.0620
-680 0 0.01000 0.2104 0.0050 0.0261
-681 0 0.01000 0.2388 0.0222 0.0122
-682 0 0.01000 0.2068 0.0050 0.0813
-683 0 0.01000 0.2791 0.0050 0.1480
-684 0 0.01000 0.2631 0.0114 0.0599
-685 0 0.01000 0.2974 0.0134 0.0435
-686 0 0.01000 0.3139 0.0081 0.0715
-687 0 0.01000 0.2895 0.0111 0.0340
-688 0 0.01000 0.3002 0.0137 0.0144
-689 0 0.01000 0.3276 0.0182 0.0085
-690 0 0.01000 0.3353 0.0049 0.0649
-691 0 0.01000 0.3329 0.0122 0.0170
-692 0 0.01000 0.3527 0.0050 0.0896
-693 0 0.01000 0.3772 0.0050 0.0691
-694 0 0.01000 0.3621 0.0188 0.0087
-695 0 0.01000 0.3962 0.0049 0.0848
-696 0 0.01000 0.3832 0.0050 0.1108
-697 0 0.01000 0.4043 0.0117 0.0235
-698 0 0.01000 0.4428 0.0049 0.0957
-699 0 0.01000 0.4325 0.0050 0.0934
-700 0 0.01000 0.4546 0.0128 0.0286
-701 0 0.01000 0.4648 0.0050 0.0899
-702 0 0.01000 0.4687 0.0251 0.0052
-703 0 0.01000 0.4739 0.0050 0.0805
-704 0 0.01000 0.5075 0.0069 0.1622
-705 0 0.01000 0.5013 0.0127 0.0234
-706 0 0.01000 0.4977 0.0184 0.0050
-707 0 0.01000 0.5358 0.0050 0.0751
-708 0 0.01000 0.5446 0.0124 0.0241
-709 0 0.01000 0.5458 0.0205 0.0052
-710 0 0.01000 0.5618 0.0049 0.0277
-711 0 0.01000 0.5956 0.0104 0.0452
-712 0 0.01000 0.5955 0.0050 0.0574
-713 0 0.01000 0.6180 0.0050 0.0464
-714 0 0.01000 0.6026 0.0049 0.0239
-715 0 0.01000 0.0050 0.0050 0.0812
-716 0 0.01000 0.0095 0.0121 0.0447
-717 0 0.01000 0.0409 0.0194 0.0050
-718 0 0.01000 0.0359 0.0049 0.0623
-719 0 0.01000 0.0578 0.0049 0.0469
-720 0 0.01000 0.0783 0.0066 0.1587
-721 0 0.01000 0.0733 0.0197 0.0417
-722 0 0.01000 0.0925 0.0197 0.0111
-723 0 0.01000 0.0088 0.0049 0.1297
-724 0 0.01000 0.0947 0.0050 0.0805
-725 0 0.01000 0.1012 0.0050 0.0975
-726 0 0.01000 0.1267 0.0051 0.1292
-727 0 0.01000 0.1347 0.0050 0.1034
-728 0 0.01000 0.1524 0.0054 0.1478
-729 0 0.01000 0.1498 0.0049 0.0485
-730 0 0.01000 0.1694 0.0095 0.0786
-731 0 0.01000 0.1664 0.0050 0.0612
-732 0 0.01000 0.1821 0.0141 0.0248
-733 0 0.01000 0.1953 0.0207 0.0171
-734 0 0.01000 0.1492 0.0049 0.1011
-735 0 0.01000 0.2130 0.0049 0.0360
-736 0 0.01000 0.1836 0.0101 0.0667
-737 0 0.01000 0.2490 0.0205 0.0149
-738 0 0.01000 0.2494 0.0049 0.1044
-739 0 0.01000 0.2474 0.0114 0.0317
-740 0 0.01000 0.2873 0.0134 0.0245
-741 0 0.01000 0.2748 0.0049 0.0627
-742 0 0.01000 0.2867 0.0049 0.0566
-743 0 0.01000 0.3182 0.0203 0.0059
-744 0 0.01000 0.3271 0.0049 0.0363
-745 0 0.01000 0.3569 0.0050 0.0687
-746 0 0.01000 0.3496 0.0154 0.0198
-747 0 0.01000 0.3374 0.0111 0.0803
-748 0 0.01000 0.3523 0.0049 0.0431
-749 0 0.01000 0.3474 0.0049 0.0656
-750 0 0.01000 0.3848 0.0050 0.0554
-751 0 0.01000 0.4160 0.0049 0.0450
-752 0 0.01000 0.4090 0.0101 0.0499
-753 0 0.01000 0.4846 0.0128 0.0472
-754 0 0.01000 0.4276 0.0081 0.0604
-755 0 0.01000 0.4348 0.0050 0.0768
-756 0 0.01000 0.4566 0.0168 0.0197
-757 0 0.01000 0.4950 0.0063 0.1295
-758 0 0.01000 0.4697 0.0049 0.0533
-759 0 0.01000 0.4625 0.0114 0.0512
-760 0 0.01000 0.4917 0.0134 0.0209
-761 0 0.01000 0.5099 0.0174 0.0246
-762 0 0.01000 0.5404 0.0050 0.0587
-763 0 0.01000 0.5332 0.0132 0.0148
-764 0 0.01000 0.5537 0.0050 0.0585
-765 0 0.01000 0.5787 0.0049 0.1139
-766 0 0.01000 0.5616 0.0129 0.0383
-767 0 0.01000 0.5580 0.0050 0.0677
-768 0 0.01000 0.5686 0.0108 0.0498
-769 0 0.01000 0.6931 0.0059 0.0200
-770 0 0.01000 0.0050 0.0143 0.0361
-771 0 0.01000 0.0258 0.0117 0.0260
-772 0 0.01000 0.0253 0.0049 0.0626
-773 0 0.01000 0.0506 0.0132 0.0187
-774 0 0.01000 0.0588 0.0129 0.0301
-775 0 0.01000 0.0527 0.0050 0.0561
-776 0 0.01000 0.0683 0.0050 0.0913
-777 0 0.01000 0.0918 0.0129 0.0246
-778 0 0.01000 0.0962 0.0165 0.0413
-779 0 0.01000 0.1117 0.0050 0.0628
-780 0 0.01000 0.1351 0.0134 0.0268
-781 0 0.01000 0.1062 0.0050 0.1347
-782 0 0.01000 0.1417 0.0236 0.0091
-783 0 0.01000 0.1406 0.0049 0.0790
-784 0 0.01000 0.1533 0.0122 0.0391
-785 0 0.01000 0.1189 0.0069 0.1069
-786 0 0.01000 0.1771 0.0049 0.0611
-787 0 0.01000 0.1951 0.0123 0.0328
-788 0 0.01000 0.2060 0.0121 0.0360
-789 0 0.01000 0.2128 0.0050 0.0733
-790 0 0.01000 0.2195 0.0078 0.0290
-791 0 0.01000 0.2218 0.0060 0.1374
-792 0 0.01000 0.2557 0.0050 0.0879
-793 0 0.01000 0.2345 0.0049 0.0643
-794 0 0.01000 0.2589 0.0118 0.0292
-795 0 0.01000 0.2709 0.0051 0.1291
-796 0 0.01000 0.2883 0.0050 0.0448
-797 0 0.01000 0.3039 0.0079 0.0666
-798 0 0.01000 0.3169 0.0133 0.0588
-799 0 0.01000 0.3159 0.0129 0.0244
-800 0 0.01000 0.3057 0.0135 0.0227
-801 0 0.01000 0.3903 0.0238 0.0050
-802 0 0.01000 0.3636 0.0171 0.0302
-803 0 0.01000 0.3624 0.0049 0.0435
-804 0 0.01000 0.3685 0.0049 0.1431
-805 0 0.01000 0.3714 0.0111 0.0286
-806 0 0.01000 0.3867 0.0097 0.0381
-807 0 0.01000 0.4102 0.0050 0.0745
-808 0 0.01000 0.3986 0.0051 0.1045
-809 0 0.01000 0.4288 0.0049 0.1341
-810 0 0.01000 0.4450 0.0133 0.0365
-811 0 0.01000 0.4349 0.0091 0.0449
-812 0 0.01000 0.4518 0.0050 0.0785
-813 0 0.01000 0.4646 0.0125 0.0283
-814 0 0.01000 0.5004 0.0180 0.0317
-815 0 0.01000 0.5010 0.0241 0.0128
-816 0 0.01000 0.4602 0.0055 0.1272
-817 0 0.01000 0.5052 0.0107 0.0366
-818 0 0.01000 0.5183 0.0050 0.0844
-819 0 0.01000 0.5369 0.0050 0.0488
-820 0 0.01000 0.5728 0.0148 0.0119
-821 0 0.01000 0.5834 0.0050 0.0689
-822 0 0.01000 0.5674 0.0049 0.0852
-823 0 0.01000 0.6167 0.0051 0.0082
-824 0 0.01000 0.6370 0.0053 0.0182
-825 0 0.01000 0.0105 0.0221 0.0225
-826 0 0.01000 0.0538 0.0050 0.0944
-827 0 0.01000 0.0201 0.0111 0.0808
-828 0 0.01000 0.0340 0.0091 0.0535
-829 0 0.01000 0.1028 0.0050 0.0876
-830 0 0.01000 0.0592 0.0176 0.0213
-831 0 0.01000 0.0820 0.0097 0.0643
-832 0 0.01000 0.1000 0.0174 0.0298
-833 0 0.01000 0.1354 0.0058 0.1142
-834 0 0.01000 0.1059 0.0104 0.0258
-835 0 0.01000 0.1138 0.0051 0.1174
-836 0 0.01000 0.1267 0.0198 0.0148
-837 0 0.01000 0.1455 0.0125 0.0304
-838 0 0.01000 0.1506 0.0207 0.0156
-839 0 0.01000 0.1441 0.0118 0.0528
-840 0 0.01000 0.1749 0.0050 0.0708
-841 0 0.01000 0.1717 0.0111 0.0554
-842 0 0.01000 0.2090 0.0050 0.1054
-843 0 0.01000 0.1971 0.0050 0.0789
-844 0 0.01000 0.2208 0.0148 0.0221
-845 0 0.01000 0.2228 0.0050 0.0382
-846 0 0.01000 0.2157 0.0050 0.0577
-847 0 0.01000 0.2531 0.0228 0.0061
-848 0 0.01000 0.2526 0.0195 0.0291
-849 0 0.01000 0.2501 0.0050 0.0777
-850 0 0.01000 0.2557 0.0050 0.0674
-851 0 0.01000 0.2767 0.0128 0.0395
-852 0 0.01000 0.2842 0.0050 0.0663
-853 0 0.01000 0.3172 0.0050 0.0318
-854 0 0.01000 0.3276 0.0097 0.0609
-855 0 0.01000 0.3246 0.0108 0.0287
-856 0 0.01000 0.3432 0.0104 0.0584
-857 0 0.01000 0.3591 0.0124 0.0378
-858 0 0.01000 0.3694 0.0049 0.0361
-859 0 0.01000 0.3744 0.0116 0.0415
-860 0 0.01000 0.3914 0.0051 0.1179
-861 0 0.01000 0.4079 0.0050 0.0963
-862 0 0.01000 0.4053 0.0120 0.0406
-863 0 0.01000 0.4158 0.0050 0.0553
-864 0 0.01000 0.4370 0.0050 0.0611
-865 0 0.01000 0.4341 0.0128 0.0331
-866 0 0.01000 0.4470 0.0050 0.0595
-867 0 0.01000 0.4564 0.0291 0.0061
-868 0 0.01000 0.5009 0.0050 0.0807
-869 0 0.01000 0.4919 0.0128 0.0319
-870 0 0.01000 0.5065 0.0050 0.0541
-871 0 0.01000 0.5132 0.0049 0.0458
-872 0 0.01000 0.4973 0.0050 0.0702
-873 0 0.01000 0.5141 0.0257 0.0050
-874 0 0.01000 0.5372 0.0049 0.0388
-875 0 0.01000 0.5430 0.0127 0.0366
-876 0 0.01000 0.5614 0.0129 0.0217
-877 0 0.01000 0.6025 0.0051 0.0340
-878 0 0.01000 0.6079 0.0049 0.0562
-879 0 0.01000 0.6031 0.0123 0.0516
-880 0 0.01000 0.0155 0.0140 0.0256
-881 0 0.01000 0.0246 0.0199 0.0205
-882 0 0.01000 0.0434 0.0190 0.0226
-883 0 0.01000 0.0413 0.0127 0.0137
-884 0 0.01000 0.0546 0.0217 0.0050
-885 0 0.01000 0.0549 0.0050 0.0712
-886 0 0.01000 0.0851 0.0132 0.0338
-887 0 0.01000 0.1153 0.0050 0.0729
-888 0 0.01000 0.1096 0.0129 0.0149
-889 0 0.01000 0.1259 0.0139 0.0228
-890 0 0.01000 0.1078 0.0124 0.0482
-891 0 0.01000 0.1223 0.0049 0.0655
-892 0 0.01000 0.1315 0.0050 0.0836
-893 0 0.01000 0.1374 0.0206 0.0204
-894 0 0.01000 0.1540 0.0049 0.0774
-895 0 0.01000 0.1573 0.0050 0.0571
-896 0 0.01000 0.1799 0.0296 0.0090
-897 0 0.01000 0.1855 0.0050 0.0875
-898 0 0.01000 0.1958 0.0050 0.0620
-899 0 0.01000 0.2120 0.0122 0.0459
-900 0 0.01000 0.2227 0.0050 0.0927
-901 0 0.01000 0.2286 0.0050 0.0466
-902 0 0.01000 0.2414 0.0050 0.0722
-903 0 0.01000 0.2633 0.0141 0.0503
-904 0 0.01000 0.2391 0.0127 0.0370
-905 0 0.01000 0.3526 0.0095 0.2311
-906 0 0.01000 0.2781 0.0095 0.0544
-907 0 0.01000 0.2994 0.0133 0.0338
-908 0 0.01000 0.3290 0.0050 0.0855
-909 0 0.01000 0.3416 0.0156 0.0256
-910 0 0.01000 0.3367 0.0092 0.0460
-911 0 0.01000 0.3212 0.0128 0.0379
-912 0 0.01000 0.3766 0.0186 0.0247
-913 0 0.01000 0.3632 0.0049 0.0283
-914 0 0.01000 0.3666 0.0072 0.0626
-915 0 0.01000 0.3692 0.0124 0.0545
-916 0 0.01000 0.3800 0.0049 0.0942
-917 0 0.01000 0.4153 0.0128 0.0389
-918 0 0.01000 0.4264 0.0261 0.0050
-919 0 0.01000 0.4242 0.0141 0.0339
-920 0 0.01000 0.4251 0.0050 0.0859
-921 0 0.01000 0.4445 0.0050 0.0695
-922 0 0.01000 0.4674 0.0197 0.0220
-923 0 0.01000 0.4893 0.0206 0.0144
-924 0 0.01000 0.5091 0.0060 0.0662
-925 0 0.01000 0.5194 0.0145 0.0240
-926 0 0.01000 0.4769 0.0050 0.0928
-927 0 0.01000 0.4588 0.0050 0.0637
-928 0 0.01000 0.5546 0.0133 0.0308
-929 0 0.01000 0.5517 0.0132 0.0162
-930 0 0.01000 0.5428 0.0050 0.0929
-931 0 0.01000 0.5929 0.0050 0.0279
-932 0 0.01000 0.5889 0.0122 0.0050
-933 0 0.01000 0.6150 0.0050 0.0206
-934 0 0.01000 0.6518 0.0062 0.0752
-935 0 0.01000 0.0265 0.0173 0.0342
-936 0 0.01000 0.0405 0.0130 0.0471
-937 0 0.01000 0.0158 0.0113 0.0569
-938 0 0.01000 0.0343 0.0120 0.0375
-939 0 0.01000 0.0524 0.0128 0.0499
-940 0 0.01000 0.0439 0.0148 0.0379
-941 0 0.01000 0.0648 0.0191 0.0131
-942 0 0.01000 0.0945 0.0109 0.0494
-943 0 0.01000 0.1025 0.0134 0.0588
-944 0 0.01000 0.1141 0.0129 0.0375
-945 0 0.01000 0.1034 0.0050 0.0740
-946 0 0.01000 0.1259 0.0117 0.0415
-947 0 0.01000 0.1413 0.0050 0.0679
-948 0 0.01000 0.1328 0.0179 0.0380
-949 0 0.01000 0.1586 0.0049 0.0436
-950 0 0.01000 0.1638 0.0103 0.0361
-951 0 0.01000 0.1765 0.0128 0.0430
-952 0 0.01000 0.1926 0.0049 0.0486
-953 0 0.01000 0.2311 0.0051 0.0841
-954 0 0.01000 0.1993 0.0119 0.0460
-955 0 0.01000 0.1878 0.0051 0.0991
-956 0 0.01000 0.2353 0.0050 0.0541
-957 0 0.01000 0.2368 0.0134 0.0251
-958 0 0.01000 0.2550 0.0116 0.0429
-959 0 0.01000 0.2437 0.0102 0.0547
-960 0 0.01000 0.2855 0.0106 0.0836
-961 0 0.01000 0.3093 0.0112 0.0317
-962 0 0.01000 0.2946 0.0087 0.0519
-963 0 0.01000 0.3124 0.0128 0.0446
-964 0 0.01000 0.3184 0.0212 0.0195
-965 0 0.01000 0.3345 0.0248 0.0056
-966 0 0.01000 0.3317 0.0170 0.0257
-967 0 0.01000 0.3862 0.0215 0.0239
-968 0 0.01000 0.3564 0.0117 0.0260
-969 0 0.01000 0.3959 0.0131 0.0445
-970 0 0.01000 0.3917 0.0136 0.0213
-971 0 0.01000 0.4061 0.0055 0.0835
-972 0 0.01000 0.4025 0.0083 0.0665
-973 0 0.01000 0.3986 0.0179 0.0362
-974 0 0.01000 0.4201 0.0050 0.1024
-975 0 0.01000 0.4442 0.0219 0.0162
-976 0 0.01000 0.4240 0.0106 0.0433
-977 0 0.01000 0.4376 0.0240 0.0050
-978 0 0.01000 0.4722 0.0050 0.0706
-979 0 0.01000 0.4785 0.0248 0.0069
-980 0 0.01000 0.5264 0.0193 0.0188
-981 0 0.01000 0.5469 0.0050 0.0511
-982 0 0.01000 0.5260 0.0050 0.0435
-983 0 0.01000 0.5132 0.0097 0.0301
-984 0 0.01000 0.5235 0.0121 0.0328
-985 0 0.01000 0.5454 0.0050 0.0694
-986 0 0.01000 0.5564 0.0199 0.0105
-987 0 0.01000 0.5843 0.0050 0.0588
-988 0 0.01000 0.5966 0.0128 0.0230
-989 0 0.01000 0.6269 0.0050 0.0294
-990 0 0.01000 0.0362 0.0210 0.0159
-991 0 0.01000 0.0187 0.0277 0.0217
-992 0 0.01000 0.0264 0.0127 0.0481
-993 0 0.01000 0.0355 0.0142 0.0263
-994 0 0.01000 0.0478 0.0202 0.0122
-995 0 0.01000 0.0660 0.0141 0.0369
-996 0 0.01000 0.0804 0.0132 0.0238
-997 0 0.01000 0.0437 0.0095 0.0559
-998 0 0.01000 0.0864 0.0212 0.0232
-999 0 0.01000 0.1252 0.0191 0.0316
+0 0 0.01000 0.0054 0.0049 0.0067 
+1 0 0.01000 0.0162 0.0049 0.0070 
+2 0 0.01000 0.0267 0.0049 0.0079 
+3 0 0.01000 0.0406 0.0049 0.0095 
+4 0 0.01000 0.0506 0.0050 0.0133 
+5 0 0.01000 0.0615 0.0049 0.0137 
+6 0 0.01000 0.0722 0.0049 0.0104 
+7 0 0.01000 0.0862 0.0049 0.0073 
+8 0 0.01000 0.0963 0.0049 0.0065 
+9 0 0.01000 0.1063 0.0049 0.0071 
+10 0 0.01000 0.1164 0.0049 0.0065 
+11 0 0.01000 0.1262 0.0049 0.0050 
+12 0 0.01000 0.1352 0.0049 0.0094 
+13 0 0.01000 0.1480 0.0049 0.0070 
+14 0 0.01000 0.1595 0.0049 0.0083 
+15 0 0.01000 0.1691 0.0049 0.0107 
+16 0 0.01000 0.1805 0.0049 0.0049 
+17 0 0.01000 0.1903 0.0049 0.0085 
+18 0 0.01000 0.2012 0.0049 0.0085 
+19 0 0.01000 0.2118 0.0049 0.0056 
+20 0 0.01000 0.2223 0.0049 0.0081 
+21 0 0.01000 0.2323 0.0049 0.0090 
+22 0 0.01000 0.2442 0.0049 0.0071 
+23 0 0.01000 0.2548 0.0049 0.0068 
+24 0 0.01000 0.2646 0.0049 0.0050 
+25 0 0.01000 0.2763 0.0049 0.0089 
+26 0 0.01000 0.2884 0.0049 0.0053 
+27 0 0.01000 0.2994 0.0049 0.0091 
+28 0 0.01000 0.3108 0.0049 0.0100 
+29 0 0.01000 0.3208 0.0049 0.0101 
+30 0 0.01000 0.3305 0.0049 0.0080 
+31 0 0.01000 0.3405 0.0049 0.0075 
+32 0 0.01000 0.3502 0.0049 0.0096 
+33 0 0.01000 0.3638 0.0050 0.0050 
+34 0 0.01000 0.3698 0.0049 0.0130 
+35 0 0.01000 0.3854 0.0049 0.0094 
+36 0 0.01000 0.3952 0.0049 0.0071 
+37 0 0.01000 0.4070 0.0049 0.0050 
+38 0 0.01000 0.4161 0.0049 0.0091 
+39 0 0.01000 0.4260 0.0049 0.0073 
+40 0 0.01000 0.4346 0.0050 0.0136 
+41 0 0.01000 0.4446 0.0049 0.0137 
+42 0 0.01000 0.4578 0.0049 0.0136 
+43 0 0.01000 0.4700 0.0049 0.0123 
+44 0 0.01000 0.4792 0.0049 0.0162 
+45 0 0.01000 0.4953 0.0049 0.0166 
+46 0 0.01000 0.5052 0.0050 0.0128 
+47 0 0.01000 0.5151 0.0049 0.0147 
+48 0 0.01000 0.5252 0.0049 0.0091 
+49 0 0.01000 0.5350 0.0049 0.0073 
+50 0 0.01000 0.5497 0.0049 0.0072 
+51 0 0.01000 0.5598 0.0049 0.0065 
+52 0 0.01000 0.5707 0.0049 0.0101 
+53 0 0.01000 0.5818 0.0049 0.0074 
+54 0 0.01000 0.5933 0.0049 0.0113 
+55 0 0.01000 0.0050 0.0147 0.0050 
+56 0 0.01000 0.0107 0.0049 0.0169 
+57 0 0.01000 0.0217 0.0049 0.0260 
+58 0 0.01000 0.0324 0.0049 0.0163 
+59 0 0.01000 0.0440 0.0049 0.0222 
+60 0 0.01000 0.0628 0.0049 0.0277 
+61 0 0.01000 0.0703 0.0049 0.0203 
+62 0 0.01000 0.0911 0.0132 0.0050 
+63 0 0.01000 0.0843 0.0049 0.0271 
+64 0 0.01000 0.1014 0.0133 0.0049 
+65 0 0.01000 0.1113 0.0133 0.0050 
+66 0 0.01000 0.1216 0.0049 0.0358 
+67 0 0.01000 0.1363 0.0049 0.0209 
+68 0 0.01000 0.1411 0.0118 0.0050 
+69 0 0.01000 0.1541 0.0125 0.0049 
+70 0 0.01000 0.1562 0.0049 0.0183 
+71 0 0.01000 0.1763 0.0049 0.0246 
+72 0 0.01000 0.1859 0.0132 0.0050 
+73 0 0.01000 0.1960 0.0049 0.0184 
+74 0 0.01000 0.2059 0.0129 0.0050 
+75 0 0.01000 0.2176 0.0130 0.0050 
+76 0 0.01000 0.2272 0.0134 0.0095 
+77 0 0.01000 0.2377 0.0122 0.0050 
+78 0 0.01000 0.2544 0.0122 0.0145 
+79 0 0.01000 0.2685 0.0102 0.0124 
+80 0 0.01000 0.2763 0.0140 0.0050 
+81 0 0.01000 0.2833 0.0049 0.0170 
+82 0 0.01000 0.2915 0.0094 0.0136 
+83 0 0.01000 0.3056 0.0116 0.0049 
+84 0 0.01000 0.3157 0.0118 0.0049 
+85 0 0.01000 0.3270 0.0104 0.0156 
+86 0 0.01000 0.3354 0.0131 0.0050 
+87 0 0.01000 0.3462 0.0127 0.0050 
+88 0 0.01000 0.3488 0.0049 0.0307 
+89 0 0.01000 0.3833 0.0049 0.0382 
+90 0 0.01000 0.3875 0.0123 0.0158 
+91 0 0.01000 0.4009 0.0128 0.0050 
+92 0 0.01000 0.4094 0.0118 0.0118 
+93 0 0.01000 0.4226 0.0114 0.0140 
+94 0 0.01000 0.4187 0.0049 0.0205 
+95 0 0.01000 0.4334 0.0049 0.0317 
+96 0 0.01000 0.4408 0.0049 0.0244 
+97 0 0.01000 0.4533 0.0049 0.0238 
+98 0 0.01000 0.4609 0.0049 0.0303 
+99 0 0.01000 0.4749 0.0049 0.0254 
+100 0 0.01000 0.4844 0.0050 0.0674 
+101 0 0.01000 0.5084 0.0049 0.0223 
+102 0 0.01000 0.5122 0.0049 0.0050 
+103 0 0.01000 0.5308 0.0050 0.0202 
+104 0 0.01000 0.5418 0.0049 0.0151 
+105 0 0.01000 0.5546 0.0133 0.0050 
+106 0 0.01000 0.5669 0.0124 0.0050 
+107 0 0.01000 0.5788 0.0103 0.0152 
+108 0 0.01000 0.5748 0.0049 0.0225 
+109 0 0.01000 0.5872 0.0049 0.0204 
+110 0 0.01000 0.0054 0.0049 0.0462 
+111 0 0.01000 0.0161 0.0049 0.0502 
+112 0 0.01000 0.0309 0.0049 0.0298 
+113 0 0.01000 0.0246 0.0141 0.0050 
+114 0 0.01000 0.0490 0.0050 0.0918 
+115 0 0.01000 0.0347 0.0049 0.0395 
+116 0 0.01000 0.0566 0.0049 0.0050 
+117 0 0.01000 0.0783 0.0105 0.0050 
+118 0 0.01000 0.0976 0.0050 0.0898 
+119 0 0.01000 0.1026 0.0049 0.0190 
+120 0 0.01000 0.1113 0.0049 0.0246 
+121 0 0.01000 0.1283 0.0050 0.0772 
+122 0 0.01000 0.1176 0.0049 0.0165 
+123 0 0.01000 0.1313 0.0134 0.0051 
+124 0 0.01000 0.1491 0.0123 0.0136 
+125 0 0.01000 0.1646 0.0128 0.0050 
+126 0 0.01000 0.1705 0.0105 0.0188 
+127 0 0.01000 0.1744 0.0125 0.0069 
+128 0 0.01000 0.1892 0.0049 0.0324 
+129 0 0.01000 0.2061 0.0049 0.0173 
+130 0 0.01000 0.2116 0.0210 0.0058 
+131 0 0.01000 0.2135 0.0142 0.0165 
+132 0 0.01000 0.2334 0.0209 0.0074 
+133 0 0.01000 0.2491 0.0132 0.0050 
+134 0 0.01000 0.2701 0.0049 0.0208 
+135 0 0.01000 0.2745 0.0213 0.0115 
+136 0 0.01000 0.2895 0.0050 0.0410 
+137 0 0.01000 0.2862 0.0146 0.0050 
+138 0 0.01000 0.2937 0.0049 0.0222 
+139 0 0.01000 0.3301 0.0049 0.0233 
+140 0 0.01000 0.3240 0.0163 0.0082 
+141 0 0.01000 0.3313 0.0222 0.0050 
+142 0 0.01000 0.3412 0.0213 0.0050 
+143 0 0.01000 0.3634 0.0049 0.0493 
+144 0 0.01000 0.3935 0.0050 0.1037 
+145 0 0.01000 0.3812 0.0133 0.0060 
+146 0 0.01000 0.4004 0.0093 0.0159 
+147 0 0.01000 0.4111 0.0050 0.0388 
+148 0 0.01000 0.4168 0.0139 0.0050 
+149 0 0.01000 0.4400 0.0049 0.0565 
+150 0 0.01000 0.4277 0.0049 0.0514 
+151 0 0.01000 0.4282 0.0049 0.0232 
+152 0 0.01000 0.4439 0.0143 0.0238 
+153 0 0.01000 0.4512 0.0116 0.0168 
+154 0 0.01000 0.4652 0.0049 0.0212 
+155 0 0.01000 0.4856 0.0049 0.0241 
+156 0 0.01000 0.5107 0.0050 0.0418 
+157 0 0.01000 0.5212 0.0049 0.0248 
+158 0 0.01000 0.5066 0.0050 0.0688 
+159 0 0.01000 0.5488 0.0049 0.0295 
+160 0 0.01000 0.5424 0.0112 0.0050 
+161 0 0.01000 0.5614 0.0204 0.0068 
+162 0 0.01000 0.5768 0.0132 0.0050 
+163 0 0.01000 0.5829 0.0050 0.0577 
+164 0 0.01000 0.6230 0.0103 0.0995 
+165 0 0.01000 0.0089 0.0049 0.0297 
+166 0 0.01000 0.0240 0.0050 0.0615 
+167 0 0.01000 0.0321 0.0050 0.0896 
+168 0 0.01000 0.0148 0.0148 0.0064 
+169 0 0.01000 0.0404 0.0076 0.0311 
+170 0 0.01000 0.0478 0.0049 0.0371 
+171 0 0.01000 0.0540 0.0049 0.0229 
+172 0 0.01000 0.0724 0.0049 0.0306 
+173 0 0.01000 0.1321 0.0050 0.0913 
+174 0 0.01000 0.1097 0.0049 0.0652 
+175 0 0.01000 0.1297 0.0049 0.0540 
+176 0 0.01000 0.1067 0.0050 0.1231 
+177 0 0.01000 0.1222 0.0118 0.0110 
+178 0 0.01000 0.1276 0.0049 0.0159 
+179 0 0.01000 0.1462 0.0049 0.0196 
+180 0 0.01000 0.1612 0.0126 0.0144 
+181 0 0.01000 0.1691 0.0184 0.0129 
+182 0 0.01000 0.1795 0.0209 0.0054 
+183 0 0.01000 0.1963 0.0050 0.1470 
+184 0 0.01000 0.1963 0.0049 0.0394 
+185 0 0.01000 0.2037 0.0142 0.0146 
+186 0 0.01000 0.2071 0.0049 0.0391 
+187 0 0.01000 0.2262 0.0049 0.0257 
+188 0 0.01000 0.2382 0.0049 0.0170 
+189 0 0.01000 0.2888 0.0050 0.0957 
+190 0 0.01000 0.2685 0.0283 0.0071 
+191 0 0.01000 0.3206 0.0051 0.1052 
+192 0 0.01000 0.2793 0.0108 0.0247 
+193 0 0.01000 0.3212 0.0049 0.0280 
+194 0 0.01000 0.3316 0.0049 0.0415 
+195 0 0.01000 0.3251 0.0135 0.0249 
+196 0 0.01000 0.3401 0.0049 0.0235 
+197 0 0.01000 0.3432 0.0131 0.0311 
+198 0 0.01000 0.3850 0.0050 0.1125 
+199 0 0.01000 0.4129 0.0050 0.0970 
+200 0 0.01000 0.3911 0.0140 0.0050 
+201 0 0.01000 0.4088 0.0049 0.0189 
+202 0 0.01000 0.3922 0.0050 0.0848 
+203 0 0.01000 0.4084 0.0193 0.0050 
+204 0 0.01000 0.4231 0.0050 0.0969 
+205 0 0.01000 0.4217 0.0049 0.0343 
+206 0 0.01000 0.4267 0.0145 0.0050 
+207 0 0.01000 0.4397 0.0049 0.0050 
+208 0 0.01000 0.4526 0.0049 0.0050 
+209 0 0.01000 0.4629 0.0049 0.0050 
+210 0 0.01000 0.4773 0.0049 0.0050 
+211 0 0.01000 0.5286 0.0063 0.1625 
+212 0 0.01000 0.5352 0.0049 0.0514 
+213 0 0.01000 0.5229 0.0107 0.0169 
+214 0 0.01000 0.5483 0.0050 0.0891 
+215 0 0.01000 0.5525 0.0049 0.0168 
+216 0 0.01000 0.5717 0.0134 0.0269 
+217 0 0.01000 0.5890 0.0113 0.0050 
+218 0 0.01000 0.5873 0.0050 0.0487 
+219 0 0.01000 0.6098 0.0053 0.0530 
+220 0 0.01000 0.0159 0.0050 0.1188 
+221 0 0.01000 0.0057 0.0050 0.1106 
+222 0 0.01000 0.0450 0.0050 0.1577 
+223 0 0.01000 0.0313 0.0049 0.0544 
+224 0 0.01000 0.0341 0.0108 0.0049 
+225 0 0.01000 0.0480 0.0098 0.0050 
+226 0 0.01000 0.0316 0.0050 0.1605 
+227 0 0.01000 0.0909 0.0050 0.1238 
+228 0 0.01000 0.1082 0.0050 0.0834 
+229 0 0.01000 0.0988 0.0050 0.1086 
+230 0 0.01000 0.1194 0.0050 0.1241 
+231 0 0.01000 0.1189 0.0049 0.0477 
+232 0 0.01000 0.1212 0.0049 0.0258 
+233 0 0.01000 0.1253 0.0050 0.0665 
+234 0 0.01000 0.1597 0.0052 0.1062 
+235 0 0.01000 0.1361 0.0130 0.0270 
+236 0 0.01000 0.1687 0.0133 0.0391 
+237 0 0.01000 0.1782 0.0049 0.0147 
+238 0 0.01000 0.2169 0.0049 0.1007 
+239 0 0.01000 0.2162 0.0049 0.1542 
+240 0 0.01000 0.2173 0.0049 0.0390 
+241 0 0.01000 0.2246 0.0049 0.0464 
+242 0 0.01000 0.2472 0.0049 0.0412 
+243 0 0.01000 0.2237 0.0114 0.0186 
+244 0 0.01000 0.2746 0.0050 0.0683 
+245 0 0.01000 0.2859 0.0049 0.0293 
+246 0 0.01000 0.3349 0.0050 0.1968 
+247 0 0.01000 0.2901 0.0193 0.0129 
+248 0 0.01000 0.3222 0.0050 0.1391 
+249 0 0.01000 0.3456 0.0049 0.0894 
+250 0 0.01000 0.3351 0.0133 0.0254 
+251 0 0.01000 0.3337 0.0050 0.0819 
+252 0 0.01000 0.3533 0.0126 0.0150 
+253 0 0.01000 0.3812 0.0050 0.0867 
+254 0 0.01000 0.3925 0.0049 0.0200 
+255 0 0.01000 0.3825 0.0122 0.0314 
+256 0 0.01000 0.4448 0.0049 0.1310 
+257 0 0.01000 0.3923 0.0049 0.0427 
+258 0 0.01000 0.3957 0.0177 0.0139 
+259 0 0.01000 0.4056 0.0050 0.0718 
+260 0 0.01000 0.4212 0.0228 0.0050 
+261 0 0.01000 0.4196 0.0119 0.0276 
+262 0 0.01000 0.4366 0.0143 0.0050 
+263 0 0.01000 0.4464 0.0126 0.0063 
+264 0 0.01000 0.4578 0.0129 0.0077 
+265 0 0.01000 0.4701 0.0118 0.0050 
+266 0 0.01000 0.4943 0.0049 0.0566 
+267 0 0.01000 0.5467 0.0051 0.1823 
+268 0 0.01000 0.5047 0.0115 0.0050 
+269 0 0.01000 0.5162 0.0050 0.0715 
+270 0 0.01000 0.5613 0.0050 0.0363 
+271 0 0.01000 0.6067 0.0122 0.0230 
+272 0 0.01000 0.5707 0.0049 0.0321 
+273 0 0.01000 0.5887 0.0131 0.0148 
+274 0 0.01000 0.6067 0.0049 0.0930 
+275 0 0.01000 0.0052 0.0050 0.0692 
+276 0 0.01000 0.0355 0.0050 0.1049 
+277 0 0.01000 0.0233 0.0050 0.0960 
+278 0 0.01000 0.0446 0.0050 0.0688 
+279 0 0.01000 0.0396 0.0118 0.0166 
+280 0 0.01000 0.0492 0.0129 0.0193 
+281 0 0.01000 0.0533 0.0049 0.0530 
+282 0 0.01000 0.0654 0.0095 0.0049 
+283 0 0.01000 0.0809 0.0049 0.0389 
+284 0 0.01000 0.1157 0.0049 0.0573 
+285 0 0.01000 0.1164 0.0050 0.1026 
+286 0 0.01000 0.0978 0.0122 0.0142 
+287 0 0.01000 0.1817 0.0050 0.1332 
+288 0 0.01000 0.1376 0.0210 0.0066 
+289 0 0.01000 0.1852 0.0055 0.1474 
+290 0 0.01000 0.1604 0.0049 0.0394 
+291 0 0.01000 0.1839 0.0130 0.0152 
+292 0 0.01000 0.1958 0.0125 0.0050 
+293 0 0.01000 0.2144 0.0050 0.0658 
+294 0 0.01000 0.2134 0.0062 0.1656 
+295 0 0.01000 0.2453 0.0049 0.0309 
+296 0 0.01000 0.2272 0.0050 0.0365 
+297 0 0.01000 0.2665 0.0050 0.1424 
+298 0 0.01000 0.2482 0.0049 0.0170 
+299 0 0.01000 0.2772 0.0049 0.1274 
+300 0 0.01000 0.2751 0.0049 0.0315 
+301 0 0.01000 0.2952 0.0066 0.1742 
+302 0 0.01000 0.3094 0.0049 0.0451 
+303 0 0.01000 0.2993 0.0049 0.0699 
+304 0 0.01000 0.3065 0.0050 0.0807 
+305 0 0.01000 0.3256 0.0201 0.0173 
+306 0 0.01000 0.3661 0.0050 0.1495 
+307 0 0.01000 0.3537 0.0049 0.0517 
+308 0 0.01000 0.3649 0.0050 0.1195 
+309 0 0.01000 0.3935 0.0049 0.0526 
+310 0 0.01000 0.3788 0.0074 0.0164 
+311 0 0.01000 0.4140 0.0072 0.1481 
+312 0 0.01000 0.3588 0.0050 0.0710 
+313 0 0.01000 0.4085 0.0133 0.0243 
+314 0 0.01000 0.4008 0.0050 0.0278 
+315 0 0.01000 0.3996 0.0049 0.0638 
+316 0 0.01000 0.4423 0.0049 0.0385 
+317 0 0.01000 0.4492 0.0101 0.0312 
+318 0 0.01000 0.4524 0.0187 0.0272 
+319 0 0.01000 0.4696 0.0092 0.0327 
+320 0 0.01000 0.4873 0.0105 0.0150 
+321 0 0.01000 0.4973 0.0049 0.0056 
+322 0 0.01000 0.5263 0.0050 0.1409 
+323 0 0.01000 0.5194 0.0118 0.0050 
+324 0 0.01000 0.5479 0.0050 0.0784 
+325 0 0.01000 0.5797 0.0050 0.1340 
+326 0 0.01000 0.6275 0.0050 0.0766 
+327 0 0.01000 0.6113 0.0050 0.1381 
+328 0 0.01000 0.6104 0.0049 0.0289 
+329 0 0.01000 0.6018 0.0050 0.0061 
+330 0 0.01000 0.0127 0.0050 0.1011 
+331 0 0.01000 0.0175 0.0050 0.0843 
+332 0 0.01000 0.0283 0.0050 0.0804 
+333 0 0.01000 0.0298 0.0049 0.1337 
+334 0 0.01000 0.0531 0.0050 0.0635 
+335 0 0.01000 0.0584 0.0135 0.0254 
+336 0 0.01000 0.0573 0.0141 0.0085 
+337 0 0.01000 0.0798 0.0049 0.0169 
+338 0 0.01000 0.0760 0.0128 0.0354 
+339 0 0.01000 0.0912 0.0049 0.0160 
+340 0 0.01000 0.1049 0.0049 0.0331 
+341 0 0.01000 0.1096 0.0105 0.0147 
+342 0 0.01000 0.1234 0.0196 0.0050 
+343 0 0.01000 0.1556 0.0049 0.0289 
+344 0 0.01000 0.1721 0.0049 0.0433 
+345 0 0.01000 0.1796 0.0050 0.0539 
+346 0 0.01000 0.1861 0.0049 0.0208 
+347 0 0.01000 0.2002 0.0049 0.0667 
+348 0 0.01000 0.2346 0.0050 0.0654 
+349 0 0.01000 0.2358 0.0050 0.0758 
+350 0 0.01000 0.2423 0.0050 0.1478 
+351 0 0.01000 0.2556 0.0049 0.0625 
+352 0 0.01000 0.2620 0.0049 0.0707 
+353 0 0.01000 0.2633 0.0050 0.1015 
+354 0 0.01000 0.2590 0.0137 0.0050 
+355 0 0.01000 0.2866 0.0107 0.1549 
+356 0 0.01000 0.2955 0.0049 0.0320 
+357 0 0.01000 0.2962 0.0049 0.0596 
+358 0 0.01000 0.2987 0.0049 0.0452 
+359 0 0.01000 0.3197 0.0050 0.0657 
+360 0 0.01000 0.3172 0.0049 0.0388 
+361 0 0.01000 0.3240 0.0050 0.0894 
+362 0 0.01000 0.3869 0.0049 0.1276 
+363 0 0.01000 0.3837 0.0049 0.0247 
+364 0 0.01000 0.3761 0.0049 0.0050 
+365 0 0.01000 0.4543 0.0050 0.1215 
+366 0 0.01000 0.3978 0.0050 0.0941 
+367 0 0.01000 0.4159 0.0049 0.0848 
+368 0 0.01000 0.4142 0.0230 0.0122 
+369 0 0.01000 0.4032 0.0133 0.0327 
+370 0 0.01000 0.4431 0.0050 0.1181 
+371 0 0.01000 0.4429 0.0050 0.0867 
+372 0 0.01000 0.4525 0.0049 0.0390 
+373 0 0.01000 0.4596 0.0127 0.0240 
+374 0 0.01000 0.4791 0.0049 0.0589 
+375 0 0.01000 0.4818 0.0050 0.0334 
+376 0 0.01000 0.4986 0.0049 0.0267 
+377 0 0.01000 0.5018 0.0119 0.0196 
+378 0 0.01000 0.5337 0.0050 0.0864 
+379 0 0.01000 0.5373 0.0049 0.0334 
+380 0 0.01000 0.5981 0.0050 0.0860 
+381 0 0.01000 0.5960 0.0070 0.0995 
+382 0 0.01000 0.6238 0.0050 0.1836 
+383 0 0.01000 0.6059 0.0049 0.0162 
+384 0 0.01000 0.6978 0.0050 0.0686 
+385 0 0.01000 0.0049 0.0115 0.0234 
+386 0 0.01000 0.0070 0.0050 0.0900 
+387 0 0.01000 0.0247 0.0049 0.0419 
+388 0 0.01000 0.0493 0.0050 0.1280 
+389 0 0.01000 0.0459 0.0050 0.1050 
+390 0 0.01000 0.0598 0.0049 0.0384 
+391 0 0.01000 0.0661 0.0115 0.0346 
+392 0 0.01000 0.0858 0.0050 0.0500 
+393 0 0.01000 0.0746 0.0132 0.0153 
+394 0 0.01000 0.0946 0.0049 0.0348 
+395 0 0.01000 0.0949 0.0068 0.0250 
+396 0 0.01000 0.1153 0.0112 0.0313 
+397 0 0.01000 0.1377 0.0128 0.0150 
+398 0 0.01000 0.1188 0.0050 0.1926 
+399 0 0.01000 0.1697 0.0049 0.0961 
+400 0 0.01000 0.1984 0.0050 0.0955 
+401 0 0.01000 0.2111 0.0050 0.0923 
+402 0 0.01000 0.2162 0.0049 0.0189 
+403 0 0.01000 0.2042 0.0228 0.0196 
+404 0 0.01000 0.2246 0.0050 0.0638 
+405 0 0.01000 0.2574 0.0050 0.1206 
+406 0 0.01000 0.3077 0.0050 0.1833 
+407 0 0.01000 0.2557 0.0049 0.0357 
+408 0 0.01000 0.3068 0.0050 0.1256 
+409 0 0.01000 0.2685 0.0049 0.0392 
+410 0 0.01000 0.2957 0.0050 0.1315 
+411 0 0.01000 0.2724 0.0158 0.0196 
+412 0 0.01000 0.3240 0.0050 0.0792 
+413 0 0.01000 0.3024 0.0078 0.0182 
+414 0 0.01000 0.3160 0.0049 0.0189 
+415 0 0.01000 0.3322 0.0049 0.0527 
+416 0 0.01000 0.3399 0.0049 0.0357 
+417 0 0.01000 0.3782 0.0054 0.1388 
+418 0 0.01000 0.3561 0.0113 0.0050 
+419 0 0.01000 0.3577 0.0049 0.0260 
+420 0 0.01000 0.3598 0.0050 0.1090 
+421 0 0.01000 0.3688 0.0050 0.0709 
+422 0 0.01000 0.4278 0.0050 0.1143 
+423 0 0.01000 0.4115 0.0049 0.0288 
+424 0 0.01000 0.4026 0.0049 0.0476 
+425 0 0.01000 0.4450 0.0050 0.0978 
+426 0 0.01000 0.4687 0.0049 0.0598 
+427 0 0.01000 0.4720 0.0049 0.0414 
+428 0 0.01000 0.4812 0.0049 0.0455 
+429 0 0.01000 0.4701 0.0050 0.0848 
+430 0 0.01000 0.5019 0.0049 0.0465 
+431 0 0.01000 0.4874 0.0049 0.0057 
+432 0 0.01000 0.4966 0.0131 0.0112 
+433 0 0.01000 0.5695 0.0057 0.2733 
+434 0 0.01000 0.5252 0.0050 0.0510 
+435 0 0.01000 0.5700 0.0050 0.0529 
+436 0 0.01000 0.7357 0.0210 0.0810 
+437 0 0.01000 0.5717 0.0049 0.2310 
+438 0 0.01000 0.6370 0.0050 0.0286 
+439 0 0.01000 0.6354 0.0051 0.0109 
+440 0 0.01000 0.0086 0.0143 0.0146 
+441 0 0.01000 0.0221 0.0165 0.0186 
+442 0 0.01000 0.0208 0.0050 0.0159 
+443 0 0.01000 0.0412 0.0123 0.0410 
+444 0 0.01000 0.0604 0.0050 0.0768 
+445 0 0.01000 0.0825 0.0049 0.0642 
+446 0 0.01000 0.0710 0.0050 0.0405 
+447 0 0.01000 0.0951 0.0049 0.0450 
+448 0 0.01000 0.0946 0.0049 0.0559 
+449 0 0.01000 0.0962 0.0218 0.0051 
+450 0 0.01000 0.0948 0.0192 0.0205 
+451 0 0.01000 0.1299 0.0272 0.0054 
+452 0 0.01000 0.1487 0.0049 0.0610 
+453 0 0.01000 0.1834 0.0050 0.1037 
+454 0 0.01000 0.1647 0.0049 0.0247 
+455 0 0.01000 0.2087 0.0050 0.1349 
+456 0 0.01000 0.2119 0.0049 0.0480 
+457 0 0.01000 0.2144 0.0050 0.0767 
+458 0 0.01000 0.1938 0.0142 0.0155 
+459 0 0.01000 0.2306 0.0051 0.0845 
+460 0 0.01000 0.2692 0.0050 0.0932 
+461 0 0.01000 0.2278 0.0050 0.0983 
+462 0 0.01000 0.2603 0.0049 0.0176 
+463 0 0.01000 0.2473 0.0050 0.1231 
+464 0 0.01000 0.2663 0.0049 0.0538 
+465 0 0.01000 0.2863 0.0050 0.0649 
+466 0 0.01000 0.2848 0.0049 0.0525 
+467 0 0.01000 0.4005 0.0050 0.1658 
+468 0 0.01000 0.3053 0.0050 0.1018 
+469 0 0.01000 0.3135 0.0050 0.0883 
+470 0 0.01000 0.3332 0.0049 0.1057 
+471 0 0.01000 0.3314 0.0128 0.0588 
+472 0 0.01000 0.3369 0.0050 0.1242 
+473 0 0.01000 0.3519 0.0050 0.0807 
+474 0 0.01000 0.3902 0.0050 0.0686 
+475 0 0.01000 0.3465 0.0050 0.1107 
+476 0 0.01000 0.3914 0.0049 0.0324 
+477 0 0.01000 0.4197 0.0060 0.1701 
+478 0 0.01000 0.4341 0.0072 0.1038 
+479 0 0.01000 0.4289 0.0050 0.0723 
+480 0 0.01000 0.4622 0.0050 0.0910 
+481 0 0.01000 0.4821 0.0050 0.0948 
+482 0 0.01000 0.5567 0.0200 0.2139 
+483 0 0.01000 0.4889 0.0147 0.0050 
+484 0 0.01000 0.5008 0.0050 0.1046 
+485 0 0.01000 0.5097 0.0050 0.1093 
+486 0 0.01000 0.4800 0.0129 0.0221 
+487 0 0.01000 0.4923 0.0123 0.0243 
+488 0 0.01000 0.5690 0.0088 0.0948 
+489 0 0.01000 0.5296 0.0130 0.0055 
+490 0 0.01000 0.5482 0.0130 0.0129 
+491 0 0.01000 0.5679 0.0130 0.0372 
+492 0 0.01000 0.6263 0.0049 0.0050 
+493 0 0.01000 0.6499 0.0050 0.0505 
+494 0 0.01000 0.6750 0.0049 0.0119 
+495 0 0.01000 0.0147 0.0073 0.1500 
+496 0 0.01000 0.0163 0.0049 0.0365 
+497 0 0.01000 0.0322 0.0206 0.0058 
+498 0 0.01000 0.0496 0.0109 0.0295 
+499 0 0.01000 0.0484 0.0050 0.0788 
+500 0 0.01000 0.1220 0.0050 0.1823 
+501 0 0.01000 0.0837 0.0075 0.1953 
+502 0 0.01000 0.0689 0.0050 0.0861 
+503 0 0.01000 0.1076 0.0049 0.0515 
+504 0 0.01000 0.0658 0.0057 0.1698 
+505 0 0.01000 0.1063 0.0219 0.0058 
+506 0 0.01000 0.1271 0.0123 0.0226 
+507 0 0.01000 0.1306 0.0049 0.0292 
+508 0 0.01000 0.1680 0.0049 0.0559 
+509 0 0.01000 0.1587 0.0204 0.0087 
+510 0 0.01000 0.1794 0.0050 0.0358 
+511 0 0.01000 0.1895 0.0049 0.0539 
+512 0 0.01000 0.1919 0.0115 0.0254 
+513 0 0.01000 0.1825 0.0114 0.0289 
+514 0 0.01000 0.2085 0.0049 0.0276 
+515 0 0.01000 0.2194 0.0049 0.1414 
+516 0 0.01000 0.2354 0.0049 0.0296 
+517 0 0.01000 0.2332 0.0050 0.0521 
+518 0 0.01000 0.2632 0.0049 0.0285 
+519 0 0.01000 0.2675 0.0186 0.0050 
+520 0 0.01000 0.2699 0.0054 0.1575 
+521 0 0.01000 0.2648 0.0206 0.0144 
+522 0 0.01000 0.2281 0.0049 0.1634 
+523 0 0.01000 0.2961 0.0144 0.0050 
+524 0 0.01000 0.3394 0.0098 0.0479 
+525 0 0.01000 0.2359 0.0049 0.1195 
+526 0 0.01000 0.3296 0.0049 0.0646 
+527 0 0.01000 0.3496 0.0049 0.0201 
+528 0 0.01000 0.3523 0.0205 0.0052 
+529 0 0.01000 0.3599 0.0050 0.0143 
+530 0 0.01000 0.3763 0.0050 0.1254 
+531 0 0.01000 0.3621 0.0049 0.0982 
+532 0 0.01000 0.4315 0.0050 0.1254 
+533 0 0.01000 0.4296 0.0050 0.0612 
+534 0 0.01000 0.4476 0.0050 0.0675 
+535 0 0.01000 0.4005 0.0154 0.2820 
+536 0 0.01000 0.4660 0.0051 0.1291 
+537 0 0.01000 0.4817 0.0048 0.1815 
+538 0 0.01000 0.4921 0.0049 0.0359 
+539 0 0.01000 0.5041 0.0050 0.0930 
+540 0 0.01000 0.5222 0.0050 0.1097 
+541 0 0.01000 0.5060 0.0050 0.0583 
+542 0 0.01000 0.5117 0.0141 0.0206 
+543 0 0.01000 0.5786 0.0052 0.1628 
+544 0 0.01000 0.5504 0.0050 0.0497 
+545 0 0.01000 0.5492 0.0122 0.0228 
+546 0 0.01000 0.5592 0.0050 0.0885 
+547 0 0.01000 0.6233 0.0050 0.0673 
+548 0 0.01000 0.6255 0.0052 0.1199 
+549 0 0.01000 0.7112 0.0205 0.0570 
+550 0 0.01000 0.0050 0.0227 0.0108 
+551 0 0.01000 0.0099 0.0201 0.0226 
+552 0 0.01000 0.0416 0.0174 0.0054 
+553 0 0.01000 0.0294 0.0133 0.0394 
+554 0 0.01000 0.0465 0.0122 0.0533 
+555 0 0.01000 0.0700 0.0053 0.2061 
+556 0 0.01000 0.0927 0.0050 0.0665 
+557 0 0.01000 0.0879 0.0049 0.0942 
+558 0 0.01000 0.1115 0.0054 0.1392 
+559 0 0.01000 0.1279 0.0049 0.0435 
+560 0 0.01000 0.1342 0.0095 0.0373 
+561 0 0.01000 0.1214 0.0050 0.1359 
+562 0 0.01000 0.1734 0.0050 0.1401 
+563 0 0.01000 0.1390 0.0049 0.0447 
+564 0 0.01000 0.1586 0.0049 0.0510 
+565 0 0.01000 0.1766 0.0170 0.0232 
+566 0 0.01000 0.1602 0.0050 0.0929 
+567 0 0.01000 0.1749 0.0049 0.0729 
+568 0 0.01000 0.2005 0.0212 0.0061 
+569 0 0.01000 0.2021 0.0050 0.0863 
+570 0 0.01000 0.2186 0.0123 0.0495 
+571 0 0.01000 0.2966 0.0125 0.1931 
+572 0 0.01000 0.2432 0.0127 0.0133 
+573 0 0.01000 0.2537 0.0050 0.0254 
+574 0 0.01000 0.2695 0.0127 0.0286 
+575 0 0.01000 0.2636 0.0367 0.0050 
+576 0 0.01000 0.2618 0.0190 0.0297 
+577 0 0.01000 0.2885 0.0052 0.1185 
+578 0 0.01000 0.3135 0.0103 0.0313 
+579 0 0.01000 0.3444 0.0049 0.0553 
+580 0 0.01000 0.3357 0.0054 0.0943 
+581 0 0.01000 0.3463 0.0195 0.0134 
+582 0 0.01000 0.3601 0.0198 0.0141 
+583 0 0.01000 0.3635 0.0180 0.0050 
+584 0 0.01000 0.3716 0.0134 0.0083 
+585 0 0.01000 0.3793 0.0170 0.0189 
+586 0 0.01000 0.3857 0.0049 0.0593 
+587 0 0.01000 0.4202 0.0051 0.1275 
+588 0 0.01000 0.4201 0.0049 0.0578 
+589 0 0.01000 0.4370 0.0050 0.0781 
+590 0 0.01000 0.4398 0.0050 0.1656 
+591 0 0.01000 0.4536 0.0050 0.0755 
+592 0 0.01000 0.4639 0.0049 0.0740 
+593 0 0.01000 0.4743 0.0050 0.1021 
+594 0 0.01000 0.4892 0.0050 0.1222 
+595 0 0.01000 0.4825 0.0066 0.1513 
+596 0 0.01000 0.5119 0.0184 0.0050 
+597 0 0.01000 0.5173 0.0181 0.0134 
+598 0 0.01000 0.5495 0.0050 0.1059 
+599 0 0.01000 0.5375 0.0050 0.0657 
+600 0 0.01000 0.5680 0.0100 0.1130 
+601 0 0.01000 0.5517 0.0224 0.0078 
+602 0 0.01000 0.5625 0.0049 0.0162 
+603 0 0.01000 0.6098 0.0050 0.0397 
+604 0 0.01000 0.6584 0.0049 0.0333 
+605 0 0.01000 0.0077 0.0049 0.0792 
+606 0 0.01000 0.0134 0.0258 0.0153 
+607 0 0.01000 0.0303 0.0142 0.0135 
+608 0 0.01000 0.0425 0.0049 0.0589 
+609 0 0.01000 0.0568 0.0189 0.0172 
+610 0 0.01000 0.0622 0.0049 0.0574 
+611 0 0.01000 0.0718 0.0050 0.0612 
+612 0 0.01000 0.0775 0.0050 0.0916 
+613 0 0.01000 0.0906 0.0136 0.0321 
+614 0 0.01000 0.1042 0.0118 0.0260 
+615 0 0.01000 0.1051 0.0050 0.0996 
+616 0 0.01000 0.1137 0.0128 0.0509 
+617 0 0.01000 0.1143 0.0050 0.1518 
+618 0 0.01000 0.1718 0.0050 0.1059 
+619 0 0.01000 0.1474 0.0198 0.0052 
+620 0 0.01000 0.1753 0.0050 0.0629 
+621 0 0.01000 0.1954 0.0050 0.1201 
+622 0 0.01000 0.1840 0.0161 0.1946 
+623 0 0.01000 0.1986 0.0049 0.0289 
+624 0 0.01000 0.1876 0.0050 0.0645 
+625 0 0.01000 0.1987 0.0050 0.0766 
+626 0 0.01000 0.2377 0.0295 0.0050 
+627 0 0.01000 0.2536 0.0208 0.0095 
+628 0 0.01000 0.2548 0.0109 0.0437 
+629 0 0.01000 0.2628 0.0137 0.0213 
+630 0 0.01000 0.2763 0.0050 0.0584 
+631 0 0.01000 0.2823 0.0049 0.0749 
+632 0 0.01000 0.2844 0.0120 0.0361 
+633 0 0.01000 0.3065 0.0049 0.0268 
+634 0 0.01000 0.3293 0.0086 0.0325 
+635 0 0.01000 0.3157 0.0165 0.0238 
+636 0 0.01000 0.3879 0.0051 0.0953 
+637 0 0.01000 0.3703 0.0129 0.0189 
+638 0 0.01000 0.3718 0.0215 0.0141 
+639 0 0.01000 0.3741 0.0049 0.0445 
+640 0 0.01000 0.4011 0.0049 0.0378 
+641 0 0.01000 0.3678 0.0057 0.0808 
+642 0 0.01000 0.4270 0.0203 0.0135 
+643 0 0.01000 0.4122 0.0050 0.0508 
+644 0 0.01000 0.4396 0.0126 0.0327 
+645 0 0.01000 0.4522 0.0207 0.0050 
+646 0 0.01000 0.4438 0.0215 0.0314 
+647 0 0.01000 0.4640 0.0049 0.0476 
+648 0 0.01000 0.4396 0.0081 0.2202 
+649 0 0.01000 0.4919 0.0049 0.0461 
+650 0 0.01000 0.4969 0.0050 0.0663 
+651 0 0.01000 0.4999 0.0202 0.0050 
+652 0 0.01000 0.5129 0.0049 0.0318 
+653 0 0.01000 0.4996 0.0050 0.0801 
+654 0 0.01000 0.5207 0.0050 0.0421 
+655 0 0.01000 0.5401 0.0080 0.0244 
+656 0 0.01000 0.5693 0.0122 0.0173 
+657 0 0.01000 0.5995 0.0055 0.0724 
+658 0 0.01000 0.6010 0.0050 0.0349 
+659 0 0.01000 0.6006 0.0050 0.0462 
+660 0 0.01000 0.0099 0.0128 0.0504 
+661 0 0.01000 0.0051 0.0175 0.0313 
+662 0 0.01000 0.0209 0.0217 0.0102 
+663 0 0.01000 0.0372 0.0053 0.1188 
+664 0 0.01000 0.0626 0.0067 0.0672 
+665 0 0.01000 0.0640 0.0050 0.0476 
+666 0 0.01000 0.0802 0.0128 0.0472 
+667 0 0.01000 0.0846 0.0128 0.0131 
+668 0 0.01000 0.0640 0.0050 0.1519 
+669 0 0.01000 0.1040 0.0089 0.0431 
+670 0 0.01000 0.1068 0.0144 0.0353 
+671 0 0.01000 0.1125 0.0049 0.0400 
+672 0 0.01000 0.0692 0.0085 0.1898 
+673 0 0.01000 0.1445 0.0148 0.0220 
+674 0 0.01000 0.1481 0.0112 0.0306 
+675 0 0.01000 0.1481 0.0049 0.0384 
+676 0 0.01000 0.2027 0.0061 0.1657 
+677 0 0.01000 0.1869 0.0049 0.0436 
+678 0 0.01000 0.1949 0.0294 0.0066 
+679 0 0.01000 0.2239 0.0050 0.0738 
+680 0 0.01000 0.2129 0.0256 0.0157 
+681 0 0.01000 0.2593 0.0058 0.1505 
+682 0 0.01000 0.2492 0.0050 0.0712 
+683 0 0.01000 0.2461 0.0049 0.0519 
+684 0 0.01000 0.2754 0.0050 0.0854 
+685 0 0.01000 0.2660 0.0050 0.1141 
+686 0 0.01000 0.3208 0.0051 0.1275 
+687 0 0.01000 0.2808 0.0140 0.0139 
+688 0 0.01000 0.3107 0.0128 0.0160 
+689 0 0.01000 0.3105 0.0201 0.0063 
+690 0 0.01000 0.3579 0.0050 0.0888 
+691 0 0.01000 0.3384 0.0049 0.0728 
+692 0 0.01000 0.3488 0.0050 0.0711 
+693 0 0.01000 0.3529 0.0049 0.0619 
+694 0 0.01000 0.3760 0.0217 0.0050 
+695 0 0.01000 0.3428 0.0090 0.0807 
+696 0 0.01000 0.4025 0.0057 0.0831 
+697 0 0.01000 0.4121 0.0054 0.1090 
+698 0 0.01000 0.4196 0.0049 0.0441 
+699 0 0.01000 0.4332 0.0122 0.0554 
+700 0 0.01000 0.4673 0.0053 0.1148 
+701 0 0.01000 0.4616 0.0096 0.0391 
+702 0 0.01000 0.4645 0.0127 0.0151 
+703 0 0.01000 0.4744 0.0050 0.0681 
+704 0 0.01000 0.4787 0.0130 0.0106 
+705 0 0.01000 0.4806 0.0210 0.0050 
+706 0 0.01000 0.5024 0.0049 0.0359 
+707 0 0.01000 0.5307 0.0089 0.0594 
+708 0 0.01000 0.4916 0.0050 0.0903 
+709 0 0.01000 0.5330 0.0049 0.0968 
+710 0 0.01000 0.5370 0.0196 0.0050 
+711 0 0.01000 0.5562 0.0050 0.0710 
+712 0 0.01000 0.5841 0.0049 0.0315 
+713 0 0.01000 0.6337 0.0050 0.0492 
+714 0 0.01000 0.6771 0.0053 0.0370 
+715 0 0.01000 0.0050 0.0097 0.0375 
+716 0 0.01000 0.0148 0.0114 0.0232 
+717 0 0.01000 0.0509 0.0209 0.0050 
+718 0 0.01000 0.0345 0.0095 0.0627 
+719 0 0.01000 0.0431 0.0049 0.0475 
+720 0 0.01000 0.0690 0.0053 0.0974 
+721 0 0.01000 0.0564 0.0050 0.1442 
+722 0 0.01000 0.0748 0.0049 0.0501 
+723 0 0.01000 0.0871 0.0134 0.0228 
+724 0 0.01000 0.1049 0.0050 0.0740 
+725 0 0.01000 0.0912 0.0302 0.0067 
+726 0 0.01000 0.1175 0.0050 0.0757 
+727 0 0.01000 0.1404 0.0049 0.0309 
+728 0 0.01000 0.1169 0.0133 0.0217 
+729 0 0.01000 0.1499 0.0048 0.1596 
+730 0 0.01000 0.1467 0.0050 0.1073 
+731 0 0.01000 0.1675 0.0060 0.1148 
+732 0 0.01000 0.1942 0.0107 0.0472 
+733 0 0.01000 0.1902 0.0128 0.0384 
+734 0 0.01000 0.2021 0.0049 0.0493 
+735 0 0.01000 0.2201 0.0200 0.0117 
+736 0 0.01000 0.2268 0.0050 0.1126 
+737 0 0.01000 0.2405 0.0134 0.0287 
+738 0 0.01000 0.2585 0.0282 0.0050 
+739 0 0.01000 0.2496 0.0126 0.0648 
+740 0 0.01000 0.2616 0.0050 0.0833 
+741 0 0.01000 0.2850 0.0062 0.1063 
+742 0 0.01000 0.2962 0.0153 0.0202 
+743 0 0.01000 0.3139 0.0049 0.0540 
+744 0 0.01000 0.3072 0.0050 0.0629 
+745 0 0.01000 0.3232 0.0134 0.2292 
+746 0 0.01000 0.3391 0.0077 0.0632 
+747 0 0.01000 0.4178 0.0078 0.2020 
+748 0 0.01000 0.3554 0.0049 0.0384 
+749 0 0.01000 0.3705 0.0049 0.0248 
+750 0 0.01000 0.3861 0.0207 0.0106 
+751 0 0.01000 0.3742 0.0050 0.0341 
+752 0 0.01000 0.4196 0.0132 0.0633 
+753 0 0.01000 0.4480 0.0049 0.0479 
+754 0 0.01000 0.4318 0.0230 0.0052 
+755 0 0.01000 0.4529 0.0050 0.0854 
+756 0 0.01000 0.4405 0.0140 0.0142 
+757 0 0.01000 0.4652 0.0114 0.0666 
+758 0 0.01000 0.4732 0.0068 0.0511 
+759 0 0.01000 0.4728 0.0177 0.0171 
+760 0 0.01000 0.4566 0.0057 0.1360 
+761 0 0.01000 0.4744 0.0054 0.1223 
+762 0 0.01000 0.5234 0.0209 0.0052 
+763 0 0.01000 0.5279 0.0188 0.0141 
+764 0 0.01000 0.5136 0.0050 0.0518 
+765 0 0.01000 0.5429 0.0269 0.0083 
+766 0 0.01000 0.5732 0.0054 0.0634 
+767 0 0.01000 0.5791 0.0050 0.0401 
+768 0 0.01000 0.6001 0.0049 0.0249 
+769 0 0.01000 0.6386 0.0049 0.0387 
+770 0 0.01000 0.0054 0.0308 0.0050 
+771 0 0.01000 0.0326 0.0049 0.0714 
+772 0 0.01000 0.0138 0.0049 0.0640 
+773 0 0.01000 0.0446 0.0202 0.0145 
+774 0 0.01000 0.0629 0.0050 0.1072 
+775 0 0.01000 0.0650 0.0132 0.0180 
+776 0 0.01000 0.0734 0.0050 0.1443 
+777 0 0.01000 0.0837 0.0189 0.0371 
+778 0 0.01000 0.0934 0.0049 0.0769 
+779 0 0.01000 0.0959 0.0132 0.0505 
+780 0 0.01000 0.0534 0.0090 0.1649 
+781 0 0.01000 0.1130 0.0050 0.0921 
+782 0 0.01000 0.0964 0.0050 0.1471 
+783 0 0.01000 0.1553 0.0050 0.1721 
+784 0 0.01000 0.1578 0.0131 0.0237 
+785 0 0.01000 0.1501 0.0050 0.0908 
+786 0 0.01000 0.1757 0.0049 0.0836 
+787 0 0.01000 0.1879 0.0053 0.0912 
+788 0 0.01000 0.2065 0.0049 0.1063 
+789 0 0.01000 0.2080 0.0050 0.0578 
+790 0 0.01000 0.2177 0.0082 0.0296 
+791 0 0.01000 0.2395 0.0187 0.0203 
+792 0 0.01000 0.2431 0.0211 0.0050 
+793 0 0.01000 0.2445 0.0049 0.0875 
+794 0 0.01000 0.2622 0.0123 0.0371 
+795 0 0.01000 0.2569 0.0049 0.1100 
+796 0 0.01000 0.3005 0.0050 0.0890 
+797 0 0.01000 0.3044 0.0050 0.0365 
+798 0 0.01000 0.2795 0.0049 0.0411 
+799 0 0.01000 0.3024 0.0171 0.0126 
+800 0 0.01000 0.3370 0.0098 0.0154 
+801 0 0.01000 0.3472 0.0049 0.0441 
+802 0 0.01000 0.3759 0.0050 0.0546 
+803 0 0.01000 0.3607 0.0134 0.0217 
+804 0 0.01000 0.3642 0.0049 0.0335 
+805 0 0.01000 0.3836 0.0049 0.0482 
+806 0 0.01000 0.3065 0.0057 0.2152 
+807 0 0.01000 0.4037 0.0099 0.0562 
+808 0 0.01000 0.4195 0.0049 0.0688 
+809 0 0.01000 0.4263 0.0123 0.0448 
+810 0 0.01000 0.4376 0.0050 0.0673 
+811 0 0.01000 0.4576 0.0049 0.0658 
+812 0 0.01000 0.4596 0.0069 0.0563 
+813 0 0.01000 0.4556 0.0050 0.0987 
+814 0 0.01000 0.5033 0.0057 0.1596 
+815 0 0.01000 0.4837 0.0198 0.0159 
+816 0 0.01000 0.5222 0.0050 0.0994 
+817 0 0.01000 0.5262 0.0049 0.0674 
+818 0 0.01000 0.5202 0.0118 0.0319 
+819 0 0.01000 0.5313 0.0050 0.0423 
+820 0 0.01000 0.5695 0.0050 0.0429 
+821 0 0.01000 0.5521 0.0091 0.0593 
+822 0 0.01000 0.5915 0.0050 0.0388 
+823 0 0.01000 0.6952 0.0050 0.1130 
+824 0 0.01000 0.6168 0.0049 0.0212 
+825 0 0.01000 0.0224 0.0049 0.0714 
+826 0 0.01000 0.0265 0.0131 0.0674 
+827 0 0.01000 0.0383 0.0198 0.0224 
+828 0 0.01000 0.0384 0.0050 0.0808 
+829 0 0.01000 0.0573 0.0050 0.0863 
+830 0 0.01000 0.0790 0.0192 0.0220 
+831 0 0.01000 0.0757 0.0107 0.0686 
+832 0 0.01000 0.0869 0.0214 0.0087 
+833 0 0.01000 0.0882 0.0112 0.0415 
+834 0 0.01000 0.0598 0.0060 0.1270 
+835 0 0.01000 0.1045 0.0182 0.0184 
+836 0 0.01000 0.1432 0.0132 0.0410 
+837 0 0.01000 0.1435 0.0050 0.0757 
+838 0 0.01000 0.1353 0.0049 0.0681 
+839 0 0.01000 0.1333 0.0055 0.1142 
+840 0 0.01000 0.1691 0.0049 0.0338 
+841 0 0.01000 0.1672 0.0241 0.0050 
+842 0 0.01000 0.2010 0.0155 0.0255 
+843 0 0.01000 0.1888 0.0050 0.0744 
+844 0 0.01000 0.2396 0.0120 0.0492 
+845 0 0.01000 0.2249 0.0255 0.0050 
+846 0 0.01000 0.2442 0.0049 0.1002 
+847 0 0.01000 0.2453 0.0055 0.1102 
+848 0 0.01000 0.2439 0.0049 0.0619 
+849 0 0.01000 0.2561 0.0049 0.0515 
+850 0 0.01000 0.2933 0.0102 0.0516 
+851 0 0.01000 0.2912 0.0133 0.0286 
+852 0 0.01000 0.3060 0.0147 0.0256 
+853 0 0.01000 0.2962 0.0121 0.0388 
+854 0 0.01000 0.3475 0.0081 0.1623 
+855 0 0.01000 0.3134 0.0050 0.0735 
+856 0 0.01000 0.3446 0.0135 0.0211 
+857 0 0.01000 0.3503 0.0129 0.0566 
+858 0 0.01000 0.3501 0.0050 0.1000 
+859 0 0.01000 0.3834 0.0284 0.0050 
+860 0 0.01000 0.3575 0.0146 0.0392 
+861 0 0.01000 0.3777 0.0050 0.0662 
+862 0 0.01000 0.3971 0.0220 0.0050 
+863 0 0.01000 0.4357 0.0134 0.0418 
+864 0 0.01000 0.4368 0.0049 0.0470 
+865 0 0.01000 0.4479 0.0210 0.0176 
+866 0 0.01000 0.4499 0.0050 0.0577 
+867 0 0.01000 0.4602 0.0213 0.0125 
+868 0 0.01000 0.4686 0.0135 0.0452 
+869 0 0.01000 0.4872 0.0134 0.0438 
+870 0 0.01000 0.4860 0.0092 0.0530 
+871 0 0.01000 0.4972 0.0129 0.0330 
+872 0 0.01000 0.5026 0.0134 0.0414 
+873 0 0.01000 0.5592 0.0050 0.0260 
+874 0 0.01000 0.5351 0.0050 0.0756 
+875 0 0.01000 0.5356 0.0126 0.0136 
+876 0 0.01000 0.5408 0.0172 0.0207 
+877 0 0.01000 0.5635 0.0050 0.1222 
+878 0 0.01000 0.5819 0.0063 0.0878 
+879 0 0.01000 0.6119 0.0050 0.0050 
+880 0 0.01000 0.0074 0.0050 0.0561 
+881 0 0.01000 0.0176 0.0115 0.0575 
+882 0 0.01000 0.0555 0.0050 0.0995 
+883 0 0.01000 0.0319 0.0122 0.0231 
+884 0 0.01000 0.0497 0.0164 0.0378 
+885 0 0.01000 0.0530 0.0095 0.0442 
+886 0 0.01000 0.0806 0.0050 0.0787 
+887 0 0.01000 0.0701 0.0049 0.0745 
+888 0 0.01000 0.0830 0.0050 0.1060 
+889 0 0.01000 0.0990 0.0188 0.0308 
+890 0 0.01000 0.0870 0.0111 0.0578 
+891 0 0.01000 0.1227 0.0049 0.0947 
+892 0 0.01000 0.1594 0.0050 0.0611 
+893 0 0.01000 0.1575 0.0057 0.1520 
+894 0 0.01000 0.1487 0.0050 0.0489 
+895 0 0.01000 0.1614 0.0050 0.0710 
+896 0 0.01000 0.1600 0.0053 0.0816 
+897 0 0.01000 0.1730 0.0117 0.0506 
+898 0 0.01000 0.1981 0.0085 0.0577 
+899 0 0.01000 0.2254 0.0138 0.0323 
+900 0 0.01000 0.2109 0.0145 0.0261 
+901 0 0.01000 0.2304 0.0129 0.0455 
+902 0 0.01000 0.2330 0.0115 0.0224 
+903 0 0.01000 0.2536 0.0135 0.0312 
+904 0 0.01000 0.2645 0.0098 0.0623 
+905 0 0.01000 0.2745 0.0081 0.0491 
+906 0 0.01000 0.3040 0.0064 0.0535 
+907 0 0.01000 0.2908 0.0096 0.0726 
+908 0 0.01000 0.3161 0.0211 0.0145 
+909 0 0.01000 0.3162 0.0121 0.0466 
+910 0 0.01000 0.3232 0.0049 0.0468 
+911 0 0.01000 0.3597 0.0271 0.0061 
+912 0 0.01000 0.3944 0.0131 0.0373 
+913 0 0.01000 0.4067 0.0051 0.1292 
+914 0 0.01000 0.3727 0.0049 0.0932 
+915 0 0.01000 0.3926 0.0117 0.0617 
+916 0 0.01000 0.3821 0.0050 0.0752 
+917 0 0.01000 0.4137 0.0089 0.0759 
+918 0 0.01000 0.3896 0.0129 0.0480 
+919 0 0.01000 0.4426 0.0219 0.0073 
+920 0 0.01000 0.3318 0.0050 0.1481 
+921 0 0.01000 0.4472 0.0129 0.0419 
+922 0 0.01000 0.4316 0.0057 0.0892 
+923 0 0.01000 0.4783 0.0123 0.0394 
+924 0 0.01000 0.4791 0.0050 0.0770 
+925 0 0.01000 0.4989 0.0126 0.0522 
+926 0 0.01000 0.4888 0.0050 0.0793 
+927 0 0.01000 0.5178 0.0050 0.0609 
+928 0 0.01000 0.5273 0.0049 0.0331 
+929 0 0.01000 0.5599 0.0050 0.0466 
+930 0 0.01000 0.5418 0.0050 0.0439 
+931 0 0.01000 0.5608 0.0049 0.0618 
+932 0 0.01000 0.5920 0.0099 0.0280 
+933 0 0.01000 0.6191 0.0067 0.0117 
+934 0 0.01000 0.6543 0.0072 0.0159 
+935 0 0.01000 0.0186 0.0049 0.1092 
+936 0 0.01000 0.0137 0.0097 0.0728 
+937 0 0.01000 0.0243 0.0106 0.0501 
+938 0 0.01000 0.0472 0.0202 0.0268 
+939 0 0.01000 0.0632 0.0220 0.0102 
+940 0 0.01000 0.0686 0.0117 0.0538 
+941 0 0.01000 0.0781 0.0245 0.0053 
+942 0 0.01000 0.0971 0.0154 0.0400 
+943 0 0.01000 0.1410 0.0050 0.0864 
+944 0 0.01000 0.1262 0.0132 0.0326 
+945 0 0.01000 0.1235 0.0110 0.0588 
+946 0 0.01000 0.1387 0.0049 0.0584 
+947 0 0.01000 0.1610 0.0128 0.0454 
+948 0 0.01000 0.1418 0.0116 0.0516 
+949 0 0.01000 0.1537 0.0050 0.1233 
+950 0 0.01000 0.1577 0.0131 0.0343 
+951 0 0.01000 0.1689 0.0133 0.0283 
+952 0 0.01000 0.1902 0.0210 0.0092 
+953 0 0.01000 0.2016 0.0122 0.0350 
+954 0 0.01000 0.2181 0.0050 0.0563 
+955 0 0.01000 0.2343 0.0121 0.0364 
+956 0 0.01000 0.2440 0.0138 0.0380 
+957 0 0.01000 0.2373 0.0049 0.0426 
+958 0 0.01000 0.2642 0.0117 0.0469 
+959 0 0.01000 0.2485 0.0130 0.0227 
+960 0 0.01000 0.2741 0.0132 0.0396 
+961 0 0.01000 0.2698 0.0050 0.0771 
+962 0 0.01000 0.3027 0.0228 0.0207 
+963 0 0.01000 0.3233 0.0069 0.0566 
+964 0 0.01000 0.2934 0.0050 0.0816 
+965 0 0.01000 0.3362 0.0135 0.0392 
+966 0 0.01000 0.3679 0.0133 0.0295 
+967 0 0.01000 0.3681 0.0062 0.1360 
+968 0 0.01000 0.3643 0.0050 0.0599 
+969 0 0.01000 0.3663 0.0105 0.0415 
+970 0 0.01000 0.3541 0.0133 0.0299 
+971 0 0.01000 0.4105 0.0050 0.0615 
+972 0 0.01000 0.3942 0.0123 0.0264 
+973 0 0.01000 0.4177 0.0178 0.0199 
+974 0 0.01000 0.4316 0.0131 0.0186 
+975 0 0.01000 0.4280 0.0126 0.0350 
+976 0 0.01000 0.4526 0.0278 0.0120 
+977 0 0.01000 0.4761 0.0164 0.0306 
+978 0 0.01000 0.5446 0.0110 0.0364 
+979 0 0.01000 0.4668 0.0211 0.0050 
+980 0 0.01000 0.4995 0.0194 0.0257 
+981 0 0.01000 0.5072 0.0130 0.0325 
+982 0 0.01000 0.5432 0.0049 0.0574 
+983 0 0.01000 0.5340 0.0265 0.0128 
+984 0 0.01000 0.5518 0.0049 0.0397 
+985 0 0.01000 0.5576 0.0050 0.1479 
+986 0 0.01000 0.5579 0.0135 0.0181 
+987 0 0.01000 0.5799 0.0050 0.0734 
+988 0 0.01000 0.5816 0.0119 0.0248 
+989 0 0.01000 0.6502 0.0165 0.0949 
+990 0 0.01000 0.0143 0.0140 0.0328 
+991 0 0.01000 0.0250 0.0132 0.0304 
+992 0 0.01000 0.0399 0.0050 0.0959 
+993 0 0.01000 0.0652 0.0207 0.0269 
+994 0 0.01000 0.0717 0.0133 0.0254 
+995 0 0.01000 0.0365 0.0166 0.0332 
+996 0 0.01000 0.0713 0.0173 0.0066 
+997 0 0.01000 0.1030 0.0093 0.0592 
+998 0 0.01000 0.0588 0.0183 0.0342 
+999 0 0.01000 0.1187 0.0127 0.0414 
