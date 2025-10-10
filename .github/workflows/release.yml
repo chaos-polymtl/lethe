@@ -59,6 +59,7 @@ jobs:
         run: |
           mkdir build-release
           cd build-release
+          git config --global --add safe.directory /__w/lethe/lethe
           cmake ../ -DCMAKE_BUILD_TYPE=Release -G Ninja
           ninja -j${{ env.COMPILE_JOBS }}
 
