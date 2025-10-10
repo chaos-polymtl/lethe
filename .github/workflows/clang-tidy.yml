@@ -25,18 +25,13 @@ env:
 jobs:
   tidy:
     name: tidy
-    runs-on: ubuntu-latest
+    runs-on: [ubuntu-22.04]
 
     strategy:
       fail-fast: false
       matrix:
         dealii_version: ["master"]
     
-    # Run steps in container of dealii's master branch
-    #container:
-    #  image: dealii/dealii:${{ matrix.dealii_version }}-focal
-    #  options: --user root
-
     steps:
       - name: Setup
         run: |
@@ -45,8 +40,8 @@ jobs:
           sudo add-apt-repository ppa:ginggs/deal.ii-9.7.1-backports
           sudo apt-get update
           sudo apt-get install -y --no-install-recommends nodejs \
-            clang-20 \
-            clang-tidy-20 \
+            clang-12 \
+            clang-tidy-12 \
             numdiff \
             libboost-all-dev \
             libcgal-dev \
