@@ -234,7 +234,7 @@ Lethe comes pre-packaged with an extensive test suit for all of its modules. It 
 where $numprocs can be the number of physical cores on your machine. Do not be afraid if some tests fail on your machine, they are not always as portable as we would like them to be.
 
 .. warning:: 
-  The lethe test suites requires that deal.II be configured with p4est 2.6.1 otherwise the tests that include restart files or that use the ``lethe-fluid-vans`` or ``lethe-fluid-particles`` executables will fail. Even if the tests fail, the application should work as expected on your machine(including the restart capabilities).
+  The lethe test suites requires that deal.II be configured with p4est 2.3.6 otherwise the tests that include restart files or that use the ``lethe-fluid-vans`` or ``lethe-fluid-particles`` executables will fail. Even if the tests fail, the application should work as expected on your machine(including the restart capabilities).
 
 .. _update-dealii:
 
