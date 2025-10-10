@@ -42,7 +42,7 @@ subsection restart
   set restart = false
 
   # Prefix for the filename of checkpoints
-  set filename = restart
+  set filename = ../two-bar-mixer-restart/restart
 
   # Frequency for checkpointing
   set frequency = 5
