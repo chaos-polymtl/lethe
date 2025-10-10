@@ -18,7 +18,7 @@ concurrency:
   cancel-in-progress: ${{github.event_name == 'pull_request'}}
 
 env:
-  COMPILE_JOBS: 12
+  COMPILE_JOBS: 16
   MULTI_CORE_TESTS_REGEX: "mpirun=[2-9][0-9]*"
 
 jobs:
