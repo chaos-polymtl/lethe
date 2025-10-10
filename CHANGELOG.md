@@ -4,6 +4,12 @@ All notable changes to the Lethe project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
 
+### [Master] - 2025-10-10
+
+### Changed
+
+- MAJOR The CXX standard enforced for Lethe has been switched from C++ 17 to C++ 20. This change has been done to harmonize with the deal.II docker images, which are also now based on C++ 20. To further modernize the CI architecture, the docker images have been moved from Jammy (22.04) to Noble (24.04). This is major breaking change for the tests since Noble is packaged with p4est 2.3.6 whereas Jammy was packaged with p4est 2.2. Consequently, all of the restart files and DEM files used in the test have been regenerated to use p4est 2.3.6. This is a positive change since p4est 2.3.6 is much easier to compile on modern machine then p4est 2.2 and it makes the whole testing environment a lot more portable. We have also reintroduced the deal.II major release CI. This means that Lethe is not only tested agaisnt deal.II v9.8pre (master), but that is is also tested agaisnt the last major stable release which is deal.II v9.7.1. This will be useful since installing the deal.II v9.7.1 is very easy on debian or ubuntu since there is a package for it. Finally, the documentation has been updated to reflect this major change and the installation instruction have been modernized to explain the capability of installing deal.II from the package manager under certain operating systems. [#1709](https://github.com/chaos-polymtl/lethe/pull/1709)
+
 ### [Master] - 2025-10-06
 
 ### Changed
