@@ -31,7 +31,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        dealii_version: ["master-noble"]
+        dealii_version: ["master-jammy"]
     
     # Run steps in container of dealii's master branch
     container:
