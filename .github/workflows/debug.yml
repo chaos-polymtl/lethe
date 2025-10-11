@@ -31,7 +31,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        dealii_version: ["master-jammy"]
+        dealii_version: ["master-noble"]
     
     # Run steps in container of dealii's master branch
     container:
@@ -59,6 +59,7 @@ jobs:
 
           mkdir build-debug
           cd build-debug
+          git config --global --add safe.directory /__w/lethe/lethe
           cmake ../ -DCMAKE_BUILD_TYPE=Debug -G Ninja
           ninja -j${{ env.COMPILE_JOBS }}
 

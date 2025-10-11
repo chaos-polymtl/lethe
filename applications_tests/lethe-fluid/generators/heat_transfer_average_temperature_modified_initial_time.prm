@@ -160,7 +160,7 @@ end
 subsection restart
   set checkpoint = true
   set frequency  = 1
-  set filename   = restart
+  set filename   = ../heat_transfer_average_temperature_restart_files/restart
   set restart    = false
 end
 

@@ -1,6 +1,6 @@
-ARG DEALII_IMAGE_VERSION="v9.6.0"
+ARG DEALII_IMAGE_VERSION="v9.7.1"
 
-FROM dealii/dealii:${DEALII_IMAGE_VERSION}-jammy as builder
+FROM dealii/dealii:${DEALII_IMAGE_VERSION}-noble as builder
 
 ARG LETHE_INSTALL_DIR=/opt/lethe
 

@@ -39,7 +39,7 @@ subsection restart
   set checkpoint = true # = true to generate the restart files.
   set frequency  = 500
   set restart    = false
-  set filename   = restart_cell_weight_function
+  set filename   = ../restart_cell_weight_function_files/restart_cell_weight_function
 end
 
 #---------------------------------------------------

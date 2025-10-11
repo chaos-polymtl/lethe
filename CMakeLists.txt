@@ -67,13 +67,13 @@ endif()
 unset(_had_deal_ii)
 
 if(CMAKE_PROJECT_NAME STREQUAL PROJECT_NAME)
-  set(CMAKE_CXX_STANDARD 17 CACHE STRING "The C++ standard to use")
+  set(CMAKE_CXX_STANDARD 20 CACHE STRING "The C++ standard to use")
   set(CMAKE_CXX_STANDARD_REQUIRED ON)
   set(CMAKE_CXX_EXTENSIONS OFF)
 
   add_compile_options(
     -Wall -Wextra -Wpedantic # Actually already in DEAL_II_CXX_FLAGS
-    -Wunused-variable -Wdisabled-optimization -std=c++17)
+    -Wunused-variable -Wdisabled-optimization)
     
 
   if(CMAKE_VERSION VERSION_LESS 3.24)

@@ -27,17 +27,14 @@ Lethe requires a modern version of the `deal.II library <https://www.dealii.org/
 Installing deal.II using apt 
 -----------------------------------------
 
-.. warning::
-  The master version of Lethe does not support deal.II 9.6 anymore. Until an apt release of deal.II 9.7 is available, you should use the 1.0.1 version of Lethe if you wish to use the deal.II 9.6 package. If you wish to use the current master version of Lethe, you should install deal.II 9.7 using the other installation methods.
-
 This is done following `this procedure <https://www.dealii.org/download.html#:~:text=page%20for%20details.-,Linux%20distributions,-Arch%20Linux>`_.
 
-In case you are using Ubuntu, you will need to `update the backports <https://launchpad.net/~ginggs/+archive/ubuntu/deal.ii-9.6.0-backports>`_:
+In case you are using Ubuntu, you will need to `update the backports <https://launchpad.net/~ginggs/+archive/ubuntu/deal.ii-9.7.1-backports>`_:
 
 .. code-block:: text
   :class: copy-button
 
-  sudo add-apt-repository ppa:ginggs/deal.ii-9.6.0-backports
+  sudo add-apt-repository ppa:ginggs/deal.ii-9.7.1-backports
   sudo apt update
 
 To install deal.II, run:
@@ -58,7 +55,7 @@ This should output several information about the installed version. Everything w
 
 .. note::
 
-  If the installed version is other than ``deal.ii-9.6.0``, follow `this link <https://github.com/dealii/dealii/wiki/Getting-deal.II>`_.
+  If the installed version is other than ``deal.ii-9.7.1``, follow `this link <https://github.com/dealii/dealii/wiki/Getting-deal.II>`_.
 
 
 .. _install-deal.II-candi:
@@ -84,7 +81,7 @@ The following packages (which are specified after line 57) should be installed:
 
 Other packages can be disabled by simply commenting out the lines (adding a ``#`` at the beginning of the lines)
 
-To ensure that the Lethe test suite works, deal.II must be configured with p4est version 2.2. Otherwise, application tests that include restart files will fail.
+To ensure that the Lethe test suite works, deal.II must be configured with p4est version 2.3.6. Otherwise, application tests that include restart files will fail.
 
 From the candi folder, the installation of candi can be launched using:
 
@@ -237,7 +234,7 @@ Lethe comes pre-packaged with an extensive test suit for all of its modules. It 
 where $numprocs can be the number of physical cores on your machine. Do not be afraid if some tests fail on your machine, they are not always as portable as we would like them to be.
 
 .. warning:: 
-  The lethe test suites requires that deal.II be configured with p4est 2.2, otherwise the test that include restart files will fail. Even if the tests fail, the application should work as expected (including the restart capabilities).
+  The lethe test suites requires that deal.II be configured with p4est 2.3.6 otherwise the tests that include restart files or that use the ``lethe-fluid-vans`` or ``lethe-fluid-particles`` executables will fail. Even if the tests fail, the application should work as expected on your machine(including the restart capabilities).
 
 .. _update-dealii:
 
