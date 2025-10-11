@@ -552,15 +552,11 @@ sudo apt upgrade
 </section>
 <section id="installing-deal-ii-using-apt-step-1">
 <span id="install-deal-ii-apt"></span><h2>Installing deal.II using apt (Step #1)<a class="headerlink" href="#installing-deal-ii-using-apt-step-1" title="Link to this heading">#</a></h2>
-<dl class="simple">
-<dt>::warning::</dt><dd><p>The master version of Lethe does not support deal.II 9.6 anymore. Until an apt release of deal.II 9.7 is available, you should use the 1.0.1 version of Lethe if you wish to use the deal.II 9.6 package. If you wish to use the current master version of Lethe, you should install deal.II 9.7 using the other installation methods.</p>
-</dd>
-</dl>
 <p>This is done following <a class="reference external" href="https://www.dealii.org/download.html#:~:text=page%20for%20details.-,Linux%20distributions,-Arch%20Linux">this procedure</a>.</p>
 <ol class="arabic simple">
-<li><p><a class="reference internal" href="../_images/linux.png"><img alt="linux_shell" src="../_images/linux.png" style="height: 15px;" /></a> In case you are using Ubuntu, you will need to <a class="reference external" href="https://launchpad.net/~ginggs/+archive/ubuntu/deal.ii-9.6.0-backports">update the backports</a>:</p></li>
+<li><p><a class="reference internal" href="../_images/linux.png"><img alt="linux_shell" src="../_images/linux.png" style="height: 15px;" /></a> In case you are using Ubuntu, you will need to <a class="reference external" href="https://launchpad.net/~ginggs/+archive/ubuntu/deal.ii-9.7.1-backports">update the backports</a>:</p></li>
 </ol>
-<div class="copy-button highlight-text notranslate"><div class="highlight"><pre><span></span>sudo add-apt-repository ppa:ginggs/deal.ii-9.6.0-backports
+<div class="copy-button highlight-text notranslate"><div class="highlight"><pre><span></span>sudo add-apt-repository ppa:ginggs/deal.ii-9.7.1-backports
 sudo apt update
 </pre></div>
 </div>
@@ -574,10 +570,10 @@ sudo apt update
 <div class="copy-button highlight-text notranslate"><div class="highlight"><pre><span></span>apt show libdeal.ii-dev
 </pre></div>
 </div>
-<p>This should output several information about the installed version. Everything worked as expected if <code class="docutils literal notranslate"><span class="pre">deal.ii-9.5.1</span></code> is output</p>
+<p>This should output several information about the installed version. Everything worked as expected if <code class="docutils literal notranslate"><span class="pre">deal.ii-9.7.1</span></code> is output</p>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
-<p>If the installed version is other than <code class="docutils literal notranslate"><span class="pre">deal.ii-9.5.1</span></code>, follow <a class="reference external" href="https://github.com/dealii/dealii/wiki/Getting-deal.II">this link</a>.</p>
+<p>If the installed version is other than <code class="docutils literal notranslate"><span class="pre">deal.ii-9.7.1</span></code>, follow <a class="reference external" href="https://github.com/dealii/dealii/wiki/Getting-deal.II">this link</a>.</p>
 </div>
 </section>
 <section id="installing-deal-ii-using-candi-step-1">

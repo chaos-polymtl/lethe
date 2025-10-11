@@ -476,13 +476,9 @@
 </ol>
 <section id="installing-deal-ii-using-apt">
 <span id="install-deal-ii-apt"></span><h2>Installing deal.II using apt<a class="headerlink" href="#installing-deal-ii-using-apt" title="Link to this heading">#</a></h2>
-<div class="admonition warning">
-<p class="admonition-title">Warning</p>
-<p>The master version of Lethe does not support deal.II 9.6 anymore. Until an apt release of deal.II 9.7 is available, you should use the 1.0.1 version of Lethe if you wish to use the deal.II 9.6 package. If you wish to use the current master version of Lethe, you should install deal.II 9.7 using the other installation methods.</p>
-</div>
 <p>This is done following <a class="reference external" href="https://www.dealii.org/download.html#:~:text=page%20for%20details.-,Linux%20distributions,-Arch%20Linux">this procedure</a>.</p>
-<p>In case you are using Ubuntu, you will need to <a class="reference external" href="https://launchpad.net/~ginggs/+archive/ubuntu/deal.ii-9.6.0-backports">update the backports</a>:</p>
-<div class="copy-button highlight-text notranslate"><div class="highlight"><pre><span></span>sudo add-apt-repository ppa:ginggs/deal.ii-9.6.0-backports
+<p>In case you are using Ubuntu, you will need to <a class="reference external" href="https://launchpad.net/~ginggs/+archive/ubuntu/deal.ii-9.7.1-backports">update the backports</a>:</p>
+<div class="copy-button highlight-text notranslate"><div class="highlight"><pre><span></span>sudo add-apt-repository ppa:ginggs/deal.ii-9.7.1-backports
 sudo apt update
 </pre></div>
 </div>
@@ -497,7 +493,7 @@ sudo apt update
 <p>This should output several information about the installed version. Everything worked as expected if <code class="docutils literal notranslate"><span class="pre">deal.ii-9.6.0</span></code> is the output</p>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
-<p>If the installed version is other than <code class="docutils literal notranslate"><span class="pre">deal.ii-9.6.0</span></code>, follow <a class="reference external" href="https://github.com/dealii/dealii/wiki/Getting-deal.II">this link</a>.</p>
+<p>If the installed version is other than <code class="docutils literal notranslate"><span class="pre">deal.ii-9.7.1</span></code>, follow <a class="reference external" href="https://github.com/dealii/dealii/wiki/Getting-deal.II">this link</a>.</p>
 </div>
 </section>
 <section id="installing-deal-ii-using-candi">
@@ -517,7 +513,7 @@ PACKAGES=&quot;${PACKAGES} dealii&quot;
 </div>
 </div></blockquote>
 <p>Other packages can be disabled by simply commenting out the lines (adding a <code class="docutils literal notranslate"><span class="pre">#</span></code> at the beginning of the lines)</p>
-<p>To ensure that the Lethe test suite works, deal.II must be configured with p4est version 2.2. Otherwise, application tests that include restart files will fail.</p>
+<p>To ensure that the Lethe test suite works, deal.II must be configured with p4est version 2.3.6. Otherwise, application tests that include restart files will fail.</p>
 <p>From the candi folder, the installation of candi can be launched using:</p>
 <div class="copy-button highlight-text notranslate"><div class="highlight"><pre><span></span>./candi.sh -j$numproc --prefix=$path
 </pre></div>
@@ -611,7 +607,7 @@ cd build
 <p>where $numprocs can be the number of physical cores on your machine. Do not be afraid if some tests fail on your machine, they are not always as portable as we would like them to be.</p>
 <div class="admonition warning">
 <p class="admonition-title">Warning</p>
-<p>The lethe test suites requires that deal.II be configured with p4est 2.2, otherwise the test that include restart files will fail. Even if the tests fail, the application should work as expected (including the restart capabilities).</p>
+<p>The lethe test suites requires that deal.II be configured with p4est 2.3.6 otherwise the tests that include restart files or that use the <code class="docutils literal notranslate"><span class="pre">lethe-fluid-vans</span></code> or <code class="docutils literal notranslate"><span class="pre">lethe-fluid-particles</span></code> executables will fail. Even if the tests fail, the application should work as expected on your machine(including the restart capabilities).</p>
 </div>
 </section>
 <section id="updating-deal-ii">
