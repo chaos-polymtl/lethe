@@ -3,6 +3,11 @@
 All notable changes to the Lethe project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
+### [Master] - 2025-10-13
+
+### Changed
+
+- MINOR The CLang tidy workflow is back to ensure to ensure that Lethe is as clean as possible. Some of the small issues identified by it through the run have been fixed (notably some pass by copy instead of const reference and some range-based loop missing). [#1708](https://github.com/chaos-polymtl/lethe/pull/1708)
 
 ### [Master] - 2025-10-10
 
