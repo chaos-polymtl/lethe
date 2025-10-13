@@ -7,8 +7,6 @@
 
 #include <boost/math/special_functions/erf.hpp>
 
-#include <float.h>
-
 #include <cmath>
 
 double
