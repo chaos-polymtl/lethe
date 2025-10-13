@@ -1,15 +1,13 @@
 <map id="/home/runner/work/lethe/lethe/source/dem/particle_heat_transfer.cc" name="/home/runner/work/lethe/lethe/source/dem/particle_heat_transfer.cc">
-<area shape="rect" id="Node000001" title=" " alt="" coords="393,5,585,60"/>
+<area shape="rect" id="Node000001" title=" " alt="" coords="292,5,484,60"/>
 <area shape="rect" id="Node000002" href="$auxiliary__math__functions_8h.html" title=" " alt="" coords="5,108,157,148"/>
-<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="394,58,172,109,170,104,393,53"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="303,63,157,107,156,101,301,58"/>
 <area shape="rect" id="Node000004" href="$particle__heat__transfer_8h.html" title=" " alt="" coords="182,115,391,141"/>
-<area shape="poly" id="edge3_Node000001_Node000004" title=" " alt="" coords="433,62,325,112,322,107,431,58"/>
+<area shape="poly" id="edge3_Node000001_Node000004" title=" " alt="" coords="361,62,312,108,308,104,357,58"/>
 <area shape="rect" id="Node000006" title=" " alt="" coords="416,108,563,148"/>
-<area shape="poly" id="edge5_Node000001_Node000006" title=" " alt="" coords="492,60,492,94,487,94,487,60"/>
+<area shape="poly" id="edge5_Node000001_Node000006" title=" " alt="" coords="419,58,461,97,457,101,415,62"/>
 <area shape="rect" id="Node000007" title=" " alt="" coords="587,115,650,141"/>
-<area shape="poly" id="edge6_Node000001_Node000007" title=" " alt="" coords="527,58,593,105,590,110,524,62"/>
-<area shape="rect" id="Node000008" title=" " alt="" coords="674,115,737,141"/>
-<area shape="poly" id="edge7_Node000001_Node000008" title=" " alt="" coords="552,58,664,106,668,107,666,112,662,110,550,63"/>
+<area shape="poly" id="edge6_Node000001_Node000007" title=" " alt="" coords="456,58,576,106,581,108,579,112,574,110,454,63"/>
 <area shape="rect" id="Node000003" title=" " alt="" coords="52,196,111,221"/>
 <area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="84,148,84,182,79,182,79,148"/>
 <area shape="rect" id="Node000005" href="$contact__type_8h.html" title=" " alt="" coords="211,196,362,221"/>

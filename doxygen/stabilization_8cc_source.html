@@ -156,10 +156,10 @@ $(document).ready(function() { init_codefold(0); });
 <div class="line"><a id="l00060" name="l00060"></a><span class="lineno">   60</span>          <span class="keywordtype">double</span> max_value  = -DBL_MAX;</div>
 <div class="line"><a id="l00061" name="l00061"></a><span class="lineno">   61</span>          <span class="keywordtype">double</span> min_value  = DBL_MAX;</div>
 <div class="line"><a id="l00062" name="l00062"></a><span class="lineno">   62</span>          <span class="keywordtype">double</span> mean_value = 0;</div>
-<div class="line"><a id="l00063" name="l00063"></a><span class="lineno">   63</span>          <span class="keywordflow">for</span> (<span class="keywordtype">unsigned</span> <span class="keywordtype">int</span> i = 0; i &lt; local_dof_indices.size(); ++i)</div>
+<div class="line"><a id="l00063" name="l00063"></a><span class="lineno">   63</span>          <span class="keywordflow">for</span> (<span class="keyword">const</span> <span class="keyword">auto</span> &amp;i_dof : local_dof_indices)</div>
 <div class="line"><a id="l00064" name="l00064"></a><span class="lineno">   64</span>            {</div>
 <div class="line"><a id="l00065" name="l00065"></a><span class="lineno">   65</span>              <span class="comment">// Get the max and the min value of the solution</span></div>
-<div class="line"><a id="l00066" name="l00066"></a><span class="lineno">   66</span>              <span class="keywordtype">double</span> dof_value = locally_relevant_vector(local_dof_indices[i]);</div>
+<div class="line"><a id="l00066" name="l00066"></a><span class="lineno">   66</span>              <span class="keywordtype">double</span> dof_value = locally_relevant_vector(i_dof);</div>
 <div class="line"><a id="l00067" name="l00067"></a><span class="lineno">   67</span>              max_value        = std::max(max_value, dof_value);</div>
 <div class="line"><a id="l00068" name="l00068"></a><span class="lineno">   68</span>              min_value        = std::min(min_value, dof_value);</div>
 <div class="line"><a id="l00069" name="l00069"></a><span class="lineno">   69</span>              <span class="comment">// Calculate mean solution \bar{w}. Right now this is an average</span></div>
@@ -242,34 +242,33 @@ $(document).ready(function() { init_codefold(0); });
 <div class="line"><a id="l00146" name="l00146"></a><span class="lineno">  146</span>          theta        = std::min(theta, phi_limit(y_min));</div>
 <div class="line"><a id="l00147" name="l00147"></a><span class="lineno">  147</span> </div>
 <div class="line"><a id="l00148" name="l00148"></a><span class="lineno">  148</span>          <span class="comment">// 4. Rescale the solution within the element</span></div>
-<div class="line"><a id="l00149" name="l00149"></a><span class="lineno">  149</span>          <span class="keywordflow">for</span> (<span class="keywordtype">unsigned</span> <span class="keywordtype">int</span> i = 0; i &lt; local_dof_indices.size(); ++i)</div>
+<div class="line"><a id="l00149" name="l00149"></a><span class="lineno">  149</span>          <span class="keywordflow">for</span> (<span class="keyword">const</span> <span class="keyword">auto</span> &amp;i : local_dof_indices)</div>
 <div class="line"><a id="l00150" name="l00150"></a><span class="lineno">  150</span>            {</div>
 <div class="line"><a id="l00151" name="l00151"></a><span class="lineno">  151</span>              <span class="comment">// Get the value of the solution at the DOFs and rescale it</span></div>
 <div class="line"><a id="l00152" name="l00152"></a><span class="lineno">  152</span>              <span class="comment">// using the mean value and the theta limiter.</span></div>
-<div class="line"><a id="l00153" name="l00153"></a><span class="lineno">  153</span>              <span class="keyword">const</span> <span class="keywordtype">double</span> dof_value =</div>
-<div class="line"><a id="l00154" name="l00154"></a><span class="lineno">  154</span>                locally_relevant_vector(local_dof_indices[i]);</div>
-<div class="line"><a id="l00155" name="l00155"></a><span class="lineno">  155</span>              locally_owned_vector(local_dof_indices[i]) =</div>
-<div class="line"><a id="l00156" name="l00156"></a><span class="lineno">  156</span>                mean_value + theta * (dof_value - mean_value);</div>
-<div class="line"><a id="l00157" name="l00157"></a><span class="lineno">  157</span>            }</div>
-<div class="line"><a id="l00158" name="l00158"></a><span class="lineno">  158</span>        }</div>
-<div class="line"><a id="l00159" name="l00159"></a><span class="lineno">  159</span>    }</div>
-<div class="line"><a id="l00160" name="l00160"></a><span class="lineno">  160</span> </div>
-<div class="line"><a id="l00161" name="l00161"></a><span class="lineno">  161</span>  <span class="comment">// Reset the present solution and the evaluation point to the new updated</span></div>
-<div class="line"><a id="l00162" name="l00162"></a><span class="lineno">  162</span>  <span class="comment">// solution.</span></div>
-<div class="line"><a id="l00163" name="l00163"></a><span class="lineno">  163</span>  locally_relevant_vector = locally_owned_vector;</div>
-<div class="line"><a id="l00164" name="l00164"></a><span class="lineno">  164</span>}</div>
+<div class="line"><a id="l00153" name="l00153"></a><span class="lineno">  153</span>              <span class="keyword">const</span> <span class="keywordtype">double</span> dof_value = locally_relevant_vector(i);</div>
+<div class="line"><a id="l00154" name="l00154"></a><span class="lineno">  154</span>              locally_owned_vector(i) =</div>
+<div class="line"><a id="l00155" name="l00155"></a><span class="lineno">  155</span>                mean_value + theta * (dof_value - mean_value);</div>
+<div class="line"><a id="l00156" name="l00156"></a><span class="lineno">  156</span>            }</div>
+<div class="line"><a id="l00157" name="l00157"></a><span class="lineno">  157</span>        }</div>
+<div class="line"><a id="l00158" name="l00158"></a><span class="lineno">  158</span>    }</div>
+<div class="line"><a id="l00159" name="l00159"></a><span class="lineno">  159</span> </div>
+<div class="line"><a id="l00160" name="l00160"></a><span class="lineno">  160</span>  <span class="comment">// Reset the present solution and the evaluation point to the new updated</span></div>
+<div class="line"><a id="l00161" name="l00161"></a><span class="lineno">  161</span>  <span class="comment">// solution.</span></div>
+<div class="line"><a id="l00162" name="l00162"></a><span class="lineno">  162</span>  locally_relevant_vector = locally_owned_vector;</div>
+<div class="line"><a id="l00163" name="l00163"></a><span class="lineno">  163</span>}</div>
 </div>
+<div class="line"><a id="l00164" name="l00164"></a><span class="lineno">  164</span> </div>
 <div class="line"><a id="l00165" name="l00165"></a><span class="lineno">  165</span> </div>
-<div class="line"><a id="l00166" name="l00166"></a><span class="lineno">  166</span> </div>
-<div class="line"><a id="l00167" name="l00167"></a><span class="lineno">  167</span><span class="keyword">template</span> <span class="keywordtype">void</span></div>
-<div class="line"><a id="l00168" name="l00168"></a><span class="lineno"><a class="line" href="stabilization_8cc.html#ac6a7fcfe8c6be584e9f6898d73f39d76">  168</a></span><a class="code hl_function" href="stabilization_8cc.html#a06937346f742736e4b9fa2b941ea6e0b">moe_scalar_limiter</a>(<span class="keyword">const</span> DoFHandler&lt;2&gt; &amp;dof_handler,</div>
-<div class="line"><a id="l00169" name="l00169"></a><span class="lineno">  169</span>                   <a class="code hl_typedef" href="vector_8h.html#a4ea4005d75c88e60bee47d4e79a13a39">GlobalVectorType</a>    &amp;locally_relevant_vector,</div>
-<div class="line"><a id="l00170" name="l00170"></a><span class="lineno">  170</span>                   <a class="code hl_typedef" href="vector_8h.html#a4ea4005d75c88e60bee47d4e79a13a39">GlobalVectorType</a>    &amp;locally_owned_vector);</div>
-<div class="line"><a id="l00171" name="l00171"></a><span class="lineno">  171</span> </div>
-<div class="line"><a id="l00172" name="l00172"></a><span class="lineno">  172</span><span class="keyword">template</span> <span class="keywordtype">void</span></div>
-<div class="line"><a id="l00173" name="l00173"></a><span class="lineno"><a class="line" href="stabilization_8cc.html#a0f9d70f1d0bf5d7ee4ecba340baac760">  173</a></span><a class="code hl_function" href="stabilization_8cc.html#a06937346f742736e4b9fa2b941ea6e0b">moe_scalar_limiter</a>(<span class="keyword">const</span> DoFHandler&lt;3&gt; &amp;dof_handler,</div>
-<div class="line"><a id="l00174" name="l00174"></a><span class="lineno">  174</span>                   <a class="code hl_typedef" href="vector_8h.html#a4ea4005d75c88e60bee47d4e79a13a39">GlobalVectorType</a>    &amp;locally_relevant_vector,</div>
-<div class="line"><a id="l00175" name="l00175"></a><span class="lineno">  175</span>                   <a class="code hl_typedef" href="vector_8h.html#a4ea4005d75c88e60bee47d4e79a13a39">GlobalVectorType</a>    &amp;locally_owned_vector);</div>
+<div class="line"><a id="l00166" name="l00166"></a><span class="lineno">  166</span><span class="keyword">template</span> <span class="keywordtype">void</span></div>
+<div class="line"><a id="l00167" name="l00167"></a><span class="lineno"><a class="line" href="stabilization_8cc.html#ac6a7fcfe8c6be584e9f6898d73f39d76">  167</a></span><a class="code hl_function" href="stabilization_8cc.html#a06937346f742736e4b9fa2b941ea6e0b">moe_scalar_limiter</a>(<span class="keyword">const</span> DoFHandler&lt;2&gt; &amp;dof_handler,</div>
+<div class="line"><a id="l00168" name="l00168"></a><span class="lineno">  168</span>                   <a class="code hl_typedef" href="vector_8h.html#a4ea4005d75c88e60bee47d4e79a13a39">GlobalVectorType</a>    &amp;locally_relevant_vector,</div>
+<div class="line"><a id="l00169" name="l00169"></a><span class="lineno">  169</span>                   <a class="code hl_typedef" href="vector_8h.html#a4ea4005d75c88e60bee47d4e79a13a39">GlobalVectorType</a>    &amp;locally_owned_vector);</div>
+<div class="line"><a id="l00170" name="l00170"></a><span class="lineno">  170</span> </div>
+<div class="line"><a id="l00171" name="l00171"></a><span class="lineno">  171</span><span class="keyword">template</span> <span class="keywordtype">void</span></div>
+<div class="line"><a id="l00172" name="l00172"></a><span class="lineno"><a class="line" href="stabilization_8cc.html#a0f9d70f1d0bf5d7ee4ecba340baac760">  172</a></span><a class="code hl_function" href="stabilization_8cc.html#a06937346f742736e4b9fa2b941ea6e0b">moe_scalar_limiter</a>(<span class="keyword">const</span> DoFHandler&lt;3&gt; &amp;dof_handler,</div>
+<div class="line"><a id="l00173" name="l00173"></a><span class="lineno">  173</span>                   <a class="code hl_typedef" href="vector_8h.html#a4ea4005d75c88e60bee47d4e79a13a39">GlobalVectorType</a>    &amp;locally_relevant_vector,</div>
+<div class="line"><a id="l00174" name="l00174"></a><span class="lineno">  174</span>                   <a class="code hl_typedef" href="vector_8h.html#a4ea4005d75c88e60bee47d4e79a13a39">GlobalVectorType</a>    &amp;locally_owned_vector);</div>
 <div class="ttc" id="alethe__grid__tools_8h_html"><div class="ttname"><a href="lethe__grid__tools_8h.html">lethe_grid_tools.h</a></div></div>
 <div class="ttc" id="anamespaceLetheGridTools_html_a0fbba5f34121cc30bc7a4432f49b8ff4"><div class="ttname"><a href="namespaceLetheGridTools.html#a0fbba5f34121cc30bc7a4432f49b8ff4">LetheGridTools::vertices_cell_mapping</a></div><div class="ttdeci">void vertices_cell_mapping(const DoFHandler&lt; dim &gt; &amp;dof_handler, std::map&lt; unsigned int, std::set&lt; typename DoFHandler&lt; dim &gt;::active_cell_iterator &gt; &gt; &amp;vertices_cell_map)</div><div class="ttdoc">Map the vertex index to the cells that includes that vertex.</div><div class="ttdef"><b>Definition</b> <a href="lethe__grid__tools_8cc_source.html#l00020">lethe_grid_tools.cc:20</a></div></div>
 <div class="ttc" id="astabilization_8cc_html_a06937346f742736e4b9fa2b941ea6e0b"><div class="ttname"><a href="stabilization_8cc.html#a06937346f742736e4b9fa2b941ea6e0b">moe_scalar_limiter</a></div><div class="ttdeci">void moe_scalar_limiter(const DoFHandler&lt; dim &gt; &amp;dof_handler, GlobalVectorType &amp;locally_relevant_vector, GlobalVectorType &amp;locally_owned_vector)</div><div class="ttdoc">Implements a Moe a posteriori shock capturing method to keep the field bounded. This limiter is only ...</div><div class="ttdef"><b>Definition</b> <a href="stabilization_8cc_source.html#l00010">stabilization.cc:10</a></div></div>
