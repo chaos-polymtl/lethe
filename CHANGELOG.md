@@ -9,6 +9,8 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
 - MINOR The CLang tidy workflow is back to ensure to ensure that Lethe is as clean as possible. Some of the small issues identified by it through the run have been fixed (notably some pass by copy instead of const reference and some range-based loop missing). [#1708](https://github.com/chaos-polymtl/lethe/pull/1708)
 
+- MINOR The organization of the documentation for multiphase flows has been restructured slightly so that DEM is allowed to stand-out more. [#1713] (https://github.com/chaos-polymtl/lethe/pull/1713)
+
 ### [Master] - 2025-10-10
 
 ### Changed
