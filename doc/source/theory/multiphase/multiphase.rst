@@ -7,4 +7,5 @@ Multiphase
     :titlesonly:
 
     cfd/cfd
+    dem/dem
     cfd_dem/cfd_dem
