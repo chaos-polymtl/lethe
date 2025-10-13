@@ -122,11 +122,9 @@ test_void_fraction_qcm(const unsigned int fe_degree,
   deallog << "dp = " << dp << std::endl;
 
   // Loop over all the particles and set their diameter to dp
-  for (auto particle = particle_handler.begin();
-       particle != particle_handler.end();
-       ++particle)
+  for (auto &particle : particle_handler)
     {
-      auto particle_properties = particle->get_properties();
+      auto particle_properties = particle.get_properties();
       particle_properties[DEM::CFDDEMProperties::dp] = dp;
     }
 
@@ -173,10 +171,8 @@ test_void_fraction_qcm(const unsigned int fe_degree,
       if (my_rank == r)
         {
           deallog << "Rank " << r << " owns: ";
-          for (auto i = particle_projector.void_fraction_solution.begin();
-               i < particle_projector.void_fraction_solution.end();
-               ++i)
-            deallog << *i << " ";
+          for (const auto & i :  particle_projector.void_fraction_solution)
+            deallog << i << " ";
           deallog << std::endl;
         }
       MPI_Barrier(MPI_COMM_WORLD);
@@ -193,7 +189,7 @@ test_void_fraction_qcm(const unsigned int fe_degree,
   double              total_particle_volume = 0;
   std::vector<double> void_fraction_values(
     fe_values_void_fraction.n_quadrature_points);
-  for (auto cell : particle_projector.dof_handler.active_cell_iterators())
+  for (const auto &cell : particle_projector.dof_handler.active_cell_iterators())
     {
       fe_values_void_fraction.reinit((cell));
       fe_values_void_fraction.get_function_values(
