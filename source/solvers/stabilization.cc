@@ -60,7 +60,7 @@ moe_scalar_limiter(const DoFHandler<dim> &dof_handler,
           double max_value  = -DBL_MAX;
           double min_value  = DBL_MAX;
           double mean_value = 0;
-          for (const auto & i_dof : local_dof_indices)
+          for (const auto &i_dof : local_dof_indices)
             {
               // Get the max and the min value of the solution
               double dof_value = locally_relevant_vector(i_dof);
@@ -150,8 +150,7 @@ moe_scalar_limiter(const DoFHandler<dim> &dof_handler,
             {
               // Get the value of the solution at the DOFs and rescale it
               // using the mean value and the theta limiter.
-              const double dof_value =
-                locally_relevant_vector(i);
+              const double dof_value = locally_relevant_vector(i);
               locally_owned_vector(i) =
                 mean_value + theta * (dof_value - mean_value);
             }

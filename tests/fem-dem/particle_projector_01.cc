@@ -171,7 +171,7 @@ test_void_fraction_qcm(const unsigned int fe_degree,
       if (my_rank == r)
         {
           deallog << "Rank " << r << " owns: ";
-          for (const auto & i :  particle_projector.void_fraction_solution)
+          for (const auto &i : particle_projector.void_fraction_solution)
             deallog << i << " ";
           deallog << std::endl;
         }
@@ -189,7 +189,8 @@ test_void_fraction_qcm(const unsigned int fe_degree,
   double              total_particle_volume = 0;
   std::vector<double> void_fraction_values(
     fe_values_void_fraction.n_quadrature_points);
-  for (const auto &cell : particle_projector.dof_handler.active_cell_iterators())
+  for (const auto &cell :
+       particle_projector.dof_handler.active_cell_iterators())
     {
       fe_values_void_fraction.reinit((cell));
       fe_values_void_fraction.get_function_values(

@@ -106,7 +106,7 @@ test_void_fraction_qcm(const unsigned int fe_degree,
                        const unsigned int number_quadrature_points,
                        Function<3>       &force_distribution,
                        const bool         output_vtu,
-                       const std::string  &vtu_label)
+                       const std::string &vtu_label)
 {
   const auto         my_rank = Utilities::MPI::this_mpi_process(MPI_COMM_WORLD);
   const unsigned int n_procs = Utilities::MPI::n_mpi_processes(MPI_COMM_WORLD);
@@ -213,8 +213,9 @@ test_void_fraction_qcm(const unsigned int fe_degree,
       if (my_rank == r)
         {
           deallog << "Rank " << r << " owns: ";
-          for (const auto & i : particle_projector.particle_fluid_force_two_way_coupling
-                          .particle_field_solution)
+          for (const auto &i :
+               particle_projector.particle_fluid_force_two_way_coupling
+                 .particle_field_solution)
             deallog << i << " ";
           deallog << std::endl;
         }
@@ -233,8 +234,9 @@ test_void_fraction_qcm(const unsigned int fe_degree,
   vector_extractor.first_vector_component = 0;
   Tensor<1, 3>              total_particle_force_on_fluid({0, 0, 0});
   std::vector<Tensor<1, 3>> force_values(fe_values.n_quadrature_points);
-  for (const auto &cell : particle_projector.particle_fluid_force_two_way_coupling
-                     .dof_handler.active_cell_iterators())
+  for (const auto &cell :
+       particle_projector.particle_fluid_force_two_way_coupling.dof_handler
+         .active_cell_iterators())
     {
       fe_values.reinit((cell));
       fe_values[vector_extractor].get_function_values(
