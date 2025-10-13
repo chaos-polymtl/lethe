@@ -76,7 +76,7 @@ protected:
 };
 
 void
-run(const std::string formulation, const std::string grid = "hyper_cube")
+run(const std::string &formulation, const std::string &grid = "hyper_cube")
 {
   using Number              = double;
   using VectorizedArrayType = VectorizedArray<Number>;

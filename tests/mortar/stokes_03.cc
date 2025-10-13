@@ -83,7 +83,7 @@ protected:
 };
 
 void
-run(const std::string formulation)
+run(const std::string &formulation)
 {
   using Number              = double;
   using VectorizedArrayType = VectorizedArray<Number>;
