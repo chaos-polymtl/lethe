@@ -62,7 +62,7 @@ template <int dim, int spacedim>
 void
 output_mesh(const std::vector<Point<spacedim>>     &points,
             const std::vector<std::vector<double>> &properties,
-            const std::string                       file_name)
+            const std::string                      &file_name)
 {
   BoundingBox<spacedim> bb(points);
 

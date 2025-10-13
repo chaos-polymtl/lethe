@@ -106,7 +106,7 @@ test_void_fraction_qcm(const unsigned int fe_degree,
                        const unsigned int number_quadrature_points,
                        Function<3>       &force_distribution,
                        const bool         output_vtu,
-                       const std::string  vtu_label)
+                       const std::string &vtu_label)
 {
   const auto         my_rank = Utilities::MPI::this_mpi_process(MPI_COMM_WORLD);
   const unsigned int n_procs = Utilities::MPI::n_mpi_processes(MPI_COMM_WORLD);
@@ -148,17 +148,15 @@ test_void_fraction_qcm(const unsigned int fe_degree,
   Tensor<1, 3> total_particle_force_on_particles({0., 0., 0.});
   // Loop over all the particles and set their diameter to dp
   // and the force to a constant value
-  for (auto particle = particle_handler.begin();
-       particle != particle_handler.end();
-       ++particle)
+  for (auto particle : particle_handler)
     {
-      auto particle_properties = particle->get_properties();
+      auto particle_properties = particle.get_properties();
       particle_properties[DEM::CFDDEMProperties::dp] = dp;
       for (unsigned int d = 0; d < 3; ++d)
         {
           particle_properties
             [DEM::CFDDEMProperties::fem_force_two_way_coupling_x + d] =
-              force_distribution.value(particle->get_location(), d);
+              force_distribution.value(particle.get_location(), d);
           total_particle_force_on_particles[d] += particle_properties
             [DEM::CFDDEMProperties::fem_force_two_way_coupling_x + d];
         }
@@ -215,12 +213,10 @@ test_void_fraction_qcm(const unsigned int fe_degree,
       if (my_rank == r)
         {
           deallog << "Rank " << r << " owns: ";
-          for (auto i = particle_projector.particle_fluid_force_two_way_coupling
-                          .particle_field_solution.begin();
-               i < particle_projector.particle_fluid_force_two_way_coupling
-                     .particle_field_solution.end();
-               ++i)
-            deallog << *i << " ";
+          for (const auto &i :
+               particle_projector.particle_fluid_force_two_way_coupling
+                 .particle_field_solution)
+            deallog << i << " ";
           deallog << std::endl;
         }
       MPI_Barrier(MPI_COMM_WORLD);
@@ -238,8 +234,9 @@ test_void_fraction_qcm(const unsigned int fe_degree,
   vector_extractor.first_vector_component = 0;
   Tensor<1, 3>              total_particle_force_on_fluid({0, 0, 0});
   std::vector<Tensor<1, 3>> force_values(fe_values.n_quadrature_points);
-  for (auto cell : particle_projector.particle_fluid_force_two_way_coupling
-                     .dof_handler.active_cell_iterators())
+  for (const auto &cell :
+       particle_projector.particle_fluid_force_two_way_coupling.dof_handler
+         .active_cell_iterators())
     {
       fe_values.reinit((cell));
       fe_values[vector_extractor].get_function_values(

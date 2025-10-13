@@ -60,10 +60,10 @@ moe_scalar_limiter(const DoFHandler<dim> &dof_handler,
           double max_value  = -DBL_MAX;
           double min_value  = DBL_MAX;
           double mean_value = 0;
-          for (unsigned int i = 0; i < local_dof_indices.size(); ++i)
+          for (const auto &i_dof : local_dof_indices)
             {
               // Get the max and the min value of the solution
-              double dof_value = locally_relevant_vector(local_dof_indices[i]);
+              double dof_value = locally_relevant_vector(i_dof);
               max_value        = std::max(max_value, dof_value);
               min_value        = std::min(min_value, dof_value);
               // Calculate mean solution \bar{w}. Right now this is an average
@@ -146,13 +146,12 @@ moe_scalar_limiter(const DoFHandler<dim> &dof_handler,
           theta        = std::min(theta, phi_limit(y_min));
 
           // 4. Rescale the solution within the element
-          for (unsigned int i = 0; i < local_dof_indices.size(); ++i)
+          for (const auto &i : local_dof_indices)
             {
               // Get the value of the solution at the DOFs and rescale it
               // using the mean value and the theta limiter.
-              const double dof_value =
-                locally_relevant_vector(local_dof_indices[i]);
-              locally_owned_vector(local_dof_indices[i]) =
+              const double dof_value = locally_relevant_vector(i);
+              locally_owned_vector(i) =
                 mean_value + theta * (dof_value - mean_value);
             }
         }
