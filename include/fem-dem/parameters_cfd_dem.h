@@ -84,6 +84,9 @@ namespace Parameters
 
   struct CFDDEM
   {
+    /// Enables one-way coupling in which only the particles feel the fluid, but
+    /// the fluid do not feel the particles.
+    bool         one_way_coupling;
     bool         grad_div;
     DragModel    drag_model;
     VANSModel    vans_model;

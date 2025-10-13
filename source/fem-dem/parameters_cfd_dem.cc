@@ -110,6 +110,11 @@ namespace Parameters
   CFDDEM::declare_parameters(ParameterHandler &prm)
   {
     prm.enter_subsection("cfd-dem");
+    prm.declare_entry(
+      "one way coupling",
+      "false",
+      Patterns::Bool(),
+      "Enables one-way coupling in which the particles feel the particle-fluid forces, but the fluid does not.");
     prm.declare_entry("grad div",
                       "true",
                       Patterns::Bool(),
@@ -194,7 +199,8 @@ namespace Parameters
   CFDDEM::parse_parameters(ParameterHandler &prm)
   {
     prm.enter_subsection("cfd-dem");
-    grad_div = prm.get_bool("grad div");
+    one_way_coupling = prm.get_bool("one way coupling");
+    grad_div         = prm.get_bool("grad div");
     void_fraction_time_derivative =
       prm.get_bool("void fraction time derivative");
     interpolated_void_fraction = prm.get_bool("interpolated void fraction");

@@ -338,9 +338,11 @@ FluidDynamicsVANS<dim>::setup_assemblers()
         this->simulation_control, this->cfd_dem_simulation_parameters.cfd_dem));
     }
 
-  //  Fluid_Particle Interactions Assembler
-  this->assemblers.push_back(std::make_shared<VANSAssemblerFPI<dim>>(
-    this->cfd_dem_simulation_parameters.cfd_dem));
+  //  Fluid_Particle Interactions Assembler. Only required if this is a two-way
+  //  coupled simulation.
+  if (this->cfd_dem_simulation_parameters.cfd_dem.one_way_coupling == false)
+    this->assemblers.push_back(std::make_shared<VANSAssemblerFPI<dim>>(
+      this->cfd_dem_simulation_parameters.cfd_dem));
 
   // The core assembler should always be the last assembler to be called
   // in the stabilized formulation as to have all strong residual and

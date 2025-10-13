@@ -455,6 +455,9 @@ private:
   /// Time step size for DEM integration
   double dem_time_step;
 
+  /// Rayleigh time step size for DEM integration
+  double rayleigh_time_step;
+
   /// Current MPI process identifier
   const unsigned int this_mpi_process;
 
