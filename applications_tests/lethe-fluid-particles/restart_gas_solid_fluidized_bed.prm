@@ -11,10 +11,10 @@ set dimension = 3
 #---------------------------------------------------
 
 subsection simulation control
-  set method            = bdf2
-  set output frequency  = 0
-  set time end          = 0.00525
-  set time step         = 0.00025
+  set method           = bdf2
+  set output frequency = 0
+  set time end         = 0.00525
+  set time step        = 0.00025
 end
 
 #---------------------------------------------------
@@ -212,10 +212,10 @@ end
 
 subsection non-linear solver
   subsection fluid dynamics
-    set solver           = newton
-    set tolerance        = 1e-8
-    set max iterations   = 20
-    set verbosity        = quiet
+    set solver         = newton
+    set tolerance      = 1e-8
+    set max iterations = 20
+    set verbosity      = quiet
   end
 end
 
@@ -230,13 +230,13 @@ subsection linear solver
     set verbosity         = quiet
   end
   subsection fluid dynamics
-    set method                                = gmres
-    set max iters                             = 200
-    set relative residual                     = 1e-3
-    set minimum residual                      = 1e-10
-    set preconditioner                        = amg
-    set verbosity                             = quiet
-    set max krylov vectors                    = 200
+    set method             = gmres
+    set max iters          = 200
+    set relative residual  = 1e-3
+    set minimum residual   = 1e-10
+    set preconditioner     = amg
+    set verbosity          = quiet
+    set max krylov vectors = 200
 
     # AMG preconditioner ILU smoother fill
     set amg preconditioner ilu fill = 1
