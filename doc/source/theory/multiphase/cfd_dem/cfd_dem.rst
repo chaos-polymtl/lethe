@@ -1,5 +1,5 @@
 ================================
-Paraticle-laden Flows - CFD-DEM
+Particle-laden Flows - CFD-DEM
 ================================
 
 
