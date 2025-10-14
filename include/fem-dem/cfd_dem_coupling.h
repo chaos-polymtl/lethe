@@ -302,6 +302,18 @@ private:
   dem_iterator(unsigned int counter);
 
   /**
+   * @brief Calculate the new DEM time-step.
+   *
+   * Calculate the new DEM time-step in a CFD-DEM simulation with adaptive
+   * time-stepping
+   *
+   */
+  void
+  update_dem_time_step()
+  {}
+
+
+  /**
    * @brief Perform contact detection and build contact lists.
    *
    * Checks if a contact search should be performed based on the contact

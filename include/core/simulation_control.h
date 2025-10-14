@@ -499,6 +499,14 @@ public:
     return bdf_coefs;
   }
 
+  /** @brief Indicate if the simulation uses adaptive time stepping or not.
+   *
+   * @return is_adaptive A boolean indicating if the simulation has adaptive time stepping
+   */
+  virtual bool
+  get_adaptive() const = 0;
+
+
   /**
    * @brief Save the simulation control information from the checkpoint file and updates the time step vector, the CFL value, the time and the iteration number.
    *
@@ -580,6 +588,15 @@ public:
   virtual void
   print_progression(const ConditionalOStream &pcout) override;
 
+  /** @brief Indicate if the simulation uses adaptive time stepping or not.
+   *
+   * @return is_adaptive A boolean indicating if the simulation has adaptive time stepping
+   */
+  bool
+  get_adaptive() const override
+  {
+    return adapt;
+  }
   /**
    * @brief Proceeds with the simulation until the end condition is reached
    */
@@ -641,6 +658,16 @@ public:
   virtual void
   print_progression(const ConditionalOStream &pcout) override;
 
+  /** @brief Indicate if the simulation uses adaptive time stepping or not.
+   *
+   * @return is_adaptive A boolean indicating if the simulation has adaptive time stepping
+   */
+  bool
+  get_adaptive() const override
+  {
+    return false;
+  }
+
   /**
    * @brief Proceeds with the simulation until the end condition is reached
    */
@@ -661,6 +688,8 @@ public:
 
   virtual void
   print_progression(const ConditionalOStream &pcout) override;
+
+
 
   /**
    * @brief Ends the simulation when the desired residual is reached
