@@ -196,7 +196,7 @@ LetheGridTools::find_cell_around_point_with_tree(
       // Otherwise, we repeat this process until we find the active cell that
       // contains the point.
 
-      unsigned int max_ childs = GeometryInfo<dim>::max_children_per_cell;
+      unsigned int max_childs = GeometryInfo<dim>::max_children_per_cell;
       while (best_cell_iter->is_active() == false)
         {
           bool         cell_found = false;
