@@ -310,7 +310,13 @@ private:
    */
   void
   update_dem_time_step()
-  {}
+  {
+    dem_time_step =
+      this->simulation_control->get_time_step() / coupling_frequency;
+    const double time_step_rayleigh_ratio = dem_time_step / rayleigh_time_step;
+    this->pcout << "DEM time-step is " << time_step_rayleigh_ratio * 100
+                << "% of Rayleigh time step" << std::endl;
+  }
 
 
   /**
@@ -466,6 +472,9 @@ private:
 
   /// Time step size for DEM integration
   double dem_time_step;
+
+  /// Rayleigh time step
+  double rayleigh_time_step;
 
   /// Current MPI process identifier
   const unsigned int this_mpi_process;

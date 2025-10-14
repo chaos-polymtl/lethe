@@ -504,7 +504,7 @@ public:
    * @return is_adaptive A boolean indicating if the simulation has adaptive time stepping
    */
   virtual bool
-  get_adaptive() const = 0;
+  is_adaptive_time_stepping() const = 0;
 
 
   /**
@@ -590,13 +590,14 @@ public:
 
   /** @brief Indicate if the simulation uses adaptive time stepping or not.
    *
-   * @return is_adaptive A boolean indicating if the simulation has adaptive time stepping
+   * @return adapt A boolean indicating if the simulation has adaptive time stepping
    */
   bool
-  get_adaptive() const override
+  is_adaptive_time_stepping() const override
   {
     return adapt;
   }
+
   /**
    * @brief Proceeds with the simulation until the end condition is reached
    */
@@ -660,10 +661,10 @@ public:
 
   /** @brief Indicate if the simulation uses adaptive time stepping or not.
    *
-   * @return is_adaptive A boolean indicating if the simulation has adaptive time stepping
+   * @return A boolean indicating if the simulation has adaptive time stepping
    */
   bool
-  get_adaptive() const override
+  is_adaptive_time_stepping() const override
   {
     return false;
   }
@@ -688,8 +689,6 @@ public:
 
   virtual void
   print_progression(const ConditionalOStream &pcout) override;
-
-
 
   /**
    * @brief Ends the simulation when the desired residual is reached

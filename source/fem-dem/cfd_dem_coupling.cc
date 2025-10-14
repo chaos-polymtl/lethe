@@ -89,11 +89,9 @@ CFDDEMSolver<dim>::dem_setup_parameters()
 
   setup_distribution_type();
 
-  dem_time_step =
-    this->simulation_control->get_time_step() / coupling_frequency;
 
   // Calculate the Rayleigh critical time step ratio
-  double rayleigh_time_step = DBL_MAX;
+  rayleigh_time_step = DBL_MAX;
 
   for (unsigned int i = 0;
        i < dem_parameters.lagrangian_physical_properties.particle_type_number;
@@ -117,9 +115,7 @@ CFDDEMSolver<dim>::dem_setup_parameters()
                  rayleigh_time_step);
     }
 
-  const double time_step_rayleigh_ratio = dem_time_step / rayleigh_time_step;
-  this->pcout << "DEM time-step is " << time_step_rayleigh_ratio * 100
-              << "% of Rayleigh time step" << std::endl;
+  update_dem_time_step();
 
   // Check if there are periodic boundaries
   for (unsigned int i_bc = 0;
@@ -1689,6 +1685,10 @@ CFDDEMSolver<dim>::solve()
 
         // Load balancing if needed
         load_balance();
+
+        // Update DEM time-step when the simulation uses adaptive time-stepping
+        if (this->simulation_control->is_adaptive_time_stepping())
+          update_dem_time_step();
 
         contact_search_counter = 0;
         for (unsigned int dem_counter = 0; dem_counter < coupling_frequency;

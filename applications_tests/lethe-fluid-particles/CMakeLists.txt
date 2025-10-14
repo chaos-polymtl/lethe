@@ -11,6 +11,15 @@ file(COPY particle_sedimentation_files/dem_1.triangulation.info DESTINATION "${C
 file(COPY particle_sedimentation_files/dem_1.triangulation_fixed.data DESTINATION "${CMAKE_CURRENT_BINARY_DIR}/particle_sedimentation.${_build_type}/mpirun=1/")
 file(COPY particle_sedimentation_files/dem_1.triangulation_variable.data DESTINATION "${CMAKE_CURRENT_BINARY_DIR}/particle_sedimentation.${_build_type}/mpirun=1/")
 
+file(COPY particle_sedimentation_files/dem.checkpoint_controller DESTINATION "${CMAKE_CURRENT_BINARY_DIR}/particle_sedimentation_adaptive_time_step.${_build_type}/serial/")
+file(COPY particle_sedimentation_files/dem_1.particles DESTINATION "${CMAKE_CURRENT_BINARY_DIR}/particle_sedimentation_adaptive_time_step.${_build_type}/serial/")
+file(COPY particle_sedimentation_files/dem_1.pvdhandler DESTINATION "${CMAKE_CURRENT_BINARY_DIR}/particle_sedimentation_adaptive_time_step.${_build_type}/serial/")
+file(COPY particle_sedimentation_files/dem_1.simulationcontrol DESTINATION "${CMAKE_CURRENT_BINARY_DIR}/particle_sedimentation_adaptive_time_step.${_build_type}/serial/")
+file(COPY particle_sedimentation_files/dem_1.triangulation DESTINATION "${CMAKE_CURRENT_BINARY_DIR}/particle_sedimentation_adaptive_time_step.${_build_type}/serial/")
+file(COPY particle_sedimentation_files/dem_1.triangulation.info DESTINATION "${CMAKE_CURRENT_BINARY_DIR}/particle_sedimentation_adaptive_time_step.${_build_type}/serial/")
+file(COPY particle_sedimentation_files/dem_1.triangulation_fixed.data DESTINATION "${CMAKE_CURRENT_BINARY_DIR}/particle_sedimentation_adaptive_time_step.${_build_type}/serial/")
+file(COPY particle_sedimentation_files/dem_1.triangulation_variable.data DESTINATION "${CMAKE_CURRENT_BINARY_DIR}/particle_sedimentation_adaptive_time_step.${_build_type}/serial/")
+
 file(COPY particle_sedimentation_files/dem.checkpoint_controller DESTINATION "${CMAKE_CURRENT_BINARY_DIR}/qcm_gauss_particle_sedimentation.${_build_type}/mpirun=1/")
 file(COPY particle_sedimentation_files/dem_1.particles DESTINATION "${CMAKE_CURRENT_BINARY_DIR}/qcm_gauss_particle_sedimentation.${_build_type}/mpirun=1/")
 file(COPY particle_sedimentation_files/dem_1.pvdhandler DESTINATION "${CMAKE_CURRENT_BINARY_DIR}/qcm_gauss_particle_sedimentation.${_build_type}/mpirun=1/")
