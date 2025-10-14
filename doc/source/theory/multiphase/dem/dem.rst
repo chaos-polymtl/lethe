@@ -1,6 +1,6 @@
-====================================
-Discrete Element Method (DEM)
-====================================
+===============================================
+Granular Flows - Discrete Element Method (DEM)
+===============================================
 
 In this guide, we summarize the theory behind DEM. For further details, we refer the reader to the article by Blais *et al.*  [#blais2019]_ and the one by Golshan *et al.* [#golshan2023]_
 

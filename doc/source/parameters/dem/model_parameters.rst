@@ -101,7 +101,7 @@ Contact search will be carried out at constant frequency. For most case (99%), `
 Contact and Integration Methods
 -------------------------------
 
-All contact force models are described in the :doc:`../../theory/multiphase/cfd_dem/dem` section of the theory guide.
+All contact force models are described in the :doc:`../../theory/multiphase/dem/dem` section of the theory guide.
 
 
 * ``integration`` controls the integration method  used. Lethe supports ``euler`` (1st order) and ``velocity-verlet`` (2nd order) time-integrators. The velocity-verlet should be used at all times. 
