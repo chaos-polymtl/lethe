@@ -174,35 +174,6 @@ IBParticle<dim>::get_properties()
 
 template <int dim>
 void
-IBParticle<dim>::clear_shape_cache()
-{
-  this->shape->clear_cache();
-}
-
-template <int dim>
-void
-IBParticle<dim>::initialize_shape(const std::string         type,
-                                  const std::vector<double> shape_arguments)
-{
-  shape = ShapeGenerator::initialize_shape_from_vector(type,
-                                                       shape_arguments,
-                                                       position,
-                                                       orientation);
-}
-
-template <int dim>
-void
-IBParticle<dim>::initialize_shape(const std::string type,
-                                  const std::string raw_arguments)
-{
-  shape = ShapeGenerator::initialize_shape(type,
-                                           raw_arguments,
-                                           position,
-                                           orientation);
-}
-
-template <int dim>
-void
 IBParticle<dim>::closest_surface_point(
   const Point<dim>                                     &p,
   Point<dim>                                           &closest_point,
@@ -228,7 +199,7 @@ IBParticle<dim>::is_inside_crown(
   const bool                                            absolute_distance,
   const typename DoFHandler<dim>::active_cell_iterator &cell_guess)
 {
-  const double radius = shape->effective_radius;
+  const double effective_radius = shape->effective_radius;
 
   double distance = shape->value_with_cell_guess(evaluation_point, cell_guess);
   bool   is_inside_outer_ring;
@@ -240,8 +211,9 @@ IBParticle<dim>::is_inside_crown(
     }
   else
     {
-      is_inside_outer_ring  = distance <= radius * (outer_radius - 1);
-      is_outside_inner_ring = distance >= radius * (inside_radius - 1);
+      is_inside_outer_ring = distance <= effective_radius * (outer_radius - 1);
+      is_outside_inner_ring =
+        distance >= effective_radius * (inside_radius - 1);
     }
 
   return is_inside_outer_ring && is_outside_inner_ring;
@@ -254,7 +226,7 @@ IBParticle<dim>::is_inside_crown(const Point<dim> &evaluation_point,
                                  const double      inside_radius,
                                  const bool        absolute_distance)
 {
-  const double radius = shape->effective_radius;
+  const double effective_radius = shape->effective_radius;
 
   double distance = shape->value(evaluation_point);
   bool   is_inside_outer_ring;
@@ -266,8 +238,9 @@ IBParticle<dim>::is_inside_crown(const Point<dim> &evaluation_point,
     }
   else
     {
-      is_inside_outer_ring  = distance <= radius * (outer_radius - 1);
-      is_outside_inner_ring = distance >= radius * (inside_radius - 1);
+      is_inside_outer_ring = distance <= effective_radius * (outer_radius - 1);
+      is_outside_inner_ring =
+        distance >= effective_radius * (inside_radius - 1);
     }
 
   return is_inside_outer_ring && is_outside_inner_ring;
@@ -275,7 +248,36 @@ IBParticle<dim>::is_inside_crown(const Point<dim> &evaluation_point,
 
 template <int dim>
 void
-IBParticle<dim>::set_orientation(const Tensor<1, 3> new_orientation)
+IBParticle<dim>::clear_shape_cache()
+{
+  this->shape->clear_cache();
+}
+
+template <int dim>
+void
+IBParticle<dim>::initialize_shape(const std::string         &type,
+                                  const std::vector<double> &shape_arguments)
+{
+  shape = ShapeGenerator::initialize_shape_from_vector(type,
+                                                       shape_arguments,
+                                                       position,
+                                                       orientation);
+}
+
+template <int dim>
+void
+IBParticle<dim>::initialize_shape(const std::string &type,
+                                  const std::string &raw_arguments)
+{
+  shape = ShapeGenerator::initialize_shape(type,
+                                           raw_arguments,
+                                           position,
+                                           orientation);
+}
+
+template <int dim>
+void
+IBParticle<dim>::set_orientation(const Tensor<1, 3> &new_orientation)
 {
   this->orientation = new_orientation;
   this->shape->set_orientation(new_orientation);
@@ -285,7 +287,7 @@ IBParticle<dim>::set_orientation(const Tensor<1, 3> new_orientation)
 template <int dim>
 void
 IBParticle<dim>::update_precalculations(DoFHandler<dim> &updated_dof_handler,
-                                        const bool mesh_based_precalculations)
+                                        const bool precalculations)
 {
   if (integrate_motion || velocity.norm() > 1e-16 || omega.norm() > 1e-16)
     {
@@ -294,28 +296,28 @@ IBParticle<dim>::update_precalculations(DoFHandler<dim> &updated_dof_handler,
   if (typeid(*shape) == typeid(RBFShape<dim>))
     {
       std::static_pointer_cast<RBFShape<dim>>(shape)->update_precalculations(
-        updated_dof_handler, mesh_based_precalculations);
+        updated_dof_handler, precalculations);
     }
   else if (typeid(*shape) == typeid(CompositeShape<dim>))
     {
       std::static_pointer_cast<CompositeShape<dim>>(shape)
         ->update_precalculations(updated_dof_handler,
-                                 mesh_based_precalculations);
+                                 precalculations);
     }
 }
 
 template <int dim>
 void
 IBParticle<dim>::remove_superfluous_data(DoFHandler<dim> &updated_dof_handler,
-                                         const bool mesh_based_precalculations)
+                                         const bool precalculations)
 {
   if (typeid(*shape) == typeid(RBFShape<dim>))
     std::static_pointer_cast<RBFShape<dim>>(shape)->remove_superfluous_data(
-      updated_dof_handler, mesh_based_precalculations);
+      updated_dof_handler, precalculations);
   else if (typeid(*shape) == typeid(CompositeShape<dim>))
     std::static_pointer_cast<CompositeShape<dim>>(shape)
       ->remove_superfluous_data(updated_dof_handler,
-                                mesh_based_precalculations);
+                                precalculations);
 }
 
 template <int dim>
