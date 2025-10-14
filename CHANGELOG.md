@@ -5,6 +5,10 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
 ### [Master] - 2025-10-14
 
+### Changed
+
+- MAJOR Changed DG Tracer formulation to be - D * laplacian T +  u * gradT + T div(u) - f=0, adding the term T div(u). It has proven to be more conservative at edges.
+
 ### Fixed
 
 - MAJOR The CFD-DEM implementation could run with adaptive time step (set adapt = true), but the DEM time step was never updated when the CFD time-step was adapted. This meant that the time progression in the DEM was actually wrong. None of our examples or previous publications use CFD-DEM with adaptive time-stepping, but this is clearly a problem. This change fixes this issue by recaclulating the DEM time-step at every coupling interval when the CFD time-step is adaptive. The portion of the critical Rayleigh time-step is also recalculated when that occurs. A test has been added to verify the adequacy of the feature. [#1715](https://github.com/chaos-polymtl/lethe/pull/1715)
@@ -15,7 +19,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
 ### Changed
 
-- MINOR The CLang tidy workflow is back to ensure to ensure that Lethe is as clean as possible. Some of the small issues identified by it through the run have been fixed (notably some pass by copy instead of const reference and some range-based loop missing). [#1708](https://github.com/chaos-polymtl/lethe/pull/1708)
+- MINOR The CLang tidy workflow is back to ensure that Lethe is as clean as possible. Some of the small issues identified by it through the run have been fixed (notably some pass by copy instead of const reference and some range-based loop missing). [#1708](https://github.com/chaos-polymtl/lethe/pull/1708)
 
 - MINOR The organization of the documentation for multiphase flows has been restructured slightly so that DEM is allowed to stand-out more. [#1713] (https://github.com/chaos-polymtl/lethe/pull/1713)
 
