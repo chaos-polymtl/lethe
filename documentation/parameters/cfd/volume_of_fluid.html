@@ -590,7 +590,7 @@ number of iterations to reach the mass conservation tolerance.
 </div>
 </section>
 <section id="geometric-interface-reinitialization">
-<h3>Geometric Interface Reinitialization<a class="headerlink" href="#geometric-interface-reinitialization" title="Link to this heading">#</a></h3>
+<span id="id1"></span><h3>Geometric Interface Reinitialization<a class="headerlink" href="#geometric-interface-reinitialization" title="Link to this heading">#</a></h3>
 <p>The <code class="docutils literal notranslate"><span class="pre">type</span> <span class="pre">=</span> <span class="pre">geometric</span> <span class="pre">interface</span> <span class="pre">reinitialization</span></code> reinitializes the phase fraction field by computing the signed distance from the interface. The latter is then converted back to a phase fraction using a transformation function. The reader is referred to the <em>Geometric Interface Reinitialization</em> section of the <a class="reference internal" href="../../theory/multiphase/cfd/vof.html"><span class="doc">Volume of Fluid method theory guide</span></a> for additional details on this method. The <code class="docutils literal notranslate"><span class="pre">geometric</span> <span class="pre">interface</span> <span class="pre">reinitialization</span></code> sunsection defines the relevant parameters.</p>
 <ul>
 <li><p><code class="docutils literal notranslate"><span class="pre">max</span> <span class="pre">reinitialization</span> <span class="pre">distance</span></code>: the maximum distance to the interface up to which the signed distance is computed. Above this value, the signed distance is set to the <code class="docutils literal notranslate"><span class="pre">max</span> <span class="pre">reinitialization</span> <span class="pre">distance</span></code>.</p></li>
@@ -717,7 +717,7 @@ number of iterations to reach the mass conservation tolerance.
 <p>The surface tension force is used in the <a class="reference internal" href="../../examples/multiphysics/rising-bubble/rising-bubble.html"><span class="doc">Rising Bubble</span></a> example.</p>
 </div>
 <section id="choosing-values-for-the-surface-tension-force-diffusion-factors">
-<span id="id2"></span><h3>Choosing Values for the Surface Tension Force Diffusion Factors<a class="headerlink" href="#choosing-values-for-the-surface-tension-force-diffusion-factors" title="Link to this heading">#</a></h3>
+<span id="id3"></span><h3>Choosing Values for the Surface Tension Force Diffusion Factors<a class="headerlink" href="#choosing-values-for-the-surface-tension-force-diffusion-factors" title="Link to this heading">#</a></h3>
 <p>The following procedure is recommended to choose proper values for the <code class="docutils literal notranslate"><span class="pre">phase</span> <span class="pre">fraction</span> <span class="pre">gradient</span> <span class="pre">diffusion</span> <span class="pre">factor</span></code> and <code class="docutils literal notranslate"><span class="pre">curvature</span> <span class="pre">diffusion</span> <span class="pre">factor</span></code>:</p>
 <ol class="arabic simple">
 <li><p>Use <code class="docutils literal notranslate"><span class="pre">set</span> <span class="pre">output</span> <span class="pre">auxiliary</span> <span class="pre">fields</span> <span class="pre">=</span> <span class="pre">true</span></code> to write projected phase fraction gradient and projected curvature fields.</p></li>

@@ -142,6 +142,8 @@ The ``type = projection-based interface sharpening`` corresponds to a projection
 
   The :doc:`../../examples/multiphysics/dam-break/dam-break` example discussed the interface sharperning mechanism.
 
+.. _geometric-interface-reinitialization:
+
 Geometric Interface Reinitialization
 ++++++++++++++++++++++++++++++++++++
 

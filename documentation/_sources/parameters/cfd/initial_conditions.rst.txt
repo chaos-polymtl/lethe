@@ -74,7 +74,7 @@ It is often necessary to set-up complex initial conditions when simulating trans
 
     where :math:`\psi(\Omega_K)` corresponds to a color function value on the Kth element, :math:`\phi` is the phase fraction, :math:`\psi^*` is the smoothed phase fraction, :math:`\eta_\psi = \alpha h^2` with :math:`\alpha` corresponding to the ``diffusion factor`` and :math:`h` to the cell size, and :math:`v` is a test function.
     
-    * When the parameter ``smoothing type = geometric``, the initial condition is smoothed using a geometric redistanciation method. 
+    * When the parameter ``smoothing type = geometric``, the initial condition is smoothed using a geometric redistanciation method. In that case, the parameters for the geometric redistanciation method are declared in the :ref:`Geometric Interface Reinitialization <geometric-interface-reinitialization>` subsection such as described in the :doc:`Volume of Fluid (Multiphase Flow)<./volume_of_fluid>` documentation.
 
 * The ``subsection cahn hilliard`` defines the areas where both fluids lay at the initial state (see section :doc:`multiphysics`). It works similarly to the ``subsection VOF`` for the first component, which corresponds to the phase order parameter. The user also has the choice to specify initial conditions for the chemical potential, although it is often more suitable to leave it at :math:`0`.
 * The ``subsection temperature`` allows the user to define an initial temperature for the fluid domain (if ``set heat tranfer = true`` in :doc:`multiphysics`).
