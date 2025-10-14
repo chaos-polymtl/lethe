@@ -190,6 +190,8 @@ Public Member Functions</h2></td></tr>
 <tr class="separator:ad46ef6790aa229f6a684bda669b01052"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a9b58c3bbf0cfb16d0d427c78eadf03b8" id="r_a9b58c3bbf0cfb16d0d427c78eadf03b8"><td class="memItemLeft" align="right" valign="top">Vector&lt; double &gt; const &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classSimulationControl.html#a9b58c3bbf0cfb16d0d427c78eadf03b8">get_bdf_coefficients</a> ()</td></tr>
 <tr class="separator:a9b58c3bbf0cfb16d0d427c78eadf03b8"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a08bd0100d59a88e4aaf607f70f803aba" id="r_a08bd0100d59a88e4aaf607f70f803aba"><td class="memItemLeft" align="right" valign="top">virtual bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classSimulationControl.html#a08bd0100d59a88e4aaf607f70f803aba">is_adaptive_time_stepping</a> () const =0</td></tr>
+<tr class="separator:a08bd0100d59a88e4aaf607f70f803aba"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a9711044f9d9cba8a344f640d55c0e1ff" id="r_a9711044f9d9cba8a344f640d55c0e1ff"><td class="memItemLeft" align="right" valign="top">virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classSimulationControl.html#a9711044f9d9cba8a344f640d55c0e1ff">save</a> (const std::string &amp;prefix)</td></tr>
 <tr class="separator:a9711044f9d9cba8a344f640d55c0e1ff"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a414fd0b7da77e067991b56af939ee66f" id="r_a414fd0b7da77e067991b56af939ee66f"><td class="memItemLeft" align="right" valign="top">virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classSimulationControl.html#a414fd0b7da77e067991b56af939ee66f">read</a> (const std::string &amp;prefix)</td></tr>
@@ -1018,6 +1020,36 @@ Static Protected Attributes</h2></td></tr>
 <p>Pure virtual function to control the progression of the simulation. As long as integrate returns true, a simulation should proceed. The criteria used to stop/continue the simulation in iterate is a property of each individual time stepping control. For example, steady-state simulation will proceed until the number of required mesh adaptation has been performed. </p>
 
 <p>Implemented in <a class="el" href="classSimulationControlTransient.html#a9323f75f9c5d9ab8463f1340c83fa539">SimulationControlTransient</a>, and <a class="el" href="classSimulationControlSteady.html#a1a841b038955ea6ba6b6d8a938d442f9">SimulationControlSteady</a>.</p>
+
+</div>
+</div>
+<a id="a08bd0100d59a88e4aaf607f70f803aba" name="a08bd0100d59a88e4aaf607f70f803aba"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a08bd0100d59a88e4aaf607f70f803aba">&#9670;&#160;</a></span>is_adaptive_time_stepping()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">virtual bool SimulationControl::is_adaptive_time_stepping </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td> const</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">pure virtual</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Indicate if the simulation uses adaptive time stepping or not. </p>
+<dl class="section return"><dt>Returns</dt><dd>is_adaptive A boolean indicating if the simulation has adaptive time stepping </dd></dl>
+
+<p>Implemented in <a class="el" href="classSimulationControlTransient.html#a036c4105e266efe7053a09b75c5ace0f">SimulationControlTransient</a>, and <a class="el" href="classSimulationControlSteady.html#a85aa77566b417c4a337c457b1a92dee4">SimulationControlSteady</a>.</p>
 
 </div>
 </div>
