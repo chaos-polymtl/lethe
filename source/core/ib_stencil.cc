@@ -102,7 +102,7 @@ IBStencil<dim>::support_points_for_interpolation(
 {
   // Create the vector of points used for the stencil based on the order of the
   // stencil. Also return the DOF position or the position of the point on the
-  // IB depending if the cell is used directly.
+  // IB depending on if the cell is used directly.
   p_base(order);
   Point<dim> point;
   Point<dim> surface_point;
@@ -147,7 +147,7 @@ IBStencil<dim>::support_points_for_interpolation(const unsigned int order,
 {
   // Create the vector of points used for the stencil based on the order of the
   // stencil. Also return the DOF position or the position of the point on the
-  // IB depending if the cell is used directly.
+  // IB depending on if the cell is used directly.
   p_base(order);
   Point<dim> point;
   Point<dim> surface_point;
@@ -191,7 +191,7 @@ IBStencil<dim>::point_for_cell_detection(
   const typename DoFHandler<dim>::active_cell_iterator &cell_guess)
 {
   // Return the DOF position or the position of the point on the
-  // IB depending if the cell is used directly.
+  // IB depending on if the cell is used directly.
 
   Point<dim> surface_point;
   p.closest_surface_point(dof_point, surface_point, cell_guess);
@@ -208,7 +208,7 @@ IBStencil<dim>::point_for_cell_detection(IBParticle<dim>  &p,
 {
   // Create the vector of points used for the stencil based on the order of the
   // stencil. Also return the DOF position or the position of the point on the
-  // IB depending if the cell is used directly
+  // IB depending on if the cell is used directly
 
   Point<dim> surface_point;
   p.closest_surface_point(dof_point, surface_point);

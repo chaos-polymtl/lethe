@@ -18,7 +18,7 @@ namespace Parameters
    * instead of meters. This class is currently only used to rescale the
    * physical properties in the FEM-based physics (e.g. all of those that are
    * solvers). Support for DEM, CFD-DEM and rescaling of boundary conditions is
-   * planned in the mid-term.
+   * planned in the midterm.
    */
   class Dimensionality
   {
@@ -39,7 +39,7 @@ namespace Parameters
 
     /**
      * @brief
-     * Defines all the sub scales that are relevant to simulations. This is used
+     * Defines all the sub-scales that are relevant to simulations. This is used
      * to define scaling laws for kinematic viscosity or other quantities which
      * appear multiple times in the simulation. This prevents the recalculation
      * of these scales (and thus, human errors).
@@ -53,7 +53,7 @@ namespace Parameters
      *
      * @param prm The parameter handler being used
      */
-    void
+    static void
     declare_parameters(ParameterHandler &prm);
 
     /**
@@ -78,7 +78,7 @@ namespace Parameters
      * Scaling laws. These are constants that are used to rescale quantities
      * arising frequently. Some of these quantities are not trivial to calculate
      * (e.g. thermal conductivity). Thus, it is better to pre-calculate these
-     * scalings and to reuse them instead of calculating them on the fly
+     * scaling and to reuse them instead of calculating them on the fly
      * everywhere.
      */
     double density_scaling;
