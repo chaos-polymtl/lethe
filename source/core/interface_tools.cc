@@ -419,6 +419,7 @@ InterfaceTools::SignedDistanceSolver<dim, VectorType>::get_signed_distance()
 template <int dim, typename VectorType>
 void
 InterfaceTools::SignedDistanceSolver<dim, VectorType>::zero_out_ghost_values()
+  const
 {
   /* To have the right to write in a LinearAlgebra::distributed::Vector, we
   have to zero out the ghost values.*/
@@ -432,6 +433,7 @@ InterfaceTools::SignedDistanceSolver<dim, VectorType>::zero_out_ghost_values()
 template <int dim, typename VectorType>
 void
 InterfaceTools::SignedDistanceSolver<dim, VectorType>::update_ghost_values()
+  const
 {
   /* To have the right to read a LinearAlgebra::distributed::Vector, we have
   to update the ghost values.*/
@@ -584,7 +586,7 @@ InterfaceTools::SignedDistanceSolver<dim, VectorType>::
   std::vector<Point<dim>>     stencil_real(2 * dim - 1);
   std::vector<Tensor<1, dim>> distance_gradients(2 * dim - 1);
 
-  // Transfomation jacobians
+  // Transformation jacobians
   std::vector<DerivativeForm<1, dim, dim>> cell_transformation_jacobians(
     2 * dim - 1);
   std::vector<DerivativeForm<1, dim - 1, dim>> face_transformation_jacobians(
@@ -633,8 +635,7 @@ InterfaceTools::SignedDistanceSolver<dim, VectorType>::
 
           // If the cell is intersected, the distance is already computed and
           // its neighbors are in the corona
-          if (interface_reconstruction_vertices.find(cell_index) !=
-              interface_reconstruction_vertices.end())
+          if (interface_reconstruction_vertices.contains(cell_index))
             {
               auto active_neighbors =
                 LetheGridTools::find_cells_around_cell<dim>(vertices_to_cell,
@@ -665,15 +666,14 @@ InterfaceTools::SignedDistanceSolver<dim, VectorType>::
                                    cell_dof_values.begin(),
                                    cell_dof_values.end());
 
-              // Loop over the cell's DoFs to check if a absolute distance is
+              // Loop over the cell's DoFs to check if an absolute distance is
               // below the max distance.
               for (unsigned int i = 0; i < dofs_per_cell; ++i)
                 {
                   if (std::abs(cell_dof_values[i]) < (max_distance))
                     {
-                      // If this is the case, insert the cell in the corona,
-                      // break the loop since anyway the cell is inside of the
-                      // corona.
+                      // If this is the case, insert the cell in the corona and
+                      // break the loop.
                       corona_cell.insert(cell);
                       break;
                     }
@@ -687,8 +687,7 @@ InterfaceTools::SignedDistanceSolver<dim, VectorType>::
               const unsigned int cell_index = cell->global_active_cell_index();
 
               // If the cell is intersected, the distance is already computed.
-              if (interface_reconstruction_vertices.find(cell_index) !=
-                  interface_reconstruction_vertices.end())
+              if (interface_reconstruction_vertices.contains(cell_index))
                 {
                   continue;
                 }
@@ -714,14 +713,13 @@ InterfaceTools::SignedDistanceSolver<dim, VectorType>::
                       outside_check[i]   = 0;
                     }
 
-                  const double tol           = 1e-9;
-                  unsigned int newton_it     = 0;
-                  const int    newton_max_it = 100;
+                  constexpr double tol           = 1e-9;
+                  unsigned int     newton_it     = 0;
+                  constexpr int    newton_max_it = 100;
 
                   // Solve the minimization problem with Newton method
                   // using a numerical jacobian
-                  while (*std::max_element(correction_norm.begin(),
-                                           correction_norm.end()) > tol &&
+                  while (*std::ranges::max_element(correction_norm) > tol &&
                          newton_it < newton_max_it)
                     {
                       for (unsigned int i = 0; i < n_opposite_dofs_per_faces;
@@ -743,7 +741,7 @@ InterfaceTools::SignedDistanceSolver<dim, VectorType>::
                                                              perturbation,
                                                              stencil_ref);
 
-                          for (unsigned int k = 0; k < 2 * dim - 1; ++k)
+                          for (int k = 0; k < 2 * dim - 1; ++k)
                             {
                               stencil_ref_vector[k + (2 * dim - 1) * i] =
                                 stencil_ref[k];
@@ -767,9 +765,8 @@ InterfaceTools::SignedDistanceSolver<dim, VectorType>::
 
                           const unsigned int local_face_opposite_dof =
                             face_opposite_dofs[i];
-                          if (intersected_dofs.find(
-                                dof_indices[local_face_opposite_dof]) !=
-                              intersected_dofs.end())
+                          if (intersected_dofs.contains(
+                                dof_indices[local_face_opposite_dof]))
                             {
                               correction_norm[i] = 0;
                               continue;
@@ -779,7 +776,7 @@ InterfaceTools::SignedDistanceSolver<dim, VectorType>::
                             dof_indices[local_face_opposite_dof]);
 
                           // Get the required values at each stencil point
-                          for (unsigned int k = 0; k < 2 * dim - 1; k++)
+                          for (int k = 0; k < 2 * dim - 1; k++)
                             {
                               stencil_real[k] =
                                 fe_point_evaluation.quadrature_point(
@@ -886,7 +883,7 @@ InterfaceTools::SignedDistanceSolver<dim, VectorType>::
                           bool check = false;
 
                           // Tolerance on the position for the outside check
-                          for (unsigned int k = 0; k < dim; ++k)
+                          for (int k = 0; k < dim; ++k)
                             {
                               if (x_n_p1_ref[k] > 1.0 + tol ||
                                   x_n_p1_ref[k] < 0.0 - tol)
@@ -959,9 +956,9 @@ InterfaceTools::SignedDistanceSolver<dim, VectorType>::
                       /* If the new distance is smaller than the previous,
                      update the value and flag the change.
                      The tolerance needs to be higher than the one for the
-                     Newton method becaus we don't want the change flag to
+                     Newton method because we don't want the change flag to
                      depend on the Newton method convergence.*/
-                      const double distance_tol = 1e-8;
+                      constexpr double distance_tol = 1e-8;
                       if (distance(dof_indices[local_face_opposite_dof]) >
                           (approx_distance + distance_tol))
                         {
@@ -1045,8 +1042,7 @@ InterfaceTools::SignedDistanceSolver<dim, VectorType>::
           const unsigned int cell_index = cell->global_active_cell_index();
 
           // The cell is not intersected, no need to correct the volume
-          if (interface_reconstruction_vertices.find(cell_index) ==
-              interface_reconstruction_vertices.end())
+          if (!interface_reconstruction_vertices.contains(cell_index))
             {
               continue;
             }
@@ -1124,7 +1120,7 @@ InterfaceTools::SignedDistanceSolver<dim, VectorType>::
 
           /* Check if there is enough volume to correct. If not, we don't
           correct.*/
-          const double tol = 1e-12;
+          constexpr double tol = 1e-12;
           if (inside_cell_volume_nm1 < tol * cell_volume ||
               inside_cell_volume_nm1 > (cell_volume - tol * cell_volume))
             {
@@ -1262,10 +1258,10 @@ InterfaceTools::SignedDistanceSolver<dim, VectorType>::conserve_global_volume()
   const double global_volume_0 = global_volume_nm1;
 
   // Initialize secant method it and update
-  const double tol           = 1e-12;
-  unsigned int secant_it     = 0;
-  unsigned int secant_max_it = 20;
-  double       secant_update = 1.0;
+  constexpr double       tol           = 1e-12;
+  unsigned int           secant_it     = 0;
+  constexpr unsigned int secant_max_it = 20;
+  double                 secant_update = 1.0;
 
   // Secant method
   while (abs(secant_update) > tol &&

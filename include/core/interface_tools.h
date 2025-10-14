@@ -520,14 +520,14 @@ namespace InterfaceTools
      * access to the ghost elements
      */
     void
-    zero_out_ghost_values();
+    zero_out_ghost_values() const;
 
     /**
      * @brief Update the ghost DoFs entries of the solution vectors to gain read
      * access to the ghost elements
      */
     void
-    update_ghost_values();
+    update_ghost_values() const;
 
     /**
      * @brief Exchange the distance and set it to the minimum value across the
