@@ -13,7 +13,7 @@
 namespace Parameters
 {
   void
-  Manifolds::declareDefaultEntry(ParameterHandler &prm, unsigned int i_bc)
+  Manifolds::declareDefaultEntry(ParameterHandler &prm, const unsigned int i_bc)
   {
     prm.declare_entry("type",
                       "none",
@@ -42,7 +42,8 @@ namespace Parameters
   }
 
   void
-  Manifolds::parse_boundary(ParameterHandler &prm, unsigned int i_bc)
+  Manifolds::parse_boundary(const ParameterHandler &prm,
+                            const unsigned int i_bc)
   {
     const std::string op = prm.get("type");
     if (op == "none")
