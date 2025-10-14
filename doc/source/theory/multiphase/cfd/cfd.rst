@@ -1,5 +1,5 @@
 =====================================
-Fluid-Fluid Flows - One-Fluid Models
+Fluid-Fluid Flows - Interface Capturing Models
 =====================================
 
 
