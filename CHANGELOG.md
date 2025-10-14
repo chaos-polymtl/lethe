@@ -9,6 +9,8 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
 - MAJOR The CFD-DEM implementation could run with adaptive time step (set adapt = true), but the DEM time step was never updated when the CFD time-step was adapted. This meant that the time progression in the DEM was actually wrong. None of our examples or previous publications use CFD-DEM with adaptive time-stepping, but this is clearly a problem. This change fixes this issue by recaclulating the DEM time-step at every coupling interval when the CFD time-step is adaptive. The portion of the critical Rayleigh time-step is also recalculated when that occurs. A test has been added to verify the adequacy of the feature. [#1715](https://github.com/chaos-polymtl/lethe/pull/1715)
 
+- MINOR There was a seg fault when the geometric smoother was selected in the vof initial condition with a reinitialization method other than the geometric one. It was because the SignedDistanceSolver was only instantiated if the geometric reinitialization method was selected. This PR fixes this problem. [#1718](https://github.com/chaos-polymtl/lethe/pull/1718)
+
 ### [Master] - 2025-10-13
 
 ### Changed
