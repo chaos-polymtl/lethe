@@ -3,7 +3,7 @@ Heated Packed Bed
 ==========================
 
 This example simulates the heating of a packed bed using the discrete element method (DEM) including heat transfer. It is based on the experimental and simulation results of Beaulieu [#Beaulieu2020]_ with stainless steel particles.
-More information regarding the Multiphysic DEM parameters and the heat transfer model is given in the Lethe documentation, i.e. `DEM parameters <../../../parameters/dem/dem.html>`_ and `Heat transfer model <../../../theory/multiphase/cfd_dem/dem.html#thermal-dem-in-a-stagnant-gas>`_.
+More information regarding the Multiphysics DEM parameters and the heat transfer model is given in the Lethe documentation, i.e. `DEM parameters <../../../parameters/dem/dem.html>`_ and `Heat transfer model <../../../theory/multiphase/dem/dem.html#thermal-dem-in-a-stagnant-gas>`_.
 
 
 ----------------------------------

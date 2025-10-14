@@ -385,13 +385,13 @@
 </ul>
 </li>
 <li class="toctree-l2 current has-children"><a class="reference internal" href="../multiphase.html">Multiphase</a><input checked="" class="toctree-checkbox" id="toctree-checkbox-28" name="toctree-checkbox-28" role="switch" type="checkbox"/><label for="toctree-checkbox-28"><div class="visually-hidden">Toggle navigation of Multiphase</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul class="current">
-<li class="toctree-l3 has-children"><a class="reference internal" href="../cfd/cfd.html">One-Fluid Models</a><input class="toctree-checkbox" id="toctree-checkbox-29" name="toctree-checkbox-29" role="switch" type="checkbox"/><label for="toctree-checkbox-29"><div class="visually-hidden">Toggle navigation of One-Fluid Models</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l3 has-children"><a class="reference internal" href="../cfd/cfd.html">Fluid-Fluid Flows - Interface Capturing Models</a><input class="toctree-checkbox" id="toctree-checkbox-29" name="toctree-checkbox-29" role="switch" type="checkbox"/><label for="toctree-checkbox-29"><div class="visually-hidden">Toggle navigation of Fluid-Fluid Flows - Interface Capturing Models</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
 <li class="toctree-l4"><a class="reference internal" href="../cfd/vof.html">The Volume of Fluid (VOF) Method</a></li>
 <li class="toctree-l4"><a class="reference internal" href="../cfd/cahn-hilliard.html">Cahn-Hilliard Method</a></li>
 </ul>
 </li>
-<li class="toctree-l3 current has-children"><a class="reference internal" href="cfd_dem.html">CFD-DEM</a><input checked="" class="toctree-checkbox" id="toctree-checkbox-30" name="toctree-checkbox-30" role="switch" type="checkbox"/><label for="toctree-checkbox-30"><div class="visually-hidden">Toggle navigation of CFD-DEM</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul class="current">
-<li class="toctree-l4"><a class="reference internal" href="dem.html">Discrete Element Method (DEM)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../dem/dem.html">Granular Flows - Discrete Element Method (DEM)</a></li>
+<li class="toctree-l3 current has-children"><a class="reference internal" href="cfd_dem.html">Particle-laden Flows - CFD-DEM</a><input checked="" class="toctree-checkbox" id="toctree-checkbox-30" name="toctree-checkbox-30" role="switch" type="checkbox"/><label for="toctree-checkbox-30"><div class="visually-hidden">Toggle navigation of Particle-laden Flows - CFD-DEM</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul class="current">
 <li class="toctree-l4"><a class="reference internal" href="resolved_cfd-dem.html">Resolved CFD-DEM</a></li>
 <li class="toctree-l4 current current-page"><a class="current reference internal" href="#">Unresolved CFD-DEM</a></li>
 </ul>
@@ -482,7 +482,7 @@ I_i \frac{\mathrm{d}\mathbf{\omega}_i}{\mathrm{d}t} = \sum_{j}\left ( \mathbf{M}
 <li><p><span class="math notranslate nohighlight">\(\mathbf{M}_{c,iw}\)</span> is the torque between particle <span class="math notranslate nohighlight">\(i\)</span> and walls <span class="math notranslate nohighlight">\(w\)</span>;</p></li>
 <li><p><span class="math notranslate nohighlight">\(\mathbf{M}_{c,iw}\)</span> is the rolling friction between particle <span class="math notranslate nohighlight">\(i\)</span> and walls <span class="math notranslate nohighlight">\(w\)</span>;</p></li>
 </ul>
-<p>Apart from <span class="math notranslate nohighlight">\(\mathbf{f}_{pf,i}\)</span>, all the other terms of the previous equations are detailed in the DEM section of this theory guide (see <a class="reference internal" href="dem.html"><span class="doc">Discrete Element Method (DEM)</span></a>). The momentum transport between phases <span class="math notranslate nohighlight">\(\mathbf{f}_{pf,i}\)</span> can be written as:</p>
+<p>Apart from <span class="math notranslate nohighlight">\(\mathbf{f}_{pf,i}\)</span>, all the other terms of the previous equations are detailed in the DEM section of this theory guide (see <a class="reference internal" href="../dem/dem.html"><span class="doc">Granular Flows - Discrete Element Method (DEM)</span></a>). The momentum transport between phases <span class="math notranslate nohighlight">\(\mathbf{f}_{pf,i}\)</span> can be written as:</p>
 <div class="math-wrapper docutils container">
 <div class="math notranslate nohighlight">
 \[\mathbf{f}_{pf,i} = \mathbf{f}_{\nabla p,i} + \mathbf{f}_{\nabla \cdot \mathbf{\tau},i} + \mathbf{f}_{d,i} + \mathbf{f}_{Ar,i} + \mathbf{f}_{g,i} + \mathbf{f}''_{i}\]</div>

@@ -38,7 +38,7 @@ where:
 * :math:`\mathbf{M}_{c,iw}` is the torque between particle :math:`i` and walls :math:`w`;
 * :math:`\mathbf{M}_{c,iw}` is the rolling friction between particle :math:`i` and walls :math:`w`;
 
-Apart from :math:`\mathbf{f}_{pf,i}`, all the other terms of the previous equations are detailed in the DEM section of this theory guide (see :doc:`./dem`). The momentum transport between phases :math:`\mathbf{f}_{pf,i}` can be written as:
+Apart from :math:`\mathbf{f}_{pf,i}`, all the other terms of the previous equations are detailed in the DEM section of this theory guide (see :doc:`../dem/dem`). The momentum transport between phases :math:`\mathbf{f}_{pf,i}` can be written as:
 
 .. math::
     \mathbf{f}_{pf,i} = \mathbf{f}_{\nabla p,i} + \mathbf{f}_{\nabla \cdot \mathbf{\tau},i} + \mathbf{f}_{d,i} + \mathbf{f}_{Ar,i} + \mathbf{f}_{g,i} + \mathbf{f}''_{i}

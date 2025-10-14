@@ -1,6 +1,6 @@
-===========
-CFD-DEM
-===========
+================================
+Particle-laden Flows - CFD-DEM
+================================
 
 
 .. toctree::
@@ -8,6 +8,5 @@ CFD-DEM
     :glob:
     :titlesonly:
 
-    dem
     resolved_cfd-dem
     unresolved_cfd-dem
