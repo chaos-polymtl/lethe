@@ -126,9 +126,10 @@ VolumeOfFluid<dim>::VolumeOfFluid(
 
 
   if (simulation_parameters.multiphysics.vof_parameters.regularization_method
-        .geometric_interface_reinitialization.enable || simulation_parameters.initial_condition
-                   ->vof_initial_condition_smoothing ==
-                 Parameters::VOFInitialConditionType::geometric)
+        .geometric_interface_reinitialization.enable ||
+      simulation_parameters.initial_condition
+          ->vof_initial_condition_smoothing ==
+        Parameters::VOFInitialConditionType::geometric)
     {
       /* For the VOF solver, the interface is defined as the iso-contour
          \f$\phi\f = 0.5$. Hence, for the  SignedDistanceSolver, we set the
