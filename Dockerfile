@@ -25,7 +25,7 @@ RUN mkdir lethe/build && cd lethe/build && \
     make -j $(nproc) && \
     make install
 
-FROM dealii/dealii:${DEALII_IMAGE_VERSION}-jammy as runner
+FROM dealii/dealii:${DEALII_IMAGE_VERSION}-noble as runner
 
 LABEL org.opencontainers.image.title="lethe" \
       org.opencontainers.image.authors="chaos-polymtl" \
