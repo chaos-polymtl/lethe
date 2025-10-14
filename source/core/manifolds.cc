@@ -43,7 +43,7 @@ namespace Parameters
 
   void
   Manifolds::parse_boundary(const ParameterHandler &prm,
-                            const unsigned int i_bc)
+                            const unsigned int      i_bc)
   {
     const std::string op = prm.get("type");
     if (op == "none")

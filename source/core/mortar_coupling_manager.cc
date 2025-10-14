@@ -19,7 +19,7 @@ MortarManagerBase<dim>::is_mesh_aligned() const
   AssertThrow(dim != 1, ExcInternalError());
 
   constexpr double tolerance = 1e-8;
-  const double delta_0   = 2 * numbers::PI / n_subdivisions[0];
+  const double     delta_0   = 2 * numbers::PI / n_subdivisions[0];
 
   return std::abs(rotation_angle / delta_0 -
                   std::round(rotation_angle / delta_0)) < tolerance;
@@ -534,7 +534,8 @@ compute_n_subdivisions_and_radius(
                     {
                       n_subdivisions_local++;
 
-                      // Store the number of subdivisions in the radial direction
+                      // Store the number of subdivisions in the radial
+                      // direction
                       if constexpr (dim == 3)
                         {
                           // Check if the current cell is contained in the same
@@ -989,8 +990,9 @@ CouplingOperator<dim, Number>::CouplingOperator(
     mortar_manager->get_n_points() / mortar_manager->get_n_mortars();
   std::vector<Number> all_penalty_parameter_ghost(
     data.all_penalty_parameter.size());
-  partitioner.export_to_ghosted_array<Number, 0>(
-    data.all_penalty_parameter, all_penalty_parameter_ghost, n_q_points);
+  partitioner.export_to_ghosted_array<Number, 0>(data.all_penalty_parameter,
+                                                 all_penalty_parameter_ghost,
+                                                 n_q_points);
   for (unsigned int i = 0; i < data.all_penalty_parameter.size(); ++i)
     data.all_penalty_parameter[i] =
       std::max(data.all_penalty_parameter[i], all_penalty_parameter_ghost[i]);
@@ -1063,7 +1065,7 @@ CouplingOperator<dim, Number>::get_affine_constraints() const
 template <int dim, typename Number>
 Number
 CouplingOperator<dim, Number>::compute_penalty_factor(const unsigned int degree,
-                                                      const Number factor)
+                                                      const Number       factor)
 {
   return factor * (degree + 1.0) * (degree + 1.0);
 }
@@ -1226,7 +1228,8 @@ CouplingOperator<dim, Number>::vmult_add(VectorType       &dst,
           {
             // Quadrature points at the current face. Note: we process
             // all mortars of the face together here.
-            const unsigned int total_n_q_points = mortar_manager->get_n_points();
+            const unsigned int total_n_q_points =
+              mortar_manager->get_n_points();
 
             evaluator->local_reinit(
               cell,

@@ -594,7 +594,7 @@ LetheGridTools::project_to_d_linear_object(
   //                   \partial_m phi_j
   // we start at xi=(0.5, 0.5).
   Point<structdim> xi;
-  for (unsigned int d = 0; std::cmp_less(d , structdim); ++d)
+  for (unsigned int d = 0; std::cmp_less(d, structdim); ++d)
     xi[d] = 0.5;
 
   Point<spacedim> x_k;
@@ -1086,134 +1086,134 @@ LetheGridTools::vertices_cell_mapping_with_periodic_boundaries(
   std::map<unsigned int, std::set<DoFHandler<3>::active_cell_iterator>>
     &vertices_cell_map);
 
-template  DoFHandler<2>::active_cell_iterator
+template DoFHandler<2>::active_cell_iterator
 LetheGridTools::find_cell_around_point_with_neighbors(
   const DoFHandler<2> &dof_handler,
   std::map<unsigned int, std::set<DoFHandler<2>::active_cell_iterator>>
-                                                     &vertices_cell_map,
-  const  DoFHandler<2>::active_cell_iterator &cell,
-  const Point<2>                                     &point);
+                                            &vertices_cell_map,
+  const DoFHandler<2>::active_cell_iterator &cell,
+  const Point<2>                            &point);
 
-template  DoFHandler<3>::active_cell_iterator
+template DoFHandler<3>::active_cell_iterator
 LetheGridTools::find_cell_around_point_with_neighbors(
   const DoFHandler<3> &dof_handler,
   std::map<unsigned int, std::set<DoFHandler<3>::active_cell_iterator>>
-                                                     &vertices_cell_map,
-  const  DoFHandler<3>::active_cell_iterator &cell,
-  const Point<3>                                     &point);
+                                            &vertices_cell_map,
+  const DoFHandler<3>::active_cell_iterator &cell,
+  const Point<3>                            &point);
 
-template  std::vector<DoFHandler<2>::active_cell_iterator>
+template std::vector<DoFHandler<2>::active_cell_iterator>
 LetheGridTools::find_cells_around_cell<2>(
-  std::map<unsigned int, std::set< DoFHandler<2>::active_cell_iterator>>
-                                                     &vertices_cell_map,
-  const  DoFHandler<2>::active_cell_iterator &cell);
+  std::map<unsigned int, std::set<DoFHandler<2>::active_cell_iterator>>
+                                            &vertices_cell_map,
+  const DoFHandler<2>::active_cell_iterator &cell);
 
-template  std::vector< DoFHandler<3>::active_cell_iterator>
+template std::vector<DoFHandler<3>::active_cell_iterator>
 LetheGridTools::find_cells_around_cell<3>(
-  std::map<unsigned int, std::set< DoFHandler<3>::active_cell_iterator>>
-                                                     &vertices_cell_map,
-  const  DoFHandler<3>::active_cell_iterator &cell);
+  std::map<unsigned int, std::set<DoFHandler<3>::active_cell_iterator>>
+                                            &vertices_cell_map,
+  const DoFHandler<3>::active_cell_iterator &cell);
 
-template std::vector< DoFHandler<2>::active_cell_iterator>
+template std::vector<DoFHandler<2>::active_cell_iterator>
 LetheGridTools::find_cells_in_cells(
-  const DoFHandler<2>                                &dof_handler,
-  const  DoFHandler<2>::active_cell_iterator &cell);
+  const DoFHandler<2>                       &dof_handler,
+  const DoFHandler<2>::active_cell_iterator &cell);
 
-template std::vector< DoFHandler<3>::active_cell_iterator>
+template std::vector<DoFHandler<3>::active_cell_iterator>
 LetheGridTools::find_cells_in_cells(
-  const DoFHandler<3>                                &dof_handler,
-  const  DoFHandler<3>::active_cell_iterator &cell);
+  const DoFHandler<3>                       &dof_handler,
+  const DoFHandler<3>::active_cell_iterator &cell);
 
 template bool
 LetheGridTools::cell_cut_by_flat<2>(
-  const  DoFHandler<2>::active_cell_iterator        &cell,
-  const  DoFHandler<2 - 1, 2>::active_cell_iterator &cell_flat);
+  const DoFHandler<2>::active_cell_iterator        &cell,
+  const DoFHandler<2 - 1, 2>::active_cell_iterator &cell_flat);
 
 template bool
 LetheGridTools::cell_cut_by_flat<3>(
-  const  DoFHandler<3>::active_cell_iterator        &cell,
-  const  DoFHandler<3 - 1, 3>::active_cell_iterator &cell_flat);
+  const DoFHandler<3>::active_cell_iterator        &cell,
+  const DoFHandler<3 - 1, 3>::active_cell_iterator &cell_flat);
 
 
-template std::vector< DoFHandler<2>::active_cell_iterator>
+template std::vector<DoFHandler<2>::active_cell_iterator>
 LetheGridTools::find_cells_around_flat_cell(
-  const DoFHandler<2>                                       &dof_handler,
-  const  DoFHandler<2 - 1, 2>::active_cell_iterator &cell,
-  std::map<unsigned int, std::set< DoFHandler<2>::active_cell_iterator>>
+  const DoFHandler<2>                              &dof_handler,
+  const DoFHandler<2 - 1, 2>::active_cell_iterator &cell,
+  std::map<unsigned int, std::set<DoFHandler<2>::active_cell_iterator>>
     &vertices_cell_map);
 
-template std::vector< DoFHandler<3>::active_cell_iterator>
+template std::vector<DoFHandler<3>::active_cell_iterator>
 LetheGridTools::find_cells_around_flat_cell(
-  const DoFHandler<3>                                       &dof_handler,
-  const  DoFHandler<3 - 1, 3>::active_cell_iterator &cell,
-  std::map<unsigned int, std::set< DoFHandler<3>::active_cell_iterator>>
+  const DoFHandler<3>                              &dof_handler,
+  const DoFHandler<3 - 1, 3>::active_cell_iterator &cell,
+  std::map<unsigned int, std::set<DoFHandler<3>::active_cell_iterator>>
     &vertices_cell_map);
 
 template std::pair<std::pair<Point<2>, bool>, Tensor<1, 2>>
 LetheGridTools::project_to_d_linear_object<2, 1>(
-  const  DoFHandler<1, 2>::active_cell_iterator &object,
-  const Point<2>                                        &trial_point);
+  const DoFHandler<1, 2>::active_cell_iterator &object,
+  const Point<2>                               &trial_point);
 
 template std::pair<std::pair<Point<3>, bool>, Tensor<1, 3>>
 LetheGridTools::project_to_d_linear_object<3, 2>(
-  const  DoFHandler<2, 3>::active_cell_iterator &object,
-  const Point<3>                                        &trial_point);
+  const DoFHandler<2, 3>::active_cell_iterator &object,
+  const Point<3>                               &trial_point);
 
 
 template bool
 LetheGridTools::cell_pierced_by_edge<3>(
-  const  DoFHandler<3>::active_cell_iterator &cell,
-  const TriaIterator<CellAccessor<1, 3>>             &cell_edge);
+  const DoFHandler<3>::active_cell_iterator &cell,
+  const TriaIterator<CellAccessor<1, 3>>    &cell_edge);
 
 template bool
 LetheGridTools::cell_pierced_by_edge<3>(
-  const  DoFHandler<3>::active_cell_iterator &cell,
-  Point<3>                                            point_1,
-  Point<3>                                            point_2);
+  const DoFHandler<3>::active_cell_iterator &cell,
+  Point<3>                                   point_1,
+  Point<3>                                   point_2);
 
-template std::vector< DoFHandler<2>::active_cell_iterator>
+template std::vector<DoFHandler<2>::active_cell_iterator>
 LetheGridTools::find_boundary_cells_in_sphere(const DoFHandler<2> &dof_handler,
                                               const Point<2>      &center,
                                               const double         radius);
-template std::vector< DoFHandler<3>::active_cell_iterator>
+template std::vector<DoFHandler<3>::active_cell_iterator>
 LetheGridTools::find_boundary_cells_in_sphere(const DoFHandler<3> &dof_handler,
                                               const Point<3>      &center,
                                               const double         radius);
 
 
 template std::map<
-   DoFHandler<3>::active_cell_iterator,
-  std::map<unsigned int,  DoFHandler<3, 3>::active_cell_iterator>>
+  DoFHandler<3>::active_cell_iterator,
+  std::map<unsigned int, DoFHandler<3, 3>::active_cell_iterator>>
 LetheGridTools::find_cells_cut_by_object(
   const DoFHandler<3> &dof_handler,
-  std::map<unsigned int, std::set< DoFHandler<3>::active_cell_iterator>>
+  std::map<unsigned int, std::set<DoFHandler<3>::active_cell_iterator>>
                                  &vertices_cell_map,
   std::vector<SerialSolid<3, 3>> &list_of_objects);
 
 template std::map<
-   DoFHandler<2>::active_cell_iterator,
-  std::map<unsigned int,  DoFHandler<2, 2>::active_cell_iterator>>
+  DoFHandler<2>::active_cell_iterator,
+  std::map<unsigned int, DoFHandler<2, 2>::active_cell_iterator>>
 LetheGridTools::find_cells_cut_by_object(
   const DoFHandler<2> &dof_handler,
-  std::map<unsigned int, std::set< DoFHandler<2>::active_cell_iterator>>
+  std::map<unsigned int, std::set<DoFHandler<2>::active_cell_iterator>>
                                  &vertices_cell_map,
   std::vector<SerialSolid<2, 2>> &list_of_objects);
 
 template std::map<
-   DoFHandler<3>::active_cell_iterator,
-  std::map<unsigned int,  DoFHandler<2, 3>::active_cell_iterator>>
+  DoFHandler<3>::active_cell_iterator,
+  std::map<unsigned int, DoFHandler<2, 3>::active_cell_iterator>>
 LetheGridTools::find_cells_cut_by_object(
   const DoFHandler<3> &dof_handler,
-  std::map<unsigned int, std::set< DoFHandler<3>::active_cell_iterator>>
+  std::map<unsigned int, std::set<DoFHandler<3>::active_cell_iterator>>
                                  &vertices_cell_map,
   std::vector<SerialSolid<2, 3>> &list_of_objects);
 
 template std::map<
-   DoFHandler<2>::active_cell_iterator,
-  std::map<unsigned int,  DoFHandler<1, 2>::active_cell_iterator>>
+  DoFHandler<2>::active_cell_iterator,
+  std::map<unsigned int, DoFHandler<1, 2>::active_cell_iterator>>
 LetheGridTools::find_cells_cut_by_object(
   const DoFHandler<2> &dof_handler,
-  std::map<unsigned int, std::set< DoFHandler<2>::active_cell_iterator>>
+  std::map<unsigned int, std::set<DoFHandler<2>::active_cell_iterator>>
                                  &vertices_cell_map,
   std::vector<SerialSolid<1, 2>> &list_of_objects);
 
@@ -1237,10 +1237,10 @@ LetheGridTools::find_particle_triangle_projection(
   const Tensor<1, dim> e_1 = p_2 - p_0;
 
   Tensor<1, dim> normal      = cross_product_3d(e_0, e_1);
-  const double         norm_normal = normal.norm();
-  Tensor<1, dim>       unit_normal = normal / norm_normal;
-  Tensor<1, 3>         unit_normal_3d;
-  Point<3>             pt_in_triangle_3d;
+  const double   norm_normal = normal.norm();
+  Tensor<1, dim> unit_normal = normal / norm_normal;
+  Tensor<1, 3>   unit_normal_3d;
+  Point<3>       pt_in_triangle_3d;
 
   const double a   = e_0.norm_square();
   const double b   = scalar_product(e_0, e_1);
