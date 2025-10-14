@@ -5,6 +5,10 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
 ### [Master] - 2025-10-14
 
+### Changed
+
+- MAJOR Changed DG Tracer formulation to be - D * laplacian T +  u * gradT + T div(u) - f=0, adding the term T div(u). It has proven to be more conservative at edges.
+
 ### Fixed
 
 - MINOR In our efforts to migrate from Clang Tidy v12 to Clang Tidy v20, this PR does the first batch of refactoring of the core library of lethe. The main things that is changed is that many loops over the dimensions used to use unsigned integer as indices and, when compared to the dimension (dim), this would raise a warning regarding comparison between signed and unsigned integer. This PR fixes that by using integers for these loops. Other small things are to use enum with a smaller data footprint and some usage of range-based interators. Some spelling mistakes there and there were also fixed. A flag was also added to the CMakeList (-std=c++20) to ensure that compilation still works on Apple Clang. Overall this removes half of the CLang V20 warnings. [#1722](https://github.com/chaos-polymtl/lethe/pull/1722)
@@ -41,7 +45,7 @@ The lethe v1.0.2 release comes with a structured and stable syntax. All of the e
 
 ### Changed
 
-- MINOR The CLang tidy workflow is back to ensure to ensure that Lethe is as clean as possible. Some of the small issues identified by it through the run have been fixed (notably some pass by copy instead of const reference and some range-based loop missing). [#1708](https://github.com/chaos-polymtl/lethe/pull/1708)
+- MINOR The CLang tidy workflow is back to ensure that Lethe is as clean as possible. Some of the small issues identified by it through the run have been fixed (notably some pass by copy instead of const reference and some range-based loop missing). [#1708](https://github.com/chaos-polymtl/lethe/pull/1708)
 
 - MINOR The organization of the documentation for multiphase flows has been restructured slightly so that DEM is allowed to stand-out more. [#1713] (https://github.com/chaos-polymtl/lethe/pull/1713)
 
