@@ -5,8 +5,8 @@ set dimension = 3
 
 subsection simulation control
   set method           = bdf1
-  set time step        = 0.01
-  set time end         = 0.04
+  set time step        = 0.025
+  set time end         = 0.4
   set output name      = out
   set output frequency = 0
 end
