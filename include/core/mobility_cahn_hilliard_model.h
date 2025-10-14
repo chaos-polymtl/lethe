@@ -93,11 +93,11 @@ public:
    * @param[out] property_vector Vectors of the mobility values
    */
   void
-  vector_value([[maybe_unused]] const std::map<field, std::vector<double>> &field_vectors,
-               std::vector<double> &property_vector) override
+  vector_value(
+    [[maybe_unused]] const std::map<field, std::vector<double>> &field_vectors,
+    std::vector<double> &property_vector) override
   {
-    std::ranges::fill(property_vector,
-              mobility_cahn_hilliard_constant);
+    std::ranges::fill(property_vector, mobility_cahn_hilliard_constant);
   }
 
   /**
@@ -112,7 +112,7 @@ public:
    */
   double
   jacobian([[maybe_unused]] const std::map<field, double> &field_values,
-           [[maybe_unused]] field id) override
+           [[maybe_unused]] field                          id) override
   {
     return 0;
   }
@@ -128,8 +128,8 @@ public:
    */
   void
   vector_jacobian(
-    [[maybe_unused]] const std::map<field, std::vector<double>> & field_vectors,
-    [[maybe_unused]] const field id,
+    [[maybe_unused]] const std::map<field, std::vector<double>> &field_vectors,
+    [[maybe_unused]] const field                                 id,
     std::vector<double> &jacobian_vector) override
   {
     std::ranges::fill(jacobian_vector, 0);
@@ -240,7 +240,8 @@ public:
    */
 
   double
-  jacobian(const std::map<field, double> &fields_value, [[maybe_unused]] field id) override
+  jacobian(const std::map<field, double> &fields_value,
+           [[maybe_unused]] field         id) override
   {
     Assert(
       fields_value.find(field::phase_order_cahn_hilliard) != fields_value.end(),
@@ -270,7 +271,7 @@ public:
 
   void
   vector_jacobian(const std::map<field, std::vector<double>> &field_vectors,
-                  [[maybe_unused]] const field id,
+                  [[maybe_unused]] const field                id,
                   std::vector<double> &jacobian_vector) override
   {
     Assert(field_vectors.find(field::phase_order_cahn_hilliard) !=
