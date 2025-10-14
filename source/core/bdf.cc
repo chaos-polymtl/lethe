@@ -12,7 +12,7 @@ bdf_coefficients(const unsigned int p, const std::vector<double> &time_steps)
   // There should be at least p time steps
   assert(time_steps.size() >= p);
 
-  // Create a time table for the bdf formula
+  // Create a timetable for the bdf formula
   Vector<double> times(p + 1);
   for (unsigned int i = 0; i < p + 1; ++i)
     {
