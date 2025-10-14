@@ -180,8 +180,8 @@ public:
    * @param[in] shape_arguments Arguments to be used for shape initialization.
    */
   void
-  initialize_shape(const std::string         type,
-                   const std::vector<double> shape_arguments);
+  initialize_shape(const std::string         &type,
+                   const std::vector<double> &shape_arguments);
 
   /**
    * @brief Set up a shape in accordance with the given type and raw text argument.
@@ -193,7 +193,7 @@ public:
    * @param[in] raw_arguments Untreated arguments of the shape.
    */
   void
-  initialize_shape(const std::string type, const std::string raw_arguments);
+  initialize_shape(const std::string &type, const std::string &raw_arguments);
 
   /**
    * @brief Set the position and dependent members to the position for
@@ -219,7 +219,7 @@ public:
    * @param[in] orientation New orientation to set the particle at.
    */
   void
-  set_orientation(const Tensor<1, 3> orientation);
+  set_orientation(const Tensor<1, 3> &orientation);
 
   /**
    * @brief Set the layer thickening value (positive or negative) of the shape.
