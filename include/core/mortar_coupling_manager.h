@@ -684,8 +684,8 @@ private:
    * @return penalty factor value
    * penalty_factor = (degree + 1)^2
    */
-  Number
-  compute_penalty_factor(const unsigned int degree, const Number factor) const;
+  static Number
+  compute_penalty_factor(const unsigned int degree, const Number factor);
 
   /**
    * @brief Compute penalty parameter in a cell

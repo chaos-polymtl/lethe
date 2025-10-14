@@ -18,7 +18,7 @@ MortarManagerBase<dim>::is_mesh_aligned() const
 {
   AssertThrow(dim != 1, ExcInternalError());
 
-  const double tolerance = 1e-8;
+  constexpr double tolerance = 1e-8;
   const double delta_0   = 2 * numbers::PI / n_subdivisions[0];
 
   return std::abs(rotation_angle / delta_0 -
@@ -34,8 +34,8 @@ MortarManagerBase<dim>::get_n_total_mortars() const
 
   unsigned int n_total_subdivisions = n_subdivisions[0];
 
-  // In 3D, besides the subdivisons in the plane perpendicular to the rotation
-  // axis, we also need to account for the number of subdivisons along the
+  // In 3D, besides the subdivisions in the plane perpendicular to the rotation
+  // axis, we also need to account for the number of subdivisions along the
   // rotation axis direction
   if constexpr (dim == 3)
     n_total_subdivisions *= n_subdivisions[1];
@@ -451,7 +451,7 @@ compute_n_subdivisions_and_radius(
   // Number of subdivisions in the radial direction per process
   unsigned int n_subdivisions_plane_local = 0;
   // Tolerance for rotor radius computation
-  const double tolerance = 1e-4;
+  constexpr double tolerance = 1e-4;
   // Min and max values for rotor radius computation
   double radius_min = std::numeric_limits<double>::max();
   double radius_max = 0;
@@ -477,7 +477,7 @@ compute_n_subdivisions_and_radius(
 
       // Now check if the vector represents the x, y, or z directions
       // specifically (we assume those are the only options for now)
-      for (unsigned int i = 0; i < dim; i++)
+      for (int i = 0; i < dim; i++)
         if (mortar_parameters.rotation_axis[i] != 0. &&
             mortar_parameters.rotation_axis[i] != 1.)
           is_unit_axis = false;
@@ -488,7 +488,7 @@ compute_n_subdivisions_and_radius(
           " The rotation axis must be a unit vector in x, y, or z direction."));
 
       // Find the direction of the rotation axis
-      for (unsigned int d = 0; d < dim; d++)
+      for (int d = 0; d < dim; d++)
         if (mortar_parameters.rotation_axis[d] != 0.0)
           direction = d;
 
@@ -534,7 +534,7 @@ compute_n_subdivisions_and_radius(
                     {
                       n_subdivisions_local++;
 
-                      // Store the number of sudivisions in the radial direction
+                      // Store the number of subdivisions in the radial direction
                       if constexpr (dim == 3)
                         {
                           // Check if the current cell is contained in the same
@@ -786,8 +786,8 @@ CouplingOperator<dim, Number>::CouplingOperator(
                 is_local_cell.emplace_back(id_local);
                 is_ghost_cell.emplace_back(id_ghost);
 
-                for (const auto i : local_dofs)
-                  dof_indices.emplace_back(i);
+                for (const auto l_dof : local_dofs)
+                  dof_indices.emplace_back(l_dof);
               }
 
             // Weights of quadrature points
@@ -818,7 +818,7 @@ CouplingOperator<dim, Number>::CouplingOperator(
                 for (const auto p : points_ref)
                   {
                     Point<dim - 1> temp;
-                    for (unsigned int i = 0, j = 0; i < dim; ++i)
+                    for (int i = 0, j = 0; i < dim; ++i)
                       if ((face_no / 2) != i)
                         temp[j++] = p[i];
 
@@ -898,7 +898,7 @@ CouplingOperator<dim, Number>::CouplingOperator(
                   AssertThrow(false, ExcNotImplemented());
               }
 
-            // Penalty parmeter
+            // Penalty parameter
             const Number penalty_parameter = compute_penalty_parameter(cell);
 
             // Store penalty parameter for all quadrature points
@@ -989,15 +989,15 @@ CouplingOperator<dim, Number>::CouplingOperator(
     mortar_manager->get_n_points() / mortar_manager->get_n_mortars();
   std::vector<Number> all_penalty_parameter_ghost(
     data.all_penalty_parameter.size());
-  partitioner.template export_to_ghosted_array<Number, 0>(
+  partitioner.export_to_ghosted_array<Number, 0>(
     data.all_penalty_parameter, all_penalty_parameter_ghost, n_q_points);
   for (unsigned int i = 0; i < data.all_penalty_parameter.size(); ++i)
     data.all_penalty_parameter[i] =
       std::max(data.all_penalty_parameter[i], all_penalty_parameter_ghost[i]);
 
-  // Finialize DoF indices and update constraints
+  // Finalize DoF indices and update constraints
   dof_indices_ghost.resize(dof_indices.size());
-  partitioner.template export_to_ghosted_array<types::global_dof_index, 0>(
+  partitioner.export_to_ghosted_array<types::global_dof_index, 0>(
     dof_indices, dof_indices_ghost, n_dofs_per_cell);
 
   {
@@ -1063,7 +1063,7 @@ CouplingOperator<dim, Number>::get_affine_constraints() const
 template <int dim, typename Number>
 Number
 CouplingOperator<dim, Number>::compute_penalty_factor(const unsigned int degree,
-                                                      const Number factor) const
+                                                      const Number factor)
 {
   return factor * (degree + 1.0) * (degree + 1.0);
 }
@@ -1210,7 +1210,7 @@ CouplingOperator<dim, Number>::vmult_add(VectorType       &dst,
   // 2) Communicate
   const unsigned n_q_points =
     mortar_manager->get_n_points() / mortar_manager->get_n_mortars();
-  partitioner.template export_to_ghosted_array<Number, 0>(
+  partitioner.export_to_ghosted_array<Number, 0>(
     ArrayView<const Number>(reinterpret_cast<Number *>(all_values_local.data()),
                             all_values_local.size()),
     ArrayView<Number>(reinterpret_cast<Number *>(all_values_ghost.data()),
@@ -1226,12 +1226,12 @@ CouplingOperator<dim, Number>::vmult_add(VectorType       &dst,
           {
             // Quadrature points at the current face. Note: we process
             // all mortars of the face together here.
-            const unsigned int n_q_points = mortar_manager->get_n_points();
+            const unsigned int total_n_q_points = mortar_manager->get_n_points();
 
             evaluator->local_reinit(
               cell,
               ArrayView<const Point<dim, Number>>(all_points_ref.data() + ptr_q,
-                                                  n_q_points));
+                                                  total_n_q_points));
 
             buffer.reinit(n_dofs_per_cell);
             evaluator->local_integrate(data,
@@ -1248,7 +1248,7 @@ CouplingOperator<dim, Number>::vmult_add(VectorType       &dst,
                                                             local_dofs,
                                                             dst_internal);
 
-            ptr_q += n_q_points;
+            ptr_q += total_n_q_points;
           }
 
   dst_internal.compress(VectorOperation::add);
@@ -1415,7 +1415,7 @@ CouplingOperator<dim, Number>::add_system_matrix_entries(
     mortar_manager->get_n_points() / mortar_manager->get_n_mortars();
 
   // 2) Communicate: export data from local to ghost side
-  partitioner.template export_to_ghosted_array<Number, 0>(
+  partitioner.export_to_ghosted_array<Number, 0>(
     ArrayView<const Number>(reinterpret_cast<Number *>(all_values_local.data()),
                             all_values_local.size()),
     ArrayView<Number>(reinterpret_cast<Number *>(all_values_ghost.data()),
