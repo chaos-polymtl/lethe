@@ -1191,6 +1191,48 @@ HeatTransfer<dim>::compute_kelly(
 }
 
 template <int dim>
+std::vector<OutputStructTableHandler>
+HeatTransfer<dim>::gather_tables()
+{
+  std::vector<OutputStructTableHandler> table_output_structs;
+
+  std::string prefix =
+    this->simulation_parameters.simulation_control.output_folder;
+  std::string suffix = ".checkpoint";
+
+  if (this->simulation_parameters.analytical_solution->calculate_error())
+    table_output_structs.emplace_back(
+      this->error_table,
+      prefix + this->simulation_parameters.analytical_solution->get_filename() +
+        "_HT" + suffix);
+
+  if (this->simulation_parameters.post_processing.calculate_heat_flux)
+    table_output_structs.emplace_back(
+      this->heat_flux_table,
+      prefix +
+        this->simulation_parameters.post_processing.heat_flux_output_name +
+        suffix);
+
+  if (this->simulation_parameters.post_processing
+        .calculate_temperature_statistics)
+    table_output_structs.emplace_back(
+      this->statistics_table,
+      prefix +
+        this->simulation_parameters.post_processing.temperature_output_name +
+        suffix);
+
+  if (this->simulation_parameters.post_processing.calculate_liquid_fraction)
+    table_output_structs.emplace_back(
+      this->liquid_fraction_table,
+      prefix +
+        this->simulation_parameters.post_processing
+          .liquid_fraction_output_name +
+        suffix);
+
+  return table_output_structs;
+}
+
+template <int dim>
 void
 HeatTransfer<dim>::write_checkpoint()
 {
@@ -1222,39 +1264,11 @@ HeatTransfer<dim>::write_checkpoint()
 
   solution_transfer->prepare_for_serialization(sol_set_transfer);
 
-  // Serialize error table
-  std::string prefix =
-    this->simulation_parameters.simulation_control.output_folder;
-  std::string suffix = ".checkpoint";
-  if (this->simulation_parameters.analytical_solution->calculate_error())
-    serialize_table(
-      this->error_table,
-      prefix + this->simulation_parameters.analytical_solution->get_filename() +
-        "_HT" + suffix,
-      mpi_communicator);
-  if (this->simulation_parameters.post_processing.calculate_heat_flux)
-    serialize_table(
-      this->heat_flux_table,
-      prefix +
-        this->simulation_parameters.post_processing.heat_flux_output_name +
-        suffix,
-      mpi_communicator);
-  if (this->simulation_parameters.post_processing
-        .calculate_temperature_statistics)
-    serialize_table(
-      this->statistics_table,
-      prefix +
-        this->simulation_parameters.post_processing.temperature_output_name +
-        suffix,
-      mpi_communicator);
-
-  if (this->simulation_parameters.post_processing.calculate_liquid_fraction)
-    serialize_table(this->liquid_fraction_table,
-                    prefix +
-                      this->simulation_parameters.post_processing
-                        .liquid_fraction_output_name +
-                      suffix,
-                    mpi_communicator);
+  // Serialize all post-processing tables that are currently used with the Heat
+  // Trasnfer solver
+  const std::vector<OutputStructTableHandler> &table_output_structs =
+    this->gather_tables();
+  this->serialize_tables_vector(table_output_structs, mpi_communicator);
 }
 
 template <int dim>
@@ -1320,38 +1334,11 @@ HeatTransfer<dim>::read_checkpoint()
       previous_solutions[i] = distributed_previous_solutions[i];
     }
 
-  // Deserialize error table
-  std::string prefix =
-    this->simulation_parameters.simulation_control.output_folder;
-  std::string suffix = ".checkpoint";
-  if (this->simulation_parameters.analytical_solution->calculate_error())
-    deserialize_table(
-      this->error_table,
-      prefix + this->simulation_parameters.analytical_solution->get_filename() +
-        "_HT" + suffix,
-      mpi_communicator);
-  if (this->simulation_parameters.post_processing.calculate_heat_flux)
-    deserialize_table(
-      this->heat_flux_table,
-      prefix +
-        this->simulation_parameters.post_processing.heat_flux_output_name +
-        suffix,
-      mpi_communicator);
-  if (this->simulation_parameters.post_processing
-        .calculate_temperature_statistics)
-    deserialize_table(
-      this->statistics_table,
-      prefix +
-        this->simulation_parameters.post_processing.temperature_output_name +
-        suffix,
-      mpi_communicator);
-  if (this->simulation_parameters.post_processing.calculate_liquid_fraction)
-    deserialize_table(this->liquid_fraction_table,
-                      prefix +
-                        this->simulation_parameters.post_processing
-                          .liquid_fraction_output_name +
-                        suffix,
-                      mpi_communicator);
+  // Deserialize all post-processing tables that are currently used with the Heat
+  // Transfer solver
+  std::vector<OutputStructTableHandler> table_output_structs =
+    this->gather_tables();
+  this->deserialize_tables_vector(table_output_structs, mpi_communicator);
 }
 
 
@@ -2234,10 +2221,10 @@ HeatTransfer<dim>::postprocess_heat_flux_on_bc(
                         fe_face_values_ht.JxW(q);
 
                     } // end loop on quadrature points
-                }     // end loop on faces
-            }         // end face is a boundary face
-        }             // end condition cell at boundary
-    }                 // end loop on cells
+                } // end loop on faces
+            } // end face is a boundary face
+        } // end condition cell at boundary
+    } // end loop on cells
 
 
   // Sum across all cores
