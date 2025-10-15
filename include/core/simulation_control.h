@@ -78,7 +78,7 @@ protected:
   // BDF methods require a number of previous time steps. This number is known a
   // priori and depends on the method used. We do not keep all the time steps to
   // prevent the accumulation within a large vector.
-  static const unsigned int n_previous_time_steps = 4;
+  static constexpr unsigned int n_previous_time_steps = 4;
 
   // Output iteration frequency
   // Controls the output of the simulation results when the output is controlled
@@ -203,7 +203,7 @@ public:
    *
    */
   bool
-  is_at_start()
+  is_at_start() const
   {
     return iteration_number <= 1;
   }
@@ -213,7 +213,7 @@ public:
    *
    */
   bool
-  is_steady()
+  is_steady() const
   {
     return method ==
              Parameters::SimulationControl::TimeSteppingMethod::steady ||
@@ -227,7 +227,7 @@ public:
    * @return true if the method is BDF1, BDF2, BDF3, or steady BDF, false otherwise.
    */
   bool
-  is_bdf()
+  is_bdf() const
   {
     return method == Parameters::SimulationControl::TimeSteppingMethod::bdf1 ||
            method ==
@@ -242,7 +242,7 @@ public:
    * @return true if the method is sdirk, false otherwise.
    */
   bool
-  is_sdirk()
+  is_sdirk() const
   {
     return method ==
              Parameters::SimulationControl::TimeSteppingMethod::sdirk22 ||
@@ -293,7 +293,7 @@ public:
    * when writing results
    */
   bool
-  get_output_boundaries()
+  get_output_boundaries() const
   {
     return output_boundaries;
   }
@@ -470,7 +470,8 @@ public:
   }
 
   void
-  set_assembly_method(Parameters::SimulationControl::TimeSteppingMethod method)
+  set_assembly_method(
+    const Parameters::SimulationControl::TimeSteppingMethod method)
   {
     assembly_method = method;
   }
@@ -526,12 +527,6 @@ public:
    */
   std::vector<double>
   get_checkpointed_simulation_control_info(const std::string &prefix);
-
-  void
-  increment_iteration()
-  {
-    iteration_number++;
-  };
 };
 
 
