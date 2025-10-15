@@ -22,7 +22,7 @@
 template <int dim, int spacedim>
 SerialSolid<dim, spacedim>::SerialSolid(
   std::shared_ptr<Parameters::RigidSolidObject<spacedim>> &param,
-  unsigned int                                             id)
+  const unsigned int                                             id)
   : mpi_communicator(MPI_COMM_WORLD)
   , n_mpi_processes(Utilities::MPI::n_mpi_processes(mpi_communicator))
   , this_mpi_process(Utilities::MPI::this_mpi_process(mpi_communicator))
@@ -209,7 +209,7 @@ SerialSolid<dim, spacedim>::setup_triangulation(const bool restart)
 
   // Refine the solid triangulation to its initial size
   // NB: solid_tria should not be refined if loaded from a restart file
-  // afterwards
+  // afterward
   if (!restart)
     {
       if (param->solid_mesh.simplex)
@@ -241,7 +241,7 @@ SerialSolid<dim, spacedim>::get_displacement_vector()
 
 template <int dim, int spacedim>
 double
-SerialSolid<dim, spacedim>::get_max_displacement_since_mapped()
+SerialSolid<dim, spacedim>::get_max_displacement_since_mapped() const
 {
   return displacement_since_mapped.linfty_norm();
 }
@@ -255,55 +255,56 @@ SerialSolid<dim, spacedim>::get_triangulation()
 
 template <>
 void
-SerialSolid<1, 2>::rotate_grid(const double angle, const Tensor<1, 3> /*axis*/)
+SerialSolid<1, 2>::rotate_grid(const double angle, const Tensor<1, 3> /*axis*/
+                                 &)
 {
   GridTools::rotate(angle, *solid_tria);
 }
 
 template <>
 void
-SerialSolid<2, 2>::rotate_grid(double angle, const Tensor<1, 3> /*axis*/)
+SerialSolid<2, 2>::rotate_grid(const double angle, const Tensor<1, 3> & /*axis*/)
 {
   GridTools::rotate(angle, *solid_tria);
 }
 
 template <>
 void
-SerialSolid<2, 3>::rotate_grid(const double angle, const Tensor<1, 3> axis)
+SerialSolid<2, 3>::rotate_grid(const double angle, const Tensor<1, 3> &axis)
 {
   GridTools::rotate(axis, angle, *solid_tria);
 }
 template <>
 void
-SerialSolid<3, 3>::rotate_grid(double angle, const Tensor<1, 3> axis)
+SerialSolid<3, 3>::rotate_grid(const double angle, const Tensor<1, 3> &axis)
 {
   GridTools::rotate(axis, angle, *solid_tria);
 }
 
 template <>
 void
-SerialSolid<1, 2>::translate_grid(const Tensor<1, 3> translation)
+SerialSolid<1, 2>::translate_grid(const Tensor<1, 3> &translation)
 {
   GridTools::shift(Tensor<1, 2>({translation[0], translation[1]}), *solid_tria);
 }
 
 template <>
 void
-SerialSolid<2, 2>::translate_grid(const Tensor<1, 3> translation)
+SerialSolid<2, 2>::translate_grid(const Tensor<1, 3> &translation)
 {
   GridTools::shift(Tensor<1, 2>({translation[0], translation[1]}), *solid_tria);
 }
 
 template <>
 void
-SerialSolid<2, 3>::translate_grid(const Tensor<1, 3> translation)
+SerialSolid<2, 3>::translate_grid(const Tensor<1, 3> &translation)
 {
   GridTools::shift(translation, *solid_tria);
 }
 
 template <>
 void
-SerialSolid<3, 3>::translate_grid(const Tensor<1, 3> translation)
+SerialSolid<3, 3>::translate_grid(const Tensor<1, 3> &translation)
 {
   GridTools::shift(translation, *solid_tria);
 }
@@ -336,7 +337,7 @@ SerialSolid<dim, spacedim>::move_solid_triangulation(const double time_step,
   translational_velocity->set_time(initial_time);
   angular_velocity->set_time(initial_time);
 
-  for (unsigned int comp_i = 0; comp_i < spacedim; ++comp_i)
+  for (int comp_i = 0; comp_i < spacedim; ++comp_i)
     {
       current_translational_velocity[comp_i] =
         translational_velocity->value(center_of_rotation, comp_i);
@@ -381,7 +382,7 @@ SerialSolid<dim, spacedim>::move_solid_triangulation(const double time_step,
 
               vertex_position += vertex_displacement;
 
-              for (unsigned d = 0; d < spacedim; ++d)
+              for (int d = 0; d < spacedim; ++d)
                 {
                   displacement[dof_index + d] =
                     displacement[dof_index + d] + vertex_displacement[d];
@@ -414,7 +415,7 @@ SerialSolid<dim, spacedim>::displace_solid_triangulation()
                vertex < cell->reference_cell().n_vertices();
                ++vertex)
             {
-              if (!dof_vertex_displaced.count(cell->vertex_index(vertex)))
+              if (!dof_vertex_displaced.contains(cell->vertex_index(vertex)))
                 {
                   const auto dof_index = cell->vertex_dof_index(vertex, 0);
                   Point<spacedim> &vertex_position = cell->vertex(vertex);
@@ -450,7 +451,7 @@ SerialSolid<dim, spacedim>::move_solid_triangulation_with_displacement()
            vertex < cell->reference_cell().n_vertices();
            ++vertex)
         {
-          if (!dof_vertex_displaced.count(cell->vertex_index(vertex)))
+          if (!dof_vertex_displaced.contains(cell->vertex_index(vertex)))
             {
               const auto       dof_index = cell->vertex_dof_index(vertex, 0);
               Point<spacedim> &vertex_position = cell->vertex(vertex);
