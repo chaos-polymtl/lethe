@@ -200,7 +200,7 @@ RPTL2Projection<dim>::setup_system()
     DoFTools::locally_owned_dofs_per_subdomain(dof_handler);
 
   // Get the DoFs owned by each process
-  const IndexSet locally_owned_dofs =
+  const IndexSet &locally_owned_dofs =
     locally_owned_dofs_per_proc[Utilities::MPI::this_mpi_process(
       mpi_communicator)];
 

@@ -1,7 +1,7 @@
 #Heavily inspired by the deal.II version of this workflow
 #https://github.com/dealii/dealii
 
-name: CI-Clang-tidy
+name: CI-Clang-tidy-v20
 
 on: 
   push:
@@ -25,7 +25,7 @@ env:
 jobs:
   tidy:
     name: tidy
-    runs-on: [ubuntu-22.04]
+    runs-on: [ubuntu-24.04]
 
     strategy:
       fail-fast: false
@@ -40,8 +40,8 @@ jobs:
           sudo add-apt-repository ppa:ginggs/deal.ii-9.7.1-backports
           sudo apt-get update
           sudo apt-get install -y --no-install-recommends nodejs \
-            clang-12 \
-            clang-tidy-12 \
+            clang-20 \
+            clang-tidy-20 \
             numdiff \
             libboost-all-dev \
             libcgal-dev \
@@ -60,6 +60,6 @@ jobs:
         run: |
           mkdir build
           cd build
-          export PATH=/usr/lib/llvm-12/share/clang/:$PATH
-          export PATH=/usr/lib/llvm-12/bin:$PATH
+          export PATH=/usr/lib/llvm-20/share/clang/:$PATH
+          export PATH=/usr/lib/llvm-20/bin:$PATH
           ../contrib/utilities/run_clang_tidy.sh ..
