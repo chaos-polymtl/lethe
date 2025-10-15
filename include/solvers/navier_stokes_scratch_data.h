@@ -1324,7 +1324,7 @@ public:
   std::vector<double>         mass_source;
 
   // Quadrature
-  std::vector<double>     JxW;
+  Table<1, double>        JxW;
   std::vector<Point<dim>> quadrature_points;
 
   // Components index
@@ -1344,13 +1344,14 @@ public:
   std::vector<Tensor<1, dim>>              sdirk_stage_sum;
 
   // Shape functions
-  std::vector<std::vector<double>>         div_phi_u;
-  std::vector<std::vector<Tensor<1, dim>>> phi_u;
-  std::vector<std::vector<Tensor<3, dim>>> hess_phi_u;
-  std::vector<std::vector<Tensor<1, dim>>> laplacian_phi_u;
-  std::vector<std::vector<Tensor<2, dim>>> grad_phi_u;
-  std::vector<std::vector<double>>         phi_p;
-  std::vector<std::vector<Tensor<1, dim>>> grad_phi_p;
+  Table<2, double> div_phi_u;
+
+  Table<2, Tensor<1, dim>> phi_u;
+  Table<2, Tensor<3, dim>> hess_phi_u;
+  Table<2, Tensor<1, dim>> laplacian_phi_u;
+  Table<2, Tensor<2, dim>> grad_phi_u;
+  Table<2, double>         phi_p;
+  Table<2, Tensor<1, dim>> grad_phi_p;
 
   /**
    * Scratch component for the VOF auxiliary physics
