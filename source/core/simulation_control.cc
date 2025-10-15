@@ -592,7 +592,7 @@ SimulationControlRayTracing::SimulationControlRayTracing(
   const Parameters::SimulationControl &param,
   Particles::ParticleHandler<3>       &input_photon_handler)
   : SimulationControl(param)
-  , particle_handler(input_photon_handler)
+  , photon_handler(input_photon_handler)
 {}
 
 bool
@@ -610,22 +610,13 @@ SimulationControlRayTracing::integrate()
 bool
 SimulationControlRayTracing::is_at_end()
 {
-  return particle_handler.n_global_particles() == 0;
+  return photon_handler.n_global_particles() == 0;
 }
 
 void
 SimulationControlRayTracing::print_progression(const ConditionalOStream &pcout)
 {
-  if (!is_verbose_iteration())
-    return;
-
-  pcout << std::endl;
-  std::stringstream ss;
-
-  // Copy information into a string stream
-  ss << "Steady iteration: " << std::setw(8) << std::right << iteration_number
-     << "/" << number_mesh_adapt + 1;
-
-  // Announce string
-  announce_string(pcout, ss.str(), '*');
+  pcout << "Iteration : " << iteration_number << std::endl
+        << "Remaining photon : " << photon_handler.n_global_particles()
+        << std::endl << std::endl;
 }

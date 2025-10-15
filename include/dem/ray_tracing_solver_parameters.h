@@ -24,6 +24,9 @@ public:
   Parameters::Lagrangian::ParticleRayTracing<dim> ray_tracing_info;
   Parameters::Lagrangian::ModelParameters<dim>    model_parameters;
 
+  /**
+   * @brief Handles all the parameters declared in the parameter handler file.
+   */
   void
   declare(ParameterHandler &prm)
   {
@@ -47,6 +50,9 @@ public:
     Parameters::Lagrangian::ModelParameters<dim>::declare_parameters(prm);
   }
 
+  /**
+   * @brief Handles the parsing of all the parameters in the parameter handler file.
+   */
   void
   parse(ParameterHandler &prm)
   {

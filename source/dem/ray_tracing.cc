@@ -694,8 +694,7 @@ RayTracingSolver<dim>::solve()
 
   while (simulation_control->integrate())
     {
-      pcout << "Remaining photon : " << photon_handler.n_global_particles()
-            << std::endl;
+      simulation_control->print_progression(pcout);
 
       // Load balancing (if needed)
       load_balance();
