@@ -31,7 +31,7 @@ Lethe is named after the river of forgetfulness, which, according to
 > The shades of the dead were required to drink the waters of the Lethe
 > in order to forget their earthly life.
 
-Lethe is described [here](https://doi.org/10.1016/j.softx.2020.100579).
+Lethe is described [here](https://doi.org/10.1016/j.cpc.2025.109880).
 It originally began as a weekend project, but slowly grew into a CFD, DEM and CFD-DEM
 software used in actual research. Lethe is under active development. 
 
