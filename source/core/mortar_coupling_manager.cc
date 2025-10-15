@@ -766,8 +766,8 @@ CouplingOperator<dim, Number>::CouplingOperator(
             // same as in the previous loop.
             for (unsigned int ii = 0; ii < indices.size(); ++ii)
               {
-                unsigned int i = indices[ii];
-                unsigned int id_local, id_ghost;
+                const unsigned int i        = indices[ii];
+                unsigned int       id_local = 0, id_ghost = 0;
 
                 if (face->boundary_id() == bid_m)
                   {

@@ -113,7 +113,7 @@ RPTCellReconstruction<dim>::find_unknown_position(
   int              level = 0;
   std::vector<int> cells_indexes, new_cells_indexes;
   Point<dim>       reconstruction_position;
-  double           volume;
+  double           volume               = 0;
   bool             still_new_candidates = true;
   std::string      status;
 
