@@ -507,9 +507,9 @@ RayTracingSolver<dim>::find_intersection(
 
           auto starting_iterator = cell_neighbor_list.begin();
 
-          // The intersection between the photon and the particles in the main cell
-          // is checked when we are looping on the local cells, thus we skip the
-          // main cell when we are looping on the ghost cells.
+          // The intersection between the photon and the particles in the main
+          // cell is checked when we are looping on the local cells, thus we
+          // skip the main cell when we are looping on the ghost cells.
           if constexpr (!move_photon)
             ++starting_iterator;
           for (auto current_neighboring_cell = starting_iterator;
