@@ -226,7 +226,7 @@ namespace Parameters
         method = TimeSteppingMethod::sdirk43;
       else
         {
-          std::runtime_error("Invalid time stepping scheme");
+          AssertThrow(false, ExcMessage("Invalid time stepping scheme"));
         }
       const std::string bdf_startup_string = prm.get("bdf startup method");
       if (bdf_startup_string == "multiple step bdf")
@@ -235,7 +235,7 @@ namespace Parameters
         bdf_startup_method = BDFStartupMethods::initial_solution;
       else
         {
-          std::runtime_error("Invalid bdf startup scheme");
+          AssertThrow(false, ExcMessage("Invalid bdf startup scheme"));
         }
 
       const std::string osv = prm.get("output control");
@@ -245,7 +245,7 @@ namespace Parameters
         output_control = OutputControl::time;
       else
         {
-          std::runtime_error("Invalid output control scheme");
+          AssertThrow(false, ExcMessage("Invalid output control scheme"));
         }
       dt       = prm.get_double("time step");
       time_end = prm.get_double("time end");
@@ -262,9 +262,7 @@ namespace Parameters
 
       output_folder = prm.get("output path");
       output_name   = prm.get("output name");
-      output_name.erase(std::remove(output_name.begin(),
-                                    output_name.end(),
-                                    '/'),
+      output_name.erase(std::ranges::remove(output_name, '/').begin(),
                         output_name.end());
       output_iteration_frequency = prm.get_integer("output frequency");
       output_time_frequency      = prm.get_double("output time frequency");
