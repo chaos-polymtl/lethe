@@ -336,7 +336,7 @@ namespace Parameters
 
   void
   PowerLawParameters::parse_parameters(ParameterHandler    &prm,
-                                       const Dimensionality dimensions)
+                                       const Dimensionality &dimensions)
   {
     prm.enter_subsection("power-law");
     {
