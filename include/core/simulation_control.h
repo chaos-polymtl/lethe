@@ -471,9 +471,9 @@ public:
 
   void
   set_assembly_method(
-    const Parameters::SimulationControl::TimeSteppingMethod method)
+    const Parameters::SimulationControl::TimeSteppingMethod a_method)
   {
-    assembly_method = method;
+    assembly_method = a_method;
   }
 
   unsigned int
@@ -590,6 +590,16 @@ public:
   virtual void
   print_progression(const ConditionalOStream &pcout) override;
 
+  /** @brief Indicate if the simulation uses adaptive time stepping or not.
+   *
+   * @return adapt A boolean indicating if the simulation has adaptive time stepping
+   */
+  bool
+  is_adaptive_time_stepping() const override
+  {
+    return adapt;
+  }
+
   /**
    * @brief Proceeds with the simulation until the end condition is reached
    */
@@ -652,9 +662,9 @@ public:
   print_progression(const ConditionalOStream &pcout) override;
 
   /** @brief Indicate if the simulation uses adaptive time stepping or not.
-  *
-  * @return A boolean indicating if the simulation has adaptive time stepping
-  */
+   *
+   * @return A boolean indicating if the simulation has adaptive time stepping
+   */
   bool
   is_adaptive_time_stepping() const override
   {
@@ -704,6 +714,16 @@ public:
    */
   bool
   is_at_end() override;
+
+  /** @brief Indicate if the simulation uses adaptive time stepping or not.
+   *
+   * @return A boolean indicating if the simulation has adaptive time stepping
+   */
+  bool
+  is_adaptive_time_stepping() const override
+  {
+    return false;
+  }
 
   // The particle_handler is a reference the photon handler used during the
   // ray-tracing simulation.
