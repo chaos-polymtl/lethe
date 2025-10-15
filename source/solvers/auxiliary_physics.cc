@@ -1,10 +1,12 @@
+// SPDX-FileCopyrightText: Copyright (c) 2021-2025 The Lethe Authors
+// SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 #include <solvers/auxiliary_physics.h>
 
 template <int dim, typename VectorType>
 void
 AuxiliaryPhysics<dim, VectorType>::serialize_tables_vector(
   const std::vector<OutputStructTableHandler> &table_output_structs,
-  MPI_Comm           mpi_communicator)
+  MPI_Comm                                     mpi_communicator)
 {
   for (const auto &output_table : table_output_structs)
     {
@@ -18,7 +20,7 @@ template <int dim, typename VectorType>
 void
 AuxiliaryPhysics<dim, VectorType>::deserialize_tables_vector(
   std::vector<OutputStructTableHandler> &table_output_structs,
-  MPI_Comm           mpi_communicator)
+  MPI_Comm                               mpi_communicator)
 {
   for (auto &output_table : table_output_structs)
     {

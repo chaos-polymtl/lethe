@@ -148,7 +148,7 @@ public:
    * be serialized/deserialized for a given AuxiliaryPhysics solver.
    *
    * @return Structure containing a vector of references to TableHandler objects
-   * that needs to be serialized/deserialized for a given AuxiliaryPhysics 
+   * that needs to be serialized/deserialized for a given AuxiliaryPhysics
    * solver, and their corresponding file names.
    */
   virtual std::vector<OutputStructTableHandler>
@@ -164,19 +164,19 @@ public:
   void
   serialize_tables_vector(
     const std::vector<OutputStructTableHandler> &table_output_structs,
-    MPI_Comm           mpi_communicator);
+    MPI_Comm                                     mpi_communicator);
 
   /**
    * @brief Deserializes all the TableHandler objects in table_output_structs.
    *
-   * @param[in,out] table_output_structs Vector of structures containing references
-   * to TableHandler objects that needs to be serialized/deserialized for a
-   * given AuxiliaryPhysics solver, and their corresponding file names.
+   * @param[in,out] table_output_structs Vector of structures containing
+   * references to TableHandler objects that needs to be serialized/deserialized
+   * for a given AuxiliaryPhysics solver, and their corresponding file names.
    */
   void
   deserialize_tables_vector(
     std::vector<OutputStructTableHandler> &table_output_structs,
-    MPI_Comm           mpi_communicator);
+    MPI_Comm                               mpi_communicator);
 
   /**
    * @brief Compute the Kelly error estimator used to refine mesh on a auxiliary physic parameter.

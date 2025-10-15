@@ -1136,7 +1136,7 @@ Tracer<dim>::gather_tables()
   std::vector<OutputStructTableHandler> table_output_structs;
 
   std::string prefix =
-      this->simulation_parameters.simulation_control.output_folder;
+    this->simulation_parameters.simulation_control.output_folder;
   std::string suffix = ".checkpoint";
 
   if (this->simulation_parameters.analytical_solution->calculate_error())
@@ -1144,13 +1144,13 @@ Tracer<dim>::gather_tables()
       this->error_table,
       prefix + this->simulation_parameters.analytical_solution->get_filename() +
         "_tracer" + suffix);
-   
+
   if (this->simulation_parameters.post_processing.calculate_tracer_statistics)
     table_output_structs.emplace_back(
       this->statistics_table,
       prefix + this->simulation_parameters.post_processing.tracer_output_name +
         suffix);
-  
+
   return table_output_structs;
 }
 
@@ -1171,8 +1171,8 @@ Tracer<dim>::write_checkpoint()
     }
   solution_transfer->prepare_for_serialization(sol_set_transfer);
 
-  // Serialize all post-processing tables that are currently used with the Tracer
-  // solver
+  // Serialize all post-processing tables that are currently used with the
+  // Tracer solver
   const std::vector<OutputStructTableHandler> &table_output_structs =
     this->gather_tables();
   this->serialize_tables_vector(table_output_structs, mpi_communicator);
@@ -1207,8 +1207,8 @@ Tracer<dim>::read_checkpoint()
       previous_solutions[i] = distributed_previous_solutions[i];
     }
 
-  // Deserialize all post-processing tables that are currently used with the Tracer
-  // solver
+  // Deserialize all post-processing tables that are currently used with the
+  // Tracer solver
   std::vector<OutputStructTableHandler> table_output_structs =
     this->gather_tables();
   this->deserialize_tables_vector(table_output_structs, mpi_communicator);

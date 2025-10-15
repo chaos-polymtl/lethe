@@ -2181,19 +2181,19 @@ VolumeOfFluid<dim>::gather_tables()
   if (this->simulation_parameters.post_processing.calculate_mass_conservation)
     table_output_structs.emplace_back(
       this->table_monitoring_vof,
-      prefix + 
-      this->simulation_parameters.post_processing.mass_conservation_output_name +
+      prefix +
+        this->simulation_parameters.post_processing
+          .mass_conservation_output_name +
         suffix);
 
   if (this->simulation_parameters.post_processing.calculate_barycenter)
     table_output_structs.emplace_back(
       this->table_barycenter,
-       prefix +
+      prefix +
         this->simulation_parameters.post_processing.barycenter_output_name +
-        suffix);     
+        suffix);
 
   return table_output_structs;
-
 }
 
 template <int dim>
@@ -2261,7 +2261,7 @@ VolumeOfFluid<dim>::read_checkpoint()
   std::vector<OutputStructTableHandler> table_output_structs =
     this->gather_tables();
   this->deserialize_tables_vector(table_output_structs, mpi_communicator);
-  
+
   if (this->simulation_parameters.multiphysics.vof_parameters
         .regularization_method.sharpening.type ==
       Parameters::SharpeningType::adaptive)

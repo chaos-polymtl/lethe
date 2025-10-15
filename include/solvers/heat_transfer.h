@@ -255,8 +255,8 @@ public:
    * be serialized/deserialized for the Heat Transfer solver.
    *
    * @return Structure containing a vector of references to TableHandler objects
-   * that needs to be serialized/deserialized for the Heat Transfer solver, and their 
-   * corresponding file names.
+   * that needs to be serialized/deserialized for the Heat Transfer solver, and
+   * their corresponding file names.
    */
   std::vector<OutputStructTableHandler>
   gather_tables() override;

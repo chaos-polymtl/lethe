@@ -1024,7 +1024,6 @@ CahnHilliard<dim>::read_checkpoint()
   std::vector<OutputStructTableHandler> table_output_structs =
     this->gather_tables();
   this->deserialize_tables_vector(table_output_structs, mpi_communicator);
-
 }
 
 
