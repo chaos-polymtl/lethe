@@ -227,7 +227,7 @@ namespace Parameters
     static void
     declare_parameters(ParameterHandler &prm);
     void
-    parse_parameters(ParameterHandler &prm, const Dimensionality dimensions);
+    parse_parameters(ParameterHandler &prm, const Dimensionality &dimensions);
   };
 
   /**
@@ -271,7 +271,7 @@ namespace Parameters
     static void
     declare_parameters(ParameterHandler &prm);
     void
-    parse_parameters(ParameterHandler &prm, const Dimensionality dimensions);
+    parse_parameters(ParameterHandler &prm, const Dimensionality &dimensions);
   };
 
   /**
@@ -284,9 +284,9 @@ namespace Parameters
     PowerLawParameters powerlaw_parameters;
 
     void
-    declare_parameters(ParameterHandler &prm);
+    declare_parameters(ParameterHandler &prm) const;
     void
-    parse_parameters(ParameterHandler &prm, const Dimensionality dimensions);
+    parse_parameters(ParameterHandler &prm, const Dimensionality &dimensions);
   };
 
   /**
@@ -304,7 +304,7 @@ namespace Parameters
     static void
     declare_parameters(ParameterHandler &prm);
     void
-    parse_parameters(ParameterHandler &prm, const Dimensionality dimensions);
+    parse_parameters(ParameterHandler &prm, const Dimensionality &dimensions);
   };
 
   /**
@@ -323,7 +323,7 @@ namespace Parameters
     static void
     declare_parameters(ParameterHandler &prm);
     void
-    parse_parameters(ParameterHandler &prm, const Dimensionality dimensions);
+    parse_parameters(ParameterHandler &prm, const Dimensionality &dimensions);
   };
 
   /**
@@ -342,7 +342,7 @@ namespace Parameters
     static void
     declare_parameters(ParameterHandler &prm);
     void
-    parse_parameters(ParameterHandler &prm, const Dimensionality dimensions);
+    parse_parameters(ParameterHandler &prm, const Dimensionality &dimensions);
   };
 
   /**
@@ -371,7 +371,7 @@ namespace Parameters
      *
      * @param[in,out] prm The ParameterHandler.
      */
-    void
+    static void
     declare_parameters(ParameterHandler &prm);
     void
     /**
@@ -382,8 +382,8 @@ namespace Parameters
      * @param[in] dimensions The Dimensionality object controling the
      * fundamental dimensions (length, time, mass, temperature) of the problem.
      */
-    parse_parameters(ParameterHandler                &prm,
-                     const Parameters::Dimensionality dimensions);
+    parse_parameters(const ParameterHandler                &prm,
+                     const Parameters::Dimensionality &dimensions);
   };
 
   /**
@@ -400,7 +400,7 @@ namespace Parameters
      *
      * @param[in,out] prm The ParameterHandler.
      */
-    void
+    static void
     declare_parameters(ParameterHandler &prm);
 
     /**
@@ -412,8 +412,8 @@ namespace Parameters
      * fundamental dimensions (length, time, mass, temperature) of the problem.
      */
     void
-    parse_parameters(ParameterHandler                &prm,
-                     const Parameters::Dimensionality dimensions);
+    parse_parameters(const ParameterHandler                &prm,
+                     const Parameters::Dimensionality &dimensions);
   };
 
 
@@ -431,12 +431,12 @@ namespace Parameters
     void
     declare_parameters(ParameterHandler  &prm,
                        const std::string &material_prefix,
-                       unsigned int       id);
+                       unsigned int       id) const;
     void
     parse_parameters(ParameterHandler    &prm,
                      const std::string   &material_prefix,
                      const unsigned int   id,
-                     const Dimensionality dimensions);
+                     const Dimensionality &dimensions);
 
     // Kinematic viscosity (nu = mu/rho) in units of L^2/s
     double kinematic_viscosity;
@@ -569,7 +569,7 @@ namespace Parameters
      * @param[in] id The material id.
      */
     void
-    declare_parameters(ParameterHandler &prm, unsigned int id);
+    declare_parameters(ParameterHandler &prm, unsigned int id) const;
 
     /**
      * @brief Parse the parameters.
@@ -584,7 +584,7 @@ namespace Parameters
     void
     parse_parameters(ParameterHandler                &prm,
                      const unsigned int               id,
-                     const Parameters::Dimensionality dimensions);
+                     const Parameters::Dimensionality &dimensions);
   };
 
   /**
@@ -629,7 +629,7 @@ namespace Parameters
     declare_parameters(ParameterHandler &prm);
     void
     parse_parameters(ParameterHandler    &prm,
-                     const Dimensionality dimensions = Dimensionality());
+                     const Dimensionality &dimensions = Dimensionality());
   };
 
   /**
@@ -705,7 +705,7 @@ namespace Parameters
      * @param[in,out] prm ParameterHandler object.
      *
      */
-    void
+    static void
     declare_default_entries(ParameterHandler &prm);
 
     /**
@@ -718,7 +718,7 @@ namespace Parameters
      * numbering starts at 0.
      */
     void
-    parse_constraint_parameters(ParameterHandler  &prm,
+    parse_constraint_parameters(const ParameterHandler  &prm,
                                 const unsigned int constraint_id);
   };
 

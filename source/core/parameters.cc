@@ -4,7 +4,6 @@
 #include <core/parameters.h>
 #include <core/utilities.h>
 
-#include <deal.II/base/conditional_ostream.h>
 #include <deal.II/base/exceptions.h>
 
 DeclException2(
@@ -376,7 +375,7 @@ namespace Parameters
 
   void
   CarreauParameters::parse_parameters(ParameterHandler    &prm,
-                                      const Dimensionality dimensions)
+                                      const Dimensionality &dimensions)
   {
     prm.enter_subsection("carreau");
     {
@@ -400,7 +399,7 @@ namespace Parameters
   }
 
   void
-  NonNewtonian::declare_parameters(ParameterHandler &prm)
+  NonNewtonian::declare_parameters(ParameterHandler &prm) const
   {
     prm.enter_subsection("non newtonian");
     {
@@ -412,7 +411,7 @@ namespace Parameters
 
   void
   NonNewtonian::parse_parameters(ParameterHandler    &prm,
-                                 const Dimensionality dimensions)
+                                 const Dimensionality &dimensions)
   {
     prm.enter_subsection("non newtonian");
     {
@@ -454,7 +453,7 @@ namespace Parameters
 
   void
   ImmersedSolidTanhParameters::parse_parameters(ParameterHandler    &prm,
-                                                const Dimensionality dimensions)
+                                                const Dimensionality &dimensions)
   {
     prm.enter_subsection("immersed solid tanh");
     {
@@ -506,7 +505,7 @@ namespace Parameters
   void
   ImmersedSolidGaussianParameters::parse_parameters(
     ParameterHandler    &prm,
-    const Dimensionality dimensions)
+    const Dimensionality &dimensions)
   {
     prm.enter_subsection("immersed solid gaussian");
     {
@@ -556,7 +555,7 @@ namespace Parameters
   void
   IsothermalIdealGasDensityParameters::parse_parameters(
     ParameterHandler    &prm,
-    const Dimensionality dimensions)
+    const Dimensionality &dimensions)
   {
     prm.enter_subsection("isothermal_ideal_gas");
     {
@@ -608,8 +607,8 @@ namespace Parameters
 
   void
   SurfaceTensionParameters::parse_parameters(
-    ParameterHandler                &prm,
-    const Parameters::Dimensionality dimensions)
+    const ParameterHandler                &prm,
+    const Parameters::Dimensionality &dimensions)
   {
     surface_tension_coefficient = prm.get_double("surface tension coefficient");
     surface_tension_coefficient *= dimensions.surface_tension_scaling;
@@ -639,8 +638,8 @@ namespace Parameters
 
   void
   MobilityCahnHilliardParameters::parse_parameters(
-    ParameterHandler                &prm,
-    const Parameters::Dimensionality dimensions)
+    const ParameterHandler                &prm,
+    const Parameters::Dimensionality &dimensions)
   {
     mobility_cahn_hilliard_constant =
       prm.get_double("cahn hilliard mobility constant");
@@ -772,7 +771,7 @@ namespace Parameters
   template <int dim>
   void
   ConstrainSolidDomain<dim>::parse_constraint_parameters(
-    dealii::ParameterHandler &prm,
+    const dealii::ParameterHandler &prm,
     const unsigned int        constraint_id)
   {
     this->fluid_ids[constraint_id] = prm.get_integer("fluid id");
@@ -872,7 +871,7 @@ namespace Parameters
 
   void
   PhaseChange::parse_parameters(ParameterHandler    &prm,
-                                const Dimensionality dimensions)
+                                const Dimensionality &dimensions)
   {
     prm.enter_subsection("phase change");
     {
@@ -1058,7 +1057,7 @@ namespace Parameters
 
   void
   PhysicalProperties::parse_parameters(ParameterHandler    &prm,
-                                       const Dimensionality dimensions)
+                                       const Dimensionality &dimensions)
   {
     prm.enter_subsection("physical properties");
     {
@@ -1114,7 +1113,7 @@ namespace Parameters
   void
   Material::declare_parameters(ParameterHandler  &prm,
                                const std::string &material_prefix,
-                               unsigned int       id)
+                               const unsigned int       id) const
   {
     prm.enter_subsection(material_prefix + " " +
                          Utilities::int_to_string(id, 1));
@@ -1247,7 +1246,7 @@ namespace Parameters
   Material::parse_parameters(ParameterHandler                &prm,
                              const std::string               &material_prefix,
                              const unsigned int               id,
-                             const Parameters::Dimensionality dimensions)
+                             const Parameters::Dimensionality &dimensions)
   {
     prm.enter_subsection(material_prefix + " " +
                          Utilities::int_to_string(id, 1));
@@ -1399,7 +1398,7 @@ namespace Parameters
 
   void
   MaterialInteractions::declare_parameters(ParameterHandler &prm,
-                                           unsigned int      id)
+                                           const unsigned int      id) const
   {
     prm.enter_subsection("material interaction " +
                          Utilities::int_to_string(id, 1));
@@ -1485,7 +1484,7 @@ namespace Parameters
   MaterialInteractions::parse_parameters(
     ParameterHandler                &prm,
     unsigned int                     id,
-    const Parameters::Dimensionality dimensions)
+    const Parameters::Dimensionality &dimensions)
   {
     prm.enter_subsection("material interaction " +
                          Utilities::int_to_string(id, 1));
@@ -3671,7 +3670,7 @@ namespace Parameters
           "print DEM",
           "true",
           Patterns::Bool(),
-          "Bool to define if particles' informations are printed on the terminal when particles' time-step is finished");
+          "Bool to define if particles' information are printed on the terminal when particles' time-step is finished");
         prm.declare_entry(
           "enable extra sharp interface vtu output field",
           "false",
@@ -4157,7 +4156,7 @@ namespace Parameters
         "recoil pressure coefficient",
         "0.56",
         Patterns::Double(),
-        "Recoil pressure coefficient corresponding to the factor applied to the saturation pressure to compute the recoil pressure in an out of equilibrium evaportation");
+        "Recoil pressure coefficient corresponding to the factor applied to the saturation pressure to compute the recoil pressure in an out of equilibrium evaporation");
       prm.declare_entry("molar mass",
                         "1.0",
                         Patterns::Double(),
