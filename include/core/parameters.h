@@ -247,7 +247,7 @@ namespace Parameters
     static void
     declare_parameters(ParameterHandler &prm);
     void
-    parse_parameters(ParameterHandler &prm, const Dimensionality dimensions);
+    parse_parameters(ParameterHandler &prm, const Dimensionality &dimensions);
   };
 
   /**

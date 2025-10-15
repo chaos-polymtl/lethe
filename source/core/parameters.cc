@@ -652,7 +652,7 @@ namespace Parameters
   void
   ConstrainSolidDomain<dim>::declare_parameters(
     dealii::ParameterHandler &prm,
-    const unsigned int        number_of_constraints)
+    const unsigned int        max_number_of_constraints)
   {
     prm.enter_subsection("constrain stasis");
     {
@@ -687,13 +687,13 @@ namespace Parameters
         "Number of solid constraints (maximum of 1 per fluid).");
 
       // Resize vectors
-      this->fluid_ids.resize(number_of_constraints);
-      this->filtered_phase_fraction_tolerance.resize(number_of_constraints);
-      this->temperature_min_values.resize(number_of_constraints);
-      this->temperature_max_values.resize(number_of_constraints);
+      this->fluid_ids.resize(max_number_of_constraints);
+      this->filtered_phase_fraction_tolerance.resize(max_number_of_constraints);
+      this->temperature_min_values.resize(max_number_of_constraints);
+      this->temperature_max_values.resize(max_number_of_constraints);
 
       // Declare default entries
-      for (unsigned int c_id = 0; c_id < number_of_constraints; ++c_id)
+      for (unsigned int c_id = 0; c_id < max_number_of_constraints; ++c_id)
         {
           prm.enter_subsection("constraint " + std::to_string(c_id));
           {
@@ -1581,11 +1581,11 @@ namespace Parameters
               surface_tension_parameters.parse_parameters(prm, dimensions);
             }
           else
-            throw(std::runtime_error(
-              "Invalid surface tension model. The choices are <constant|linear|phase change>."));
-          std::pair<std::pair<unsigned int, unsigned int>, SurfaceTensionModel>
-            fluid_solid_surface_tension_interaction(fluid_solid_interaction,
-                                                    surface_tension_model);
+            AssertThrow(
+              false,
+              ExcMessage(
+                "Invalid surface tension model. The choices are <constant|linear|phase change>."));
+
           prm.leave_subsection();
         }
     }
@@ -2996,12 +2996,13 @@ namespace Parameters
         mg_smoother_iterations = prm.get_integer("mg smoother iterations");
         mg_smoother_relaxation = prm.get_double("mg smoother relaxation");
 
-        const std::string mg_smoother_preconditioner_type =
+        const std::string mg_smoother_preconditioner_type_str =
           prm.get("mg smoother preconditioner type");
-        if (mg_smoother_preconditioner_type == "inverse diagonal")
+        if (mg_smoother_preconditioner_type_str == "inverse diagonal")
           this->mg_smoother_preconditioner_type =
             MultigridSmootherPreconditionerType::InverseDiagonal;
-        else if (mg_smoother_preconditioner_type == "additive schwarz method")
+        else if (mg_smoother_preconditioner_type_str ==
+                 "additive schwarz method")
           this->mg_smoother_preconditioner_type =
             MultigridSmootherPreconditionerType::AdditiveSchwarzMethod;
         else
@@ -3038,27 +3039,28 @@ namespace Parameters
 
         mg_use_fe_q_iso_q1 = prm.get_bool("mg coarse grid use fe q iso q1");
 
-        const std::string mg_coarsening_type = prm.get("mg coarsening type");
-        if (mg_coarsening_type == "h")
+        const std::string mg_coarsening_type_str =
+          prm.get("mg coarsening type");
+        if (mg_coarsening_type_str == "h")
           this->mg_coarsening_type = MultigridCoarseningSequenceType::h;
-        else if (mg_coarsening_type == "p")
+        else if (mg_coarsening_type_str == "p")
           this->mg_coarsening_type = MultigridCoarseningSequenceType::p;
-        else if (mg_coarsening_type == "hp")
+        else if (mg_coarsening_type_str == "hp")
           this->mg_coarsening_type = MultigridCoarseningSequenceType::hp;
-        else if (mg_coarsening_type == "ph")
+        else if (mg_coarsening_type_str == "ph")
           this->mg_coarsening_type = MultigridCoarseningSequenceType::ph;
         else
           AssertThrow(false, ExcNotImplemented());
 
-        const std::string mg_p_coarsening_type =
+        const std::string mg_p_coarsening_type_str =
           prm.get("mg p coarsening type");
-        if (mg_p_coarsening_type == "decrease by one")
+        if (mg_p_coarsening_type_str == "decrease by one")
           this->mg_p_coarsening_type = MGTransferGlobalCoarseningTools::
             PolynomialCoarseningSequenceType::decrease_by_one;
-        else if (mg_p_coarsening_type == "bisect")
+        else if (mg_p_coarsening_type_str == "bisect")
           this->mg_p_coarsening_type = MGTransferGlobalCoarseningTools::
             PolynomialCoarseningSequenceType::bisect;
-        else if (mg_p_coarsening_type == "go to one")
+        else if (mg_p_coarsening_type_str == "go to one")
           this->mg_p_coarsening_type = MGTransferGlobalCoarseningTools::
             PolynomialCoarseningSequenceType::go_to_one;
         else
@@ -3965,12 +3967,10 @@ namespace Parameters
             std::string              inertia_str = prm.get("inertia");
             std::vector<std::string> inertia_str_list(
               Utilities::split_string_list(inertia_str, ";"));
-            std::vector<double> inertia_list =
+            const std::vector<double> inertia_list =
               Utilities::string_to_double(inertia_str_list);
             if (inertia_str_list.size() == 9)
               {
-                std::vector<double> inertia_list =
-                  Utilities::string_to_double(inertia_str_list);
                 particles[i].inertia[0][0] = inertia_list[0];
                 particles[i].inertia[0][1] = inertia_list[1];
                 particles[i].inertia[0][2] = inertia_list[2];
@@ -3985,8 +3985,6 @@ namespace Parameters
               {
                 // If only one inertia value is given, we assume that the
                 // inertia is uniform in all axes.
-                std::vector<double> inertia_list =
-                  Utilities::string_to_double(inertia_str_list);
                 particles[i].inertia[0][0] = inertia_list[0];
                 particles[i].inertia[0][1] = 0;
                 particles[i].inertia[0][2] = 0;
