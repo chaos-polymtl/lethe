@@ -300,7 +300,7 @@ $(document).ready(function() { init_codefold(0); });
 <div class="line"><a id="l00200" name="l00200"></a><span class="lineno">  200</span>    DoFTools::locally_owned_dofs_per_subdomain(dof_handler);</div>
 <div class="line"><a id="l00201" name="l00201"></a><span class="lineno">  201</span> </div>
 <div class="line"><a id="l00202" name="l00202"></a><span class="lineno">  202</span>  <span class="comment">// Get the DoFs owned by each process</span></div>
-<div class="line"><a id="l00203" name="l00203"></a><span class="lineno">  203</span>  <span class="keyword">const</span> IndexSet locally_owned_dofs =</div>
+<div class="line"><a id="l00203" name="l00203"></a><span class="lineno">  203</span>  <span class="keyword">const</span> IndexSet &amp;locally_owned_dofs =</div>
 <div class="line"><a id="l00204" name="l00204"></a><span class="lineno">  204</span>    locally_owned_dofs_per_proc[Utilities::MPI::this_mpi_process(</div>
 <div class="line"><a id="l00205" name="l00205"></a><span class="lineno">  205</span>      mpi_communicator)];</div>
 <div class="line"><a id="l00206" name="l00206"></a><span class="lineno">  206</span> </div>
