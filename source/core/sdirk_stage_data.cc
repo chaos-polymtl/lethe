@@ -58,7 +58,7 @@ sdirk_table(const Parameters::SimulationControl::TimeSteppingMethod method)
 
       // gamma is a constant coefficient chosen to ensure the method is stable
       // and consistent
-      const double gamma = 0.4358665215;
+      constexpr double gamma = 0.4358665215;
 
       table.A.reinit(3, 3);
       table.A(0, 0) = gamma;
@@ -90,7 +90,7 @@ sdirk_table(const Parameters::SimulationControl::TimeSteppingMethod method)
 
       // gamma is a constant coefficient chosen to ensure the method is stable
       // and consistent const double gamma = 0.128886400515;
-      const double gamma = 1.068579021301629;
+      constexpr double gamma = 1.068579021301629;
 
       table.A.reinit(3, 3);
       table.A(0, 0) = gamma;
@@ -117,7 +117,6 @@ sdirk_table(const Parameters::SimulationControl::TimeSteppingMethod method)
   else
     {
       AssertThrow(false, ExcMessage("Unknown SDIRK method in sdirk_table()."));
-      return table;
     }
 }
 
