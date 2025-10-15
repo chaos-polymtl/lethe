@@ -267,7 +267,7 @@ public:
   /**
    * @brief print_progress Function that prints the current progress status of the simulation
    *
-   * @param[in] pcout the ConditionalOSStream that is use to write
+   * @param[in] pcout Parallel cout used to print the information
    */
   virtual void
   print_progression(const ConditionalOStream &pcout) = 0;
@@ -587,6 +587,11 @@ protected:
 public:
   SimulationControlTransient(const Parameters::SimulationControl &param);
 
+  /**
+   * @brief print_progress Function that prints the current progress status of the simulation
+   *
+   * @param[in] pcout Parallel cout used to print the information
+   */
   virtual void
   print_progression(const ConditionalOStream &pcout) override;
 
@@ -649,6 +654,11 @@ class SimulationControlTransientDEM : public SimulationControlTransient
 public:
   SimulationControlTransientDEM(const Parameters::SimulationControl &param);
 
+  /**
+   * @brief print_progress Function that prints the current progress status of the simulation
+   *
+   * @param[in] pcout Parallel cout used to print the information
+   */
   virtual void
   print_progression(const ConditionalOStream &pcout) override;
 };
@@ -658,6 +668,11 @@ class SimulationControlSteady : public SimulationControl
 public:
   SimulationControlSteady(const Parameters::SimulationControl &param);
 
+  /**
+   * @brief print_progress Function that prints the current progress status of the simulation
+   *
+   * @param[in] pcout Parallel cout used to print the information
+   */
   virtual void
   print_progression(const ConditionalOStream &pcout) override;
 
@@ -689,6 +704,11 @@ class SimulationControlAdjointSteady : public SimulationControlTransient
 public:
   SimulationControlAdjointSteady(const Parameters::SimulationControl &param);
 
+  /**
+   * @brief print_progress Function that prints the current progress status of the simulation
+   *
+   * @param[in] pcout Parallel cout used to print the information
+   */
   virtual void
   print_progression(const ConditionalOStream &pcout) override;
 
@@ -725,12 +745,17 @@ public:
     return false;
   }
 
-  // The particle_handler is a reference the photon handler used during the
-  // ray-tracing simulation.
-  Particles::ParticleHandler<3> &particle_handler;
-
+  /**
+   * @brief print_progress Function that prints the current progress status of the simulation
+   *
+   * @param[in] pcout Parallel cout used to print the information
+   */
   void
   print_progression(const ConditionalOStream &pcout) override;
+
+  // The particle_handler is a reference the photon handler used during the
+  // ray-tracing simulation.
+  Particles::ParticleHandler<3> &photon_handler;
 };
 
 #endif
