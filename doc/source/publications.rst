@@ -7,6 +7,8 @@ This section regroups the peer-reviewed journal articles that **describe** core 
 2025
 ----
 
+* `A. Alphonius, L. Barbeau, B. Blais, O. Gaboriault, O. Guévremont, J. Lamouche, P. Laurentin, O. Marquis, P. Munch, V. Oliveira Ferreira, H. Papillon-Laroche, P. A. Patience, L. Prieto Saavedra, M. Vaillant, Lethe 1.0: An Open-Source High-Performance and High-Order Computational Fluid Dynamics Software for Single and Multiphase Flows. Computer Physics Communications 109880. <https://doi.org/10.1016/j.cpc.2025.109880>`_
+
 * `G. Mirakhori, J. Doucet, S. Chidami, B. Blais, and J. Chaouki, "AI-enhanced radioactive particle tracking: A practical methodology for accelerating industrial process development", Chemical Engineering Science, 2025 <https://doi.org/10.1016/j.ces.2025.122173>`_.
 
 * `L. Prieto Saavedra, J. Archambault, P. Munch, and B. Blais, "An implicit large-eddy simulation study of the turbulent Taylor-Couette flow with an inner rotating cylinder", Journal of Turbulence, 2025 <http://dx.doi.org/10.1080/14685248.2025.2524336>`_.
@@ -66,4 +68,4 @@ Preprints
 
 This section regroups preprints of journal articles already submitted, but which are still under review.
 
-* `A. Alphonius, L. Barbeau, B. Blais, O. Gaboriault, O. Guévremont, J. Lamouche, P. Laurentin, O. Marquis, P. Munch, V. Oliveira Ferreira, H. Papillon-Laroche, P. A. Patience, L. Prieto Saavedra, M. Vaillant, Lethe 1.0: An Open-Source High-Performance and High-Order Computational Fluid Dynamics Software for Single and Multiphase Flows. SSRN 5090483. <https://dx.doi.org/10.2139/ssrn.5090483>`_
+* `O. Gaboriault, A. Timercan, R. Pelletier, L.-P. Lefebvre, D. Melançon, and B. Blais, “Increase in packing density during multi-layer powder spreading: An experimental and numerical study,” arXiv preprint arXiv:2509.26402, 2025. <https://arxiv.org/abs/2509.26402>`_
