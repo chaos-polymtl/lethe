@@ -334,7 +334,7 @@ namespace Parameters
   }
 
   void
-  PowerLawParameters::parse_parameters(ParameterHandler    &prm,
+  PowerLawParameters::parse_parameters(ParameterHandler     &prm,
                                        const Dimensionality &dimensions)
   {
     prm.enter_subsection("power-law");
@@ -374,7 +374,7 @@ namespace Parameters
   }
 
   void
-  CarreauParameters::parse_parameters(ParameterHandler    &prm,
+  CarreauParameters::parse_parameters(ParameterHandler     &prm,
                                       const Dimensionality &dimensions)
   {
     prm.enter_subsection("carreau");
@@ -410,7 +410,7 @@ namespace Parameters
   }
 
   void
-  NonNewtonian::parse_parameters(ParameterHandler    &prm,
+  NonNewtonian::parse_parameters(ParameterHandler     &prm,
                                  const Dimensionality &dimensions)
   {
     prm.enter_subsection("non newtonian");
@@ -452,8 +452,9 @@ namespace Parameters
   }
 
   void
-  ImmersedSolidTanhParameters::parse_parameters(ParameterHandler    &prm,
-                                                const Dimensionality &dimensions)
+  ImmersedSolidTanhParameters::parse_parameters(
+    ParameterHandler     &prm,
+    const Dimensionality &dimensions)
   {
     prm.enter_subsection("immersed solid tanh");
     {
@@ -504,7 +505,7 @@ namespace Parameters
 
   void
   ImmersedSolidGaussianParameters::parse_parameters(
-    ParameterHandler    &prm,
+    ParameterHandler     &prm,
     const Dimensionality &dimensions)
   {
     prm.enter_subsection("immersed solid gaussian");
@@ -554,7 +555,7 @@ namespace Parameters
 
   void
   IsothermalIdealGasDensityParameters::parse_parameters(
-    ParameterHandler    &prm,
+    ParameterHandler     &prm,
     const Dimensionality &dimensions)
   {
     prm.enter_subsection("isothermal_ideal_gas");
@@ -607,7 +608,7 @@ namespace Parameters
 
   void
   SurfaceTensionParameters::parse_parameters(
-    const ParameterHandler                &prm,
+    const ParameterHandler           &prm,
     const Parameters::Dimensionality &dimensions)
   {
     surface_tension_coefficient = prm.get_double("surface tension coefficient");
@@ -638,7 +639,7 @@ namespace Parameters
 
   void
   MobilityCahnHilliardParameters::parse_parameters(
-    const ParameterHandler                &prm,
+    const ParameterHandler           &prm,
     const Parameters::Dimensionality &dimensions)
   {
     mobility_cahn_hilliard_constant =
@@ -772,7 +773,7 @@ namespace Parameters
   void
   ConstrainSolidDomain<dim>::parse_constraint_parameters(
     const dealii::ParameterHandler &prm,
-    const unsigned int        constraint_id)
+    const unsigned int              constraint_id)
   {
     this->fluid_ids[constraint_id] = prm.get_integer("fluid id");
     this->filtered_phase_fraction_tolerance[constraint_id] =
@@ -870,7 +871,7 @@ namespace Parameters
   }
 
   void
-  PhaseChange::parse_parameters(ParameterHandler    &prm,
+  PhaseChange::parse_parameters(ParameterHandler     &prm,
                                 const Dimensionality &dimensions)
   {
     prm.enter_subsection("phase change");
@@ -1056,7 +1057,7 @@ namespace Parameters
   }
 
   void
-  PhysicalProperties::parse_parameters(ParameterHandler    &prm,
+  PhysicalProperties::parse_parameters(ParameterHandler     &prm,
                                        const Dimensionality &dimensions)
   {
     prm.enter_subsection("physical properties");
@@ -1113,7 +1114,7 @@ namespace Parameters
   void
   Material::declare_parameters(ParameterHandler  &prm,
                                const std::string &material_prefix,
-                               const unsigned int       id) const
+                               const unsigned int id) const
   {
     prm.enter_subsection(material_prefix + " " +
                          Utilities::int_to_string(id, 1));
@@ -1243,9 +1244,9 @@ namespace Parameters
   }
 
   void
-  Material::parse_parameters(ParameterHandler                &prm,
-                             const std::string               &material_prefix,
-                             const unsigned int               id,
+  Material::parse_parameters(ParameterHandler                 &prm,
+                             const std::string                &material_prefix,
+                             const unsigned int                id,
                              const Parameters::Dimensionality &dimensions)
   {
     prm.enter_subsection(material_prefix + " " +
@@ -1397,8 +1398,8 @@ namespace Parameters
   }
 
   void
-  MaterialInteractions::declare_parameters(ParameterHandler &prm,
-                                           const unsigned int      id) const
+  MaterialInteractions::declare_parameters(ParameterHandler  &prm,
+                                           const unsigned int id) const
   {
     prm.enter_subsection("material interaction " +
                          Utilities::int_to_string(id, 1));
@@ -1482,8 +1483,8 @@ namespace Parameters
 
   void
   MaterialInteractions::parse_parameters(
-    ParameterHandler                &prm,
-    unsigned int                     id,
+    ParameterHandler                 &prm,
+    unsigned int                      id,
     const Parameters::Dimensionality &dimensions)
   {
     prm.enter_subsection("material interaction " +
