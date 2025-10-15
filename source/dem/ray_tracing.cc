@@ -322,10 +322,10 @@ RayTracingSolver<dim>::insert_particles_and_photons()
       const unsigned int rem = id % (n_photons_each_directions.at(0) *
                                      n_photons_each_directions.at(1));
       // nth position in the y direction
-      const unsigned int iy  = rem / n_photons_each_directions.at(0);
+      const unsigned int iy = rem / n_photons_each_directions.at(0);
 
       // nth position in the x direction
-      const unsigned int ix  = rem % n_photons_each_directions.at(0);
+      const unsigned int ix = rem % n_photons_each_directions.at(0);
 
       // ID relative to this processor. This is used to write at the write
       // location in each container.
