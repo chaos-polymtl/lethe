@@ -11,25 +11,47 @@ Finished reading triangulation
 *******************************
 250000 photons  were inserted.
 *******************************
+Iteration : 1
 Remaining photon : 250000
+
+Iteration : 2
 Remaining photon : 250000
+
+Iteration : 3
 Remaining photon : 249282
+
+Iteration : 4
 Remaining photon : 248756
+
+Iteration : 5
 Remaining photon : 248132
+
 -->Repartitioning triangulation
 Load balance finished
 Average, minimum and maximum number of photons on the processors are 124066 , 108636 and 139496
 Minimum and maximum number of cells owned by the processors are 316 and 498
+Iteration : 6
 Remaining photon : 243215
+
+Iteration : 7
 Remaining photon : 242645
+
+Iteration : 8
 Remaining photon : 242021
+
+Iteration : 9
 Remaining photon : 241430
+
+Iteration : 10
 Remaining photon : 240762
+
 -->Repartitioning triangulation
 Load balance finished
 Average, minimum and maximum number of photons on the processors are 120381 , 120042 and 120720
 Minimum and maximum number of cells owned by the processors are 316 and 484
+Iteration : 11
 Remaining photon : 240237
+
 x, y, z
 0.983559 0.902001 0.811218
 0.986979 0.901565 0.811873
