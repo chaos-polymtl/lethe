@@ -2,7 +2,7 @@
 Particle Ray Tracing
 =====================
 
-In this subsection, is used when using the ``lethe-particles-ray-tracing`` application. This application simulates the trajectories of photons, or rays, as they propagate through a simulation domain to extract the surface made by particle using the same principal as profilometry. The parameters defined here control the initial conditions for photon insertion, including their starting positions, directions, and any random offsets applied to their trajectories.
+In this subsection, the parameters are used by the ``lethe-particles-ray-tracing`` application. This application simulates the propagation of photons (or rays) through the simulation domain to reconstruct the surface made by particle using the same principles as profilometry. The parameters defined here control the initial conditions for photon insertion, including their starting positions, directions, and any random offsets applied to their trajectories.
 
 .. code-block:: text
 
