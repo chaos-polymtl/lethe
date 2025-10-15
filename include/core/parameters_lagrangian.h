@@ -609,7 +609,7 @@ namespace Parameters
     };
 
     /**
-     * @brief ParticleRayTracing - Defines parameters used to construct particle
+     * @brief Defines parameters used to construct particle
      * ray tracing class.
      */
     template <int dim>
