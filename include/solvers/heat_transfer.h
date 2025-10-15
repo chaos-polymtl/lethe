@@ -251,6 +251,17 @@ public:
   read_checkpoint() override;
 
   /**
+   * @brief Returns a vector of references to TableHandler objects that needs to
+   * be serialized/deserialized for the Heat Transfer solver.
+   *
+   * @return Structure containing a vector of references to TableHandler objects
+   * that needs to be serialized/deserialized for the Heat Transfer solver, and their 
+   * corresponding file names.
+   */
+  std::vector<OutputStructTableHandler>
+  gather_tables() override;
+
+  /**
    * @brief Set up the DofHandler and the degrees of freedom associated with the physics.
    */
   void

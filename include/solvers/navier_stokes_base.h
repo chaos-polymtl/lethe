@@ -878,7 +878,7 @@ protected:
   /**
    * @brief Deserializes all the TableHandler objects in table_output_structs.
    *
-   * @param[in] table_output_structs Vector of structures containing references
+   * @param[in,out] table_output_structs Vector of structures containing references
    * to TableHandler objects that needs to be serialized/deserialized for a
    * given solver, and their corresponding file names.
    */

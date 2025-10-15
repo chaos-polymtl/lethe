@@ -992,9 +992,13 @@ FluidDynamicsNitsche<dim, spacedim>::write_checkpoint()
     }
   // Serialize all post-processing tables that are currently used
   // Serialize the post-processing tables that are additional in this solver
-  const std::vector<OutputStructTableHandler> &table_output_structs_add =
-    this->gather_tables();
-  this->serialize_tables_vector(table_output_structs_add);
+  // There is no need to currently do the following lines because they will be 
+  // executed in the previous call this->FluidDynamicsMatrixBased<spacedim>::
+  // write_checkpoint() which calls this->gather_tables();
+  // const std::vector<OutputStructTableHandler> &table_output_structs_add =
+  //   this->gather_tables();
+  // this->serialize_tables_vector(table_output_structs_add);
+
   // Serialize the default post-processing tables that are members of
   // NavierStokesBase
   const std::vector<OutputStructTableHandler> &table_output_structs =
@@ -1063,14 +1067,33 @@ FluidDynamicsNitsche<dim, spacedim>::read_checkpoint()
     }
   // Deserialize all post-processing tables that are currently used
   // Deserialize the post-processing tables that are particular to this solver
-  std::vector<OutputStructTableHandler> table_output_structs_add =
-    this->gather_tables();
-  this->deserialize_tables_vector(table_output_structs_add);
+  // There is no need to currently do the following lines because they will be 
+  // executed in the previous call this->FluidDynamicsMatrixBased<spacedim>::
+  // read_checkpoint() which calls this->gather_tables();
+  // const std::vector<OutputStructTableHandler> &table_output_structs_add =
+  //   this->gather_tables();
+  // std::vector<OutputStructTableHandler> table_output_structs_add =
+  //   this->gather_tables();
+  // this->deserialize_tables_vector(table_output_structs_add);
+
   // Deserialize the default post-processing tables that are members of
   // NavierStokesBase
   std::vector<OutputStructTableHandler> table_output_structs =
     NavierStokesBase<spacedim, GlobalVectorType, IndexSet>::gather_tables();
   this->deserialize_tables_vector(table_output_structs);
+
+//   for (const auto &table : table_output_structs_add)
+// {
+//   std::string filename = table.table_filename + "_after_checkpoint.txt";
+//   std::ofstream out(filename);
+//   table.table.write_text(out);
+// }
+//   for (const auto &table : table_output_structs)
+// {
+//   std::string filename = table.table_filename + "_after_checkpoint.txt";
+//   std::ofstream out(filename);
+//   table.table.write_text(out);
+// }
 }
 
 

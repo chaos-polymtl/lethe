@@ -214,6 +214,17 @@ public:
   read_checkpoint() override;
 
   /**
+   * @brief Returns a vector of references to TableHandler objects that needs to
+   * be serialized/deserialized for the VOF solver.
+   *
+   * @return Structure containing a vector of references to TableHandler objects
+   * that needs to be serialized/deserialized for the VOF solver, and their 
+   * corresponding file names.
+   */
+  std::vector<OutputStructTableHandler>
+  gather_tables() override;
+
+  /**
    * @brief Sets-up the DofHandler and the degree of freedom associated with the physics.
    */
   void

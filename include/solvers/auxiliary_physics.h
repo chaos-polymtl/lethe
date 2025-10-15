@@ -6,12 +6,12 @@
 
 #include <core/parameters.h>
 #include <core/physics_solver.h>
+#include <core/vector.h>
 
 #include <solvers/output_struct.h>
 #include <solvers/simulation_parameters.h>
 
 #include <deal.II/numerics/data_out.h>
-
 
 /**
  * Au auxiliary physics is defined as a physics that is solved on top of
@@ -142,6 +142,41 @@ public:
    */
   virtual void
   read_checkpoint() = 0;
+
+  /**
+   * @brief Returns a vector of references to TableHandler objects that needs to
+   * be serialized/deserialized for a given AuxiliaryPhysics solver.
+   *
+   * @return Structure containing a vector of references to TableHandler objects
+   * that needs to be serialized/deserialized for a given AuxiliaryPhysics 
+   * solver, and their corresponding file names.
+   */
+  virtual std::vector<OutputStructTableHandler>
+  gather_tables() = 0;
+
+  /**
+   * @brief Serializes all the TableHandler objects in table_output_structs.
+   *
+   * @param[in] table_output_structs Vector of structures containing references
+   * to TableHandler objects that needs to be serialized/deserialized for a
+   * given AuxiliaryPhysics solver, and their corresponding file names.
+   */
+  void
+  serialize_tables_vector(
+    const std::vector<OutputStructTableHandler> &table_output_structs,
+    MPI_Comm           mpi_communicator);
+
+  /**
+   * @brief Deserializes all the TableHandler objects in table_output_structs.
+   *
+   * @param[in,out] table_output_structs Vector of structures containing references
+   * to TableHandler objects that needs to be serialized/deserialized for a
+   * given AuxiliaryPhysics solver, and their corresponding file names.
+   */
+  void
+  deserialize_tables_vector(
+    std::vector<OutputStructTableHandler> &table_output_structs,
+    MPI_Comm           mpi_communicator);
 
   /**
    * @brief Compute the Kelly error estimator used to refine mesh on a auxiliary physic parameter.
