@@ -854,7 +854,7 @@ namespace Parameters
     // "heat_flux_vof_interface", the laser behaves as a surface flux at the
     // interface between fluids (VOF auxiliary physic must be enabled to use
     // this model).
-    enum class LaserType  : std::int8_t
+    enum class LaserType : std::int8_t
     {
       exponential_decay,
       gaussian_heat_flux_vof_interface,

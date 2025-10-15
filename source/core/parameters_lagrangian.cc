@@ -10,193 +10,8 @@ namespace Parameters
   namespace Lagrangian
   {
     void
-    LagrangianPhysicalProperties::declareDefaultEntry(ParameterHandler &prm)
-    {
-      prm.declare_entry("size distribution type",
-                        "uniform",
-                        Patterns::Selection("uniform|normal|custom"),
-                        "Particle size distribution"
-                        "Choices are <uniform|normal|custom>.");
-      prm.declare_entry("diameter",
-                        "0.001",
-                        Patterns::Double(),
-                        "Particle diameter");
-      prm.declare_entry("standard deviation",
-                        "0",
-                        Patterns::Double(),
-                        "Particle size standard deviation");
-      prm.declare_entry("custom diameters",
-                        "0.001 , 0.0005",
-                        Patterns::List(Patterns::Double()),
-                        "Diameter values for a custom distribution");
-      prm.declare_entry(
-        "custom volume fractions",
-        "0.6 , 0.4",
-        Patterns::List(Patterns::Double()),
-        "Probabilities of each diameter of the custom distribution based on the volume fraction");
-      prm.declare_entry(
-        "random seed distribution",
-        "1",
-        Patterns::Integer(),
-        "Seed for generation of random numbers for the size distribution");
-      prm.declare_entry("number of particles",
-                        "0",
-                        Patterns::Integer(),
-                        "Number of particles of this type");
-      prm.declare_entry("density particles",
-                        "1000",
-                        Patterns::Double(),
-                        "Particle density");
-      prm.declare_entry("young modulus particles",
-                        "1000000",
-                        Patterns::Double(),
-                        "Particle Young's modulus");
-      prm.declare_entry("poisson ratio particles",
-                        "0.3",
-                        Patterns::Double(),
-                        "Particle Poisson ratio");
-      prm.declare_entry("restitution coefficient particles",
-                        "0.1",
-                        Patterns::Double(),
-                        "Particle restitution coefficient");
-      prm.declare_entry("friction coefficient particles",
-                        "0.1",
-                        Patterns::Double(),
-                        "Particle friction coefficient");
-      prm.declare_entry("rolling viscous damping particles",
-                        "0.1",
-                        Patterns::Double(),
-                        "Particle rolling viscous damping");
-      prm.declare_entry("rolling friction particles",
-                        "0.1",
-                        Patterns::Double(),
-                        "Particle rolling friction");
-      prm.declare_entry("surface energy particles",
-                        "0.0",
-                        Patterns::Double(),
-                        "Particle surface energy");
-      prm.declare_entry("hamaker constant particles",
-                        "4.e-19",
-                        Patterns::Double(),
-                        "Material Hamaker constant");
-      prm.declare_entry("thermal conductivity particles",
-                        "1",
-                        Patterns::Double(),
-                        "Particle thermal conductivity");
-      prm.declare_entry("specific heat particles",
-                        "1000",
-                        Patterns::Double(),
-                        "Particle specific heat");
-      prm.declare_entry("microhardness particles",
-                        "1.e9",
-                        Patterns::Double(),
-                        "Particle microhardness");
-      prm.declare_entry("surface slope particles",
-                        "0.1",
-                        Patterns::Double(),
-                        "Particle surface slope");
-      prm.declare_entry("surface roughness particles",
-                        "1.e-9",
-                        Patterns::Double(),
-                        "Particle surface roughness");
-      prm.declare_entry("thermal accommodation particles",
-                        "0.7",
-                        Patterns::Double(),
-                        "Particle thermal accommodation");
-      prm.declare_entry("real young modulus particles",
-                        "0.",
-                        Patterns::Double(),
-                        "Particle real Young's modulus");
-    }
-
-    void
-    LagrangianPhysicalProperties::parse_particle_properties(
-      const unsigned int &particle_type,
-      ParameterHandler   &prm)
-    {
-      particle_average_diameter.at(particle_type) = prm.get_double("diameter");
-      particle_size_std.at(particle_type) =
-        prm.get_double("standard deviation");
-      particle_custom_diameter.at(particle_type) =
-        convert_string_to_vector<double>(prm, "custom diameters");
-      particle_custom_probability.at(particle_type) =
-        convert_string_to_vector<double>(prm, "custom volume fractions");
-      seed_for_distributions.push_back(
-        prm.get_integer("random seed distribution"));
-
-      double probability_sum =
-        std::reduce(particle_custom_probability.at(particle_type).begin(),
-                    particle_custom_probability.at(particle_type).end());
-
-      // We make sure that the cumulative probability is equal to 1.
-      if (std::abs(probability_sum - 1.0) > 1.e-5)
-        {
-          throw(std::runtime_error(
-            "Invalid custom volume fraction. The sum of volume fractions should be equal to 1.0 "));
-        }
-      const std::string size_distribution_type_str =
-        prm.get("size distribution type");
-      if (size_distribution_type_str == "uniform")
-        {
-          distribution_type.at(particle_type) = SizeDistributionType::uniform;
-        }
-      else if (size_distribution_type_str == "normal")
-        {
-          distribution_type.at(particle_type) = SizeDistributionType::normal;
-        }
-      else if (size_distribution_type_str == "custom")
-        {
-          distribution_type.at(particle_type) = SizeDistributionType::custom;
-        }
-      else
-        {
-          throw(std::runtime_error(
-            "Invalid size distribution type. Choices are <uniform|normal|custom>."));
-        }
-      number.at(particle_type) = prm.get_integer("number of particles");
-      density_particle.at(particle_type) = prm.get_double("density particles");
-      youngs_modulus_particle.at(particle_type) =
-        prm.get_double("young modulus particles");
-      poisson_ratio_particle.at(particle_type) =
-        prm.get_double("poisson ratio particles");
-      restitution_coefficient_particle.at(particle_type) =
-        prm.get_double("restitution coefficient particles");
-      friction_coefficient_particle.at(particle_type) =
-        prm.get_double("friction coefficient particles");
-      rolling_viscous_damping_coefficient_particle.at(particle_type) =
-        prm.get_double("rolling viscous damping particles");
-      rolling_friction_coefficient_particle.at(particle_type) =
-        prm.get_double("rolling friction particles");
-      surface_energy_particle.at(particle_type) =
-        prm.get_double("surface energy particles");
-      hamaker_constant_particle.at(particle_type) =
-        prm.get_double("hamaker constant particles");
-      thermal_conductivity_particle.at(particle_type) =
-        prm.get_double("thermal conductivity particles");
-      specific_heat_particle.at(particle_type) =
-        prm.get_double("specific heat particles");
-      microhardness_particle.at(particle_type) =
-        prm.get_double("microhardness particles");
-      surface_slope_particle.at(particle_type) =
-        prm.get_double("surface slope particles");
-      surface_roughness_particle.at(particle_type) =
-        prm.get_double("surface roughness particles");
-      thermal_accommodation_particle.at(particle_type) =
-        prm.get_double("thermal accommodation particles");
-      real_youngs_modulus_particle.at(particle_type) =
-        prm.get_double("real young modulus particles");
-      // Only use the real Young's modulus if it is higher than the Young's
-      // modulus
-      if (real_youngs_modulus_particle.at(particle_type) <
-          youngs_modulus_particle.at(particle_type))
-        {
-          real_youngs_modulus_particle.at(particle_type) =
-            youngs_modulus_particle.at(particle_type);
-        }
-    }
-
-    void
-    LagrangianPhysicalProperties::declare_parameters(ParameterHandler &prm)
+    LagrangianPhysicalProperties::declare_parameters(
+      ParameterHandler &prm) const
     {
       prm.enter_subsection("lagrangian physical properties");
       {
@@ -394,63 +209,246 @@ namespace Parameters
     }
 
     void
+    LagrangianPhysicalProperties::declareDefaultEntry(ParameterHandler &prm)
+    {
+      prm.declare_entry("size distribution type",
+                        "uniform",
+                        Patterns::Selection("uniform|normal|custom"),
+                        "Particle size distribution"
+                        "Choices are <uniform|normal|custom>.");
+      prm.declare_entry("diameter",
+                        "0.001",
+                        Patterns::Double(),
+                        "Particle diameter");
+      prm.declare_entry("standard deviation",
+                        "0",
+                        Patterns::Double(),
+                        "Particle size standard deviation");
+      prm.declare_entry("custom diameters",
+                        "0.001 , 0.0005",
+                        Patterns::List(Patterns::Double()),
+                        "Diameter values for a custom distribution");
+      prm.declare_entry(
+        "custom volume fractions",
+        "0.6 , 0.4",
+        Patterns::List(Patterns::Double()),
+        "Probabilities of each diameter of the custom distribution based on the volume fraction");
+      prm.declare_entry(
+        "random seed distribution",
+        "1",
+        Patterns::Integer(),
+        "Seed for generation of random numbers for the size distribution");
+      prm.declare_entry("number of particles",
+                        "0",
+                        Patterns::Integer(),
+                        "Number of particles of this type");
+      prm.declare_entry("density particles",
+                        "1000",
+                        Patterns::Double(),
+                        "Particle density");
+      prm.declare_entry("young modulus particles",
+                        "1000000",
+                        Patterns::Double(),
+                        "Particle Young's modulus");
+      prm.declare_entry("poisson ratio particles",
+                        "0.3",
+                        Patterns::Double(),
+                        "Particle Poisson ratio");
+      prm.declare_entry("restitution coefficient particles",
+                        "0.1",
+                        Patterns::Double(),
+                        "Particle restitution coefficient");
+      prm.declare_entry("friction coefficient particles",
+                        "0.1",
+                        Patterns::Double(),
+                        "Particle friction coefficient");
+      prm.declare_entry("rolling viscous damping particles",
+                        "0.1",
+                        Patterns::Double(),
+                        "Particle rolling viscous damping");
+      prm.declare_entry("rolling friction particles",
+                        "0.1",
+                        Patterns::Double(),
+                        "Particle rolling friction");
+      prm.declare_entry("surface energy particles",
+                        "0.0",
+                        Patterns::Double(),
+                        "Particle surface energy");
+      prm.declare_entry("hamaker constant particles",
+                        "4.e-19",
+                        Patterns::Double(),
+                        "Material Hamaker constant");
+      prm.declare_entry("thermal conductivity particles",
+                        "1",
+                        Patterns::Double(),
+                        "Particle thermal conductivity");
+      prm.declare_entry("specific heat particles",
+                        "1000",
+                        Patterns::Double(),
+                        "Particle specific heat");
+      prm.declare_entry("microhardness particles",
+                        "1.e9",
+                        Patterns::Double(),
+                        "Particle microhardness");
+      prm.declare_entry("surface slope particles",
+                        "0.1",
+                        Patterns::Double(),
+                        "Particle surface slope");
+      prm.declare_entry("surface roughness particles",
+                        "1.e-9",
+                        Patterns::Double(),
+                        "Particle surface roughness");
+      prm.declare_entry("thermal accommodation particles",
+                        "0.7",
+                        Patterns::Double(),
+                        "Particle thermal accommodation");
+      prm.declare_entry("real young modulus particles",
+                        "0.",
+                        Patterns::Double(),
+                        "Particle real Young's modulus");
+    }
+
+    void
+    LagrangianPhysicalProperties::parse_particle_properties(
+      const unsigned int     &particle_type,
+      const ParameterHandler &prm)
+    {
+      particle_average_diameter.at(particle_type) = prm.get_double("diameter");
+      particle_size_std.at(particle_type) =
+        prm.get_double("standard deviation");
+      particle_custom_diameter.at(particle_type) =
+        convert_string_to_vector<double>(prm, "custom diameters");
+      particle_custom_probability.at(particle_type) =
+        convert_string_to_vector<double>(prm, "custom volume fractions");
+      seed_for_distributions.push_back(
+        prm.get_integer("random seed distribution"));
+
+      double probability_sum =
+        std::reduce(particle_custom_probability.at(particle_type).begin(),
+                    particle_custom_probability.at(particle_type).end());
+
+      // We make sure that the cumulative probability is equal to 1.
+      if (std::abs(probability_sum - 1.0) > 1.e-5)
+        {
+          throw(std::runtime_error(
+            "Invalid custom volume fraction. The sum of volume fractions should be equal to 1.0 "));
+        }
+      const std::string size_distribution_type_str =
+        prm.get("size distribution type");
+      if (size_distribution_type_str == "uniform")
+        {
+          distribution_type.at(particle_type) = SizeDistributionType::uniform;
+        }
+      else if (size_distribution_type_str == "normal")
+        {
+          distribution_type.at(particle_type) = SizeDistributionType::normal;
+        }
+      else if (size_distribution_type_str == "custom")
+        {
+          distribution_type.at(particle_type) = SizeDistributionType::custom;
+        }
+      else
+        {
+          throw(std::runtime_error(
+            "Invalid size distribution type. Choices are <uniform|normal|custom>."));
+        }
+      number.at(particle_type) = prm.get_integer("number of particles");
+      density_particle.at(particle_type) = prm.get_double("density particles");
+      youngs_modulus_particle.at(particle_type) =
+        prm.get_double("young modulus particles");
+      poisson_ratio_particle.at(particle_type) =
+        prm.get_double("poisson ratio particles");
+      restitution_coefficient_particle.at(particle_type) =
+        prm.get_double("restitution coefficient particles");
+      friction_coefficient_particle.at(particle_type) =
+        prm.get_double("friction coefficient particles");
+      rolling_viscous_damping_coefficient_particle.at(particle_type) =
+        prm.get_double("rolling viscous damping particles");
+      rolling_friction_coefficient_particle.at(particle_type) =
+        prm.get_double("rolling friction particles");
+      surface_energy_particle.at(particle_type) =
+        prm.get_double("surface energy particles");
+      hamaker_constant_particle.at(particle_type) =
+        prm.get_double("hamaker constant particles");
+      thermal_conductivity_particle.at(particle_type) =
+        prm.get_double("thermal conductivity particles");
+      specific_heat_particle.at(particle_type) =
+        prm.get_double("specific heat particles");
+      microhardness_particle.at(particle_type) =
+        prm.get_double("microhardness particles");
+      surface_slope_particle.at(particle_type) =
+        prm.get_double("surface slope particles");
+      surface_roughness_particle.at(particle_type) =
+        prm.get_double("surface roughness particles");
+      thermal_accommodation_particle.at(particle_type) =
+        prm.get_double("thermal accommodation particles");
+      real_youngs_modulus_particle.at(particle_type) =
+        prm.get_double("real young modulus particles");
+      // Only use the real Young's modulus if it is higher than the Young's
+      // modulus
+      if (real_youngs_modulus_particle.at(particle_type) <
+          youngs_modulus_particle.at(particle_type))
+        {
+          real_youngs_modulus_particle.at(particle_type) =
+            youngs_modulus_particle.at(particle_type);
+        }
+    }
+
+    void
     LagrangianPhysicalProperties::initialize_containers(
-      std::unordered_map<unsigned int, double> &particle_average_diameter,
-      std::unordered_map<unsigned int, double> &particle_size_std,
-      std::vector<SizeDistributionType>        &distribution_type,
+      std::unordered_map<unsigned int, double>              &p_average_diameter,
+      std::unordered_map<unsigned int, double>              &p_size_std,
+      std::vector<SizeDistributionType>                     &dist_type,
+      std::unordered_map<unsigned int, std::vector<double>> &p_custom_diameter,
       std::unordered_map<unsigned int, std::vector<double>>
-        &particle_custom_diameter,
-      std::unordered_map<unsigned int, std::vector<double>>
-                                               &particle_custom_probability,
-      std::vector<unsigned int>                &seed_for_distributions,
-      std::unordered_map<unsigned int, int>    &number,
-      std::unordered_map<unsigned int, double> &density_particle,
-      std::unordered_map<unsigned int, double> &youngs_modulus_particle,
-      std::unordered_map<unsigned int, double> &poisson_ratio_particle,
+                                               &p_custom_probability,
+      std::vector<unsigned int>                &seed_for_dist,
+      std::unordered_map<unsigned int, int>    &number_p,
+      std::unordered_map<unsigned int, double> &density_p,
+      std::unordered_map<unsigned int, double> &youngs_modulus_p,
+      std::unordered_map<unsigned int, double> &poisson_ratio_p,
+      std::unordered_map<unsigned int, double> &restitution_coefficient_p,
+      std::unordered_map<unsigned int, double> &friction_coefficient_p,
       std::unordered_map<unsigned int, double>
-        &restitution_coefficient_particle,
-      std::unordered_map<unsigned int, double> &friction_coefficient_particle,
-      std::unordered_map<unsigned int, double>
-        &rolling_viscous_damping_coefficient_particle,
-      std::unordered_map<unsigned int, double>
-        &rolling_friction_coefficient_particle,
-      std::unordered_map<unsigned int, double> &surface_energy_particle,
-      std::unordered_map<unsigned int, double> &hamaker_constant_particle,
-      std::unordered_map<unsigned int, double> &thermal_conductivity_particle,
-      std::unordered_map<unsigned int, double> &specific_heat_particle,
-      std::unordered_map<unsigned int, double> &microhardness_particle,
-      std::unordered_map<unsigned int, double> &surface_slope_particle,
-      std::unordered_map<unsigned int, double> &surface_roughness_particle,
-      std::unordered_map<unsigned int, double> &thermal_accommodation_particle,
-      std::unordered_map<unsigned int, double> &real_youngs_modulus_particle)
+        &rolling_viscous_damping_coefficient_p,
+      std::unordered_map<unsigned int, double> &rolling_friction_coefficient_p,
+      std::unordered_map<unsigned int, double> &surface_energy_p,
+      std::unordered_map<unsigned int, double> &hamaker_constant_p,
+      std::unordered_map<unsigned int, double> &thermal_conductivity_p,
+      std::unordered_map<unsigned int, double> &specific_heat_p,
+      std::unordered_map<unsigned int, double> &microhardness_p,
+      std::unordered_map<unsigned int, double> &surface_slope_p,
+      std::unordered_map<unsigned int, double> &surface_roughness_p,
+      std::unordered_map<unsigned int, double> &thermal_accommodation_p,
+      std::unordered_map<unsigned int, double> &real_youngs_modulus_p) const
     {
       for (unsigned int counter = 0; counter < particle_type_maximum_number;
            ++counter)
         {
-          particle_average_diameter.insert({counter, 0.});
-          particle_size_std.insert({counter, 0.});
-          distribution_type.push_back(SizeDistributionType::uniform);
-          particle_custom_diameter.insert({counter, {0.}});
-          particle_custom_probability.insert({counter, {1.}});
-          number.insert({counter, 0});
-          density_particle.insert({counter, 0.});
-          youngs_modulus_particle.insert({counter, 0.});
-          poisson_ratio_particle.insert({counter, 0.});
-          restitution_coefficient_particle.insert({counter, 0.});
-          friction_coefficient_particle.insert({counter, 0.});
-          rolling_viscous_damping_coefficient_particle.insert({counter, 0.});
-          rolling_friction_coefficient_particle.insert({counter, 0.});
-          surface_energy_particle.insert({counter, 0.});
-          hamaker_constant_particle.insert({counter, 0.});
-          thermal_conductivity_particle.insert({counter, 0.});
-          specific_heat_particle.insert({counter, 0.});
-          microhardness_particle.insert({counter, 0.});
-          surface_slope_particle.insert({counter, 0.});
-          surface_roughness_particle.insert({counter, 0.});
-          thermal_accommodation_particle.insert({counter, 0.});
-          real_youngs_modulus_particle.insert({counter, 0.});
+          p_average_diameter.insert({counter, 0.});
+          p_size_std.insert({counter, 0.});
+          dist_type.push_back(SizeDistributionType::uniform);
+          p_custom_diameter.insert({counter, {0.}});
+          p_custom_probability.insert({counter, {1.}});
+          number_p.insert({counter, 0});
+          density_p.insert({counter, 0.});
+          youngs_modulus_p.insert({counter, 0.});
+          poisson_ratio_p.insert({counter, 0.});
+          restitution_coefficient_p.insert({counter, 0.});
+          friction_coefficient_p.insert({counter, 0.});
+          rolling_viscous_damping_coefficient_p.insert({counter, 0.});
+          rolling_friction_coefficient_p.insert({counter, 0.});
+          surface_energy_p.insert({counter, 0.});
+          hamaker_constant_p.insert({counter, 0.});
+          thermal_conductivity_p.insert({counter, 0.});
+          specific_heat_p.insert({counter, 0.});
+          microhardness_p.insert({counter, 0.});
+          surface_slope_p.insert({counter, 0.});
+          surface_roughness_p.insert({counter, 0.});
+          thermal_accommodation_p.insert({counter, 0.});
+          real_youngs_modulus_p.insert({counter, 0.});
         }
-      seed_for_distributions.reserve(particle_type_maximum_number);
+      seed_for_dist.reserve(particle_type_maximum_number);
     }
 
     template <int dim>
@@ -1259,54 +1257,7 @@ namespace Parameters
 
     template <int dim>
     void
-    FloatingWalls<dim>::declareDefaultEntry(ParameterHandler &prm)
-    {
-      prm.enter_subsection("point on wall");
-      prm.declare_entry("x", "0.", Patterns::Double(), "X Point on wall");
-      prm.declare_entry("y", "0.", Patterns::Double(), "Y Point on wall");
-      prm.declare_entry("z", "0.", Patterns::Double(), "Z Point on wall");
-      prm.leave_subsection();
-
-      prm.enter_subsection("normal vector");
-      prm.declare_entry("nx", "0.", Patterns::Double(), "X Normal vector wall");
-      prm.declare_entry("ny", "0.", Patterns::Double(), "Y Normal vector wall");
-      prm.declare_entry("nz", "0.", Patterns::Double(), "Z Normal vector wall");
-      prm.leave_subsection();
-
-      prm.declare_entry("start time", "0.", Patterns::Double(), "Start time");
-
-      prm.declare_entry("end time", "0.", Patterns::Double(), "End time");
-    }
-
-    template <int dim>
-    void
-    FloatingWalls<dim>::parse_floating_wall(ParameterHandler &prm)
-    {
-      prm.enter_subsection("point on wall");
-      Point<dim> wall_point;
-      wall_point[0] = prm.get_double("x");
-      wall_point[1] = prm.get_double("y");
-      if (dim == 3)
-        wall_point[2] = prm.get_double("z");
-      this->points_on_walls.push_back(wall_point);
-      prm.leave_subsection();
-
-      prm.enter_subsection("normal vector");
-      Tensor<1, dim> wall_normal;
-      wall_normal[0] = prm.get_double("nx");
-      wall_normal[1] = prm.get_double("ny");
-      if (dim == 3)
-        wall_normal[2] = prm.get_double("nz");
-      this->floating_walls_normal_vectors.push_back(wall_normal);
-      prm.leave_subsection();
-
-      time_start.push_back(prm.get_double("start time"));
-      time_end.push_back(prm.get_double("end time"));
-    }
-
-    template <int dim>
-    void
-    FloatingWalls<dim>::declare_parameters(ParameterHandler &prm)
+    FloatingWalls<dim>::declare_parameters(ParameterHandler &prm) const
     {
       prm.enter_subsection("floating walls");
       {
@@ -1421,6 +1372,102 @@ namespace Parameters
       prm.leave_subsection();
     }
 
+    template <int dim>
+    void
+    FloatingWalls<dim>::declareDefaultEntry(ParameterHandler &prm)
+    {
+      prm.enter_subsection("point on wall");
+      prm.declare_entry("x", "0.", Patterns::Double(), "X Point on wall");
+      prm.declare_entry("y", "0.", Patterns::Double(), "Y Point on wall");
+      prm.declare_entry("z", "0.", Patterns::Double(), "Z Point on wall");
+      prm.leave_subsection();
+
+      prm.enter_subsection("normal vector");
+      prm.declare_entry("nx", "0.", Patterns::Double(), "X Normal vector wall");
+      prm.declare_entry("ny", "0.", Patterns::Double(), "Y Normal vector wall");
+      prm.declare_entry("nz", "0.", Patterns::Double(), "Z Normal vector wall");
+      prm.leave_subsection();
+
+      prm.declare_entry("start time", "0.", Patterns::Double(), "Start time");
+
+      prm.declare_entry("end time", "0.", Patterns::Double(), "End time");
+    }
+
+    template <int dim>
+    void
+    FloatingWalls<dim>::parse_floating_wall(ParameterHandler &prm)
+    {
+      prm.enter_subsection("point on wall");
+      Point<dim> wall_point;
+      wall_point[0] = prm.get_double("x");
+      wall_point[1] = prm.get_double("y");
+      if (dim == 3)
+        wall_point[2] = prm.get_double("z");
+      this->points_on_walls.push_back(wall_point);
+      prm.leave_subsection();
+
+      prm.enter_subsection("normal vector");
+      Tensor<1, dim> wall_normal;
+      wall_normal[0] = prm.get_double("nx");
+      wall_normal[1] = prm.get_double("ny");
+      if (dim == 3)
+        wall_normal[2] = prm.get_double("nz");
+      this->floating_walls_normal_vectors.push_back(wall_normal);
+      prm.leave_subsection();
+
+      time_start.push_back(prm.get_double("start time"));
+      time_end.push_back(prm.get_double("end time"));
+    }
+
+    void
+    BCDEM::declare_parameters(ParameterHandler &prm) const
+    {
+      prm.enter_subsection("DEM boundary conditions");
+      {
+        prm.declare_entry("number of boundary conditions",
+                          "0",
+                          Patterns::Integer(),
+                          "Number of boundary conditions");
+
+        for (unsigned int counter = 0; counter < DEM_BC_number_max; ++counter)
+          { // Example: "boundary condition 0"
+            prm.enter_subsection("boundary condition " +
+                                 Utilities::int_to_string(counter, 1));
+            {
+              declareDefaultEntry(prm);
+            }
+            prm.leave_subsection();
+          }
+      }
+      prm.leave_subsection();
+    }
+
+    void
+    BCDEM::parse_parameters(ParameterHandler &prm)
+    {
+      prm.enter_subsection("DEM boundary conditions");
+
+      DEM_BC_number = prm.get_integer("number of boundary conditions");
+
+      initialize_containers(boundary_translational_velocity,
+                            boundary_rotational_speed,
+                            boundary_rotational_vector,
+                            point_on_rotation_axis,
+                            outlet_boundaries,
+                            bc_types);
+
+      for (unsigned int counter = 0; counter < DEM_BC_number; ++counter)
+        {
+          prm.enter_subsection("boundary condition " +
+                               Utilities::int_to_string(counter, 1));
+          {
+            parse_boundary_conditions(prm);
+          }
+          prm.leave_subsection();
+        }
+      prm.leave_subsection();
+    }
+
     void
     BCDEM::declareDefaultEntry(ParameterHandler &prm)
     {
@@ -1477,7 +1524,7 @@ namespace Parameters
     }
 
     void
-    BCDEM::parse_boundary_conditions(ParameterHandler &prm)
+    BCDEM::parse_boundary_conditions(const ParameterHandler &prm)
     {
       const unsigned int boundary_id   = prm.get_integer("boundary id");
       const std::string  boundary_type = prm.get("type");
@@ -1539,78 +1586,27 @@ namespace Parameters
     }
 
     void
-    BCDEM::declare_parameters(ParameterHandler &prm)
-    {
-      prm.enter_subsection("DEM boundary conditions");
-      {
-        prm.declare_entry("number of boundary conditions",
-                          "0",
-                          Patterns::Integer(),
-                          "Number of boundary conditions");
-
-        for (unsigned int counter = 0; counter < DEM_BC_number_max; ++counter)
-          { // Example: "boundary condition 0"
-            prm.enter_subsection("boundary condition " +
-                                 Utilities::int_to_string(counter, 1));
-            {
-              declareDefaultEntry(prm);
-            }
-            prm.leave_subsection();
-          }
-      }
-      prm.leave_subsection();
-    }
-
-    void
-    BCDEM::parse_parameters(ParameterHandler &prm)
-    {
-      prm.enter_subsection("DEM boundary conditions");
-
-      DEM_BC_number = prm.get_integer("number of boundary conditions");
-
-      initialize_containers(boundary_translational_velocity,
-                            boundary_rotational_speed,
-                            boundary_rotational_vector,
-                            point_on_rotation_axis,
-                            outlet_boundaries,
-                            bc_types);
-
-      for (unsigned int counter = 0; counter < DEM_BC_number; ++counter)
-        {
-          prm.enter_subsection("boundary condition " +
-                               Utilities::int_to_string(counter, 1));
-          {
-            parse_boundary_conditions(prm);
-          }
-          prm.leave_subsection();
-        }
-      prm.leave_subsection();
-    }
-
-    void
     BCDEM::initialize_containers(
-      std::unordered_map<unsigned int, Tensor<1, 3>>
-                                               &boundary_translational_velocity,
-      std::unordered_map<unsigned int, double> &boundary_rotational_speed,
-      std::unordered_map<unsigned int, Tensor<1, 3>>
-                                                 &boundary_rotational_vector,
-      std::unordered_map<unsigned int, Point<3>> &point_on_rotation_axis,
-      std::vector<unsigned int>                  &outlet_boundaries,
-      std::vector<BoundaryType>                  &bc_types)
+      std::unordered_map<unsigned int, Tensor<1, 3>> &boundary_trans_velocity,
+      std::unordered_map<unsigned int, double>       &boundary_rot_speed,
+      std::unordered_map<unsigned int, Tensor<1, 3>> &boundary_rot_vector,
+      std::unordered_map<unsigned int, Point<3>>     &point_on_rot_axis,
+      std::vector<unsigned int>                      &outlet_boundaries_id,
+      std::vector<BoundaryType>                      &boundaries_types) const
     {
       Tensor<1, 3> zero_tensor({0.0, 0.0, 0.0});
 
       for (unsigned int counter = 0; counter < DEM_BC_number_max; ++counter)
         {
-          boundary_translational_velocity.insert({counter, zero_tensor});
-          boundary_rotational_speed.insert({counter, 0});
-          boundary_rotational_vector.insert({counter, zero_tensor});
-          point_on_rotation_axis.insert({counter, Point<3>(zero_tensor)});
+          boundary_trans_velocity.insert({counter, zero_tensor});
+          boundary_rot_speed.insert({counter, 0});
+          boundary_rot_vector.insert({counter, zero_tensor});
+          point_on_rot_axis.insert({counter, Point<3>(zero_tensor)});
         }
 
       // NOTE This first vector should not be initialized this big.
-      outlet_boundaries.reserve(DEM_BC_number);
-      bc_types.reserve(DEM_BC_number);
+      outlet_boundaries_id.reserve(DEM_BC_number);
+      boundaries_types.reserve(DEM_BC_number);
     }
 
     template <int dim>
