@@ -992,7 +992,7 @@ FluidDynamicsNitsche<dim, spacedim>::write_checkpoint()
     }
   // Serialize all post-processing tables that are currently used
   // Serialize the post-processing tables that are additional in this solver
-  // There is no need to currently do the following lines because they will be 
+  // There is no need to currently do the following lines because they will be
   // executed in the previous call this->FluidDynamicsMatrixBased<spacedim>::
   // write_checkpoint() which calls this->gather_tables();
   // const std::vector<OutputStructTableHandler> &table_output_structs_add =
@@ -1067,7 +1067,7 @@ FluidDynamicsNitsche<dim, spacedim>::read_checkpoint()
     }
   // Deserialize all post-processing tables that are currently used
   // Deserialize the post-processing tables that are particular to this solver
-  // There is no need to currently do the following lines because they will be 
+  // There is no need to currently do the following lines because they will be
   // executed in the previous call this->FluidDynamicsMatrixBased<spacedim>::
   // read_checkpoint() which calls this->gather_tables();
   // const std::vector<OutputStructTableHandler> &table_output_structs_add =
@@ -1082,18 +1082,18 @@ FluidDynamicsNitsche<dim, spacedim>::read_checkpoint()
     NavierStokesBase<spacedim, GlobalVectorType, IndexSet>::gather_tables();
   this->deserialize_tables_vector(table_output_structs);
 
-//   for (const auto &table : table_output_structs_add)
-// {
-//   std::string filename = table.table_filename + "_after_checkpoint.txt";
-//   std::ofstream out(filename);
-//   table.table.write_text(out);
-// }
-//   for (const auto &table : table_output_structs)
-// {
-//   std::string filename = table.table_filename + "_after_checkpoint.txt";
-//   std::ofstream out(filename);
-//   table.table.write_text(out);
-// }
+  //   for (const auto &table : table_output_structs_add)
+  // {
+  //   std::string filename = table.table_filename + "_after_checkpoint.txt";
+  //   std::ofstream out(filename);
+  //   table.table.write_text(out);
+  // }
+  //   for (const auto &table : table_output_structs)
+  // {
+  //   std::string filename = table.table_filename + "_after_checkpoint.txt";
+  //   std::ofstream out(filename);
+  //   table.table.write_text(out);
+  // }
 }
 
 

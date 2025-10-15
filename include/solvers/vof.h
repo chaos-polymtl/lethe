@@ -218,7 +218,7 @@ public:
    * be serialized/deserialized for the VOF solver.
    *
    * @return Structure containing a vector of references to TableHandler objects
-   * that needs to be serialized/deserialized for the VOF solver, and their 
+   * that needs to be serialized/deserialized for the VOF solver, and their
    * corresponding file names.
    */
   std::vector<OutputStructTableHandler>

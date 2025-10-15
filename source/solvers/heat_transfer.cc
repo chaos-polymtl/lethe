@@ -1334,8 +1334,8 @@ HeatTransfer<dim>::read_checkpoint()
       previous_solutions[i] = distributed_previous_solutions[i];
     }
 
-  // Deserialize all post-processing tables that are currently used with the Heat
-  // Transfer solver
+  // Deserialize all post-processing tables that are currently used with the
+  // Heat Transfer solver
   std::vector<OutputStructTableHandler> table_output_structs =
     this->gather_tables();
   this->deserialize_tables_vector(table_output_structs, mpi_communicator);
@@ -2221,10 +2221,10 @@ HeatTransfer<dim>::postprocess_heat_flux_on_bc(
                         fe_face_values_ht.JxW(q);
 
                     } // end loop on quadrature points
-                } // end loop on faces
-            } // end face is a boundary face
-        } // end condition cell at boundary
-    } // end loop on cells
+                }     // end loop on faces
+            }         // end face is a boundary face
+        }             // end condition cell at boundary
+    }                 // end loop on cells
 
 
   // Sum across all cores
