@@ -618,5 +618,6 @@ SimulationControlRayTracing::print_progression(const ConditionalOStream &pcout)
 {
   pcout << "Iteration : " << iteration_number << std::endl
         << "Remaining photon : " << photon_handler.n_global_particles()
-        << std::endl << std::endl;
+        << std::endl
+        << std::endl;
 }
