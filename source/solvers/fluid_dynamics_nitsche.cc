@@ -1081,19 +1081,6 @@ FluidDynamicsNitsche<dim, spacedim>::read_checkpoint()
   std::vector<OutputStructTableHandler> table_output_structs =
     NavierStokesBase<spacedim, GlobalVectorType, IndexSet>::gather_tables();
   this->deserialize_tables_vector(table_output_structs);
-
-  //   for (const auto &table : table_output_structs_add)
-  // {
-  //   std::string filename = table.table_filename + "_after_checkpoint.txt";
-  //   std::ofstream out(filename);
-  //   table.table.write_text(out);
-  // }
-  //   for (const auto &table : table_output_structs)
-  // {
-  //   std::string filename = table.table_filename + "_after_checkpoint.txt";
-  //   std::ofstream out(filename);
-  //   table.table.write_text(out);
-  // }
 }
 
 
