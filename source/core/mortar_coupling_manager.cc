@@ -819,7 +819,9 @@ CouplingOperator<dim, Number>::CouplingOperator(
                 for (const auto p : points_ref)
                   {
                     Point<dim - 1> temp;
-                    for (int i = 0, j = 0; i < dim; ++i)
+                    for (unsigned int i = 0, j = 0;
+                         i < static_cast<unsigned int>(dim);
+                         ++i)
                       if ((face_no / 2) != i)
                         temp[j++] = p[i];
 
