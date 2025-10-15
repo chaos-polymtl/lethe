@@ -315,15 +315,20 @@ RayTracingSolver<dim>::insert_particles_and_photons()
                            std::vector<double>(6));
   for (unsigned int id = first_id; id <= last_id; ++id)
     {
+      // nth position in the z direction
       const unsigned int iz = id / (n_photons_each_directions.at(0) *
                                     n_photons_each_directions.at(1));
 
       const unsigned int rem = id % (n_photons_each_directions.at(0) *
                                      n_photons_each_directions.at(1));
+      // nth position in the y direction
       const unsigned int iy  = rem / n_photons_each_directions.at(0);
+
+      // nth position in the x direction
       const unsigned int ix  = rem % n_photons_each_directions.at(0);
 
-      // ID relative to this processor
+      // ID relative to this processor. This is used to write at the write
+      // location in each container.
       const unsigned int id_on_proc = id - first_id;
       temp_point =
         starting_insertion_point +
