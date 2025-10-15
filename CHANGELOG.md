@@ -3,6 +3,25 @@
 All notable changes to the Lethe project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
+## Release of Lethe v1.0.2 - 2025-10-15
+
+The Lethe v1.0.2 requires the latest major release of the deal.II library (deal.ii v9.7).
+
+As part of the v1.0 release, the major components of this version are detailed in the following Journal Article for (which is available in open-access):
+https://doi.org/10.1016/j.cpc.2025.109880
+
+Lethe v1.0.2 introduces some key new features and bug fixes including:
+
+Five new examples : Turbulent Flow Around a Cylinder, Pseudo-2D Gas-Solid Fluidized Bed, Gas-Solid Spouted Rectangular Bed, Heat Transfer in Aligned Particles and Heated Packed Bed
+Full support for particle-particle heat transfer in the DEM simulations. This feature is illustrated in two of the aforementioned examples.
+A new feature which allows user to apply a single boundary condition to multiple boundary conditions id, greatly simplifying parameter files.
+Significant improvement to the geometric redistanciation algorithm. It is now approximatively 3-5X faster to apply this method to sharpen the interface. Furthermore, the method can also be used to generate initial conditions
+SDIRK time integration scheme for the matrix-based fluid dynamics solver (SDIRK22, SDIRK33 and SDIRK34)
+A number of bug fixes related to the of simulations in which post-processing capabilities are used. Notably, the Tables used to store the post-processing information were not all serialized and restored properly.
+Significant improvement to the compilation of Lethe. Warnings during compilation under CLang were all eliminated. Furthermore, compilation speed was improved by removing unnecessary include files.
+A great number of small bug fixes and improvements which are given in details below.
+The lethe v1.0.2 release comes with a structured and stable syntax. All of the examples and test provided with lethe were re-ran with this v1.0.2 release to ensure that all of the results provided online are up to date. This version is production-ready and has been tested and validated extensively.
+
 ### [Master] - 2025-10-14
 
 ### Fixed
