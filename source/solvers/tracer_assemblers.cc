@@ -283,12 +283,12 @@ TracerAssemblerDGCore<dim>::assemble_matrix(
               const Tensor<1, dim> grad_phi_T_j = scratch_data.grad_phi[q][j];
               const auto           phi_T_j      = scratch_data.phi[q][j];
 
-              // Weak form : - D * laplacian T +  u * gradT + T div(u) - f=0
+              // Weak form : - D * laplacian T +  u * gradT - T div(u) - f=0
               // Note that the advection term has been weakened for it to appear
               // explicitly in the weak form as a boundary term.
               local_matrix(i, j) += (diffusivity * grad_phi_T_i * grad_phi_T_j -
                                      grad_phi_T_i * velocity * phi_T_j -
-                                     phi_T_i * velocity_divergence) *
+                                     phi_T_i * velocity_divergence * phi_T_j) *
                                     JxW;
             }
         }
