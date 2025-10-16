@@ -3,6 +3,12 @@
 All notable changes to the Lethe project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
+### [Master] - 2025-10-16
+
+### Changed
+
+- MINOR The scratch data for all of the FEM-based physics used std::vector<type> for both the evaluation of the solution at the gauss point, but also to store the shape function (or their gradient, divergence, etc.) at the gauss points for the degrees of freedom. The issue with this is that it creates std::vector<std::vector<type>> data structures. These vectors of vectors are not contiguous in memory and may lead to a large number of cache misses as the degree of the polynomial of the shape function is increased. This PR fixes this by changing the data structure used to store the shape function (and their gradient, divergence, etc.) to use the deal.II Table<n_dim,type> data structure. These data structures are identical to vectors of vectors in the way they are used, but they store the information in a contiguous memory block (see https://dealii.org/current/doxygen/deal.II/classTableBase.html for more information). This change has minimal impact on the code, but should lead to much better scalability of the matrix and RHS assembly when the degree of the polynomial is increased and the matrix-based solvers are used. The improvement will be problem dependent, but it should never worsen performance.
+
 ### [Master] - 2025-10-14
 
 ### Changed
@@ -12,7 +18,6 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/).
 ### Fixed
 
 - MINOR In our efforts to migrate from Clang Tidy v12 to Clang Tidy v20, this PR does the first batch of refactoring of the core library of lethe. The main things that is changed is that many loops over the dimensions used to use unsigned integer as indices and, when compared to the dimension (dim), this would raise a warning regarding comparison between signed and unsigned integer. This PR fixes that by using integers for these loops. Other small things are to use enum with a smaller data footprint and some usage of range-based interators. Some spelling mistakes there and there were also fixed. A flag was also added to the CMakeList (-std=c++20) to ensure that compilation still works on Apple Clang. Overall this removes half of the CLang V20 warnings. [#1722](https://github.com/chaos-polymtl/lethe/pull/1722)
-
 
 ## Release of Lethe v1.0.2 - 2025-10-15
 
