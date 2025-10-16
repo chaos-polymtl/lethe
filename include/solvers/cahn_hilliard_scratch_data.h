@@ -302,7 +302,7 @@ public:
       {
         velocity_ale_function->vector_value(quadrature_points[q],
                                             velocity_ale_vector);
-        for (unsigned int d = 0; d < dim; ++d)
+        for (int d = 0; d < dim; ++d)
           velocity_ale[d] = velocity_ale_vector[d];
 
         velocity_values[q] -= velocity_ale;

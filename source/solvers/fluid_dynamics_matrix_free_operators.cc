@@ -890,7 +890,7 @@ NavierStokesOperatorBase<dim, number>::
 
               // Compute gradient of shear rate
               // ∂d gamma_dot = 1/(2*gamma_dot)*(∂iuj + ∂jui) * ∂d(∂iuj + ∂jui)
-              for (unsigned int d = 0; d < dim; ++d)
+              for (int d = 0; d < dim; ++d)
                 {
                   grad_shear_rate[d] = 0.;
                   for (unsigned int i = 0; i < dim; ++i)
@@ -1085,7 +1085,7 @@ NavierStokesOperatorBase<dim, number>::update_beta_force(
 {
   for (unsigned int v = 0; v < VectorizedArray<number>::size(); ++v)
     {
-      for (unsigned int d = 0; d < dim; ++d)
+      for (int d = 0; d < dim; ++d)
         this->beta_force[d][v] = beta_force[d];
     }
 }
@@ -1274,10 +1274,10 @@ NavierStokesOperatorBase<dim, number>::do_boundary_face_integral_local(
           // If we are assembling the residual, substract the target velocity
           // from the velocity value.
           if constexpr (assemble_residual)
-            for (unsigned int d = 0; d < dim; ++d)
+            for (int d = 0; d < dim; ++d)
               value[d] -= this->face_target_velocity[face_index][q][d];
 
-          for (unsigned int d = 0; d < dim; ++d)
+          for (int d = 0; d < dim; ++d)
             {
               // Assemble (v,beta (u-u_target)) for the main penalization
               value_result[d] += penalty_parameter * value[d];
@@ -1315,13 +1315,13 @@ NavierStokesOperatorBase<dim, number>::do_boundary_face_integral_local(
           Tensor<1, dim, VectorizedArray<number>> velocity;
           if constexpr (assemble_residual)
             {
-              for (unsigned int d = 0; d < dim; ++d)
+              for (int d = 0; d < dim; ++d)
                 velocity[d] = value[d];
             }
           else
             {
               // Only use the previous velocity values for the Jacobian
-              for (unsigned int d = 0; d < dim; ++d)
+              for (int d = 0; d < dim; ++d)
                 velocity[d] = face_nonlinear_previous_values[face][q][d];
             }
 
@@ -1332,7 +1332,7 @@ NavierStokesOperatorBase<dim, number>::do_boundary_face_integral_local(
             std::min(VectorizedArray<number>(0.0), normal_outflux);
 
           // -(v,β(u·n)_·u)
-          for (unsigned int d = 0; d < dim; ++d)
+          for (int d = 0; d < dim; ++d)
             value_result[d] -= penalty_parameter * normal_outflux * value[d];
 
           integrator.submit_value(value_result, q);

@@ -174,7 +174,7 @@ public:
         const unsigned int /* component */ = 0) const override
   {
     double val = 0.;
-    for (unsigned int d = 0; d < dim; ++d)
+    for (int d = 0; d < dim; ++d)
       {
         val += std::pow(p[d], 2.);
       }

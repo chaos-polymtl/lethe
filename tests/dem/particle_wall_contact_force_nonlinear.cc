@@ -77,7 +77,7 @@ test()
 
   // Initializing motion of boundaries
   Tensor<1, dim> translational_and_rotational_velocity;
-  for (unsigned int d = 0; d < dim; ++d)
+  for (int d = 0; d < dim; ++d)
     {
       translational_and_rotational_velocity[d] = 0;
     }

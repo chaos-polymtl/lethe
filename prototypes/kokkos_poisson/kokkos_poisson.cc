@@ -431,7 +431,7 @@ public:
   {
     double temp = 0.0;
 
-    for (unsigned int d = 0; d < dim; ++d)
+    for (int d = 0; d < dim; ++d)
       temp += std::sin(p[d]);
 
     return temp * (1.0 + component);

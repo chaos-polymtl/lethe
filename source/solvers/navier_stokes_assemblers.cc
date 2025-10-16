@@ -1960,7 +1960,7 @@ PressureBoundaryCondition<dim>::assemble_matrix(
 
   // Loop and quadrature information
   Tensor<2, dim> identity;
-  for (unsigned int d = 0; d < dim; ++d)
+  for (int d = 0; d < dim; ++d)
     {
       identity[d][d] = 1;
     }
@@ -2029,7 +2029,7 @@ PressureBoundaryCondition<dim>::assemble_rhs(
 
   // Loop and quadrature information
   Tensor<2, dim> identity;
-  for (unsigned int d = 0; d < dim; ++d)
+  for (int d = 0; d < dim; ++d)
     {
       identity[d][d] = 1;
     }
@@ -2105,7 +2105,7 @@ WeakDirichletBoundaryCondition<dim>::assemble_matrix(
   const double kinematic_viscosity = scratch_data.kinematic_viscosity_scale;
   // Loop and quadrature information
   Tensor<2, dim> identity;
-  for (unsigned int d = 0; d < dim; ++d)
+  for (int d = 0; d < dim; ++d)
     {
       identity[d][d] = 1;
     }
@@ -2195,7 +2195,7 @@ WeakDirichletBoundaryCondition<dim>::assemble_rhs(
 
   // Loop and quadrature information
   Tensor<2, dim> identity;
-  for (unsigned int d = 0; d < dim; ++d)
+  for (int d = 0; d < dim; ++d)
     {
       identity[d][d] = 1;
     }
@@ -2231,7 +2231,7 @@ WeakDirichletBoundaryCondition<dim>::assemble_rhs(
               for (unsigned int q = 0; q < scratch_data.n_faces_q_points; ++q)
                 {
                   const double JxW = scratch_data.face_JxW[f][q];
-                  for (unsigned int d = 0; d < dim; ++d)
+                  for (int d = 0; d < dim; ++d)
                     {
                       prescribed_velocity_values[f][q][d] = function_v.value(
                         scratch_data.face_quadrature_points[f][q], d);
@@ -2288,7 +2288,7 @@ PartialSlipDirichletBoundaryCondition<dim>::assemble_matrix(
 
   // Loop and quadrature information
   Tensor<2, dim> identity;
-  for (unsigned int d = 0; d < dim; ++d)
+  for (int d = 0; d < dim; ++d)
     {
       identity[d][d] = 1;
     }
@@ -2408,7 +2408,7 @@ PartialSlipDirichletBoundaryCondition<dim>::assemble_rhs(
 
   // Loop and quadrature information
   Tensor<2, dim> identity;
-  for (unsigned int d = 0; d < dim; ++d)
+  for (int d = 0; d < dim; ++d)
     {
       identity[d][d] = 1;
     }
@@ -2448,7 +2448,7 @@ PartialSlipDirichletBoundaryCondition<dim>::assemble_rhs(
               for (unsigned int q = 0; q < scratch_data.n_faces_q_points; ++q)
                 {
                   const double JxW = scratch_data.face_JxW[f][q];
-                  for (unsigned int d = 0; d < dim; ++d)
+                  for (int d = 0; d < dim; ++d)
                     {
                       prescribed_velocity_values[f][q][d] = function_v.value(
                         scratch_data.face_quadrature_points[f][q], d);
@@ -2677,7 +2677,7 @@ NavierStokesAssemblerALE<dim>::assemble_matrix(
     {
       velocity_ale_function->vector_value(quadrature_points[q],
                                           velocity_ale_vector);
-      for (unsigned int d = 0; d < dim; ++d)
+      for (int d = 0; d < dim; ++d)
         velocity_ale[d] = velocity_ale_vector[d];
 
       // Store JxW in local variable for faster access
@@ -2739,7 +2739,7 @@ NavierStokesAssemblerALE<dim>::assemble_rhs(
     {
       velocity_ale_function->vector_value(quadrature_points[q],
                                           velocity_ale_vector);
-      for (unsigned int d = 0; d < dim; ++d)
+      for (int d = 0; d < dim; ++d)
         velocity_ale[d] = velocity_ale_vector[d];
 
       // Store JxW in local variable for faster access

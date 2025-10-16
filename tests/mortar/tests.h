@@ -774,7 +774,7 @@ public:
 
         Tensor<2, dim, VectorizedArray<Number>> u_gradient;
 
-        for (unsigned int d = 0; d < dim; ++d)
+        for (int d = 0; d < dim; ++d)
           u_gradient[d] = gradient[d];
 
         // a)     (ε(v), 2νε(u))
@@ -783,15 +783,15 @@ public:
                                   u_gradient,
                                   VectorizedArrayType(2.0));
         else
-          for (unsigned int d = 0; d < dim; ++d)
+          for (int d = 0; d < dim; ++d)
             gradient_result[d] += u_gradient[d];
 
         // b)   - (div(v), p)
-        for (unsigned int d = 0; d < dim; ++d)
+        for (int d = 0; d < dim; ++d)
           gradient_result[d][d] -= p_value;
 
         // c)     (q, div(u))
-        for (unsigned int d = 0; d < dim; ++d)
+        for (int d = 0; d < dim; ++d)
           value_result[dim] -= u_gradient[d][d];
 
         // d) δ_1 (∇q, ∇p)
@@ -1170,7 +1170,7 @@ private:
         if constexpr (dim == 1)
           u_gradient_result[0] -= p_value;
         else
-          for (unsigned int d = 0; d < dim; ++d)
+          for (int d = 0; d < dim; ++d)
             u_gradient_result[d][d] -= p_value;
 
         if (weak_velocity_divergence_term)
@@ -1187,7 +1187,7 @@ private:
             if constexpr (dim == 1)
               p_value_result += u_gradient[0];
             else
-              for (unsigned int d = 0; d < dim; ++d)
+              for (int d = 0; d < dim; ++d)
                 p_value_result += u_gradient[d][d];
           }
 
@@ -2101,7 +2101,7 @@ private:
         if (weak_pressure_gradient_term)
           {
             // - (div(v), p)
-            for (unsigned int d = 0; d < dim; ++d)
+            for (int d = 0; d < dim; ++d)
               u_gradient_result[d][d] -= p_value;
           }
         else
@@ -2118,7 +2118,7 @@ private:
         else
           {
             // + (q, div(u))
-            for (unsigned int d = 0; d < dim; ++d)
+            for (int d = 0; d < dim; ++d)
               p_value_result += u_gradient[d][d] * vel_div_sign;
           }
 

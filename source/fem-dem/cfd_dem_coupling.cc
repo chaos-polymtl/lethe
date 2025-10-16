@@ -1218,7 +1218,7 @@ CFDDEMSolver<dim>::print_particles_summary()
               std::cout << std::setprecision(
                              this->simulation_control->get_log_precision())
                         << std::setw(display_width) << std::left << id;
-              for (unsigned int d = 0; d < dim; ++d)
+              for (int d = 0; d < dim; ++d)
                 std::cout << std::setw(display_width) << std::left
                           << particle_location[d];
               std::cout << std::setw(display_width) << std::left

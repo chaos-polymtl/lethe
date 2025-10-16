@@ -456,7 +456,7 @@ symm_scalar_product_add(Tensor<1, dim_, Tensor<1, dim, Number>> &v_gradient,
                         const Tensor<2, dim, Number>            &u_gradient,
                         const Number                            &factor)
 {
-  for (unsigned int d = 0; d < dim; ++d)
+  for (int d = 0; d < dim; ++d)
     v_gradient[d][d] += u_gradient[d][d] * factor;
 
   for (unsigned int e = 0; e < dim; ++e)
@@ -481,7 +481,7 @@ symm_scalar_product_add(Tensor<2, dim, Number>       &v_gradient,
                         const Tensor<2, dim, Number> &u_gradient,
                         const Number                 &factor)
 {
-  for (unsigned int d = 0; d < dim; ++d)
+  for (int d = 0; d < dim; ++d)
     v_gradient[d][d] += u_gradient[d][d] * factor;
 
   for (unsigned int e = 0; e < dim; ++e)

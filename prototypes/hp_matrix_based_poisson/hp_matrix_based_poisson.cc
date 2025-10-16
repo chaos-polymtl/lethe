@@ -217,7 +217,7 @@ public:
         const unsigned int /* component */ = 0) const override
   {
     double product = 1.;
-    for (unsigned int d = 0; d < dim; ++d)
+    for (int d = 0; d < dim; ++d)
       {
         product *= (p[d] + 1);
       }

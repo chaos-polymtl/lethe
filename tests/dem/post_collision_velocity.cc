@@ -77,7 +77,7 @@ test(double coefficient_of_restitution)
 
   // Initializing motion of boundaries
   Tensor<1, dim> translational_and_rotational_veclocity;
-  for (unsigned int d = 0; d < dim; ++d)
+  for (int d = 0; d < dim; ++d)
     {
       translational_and_rotational_veclocity[d] = 0;
     }

@@ -1298,7 +1298,7 @@ IBParticlesDEM<dim>::integrate_particles_motion(const double dt,
                      lubrication_force[p_i] + lubrication_wall_force[p_i]) /
                     dem_particles[p_i].mass;
 
-                  for (unsigned int d = 0; d < dim; ++d)
+                  for (int d = 0; d < dim; ++d)
                     {
                       k_position[p_i][step][d] = dem_particles[p_i].velocity[d];
                     }
@@ -1314,7 +1314,7 @@ IBParticlesDEM<dim>::integrate_particles_motion(const double dt,
                   dem_particles[p_i].velocity =
                     last_velocity[p_i] + k_velocity[p_i][step] * local_dt;
 
-                  for (unsigned int d = 0; d < dim; ++d)
+                  for (int d = 0; d < dim; ++d)
                     {
                       dem_particles[p_i].position[d] =
                         last_position[p_i][d] +
@@ -1557,7 +1557,7 @@ IBParticlesDEM<dim>::integrate_particles_motion(const double dt,
                    2 * k_velocity[p_i][2] + k_velocity[p_i][3]) /
                   6;
 
-              for (unsigned int d = 0; d < dim; ++d)
+              for (int d = 0; d < dim; ++d)
                 {
                   dem_particles[p_i].position[d] =
                     last_position[p_i][d] +
