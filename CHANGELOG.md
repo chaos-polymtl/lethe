@@ -7,7 +7,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
 ### Changed
 
-- MAJOR Changed DG Tracer formulation to be - D * laplacian T +  u * gradT + T div(u) - f=0, adding the term T div(u). It has proven to be more conservative at edges. The dg_tracer_pipe application test was sensitive to this change, and will be used to track the change. The use of the new formulation seem more sensitive to the CFL to keep the solution closer to bounded.
+- MAJOR Changed DG Tracer formulation to be - D * laplacian T +  u * gradT + T div(u) - f=0, adding the term T div(u). It has proven to be more conservative at edges. The dg_tracer_pipe application test was sensitive to this change, and will be used to track it. The use of the new formulation seems more sensitive to the CFL to keep the solution closer to bounded.
 
 ### Fixed
 
