@@ -524,7 +524,7 @@ Parameters::VOF_AlgebraicInterfaceReinitialization::declare_parameters(
                       "Maximum number of reinitialization steps.");
     prm.declare_entry(
       "reinitialization CFL",
-      "1.",
+      "0.5",
       Patterns::Double(),
       "CFL value for pseudo-time-step calculation purposes in the algebraic "
       "interface reinitialization.");
