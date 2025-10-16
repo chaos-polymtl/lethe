@@ -3,6 +3,12 @@
 All notable changes to the Lethe project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
+### [Master] - 2025-10-16
+
+### Added
+
+- MAJOR A new application called lethe-particle-ray-tracing has been added. This application allows to trace rays through a domain containing particle and to extract the intersection point between those rays and particles. [#1629](https://github.com/chaos-polymtl/lethe/pull/1629)
+
 ## Release of Lethe v1.0.2 - 2025-10-15
 
 The Lethe v1.0.2 requires the latest major release of the deal.II library (deal.ii v9.7).
@@ -94,7 +100,7 @@ The lethe v1.0.2 release comes with a structured and stable syntax. All of the e
 
 - MINOR The mortar implementation is added in the matrix-free solver. This PR also adds a direct MF solver to be used for debugging purposes.[#1682](https://github.com/chaos-polymtl/lethe/pull/1682)
 
-### Fixed
+## Fixed
 
 - MINOR The code is modified so that the TableHandler objects are properly restored when writing checkpoints and restarting simulations for the lethe-fluid, lethe-fluid-particles and lethe-fluid-nitsche solvers. This feature was only working for the lethe-fluid/lethe-fluid-block/lethe-fluid-matrix-free solvers before. [#1673] (https://github.com/chaos-polymtl/lethe/pull/1673)
 

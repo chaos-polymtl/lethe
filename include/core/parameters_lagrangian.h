@@ -189,10 +189,10 @@ namespace Parameters
       double molecular_mean_free_path_gas;
 
       void
-      declare_parameters(ParameterHandler &prm);
+      declare_parameters(ParameterHandler &prm) const;
       void
       parse_parameters(ParameterHandler &prm);
-      void
+      static void
       declareDefaultEntry(ParameterHandler &prm);
       void
       parse_particle_properties(const unsigned int &particle_type,
@@ -231,7 +231,8 @@ namespace Parameters
         std::unordered_map<unsigned int, double> &surface_roughness_particle,
         std::unordered_map<unsigned int, double>
           &thermal_accommodation_particle,
-        std::unordered_map<unsigned int, double> &real_youngs_modulus_particle);
+        std::unordered_map<unsigned int, double> &real_youngs_modulus_particle)
+        const;
     };
 
     template <int dim>
@@ -423,7 +424,7 @@ namespace Parameters
       // Center of mass
       Point<3> point_center_mass;
 
-      void
+      static void
       declare_parameters(ParameterHandler &prm);
       void
       parse_parameters(ParameterHandler &prm);
@@ -449,10 +450,10 @@ namespace Parameters
       std::vector<double> time_end;
 
       void
-      declare_parameters(ParameterHandler &prm);
+      declare_parameters(ParameterHandler &prm) const;
       void
       parse_parameters(ParameterHandler &prm);
-      void
+      static void
       declareDefaultEntry(ParameterHandler &prm);
       void
       parse_floating_wall(ParameterHandler &prm);
@@ -504,13 +505,13 @@ namespace Parameters
 
 
       void
-      declare_parameters(ParameterHandler &prm);
+      declare_parameters(ParameterHandler &prm) const;
       void
       parse_parameters(ParameterHandler &prm);
-      void
+      static void
       declareDefaultEntry(ParameterHandler &prm);
       void
-      parse_boundary_conditions(ParameterHandler &prm);
+      parse_boundary_conditions(const ParameterHandler &prm);
 
     private:
       unsigned int DEM_BC_number_max = 10;
@@ -523,7 +524,7 @@ namespace Parameters
                                                    &boundary_rotational_vector,
         std::unordered_map<unsigned int, Point<3>> &point_on_rotation_axis,
         std::vector<unsigned int>                  &outlet_boundaries,
-        std::vector<BoundaryType>                  &bc_types);
+        std::vector<BoundaryType>                  &bc_types) const;
     };
 
     template <int dim>
@@ -602,6 +603,46 @@ namespace Parameters
       double time_end;
 
       void
+      declare_parameters(ParameterHandler &prm);
+      void
+      parse_parameters(ParameterHandler &prm);
+    };
+
+    /**
+     * @brief Defines parameters used to construct particle
+     * ray tracing class.
+     */
+    template <int dim>
+    class ParticleRayTracing
+    {
+    public:
+      /// Location of the first photon to be inserted
+      Point<3> starting_point;
+
+      /// In which directions will the photons be inserted relative to the first
+      /// photon.
+      std::vector<Tensor<1, 3>> insertion_directions_units_vector;
+
+      /// How many photon will be inserted in each of those directions.
+      std::vector<unsigned int> n_photons_each_directions;
+
+      /// What is the distance between each photon in each of those directions
+      /// considering an offset equal to 0.
+      std::vector<double> step_between_photons_each_directions;
+
+      /// Reference displacement unit tensor
+      Tensor<1, 3> ref_displacement_tensor_unit;
+
+      /// Related to the offset insertion position.
+      double       max_insertion_offset;
+      unsigned int prn_seed_photon_insertion;
+
+      /// Related to the offset in the displacement direction.
+      double       max_angular_offset;
+      unsigned int prn_seed_photon_displacement;
+
+      /// Declare and parse function
+      static void
       declare_parameters(ParameterHandler &prm);
       void
       parse_parameters(ParameterHandler &prm);

@@ -587,3 +587,37 @@ SimulationControlAdjointSteady::is_at_end()
 {
   return residual <= stop_tolerance;
 }
+
+SimulationControlRayTracing::SimulationControlRayTracing(
+  const Parameters::SimulationControl &param,
+  Particles::ParticleHandler<3>       &input_photon_handler)
+  : SimulationControl(param)
+  , photon_handler(input_photon_handler)
+{}
+
+bool
+SimulationControlRayTracing::integrate()
+{
+  if (!is_at_end())
+    {
+      iteration_number++;
+      return true;
+    }
+
+  else
+    return false;
+}
+bool
+SimulationControlRayTracing::is_at_end()
+{
+  return photon_handler.n_global_particles() == 0;
+}
+
+void
+SimulationControlRayTracing::print_progression(const ConditionalOStream &pcout)
+{
+  pcout << "Iteration : " << iteration_number << std::endl
+        << "Remaining photon : " << photon_handler.n_global_particles()
+        << std::endl
+        << std::endl;
+}
