@@ -13,7 +13,7 @@ CahnHilliardScratchData<dim>::allocate()
   this->n_dofs     = fe_values_cahn_hilliard.get_fe().n_dofs_per_cell();
 
   // Initialize arrays related to quadrature
-  this->JxW = std::vector<double>(n_q_points);
+  this->JxW.reinit(n_q_points);
 
   // Forcing term array
   this->source_phase_order        = std::vector<double>(n_q_points);
@@ -42,24 +42,16 @@ CahnHilliardScratchData<dim>::allocate()
 
   // Initialize arrays related to shape functions
   // Phase-order shape functions
-  this->phi_phase =
-    std::vector<std::vector<double>>(n_q_points, std::vector<double>(n_dofs));
-  this->grad_phi_phase = std::vector<std::vector<Tensor<1, dim>>>(
-    n_q_points, std::vector<Tensor<1, dim>>(n_dofs));
-  this->hess_phi_phase = std::vector<std::vector<Tensor<2, dim>>>(
-    n_q_points, std::vector<Tensor<2, dim>>(n_dofs));
-  this->laplacian_phi_phase =
-    std::vector<std::vector<double>>(n_q_points, std::vector<double>(n_dofs));
+  this->phi_phase.reinit(n_q_points, n_dofs);
+  this->grad_phi_phase.reinit(n_q_points, n_dofs);
+  this->hess_phi_phase.reinit(n_q_points, n_dofs);
+  this->laplacian_phi_phase.reinit(n_q_points, n_dofs);
 
   // Chemical potential shape functions
-  this->phi_potential =
-    std::vector<std::vector<double>>(n_q_points, std::vector<double>(n_dofs));
-  this->grad_phi_potential = std::vector<std::vector<Tensor<1, dim>>>(
-    n_q_points, std::vector<Tensor<1, dim>>(n_dofs));
-  this->hess_phi_potential = std::vector<std::vector<Tensor<2, dim>>>(
-    n_q_points, std::vector<Tensor<2, dim>>(n_dofs));
-  this->laplacian_phi_potential =
-    std::vector<std::vector<double>>(n_q_points, std::vector<double>(n_dofs));
+  this->phi_potential.reinit(n_q_points, n_dofs);
+  this->grad_phi_potential.reinit(n_q_points, n_dofs);
+  this->hess_phi_potential.reinit(n_q_points, n_dofs);
+  this->laplacian_phi_potential.reinit(n_q_points, n_dofs);
 
   // Velocity values
   this->velocity_values = std::vector<Tensor<1, dim>>(this->n_q_points);
