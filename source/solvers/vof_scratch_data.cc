@@ -14,7 +14,7 @@ VOFScratchData<dim>::allocate()
   this->n_dofs     = fe_values_vof.get_fe().n_dofs_per_cell();
 
   // Initialize arrays related to quadrature
-  this->JxW = std::vector<double>(this->n_q_points);
+  this->JxW.reinit(n_q_points);
 
   // Initialize arrays related to velocity and pressure
   this->velocities_fd.first_vector_component = 0;
@@ -40,16 +40,10 @@ VOFScratchData<dim>::allocate()
                                      std::vector<double>(this->n_q_points));
 
   // Initialize arrays related to shape functions
-  this->phi =
-    std::vector<std::vector<double>>(this->n_q_points,
-                                     std::vector<double>(this->n_dofs));
-  this->grad_phi = std::vector<std::vector<Tensor<1, dim>>>(
-    this->n_q_points, std::vector<Tensor<1, dim>>(this->n_dofs));
-  this->hess_phi = std::vector<std::vector<Tensor<2, dim>>>(
-    this->n_q_points, std::vector<Tensor<2, dim>>(this->n_dofs));
-  this->laplacian_phi =
-    std::vector<std::vector<double>>(this->n_q_points,
-                                     std::vector<double>(this->n_dofs));
+  this->phi.reinit(n_q_points, n_dofs);
+  this->grad_phi.reinit(n_q_points, n_dofs);
+  this->hess_phi.reinit(n_q_points, n_dofs);
+  this->laplacian_phi.reinit(n_q_points, n_dofs);
 }
 
 template class VOFScratchData<2>;
