@@ -14,7 +14,7 @@ TracerScratchData<dim>::allocate()
   this->n_dofs     = fe_values_tracer.get_fe().n_dofs_per_cell();
 
   // Initialize arrays related to quadrature
-  this->JxW = std::vector<double>(n_q_points);
+  this->JxW.reinit(n_q_points);
 
   // Forcing term array
   this->source = std::vector<double>(n_q_points);
@@ -49,14 +49,10 @@ TracerScratchData<dim>::allocate()
 
   // Initialize arrays related to shape functions
   // Velocity shape functions
-  this->phi =
-    std::vector<std::vector<double>>(n_q_points, std::vector<double>(n_dofs));
-  this->grad_phi = std::vector<std::vector<Tensor<1, dim>>>(
-    n_q_points, std::vector<Tensor<1, dim>>(n_dofs));
-  this->hess_phi = std::vector<std::vector<Tensor<2, dim>>>(
-    n_q_points, std::vector<Tensor<2, dim>>(n_dofs));
-  this->laplacian_phi =
-    std::vector<std::vector<double>>(n_q_points, std::vector<double>(n_dofs));
+  this->phi.reinit(n_q_points, n_dofs);
+  this->grad_phi.reinit(n_q_points, n_dofs);
+  this->hess_phi.reinit(n_q_points, n_dofs);
+  this->laplacian_phi.reinit(n_q_points, n_dofs);
 
   if (properties_manager.field_is_required(field::levelset))
     fields.insert(
