@@ -260,11 +260,13 @@ RayTracingSolver<dim>::insert_particles_and_photons()
     n_total_photons_to_insert / n_mpi_processes;
   const unsigned int remainder = n_total_photons_to_insert % n_mpi_processes;
 
+  // We add one photon to the first processors so that the total number of
+  // photon inserted match the requested number written in the prm file.
   const unsigned int n_photons_to_insert_this_proc =
     base_photons_per_proc + (this_mpi_process < remainder ? 1 : 0);
 
   // First and last photon id on this processor. This will be used to find the
-  // position of the photons.
+  // insertion location on this proc.
   const unsigned int first_id =
     this_mpi_process * base_photons_per_proc +
     (this_mpi_process < remainder ? this_mpi_process : remainder);
@@ -303,6 +305,22 @@ RayTracingSolver<dim>::insert_particles_and_photons()
     parameters.ray_tracing_info.max_insertion_offset,
     parameters.ray_tracing_info.prn_seed_photon_insertion);
 
+  // For the displacement direction randomness, we need to find a vector
+  // normal to ref_displacement_dir.
+
+  // We make sure that our first vector is not parallel to the
+  // ref_displacement_dir.
+  const Tensor<1, 3> temp_normal_vector =
+    (std::fabs(ref_displacement_dir[0]) < 0.9) ? Tensor<1, 3>({1, 0, 0}) :
+                                                 Tensor<1, 3>({0, 1, 0});
+
+  Tensor<1, 3> u = temp_normal_vector -
+                   temp_normal_vector *
+                     scalar_product(temp_normal_vector, ref_displacement_dir);
+  u = u / u.norm();
+
+  const Tensor<1, 3> v = cross_product_3d(ref_displacement_dir, u);
+
   // Create the insertion location of every photon from their IDs.
   // Temporary variable
   Point<3>            temp_point;
@@ -313,6 +331,9 @@ RayTracingSolver<dim>::insert_particles_and_photons()
   insertion_points_on_proc.reserve(n_photons_to_insert_this_proc);
   photon_properties.resize(n_photons_to_insert_this_proc,
                            std::vector<double>(6));
+  // This loop is equivalent of having three nested loops over the three
+  // directions. However, this way we can easily distribute the photons over
+  // the processors using the first and last ID.
   for (unsigned int id = first_id; id <= last_id; ++id)
     {
       // nth position in the z direction
@@ -340,23 +361,7 @@ RayTracingSolver<dim>::insert_particles_and_photons()
           third_dir;
       insertion_points_on_proc.push_back(temp_point);
 
-      // For the displacement direction randomness, we need to find a vector
-      // normal to ref_displacement_dir.
-
-      // We make sure that our first vector is not parallel to the
-      // ref_displacement_dir.
-      const Tensor<1, 3> temp_normal_vector =
-        (std::fabs(ref_displacement_dir[0]) < 0.9) ? Tensor<1, 3>({1, 0, 0}) :
-                                                     Tensor<1, 3>({0, 1, 0});
-
-      Tensor<1, 3> u =
-        temp_normal_vector -
-        temp_normal_vector *
-          scalar_product(temp_normal_vector, ref_displacement_dir);
-      u = u / u.norm();
-
-      const Tensor<1, 3> v = cross_product_3d(ref_displacement_dir, u);
-      temp_dir             = ref_displacement_dir +
+      temp_dir = ref_displacement_dir +
                  std::sin(random_number_angular_2.at(id_on_proc)) *
                    (std::cos(random_number_angular_1.at(id_on_proc)) * u +
                     std::sin(random_number_angular_1.at(id_on_proc)) * v);
