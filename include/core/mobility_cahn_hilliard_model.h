@@ -34,7 +34,7 @@ public:
   /**
    * @brief Definition of a virtual destructor for the class.
    */
-  virtual ~MobilityCahnHilliardModel() = default;
+  ~MobilityCahnHilliardModel() override = default;
 };
 
 /**
@@ -60,7 +60,7 @@ public:
   /**
    * @brief Destructor of derived class.
    */
-  ~MobilityCahnHilliardModelConstant() = default;
+  ~MobilityCahnHilliardModelConstant() override = default;
 
   /**
    * @brief Return the mobility constant, though it returns the same
@@ -164,7 +164,7 @@ public:
   /**
    * @brief Destructor of derived class.
    */
-  ~MobilityCahnHilliardModelQuartic() = default;
+  ~MobilityCahnHilliardModelQuartic() override = default;
 
   /**
    * @brief Return the mobility constant.
@@ -186,7 +186,7 @@ public:
   value(const std::map<field, double> &fields_value) override
   {
     Assert(
-      fields_value.find(field::phase_order_cahn_hilliard) != fields_value.end(),
+      fields_value.contains(field::phase_order_cahn_hilliard),
       PhysicialPropertyModelFieldUndefined("MobilityCahnHilliardModelQuartic",
                                            "phase_order_cahn_hilliard"));
     const double &phase_order_cahn_hilliard =
@@ -211,8 +211,7 @@ public:
   vector_value(const std::map<field, std::vector<double>> &field_vectors,
                std::vector<double> &property_vector) override
   {
-    Assert(field_vectors.find(field::phase_order_cahn_hilliard) !=
-             field_vectors.end(),
+    Assert(field_vectors.contains(field::phase_order_cahn_hilliard),
            PhysicialPropertyModelFieldUndefined(
              "MobilityCahnHilliardModelQuartic", "phase_order_cahn_hilliard"));
     const std::vector<double> &phase_order_cahn_hilliard =
@@ -244,7 +243,7 @@ public:
            [[maybe_unused]] field         id) override
   {
     Assert(
-      fields_value.find(field::phase_order_cahn_hilliard) != fields_value.end(),
+      fields_value.contains(field::phase_order_cahn_hilliard),
       PhysicialPropertyModelFieldUndefined("MobilityCahnHilliardModelQuartic",
                                            "phase_order_cahn_hilliard"));
     const double &phase_order_cahn_hilliard =
@@ -261,7 +260,7 @@ public:
 
   /**
    * @brief Calculate the derivative of the mobility with respect to a field.
-   * @param[in] field_vectors Vector for the values of the fields used to
+   * @param[in] fields_vectors Vector for the values of the fields used to
    * evaluate the mobility.
    * @param[in] id Identifier of the field with respect to which a derivative
    * should be calculated.
@@ -270,16 +269,15 @@ public:
    */
 
   void
-  vector_jacobian(const std::map<field, std::vector<double>> &field_vectors,
+  vector_jacobian(const std::map<field, std::vector<double>> &fields_vectors,
                   [[maybe_unused]] const field                id,
                   std::vector<double> &jacobian_vector) override
   {
-    Assert(field_vectors.find(field::phase_order_cahn_hilliard) !=
-             field_vectors.end(),
+    Assert(fields_vectors.contains(field::phase_order_cahn_hilliard),
            PhysicialPropertyModelFieldUndefined(
              "MobilityCahnHilliardModelQuartic", "phase_order_cahn_hilliard"));
     const std::vector<double> &phase_order_cahn_hilliard =
-      field_vectors.at(field::phase_order_cahn_hilliard);
+      fields_vectors.at(field::phase_order_cahn_hilliard);
     for (unsigned int i = 0; i < jacobian_vector.size(); ++i)
       jacobian_vector[i] =
         -4 *

@@ -403,16 +403,16 @@ namespace Parameters
       std::unordered_map<unsigned int, std::vector<double>>
                                                &p_custom_probability,
       std::vector<unsigned int>                &seed_for_dist,
-      std::unordered_map<unsigned int, int>    &number_p,
-      std::unordered_map<unsigned int, double> &density_p,
-      std::unordered_map<unsigned int, double> &youngs_modulus_p,
-      std::unordered_map<unsigned int, double> &poisson_ratio_p,
-      std::unordered_map<unsigned int, double> &restitution_coefficient_p,
-      std::unordered_map<unsigned int, double> &friction_coefficient_p,
+      std::unordered_map<unsigned int, int>    &p_number,
+      std::unordered_map<unsigned int, double> &p_density,
+      std::unordered_map<unsigned int, double> &p_youngs_modulus,
+      std::unordered_map<unsigned int, double> &p_poisson_ratio,
+      std::unordered_map<unsigned int, double> &p_restitution_coefficient,
+      std::unordered_map<unsigned int, double> &p_friction_coefficient,
       std::unordered_map<unsigned int, double>
-        &rolling_viscous_damping_coefficient_p,
-      std::unordered_map<unsigned int, double> &rolling_friction_coefficient_p,
-      std::unordered_map<unsigned int, double> &surface_energy_p,
+        &p_rolling_viscous_damping_coefficient,
+      std::unordered_map<unsigned int, double> &p_rolling_friction_coefficient,
+      std::unordered_map<unsigned int, double> &p_surface_energy,
       std::unordered_map<unsigned int, double> &hamaker_constant_p,
       std::unordered_map<unsigned int, double> &thermal_conductivity_p,
       std::unordered_map<unsigned int, double> &specific_heat_p,
@@ -430,15 +430,15 @@ namespace Parameters
           dist_type.push_back(SizeDistributionType::uniform);
           p_custom_diameter.insert({counter, {0.}});
           p_custom_probability.insert({counter, {1.}});
-          number_p.insert({counter, 0});
-          density_p.insert({counter, 0.});
-          youngs_modulus_p.insert({counter, 0.});
-          poisson_ratio_p.insert({counter, 0.});
-          restitution_coefficient_p.insert({counter, 0.});
-          friction_coefficient_p.insert({counter, 0.});
-          rolling_viscous_damping_coefficient_p.insert({counter, 0.});
-          rolling_friction_coefficient_p.insert({counter, 0.});
-          surface_energy_p.insert({counter, 0.});
+          p_number.insert({counter, 0});
+          p_density.insert({counter, 0.});
+          p_youngs_modulus.insert({counter, 0.});
+          p_poisson_ratio.insert({counter, 0.});
+          p_restitution_coefficient.insert({counter, 0.});
+          p_friction_coefficient.insert({counter, 0.});
+          p_rolling_viscous_damping_coefficient.insert({counter, 0.});
+          p_rolling_friction_coefficient.insert({counter, 0.});
+          p_surface_energy.insert({counter, 0.});
           hamaker_constant_p.insert({counter, 0.});
           thermal_conductivity_p.insert({counter, 0.});
           specific_heat_p.insert({counter, 0.});

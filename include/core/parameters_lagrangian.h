@@ -216,19 +216,19 @@ namespace Parameters
        * based on volume fraction for the custom distribution for each particle
        * type.
        * @param[in,out] seed_for_dist Random seed for the size distribution.
-       * @param[in,out] number_p Number of each particle type.
-       * @param[in,out] density_p Density of each particle type.
-       * @param[in,out] youngs_modulus_p Young's modulus of each particle type.
-       * @param[in,out] poisson_ratio_p Poisson's ratio of each particle type.
-       * @param[in,out] restitution_coefficient_p Coefficients of restitution
+       * @param[in,out] p_number Number of each particle type.
+       * @param[in,out] p_density Density of each particle type.
+       * @param[in,out] p_youngs_modulus Young's modulus of each particle type.
+       * @param[in,out] p_poisson_ratio Poisson's ratio of each particle type.
+       * @param[in,out] p_restitution_coefficient Coefficients of restitution
        * of each particle type.
-       * @param[in,out] friction_coefficient_p Friction coefficient of each
+       * @param[in,out] p_friction_coefficient Friction coefficient of each
        * particle type.
-       * @param[in,out] rolling_viscous_damping_coefficient_p Rolling viscous
+       * @param[in,out] p_rolling_viscous_damping_coefficient Rolling viscous
        * damping coefficient of each particle type.
-       * @param[in,out] rolling_friction_coefficient_p Rolling friction
+       * @param[in,out] p_rolling_friction_coefficient Rolling friction
        * coefficient of each particle type.
-       * @param[in,out] surface_energy_p Surface energy of each particle type.
+       * @param[in,out] p_surface_energy Surface energy of each particle type.
        * @param[in,out] hamaker_constant_p Hamaker constant of each particle
        * type.
        * @param[in,out] thermal_conductivity_p Thermal conductivity of each
@@ -253,25 +253,25 @@ namespace Parameters
         std::unordered_map<unsigned int, std::vector<double>>
                                                  &p_custom_probability,
         std::vector<unsigned int>                &seed_for_dist,
-        std::unordered_map<unsigned int, int>    &number_p,
-        std::unordered_map<unsigned int, double> &density_p,
-        std::unordered_map<unsigned int, double> &youngs_modulus_p,
-        std::unordered_map<unsigned int, double> &poisson_ratio_p,
-        std::unordered_map<unsigned int, double> &restitution_coefficient_p,
-        std::unordered_map<unsigned int, double> &friction_coefficient_p,
+        std::unordered_map<unsigned int, int>    &p_number,
+        std::unordered_map<unsigned int, double> &p_density,
+        std::unordered_map<unsigned int, double> &p_youngs_modulus,
+        std::unordered_map<unsigned int, double> &p_poisson_ratio,
+        std::unordered_map<unsigned int, double> &p_restitution_coefficient,
+        std::unordered_map<unsigned int, double> &p_friction_coefficient,
         std::unordered_map<unsigned int, double>
-          &rolling_viscous_damping_coefficient_p,
+          &p_rolling_viscous_damping_coefficient,
         std::unordered_map<unsigned int, double>
-          &rolling_friction_coefficient_p,
-        std::unordered_map<unsigned int, double> &surface_energy_p,
-        std::unordered_map<unsigned int, double> &hamaker_constant_p,
-        std::unordered_map<unsigned int, double> &thermal_conductivity_p,
-        std::unordered_map<unsigned int, double> &specific_heat_p,
-        std::unordered_map<unsigned int, double> &microhardness_p,
-        std::unordered_map<unsigned int, double> &surface_slope_p,
-        std::unordered_map<unsigned int, double> &surface_roughness_p,
-        std::unordered_map<unsigned int, double> &thermal_accommodation_p,
-        std::unordered_map<unsigned int, double> &real_youngs_modulus_p) const;
+          &p_rolling_friction_coefficient,
+        std::unordered_map<unsigned int, double> &p_surface_energy,
+        std::unordered_map<unsigned int, double> &p_hamaker_constant,
+        std::unordered_map<unsigned int, double> &p_thermal_conductivity,
+        std::unordered_map<unsigned int, double> &p_specific_heat,
+        std::unordered_map<unsigned int, double> &p_microhardness,
+        std::unordered_map<unsigned int, double> &p_surface_slope,
+        std::unordered_map<unsigned int, double> &p_surface_roughness,
+        std::unordered_map<unsigned int, double> &p_thermal_accommodation,
+        std::unordered_map<unsigned int, double> &p_real_youngs_modulus) const;
     };
 
     template <int dim>
@@ -583,7 +583,7 @@ namespace Parameters
       double grid_rotational_speed;
 
       // Rotational axis of rotating grid. Similar to deal.II, we use 0=x axis,
-      // 1=y-axis, 2=z axis.
+      // 1=y axis, 2=z axis.
       unsigned int grid_rotational_axis;
 
       static void

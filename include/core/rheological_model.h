@@ -11,7 +11,7 @@ using namespace dealii;
 
 /**
  * @brief Abstract class that allows to calculate the
- * non-newtonian viscosity on each quadrature point and the shear rate
+ * non-Newtonian viscosity on each quadrature point and the shear rate
  * magnitude.
  */
 class RheologicalModel : public PhysicalPropertyModel
@@ -170,7 +170,7 @@ public:
   /**
    * @brief is_non_newtonian_rheological_model Returns a boolean indicating if
    * the model is a non-Newtonian rheological model.
-   * @return Boolean value of if the model corresponds to a non-newtonian
+   * @return Boolean value of if the model corresponds to a non-Newtonian
    * rheological model.
    */
   bool
@@ -365,7 +365,7 @@ public:
   }
 
   /**
-   * @brief Returns the non-newtonian kinematic viscosity.
+   * @brief Returns the non-Newtonian kinematic viscosity.
    *
    * @param field_values The values of the field on which the kinematic
    * viscosity may depend on. For this model, it only depends on the magnitude
@@ -545,7 +545,7 @@ public:
   }
 
   /**
-   * @brief Returns the non-newtonian viscosity.
+   * @brief Returns the non-Newtonian viscosity.
    *
    * @param field_values The values of the field on which the viscosity may
    * depend on. For this model, it only depends on the magnitude of the shear
@@ -843,7 +843,7 @@ public:
   virtual double
   get_dynamic_viscosity_for_stabilization(
     const double                  &p_density_ref,
-    const std::map<field, double> &field_values) override;
+    [[maybe_unused]] const std::map<field, double> &field_values) override;
 
   /**
    * @brief Calculates the vector values of the dynamic viscosity used in PSPG and SUPG stabilization terms.
@@ -855,7 +855,7 @@ public:
   virtual void
   get_dynamic_viscosity_for_stabilization_vector(
     const double                               &p_density_ref,
-    const std::map<field, std::vector<double>> &field_vectors,
+    [[maybe_unused]] const std::map<field, std::vector<double>> &field_vectors,
     std::vector<double>                        &property_vector) override;
 
 private:

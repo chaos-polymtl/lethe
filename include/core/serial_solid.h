@@ -112,7 +112,7 @@ public:
     if constexpr (spacedim == 3)
       return this->current_translational_velocity;
 
-    else
+    else if constexpr (spacedim == 2)// spacedim == 2
       return tensor_nd_to_3d(this->current_translational_velocity);
   }
 
