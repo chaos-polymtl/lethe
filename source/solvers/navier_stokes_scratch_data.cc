@@ -15,7 +15,7 @@ NavierStokesScratchData<dim>::allocate()
   this->n_dofs     = fe_values.get_fe().n_dofs_per_cell();
 
   // Initialize arrays related to quadrature
-  this->JxW = std::vector<double>(n_q_points);
+  this->JxW.reinit(n_q_points);
 
   // Initialize component array
   this->components = std::vector<unsigned int>(n_dofs);
