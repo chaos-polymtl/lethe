@@ -141,7 +141,7 @@ LetheGridTools::vertices_cell_mapping_with_periodic_boundaries(
 }
 
 template <int dim>
-DoFHandler<dim>::active_cell_iterator
+typename DoFHandler<dim>::active_cell_iterator
 LetheGridTools::find_cell_around_point_with_tree(
   const DoFHandler<dim> &dof_handler,
   const Point<dim>      &point)
