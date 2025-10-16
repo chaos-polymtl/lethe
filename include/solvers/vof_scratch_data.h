@@ -1,4 +1,4 @@
-// SPDX-FileCopyrightText: Copyright (c) 2021-2024 The Lethe Authors
+// SPDX-FileCopyrightText: Copyright (c) 2021-2025 The Lethe Authors
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
 #ifndef lethe_vof_scratch_data_h
@@ -397,7 +397,7 @@ public:
   double                 cell_size;
 
   // Quadrature
-  std::vector<double>     JxW;
+  Table<1, double>        JxW;
   std::vector<Point<dim>> quadrature_points;
   std::vector<Point<dim>> face_quadrature_points;
 
@@ -415,10 +415,10 @@ public:
   std::vector<double> phase_value_jump;
 
   // Shape functions
-  std::vector<std::vector<double>>         phi;
-  std::vector<std::vector<Tensor<1, dim>>> grad_phi;
-  std::vector<std::vector<Tensor<2, dim>>> hess_phi;
-  std::vector<std::vector<double>>         laplacian_phi;
+  Table<2, double>         phi;
+  Table<2, Tensor<1, dim>> grad_phi;
+  Table<2, Tensor<2, dim>> hess_phi;
+  Table<2, double>         laplacian_phi;
 
 
   /**
