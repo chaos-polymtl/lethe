@@ -22,7 +22,7 @@
 template <int dim, int spacedim>
 SerialSolid<dim, spacedim>::SerialSolid(
   std::shared_ptr<Parameters::RigidSolidObject<spacedim>> &param,
-  const unsigned int                                             id)
+  const unsigned int                                       id)
   : mpi_communicator(MPI_COMM_WORLD)
   , n_mpi_processes(Utilities::MPI::n_mpi_processes(mpi_communicator))
   , this_mpi_process(Utilities::MPI::this_mpi_process(mpi_communicator))
@@ -255,7 +255,8 @@ SerialSolid<dim, spacedim>::get_triangulation()
 
 template <>
 void
-SerialSolid<1, 2>::rotate_grid(const double angle, const Tensor<1, 3> /*axis*/
+SerialSolid<1, 2>::rotate_grid(const double angle,
+                               const Tensor<1, 3> /*axis*/
                                  &)
 {
   GridTools::rotate(angle, *solid_tria);
@@ -263,7 +264,8 @@ SerialSolid<1, 2>::rotate_grid(const double angle, const Tensor<1, 3> /*axis*/
 
 template <>
 void
-SerialSolid<2, 2>::rotate_grid(const double angle, const Tensor<1, 3> & /*axis*/)
+SerialSolid<2, 2>::rotate_grid(const double angle,
+                               const Tensor<1, 3> & /*axis*/)
 {
   GridTools::rotate(angle, *solid_tria);
 }

@@ -56,7 +56,7 @@ public:
   /**
    * @brief enum class that associate an integer index tp each type of shape
    */
-  enum ShapeType : int
+  enum ShapeType : std::int8_t
   {
     sphere,
     hyper_rectangle,
@@ -80,7 +80,7 @@ public:
    * @param position The position to set the shape at
    * @param orientation The orientation to set the shape at
    */
-  Shape(double              radius,
+  Shape(const double        radius,
         const Point<dim>   &position,
         const Tensor<1, 3> &orientation)
 
@@ -114,10 +114,9 @@ public:
    * @param component This parameter is not used, but it is necessary because Shapes inherit from the Function class of deal.II.
    */
   virtual double
-  value_with_cell_guess(
-    const Point<dim>                                    &evaluation_point,
-    const typename DoFHandler<dim>::active_cell_iterator cell,
-    const unsigned int                                   component = 0);
+  value_with_cell_guess(const Point<dim> &evaluation_point,
+                        const DoFHandler<dim>::active_cell_iterator cell,
+                        const unsigned int component = 0);
 
   /**
    * @brief Return the smoothed maximum of two variables used for shape contact calculation.
@@ -141,11 +140,11 @@ public:
    */
   virtual std::tuple<double, Tensor<1, dim>, Point<dim>>
   distance_to_shape_with_cell_guess(
-    Shape<dim>                                           &shape,
-    const typename DoFHandler<dim>::active_cell_iterator &cell,
-    std::vector<Point<dim>>                              &candidate_points,
-    double                                                precision = 1e-6,
-    bool exact_distance_outside_of_contact                          = false)
+    Shape<dim>                                  &shape,
+    const DoFHandler<dim>::active_cell_iterator &cell,
+    std::vector<Point<dim>>                     &candidate_points,
+    double                                       precision = 1e-6,
+    bool exact_distance_outside_of_contact                 = false)
   {
     // Initialized the default values.
     double         distance = DBL_MAX;
@@ -438,7 +437,6 @@ public:
   /**
    * @brief Return the distance, the center point, and the normal between the current shape and the shape given in the argument. The center point is the point where both shapes are at the same distance from each other. The normal is defined using the closest surface point on the two shapes. By default, the function does not calculate the distance between the two shapes if their bounding boxes are not in contact. This behavior can be modified using the appropriate parameter.
    * @param shape The shape with which the distance is evaluated
-   * @param cell The cell that is likely to contain the evaluation point
    * @param candidate_points This is the initial guess points used in the calculation.
    * @param precision This is the precision of the distance between the two shapes.
    * @param exact_distance_outside_of_contact This is a boolean to force the exact distance evaluation if the shapes are not in contact.
@@ -1023,10 +1021,9 @@ public:
    * @param component This parameter is not used, but it is necessary because Shapes inherit from the Function class of deal.II.
    */
   virtual Tensor<1, dim>
-  gradient_with_cell_guess(
-    const Point<dim>                                    &evaluation_point,
-    const typename DoFHandler<dim>::active_cell_iterator cell,
-    const unsigned int                                   component = 0);
+  gradient_with_cell_guess(const Point<dim> &evaluation_point,
+                           const DoFHandler<dim>::active_cell_iterator cell,
+                           const unsigned int component = 0);
 
 
   /**
@@ -1048,9 +1045,9 @@ public:
    */
   virtual void
   closest_surface_point(
-    const Point<dim>                                     &p,
-    Point<dim>                                           &closest_point,
-    const typename DoFHandler<dim>::active_cell_iterator &cell_guess);
+    const Point<dim>                            &p,
+    Point<dim>                                  &closest_point,
+    const DoFHandler<dim>::active_cell_iterator &cell_guess);
   virtual void
   closest_surface_point(const Point<dim> &p, Point<dim> &closest_point) const;
 
@@ -1096,8 +1093,8 @@ public:
    */
   virtual double
   local_curvature_radius_with_cell_guess(
-    const Point<dim>                                     p,
-    const typename DoFHandler<dim>::active_cell_iterator cell)
+    const Point<dim>                            p,
+    const DoFHandler<dim>::active_cell_iterator cell)
   {
     double curvature = 0;
     double epsilone  = 1e-6 * this->effective_radius;
@@ -1127,7 +1124,7 @@ public:
    * @brief
    * Sets a new position for the shape
    *
-   * @param The new position the shape will be placed at
+   * @param new_position The new position the shape will be placed at
    */
   inline virtual void
   set_position(const Point<dim> &new_position)
@@ -1140,7 +1137,7 @@ public:
    * @brief
    * Sets a new orientation for the shape
    *
-   * @param The new orientation the shape will be set at
+   * @param new_orientation The new orientation the shape will be set at
    */
   inline virtual void
   set_orientation(const Tensor<1, 3> &new_orientation)
@@ -1173,8 +1170,7 @@ public:
     orientation = new_orientation;
   }
   /**
-   * @brief
-   * Returns the position of the shape
+   * @brief Returns the position of the shape.
    *
    */
   inline virtual Point<dim>
@@ -1184,8 +1180,7 @@ public:
   }
 
   /**
-   * @brief
-   * Returns the orientation of the shape
+   * @brief Returns the orientation of the shape
    *
    */
   inline virtual Tensor<1, 3>
@@ -1195,8 +1190,7 @@ public:
   }
 
   /**
-   * @brief
-   * Returns the orientation of the shape
+   * @brief Returns the orientation of the shape
    *
    */
   inline virtual Tensor<2, 3>
@@ -1206,8 +1200,7 @@ public:
   }
 
   /**
-   * @brief
-   * Returns the bounding box half length
+   * @brief Returns the bounding box half length
    *
    */
   inline virtual Tensor<1, dim>
@@ -1217,8 +1210,7 @@ public:
   }
 
   /**
-   * @brief
-   * Returns the bounding box position
+   * @brief Returns the bounding box position
    *
    */
   inline virtual Point<dim>
@@ -1228,8 +1220,7 @@ public:
   }
 
   /**
-   * @brief
-   * Returns the default manifold of the shape. If not redefined, it is a flat
+   * @brief Returns the default manifold of the shape. If not redefined, it is a flat
    * manifold.
    */
   virtual std::shared_ptr<Manifold<dim - 1, dim>>
@@ -1237,8 +1228,7 @@ public:
 
 
   /**
-   * @brief
-   * Clear the cache of the shape
+   * @brief Clear the cache of the shape
    *
    */
   virtual void
@@ -1288,12 +1278,12 @@ public:
    * @brief Defines if this shape is part of a composite.
    * If true, cache management is deactivated and delegated to the upper level
    * shape, to avoid cache duplication.
-   * @param part_of_a_composite is true if this shape is a constituent of a composite shape
+   * @param is_part_of_a_composite is true if this shape is a constituent of a composite shape
    */
   void
-  set_part_of_a_composite(const bool part_of_a_composite)
+  set_part_of_a_composite(const bool is_part_of_a_composite)
   {
-    this->part_of_a_composite = part_of_a_composite;
+    this->part_of_a_composite = is_part_of_a_composite;
   }
 
   /**
@@ -1301,14 +1291,14 @@ public:
    * Sets the layer thickening value (positive or negative) of the particle's
    * shape
    *
-   * @param layer_thickening Thickness to be artificially added to the particle.
+   * @param the_layer_thickening Thickness to be artificially added to the particle.
    * A negative value will decrease the particle's thickness by subtracting a
    * layer of specified width.
    */
   virtual void
-  set_layer_thickening(const double layer_thickening)
+  set_layer_thickening(const double the_layer_thickening)
   {
-    this->layer_thickening = layer_thickening;
+    this->layer_thickening = the_layer_thickening;
   }
 
   /**
@@ -1317,9 +1307,8 @@ public:
    *
    * @param rotation_matrix_representation The rotation matrix.
    */
-  Tensor<1, 3>
-  rotation_matrix_to_xyz_angles(
-    Tensor<2, 3> &rotation_matrix_representation) const
+  static Tensor<1, 3>
+  rotation_matrix_to_xyz_angles(Tensor<2, 3> &rotation_matrix_representation)
   {
     Tensor<1, 3> xyz_rotation;
     xyz_rotation[0] = std::atan2(-rotation_matrix_representation[1][2],
@@ -1445,16 +1434,15 @@ public:
    */
   std::tuple<double, Tensor<1, dim>, Point<dim>>
   distance_to_shape_with_cell_guess(
-    Shape<dim>                                           &shape,
-    const typename DoFHandler<dim>::active_cell_iterator &cell,
-    std::vector<Point<dim>>                              &candidate_points,
-    double                                                precision = 1e-6,
-    bool exact_distance_outside_of_contact = false) override;
+    Shape<dim>                                  &shape,
+    const DoFHandler<dim>::active_cell_iterator &cell,
+    std::vector<Point<dim>>                     &candidate_points,
+    double                                       precision = 1e-6,
+    bool exact_distance_outside_of_contact                 = false) override;
 
   /**
    * @brief Return the distance, the center point, and the normal between the current shape and the shape given in the argument. The center point is the point that minimized the level set obtained from the intersection of the two shapes. The normal is defined using the closest surface point on the two shapes. This function is an optimized version of the general shape distance calculation for the case of a sphere.
    * @param shape The shape with which the distance is evaluated
-   * @param cell The cell that is likely to contain the evaluation point
    * @param candidate_points This is the initial guess points used in the calculation. (In this implementation, this parameter is void)
    * @param precision This is the precision of the distance between the two shapes. (In this implementation, this parameter is void)
    * @param exact_distance_outside_of_contact This is a boolean to force the exact distance evaluation if the shapes are not in contact. (In this implementation, this parameter is void)
@@ -1482,14 +1470,13 @@ public:
    */
   virtual double
   local_curvature_radius_with_cell_guess(
-    const Point<dim>                                     p,
-    const typename DoFHandler<dim>::active_cell_iterator cell) override;
+    const Point<dim>                            p,
+    const DoFHandler<dim>::active_cell_iterator cell) override;
 
 
 private:
   std::shared_ptr<Functions::SignedDistance::Sphere<dim>> sphere_function;
 };
-
 
 
 template <int dim>
@@ -1526,7 +1513,8 @@ public:
    * at the given point evaluation point.
    *
    * @param evaluation_point The point at which the function will be evaluated
-   * @param component This parameter is not used, but it is necessary because Shapes inherit from the Function class of deal.II.
+   * @param component This parameter is not used, but it is necessary because
+   * Shapes inherit from the Function class of deal.II.
    */
   double
   value(const Point<dim>  &evaluation_point,
@@ -1554,7 +1542,6 @@ public:
    */
   double
   displaced_volume() override;
-
 
 
 private:
@@ -1619,9 +1606,9 @@ public:
    */
   double
   value_with_cell_guess(
-    const Point<dim>                                    &evaluation_point,
-    const typename DoFHandler<dim>::active_cell_iterator cell,
-    const unsigned int /*component = 0*/) override;
+    const Point<dim>                           &evaluation_point,
+    const DoFHandler<dim>::active_cell_iterator cell,
+    [[maybe_unused]] const unsigned int         component = 0) override;
 
   /**
    * @brief Return a pointer to a copy of the Shape
@@ -1645,10 +1632,9 @@ public:
    * @param component Not applicable
    */
   Tensor<1, dim>
-  gradient_with_cell_guess(
-    const Point<dim>                                    &evaluation_point,
-    const typename DoFHandler<dim>::active_cell_iterator cell,
-    const unsigned int component = 0) override;
+  gradient_with_cell_guess(const Point<dim> &evaluation_point,
+                           const DoFHandler<dim>::active_cell_iterator cell,
+                           const unsigned int component = 0) override;
 
   /**
    * @brief
@@ -1664,9 +1650,9 @@ public:
    */
   void
   closest_surface_point(
-    const Point<dim>                                     &p,
-    Point<dim>                                           &closest_point,
-    const typename DoFHandler<dim>::active_cell_iterator &cell_guess) override;
+    const Point<dim>                            &p,
+    Point<dim>                                  &closest_point,
+    const DoFHandler<dim>::active_cell_iterator &cell_guess) override;
   void
   closest_surface_point(const Point<dim> &p,
                         Point<dim>       &closest_point) const override;
@@ -2140,8 +2126,7 @@ public:
         this->effective_radius =
           std::max(this->effective_radius, constituent->effective_radius);
         constituent->set_part_of_a_composite(true);
-        std::vector<Point<3>> component_bounding_box_vertex(
-          Utilities::fixed_power<dim>(2));
+
         // For each of the components update the bounding box.
         if constexpr (dim == 2)
           {
@@ -2304,9 +2289,9 @@ public:
    */
   double
   value_with_cell_guess(
-    const Point<dim>                                    &evaluation_point,
-    const typename DoFHandler<dim>::active_cell_iterator cell,
-    const unsigned int /*component = 0*/) override;
+    const Point<dim>                           &evaluation_point,
+    const DoFHandler<dim>::active_cell_iterator cell,
+    [[maybe_unused]] const unsigned int         component = 0) override;
 
   /**
    * @brief Return the gradient of the distance function
@@ -2324,10 +2309,9 @@ public:
    * @param component Not applicable
    */
   Tensor<1, dim>
-  gradient_with_cell_guess(
-    const Point<dim>                                    &evaluation_point,
-    const typename DoFHandler<dim>::active_cell_iterator cell,
-    const unsigned int component = 0) override;
+  gradient_with_cell_guess(const Point<dim> &evaluation_point,
+                           const DoFHandler<dim>::active_cell_iterator cell,
+                           const unsigned int component = 0) override;
 
   /**
    * @brief Return a pointer to a copy of the Shape
@@ -2534,10 +2518,9 @@ public:
    * @param component Not applicable
    */
   double
-  value_with_cell_guess(
-    const Point<dim>                                    &evaluation_point,
-    const typename DoFHandler<dim>::active_cell_iterator cell,
-    const unsigned int component = 0) override;
+  value_with_cell_guess(const Point<dim> &evaluation_point,
+                        const DoFHandler<dim>::active_cell_iterator cell,
+                        const unsigned int component = 0) override;
 
   /**
    * @brief Return a pointer to a copy of the Shape
@@ -2561,10 +2544,9 @@ public:
    * @param component Not applicable
    */
   Tensor<1, dim>
-  gradient_with_cell_guess(
-    const Point<dim>                                    &evaluation_point,
-    const typename DoFHandler<dim>::active_cell_iterator cell,
-    const unsigned int component = 0) override;
+  gradient_with_cell_guess(const Point<dim> &evaluation_point,
+                           const DoFHandler<dim>::active_cell_iterator cell,
+                           const unsigned int component = 0) override;
 
   /**
    * @brief
@@ -2704,10 +2686,9 @@ public:
    * @param component This parameter is not used, but it is necessary because Shapes inherit from the Function class of deal.II.
    */
   double
-  value_with_cell_guess(
-    const Point<dim> &evaluation_point,
-    const typename DoFHandler<dim>::active_cell_iterator /*cell*/,
-    const unsigned int /*component = 0*/) override;
+  value_with_cell_guess(const Point<dim> &evaluation_point,
+                        const DoFHandler<dim>::active_cell_iterator /*cell*/,
+                        const unsigned int /*component = 0*/) override;
 
   /**
    * @brief Return the analytical gradient of the distance
@@ -2716,10 +2697,9 @@ public:
    * @param component This parameter is not used, but it is necessary because Shapes inherit from the Function class of deal.II.
    */
   Tensor<1, dim>
-  gradient_with_cell_guess(
-    const Point<dim>                                    &evaluation_point,
-    const typename DoFHandler<dim>::active_cell_iterator cell,
-    const unsigned int component = 0) override;
+  gradient_with_cell_guess(const Point<dim> &evaluation_point,
+                           const DoFHandler<dim>::active_cell_iterator cell,
+                           const unsigned int component = 0) override;
 
   /**
    * @brief Return the analytical gradient of the distance for the current RBF
@@ -2785,13 +2765,13 @@ public:
    */
   void
   determine_likely_nodes_for_one_cell(
-    const typename DoFHandler<dim>::cell_iterator &cell,
-    const Point<dim>                               support_point);
+    const DoFHandler<dim>::cell_iterator &cell,
+    const Point<dim>                      support_point);
 
   /**
    * @brief Sets the proper dof handler, then computes/updates the map of cells
    * and their likely non-null nodes
-   * @param dof_handler the reference to the new dof_handler
+   * @param updated_dof_handler the reference to the new dof_handler
    * @param mesh_based_precalculations mesh-based precalculations that can lead to slight shape misrepresentation (if RBF typed)
    * */
   void
@@ -3155,8 +3135,7 @@ public:
    * @param cell A likely one where the evaluation point is located
    */
   void
-  swap_iterable_nodes(
-    const typename DoFHandler<dim>::active_cell_iterator cell);
+  swap_iterable_nodes(const DoFHandler<dim>::active_cell_iterator cell);
 
 private:
   std::string                          filename;

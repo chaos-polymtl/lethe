@@ -66,20 +66,19 @@ Shape<dim>::align_and_center(const Point<dim> &evaluation_point) const
     {
       if (std::abs(theta[2]) > 1e-10 * this->effective_radius)
         {
-          Tensor<2, 2> rotation_matrix =
+          Tensor<2, 2> rot_matrix =
             Physics::Transformations::Rotations::rotation_matrix_2d(-theta[2]);
 
           // Multiplication
           centralized_rotated.clear();
-          for (unsigned int j = 0; j < dim; ++j)
+          for (int j = 0; j < dim; ++j)
             {
-              for (unsigned int k = 0; k < dim; ++k)
+              for (int k = 0; k < dim; ++k)
                 {
                   centralized_rotated[j] +=
-                    rotation_matrix[j][k] * centralized_point[k];
+                    rot_matrix[j][k] * centralized_point[k];
                 }
             }
-          centralized_point = centralized_rotated;
         }
     }
   else // (dim == 3)
@@ -90,18 +89,18 @@ Shape<dim>::align_and_center(const Point<dim> &evaluation_point) const
             {
               Tensor<1, 3> axis;
               axis[i] = 1.0;
-              Tensor<2, 3> rotation_matrix =
+              Tensor<2, 3> rot_matrix =
                 Physics::Transformations::Rotations::rotation_matrix_3d(
                   axis, -theta[i]);
 
               // Multiplication
               centralized_rotated.clear();
-              for (unsigned int j = 0; j < dim; ++j)
+              for (int j = 0; j < dim; ++j)
                 {
-                  for (unsigned int k = 0; k < dim; ++k)
+                  for (int k = 0; k < dim; ++k)
                     {
                       centralized_rotated[j] +=
-                        rotation_matrix[j][k] * centralized_point[k];
+                        rot_matrix[j][k] * centralized_point[k];
                     }
                 }
               centralized_point = centralized_rotated;
@@ -146,20 +145,19 @@ Shape<dim>::reverse_align_and_center(const Point<dim> &evaluation_point) const
     {
       if (std::abs(theta[2]) > 1e-10 * this->effective_radius)
         {
-          Tensor<2, 2> rotation_matrix =
+          Tensor<2, 2> rot_matrix =
             Physics::Transformations::Rotations::rotation_matrix_2d(theta[2]);
 
           // Multiplication
           centralized_rotated.clear();
-          for (unsigned int j = 0; j < dim; ++j)
+          for (int j = 0; j < dim; ++j)
             {
-              for (unsigned int k = 0; k < dim; ++k)
+              for (int k = 0; k < dim; ++k)
                 {
                   centralized_rotated[j] +=
-                    rotation_matrix[j][k] * centralized_point[k];
+                    rot_matrix[j][k] * centralized_point[k];
                 }
             }
-          centralized_point = centralized_rotated;
         }
     }
   else // (dim == 3)
@@ -170,18 +168,18 @@ Shape<dim>::reverse_align_and_center(const Point<dim> &evaluation_point) const
             {
               Tensor<1, 3> axis;
               axis[2 - i] = 1.0;
-              Tensor<2, 3> rotation_matrix =
+              Tensor<2, 3> rot_matrix =
                 Physics::Transformations::Rotations::rotation_matrix_3d(
                   axis, theta[2 - i]);
 
               // Multiplication
               centralized_rotated.clear();
-              for (unsigned int j = 0; j < dim; ++j)
+              for (int j = 0; j < dim; ++j)
                 {
-                  for (unsigned int k = 0; k < dim; ++k)
+                  for (int k = 0; k < dim; ++k)
                     {
                       centralized_rotated[j] +=
-                        rotation_matrix[j][k] * centralized_point[k];
+                        rot_matrix[j][k] * centralized_point[k];
                     }
                 }
               centralized_point = centralized_rotated;
@@ -329,7 +327,7 @@ Sphere<dim>::displaced_volume()
   if (dim == 2)
     solid_volume = this->effective_radius * this->effective_radius * PI;
 
-  else if (dim == 3)
+  else // dim = 3
     solid_volume = 4.0 / 3.0 * this->effective_radius * this->effective_radius *
                    this->effective_radius * PI;
   return solid_volume;
@@ -527,16 +525,16 @@ Superquadric<dim>::closest_surface_point(const Point<dim> &p,
       // close to the closest point, and it is already in the right octant.
       Point<dim> current_point = this->align_and_center(p);
 
-      unsigned int       iteration     = 0;
-      const unsigned int iteration_max = 1e2;
+      unsigned int           iteration     = 0;
+      constexpr unsigned int iteration_max = 1e2;
 
       Point<dim> dx{}, distance_gradient{};
       double     current_distance = superquadric(current_point);
 
-      double relaxation = 1;
       while (iteration < iteration_max && abs(current_distance) > epsilon)
         {
-          distance_gradient = superquadric_gradient(current_point);
+          constexpr double relaxation = 1;
+          distance_gradient           = superquadric_gradient(current_point);
           // limit the step size
 
           if (distance_gradient.norm() < epsilon)
@@ -544,7 +542,7 @@ Superquadric<dim>::closest_surface_point(const Point<dim> &p,
             // centroid of the shape. In this case it is also the closest point.
             break;
           // This is a modified Newton method that limits the step size when the
-          // gradient norm is smaller then 1.
+          // gradient norm is smaller than 1.
           dx = -relaxation * (current_distance * distance_gradient) /
                distance_gradient.norm() /
                std::max(1.0, distance_gradient.norm());
@@ -1858,7 +1856,7 @@ RBFShape<dim>::initialize_bounding_box()
 
 template <int dim>
 void
-RBFShape<dim>::update_precalculations(DoFHandler<dim> &dof_handler,
+RBFShape<dim>::update_precalculations(DoFHandler<dim> &updated_dof_handler,
                                       const bool mesh_based_precalculations)
 {
   if (!mesh_based_precalculations)
@@ -1868,8 +1866,9 @@ RBFShape<dim>::update_precalculations(DoFHandler<dim> &dof_handler,
   // reset does not have a significant impact on global computational cost.
   likely_nodes_map.clear();
 
-  this->dof_handler                = &dof_handler;
-  const unsigned int maximal_level = dof_handler.get_triangulation().n_levels();
+  this->dof_handler = &updated_dof_handler;
+  const unsigned int maximal_level =
+    updated_dof_handler.get_triangulation().n_levels();
 
   // We start by dividing the list of RBF nodes into manageable portions
   number_of_nodes = std::get<2>(iterable_nodes[0])->size();
@@ -1885,7 +1884,8 @@ RBFShape<dim>::update_precalculations(DoFHandler<dim> &dof_handler,
   for (unsigned int level = 0; level < maximal_level; level++)
     {
       max_number_of_inside_nodes = 1;
-      const auto &cell_iterator  = dof_handler.cell_iterators_on_level(level);
+      const auto &cell_iterator =
+        updated_dof_handler.cell_iterators_on_level(level);
       for (const auto &cell : cell_iterator)
         {
           if (cell->is_artificial_on_level())
@@ -1947,7 +1947,7 @@ RBFShape<dim>::update_precalculations(DoFHandler<dim> &dof_handler,
     }
 
   // We give all the subsets to the 0 level, as an initial partitioning
-  const auto &cell_iterator = dof_handler.cell_iterators_on_level(0);
+  const auto &cell_iterator = updated_dof_handler.cell_iterators_on_level(0);
   typename DoFHandler<dim>::cell_iterator temp_cell;
   std::tuple<Point<dim>, double, std::shared_ptr<std::vector<size_t>>>
     temp_cell_tuple{};
@@ -1961,7 +1961,7 @@ RBFShape<dim>::update_precalculations(DoFHandler<dim> &dof_handler,
           tuple<Point<dim>, double, std::shared_ptr<std::vector<size_t>>>>>();
       for (auto it = temporary_nodes_portions_map.cbegin();
            it != temporary_nodes_portions_map.cend();
-           it++)
+           ++it)
         {
           temp_cell = it->first;
           if (temp_cell->is_active())
@@ -1978,7 +1978,7 @@ RBFShape<dim>::update_precalculations(DoFHandler<dim> &dof_handler,
   for (unsigned int level = 1; level < maximal_level; level++)
     {
       const auto &cell_iterator_on_level =
-        dof_handler.cell_iterators_on_level(level);
+        updated_dof_handler.cell_iterators_on_level(level);
       for (const auto &cell : cell_iterator_on_level)
         {
           if (cell->is_artificial_on_level())
@@ -2017,7 +2017,7 @@ RBFShape<dim>::update_precalculations(DoFHandler<dim> &dof_handler,
   useful_rbf_nodes.resize(number_of_nodes);
   for (auto it = temporary_nodes_portions_map.cbegin();
        it != temporary_nodes_portions_map.cend();
-       it++)
+       ++it)
     {
       auto cell = it->first;
       if (!cell->is_active())
@@ -2036,7 +2036,7 @@ RBFShape<dim>::determine_likely_nodes_for_one_cell(
   const Point<dim>                               support_point)
 {
   // We exit the function immediately if the cell is already in the map
-  if (likely_nodes_map.find(cell) != likely_nodes_map.end())
+  if (likely_nodes_map.contains(cell))
     return;
 
   bool parent_found = false;
@@ -2059,16 +2059,16 @@ RBFShape<dim>::determine_likely_nodes_for_one_cell(
     catch (TriaAccessorExceptions::ExcCellHasNoParent())
       {}
 
-  double     distance, max_distance;
-  double     cell_diameter = cell->diameter();
-  Point<dim> temp_cell_barycenter;
-  double     temp_cell_diameter;
+  double       distance, max_distance;
+  const double cell_diameter = cell->diameter();
+  Point<dim>   temp_cell_barycenter;
 
   likely_nodes_map[cell]          = std::make_shared<std::vector<
     std::tuple<Point<dim>, double, std::shared_ptr<std::vector<size_t>>>>>();
   const size_t number_of_portions = iterable_nodes.size();
   for (size_t portion_id = 0; portion_id < number_of_portions; portion_id++)
     {
+      double temp_cell_diameter;
       std::tie(temp_cell_barycenter, temp_cell_diameter, std::ignore) =
         (iterable_nodes[portion_id]);
       // We only check for one support point, but we use a high security
@@ -2136,8 +2136,7 @@ RBFShape<dim>::load_data_from_file()
                        std::numeric_limits<double>::max(),
                        temp_nodes_id};
 
-  maximal_support_radius =
-    *std::max_element(std::begin(support_radii), std::end(support_radii));
+  maximal_support_radius = *std::ranges::max_element(support_radii);
   initialize_bounding_box();
   rotate_nodes();
   this->effective_radius = bounding_box->half_lengths.norm();
@@ -2466,7 +2465,7 @@ CylindricalHelix<dim>::value(const Point<dim> &evaluation_point,
   // Distance to the center of the helix
   // First we find a good initial guess for the non linear resolution.
   double phase = std::atan2(centered_point[1], centered_point[0]);
-  if (phase != phase)
+  if (std::isnan(phase))
     phase = 0;
   if (phase < 0)
     phase = phase + 2 * numbers::PI;
@@ -2682,7 +2681,7 @@ double
 CylindricalHelix<dim>::displaced_volume()
 {
   using numbers::PI;
-  double solid_volume = 0;
+  constexpr double solid_volume = 0;
 
   return solid_volume;
 }
