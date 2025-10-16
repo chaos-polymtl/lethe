@@ -112,9 +112,10 @@ public:
    * @param component This parameter is not used, but it is necessary because Shapes inherit from the Function class of deal.II.
    */
   virtual double
-  value_with_cell_guess(const Point<dim> &evaluation_point,
-                        const DoFHandler<dim>::active_cell_iterator cell,
-                        const unsigned int component = 0);
+  value_with_cell_guess(
+    const Point<dim>                                    &evaluation_point,
+    const typename DoFHandler<dim>::active_cell_iterator cell,
+    const unsigned int                                   component = 0);
 
   /**
    * @brief Return the smoothed maximum of two variables used for shape contact calculation.
@@ -139,11 +140,11 @@ public:
    */
   virtual std::tuple<double, Tensor<1, dim>, Point<dim>>
   distance_to_shape_with_cell_guess(
-    Shape<dim>                                  &shape,
-    const DoFHandler<dim>::active_cell_iterator &cell,
-    std::vector<Point<dim>>                     &candidate_points,
-    double                                       precision = 1e-6,
-    bool exact_distance_outside_of_contact                 = false)
+    Shape<dim>                                           &shape,
+    const typename DoFHandler<dim>::active_cell_iterator &cell,
+    std::vector<Point<dim>>                              &candidate_points,
+    double                                                precision = 1e-6,
+    bool exact_distance_outside_of_contact                          = false)
   {
     // Initialized the default values.
     double         distance = DBL_MAX;
@@ -1020,9 +1021,10 @@ public:
    * @param component This parameter is not used, but it is necessary because Shapes inherit from the Function class of deal.II.
    */
   virtual Tensor<1, dim>
-  gradient_with_cell_guess(const Point<dim> &evaluation_point,
-                           const DoFHandler<dim>::active_cell_iterator cell,
-                           const unsigned int component = 0);
+  gradient_with_cell_guess(
+    const Point<dim>                                    &evaluation_point,
+    const typename DoFHandler<dim>::active_cell_iterator cell,
+    const unsigned int                                   component = 0);
 
 
   /**
@@ -1044,9 +1046,9 @@ public:
    */
   virtual void
   closest_surface_point(
-    const Point<dim>                            &p,
-    Point<dim>                                  &closest_point,
-    const DoFHandler<dim>::active_cell_iterator &cell_guess);
+    const Point<dim>                                     &p,
+    Point<dim>                                           &closest_point,
+    const typename DoFHandler<dim>::active_cell_iterator &cell_guess);
   virtual void
   closest_surface_point(const Point<dim> &p, Point<dim> &closest_point) const;
 
@@ -1092,8 +1094,8 @@ public:
    */
   virtual double
   local_curvature_radius_with_cell_guess(
-    const Point<dim>                            p,
-    const DoFHandler<dim>::active_cell_iterator cell)
+    const Point<dim>                                     p,
+    const typename DoFHandler<dim>::active_cell_iterator cell)
   {
     double curvature = 0;
     double epsilone  = 1e-6 * this->effective_radius;
@@ -1433,11 +1435,11 @@ public:
    */
   std::tuple<double, Tensor<1, dim>, Point<dim>>
   distance_to_shape_with_cell_guess(
-    Shape<dim>                                  &shape,
-    const DoFHandler<dim>::active_cell_iterator &cell,
-    std::vector<Point<dim>>                     &candidate_points,
-    double                                       precision = 1e-6,
-    bool exact_distance_outside_of_contact                 = false) override;
+    Shape<dim>                                           &shape,
+    const typename DoFHandler<dim>::active_cell_iterator &cell,
+    std::vector<Point<dim>>                              &candidate_points,
+    double                                                precision = 1e-6,
+    bool exact_distance_outside_of_contact = false) override;
 
   /**
    * @brief Return the distance, the center point, and the normal between the current shape and the shape given in the argument. The center point is the point that minimized the level set obtained from the intersection of the two shapes. The normal is defined using the closest surface point on the two shapes. This function is an optimized version of the general shape distance calculation for the case of a sphere.
@@ -1469,8 +1471,8 @@ public:
    */
   virtual double
   local_curvature_radius_with_cell_guess(
-    const Point<dim>                            p,
-    const DoFHandler<dim>::active_cell_iterator cell) override;
+    const Point<dim>                                     p,
+    const typename DoFHandler<dim>::active_cell_iterator cell) override;
 
 
 private:
@@ -1605,9 +1607,9 @@ public:
    */
   double
   value_with_cell_guess(
-    const Point<dim>                           &evaluation_point,
-    const DoFHandler<dim>::active_cell_iterator cell,
-    [[maybe_unused]] const unsigned int         component = 0) override;
+    const Point<dim>                                    &evaluation_point,
+    const typename DoFHandler<dim>::active_cell_iterator cell,
+    [[maybe_unused]] const unsigned int component = 0) override;
 
   /**
    * @brief Return a pointer to a copy of the Shape
@@ -1631,9 +1633,10 @@ public:
    * @param component Not applicable
    */
   Tensor<1, dim>
-  gradient_with_cell_guess(const Point<dim> &evaluation_point,
-                           const DoFHandler<dim>::active_cell_iterator cell,
-                           const unsigned int component = 0) override;
+  gradient_with_cell_guess(
+    const Point<dim>                                    &evaluation_point,
+    const typename DoFHandler<dim>::active_cell_iterator cell,
+    const unsigned int component = 0) override;
 
   /**
    * @brief
@@ -1649,9 +1652,9 @@ public:
    */
   void
   closest_surface_point(
-    const Point<dim>                            &p,
-    Point<dim>                                  &closest_point,
-    const DoFHandler<dim>::active_cell_iterator &cell_guess) override;
+    const Point<dim>                                     &p,
+    Point<dim>                                           &closest_point,
+    const typename DoFHandler<dim>::active_cell_iterator &cell_guess) override;
   void
   closest_surface_point(const Point<dim> &p,
                         Point<dim>       &closest_point) const override;
@@ -2292,9 +2295,9 @@ public:
    */
   double
   value_with_cell_guess(
-    const Point<dim>                           &evaluation_point,
-    const DoFHandler<dim>::active_cell_iterator cell,
-    [[maybe_unused]] const unsigned int         component = 0) override;
+    const Point<dim>                                    &evaluation_point,
+    const typename DoFHandler<dim>::active_cell_iterator cell,
+    [[maybe_unused]] const unsigned int component = 0) override;
 
   /**
    * @brief Return the gradient of the distance function
@@ -2312,9 +2315,10 @@ public:
    * @param component Not applicable
    */
   Tensor<1, dim>
-  gradient_with_cell_guess(const Point<dim> &evaluation_point,
-                           const DoFHandler<dim>::active_cell_iterator cell,
-                           const unsigned int component = 0) override;
+  gradient_with_cell_guess(
+    const Point<dim>                                    &evaluation_point,
+    const typename DoFHandler<dim>::active_cell_iterator cell,
+    const unsigned int component = 0) override;
 
   /**
    * @brief Return a pointer to a copy of the Shape
@@ -2521,9 +2525,10 @@ public:
    * @param component Not applicable
    */
   double
-  value_with_cell_guess(const Point<dim> &evaluation_point,
-                        const DoFHandler<dim>::active_cell_iterator cell,
-                        const unsigned int component = 0) override;
+  value_with_cell_guess(
+    const Point<dim>                                    &evaluation_point,
+    const typename DoFHandler<dim>::active_cell_iterator cell,
+    const unsigned int component = 0) override;
 
   /**
    * @brief Return a pointer to a copy of the Shape
@@ -2547,9 +2552,10 @@ public:
    * @param component Not applicable
    */
   Tensor<1, dim>
-  gradient_with_cell_guess(const Point<dim> &evaluation_point,
-                           const DoFHandler<dim>::active_cell_iterator cell,
-                           const unsigned int component = 0) override;
+  gradient_with_cell_guess(
+    const Point<dim>                                    &evaluation_point,
+    const typename DoFHandler<dim>::active_cell_iterator cell,
+    const unsigned int component = 0) override;
 
   /**
    * @brief
@@ -2691,7 +2697,7 @@ public:
   double
   value_with_cell_guess(
     const Point<dim> &evaluation_point,
-    [[maybe_unused]] const DoFHandler<dim>::active_cell_iterator cell,
+    [[maybe_unused]] const typename DoFHandler<dim>::active_cell_iterator cell,
     [[maybe_unused]] const unsigned int component = 0) override;
 
   /**
@@ -2701,9 +2707,10 @@ public:
    * @param component This parameter is not used, but it is necessary because Shapes inherit from the Function class of deal.II.
    */
   Tensor<1, dim>
-  gradient_with_cell_guess(const Point<dim> &evaluation_point,
-                           const DoFHandler<dim>::active_cell_iterator cell,
-                           const unsigned int component = 0) override;
+  gradient_with_cell_guess(
+    const Point<dim>                                    &evaluation_point,
+    const typename DoFHandler<dim>::active_cell_iterator cell,
+    const unsigned int component = 0) override;
 
   /**
    * @brief Return the analytical gradient of the distance for the current RBF
@@ -2769,8 +2776,8 @@ public:
    */
   void
   determine_likely_nodes_for_one_cell(
-    const DoFHandler<dim>::cell_iterator &cell,
-    const Point<dim>                      support_point);
+    const typename DoFHandler<dim>::cell_iterator &cell,
+    const Point<dim>                               support_point);
 
   /**
    * @brief Sets the proper dof handler, then computes/updates the map of cells
@@ -3139,7 +3146,8 @@ public:
    * @param cell A likely one where the evaluation point is located
    */
   void
-  swap_iterable_nodes(const DoFHandler<dim>::active_cell_iterator cell);
+  swap_iterable_nodes(
+    const typename DoFHandler<dim>::active_cell_iterator cell);
 
 private:
   std::string                          filename;
