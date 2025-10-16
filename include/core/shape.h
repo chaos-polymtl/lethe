@@ -78,7 +78,7 @@ public:
    * @param position The position to set the shape at
    * @param orientation The orientation to set the shape at
    */
-  Shape(double        radius,
+  Shape(double              radius,
         const Point<dim>   &position,
         const Tensor<1, 3> &orientation)
 

@@ -78,7 +78,7 @@ namespace Parameters
      * Scaling laws. These are constants that are used to rescale quantities
      * arising frequently. Some of these quantities are not trivial to calculate
      * (e.g. thermal conductivity). Thus, it is better to pre-calculate these
-     * scaling and to reuse them instead of calculating them on the fly
+     * scalings and to reuse them instead of calculating them on the fly
      * everywhere.
      */
     double density_scaling;

@@ -185,10 +185,9 @@ public:
   double
   value(const std::map<field, double> &fields_value) override
   {
-    Assert(
-      fields_value.contains(field::phase_order_cahn_hilliard),
-      PhysicialPropertyModelFieldUndefined("MobilityCahnHilliardModelQuartic",
-                                           "phase_order_cahn_hilliard"));
+    Assert(fields_value.contains(field::phase_order_cahn_hilliard),
+           PhysicialPropertyModelFieldUndefined(
+             "MobilityCahnHilliardModelQuartic", "phase_order_cahn_hilliard"));
     const double &phase_order_cahn_hilliard =
       fields_value.at(field::phase_order_cahn_hilliard);
 
@@ -242,10 +241,9 @@ public:
   jacobian(const std::map<field, double> &fields_value,
            [[maybe_unused]] field         id) override
   {
-    Assert(
-      fields_value.contains(field::phase_order_cahn_hilliard),
-      PhysicialPropertyModelFieldUndefined("MobilityCahnHilliardModelQuartic",
-                                           "phase_order_cahn_hilliard"));
+    Assert(fields_value.contains(field::phase_order_cahn_hilliard),
+           PhysicialPropertyModelFieldUndefined(
+             "MobilityCahnHilliardModelQuartic", "phase_order_cahn_hilliard"));
     const double &phase_order_cahn_hilliard =
       fields_value.at(field::phase_order_cahn_hilliard);
 

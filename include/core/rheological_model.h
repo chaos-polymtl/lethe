@@ -842,7 +842,7 @@ public:
    */
   virtual double
   get_dynamic_viscosity_for_stabilization(
-    const double                  &p_density_ref,
+    const double                                   &p_density_ref,
     [[maybe_unused]] const std::map<field, double> &field_values) override;
 
   /**
@@ -854,9 +854,9 @@ public:
    */
   virtual void
   get_dynamic_viscosity_for_stabilization_vector(
-    const double                               &p_density_ref,
+    const double                                                &p_density_ref,
     [[maybe_unused]] const std::map<field, std::vector<double>> &field_vectors,
-    std::vector<double>                        &property_vector) override;
+    std::vector<double> &property_vector) override;
 
 private:
   /**
