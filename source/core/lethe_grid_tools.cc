@@ -335,7 +335,7 @@ LetheGridTools::find_boundary_cells_in_sphere(
 
 
 template <int dim>
-DoFHandler<dim>::active_cell_iterator
+typename DoFHandler<dim>::active_cell_iterator
 LetheGridTools::find_cell_around_point_with_neighbors(
   const DoFHandler<dim> &dof_handler,
   std::map<unsigned int,
@@ -1086,7 +1086,7 @@ LetheGridTools::vertices_cell_mapping_with_periodic_boundaries(
   std::map<unsigned int, std::set<DoFHandler<3>::active_cell_iterator>>
     &vertices_cell_map);
 
-template DoFHandler<2>::active_cell_iterator
+template typename DoFHandler<2>::active_cell_iterator
 LetheGridTools::find_cell_around_point_with_neighbors(
   const DoFHandler<2> &dof_handler,
   std::map<unsigned int, std::set<DoFHandler<2>::active_cell_iterator>>
@@ -1094,7 +1094,7 @@ LetheGridTools::find_cell_around_point_with_neighbors(
   const DoFHandler<2>::active_cell_iterator &cell,
   const Point<2>                            &point);
 
-template DoFHandler<3>::active_cell_iterator
+template typename DoFHandler<3>::active_cell_iterator
 LetheGridTools::find_cell_around_point_with_neighbors(
   const DoFHandler<3> &dof_handler,
   std::map<unsigned int, std::set<DoFHandler<3>::active_cell_iterator>>
