@@ -286,8 +286,7 @@ TracerAssemblerDGCore<dim>::assemble_matrix(
               // Note that the advection term has been weakened for it to appear
               // explicitly in the weak form as a boundary term.
               local_matrix(i, j) += (diffusivity * grad_phi_T_i * grad_phi_T_j -
-                                     grad_phi_T_i * velocity * phi_T_j -
-                                     phi_T_i * velocity_divergence * phi_T_j) *
+                                     grad_phi_T_i * velocity * phi_T_j) *
                                     JxW;
 
               // This term is added to correct for the influence of the
@@ -342,8 +341,7 @@ TracerAssemblerDGCore<dim>::assemble_rhs(
 
           // rhs for : - D * laplacian T + u grad T - f=0
           local_rhs(i) -= (diffusivity * grad_phi_T_i * tracer_gradient -
-                           grad_phi_T_i * velocity * tracer_value -
-                           phi_T_i * velocity_divergence * tracer_value +
+                           grad_phi_T_i * velocity * tracer_value +
                            scratch_data.source[q] * phi_T_i) *
                           JxW;
 
