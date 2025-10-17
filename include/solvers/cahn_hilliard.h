@@ -227,9 +227,7 @@ public:
    * @brief Returns a vector of references to TableHandler objects that needs to
    * be serialized/deserialized for the Cahn-Hilliard solver.
    *
-   * @return Structure containing a vector of references to TableHandler objects
-   * that needs to be serialized/deserialized for the Cahn-Hilliard solver, and
-   * their corresponding file names.
+   * @return Structure containing the TableHandler objects and their corresponding file names.
    */
   std::vector<OutputStructTableHandler>
   gather_tables() override;

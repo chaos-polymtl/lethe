@@ -1265,7 +1265,7 @@ HeatTransfer<dim>::write_checkpoint()
   solution_transfer->prepare_for_serialization(sol_set_transfer);
 
   // Serialize all post-processing tables that are currently used with the Heat
-  // Trasnfer solver
+  // Transfer solver
   const std::vector<OutputStructTableHandler> &table_output_structs =
     this->gather_tables();
   this->serialize_tables_vector(table_output_structs, mpi_communicator);

@@ -147,9 +147,7 @@ public:
    * @brief Returns a vector of references to TableHandler objects that needs to
    * be serialized/deserialized for a given AuxiliaryPhysics solver.
    *
-   * @return Structure containing a vector of references to TableHandler objects
-   * that needs to be serialized/deserialized for a given AuxiliaryPhysics
-   * solver, and their corresponding file names.
+   * @return Structure containing the TableHandler objects and their corresponding file names.
    */
   virtual std::vector<OutputStructTableHandler>
   gather_tables() = 0;
