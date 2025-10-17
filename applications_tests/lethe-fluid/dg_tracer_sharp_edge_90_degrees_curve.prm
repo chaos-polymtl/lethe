@@ -1,12 +1,10 @@
 # SPDX-FileCopyrightText: Copyright (c) 2022-2023 The Lethe Authors
 # SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
-set dimension = 3
+set dimension = 2
 
 subsection simulation control
-  set method           = bdf1
-  set time step        = 0.025
-  set time end         = 0.4
+  set method           = steady
   set output frequency = 0
 end
 
@@ -25,10 +23,8 @@ subsection physical properties
 end
 
 subsection mesh
-  set type               = dealii
-  set grid type          = subdivided_cylinder
-  set grid arguments     = 3 : 0.1 : 0.15
-  set initial refinement = 1
+  set type      = gmsh
+  set file name = ../../dg_tracer_sharp_edge_90_degrees_curve.msh
 end
 
 subsection multiphysics
@@ -38,18 +34,18 @@ end
 subsection boundary conditions
   set number = 3
   subsection bc 0
-    set id   = 2
+    set id   = 3
     set type = outlet
   end
   subsection bc 1
-    set id   = 0
+    set id   = 4
     set type = noslip
   end
   subsection bc 2
-    set id   = 1
+    set id   = 2
     set type = function
     subsection u
-      set Function expression = 300*(0.1*0.1-y*y-z*z)
+      set Function expression = (7.8125 - 7.8125*(2.5*y - 1.875)^4)
     end
   end
 end
@@ -57,18 +53,18 @@ end
 subsection boundary conditions tracer
   set number = 3
   subsection bc 0
-    set id   = 0
+    set id   = 3
     set type = outlet
   end
   subsection bc 1
-    set id   = 1
+    set id   = 2
     set type = dirichlet
     subsection dirichlet
-      set Function expression = 100*(0.1*0.1-y*y-z*z)
+      set Function expression = 0.78125 - 0.78125*(2.5*y - 1.875)^4
     end
   end
   subsection bc 2
-    set id   = 2
+    set id   = 4
     set type = outlet
   end
 end
