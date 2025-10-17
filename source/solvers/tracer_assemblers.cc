@@ -336,7 +336,7 @@ TracerAssemblerDGCore<dim>::assemble_rhs(
           const auto phi_T_i      = scratch_data.phi[q][i];
           const auto grad_phi_T_i = scratch_data.grad_phi[q][i];
 
-          // rhs for : - D * laplacian T + u grad T - f=0
+          // rhs for : - D * laplacian T + u * grad T - f=0
           local_rhs(i) -= (diffusivity * grad_phi_T_i * tracer_gradient -
                            grad_phi_T_i * velocity * tracer_value -
                            scratch_data.source[q] * phi_T_i) *
