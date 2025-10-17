@@ -1,4 +1,4 @@
-# SPDX-FileCopyrightText: Copyright (c) 2022-2023 The Lethe Authors
+# SPDX-FileCopyrightText: Copyright (c) 2022-2025 The Lethe Authors
 # SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
 set dimension = 3
@@ -97,9 +97,25 @@ subsection linear solver
   subsection fluid dynamics
     set verbosity                             = quiet
     set method                                = gmres
+    set max iters                             = 300
+    set max krylov vectors                    = 300
+    set relative residual                     = 1e-1
+    set minimum residual                      = 1e-9
+    set preconditioner                        = ilu
+    set ilu preconditioner fill               = 0
+    set ilu preconditioner absolute tolerance = 1e-14
+    set ilu preconditioner relative tolerance = 1.00
   end
   subsection tracer
     set verbosity                             = quiet
+    set method                                = gmres
+    set max iters                             = 300
+    set max krylov vectors                    = 300
+    set relative residual                     = 1e-1
     set minimum residual                      = 1e-8
+    set preconditioner                        = ilu
+    set ilu preconditioner fill               = 0
+    set ilu preconditioner absolute tolerance = 1e-14
+    set ilu preconditioner relative tolerance = 1.00
   end
 end
