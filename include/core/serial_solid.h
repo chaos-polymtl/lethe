@@ -264,7 +264,7 @@ private:
    *
    */
   void
-  rotate_grid(const double angle, const Tensor<1, 3> &axis);
+  rotate_grid(const double angle, [[maybe_unused]] const Tensor<1, 3> &axis);
 
   /**
    * @brief Translate the grid. In spacedim=2, the third component is ignore

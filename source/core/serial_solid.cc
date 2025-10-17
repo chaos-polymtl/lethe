@@ -255,9 +255,8 @@ SerialSolid<dim, spacedim>::get_triangulation()
 
 template <>
 void
-SerialSolid<1, 2>::rotate_grid(const double angle,
-                               const Tensor<1, 3> /*axis*/
-                                 &)
+SerialSolid<1, 2>::rotate_grid(const double                         angle,
+                               [[maybe_unused]] const Tensor<1, 3> &axis)
 {
   GridTools::rotate(angle, *solid_tria);
 }
@@ -265,7 +264,7 @@ SerialSolid<1, 2>::rotate_grid(const double angle,
 template <>
 void
 SerialSolid<2, 2>::rotate_grid(const double                         angle,
-                               [[maybe unused]] const Tensor<1, 3> &axis)
+                               [[maybe_unused]] const Tensor<1, 3> &axis)
 {
   GridTools::rotate(angle, *solid_tria);
 }
