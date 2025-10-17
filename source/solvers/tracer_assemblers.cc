@@ -292,9 +292,6 @@ TracerAssemblerDGCore<dim>::assemble_matrix(
               // This term is added to correct for the influence of the
               // non-divergence-free velocity field on the concentration. The
               // term is introduced in the strong form as - div u * T.
-              // IMPORTANT: It does not come from opening div (u * T). Doing so
-              // will lead to the opposite sign, which blows at boundary hanging
-              // nodes.
               local_matrix(i, j) +=
                 -phi_T_i * velocity_divergence * phi_T_j * JxW;
             }
@@ -347,9 +344,7 @@ TracerAssemblerDGCore<dim>::assemble_rhs(
 
           // This term is added to correct for the influence of the
           // non-divergence-free velocity field on the concentration. The term
-          // is introduced in the strong form as div u * T.
-          // IMPORTANT: It does not come from opening div (u * T). Doing so will
-          // lead to the opposite sign, which blows at boundary hanging nodes.
+          // is introduced in the strong form as - div u * T.
           local_rhs(i) -= -phi_T_i * velocity_divergence * tracer_value * JxW;
         }
     } // end loop on quadrature points
