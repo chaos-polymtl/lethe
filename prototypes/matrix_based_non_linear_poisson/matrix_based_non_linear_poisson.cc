@@ -213,7 +213,7 @@ public:
         const unsigned int /* component */ = 0) const override
   {
     double val = 1.0;
-    for (unsigned int d = 0; d < dim; ++d)
+    for (int d = 0; d < dim; ++d)
       {
         val *= std::sin(numbers::PI * p[d]);
       }
@@ -231,7 +231,7 @@ public:
   {
     const double coeff  = dim * numbers::PI * numbers::PI;
     double       factor = 1.0;
-    for (unsigned int d = 0; d < dim; ++d)
+    for (int d = 0; d < dim; ++d)
       {
         factor *= std::sin(numbers::PI * p[d]);
       }

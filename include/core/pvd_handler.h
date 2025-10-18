@@ -22,7 +22,7 @@ public:
    * @param filename Name of the file to which the PVDHandler content is save
    */
   void
-  save(const std::string &filename);
+  save(const std::string &filename) const;
 
   /**
    * @brief read Reads the content of a pvd times_and_names checpoint
@@ -35,8 +35,7 @@ public:
   void
   append(double time, const std::string &pvtu_filename)
   {
-    times_and_names.push_back(
-      std::pair<double, std::string>(time, pvtu_filename));
+    times_and_names.emplace_back(time, pvtu_filename);
   }
 
   // The name of the pvtu files and the time associated with each file

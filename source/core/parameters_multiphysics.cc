@@ -29,7 +29,7 @@ DeclException1(
   << "Interface regularization method requires an frequency larger than 0.");
 
 void
-Parameters::Multiphysics::declare_parameters(ParameterHandler &prm)
+Parameters::Multiphysics::declare_parameters(ParameterHandler &prm) const
 {
   prm.enter_subsection("multiphysics");
   {
@@ -76,8 +76,8 @@ Parameters::Multiphysics::declare_parameters(ParameterHandler &prm)
 }
 
 void
-Parameters::Multiphysics::parse_parameters(ParameterHandler    &prm,
-                                           const Dimensionality dimensions)
+Parameters::Multiphysics::parse_parameters(ParameterHandler     &prm,
+                                           const Dimensionality &dimensions)
 {
   prm.enter_subsection("multiphysics");
   {
@@ -97,7 +97,7 @@ Parameters::Multiphysics::parse_parameters(ParameterHandler    &prm,
 }
 
 void
-Parameters::VOF::declare_parameters(ParameterHandler &prm)
+Parameters::VOF::declare_parameters(ParameterHandler &prm) const
 {
   prm.enter_subsection("VOF");
   {
@@ -157,7 +157,8 @@ Parameters::VOF::parse_parameters(ParameterHandler &prm)
 }
 
 void
-Parameters::VOF_RegularizationMethod::declare_parameters(ParameterHandler &prm)
+Parameters::VOF_RegularizationMethod::declare_parameters(
+  ParameterHandler &prm) const
 {
   prm.enter_subsection("interface regularization method");
   {
@@ -668,7 +669,7 @@ Parameters::CahnHilliard_PhaseFilter::parse_parameters(ParameterHandler &prm)
 }
 
 void
-Parameters::CahnHilliard::declare_parameters(ParameterHandler &prm)
+Parameters::CahnHilliard::declare_parameters(ParameterHandler &prm) const
 {
   prm.enter_subsection("cahn hilliard");
   {
@@ -706,8 +707,8 @@ Parameters::CahnHilliard::declare_parameters(ParameterHandler &prm)
 }
 
 void
-Parameters::CahnHilliard::parse_parameters(ParameterHandler    &prm,
-                                           const Dimensionality dimensions)
+Parameters::CahnHilliard::parse_parameters(ParameterHandler     &prm,
+                                           const Dimensionality &dimensions)
 {
   prm.enter_subsection("cahn hilliard");
   {

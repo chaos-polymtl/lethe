@@ -295,19 +295,19 @@ private:
 
         Tensor<2, dim, VectorizedArray<Number>> u_gradient;
 
-        for (unsigned int d = 0; d < dim; ++d)
+        for (int d = 0; d < dim; ++d)
           u_gradient[d] = gradient[d];
 
         // a)     (ε(v), 2νε(u))
-        for (unsigned int d = 0; d < dim; ++d)
+        for (int d = 0; d < dim; ++d)
           gradient_result[d] += u_gradient[d];
 
         // b)   - (div(v), p)
-        for (unsigned int d = 0; d < dim; ++d)
+        for (int d = 0; d < dim; ++d)
           gradient_result[d][d] -= p_value;
 
         // c)     (q, div(u))
-        for (unsigned int d = 0; d < dim; ++d)
+        for (int d = 0; d < dim; ++d)
           value_result[dim] += u_gradient[d][d];
 
         // d) δ_1 (∇q, ∇p)
@@ -363,19 +363,19 @@ public:
 
     Tensor<2, dim, Number> u_gradient;
 
-    for (unsigned int d = 0; d < dim; ++d)
+    for (int d = 0; d < dim; ++d)
       u_gradient[d] = gradient[d];
 
     // a)     (ε(v), 2νε(u))
-    for (unsigned int d = 0; d < dim; ++d)
+    for (int d = 0; d < dim; ++d)
       gradient_result[d] += u_gradient[d];
 
     // b)   - (div(v), p)
-    for (unsigned int d = 0; d < dim; ++d)
+    for (int d = 0; d < dim; ++d)
       gradient_result[d][d] -= p_value;
 
     // c)     (q, div(u))
-    for (unsigned int d = 0; d < dim; ++d)
+    for (int d = 0; d < dim; ++d)
       value_result[dim] += u_gradient[d][d];
 
     // d) δ_1 (∇q, ∇p)

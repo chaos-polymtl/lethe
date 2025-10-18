@@ -63,18 +63,18 @@ make_table_scalars_tensors(
   for (unsigned int i = 0; i < dependent_vector.size(); ++i)
     {
       table.add_value(independent_column_name, independent_vector[i]);
-      for (unsigned int d = 0; d < dim; ++d)
+      for (int d = 0; d < dim; ++d)
         table.add_value(dependent_column_names[d], dependent_vector[i][d]);
     }
 
   table.set_precision(independent_column_name, display_precision);
-  for (unsigned int d = 0; d < dim; ++d)
+  for (int d = 0; d < dim; ++d)
     table.set_precision(dependent_column_names[d], display_precision);
 
   if (display_scientific_notation)
     {
       table.set_scientific(independent_column_name, true);
-      for (unsigned int d = 0; d < dim; ++d)
+      for (int d = 0; d < dim; ++d)
         table.set_scientific(dependent_column_names[d], true);
     }
 
@@ -105,7 +105,7 @@ make_table_scalars_tensors(
       AssertDimension(independent_vector.size(), vect.size());
       for (unsigned int i = 0; i < vect.size(); ++i)
         {
-          for (unsigned int d = 0; d < dim; ++d)
+          for (int d = 0; d < dim; ++d)
             {
               table.add_value(dependent_column_names[d + vect_index],
                               vect[i][d]);
@@ -145,7 +145,7 @@ make_table_tensors_tensors(
 
   for (unsigned int i = 0; i < dependent_vector.size(); ++i)
     {
-      for (unsigned int d = 0; d < dim; ++d)
+      for (int d = 0; d < dim; ++d)
         {
           table.add_value(independent_column_names[d],
                           independent_vector[i][d]);
@@ -153,14 +153,14 @@ make_table_tensors_tensors(
         }
     }
 
-  for (unsigned int d = 0; d < dim; ++d)
+  for (int d = 0; d < dim; ++d)
     {
       table.set_precision(independent_column_names[d], display_precision);
       table.set_precision(dependent_column_names[d], display_precision);
     }
 
   if (display_scientific_notation)
-    for (unsigned int d = 0; d < dim; ++d)
+    for (int d = 0; d < dim; ++d)
       {
         table.set_scientific(independent_column_names[d], true);
         table.set_scientific(dependent_column_names[d], true);
@@ -188,18 +188,18 @@ make_table_tensors_scalars(
   for (unsigned int i = 0; i < dependent_vector.size(); ++i)
     {
       table.add_value(dependent_column_name, dependent_vector[i]);
-      for (unsigned int d = 0; d < dim; ++d)
+      for (int d = 0; d < dim; ++d)
         table.add_value(independent_column_names[d], independent_vector[i][d]);
     }
 
   table.set_precision(dependent_column_name, display_precision);
-  for (unsigned int d = 0; d < dim; ++d)
+  for (int d = 0; d < dim; ++d)
     table.set_precision(independent_column_names[d], display_precision);
 
   if (display_scientific_notation)
     {
       table.set_scientific(dependent_column_name, true);
-      for (unsigned int d = 0; d < dim; ++d)
+      for (int d = 0; d < dim; ++d)
         table.set_scientific(independent_column_names[d], true);
     }
 

@@ -1367,7 +1367,7 @@ VolumeOfFluid<dim>::postprocess(bool first_iteration)
                                                             true);
                 }
               // Add "momentum" columns
-              for (unsigned int d = 0; d < dim; ++d)
+              for (int d = 0; d < dim; ++d)
                 {
                   this->table_monitoring_vof.add_value(momentum_names[d],
                                                        momentum[d]);
@@ -1410,7 +1410,7 @@ VolumeOfFluid<dim>::postprocess(bool first_iteration)
                       volumes_masses_momentum_and_sharpening_threshold
                         .emplace_back(surface);
                     }
-                  for (unsigned int d = 0; d < dim; ++d)
+                  for (int d = 0; d < dim; ++d)
                     {
                       dependent_column_names.emplace_back(momentum_names[d]);
                       volumes_masses_momentum_and_sharpening_threshold

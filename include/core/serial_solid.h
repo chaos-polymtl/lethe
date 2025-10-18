@@ -99,7 +99,7 @@ public:
    * @return The reference to the vector of the displacement since the mapping
    */
   double
-  get_max_displacement_since_mapped();
+  get_max_displacement_since_mapped() const;
 
   /**
    * @brief Returns translational velocity of the center of mass of the solid object
@@ -112,7 +112,7 @@ public:
     if constexpr (spacedim == 3)
       return this->current_translational_velocity;
 
-    if constexpr (spacedim == 2)
+    else if constexpr (spacedim == 2) // spacedim == 2
       return tensor_nd_to_3d(this->current_translational_velocity);
   }
 
@@ -138,7 +138,7 @@ public:
     if constexpr (spacedim == 3)
       return this->center_of_rotation;
 
-    if constexpr (spacedim == 2)
+    else
       return point_nd_to_3d(this->center_of_rotation);
   }
 
@@ -264,7 +264,7 @@ private:
    *
    */
   void
-  rotate_grid(const double angle, const Tensor<1, 3> axis);
+  rotate_grid(const double angle, [[maybe_unused]] const Tensor<1, 3> &axis);
 
   /**
    * @brief Translate the grid. In spacedim=2, the third component is ignore
@@ -272,7 +272,7 @@ private:
    * @param translate The vector with which the solid is translated.
    */
   void
-  translate_grid(const Tensor<1, 3> translate);
+  translate_grid(const Tensor<1, 3> &translate);
 
   // Member variables
 

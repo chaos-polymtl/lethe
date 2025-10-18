@@ -31,8 +31,6 @@
 #include <deal.II/dofs/dof_handler.h>
 #include <deal.II/dofs/dof_tools.h>
 
-#include <deal.II/grid/manifold_lib.h>
-
 #include <deal.II/physics/transformations.h>
 
 #include <cfloat>
@@ -56,7 +54,7 @@ public:
   /**
    * @brief enum class that associate an integer index tp each type of shape
    */
-  enum ShapeType : int
+  enum ShapeType : std::int8_t
   {
     sphere,
     hyper_rectangle,
@@ -123,9 +121,10 @@ public:
    * @brief Return the smoothed maximum of two variables used for shape contact calculation.
    * @param a first variable
    * @param b second variable
+   * @param smooth_factor
    */
-  double
-  smooth_max(double a, double b, double smooth_factor = 10)
+  static double
+  smooth_max(const double a, const double b, const double smooth_factor = 10)
   {
     return (a * std::exp(a * smooth_factor) + b * std::exp(b * smooth_factor)) /
            ((std::exp(a * smooth_factor) + std::exp(b * smooth_factor)));
@@ -227,8 +226,8 @@ public:
             Point<dim> current_point = candidate_points[i];
             Point<dim> dx{}, distance_gradient{}, previous_position{};
             // Initialize the iteration counter.
-            unsigned int       iteration     = 0;
-            const unsigned int iteration_max = 2e2;
+            unsigned int           iteration     = 0;
+            constexpr unsigned int iteration_max = 2e2;
 
             // The initial step size is set to 25% of the effective radius of
             // the shape. Tests showed that this initial step size is generally
@@ -438,7 +437,6 @@ public:
   /**
    * @brief Return the distance, the center point, and the normal between the current shape and the shape given in the argument. The center point is the point where both shapes are at the same distance from each other. The normal is defined using the closest surface point on the two shapes. By default, the function does not calculate the distance between the two shapes if their bounding boxes are not in contact. This behavior can be modified using the appropriate parameter.
    * @param shape The shape with which the distance is evaluated
-   * @param cell The cell that is likely to contain the evaluation point
    * @param candidate_points This is the initial guess points used in the calculation.
    * @param precision This is the precision of the distance between the two shapes.
    * @param exact_distance_outside_of_contact This is a boolean to force the exact distance evaluation if the shapes are not in contact.
@@ -530,8 +528,8 @@ public:
             Point<dim> dx{}, distance_gradient{}, previous_position{};
             // Initialize the iteration counter. We limit the number of
             // iterations to 200.
-            unsigned int       iteration     = 0;
-            const unsigned int iteration_max = 2e2;
+            unsigned int           iteration     = 0;
+            constexpr unsigned int iteration_max = 2e2;
 
             // The initial step size is set to 25% of the effective radius of
             // the shape. Tests showed that this initial step size is generally
@@ -1071,7 +1069,7 @@ public:
   {
     double curvature = 0;
     double epsilone  = 1e-6 * this->effective_radius;
-    for (unsigned int d = 0; d < dim; ++d)
+    for (int d = 0; d < dim; ++d)
       {
         Tensor<1, dim> perturbation;
         perturbation[d]           = epsilone;
@@ -1104,7 +1102,7 @@ public:
     // Calculate the curvature using the divergence of the normal and define the
     // local curvature radius as the absolute value of the inverse of the
     // curvature.
-    for (unsigned int d = 0; d < dim; ++d)
+    for (int d = 0; d < dim; ++d)
       {
         Tensor<1, dim> perturbation;
         perturbation[d] = epsilone;
@@ -1127,7 +1125,7 @@ public:
    * @brief
    * Sets a new position for the shape
    *
-   * @param The new position the shape will be placed at
+   * @param new_position The new position the shape will be placed at
    */
   inline virtual void
   set_position(const Point<dim> &new_position)
@@ -1140,7 +1138,7 @@ public:
    * @brief
    * Sets a new orientation for the shape
    *
-   * @param The new orientation the shape will be set at
+   * @param new_orientation The new orientation the shape will be set at
    */
   inline virtual void
   set_orientation(const Tensor<1, 3> &new_orientation)
@@ -1173,8 +1171,7 @@ public:
     orientation = new_orientation;
   }
   /**
-   * @brief
-   * Returns the position of the shape
+   * @brief Returns the position of the shape.
    *
    */
   inline virtual Point<dim>
@@ -1184,8 +1181,7 @@ public:
   }
 
   /**
-   * @brief
-   * Returns the orientation of the shape
+   * @brief Returns the orientation of the shape
    *
    */
   inline virtual Tensor<1, 3>
@@ -1195,8 +1191,7 @@ public:
   }
 
   /**
-   * @brief
-   * Returns the orientation of the shape
+   * @brief Returns the orientation of the shape
    *
    */
   inline virtual Tensor<2, 3>
@@ -1206,8 +1201,7 @@ public:
   }
 
   /**
-   * @brief
-   * Returns the bounding box half length
+   * @brief Returns the bounding box half length
    *
    */
   inline virtual Tensor<1, dim>
@@ -1217,8 +1211,7 @@ public:
   }
 
   /**
-   * @brief
-   * Returns the bounding box position
+   * @brief Returns the bounding box position
    *
    */
   inline virtual Point<dim>
@@ -1228,8 +1221,7 @@ public:
   }
 
   /**
-   * @brief
-   * Returns the default manifold of the shape. If not redefined, it is a flat
+   * @brief Returns the default manifold of the shape. If not redefined, it is a flat
    * manifold.
    */
   virtual std::shared_ptr<Manifold<dim - 1, dim>>
@@ -1237,8 +1229,7 @@ public:
 
 
   /**
-   * @brief
-   * Clear the cache of the shape
+   * @brief Clear the cache of the shape
    *
    */
   virtual void
@@ -1288,12 +1279,12 @@ public:
    * @brief Defines if this shape is part of a composite.
    * If true, cache management is deactivated and delegated to the upper level
    * shape, to avoid cache duplication.
-   * @param part_of_a_composite is true if this shape is a constituent of a composite shape
+   * @param is_part_of_a_composite is true if this shape is a constituent of a composite shape
    */
   void
-  set_part_of_a_composite(const bool part_of_a_composite)
+  set_part_of_a_composite(const bool is_part_of_a_composite)
   {
-    this->part_of_a_composite = part_of_a_composite;
+    this->part_of_a_composite = is_part_of_a_composite;
   }
 
   /**
@@ -1301,14 +1292,14 @@ public:
    * Sets the layer thickening value (positive or negative) of the particle's
    * shape
    *
-   * @param layer_thickening Thickness to be artificially added to the particle.
+   * @param the_layer_thickening Thickness to be artificially added to the particle.
    * A negative value will decrease the particle's thickness by subtracting a
    * layer of specified width.
    */
   virtual void
-  set_layer_thickening(const double layer_thickening)
+  set_layer_thickening(const double the_layer_thickening)
   {
-    this->layer_thickening = layer_thickening;
+    this->layer_thickening = the_layer_thickening;
   }
 
   /**
@@ -1317,9 +1308,8 @@ public:
    *
    * @param rotation_matrix_representation The rotation matrix.
    */
-  Tensor<1, 3>
-  rotation_matrix_to_xyz_angles(
-    Tensor<2, 3> &rotation_matrix_representation) const
+  static Tensor<1, 3>
+  rotation_matrix_to_xyz_angles(Tensor<2, 3> &rotation_matrix_representation)
   {
     Tensor<1, 3> xyz_rotation;
     xyz_rotation[0] = std::atan2(-rotation_matrix_representation[1][2],
@@ -1384,7 +1374,7 @@ public:
     sphere_function =
       std::make_shared<Functions::SignedDistance::Sphere<dim>>(position,
                                                                radius);
-    for (unsigned int d = 0; d < dim; ++d)
+    for (int d = 0; d < dim; ++d)
       {
         this->bounding_box_half_length[d] = radius;
         this->bounding_box_center[d]      = 0;
@@ -1454,7 +1444,6 @@ public:
   /**
    * @brief Return the distance, the center point, and the normal between the current shape and the shape given in the argument. The center point is the point that minimized the level set obtained from the intersection of the two shapes. The normal is defined using the closest surface point on the two shapes. This function is an optimized version of the general shape distance calculation for the case of a sphere.
    * @param shape The shape with which the distance is evaluated
-   * @param cell The cell that is likely to contain the evaluation point
    * @param candidate_points This is the initial guess points used in the calculation. (In this implementation, this parameter is void)
    * @param precision This is the precision of the distance between the two shapes. (In this implementation, this parameter is void)
    * @param exact_distance_outside_of_contact This is a boolean to force the exact distance evaluation if the shapes are not in contact. (In this implementation, this parameter is void)
@@ -1491,7 +1480,6 @@ private:
 };
 
 
-
 template <int dim>
 class Plane : public Shape<dim>
 {
@@ -1514,7 +1502,7 @@ public:
       }
     // This is a special case since the plane has no bounding box so here we
     // fill it with zeros.
-    for (unsigned int d = 0; d < dim; ++d)
+    for (int d = 0; d < dim; ++d)
       {
         this->bounding_box_half_length[d] = 0;
         this->bounding_box_center[d]      = 0;
@@ -1526,7 +1514,8 @@ public:
    * at the given point evaluation point.
    *
    * @param evaluation_point The point at which the function will be evaluated
-   * @param component This parameter is not used, but it is necessary because Shapes inherit from the Function class of deal.II.
+   * @param component This parameter is not used, but it is necessary because
+   * Shapes inherit from the Function class of deal.II.
    */
   double
   value(const Point<dim>  &evaluation_point,
@@ -1554,7 +1543,6 @@ public:
    */
   double
   displaced_volume() override;
-
 
 
 private:
@@ -1592,7 +1580,7 @@ public:
   {
     // Initialize the bounding box.
     this->bounding_box_half_length = half_lengths;
-    for (unsigned int d = 0; d < dim; ++d)
+    for (int d = 0; d < dim; ++d)
       {
         this->bounding_box_center[d] = 0;
       }
@@ -1621,7 +1609,7 @@ public:
   value_with_cell_guess(
     const Point<dim>                                    &evaluation_point,
     const typename DoFHandler<dim>::active_cell_iterator cell,
-    const unsigned int /*component = 0*/) override;
+    [[maybe_unused]] const unsigned int component = 0) override;
 
   /**
    * @brief Return a pointer to a copy of the Shape
@@ -1675,8 +1663,8 @@ public:
    * @brief Return the sign of the parameter. To be removed once PR#794 is merged.
    * @param prm parameter
    */
-  inline double
-  sign(const double prm) const
+  static inline double
+  sign(const double prm)
   {
     if (prm > 0)
       return 1;
@@ -1747,7 +1735,7 @@ public:
     , half_lengths(half_lengths)
   {
     this->bounding_box_half_length = half_lengths;
-    for (unsigned int d = 0; d < dim; ++d)
+    for (int d = 0; d < dim; ++d)
       {
         this->bounding_box_center[d] = 0;
       }
@@ -1799,7 +1787,7 @@ public:
     , radii(radii)
   {
     this->bounding_box_half_length = radii;
-    for (unsigned int d = 0; d < dim; ++d)
+    for (int d = 0; d < dim; ++d)
       {
         this->bounding_box_center[d] = 0;
       }
@@ -1859,7 +1847,7 @@ public:
         this->bounding_box_half_length[1] = ring_thickness;
         this->bounding_box_half_length[2] = ring_radius + ring_thickness;
       };
-    for (unsigned int d = 0; d < dim; ++d)
+    for (int d = 0; d < dim; ++d)
       {
         this->bounding_box_center[d] = 0;
       }
@@ -2118,6 +2106,8 @@ public:
    * @brief Constructs an assembly of shapes into a composite shape
    * @param constituents The shapes from which this composite shape will be composed
    * @param operations The list of operations to perform to construct the composite
+   * @param position
+   * @param orientation
    */
   CompositeShape(
     std::map<unsigned int, std::shared_ptr<Shape<dim>>> constituents,
@@ -2140,8 +2130,7 @@ public:
         this->effective_radius =
           std::max(this->effective_radius, constituent->effective_radius);
         constituent->set_part_of_a_composite(true);
-        std::vector<Point<3>> component_bounding_box_vertex(
-          Utilities::fixed_power<dim>(2));
+
         // For each of the components update the bounding box.
         if constexpr (dim == 2)
           {
@@ -2171,7 +2160,7 @@ public:
                                  point_nd_to_3d(constituent->get_position());
                 if (xyz_min_max_is_initialized == false)
                   {
-                    for (unsigned int d = 0; d < dim; ++d)
+                    for (int d = 0; d < dim; ++d)
                       {
                         point_min[d] = new_point[d];
                         point_max[d] = new_point[d];
@@ -2180,7 +2169,7 @@ public:
                   }
                 else
                   {
-                    for (unsigned int d = 0; d < dim; ++d)
+                    for (int d = 0; d < dim; ++d)
                       {
                         point_min[d] = std::min(point_min[d], new_point[d]);
                         point_max[d] = std::max(point_max[d], new_point[d]);
@@ -2223,7 +2212,7 @@ public:
 
                 if (xyz_min_max_is_initialized == false)
                   {
-                    for (unsigned int d = 0; d < dim; ++d)
+                    for (int d = 0; d < dim; ++d)
                       {
                         point_min[d] = new_point[d];
                         point_max[d] = new_point[d];
@@ -2232,7 +2221,7 @@ public:
                   }
                 else
                   {
-                    for (unsigned int d = 0; d < dim; ++d)
+                    for (int d = 0; d < dim; ++d)
                       {
                         point_min[d] = std::min(point_min[d], new_point[d]);
                         point_max[d] = std::max(point_max[d], new_point[d]);
@@ -2250,6 +2239,8 @@ public:
    * This constructor is mainly used for outputting multiple shapes with a
    * global level set function defined as a union.
    * @param constituents_vector The shapes from which this composite sphere will be composed
+   * @param position
+   * @param orientation
    */
   CompositeShape(std::vector<std::shared_ptr<Shape<dim>>> constituents_vector,
                  const Point<dim>                        &position,
@@ -2306,7 +2297,7 @@ public:
   value_with_cell_guess(
     const Point<dim>                                    &evaluation_point,
     const typename DoFHandler<dim>::active_cell_iterator cell,
-    const unsigned int /*component = 0*/) override;
+    [[maybe_unused]] const unsigned int component = 0) override;
 
   /**
    * @brief Return the gradient of the distance function
@@ -2356,7 +2347,7 @@ public:
   /**
    * @brief Remove data that affects only artificial cells (not locally owned and not ghost).
    * The data is removed if it would never be accessed by the local process.
-   * @param dof_handler the reference to the new dof_handler
+   * @param updated_dof_handler the reference to the new dof_handler
    * @param mesh_based_precalculations mesh-based precalculations that can lead to slight shape misrepresentation (if RBF typed)
    */
   void
@@ -2411,7 +2402,7 @@ public:
    * @param position The shape center
    * @param orientation The shape orientation
    */
-  OpenCascadeShape(const std::string   file_name,
+  OpenCascadeShape(const std::string  &file_name,
                    const Point<dim>   &position,
                    const Tensor<1, 3> &orientation)
     : Shape<dim>(0.1, position, orientation)
@@ -2577,7 +2568,7 @@ public:
    * @brief
    * Sets a new position for the shape
    *
-   * @param The new position the shape will be placed at
+   * @param position The new position the shape will be placed at
    */
   void
   set_position(const Point<dim> &position) override;
@@ -2706,8 +2697,8 @@ public:
   double
   value_with_cell_guess(
     const Point<dim> &evaluation_point,
-    const typename DoFHandler<dim>::active_cell_iterator /*cell*/,
-    const unsigned int /*component = 0*/) override;
+    [[maybe_unused]] const typename DoFHandler<dim>::active_cell_iterator cell,
+    [[maybe_unused]] const unsigned int component = 0) override;
 
   /**
    * @brief Return the analytical gradient of the distance
@@ -2791,7 +2782,7 @@ public:
   /**
    * @brief Sets the proper dof handler, then computes/updates the map of cells
    * and their likely non-null nodes
-   * @param dof_handler the reference to the new dof_handler
+   * @param updated_dof_handler the reference to the new dof_handler
    * @param mesh_based_precalculations mesh-based precalculations that can lead to slight shape misrepresentation (if RBF typed)
    * */
   void
@@ -2808,8 +2799,8 @@ public:
    * @brief Compact Wendland C2 function defined from 0 to 1.
    * @param distance distance to the node normalized by the support radius
    */
-  inline double
-  wendlandc2(const double distance) const
+  static inline double
+  wendlandc2(const double distance)
   {
     return distance > 1.0 ?
              0.0 :
@@ -2820,8 +2811,8 @@ public:
    * @brief Compact linear function defined from 0 to 1.
    * @param distance distance to the node normalized by the support radius
    */
-  inline double
-  linear(const double distance) const
+  static inline double
+  linear(const double distance)
   {
     return distance > 1.0 ? 0.0 : (1.0 - distance);
   }
@@ -2830,8 +2821,8 @@ public:
    * @brief Non-compact Gaussian function with 0.1 value at distance equal to 1.
    * @param distance distance to the node normalized by the support radius
    */
-  inline double
-  gauss90(const double distance) const
+  static inline double
+  gauss90(const double distance)
   {
     double eps = std::pow(-1.0 * std::log(0.1), 0.5);
     return std::exp(-1.0 * std::pow(distance * eps, 2.0));
@@ -2841,8 +2832,8 @@ public:
    * @brief Non-compact Gaussian function with 0.05 value at distance equal to 1.
    * @param distance distance to the node normalized by the support radius
    */
-  inline double
-  gauss95(const double distance) const
+  static inline double
+  gauss95(const double distance)
   {
     double eps = std::pow(-1.0 * std::log(0.05), 0.5);
     return std::exp(-1.0 * std::pow(distance * eps, 2.0));
@@ -2852,8 +2843,8 @@ public:
    * @brief Non-compact Gaussian function with 0.01 value at distance equal to 1.
    * @param distance distance to the node normalized by the support radius
    */
-  inline double
-  gauss99(const double distance) const
+  static inline double
+  gauss99(const double distance)
   {
     double eps = std::pow(-1.0 * std::log(0.01), 0.5);
     return std::exp(-1.0 * std::pow(distance * eps, 2.0));
@@ -2865,8 +2856,8 @@ public:
    * distance=1.
    * @param distance distance to the node normalized by the support radius
    */
-  inline double
-  c1c0(const double distance) const
+  static inline double
+  c1c0(const double distance)
   {
     return distance > 1.0 ? 0.0 : (1.0 - std::pow(distance, 2.0));
   }
@@ -2877,8 +2868,8 @@ public:
    * distance=1.
    * @param distance distance to the node normalized by the support radius
    */
-  inline double
-  c2c0(const double distance) const
+  static inline double
+  c2c0(const double distance)
   {
     return distance > 1.0 ? 0.0 : (1.0 - std::pow(distance, 3.0));
   }
@@ -2889,8 +2880,8 @@ public:
    * distance=1.
    * @param distance distance to the node normalized by the support radius
    */
-  inline double
-  c0c1(const double distance) const
+  static inline double
+  c0c1(const double distance)
   {
     return distance > 1.0 ? 0.0 :
                             (1.0 - 2.0 * distance + std::pow(distance, 2.0));
@@ -2902,8 +2893,8 @@ public:
    * distance=1.
    * @param distance distance to the node normalized by the support radius
    */
-  inline double
-  c1c1(const double distance) const
+  static inline double
+  c1c1(const double distance)
   {
     return distance > 1.0 ? 0.0 :
                             (1.0 - 3.0 * std::pow(distance, 2.0) +
@@ -2916,8 +2907,8 @@ public:
    * distance=1.
    * @param distance distance to the node normalized by the support radius
    */
-  inline double
-  c2c1(const double distance) const
+  static inline double
+  c2c1(const double distance)
   {
     return distance > 1.0 ? 0.0 :
                             (1.0 - 4.0 * std::pow(distance, 3.0) +
@@ -2930,8 +2921,8 @@ public:
    * distance=1.
    * @param distance distance to the node normalized by the support radius
    */
-  inline double
-  c0c2(const double distance) const
+  static inline double
+  c0c2(const double distance)
   {
     return distance > 1.0 ?
              0.0 :
@@ -2945,8 +2936,8 @@ public:
    * distance=1.
    * @param distance distance to the node normalized by the support radius
    */
-  inline double
-  c1c2(const double distance) const
+  static inline double
+  c1c2(const double distance)
   {
     return distance > 1.0 ?
              0.0 :
@@ -2960,8 +2951,8 @@ public:
    * distance=1.
    * @param distance distance to the node normalized by the support radius
    */
-  inline double
-  c2c2(const double distance) const
+  static inline double
+  c2c2(const double distance)
   {
     return distance > 1.0 ?
              0.0 :
@@ -2973,8 +2964,8 @@ public:
    * @brief Compact cosinusoidal basis function. It is null when r>1
    * @param distance distance to the node normalized by the support radius
    */
-  inline double
-  cos(const double distance) const
+  static inline double
+  cos(const double distance)
   {
     return distance > 1.0 ? 0.0 : 0.5 + 0.5 * std::cos(distance * M_PI);
   }
@@ -2984,8 +2975,8 @@ public:
    * @brief Derivative of a compact Wendland C2 function defined from 0 to 1.
    * @param distance distance to the node normalized by the support radius
    */
-  inline double
-  wendlandc2_derivative(const double distance) const
+  static inline double
+  wendlandc2_derivative(const double distance)
   {
     return distance > 1.0 ? 0.0 :
                             -20.0 * distance * std::pow(1.0 - distance, 3.0);
@@ -2995,8 +2986,8 @@ public:
    * @brief Derivative of a compact linear function defined from 0 to 1.
    * @param distance distance to the node normalized by the support radius
    */
-  inline double
-  linear_derivative(const double distance) const
+  static inline double
+  linear_derivative(const double distance)
   {
     return distance > 1.0 ? 0.0 : -1.0;
   }
@@ -3005,8 +2996,8 @@ public:
    * @brief Derivative of a non-compact Gaussian function with 0.1 value at distance equal to 1.
    * @param distance distance to the node normalized by the support radius
    */
-  inline double
-  gauss90_derivative(const double distance) const
+  static inline double
+  gauss90_derivative(const double distance)
   {
     double eps = std::pow(-1.0 * std::log(0.1), 0.5);
     return -2.0 * std::pow(eps, 2.0) * distance *
@@ -3017,8 +3008,8 @@ public:
    * @brief Derivative of a non-compact Gaussian function with 0.05 value at distance equal to 1.
    * @param distance distance to the node normalized by the support radius
    */
-  inline double
-  gauss95_derivative(const double distance) const
+  static inline double
+  gauss95_derivative(const double distance)
   {
     double eps = std::pow(-1.0 * std::log(0.05), 0.5);
     return -2.0 * std::pow(eps, 2.0) * distance *
@@ -3029,8 +3020,8 @@ public:
    * @brief Derivative of a non-compact Gaussian function with 0.01 value at distance equal to 1.
    * @param distance distance to the node normalized by the support radius
    */
-  inline double
-  gauss99_derivative(const double distance) const
+  static inline double
+  gauss99_derivative(const double distance)
   {
     double eps = std::pow(-1.0 * std::log(0.01), 0.5);
     return -2.0 * std::pow(eps, 2.0) * distance *
@@ -3043,8 +3034,8 @@ public:
    * distance=1.
    * @param distance distance to the node normalized by the support radius
    */
-  inline double
-  c1c0_derivative(const double distance) const
+  static inline double
+  c1c0_derivative(const double distance)
   {
     return distance > 1.0 ? 0.0 : -2.0 * distance;
   }
@@ -3055,8 +3046,8 @@ public:
    * distance=1.
    * @param distance distance to the node normalized by the support radius
    */
-  inline double
-  c2c0_derivative(const double distance) const
+  static inline double
+  c2c0_derivative(const double distance)
   {
     return distance > 1.0 ? 0.0 : -3.0 * std::pow(distance, 2.0);
   }
@@ -3067,8 +3058,8 @@ public:
    * distance=1.
    * @param distance distance to the node normalized by the support radius
    */
-  inline double
-  c0c1_derivative(const double distance) const
+  static inline double
+  c0c1_derivative(const double distance)
   {
     return distance > 1.0 ? 0.0 : 2.0 * (distance - 1.0);
   }
@@ -3079,8 +3070,8 @@ public:
    * distance=1.
    * @param distance distance to the node normalized by the support radius
    */
-  inline double
-  c1c1_derivative(const double distance) const
+  static inline double
+  c1c1_derivative(const double distance)
   {
     return distance > 1.0 ? 0.0 : 6.0 * (distance - 1.0) * distance;
   }
@@ -3091,8 +3082,8 @@ public:
    * distance=1.
    * @param distance distance to the node normalized by the support radius
    */
-  inline double
-  c2c1_derivative(const double distance) const
+  static inline double
+  c2c1_derivative(const double distance)
   {
     return distance > 1.0 ? 0.0 :
                             12 * (distance - 1.0) * std::pow(distance, 2.0);
@@ -3104,8 +3095,8 @@ public:
    * distance=1.
    * @param distance distance to the node normalized by the support radius
    */
-  inline double
-  c0c2_derivative(const double distance) const
+  static inline double
+  c0c2_derivative(const double distance)
   {
     return distance > 1.0 ? 0.0 : -3.0 * std::pow(distance - 1.0, 2.0);
   }
@@ -3116,8 +3107,8 @@ public:
    * distance=1.
    * @param distance distance to the node normalized by the support radius
    */
-  inline double
-  c1c2_derivative(const double distance) const
+  static inline double
+  c1c2_derivative(const double distance)
   {
     return distance > 1.0 ?
              0.0 :
@@ -3131,8 +3122,8 @@ public:
    * distance=1.
    * @param distance distance to the node normalized by the support radius
    */
-  inline double
-  c2c2_derivative(const double distance) const
+  static inline double
+  c2c2_derivative(const double distance)
   {
     return distance > 1.0 ?
              0.0 :
@@ -3144,8 +3135,8 @@ public:
    * It preserves continuity at every point
    * @param distance distance to the node normalized by the support radius
    */
-  inline double
-  cosinus_derivative(const double distance) const
+  static inline double
+  cosinus_derivative(const double distance)
   {
     return distance > 1.0 ? 0.0 : -M_PI_2 * std::sin(M_PI * distance);
   }

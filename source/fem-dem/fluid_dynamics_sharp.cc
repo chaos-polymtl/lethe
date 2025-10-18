@@ -2288,7 +2288,7 @@ FluidDynamicsSharp<dim>::integrate_particles()
                      ->explicit_position_integration_calculation == false))
                 {
                   particles[p].position.clear();
-                  for (unsigned int d = 0; d < dim; ++d)
+                  for (int d = 0; d < dim; ++d)
                     {
                       for (unsigned int i = 1;
                            i < number_of_previous_solutions(method) + 1;

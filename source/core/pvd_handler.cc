@@ -8,7 +8,7 @@
 using namespace dealii;
 
 void
-PVDHandler::save(const std::string &prefix)
+PVDHandler::save(const std::string &prefix) const
 {
   std::string   filename = prefix + ".pvdhandler";
   std::ofstream output(filename.c_str());
@@ -37,10 +37,10 @@ PVDHandler::read(const std::string &prefix)
   for (unsigned int i = 0; i < size; ++i)
     {
       double      time;
-      std::string filename;
+      std::string filename_i;
       input >> time;
-      input >> filename;
-      append(time, filename);
+      input >> filename_i;
+      append(time, filename_i);
     }
 
   if (size != times_and_names.size())

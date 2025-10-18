@@ -189,49 +189,89 @@ namespace Parameters
       double molecular_mean_free_path_gas;
 
       void
-      declare_parameters(ParameterHandler &prm);
+      declare_parameters(ParameterHandler &prm) const;
       void
       parse_parameters(ParameterHandler &prm);
-      void
+      static void
       declareDefaultEntry(ParameterHandler &prm);
       void
-      parse_particle_properties(const unsigned int &particle_type,
-                                ParameterHandler   &prm);
+      parse_particle_properties(const unsigned int     &particle_type,
+                                const ParameterHandler &prm);
 
     private:
       unsigned int particle_type_maximum_number = 5;
 
+      /**
+       * @brief initialize_containers - Initialize the containers
+       * used to store the physical properties of each particle type.
+       *
+       * @param[in,out] p_average_diameter Average diameter of each particle
+       * type.
+       * @param[in,out] p_size_std Size standard deviation of each particle
+       * type.
+       * @param[in,out] dist_types Distribution type of each particle type.
+       * @param[in,out] p_custom_diameter List of diameters for the custom
+       * distribution for each particle type.
+       * @param[in,out] p_custom_probability Probability of each diameter value
+       * based on volume fraction for the custom distribution for each particle
+       * type.
+       * @param[in,out] seed_for_dist Random seed for the size distribution.
+       * @param[in,out] p_number Number of each particle type.
+       * @param[in,out] p_density Density of each particle type.
+       * @param[in,out] p_youngs_modulus Young's modulus of each particle type.
+       * @param[in,out] p_poisson_ratio Poisson's ratio of each particle type.
+       * @param[in,out] p_restitution_coefficient Coefficients of restitution
+       * of each particle type.
+       * @param[in,out] p_friction_coefficient Friction coefficient of each
+       * particle type.
+       * @param[in,out] p_rolling_viscous_damping_coefficient Rolling viscous
+       * damping coefficient of each particle type.
+       * @param[in,out] p_rolling_friction_coefficient Rolling friction
+       * coefficient of each particle type.
+       * @param[in,out] p_surface_energy Surface energy of each particle type.
+       * @param[in,out] hamaker_constant_p Hamaker constant of each particle
+       * type.
+       * @param[in,out] thermal_conductivity_p Thermal conductivity of each
+       * particle type.
+       * @param[in,out] specific_heat_p Specific heat of each particle type.
+       * @param[in,out] microhardness_p Microhardness of each particle type.
+       * @param[in,out] surface_slope_p Surface slope of each particle type.
+       * @param[in,out] surface_roughness_p Surface roughness of each particle
+       * type.
+       * @param[in,out] thermal_accommodation_p Thermal accommodation
+       * coefficient of each particle type.
+       * @param[in,out] real_youngs_modulus_p Real Young's modulus of each
+       * particle type.
+       */
       void
       initialize_containers(
-        std::unordered_map<unsigned int, double> &particle_average_diameter,
-        std::unordered_map<unsigned int, double> &particle_size_std,
-        std::vector<SizeDistributionType>        &distribution_type,
+        std::unordered_map<unsigned int, double> &p_average_diameter,
+        std::unordered_map<unsigned int, double> &p_size_std,
+        std::vector<SizeDistributionType>        &dist_types,
         std::unordered_map<unsigned int, std::vector<double>>
-          &particle_custom_diameter,
+          &p_custom_diameter,
         std::unordered_map<unsigned int, std::vector<double>>
-                                                 &particle_custom_probability,
-        std::vector<unsigned int>                &seed_for_distributions,
-        std::unordered_map<unsigned int, int>    &number,
-        std::unordered_map<unsigned int, double> &density_particle,
-        std::unordered_map<unsigned int, double> &youngs_modulus_particle,
-        std::unordered_map<unsigned int, double> &poisson_ratio_particle,
+                                                 &p_custom_probability,
+        std::vector<unsigned int>                &seed_for_dist,
+        std::unordered_map<unsigned int, int>    &p_number,
+        std::unordered_map<unsigned int, double> &p_density,
+        std::unordered_map<unsigned int, double> &p_youngs_modulus,
+        std::unordered_map<unsigned int, double> &p_poisson_ratio,
+        std::unordered_map<unsigned int, double> &p_restitution_coefficient,
+        std::unordered_map<unsigned int, double> &p_friction_coefficient,
         std::unordered_map<unsigned int, double>
-          &restitution_coefficient_particle,
-        std::unordered_map<unsigned int, double> &friction_coefficient_particle,
+          &p_rolling_viscous_damping_coefficient,
         std::unordered_map<unsigned int, double>
-          &rolling_viscous_dampimg_coefficient_particle,
-        std::unordered_map<unsigned int, double>
-          &rolling_friction_coefficient_particle,
-        std::unordered_map<unsigned int, double> &surface_energy_particle,
-        std::unordered_map<unsigned int, double> &hamaker_constant_particle,
-        std::unordered_map<unsigned int, double> &thermal_conductivity_particle,
-        std::unordered_map<unsigned int, double> &specific_heat_particle,
-        std::unordered_map<unsigned int, double> &microhardness_particle,
-        std::unordered_map<unsigned int, double> &surface_slope_particle,
-        std::unordered_map<unsigned int, double> &surface_roughness_particle,
-        std::unordered_map<unsigned int, double>
-          &thermal_accommodation_particle,
-        std::unordered_map<unsigned int, double> &real_youngs_modulus_particle);
+          &p_rolling_friction_coefficient,
+        std::unordered_map<unsigned int, double> &p_surface_energy,
+        std::unordered_map<unsigned int, double> &p_hamaker_constant,
+        std::unordered_map<unsigned int, double> &p_thermal_conductivity,
+        std::unordered_map<unsigned int, double> &p_specific_heat,
+        std::unordered_map<unsigned int, double> &p_microhardness,
+        std::unordered_map<unsigned int, double> &p_surface_slope,
+        std::unordered_map<unsigned int, double> &p_surface_roughness,
+        std::unordered_map<unsigned int, double> &p_thermal_accommodation,
+        std::unordered_map<unsigned int, double> &p_real_youngs_modulus) const;
     };
 
     template <int dim>
@@ -423,7 +463,7 @@ namespace Parameters
       // Center of mass
       Point<3> point_center_mass;
 
-      void
+      static void
       declare_parameters(ParameterHandler &prm);
       void
       parse_parameters(ParameterHandler &prm);
@@ -449,10 +489,10 @@ namespace Parameters
       std::vector<double> time_end;
 
       void
-      declare_parameters(ParameterHandler &prm);
+      declare_parameters(ParameterHandler &prm) const;
       void
       parse_parameters(ParameterHandler &prm);
-      void
+      static void
       declareDefaultEntry(ParameterHandler &prm);
       void
       parse_floating_wall(ParameterHandler &prm);
@@ -504,26 +544,24 @@ namespace Parameters
 
 
       void
-      declare_parameters(ParameterHandler &prm);
+      declare_parameters(ParameterHandler &prm) const;
       void
       parse_parameters(ParameterHandler &prm);
-      void
+      static void
       declareDefaultEntry(ParameterHandler &prm);
       void
-      parse_boundary_conditions(ParameterHandler &prm);
+      parse_boundary_conditions(const ParameterHandler &prm);
 
     private:
       unsigned int DEM_BC_number_max = 10;
       void
       initialize_containers(
-        std::unordered_map<unsigned int, Tensor<1, 3>>
-          &boundary_translational_velocity,
-        std::unordered_map<unsigned int, double> &boundary_rotational_speed,
-        std::unordered_map<unsigned int, Tensor<1, 3>>
-                                                   &boundary_rotational_vector,
-        std::unordered_map<unsigned int, Point<3>> &point_on_rotation_axis,
-        std::vector<unsigned int>                  &outlet_boundaries,
-        std::vector<BoundaryType>                  &bc_types);
+        std::unordered_map<unsigned int, Tensor<1, 3>> &boundary_trans_velocity,
+        std::unordered_map<unsigned int, double>       &boundary_rot_speed,
+        std::unordered_map<unsigned int, Tensor<1, 3>> &boundary_rot_vector,
+        std::unordered_map<unsigned int, Point<3>>     &point_on_rot_axis,
+        std::vector<unsigned int>                      &outlet_boundaries_id,
+        std::vector<BoundaryType>                      &boundaries_types) const;
     };
 
     template <int dim>

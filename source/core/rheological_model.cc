@@ -42,7 +42,7 @@ Newtonian::value(const std::map<field, double> & /*field_values*/)
 double
 PowerLaw::value(const std::map<field, double> &field_values)
 {
-  Assert(field_values.find(field::shear_rate) != field_values.end(),
+  Assert(field_values.contains(field::shear_rate),
          PhysicialPropertyModelFieldUndefined("PowerLaw", "shear_rate"));
   const double shear_rate_magnitude = field_values.at(field::shear_rate);
 
@@ -54,7 +54,7 @@ PowerLaw::vector_value(
   const std::map<field, std::vector<double>> &field_vectors,
   std::vector<double>                        &property_vector)
 {
-  Assert(field_vectors.find(field::shear_rate) != field_vectors.end(),
+  Assert(field_vectors.contains(field::shear_rate),
          PhysicialPropertyModelFieldUndefined("PowerLaw", "shear_rate"));
   const auto shear_rate_magnitude = field_vectors.at(field::shear_rate);
 
@@ -68,7 +68,7 @@ PowerLaw::jacobian(const std::map<field, double> &field_values, const field id)
   const double shear_rate_magnitude = field_values.at(field::shear_rate);
   if (id == field::shear_rate)
     {
-      Assert(field_values.find(field::shear_rate) != field_values.end(),
+      Assert(field_values.contains(field::shear_rate),
              PhysicialPropertyModelFieldUndefined("PowerLaw", "shear_rate"));
       return calculate_derivative(shear_rate_magnitude);
     }
@@ -82,7 +82,7 @@ PowerLaw::vector_jacobian(
   const field                                 id,
   std::vector<double>                        &jacobian_vector)
 {
-  Assert(field_vectors.find(field::shear_rate) != field_vectors.end(),
+  Assert(field_vectors.contains(field::shear_rate),
          PhysicialPropertyModelFieldUndefined("PowerLaw", "shear_rate"));
   const auto shear_rate_magnitude = field_vectors.at(field::shear_rate);
 
@@ -90,13 +90,13 @@ PowerLaw::vector_jacobian(
     for (unsigned int i = 0; i < shear_rate_magnitude.size(); ++i)
       jacobian_vector[i] = calculate_derivative(shear_rate_magnitude[i]);
   else
-    std::fill(jacobian_vector.begin(), jacobian_vector.end(), 0);
+    std::ranges::fill(jacobian_vector, 0);
 }
 
 double
 Carreau::value(const std::map<field, double> &field_values)
 {
-  Assert(field_values.find(field::shear_rate) != field_values.end(),
+  Assert(field_values.contains(field::shear_rate),
          PhysicialPropertyModelFieldUndefined("Carreau", "shear_rate"));
   const double shear_rate_magnitude = field_values.at(field::shear_rate);
 
@@ -107,7 +107,7 @@ void
 Carreau::vector_value(const std::map<field, std::vector<double>> &field_vectors,
                       std::vector<double> &property_vector)
 {
-  Assert(field_vectors.find(field::shear_rate) != field_vectors.end(),
+  Assert(field_vectors.contains(field::shear_rate),
          PhysicialPropertyModelFieldUndefined("Carreau", "shear_rate"));
   const auto shear_rate_magnitude = field_vectors.at(field::shear_rate);
 
@@ -123,7 +123,7 @@ Carreau::jacobian(const std::map<field, double> &field_values, const field id)
 {
   if (id == field::shear_rate)
     {
-      Assert(field_values.find(field::shear_rate) != field_values.end(),
+      Assert(field_values.contains(field::shear_rate),
              PhysicialPropertyModelFieldUndefined("Carreau", "shear_rate"));
       return this->numerical_jacobian(field_values, field::shear_rate);
     }
@@ -139,14 +139,14 @@ Carreau::vector_jacobian(
 {
   if (id == field::shear_rate)
     {
-      Assert(field_vectors.find(field::shear_rate) != field_vectors.end(),
+      Assert(field_vectors.contains(field::shear_rate),
              PhysicialPropertyModelFieldUndefined("Carreau", "shear_rate"));
       this->vector_numerical_jacobian(field_vectors,
                                       field::shear_rate,
                                       jacobian_vector);
     }
   else
-    std::fill(jacobian_vector.begin(), jacobian_vector.end(), 0);
+    std::ranges::fill(jacobian_vector, 0);
 }
 
 
@@ -154,7 +154,7 @@ Carreau::vector_jacobian(
 double
 PhaseChangeRheology::value(const std::map<field, double> &field_values)
 {
-  Assert(field_values.find(field::temperature) != field_values.end(),
+  Assert(field_values.contains(field::temperature),
          PhysicialPropertyModelFieldUndefined("PhaseChangeRheology",
                                               "temperature"));
   const double temperature = field_values.at(field::temperature);
@@ -167,7 +167,7 @@ PhaseChangeRheology::vector_value(
   const std::map<field, std::vector<double>> &field_vectors,
   std::vector<double>                        &property_vector)
 {
-  Assert(field_vectors.find(field::temperature) != field_vectors.end(),
+  Assert(field_vectors.contains(field::temperature),
          PhysicialPropertyModelFieldUndefined("PhaseChangeRheology",
                                               "temperature"));
   const std::vector<double> &temperature_vec =
@@ -185,7 +185,7 @@ PhaseChangeRheology::jacobian(const std::map<field, double> &field_values,
 {
   if (id == field::temperature)
     {
-      Assert(field_values.find(field::temperature) != field_values.end(),
+      Assert(field_values.contains(field::temperature),
              PhysicialPropertyModelFieldUndefined("PhaseChangeRheology",
                                                   "temperature"));
       return this->numerical_jacobian(field_values, field::temperature);
@@ -200,7 +200,7 @@ PhaseChangeRheology::vector_jacobian(
   const field                                 id,
   std::vector<double>                        &jacobian_vector)
 {
-  Assert(field_vectors.find(field::temperature) != field_vectors.end(),
+  Assert(field_vectors.contains(field::temperature),
          PhysicialPropertyModelFieldUndefined("PhaseChangeRheology",
                                               "temperature"));
   vector_numerical_jacobian(field_vectors, id, jacobian_vector);
@@ -213,7 +213,7 @@ PhaseChangeRheology::vector_jacobian(
  */
 double
 PhaseChangeRheology::get_kinematic_viscosity_for_stabilization(
-  const std::map<field, double> & /*field_values*/)
+  [[maybe_unused]] const std::map<field, double> &field_values)
 {
   return param.kinematic_viscosity_l;
 }
@@ -226,24 +226,22 @@ PhaseChangeRheology::get_kinematic_viscosity_for_stabilization(
  */
 void
 PhaseChangeRheology::get_kinematic_viscosity_for_stabilization_vector(
-  const std::map<field, std::vector<double>> & /*field_vectors*/,
-  std::vector<double> &property_vector)
+  [[maybe_unused]] const std::map<field, std::vector<double>> &field_vectors,
+  std::vector<double>                                         &property_vector)
 {
-  std::fill(property_vector.begin(),
-            property_vector.end(),
-            param.kinematic_viscosity_l);
+  std::ranges::fill(property_vector, param.kinematic_viscosity_l);
 }
 
 /**
- * @brief Calculates the dynamic viscosity used in PSPG and SUPG stabilizations.
+ * @brief Calculates the dynamic viscosity used in PSPG and SUPG stabilization.
  * @param[in] p_density_ref The density of the fluid at the reference state
  * @param[in] field_values Value of the various fields on which the property may
  * depend.
  */
 double
 PhaseChangeRheology::get_dynamic_viscosity_for_stabilization(
-  const double &p_density_ref,
-  const std::map<field, double> & /*field_values*/)
+  const double                                   &p_density_ref,
+  [[maybe_unused]] const std::map<field, double> &field_values)
 {
   return param.kinematic_viscosity_l * p_density_ref;
 }
@@ -257,11 +255,10 @@ PhaseChangeRheology::get_dynamic_viscosity_for_stabilization(
  */
 void
 PhaseChangeRheology::get_dynamic_viscosity_for_stabilization_vector(
-  const double &p_density_ref,
-  const std::map<field, std::vector<double>> & /*field_vectors*/,
-  std::vector<double> &property_vector)
+  const double                                                &p_density_ref,
+  [[maybe_unused]] const std::map<field, std::vector<double>> &field_vectors,
+  std::vector<double>                                         &property_vector)
 {
-  std::fill(property_vector.begin(),
-            property_vector.end(),
-            param.kinematic_viscosity_l * p_density_ref);
+  std::ranges::fill(property_vector,
+                    param.kinematic_viscosity_l * p_density_ref);
 }

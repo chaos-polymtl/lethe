@@ -39,7 +39,7 @@ namespace Parameters
     std::vector<ManifoldType> types;
 
     // Vector containing strings describing the user inserted geometrical
-    // caracteristics of the manifolds
+    // characteristics of the manifolds
     std::vector<std::string> manifold_point;
     std::vector<std::string> manifold_direction;
 
@@ -51,9 +51,9 @@ namespace Parameters
     unsigned int max_size;
 
     void
-    parse_boundary(ParameterHandler &prm, unsigned int i_bc);
+    parse_boundary(const ParameterHandler &prm, unsigned int i_bc);
 
-    void
+    static void
     declareDefaultEntry(ParameterHandler &prm, unsigned int i_bc);
     void
     declare_parameters(ParameterHandler &prm, unsigned int subsection_max_size);

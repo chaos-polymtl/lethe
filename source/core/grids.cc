@@ -11,6 +11,7 @@
 #include <deal.II/grid/tria.h>
 
 #include <fstream>
+#include <numbers>
 
 
 template <int dim, int spacedim>
@@ -377,7 +378,7 @@ read_mesh_and_manifolds(
           for (const auto &face : triangulation.active_face_iterators())
             {
               if (face->at_boundary() &&
-                  manifold_ids.find(face->boundary_id()) != manifold_ids.end())
+                  manifold_ids.contains(face->boundary_id()))
                 face->set_all_manifold_ids(face->boundary_id());
             }
         }
@@ -399,8 +400,8 @@ read_mesh_and_manifolds(
           double minimal_cell_size =
             GridTools::minimal_cell_diameter(triangulation);
           double       target_size       = mesh_parameters.target_size;
-          unsigned int number_refinement = static_cast<unsigned int>(
-            floor(std::log(minimal_cell_size / target_size) / std::log(2)));
+          unsigned int number_refinement = static_cast<unsigned int>(floor(
+            std::log(minimal_cell_size / target_size) / std::numbers::ln2));
           triangulation.refine_global(number_refinement);
         }
       else if (!restart)
@@ -587,7 +588,7 @@ read_mesh_and_manifolds_for_stator_and_rotor(
           for (const auto &face : triangulation.active_face_iterators())
             {
               if (face->at_boundary() &&
-                  manifold_ids.find(face->boundary_id()) != manifold_ids.end())
+                  manifold_ids.contains(face->boundary_id()))
                 face->set_all_manifold_ids(face->boundary_id());
             }
         }
@@ -621,9 +622,10 @@ read_mesh_and_manifolds_for_stator_and_rotor(
         {
           const double minimal_cell_size =
             GridTools::minimal_cell_diameter(triangulation);
-          const double       target_size       = mesh_parameters.target_size;
-          const unsigned int number_refinement = static_cast<unsigned int>(
-            floor(std::log(minimal_cell_size / target_size) / std::log(2)));
+          const double       target_size = mesh_parameters.target_size;
+          const unsigned int number_refinement =
+            static_cast<unsigned int>(floor(
+              std::log(minimal_cell_size / target_size) / std::numbers::ln2));
           triangulation.refine_global(number_refinement);
         }
       else if (!restart)

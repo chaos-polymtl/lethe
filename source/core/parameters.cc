@@ -4,7 +4,6 @@
 #include <core/parameters.h>
 #include <core/utilities.h>
 
-#include <deal.II/base/conditional_ostream.h>
 #include <deal.II/base/exceptions.h>
 
 DeclException2(
@@ -226,7 +225,7 @@ namespace Parameters
         method = TimeSteppingMethod::sdirk43;
       else
         {
-          std::runtime_error("Invalid time stepping scheme");
+          AssertThrow(false, ExcMessage("Invalid time stepping scheme"));
         }
       const std::string bdf_startup_string = prm.get("bdf startup method");
       if (bdf_startup_string == "multiple step bdf")
@@ -235,7 +234,7 @@ namespace Parameters
         bdf_startup_method = BDFStartupMethods::initial_solution;
       else
         {
-          std::runtime_error("Invalid bdf startup scheme");
+          AssertThrow(false, ExcMessage("Invalid bdf startup scheme"));
         }
 
       const std::string osv = prm.get("output control");
@@ -245,7 +244,7 @@ namespace Parameters
         output_control = OutputControl::time;
       else
         {
-          std::runtime_error("Invalid output control scheme");
+          AssertThrow(false, ExcMessage("Invalid output control scheme"));
         }
       dt       = prm.get_double("time step");
       time_end = prm.get_double("time end");
@@ -337,8 +336,8 @@ namespace Parameters
   }
 
   void
-  PowerLawParameters::parse_parameters(ParameterHandler    &prm,
-                                       const Dimensionality dimensions)
+  PowerLawParameters::parse_parameters(ParameterHandler     &prm,
+                                       const Dimensionality &dimensions)
   {
     prm.enter_subsection("power-law");
     {
@@ -377,8 +376,8 @@ namespace Parameters
   }
 
   void
-  CarreauParameters::parse_parameters(ParameterHandler    &prm,
-                                      const Dimensionality dimensions)
+  CarreauParameters::parse_parameters(ParameterHandler     &prm,
+                                      const Dimensionality &dimensions)
   {
     prm.enter_subsection("carreau");
     {
@@ -402,7 +401,7 @@ namespace Parameters
   }
 
   void
-  NonNewtonian::declare_parameters(ParameterHandler &prm)
+  NonNewtonian::declare_parameters(ParameterHandler &prm) const
   {
     prm.enter_subsection("non newtonian");
     {
@@ -413,8 +412,8 @@ namespace Parameters
   }
 
   void
-  NonNewtonian::parse_parameters(ParameterHandler    &prm,
-                                 const Dimensionality dimensions)
+  NonNewtonian::parse_parameters(ParameterHandler     &prm,
+                                 const Dimensionality &dimensions)
   {
     prm.enter_subsection("non newtonian");
     {
@@ -455,8 +454,9 @@ namespace Parameters
   }
 
   void
-  ImmersedSolidTanhParameters::parse_parameters(ParameterHandler    &prm,
-                                                const Dimensionality dimensions)
+  ImmersedSolidTanhParameters::parse_parameters(
+    ParameterHandler     &prm,
+    const Dimensionality &dimensions)
   {
     prm.enter_subsection("immersed solid tanh");
     {
@@ -507,8 +507,8 @@ namespace Parameters
 
   void
   ImmersedSolidGaussianParameters::parse_parameters(
-    ParameterHandler    &prm,
-    const Dimensionality dimensions)
+    ParameterHandler     &prm,
+    const Dimensionality &dimensions)
   {
     prm.enter_subsection("immersed solid gaussian");
     {
@@ -557,8 +557,8 @@ namespace Parameters
 
   void
   IsothermalIdealGasDensityParameters::parse_parameters(
-    ParameterHandler    &prm,
-    const Dimensionality dimensions)
+    ParameterHandler     &prm,
+    const Dimensionality &dimensions)
   {
     prm.enter_subsection("isothermal_ideal_gas");
     {
@@ -610,8 +610,8 @@ namespace Parameters
 
   void
   SurfaceTensionParameters::parse_parameters(
-    ParameterHandler                &prm,
-    const Parameters::Dimensionality dimensions)
+    const ParameterHandler           &prm,
+    const Parameters::Dimensionality &dimensions)
   {
     surface_tension_coefficient = prm.get_double("surface tension coefficient");
     surface_tension_coefficient *= dimensions.surface_tension_scaling;
@@ -641,8 +641,8 @@ namespace Parameters
 
   void
   MobilityCahnHilliardParameters::parse_parameters(
-    ParameterHandler                &prm,
-    const Parameters::Dimensionality dimensions)
+    const ParameterHandler           &prm,
+    const Parameters::Dimensionality &dimensions)
   {
     mobility_cahn_hilliard_constant =
       prm.get_double("cahn hilliard mobility constant");
@@ -654,7 +654,7 @@ namespace Parameters
   void
   ConstrainSolidDomain<dim>::declare_parameters(
     dealii::ParameterHandler &prm,
-    const unsigned int        number_of_constraints)
+    const unsigned int        max_number_of_constraints)
   {
     prm.enter_subsection("constrain stasis");
     {
@@ -689,13 +689,13 @@ namespace Parameters
         "Number of solid constraints (maximum of 1 per fluid).");
 
       // Resize vectors
-      this->fluid_ids.resize(number_of_constraints);
-      this->filtered_phase_fraction_tolerance.resize(number_of_constraints);
-      this->temperature_min_values.resize(number_of_constraints);
-      this->temperature_max_values.resize(number_of_constraints);
+      this->fluid_ids.resize(max_number_of_constraints);
+      this->filtered_phase_fraction_tolerance.resize(max_number_of_constraints);
+      this->temperature_min_values.resize(max_number_of_constraints);
+      this->temperature_max_values.resize(max_number_of_constraints);
 
       // Declare default entries
-      for (unsigned int c_id = 0; c_id < number_of_constraints; ++c_id)
+      for (unsigned int c_id = 0; c_id < max_number_of_constraints; ++c_id)
         {
           prm.enter_subsection("constraint " + std::to_string(c_id));
           {
@@ -774,8 +774,8 @@ namespace Parameters
   template <int dim>
   void
   ConstrainSolidDomain<dim>::parse_constraint_parameters(
-    dealii::ParameterHandler &prm,
-    const unsigned int        constraint_id)
+    const dealii::ParameterHandler &prm,
+    const unsigned int              constraint_id)
   {
     this->fluid_ids[constraint_id] = prm.get_integer("fluid id");
     this->filtered_phase_fraction_tolerance[constraint_id] =
@@ -873,8 +873,8 @@ namespace Parameters
   }
 
   void
-  PhaseChange::parse_parameters(ParameterHandler    &prm,
-                                const Dimensionality dimensions)
+  PhaseChange::parse_parameters(ParameterHandler     &prm,
+                                const Dimensionality &dimensions)
   {
     prm.enter_subsection("phase change");
     {
@@ -1059,8 +1059,8 @@ namespace Parameters
   }
 
   void
-  PhysicalProperties::parse_parameters(ParameterHandler    &prm,
-                                       const Dimensionality dimensions)
+  PhysicalProperties::parse_parameters(ParameterHandler     &prm,
+                                       const Dimensionality &dimensions)
   {
     prm.enter_subsection("physical properties");
     {
@@ -1116,7 +1116,7 @@ namespace Parameters
   void
   Material::declare_parameters(ParameterHandler  &prm,
                                const std::string &material_prefix,
-                               unsigned int       id)
+                               const unsigned int id) const
   {
     prm.enter_subsection(material_prefix + " " +
                          Utilities::int_to_string(id, 1));
@@ -1246,10 +1246,10 @@ namespace Parameters
   }
 
   void
-  Material::parse_parameters(ParameterHandler                &prm,
-                             const std::string               &material_prefix,
-                             const unsigned int               id,
-                             const Parameters::Dimensionality dimensions)
+  Material::parse_parameters(ParameterHandler                 &prm,
+                             const std::string                &material_prefix,
+                             const unsigned int                id,
+                             const Parameters::Dimensionality &dimensions)
   {
     prm.enter_subsection(material_prefix + " " +
                          Utilities::int_to_string(id, 1));
@@ -1400,8 +1400,8 @@ namespace Parameters
   }
 
   void
-  MaterialInteractions::declare_parameters(ParameterHandler &prm,
-                                           unsigned int      id)
+  MaterialInteractions::declare_parameters(ParameterHandler  &prm,
+                                           const unsigned int id) const
   {
     prm.enter_subsection("material interaction " +
                          Utilities::int_to_string(id, 1));
@@ -1485,9 +1485,9 @@ namespace Parameters
 
   void
   MaterialInteractions::parse_parameters(
-    ParameterHandler                &prm,
-    unsigned int                     id,
-    const Parameters::Dimensionality dimensions)
+    ParameterHandler                 &prm,
+    unsigned int                      id,
+    const Parameters::Dimensionality &dimensions)
   {
     prm.enter_subsection("material interaction " +
                          Utilities::int_to_string(id, 1));
@@ -1583,11 +1583,11 @@ namespace Parameters
               surface_tension_parameters.parse_parameters(prm, dimensions);
             }
           else
-            throw(std::runtime_error(
-              "Invalid surface tension model. The choices are <constant|linear|phase change>."));
-          std::pair<std::pair<unsigned int, unsigned int>, SurfaceTensionModel>
-            fluid_solid_surface_tension_interaction(fluid_solid_interaction,
-                                                    surface_tension_model);
+            AssertThrow(
+              false,
+              ExcMessage(
+                "Invalid surface tension model. The choices are <constant|linear|phase change>."));
+
           prm.leave_subsection();
         }
     }
@@ -2998,12 +2998,13 @@ namespace Parameters
         mg_smoother_iterations = prm.get_integer("mg smoother iterations");
         mg_smoother_relaxation = prm.get_double("mg smoother relaxation");
 
-        const std::string mg_smoother_preconditioner_type =
+        const std::string mg_smoother_preconditioner_type_str =
           prm.get("mg smoother preconditioner type");
-        if (mg_smoother_preconditioner_type == "inverse diagonal")
+        if (mg_smoother_preconditioner_type_str == "inverse diagonal")
           this->mg_smoother_preconditioner_type =
             MultigridSmootherPreconditionerType::InverseDiagonal;
-        else if (mg_smoother_preconditioner_type == "additive schwarz method")
+        else if (mg_smoother_preconditioner_type_str ==
+                 "additive schwarz method")
           this->mg_smoother_preconditioner_type =
             MultigridSmootherPreconditionerType::AdditiveSchwarzMethod;
         else
@@ -3040,27 +3041,28 @@ namespace Parameters
 
         mg_use_fe_q_iso_q1 = prm.get_bool("mg coarse grid use fe q iso q1");
 
-        const std::string mg_coarsening_type = prm.get("mg coarsening type");
-        if (mg_coarsening_type == "h")
+        const std::string mg_coarsening_type_str =
+          prm.get("mg coarsening type");
+        if (mg_coarsening_type_str == "h")
           this->mg_coarsening_type = MultigridCoarseningSequenceType::h;
-        else if (mg_coarsening_type == "p")
+        else if (mg_coarsening_type_str == "p")
           this->mg_coarsening_type = MultigridCoarseningSequenceType::p;
-        else if (mg_coarsening_type == "hp")
+        else if (mg_coarsening_type_str == "hp")
           this->mg_coarsening_type = MultigridCoarseningSequenceType::hp;
-        else if (mg_coarsening_type == "ph")
+        else if (mg_coarsening_type_str == "ph")
           this->mg_coarsening_type = MultigridCoarseningSequenceType::ph;
         else
           AssertThrow(false, ExcNotImplemented());
 
-        const std::string mg_p_coarsening_type =
+        const std::string mg_p_coarsening_type_str =
           prm.get("mg p coarsening type");
-        if (mg_p_coarsening_type == "decrease by one")
+        if (mg_p_coarsening_type_str == "decrease by one")
           this->mg_p_coarsening_type = MGTransferGlobalCoarseningTools::
             PolynomialCoarseningSequenceType::decrease_by_one;
-        else if (mg_p_coarsening_type == "bisect")
+        else if (mg_p_coarsening_type_str == "bisect")
           this->mg_p_coarsening_type = MGTransferGlobalCoarseningTools::
             PolynomialCoarseningSequenceType::bisect;
-        else if (mg_p_coarsening_type == "go to one")
+        else if (mg_p_coarsening_type_str == "go to one")
           this->mg_p_coarsening_type = MGTransferGlobalCoarseningTools::
             PolynomialCoarseningSequenceType::go_to_one;
         else
@@ -3671,7 +3673,7 @@ namespace Parameters
           "print DEM",
           "true",
           Patterns::Bool(),
-          "Bool to define if particles' informations are printed on the terminal when particles' time-step is finished");
+          "Bool to define if particles' information are printed on the terminal when particles' time-step is finished");
         prm.declare_entry(
           "enable extra sharp interface vtu output field",
           "false",
@@ -3967,12 +3969,10 @@ namespace Parameters
             std::string              inertia_str = prm.get("inertia");
             std::vector<std::string> inertia_str_list(
               Utilities::split_string_list(inertia_str, ";"));
-            std::vector<double> inertia_list =
+            const std::vector<double> inertia_list =
               Utilities::string_to_double(inertia_str_list);
             if (inertia_str_list.size() == 9)
               {
-                std::vector<double> inertia_list =
-                  Utilities::string_to_double(inertia_str_list);
                 particles[i].inertia[0][0] = inertia_list[0];
                 particles[i].inertia[0][1] = inertia_list[1];
                 particles[i].inertia[0][2] = inertia_list[2];
@@ -3987,8 +3987,6 @@ namespace Parameters
               {
                 // If only one inertia value is given, we assume that the
                 // inertia is uniform in all axes.
-                std::vector<double> inertia_list =
-                  Utilities::string_to_double(inertia_str_list);
                 particles[i].inertia[0][0] = inertia_list[0];
                 particles[i].inertia[0][1] = 0;
                 particles[i].inertia[0][2] = 0;
@@ -4161,7 +4159,7 @@ namespace Parameters
         "recoil pressure coefficient",
         "0.56",
         Patterns::Double(),
-        "Recoil pressure coefficient corresponding to the factor applied to the saturation pressure to compute the recoil pressure in an out of equilibrium evaportation");
+        "Recoil pressure coefficient corresponding to the factor applied to the saturation pressure to compute the recoil pressure in an out of equilibrium evaporation");
       prm.declare_entry("molar mass",
                         "1.0",
                         Patterns::Double(),

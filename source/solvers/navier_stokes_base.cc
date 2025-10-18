@@ -3304,7 +3304,7 @@ NavierStokesBase<dim, VectorType, DofsType>::output_newton_update_norms(
       double local_sum = 0.0;
       double local_max = std::numeric_limits<double>::lowest();
 
-      for (unsigned int d = 0; d < dim; ++d)
+      for (int d = 0; d < dim; ++d)
         {
           for (const auto &j : index_set_velocity[d])
             {

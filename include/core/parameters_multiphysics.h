@@ -24,7 +24,7 @@ namespace Parameters
    *  - algebraic: PDE-based reinitialization
    *  - geometric: geometric redistanciation
    */
-  enum class RegularizationMethodType
+  enum class RegularizationMethodType : std::int8_t
   {
     none,
     sharpening,
@@ -39,7 +39,7 @@ namespace Parameters
    *  - adaptive: the sharpening threshold is determined by binary search, to
    * ensure mass conservation of the monitored phase
    */
-  enum class SharpeningType
+  enum class SharpeningType : std::int8_t
   {
     constant,
     adaptive
@@ -62,7 +62,7 @@ namespace Parameters
    *    maximum redistanciation distance. This transformation clamps the phase
    *    fraction to 0 or 1 when \f$d = \pm d_\mathrm{max}\f$.
    */
-  enum class RedistanciationTransformationType
+  enum class RedistanciationTransformationType : std::int8_t
   {
     tanh,
     piecewise_polynomial
@@ -75,14 +75,14 @@ namespace Parameters
    * a \f$\beta\f$ parameter influencing the interface definition must be
    * defined
    */
-  enum class FilterType
+  enum class FilterType : std::int8_t
   {
     none,
     clip,
     tanh
   };
 
-  enum class EpsilonSetMethod
+  enum class EpsilonSetMethod : std::int8_t
   {
     automatic,
     manual
@@ -91,7 +91,7 @@ namespace Parameters
   /**
    * @brief Verbosity options for the epsilon parameter.
    */
-  enum class EpsilonVerbosity
+  enum class EpsilonVerbosity : std::int8_t
   {
     /// Epsilon related information will not be displayed on terminal
     quiet,
@@ -114,7 +114,7 @@ namespace Parameters
     // Type of verbosity for the phase filter
     Parameters::Verbosity verbosity;
 
-    void
+    static void
     declare_parameters(ParameterHandler &prm);
     void
     parse_parameters(ParameterHandler &prm);
@@ -152,7 +152,7 @@ namespace Parameters
 
     Parameters::FluidIndicator monitored_fluid;
 
-    void
+    static void
     declare_parameters(ParameterHandler &prm);
     void
     parse_parameters(ParameterHandler &prm);
@@ -177,7 +177,7 @@ namespace Parameters
     // Enable marangoni effect
     bool enable_marangoni_effect;
 
-    void
+    static void
     declare_parameters(ParameterHandler &prm);
     void
     parse_parameters(ParameterHandler &prm);
@@ -197,7 +197,7 @@ namespace Parameters
     // Type of verbosity for the phase filter
     Parameters::Verbosity verbosity;
 
-    void
+    static void
     declare_parameters(ParameterHandler &prm);
     void
     parse_parameters(ParameterHandler &prm);
@@ -238,7 +238,7 @@ namespace Parameters
      *
      * @param[in,out] prm The ParameterHandler.
      */
-    void
+    static void
     declare_parameters(ParameterHandler &prm);
 
     /**
@@ -272,7 +272,7 @@ namespace Parameters
      *
      * @param[in,out] prm The ParameterHandler.
      */
-    void
+    static void
     declare_parameters(ParameterHandler &prm);
 
     /**
@@ -319,7 +319,7 @@ namespace Parameters
      * @param[in,out] prm The ParameterHandler.
      */
     void
-    declare_parameters(ParameterHandler &prm);
+    declare_parameters(ParameterHandler &prm) const;
 
     /**
      * @brief Parse the parameters.
@@ -352,7 +352,7 @@ namespace Parameters
     bool compressible;
 
     void
-    declare_parameters(ParameterHandler &prm);
+    declare_parameters(ParameterHandler &prm) const;
     void
     parse_parameters(ParameterHandler &prm);
   };
@@ -376,9 +376,9 @@ namespace Parameters
     Parameters::CahnHilliard_PhaseFilter cahn_hilliard_phase_filter;
 
     void
-    declare_parameters(ParameterHandler &prm);
+    declare_parameters(ParameterHandler &prm) const;
     void
-    parse_parameters(ParameterHandler &prm, const Dimensionality dimensions);
+    parse_parameters(ParameterHandler &prm, const Dimensionality &dimensions);
   };
 
   /**
@@ -401,9 +401,9 @@ namespace Parameters
     Parameters::CahnHilliard cahn_hilliard_parameters;
 
     void
-    declare_parameters(ParameterHandler &prm);
+    declare_parameters(ParameterHandler &prm) const;
     void
-    parse_parameters(ParameterHandler &prm, const Dimensionality dimensions);
+    parse_parameters(ParameterHandler &prm, const Dimensionality &dimensions);
   };
 } // namespace Parameters
 #endif

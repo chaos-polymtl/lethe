@@ -341,7 +341,7 @@ public:
     // Calculates an approximation of the shear rate magnitude gradient using
     // the derived form, since it does not change with rheological models
     Tensor<1, dim> grad_shear_rate;
-    for (unsigned int d = 0; d < dim; ++d)
+    for (int d = 0; d < dim; ++d)
       {
         if (dim == 2)
           {

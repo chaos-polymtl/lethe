@@ -14,7 +14,7 @@ class MeshController
 public:
   /**
    * @brief Constructor of the controller.
-   * @param target_number_of_elements, the number of element the controller try to obtained.
+   * @param target_number_of_elements Number of element the controller tries to obtain.
    */
   MeshController(const unsigned int target_number_of_elements)
     : target_number_of_elements(target_number_of_elements)

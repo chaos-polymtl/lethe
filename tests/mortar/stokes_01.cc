@@ -231,7 +231,7 @@ main(int argc, char **argv)
                 const auto point = fe_values.quadrature_point(q);
 
                 Tensor<1, dim> source;
-                for (unsigned int d = 0; d < dim; ++d)
+                for (int d = 0; d < dim; ++d)
                   source[d] = rhs_func->value(point, d);
 
                 for (const unsigned int i : fe_values.dof_indices())

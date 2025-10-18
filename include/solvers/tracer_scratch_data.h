@@ -293,7 +293,7 @@ public:
       {
         drift_velocity->vector_value(quadrature_points[q],
                                      drift_velocity_vector);
-        for (unsigned int d = 0; d < dim; ++d)
+        for (int d = 0; d < dim; ++d)
           drift_velocity_tensor[d] = drift_velocity_vector[d];
 
         velocity_values[q] += drift_velocity_tensor;
@@ -313,7 +313,7 @@ public:
       {
         velocity_ale_function->vector_value(quadrature_points[q],
                                             velocity_ale_vector);
-        for (unsigned int d = 0; d < dim; ++d)
+        for (int d = 0; d < dim; ++d)
           velocity_ale[d] = velocity_ale_vector[d];
 
         velocity_values[q] -= velocity_ale;
@@ -458,7 +458,7 @@ public:
       {
         drift_velocity->vector_value(face_quadrature_points[q],
                                      drift_velocity_vector);
-        for (unsigned int d = 0; d < dim; ++d)
+        for (int d = 0; d < dim; ++d)
           drift_velocity_tensor[d] = drift_velocity_vector[d];
 
         face_velocity_values[q] += drift_velocity_tensor;
@@ -479,7 +479,7 @@ public:
       {
         velocity_ale_function->vector_value(face_quadrature_points[q],
                                             velocity_ale_vector);
-        for (unsigned int d = 0; d < dim; ++d)
+        for (int d = 0; d < dim; ++d)
           velocity_ale[d] = velocity_ale_vector[d];
 
         face_velocity_values[q] -= velocity_ale;

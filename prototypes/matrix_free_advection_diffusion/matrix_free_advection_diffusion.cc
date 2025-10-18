@@ -262,7 +262,7 @@ public:
   {
     const double coeff  = dim * numbers::PI * numbers::PI;
     double       factor = 1.0;
-    for (unsigned int d = 0; d < dim; ++d)
+    for (int d = 0; d < dim; ++d)
       {
         factor *= std::sin(numbers::PI * p[d]);
       }
@@ -436,7 +436,7 @@ evaluate_function(const Function<dim>                       &function,
   for (unsigned int v = 0; v < VectorizedArray<Number>::size(); ++v)
     {
       Point<dim> p;
-      for (unsigned int d = 0; d < dim; ++d)
+      for (int d = 0; d < dim; ++d)
         p[d] = p_vectorized[d][v];
       result[v] = function.value(p);
     }
@@ -453,7 +453,7 @@ evaluate_function(const Function<dim>                       &function,
   for (unsigned int v = 0; v < VectorizedArray<Number>::size(); ++v)
     {
       Point<dim> p;
-      for (unsigned int d = 0; d < dim; ++d)
+      for (int d = 0; d < dim; ++d)
         p[d] = p_vectorized[d][v];
       for (unsigned int d = 0; d < components; ++d)
         result[d][v] = function.value(p, d);

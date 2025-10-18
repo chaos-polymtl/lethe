@@ -34,7 +34,7 @@ public:
   /**
    * @brief Definition of a virtual destructor for the class.
    */
-  virtual ~MobilityCahnHilliardModel() = default;
+  ~MobilityCahnHilliardModel() override = default;
 };
 
 /**
@@ -60,7 +60,7 @@ public:
   /**
    * @brief Destructor of derived class.
    */
-  ~MobilityCahnHilliardModelConstant() = default;
+  ~MobilityCahnHilliardModelConstant() override = default;
 
   /**
    * @brief Return the mobility constant, though it returns the same
@@ -81,7 +81,7 @@ public:
    * @return Value of the mobility.
    */
   double
-  value(const std::map<field, double> & /*fields_value*/) override
+  value([[maybe_unused]] const std::map<field, double> &fields_value) override
   {
     return mobility_cahn_hilliard_constant;
   }
@@ -93,12 +93,11 @@ public:
    * @param[out] property_vector Vectors of the mobility values
    */
   void
-  vector_value(const std::map<field, std::vector<double>> & /*field_vectors*/,
-               std::vector<double> &property_vector) override
+  vector_value(
+    [[maybe_unused]] const std::map<field, std::vector<double>> &field_vectors,
+    std::vector<double> &property_vector) override
   {
-    std::fill(property_vector.begin(),
-              property_vector.end(),
-              mobility_cahn_hilliard_constant);
+    std::ranges::fill(property_vector, mobility_cahn_hilliard_constant);
   }
 
   /**
@@ -112,8 +111,8 @@ public:
    * the field.
    */
   double
-  jacobian(const std::map<field, double> & /*field_values*/,
-           field /*id*/) override
+  jacobian([[maybe_unused]] const std::map<field, double> &field_values,
+           [[maybe_unused]] field                          id) override
   {
     return 0;
   }
@@ -129,11 +128,11 @@ public:
    */
   void
   vector_jacobian(
-    const std::map<field, std::vector<double>> & /*field_vectors*/,
-    const field /*id*/,
+    [[maybe_unused]] const std::map<field, std::vector<double>> &field_vectors,
+    [[maybe_unused]] const field                                 id,
     std::vector<double> &jacobian_vector) override
   {
-    std::fill(jacobian_vector.begin(), jacobian_vector.end(), 0);
+    std::ranges::fill(jacobian_vector, 0);
   }
 
 private:
@@ -165,7 +164,7 @@ public:
   /**
    * @brief Destructor of derived class.
    */
-  ~MobilityCahnHilliardModelQuartic() = default;
+  ~MobilityCahnHilliardModelQuartic() override = default;
 
   /**
    * @brief Return the mobility constant.
@@ -186,10 +185,9 @@ public:
   double
   value(const std::map<field, double> &fields_value) override
   {
-    Assert(
-      fields_value.find(field::phase_order_cahn_hilliard) != fields_value.end(),
-      PhysicialPropertyModelFieldUndefined("MobilityCahnHilliardModelQuartic",
-                                           "phase_order_cahn_hilliard"));
+    Assert(fields_value.contains(field::phase_order_cahn_hilliard),
+           PhysicialPropertyModelFieldUndefined(
+             "MobilityCahnHilliardModelQuartic", "phase_order_cahn_hilliard"));
     const double &phase_order_cahn_hilliard =
       fields_value.at(field::phase_order_cahn_hilliard);
 
@@ -212,8 +210,7 @@ public:
   vector_value(const std::map<field, std::vector<double>> &field_vectors,
                std::vector<double> &property_vector) override
   {
-    Assert(field_vectors.find(field::phase_order_cahn_hilliard) !=
-             field_vectors.end(),
+    Assert(field_vectors.contains(field::phase_order_cahn_hilliard),
            PhysicialPropertyModelFieldUndefined(
              "MobilityCahnHilliardModelQuartic", "phase_order_cahn_hilliard"));
     const std::vector<double> &phase_order_cahn_hilliard =
@@ -232,7 +229,7 @@ public:
   /**
    * @brief Calculate the jacobian (the partial derivative) of the
    * mobility with respect to a field.
-   * @param[in] field_values Value of the various fields on which the mobility
+   * @param[in] fields_value Value of the various fields on which the mobility
    * may depend.
    * @param[in] id Indicator of the field with respect to which the Jacobian
    * should be calculated.
@@ -241,12 +238,12 @@ public:
    */
 
   double
-  jacobian(const std::map<field, double> &fields_value, field /*id*/) override
+  jacobian(const std::map<field, double> &fields_value,
+           [[maybe_unused]] field         id) override
   {
-    Assert(
-      fields_value.find(field::phase_order_cahn_hilliard) != fields_value.end(),
-      PhysicialPropertyModelFieldUndefined("MobilityCahnHilliardModelQuartic",
-                                           "phase_order_cahn_hilliard"));
+    Assert(fields_value.contains(field::phase_order_cahn_hilliard),
+           PhysicialPropertyModelFieldUndefined(
+             "MobilityCahnHilliardModelQuartic", "phase_order_cahn_hilliard"));
     const double &phase_order_cahn_hilliard =
       fields_value.at(field::phase_order_cahn_hilliard);
 
@@ -261,7 +258,7 @@ public:
 
   /**
    * @brief Calculate the derivative of the mobility with respect to a field.
-   * @param[in] field_vectors Vector for the values of the fields used to
+   * @param[in] fields_vectors Vector for the values of the fields used to
    * evaluate the mobility.
    * @param[in] id Identifier of the field with respect to which a derivative
    * should be calculated.
@@ -270,16 +267,15 @@ public:
    */
 
   void
-  vector_jacobian(const std::map<field, std::vector<double>> &field_vectors,
-                  const field /*id*/,
+  vector_jacobian(const std::map<field, std::vector<double>> &fields_vectors,
+                  [[maybe_unused]] const field                id,
                   std::vector<double> &jacobian_vector) override
   {
-    Assert(field_vectors.find(field::phase_order_cahn_hilliard) !=
-             field_vectors.end(),
+    Assert(fields_vectors.contains(field::phase_order_cahn_hilliard),
            PhysicialPropertyModelFieldUndefined(
              "MobilityCahnHilliardModelQuartic", "phase_order_cahn_hilliard"));
     const std::vector<double> &phase_order_cahn_hilliard =
-      field_vectors.at(field::phase_order_cahn_hilliard);
+      fields_vectors.at(field::phase_order_cahn_hilliard);
     for (unsigned int i = 0; i < jacobian_vector.size(); ++i)
       jacobian_vector[i] =
         -4 *
