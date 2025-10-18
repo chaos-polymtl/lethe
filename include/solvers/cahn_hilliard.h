@@ -224,6 +224,15 @@ public:
   read_checkpoint() override;
 
   /**
+   * @brief Returns a vector of references to TableHandler objects that needs to
+   * be serialized/deserialized for the Cahn-Hilliard solver.
+   *
+   * @return Structure containing the TableHandler objects and their corresponding file names.
+   */
+  std::vector<OutputStructTableHandler>
+  gather_tables() override;
+
+  /**
    * @brief Returns the dof_handler of the Cahn-Hilliard physics
    */
   const DoFHandler<dim> &
