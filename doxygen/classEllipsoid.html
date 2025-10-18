@@ -118,8 +118,6 @@ Public Member Functions</h2></td></tr>
 <tr class="separator:afe1e03ec9d78e28f160d88380ffd0a35 inherit pub_methods_classShape"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a53cd426c500960e007ff2ef2f5df0d1d inherit pub_methods_classShape" id="r_a53cd426c500960e007ff2ef2f5df0d1d"><td class="memItemLeft" align="right" valign="top">virtual double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classShape.html#a53cd426c500960e007ff2ef2f5df0d1d">value_with_cell_guess</a> (const Point&lt; dim &gt; &amp;evaluation_point, const typename DoFHandler&lt; dim &gt;::active_cell_iterator cell, const unsigned int component=0)</td></tr>
 <tr class="separator:a53cd426c500960e007ff2ef2f5df0d1d inherit pub_methods_classShape"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a3beacb4994e184b9cf5c7d5719d1ab94 inherit pub_methods_classShape" id="r_a3beacb4994e184b9cf5c7d5719d1ab94"><td class="memItemLeft" align="right" valign="top">double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classShape.html#a3beacb4994e184b9cf5c7d5719d1ab94">smooth_max</a> (double a, double b, double smooth_factor=10)</td></tr>
-<tr class="separator:a3beacb4994e184b9cf5c7d5719d1ab94 inherit pub_methods_classShape"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a4666a48ee33dc2ca425c67dfe22e97bb inherit pub_methods_classShape" id="r_a4666a48ee33dc2ca425c67dfe22e97bb"><td class="memItemLeft" align="right" valign="top">virtual std::tuple&lt; double, Tensor&lt; 1, dim &gt;, Point&lt; dim &gt; &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classShape.html#a4666a48ee33dc2ca425c67dfe22e97bb">distance_to_shape_with_cell_guess</a> (<a class="el" href="classShape.html">Shape</a>&lt; dim &gt; &amp;shape, const typename DoFHandler&lt; dim &gt;::active_cell_iterator &amp;cell, std::vector&lt; Point&lt; dim &gt; &gt; &amp;candidate_points, double precision=1e-6, bool exact_distance_outside_of_contact=false)</td></tr>
 <tr class="separator:a4666a48ee33dc2ca425c67dfe22e97bb inherit pub_methods_classShape"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a6603c76ecfd43a787cb1c5295a3bfbcf inherit pub_methods_classShape" id="r_a6603c76ecfd43a787cb1c5295a3bfbcf"><td class="memItemLeft" align="right" valign="top">virtual std::tuple&lt; double, Tensor&lt; 1, dim &gt;, Point&lt; dim &gt; &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classShape.html#a6603c76ecfd43a787cb1c5295a3bfbcf">distance_to_shape</a> (<a class="el" href="classShape.html">Shape</a>&lt; dim &gt; &amp;shape, std::vector&lt; Point&lt; dim &gt; &gt; &amp;candidate_points, double precision=1e-6, bool exact_distance_outside_of_contact=false)</td></tr>
@@ -160,12 +158,10 @@ Public Member Functions</h2></td></tr>
 <tr class="separator:a8fb04c9145a69a03028d3cecf2cd9338 inherit pub_methods_classShape"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a532f0f37cbc778f665364b3a2e2a559a inherit pub_methods_classShape" id="r_a532f0f37cbc778f665364b3a2e2a559a"><td class="memItemLeft" align="right" valign="top">std::string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classShape.html#a532f0f37cbc778f665364b3a2e2a559a">point_to_string</a> (const Point&lt; dim &gt; &amp;evaluation_point) const</td></tr>
 <tr class="separator:a532f0f37cbc778f665364b3a2e2a559a inherit pub_methods_classShape"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:acc115201008418068265ed7fd5f092ae inherit pub_methods_classShape" id="r_acc115201008418068265ed7fd5f092ae"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classShape.html#acc115201008418068265ed7fd5f092ae">set_part_of_a_composite</a> (const bool <a class="el" href="classShape.html#aa03400a77cb8749bc2eb71265f550b38">part_of_a_composite</a>)</td></tr>
-<tr class="separator:acc115201008418068265ed7fd5f092ae inherit pub_methods_classShape"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a4012470e896cf61c53ad611eb1a26e06 inherit pub_methods_classShape" id="r_a4012470e896cf61c53ad611eb1a26e06"><td class="memItemLeft" align="right" valign="top">virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classShape.html#a4012470e896cf61c53ad611eb1a26e06">set_layer_thickening</a> (const double <a class="el" href="classShape.html#a6be6b189b76d906b833a6056381ac97d">layer_thickening</a>)</td></tr>
-<tr class="separator:a4012470e896cf61c53ad611eb1a26e06 inherit pub_methods_classShape"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a7184cf3e2b161a44e7e3b3e6f2ffe988 inherit pub_methods_classShape" id="r_a7184cf3e2b161a44e7e3b3e6f2ffe988"><td class="memItemLeft" align="right" valign="top">Tensor&lt; 1, 3 &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classShape.html#a7184cf3e2b161a44e7e3b3e6f2ffe988">rotation_matrix_to_xyz_angles</a> (Tensor&lt; 2, 3 &gt; &amp;rotation_matrix_representation) const</td></tr>
-<tr class="separator:a7184cf3e2b161a44e7e3b3e6f2ffe988 inherit pub_methods_classShape"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:afd776930f18fc019da2c0a1a890cb2e1 inherit pub_methods_classShape" id="r_afd776930f18fc019da2c0a1a890cb2e1"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classShape.html#afd776930f18fc019da2c0a1a890cb2e1">set_part_of_a_composite</a> (const bool is_part_of_a_composite)</td></tr>
+<tr class="separator:afd776930f18fc019da2c0a1a890cb2e1 inherit pub_methods_classShape"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ab7973d48a34701f6a301613ce08cc938 inherit pub_methods_classShape" id="r_ab7973d48a34701f6a301613ce08cc938"><td class="memItemLeft" align="right" valign="top">virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classShape.html#ab7973d48a34701f6a301613ce08cc938">set_layer_thickening</a> (const double the_layer_thickening)</td></tr>
+<tr class="separator:ab7973d48a34701f6a301613ce08cc938 inherit pub_methods_classShape"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pri-attribs" name="pri-attribs"></a>
 Private Attributes</h2></td></tr>
@@ -175,28 +171,33 @@ Private Attributes</h2></td></tr>
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="inherited" name="inherited"></a>
 Additional Inherited Members</h2></td></tr>
 <tr class="inherit_header pub_types_classShape"><td colspan="2" onclick="javascript:toggleInherit('pub_types_classShape')"><img src="closed.png" alt="-"/>&#160;Public Types inherited from <a class="el" href="classShape.html">Shape&lt; dim &gt;</a></td></tr>
-<tr class="memitem:a3e44e2b1f6fca48f7b7b2151977b3abd inherit pub_types_classShape" id="r_a3e44e2b1f6fca48f7b7b2151977b3abd"><td class="memItemLeft" align="right" valign="top">enum &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classShape.html#a3e44e2b1f6fca48f7b7b2151977b3abd">ShapeType</a> : int { <br />
-&#160;&#160;<a class="el" href="classShape.html#a3e44e2b1f6fca48f7b7b2151977b3abdaa9f2d0e0ebfe9aaa1e10b43015fa3710">sphere</a>
-, <a class="el" href="classShape.html#a3e44e2b1f6fca48f7b7b2151977b3abda37c0074da66fc8173cb16591045af43a">hyper_rectangle</a>
-, <a class="el" href="classShape.html#a3e44e2b1f6fca48f7b7b2151977b3abda4bffc1780b0728178be01297b30d7568">ellipsoid</a>
-, <a class="el" href="classShape.html#a3e44e2b1f6fca48f7b7b2151977b3abda04d7c7decbdeffd2eb8df924f71b9c3a">torus</a>
+<tr class="memitem:a394819ce751267dc955abe4ad18ebdeb inherit pub_types_classShape" id="r_a394819ce751267dc955abe4ad18ebdeb"><td class="memItemLeft" align="right" valign="top">enum &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classShape.html#a394819ce751267dc955abe4ad18ebdeb">ShapeType</a> : std::int8_t { <br />
+&#160;&#160;<a class="el" href="classShape.html#a394819ce751267dc955abe4ad18ebdebaa9f2d0e0ebfe9aaa1e10b43015fa3710">sphere</a>
+, <a class="el" href="classShape.html#a394819ce751267dc955abe4ad18ebdeba37c0074da66fc8173cb16591045af43a">hyper_rectangle</a>
+, <a class="el" href="classShape.html#a394819ce751267dc955abe4ad18ebdeba4bffc1780b0728178be01297b30d7568">ellipsoid</a>
+, <a class="el" href="classShape.html#a394819ce751267dc955abe4ad18ebdeba04d7c7decbdeffd2eb8df924f71b9c3a">torus</a>
 , <br />
-&#160;&#160;<a class="el" href="classShape.html#a3e44e2b1f6fca48f7b7b2151977b3abdac24574f62365dbabb94ca975e18bcf11">cone</a>
-, <a class="el" href="classShape.html#a3e44e2b1f6fca48f7b7b2151977b3abda648bf60f39e61e35fc8557cb6e4928f6">cylinder</a>
-, <a class="el" href="classShape.html#a3e44e2b1f6fca48f7b7b2151977b3abdaed29193b1d7117fdc0c82f7f131f33f2">cylindrical_tube</a>
-, <a class="el" href="classShape.html#a3e44e2b1f6fca48f7b7b2151977b3abda96a979bc71177dae4f20afbf3472caf8">cylindrical_helix</a>
+&#160;&#160;<a class="el" href="classShape.html#a394819ce751267dc955abe4ad18ebdebac24574f62365dbabb94ca975e18bcf11">cone</a>
+, <a class="el" href="classShape.html#a394819ce751267dc955abe4ad18ebdeba648bf60f39e61e35fc8557cb6e4928f6">cylinder</a>
+, <a class="el" href="classShape.html#a394819ce751267dc955abe4ad18ebdebaed29193b1d7117fdc0c82f7f131f33f2">cylindrical_tube</a>
+, <a class="el" href="classShape.html#a394819ce751267dc955abe4ad18ebdeba96a979bc71177dae4f20afbf3472caf8">cylindrical_helix</a>
 , <br />
-&#160;&#160;<a class="el" href="classShape.html#a3e44e2b1f6fca48f7b7b2151977b3abdab04cd2bbd3080e71efda561f507a317f">cut_hollow_sphere</a>
-, <a class="el" href="classShape.html#a3e44e2b1f6fca48f7b7b2151977b3abdae8ef59ac302678275d0e60506314b5f6">death_star</a>
-, <a class="el" href="classShape.html#a3e44e2b1f6fca48f7b7b2151977b3abda9b2bf872fb19c75a69cd4946bc4e943a">composite_shape</a>
-, <a class="el" href="classShape.html#a3e44e2b1f6fca48f7b7b2151977b3abdae54312d0ea888cdacf72bca2101e8042">rbf_shape</a>
+&#160;&#160;<a class="el" href="classShape.html#a394819ce751267dc955abe4ad18ebdebab04cd2bbd3080e71efda561f507a317f">cut_hollow_sphere</a>
+, <a class="el" href="classShape.html#a394819ce751267dc955abe4ad18ebdebae8ef59ac302678275d0e60506314b5f6">death_star</a>
+, <a class="el" href="classShape.html#a394819ce751267dc955abe4ad18ebdeba9b2bf872fb19c75a69cd4946bc4e943a">composite_shape</a>
+, <a class="el" href="classShape.html#a394819ce751267dc955abe4ad18ebdebae54312d0ea888cdacf72bca2101e8042">rbf_shape</a>
 , <br />
-&#160;&#160;<a class="el" href="classShape.html#a3e44e2b1f6fca48f7b7b2151977b3abdab5ddf5c4e14b81360fe87fe24a2eb4d5">opencascade_shape</a>
+&#160;&#160;<a class="el" href="classShape.html#a394819ce751267dc955abe4ad18ebdebab5ddf5c4e14b81360fe87fe24a2eb4d5">opencascade_shape</a>
 <br />
  }</td></tr>
-<tr class="separator:a3e44e2b1f6fca48f7b7b2151977b3abd inherit pub_types_classShape"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="separator:a394819ce751267dc955abe4ad18ebdeb inherit pub_types_classShape"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="inherit_header pub_static_methods_classShape"><td colspan="2" onclick="javascript:toggleInherit('pub_static_methods_classShape')"><img src="closed.png" alt="-"/>&#160;Static Public Member Functions inherited from <a class="el" href="classShape.html">Shape&lt; dim &gt;</a></td></tr>
+<tr class="memitem:aad117c51ca97220bf3ae94da9de6cb75 inherit pub_static_methods_classShape" id="r_aad117c51ca97220bf3ae94da9de6cb75"><td class="memItemLeft" align="right" valign="top">static double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classShape.html#aad117c51ca97220bf3ae94da9de6cb75">smooth_max</a> (const double a, const double b, const double smooth_factor=10)</td></tr>
+<tr class="separator:aad117c51ca97220bf3ae94da9de6cb75 inherit pub_static_methods_classShape"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a430fdcfc03012e0a15c8bd72c9b7010b inherit pub_static_methods_classShape" id="r_a430fdcfc03012e0a15c8bd72c9b7010b"><td class="memItemLeft" align="right" valign="top">static Tensor&lt; 1, 3 &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classShape.html#a430fdcfc03012e0a15c8bd72c9b7010b">rotation_matrix_to_xyz_angles</a> (Tensor&lt; 2, 3 &gt; &amp;rotation_matrix_representation)</td></tr>
+<tr class="separator:a430fdcfc03012e0a15c8bd72c9b7010b inherit pub_static_methods_classShape"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="inherit_header pub_attribs_classShape"><td colspan="2" onclick="javascript:toggleInherit('pub_attribs_classShape')"><img src="closed.png" alt="-"/>&#160;Public Attributes inherited from <a class="el" href="classShape.html">Shape&lt; dim &gt;</a></td></tr>
-<tr class="memitem:a6b530422aac8aacdf7bba3648a32d658 inherit pub_attribs_classShape" id="r_a6b530422aac8aacdf7bba3648a32d658"><td class="memItemLeft" align="right" valign="top">enum <a class="el" href="classShape.html#a3e44e2b1f6fca48f7b7b2151977b3abd">Shape::ShapeType</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classShape.html#a6b530422aac8aacdf7bba3648a32d658">type</a></td></tr>
+<tr class="memitem:a6b530422aac8aacdf7bba3648a32d658 inherit pub_attribs_classShape" id="r_a6b530422aac8aacdf7bba3648a32d658"><td class="memItemLeft" align="right" valign="top">enum <a class="el" href="classShape.html#a394819ce751267dc955abe4ad18ebdeb">Shape::ShapeType</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classShape.html#a6b530422aac8aacdf7bba3648a32d658">type</a></td></tr>
 <tr class="separator:a6b530422aac8aacdf7bba3648a32d658 inherit pub_attribs_classShape"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a32546bd02c82fe6fcc6b4ac2c12937f3 inherit pub_attribs_classShape" id="r_a32546bd02c82fe6fcc6b4ac2c12937f3"><td class="memItemLeft" align="right" valign="top">double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classShape.html#a32546bd02c82fe6fcc6b4ac2c12937f3">effective_radius</a></td></tr>
 <tr class="separator:a32546bd02c82fe6fcc6b4ac2c12937f3 inherit pub_attribs_classShape"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -227,7 +228,7 @@ Additional Inherited Members</h2></td></tr>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><div class="compoundTemplParams">template&lt;int dim&gt;<br />
 class Ellipsoid&lt; dim &gt;</div>
-<p class="definition">Definition at line <a class="el" href="shape_8h_source.html#l01786">1786</a> of file <a class="el" href="shape_8h_source.html">shape.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="shape_8h_source.html#l01774">1774</a> of file <a class="el" href="shape_8h_source.html">shape.h</a>.</p>
 </div><h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
 <a id="a459db84c2238f9e81c56b658fb9e7f6d" name="a459db84c2238f9e81c56b658fb9e7f6d"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a459db84c2238f9e81c56b658fb9e7f6d">&#9670;&#160;</a></span>Ellipsoid()</h2>
@@ -281,9 +282,9 @@ template&lt;int dim&gt; </div>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="shape_8h_source.html#l01795">1795</a> of file <a class="el" href="shape_8h_source.html">shape.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="shape_8h_source.html#l01783">1783</a> of file <a class="el" href="shape_8h_source.html">shape.h</a>.</p>
 
-<p class="reference">References <a class="el" href="shape_8h_source.html#l01344">Shape&lt; dim &gt;::bounding_box_center</a>, <a class="el" href="shape_8h_source.html#l01342">Shape&lt; dim &gt;::bounding_box_half_length</a>, and <a class="el" href="shape_8h_source.html#l01834">Ellipsoid&lt; dim &gt;::radii</a>.</p>
+<p class="reference">References <a class="el" href="shape_8h_source.html#l01334">Shape&lt; dim &gt;::bounding_box_center</a>, <a class="el" href="shape_8h_source.html#l01332">Shape&lt; dim &gt;::bounding_box_half_length</a>, and <a class="el" href="shape_8h_source.html#l01822">Ellipsoid&lt; dim &gt;::radii</a>.</p>
 
 </div>
 </div>
@@ -317,7 +318,7 @@ template&lt;int dim&gt; </div>
 
 <p>Reimplemented from <a class="el" href="classShape.html#a4b59682718a14d3f9bea00a66445bb77">Shape&lt; dim &gt;</a>.</p>
 
-<p class="definition">Definition at line <a class="el" href="shape_8cc_source.html#l01092">1092</a> of file <a class="el" href="shape_8cc_source.html">shape.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="shape_8cc_source.html#l01090">1090</a> of file <a class="el" href="shape_8cc_source.html">shape.cc</a>.</p>
 
 </div>
 </div>
@@ -350,7 +351,7 @@ template&lt;int dim&gt; </div>
 
 <p>Implements <a class="el" href="classShape.html#a25c5903e89944092d7bc932d8b71d996">Shape&lt; dim &gt;</a>.</p>
 
-<p class="definition">Definition at line <a class="el" href="shape_8cc_source.html#l01081">1081</a> of file <a class="el" href="shape_8cc_source.html">shape.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="shape_8cc_source.html#l01079">1079</a> of file <a class="el" href="shape_8cc_source.html">shape.cc</a>.</p>
 
 </div>
 </div>
@@ -401,7 +402,7 @@ template&lt;int dim&gt; </div>
 
 <p>Implements <a class="el" href="classShape.html#ad5f4333acae9352a237b917a6eb49ae9">Shape&lt; dim &gt;</a>.</p>
 
-<p class="definition">Definition at line <a class="el" href="shape_8cc_source.html#l01061">1061</a> of file <a class="el" href="shape_8cc_source.html">shape.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="shape_8cc_source.html#l01059">1059</a> of file <a class="el" href="shape_8cc_source.html">shape.cc</a>.</p>
 
 </div>
 </div>
@@ -428,7 +429,7 @@ template&lt;int dim&gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="shape_8h_source.html#l01834">1834</a> of file <a class="el" href="shape_8h_source.html">shape.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="shape_8h_source.html#l01822">1822</a> of file <a class="el" href="shape_8h_source.html">shape.h</a>.</p>
 
 </div>
 </div>

@@ -84,6 +84,7 @@ $(function() {
   <div class="summary">
 <a href="#pub-types">Public Types</a> &#124;
 <a href="#pub-methods">Public Member Functions</a> &#124;
+<a href="#pub-static-methods">Static Public Member Functions</a> &#124;
 <a href="#pub-attribs">Public Attributes</a> &#124;
 <a href="#pri-attribs">Private Attributes</a> &#124;
 <a href="classRBFShape-members.html">List of all members</a>  </div>
@@ -130,26 +131,26 @@ Public Types</h2></td></tr>
  }</td></tr>
 <tr class="separator:a2060a8058a7a5a439d772319f39ec66b"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="inherit_header pub_types_classShape"><td colspan="2" onclick="javascript:toggleInherit('pub_types_classShape')"><img src="closed.png" alt="-"/>&#160;Public Types inherited from <a class="el" href="classShape.html">Shape&lt; dim &gt;</a></td></tr>
-<tr class="memitem:a3e44e2b1f6fca48f7b7b2151977b3abd inherit pub_types_classShape" id="r_a3e44e2b1f6fca48f7b7b2151977b3abd"><td class="memItemLeft" align="right" valign="top">enum &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classShape.html#a3e44e2b1f6fca48f7b7b2151977b3abd">ShapeType</a> : int { <br />
-&#160;&#160;<a class="el" href="classShape.html#a3e44e2b1f6fca48f7b7b2151977b3abdaa9f2d0e0ebfe9aaa1e10b43015fa3710">sphere</a>
-, <a class="el" href="classShape.html#a3e44e2b1f6fca48f7b7b2151977b3abda37c0074da66fc8173cb16591045af43a">hyper_rectangle</a>
-, <a class="el" href="classShape.html#a3e44e2b1f6fca48f7b7b2151977b3abda4bffc1780b0728178be01297b30d7568">ellipsoid</a>
-, <a class="el" href="classShape.html#a3e44e2b1f6fca48f7b7b2151977b3abda04d7c7decbdeffd2eb8df924f71b9c3a">torus</a>
+<tr class="memitem:a394819ce751267dc955abe4ad18ebdeb inherit pub_types_classShape" id="r_a394819ce751267dc955abe4ad18ebdeb"><td class="memItemLeft" align="right" valign="top">enum &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classShape.html#a394819ce751267dc955abe4ad18ebdeb">ShapeType</a> : std::int8_t { <br />
+&#160;&#160;<a class="el" href="classShape.html#a394819ce751267dc955abe4ad18ebdebaa9f2d0e0ebfe9aaa1e10b43015fa3710">sphere</a>
+, <a class="el" href="classShape.html#a394819ce751267dc955abe4ad18ebdeba37c0074da66fc8173cb16591045af43a">hyper_rectangle</a>
+, <a class="el" href="classShape.html#a394819ce751267dc955abe4ad18ebdeba4bffc1780b0728178be01297b30d7568">ellipsoid</a>
+, <a class="el" href="classShape.html#a394819ce751267dc955abe4ad18ebdeba04d7c7decbdeffd2eb8df924f71b9c3a">torus</a>
 , <br />
-&#160;&#160;<a class="el" href="classShape.html#a3e44e2b1f6fca48f7b7b2151977b3abdac24574f62365dbabb94ca975e18bcf11">cone</a>
-, <a class="el" href="classShape.html#a3e44e2b1f6fca48f7b7b2151977b3abda648bf60f39e61e35fc8557cb6e4928f6">cylinder</a>
-, <a class="el" href="classShape.html#a3e44e2b1f6fca48f7b7b2151977b3abdaed29193b1d7117fdc0c82f7f131f33f2">cylindrical_tube</a>
-, <a class="el" href="classShape.html#a3e44e2b1f6fca48f7b7b2151977b3abda96a979bc71177dae4f20afbf3472caf8">cylindrical_helix</a>
+&#160;&#160;<a class="el" href="classShape.html#a394819ce751267dc955abe4ad18ebdebac24574f62365dbabb94ca975e18bcf11">cone</a>
+, <a class="el" href="classShape.html#a394819ce751267dc955abe4ad18ebdeba648bf60f39e61e35fc8557cb6e4928f6">cylinder</a>
+, <a class="el" href="classShape.html#a394819ce751267dc955abe4ad18ebdebaed29193b1d7117fdc0c82f7f131f33f2">cylindrical_tube</a>
+, <a class="el" href="classShape.html#a394819ce751267dc955abe4ad18ebdeba96a979bc71177dae4f20afbf3472caf8">cylindrical_helix</a>
 , <br />
-&#160;&#160;<a class="el" href="classShape.html#a3e44e2b1f6fca48f7b7b2151977b3abdab04cd2bbd3080e71efda561f507a317f">cut_hollow_sphere</a>
-, <a class="el" href="classShape.html#a3e44e2b1f6fca48f7b7b2151977b3abdae8ef59ac302678275d0e60506314b5f6">death_star</a>
-, <a class="el" href="classShape.html#a3e44e2b1f6fca48f7b7b2151977b3abda9b2bf872fb19c75a69cd4946bc4e943a">composite_shape</a>
-, <a class="el" href="classShape.html#a3e44e2b1f6fca48f7b7b2151977b3abdae54312d0ea888cdacf72bca2101e8042">rbf_shape</a>
+&#160;&#160;<a class="el" href="classShape.html#a394819ce751267dc955abe4ad18ebdebab04cd2bbd3080e71efda561f507a317f">cut_hollow_sphere</a>
+, <a class="el" href="classShape.html#a394819ce751267dc955abe4ad18ebdebae8ef59ac302678275d0e60506314b5f6">death_star</a>
+, <a class="el" href="classShape.html#a394819ce751267dc955abe4ad18ebdeba9b2bf872fb19c75a69cd4946bc4e943a">composite_shape</a>
+, <a class="el" href="classShape.html#a394819ce751267dc955abe4ad18ebdebae54312d0ea888cdacf72bca2101e8042">rbf_shape</a>
 , <br />
-&#160;&#160;<a class="el" href="classShape.html#a3e44e2b1f6fca48f7b7b2151977b3abdab5ddf5c4e14b81360fe87fe24a2eb4d5">opencascade_shape</a>
+&#160;&#160;<a class="el" href="classShape.html#a394819ce751267dc955abe4ad18ebdebab5ddf5c4e14b81360fe87fe24a2eb4d5">opencascade_shape</a>
 <br />
  }</td></tr>
-<tr class="separator:a3e44e2b1f6fca48f7b7b2151977b3abd inherit pub_types_classShape"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="separator:a394819ce751267dc955abe4ad18ebdeb inherit pub_types_classShape"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pub-methods" name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
@@ -161,8 +162,8 @@ Public Member Functions</h2></td></tr>
 <tr class="separator:a02d165a5215eb4e8f45bbd82515551e1"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a91e5a0e7c2983d873e32e65abd3a53bb" id="r_a91e5a0e7c2983d873e32e65abd3a53bb"><td class="memItemLeft" align="right" valign="top">double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRBFShape.html#a91e5a0e7c2983d873e32e65abd3a53bb">value</a> (const Point&lt; dim &gt; &amp;evaluation_point, const unsigned int component=0) const override</td></tr>
 <tr class="separator:a91e5a0e7c2983d873e32e65abd3a53bb"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a3bb5e038767577ace42bbb92fffe8d0f" id="r_a3bb5e038767577ace42bbb92fffe8d0f"><td class="memItemLeft" align="right" valign="top">double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRBFShape.html#a3bb5e038767577ace42bbb92fffe8d0f">value_with_cell_guess</a> (const Point&lt; dim &gt; &amp;evaluation_point, const typename DoFHandler&lt; dim &gt;::active_cell_iterator, const unsigned int) override</td></tr>
-<tr class="separator:a3bb5e038767577ace42bbb92fffe8d0f"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ae15e610ac060e65d08344d4928894835" id="r_ae15e610ac060e65d08344d4928894835"><td class="memItemLeft" align="right" valign="top">double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRBFShape.html#ae15e610ac060e65d08344d4928894835">value_with_cell_guess</a> (const Point&lt; dim &gt; &amp;evaluation_point, const typename DoFHandler&lt; dim &gt;::active_cell_iterator cell, const unsigned int component=0) override</td></tr>
+<tr class="separator:ae15e610ac060e65d08344d4928894835"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a76ef6b66fa9f842370f062e52be95229" id="r_a76ef6b66fa9f842370f062e52be95229"><td class="memItemLeft" align="right" valign="top">Tensor&lt; 1, dim &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRBFShape.html#a76ef6b66fa9f842370f062e52be95229">gradient_with_cell_guess</a> (const Point&lt; dim &gt; &amp;evaluation_point, const typename DoFHandler&lt; dim &gt;::active_cell_iterator cell, const unsigned int component=0) override</td></tr>
 <tr class="separator:a76ef6b66fa9f842370f062e52be95229"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aa992e134d80d8ab948734af8894bc308" id="r_aa992e134d80d8ab948734af8894bc308"><td class="memItemLeft" align="right" valign="top">Tensor&lt; 1, dim &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRBFShape.html#aa992e134d80d8ab948734af8894bc308">gradient</a> (const Point&lt; dim &gt; &amp;evaluation_point, const unsigned int component=0) const override</td></tr>
@@ -183,69 +184,11 @@ Public Member Functions</h2></td></tr>
 <tr class="separator:adba88b6f906dc8ec58d9689e418f978d"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a37e04469a136df013e5c01044e2a4e73" id="r_a37e04469a136df013e5c01044e2a4e73"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRBFShape.html#a37e04469a136df013e5c01044e2a4e73">rotate_nodes</a> ()</td></tr>
 <tr class="separator:a37e04469a136df013e5c01044e2a4e73"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ac4f98e19cc9b04913df4704f64c8c040" id="r_ac4f98e19cc9b04913df4704f64c8c040"><td class="memItemLeft" align="right" valign="top">double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRBFShape.html#ac4f98e19cc9b04913df4704f64c8c040">wendlandc2</a> (const double distance) const</td></tr>
-<tr class="separator:ac4f98e19cc9b04913df4704f64c8c040"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a80993be1a21537d5796fabce135c0342" id="r_a80993be1a21537d5796fabce135c0342"><td class="memItemLeft" align="right" valign="top">double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRBFShape.html#a80993be1a21537d5796fabce135c0342">linear</a> (const double distance) const</td></tr>
-<tr class="separator:a80993be1a21537d5796fabce135c0342"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a4dcfdbddf4845e4d58b8e29bb091431b" id="r_a4dcfdbddf4845e4d58b8e29bb091431b"><td class="memItemLeft" align="right" valign="top">double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRBFShape.html#a4dcfdbddf4845e4d58b8e29bb091431b">gauss90</a> (const double distance) const</td></tr>
-<tr class="separator:a4dcfdbddf4845e4d58b8e29bb091431b"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ae61701d91c2312f7700d830dd7122897" id="r_ae61701d91c2312f7700d830dd7122897"><td class="memItemLeft" align="right" valign="top">double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRBFShape.html#ae61701d91c2312f7700d830dd7122897">gauss95</a> (const double distance) const</td></tr>
-<tr class="separator:ae61701d91c2312f7700d830dd7122897"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a6b8d26b17a3cdc03cd9189dbff1d0b12" id="r_a6b8d26b17a3cdc03cd9189dbff1d0b12"><td class="memItemLeft" align="right" valign="top">double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRBFShape.html#a6b8d26b17a3cdc03cd9189dbff1d0b12">gauss99</a> (const double distance) const</td></tr>
-<tr class="separator:a6b8d26b17a3cdc03cd9189dbff1d0b12"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aac79678c3885bdfed0ab57e0397be1c4" id="r_aac79678c3885bdfed0ab57e0397be1c4"><td class="memItemLeft" align="right" valign="top">double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRBFShape.html#aac79678c3885bdfed0ab57e0397be1c4">c1c0</a> (const double distance) const</td></tr>
-<tr class="separator:aac79678c3885bdfed0ab57e0397be1c4"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a0f0de458b769d6a617f9880b7151d763" id="r_a0f0de458b769d6a617f9880b7151d763"><td class="memItemLeft" align="right" valign="top">double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRBFShape.html#a0f0de458b769d6a617f9880b7151d763">c2c0</a> (const double distance) const</td></tr>
-<tr class="separator:a0f0de458b769d6a617f9880b7151d763"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a9b2dce5260b3af14c1d2a0ff27fc1a00" id="r_a9b2dce5260b3af14c1d2a0ff27fc1a00"><td class="memItemLeft" align="right" valign="top">double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRBFShape.html#a9b2dce5260b3af14c1d2a0ff27fc1a00">c0c1</a> (const double distance) const</td></tr>
-<tr class="separator:a9b2dce5260b3af14c1d2a0ff27fc1a00"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ae42e844cb2da529eb389a1ff2cd2bc8f" id="r_ae42e844cb2da529eb389a1ff2cd2bc8f"><td class="memItemLeft" align="right" valign="top">double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRBFShape.html#ae42e844cb2da529eb389a1ff2cd2bc8f">c1c1</a> (const double distance) const</td></tr>
-<tr class="separator:ae42e844cb2da529eb389a1ff2cd2bc8f"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ab5204136c521c696ae6fed7ac311260e" id="r_ab5204136c521c696ae6fed7ac311260e"><td class="memItemLeft" align="right" valign="top">double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRBFShape.html#ab5204136c521c696ae6fed7ac311260e">c2c1</a> (const double distance) const</td></tr>
-<tr class="separator:ab5204136c521c696ae6fed7ac311260e"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a252aee49ca2f651931bfece9df1a0da5" id="r_a252aee49ca2f651931bfece9df1a0da5"><td class="memItemLeft" align="right" valign="top">double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRBFShape.html#a252aee49ca2f651931bfece9df1a0da5">c0c2</a> (const double distance) const</td></tr>
-<tr class="separator:a252aee49ca2f651931bfece9df1a0da5"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a36b6da6aadf7109bf6991140e07c4548" id="r_a36b6da6aadf7109bf6991140e07c4548"><td class="memItemLeft" align="right" valign="top">double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRBFShape.html#a36b6da6aadf7109bf6991140e07c4548">c1c2</a> (const double distance) const</td></tr>
-<tr class="separator:a36b6da6aadf7109bf6991140e07c4548"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aa0e0269777cb40f18296110539b2263f" id="r_aa0e0269777cb40f18296110539b2263f"><td class="memItemLeft" align="right" valign="top">double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRBFShape.html#aa0e0269777cb40f18296110539b2263f">c2c2</a> (const double distance) const</td></tr>
-<tr class="separator:aa0e0269777cb40f18296110539b2263f"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a04207b53660131c73d4ee717bad82c33" id="r_a04207b53660131c73d4ee717bad82c33"><td class="memItemLeft" align="right" valign="top">double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRBFShape.html#a04207b53660131c73d4ee717bad82c33">cos</a> (const double distance) const</td></tr>
-<tr class="separator:a04207b53660131c73d4ee717bad82c33"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a0e6efac8271e7370c1cd8c0180e0d4a8" id="r_a0e6efac8271e7370c1cd8c0180e0d4a8"><td class="memItemLeft" align="right" valign="top">double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRBFShape.html#a0e6efac8271e7370c1cd8c0180e0d4a8">wendlandc2_derivative</a> (const double distance) const</td></tr>
-<tr class="separator:a0e6efac8271e7370c1cd8c0180e0d4a8"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a008589cf434ca19e13d2fee6549e36dc" id="r_a008589cf434ca19e13d2fee6549e36dc"><td class="memItemLeft" align="right" valign="top">double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRBFShape.html#a008589cf434ca19e13d2fee6549e36dc">linear_derivative</a> (const double distance) const</td></tr>
-<tr class="separator:a008589cf434ca19e13d2fee6549e36dc"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a7446816c3dd562cf6079b74524f13f6e" id="r_a7446816c3dd562cf6079b74524f13f6e"><td class="memItemLeft" align="right" valign="top">double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRBFShape.html#a7446816c3dd562cf6079b74524f13f6e">gauss90_derivative</a> (const double distance) const</td></tr>
-<tr class="separator:a7446816c3dd562cf6079b74524f13f6e"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:affd8c93eb99dc759e503578627831e0c" id="r_affd8c93eb99dc759e503578627831e0c"><td class="memItemLeft" align="right" valign="top">double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRBFShape.html#affd8c93eb99dc759e503578627831e0c">gauss95_derivative</a> (const double distance) const</td></tr>
-<tr class="separator:affd8c93eb99dc759e503578627831e0c"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a0a6c6981a2f3798cf10252b78fb62a66" id="r_a0a6c6981a2f3798cf10252b78fb62a66"><td class="memItemLeft" align="right" valign="top">double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRBFShape.html#a0a6c6981a2f3798cf10252b78fb62a66">gauss99_derivative</a> (const double distance) const</td></tr>
-<tr class="separator:a0a6c6981a2f3798cf10252b78fb62a66"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a05a7bf6a5acb71d4b7f16b9f003dcb4c" id="r_a05a7bf6a5acb71d4b7f16b9f003dcb4c"><td class="memItemLeft" align="right" valign="top">double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRBFShape.html#a05a7bf6a5acb71d4b7f16b9f003dcb4c">c1c0_derivative</a> (const double distance) const</td></tr>
-<tr class="separator:a05a7bf6a5acb71d4b7f16b9f003dcb4c"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a262916275cec9936d6594b42a21d3721" id="r_a262916275cec9936d6594b42a21d3721"><td class="memItemLeft" align="right" valign="top">double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRBFShape.html#a262916275cec9936d6594b42a21d3721">c2c0_derivative</a> (const double distance) const</td></tr>
-<tr class="separator:a262916275cec9936d6594b42a21d3721"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a9f67ac796c1ed2a72be9d6d461a2592e" id="r_a9f67ac796c1ed2a72be9d6d461a2592e"><td class="memItemLeft" align="right" valign="top">double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRBFShape.html#a9f67ac796c1ed2a72be9d6d461a2592e">c0c1_derivative</a> (const double distance) const</td></tr>
-<tr class="separator:a9f67ac796c1ed2a72be9d6d461a2592e"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a00bfd5d4107225fbdca9d713ad864415" id="r_a00bfd5d4107225fbdca9d713ad864415"><td class="memItemLeft" align="right" valign="top">double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRBFShape.html#a00bfd5d4107225fbdca9d713ad864415">c1c1_derivative</a> (const double distance) const</td></tr>
-<tr class="separator:a00bfd5d4107225fbdca9d713ad864415"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ac5edc7e7d2b8ba2f5fc8b8558f90a769" id="r_ac5edc7e7d2b8ba2f5fc8b8558f90a769"><td class="memItemLeft" align="right" valign="top">double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRBFShape.html#ac5edc7e7d2b8ba2f5fc8b8558f90a769">c2c1_derivative</a> (const double distance) const</td></tr>
-<tr class="separator:ac5edc7e7d2b8ba2f5fc8b8558f90a769"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a7ee2faeaa1d172856bc44f1767108349" id="r_a7ee2faeaa1d172856bc44f1767108349"><td class="memItemLeft" align="right" valign="top">double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRBFShape.html#a7ee2faeaa1d172856bc44f1767108349">c0c2_derivative</a> (const double distance) const</td></tr>
-<tr class="separator:a7ee2faeaa1d172856bc44f1767108349"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:abdcd268bc190b0217e5f05752910decc" id="r_abdcd268bc190b0217e5f05752910decc"><td class="memItemLeft" align="right" valign="top">double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRBFShape.html#abdcd268bc190b0217e5f05752910decc">c1c2_derivative</a> (const double distance) const</td></tr>
-<tr class="separator:abdcd268bc190b0217e5f05752910decc"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a894d36a22a3f83760581f1e614f6daca" id="r_a894d36a22a3f83760581f1e614f6daca"><td class="memItemLeft" align="right" valign="top">double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRBFShape.html#a894d36a22a3f83760581f1e614f6daca">c2c2_derivative</a> (const double distance) const</td></tr>
-<tr class="separator:a894d36a22a3f83760581f1e614f6daca"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a904c73520b5051319725c4b9daf87711" id="r_a904c73520b5051319725c4b9daf87711"><td class="memItemLeft" align="right" valign="top">double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRBFShape.html#a904c73520b5051319725c4b9daf87711">cosinus_derivative</a> (const double distance) const</td></tr>
-<tr class="separator:a904c73520b5051319725c4b9daf87711"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a701707d291e064868b7dbb2908209eea" id="r_a701707d291e064868b7dbb2908209eea"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRBFShape.html#a701707d291e064868b7dbb2908209eea">swap_iterable_nodes</a> (const typename DoFHandler&lt; dim &gt;::active_cell_iterator cell)</td></tr>
 <tr class="separator:a701707d291e064868b7dbb2908209eea"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="inherit_header pub_methods_classShape"><td colspan="2" onclick="javascript:toggleInherit('pub_methods_classShape')"><img src="closed.png" alt="-"/>&#160;Public Member Functions inherited from <a class="el" href="classShape.html">Shape&lt; dim &gt;</a></td></tr>
 <tr class="memitem:afe1e03ec9d78e28f160d88380ffd0a35 inherit pub_methods_classShape" id="r_afe1e03ec9d78e28f160d88380ffd0a35"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classShape.html#afe1e03ec9d78e28f160d88380ffd0a35">Shape</a> (double radius, const Point&lt; dim &gt; &amp;<a class="el" href="classShape.html#ac35254a566e6850f6f9b8606aa25ddc4">position</a>, const Tensor&lt; 1, 3 &gt; &amp;<a class="el" href="classShape.html#a2ca8b6d6616659ad6ea4727762ab0d9f">orientation</a>)</td></tr>
 <tr class="separator:afe1e03ec9d78e28f160d88380ffd0a35 inherit pub_methods_classShape"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a3beacb4994e184b9cf5c7d5719d1ab94 inherit pub_methods_classShape" id="r_a3beacb4994e184b9cf5c7d5719d1ab94"><td class="memItemLeft" align="right" valign="top">double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classShape.html#a3beacb4994e184b9cf5c7d5719d1ab94">smooth_max</a> (double a, double b, double smooth_factor=10)</td></tr>
-<tr class="separator:a3beacb4994e184b9cf5c7d5719d1ab94 inherit pub_methods_classShape"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a4666a48ee33dc2ca425c67dfe22e97bb inherit pub_methods_classShape" id="r_a4666a48ee33dc2ca425c67dfe22e97bb"><td class="memItemLeft" align="right" valign="top">virtual std::tuple&lt; double, Tensor&lt; 1, dim &gt;, Point&lt; dim &gt; &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classShape.html#a4666a48ee33dc2ca425c67dfe22e97bb">distance_to_shape_with_cell_guess</a> (<a class="el" href="classShape.html">Shape</a>&lt; dim &gt; &amp;shape, const typename DoFHandler&lt; dim &gt;::active_cell_iterator &amp;cell, std::vector&lt; Point&lt; dim &gt; &gt; &amp;candidate_points, double precision=1e-6, bool exact_distance_outside_of_contact=false)</td></tr>
 <tr class="separator:a4666a48ee33dc2ca425c67dfe22e97bb inherit pub_methods_classShape"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a6603c76ecfd43a787cb1c5295a3bfbcf inherit pub_methods_classShape" id="r_a6603c76ecfd43a787cb1c5295a3bfbcf"><td class="memItemLeft" align="right" valign="top">virtual std::tuple&lt; double, Tensor&lt; 1, dim &gt;, Point&lt; dim &gt; &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classShape.html#a6603c76ecfd43a787cb1c5295a3bfbcf">distance_to_shape</a> (<a class="el" href="classShape.html">Shape</a>&lt; dim &gt; &amp;shape, std::vector&lt; Point&lt; dim &gt; &gt; &amp;candidate_points, double precision=1e-6, bool exact_distance_outside_of_contact=false)</td></tr>
@@ -284,12 +227,74 @@ Public Member Functions</h2></td></tr>
 <tr class="separator:a8fb04c9145a69a03028d3cecf2cd9338 inherit pub_methods_classShape"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a532f0f37cbc778f665364b3a2e2a559a inherit pub_methods_classShape" id="r_a532f0f37cbc778f665364b3a2e2a559a"><td class="memItemLeft" align="right" valign="top">std::string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classShape.html#a532f0f37cbc778f665364b3a2e2a559a">point_to_string</a> (const Point&lt; dim &gt; &amp;evaluation_point) const</td></tr>
 <tr class="separator:a532f0f37cbc778f665364b3a2e2a559a inherit pub_methods_classShape"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:acc115201008418068265ed7fd5f092ae inherit pub_methods_classShape" id="r_acc115201008418068265ed7fd5f092ae"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classShape.html#acc115201008418068265ed7fd5f092ae">set_part_of_a_composite</a> (const bool <a class="el" href="classShape.html#aa03400a77cb8749bc2eb71265f550b38">part_of_a_composite</a>)</td></tr>
-<tr class="separator:acc115201008418068265ed7fd5f092ae inherit pub_methods_classShape"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a4012470e896cf61c53ad611eb1a26e06 inherit pub_methods_classShape" id="r_a4012470e896cf61c53ad611eb1a26e06"><td class="memItemLeft" align="right" valign="top">virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classShape.html#a4012470e896cf61c53ad611eb1a26e06">set_layer_thickening</a> (const double <a class="el" href="classShape.html#a6be6b189b76d906b833a6056381ac97d">layer_thickening</a>)</td></tr>
-<tr class="separator:a4012470e896cf61c53ad611eb1a26e06 inherit pub_methods_classShape"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a7184cf3e2b161a44e7e3b3e6f2ffe988 inherit pub_methods_classShape" id="r_a7184cf3e2b161a44e7e3b3e6f2ffe988"><td class="memItemLeft" align="right" valign="top">Tensor&lt; 1, 3 &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classShape.html#a7184cf3e2b161a44e7e3b3e6f2ffe988">rotation_matrix_to_xyz_angles</a> (Tensor&lt; 2, 3 &gt; &amp;rotation_matrix_representation) const</td></tr>
-<tr class="separator:a7184cf3e2b161a44e7e3b3e6f2ffe988 inherit pub_methods_classShape"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:afd776930f18fc019da2c0a1a890cb2e1 inherit pub_methods_classShape" id="r_afd776930f18fc019da2c0a1a890cb2e1"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classShape.html#afd776930f18fc019da2c0a1a890cb2e1">set_part_of_a_composite</a> (const bool is_part_of_a_composite)</td></tr>
+<tr class="separator:afd776930f18fc019da2c0a1a890cb2e1 inherit pub_methods_classShape"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ab7973d48a34701f6a301613ce08cc938 inherit pub_methods_classShape" id="r_ab7973d48a34701f6a301613ce08cc938"><td class="memItemLeft" align="right" valign="top">virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classShape.html#ab7973d48a34701f6a301613ce08cc938">set_layer_thickening</a> (const double the_layer_thickening)</td></tr>
+<tr class="separator:ab7973d48a34701f6a301613ce08cc938 inherit pub_methods_classShape"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table><table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pub-static-methods" name="pub-static-methods"></a>
+Static Public Member Functions</h2></td></tr>
+<tr class="memitem:a500945b0623183e0230557de96446718" id="r_a500945b0623183e0230557de96446718"><td class="memItemLeft" align="right" valign="top">static double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRBFShape.html#a500945b0623183e0230557de96446718">wendlandc2</a> (const double distance)</td></tr>
+<tr class="separator:a500945b0623183e0230557de96446718"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a1b868f17f516043727fb9ba846d9ea77" id="r_a1b868f17f516043727fb9ba846d9ea77"><td class="memItemLeft" align="right" valign="top">static double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRBFShape.html#a1b868f17f516043727fb9ba846d9ea77">linear</a> (const double distance)</td></tr>
+<tr class="separator:a1b868f17f516043727fb9ba846d9ea77"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:afcc70649ac96639b57456bd38e5a222e" id="r_afcc70649ac96639b57456bd38e5a222e"><td class="memItemLeft" align="right" valign="top">static double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRBFShape.html#afcc70649ac96639b57456bd38e5a222e">gauss90</a> (const double distance)</td></tr>
+<tr class="separator:afcc70649ac96639b57456bd38e5a222e"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a0136ef0bada828a44e21a53d067c4cbf" id="r_a0136ef0bada828a44e21a53d067c4cbf"><td class="memItemLeft" align="right" valign="top">static double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRBFShape.html#a0136ef0bada828a44e21a53d067c4cbf">gauss95</a> (const double distance)</td></tr>
+<tr class="separator:a0136ef0bada828a44e21a53d067c4cbf"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a3e39741a66bd4afac0b5340009105b23" id="r_a3e39741a66bd4afac0b5340009105b23"><td class="memItemLeft" align="right" valign="top">static double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRBFShape.html#a3e39741a66bd4afac0b5340009105b23">gauss99</a> (const double distance)</td></tr>
+<tr class="separator:a3e39741a66bd4afac0b5340009105b23"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a047052e782cda525ab7716c6f74f6b9d" id="r_a047052e782cda525ab7716c6f74f6b9d"><td class="memItemLeft" align="right" valign="top">static double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRBFShape.html#a047052e782cda525ab7716c6f74f6b9d">c1c0</a> (const double distance)</td></tr>
+<tr class="separator:a047052e782cda525ab7716c6f74f6b9d"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a9c2e18709d564b3ddcf70c7fdc180c4c" id="r_a9c2e18709d564b3ddcf70c7fdc180c4c"><td class="memItemLeft" align="right" valign="top">static double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRBFShape.html#a9c2e18709d564b3ddcf70c7fdc180c4c">c2c0</a> (const double distance)</td></tr>
+<tr class="separator:a9c2e18709d564b3ddcf70c7fdc180c4c"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a0bea232b76f7ad96b215dd1a5cdc6b70" id="r_a0bea232b76f7ad96b215dd1a5cdc6b70"><td class="memItemLeft" align="right" valign="top">static double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRBFShape.html#a0bea232b76f7ad96b215dd1a5cdc6b70">c0c1</a> (const double distance)</td></tr>
+<tr class="separator:a0bea232b76f7ad96b215dd1a5cdc6b70"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ac69a1a2914cd00ba3097d50865c1d0b0" id="r_ac69a1a2914cd00ba3097d50865c1d0b0"><td class="memItemLeft" align="right" valign="top">static double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRBFShape.html#ac69a1a2914cd00ba3097d50865c1d0b0">c1c1</a> (const double distance)</td></tr>
+<tr class="separator:ac69a1a2914cd00ba3097d50865c1d0b0"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a7a4db1db011dfd3376f8c44f60b70482" id="r_a7a4db1db011dfd3376f8c44f60b70482"><td class="memItemLeft" align="right" valign="top">static double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRBFShape.html#a7a4db1db011dfd3376f8c44f60b70482">c2c1</a> (const double distance)</td></tr>
+<tr class="separator:a7a4db1db011dfd3376f8c44f60b70482"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ad939b0d66e83eb9fe4c90000a421eca7" id="r_ad939b0d66e83eb9fe4c90000a421eca7"><td class="memItemLeft" align="right" valign="top">static double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRBFShape.html#ad939b0d66e83eb9fe4c90000a421eca7">c0c2</a> (const double distance)</td></tr>
+<tr class="separator:ad939b0d66e83eb9fe4c90000a421eca7"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a636de55948075b7258c9bca7b41a5c37" id="r_a636de55948075b7258c9bca7b41a5c37"><td class="memItemLeft" align="right" valign="top">static double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRBFShape.html#a636de55948075b7258c9bca7b41a5c37">c1c2</a> (const double distance)</td></tr>
+<tr class="separator:a636de55948075b7258c9bca7b41a5c37"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a70716d8209e87c47ca84af3e8481c2c1" id="r_a70716d8209e87c47ca84af3e8481c2c1"><td class="memItemLeft" align="right" valign="top">static double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRBFShape.html#a70716d8209e87c47ca84af3e8481c2c1">c2c2</a> (const double distance)</td></tr>
+<tr class="separator:a70716d8209e87c47ca84af3e8481c2c1"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a9ac278115acb69eba29e88f66c224563" id="r_a9ac278115acb69eba29e88f66c224563"><td class="memItemLeft" align="right" valign="top">static double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRBFShape.html#a9ac278115acb69eba29e88f66c224563">cos</a> (const double distance)</td></tr>
+<tr class="separator:a9ac278115acb69eba29e88f66c224563"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a721451fbe48d2aa32308c735d047b001" id="r_a721451fbe48d2aa32308c735d047b001"><td class="memItemLeft" align="right" valign="top">static double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRBFShape.html#a721451fbe48d2aa32308c735d047b001">wendlandc2_derivative</a> (const double distance)</td></tr>
+<tr class="separator:a721451fbe48d2aa32308c735d047b001"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:afec59b4ce8194ea8a5dec3704b7ae701" id="r_afec59b4ce8194ea8a5dec3704b7ae701"><td class="memItemLeft" align="right" valign="top">static double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRBFShape.html#afec59b4ce8194ea8a5dec3704b7ae701">linear_derivative</a> (const double distance)</td></tr>
+<tr class="separator:afec59b4ce8194ea8a5dec3704b7ae701"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a40217b3ae4880af9254d5c839f07f9d8" id="r_a40217b3ae4880af9254d5c839f07f9d8"><td class="memItemLeft" align="right" valign="top">static double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRBFShape.html#a40217b3ae4880af9254d5c839f07f9d8">gauss90_derivative</a> (const double distance)</td></tr>
+<tr class="separator:a40217b3ae4880af9254d5c839f07f9d8"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:af85fb383074fbe41bf03445d98f359de" id="r_af85fb383074fbe41bf03445d98f359de"><td class="memItemLeft" align="right" valign="top">static double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRBFShape.html#af85fb383074fbe41bf03445d98f359de">gauss95_derivative</a> (const double distance)</td></tr>
+<tr class="separator:af85fb383074fbe41bf03445d98f359de"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a63acec630af9f983064f387bb7ae9e26" id="r_a63acec630af9f983064f387bb7ae9e26"><td class="memItemLeft" align="right" valign="top">static double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRBFShape.html#a63acec630af9f983064f387bb7ae9e26">gauss99_derivative</a> (const double distance)</td></tr>
+<tr class="separator:a63acec630af9f983064f387bb7ae9e26"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a3e93631d5f0f07eee2b84b71e85eae44" id="r_a3e93631d5f0f07eee2b84b71e85eae44"><td class="memItemLeft" align="right" valign="top">static double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRBFShape.html#a3e93631d5f0f07eee2b84b71e85eae44">c1c0_derivative</a> (const double distance)</td></tr>
+<tr class="separator:a3e93631d5f0f07eee2b84b71e85eae44"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a0129bc8394fdb9495f2c88d1415212be" id="r_a0129bc8394fdb9495f2c88d1415212be"><td class="memItemLeft" align="right" valign="top">static double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRBFShape.html#a0129bc8394fdb9495f2c88d1415212be">c2c0_derivative</a> (const double distance)</td></tr>
+<tr class="separator:a0129bc8394fdb9495f2c88d1415212be"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a243b0f30302fdde9a66590cc96e79560" id="r_a243b0f30302fdde9a66590cc96e79560"><td class="memItemLeft" align="right" valign="top">static double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRBFShape.html#a243b0f30302fdde9a66590cc96e79560">c0c1_derivative</a> (const double distance)</td></tr>
+<tr class="separator:a243b0f30302fdde9a66590cc96e79560"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a2dfd2decf38f9a5815a155f4b4144d7c" id="r_a2dfd2decf38f9a5815a155f4b4144d7c"><td class="memItemLeft" align="right" valign="top">static double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRBFShape.html#a2dfd2decf38f9a5815a155f4b4144d7c">c1c1_derivative</a> (const double distance)</td></tr>
+<tr class="separator:a2dfd2decf38f9a5815a155f4b4144d7c"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:afbdf0ce7db1957ffa86fd31d1c9d5a72" id="r_afbdf0ce7db1957ffa86fd31d1c9d5a72"><td class="memItemLeft" align="right" valign="top">static double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRBFShape.html#afbdf0ce7db1957ffa86fd31d1c9d5a72">c2c1_derivative</a> (const double distance)</td></tr>
+<tr class="separator:afbdf0ce7db1957ffa86fd31d1c9d5a72"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a5494d9d44207f9741bb46695cc6ac073" id="r_a5494d9d44207f9741bb46695cc6ac073"><td class="memItemLeft" align="right" valign="top">static double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRBFShape.html#a5494d9d44207f9741bb46695cc6ac073">c0c2_derivative</a> (const double distance)</td></tr>
+<tr class="separator:a5494d9d44207f9741bb46695cc6ac073"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ae4da64b9957a9e8d96d26a3982c90666" id="r_ae4da64b9957a9e8d96d26a3982c90666"><td class="memItemLeft" align="right" valign="top">static double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRBFShape.html#ae4da64b9957a9e8d96d26a3982c90666">c1c2_derivative</a> (const double distance)</td></tr>
+<tr class="separator:ae4da64b9957a9e8d96d26a3982c90666"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a2849c712d0662455b2dc55266635df04" id="r_a2849c712d0662455b2dc55266635df04"><td class="memItemLeft" align="right" valign="top">static double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRBFShape.html#a2849c712d0662455b2dc55266635df04">c2c2_derivative</a> (const double distance)</td></tr>
+<tr class="separator:a2849c712d0662455b2dc55266635df04"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a05eb94b00b2b511716dc5c1a446ee30d" id="r_a05eb94b00b2b511716dc5c1a446ee30d"><td class="memItemLeft" align="right" valign="top">static double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRBFShape.html#a05eb94b00b2b511716dc5c1a446ee30d">cosinus_derivative</a> (const double distance)</td></tr>
+<tr class="separator:a05eb94b00b2b511716dc5c1a446ee30d"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="inherit_header pub_static_methods_classShape"><td colspan="2" onclick="javascript:toggleInherit('pub_static_methods_classShape')"><img src="closed.png" alt="-"/>&#160;Static Public Member Functions inherited from <a class="el" href="classShape.html">Shape&lt; dim &gt;</a></td></tr>
+<tr class="memitem:aad117c51ca97220bf3ae94da9de6cb75 inherit pub_static_methods_classShape" id="r_aad117c51ca97220bf3ae94da9de6cb75"><td class="memItemLeft" align="right" valign="top">static double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classShape.html#aad117c51ca97220bf3ae94da9de6cb75">smooth_max</a> (const double a, const double b, const double smooth_factor=10)</td></tr>
+<tr class="separator:aad117c51ca97220bf3ae94da9de6cb75 inherit pub_static_methods_classShape"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a430fdcfc03012e0a15c8bd72c9b7010b inherit pub_static_methods_classShape" id="r_a430fdcfc03012e0a15c8bd72c9b7010b"><td class="memItemLeft" align="right" valign="top">static Tensor&lt; 1, 3 &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classShape.html#a430fdcfc03012e0a15c8bd72c9b7010b">rotation_matrix_to_xyz_angles</a> (Tensor&lt; 2, 3 &gt; &amp;rotation_matrix_representation)</td></tr>
+<tr class="separator:a430fdcfc03012e0a15c8bd72c9b7010b inherit pub_static_methods_classShape"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pub-attribs" name="pub-attribs"></a>
 Public Attributes</h2></td></tr>
@@ -306,7 +311,7 @@ Public Attributes</h2></td></tr>
 <tr class="memitem:adee8e4d8527a849ba3cb086c3085f02f" id="r_adee8e4d8527a849ba3cb086c3085f02f"><td class="memItemLeft" align="right" valign="top">std::vector&lt; bool &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRBFShape.html#adee8e4d8527a849ba3cb086c3085f02f">useful_rbf_nodes</a></td></tr>
 <tr class="separator:adee8e4d8527a849ba3cb086c3085f02f"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="inherit_header pub_attribs_classShape"><td colspan="2" onclick="javascript:toggleInherit('pub_attribs_classShape')"><img src="closed.png" alt="-"/>&#160;Public Attributes inherited from <a class="el" href="classShape.html">Shape&lt; dim &gt;</a></td></tr>
-<tr class="memitem:a6b530422aac8aacdf7bba3648a32d658 inherit pub_attribs_classShape" id="r_a6b530422aac8aacdf7bba3648a32d658"><td class="memItemLeft" align="right" valign="top">enum <a class="el" href="classShape.html#a3e44e2b1f6fca48f7b7b2151977b3abd">Shape::ShapeType</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classShape.html#a6b530422aac8aacdf7bba3648a32d658">type</a></td></tr>
+<tr class="memitem:a6b530422aac8aacdf7bba3648a32d658 inherit pub_attribs_classShape" id="r_a6b530422aac8aacdf7bba3648a32d658"><td class="memItemLeft" align="right" valign="top">enum <a class="el" href="classShape.html#a394819ce751267dc955abe4ad18ebdeb">Shape::ShapeType</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classShape.html#a6b530422aac8aacdf7bba3648a32d658">type</a></td></tr>
 <tr class="separator:a6b530422aac8aacdf7bba3648a32d658 inherit pub_attribs_classShape"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a32546bd02c82fe6fcc6b4ac2c12937f3 inherit pub_attribs_classShape" id="r_a32546bd02c82fe6fcc6b4ac2c12937f3"><td class="memItemLeft" align="right" valign="top">double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classShape.html#a32546bd02c82fe6fcc6b4ac2c12937f3">effective_radius</a></td></tr>
 <tr class="separator:a32546bd02c82fe6fcc6b4ac2c12937f3 inherit pub_attribs_classShape"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -366,7 +371,7 @@ class RBFShape&lt; dim &gt;</div><p>RBF Shapes express the signed distance funct
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="shape_8h_source.html#l02623">2623</a> of file <a class="el" href="shape_8h_source.html">shape.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="shape_8h_source.html#l02614">2614</a> of file <a class="el" href="shape_8h_source.html">shape.h</a>.</p>
 </div><h2 class="groupheader">Member Enumeration Documentation</h2>
 <a id="a2060a8058a7a5a439d772319f39ec66b" name="a2060a8058a7a5a439d772319f39ec66b"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a2060a8058a7a5a439d772319f39ec66b">&#9670;&#160;</a></span>RBFBasisFunction</h2>
@@ -410,7 +415,7 @@ template&lt;int dim&gt; </div>
 <tr><td class="fieldname"><a id="a2060a8058a7a5a439d772319f39ec66baef23ef1d426ae1a73a7eed399cef707d" name="a2060a8058a7a5a439d772319f39ec66baef23ef1d426ae1a73a7eed399cef707d"></a>COS&#160;</td><td class="fielddoc"></td></tr>
 </table>
 
-<p class="definition">Definition at line <a class="el" href="shape_8h_source.html#l02632">2632</a> of file <a class="el" href="shape_8h_source.html">shape.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="shape_8h_source.html#l02623">2623</a> of file <a class="el" href="shape_8h_source.html">shape.h</a>.</p>
 
 </div>
 </div>
@@ -459,15 +464,15 @@ template&lt;int dim&gt; </div>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="shape_8cc_source.html#l01615">1615</a> of file <a class="el" href="shape_8cc_source.html">shape.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="shape_8cc_source.html#l01613">1613</a> of file <a class="el" href="shape_8cc_source.html">shape.cc</a>.</p>
 
-<p class="reference">References <a class="el" href="shape_8h_source.html#l03162">RBFShape&lt; dim &gt;::filename</a>, and <a class="el" href="shape_8cc_source.html#l02099">RBFShape&lt; dim &gt;::load_data_from_file()</a>.</p>
+<p class="reference">References <a class="el" href="shape_8h_source.html#l03153">RBFShape&lt; dim &gt;::filename</a>, and <a class="el" href="shape_8cc_source.html#l02099">RBFShape&lt; dim &gt;::load_data_from_file()</a>.</p>
 
 </div>
 </div>
 <h2 class="groupheader">Member Function Documentation</h2>
-<a id="a9b2dce5260b3af14c1d2a0ff27fc1a00" name="a9b2dce5260b3af14c1d2a0ff27fc1a00"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a9b2dce5260b3af14c1d2a0ff27fc1a00">&#9670;&#160;</a></span>c0c1()</h2>
+<a id="a0bea232b76f7ad96b215dd1a5cdc6b70" name="a0bea232b76f7ad96b215dd1a5cdc6b70"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a0bea232b76f7ad96b215dd1a5cdc6b70">&#9670;&#160;</a></span>c0c1()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -478,16 +483,16 @@ template&lt;int dim&gt; </div>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">double <a class="el" href="classRBFShape.html">RBFShape</a>&lt; dim &gt;::c0c1 </td>
+          <td class="memname">static double <a class="el" href="classRBFShape.html">RBFShape</a>&lt; dim &gt;::c0c1 </td>
           <td>(</td>
           <td class="paramtype">const double&#160;</td>
           <td class="paramname"><em>distance</em></td><td>)</td>
-          <td> const</td>
+          <td></td>
         </tr>
       </table>
   </td>
   <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+<span class="mlabels"><span class="mlabel">inline</span><span class="mlabel">static</span></span>  </td>
   </tr>
 </table>
 </div><div class="memdoc">
@@ -500,12 +505,12 @@ template&lt;int dim&gt; </div>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="shape_8h_source.html#l02893">2893</a> of file <a class="el" href="shape_8h_source.html">shape.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="shape_8h_source.html#l02884">2884</a> of file <a class="el" href="shape_8h_source.html">shape.h</a>.</p>
 
 </div>
 </div>
-<a id="a9f67ac796c1ed2a72be9d6d461a2592e" name="a9f67ac796c1ed2a72be9d6d461a2592e"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a9f67ac796c1ed2a72be9d6d461a2592e">&#9670;&#160;</a></span>c0c1_derivative()</h2>
+<a id="a243b0f30302fdde9a66590cc96e79560" name="a243b0f30302fdde9a66590cc96e79560"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a243b0f30302fdde9a66590cc96e79560">&#9670;&#160;</a></span>c0c1_derivative()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -516,16 +521,16 @@ template&lt;int dim&gt; </div>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">double <a class="el" href="classRBFShape.html">RBFShape</a>&lt; dim &gt;::c0c1_derivative </td>
+          <td class="memname">static double <a class="el" href="classRBFShape.html">RBFShape</a>&lt; dim &gt;::c0c1_derivative </td>
           <td>(</td>
           <td class="paramtype">const double&#160;</td>
           <td class="paramname"><em>distance</em></td><td>)</td>
-          <td> const</td>
+          <td></td>
         </tr>
       </table>
   </td>
   <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+<span class="mlabels"><span class="mlabel">inline</span><span class="mlabel">static</span></span>  </td>
   </tr>
 </table>
 </div><div class="memdoc">
@@ -538,12 +543,12 @@ template&lt;int dim&gt; </div>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="shape_8h_source.html#l03071">3071</a> of file <a class="el" href="shape_8h_source.html">shape.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="shape_8h_source.html#l03062">3062</a> of file <a class="el" href="shape_8h_source.html">shape.h</a>.</p>
 
 </div>
 </div>
-<a id="a252aee49ca2f651931bfece9df1a0da5" name="a252aee49ca2f651931bfece9df1a0da5"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a252aee49ca2f651931bfece9df1a0da5">&#9670;&#160;</a></span>c0c2()</h2>
+<a id="ad939b0d66e83eb9fe4c90000a421eca7" name="ad939b0d66e83eb9fe4c90000a421eca7"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ad939b0d66e83eb9fe4c90000a421eca7">&#9670;&#160;</a></span>c0c2()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -554,16 +559,16 @@ template&lt;int dim&gt; </div>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">double <a class="el" href="classRBFShape.html">RBFShape</a>&lt; dim &gt;::c0c2 </td>
+          <td class="memname">static double <a class="el" href="classRBFShape.html">RBFShape</a>&lt; dim &gt;::c0c2 </td>
           <td>(</td>
           <td class="paramtype">const double&#160;</td>
           <td class="paramname"><em>distance</em></td><td>)</td>
-          <td> const</td>
+          <td></td>
         </tr>
       </table>
   </td>
   <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+<span class="mlabels"><span class="mlabel">inline</span><span class="mlabel">static</span></span>  </td>
   </tr>
 </table>
 </div><div class="memdoc">
@@ -576,12 +581,12 @@ template&lt;int dim&gt; </div>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="shape_8h_source.html#l02934">2934</a> of file <a class="el" href="shape_8h_source.html">shape.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="shape_8h_source.html#l02925">2925</a> of file <a class="el" href="shape_8h_source.html">shape.h</a>.</p>
 
 </div>
 </div>
-<a id="a7ee2faeaa1d172856bc44f1767108349" name="a7ee2faeaa1d172856bc44f1767108349"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a7ee2faeaa1d172856bc44f1767108349">&#9670;&#160;</a></span>c0c2_derivative()</h2>
+<a id="a5494d9d44207f9741bb46695cc6ac073" name="a5494d9d44207f9741bb46695cc6ac073"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a5494d9d44207f9741bb46695cc6ac073">&#9670;&#160;</a></span>c0c2_derivative()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -592,16 +597,16 @@ template&lt;int dim&gt; </div>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">double <a class="el" href="classRBFShape.html">RBFShape</a>&lt; dim &gt;::c0c2_derivative </td>
+          <td class="memname">static double <a class="el" href="classRBFShape.html">RBFShape</a>&lt; dim &gt;::c0c2_derivative </td>
           <td>(</td>
           <td class="paramtype">const double&#160;</td>
           <td class="paramname"><em>distance</em></td><td>)</td>
-          <td> const</td>
+          <td></td>
         </tr>
       </table>
   </td>
   <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+<span class="mlabels"><span class="mlabel">inline</span><span class="mlabel">static</span></span>  </td>
   </tr>
 </table>
 </div><div class="memdoc">
@@ -614,12 +619,12 @@ template&lt;int dim&gt; </div>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="shape_8h_source.html#l03108">3108</a> of file <a class="el" href="shape_8h_source.html">shape.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="shape_8h_source.html#l03099">3099</a> of file <a class="el" href="shape_8h_source.html">shape.h</a>.</p>
 
 </div>
 </div>
-<a id="aac79678c3885bdfed0ab57e0397be1c4" name="aac79678c3885bdfed0ab57e0397be1c4"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#aac79678c3885bdfed0ab57e0397be1c4">&#9670;&#160;</a></span>c1c0()</h2>
+<a id="a047052e782cda525ab7716c6f74f6b9d" name="a047052e782cda525ab7716c6f74f6b9d"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a047052e782cda525ab7716c6f74f6b9d">&#9670;&#160;</a></span>c1c0()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -630,16 +635,16 @@ template&lt;int dim&gt; </div>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">double <a class="el" href="classRBFShape.html">RBFShape</a>&lt; dim &gt;::c1c0 </td>
+          <td class="memname">static double <a class="el" href="classRBFShape.html">RBFShape</a>&lt; dim &gt;::c1c0 </td>
           <td>(</td>
           <td class="paramtype">const double&#160;</td>
           <td class="paramname"><em>distance</em></td><td>)</td>
-          <td> const</td>
+          <td></td>
         </tr>
       </table>
   </td>
   <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+<span class="mlabels"><span class="mlabel">inline</span><span class="mlabel">static</span></span>  </td>
   </tr>
 </table>
 </div><div class="memdoc">
@@ -652,12 +657,12 @@ template&lt;int dim&gt; </div>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="shape_8h_source.html#l02869">2869</a> of file <a class="el" href="shape_8h_source.html">shape.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="shape_8h_source.html#l02860">2860</a> of file <a class="el" href="shape_8h_source.html">shape.h</a>.</p>
 
 </div>
 </div>
-<a id="a05a7bf6a5acb71d4b7f16b9f003dcb4c" name="a05a7bf6a5acb71d4b7f16b9f003dcb4c"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a05a7bf6a5acb71d4b7f16b9f003dcb4c">&#9670;&#160;</a></span>c1c0_derivative()</h2>
+<a id="a3e93631d5f0f07eee2b84b71e85eae44" name="a3e93631d5f0f07eee2b84b71e85eae44"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a3e93631d5f0f07eee2b84b71e85eae44">&#9670;&#160;</a></span>c1c0_derivative()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -668,16 +673,16 @@ template&lt;int dim&gt; </div>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">double <a class="el" href="classRBFShape.html">RBFShape</a>&lt; dim &gt;::c1c0_derivative </td>
+          <td class="memname">static double <a class="el" href="classRBFShape.html">RBFShape</a>&lt; dim &gt;::c1c0_derivative </td>
           <td>(</td>
           <td class="paramtype">const double&#160;</td>
           <td class="paramname"><em>distance</em></td><td>)</td>
-          <td> const</td>
+          <td></td>
         </tr>
       </table>
   </td>
   <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+<span class="mlabels"><span class="mlabel">inline</span><span class="mlabel">static</span></span>  </td>
   </tr>
 </table>
 </div><div class="memdoc">
@@ -690,12 +695,12 @@ template&lt;int dim&gt; </div>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="shape_8h_source.html#l03047">3047</a> of file <a class="el" href="shape_8h_source.html">shape.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="shape_8h_source.html#l03038">3038</a> of file <a class="el" href="shape_8h_source.html">shape.h</a>.</p>
 
 </div>
 </div>
-<a id="ae42e844cb2da529eb389a1ff2cd2bc8f" name="ae42e844cb2da529eb389a1ff2cd2bc8f"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ae42e844cb2da529eb389a1ff2cd2bc8f">&#9670;&#160;</a></span>c1c1()</h2>
+<a id="ac69a1a2914cd00ba3097d50865c1d0b0" name="ac69a1a2914cd00ba3097d50865c1d0b0"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ac69a1a2914cd00ba3097d50865c1d0b0">&#9670;&#160;</a></span>c1c1()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -706,16 +711,16 @@ template&lt;int dim&gt; </div>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">double <a class="el" href="classRBFShape.html">RBFShape</a>&lt; dim &gt;::c1c1 </td>
+          <td class="memname">static double <a class="el" href="classRBFShape.html">RBFShape</a>&lt; dim &gt;::c1c1 </td>
           <td>(</td>
           <td class="paramtype">const double&#160;</td>
           <td class="paramname"><em>distance</em></td><td>)</td>
-          <td> const</td>
+          <td></td>
         </tr>
       </table>
   </td>
   <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+<span class="mlabels"><span class="mlabel">inline</span><span class="mlabel">static</span></span>  </td>
   </tr>
 </table>
 </div><div class="memdoc">
@@ -728,12 +733,12 @@ template&lt;int dim&gt; </div>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="shape_8h_source.html#l02906">2906</a> of file <a class="el" href="shape_8h_source.html">shape.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="shape_8h_source.html#l02897">2897</a> of file <a class="el" href="shape_8h_source.html">shape.h</a>.</p>
 
 </div>
 </div>
-<a id="a00bfd5d4107225fbdca9d713ad864415" name="a00bfd5d4107225fbdca9d713ad864415"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a00bfd5d4107225fbdca9d713ad864415">&#9670;&#160;</a></span>c1c1_derivative()</h2>
+<a id="a2dfd2decf38f9a5815a155f4b4144d7c" name="a2dfd2decf38f9a5815a155f4b4144d7c"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a2dfd2decf38f9a5815a155f4b4144d7c">&#9670;&#160;</a></span>c1c1_derivative()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -744,16 +749,16 @@ template&lt;int dim&gt; </div>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">double <a class="el" href="classRBFShape.html">RBFShape</a>&lt; dim &gt;::c1c1_derivative </td>
+          <td class="memname">static double <a class="el" href="classRBFShape.html">RBFShape</a>&lt; dim &gt;::c1c1_derivative </td>
           <td>(</td>
           <td class="paramtype">const double&#160;</td>
           <td class="paramname"><em>distance</em></td><td>)</td>
-          <td> const</td>
+          <td></td>
         </tr>
       </table>
   </td>
   <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+<span class="mlabels"><span class="mlabel">inline</span><span class="mlabel">static</span></span>  </td>
   </tr>
 </table>
 </div><div class="memdoc">
@@ -766,12 +771,12 @@ template&lt;int dim&gt; </div>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="shape_8h_source.html#l03083">3083</a> of file <a class="el" href="shape_8h_source.html">shape.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="shape_8h_source.html#l03074">3074</a> of file <a class="el" href="shape_8h_source.html">shape.h</a>.</p>
 
 </div>
 </div>
-<a id="a36b6da6aadf7109bf6991140e07c4548" name="a36b6da6aadf7109bf6991140e07c4548"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a36b6da6aadf7109bf6991140e07c4548">&#9670;&#160;</a></span>c1c2()</h2>
+<a id="a636de55948075b7258c9bca7b41a5c37" name="a636de55948075b7258c9bca7b41a5c37"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a636de55948075b7258c9bca7b41a5c37">&#9670;&#160;</a></span>c1c2()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -782,16 +787,16 @@ template&lt;int dim&gt; </div>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">double <a class="el" href="classRBFShape.html">RBFShape</a>&lt; dim &gt;::c1c2 </td>
+          <td class="memname">static double <a class="el" href="classRBFShape.html">RBFShape</a>&lt; dim &gt;::c1c2 </td>
           <td>(</td>
           <td class="paramtype">const double&#160;</td>
           <td class="paramname"><em>distance</em></td><td>)</td>
-          <td> const</td>
+          <td></td>
         </tr>
       </table>
   </td>
   <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+<span class="mlabels"><span class="mlabel">inline</span><span class="mlabel">static</span></span>  </td>
   </tr>
 </table>
 </div><div class="memdoc">
@@ -804,12 +809,12 @@ template&lt;int dim&gt; </div>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="shape_8h_source.html#l02949">2949</a> of file <a class="el" href="shape_8h_source.html">shape.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="shape_8h_source.html#l02940">2940</a> of file <a class="el" href="shape_8h_source.html">shape.h</a>.</p>
 
 </div>
 </div>
-<a id="abdcd268bc190b0217e5f05752910decc" name="abdcd268bc190b0217e5f05752910decc"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#abdcd268bc190b0217e5f05752910decc">&#9670;&#160;</a></span>c1c2_derivative()</h2>
+<a id="ae4da64b9957a9e8d96d26a3982c90666" name="ae4da64b9957a9e8d96d26a3982c90666"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ae4da64b9957a9e8d96d26a3982c90666">&#9670;&#160;</a></span>c1c2_derivative()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -820,16 +825,16 @@ template&lt;int dim&gt; </div>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">double <a class="el" href="classRBFShape.html">RBFShape</a>&lt; dim &gt;::c1c2_derivative </td>
+          <td class="memname">static double <a class="el" href="classRBFShape.html">RBFShape</a>&lt; dim &gt;::c1c2_derivative </td>
           <td>(</td>
           <td class="paramtype">const double&#160;</td>
           <td class="paramname"><em>distance</em></td><td>)</td>
-          <td> const</td>
+          <td></td>
         </tr>
       </table>
   </td>
   <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+<span class="mlabels"><span class="mlabel">inline</span><span class="mlabel">static</span></span>  </td>
   </tr>
 </table>
 </div><div class="memdoc">
@@ -842,12 +847,12 @@ template&lt;int dim&gt; </div>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="shape_8h_source.html#l03120">3120</a> of file <a class="el" href="shape_8h_source.html">shape.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="shape_8h_source.html#l03111">3111</a> of file <a class="el" href="shape_8h_source.html">shape.h</a>.</p>
 
 </div>
 </div>
-<a id="a0f0de458b769d6a617f9880b7151d763" name="a0f0de458b769d6a617f9880b7151d763"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a0f0de458b769d6a617f9880b7151d763">&#9670;&#160;</a></span>c2c0()</h2>
+<a id="a9c2e18709d564b3ddcf70c7fdc180c4c" name="a9c2e18709d564b3ddcf70c7fdc180c4c"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a9c2e18709d564b3ddcf70c7fdc180c4c">&#9670;&#160;</a></span>c2c0()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -858,16 +863,16 @@ template&lt;int dim&gt; </div>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">double <a class="el" href="classRBFShape.html">RBFShape</a>&lt; dim &gt;::c2c0 </td>
+          <td class="memname">static double <a class="el" href="classRBFShape.html">RBFShape</a>&lt; dim &gt;::c2c0 </td>
           <td>(</td>
           <td class="paramtype">const double&#160;</td>
           <td class="paramname"><em>distance</em></td><td>)</td>
-          <td> const</td>
+          <td></td>
         </tr>
       </table>
   </td>
   <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+<span class="mlabels"><span class="mlabel">inline</span><span class="mlabel">static</span></span>  </td>
   </tr>
 </table>
 </div><div class="memdoc">
@@ -880,12 +885,12 @@ template&lt;int dim&gt; </div>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="shape_8h_source.html#l02881">2881</a> of file <a class="el" href="shape_8h_source.html">shape.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="shape_8h_source.html#l02872">2872</a> of file <a class="el" href="shape_8h_source.html">shape.h</a>.</p>
 
 </div>
 </div>
-<a id="a262916275cec9936d6594b42a21d3721" name="a262916275cec9936d6594b42a21d3721"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a262916275cec9936d6594b42a21d3721">&#9670;&#160;</a></span>c2c0_derivative()</h2>
+<a id="a0129bc8394fdb9495f2c88d1415212be" name="a0129bc8394fdb9495f2c88d1415212be"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a0129bc8394fdb9495f2c88d1415212be">&#9670;&#160;</a></span>c2c0_derivative()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -896,16 +901,16 @@ template&lt;int dim&gt; </div>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">double <a class="el" href="classRBFShape.html">RBFShape</a>&lt; dim &gt;::c2c0_derivative </td>
+          <td class="memname">static double <a class="el" href="classRBFShape.html">RBFShape</a>&lt; dim &gt;::c2c0_derivative </td>
           <td>(</td>
           <td class="paramtype">const double&#160;</td>
           <td class="paramname"><em>distance</em></td><td>)</td>
-          <td> const</td>
+          <td></td>
         </tr>
       </table>
   </td>
   <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+<span class="mlabels"><span class="mlabel">inline</span><span class="mlabel">static</span></span>  </td>
   </tr>
 </table>
 </div><div class="memdoc">
@@ -918,12 +923,12 @@ template&lt;int dim&gt; </div>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="shape_8h_source.html#l03059">3059</a> of file <a class="el" href="shape_8h_source.html">shape.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="shape_8h_source.html#l03050">3050</a> of file <a class="el" href="shape_8h_source.html">shape.h</a>.</p>
 
 </div>
 </div>
-<a id="ab5204136c521c696ae6fed7ac311260e" name="ab5204136c521c696ae6fed7ac311260e"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ab5204136c521c696ae6fed7ac311260e">&#9670;&#160;</a></span>c2c1()</h2>
+<a id="a7a4db1db011dfd3376f8c44f60b70482" name="a7a4db1db011dfd3376f8c44f60b70482"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a7a4db1db011dfd3376f8c44f60b70482">&#9670;&#160;</a></span>c2c1()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -934,16 +939,16 @@ template&lt;int dim&gt; </div>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">double <a class="el" href="classRBFShape.html">RBFShape</a>&lt; dim &gt;::c2c1 </td>
+          <td class="memname">static double <a class="el" href="classRBFShape.html">RBFShape</a>&lt; dim &gt;::c2c1 </td>
           <td>(</td>
           <td class="paramtype">const double&#160;</td>
           <td class="paramname"><em>distance</em></td><td>)</td>
-          <td> const</td>
+          <td></td>
         </tr>
       </table>
   </td>
   <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+<span class="mlabels"><span class="mlabel">inline</span><span class="mlabel">static</span></span>  </td>
   </tr>
 </table>
 </div><div class="memdoc">
@@ -956,12 +961,12 @@ template&lt;int dim&gt; </div>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="shape_8h_source.html#l02920">2920</a> of file <a class="el" href="shape_8h_source.html">shape.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="shape_8h_source.html#l02911">2911</a> of file <a class="el" href="shape_8h_source.html">shape.h</a>.</p>
 
 </div>
 </div>
-<a id="ac5edc7e7d2b8ba2f5fc8b8558f90a769" name="ac5edc7e7d2b8ba2f5fc8b8558f90a769"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ac5edc7e7d2b8ba2f5fc8b8558f90a769">&#9670;&#160;</a></span>c2c1_derivative()</h2>
+<a id="afbdf0ce7db1957ffa86fd31d1c9d5a72" name="afbdf0ce7db1957ffa86fd31d1c9d5a72"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#afbdf0ce7db1957ffa86fd31d1c9d5a72">&#9670;&#160;</a></span>c2c1_derivative()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -972,16 +977,16 @@ template&lt;int dim&gt; </div>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">double <a class="el" href="classRBFShape.html">RBFShape</a>&lt; dim &gt;::c2c1_derivative </td>
+          <td class="memname">static double <a class="el" href="classRBFShape.html">RBFShape</a>&lt; dim &gt;::c2c1_derivative </td>
           <td>(</td>
           <td class="paramtype">const double&#160;</td>
           <td class="paramname"><em>distance</em></td><td>)</td>
-          <td> const</td>
+          <td></td>
         </tr>
       </table>
   </td>
   <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+<span class="mlabels"><span class="mlabel">inline</span><span class="mlabel">static</span></span>  </td>
   </tr>
 </table>
 </div><div class="memdoc">
@@ -994,12 +999,12 @@ template&lt;int dim&gt; </div>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="shape_8h_source.html#l03095">3095</a> of file <a class="el" href="shape_8h_source.html">shape.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="shape_8h_source.html#l03086">3086</a> of file <a class="el" href="shape_8h_source.html">shape.h</a>.</p>
 
 </div>
 </div>
-<a id="aa0e0269777cb40f18296110539b2263f" name="aa0e0269777cb40f18296110539b2263f"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#aa0e0269777cb40f18296110539b2263f">&#9670;&#160;</a></span>c2c2()</h2>
+<a id="a70716d8209e87c47ca84af3e8481c2c1" name="a70716d8209e87c47ca84af3e8481c2c1"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a70716d8209e87c47ca84af3e8481c2c1">&#9670;&#160;</a></span>c2c2()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -1010,16 +1015,16 @@ template&lt;int dim&gt; </div>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">double <a class="el" href="classRBFShape.html">RBFShape</a>&lt; dim &gt;::c2c2 </td>
+          <td class="memname">static double <a class="el" href="classRBFShape.html">RBFShape</a>&lt; dim &gt;::c2c2 </td>
           <td>(</td>
           <td class="paramtype">const double&#160;</td>
           <td class="paramname"><em>distance</em></td><td>)</td>
-          <td> const</td>
+          <td></td>
         </tr>
       </table>
   </td>
   <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+<span class="mlabels"><span class="mlabel">inline</span><span class="mlabel">static</span></span>  </td>
   </tr>
 </table>
 </div><div class="memdoc">
@@ -1032,12 +1037,12 @@ template&lt;int dim&gt; </div>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="shape_8h_source.html#l02964">2964</a> of file <a class="el" href="shape_8h_source.html">shape.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="shape_8h_source.html#l02955">2955</a> of file <a class="el" href="shape_8h_source.html">shape.h</a>.</p>
 
 </div>
 </div>
-<a id="a894d36a22a3f83760581f1e614f6daca" name="a894d36a22a3f83760581f1e614f6daca"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a894d36a22a3f83760581f1e614f6daca">&#9670;&#160;</a></span>c2c2_derivative()</h2>
+<a id="a2849c712d0662455b2dc55266635df04" name="a2849c712d0662455b2dc55266635df04"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a2849c712d0662455b2dc55266635df04">&#9670;&#160;</a></span>c2c2_derivative()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -1048,16 +1053,16 @@ template&lt;int dim&gt; </div>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">double <a class="el" href="classRBFShape.html">RBFShape</a>&lt; dim &gt;::c2c2_derivative </td>
+          <td class="memname">static double <a class="el" href="classRBFShape.html">RBFShape</a>&lt; dim &gt;::c2c2_derivative </td>
           <td>(</td>
           <td class="paramtype">const double&#160;</td>
           <td class="paramname"><em>distance</em></td><td>)</td>
-          <td> const</td>
+          <td></td>
         </tr>
       </table>
   </td>
   <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+<span class="mlabels"><span class="mlabel">inline</span><span class="mlabel">static</span></span>  </td>
   </tr>
 </table>
 </div><div class="memdoc">
@@ -1070,12 +1075,12 @@ template&lt;int dim&gt; </div>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="shape_8h_source.html#l03135">3135</a> of file <a class="el" href="shape_8h_source.html">shape.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="shape_8h_source.html#l03126">3126</a> of file <a class="el" href="shape_8h_source.html">shape.h</a>.</p>
 
 </div>
 </div>
-<a id="a04207b53660131c73d4ee717bad82c33" name="a04207b53660131c73d4ee717bad82c33"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a04207b53660131c73d4ee717bad82c33">&#9670;&#160;</a></span>cos()</h2>
+<a id="a9ac278115acb69eba29e88f66c224563" name="a9ac278115acb69eba29e88f66c224563"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a9ac278115acb69eba29e88f66c224563">&#9670;&#160;</a></span>cos()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -1086,16 +1091,16 @@ template&lt;int dim&gt; </div>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">double <a class="el" href="classRBFShape.html">RBFShape</a>&lt; dim &gt;::cos </td>
+          <td class="memname">static double <a class="el" href="classRBFShape.html">RBFShape</a>&lt; dim &gt;::cos </td>
           <td>(</td>
           <td class="paramtype">const double&#160;</td>
           <td class="paramname"><em>distance</em></td><td>)</td>
-          <td> const</td>
+          <td></td>
         </tr>
       </table>
   </td>
   <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+<span class="mlabels"><span class="mlabel">inline</span><span class="mlabel">static</span></span>  </td>
   </tr>
 </table>
 </div><div class="memdoc">
@@ -1108,12 +1113,12 @@ template&lt;int dim&gt; </div>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="shape_8h_source.html#l02977">2977</a> of file <a class="el" href="shape_8h_source.html">shape.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="shape_8h_source.html#l02968">2968</a> of file <a class="el" href="shape_8h_source.html">shape.h</a>.</p>
 
 </div>
 </div>
-<a id="a904c73520b5051319725c4b9daf87711" name="a904c73520b5051319725c4b9daf87711"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a904c73520b5051319725c4b9daf87711">&#9670;&#160;</a></span>cosinus_derivative()</h2>
+<a id="a05eb94b00b2b511716dc5c1a446ee30d" name="a05eb94b00b2b511716dc5c1a446ee30d"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a05eb94b00b2b511716dc5c1a446ee30d">&#9670;&#160;</a></span>cosinus_derivative()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -1124,16 +1129,16 @@ template&lt;int dim&gt; </div>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">double <a class="el" href="classRBFShape.html">RBFShape</a>&lt; dim &gt;::cosinus_derivative </td>
+          <td class="memname">static double <a class="el" href="classRBFShape.html">RBFShape</a>&lt; dim &gt;::cosinus_derivative </td>
           <td>(</td>
           <td class="paramtype">const double&#160;</td>
           <td class="paramname"><em>distance</em></td><td>)</td>
-          <td> const</td>
+          <td></td>
         </tr>
       </table>
   </td>
   <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+<span class="mlabels"><span class="mlabel">inline</span><span class="mlabel">static</span></span>  </td>
   </tr>
 </table>
 </div><div class="memdoc">
@@ -1146,7 +1151,7 @@ template&lt;int dim&gt; </div>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="shape_8h_source.html#l03148">3148</a> of file <a class="el" href="shape_8h_source.html">shape.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="shape_8h_source.html#l03139">3139</a> of file <a class="el" href="shape_8h_source.html">shape.h</a>.</p>
 
 </div>
 </div>
@@ -1220,7 +1225,7 @@ template&lt;int dim&gt; </div>
 
 <p>Reimplemented from <a class="el" href="classShape.html#a4b59682718a14d3f9bea00a66445bb77">Shape&lt; dim &gt;</a>.</p>
 
-<p class="definition">Definition at line <a class="el" href="shape_8cc_source.html#l01821">1821</a> of file <a class="el" href="shape_8cc_source.html">shape.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="shape_8cc_source.html#l01819">1819</a> of file <a class="el" href="shape_8cc_source.html">shape.cc</a>.</p>
 
 </div>
 </div>
@@ -1269,9 +1274,9 @@ template&lt;int dim&gt; </div>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="shape_8cc_source.html#l02257">2257</a> of file <a class="el" href="shape_8cc_source.html">shape.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="shape_8cc_source.html#l02256">2256</a> of file <a class="el" href="shape_8cc_source.html">shape.cc</a>.</p>
 
-<p class="reference">References <a class="el" href="shape_8h_source.html#l02893">RBFShape&lt; dim &gt;::c0c1()</a>, <a class="el" href="shape_8h_source.html#l02934">RBFShape&lt; dim &gt;::c0c2()</a>, <a class="el" href="shape_8h_source.html#l02869">RBFShape&lt; dim &gt;::c1c0()</a>, <a class="el" href="shape_8h_source.html#l02906">RBFShape&lt; dim &gt;::c1c1()</a>, <a class="el" href="shape_8h_source.html#l02949">RBFShape&lt; dim &gt;::c1c2()</a>, <a class="el" href="shape_8h_source.html#l02881">RBFShape&lt; dim &gt;::c2c0()</a>, <a class="el" href="shape_8h_source.html#l02920">RBFShape&lt; dim &gt;::c2c1()</a>, <a class="el" href="shape_8h_source.html#l02964">RBFShape&lt; dim &gt;::c2c2()</a>, <a class="el" href="shape_8h_source.html#l02977">RBFShape&lt; dim &gt;::cos()</a>, <a class="el" href="shape_8h_source.html#l02834">RBFShape&lt; dim &gt;::gauss90()</a>, <a class="el" href="shape_8h_source.html#l02845">RBFShape&lt; dim &gt;::gauss95()</a>, <a class="el" href="shape_8h_source.html#l02856">RBFShape&lt; dim &gt;::gauss99()</a>, <a class="el" href="shape_8h_source.html#l02824">RBFShape&lt; dim &gt;::linear()</a>, and <a class="el" href="shape_8h_source.html#l02812">RBFShape&lt; dim &gt;::wendlandc2()</a>.</p>
+<p class="reference">References <a class="el" href="shape_8h_source.html#l02884">RBFShape&lt; dim &gt;::c0c1()</a>, <a class="el" href="shape_8h_source.html#l02925">RBFShape&lt; dim &gt;::c0c2()</a>, <a class="el" href="shape_8h_source.html#l02860">RBFShape&lt; dim &gt;::c1c0()</a>, <a class="el" href="shape_8h_source.html#l02897">RBFShape&lt; dim &gt;::c1c1()</a>, <a class="el" href="shape_8h_source.html#l02940">RBFShape&lt; dim &gt;::c1c2()</a>, <a class="el" href="shape_8h_source.html#l02872">RBFShape&lt; dim &gt;::c2c0()</a>, <a class="el" href="shape_8h_source.html#l02911">RBFShape&lt; dim &gt;::c2c1()</a>, <a class="el" href="shape_8h_source.html#l02955">RBFShape&lt; dim &gt;::c2c2()</a>, <a class="el" href="shape_8h_source.html#l02968">RBFShape&lt; dim &gt;::cos()</a>, <a class="el" href="shape_8h_source.html#l02825">RBFShape&lt; dim &gt;::gauss90()</a>, <a class="el" href="shape_8h_source.html#l02836">RBFShape&lt; dim &gt;::gauss95()</a>, <a class="el" href="shape_8h_source.html#l02847">RBFShape&lt; dim &gt;::gauss99()</a>, <a class="el" href="shape_8h_source.html#l02815">RBFShape&lt; dim &gt;::linear()</a>, and <a class="el" href="shape_8h_source.html#l02803">RBFShape&lt; dim &gt;::wendlandc2()</a>.</p>
 
 </div>
 </div>
@@ -1320,14 +1325,14 @@ template&lt;int dim&gt; </div>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="shape_8cc_source.html#l02297">2297</a> of file <a class="el" href="shape_8cc_source.html">shape.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="shape_8cc_source.html#l02296">2296</a> of file <a class="el" href="shape_8cc_source.html">shape.cc</a>.</p>
 
-<p class="reference">References <a class="el" href="shape_8h_source.html#l03071">RBFShape&lt; dim &gt;::c0c1_derivative()</a>, <a class="el" href="shape_8h_source.html#l03108">RBFShape&lt; dim &gt;::c0c2_derivative()</a>, <a class="el" href="shape_8h_source.html#l03047">RBFShape&lt; dim &gt;::c1c0_derivative()</a>, <a class="el" href="shape_8h_source.html#l03083">RBFShape&lt; dim &gt;::c1c1_derivative()</a>, <a class="el" href="shape_8h_source.html#l03120">RBFShape&lt; dim &gt;::c1c2_derivative()</a>, <a class="el" href="shape_8h_source.html#l03059">RBFShape&lt; dim &gt;::c2c0_derivative()</a>, <a class="el" href="shape_8h_source.html#l03095">RBFShape&lt; dim &gt;::c2c1_derivative()</a>, <a class="el" href="shape_8h_source.html#l03135">RBFShape&lt; dim &gt;::c2c2_derivative()</a>, <a class="el" href="shape_8h_source.html#l03148">RBFShape&lt; dim &gt;::cosinus_derivative()</a>, <a class="el" href="shape_8h_source.html#l03009">RBFShape&lt; dim &gt;::gauss90_derivative()</a>, <a class="el" href="shape_8h_source.html#l03021">RBFShape&lt; dim &gt;::gauss95_derivative()</a>, <a class="el" href="shape_8h_source.html#l03033">RBFShape&lt; dim &gt;::gauss99_derivative()</a>, <a class="el" href="shape_8h_source.html#l02999">RBFShape&lt; dim &gt;::linear_derivative()</a>, and <a class="el" href="shape_8h_source.html#l02988">RBFShape&lt; dim &gt;::wendlandc2_derivative()</a>.</p>
+<p class="reference">References <a class="el" href="shape_8h_source.html#l03062">RBFShape&lt; dim &gt;::c0c1_derivative()</a>, <a class="el" href="shape_8h_source.html#l03099">RBFShape&lt; dim &gt;::c0c2_derivative()</a>, <a class="el" href="shape_8h_source.html#l03038">RBFShape&lt; dim &gt;::c1c0_derivative()</a>, <a class="el" href="shape_8h_source.html#l03074">RBFShape&lt; dim &gt;::c1c1_derivative()</a>, <a class="el" href="shape_8h_source.html#l03111">RBFShape&lt; dim &gt;::c1c2_derivative()</a>, <a class="el" href="shape_8h_source.html#l03050">RBFShape&lt; dim &gt;::c2c0_derivative()</a>, <a class="el" href="shape_8h_source.html#l03086">RBFShape&lt; dim &gt;::c2c1_derivative()</a>, <a class="el" href="shape_8h_source.html#l03126">RBFShape&lt; dim &gt;::c2c2_derivative()</a>, <a class="el" href="shape_8h_source.html#l03139">RBFShape&lt; dim &gt;::cosinus_derivative()</a>, <a class="el" href="shape_8h_source.html#l03000">RBFShape&lt; dim &gt;::gauss90_derivative()</a>, <a class="el" href="shape_8h_source.html#l03012">RBFShape&lt; dim &gt;::gauss95_derivative()</a>, <a class="el" href="shape_8h_source.html#l03024">RBFShape&lt; dim &gt;::gauss99_derivative()</a>, <a class="el" href="shape_8h_source.html#l02990">RBFShape&lt; dim &gt;::linear_derivative()</a>, and <a class="el" href="shape_8h_source.html#l02979">RBFShape&lt; dim &gt;::wendlandc2_derivative()</a>.</p>
 
 </div>
 </div>
-<a id="a4dcfdbddf4845e4d58b8e29bb091431b" name="a4dcfdbddf4845e4d58b8e29bb091431b"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a4dcfdbddf4845e4d58b8e29bb091431b">&#9670;&#160;</a></span>gauss90()</h2>
+<a id="afcc70649ac96639b57456bd38e5a222e" name="afcc70649ac96639b57456bd38e5a222e"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#afcc70649ac96639b57456bd38e5a222e">&#9670;&#160;</a></span>gauss90()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -1338,16 +1343,16 @@ template&lt;int dim&gt; </div>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">double <a class="el" href="classRBFShape.html">RBFShape</a>&lt; dim &gt;::gauss90 </td>
+          <td class="memname">static double <a class="el" href="classRBFShape.html">RBFShape</a>&lt; dim &gt;::gauss90 </td>
           <td>(</td>
           <td class="paramtype">const double&#160;</td>
           <td class="paramname"><em>distance</em></td><td>)</td>
-          <td> const</td>
+          <td></td>
         </tr>
       </table>
   </td>
   <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+<span class="mlabels"><span class="mlabel">inline</span><span class="mlabel">static</span></span>  </td>
   </tr>
 </table>
 </div><div class="memdoc">
@@ -1360,12 +1365,12 @@ template&lt;int dim&gt; </div>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="shape_8h_source.html#l02834">2834</a> of file <a class="el" href="shape_8h_source.html">shape.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="shape_8h_source.html#l02825">2825</a> of file <a class="el" href="shape_8h_source.html">shape.h</a>.</p>
 
 </div>
 </div>
-<a id="a7446816c3dd562cf6079b74524f13f6e" name="a7446816c3dd562cf6079b74524f13f6e"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a7446816c3dd562cf6079b74524f13f6e">&#9670;&#160;</a></span>gauss90_derivative()</h2>
+<a id="a40217b3ae4880af9254d5c839f07f9d8" name="a40217b3ae4880af9254d5c839f07f9d8"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a40217b3ae4880af9254d5c839f07f9d8">&#9670;&#160;</a></span>gauss90_derivative()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -1376,16 +1381,16 @@ template&lt;int dim&gt; </div>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">double <a class="el" href="classRBFShape.html">RBFShape</a>&lt; dim &gt;::gauss90_derivative </td>
+          <td class="memname">static double <a class="el" href="classRBFShape.html">RBFShape</a>&lt; dim &gt;::gauss90_derivative </td>
           <td>(</td>
           <td class="paramtype">const double&#160;</td>
           <td class="paramname"><em>distance</em></td><td>)</td>
-          <td> const</td>
+          <td></td>
         </tr>
       </table>
   </td>
   <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+<span class="mlabels"><span class="mlabel">inline</span><span class="mlabel">static</span></span>  </td>
   </tr>
 </table>
 </div><div class="memdoc">
@@ -1398,12 +1403,12 @@ template&lt;int dim&gt; </div>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="shape_8h_source.html#l03009">3009</a> of file <a class="el" href="shape_8h_source.html">shape.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="shape_8h_source.html#l03000">3000</a> of file <a class="el" href="shape_8h_source.html">shape.h</a>.</p>
 
 </div>
 </div>
-<a id="ae61701d91c2312f7700d830dd7122897" name="ae61701d91c2312f7700d830dd7122897"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ae61701d91c2312f7700d830dd7122897">&#9670;&#160;</a></span>gauss95()</h2>
+<a id="a0136ef0bada828a44e21a53d067c4cbf" name="a0136ef0bada828a44e21a53d067c4cbf"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a0136ef0bada828a44e21a53d067c4cbf">&#9670;&#160;</a></span>gauss95()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -1414,16 +1419,16 @@ template&lt;int dim&gt; </div>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">double <a class="el" href="classRBFShape.html">RBFShape</a>&lt; dim &gt;::gauss95 </td>
+          <td class="memname">static double <a class="el" href="classRBFShape.html">RBFShape</a>&lt; dim &gt;::gauss95 </td>
           <td>(</td>
           <td class="paramtype">const double&#160;</td>
           <td class="paramname"><em>distance</em></td><td>)</td>
-          <td> const</td>
+          <td></td>
         </tr>
       </table>
   </td>
   <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+<span class="mlabels"><span class="mlabel">inline</span><span class="mlabel">static</span></span>  </td>
   </tr>
 </table>
 </div><div class="memdoc">
@@ -1436,12 +1441,12 @@ template&lt;int dim&gt; </div>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="shape_8h_source.html#l02845">2845</a> of file <a class="el" href="shape_8h_source.html">shape.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="shape_8h_source.html#l02836">2836</a> of file <a class="el" href="shape_8h_source.html">shape.h</a>.</p>
 
 </div>
 </div>
-<a id="affd8c93eb99dc759e503578627831e0c" name="affd8c93eb99dc759e503578627831e0c"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#affd8c93eb99dc759e503578627831e0c">&#9670;&#160;</a></span>gauss95_derivative()</h2>
+<a id="af85fb383074fbe41bf03445d98f359de" name="af85fb383074fbe41bf03445d98f359de"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#af85fb383074fbe41bf03445d98f359de">&#9670;&#160;</a></span>gauss95_derivative()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -1452,16 +1457,16 @@ template&lt;int dim&gt; </div>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">double <a class="el" href="classRBFShape.html">RBFShape</a>&lt; dim &gt;::gauss95_derivative </td>
+          <td class="memname">static double <a class="el" href="classRBFShape.html">RBFShape</a>&lt; dim &gt;::gauss95_derivative </td>
           <td>(</td>
           <td class="paramtype">const double&#160;</td>
           <td class="paramname"><em>distance</em></td><td>)</td>
-          <td> const</td>
+          <td></td>
         </tr>
       </table>
   </td>
   <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+<span class="mlabels"><span class="mlabel">inline</span><span class="mlabel">static</span></span>  </td>
   </tr>
 </table>
 </div><div class="memdoc">
@@ -1474,12 +1479,12 @@ template&lt;int dim&gt; </div>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="shape_8h_source.html#l03021">3021</a> of file <a class="el" href="shape_8h_source.html">shape.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="shape_8h_source.html#l03012">3012</a> of file <a class="el" href="shape_8h_source.html">shape.h</a>.</p>
 
 </div>
 </div>
-<a id="a6b8d26b17a3cdc03cd9189dbff1d0b12" name="a6b8d26b17a3cdc03cd9189dbff1d0b12"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a6b8d26b17a3cdc03cd9189dbff1d0b12">&#9670;&#160;</a></span>gauss99()</h2>
+<a id="a3e39741a66bd4afac0b5340009105b23" name="a3e39741a66bd4afac0b5340009105b23"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a3e39741a66bd4afac0b5340009105b23">&#9670;&#160;</a></span>gauss99()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -1490,16 +1495,16 @@ template&lt;int dim&gt; </div>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">double <a class="el" href="classRBFShape.html">RBFShape</a>&lt; dim &gt;::gauss99 </td>
+          <td class="memname">static double <a class="el" href="classRBFShape.html">RBFShape</a>&lt; dim &gt;::gauss99 </td>
           <td>(</td>
           <td class="paramtype">const double&#160;</td>
           <td class="paramname"><em>distance</em></td><td>)</td>
-          <td> const</td>
+          <td></td>
         </tr>
       </table>
   </td>
   <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+<span class="mlabels"><span class="mlabel">inline</span><span class="mlabel">static</span></span>  </td>
   </tr>
 </table>
 </div><div class="memdoc">
@@ -1512,12 +1517,12 @@ template&lt;int dim&gt; </div>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="shape_8h_source.html#l02856">2856</a> of file <a class="el" href="shape_8h_source.html">shape.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="shape_8h_source.html#l02847">2847</a> of file <a class="el" href="shape_8h_source.html">shape.h</a>.</p>
 
 </div>
 </div>
-<a id="a0a6c6981a2f3798cf10252b78fb62a66" name="a0a6c6981a2f3798cf10252b78fb62a66"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a0a6c6981a2f3798cf10252b78fb62a66">&#9670;&#160;</a></span>gauss99_derivative()</h2>
+<a id="a63acec630af9f983064f387bb7ae9e26" name="a63acec630af9f983064f387bb7ae9e26"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a63acec630af9f983064f387bb7ae9e26">&#9670;&#160;</a></span>gauss99_derivative()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -1528,16 +1533,16 @@ template&lt;int dim&gt; </div>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">double <a class="el" href="classRBFShape.html">RBFShape</a>&lt; dim &gt;::gauss99_derivative </td>
+          <td class="memname">static double <a class="el" href="classRBFShape.html">RBFShape</a>&lt; dim &gt;::gauss99_derivative </td>
           <td>(</td>
           <td class="paramtype">const double&#160;</td>
           <td class="paramname"><em>distance</em></td><td>)</td>
-          <td> const</td>
+          <td></td>
         </tr>
       </table>
   </td>
   <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+<span class="mlabels"><span class="mlabel">inline</span><span class="mlabel">static</span></span>  </td>
   </tr>
 </table>
 </div><div class="memdoc">
@@ -1550,7 +1555,7 @@ template&lt;int dim&gt; </div>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="shape_8h_source.html#l03033">3033</a> of file <a class="el" href="shape_8h_source.html">shape.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="shape_8h_source.html#l03024">3024</a> of file <a class="el" href="shape_8h_source.html">shape.h</a>.</p>
 
 </div>
 </div>
@@ -1599,7 +1604,7 @@ template&lt;int dim&gt; </div>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="shape_8cc_source.html#l01737">1737</a> of file <a class="el" href="shape_8cc_source.html">shape.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="shape_8cc_source.html#l01735">1735</a> of file <a class="el" href="shape_8cc_source.html">shape.cc</a>.</p>
 
 </div>
 </div>
@@ -1657,7 +1662,7 @@ template&lt;int dim&gt; </div>
 
 <p>Reimplemented from <a class="el" href="classShape.html#a816b648f0d216adbb718482f5811c115">Shape&lt; dim &gt;</a>.</p>
 
-<p class="definition">Definition at line <a class="el" href="shape_8cc_source.html#l01666">1666</a> of file <a class="el" href="shape_8cc_source.html">shape.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="shape_8cc_source.html#l01664">1664</a> of file <a class="el" href="shape_8cc_source.html">shape.cc</a>.</p>
 
 </div>
 </div>
@@ -1681,12 +1686,12 @@ template&lt;int dim&gt; </div>
 <p>Initializes the bounding box around the nodes which enables distance calculation even if the RBF nodes don't cover the whole domain. </p>
 <p>A bounding box is constructed around the collection of nodes defining the RBF. It solves an issue where the collection of nodes is located only around the object itself, which would result in an undefined distance when the value is evaluated outside of all support radii. The hyper rectangle shape doesn't have this limitation, as its distance can be evaluated anywhere. The distance computed by an RBF object will therefore use an approximated distance when the evaluation point is too far. </p>
 
-<p class="definition">Definition at line <a class="el" href="shape_8cc_source.html#l01828">1828</a> of file <a class="el" href="shape_8cc_source.html">shape.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="shape_8cc_source.html#l01826">1826</a> of file <a class="el" href="shape_8cc_source.html">shape.cc</a>.</p>
 
 </div>
 </div>
-<a id="a80993be1a21537d5796fabce135c0342" name="a80993be1a21537d5796fabce135c0342"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a80993be1a21537d5796fabce135c0342">&#9670;&#160;</a></span>linear()</h2>
+<a id="a1b868f17f516043727fb9ba846d9ea77" name="a1b868f17f516043727fb9ba846d9ea77"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a1b868f17f516043727fb9ba846d9ea77">&#9670;&#160;</a></span>linear()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -1697,16 +1702,16 @@ template&lt;int dim&gt; </div>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">double <a class="el" href="classRBFShape.html">RBFShape</a>&lt; dim &gt;::linear </td>
+          <td class="memname">static double <a class="el" href="classRBFShape.html">RBFShape</a>&lt; dim &gt;::linear </td>
           <td>(</td>
           <td class="paramtype">const double&#160;</td>
           <td class="paramname"><em>distance</em></td><td>)</td>
-          <td> const</td>
+          <td></td>
         </tr>
       </table>
   </td>
   <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+<span class="mlabels"><span class="mlabel">inline</span><span class="mlabel">static</span></span>  </td>
   </tr>
 </table>
 </div><div class="memdoc">
@@ -1719,12 +1724,12 @@ template&lt;int dim&gt; </div>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="shape_8h_source.html#l02824">2824</a> of file <a class="el" href="shape_8h_source.html">shape.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="shape_8h_source.html#l02815">2815</a> of file <a class="el" href="shape_8h_source.html">shape.h</a>.</p>
 
 </div>
 </div>
-<a id="a008589cf434ca19e13d2fee6549e36dc" name="a008589cf434ca19e13d2fee6549e36dc"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a008589cf434ca19e13d2fee6549e36dc">&#9670;&#160;</a></span>linear_derivative()</h2>
+<a id="afec59b4ce8194ea8a5dec3704b7ae701" name="afec59b4ce8194ea8a5dec3704b7ae701"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#afec59b4ce8194ea8a5dec3704b7ae701">&#9670;&#160;</a></span>linear_derivative()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -1735,16 +1740,16 @@ template&lt;int dim&gt; </div>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">double <a class="el" href="classRBFShape.html">RBFShape</a>&lt; dim &gt;::linear_derivative </td>
+          <td class="memname">static double <a class="el" href="classRBFShape.html">RBFShape</a>&lt; dim &gt;::linear_derivative </td>
           <td>(</td>
           <td class="paramtype">const double&#160;</td>
           <td class="paramname"><em>distance</em></td><td>)</td>
-          <td> const</td>
+          <td></td>
         </tr>
       </table>
   </td>
   <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+<span class="mlabels"><span class="mlabel">inline</span><span class="mlabel">static</span></span>  </td>
   </tr>
 </table>
 </div><div class="memdoc">
@@ -1757,7 +1762,7 @@ template&lt;int dim&gt; </div>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="shape_8h_source.html#l02999">2999</a> of file <a class="el" href="shape_8h_source.html">shape.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="shape_8h_source.html#l02990">2990</a> of file <a class="el" href="shape_8h_source.html">shape.h</a>.</p>
 
 </div>
 </div>
@@ -1823,7 +1828,7 @@ template&lt;int dim&gt; </div>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="shape_8cc_source.html#l02148">2148</a> of file <a class="el" href="shape_8cc_source.html">shape.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="shape_8cc_source.html#l02147">2147</a> of file <a class="el" href="shape_8cc_source.html">shape.cc</a>.</p>
 
 </div>
 </div>
@@ -1846,7 +1851,7 @@ template&lt;int dim&gt; </div>
 
 <p>Rotate RBF nodes in the global reference frame (the reference frame of the triangulation). </p>
 
-<p class="definition">Definition at line <a class="el" href="shape_8cc_source.html#l02244">2244</a> of file <a class="el" href="shape_8cc_source.html">shape.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="shape_8cc_source.html#l02243">2243</a> of file <a class="el" href="shape_8cc_source.html">shape.cc</a>.</p>
 
 </div>
 </div>
@@ -1879,7 +1884,7 @@ template&lt;int dim&gt; </div>
 
 <p>Implements <a class="el" href="classShape.html#a25c5903e89944092d7bc932d8b71d996">Shape&lt; dim &gt;</a>.</p>
 
-<p class="definition">Definition at line <a class="el" href="shape_8cc_source.html#l01810">1810</a> of file <a class="el" href="shape_8cc_source.html">shape.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="shape_8cc_source.html#l01808">1808</a> of file <a class="el" href="shape_8cc_source.html">shape.cc</a>.</p>
 
 </div>
 </div>
@@ -1909,7 +1914,7 @@ template&lt;int dim&gt; </div>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="shape_8cc_source.html#l02338">2338</a> of file <a class="el" href="shape_8cc_source.html">shape.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="shape_8cc_source.html#l02337">2337</a> of file <a class="el" href="shape_8cc_source.html">shape.cc</a>.</p>
 
 </div>
 </div>
@@ -1944,13 +1949,13 @@ template&lt;int dim&gt; </div>
 <p>Sets the proper dof handler, then computes/updates the map of cells and their likely non-null nodes. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">dof_handler</td><td>the reference to the new dof_handler </td></tr>
+    <tr><td class="paramname">updated_dof_handler</td><td>the reference to the new dof_handler </td></tr>
     <tr><td class="paramname">mesh_based_precalculations</td><td>mesh-based precalculations that can lead to slight shape misrepresentation (if RBF typed) </td></tr>
   </table>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="shape_8cc_source.html#l01861">1861</a> of file <a class="el" href="shape_8cc_source.html">shape.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="shape_8cc_source.html#l01859">1859</a> of file <a class="el" href="shape_8cc_source.html">shape.cc</a>.</p>
 
 </div>
 </div>
@@ -2001,12 +2006,12 @@ template&lt;int dim&gt; </div>
 
 <p>Implements <a class="el" href="classShape.html#ad5f4333acae9352a237b917a6eb49ae9">Shape&lt; dim &gt;</a>.</p>
 
-<p class="definition">Definition at line <a class="el" href="shape_8cc_source.html#l01698">1698</a> of file <a class="el" href="shape_8cc_source.html">shape.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="shape_8cc_source.html#l01696">1696</a> of file <a class="el" href="shape_8cc_source.html">shape.cc</a>.</p>
 
 </div>
 </div>
-<a id="a3bb5e038767577ace42bbb92fffe8d0f" name="a3bb5e038767577ace42bbb92fffe8d0f"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a3bb5e038767577ace42bbb92fffe8d0f">&#9670;&#160;</a></span>value_with_cell_guess()</h2>
+<a id="ae15e610ac060e65d08344d4928894835" name="ae15e610ac060e65d08344d4928894835"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ae15e610ac060e65d08344d4928894835">&#9670;&#160;</a></span>value_with_cell_guess()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -2032,7 +2037,7 @@ template&lt;int dim&gt; </div>
           <td class="paramkey"></td>
           <td></td>
           <td class="paramtype">const unsigned int&#160;</td>
-          <td class="paramname">&#160;</td>
+          <td class="paramname"><em>component</em> = <code>0</code>&#160;</td>
         </tr>
         <tr>
           <td></td>
@@ -2059,12 +2064,12 @@ template&lt;int dim&gt; </div>
 
 <p>Reimplemented from <a class="el" href="classShape.html#a53cd426c500960e007ff2ef2f5df0d1d">Shape&lt; dim &gt;</a>.</p>
 
-<p class="definition">Definition at line <a class="el" href="shape_8cc_source.html#l01636">1636</a> of file <a class="el" href="shape_8cc_source.html">shape.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="shape_8cc_source.html#l01634">1634</a> of file <a class="el" href="shape_8cc_source.html">shape.cc</a>.</p>
 
 </div>
 </div>
-<a id="ac4f98e19cc9b04913df4704f64c8c040" name="ac4f98e19cc9b04913df4704f64c8c040"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ac4f98e19cc9b04913df4704f64c8c040">&#9670;&#160;</a></span>wendlandc2()</h2>
+<a id="a500945b0623183e0230557de96446718" name="a500945b0623183e0230557de96446718"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a500945b0623183e0230557de96446718">&#9670;&#160;</a></span>wendlandc2()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -2075,16 +2080,16 @@ template&lt;int dim&gt; </div>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">double <a class="el" href="classRBFShape.html">RBFShape</a>&lt; dim &gt;::wendlandc2 </td>
+          <td class="memname">static double <a class="el" href="classRBFShape.html">RBFShape</a>&lt; dim &gt;::wendlandc2 </td>
           <td>(</td>
           <td class="paramtype">const double&#160;</td>
           <td class="paramname"><em>distance</em></td><td>)</td>
-          <td> const</td>
+          <td></td>
         </tr>
       </table>
   </td>
   <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+<span class="mlabels"><span class="mlabel">inline</span><span class="mlabel">static</span></span>  </td>
   </tr>
 </table>
 </div><div class="memdoc">
@@ -2097,12 +2102,12 @@ template&lt;int dim&gt; </div>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="shape_8h_source.html#l02812">2812</a> of file <a class="el" href="shape_8h_source.html">shape.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="shape_8h_source.html#l02803">2803</a> of file <a class="el" href="shape_8h_source.html">shape.h</a>.</p>
 
 </div>
 </div>
-<a id="a0e6efac8271e7370c1cd8c0180e0d4a8" name="a0e6efac8271e7370c1cd8c0180e0d4a8"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a0e6efac8271e7370c1cd8c0180e0d4a8">&#9670;&#160;</a></span>wendlandc2_derivative()</h2>
+<a id="a721451fbe48d2aa32308c735d047b001" name="a721451fbe48d2aa32308c735d047b001"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a721451fbe48d2aa32308c735d047b001">&#9670;&#160;</a></span>wendlandc2_derivative()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -2113,16 +2118,16 @@ template&lt;int dim&gt; </div>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">double <a class="el" href="classRBFShape.html">RBFShape</a>&lt; dim &gt;::wendlandc2_derivative </td>
+          <td class="memname">static double <a class="el" href="classRBFShape.html">RBFShape</a>&lt; dim &gt;::wendlandc2_derivative </td>
           <td>(</td>
           <td class="paramtype">const double&#160;</td>
           <td class="paramname"><em>distance</em></td><td>)</td>
-          <td> const</td>
+          <td></td>
         </tr>
       </table>
   </td>
   <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+<span class="mlabels"><span class="mlabel">inline</span><span class="mlabel">static</span></span>  </td>
   </tr>
 </table>
 </div><div class="memdoc">
@@ -2135,7 +2140,7 @@ template&lt;int dim&gt; </div>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="shape_8h_source.html#l02988">2988</a> of file <a class="el" href="shape_8h_source.html">shape.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="shape_8h_source.html#l02979">2979</a> of file <a class="el" href="shape_8h_source.html">shape.h</a>.</p>
 
 </div>
 </div>
@@ -2154,7 +2159,7 @@ template&lt;int dim&gt; </div>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="shape_8h_source.html#l03196">3196</a> of file <a class="el" href="shape_8h_source.html">shape.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="shape_8h_source.html#l03187">3187</a> of file <a class="el" href="shape_8h_source.html">shape.h</a>.</p>
 
 </div>
 </div>
@@ -2180,7 +2185,7 @@ template&lt;int dim&gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="shape_8h_source.html#l03164">3164</a> of file <a class="el" href="shape_8h_source.html">shape.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="shape_8h_source.html#l03155">3155</a> of file <a class="el" href="shape_8h_source.html">shape.h</a>.</p>
 
 </div>
 </div>
@@ -2206,7 +2211,7 @@ template&lt;int dim&gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="shape_8h_source.html#l03187">3187</a> of file <a class="el" href="shape_8h_source.html">shape.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="shape_8h_source.html#l03178">3178</a> of file <a class="el" href="shape_8h_source.html">shape.h</a>.</p>
 
 </div>
 </div>
@@ -2232,7 +2237,7 @@ template&lt;int dim&gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="shape_8h_source.html#l03162">3162</a> of file <a class="el" href="shape_8h_source.html">shape.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="shape_8h_source.html#l03153">3153</a> of file <a class="el" href="shape_8h_source.html">shape.h</a>.</p>
 
 </div>
 </div>
@@ -2258,7 +2263,7 @@ template&lt;int dim&gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="shape_8h_source.html#l03170">3170</a> of file <a class="el" href="shape_8h_source.html">shape.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="shape_8h_source.html#l03161">3161</a> of file <a class="el" href="shape_8h_source.html">shape.h</a>.</p>
 
 </div>
 </div>
@@ -2284,7 +2289,7 @@ template&lt;int dim&gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="shape_8h_source.html#l03185">3185</a> of file <a class="el" href="shape_8h_source.html">shape.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="shape_8h_source.html#l03176">3176</a> of file <a class="el" href="shape_8h_source.html">shape.h</a>.</p>
 
 </div>
 </div>
@@ -2310,7 +2315,7 @@ template&lt;int dim&gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="shape_8h_source.html#l03186">3186</a> of file <a class="el" href="shape_8h_source.html">shape.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="shape_8h_source.html#l03177">3177</a> of file <a class="el" href="shape_8h_source.html">shape.h</a>.</p>
 
 </div>
 </div>
@@ -2336,7 +2341,7 @@ template&lt;int dim&gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="shape_8h_source.html#l03189">3189</a> of file <a class="el" href="shape_8h_source.html">shape.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="shape_8h_source.html#l03180">3180</a> of file <a class="el" href="shape_8h_source.html">shape.h</a>.</p>
 
 </div>
 </div>
@@ -2354,7 +2359,7 @@ template&lt;int dim&gt; </div>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="shape_8h_source.html#l03193">3193</a> of file <a class="el" href="shape_8h_source.html">shape.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="shape_8h_source.html#l03184">3184</a> of file <a class="el" href="shape_8h_source.html">shape.h</a>.</p>
 
 </div>
 </div>
@@ -2380,7 +2385,7 @@ template&lt;int dim&gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="shape_8h_source.html#l03163">3163</a> of file <a class="el" href="shape_8h_source.html">shape.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="shape_8h_source.html#l03154">3154</a> of file <a class="el" href="shape_8h_source.html">shape.h</a>.</p>
 
 </div>
 </div>
@@ -2398,7 +2403,7 @@ template&lt;int dim&gt; </div>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="shape_8h_source.html#l03194">3194</a> of file <a class="el" href="shape_8h_source.html">shape.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="shape_8h_source.html#l03185">3185</a> of file <a class="el" href="shape_8h_source.html">shape.h</a>.</p>
 
 </div>
 </div>
@@ -2416,7 +2421,7 @@ template&lt;int dim&gt; </div>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="shape_8h_source.html#l03195">3195</a> of file <a class="el" href="shape_8h_source.html">shape.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="shape_8h_source.html#l03186">3186</a> of file <a class="el" href="shape_8h_source.html">shape.h</a>.</p>
 
 </div>
 </div>
@@ -2434,7 +2439,7 @@ template&lt;int dim&gt; </div>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="shape_8h_source.html#l03197">3197</a> of file <a class="el" href="shape_8h_source.html">shape.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="shape_8h_source.html#l03188">3188</a> of file <a class="el" href="shape_8h_source.html">shape.h</a>.</p>
 
 </div>
 </div>
@@ -2452,7 +2457,7 @@ template&lt;int dim&gt; </div>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="shape_8h_source.html#l03192">3192</a> of file <a class="el" href="shape_8h_source.html">shape.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="shape_8h_source.html#l03183">3183</a> of file <a class="el" href="shape_8h_source.html">shape.h</a>.</p>
 
 </div>
 </div>

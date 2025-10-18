@@ -98,28 +98,31 @@ $(function() {
 <code>#include &lt;deal.II/grid/grid_tools.h&gt;</code><br />
 <code>#include &lt;deal.II/grid/tria.h&gt;</code><br />
 <code>#include &lt;fstream&gt;</code><br />
+<code>#include &lt;numbers&gt;</code><br />
 </div><div class="textblock"><div class="dynheader">
 Include dependency graph for grids.cc:</div>
 <div class="dyncontent">
 <div class="center"><img src="grids_8cc__incl.png" border="0" usemap="#a_2home_2runner_2work_2lethe_2lethe_2source_2core_2grids_8cc" alt=""/></div>
 <map name="a_2home_2runner_2work_2lethe_2lethe_2source_2core_2grids_8cc" id="a_2home_2runner_2work_2lethe_2lethe_2source_2core_2grids_8cc">
-<area shape="rect" title=" " alt="" coords="3368,5,3560,45"/>
+<area shape="rect" title=" " alt="" coords="3432,5,3624,45"/>
 <area shape="rect" href="boundary__conditions_8h.html" title=" " alt="" coords="719,262,921,287"/>
-<area shape="poly" title=" " alt="" coords="3368,32,2836,47,2071,77,1686,98,1345,123,1081,151,989,167,929,184,903,198,878,216,840,253,836,249,875,212,900,193,927,179,988,162,1081,146,1345,117,1686,93,2071,72,2835,42,3368,26"/>
+<area shape="poly" title=" " alt="" coords="3432,31,2887,46,2103,76,1707,97,1357,122,1085,151,991,167,929,184,903,198,878,216,840,253,836,249,875,211,900,193,927,179,990,162,1085,145,1356,116,1707,91,2102,71,2887,41,3432,26"/>
 <area shape="rect" title=" " alt="" coords="3423,526,3497,551"/>
-<area shape="poly" title=" " alt="" coords="3515,43,3560,66,3605,99,3624,119,3639,141,3650,166,3653,192,3653,364,3649,393,3638,420,3621,443,3600,465,3552,499,3505,523,3502,518,3549,494,3596,461,3617,440,3633,417,3644,392,3648,364,3648,193,3644,167,3635,143,3620,122,3601,103,3557,71,3512,48"/>
+<area shape="poly" title=" " alt="" coords="3547,44,3578,83,3613,138,3641,203,3650,238,3653,273,3653,364,3649,393,3638,420,3621,443,3600,465,3552,499,3505,523,3502,518,3549,494,3596,461,3617,440,3633,417,3644,392,3648,364,3648,273,3645,239,3636,205,3608,140,3574,86,3543,47"/>
 <area shape="rect" href="grids_8h.html" title=" " alt="" coords="767,101,865,126"/>
-<area shape="poly" title=" " alt="" coords="3368,30,2055,51,1315,71,1044,83,884,96,865,100,864,95,884,91,1044,78,1315,66,2055,46,3368,25"/>
-<area shape="rect" href="periodic__hills__grid_8h.html" title=" " alt="" coords="3145,93,3285,133"/>
-<area shape="poly" title=" " alt="" coords="3410,48,3283,91,3281,86,3408,43"/>
+<area shape="poly" title=" " alt="" coords="3432,30,2882,37,2087,51,1327,71,1049,83,884,96,865,100,864,95,884,91,1048,77,1327,65,2087,46,2882,32,3432,25"/>
+<area shape="rect" href="periodic__hills__grid_8h.html" title=" " alt="" coords="3090,93,3230,133"/>
+<area shape="poly" title=" " alt="" coords="3448,48,3244,95,3243,90,3447,43"/>
 <area shape="rect" title=" " alt="" coords="3217,181,3418,207"/>
-<area shape="poly" title=" " alt="" coords="3449,47,3339,173,3335,169,3445,44"/>
+<area shape="poly" title=" " alt="" coords="3506,47,3345,175,3341,170,3503,43"/>
 <area shape="rect" title=" " alt="" coords="3443,181,3613,207"/>
-<area shape="poly" title=" " alt="" coords="3474,45,3521,168,3516,170,3469,47"/>
-<area shape="rect" title=" " alt="" coords="3689,101,3839,126"/>
-<area shape="poly" title=" " alt="" coords="3531,43,3712,94,3710,100,3529,48"/>
-<area shape="rect" title=" " alt="" coords="3863,101,3993,126"/>
-<area shape="poly" title=" " alt="" coords="3560,39,3699,62,3853,91,3871,95,3870,100,3851,96,3698,67,3560,44"/>
+<area shape="poly" title=" " alt="" coords="3531,46,3531,168,3525,168,3525,46"/>
+<area shape="rect" title=" " alt="" coords="3653,101,3803,126"/>
+<area shape="poly" title=" " alt="" coords="3573,43,3690,93,3688,98,3571,48"/>
+<area shape="rect" title=" " alt="" coords="3827,101,3957,126"/>
+<area shape="poly" title=" " alt="" coords="3611,43,3817,91,3834,95,3832,100,3815,96,3609,48"/>
+<area shape="rect" title=" " alt="" coords="3981,101,4059,126"/>
+<area shape="poly" title=" " alt="" coords="3625,33,3787,54,3879,70,3970,91,3980,94,3979,99,3969,96,3878,76,3786,59,3624,38"/>
 <area shape="rect" href="utilities_8h.html" title=" " alt="" coords="845,438,960,463"/>
 <area shape="poly" title=" " alt="" coords="835,286,858,310,880,341,895,384,903,423,897,424,890,385,875,344,854,313,831,289"/>
 <area shape="rect" title=" " alt="" coords="275,519,445,559"/>
@@ -176,20 +179,20 @@ Include dependency graph for grids.cc:</div>
 <area shape="poly" title=" " alt="" coords="1015,207,1024,246,1038,294,1055,330,1051,332,1034,296,1019,247,1010,208"/>
 <area shape="rect" href="dimensionality_8h.html" title=" " alt="" coords="315,350,477,375"/>
 <area shape="poly" title=" " alt="" coords="940,209,830,229,707,257,558,304,438,348,437,343,557,299,706,252,829,224,939,204"/>
-<area shape="rect" href="ib__particle_8h.html" title=" " alt="" coords="1694,262,1829,287"/>
-<area shape="poly" title=" " alt="" coords="1082,200,1681,262,1680,268,1081,205"/>
+<area shape="rect" href="ib__particle_8h.html" title=" " alt="" coords="1741,262,1875,287"/>
+<area shape="poly" title=" " alt="" coords="1082,200,1727,263,1726,268,1081,205"/>
 <area shape="rect" href="multiphysics_8h.html" title=" " alt="" coords="1048,262,1197,287"/>
 <area shape="poly" title=" " alt="" coords="1029,205,1097,252,1094,256,1026,209"/>
 <area shape="rect" title=" " alt="" coords="1222,255,1439,295"/>
 <area shape="poly" title=" " alt="" coords="1058,204,1241,249,1240,254,1057,209"/>
 <area shape="poly" title=" " alt="" coords="396,376,369,506,364,505,391,375"/>
-<area shape="poly" title=" " alt="" coords="1694,288,1572,308,1427,339,1358,358,1296,381,1248,405,1217,433,1189,463,1159,485,1130,499,1103,507,1079,509,1061,507,1049,502,1047,493,1058,485,1080,478,1116,473,1167,471,1236,473,1324,481,1433,495,1564,516,1587,520,1586,526,1564,521,1432,500,1324,486,1236,479,1167,477,1116,478,1081,483,1060,489,1052,495,1053,499,1062,502,1079,504,1102,502,1128,494,1156,480,1185,459,1213,429,1245,401,1294,376,1356,353,1426,334,1571,302,1693,282"/>
-<area shape="poly" title=" " alt="" coords="1829,275,2159,287,2384,298,2620,313,2848,333,3047,359,3129,374,3196,390,3245,409,3275,429,3283,442,3284,455,3279,468,3270,481,3244,503,3215,522,3212,517,3241,499,3266,477,3274,466,3278,454,3278,443,3271,432,3243,413,3194,395,3128,379,3046,364,2847,338,2620,318,2383,303,2159,292,1829,280"/>
-<area shape="poly" title=" " alt="" coords="1694,285,1462,308,1171,345,1157,347,1156,342,1170,340,1462,303,1694,279"/>
+<area shape="poly" title=" " alt="" coords="1741,286,1608,304,1449,335,1373,354,1305,377,1251,403,1231,417,1217,433,1188,463,1157,485,1127,499,1098,506,1073,508,1053,506,1040,501,1037,491,1047,483,1069,476,1105,471,1157,469,1227,472,1317,480,1429,494,1564,516,1587,520,1586,526,1564,521,1428,499,1317,485,1227,477,1157,475,1105,476,1070,481,1049,487,1042,493,1044,497,1055,501,1073,503,1097,501,1125,494,1155,480,1184,459,1213,429,1228,413,1249,399,1303,372,1371,349,1448,330,1607,299,1740,281"/>
+<area shape="poly" title=" " alt="" coords="1876,275,2197,288,2415,299,2643,315,2863,335,3055,360,3134,375,3199,391,3247,409,3275,429,3283,442,3284,455,3279,468,3270,481,3244,503,3215,522,3212,517,3241,499,3266,477,3274,466,3278,454,3278,443,3271,432,3244,414,3197,396,3133,380,3054,366,2862,340,2643,320,2414,304,2197,293,1875,281"/>
+<area shape="poly" title=" " alt="" coords="1741,284,1490,307,1171,345,1157,347,1156,342,1170,340,1489,302,1740,279"/>
 <area shape="rect" href="dem__properties_8h.html" title=" " alt="" coords="3093,438,3261,463"/>
-<area shape="poly" title=" " alt="" coords="1829,279,2349,333,2712,376,3082,428,3110,433,3109,438,3081,433,2711,381,2349,338,1829,285"/>
+<area shape="poly" title=" " alt="" coords="1876,280,2378,334,2726,377,3082,428,3110,433,3109,438,3081,433,2726,382,2377,339,1875,285"/>
 <area shape="rect" href="shape_8h.html" title=" " alt="" coords="1939,350,2045,375"/>
-<area shape="poly" title=" " alt="" coords="1793,285,1949,343,1947,348,1792,290"/>
+<area shape="poly" title=" " alt="" coords="1834,285,1956,342,1953,346,1832,290"/>
 <area shape="poly" title=" " alt="" coords="3133,466,2887,529,2886,524,3132,461"/>
 <area shape="poly" title=" " alt="" coords="3180,464,3180,512,3175,512,3175,464"/>
 <area shape="poly" title=" " alt="" coords="1939,367,1776,369,1537,378,1258,398,1114,413,974,433,954,437,953,432,973,428,1113,408,1257,392,1537,372,1776,363,1939,361"/>
@@ -217,13 +220,13 @@ Include dependency graph for grids.cc:</div>
 <area shape="poly" title=" " alt="" coords="2045,364,2256,382,2390,401,2525,428,2535,431,2533,436,2523,433,2390,406,2256,388,2045,369"/>
 <area shape="poly" title=" " alt="" coords="2637,472,2626,473,2232,502,1737,535,1736,529,2232,497,2625,468,2636,467"/>
 <area shape="poly" title=" " alt="" coords="2637,472,2626,473,2355,507,2129,531,2129,526,2354,502,2625,468,2636,466"/>
-<area shape="poly" title=" " alt="" coords="3145,122,3111,129,3077,141,3045,159,3019,183,3002,210,2990,240,2983,272,2979,305,2981,367,2988,417,2982,418,2975,367,2974,305,2978,271,2985,239,2997,208,3015,180,3042,154,3075,136,3110,124,3144,117"/>
+<area shape="poly" title=" " alt="" coords="3091,134,3051,153,3034,167,3020,183,3004,211,2992,241,2982,306,2982,367,2988,417,2983,418,2977,368,2977,306,2987,240,2999,209,3015,180,3030,163,3049,149,3089,129"/>
 <area shape="rect" title=" " alt="" coords="3029,181,3192,207"/>
-<area shape="poly" title=" " alt="" coords="3191,136,3139,175,3135,171,3188,131"/>
-<area shape="poly" title=" " alt="" coords="3241,131,3293,171,3290,175,3238,136"/>
-<area shape="poly" title=" " alt="" coords="3286,130,3470,175,3468,181,3284,135"/>
+<area shape="poly" title=" " alt="" coords="3150,135,3127,171,3123,168,3146,132"/>
+<area shape="poly" title=" " alt="" coords="3199,131,3283,173,3281,177,3197,136"/>
+<area shape="poly" title=" " alt="" coords="3231,127,3461,176,3460,181,3230,132"/>
 <area shape="rect" title=" " alt="" coords="2880,181,2955,207"/>
-<area shape="poly" title=" " alt="" coords="3145,136,2968,182,2967,177,3144,130"/>
+<area shape="poly" title=" " alt="" coords="3103,136,2967,180,2965,174,3101,131"/>
 </map>
 </div>
 </div>
@@ -388,9 +391,9 @@ template&lt;int dim, int spacedim&gt; </div>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="grids_8cc_source.html#l00018">18</a> of file <a class="el" href="grids_8cc_source.html">grids.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="grids_8cc_source.html#l00019">19</a> of file <a class="el" href="grids_8cc_source.html">grids.cc</a>.</p>
 
-<p class="reference">References <a class="el" href="structParameters_1_1Mesh.html#a9be2ccd9771c7cc7df861429a0c7864ca9c7cd9fc9aa15fae1e37885314637c36">Parameters::Mesh::cylinder</a>, <a class="el" href="structParameters_1_1Mesh.html#a9be2ccd9771c7cc7df861429a0c7864ca3c4b939087811f328575e358443a5880">Parameters::Mesh::dealii</a>, <a class="el" href="parameters_8h_source.html#l01416">Parameters::Mesh::file_name</a>, <a class="el" href="structParameters_1_1Mesh.html#a9be2ccd9771c7cc7df861429a0c7864cab7c7797f3a0a1098b484e5e3a780e025">Parameters::Mesh::gmsh</a>, <a class="el" href="parameters_8h_source.html#l01422">Parameters::Mesh::grid_arguments</a>, <a class="el" href="parameters_8h_source.html#l01419">Parameters::Mesh::grid_type</a>, <a class="el" href="parameters_8h_source.html#l01425">Parameters::Mesh::initial_refinement</a>, <a class="el" href="periodic__hills__grid_8h_source.html#l00499">PeriodicHillsGrid&lt; dim, spacedim &gt;::make_grid()</a>, <a class="el" href="structParameters_1_1Mesh.html#a9be2ccd9771c7cc7df861429a0c7864ca8b6e7e08f9b5c2b02a4d5065cb5b69ce">Parameters::Mesh::periodic_hills</a>, <a class="el" href="parameters_8h_source.html#l01459">Parameters::Mesh::rotation_angle</a>, <a class="el" href="parameters_8h_source.html#l01458">Parameters::Mesh::rotation_axis</a>, <a class="el" href="parameters_8h_source.html#l01462">Parameters::Mesh::scale</a>, <a class="el" href="parameters_8h_source.html#l01438">Parameters::Mesh::simplex</a>, <a class="el" href="parameters_8h_source.html#l01455">Parameters::Mesh::translation</a>, and <a class="el" href="parameters_8h_source.html#l01413">Parameters::Mesh::type</a>.</p>
+<p class="reference">References <a class="el" href="structParameters_1_1Mesh.html#a98b00ca6e2274cc90b7bec52bdc7c50ba9c7cd9fc9aa15fae1e37885314637c36">Parameters::Mesh::cylinder</a>, <a class="el" href="structParameters_1_1Mesh.html#a98b00ca6e2274cc90b7bec52bdc7c50ba3c4b939087811f328575e358443a5880">Parameters::Mesh::dealii</a>, <a class="el" href="parameters_8h_source.html#l01413">Parameters::Mesh::file_name</a>, <a class="el" href="structParameters_1_1Mesh.html#a98b00ca6e2274cc90b7bec52bdc7c50bab7c7797f3a0a1098b484e5e3a780e025">Parameters::Mesh::gmsh</a>, <a class="el" href="parameters_8h_source.html#l01419">Parameters::Mesh::grid_arguments</a>, <a class="el" href="parameters_8h_source.html#l01416">Parameters::Mesh::grid_type</a>, <a class="el" href="parameters_8h_source.html#l01422">Parameters::Mesh::initial_refinement</a>, <a class="el" href="periodic__hills__grid_8h_source.html#l00499">PeriodicHillsGrid&lt; dim, spacedim &gt;::make_grid()</a>, <a class="el" href="structParameters_1_1Mesh.html#a98b00ca6e2274cc90b7bec52bdc7c50ba8b6e7e08f9b5c2b02a4d5065cb5b69ce">Parameters::Mesh::periodic_hills</a>, <a class="el" href="parameters_8h_source.html#l01456">Parameters::Mesh::rotation_angle</a>, <a class="el" href="parameters_8h_source.html#l01455">Parameters::Mesh::rotation_axis</a>, <a class="el" href="parameters_8h_source.html#l01459">Parameters::Mesh::scale</a>, <a class="el" href="parameters_8h_source.html#l01435">Parameters::Mesh::simplex</a>, <a class="el" href="parameters_8h_source.html#l01452">Parameters::Mesh::translation</a>, and <a class="el" href="parameters_8h_source.html#l01410">Parameters::Mesh::type</a>.</p>
 
 </div>
 </div>
@@ -598,9 +601,9 @@ template&lt;int dim, int spacedim&gt; </div>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="grids_8cc_source.html#l00342">342</a> of file <a class="el" href="grids_8cc_source.html">grids.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="grids_8cc_source.html#l00343">343</a> of file <a class="el" href="grids_8cc_source.html">grids.cc</a>.</p>
 
-<p class="reference">References <a class="el" href="grids_8cc_source.html#l00018">attach_grid_to_triangulation()</a>, <a class="el" href="manifolds_8cc_source.html#l00110">attach_manifolds_to_triangulation()</a>, <a class="el" href="parameters_8h_source.html#l01432">Parameters::Mesh::boundaries_to_refine</a>, <a class="el" href="structParameters_1_1Mesh.html#a9be2ccd9771c7cc7df861429a0c7864cab7c7797f3a0a1098b484e5e3a780e025">Parameters::Mesh::gmsh</a>, <a class="el" href="manifolds_8h_source.html#l00036">Parameters::Manifolds::id</a>, <a class="el" href="parameters_8h_source.html#l01425">Parameters::Mesh::initial_refinement</a>, <a class="el" href="parameters_8h_source.html#l01429">Parameters::Mesh::initial_refinement_at_boundaries</a>, <a class="el" href="grids_8h_source.html#l00117">refine_triangulation_at_boundaries()</a>, <a class="el" href="parameters_8h_source.html#l01435">Parameters::Mesh::refine_until_target_size</a>, <a class="el" href="grids_8cc_source.html#l00314">setup_periodic_boundary_conditions()</a>, <a class="el" href="parameters_8h_source.html#l01438">Parameters::Mesh::simplex</a>, <a class="el" href="manifolds_8h_source.html#l00050">Parameters::Manifolds::size</a>, <a class="el" href="parameters_8h_source.html#l01441">Parameters::Mesh::target_size</a>, and <a class="el" href="parameters_8h_source.html#l01413">Parameters::Mesh::type</a>.</p>
+<p class="reference">References <a class="el" href="grids_8cc_source.html#l00019">attach_grid_to_triangulation()</a>, <a class="el" href="manifolds_8cc_source.html#l00111">attach_manifolds_to_triangulation()</a>, <a class="el" href="parameters_8h_source.html#l01429">Parameters::Mesh::boundaries_to_refine</a>, <a class="el" href="structParameters_1_1Mesh.html#a98b00ca6e2274cc90b7bec52bdc7c50bab7c7797f3a0a1098b484e5e3a780e025">Parameters::Mesh::gmsh</a>, <a class="el" href="manifolds_8h_source.html#l00036">Parameters::Manifolds::id</a>, <a class="el" href="parameters_8h_source.html#l01422">Parameters::Mesh::initial_refinement</a>, <a class="el" href="parameters_8h_source.html#l01426">Parameters::Mesh::initial_refinement_at_boundaries</a>, <a class="el" href="grids_8h_source.html#l00117">refine_triangulation_at_boundaries()</a>, <a class="el" href="parameters_8h_source.html#l01432">Parameters::Mesh::refine_until_target_size</a>, <a class="el" href="grids_8cc_source.html#l00315">setup_periodic_boundary_conditions()</a>, <a class="el" href="parameters_8h_source.html#l01435">Parameters::Mesh::simplex</a>, <a class="el" href="manifolds_8h_source.html#l00050">Parameters::Manifolds::size</a>, <a class="el" href="parameters_8h_source.html#l01438">Parameters::Mesh::target_size</a>, and <a class="el" href="parameters_8h_source.html#l01410">Parameters::Mesh::type</a>.</p>
 
 </div>
 </div>
@@ -781,9 +784,9 @@ template&lt;int dim, int spacedim&gt; </div>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="grids_8cc_source.html#l00420">420</a> of file <a class="el" href="grids_8cc_source.html">grids.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="grids_8cc_source.html#l00421">421</a> of file <a class="el" href="grids_8cc_source.html">grids.cc</a>.</p>
 
-<p class="reference">References <a class="el" href="grids_8cc_source.html#l00018">attach_grid_to_triangulation()</a>, <a class="el" href="manifolds_8cc_source.html#l00110">attach_manifolds_to_triangulation()</a>, <a class="el" href="parameters_8h_source.html#l01432">Parameters::Mesh::boundaries_to_refine</a>, <a class="el" href="structParameters_1_1Mesh.html#a9be2ccd9771c7cc7df861429a0c7864ca3c4b939087811f328575e358443a5880">Parameters::Mesh::dealii</a>, <a class="el" href="structParameters_1_1Mesh.html#a9be2ccd9771c7cc7df861429a0c7864cab7c7797f3a0a1098b484e5e3a780e025">Parameters::Mesh::gmsh</a>, <a class="el" href="manifolds_8h_source.html#l00036">Parameters::Manifolds::id</a>, <a class="el" href="parameters_8h_source.html#l01425">Parameters::Mesh::initial_refinement</a>, <a class="el" href="parameters_8h_source.html#l01429">Parameters::Mesh::initial_refinement_at_boundaries</a>, <a class="el" href="grids_8h_source.html#l00117">refine_triangulation_at_boundaries()</a>, <a class="el" href="parameters_8h_source.html#l01435">Parameters::Mesh::refine_until_target_size</a>, <a class="el" href="parameters_8h_source.html#l01831">Parameters::Mortar&lt; dim &gt;::rotor_boundary_id</a>, <a class="el" href="parameters_8h_source.html#l01829">Parameters::Mortar&lt; dim &gt;::rotor_mesh</a>, <a class="el" href="grids_8cc_source.html#l00314">setup_periodic_boundary_conditions()</a>, <a class="el" href="parameters_8h_source.html#l01438">Parameters::Mesh::simplex</a>, <a class="el" href="manifolds_8h_source.html#l00050">Parameters::Manifolds::size</a>, <a class="el" href="parameters_8h_source.html#l01833">Parameters::Mortar&lt; dim &gt;::stator_boundary_id</a>, <a class="el" href="parameters_8h_source.html#l01441">Parameters::Mesh::target_size</a>, and <a class="el" href="parameters_8h_source.html#l01413">Parameters::Mesh::type</a>.</p>
+<p class="reference">References <a class="el" href="grids_8cc_source.html#l00019">attach_grid_to_triangulation()</a>, <a class="el" href="manifolds_8cc_source.html#l00111">attach_manifolds_to_triangulation()</a>, <a class="el" href="parameters_8h_source.html#l01429">Parameters::Mesh::boundaries_to_refine</a>, <a class="el" href="structParameters_1_1Mesh.html#a98b00ca6e2274cc90b7bec52bdc7c50ba3c4b939087811f328575e358443a5880">Parameters::Mesh::dealii</a>, <a class="el" href="structParameters_1_1Mesh.html#a98b00ca6e2274cc90b7bec52bdc7c50bab7c7797f3a0a1098b484e5e3a780e025">Parameters::Mesh::gmsh</a>, <a class="el" href="manifolds_8h_source.html#l00036">Parameters::Manifolds::id</a>, <a class="el" href="parameters_8h_source.html#l01422">Parameters::Mesh::initial_refinement</a>, <a class="el" href="parameters_8h_source.html#l01426">Parameters::Mesh::initial_refinement_at_boundaries</a>, <a class="el" href="grids_8h_source.html#l00117">refine_triangulation_at_boundaries()</a>, <a class="el" href="parameters_8h_source.html#l01432">Parameters::Mesh::refine_until_target_size</a>, <a class="el" href="parameters_8h_source.html#l01828">Parameters::Mortar&lt; dim &gt;::rotor_boundary_id</a>, <a class="el" href="parameters_8h_source.html#l01826">Parameters::Mortar&lt; dim &gt;::rotor_mesh</a>, <a class="el" href="grids_8cc_source.html#l00315">setup_periodic_boundary_conditions()</a>, <a class="el" href="parameters_8h_source.html#l01435">Parameters::Mesh::simplex</a>, <a class="el" href="manifolds_8h_source.html#l00050">Parameters::Manifolds::size</a>, <a class="el" href="parameters_8h_source.html#l01830">Parameters::Mortar&lt; dim &gt;::stator_boundary_id</a>, <a class="el" href="parameters_8h_source.html#l01438">Parameters::Mesh::target_size</a>, and <a class="el" href="parameters_8h_source.html#l01410">Parameters::Mesh::type</a>.</p>
 
 </div>
 </div>
@@ -908,7 +911,7 @@ template&lt;int dim, int spacedim&gt; </div>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="grids_8cc_source.html#l00314">314</a> of file <a class="el" href="grids_8cc_source.html">grids.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="grids_8cc_source.html#l00315">315</a> of file <a class="el" href="grids_8cc_source.html">grids.cc</a>.</p>
 
 <p class="reference">References <a class="el" href="namespaceBoundaryConditions.html#a07df76d63cde5cb5bcbea0d9c25a54b8ae6ffdec5e14fce371eb7ae99edebbbee">BoundaryConditions::periodic</a>, <a class="el" href="boundary__conditions_8h_source.html#l00118">BoundaryConditions::BoundaryConditions::periodic_direction</a>, <a class="el" href="boundary__conditions_8h_source.html#l00115">BoundaryConditions::BoundaryConditions::periodic_neighbor_id</a>, and <a class="el" href="boundary__conditions_8h_source.html#l00096">BoundaryConditions::BoundaryConditions::type</a>.</p>
 

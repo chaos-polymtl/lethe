@@ -1,5 +1,5 @@
 <map id="RheologicalModel" name="RheologicalModel">
-<area shape="rect" id="Node000001" title="Abstract class that allows to calculate the non&#45;newtonian viscosity on each quadrature point and the ..." alt="" coords="157,79,295,104"/>
+<area shape="rect" id="Node000001" title="Abstract class that allows to calculate the non&#45;Newtonian viscosity on each quadrature point and the ..." alt="" coords="157,79,295,104"/>
 <area shape="rect" id="Node000003" href="$classCarreau.html" title=" " alt="" coords="5,152,79,177"/>
 <area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="185,111,73,154,71,149,183,106"/>
 <area shape="rect" id="Node000004" href="$classNewtonian.html" title=" " alt="" coords="103,152,195,177"/>

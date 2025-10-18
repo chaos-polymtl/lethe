@@ -278,166 +278,166 @@ $(document).ready(function() { init_codefold(0); });
 <div class="line"><a id="l00175" name="l00175"></a><span class="lineno">  175</span><span class="keyword">template</span> &lt;<span class="keywordtype">int</span> dim&gt;</div>
 <div class="line"><a id="l00176" name="l00176"></a><span class="lineno">  176</span><span class="keywordtype">void</span></div>
 <div class="foldopen" id="foldopen00177" data-start="{" data-end="}">
-<div class="line"><a id="l00177" name="l00177"></a><span class="lineno"><a class="line" href="classIBParticle.html#a45da6cdb769a95e3fb1924ebb40e31a6">  177</a></span><a class="code hl_function" href="classIBParticle.html#a45da6cdb769a95e3fb1924ebb40e31a6">IBParticle&lt;dim&gt;::clear_shape_cache</a>()</div>
-<div class="line"><a id="l00178" name="l00178"></a><span class="lineno">  178</span>{</div>
-<div class="line"><a id="l00179" name="l00179"></a><span class="lineno">  179</span>  this-&gt;shape-&gt;clear_cache();</div>
-<div class="line"><a id="l00180" name="l00180"></a><span class="lineno">  180</span>}</div>
+<div class="line"><a id="l00177" name="l00177"></a><span class="lineno"><a class="line" href="classIBParticle.html#a7da9b4fcc98681e06767478dc7db3963">  177</a></span><a class="code hl_function" href="classIBParticle.html#a7da9b4fcc98681e06767478dc7db3963">IBParticle&lt;dim&gt;::closest_surface_point</a>(</div>
+<div class="line"><a id="l00178" name="l00178"></a><span class="lineno">  178</span>  <span class="keyword">const</span> Point&lt;dim&gt;                                     &amp;p,</div>
+<div class="line"><a id="l00179" name="l00179"></a><span class="lineno">  179</span>  Point&lt;dim&gt;                                           &amp;closest_point,</div>
+<div class="line"><a id="l00180" name="l00180"></a><span class="lineno">  180</span>  <span class="keyword">const</span> <span class="keyword">typename</span> DoFHandler&lt;dim&gt;::active_cell_iterator &amp;cell_guess)</div>
+<div class="line"><a id="l00181" name="l00181"></a><span class="lineno">  181</span>{</div>
+<div class="line"><a id="l00182" name="l00182"></a><span class="lineno">  182</span>  shape-&gt;closest_surface_point(p, closest_point, cell_guess);</div>
+<div class="line"><a id="l00183" name="l00183"></a><span class="lineno">  183</span>}</div>
 </div>
-<div class="line"><a id="l00181" name="l00181"></a><span class="lineno">  181</span> </div>
-<div class="line"><a id="l00182" name="l00182"></a><span class="lineno">  182</span><span class="keyword">template</span> &lt;<span class="keywordtype">int</span> dim&gt;</div>
-<div class="line"><a id="l00183" name="l00183"></a><span class="lineno">  183</span><span class="keywordtype">void</span></div>
-<div class="foldopen" id="foldopen00184" data-start="{" data-end="}">
-<div class="line"><a id="l00184" name="l00184"></a><span class="lineno"><a class="line" href="classIBParticle.html#a67d643161abaf21b8d5d2acf0ce534d8">  184</a></span><a class="code hl_function" href="classIBParticle.html#a67d643161abaf21b8d5d2acf0ce534d8">IBParticle&lt;dim&gt;::initialize_shape</a>(<span class="keyword">const</span> std::string         type,</div>
-<div class="line"><a id="l00185" name="l00185"></a><span class="lineno">  185</span>                                  <span class="keyword">const</span> std::vector&lt;double&gt; shape_arguments)</div>
-<div class="line"><a id="l00186" name="l00186"></a><span class="lineno">  186</span>{</div>
-<div class="line"><a id="l00187" name="l00187"></a><span class="lineno">  187</span>  shape = <a class="code hl_function" href="namespaceShapeGenerator.html#a3bd744f2a2a809dc9ae6bc9d7beeecca">ShapeGenerator::initialize_shape_from_vector</a>(type,</div>
-<div class="line"><a id="l00188" name="l00188"></a><span class="lineno">  188</span>                                                       shape_arguments,</div>
-<div class="line"><a id="l00189" name="l00189"></a><span class="lineno">  189</span>                                                       position,</div>
-<div class="line"><a id="l00190" name="l00190"></a><span class="lineno">  190</span>                                                       orientation);</div>
+<div class="line"><a id="l00184" name="l00184"></a><span class="lineno">  184</span> </div>
+<div class="line"><a id="l00185" name="l00185"></a><span class="lineno">  185</span><span class="keyword">template</span> &lt;<span class="keywordtype">int</span> dim&gt;</div>
+<div class="line"><a id="l00186" name="l00186"></a><span class="lineno">  186</span><span class="keywordtype">void</span></div>
+<div class="foldopen" id="foldopen00187" data-start="{" data-end="}">
+<div class="line"><a id="l00187" name="l00187"></a><span class="lineno"><a class="line" href="classIBParticle.html#af033452338f361820c04eede277852b5">  187</a></span><a class="code hl_function" href="classIBParticle.html#a7da9b4fcc98681e06767478dc7db3963">IBParticle&lt;dim&gt;::closest_surface_point</a>(<span class="keyword">const</span> Point&lt;dim&gt; &amp;p,</div>
+<div class="line"><a id="l00188" name="l00188"></a><span class="lineno">  188</span>                                       Point&lt;dim&gt;       &amp;closest_point)</div>
+<div class="line"><a id="l00189" name="l00189"></a><span class="lineno">  189</span>{</div>
+<div class="line"><a id="l00190" name="l00190"></a><span class="lineno">  190</span>  shape-&gt;closest_surface_point(p, closest_point);</div>
 <div class="line"><a id="l00191" name="l00191"></a><span class="lineno">  191</span>}</div>
 </div>
 <div class="line"><a id="l00192" name="l00192"></a><span class="lineno">  192</span> </div>
 <div class="line"><a id="l00193" name="l00193"></a><span class="lineno">  193</span><span class="keyword">template</span> &lt;<span class="keywordtype">int</span> dim&gt;</div>
-<div class="line"><a id="l00194" name="l00194"></a><span class="lineno">  194</span><span class="keywordtype">void</span></div>
+<div class="line"><a id="l00194" name="l00194"></a><span class="lineno">  194</span><span class="keywordtype">bool</span></div>
 <div class="foldopen" id="foldopen00195" data-start="{" data-end="}">
-<div class="line"><a id="l00195" name="l00195"></a><span class="lineno"><a class="line" href="classIBParticle.html#a6b3c8cd07f8afa784ed4af52fd6e0f61">  195</a></span><a class="code hl_function" href="classIBParticle.html#a67d643161abaf21b8d5d2acf0ce534d8">IBParticle&lt;dim&gt;::initialize_shape</a>(<span class="keyword">const</span> std::string type,</div>
-<div class="line"><a id="l00196" name="l00196"></a><span class="lineno">  196</span>                                  <span class="keyword">const</span> std::string raw_arguments)</div>
-<div class="line"><a id="l00197" name="l00197"></a><span class="lineno">  197</span>{</div>
-<div class="line"><a id="l00198" name="l00198"></a><span class="lineno">  198</span>  shape = <a class="code hl_function" href="namespaceShapeGenerator.html#ab44d589cc8edd0b6dd1defc5d8705561">ShapeGenerator::initialize_shape</a>(type,</div>
-<div class="line"><a id="l00199" name="l00199"></a><span class="lineno">  199</span>                                           raw_arguments,</div>
-<div class="line"><a id="l00200" name="l00200"></a><span class="lineno">  200</span>                                           position,</div>
-<div class="line"><a id="l00201" name="l00201"></a><span class="lineno">  201</span>                                           orientation);</div>
-<div class="line"><a id="l00202" name="l00202"></a><span class="lineno">  202</span>}</div>
-</div>
+<div class="line"><a id="l00195" name="l00195"></a><span class="lineno"><a class="line" href="classIBParticle.html#a344004d747375230e0d6b10ca98fbe50">  195</a></span><a class="code hl_function" href="classIBParticle.html#a344004d747375230e0d6b10ca98fbe50">IBParticle&lt;dim&gt;::is_inside_crown</a>(</div>
+<div class="line"><a id="l00196" name="l00196"></a><span class="lineno">  196</span>  <span class="keyword">const</span> Point&lt;dim&gt;                                     &amp;evaluation_point,</div>
+<div class="line"><a id="l00197" name="l00197"></a><span class="lineno">  197</span>  <span class="keyword">const</span> <span class="keywordtype">double</span>                                          outer_radius,</div>
+<div class="line"><a id="l00198" name="l00198"></a><span class="lineno">  198</span>  <span class="keyword">const</span> <span class="keywordtype">double</span>                                          inside_radius,</div>
+<div class="line"><a id="l00199" name="l00199"></a><span class="lineno">  199</span>  <span class="keyword">const</span> <span class="keywordtype">bool</span>                                            absolute_distance,</div>
+<div class="line"><a id="l00200" name="l00200"></a><span class="lineno">  200</span>  <span class="keyword">const</span> <span class="keyword">typename</span> DoFHandler&lt;dim&gt;::active_cell_iterator &amp;cell_guess)</div>
+<div class="line"><a id="l00201" name="l00201"></a><span class="lineno">  201</span>{</div>
+<div class="line"><a id="l00202" name="l00202"></a><span class="lineno">  202</span>  <span class="keyword">const</span> <span class="keywordtype">double</span> effective_radius = shape-&gt;effective_radius;</div>
 <div class="line"><a id="l00203" name="l00203"></a><span class="lineno">  203</span> </div>
-<div class="line"><a id="l00204" name="l00204"></a><span class="lineno">  204</span><span class="keyword">template</span> &lt;<span class="keywordtype">int</span> dim&gt;</div>
-<div class="line"><a id="l00205" name="l00205"></a><span class="lineno">  205</span><span class="keywordtype">void</span></div>
-<div class="foldopen" id="foldopen00206" data-start="{" data-end="}">
-<div class="line"><a id="l00206" name="l00206"></a><span class="lineno"><a class="line" href="classIBParticle.html#a7da9b4fcc98681e06767478dc7db3963">  206</a></span><a class="code hl_function" href="classIBParticle.html#a7da9b4fcc98681e06767478dc7db3963">IBParticle&lt;dim&gt;::closest_surface_point</a>(</div>
-<div class="line"><a id="l00207" name="l00207"></a><span class="lineno">  207</span>  <span class="keyword">const</span> Point&lt;dim&gt;                                     &amp;p,</div>
-<div class="line"><a id="l00208" name="l00208"></a><span class="lineno">  208</span>  Point&lt;dim&gt;                                           &amp;closest_point,</div>
-<div class="line"><a id="l00209" name="l00209"></a><span class="lineno">  209</span>  <span class="keyword">const</span> <span class="keyword">typename</span> DoFHandler&lt;dim&gt;::active_cell_iterator &amp;cell_guess)</div>
-<div class="line"><a id="l00210" name="l00210"></a><span class="lineno">  210</span>{</div>
-<div class="line"><a id="l00211" name="l00211"></a><span class="lineno">  211</span>  shape-&gt;closest_surface_point(p, closest_point, cell_guess);</div>
-<div class="line"><a id="l00212" name="l00212"></a><span class="lineno">  212</span>}</div>
-</div>
-<div class="line"><a id="l00213" name="l00213"></a><span class="lineno">  213</span> </div>
-<div class="line"><a id="l00214" name="l00214"></a><span class="lineno">  214</span><span class="keyword">template</span> &lt;<span class="keywordtype">int</span> dim&gt;</div>
-<div class="line"><a id="l00215" name="l00215"></a><span class="lineno">  215</span><span class="keywordtype">void</span></div>
-<div class="foldopen" id="foldopen00216" data-start="{" data-end="}">
-<div class="line"><a id="l00216" name="l00216"></a><span class="lineno"><a class="line" href="classIBParticle.html#af033452338f361820c04eede277852b5">  216</a></span><a class="code hl_function" href="classIBParticle.html#a7da9b4fcc98681e06767478dc7db3963">IBParticle&lt;dim&gt;::closest_surface_point</a>(<span class="keyword">const</span> Point&lt;dim&gt; &amp;p,</div>
-<div class="line"><a id="l00217" name="l00217"></a><span class="lineno">  217</span>                                       Point&lt;dim&gt;       &amp;closest_point)</div>
-<div class="line"><a id="l00218" name="l00218"></a><span class="lineno">  218</span>{</div>
-<div class="line"><a id="l00219" name="l00219"></a><span class="lineno">  219</span>  shape-&gt;closest_surface_point(p, closest_point);</div>
+<div class="line"><a id="l00204" name="l00204"></a><span class="lineno">  204</span>  <span class="keywordtype">double</span> distance = shape-&gt;value_with_cell_guess(evaluation_point, cell_guess);</div>
+<div class="line"><a id="l00205" name="l00205"></a><span class="lineno">  205</span>  <span class="keywordtype">bool</span>   is_inside_outer_ring;</div>
+<div class="line"><a id="l00206" name="l00206"></a><span class="lineno">  206</span>  <span class="keywordtype">bool</span>   is_outside_inner_ring;</div>
+<div class="line"><a id="l00207" name="l00207"></a><span class="lineno">  207</span>  <span class="keywordflow">if</span> (absolute_distance)</div>
+<div class="line"><a id="l00208" name="l00208"></a><span class="lineno">  208</span>    {</div>
+<div class="line"><a id="l00209" name="l00209"></a><span class="lineno">  209</span>      is_inside_outer_ring  = distance &lt;= outer_radius;</div>
+<div class="line"><a id="l00210" name="l00210"></a><span class="lineno">  210</span>      is_outside_inner_ring = distance &gt;= inside_radius;</div>
+<div class="line"><a id="l00211" name="l00211"></a><span class="lineno">  211</span>    }</div>
+<div class="line"><a id="l00212" name="l00212"></a><span class="lineno">  212</span>  <span class="keywordflow">else</span></div>
+<div class="line"><a id="l00213" name="l00213"></a><span class="lineno">  213</span>    {</div>
+<div class="line"><a id="l00214" name="l00214"></a><span class="lineno">  214</span>      is_inside_outer_ring = distance &lt;= effective_radius * (outer_radius - 1);</div>
+<div class="line"><a id="l00215" name="l00215"></a><span class="lineno">  215</span>      is_outside_inner_ring =</div>
+<div class="line"><a id="l00216" name="l00216"></a><span class="lineno">  216</span>        distance &gt;= effective_radius * (inside_radius - 1);</div>
+<div class="line"><a id="l00217" name="l00217"></a><span class="lineno">  217</span>    }</div>
+<div class="line"><a id="l00218" name="l00218"></a><span class="lineno">  218</span> </div>
+<div class="line"><a id="l00219" name="l00219"></a><span class="lineno">  219</span>  <span class="keywordflow">return</span> is_inside_outer_ring &amp;&amp; is_outside_inner_ring;</div>
 <div class="line"><a id="l00220" name="l00220"></a><span class="lineno">  220</span>}</div>
 </div>
 <div class="line"><a id="l00221" name="l00221"></a><span class="lineno">  221</span> </div>
 <div class="line"><a id="l00222" name="l00222"></a><span class="lineno">  222</span><span class="keyword">template</span> &lt;<span class="keywordtype">int</span> dim&gt;</div>
 <div class="line"><a id="l00223" name="l00223"></a><span class="lineno">  223</span><span class="keywordtype">bool</span></div>
 <div class="foldopen" id="foldopen00224" data-start="{" data-end="}">
-<div class="line"><a id="l00224" name="l00224"></a><span class="lineno"><a class="line" href="classIBParticle.html#a344004d747375230e0d6b10ca98fbe50">  224</a></span><a class="code hl_function" href="classIBParticle.html#a344004d747375230e0d6b10ca98fbe50">IBParticle&lt;dim&gt;::is_inside_crown</a>(</div>
-<div class="line"><a id="l00225" name="l00225"></a><span class="lineno">  225</span>  <span class="keyword">const</span> Point&lt;dim&gt;                                     &amp;evaluation_point,</div>
-<div class="line"><a id="l00226" name="l00226"></a><span class="lineno">  226</span>  <span class="keyword">const</span> <span class="keywordtype">double</span>                                          outer_radius,</div>
-<div class="line"><a id="l00227" name="l00227"></a><span class="lineno">  227</span>  <span class="keyword">const</span> <span class="keywordtype">double</span>                                          inside_radius,</div>
-<div class="line"><a id="l00228" name="l00228"></a><span class="lineno">  228</span>  <span class="keyword">const</span> <span class="keywordtype">bool</span>                                            absolute_distance,</div>
-<div class="line"><a id="l00229" name="l00229"></a><span class="lineno">  229</span>  <span class="keyword">const</span> <span class="keyword">typename</span> DoFHandler&lt;dim&gt;::active_cell_iterator &amp;cell_guess)</div>
-<div class="line"><a id="l00230" name="l00230"></a><span class="lineno">  230</span>{</div>
-<div class="line"><a id="l00231" name="l00231"></a><span class="lineno">  231</span>  <span class="keyword">const</span> <span class="keywordtype">double</span> radius = shape-&gt;effective_radius;</div>
-<div class="line"><a id="l00232" name="l00232"></a><span class="lineno">  232</span> </div>
-<div class="line"><a id="l00233" name="l00233"></a><span class="lineno">  233</span>  <span class="keywordtype">double</span> distance = shape-&gt;value_with_cell_guess(evaluation_point, cell_guess);</div>
-<div class="line"><a id="l00234" name="l00234"></a><span class="lineno">  234</span>  <span class="keywordtype">bool</span>   is_inside_outer_ring;</div>
-<div class="line"><a id="l00235" name="l00235"></a><span class="lineno">  235</span>  <span class="keywordtype">bool</span>   is_outside_inner_ring;</div>
-<div class="line"><a id="l00236" name="l00236"></a><span class="lineno">  236</span>  <span class="keywordflow">if</span> (absolute_distance)</div>
-<div class="line"><a id="l00237" name="l00237"></a><span class="lineno">  237</span>    {</div>
-<div class="line"><a id="l00238" name="l00238"></a><span class="lineno">  238</span>      is_inside_outer_ring  = distance &lt;= outer_radius;</div>
-<div class="line"><a id="l00239" name="l00239"></a><span class="lineno">  239</span>      is_outside_inner_ring = distance &gt;= inside_radius;</div>
-<div class="line"><a id="l00240" name="l00240"></a><span class="lineno">  240</span>    }</div>
-<div class="line"><a id="l00241" name="l00241"></a><span class="lineno">  241</span>  <span class="keywordflow">else</span></div>
-<div class="line"><a id="l00242" name="l00242"></a><span class="lineno">  242</span>    {</div>
-<div class="line"><a id="l00243" name="l00243"></a><span class="lineno">  243</span>      is_inside_outer_ring  = distance &lt;= radius * (outer_radius - 1);</div>
-<div class="line"><a id="l00244" name="l00244"></a><span class="lineno">  244</span>      is_outside_inner_ring = distance &gt;= radius * (inside_radius - 1);</div>
-<div class="line"><a id="l00245" name="l00245"></a><span class="lineno">  245</span>    }</div>
-<div class="line"><a id="l00246" name="l00246"></a><span class="lineno">  246</span> </div>
-<div class="line"><a id="l00247" name="l00247"></a><span class="lineno">  247</span>  <span class="keywordflow">return</span> is_inside_outer_ring &amp;&amp; is_outside_inner_ring;</div>
-<div class="line"><a id="l00248" name="l00248"></a><span class="lineno">  248</span>}</div>
+<div class="line"><a id="l00224" name="l00224"></a><span class="lineno"><a class="line" href="classIBParticle.html#af287c94d6ba6527c7115cea356142065">  224</a></span><a class="code hl_function" href="classIBParticle.html#a344004d747375230e0d6b10ca98fbe50">IBParticle&lt;dim&gt;::is_inside_crown</a>(<span class="keyword">const</span> Point&lt;dim&gt; &amp;evaluation_point,</div>
+<div class="line"><a id="l00225" name="l00225"></a><span class="lineno">  225</span>                                 <span class="keyword">const</span> <span class="keywordtype">double</span>      outer_radius,</div>
+<div class="line"><a id="l00226" name="l00226"></a><span class="lineno">  226</span>                                 <span class="keyword">const</span> <span class="keywordtype">double</span>      inside_radius,</div>
+<div class="line"><a id="l00227" name="l00227"></a><span class="lineno">  227</span>                                 <span class="keyword">const</span> <span class="keywordtype">bool</span>        absolute_distance)</div>
+<div class="line"><a id="l00228" name="l00228"></a><span class="lineno">  228</span>{</div>
+<div class="line"><a id="l00229" name="l00229"></a><span class="lineno">  229</span>  <span class="keyword">const</span> <span class="keywordtype">double</span> effective_radius = shape-&gt;effective_radius;</div>
+<div class="line"><a id="l00230" name="l00230"></a><span class="lineno">  230</span> </div>
+<div class="line"><a id="l00231" name="l00231"></a><span class="lineno">  231</span>  <span class="keywordtype">double</span> distance = shape-&gt;value(evaluation_point);</div>
+<div class="line"><a id="l00232" name="l00232"></a><span class="lineno">  232</span>  <span class="keywordtype">bool</span>   is_inside_outer_ring;</div>
+<div class="line"><a id="l00233" name="l00233"></a><span class="lineno">  233</span>  <span class="keywordtype">bool</span>   is_outside_inner_ring;</div>
+<div class="line"><a id="l00234" name="l00234"></a><span class="lineno">  234</span>  <span class="keywordflow">if</span> (absolute_distance)</div>
+<div class="line"><a id="l00235" name="l00235"></a><span class="lineno">  235</span>    {</div>
+<div class="line"><a id="l00236" name="l00236"></a><span class="lineno">  236</span>      is_inside_outer_ring  = distance &lt;= outer_radius;</div>
+<div class="line"><a id="l00237" name="l00237"></a><span class="lineno">  237</span>      is_outside_inner_ring = distance &gt;= inside_radius;</div>
+<div class="line"><a id="l00238" name="l00238"></a><span class="lineno">  238</span>    }</div>
+<div class="line"><a id="l00239" name="l00239"></a><span class="lineno">  239</span>  <span class="keywordflow">else</span></div>
+<div class="line"><a id="l00240" name="l00240"></a><span class="lineno">  240</span>    {</div>
+<div class="line"><a id="l00241" name="l00241"></a><span class="lineno">  241</span>      is_inside_outer_ring = distance &lt;= effective_radius * (outer_radius - 1);</div>
+<div class="line"><a id="l00242" name="l00242"></a><span class="lineno">  242</span>      is_outside_inner_ring =</div>
+<div class="line"><a id="l00243" name="l00243"></a><span class="lineno">  243</span>        distance &gt;= effective_radius * (inside_radius - 1);</div>
+<div class="line"><a id="l00244" name="l00244"></a><span class="lineno">  244</span>    }</div>
+<div class="line"><a id="l00245" name="l00245"></a><span class="lineno">  245</span> </div>
+<div class="line"><a id="l00246" name="l00246"></a><span class="lineno">  246</span>  <span class="keywordflow">return</span> is_inside_outer_ring &amp;&amp; is_outside_inner_ring;</div>
+<div class="line"><a id="l00247" name="l00247"></a><span class="lineno">  247</span>}</div>
 </div>
-<div class="line"><a id="l00249" name="l00249"></a><span class="lineno">  249</span> </div>
-<div class="line"><a id="l00250" name="l00250"></a><span class="lineno">  250</span><span class="keyword">template</span> &lt;<span class="keywordtype">int</span> dim&gt;</div>
-<div class="line"><a id="l00251" name="l00251"></a><span class="lineno">  251</span><span class="keywordtype">bool</span></div>
-<div class="foldopen" id="foldopen00252" data-start="{" data-end="}">
-<div class="line"><a id="l00252" name="l00252"></a><span class="lineno"><a class="line" href="classIBParticle.html#af287c94d6ba6527c7115cea356142065">  252</a></span><a class="code hl_function" href="classIBParticle.html#a344004d747375230e0d6b10ca98fbe50">IBParticle&lt;dim&gt;::is_inside_crown</a>(<span class="keyword">const</span> Point&lt;dim&gt; &amp;evaluation_point,</div>
-<div class="line"><a id="l00253" name="l00253"></a><span class="lineno">  253</span>                                 <span class="keyword">const</span> <span class="keywordtype">double</span>      outer_radius,</div>
-<div class="line"><a id="l00254" name="l00254"></a><span class="lineno">  254</span>                                 <span class="keyword">const</span> <span class="keywordtype">double</span>      inside_radius,</div>
-<div class="line"><a id="l00255" name="l00255"></a><span class="lineno">  255</span>                                 <span class="keyword">const</span> <span class="keywordtype">bool</span>        absolute_distance)</div>
-<div class="line"><a id="l00256" name="l00256"></a><span class="lineno">  256</span>{</div>
-<div class="line"><a id="l00257" name="l00257"></a><span class="lineno">  257</span>  <span class="keyword">const</span> <span class="keywordtype">double</span> radius = shape-&gt;effective_radius;</div>
-<div class="line"><a id="l00258" name="l00258"></a><span class="lineno">  258</span> </div>
-<div class="line"><a id="l00259" name="l00259"></a><span class="lineno">  259</span>  <span class="keywordtype">double</span> distance = shape-&gt;value(evaluation_point);</div>
-<div class="line"><a id="l00260" name="l00260"></a><span class="lineno">  260</span>  <span class="keywordtype">bool</span>   is_inside_outer_ring;</div>
-<div class="line"><a id="l00261" name="l00261"></a><span class="lineno">  261</span>  <span class="keywordtype">bool</span>   is_outside_inner_ring;</div>
-<div class="line"><a id="l00262" name="l00262"></a><span class="lineno">  262</span>  <span class="keywordflow">if</span> (absolute_distance)</div>
-<div class="line"><a id="l00263" name="l00263"></a><span class="lineno">  263</span>    {</div>
-<div class="line"><a id="l00264" name="l00264"></a><span class="lineno">  264</span>      is_inside_outer_ring  = distance &lt;= outer_radius;</div>
-<div class="line"><a id="l00265" name="l00265"></a><span class="lineno">  265</span>      is_outside_inner_ring = distance &gt;= inside_radius;</div>
-<div class="line"><a id="l00266" name="l00266"></a><span class="lineno">  266</span>    }</div>
-<div class="line"><a id="l00267" name="l00267"></a><span class="lineno">  267</span>  <span class="keywordflow">else</span></div>
-<div class="line"><a id="l00268" name="l00268"></a><span class="lineno">  268</span>    {</div>
-<div class="line"><a id="l00269" name="l00269"></a><span class="lineno">  269</span>      is_inside_outer_ring  = distance &lt;= radius * (outer_radius - 1);</div>
-<div class="line"><a id="l00270" name="l00270"></a><span class="lineno">  270</span>      is_outside_inner_ring = distance &gt;= radius * (inside_radius - 1);</div>
-<div class="line"><a id="l00271" name="l00271"></a><span class="lineno">  271</span>    }</div>
-<div class="line"><a id="l00272" name="l00272"></a><span class="lineno">  272</span> </div>
-<div class="line"><a id="l00273" name="l00273"></a><span class="lineno">  273</span>  <span class="keywordflow">return</span> is_inside_outer_ring &amp;&amp; is_outside_inner_ring;</div>
-<div class="line"><a id="l00274" name="l00274"></a><span class="lineno">  274</span>}</div>
+<div class="line"><a id="l00248" name="l00248"></a><span class="lineno">  248</span> </div>
+<div class="line"><a id="l00249" name="l00249"></a><span class="lineno">  249</span><span class="keyword">template</span> &lt;<span class="keywordtype">int</span> dim&gt;</div>
+<div class="line"><a id="l00250" name="l00250"></a><span class="lineno">  250</span><span class="keywordtype">void</span></div>
+<div class="foldopen" id="foldopen00251" data-start="{" data-end="}">
+<div class="line"><a id="l00251" name="l00251"></a><span class="lineno"><a class="line" href="classIBParticle.html#a45da6cdb769a95e3fb1924ebb40e31a6">  251</a></span><a class="code hl_function" href="classIBParticle.html#a45da6cdb769a95e3fb1924ebb40e31a6">IBParticle&lt;dim&gt;::clear_shape_cache</a>()</div>
+<div class="line"><a id="l00252" name="l00252"></a><span class="lineno">  252</span>{</div>
+<div class="line"><a id="l00253" name="l00253"></a><span class="lineno">  253</span>  this-&gt;shape-&gt;clear_cache();</div>
+<div class="line"><a id="l00254" name="l00254"></a><span class="lineno">  254</span>}</div>
 </div>
-<div class="line"><a id="l00275" name="l00275"></a><span class="lineno">  275</span> </div>
-<div class="line"><a id="l00276" name="l00276"></a><span class="lineno">  276</span><span class="keyword">template</span> &lt;<span class="keywordtype">int</span> dim&gt;</div>
-<div class="line"><a id="l00277" name="l00277"></a><span class="lineno">  277</span><span class="keywordtype">void</span></div>
-<div class="foldopen" id="foldopen00278" data-start="{" data-end="}">
-<div class="line"><a id="l00278" name="l00278"></a><span class="lineno"><a class="line" href="classIBParticle.html#ad19ebdd1188adb181af979666037a7b5">  278</a></span><a class="code hl_function" href="classIBParticle.html#ad19ebdd1188adb181af979666037a7b5">IBParticle&lt;dim&gt;::set_orientation</a>(<span class="keyword">const</span> Tensor&lt;1, 3&gt; new_orientation)</div>
-<div class="line"><a id="l00279" name="l00279"></a><span class="lineno">  279</span>{</div>
-<div class="line"><a id="l00280" name="l00280"></a><span class="lineno">  280</span>  this-&gt;orientation = new_orientation;</div>
-<div class="line"><a id="l00281" name="l00281"></a><span class="lineno">  281</span>  this-&gt;shape-&gt;set_orientation(new_orientation);</div>
-<div class="line"><a id="l00282" name="l00282"></a><span class="lineno">  282</span>  this-&gt;rotation_matrix = this-&gt;shape-&gt;get_rotation_matrix();</div>
-<div class="line"><a id="l00283" name="l00283"></a><span class="lineno">  283</span>}</div>
+<div class="line"><a id="l00255" name="l00255"></a><span class="lineno">  255</span> </div>
+<div class="line"><a id="l00256" name="l00256"></a><span class="lineno">  256</span><span class="keyword">template</span> &lt;<span class="keywordtype">int</span> dim&gt;</div>
+<div class="line"><a id="l00257" name="l00257"></a><span class="lineno">  257</span><span class="keywordtype">void</span></div>
+<div class="foldopen" id="foldopen00258" data-start="{" data-end="}">
+<div class="line"><a id="l00258" name="l00258"></a><span class="lineno"><a class="line" href="classIBParticle.html#ac08c903a2045505a9059850bf274b6ac">  258</a></span><a class="code hl_function" href="classIBParticle.html#ac08c903a2045505a9059850bf274b6ac">IBParticle&lt;dim&gt;::initialize_shape</a>(<span class="keyword">const</span> std::string         &amp;type,</div>
+<div class="line"><a id="l00259" name="l00259"></a><span class="lineno">  259</span>                                  <span class="keyword">const</span> std::vector&lt;double&gt; &amp;shape_arguments)</div>
+<div class="line"><a id="l00260" name="l00260"></a><span class="lineno">  260</span>{</div>
+<div class="line"><a id="l00261" name="l00261"></a><span class="lineno">  261</span>  shape = <a class="code hl_function" href="namespaceShapeGenerator.html#a3bd744f2a2a809dc9ae6bc9d7beeecca">ShapeGenerator::initialize_shape_from_vector</a>(type,</div>
+<div class="line"><a id="l00262" name="l00262"></a><span class="lineno">  262</span>                                                       shape_arguments,</div>
+<div class="line"><a id="l00263" name="l00263"></a><span class="lineno">  263</span>                                                       position,</div>
+<div class="line"><a id="l00264" name="l00264"></a><span class="lineno">  264</span>                                                       orientation);</div>
+<div class="line"><a id="l00265" name="l00265"></a><span class="lineno">  265</span>}</div>
 </div>
-<div class="line"><a id="l00284" name="l00284"></a><span class="lineno">  284</span> </div>
-<div class="line"><a id="l00285" name="l00285"></a><span class="lineno">  285</span><span class="keyword">template</span> &lt;<span class="keywordtype">int</span> dim&gt;</div>
-<div class="line"><a id="l00286" name="l00286"></a><span class="lineno">  286</span><span class="keywordtype">void</span></div>
-<div class="foldopen" id="foldopen00287" data-start="{" data-end="}">
-<div class="line"><a id="l00287" name="l00287"></a><span class="lineno"><a class="line" href="classIBParticle.html#a6e87956f17a27dafa3b40a8a218b73c1">  287</a></span><a class="code hl_function" href="classIBParticle.html#a6e87956f17a27dafa3b40a8a218b73c1">IBParticle&lt;dim&gt;::update_precalculations</a>(DoFHandler&lt;dim&gt; &amp;updated_dof_handler,</div>
-<div class="line"><a id="l00288" name="l00288"></a><span class="lineno">  288</span>                                        <span class="keyword">const</span> <span class="keywordtype">bool</span> mesh_based_precalculations)</div>
-<div class="line"><a id="l00289" name="l00289"></a><span class="lineno">  289</span>{</div>
-<div class="line"><a id="l00290" name="l00290"></a><span class="lineno">  290</span>  <span class="keywordflow">if</span> (integrate_motion || <a class="code hl_enumvalue" href="multiphysics_8h.html#a2cbb04ef215561a69b48772159577fddaac1a453d0cdc1f19d9479ccfaa8b082c">velocity</a>.norm() &gt; 1e-16 || omega.norm() &gt; 1e-16)</div>
-<div class="line"><a id="l00291" name="l00291"></a><span class="lineno">  291</span>    {</div>
-<div class="line"><a id="l00292" name="l00292"></a><span class="lineno">  292</span>      this-&gt;load_data_from_file();</div>
-<div class="line"><a id="l00293" name="l00293"></a><span class="lineno">  293</span>    }</div>
-<div class="line"><a id="l00294" name="l00294"></a><span class="lineno">  294</span>  <span class="keywordflow">if</span> (<span class="keyword">typeid</span>(*shape) == <span class="keyword">typeid</span>(<a class="code hl_class" href="classRBFShape.html">RBFShape&lt;dim&gt;</a>))</div>
-<div class="line"><a id="l00295" name="l00295"></a><span class="lineno">  295</span>    {</div>
-<div class="line"><a id="l00296" name="l00296"></a><span class="lineno">  296</span>      std::static_pointer_cast&lt;RBFShape&lt;dim&gt;&gt;(shape)-&gt;update_precalculations(</div>
-<div class="line"><a id="l00297" name="l00297"></a><span class="lineno">  297</span>        updated_dof_handler, mesh_based_precalculations);</div>
-<div class="line"><a id="l00298" name="l00298"></a><span class="lineno">  298</span>    }</div>
-<div class="line"><a id="l00299" name="l00299"></a><span class="lineno">  299</span>  <span class="keywordflow">else</span> <span class="keywordflow">if</span> (<span class="keyword">typeid</span>(*shape) == <span class="keyword">typeid</span>(<a class="code hl_class" href="classCompositeShape.html">CompositeShape&lt;dim&gt;</a>))</div>
-<div class="line"><a id="l00300" name="l00300"></a><span class="lineno">  300</span>    {</div>
-<div class="line"><a id="l00301" name="l00301"></a><span class="lineno">  301</span>      std::static_pointer_cast&lt;CompositeShape&lt;dim&gt;&gt;(shape)</div>
-<div class="line"><a id="l00302" name="l00302"></a><span class="lineno">  302</span>        -&gt;update_precalculations(updated_dof_handler,</div>
-<div class="line"><a id="l00303" name="l00303"></a><span class="lineno">  303</span>                                 mesh_based_precalculations);</div>
-<div class="line"><a id="l00304" name="l00304"></a><span class="lineno">  304</span>    }</div>
-<div class="line"><a id="l00305" name="l00305"></a><span class="lineno">  305</span>}</div>
+<div class="line"><a id="l00266" name="l00266"></a><span class="lineno">  266</span> </div>
+<div class="line"><a id="l00267" name="l00267"></a><span class="lineno">  267</span><span class="keyword">template</span> &lt;<span class="keywordtype">int</span> dim&gt;</div>
+<div class="line"><a id="l00268" name="l00268"></a><span class="lineno">  268</span><span class="keywordtype">void</span></div>
+<div class="foldopen" id="foldopen00269" data-start="{" data-end="}">
+<div class="line"><a id="l00269" name="l00269"></a><span class="lineno"><a class="line" href="classIBParticle.html#a8998dddc09af4e48d424ac38870b8795">  269</a></span><a class="code hl_function" href="classIBParticle.html#ac08c903a2045505a9059850bf274b6ac">IBParticle&lt;dim&gt;::initialize_shape</a>(<span class="keyword">const</span> std::string &amp;type,</div>
+<div class="line"><a id="l00270" name="l00270"></a><span class="lineno">  270</span>                                  <span class="keyword">const</span> std::string &amp;raw_arguments)</div>
+<div class="line"><a id="l00271" name="l00271"></a><span class="lineno">  271</span>{</div>
+<div class="line"><a id="l00272" name="l00272"></a><span class="lineno">  272</span>  shape = <a class="code hl_function" href="namespaceShapeGenerator.html#ab44d589cc8edd0b6dd1defc5d8705561">ShapeGenerator::initialize_shape</a>(type,</div>
+<div class="line"><a id="l00273" name="l00273"></a><span class="lineno">  273</span>                                           raw_arguments,</div>
+<div class="line"><a id="l00274" name="l00274"></a><span class="lineno">  274</span>                                           position,</div>
+<div class="line"><a id="l00275" name="l00275"></a><span class="lineno">  275</span>                                           orientation);</div>
+<div class="line"><a id="l00276" name="l00276"></a><span class="lineno">  276</span>}</div>
 </div>
-<div class="line"><a id="l00306" name="l00306"></a><span class="lineno">  306</span> </div>
-<div class="line"><a id="l00307" name="l00307"></a><span class="lineno">  307</span><span class="keyword">template</span> &lt;<span class="keywordtype">int</span> dim&gt;</div>
-<div class="line"><a id="l00308" name="l00308"></a><span class="lineno">  308</span><span class="keywordtype">void</span></div>
-<div class="foldopen" id="foldopen00309" data-start="{" data-end="}">
-<div class="line"><a id="l00309" name="l00309"></a><span class="lineno"><a class="line" href="classIBParticle.html#a6f8122e0e1a3746c7cffd6951654c910">  309</a></span><a class="code hl_function" href="classIBParticle.html#a6f8122e0e1a3746c7cffd6951654c910">IBParticle&lt;dim&gt;::remove_superfluous_data</a>(DoFHandler&lt;dim&gt; &amp;updated_dof_handler,</div>
-<div class="line"><a id="l00310" name="l00310"></a><span class="lineno">  310</span>                                         <span class="keyword">const</span> <span class="keywordtype">bool</span> mesh_based_precalculations)</div>
-<div class="line"><a id="l00311" name="l00311"></a><span class="lineno">  311</span>{</div>
-<div class="line"><a id="l00312" name="l00312"></a><span class="lineno">  312</span>  <span class="keywordflow">if</span> (<span class="keyword">typeid</span>(*shape) == <span class="keyword">typeid</span>(<a class="code hl_class" href="classRBFShape.html">RBFShape&lt;dim&gt;</a>))</div>
-<div class="line"><a id="l00313" name="l00313"></a><span class="lineno">  313</span>    std::static_pointer_cast&lt;RBFShape&lt;dim&gt;&gt;(shape)-&gt;remove_superfluous_data(</div>
-<div class="line"><a id="l00314" name="l00314"></a><span class="lineno">  314</span>      updated_dof_handler, mesh_based_precalculations);</div>
-<div class="line"><a id="l00315" name="l00315"></a><span class="lineno">  315</span>  <span class="keywordflow">else</span> <span class="keywordflow">if</span> (<span class="keyword">typeid</span>(*shape) == <span class="keyword">typeid</span>(<a class="code hl_class" href="classCompositeShape.html">CompositeShape&lt;dim&gt;</a>))</div>
-<div class="line"><a id="l00316" name="l00316"></a><span class="lineno">  316</span>    std::static_pointer_cast&lt;CompositeShape&lt;dim&gt;&gt;(shape)</div>
-<div class="line"><a id="l00317" name="l00317"></a><span class="lineno">  317</span>      -&gt;remove_superfluous_data(updated_dof_handler,</div>
-<div class="line"><a id="l00318" name="l00318"></a><span class="lineno">  318</span>                                mesh_based_precalculations);</div>
+<div class="line"><a id="l00277" name="l00277"></a><span class="lineno">  277</span> </div>
+<div class="line"><a id="l00278" name="l00278"></a><span class="lineno">  278</span><span class="keyword">template</span> &lt;<span class="keywordtype">int</span> dim&gt;</div>
+<div class="line"><a id="l00279" name="l00279"></a><span class="lineno">  279</span><span class="keywordtype">void</span></div>
+<div class="foldopen" id="foldopen00280" data-start="{" data-end="}">
+<div class="line"><a id="l00280" name="l00280"></a><span class="lineno"><a class="line" href="classIBParticle.html#a2bc83a810b43362a78d6f0fd2c4f5b46">  280</a></span><a class="code hl_function" href="classIBParticle.html#a2bc83a810b43362a78d6f0fd2c4f5b46">IBParticle&lt;dim&gt;::set_orientation</a>(<span class="keyword">const</span> Tensor&lt;1, 3&gt; &amp;new_orientation)</div>
+<div class="line"><a id="l00281" name="l00281"></a><span class="lineno">  281</span>{</div>
+<div class="line"><a id="l00282" name="l00282"></a><span class="lineno">  282</span>  this-&gt;orientation = new_orientation;</div>
+<div class="line"><a id="l00283" name="l00283"></a><span class="lineno">  283</span>  this-&gt;shape-&gt;set_orientation(new_orientation);</div>
+<div class="line"><a id="l00284" name="l00284"></a><span class="lineno">  284</span>  this-&gt;rotation_matrix = this-&gt;shape-&gt;get_rotation_matrix();</div>
+<div class="line"><a id="l00285" name="l00285"></a><span class="lineno">  285</span>}</div>
+</div>
+<div class="line"><a id="l00286" name="l00286"></a><span class="lineno">  286</span> </div>
+<div class="line"><a id="l00287" name="l00287"></a><span class="lineno">  287</span><span class="keyword">template</span> &lt;<span class="keywordtype">int</span> dim&gt;</div>
+<div class="line"><a id="l00288" name="l00288"></a><span class="lineno">  288</span><span class="keywordtype">void</span></div>
+<div class="foldopen" id="foldopen00289" data-start="{" data-end="}">
+<div class="line"><a id="l00289" name="l00289"></a><span class="lineno"><a class="line" href="classIBParticle.html#a6e87956f17a27dafa3b40a8a218b73c1">  289</a></span><a class="code hl_function" href="classIBParticle.html#a6e87956f17a27dafa3b40a8a218b73c1">IBParticle&lt;dim&gt;::update_precalculations</a>(DoFHandler&lt;dim&gt; &amp;updated_dof_handler,</div>
+<div class="line"><a id="l00290" name="l00290"></a><span class="lineno">  290</span>                                        <span class="keyword">const</span> <span class="keywordtype">bool</span>       precalculations)</div>
+<div class="line"><a id="l00291" name="l00291"></a><span class="lineno">  291</span>{</div>
+<div class="line"><a id="l00292" name="l00292"></a><span class="lineno">  292</span>  <span class="keywordflow">if</span> (integrate_motion || <a class="code hl_enumvalue" href="multiphysics_8h.html#a2cbb04ef215561a69b48772159577fddaac1a453d0cdc1f19d9479ccfaa8b082c">velocity</a>.norm() &gt; 1e-16 || omega.norm() &gt; 1e-16)</div>
+<div class="line"><a id="l00293" name="l00293"></a><span class="lineno">  293</span>    {</div>
+<div class="line"><a id="l00294" name="l00294"></a><span class="lineno">  294</span>      this-&gt;load_data_from_file();</div>
+<div class="line"><a id="l00295" name="l00295"></a><span class="lineno">  295</span>    }</div>
+<div class="line"><a id="l00296" name="l00296"></a><span class="lineno">  296</span>  <span class="keywordflow">if</span> (<span class="keyword">typeid</span>(*shape) == <span class="keyword">typeid</span>(<a class="code hl_class" href="classRBFShape.html">RBFShape&lt;dim&gt;</a>))</div>
+<div class="line"><a id="l00297" name="l00297"></a><span class="lineno">  297</span>    {</div>
+<div class="line"><a id="l00298" name="l00298"></a><span class="lineno">  298</span>      std::static_pointer_cast&lt;RBFShape&lt;dim&gt;&gt;(shape)-&gt;update_precalculations(</div>
+<div class="line"><a id="l00299" name="l00299"></a><span class="lineno">  299</span>        updated_dof_handler, precalculations);</div>
+<div class="line"><a id="l00300" name="l00300"></a><span class="lineno">  300</span>    }</div>
+<div class="line"><a id="l00301" name="l00301"></a><span class="lineno">  301</span>  <span class="keywordflow">else</span> <span class="keywordflow">if</span> (<span class="keyword">typeid</span>(*shape) == <span class="keyword">typeid</span>(<a class="code hl_class" href="classCompositeShape.html">CompositeShape&lt;dim&gt;</a>))</div>
+<div class="line"><a id="l00302" name="l00302"></a><span class="lineno">  302</span>    {</div>
+<div class="line"><a id="l00303" name="l00303"></a><span class="lineno">  303</span>      std::static_pointer_cast&lt;CompositeShape&lt;dim&gt;&gt;(shape)</div>
+<div class="line"><a id="l00304" name="l00304"></a><span class="lineno">  304</span>        -&gt;update_precalculations(updated_dof_handler, precalculations);</div>
+<div class="line"><a id="l00305" name="l00305"></a><span class="lineno">  305</span>    }</div>
+<div class="line"><a id="l00306" name="l00306"></a><span class="lineno">  306</span>}</div>
+</div>
+<div class="line"><a id="l00307" name="l00307"></a><span class="lineno">  307</span> </div>
+<div class="line"><a id="l00308" name="l00308"></a><span class="lineno">  308</span><span class="keyword">template</span> &lt;<span class="keywordtype">int</span> dim&gt;</div>
+<div class="line"><a id="l00309" name="l00309"></a><span class="lineno">  309</span><span class="keywordtype">void</span></div>
+<div class="foldopen" id="foldopen00310" data-start="{" data-end="}">
+<div class="line"><a id="l00310" name="l00310"></a><span class="lineno"><a class="line" href="classIBParticle.html#a6f8122e0e1a3746c7cffd6951654c910">  310</a></span><a class="code hl_function" href="classIBParticle.html#a6f8122e0e1a3746c7cffd6951654c910">IBParticle&lt;dim&gt;::remove_superfluous_data</a>(DoFHandler&lt;dim&gt; &amp;updated_dof_handler,</div>
+<div class="line"><a id="l00311" name="l00311"></a><span class="lineno">  311</span>                                         <span class="keyword">const</span> <span class="keywordtype">bool</span>       precalculations)</div>
+<div class="line"><a id="l00312" name="l00312"></a><span class="lineno">  312</span>{</div>
+<div class="line"><a id="l00313" name="l00313"></a><span class="lineno">  313</span>  <span class="keywordflow">if</span> (<span class="keyword">typeid</span>(*shape) == <span class="keyword">typeid</span>(<a class="code hl_class" href="classRBFShape.html">RBFShape&lt;dim&gt;</a>))</div>
+<div class="line"><a id="l00314" name="l00314"></a><span class="lineno">  314</span>    std::static_pointer_cast&lt;RBFShape&lt;dim&gt;&gt;(shape)-&gt;remove_superfluous_data(</div>
+<div class="line"><a id="l00315" name="l00315"></a><span class="lineno">  315</span>      updated_dof_handler, precalculations);</div>
+<div class="line"><a id="l00316" name="l00316"></a><span class="lineno">  316</span>  <span class="keywordflow">else</span> <span class="keywordflow">if</span> (<span class="keyword">typeid</span>(*shape) == <span class="keyword">typeid</span>(<a class="code hl_class" href="classCompositeShape.html">CompositeShape&lt;dim&gt;</a>))</div>
+<div class="line"><a id="l00317" name="l00317"></a><span class="lineno">  317</span>    std::static_pointer_cast&lt;CompositeShape&lt;dim&gt;&gt;(shape)</div>
+<div class="line"><a id="l00318" name="l00318"></a><span class="lineno">  318</span>      -&gt;remove_superfluous_data(updated_dof_handler, precalculations);</div>
 <div class="line"><a id="l00319" name="l00319"></a><span class="lineno">  319</span>}</div>
 </div>
 <div class="line"><a id="l00320" name="l00320"></a><span class="lineno">  320</span> </div>
@@ -455,22 +455,22 @@ $(document).ready(function() { init_codefold(0); });
 <div class="line"><a id="l00330" name="l00330"></a><span class="lineno">  330</span> </div>
 <div class="line"><a id="l00331" name="l00331"></a><span class="lineno">  331</span><span class="keyword">template</span> <span class="keyword">class </span><a class="code hl_class" href="classIBParticle.html">IBParticle&lt;2&gt;</a>;</div>
 <div class="line"><a id="l00332" name="l00332"></a><span class="lineno">  332</span><span class="keyword">template</span> <span class="keyword">class </span><a class="code hl_class" href="classIBParticle.html">IBParticle&lt;3&gt;</a>;</div>
-<div class="ttc" id="aclassCompositeShape_html"><div class="ttname"><a href="classCompositeShape.html">CompositeShape</a></div><div class="ttdoc">This class was designed so that specific composite shapes could be defined through the parameter file...</div><div class="ttdef"><b>Definition</b> <a href="shape_8h_source.html#l02107">shape.h:2108</a></div></div>
+<div class="ttc" id="aclassCompositeShape_html"><div class="ttname"><a href="classCompositeShape.html">CompositeShape</a></div><div class="ttdoc">This class was designed so that specific composite shapes could be defined through the parameter file...</div><div class="ttdef"><b>Definition</b> <a href="shape_8h_source.html#l02095">shape.h:2096</a></div></div>
 <div class="ttc" id="aclassDEM_1_1ParticleProperties_html_ae8bbaccc0e3dad899903c49dbbd1a612"><div class="ttname"><a href="classDEM_1_1ParticleProperties.html#ae8bbaccc0e3dad899903c49dbbd1a612">DEM::ParticleProperties::get_properties_name</a></div><div class="ttdeci">static std::vector&lt; std::pair&lt; std::string, int &gt; &gt; get_properties_name()</div><div class="ttdoc">Return the names of each DEM property. Used to properly generate output files.</div><div class="ttdef"><b>Definition</b> <a href="dem__properties_8cc_source.html#l00012">dem_properties.cc:12</a></div></div>
 <div class="ttc" id="aclassIBParticle_html"><div class="ttname"><a href="classIBParticle.html">IBParticle</a></div><div class="ttdoc">Define the behavior of a specific particle for the sharp interface IB solver.</div><div class="ttdef"><b>Definition</b> <a href="ib__particle_8h_source.html#l00025">ib_particle.h:26</a></div></div>
 <div class="ttc" id="aclassIBParticle_html_a16aea2f4bc24e16a1b065e8746e0f3e7"><div class="ttname"><a href="classIBParticle.html#a16aea2f4bc24e16a1b065e8746e0f3e7">IBParticle::get_properties</a></div><div class="ttdeci">std::vector&lt; double &gt; get_properties()</div><div class="ttdoc">Return the value of the DEM properties, for visualization.</div><div class="ttdef"><b>Definition</b> <a href="ib__particle_8cc_source.html#l00133">ib_particle.cc:133</a></div></div>
+<div class="ttc" id="aclassIBParticle_html_a2bc83a810b43362a78d6f0fd2c4f5b46"><div class="ttname"><a href="classIBParticle.html#a2bc83a810b43362a78d6f0fd2c4f5b46">IBParticle::set_orientation</a></div><div class="ttdeci">void set_orientation(const Tensor&lt; 1, 3 &gt; &amp;orientation)</div><div class="ttdoc">Set the orientation and dependent members to the given orientation.</div><div class="ttdef"><b>Definition</b> <a href="ib__particle_8cc_source.html#l00280">ib_particle.cc:280</a></div></div>
 <div class="ttc" id="aclassIBParticle_html_a2ea032dbbcaad3e5b10f5eebfc8efcbf"><div class="ttname"><a href="classIBParticle.html#a2ea032dbbcaad3e5b10f5eebfc8efcbf">IBParticle::load_data_from_file</a></div><div class="ttdeci">void load_data_from_file()</div><div class="ttdoc">Load data from the files (for file-based Shapes).</div><div class="ttdef"><b>Definition</b> <a href="ib__particle_8cc_source.html#l00323">ib_particle.cc:323</a></div></div>
-<div class="ttc" id="aclassIBParticle_html_a344004d747375230e0d6b10ca98fbe50"><div class="ttname"><a href="classIBParticle.html#a344004d747375230e0d6b10ca98fbe50">IBParticle::is_inside_crown</a></div><div class="ttdeci">bool is_inside_crown(const Point&lt; dim &gt; &amp;evaluation_point, const double outer_radius, const double inside_radius, const bool absolute_distance, const typename DoFHandler&lt; dim &gt;::active_cell_iterator &amp;cell_guess)</div><div class="ttdoc">Determine if the given point is inside the crown for which the limits are defined by inner and outer ...</div><div class="ttdef"><b>Definition</b> <a href="ib__particle_8cc_source.html#l00224">ib_particle.cc:224</a></div></div>
-<div class="ttc" id="aclassIBParticle_html_a45da6cdb769a95e3fb1924ebb40e31a6"><div class="ttname"><a href="classIBParticle.html#a45da6cdb769a95e3fb1924ebb40e31a6">IBParticle::clear_shape_cache</a></div><div class="ttdeci">void clear_shape_cache()</div><div class="ttdoc">Clear the cache used to evaluate the value and vector defining the signed distance function.</div><div class="ttdef"><b>Definition</b> <a href="ib__particle_8cc_source.html#l00177">ib_particle.cc:177</a></div></div>
-<div class="ttc" id="aclassIBParticle_html_a67d643161abaf21b8d5d2acf0ce534d8"><div class="ttname"><a href="classIBParticle.html#a67d643161abaf21b8d5d2acf0ce534d8">IBParticle::initialize_shape</a></div><div class="ttdeci">void initialize_shape(const std::string type, const std::vector&lt; double &gt; shape_arguments)</div><div class="ttdoc">Set up a shape in accordance with the given type and arguments.</div><div class="ttdef"><b>Definition</b> <a href="ib__particle_8cc_source.html#l00184">ib_particle.cc:184</a></div></div>
-<div class="ttc" id="aclassIBParticle_html_a6e87956f17a27dafa3b40a8a218b73c1"><div class="ttname"><a href="classIBParticle.html#a6e87956f17a27dafa3b40a8a218b73c1">IBParticle::update_precalculations</a></div><div class="ttdeci">void update_precalculations(DoFHandler&lt; dim &gt; &amp;updated_dof_handler, const bool mesh_based_precalculations)</div><div class="ttdoc">Set the proper DOF handler, then compute/update the map of cells and their likely non-null nodes.</div><div class="ttdef"><b>Definition</b> <a href="ib__particle_8cc_source.html#l00287">ib_particle.cc:287</a></div></div>
-<div class="ttc" id="aclassIBParticle_html_a6f8122e0e1a3746c7cffd6951654c910"><div class="ttname"><a href="classIBParticle.html#a6f8122e0e1a3746c7cffd6951654c910">IBParticle::remove_superfluous_data</a></div><div class="ttdeci">void remove_superfluous_data(DoFHandler&lt; dim &gt; &amp;updated_dof_handler, const bool mesh_based_precalculations)</div><div class="ttdoc">Update precalculations if needed, then compute and remove superfluous data.</div><div class="ttdef"><b>Definition</b> <a href="ib__particle_8cc_source.html#l00309">ib_particle.cc:309</a></div></div>
-<div class="ttc" id="aclassIBParticle_html_a7da9b4fcc98681e06767478dc7db3963"><div class="ttname"><a href="classIBParticle.html#a7da9b4fcc98681e06767478dc7db3963">IBParticle::closest_surface_point</a></div><div class="ttdeci">void closest_surface_point(const Point&lt; dim &gt; &amp;p, Point&lt; dim &gt; &amp;closest_point, const typename DoFHandler&lt; dim &gt;::active_cell_iterator &amp;cell_guess)</div><div class="ttdoc">Find the closest surface point on the shape.</div><div class="ttdef"><b>Definition</b> <a href="ib__particle_8cc_source.html#l00206">ib_particle.cc:206</a></div></div>
+<div class="ttc" id="aclassIBParticle_html_a344004d747375230e0d6b10ca98fbe50"><div class="ttname"><a href="classIBParticle.html#a344004d747375230e0d6b10ca98fbe50">IBParticle::is_inside_crown</a></div><div class="ttdeci">bool is_inside_crown(const Point&lt; dim &gt; &amp;evaluation_point, const double outer_radius, const double inside_radius, const bool absolute_distance, const typename DoFHandler&lt; dim &gt;::active_cell_iterator &amp;cell_guess)</div><div class="ttdoc">Determine if the given point is inside the crown for which the limits are defined by inner and outer ...</div><div class="ttdef"><b>Definition</b> <a href="ib__particle_8cc_source.html#l00195">ib_particle.cc:195</a></div></div>
+<div class="ttc" id="aclassIBParticle_html_a45da6cdb769a95e3fb1924ebb40e31a6"><div class="ttname"><a href="classIBParticle.html#a45da6cdb769a95e3fb1924ebb40e31a6">IBParticle::clear_shape_cache</a></div><div class="ttdeci">void clear_shape_cache()</div><div class="ttdoc">Clear the cache used to evaluate the value and vector defining the signed distance function.</div><div class="ttdef"><b>Definition</b> <a href="ib__particle_8cc_source.html#l00251">ib_particle.cc:251</a></div></div>
+<div class="ttc" id="aclassIBParticle_html_a6e87956f17a27dafa3b40a8a218b73c1"><div class="ttname"><a href="classIBParticle.html#a6e87956f17a27dafa3b40a8a218b73c1">IBParticle::update_precalculations</a></div><div class="ttdeci">void update_precalculations(DoFHandler&lt; dim &gt; &amp;updated_dof_handler, const bool mesh_based_precalculations)</div><div class="ttdoc">Set the proper DOF handler, then compute/update the map of cells and their likely non-null nodes.</div><div class="ttdef"><b>Definition</b> <a href="ib__particle_8cc_source.html#l00289">ib_particle.cc:289</a></div></div>
+<div class="ttc" id="aclassIBParticle_html_a6f8122e0e1a3746c7cffd6951654c910"><div class="ttname"><a href="classIBParticle.html#a6f8122e0e1a3746c7cffd6951654c910">IBParticle::remove_superfluous_data</a></div><div class="ttdeci">void remove_superfluous_data(DoFHandler&lt; dim &gt; &amp;updated_dof_handler, const bool mesh_based_precalculations)</div><div class="ttdoc">Update precalculations if needed, then compute and remove superfluous data.</div><div class="ttdef"><b>Definition</b> <a href="ib__particle_8cc_source.html#l00310">ib_particle.cc:310</a></div></div>
+<div class="ttc" id="aclassIBParticle_html_a7da9b4fcc98681e06767478dc7db3963"><div class="ttname"><a href="classIBParticle.html#a7da9b4fcc98681e06767478dc7db3963">IBParticle::closest_surface_point</a></div><div class="ttdeci">void closest_surface_point(const Point&lt; dim &gt; &amp;p, Point&lt; dim &gt; &amp;closest_point, const typename DoFHandler&lt; dim &gt;::active_cell_iterator &amp;cell_guess)</div><div class="ttdoc">Find the closest surface point on the shape.</div><div class="ttdef"><b>Definition</b> <a href="ib__particle_8cc_source.html#l00177">ib_particle.cc:177</a></div></div>
 <div class="ttc" id="aclassIBParticle_html_a8e24bfa945f64bf499bfbde33f5391b0"><div class="ttname"><a href="classIBParticle.html#a8e24bfa945f64bf499bfbde33f5391b0">IBParticle::initialize_all</a></div><div class="ttdeci">void initialize_all()</div><div class="ttdoc">Initialize all particles.</div><div class="ttdef"><b>Definition</b> <a href="ib__particle_8cc_source.html#l00009">ib_particle.cc:9</a></div></div>
 <div class="ttc" id="aclassIBParticle_html_a9a552b1c7085a2ec4ff00f87fe17e517"><div class="ttname"><a href="classIBParticle.html#a9a552b1c7085a2ec4ff00f87fe17e517">IBParticle::initialize_previous_solution</a></div><div class="ttdeci">void initialize_previous_solution()</div><div class="ttdoc">Initialize the value of the last state of the particle.</div><div class="ttdef"><b>Definition</b> <a href="ib__particle_8cc_source.html#l00097">ib_particle.cc:97</a></div></div>
 <div class="ttc" id="aclassIBParticle_html_aa1bd8471146cc5580164fb8b28415ed8"><div class="ttname"><a href="classIBParticle.html#aa1bd8471146cc5580164fb8b28415ed8">IBParticle::get_properties_name</a></div><div class="ttdeci">std::vector&lt; std::pair&lt; std::string, int &gt; &gt; get_properties_name()</div><div class="ttdoc">Return the names of the DEM properties, for visualization.</div><div class="ttdef"><b>Definition</b> <a href="ib__particle_8cc_source.html#l00117">ib_particle.cc:117</a></div></div>
-<div class="ttc" id="aclassIBParticle_html_ad19ebdd1188adb181af979666037a7b5"><div class="ttname"><a href="classIBParticle.html#ad19ebdd1188adb181af979666037a7b5">IBParticle::set_orientation</a></div><div class="ttdeci">void set_orientation(const Tensor&lt; 1, 3 &gt; orientation)</div><div class="ttdoc">Set the orientation and dependent members to the given orientation.</div><div class="ttdef"><b>Definition</b> <a href="ib__particle_8cc_source.html#l00278">ib_particle.cc:278</a></div></div>
-<div class="ttc" id="aclassRBFShape_html"><div class="ttname"><a href="classRBFShape.html">RBFShape</a></div><div class="ttdoc">RBF Shapes express the signed distance function as a linear combination of Radial Basis Functions (RB...</div><div class="ttdef"><b>Definition</b> <a href="shape_8h_source.html#l02623">shape.h:2624</a></div></div>
+<div class="ttc" id="aclassIBParticle_html_ac08c903a2045505a9059850bf274b6ac"><div class="ttname"><a href="classIBParticle.html#ac08c903a2045505a9059850bf274b6ac">IBParticle::initialize_shape</a></div><div class="ttdeci">void initialize_shape(const std::string &amp;type, const std::vector&lt; double &gt; &amp;shape_arguments)</div><div class="ttdoc">Set up a shape in accordance with the given type and arguments.</div><div class="ttdef"><b>Definition</b> <a href="ib__particle_8cc_source.html#l00258">ib_particle.cc:258</a></div></div>
+<div class="ttc" id="aclassRBFShape_html"><div class="ttname"><a href="classRBFShape.html">RBFShape</a></div><div class="ttdoc">RBF Shapes express the signed distance function as a linear combination of Radial Basis Functions (RB...</div><div class="ttdef"><b>Definition</b> <a href="shape_8h_source.html#l02614">shape.h:2615</a></div></div>
 <div class="ttc" id="aib__particle_8h_html"><div class="ttname"><a href="ib__particle_8h.html">ib_particle.h</a></div></div>
 <div class="ttc" id="amultiphysics_8h_html_a2cbb04ef215561a69b48772159577fddaac1a453d0cdc1f19d9479ccfaa8b082c"><div class="ttname"><a href="multiphysics_8h.html#a2cbb04ef215561a69b48772159577fddaac1a453d0cdc1f19d9479ccfaa8b082c">Variable::velocity</a></div><div class="ttdeci">@ velocity</div><div class="ttdoc">Velocity vector field from fluid dynamics.</div></div>
 <div class="ttc" id="anamespaceDEM_1_1CFDDEMProperties_html_ae9734b9d29480269e4764c5092d87b2fa0b120504b8591bd6814e4291c614e7ae"><div class="ttname"><a href="namespaceDEM_1_1CFDDEMProperties.html#ae9734b9d29480269e4764c5092d87b2fa0b120504b8591bd6814e4291c614e7ae">DEM::CFDDEMProperties::fem_torque_x</a></div><div class="ttdeci">@ fem_torque_x</div><div class="ttdef"><b>Definition</b> <a href="dem__properties_8h_source.html#l00082">dem_properties.h:82</a></div></div>

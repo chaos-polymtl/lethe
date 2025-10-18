@@ -2,7 +2,7 @@
 <area shape="rect" id="Node000000" href="$classPhysicalPropertyModel.html" title="Abstract class that defines the interface for a physical property model Physical property model provi..." alt="" coords="5,449,176,475"/>
 <area shape="rect" id="Node000001" href="$classDensityModel.html" title="Abstract class for calculating the density of materials." alt="" coords="277,55,389,80"/>
 <area shape="poly" id="edge104_Node000000_Node000001" title=" " alt="" coords="99,435,147,325,182,256,222,188,272,125,316,78,320,82,276,129,226,192,186,258,152,327,104,437"/>
-<area shape="rect" id="Node000004" href="$classRheologicalModel.html" title="Abstract class that allows to calculate the non&#45;newtonian viscosity on each quadrature point and the ..." alt="" coords="263,203,402,228"/>
+<area shape="rect" id="Node000004" href="$classRheologicalModel.html" title="Abstract class that allows to calculate the non&#45;Newtonian viscosity on each quadrature point and the ..." alt="" coords="263,203,402,228"/>
 <area shape="poly" id="edge107_Node000000_Node000004" title=" " alt="" coords="112,438,317,226,321,230,116,441"/>
 <area shape="rect" id="Node000009" href="$classSpecificHeatModel.html" title="Abstract class for calculating the specific heat of materials on quadrature points using the temperat..." alt="" coords="261,351,404,376"/>
 <area shape="poly" id="edge112_Node000000_Node000009" title=" " alt="" coords="134,442,299,374,301,379,136,447"/>

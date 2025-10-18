@@ -359,13 +359,13 @@ This graph shows which files directly or indirectly include this file:</div>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="func-members" name="func-members"></a>
 Functions</h2></td></tr>
-<tr class="memitem:a585ba53d846bcdb132f1fbc13a0c5180" id="r_a585ba53d846bcdb132f1fbc13a0c5180"><td class="memItemLeft" align="right" valign="top">Vector&lt; double &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="bdf_8h.html#a585ba53d846bcdb132f1fbc13a0c5180">calculate_bdf_coefficients</a> (<a class="el" href="structParameters_1_1SimulationControl.html#a75b33ae454da14bc72dbe078c121d7e9">Parameters::SimulationControl::TimeSteppingMethod</a> method, const std::vector&lt; double &gt; &amp;time_steps)</td></tr>
+<tr class="memitem:a585ba53d846bcdb132f1fbc13a0c5180" id="r_a585ba53d846bcdb132f1fbc13a0c5180"><td class="memItemLeft" align="right" valign="top">Vector&lt; double &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="bdf_8h.html#a585ba53d846bcdb132f1fbc13a0c5180">calculate_bdf_coefficients</a> (<a class="el" href="structParameters_1_1SimulationControl.html#a86daf86652a712eb783c105c953eb7f8">Parameters::SimulationControl::TimeSteppingMethod</a> method, const std::vector&lt; double &gt; &amp;time_steps)</td></tr>
 <tr class="separator:a585ba53d846bcdb132f1fbc13a0c5180"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ad10bfebb790e6a6a6e6df1cb1d062a61" id="r_ad10bfebb790e6a6a6e6df1cb1d062a61"><td class="memItemLeft" align="right" valign="top">Vector&lt; double &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="bdf_8h.html#ad10bfebb790e6a6a6e6df1cb1d062a61">delta</a> (unsigned int order, unsigned int n, unsigned int j, const Vector&lt; double &gt; &amp;times)</td></tr>
 <tr class="separator:ad10bfebb790e6a6a6e6df1cb1d062a61"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a20abc47ca7441007f8923c529000ace5" id="r_a20abc47ca7441007f8923c529000ace5"><td class="memItemLeft" align="right" valign="top">unsigned int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="bdf_8h.html#a20abc47ca7441007f8923c529000ace5">maximum_number_of_previous_solutions</a> ()</td></tr>
 <tr class="separator:a20abc47ca7441007f8923c529000ace5"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a79e44dc10ababc737a8659c2f5f8c18a" id="r_a79e44dc10ababc737a8659c2f5f8c18a"><td class="memItemLeft" align="right" valign="top">unsigned int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="bdf_8h.html#a79e44dc10ababc737a8659c2f5f8c18a">number_of_previous_solutions</a> (const <a class="el" href="structParameters_1_1SimulationControl.html#a75b33ae454da14bc72dbe078c121d7e9">Parameters::SimulationControl::TimeSteppingMethod</a> method)</td></tr>
+<tr class="memitem:a79e44dc10ababc737a8659c2f5f8c18a" id="r_a79e44dc10ababc737a8659c2f5f8c18a"><td class="memItemLeft" align="right" valign="top">unsigned int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="bdf_8h.html#a79e44dc10ababc737a8659c2f5f8c18a">number_of_previous_solutions</a> (const <a class="el" href="structParameters_1_1SimulationControl.html#a86daf86652a712eb783c105c953eb7f8">Parameters::SimulationControl::TimeSteppingMethod</a> method)</td></tr>
 <tr class="separator:a79e44dc10ababc737a8659c2f5f8c18a"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a4e79f83003fb6f8817196a020a8dc161" id="r_a4e79f83003fb6f8817196a020a8dc161"><td class="memTemplParams" colspan="2">template&lt;typename DataType &gt; </td></tr>
 <tr class="memitem:a4e79f83003fb6f8817196a020a8dc161"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="bdf_8h.html#a4e79f83003fb6f8817196a020a8dc161">bdf_extrapolate</a> (const std::vector&lt; double &gt; &amp;time_vector, const std::vector&lt; std::vector&lt; DataType &gt; &gt; &amp;solution_vector, const unsigned int <a class="el" href="bdf_8h.html#a79e44dc10ababc737a8659c2f5f8c18a">number_of_previous_solutions</a>, std::vector&lt; DataType &gt; &amp;extrapolated_solution)</td></tr>
@@ -444,7 +444,7 @@ template&lt;typename DataType &gt; </div>
         <tr>
           <td class="memname">Vector&lt; double &gt; calculate_bdf_coefficients </td>
           <td>(</td>
-          <td class="paramtype"><a class="el" href="structParameters_1_1SimulationControl.html#a75b33ae454da14bc72dbe078c121d7e9">Parameters::SimulationControl::TimeSteppingMethod</a>&#160;</td>
+          <td class="paramtype"><a class="el" href="structParameters_1_1SimulationControl.html#a86daf86652a712eb783c105c953eb7f8">Parameters::SimulationControl::TimeSteppingMethod</a>&#160;</td>
           <td class="paramname"><em>method</em>, </td>
         </tr>
         <tr>
@@ -477,7 +477,7 @@ integration based on the BDF for viscous flows." Journal of Computational Physic
 
 <p class="definition">Definition at line <a class="el" href="bdf_8cc_source.html#l00042">42</a> of file <a class="el" href="bdf_8cc_source.html">bdf.cc</a>.</p>
 
-<p class="reference">References <a class="el" href="structParameters_1_1SimulationControl.html#a75b33ae454da14bc72dbe078c121d7e9a0267dc6b1db4ed7cf48c60fa776c8843">Parameters::SimulationControl::bdf1</a>, <a class="el" href="structParameters_1_1SimulationControl.html#a75b33ae454da14bc72dbe078c121d7e9a7e23e875a6c062a276f90cb43a6280c0">Parameters::SimulationControl::bdf2</a>, <a class="el" href="structParameters_1_1SimulationControl.html#a75b33ae454da14bc72dbe078c121d7e9a62fd133dd9c35c94e867fc65606aeffe">Parameters::SimulationControl::bdf3</a>, <a class="el" href="bdf_8cc_source.html#l00010">bdf_coefficients()</a>, and <a class="el" href="structParameters_1_1SimulationControl.html#a75b33ae454da14bc72dbe078c121d7e9ace68ebd29c010930ed70df3b718e02b9">Parameters::SimulationControl::steady_bdf</a>.</p>
+<p class="reference">References <a class="el" href="structParameters_1_1SimulationControl.html#a86daf86652a712eb783c105c953eb7f8a0267dc6b1db4ed7cf48c60fa776c8843">Parameters::SimulationControl::bdf1</a>, <a class="el" href="structParameters_1_1SimulationControl.html#a86daf86652a712eb783c105c953eb7f8a7e23e875a6c062a276f90cb43a6280c0">Parameters::SimulationControl::bdf2</a>, <a class="el" href="structParameters_1_1SimulationControl.html#a86daf86652a712eb783c105c953eb7f8a62fd133dd9c35c94e867fc65606aeffe">Parameters::SimulationControl::bdf3</a>, <a class="el" href="bdf_8cc_source.html#l00010">bdf_coefficients()</a>, and <a class="el" href="structParameters_1_1SimulationControl.html#a86daf86652a712eb783c105c953eb7f8ace68ebd29c010930ed70df3b718e02b9">Parameters::SimulationControl::steady_bdf</a>.</p>
 
 </div>
 </div>
@@ -583,7 +583,7 @@ integration based on the BDF for viscous flows." Journal of Computational Physic
         <tr>
           <td class="memname">unsigned int number_of_previous_solutions </td>
           <td>(</td>
-          <td class="paramtype">const <a class="el" href="structParameters_1_1SimulationControl.html#a75b33ae454da14bc72dbe078c121d7e9">Parameters::SimulationControl::TimeSteppingMethod</a>&#160;</td>
+          <td class="paramtype">const <a class="el" href="structParameters_1_1SimulationControl.html#a86daf86652a712eb783c105c953eb7f8">Parameters::SimulationControl::TimeSteppingMethod</a>&#160;</td>
           <td class="paramname"><em>method</em></td><td>)</td>
           <td></td>
         </tr>
@@ -606,7 +606,7 @@ integration based on the BDF for viscous flows." Journal of Computational Physic
 
 <p class="definition">Definition at line <a class="el" href="bdf_8h_source.html#l00097">97</a> of file <a class="el" href="bdf_8h_source.html">bdf.h</a>.</p>
 
-<p class="reference">References <a class="el" href="structParameters_1_1SimulationControl.html#a75b33ae454da14bc72dbe078c121d7e9a0267dc6b1db4ed7cf48c60fa776c8843">Parameters::SimulationControl::bdf1</a>, <a class="el" href="structParameters_1_1SimulationControl.html#a75b33ae454da14bc72dbe078c121d7e9a7e23e875a6c062a276f90cb43a6280c0">Parameters::SimulationControl::bdf2</a>, <a class="el" href="structParameters_1_1SimulationControl.html#a75b33ae454da14bc72dbe078c121d7e9a62fd133dd9c35c94e867fc65606aeffe">Parameters::SimulationControl::bdf3</a>, and <a class="el" href="structParameters_1_1SimulationControl.html#a75b33ae454da14bc72dbe078c121d7e9ace68ebd29c010930ed70df3b718e02b9">Parameters::SimulationControl::steady_bdf</a>.</p>
+<p class="reference">References <a class="el" href="structParameters_1_1SimulationControl.html#a86daf86652a712eb783c105c953eb7f8a0267dc6b1db4ed7cf48c60fa776c8843">Parameters::SimulationControl::bdf1</a>, <a class="el" href="structParameters_1_1SimulationControl.html#a86daf86652a712eb783c105c953eb7f8a7e23e875a6c062a276f90cb43a6280c0">Parameters::SimulationControl::bdf2</a>, <a class="el" href="structParameters_1_1SimulationControl.html#a86daf86652a712eb783c105c953eb7f8a62fd133dd9c35c94e867fc65606aeffe">Parameters::SimulationControl::bdf3</a>, and <a class="el" href="structParameters_1_1SimulationControl.html#a86daf86652a712eb783c105c953eb7f8ace68ebd29c010930ed70df3b718e02b9">Parameters::SimulationControl::steady_bdf</a>.</p>
 
 </div>
 </div>

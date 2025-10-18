@@ -87,6 +87,7 @@ $(function() {
 <div class="header">
   <div class="summary">
 <a href="#pub-methods">Public Member Functions</a> &#124;
+<a href="#pub-static-methods">Static Public Member Functions</a> &#124;
 <a href="#pub-attribs">Public Attributes</a> &#124;
 <a href="structParameters_1_1ConstrainSolidDomain-members.html">List of all members</a>  </div>
   <div class="headertitle"><div class="title">Parameters::ConstrainSolidDomain&lt; dim &gt; Struct Template Reference</div></div>
@@ -101,10 +102,13 @@ Public Member Functions</h2></td></tr>
 <tr class="separator:ae776f1356633e89bda3d13a3a249d529"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a64c8b67ae67a2b16f80d1d57a4966411" id="r_a64c8b67ae67a2b16f80d1d57a4966411"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structParameters_1_1ConstrainSolidDomain.html#a64c8b67ae67a2b16f80d1d57a4966411">parse_parameters</a> (ParameterHandler &amp;prm)</td></tr>
 <tr class="separator:a64c8b67ae67a2b16f80d1d57a4966411"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a58b18984d18c8bbc7bdebc605c7bf729" id="r_a58b18984d18c8bbc7bdebc605c7bf729"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structParameters_1_1ConstrainSolidDomain.html#a58b18984d18c8bbc7bdebc605c7bf729">declare_default_entries</a> (ParameterHandler &amp;prm)</td></tr>
+<tr class="memitem:a8138b2a25e44d313c0c30b431dfa3373" id="r_a8138b2a25e44d313c0c30b431dfa3373"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structParameters_1_1ConstrainSolidDomain.html#a8138b2a25e44d313c0c30b431dfa3373">parse_constraint_parameters</a> (const ParameterHandler &amp;prm, const unsigned int constraint_id)</td></tr>
+<tr class="separator:a8138b2a25e44d313c0c30b431dfa3373"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table><table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pub-static-methods" name="pub-static-methods"></a>
+Static Public Member Functions</h2></td></tr>
+<tr class="memitem:a58b18984d18c8bbc7bdebc605c7bf729" id="r_a58b18984d18c8bbc7bdebc605c7bf729"><td class="memItemLeft" align="right" valign="top">static void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structParameters_1_1ConstrainSolidDomain.html#a58b18984d18c8bbc7bdebc605c7bf729">declare_default_entries</a> (ParameterHandler &amp;prm)</td></tr>
 <tr class="separator:a58b18984d18c8bbc7bdebc605c7bf729"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a7bde01567ba2edaa693faa8bc5b4508d" id="r_a7bde01567ba2edaa693faa8bc5b4508d"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structParameters_1_1ConstrainSolidDomain.html#a7bde01567ba2edaa693faa8bc5b4508d">parse_constraint_parameters</a> (ParameterHandler &amp;prm, const unsigned int constraint_id)</td></tr>
-<tr class="separator:a7bde01567ba2edaa693faa8bc5b4508d"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pub-attribs" name="pub-attribs"></a>
 Public Attributes</h2></td></tr>
@@ -139,7 +143,7 @@ struct Parameters::ConstrainSolidDomain&lt; dim &gt;</div><p>Set of parameters c
 </dl>
 <dl class="section note"><dt>Note</dt><dd>At the moment, only the temperature field is used to constrain the "solid" domain. </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="parameters_8h_source.html#l00648">648</a> of file <a class="el" href="parameters_8h_source.html">parameters.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="parameters_8h_source.html#l00645">645</a> of file <a class="el" href="parameters_8h_source.html">parameters.h</a>.</p>
 </div><h2 class="groupheader">Member Function Documentation</h2>
 <a id="a58b18984d18c8bbc7bdebc605c7bf729" name="a58b18984d18c8bbc7bdebc605c7bf729"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a58b18984d18c8bbc7bdebc605c7bf729">&#9670;&#160;</a></span>declare_default_entries()</h2>
@@ -148,6 +152,9 @@ struct Parameters::ConstrainSolidDomain&lt; dim &gt;</div><p>Set of parameters c
 <div class="memproto">
 <div class="memtemplate">
 template&lt;int dim&gt; </div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
       <table class="memname">
         <tr>
           <td class="memname">void <a class="el" href="structParameters_1_1ConstrainSolidDomain.html">Parameters::ConstrainSolidDomain</a>&lt; dim &gt;::declare_default_entries </td>
@@ -157,6 +164,11 @@ template&lt;int dim&gt; </div>
           <td></td>
         </tr>
       </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">static</span></span>  </td>
+  </tr>
+</table>
 </div><div class="memdoc">
 
 <p>Declare the default parameters for each constraint. </p>
@@ -212,8 +224,8 @@ template&lt;int dim&gt; </div>
 
 </div>
 </div>
-<a id="a7bde01567ba2edaa693faa8bc5b4508d" name="a7bde01567ba2edaa693faa8bc5b4508d"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a7bde01567ba2edaa693faa8bc5b4508d">&#9670;&#160;</a></span>parse_constraint_parameters()</h2>
+<a id="a8138b2a25e44d313c0c30b431dfa3373" name="a8138b2a25e44d313c0c30b431dfa3373"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a8138b2a25e44d313c0c30b431dfa3373">&#9670;&#160;</a></span>parse_constraint_parameters()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -223,7 +235,7 @@ template&lt;int dim&gt; </div>
         <tr>
           <td class="memname">void <a class="el" href="structParameters_1_1ConstrainSolidDomain.html">Parameters::ConstrainSolidDomain</a>&lt; dim &gt;::parse_constraint_parameters </td>
           <td>(</td>
-          <td class="paramtype">ParameterHandler &amp;&#160;</td>
+          <td class="paramtype">const ParameterHandler &amp;&#160;</td>
           <td class="paramname"><em>prm</em>, </td>
         </tr>
         <tr>
@@ -300,7 +312,7 @@ template&lt;int dim&gt; </div>
 
 <p>Enable/disable (<code>true/false</code>) the solid domain constraining feature. </p>
 
-<p class="definition">Definition at line <a class="el" href="parameters_8h_source.html#l00651">651</a> of file <a class="el" href="parameters_8h_source.html">parameters.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="parameters_8h_source.html#l00648">648</a> of file <a class="el" href="parameters_8h_source.html">parameters.h</a>.</p>
 
 </div>
 </div>
@@ -319,7 +331,7 @@ template&lt;int dim&gt; </div>
 </div><div class="memdoc">
 <p>Enable/disable (<code>true/false</code>) the definition of a plane for geometrical restrictions on the domain where the stasis constraint is applied. </p>
 
-<p class="definition">Definition at line <a class="el" href="parameters_8h_source.html#l00671">671</a> of file <a class="el" href="parameters_8h_source.html">parameters.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="parameters_8h_source.html#l00668">668</a> of file <a class="el" href="parameters_8h_source.html">parameters.h</a>.</p>
 
 </div>
 </div>
@@ -338,7 +350,7 @@ template&lt;int dim&gt; </div>
 </div><div class="memdoc">
 <p>Absolute tolerance applied on filtered phase fraction for constrained cell selection </p>
 
-<p class="definition">Definition at line <a class="el" href="parameters_8h_source.html#l00661">661</a> of file <a class="el" href="parameters_8h_source.html">parameters.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="parameters_8h_source.html#l00658">658</a> of file <a class="el" href="parameters_8h_source.html">parameters.h</a>.</p>
 
 </div>
 </div>
@@ -358,7 +370,7 @@ template&lt;int dim&gt; </div>
 
 <p>Identifiers of fluids that are constrained. </p>
 
-<p class="definition">Definition at line <a class="el" href="parameters_8h_source.html#l00657">657</a> of file <a class="el" href="parameters_8h_source.html">parameters.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="parameters_8h_source.html#l00654">654</a> of file <a class="el" href="parameters_8h_source.html">parameters.h</a>.</p>
 
 </div>
 </div>
@@ -378,7 +390,7 @@ template&lt;int dim&gt; </div>
 
 <p>Total number of constraints (maximum of 1 per fluid) </p>
 
-<p class="definition">Definition at line <a class="el" href="parameters_8h_source.html#l00654">654</a> of file <a class="el" href="parameters_8h_source.html">parameters.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="parameters_8h_source.html#l00651">651</a> of file <a class="el" href="parameters_8h_source.html">parameters.h</a>.</p>
 
 </div>
 </div>
@@ -397,7 +409,7 @@ template&lt;int dim&gt; </div>
 </div><div class="memdoc">
 <p>Outward-pointing normal vector from the restricted domain to define the restriction plane for the stasis constraint application domain </p>
 
-<p class="definition">Definition at line <a class="el" href="parameters_8h_source.html#l00679">679</a> of file <a class="el" href="parameters_8h_source.html">parameters.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="parameters_8h_source.html#l00676">676</a> of file <a class="el" href="parameters_8h_source.html">parameters.h</a>.</p>
 
 </div>
 </div>
@@ -416,7 +428,7 @@ template&lt;int dim&gt; </div>
 </div><div class="memdoc">
 <p>Coordinates of a point on the restriction plane for the stasis constraint application domain </p>
 
-<p class="definition">Definition at line <a class="el" href="parameters_8h_source.html#l00675">675</a> of file <a class="el" href="parameters_8h_source.html">parameters.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="parameters_8h_source.html#l00672">672</a> of file <a class="el" href="parameters_8h_source.html">parameters.h</a>.</p>
 
 </div>
 </div>
@@ -436,7 +448,7 @@ template&lt;int dim&gt; </div>
 
 <p>Upper threshold values of the constraining field (temperature) </p>
 
-<p class="definition">Definition at line <a class="el" href="parameters_8h_source.html#l00667">667</a> of file <a class="el" href="parameters_8h_source.html">parameters.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="parameters_8h_source.html#l00664">664</a> of file <a class="el" href="parameters_8h_source.html">parameters.h</a>.</p>
 
 </div>
 </div>
@@ -456,7 +468,7 @@ template&lt;int dim&gt; </div>
 
 <p>Lower threshold values of the constraining field (temperature) </p>
 
-<p class="definition">Definition at line <a class="el" href="parameters_8h_source.html#l00664">664</a> of file <a class="el" href="parameters_8h_source.html">parameters.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="parameters_8h_source.html#l00661">661</a> of file <a class="el" href="parameters_8h_source.html">parameters.h</a>.</p>
 
 </div>
 </div>

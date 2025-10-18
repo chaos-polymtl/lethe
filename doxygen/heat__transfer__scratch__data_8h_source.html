@@ -421,7 +421,7 @@ $(document).ready(function() { init_codefold(0); });
 <div class="line"><a id="l00318" name="l00318"></a><span class="lineno">  318</span>      {</div>
 <div class="line"><a id="l00319" name="l00319"></a><span class="lineno">  319</span>        velocity_ale_function-&gt;vector_value(<a class="code hl_variable" href="classHeatTransferScratchData.html#aee5b05900d9f71ac21b5865010bd3247">quadrature_points</a>[q],</div>
 <div class="line"><a id="l00320" name="l00320"></a><span class="lineno">  320</span>                                            velocity_ale_vector);</div>
-<div class="line"><a id="l00321" name="l00321"></a><span class="lineno">  321</span>        <span class="keywordflow">for</span> (<span class="keywordtype">unsigned</span> <span class="keywordtype">int</span> d = 0; d &lt; dim; ++d)</div>
+<div class="line"><a id="l00321" name="l00321"></a><span class="lineno">  321</span>        <span class="keywordflow">for</span> (<span class="keywordtype">int</span> d = 0; d &lt; dim; ++d)</div>
 <div class="line"><a id="l00322" name="l00322"></a><span class="lineno">  322</span>          velocity_ale[d] = velocity_ale_vector[d];</div>
 <div class="line"><a id="l00323" name="l00323"></a><span class="lineno">  323</span> </div>
 <div class="line"><a id="l00324" name="l00324"></a><span class="lineno">  324</span>        <a class="code hl_variable" href="classHeatTransferScratchData.html#ad2ad4946c4342df944930de7b4a1eaa3">velocity_values</a>[q] -= velocity_ale;</div>

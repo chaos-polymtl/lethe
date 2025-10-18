@@ -84,6 +84,7 @@ $(function() {
   <div class="summary">
 <a href="#pub-types">Public Types</a> &#124;
 <a href="#pub-methods">Public Member Functions</a> &#124;
+<a href="#pub-static-methods">Static Public Member Functions</a> &#124;
 <a href="#pub-attribs">Public Attributes</a> &#124;
 <a href="#pro-attribs">Protected Attributes</a> &#124;
 <a href="classShape-members.html">List of all members</a>  </div>
@@ -135,26 +136,26 @@ Inheritance diagram for Shape&lt; dim &gt;:</div>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pub-types" name="pub-types"></a>
 Public Types</h2></td></tr>
-<tr class="memitem:a3e44e2b1f6fca48f7b7b2151977b3abd" id="r_a3e44e2b1f6fca48f7b7b2151977b3abd"><td class="memItemLeft" align="right" valign="top">enum &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classShape.html#a3e44e2b1f6fca48f7b7b2151977b3abd">ShapeType</a> : int { <br />
-&#160;&#160;<a class="el" href="classShape.html#a3e44e2b1f6fca48f7b7b2151977b3abdaa9f2d0e0ebfe9aaa1e10b43015fa3710">sphere</a>
-, <a class="el" href="classShape.html#a3e44e2b1f6fca48f7b7b2151977b3abda37c0074da66fc8173cb16591045af43a">hyper_rectangle</a>
-, <a class="el" href="classShape.html#a3e44e2b1f6fca48f7b7b2151977b3abda4bffc1780b0728178be01297b30d7568">ellipsoid</a>
-, <a class="el" href="classShape.html#a3e44e2b1f6fca48f7b7b2151977b3abda04d7c7decbdeffd2eb8df924f71b9c3a">torus</a>
+<tr class="memitem:a394819ce751267dc955abe4ad18ebdeb" id="r_a394819ce751267dc955abe4ad18ebdeb"><td class="memItemLeft" align="right" valign="top">enum &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classShape.html#a394819ce751267dc955abe4ad18ebdeb">ShapeType</a> : std::int8_t { <br />
+&#160;&#160;<a class="el" href="classShape.html#a394819ce751267dc955abe4ad18ebdebaa9f2d0e0ebfe9aaa1e10b43015fa3710">sphere</a>
+, <a class="el" href="classShape.html#a394819ce751267dc955abe4ad18ebdeba37c0074da66fc8173cb16591045af43a">hyper_rectangle</a>
+, <a class="el" href="classShape.html#a394819ce751267dc955abe4ad18ebdeba4bffc1780b0728178be01297b30d7568">ellipsoid</a>
+, <a class="el" href="classShape.html#a394819ce751267dc955abe4ad18ebdeba04d7c7decbdeffd2eb8df924f71b9c3a">torus</a>
 , <br />
-&#160;&#160;<a class="el" href="classShape.html#a3e44e2b1f6fca48f7b7b2151977b3abdac24574f62365dbabb94ca975e18bcf11">cone</a>
-, <a class="el" href="classShape.html#a3e44e2b1f6fca48f7b7b2151977b3abda648bf60f39e61e35fc8557cb6e4928f6">cylinder</a>
-, <a class="el" href="classShape.html#a3e44e2b1f6fca48f7b7b2151977b3abdaed29193b1d7117fdc0c82f7f131f33f2">cylindrical_tube</a>
-, <a class="el" href="classShape.html#a3e44e2b1f6fca48f7b7b2151977b3abda96a979bc71177dae4f20afbf3472caf8">cylindrical_helix</a>
+&#160;&#160;<a class="el" href="classShape.html#a394819ce751267dc955abe4ad18ebdebac24574f62365dbabb94ca975e18bcf11">cone</a>
+, <a class="el" href="classShape.html#a394819ce751267dc955abe4ad18ebdeba648bf60f39e61e35fc8557cb6e4928f6">cylinder</a>
+, <a class="el" href="classShape.html#a394819ce751267dc955abe4ad18ebdebaed29193b1d7117fdc0c82f7f131f33f2">cylindrical_tube</a>
+, <a class="el" href="classShape.html#a394819ce751267dc955abe4ad18ebdeba96a979bc71177dae4f20afbf3472caf8">cylindrical_helix</a>
 , <br />
-&#160;&#160;<a class="el" href="classShape.html#a3e44e2b1f6fca48f7b7b2151977b3abdab04cd2bbd3080e71efda561f507a317f">cut_hollow_sphere</a>
-, <a class="el" href="classShape.html#a3e44e2b1f6fca48f7b7b2151977b3abdae8ef59ac302678275d0e60506314b5f6">death_star</a>
-, <a class="el" href="classShape.html#a3e44e2b1f6fca48f7b7b2151977b3abda9b2bf872fb19c75a69cd4946bc4e943a">composite_shape</a>
-, <a class="el" href="classShape.html#a3e44e2b1f6fca48f7b7b2151977b3abdae54312d0ea888cdacf72bca2101e8042">rbf_shape</a>
+&#160;&#160;<a class="el" href="classShape.html#a394819ce751267dc955abe4ad18ebdebab04cd2bbd3080e71efda561f507a317f">cut_hollow_sphere</a>
+, <a class="el" href="classShape.html#a394819ce751267dc955abe4ad18ebdebae8ef59ac302678275d0e60506314b5f6">death_star</a>
+, <a class="el" href="classShape.html#a394819ce751267dc955abe4ad18ebdeba9b2bf872fb19c75a69cd4946bc4e943a">composite_shape</a>
+, <a class="el" href="classShape.html#a394819ce751267dc955abe4ad18ebdebae54312d0ea888cdacf72bca2101e8042">rbf_shape</a>
 , <br />
-&#160;&#160;<a class="el" href="classShape.html#a3e44e2b1f6fca48f7b7b2151977b3abdab5ddf5c4e14b81360fe87fe24a2eb4d5">opencascade_shape</a>
+&#160;&#160;<a class="el" href="classShape.html#a394819ce751267dc955abe4ad18ebdebab5ddf5c4e14b81360fe87fe24a2eb4d5">opencascade_shape</a>
 <br />
  }</td></tr>
-<tr class="separator:a3e44e2b1f6fca48f7b7b2151977b3abd"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="separator:a394819ce751267dc955abe4ad18ebdeb"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pub-methods" name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
@@ -164,8 +165,6 @@ Public Member Functions</h2></td></tr>
 <tr class="separator:ad5f4333acae9352a237b917a6eb49ae9"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a53cd426c500960e007ff2ef2f5df0d1d" id="r_a53cd426c500960e007ff2ef2f5df0d1d"><td class="memItemLeft" align="right" valign="top">virtual double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classShape.html#a53cd426c500960e007ff2ef2f5df0d1d">value_with_cell_guess</a> (const Point&lt; dim &gt; &amp;evaluation_point, const typename DoFHandler&lt; dim &gt;::active_cell_iterator cell, const unsigned int component=0)</td></tr>
 <tr class="separator:a53cd426c500960e007ff2ef2f5df0d1d"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a3beacb4994e184b9cf5c7d5719d1ab94" id="r_a3beacb4994e184b9cf5c7d5719d1ab94"><td class="memItemLeft" align="right" valign="top">double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classShape.html#a3beacb4994e184b9cf5c7d5719d1ab94">smooth_max</a> (double a, double b, double smooth_factor=10)</td></tr>
-<tr class="separator:a3beacb4994e184b9cf5c7d5719d1ab94"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a4666a48ee33dc2ca425c67dfe22e97bb" id="r_a4666a48ee33dc2ca425c67dfe22e97bb"><td class="memItemLeft" align="right" valign="top">virtual std::tuple&lt; double, Tensor&lt; 1, dim &gt;, Point&lt; dim &gt; &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classShape.html#a4666a48ee33dc2ca425c67dfe22e97bb">distance_to_shape_with_cell_guess</a> (<a class="el" href="classShape.html">Shape</a>&lt; dim &gt; &amp;shape, const typename DoFHandler&lt; dim &gt;::active_cell_iterator &amp;cell, std::vector&lt; Point&lt; dim &gt; &gt; &amp;candidate_points, double precision=1e-6, bool exact_distance_outside_of_contact=false)</td></tr>
 <tr class="separator:a4666a48ee33dc2ca425c67dfe22e97bb"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a6603c76ecfd43a787cb1c5295a3bfbcf" id="r_a6603c76ecfd43a787cb1c5295a3bfbcf"><td class="memItemLeft" align="right" valign="top">virtual std::tuple&lt; double, Tensor&lt; 1, dim &gt;, Point&lt; dim &gt; &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classShape.html#a6603c76ecfd43a787cb1c5295a3bfbcf">distance_to_shape</a> (<a class="el" href="classShape.html">Shape</a>&lt; dim &gt; &amp;shape, std::vector&lt; Point&lt; dim &gt; &gt; &amp;candidate_points, double precision=1e-6, bool exact_distance_outside_of_contact=false)</td></tr>
@@ -210,16 +209,21 @@ Public Member Functions</h2></td></tr>
 <tr class="separator:a8fb04c9145a69a03028d3cecf2cd9338"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a532f0f37cbc778f665364b3a2e2a559a" id="r_a532f0f37cbc778f665364b3a2e2a559a"><td class="memItemLeft" align="right" valign="top">std::string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classShape.html#a532f0f37cbc778f665364b3a2e2a559a">point_to_string</a> (const Point&lt; dim &gt; &amp;evaluation_point) const</td></tr>
 <tr class="separator:a532f0f37cbc778f665364b3a2e2a559a"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:acc115201008418068265ed7fd5f092ae" id="r_acc115201008418068265ed7fd5f092ae"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classShape.html#acc115201008418068265ed7fd5f092ae">set_part_of_a_composite</a> (const bool <a class="el" href="classShape.html#aa03400a77cb8749bc2eb71265f550b38">part_of_a_composite</a>)</td></tr>
-<tr class="separator:acc115201008418068265ed7fd5f092ae"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a4012470e896cf61c53ad611eb1a26e06" id="r_a4012470e896cf61c53ad611eb1a26e06"><td class="memItemLeft" align="right" valign="top">virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classShape.html#a4012470e896cf61c53ad611eb1a26e06">set_layer_thickening</a> (const double <a class="el" href="classShape.html#a6be6b189b76d906b833a6056381ac97d">layer_thickening</a>)</td></tr>
-<tr class="separator:a4012470e896cf61c53ad611eb1a26e06"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a7184cf3e2b161a44e7e3b3e6f2ffe988" id="r_a7184cf3e2b161a44e7e3b3e6f2ffe988"><td class="memItemLeft" align="right" valign="top">Tensor&lt; 1, 3 &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classShape.html#a7184cf3e2b161a44e7e3b3e6f2ffe988">rotation_matrix_to_xyz_angles</a> (Tensor&lt; 2, 3 &gt; &amp;rotation_matrix_representation) const</td></tr>
-<tr class="separator:a7184cf3e2b161a44e7e3b3e6f2ffe988"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:afd776930f18fc019da2c0a1a890cb2e1" id="r_afd776930f18fc019da2c0a1a890cb2e1"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classShape.html#afd776930f18fc019da2c0a1a890cb2e1">set_part_of_a_composite</a> (const bool is_part_of_a_composite)</td></tr>
+<tr class="separator:afd776930f18fc019da2c0a1a890cb2e1"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ab7973d48a34701f6a301613ce08cc938" id="r_ab7973d48a34701f6a301613ce08cc938"><td class="memItemLeft" align="right" valign="top">virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classShape.html#ab7973d48a34701f6a301613ce08cc938">set_layer_thickening</a> (const double the_layer_thickening)</td></tr>
+<tr class="separator:ab7973d48a34701f6a301613ce08cc938"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table><table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pub-static-methods" name="pub-static-methods"></a>
+Static Public Member Functions</h2></td></tr>
+<tr class="memitem:aad117c51ca97220bf3ae94da9de6cb75" id="r_aad117c51ca97220bf3ae94da9de6cb75"><td class="memItemLeft" align="right" valign="top">static double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classShape.html#aad117c51ca97220bf3ae94da9de6cb75">smooth_max</a> (const double a, const double b, const double smooth_factor=10)</td></tr>
+<tr class="separator:aad117c51ca97220bf3ae94da9de6cb75"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a430fdcfc03012e0a15c8bd72c9b7010b" id="r_a430fdcfc03012e0a15c8bd72c9b7010b"><td class="memItemLeft" align="right" valign="top">static Tensor&lt; 1, 3 &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classShape.html#a430fdcfc03012e0a15c8bd72c9b7010b">rotation_matrix_to_xyz_angles</a> (Tensor&lt; 2, 3 &gt; &amp;rotation_matrix_representation)</td></tr>
+<tr class="separator:a430fdcfc03012e0a15c8bd72c9b7010b"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pub-attribs" name="pub-attribs"></a>
 Public Attributes</h2></td></tr>
-<tr class="memitem:a6b530422aac8aacdf7bba3648a32d658" id="r_a6b530422aac8aacdf7bba3648a32d658"><td class="memItemLeft" align="right" valign="top">enum <a class="el" href="classShape.html#a3e44e2b1f6fca48f7b7b2151977b3abd">Shape::ShapeType</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classShape.html#a6b530422aac8aacdf7bba3648a32d658">type</a></td></tr>
+<tr class="memitem:a6b530422aac8aacdf7bba3648a32d658" id="r_a6b530422aac8aacdf7bba3648a32d658"><td class="memItemLeft" align="right" valign="top">enum <a class="el" href="classShape.html#a394819ce751267dc955abe4ad18ebdeb">Shape::ShapeType</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classShape.html#a6b530422aac8aacdf7bba3648a32d658">type</a></td></tr>
 <tr class="separator:a6b530422aac8aacdf7bba3648a32d658"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a32546bd02c82fe6fcc6b4ac2c12937f3" id="r_a32546bd02c82fe6fcc6b4ac2c12937f3"><td class="memItemLeft" align="right" valign="top">double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classShape.html#a32546bd02c82fe6fcc6b4ac2c12937f3">effective_radius</a></td></tr>
 <tr class="separator:a32546bd02c82fe6fcc6b4ac2c12937f3"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -259,10 +263,10 @@ class Shape&lt; dim &gt;</div><p>A base class used to represent geometrical enti
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="shape_8h_source.html#l00053">53</a> of file <a class="el" href="shape_8h_source.html">shape.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="shape_8h_source.html#l00051">51</a> of file <a class="el" href="shape_8h_source.html">shape.h</a>.</p>
 </div><h2 class="groupheader">Member Enumeration Documentation</h2>
-<a id="a3e44e2b1f6fca48f7b7b2151977b3abd" name="a3e44e2b1f6fca48f7b7b2151977b3abd"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a3e44e2b1f6fca48f7b7b2151977b3abd">&#9670;&#160;</a></span>ShapeType</h2>
+<a id="a394819ce751267dc955abe4ad18ebdeb" name="a394819ce751267dc955abe4ad18ebdeb"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a394819ce751267dc955abe4ad18ebdeb">&#9670;&#160;</a></span>ShapeType</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -270,29 +274,29 @@ class Shape&lt; dim &gt;</div><p>A base class used to represent geometrical enti
 template&lt;int dim&gt; </div>
       <table class="memname">
         <tr>
-          <td class="memname">enum <a class="el" href="classShape.html#a3e44e2b1f6fca48f7b7b2151977b3abd">Shape::ShapeType</a> : int</td>
+          <td class="memname">enum <a class="el" href="classShape.html#a394819ce751267dc955abe4ad18ebdeb">Shape::ShapeType</a> : std::int8_t</td>
         </tr>
       </table>
 </div><div class="memdoc">
 
 <p>enum class that associate an integer index tp each type of shape </p>
 <table class="fieldtable">
-<tr><th colspan="2">Enumerator</th></tr><tr><td class="fieldname"><a id="a3e44e2b1f6fca48f7b7b2151977b3abdaa9f2d0e0ebfe9aaa1e10b43015fa3710" name="a3e44e2b1f6fca48f7b7b2151977b3abdaa9f2d0e0ebfe9aaa1e10b43015fa3710"></a>sphere&#160;</td><td class="fielddoc"></td></tr>
-<tr><td class="fieldname"><a id="a3e44e2b1f6fca48f7b7b2151977b3abda37c0074da66fc8173cb16591045af43a" name="a3e44e2b1f6fca48f7b7b2151977b3abda37c0074da66fc8173cb16591045af43a"></a>hyper_rectangle&#160;</td><td class="fielddoc"></td></tr>
-<tr><td class="fieldname"><a id="a3e44e2b1f6fca48f7b7b2151977b3abda4bffc1780b0728178be01297b30d7568" name="a3e44e2b1f6fca48f7b7b2151977b3abda4bffc1780b0728178be01297b30d7568"></a>ellipsoid&#160;</td><td class="fielddoc"></td></tr>
-<tr><td class="fieldname"><a id="a3e44e2b1f6fca48f7b7b2151977b3abda04d7c7decbdeffd2eb8df924f71b9c3a" name="a3e44e2b1f6fca48f7b7b2151977b3abda04d7c7decbdeffd2eb8df924f71b9c3a"></a>torus&#160;</td><td class="fielddoc"></td></tr>
-<tr><td class="fieldname"><a id="a3e44e2b1f6fca48f7b7b2151977b3abdac24574f62365dbabb94ca975e18bcf11" name="a3e44e2b1f6fca48f7b7b2151977b3abdac24574f62365dbabb94ca975e18bcf11"></a>cone&#160;</td><td class="fielddoc"></td></tr>
-<tr><td class="fieldname"><a id="a3e44e2b1f6fca48f7b7b2151977b3abda648bf60f39e61e35fc8557cb6e4928f6" name="a3e44e2b1f6fca48f7b7b2151977b3abda648bf60f39e61e35fc8557cb6e4928f6"></a>cylinder&#160;</td><td class="fielddoc"></td></tr>
-<tr><td class="fieldname"><a id="a3e44e2b1f6fca48f7b7b2151977b3abdaed29193b1d7117fdc0c82f7f131f33f2" name="a3e44e2b1f6fca48f7b7b2151977b3abdaed29193b1d7117fdc0c82f7f131f33f2"></a>cylindrical_tube&#160;</td><td class="fielddoc"></td></tr>
-<tr><td class="fieldname"><a id="a3e44e2b1f6fca48f7b7b2151977b3abda96a979bc71177dae4f20afbf3472caf8" name="a3e44e2b1f6fca48f7b7b2151977b3abda96a979bc71177dae4f20afbf3472caf8"></a>cylindrical_helix&#160;</td><td class="fielddoc"></td></tr>
-<tr><td class="fieldname"><a id="a3e44e2b1f6fca48f7b7b2151977b3abdab04cd2bbd3080e71efda561f507a317f" name="a3e44e2b1f6fca48f7b7b2151977b3abdab04cd2bbd3080e71efda561f507a317f"></a>cut_hollow_sphere&#160;</td><td class="fielddoc"></td></tr>
-<tr><td class="fieldname"><a id="a3e44e2b1f6fca48f7b7b2151977b3abdae8ef59ac302678275d0e60506314b5f6" name="a3e44e2b1f6fca48f7b7b2151977b3abdae8ef59ac302678275d0e60506314b5f6"></a>death_star&#160;</td><td class="fielddoc"></td></tr>
-<tr><td class="fieldname"><a id="a3e44e2b1f6fca48f7b7b2151977b3abda9b2bf872fb19c75a69cd4946bc4e943a" name="a3e44e2b1f6fca48f7b7b2151977b3abda9b2bf872fb19c75a69cd4946bc4e943a"></a>composite_shape&#160;</td><td class="fielddoc"></td></tr>
-<tr><td class="fieldname"><a id="a3e44e2b1f6fca48f7b7b2151977b3abdae54312d0ea888cdacf72bca2101e8042" name="a3e44e2b1f6fca48f7b7b2151977b3abdae54312d0ea888cdacf72bca2101e8042"></a>rbf_shape&#160;</td><td class="fielddoc"></td></tr>
-<tr><td class="fieldname"><a id="a3e44e2b1f6fca48f7b7b2151977b3abdab5ddf5c4e14b81360fe87fe24a2eb4d5" name="a3e44e2b1f6fca48f7b7b2151977b3abdab5ddf5c4e14b81360fe87fe24a2eb4d5"></a>opencascade_shape&#160;</td><td class="fielddoc"></td></tr>
+<tr><th colspan="2">Enumerator</th></tr><tr><td class="fieldname"><a id="a394819ce751267dc955abe4ad18ebdebaa9f2d0e0ebfe9aaa1e10b43015fa3710" name="a394819ce751267dc955abe4ad18ebdebaa9f2d0e0ebfe9aaa1e10b43015fa3710"></a>sphere&#160;</td><td class="fielddoc"></td></tr>
+<tr><td class="fieldname"><a id="a394819ce751267dc955abe4ad18ebdeba37c0074da66fc8173cb16591045af43a" name="a394819ce751267dc955abe4ad18ebdeba37c0074da66fc8173cb16591045af43a"></a>hyper_rectangle&#160;</td><td class="fielddoc"></td></tr>
+<tr><td class="fieldname"><a id="a394819ce751267dc955abe4ad18ebdeba4bffc1780b0728178be01297b30d7568" name="a394819ce751267dc955abe4ad18ebdeba4bffc1780b0728178be01297b30d7568"></a>ellipsoid&#160;</td><td class="fielddoc"></td></tr>
+<tr><td class="fieldname"><a id="a394819ce751267dc955abe4ad18ebdeba04d7c7decbdeffd2eb8df924f71b9c3a" name="a394819ce751267dc955abe4ad18ebdeba04d7c7decbdeffd2eb8df924f71b9c3a"></a>torus&#160;</td><td class="fielddoc"></td></tr>
+<tr><td class="fieldname"><a id="a394819ce751267dc955abe4ad18ebdebac24574f62365dbabb94ca975e18bcf11" name="a394819ce751267dc955abe4ad18ebdebac24574f62365dbabb94ca975e18bcf11"></a>cone&#160;</td><td class="fielddoc"></td></tr>
+<tr><td class="fieldname"><a id="a394819ce751267dc955abe4ad18ebdeba648bf60f39e61e35fc8557cb6e4928f6" name="a394819ce751267dc955abe4ad18ebdeba648bf60f39e61e35fc8557cb6e4928f6"></a>cylinder&#160;</td><td class="fielddoc"></td></tr>
+<tr><td class="fieldname"><a id="a394819ce751267dc955abe4ad18ebdebaed29193b1d7117fdc0c82f7f131f33f2" name="a394819ce751267dc955abe4ad18ebdebaed29193b1d7117fdc0c82f7f131f33f2"></a>cylindrical_tube&#160;</td><td class="fielddoc"></td></tr>
+<tr><td class="fieldname"><a id="a394819ce751267dc955abe4ad18ebdeba96a979bc71177dae4f20afbf3472caf8" name="a394819ce751267dc955abe4ad18ebdeba96a979bc71177dae4f20afbf3472caf8"></a>cylindrical_helix&#160;</td><td class="fielddoc"></td></tr>
+<tr><td class="fieldname"><a id="a394819ce751267dc955abe4ad18ebdebab04cd2bbd3080e71efda561f507a317f" name="a394819ce751267dc955abe4ad18ebdebab04cd2bbd3080e71efda561f507a317f"></a>cut_hollow_sphere&#160;</td><td class="fielddoc"></td></tr>
+<tr><td class="fieldname"><a id="a394819ce751267dc955abe4ad18ebdebae8ef59ac302678275d0e60506314b5f6" name="a394819ce751267dc955abe4ad18ebdebae8ef59ac302678275d0e60506314b5f6"></a>death_star&#160;</td><td class="fielddoc"></td></tr>
+<tr><td class="fieldname"><a id="a394819ce751267dc955abe4ad18ebdeba9b2bf872fb19c75a69cd4946bc4e943a" name="a394819ce751267dc955abe4ad18ebdeba9b2bf872fb19c75a69cd4946bc4e943a"></a>composite_shape&#160;</td><td class="fielddoc"></td></tr>
+<tr><td class="fieldname"><a id="a394819ce751267dc955abe4ad18ebdebae54312d0ea888cdacf72bca2101e8042" name="a394819ce751267dc955abe4ad18ebdebae54312d0ea888cdacf72bca2101e8042"></a>rbf_shape&#160;</td><td class="fielddoc"></td></tr>
+<tr><td class="fieldname"><a id="a394819ce751267dc955abe4ad18ebdebab5ddf5c4e14b81360fe87fe24a2eb4d5" name="a394819ce751267dc955abe4ad18ebdebab5ddf5c4e14b81360fe87fe24a2eb4d5"></a>opencascade_shape&#160;</td><td class="fielddoc"></td></tr>
 </table>
 
-<p class="definition">Definition at line <a class="el" href="shape_8h_source.html#l00059">59</a> of file <a class="el" href="shape_8h_source.html">shape.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="shape_8h_source.html#l00057">57</a> of file <a class="el" href="shape_8h_source.html">shape.h</a>.</p>
 
 </div>
 </div>
@@ -349,7 +353,7 @@ template&lt;int dim&gt; </div>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="shape_8h_source.html#l00083">83</a> of file <a class="el" href="shape_8h_source.html">shape.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="shape_8h_source.html#l00081">81</a> of file <a class="el" href="shape_8h_source.html">shape.h</a>.</p>
 
 </div>
 </div>
@@ -421,9 +425,9 @@ template&lt;int dim&gt; </div>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>This function returns false if the shapes are not overlapping. </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="shape_8h_source.html#l00738">738</a> of file <a class="el" href="shape_8h_source.html">shape.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="shape_8h_source.html#l00736">736</a> of file <a class="el" href="shape_8h_source.html">shape.h</a>.</p>
 
-<p class="reference">References <a class="el" href="shape_8h_source.html#l01344">Shape&lt; dim &gt;::bounding_box_center</a>, <a class="el" href="shape_8h_source.html#l01342">Shape&lt; dim &gt;::bounding_box_half_length</a>, <a class="el" href="shape_8h_source.html#l01365">Shape&lt; dim &gt;::layer_thickening</a>, <a class="el" href="tensors__and__points__dimension__manipulation_8h_source.html#l00094">point_nd_to_2d()</a>, <a class="el" href="tensors__and__points__dimension__manipulation_8h_source.html#l00069">point_nd_to_3d()</a>, <a class="el" href="shape_8h_source.html#l01349">Shape&lt; dim &gt;::position</a>, <a class="el" href="shape_8h_source.html#l01363">Shape&lt; dim &gt;::rotation_matrix</a>, and <a class="el" href="classShape.html#ad5f4333acae9352a237b917a6eb49ae9">Shape&lt; dim &gt;::value()</a>.</p>
+<p class="reference">References <a class="el" href="shape_8h_source.html#l01334">Shape&lt; dim &gt;::bounding_box_center</a>, <a class="el" href="shape_8h_source.html#l01332">Shape&lt; dim &gt;::bounding_box_half_length</a>, <a class="el" href="shape_8h_source.html#l01355">Shape&lt; dim &gt;::layer_thickening</a>, <a class="el" href="tensors__and__points__dimension__manipulation_8h_source.html#l00094">point_nd_to_2d()</a>, <a class="el" href="tensors__and__points__dimension__manipulation_8h_source.html#l00069">point_nd_to_3d()</a>, <a class="el" href="shape_8h_source.html#l01339">Shape&lt; dim &gt;::position</a>, <a class="el" href="shape_8h_source.html#l01353">Shape&lt; dim &gt;::rotation_matrix</a>, and <a class="el" href="classShape.html#ad5f4333acae9352a237b917a6eb49ae9">Shape&lt; dim &gt;::value()</a>.</p>
 
 </div>
 </div>
@@ -498,7 +502,7 @@ template&lt;int dim&gt; </div>
 
 <p>Reimplemented in <a class="el" href="classSuperquadric.html#a1f1a723b9e47d30e4db814e122fd4e05">Superquadric&lt; dim &gt;</a>.</p>
 
-<p class="definition">Definition at line <a class="el" href="shape_8cc_source.html#l00245">245</a> of file <a class="el" href="shape_8cc_source.html">shape.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="shape_8cc_source.html#l00243">243</a> of file <a class="el" href="shape_8cc_source.html">shape.cc</a>.</p>
 
 </div>
 </div>
@@ -556,7 +560,7 @@ template&lt;int dim&gt; </div>
 
 <p>Reimplemented in <a class="el" href="classSuperquadric.html#a6221e680513e3bf71501781db520c401">Superquadric&lt; dim &gt;</a>.</p>
 
-<p class="definition">Definition at line <a class="el" href="shape_8cc_source.html#l00225">225</a> of file <a class="el" href="shape_8cc_source.html">shape.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="shape_8cc_source.html#l00223">223</a> of file <a class="el" href="shape_8cc_source.html">shape.cc</a>.</p>
 
 </div>
 </div>
@@ -645,7 +649,6 @@ template&lt;int dim&gt; </div>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">shape</td><td>The shape with which the distance is evaluated </td></tr>
-    <tr><td class="paramname">cell</td><td>The cell that is likely to contain the evaluation point </td></tr>
     <tr><td class="paramname">candidate_points</td><td>This is the initial guess points used in the calculation. </td></tr>
     <tr><td class="paramname">precision</td><td>This is the precision of the distance between the two shapes. </td></tr>
     <tr><td class="paramname">exact_distance_outside_of_contact</td><td>This is a boolean to force the exact distance evaluation if the shapes are not in contact. </td></tr>
@@ -655,9 +658,9 @@ template&lt;int dim&gt; </div>
 
 <p>Reimplemented in <a class="el" href="classSphere.html#a9a3f8d78bafc7150cde751188512d649">Sphere&lt; dim &gt;</a>.</p>
 
-<p class="definition">Definition at line <a class="el" href="shape_8h_source.html#l00447">447</a> of file <a class="el" href="shape_8h_source.html">shape.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="shape_8h_source.html#l00445">445</a> of file <a class="el" href="shape_8h_source.html">shape.h</a>.</p>
 
-<p class="reference">References <a class="el" href="shape_8h_source.html#l01344">Shape&lt; dim &gt;::bounding_box_center</a>, <a class="el" href="shape_8h_source.html#l00738">Shape&lt; dim &gt;::bounding_box_contact()</a>, <a class="el" href="shape_8h_source.html#l01342">Shape&lt; dim &gt;::bounding_box_half_length</a>, <a class="el" href="shape_8cc_source.html#l00225">Shape&lt; dim &gt;::closest_surface_point()</a>, <a class="el" href="shape_8h_source.html#l01334">Shape&lt; dim &gt;::effective_radius</a>, <a class="el" href="tensors__and__points__dimension__manipulation_8h_source.html#l00069">point_nd_to_3d()</a>, <a class="el" href="shape_8h_source.html#l01349">Shape&lt; dim &gt;::position</a>, <a class="el" href="shape_8h_source.html#l01363">Shape&lt; dim &gt;::rotation_matrix</a>, <a class="el" href="shape_8h_source.html#l00128">Shape&lt; dim &gt;::smooth_max()</a>, <a class="el" href="tensors__and__points__dimension__manipulation_8h_source.html#l00050">tensor_nd_to_2d()</a>, and <a class="el" href="classShape.html#ad5f4333acae9352a237b917a6eb49ae9">Shape&lt; dim &gt;::value()</a>.</p>
+<p class="reference">References <a class="el" href="shape_8h_source.html#l01334">Shape&lt; dim &gt;::bounding_box_center</a>, <a class="el" href="shape_8h_source.html#l00736">Shape&lt; dim &gt;::bounding_box_contact()</a>, <a class="el" href="shape_8h_source.html#l01332">Shape&lt; dim &gt;::bounding_box_half_length</a>, <a class="el" href="shape_8cc_source.html#l00223">Shape&lt; dim &gt;::closest_surface_point()</a>, <a class="el" href="shape_8h_source.html#l01324">Shape&lt; dim &gt;::effective_radius</a>, <a class="el" href="tensors__and__points__dimension__manipulation_8h_source.html#l00069">point_nd_to_3d()</a>, <a class="el" href="shape_8h_source.html#l01339">Shape&lt; dim &gt;::position</a>, <a class="el" href="shape_8h_source.html#l01353">Shape&lt; dim &gt;::rotation_matrix</a>, <a class="el" href="shape_8h_source.html#l00127">Shape&lt; dim &gt;::smooth_max()</a>, <a class="el" href="tensors__and__points__dimension__manipulation_8h_source.html#l00050">tensor_nd_to_2d()</a>, and <a class="el" href="classShape.html#ad5f4333acae9352a237b917a6eb49ae9">Shape&lt; dim &gt;::value()</a>.</p>
 
 </div>
 </div>
@@ -729,9 +732,9 @@ template&lt;int dim&gt; </div>
 
 <p>Reimplemented in <a class="el" href="classSphere.html#add85859c27507d5d53542a1f854e123c">Sphere&lt; dim &gt;</a>.</p>
 
-<p class="definition">Definition at line <a class="el" href="shape_8h_source.html#l00143">143</a> of file <a class="el" href="shape_8h_source.html">shape.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="shape_8h_source.html#l00142">142</a> of file <a class="el" href="shape_8h_source.html">shape.h</a>.</p>
 
-<p class="reference">References <a class="el" href="shape_8h_source.html#l01344">Shape&lt; dim &gt;::bounding_box_center</a>, <a class="el" href="shape_8h_source.html#l00738">Shape&lt; dim &gt;::bounding_box_contact()</a>, <a class="el" href="shape_8h_source.html#l01342">Shape&lt; dim &gt;::bounding_box_half_length</a>, <a class="el" href="shape_8cc_source.html#l00225">Shape&lt; dim &gt;::closest_surface_point()</a>, <a class="el" href="shape_8h_source.html#l01334">Shape&lt; dim &gt;::effective_radius</a>, <a class="el" href="shape_8cc_source.html#l00273">Shape&lt; dim &gt;::gradient_with_cell_guess()</a>, <a class="el" href="tensors__and__points__dimension__manipulation_8h_source.html#l00069">point_nd_to_3d()</a>, <a class="el" href="shape_8h_source.html#l01349">Shape&lt; dim &gt;::position</a>, <a class="el" href="shape_8h_source.html#l01363">Shape&lt; dim &gt;::rotation_matrix</a>, <a class="el" href="shape_8h_source.html#l00128">Shape&lt; dim &gt;::smooth_max()</a>, <a class="el" href="tensors__and__points__dimension__manipulation_8h_source.html#l00050">tensor_nd_to_2d()</a>, and <a class="el" href="shape_8cc_source.html#l00263">Shape&lt; dim &gt;::value_with_cell_guess()</a>.</p>
+<p class="reference">References <a class="el" href="shape_8h_source.html#l01334">Shape&lt; dim &gt;::bounding_box_center</a>, <a class="el" href="shape_8h_source.html#l00736">Shape&lt; dim &gt;::bounding_box_contact()</a>, <a class="el" href="shape_8h_source.html#l01332">Shape&lt; dim &gt;::bounding_box_half_length</a>, <a class="el" href="shape_8cc_source.html#l00223">Shape&lt; dim &gt;::closest_surface_point()</a>, <a class="el" href="shape_8h_source.html#l01324">Shape&lt; dim &gt;::effective_radius</a>, <a class="el" href="shape_8cc_source.html#l00271">Shape&lt; dim &gt;::gradient_with_cell_guess()</a>, <a class="el" href="tensors__and__points__dimension__manipulation_8h_source.html#l00069">point_nd_to_3d()</a>, <a class="el" href="shape_8h_source.html#l01339">Shape&lt; dim &gt;::position</a>, <a class="el" href="shape_8h_source.html#l01353">Shape&lt; dim &gt;::rotation_matrix</a>, <a class="el" href="shape_8h_source.html#l00127">Shape&lt; dim &gt;::smooth_max()</a>, <a class="el" href="tensors__and__points__dimension__manipulation_8h_source.html#l00050">tensor_nd_to_2d()</a>, and <a class="el" href="shape_8cc_source.html#l00261">Shape&lt; dim &gt;::value_with_cell_guess()</a>.</p>
 
 </div>
 </div>
@@ -762,9 +765,9 @@ template&lt;int dim&gt; </div>
 
 <p>Returns the bounding box position. </p>
 
-<p class="definition">Definition at line <a class="el" href="shape_8h_source.html#l01225">1225</a> of file <a class="el" href="shape_8h_source.html">shape.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="shape_8h_source.html#l01218">1218</a> of file <a class="el" href="shape_8h_source.html">shape.h</a>.</p>
 
-<p class="reference">References <a class="el" href="shape_8h_source.html#l01344">Shape&lt; dim &gt;::bounding_box_center</a>.</p>
+<p class="reference">References <a class="el" href="shape_8h_source.html#l01334">Shape&lt; dim &gt;::bounding_box_center</a>.</p>
 
 </div>
 </div>
@@ -795,9 +798,9 @@ template&lt;int dim&gt; </div>
 
 <p>Returns the bounding box half length. </p>
 
-<p class="definition">Definition at line <a class="el" href="shape_8h_source.html#l01214">1214</a> of file <a class="el" href="shape_8h_source.html">shape.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="shape_8h_source.html#l01208">1208</a> of file <a class="el" href="shape_8h_source.html">shape.h</a>.</p>
 
-<p class="reference">References <a class="el" href="shape_8h_source.html#l01342">Shape&lt; dim &gt;::bounding_box_half_length</a>.</p>
+<p class="reference">References <a class="el" href="shape_8h_source.html#l01332">Shape&lt; dim &gt;::bounding_box_half_length</a>.</p>
 
 </div>
 </div>
@@ -828,9 +831,9 @@ template&lt;int dim&gt; </div>
 
 <p>Returns the orientation of the shape. </p>
 
-<p class="definition">Definition at line <a class="el" href="shape_8h_source.html#l01192">1192</a> of file <a class="el" href="shape_8h_source.html">shape.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="shape_8h_source.html#l01188">1188</a> of file <a class="el" href="shape_8h_source.html">shape.h</a>.</p>
 
-<p class="reference">References <a class="el" href="shape_8h_source.html#l01352">Shape&lt; dim &gt;::orientation</a>.</p>
+<p class="reference">References <a class="el" href="shape_8h_source.html#l01342">Shape&lt; dim &gt;::orientation</a>.</p>
 
 </div>
 </div>
@@ -861,9 +864,9 @@ template&lt;int dim&gt; </div>
 
 <p>Returns the position of the shape. </p>
 
-<p class="definition">Definition at line <a class="el" href="shape_8h_source.html#l01181">1181</a> of file <a class="el" href="shape_8h_source.html">shape.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="shape_8h_source.html#l01178">1178</a> of file <a class="el" href="shape_8h_source.html">shape.h</a>.</p>
 
-<p class="reference">References <a class="el" href="shape_8h_source.html#l01349">Shape&lt; dim &gt;::position</a>.</p>
+<p class="reference">References <a class="el" href="shape_8h_source.html#l01339">Shape&lt; dim &gt;::position</a>.</p>
 
 </div>
 </div>
@@ -894,9 +897,9 @@ template&lt;int dim&gt; </div>
 
 <p>Returns the orientation of the shape. </p>
 
-<p class="definition">Definition at line <a class="el" href="shape_8h_source.html#l01203">1203</a> of file <a class="el" href="shape_8h_source.html">shape.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="shape_8h_source.html#l01198">1198</a> of file <a class="el" href="shape_8h_source.html">shape.h</a>.</p>
 
-<p class="reference">References <a class="el" href="shape_8h_source.html#l01363">Shape&lt; dim &gt;::rotation_matrix</a>.</p>
+<p class="reference">References <a class="el" href="shape_8h_source.html#l01353">Shape&lt; dim &gt;::rotation_matrix</a>.</p>
 
 </div>
 </div>
@@ -929,7 +932,7 @@ template&lt;int dim&gt; </div>
 
 <p>Reimplemented in <a class="el" href="classSphere.html#a35a40beba8a4e583ff3fc6639ba02ddb">Sphere&lt; dim &gt;</a>.</p>
 
-<p class="definition">Definition at line <a class="el" href="shape_8cc_source.html#l00201">201</a> of file <a class="el" href="shape_8cc_source.html">shape.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="shape_8cc_source.html#l00199">199</a> of file <a class="el" href="shape_8cc_source.html">shape.cc</a>.</p>
 
 </div>
 </div>
@@ -987,7 +990,7 @@ template&lt;int dim&gt; </div>
 
 <p>Reimplemented in <a class="el" href="classSuperquadric.html#aa8ac03f4bed7e3b4b41494c5f0e9ad9b">Superquadric&lt; dim &gt;</a>, <a class="el" href="classCompositeShape.html#a5161e87e452ee36b152cb9ed4fd20015">CompositeShape&lt; dim &gt;</a>, <a class="el" href="classOpenCascadeShape.html#a293324d2416f3ecf124621f777fbb1ec">OpenCascadeShape&lt; dim &gt;</a>, and <a class="el" href="classRBFShape.html#a76ef6b66fa9f842370f062e52be95229">RBFShape&lt; dim &gt;</a>.</p>
 
-<p class="definition">Definition at line <a class="el" href="shape_8cc_source.html#l00273">273</a> of file <a class="el" href="shape_8cc_source.html">shape.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="shape_8cc_source.html#l00271">271</a> of file <a class="el" href="shape_8cc_source.html">shape.cc</a>.</p>
 
 </div>
 </div>
@@ -1021,9 +1024,9 @@ template&lt;int dim&gt; </div>
 
 <p>Reimplemented in <a class="el" href="classSphere.html#ac2ded1d768510df6814ddc537b2ee249">Sphere&lt; dim &gt;</a>.</p>
 
-<p class="definition">Definition at line <a class="el" href="shape_8h_source.html#l01070">1070</a> of file <a class="el" href="shape_8h_source.html">shape.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="shape_8h_source.html#l01068">1068</a> of file <a class="el" href="shape_8h_source.html">shape.h</a>.</p>
 
-<p class="reference">References <a class="el" href="shape_8h_source.html#l01334">Shape&lt; dim &gt;::effective_radius</a>.</p>
+<p class="reference">References <a class="el" href="shape_8h_source.html#l01324">Shape&lt; dim &gt;::effective_radius</a>.</p>
 
 </div>
 </div>
@@ -1074,9 +1077,9 @@ template&lt;int dim&gt; </div>
 
 <p>Reimplemented in <a class="el" href="classSphere.html#a2cfef064834d200cd5ef4e8b4ea2daab">Sphere&lt; dim &gt;</a>.</p>
 
-<p class="definition">Definition at line <a class="el" href="shape_8h_source.html#l01098">1098</a> of file <a class="el" href="shape_8h_source.html">shape.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="shape_8h_source.html#l01096">1096</a> of file <a class="el" href="shape_8h_source.html">shape.h</a>.</p>
 
-<p class="reference">References <a class="el" href="shape_8h_source.html#l01334">Shape&lt; dim &gt;::effective_radius</a>, and <a class="el" href="shape_8cc_source.html#l00273">Shape&lt; dim &gt;::gradient_with_cell_guess()</a>.</p>
+<p class="reference">References <a class="el" href="shape_8h_source.html#l01324">Shape&lt; dim &gt;::effective_radius</a>, and <a class="el" href="shape_8cc_source.html#l00271">Shape&lt; dim &gt;::gradient_with_cell_guess()</a>.</p>
 
 </div>
 </div>
@@ -1106,7 +1109,7 @@ template&lt;int dim&gt; </div>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="shape_8cc_source.html#l00208">208</a> of file <a class="el" href="shape_8cc_source.html">shape.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="shape_8cc_source.html#l00206">206</a> of file <a class="el" href="shape_8cc_source.html">shape.cc</a>.</p>
 
 </div>
 </div>
@@ -1138,12 +1141,12 @@ template&lt;int dim&gt; </div>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>The aligned and centered point </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="shape_8cc_source.html#l00122">122</a> of file <a class="el" href="shape_8cc_source.html">shape.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="shape_8cc_source.html#l00121">121</a> of file <a class="el" href="shape_8cc_source.html">shape.cc</a>.</p>
 
 </div>
 </div>
-<a id="a7184cf3e2b161a44e7e3b3e6f2ffe988" name="a7184cf3e2b161a44e7e3b3e6f2ffe988"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a7184cf3e2b161a44e7e3b3e6f2ffe988">&#9670;&#160;</a></span>rotation_matrix_to_xyz_angles()</h2>
+<a id="a430fdcfc03012e0a15c8bd72c9b7010b" name="a430fdcfc03012e0a15c8bd72c9b7010b"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a430fdcfc03012e0a15c8bd72c9b7010b">&#9670;&#160;</a></span>rotation_matrix_to_xyz_angles()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -1154,16 +1157,16 @@ template&lt;int dim&gt; </div>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">Tensor&lt; 1, 3 &gt; <a class="el" href="classShape.html">Shape</a>&lt; dim &gt;::rotation_matrix_to_xyz_angles </td>
+          <td class="memname">static Tensor&lt; 1, 3 &gt; <a class="el" href="classShape.html">Shape</a>&lt; dim &gt;::rotation_matrix_to_xyz_angles </td>
           <td>(</td>
           <td class="paramtype">Tensor&lt; 2, 3 &gt; &amp;&#160;</td>
           <td class="paramname"><em>rotation_matrix_representation</em></td><td>)</td>
-          <td> const</td>
+          <td></td>
         </tr>
       </table>
   </td>
   <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+<span class="mlabels"><span class="mlabel">inline</span><span class="mlabel">static</span></span>  </td>
   </tr>
 </table>
 </div><div class="memdoc">
@@ -1176,12 +1179,12 @@ template&lt;int dim&gt; </div>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="shape_8h_source.html#l01321">1321</a> of file <a class="el" href="shape_8h_source.html">shape.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="shape_8h_source.html#l01312">1312</a> of file <a class="el" href="shape_8h_source.html">shape.h</a>.</p>
 
 </div>
 </div>
-<a id="a4012470e896cf61c53ad611eb1a26e06" name="a4012470e896cf61c53ad611eb1a26e06"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a4012470e896cf61c53ad611eb1a26e06">&#9670;&#160;</a></span>set_layer_thickening()</h2>
+<a id="ab7973d48a34701f6a301613ce08cc938" name="ab7973d48a34701f6a301613ce08cc938"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ab7973d48a34701f6a301613ce08cc938">&#9670;&#160;</a></span>set_layer_thickening()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -1195,7 +1198,7 @@ template&lt;int dim&gt; </div>
           <td class="memname">virtual void <a class="el" href="classShape.html">Shape</a>&lt; dim &gt;::set_layer_thickening </td>
           <td>(</td>
           <td class="paramtype">const double&#160;</td>
-          <td class="paramname"><em>layer_thickening</em></td><td>)</td>
+          <td class="paramname"><em>the_layer_thickening</em></td><td>)</td>
           <td></td>
         </tr>
       </table>
@@ -1209,16 +1212,16 @@ template&lt;int dim&gt; </div>
 <p>Sets the layer thickening value (positive or negative) of the particle's shape. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">layer_thickening</td><td>Thickness to be artificially added to the particle. A negative value will decrease the particle's thickness by subtracting a layer of specified width. </td></tr>
+    <tr><td class="paramname">the_layer_thickening</td><td>Thickness to be artificially added to the particle. A negative value will decrease the particle's thickness by subtracting a layer of specified width. </td></tr>
   </table>
   </dd>
 </dl>
 
 <p>Reimplemented in <a class="el" href="classCompositeShape.html#aa01c6ca901fc3e2762b0baf686b9d33b">CompositeShape&lt; dim &gt;</a>.</p>
 
-<p class="definition">Definition at line <a class="el" href="shape_8h_source.html#l01309">1309</a> of file <a class="el" href="shape_8h_source.html">shape.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="shape_8h_source.html#l01300">1300</a> of file <a class="el" href="shape_8h_source.html">shape.h</a>.</p>
 
-<p class="reference">References <a class="el" href="shape_8h_source.html#l01365">Shape&lt; dim &gt;::layer_thickening</a>.</p>
+<p class="reference">References <a class="el" href="shape_8h_source.html#l01355">Shape&lt; dim &gt;::layer_thickening</a>.</p>
 
 </div>
 </div>
@@ -1251,19 +1254,19 @@ template&lt;int dim&gt; </div>
 <p>Sets a new orientation for the shape. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">The</td><td>new orientation the shape will be set at </td></tr>
+    <tr><td class="paramname">new_orientation</td><td>The new orientation the shape will be set at </td></tr>
   </table>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="shape_8h_source.html#l01146">1146</a> of file <a class="el" href="shape_8h_source.html">shape.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="shape_8h_source.html#l01144">1144</a> of file <a class="el" href="shape_8h_source.html">shape.h</a>.</p>
 
-<p class="reference">References <a class="el" href="shape_8cc_source.html#l00030">Shape&lt; dim &gt;::clear_cache()</a>, <a class="el" href="shape_8h_source.html#l01352">Shape&lt; dim &gt;::orientation</a>, and <a class="el" href="shape_8h_source.html#l01363">Shape&lt; dim &gt;::rotation_matrix</a>.</p>
+<p class="reference">References <a class="el" href="shape_8cc_source.html#l00030">Shape&lt; dim &gt;::clear_cache()</a>, <a class="el" href="shape_8h_source.html#l01342">Shape&lt; dim &gt;::orientation</a>, and <a class="el" href="shape_8h_source.html#l01353">Shape&lt; dim &gt;::rotation_matrix</a>.</p>
 
 </div>
 </div>
-<a id="acc115201008418068265ed7fd5f092ae" name="acc115201008418068265ed7fd5f092ae"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#acc115201008418068265ed7fd5f092ae">&#9670;&#160;</a></span>set_part_of_a_composite()</h2>
+<a id="afd776930f18fc019da2c0a1a890cb2e1" name="afd776930f18fc019da2c0a1a890cb2e1"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#afd776930f18fc019da2c0a1a890cb2e1">&#9670;&#160;</a></span>set_part_of_a_composite()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -1277,7 +1280,7 @@ template&lt;int dim&gt; </div>
           <td class="memname">void <a class="el" href="classShape.html">Shape</a>&lt; dim &gt;::set_part_of_a_composite </td>
           <td>(</td>
           <td class="paramtype">const bool&#160;</td>
-          <td class="paramname"><em>part_of_a_composite</em></td><td>)</td>
+          <td class="paramname"><em>is_part_of_a_composite</em></td><td>)</td>
           <td></td>
         </tr>
       </table>
@@ -1291,14 +1294,14 @@ template&lt;int dim&gt; </div>
 <p>Defines if this shape is part of a composite. If true, cache management is deactivated and delegated to the upper level shape, to avoid cache duplication. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">part_of_a_composite</td><td>is true if this shape is a constituent of a composite shape </td></tr>
+    <tr><td class="paramname">is_part_of_a_composite</td><td>is true if this shape is a constituent of a composite shape </td></tr>
   </table>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="shape_8h_source.html#l01294">1294</a> of file <a class="el" href="shape_8h_source.html">shape.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="shape_8h_source.html#l01285">1285</a> of file <a class="el" href="shape_8h_source.html">shape.h</a>.</p>
 
-<p class="reference">References <a class="el" href="shape_8h_source.html#l01359">Shape&lt; dim &gt;::part_of_a_composite</a>.</p>
+<p class="reference">References <a class="el" href="shape_8h_source.html#l01349">Shape&lt; dim &gt;::part_of_a_composite</a>.</p>
 
 </div>
 </div>
@@ -1331,21 +1334,21 @@ template&lt;int dim&gt; </div>
 <p>Sets a new position for the shape. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">The</td><td>new position the shape will be placed at </td></tr>
+    <tr><td class="paramname">new_position</td><td>The new position the shape will be placed at </td></tr>
   </table>
   </dd>
 </dl>
 
 <p>Reimplemented in <a class="el" href="classSphere.html#a7a62ccd8adb5caf255b60f066e4a4059">Sphere&lt; dim &gt;</a>, and <a class="el" href="classOpenCascadeShape.html#a552e8985bec2f9ad893235502c350b62">OpenCascadeShape&lt; dim &gt;</a>.</p>
 
-<p class="definition">Definition at line <a class="el" href="shape_8h_source.html#l01133">1133</a> of file <a class="el" href="shape_8h_source.html">shape.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="shape_8h_source.html#l01131">1131</a> of file <a class="el" href="shape_8h_source.html">shape.h</a>.</p>
 
-<p class="reference">References <a class="el" href="shape_8cc_source.html#l00030">Shape&lt; dim &gt;::clear_cache()</a>, and <a class="el" href="shape_8h_source.html#l01349">Shape&lt; dim &gt;::position</a>.</p>
+<p class="reference">References <a class="el" href="shape_8cc_source.html#l00030">Shape&lt; dim &gt;::clear_cache()</a>, and <a class="el" href="shape_8h_source.html#l01339">Shape&lt; dim &gt;::position</a>.</p>
 
 </div>
 </div>
-<a id="a3beacb4994e184b9cf5c7d5719d1ab94" name="a3beacb4994e184b9cf5c7d5719d1ab94"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a3beacb4994e184b9cf5c7d5719d1ab94">&#9670;&#160;</a></span>smooth_max()</h2>
+<a id="aad117c51ca97220bf3ae94da9de6cb75" name="aad117c51ca97220bf3ae94da9de6cb75"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aad117c51ca97220bf3ae94da9de6cb75">&#9670;&#160;</a></span>smooth_max()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -1356,21 +1359,21 @@ template&lt;int dim&gt; </div>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">double <a class="el" href="classShape.html">Shape</a>&lt; dim &gt;::smooth_max </td>
+          <td class="memname">static double <a class="el" href="classShape.html">Shape</a>&lt; dim &gt;::smooth_max </td>
           <td>(</td>
-          <td class="paramtype">double&#160;</td>
+          <td class="paramtype">const double&#160;</td>
           <td class="paramname"><em>a</em>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">double&#160;</td>
+          <td class="paramtype">const double&#160;</td>
           <td class="paramname"><em>b</em>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">double&#160;</td>
+          <td class="paramtype">const double&#160;</td>
           <td class="paramname"><em>smooth_factor</em> = <code>10</code>&#160;</td>
         </tr>
         <tr>
@@ -1381,7 +1384,7 @@ template&lt;int dim&gt; </div>
       </table>
   </td>
   <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+<span class="mlabels"><span class="mlabel">inline</span><span class="mlabel">static</span></span>  </td>
   </tr>
 </table>
 </div><div class="memdoc">
@@ -1391,11 +1394,12 @@ template&lt;int dim&gt; </div>
   <table class="params">
     <tr><td class="paramname">a</td><td>first variable </td></tr>
     <tr><td class="paramname">b</td><td>second variable </td></tr>
+    <tr><td class="paramname">smooth_factor</td><td></td></tr>
   </table>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="shape_8h_source.html#l00128">128</a> of file <a class="el" href="shape_8h_source.html">shape.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="shape_8h_source.html#l00127">127</a> of file <a class="el" href="shape_8h_source.html">shape.h</a>.</p>
 
 </div>
 </div>
@@ -1531,9 +1535,9 @@ template&lt;int dim&gt; </div>
   </dd>
 </dl>
 
-<p>Reimplemented in <a class="el" href="classOpenCascadeShape.html#ab2a64d69356d220c83aad684c1e16caf">OpenCascadeShape&lt; dim &gt;</a>, <a class="el" href="classSuperquadric.html#ab931dd581476e8b87945fa75ea705d1e">Superquadric&lt; dim &gt;</a>, <a class="el" href="classCompositeShape.html#ab578847536073bc3aea67aec3e9b3044">CompositeShape&lt; dim &gt;</a>, and <a class="el" href="classRBFShape.html#a3bb5e038767577ace42bbb92fffe8d0f">RBFShape&lt; dim &gt;</a>.</p>
+<p>Reimplemented in <a class="el" href="classSuperquadric.html#a0a173a354e51d6d1e0756a87d1390309">Superquadric&lt; dim &gt;</a>, <a class="el" href="classCompositeShape.html#a7f371a7edf02da4c723477d6e52a322b">CompositeShape&lt; dim &gt;</a>, <a class="el" href="classOpenCascadeShape.html#ab2a64d69356d220c83aad684c1e16caf">OpenCascadeShape&lt; dim &gt;</a>, and <a class="el" href="classRBFShape.html#ae15e610ac060e65d08344d4928894835">RBFShape&lt; dim &gt;</a>.</p>
 
-<p class="definition">Definition at line <a class="el" href="shape_8cc_source.html#l00263">263</a> of file <a class="el" href="shape_8cc_source.html">shape.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="shape_8cc_source.html#l00261">261</a> of file <a class="el" href="shape_8cc_source.html">shape.cc</a>.</p>
 
 </div>
 </div>
@@ -1552,7 +1556,7 @@ template&lt;int dim&gt; </div>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="shape_8h_source.html#l01339">1339</a> of file <a class="el" href="shape_8h_source.html">shape.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="shape_8h_source.html#l01329">1329</a> of file <a class="el" href="shape_8h_source.html">shape.h</a>.</p>
 
 </div>
 </div>
@@ -1570,7 +1574,7 @@ template&lt;int dim&gt; </div>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="shape_8h_source.html#l01344">1344</a> of file <a class="el" href="shape_8h_source.html">shape.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="shape_8h_source.html#l01334">1334</a> of file <a class="el" href="shape_8h_source.html">shape.h</a>.</p>
 
 </div>
 </div>
@@ -1588,7 +1592,7 @@ template&lt;int dim&gt; </div>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="shape_8h_source.html#l01342">1342</a> of file <a class="el" href="shape_8h_source.html">shape.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="shape_8h_source.html#l01332">1332</a> of file <a class="el" href="shape_8h_source.html">shape.h</a>.</p>
 
 </div>
 </div>
@@ -1614,7 +1618,7 @@ template&lt;int dim&gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="shape_8h_source.html#l01358">1358</a> of file <a class="el" href="shape_8h_source.html">shape.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="shape_8h_source.html#l01348">1348</a> of file <a class="el" href="shape_8h_source.html">shape.h</a>.</p>
 
 </div>
 </div>
@@ -1632,7 +1636,7 @@ template&lt;int dim&gt; </div>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="shape_8h_source.html#l01334">1334</a> of file <a class="el" href="shape_8h_source.html">shape.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="shape_8h_source.html#l01324">1324</a> of file <a class="el" href="shape_8h_source.html">shape.h</a>.</p>
 
 </div>
 </div>
@@ -1658,7 +1662,7 @@ template&lt;int dim&gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="shape_8h_source.html#l01357">1357</a> of file <a class="el" href="shape_8h_source.html">shape.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="shape_8h_source.html#l01347">1347</a> of file <a class="el" href="shape_8h_source.html">shape.h</a>.</p>
 
 </div>
 </div>
@@ -1684,7 +1688,7 @@ template&lt;int dim&gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="shape_8h_source.html#l01365">1365</a> of file <a class="el" href="shape_8h_source.html">shape.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="shape_8h_source.html#l01355">1355</a> of file <a class="el" href="shape_8h_source.html">shape.h</a>.</p>
 
 </div>
 </div>
@@ -1710,7 +1714,7 @@ template&lt;int dim&gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="shape_8h_source.html#l01352">1352</a> of file <a class="el" href="shape_8h_source.html">shape.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="shape_8h_source.html#l01342">1342</a> of file <a class="el" href="shape_8h_source.html">shape.h</a>.</p>
 
 </div>
 </div>
@@ -1736,7 +1740,7 @@ template&lt;int dim&gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="shape_8h_source.html#l01359">1359</a> of file <a class="el" href="shape_8h_source.html">shape.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="shape_8h_source.html#l01349">1349</a> of file <a class="el" href="shape_8h_source.html">shape.h</a>.</p>
 
 </div>
 </div>
@@ -1762,7 +1766,7 @@ template&lt;int dim&gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="shape_8h_source.html#l01349">1349</a> of file <a class="el" href="shape_8h_source.html">shape.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="shape_8h_source.html#l01339">1339</a> of file <a class="el" href="shape_8h_source.html">shape.h</a>.</p>
 
 </div>
 </div>
@@ -1788,7 +1792,7 @@ template&lt;int dim&gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="shape_8h_source.html#l01363">1363</a> of file <a class="el" href="shape_8h_source.html">shape.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="shape_8h_source.html#l01353">1353</a> of file <a class="el" href="shape_8h_source.html">shape.h</a>.</p>
 
 </div>
 </div>
@@ -1801,7 +1805,7 @@ template&lt;int dim&gt; </div>
 template&lt;int dim&gt; </div>
       <table class="memname">
         <tr>
-          <td class="memname">enum <a class="el" href="classShape.html#a3e44e2b1f6fca48f7b7b2151977b3abd">Shape::ShapeType</a> <a class="el" href="classShape.html">Shape</a>&lt; dim &gt;::type</td>
+          <td class="memname">enum <a class="el" href="classShape.html#a394819ce751267dc955abe4ad18ebdeb">Shape::ShapeType</a> <a class="el" href="classShape.html">Shape</a>&lt; dim &gt;::type</td>
         </tr>
       </table>
 </div><div class="memdoc">
@@ -1830,7 +1834,7 @@ template&lt;int dim&gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="shape_8h_source.html#l01356">1356</a> of file <a class="el" href="shape_8h_source.html">shape.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="shape_8h_source.html#l01346">1346</a> of file <a class="el" href="shape_8h_source.html">shape.h</a>.</p>
 
 </div>
 </div>

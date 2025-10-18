@@ -87,6 +87,7 @@ $(function() {
 <div class="header">
   <div class="summary">
 <a href="#pub-methods">Public Member Functions</a> &#124;
+<a href="#pub-static-methods">Static Public Member Functions</a> &#124;
 <a href="#pub-attribs">Public Attributes</a> &#124;
 <a href="structParameters_1_1SurfaceTensionParameters-members.html">List of all members</a>  </div>
   <div class="headertitle"><div class="title">Parameters::SurfaceTensionParameters Struct Reference</div></div>
@@ -97,10 +98,13 @@ $(function() {
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pub-methods" name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
-<tr class="memitem:ab8f88c502842a46210207b6e6907271d" id="r_ab8f88c502842a46210207b6e6907271d"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structParameters_1_1SurfaceTensionParameters.html#ab8f88c502842a46210207b6e6907271d">declare_parameters</a> (ParameterHandler &amp;prm)</td></tr>
+<tr class="memitem:a54b6256fa052b993453225b558be2728" id="r_a54b6256fa052b993453225b558be2728"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structParameters_1_1SurfaceTensionParameters.html#a54b6256fa052b993453225b558be2728">parse_parameters</a> (const ParameterHandler &amp;prm, const <a class="el" href="classParameters_1_1Dimensionality.html">Parameters::Dimensionality</a> &amp;dimensions)</td></tr>
+<tr class="separator:a54b6256fa052b993453225b558be2728"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table><table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pub-static-methods" name="pub-static-methods"></a>
+Static Public Member Functions</h2></td></tr>
+<tr class="memitem:ab8f88c502842a46210207b6e6907271d" id="r_ab8f88c502842a46210207b6e6907271d"><td class="memItemLeft" align="right" valign="top">static void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structParameters_1_1SurfaceTensionParameters.html#ab8f88c502842a46210207b6e6907271d">declare_parameters</a> (ParameterHandler &amp;prm)</td></tr>
 <tr class="separator:ab8f88c502842a46210207b6e6907271d"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a10be37cc823c19d0798b0219c3304419" id="r_a10be37cc823c19d0798b0219c3304419"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structParameters_1_1SurfaceTensionParameters.html#a10be37cc823c19d0798b0219c3304419">parse_parameters</a> (ParameterHandler &amp;prm, const <a class="el" href="classParameters_1_1Dimensionality.html">Parameters::Dimensionality</a> dimensions)</td></tr>
-<tr class="separator:a10be37cc823c19d0798b0219c3304419"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pub-attribs" name="pub-attribs"></a>
 Public Attributes</h2></td></tr>
@@ -125,6 +129,9 @@ Public Attributes</h2></td></tr>
 
 <div class="memitem">
 <div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
       <table class="memname">
         <tr>
           <td class="memname">void Parameters::SurfaceTensionParameters::declare_parameters </td>
@@ -134,6 +141,11 @@ Public Attributes</h2></td></tr>
           <td></td>
         </tr>
       </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">static</span></span>  </td>
+  </tr>
+</table>
 </div><div class="memdoc">
 
 <p>Declare the parameters. </p>
@@ -148,8 +160,8 @@ Public Attributes</h2></td></tr>
 
 </div>
 </div>
-<a id="a10be37cc823c19d0798b0219c3304419" name="a10be37cc823c19d0798b0219c3304419"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a10be37cc823c19d0798b0219c3304419">&#9670;&#160;</a></span>parse_parameters()</h2>
+<a id="a54b6256fa052b993453225b558be2728" name="a54b6256fa052b993453225b558be2728"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a54b6256fa052b993453225b558be2728">&#9670;&#160;</a></span>parse_parameters()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -157,13 +169,13 @@ Public Attributes</h2></td></tr>
         <tr>
           <td class="memname">void Parameters::SurfaceTensionParameters::parse_parameters </td>
           <td>(</td>
-          <td class="paramtype">ParameterHandler &amp;&#160;</td>
+          <td class="paramtype">const ParameterHandler &amp;&#160;</td>
           <td class="paramname"><em>prm</em>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">const <a class="el" href="classParameters_1_1Dimensionality.html">Parameters::Dimensionality</a>&#160;</td>
+          <td class="paramtype">const <a class="el" href="classParameters_1_1Dimensionality.html">Parameters::Dimensionality</a> &amp;&#160;</td>
           <td class="paramname"><em>dimensions</em>&#160;</td>
         </tr>
         <tr>
@@ -178,7 +190,7 @@ Public Attributes</h2></td></tr>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramdir">[in,out]</td><td class="paramname">prm</td><td>The ParameterHandler.</td></tr>
-    <tr><td class="paramdir">[in]</td><td class="paramname">dimensions</td><td>The <a class="el" href="classParameters_1_1Dimensionality.html" title="Class used to rescale physical properties for cases where the main dimensions of the problems (Length...">Dimensionality</a> object controling the fundamental dimensions (length, time, mass, temperature) of the problem. </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">dimensions</td><td>The <a class="el" href="classParameters_1_1Dimensionality.html" title="Class used to rescale physical properties for cases where the main dimensions of the problems (Length...">Dimensionality</a> object controlling the fundamental dimensions (length, time, mass, temperature) of the problem. </td></tr>
   </table>
   </dd>
 </dl>

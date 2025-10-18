@@ -412,7 +412,7 @@ $(document).ready(function() { init_codefold(0); });
 <div class="line"><a id="l00307" name="l00307"></a><span class="lineno">  307</span>          {</div>
 <div class="line"><a id="l00308" name="l00308"></a><span class="lineno">  308</span>            velocity_ale_function-&gt;vector_value(<a class="code hl_variable" href="classVOFScratchData.html#abf608477551d9defeb1ccdf3633dec97">quadrature_points</a>[q],</div>
 <div class="line"><a id="l00309" name="l00309"></a><span class="lineno">  309</span>                                                velocity_ale_vector);</div>
-<div class="line"><a id="l00310" name="l00310"></a><span class="lineno">  310</span>            <span class="keywordflow">for</span> (<span class="keywordtype">unsigned</span> <span class="keywordtype">int</span> d = 0; d &lt; dim; ++d)</div>
+<div class="line"><a id="l00310" name="l00310"></a><span class="lineno">  310</span>            <span class="keywordflow">for</span> (<span class="keywordtype">int</span> d = 0; d &lt; dim; ++d)</div>
 <div class="line"><a id="l00311" name="l00311"></a><span class="lineno">  311</span>              velocity_ale[d] = velocity_ale_vector[d];</div>
 <div class="line"><a id="l00312" name="l00312"></a><span class="lineno">  312</span> </div>
 <div class="line"><a id="l00313" name="l00313"></a><span class="lineno">  313</span>            <a class="code hl_variable" href="classVOFScratchData.html#abf45e78d655a35826c643fe8fc903636">velocity_values</a>[q] -= velocity_ale;</div>
@@ -481,7 +481,7 @@ $(document).ready(function() { init_codefold(0); });
 <div class="line"><a id="l00374" name="l00374"></a><span class="lineno">  374</span>      {</div>
 <div class="line"><a id="l00375" name="l00375"></a><span class="lineno">  375</span>        velocity_ale_function-&gt;vector_value(<a class="code hl_variable" href="classVOFScratchData.html#ac776ce6511e3e31cff9ad63a9254581b">face_quadrature_points</a>[q],</div>
 <div class="line"><a id="l00376" name="l00376"></a><span class="lineno">  376</span>                                            velocity_ale_vector);</div>
-<div class="line"><a id="l00377" name="l00377"></a><span class="lineno">  377</span>        <span class="keywordflow">for</span> (<span class="keywordtype">unsigned</span> <span class="keywordtype">int</span> d = 0; d &lt; dim; ++d)</div>
+<div class="line"><a id="l00377" name="l00377"></a><span class="lineno">  377</span>        <span class="keywordflow">for</span> (<span class="keywordtype">int</span> d = 0; d &lt; dim; ++d)</div>
 <div class="line"><a id="l00378" name="l00378"></a><span class="lineno">  378</span>          velocity_ale[d] = velocity_ale_vector[d];</div>
 <div class="line"><a id="l00379" name="l00379"></a><span class="lineno">  379</span> </div>
 <div class="line"><a id="l00380" name="l00380"></a><span class="lineno">  380</span>        <a class="code hl_variable" href="classVOFScratchData.html#af97f198c52dfcffb3833bfd80348f605">face_velocity_values</a>[q] -= velocity_ale;</div>
