@@ -212,7 +212,11 @@ private:
   std::shared_ptr<Insertion<dim, DEMProperties::PropertiesIndex>>
     particle_insertion_object;
 
-  const double displacement_distance;
+  /**
+   * @brief The reference displacement distance used to move the photons
+   * during each pseudo time step.
+   */
+  double displacement_distance;
 
   /**
    * @brief Container that shows the local/ghost neighbor cells of all local

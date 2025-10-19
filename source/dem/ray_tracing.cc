@@ -664,6 +664,7 @@ RayTracingSolver<dim>::solve()
             triangulation,
             dem_parameters.boundary_conditions);
 
+  displacement_distance = 0.5 * GridTools::minimal_cell_diameter(triangulation);
 
   // Set particle insertion object
   particle_insertion_object = set_particle_insertion_type();
