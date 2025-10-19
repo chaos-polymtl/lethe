@@ -282,7 +282,7 @@ TracerAssemblerDGCore<dim>::assemble_matrix(
               const Tensor<1, dim> grad_phi_T_j = scratch_data.grad_phi[q][j];
               const auto           phi_T_j      = scratch_data.phi[q][j];
 
-              // Weak form: - D * laplacian T + u * gradT - f=0
+              // Weak form of: - D * laplacian T + u * gradT - f=0
               // Note that the advection term has been weakened for it to appear
               // explicitly in the weak form as a boundary term.
               local_matrix(i, j) += (diffusivity * grad_phi_T_i * grad_phi_T_j -
@@ -290,8 +290,7 @@ TracerAssemblerDGCore<dim>::assemble_matrix(
                                     JxW;
 
               // This term is added to correct for the influence of the
-              // non-divergence-free velocity field on the concentration. The
-              // term is introduced in the strong form as - div u * T.
+              // non-divergence-free velocity field on the concentration.
               local_matrix(i, j) +=
                 -phi_T_i * velocity_divergence * phi_T_j * JxW;
             }
@@ -343,8 +342,7 @@ TracerAssemblerDGCore<dim>::assemble_rhs(
                           JxW;
 
           // This term is added to correct for the influence of the
-          // non-divergence-free velocity field on the concentration. The term
-          // is introduced in the strong form as - div u * T.
+          // non-divergence-free velocity field on the concentration.
           local_rhs(i) -= -phi_T_i * velocity_divergence * tracer_value * JxW;
         }
     } // end loop on quadrature points

@@ -46,7 +46,7 @@ This subsection specifies the characteristics of the finite element method used 
 
 .. important::
 
-    The DG formulation is sensitive to CFL. Use a small time-step to avoid over/undershoots. From our experience, a CFL of 1 or lower is recommended.
+    The DG formulation is sensitive to the CFL value. Use a small time-step to  keep the tracer value bounded. From our experience, a CFL of 1 or lower is recommended.
 
 * ``VOF order`` specifies the interpolation for the VOF phase indicator. It is not recommended to use higher order interpolation for the VOF method as this may conflict with the bounding and the sharpening mechanism used therein.
 

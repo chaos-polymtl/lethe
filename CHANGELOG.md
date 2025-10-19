@@ -7,7 +7,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
 ### Changed
 
-- MAJOR Changed DG Tracer formulation to be - D * laplacian T +  u * gradT + T div(u) - f=0, adding the term T div(u). It has proven to be more conservative at edges. The dg_tracer_pipe application test was sensitive to this change, and will be used to track it. The use of the new formulation seems more sensitive to the CFL to keep the solution closer to bounded.
+- MAJOR The DG Tracer formulation for the equation - D * Laplacian T +  u * gradT - f=0 is formulated in the weak sense. Consequently, we solve it by solving -D * Laplacian T + div(u*T) - f = 0 and taking the weak form of that expression. However, this assumes that the divergence of the velocity field is exactly zero, yet the divergence of the velocity field is not exactly zero if the velocity field arises from a CG formulation. This is especially true near corners or hanging nodes. To fix this, we explicitly account for the divergence of the velocity field and solve for -D * Laplacian T + div(u*T) -T*div(u) - f = 0. This essentially explicitly removes the term T div(u). It has proven to be more conservative at edges and corners. The dg_tracer_pipe application test was sensitive to this change, and will be used to track it. The use of the new formulation seems more sensitive to the CFL to keep the solution closer to its bounds.
 
 ### Fixed
 
