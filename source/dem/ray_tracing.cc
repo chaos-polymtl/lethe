@@ -36,6 +36,7 @@ RayTracingSolver<dim>::RayTracingSolver(
                     TimerOutput::summary,
                     TimerOutput::wall_times)
   , background_dh(triangulation)
+  , displacement_distance(0.5 * GridTools::minimal_cell_diameter(triangulation))
 {
   AssertThrow(!(parameters.model_parameters.load_balance_method ==
                   Parameters::Lagrangian::ModelParameters<
@@ -54,9 +55,9 @@ RayTracingSolver<dim>::setup_parameters()
 {
   // Print simulation starting information
   pcout << std::endl;
-  std::stringstream ss;
-  ss << "Running on " << n_mpi_processes << " rank(s)";
-  announce_string(pcout, ss.str(), '*');
+  std::string msg =
+    "Running on " + std::to_string(n_mpi_processes) + " rank(s)";
+  announce_string(pcout, msg, '*');
 
   if (parameters.timer.type == Parameters::Timer::Type::none)
     computing_timer.disable_output();
@@ -71,8 +72,6 @@ RayTracingSolver<dim>::setup_parameters()
 
   // Setup load balancing parameters and attach the correct functions to the
   // signals inside the triangulation
-  // parameters.model_parameters.load_balance_method =
-  // Parameters::Lagrangian::ModelParameters<dim>::frequent;
   load_balancing.set_parameters(parameters.model_parameters);
 
   AdaptiveSparseContacts<dim, DEMProperties::PropertiesIndex>
@@ -276,13 +275,14 @@ RayTracingSolver<dim>::insert_particles_and_photons()
   // direction. For the position, the offset uses the same logic as other
   // insertion mechanism in Lethe. For the displacement direction of each
   // photon, we need to generate one random angular offset (theta) relative to
-  // reference displacement vector. We then need to decide in which direction
-  // (phi) around this reference displacement direction vector the offset will
-  // be applied.
+  // the reference displacement vector. We then need to decide in which
+  // direction (phi) around this reference displacement direction vector the
+  // offset will be applied.
   std::vector<double> random_number_angular_1; // From 0 to 2*pi
   std::vector<double> random_number_angular_2; // From 0 to max_angular_offset
   std::vector<double> random_number_position;  // From 0 to max_insertion_offset
 
+  // Reserve the size of the vectors
   random_number_angular_1.reserve(n_photons_to_insert_this_proc);
   random_number_angular_2.reserve(n_photons_to_insert_this_proc);
   random_number_position.reserve(3 * n_photons_to_insert_this_proc);
@@ -305,11 +305,10 @@ RayTracingSolver<dim>::insert_particles_and_photons()
     parameters.ray_tracing_info.max_insertion_offset,
     parameters.ray_tracing_info.prn_seed_photon_insertion);
 
-  // For the displacement direction randomness, we need to find a vector
+  // For the displacement direction randomness, we need to find two vectors
   // normal to ref_displacement_dir.
-
   // We make sure that our first vector is not parallel to the
-  // ref_displacement_dir.
+  // ref_displacement_dir
   const Tensor<1, 3> temp_normal_vector =
     (std::fabs(ref_displacement_dir[0]) < 0.9) ? Tensor<1, 3>({1, 0, 0}) :
                                                  Tensor<1, 3>({0, 1, 0});
@@ -319,6 +318,7 @@ RayTracingSolver<dim>::insert_particles_and_photons()
                      scalar_product(temp_normal_vector, ref_displacement_dir);
   u = u / u.norm();
 
+  // We find the second one using the cross product
   const Tensor<1, 3> v = cross_product_3d(ref_displacement_dir, u);
 
   // Create the insertion location of every photon from their IDs.
@@ -329,6 +329,8 @@ RayTracingSolver<dim>::insert_particles_and_photons()
 
   // Prepare the containers.
   insertion_points_on_proc.reserve(n_photons_to_insert_this_proc);
+
+  // Fill the photon properties container with vectors of size 6.
   photon_properties.resize(n_photons_to_insert_this_proc,
                            std::vector<double>(6));
   // This loop is equivalent of having three nested loops over the three
@@ -441,7 +443,7 @@ RayTracingSolver<dim>::write_output_results(
 template <int dim>
 void
 RayTracingSolver<dim>::finish_simulation(
-  std::vector<Point<3>> &intersection_points)
+  const std::vector<Point<3>> &intersection_points)
 {
   // Timer output
   if (parameters.timer.type == Parameters::Timer::Type::end)
@@ -476,7 +478,7 @@ RayTracingSolver<dim>::find_intersection(
 {
   // Loop over each local cell in the triangulation. To do this, we loop
   // over each cell neighbor list. Each local cell has a list and the first
-  // iterator in the main cell itself.
+  // iterator is the main cell itself.
   for (auto cell_neighbor_list_iterator = cell_list.begin();
        cell_neighbor_list_iterator != cell_list.end();
        ++cell_neighbor_list_iterator)
@@ -662,7 +664,6 @@ RayTracingSolver<dim>::solve()
             triangulation,
             dem_parameters.boundary_conditions);
 
-  displacement_distance = 0.5 * GridTools::minimal_cell_diameter(triangulation);
 
   // Set particle insertion object
   particle_insertion_object = set_particle_insertion_type();

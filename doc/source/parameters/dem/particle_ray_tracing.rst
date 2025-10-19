@@ -2,7 +2,7 @@
 Particle Ray Tracing
 =====================
 
-In this subsection, the parameters are used by the ``lethe-particles-ray-tracing`` application. This application simulates the propagation of photons (or rays) through the simulation domain to reconstruct the surface made by particle using the same principles as profilometry. The parameters defined here control the initial conditions for photon insertion, including their starting positions, directions, and any random offsets applied to their trajectories.
+In this subsection, the parameters used by the ``lethe-particles-ray-tracing`` application are explained.. This application simulates the propagation of photons (or rays) through the simulation domain to reconstruct the surface formed by particles, using the same principles as profilometry. The parameters defined here control the initial conditions for photon insertion, including their starting positions, directions, and any random offsets applied to their trajectories.
 
 .. code-block:: text
 
@@ -20,7 +20,7 @@ In this subsection, the parameters are used by the ``lethe-particles-ray-tracing
 
 -  ``starting photon insertion position`` is the location of the first photon being inserted, given as a 3D coordinate (x,y,z).
 
--  ``insertion unit tensors`` are three vectors defining the insertion grid directions relative to the ``starting photon position``. By default, these correspond to the Cartesian axes. The vectors do not need to be orthogonal or normalized, but they must not be zero vectors. The insertion grid is formed by creating insertion point relative to the ``starting photon insertion position`` using these three vectors.
+-  ``insertion unit tensors`` are three vectors defining the insertion grid directions relative to the ``starting photon position``. By default, these correspond to the Cartesian axes (x-y-z). The vectors do not need to be orthogonal or normalized, but they must not be non-zero vectors. The insertion grid is formed by creating insertion points relative to the ``starting photon insertion position`` using these three vectors.
 
 -  ``number of inserted photons per direction`` are the number of photons to insert along each of the three ``insertion unit tensors`` . Example: ``5 : 10 : 1`` inserts 5 × 10 × 1 = 50 photons.
 

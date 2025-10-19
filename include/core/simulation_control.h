@@ -719,13 +719,23 @@ public:
   is_at_end() override;
 };
 
+
 class SimulationControlRayTracing : public SimulationControl
 {
+  /**
+   * @brief Simulation control constructor used for the particle ray tracing simulation.
+   *
+   * @param[in] param Structure of the parameters for the simulation control
+   * @param[in] input_photon_handler The particle handler containing the photons
+   */
 public:
   SimulationControlRayTracing(
     const Parameters::SimulationControl &param,
     Particles::ParticleHandler<3>       &input_photon_handler);
 
+  /**
+   * @brief Proceeds with the simulation until the end condition is reached
+   */
   virtual bool
   integrate() override;
 
@@ -735,7 +745,8 @@ public:
   bool
   is_at_end() override;
 
-  /** @brief Indicate if the simulation uses adaptive time stepping or not.
+  /**
+   * @brief Indicate if the simulation uses adaptive time stepping or not.
    *
    * @return A boolean indicating if the simulation has adaptive time stepping
    */

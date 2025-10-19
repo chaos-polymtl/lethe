@@ -99,7 +99,7 @@ private:
    * intersection between photons and particles.
    */
   void
-  finish_simulation(std::vector<Point<3>> &intersection_points);
+  finish_simulation(const std::vector<Point<3>> &intersection_points);
 
   /**
    * @brief Execute the ray tracing algorithm to find intersection points between
@@ -151,12 +151,12 @@ private:
   /**
    * @brief The parameters of the Ray Tracing simulation.
    */
-  RayTracingSolverParameters<dim> parameters;
+  const RayTracingSolverParameters<dim> parameters;
 
   /**
    * @brief DEM parameters needed for some functions related to the DEM particles.
    */
-  DEMSolverParameters<dim> dem_parameters;
+  const DEMSolverParameters<dim> dem_parameters;
   /**
    * @brief The distributed triangulation used for the DEM simulation.
    */
@@ -212,7 +212,7 @@ private:
   std::shared_ptr<Insertion<dim, DEMProperties::PropertiesIndex>>
     particle_insertion_object;
 
-  double displacement_distance;
+  const double displacement_distance;
 
   /**
    * @brief Container that shows the local/ghost neighbor cells of all local

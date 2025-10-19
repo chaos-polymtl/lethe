@@ -27,7 +27,7 @@ Lethe has several applications that can be used depending on the problem to be s
      - This application uses the Discrete Element Method to simulate spherical particles.
    * - ``lethe-particles-ray-tracing``
      - * Profilometry extraction of particle surfaces
-     -  This application performs particle ray tracing to reconstruct the geometry of particle surfaces, similar to a virtual profilometry technique. It emits rays through the simulation domain and detects particle intersections to generate a surface representations.
+     -  This application performs particle ray tracing to reconstruct the geometry of the surface of an assembly of particles, similar to a virtual profilometry technique. It emits rays through the simulation domain and detects particle intersections to represent the surface.
    * - ``lethe-fluid-particles``
      - * Particle-laden flows
      - This application allows to run unresolved Computational Fluid Dynamics-Discrete Element Method simulations.
