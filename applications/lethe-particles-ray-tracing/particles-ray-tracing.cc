@@ -48,7 +48,7 @@ main(int argc, char *argv[])
             dealii::ExcMessage(
               "While reading the dimension parameter from the input file, "
               "Lethe found a value of 2 . lethe-particles-ray-tracing tracing"
-              " does not support other dimension than 3."));
+              " does not support a number of dimensions other than 3."));
         }
 
       else if (dim == 3)

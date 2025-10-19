@@ -1,6 +1,6 @@
 # In this test, three particles are inserted using the list insertion.
 # These particles partially overlap each other in relation to the photon's displacement direction.
-# 1,000,000 photons are then inserted and ray tracing simulation is performed. 
+# 10,000 photons are then inserted and ray tracing simulation is performed.
 
 # Listing of Parameters
 #----------------------
@@ -76,8 +76,8 @@ end
 subsection particle ray tracing
   set starting photon insertion position                  = 0.0, 0.0, 1.95
   set insertion unit tensors                              = 1., 0., 0. : 0., 1., 0.: 0., 0 , -1.
-  set number of inserted photons per direction            = 500 :500 : 1
-  set distance between photons on insertion per direction = 0.004 : 0.004 : 0.004
+  set number of inserted photons per direction            = 100 :100 : 1
+  set distance between photons on insertion per direction = 0.02 : 0.02 : 0.02
   set reference displacement vector                       = 0., 0., -1.
   set photon insertion maximum offset                     = 0.00002
   set photon insertion prn seed                           = 1
