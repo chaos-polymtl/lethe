@@ -36,7 +36,6 @@ RayTracingSolver<dim>::RayTracingSolver(
                     TimerOutput::summary,
                     TimerOutput::wall_times)
   , background_dh(triangulation)
-  , displacement_distance(0.5 * GridTools::minimal_cell_diameter(triangulation))
 {
   AssertThrow(!(parameters.model_parameters.load_balance_method ==
                   Parameters::Lagrangian::ModelParameters<
