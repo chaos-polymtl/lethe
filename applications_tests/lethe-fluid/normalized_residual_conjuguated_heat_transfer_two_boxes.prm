@@ -1,0 +1,186 @@
+# SPDX-FileCopyrightText: Copyright (c) 2025 The Lethe Authors
+# SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
+
+# Tests normalize residual option in heat transfer and fluid flow using matrix-based solver.
+# This test should have the exact same result as the other conjucated heat transfer
+# test, as tolerances are adjusted to follow the non-normalized residual version.
+# If one of the tests change, the other should change accordingly.
+
+# Listing of Parameters
+#----------------------
+
+set dimension = 2
+
+#---------------------------------------------------
+# Simulation Control
+#---------------------------------------------------
+
+subsection simulation control
+  set method            = steady
+  set number mesh adapt = 0
+  set output frequency  = 0
+end
+
+#---------------------------------------------------
+# Physical Properties
+#---------------------------------------------------
+
+subsection physical properties
+  set number of solids = 1
+  subsection fluid 0
+    set kinematic viscosity  = 1.000
+    set thermal conductivity = 1
+  end
+end
+
+#---------------------------------------------------
+# Multiphysics
+#---------------------------------------------------
+
+subsection multiphysics
+  set heat transfer = true
+end
+
+#---------------------------------------------------
+# Mesh
+#---------------------------------------------------
+
+subsection mesh
+  set type      = gmsh
+  set file name = box.msh
+  set simplex   = true
+end
+
+#---------------------------------------------------
+# Post-Processing
+#---------------------------------------------------
+
+subsection post-processing
+  set verbosity = verbose
+  #set calculate temperature range = true
+end
+
+#---------------------------------------------------
+# Analytical Solution
+#---------------------------------------------------
+
+subsection analytical solution
+  set enable = true
+  subsection uvwp
+    set Function expression = if (y<0.1,y*(0.1-y),0); 0 ; if(y<0.1,(2-2*x),0)
+  end
+  set verbosity = verbose
+end
+
+#---------------------------------------------------
+# Boundary Conditions
+#---------------------------------------------------
+
+subsection boundary conditions
+  set number = 5
+  subsection bc 0
+    set type = function
+    set id   = 0
+    subsection u
+      set Function expression = y * (0.1-y)
+    end
+    subsection v
+      set Function expression = 0
+    end
+  end
+  subsection bc 1
+    set type = noslip
+    set id   = 2
+  end
+  subsection bc 2
+    set id   = 1
+    set type = outlet
+    set beta = 0
+  end
+  subsection bc 3
+    set id   = 3
+    set type = outlet
+    set beta = 0
+  end
+  subsection bc 4
+    set id   = 4
+    set type = outlet
+    set beta = 0
+  end
+end
+
+subsection boundary conditions heat transfer
+  set number = 5
+  subsection bc 0
+    set id   = 0
+    set type = temperature
+    subsection value
+      set Function expression = 1
+    end
+  end
+  subsection bc 1
+    set id   = 3
+    set type = temperature
+    subsection value
+      set Function expression = 0
+    end
+  end
+  subsection bc 2
+    set id   = 1
+    set type = noflux
+  end
+  subsection bc 3
+    set id   = 2
+    set type = noflux
+  end
+  subsection bc 4
+    set id   = 4
+    set type = noflux
+  end
+end
+
+#---------------------------------------------------
+# Non-Linear Solver Control
+#---------------------------------------------------
+
+subsection non-linear solver
+  subsection heat transfer
+    set tolerance      = 5e-8
+    set max iterations = 3
+    set verbosity      = quiet
+    set normalize residual = true
+  end
+  subsection fluid dynamics
+    set tolerance      = 5e-8
+    set max iterations = 3
+    set verbosity      = quiet
+    set normalize residual = true
+  end
+end
+
+#---------------------------------------------------
+# Linear Solver Control
+#---------------------------------------------------
+
+subsection linear solver
+  subsection fluid dynamics
+    set method                                = gmres
+    set relative residual                     = 1e-3
+    set minimum residual                      = 5e-9
+    set preconditioner                        = ilu
+    set ilu preconditioner fill               = 0
+    set ilu preconditioner absolute tolerance = 1e-10
+    set ilu preconditioner relative tolerance = 1.00
+    set verbosity                             = quiet
+  end
+  subsection heat transfer
+    set method                                = gmres
+    set relative residual                     = 1e-3
+    set minimum residual                      = 5e-9
+    set preconditioner                        = ilu
+    set ilu preconditioner fill               = 0
+    set ilu preconditioner absolute tolerance = 1e-10
+    set ilu preconditioner relative tolerance = 1.00
+    set verbosity                             = quiet
+  end
+end
