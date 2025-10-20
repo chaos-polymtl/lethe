@@ -987,16 +987,24 @@ FluidDynamicsBlock<dim>::solve_system_GMRES(const bool   initial_step,
 {
   const AffineConstraints<double> &constraints_used =
     initial_step ? this->nonzero_constraints : this->zero_constraints;
+  const double normalize_volume =
+    this->simulation_parameters.non_linear_solver.at(PhysicsID::fluid_dynamics)
+        .normalize_residual_by_volume ?
+      this->get_global_volume() :
+      1.;
+  const double current_residual = this->get_current_residual(
+    this->simulation_parameters.non_linear_solver.at(PhysicsID::fluid_dynamics)
+      .normalize_residual_by_volume);
   const double linear_solver_tolerance =
-    std::max(relative_residual * this->system_rhs.l2_norm(), absolute_residual);
-
+    std::max(relative_residual * current_residual, absolute_residual);
   if (this->simulation_parameters.linear_solver.at(PhysicsID::fluid_dynamics)
         .verbosity != Parameters::Verbosity::quiet)
     {
       this->pcout << "  -Tolerance of iterative solver is : "
                   << linear_solver_tolerance << std::endl;
     }
-
+  const double non_normalized_linear_solver_tolerance =
+    linear_solver_tolerance * normalize_volume;
 
   GlobalBlockVectorType completely_distributed_solution(
     this->locally_owned_dofs, this->mpi_communicator);
@@ -1004,7 +1012,7 @@ FluidDynamicsBlock<dim>::solve_system_GMRES(const bool   initial_step,
   SolverControl solver_control(this->simulation_parameters.linear_solver
                                  .at(PhysicsID::fluid_dynamics)
                                  .max_iterations,
-                               linear_solver_tolerance,
+                               non_normalized_linear_solver_tolerance,
                                true,
                                true);
 
@@ -1063,7 +1071,8 @@ FluidDynamicsBlock<dim>::solve_system_GMRES(const bool   initial_step,
         this->pcout << "  -Iterative solver took : "
                     << solver_control.last_step()
                     << " steps to reach a residual norm of "
-                    << solver_control.last_value() << std::endl;
+                    << solver_control.last_value() / normalize_volume
+                    << std::endl;
       }
 
     constraints_used.distribute(this->newton_update);

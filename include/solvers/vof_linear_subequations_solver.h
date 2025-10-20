@@ -110,6 +110,24 @@ protected:
   virtual void
   check_dependencies_validity() = 0;
 
+  /**
+   * @brief Return varialbe with volume of the entire triangulation.
+   */
+  inline double
+  get_global_volume() const
+  {
+    return global_volume;
+  }
+
+  /**
+   * @brief Set variable holding the volume of the entire triangulation.
+   */
+  inline void
+  set_global_volume(const double &volume)
+  {
+    global_volume = volume;
+  }
+
 
   const VOFSubequationsID        subequation_id;
   VOFSubequationsInterface<dim> &subequations_interface;
@@ -139,6 +157,10 @@ protected:
   // Verbosity
   const Parameters::Verbosity linear_solver_verbosity;
   const Parameters::Verbosity subequation_verbosity;
+
+  // Volume of the entire triangulation. Set as 1. as default to avoid
+  // indetermination.
+  double global_volume = 1.;
 };
 
 #endif
