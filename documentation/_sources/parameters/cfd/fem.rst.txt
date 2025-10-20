@@ -44,6 +44,10 @@ This subsection specifies the characteristics of the finite element method used 
 
 * ``tracer uses dg`` specifies if the Discontinuous Galerkin (DG) formulation is used instead of the Continuous Galerkin (CG) that is used by default, for the tracer physics. This formulation allows discontinuities between elements and at boundaries, and only penalizes them; this prevents oscillations and enforces local conservation of mass, at the cost of more numerous degrees of freedom.
 
+.. important::
+
+    The DG formulation is sensitive to the CFL value. Use a small time-step to  keep the tracer value bounded. From our experience, a CFL of 1 or lower is recommended.
+
 * ``VOF order`` specifies the interpolation for the VOF phase indicator. It is not recommended to use higher order interpolation for the VOF method as this may conflict with the bounding and the sharpening mechanism used therein.
 
 * ``phase cahn hilliard order`` and ``potential cahn hilliard order`` specify the interpolation order for the phase order parameter and the chemical potential in the Cahn-Hilliard equations. The orders chosen should be equal. They are left as two separate parameters for debugging purposes.
