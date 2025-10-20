@@ -1866,7 +1866,7 @@ NavierStokesStabilizedOperator<dim, number>::local_evaluate_residual(
                             tau * value[k] * gradient[i][l] * u_ale[l];
 
                           // -(-ν∆u)τ(u_ale·∇)v
-                          gradient_result[i][k] -= -tau * kinematic_viscosity *
+                          gradient_result[i][k] += tau * kinematic_viscosity *
                                                    u_ale[k] *
                                                    hessian_diagonal[i][l];
 
@@ -1875,8 +1875,8 @@ NavierStokesStabilizedOperator<dim, number>::local_evaluate_residual(
                             tau * u_ale[k] * gradient[i][l] * value[l];
 
                           // -(-(u_ale·∇)u)τ(u_ale·∇)v
-                          gradient_result[i][k] -=
-                            -tau * u_ale[k] * gradient[i][l] * u_ale[l];
+                          gradient_result[i][k] +=
+                            tau * u_ale[k] * gradient[i][l] * u_ale[l];
                         }
                     }
                   // + (∇p - f)τ(u·∇)v
