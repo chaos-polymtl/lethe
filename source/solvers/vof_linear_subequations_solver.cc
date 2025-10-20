@@ -115,9 +115,18 @@ VOFLinearSubequationsSolver<dim>::solve_linear_system_and_update_solution()
     }
 
   // Set tolerance
+  const double normalize_volume =
+    this->simulation_parameters.non_linear_solver.at(PhysicsID::fluid_dynamics)
+        .normalize_residual_by_volume ?
+      this->get_global_volume() :
+      1.;
   const double linear_solver_tolerance =
     this->simulation_parameters.linear_solver.at(PhysicsID::VOF)
-      .minimum_residual;
+      .minimum_residual /
+    normalize_volume;
+
+  const double non_normalized_linear_solver_tolerance =
+    linear_solver_tolerance * normalize_volume;
 
   // Solution vector
   GlobalVectorType completely_distributed_solution(this->locally_owned_dofs,
@@ -151,7 +160,7 @@ VOFLinearSubequationsSolver<dim>::solve_linear_system_and_update_solution()
   // CG solver
   SolverControl solver_control(
     this->simulation_parameters.linear_solver.at(PhysicsID::VOF).max_iterations,
-    linear_solver_tolerance,
+    non_normalized_linear_solver_tolerance,
     true,
     true);
 
@@ -166,7 +175,8 @@ VOFLinearSubequationsSolver<dim>::solve_linear_system_and_update_solution()
     {
       this->pcout << "    -Iterative solver took " << solver_control.last_step()
                   << " steps to reach a residual norm of "
-                  << solver_control.last_value() << std::endl;
+                  << solver_control.last_value() / normalize_volume
+                  << std::endl;
     }
 
   // Update constraints vector
