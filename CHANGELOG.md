@@ -70,6 +70,12 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
 - MINOR The serialization/deserialization of tables in classes derived from AuxiliaryPhysics have been refactored to match the same code structure as that used for the tables in solvers derived from NavierStokesBase. Functions for serializing/deserializing multiple tables are now defined in include/core/utilities.h. Also, the output_struct.h file has been moved to the core folder. [#1725](https://github.com/chaos-polymtl/lethe/pull/1725)
 
+### [Master] - 2025-10-20
+
+### Added
+
+- MAJOR Allow residual normalization. This PR introduces a new parameter ("normalize residual") to the non-linear solver subsection. When the parameter is true, all residua is normalized by the volume of the triangulation. This is very convenient because, when activated, tolerances are independent of the mesh size.
+
 ### [Master] - 2025-10-16
 
 ### Changed

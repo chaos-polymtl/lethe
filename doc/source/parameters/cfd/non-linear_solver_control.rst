@@ -31,6 +31,9 @@ In the example below, only ``fluid dynamics`` is shown but the same block can be
       # Newton solver tolerance
       set tolerance                    = 1e-6
 
+      # Normalize solver residuals by the volume of the mesh
+      set normalize residual           = false
+
       # Tolerance for the acceptation of the step
       set step tolerance               = 0.9
 
@@ -78,6 +81,7 @@ In the example below, only ``fluid dynamics`` is shown but the same block can be
 
 * The ``step tolerance`` parameter controls how much the L2 norm of the residual must decrease to proceed to the next non-linear step. If the ``new_residual``:math:`<` ``old_residual``:math:`\times` ``step tolerance``, then a Newton iteration is accepted. If this condition is not reached, then a relaxation of the step is applied (increasing the ``alpha`` parameter, as printed on the terminal if ``set verbosity = verbose``) until this condition is reached.
 * The ``tolerance`` parameter controls the value under which the residual must be to proceed to the next iteration.
+* The ``normalize residual`` parameter enables to normalize the residual by the volume of the mesh. This can be useful when comparing the convergence of simulations with different mesh sizes. When set to ``true``, the residual displayed on the terminal and compared to the ``tolerance`` is divided by the volume of the mesh. By default, this parameter is ``false``.
 
 .. hint::
 	The ``tolerance`` parameter is directly linked to the numerical convergence of the simulation, but also to the computational cost (number of Newton iteration).
