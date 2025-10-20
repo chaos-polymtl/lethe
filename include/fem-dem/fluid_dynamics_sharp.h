@@ -464,14 +464,19 @@ Return a bool that describes  if a cell contains a specific point
    * coupling residual.
    */
   double
-  get_current_residual() override
+  get_current_residual(
+    const bool &normalize_residual_by_volume = false) override
   {
+    const double normalize_volume =
+      normalize_residual_by_volume ? this->get_global_volume() : 1.0;
+    const double current_residual =
+      this->system_rhs.l2_norm() / normalize_volume;
     double scalling = this->simulation_parameters.non_linear_solver
                         .at(PhysicsID::fluid_dynamics)
                         .tolerance /
                       this->simulation_parameters.particlesParameters
                         ->particle_nonlinear_tolerance;
-    return std::max(this->system_rhs.l2_norm(), particle_residual * scalling);
+    return std::max(current_residual, particle_residual * scalling);
   }
 
   /**
