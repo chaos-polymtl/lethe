@@ -15,7 +15,7 @@ namespace Parameters
 {
   namespace Lagrangian
   {
-    enum class ParticleParticleContactForceModel
+    enum class ParticleParticleContactForceModel : std::uint8_t
     {
       linear,
       hertz_mindlin_limit_force,
@@ -25,7 +25,7 @@ namespace Parameters
       DMT
     };
 
-    enum class ParticleWallContactForceModel
+    enum class ParticleWallContactForceModel : std::uint8_t
     {
       linear,
       nonlinear,
@@ -33,7 +33,7 @@ namespace Parameters
       DMT
     };
 
-    enum RollingResistanceMethod
+    enum RollingResistanceMethod : std::uint8_t
     {
       none,
       constant,
@@ -41,7 +41,7 @@ namespace Parameters
       epsd
     };
 
-    enum class SizeDistributionType
+    enum class SizeDistributionType : std::uint8_t
     {
       uniform,
       normal,
@@ -229,18 +229,18 @@ namespace Parameters
        * @param[in,out] p_rolling_friction_coefficient Rolling friction
        * coefficient of each particle type.
        * @param[in,out] p_surface_energy Surface energy of each particle type.
-       * @param[in,out] hamaker_constant_p Hamaker constant of each particle
+       * @param[in,out] p_hamaker_constant Hamaker constant of each particle
        * type.
-       * @param[in,out] thermal_conductivity_p Thermal conductivity of each
+       * @param[in,out] p_thermal_conductivity Thermal conductivity of each
        * particle type.
-       * @param[in,out] specific_heat_p Specific heat of each particle type.
-       * @param[in,out] microhardness_p Microhardness of each particle type.
-       * @param[in,out] surface_slope_p Surface slope of each particle type.
-       * @param[in,out] surface_roughness_p Surface roughness of each particle
+       * @param[in,out] p_specific_heat Specific heat of each particle type.
+       * @param[in,out] p_microhardness Microhardness of each particle type.
+       * @param[in,out] p_surface_slope Surface slope of each particle type.
+       * @param[in,out] p_surface_roughness Surface roughness of each particle
        * type.
-       * @param[in,out] thermal_accommodation_p Thermal accommodation
+       * @param[in,out] p_thermal_accommodation Thermal accommodation
        * coefficient of each particle type.
-       * @param[in,out] real_youngs_modulus_p Real Young's modulus of each
+       * @param[in,out] p_real_youngs_modulus Real Young's modulus of each
        * particle type.
        */
       void
@@ -640,6 +640,45 @@ namespace Parameters
       double time_end;
 
       void
+      declare_parameters(ParameterHandler &prm);
+      void
+      parse_parameters(ParameterHandler &prm);
+    };
+
+    /**
+     * @brief Defines parameters used to construct particle
+     * ray tracing class.
+     */
+    template <int dim>
+    struct ParticleRayTracing
+    {
+      // Location of the first photon to be inserted
+      Point<3> starting_point;
+
+      // In which directions will the photons be inserted relative to the first
+      // photon.
+      std::vector<Tensor<1, 3>> insertion_directions_units_vector;
+
+      // How many photon will be inserted in each of those directions.
+      std::vector<unsigned int> n_photons_each_directions;
+
+      // What is the distance between each photon in each of those directions
+      // considering an offset equal to 0.
+      std::vector<double> step_between_photons_each_directions;
+
+      // Reference displacement unit tensor
+      Tensor<1, 3> ref_displacement_tensor_unit;
+
+      // Related to the offset insertion position.
+      double       max_insertion_offset;
+      unsigned int prn_seed_photon_insertion;
+
+      // Related to the offset in the displacement direction.
+      double       max_angular_offset;
+      unsigned int prn_seed_photon_displacement;
+
+      // Declare and parse function
+      static void
       declare_parameters(ParameterHandler &prm);
       void
       parse_parameters(ParameterHandler &prm);
