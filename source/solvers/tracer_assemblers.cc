@@ -267,6 +267,7 @@ TracerAssemblerDGCore<dim>::assemble_matrix(
       // Gather into local variables the relevant fields
       const double         diffusivity = diffusivity_vector[q];
       const Tensor<1, dim> velocity    = scratch_data.velocity_values[q];
+      const double velocity_divergence = scratch_data.velocity_divergences[q];
 
       // Store JxW in local variable for faster access;
       const double JxW = JxW_vec[q];
@@ -274,18 +275,24 @@ TracerAssemblerDGCore<dim>::assemble_matrix(
       for (unsigned int i = 0; i < n_dofs; ++i)
         {
           const auto grad_phi_T_i = scratch_data.grad_phi[q][i];
+          const auto phi_T_i      = scratch_data.phi[q][i];
 
           for (unsigned int j = 0; j < n_dofs; ++j)
             {
               const Tensor<1, dim> grad_phi_T_j = scratch_data.grad_phi[q][j];
               const auto           phi_T_j      = scratch_data.phi[q][j];
 
-              // Weak form : - D * laplacian T +  u * gradT - f=0
+              // Weak form of: - D * laplacian T + u * gradT - f=0
               // Note that the advection term has been weakened for it to appear
               // explicitly in the weak form as a boundary term.
               local_matrix(i, j) += (diffusivity * grad_phi_T_i * grad_phi_T_j -
                                      grad_phi_T_i * velocity * phi_T_j) *
                                     JxW;
+
+              // This term is added to correct for the influence of the
+              // non-divergence-free velocity field on the concentration.
+              local_matrix(i, j) +=
+                -phi_T_i * velocity_divergence * phi_T_j * JxW;
             }
         }
     } // end loop on quadrature points
@@ -318,6 +325,7 @@ TracerAssemblerDGCore<dim>::assemble_rhs(
       const double         tracer_value    = scratch_data.tracer_values[q];
       const Tensor<1, dim> tracer_gradient = scratch_data.tracer_gradients[q];
       const Tensor<1, dim> velocity        = scratch_data.velocity_values[q];
+      const double velocity_divergence = scratch_data.velocity_divergences[q];
 
       // Store JxW in local variable for faster access;
       const double JxW = JxW_vec[q];
@@ -327,11 +335,15 @@ TracerAssemblerDGCore<dim>::assemble_rhs(
           const auto phi_T_i      = scratch_data.phi[q][i];
           const auto grad_phi_T_i = scratch_data.grad_phi[q][i];
 
-          // rhs for : - D * laplacian T +  u * grad T - f=0
+          // rhs for : - D * laplacian T + u * grad T - f=0
           local_rhs(i) -= (diffusivity * grad_phi_T_i * tracer_gradient -
                            grad_phi_T_i * velocity * tracer_value -
                            scratch_data.source[q] * phi_T_i) *
                           JxW;
+
+          // This term is added to correct for the influence of the
+          // non-divergence-free velocity field on the concentration.
+          local_rhs(i) -= -phi_T_i * velocity_divergence * tracer_value * JxW;
         }
     } // end loop on quadrature points
 }

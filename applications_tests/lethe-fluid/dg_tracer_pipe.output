@@ -17,65 +17,257 @@ Tracer flow rate at the boundaries:
 	 boundary 2: 0
 
 *******************************************************************************
-Transient iteration: 1        Time: 0.1      Time step: 0.1      CFL: 5.25029 
+Transient iteration: 1        Time: 0.025    Time step: 0.025    CFL: 1.31257 
 *******************************************************************************
 Tracer statistics: 
-	     Min: -0.00216424
-	     Max: 0.991119
-	 Average: 0.275336
-	 Std-Dev: 0.255943
+	     Min: -0.00612327
+	     Max: 0.846917
+	 Average: 0.0753412
+	 Std-Dev: 0.154854
 ------------------
 Tracer flow rates
 ------------------
 Tracer flow rate at the boundaries: 
 	 boundary 0: 0
-	 boundary 1: 0.0287166
-	 boundary 2: -0.00537149
+	 boundary 1: 0.0261933
+	 boundary 2: -6.72167e-05
 
 *******************************************************************************
-Transient iteration: 2        Time: 0.2      Time step: 0.1      CFL: 6.43325 
+Transient iteration: 2        Time: 0.05     Time step: 0.025    CFL: 1.60685 
 *******************************************************************************
 Tracer statistics: 
-	     Min: -0.00851744
-	     Max: 1.09385
-	 Average: 0.452294
-	 Std-Dev: 0.328363
+	     Min: -0.00658757
+	     Max: 0.986379
+	 Average: 0.146779
+	 Std-Dev: 0.225228
 ------------------
 Tracer flow rates
 ------------------
 Tracer flow rate at the boundaries: 
 	 boundary 0: 0
-	 boundary 1: 0.0287173
-	 boundary 2: -0.0137191
+	 boundary 1: 0.0298899
+	 boundary 2: -0.000455714
 
 *******************************************************************************
-Transient iteration: 3        Time: 0.3      Time step: 0.1      CFL: 6.43522 
+Transient iteration: 3        Time: 0.075    Time step: 0.025    CFL: 1.60879 
 *******************************************************************************
 Tracer statistics: 
-	     Min: -0.0175728
-	     Max: 1.11379
-	 Average: 0.548584
-	 Std-Dev: 0.348619
+	     Min: -0.000892934
+	     Max: 0.997961
+	 Average: 0.214555
+	 Std-Dev: 0.266921
 ------------------
 Tracer flow rates
 ------------------
 Tracer flow rate at the boundaries: 
 	 boundary 0: 0
-	 boundary 1: 0.0283498
-	 boundary 2: -0.020564
+	 boundary 1: 0.0296482
+	 boundary 2: -0.00154518
 
 *******************************************************************************
-Transient iteration: 4        Time: 0.4      Time step: 0.1      CFL: 6.43523 
+Transient iteration: 4        Time: 0.1      Time step: 0.025    CFL: 1.60881 
 *******************************************************************************
 Tracer statistics: 
-	     Min: -0.0248527
-	     Max: 1.11528
-	 Average: 0.597341
-	 Std-Dev: 0.347425
+	     Min: -0.00154912
+	     Max: 0.99504
+	 Average: 0.276785
+	 Std-Dev: 0.293746
 ------------------
 Tracer flow rates
 ------------------
 Tracer flow rate at the boundaries: 
 	 boundary 0: 0
-	 boundary 1: 0.0282423
-	 boundary 2: -0.0245974
+	 boundary 1: 0.0291654
+	 boundary 2: -0.00359174
+
+*******************************************************************************
+Transient iteration: 5        Time: 0.125    Time step: 0.025    CFL: 1.60881 
+*******************************************************************************
+Tracer statistics: 
+	     Min: -0.00198049
+	     Max: 0.993149
+	 Average: 0.331334
+	 Std-Dev: 0.311478
+------------------
+Tracer flow rates
+------------------
+Tracer flow rate at the boundaries: 
+	 boundary 0: 0
+	 boundary 1: 0.0288975
+	 boundary 2: -0.00651966
+
+*******************************************************************************
+Transient iteration: 6        Time: 0.15     Time step: 0.025    CFL: 1.60881 
+*******************************************************************************
+Tracer statistics: 
+	     Min: -0.00132448
+	     Max: 0.994284
+	 Average: 0.376941
+	 Std-Dev: 0.322883
+------------------
+Tracer flow rates
+------------------
+Tracer flow rate at the boundaries: 
+	 boundary 0: 0
+	 boundary 1: 0.0287772
+	 boundary 2: -0.00995866
+
+*******************************************************************************
+Transient iteration: 7        Time: 0.175    Time step: 0.025    CFL: 1.60881 
+*******************************************************************************
+Tracer statistics: 
+	     Min: -0.00213742
+	     Max: 0.99384
+	 Average: 0.41354
+	 Std-Dev: 0.329378
+------------------
+Tracer flow rates
+------------------
+Tracer flow rate at the boundaries: 
+	 boundary 0: 0
+	 boundary 1: 0.0287244
+	 boundary 2: -0.0134508
+
+*******************************************************************************
+Transient iteration: 8        Time: 0.2      Time step: 0.025    CFL: 1.60881 
+*******************************************************************************
+Tracer statistics: 
+	     Min: -0.00398038
+	     Max: 0.994011
+	 Average: 0.441992
+	 Std-Dev: 0.332094
+------------------
+Tracer flow rates
+------------------
+Tracer flow rate at the boundaries: 
+	 boundary 0: 0
+	 boundary 1: 0.0286978
+	 boundary 2: -0.0166392
+
+*******************************************************************************
+Transient iteration: 9        Time: 0.225    Time step: 0.025    CFL: 1.60881 
+*******************************************************************************
+Tracer statistics: 
+	     Min: -0.00679477
+	     Max: 0.993994
+	 Average: 0.463624
+	 Std-Dev: 0.33222
+------------------
+Tracer flow rates
+------------------
+Tracer flow rate at the boundaries: 
+	 boundary 0: 0
+	 boundary 1: 0.0286809
+	 boundary 2: -0.0193396
+
+*******************************************************************************
+Transient iteration: 10       Time: 0.25     Time step: 0.025    CFL: 1.60881 
+*******************************************************************************
+Tracer statistics: 
+	     Min: -0.0105187
+	     Max: 0.99387
+	 Average: 0.479834
+	 Std-Dev: 0.330862
+------------------
+Tracer flow rates
+------------------
+Tracer flow rate at the boundaries: 
+	 boundary 0: 0
+	 boundary 1: 0.0286677
+	 boundary 2: -0.0215134
+
+*******************************************************************************
+Transient iteration: 11       Time: 0.275    Time step: 0.025    CFL: 1.60881 
+*******************************************************************************
+Tracer statistics: 
+	     Min: -0.0150248
+	     Max: 0.993885
+	 Average: 0.491878
+	 Std-Dev: 0.328848
+------------------
+Tracer flow rates
+------------------
+Tracer flow rate at the boundaries: 
+	 boundary 0: 0
+	 boundary 1: 0.0286566
+	 boundary 2: -0.0232047
+
+*******************************************************************************
+Transient iteration: 12       Time: 0.3      Time step: 0.025    CFL: 1.60881 
+*******************************************************************************
+Tracer statistics: 
+	     Min: -0.0200827
+	     Max: 0.993842
+	 Average: 0.500791
+	 Std-Dev: 0.326659
+------------------
+Tracer flow rates
+------------------
+Tracer flow rate at the boundaries: 
+	 boundary 0: 0
+	 boundary 1: 0.0286472
+	 boundary 2: -0.0244888
+
+*******************************************************************************
+Transient iteration: 13       Time: 0.325    Time step: 0.025    CFL: 1.60881 
+*******************************************************************************
+Tracer statistics: 
+	     Min: -0.0254128
+	     Max: 0.993842
+	 Average: 0.507393
+	 Std-Dev: 0.324501
+------------------
+Tracer flow rates
+------------------
+Tracer flow rate at the boundaries: 
+	 boundary 0: 0
+	 boundary 1: 0.0286393
+	 boundary 2: -0.0254425
+
+*******************************************************************************
+Transient iteration: 14       Time: 0.35     Time step: 0.025    CFL: 1.60881 
+*******************************************************************************
+Tracer statistics: 
+	     Min: -0.0307408
+	     Max: 0.993821
+	 Average: 0.512326
+	 Std-Dev: 0.322416
+------------------
+Tracer flow rates
+------------------
+Tracer flow rate at the boundaries: 
+	 boundary 0: 0
+	 boundary 1: 0.0286329
+	 boundary 2: -0.0261338
+
+*******************************************************************************
+Transient iteration: 15       Time: 0.375    Time step: 0.025    CFL: 1.60881 
+*******************************************************************************
+Tracer statistics: 
+	     Min: -0.0358386
+	     Max: 0.993802
+	 Average: 0.516082
+	 Std-Dev: 0.320379
+------------------
+Tracer flow rates
+------------------
+Tracer flow rate at the boundaries: 
+	 boundary 0: 0
+	 boundary 1: 0.0286279
+	 boundary 2: -0.0266201
+
+*******************************************************************************
+Transient iteration: 16       Time: 0.4      Time step: 0.025    CFL: 1.60881 
+*******************************************************************************
+Tracer statistics: 
+	     Min: -0.0405426
+	     Max: 0.993792
+	 Average: 0.519036
+	 Std-Dev: 0.318349
+------------------
+Tracer flow rates
+------------------
+Tracer flow rate at the boundaries: 
+	 boundary 0: 0
+	 boundary 1: 0.0286241
+	 boundary 2: -0.0269501

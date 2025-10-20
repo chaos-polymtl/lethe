@@ -22,7 +22,9 @@ TracerScratchData<dim>::allocate()
   // Initialize arrays related to velocity
   this->velocities.first_vector_component = 0;
   // Velocity
-  this->velocity_values = std::vector<Tensor<1, dim>>(n_q_points);
+  this->velocity_values      = std::vector<Tensor<1, dim>>(n_q_points);
+  this->velocity_divergences = std::vector<double>(n_q_points);
+
   // Tracer
   this->tracer_values    = std::vector<double>(n_q_points);
   this->tracer_gradients = std::vector<Tensor<1, dim>>(n_q_points);
