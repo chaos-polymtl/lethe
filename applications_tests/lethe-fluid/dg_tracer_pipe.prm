@@ -1,6 +1,10 @@
 # SPDX-FileCopyrightText: Copyright (c) 2022-2025 The Lethe Authors
 # SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
+# Tests DG approach to tracer for a flow inside a cylindrical pipe.
+# In the test, we apply a 2nd order polynomial inlet velocity and tracer concentration,
+# which runs until reaching steady-state.
+
 set dimension = 3
 
 subsection simulation control

@@ -1,6 +1,11 @@
 # SPDX-FileCopyrightText: Copyright (c) 2022-2025 The Lethe Authors
 # SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
+# Test robustness of the DG tracer when handling hanging nodes.
+# This test was implemented after adding the term - T*div(u) to the tracer equation.
+# It consists of the flow inside a pipe with a sharp 90 degree curve at the end, and
+# is very sensitive to the divergence of the velocity field.
+
 set dimension = 2
 
 subsection simulation control
