@@ -1517,23 +1517,31 @@ FluidDynamicsMatrixBased<dim>::solve_system_GMRES(
 
   const AffineConstraints<double> &constraints_used =
     initial_step ? nonzero_constraints : zero_constraints_used;
-
+  const double normalize_volume =
+    this->simulation_parameters.non_linear_solver.at(PhysicsID::fluid_dynamics)
+        .normalize_residual_by_volume ?
+      this->get_global_volume() :
+      1.;
+  const double current_residual = this->get_current_residual(
+    this->simulation_parameters.non_linear_solver.at(PhysicsID::fluid_dynamics)
+      .normalize_residual_by_volume);
   const double linear_solver_tolerance =
-    std::max(relative_residual * system_rhs.l2_norm(), absolute_residual);
-
+    std::max(relative_residual * current_residual, absolute_residual);
   if (this->simulation_parameters.linear_solver.at(PhysicsID::fluid_dynamics)
         .verbosity != Parameters::Verbosity::quiet)
     {
       this->pcout << "  -Tolerance of iterative solver is : "
                   << linear_solver_tolerance << std::endl;
     }
+  const double non_normalized_linear_solver_tolerance =
+    linear_solver_tolerance * normalize_volume;
   GlobalVectorType completely_distributed_solution(this->locally_owned_dofs,
                                                    this->mpi_communicator);
 
   SolverControl solver_control(this->simulation_parameters.linear_solver
                                  .at(PhysicsID::fluid_dynamics)
                                  .max_iterations,
-                               linear_solver_tolerance,
+                               non_normalized_linear_solver_tolerance,
                                true,
                                true);
   bool          extra_verbose = false;
@@ -1601,7 +1609,8 @@ FluidDynamicsMatrixBased<dim>::solve_system_GMRES(
                 this->pcout
                   << "  -Iterative solver took : " << solver_control.last_step()
                   << " steps to reach a residual norm of "
-                  << solver_control.last_value() << std::endl;
+                  << solver_control.last_value() / normalize_volume
+                  << std::endl;
               }
           }
 
@@ -1663,14 +1672,25 @@ FluidDynamicsMatrixBased<dim>::solve_system_BiCGStab(
 
   const AffineConstraints<double> &constraints_used =
     initial_step ? nonzero_constraints : zero_constraints_used;
+
+  const double normalize_volume =
+    this->simulation_parameters.non_linear_solver.at(PhysicsID::fluid_dynamics)
+        .normalize_residual_by_volume ?
+      this->get_global_volume() :
+      1.;
+  const double current_residual = this->get_current_residual(
+    this->simulation_parameters.non_linear_solver.at(PhysicsID::fluid_dynamics)
+      .normalize_residual_by_volume);
   const double linear_solver_tolerance =
-    std::max(relative_residual * system_rhs.l2_norm(), absolute_residual);
+    std::max(relative_residual * current_residual, absolute_residual);
   if (this->simulation_parameters.linear_solver.at(PhysicsID::fluid_dynamics)
         .verbosity != Parameters::Verbosity::quiet)
     {
       this->pcout << "  -Tolerance of iterative solver is : "
                   << linear_solver_tolerance << std::endl;
     }
+  const double non_normalized_linear_solver_tolerance =
+    linear_solver_tolerance * normalize_volume;
   GlobalVectorType completely_distributed_solution(this->locally_owned_dofs,
                                                    this->mpi_communicator);
 
@@ -1684,7 +1704,7 @@ FluidDynamicsMatrixBased<dim>::solve_system_BiCGStab(
   SolverControl solver_control(this->simulation_parameters.linear_solver
                                  .at(PhysicsID::fluid_dynamics)
                                  .max_iterations,
-                               linear_solver_tolerance,
+                               non_normalized_linear_solver_tolerance,
                                true,
                                true);
   TrilinosWrappers::SolverBicgstab solver(solver_control, solver_parameters);
@@ -1722,7 +1742,8 @@ FluidDynamicsMatrixBased<dim>::solve_system_BiCGStab(
                 this->pcout
                   << "  -Iterative solver took : " << solver_control.last_step()
                   << " steps to reach a residual norm of "
-                  << solver_control.last_value() << std::endl;
+                  << solver_control.last_value() / normalize_volume
+                  << std::endl;
               }
             constraints_used.distribute(completely_distributed_solution);
             this->newton_update = completely_distributed_solution;
@@ -1764,8 +1785,18 @@ FluidDynamicsMatrixBased<dim>::solve_system_direct(
 
   const AffineConstraints<double> &constraints_used =
     initial_step ? nonzero_constraints : zero_constraints_used;
+  const double normalize_volume =
+    this->simulation_parameters.non_linear_solver.at(PhysicsID::fluid_dynamics)
+        .normalize_residual_by_volume ?
+      this->get_global_volume() :
+      1.;
+  const double current_residual = this->get_current_residual(
+    this->simulation_parameters.non_linear_solver.at(PhysicsID::fluid_dynamics)
+      .normalize_residual_by_volume);
   const double linear_solver_tolerance =
-    std::max(relative_residual * system_rhs.l2_norm(), absolute_residual);
+    std::max(relative_residual * current_residual, absolute_residual);
+  const double non_normalized_linear_solver_tolerance =
+    linear_solver_tolerance * normalize_volume;
 
   GlobalVectorType completely_distributed_solution(this->locally_owned_dofs,
                                                    this->mpi_communicator);
@@ -1773,7 +1804,7 @@ FluidDynamicsMatrixBased<dim>::solve_system_direct(
   SolverControl solver_control(this->simulation_parameters.linear_solver
                                  .at(PhysicsID::fluid_dynamics)
                                  .max_iterations,
-                               linear_solver_tolerance,
+                               non_normalized_linear_solver_tolerance,
                                true,
                                true);
   TrilinosWrappers::SolverDirect solver(solver_control);
