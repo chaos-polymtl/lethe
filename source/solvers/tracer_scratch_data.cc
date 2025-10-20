@@ -103,11 +103,11 @@ TracerScratchData<dim>::calculate_physical_properties()
           throw std::runtime_error(
             "Unsupported number of fluids (2) with the tracer physics.");
           // In this case, we need both density and viscosity
-          // const auto diffusivity_models =
-          //   properties_manager.get_tracer_diffusivity_vector();
-          //
-          // diffusivity_models[0]->vector_value(fields, tracer_diffusivity_0);
-          // diffusivity_models[1]->vector_value(fields, tracer_diffusivity_1);
+          const auto diffusivity_models =
+            properties_manager.get_tracer_diffusivity_vector();
+
+          diffusivity_models[0]->vector_value(fields, tracer_diffusivity_0);
+          diffusivity_models[1]->vector_value(fields, tracer_diffusivity_1);
 
           // TODO Incomplete at the present time because the tracer VOF
           // complete is not finished Blend the physical properties
