@@ -123,7 +123,7 @@ public:
            PhysicialPropertyModelFieldUndefined(
              "ConstantTracerReactionPrefactor", "tracer_concentration"));
     return tracer_reaction_constant *
-           pow(fields_value.at(field::tracer_concentration),
+           pow(std::max(fields_value.at(field::tracer_concentration), 1e-8),
                tracer_reaction_order - 1.);
   }
 
@@ -145,9 +145,9 @@ public:
       field_vectors.at(field::tracer_concentration);
     for (size_t i = 0; i < property_vector.size(); ++i)
       {
-        property_vector[i] =
-          tracer_reaction_constant *
-          std::pow(concentration_vector[i], tracer_reaction_order - 1.);
+        property_vector[i] = tracer_reaction_constant *
+                             std::pow(std::max(concentration_vector[i], 1e-8),
+                                      tracer_reaction_order - 1.);
       }
   }
 
@@ -166,7 +166,7 @@ public:
              "ConstantTracerReactionPrefactor", "tracer_concentration"));
     if (id == field::tracer_concentration)
       return tracer_reaction_constant * (tracer_reaction_order - 1.) *
-             pow(field_values.at(field::tracer_concentration),
+             pow(std::max(field_values.at(field::tracer_concentration), 1e-8),
                  tracer_reaction_order - 2.);
     else
       return 0;
@@ -196,7 +196,8 @@ public:
           {
             jacobian_vector[i] =
               tracer_reaction_constant * (tracer_reaction_order - 1.) *
-              std::pow(concentration_vector[i], tracer_reaction_order - 2.);
+              std::pow(std::max(concentration_vector[i], 1e-8),
+                       tracer_reaction_order - 2.);
           }
       }
     else
@@ -262,7 +263,7 @@ public:
     const double k =
       tracer_reaction_constant_inside +
       delta_reaction_constant * (0.5 + 0.5 * tanh(levelset / thickness));
-    return k * pow(concentration, tracer_reaction_order - 1.);
+    return k * pow(std::max(concentration, 1e-8), tracer_reaction_order - 1.);
   }
 
   /**
@@ -295,8 +296,8 @@ public:
         const double k = tracer_reaction_constant_inside +
                          delta_reaction_constant *
                            (0.5 + 0.5 * tanh(levelset_vec[i] / thickness));
-        property_vector[i] =
-          k * pow(concentration_vec[i], tracer_reaction_order - 1.);
+        property_vector[i] = k * pow(std::max(concentration_vec[i], 1e-8),
+                                     tracer_reaction_order - 1.);
       }
   }
 
@@ -326,16 +327,17 @@ public:
         const double tanh = std::tanh(levelset_val / thickness);
         const double dkdlambda =
           delta_reaction_constant * 0.5 * (1.0 - pow(tanh, 2)) / thickness;
-        return dkdlambda *
-               std::pow(concentration_val, tracer_reaction_order - 1.);
+        return dkdlambda * std::pow(std::max(concentration_val, 1e-8),
+                                    tracer_reaction_order - 1.);
       }
     else if (id == field::tracer_concentration)
       {
         const double k = tracer_reaction_constant_inside +
                          delta_reaction_constant *
-                           (0.5 + 0.5 * tanh(levelset_val) / thickness);
+                           (0.5 + 0.5 * tanh(levelset_val / thickness));
         return k * (tracer_reaction_order - 1.) *
-               pow(concentration_val, tracer_reaction_order - 2.);
+               pow(std::max(concentration_val, 1e-8),
+                   tracer_reaction_order - 2.);
       }
     else
       return 0;
@@ -372,8 +374,8 @@ public:
             const double dkdlambda =
               delta_reaction_constant * 0.5 * (1.0 - pow(tanh, 2)) / thickness;
             jacobian_vector[i] =
-              dkdlambda *
-              std::pow(concentration_vec[i], tracer_reaction_order - 1.);
+              dkdlambda * std::pow(std::max(concentration_vec[i], 1e-8),
+                                   tracer_reaction_order - 1.);
           }
       }
     else if (id == field::tracer_concentration)
@@ -383,9 +385,9 @@ public:
             const double k = tracer_reaction_constant_inside +
                              delta_reaction_constant *
                                (0.5 + 0.5 * tanh(levelset_vec[i] / thickness));
-            jacobian_vector[i] =
-              k * (tracer_reaction_order - 1.) *
-              pow(concentration_vec[i], tracer_reaction_order - 2.);
+            jacobian_vector[i] = k * (tracer_reaction_order - 1.) *
+                                 pow(std::max(concentration_vec[i], 1e-8),
+                                     tracer_reaction_order - 2.);
           }
       }
     else
@@ -458,7 +460,7 @@ public:
     const double k =
       tracer_reaction_constant_bulk +
       delta_reaction_constant * exp(-pow(levelset_val, 2) / squared_thickness);
-    return k * pow(concentration, tracer_reaction_order - 1.);
+    return k * pow(std::max(concentration, 1e-8), tracer_reaction_order - 1.);
   }
 
   /**
@@ -496,8 +498,8 @@ public:
                          delta_reaction_constant *
                            exp(-pow(levelset_vec[i], 2) / squared_thickness);
 
-        property_vector[i] =
-          k * pow(concentration_vec[i], tracer_reaction_order - 1.);
+        property_vector[i] = k * pow(std::max(concentration_vec[i], 1e-8),
+                                     tracer_reaction_order - 1.);
       }
   }
 
@@ -534,8 +536,8 @@ public:
         const double dkdlambda = delta_reaction_constant * exponential *
                                  (-2.0 * levelset_val / squared_thickness);
 
-        return dkdlambda *
-               std::pow(concentration_val, tracer_reaction_order - 1.);
+        return dkdlambda * std::pow(std::max(concentration_val, 1e-8),
+                                    tracer_reaction_order - 1.);
       }
     else if (id == field::tracer_concentration)
       {
@@ -543,7 +545,8 @@ public:
                          delta_reaction_constant *
                            exp(-pow(levelset_val, 2) / squared_thickness);
         return k * (tracer_reaction_order - 1.) *
-               pow(concentration_val, tracer_reaction_order - 2.);
+               pow(std::max(concentration_val, 1e-8),
+                   tracer_reaction_order - 2.);
       }
     else
       return 0;
@@ -587,8 +590,8 @@ public:
               delta_reaction_constant * exponential *
               (-2.0 * levelset_vec[i] / squared_thickness);
             jacobian_vector[i] =
-              dkdlambda *
-              std::pow(concentration_vec[i], tracer_reaction_order - 1.);
+              dkdlambda * std::pow(std::max(concentration_vec[i], 1e-8),
+                                   tracer_reaction_order - 1.);
           }
       }
     else if (id == field::tracer_concentration)
@@ -599,9 +602,9 @@ public:
               tracer_reaction_constant_bulk +
               delta_reaction_constant *
                 exp(-pow(levelset_vec[i], 2) / squared_thickness);
-            jacobian_vector[i] =
-              k * (tracer_reaction_order - 1.) *
-              pow(concentration_vec[i], tracer_reaction_order - 2.);
+            jacobian_vector[i] = k * (tracer_reaction_order - 1.) *
+                                 pow(std::max(concentration_vec[i], 1e-8),
+                                     tracer_reaction_order - 2.);
           }
       }
     else
