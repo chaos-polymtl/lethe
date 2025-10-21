@@ -165,6 +165,25 @@ ParticleWallContactForce<dim,
   for (unsigned int solid_counter = 0; solid_counter < solids.size();
        ++solid_counter)
     {
+      // For each solid surface, we create a map used to store every contact.
+      // The key of that map is the particle_iterator.
+      // The value is a vector of tuple storing the required information to
+      // compute the contact force later on.
+      // The information includes the type of contact : face_contact,
+      // edge_contact, vetex_contact
+      using particle_triangle_contact_description = std::vector<
+        std::tuple<typename Triangulation<dim - 1, dim>::active_cell_iterator,
+                   Point<3>,
+                   Tensor<1, 3>,
+                   double,
+                   LetheGridTools::ContactIndicator>>;
+
+      using particle_triangle_contact_record =
+        ankerl::unordered_dense::map<types::particle_index,
+                                     particle_triangle_contact_description>;
+
+      particle_triangle_contact_record contact_record;
+
       // Get translational and rotational velocities and center of
       // rotation of solid object
       Tensor<1, 3> translational_velocity =
@@ -182,7 +201,8 @@ ParticleWallContactForce<dim,
       auto &particle_floating_mesh_contact_pair =
         particle_floating_mesh_in_contact[solid_counter];
 
-      for (auto &[cut_cell, map_info] : particle_floating_mesh_contact_pair)
+      for (auto &[triangle_cell_iterator, map_info] :
+           particle_floating_mesh_contact_pair)
         {
           if (!map_info.empty())
             {
@@ -202,7 +222,7 @@ ParticleWallContactForce<dim,
                    ++vertex)
                 {
                   // Find vertex-floating wall distance
-                  triangle[vertex] = cut_cell->vertex(vertex);
+                  triangle[vertex] = triangle_cell_iterator->vertex(vertex);
                 }
 
               // Getting the projection of particles on the triangle
@@ -211,152 +231,192 @@ ParticleWallContactForce<dim,
                 find_particle_triangle_projection<dim, PropertiesIndex>(
                   triangle, particle_locations, n_particles);
 
-              const std::vector<bool> pass_distance_check =
-                std::get<0>(particle_triangle_information);
-              const std::vector<Point<3>> projection_points =
-                std::get<1>(particle_triangle_information);
-              const std::vector<Tensor<1, 3>> normal_vectors =
-                std::get<2>(particle_triangle_information);
+              const auto &[pass_distance_check,
+                           projection_points,
+                           normal_vectors,
+                           contact_indicators] = particle_triangle_information;
 
               unsigned int particle_counter = 0;
 
               for (auto &&contact_info : map_info | boost::adaptors::map_values)
                 {
-                  // If particle passes the distance check
+                  // If the particle is sufficiently close to the triangle in
+                  // the direction normal to the triangle.
                   if (pass_distance_check[particle_counter])
                     {
-                      // Defining local variables which will be used within the
-                      // contact calculation
+                      // Defining local variables which will be used to store
+                      // the contact in the contact record
                       auto &particle            = contact_info.particle;
                       auto  particle_properties = particle->get_properties();
-                      Tensor<1, 3> normal_force;
-                      Tensor<1, 3> tangential_force;
-                      Tensor<1, 3> tangential_torque;
-                      Tensor<1, 3> rolling_resistance_torque;
-                      double       normal_relative_velocity_value;
-                      Tensor<1, 3> tangential_relative_velocity;
-
-                      const Point<3> &projection_point =
-                        projection_points[particle_counter];
 
                       Point<3> particle_location_3d = get_location(particle);
 
                       const double particle_triangle_distance =
-                        particle_location_3d.distance(projection_point);
+                        particle_location_3d.distance(
+                          projection_points[particle_counter]);
 
                       // Find normal overlap
-                      double normal_overlap =
-                        ((particle_properties[PropertiesIndex::dp]) * 0.5) -
+                      const double normal_overlap =
+                        0.5 * particle_properties[PropertiesIndex::dp] -
                         particle_triangle_distance;
 
+                      // The contact is potentially valid, thus we need to store
+                      // it
                       if (normal_overlap > force_calculation_threshold_distance)
                         {
-                          contact_info.normal_vector =
-                            normal_vectors[particle_counter];
-
-                          contact_info.point_on_boundary = projection_point;
-
-                          contact_info.boundary_id = solid_counter;
-
-                          // Updating contact information
-                          this
-                            ->update_particle_solid_object_contact_information(
-                              contact_info,
-                              tangential_relative_velocity,
-                              normal_relative_velocity_value,
-                              particle_properties,
-                              dt,
-                              translational_velocity,
-                              angular_velocity,
-                              center_of_rotation.distance(
-                                particle_location_3d));
-
-                          // Calculating contact force and torque
-                          this->calculate_contact(
-                            contact_info,
-                            tangential_relative_velocity,
-                            normal_relative_velocity_value,
-                            normal_overlap,
-                            dt,
-                            particle_properties,
-                            normal_force,
-                            tangential_force,
-                            tangential_torque,
-                            rolling_resistance_torque);
-
-                          // Applying the calculated forces and torques on the
-                          // particle
-                          types::particle_index particle_id =
-                            particle->get_local_index();
-                          Tensor<1, 3> &particle_torque =
-                            contact_outcome.torque[particle_id];
-                          Tensor<1, 3> &particle_force =
-                            contact_outcome.force[particle_id];
-
-                          this->apply_force_and_torque(
-                            normal_force,
-                            tangential_force,
-                            tangential_torque,
-                            rolling_resistance_torque,
-                            particle_torque,
-                            particle_force);
-                        }
-                      else
-                        {
-                          contact_info.tangential_displacement.clear();
-                          contact_info.rolling_resistance_spring_torque.clear();
-                        }
-
-                      if constexpr (std::is_same_v<
-                                      PropertiesIndex,
-                                      DEM::DEMMPProperties::PropertiesIndex>)
-                        {
-                          if ((thermal_boundary_type !=
-                               Parameters::ThermalBoundaryType::adiabatic) &&
-                              (normal_overlap > 0))
-                            {
-                              const unsigned int particle_type =
-                                static_cast<unsigned int>(
-                                  particle_properties[PropertiesIndex::type]);
-                              const double temperature_particle =
-                                particle_properties[PropertiesIndex::T];
-                              double &particle_heat_transfer_rate =
-                                contact_outcome.heat_transfer_rate
-                                  [particle->get_local_index()];
-                              double thermal_conductance;
-
-                              calculate_contact_thermal_conductance<
-                                ContactType::particle_floating_mesh>(
-                                0.5 * particle_properties[PropertiesIndex::dp],
-                                0,
-                                this->effective_youngs_modulus[particle_type],
-                                this->effective_real_youngs_modulus
-                                  [particle_type],
-                                this
-                                  ->equivalent_surface_roughness[particle_type],
-                                this->equivalent_surface_slope[particle_type],
-                                this->effective_microhardness[particle_type],
-                                this->particle_thermal_conductivity
-                                  [particle_type],
-                                this->wall_thermal_conductivity,
-                                this->gas_thermal_conductivity,
-                                this->gas_parameter_m[particle_type],
-                                normal_overlap,
-                                normal_force.norm(),
-                                thermal_conductance);
-
-                              // Apply the heat transfer to the particle
-                              apply_heat_transfer_on_single_local_particle(
-                                temperature_particle,
-                                temperature_wall,
-                                thermal_conductance,
-                                particle_heat_transfer_rate);
-                            }
+                          contact_record[particle->get_id()].emplace_back(
+                            std::make_tuple(
+                              triangle_cell_iterator,
+                              projection_points[particle_counter],
+                              normal_vectors[particle_counter],
+                              normal_overlap,
+                              contact_indicators[particle_counter]));
                         }
                     }
+
+
+
+                  // // If particle passes the distance check
+                  // if (pass_distance_check[particle_counter])
+                  //   {
+                  //     // Defining local variables which will be used within
+                  //     the
+                  //     // contact calculation
+                  //     auto &particle            = contact_info.particle;
+                  //     auto  particle_properties = particle->get_properties();
+                  //     Tensor<1, 3> normal_force;
+                  //     Tensor<1, 3> tangential_force;
+                  //     Tensor<1, 3> tangential_torque;
+                  //     Tensor<1, 3> rolling_resistance_torque;
+                  //     double       normal_relative_velocity_value;
+                  //     Tensor<1, 3> tangential_relative_velocity;
+                  //
+                  //     const Point<3> &projection_point =
+                  //       projection_points[particle_counter];
+                  //
+                  //     Point<3> particle_location_3d = get_location(particle);
+                  //
+                  //     const double particle_triangle_distance =
+                  //       particle_location_3d.distance(projection_point);
+                  //
+                  //     // Find normal overlap
+                  //     double normal_overlap =
+                  //       ((particle_properties[PropertiesIndex::dp]) * 0.5) -
+                  //       particle_triangle_distance;
+                  //
+                  //     if (normal_overlap >
+                  //     force_calculation_threshold_distance)
+                  //       {
+                  //         contact_info.normal_vector =
+                  //           normal_vectors[particle_counter];
+                  //
+                  //         contact_info.point_on_boundary = projection_point;
+                  //
+                  //         contact_info.boundary_id = solid_counter;
+                  //
+                  //         // Updating contact information
+                  //         this
+                  //           ->update_particle_solid_object_contact_information(
+                  //             contact_info,
+                  //             tangential_relative_velocity,
+                  //             normal_relative_velocity_value,
+                  //             particle_properties,
+                  //             dt,
+                  //             translational_velocity,
+                  //             angular_velocity,
+                  //             center_of_rotation.distance(
+                  //               particle_location_3d));
+                  //
+                  //         // Calculating contact force and torque
+                  //         this->calculate_contact(
+                  //           contact_info,
+                  //           tangential_relative_velocity,
+                  //           normal_relative_velocity_value,
+                  //           normal_overlap,
+                  //           dt,
+                  //           particle_properties,
+                  //           normal_force,
+                  //           tangential_force,
+                  //           tangential_torque,
+                  //           rolling_resistance_torque);
+                  //
+                  //         // Applying the calculated forces and torques on
+                  //         the
+                  //         // particle
+                  //         types::particle_index particle_id =
+                  //           particle->get_local_index();
+                  //         Tensor<1, 3> &particle_torque =
+                  //           contact_outcome.torque[particle_id];
+                  //         Tensor<1, 3> &particle_force =
+                  //           contact_outcome.force[particle_id];
+                  //
+                  //         this->apply_force_and_torque(
+                  //           normal_force,
+                  //           tangential_force,
+                  //           tangential_torque,
+                  //           rolling_resistance_torque,
+                  //           particle_torque,
+                  //           particle_force);
+                  //       }
+                  //     else
+                  //       {
+                  //         contact_info.tangential_displacement.clear();
+                  //         contact_info.rolling_resistance_spring_torque.clear();
+                  //       }
+                  //
+                  //     if constexpr (std::is_same_v<
+                  //                     PropertiesIndex,
+                  //                     DEM::DEMMPProperties::PropertiesIndex>)
+                  //       {
+                  //         if ((thermal_boundary_type !=
+                  //              Parameters::ThermalBoundaryType::adiabatic) &&
+                  //             (normal_overlap > 0))
+                  //           {
+                  //             const unsigned int particle_type =
+                  //               static_cast<unsigned int>(
+                  //                 particle_properties[PropertiesIndex::type]);
+                  //             const double temperature_particle =
+                  //               particle_properties[PropertiesIndex::T];
+                  //             double &particle_heat_transfer_rate =
+                  //               contact_outcome.heat_transfer_rate
+                  //                 [particle->get_local_index()];
+                  //             double thermal_conductance;
+                  //
+                  //             calculate_contact_thermal_conductance<
+                  //               ContactType::particle_floating_mesh>(
+                  //               0.5 *
+                  //               particle_properties[PropertiesIndex::dp], 0,
+                  //               this->effective_youngs_modulus[particle_type],
+                  //               this->effective_real_youngs_modulus
+                  //                 [particle_type],
+                  //               this
+                  //                 ->equivalent_surface_roughness[particle_type],
+                  //               this->equivalent_surface_slope[particle_type],
+                  //               this->effective_microhardness[particle_type],
+                  //               this->particle_thermal_conductivity
+                  //                 [particle_type],
+                  //               this->wall_thermal_conductivity,
+                  //               this->gas_thermal_conductivity,
+                  //               this->gas_parameter_m[particle_type],
+                  //               normal_overlap,
+                  //               normal_force.norm(),
+                  //               thermal_conductance);
+                  //
+                  //             // Apply the heat transfer to the particle
+                  //             apply_heat_transfer_on_single_local_particle(
+                  //               temperature_particle,
+                  //               temperature_wall,
+                  //               thermal_conductance,
+                  //               particle_heat_transfer_rate);
+                  //           }
+                  //       }
+                  //   }
                   particle_counter++;
                 }
-            }
+              // Every contact between this solid object and the particles are
+              // recorder.
+
+            } // Loop on each solid object
         }
     }
 }
