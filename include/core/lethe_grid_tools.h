@@ -259,6 +259,13 @@ namespace LetheGridTools
                                                   &vertices_cell_map,
     std::vector<SerialSolid<structdim, spacedim>> &list_of_objects);
 
+
+  enum class ContactIndicator : std::uint8_t
+  {
+    face_contact,
+    edge_contact,
+    vertex_contact
+  };
   /**
    * @brief Calculates the distance between particles and a triangle (defined using
    * three vertices). The full calculation is taken from  Geometric Tools for
@@ -282,15 +289,15 @@ namespace LetheGridTools
    * close to the triangle plane, 1. a vector of projected location of particles
    * on the triangle, 2. a vector of normal vectors of the triangles
    */
-
   template <int dim, typename PropertiesIndex>
-  std::
-    tuple<std::vector<bool>, std::vector<Point<3>>, std::vector<Tensor<1, 3>>>
-    find_particle_triangle_projection(
-      const std::vector<Point<dim>>                       &triangle,
-      const std::vector<Particles::ParticleIterator<dim>> &particles,
-      const unsigned int &n_particles_in_base_cell);
-
+  std::tuple<std::vector<bool>,
+             std::vector<Point<3>>,
+             std::vector<Tensor<1, 3>>,
+             std::vector<ContactIndicator>>
+  find_particle_triangle_projection(
+    const std::vector<Point<dim>>                       &triangle,
+    const std::vector<Particles::ParticleIterator<dim>> &particles,
+    const unsigned int &n_particles_in_base_cell);
 
   /**
    * @brief Calculates the distance between points and a triangle (defined using
@@ -482,6 +489,4 @@ namespace LetheGridTools
     const typename Triangulation<dim, spacedim>::active_cell_iterator &cell);
 
 } // namespace LetheGridTools
-
-
 #endif // lethe_lethegridtools_h
