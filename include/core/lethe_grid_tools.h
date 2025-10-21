@@ -91,7 +91,6 @@ namespace LetheGridTools
    * cell.
    *
    * @param cell The initial cell. We want to know all the cells that share a vertex with this cell.
-   *
    * @param vertices_cell_map see vertices_cell_mapping function description.
    */
   template <int dim>
@@ -430,6 +429,57 @@ namespace LetheGridTools
              cell2->global_active_cell_index();
     }
   };
+
+  /**
+   * @brief Function that checks if two cells are coplanar within a given tolerance.
+   *
+   * @param cell_A
+   * @param cell_B Second cell to compare.
+   * @param tol Tolerance for coplanarity check.
+   */
+  template <int dim, int spacedim>
+  bool
+  triangle_cells_are_coplanar(
+    const typename Triangulation<dim, spacedim>::active_cell_iterator &cell_A,
+    const typename Triangulation<dim, spacedim>::active_cell_iterator &cell_B,
+    double tol = 1e-6);
+
+
+  /**
+   * @brief
+   * Map the vertex index to the cells that includes that vertex.
+   *
+   * @param tria Triangualtion
+   * @param vertices_cell_map The map container of vertex ids with its set of
+   * neighbor cells
+   */
+  template <int dim, int spacedim>
+  void
+  vertices_cell_mapping(
+    const Triangulation<dim, spacedim> &tria,
+    std::map<
+      unsigned int,
+      std::set<typename Triangulation<dim, spacedim>::active_cell_iterator>>
+      &vertices_cell_map);
+
+
+  /**
+   * @brief Return a vector of cells around a cell. The vector of cells includes all
+   * the cells that share a vertex with the initial cell, including the
+   initial
+   * cell.
+   *
+   * @param cell The initial cell. We want to know all the cells that share a vertex with this cell.
+   * @param vertices_cell_map see vertices_cell_mapping function description.
+   */
+  template <int dim, int spacedim = dim>
+  std::vector<typename Triangulation<dim, spacedim>::active_cell_iterator>
+  find_cells_around_cell(
+    std::map<
+      unsigned int,
+      std::set<typename Triangulation<dim, spacedim>::active_cell_iterator>>
+      &vertices_cell_map,
+    const typename Triangulation<dim, spacedim>::active_cell_iterator &cell);
 
 } // namespace LetheGridTools
 
