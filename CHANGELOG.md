@@ -3,6 +3,14 @@
 All notable changes to the Lethe project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
+### [Master] - 2025-10-23
+
+### Changed
+
+- MINOR The serialization/deserialization of tables in classes derived from AuxiliaryPhysics
+have been refactored to match the same code structure as that used for the tables in solvers
+derived from NavierStokesBase. Functions for serializing/deserializing multiple tables are now defined in include/core/utilities.h. [#1725] (https://github.com/chaos-polymtl/lethe/pull/1725)
+
 ### [Master] - 2025-10-16
 
 ### Changed
