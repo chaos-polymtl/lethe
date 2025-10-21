@@ -16,7 +16,7 @@ HeatTransferScratchData<dim>::allocate()
   this->n_dofs     = fe_values_T.get_fe().n_dofs_per_cell();
 
   // Initialize arrays related to quadrature
-  this->JxW.reinit(TableIndices<1>(n_q_points));
+  this->JxW.reinit(n_q_points);
 
   // Forcing term array
   this->source = std::vector<double>(n_q_points);
@@ -49,7 +49,6 @@ HeatTransferScratchData<dim>::allocate()
     std::vector<std::vector<Tensor<1, dim>>>(
       maximum_number_of_previous_solutions(),
       std::vector<Tensor<1, dim>>(n_q_points));
-
 
   // Initialize arrays related to shape functions
   // Velocity shape functions

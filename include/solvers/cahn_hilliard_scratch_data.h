@@ -382,7 +382,7 @@ public:
   std::vector<bool>         is_boundary_face;
   std::vector<unsigned int> boundary_face_id;
 
-  // First vector is face number, second quadrature point, third DOF
+  // First is face number, second quadrature point, third DOF
   Table<3, Tensor<1, dim>> grad_phi_face_phase;
   // First vector is face number, second quadrature point
   std::vector<std::vector<Tensor<1, dim>>> face_phase_grad_values;

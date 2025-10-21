@@ -505,7 +505,7 @@ public:
 
   // First is face number, second quadrature point, third DOF
   Table<3, double> phi_face_T;
-  // First  is face number, second quadrature point
+  // First vector is face number, second quadrature point
   std::vector<std::vector<double>> temperature_face_value;
 };
 

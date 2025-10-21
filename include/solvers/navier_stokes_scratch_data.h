@@ -364,8 +364,7 @@ public:
           std::vector<std::vector<Tensor<1, dim>>>(
             n_faces, std::vector<Tensor<1, dim>>(n_faces_q_points));
 
-        this->face_normal = std::vector<std::vector<Tensor<1, dim>>>(
-          n_faces, std::vector<Tensor<1, dim>>(n_faces_q_points));
+        this->face_normal.reinit(n_faces, n_faces_q_points);
 
         this->face_quadrature_points = std::vector<std::vector<Point<dim>>>(
           n_faces, std::vector<Point<dim>>(n_faces_q_points));
@@ -1315,8 +1314,7 @@ public:
   std::vector<Tensor<1, dim>>              sdirk_stage_sum;
 
   // Shape functions
-  Table<2, double> div_phi_u;
-
+  Table<2, double>         div_phi_u;
   Table<2, Tensor<1, dim>> phi_u;
   Table<2, Tensor<3, dim>> hess_phi_u;
   Table<2, Tensor<1, dim>> laplacian_phi_u;
@@ -1440,9 +1438,9 @@ public:
   std::vector<unsigned int> boundary_face_id;
 
   // Quadrature
-  Table<2, double>                         face_JxW;
-  std::vector<std::vector<Point<dim>>>     face_quadrature_points;
-  std::vector<std::vector<Tensor<1, dim>>> face_normal;
+  Table<2, double>                     face_JxW;
+  std::vector<std::vector<Point<dim>>> face_quadrature_points;
+  Table<2, Tensor<1, dim>>             face_normal;
 
   // Velocity and pressure values
   // First vector is face number, second quadrature point
