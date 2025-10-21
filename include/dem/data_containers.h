@@ -175,6 +175,17 @@ namespace DEM
     typedef std::vector<particle_floating_wall_from_mesh_candidates>
       particle_floating_mesh_candidates;
 
+    // [cell iterator]
+    typedef std::vector<
+      typename Triangulation<dim - 1, dim>::active_cell_iterator>
+      triangulation_cell_vector;
+
+    // <cell iterator, [cell iterator]>
+    typedef std::map<typename Triangulation<dim - 1, dim>::active_cell_iterator,
+                     triangulation_cell_vector,
+                     cut_cell_comparison<dim>>
+      triangulation_cell_map;
+
     // [<cell iterator, <particle id, particle-wall info>>]
     typedef std::vector<particle_triangle_cell_from_mesh_in_contact>
       particle_floating_mesh_in_contact;

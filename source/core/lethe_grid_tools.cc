@@ -1852,3 +1852,176 @@ LetheGridTools::rotate_mapping(const DoFHandler<3> &dof_handler,
                                const double        &rotation_angle,
                                const Point<3>      &center_of_rotation,
                                const Tensor<1, 3>  &rotation_axis);
+
+
+template <int dim, int spacedim>
+bool
+LetheGridTools::triangle_cells_are_coplanar(
+  const typename Triangulation<dim, spacedim>::active_cell_iterator &cell_A,
+  const typename Triangulation<dim, spacedim>::active_cell_iterator &cell_B,
+  const double                                                       tol)
+{
+  // Point of each triangle cell
+  std::vector<Point<spacedim>> points_A, points_B;
+  points_A.reserve(3);
+  points_B.reserve(3);
+
+  for (unsigned int i = 0; i < 3; ++i)
+    {
+      points_A.push_back(cell_A->vertex(i));
+      points_B.push_back(cell_B->vertex(i));
+    }
+
+  // Every tensor needed
+  Tensor<1, spacedim> u_A, v_A, u_B, v_B, normal_A, normal_B;
+  u_A = points_A[1] - points_A[0];
+  v_A = points_A[2] - points_A[0];
+  u_B = points_B[1] - points_B[0];
+  v_B = points_B[2] - points_B[0];
+
+  // Normal of each triangle
+  normal_A = cross_product_3d(u_A, v_A);
+  normal_B = cross_product_3d(u_B, v_B);
+
+  if (std::abs(scalar_product(normal_A, normal_B)) >=
+      normal_A.norm() * normal_B.norm() * (1.0 - tol))
+    return true;
+
+  return false;
+}
+
+template bool
+LetheGridTools::triangle_cells_are_coplanar<1, 2>(
+  const typename Triangulation<1, 2>::active_cell_iterator &cell_A,
+  const typename Triangulation<1, 2>::active_cell_iterator &cell_B,
+  const double                                              tol);
+
+template bool
+LetheGridTools::triangle_cells_are_coplanar<2, 2>(
+  const typename Triangulation<2, 2>::active_cell_iterator &cell_A,
+  const typename Triangulation<2, 2>::active_cell_iterator &cell_B,
+  const double                                              tol);
+
+template bool
+LetheGridTools::triangle_cells_are_coplanar<2, 3>(
+  const typename Triangulation<2, 3>::active_cell_iterator &cell_A,
+  const typename Triangulation<2, 3>::active_cell_iterator &cell_B,
+  const double                                              tol);
+
+template bool
+LetheGridTools::triangle_cells_are_coplanar<3, 3>(
+  const typename Triangulation<3, 3>::active_cell_iterator &cell_A,
+  const typename Triangulation<3, 3>::active_cell_iterator &cell_B,
+  const double                                              tol);
+
+template <int dim, int spacedim>
+void
+LetheGridTools::vertices_cell_mapping(
+  const Triangulation<dim, spacedim> &tria,
+  std::map<
+    unsigned int,
+    std::set<typename Triangulation<dim, spacedim>::active_cell_iterator>>
+    &vertices_cell_map)
+{
+  vertices_cell_map.clear();
+  const auto &cell_iterator = tria.active_cell_iterators();
+
+  // Loop on all the cells and find their vertices, and fill
+  // the map with sets of cells around each vertex
+  for (const auto &cell : cell_iterator)
+    {
+      // Since this is a serial triangulation, no need to check if the cells
+      // are locally own.
+      const unsigned int vertices_per_cell = cell->n_vertices();
+      for (unsigned int i = 0; i < vertices_per_cell; i++)
+        {
+          // First obtain vertex index
+          unsigned int v_index = cell->vertex_index(i);
+
+          // Insert the cell into the set of cell around that vertex.
+          vertices_cell_map[v_index].insert(cell);
+        }
+    }
+}
+template void
+LetheGridTools::vertices_cell_mapping(
+  const Triangulation<1, 2> &tria,
+  std::map<unsigned int,
+           std::set<typename Triangulation<1, 2>::active_cell_iterator>>
+    &vertices_cell_map);
+template void
+LetheGridTools::vertices_cell_mapping(
+  const Triangulation<2, 2> &tria,
+  std::map<unsigned int,
+           std::set<typename Triangulation<2, 2>::active_cell_iterator>>
+    &vertices_cell_map);
+template void
+LetheGridTools::vertices_cell_mapping(
+  const Triangulation<2, 3> &tria,
+  std::map<unsigned int,
+           std::set<typename Triangulation<2, 3>::active_cell_iterator>>
+    &vertices_cell_map);
+template void
+LetheGridTools::vertices_cell_mapping(
+  const Triangulation<3, 3> &tria,
+  std::map<unsigned int,
+           std::set<typename Triangulation<3, 3>::active_cell_iterator>>
+    &vertices_cell_map);
+
+
+template <int dim, int spacedim>
+std::vector<typename Triangulation<dim, spacedim>::active_cell_iterator>
+LetheGridTools::find_cells_around_cell(
+  std::map<
+    unsigned int,
+    std::set<typename Triangulation<dim, spacedim>::active_cell_iterator>>
+    &vertices_cell_map,
+  const typename Triangulation<dim, spacedim>::active_cell_iterator &cell)
+{
+  // Find all the cells that share a vertex with a reference cell, including
+  // the initial cell.
+  std::set<typename Triangulation<dim, spacedim>::active_cell_iterator>
+    neighbors_cells;
+
+  // Loop over the vertices of the initial cell, find all the cells around
+  // each vertex and add them to the set of cells around the reference cell.
+  unsigned int vertices_per_cell = cell->n_vertices();
+  for (unsigned int i = 0; i < vertices_per_cell; i++)
+    {
+      unsigned int v_index = cell->vertex_index(i);
+      neighbors_cells.insert(vertices_cell_map[v_index].begin(),
+                             vertices_cell_map[v_index].end());
+    }
+
+  // Transform the set into a vector.
+  std::vector<typename Triangulation<dim, spacedim>::active_cell_iterator>
+    cells_sharing_vertices(neighbors_cells.begin(), neighbors_cells.end());
+  return cells_sharing_vertices;
+}
+
+template std::vector<typename Triangulation<1, 2>::active_cell_iterator>
+LetheGridTools::find_cells_around_cell<1, 2>(
+  std::map<unsigned int, std::set<Triangulation<1, 2>::active_cell_iterator>>
+                                                           &vertices_cell_map,
+  const typename Triangulation<1, 2>::active_cell_iterator &cell);
+
+template std::vector<typename Triangulation<2>::active_cell_iterator>
+LetheGridTools::find_cells_around_cell<2>(
+  std::map<unsigned int,
+           std::set<typename Triangulation<2>::active_cell_iterator>>
+                                                        &vertices_cell_map,
+  const typename Triangulation<2>::active_cell_iterator &cell);
+
+template std::vector<typename Triangulation<2, 3>::active_cell_iterator>
+LetheGridTools::find_cells_around_cell<2, 3>(
+  std::map<unsigned int,
+           std::set<typename Triangulation<2, 3>::active_cell_iterator>>
+                                                           &vertices_cell_map,
+  const typename Triangulation<2, 3>::active_cell_iterator &cell);
+
+template std::vector<typename Triangulation<3>::active_cell_iterator>
+LetheGridTools::find_cells_around_cell<3>(
+  std::map<unsigned int,
+           std::set<typename Triangulation<3>::active_cell_iterator>>
+                                                        &vertices_cell_map,
+  const typename Triangulation<3>::active_cell_iterator &cell);

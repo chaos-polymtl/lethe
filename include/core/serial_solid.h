@@ -68,6 +68,15 @@ public:
   setup_dof_handler();
 
   /**
+   * @brief Stores the neighboring cells information for each cell of the solid object.
+   * These containers store for each cell which neighboring cells are sharing a
+   * vertex or an edge (two vertex). Also stores which neighboring cells are
+   * coplanar or non-coplanar.
+   */
+  void
+  setup_containers();
+
+  /**
    * @brief Returns the shared pointer to the solid object triangulation
    *
    * @return shared_ptr of the solid triangulation
@@ -92,9 +101,9 @@ public:
   get_displacement_vector();
 
   /**
-   * @brief Calculates the max displacement of the solid object. The max displacement is defined as
-   *  the L^\infty norm of the displacement components. This is a measure of the
-   * maximal displacement in any direction.
+   * @brief Calculates the max displacement of the solid object. The max
+   * displacement is defined as the L^\infty norm of the displacement
+   * components. This is a measure of the maximal displacement in any direction.
    *
    * @return The reference to the vector of the displacement since the mapping
    */
@@ -193,7 +202,6 @@ public:
    * in order to allow correct checkpointing of the triangulation.
    *
    * @param time_step The time_step value for this iteration
-   *
    * @param initial_time The initial time (time t) of the timestep. This is used to
    * set the time of the velocity function.
    */
@@ -259,7 +267,6 @@ private:
    * @brief Rotates the grid by a given angle around an axis
    *
    * @param angle The angle (in rad) with which the solid is rotated
-   *
    * @param axis The axis over which the solid is rotated.
    *
    */
@@ -309,6 +316,34 @@ private:
   std::shared_ptr<Function<spacedim>> solid_temperature;
   Parameters::ThermalBoundaryType     thermal_boundary_type;
   double                              current_solid_temperature;
+
+  struct cut_cell_comparison
+  {
+    inline bool
+    operator()(
+      const typename Triangulation<dim, spacedim>::active_cell_iterator &cell_1,
+      const typename Triangulation<dim, spacedim>::active_cell_iterator &cell_2)
+      const
+    {
+      return cell_1->global_active_cell_index() <
+             cell_2->global_active_cell_index();
+    }
+  };
+
+  typedef std::map<
+    typename Triangulation<dim, spacedim>::active_cell_iterator,
+    std::vector<typename Triangulation<dim, spacedim>::active_cell_iterator>,
+    cut_cell_comparison>
+    triangulation_cell_neighbors_map;
+
+  // CP : coplanar
+  // NP : non-coplanar
+  // ES : edge-sharing
+  // VS : vertex-sharing
+  triangulation_cell_neighbors_map cp_es_neighbors;
+  triangulation_cell_neighbors_map np_es_neighbors;
+  triangulation_cell_neighbors_map cp_vs_neighbors;
+  triangulation_cell_neighbors_map np_vs_neighbors;
 };
 
 #endif
