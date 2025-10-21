@@ -987,7 +987,7 @@ CahnHilliard<dim>::write_checkpoint()
   // Hilliard solver
   const std::vector<OutputStructTableHandler> &table_output_structs =
     this->gather_tables();
-  this->serialize_tables_vector(table_output_structs, mpi_communicator);
+  serialize_tables_vector(table_output_structs, mpi_communicator);
 }
 
 template <int dim>
@@ -1023,7 +1023,7 @@ CahnHilliard<dim>::read_checkpoint()
   // Cahn-Hilliard solver
   std::vector<OutputStructTableHandler> table_output_structs =
     this->gather_tables();
-  this->deserialize_tables_vector(table_output_structs, mpi_communicator);
+  deserialize_tables_vector(table_output_structs, mpi_communicator);
 }
 
 

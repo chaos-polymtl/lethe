@@ -1175,7 +1175,7 @@ Tracer<dim>::write_checkpoint()
   // Tracer solver
   const std::vector<OutputStructTableHandler> &table_output_structs =
     this->gather_tables();
-  this->serialize_tables_vector(table_output_structs, mpi_communicator);
+  serialize_tables_vector(table_output_structs, mpi_communicator);
 }
 
 template <int dim>
@@ -1211,7 +1211,7 @@ Tracer<dim>::read_checkpoint()
   // Tracer solver
   std::vector<OutputStructTableHandler> table_output_structs =
     this->gather_tables();
-  this->deserialize_tables_vector(table_output_structs, mpi_communicator);
+  deserialize_tables_vector(table_output_structs, mpi_communicator);
 }
 
 

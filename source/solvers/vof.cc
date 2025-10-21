@@ -2218,7 +2218,7 @@ VolumeOfFluid<dim>::write_checkpoint()
   // solver
   const std::vector<OutputStructTableHandler> &table_output_structs =
     this->gather_tables();
-  this->serialize_tables_vector(table_output_structs, mpi_communicator);
+  serialize_tables_vector(table_output_structs, mpi_communicator);
 }
 
 template <int dim>
@@ -2260,7 +2260,7 @@ VolumeOfFluid<dim>::read_checkpoint()
   // solver
   std::vector<OutputStructTableHandler> table_output_structs =
     this->gather_tables();
-  this->deserialize_tables_vector(table_output_structs, mpi_communicator);
+  deserialize_tables_vector(table_output_structs, mpi_communicator);
 
   if (this->simulation_parameters.multiphysics.vof_parameters
         .regularization_method.sharpening.type ==

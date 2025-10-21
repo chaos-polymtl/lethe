@@ -1003,7 +1003,7 @@ FluidDynamicsNitsche<dim, spacedim>::write_checkpoint()
   // NavierStokesBase
   const std::vector<OutputStructTableHandler> &table_output_structs =
     NavierStokesBase<spacedim, GlobalVectorType, IndexSet>::gather_tables();
-  this->serialize_tables_vector(table_output_structs);
+  serialize_tables_vector(table_output_structs, this->mpi_communicator);
 }
 
 template <int dim, int spacedim>
@@ -1080,7 +1080,7 @@ FluidDynamicsNitsche<dim, spacedim>::read_checkpoint()
   // NavierStokesBase
   std::vector<OutputStructTableHandler> table_output_structs =
     NavierStokesBase<spacedim, GlobalVectorType, IndexSet>::gather_tables();
-  this->deserialize_tables_vector(table_output_structs);
+  deserialize_tables_vector(table_output_structs, this->mpi_communicator);
 }
 
 

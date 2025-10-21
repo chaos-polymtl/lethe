@@ -153,30 +153,6 @@ public:
   gather_tables() = 0;
 
   /**
-   * @brief Serializes all the TableHandler objects in table_output_structs.
-   *
-   * @param[in] table_output_structs Vector of structures containing references
-   * to TableHandler objects that needs to be serialized/deserialized for a
-   * given AuxiliaryPhysics solver, and their corresponding file names.
-   */
-  void
-  serialize_tables_vector(
-    const std::vector<OutputStructTableHandler> &table_output_structs,
-    MPI_Comm                                     mpi_communicator);
-
-  /**
-   * @brief Deserializes all the TableHandler objects in table_output_structs.
-   *
-   * @param[in,out] table_output_structs Vector of structures containing
-   * references to TableHandler objects that needs to be serialized/deserialized
-   * for a given AuxiliaryPhysics solver, and their corresponding file names.
-   */
-  void
-  deserialize_tables_vector(
-    std::vector<OutputStructTableHandler> &table_output_structs,
-    MPI_Comm                               mpi_communicator);
-
-  /**
    * @brief Compute the Kelly error estimator used to refine mesh on a auxiliary physic parameter.
    *
    * @param ivar The current element of the map simulation_parameters.mesh_adaptation.variables

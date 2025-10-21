@@ -10,6 +10,8 @@
 #include <deal.II/base/table_handler.h>
 #include <deal.II/base/tensor.h>
 
+#include <solvers/output_struct.h>
+
 #include <deal.II/dofs/dof_handler.h>
 
 #include <deal.II/fe/fe_values.h>
@@ -498,7 +500,6 @@ serialize_table(const TableHandler &table,
     }
 }
 
-
 /**
  * @brief Loads a TableHandler from a file using Boost serialization.
  *
@@ -525,6 +526,50 @@ deserialize_table(TableHandler      &table,
       std::ifstream                 ifile(filename);
       boost::archive::text_iarchive ia(ifile, boost::archive::no_header);
       ia >> table;
+    }
+}
+
+/**
+ * @brief Serializes all the TableHandler objects in table_output_structs.
+ *
+ * @param[in] table_output_structs Vector of structures containing references
+ * to TableHandler objects that need to be serialized/deserialized for a
+ * given solver, and their corresponding file names.
+ *
+ * @param[in] mpi_communicator The MPI communicator
+ */
+inline void
+serialize_tables_vector(
+  const std::vector<OutputStructTableHandler> &table_output_structs,
+  const MPI_Comm                                   mpi_communicator)
+{
+  for (const auto &output_table : table_output_structs)
+    {
+      serialize_table(output_table.table,
+                      output_table.table_filename,
+                      mpi_communicator);
+    }
+}
+
+/**
+ * @brief Deserializes all the TableHandler objects in table_output_structs.
+ *
+ * @param[in,out] table_output_structs Vector of structures containing
+ * references to TableHandler objects that needs to be serialized/deserialized
+ * for a given solver, and their corresponding file names.
+ *
+ * @param[in] mpi_communicator The MPI communicator
+ */
+inline void
+deserialize_tables_vector(
+  std::vector<OutputStructTableHandler> &table_output_structs,
+  const MPI_Comm                        mpi_communicator)
+{
+  for (auto &output_table : table_output_structs)
+    {
+      deserialize_table(output_table.table,
+                        output_table.table_filename,
+                        mpi_communicator);
     }
 }
 

@@ -1268,7 +1268,7 @@ HeatTransfer<dim>::write_checkpoint()
   // Transfer solver
   const std::vector<OutputStructTableHandler> &table_output_structs =
     this->gather_tables();
-  this->serialize_tables_vector(table_output_structs, mpi_communicator);
+  serialize_tables_vector(table_output_structs, mpi_communicator);
 }
 
 template <int dim>
@@ -1338,7 +1338,7 @@ HeatTransfer<dim>::read_checkpoint()
   // Heat Transfer solver
   std::vector<OutputStructTableHandler> table_output_structs =
     this->gather_tables();
-  this->deserialize_tables_vector(table_output_structs, mpi_communicator);
+  deserialize_tables_vector(table_output_structs, mpi_communicator);
 }
 
 
