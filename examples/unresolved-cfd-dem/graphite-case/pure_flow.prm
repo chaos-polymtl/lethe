@@ -12,8 +12,8 @@ set dimension = 3
 
 subsection simulation control
   set method           = bdf2
-  set output frequency = 2500
-  set time end         = 8
+  set output frequency = 20
+  set time end         = 2
   set time step        = 0.00005
   set adapt            = true
   set max cfl          = 1
@@ -93,7 +93,7 @@ subsection boundary conditions
       set Function expression = 0
     end
     subsection w
-      set Function expression = if(t<1, (5*t), 5)
+      set Function expression =  -4.0e+5*x^2 - 4.0e+5*y^2 + 10.0 # 0.0003926990816987241 flow rate or an average velocity of 5
     end
   end
   subsection bc 1
@@ -106,7 +106,7 @@ subsection boundary conditions
       set Function expression = 0
     end
     subsection w
-      set Function expression = 0.10
+      set Function expression = 0.10     #0.0001539380400258999
     end
   end
   subsection bc 2
@@ -130,6 +130,34 @@ end
 subsection mesh adaptation
   set type = none
 end
+
+#---------------------------------------------------
+# Manifolds
+#---------------------------------------------------
+
+subsection manifolds
+
+  # Sets the total number of specified manifolds
+  set number = 1
+
+  subsection manifold 0
+
+      # Boundary mesh id specified in the .gmsh file
+      set id                 = 3
+
+      # Type of manifold. Choices are <spherical|cylindrical|iges|none>
+      set type               = cylindrical
+
+      # Center of the sphere or a point along the cylinder's axis (x, y, z)
+      set point coordinates  = 0, 0, 0  #for 2D, set point coordinates = 0, 0
+
+      # Direction vector used only for the cylinder (x, y, z)
+      set direction vector   = 0, 0, 1
+
+  end
+
+end
+
 
 #---------------------------------------------------
 # Timer
@@ -159,12 +187,12 @@ end
 subsection linear solver
   subsection fluid dynamics
     set method                  = gmres
-    set max iters               = 1000
+    set max iters               = 500
     set relative residual       = 1e-3
     set minimum residual        = 1e-9
     set preconditioner          = ilu
     set ilu preconditioner fill = 0
     set verbosity               = verbose
-    set max krylov vectors      = 200
+    set max krylov vectors      = 500
   end
 end

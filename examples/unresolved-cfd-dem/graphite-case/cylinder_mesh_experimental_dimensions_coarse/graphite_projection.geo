@@ -5,8 +5,8 @@
 
 // Projection zone
 
-hp = 0.18; // height of projection zone
-wp = 0.18; // width of projection zone
+hp = 0.25; // height of projection zone
+wp = 0.25; // width of projection zone
 dp = 0.02; // depth in z of projection zone
 zp = 10; // number of cells in the z direction (depth) of projection zone
 nhp = 27; // number of points in height of section of projection zone
