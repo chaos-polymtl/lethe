@@ -229,14 +229,8 @@ public:
         n_faces_q_points = fe_face_values_cahn_hilliard.get_quadrature().size();
         boundary_face_id = std::vector<unsigned int>(n_faces);
 
-        face_JxW = std::vector<std::vector<double>>(
-          n_faces, std::vector<double>(n_faces_q_points));
-
-        this->grad_phi_face_phase =
-          std::vector<std::vector<std::vector<Tensor<1, dim>>>>(
-            n_faces,
-            std::vector<std::vector<Tensor<1, dim>>>(
-              n_faces_q_points, std::vector<Tensor<1, dim>>(n_dofs)));
+        face_JxW.reinit(n_faces, n_faces_q_points);
+        this->grad_phi_face_phase.reinit(n_faces, n_faces_q_points, n_dofs);
 
         this->face_phase_grad_values = std::vector<std::vector<Tensor<1, dim>>>(
           n_faces, std::vector<Tensor<1, dim>>(n_faces_q_points));
@@ -339,7 +333,7 @@ public:
   double        cell_size;
 
   // Quadrature
-  std::vector<double>     JxW;
+  Table<1, double>        JxW;
   std::vector<Point<dim>> quadrature_points;
 
   // Phase order and chemical potential values
@@ -357,14 +351,14 @@ public:
   std::vector<double> source_chemical_potential;
 
   // Shape functions for the phase order and the chemical potential
-  std::vector<std::vector<double>>         phi_phase;
-  std::vector<std::vector<Tensor<2, dim>>> hess_phi_phase;
-  std::vector<std::vector<double>>         laplacian_phi_phase;
-  std::vector<std::vector<Tensor<1, dim>>> grad_phi_phase;
-  std::vector<std::vector<double>>         phi_potential;
-  std::vector<std::vector<Tensor<2, dim>>> hess_phi_potential;
-  std::vector<std::vector<double>>         laplacian_phi_potential;
-  std::vector<std::vector<Tensor<1, dim>>> grad_phi_potential;
+  Table<2, double>         phi_phase;
+  Table<2, Tensor<2, dim>> hess_phi_phase;
+  Table<2, double>         laplacian_phi_phase;
+  Table<2, Tensor<1, dim>> grad_phi_phase;
+  Table<2, double>         phi_potential;
+  Table<2, Tensor<2, dim>> hess_phi_potential;
+  Table<2, double>         laplacian_phi_potential;
+  Table<2, Tensor<1, dim>> grad_phi_potential;
 
   /**
    * Scratch component for the Navier-Stokes component
@@ -377,8 +371,8 @@ public:
   std::vector<Tensor<2, dim>>              velocity_gradient_values;
 
   // Scratch for the face boundary condition
-  FEFaceValues<dim>                fe_face_values_cahn_hilliard;
-  std::vector<std::vector<double>> face_JxW;
+  FEFaceValues<dim> fe_face_values_cahn_hilliard;
+  Table<2, double>  face_JxW;
 
   unsigned int n_faces;
   unsigned int n_faces_q_points;
@@ -388,8 +382,8 @@ public:
   std::vector<bool>         is_boundary_face;
   std::vector<unsigned int> boundary_face_id;
 
-  // First vector is face number, second quadrature point, third DOF
-  std::vector<std::vector<std::vector<Tensor<1, dim>>>> grad_phi_face_phase;
+  // First is face number, second quadrature point, third DOF
+  Table<3, Tensor<1, dim>> grad_phi_face_phase;
   // First vector is face number, second quadrature point
   std::vector<std::vector<Tensor<1, dim>>> face_phase_grad_values;
   // The normal vector is necessary for the free angle boundary condition

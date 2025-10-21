@@ -1,4 +1,4 @@
-// SPDX-FileCopyrightText: Copyright (c) 2021-2024 The Lethe Authors
+// SPDX-FileCopyrightText: Copyright (c) 2021-2025 The Lethe Authors
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
 #include <core/bdf.h>
@@ -16,7 +16,7 @@ HeatTransferScratchData<dim>::allocate()
   this->n_dofs     = fe_values_T.get_fe().n_dofs_per_cell();
 
   // Initialize arrays related to quadrature
-  this->JxW = std::vector<double>(n_q_points);
+  this->JxW.reinit(n_q_points);
 
   // Forcing term array
   this->source = std::vector<double>(n_q_points);
@@ -52,14 +52,10 @@ HeatTransferScratchData<dim>::allocate()
 
   // Initialize arrays related to shape functions
   // Velocity shape functions
-  this->phi_T =
-    std::vector<std::vector<double>>(n_q_points, std::vector<double>(n_dofs));
-  this->grad_phi_T = std::vector<std::vector<Tensor<1, dim>>>(
-    n_q_points, std::vector<Tensor<1, dim>>(n_dofs));
-  this->hess_phi_T = std::vector<std::vector<Tensor<2, dim>>>(
-    n_q_points, std::vector<Tensor<2, dim>>(n_dofs));
-  this->laplacian_phi_T =
-    std::vector<std::vector<double>>(n_q_points, std::vector<double>(n_dofs));
+  this->phi_T.reinit(TableIndices<2>(n_q_points, n_dofs));
+  this->grad_phi_T.reinit(TableIndices<2>(n_q_points, n_dofs));
+  this->hess_phi_T.reinit(TableIndices<2>(n_q_points, n_dofs));
+  this->laplacian_phi_T.reinit(TableIndices<2>(n_q_points, n_dofs));
 
   // Physical properties
   fields.insert(

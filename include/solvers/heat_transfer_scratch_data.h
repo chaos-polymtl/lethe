@@ -234,14 +234,10 @@ public:
         n_faces_q_points = fe_face_values_ht.get_quadrature().size();
         boundary_face_id = std::vector<unsigned int>(n_faces);
 
-        face_JxW = std::vector<std::vector<double>>(
-          n_faces, std::vector<double>(n_faces_q_points));
+        face_JxW.reinit(TableIndices<2>(n_faces, n_faces_q_points));
 
-
-        this->phi_face_T = std::vector<std::vector<std::vector<double>>>(
-          n_faces,
-          std::vector<std::vector<double>>(n_faces_q_points,
-                                           std::vector<double>(n_dofs)));
+        this->phi_face_T.reinit(
+          TableIndices<3>(n_faces, n_faces_q_points, n_dofs));
 
         this->temperature_face_value = std::vector<std::vector<double>>(
           n_faces, std::vector<double>(n_faces_q_points));
@@ -449,7 +445,7 @@ public:
 
 
   // Quadrature
-  std::vector<double>     JxW;
+  Table<1, double>        JxW;
   std::vector<Point<dim>> quadrature_points;
 
   // Temperature values
@@ -462,10 +458,10 @@ public:
   double                                   global_delta_T_ref;
 
   // Shape functions and gradients
-  std::vector<std::vector<double>>         phi_T;
-  std::vector<std::vector<Tensor<1, dim>>> grad_phi_T;
-  std::vector<std::vector<Tensor<2, dim>>> hess_phi_T;
-  std::vector<std::vector<double>>         laplacian_phi_T;
+  Table<2, double>         phi_T;
+  Table<2, Tensor<1, dim>> grad_phi_T;
+  Table<2, Tensor<2, dim>> hess_phi_T;
+  Table<2, double>         laplacian_phi_T;
 
   // Source term
   std::vector<double> source;
@@ -495,8 +491,8 @@ public:
   std::vector<double> pressure_values;
 
   // Scratch for the face boundary condition
-  FEFaceValues<dim>                fe_face_values_ht;
-  std::vector<std::vector<double>> face_JxW;
+  FEFaceValues<dim> fe_face_values_ht;
+  Table<2, double>  face_JxW;
 
   unsigned int n_faces;
   unsigned int n_faces_q_points;
@@ -507,8 +503,8 @@ public:
   std::vector<unsigned int> boundary_face_id;
 
 
-  // First vector is face number, second quadrature point, third DOF
-  std::vector<std::vector<std::vector<double>>> phi_face_T;
+  // First is face number, second quadrature point, third DOF
+  Table<3, double> phi_face_T;
   // First vector is face number, second quadrature point
   std::vector<std::vector<double>> temperature_face_value;
 };

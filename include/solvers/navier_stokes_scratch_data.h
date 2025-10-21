@@ -339,8 +339,7 @@ public:
         n_faces_q_points = fe_face_values.get_quadrature().size();
         boundary_face_id = std::vector<unsigned int>(n_faces);
 
-        face_JxW = std::vector<std::vector<double>>(
-          n_faces, std::vector<double>(n_faces_q_points));
+        face_JxW.reinit(n_faces, n_faces_q_points);
 
         // Velocity and pressure values
         // First vector is face number, second quadrature point
@@ -365,51 +364,22 @@ public:
           std::vector<std::vector<Tensor<1, dim>>>(
             n_faces, std::vector<Tensor<1, dim>>(n_faces_q_points));
 
-        this->face_normal = std::vector<std::vector<Tensor<1, dim>>>(
-          n_faces, std::vector<Tensor<1, dim>>(n_faces_q_points));
+        this->face_normal.reinit(n_faces, n_faces_q_points);
 
         this->face_quadrature_points = std::vector<std::vector<Point<dim>>>(
           n_faces, std::vector<Point<dim>>(n_faces_q_points));
 
-        this->face_div_phi_u = std::vector<std::vector<std::vector<double>>>(
-          n_faces,
-          std::vector<std::vector<double>>(n_faces_q_points,
-                                           std::vector<double>(n_dofs)));
+        this->face_div_phi_u.reinit(n_faces, n_faces_q_points, n_dofs);
 
-        this->face_phi_u =
-          std::vector<std::vector<std::vector<Tensor<1, dim>>>>(
-            n_faces,
-            std::vector<std::vector<Tensor<1, dim>>>(
-              n_faces_q_points, std::vector<Tensor<1, dim>>(n_dofs)));
+        this->face_phi_u.reinit(n_faces, n_faces_q_points, n_dofs);
+        this->face_hess_phi_u.reinit(n_faces, n_faces_q_points, n_dofs);
 
-        this->face_hess_phi_u =
-          std::vector<std::vector<std::vector<Tensor<3, dim>>>>(
-            n_faces,
-            std::vector<std::vector<Tensor<3, dim>>>(
-              n_faces_q_points, std::vector<Tensor<3, dim>>(n_dofs)));
+        this->face_laplacian_phi_u.reinit(n_faces, n_faces_q_points, n_dofs);
 
-        this->face_laplacian_phi_u =
-          std::vector<std::vector<std::vector<Tensor<1, dim>>>>(
-            n_faces,
-            std::vector<std::vector<Tensor<1, dim>>>(
-              n_faces_q_points, std::vector<Tensor<1, dim>>(n_dofs)));
+        this->face_grad_phi_u.reinit(n_faces, n_faces_q_points, n_dofs);
+        this->face_phi_p.reinit(n_faces, n_faces_q_points, n_dofs);
+        this->face_grad_phi_p.reinit(n_faces, n_faces_q_points, n_dofs);
 
-        this->face_grad_phi_u =
-          std::vector<std::vector<std::vector<Tensor<2, dim>>>>(
-            n_faces,
-            std::vector<std::vector<Tensor<2, dim>>>(
-              n_faces_q_points, std::vector<Tensor<2, dim>>(n_dofs)));
-
-        this->face_phi_p = std::vector<std::vector<std::vector<double>>>(
-          n_faces,
-          std::vector<std::vector<double>>(n_faces_q_points,
-                                           std::vector<double>(n_dofs)));
-
-        this->face_grad_phi_p =
-          std::vector<std::vector<std::vector<Tensor<1, dim>>>>(
-            n_faces,
-            std::vector<std::vector<Tensor<1, dim>>>(
-              n_faces_q_points, std::vector<Tensor<1, dim>>(n_dofs)));
         for (const auto face : cell->face_indices())
           {
             is_boundary_face[face] = cell->face(face)->at_boundary();
@@ -1324,7 +1294,7 @@ public:
   std::vector<double>         mass_source;
 
   // Quadrature
-  std::vector<double>     JxW;
+  Table<1, double>        JxW;
   std::vector<Point<dim>> quadrature_points;
 
   // Components index
@@ -1344,13 +1314,13 @@ public:
   std::vector<Tensor<1, dim>>              sdirk_stage_sum;
 
   // Shape functions
-  std::vector<std::vector<double>>         div_phi_u;
-  std::vector<std::vector<Tensor<1, dim>>> phi_u;
-  std::vector<std::vector<Tensor<3, dim>>> hess_phi_u;
-  std::vector<std::vector<Tensor<1, dim>>> laplacian_phi_u;
-  std::vector<std::vector<Tensor<2, dim>>> grad_phi_u;
-  std::vector<std::vector<double>>         phi_p;
-  std::vector<std::vector<Tensor<1, dim>>> grad_phi_p;
+  Table<2, double>         div_phi_u;
+  Table<2, Tensor<1, dim>> phi_u;
+  Table<2, Tensor<3, dim>> hess_phi_u;
+  Table<2, Tensor<1, dim>> laplacian_phi_u;
+  Table<2, Tensor<2, dim>> grad_phi_u;
+  Table<2, double>         phi_p;
+  Table<2, Tensor<1, dim>> grad_phi_p;
 
   /**
    * Scratch component for the VOF auxiliary physics
@@ -1468,9 +1438,9 @@ public:
   std::vector<unsigned int> boundary_face_id;
 
   // Quadrature
-  std::vector<std::vector<double>>         face_JxW;
-  std::vector<std::vector<Point<dim>>>     face_quadrature_points;
-  std::vector<std::vector<Tensor<1, dim>>> face_normal;
+  Table<2, double>                     face_JxW;
+  std::vector<std::vector<Point<dim>>> face_quadrature_points;
+  Table<2, Tensor<1, dim>>             face_normal;
 
   // Velocity and pressure values
   // First vector is face number, second quadrature point
@@ -1483,14 +1453,15 @@ public:
 
   // Shape functions
   // First vector is face number, second quadrature point, third DOF
-  std::vector<std::vector<std::vector<double>>>         face_div_phi_u;
-  std::vector<std::vector<std::vector<Tensor<1, dim>>>> face_phi_u;
-  std::vector<std::vector<std::vector<Tensor<3, dim>>>> face_hess_phi_u;
-  std::vector<std::vector<std::vector<Tensor<1, dim>>>> face_laplacian_phi_u;
-  std::vector<std::vector<std::vector<Tensor<2, dim>>>> face_grad_phi_u;
-  std::vector<std::vector<std::vector<double>>>         face_phi_p;
-  std::vector<std::vector<std::vector<Tensor<1, dim>>>> face_grad_phi_p;
+  Table<3, double>         face_div_phi_u;
+  Table<3, Tensor<1, dim>> face_phi_u;
+  Table<3, Tensor<3, dim>> face_hess_phi_u;
+  Table<3, Tensor<1, dim>> face_laplacian_phi_u;
+  Table<3, Tensor<2, dim>> face_grad_phi_u;
+  Table<3, double>         face_phi_p;
+  Table<3, Tensor<1, dim>> face_grad_phi_p;
 
+  /// SDIRK table for SDIRK time integration
   SDIRKTable sdirk_table;
 };
 

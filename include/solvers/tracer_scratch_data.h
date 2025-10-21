@@ -540,7 +540,7 @@ public:
   double       cell_size;
 
   // Quadrature
-  std::vector<double>     JxW;
+  Table<1, double>        JxW;
   std::vector<Point<dim>> quadrature_points;
   std::vector<Point<dim>> face_quadrature_points;
 
@@ -569,15 +569,14 @@ public:
   // Immersed solid shape (signed distance function)
   std::vector<double> sdf_values;
 
-
   // Source term
   std::vector<double> source;
 
   // Shape functions
-  std::vector<std::vector<double>>         phi;
-  std::vector<std::vector<Tensor<2, dim>>> hess_phi;
-  std::vector<std::vector<double>>         laplacian_phi;
-  std::vector<std::vector<Tensor<1, dim>>> grad_phi;
+  Table<2, double>         phi;
+  Table<2, Tensor<2, dim>> hess_phi;
+  Table<2, double>         laplacian_phi;
+  Table<2, Tensor<1, dim>> grad_phi;
 
 
   /**
