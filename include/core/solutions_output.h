@@ -46,8 +46,16 @@ write_vtu_and_pvd(PVDHandler                            &pvd_handler,
  * @param data_out the DataOutFaces class to which the data has been attached
  * @param folder the path to when the results are to be written
  * @param time the time associated with the file
+ *
  * @param iter the iteration number associated with the file
+ *
+ * @param group_files the number of vtu files that will be generated.
+ *
  * @param mpi_communicator The mpi communicator
+ *
+ * @param file_prefix a string that stores the name of the file without the iteration number and the extension
+ *
+ * @param digits An optional parameter that specifies the amount of digit used to store iteration number in the file name
  * @param file_prefix a string that stores the name of the file without the
  * iteration number and the extension.
  * @param digits An optional parameter that specifies the amount of digit used to
@@ -55,11 +63,14 @@ write_vtu_and_pvd(PVDHandler                            &pvd_handler,
  */
 template <int dim>
 void
-write_boundaries_vtu(const DataOutFaces<dim> &data_out,
-                     const std::string       &folder,
-                     const double             time,
-                     const unsigned int       iter,
-                     const MPI_Comm          &mpi_communicator,
-                     const std::string &file_prefix = std::string("boundaries"),
-                     const unsigned int digits      = 5);
+write_boundaries_vtu_and_pvd(
+  PVDHandler              &pvd_handler,
+  const DataOutFaces<dim> &data_out_faces,
+  const std::string       &folder,
+  const double             time,
+  const unsigned int       iter,
+  const unsigned int       group_files,
+  const MPI_Comm          &mpi_communicator,
+  const std::string       &file_prefix = std::string("boundaries"),
+  const unsigned int       digits      = 5);
 #endif

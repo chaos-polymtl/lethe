@@ -3016,7 +3016,8 @@ NavierStokesBase<dim, VectorType, DofsType>::write_output_results(
                          this->mpi_communicator);
 
   if (simulation_control->get_output_boundaries() &&
-      simulation_control->get_step_number() == 0)
+      (simulation_control->get_step_number() == 0 ||
+       simulation_parameters.mortar_parameters.enable))
     {
       DataOutFaces<dim> data_out_faces;
 
@@ -3032,8 +3033,17 @@ NavierStokesBase<dim, VectorType, DofsType>::write_output_results(
       data_out_faces.add_data_vector(solution, boundary_id);
       data_out_faces.build_patches(*this->get_mapping(), subdivision);
 
-      write_boundaries_vtu<dim>(
-        data_out_faces, folder, time, iter, this->mpi_communicator);
+      if (simulation_parameters.mortar_parameters.enable)
+        write_boundaries_vtu_and_pvd<dim>(this->pvdhandler,
+                                          data_out_faces,
+                                          folder,
+                                          time,
+                                          iter,
+                                          group_files,
+                                          this->mpi_communicator);
+      else
+        write_boundaries_vtu<dim>(
+          data_out_faces, folder, time, iter, this->mpi_communicator);
     }
 }
 
