@@ -1289,15 +1289,24 @@ CahnHilliard<dim>::solve_linear_system(const bool initial_step,
     simulation_parameters.linear_solver.at(PhysicsID::cahn_hilliard)
       .relative_residual;
 
+  const double normalize_volume =
+    this->simulation_parameters.non_linear_solver.at(PhysicsID::fluid_dynamics)
+        .normalize_residual_by_volume ?
+      this->get_global_volume() :
+      1.;
+  const double current_residual = this->get_current_residual(
+    this->simulation_parameters.non_linear_solver.at(PhysicsID::fluid_dynamics)
+      .normalize_residual_by_volume);
   const double linear_solver_tolerance =
-    std::max(relative_residual * system_rhs.l2_norm(), absolute_residual);
-
-  if (this->simulation_parameters.linear_solver.at(PhysicsID::cahn_hilliard)
+    std::max(relative_residual * current_residual, absolute_residual);
+  if (this->simulation_parameters.linear_solver.at(PhysicsID::fluid_dynamics)
         .verbosity != Parameters::Verbosity::quiet)
     {
       this->pcout << "  -Tolerance of iterative solver is : "
                   << linear_solver_tolerance << std::endl;
     }
+  const double non_normalized_linear_solver_tolerance =
+    linear_solver_tolerance * normalize_volume;
 
   const unsigned int ilu_fill = static_cast<unsigned int>(
     simulation_parameters.linear_solver.at(PhysicsID::cahn_hilliard)
@@ -1321,7 +1330,7 @@ CahnHilliard<dim>::solve_linear_system(const bool initial_step,
   SolverControl solver_control(simulation_parameters.linear_solver
                                  .at(PhysicsID::cahn_hilliard)
                                  .max_iterations,
-                               linear_solver_tolerance,
+                               non_normalized_linear_solver_tolerance,
                                true,
                                true);
 
@@ -1344,7 +1353,8 @@ CahnHilliard<dim>::solve_linear_system(const bool initial_step,
     {
       this->pcout << "  -Iterative solver took : " << solver_control.last_step()
                   << " steps to reach a residual norm of "
-                  << solver_control.last_value() << std::endl;
+                  << solver_control.last_value() / normalize_volume
+                  << std::endl;
     }
 
   constraints_used.distribute(completely_distributed_solution);
