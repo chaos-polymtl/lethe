@@ -100,9 +100,9 @@ InexactNewtonNonLinearSolver<VectorType>::solve(const bool is_initial_step)
 
       if (outer_iteration == 0)
         {
-          auto &system_rhs = solver->get_system_rhs();
-          current_res      = system_rhs.l2_norm();
-          last_res         = current_res;
+          current_res = solver->get_current_residual(
+            this->params.normalize_residual_by_volume);
+          last_res = current_res;
         }
 
       if (this->params.verbosity != Parameters::Verbosity::quiet)
@@ -125,8 +125,8 @@ InexactNewtonNonLinearSolver<VectorType>::solve(const bool is_initial_step)
           evaluation_point = local_evaluation_point;
           solver->assemble_system_rhs();
 
-          auto &system_rhs = solver->get_system_rhs();
-          current_res      = system_rhs.l2_norm();
+          current_res = solver->get_current_residual(
+            this->params.normalize_residual_by_volume);
 
           if (this->params.verbosity != Parameters::Verbosity::quiet)
             {
@@ -180,7 +180,8 @@ InexactNewtonNonLinearSolver<VectorType>::solve(const bool is_initial_step)
           alpha_iter++;
         }
 
-      global_res       = solver->get_current_residual();
+      global_res =
+        solver->get_current_residual(this->params.normalize_residual_by_volume);
       present_solution = evaluation_point;
       last_res         = current_res;
       ++outer_iteration;

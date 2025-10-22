@@ -114,12 +114,36 @@ public:
    * @brief Default way to evaluate the residual for the nonlinear solver.
    * Some application may use more complex evaluation of the residual and
    * override this method.
+   *
+   * @params[in] normalize_residual_by_volume If true, the residual is
+   * normalized by the global volume of the triangulation.
    */
   virtual double
-  get_current_residual()
+  get_current_residual(const bool &normalize_residual_by_volume = false)
   {
+    const double normalize_volume =
+      normalize_residual_by_volume ? get_global_volume() : 1.0;
     auto &system_rhs = get_system_rhs();
-    return system_rhs.l2_norm();
+    return system_rhs.l2_norm() / normalize_volume;
+  }
+
+
+  /**
+   * @brief Return varialbe with volume of the entire triangulation.
+   */
+  inline double
+  get_global_volume() const
+  {
+    return global_volume;
+  }
+
+  /**
+   * @brief Set variable holding the volume of the entire triangulation.
+   */
+  inline void
+  set_global_volume(const double &volume)
+  {
+    global_volume = volume;
   }
 
   /**
@@ -136,6 +160,10 @@ public:
 
 private:
   NonLinearSolver<VectorType> *non_linear_solver;
+
+  /// Volume of the entire triangulation. Set as 1. as default to avoid
+  /// indetermination.
+  double global_volume = 1.;
 };
 
 template <typename VectorType>

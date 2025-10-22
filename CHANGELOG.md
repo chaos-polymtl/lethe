@@ -3,6 +3,12 @@
 All notable changes to the Lethe project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
+### [Master] - 2025-10-20
+
+### Added
+
+- MAJOR Allow residual normalization. This PR introduces a new parameter ("normalize residual") to the non-linear solver subsection. When the parameter is true, all residua is normalized by the volume of the triangulation. This is very convenient because, when activated, tolerances are independent of the mesh size. [1728](https://github.com/chaos-polymtl/lethe/pull/1728)
+
 ### [Master] - 2025-10-16
 
 ### Changed
@@ -18,6 +24,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/).
 ### Fixed
 
 - MINOR In our efforts to migrate from Clang Tidy v12 to Clang Tidy v20, this PR does the first batch of refactoring of the core library of lethe. The main things that is changed is that many loops over the dimensions used to use unsigned integer as indices and, when compared to the dimension (dim), this would raise a warning regarding comparison between signed and unsigned integer. This PR fixes that by using integers for these loops. Other small things are to use enum with a smaller data footprint and some usage of range-based interators. Some spelling mistakes there and there were also fixed. A flag was also added to the CMakeList (-std=c++20) to ensure that compilation still works on Apple Clang. Overall this removes half of the CLang V20 warnings. [#1722](https://github.com/chaos-polymtl/lethe/pull/1722)
+
 
 ## Release of Lethe v1.0.2 - 2025-10-15
 
