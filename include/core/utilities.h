@@ -4,13 +4,13 @@
 #ifndef lethe_utilities_h
 #define lethe_utilities_h
 
-#include <solvers/output_struct.h>
-
 #include <deal.II/base/conditional_ostream.h>
 #include <deal.II/base/parameter_handler.h>
 #include <deal.II/base/point.h>
 #include <deal.II/base/table_handler.h>
 #include <deal.II/base/tensor.h>
+
+#include <solvers/output_struct.h>
 
 #include <deal.II/dofs/dof_handler.h>
 
