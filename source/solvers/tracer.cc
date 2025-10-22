@@ -1154,7 +1154,9 @@ Tracer<dim>::gather_tables()
   if (this->simulation_parameters.post_processing.calculate_tracer_flow_rate)
     table_output_structs.emplace_back(
       this->tracer_flow_rate_table,
-      prefix + this->simulation_parameters.post_processing.tracer_flow_rate_output_name +
+      prefix +
+        this->simulation_parameters.post_processing
+          .tracer_flow_rate_output_name +
         suffix);
 
   return table_output_structs;

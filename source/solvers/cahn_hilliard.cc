@@ -962,18 +962,20 @@ CahnHilliard<dim>::gather_tables()
       this->statistics_table,
       prefix + this->simulation_parameters.post_processing.phase_output_name +
         suffix);
-  
-   if (this->simulation_parameters.post_processing.calculate_barycenter)
+
+  if (this->simulation_parameters.post_processing.calculate_barycenter)
     table_output_structs.emplace_back(
       this->barycenter_table,
-      prefix + this->simulation_parameters.post_processing.barycenter_output_name +
+      prefix +
+        this->simulation_parameters.post_processing.barycenter_output_name +
         suffix);
 
   if (this->simulation_parameters.post_processing.calculate_phase_energy)
-  table_output_structs.emplace_back(
-    this->phase_energy_table,
-    prefix + this->simulation_parameters.post_processing.phase_energy_output_name +
-      suffix);
+    table_output_structs.emplace_back(
+      this->phase_energy_table,
+      prefix +
+        this->simulation_parameters.post_processing.phase_energy_output_name +
+        suffix);
 
   return table_output_structs;
 }

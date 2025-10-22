@@ -4,13 +4,13 @@
 #ifndef lethe_utilities_h
 #define lethe_utilities_h
 
+#include <solvers/output_struct.h>
+
 #include <deal.II/base/conditional_ostream.h>
 #include <deal.II/base/parameter_handler.h>
 #include <deal.II/base/point.h>
 #include <deal.II/base/table_handler.h>
 #include <deal.II/base/tensor.h>
-
-#include <solvers/output_struct.h>
 
 #include <deal.II/dofs/dof_handler.h>
 
@@ -541,7 +541,7 @@ deserialize_table(TableHandler      &table,
 inline void
 serialize_tables_vector(
   const std::vector<OutputStructTableHandler> &table_output_structs,
-  const MPI_Comm                                   mpi_communicator)
+  const MPI_Comm                               mpi_communicator)
 {
   for (const auto &output_table : table_output_structs)
     {
@@ -563,7 +563,7 @@ serialize_tables_vector(
 inline void
 deserialize_tables_vector(
   std::vector<OutputStructTableHandler> &table_output_structs,
-  const MPI_Comm                        mpi_communicator)
+  const MPI_Comm                         mpi_communicator)
 {
   for (auto &output_table : table_output_structs)
     {

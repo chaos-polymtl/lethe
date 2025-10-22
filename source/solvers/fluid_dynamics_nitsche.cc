@@ -994,9 +994,9 @@ FluidDynamicsNitsche<dim, spacedim>::write_checkpoint()
   // Serialize the default post-processing tables that are members of
   // NavierStokesBase. Only the default tables need to be serialized here, since
   // the additional tables (specific to this solver) are serialized above in the
-  // previous call this->FluidDynamicsMatrixBased<spacedim>:: write_checkpoint(),
-  // which calls this->gather_tables() and then serialize_tables_vector in 
-  // NavierStokesBase.
+  // previous call this->FluidDynamicsMatrixBased<spacedim>::
+  // write_checkpoint(), which calls this->gather_tables() and then
+  // serialize_tables_vector in NavierStokesBase.
   const std::vector<OutputStructTableHandler> &table_output_structs =
     NavierStokesBase<spacedim, GlobalVectorType, IndexSet>::gather_tables();
   serialize_tables_vector(table_output_structs, this->mpi_communicator);
@@ -1041,11 +1041,11 @@ FluidDynamicsNitsche<dim, spacedim>::read_checkpoint()
     }
 
   // Deserialize the default post-processing tables that are members of
-  // NavierStokesBase. Only the default tables need to be deserialized here, since
-  // the additional tables (specific to this solver) are deserialized above in the
-  // previous call this->FluidDynamicsMatrixBased<spacedim>:: read_checkpoint(),
-  // which calls this->gather_tables() and then deserialize_tables_vector in 
-  // NavierStokesBase.
+  // NavierStokesBase. Only the default tables need to be deserialized here,
+  // since the additional tables (specific to this solver) are deserialized
+  // above in the previous call this->FluidDynamicsMatrixBased<spacedim>::
+  // read_checkpoint(), which calls this->gather_tables() and then
+  // deserialize_tables_vector in NavierStokesBase.
   std::vector<OutputStructTableHandler> table_output_structs =
     NavierStokesBase<spacedim, GlobalVectorType, IndexSet>::gather_tables();
   deserialize_tables_vector(table_output_structs, this->mpi_communicator);
