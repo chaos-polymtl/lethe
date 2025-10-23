@@ -1,9 +1,8 @@
 // SPDX-FileCopyrightText: Copyright (c) 2025 The Lethe Authors
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
+#include <core/output_struct.h>
 #include <core/vector.h>
-
-#include <solvers/output_struct.h>
 
 #include <deal.II/lac/la_parallel_vector.h>
 

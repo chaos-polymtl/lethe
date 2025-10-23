@@ -15,6 +15,7 @@ add_library(lethe-core
   mesh_controller.cc
   mobility_cahn_hilliard_model.cc
   mortar_coupling_manager.cc
+  output_struct.cc
   parameters.cc
   parameters_lagrangian.cc
   parameters_multiphysics.cc
@@ -60,6 +61,7 @@ add_library(lethe-core
   ../../include/core/multiphysics.h
   ../../include/core/newton_non_linear_solver.h
   ../../include/core/non_linear_solver.h
+   ../../include/core/output_struct.h
   ../../include/core/parameters.h
   ../../include/core/parameters_lagrangian.h
   ../../include/core/parameters_multiphysics.h

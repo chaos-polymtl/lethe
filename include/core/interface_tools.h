@@ -5,11 +5,10 @@
 #define lethe_interface_tools_h
 
 #include <core/lethe_grid_tools.h>
+#include <core/output_struct.h>
 #include <core/solutions_output.h>
 #include <core/utilities.h>
 #include <core/vector.h>
-
-#include <solvers/output_struct.h>
 
 #include <deal.II/base/conditional_ostream.h>
 #include <deal.II/base/data_out_base.h>

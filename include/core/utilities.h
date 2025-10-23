@@ -4,7 +4,7 @@
 #ifndef lethe_utilities_h
 #define lethe_utilities_h
 
-#include <solvers/output_struct.h>
+#include <core/output_struct.h>
 
 #include <deal.II/base/conditional_ostream.h>
 #include <deal.II/base/parameter_handler.h>

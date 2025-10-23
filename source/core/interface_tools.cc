@@ -2,8 +2,7 @@
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
 #include <core/interface_tools.h>
-
-#include <solvers/output_struct.h>
+#include <core/output_struct.h>
 
 #include <deal.II/dofs/dof_tools.h>
 

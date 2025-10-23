@@ -6,6 +6,7 @@
 
 #include <core/mesh_controller.h>
 #include <core/mortar_coupling_manager.h>
+#include <core/output_struct.h>
 #include <core/parameters.h>
 #include <core/physics_solver.h>
 #include <core/pvd_handler.h>
@@ -16,7 +17,6 @@
 #include <solvers/flow_control.h>
 #include <solvers/multiphysics_interface.h>
 #include <solvers/navier_stokes_assemblers.h>
-#include <solvers/output_struct.h>
 #include <solvers/postprocessing_scalar.h>
 #include <solvers/postprocessing_velocities.h>
 #include <solvers/postprocessors.h>

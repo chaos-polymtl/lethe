@@ -4,11 +4,11 @@
 #ifndef lethe_auxiliary_physics_h
 #define lethe_auxiliary_physics_h
 
+#include <core/output_struct.h>
 #include <core/parameters.h>
 #include <core/physics_solver.h>
 #include <core/vector.h>
 
-#include <solvers/output_struct.h>
 #include <solvers/simulation_parameters.h>
 
 #include <deal.II/numerics/data_out.h>
