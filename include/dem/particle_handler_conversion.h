@@ -23,9 +23,9 @@ using namespace dealii;
  * @tparam output the properties index used for the ph_out
  *
  * @param[in] triangulation The triangulation on which the ph_out is stored
- * @param[in] ph_in The input particle_handler that has properties indified by
+ * @param[in] ph_in The input particle_handler that has properties identified by
  * the input.
- * @param[out] ph_out The output partcile_handler that has properties identified
+ * @param[out] ph_out The output particle_handler that has properties identified
  *by the output.
  */
 template <int dim, typename input, typename output>
