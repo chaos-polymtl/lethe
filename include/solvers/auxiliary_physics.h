@@ -7,7 +7,6 @@
 #include <core/output_struct.h>
 #include <core/parameters.h>
 #include <core/physics_solver.h>
-#include <core/vector.h>
 
 #include <solvers/simulation_parameters.h>
 
