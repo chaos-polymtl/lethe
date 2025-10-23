@@ -1621,10 +1621,10 @@ CFDDEMSolver<dim>::solve()
 
   // Output the solution after initializing the void fraction
   if (!this->cfd_dem_simulation_parameters.cfd_parameters.restart_parameters
-        .restart)
+         .restart)
     {
       this->postprocess_fd(true);
-      this -> multiphysics->postprocess(true);
+      this->multiphysics->postprocess(true);
       if (this->simulation_control->is_output_iteration())
         this->write_output_results(this->present_solution);
     }
