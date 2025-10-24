@@ -1,0 +1,54 @@
+# Listing of Parameters
+# ---------------------
+subsection Parameters
+
+
+  # relative permittivity of medium
+  set epsilon r = {1.,0.}
+
+  # relative permeability of medium
+  set mu r  = {1.,0.}
+
+  # relative conductivity of medium
+  set sigma r  = 0.
+
+  # rectangular waveguide width adimentionalized
+  set waveguide a = 0.25
+
+  # rectangular waveguide height adimentionalized
+  set waveguide b = 0.0625
+
+  # rectangular waveguide length adimentionalized
+  set waveguide length = 1
+
+  # signal frequency l=2 -> f =  618037985
+  set frequency = 670356315.23
+
+  # Excitation mode m for TE_mn
+  set mode x = 1
+
+  # Excitation mode n for TE_mn
+  set mode y = 0
+
+  # number of refinements cycle of the geometry (min = 0)
+  set n refinements                  = 3
+
+  # number of refinements initialy
+  set initial refinements            = 0
+
+  # number of repetitions for subdivided hyper rectangle
+  set n repetitions            = 1,1,4
+
+  # flag for adaptive refinement
+  set adaptive refinement = false
+
+  # maximum refinement level for adaptive refinement
+  set max refinement level = 6
+
+  # order of the DGQ element 
+  set degree                     = 2
+
+  # delta order for the test space 
+  set delta degree = 1
+
+end
