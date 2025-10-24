@@ -55,34 +55,46 @@ MFNavierStokesVANSPreconditionGMG<dim>::initialize(
       const unsigned int min_level = this->minlevel;
       const unsigned int max_level = this->maxlevel;
 
+      // Resize all of the dof handlers related to every field for the
+      // particle-fluid coupling
       this->void_fraction_dof_handlers.resize(min_level, max_level);
       this->pf_force_dof_handlers.resize(min_level, max_level);
       this->pf_drag_dof_handlers.resize(min_level, max_level);
+      this->particle_velocity_dof_handlers.resize(min_level, max_level);
 
 
       for (unsigned int l = min_level; l <= max_level; l++)
         {
+          // Void fraction
           this->void_fraction_dof_handlers[l].reinit(
             this->dof_handlers[l].get_triangulation());
           this->void_fraction_dof_handlers[l].distribute_dofs(
             particle_projector.dof_handler.get_fe());
 
+          // Particle-fluid force
           this->pf_force_dof_handlers[l].reinit(
             this->dof_handlers[l].get_triangulation());
           this->pf_force_dof_handlers[l].distribute_dofs(
             particle_projector.particle_fluid_force_two_way_coupling.dof_handler
               .get_fe());
 
+          // Particle-fluid drag
           this->pf_drag_dof_handlers[l].reinit(
             this->dof_handlers[l].get_triangulation());
           this->pf_drag_dof_handlers[l].distribute_dofs(
             particle_projector.particle_fluid_drag.dof_handler.get_fe());
+
+          // Particle velocity field
+          this->particle_velocity_dof_handlers[l].reinit(
+            this->dof_handlers[l].get_triangulation());
+          this->particle_velocity_dof_handlers[l].distribute_dofs(
+            particle_projector.particle_velocity.dof_handler.get_fe());
         }
 
       this->transfers_void_fraction.resize(min_level, max_level);
       this->transfers_pf_force.resize(min_level, max_level);
       this->transfers_pf_drag.resize(min_level, max_level);
-
+      this->transfers_particle_velocity.resize(min_level, max_level);
 
       for (unsigned int l = min_level; l < max_level; l++)
         {
@@ -103,8 +115,15 @@ MFNavierStokesVANSPreconditionGMG<dim>::initialize(
             this->pf_drag_dof_handlers[l],
             {},
             {});
+
+          this->transfers_particle_velocity[l + 1].reinit(
+            this->particle_velocity_dof_handlers[l + 1],
+            this->particle_velocity_dof_handlers[l],
+            {},
+            {});
         }
 
+      // Make the transfer operators for every field we will transfer
       this->mg_transfer_gc_void_fraction =
         std::make_shared<MFNavierStokesVANSPreconditionGMG::GCTransferType>(
           this->transfers_void_fraction);
@@ -117,7 +136,11 @@ MFNavierStokesVANSPreconditionGMG<dim>::initialize(
         std::make_shared<MFNavierStokesVANSPreconditionGMG::GCTransferType>(
           this->transfers_pf_drag);
 
-#if DEAL_II_VERSION_GTE(9, 7, 0)
+      this->mg_transfer_gc_particle_velocity =
+        std::make_shared<MFNavierStokesVANSPreconditionGMG::GCTransferType>(
+          this->transfers_particle_velocity);
+
+      // Build transfer operator for every field
       this->mg_transfer_gc_void_fraction->build(
         particle_projector.dof_handler, [&](const auto l, auto &vec) {
           vec.reinit(
@@ -144,8 +167,18 @@ MFNavierStokesVANSPreconditionGMG<dim>::initialize(
                        this->pf_drag_dof_handlers[l]),
                      this->pf_drag_dof_handlers[l].get_mpi_communicator());
         });
-#endif
 
+      this->mg_transfer_gc_particle_velocity->build(
+        particle_projector.particle_velocity.dof_handler,
+        [&](const auto l, auto &vec) {
+          vec.reinit(
+            this->particle_velocity_dof_handlers[l].locally_owned_dofs(),
+            DoFTools::extract_locally_active_dofs(
+              this->particle_velocity_dof_handlers[l]),
+            this->particle_velocity_dof_handlers[l].get_mpi_communicator());
+        });
+
+      // Create the MG Level Object for every field
       MGLevelObject<MFNavierStokesVANSPreconditionGMG::MGVectorType>
         mg_void_fraction_solution(this->minlevel, this->maxlevel);
 
@@ -155,9 +188,14 @@ MFNavierStokesVANSPreconditionGMG<dim>::initialize(
       MGLevelObject<MFNavierStokesVANSPreconditionGMG::MGVectorType>
         mg_pf_drag_solution(this->minlevel, this->maxlevel);
 
+      MGLevelObject<MFNavierStokesVANSPreconditionGMG::MGVectorType>
+        mg_particle_velocity_solution(this->minlevel, this->maxlevel);
+
       // A deal.II vector is required here, so we take the deal.II vector
       // solution from the particle projector instead of the trilinos vector
-      // one.
+      // one. This is done for every field.
+
+      // Void fraction
       this->mg_transfer_gc_void_fraction->interpolate_to_mg(
         particle_projector.dof_handler,
         mg_void_fraction_solution,
@@ -166,13 +204,14 @@ MFNavierStokesVANSPreconditionGMG<dim>::initialize(
       particle_projector.particle_fluid_force_two_way_coupling
         .particle_field_solution.update_ghost_values();
 
+      // Particle-fluid force
       this->mg_transfer_gc_pf_force->interpolate_to_mg(
         particle_projector.particle_fluid_force_two_way_coupling.dof_handler,
         mg_pf_forces_solution,
         particle_projector.particle_fluid_force_two_way_coupling
           .particle_field_solution);
 
-
+      // Particle-fluid drag
       particle_projector.particle_fluid_drag.particle_field_solution
         .update_ghost_values();
 
@@ -181,11 +220,21 @@ MFNavierStokesVANSPreconditionGMG<dim>::initialize(
         mg_pf_drag_solution,
         particle_projector.particle_fluid_drag.particle_field_solution);
 
+      // Particle-velocity
+      particle_projector.particle_velocity.particle_field_solution
+        .update_ghost_values();
+
+      this->mg_transfer_gc_pf_force->interpolate_to_mg(
+        particle_projector.particle_velocity.dof_handler,
+        mg_particle_velocity_solution,
+        particle_projector.particle_velocity.particle_field_solution);
+
       for (unsigned int l = min_level; l <= max_level; l++)
         {
           mg_void_fraction_solution[l].update_ghost_values();
           mg_pf_forces_solution[l].update_ghost_values();
           mg_pf_drag_solution[l].update_ghost_values();
+          mg_particle_velocity_solution[l].update_ghost_values();
 
 
           if (auto mf_operator = dynamic_cast<VANSOperator<dim, double> *>(
@@ -199,7 +248,9 @@ MFNavierStokesVANSPreconditionGMG<dim>::initialize(
                 this->pf_force_dof_handlers[l],
                 mg_pf_forces_solution[l],
                 this->pf_drag_dof_handlers[l],
-                mg_pf_drag_solution[l]);
+                mg_pf_drag_solution[l],
+                this->particle_velocity_dof_handlers[l],
+                mg_particle_velocity_solution[l]);
             }
         }
     }
@@ -497,7 +548,9 @@ FluidDynamicsVANSMatrixFree<dim>::solve()
               particle_projector.particle_fluid_force_two_way_coupling
                 .particle_field_solution,
               particle_projector.particle_fluid_drag.dof_handler,
-              particle_projector.particle_fluid_drag.particle_field_solution);
+              particle_projector.particle_fluid_drag.particle_field_solution,
+              particle_projector.particle_velocity.dof_handler,
+              particle_projector.particle_velocity.particle_field_solution);
           }
       }
 

@@ -59,7 +59,11 @@ public:
     const LinearAlgebra::distributed::Vector<double> &void_fraction_solution);
 
   /**
-   * @brief Compute the terms the particle-fluid (pf) forces at the fluid quadrature points.
+   * @brief Compute the terms required to assemble the particle-fluid forces at
+   * the gauss points. The function gathers the particle-fluid force (without
+   * drag), the particle-fluid drag and the particle velocity. With these three
+   * elements, the full particle-fluid coupling and its jacobian can be
+   * established within the matrix-free operator.
    *
    * @param[in] pf_force_dof_handler The dof handler associated with the
    * particle-fluid forces.
@@ -67,6 +71,9 @@ public:
    * @param[in] pf_drag_dof_handler The dof handler associated with the
    * drag force.
    * @param[in] pf_drag_solution The solution of the drag force.
+   * @param[in] particle_velocity_dof_handler The dof handler associated with
+   * the particle velocity.
+   * @param[in] pf_drag_solution The solution of the particle velocity.
    *
    */
   void
@@ -74,7 +81,10 @@ public:
     const DoFHandler<dim>                            &pf_force_dof_handler,
     const LinearAlgebra::distributed::Vector<double> &pf_force_solution,
     const DoFHandler<dim>                            &pf_drag_dof_handler,
-    const LinearAlgebra::distributed::Vector<double> &pf_drag_solution);
+    const LinearAlgebra::distributed::Vector<double> &pf_drag_solution,
+    const DoFHandler<dim> &particle_velocity_dof_handler,
+    const LinearAlgebra::distributed::Vector<double>
+      &particle_velocity_solution);
 
 protected:
   /**
@@ -125,10 +135,18 @@ protected:
   Table<2, Tensor<1, dim, VectorizedArray<number>>> void_fraction_gradient;
 
   /// Table with correct alignment for vectorization to store the values of the
-  /// particle-fluid forces. These are the resulting forces applied on the
-  /// particles due to hydrodynamic interaction, normalized by the volume
-  /// of the cells.
+  /// particle-fluid forces (without drag). These are the resulting forces
+  /// applied on the particles due to hydrodynamic interaction, normalized by
+  /// the volume of the cells.
   Table<2, Tensor<1, dim, VectorizedArray<number>>> particle_fluid_force;
+
+  /// Table with correct alignment for vectorization to store the values of the
+  /// particle-fluid drag.
+  Table<2, Tensor<1, dim, VectorizedArray<number>>> particle_fluid_drag;
+
+  /// Table with correct alignment for vectorization to store the values of the
+  /// particle-fluid drag.
+  Table<2, Tensor<1, dim, VectorizedArray<number>>> particle_velocity;
 
   /// Table with correct alignment for vectorization to store the values of the
   /// grad-div gamma parameter
