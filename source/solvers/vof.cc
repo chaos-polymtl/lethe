@@ -2163,6 +2163,40 @@ VolumeOfFluid<dim>::compute_kelly(
 }
 
 template <int dim>
+std::vector<OutputStructTableHandler>
+VolumeOfFluid<dim>::gather_tables()
+{
+  std::vector<OutputStructTableHandler> table_output_structs;
+
+  std::string prefix =
+    this->simulation_parameters.simulation_control.output_folder;
+  std::string suffix = ".checkpoint";
+
+  if (this->simulation_parameters.analytical_solution->calculate_error())
+    table_output_structs.emplace_back(
+      this->error_table,
+      prefix + this->simulation_parameters.analytical_solution->get_filename() +
+        "_VOF" + suffix);
+
+  if (this->simulation_parameters.post_processing.calculate_mass_conservation)
+    table_output_structs.emplace_back(
+      this->table_monitoring_vof,
+      prefix +
+        this->simulation_parameters.post_processing
+          .mass_conservation_output_name +
+        suffix);
+
+  if (this->simulation_parameters.post_processing.calculate_barycenter)
+    table_output_structs.emplace_back(
+      this->table_barycenter,
+      prefix +
+        this->simulation_parameters.post_processing.barycenter_output_name +
+        suffix);
+
+  return table_output_structs;
+}
+
+template <int dim>
 void
 VolumeOfFluid<dim>::write_checkpoint()
 {
@@ -2180,32 +2214,11 @@ VolumeOfFluid<dim>::write_checkpoint()
     }
   this->solution_transfer->prepare_for_serialization(sol_set_transfer);
 
-  // Serialize tables
-  std::string prefix =
-    this->simulation_parameters.simulation_control.output_folder;
-  std::string suffix = ".checkpoint";
-  if (this->simulation_parameters.analytical_solution->calculate_error())
-    serialize_table(
-      this->error_table,
-      prefix + this->simulation_parameters.analytical_solution->get_filename() +
-        "_VOF" + suffix,
-      mpi_communicator);
-  if (this->simulation_parameters.post_processing.calculate_mass_conservation)
-    {
-      serialize_table(this->table_monitoring_vof,
-                      prefix +
-                        this->simulation_parameters.post_processing
-                          .mass_conservation_output_name +
-                        suffix,
-                      mpi_communicator);
-    }
-  if (this->simulation_parameters.post_processing.calculate_barycenter)
-    serialize_table(
-      this->table_barycenter,
-      prefix +
-        this->simulation_parameters.post_processing.barycenter_output_name +
-        suffix,
-      mpi_communicator);
+  // Serialize all post-processing tables that are currently used with the VOF
+  // solver
+  const std::vector<OutputStructTableHandler> &table_output_structs =
+    this->gather_tables();
+  serialize_tables_vector(table_output_structs, mpi_communicator);
 }
 
 template <int dim>
@@ -2243,32 +2256,11 @@ VolumeOfFluid<dim>::read_checkpoint()
   // Apply filter to phase fraction
   apply_phase_filter(this->present_solution, this->filtered_solution);
 
-  // Deserialize tables
-  const std::string prefix =
-    this->simulation_parameters.simulation_control.output_folder;
-  const std::string suffix = ".checkpoint";
-  if (this->simulation_parameters.analytical_solution->calculate_error())
-    deserialize_table(
-      this->error_table,
-      prefix + this->simulation_parameters.analytical_solution->get_filename() +
-        "_VOF" + suffix,
-      mpi_communicator);
-  if (this->simulation_parameters.post_processing.calculate_mass_conservation)
-    {
-      deserialize_table(this->table_monitoring_vof,
-                        prefix +
-                          this->simulation_parameters.post_processing
-                            .mass_conservation_output_name +
-                          suffix,
-                        mpi_communicator);
-    }
-  if (this->simulation_parameters.post_processing.calculate_barycenter)
-    deserialize_table(
-      this->table_barycenter,
-      prefix +
-        this->simulation_parameters.post_processing.barycenter_output_name +
-        suffix,
-      mpi_communicator);
+  // Deserialize all post-processing tables that are currently used with the VOF
+  // solver
+  std::vector<OutputStructTableHandler> table_output_structs =
+    this->gather_tables();
+  deserialize_tables_vector(table_output_structs, mpi_communicator);
 
   if (this->simulation_parameters.multiphysics.vof_parameters
         .regularization_method.sharpening.type ==

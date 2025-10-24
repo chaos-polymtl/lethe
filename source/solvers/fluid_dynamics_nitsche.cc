@@ -990,16 +990,16 @@ FluidDynamicsNitsche<dim, spacedim>::write_checkpoint()
             Utilities::int_to_string(i_solid, 2));
         }
     }
-  // Serialize all post-processing tables that are currently used
-  // Serialize the post-processing tables that are additional in this solver
-  const std::vector<OutputStructTableHandler> &table_output_structs_add =
-    this->gather_tables();
-  this->serialize_tables_vector(table_output_structs_add);
+
   // Serialize the default post-processing tables that are members of
-  // NavierStokesBase
+  // NavierStokesBase. Only the default tables need to be serialized here, since
+  // the additional tables (specific to this solver) are serialized above in the
+  // previous call this->FluidDynamicsMatrixBased<spacedim>::
+  // write_checkpoint(), which calls this->gather_tables() and then
+  // serialize_tables_vector in NavierStokesBase.
   const std::vector<OutputStructTableHandler> &table_output_structs =
     NavierStokesBase<spacedim, GlobalVectorType, IndexSet>::gather_tables();
-  this->serialize_tables_vector(table_output_structs);
+  serialize_tables_vector(table_output_structs, this->mpi_communicator);
 }
 
 template <int dim, int spacedim>
@@ -1038,39 +1038,17 @@ FluidDynamicsNitsche<dim, spacedim>::read_checkpoint()
       pvdhandler_solid_triangulation[i_solid].read(
         prefix + "_solid_triangulation_" +
         Utilities::int_to_string(i_solid, 2));
-
-      // Refill force and torque table from checkpoint
-      if (this->simulation_parameters.nitsche->nitsche_solids[i_solid]
-            ->calculate_force_on_solid)
-        {
-          std::string filename_force =
-            this->simulation_parameters.simulation_control.output_folder +
-            this->simulation_parameters.nitsche->nitsche_solids[i_solid]
-              ->force_output_name +
-            "_" + Utilities::int_to_string(i_solid, 2) + ".dat";
-          fill_table_from_file(solid_forces_table[i_solid], filename_force);
-        }
-      if (this->simulation_parameters.nitsche->nitsche_solids[i_solid]
-            ->calculate_torque_on_solid)
-        {
-          std::string filename_torque =
-            this->simulation_parameters.simulation_control.output_folder +
-            this->simulation_parameters.nitsche->nitsche_solids[i_solid]
-              ->torque_output_name +
-            "_" + Utilities::int_to_string(i_solid, 2) + ".dat";
-          fill_table_from_file(solid_torques_table[i_solid], filename_torque);
-        }
     }
-  // Deserialize all post-processing tables that are currently used
-  // Deserialize the post-processing tables that are particular to this solver
-  std::vector<OutputStructTableHandler> table_output_structs_add =
-    this->gather_tables();
-  this->deserialize_tables_vector(table_output_structs_add);
+
   // Deserialize the default post-processing tables that are members of
-  // NavierStokesBase
+  // NavierStokesBase. Only the default tables need to be deserialized here,
+  // since the additional tables (specific to this solver) are deserialized
+  // above in the previous call this->FluidDynamicsMatrixBased<spacedim>::
+  // read_checkpoint(), which calls this->gather_tables() and then
+  // deserialize_tables_vector in NavierStokesBase.
   std::vector<OutputStructTableHandler> table_output_structs =
     NavierStokesBase<spacedim, GlobalVectorType, IndexSet>::gather_tables();
-  this->deserialize_tables_vector(table_output_structs);
+  deserialize_tables_vector(table_output_structs, this->mpi_communicator);
 }
 
 

@@ -941,6 +941,44 @@ CahnHilliard<dim>::compute_kelly(
     }
 }
 
+template <int dim>
+std::vector<OutputStructTableHandler>
+CahnHilliard<dim>::gather_tables()
+{
+  std::vector<OutputStructTableHandler> table_output_structs;
+
+  std::string prefix =
+    this->simulation_parameters.simulation_control.output_folder;
+  std::string suffix = ".checkpoint";
+
+  if (this->simulation_parameters.analytical_solution->calculate_error())
+    table_output_structs.emplace_back(
+      this->error_table,
+      prefix + this->simulation_parameters.analytical_solution->get_filename() +
+        "_CH" + suffix);
+
+  if (this->simulation_parameters.post_processing.calculate_phase_statistics)
+    table_output_structs.emplace_back(
+      this->statistics_table,
+      prefix + this->simulation_parameters.post_processing.phase_output_name +
+        suffix);
+
+  if (this->simulation_parameters.post_processing.calculate_barycenter)
+    table_output_structs.emplace_back(
+      this->barycenter_table,
+      prefix +
+        this->simulation_parameters.post_processing.barycenter_output_name +
+        suffix);
+
+  if (this->simulation_parameters.post_processing.calculate_phase_energy)
+    table_output_structs.emplace_back(
+      this->phase_energy_table,
+      prefix +
+        this->simulation_parameters.post_processing.phase_energy_output_name +
+        suffix);
+
+  return table_output_structs;
+}
 
 template <int dim>
 void
@@ -959,22 +997,11 @@ CahnHilliard<dim>::write_checkpoint()
     }
   solution_transfer->prepare_for_serialization(sol_set_transfer);
 
-  // Serialize tables
-  std::string prefix =
-    this->simulation_parameters.simulation_control.output_folder;
-  std::string suffix = ".checkpoint";
-  if (this->simulation_parameters.analytical_solution->calculate_error())
-    serialize_table(
-      this->error_table,
-      prefix + this->simulation_parameters.analytical_solution->get_filename() +
-        "_CH" + suffix,
-      mpi_communicator);
-  if (this->simulation_parameters.post_processing.calculate_phase_statistics)
-    serialize_table(
-      this->statistics_table,
-      prefix + this->simulation_parameters.post_processing.phase_output_name +
-        suffix,
-      mpi_communicator);
+  // Serialize all post-processing tables that are currently used with the Cahn-
+  // Hilliard solver
+  const std::vector<OutputStructTableHandler> &table_output_structs =
+    this->gather_tables();
+  serialize_tables_vector(table_output_structs, mpi_communicator);
 }
 
 template <int dim>
@@ -1006,22 +1033,11 @@ CahnHilliard<dim>::read_checkpoint()
       previous_solutions[i] = distributed_previous_solutions[i];
     }
 
-  // Deserialize tables
-  std::string prefix =
-    this->simulation_parameters.simulation_control.output_folder;
-  std::string suffix = ".checkpoint";
-  if (this->simulation_parameters.analytical_solution->calculate_error())
-    deserialize_table(
-      this->error_table,
-      prefix + this->simulation_parameters.analytical_solution->get_filename() +
-        "_CH" + suffix,
-      mpi_communicator);
-  if (this->simulation_parameters.post_processing.calculate_phase_statistics)
-    deserialize_table(
-      this->statistics_table,
-      prefix + this->simulation_parameters.post_processing.phase_output_name +
-        suffix,
-      mpi_communicator);
+  // Deserialize all post-processing tables that are currently used with the
+  // Cahn-Hilliard solver
+  std::vector<OutputStructTableHandler> table_output_structs =
+    this->gather_tables();
+  deserialize_tables_vector(table_output_structs, mpi_communicator);
 }
 
 

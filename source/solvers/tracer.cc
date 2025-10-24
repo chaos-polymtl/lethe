@@ -1130,6 +1130,39 @@ Tracer<dim>::post_mesh_adaptation()
 }
 
 template <int dim>
+std::vector<OutputStructTableHandler>
+Tracer<dim>::gather_tables()
+{
+  std::vector<OutputStructTableHandler> table_output_structs;
+
+  std::string prefix =
+    this->simulation_parameters.simulation_control.output_folder;
+  std::string suffix = ".checkpoint";
+
+  if (this->simulation_parameters.analytical_solution->calculate_error())
+    table_output_structs.emplace_back(
+      this->error_table,
+      prefix + this->simulation_parameters.analytical_solution->get_filename() +
+        "_tracer" + suffix);
+
+  if (this->simulation_parameters.post_processing.calculate_tracer_statistics)
+    table_output_structs.emplace_back(
+      this->statistics_table,
+      prefix + this->simulation_parameters.post_processing.tracer_output_name +
+        suffix);
+
+  if (this->simulation_parameters.post_processing.calculate_tracer_flow_rate)
+    table_output_structs.emplace_back(
+      this->tracer_flow_rate_table,
+      prefix +
+        this->simulation_parameters.post_processing
+          .tracer_flow_rate_output_name +
+        suffix);
+
+  return table_output_structs;
+}
+
+template <int dim>
 void
 Tracer<dim>::write_checkpoint()
 {
@@ -1146,22 +1179,11 @@ Tracer<dim>::write_checkpoint()
     }
   solution_transfer->prepare_for_serialization(sol_set_transfer);
 
-  // Serialize tables
-  std::string prefix =
-    this->simulation_parameters.simulation_control.output_folder;
-  std::string suffix = ".checkpoint";
-  if (this->simulation_parameters.analytical_solution->calculate_error())
-    serialize_table(
-      this->error_table,
-      prefix + this->simulation_parameters.analytical_solution->get_filename() +
-        "_tracer" + suffix,
-      mpi_communicator);
-  if (this->simulation_parameters.post_processing.calculate_tracer_statistics)
-    serialize_table(
-      this->statistics_table,
-      prefix + this->simulation_parameters.post_processing.tracer_output_name +
-        suffix,
-      mpi_communicator);
+  // Serialize all post-processing tables that are currently used with the
+  // Tracer solver
+  const std::vector<OutputStructTableHandler> &table_output_structs =
+    this->gather_tables();
+  serialize_tables_vector(table_output_structs, mpi_communicator);
 }
 
 template <int dim>
@@ -1193,22 +1215,11 @@ Tracer<dim>::read_checkpoint()
       previous_solutions[i] = distributed_previous_solutions[i];
     }
 
-  // Deserialize tables
-  std::string prefix =
-    this->simulation_parameters.simulation_control.output_folder;
-  std::string suffix = ".checkpoint";
-  if (this->simulation_parameters.analytical_solution->calculate_error())
-    deserialize_table(
-      this->error_table,
-      prefix + this->simulation_parameters.analytical_solution->get_filename() +
-        "_tracer" + suffix,
-      mpi_communicator);
-  if (this->simulation_parameters.post_processing.calculate_tracer_statistics)
-    deserialize_table(
-      this->statistics_table,
-      prefix + this->simulation_parameters.post_processing.tracer_output_name +
-        suffix,
-      mpi_communicator);
+  // Deserialize all post-processing tables that are currently used with the
+  // Tracer solver
+  std::vector<OutputStructTableHandler> table_output_structs =
+    this->gather_tables();
+  deserialize_tables_vector(table_output_structs, mpi_communicator);
 }
 
 

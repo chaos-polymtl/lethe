@@ -4,6 +4,8 @@
 #ifndef lethe_output_struct_h
 #define lethe_output_struct_h
 
+#include <deal.II/base/table_handler.h>
+
 #include <deal.II/numerics/data_postprocessor.h>
 
 using namespace dealii;

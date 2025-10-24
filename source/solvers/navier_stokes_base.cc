@@ -2297,7 +2297,7 @@ NavierStokesBase<dim, VectorType, DofsType>::read_checkpoint()
   // Deserialize all post-processing tables that are currently used
   std::vector<OutputStructTableHandler> table_output_structs =
     this->gather_tables();
-  this->deserialize_tables_vector(table_output_structs);
+  deserialize_tables_vector(table_output_structs, this->mpi_communicator);
 }
 
 template <int dim, typename VectorType, typename DofsType>
@@ -3151,32 +3151,6 @@ NavierStokesBase<dim, VectorType, DofsType>::gather_tables()
 
 template <int dim, typename VectorType, typename DofsType>
 void
-NavierStokesBase<dim, VectorType, DofsType>::serialize_tables_vector(
-  const std::vector<OutputStructTableHandler> &table_output_structs)
-{
-  for (const auto &output_table : table_output_structs)
-    {
-      serialize_table(output_table.table,
-                      output_table.table_filename,
-                      mpi_communicator);
-    }
-}
-
-template <int dim, typename VectorType, typename DofsType>
-void
-NavierStokesBase<dim, VectorType, DofsType>::deserialize_tables_vector(
-  std::vector<OutputStructTableHandler> &table_output_structs)
-{
-  for (auto &output_table : table_output_structs)
-    {
-      deserialize_table(output_table.table,
-                        output_table.table_filename,
-                        mpi_communicator);
-    }
-}
-
-template <int dim, typename VectorType, typename DofsType>
-void
 NavierStokesBase<dim, VectorType, DofsType>::write_checkpoint()
 {
   TimerOutput::Scope timer(this->computing_timer, "Write checkpoint");
@@ -3227,7 +3201,7 @@ NavierStokesBase<dim, VectorType, DofsType>::write_checkpoint()
   // Serialize all post-processing tables that are currently used
   const std::vector<OutputStructTableHandler> &table_output_structs =
     this->gather_tables();
-  this->serialize_tables_vector(table_output_structs);
+  serialize_tables_vector(table_output_structs, this->mpi_communicator);
 }
 
 template <int dim, typename VectorType, typename DofsType>

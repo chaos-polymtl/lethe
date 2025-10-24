@@ -194,6 +194,16 @@ public:
   void
   read_checkpoint() override;
 
+  /**
+   * @brief Returns a vector of references to TableHandler objects that needs to
+   * be serialized/deserialized for the Tracer solver.
+   *
+   * @return Structure containing a vector of references to TableHandler objects
+   * that needs to be serialized/deserialized for the Tracer solver, and their
+   * corresponding file names.
+   */
+  std::vector<OutputStructTableHandler>
+  gather_tables() override;
 
   /**
    * @brief Returns the dof_handler of the tracer physics

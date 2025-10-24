@@ -6,6 +6,7 @@
 
 #include <core/mesh_controller.h>
 #include <core/mortar_coupling_manager.h>
+#include <core/output_struct.h>
 #include <core/parameters.h>
 #include <core/physics_solver.h>
 #include <core/pvd_handler.h>
@@ -16,7 +17,6 @@
 #include <solvers/flow_control.h>
 #include <solvers/multiphysics_interface.h>
 #include <solvers/navier_stokes_assemblers.h>
-#include <solvers/output_struct.h>
 #include <solvers/postprocessing_scalar.h>
 #include <solvers/postprocessing_velocities.h>
 #include <solvers/postprocessors.h>
@@ -863,28 +863,6 @@ protected:
    */
   virtual std::vector<OutputStructTableHandler>
   gather_tables();
-
-  /**
-   * @brief Serializes all the TableHandler objects in table_output_structs.
-   *
-   * @param[in] table_output_structs Vector of structures containing references
-   * to TableHandler objects that needs to be serialized/deserialized for a
-   * given solver, and their corresponding file names.
-   */
-  void
-  serialize_tables_vector(
-    const std::vector<OutputStructTableHandler> &table_output_structs);
-
-  /**
-   * @brief Deserializes all the TableHandler objects in table_output_structs.
-   *
-   * @param[in] table_output_structs Vector of structures containing references
-   * to TableHandler objects that needs to be serialized/deserialized for a
-   * given solver, and their corresponding file names.
-   */
-  void
-  deserialize_tables_vector(
-    std::vector<OutputStructTableHandler> &table_output_structs);
 
   /**
    * @brief Write the checkpoint
