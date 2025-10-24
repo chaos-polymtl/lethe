@@ -110,7 +110,9 @@ VANSOperator<dim, number>::compute_particle_fluid_force(
   const DoFHandler<dim>                            &pf_force_dof_handler,
   const LinearAlgebra::distributed::Vector<double> &pf_force_solution,
   const DoFHandler<dim>                            &pf_drag_dof_handler,
-  const LinearAlgebra::distributed::Vector<double> &pf_drag_solution)
+  const LinearAlgebra::distributed::Vector<double> &pf_drag_solution,
+  const DoFHandler<dim> &particle_velocity_dof_handler,
+  const LinearAlgebra::distributed::Vector<double> &particle_velocity_solution)
 {
   this->timer.enter_subsection("operator::compute_particle_fluid_forces");
 
@@ -118,7 +120,12 @@ VANSOperator<dim, number>::compute_particle_fluid_force(
   FECellIntegrator   integrator(this->matrix_free);
 
   particle_fluid_force.reinit(n_cells, integrator.n_q_points);
+  particle_fluid_drag.reinit(n_cells, integrator.n_q_points);
+  particle_velocity.reinit(n_cells, integrator.n_q_points);
 
+
+  // We create one FE_values per field that we wish to interpolate. This comes
+  // with a significant overhead, but that's life.
   FEValues<dim> fe_values_force(*(this->matrix_free.get_mapping_info().mapping),
                                 pf_force_dof_handler.get_fe(),
                                 this->matrix_free.get_quadrature(),
@@ -129,9 +136,17 @@ VANSOperator<dim, number>::compute_particle_fluid_force(
                                this->matrix_free.get_quadrature(),
                                update_values);
 
+  FEValues<dim> fe_values_particle_velocity(
+    *(this->matrix_free.get_mapping_info().mapping),
+    particle_velocity_dof_handler.get_fe(),
+    this->matrix_free.get_quadrature(),
+    update_values);
+
   std::vector<Tensor<1, dim>> cell_pf_force(
     fe_values_force.n_quadrature_points);
-  std::vector<Tensor<1, dim>> cell_pf_drag(fe_values_force.n_quadrature_points);
+  std::vector<Tensor<1, dim>> cell_pf_drag(fe_values_drag.n_quadrature_points);
+  std::vector<Tensor<1, dim>> cell_particle_velocity(
+    fe_values_particle_velocity.n_quadrature_points);
 
   constexpr FEValuesExtractors::Vector force(0);
 
@@ -141,6 +156,7 @@ VANSOperator<dim, number>::compute_particle_fluid_force(
            lane < this->matrix_free.n_active_entries_per_cell_batch(cell);
            lane++)
         {
+          // Reinit the particle-fluid force
           fe_values_force.reinit(
             this->matrix_free.get_cell_iterator(cell, lane)
               ->as_dof_handler_iterator(pf_force_dof_handler));
@@ -148,6 +164,7 @@ VANSOperator<dim, number>::compute_particle_fluid_force(
           fe_values_force[force].get_function_values(pf_force_solution,
                                                      cell_pf_force);
 
+          // Reinit the drag
           fe_values_drag.reinit(
             this->matrix_free.get_cell_iterator(cell, lane)
               ->as_dof_handler_iterator(pf_drag_dof_handler));
@@ -155,12 +172,17 @@ VANSOperator<dim, number>::compute_particle_fluid_force(
           fe_values_force[force].get_function_values(pf_drag_solution,
                                                      cell_pf_drag);
 
+          // Reinit the particle velocity
+
+
           for (const auto q : fe_values_force.quadrature_point_indices())
             {
               for (unsigned int c = 0; c < dim; ++c)
                 {
-                  particle_fluid_force[cell][q][c][lane] =
-                    cell_pf_force[q][c] + cell_pf_drag[q][c];
+                  particle_fluid_force[cell][q][c][lane] = cell_pf_force[q][c];
+                  particle_fluid_drag[cell][q][c][lane]  = cell_pf_drag[q][c];
+                  particle_velocity[cell][q][c][lane] =
+                    cell_particle_velocity[q][c];
                 }
             }
         }
@@ -170,15 +192,24 @@ VANSOperator<dim, number>::compute_particle_fluid_force(
 }
 
 /**
+ * Calculates the Jacobian of VANS equations. Here, we note f_fp the force
+ * that are applied on the particles due to the fluid, whereas f_pf would be
+ * the forces from the particles to the fluid. f_pf=-f_fp.
  * The expressions calculated in this cell integral are:
- * (q,ε∇·δu) + (q,δu·∇ε)  (Continuity equation)
- * \+ (v, ε ∂t δu) + (v, ε (u·∇)δu) + (v, ε (δu·∇)u)
- * \- (∇·v, ε δp) - (v,p∇ε)
- * \+ ε*ν(∇v,∇δu)  +  ν(v,∇ε·∇δu)   (VANS equations),
- * plus three additional terms in the case of SUPG-PSPG stabilization:
- * \+ (ε ∂t δu + ε(u·∇)δu +  ε(δu·∇)u +  ε∇δp -  εν∆δu)τ·∇q (PSPG
+ * (Continuity equation)
+ * (q,ε∇·δu) + (q,δu·∇ε) +
+ * (VANS equations)
+ * \+ (v, ε ∂t δu)  -> Time derivative
+ * \+ (v, ε (u·∇)δu) + (v, ε (δu·∇)u) -> Advection
+ * \- (∇·v, ε δp) - (v,p∇ε) -> Pressure
+ * \+ ε*ν(∇v,∇δu)  +  ν(v,∇ε·∇δu)   -> Viscous term  ---> There are currently
+ * two terms missing here which would be:
+ *\+ ε*ν(∇v,∇δu^T)  +  ν(v,∇ε·∇δu^T)
+ * plus three additional terms in the case of
+ * SUPG-PSPG stabilization:
+ * \+ (ε ∂t δu + ε(u·∇)δu +  ε(δu·∇)u +  ε∇δp -  εν∆δu - (ɛf+f_fp))τ·∇q (PSPG
  * Jacobian)
- * \+ (ε ∂t δu + ε(u·∇)δu +  ε(δu·∇)u +  ε∇δp -  εν∆δu)τu·∇v (SUPG
+ * \+ (ε ∂t δu + ε(u·∇)δu +  ε(δu·∇)u +  ε∇δp -  εν∆δu - (ɛf+f_fp))τu·∇v (SUPG
  * Jacobian P.1)
  * \+ (ε ∂t u  + ε(u·∇)u  +  ε∇p -  εν∆u -  εf )τδu·∇v (SUPG Jacobian
  * P.2), in the case of additional grad-div stabilization
@@ -211,21 +242,26 @@ VANSOperator<dim, number>::do_cell_integral_local(
 
   for (const auto q : integrator.quadrature_point_indices())
     {
+      // Gather void fraction value and gradient
+      // We gather the void fraction force since we will use it in the forcing
+      // terms (beta and source terms).
+      auto vf_value    = this->void_fraction(cell, q);
+      auto vf_gradient = this->void_fraction_gradient(cell, q);
+
       Tensor<1, dim, VectorizedArray<number>> source_value;
 
       // Gather particle-fluid force, will be zero if they have not been
       // gathered.
-      auto pf_value = this->particle_fluid_force(cell, q);
+      auto pf_force_value = this->particle_fluid_force(cell, q);
+      auto pf_drag_value  = this->particle_fluid_drag(cell, q);
 
       // Evaluate source term function if enabled
       if (this->forcing_function)
-        source_value = this->forcing_terms(cell, q);
+        source_value = vf_value * this->forcing_terms(cell, q);
 
       // Add to source term the dynamic flow control force (zero if not
       // enabled)
-      source_value += this->beta_force;
-
-
+      source_value += vf_value * this->beta_force;
 
       // Gather the original value/gradient
       typename FECellIntegrator::value_type    value = integrator.get_value(q);
@@ -247,15 +283,10 @@ VANSOperator<dim, number>::do_cell_integral_local(
       auto previous_hessian_diagonal =
         this->nonlinear_previous_hessian_diagonal(cell, q);
 
-      // Gather void fraction value and gradient
-      auto vf_value    = this->void_fraction(cell, q);
-      auto vf_gradient = this->void_fraction_gradient(cell, q);
-
-      // Add to source term the particle-fluid force (if it is enabled)
-      // We divide this source by the void fraction value since it is multiplied
-      // by the void fraction value within the assembler.
-
-      source_value += -pf_value / vf_value;
+      // Add to source term the particle-fluid force and the drag force (if they
+      // enabled) We divide this source by the void fraction value since it is
+      // multiplied by the void fraction value within the assembler.
+      source_value += -pf_force_value - pf_drag_value;
 
       Tensor<1, dim + 1, VectorizedArray<number>> previous_time_derivatives;
       if (transient)
@@ -364,8 +395,8 @@ VANSOperator<dim, number>::do_cell_integral_local(
                 }
               // +(ɛ∇p - ɛf)τ(δu·∇)v
               gradient_result[i][k] +=
-                tau * value[k] * vf_value *
-                (previous_gradient[dim][i] - source_value[i]);
+                tau * value[k] *
+                (vf_value * previous_gradient[dim][i] - source_value[i]);
 
               // +(ɛ∂t u)τ(δu·∇)v
               if (transient)
@@ -441,9 +472,14 @@ VANSOperator<dim, number>::local_evaluate_residual(
         {
           Tensor<1, dim, VectorizedArray<number>> source_value;
 
-          // Gather particle-fluid force, will be zero if they have not been
-          // gathered.
-          auto pf_value = this->particle_fluid_force(cell, q);
+          // Gather particle-fluid force and drag force, will be zero if they
+          // have not been gathered.
+          auto pf_force_value = this->particle_fluid_force(cell, q);
+          auto pf_drag_value  = this->particle_fluid_drag(cell, q);
+
+          // Gather void fraction value and gradient
+          auto vf_value    = this->void_fraction(cell, q);
+          auto vf_gradient = this->void_fraction_gradient(cell, q);
 
           // Evaluate source term function if enabled
           if (this->forcing_function)
@@ -462,14 +498,12 @@ VANSOperator<dim, number>::local_evaluate_residual(
           if (this->enable_hessians_residual)
             hessian_diagonal = integrator.get_hessian_diagonal(q);
 
-          // Gather void fraction value and gradient
-          auto vf_value    = this->void_fraction(cell, q);
-          auto vf_gradient = this->void_fraction_gradient(cell, q);
+
 
           // Add to source term the particle-fluid force (zero if not enabled)
           // We divide this source by the void fraction value since it is
           // multiplied by the void fraction value within the assembler.
-          source_value += -pf_value / vf_value;
+          source_value += -(pf_force_value + pf_drag_value) / vf_value;
 
           // Time derivatives of previous solutions
           Tensor<1, dim + 1, VectorizedArray<number>> previous_time_derivatives;
