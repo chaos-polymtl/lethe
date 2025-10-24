@@ -1,5 +1,7 @@
-<map id="/home/runner/work/lethe/lethe/include/solvers/output_struct.h" name="/home/runner/work/lethe/lethe/include/solvers/output_struct.h">
-<area shape="rect" id="Node000001" title=" " alt="" coords="5,5,188,60"/>
-<area shape="rect" id="Node000002" title=" " alt="" coords="17,108,176,148"/>
-<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="99,60,99,94,94,94,94,60"/>
+<map id="/home/runner/work/lethe/lethe/include/core/output_struct.h" name="/home/runner/work/lethe/lethe/include/core/output_struct.h">
+<area shape="rect" id="Node000001" title=" " alt="" coords="64,5,252,60"/>
+<area shape="rect" id="Node000002" title=" " alt="" coords="5,108,140,148"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="136,62,101,100,97,96,132,59"/>
+<area shape="rect" id="Node000003" title=" " alt="" coords="164,108,323,148"/>
+<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="184,59,219,96,215,100,180,62"/>
 </map>

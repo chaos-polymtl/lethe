@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=11"/>
 <meta name="generator" content="Doxygen 1.9.8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1"/>
-<title>Lethe Open-Source Library: /home/runner/work/lethe/lethe/source/solvers/output_struct.cc File Reference</title>
+<title>Lethe Open-Source Library: /home/runner/work/lethe/lethe/source/core/output_struct.cc File Reference</title>
 <link href="tabs.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="jquery.js"></script>
 <script type="text/javascript" src="dynsections.js"></script>
@@ -81,41 +81,43 @@ $(function() {
 
 <div id="nav-path" class="navpath">
   <ul>
-<li class="navelem"><a class="el" href="dir_b2f33c71d4aa5e7af42a1ca61ff5af1b.html">source</a></li><li class="navelem"><a class="el" href="dir_ac5436e408af57248b48f6dcc8be2bc4.html">solvers</a></li>  </ul>
+<li class="navelem"><a class="el" href="dir_b2f33c71d4aa5e7af42a1ca61ff5af1b.html">source</a></li><li class="navelem"><a class="el" href="dir_0d27ce74e9bd514c31e1d63efab6b388.html">core</a></li>  </ul>
 </div>
 </div><!-- top -->
 <div class="header">
   <div class="headertitle"><div class="title">output_struct.cc File Reference</div></div>
 </div><!--header-->
 <div class="contents">
-<div class="textblock"><code>#include &lt;<a class="el" href="vector_8h_source.html">core/vector.h</a>&gt;</code><br />
-<code>#include &lt;<a class="el" href="output__struct_8h_source.html">solvers/output_struct.h</a>&gt;</code><br />
+<div class="textblock"><code>#include &lt;<a class="el" href="output__struct_8h_source.html">core/output_struct.h</a>&gt;</code><br />
+<code>#include &lt;<a class="el" href="vector_8h_source.html">core/vector.h</a>&gt;</code><br />
 <code>#include &lt;deal.II/lac/la_parallel_vector.h&gt;</code><br />
 </div><div class="textblock"><div class="dynheader">
 Include dependency graph for output_struct.cc:</div>
 <div class="dyncontent">
-<div class="center"><img src="output__struct_8cc__incl.png" border="0" usemap="#a_2home_2runner_2work_2lethe_2lethe_2source_2solvers_2output__struct_8cc" alt=""/></div>
-<map name="a_2home_2runner_2work_2lethe_2lethe_2source_2solvers_2output__struct_8cc" id="a_2home_2runner_2work_2lethe_2lethe_2source_2solvers_2output__struct_8cc">
-<area shape="rect" title=" " alt="" coords="453,5,635,60"/>
-<area shape="rect" href="vector_8h.html" title=" " alt="" coords="491,108,597,133"/>
-<area shape="poly" title=" " alt="" coords="547,60,547,94,541,94,541,60"/>
-<area shape="rect" title=" " alt="" coords="5,181,163,221"/>
-<area shape="poly" title=" " alt="" coords="473,63,149,179,148,174,471,58"/>
-<area shape="rect" href="output__struct_8h.html" title=" " alt="" coords="891,108,1061,133"/>
-<area shape="poly" title=" " alt="" coords="636,49,906,103,905,108,635,55"/>
-<area shape="rect" title=" " alt="" coords="187,181,344,221"/>
-<area shape="poly" title=" " alt="" coords="504,136,346,180,344,175,503,131"/>
-<area shape="poly" title=" " alt="" coords="491,132,177,184,176,178,490,127"/>
-<area shape="rect" title=" " alt="" coords="369,181,527,221"/>
-<area shape="poly" title=" " alt="" coords="532,136,483,175,480,171,528,131"/>
-<area shape="rect" title=" " alt="" coords="552,181,731,221"/>
-<area shape="poly" title=" " alt="" coords="560,131,609,171,606,175,557,136"/>
-<area shape="rect" title=" " alt="" coords="755,181,890,221"/>
-<area shape="poly" title=" " alt="" coords="585,131,744,175,742,180,584,136"/>
-<area shape="rect" title=" " alt="" coords="915,181,1045,221"/>
-<area shape="poly" title=" " alt="" coords="598,127,732,148,901,178,900,184,731,153,597,132"/>
-<area shape="rect" title=" " alt="" coords="1070,181,1229,221"/>
-<area shape="poly" title=" " alt="" coords="1002,131,1096,173,1094,178,1000,136"/>
+<div class="center"><img src="output__struct_8cc__incl.png" border="0" usemap="#a_2home_2runner_2work_2lethe_2lethe_2source_2core_2output__struct_8cc" alt=""/></div>
+<map name="a_2home_2runner_2work_2lethe_2lethe_2source_2core_2output__struct_8cc" id="a_2home_2runner_2work_2lethe_2lethe_2source_2core_2output__struct_8cc">
+<area shape="rect" title=" " alt="" coords="334,5,518,60"/>
+<area shape="rect" href="output__struct_8h.html" title=" " alt="" coords="167,108,319,133"/>
+<area shape="poly" title=" " alt="" coords="371,62,281,105,279,100,369,58"/>
+<area shape="rect" href="vector_8h.html" title=" " alt="" coords="737,108,843,133"/>
+<area shape="poly" title=" " alt="" coords="519,53,729,102,727,107,518,58"/>
+<area shape="rect" title=" " alt="" coords="347,181,505,221"/>
+<area shape="poly" title=" " alt="" coords="429,60,429,167,423,167,423,60"/>
+<area shape="rect" title=" " alt="" coords="5,181,140,221"/>
+<area shape="poly" title=" " alt="" coords="220,136,127,178,125,173,217,131"/>
+<area shape="rect" title=" " alt="" coords="164,181,323,221"/>
+<area shape="poly" title=" " alt="" coords="246,134,246,168,241,168,241,134"/>
+<area shape="rect" title=" " alt="" coords="529,181,686,221"/>
+<area shape="poly" title=" " alt="" coords="764,136,665,178,663,174,762,131"/>
+<area shape="poly" title=" " alt="" coords="738,136,518,183,517,178,737,131"/>
+<area shape="rect" title=" " alt="" coords="711,181,869,221"/>
+<area shape="poly" title=" " alt="" coords="793,134,793,168,787,168,787,134"/>
+<area shape="rect" title=" " alt="" coords="894,181,1073,221"/>
+<area shape="poly" title=" " alt="" coords="819,131,925,174,923,179,817,136"/>
+<area shape="rect" title=" " alt="" coords="1097,181,1232,221"/>
+<area shape="poly" title=" " alt="" coords="844,130,1084,179,1083,184,843,135"/>
+<area shape="rect" title=" " alt="" coords="1257,181,1387,221"/>
+<area shape="poly" title=" " alt="" coords="844,124,1018,144,1243,179,1243,184,1017,150,843,130"/>
 </map>
 </div>
 </div>

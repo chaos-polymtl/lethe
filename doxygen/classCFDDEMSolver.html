@@ -430,10 +430,6 @@ Additional Inherited Members</h2></td></tr>
 <tr class="separator:a0280c83da8fca948b2ca6e0f475da19c inherit pro_methods_classNavierStokesBase"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a42a93d1b332da6a4bd52b9540b24012c inherit pro_methods_classNavierStokesBase" id="r_a42a93d1b332da6a4bd52b9540b24012c"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classNavierStokesBase.html#a42a93d1b332da6a4bd52b9540b24012c">constrain_stasis_with_temperature_vof</a> (const DoFHandler&lt; dim &gt; *dof_handler_vof, const DoFHandler&lt; dim &gt; *dof_handler_ht)</td></tr>
 <tr class="separator:a42a93d1b332da6a4bd52b9540b24012c inherit pro_methods_classNavierStokesBase"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a459e5dd4f683a6454b713c598e0dcc3d inherit pro_methods_classNavierStokesBase" id="r_a459e5dd4f683a6454b713c598e0dcc3d"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classNavierStokesBase.html#a459e5dd4f683a6454b713c598e0dcc3d">serialize_tables_vector</a> (const std::vector&lt; <a class="el" href="structOutputStructTableHandler.html">OutputStructTableHandler</a> &gt; &amp;table_output_structs)</td></tr>
-<tr class="separator:a459e5dd4f683a6454b713c598e0dcc3d inherit pro_methods_classNavierStokesBase"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:af9c6999150be2fb03966e9f578508b72 inherit pro_methods_classNavierStokesBase" id="r_af9c6999150be2fb03966e9f578508b72"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classNavierStokesBase.html#af9c6999150be2fb03966e9f578508b72">deserialize_tables_vector</a> (std::vector&lt; <a class="el" href="structOutputStructTableHandler.html">OutputStructTableHandler</a> &gt; &amp;table_output_structs)</td></tr>
-<tr class="separator:af9c6999150be2fb03966e9f578508b72 inherit pro_methods_classNavierStokesBase"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a73730111a45fabb5bcc26e950ed5bbe6 inherit pro_methods_classNavierStokesBase" id="r_a73730111a45fabb5bcc26e950ed5bbe6"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classNavierStokesBase.html#a73730111a45fabb5bcc26e950ed5bbe6">gather_output_results</a> (const <a class="el" href="vector_8h.html#a4ea4005d75c88e60bee47d4e79a13a39">GlobalVectorType</a> &amp;solution, std::vector&lt; <a class="el" href="output__struct_8h.html#a24c1f4e015db04387ac9c28a58ee7378">OutputStruct</a>&lt; dim, <a class="el" href="vector_8h.html#a4ea4005d75c88e60bee47d4e79a13a39">GlobalVectorType</a> &gt; &gt; &amp;solution_output_structs)</td></tr>
 <tr class="separator:a73730111a45fabb5bcc26e950ed5bbe6 inherit pro_methods_classNavierStokesBase"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a18c2b29088f98ef45c04212bc5f2d33c inherit pro_methods_classNavierStokesBase" id="r_a18c2b29088f98ef45c04212bc5f2d33c"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classNavierStokesBase.html#a18c2b29088f98ef45c04212bc5f2d33c">write_output_results</a> (const <a class="el" href="vector_8h.html#a4ea4005d75c88e60bee47d4e79a13a39">GlobalVectorType</a> &amp;solution)</td></tr>
@@ -917,7 +913,7 @@ template&lt;int dim&gt; </div>
 
 <p class="definition">Definition at line <a class="el" href="cfd__dem__coupling_8cc_source.html#l01320">1320</a> of file <a class="el" href="cfd__dem__coupling_8cc_source.html">cfd_dem_coupling.cc</a>.</p>
 
-<p class="reference">References <a class="el" href="utilities_8h_source.html#l00463">announce_string()</a>, <a class="el" href="postprocessing__cfd_8cc_source.html#l01485">calculate_average_velocity()</a>, <a class="el" href="structParameters_1_1SimulationControl.html#a86daf86652a712eb783c105c953eb7f8a4f997f546b68779b58e9f6f19dc2b9e5">Parameters::SimulationControl::steady</a>, and <a class="el" href="namespaceParameters.html#a91f1943180a615249347b911b0ed3919a2c7aea4237e25b4f8ee3b0bf77d6fed0">Parameters::verbose</a>.</p>
+<p class="reference">References <a class="el" href="utilities_8h_source.html#l00465">announce_string()</a>, <a class="el" href="postprocessing__cfd_8cc_source.html#l01485">calculate_average_velocity()</a>, <a class="el" href="structParameters_1_1SimulationControl.html#a86daf86652a712eb783c105c953eb7f8a4f997f546b68779b58e9f6f19dc2b9e5">Parameters::SimulationControl::steady</a>, and <a class="el" href="namespaceParameters.html#a91f1943180a615249347b911b0ed3919a2c7aea4237e25b4f8ee3b0bf77d6fed0">Parameters::verbose</a>.</p>
 
 </div>
 </div>
@@ -1231,7 +1227,7 @@ template&lt;int dim&gt; </div>
 
 <p class="definition">Definition at line <a class="el" href="cfd__dem__coupling_8cc_source.html#l00552">552</a> of file <a class="el" href="cfd__dem__coupling_8cc_source.html">cfd_dem_coupling.cc</a>.</p>
 
-<p class="reference">References <a class="el" href="navier__stokes__base_8cc_source.html#l03084">NavierStokesBase&lt; dim, VectorType, DofsType &gt;::gather_tables()</a>.</p>
+<p class="reference">References <a class="el" href="utilities_8h_source.html#l00564">deserialize_tables_vector()</a>, and <a class="el" href="navier__stokes__base_8cc_source.html#l03084">NavierStokesBase&lt; dim, VectorType, DofsType &gt;::gather_tables()</a>.</p>
 
 </div>
 </div>
@@ -1301,7 +1297,7 @@ template&lt;int dim&gt; </div>
 
 <p class="definition">Definition at line <a class="el" href="cfd__dem__coupling_8cc_source.html#l01077">1077</a> of file <a class="el" href="cfd__dem__coupling_8cc_source.html">cfd_dem_coupling.cc</a>.</p>
 
-<p class="reference">References <a class="el" href="utilities_8h_source.html#l00082">add_statistics_to_table_handler()</a>, <a class="el" href="utilities_8h_source.html#l00463">announce_string()</a>, <a class="el" href="dem__post__processing_8cc_source.html#l00012">DEM::calculate_granular_statistics()</a>, <a class="el" href="namespaceDEM.html#af85feac59e2a3e30010cccde5bda5b2bac6d6bd7ebf806f43c76acc3681703b81">DEM::omega</a>, <a class="el" href="namespaceDEM.html#af85feac59e2a3e30010cccde5bda5b2ba0c1c97be26e7d13e9c7757f74414040e">DEM::rotational_kinetic_energy</a>, <a class="el" href="namespaceDEM.html#af85feac59e2a3e30010cccde5bda5b2baeb81959bf8f42fe1d4bdaec5fd3fdb41">DEM::translational_kinetic_energy</a>, and <a class="el" href="namespaceDEM.html#af85feac59e2a3e30010cccde5bda5b2baac1a453d0cdc1f19d9479ccfaa8b082c">DEM::velocity</a>.</p>
+<p class="reference">References <a class="el" href="utilities_8h_source.html#l00084">add_statistics_to_table_handler()</a>, <a class="el" href="utilities_8h_source.html#l00465">announce_string()</a>, <a class="el" href="dem__post__processing_8cc_source.html#l00012">DEM::calculate_granular_statistics()</a>, <a class="el" href="namespaceDEM.html#af85feac59e2a3e30010cccde5bda5b2bac6d6bd7ebf806f43c76acc3681703b81">DEM::omega</a>, <a class="el" href="namespaceDEM.html#af85feac59e2a3e30010cccde5bda5b2ba0c1c97be26e7d13e9c7757f74414040e">DEM::rotational_kinetic_energy</a>, <a class="el" href="namespaceDEM.html#af85feac59e2a3e30010cccde5bda5b2baeb81959bf8f42fe1d4bdaec5fd3fdb41">DEM::translational_kinetic_energy</a>, and <a class="el" href="namespaceDEM.html#af85feac59e2a3e30010cccde5bda5b2baac1a453d0cdc1f19d9479ccfaa8b082c">DEM::velocity</a>.</p>
 
 </div>
 </div>
@@ -1436,7 +1432,7 @@ template&lt;int dim&gt; </div>
 
 <p class="definition">Definition at line <a class="el" href="cfd__dem__coupling_8cc_source.html#l01579">1579</a> of file <a class="el" href="cfd__dem__coupling_8cc_source.html">cfd_dem_coupling.cc</a>.</p>
 
-<p class="reference">References <a class="el" href="utilities_8h_source.html#l00463">announce_string()</a>, <a class="el" href="structParameters_1_1Testing.html#ad685a47cec3b7e8562c8b6444e8a9a39abdfd37e8359d01ed10577a9d0d609c15">Parameters::Testing::mobility_status</a>, <a class="el" href="fluid__dynamics__vans_8cc_source.html#l00713">FluidDynamicsVANS&lt; dim &gt;::monitor_mass_conservation()</a>, <a class="el" href="structParameters_1_1Testing.html#ad685a47cec3b7e8562c8b6444e8a9a39a7e45214f92b501af4495b82455b39e7c">Parameters::Testing::particles</a>, <a class="el" href="grids_8cc_source.html#l00343">read_mesh_and_manifolds()</a>, <a class="el" href="navier__stokes__base_8cc_source.html#l00855">NavierStokesBase&lt; dim, VectorType, DofsType &gt;::refine_mesh()</a>, and <a class="el" href="log__collision__data_8cc_source.html#l00158">write_collision_stats()</a>.</p>
+<p class="reference">References <a class="el" href="utilities_8h_source.html#l00465">announce_string()</a>, <a class="el" href="structParameters_1_1Testing.html#ad685a47cec3b7e8562c8b6444e8a9a39abdfd37e8359d01ed10577a9d0d609c15">Parameters::Testing::mobility_status</a>, <a class="el" href="fluid__dynamics__vans_8cc_source.html#l00713">FluidDynamicsVANS&lt; dim &gt;::monitor_mass_conservation()</a>, <a class="el" href="structParameters_1_1Testing.html#ad685a47cec3b7e8562c8b6444e8a9a39a7e45214f92b501af4495b82455b39e7c">Parameters::Testing::particles</a>, <a class="el" href="grids_8cc_source.html#l00343">read_mesh_and_manifolds()</a>, <a class="el" href="navier__stokes__base_8cc_source.html#l00855">NavierStokesBase&lt; dim, VectorType, DofsType &gt;::refine_mesh()</a>, and <a class="el" href="log__collision__data_8cc_source.html#l00158">write_collision_stats()</a>.</p>
 
 </div>
 </div>
@@ -1504,7 +1500,7 @@ template&lt;int dim&gt; </div>
 
 <p class="definition">Definition at line <a class="el" href="cfd__dem__coupling_8h_source.html#l00312">312</a> of file <a class="el" href="cfd__dem__coupling_8h_source.html">cfd_dem_coupling.h</a>.</p>
 
-<p class="reference">References <a class="el" href="cfd__dem__coupling_8h_source.html#l00336">CFDDEMSolver&lt; dim &gt;::coupling_frequency</a>, <a class="el" href="cfd__dem__coupling_8h_source.html#l00474">CFDDEMSolver&lt; dim &gt;::dem_time_step</a>, <a class="el" href="physics__solver_8h_source.html#l00134">PhysicsSolver&lt; VectorType &gt;::pcout</a>, <a class="el" href="cfd__dem__coupling_8h_source.html#l00477">CFDDEMSolver&lt; dim &gt;::rayleigh_time_step</a>, and <a class="el" href="navier__stokes__base_8h_source.html#l01062">NavierStokesBase&lt; dim, GlobalVectorType, IndexSet &gt;::simulation_control</a>.</p>
+<p class="reference">References <a class="el" href="cfd__dem__coupling_8h_source.html#l00336">CFDDEMSolver&lt; dim &gt;::coupling_frequency</a>, <a class="el" href="cfd__dem__coupling_8h_source.html#l00474">CFDDEMSolver&lt; dim &gt;::dem_time_step</a>, <a class="el" href="physics__solver_8h_source.html#l00134">PhysicsSolver&lt; VectorType &gt;::pcout</a>, <a class="el" href="cfd__dem__coupling_8h_source.html#l00477">CFDDEMSolver&lt; dim &gt;::rayleigh_time_step</a>, and <a class="el" href="navier__stokes__base_8h_source.html#l01040">NavierStokesBase&lt; dim, GlobalVectorType, IndexSet &gt;::simulation_control</a>.</p>
 
 </div>
 </div>
@@ -1540,7 +1536,7 @@ template&lt;int dim&gt; </div>
 
 <p class="definition">Definition at line <a class="el" href="cfd__dem__coupling_8cc_source.html#l00454">454</a> of file <a class="el" href="cfd__dem__coupling_8cc_source.html">cfd_dem_coupling.cc</a>.</p>
 
-<p class="reference">References <a class="el" href="navier__stokes__base_8cc_source.html#l03084">NavierStokesBase&lt; dim, VectorType, DofsType &gt;::gather_tables()</a>.</p>
+<p class="reference">References <a class="el" href="navier__stokes__base_8cc_source.html#l03084">NavierStokesBase&lt; dim, VectorType, DofsType &gt;::gather_tables()</a>, and <a class="el" href="utilities_8h_source.html#l00542">serialize_tables_vector()</a>.</p>
 
 </div>
 </div>
