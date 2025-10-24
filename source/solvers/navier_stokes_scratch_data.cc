@@ -381,6 +381,15 @@ NavierStokesScratchData<dim>::reinit_mortar(
   const double rotor_angular_velocity =
     mortar_parameters.rotor_angular_velocity->value(Point<dim>());
 
+  // std::cout << "Matrix-based cell " << cell->active_cell_index()
+  //           << ", center = " << cell->center() << std::endl;
+
+  // for (unsigned int q=0; q<n_q_points; ++q)
+  // {
+  //   const auto qp = fe_values.quadrature_point(q);
+  //   std::cout << "QP " << q << ": (" << qp[0] << ", " << qp[1] << ")\n";
+  // }
+
   // Compute radius between center of rotation and current cell center
   const double radius_current =
     cell_center.distance(mortar_parameters.center_of_rotation);
@@ -392,7 +401,9 @@ NavierStokesScratchData<dim>::reinit_mortar(
   else
     cell_rotor_angular_velocity = rotor_angular_velocity;
 
-  // Compute rotor linear velocity at quadrature points
+  // std::cout << "cell radius: " << radius_current << ", ang vel: " <<
+  // cell_rotor_angular_velocity << std::endl; Compute rotor linear velocity at
+  // quadrature points
   rotor_linear_velocity_values = std::vector<Tensor<1, dim>>(this->n_q_points);
   for (unsigned int q = 0; q < n_q_points; ++q)
     {
@@ -400,6 +411,8 @@ NavierStokesScratchData<dim>::reinit_mortar(
       const auto y                       = fe_values.quadrature_point(q)[1];
       rotor_linear_velocity_values[q][0] = -cell_rotor_angular_velocity * y;
       rotor_linear_velocity_values[q][1] = cell_rotor_angular_velocity * x;
+      // std::cout << "ID " << cell->id() << ", x: " << x << ", y: " << y <<
+      // std::endl;
     }
 }
 
