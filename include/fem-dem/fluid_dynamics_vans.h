@@ -110,6 +110,40 @@ protected:
   setup_dofs() override;
 
   /**
+   * @brief Set the initial condition. The version in this class does not output
+   * the solution, since the void fraction is not initialized yet.
+   *
+   * @param initial_condition_type Type of method  use to impose initial condition.
+   *
+   * @param restart Indicator if the simulation is being restarted or not.
+   *
+   **/
+
+  void
+  set_initial_condition(
+    Parameters::FluidDynamicsInitialConditionType initial_condition_type,
+    bool                                          restart = false) override
+  {
+    unsigned int ref_iter = 0;
+    do
+      {
+        if (ref_iter > 0)
+          this->refine_mesh();
+
+        this->set_initial_condition_fd(initial_condition_type, restart);
+        if (!restart)
+          {
+            this->multiphysics->set_initial_conditions();
+          }
+        ref_iter++;
+      }
+    while (
+      ref_iter <
+        (this->simulation_parameters.mesh_adaptation.initial_refinement + 1) &&
+      restart == false);
+  }
+
+  /**
    * @brief Execute a single VANS iteration.
    *
    * Performs one iteration of the VANS solution procedure including
