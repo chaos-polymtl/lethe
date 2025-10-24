@@ -383,6 +383,7 @@ public:
 
   void
   evaluate_velocity_ale(
+    const std::shared_ptr<Mapping<dim>>            &mapping,
     const double                                    radius,
     const Point<dim>                                center_of_rotation,
     std::shared_ptr<Functions::ParsedFunction<dim>> rotor_angular_velocity);
