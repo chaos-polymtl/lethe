@@ -215,11 +215,11 @@ VANSOperator<dim, number>::compute_particle_fluid_force(
  *\+ ε*ν(∇v,∇δu^T)  +  ν(v,∇ε·∇δu^T)
  * plus three additional terms in the case of
  * SUPG-PSPG stabilization:
- * \+ (ε ∂t δu + ε(u·∇)δu +  ε(δu·∇)u +  ε∇δp -  εν∆δu - (ɛf+f_fp))τ·∇q (PSPG
+ * \+ (ε ∂t δu + ε(u·∇)δu +  ε(δu·∇)u +  ε∇δp -  εν∆δu +βδu)τ·∇q (PSPG
  * Jacobian)
- * \+ (ε ∂t δu + ε(u·∇)δu +  ε(δu·∇)u +  ε∇δp -  εν∆δu - (ɛf+f_fp))τu·∇v (SUPG
+ * \+ (ε ∂t δu + ε(u·∇)δu +  ε(δu·∇)u +  ε∇δp -  εν∆δu +βδu)τu·∇v (SUPG
  * Jacobian P.1)
- * \+ (ε ∂t u  + ε(u·∇)u  +  ε∇p -  εν∆u -  εf )τδu·∇v (SUPG Jacobian
+ * \+ (ε ∂t u  + ε(u·∇)u  +  ε∇p -  εν∆u -  εf - f_pf )τδu·∇v (SUPG Jacobian
  * P.2), in the case of additional grad-div stabilization
  * \+ (∇·v,γ(ɛ∇·δu+δu·∇ɛ)) (grad-div term)
  */
@@ -272,6 +272,9 @@ VANSOperator<dim, number>::do_cell_integral_local(
       // enabled)
       source_value += vf_value * this->beta_force;
 
+      // Add to source term the particle-fluid force and the drag force
+      source_value += pf_force_value + pf_drag_value;
+
       // Gather the original value/gradient
       typename FECellIntegrator::value_type    value = integrator.get_value(q);
       typename FECellIntegrator::gradient_type gradient =
@@ -292,8 +295,7 @@ VANSOperator<dim, number>::do_cell_integral_local(
       auto previous_hessian_diagonal =
         this->nonlinear_previous_hessian_diagonal(cell, q);
 
-      // Add to source term the particle-fluid force and the drag force
-      source_value += pf_force_value + pf_drag_value;
+
 
       // Calculate norm of the relative velocity and of the drag force and use
       // it to calculate the beta momentum exchnage coefficient A tolerance is
@@ -306,7 +308,7 @@ VANSOperator<dim, number>::do_cell_integral_local(
           relative_velocity_norm += Utilities::fixed_power<2>(
             particle_velocity[i] - previous_values[i]);
         }
-      relative_velocity_norm = sqrt(relative_velocity_norm) + 1e-6;
+      relative_velocity_norm = sqrt(relative_velocity_norm) + 1e-9;
       VectorizedArray<number> beta_momentum_exchange =
         sqrt(drag_force_norm / relative_velocity_norm);
 
@@ -335,6 +337,9 @@ VANSOperator<dim, number>::do_cell_integral_local(
           // +(q,∇ɛ·δu)
           value_result[dim] += vf_gradient[i] * value[i];
 
+          // (v, βu) (since the forcing is f_pf = beta (v-u))
+          value_result[i] += beta_momentum_exchange * value[i];
+
           for (unsigned int k = 0; k < dim; ++k)
             {
               // +(v,ɛ(u·∇)δu + ɛ(δu·∇)u)
@@ -346,8 +351,7 @@ VANSOperator<dim, number>::do_cell_integral_local(
           if (transient)
             value_result[i] += vf_value * (*bdf_coefs)[0] * value[i];
 
-          // (v, βu) (since the forcing is beta (v-u))
-          value_result[i] += beta_momentum_exchange * value[i];
+
         }
 
       // PSPG Jacobian
@@ -366,6 +370,9 @@ VANSOperator<dim, number>::do_cell_integral_local(
           if (transient)
             gradient_result[dim][i] +=
               tau * vf_value * (*bdf_coefs)[0] * value[i];
+
+          // βδu·τ∇q
+          gradient_result[dim][i] += tau * beta_momentum_exchange * value[i];
         }
       // (ɛ∇δp)τ·∇q
       gradient_result[dim] += tau * vf_value * gradient[dim];
@@ -409,6 +416,10 @@ VANSOperator<dim, number>::do_cell_integral_local(
                 gradient_result[i][k] += tau * previous_values[k] * vf_value *
                                          ((*bdf_coefs)[0] * value[i]);
 
+              // +(βδu)τ(u·∇)v
+              gradient_result[i][k] +=
+                beta_momentum_exchange * value[i]* tau * previous_values[k];
+
               // Part 2
               for (unsigned int l = 0; l < dim; ++l)
                 {
@@ -428,6 +439,10 @@ VANSOperator<dim, number>::do_cell_integral_local(
                 gradient_result[i][k] += tau * value[k] * vf_value *
                                          ((*bdf_coefs)[0] * previous_values[i] +
                                           previous_time_derivatives[i]);
+
+              // +(βu)τ(δu·∇)v
+              gradient_result[i][k] +=
+                beta_momentum_exchange * previous_values[i] * tau * value[k];
             }
         }
 
