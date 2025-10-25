@@ -167,6 +167,14 @@ protected:
   setup_dofs() override;
 
   /**
+ * @brief Assembles the RHS of the VANS system of equation. This function
+ * also recalculates the particle-fluid interaction when the drag coupling
+ * is implicit.
+ */
+  void
+  assemble_system_rhs() override;
+
+  /**
    * @brief Finish the time-step and manage the time-step end for the void
    * fraction.
    */
