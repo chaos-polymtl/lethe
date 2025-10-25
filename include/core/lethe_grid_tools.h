@@ -266,6 +266,7 @@ namespace LetheGridTools
     edge_contact,
     vertex_contact
   };
+
   /**
    * @brief Calculates the distance between particles and a triangle (defined using
    * three vertices). The full calculation is taken from  Geometric Tools for
