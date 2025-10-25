@@ -744,7 +744,7 @@ NavierStokesScratchData<dim>::calculate_cell_void_fraction(
   // be tailored exactly to the number of particles.
   // We also initialize it to zero and it will be filled if a cell-averaged
   // void fraction is used.
-  cell_void_fraction.resize(number_of_particles,0);
+  cell_void_fraction.resize(number_of_particles, 0);
 
   if (!this->interpolated_void_fraction)
     {
