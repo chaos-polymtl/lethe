@@ -143,17 +143,13 @@ ParticleProjector<dim>::setup_dofs()
   // Vertices to cell mapping
   LetheGridTools::vertices_cell_mapping(this->dof_handler, vertices_to_cell);
 
-  // If particle projection is enabled, we also setup the dofs for the particle
-  // velocity
-  if (void_fraction_parameters->project_particle_velocity)
-    particle_velocity.setup_dofs();
-
   // TODO BB both these fields are always set-up even if they are not used. This
   // is ok since this will just take a little bit of extra memory. If this
   // becomes an issue, we can enable/disable their allocation with an additional
   // bool parameter inside the CFD-DEM parameters.
   particle_fluid_force_two_way_coupling.setup_dofs();
   particle_fluid_drag.setup_dofs();
+  particle_velocity.setup_dofs();
 }
 
 
@@ -1601,6 +1597,8 @@ ParticleProjector<dim>::calculate_particle_fluid_forces_projection(
   calculate_field_projection(particle_fluid_force_two_way_coupling);
   announce_string(this->pcout, "Particle-fluid drag");
   calculate_field_projection(particle_fluid_drag);
+  announce_string(this->pcout, "Particle velocity");
+  calculate_field_projection(particle_velocity);
 }
 
 
