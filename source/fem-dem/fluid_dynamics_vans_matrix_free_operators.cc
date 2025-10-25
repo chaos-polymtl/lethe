@@ -170,7 +170,7 @@ VANSOperator<dim, number>::compute_particle_fluid_force(
               ->as_dof_handler_iterator(fp_drag_dof_handler));
 
           fe_values_drag[force].get_function_values(fp_drag_solution,
-                                                     cell_fp_drag);
+                                                    cell_fp_drag);
 
           // Reinit the particle velocity
           fe_values_particle_velocity.reinit(
@@ -184,7 +184,9 @@ VANSOperator<dim, number>::compute_particle_fluid_force(
             {
               for (int c = 0; c < dim; ++c)
                 {
-                  // The force applied on the fluid from the particle is (-) the force applied on the particles by the fluid following Newton's third law.
+                  // The force applied on the fluid from the particle is (-) the
+                  // force applied on the particles by the fluid following
+                  // Newton's third law.
                   particle_fluid_force[cell][q][c][lane] = -cell_fp_force[q][c];
                   particle_fluid_drag[cell][q][c][lane]  = -cell_fp_drag[q][c];
                   particle_velocity[cell][q][c][lane] =
@@ -258,9 +260,9 @@ VANSOperator<dim, number>::do_cell_integral_local(
 
       // Gather particle-fluid force, will be zero if they have not been
       // gathered.
-      auto pf_force_value = this->particle_fluid_force(cell, q);
-      auto pf_drag_value  = this->particle_fluid_drag(cell, q);
-      auto particle_velocity  = this->particle_velocity(cell, q);
+      auto pf_force_value    = this->particle_fluid_force(cell, q);
+      auto pf_drag_value     = this->particle_fluid_drag(cell, q);
+      auto particle_velocity = this->particle_velocity(cell, q);
 
       // Evaluate source term function if enabled
       if (this->forcing_function)
@@ -293,17 +295,20 @@ VANSOperator<dim, number>::do_cell_integral_local(
       // Add to source term the particle-fluid force and the drag force
       source_value += pf_force_value + pf_drag_value;
 
-      // Calculate norm of the relative velocity and of the drag force and use it to calculate the beta momentum exchnage coefficient
-      // A tolerance is added (1e-14) to prevent division by 0 and occurence of NaN.
-      VectorizedArray<number> drag_force_norm=0.;
-      VectorizedArray<number> relative_velocity_norm=0.;
+      // Calculate norm of the relative velocity and of the drag force and use
+      // it to calculate the beta momentum exchnage coefficient A tolerance is
+      // added (1e-14) to prevent division by 0 and occurence of NaN.
+      VectorizedArray<number> drag_force_norm        = 0.;
+      VectorizedArray<number> relative_velocity_norm = 0.;
       for (unsigned int i = 0; i < dim; ++i)
         {
           drag_force_norm += Utilities::fixed_power<2>(pf_drag_value[i]);
-          relative_velocity_norm += Utilities::fixed_power<2>(particle_velocity[i]- previous_values[i]);
+          relative_velocity_norm += Utilities::fixed_power<2>(
+            particle_velocity[i] - previous_values[i]);
         }
-      relative_velocity_norm = sqrt(relative_velocity_norm)+1e-6;
-      VectorizedArray<number> beta_momentum_exchange = sqrt(drag_force_norm/relative_velocity_norm);
+      relative_velocity_norm = sqrt(relative_velocity_norm) + 1e-6;
+      VectorizedArray<number> beta_momentum_exchange =
+        sqrt(drag_force_norm / relative_velocity_norm);
 
       Tensor<1, dim + 1, VectorizedArray<number>> previous_time_derivatives;
       if (transient)
@@ -342,7 +347,7 @@ VANSOperator<dim, number>::do_cell_integral_local(
             value_result[i] += vf_value * (*bdf_coefs)[0] * value[i];
 
           // (v, βu) (since the forcing is beta (v-u))
-          value_result[i] +=  beta_momentum_exchange * value[i];
+          value_result[i] += beta_momentum_exchange * value[i];
         }
 
       // PSPG Jacobian
@@ -490,8 +495,6 @@ VANSOperator<dim, number>::local_evaluate_residual(
 
       for (const auto q : integrator.quadrature_point_indices())
         {
-
-
           // Gather particle-fluid force and drag force, will be zero if they
           // have not been gathered.
           auto pf_force_value = this->particle_fluid_force(cell, q);
@@ -499,7 +502,8 @@ VANSOperator<dim, number>::local_evaluate_residual(
           // Add to source term the particle-fluid force (zero if not enabled)
           // We divide this source by the void fraction value since it is
           // multiplied by the void fraction value within the assembler.
-          Tensor<1, dim, VectorizedArray<number>> source_value = pf_force_value + pf_drag_value;
+          Tensor<1, dim, VectorizedArray<number>> source_value =
+            pf_force_value + pf_drag_value;
 
           // Gather void fraction value and gradient
           auto vf_value    = this->void_fraction(cell, q);
@@ -627,8 +631,9 @@ VANSOperator<dim, number>::local_evaluate_residual(
                         tau * vf_value * value[k] * gradient[i][l] * value[l];
                     }
                   // + (ɛ∇p - ɛf)τ(u·∇)v
-                  gradient_result[i][k] += tau * value[k] *
-                                           (vf_value *gradient[dim][i] - source_value[i]);
+                  gradient_result[i][k] +=
+                    tau * value[k] *
+                    (vf_value * gradient[dim][i] - source_value[i]);
 
                   // + (ɛ∂t u)τ(u·∇)v
                   if (transient)

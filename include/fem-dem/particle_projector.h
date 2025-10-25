@@ -251,10 +251,10 @@ public:
     , particle_have_been_projected(false)
     , particle_velocity(triangulation, fe_degree, simplex, true, false)
     , fluid_force_on_particles_two_way_coupling(triangulation,
-                                            fe_degree,
-                                            simplex,
-                                            false,
-                                            true)
+                                                fe_degree,
+                                                simplex,
+                                                false,
+                                                true)
     , fluid_drag_on_particles(triangulation, fe_degree, simplex, false, true)
   {
     if (simplex)

@@ -259,7 +259,8 @@ test_void_fraction_qcm(const unsigned int fe_degree,
                                particle_projector.void_fraction_solution,
                                "void_fraction");
       data_out.add_data_vector(
-        particle_projector.fluid_force_on_particles_two_way_coupling.dof_handler,
+        particle_projector.fluid_force_on_particles_two_way_coupling
+          .dof_handler,
         particle_projector.fluid_force_on_particles_two_way_coupling
           .particle_field_solution,
         "force_pf");

@@ -75,8 +75,8 @@ MFNavierStokesVANSPreconditionGMG<dim>::initialize(
           this->pf_force_dof_handlers[l].reinit(
             this->dof_handlers[l].get_triangulation());
           this->pf_force_dof_handlers[l].distribute_dofs(
-            particle_projector.fluid_force_on_particles_two_way_coupling.dof_handler
-              .get_fe());
+            particle_projector.fluid_force_on_particles_two_way_coupling
+              .dof_handler.get_fe());
 
           // Particle-fluid drag
           this->pf_drag_dof_handlers[l].reinit(
@@ -151,7 +151,8 @@ MFNavierStokesVANSPreconditionGMG<dim>::initialize(
         });
 
       this->mg_transfer_gc_pf_force->build(
-        particle_projector.fluid_force_on_particles_two_way_coupling.dof_handler,
+        particle_projector.fluid_force_on_particles_two_way_coupling
+          .dof_handler,
         [&](const auto l, auto &vec) {
           vec.reinit(this->pf_force_dof_handlers[l].locally_owned_dofs(),
                      DoFTools::extract_locally_active_dofs(
@@ -206,7 +207,8 @@ MFNavierStokesVANSPreconditionGMG<dim>::initialize(
 
       // Particle-fluid force
       this->mg_transfer_gc_pf_force->interpolate_to_mg(
-        particle_projector.fluid_force_on_particles_two_way_coupling.dof_handler,
+        particle_projector.fluid_force_on_particles_two_way_coupling
+          .dof_handler,
         mg_pf_forces_solution,
         particle_projector.fluid_force_on_particles_two_way_coupling
           .particle_field_solution);
@@ -412,8 +414,8 @@ FluidDynamicsVANSMatrixFree<dim>::assemble_system_rhs()
   // The base matrix-free operator is not aware of the various VANS
   // coupling term. We must do a cast here to ensure that the operator is
   // of the right type.
-  if (auto mf_operator = dynamic_cast<VANSOperator<dim, double> *>(
-        this->system_operator.get()))
+  if (auto mf_operator =
+        dynamic_cast<VANSOperator<dim, double> *>(this->system_operator.get()))
     {
       // Project again the forces acting on the particles
       particle_projector.calculate_particle_fluid_forces_projection(
@@ -430,7 +432,8 @@ FluidDynamicsVANSMatrixFree<dim>::assemble_system_rhs()
           *this->face_quadrature));
 
       TimerOutput::Scope t(this->computing_timer,
-                          "Prepare MF operator for VANS");;
+                           "Prepare MF operator for VANS");
+      ;
 
       mf_operator->compute_particle_fluid_force(
         particle_projector.fluid_force_on_particles_two_way_coupling
@@ -499,18 +502,17 @@ FluidDynamicsVANSMatrixFree<dim>::gather_output_hook()
                          name,
                          component_interpretation);
 
-  std::vector<std::string>
-    force_names(
-      dim, "fluid_drag_on_particles");
+  std::vector<std::string> force_names(dim, "fluid_drag_on_particles");
   std::vector<DataComponentInterpretation::DataComponentInterpretation>
-      force_component_interpretation(
-        dim, DataComponentInterpretation::component_is_part_of_vector);
+    force_component_interpretation(
+      dim, DataComponentInterpretation::component_is_part_of_vector);
 
   OutputStructSolution<dim, LinearAlgebra::distributed::Vector<double>>
-  particle_fluid_drag_struct(particle_projector.fluid_drag_on_particles.dof_handler,
-                      particle_projector.fluid_drag_on_particles.particle_field_solution,
-                      force_names,
-                      force_component_interpretation);
+    particle_fluid_drag_struct(
+      particle_projector.fluid_drag_on_particles.dof_handler,
+      particle_projector.fluid_drag_on_particles.particle_field_solution,
+      force_names,
+      force_component_interpretation);
 
 
   return {void_fraction_struct, particle_fluid_drag_struct};
@@ -627,7 +629,7 @@ FluidDynamicsVANSMatrixFree<dim>::solve()
             particle_projector.fluid_drag_on_particles.particle_field_solution
               .update_ghost_values();
             particle_projector.particle_velocity.particle_field_solution
-  .update_ghost_values();
+              .update_ghost_values();
 
             mf_operator->compute_particle_fluid_force(
               particle_projector.fluid_force_on_particles_two_way_coupling
@@ -635,7 +637,8 @@ FluidDynamicsVANSMatrixFree<dim>::solve()
               particle_projector.fluid_force_on_particles_two_way_coupling
                 .particle_field_solution,
               particle_projector.fluid_drag_on_particles.dof_handler,
-              particle_projector.fluid_drag_on_particles.particle_field_solution,
+              particle_projector.fluid_drag_on_particles
+                .particle_field_solution,
               particle_projector.particle_velocity.dof_handler,
               particle_projector.particle_velocity.particle_field_solution);
           }
