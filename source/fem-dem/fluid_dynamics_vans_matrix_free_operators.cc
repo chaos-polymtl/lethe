@@ -173,7 +173,12 @@ VANSOperator<dim, number>::compute_particle_fluid_force(
                                                      cell_pf_drag);
 
           // Reinit the particle velocity
+          fe_values_particle_velocity.reinit(
+            this->matrix_free.get_cell_iterator(cell, lane)
+              ->as_dof_handler_iterator(particle_velocity_dof_handler));
 
+          fe_values_force[force].get_function_values(particle_velocity_solution,
+                                                     cell_particle_velocity);
 
           for (const auto q : fe_values_force.quadrature_point_indices())
             {
