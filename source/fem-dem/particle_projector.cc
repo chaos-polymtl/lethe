@@ -1557,7 +1557,7 @@ ParticleProjector<dim>::calculate_particle_fluid_forces_projection(
               cell,
               void_fraction_cell,
               fluid_solution,
-              fluid_previous_solutions[0],
+              fluid_solution,
               void_fraction_solution,
               *particle_handler,
               cfd_dem_parameters.drag_coupling);
@@ -1568,7 +1568,7 @@ ParticleProjector<dim>::calculate_particle_fluid_forces_projection(
                 cell,
                 void_fraction_cell,
                 fluid_solution,
-                fluid_previous_solutions[0],
+                fluid_solution,
                 void_fraction_locally_relevant,
                 *particle_handler,
                 cfd_dem_parameters.drag_coupling);
@@ -1588,11 +1588,11 @@ ParticleProjector<dim>::calculate_particle_fluid_forces_projection(
   particle_handler->update_ghost_particles();
 
   // We project both the fluid force (without drag) and the drag force.
-  announce_string(this->pcout, "Particle-fluid forces");
+  //announce_string(this->pcout, "Particle-fluid forces");
   calculate_field_projection(fluid_force_on_particles_two_way_coupling);
-  announce_string(this->pcout, "Particle-fluid drag");
+  //announce_string(this->pcout, "Particle-fluid drag");
   calculate_field_projection(fluid_drag_on_particles);
-  announce_string(this->pcout, "Particle velocity");
+  //announce_string(this->pcout, "Particle velocity");
   calculate_field_projection(particle_velocity);
 }
 
