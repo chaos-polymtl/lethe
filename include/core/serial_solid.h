@@ -186,6 +186,34 @@ public:
     return id;
   }
 
+  struct cell_comparison
+  {
+    inline bool
+    operator()(
+      const typename Triangulation<dim, spacedim>::active_cell_iterator &cell_1,
+      const typename Triangulation<dim, spacedim>::active_cell_iterator &cell_2)
+      const
+    {
+      return cell_1->global_active_cell_index() <
+             cell_2->global_active_cell_index();
+    }
+  };
+
+  typedef std::map<
+    typename Triangulation<dim, spacedim>::active_cell_iterator,
+    std::vector<
+      std::pair<typename Triangulation<dim, spacedim>::active_cell_iterator,
+                bool>>,
+    cell_comparison>
+    triangulation_cell_neighbors_map;
+
+  inline std::tuple<triangulation_cell_neighbors_map,
+                    triangulation_cell_neighbors_map>
+  get_neighbors_maps() const
+  {
+    return std::make_tuple(es_neighbors, vs_neighbors);
+  }
+
   /**
    * @brief Update the temperature of the solid object, which is a function of time.
    *
@@ -317,33 +345,10 @@ private:
   Parameters::ThermalBoundaryType     thermal_boundary_type;
   double                              current_solid_temperature;
 
-  struct cut_cell_comparison
-  {
-    inline bool
-    operator()(
-      const typename Triangulation<dim, spacedim>::active_cell_iterator &cell_1,
-      const typename Triangulation<dim, spacedim>::active_cell_iterator &cell_2)
-      const
-    {
-      return cell_1->global_active_cell_index() <
-             cell_2->global_active_cell_index();
-    }
-  };
-
-  typedef std::map<
-    typename Triangulation<dim, spacedim>::active_cell_iterator,
-    std::vector<typename Triangulation<dim, spacedim>::active_cell_iterator>,
-    cut_cell_comparison>
-    triangulation_cell_neighbors_map;
-
-  // CP : coplanar
-  // NP : non-coplanar
   // ES : edge-sharing
   // VS : vertex-sharing
-  triangulation_cell_neighbors_map cp_es_neighbors;
-  triangulation_cell_neighbors_map np_es_neighbors;
-  triangulation_cell_neighbors_map cp_vs_neighbors;
-  triangulation_cell_neighbors_map np_vs_neighbors;
+  triangulation_cell_neighbors_map es_neighbors;
+  triangulation_cell_neighbors_map vs_neighbors;
 };
 
 #endif
