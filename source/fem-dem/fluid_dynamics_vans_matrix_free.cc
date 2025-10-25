@@ -419,7 +419,7 @@ FluidDynamicsVANSMatrixFree<dim>::assemble_system_rhs()
       particle_projector.calculate_particle_fluid_forces_projection(
         this->cfd_dem_simulation_parameters.cfd_dem,
         this->dof_handler,
-        this->present_solution,
+        this->evaluation_point,
         this->previous_solutions,
         NavierStokesScratchData<dim>(
           this->simulation_control,
@@ -599,7 +599,7 @@ FluidDynamicsVANSMatrixFree<dim>::solve()
         particle_projector.calculate_particle_fluid_forces_projection(
           this->cfd_dem_simulation_parameters.cfd_dem,
           this->dof_handler,
-          this->evaluation_point,
+          this->present_solution,
           this->previous_solutions,
           NavierStokesScratchData<dim>(
             this->simulation_control,
