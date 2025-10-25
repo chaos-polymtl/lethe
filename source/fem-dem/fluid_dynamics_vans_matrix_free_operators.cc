@@ -107,10 +107,10 @@ VANSOperator<dim, number>::compute_void_fraction(
 template <int dim, typename number>
 void
 VANSOperator<dim, number>::compute_particle_fluid_force(
-  const DoFHandler<dim>                            &pf_force_dof_handler,
-  const LinearAlgebra::distributed::Vector<double> &pf_force_solution,
-  const DoFHandler<dim>                            &pf_drag_dof_handler,
-  const LinearAlgebra::distributed::Vector<double> &pf_drag_solution,
+  const DoFHandler<dim>                            &fp_force_dof_handler,
+  const LinearAlgebra::distributed::Vector<double> &fp_force_solution,
+  const DoFHandler<dim>                            &fp_drag_dof_handler,
+  const LinearAlgebra::distributed::Vector<double> &fp_drag_solution,
   const DoFHandler<dim> &particle_velocity_dof_handler,
   const LinearAlgebra::distributed::Vector<double> &particle_velocity_solution)
 {
@@ -127,12 +127,12 @@ VANSOperator<dim, number>::compute_particle_fluid_force(
   // We create one FE_values per field that we wish to interpolate. This comes
   // with a significant overhead, but that's life.
   FEValues<dim> fe_values_force(*(this->matrix_free.get_mapping_info().mapping),
-                                pf_force_dof_handler.get_fe(),
+                                fp_force_dof_handler.get_fe(),
                                 this->matrix_free.get_quadrature(),
                                 update_values);
 
   FEValues<dim> fe_values_drag(*(this->matrix_free.get_mapping_info().mapping),
-                               pf_force_dof_handler.get_fe(),
+                               fp_force_dof_handler.get_fe(),
                                this->matrix_free.get_quadrature(),
                                update_values);
 
@@ -142,9 +142,9 @@ VANSOperator<dim, number>::compute_particle_fluid_force(
     this->matrix_free.get_quadrature(),
     update_values);
 
-  std::vector<Tensor<1, dim>> cell_pf_force(
+  std::vector<Tensor<1, dim>> cell_fp_force(
     fe_values_force.n_quadrature_points);
-  std::vector<Tensor<1, dim>> cell_pf_drag(fe_values_drag.n_quadrature_points);
+  std::vector<Tensor<1, dim>> cell_fp_drag(fe_values_drag.n_quadrature_points);
   std::vector<Tensor<1, dim>> cell_particle_velocity(
     fe_values_particle_velocity.n_quadrature_points);
 
@@ -159,18 +159,18 @@ VANSOperator<dim, number>::compute_particle_fluid_force(
           // Reinit the particle-fluid force
           fe_values_force.reinit(
             this->matrix_free.get_cell_iterator(cell, lane)
-              ->as_dof_handler_iterator(pf_force_dof_handler));
+              ->as_dof_handler_iterator(fp_force_dof_handler));
 
-          fe_values_force[force].get_function_values(pf_force_solution,
-                                                     cell_pf_force);
+          fe_values_force[force].get_function_values(fp_force_solution,
+                                                     cell_fp_force);
 
           // Reinit the drag
           fe_values_drag.reinit(
             this->matrix_free.get_cell_iterator(cell, lane)
-              ->as_dof_handler_iterator(pf_drag_dof_handler));
+              ->as_dof_handler_iterator(fp_drag_dof_handler));
 
-          fe_values_force[force].get_function_values(pf_drag_solution,
-                                                     cell_pf_drag);
+          fe_values_drag[force].get_function_values(fp_drag_solution,
+                                                     cell_fp_drag);
 
           // Reinit the particle velocity
           fe_values_particle_velocity.reinit(
@@ -184,8 +184,8 @@ VANSOperator<dim, number>::compute_particle_fluid_force(
             {
               for (int c = 0; c < dim; ++c)
                 {
-                  particle_fluid_force[cell][q][c][lane] = cell_pf_force[q][c];
-                  particle_fluid_drag[cell][q][c][lane]  = cell_pf_drag[q][c];
+                  particle_fluid_force[cell][q][c][lane] = -cell_fp_force[q][c];
+                  particle_fluid_drag[cell][q][c][lane]  = -cell_fp_drag[q][c];
                   particle_velocity[cell][q][c][lane] =
                     cell_particle_velocity[q][c];
                 }
@@ -288,10 +288,8 @@ VANSOperator<dim, number>::do_cell_integral_local(
       auto previous_hessian_diagonal =
         this->nonlinear_previous_hessian_diagonal(cell, q);
 
-      // Add to source term the particle-fluid force and the drag force (if they
-      // enabled) We divide this source by the void fraction value since it is
-      // multiplied by the void fraction value within the assembler.
-      source_value += -pf_force_value - pf_drag_value;
+      // Add to source term the particle-fluid force and the drag force
+      source_value += pf_force_value + pf_drag_value;
 
       Tensor<1, dim + 1, VectorizedArray<number>> previous_time_derivatives;
       if (transient)
@@ -488,11 +486,11 @@ VANSOperator<dim, number>::local_evaluate_residual(
 
           // Evaluate source term function if enabled
           if (this->forcing_function)
-            source_value = this->forcing_terms(cell, q);
+            source_value = this->forcing_terms(cell, q) * vf_value;
 
           // Add to source term the dynamic flow control force (zero if
           // not enabled)
-          source_value += this->beta_force;
+          source_value += this->beta_force * vf_value;
 
           // Gather the original value/gradient
           typename FECellIntegrator::value_type value = integrator.get_value(q);
@@ -508,7 +506,7 @@ VANSOperator<dim, number>::local_evaluate_residual(
           // Add to source term the particle-fluid force (zero if not enabled)
           // We divide this source by the void fraction value since it is
           // multiplied by the void fraction value within the assembler.
-          source_value += -(pf_force_value + pf_drag_value) / vf_value;
+          source_value += pf_force_value + pf_drag_value;
 
           // Time derivatives of previous solutions
           Tensor<1, dim + 1, VectorizedArray<number>> previous_time_derivatives;
@@ -535,7 +533,7 @@ VANSOperator<dim, number>::local_evaluate_residual(
               gradient_result[i][i] += -vf_value * value[dim];
 
               // -(v,ɛf)
-              value_result[i] = -vf_value * source_value[i];
+              value_result[i] = -source_value[i];
 
               // -(v,p∇ɛ)
               value_result[i] += -vf_gradient[i] * value[dim];
@@ -572,7 +570,7 @@ VANSOperator<dim, number>::local_evaluate_residual(
                      gradient[i][k] * value[k]);
                 }
               // +(-ɛf)·τ∇q
-              gradient_result[dim][i] += tau * (-vf_value * source_value[i]);
+              gradient_result[dim][i] += tau * (-source_value[i]);
 
               // +(ɛ∂t u)·τ∇q
               if (transient)
@@ -615,8 +613,8 @@ VANSOperator<dim, number>::local_evaluate_residual(
                         tau * vf_value * value[k] * gradient[i][l] * value[l];
                     }
                   // + (ɛ∇p - ɛf)τ(u·∇)v
-                  gradient_result[i][k] += tau * value[k] * vf_value *
-                                           (gradient[dim][i] - source_value[i]);
+                  gradient_result[i][k] += tau * value[k] *
+                                           (vf_value *gradient[dim][i] - source_value[i]);
 
                   // + (ɛ∂t u)τ(u·∇)v
                   if (transient)
