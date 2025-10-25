@@ -302,7 +302,7 @@ VANSOperator<dim, number>::do_cell_integral_local(
           drag_force_norm += Utilities::fixed_power<2>(pf_drag_value[i]);
           relative_velocity_norm += Utilities::fixed_power<2>(particle_velocity[i]- previous_values[i]);
         }
-      relative_velocity_norm = sqrt(relative_velocity_norm)+1e-14;
+      relative_velocity_norm = sqrt(relative_velocity_norm)+1e-6;
       VectorizedArray<number> beta_momentum_exchange = sqrt(drag_force_norm/relative_velocity_norm);
 
       Tensor<1, dim + 1, VectorizedArray<number>> previous_time_derivatives;
