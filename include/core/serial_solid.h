@@ -201,17 +201,20 @@ public:
 
   typedef std::map<
     typename Triangulation<dim, spacedim>::active_cell_iterator,
-    std::vector<
-      std::pair<typename Triangulation<dim, spacedim>::active_cell_iterator,
-                bool>>,
+    std::vector<typename Triangulation<dim, spacedim>::active_cell_iterator>,
     cell_comparison>
     triangulation_cell_neighbors_map;
 
   inline std::tuple<triangulation_cell_neighbors_map,
+                    triangulation_cell_neighbors_map,
+                    triangulation_cell_neighbors_map,
                     triangulation_cell_neighbors_map>
   get_neighbors_maps() const
   {
-    return std::make_tuple(es_neighbors, vs_neighbors);
+    return std::make_tuple(cp_es_neighbors,
+                           cp_vs_neighbors,
+                           np_es_neighbors,
+                           np_vs_neighbors);
   }
 
   /**
@@ -345,10 +348,14 @@ private:
   Parameters::ThermalBoundaryType     thermal_boundary_type;
   double                              current_solid_temperature;
 
+  // CP : coplanar
+  // NP : non-coplanar
   // ES : edge-sharing
   // VS : vertex-sharing
-  triangulation_cell_neighbors_map es_neighbors;
-  triangulation_cell_neighbors_map vs_neighbors;
+  triangulation_cell_neighbors_map cp_es_neighbors;
+  triangulation_cell_neighbors_map np_es_neighbors;
+  triangulation_cell_neighbors_map cp_vs_neighbors;
+  triangulation_cell_neighbors_map np_vs_neighbors;
 };
 
 #endif
