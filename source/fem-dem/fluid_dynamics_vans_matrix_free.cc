@@ -600,7 +600,7 @@ FluidDynamicsVANSMatrixFree<dim>::solve()
           this->cfd_dem_simulation_parameters.cfd_dem,
           this->dof_handler,
           this->evaluation_point,
-          this->evaluation_point,
+          this->previous_solutions,
           NavierStokesScratchData<dim>(
             this->simulation_control,
             this->simulation_parameters.physical_properties_manager,
