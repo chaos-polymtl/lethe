@@ -150,8 +150,8 @@ ParticleProjector<dim>::setup_dofs()
   // is ok since this will just take a little bit of extra memory. If this
   // becomes an issue, we can enable/disable their allocation with an additional
   // bool parameter inside the CFD-DEM parameters.
-  particle_fluid_force_two_way_coupling.setup_dofs();
-  particle_fluid_drag.setup_dofs();
+  fluid_force_on_particles_two_way_coupling.setup_dofs();
+  fluid_drag_on_particles.setup_dofs();
   particle_velocity.setup_dofs();
 }
 
@@ -1530,11 +1530,6 @@ ParticleProjector<dim>::calculate_particle_fluid_forces_projection(
           std::make_shared<VANSAssemblerShearForce<dim>>(cfd_dem_parameters));
     }
 
-  AssertThrow(
-    cfd_dem_parameters.buoyancy_force == false,
-    ExcMessage(
-      "The use of the buoyancy force is currently not supported with the volume-projection mechanism for the particle-fluid forces."));
-
   scratch_data.enable_void_fraction(*fe, *quadrature, *mapping);
 
   scratch_data.enable_particle_fluid_interactions(
@@ -1606,9 +1601,9 @@ ParticleProjector<dim>::calculate_particle_fluid_forces_projection(
 
   // We project both the fluid force (without drag) and the drag force.
   announce_string(this->pcout, "Particle-fluid forces");
-  calculate_field_projection(particle_fluid_force_two_way_coupling);
+  calculate_field_projection(fluid_force_on_particles_two_way_coupling);
   announce_string(this->pcout, "Particle-fluid drag");
-  calculate_field_projection(particle_fluid_drag);
+  calculate_field_projection(fluid_drag_on_particles);
   announce_string(this->pcout, "Particle velocity");
   calculate_field_projection(particle_velocity);
 }
