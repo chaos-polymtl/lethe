@@ -629,10 +629,8 @@ SerialSolid<dim, spacedim>::setup_containers()
   for (const auto &main_cell : solid_tria->active_cell_iterators())
     {
       // Initializing the containers associated with the main cell
-      std::vector<
-        std::pair<typename Triangulation<dim, spacedim>::active_cell_iterator,
-                  bool>>
-        es_main_cell, vs_main_cell;
+      std::vector<typename Triangulation<dim, spacedim>::active_cell_iterator>
+        cp_es_main_cell, np_es_main_cell, cp_vs_main_cell, np_vs_main_cell;
 
       // Number of vertices of the main cell
       const unsigned int n_vertices_main_cell = main_cell->n_vertices();
@@ -678,15 +676,29 @@ SerialSolid<dim, spacedim>::setup_containers()
                   main_cell_vertex_indices.end())
                 n_sharing_vertices++;
             }
+          // Coplanar
+          if (coplanar)
+            {
+              // Sharing 1 vertex
+              if (n_sharing_vertices == 1)
+                cp_vs_main_cell.push_back(neigh_cell);
+              else // Sharing 2 vertex
 
-          if (n_sharing_vertices == 1)
-            vs_main_cell.emplace_back(neigh_cell, coplanar);
-
-          else // Sharing 2 vertex
-            es_main_cell.emplace_back(neigh_cell, coplanar);
+                cp_es_main_cell.push_back(neigh_cell);
+            }
+          else
+            {
+              // Sharing 1 vertex
+              if (n_sharing_vertices == 1)
+                np_vs_main_cell.push_back(neigh_cell);
+              else // Sharing 2 vertex
+                np_es_main_cell.push_back(neigh_cell);
+            }
         }
-      es_neighbors.insert(std::make_pair(main_cell, es_main_cell));
-      vs_neighbors.insert(std::make_pair(main_cell, vs_main_cell));
+      cp_es_neighbors.insert(std::make_pair(main_cell, cp_es_main_cell));
+      cp_vs_neighbors.insert(std::make_pair(main_cell, cp_vs_main_cell));
+      np_es_neighbors.insert(std::make_pair(main_cell, np_es_main_cell));
+      np_vs_neighbors.insert(std::make_pair(main_cell, np_vs_main_cell));
     }
 }
 
