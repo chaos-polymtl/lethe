@@ -61,8 +61,10 @@ public:
   /**
    * @brief Compute the terms required to assemble the particle-fluid forces at
    * the gauss points. The function gathers the particle-fluid force (without
-   * drag), the particle-fluid drag and the particle velocity. With these three
-   * elements, the full particle-fluid coupling and its jacobian can be
+   * drag), the particle-fluid drag and the particle velocity. The function assumes that
+   * the all of the fields gathered from the projectors are the forces acting on the particles due to the fluid.
+   * Consequently, since this aims to gather the forces that apply on the fluid due to the particles, a (-) multiplicator is applied during the gathering stage.
+   * With these three elements, the full particle-fluid coupling and its jacobian can be
    * established within the matrix-free operator.
    *
    * @param[in] fp_force_dof_handler The dof handler associated with the
