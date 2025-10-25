@@ -417,6 +417,9 @@ FluidDynamicsVANSMatrixFree<dim>::assemble_system_rhs()
   if (auto mf_operator =
         dynamic_cast<VANSOperator<dim, double> *>(this->system_operator.get()))
     {
+      TimerOutput::Scope t(this->computing_timer,
+                           "Prepare MF operator for VANS");
+
       // Project again the forces acting on the particles
       particle_projector.calculate_particle_fluid_forces_projection(
         this->cfd_dem_simulation_parameters.cfd_dem,
@@ -430,10 +433,6 @@ FluidDynamicsVANSMatrixFree<dim>::assemble_system_rhs()
           *this->cell_quadrature,
           *this->mapping,
           *this->face_quadrature));
-
-      TimerOutput::Scope t(this->computing_timer,
-                           "Prepare MF operator for VANS");
-      ;
 
       mf_operator->compute_particle_fluid_force(
         particle_projector.fluid_force_on_particles_two_way_coupling

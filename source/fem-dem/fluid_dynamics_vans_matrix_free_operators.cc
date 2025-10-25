@@ -299,18 +299,25 @@ VANSOperator<dim, number>::do_cell_integral_local(
 
       // Calculate norm of the relative velocity and of the drag force and use
       // it to calculate the beta momentum exchnage coefficient A tolerance is
-      // added (1e-14) to prevent division by 0 and occurence of NaN.
-      VectorizedArray<number> drag_force_norm        = 0.;
-      VectorizedArray<number> relative_velocity_norm = 0.;
+      // added (1e-9) to prevent division by 0 and occurence of NaN.
+      VectorizedArray<number> drag_force_norm                = 0.;
+      VectorizedArray<number> relative_velocity_norm_squared = 0.;
+      VectorizedArray<number> drag_force_dot_u_rel           = 0.;
+
       for (unsigned int i = 0; i < dim; ++i)
         {
+          drag_force_dot_u_rel +=
+            pf_drag_value[i] * (particle_velocity[i] - previous_values[i]);
           drag_force_norm += Utilities::fixed_power<2>(pf_drag_value[i]);
-          relative_velocity_norm += Utilities::fixed_power<2>(
+          relative_velocity_norm_squared += Utilities::fixed_power<2>(
             particle_velocity[i] - previous_values[i]);
         }
-      relative_velocity_norm = sqrt(relative_velocity_norm) + 1e-9;
+      relative_velocity_norm_squared += 1e-6;
+      // Since the drag force and the relative velocity are both first rank
+      // tensor extracting beta is that directly define. We do it in a
+      // projection fashion.
       VectorizedArray<number> beta_momentum_exchange =
-        sqrt(drag_force_norm / relative_velocity_norm);
+        drag_force_dot_u_rel / relative_velocity_norm_squared;
 
       Tensor<1, dim + 1, VectorizedArray<number>> previous_time_derivatives;
       if (transient)
