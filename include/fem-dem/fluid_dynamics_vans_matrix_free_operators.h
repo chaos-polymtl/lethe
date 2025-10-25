@@ -65,23 +65,23 @@ public:
    * elements, the full particle-fluid coupling and its jacobian can be
    * established within the matrix-free operator.
    *
-   * @param[in] pf_force_dof_handler The dof handler associated with the
+   * @param[in] fp_force_dof_handler The dof handler associated with the
    * particle-fluid forces.
-   * @param[in] pf_force_solution The solution of the particle-fluid forces.
-   * @param[in] pf_drag_dof_handler The dof handler associated with the
+   * @param[in] fp_force_solution The solution of the particle-fluid forces.
+   * @param[in] fp_drag_dof_handler The dof handler associated with the
    * drag force.
-   * @param[in] pf_drag_solution The solution of the drag force.
+   * @param[in] fp_drag_solution The solution of the drag force.
    * @param[in] particle_velocity_dof_handler The dof handler associated with
    * the particle velocity.
-   * @param[in] pf_drag_solution The solution of the particle velocity.
+   * @param[in] fp_drag_solution The solution of the particle velocity.
    *
    */
   void
   compute_particle_fluid_force(
-    const DoFHandler<dim>                            &pf_force_dof_handler,
-    const LinearAlgebra::distributed::Vector<double> &pf_force_solution,
-    const DoFHandler<dim>                            &pf_drag_dof_handler,
-    const LinearAlgebra::distributed::Vector<double> &pf_drag_solution,
+    const DoFHandler<dim>                            &fp_force_dof_handler,
+    const LinearAlgebra::distributed::Vector<double> &fp_force_solution,
+    const DoFHandler<dim>                            &fp_drag_dof_handler,
+    const LinearAlgebra::distributed::Vector<double> &fp_drag_solution,
     const DoFHandler<dim> &particle_velocity_dof_handler,
     const LinearAlgebra::distributed::Vector<double>
       &particle_velocity_solution);
