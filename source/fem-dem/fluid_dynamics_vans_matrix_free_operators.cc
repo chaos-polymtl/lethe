@@ -300,7 +300,6 @@ VANSOperator<dim, number>::do_cell_integral_local(
       // Calculate norm of the relative velocity and of the drag force and use
       // it to calculate the beta momentum exchnage coefficient A tolerance is
       // added (1e-9) to prevent division by 0 and occurence of NaN.
-      VectorizedArray<number> drag_force_norm                = 0.;
       VectorizedArray<number> relative_velocity_norm_squared = 0.;
       VectorizedArray<number> drag_force_dot_u_rel           = 0.;
 
@@ -308,7 +307,6 @@ VANSOperator<dim, number>::do_cell_integral_local(
         {
           drag_force_dot_u_rel +=
             pf_drag_value[i] * (particle_velocity[i] - previous_values[i]);
-          drag_force_norm += Utilities::fixed_power<2>(pf_drag_value[i]);
           relative_velocity_norm_squared += Utilities::fixed_power<2>(
             particle_velocity[i] - previous_values[i]);
         }
