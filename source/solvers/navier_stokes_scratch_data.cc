@@ -740,7 +740,7 @@ NavierStokesScratchData<dim>::calculate_cell_void_fraction(
     this->fe_values_void_fraction->get_JxW_values());
 
   // The cell_void_fraction vector needs to be resized to the correct size
-  // since the quadrature used in the FeValues for the void fraction will
+  // since the quadrature used in the FEValues for the void fraction will
   // be tailored exactly to the number of particles.
   // We also initialize it to zero and it will be filled if a cell-averaged
   // void fraction is used.
