@@ -3,6 +3,12 @@
 All notable changes to the Lethe project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
+### [Master] - 2025-10-25
+
+### Changed
+
+- MINOR The array used to calculate the void fraction at the particle location was not being resized to the number of particles, but it was kept at a constant size corresponding to the maximum number of particles. This could lead to a weird segmentation fault in some edge cases that I have not found an easy way to reproduce. This is fixed by resizing the array to be consistent with the number of particles. [#1732] (https://github.com/chaos-polymtl/lethe/pull/1732)
+
 ### [Master] - 2025-10-23
 
 ### Changed

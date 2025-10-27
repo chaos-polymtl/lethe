@@ -739,6 +739,13 @@ NavierStokesScratchData<dim>::calculate_cell_void_fraction(
   cell_volume = compute_cell_measure_with_JxW(
     this->fe_values_void_fraction->get_JxW_values());
 
+  // The cell_void_fraction vector needs to be resized to the correct size
+  // since the quadrature used in the FEValues for the void fraction will
+  // be tailored exactly to the number of particles.
+  // We also initialize it to zero and it will be filled if a cell-averaged
+  // void fraction is used.
+  cell_void_fraction.resize(number_of_particles, 0);
+
   if (!this->interpolated_void_fraction)
     {
       double cell_void_fraction_bulk = 0;
@@ -748,9 +755,6 @@ NavierStokesScratchData<dim>::calculate_cell_void_fraction(
       for (unsigned int j = 0; j < number_of_particles; ++j)
         cell_void_fraction[j] = cell_void_fraction_bulk;
     }
-  else
-    for (unsigned int j = 0; j < number_of_particles; ++j)
-      cell_void_fraction[j] = 0;
 }
 
 template <int dim>
