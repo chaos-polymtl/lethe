@@ -471,7 +471,7 @@ Return a bool that describes  if a cell contains a specific point
       normalize_residual_by_volume ? this->get_global_volume() : 1.0;
     const double current_residual =
       this->system_rhs.l2_norm() / normalize_volume;
-    double scalling = this->simulation_parameters.non_linear_solver
+    double scaling = this->simulation_parameters.non_linear_solver
                         .at(PhysicsID::fluid_dynamics)
                         .tolerance /
                       this->simulation_parameters.particlesParameters
