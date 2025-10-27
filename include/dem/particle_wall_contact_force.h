@@ -1039,6 +1039,18 @@ private:
   void
   set_multiphysic_properties(const DEMSolverParameters<dim> &dem_parameters);
 
+  /**
+   * @brief Clears the tangential displacement and rolling resistance spring torque
+   * from a contact info structure.
+   *
+   */
+  static void
+  clear_contact_info(particle_wall_contact_info<dim> &contact_info)
+  {
+    contact_info.tangential_displacement.clear();
+    contact_info.rolling_resistance_spring_torque.clear();
+  }
+
   // Members of the class
 
   unsigned int        n_particle_types;
