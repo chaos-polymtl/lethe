@@ -415,7 +415,7 @@ outer(const Tensor<1, dim, Number> &value, const Tensor<1, dim, Number> &normal)
 {
   Tensor<2, dim, Number> result;
 
-  for (unsigned int c = 0; c < dim; ++c)
+  for (int c = 0; c < dim; ++c)
     result[c] = value[c] * normal;
 
   return result;
@@ -436,7 +436,7 @@ outer(const Tensor<1, n_components, Number> &value,
 {
   Tensor<1, n_components, Tensor<1, dim, Number>> result;
 
-  for (unsigned int c = 0; c < n_components; ++c)
+  for (int c = 0; c < n_components; ++c)
     result[c] = value[c] * normal;
 
   return result;
@@ -459,8 +459,8 @@ symm_scalar_product_add(Tensor<1, dim_, Tensor<1, dim, Number>> &v_gradient,
   for (int d = 0; d < dim; ++d)
     v_gradient[d][d] += u_gradient[d][d] * factor;
 
-  for (unsigned int e = 0; e < dim; ++e)
-    for (unsigned int d = e + 1; d < dim; ++d)
+  for (int e = 0; e < dim; ++e)
+    for (int d = e + 1; d < dim; ++d)
       {
         const auto tmp = (u_gradient[d][e] + u_gradient[e][d]) * (factor * 0.5);
         v_gradient[d][e] += tmp;
@@ -484,8 +484,8 @@ symm_scalar_product_add(Tensor<2, dim, Number>       &v_gradient,
   for (int d = 0; d < dim; ++d)
     v_gradient[d][d] += u_gradient[d][d] * factor;
 
-  for (unsigned int e = 0; e < dim; ++e)
-    for (unsigned int d = e + 1; d < dim; ++d)
+  for (int e = 0; e < dim; ++e)
+    for (int d = e + 1; d < dim; ++d)
       {
         const auto tmp = (u_gradient[d][e] + u_gradient[e][d]) * (factor * 0.5);
         v_gradient[d][e] += tmp;
@@ -533,6 +533,7 @@ template <int dim, typename Number>
 class CouplingEvaluationBase
 {
 public:
+  virtual ~CouplingEvaluationBase() = default;
   /**
    * Number of data points of type Number associated to a quadrature point.
    */
@@ -788,7 +789,7 @@ public:
   void
   write(const Tensor<1, dim, T> &in)
   {
-    for (unsigned int i = 0; i < dim; ++i)
+    for (int i = 0; i < dim; ++i)
       ptr[i] = in[i];
 
     ptr += dim;
@@ -813,7 +814,7 @@ private:
   void
   read(Tensor<1, dim, T> &out) const
   {
-    for (unsigned int i = 0; i < dim; ++i)
+    for (int i = 0; i < dim; ++i)
       out[i] = ptr[i];
 
     ptr += dim;

@@ -250,6 +250,7 @@ MortarManagerBase<dim>::get_points_ref(const Point<dim> &face_center,
   if (type == 0) // aligned
     {
       std::vector<Point<std::max(1, dim - 1)>> points;
+      points.reserve(n_quadrature_points);
 
       for (unsigned int q = 0; q < n_quadrature_points; ++q)
         points.emplace_back(quadrature.point(q));
@@ -278,6 +279,7 @@ MortarManagerBase<dim>::get_points_ref(const Point<dim> &face_center,
         }
 
       std::vector<Point<std::max(1, dim - 1)>> points;
+      points.reserve(2 * n_quadrature_points);
 
       for (unsigned int q = 0; q < n_quadrature_points; ++q)
         {
@@ -351,6 +353,7 @@ MortarManagerBase<dim>::get_weights(const Point<dim> &face_center,
         }
 
       std::vector<double> weights;
+      weights.reserve(2 * n_quadrature_points);
 
       for (unsigned int q = 0; q < n_quadrature_points; ++q)
         weights.emplace_back(radius[0] * quadrature.weight(q) *
@@ -819,10 +822,8 @@ CouplingOperator<dim, Number>::CouplingOperator(
                 for (const auto p : points_ref)
                   {
                     Point<dim - 1> temp;
-                    for (unsigned int i = 0, j = 0;
-                         i < static_cast<unsigned int>(dim);
-                         ++i)
-                      if ((face_no / 2) != i)
+                    for (int i = 0, j = 0; i < dim; ++i)
+                      if ((face_no / 2) != static_cast<unsigned int>(i))
                         temp[j++] = p[i];
 
                     if ((dim == 3) && ((face_no / 2) == 1))
