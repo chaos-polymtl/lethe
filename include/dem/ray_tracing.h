@@ -71,7 +71,7 @@ private:
    * simulation.
    * @param[in] pcout Printing in parallel
    */
-  void
+  static void
   print_insertion_info(const unsigned int       &inserted_photon,
                        const ConditionalOStream &pcout);
 
@@ -105,9 +105,8 @@ private:
    * @brief Execute the ray tracing algorithm to find intersection points between
    * photons and particles.
    *
-   * @tparam move_photon Boolean to indicate if the photon should move at the
-   * end of the loop. This is set to true when the loop is done on the local
-   * cell neighboring list.
+   * @tparam NeighborListType Type of the data structure containing the neighboring
+   * cells.
    *
    * @param[in] cell_list Data structure containing the local or ghost
    * neighboring cell to each local cell in the triangulation.
@@ -118,10 +117,10 @@ private:
    * intersection point, the intersection point and an iterator to the photon
    * that needs to be removed.
    */
-  template <bool move_photon>
+  template <typename NeighborListType>
   void
   find_intersection(
-    typename dem_data_structures<dim>::cells_neighbor_list &cell_list,
+    NeighborListType &cell_list,
     ankerl::unordered_dense::map<
       types::particle_index,
       std::tuple<double, Point<dim>, Particles::ParticleIterator<dim>>>
@@ -222,13 +221,13 @@ private:
    * @brief Container that shows the local/ghost neighbor cells of all local
    * cells in the triangulation. Note that they are reciprocal.
    */
+  using local_neighbor_list = dem_data_structures<dim>::cells_neighbor_list;
+  using ghost_neighbor_list = dem_data_structures<dim>::cells_neighbor_list;
 
   /// Local neighbor list
-  typename dem_data_structures<dim>::cells_neighbor_list
-    cells_local_neighbor_list;
+  local_neighbor_list cells_local_neighbor_list;
 
   /// Ghost neighbor list
-  typename dem_data_structures<dim>::cells_neighbor_list
-    cells_ghost_neighbor_list;
+  ghost_neighbor_list cells_ghost_neighbor_list;
 };
 #endif // lethe_ray_tracing_h

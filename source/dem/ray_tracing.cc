@@ -36,6 +36,7 @@ RayTracingSolver<dim>::RayTracingSolver(
                     TimerOutput::summary,
                     TimerOutput::wall_times)
   , background_dh(triangulation)
+  , displacement_distance(0)
 {
   AssertThrow(!(parameters.model_parameters.load_balance_method ==
                   Parameters::Lagrangian::ModelParameters<
@@ -216,7 +217,7 @@ RayTracingSolver<dim>::insert_particles_and_photons()
   // point when multiple intersections are found. The logic used therein is that
   // the intersection point which is closest to the initial location is the
   // correct one. We also store the displacement direction unit vector in this
-  // vector since each photon has its own slightly off set from the reference
+  // vector since each photon has its own slightly offset from the reference
   // displacement direction.
   std::vector<std::vector<double>> photon_properties;
 
@@ -349,7 +350,7 @@ RayTracingSolver<dim>::insert_particles_and_photons()
       // nth position in the x direction
       const unsigned int ix = rem % n_photons_each_directions.at(0);
 
-      // ID relative to this processor. This is used to write at the write
+      // ID relative to this processor. This is used to write at the right
       // location in each container.
       const unsigned int id_on_proc = id - first_id;
       temp_point =
@@ -389,7 +390,7 @@ RayTracingSolver<dim>::insert_particles_and_photons()
   ConditionalOStream pcout(std::cout,
                            Utilities::MPI::this_mpi_process(MPI_COMM_WORLD) ==
                              0);
-  this->print_insertion_info(n_total_photons_to_insert, pcout);
+  print_insertion_info(n_total_photons_to_insert, pcout);
 }
 
 template <int dim>
@@ -466,10 +467,10 @@ RayTracingSolver<dim>::finish_simulation(
 }
 
 template <int dim>
-template <bool move_photon>
+template <typename NeighborListType>
 void
 RayTracingSolver<dim>::find_intersection(
-  typename dem_data_structures<dim>::cells_neighbor_list &cell_list,
+  NeighborListType &cell_list,
   ankerl::unordered_dense::map<
     types::particle_index,
     std::tuple<double, Point<dim>, Particles::ParticleIterator<dim>>>
@@ -515,13 +516,12 @@ RayTracingSolver<dim>::find_intersection(
           // the main cell itself.
           auto &cell_neighbor_list = *cell_neighbor_list_iterator;
 
-
           auto starting_iterator = cell_neighbor_list.begin();
 
           // The intersection between the photon and the particles in the main
           // cell is checked when we are looping on the local cells, thus we
           // skip the main cell when we are looping on the ghost cells.
-          if constexpr (!move_photon)
+          if constexpr (std::is_same_v<NeighborListType, ghost_neighbor_list>)
             ++starting_iterator;
           for (auto current_neighboring_cell = starting_iterator;
                current_neighboring_cell != cell_neighbor_list.end();
@@ -625,7 +625,7 @@ RayTracingSolver<dim>::find_intersection(
                       if (new_distance < old_distance)
                         {
                           // if the new distance is smaller, we replace the
-                          // old one in the map. Otherwise we do nothing.
+                          // old one in the map. Otherwise, we do nothing.
                           photon_intersection_points_map[current_photon
                                                            ->get_id()] = {
                             new_distance, new_closest_point, current_photon};
@@ -637,7 +637,7 @@ RayTracingSolver<dim>::find_intersection(
           // step, we move the photons here since we are looping on each of
           // them in this loop. This way, we don't need to loop on each of
           // them at the end.
-          if constexpr (move_photon)
+          if constexpr (std::is_same_v<NeighborListType, local_neighbor_list>)
             {
               const Point<dim> new_photon_location =
                 current_photon_location +
@@ -715,11 +715,11 @@ RayTracingSolver<dim>::solve()
 
       photon_handler.sort_particles_into_subdomains_and_cells();
 
-      find_intersection<true>(cells_local_neighbor_list,
-                              photon_intersection_points_map);
+      find_intersection(cells_local_neighbor_list,
+                        photon_intersection_points_map);
 
-      find_intersection<false>(cells_ghost_neighbor_list,
-                               photon_intersection_points_map);
+      find_intersection(cells_ghost_neighbor_list,
+                        photon_intersection_points_map);
 
       // Remove all the photon that have found their intersection. In other
       // words, every photon that is present in the map. We also store the

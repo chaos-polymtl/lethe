@@ -34,23 +34,23 @@ Iteration : 6
 Remaining photon : 9696
 
 Iteration : 7
-Remaining photon : 9682
+Remaining photon : 4850
 
 Iteration : 8
-Remaining photon : 9651
+Remaining photon : 4840
 
 Iteration : 9
-Remaining photon : 9629
+Remaining photon : 4833
 
 Iteration : 10
-Remaining photon : 9604
+Remaining photon : 4829
 
 -->Repartitioning triangulation
 Load balance finished
-Average, minimum and maximum number of photons on the processors are 4802 , 4801 and 4803
-Minimum and maximum number of cells owned by the processors are 316 and 484
+Average, minimum and maximum number of photons on the processors are 2414.5 , 2397 and 2432
+Minimum and maximum number of cells owned by the processors are 253 and 505
 Iteration : 11
-Remaining photon : 9582
+Remaining photon : 3680
 
 x, y, z
 0.914666 0.903033 1.01955
