@@ -3449,7 +3449,6 @@ FluidDynamicsMatrixFree<dim>::solve_system_GMRES(const bool   initial_step,
                                                  const double absolute_residual,
                                                  const double relative_residual)
 {
-  auto &system_rhs          = this->system_rhs;
   auto &nonzero_constraints = this->nonzero_constraints;
 
   const AffineConstraints<double> &constraints_used =
@@ -3554,7 +3553,6 @@ FluidDynamicsMatrixFree<dim>::solve_system_direct(
   const double absolute_residual,
   const double relative_residual)
 {
-  auto &system_rhs          = this->system_rhs;
   auto &nonzero_constraints = this->nonzero_constraints;
 
   const AffineConstraints<double> &constraints_used =
