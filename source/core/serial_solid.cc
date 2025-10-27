@@ -68,12 +68,12 @@ SerialSolid<dim, spacedim>::SerialSolid(
   // Load triangulation
   initial_setup();
 
-  // if constexpr (dim == 2)
-  //   {
-  //     // Set-up containers
-  //     if (param->solid_mesh.simplex)
-  //       setup_containers();
-  //   }
+  if constexpr (dim == 2)
+    {
+      // Set-up containers
+      if (param->solid_mesh.simplex)
+        setup_containers();
+    }
 }
 
 template <int dim, int spacedim>
