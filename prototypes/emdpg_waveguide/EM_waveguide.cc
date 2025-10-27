@@ -50,6 +50,7 @@
 #include <deal.II/numerics/vector_tools.h>
 
 #include <complex>
+#include <filesystem>
 #include <fstream>
 #include <iostream>
 
@@ -70,8 +71,26 @@ namespace EM_DPG
 {
   using namespace dealii;
 
-  // This is a helper function that maps a 3D tensor to a 2D face in
-  // H^-1/2(curl).
+  /**
+   * @brief Maps a 3D vector field to its tangential component on a face
+   * in the H^{-1/2}(curl) trace space.
+   *
+   * This helper function projects a 3D tensor onto the tangential plane
+   * defined by the given normal vector. Mathematically, it computes:
+   * \f[
+   * \mathbf{t} = \mathbf{n} \times (\mathbf{v} \times \mathbf{n})
+   * \f]
+   * which removes the normal component of the vector \f$\mathbf{v}\f$,
+   * keeping only the tangential part.
+   *
+   * @tparam dim Spatial dimension (typically 3).
+   * @param tensor Input vector (field value) to be projected.
+   * @param normal Unit normal vector defining the face orientation.
+   * @return The tangential component of the input vector.
+   *
+   * @note This operation is used to obtain traces in H^{-1/2}(curl) spaces,
+   * where only tangential components are continuous across interfaces.
+   */
   template <int dim>
   DEAL_II_ALWAYS_INLINE inline Tensor<1, dim, std::complex<double>>
   map_H12(const Tensor<1, dim, std::complex<double>> &tensor,
@@ -82,12 +101,25 @@ namespace EM_DPG
     return result;
   }
 
-  // We create a class to handle the input parameters.
+  /**
+   * @brief Container class for all user-defined simulation parameters.
+   *
+   * This class centralizes all the physical, geometrical, and numerical
+   * parameters required by the solver. It inherits from `ParameterAcceptor`
+   * to enable automatic parameter handling and input parsing.
+   *
+   * @tparam dim Spatial dimension of the problem (e.g., 2 or 3).
+   */
   template <int dim>
   class Parameters : public ParameterAcceptor
   {
   public:
-    // CONSTRUCTOR
+    /**
+     * @brief Default constructor.
+     *
+     * Initializes parameters with default values and registers them
+     * through the `ParameterAcceptor` interface.
+     */
     Parameters();
 
     // Constexpr values
@@ -105,20 +137,23 @@ namespace EM_DPG
     double waveguide_length;
 
     // Frequency and excitation modes
-    double frequency;
-    int    mode_x;
-    int    mode_y;
+    double       frequency;
+    unsigned int mode_x;
+    unsigned int mode_y;
 
     // Mesh parameters
     unsigned int              n_refinements;
     std::vector<unsigned int> n_repetitions;
     unsigned int              initial_refinements;
     bool                      adaptive_refinement;
-    int                       max_refinement_level;
+    unsigned int              max_refinement_level;
 
     // Order of the DGQ elements
     unsigned int degree;
     unsigned int delta_degree;
+
+    // Solution convergence criteria
+    double convergence_criteria;
   };
 
   template <int dim>
@@ -197,41 +232,68 @@ namespace EM_DPG
     add_parameter("delta degree",
                   delta_degree,
                   "order difference between the trial and test space");
+
+    // Default solution convergence criteria
+    convergence_criteria = 1e-5;
+    add_parameter(
+      "convergence criteria",
+      convergence_criteria,
+      "Maximum cell residual in the energy norm desired for convergence");
   }
 
-  /* Create analytical solution class for the electric field (E).
-   * The corresponding solution for the electric field follows the physicist's
-   * time convention with the imaginary unit in the exponent being negative
-   * (i.e. exp(-i wt) ). The function manage both the real and complex
-   * components of the solution. Since the frequency, the material properties,
-   * and the geometry are arguments for the parameter file, they are used in the
-   * constructor to initialize the different wavenumber. Note that everything is
-   * addimensionalize using the following : \tilde{\mathbf{E}} =
-   * \frac{\mathbf{E}}{E_0}, \tilde{\mathbf{H}} = \frac{Z_0}{E_0} \mathbf{H},
-   *       \varepsilon_r = \frac{\varepsilon}{\varepsilon_0},
-   *       \mu_r = \frac{\mu}{\mu_0},
-   *       Z_r = \frac{Z}{Z_0},
-   *       \sigma_r = \frac{\sigma}{\omega \varepsilon_0},
-   *       \tilde{\omega} =  \frac{\omega}{k_0 c_0},
-   *       \tilde{\mathbf{J}} = \frac{1}{\omega \varepsilon E_0 } \mathbf{J}
-   *       \tilde{k} = L \mathbf{k},
-   *       \tilde{\nabla} = L \nabla.
+  /**
+   * @brief Analytical solution for the electric field \f$\mathbf{E}\f$.
+   *
+   * This class provides an analytical solution for the electric field
+   * inside a waveguide. The solution follows the physicist's time convention
+   * with the imaginary unit in the exponent being negative (i.e., \f$e^{-i
+   * \omega t}\f$). It manages both the real and complex components of the
+   * field.
+   *
+   * The wavenumbers are initialized using the frequency, material properties,
+   * and waveguide geometry specified in the Parameters object.
+   * All quantities are adimensionalized as follows:
+   * @f[
+   * \tilde{\mathbf{E}} = \frac{\mathbf{E}}{E_0}, \quad
+   * \tilde{\mathbf{H}} = \frac{Z_0}{E_0} \mathbf{H}, \quad
+   * \varepsilon_r = \frac{\varepsilon}{\varepsilon_0}, \quad
+   * \mu_r = \frac{\mu}{\mu_0}, \quad
+   * \sigma_r = \frac{\sigma}{\omega \varepsilon_0}, \quad
+   * \tilde{\omega} = \frac{\omega}{L c_0}, \quad
+   * \tilde{\mathbf{J}} = \frac{Z_0 L}{E_0} \mathbf{J}, \quad
+   * \tilde{\nabla} = L \nabla
+   * @f]
+   *
+   * @tparam dim Dimension of the problem.
+   * @return The function returns a vector of size 6, where the component follow
+   * the convention [Re(E_x), Re(E_y), Re(E_z), Im(E_x), Im(E_y), Im(E_z)].
    */
 
   template <int dim>
   class AnalyticalSolution_E : public Function<dim>
   {
   public:
-    // Constructor
+    /**
+     * @brief Constructor.
+     *
+     * Initializes the analytical solution using the provided parameters.
+     * Computes the wavenumbers along each axis and the characteristic
+     * impedance.
+     *
+     * @param parameters A Parameters object containing frequency, material
+     *                   properties, and waveguide geometry.
+     */
     AnalyticalSolution_E(const Parameters<dim> &parameters)
       : Function<dim>(6)
       , parameters(parameters)
-      , k(2. * M_PI * parameters.frequency / parameters.speed_of_light)
+      , omega(2. * M_PI * parameters.frequency / parameters.speed_of_light)
+      , epsilon_r_eff(parameters.epsilon_r +
+                      parameters.imag * parameters.sigma_r)
+      , k_squared(omega * omega * parameters.mu_r * epsilon_r_eff)
       , k_x(parameters.mode_x * M_PI / parameters.waveguide_a)
       , k_y(parameters.mode_y * M_PI / parameters.waveguide_b)
-      , k_z(std::sqrt(k * k - k_x * k_x - k_y * k_y))
-      , k_c(std::sqrt(k_x * k_x + k_y * k_y))
-      , Z_r(std::sqrt(parameters.mu_r / parameters.epsilon_r))
+      , k_z(std::sqrt(k_squared - k_x * k_x - k_y * k_y))
+      , k_c_squared(k_x * k_x + k_y * k_y)
     {}
 
     virtual double
@@ -239,12 +301,13 @@ namespace EM_DPG
 
   private:
     const Parameters<dim>     &parameters;
-    const double               k;
+    const double               omega;
+    const std::complex<double> epsilon_r_eff;
+    const std::complex<double> k_squared;
     const double               k_x;
     const double               k_y;
-    const double               k_z;
-    const double               k_c;
-    const std::complex<double> Z_r;
+    const std::complex<double> k_z;
+    const double               k_c_squared;
   };
 
   template <int dim>
@@ -252,9 +315,10 @@ namespace EM_DPG
   AnalyticalSolution_E<dim>::value(const Point<dim>  &p,
                                    const unsigned int component) const
   {
-    const std::complex<double> &imag = parameters.imag;
-    std::complex<double>        factor =
-      imag * k * Z_r / (k_c * k_c) * std::exp(imag * k_z * p[2]);
+    const std::complex<double> &imag   = parameters.imag;
+    std::complex<double>        factor = imag * k_squared /
+                                  (k_c_squared * epsilon_r_eff * omega) *
+                                  std::exp(imag * k_z * p[2]);
 
     if (component == 0)
       return (-factor * k_y * std::cos(k_x * p[0]) * std::sin(k_y * p[1]))
@@ -277,34 +341,74 @@ namespace EM_DPG
         "Too many components for the analytical solution");
   }
 
-  // Same here, we create the analytical solution class for the magnetic field
-  // (H).
+  /**
+   * @brief Analytical solution for the magnetic field \f$\mathbf{H}\f$.
+   *
+   * This class provides an analytical solution for the magnetic
+   * field inside a waveguide. The solution follows the physicist's time
+   * convention with the imaginary unit in the exponent being negative (i.e.,
+   * \f$e^{-i \omega t}\f$). It manages both the real and complex components of
+   * the field.
+   *
+   * The wavenumbers are initialized using the frequency, material properties,
+   * and waveguide geometry specified in the Parameters object.
+   * All quantities are adimensionalized as follows:
+   * @f[
+   * \tilde{\mathbf{E}} = \frac{\mathbf{E}}{E_0}, \quad
+   * \tilde{\mathbf{H}} = \frac{Z_0}{E_0} \mathbf{H}, \quad
+   * \varepsilon_r = \frac{\varepsilon}{\varepsilon_0}, \quad
+   * \mu_r = \frac{\mu}{\mu_0}, \quad
+   * \sigma_r = \frac{\sigma}{\omega \varepsilon_0}, \quad
+   * \tilde{\omega} = \frac{\omega}{L c_0}, \quad
+   * \tilde{\mathbf{J}} = \frac{Z_0 L}{E_0} \mathbf{J}, \quad
+   * \tilde{\nabla} = L \nabla
+   * @f]
+   *
+   * @tparam dim Dimension of the problem.
+   * @return The function returns a vector of size 6, where the component follow
+   * the convention [Re(H_x), Re(H_y), Re(H_z), Im(H_x), Im(H_y), Im(H_z)].
+   */
   template <int dim>
   class AnalyticalSolution_H : public Function<dim>
   {
   public:
-    // Constructor
+    /**
+     * @brief Constructor.
+     *
+     * Initializes the analytical solution using the provided parameters.
+     * Computes the wavenumbers along each axis and the characteristic
+     * impedance.
+     *
+     * @param parameters A Parameters object containing frequency, material
+     *                   properties, and waveguide geometry.
+     */
     AnalyticalSolution_H(const Parameters<dim> &parameters)
       : Function<dim>(6)
       , parameters(parameters)
-      , k(2. * M_PI * parameters.frequency / parameters.speed_of_light)
+      , omega(2. * M_PI * parameters.frequency / parameters.speed_of_light)
+      , epsilon_r_eff(parameters.epsilon_r +
+                      parameters.imag * parameters.sigma_r)
+      , k_squared(omega * omega * parameters.mu_r * epsilon_r_eff)
       , k_x(parameters.mode_x * M_PI / parameters.waveguide_a)
       , k_y(parameters.mode_y * M_PI / parameters.waveguide_b)
-      , k_z(std::sqrt(k * k - k_x * k_x - k_y * k_y))
-      , k_c(std::sqrt(k_x * k_x + k_y * k_y))
+      , k_z(std::sqrt(k_squared - k_x * k_x - k_y * k_y))
+      , k_c_squared(k_x * k_x + k_y * k_y)
     {}
 
     virtual double
     value(const Point<dim> &p, const unsigned int component) const override;
 
   private:
-    const Parameters<dim> &parameters;
-    const double           k;
-    const double           k_x;
-    const double           k_y;
-    const double           k_z;
-    const double           k_c;
+    const Parameters<dim>     &parameters;
+    const double               omega;
+    const std::complex<double> epsilon_r_eff;
+    const std::complex<double> k_squared;
+    const double               k_x;
+    const double               k_y;
+    const std::complex<double> k_z;
+    const double               k_c_squared;
   };
+
 
   template <int dim>
   double
@@ -315,21 +419,21 @@ namespace EM_DPG
     std::complex<double>        factor = std::exp(imag * k_z * p[2]);
 
     if (component == 0)
-      return (-factor * imag * k_z * k_x / (k_c * k_c) * std::sin(k_x * p[0]) *
+      return (-factor * imag * k_z * k_x / k_c_squared * std::sin(k_x * p[0]) *
               std::cos(k_y * p[1]))
         .real();
     else if (component == 1)
-      return (-factor * imag * k_z * k_y / (k_c * k_c) * std::cos(k_x * p[0]) *
+      return (-factor * imag * k_z * k_y / k_c_squared * std::cos(k_x * p[0]) *
               std::sin(k_y * p[1]))
         .real();
     else if (component == 2)
       return (factor * std::cos(k_x * p[0]) * std::cos(k_y * p[1])).real();
     else if (component == 3)
-      return (-factor * imag * k_z * k_x / (k_c * k_c) * std::sin(k_x * p[0]) *
+      return (-factor * imag * k_z * k_x / k_c_squared * std::sin(k_x * p[0]) *
               std::cos(k_y * p[1]))
         .imag();
     else if (component == 4)
-      return (-factor * imag * k_z * k_y / (k_c * k_c) * std::cos(k_x * p[0]) *
+      return (-factor * imag * k_z * k_y / k_c_squared * std::cos(k_x * p[0]) *
               std::sin(k_y * p[1]))
         .imag();
     else if (component == 5)
@@ -339,88 +443,123 @@ namespace EM_DPG
         "Too many components for the analytical solution");
   }
 
-  // Main class for the DPG solver. The method rely on multiple DoFHandler and
-  // FESystem to manage the different functional spaces. The DoFHandlers that we
-  // rely on are the following:
-  // - The <code>dof_handler_trial_interior</code> is for the unknowns in the
-  // interior of the cells;
-  // - The <code>dof_handler_trial_skeleton</code> is for the unknowns in the
-  // skeleton;
-  // - The <code>dof_handler_test</code> is for the test functions. Although we
-  // do not use the unknowns associated with this DoFHandler, it enables us to
-  // evaluate the test function we will use in DPG.
-
-  // The same applies for the three FESystem:
-  // <code>fe_system_trial_interior</code>,
-  // <code>fe_system_trial_skeleton</code> and <code>fe_system_test</code>. In
-  // each one of these, we will store the relevant finite element space in the
-  // same order to avoid confusion. The first component will therefore always be
-  // related to the real part of the electric field, the second component to the
-  // its imaginary part, the third component to the real part of the magnetic
-  // field and the fourth component to its imaginary part.
+  /**
+   * @brief Main class for the DPG solver for time-harmonic Maxwell equations.
+   *
+   * This class implements a Discontinuous Petrov-Galerkin (DPG) solver for
+   * the time-harmonic Maxwell equations in a waveguide. The solver relies on
+   * multiple DoFHandlers and FESystems to manage different functional spaces:
+   *
+   * - `dof_handler_trial_interior`: unknowns in the interior of the cells
+   * - `dof_handler_trial_skeleton`: unknowns on the skeleton (faces)
+   * - `dof_handler_test`: test functions (used for evaluating test functions in
+   * DPG)
+   *
+   * Similarly, three FESystems are used: `fe_system_trial_interior`,
+   * `fe_system_trial_skeleton`, and `fe_system_test`. The component order
+   * is always: real part of electric field, imaginary part of electric field,
+   * real part of magnetic field, imaginary part of magnetic field.
+   *
+   * @tparam dim Dimension of the problem.
+   */
   template <int dim>
   class Time_Harmonic_Maxwell_DPG : public ParameterAcceptor
   {
   public:
+    /**
+     * @brief Constructor.
+     *
+     * Initializes the solver with the given input parameters.
+     *
+     * @param parameters Input parameters for frequency, material properties,
+     *                   waveguide geometry, mesh settings, and solver options.
+     */
     Time_Harmonic_Maxwell_DPG(const Parameters<dim> &parameters);
+
+    /**
+     * @brief Run the full simulation.
+     *
+     * This function calls mesh generation, system setup, assembly, solver,
+     * and output routines.
+     */
     void
     run();
 
   private:
-    // <code>make_grid</code> creates the initial mesh.
+    /**
+     * @brief Create the initial mesh.
+     *
+     * @param initial_refinement Number of initial global refinements.
+     */
     void
     make_grid(const unsigned int initial_refinement);
 
-    // <code>refine_grid</code> refines the mesh uniformly or adaptively using
-    // the built-in error estimator depending on the input parameters. Note that
-    // at the moment the adaptive refinement does not work in parallel for
-    // fe_nedelecSZ elements. From quick tests, it seems to be related to
-    // hanging nodes constraints. Use the standard Nedelec elements if you want
-    // to use adaptive refinement in parallel.
+    /**
+     * @brief Refine the mesh.
+     *
+     * Refines the mesh uniformly or adaptively based on the built-in error
+     * estimator and input parameters. Note that at the moment the adaptive
+     * refinement does not work in parallel for fe_nedelecSZ elements. From
+     * quick tests, it seems to be related to hanging nodes constraints. Use the
+     * standard Nedelec elements if you want to use adaptive refinement in
+     * parallel.
+     */
     void
     refine_grid();
 
-    // The <code>setup_system</code> function initializes the three DoFHandlers,
-    // the system matrix and right-hand side and establishes the boundary
-    // conditions that rely on AffineConstraints
+    /**
+     * @brief Setup the system.
+     *
+     * Initializes the three DoFHandlers, the system matrix and right-hand side
+     * and establishes the boundary conditions that rely on AffineConstraints
+     */
+
     void
     setup_system();
 
-    // The <code>assemble_system</code> assembles both the right-hand side and
-    // the system matrix. This function is used twice per problem and it has
-    // two functions.
-    // - When <code>solve_interior = false</code> the system is assembled and is
-    // locally condensed such that the resulting system only contains the
-    // skeleton unknowns. This is achieved by local condensation.
-    // - When <code>solve_interior = true</code> the system is assembled and the
-    // skeleton degrees of freedom solution is used to
-    // reconstruct the interior solution and the built-in error estimator right
-    // after.
+
+    /**
+     * @brief Assemble the system.
+     *
+     * Assembles both the right-hand side and the system matrix. This function
+     * is used twice per problem and it has two functions.
+     *
+     * @param solve_interior If true, the system is assembled and the skeleton degrees of freedom solution is used to reconstruct the interior solution and the built-in error estimator right after.; otherwise,the system is assembled and is locally condensed such that the resulting system only contains the skeleton unknowns.
+     */
     void
     assemble_system(bool solve_interior = false);
 
-    // <code>solve_linear_system_skeleton</code> solves the linear system of
-    // equations for the skeleton degree of freedom.
+    /**
+     * @brief Solve the linear system for the skeleton degrees of freedom.
+     */
     void
     solve_skeleton();
 
-    // <code>output_results</code> write the skeleton and the interior unknowns
-    // into two different VTU and PVTU files.
+    /**
+     * @brief Output results to VTU/PVTU files.
+     *
+     * Outputs the skeleton, interior unknowns and error estimates in three
+     * different files.
+     *
+     * @param cycle Current refinement cycle.
+     */
     void
     output_results(unsigned int cycle);
 
-    // <code> calculate_L2_error</code> calculates the $L^2$ norm of the error
-    // using the analytical solution to verify convergence order, but it also
-    // calculates the error in the energy norm for each cell to obtain the
-    // h-refinement indicator.
+    /**
+     * @brief Calculate the L2 error.
+     *
+     * Computes the L2 norm of the error using the analytical solution
+     * and the energy norm per cell for adaptive refinement.
+     */
     void
     calculate_L2_error();
 
     /* run time parameters */
     const Parameters<dim>     &parameters;
-    const double               k;               // Wavenumber
-    const double               k_z;             // z-component of the wavenumber
-    const std::complex<double> Z_r;             // Relative impedance
+    const double               omega;         // Angular frequency
+    const std::complex<double> epsilon_r_eff; // Effective relative permittivity
+    const std::complex<double> k_z;           // z-component of the wavenumber
     std::complex<double>       imag = {0., 1.}; // Imaginary unit
 
     // MPI-related variables
@@ -463,7 +602,7 @@ namespace EM_DPG
     ConvergenceTable error_table;
 
     // Extractors that will be used at multiple places in the class to
-    // select the relevant components for the calculation. Those are created
+    // select the relevant components for the calculations. Those are created
     // here to avoid repetition throughout the class.
     const FEValuesExtractors::Vector extractor_E_real;
     const FEValuesExtractors::Vector extractor_E_imag;
@@ -471,29 +610,36 @@ namespace EM_DPG
     const FEValuesExtractors::Vector extractor_H_imag;
   };
 
-  // DPG constructor
-  // In the constructor, we assign the relevant finite element to each FESystem
-  // following the nomenclature described above in the class description:
-  // - <code>fe_system_trial_interior</code> contains $\Re(\mathbf{E})$,
-  // $\Im(\mathbf{E})$, $\Re(\mathbf{H})$, $\Im(\mathbf{H})$ ;
-  // - <code>fe_system_trial_skeleton</code> contains $\Re(\hat{E}_\parallel)$,
-  // $\Im(\hat{E}_\parallel)$, $\Re(\hat{H}_\parallel)$,
-  // $\Im(\hat{H}_\parallel)$;
-  // - <code>fe_system_test</code> contains $\Re(\mathbf{F})$,
-  // $\Im(\mathbf{F})$, $\Re(\mathbf{I})$, $\Im(\mathbf{I})$.
-  // We also initialize probleme dependent parameters and parallel related
-  // variables.
+  /**
+   * @brief DPG solver constructor.
+   *
+   * Assigns the relevant finite element to each FESystem following the class
+   * conventions:
+   * - `fe_system_trial_interior`: $\Re(\mathbf{E})$, $\Im(\mathbf{E})$,
+   * $\Re(\mathbf{H})$, $\Im(\mathbf{H})$.
+   * - `fe_system_trial_skeleton`: $\Re(\hat{E}_\parallel)$,
+   * $\Im(\hat{E}_\parallel)$, $\Re(\hat{H}_\parallel)$,
+   * $\Im(\hat{H}_\parallel)$.
+   * - `fe_system_test`: $\Re(\mathbf{F})$, $\Im(\mathbf{F})$,
+   * $\Re(\mathbf{I})$, $\Im(\mathbf{I})$.
+   *
+   * Also initializes problem-dependent parameters and parallel-related
+   * variables. Note that the parallel subscript above stand for the tangential
+   * component of the fields on the faces. It has nothing to do with parallel
+   * computation parameters.
+   */
 
   template <int dim>
   Time_Harmonic_Maxwell_DPG<dim>::Time_Harmonic_Maxwell_DPG(
     const Parameters<dim> &parameters)
     : ParameterAcceptor("Time_Harmonic_Maxwell_DPG")
     , parameters(parameters)
-    , k(2. * M_PI * parameters.frequency / parameters.speed_of_light)
+    , omega(2. * M_PI * parameters.frequency / parameters.speed_of_light)
+    , epsilon_r_eff(parameters.epsilon_r + parameters.imag * parameters.sigma_r)
     , k_z(std::sqrt(
-        k * k - std::pow(parameters.mode_x * M_PI / parameters.waveguide_a, 2) -
+        omega * omega * epsilon_r_eff * parameters.mu_r -
+        std::pow(parameters.mode_x * M_PI / parameters.waveguide_a, 2) -
         std::pow(parameters.mode_y * M_PI / parameters.waveguide_b, 2)))
-    , Z_r(std::sqrt(parameters.mu_r / parameters.epsilon_r))
     , mpi_communicator(MPI_COMM_WORLD)
     , pcout(std::cout, Utilities::MPI::this_mpi_process(mpi_communicator) == 0)
     , computing_timer(mpi_communicator,
@@ -532,15 +678,11 @@ namespace EM_DPG
 
     AssertThrow(parameters.delta_degree >= 1,
                 ExcMessage("The delta_degree needs to be at least 1."));
-
-    AssertThrow(k > 0,
-                ExcMessage("The wavenumber must be positive, its the "
-                           "magnitude of the wave vector."));
   }
 
-  // Here the <code>make_grid</code> function creates the initial rectangular
-  // mesh using a structured grid using
-  // dealii::GridGenerator::subdivided_hyper_rectangle.
+  /**
+   * @brief Create the initial mesh using a subdivided hyper rectangle from dealii::GridGenerator and the initial refinement level.
+   */
   template <int dim>
   void
   Time_Harmonic_Maxwell_DPG<dim>::make_grid(
@@ -561,9 +703,10 @@ namespace EM_DPG
     triangulation.refine_global(initial_refinement);
   }
 
-  // Here the <code>refine_grid</code> function refines the mesh uniformly or
-  // adaptively using the built-in error estimator computed from the previous
-  // solution.
+
+  /**
+   * @brief Refines the mesh uniformly or adaptively using the built-in error estimator computed from the previous solution.
+   */
   template <int dim>
   void
   Time_Harmonic_Maxwell_DPG<dim>::refine_grid()
@@ -582,7 +725,8 @@ namespace EM_DPG
           {
             if (cell->is_locally_owned())
               {
-                if (cell->level() >= parameters.max_refinement_level &&
+                if (cell->level() >=
+                      static_cast<int>(parameters.max_refinement_level) &&
                     cell->refine_flag_set())
                   cell->clear_refine_flag();
               }
@@ -596,9 +740,9 @@ namespace EM_DPG
       }
   }
 
-  // In this function, we initialize the three different DoFHandlers and apply
-  // the constraints related to the boundary conditions. We also create the
-  // sparsity pattern and initialize the system matrix and right-hand side.
+  /**
+   * @brief Setup the system by initializing the DoFHandlers, applying boundary conditions, and preparing the system matrix and right-hand side.
+   */
   template <int dim>
   void
   Time_Harmonic_Maxwell_DPG<dim>::setup_system()
@@ -827,7 +971,7 @@ namespace EM_DPG
 
     // We first define quadrature rules and related variables. Since the
     // quadrature formula should be the same for both trial and test FE and that
-    // the test space have higher polynomial degree than the others by
+    // the test space has a higher polynomial degree than the others by
     // construction, we use it to define the quadrature formula.
     const QGauss<dim>     quadrature_formula(fe_test.degree + 1);
     const QGauss<dim - 1> face_quadrature_formula(fe_test.degree + 1);
@@ -911,9 +1055,9 @@ namespace EM_DPG
     std::vector<Tensor<1, dim, std::complex<double>>> n_cross_H_hat(
       dofs_per_cell_trial_skeleton);
 
-    // Also, to avoid multiple if calls to understand where assemble each term
-    // in the matrix, we will use containers to store dofs relationships for
-    // each of the local matrices.
+    // Also, to avoid multiple if calls to understand where we assemble each
+    // term in the matrix, we will use containers to store dofs relationships
+    // for each of the local matrices.
 
     // G matrix for the Riesz map and relationships between test functions
     std::vector<std::pair<unsigned int, unsigned int>> G_FF;
@@ -937,7 +1081,7 @@ namespace EM_DPG
     // l vector for the linear form and relationships between test functions
     std::vector<unsigned int> l_F;
 
-    // Reserve memory to avoid reallocations of each matrix
+    // Reserve memory to avoid reallocations of each relationship vectors
     G_FF.reserve(dofs_per_cell_test * dofs_per_cell_test);
     G_FI.reserve(dofs_per_cell_test * dofs_per_cell_test);
     G_IF.reserve(dofs_per_cell_test * dofs_per_cell_test);
@@ -966,7 +1110,12 @@ namespace EM_DPG
 
     Vector<double> l_vector(dofs_per_cell_test);
 
-    // We create the condensation matrices.
+    // We create the condensation matrices which are defined as :
+    // $M_1 = B^\dagger G^{-1}B$;
+    // $M_2 = B^\dagger G^{-1}\hat{B}$;
+    // $M_3 = \hat{B}^\dagger G^{-1}\hat{B}$;
+    // $M_4 = B^\dagger G^{-1}$;
+    // $M_5 = \hat{B}^\dagger G^{-1}$.
     LAPACKFullMatrix<double> M1_matrix(dofs_per_cell_trial_interior,
                                        dofs_per_cell_trial_interior);
     LAPACKFullMatrix<double> M2_matrix(dofs_per_cell_trial_interior,
@@ -979,18 +1128,28 @@ namespace EM_DPG
                                        dofs_per_cell_test);
 
     // During the calculation of matrix vector product, we require intermediary
-    // matrices and vector that we also allocate here.
-    LAPACKFullMatrix<double> tmp_matrix(dofs_per_cell_trial_skeleton,
-                                        dofs_per_cell_trial_interior);
+    // matrices and vector that we also allocate here. The temporary matrices
+    // are defined as :
+    // $tmp_matrix_M2M1  = M_2^\dagger M_1^{-1}$;
+    // $tmp_matrix_M2M1M2 = M_2^\dagger M_1^{-1} M_2$;
+    // $tmp_matrix_M2M1M4 = M_2^\dagger M_1^{-1} M_4$.
 
-    LAPACKFullMatrix<double> tmp_matrix2(dofs_per_cell_trial_skeleton,
-                                         dofs_per_cell_trial_skeleton);
+    LAPACKFullMatrix<double> tmp_matrix_M2M1(dofs_per_cell_trial_skeleton,
+                                             dofs_per_cell_trial_interior);
 
-    LAPACKFullMatrix<double> tmp_matrix3(dofs_per_cell_trial_skeleton,
-                                         dofs_per_cell_test);
+    LAPACKFullMatrix<double> tmp_matrix_M2M1M2(dofs_per_cell_trial_skeleton,
+                                               dofs_per_cell_trial_skeleton);
 
-    Vector<double> tmp_vector(dofs_per_cell_trial_interior);
-    Vector<double> tmp_vector2(dofs_per_cell_test);
+    LAPACKFullMatrix<double> tmp_matrix_M2M1M4(dofs_per_cell_trial_skeleton,
+                                               dofs_per_cell_test);
+
+    // Temporary vector using when reconstructing the interior solution :
+    // $tmp_{interior} = M_2 * x_{skeleton}$
+    Vector<double> tmp_vector_interior(dofs_per_cell_trial_interior);
+
+    // Temporary vector used when computing the error estimator :
+    // $tmp_{error\_estimator} = B * x_{interior}$
+    Vector<double> tmp_vector_error_estimator(dofs_per_cell_test);
 
     // We create the cell matrix and the RHS that will be distributed in the
     // full system after the assembly along with the index’s mapping.
@@ -1011,16 +1170,15 @@ namespace EM_DPG
     // We define some constants that will be used during the assembly. Those
     // would change according to the material parameters, but here we only have
     // one material.
-    const std::complex<double> ikZr      = imag * k * Z_r;
-    const std::complex<double> conj_ikZr = conj(ikZr);
-    const std::complex<double> ikepsilon_Zr =
-      imag * k / Z_r * (1. - imag * parameters.sigma_r / parameters.epsilon_r);
-    const std::complex<double> conj_ikepsilon_Zr = conj(ikepsilon_Zr);
-    const std::complex<double> kz_kZr            = k_z / (k * Z_r);
-    const std::complex<double> conj_kz_kZr       = conj(kz_kZr);
+    const std::complex<double> iwmu_r       = imag * omega * parameters.mu_r;
+    const std::complex<double> conj_iwmu_r  = conj(iwmu_r);
+    const std::complex<double> iweps_r      = imag * omega * epsilon_r_eff;
+    const std::complex<double> conj_iweps_r = conj(iweps_r);
+    const std::complex<double> kz_wmur      = k_z / (omega * parameters.mu_r);
+    const std::complex<double> conj_kz_wmur = conj(kz_wmur);
 
     // We also create objects to store the incident fields that will be used to
-    // compute the excitation for the robin boundary condition.
+    // compute the excitation for the Robin boundary condition.
     Tensor<1, dim, std::complex<double>> H_inc;
     Tensor<1, dim, std::complex<double>> E_inc;
     Tensor<1, dim, std::complex<double>> g_inc;
@@ -1061,7 +1219,27 @@ namespace EM_DPG
             // between each iteration on cell to get rid of its inverse status.
             M1_matrix = 0;
 
-            // Reset the dofs relationships containers
+            // Here we reset the dofs relationships containers. These containers
+            // are use to store all the relationships between the dof i
+            // dof j according to which space they belong to. Indeed, when
+            // looping over all the test and trial dofs, the terms  we need to
+            // compute depend on the specific combination of spaces
+            // involved. The following containers are therefore use use to avoid
+            // multiple "if" statement inside the dofs loops and are fill with
+            // all the relevant dofs pairs that we need for each of the
+            // different terms.
+
+            // For example, in the ultraweak form of Maxwell equation we have a
+            // term (E, curl(I)) in the interior so the matrix B as a term
+            // (curl(I_i), E_j), so we want to only compute this term for the
+            // dofs i that are in the test space I and the dofs j that are in
+            // the trial space for E. Therefore, when looping on all the
+            // interior and test dofs in a cell we add the pairs of dofs that
+            // are in those spaces to the container B_IE. We do this for all the
+            // different terms of the formulation.
+
+            // Finally, we can loop on all the pairs that we have assigned in
+            // each vector container to compute the desired terms.
             G_FF.clear();
             G_FI.clear();
             G_IF.clear();
@@ -1082,14 +1260,14 @@ namespace EM_DPG
                 const unsigned int current_element_test_i =
                   fe_test.system_to_base_index(i).first.first;
 
-                // Fill the l vector relationship
+                // Fill the load vector relationship
                 if ((current_element_test_i == 0) ||
                     (current_element_test_i == 1))
                   {
                     l_F.emplace_back(i);
                   }
 
-                // Loop over the dofs test a second time to fill the dofs
+                // Loop over the test dofs a second time to fill the dofs
                 // relationship for the G matrix (Riesz map)
                 for (unsigned int j : fe_values_test.dof_indices())
                   {
@@ -1125,7 +1303,7 @@ namespace EM_DPG
                       }
                   }
 
-                // Then we loop over the dofs trial space to fill the dofs
+                // Then we loop over the trial dofs space to fill the dofs
                 // relationship for the B matrix (bilinear form)
                 for (unsigned int j : fe_values_trial_interior.dof_indices())
                   {
@@ -1168,7 +1346,7 @@ namespace EM_DPG
               {
                 // To avoid unnecessary computation, we fill the shape values
                 // containers for the real and imaginary parts of the electric
-                // and magnetic fields and the Dof relationship at the current
+                // and magnetic fields and the dofs relationship at the current
                 // quadrature point.
                 const double &JxW = fe_values_trial_interior.JxW(q_point);
 
@@ -1223,41 +1401,39 @@ namespace EM_DPG
                   {
                     G_matrix(i, j) +=
                       (((F[j] * F_conj[i]) + (curl_F[j] * curl_F_conj[i]) +
-                        (conj_ikepsilon_Zr * F[j] * ikepsilon_Zr * F_conj[i])) *
+                        (conj_iweps_r * F[j] * iweps_r * F_conj[i])) *
                        JxW)
                         .real();
                   }
 
                 for (const auto &[i, j] : G_FI)
                   {
-                    G_matrix(i, j) += (((curl_I[j] * ikepsilon_Zr * F_conj[i]) -
-                                        (conj_ikZr * I[j] * curl_F_conj[i])) *
+                    G_matrix(i, j) += (((curl_I[j] * iweps_r * F_conj[i]) -
+                                        (conj_iwmu_r * I[j] * curl_F_conj[i])) *
                                        JxW)
                                         .real();
                   }
 
                 for (const auto &[i, j] : G_IF)
                   {
-                    G_matrix(i, j) +=
-                      (((conj_ikepsilon_Zr * F[j] * curl_I_conj[i]) -
-                        (curl_F[j] * ikZr * I_conj[i])) *
-                       JxW)
-                        .real();
+                    G_matrix(i, j) += (((conj_iweps_r * F[j] * curl_I_conj[i]) -
+                                        (curl_F[j] * iwmu_r * I_conj[i])) *
+                                       JxW)
+                                        .real();
                   }
 
                 for (const auto &[i, j] : G_II)
                   {
                     G_matrix(i, j) +=
                       (((I[j] * I_conj[i]) + (curl_I[j] * curl_I_conj[i]) +
-                        (conj_ikZr * I[j] * ikZr * I_conj[i])) *
+                        (conj_iwmu_r * I[j] * iwmu_r * I_conj[i])) *
                        JxW)
                         .real();
                   }
 
                 for (const auto &[i, j] : B_FE)
                   {
-                    B_matrix(i, j) +=
-                      (ikepsilon_Zr * E[j] * F_conj[i] * JxW).real();
+                    B_matrix(i, j) += (iweps_r * E[j] * F_conj[i] * JxW).real();
                   }
 
                 for (const auto &[i, j] : B_FH)
@@ -1272,7 +1448,7 @@ namespace EM_DPG
 
                 for (const auto &[i, j] : B_IH)
                   {
-                    B_matrix(i, j) -= (ikZr * H[j] * I_conj[i] * JxW).real();
+                    B_matrix(i, j) -= (iwmu_r * H[j] * I_conj[i] * JxW).real();
                   }
 
                 for (const auto &i : l_F)
@@ -1312,7 +1488,7 @@ namespace EM_DPG
 
                     // If we are at either boundary 4 or 5, we are on the Robin
                     // B.C. and the load vector and the B_hat matrix will have a
-                    // contribution in addition to a modification of the riesz
+                    // contribution in addition to a modification of the Riesz
                     // map (G matrix) because of the energy norm that we want to
                     // minimize there.
                     if ((face->boundary_id() == 4) ||
@@ -1389,7 +1565,7 @@ namespace EM_DPG
                     else
                       {
                         // If not on Robin B.C., assemble all the other
-                        // relevantskeleton terms
+                        // relevant skeleton terms
                         for (unsigned int j :
                              fe_face_values_trial_skeleton.dof_indices())
                           {
@@ -1463,7 +1639,7 @@ namespace EM_DPG
                       }
 
                     // Then, similarly we loop over the trial dofs to fill the
-                    // face values containers. Note that the to be in
+                    // face values containers. Note that to be in
                     // H^-1/2(curl), the fields needs to have the tangential
                     // property mapping (n x (E x n)) which effectively extract
                     // the tangential component of the field at the face. So
@@ -1504,7 +1680,7 @@ namespace EM_DPG
                       }
 
                     // Here we get the excitation at the inlet port. To do so we
-                    // force the electromagnetic fields with our analytical
+                    // force the electromagnetic fields using our analytical
                     // solution at the boundary.
                     if (face->boundary_id() == 4)
                       {
@@ -1529,7 +1705,7 @@ namespace EM_DPG
                           imag * analytical_solution_E.value(position, 5);
 
                         g_inc = cross_product_3d(normal, H_inc) +
-                                map_H12(kz_kZr * E_inc, normal);
+                                map_H12(kz_wmur * E_inc, normal);
                       }
                     // If we are at the outlet, we want to have an absorbing
                     // boundary condition so we set the excitation to zero.
@@ -1542,21 +1718,21 @@ namespace EM_DPG
                     // the relevant matrices.
                     for (const auto &[i, j] : G_FF)
                       {
-                        G_matrix(i, j) += (conj_kz_kZr * F_face[j] * kz_kZr *
+                        G_matrix(i, j) += (conj_kz_wmur * F_face[j] * kz_wmur *
                                            F_face_conj[i] * JxW_face)
                                             .real();
                       }
 
                     for (const auto &[i, j] : G_FI)
                       {
-                        G_matrix(i, j) += (n_cross_I_face[j] * kz_kZr *
+                        G_matrix(i, j) += (n_cross_I_face[j] * kz_wmur *
                                            F_face_conj[i] * JxW_face)
                                             .real();
                       }
 
                     for (const auto &[i, j] : G_IF)
                       {
-                        G_matrix(i, j) += (conj_kz_kZr * F_face[j] *
+                        G_matrix(i, j) += (conj_kz_wmur * F_face[j] *
                                            n_cross_I_face_conj[i] * JxW_face)
                                             .real();
                       }
@@ -1583,7 +1759,7 @@ namespace EM_DPG
                     for (const auto &[i, j] : B_hat_FE)
                       {
                         B_hat_matrix(i, j) -=
-                          (kz_kZr * E_hat[j] * F_face_conj[i] * JxW_face)
+                          (kz_wmur * E_hat[j] * F_face_conj[i] * JxW_face)
                             .real();
                       }
 
@@ -1631,11 +1807,11 @@ namespace EM_DPG
                 cell_skeleton->get_dof_values(
                   locally_relevant_solution_skeleton, cell_skeleton_solution);
 
-                // Then we do the matrix-vector product to obtain the interior
+                // Then we do the matrix-vector products to obtain the interior
                 // unknowns.
-                M2_matrix.vmult(tmp_vector, cell_skeleton_solution);
+                M2_matrix.vmult(tmp_vector_interior, cell_skeleton_solution);
                 M4_matrix.vmult(cell_interior_rhs, l_vector);
-                cell_interior_rhs -= tmp_vector;
+                cell_interior_rhs -= tmp_vector_interior;
                 M1_matrix.vmult(cell_interior_solution, cell_interior_rhs);
 
                 // Finally, we map the cell interior solution to the global
@@ -1645,33 +1821,35 @@ namespace EM_DPG
 
                 // Then we compute the residual estimator and also map it to the
                 // global residual estimator vector.
-                B_matrix.vmult(tmp_vector2, cell_interior_solution);
-                B_hat_matrix.vmult_add(tmp_vector2, cell_skeleton_solution);
-                l_vector -= tmp_vector2;
+                B_matrix.vmult(tmp_vector_error_estimator,
+                               cell_interior_solution);
+                B_hat_matrix.vmult_add(tmp_vector_error_estimator,
+                                       cell_skeleton_solution);
+                l_vector -= tmp_vector_error_estimator;
                 G_matrix.vmult(cell_residual, l_vector);
                 cell_test->distribute_local_to_global(
                   cell_residual, locally_owned_residual_estimator);
               }
-            // If the flag solves interior is set to false, we have to compute
+            // If the flag "solves_interior" is set to false, we have to compute
             // the local matrix and the local RHS for the condensed system.
             else
               {
-                // So the cell matrix is obtained with the formula $(M_3 -
+                // The cell matrix is obtained with the formula $(M_3 -
                 // M_2^\dagger M_1^{-1} M_2)$:
-                M2_matrix.Tmmult(tmp_matrix, M1_matrix);
-                tmp_matrix.mmult(tmp_matrix2, M2_matrix);
-                tmp_matrix2.add(-1.0, M3_matrix);
-                tmp_matrix2 *= -1.0;
+                M2_matrix.Tmmult(tmp_matrix_M2M1, M1_matrix);
+                tmp_matrix_M2M1.mmult(tmp_matrix_M2M1M2, M2_matrix);
+                tmp_matrix_M2M1M2.add(-1.0, M3_matrix);
+                tmp_matrix_M2M1M2 *= -1.0;
                 // This line is used to convert the LAPACK matrix to a full
                 // matrix so we can perform the distribution to the global
                 // system below.
-                cell_matrix = tmp_matrix2;
+                cell_matrix = tmp_matrix_M2M1M2;
 
                 // Then we compute the cell RHS using $(M_5 -
                 // M_2^\dagger M_1^{-1} M_4)l -
                 // G$.
-                tmp_matrix.mmult(tmp_matrix3, M4_matrix);
-                M5_matrix.add(-1.0, tmp_matrix3);
+                tmp_matrix_M2M1.mmult(tmp_matrix_M2M1M4, M4_matrix);
+                M5_matrix.add(-1.0, tmp_matrix_M2M1M4);
                 M5_matrix.vmult(cell_skeleton_rhs, l_vector);
 
                 // Map to global matrix
@@ -1703,14 +1881,19 @@ namespace EM_DPG
       }
   }
 
-  // The solve function is in charge of solving the linear system assembled and
-  // has nothing specific to DPG per se. Nonetheless, the method allows us to
-  // use the Conjugate Gradient iterative solver. Note that because we do not
-  // have any preconditioner, the number of iterations can be quite high. For
-  // simplicity, we put a high upper limit on the number of iterations, but in
-  // practice one would want to change this function to have a more robust
-  // solver. The tolerance for the convergence here is defined proportional to
-  // the $L^2$ norm of the RHS vector so the stopping criterion is scaled aware.
+  /**
+   * @brief Solves the assembled linear system using a Conjugate Gradient (CG) solver.
+   *
+   * This function performs the numerical solution of the assembled system.
+   * Although the method itself is not specific to DPG, it provides a basic
+   * iterative solver implementation. No preconditioner is used, which may
+   * result in a large number of iterations. The convergence tolerance is
+   * defined relative to the $L_2$ norm of the right-hand side (RHS) vector,
+   * ensuring a scale-aware stopping criterion.
+   *
+   * @note In practice, this function should be adapted to use a more robust solver
+   * or an appropriate preconditioner to improve convergence.
+   */
   template <int dim>
   void
   Time_Harmonic_Maxwell_DPG<dim>::solve_skeleton()
@@ -1722,7 +1905,7 @@ namespace EM_DPG
     LA::MPI::Vector completely_distributed_solution(
       locally_owned_dofs_trial_skeleton, mpi_communicator);
     SolverControl solver_control(dof_handler_trial_skeleton.n_dofs(),
-                                 1e-10 * system_rhs.l2_norm());
+                                 std::max(1e-10 * system_rhs.l2_norm(), 1e-12));
     LA::SolverCG  solver(solver_control);
     TrilinosWrappers::PreconditionIdentity preconditioner;
     solver.solve(system_matrix,
@@ -1744,11 +1927,15 @@ namespace EM_DPG
       }
   }
 
-  // This function is standard and is in charge of outputting the
-  // solution to a file that can be visualized with Paraview or Visit (VTU and
-  // PVTU format). However, because the skeleton solution lives only on the mesh
-  // faces, we made use of the DataOutFaces class to output it properly. Note
-  // that the subdomains are only outputed in the interior solution file.
+  /**
+   * @brief Outputs the computed solution to files for visualization.
+   *
+   * This function writes the solution in VTU and PVTU formats, suitable for
+   * visualization with ParaView or VisIt. Since the skeleton solution exists
+   * only on the mesh faces, it leverages the `DataOutFaces` class to properly
+   * export this data. The interior solution files include the subdomain
+   * information, whereas the skeleton output does not.
+   */
   template <int dim>
   void
   Time_Harmonic_Maxwell_DPG<dim>::output_results(const unsigned int cycle)
@@ -1756,6 +1943,14 @@ namespace EM_DPG
     pcout << "*--- Outputting results ---*" << std::endl;
 
     TimerOutput::Scope t(computing_timer, "output_results");
+
+    // Create the ouput foulder if it doesn't exist
+    std::filesystem::path output_dir("./output/");
+    if (!std::filesystem::exists(output_dir))
+      {
+        std::filesystem::create_directory(output_dir);
+      }
+
 
     // Organize the solution output
     DataOut<dim> data_out;
@@ -1785,7 +1980,7 @@ namespace EM_DPG
                              DataOut<dim>::type_automatic,
                              data_component_interpretation);
 
-    // Out the subdomains
+    // Output the subdomains
     Vector<float> subdomain(triangulation.n_active_cells());
     for (unsigned int i = 0; i < subdomain.size(); ++i)
       subdomain(i) = triangulation.locally_owned_subdomain();
@@ -1864,18 +2059,19 @@ namespace EM_DPG
       "./output/", "solution-face_waveguide", cycle, mpi_communicator, 3);
   }
 
-  // In the function calculate_L2_error, we compute the $L^2$ error of each
-  // component of our solution, i.e., for the real and imaginary parts of the
-  // electric and magnetic fields for both the interior and skeleton solutions.
-  // Because we want to have all the error for all the different components of
-  // our solution vectors separately, we cannot use the
-  // VectorTools::integrate_difference function directly. Instead, we will
-  // perform the computation "by hand" by looping over all the cells and faces,
-  // interpolating the solution at the quadrature points, and computing the
-  // error with respect to the analytical solution at those points. Since we are
-  // performing this loop, at the same time we can also compute the error on
-  // each cell using the energy norm that we defined for the problem. This will
-  // be useful for the adaptive mesh refinement later on.
+  /**
+   * @brief Computes the L2 error and cell-wise energy error of the solution.
+   *
+   * This function calculates the $L^2$ error for each component of the
+   * solution, including the real and imaginary parts of the electric and
+   * magnetic fields for both the interior and skeleton solutions. Since each
+   * component's error is evaluated separately, the standard
+   * VectorTools::integrate_difference() function cannot be used directly.
+   * Instead, the computation is performed manually by looping over all cells
+   * and faces, interpolating the numerical and analytical solutions at the
+   * quadrature points. During this process, the cell-wise energy norm error
+   * is also computed, which is useful for adaptive mesh refinement.
+   */
   template <int dim>
   void
   Time_Harmonic_Maxwell_DPG<dim>::calculate_L2_error()
@@ -1969,13 +2165,12 @@ namespace EM_DPG
     AnalyticalSolution_H<dim> analytical_solution_H(parameters);
 
     // Initialize variables that are used in the energy norm definition.
-    const auto ikZr      = imag * k * Z_r;
-    const auto conj_ikZr = conj(ikZr);
-    const auto ikepsilon_Zr =
-      imag * k / Z_r * (1. - imag * parameters.sigma_r / parameters.epsilon_r);
-    const auto conj_ikepsilon_Zr = conj(ikepsilon_Zr);
-    const auto kz_kZr            = k_z / (k * Z_r);
-    const auto conj_kz_kZr       = conj(kz_kZr);
+    const std::complex<double> iwmu_r       = imag * omega * parameters.mu_r;
+    const std::complex<double> conj_iwmu_r  = conj(iwmu_r);
+    const std::complex<double> iweps_r      = imag * omega * epsilon_r_eff;
+    const std::complex<double> conj_iweps_r = conj(iweps_r);
+    const std::complex<double> kz_wmur      = k_z / (omega * parameters.mu_r);
+    const std::complex<double> conj_kz_wmur = conj(kz_wmur);
 
     // We create reusable variables to store the fields in complex form to ease
     // the calculations.
@@ -2036,10 +2231,10 @@ namespace EM_DPG
 
                 // Loop over dimensions to compute each component of the error
                 // because for a vector field is simply the sum of the squared
-                // scalar L² errors of each component.
+                // scalar $L_2$ errors of each component.
                 for (unsigned int i = 0; i < dim; ++i)
                   {
-                    // Calculate the L2 error for E
+                    // Calculate the $L_2$ error for E
                     L2_error_E_real +=
                       pow((local_E_values_real[q_index][i] -
                            analytical_solution_E.value(position, i)),
@@ -2051,7 +2246,7 @@ namespace EM_DPG
                           2) *
                       JxW;
 
-                    // Calculate the L2 error for H
+                    // Calculate the $L_2$ error for H
                     L2_error_H_real +=
                       pow((local_H_values_real[q_index][i] -
                            analytical_solution_H.value(position, i)),
@@ -2082,24 +2277,24 @@ namespace EM_DPG
                        pow(complex_shape_function.imag(), 2)) *
                       JxW;
 
-                    // ||curl F - ikZr* I||^2
+
+                    // ||curl F - iwmu_r* I||^2
                     complex_shape_function =
                       local_curl_F_values_real[q_index][i] +
                       imag * local_curl_F_values_imag[q_index][i] -
-                      conj_ikZr * (local_I_values_real[q_index][i] +
-                                   imag * local_I_values_imag[q_index][i]);
+                      conj_iwmu_r * (local_I_values_real[q_index][i] +
+                                     imag * local_I_values_imag[q_index][i]);
                     estimated_error_per_cell(cell_index) +=
                       (pow(complex_shape_function.real(), 2) +
                        pow(complex_shape_function.imag(), 2)) *
                       JxW;
 
-                    // ||curl I + ikepsilon_Zr* F||^2
+                    // ||curl I + iweps_r* F||^2
                     complex_shape_function =
                       local_curl_I_values_real[q_index][i] +
                       imag * local_curl_I_values_imag[q_index][i] +
-                      conj_ikepsilon_Zr *
-                        (local_F_values_real[q_index][i] +
-                         imag * local_F_values_imag[q_index][i]);
+                      conj_iweps_r * (local_F_values_real[q_index][i] +
+                                      imag * local_F_values_imag[q_index][i]);
                     estimated_error_per_cell(cell_index) +=
                       (pow(complex_shape_function.real(), 2) +
                        pow(complex_shape_function.imag(), 2)) *
@@ -2130,9 +2325,9 @@ namespace EM_DPG
                   .get_function_values(locally_relevant_solution_skeleton,
                                        local_H_hat_values_imag);
 
-                // The energy norm only has a face contribution the face where
-                // we applied a Robin Boundary condition, i.e., the inlet port
-                // and outlet port faces. So we only extract the residual
+                // The energy norm only has a face contribution at the face
+                // where we applied a Robin Boundary condition, i.e., the inlet
+                // port and outlet port faces. So we only extract the residual
                 // estimator solution on these faces to save some computational
                 // time.
                 if ((face->boundary_id() == 4) || (face->boundary_id() == 5))
@@ -2153,7 +2348,7 @@ namespace EM_DPG
                       local_I_hat_values_imag);
                   }
 
-                // Compute the L2 error
+                // Compute the $L_2$ error
                 const auto &quadrature_points =
                   fe_face_values_trial_skeleton.get_quadrature_points();
 
@@ -2178,7 +2373,7 @@ namespace EM_DPG
                                            local_I_hat_values_imag[q_index]);
                       }
 
-                    // Calculate the L2 error for E
+                    // Calculate the $L_2$ error for E
                     for (unsigned int i = 0; i < dim; ++i)
                       {
                         L2_error_E_hat_real +=
@@ -2206,9 +2401,9 @@ namespace EM_DPG
                         if ((face->boundary_id() == 4) ||
                             (face->boundary_id() == 5))
                           {
-                            // || n x I + kz_kZr * F||^2
+                            // || n x I + kz_wmur * F||^2
                             complex_shape_function =
-                              conj_kz_kZr *
+                              conj_kz_wmur *
                                 (local_F_hat_values_real[q_index][i] +
                                  imag * local_F_hat_values_imag[q_index][i]) +
                               (local_n_I_hat_values_real[i] +
@@ -2225,8 +2420,8 @@ namespace EM_DPG
           }
       }
 
-    // Finally, we perform a global sum to obtain the final L2 errors and output
-    // the results.
+    // Finally, we perform a global sum to obtain the final $L_2$ errors and
+    // output the results.
     const double L2_error_E_real_global =
       std::sqrt(Utilities::MPI::sum(L2_error_E_real, mpi_communicator));
     const double L2_error_E_imag_global =
@@ -2293,15 +2488,12 @@ namespace EM_DPG
     // We use the residual indicator as a stopping criteria for the refinement
     // cycles if the adaptive refinement flag is set to true.
     double residual_indicator = 1.0;
-    // Stopping criteria for adaptive refinement which is the maximum residual
-    // across all cells
-    double stopping_criteria = 1e-5;
 
     pcout << "Running with Trilinos on "
           << Utilities::MPI::n_mpi_processes(mpi_communicator)
           << " MPI rank(s)..." << std::endl;
 
-    while (residual_indicator > stopping_criteria)
+    while (residual_indicator > parameters.convergence_criteria)
       {
         pcout << "===========================================" << std::endl
               << "Cycle " << cycle << ':' << std::endl;
