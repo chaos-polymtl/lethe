@@ -1289,14 +1289,8 @@ CahnHilliard<dim>::solve_linear_system(const bool initial_step,
     simulation_parameters.linear_solver.at(PhysicsID::cahn_hilliard)
       .relative_residual;
 
-  const double normalize_volume =
-    this->simulation_parameters.non_linear_solver.at(PhysicsID::fluid_dynamics)
-        .normalize_residual_by_volume ?
-      this->get_global_volume() :
-      1.;
-  const double current_residual = this->get_current_residual(
-    this->simulation_parameters.non_linear_solver.at(PhysicsID::fluid_dynamics)
-      .normalize_residual_by_volume);
+  const double normalize_volume = this->get_residual_normalize_volume();
+  const double current_residual = system_rhs.l2_norm() / normalize_volume;
   const double linear_solver_tolerance =
     std::max(relative_residual * current_residual, absolute_residual);
   if (this->simulation_parameters.linear_solver.at(PhysicsID::fluid_dynamics)

@@ -877,8 +877,6 @@ NavierStokesBase<dim, VectorType, DofsType>::refine_mesh()
       else if (this->simulation_parameters.mesh_adaptation.type ==
                Parameters::MeshAdaptation::Type::uniform)
         refine_mesh_uniform();
-      // Recalculate the global volume of the domain for every mesh refinement
-      this->calculate_global_volume();
     }
 }
 

@@ -2811,8 +2811,8 @@ FluidDynamicsMatrixFree<dim>::setup_dofs_fd()
                                                    this->mpi_communicator);
     }
 
-  this->calculate_global_volume();
-  double global_volume = this->get_global_volume();
+  double global_volume =
+    GridTools::volume(*this->triangulation, *this->mapping);
 
   this->pcout << "   Number of active cells:       "
               << this->triangulation->n_global_active_cells() << std::endl
@@ -3456,14 +3456,8 @@ FluidDynamicsMatrixFree<dim>::solve_system_GMRES(const bool   initial_step,
 
   const AffineConstraints<double> &constraints_used =
     initial_step ? nonzero_constraints : this->zero_constraints;
-  const double normalize_volume =
-    this->simulation_parameters.non_linear_solver.at(PhysicsID::fluid_dynamics)
-        .normalize_residual_by_volume ?
-      this->get_global_volume() :
-      1.;
-  const double current_residual = this->get_current_residual(
-    this->simulation_parameters.non_linear_solver.at(PhysicsID::fluid_dynamics)
-      .normalize_residual_by_volume);
+  const double normalize_volume = this->get_residual_normalize_volume();
+  const double current_residual = this->system_rhs.l2_norm() / normalize_volume;
   const double linear_solver_tolerance =
     std::max(relative_residual * current_residual, absolute_residual);
   if (this->simulation_parameters.linear_solver.at(PhysicsID::fluid_dynamics)
@@ -3567,14 +3561,8 @@ FluidDynamicsMatrixFree<dim>::solve_system_direct(
 
   const AffineConstraints<double> &constraints_used =
     initial_step ? nonzero_constraints : this->zero_constraints;
-  const double normalize_volume =
-    this->simulation_parameters.non_linear_solver.at(PhysicsID::fluid_dynamics)
-        .normalize_residual_by_volume ?
-      this->get_global_volume() :
-      1.;
-  const double current_residual = this->get_current_residual(
-    this->simulation_parameters.non_linear_solver.at(PhysicsID::fluid_dynamics)
-      .normalize_residual_by_volume);
+  const double normalize_volume = this->get_residual_normalize_volume();
+  const double current_residual = this->system_rhs.l2_norm() / normalize_volume;
   const double linear_solver_tolerance =
     std::max(relative_residual * current_residual, absolute_residual);
   const double non_normalized_linear_solver_tolerance =
