@@ -221,40 +221,41 @@ SolidBase<dim, spacedim>::setup_triangulation(const bool restart)
 
 template <>
 void
-SolidBase<2, 2>::rotate_grid(const double angle, const Tensor<1, 3> /*axis*/)
+SolidBase<2, 2>::rotate_grid(const double angle, const Tensor<1, 3> /*axis*/
+                               &)
 {
   GridTools::rotate(angle, *solid_tria);
 }
 template <>
 void
-SolidBase<2, 3>::rotate_grid(const double angle, const Tensor<1, 3> axis)
+SolidBase<2, 3>::rotate_grid(const double angle, const Tensor<1, 3> &axis)
 {
   GridTools::rotate(axis, angle, *solid_tria);
 }
 template <>
 void
-SolidBase<3, 3>::rotate_grid(const double angle, const Tensor<1, 3> axis)
+SolidBase<3, 3>::rotate_grid(const double angle, const Tensor<1, 3> &axis)
 {
   GridTools::rotate(axis, angle, *solid_tria);
 }
 
 template <>
 void
-SolidBase<2, 2>::translate_grid(const Tensor<1, 3> translation)
+SolidBase<2, 2>::translate_grid(const Tensor<1, 3> &translation)
 {
   GridTools::shift(Tensor<1, 2>({translation[0], translation[1]}), *solid_tria);
 }
 
 template <>
 void
-SolidBase<2, 3>::translate_grid(const Tensor<1, 3> translation)
+SolidBase<2, 3>::translate_grid(const Tensor<1, 3> &translation)
 {
   GridTools::shift(translation, *solid_tria);
 }
 
 template <>
 void
-SolidBase<3, 3>::translate_grid(const Tensor<1, 3> translation)
+SolidBase<3, 3>::translate_grid(const Tensor<1, 3> &translation)
 {
   GridTools::shift(translation, *solid_tria);
 }
@@ -497,24 +498,24 @@ SolidBase<dim, spacedim>::integrate_velocity(double time_step,
 
           Tensor<1, spacedim> k1;
           velocity->set_time(initial_time);
-          for (unsigned int comp_i = 0; comp_i < spacedim; ++comp_i)
+          for (int comp_i = 0; comp_i < spacedim; ++comp_i)
             k1[comp_i] = velocity->value(particle_location, comp_i);
 
           Point<spacedim>     p1 = particle_location + time_step / 2 * k1;
           Tensor<1, spacedim> k2;
           velocity->set_time(initial_time + time_step / 2);
-          for (unsigned int comp_i = 0; comp_i < spacedim; ++comp_i)
+          for (int comp_i = 0; comp_i < spacedim; ++comp_i)
             k2[comp_i] = velocity->value(p1, comp_i);
 
           Point<spacedim>     p2 = particle_location + time_step / 2 * k2;
           Tensor<1, spacedim> k3;
-          for (unsigned int comp_i = 0; comp_i < spacedim; ++comp_i)
+          for (int comp_i = 0; comp_i < spacedim; ++comp_i)
             k3[comp_i] = velocity->value(p2, comp_i);
 
           Point<spacedim>     p3 = particle_location + time_step * k3;
           Tensor<1, spacedim> k4;
           velocity->set_time(initial_time + time_step);
-          for (unsigned int comp_i = 0; comp_i < spacedim; ++comp_i)
+          for (int comp_i = 0; comp_i < spacedim; ++comp_i)
             k4[comp_i] = velocity->value(p3, comp_i);
 
           particle_location += time_step / 6 * (k1 + 2 * k2 + 2 * k3 + k4);
@@ -606,24 +607,24 @@ SolidBase<dim, spacedim>::move_solid_triangulation(const double time_step,
 
               Tensor<1, spacedim> k1;
               velocity->set_time(initial_time);
-              for (unsigned int comp_i = 0; comp_i < spacedim; ++comp_i)
+              for (int comp_i = 0; comp_i < spacedim; ++comp_i)
                 k1[comp_i] = velocity->value(vertex_position, comp_i);
 
               Point<spacedim>     p1 = vertex_position + time_step / 2 * k1;
               Tensor<1, spacedim> k2;
               velocity->set_time(initial_time + time_step / 2);
-              for (unsigned int comp_i = 0; comp_i < spacedim; ++comp_i)
+              for (int comp_i = 0; comp_i < spacedim; ++comp_i)
                 k2[comp_i] = velocity->value(p1, comp_i);
 
               Point<spacedim>     p2 = vertex_position + time_step / 2 * k2;
               Tensor<1, spacedim> k3;
-              for (unsigned int comp_i = 0; comp_i < spacedim; ++comp_i)
+              for (int comp_i = 0; comp_i < spacedim; ++comp_i)
                 k3[comp_i] = velocity->value(p2, comp_i);
 
               Point<spacedim>     p3 = vertex_position + time_step * k3;
               Tensor<1, spacedim> k4;
               velocity->set_time(initial_time + time_step);
-              for (unsigned int comp_i = 0; comp_i < spacedim; ++comp_i)
+              for (int comp_i = 0; comp_i < spacedim; ++comp_i)
                 k4[comp_i] = velocity->value(p3, comp_i);
 
               auto vertex_displacement =
@@ -631,7 +632,7 @@ SolidBase<dim, spacedim>::move_solid_triangulation(const double time_step,
 
               vertex_position += vertex_displacement;
 
-              for (unsigned d = 0; d < spacedim; ++d)
+              for (int d = 0; d < spacedim; ++d)
                 displacement[dof_index + d] =
                   displacement[dof_index + d] + vertex_displacement[d];
 
@@ -659,12 +660,12 @@ SolidBase<dim, spacedim>::move_solid_triangulation_with_displacement()
                vertex < cell->reference_cell().n_vertices();
                ++vertex)
             {
-              if (!dof_vertex_displaced.count(cell->vertex_index(vertex)))
+              if (!dof_vertex_displaced.contains(cell->vertex_index(vertex)))
                 {
                   const auto dof_index = cell->vertex_dof_index(vertex, 0);
                   Point<spacedim> &vertex_position = cell->vertex(vertex);
 
-                  for (unsigned d = 0; d < spacedim; ++d)
+                  for (int d = 0; d < spacedim; ++d)
                     {
                       vertex_position[d] = vertex_position[d] +
                                            displacement_relevant[dof_index + d];

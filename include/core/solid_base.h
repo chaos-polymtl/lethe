@@ -178,7 +178,7 @@ public:
    *
    */
   void
-  rotate_grid(const double angle, const Tensor<1, 3> axis);
+  rotate_grid(const double angle, const Tensor<1, 3> &axis);
 
   /**
    * @brief Translate the grid. In spacedim=2, the third component is ignore
@@ -186,7 +186,7 @@ public:
    * @param translate The vector with which the solid is translated.
    */
   void
-  translate_grid(const Tensor<1, 3> translate);
+  translate_grid(const Tensor<1, 3> &translate);
 
   /**
    * @brief Updates the time in the function used to describe the solid temperature
