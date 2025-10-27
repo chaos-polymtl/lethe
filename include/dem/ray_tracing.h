@@ -93,8 +93,8 @@ private:
    * @brief Execute the last post-processing at the end of the simulation and
    * output test results if necessary.
    *
-   * @param[in] intersection_points Vector of points containing every intersection
-   * between photons and particles.
+   * @param[in] intersection_points Vector of points containing every
+   * intersection between photons and particles.
    */
   void
   finish_simulation(std::vector<Point<3>> &intersection_points);
@@ -104,17 +104,17 @@ private:
    * photons and particles.
    *
    * @tparam move_photon Boolean to indicate if the photon should move at the
-   * end of the loop. This is set to true when the loop is done on the local cell
-   * neighboring list.
+   * end of the loop. This is set to true when the loop is done on the local
+   * cell neighboring list.
    *
-   * @param[in] cell_list Data structure containing the local or ghost neighboring cell
-   * to each local cell in the triangulation.
+   * @param[in] cell_list Data structure containing the local or ghost
+   * neighboring cell to each local cell in the triangulation.
    * @param[in,out] photon_intersection_points_map A map containing information
    * about each intersection point found during the ray tracing. The key of the
    * map is the particle index of the photon. The value is a tuple containing
-   * the distance between the initial location of the photon and the intersection
-   * point, the intersection point and an iterator to the photon that needs to be
-   * removed.
+   * the distance between the initial location of the photon and the
+   * intersection point, the intersection point and an iterator to the photon
+   * that needs to be removed.
    */
   template <bool move_photon>
   void

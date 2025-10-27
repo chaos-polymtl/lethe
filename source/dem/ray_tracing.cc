@@ -390,7 +390,7 @@ RayTracingSolver<dim>::write_output_results(
 
   for (const auto &p : points)
     {
-      oss << p[0] << "," <<  p[1] << "," << p[2] << "\n";
+      oss << p[0] << "," << p[1] << "," << p[2] << "\n";
     }
 
   std::string local_str  = oss.str();
@@ -527,7 +527,7 @@ RayTracingSolver<dim>::find_intersection(
                   const double particle_diameter =
                     current_particle
                       ->get_properties()[DEMProperties::PropertiesIndex::dp];
-                  
+
                   current_intersection_points =
                     LetheGridTools::find_line_sphere_intersection(
                       photon_insertion_point,
