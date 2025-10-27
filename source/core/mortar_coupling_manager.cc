@@ -823,7 +823,7 @@ CouplingOperator<dim, Number>::CouplingOperator(
                   {
                     Point<dim - 1> temp;
                     for (int i = 0, j = 0; i < dim; ++i)
-                      if ((face_no / 2) != i)
+                      if ((face_no / 2) != static_cast<unsigned int>(i))
                         temp[j++] = p[i];
 
                     if ((dim == 3) && ((face_no / 2) == 1))
