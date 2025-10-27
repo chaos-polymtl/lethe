@@ -122,6 +122,11 @@ public:
     Assert(fields_value.find(field::tracer_concentration) != fields_value.end(),
            PhysicialPropertyModelFieldUndefined(
              "ConstantTracerReactionPrefactor", "tracer_concentration"));
+    if (tracer_reaction_order < 1.)
+      if (fields_value.at(field::tracer_concentration) < 1e-12)
+        {
+          return DBL_MAX;
+        }
     return tracer_reaction_constant *
            pow(fields_value.at(field::tracer_concentration),
                tracer_reaction_order - 1.);
@@ -145,6 +150,12 @@ public:
       field_vectors.at(field::tracer_concentration);
     for (size_t i = 0; i < property_vector.size(); ++i)
       {
+        if (tracer_reaction_order < 1.)
+          if (concentration_vector[i] < 1e-12)
+            {
+              property_vector[i] = DBL_MAX;
+              continue;
+            }
         property_vector[i] =
           tracer_reaction_constant *
           std::pow(concentration_vector[i], tracer_reaction_order - 1.);
@@ -260,6 +271,9 @@ public:
              "TanhLevelsetTracerReactionPrefactor", "tracer_concentration"));
     const double levelset      = field_values.at(field::levelset);
     const double concentration = field_values.at(field::tracer_concentration);
+    if (tracer_reaction_order < 1.)
+      if (concentration < 1e-12)
+        return DBL_MAX;
     const double k =
       tracer_reaction_constant_inside +
       delta_reaction_constant * (0.5 + 0.5 * tanh(levelset / thickness));
@@ -293,6 +307,12 @@ public:
            SizeOfFields(n_values, concentration_vec.size()));
     for (unsigned int i = 0; i < n_values; ++i)
       {
+        if (tracer_reaction_order < 1.)
+          if (concentration_vec[i] < 1e-12)
+            {
+              property_vector[i] = DBL_MAX;
+              continue;
+            }
         const double k = tracer_reaction_constant_inside +
                          delta_reaction_constant *
                            (0.5 + 0.5 * tanh(levelset_vec[i] / thickness));
@@ -456,6 +476,9 @@ public:
              "tracer_concentration"));
     const double levelset_val  = field_values.at(field::levelset);
     const double concentration = field_values.at(field::tracer_concentration);
+    if (tracer_reaction_order < 1.)
+      if (concentration < 1e-12)
+        return DBL_MAX;
     const double k =
       tracer_reaction_constant_bulk +
       delta_reaction_constant * exp(-pow(levelset_val, 2) / squared_thickness);
@@ -493,6 +516,12 @@ public:
            SizeOfFields(n_values, concentration_vec.size()));
     for (unsigned int i = 0; i < n_values; ++i)
       {
+        if (tracer_reaction_order < 1.)
+          if (concentration_vec[i] < 1e-12)
+            {
+              property_vector[i] = DBL_MAX;
+              continue;
+            }
         const double k = tracer_reaction_constant_bulk +
                          delta_reaction_constant *
                            exp(-pow(levelset_vec[i], 2) / squared_thickness);
