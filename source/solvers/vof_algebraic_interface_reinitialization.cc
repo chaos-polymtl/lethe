@@ -470,6 +470,9 @@ VOFAlgebraicInterfaceReinitialization<dim>::assemble_system_rhs()
   const Vector<double> bdf_coefficient_vector =
     calculate_bdf_coefficients(method, this->time_step_vector);
 
+  // Set tolerance to avoid division by zero
+  const double tolerance = 1e-12;
+
   for (const auto &cell : this->dof_handler->active_cell_iterators())
     {
       if (cell->is_locally_owned())
@@ -517,9 +520,6 @@ VOFAlgebraicInterfaceReinitialization<dim>::assemble_system_rhs()
           fe_values_algebraic_reinitialization.get_function_gradients(
             this->evaluation_point,
             present_reinitialized_phase_gradient_values);
-
-          // Set tolerance to avoid division by zero
-          const double tolerance = 1e-12;
 
           // Loop over quadrature points
           for (unsigned int q = 0; q < n_q_points; ++q)
