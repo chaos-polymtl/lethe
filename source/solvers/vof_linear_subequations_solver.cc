@@ -3,6 +3,8 @@
 
 #include <solvers/vof_linear_subequations_solver.h>
 
+#include <deal.II/grid/grid_tools.h>
+
 #include <deal.II/lac/solver_control.h>
 #include <deal.II/lac/sparsity_tools.h>
 #include <deal.II/lac/trilinos_solver.h>
@@ -116,10 +118,10 @@ VOFLinearSubequationsSolver<dim>::solve_linear_system_and_update_solution()
 
   // Set tolerance
   const double normalize_volume =
-    this->simulation_parameters.non_linear_solver.at(PhysicsID::fluid_dynamics)
+    simulation_parameters.non_linear_solver.at(PhysicsID::VOF)
         .normalize_residual_by_volume ?
-      this->get_global_volume() :
-      1.;
+      GridTools::volume(*this->triangulation, *this->mapping) :
+      1.0;
   const double linear_solver_tolerance =
     this->simulation_parameters.linear_solver.at(PhysicsID::VOF)
       .minimum_residual /

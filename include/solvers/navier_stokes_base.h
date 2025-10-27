@@ -173,6 +173,20 @@ protected:
   output_newton_update_norms(const unsigned int display_precision) override;
 
   /**
+   * @brief Get volume for residual normalization. By default, should return 1. In solvers, if normalize by volume is activated, the overriden method should return the global volume of the triangulation.
+   *
+   * @return Normalization volume.
+   */
+  virtual double
+  get_residual_normalize_volume() const override
+  {
+    return simulation_parameters.non_linear_solver.at(PhysicsID::fluid_dynamics)
+               .normalize_residual_by_volume ?
+             GridTools::volume(*this->triangulation, *this->mapping) :
+             1.;
+  }
+
+  /**
    *  Generic interface routine to allow the CFD solver
    *  to cooperate with the multiphysics modules
    **/
@@ -473,13 +487,6 @@ protected:
    */
   void
   reinit_mortar_operators();
-
-  virtual void
-  calculate_global_volume()
-  {
-    this->set_global_volume(
-      GridTools::volume(*this->triangulation, *this->mapping));
-  }
 
   /**
    * @brief Returns the mapping shared pointer. A MappingQCache is
