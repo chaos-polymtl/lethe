@@ -121,8 +121,8 @@ protected:
 
   void
   set_initial_condition(
-    Parameters::FluidDynamicsInitialConditionType initial_condition_type,
-    bool                                          restart = false) override
+    const Parameters::FluidDynamicsInitialConditionType initial_condition_type,
+    const bool                                          restart = false) override
   {
     unsigned int ref_iter = 0;
     do

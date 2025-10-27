@@ -223,8 +223,8 @@ protected:
 
   virtual void
   set_initial_condition(
-    Parameters::FluidDynamicsInitialConditionType initial_condition_type,
-    bool                                          restart = false)
+    const Parameters::FluidDynamicsInitialConditionType initial_condition_type,
+    const bool                                          restart = false)
   {
     unsigned int ref_iter = 0;
     do
