@@ -6,13 +6,11 @@
 
 
 // Lethe includes
-#include <core/manifolds.h>
 #include <core/pvd_handler.h>
 #include <core/solutions_output.h>
 
 // Std
 #include <fstream>
-#include <iostream>
 
 template <int dim, int spacedim>
 void
@@ -36,6 +34,7 @@ write_vtu_and_pvd(PVDHandler                            &pvd_handler,
         Utilities::MPI::n_mpi_processes(mpi_communicator);
       const unsigned int n_files =
         (group_files == 0) ? n_processes : std::min(group_files, n_processes);
+      filenames.reserve(n_files);
 
       for (unsigned int i = 0; i < n_files; ++i)
         filenames.push_back(file_prefix + "." +
@@ -60,16 +59,14 @@ write_vtu_and_pvd(PVDHandler                            &pvd_handler,
     (group_files == 0 ? my_id : my_id % group_files);
   int color = my_id % group_files;
 
-  {
-    MPI_Comm comm;
-    MPI_Comm_split(mpi_communicator, color, my_id, &comm);
-    const std::string filename =
-      (folder + file_prefix + "." + Utilities::int_to_string(iter, digits) +
-       "." + Utilities::int_to_string(my_file_id, digits) + ".vtu");
-    data_out.write_vtu_in_parallel(filename.c_str(), comm);
+  MPI_Comm comm;
+  MPI_Comm_split(mpi_communicator, color, my_id, &comm);
+  const std::string filename =
+    (folder + file_prefix + "." + Utilities::int_to_string(iter, digits) + "." +
+     Utilities::int_to_string(my_file_id, digits) + ".vtu");
+  data_out.write_vtu_in_parallel(filename.c_str(), comm);
 
-    MPI_Comm_free(&comm);
-  }
+  MPI_Comm_free(&comm);
 }
 
 template <int dim>
