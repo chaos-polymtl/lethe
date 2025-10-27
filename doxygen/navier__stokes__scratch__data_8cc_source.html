@@ -865,49 +865,53 @@ $(document).ready(function() { init_codefold(0); });
 <div class="line"><a id="l00739" name="l00739"></a><span class="lineno">  739</span>  cell_volume = <a class="code hl_function" href="utilities_8h.html#a3d02cb065c32b672c94bb862ecff4431">compute_cell_measure_with_JxW</a>(</div>
 <div class="line"><a id="l00740" name="l00740"></a><span class="lineno">  740</span>    this-&gt;fe_values_void_fraction-&gt;get_JxW_values());</div>
 <div class="line"><a id="l00741" name="l00741"></a><span class="lineno">  741</span> </div>
-<div class="line"><a id="l00742" name="l00742"></a><span class="lineno">  742</span>  <span class="keywordflow">if</span> (!this-&gt;interpolated_void_fraction)</div>
-<div class="line"><a id="l00743" name="l00743"></a><span class="lineno">  743</span>    {</div>
-<div class="line"><a id="l00744" name="l00744"></a><span class="lineno">  744</span>      <span class="keywordtype">double</span> cell_void_fraction_bulk = 0;</div>
-<div class="line"><a id="l00745" name="l00745"></a><span class="lineno">  745</span>      cell_void_fraction_bulk =</div>
-<div class="line"><a id="l00746" name="l00746"></a><span class="lineno">  746</span>        (cell_volume - total_particle_volume) / cell_volume;</div>
-<div class="line"><a id="l00747" name="l00747"></a><span class="lineno">  747</span> </div>
-<div class="line"><a id="l00748" name="l00748"></a><span class="lineno">  748</span>      <span class="keywordflow">for</span> (<span class="keywordtype">unsigned</span> <span class="keywordtype">int</span> j = 0; j &lt; number_of_particles; ++j)</div>
-<div class="line"><a id="l00749" name="l00749"></a><span class="lineno">  749</span>        cell_void_fraction[j] = cell_void_fraction_bulk;</div>
-<div class="line"><a id="l00750" name="l00750"></a><span class="lineno">  750</span>    }</div>
-<div class="line"><a id="l00751" name="l00751"></a><span class="lineno">  751</span>  <span class="keywordflow">else</span></div>
-<div class="line"><a id="l00752" name="l00752"></a><span class="lineno">  752</span>    <span class="keywordflow">for</span> (<span class="keywordtype">unsigned</span> <span class="keywordtype">int</span> j = 0; j &lt; number_of_particles; ++j)</div>
-<div class="line"><a id="l00753" name="l00753"></a><span class="lineno">  753</span>      cell_void_fraction[j] = 0;</div>
-<div class="line"><a id="l00754" name="l00754"></a><span class="lineno">  754</span>}</div>
+<div class="line"><a id="l00742" name="l00742"></a><span class="lineno">  742</span>  <span class="comment">// The cell_void_fraction vector needs to be resized to the correct size</span></div>
+<div class="line"><a id="l00743" name="l00743"></a><span class="lineno">  743</span>  <span class="comment">// since the quadrature used in the FEValues for the void fraction will</span></div>
+<div class="line"><a id="l00744" name="l00744"></a><span class="lineno">  744</span>  <span class="comment">// be tailored exactly to the number of particles.</span></div>
+<div class="line"><a id="l00745" name="l00745"></a><span class="lineno">  745</span>  <span class="comment">// We also initialize it to zero and it will be filled if a cell-averaged</span></div>
+<div class="line"><a id="l00746" name="l00746"></a><span class="lineno">  746</span>  <span class="comment">// void fraction is used.</span></div>
+<div class="line"><a id="l00747" name="l00747"></a><span class="lineno">  747</span>  cell_void_fraction.resize(number_of_particles, 0);</div>
+<div class="line"><a id="l00748" name="l00748"></a><span class="lineno">  748</span> </div>
+<div class="line"><a id="l00749" name="l00749"></a><span class="lineno">  749</span>  <span class="keywordflow">if</span> (!this-&gt;interpolated_void_fraction)</div>
+<div class="line"><a id="l00750" name="l00750"></a><span class="lineno">  750</span>    {</div>
+<div class="line"><a id="l00751" name="l00751"></a><span class="lineno">  751</span>      <span class="keywordtype">double</span> cell_void_fraction_bulk = 0;</div>
+<div class="line"><a id="l00752" name="l00752"></a><span class="lineno">  752</span>      cell_void_fraction_bulk =</div>
+<div class="line"><a id="l00753" name="l00753"></a><span class="lineno">  753</span>        (cell_volume - total_particle_volume) / cell_volume;</div>
+<div class="line"><a id="l00754" name="l00754"></a><span class="lineno">  754</span> </div>
+<div class="line"><a id="l00755" name="l00755"></a><span class="lineno">  755</span>      <span class="keywordflow">for</span> (<span class="keywordtype">unsigned</span> <span class="keywordtype">int</span> j = 0; j &lt; number_of_particles; ++j)</div>
+<div class="line"><a id="l00756" name="l00756"></a><span class="lineno">  756</span>        cell_void_fraction[j] = cell_void_fraction_bulk;</div>
+<div class="line"><a id="l00757" name="l00757"></a><span class="lineno">  757</span>    }</div>
+<div class="line"><a id="l00758" name="l00758"></a><span class="lineno">  758</span>}</div>
 </div>
-<div class="line"><a id="l00755" name="l00755"></a><span class="lineno">  755</span> </div>
-<div class="line"><a id="l00756" name="l00756"></a><span class="lineno">  756</span><span class="keyword">template</span> &lt;<span class="keywordtype">int</span> dim&gt;</div>
-<div class="line"><a id="l00757" name="l00757"></a><span class="lineno">  757</span>Quadrature&lt;dim&gt;</div>
-<div class="foldopen" id="foldopen00758" data-start="{" data-end="}">
-<div class="line"><a id="l00758" name="l00758"></a><span class="lineno"><a class="line" href="classNavierStokesScratchData.html#aa2e6cff4889a98d9ed713209ad8e9a06">  758</a></span><a class="code hl_function" href="classNavierStokesScratchData.html#aa2e6cff4889a98d9ed713209ad8e9a06">NavierStokesScratchData&lt;dim&gt;::gather_particles_reference_location</a>()</div>
-<div class="line"><a id="l00759" name="l00759"></a><span class="lineno">  759</span>{</div>
-<div class="line"><a id="l00760" name="l00760"></a><span class="lineno">  760</span>  <span class="comment">// Create local vector that will be used to spawn an in-situ quadrature to</span></div>
-<div class="line"><a id="l00761" name="l00761"></a><span class="lineno">  761</span>  <span class="comment">// interpolate at the locations of the particles</span></div>
-<div class="line"><a id="l00762" name="l00762"></a><span class="lineno">  762</span>  std::vector&lt;Point&lt;dim&gt;&gt; particle_reference_location(number_of_particles);</div>
-<div class="line"><a id="l00763" name="l00763"></a><span class="lineno">  763</span>  std::vector&lt;double&gt;     particle_weights(number_of_particles, 1);</div>
-<div class="line"><a id="l00764" name="l00764"></a><span class="lineno">  764</span>  <span class="keywordtype">unsigned</span> <span class="keywordtype">int</span>            i_particle = 0;</div>
-<div class="line"><a id="l00765" name="l00765"></a><span class="lineno">  765</span> </div>
-<div class="line"><a id="l00766" name="l00766"></a><span class="lineno">  766</span>  <span class="comment">// Loop over particles in cell and cache their reference location</span></div>
-<div class="line"><a id="l00767" name="l00767"></a><span class="lineno">  767</span>  <span class="keywordflow">for</span> (<span class="keyword">auto</span> &amp;particle : pic)</div>
-<div class="line"><a id="l00768" name="l00768"></a><span class="lineno">  768</span>    {</div>
-<div class="line"><a id="l00769" name="l00769"></a><span class="lineno">  769</span>      <span class="comment">// Store particle positions and weights</span></div>
-<div class="line"><a id="l00770" name="l00770"></a><span class="lineno">  770</span>      <span class="comment">// Reference location of the particle</span></div>
-<div class="line"><a id="l00771" name="l00771"></a><span class="lineno">  771</span>      particle_reference_location[i_particle] =</div>
-<div class="line"><a id="l00772" name="l00772"></a><span class="lineno">  772</span>        particle.get_reference_location();</div>
-<div class="line"><a id="l00773" name="l00773"></a><span class="lineno">  773</span>      i_particle++;</div>
-<div class="line"><a id="l00774" name="l00774"></a><span class="lineno">  774</span>    }</div>
-<div class="line"><a id="l00775" name="l00775"></a><span class="lineno">  775</span> </div>
-<div class="line"><a id="l00776" name="l00776"></a><span class="lineno">  776</span>  <span class="comment">// Return a quadrature for the Navier-Stokes equations that is based on the</span></div>
-<div class="line"><a id="l00777" name="l00777"></a><span class="lineno">  777</span>  <span class="comment">// particle reference location</span></div>
-<div class="line"><a id="l00778" name="l00778"></a><span class="lineno">  778</span>  <span class="keywordflow">return</span> Quadrature&lt;dim&gt;(particle_reference_location, particle_weights);</div>
-<div class="line"><a id="l00779" name="l00779"></a><span class="lineno">  779</span>}</div>
+<div class="line"><a id="l00759" name="l00759"></a><span class="lineno">  759</span> </div>
+<div class="line"><a id="l00760" name="l00760"></a><span class="lineno">  760</span><span class="keyword">template</span> &lt;<span class="keywordtype">int</span> dim&gt;</div>
+<div class="line"><a id="l00761" name="l00761"></a><span class="lineno">  761</span>Quadrature&lt;dim&gt;</div>
+<div class="foldopen" id="foldopen00762" data-start="{" data-end="}">
+<div class="line"><a id="l00762" name="l00762"></a><span class="lineno"><a class="line" href="classNavierStokesScratchData.html#aa2e6cff4889a98d9ed713209ad8e9a06">  762</a></span><a class="code hl_function" href="classNavierStokesScratchData.html#aa2e6cff4889a98d9ed713209ad8e9a06">NavierStokesScratchData&lt;dim&gt;::gather_particles_reference_location</a>()</div>
+<div class="line"><a id="l00763" name="l00763"></a><span class="lineno">  763</span>{</div>
+<div class="line"><a id="l00764" name="l00764"></a><span class="lineno">  764</span>  <span class="comment">// Create local vector that will be used to spawn an in-situ quadrature to</span></div>
+<div class="line"><a id="l00765" name="l00765"></a><span class="lineno">  765</span>  <span class="comment">// interpolate at the locations of the particles</span></div>
+<div class="line"><a id="l00766" name="l00766"></a><span class="lineno">  766</span>  std::vector&lt;Point&lt;dim&gt;&gt; particle_reference_location(number_of_particles);</div>
+<div class="line"><a id="l00767" name="l00767"></a><span class="lineno">  767</span>  std::vector&lt;double&gt;     particle_weights(number_of_particles, 1);</div>
+<div class="line"><a id="l00768" name="l00768"></a><span class="lineno">  768</span>  <span class="keywordtype">unsigned</span> <span class="keywordtype">int</span>            i_particle = 0;</div>
+<div class="line"><a id="l00769" name="l00769"></a><span class="lineno">  769</span> </div>
+<div class="line"><a id="l00770" name="l00770"></a><span class="lineno">  770</span>  <span class="comment">// Loop over particles in cell and cache their reference location</span></div>
+<div class="line"><a id="l00771" name="l00771"></a><span class="lineno">  771</span>  <span class="keywordflow">for</span> (<span class="keyword">auto</span> &amp;particle : pic)</div>
+<div class="line"><a id="l00772" name="l00772"></a><span class="lineno">  772</span>    {</div>
+<div class="line"><a id="l00773" name="l00773"></a><span class="lineno">  773</span>      <span class="comment">// Store particle positions and weights</span></div>
+<div class="line"><a id="l00774" name="l00774"></a><span class="lineno">  774</span>      <span class="comment">// Reference location of the particle</span></div>
+<div class="line"><a id="l00775" name="l00775"></a><span class="lineno">  775</span>      particle_reference_location[i_particle] =</div>
+<div class="line"><a id="l00776" name="l00776"></a><span class="lineno">  776</span>        particle.get_reference_location();</div>
+<div class="line"><a id="l00777" name="l00777"></a><span class="lineno">  777</span>      i_particle++;</div>
+<div class="line"><a id="l00778" name="l00778"></a><span class="lineno">  778</span>    }</div>
+<div class="line"><a id="l00779" name="l00779"></a><span class="lineno">  779</span> </div>
+<div class="line"><a id="l00780" name="l00780"></a><span class="lineno">  780</span>  <span class="comment">// Return a quadrature for the Navier-Stokes equations that is based on the</span></div>
+<div class="line"><a id="l00781" name="l00781"></a><span class="lineno">  781</span>  <span class="comment">// particle reference location</span></div>
+<div class="line"><a id="l00782" name="l00782"></a><span class="lineno">  782</span>  <span class="keywordflow">return</span> Quadrature&lt;dim&gt;(particle_reference_location, particle_weights);</div>
+<div class="line"><a id="l00783" name="l00783"></a><span class="lineno">  783</span>}</div>
 </div>
-<div class="line"><a id="l00780" name="l00780"></a><span class="lineno">  780</span><span class="keyword">template</span> <span class="keyword">class </span><a class="code hl_class" href="classNavierStokesScratchData.html">NavierStokesScratchData&lt;2&gt;</a>;</div>
-<div class="line"><a id="l00781" name="l00781"></a><span class="lineno">  781</span><span class="keyword">template</span> <span class="keyword">class </span><a class="code hl_class" href="classNavierStokesScratchData.html">NavierStokesScratchData&lt;3&gt;</a>;</div>
+<div class="line"><a id="l00784" name="l00784"></a><span class="lineno">  784</span><span class="keyword">template</span> <span class="keyword">class </span><a class="code hl_class" href="classNavierStokesScratchData.html">NavierStokesScratchData&lt;2&gt;</a>;</div>
+<div class="line"><a id="l00785" name="l00785"></a><span class="lineno">  785</span><span class="keyword">template</span> <span class="keyword">class </span><a class="code hl_class" href="classNavierStokesScratchData.html">NavierStokesScratchData&lt;3&gt;</a>;</div>
 <div class="ttc" id="abdf_8h_html"><div class="ttname"><a href="bdf_8h.html">bdf.h</a></div></div>
 <div class="ttc" id="abdf_8h_html_a20abc47ca7441007f8923c529000ace5"><div class="ttname"><a href="bdf_8h.html#a20abc47ca7441007f8923c529000ace5">maximum_number_of_previous_solutions</a></div><div class="ttdeci">unsigned int maximum_number_of_previous_solutions()</div><div class="ttdoc">Get the maximum number of previous time steps supposed by the BDF schemes implemented in Lethe.</div><div class="ttdef"><b>Definition</b> <a href="bdf_8h_source.html#l00084">bdf.h:84</a></div></div>
 <div class="ttc" id="aclassCahnHilliardFilterBase_html_a3768b77608aa7e5f45fe38efdc5827f4"><div class="ttname"><a href="classCahnHilliardFilterBase.html#a3768b77608aa7e5f45fe38efdc5827f4">CahnHilliardFilterBase::model_cast</a></div><div class="ttdeci">static std::shared_ptr&lt; CahnHilliardFilterBase &gt; model_cast(const Parameters::CahnHilliard &amp;cahn_hilliard_parameters)</div><div class="ttdoc">Instantiate and return a pointer to a CahnHilliardFilterBase object by casting it to the proper child...</div><div class="ttdef"><b>Definition</b> <a href="cahn__hilliard__filter_8cc_source.html#l00007">cahn_hilliard_filter.cc:7</a></div></div>
@@ -921,7 +925,7 @@ $(document).ready(function() { init_codefold(0); });
 <div class="ttc" id="aclassNavierStokesScratchData_html_a661e62ccc078b9798322641b2c56655c"><div class="ttname"><a href="classNavierStokesScratchData.html#a661e62ccc078b9798322641b2c56655c">NavierStokesScratchData::enable_particle_fluid_interactions</a></div><div class="ttdeci">void enable_particle_fluid_interactions(const unsigned int n_global_max_particles_per_cell, const bool enable_void_fraction_interpolation)</div><div class="ttdoc">enable_particle_fluid_interactions Enables the calculation of the fluid information at the particle l...</div><div class="ttdef"><b>Definition</b> <a href="navier__stokes__scratch__data_8cc_source.html#l00337">navier_stokes_scratch_data.cc:337</a></div></div>
 <div class="ttc" id="aclassNavierStokesScratchData_html_a6937a49938e44bf91ff473c99e176561"><div class="ttname"><a href="classNavierStokesScratchData.html#a6937a49938e44bf91ff473c99e176561">NavierStokesScratchData::enable_projected_phase_fraction_gradient</a></div><div class="ttdeci">void enable_projected_phase_fraction_gradient(const FiniteElement&lt; dim &gt; &amp;fe_projected_phase_fraction_gradient, const Quadrature&lt; dim &gt; &amp;quadrature, const Mapping&lt; dim &gt; &amp;mapping)</div><div class="ttdef"><b>Definition</b> <a href="navier__stokes__scratch__data_8cc_source.html#l00274">navier_stokes_scratch_data.cc:274</a></div></div>
 <div class="ttc" id="aclassNavierStokesScratchData_html_a9f3a9b09303fb38071eba70e6392dc0c"><div class="ttname"><a href="classNavierStokesScratchData.html#a9f3a9b09303fb38071eba70e6392dc0c">NavierStokesScratchData::enable_curvature</a></div><div class="ttdeci">void enable_curvature(const FiniteElement&lt; dim &gt; &amp;fe_curvature, const Quadrature&lt; dim &gt; &amp;quadrature, const Mapping&lt; dim &gt; &amp;mapping)</div><div class="ttdef"><b>Definition</b> <a href="navier__stokes__scratch__data_8cc_source.html#l00294">navier_stokes_scratch_data.cc:294</a></div></div>
-<div class="ttc" id="aclassNavierStokesScratchData_html_aa2e6cff4889a98d9ed713209ad8e9a06"><div class="ttname"><a href="classNavierStokesScratchData.html#aa2e6cff4889a98d9ed713209ad8e9a06">NavierStokesScratchData::gather_particles_reference_location</a></div><div class="ttdeci">Quadrature&lt; dim &gt; gather_particles_reference_location()</div><div class="ttdoc">Creates an object of type Quadrature&lt;dim&gt; that contains the particle reference location....</div><div class="ttdef"><b>Definition</b> <a href="navier__stokes__scratch__data_8cc_source.html#l00758">navier_stokes_scratch_data.cc:758</a></div></div>
+<div class="ttc" id="aclassNavierStokesScratchData_html_aa2e6cff4889a98d9ed713209ad8e9a06"><div class="ttname"><a href="classNavierStokesScratchData.html#aa2e6cff4889a98d9ed713209ad8e9a06">NavierStokesScratchData::gather_particles_reference_location</a></div><div class="ttdeci">Quadrature&lt; dim &gt; gather_particles_reference_location()</div><div class="ttdoc">Creates an object of type Quadrature&lt;dim&gt; that contains the particle reference location....</div><div class="ttdef"><b>Definition</b> <a href="navier__stokes__scratch__data_8cc_source.html#l00762">navier_stokes_scratch_data.cc:762</a></div></div>
 <div class="ttc" id="aclassNavierStokesScratchData_html_aa3ac2a1e98dd07b62ee49f808642ce09"><div class="ttname"><a href="classNavierStokesScratchData.html#aa3ac2a1e98dd07b62ee49f808642ce09">NavierStokesScratchData::enable_vof</a></div><div class="ttdeci">void enable_vof(const FiniteElement&lt; dim &gt; &amp;fe, const Quadrature&lt; dim &gt; &amp;quadrature, const Mapping&lt; dim &gt; &amp;mapping, const Parameters::VOF_PhaseFilter &amp;phase_filter_parameters)</div><div class="ttdoc">enable_vof Enables the collection of the VOF data by the scratch</div><div class="ttdef"><b>Definition</b> <a href="navier__stokes__scratch__data_8cc_source.html#l00095">navier_stokes_scratch_data.cc:95</a></div></div>
 <div class="ttc" id="aclassNavierStokesScratchData_html_ab059ac1bfc7ed0fc0f1540ead8fa59f0"><div class="ttname"><a href="classNavierStokesScratchData.html#ab059ac1bfc7ed0fc0f1540ead8fa59f0">NavierStokesScratchData::reinit_particle_fluid_forces</a></div><div class="ttdeci">void reinit_particle_fluid_forces()</div><div class="ttdoc">Reinitializes the fluid forces and torques on the particles in the cell to zero.</div><div class="ttdef"><b>Definition</b> <a href="navier__stokes__scratch__data_8cc_source.html#l00671">navier_stokes_scratch_data.cc:671</a></div></div>
 <div class="ttc" id="aclassNavierStokesScratchData_html_ad98b8bde0f425d5269cde4132d5cdfd3"><div class="ttname"><a href="classNavierStokesScratchData.html#ad98b8bde0f425d5269cde4132d5cdfd3">NavierStokesScratchData::allocate</a></div><div class="ttdeci">void allocate() override</div><div class="ttdoc">Allocates the memory for the scratch.</div><div class="ttdef"><b>Definition</b> <a href="navier__stokes__scratch__data_8cc_source.html#l00011">navier_stokes_scratch_data.cc:11</a></div></div>
