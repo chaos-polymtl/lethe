@@ -47,7 +47,7 @@ end
 
 subsection mesh
   set type      = gmsh
-  set file name = box.msh
+  set file name = ../../box.msh
   set simplex   = true
 end
 
