@@ -3023,10 +3023,12 @@ VolumeOfFluid<dim>::reinitialize_interface_with_algebraic_method()
       apply_phase_filter((*this->previous_solutions)[0],
                          previous_filtered_solution);
 
+      // TODO AA: remove filtered solution and use only unfiltered values
+
       // Set VOF information in the VOF subequations interface
       this->vof_subequations_interface
-        ->set_vof_filtered_solution_and_dof_handler(previous_filtered_solution,
-                                                    *this->dof_handler);
+        ->set_vof_filtered_solution_and_dof_handler(
+          (*this->previous_solutions)[0], *this->dof_handler);
       this->vof_subequations_interface->set_vof_solution(
         (*this->previous_solutions)[0]);
 
@@ -3049,8 +3051,12 @@ VolumeOfFluid<dim>::reinitialize_interface_with_algebraic_method()
   // Apply filter to solution and set VOF information in the subequation
   // interface
   apply_phase_filter(*this->present_solution, *this->filtered_solution);
+
+  // TODO AA: remove filtered solution and use only unfiltered values
+
+  // Set VOF information in the VOF subequations interface
   this->vof_subequations_interface->set_vof_filtered_solution_and_dof_handler(
-    *this->filtered_solution, *this->dof_handler);
+    *this->present_solution, *this->dof_handler);
   this->vof_subequations_interface->set_vof_solution(*this->present_solution);
 
   // Solve phase gradient and curvature projections followed by algebraic
