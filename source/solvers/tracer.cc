@@ -1468,7 +1468,7 @@ Tracer<dim>::solve_linear_system(const bool initial_step,
   const double current_residual = system_rhs.l2_norm() / normalize_volume;
   const double linear_solver_tolerance =
     std::max(relative_residual * current_residual, absolute_residual);
-  if (this->simulation_parameters.linear_solver.at(PhysicsID::fluid_dynamics)
+  if (this->simulation_parameters.linear_solver.at(PhysicsID::tracer)
         .verbosity != Parameters::Verbosity::quiet)
     {
       this->pcout << "  -Tolerance of iterative solver is : "

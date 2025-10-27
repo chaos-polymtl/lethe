@@ -138,6 +138,11 @@ public:
   {
     return dummy_constraints;
   };
+  virtual double
+  get_residual_normalize_volume() const override
+  {
+    return 1.0;
+  }
 
   // Reset present solution to initial value
   void
