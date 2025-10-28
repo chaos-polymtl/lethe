@@ -18,21 +18,13 @@ using namespace dealii;
  * the time associated with each .pvtu file.
  *
  * @param pvd_handler a PVDHandler to store the information about the file name and time associated with it
- *
  * @param data_out the DataOut class to which the data has been attached
- *
  * @param folder a string that contains the path where the results are to be saved
- *
  * @param file_prefix a string that stores the name of the file without the iteration number and the extension
- *
  * @param time the time associated with the file
- *
  * @param iter the iteration number associated with the file
- *
  * @param group_files the number of vtu files that will be generated.
- *
  * @param mpi_communicator The mpi communicator
- *
  * @param digits An optional parameter that specifies the amount of digit used to store iteration number in the file name
  */
 template <int dim, int spacedim = dim>
@@ -52,14 +44,14 @@ write_vtu_and_pvd(PVDHandler                            &pvd_handler,
  * This function outputs the DataOutFaces to a vtu file.
  *
  * @param data_out the DataOutFaces class to which the data has been attached
- *
+ * @param folder the path to when the results are to be written
  * @param time the time associated with the file
- *
  * @param iter the iteration number associated with the file
- *
  * @param mpi_communicator The mpi communicator
- *
- * @param digits An optional parameter that specifies the amount of digit used to store iteration number in the file name
+ * @param file_prefix a string that stores the name of the file without the
+ * iteration number and the extension.
+ * @param digits An optional parameter that specifies the amount of digit used to
+ * store iteration number in the file name
  */
 template <int dim>
 void
