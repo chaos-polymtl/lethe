@@ -225,7 +225,14 @@ ShapeGenerator::initialize_shape_from_file(const std::string  &type,
                       unsigned int identifier = stoi(list_of_words_clean[0]);
                       const std::string &type_str      = list_of_words_clean[1];
                       std::string        arguments_str = list_of_words_clean[2];
-                      std::ranges::replace(arguments_str, ':', ';');
+                      // When we switch to the Clang V20 CI, we should use the
+                      // line below.
+                      // std::ranges::replace(arguments_str, ':', ';');
+                      // Until then
+                      std::replace(arguments_str.begin(),
+                                   arguments_str.end(),
+                                   ':',
+                                   ';');
                       const std::string &position_str = list_of_words_clean[3];
                       const std::string &orientation_str =
                         list_of_words_clean[4];
