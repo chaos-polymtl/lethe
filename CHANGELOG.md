@@ -3,6 +3,12 @@
 All notable changes to the Lethe project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
+### [Master] - 2025-10-28
+
+### Changed
+
+- MINOR The normal of the triangle was calculated in LetheGridTools::find_point_triangle_distance but not being used. This removes this element. [#1736] (https://github.com/chaos-polymtl/lethe/pull/1736)
+
 ### [Master] - 2025-10-25
 
 ### Changed
