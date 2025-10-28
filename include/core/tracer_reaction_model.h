@@ -122,7 +122,7 @@ public:
     Assert(fields_value.find(field::tracer_concentration) != fields_value.end(),
            PhysicialPropertyModelFieldUndefined(
              "ConstantTracerReactionPrefactor", "tracer_concentration"));
-    if (tracer_reaction_order < 1.)
+    if (tracer_reaction_order < 1. && tracer_reaction_order > 0.)
       if (fields_value.at(field::tracer_concentration) < 1e-12)
         {
           return DBL_MAX;
@@ -150,7 +150,7 @@ public:
       field_vectors.at(field::tracer_concentration);
     for (size_t i = 0; i < property_vector.size(); ++i)
       {
-        if (tracer_reaction_order < 1.)
+        if (tracer_reaction_order < 1. && tracer_reaction_order > 0.)
           if (concentration_vector[i] < 1e-12)
             {
               property_vector[i] = DBL_MAX;
@@ -271,7 +271,7 @@ public:
              "TanhLevelsetTracerReactionPrefactor", "tracer_concentration"));
     const double levelset      = field_values.at(field::levelset);
     const double concentration = field_values.at(field::tracer_concentration);
-    if (tracer_reaction_order < 1.)
+    if (tracer_reaction_order < 1. && tracer_reaction_order > 0.)
       if (concentration < 1e-12)
         return DBL_MAX;
     const double k =
@@ -307,7 +307,7 @@ public:
            SizeOfFields(n_values, concentration_vec.size()));
     for (unsigned int i = 0; i < n_values; ++i)
       {
-        if (tracer_reaction_order < 1.)
+        if (tracer_reaction_order < 1. && tracer_reaction_order > 0.)
           if (concentration_vec[i] < 1e-12)
             {
               property_vector[i] = DBL_MAX;
@@ -476,7 +476,7 @@ public:
              "tracer_concentration"));
     const double levelset_val  = field_values.at(field::levelset);
     const double concentration = field_values.at(field::tracer_concentration);
-    if (tracer_reaction_order < 1.)
+    if (tracer_reaction_order < 1. && tracer_reaction_order > 0.)
       if (concentration < 1e-12)
         return DBL_MAX;
     const double k =
@@ -516,7 +516,7 @@ public:
            SizeOfFields(n_values, concentration_vec.size()));
     for (unsigned int i = 0; i < n_values; ++i)
       {
-        if (tracer_reaction_order < 1.)
+        if (tracer_reaction_order < 1. && tracer_reaction_order > 0.)
           if (concentration_vec[i] < 1e-12)
             {
               property_vector[i] = DBL_MAX;
