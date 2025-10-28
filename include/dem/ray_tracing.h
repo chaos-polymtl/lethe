@@ -227,8 +227,10 @@ private:
     using base_type = typename dem_data_structures<dim>::cells_neighbor_list;
 
     // Distinct tagged typedefs
-    struct local  : base_type {};
-    struct ghost  : base_type {};
+    struct local : base_type
+    {};
+    struct ghost : base_type
+    {};
   };
 
   using local_neighbor_list = typename neighbor_list_types::local;
