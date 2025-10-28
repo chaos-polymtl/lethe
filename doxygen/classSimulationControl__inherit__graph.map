@@ -1,11 +1,13 @@
 <map id="SimulationControl" name="SimulationControl">
-<area shape="rect" id="Node000001" title="The SimulationControl class is responsible for the control of steady&#45;state and transient simulations ..." alt="" coords="136,5,275,31"/>
-<area shape="rect" id="Node000002" href="$classSimulationControlSteady.html" title=" " alt="" coords="5,79,189,104"/>
-<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="178,40,116,81,114,76,175,36"/>
-<area shape="rect" id="Node000003" href="$classSimulationControlTransient.html" title=" " alt="" coords="214,79,413,104"/>
-<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="235,36,297,76,294,81,233,40"/>
-<area shape="rect" id="Node000004" href="$classSimulationControlAdjointSteady.html" title=" " alt="" coords="105,152,290,192"/>
-<area shape="poly" id="edge3_Node000003_Node000004" title=" " alt="" coords="286,114,227,154,224,150,283,110"/>
-<area shape="rect" id="Node000005" href="$classSimulationControlTransientDEM.html" title="Transient simulation control tailored around the discrete element method." alt="" coords="314,159,542,185"/>
-<area shape="poly" id="edge4_Node000003_Node000005" title=" " alt="" coords="343,110,413,157,410,161,340,114"/>
+<area shape="rect" id="Node000001" title="The SimulationControl class is responsible for the control of steady&#45;state and transient simulations ..." alt="" coords="263,5,401,31"/>
+<area shape="rect" id="Node000002" href="$classSimulationControlRayTracing.html" title=" " alt="" coords="5,79,216,104"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="284,37,147,81,146,76,283,32"/>
+<area shape="rect" id="Node000003" href="$classSimulationControlSteady.html" title=" " alt="" coords="240,79,424,104"/>
+<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="335,44,335,79,329,79,329,44"/>
+<area shape="rect" id="Node000004" href="$classSimulationControlTransient.html" title=" " alt="" coords="449,79,647,104"/>
+<area shape="poly" id="edge3_Node000001_Node000004" title=" " alt="" coords="381,32,514,76,512,81,379,37"/>
+<area shape="rect" id="Node000005" href="$classSimulationControlAdjointSteady.html" title=" " alt="" coords="339,152,525,192"/>
+<area shape="poly" id="edge4_Node000004_Node000005" title=" " alt="" coords="521,114,461,154,458,150,518,110"/>
+<area shape="rect" id="Node000006" href="$classSimulationControlTransientDEM.html" title="Transient simulation control tailored around the discrete element method." alt="" coords="549,159,777,185"/>
+<area shape="poly" id="edge5_Node000004_Node000006" title=" " alt="" coords="578,110,647,157,644,161,575,114"/>
 </map>

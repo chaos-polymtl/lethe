@@ -53,7 +53,7 @@ var searchData=
   ['load_5fbalance_5fstep_50',['load_balance_step',['../classParameters_1_1Lagrangian_1_1ModelParameters.html#af570cb40691a8bcc3ae4c2830095c14e',1,'Parameters::Lagrangian::ModelParameters::load_balance_step'],['../classLagrangianLoadBalancing.html#a74541de3d5ab8875cc452536b81b974e',1,'LagrangianLoadBalancing::load_balance_step']]],
   ['load_5fbalance_5fthreshold_51',['load_balance_threshold',['../classParameters_1_1Lagrangian_1_1ModelParameters.html#ad6a0ef047a38dbfe60e4aee6cdb2e218',1,'Parameters::Lagrangian::ModelParameters']]],
   ['load_5fbalance_5ftrigger_52',['load_balance_trigger',['../classDEMActionManager.html#a28510bde58a667a3a6307335613d5090',1,'DEMActionManager']]],
-  ['load_5fbalancing_53',['load_balancing',['../classDEMSolver.html#a7903b1b7332395df30c1ccb9bb53e5fc',1,'DEMSolver::load_balancing'],['../classCFDDEMSolver.html#a71725947d33359505d6261141f03696c',1,'CFDDEMSolver::load_balancing']]],
+  ['load_5fbalancing_53',['load_balancing',['../classRayTracingSolver.html#a887df1a5d9bfc4ba0fcb30f6f944dfd0',1,'RayTracingSolver::load_balancing'],['../classCFDDEMSolver.html#a71725947d33359505d6261141f03696c',1,'CFDDEMSolver::load_balancing'],['../classDEMSolver.html#a7903b1b7332395df30c1ccb9bb53e5fc',1,'DEMSolver::load_balancing']]],
   ['load_5fparticles_5ffrom_5ffile_54',['load_particles_from_file',['../classParameters_1_1IBParticles.html#ab20cd4c7c90d5f1d26f5ccc4a6768456',1,'Parameters::IBParticles']]],
   ['load_5fthreshold_55',['load_threshold',['../classLagrangianLoadBalancing.html#ad73a632f72e2ea4c31944e86b34e60f8',1,'LagrangianLoadBalancing']]],
   ['local_5fadjacent_5fparticles_56',['local_adjacent_particles',['../classDEMContactManager.html#a9f9b121ad9186b0e7a636d4338f8f54a',1,'DEMContactManager']]],

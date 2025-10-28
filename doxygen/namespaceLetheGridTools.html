@@ -145,9 +145,9 @@ Functions</h2></td></tr>
 <tr class="memitem:a0441112a1d2ecc434246a30f9ef098a1" id="r_a0441112a1d2ecc434246a30f9ef098a1"><td class="memTemplParams" colspan="2">template&lt;int dim&gt; </td></tr>
 <tr class="memitem:a0441112a1d2ecc434246a30f9ef098a1"><td class="memTemplItemLeft" align="right" valign="top">double&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespaceLetheGridTools.html#a0441112a1d2ecc434246a30f9ef098a1">find_point_triangle_distance</a> (const std::vector&lt; Point&lt; dim &gt; &gt; &amp;triangle_vertices, const Point&lt; dim &gt; &amp;point)</td></tr>
 <tr class="separator:a0441112a1d2ecc434246a30f9ef098a1"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:acceb6af30750ac5a8f8cdb85aace19f9" id="r_acceb6af30750ac5a8f8cdb85aace19f9"><td class="memTemplParams" colspan="2">template&lt;int dim&gt; </td></tr>
-<tr class="memitem:acceb6af30750ac5a8f8cdb85aace19f9"><td class="memTemplItemLeft" align="right" valign="top">std::vector&lt; Point&lt; dim &gt; &gt;&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespaceLetheGridTools.html#acceb6af30750ac5a8f8cdb85aace19f9">find_line_sphere_intersection</a> (const Point&lt; dim &gt; &amp;line_start, const Tensor&lt; 1, dim &gt; &amp;line_direction, const Point&lt; dim &gt; &amp;sphere_center, const double &amp;sphere_radius)</td></tr>
-<tr class="separator:acceb6af30750ac5a8f8cdb85aace19f9"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a417dffde43b4b9b6792dfe4a8b9d7066" id="r_a417dffde43b4b9b6792dfe4a8b9d7066"><td class="memTemplParams" colspan="2">template&lt;int dim&gt; </td></tr>
+<tr class="memitem:a417dffde43b4b9b6792dfe4a8b9d7066"><td class="memTemplItemLeft" align="right" valign="top">std::vector&lt; Point&lt; dim &gt; &gt;&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespaceLetheGridTools.html#a417dffde43b4b9b6792dfe4a8b9d7066">find_line_sphere_intersection</a> (const Point&lt; dim &gt; &amp;line_start, const Tensor&lt; 1, dim &gt; &amp;line_direction, const Point&lt; dim &gt; &amp;sphere_center, const double &amp;sphere_diameter)</td></tr>
+<tr class="separator:a417dffde43b4b9b6792dfe4a8b9d7066"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a90583db59423ee4e85fff79df1cb0bf6" id="r_a90583db59423ee4e85fff79df1cb0bf6"><td class="memTemplParams" colspan="2">template&lt;int dim&gt; </td></tr>
 <tr class="memitem:a90583db59423ee4e85fff79df1cb0bf6"><td class="memTemplItemLeft" align="right" valign="top">double&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespaceLetheGridTools.html#a90583db59423ee4e85fff79df1cb0bf6">find_point_line_distance</a> (const Point&lt; dim &gt; &amp;line_origin, const Tensor&lt; 1, dim &gt; &amp;line_direction, const Point&lt; dim &gt; &amp;point)</td></tr>
 <tr class="separator:a90583db59423ee4e85fff79df1cb0bf6"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -674,8 +674,8 @@ template&lt;int dim&gt; </div>
 
 </div>
 </div>
-<a id="acceb6af30750ac5a8f8cdb85aace19f9" name="acceb6af30750ac5a8f8cdb85aace19f9"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#acceb6af30750ac5a8f8cdb85aace19f9">&#9670;&#160;</a></span>find_line_sphere_intersection()</h2>
+<a id="a417dffde43b4b9b6792dfe4a8b9d7066" name="a417dffde43b4b9b6792dfe4a8b9d7066"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a417dffde43b4b9b6792dfe4a8b9d7066">&#9670;&#160;</a></span>find_line_sphere_intersection()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -704,7 +704,7 @@ template&lt;int dim&gt; </div>
           <td class="paramkey"></td>
           <td></td>
           <td class="paramtype">const double &amp;&#160;</td>
-          <td class="paramname"><em>sphere_radius</em>&#160;</td>
+          <td class="paramname"><em>sphere_diameter</em>&#160;</td>
         </tr>
         <tr>
           <td></td>
@@ -720,7 +720,7 @@ template&lt;int dim&gt; </div>
     <tr><td class="paramdir">[in]</td><td class="paramname">line_start</td><td>The starting point of the line </td></tr>
     <tr><td class="paramdir">[in]</td><td class="paramname">line_direction</td><td>The direction of the line </td></tr>
     <tr><td class="paramdir">[in]</td><td class="paramname">sphere_center</td><td>The center of the sphere </td></tr>
-    <tr><td class="paramdir">[in]</td><td class="paramname">sphere_radius</td><td>The radius of the sphere </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">sphere_diameter</td><td>The diameter of the sphere </td></tr>
   </table>
   </dd>
 </dl>
@@ -1000,7 +1000,7 @@ template&lt;int dim&gt; </div>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="lethe__grid__tools_8cc_source.html#l01779">1779</a> of file <a class="el" href="lethe__grid__tools_8cc_source.html">lethe_grid_tools.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="lethe__grid__tools_8cc_source.html#l01784">1784</a> of file <a class="el" href="lethe__grid__tools_8cc_source.html">lethe_grid_tools.cc</a>.</p>
 
 </div>
 </div>

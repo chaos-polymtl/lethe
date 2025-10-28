@@ -4,7 +4,7 @@ var searchData=
   ['a_5fij_1',['a_ij',['../classSDIRKStageData.html#ae03ac44622ed29f42ce5741bbd50be55',1,'SDIRKStageData']]],
   ['a_5finverse_2',['A_inverse',['../classBlockDiagPreconditioner.html#aaebbf0f342b00811c1839c90176936bc',1,'BlockDiagPreconditioner']]],
   ['abort_5fat_5fconvergence_5ffailure_3',['abort_at_convergence_failure',['../structParameters_1_1NonLinearSolver.html#a491f1c3c8f1c66e2ee84e42fd23be06e',1,'Parameters::NonLinearSolver']]],
-  ['action_5fmanager_4',['action_manager',['../classDEMSolver.html#adc01d9af8e6a5b70937b76e2b5e80247',1,'DEMSolver']]],
+  ['action_5fmanager_4',['action_manager',['../classDEMSolver.html#adc01d9af8e6a5b70937b76e2b5e80247',1,'DEMSolver::action_manager'],['../classRayTracingSolver.html#a2ac0eda6d125205bd80ab46ecc0b9743',1,'RayTracingSolver::action_manager']]],
   ['activate_5flaser_5',['activate_laser',['../classParameters_1_1Laser.html#a4318207e68f24b1b9089c75b5b170260',1,'Parameters::Laser']]],
   ['active_5fload_5fbalancing_5ffactor_6',['active_load_balancing_factor',['../classParameters_1_1Lagrangian_1_1ModelParameters.html#a4d8967b438d7f40c3f66010be434bf55',1,'Parameters::Lagrangian::ModelParameters']]],
   ['active_5fphysics_7',['active_physics',['../classMultiphysicsInterface.html#a14dce6e8da33be1ccb85f215c6df0634',1,'MultiphysicsInterface']]],

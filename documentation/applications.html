@@ -204,17 +204,18 @@
 </ul>
 </li>
 <li class="toctree-l2 has-children"><a class="reference internal" href="parameters/dem/dem.html">Discrete Element Method (DEM)</a><input class="toctree-checkbox" id="toctree-checkbox-4" name="toctree-checkbox-4" role="switch" type="checkbox"/><label for="toctree-checkbox-4"><div class="visually-hidden">Toggle navigation of Discrete Element Method (DEM)</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
-<li class="toctree-l3"><a class="reference internal" href="parameters/dem/boundary_conditions.html">Boundary Conditions</a></li>
-<li class="toctree-l3"><a class="reference internal" href="parameters/dem/floating_wall.html">Floating Wall</a></li>
-<li class="toctree-l3"><a class="reference internal" href="parameters/dem/insertion_info.html">Insertion Info</a></li>
-<li class="toctree-l3"><a class="reference internal" href="parameters/dem/lagrangian_physical_properties.html">Lagrangian Physical Properties</a></li>
-<li class="toctree-l3"><a class="reference internal" href="parameters/dem/mesh.html">Mesh</a></li>
-<li class="toctree-l3"><a class="reference internal" href="parameters/dem/model_parameters.html">Model Parameters</a></li>
-<li class="toctree-l3"><a class="reference internal" href="parameters/dem/post-processing.html">Post-processing</a></li>
 <li class="toctree-l3"><a class="reference internal" href="parameters/dem/simulation_control.html">Simulation Control</a></li>
-<li class="toctree-l3"><a class="reference internal" href="parameters/dem/solid_objects.html">Solid Objects</a></li>
 <li class="toctree-l3"><a class="reference internal" href="parameters/dem/test.html">Test</a></li>
 <li class="toctree-l3"><a class="reference internal" href="parameters/dem/timer.html">Timer</a></li>
+<li class="toctree-l3"><a class="reference internal" href="parameters/dem/model_parameters.html">Model Parameters</a></li>
+<li class="toctree-l3"><a class="reference internal" href="parameters/dem/lagrangian_physical_properties.html">Lagrangian Physical Properties</a></li>
+<li class="toctree-l3"><a class="reference internal" href="parameters/dem/mesh.html">Mesh</a></li>
+<li class="toctree-l3"><a class="reference internal" href="parameters/dem/insertion_info.html">Insertion Info</a></li>
+<li class="toctree-l3"><a class="reference internal" href="parameters/dem/floating_wall.html">Floating Wall</a></li>
+<li class="toctree-l3"><a class="reference internal" href="parameters/dem/solid_objects.html">Solid Objects</a></li>
+<li class="toctree-l3"><a class="reference internal" href="parameters/dem/boundary_conditions.html">Boundary Conditions</a></li>
+<li class="toctree-l3"><a class="reference internal" href="parameters/dem/post-processing.html">Post-processing</a></li>
+<li class="toctree-l3"><a class="reference internal" href="parameters/dem/particle_ray_tracing.html">Particle Ray Tracing</a></li>
 </ul>
 </li>
 <li class="toctree-l2 has-children"><a class="reference internal" href="parameters/unresolved-cfd-dem/unresolved-cfd-dem.html">Unresolved CFD-DEM</a><input class="toctree-checkbox" id="toctree-checkbox-5" name="toctree-checkbox-5" role="switch" type="checkbox"/><label for="toctree-checkbox-5"><div class="visually-hidden">Toggle navigation of Unresolved CFD-DEM</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
@@ -496,14 +497,21 @@
 </td>
 <td><p>This application uses the Discrete Element Method to simulate spherical particles.</p></td>
 </tr>
-<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">lethe-fluid-particles</span></code></p></td>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">lethe-particles-ray-tracing</span></code></p></td>
+<td><ul class="simple">
+<li><p>Profilometry extraction of particle surfaces</p></li>
+</ul>
+</td>
+<td><p>This application performs particle ray tracing to reconstruct the geometry of the surface of an assembly of particles, similar to a virtual profilometry technique. It emits rays through the simulation domain and detects particle intersections to represent the surface.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">lethe-fluid-particles</span></code></p></td>
 <td><ul class="simple">
 <li><p>Particle-laden flows</p></li>
 </ul>
 </td>
 <td><p>This application allows to run unresolved Computational Fluid Dynamics-Discrete Element Method simulations.</p></td>
 </tr>
-<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">lethe-fluid-sharp</span></code></p></td>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">lethe-fluid-sharp</span></code></p></td>
 <td><ul class="simple">
 <li><p>Single-phase flows</p></li>
 <li><p>Particle-laden flows</p></li>
@@ -512,7 +520,7 @@
 </td>
 <td><p>This application solves the Navier-Stokes equations for particle-laden flows. A sharp-edge method is used to impose immersed boundary conditions at the particle walls, removing the requirement of a boundary-conforming mesh. This application allows to perform resolved Computational Fluid Dynamics-Discrete Element Method simulations.</p></td>
 </tr>
-<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">lethe-fluid-nitsche</span></code></p></td>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">lethe-fluid-nitsche</span></code></p></td>
 <td><ul class="simple">
 <li><p>Single-phase flows</p></li>
 <li><p>Fluid-fluid flows</p></li>
@@ -522,42 +530,42 @@
 </td>
 <td><p>This application solves the Navier-Stokes equations by imposing immersed boundary conditions without discretizing the boundaries using the Nitsche method.</p></td>
 </tr>
-<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">lethe-fluid-vans</span></code></p></td>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">lethe-fluid-vans</span></code></p></td>
 <td><ul class="simple">
 <li><p>Single phase volume-averaged flows</p></li>
 </ul>
 </td>
 <td><p>This application solves the Volume-Averaged Navier-Stokes equations in a monolithic way. It supports calculation of the void fraction from particles, but the particles remain static.</p></td>
 </tr>
-<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">lethe-fluid-block</span></code></p></td>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">lethe-fluid-block</span></code></p></td>
 <td><ul class="simple">
 <li><p>Steady-state single-phase flows</p></li>
 </ul>
 </td>
 <td><p>This application solves the Navier-Stokes equations in a monolithic way using block preconditioner. <strong>This solver is experimental and is only adequate for steady-state simulations</strong>.</p></td>
 </tr>
-<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">lethe-rpt-3d</span></code></p></td>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">lethe-rpt-3d</span></code></p></td>
 <td><ul class="simple">
 <li><p>Radioactive Particle Tracking</p></li>
 </ul>
 </td>
 <td><p>This application solves the Beam Monte-Carlo model for the interaction between gamma ray emitting particles and detectors.</p></td>
 </tr>
-<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">lethe-rpt-cell-reconstruction-3d</span></code></p></td>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">lethe-rpt-cell-reconstruction-3d</span></code></p></td>
 <td><ul class="simple">
 <li><p>Radioactive Particle Tracking</p></li>
 </ul>
 </td>
 <td><p>This application reconstructs the position of particles using a cellular decomposition approach.</p></td>
 </tr>
-<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">lethe-rpt-fem-reconstruction-3d</span></code></p></td>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">lethe-rpt-fem-reconstruction-3d</span></code></p></td>
 <td><ul class="simple">
 <li><p>Radioactive Particle Tracking</p></li>
 </ul>
 </td>
 <td><p>This application allows to reconstruct positions from ray tracing experimental measurements obtained by Radioactive Particle Tracking.</p></td>
 </tr>
-<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">lethe-rpt-l2-projection-3d</span></code></p></td>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">lethe-rpt-l2-projection-3d</span></code></p></td>
 <td><ul class="simple">
 <li><p>Radioactive Particle Tracking</p></li>
 </ul>
