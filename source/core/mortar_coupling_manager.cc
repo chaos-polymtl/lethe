@@ -325,6 +325,7 @@ MortarManagerBase<dim>::get_weights(const Point<dim> &face_center,
   if (type == 0) // aligned
     {
       std::vector<double> weights;
+      weights.reserve(n_quadrature_points);
 
       for (unsigned int q = 0; q < n_quadrature_points; ++q)
         weights.emplace_back(radius[0] * quadrature.weight(q) * delta_0 *
