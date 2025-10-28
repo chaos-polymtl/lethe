@@ -30,7 +30,7 @@ namespace DEM
           {
             // Put particle velocity in a tensor
             Tensor<1, dim> velocity;
-            for (unsigned d = 0; d < dim; ++d)
+            for (int d = 0; d < dim; ++d)
               velocity[d] = particle_properties[PropertiesIndex::v_x + d];
 
             // Kinetic energy is 0.5*m*u^2
@@ -47,7 +47,7 @@ namespace DEM
               }
             if constexpr (dim == 3)
               {
-                for (unsigned d = 0; d < dim; ++d)
+                for (int d = 0; d < dim; ++d)
                   omega[d] = particle_properties[PropertiesIndex::omega_x + d];
               }
 
@@ -62,7 +62,7 @@ namespace DEM
           {
             // Put particle velocity in a tensor
             Tensor<1, dim> velocity;
-            for (unsigned d = 0; d < dim; ++d)
+            for (int d = 0; d < dim; ++d)
               velocity[d] = particle_properties[PropertiesIndex::v_x + d];
 
             variable = velocity.norm();
@@ -78,7 +78,7 @@ namespace DEM
               }
             if constexpr (dim == 3)
               {
-                for (unsigned d = 0; d < dim; ++d)
+                for (int d = 0; d < dim; ++d)
                   omega[d] = particle_properties[PropertiesIndex::omega_x + d];
               }
 
