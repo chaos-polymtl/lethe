@@ -1524,10 +1524,6 @@ LetheGridTools::find_point_triangle_distance(
       const Tensor<1, dim> e_0 = point_1 - point_0;
       const Tensor<1, dim> e_1 = point_2 - point_0;
 
-      const Tensor<1, dim> normal      = cross_product_3d(e_0, e_1);
-      const double         normal_norm = normal.norm();
-      Tensor<1, dim>       normal_unit = normal / normal_norm;
-
       const double a   = e_0.norm_square();
       const double b   = scalar_product(e_0, e_1);
       const double c   = e_1.norm_square();
