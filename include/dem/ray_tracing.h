@@ -221,8 +221,18 @@ private:
    * @brief Container that shows the local/ghost neighbor cells of all local
    * cells in the triangulation. Note that they are reciprocal.
    */
-  using local_neighbor_list = dem_data_structures<dim>::cells_neighbor_list;
-  using ghost_neighbor_list = dem_data_structures<dim>::cells_neighbor_list;
+  struct neighbor_list_types
+  {
+    // Base type, shared by both
+    using base_type = typename dem_data_structures<dim>::cells_neighbor_list;
+
+    // Distinct tagged typedefs
+    struct local  : base_type {};
+    struct ghost  : base_type {};
+  };
+
+  using local_neighbor_list = typename neighbor_list_types::local;
+  using ghost_neighbor_list = typename neighbor_list_types::ghost;
 
   /// Local neighbor list
   local_neighbor_list cells_local_neighbor_list;
