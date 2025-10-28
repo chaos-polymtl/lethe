@@ -1,6 +1,7 @@
 foreach(_target IN ITEMS
     lethe-fluid-particles
     lethe-particles
+    lethe-particles-ray-tracing
     lethe-fluid-block
     lethe-fluid
     lethe-fluid-nitsche

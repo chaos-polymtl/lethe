@@ -1723,9 +1723,11 @@ LetheGridTools::find_line_sphere_intersection(
   const Point<dim>     &line_start,
   const Tensor<1, dim> &line_direction,
   const Point<dim>     &sphere_center,
-  const double         &sphere_radius)
+  const double         &sphere_diameter)
 {
   // Calculate the coefficients of the quadratic equation
+  const double sphere_radius = 0.5 * sphere_diameter;
+
   const double a = line_direction.norm_square();
   const double b =
     2 * scalar_product(line_direction, line_start - sphere_center);
@@ -1738,13 +1740,7 @@ LetheGridTools::find_line_sphere_intersection(
 
   // Calculate the discriminant
   const double discriminant = b * b - 4 * a * c;
-  if (discriminant == 0.)
-    {
-      // One intersection point
-      const double t = -b / (2. * a);
-      intersection_points.push_back(line_start + t * line_direction);
-    }
-  else if (discriminant > 0.)
+  if (discriminant > 0.)
     {
       // Two intersection points
       const double sqrt_discriminant = std::sqrt(discriminant);
@@ -1753,10 +1749,19 @@ LetheGridTools::find_line_sphere_intersection(
 
       intersection_points.push_back(line_start + t1 * line_direction);
       intersection_points.push_back(line_start + t2 * line_direction);
+
+      return intersection_points;
+    }
+  if (discriminant == 0.)
+    {
+      // One intersection point
+      const double t = -b / (2. * a);
+      intersection_points.push_back(line_start + t * line_direction);
+
+      return intersection_points;
     }
   // If the discriminant is negative, there are no intersection points therefore
   // the vector remains empty
-
   return intersection_points;
 }
 

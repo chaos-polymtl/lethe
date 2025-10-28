@@ -9,6 +9,10 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
 - MINOR The normal of the triangle was calculated in LetheGridTools::find_point_triangle_distance but not being used. This removes this element. [#1736] (https://github.com/chaos-polymtl/lethe/pull/1736)
 
+### Added
+
+- MAJOR A new application called lethe-particle-ray-tracing has been added. This application allows to trace rays through a domain containing particles and to extract the intersection point between those rays and particles. This application can be used generate numerical profilometry measurements which can be use to validate DEM simulations. [#1629](https://github.com/chaos-polymtl/lethe/pull/1629)
+
 ### [Master] - 2025-10-25
 
 ### Changed

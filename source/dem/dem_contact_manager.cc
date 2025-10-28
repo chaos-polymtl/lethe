@@ -133,7 +133,7 @@ DEMContactManager<dim, PropertiesIndex>::update_contacts()
       update_fine_search_candidates<
         dim,
         typename dem_data_structures<
-          dim>::particle_floating_wall_from_mesh_in_contact,
+          dim>::particle_triangle_cell_from_mesh_in_contact,
         typename dem_data_structures<
           dim>::particle_floating_wall_from_mesh_candidates,
         ContactType::particle_floating_mesh>(
@@ -214,7 +214,7 @@ DEMContactManager<dim, PropertiesIndex>::update_local_particles_in_cells(
       update_contact_container_iterators<
         dim,
         typename dem_data_structures<
-          dim>::particle_floating_wall_from_mesh_in_contact,
+          dim>::particle_triangle_cell_from_mesh_in_contact,
         ContactType::particle_floating_mesh>(
         particle_floating_mesh_in_contact[solid_counter], particle_container);
     }

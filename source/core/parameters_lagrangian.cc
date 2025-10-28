@@ -1797,6 +1797,162 @@ namespace Parameters
       prm.leave_subsection();
     }
 
+
+    template <int dim>
+    void
+    ParticleRayTracing<dim>::declare_parameters(ParameterHandler &prm)
+    {
+      prm.enter_subsection("particle ray tracing");
+      {
+        // Location of the first photon to be inserted
+        prm.declare_entry("starting photon insertion position",
+                          "0.,0.,0.",
+                          Patterns::List(Patterns::Double()),
+                          "Location of the first photon being inserted.");
+
+        // In which direction will the photons be inserted  relative to the
+        // first photon.
+        prm.declare_entry(
+          "insertion unit tensors",
+          "1.,0.,0. : 0., 1., 0. : 0., 0., 1.",
+          Patterns::List(
+            Patterns::List(Patterns::Double(), 3, 3, ","), 3, 3, ":"),
+          "Directions used to insert photons.");
+
+        // How many photon will be inserted in each of those directions.
+        prm.declare_entry("number of inserted photons per direction",
+                          "1 : 1 : 1",
+                          Patterns::List(Patterns::Integer(), 3, 3, ":"),
+                          "Number of inserted photon in each direction.");
+
+        // What is the distance between each photon in each of those directions
+        // considering an offset equal to 0.
+        prm.declare_entry("distance between photons on insertion per direction",
+                          "1. :  1. : 1.",
+                          Patterns::List(Patterns::Double(), 3, 3, ":"),
+                          "Number of inserted photon in each direction.");
+
+        // In which direction photons will move considering a photon maximum
+        // angle offset equal to 0.
+        prm.declare_entry("reference displacement vector",
+                          "0.,0.,1.",
+                          Patterns::List(Patterns::Double()),
+                          "Reference displacement vector of each photons.");
+
+        // Insertion location
+        prm.declare_entry(
+          "photon insertion maximum offset",
+          "0.",
+          Patterns::Double(),
+          "Set the maximum offset applied on each photon position during their "
+          "insertion. If set to 0., photons will be perfectly aligned."
+          "respectively to the insertion unit tensors ");
+
+        prm.declare_entry(
+          "photon insertion prn seed",
+          "0",
+          Patterns::Integer(),
+          "Pseudo random seed used to generate the offset for each photon "
+          "insertion location.");
+
+        // Displacement unit vector
+        prm.declare_entry(
+          "photon maximum angular offset",
+          "0.",
+          Patterns::Double(),
+          "Used to introduce randomness in the displacement direction of each "
+          "photon. This parameter defines the maximum angle between a given "
+          "photon displacement vector and the prescribed displacement vector "
+          "parameter. If set to zero, every photon will move in the same "
+          "direction defined by the prescribed displacement vector parameter."
+          "Otherwise, the offset is applied in a random orientation relative to "
+          "the reference displacement vector parameter.");
+
+        prm.declare_entry("photon angular offset prn seed",
+                          "1",
+                          Patterns::Integer(),
+                          "Pseudo random seed used to generated the angle "
+                          "offset and the random orientation.");
+      }
+      prm.leave_subsection();
+    }
+
+    template <int dim>
+    void
+    ParticleRayTracing<dim>::parse_parameters(ParameterHandler &prm)
+    {
+      prm.enter_subsection("particle ray tracing");
+      {
+        // Location of the first photon to be inserted
+        starting_point = point_nd_to_3d(Point<dim>(value_string_to_tensor<dim>(
+          prm.get("starting photon insertion position"))));
+
+        // Extract the strings related to the three std::vector
+        const std::vector<std::string> insertion_unit_tensors_string(
+          Utilities::split_string_list(prm.get("insertion unit tensors"), ":"));
+        const std::vector<std::string> n_photons_per_directions_strings(
+          Utilities::split_string_list(
+            prm.get("number of inserted photons per direction"), ":"));
+        const std::vector<std::string>
+          step_between_photon_per_direction_strings(
+            Utilities::split_string_list(
+              prm.get("distance between photons on insertion per direction"),
+              ":"));
+
+        // We always use 3d tensor even in a dim=2 simulation. Still, we want to
+        // make sure the user write 2d tensor in the prm when the simulation is
+        // in 2d. Those tensors will be but in 3d afterward.
+        AssertThrow(
+          insertion_unit_tensors_string.size() == dim &&
+            step_between_photon_per_direction_strings.size() == dim &&
+            step_between_photon_per_direction_strings.size() == dim,
+          dealii::ExcMessage(
+            "The \"insertion unit tensors\", \"distance between photons on"
+            " insertion per direction\" and \"number of inserted photons per "
+            "direction\" all need to have a number of dimension equal to the "
+            "\"dimension\" parameter."));
+
+        // Always of size 3.
+        insertion_directions_units_vector.reserve(3);
+        n_photons_each_directions.reserve(3);
+        step_between_photons_each_directions.reserve(3);
+        for (unsigned int i = 0; i < dim; i++)
+          {
+            Tensor<1, dim> temp_direction_tensor =
+              value_string_to_tensor<dim>(insertion_unit_tensors_string.at(i));
+            temp_direction_tensor =
+              temp_direction_tensor / temp_direction_tensor.norm();
+            insertion_directions_units_vector.emplace_back(
+              tensor_nd_to_3d(temp_direction_tensor));
+
+            n_photons_each_directions.emplace_back(Utilities::string_to_double(
+              n_photons_per_directions_strings.at(i)));
+
+            step_between_photons_each_directions.emplace_back(
+              Utilities::string_to_double(
+                step_between_photon_per_direction_strings.at(i)));
+          }
+        // Reference displacement unit tensor
+        ref_displacement_tensor_unit =
+          tensor_nd_to_3d(value_string_to_tensor<dim>(
+            prm.get("reference displacement vector")));
+        ref_displacement_tensor_unit =
+          ref_displacement_tensor_unit / ref_displacement_tensor_unit.norm();
+
+        // Insertion offset
+        max_insertion_offset =
+          prm.get_double("photon insertion maximum offset");
+        prn_seed_photon_insertion =
+          prm.get_integer("photon insertion prn seed");
+
+        // Displacement direction offset
+        max_angular_offset = prm.get_double("photon maximum angular offset");
+        prn_seed_photon_displacement =
+          prm.get_integer("photon insertion prn seed");
+      }
+      prm.leave_subsection();
+    }
+
     template class ForceTorqueOnWall<2>;
     template class ForceTorqueOnWall<3>;
     template class FloatingWalls<2>;
@@ -1809,6 +1965,8 @@ namespace Parameters
     template class GridMotion<3>;
     template class InsertionInfo<2>;
     template class InsertionInfo<3>;
+    template class ParticleRayTracing<2>;
+    template class ParticleRayTracing<3>;
 
   } // namespace Lagrangian
 } // namespace Parameters

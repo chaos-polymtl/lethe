@@ -7,6 +7,8 @@
 #include <core/bdf.h>
 #include <core/parameters.h>
 
+#include <deal.II/particles/particle_handler.h>
+
 /**
  * @brief The SimulationControl class is responsible for the control of steady-state and transient
  * simulations carried out with Lethe. This base class is a pure virtual class
@@ -76,7 +78,7 @@ protected:
   // BDF methods require a number of previous time steps. This number is known a
   // priori and depends on the method used. We do not keep all the time steps to
   // prevent the accumulation within a large vector.
-  static const unsigned int n_previous_time_steps = 4;
+  static constexpr unsigned int n_previous_time_steps = 4;
 
   // Output iteration frequency
   // Controls the output of the simulation results when the output is controlled
@@ -201,7 +203,7 @@ public:
    *
    */
   bool
-  is_at_start()
+  is_at_start() const
   {
     return iteration_number <= 1;
   }
@@ -211,7 +213,7 @@ public:
    *
    */
   bool
-  is_steady()
+  is_steady() const
   {
     return method ==
              Parameters::SimulationControl::TimeSteppingMethod::steady ||
@@ -225,7 +227,7 @@ public:
    * @return true if the method is BDF1, BDF2, BDF3, or steady BDF, false otherwise.
    */
   bool
-  is_bdf()
+  is_bdf() const
   {
     return method == Parameters::SimulationControl::TimeSteppingMethod::bdf1 ||
            method ==
@@ -240,7 +242,7 @@ public:
    * @return true if the method is sdirk, false otherwise.
    */
   bool
-  is_sdirk()
+  is_sdirk() const
   {
     return method ==
              Parameters::SimulationControl::TimeSteppingMethod::sdirk22 ||
@@ -265,7 +267,7 @@ public:
   /**
    * @brief print_progress Function that prints the current progress status of the simulation
    *
-   * @param[in] pcout the ConditionalOSStream that is use to write
+   * @param[in] pcout Parallel cout used to print the information
    */
   virtual void
   print_progression(const ConditionalOStream &pcout) = 0;
@@ -291,7 +293,7 @@ public:
    * when writing results
    */
   bool
-  get_output_boundaries()
+  get_output_boundaries() const
   {
     return output_boundaries;
   }
@@ -468,9 +470,10 @@ public:
   }
 
   void
-  set_assembly_method(Parameters::SimulationControl::TimeSteppingMethod method)
+  set_assembly_method(
+    const Parameters::SimulationControl::TimeSteppingMethod a_method)
   {
-    assembly_method = method;
+    assembly_method = a_method;
   }
 
   unsigned int
@@ -505,7 +508,6 @@ public:
    */
   virtual bool
   is_adaptive_time_stepping() const = 0;
-
 
   /**
    * @brief Save the simulation control information from the checkpoint file and updates the time step vector, the CFL value, the time and the iteration number.
@@ -585,6 +587,11 @@ protected:
 public:
   SimulationControlTransient(const Parameters::SimulationControl &param);
 
+  /**
+   * @brief print_progress Function that prints the current progress status of the simulation
+   *
+   * @param[in] pcout Parallel cout used to print the information
+   */
   virtual void
   print_progression(const ConditionalOStream &pcout) override;
 
@@ -647,6 +654,11 @@ class SimulationControlTransientDEM : public SimulationControlTransient
 public:
   SimulationControlTransientDEM(const Parameters::SimulationControl &param);
 
+  /**
+   * @brief print_progress Function that prints the current progress status of the simulation
+   *
+   * @param[in] pcout Parallel cout used to print the information
+   */
   virtual void
   print_progression(const ConditionalOStream &pcout) override;
 };
@@ -656,6 +668,11 @@ class SimulationControlSteady : public SimulationControl
 public:
   SimulationControlSteady(const Parameters::SimulationControl &param);
 
+  /**
+   * @brief print_progress Function that prints the current progress status of the simulation
+   *
+   * @param[in] pcout Parallel cout used to print the information
+   */
   virtual void
   print_progression(const ConditionalOStream &pcout) override;
 
@@ -687,6 +704,11 @@ class SimulationControlAdjointSteady : public SimulationControlTransient
 public:
   SimulationControlAdjointSteady(const Parameters::SimulationControl &param);
 
+  /**
+   * @brief print_progress Function that prints the current progress status of the simulation
+   *
+   * @param[in] pcout Parallel cout used to print the information
+   */
   virtual void
   print_progression(const ConditionalOStream &pcout) override;
 
@@ -695,6 +717,56 @@ public:
    */
   virtual bool
   is_at_end() override;
+};
+
+
+class SimulationControlRayTracing : public SimulationControl
+{
+  /**
+   * @brief Simulation control constructor used for the particle ray tracing simulation.
+   *
+   * @param[in] param Structure of the parameters for the simulation control
+   * @param[in] input_photon_handler The particle handler containing the photons
+   */
+public:
+  SimulationControlRayTracing(
+    const Parameters::SimulationControl &param,
+    Particles::ParticleHandler<3>       &input_photon_handler);
+
+  /**
+   * @brief Proceeds with the simulation until the end condition is reached
+   */
+  virtual bool
+  integrate() override;
+
+  /**
+   * @brief Ends the simulation when there is no longer photon in the triangulation.
+   */
+  bool
+  is_at_end() override;
+
+  /**
+   * @brief Indicate if the simulation uses adaptive time stepping or not.
+   *
+   * @return A boolean indicating if the simulation has adaptive time stepping
+   */
+  bool
+  is_adaptive_time_stepping() const override
+  {
+    return false;
+  }
+
+  /**
+   * @brief print_progress Function that prints the current progress status of the simulation
+   *
+   * @param[in] pcout Parallel cout used to print the information
+   */
+  void
+  print_progression(const ConditionalOStream &pcout) override;
+
+  // The particle_handler is a reference the photon handler used during the
+  // ray-tracing simulation.
+  Particles::ParticleHandler<3> &photon_handler;
 };
 
 #endif

@@ -1,0 +1,88 @@
+# In this test, three particles are inserted using the list insertion.
+# These particles partially overlap each other in relation to the photon's displacement direction.
+# 10,000 photons are then inserted and ray tracing simulation is performed.
+
+# Listing of Parameters
+#----------------------
+
+set dimension = 3
+
+#---------------------------------------------------
+# Simulation Control
+#---------------------------------------------------
+
+subsection simulation control
+  set output path = ./out/
+  set output name = out
+end
+
+#---------------------------------------------------
+# Test
+#---------------------------------------------------
+
+subsection test
+  set enable = true
+end
+
+#---------------------------------------------------
+# Model parameters
+#---------------------------------------------------
+
+subsection model parameters
+  subsection load balancing
+    set load balance method = frequent
+    set frequency           = 5
+  end
+end
+
+#---------------------------------------------------
+# Physical Properties
+#---------------------------------------------------
+
+subsection lagrangian physical properties
+  set number of particle types = 1
+  subsection particle type 0
+    set number of particles = 100000000
+  end
+end
+
+#---------------------------------------------------
+# Insertion Info
+#---------------------------------------------------
+
+subsection insertion info
+  set insertion method    = list
+  set insertion frequency = 10000
+  set list x              = 0.9, 1.1, 1.0 
+  set list y              = 1.0, 1.0, 1.0
+  set list z              = 1.0, 1.0, 0.8
+  set list diameters      = 0.2, 0.2, 0.2
+end
+
+#---------------------------------------------------
+# Mesh
+#---------------------------------------------------
+
+subsection mesh
+  set type               = dealii
+  set grid type          = hyper_cube
+  set grid arguments     = 0 : 2 : false
+  set initial refinement = 3
+end
+
+#---------------------------------------------------
+# Ray tracing
+#---------------------------------------------------
+subsection particle ray tracing
+  set starting photon insertion position                  = 0.0, 0.0, 1.95
+  set insertion unit tensors                              = 1., 0., 0. : 0., 1., 0.: 0., 0 , -1.
+  set number of inserted photons per direction            = 100 :100 : 1
+  set distance between photons on insertion per direction = 0.02 : 0.02 : 0.02
+  set reference displacement vector                       = 0., 0., -1.
+  set photon insertion maximum offset                     = 0.00002
+  set photon insertion prn seed                           = 1
+  set photon maximum angular offset                       = 0.034906585 # 2 degrees
+  set photon angular offset prn seed                      = 1
+end
+
+
