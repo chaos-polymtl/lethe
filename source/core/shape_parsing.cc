@@ -47,7 +47,7 @@ ShapeGenerator::initialize_shape_from_vector(
   else if (type == "hyper rectangle")
     {
       Tensor<1, dim> half_lengths;
-      for (unsigned int i = 0; i < dim; ++i)
+      for (int i = 0; i < dim; ++i)
         {
           half_lengths[i] = shape_arguments[i];
         }
@@ -58,7 +58,7 @@ ShapeGenerator::initialize_shape_from_vector(
   else if (type == "ellipsoid")
     {
       Tensor<1, dim> radii;
-      for (unsigned int i = 0; i < dim; ++i)
+      for (int i = 0; i < dim; ++i)
         {
           radii[i] = shape_arguments[i];
         }
@@ -222,15 +222,13 @@ ShapeGenerator::initialize_shape_from_file(const std::string  &type,
                     }
                   if (parsing_shapes)
                     {
-                      unsigned int identifier    = stoi(list_of_words_clean[0]);
-                      std::string  type          = list_of_words_clean[1];
-                      std::string  arguments_str = list_of_words_clean[2];
-                      std::replace(arguments_str.begin(),
-                                   arguments_str.end(),
-                                   ':',
-                                   ';');
-                      std::string position_str    = list_of_words_clean[3];
-                      std::string orientation_str = list_of_words_clean[4];
+                      unsigned int identifier = stoi(list_of_words_clean[0]);
+                      const std::string &type_str      = list_of_words_clean[1];
+                      std::string        arguments_str = list_of_words_clean[2];
+                      std::ranges::replace(arguments_str, ':', ';');
+                      const std::string &position_str = list_of_words_clean[3];
+                      const std::string &orientation_str =
+                        list_of_words_clean[4];
 
                       std::vector<std::string> position_str_component =
                         Utilities::split_string_list(position_str, ":");
@@ -254,16 +252,16 @@ ShapeGenerator::initialize_shape_from_file(const std::string  &type,
 
                       std::shared_ptr<Shape<dim>> shape_temp;
                       shape_temp = ShapeGenerator::initialize_shape(
-                        type, arguments_str, Point<dim>(), Tensor<1, 3>());
+                        type_str, arguments_str, Point<dim>(), Tensor<1, 3>());
                       shape_temp->set_position(temp_position);
                       shape_temp->set_orientation(temp_orientation);
                       components[identifier] = shape_temp->static_copy();
                     }
                   else if (parsing_operations)
                     {
-                      unsigned int identifier    = stoi(list_of_words_clean[0]);
-                      std::string  type          = list_of_words_clean[1];
-                      std::string  arguments_str = list_of_words_clean[2];
+                      unsigned int identifier = stoi(list_of_words_clean[0]);
+                      const std::string &type_str      = list_of_words_clean[1];
+                      const std::string &arguments_str = list_of_words_clean[2];
                       std::vector<std::string> arguments_str_component =
                         Utilities::split_string_list(arguments_str, ":");
 
@@ -271,21 +269,21 @@ ShapeGenerator::initialize_shape_from_file(const std::string  &type,
                         stoi(arguments_str_component[0]);
                       unsigned int second_shape =
                         stoi(arguments_str_component[1]);
-                      if (type == "union")
+                      if (type_str == "union")
                         {
                           operations[identifier] = std::make_tuple(
                             CompositeShape<dim>::BooleanOperation::Union,
                             first_shape,
                             second_shape);
                         }
-                      else if (type == "difference")
+                      else if (type_str == "difference")
                         {
                           operations[identifier] = std::make_tuple(
                             CompositeShape<dim>::BooleanOperation::Difference,
                             first_shape,
                             second_shape);
                         }
-                      else if (type == "intersection")
+                      else if (type_str == "intersection")
                         {
                           operations[identifier] = std::make_tuple(
                             CompositeShape<dim>::BooleanOperation::Intersection,

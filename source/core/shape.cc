@@ -6,6 +6,8 @@
 #include <deal.II/grid/manifold.h>
 #include <deal.II/grid/manifold_lib.h>
 
+#include <algorithm>
+
 #ifdef DEAL_II_WITH_OPENCASCADE
 #  include <deal.II/opencascade/manifold_lib.h>
 #  include <deal.II/opencascade/utilities.h>
@@ -162,7 +164,7 @@ Shape<dim>::reverse_align_and_center(const Point<dim> &evaluation_point) const
     }
   else // (dim == 3)
     {
-      for (unsigned int i = 0; i < dim; ++i)
+      for (int i = 0; i < dim; ++i)
         {
           if (std::abs(theta[2 - i]) > 1e-10 * this->effective_radius)
             {
@@ -498,7 +500,7 @@ Superquadric<dim>::closest_surface_point(
       this->closest_surface_point(p, closest_point);
 
       Point<dim> copy_closest_point{};
-      for (unsigned int d = 0; d < dim; d++)
+      for (int d = 0; d < dim; d++)
         copy_closest_point[d] = closest_point[d];
       if (!this->part_of_a_composite)
         {
@@ -602,7 +604,7 @@ Superquadric<dim>::value_with_cell_guess(
       Point<dim> closest_point{};
       this->closest_surface_point(evaluation_point, closest_point);
       Point<dim> copy_closest_point{};
-      for (unsigned int d = 0; d < dim; d++)
+      for (int d = 0; d < dim; d++)
         copy_closest_point[d] = closest_point[d];
 
       double levelset = this->value(evaluation_point);
@@ -676,7 +678,7 @@ Superquadric<dim>::gradient_with_cell_guess(
       Point<dim> closest_point{};
       this->closest_surface_point(evaluation_point, closest_point);
       Point<dim> copy_closest_point{};
-      for (unsigned int d = 0; d < dim; d++)
+      for (int d = 0; d < dim; d++)
         copy_closest_point[d] = closest_point[d];
 
       Tensor<1, dim> gradient = this->gradient(evaluation_point);
@@ -1015,7 +1017,7 @@ HyperRectangle<dim>::value(const Point<dim> &evaluation_point,
 
   Point<dim> abs_p;
   Point<dim> half_lengths_dim;
-  for (unsigned int i = 0; i < dim; ++i)
+  for (int i = 0; i < dim; ++i)
     {
       abs_p[i]            = std::abs(centered_point[i]);
       half_lengths_dim[i] = half_lengths[i];
@@ -1023,11 +1025,11 @@ HyperRectangle<dim>::value(const Point<dim> &evaluation_point,
   Point<dim> q;
   q = abs_p - half_lengths_dim;
   Point<dim> max_q_0;
-  for (unsigned int i = 0; i < dim; ++i)
+  for (int i = 0; i < dim; ++i)
     {
       max_q_0[i] = std::max(q[i], 0.0);
     }
-  double max_q = std::max(q[0], std::max(q[1], q[dim - 1]));
+  const double max_q = std::max(q[0], std::max(q[1], q[dim - 1]));
   return max_q_0.norm() + std::min(max_q, 0.0) - this->layer_thickening;
 }
 
@@ -1047,7 +1049,7 @@ double
 HyperRectangle<dim>::displaced_volume()
 {
   double solid_volume = 1.0;
-  for (unsigned int i = 0; i < dim; ++i)
+  for (int i = 0; i < dim; ++i)
     {
       solid_volume = solid_volume * 2.0 * half_lengths[i];
     }
@@ -1063,7 +1065,7 @@ Ellipsoid<dim>::value(const Point<dim> &evaluation_point,
 
   Point<dim> v_k0;
   Point<dim> v_k1;
-  for (unsigned int i = 0; i < dim; ++i)
+  for (int i = 0; i < dim; ++i)
     {
       // Ellipsoid parameters[0->2]:= radii x, y, z
       v_k0[i] = centered_point[i] / radii[i];
@@ -1091,7 +1093,7 @@ Ellipsoid<dim>::displaced_volume()
 {
   using numbers::PI;
   double solid_volume = PI * 4.0 / 3.0;
-  for (unsigned int i = 0; i < dim; i++)
+  for (int i = 0; i < dim; i++)
     {
       solid_volume = solid_volume * radii[i];
     }
@@ -2418,7 +2420,7 @@ CylindricalTube<dim>::value(const Point<dim> &evaluation_point,
     level_set_of_cylinder_hollow = -radius_diff_i;
   else
     level_set_of_cylinder_hollow =
-      std::max(std::max(radius_diff_o, h_diff_o), -radius_diff_i);
+      std::max({radius_diff_o, h_diff_o, -radius_diff_i});
 
   return level_set_of_cylinder_hollow - this->layer_thickening;
 }
@@ -2653,11 +2655,9 @@ CylindricalHelix<dim>::value(const Point<dim> &evaluation_point,
   // Do the union of the helix and the cap.
   double level_set = 0;
   if (level_set_tube > 0)
-    level_set =
-      std::min(std::min(level_set_tube, dist_from_cap), dist_from_cap_top);
+    level_set = std::min({level_set_tube, dist_from_cap, dist_from_cap_top});
   else
-    level_set =
-      std::max(std::max(level_set_tube, -dist_from_cap_top), -dist_from_cap);
+    level_set = std::max({level_set_tube, -dist_from_cap_top, -dist_from_cap});
 
   return level_set - this->layer_thickening;
 }
