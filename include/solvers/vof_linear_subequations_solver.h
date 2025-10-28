@@ -101,7 +101,7 @@ protected:
    * for the partial differential equation.
    */
   void
-  solve_void_fraction_linear_system() override;
+  solve_linear_system_and_update_solution() override;
 
   /**
    * @brief Check if the solutions on which the subequation depends on are

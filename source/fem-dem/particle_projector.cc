@@ -261,7 +261,7 @@ ParticleProjector<dim>::calculate_void_fraction(const double time)
       calculate_void_fraction_satellite_point_method();
     }
 
-  solve_void_fraction_linear_system();
+  solve_linear_system_and_update_solution();
 
   if (void_fraction_parameters->project_particle_velocity)
     {
@@ -1640,7 +1640,7 @@ ParticleProjector<3>::calculate_particle_fluid_forces_projection(
 
 template <int dim>
 void
-ParticleProjector<dim>::solve_void_fraction_linear_system()
+ParticleProjector<dim>::solve_linear_system_and_update_solution()
 {
   // Solve the L2 projection system
   const double linear_solver_tolerance =
