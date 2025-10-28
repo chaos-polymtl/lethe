@@ -355,9 +355,11 @@ DEMSolver<dim, PropertiesIndex>::setup_triangulation_dependent_parameters()
   // this value.
   smallest_solid_object_mapping_criterion = [&] {
     if constexpr (dim == 2) // 2^-0.5 * D_c,min
-      return 0.5 * std::numbers::sqrt2 * GridTools::minimal_cell_diameter(triangulation);
+      return 0.5 * std::numbers::sqrt2 *
+             GridTools::minimal_cell_diameter(triangulation);
     if constexpr (dim == 3) // 3^-0.5 * D_c,min
-      return std::numbers::inv_sqrt3 * GridTools::minimal_cell_diameter(triangulation);
+      return std::numbers::inv_sqrt3 *
+             GridTools::minimal_cell_diameter(triangulation);
   }();
 
   // Setup background dof
