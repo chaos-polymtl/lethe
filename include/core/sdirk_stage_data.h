@@ -97,8 +97,8 @@ public:
    *
    * where \( s \) is the total number of stages.
    *
-   * Pay attention that the stage indices start from 1, but the but indicices
-   * for the matrix and the vectors when coding start from 0.
+   * Pay attention that the stage indices start from 1, but the indices
+   * for the matrix and the vectors start at 0.
    *
    *
    * @param[in] table The SDIRK Butcher tableau (structure containing A, b, and

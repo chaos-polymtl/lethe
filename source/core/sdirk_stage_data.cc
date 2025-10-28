@@ -30,7 +30,7 @@ sdirk_table(const Parameters::SimulationControl::TimeSteppingMethod method)
 
       // alpha is a constant coefficient chosen to ensure the method is stable
       // and consistent
-      const double alpha = (2. - std::sqrt(2.)) / 2.;
+      constexpr double alpha = (2. - std::numbers::sqrt2) / 2.;
 
       table.A.reinit(2, 2);
       table.A(0, 0) = alpha;
