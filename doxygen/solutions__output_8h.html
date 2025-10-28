@@ -311,16 +311,18 @@ template&lt;int dim&gt; </div>
 <p>Output the Data Out Faces to a single vtu file This function outputs the DataOutFaces to a vtu file. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">data_out</td><td>the DataOutFaces class to which the data has been attached</td></tr>
-    <tr><td class="paramname">time</td><td>the time associated with the file</td></tr>
-    <tr><td class="paramname">iter</td><td>the iteration number associated with the file</td></tr>
-    <tr><td class="paramname">mpi_communicator</td><td>The mpi communicator</td></tr>
+    <tr><td class="paramname">data_out</td><td>the DataOutFaces class to which the data has been attached </td></tr>
+    <tr><td class="paramname">folder</td><td>the path to when the results are to be written </td></tr>
+    <tr><td class="paramname">time</td><td>the time associated with the file </td></tr>
+    <tr><td class="paramname">iter</td><td>the iteration number associated with the file </td></tr>
+    <tr><td class="paramname">mpi_communicator</td><td>The mpi communicator </td></tr>
+    <tr><td class="paramname">file_prefix</td><td>a string that stores the name of the file without the iteration number and the extension. </td></tr>
     <tr><td class="paramname">digits</td><td>An optional parameter that specifies the amount of digit used to store iteration number in the file name </td></tr>
   </table>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="solutions__output_8cc_source.html#l00077">77</a> of file <a class="el" href="solutions__output_8cc_source.html">solutions_output.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="solutions__output_8cc_source.html#l00074">74</a> of file <a class="el" href="solutions__output_8cc_source.html">solutions_output.cc</a>.</p>
 
 </div>
 </div>
@@ -397,20 +399,20 @@ template&lt;int dim, int spacedim = dim&gt; </div>
 <p>Output the data out to "group_files" vtu files, with a pvtu file and a pvd to store the timing This function outputs the data out to "group_files" vtu file that are orchestrated by a .pvtu file. An additional pvd file takes care of storing the time associated with each .pvtu file. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">pvd_handler</td><td>a <a class="el" href="classPVDHandler.html" title="The PVDHandler class manages the storage of the information required to write pvd file....">PVDHandler</a> to store the information about the file name and time associated with it</td></tr>
-    <tr><td class="paramname">data_out</td><td>the DataOut class to which the data has been attached</td></tr>
-    <tr><td class="paramname">folder</td><td>a string that contains the path where the results are to be saved</td></tr>
-    <tr><td class="paramname">file_prefix</td><td>a string that stores the name of the file without the iteration number and the extension</td></tr>
-    <tr><td class="paramname">time</td><td>the time associated with the file</td></tr>
-    <tr><td class="paramname">iter</td><td>the iteration number associated with the file</td></tr>
-    <tr><td class="paramname">group_files</td><td>the number of vtu files that will be generated.</td></tr>
-    <tr><td class="paramname">mpi_communicator</td><td>The mpi communicator</td></tr>
+    <tr><td class="paramname">pvd_handler</td><td>a <a class="el" href="classPVDHandler.html" title="The PVDHandler class manages the storage of the information required to write pvd file....">PVDHandler</a> to store the information about the file name and time associated with it </td></tr>
+    <tr><td class="paramname">data_out</td><td>the DataOut class to which the data has been attached </td></tr>
+    <tr><td class="paramname">folder</td><td>a string that contains the path where the results are to be saved </td></tr>
+    <tr><td class="paramname">file_prefix</td><td>a string that stores the name of the file without the iteration number and the extension </td></tr>
+    <tr><td class="paramname">time</td><td>the time associated with the file </td></tr>
+    <tr><td class="paramname">iter</td><td>the iteration number associated with the file </td></tr>
+    <tr><td class="paramname">group_files</td><td>the number of vtu files that will be generated. </td></tr>
+    <tr><td class="paramname">mpi_communicator</td><td>The mpi communicator </td></tr>
     <tr><td class="paramname">digits</td><td>An optional parameter that specifies the amount of digit used to store iteration number in the file name </td></tr>
   </table>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="solutions__output_8cc_source.html#l00019">19</a> of file <a class="el" href="solutions__output_8cc_source.html">solutions_output.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="solutions__output_8cc_source.html#l00017">17</a> of file <a class="el" href="solutions__output_8cc_source.html">solutions_output.cc</a>.</p>
 
 <p class="reference">References <a class="el" href="pvd__handler_8h_source.html#l00036">PVDHandler::append()</a>, and <a class="el" href="pvd__handler_8h_source.html#l00043">PVDHandler::times_and_names</a>.</p>
 
