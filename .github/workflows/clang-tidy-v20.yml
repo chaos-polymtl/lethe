@@ -33,6 +33,7 @@ jobs:
           mkdir build && cd build
           apt-get update && apt-get install -y --no-install-recommends build-essential
           update-alternatives --install /usr/bin/cc cc /usr/bin/clang-20 100  && update-alternatives --install /usr/bin/c++ c++ /usr/bin/clang++-20 100
+          sudo apt-get install -y mold
           export PATH=/usr/lib/llvm-20/share/clang/:$PATH 
           export PATH=/usr/lib/llvm-20/bin:$PATH
           ../contrib/utilities/run_clang_tidy.sh ..
