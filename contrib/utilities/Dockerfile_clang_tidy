@@ -1,0 +1,50 @@
+# syntax=docker/dockerfile:1
+FROM ubuntu:24.04
+
+LABEL maintainer="CHAOS Lab <chaos-lab@polymtl.ca>"
+LABEL description="Docker image with deal.II, clang-20, clang-tidy-20, Trilinos, PETSc, etc. for CI clang-tidy checks."
+
+ENV DEBIAN_FRONTEND=noninteractive
+ENV LLVM_VERSION=20
+
+# Install base utilities
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    software-properties-common \
+    wget \
+    gnupg \
+    ca-certificates \
+    lsb-release && \
+    rm -rf /var/lib/apt/lists/*
+
+# Add dealii backport repository
+RUN add-apt-repository ppa:ginggs/deal.ii-9.7.1-backports && \
+    apt-get update
+
+# Install development and analysis tools
+RUN apt-get install -y --no-install-recommends \
+    nodejs \
+    clang-${LLVM_VERSION} \
+    clang-tidy-${LLVM_VERSION} \
+    numdiff \
+    libboost-all-dev \
+    libcgal-dev \
+    libp4est-dev \
+    trilinos-all-dev \
+    petsc-dev \
+    libmetis-dev \
+    libhdf5-mpi-dev \
+    deal.ii \
+    git \
+    cmake \
+    ninja-build \
+    python3 \
+    python3-pip && \
+    rm -rf /var/lib/apt/lists/*
+
+# Add clang binaries to PATH
+ENV PATH=/usr/lib/llvm-${LLVM_VERSION}/share/clang/:/usr/lib/llvm-${LLVM_VERSION}/bin:$PATH
+
+# Default working directory
+WORKDIR /workspace
+
+CMD ["/bin/bash"]
