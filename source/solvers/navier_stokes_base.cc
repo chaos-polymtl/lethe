@@ -1970,12 +1970,18 @@ NavierStokesBase<dim, VectorType, DofsType>::define_non_zero_constraints()
         {
           std::set<types::boundary_id> no_normal_flux_boundaries;
           no_normal_flux_boundaries.insert(id);
+
+          bool use_manifold_for_normal = true;
+          if (this->simulation_parameters.mortar_parameters.enable)
+            use_manifold_for_normal = false;
+
           VectorTools::compute_no_normal_flux_constraints(
             this->dof_handler,
             0,
             no_normal_flux_boundaries,
             nonzero_constraints,
-            *this->get_mapping());
+            *this->get_mapping(),
+            use_manifold_for_normal);
         }
       else if (type == BoundaryConditions::BoundaryType::function)
         {
@@ -2082,12 +2088,18 @@ NavierStokesBase<dim, VectorType, DofsType>::define_zero_constraints()
         {
           std::set<types::boundary_id> no_normal_flux_boundaries;
           no_normal_flux_boundaries.insert(id);
+
+          bool use_manifold_for_normal = true;
+          if (this->simulation_parameters.mortar_parameters.enable)
+            use_manifold_for_normal = false;
+
           VectorTools::compute_no_normal_flux_constraints(
             this->dof_handler,
             0,
             no_normal_flux_boundaries,
             this->zero_constraints,
-            *this->get_mapping());
+            *this->get_mapping(),
+            use_manifold_for_normal);
         }
       else if (type == BoundaryConditions::BoundaryType::periodic)
         {

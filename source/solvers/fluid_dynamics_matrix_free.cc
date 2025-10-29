@@ -1468,12 +1468,17 @@ MFNavierStokesPreconditionGMGBase<dim>::reinit(
                   std::set<types::boundary_id> no_normal_flux_boundaries;
                   no_normal_flux_boundaries.insert(id);
 
+                  bool use_manifold_for_normal = true;
+                  if (this->simulation_parameters.mortar_parameters.enable)
+                    use_manifold_for_normal = false;
+
                   VectorTools::compute_no_normal_flux_constraints(
                     level_dof_handler,
                     0,
                     no_normal_flux_boundaries,
                     level_constraint,
-                    *mapping);
+                    *mapping,
+                    use_manifold_for_normal);
                 }
               else if (type == BoundaryConditions::BoundaryType::periodic)
                 {
