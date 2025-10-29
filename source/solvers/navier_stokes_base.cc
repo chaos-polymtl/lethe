@@ -2272,7 +2272,6 @@ NavierStokesBase<dim, VectorType, DofsType>::read_checkpoint()
   std::string        prefix =
     this->simulation_parameters.simulation_control.output_folder +
     this->simulation_parameters.restart_parameters.filename;
-
   this->simulation_control->read(prefix);
   this->pvdhandler.read(prefix);
 
@@ -3173,7 +3172,6 @@ NavierStokesBase<dim, VectorType, DofsType>::write_checkpoint()
   std::string        prefix =
     this->simulation_parameters.simulation_control.output_folder +
     this->simulation_parameters.restart_parameters.filename;
-
   if (Utilities::MPI::this_mpi_process(this->mpi_communicator) == 0)
     {
       simulation_control->save(prefix);
