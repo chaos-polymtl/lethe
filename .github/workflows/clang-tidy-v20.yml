@@ -24,7 +24,7 @@ jobs:
     name: clang-tidy
     runs-on: self-hosted
     container:
-      image: ghcr.io/chaos-lab/clang-tidy-dealii:20
+      image: blaisb/clang-tidy-dealii:20
 
     steps:
       - uses: actions/checkout@v4
