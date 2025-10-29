@@ -5,6 +5,7 @@ name: CI-Clang-tidy-v20
 
 
 on:
+  #Runs on pushes to master and on PRs, ignoring documentation and contrib changes
   push:
     branches: [ master ]
   pull_request:
