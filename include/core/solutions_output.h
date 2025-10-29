@@ -1,4 +1,4 @@
-// SPDX-FileCopyrightText: Copyright (c) 2020, 2023-2024 The Lethe Authors
+// SPDX-FileCopyrightText: Copyright (c) 2020, 2023-2025 The Lethe Authors
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
 #ifndef lethe_solutions_output_h
@@ -17,15 +17,19 @@ using namespace dealii;
  * orchestrated by a .pvtu file. An additional pvd file takes care of storing
  * the time associated with each .pvtu file.
  *
- * @param pvd_handler a PVDHandler to store the information about the file name and time associated with it
- * @param data_out the DataOut class to which the data has been attached
- * @param folder a string that contains the path where the results are to be saved
- * @param file_prefix a string that stores the name of the file without the iteration number and the extension
- * @param time the time associated with the file
- * @param iter the iteration number associated with the file
- * @param group_files the number of vtu files that will be generated.
- * @param mpi_communicator The mpi communicator
- * @param digits An optional parameter that specifies the amount of digit used to store iteration number in the file name
+ * @param[in] pvd_handler a PVDHandler to store the information about the file
+ * name and time associated with it
+ * @param[in] data_out the DataOut class to which the data has been attached
+ * @param[in] folder a string that contains the path where the results are to be
+ * saved
+ * @param[in] file_prefix a string that stores the name of the file without the
+ * iteration number and the extension
+ * @param[in] time the time associated with the file
+ * @param[in] iter the iteration number associated with the file
+ * @param[in] group_files the number of vtu files that will be generated.
+ * @param[in] mpi_communicator The mpi communicator
+ * @param[in] digits An optional parameter that specifies the amount of digit
+ * used to store iteration number in the file name
  */
 template <int dim, int spacedim = dim>
 void
@@ -43,15 +47,17 @@ write_vtu_and_pvd(PVDHandler                            &pvd_handler,
  * @brief Output the Data Out Faces to a single vtu file
  * This function outputs the DataOutFaces to a vtu file.
  *
- * @param data_out the DataOutFaces class to which the data has been attached
- * @param folder the path to when the results are to be written
- * @param time the time associated with the file
- * @param iter the iteration number associated with the file
- * @param mpi_communicator The mpi communicator
- * @param file_prefix a string that stores the name of the file without the
- * iteration number and the extension.
- * @param digits An optional parameter that specifies the amount of digit used to
- * store iteration number in the file name
+ * @param[in] data_out the DataOutFaces class to which the data has been
+ * attached
+ * @param[in] folder a string that contains the path where the results are to be
+ * saved
+ * @param[in] time the time associated with the file
+ * @param[in] iter the iteration number associated with the file
+ * @param[in] mpi_communicator The mpi communicator
+ * @param[in] file_prefix a string that stores the name of the file without the
+ * iteration number and the extension
+ * @param[in] digits An optional parameter that specifies the amount of digit
+ * used to store iteration number in the file name
  */
 template <int dim>
 void
@@ -62,4 +68,41 @@ write_boundaries_vtu(const DataOutFaces<dim> &data_out,
                      const MPI_Comm          &mpi_communicator,
                      const std::string &file_prefix = std::string("boundaries"),
                      const unsigned int digits      = 5);
+
+/**
+ * @brief Output the Data Out Faces as vtu files, with a pvtu file and a pvd to store the timing
+ * This function is used only when the mortar feature is enabled, since the
+ * rotating domain changes its boundary position over time.
+ *
+ * @param[in] pvd_handler a PVDHandler to store the information about the file
+ * name and time associated with it
+ * @param[in] data_out_faces the DataOutFaces class to which the data has been
+ * attached
+ * @param[in] folder a string that contains the path where the results are to be
+ * saved
+ * @param[in] time the time associated with the file
+ * @param[in] iter the iteration number associated with the file
+ * @param[in] group_files the number of vtu files that will be generated.
+ * @param[in] mpi_communicator The mpi communicator
+ * @param[in] file_prefix a string that stores the name of the file without the
+ * iteration number and the extension
+ * @param[in] digits An optional parameter that specifies the amount of digit
+ * used to store iteration number in the file name
+ * @param[in] file_prefix a string that stores the name of the file without the
+ * iteration number and the extension.
+ * @param[in] digits An optional parameter that specifies the amount of digit
+ * used to store iteration number in the file name
+ */
+template <int dim>
+void
+write_boundaries_vtu_and_pvd(
+  PVDHandler              &pvd_handler_boundary,
+  const DataOutFaces<dim> &data_out_faces,
+  const std::string       &folder,
+  const double             time,
+  const unsigned int       iter,
+  const unsigned int       group_files,
+  const MPI_Comm          &mpi_communicator,
+  const std::string       &file_prefix = std::string("boundaries"),
+  const unsigned int       digits      = 5);
 #endif

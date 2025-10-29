@@ -2275,6 +2275,15 @@ NavierStokesBase<dim, VectorType, DofsType>::read_checkpoint()
   this->simulation_control->read(prefix);
   this->pvdhandler.read(prefix);
 
+  if (this->simulation_control->get_output_boundaries())
+    {
+      std::string prefix_boundary =
+        this->simulation_parameters.simulation_control.output_folder +
+        this->simulation_parameters.restart_parameters.filename + ".boundary";
+
+      this->pvdhandler_boundary.read(prefix_boundary);
+    }
+
   this->set_solution_from_checkpoint(prefix);
 
   // Calculate the initial condition for the average velocity profile
@@ -3016,7 +3025,8 @@ NavierStokesBase<dim, VectorType, DofsType>::write_output_results(
                          this->mpi_communicator);
 
   if (simulation_control->get_output_boundaries() &&
-      simulation_control->get_step_number() == 0)
+      (simulation_control->get_step_number() == 0 ||
+       simulation_parameters.mortar_parameters.enable))
     {
       DataOutFaces<dim> data_out_faces;
 
@@ -3032,8 +3042,13 @@ NavierStokesBase<dim, VectorType, DofsType>::write_output_results(
       data_out_faces.add_data_vector(solution, boundary_id);
       data_out_faces.build_patches(*this->get_mapping(), subdivision);
 
-      write_boundaries_vtu<dim>(
-        data_out_faces, folder, time, iter, this->mpi_communicator);
+      write_boundaries_vtu_and_pvd<dim>(this->pvdhandler_boundary,
+                                        data_out_faces,
+                                        folder,
+                                        time,
+                                        iter,
+                                        group_files,
+                                        this->mpi_communicator);
     }
 }
 
@@ -3164,6 +3179,16 @@ NavierStokesBase<dim, VectorType, DofsType>::write_checkpoint()
 
       if (simulation_parameters.flow_control.enable_flow_control)
         this->flow_control.save(prefix);
+
+      if (this->simulation_control->get_output_boundaries())
+        {
+          std::string prefix_boundary =
+            this->simulation_parameters.simulation_control.output_folder +
+            this->simulation_parameters.restart_parameters.filename +
+            ".boundary";
+
+          this->pvdhandler_boundary.read(prefix_boundary);
+        }
     }
 
   std::vector<const VectorType *> sol_set_transfer;
