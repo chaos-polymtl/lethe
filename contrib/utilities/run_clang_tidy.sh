@@ -54,7 +54,7 @@ fi
 
 CC=clang CXX=clang++ cmake "${ARGS[@]}" "$SRC" || (echo "cmake failed!"; false) || exit 2
 
-cmake -DCMAKE_CXX_FLAGS="-Wno-unknown-warning-option" --build . -j12
+cmake -DCMAKE_CXX_FLAGS="-Wno-unknown-warning-option" --build . -j 12
 
 # generate allheaders.h
 #(cd include; find . -name '*.h'; cd $SRC/include/; find . -name '*.h') | grep -v allheaders.h | grep -v undefine_macros.h | sed 's|^./|#include <|' | sed 's|$|>|' >include/deal.II/allheaders.h
