@@ -87,6 +87,16 @@ file(COPY heat_transfer_average_temperature_restart_files/restart.triangulation_
 file(COPY heat_transfer_average_temperature_restart_files/restart.triangulation.info DESTINATION "${CMAKE_CURRENT_BINARY_DIR}/heat_transfer_average_temperature_modified_initial_time.${_build_type}/mpirun=1/")
 file(COPY heat_transfer_average_temperature_restart_files/temperature_statistics.checkpoint DESTINATION "${CMAKE_CURRENT_BINARY_DIR}/heat_transfer_average_temperature_modified_initial_time.${_build_type}/mpirun=1/")
 
+file(COPY mortar_tgv_restart_files/mortar_tgv_restart.boundary.pvdhandler DESTINATION "${CMAKE_CURRENT_BINARY_DIR}/mortar_tgv_restart.${_build_type}/mpirun=1/")
+file(COPY mortar_tgv_restart_files/mortar_tgv_restart.pvdhandler DESTINATION "${CMAKE_CURRENT_BINARY_DIR}/mortar_tgv_restart.${_build_type}/mpirun=1/")
+file(COPY mortar_tgv_restart_files/mortar_tgv_restart.simulationcontrol DESTINATION "${CMAKE_CURRENT_BINARY_DIR}/mortar_tgv_restart.${_build_type}/mpirun=1/")
+file(COPY mortar_tgv_restart_files/mortar_tgv_restart.triangulation DESTINATION "${CMAKE_CURRENT_BINARY_DIR}/mortar_tgv_restart.${_build_type}/mpirun=1/")
+file(COPY mortar_tgv_restart_files/mortar_tgv_restart.triangulation_fixed.data DESTINATION "${CMAKE_CURRENT_BINARY_DIR}/mortar_tgv_restart.${_build_type}/mpirun=1/")
+file(COPY mortar_tgv_restart_files/mortar_tgv_restart.triangulation.info DESTINATION "${CMAKE_CURRENT_BINARY_DIR}/mortar_tgv_restart.${_build_type}/mpirun=1/")
+file(COPY mortar_tgv_restart_files/enstrophy.checkpoint DESTINATION "${CMAKE_CURRENT_BINARY_DIR}/mortar_tgv_restart.${_build_type}/mpirun=1/")
+file(COPY mortar_tgv_restart_files/kinetic_energy.checkpoint DESTINATION "${CMAKE_CURRENT_BINARY_DIR}/mortar_tgv_restart.${_build_type}/mpirun=1/")
+file(COPY mortar_tgv_restart_files/L2Error_FD.checkpoint DESTINATION "${CMAKE_CURRENT_BINARY_DIR}/mortar_tgv_restart.${_build_type}/mpirun=1/")
+
 deal_ii_pickup_tests()
 
 if(CMAKE_BUILD_TYPE STREQUAL "Debug")

@@ -1,0 +1,78 @@
+Running on 1 MPI rank(s)...
+Mortar - Rotor grid angle is: 0 rad 
+         Rotor grid velocity is: 0.03 rad/time 
+
+   Number of active cells:       20
+   Number of degrees of freedom: 139
+   Volume of triangulation:      39.4784
+************************
+---> Simulation Restart 
+************************
+Mortar - Rotor grid angle is: 0.015 rad 
+         Rotor grid velocity is: 0.03 rad/time 
+
+   Number of active cells:       1280
+   Number of degrees of freedom: 6691
+   Volume of triangulation:      39.4784
+
+*******************************************************************************
+Transient iteration: 7        Time: 0.6      Time step: 0.1      CFL: 0.526988
+*******************************************************************************
+Mortar - Rotor grid angle is: 0.018 rad 
+         Rotor grid velocity is: 0.03 rad/time 
+
+Enstrophy: 0.0446433
+Kinetic energy: 0.0222872
+L2 error velocity: 0.0120342
+
+*******************************************************************************
+Transient iteration: 8        Time: 0.7      Time step: 0.1      CFL: 0.430029
+*******************************************************************************
+Mortar - Rotor grid angle is: 0.021 rad 
+         Rotor grid velocity is: 0.03 rad/time 
+
+Enstrophy: 0.029705
+Kinetic energy: 0.0148297
+L2 error velocity: 0.0138446
+
+*******************************************************************************
+Transient iteration: 9        Time: 0.8      Time step: 0.1      CFL: 0.350893
+*******************************************************************************
+Mortar - Rotor grid angle is: 0.024 rad 
+         Rotor grid velocity is: 0.03 rad/time 
+
+Enstrophy: 0.0197639
+Kinetic energy: 0.00986679
+L2 error velocity: 0.0146447
+
+*******************************************************************************
+Transient iteration: 10       Time: 0.9      Time step: 0.1      CFL: 0.286318
+*******************************************************************************
+Mortar - Rotor grid angle is: 0.027 rad 
+         Rotor grid velocity is: 0.03 rad/time 
+
+Enstrophy: 0.0131493
+Kinetic energy: 0.00656455
+L2 error velocity: 0.0147144
+
+*******************************************************************************
+Transient iteration: 11       Time: 1        Time step: 0.1      CFL: 0.233628
+*******************************************************************************
+Mortar - Rotor grid angle is: 0.03 rad 
+         Rotor grid velocity is: 0.03 rad/time 
+
+Enstrophy: 0.00874823
+Kinetic energy: 0.00436743
+L2 error velocity: 0.0142834
+ time  error_velocity 
+0.0400   1.203310e-02 
+0.1000   1.578476e-02 
+0.2000   1.174546e-02 
+0.3000   4.997654e-03 
+0.4000   4.724314e-03 
+0.5000   8.936556e-03 
+0.6000   1.203420e-02 
+0.7000   1.384465e-02 
+0.8000   1.464469e-02 
+0.9000   1.471444e-02 
+1.0000   1.428343e-02 
