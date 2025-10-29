@@ -3,6 +3,12 @@
 All notable changes to the Lethe project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
+### [Master] - 2025-10-29
+
+### Added
+
+- MINOR This PR adds a post processing function to write pvd files for boundaries when output boundaries is set to true in the simulation control section. This function is used when the mortar feature is enabled, so that rotating boundaries can be printed at every time step. [#1731](https://github.com/chaos-polymtl/lethe/pull/1731)
+
 ### [Master] - 2025-10-28
 
 ### Changed
