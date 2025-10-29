@@ -11,10 +11,10 @@ set dimension = 2
 #---------------------------------------------------
 
 subsection simulation control
-  set method            = bdf2
-  set time step         = 0.1
-  set time end          = 1
-  set output frequency  = 0
+  set method           = bdf2
+  set time step        = 0.1
+  set time end         = 0.4
+  set output frequency = 0
 end
 
 #---------------------------------------------------
@@ -76,9 +76,9 @@ end
 #---------------------------------------------------
 
 subsection mesh
-  set type      = dealii
-  set grid type = hyper_cube_with_cylindrical_hole
-  set grid arguments = 2.0 : 3.141592654 : 1 : 1 : true
+  set type               = dealii
+  set grid type          = hyper_cube_with_cylindrical_hole
+  set grid arguments     = 2.0 : 3.141592654 : 1 : 1 : true
   set initial refinement = 3
 end
 
@@ -89,8 +89,8 @@ end
 subsection mortar
   set enable = true
   subsection mesh
-    set type      = dealii
-    set grid type = hyper_ball_balanced
+    set type           = dealii
+    set grid type      = hyper_ball_balanced
     set grid arguments = 0, 0 : 2.0
   end
   set rotor boundary id  = 5
@@ -124,12 +124,12 @@ subsection boundary conditions
     set periodic direction = 1
   end
   subsection bc 2
-    set type               = none
-    set id                 = 4
+    set type = none
+    set id   = 4
   end
   subsection bc 3
-    set type               = none
-    set id                 = 5
+    set type = none
+    set id   = 5
   end
 end
 
