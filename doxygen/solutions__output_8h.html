@@ -248,6 +248,9 @@ Functions</h2></td></tr>
 <tr class="memitem:a6fc16b92766f9e3ba703254845373424" id="r_a6fc16b92766f9e3ba703254845373424"><td class="memTemplParams" colspan="2">template&lt;int dim&gt; </td></tr>
 <tr class="memitem:a6fc16b92766f9e3ba703254845373424"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="solutions__output_8h.html#a6fc16b92766f9e3ba703254845373424">write_boundaries_vtu</a> (const DataOutFaces&lt; dim &gt; &amp;data_out, const std::string &amp;folder, const double time, const unsigned int iter, const MPI_Comm &amp;mpi_communicator, const std::string &amp;file_prefix=std::string(&quot;boundaries&quot;), const unsigned int digits=5)</td></tr>
 <tr class="separator:a6fc16b92766f9e3ba703254845373424"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a11b10d97db6073f757ecd9ec66775d28" id="r_a11b10d97db6073f757ecd9ec66775d28"><td class="memTemplParams" colspan="2">template&lt;int dim&gt; </td></tr>
+<tr class="memitem:a11b10d97db6073f757ecd9ec66775d28"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="solutions__output_8h.html#a11b10d97db6073f757ecd9ec66775d28">write_boundaries_vtu_and_pvd</a> (<a class="el" href="classPVDHandler.html">PVDHandler</a> &amp;pvd_handler_boundary, const DataOutFaces&lt; dim &gt; &amp;data_out_faces, const std::string &amp;folder, const double time, const unsigned int iter, const unsigned int group_files, const MPI_Comm &amp;mpi_communicator, const std::string &amp;file_prefix=std::string(&quot;boundaries&quot;), const unsigned int digits=5)</td></tr>
+<tr class="separator:a11b10d97db6073f757ecd9ec66775d28"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <h2 class="groupheader">Function Documentation</h2>
 <a id="a6fc16b92766f9e3ba703254845373424" name="a6fc16b92766f9e3ba703254845373424"></a>
@@ -311,18 +314,112 @@ template&lt;int dim&gt; </div>
 <p>Output the Data Out Faces to a single vtu file This function outputs the DataOutFaces to a vtu file. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">data_out</td><td>the DataOutFaces class to which the data has been attached </td></tr>
-    <tr><td class="paramname">folder</td><td>the path to when the results are to be written </td></tr>
-    <tr><td class="paramname">time</td><td>the time associated with the file </td></tr>
-    <tr><td class="paramname">iter</td><td>the iteration number associated with the file </td></tr>
-    <tr><td class="paramname">mpi_communicator</td><td>The mpi communicator </td></tr>
-    <tr><td class="paramname">file_prefix</td><td>a string that stores the name of the file without the iteration number and the extension. </td></tr>
-    <tr><td class="paramname">digits</td><td>An optional parameter that specifies the amount of digit used to store iteration number in the file name </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">data_out</td><td>the DataOutFaces class to which the data has been attached </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">folder</td><td>a string that contains the path where the results are to be saved </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">time</td><td>the time associated with the file </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">iter</td><td>the iteration number associated with the file </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">mpi_communicator</td><td>The mpi communicator </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">file_prefix</td><td>a string that stores the name of the file without the iteration number and the extension </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">digits</td><td>An optional parameter that specifies the amount of digit used to store iteration number in the file name </td></tr>
   </table>
   </dd>
 </dl>
 
 <p class="definition">Definition at line <a class="el" href="solutions__output_8cc_source.html#l00074">74</a> of file <a class="el" href="solutions__output_8cc_source.html">solutions_output.cc</a>.</p>
+
+</div>
+</div>
+<a id="a11b10d97db6073f757ecd9ec66775d28" name="a11b10d97db6073f757ecd9ec66775d28"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a11b10d97db6073f757ecd9ec66775d28">&#9670;&#160;</a></span>write_boundaries_vtu_and_pvd()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;int dim&gt; </div>
+      <table class="memname">
+        <tr>
+          <td class="memname">void write_boundaries_vtu_and_pvd </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="classPVDHandler.html">PVDHandler</a> &amp;&#160;</td>
+          <td class="paramname"><em>pvd_handler_boundary</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const DataOutFaces&lt; dim &gt; &amp;&#160;</td>
+          <td class="paramname"><em>data_out_faces</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const std::string &amp;&#160;</td>
+          <td class="paramname"><em>folder</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const double&#160;</td>
+          <td class="paramname"><em>time</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const unsigned int&#160;</td>
+          <td class="paramname"><em>iter</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const unsigned int&#160;</td>
+          <td class="paramname"><em>group_files</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const MPI_Comm &amp;&#160;</td>
+          <td class="paramname"><em>mpi_communicator</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const std::string &amp;&#160;</td>
+          <td class="paramname"><em>file_prefix</em> = <code>std::string(&quot;boundaries&quot;)</code>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const unsigned int&#160;</td>
+          <td class="paramname"><em>digits</em> = <code>5</code>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Output the Data Out Faces as vtu files, with a pvtu file and a pvd to store the timing This function is used only when the mortar feature is enabled, since the rotating domain changes its boundary position over time. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramdir">[in]</td><td class="paramname">pvd_handler</td><td>a <a class="el" href="classPVDHandler.html" title="The PVDHandler class manages the storage of the information required to write pvd file....">PVDHandler</a> to store the information about the file name and time associated with it </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">data_out_faces</td><td>the DataOutFaces class to which the data has been attached </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">folder</td><td>a string that contains the path where the results are to be saved </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">time</td><td>the time associated with the file </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">iter</td><td>the iteration number associated with the file </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">group_files</td><td>the number of vtu files that will be generated. </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">mpi_communicator</td><td>The mpi communicator </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">file_prefix</td><td>a string that stores the name of the file without the iteration number and the extension </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">digits</td><td>An optional parameter that specifies the amount of digit used to store iteration number in the file name </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">file_prefix</td><td>a string that stores the name of the file without the iteration number and the extension. </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">digits</td><td>An optional parameter that specifies the amount of digit used to store iteration number in the file name </td></tr>
+  </table>
+  </dd>
+</dl>
+
+<p class="definition">Definition at line <a class="el" href="solutions__output_8cc_source.html#l00098">98</a> of file <a class="el" href="solutions__output_8cc_source.html">solutions_output.cc</a>.</p>
+
+<p class="reference">References <a class="el" href="pvd__handler_8h_source.html#l00036">PVDHandler::append()</a>, and <a class="el" href="pvd__handler_8h_source.html#l00043">PVDHandler::times_and_names</a>.</p>
 
 </div>
 </div>
@@ -399,15 +496,15 @@ template&lt;int dim, int spacedim = dim&gt; </div>
 <p>Output the data out to "group_files" vtu files, with a pvtu file and a pvd to store the timing This function outputs the data out to "group_files" vtu file that are orchestrated by a .pvtu file. An additional pvd file takes care of storing the time associated with each .pvtu file. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">pvd_handler</td><td>a <a class="el" href="classPVDHandler.html" title="The PVDHandler class manages the storage of the information required to write pvd file....">PVDHandler</a> to store the information about the file name and time associated with it </td></tr>
-    <tr><td class="paramname">data_out</td><td>the DataOut class to which the data has been attached </td></tr>
-    <tr><td class="paramname">folder</td><td>a string that contains the path where the results are to be saved </td></tr>
-    <tr><td class="paramname">file_prefix</td><td>a string that stores the name of the file without the iteration number and the extension </td></tr>
-    <tr><td class="paramname">time</td><td>the time associated with the file </td></tr>
-    <tr><td class="paramname">iter</td><td>the iteration number associated with the file </td></tr>
-    <tr><td class="paramname">group_files</td><td>the number of vtu files that will be generated. </td></tr>
-    <tr><td class="paramname">mpi_communicator</td><td>The mpi communicator </td></tr>
-    <tr><td class="paramname">digits</td><td>An optional parameter that specifies the amount of digit used to store iteration number in the file name </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">pvd_handler</td><td>a <a class="el" href="classPVDHandler.html" title="The PVDHandler class manages the storage of the information required to write pvd file....">PVDHandler</a> to store the information about the file name and time associated with it </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">data_out</td><td>the DataOut class to which the data has been attached </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">folder</td><td>a string that contains the path where the results are to be saved </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">file_prefix</td><td>a string that stores the name of the file without the iteration number and the extension </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">time</td><td>the time associated with the file </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">iter</td><td>the iteration number associated with the file </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">group_files</td><td>the number of vtu files that will be generated. </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">mpi_communicator</td><td>The mpi communicator </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">digits</td><td>An optional parameter that specifies the amount of digit used to store iteration number in the file name </td></tr>
   </table>
   </dd>
 </dl>
