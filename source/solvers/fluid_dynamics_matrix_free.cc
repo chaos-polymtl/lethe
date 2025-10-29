@@ -1624,8 +1624,6 @@ MFNavierStokesPreconditionGMGBase<dim>::reinit(
             {
               this->mg_setup_timer.enter_subsection("Set up mortar operators");
 
-              // this->mg_operators[level]->get_system_matrix_free().update_mapping(*mapping);
-
               // Manager
               this->mg_operators[level]->mortar_manager_mf =
                 std::make_shared<MortarManagerCircle<dim>>(

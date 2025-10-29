@@ -763,13 +763,6 @@ NavierStokesOperatorBase<dim, number>::get_element_size() const
   return this->element_size;
 }
 
-// template <int dim, typename number>
-// const AlignedVector<VectorizedArray<number>>
-// NavierStokesOperatorBase<dim, number>::get_element_center() const
-// {
-//   return this->element_center[dim];
-// }
-
 template <int dim, typename number>
 void
 NavierStokesOperatorBase<dim, number>::
@@ -1119,17 +1112,6 @@ NavierStokesOperatorBase<dim, number>::evaluate_velocity_ale(
            lane < matrix_free.n_active_entries_per_cell_batch(cell);
            lane++)
         {
-          // const auto &cell_it = matrix_free.get_cell_iterator(cell, lane);
-          // std::cout << "Matrix-free cell " << cell_it->active_cell_index()
-          //           << ", center = " << cell_it->center() << std::endl;
-
-          // for (unsigned int q=0; q<integrator.n_q_points; ++q)
-          // {
-          //   const auto qp = integrator.quadrature_point(q);
-          //   std::cout << "QP " << q << ": (" << qp[0][lane] << ", " <<
-          //   qp[1][lane] << ")\n";
-          // }
-
           // Compute radial distance from the current cell
           const auto cell_center =
             matrix_free.get_cell_iterator(cell, lane)->center();
@@ -1143,9 +1125,7 @@ NavierStokesOperatorBase<dim, number>::evaluate_velocity_ale(
           else
             cell_rotor_angular_velocity = rotor_angular_velocity_value;
 
-          // std::cout << "cell radius: " << radius_current << ", ang vel: " <<
-          // cell_rotor_angular_velocity << std::endl; Compute linear velocity
-          // at quadrature points
+          // Compute linear velocity at quadrature points
           for (const auto q : integrator.quadrature_point_indices())
             {
               const auto x = integrator.quadrature_point(q)[0][lane];
@@ -1155,10 +1135,6 @@ NavierStokesOperatorBase<dim, number>::evaluate_velocity_ale(
                 -cell_rotor_angular_velocity * y;
               this->velocity_ale[cell][q][1][lane] =
                 cell_rotor_angular_velocity * x;
-
-              // std::cout << "ID " << cell << ", x: " <<
-              // integrator.quadrature_point(q)[0][lane] << ", y: " <<
-              // integrator.quadrature_point(q)[1][lane] << std::endl;
             }
         }
     }
@@ -1541,7 +1517,6 @@ NavierStokesStabilizedOperator<dim, number>::do_cell_integral_local(
       if (this->enable_mortar)
         u_ale = this->velocity_ale[cell][q];
 
-      // std::cout << u_ale << std::endl;
       // Get stabilization parameter
       const auto tau      = this->stabilization_parameter[cell][q];
       const auto tau_lsic = this->stabilization_parameter_lsic[cell][q];
