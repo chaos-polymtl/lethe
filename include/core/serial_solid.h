@@ -9,6 +9,8 @@
 #include <core/solid_objects_parameters.h>
 #include <core/tensors_and_points_dimension_manipulation.h>
 
+#include "dem/data_containers.h"
+
 #include <deal.II/base/function.h>
 
 #include <deal.II/dofs/dof_handler.h>
@@ -186,23 +188,10 @@ public:
     return id;
   }
 
-  struct cell_comparison
-  {
-    inline bool
-    operator()(
-      const typename Triangulation<dim, spacedim>::active_cell_iterator &cell_1,
-      const typename Triangulation<dim, spacedim>::active_cell_iterator &cell_2)
-      const
-    {
-      return cell_1->global_active_cell_index() <
-             cell_2->global_active_cell_index();
-    }
-  };
-
   typedef std::map<
     typename Triangulation<dim, spacedim>::active_cell_iterator,
     std::vector<typename Triangulation<dim, spacedim>::active_cell_iterator>,
-    cell_comparison>
+    DEM::cut_cell_comparison<spacedim>>
     triangulation_cell_neighbors_map;
 
   inline std::tuple<triangulation_cell_neighbors_map,
