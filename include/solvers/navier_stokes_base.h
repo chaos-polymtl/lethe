@@ -963,6 +963,7 @@ protected:
 
   SimulationParameters<dim> simulation_parameters;
   PVDHandler                pvdhandler;
+  PVDHandler                pvdhandler_boundary;
 
   // Functions used for source term and error analysis
   Function<dim>                 *exact_solution;

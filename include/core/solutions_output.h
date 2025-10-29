@@ -96,7 +96,7 @@ write_boundaries_vtu(const DataOutFaces<dim> &data_out,
 template <int dim>
 void
 write_boundaries_vtu_and_pvd(
-  PVDHandler              &pvd_handler,
+  PVDHandler              &pvd_handler_boundary,
   const DataOutFaces<dim> &data_out_faces,
   const std::string       &folder,
   const double             time,

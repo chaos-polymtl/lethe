@@ -95,7 +95,7 @@ write_boundaries_vtu(const DataOutFaces<dim> &data_out_faces,
 
 template <int dim>
 void
-write_boundaries_vtu_and_pvd(PVDHandler              &pvd_handler,
+write_boundaries_vtu_and_pvd(PVDHandler              &pvd_handler_boundary,
                              const DataOutFaces<dim> &data_out_faces,
                              const std::string       &folder,
                              const double             time,
@@ -130,9 +130,10 @@ write_boundaries_vtu_and_pvd(PVDHandler              &pvd_handler,
       data_out_faces.write_pvtu_record(master_output, filenames);
 
       std::string pvdPrefix = (folder + file_prefix + ".pvd");
-      pvd_handler.append(time, pvtu_filename);
+      pvd_handler_boundary.append(time, pvtu_filename);
       std::ofstream pvd_output(pvdPrefix.c_str());
-      DataOutBase::write_pvd_record(pvd_output, pvd_handler.times_and_names);
+      DataOutBase::write_pvd_record(pvd_output,
+                                    pvd_handler_boundary.times_and_names);
     }
 
   const unsigned int my_file_id =
@@ -236,7 +237,7 @@ write_boundaries_vtu(const DataOutFaces<3> &data_out_faces,
                      const unsigned int     digits);
 
 template void
-write_boundaries_vtu_and_pvd(PVDHandler            &pvd_handler,
+write_boundaries_vtu_and_pvd(PVDHandler            &pvd_handler_boundary,
                              const DataOutFaces<2> &data_out_faces,
                              const std::string     &folder,
                              const double           time,
@@ -247,7 +248,7 @@ write_boundaries_vtu_and_pvd(PVDHandler            &pvd_handler,
                              const unsigned int     digits);
 
 template void
-write_boundaries_vtu_and_pvd(PVDHandler            &pvd_handler,
+write_boundaries_vtu_and_pvd(PVDHandler            &pvd_handler_boundary,
                              const DataOutFaces<3> &data_out_faces,
                              const std::string     &folder,
                              const double           time,
