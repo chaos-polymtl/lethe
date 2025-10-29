@@ -2276,8 +2276,7 @@ NavierStokesBase<dim, VectorType, DofsType>::read_checkpoint()
   this->simulation_control->read(prefix);
   this->pvdhandler.read(prefix);
 
-  if (this->simulation_control->get_output_boundaries() &&
-      this->simulation_parameters.mortar_parameters.enable)
+  if (this->simulation_control->get_output_boundaries())
     {
       std::string prefix_boundary =
         this->simulation_parameters.simulation_control.output_folder +
@@ -3044,17 +3043,13 @@ NavierStokesBase<dim, VectorType, DofsType>::write_output_results(
       data_out_faces.add_data_vector(solution, boundary_id);
       data_out_faces.build_patches(*this->get_mapping(), subdivision);
 
-      if (simulation_parameters.mortar_parameters.enable)
-        write_boundaries_vtu_and_pvd<dim>(this->pvdhandler_boundary,
-                                          data_out_faces,
-                                          folder,
-                                          time,
-                                          iter,
-                                          group_files,
-                                          this->mpi_communicator);
-      else
-        write_boundaries_vtu<dim>(
-          data_out_faces, folder, time, iter, this->mpi_communicator);
+      write_boundaries_vtu_and_pvd<dim>(this->pvdhandler_boundary,
+                                        data_out_faces,
+                                        folder,
+                                        time,
+                                        iter,
+                                        group_files,
+                                        this->mpi_communicator);
     }
 }
 
@@ -3187,8 +3182,7 @@ NavierStokesBase<dim, VectorType, DofsType>::write_checkpoint()
       if (simulation_parameters.flow_control.enable_flow_control)
         this->flow_control.save(prefix);
 
-      if (this->simulation_control->get_output_boundaries() &&
-          this->simulation_parameters.mortar_parameters.enable)
+      if (this->simulation_control->get_output_boundaries())
         {
           std::string prefix_boundary =
             this->simulation_parameters.simulation_control.output_folder +
