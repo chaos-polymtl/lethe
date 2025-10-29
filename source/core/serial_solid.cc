@@ -428,7 +428,7 @@ SerialSolid<dim, spacedim>::displace_solid_triangulation()
                   const auto dof_index = cell->vertex_dof_index(vertex, 0);
                   Point<spacedim> &vertex_position = cell->vertex(vertex);
 
-                  for (unsigned d = 0; d < spacedim; ++d)
+                  for (int d = 0; d < spacedim; ++d)
                     {
                       vertex_position[d] =
                         vertex_position[d] + displacement[dof_index + d];
@@ -464,7 +464,7 @@ SerialSolid<dim, spacedim>::move_solid_triangulation_with_displacement()
               const auto       dof_index = cell->vertex_dof_index(vertex, 0);
               Point<spacedim> &vertex_position = cell->vertex(vertex);
 
-              for (unsigned d = 0; d < spacedim; ++d)
+              for (int d = 0; d < spacedim; ++d)
                 {
                   vertex_position[d] += displacement[dof_index + d];
                 }
@@ -701,7 +701,6 @@ SerialSolid<dim, spacedim>::setup_containers()
       np_vs_neighbors.insert(std::make_pair(main_cell, np_vs_main_cell));
     }
 }
-
 // Pre-compile the 2D, 3D and the 2D in 3D versions with the types that can
 // occur
 template class SerialSolid<1, 2>;
