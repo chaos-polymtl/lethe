@@ -2273,13 +2273,18 @@ NavierStokesBase<dim, VectorType, DofsType>::read_checkpoint()
     this->simulation_parameters.simulation_control.output_folder +
     this->simulation_parameters.restart_parameters.filename;
 
-  std::string prefix_boundary =
-    this->simulation_parameters.simulation_control.output_folder +
-    this->simulation_parameters.restart_parameters.filename + ".boundary";
-
   this->simulation_control->read(prefix);
   this->pvdhandler.read(prefix);
-  this->pvdhandler_boundary.read(prefix_boundary);
+
+  if (this->simulation_control->get_output_boundaries() &&
+      this->simulation_parameters.mortar_parameters.enable)
+    {
+      std::string prefix_boundary =
+        this->simulation_parameters.simulation_control.output_folder +
+        this->simulation_parameters.restart_parameters.filename + ".boundary";
+
+      this->pvdhandler_boundary.read(prefix_boundary);
+    }
 
   this->set_solution_from_checkpoint(prefix);
 
@@ -3174,18 +3179,24 @@ NavierStokesBase<dim, VectorType, DofsType>::write_checkpoint()
     this->simulation_parameters.simulation_control.output_folder +
     this->simulation_parameters.restart_parameters.filename;
 
-  std::string prefix_boundary =
-    this->simulation_parameters.simulation_control.output_folder +
-    this->simulation_parameters.restart_parameters.filename + ".boundary";
-
   if (Utilities::MPI::this_mpi_process(this->mpi_communicator) == 0)
     {
       simulation_control->save(prefix);
       this->pvdhandler.save(prefix);
-      this->pvdhandler_boundary.save(prefix_boundary);
 
       if (simulation_parameters.flow_control.enable_flow_control)
         this->flow_control.save(prefix);
+
+      if (this->simulation_control->get_output_boundaries() &&
+          this->simulation_parameters.mortar_parameters.enable)
+        {
+          std::string prefix_boundary =
+            this->simulation_parameters.simulation_control.output_folder +
+            this->simulation_parameters.restart_parameters.filename +
+            ".boundary";
+
+          this->pvdhandler_boundary.read(prefix_boundary);
+        }
     }
 
   std::vector<const VectorType *> sol_set_transfer;
