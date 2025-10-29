@@ -701,7 +701,6 @@ SerialSolid<dim, spacedim>::setup_containers()
       np_vs_neighbors.insert(std::make_pair(main_cell, np_vs_main_cell));
     }
 }
-
 // Pre-compile the 2D, 3D and the 2D in 3D versions with the types that can
 // occur
 template class SerialSolid<1, 2>;
