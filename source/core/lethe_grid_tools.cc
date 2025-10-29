@@ -1252,7 +1252,6 @@ LetheGridTools::find_particle_triangle_projection(
   const double c   = e_1.norm_square();
   const double det = a * c - b * b;
 
-
   // Pre-allocation for speed
   Tensor<1, dim> vector_to_plane;
   Point<dim>     pt_in_triangle;

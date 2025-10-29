@@ -166,7 +166,7 @@ ParticleWallContactForce<dim,
   // Initiate containers
   std::vector<Particles::ParticleIterator<dim>> particle_locations;
   std::vector<Point<dim>> triangle(this->vertices_per_triangle);
-  
+
 
   // Iterating over the solid objects
   for (unsigned int solid_counter = 0; solid_counter < solids.size();
@@ -184,7 +184,7 @@ ParticleWallContactForce<dim,
       // compute the contact force later on.
       // The information includes the type of contact : face contact,
       // edge contact, vertex contact
-      using particle_triangle_contact_description = std::vector<
+      using particle_triangle_contact_description = std::list<
         std::tuple<typename Triangulation<dim - 1, dim>::active_cell_iterator,
                    Point<3>,
                    Tensor<1, 3>,
@@ -197,6 +197,7 @@ ParticleWallContactForce<dim,
                                      particle_triangle_contact_description>;
 
       particle_triangle_contact_record contact_record;
+      contact_record.reserve(1000);
 
       typename dem_data_structures<
         dim>::particle_triangle_cell_from_mesh_in_contact
@@ -206,8 +207,6 @@ ParticleWallContactForce<dim,
       for (auto &[triangle_cell_iterator, map_info] :
            particle_floating_mesh_contact_pair)
         {
-          
-
           if (!map_info.empty())
             {
               // Clear the particle locations vector for the new cut cell and
@@ -225,8 +224,6 @@ ParticleWallContactForce<dim,
                    vertex < this->vertices_per_triangle;
                    ++vertex)
                 triangle[vertex] = triangle_cell_iterator->vertex(vertex);
-              
-
 
               // Getting the projection of particles on the triangle
               // (triangle cell)
@@ -238,14 +235,11 @@ ParticleWallContactForce<dim,
                            projection_points,
                            normal_vectors,
                            contact_indicators] = particle_triangle_information;
-              
 
               // Loop on every particle contact info
               unsigned int particle_counter = 0;
               for (auto &&contact_info : map_info | boost::adaptors::map_values)
                 {
-                  
-
                   // If the particle is close enough to the triangle in
                   // the direction normal to the triangle.
                   if (pass_distance_check[particle_counter])
@@ -288,8 +282,6 @@ ParticleWallContactForce<dim,
           // Loop on every particle / contact record
           for (auto &[particle_index, this_contact_record] : contact_record)
             {
-              
-
               // Loop on every contact in the contact record
               for (auto contact_1 = this_contact_record.begin();
                    contact_1 != this_contact_record.end();)
@@ -319,7 +311,6 @@ ParticleWallContactForce<dim,
                     typename Triangulation<dim - 1, dim>::active_cell_iterator>
                     &T1_np_vs_neighbors =
                       this_solid_np_vs_neighbors.at(T1_cell);
-                  
 
                   // Initialize variables. We need to compare C1 to every other
                   // contact that was compared yet.
@@ -327,8 +318,6 @@ ParticleWallContactForce<dim,
                   auto contact_2       = std::next(contact_1);
                   while (contact_2 != this_contact_record.end())
                     {
-                      
-
                       // Extract the information of C2
                       auto &[T2_cell,
                              projection_point_C2,
@@ -358,8 +347,6 @@ ParticleWallContactForce<dim,
                       if (contact_indicator_C1 ==
                           LetheGridTools::ContactIndicator::face_contact)
                         {
-                          
-
                           // If C1 and C2 are both face contacts, they
                           // are both valid. This case is either can happen with
                           // either edge sharing or vertex sharing triangles
@@ -390,7 +377,6 @@ ParticleWallContactForce<dim,
                               contact_2 = this_contact_record.erase(contact_2);
                               continue;
                             }
-                          
 
                           // If C1 is a face contact and C2 is a vertex
                           // contact.
@@ -399,14 +385,12 @@ ParticleWallContactForce<dim,
                           contact_2 = this_contact_record.erase(contact_2);
                           continue;
                         }
-                      
+
 
                       // If C1 is an edge contact.
                       if (contact_indicator_C1 ==
                           LetheGridTools::ContactIndicator::edge_contact)
                         {
-                          
-
                           // If C1 is an edge contact and C2 is a face contact.
                           if (contact_indicator_C2 ==
                               LetheGridTools::ContactIndicator::face_contact)
@@ -451,8 +435,6 @@ ParticleWallContactForce<dim,
                       if (contact_indicator_C1 ==
                           LetheGridTools::ContactIndicator::vertex_contact)
                         {
-                          
-
                           // If C1 is a vertex contact and C2 is a face contact.
                           if (contact_indicator_C2 ==
                               LetheGridTools::ContactIndicator::face_contact)
@@ -470,8 +452,6 @@ ParticleWallContactForce<dim,
                           if (contact_indicator_C2 ==
                               LetheGridTools::ContactIndicator::edge_contact)
                             {
-                              
-
                               // C2 is valid
                               // C1 is invalid if T1 and T2 are vertex sharing.
                               // This case means that both contacts occur on the
@@ -499,7 +479,7 @@ ParticleWallContactForce<dim,
                         }
                       ++contact_2;
                     } // While loop
-                  
+
 
                   // Erase C1 from the contact record is marked as true.
                   if (erase_contact_1)
@@ -511,8 +491,8 @@ ParticleWallContactForce<dim,
                   ++contact_1;
                 } // For loop
 
-              // At this point, every contact in the contact record are valid,
-              // thus we can compute and applied the force and torques.
+              //  At this point, every contact in the contact record are valid,
+              //  thus we can compute and applied the force and torques.
 
               // Get translational and rotational velocities and center of
               // rotation of solid object
@@ -526,22 +506,24 @@ ParticleWallContactForce<dim,
               // Multiphysics properties
               Parameters::ThermalBoundaryType thermal_boundary_type =
                 solids[solid_counter]->get_thermal_boundary_type();
-              double temperature_wall;
-              if (thermal_boundary_type !=
-                  Parameters::ThermalBoundaryType::adiabatic)
-                temperature_wall = solids[solid_counter]->get_temperature();
 
               for (auto contact = this_contact_record.begin();
                    contact != this_contact_record.end();
                    ++contact)
                 {
-                  // Extract the information of the contact
+                  //  Extract the information of the contact
                   auto &[T_cell,
                          projection_point,
                          normal_vector,
                          normal_overlap,
                          contact_indicator,
                          contact_info] = *contact;
+
+                  contact_info.normal_vector = normal_vector;
+
+                  contact_info.point_on_boundary = projection_point;
+
+                  contact_info.boundary_id = solid_counter;
 
                   // Defining local variables which will be used within the
                   // contact calculation
@@ -626,6 +608,9 @@ ParticleWallContactForce<dim,
                             normal_overlap,
                             normal_force.norm(),
                             thermal_conductance);
+
+                          double temperature_wall =
+                            solids[solid_counter]->get_temperature();
 
                           // Apply the heat transfer to the particle
                           apply_heat_transfer_on_single_local_particle(
