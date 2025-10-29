@@ -31,6 +31,8 @@ jobs:
       - name: Run clang-tidy
         run: |
           mkdir build && cd build
+          RUN apt-get update && apt-get install -y --no-install-recommends build-essential
+          RUN update-alternatives --install /usr/bin/cc cc /usr/bin/clang-20 100  && update-alternatives --install /usr/bin/c++ c++ /usr/bin/clang++-20 100
           export PATH=/usr/lib/llvm-20/share/clang/:$PATH 
           export PATH=/usr/lib/llvm-20/bin:$PATH
           ../contrib/utilities/run_clang_tidy.sh ..
