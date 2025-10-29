@@ -2437,12 +2437,15 @@ MFNavierStokesPreconditionGMG<dim>::initialize(
       this->mg_operators[level]->evaluate_non_linear_term_and_calculate_tau(
         mg_solution[level]);
 
-      // if (this->simulation_parameters.mortar_parameters.enable)
-      //   this->mg_operators[level]->evaluate_velocity_ale(
-      //     this->mg_operators[level]->get_system_matrix_free().mapping,
-      //     this->mg_operators[level]->mortar_manager_mf->radius[0],
-      //     this->simulation_parameters.mortar_parameters.center_of_rotation,
-      //     this->simulation_parameters.mortar_parameters.rotor_angular_velocity);
+      if (this->simulation_parameters.mortar_parameters.enable)
+        this->mg_operators[level]->evaluate_velocity_ale(
+          *this->mg_operators[level]
+             ->get_system_matrix_free()
+             .get_mapping_info()
+             .mapping,
+          this->mg_operators[level]->mortar_manager_mf->radius[0],
+          this->simulation_parameters.mortar_parameters.center_of_rotation,
+          this->simulation_parameters.mortar_parameters.rotor_angular_velocity);
 
       if (is_bdf(simulation_control->get_assembly_method()))
         {
@@ -3066,7 +3069,7 @@ FluidDynamicsMatrixFree<dim>::assemble_system_rhs()
 
   if (this->simulation_parameters.mortar_parameters.enable)
     this->system_operator->evaluate_velocity_ale(
-      this->get_mapping(),
+      *this->get_mapping(),
       this->system_operator->mortar_manager_mf->radius[0],
       this->simulation_parameters.mortar_parameters.center_of_rotation,
       this->simulation_parameters.mortar_parameters.rotor_angular_velocity);
@@ -3370,7 +3373,7 @@ FluidDynamicsMatrixFree<dim>::setup_preconditioner()
 
   if (this->simulation_parameters.mortar_parameters.enable)
     this->system_operator->evaluate_velocity_ale(
-      this->get_mapping(),
+      *this->get_mapping(),
       this->system_operator->mortar_manager_mf->radius[0],
       this->simulation_parameters.mortar_parameters.center_of_rotation,
       this->simulation_parameters.mortar_parameters.rotor_angular_velocity);

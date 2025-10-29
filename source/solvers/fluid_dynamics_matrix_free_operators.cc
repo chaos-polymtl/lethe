@@ -1088,7 +1088,7 @@ NavierStokesOperatorBase<dim, number>::
 template <int dim, typename number>
 void
 NavierStokesOperatorBase<dim, number>::evaluate_velocity_ale(
-  const std::shared_ptr<Mapping<dim>>            &mapping,
+  const Mapping<dim>                             &mapping,
   const double                                    radius,
   const Point<dim>                                center_of_rotation,
   std::shared_ptr<Functions::ParsedFunction<dim>> rotor_angular_velocity)
@@ -1099,7 +1099,7 @@ NavierStokesOperatorBase<dim, number>::evaluate_velocity_ale(
     matrix_free.n_cell_batches() + matrix_free.n_ghost_cell_batches();
 
   FECellIntegrator integrator(matrix_free);
-  matrix_free.update_mapping(*mapping);
+  matrix_free.update_mapping(mapping);
 
   // 1. Precompute values on cells:
 
