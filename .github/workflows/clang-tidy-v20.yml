@@ -3,63 +3,32 @@
 
 name: CI-Clang-tidy-v20
 
-on: 
+
+on:
   push:
-    # Runs on every push on master branch
-    branches:
-      - master
-  # Runs on every push on master branch. If a push contains multiple commits, it will be ran on the latest one.
+    branches: [ master ]
   pull_request:
     paths-ignore:
       - 'doc/**'
       - 'contrib/**'
 
-# Cancels running instances when a pull request is updated by a commit
 concurrency:
   group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref || github.run_id }}
-  cancel-in-progress: ${{github.event_name == 'pull_request'}}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
 
 env:
-  COMPILE_JOBS: 4
-  
+  COMPILE_JOBS: 12
+
 jobs:
   tidy:
-    name: tidy
-    runs-on: [ubuntu-24.04]
+    name: clang-tidy
+    runs-on: self-hosted
+    container:
+      image: ghcr.io/chaos-lab/clang-tidy-dealii:20
 
-    strategy:
-      fail-fast: false
-      matrix:
-        dealii_version: ["master"]
-    
     steps:
-      - name: Setup
+      - uses: actions/checkout@v4
+      - name: Run clang-tidy
         run: |
-          # Since dealii image doesn't include Node.js, we'll install it
-          sudo apt-get install -y software-properties-common
-          sudo add-apt-repository ppa:ginggs/deal.ii-9.7.1-backports
-          sudo apt-get update
-          sudo apt-get install -y --no-install-recommends nodejs \
-            clang-20 \
-            clang-tidy-20 \
-            numdiff \
-            libboost-all-dev \
-            libcgal-dev \
-            libp4est-dev \
-            trilinos-all-dev \
-            petsc-dev \
-            libmetis-dev \
-            libhdf5-mpi-dev \
-            deal.ii
-
-      # Checks-out Lethe with branch of triggering commit
-      - name: Checkout code
-        uses: actions/checkout@v2
-      
-      - name: Tidy
-        run: |
-          mkdir build
-          cd build
-          export PATH=/usr/lib/llvm-20/share/clang/:$PATH
-          export PATH=/usr/lib/llvm-20/bin:$PATH
+          mkdir build && cd build
           ../contrib/utilities/run_clang_tidy.sh ..
