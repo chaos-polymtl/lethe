@@ -7,7 +7,8 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
 ### Changed
 
-- MINOR The normal of the triangle was calculated in LetheGridTools::find_point_triangle_distance but not being used. This removes this element. [#1736] (https://github.com/chaos-polymtl/lethe/pull/1736)
+- MINOR During [PR#1618](https://github.com/chaos-polymtl/lethe/pull/1618), the `solve_linear_system_and_update_solution` method in `PhysicsLinearSubequationsSolver` was renamed to `solve_void_fraction_linear_system`, which was relevant to the specific use of that PR. However, it also accidentally changed the method's name in the `VOFLinearSubequationsSolver` class, where the "void fraction" naming is less appropriate. This PR reverts that change. [#1742](https://github.com/chaos-polymtl/lethe/pull/1742)
+- MINOR The normal of the triangle was calculated in LetheGridTools::find_point_triangle_distance but not being used. This removes this element. [#1736](https://github.com/chaos-polymtl/lethe/pull/1736)
 
 ### Added
 
@@ -17,13 +18,13 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
 ### Changed
 
-- MINOR The array used to calculate the void fraction at the particle location was not being resized to the number of particles, but it was kept at a constant size corresponding to the maximum number of particles. This could lead to a weird segmentation fault in some edge cases that I have not found an easy way to reproduce. This is fixed by resizing the array to be consistent with the number of particles. [#1732] (https://github.com/chaos-polymtl/lethe/pull/1732)
+- MINOR The array used to calculate the void fraction at the particle location was not being resized to the number of particles, but it was kept at a constant size corresponding to the maximum number of particles. This could lead to a weird segmentation fault in some edge cases that I have not found an easy way to reproduce. This is fixed by resizing the array to be consistent with the number of particles. [#1732](https://github.com/chaos-polymtl/lethe/pull/1732)
 
 ### [Master] - 2025-10-23
 
 ### Changed
 
-- MINOR The serialization/deserialization of tables in classes derived from AuxiliaryPhysics have been refactored to match the same code structure as that used for the tables in solvers derived from NavierStokesBase. Functions for serializing/deserializing multiple tables are now defined in include/core/utilities.h. Also, the output_struct.h file has been moved to the core folder. [#1725] (https://github.com/chaos-polymtl/lethe/pull/1725)
+- MINOR The serialization/deserialization of tables in classes derived from AuxiliaryPhysics have been refactored to match the same code structure as that used for the tables in solvers derived from NavierStokesBase. Functions for serializing/deserializing multiple tables are now defined in include/core/utilities.h. Also, the output_struct.h file has been moved to the core folder. [#1725](https://github.com/chaos-polymtl/lethe/pull/1725)
 
 ### [Master] - 2025-10-16
 

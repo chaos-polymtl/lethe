@@ -566,8 +566,7 @@ private:
    *
    */
   virtual void
-  solve_void_fraction_linear_system() override;
-
+  solve_linear_system_and_update_solution() override;
 
   /**
    * @brief Calculate and return the periodic offset distance vector of the domain which is needed
