@@ -345,7 +345,7 @@ public:
   /**
    * @brief Calculate all the necessary information for the particle-fluid coupling.
    * This means calculating the projection of the particle-fluid interaction
-   * forces as well as the solid velociy onto the CFD mesh.
+   * forces as well as the solid velocity onto the CFD mesh.
    *
    */
   template <typename VectorType>
@@ -700,7 +700,7 @@ public:
     DEM::CFDDEMProperties::PropertiesIndex::fem_force_two_way_coupling_x>
     particle_fluid_force_two_way_coupling;
 
-  /// Projector used to store the drag force. The drag is stored as a seperate
+  /// Projector used to store the drag force. The drag is stored as a separate
   /// field since we may want to make implicit calculations of it.
   ParticleFieldQCM<dim, 3, DEM::CFDDEMProperties::PropertiesIndex::fem_drag_x>
     particle_fluid_drag;
