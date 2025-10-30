@@ -1128,6 +1128,8 @@ NavierStokesOperatorBase<dim, number>::evaluate_velocity_ale(
           // Compute linear velocity at quadrature points
           for (const auto q : integrator.quadrature_point_indices())
             {
+              // Assumption in 3D case: rotation axis is in z
+              // TODO generalize rotation axis
               const auto x = integrator.quadrature_point(q)[0][lane];
               const auto y = integrator.quadrature_point(q)[1][lane];
 

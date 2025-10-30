@@ -381,6 +381,17 @@ public:
   evaluate_time_derivative_previous_solutions(
     const VectorType &time_derivative_previous_solutions);
 
+  /**
+   * @brief Store the values of the vector containing the ALE velocity to use
+   * them in the Jacobian and residual cell integrals. This function is called
+   * when the mortar feature is enabled.
+   *
+   * @param[in] mapping Describes the transformations from unit to real cell.
+   * @param[in] radius Radius at the mortar interface in the direction
+   * perpendicular to the rotation axis.
+   * @param[in] center_of_rotation Center of rotation of the rotor domain.
+   * @param[in] rotor_angular_velocity  Angular velocity of the rotor domain.
+   */
   void
   evaluate_velocity_ale(
     const Mapping<dim>                             &mapping,
