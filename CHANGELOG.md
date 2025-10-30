@@ -7,6 +7,8 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
 ### Added
 
+- MINOR This PR adds ALE terms for transient mortar problems in the matrix-free solver. It is similar to what has been done for the matrix-based solver in #1597 and #1638.[#1744](https://github.com/chaos-polymtl/lethe/pull/1744)
+
 - MINOR This PR adds a post processing function to write pvd files for boundaries when output boundaries is set to true in the simulation control section. This function is used when the mortar feature is enabled, so that rotating boundaries can be printed at every time step. [#1731](https://github.com/chaos-polymtl/lethe/pull/1731)
 
 ### [Master] - 2025-10-28

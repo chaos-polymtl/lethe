@@ -1,0 +1,340 @@
+Running on 3 MPI rank(s)...
+Mortar - Rotor grid angle is: 0 rad 
+         Rotor grid velocity is: 0.03 rad/time 
+
+   Number of active cells:       1280
+   Number of degrees of freedom: 15939
+   Volume of triangulation:      39.4784
+Enstrophy: 0.499995
+Kinetic energy: 0.249995
+
+*******************************************************************************
+Transient iteration: 1        Time: 0.04     Time step: 0.04     CFL: 1.44003 
+*******************************************************************************
+Mortar - Rotor grid angle is: 0.0012 rad 
+         Rotor grid velocity is: 0.03 rad/time 
+
+
+  -Levels of MG preconditioner:
+    Level 0: 315 DoFs, 20 cells
+    Level 1: 1107 DoFs, 80 cells
+    Level 2: 4131 DoFs, 320 cells
+    Level 3: 15939 DoFs, 1280 cells
+
+
+  -Eigenvalue estimation level 0:
+    Relaxation parameter: 0.639921
+    Minimum eigenvalue: 2.17041
+    Maximum eigenvalue: 2.60449
+
+
+  -Eigenvalue estimation level 1:
+    Relaxation parameter: 0.774467
+    Minimum eigenvalue: 1.79335
+    Maximum eigenvalue: 2.15202
+
+
+  -Eigenvalue estimation level 2:
+    Relaxation parameter: 0.760292
+    Minimum eigenvalue: 1.82678
+    Maximum eigenvalue: 2.19214
+
+
+  -Eigenvalue estimation level 3:
+    Relaxation parameter: 0.706685
+    Minimum eigenvalue: 1.96536
+    Maximum eigenvalue: 2.35843
+
+
+  -Eigenvalue estimation level 0:
+    Relaxation parameter: 0.640855
+    Minimum eigenvalue: 2.16724
+    Maximum eigenvalue: 2.60069
+
+
+  -Eigenvalue estimation level 1:
+    Relaxation parameter: 0.774936
+    Minimum eigenvalue: 1.79226
+    Maximum eigenvalue: 2.15072
+
+
+  -Eigenvalue estimation level 2:
+    Relaxation parameter: 0.760685
+    Minimum eigenvalue: 1.82584
+    Maximum eigenvalue: 2.19101
+
+
+  -Eigenvalue estimation level 3:
+    Relaxation parameter: 0.706963
+    Minimum eigenvalue: 1.96458
+    Maximum eigenvalue: 2.3575
+
+Enstrophy: 0.428665
+Kinetic energy: 0.21433
+L2 error velocity: 0.0124571
+
+*******************************************************************************
+Transient iteration: 2        Time: 0.1      Time step: 0.06     CFL: 0.533355
+*******************************************************************************
+Mortar - Rotor grid angle is: 0.003 rad 
+         Rotor grid velocity is: 0.03 rad/time 
+
+
+  -Levels of MG preconditioner:
+    Level 0: 315 DoFs, 20 cells
+    Level 1: 1107 DoFs, 80 cells
+    Level 2: 4131 DoFs, 320 cells
+    Level 3: 15939 DoFs, 1280 cells
+
+
+  -Eigenvalue estimation level 0:
+    Relaxation parameter: 0.593933
+    Minimum eigenvalue: 2.33846
+    Maximum eigenvalue: 2.80615
+
+
+  -Eigenvalue estimation level 1:
+    Relaxation parameter: 0.755535
+    Minimum eigenvalue: 1.83829
+    Maximum eigenvalue: 2.20594
+
+
+  -Eigenvalue estimation level 2:
+    Relaxation parameter: 0.758966
+    Minimum eigenvalue: 1.82997
+    Maximum eigenvalue: 2.19597
+
+
+  -Eigenvalue estimation level 3:
+    Relaxation parameter: 0.708143
+    Minimum eigenvalue: 1.96131
+    Maximum eigenvalue: 2.35357
+
+
+  -Eigenvalue estimation level 0:
+    Relaxation parameter: 0.594471
+    Minimum eigenvalue: 2.33634
+    Maximum eigenvalue: 2.80361
+
+
+  -Eigenvalue estimation level 1:
+    Relaxation parameter: 0.75604
+    Minimum eigenvalue: 1.83706
+    Maximum eigenvalue: 2.20447
+
+
+  -Eigenvalue estimation level 2:
+    Relaxation parameter: 0.759402
+    Minimum eigenvalue: 1.82893
+    Maximum eigenvalue: 2.19471
+
+
+  -Eigenvalue estimation level 3:
+    Relaxation parameter: 0.708473
+    Minimum eigenvalue: 1.9604
+    Maximum eigenvalue: 2.35248
+
+Enstrophy: 0.338304
+Kinetic energy: 0.169149
+L2 error velocity: 0.0170073
+
+*******************************************************************************
+Transient iteration: 3        Time: 0.2      Time step: 0.1      CFL: 0.710746
+*******************************************************************************
+Mortar - Rotor grid angle is: 0.006 rad 
+         Rotor grid velocity is: 0.03 rad/time 
+
+
+  -Levels of MG preconditioner:
+    Level 0: 315 DoFs, 20 cells
+    Level 1: 1107 DoFs, 80 cells
+    Level 2: 4131 DoFs, 320 cells
+    Level 3: 15939 DoFs, 1280 cells
+
+
+  -Eigenvalue estimation level 0:
+    Relaxation parameter: 0.620505
+    Minimum eigenvalue: 2.23832
+    Maximum eigenvalue: 2.68598
+
+
+  -Eigenvalue estimation level 1:
+    Relaxation parameter: 0.794084
+    Minimum eigenvalue: 1.74905
+    Maximum eigenvalue: 2.09885
+
+
+  -Eigenvalue estimation level 2:
+    Relaxation parameter: 0.756754
+    Minimum eigenvalue: 1.83532
+    Maximum eigenvalue: 2.20239
+
+
+  -Eigenvalue estimation level 3:
+    Relaxation parameter: 0.709179
+    Minimum eigenvalue: 1.95845
+    Maximum eigenvalue: 2.35014
+
+
+  -Eigenvalue estimation level 0:
+    Relaxation parameter: 0.62257
+    Minimum eigenvalue: 2.2309
+    Maximum eigenvalue: 2.67707
+
+
+  -Eigenvalue estimation level 1:
+    Relaxation parameter: 0.795219
+    Minimum eigenvalue: 1.74655
+    Maximum eigenvalue: 2.09586
+
+
+  -Eigenvalue estimation level 2:
+    Relaxation parameter: 0.75739
+    Minimum eigenvalue: 1.83378
+    Maximum eigenvalue: 2.20054
+
+
+  -Eigenvalue estimation level 3:
+    Relaxation parameter: 0.709561
+    Minimum eigenvalue: 1.95739
+    Maximum eigenvalue: 2.34887
+
+Enstrophy: 0.226748
+Kinetic energy: 0.113373
+L2 error velocity: 0.0137705
+
+*******************************************************************************
+Transient iteration: 4        Time: 0.3      Time step: 0.1      CFL: 0.969837
+*******************************************************************************
+Mortar - Rotor grid angle is: 0.009 rad 
+         Rotor grid velocity is: 0.03 rad/time 
+
+
+  -Levels of MG preconditioner:
+    Level 0: 315 DoFs, 20 cells
+    Level 1: 1107 DoFs, 80 cells
+    Level 2: 4131 DoFs, 320 cells
+    Level 3: 15939 DoFs, 1280 cells
+
+
+  -Eigenvalue estimation level 0:
+    Relaxation parameter: 0.631559
+    Minimum eigenvalue: 2.19914
+    Maximum eigenvalue: 2.63897
+
+
+  -Eigenvalue estimation level 1:
+    Relaxation parameter: 0.80016
+    Minimum eigenvalue: 1.73576
+    Maximum eigenvalue: 2.08292
+
+
+  -Eigenvalue estimation level 2:
+    Relaxation parameter: 0.756246
+    Minimum eigenvalue: 1.83656
+    Maximum eigenvalue: 2.20387
+
+
+  -Eigenvalue estimation level 3:
+    Relaxation parameter: 0.710907
+    Minimum eigenvalue: 1.95369
+    Maximum eigenvalue: 2.34442
+
+
+  -Eigenvalue estimation level 0:
+    Relaxation parameter: 0.633491
+    Minimum eigenvalue: 2.19244
+    Maximum eigenvalue: 2.63092
+
+
+  -Eigenvalue estimation level 1:
+    Relaxation parameter: 0.80088
+    Minimum eigenvalue: 1.7342
+    Maximum eigenvalue: 2.08104
+
+
+  -Eigenvalue estimation level 2:
+    Relaxation parameter: 0.756607
+    Minimum eigenvalue: 1.83568
+    Maximum eigenvalue: 2.20282
+
+
+  -Eigenvalue estimation level 3:
+    Relaxation parameter: 0.711119
+    Minimum eigenvalue: 1.9531
+    Maximum eigenvalue: 2.34372
+
+Enstrophy: 0.151432
+Kinetic energy: 0.0757149
+L2 error velocity: 0.00674692
+
+*******************************************************************************
+Transient iteration: 5        Time: 0.4      Time step: 0.1      CFL: 0.792583
+*******************************************************************************
+Mortar - Rotor grid angle is: 0.012 rad 
+         Rotor grid velocity is: 0.03 rad/time 
+
+
+  -Levels of MG preconditioner:
+    Level 0: 315 DoFs, 20 cells
+    Level 1: 1107 DoFs, 80 cells
+    Level 2: 4131 DoFs, 320 cells
+    Level 3: 15939 DoFs, 1280 cells
+
+
+  -Eigenvalue estimation level 0:
+    Relaxation parameter: 0.633448
+    Minimum eigenvalue: 2.19259
+    Maximum eigenvalue: 2.6311
+
+
+  -Eigenvalue estimation level 1:
+    Relaxation parameter: 0.800902
+    Minimum eigenvalue: 1.73416
+    Maximum eigenvalue: 2.08099
+
+
+  -Eigenvalue estimation level 2:
+    Relaxation parameter: 0.755973
+    Minimum eigenvalue: 1.83722
+    Maximum eigenvalue: 2.20466
+
+
+  -Eigenvalue estimation level 3:
+    Relaxation parameter: 0.712311
+    Minimum eigenvalue: 1.94983
+    Maximum eigenvalue: 2.3398
+
+
+  -Eigenvalue estimation level 0:
+    Relaxation parameter: 0.634998
+    Minimum eigenvalue: 2.18723
+    Maximum eigenvalue: 2.62468
+
+
+  -Eigenvalue estimation level 1:
+    Relaxation parameter: 0.80129
+    Minimum eigenvalue: 1.73332
+    Maximum eigenvalue: 2.07998
+
+
+  -Eigenvalue estimation level 2:
+    Relaxation parameter: 0.756145
+    Minimum eigenvalue: 1.8368
+    Maximum eigenvalue: 2.20416
+
+
+  -Eigenvalue estimation level 3:
+    Relaxation parameter: 0.712414
+    Minimum eigenvalue: 1.94955
+    Maximum eigenvalue: 2.33946
+
+Enstrophy: 0.100972
+Kinetic energy: 0.0504854
+L2 error velocity: 0.000439565
+ time  error_velocity 
+0.0400   1.245708e-02 
+0.1000   1.700730e-02 
+0.2000   1.377048e-02 
+0.3000   6.746918e-03 
+0.4000   4.395655e-04 

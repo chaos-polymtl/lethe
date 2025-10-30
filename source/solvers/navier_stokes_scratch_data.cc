@@ -373,7 +373,7 @@ NavierStokesScratchData<dim>::reinit_mortar(
   const Parameters::Mortar<dim>                        &mortar_parameters,
   const double                                         &radius)
 {
-  auto cell_center = cell->center();
+  const auto cell_center = cell->center();
 
   // Get updated rotor angular velocity
   mortar_parameters.rotor_angular_velocity->set_time(
@@ -382,7 +382,7 @@ NavierStokesScratchData<dim>::reinit_mortar(
     mortar_parameters.rotor_angular_velocity->value(Point<dim>());
 
   // Compute radius between center of rotation and current cell center
-  double radius_current =
+  const double radius_current =
     cell_center.distance(mortar_parameters.center_of_rotation);
 
   // Use prescribed rotor angular velocity only if cell is part of the rotor
@@ -396,6 +396,8 @@ NavierStokesScratchData<dim>::reinit_mortar(
   rotor_linear_velocity_values = std::vector<Tensor<1, dim>>(this->n_q_points);
   for (unsigned int q = 0; q < n_q_points; ++q)
     {
+      // Assumption in 3D case: rotation axis is in z
+      // TODO generalize rotation axis
       const auto x                       = fe_values.quadrature_point(q)[0];
       const auto y                       = fe_values.quadrature_point(q)[1];
       rotor_linear_velocity_values[q][0] = -cell_rotor_angular_velocity * y;

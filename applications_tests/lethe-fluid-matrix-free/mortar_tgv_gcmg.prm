@@ -1,6 +1,6 @@
 # SPDX-FileCopyrightText: Copyright (c) 2025 The Lethe Authors
 # SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
-# Checks the storage of checkpoint and restart files when outputting boundaries within the mortar feature.
+# Checks the transient stabilized ALE mortar implementation in the matrix-free solver.
 
 # Listing of Parameters
 #----------------------
@@ -14,17 +14,8 @@ set dimension = 2
 subsection simulation control
   set method           = bdf2
   set time step        = 0.1
-  set time end         = 1
+  set time end         = 0.4
   set output frequency = 0
-end
-
-#---------------------------------------------------
-# Restart
-#---------------------------------------------------
-
-subsection restart
-  set restart  = true
-  set filename = mortar_tgv_restart
 end
 
 #---------------------------------------------------
@@ -32,9 +23,8 @@ end
 #---------------------------------------------------
 
 subsection FEM
-  set enable bubble function velocity = true
-  set velocity order                  = 1
-  set pressure order                  = 1
+  set velocity order = 2
+  set pressure order = 2
 end
 
 #---------------------------------------------------
@@ -42,7 +32,7 @@ end
 #---------------------------------------------------
 
 subsection initial conditions
-  set type = L2projection
+  set type = nodal
   subsection uvwp
     set Function expression = cos(x)*sin(y); -sin(x)*cos(y); -1./4*(cos(2*x)+cos(2*y));
   end
@@ -162,13 +152,23 @@ end
 
 subsection linear solver
   subsection fluid dynamics
-    set verbosity                             = quiet
-    set method                                = gmres
-    set relative residual                     = 1e-4
-    set minimum residual                      = 1e-9
-    set preconditioner                        = ilu
-    set ilu preconditioner fill               = 0
-    set ilu preconditioner absolute tolerance = 1e-10
-    set ilu preconditioner relative tolerance = 1.00
+    set method            = gmres
+    set max iters         = 100
+    set relative residual = 1e-4
+    set minimum residual  = 1e-9
+    set preconditioner    = gcmg
+    set verbosity         = quiet
+
+    # MG parameters
+    set mg verbosity = verbose
+
+    # Smoother
+    set mg smoother iterations     = 10
+    set mg smoother eig estimation = true
+
+    # Eigenvalue estimation parameters
+    set eig estimation smoothing range = 5
+    set eig estimation cg n iterations = 10
+    set eig estimation verbosity       = verbose
   end
 end

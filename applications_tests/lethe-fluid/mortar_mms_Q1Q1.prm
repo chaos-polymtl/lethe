@@ -1,5 +1,6 @@
 # SPDX-FileCopyrightText: Copyright (c) 2025 The Lethe Authors
 # SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
+# Checks the use of bubble enrichment function for Q1Q1 simulation with the mortar feature.
 
 # Listing of Parameters
 #----------------------
