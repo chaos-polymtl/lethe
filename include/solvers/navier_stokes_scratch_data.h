@@ -17,6 +17,8 @@
 #include <solvers/physics_scratch_data.h>
 #include <solvers/vof_filter.h>
 
+#include <fem-dem/particle_projector.h>
+
 #include <deal.II/base/quadrature.h>
 
 #include <deal.II/dofs/dof_renumbering.h>
@@ -1268,6 +1270,39 @@ public:
   void
   calculate_physical_properties();
 
+  /**
+   * @brief Calculates the particle forces and velocities that were projected on
+   * the fluid dofs at the quadrature points of the velocity and pressure FE. The 
+   * values are stored in the corresponding variables in scratch data.
+   * 
+   * @param[in] cell Iterator pointing to the current active cell
+   * 
+   * @param[in] particle_projector The object containing the projections of the 
+   * particle fields onto the fluid dofs
+   */
+  void
+  calculate_particle_fields_values(
+    const typename DoFHandler<dim>::active_cell_iterator &cell,
+    const ParticleProjector <dim> & particle_projector)
+  {
+    // Compute cell volume since it is needed in the assemblers of the projected 
+    // drag and two-way coupling forces
+    cell_volume = compute_cell_measure_with_JxW(
+    this->fe_values_void_fraction->get_JxW_values());
+
+    // There is no need to reinit fe_values as it is already reinitialized as it
+    // is already reinitialized for the cell in question in scratch_data.reinit
+    this->fe_values[velocities].get_function_values(
+      particle_projector.particle_fluid_drag.particle_field_solution,
+                          this->particle_drag_values);
+    this->fe_values[velocities].get_function_values(
+      particle_projector.particle_fluid_force_two_way_coupling.particle_field_solution,
+                          this->particle_two_way_coupling_force_values);
+    this->fe_values[velocities].get_function_values(
+      particle_projector.particle_velocity.particle_field_solution,
+                          this->particle_velocity_values); 
+  }
+
   // For auxiliary physics solution extrapolation
   const std::shared_ptr<SimulationControl> simulation_control;
 
@@ -1409,6 +1444,9 @@ public:
   bool interpolated_void_fraction;
 
   std::vector<Tensor<1, dim>> particle_velocity;
+  std::vector<Tensor<1, dim>> particle_velocity_values;
+  std::vector<Tensor<1, dim>> particle_drag_values;
+  std::vector<Tensor<1, dim>> particle_two_way_coupling_force_values;
   Tensor<1, dim>              average_particle_velocity;
   std::vector<Tensor<1, dim>> fluid_velocity_at_particle_location;
   std::vector<Tensor<1, dim>>

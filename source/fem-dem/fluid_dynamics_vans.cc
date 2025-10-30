@@ -339,8 +339,16 @@ FluidDynamicsVANS<dim>::setup_assemblers()
     }
 
   //  Fluid_Particle Interactions Assembler
-  this->assemblers.push_back(std::make_shared<VANSAssemblerFPI<dim>>(
-    this->cfd_dem_simulation_parameters.cfd_dem));
+  if (this->cfd_dem_simulation_parameters.void_fraction.project_particle_forces)
+    {
+      this->assemblers.push_back(std::make_shared<VANSAssemblerFPIProj<dim>>(
+        this->cfd_dem_simulation_parameters.cfd_dem));
+    }
+  else
+    {
+      this->assemblers.push_back(std::make_shared<VANSAssemblerFPI<dim>>(
+        this->cfd_dem_simulation_parameters.cfd_dem));
+    }
 
   // The core assembler should always be the last assembler to be called
   // in the stabilized formulation as to have all strong residual and
@@ -473,37 +481,45 @@ FluidDynamicsVANS<dim>::assemble_local_system_matrix(
 
   scratch_data.calculate_physical_properties();
 
-  if (this->simulation_parameters.multiphysics.VOF)
+  if (!this->cfd_dem_simulation_parameters.void_fraction
+         .project_particle_forces)
     {
-      scratch_data.reinit_particle_fluid_interactions(
-        cell,
-        void_fraction_cell,
-        *phase_cell,
-        this->evaluation_point,
-        (*this->previous_solutions)[0],
-        this->particle_projector.void_fraction_locally_relevant,
-        particle_handler,
-        cfd_dem_simulation_parameters.cfd_dem.drag_coupling,
-        this->multiphysics->get_filtered_solution(PhysicsID::VOF));
+      if (this->simulation_parameters.multiphysics.VOF)
+        {
+          scratch_data.reinit_particle_fluid_interactions(
+            cell,
+            void_fraction_cell,
+            *phase_cell,
+            this->evaluation_point,
+            this->previous_solutions[0],
+            this->particle_projector.void_fraction_locally_relevant,
+            particle_handler,
+            cfd_dem_simulation_parameters.cfd_dem.drag_coupling,
+            *this->multiphysics->get_filtered_solution(PhysicsID::VOF));
+        }
+      else
+        {
+          scratch_data.reinit_particle_fluid_interactions(
+            cell,
+            void_fraction_cell,
+            this->evaluation_point,
+            this->previous_solutions[0],
+            this->particle_projector.void_fraction_locally_relevant,
+            particle_handler,
+            cfd_dem_simulation_parameters.cfd_dem.drag_coupling);
+        }
+
+      for (auto &pf_assembler : particle_fluid_assemblers)
+        {
+          pf_assembler->calculate_particle_fluid_interactions(scratch_data);
+        }
     }
   else
     {
-      scratch_data.reinit_particle_fluid_interactions(
-        cell,
-        void_fraction_cell,
-        this->evaluation_point,
-        (*this->previous_solutions)[0],
-        this->particle_projector.void_fraction_locally_relevant,
-        particle_handler,
-        cfd_dem_simulation_parameters.cfd_dem.drag_coupling);
+      scratch_data.calculate_particle_fields_values(cell, particle_projector);
     }
 
   copy_data.reset();
-
-  for (auto &pf_assembler : particle_fluid_assemblers)
-    {
-      pf_assembler->calculate_particle_fluid_interactions(scratch_data);
-    }
 
   for (auto &assembler : this->assemblers)
     {
@@ -629,37 +645,44 @@ FluidDynamicsVANS<dim>::assemble_local_system_rhs(
 
   scratch_data.calculate_physical_properties();
 
-  if (this->simulation_parameters.multiphysics.VOF)
+  if (!this->cfd_dem_simulation_parameters.void_fraction
+         .project_particle_forces)
     {
-      scratch_data.reinit_particle_fluid_interactions(
-        cell,
-        void_fraction_cell,
-        *phase_cell,
-        this->evaluation_point,
-        (*this->previous_solutions)[0],
-        particle_projector.void_fraction_locally_relevant,
-        particle_handler,
-        cfd_dem_simulation_parameters.cfd_dem.drag_coupling,
-        this->multiphysics->get_filtered_solution(PhysicsID::VOF));
+      if (this->simulation_parameters.multiphysics.VOF)
+        {
+          scratch_data.reinit_particle_fluid_interactions(
+            cell,
+            void_fraction_cell,
+            *phase_cell,
+            this->evaluation_point,
+            this->previous_solutions[0],
+            particle_projector.void_fraction_locally_relevant,
+            particle_handler,
+            cfd_dem_simulation_parameters.cfd_dem.drag_coupling,
+            *this->multiphysics->get_filtered_solution(PhysicsID::VOF));
+        }
+      else
+        {
+          scratch_data.reinit_particle_fluid_interactions(
+            cell,
+            void_fraction_cell,
+            this->evaluation_point,
+            this->previous_solutions[0],
+            particle_projector.void_fraction_locally_relevant,
+            particle_handler,
+            cfd_dem_simulation_parameters.cfd_dem.drag_coupling);
+        }
+      for (auto &pf_assembler : particle_fluid_assemblers)
+        {
+          pf_assembler->calculate_particle_fluid_interactions(scratch_data);
+        }
     }
   else
     {
-      scratch_data.reinit_particle_fluid_interactions(
-        cell,
-        void_fraction_cell,
-        this->evaluation_point,
-        (*this->previous_solutions)[0],
-        particle_projector.void_fraction_locally_relevant,
-        particle_handler,
-        cfd_dem_simulation_parameters.cfd_dem.drag_coupling);
+      scratch_data.calculate_particle_fields_values(cell, particle_projector);
     }
 
   copy_data.reset();
-
-  for (auto &pf_assembler : particle_fluid_assemblers)
-    {
-      pf_assembler->calculate_particle_fluid_interactions(scratch_data);
-    }
 
   for (auto &assembler : this->assemblers)
     {
