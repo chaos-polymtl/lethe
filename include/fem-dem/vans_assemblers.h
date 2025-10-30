@@ -691,6 +691,48 @@ public:
 };
 
 /**
+ * @brief Class that assembles the fluid_particle interactions (FPI) for the
+ * VANS equations such as the drag force, when the forces are projected from the
+ * particles to the fluid grid.
+ *
+ * @tparam dim An integer that denotes the number of spatial dimensions
+ *
+ * @ingroup assemblers
+ */
+
+template <int dim>
+class VANSAssemblerFPIProj : public NavierStokesAssemblerBase<dim>
+{
+public:
+  VANSAssemblerFPI(const Parameters::CFDDEM &cfd_dem)
+    : cfd_dem(cfd_dem)
+
+  {}
+
+  /**
+   * @brief assemble_matrix Assembles the matrix.
+   *
+   * @param scratch_data (see base class)
+   * @param copy_data (see base class)
+   */
+  virtual void
+  assemble_matrix(const NavierStokesScratchData<dim>   &scratch_data,
+                  StabilizedMethodsTensorCopyData<dim> &copy_data) override;
+
+  /**
+   * @brief assemble_rhs Assembles the rhs.
+   *
+   * @param scratch_data (see base class)
+   * @param copy_data (see base class)
+   */
+  virtual void
+  assemble_rhs(const NavierStokesScratchData<dim>   &scratch_data,
+               StabilizedMethodsTensorCopyData<dim> &copy_data) override;
+
+  const Parameters::CFDDEM cfd_dem;
+};
+
+/**
  * @brief Calculate gamma grad-div stabilization constant for the VANS equations.
  *
  * @param[in] velocity Magnitude of the velocity at the quadrature point

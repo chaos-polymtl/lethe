@@ -1586,7 +1586,7 @@ ParticleProjector<dim>::calculate_particle_fluid_forces_projection(
       if (cell->is_locally_owned())
         {
           // A. We reinit the scratch data at the particle location for the void
-          // fraction and the velocity This is what we will require to calculate
+          // fraction and the velocity. This is what we will require to calculate
           // the particle-fluid forces.
           typename DoFHandler<dim>::active_cell_iterator void_fraction_cell(
             &(this->dof_handler.get_triangulation()),

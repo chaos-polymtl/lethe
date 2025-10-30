@@ -123,6 +123,7 @@ namespace Parameters
     VoidFractionQuadratureRule     quadrature_rule;
     unsigned int                   n_quadrature_points;
     bool                           project_particle_velocity;
+    bool         project_particle_forces;
   };
 
   struct CFDDEM

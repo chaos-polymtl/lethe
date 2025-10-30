@@ -1658,6 +1658,25 @@ CFDDEMSolver<dim>::solve()
 
       this->calculate_void_fraction(
         this->simulation_control->get_current_time());
+      
+      // If we want to get the forces resulting from the particle fluid interaction
+      // by using the projection of the forces on the particles to the fluid grid
+      // I need to see how to access this boolean that is also in 
+      // NavierStokesScratchData 
+      if (this->cfd_dem_simulation_parameters.void_fraction.project_particle_forces)
+        {this->particle_projector.calculate_particle_fluid_forces_projection(
+           this->cfd_dem_simulation_parameters.cfd_dem,
+          this->dof_handler,
+          this->present_solution,
+          this->previous_solutions,
+          NavierStokesScratchData<dim>(
+            this->simulation_control,
+            this->simulation_parameters.physical_properties_manager,
+            *this->fe,
+            *this->cell_quadrature,
+            *this->mapping,
+            *this->face_quadrature));
+          }
       this->iterate();
 
       if (this->cfd_dem_simulation_parameters.cfd_parameters.test.enabled)
