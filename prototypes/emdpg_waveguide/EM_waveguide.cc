@@ -1,3 +1,6 @@
+// SPDX-FileCopyrightText: Copyright (c) 2025-2025 The Lethe Authors
+// SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
+
 /**
  * @brief Necessary includes for the implementation of the DPG method for the
  * time-harmonic maxwell equations.
