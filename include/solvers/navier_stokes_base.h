@@ -976,6 +976,10 @@ protected:
   AffineConstraints<double> zero_constraints;
   AffineConstraints<double> nonzero_constraints;
 
+  // Define whether manifolds are used for the normal vectors computation in
+  // slip BCs
+  bool use_manifold_for_normal;
+
   // Present solution and non-linear solution components
   VectorType evaluation_point;
   VectorType local_evaluation_point;
