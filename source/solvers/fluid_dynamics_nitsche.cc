@@ -103,7 +103,7 @@ FluidDynamicsNitsche<dim, spacedim>::assemble_nitsche_restriction()
             1. / std::pow(h_cell * h_cell, double(dim) / double(spacedim));
           const auto &dh_cell =
             typename DoFHandler<spacedim>::cell_iterator(*cell,
-                                                         &this->dof_handler);
+                                                         &(*this->dof_handler));
           dh_cell->get_dof_indices(fluid_dof_indices);
 
           const auto pic = solid_ph->particles_in_cell(cell);
@@ -252,7 +252,7 @@ FluidDynamicsNitsche<2, 3>::calculate_forces_on_solid(
     {
       const auto &cell = particle->get_surrounding_cell();
       const auto &dh_cell =
-        typename DoFHandler<3>::cell_iterator(*cell, &this->dof_handler);
+        typename DoFHandler<3>::cell_iterator(*cell, &(*this->dof_handler));
       dh_cell->get_dof_indices(fluid_dof_indices);
 
       const auto pic = solid_ph->particles_in_cell(cell);
@@ -263,7 +263,7 @@ FluidDynamicsNitsche<2, 3>::calculate_forces_on_solid(
       auto &evaluation_point = this->evaluation_point;
 
       Functions::FEFieldFunction<3, GlobalVectorType> fe_field(
-        this->dof_handler, evaluation_point);
+        *this->dof_handler, evaluation_point);
 
 
       fe_field.set_active_cell(dh_cell);
@@ -335,7 +335,8 @@ FluidDynamicsNitsche<dim, spacedim>::calculate_forces_on_solid(
       const double penalty_parameter =
         1. / std::pow(h_cell * h_cell, double(dim) / double(spacedim));
       const auto &dh_cell =
-        typename DoFHandler<spacedim>::cell_iterator(*cell, &this->dof_handler);
+        typename DoFHandler<spacedim>::cell_iterator(*cell,
+                                                     &(*this->dof_handler));
       dh_cell->get_dof_indices(fluid_dof_indices);
 
       const auto pic = solid_ph->particles_in_cell(cell);
@@ -415,7 +416,8 @@ FluidDynamicsNitsche<dim, spacedim>::calculate_torque_on_solid(
       const double penalty_parameter =
         1. / std::pow(h_cell * h_cell, double(dim) / double(spacedim));
       const auto &dh_cell =
-        typename DoFHandler<spacedim>::cell_iterator(*cell, &this->dof_handler);
+        typename DoFHandler<spacedim>::cell_iterator(*cell,
+                                                     &(*this->dof_handler));
       dh_cell->get_dof_indices(fluid_dof_indices);
 
       const auto pic = solid_ph->particles_in_cell(cell);

@@ -934,8 +934,8 @@ protected:
   void
   verify_consistency_of_boundary_conditions()
   {
-    // Sanity check all of the boundary conditions of the triangulation to
-    // ensure that they have a type.
+    // Sanity check all the boundary conditions of the triangulation to ensure
+    // that they have a type.
     std::vector<types::boundary_id> boundary_ids_in_triangulation =
       this->triangulation->get_boundary_ids();
     for (auto const &boundary_id_in_tria : boundary_ids_in_triangulation)
@@ -956,7 +956,7 @@ protected:
   const unsigned int this_mpi_process;
 
   std::shared_ptr<parallel::DistributedTriangulationBase<dim>> triangulation;
-  DoFHandler<dim>                                              dof_handler;
+  std::shared_ptr<DoFHandler<dim>>                             dof_handler;
   std::shared_ptr<FESystem<dim>>                               fe;
 
   TimerOutput computing_timer;

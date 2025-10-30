@@ -83,7 +83,7 @@ public:
     , simulation_parameters(p_simulation_parameters)
     , triangulation(p_triangulation)
     , simulation_control(p_simulation_control)
-    , dof_handler(*triangulation)
+    , dof_handler(std::make_shared<DoFHandler<dim>>(*triangulation))
     , thermal_conductivity_models(
         p_simulation_parameters.physical_properties_manager
           .get_thermal_conductivity_vector())
@@ -111,7 +111,7 @@ public:
 
     // Allocate solution transfer
     solution_transfer =
-      std::make_shared<SolutionTransfer<dim, GlobalVectorType>>(dof_handler);
+      std::make_shared<SolutionTransfer<dim, GlobalVectorType>>(*dof_handler);
 
     // Set size of previous solutions using BDF schemes information
     previous_solutions.resize(maximum_number_of_previous_solutions());
@@ -121,7 +121,7 @@ public:
     for (unsigned int i = 0; i < previous_solutions.size(); ++i)
       {
         previous_solutions_transfer.emplace_back(
-          SolutionTransfer<dim, GlobalVectorType>(this->dof_handler));
+          SolutionTransfer<dim, GlobalVectorType>(*this->dof_handler));
       }
 
     // Change the behavior of the timer for situations when you don't want
@@ -132,7 +132,7 @@ public:
     if (simulation_parameters.post_processing.calculate_average_temp_and_hf)
       {
         average_temperature =
-          std::make_shared<AverageScalar<dim>>(this->dof_handler);
+          std::make_shared<AverageScalar<dim>>(*this->dof_handler);
       }
   }
 
@@ -305,7 +305,7 @@ public:
   const DoFHandler<dim> &
   get_dof_handler() override
   {
-    return dof_handler;
+    return *dof_handler;
   }
 
   /**
@@ -665,7 +665,7 @@ private:
    * class enumerates degrees of freedom on all vertices, edges, faces, and
    * cells of the triangulation.
    */
-  DoFHandler<dim> dof_handler;
+  std::shared_ptr<DoFHandler<dim>> dof_handler;
   /**
    * @brief The base class for finite element.
    */
