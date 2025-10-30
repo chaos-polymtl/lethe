@@ -175,6 +175,8 @@ Public Member Functions</h2></td></tr>
 <tr class="separator:a28fa135d774b41700ab8f214c9d6f124 inherit pub_methods_classNavierStokesOperatorBase"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a98733981a11a81680fdbcf7619eeb690 inherit pub_methods_classNavierStokesOperatorBase" id="r_a98733981a11a81680fdbcf7619eeb690"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classNavierStokesOperatorBase.html#a98733981a11a81680fdbcf7619eeb690">evaluate_time_derivative_previous_solutions</a> (const <a class="el" href="classNavierStokesOperatorBase.html#af38ac45042fda00de01ec4f576b62eeb">VectorType</a> &amp;time_derivative_previous_solutions)</td></tr>
 <tr class="separator:a98733981a11a81680fdbcf7619eeb690 inherit pub_methods_classNavierStokesOperatorBase"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:af36d8f8cafc8fb7242226cf65a67cdb6 inherit pub_methods_classNavierStokesOperatorBase" id="r_af36d8f8cafc8fb7242226cf65a67cdb6"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classNavierStokesOperatorBase.html#af36d8f8cafc8fb7242226cf65a67cdb6">evaluate_velocity_ale</a> (const Mapping&lt; dim &gt; &amp;mapping, const double radius, const Point&lt; dim &gt; center_of_rotation, std::shared_ptr&lt; Functions::ParsedFunction&lt; dim &gt; &gt; rotor_angular_velocity)</td></tr>
+<tr class="separator:af36d8f8cafc8fb7242226cf65a67cdb6 inherit pub_methods_classNavierStokesOperatorBase"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a33fb27abd727837ecc7302a9a3a34328 inherit pub_methods_classNavierStokesOperatorBase" id="r_a33fb27abd727837ecc7302a9a3a34328"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classNavierStokesOperatorBase.html#a33fb27abd727837ecc7302a9a3a34328">update_beta_force</a> (const Tensor&lt; 1, dim &gt; &amp;<a class="el" href="classNavierStokesOperatorBase.html#ae0d63608e35a2225279a2c26fddb1fe6">beta_force</a>)</td></tr>
 <tr class="separator:a33fb27abd727837ecc7302a9a3a34328 inherit pub_methods_classNavierStokesOperatorBase"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a8a5aeb6754df7143dff9e008310e9f75 inherit pub_methods_classNavierStokesOperatorBase" id="r_a8a5aeb6754df7143dff9e008310e9f75"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classNavierStokesOperatorBase.html#a8a5aeb6754df7143dff9e008310e9f75">evaluate_residual</a> (<a class="el" href="classNavierStokesOperatorBase.html#af38ac45042fda00de01ec4f576b62eeb">VectorType</a> &amp;dst, const <a class="el" href="classNavierStokesOperatorBase.html#af38ac45042fda00de01ec4f576b62eeb">VectorType</a> &amp;src)</td></tr>
@@ -274,6 +276,8 @@ Additional Inherited Members</h2></td></tr>
 <tr class="separator:a66be91d31a9a6e2a549cda171af555fb inherit pro_attribs_classNavierStokesOperatorBase"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aa9e09c8d85c457df60f3815236c15fc4 inherit pro_attribs_classNavierStokesOperatorBase" id="r_aa9e09c8d85c457df60f3815236c15fc4"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classNavierStokesOperatorBase.html#aa9e09c8d85c457df60f3815236c15fc4">enable_mortar</a></td></tr>
 <tr class="separator:aa9e09c8d85c457df60f3815236c15fc4 inherit pro_attribs_classNavierStokesOperatorBase"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a4c2028026090efedaa28007729fe7b84 inherit pro_attribs_classNavierStokesOperatorBase" id="r_a4c2028026090efedaa28007729fe7b84"><td class="memItemLeft" align="right" valign="top">Table&lt; 2, Tensor&lt; 1, dim, VectorizedArray&lt; number &gt; &gt; &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classNavierStokesOperatorBase.html#a4c2028026090efedaa28007729fe7b84">velocity_ale</a></td></tr>
+<tr class="separator:a4c2028026090efedaa28007729fe7b84 inherit pro_attribs_classNavierStokesOperatorBase"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a0f61a4f53daea8600b981c4ad6f4e528 inherit pro_attribs_classNavierStokesOperatorBase" id="r_a0f61a4f53daea8600b981c4ad6f4e528"><td class="memItemLeft" align="right" valign="top">std::vector&lt; unsigned int &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classNavierStokesOperatorBase.html#a0f61a4f53daea8600b981c4ad6f4e528">constrained_indices</a></td></tr>
 <tr class="separator:a0f61a4f53daea8600b981c4ad6f4e528 inherit pro_attribs_classNavierStokesOperatorBase"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a3d98fc8b8ae9beda0c332a1bbedfa1cd inherit pro_attribs_classNavierStokesOperatorBase" id="r_a3d98fc8b8ae9beda0c332a1bbedfa1cd"><td class="memItemLeft" align="right" valign="top">std::vector&lt; std::pair&lt; number, number &gt; &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classNavierStokesOperatorBase.html#a3d98fc8b8ae9beda0c332a1bbedfa1cd">constrained_values</a></td></tr>
@@ -302,7 +306,7 @@ class NavierStokesNonNewtonianStabilizedOperator&lt; dim, number &gt;</div><p>Im
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="fluid__dynamics__matrix__free__operators_8h_source.html#l00862">862</a> of file <a class="el" href="fluid__dynamics__matrix__free__operators_8h_source.html">fluid_dynamics_matrix_free_operators.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="fluid__dynamics__matrix__free__operators_8h_source.html#l00887">887</a> of file <a class="el" href="fluid__dynamics__matrix__free__operators_8h_source.html">fluid_dynamics_matrix_free_operators.h</a>.</p>
 </div><h2 class="groupheader">Member Typedef Documentation</h2>
 <a id="a19c8efed0da22f8ead348ffe4a305f15" name="a19c8efed0da22f8ead348ffe4a305f15"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a19c8efed0da22f8ead348ffe4a305f15">&#9670;&#160;</a></span>FECellIntegrator</h2>
@@ -318,7 +322,7 @@ template&lt;int dim, typename number &gt; </div>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="fluid__dynamics__matrix__free__operators_8h_source.html#l00866">866</a> of file <a class="el" href="fluid__dynamics__matrix__free__operators_8h_source.html">fluid_dynamics_matrix_free_operators.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="fluid__dynamics__matrix__free__operators_8h_source.html#l00891">891</a> of file <a class="el" href="fluid__dynamics__matrix__free__operators_8h_source.html">fluid_dynamics_matrix_free_operators.h</a>.</p>
 
 </div>
 </div>
@@ -336,7 +340,7 @@ template&lt;int dim, typename number &gt; </div>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="fluid__dynamics__matrix__free__operators_8h_source.html#l00867">867</a> of file <a class="el" href="fluid__dynamics__matrix__free__operators_8h_source.html">fluid_dynamics_matrix_free_operators.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="fluid__dynamics__matrix__free__operators_8h_source.html#l00892">892</a> of file <a class="el" href="fluid__dynamics__matrix__free__operators_8h_source.html">fluid_dynamics_matrix_free_operators.h</a>.</p>
 
 </div>
 </div>
@@ -354,7 +358,7 @@ template&lt;int dim, typename number &gt; </div>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="fluid__dynamics__matrix__free__operators_8h_source.html#l00868">868</a> of file <a class="el" href="fluid__dynamics__matrix__free__operators_8h_source.html">fluid_dynamics_matrix_free_operators.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="fluid__dynamics__matrix__free__operators_8h_source.html#l00893">893</a> of file <a class="el" href="fluid__dynamics__matrix__free__operators_8h_source.html">fluid_dynamics_matrix_free_operators.h</a>.</p>
 
 </div>
 </div>
@@ -424,7 +428,7 @@ template&lt;int dim, typename number &gt; </div>
 
 <p>Implements <a class="el" href="classNavierStokesOperatorBase.html#a9f3bb8de4716c95844cbdf35272b30a6">NavierStokesOperatorBase&lt; dim, number &gt;</a>.</p>
 
-<p class="definition">Definition at line <a class="el" href="fluid__dynamics__matrix__free__operators_8cc_source.html#l01832">1832</a> of file <a class="el" href="fluid__dynamics__matrix__free__operators_8cc_source.html">fluid_dynamics_matrix_free_operators.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="fluid__dynamics__matrix__free__operators_8cc_source.html#l01993">1993</a> of file <a class="el" href="fluid__dynamics__matrix__free__operators_8cc_source.html">fluid_dynamics_matrix_free_operators.cc</a>.</p>
 
 <p class="reference">References <a class="el" href="time__integration__utilities_8h_source.html#l00041">is_bdf()</a>, and <a class="el" href="physical__property__model_8h_source.html#l00039">shear_rate</a>.</p>
 
@@ -492,7 +496,7 @@ template&lt;int dim, typename number &gt; </div>
 
 <p>Implements <a class="el" href="classNavierStokesOperatorBase.html#a1d289e3cf780010e8be1f75d4b027194">NavierStokesOperatorBase&lt; dim, number &gt;</a>.</p>
 
-<p class="definition">Definition at line <a class="el" href="fluid__dynamics__matrix__free__operators_8cc_source.html#l02049">2049</a> of file <a class="el" href="fluid__dynamics__matrix__free__operators_8cc_source.html">fluid_dynamics_matrix_free_operators.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="fluid__dynamics__matrix__free__operators_8cc_source.html#l02210">2210</a> of file <a class="el" href="fluid__dynamics__matrix__free__operators_8cc_source.html">fluid_dynamics_matrix_free_operators.cc</a>.</p>
 
 <p class="reference">References <a class="el" href="time__integration__utilities_8h_source.html#l00041">is_bdf()</a>, and <a class="el" href="physical__property__model_8h_source.html#l00039">shear_rate</a>.</p>
 

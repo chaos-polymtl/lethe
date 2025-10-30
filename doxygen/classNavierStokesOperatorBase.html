@@ -172,6 +172,8 @@ Public Member Functions</h2></td></tr>
 <tr class="separator:a28fa135d774b41700ab8f214c9d6f124"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a98733981a11a81680fdbcf7619eeb690" id="r_a98733981a11a81680fdbcf7619eeb690"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classNavierStokesOperatorBase.html#a98733981a11a81680fdbcf7619eeb690">evaluate_time_derivative_previous_solutions</a> (const <a class="el" href="classNavierStokesOperatorBase.html#af38ac45042fda00de01ec4f576b62eeb">VectorType</a> &amp;time_derivative_previous_solutions)</td></tr>
 <tr class="separator:a98733981a11a81680fdbcf7619eeb690"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:af36d8f8cafc8fb7242226cf65a67cdb6" id="r_af36d8f8cafc8fb7242226cf65a67cdb6"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classNavierStokesOperatorBase.html#af36d8f8cafc8fb7242226cf65a67cdb6">evaluate_velocity_ale</a> (const Mapping&lt; dim &gt; &amp;mapping, const double radius, const Point&lt; dim &gt; center_of_rotation, std::shared_ptr&lt; Functions::ParsedFunction&lt; dim &gt; &gt; rotor_angular_velocity)</td></tr>
+<tr class="separator:af36d8f8cafc8fb7242226cf65a67cdb6"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a33fb27abd727837ecc7302a9a3a34328" id="r_a33fb27abd727837ecc7302a9a3a34328"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classNavierStokesOperatorBase.html#a33fb27abd727837ecc7302a9a3a34328">update_beta_force</a> (const Tensor&lt; 1, dim &gt; &amp;<a class="el" href="classNavierStokesOperatorBase.html#ae0d63608e35a2225279a2c26fddb1fe6">beta_force</a>)</td></tr>
 <tr class="separator:a33fb27abd727837ecc7302a9a3a34328"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a8a5aeb6754df7143dff9e008310e9f75" id="r_a8a5aeb6754df7143dff9e008310e9f75"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classNavierStokesOperatorBase.html#a8a5aeb6754df7143dff9e008310e9f75">evaluate_residual</a> (<a class="el" href="classNavierStokesOperatorBase.html#af38ac45042fda00de01ec4f576b62eeb">VectorType</a> &amp;dst, const <a class="el" href="classNavierStokesOperatorBase.html#af38ac45042fda00de01ec4f576b62eeb">VectorType</a> &amp;src)</td></tr>
@@ -271,6 +273,8 @@ Protected Attributes</h2></td></tr>
 <tr class="separator:a66be91d31a9a6e2a549cda171af555fb"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aa9e09c8d85c457df60f3815236c15fc4" id="r_aa9e09c8d85c457df60f3815236c15fc4"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classNavierStokesOperatorBase.html#aa9e09c8d85c457df60f3815236c15fc4">enable_mortar</a></td></tr>
 <tr class="separator:aa9e09c8d85c457df60f3815236c15fc4"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a4c2028026090efedaa28007729fe7b84" id="r_a4c2028026090efedaa28007729fe7b84"><td class="memItemLeft" align="right" valign="top">Table&lt; 2, Tensor&lt; 1, dim, VectorizedArray&lt; number &gt; &gt; &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classNavierStokesOperatorBase.html#a4c2028026090efedaa28007729fe7b84">velocity_ale</a></td></tr>
+<tr class="separator:a4c2028026090efedaa28007729fe7b84"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a0f61a4f53daea8600b981c4ad6f4e528" id="r_a0f61a4f53daea8600b981c4ad6f4e528"><td class="memItemLeft" align="right" valign="top">std::vector&lt; unsigned int &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classNavierStokesOperatorBase.html#a0f61a4f53daea8600b981c4ad6f4e528">constrained_indices</a></td></tr>
 <tr class="separator:a0f61a4f53daea8600b981c4ad6f4e528"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a3d98fc8b8ae9beda0c332a1bbedfa1cd" id="r_a3d98fc8b8ae9beda0c332a1bbedfa1cd"><td class="memItemLeft" align="right" valign="top">std::vector&lt; std::pair&lt; number, number &gt; &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classNavierStokesOperatorBase.html#a3d98fc8b8ae9beda0c332a1bbedfa1cd">constrained_values</a></td></tr>
@@ -555,7 +559,7 @@ template&lt;int dim, typename number &gt; </div>
 
 <p class="definition">Definition at line <a class="el" href="fluid__dynamics__matrix__free__operators_8cc_source.html#l00082">82</a> of file <a class="el" href="fluid__dynamics__matrix__free__operators_8cc_source.html">fluid_dynamics_matrix_free_operators.cc</a>.</p>
 
-<p class="reference">References <a class="el" href="fluid__dynamics__matrix__free__operators_8h_source.html#l00601">NavierStokesOperatorBase&lt; dim, number &gt;::boundary_conditions</a>, <a class="el" href="fluid__dynamics__matrix__free__operators_8h_source.html#l00535">NavierStokesOperatorBase&lt; dim, number &gt;::constraints</a>, <a class="el" href="fluid__dynamics__matrix__free__operators_8h_source.html#l00607">NavierStokesOperatorBase&lt; dim, number &gt;::enable_hessians_jacobian</a>, <a class="el" href="fluid__dynamics__matrix__free__operators_8h_source.html#l00613">NavierStokesOperatorBase&lt; dim, number &gt;::enable_hessians_residual</a>, <a class="el" href="fluid__dynamics__matrix__free__operators_8h_source.html#l00745">NavierStokesOperatorBase&lt; dim, number &gt;::enable_mortar</a>, <a class="el" href="fluid__dynamics__matrix__free__operators_8h_source.html#l00566">NavierStokesOperatorBase&lt; dim, number &gt;::forcing_function</a>, <a class="el" href="fluid__dynamics__matrix__free__operators_8cc_source.html#l00116">NavierStokesOperatorBase&lt; dim, number &gt;::reinit()</a>, <a class="el" href="fluid__dynamics__matrix__free__operators_8h_source.html#l00584">NavierStokesOperatorBase&lt; dim, number &gt;::simulation_control</a>, and <a class="el" href="fluid__dynamics__matrix__free__operators_8h_source.html#l00578">NavierStokesOperatorBase&lt; dim, number &gt;::stabilization</a>.</p>
+<p class="reference">References <a class="el" href="fluid__dynamics__matrix__free__operators_8h_source.html#l00619">NavierStokesOperatorBase&lt; dim, number &gt;::boundary_conditions</a>, <a class="el" href="fluid__dynamics__matrix__free__operators_8h_source.html#l00553">NavierStokesOperatorBase&lt; dim, number &gt;::constraints</a>, <a class="el" href="fluid__dynamics__matrix__free__operators_8h_source.html#l00625">NavierStokesOperatorBase&lt; dim, number &gt;::enable_hessians_jacobian</a>, <a class="el" href="fluid__dynamics__matrix__free__operators_8h_source.html#l00631">NavierStokesOperatorBase&lt; dim, number &gt;::enable_hessians_residual</a>, <a class="el" href="fluid__dynamics__matrix__free__operators_8h_source.html#l00763">NavierStokesOperatorBase&lt; dim, number &gt;::enable_mortar</a>, <a class="el" href="fluid__dynamics__matrix__free__operators_8h_source.html#l00584">NavierStokesOperatorBase&lt; dim, number &gt;::forcing_function</a>, <a class="el" href="fluid__dynamics__matrix__free__operators_8cc_source.html#l00116">NavierStokesOperatorBase&lt; dim, number &gt;::reinit()</a>, <a class="el" href="fluid__dynamics__matrix__free__operators_8h_source.html#l00602">NavierStokesOperatorBase&lt; dim, number &gt;::simulation_control</a>, and <a class="el" href="fluid__dynamics__matrix__free__operators_8h_source.html#l00596">NavierStokesOperatorBase&lt; dim, number &gt;::stabilization</a>.</p>
 
 </div>
 </div>
@@ -696,7 +700,7 @@ template&lt;int dim, typename number &gt; </div>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="fluid__dynamics__matrix__free__operators_8cc_source.html#l01118">1118</a> of file <a class="el" href="fluid__dynamics__matrix__free__operators_8cc_source.html">fluid_dynamics_matrix_free_operators.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="fluid__dynamics__matrix__free__operators_8cc_source.html#l01184">1184</a> of file <a class="el" href="fluid__dynamics__matrix__free__operators_8cc_source.html">fluid_dynamics_matrix_free_operators.cc</a>.</p>
 
 </div>
 </div>
@@ -742,7 +746,7 @@ template&lt;bool assemble_residual&gt; </div>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="fluid__dynamics__matrix__free__operators_8cc_source.html#l01227">1227</a> of file <a class="el" href="fluid__dynamics__matrix__free__operators_8cc_source.html">fluid_dynamics_matrix_free_operators.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="fluid__dynamics__matrix__free__operators_8cc_source.html#l01293">1293</a> of file <a class="el" href="fluid__dynamics__matrix__free__operators_8cc_source.html">fluid_dynamics_matrix_free_operators.cc</a>.</p>
 
 <p class="reference">References <a class="el" href="namespaceBoundaryConditions.html#a07df76d63cde5cb5bcbea0d9c25a54b8add95ffdcea64b1eaaa9244611678ed38">BoundaryConditions::function_weak</a>, <a class="el" href="namespaceBoundaryConditions.html#a07df76d63cde5cb5bcbea0d9c25a54b8ab0ba1623558e169131cb513037504286">BoundaryConditions::outlet</a>, and <a class="el" href="multiphysics_8h.html#a2cbb04ef215561a69b48772159577fddaac1a453d0cdc1f19d9479ccfaa8b082c">velocity</a>.</p>
 
@@ -815,7 +819,7 @@ template&lt;bool assemble_residual&gt; </div>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="fluid__dynamics__matrix__free__operators_8cc_source.html#l01193">1193</a> of file <a class="el" href="fluid__dynamics__matrix__free__operators_8cc_source.html">fluid_dynamics_matrix_free_operators.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="fluid__dynamics__matrix__free__operators_8cc_source.html#l01259">1259</a> of file <a class="el" href="fluid__dynamics__matrix__free__operators_8cc_source.html">fluid_dynamics_matrix_free_operators.cc</a>.</p>
 
 </div>
 </div>
@@ -916,7 +920,7 @@ template&lt;int dim, typename number &gt; </div>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="fluid__dynamics__matrix__free__operators_8cc_source.html#l01154">1154</a> of file <a class="el" href="fluid__dynamics__matrix__free__operators_8cc_source.html">fluid_dynamics_matrix_free_operators.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="fluid__dynamics__matrix__free__operators_8cc_source.html#l01220">1220</a> of file <a class="el" href="fluid__dynamics__matrix__free__operators_8cc_source.html">fluid_dynamics_matrix_free_operators.cc</a>.</p>
 
 </div>
 </div>
@@ -979,7 +983,7 @@ template&lt;int dim, typename number &gt; </div>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="fluid__dynamics__matrix__free__operators_8cc_source.html#l01176">1176</a> of file <a class="el" href="fluid__dynamics__matrix__free__operators_8cc_source.html">fluid_dynamics_matrix_free_operators.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="fluid__dynamics__matrix__free__operators_8cc_source.html#l01242">1242</a> of file <a class="el" href="fluid__dynamics__matrix__free__operators_8cc_source.html">fluid_dynamics_matrix_free_operators.cc</a>.</p>
 
 </div>
 </div>
@@ -1104,9 +1108,9 @@ template&lt;int dim, typename number &gt; </div>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="fluid__dynamics__matrix__free__operators_8cc_source.html#l01095">1095</a> of file <a class="el" href="fluid__dynamics__matrix__free__operators_8cc_source.html">fluid_dynamics_matrix_free_operators.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="fluid__dynamics__matrix__free__operators_8cc_source.html#l01161">1161</a> of file <a class="el" href="fluid__dynamics__matrix__free__operators_8cc_source.html">fluid_dynamics_matrix_free_operators.cc</a>.</p>
 
-<p class="reference">References <a class="el" href="fluid__dynamics__matrix__free__operators_8cc_source.html#l01176">NavierStokesOperatorBase&lt; dim, number &gt;::do_internal_face_integral_range()</a>, and <a class="el" href="classNavierStokesOperatorBase.html#a1d289e3cf780010e8be1f75d4b027194">NavierStokesOperatorBase&lt; dim, number &gt;::local_evaluate_residual()</a>.</p>
+<p class="reference">References <a class="el" href="fluid__dynamics__matrix__free__operators_8cc_source.html#l01242">NavierStokesOperatorBase&lt; dim, number &gt;::do_internal_face_integral_range()</a>, and <a class="el" href="classNavierStokesOperatorBase.html#a1d289e3cf780010e8be1f75d4b027194">NavierStokesOperatorBase&lt; dim, number &gt;::local_evaluate_residual()</a>.</p>
 
 </div>
 </div>
@@ -1137,6 +1141,61 @@ template&lt;int dim, typename number &gt; </div>
 </dl>
 
 <p class="definition">Definition at line <a class="el" href="fluid__dynamics__matrix__free__operators_8cc_source.html#l01056">1056</a> of file <a class="el" href="fluid__dynamics__matrix__free__operators_8cc_source.html">fluid_dynamics_matrix_free_operators.cc</a>.</p>
+
+</div>
+</div>
+<a id="af36d8f8cafc8fb7242226cf65a67cdb6" name="af36d8f8cafc8fb7242226cf65a67cdb6"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#af36d8f8cafc8fb7242226cf65a67cdb6">&#9670;&#160;</a></span>evaluate_velocity_ale()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;int dim, typename number &gt; </div>
+      <table class="memname">
+        <tr>
+          <td class="memname">void <a class="el" href="classNavierStokesOperatorBase.html">NavierStokesOperatorBase</a>&lt; dim, number &gt;::evaluate_velocity_ale </td>
+          <td>(</td>
+          <td class="paramtype">const Mapping&lt; dim &gt; &amp;&#160;</td>
+          <td class="paramname"><em>mapping</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const double&#160;</td>
+          <td class="paramname"><em>radius</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const Point&lt; dim &gt;&#160;</td>
+          <td class="paramname"><em>center_of_rotation</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">std::shared_ptr&lt; Functions::ParsedFunction&lt; dim &gt; &gt;&#160;</td>
+          <td class="paramname"><em>rotor_angular_velocity</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Store the values of the vector containing the ALE velocity to use them in the Jacobian and residual cell integrals. This function is called when the mortar feature is enabled. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramdir">[in]</td><td class="paramname">mapping</td><td>Describes the transformations from unit to real cell. </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">radius</td><td>Radius at the mortar interface in the direction perpendicular to the rotation axis. </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">center_of_rotation</td><td>Center of rotation of the rotor domain. </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">rotor_angular_velocity</td><td>Angular velocity of the rotor domain. </td></tr>
+  </table>
+  </dd>
+</dl>
+
+<p class="definition">Definition at line <a class="el" href="fluid__dynamics__matrix__free__operators_8cc_source.html#l01083">1083</a> of file <a class="el" href="fluid__dynamics__matrix__free__operators_8cc_source.html">fluid_dynamics_matrix_free_operators.cc</a>.</p>
 
 </div>
 </div>
@@ -1199,7 +1258,7 @@ template&lt;int dim, typename number &gt; </div>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>Set containing the indices of the refinement edges. </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="fluid__dynamics__matrix__free__operators_8cc_source.html#l01348">1348</a> of file <a class="el" href="fluid__dynamics__matrix__free__operators_8cc_source.html">fluid_dynamics_matrix_free_operators.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="fluid__dynamics__matrix__free__operators_8cc_source.html#l01414">1414</a> of file <a class="el" href="fluid__dynamics__matrix__free__operators_8cc_source.html">fluid_dynamics_matrix_free_operators.cc</a>.</p>
 
 </div>
 </div>
@@ -1603,7 +1662,7 @@ template&lt;int dim, typename number &gt; </div>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="fluid__dynamics__matrix__free__operators_8cc_source.html#l01083">1083</a> of file <a class="el" href="fluid__dynamics__matrix__free__operators_8cc_source.html">fluid_dynamics_matrix_free_operators.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="fluid__dynamics__matrix__free__operators_8cc_source.html#l01149">1149</a> of file <a class="el" href="fluid__dynamics__matrix__free__operators_8cc_source.html">fluid_dynamics_matrix_free_operators.cc</a>.</p>
 
 </div>
 </div>
@@ -1646,7 +1705,7 @@ template&lt;int dim, typename number &gt; </div>
 
 <p class="definition">Definition at line <a class="el" href="fluid__dynamics__matrix__free__operators_8cc_source.html#l00411">411</a> of file <a class="el" href="fluid__dynamics__matrix__free__operators_8cc_source.html">fluid_dynamics_matrix_free_operators.cc</a>.</p>
 
-<p class="reference">References <a class="el" href="fluid__dynamics__matrix__free__operators_8cc_source.html#l01154">NavierStokesOperatorBase&lt; dim, number &gt;::do_cell_integral_range()</a>, and <a class="el" href="fluid__dynamics__matrix__free__operators_8cc_source.html#l01176">NavierStokesOperatorBase&lt; dim, number &gt;::do_internal_face_integral_range()</a>.</p>
+<p class="reference">References <a class="el" href="fluid__dynamics__matrix__free__operators_8cc_source.html#l01220">NavierStokesOperatorBase&lt; dim, number &gt;::do_cell_integral_range()</a>, and <a class="el" href="fluid__dynamics__matrix__free__operators_8cc_source.html#l01242">NavierStokesOperatorBase&lt; dim, number &gt;::do_internal_face_integral_range()</a>.</p>
 
 </div>
 </div>
@@ -1689,7 +1748,7 @@ template&lt;int dim, typename number &gt; </div>
 
 <p class="definition">Definition at line <a class="el" href="fluid__dynamics__matrix__free__operators_8cc_source.html#l00481">481</a> of file <a class="el" href="fluid__dynamics__matrix__free__operators_8cc_source.html">fluid_dynamics_matrix_free_operators.cc</a>.</p>
 
-<p class="reference">References <a class="el" href="fluid__dynamics__matrix__free__operators_8cc_source.html#l01154">NavierStokesOperatorBase&lt; dim, number &gt;::do_cell_integral_range()</a>, and <a class="el" href="fluid__dynamics__matrix__free__operators_8cc_source.html#l01176">NavierStokesOperatorBase&lt; dim, number &gt;::do_internal_face_integral_range()</a>.</p>
+<p class="reference">References <a class="el" href="fluid__dynamics__matrix__free__operators_8cc_source.html#l01220">NavierStokesOperatorBase&lt; dim, number &gt;::do_cell_integral_range()</a>, and <a class="el" href="fluid__dynamics__matrix__free__operators_8cc_source.html#l01242">NavierStokesOperatorBase&lt; dim, number &gt;::do_internal_face_integral_range()</a>.</p>
 
 </div>
 </div>
@@ -1732,7 +1791,7 @@ template&lt;int dim, typename number &gt; </div>
 
 <p class="definition">Definition at line <a class="el" href="fluid__dynamics__matrix__free__operators_8cc_source.html#l00507">507</a> of file <a class="el" href="fluid__dynamics__matrix__free__operators_8cc_source.html">fluid_dynamics_matrix_free_operators.cc</a>.</p>
 
-<p class="reference">References <a class="el" href="fluid__dynamics__matrix__free__operators_8cc_source.html#l01154">NavierStokesOperatorBase&lt; dim, number &gt;::do_cell_integral_range()</a>, and <a class="el" href="fluid__dynamics__matrix__free__operators_8cc_source.html#l01176">NavierStokesOperatorBase&lt; dim, number &gt;::do_internal_face_integral_range()</a>.</p>
+<p class="reference">References <a class="el" href="fluid__dynamics__matrix__free__operators_8cc_source.html#l01220">NavierStokesOperatorBase&lt; dim, number &gt;::do_cell_integral_range()</a>, and <a class="el" href="fluid__dynamics__matrix__free__operators_8cc_source.html#l01242">NavierStokesOperatorBase&lt; dim, number &gt;::do_internal_face_integral_range()</a>.</p>
 
 </div>
 </div>
@@ -1761,7 +1820,7 @@ template&lt;int dim, typename number &gt; </div>
 
 <p>Additional source term in the case of dynamic flow control. </p>
 
-<p class="definition">Definition at line <a class="el" href="fluid__dynamics__matrix__free__operators_8h_source.html#l00572">572</a> of file <a class="el" href="fluid__dynamics__matrix__free__operators_8h_source.html">fluid_dynamics_matrix_free_operators.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="fluid__dynamics__matrix__free__operators_8h_source.html#l00590">590</a> of file <a class="el" href="fluid__dynamics__matrix__free__operators_8h_source.html">fluid_dynamics_matrix_free_operators.h</a>.</p>
 
 </div>
 </div>
@@ -1789,7 +1848,7 @@ template&lt;int dim, typename number &gt; </div>
 
 <p>DoF mask object needed for the sparsity pattern and computation of the system matrix of the coarse level in case FE_Q_iso_Q1 elements are used. </p>
 
-<p class="definition">Definition at line <a class="el" href="fluid__dynamics__matrix__free__operators_8h_source.html#l00791">791</a> of file <a class="el" href="fluid__dynamics__matrix__free__operators_8h_source.html">fluid_dynamics_matrix_free_operators.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="fluid__dynamics__matrix__free__operators_8h_source.html#l00816">816</a> of file <a class="el" href="fluid__dynamics__matrix__free__operators_8h_source.html">fluid_dynamics_matrix_free_operators.h</a>.</p>
 
 </div>
 </div>
@@ -1817,7 +1876,7 @@ template&lt;int dim, typename number &gt; </div>
 
 <p>Boundary conditions object to impose the correct boundary conditions. This object is only used to impose boundary conditions that appear in the weak form as face terms (Weak Dirichlet boundary conditions and, eventually, outlets). However, the entire boundary_conditions object is stored instead of trying to isolate which parameters are used since many of them are used in the initialization of the boundary conditions. </p>
 
-<p class="definition">Definition at line <a class="el" href="fluid__dynamics__matrix__free__operators_8h_source.html#l00601">601</a> of file <a class="el" href="fluid__dynamics__matrix__free__operators_8h_source.html">fluid_dynamics_matrix_free_operators.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="fluid__dynamics__matrix__free__operators_8h_source.html#l00619">619</a> of file <a class="el" href="fluid__dynamics__matrix__free__operators_8h_source.html">fluid_dynamics_matrix_free_operators.h</a>.</p>
 
 </div>
 </div>
@@ -1845,7 +1904,7 @@ template&lt;int dim, typename number &gt; </div>
 
 <p>Table with precomputed buoyancy term values. </p>
 
-<p class="definition">Definition at line <a class="el" href="fluid__dynamics__matrix__free__operators_8h_source.html#l00626">626</a> of file <a class="el" href="fluid__dynamics__matrix__free__operators_8h_source.html">fluid_dynamics_matrix_free_operators.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="fluid__dynamics__matrix__free__operators_8h_source.html#l00644">644</a> of file <a class="el" href="fluid__dynamics__matrix__free__operators_8h_source.html">fluid_dynamics_matrix_free_operators.h</a>.</p>
 
 </div>
 </div>
@@ -1873,7 +1932,7 @@ template&lt;int dim, typename number &gt; </div>
 
 <p>Vector with the constrained indices used for the local smoothing approach. </p>
 
-<p class="definition">Definition at line <a class="el" href="fluid__dynamics__matrix__free__operators_8h_source.html#l00751">751</a> of file <a class="el" href="fluid__dynamics__matrix__free__operators_8h_source.html">fluid_dynamics_matrix_free_operators.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="fluid__dynamics__matrix__free__operators_8h_source.html#l00776">776</a> of file <a class="el" href="fluid__dynamics__matrix__free__operators_8h_source.html">fluid_dynamics_matrix_free_operators.h</a>.</p>
 
 </div>
 </div>
@@ -1901,7 +1960,7 @@ template&lt;int dim, typename number &gt; </div>
 
 <p>Vector with the constrained values used for the local smoothing approach. </p>
 
-<p class="definition">Definition at line <a class="el" href="fluid__dynamics__matrix__free__operators_8h_source.html#l00757">757</a> of file <a class="el" href="fluid__dynamics__matrix__free__operators_8h_source.html">fluid_dynamics_matrix_free_operators.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="fluid__dynamics__matrix__free__operators_8h_source.html#l00782">782</a> of file <a class="el" href="fluid__dynamics__matrix__free__operators_8h_source.html">fluid_dynamics_matrix_free_operators.h</a>.</p>
 
 </div>
 </div>
@@ -1929,7 +1988,7 @@ template&lt;int dim, typename number &gt; </div>
 
 <p>Object that stores constraints for the matrix free implementation. </p>
 
-<p class="definition">Definition at line <a class="el" href="fluid__dynamics__matrix__free__operators_8h_source.html#l00535">535</a> of file <a class="el" href="fluid__dynamics__matrix__free__operators_8h_source.html">fluid_dynamics_matrix_free_operators.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="fluid__dynamics__matrix__free__operators_8h_source.html#l00553">553</a> of file <a class="el" href="fluid__dynamics__matrix__free__operators_8h_source.html">fluid_dynamics_matrix_free_operators.h</a>.</p>
 
 </div>
 </div>
@@ -1957,7 +2016,7 @@ template&lt;int dim, typename number &gt; </div>
 
 <p>Sparsity pattern used when the matrix of certain level is computed and stored. </p>
 
-<p class="definition">Definition at line <a class="el" href="fluid__dynamics__matrix__free__operators_8h_source.html#l00541">541</a> of file <a class="el" href="fluid__dynamics__matrix__free__operators_8h_source.html">fluid_dynamics_matrix_free_operators.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="fluid__dynamics__matrix__free__operators_8h_source.html#l00559">559</a> of file <a class="el" href="fluid__dynamics__matrix__free__operators_8h_source.html">fluid_dynamics_matrix_free_operators.h</a>.</p>
 
 </div>
 </div>
@@ -1985,7 +2044,7 @@ template&lt;int dim, typename number &gt; </div>
 
 <p>Vector used to mark edge constrained cells in order to verify constrained indices for the local smoothing approach. </p>
 
-<p class="definition">Definition at line <a class="el" href="fluid__dynamics__matrix__free__operators_8h_source.html#l00784">784</a> of file <a class="el" href="fluid__dynamics__matrix__free__operators_8h_source.html">fluid_dynamics_matrix_free_operators.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="fluid__dynamics__matrix__free__operators_8h_source.html#l00809">809</a> of file <a class="el" href="fluid__dynamics__matrix__free__operators_8h_source.html">fluid_dynamics_matrix_free_operators.h</a>.</p>
 
 </div>
 </div>
@@ -2013,7 +2072,7 @@ template&lt;int dim, typename number &gt; </div>
 
 <p>Vector with the constrained edge indices for the local smoothing approach. </p>
 
-<p class="definition">Definition at line <a class="el" href="fluid__dynamics__matrix__free__operators_8h_source.html#l00763">763</a> of file <a class="el" href="fluid__dynamics__matrix__free__operators_8h_source.html">fluid_dynamics_matrix_free_operators.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="fluid__dynamics__matrix__free__operators_8h_source.html#l00788">788</a> of file <a class="el" href="fluid__dynamics__matrix__free__operators_8h_source.html">fluid_dynamics_matrix_free_operators.h</a>.</p>
 
 </div>
 </div>
@@ -2041,7 +2100,7 @@ template&lt;int dim, typename number &gt; </div>
 
 <p>Vector with edge constrained values used for the local smoothing approach. </p>
 
-<p class="definition">Definition at line <a class="el" href="fluid__dynamics__matrix__free__operators_8h_source.html#l00776">776</a> of file <a class="el" href="fluid__dynamics__matrix__free__operators_8h_source.html">fluid_dynamics_matrix_free_operators.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="fluid__dynamics__matrix__free__operators_8h_source.html#l00801">801</a> of file <a class="el" href="fluid__dynamics__matrix__free__operators_8h_source.html">fluid_dynamics_matrix_free_operators.h</a>.</p>
 
 </div>
 </div>
@@ -2069,7 +2128,7 @@ template&lt;int dim, typename number &gt; </div>
 
 <p>Table with correct alignment for vectorization to store the values of the face penalization term effective_beta_face. </p>
 
-<p class="definition">Definition at line <a class="el" href="fluid__dynamics__matrix__free__operators_8h_source.html#l00740">740</a> of file <a class="el" href="fluid__dynamics__matrix__free__operators_8h_source.html">fluid_dynamics_matrix_free_operators.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="fluid__dynamics__matrix__free__operators_8h_source.html#l00758">758</a> of file <a class="el" href="fluid__dynamics__matrix__free__operators_8h_source.html">fluid_dynamics_matrix_free_operators.h</a>.</p>
 
 </div>
 </div>
@@ -2097,7 +2156,7 @@ template&lt;int dim, typename number &gt; </div>
 
 <p>Aligned vector to store the element size of all the elements. </p>
 
-<p class="definition">Definition at line <a class="el" href="fluid__dynamics__matrix__free__operators_8h_source.html#l00554">554</a> of file <a class="el" href="fluid__dynamics__matrix__free__operators_8h_source.html">fluid_dynamics_matrix_free_operators.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="fluid__dynamics__matrix__free__operators_8h_source.html#l00572">572</a> of file <a class="el" href="fluid__dynamics__matrix__free__operators_8h_source.html">fluid_dynamics_matrix_free_operators.h</a>.</p>
 
 </div>
 </div>
@@ -2125,7 +2184,7 @@ template&lt;int dim, typename number &gt; </div>
 
 <p>Flag to turn the calculation of face terms on or off. This is used for weakly imposed Dirichlet boundary conditions or outlets. </p>
 
-<p class="definition">Definition at line <a class="el" href="fluid__dynamics__matrix__free__operators_8h_source.html#l00633">633</a> of file <a class="el" href="fluid__dynamics__matrix__free__operators_8h_source.html">fluid_dynamics_matrix_free_operators.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="fluid__dynamics__matrix__free__operators_8h_source.html#l00651">651</a> of file <a class="el" href="fluid__dynamics__matrix__free__operators_8h_source.html">fluid_dynamics_matrix_free_operators.h</a>.</p>
 
 </div>
 </div>
@@ -2153,7 +2212,7 @@ template&lt;int dim, typename number &gt; </div>
 
 <p>Flag to turn hessian terms from jacobian on or off. </p>
 
-<p class="definition">Definition at line <a class="el" href="fluid__dynamics__matrix__free__operators_8h_source.html#l00607">607</a> of file <a class="el" href="fluid__dynamics__matrix__free__operators_8h_source.html">fluid_dynamics_matrix_free_operators.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="fluid__dynamics__matrix__free__operators_8h_source.html#l00625">625</a> of file <a class="el" href="fluid__dynamics__matrix__free__operators_8h_source.html">fluid_dynamics_matrix_free_operators.h</a>.</p>
 
 </div>
 </div>
@@ -2181,7 +2240,7 @@ template&lt;int dim, typename number &gt; </div>
 
 <p>Flag to turn hessian terms from residual on or off. </p>
 
-<p class="definition">Definition at line <a class="el" href="fluid__dynamics__matrix__free__operators_8h_source.html#l00613">613</a> of file <a class="el" href="fluid__dynamics__matrix__free__operators_8h_source.html">fluid_dynamics_matrix_free_operators.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="fluid__dynamics__matrix__free__operators_8h_source.html#l00631">631</a> of file <a class="el" href="fluid__dynamics__matrix__free__operators_8h_source.html">fluid_dynamics_matrix_free_operators.h</a>.</p>
 
 </div>
 </div>
@@ -2209,7 +2268,7 @@ template&lt;int dim, typename number &gt; </div>
 
 <p>Flag to turn the computation of mortar coupling terms on or off. </p>
 
-<p class="definition">Definition at line <a class="el" href="fluid__dynamics__matrix__free__operators_8h_source.html#l00745">745</a> of file <a class="el" href="fluid__dynamics__matrix__free__operators_8h_source.html">fluid_dynamics_matrix_free_operators.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="fluid__dynamics__matrix__free__operators_8h_source.html#l00763">763</a> of file <a class="el" href="fluid__dynamics__matrix__free__operators_8h_source.html">fluid_dynamics_matrix_free_operators.h</a>.</p>
 
 </div>
 </div>
@@ -2237,7 +2296,7 @@ template&lt;int dim, typename number &gt; </div>
 
 <p>Table with correct alignment for vectorization to store the values of the velocity at faces. </p>
 
-<p class="definition">Definition at line <a class="el" href="fluid__dynamics__matrix__free__operators_8h_source.html#l00673">673</a> of file <a class="el" href="fluid__dynamics__matrix__free__operators_8h_source.html">fluid_dynamics_matrix_free_operators.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="fluid__dynamics__matrix__free__operators_8h_source.html#l00691">691</a> of file <a class="el" href="fluid__dynamics__matrix__free__operators_8h_source.html">fluid_dynamics_matrix_free_operators.h</a>.</p>
 
 </div>
 </div>
@@ -2265,7 +2324,7 @@ template&lt;int dim, typename number &gt; </div>
 
 <p>Table with correct alignment for vectorization to store the values of the target velocity of a weakly imposed Dirichlet boundary condition. </p>
 
-<p class="definition">Definition at line <a class="el" href="fluid__dynamics__matrix__free__operators_8h_source.html#l00680">680</a> of file <a class="el" href="fluid__dynamics__matrix__free__operators_8h_source.html">fluid_dynamics_matrix_free_operators.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="fluid__dynamics__matrix__free__operators_8h_source.html#l00698">698</a> of file <a class="el" href="fluid__dynamics__matrix__free__operators_8h_source.html">fluid_dynamics_matrix_free_operators.h</a>.</p>
 
 </div>
 </div>
@@ -2293,7 +2352,7 @@ template&lt;int dim, typename number &gt; </div>
 
 <p>Finite element degree for the operator. </p>
 
-<p class="definition">Definition at line <a class="el" href="fluid__dynamics__matrix__free__operators_8h_source.html#l00560">560</a> of file <a class="el" href="fluid__dynamics__matrix__free__operators_8h_source.html">fluid_dynamics_matrix_free_operators.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="fluid__dynamics__matrix__free__operators_8h_source.html#l00578">578</a> of file <a class="el" href="fluid__dynamics__matrix__free__operators_8h_source.html">fluid_dynamics_matrix_free_operators.h</a>.</p>
 
 </div>
 </div>
@@ -2321,7 +2380,7 @@ template&lt;int dim, typename number &gt; </div>
 
 <p>Force function or source function for the Navier-Stokes equations. </p>
 
-<p class="definition">Definition at line <a class="el" href="fluid__dynamics__matrix__free__operators_8h_source.html#l00566">566</a> of file <a class="el" href="fluid__dynamics__matrix__free__operators_8h_source.html">fluid_dynamics_matrix_free_operators.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="fluid__dynamics__matrix__free__operators_8h_source.html#l00584">584</a> of file <a class="el" href="fluid__dynamics__matrix__free__operators_8h_source.html">fluid_dynamics_matrix_free_operators.h</a>.</p>
 
 </div>
 </div>
@@ -2349,7 +2408,7 @@ template&lt;int dim, typename number &gt; </div>
 
 <p>Table with precomputed forcing term values. </p>
 
-<p class="definition">Definition at line <a class="el" href="fluid__dynamics__matrix__free__operators_8h_source.html#l00619">619</a> of file <a class="el" href="fluid__dynamics__matrix__free__operators_8h_source.html">fluid_dynamics_matrix_free_operators.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="fluid__dynamics__matrix__free__operators_8h_source.html#l00637">637</a> of file <a class="el" href="fluid__dynamics__matrix__free__operators_8h_source.html">fluid_dynamics_matrix_free_operators.h</a>.</p>
 
 </div>
 </div>
@@ -2377,7 +2436,7 @@ template&lt;int dim, typename number &gt; </div>
 
 <p>Table with correct alignment for vectorization to store the values of the gradient of the kinematic viscosity w.r.t shear rate. </p>
 
-<p class="definition">Definition at line <a class="el" href="fluid__dynamics__matrix__free__operators_8h_source.html#l00710">710</a> of file <a class="el" href="fluid__dynamics__matrix__free__operators_8h_source.html">fluid_dynamics_matrix_free_operators.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="fluid__dynamics__matrix__free__operators_8h_source.html#l00728">728</a> of file <a class="el" href="fluid__dynamics__matrix__free__operators_8h_source.html">fluid_dynamics_matrix_free_operators.h</a>.</p>
 
 </div>
 </div>
@@ -2405,7 +2464,7 @@ template&lt;int dim, typename number &gt; </div>
 
 <p>Variable to identify whether there are edge constrained indices for the local smoothing approach. </p>
 
-<p class="definition">Definition at line <a class="el" href="fluid__dynamics__matrix__free__operators_8h_source.html#l00770">770</a> of file <a class="el" href="fluid__dynamics__matrix__free__operators_8h_source.html">fluid_dynamics_matrix_free_operators.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="fluid__dynamics__matrix__free__operators_8h_source.html#l00795">795</a> of file <a class="el" href="fluid__dynamics__matrix__free__operators_8h_source.html">fluid_dynamics_matrix_free_operators.h</a>.</p>
 
 </div>
 </div>
@@ -2433,7 +2492,7 @@ template&lt;int dim, typename number &gt; </div>
 
 <p>Table with correct alignment for vectorization to store the values of the kinematic viscosity gradient. </p>
 
-<p class="definition">Definition at line <a class="el" href="fluid__dynamics__matrix__free__operators_8h_source.html#l00718">718</a> of file <a class="el" href="fluid__dynamics__matrix__free__operators_8h_source.html">fluid_dynamics_matrix_free_operators.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="fluid__dynamics__matrix__free__operators_8h_source.html#l00736">736</a> of file <a class="el" href="fluid__dynamics__matrix__free__operators_8h_source.html">fluid_dynamics_matrix_free_operators.h</a>.</p>
 
 </div>
 </div>
@@ -2461,7 +2520,7 @@ template&lt;int dim, typename number &gt; </div>
 
 <p>Table with correct alignment for vectorization to store the values of the kinematic viscosity. </p>
 
-<p class="definition">Definition at line <a class="el" href="fluid__dynamics__matrix__free__operators_8h_source.html#l00703">703</a> of file <a class="el" href="fluid__dynamics__matrix__free__operators_8h_source.html">fluid_dynamics_matrix_free_operators.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="fluid__dynamics__matrix__free__operators_8h_source.html#l00721">721</a> of file <a class="el" href="fluid__dynamics__matrix__free__operators_8h_source.html">fluid_dynamics_matrix_free_operators.h</a>.</p>
 
 </div>
 </div>
@@ -2489,7 +2548,7 @@ template&lt;int dim, typename number &gt; </div>
 
 <p>Object storing all the relevant data needed for the matrix free implementation. </p>
 
-<p class="definition">Definition at line <a class="el" href="fluid__dynamics__matrix__free__operators_8h_source.html#l00529">529</a> of file <a class="el" href="fluid__dynamics__matrix__free__operators_8h_source.html">fluid_dynamics_matrix_free_operators.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="fluid__dynamics__matrix__free__operators_8h_source.html#l00547">547</a> of file <a class="el" href="fluid__dynamics__matrix__free__operators_8h_source.html">fluid_dynamics_matrix_free_operators.h</a>.</p>
 
 </div>
 </div>
@@ -2507,7 +2566,7 @@ template&lt;int dim, typename number &gt; </div>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="fluid__dynamics__matrix__free__operators_8h_source.html#l00411">411</a> of file <a class="el" href="fluid__dynamics__matrix__free__operators_8h_source.html">fluid_dynamics_matrix_free_operators.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="fluid__dynamics__matrix__free__operators_8h_source.html#l00429">429</a> of file <a class="el" href="fluid__dynamics__matrix__free__operators_8h_source.html">fluid_dynamics_matrix_free_operators.h</a>.</p>
 
 </div>
 </div>
@@ -2525,7 +2584,7 @@ template&lt;int dim, typename number &gt; </div>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="fluid__dynamics__matrix__free__operators_8h_source.html#l00409">409</a> of file <a class="el" href="fluid__dynamics__matrix__free__operators_8h_source.html">fluid_dynamics_matrix_free_operators.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="fluid__dynamics__matrix__free__operators_8h_source.html#l00427">427</a> of file <a class="el" href="fluid__dynamics__matrix__free__operators_8h_source.html">fluid_dynamics_matrix_free_operators.h</a>.</p>
 
 </div>
 </div>
@@ -2545,7 +2604,7 @@ template&lt;int dim, typename number &gt; </div>
 
 <p>Mortar coupling manager, operator, and evaluator used in the matrix-free solver. The matrix-based solver uses the shared pointers created in the NS base. Because we have a different system_operator here, we need to create new pointers. </p>
 
-<p class="definition">Definition at line <a class="el" href="fluid__dynamics__matrix__free__operators_8h_source.html#l00408">408</a> of file <a class="el" href="fluid__dynamics__matrix__free__operators_8h_source.html">fluid_dynamics_matrix_free_operators.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="fluid__dynamics__matrix__free__operators_8h_source.html#l00426">426</a> of file <a class="el" href="fluid__dynamics__matrix__free__operators_8h_source.html">fluid_dynamics_matrix_free_operators.h</a>.</p>
 
 </div>
 </div>
@@ -2573,7 +2632,7 @@ template&lt;int dim, typename number &gt; </div>
 
 <p>Table with correct alignment for vectorization to store the gradients of the previous newton step. </p>
 
-<p class="definition">Definition at line <a class="el" href="fluid__dynamics__matrix__free__operators_8h_source.html#l00649">649</a> of file <a class="el" href="fluid__dynamics__matrix__free__operators_8h_source.html">fluid_dynamics_matrix_free_operators.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="fluid__dynamics__matrix__free__operators_8h_source.html#l00667">667</a> of file <a class="el" href="fluid__dynamics__matrix__free__operators_8h_source.html">fluid_dynamics_matrix_free_operators.h</a>.</p>
 
 </div>
 </div>
@@ -2601,7 +2660,7 @@ template&lt;int dim, typename number &gt; </div>
 
 <p>Table with correct alignment for vectorization to store the hessian diagonal of the previous newton step. </p>
 
-<p class="definition">Definition at line <a class="el" href="fluid__dynamics__matrix__free__operators_8h_source.html#l00657">657</a> of file <a class="el" href="fluid__dynamics__matrix__free__operators_8h_source.html">fluid_dynamics_matrix_free_operators.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="fluid__dynamics__matrix__free__operators_8h_source.html#l00675">675</a> of file <a class="el" href="fluid__dynamics__matrix__free__operators_8h_source.html">fluid_dynamics_matrix_free_operators.h</a>.</p>
 
 </div>
 </div>
@@ -2629,7 +2688,7 @@ template&lt;int dim, typename number &gt; </div>
 
 <p>Table with correct alignment for vectorization to store the values of the previous newton step. </p>
 
-<p class="definition">Definition at line <a class="el" href="fluid__dynamics__matrix__free__operators_8h_source.html#l00641">641</a> of file <a class="el" href="fluid__dynamics__matrix__free__operators_8h_source.html">fluid_dynamics_matrix_free_operators.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="fluid__dynamics__matrix__free__operators_8h_source.html#l00659">659</a> of file <a class="el" href="fluid__dynamics__matrix__free__operators_8h_source.html">fluid_dynamics_matrix_free_operators.h</a>.</p>
 
 </div>
 </div>
@@ -2657,7 +2716,7 @@ template&lt;int dim, typename number &gt; </div>
 
 <p>Conditional OStream for parallel output. </p>
 
-<p class="definition">Definition at line <a class="el" href="fluid__dynamics__matrix__free__operators_8h_source.html#l00797">797</a> of file <a class="el" href="fluid__dynamics__matrix__free__operators_8h_source.html">fluid_dynamics_matrix_free_operators.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="fluid__dynamics__matrix__free__operators_8h_source.html#l00822">822</a> of file <a class="el" href="fluid__dynamics__matrix__free__operators_8h_source.html">fluid_dynamics_matrix_free_operators.h</a>.</p>
 
 </div>
 </div>
@@ -2685,7 +2744,7 @@ template&lt;int dim, typename number &gt; </div>
 
 <p>Table with correct alignment for vectorization to store the values of the shear_rate. </p>
 
-<p class="definition">Definition at line <a class="el" href="fluid__dynamics__matrix__free__operators_8h_source.html#l00726">726</a> of file <a class="el" href="fluid__dynamics__matrix__free__operators_8h_source.html">fluid_dynamics_matrix_free_operators.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="fluid__dynamics__matrix__free__operators_8h_source.html#l00744">744</a> of file <a class="el" href="fluid__dynamics__matrix__free__operators_8h_source.html">fluid_dynamics_matrix_free_operators.h</a>.</p>
 
 </div>
 </div>
@@ -2713,7 +2772,7 @@ template&lt;int dim, typename number &gt; </div>
 
 <p>Table with correct alignment for vectorization to store the values of the shear_rate_magnitude. </p>
 
-<p class="definition">Definition at line <a class="el" href="fluid__dynamics__matrix__free__operators_8h_source.html#l00733">733</a> of file <a class="el" href="fluid__dynamics__matrix__free__operators_8h_source.html">fluid_dynamics_matrix_free_operators.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="fluid__dynamics__matrix__free__operators_8h_source.html#l00751">751</a> of file <a class="el" href="fluid__dynamics__matrix__free__operators_8h_source.html">fluid_dynamics_matrix_free_operators.h</a>.</p>
 
 </div>
 </div>
@@ -2741,7 +2800,7 @@ template&lt;int dim, typename number &gt; </div>
 
 <p>Object pointing to the physical properties manager of the matrix free class. </p>
 
-<p class="definition">Definition at line <a class="el" href="fluid__dynamics__matrix__free__operators_8h_source.html#l00590">590</a> of file <a class="el" href="fluid__dynamics__matrix__free__operators_8h_source.html">fluid_dynamics_matrix_free_operators.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="fluid__dynamics__matrix__free__operators_8h_source.html#l00608">608</a> of file <a class="el" href="fluid__dynamics__matrix__free__operators_8h_source.html">fluid_dynamics_matrix_free_operators.h</a>.</p>
 
 </div>
 </div>
@@ -2769,7 +2828,7 @@ template&lt;int dim, typename number &gt; </div>
 
 <p>Object storing the information regarding the time stepping method. </p>
 
-<p class="definition">Definition at line <a class="el" href="fluid__dynamics__matrix__free__operators_8h_source.html#l00584">584</a> of file <a class="el" href="fluid__dynamics__matrix__free__operators_8h_source.html">fluid_dynamics_matrix_free_operators.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="fluid__dynamics__matrix__free__operators_8h_source.html#l00602">602</a> of file <a class="el" href="fluid__dynamics__matrix__free__operators_8h_source.html">fluid_dynamics_matrix_free_operators.h</a>.</p>
 
 </div>
 </div>
@@ -2797,7 +2856,7 @@ template&lt;int dim, typename number &gt; </div>
 
 <p>Stabilization type needed to add or remove terms from operator. </p>
 
-<p class="definition">Definition at line <a class="el" href="fluid__dynamics__matrix__free__operators_8h_source.html#l00578">578</a> of file <a class="el" href="fluid__dynamics__matrix__free__operators_8h_source.html">fluid_dynamics_matrix_free_operators.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="fluid__dynamics__matrix__free__operators_8h_source.html#l00596">596</a> of file <a class="el" href="fluid__dynamics__matrix__free__operators_8h_source.html">fluid_dynamics_matrix_free_operators.h</a>.</p>
 
 </div>
 </div>
@@ -2825,7 +2884,7 @@ template&lt;int dim, typename number &gt; </div>
 
 <p>Table with correct alignment for vectorization to store the values of the stabilization parameter tau. </p>
 
-<p class="definition">Definition at line <a class="el" href="fluid__dynamics__matrix__free__operators_8h_source.html#l00688">688</a> of file <a class="el" href="fluid__dynamics__matrix__free__operators_8h_source.html">fluid_dynamics_matrix_free_operators.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="fluid__dynamics__matrix__free__operators_8h_source.html#l00706">706</a> of file <a class="el" href="fluid__dynamics__matrix__free__operators_8h_source.html">fluid_dynamics_matrix_free_operators.h</a>.</p>
 
 </div>
 </div>
@@ -2853,7 +2912,7 @@ template&lt;int dim, typename number &gt; </div>
 
 <p>Table with correct alignment for vectorization to store the values of the stabilization parameter tau lsic. </p>
 
-<p class="definition">Definition at line <a class="el" href="fluid__dynamics__matrix__free__operators_8h_source.html#l00695">695</a> of file <a class="el" href="fluid__dynamics__matrix__free__operators_8h_source.html">fluid_dynamics_matrix_free_operators.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="fluid__dynamics__matrix__free__operators_8h_source.html#l00713">713</a> of file <a class="el" href="fluid__dynamics__matrix__free__operators_8h_source.html">fluid_dynamics_matrix_free_operators.h</a>.</p>
 
 </div>
 </div>
@@ -2881,7 +2940,7 @@ template&lt;int dim, typename number &gt; </div>
 
 <p>Sparse trilinos matrix used when the matrix of certain level is computed and stored. </p>
 
-<p class="definition">Definition at line <a class="el" href="fluid__dynamics__matrix__free__operators_8h_source.html#l00548">548</a> of file <a class="el" href="fluid__dynamics__matrix__free__operators_8h_source.html">fluid_dynamics_matrix_free_operators.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="fluid__dynamics__matrix__free__operators_8h_source.html#l00566">566</a> of file <a class="el" href="fluid__dynamics__matrix__free__operators_8h_source.html">fluid_dynamics_matrix_free_operators.h</a>.</p>
 
 </div>
 </div>
@@ -2909,7 +2968,7 @@ template&lt;int dim, typename number &gt; </div>
 
 <p>Table with correct alignment for vectorization to store the time derivatives of previous solutions. </p>
 
-<p class="definition">Definition at line <a class="el" href="fluid__dynamics__matrix__free__operators_8h_source.html#l00665">665</a> of file <a class="el" href="fluid__dynamics__matrix__free__operators_8h_source.html">fluid_dynamics_matrix_free_operators.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="fluid__dynamics__matrix__free__operators_8h_source.html#l00683">683</a> of file <a class="el" href="fluid__dynamics__matrix__free__operators_8h_source.html">fluid_dynamics_matrix_free_operators.h</a>.</p>
 
 </div>
 </div>
@@ -2937,7 +2996,35 @@ template&lt;int dim, typename number &gt; </div>
 
 <p>Timer for internal operator calls. </p>
 
-<p class="definition">Definition at line <a class="el" href="fluid__dynamics__matrix__free__operators_8h_source.html#l00804">804</a> of file <a class="el" href="fluid__dynamics__matrix__free__operators_8h_source.html">fluid_dynamics_matrix_free_operators.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="fluid__dynamics__matrix__free__operators_8h_source.html#l00829">829</a> of file <a class="el" href="fluid__dynamics__matrix__free__operators_8h_source.html">fluid_dynamics_matrix_free_operators.h</a>.</p>
+
+</div>
+</div>
+<a id="a4c2028026090efedaa28007729fe7b84" name="a4c2028026090efedaa28007729fe7b84"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a4c2028026090efedaa28007729fe7b84">&#9670;&#160;</a></span>velocity_ale</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;int dim, typename number &gt; </div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">Table&lt;2, Tensor&lt;1, dim, VectorizedArray&lt;number&gt; &gt; &gt; <a class="el" href="classNavierStokesOperatorBase.html">NavierStokesOperatorBase</a>&lt; dim, number &gt;::velocity_ale</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">protected</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Table with correct alignment for vectorization to store the values of the ALE velocity used in mortar coupling terms. </p>
+
+<p class="definition">Definition at line <a class="el" href="fluid__dynamics__matrix__free__operators_8h_source.html#l00770">770</a> of file <a class="el" href="fluid__dynamics__matrix__free__operators_8h_source.html">fluid_dynamics_matrix_free_operators.h</a>.</p>
 
 </div>
 </div>
