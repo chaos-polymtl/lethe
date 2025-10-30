@@ -70,6 +70,12 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
 - MINOR The serialization/deserialization of tables in classes derived from AuxiliaryPhysics have been refactored to match the same code structure as that used for the tables in solvers derived from NavierStokesBase. Functions for serializing/deserializing multiple tables are now defined in include/core/utilities.h. Also, the output_struct.h file has been moved to the core folder. [#1725](https://github.com/chaos-polymtl/lethe/pull/1725)
 
+### [Master] - 2025-10-16
+
+### Changed
+
+- MINOR The scratch data for all of the FEM-based physics used std::vector<type> for both the evaluation of the solution at the gauss point, but also to store the shape function (or their gradient, divergence, etc.) at the gauss points for the degrees of freedom. The issue with this is that it creates std::vector<std::vector<type>> data structures. These vectors of vectors are not contiguous in memory and may lead to a large number of cache misses as the degree of the polynomial of the shape function is increased. This PR fixes this by changing the data structure used to store the shape function (and their gradient, divergence, etc.) to use the deal.II Table<n_dim,type> data structure. These data structures are identical to vectors of vectors in the way they are used, but they store the information in a contiguous memory block (see https://dealii.org/current/doxygen/deal.II/classTableBase.html for more information). This change has minimal impact on the code, but should lead to much better scalability of the matrix and RHS assembly when the degree of the polynomial is increased and the matrix-based solvers are used. The improvement will be problem dependent, but it should never worsen performance. [#1726](https://github.com/chaos-polymtl/lethe/pull/1726)
+
 ### [Master] - 2025-10-20
 
 ### Added
