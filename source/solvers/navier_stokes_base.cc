@@ -1306,6 +1306,11 @@ NavierStokesBase<dim, VectorType, DofsType>::refine_mesh_kelly()
     average_velocities->prepare_for_mesh_adaptation();
 
   tria.execute_coarsening_and_refinement();
+
+  // If mortar is enabled, update mapping cache with refined triangulation
+  if (this->simulation_parameters.mortar_parameters.enable)
+    this->mapping_cache->initialize(*this->mapping, *this->triangulation);
+
   setup_dofs();
 
   // Transfer solution
