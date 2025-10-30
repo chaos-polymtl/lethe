@@ -70,7 +70,7 @@ NewtonNonLinearSolver<VectorType>::solve(const bool is_initial_step)
 
   PhysicsSolver<VectorType> *solver = this->physics_solver;
 
-  const double normalize_volume = solver->get_residual_normalize_volume();
+  const double normalize_metric = solver->get_residual_normalization_metric();
 
   auto &evaluation_point = solver->get_evaluation_point();
   auto &present_solution = solver->get_present_solution();
@@ -91,7 +91,7 @@ NewtonNonLinearSolver<VectorType>::solve(const bool is_initial_step)
       if (this->outer_iteration == 0)
         {
           auto &system_rhs = solver->get_system_rhs();
-          current_res      = system_rhs.l2_norm() / normalize_volume;
+          current_res      = system_rhs.l2_norm() / normalize_metric;
           last_res         = current_res;
         }
 
@@ -116,7 +116,7 @@ NewtonNonLinearSolver<VectorType>::solve(const bool is_initial_step)
           solver->assemble_system_rhs();
 
           auto &system_rhs = solver->get_system_rhs();
-          current_res      = system_rhs.l2_norm() / normalize_volume;
+          current_res      = system_rhs.l2_norm() / normalize_metric;
 
           if (this->params.verbosity != Parameters::Verbosity::quiet)
             {
@@ -159,7 +159,7 @@ NewtonNonLinearSolver<VectorType>::solve(const bool is_initial_step)
           alpha_iter++;
         }
 
-      global_res       = solver->get_current_residual() / normalize_volume;
+      global_res       = solver->get_current_residual() / normalize_metric;
       present_solution = evaluation_point;
       last_res         = current_res;
       ++this->outer_iteration;

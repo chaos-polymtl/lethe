@@ -111,14 +111,14 @@ public:
   output_newton_update_norms(const unsigned int display_precision) = 0;
 
   /**
-   * @brief Get volume for residual normalization. By default, should return 1.
+   * @brief Get metric for residual normalization. By default, should return 1.
    * In solvers, if normalize by volume is activated, the overridden method
    * should return the global volume of the triangulation.
    *
-   * @return Normalization volume.
+   * @return Normalization metric.
    */
   virtual double
-  get_residual_normalize_volume() const = 0;
+  get_residual_normalization_metric() const = 0;
 
   /**
    * @brief Default way to evaluate the residual for the nonlinear solver, which is simply the norm of the RHS vector.

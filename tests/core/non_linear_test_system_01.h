@@ -139,7 +139,7 @@ public:
     return dummy_constraints;
   };
   virtual double
-  get_residual_normalize_volume() const override
+  get_residual_normalization_metric() const override
   {
     return 1.0;
   }
