@@ -105,7 +105,7 @@ HeatTransfer<dim>::assemble_nitsche_heat_restriction(bool assemble_matrix)
                 1.; /// std::pow(h_cell * h_cell, double(dim) / double(dim));
               const auto &dh_cell =
                 typename DoFHandler<dim>::cell_iterator(*cell,
-                                                        &this->dof_handler);
+                                                        &(*this->dof_handler));
               dh_cell->get_dof_indices(heat_dof_indices);
 
               const auto pic = solid_ph->particles_in_cell(cell);
@@ -211,7 +211,7 @@ HeatTransfer<dim>::postprocess_heat_flux_on_nitsche_ib()
 
               const auto &dh_cell =
                 typename DoFHandler<dim>::cell_iterator(*cell,
-                                                        &this->dof_handler);
+                                                        &(*this->dof_handler));
               dh_cell->get_dof_indices(heat_dof_indices);
 
               const auto pic = solid_ph->particles_in_cell(cell);
@@ -410,7 +410,7 @@ HeatTransfer<dim>::assemble_system_matrix()
   this->system_matrix = 0;
   setup_assemblers();
 
-  const DoFHandler<dim> *dof_handler_fluid =
+  const DoFHandler<dim> &dof_handler_fluid =
     multiphysics->get_dof_handler(PhysicsID::fluid_dynamics);
 
   const double delta_T_ref = calculate_delta_T_ref(1.);
@@ -420,23 +420,23 @@ HeatTransfer<dim>::assemble_system_matrix()
     *this->fe,
     *this->cell_quadrature,
     *this->temperature_mapping,
-    dof_handler_fluid->get_fe(),
+    dof_handler_fluid.get_fe(),
     *this->face_quadrature,
     delta_T_ref);
 
   if (this->simulation_parameters.multiphysics.VOF)
     {
-      const DoFHandler<dim> *dof_handler_vof =
+      const DoFHandler<dim> &dof_handler_vof =
         this->multiphysics->get_dof_handler(PhysicsID::VOF);
       scratch_data.enable_vof(
-        dof_handler_vof->get_fe(),
+        dof_handler_vof.get_fe(),
         *this->cell_quadrature,
         *this->temperature_mapping,
         this->simulation_parameters.multiphysics.vof_parameters.phase_filter);
     }
 
-  WorkStream::run(this->dof_handler.begin_active(),
-                  this->dof_handler.end(),
+  WorkStream::run(this->dof_handler->begin_active(),
+                  this->dof_handler->end(),
                   *this,
                   &HeatTransfer::assemble_local_system_matrix,
                   &HeatTransfer::copy_local_matrix_to_global_matrix,
@@ -469,13 +469,13 @@ HeatTransfer<dim>::assemble_local_system_matrix(
                       this->previous_solutions,
                       &(*source_term));
 
-  const DoFHandler<dim> *dof_handler_fluid =
+  const DoFHandler<dim> &dof_handler_fluid =
     multiphysics->get_dof_handler(PhysicsID::fluid_dynamics);
 
   typename DoFHandler<dim>::active_cell_iterator fd_cell(&(*triangulation),
                                                          cell->level(),
                                                          cell->index(),
-                                                         dof_handler_fluid);
+                                                         &dof_handler_fluid);
 
   if (multiphysics->fluid_dynamics_is_block())
     {
@@ -532,13 +532,13 @@ HeatTransfer<dim>::assemble_local_system_matrix(
 
   if (this->simulation_parameters.multiphysics.VOF)
     {
-      const DoFHandler<dim> *dof_handler_vof =
+      const DoFHandler<dim> &dof_handler_vof =
         this->multiphysics->get_dof_handler(PhysicsID::VOF);
       typename DoFHandler<dim>::active_cell_iterator phase_cell(
         &(*(this->triangulation)),
         cell->level(),
         cell->index(),
-        dof_handler_vof);
+        &dof_handler_vof);
 
       scratch_data.reinit_vof(
         phase_cell, *this->multiphysics->get_filtered_solution(PhysicsID::VOF));
@@ -581,7 +581,7 @@ HeatTransfer<dim>::assemble_system_rhs()
   this->system_rhs = 0;
   setup_assemblers();
 
-  const DoFHandler<dim> *dof_handler_fluid =
+  const DoFHandler<dim> &dof_handler_fluid =
     multiphysics->get_dof_handler(PhysicsID::fluid_dynamics);
 
   const double delta_T_ref = calculate_delta_T_ref(1.);
@@ -591,23 +591,23 @@ HeatTransfer<dim>::assemble_system_rhs()
     *this->fe,
     *this->cell_quadrature,
     *this->temperature_mapping,
-    dof_handler_fluid->get_fe(),
+    dof_handler_fluid.get_fe(),
     *this->face_quadrature,
     delta_T_ref);
 
   if (this->simulation_parameters.multiphysics.VOF)
     {
-      const DoFHandler<dim> *dof_handler_vof =
+      const DoFHandler<dim> &dof_handler_vof =
         this->multiphysics->get_dof_handler(PhysicsID::VOF);
       scratch_data.enable_vof(
-        dof_handler_vof->get_fe(),
+        dof_handler_vof.get_fe(),
         *this->cell_quadrature,
         *this->temperature_mapping,
         this->simulation_parameters.multiphysics.vof_parameters.phase_filter);
     }
 
-  WorkStream::run(this->dof_handler.begin_active(),
-                  this->dof_handler.end(),
+  WorkStream::run(this->dof_handler->begin_active(),
+                  this->dof_handler->end(),
                   *this,
                   &HeatTransfer::assemble_local_system_rhs,
                   &HeatTransfer::copy_local_rhs_to_global_rhs,
@@ -640,13 +640,13 @@ HeatTransfer<dim>::assemble_local_system_rhs(
                       this->previous_solutions,
                       &(*source_term));
 
-  const DoFHandler<dim> *dof_handler_fluid =
+  const DoFHandler<dim> &dof_handler_fluid =
     multiphysics->get_dof_handler(PhysicsID::fluid_dynamics);
 
   typename DoFHandler<dim>::active_cell_iterator fd_cell(&(*triangulation),
                                                          cell->level(),
                                                          cell->index(),
-                                                         dof_handler_fluid);
+                                                         &dof_handler_fluid);
 
   if (multiphysics->fluid_dynamics_is_block())
     {
@@ -707,13 +707,13 @@ HeatTransfer<dim>::assemble_local_system_rhs(
 
   if (this->simulation_parameters.multiphysics.VOF)
     {
-      const DoFHandler<dim> *dof_handler_vof =
+      const DoFHandler<dim> &dof_handler_vof =
         this->multiphysics->get_dof_handler(PhysicsID::VOF);
       typename DoFHandler<dim>::active_cell_iterator phase_cell(
         &(*(this->triangulation)),
         cell->level(),
         cell->index(),
-        dof_handler_vof);
+        &dof_handler_vof);
 
       scratch_data.reinit_vof(
         phase_cell, *this->multiphysics->get_filtered_solution(PhysicsID::VOF));
@@ -753,7 +753,7 @@ HeatTransfer<dim>::gather_output_hook()
   std::vector<OutputStruct<dim, GlobalVectorType>> solution_output_structs;
   solution_output_structs.emplace_back(
     std::in_place_type<OutputStructSolution<dim, GlobalVectorType>>,
-    this->dof_handler,
+    *this->dof_handler,
     this->present_solution,
     std::vector<std::string>{"temperature"},
     std::vector<DataComponentInterpretation::DataComponentInterpretation>{
@@ -785,7 +785,7 @@ HeatTransfer<dim>::gather_output_hook()
                                    solid_phase_present));
       solution_output_structs.emplace_back(
         std::in_place_type<OutputStructPostprocessor<dim, GlobalVectorType>>,
-        this->dof_handler,
+        *this->dof_handler,
         this->present_solution,
         std::make_shared<HeatFluxPostprocessor<dim>>(
           heat_flux_postprocessors[f_id]));
@@ -802,7 +802,7 @@ HeatTransfer<dim>::gather_output_hook()
                                    solid_phase_present));
       solution_output_structs.emplace_back(
         std::in_place_type<OutputStructPostprocessor<dim, GlobalVectorType>>,
-        this->dof_handler,
+        *this->dof_handler,
         this->present_solution,
         std::make_shared<HeatFluxPostprocessor<dim>>(
           heat_flux_postprocessors[m_id]));
@@ -815,7 +815,7 @@ HeatTransfer<dim>::gather_output_hook()
         this->average_temperature->get_average_scalar();
       solution_output_structs.emplace_back(
         std::in_place_type<OutputStructSolution<dim, GlobalVectorType>>,
-        this->dof_handler,
+        *this->dof_handler,
         this->average_temperature_to_output,
         std::vector<std::string>{"average_temperature"},
         std::vector<DataComponentInterpretation::DataComponentInterpretation>{
@@ -837,7 +837,7 @@ HeatTransfer<dim>::gather_output_hook()
           solution_output_structs.emplace_back(
             std::in_place_type<
               OutputStructPostprocessor<dim, GlobalVectorType>>,
-            this->dof_handler,
+            *this->dof_handler,
             this->average_temperature_to_output,
             std::make_shared<HeatFluxPostprocessor<dim>>(
               average_heat_flux_postprocessors[f_id]));
@@ -855,7 +855,7 @@ HeatTransfer<dim>::gather_output_hook()
           solution_output_structs.emplace_back(
             std::in_place_type<
               OutputStructPostprocessor<dim, GlobalVectorType>>,
-            this->dof_handler,
+            *this->dof_handler,
             this->average_temperature_to_output,
             std::make_shared<HeatFluxPostprocessor<dim>>(
               average_heat_flux_postprocessors[m_id]));
@@ -912,7 +912,7 @@ HeatTransfer<dim>::calculate_L2_error()
 
   double l2error = 0.;
 
-  for (const auto &cell : dof_handler.active_cell_iterators())
+  for (const auto &cell : dof_handler->active_cell_iterators())
     {
       if (cell->is_locally_owned())
         {
@@ -1182,7 +1182,7 @@ HeatTransfer<dim>::compute_kelly(
 
       KellyErrorEstimator<dim>::estimate(
         *this->temperature_mapping,
-        this->dof_handler,
+        *this->dof_handler,
         *this->face_quadrature,
         typename std::map<types::boundary_id, const Function<dim, double> *>(),
         this->present_solution,
@@ -1241,7 +1241,7 @@ HeatTransfer<dim>::write_checkpoint()
   std::vector<const GlobalVectorType *> sol_set_transfer;
 
   solution_transfer =
-    std::make_shared<SolutionTransfer<dim, GlobalVectorType>>(dof_handler);
+    std::make_shared<SolutionTransfer<dim, GlobalVectorType>>(*dof_handler);
 
   sol_set_transfer.emplace_back(&present_solution);
   for (const auto &previous_solution : previous_solutions)
@@ -1294,7 +1294,7 @@ HeatTransfer<dim>::read_checkpoint()
     }
 
   SolutionTransfer<dim, GlobalVectorType> system_trans_vectors(
-    this->dof_handler);
+    *this->dof_handler);
 
   std::string checkpoint_file_prefix =
     this->simulation_parameters.simulation_control.output_folder +
@@ -1350,14 +1350,14 @@ HeatTransfer<dim>::setup_dofs()
   verify_consistency_of_boundary_conditions();
 
   // Proceed with setting up the DoFs
-  dof_handler.distribute_dofs(*fe);
-  DoFRenumbering::Cuthill_McKee(this->dof_handler);
+  dof_handler->distribute_dofs(*fe);
+  DoFRenumbering::Cuthill_McKee(*this->dof_handler);
 
   auto mpi_communicator = triangulation->get_mpi_communicator();
 
 
-  locally_owned_dofs    = dof_handler.locally_owned_dofs();
-  locally_relevant_dofs = DoFTools::extract_locally_relevant_dofs(dof_handler);
+  locally_owned_dofs    = dof_handler->locally_owned_dofs();
+  locally_relevant_dofs = DoFTools::extract_locally_relevant_dofs(*dof_handler);
 
   present_solution.reinit(locally_owned_dofs,
                           locally_relevant_dofs,
@@ -1381,7 +1381,7 @@ HeatTransfer<dim>::setup_dofs()
     nonzero_constraints.clear();
     nonzero_constraints.reinit(this->locally_owned_dofs,
                                this->locally_relevant_dofs);
-    DoFTools::make_hanging_node_constraints(this->dof_handler,
+    DoFTools::make_hanging_node_constraints(*this->dof_handler,
                                             nonzero_constraints);
 
     for (auto const &[id, type] :
@@ -1391,7 +1391,7 @@ HeatTransfer<dim>::setup_dofs()
         if (type == BoundaryConditions::BoundaryType::temperature)
           {
             VectorTools::interpolate_boundary_values(
-              this->dof_handler,
+              *this->dof_handler,
               id,
               *this->simulation_parameters.boundary_conditions_ht
                  .dirichlet_value.at(id),
@@ -1400,7 +1400,7 @@ HeatTransfer<dim>::setup_dofs()
         if (type == BoundaryConditions::BoundaryType::periodic)
           {
             DoFTools::make_periodicity_constraints(
-              this->dof_handler,
+              *this->dof_handler,
               id,
               this->simulation_parameters.boundary_conditions_ht
                 .periodic_neighbor_id.at(id),
@@ -1427,7 +1427,7 @@ HeatTransfer<dim>::setup_dofs()
     zero_constraints.clear();
     zero_constraints.reinit(this->locally_owned_dofs,
                             this->locally_relevant_dofs);
-    DoFTools::make_hanging_node_constraints(this->dof_handler,
+    DoFTools::make_hanging_node_constraints(*this->dof_handler,
                                             zero_constraints);
 
     for (auto const &[id, type] :
@@ -1436,7 +1436,7 @@ HeatTransfer<dim>::setup_dofs()
         if (type == BoundaryConditions::BoundaryType::temperature)
           {
             VectorTools::interpolate_boundary_values(
-              this->dof_handler,
+              *this->dof_handler,
               id,
               Functions::ZeroFunction<dim>(),
               zero_constraints);
@@ -1444,7 +1444,7 @@ HeatTransfer<dim>::setup_dofs()
         if (type == BoundaryConditions::BoundaryType::periodic)
           {
             DoFTools::make_periodicity_constraints(
-              this->dof_handler,
+              *this->dof_handler,
               id,
               this->simulation_parameters.boundary_conditions_ht
                 .periodic_neighbor_id.at(id),
@@ -1458,7 +1458,7 @@ HeatTransfer<dim>::setup_dofs()
 
   // Sparse matrices initialization
   DynamicSparsityPattern dsp(locally_relevant_dofs);
-  DoFTools::make_sparsity_pattern(this->dof_handler,
+  DoFTools::make_sparsity_pattern(*this->dof_handler,
                                   dsp,
                                   nonzero_constraints,
                                   /*keep_constrained_dofs = */ true);
@@ -1473,11 +1473,11 @@ HeatTransfer<dim>::setup_dofs()
                        mpi_communicator);
 
   this->pcout << "   Number of thermal degrees of freedom: "
-              << dof_handler.n_dofs() << std::endl;
+              << dof_handler->n_dofs() << std::endl;
 
   // Provide the heat transfer dof_handler and present solution pointers to the
   // multiphysics interface
-  multiphysics->set_dof_handler(PhysicsID::heat_transfer, &this->dof_handler);
+  multiphysics->set_dof_handler(PhysicsID::heat_transfer, this->dof_handler);
   multiphysics->set_solution(PhysicsID::heat_transfer, &this->present_solution);
   multiphysics->set_previous_solutions(PhysicsID::heat_transfer,
                                        &this->previous_solutions);
@@ -1512,7 +1512,7 @@ HeatTransfer<dim>::update_boundary_conditions()
   nonzero_constraints.clear();
   nonzero_constraints.reinit(this->locally_owned_dofs,
                              this->locally_relevant_dofs);
-  DoFTools::make_hanging_node_constraints(this->dof_handler,
+  DoFTools::make_hanging_node_constraints(*this->dof_handler,
                                           nonzero_constraints);
 
   for (auto const &[id, type] :
@@ -1522,7 +1522,7 @@ HeatTransfer<dim>::update_boundary_conditions()
       if (type == BoundaryConditions::BoundaryType::temperature)
         {
           VectorTools::interpolate_boundary_values(
-            this->dof_handler,
+            *this->dof_handler,
             id,
             *this->simulation_parameters.boundary_conditions_ht.dirichlet_value
                .at(id),
@@ -1531,7 +1531,7 @@ HeatTransfer<dim>::update_boundary_conditions()
       if (type == BoundaryConditions::BoundaryType::periodic)
         {
           DoFTools::make_periodicity_constraints(
-            this->dof_handler,
+            *this->dof_handler,
             id,
             this->simulation_parameters.boundary_conditions_ht
               .periodic_neighbor_id.at(id),
@@ -1548,7 +1548,7 @@ void
 HeatTransfer<dim>::set_initial_conditions()
 {
   VectorTools::interpolate(*this->temperature_mapping,
-                           dof_handler,
+                           *dof_handler,
                            simulation_parameters.initial_condition->temperature,
                            newton_update);
   nonzero_constraints.distribute(newton_update);
@@ -1647,7 +1647,7 @@ HeatTransfer<dim>::postprocess_temperature_statistics(
   const bool                       time_average)
 {
   const unsigned int n_q_points   = this->cell_quadrature->size();
-  const MPI_Comm mpi_communicator = this->dof_handler.get_mpi_communicator();
+  const MPI_Comm mpi_communicator = this->dof_handler->get_mpi_communicator();
 
   // Initialize heat transfer information
   std::vector<double> local_temperature_values(n_q_points);
@@ -1657,13 +1657,16 @@ HeatTransfer<dim>::postprocess_temperature_statistics(
                              update_values | update_JxW_values);
 
   // Initialize VOF information
-  const DoFHandler<dim>         *dof_handler_vof = nullptr;
-  std::shared_ptr<FEValues<dim>> fe_values_vof;
-  std::vector<double>            filtered_phase_values(n_q_points);
+  std::shared_ptr<const DoFHandler<dim>> dof_handler_vof;
+  std::shared_ptr<FEValues<dim>>         fe_values_vof;
+  std::vector<double>                    filtered_phase_values(n_q_points);
 
   if (gather_vof)
     {
-      dof_handler_vof = this->multiphysics->get_dof_handler(PhysicsID::VOF);
+      dof_handler_vof = std::shared_ptr<const DoFHandler<dim>>(
+        &this->multiphysics->get_dof_handler(PhysicsID::VOF),
+        [](const DoFHandler<dim> *) {});
+      ;
       fe_values_vof =
         std::make_shared<FEValues<dim>>(*this->temperature_mapping,
                                         dof_handler_vof->get_fe(),
@@ -1683,7 +1686,7 @@ HeatTransfer<dim>::postprocess_temperature_statistics(
   bool point_is_in_postprocessed_fluid(false);
 
   // Calculate min, max and average
-  for (const auto &cell : this->dof_handler.active_cell_iterators())
+  for (const auto &cell : this->dof_handler->active_cell_iterators())
     {
       if (cell->is_locally_owned())
         {
@@ -1710,7 +1713,7 @@ HeatTransfer<dim>::postprocess_temperature_statistics(
                 &(*(this->triangulation)),
                 cell->level(),
                 cell->index(),
-                dof_handler_vof);
+                &(*dof_handler_vof));
 
               // Gather VOF information
               fe_values_vof->reinit(cell_vof);
@@ -1753,7 +1756,7 @@ HeatTransfer<dim>::postprocess_temperature_statistics(
 
   // Calculate standard deviation
   double temperature_variance_integral = 0;
-  for (const auto &cell : this->dof_handler.active_cell_iterators())
+  for (const auto &cell : this->dof_handler->active_cell_iterators())
     {
       if (cell->is_locally_owned())
         {
@@ -1779,7 +1782,7 @@ HeatTransfer<dim>::postprocess_temperature_statistics(
                 &(*(this->triangulation)),
                 cell->level(),
                 cell->index(),
-                dof_handler_vof);
+                &(*dof_handler_vof));
 
               // Gather VOF information
               fe_values_vof->reinit(cell_vof);
@@ -1867,7 +1870,7 @@ void
 HeatTransfer<dim>::postprocess_liquid_fraction(const bool gather_vof)
 {
   const unsigned int n_q_points   = this->cell_quadrature->size();
-  const MPI_Comm mpi_communicator = this->dof_handler.get_mpi_communicator();
+  const MPI_Comm mpi_communicator = this->dof_handler->get_mpi_communicator();
 
   // Initialize heat transfer information
   std::vector<double> local_temperature_values(n_q_points);
@@ -1877,9 +1880,9 @@ HeatTransfer<dim>::postprocess_liquid_fraction(const bool gather_vof)
                              update_values | update_JxW_values);
 
   // Initialize VOF information
-  const DoFHandler<dim>         *dof_handler_vof = nullptr;
-  std::shared_ptr<FEValues<dim>> fe_values_vof;
-  std::vector<double>            filtered_phase_values(n_q_points);
+  std::shared_ptr<const DoFHandler<dim>> dof_handler_vof;
+  std::shared_ptr<FEValues<dim>>         fe_values_vof;
+  std::vector<double>                    filtered_phase_values(n_q_points);
 
   // Get the raw physical properties parameters to calculate the liquid fraction
   // in-situ
@@ -1889,7 +1892,9 @@ HeatTransfer<dim>::postprocess_liquid_fraction(const bool gather_vof)
 
   if (gather_vof)
     {
-      dof_handler_vof = this->multiphysics->get_dof_handler(PhysicsID::VOF);
+      dof_handler_vof = std::shared_ptr<const DoFHandler<dim>>(
+        &this->multiphysics->get_dof_handler(PhysicsID::VOF),
+        [](const DoFHandler<dim> *) {});
       fe_values_vof =
         std::make_shared<FEValues<dim>>(*this->temperature_mapping,
                                         dof_handler_vof->get_fe(),
@@ -1902,7 +1907,7 @@ HeatTransfer<dim>::postprocess_liquid_fraction(const bool gather_vof)
   double liquid_volume_integral(0.);
 
   // Calculate min, max and average
-  for (const auto &cell : this->dof_handler.active_cell_iterators())
+  for (const auto &cell : this->dof_handler->active_cell_iterators())
     {
       if (cell->is_locally_owned())
         {
@@ -1918,7 +1923,7 @@ HeatTransfer<dim>::postprocess_liquid_fraction(const bool gather_vof)
                 &(*(this->triangulation)),
                 cell->level(),
                 cell->index(),
-                dof_handler_vof);
+                &(*dof_handler_vof));
 
               // Gather VOF information
               fe_values_vof->reinit(cell_vof);
@@ -2026,36 +2031,38 @@ HeatTransfer<dim>::postprocess_heat_flux_on_bc(
   const VectorType &current_solution_fd)
 {
   const unsigned int n_q_points_face = this->face_quadrature->size();
-  const MPI_Comm mpi_communicator    = this->dof_handler.get_mpi_communicator();
+  const MPI_Comm mpi_communicator = this->dof_handler->get_mpi_communicator();
 
   // Initialize heat transfer information
   std::vector<double>         local_temperature_values(n_q_points_face);
   std::vector<Tensor<1, dim>> temperature_gradient(n_q_points_face);
   FEFaceValues<dim>           fe_face_values_ht(*this->temperature_mapping,
-                                      this->dof_handler.get_fe(),
+                                      this->dof_handler->get_fe(),
                                       *this->face_quadrature,
                                       update_values | update_gradients |
                                         update_JxW_values |
                                         update_normal_vectors);
 
   // Initialize fluid dynamics information
-  const DoFHandler<dim> *dof_handler_fd =
+  const DoFHandler<dim> &dof_handler_fd =
     multiphysics->get_dof_handler(PhysicsID::fluid_dynamics);
   const FEValuesExtractors::Vector velocities(0);
   std::vector<Tensor<1, dim>>      local_velocity_values(n_q_points_face);
   FEFaceValues<dim>                fe_face_values_fd(*this->temperature_mapping,
-                                      dof_handler_fd->get_fe(),
+                                      dof_handler_fd.get_fe(),
                                       *this->face_quadrature,
                                       update_values);
 
   // Initialize VOF information
-  DoFHandler<dim>                   *dof_handler_vof = nullptr;
-  std::shared_ptr<FEFaceValues<dim>> fe_face_values_vof;
-  std::vector<double>                filtered_phase_values(n_q_points_face);
+  std::shared_ptr<const DoFHandler<dim>> dof_handler_vof;
+  std::shared_ptr<FEFaceValues<dim>>     fe_face_values_vof;
+  std::vector<double>                    filtered_phase_values(n_q_points_face);
 
   if (gather_vof)
     {
-      dof_handler_vof = this->multiphysics->get_dof_handler(PhysicsID::VOF);
+      dof_handler_vof = std::shared_ptr<const DoFHandler<dim>>(
+        &this->multiphysics->get_dof_handler(PhysicsID::VOF),
+        [](const DoFHandler<dim> *) {});
       fe_face_values_vof =
         std::make_shared<FEFaceValues<dim>>(*this->temperature_mapping,
                                             dof_handler_vof->get_fe(),
@@ -2127,7 +2134,7 @@ HeatTransfer<dim>::postprocess_heat_flux_on_bc(
   std::map<types::boundary_id, double> convective_flux;
 
   // Get vector of heat transfer boundary conditions
-  for (const auto &cell : this->dof_handler.active_cell_iterators())
+  for (const auto &cell : this->dof_handler->active_cell_iterators())
     {
       if (cell->is_locally_owned() && cell->at_boundary())
         {
@@ -2161,7 +2168,7 @@ HeatTransfer<dim>::postprocess_heat_flux_on_bc(
                     &(*(this->triangulation)),
                     cell->level(),
                     cell->index(),
-                    dof_handler_fd);
+                    &dof_handler_fd);
 
                   // Gather fluid dynamics information
                   fe_face_values_fd.reinit(cell_fd, face);
@@ -2175,7 +2182,7 @@ HeatTransfer<dim>::postprocess_heat_flux_on_bc(
                         &(*(this->triangulation)),
                         cell->level(),
                         cell->index(),
-                        dof_handler_vof);
+                        &(*dof_handler_vof));
 
                       // Gather VOF information
                       fe_face_values_vof->reinit(cell_vof, face);
@@ -2306,34 +2313,36 @@ HeatTransfer<dim>::postprocess_thermal_energy_in_fluid(
   const VectorType                &current_solution_fd)
 {
   const unsigned int n_q_points   = this->cell_quadrature->size();
-  const MPI_Comm mpi_communicator = this->dof_handler.get_mpi_communicator();
+  const MPI_Comm mpi_communicator = this->dof_handler->get_mpi_communicator();
 
   // Initialize heat transfer information
   std::vector<double>         local_temperature_values(n_q_points);
   std::vector<Tensor<1, dim>> temperature_gradient(n_q_points);
   FEValues<dim>               fe_values_ht(*this->temperature_mapping,
-                             this->dof_handler.get_fe(),
+                             this->dof_handler->get_fe(),
                              *this->cell_quadrature,
                              update_values | update_JxW_values);
 
   // Initialize fluid dynamics information
-  const DoFHandler<dim> *dof_handler_fd =
+  const DoFHandler<dim> &dof_handler_fd =
     multiphysics->get_dof_handler(PhysicsID::fluid_dynamics);
   const FEValuesExtractors::Vector velocities(0);
   std::vector<Tensor<1, dim>>      local_velocity_values(n_q_points);
   FEValues<dim>                    fe_values_fd(*this->temperature_mapping,
-                             dof_handler_fd->get_fe(),
+                             dof_handler_fd.get_fe(),
                              *this->cell_quadrature,
                              update_values);
 
   // Initialize VOF information
-  const DoFHandler<dim>         *dof_handler_vof = nullptr;
-  std::shared_ptr<FEValues<dim>> fe_values_vof;
-  std::vector<double>            filtered_phase_values(n_q_points);
+  std::shared_ptr<const DoFHandler<dim>> dof_handler_vof;
+  std::shared_ptr<FEValues<dim>>         fe_values_vof;
+  std::vector<double>                    filtered_phase_values(n_q_points);
 
   if (gather_vof)
     {
-      dof_handler_vof = this->multiphysics->get_dof_handler(PhysicsID::VOF);
+      dof_handler_vof = std::shared_ptr<const DoFHandler<dim>>(
+        &this->multiphysics->get_dof_handler(PhysicsID::VOF),
+        [](const DoFHandler<dim> *) {});
       fe_values_vof =
         std::make_shared<FEValues<dim>>(*this->temperature_mapping,
                                         dof_handler_vof->get_fe(),
@@ -2394,7 +2403,7 @@ HeatTransfer<dim>::postprocess_thermal_energy_in_fluid(
   double heat_in_domain(0.);
 
   // Integrate on all domain
-  for (const auto &cell : this->dof_handler.active_cell_iterators())
+  for (const auto &cell : this->dof_handler->active_cell_iterators())
     {
       if (cell->is_locally_owned())
         {
@@ -2408,7 +2417,7 @@ HeatTransfer<dim>::postprocess_thermal_energy_in_fluid(
             &(*(this->triangulation)),
             cell->level(),
             cell->index(),
-            dof_handler_fd);
+            &dof_handler_fd);
 
           // Gather fluid dynamics information
           fe_values_fd.reinit(cell_fd);
@@ -2422,7 +2431,7 @@ HeatTransfer<dim>::postprocess_thermal_energy_in_fluid(
                 &(*(this->triangulation)),
                 cell->level(),
                 cell->index(),
-                dof_handler_vof);
+                &(*dof_handler_vof));
 
               // Gather VOF information
               fe_values_vof->reinit(cell_vof);

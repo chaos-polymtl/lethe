@@ -425,7 +425,7 @@ public:
    *
    * @param physics_id The physics of the DOF handler being requested
    */
-  DoFHandler<dim> *
+  const DoFHandler<dim> &
   get_dof_handler(const PhysicsID physics_id)
   {
     AssertThrow((std::find(active_physics.begin(),
@@ -433,7 +433,7 @@ public:
                            physics_id) != active_physics.end()),
                 ExcInternalError());
 
-    return physics_dof_handler[physics_id];
+    return *physics_dof_handler[physics_id];
   }
 
   /**
@@ -601,14 +601,17 @@ public:
   }
 
   /**
-   * @brief Sets the reference to the DOFHandler of the physics in the multiphysics interface
+   * @brief Sets the reference to the DOFHandler of the physics in the
+   * multiphysics interface
    *
    * @param physics_id The physics of the DOF handler being requested
    *
-   * @param dof_handler The dof handler for which the reference is stored
+   * @param dof_handler Shared pointer to the dof handler for which the
+   * reference is stored
    */
   void
-  set_dof_handler(const PhysicsID physics_id, DoFHandler<dim> *dof_handler)
+  set_dof_handler(const PhysicsID                  physics_id,
+                  std::shared_ptr<DoFHandler<dim>> dof_handler)
   {
     AssertThrow((std::find(active_physics.begin(),
                            active_physics.end(),
@@ -841,7 +844,7 @@ private:
     block_physics;
 
 
-  std::map<PhysicsID, DoFHandler<dim> *> physics_dof_handler;
+  std::map<PhysicsID, std::shared_ptr<DoFHandler<dim>>> physics_dof_handler;
 
   std::vector<std::shared_ptr<SolidBase<dim, dim>>> *solids;
 

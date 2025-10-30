@@ -33,7 +33,7 @@ VolumeOfFluid<dim>::VolumeOfFluid(
   , simulation_parameters(p_simulation_parameters)
   , triangulation(p_triangulation)
   , simulation_control(std::move(p_simulation_control))
-  , dof_handler(*triangulation)
+  , dof_handler(std::make_shared<DoFHandler<dim>>(*triangulation))
   , sharpening_threshold(simulation_parameters.multiphysics.vof_parameters
                            .regularization_method.sharpening.threshold)
 {
@@ -89,7 +89,7 @@ VolumeOfFluid<dim>::VolumeOfFluid(
 
   // Allocate solution transfer
   solution_transfer =
-    std::make_shared<SolutionTransfer<dim, GlobalVectorType>>(dof_handler);
+    std::make_shared<SolutionTransfer<dim, GlobalVectorType>>(*dof_handler);
 
   // Set size of previous solutions using BDF schemes information
   previous_solutions.resize(maximum_number_of_previous_solutions());
@@ -99,7 +99,7 @@ VolumeOfFluid<dim>::VolumeOfFluid(
   for (unsigned int i = 0; i < previous_solutions.size(); ++i)
     {
       previous_solutions_transfer.emplace_back(
-        SolutionTransfer<dim, GlobalVectorType>(this->dof_handler));
+        SolutionTransfer<dim, GlobalVectorType>(*this->dof_handler));
     }
 
   // Check the value of interface sharpness
@@ -224,7 +224,7 @@ template <int dim>
 void
 VolumeOfFluid<dim>::assemble_system_matrix_cg()
 {
-  const DoFHandler<dim> *dof_handler_fd =
+  const DoFHandler<dim> &dof_handler_fd =
     multiphysics->get_dof_handler(PhysicsID::fluid_dynamics);
 
   auto scratch_data =
@@ -234,10 +234,10 @@ VolumeOfFluid<dim>::assemble_system_matrix_cg()
                         *this->cell_quadrature,
                         *this->face_quadrature,
                         *this->mapping,
-                        dof_handler_fd->get_fe());
+                        dof_handler_fd.get_fe());
 
-  WorkStream::run(this->dof_handler.begin_active(),
-                  this->dof_handler.end(),
+  WorkStream::run(this->dof_handler->begin_active(),
+                  this->dof_handler->end(),
                   *this,
                   &VolumeOfFluid::assemble_local_system_matrix,
                   &VolumeOfFluid::copy_local_matrix_to_global_matrix,
@@ -253,7 +253,7 @@ template <int dim>
 void
 VolumeOfFluid<dim>::assemble_system_matrix_dg()
 {
-  const DoFHandler<dim> *dof_handler_fluid =
+  const DoFHandler<dim> &dof_handler_fluid =
     multiphysics->get_dof_handler(PhysicsID::fluid_dynamics);
 
   auto scratch_data =
@@ -263,7 +263,7 @@ VolumeOfFluid<dim>::assemble_system_matrix_dg()
                         *this->cell_quadrature,
                         *this->face_quadrature,
                         *this->mapping,
-                        dof_handler_fluid->get_fe());
+                        dof_handler_fluid.get_fe());
 
   StabilizedDGMethodsCopyData copy_data(this->fe->n_dofs_per_cell(),
                                         this->cell_quadrature->size());
@@ -314,7 +314,7 @@ VolumeOfFluid<dim>::assemble_system_matrix_dg()
       // Gather velocity information at the face to advect properly
       // Get the cell that corresponds to the fluid dynamics
       typename DoFHandler<dim>::active_cell_iterator velocity_cell(
-        &(*triangulation), cell->level(), cell->index(), dof_handler_fluid);
+        &(*triangulation), cell->level(), cell->index(), &dof_handler_fluid);
 
       // Reinit the internal face velocity within the scratch data
       reinit_face_velocity_with_adequate_solution(velocity_cell,
@@ -337,8 +337,8 @@ VolumeOfFluid<dim>::assemble_system_matrix_dg()
       }
   };
 
-  MeshWorker::mesh_loop(this->dof_handler.begin_active(),
-                        this->dof_handler.end(),
+  MeshWorker::mesh_loop(this->dof_handler->begin_active(),
+                        this->dof_handler->end(),
                         cell_worker,
                         copier,
                         scratch_data,
@@ -365,11 +365,11 @@ VolumeOfFluid<dim>::assemble_local_system_matrix(
 
   scratch_data.reinit(cell, this->evaluation_point, this->previous_solutions);
 
-  const DoFHandler<dim> *dof_handler_fd =
+  const DoFHandler<dim> &dof_handler_fd =
     multiphysics->get_dof_handler(PhysicsID::fluid_dynamics);
 
   typename DoFHandler<dim>::active_cell_iterator velocity_cell(
-    &(*this->triangulation), cell->level(), cell->index(), dof_handler_fd);
+    &(*this->triangulation), cell->level(), cell->index(), &dof_handler_fd);
 
   if (multiphysics->fluid_dynamics_is_block())
     {
@@ -474,7 +474,7 @@ template <int dim>
 void
 VolumeOfFluid<dim>::assemble_system_rhs_cg()
 {
-  const DoFHandler<dim> *dof_handler_fd =
+  const DoFHandler<dim> &dof_handler_fd =
     multiphysics->get_dof_handler(PhysicsID::fluid_dynamics);
 
   auto scratch_data =
@@ -484,10 +484,10 @@ VolumeOfFluid<dim>::assemble_system_rhs_cg()
                         *this->cell_quadrature,
                         *this->face_quadrature,
                         *this->mapping,
-                        dof_handler_fd->get_fe());
+                        dof_handler_fd.get_fe());
 
-  WorkStream::run(this->dof_handler.begin_active(),
-                  this->dof_handler.end(),
+  WorkStream::run(this->dof_handler->begin_active(),
+                  this->dof_handler->end(),
                   *this,
                   &VolumeOfFluid::assemble_local_system_rhs,
                   &VolumeOfFluid::copy_local_rhs_to_global_rhs,
@@ -502,7 +502,7 @@ template <int dim>
 void
 VolumeOfFluid<dim>::assemble_system_rhs_dg()
 {
-  const DoFHandler<dim> *dof_handler_fluid =
+  const DoFHandler<dim> &dof_handler_fluid =
     multiphysics->get_dof_handler(PhysicsID::fluid_dynamics);
 
   auto scratch_data =
@@ -512,7 +512,7 @@ VolumeOfFluid<dim>::assemble_system_rhs_dg()
                         *this->cell_quadrature,
                         *this->face_quadrature,
                         *this->mapping,
-                        dof_handler_fluid->get_fe());
+                        dof_handler_fluid.get_fe());
 
   StabilizedDGMethodsCopyData copy_data(this->fe->n_dofs_per_cell(),
                                         this->cell_quadrature->size());
@@ -558,11 +558,11 @@ VolumeOfFluid<dim>::assemble_system_rhs_dg()
 
     // Gather velocity information at the face to advect properly.
     // First gather the dof handler for the fluid dynamics.
-    const DoFHandler<dim> *dof_handler_fluid =
+    const DoFHandler<dim> &dof_handler_fluid =
       multiphysics->get_dof_handler(PhysicsID::fluid_dynamics);
     // Get the cell that corresponds to the fluid dynamics
     typename DoFHandler<dim>::active_cell_iterator velocity_cell(
-      &(*triangulation), cell->level(), cell->index(), dof_handler_fluid);
+      &(*triangulation), cell->level(), cell->index(), &dof_handler_fluid);
 
     reinit_face_velocity_with_adequate_solution(velocity_cell,
                                                 face_no,
@@ -583,8 +583,8 @@ VolumeOfFluid<dim>::assemble_system_rhs_dg()
       }
   };
 
-  MeshWorker::mesh_loop(this->dof_handler.begin_active(),
-                        this->dof_handler.end(),
+  MeshWorker::mesh_loop(this->dof_handler->begin_active(),
+                        this->dof_handler->end(),
                         cell_worker,
                         copier,
                         scratch_data,
@@ -610,11 +610,11 @@ VolumeOfFluid<dim>::assemble_local_system_rhs(
 
   scratch_data.reinit(cell, this->evaluation_point, this->previous_solutions);
 
-  const DoFHandler<dim> *dof_handler_fd =
+  const DoFHandler<dim> &dof_handler_fd =
     multiphysics->get_dof_handler(PhysicsID::fluid_dynamics);
 
   typename DoFHandler<dim>::active_cell_iterator velocity_cell(
-    &(*this->triangulation), cell->level(), cell->index(), dof_handler_fd);
+    &(*this->triangulation), cell->level(), cell->index(), &dof_handler_fd);
 
   if (multiphysics->fluid_dynamics_is_block())
     {
@@ -711,7 +711,7 @@ VolumeOfFluid<dim>::gather_output_hook()
   // Phase fraction
   solution_output_structs.emplace_back(
     std::in_place_type<OutputStructSolution<dim, GlobalVectorType>>,
-    this->dof_handler,
+    *this->dof_handler,
     this->present_solution,
     solution_names,
     solution_component_interpretation);
@@ -723,7 +723,7 @@ VolumeOfFluid<dim>::gather_output_hook()
       1, DataComponentInterpretation::component_is_scalar);
   solution_output_structs.emplace_back(
     std::in_place_type<OutputStructSolution<dim, GlobalVectorType>>,
-    this->dof_handler,
+    *this->dof_handler,
     this->filtered_solution,
     filtered_solution_names,
     filtered_solution_component_interpretation);
@@ -779,7 +779,7 @@ VolumeOfFluid<dim>::gather_output_hook()
           signed_distance_solver->setup_dofs();
 
           signed_distance_solver->set_level_set_from_background_mesh(
-            dof_handler, this->present_solution);
+            *dof_handler, this->present_solution);
 
           signed_distance_solver->solve();
         }
@@ -817,7 +817,7 @@ VolumeOfFluid<dim>::calculate_L2_error()
 
   double l2error = 0.;
 
-  for (const auto &cell : this->dof_handler.active_cell_iterators())
+  for (const auto &cell : this->dof_handler->active_cell_iterators())
     {
       if (cell->is_locally_owned())
         {
@@ -859,11 +859,11 @@ VolumeOfFluid<dim>::calculate_barycenter(const GlobalVectorType &solution,
     VolumeOfFluidFilterBase::model_cast(
       this->simulation_parameters.multiphysics.vof_parameters.phase_filter);
 
-  const DoFHandler<dim> *dof_handler_fd =
+  const DoFHandler<dim> &dof_handler_fd =
     multiphysics->get_dof_handler(PhysicsID::fluid_dynamics);
 
   FEValues<dim> fe_values_fd(*this->mapping,
-                             dof_handler_fd->get_fe(),
+                             dof_handler_fd.get_fe(),
                              *this->cell_quadrature,
                              update_values);
 
@@ -881,7 +881,7 @@ VolumeOfFluid<dim>::calculate_barycenter(const GlobalVectorType &solution,
 
   std::map<field, std::vector<double>> fields;
 
-  for (const auto &cell : this->dof_handler.active_cell_iterators())
+  for (const auto &cell : this->dof_handler->active_cell_iterators())
     {
       if (cell->is_locally_owned())
         {
@@ -894,7 +894,7 @@ VolumeOfFluid<dim>::calculate_barycenter(const GlobalVectorType &solution,
             &(*(this->triangulation)),
             cell->level(),
             cell->index(),
-            dof_handler_fd);
+            &dof_handler_fd);
 
           fe_values_fd.reinit(cell_fd);
           fe_values_fd[velocity].get_function_values(solution_fd,
@@ -963,12 +963,12 @@ VolumeOfFluid<dim>::calculate_volume_and_mass(
                               *this->cell_quadrature,
                               update_values | update_JxW_values);
 
-  const DoFHandler<dim> *dof_handler_fd =
+  const DoFHandler<dim> &dof_handler_fd =
     multiphysics->get_dof_handler(PhysicsID::fluid_dynamics);
-  QGauss<dim> quadrature_formula(dof_handler_fd->get_fe().degree + 1);
+  QGauss<dim> quadrature_formula(dof_handler_fd.get_fe().degree + 1);
 
   FEValues<dim> fe_values_fd(*this->mapping,
-                             dof_handler_fd->get_fe(),
+                             dof_handler_fd.get_fe(),
                              quadrature_formula,
                              update_values);
 
@@ -991,7 +991,7 @@ VolumeOfFluid<dim>::calculate_volume_and_mass(
   fields.insert(
     std::pair<field, std::vector<double>>(field::pressure, n_q_points));
 
-  for (const auto &cell_vof : this->dof_handler.active_cell_iterators())
+  for (const auto &cell_vof : this->dof_handler->active_cell_iterators())
     {
       if (cell_vof->is_locally_owned())
         {
@@ -1006,7 +1006,7 @@ VolumeOfFluid<dim>::calculate_volume_and_mass(
                 &(*(this->triangulation)),
                 cell_vof->level(),
                 cell_vof->index(),
-                dof_handler_fd);
+                &dof_handler_fd);
 
               fe_values_fd.reinit(cell_fd);
               fe_values_fd[pressure].get_function_values(current_solution_fd,
@@ -1067,11 +1067,11 @@ VolumeOfFluid<dim>::calculate_momentum(
                               *this->cell_quadrature,
                               update_values | update_JxW_values);
 
-  const DoFHandler<dim> *dof_handler_fd =
+  const DoFHandler<dim> &dof_handler_fd =
     multiphysics->get_dof_handler(PhysicsID::fluid_dynamics);
 
   FEValues<dim> fe_values_fd(*this->mapping,
-                             dof_handler_fd->get_fe(),
+                             dof_handler_fd.get_fe(),
                              *this->cell_quadrature,
                              update_values);
 
@@ -1095,7 +1095,7 @@ VolumeOfFluid<dim>::calculate_momentum(
   fields.insert(
     std::pair<field, std::vector<double>>(field::pressure, n_q_points));
 
-  for (const auto &cell_vof : this->dof_handler.active_cell_iterators())
+  for (const auto &cell_vof : this->dof_handler->active_cell_iterators())
     {
       if (cell_vof->is_locally_owned())
         {
@@ -1107,7 +1107,7 @@ VolumeOfFluid<dim>::calculate_momentum(
             &(*(this->triangulation)),
             cell_vof->level(),
             cell_vof->index(),
-            dof_handler_fd);
+            &dof_handler_fd);
           fe_values_fd.reinit(cell_fd);
 
           fe_values_fd[velocity].get_function_values(current_solution_fd,
@@ -1272,7 +1272,7 @@ VolumeOfFluid<dim>::postprocess(bool first_iteration)
         {
           std::tie(geometric_volume_outside, surface) =
             InterfaceTools::compute_surface_and_volume(
-              dof_handler, *fe, this->present_solution, 0.5, mpi_communicator);
+              *dof_handler, *fe, this->present_solution, 0.5, mpi_communicator);
 
           // Compute geometric inside volume (fluid 1)
           const double global_volume =
@@ -1687,7 +1687,7 @@ VolumeOfFluid<dim>::modify_solution()
     {
       this->vof_subequations_interface
         ->set_vof_filtered_solution_and_dof_handler(this->filtered_solution,
-                                                    this->dof_handler);
+                                                    *this->dof_handler);
       this->vof_subequations_interface->solve_specific_subequation(
         VOFSubequationsID::phase_gradient_projection);
       this->vof_subequations_interface->solve_specific_subequation(
@@ -1971,7 +1971,7 @@ VolumeOfFluid<dim>::assemble_projection_phase_fraction(
     this->simulation_parameters.initial_condition
       ->projection_step_diffusion_factor;
 
-  for (const auto &cell : this->dof_handler.active_cell_iterators())
+  for (const auto &cell : this->dof_handler->active_cell_iterators())
     {
       if (cell->is_locally_owned())
         {
@@ -2154,7 +2154,7 @@ VolumeOfFluid<dim>::compute_kelly(
 
       KellyErrorEstimator<dim>::estimate(
         *this->mapping,
-        this->dof_handler,
+        *this->dof_handler,
         *this->face_quadrature,
         typename std::map<types::boundary_id, const Function<dim, double> *>(),
         this->present_solution,
@@ -2206,7 +2206,7 @@ VolumeOfFluid<dim>::write_checkpoint()
   std::vector<const GlobalVectorType *> sol_set_transfer;
 
   solution_transfer =
-    std::make_shared<SolutionTransfer<dim, GlobalVectorType>>(dof_handler);
+    std::make_shared<SolutionTransfer<dim, GlobalVectorType>>(*dof_handler);
 
   sol_set_transfer.emplace_back(&this->present_solution);
   for (const auto &previous_solution : this->previous_solutions)
@@ -2290,13 +2290,13 @@ VolumeOfFluid<dim>::setup_dofs()
   // Setup DoFs for all active subequations
   this->vof_subequations_interface->setup_dofs();
 
-  this->dof_handler.distribute_dofs(*this->fe);
-  DoFRenumbering::Cuthill_McKee(this->dof_handler);
+  this->dof_handler->distribute_dofs(*this->fe);
+  DoFRenumbering::Cuthill_McKee(*this->dof_handler);
 
-  this->locally_owned_dofs = this->dof_handler.locally_owned_dofs();
+  this->locally_owned_dofs = this->dof_handler->locally_owned_dofs();
 
   this->locally_relevant_dofs =
-    DoFTools::extract_locally_relevant_dofs(this->dof_handler);
+    DoFTools::extract_locally_relevant_dofs(*this->dof_handler);
 
   this->present_solution.reinit(this->locally_owned_dofs,
                                 this->locally_relevant_dofs,
@@ -2334,14 +2334,14 @@ VolumeOfFluid<dim>::setup_dofs()
   DynamicSparsityPattern dsp(this->locally_relevant_dofs);
   if (simulation_parameters.fem_parameters.VOF_uses_dg)
     {
-      DoFTools::make_flux_sparsity_pattern(this->dof_handler,
+      DoFTools::make_flux_sparsity_pattern(*this->dof_handler,
                                            dsp,
                                            nonzero_constraints,
                                            /*keep_constrained_dofs = */ true);
     }
   else
     {
-      DoFTools::make_sparsity_pattern(this->dof_handler,
+      DoFTools::make_sparsity_pattern(*this->dof_handler,
                                       dsp,
                                       nonzero_constraints,
                                       /*keep_constrained_dofs = */ false);
@@ -2389,11 +2389,11 @@ VolumeOfFluid<dim>::setup_dofs()
                              mpi_communicator);
 
   this->pcout << "   Number of VOF degrees of freedom: "
-              << this->dof_handler.n_dofs() << std::endl;
+              << this->dof_handler->n_dofs() << std::endl;
 
   // Provide the VOF dof_handler and solution pointers to the
   // multiphysics interface
-  multiphysics->set_dof_handler(PhysicsID::VOF, &this->dof_handler);
+  multiphysics->set_dof_handler(PhysicsID::VOF, this->dof_handler);
   multiphysics->set_solution(PhysicsID::VOF, &this->present_solution);
   multiphysics->set_filtered_solution(PhysicsID::VOF, &this->filtered_solution);
   multiphysics->set_previous_solutions(PhysicsID::VOF,
@@ -2445,7 +2445,7 @@ VolumeOfFluid<dim>::define_zero_constraints()
   this->zero_constraints.reinit(this->locally_owned_dofs,
                                 this->locally_relevant_dofs);
 
-  DoFTools::make_hanging_node_constraints(this->dof_handler,
+  DoFTools::make_hanging_node_constraints(*this->dof_handler,
                                           this->zero_constraints);
 
   for (auto const &[id, type] :
@@ -2454,7 +2454,7 @@ VolumeOfFluid<dim>::define_zero_constraints()
       if (type == BoundaryConditions::BoundaryType::vof_dirichlet)
         {
           VectorTools::interpolate_boundary_values(
-            this->dof_handler,
+            *this->dof_handler,
             id,
             Functions::ZeroFunction<dim>(),
             this->zero_constraints);
@@ -2462,7 +2462,7 @@ VolumeOfFluid<dim>::define_zero_constraints()
       if (type == BoundaryConditions::BoundaryType::periodic)
         {
           DoFTools::make_periodicity_constraints(
-            this->dof_handler,
+            *this->dof_handler,
             id,
             this->simulation_parameters.boundary_conditions_vof
               .periodic_neighbor_id.at(id),
@@ -2484,7 +2484,7 @@ VolumeOfFluid<dim>::define_non_zero_constraints()
     nonzero_constraints.reinit(this->locally_owned_dofs,
                                this->locally_relevant_dofs);
 
-    DoFTools::make_hanging_node_constraints(this->dof_handler,
+    DoFTools::make_hanging_node_constraints(*this->dof_handler,
                                             nonzero_constraints);
 
     for (auto const &[id, type] :
@@ -2493,7 +2493,7 @@ VolumeOfFluid<dim>::define_non_zero_constraints()
         if (type == BoundaryConditions::BoundaryType::vof_dirichlet)
           {
             VectorTools::interpolate_boundary_values(
-              this->dof_handler,
+              *this->dof_handler,
               id,
               *this->simulation_parameters.boundary_conditions_vof
                  .phase_fraction.at(id),
@@ -2502,7 +2502,7 @@ VolumeOfFluid<dim>::define_non_zero_constraints()
         if (type == BoundaryConditions::BoundaryType::periodic)
           {
             DoFTools::make_periodicity_constraints(
-              this->dof_handler,
+              *this->dof_handler,
               id,
               this->simulation_parameters.boundary_conditions_vof
                 .periodic_neighbor_id.at(id),
@@ -2521,7 +2521,7 @@ void
 VolumeOfFluid<dim>::set_initial_conditions()
 {
   VectorTools::interpolate(*this->mapping,
-                           this->dof_handler,
+                           *this->dof_handler,
                            simulation_parameters.initial_condition->VOF,
                            this->newton_update);
   this->nonzero_constraints.distribute(this->newton_update);
@@ -2565,7 +2565,7 @@ VolumeOfFluid<dim>::set_initial_conditions()
     {
       this->vof_subequations_interface
         ->set_vof_filtered_solution_and_dof_handler(this->filtered_solution,
-                                                    this->dof_handler);
+                                                    *this->dof_handler);
       this->vof_subequations_interface->solve_specific_subequation(
         VOFSubequationsID::phase_gradient_projection);
       this->vof_subequations_interface->solve_specific_subequation(
@@ -2701,16 +2701,16 @@ VolumeOfFluid<dim>::update_solution_and_constraints(GlobalVectorType &solution)
 
   this->bounding_constraints.clear();
 
-  std::vector<bool> dof_touched(this->dof_handler.n_dofs(), false);
+  std::vector<bool> dof_touched(this->dof_handler->n_dofs(), false);
 
-  for (const auto &cell : this->dof_handler.active_cell_iterators())
+  for (const auto &cell : this->dof_handler->active_cell_iterators())
     {
       if (cell->is_locally_owned())
         {
           for (unsigned int v = 0; v < GeometryInfo<dim>::vertices_per_cell;
                ++v)
             {
-              Assert(this->dof_handler.get_fe().dofs_per_cell ==
+              Assert(this->dof_handler->get_fe().dofs_per_cell ==
                        GeometryInfo<dim>::vertices_per_cell,
                      ExcNotImplemented());
               const unsigned int dof_index = cell->vertex_dof_index(v, 0);
@@ -2781,7 +2781,7 @@ VolumeOfFluid<dim>::assemble_L2_projection_interface_sharpening(
   system_rhs_phase_fraction    = 0;
   system_matrix_phase_fraction = 0;
 
-  for (const auto &cell : this->dof_handler.active_cell_iterators())
+  for (const auto &cell : this->dof_handler->active_cell_iterators())
     {
       if (cell->is_locally_owned())
         {
@@ -2930,7 +2930,7 @@ VolumeOfFluid<dim>::assemble_mass_matrix(
   const unsigned int n_q_points    = quadrature_formula.size();
   FullMatrix<double> cell_matrix(dofs_per_cell, dofs_per_cell);
   std::vector<types::global_dof_index> local_dof_indices(dofs_per_cell);
-  for (const auto &cell : this->dof_handler.active_cell_iterators())
+  for (const auto &cell : this->dof_handler->active_cell_iterators())
     {
       if (cell->is_locally_owned())
         {
@@ -3011,7 +3011,7 @@ VolumeOfFluid<dim>::reinitialize_interface_with_algebraic_method()
       // Set VOF information in the VOF subequations interface
       this->vof_subequations_interface
         ->set_vof_filtered_solution_and_dof_handler(previous_filtered_solution,
-                                                    this->dof_handler);
+                                                    *this->dof_handler);
       this->vof_subequations_interface->set_vof_solution(
         this->previous_solutions[0]);
 
@@ -3025,7 +3025,7 @@ VolumeOfFluid<dim>::reinitialize_interface_with_algebraic_method()
           VOFSubequationsID::algebraic_interface_reinitialization),
         this->vof_subequations_interface->get_solution(
           VOFSubequationsID::algebraic_interface_reinitialization),
-        this->dof_handler,
+        *this->dof_handler,
         this->nonzero_constraints,
         previous_reinitialized_solution_owned);
       this->previous_solutions[0] = previous_reinitialized_solution_owned;
@@ -3035,7 +3035,7 @@ VolumeOfFluid<dim>::reinitialize_interface_with_algebraic_method()
   // interface
   apply_phase_filter(this->present_solution, this->filtered_solution);
   this->vof_subequations_interface->set_vof_filtered_solution_and_dof_handler(
-    this->filtered_solution, this->dof_handler);
+    this->filtered_solution, *this->dof_handler);
   this->vof_subequations_interface->set_vof_solution(this->present_solution);
 
   // Solve phase gradient and curvature projections followed by algebraic
@@ -3048,7 +3048,7 @@ VolumeOfFluid<dim>::reinitialize_interface_with_algebraic_method()
       VOFSubequationsID::algebraic_interface_reinitialization),
     this->vof_subequations_interface->get_solution(
       VOFSubequationsID::algebraic_interface_reinitialization),
-    this->dof_handler,
+    *this->dof_handler,
     this->nonzero_constraints,
     this->local_evaluation_point);
   this->present_solution = this->local_evaluation_point;
@@ -3122,7 +3122,7 @@ VolumeOfFluid<dim>::reinitialize_interface_with_geometric_method()
         .frequency != 1)
     {
       signed_distance_solver->set_level_set_from_background_mesh(
-        dof_handler, this->previous_solutions[0]);
+        *dof_handler, this->previous_solutions[0]);
 
       signed_distance_solver->solve();
 
@@ -3131,7 +3131,7 @@ VolumeOfFluid<dim>::reinitialize_interface_with_geometric_method()
 
       FETools::interpolate(signed_distance_solver->dof_handler,
                            signed_distance_solver->get_signed_distance(),
-                           this->dof_handler,
+                           *this->dof_handler,
                            this->nonzero_constraints,
                            previous_level_set_owned);
 
@@ -3148,7 +3148,7 @@ VolumeOfFluid<dim>::reinitialize_interface_with_geometric_method()
                 << std::endl;
 
   signed_distance_solver->set_level_set_from_background_mesh(
-    dof_handler, this->present_solution);
+    *dof_handler, this->present_solution);
 
   signed_distance_solver->solve();
 
@@ -3156,7 +3156,7 @@ VolumeOfFluid<dim>::reinitialize_interface_with_geometric_method()
 
   FETools::interpolate(signed_distance_solver->dof_handler,
                        signed_distance_solver->get_signed_distance(),
-                       this->dof_handler,
+                       *this->dof_handler,
                        this->nonzero_constraints,
                        level_set_owned);
 

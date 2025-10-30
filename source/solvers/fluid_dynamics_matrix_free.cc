@@ -2588,7 +2588,7 @@ FluidDynamicsMatrixFree<dim>::FluidDynamicsMatrixFree(
 template <int dim>
 FluidDynamicsMatrixFree<dim>::~FluidDynamicsMatrixFree()
 {
-  this->dof_handler.clear();
+  this->dof_handler->clear();
 }
 
 template <int dim>
@@ -2758,7 +2758,7 @@ FluidDynamicsMatrixFree<dim>::solve()
           if (this->simulation_parameters.multiphysics.buoyancy_force)
             this->system_operator->compute_buoyancy_term(
               temperature_present_solution,
-              *this->multiphysics->get_dof_handler(PhysicsID::heat_transfer));
+              this->multiphysics->get_dof_handler(PhysicsID::heat_transfer));
         }
 
       this->iterate();
@@ -2790,13 +2790,13 @@ FluidDynamicsMatrixFree<dim>::setup_dofs_fd()
   this->system_operator->clear();
 
   // Fill the dof handler and initialize vectors
-  this->dof_handler.distribute_dofs(*this->fe);
-  DoFRenumbering::Cuthill_McKee(this->dof_handler);
+  this->dof_handler->distribute_dofs(*this->fe);
+  DoFRenumbering::Cuthill_McKee(*this->dof_handler);
 
   if (this->simulation_parameters.linear_solver.at(PhysicsID::fluid_dynamics)
         .preconditioner == Parameters::LinearSolver::PreconditionerType::lsmg)
     {
-      this->dof_handler.distribute_mg_dofs();
+      this->dof_handler->distribute_mg_dofs();
 
       // To use elements with linear interpolation for coarse-grid we need to
       // have another dof handler with the appropriate element type
@@ -2807,7 +2807,7 @@ FluidDynamicsMatrixFree<dim>::setup_dofs_fd()
           this->dof_handler_fe_q_iso_q1.reinit(*this->triangulation);
 
           const auto points =
-            QGaussLobatto<1>(this->dof_handler.get_fe().degree + 1)
+            QGaussLobatto<1>(this->dof_handler->get_fe().degree + 1)
               .get_points();
 
           this->dof_handler_fe_q_iso_q1.distribute_dofs(
@@ -2817,9 +2817,9 @@ FluidDynamicsMatrixFree<dim>::setup_dofs_fd()
         }
     }
 
-  this->locally_owned_dofs = this->dof_handler.locally_owned_dofs();
+  this->locally_owned_dofs = this->dof_handler->locally_owned_dofs();
   this->locally_relevant_dofs =
-    DoFTools::extract_locally_relevant_dofs(this->dof_handler);
+    DoFTools::extract_locally_relevant_dofs(*this->dof_handler);
 
   // If enabled, rotate rotor mapping
   this->rotate_rotor_mapping(false);
@@ -2853,7 +2853,7 @@ FluidDynamicsMatrixFree<dim>::setup_dofs_fd()
   unsigned int mg_level = numbers::invalid_unsigned_int;
   this->system_operator->reinit(
     *this->get_mapping(),
-    this->dof_handler,
+    *this->dof_handler,
     this->zero_constraints,
     *this->cell_quadrature,
     this->forcing_function,
@@ -2915,7 +2915,7 @@ FluidDynamicsMatrixFree<dim>::setup_dofs_fd()
   this->pcout << "   Number of active cells:       "
               << this->triangulation->n_global_active_cells() << std::endl
               << "   Number of degrees of freedom: "
-              << this->dof_handler.n_dofs() << std::endl;
+              << this->dof_handler->n_dofs() << std::endl;
   this->pcout << "   Volume of triangulation:      " << global_volume
               << std::endl;
 
@@ -2994,21 +2994,21 @@ FluidDynamicsMatrixFree<dim>::reinit_mortar_operators_mf()
     std::make_shared<MortarManagerCircle<dim>>(
       *this->cell_quadrature,
       *this->get_mapping(),
-      this->dof_handler,
+      *this->dof_handler,
       this->simulation_parameters.mortar_parameters);
 
   // Create mortar coupling evaluator
   this->system_operator->mortar_coupling_evaluator_mf =
     std::make_shared<NavierStokesCouplingEvaluation<dim, double>>(
       *this->get_mapping(),
-      this->dof_handler,
+      *this->dof_handler,
       this->physical_properties_manager->get_rheology()
         ->get_kinematic_viscosity());
 
   this->system_operator->mortar_coupling_operator_mf =
     std::make_shared<CouplingOperator<dim, double>>(
       *this->get_mapping(),
-      this->dof_handler,
+      *this->dof_handler,
       this->zero_constraints,
       this->system_operator->mortar_coupling_evaluator_mf,
       this->system_operator->mortar_manager_mf,
@@ -3266,7 +3266,7 @@ FluidDynamicsMatrixFree<dim>::create_GMG()
 {
   gmg_preconditioner = std::make_shared<MFNavierStokesPreconditionGMG<dim>>(
     this->simulation_parameters,
-    this->dof_handler,
+    *this->dof_handler,
     this->dof_handler_fe_q_iso_q1);
 
   gmg_preconditioner->reinit(this->get_mapping(),
@@ -3284,7 +3284,7 @@ FluidDynamicsMatrixFree<dim>::initialize_GMG()
   // Initialize everything related to heat transfer within the MG algorithm
   if (this->simulation_parameters.multiphysics.buoyancy_force)
     dynamic_cast<MFNavierStokesPreconditionGMG<dim> *>(gmg_preconditioner.get())
-      ->initialize_auxiliary_physics(*this->multiphysics->get_dof_handler(
+      ->initialize_auxiliary_physics(this->multiphysics->get_dof_handler(
                                        PhysicsID::heat_transfer),
                                      this->temperature_present_solution);
 
@@ -3393,7 +3393,7 @@ FluidDynamicsMatrixFree<dim>::update_solutions_for_multiphysics()
 
   // Provide the fluid dynamics dof_handler to the multiphysics interface
   this->multiphysics->set_dof_handler(PhysicsID::fluid_dynamics,
-                                      &this->dof_handler);
+                                      this->dof_handler);
 
   // Convert the present solution to multiphysics vector type and provide it
   // to the multiphysics interface
@@ -3456,7 +3456,7 @@ FluidDynamicsMatrixFree<dim>::update_solutions_for_fluid_dynamics()
 
 #ifndef LETHE_USE_LDV
       const auto &heat_dof_handler =
-        *this->multiphysics->get_dof_handler(PhysicsID::heat_transfer);
+        this->multiphysics->get_dof_handler(PhysicsID::heat_transfer);
 
       // Copy solution to temporary vector
       TrilinosWrappers::MPI::Vector temp_heat_solution;

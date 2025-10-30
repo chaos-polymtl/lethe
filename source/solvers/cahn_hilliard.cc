@@ -99,7 +99,7 @@ CahnHilliard<dim>::assemble_system_matrix()
   this->system_matrix = 0;
   setup_assemblers();
 
-  const DoFHandler<dim> *dof_handler_fluid =
+  const DoFHandler<dim> &dof_handler_fluid =
     multiphysics->get_dof_handler(PhysicsID::fluid_dynamics);
 
   auto scratch_data = CahnHilliardScratchData<dim>(
@@ -107,11 +107,11 @@ CahnHilliard<dim>::assemble_system_matrix()
     *this->fe,
     *this->cell_quadrature,
     *this->mapping,
-    dof_handler_fluid->get_fe(),
+    dof_handler_fluid.get_fe(),
     *this->face_quadrature);
 
-  WorkStream::run(this->dof_handler.begin_active(),
-                  this->dof_handler.end(),
+  WorkStream::run(this->dof_handler->begin_active(),
+                  this->dof_handler->end(),
                   *this,
                   &CahnHilliard::assemble_local_system_matrix,
                   &CahnHilliard::copy_local_matrix_to_global_matrix,
@@ -141,11 +141,11 @@ CahnHilliard<dim>::assemble_local_system_matrix(
                       this->previous_solutions,
                       &(*source_term));
 
-  const DoFHandler<dim> *dof_handler_fluid =
+  const DoFHandler<dim> &dof_handler_fluid =
     multiphysics->get_dof_handler(PhysicsID::fluid_dynamics);
 
   typename DoFHandler<dim>::active_cell_iterator velocity_cell(
-    &(*triangulation), cell->level(), cell->index(), dof_handler_fluid);
+    &(*triangulation), cell->level(), cell->index(), &dof_handler_fluid);
 
   if (multiphysics->fluid_dynamics_is_block())
     {
@@ -196,7 +196,7 @@ CahnHilliard<dim>::assemble_system_rhs()
   this->system_rhs = 0;
   setup_assemblers();
 
-  const DoFHandler<dim> *dof_handler_fluid =
+  const DoFHandler<dim> &dof_handler_fluid =
     multiphysics->get_dof_handler(PhysicsID::fluid_dynamics);
 
   auto scratch_data = CahnHilliardScratchData<dim>(
@@ -204,11 +204,11 @@ CahnHilliard<dim>::assemble_system_rhs()
     *this->fe,
     *this->cell_quadrature,
     *this->mapping,
-    dof_handler_fluid->get_fe(),
+    dof_handler_fluid.get_fe(),
     *this->face_quadrature);
 
-  WorkStream::run(this->dof_handler.begin_active(),
-                  this->dof_handler.end(),
+  WorkStream::run(this->dof_handler->begin_active(),
+                  this->dof_handler->end(),
                   *this,
                   &CahnHilliard::assemble_local_system_rhs,
                   &CahnHilliard::copy_local_rhs_to_global_rhs,
@@ -238,11 +238,11 @@ CahnHilliard<dim>::assemble_local_system_rhs(
                       this->previous_solutions,
                       &(*source_term));
 
-  const DoFHandler<dim> *dof_handler_fluid =
+  const DoFHandler<dim> &dof_handler_fluid =
     multiphysics->get_dof_handler(PhysicsID::fluid_dynamics);
 
   typename DoFHandler<dim>::active_cell_iterator velocity_cell(
-    &(*triangulation), cell->level(), cell->index(), dof_handler_fluid);
+    &(*triangulation), cell->level(), cell->index(), &dof_handler_fluid);
 
   if (multiphysics->fluid_dynamics_is_block())
     {
@@ -301,7 +301,7 @@ CahnHilliard<dim>::gather_output_hook()
 
   solution_output_structs.emplace_back(
     std::in_place_type<OutputStructSolution<dim, GlobalVectorType>>,
-    dof_handler,
+    *dof_handler,
     present_solution,
     solution_names,
     data_component_interpretation);
@@ -313,7 +313,7 @@ CahnHilliard<dim>::gather_output_hook()
   // Filter phase fraction
   solution_output_structs.emplace_back(
     std::in_place_type<OutputStructSolution<dim, GlobalVectorType>>,
-    dof_handler,
+    *dof_handler,
     filtered_solution,
     solution_names_filtered,
     data_component_interpretation);
@@ -349,7 +349,7 @@ CahnHilliard<dim>::calculate_L2_error()
   double l2_error_phase_order        = 0.;
   double l2_error_chemical_potential = 0.;
 
-  for (const auto &cell : dof_handler.active_cell_iterators())
+  for (const auto &cell : dof_handler->active_cell_iterators())
     {
       if (cell->is_locally_owned())
         {
@@ -420,7 +420,7 @@ CahnHilliard<dim>::calculate_phase_statistics()
   double volume_1(0.);
 
 
-  for (const auto &cell : dof_handler.active_cell_iterators())
+  for (const auto &cell : dof_handler->active_cell_iterators())
     {
       if (cell->is_locally_owned())
         {
@@ -530,7 +530,7 @@ CahnHilliard<dim>::calculate_phase_energy()
         .epsilon :
       GridTools::minimal_cell_diameter(*triangulation);
 
-  for (const auto &cell : dof_handler.active_cell_iterators())
+  for (const auto &cell : dof_handler->active_cell_iterators())
     {
       if (cell->is_locally_owned())
         {
@@ -922,7 +922,7 @@ CahnHilliard<dim>::compute_kelly(
     {
       KellyErrorEstimator<dim>::estimate(
         *this->mapping,
-        this->dof_handler,
+        *this->dof_handler,
         *this->face_quadrature,
         typename std::map<types::boundary_id, const Function<dim, double> *>(),
         present_solution,
@@ -933,7 +933,7 @@ CahnHilliard<dim>::compute_kelly(
     {
       KellyErrorEstimator<dim>::estimate(
         *this->mapping,
-        this->dof_handler,
+        *this->dof_handler,
         *this->face_quadrature,
         typename std::map<types::boundary_id, const Function<dim, double> *>(),
         present_solution,
@@ -989,7 +989,7 @@ CahnHilliard<dim>::write_checkpoint()
   std::vector<const GlobalVectorType *> sol_set_transfer;
 
   solution_transfer =
-    std::make_shared<SolutionTransfer<dim, GlobalVectorType>>(dof_handler);
+    std::make_shared<SolutionTransfer<dim, GlobalVectorType>>(*dof_handler);
 
   sol_set_transfer.emplace_back(&present_solution);
   for (const auto &previous_solution : previous_solutions)
@@ -1048,14 +1048,14 @@ CahnHilliard<dim>::setup_dofs()
 {
   verify_consistency_of_boundary_conditions();
 
-  dof_handler.distribute_dofs(*fe);
-  DoFRenumbering::Cuthill_McKee(this->dof_handler);
+  dof_handler->distribute_dofs(*fe);
+  DoFRenumbering::Cuthill_McKee(*this->dof_handler);
 
   auto mpi_communicator = triangulation->get_mpi_communicator();
 
 
-  locally_owned_dofs    = dof_handler.locally_owned_dofs();
-  locally_relevant_dofs = DoFTools::extract_locally_relevant_dofs(dof_handler);
+  locally_owned_dofs    = dof_handler->locally_owned_dofs();
+  locally_relevant_dofs = DoFTools::extract_locally_relevant_dofs(*dof_handler);
 
   present_solution.reinit(locally_owned_dofs,
                           locally_relevant_dofs,
@@ -1081,7 +1081,7 @@ CahnHilliard<dim>::setup_dofs()
 
   {
     nonzero_constraints.clear();
-    DoFTools::make_hanging_node_constraints(this->dof_handler,
+    DoFTools::make_hanging_node_constraints(*this->dof_handler,
                                             nonzero_constraints);
 
     for (auto const &[id, type] :
@@ -1097,7 +1097,7 @@ CahnHilliard<dim>::setup_dofs()
                       cahn_hilliard_dirichlet_phase_order)
           {
             VectorTools::interpolate_boundary_values(
-              this->dof_handler,
+              *this->dof_handler,
               id,
               CahnHilliardFunctionDefined<dim>(
                 &this->simulation_parameters.boundary_conditions_cahn_hilliard
@@ -1109,7 +1109,7 @@ CahnHilliard<dim>::setup_dofs()
         if (type == BoundaryConditions::BoundaryType::periodic)
           {
             DoFTools::make_periodicity_constraints(
-              this->dof_handler,
+              *this->dof_handler,
               id,
               this->simulation_parameters.boundary_conditions_cahn_hilliard
                 .periodic_neighbor_id.at(id),
@@ -1124,7 +1124,7 @@ CahnHilliard<dim>::setup_dofs()
   // Boundary conditions for Newton correction
   {
     zero_constraints.clear();
-    DoFTools::make_hanging_node_constraints(this->dof_handler,
+    DoFTools::make_hanging_node_constraints(*this->dof_handler,
                                             zero_constraints);
 
     for (auto const &[id, type] :
@@ -1134,7 +1134,7 @@ CahnHilliard<dim>::setup_dofs()
                       cahn_hilliard_dirichlet_phase_order)
           {
             VectorTools::interpolate_boundary_values(
-              this->dof_handler,
+              *this->dof_handler,
               id,
               Functions::ZeroFunction<dim>(2),
               zero_constraints);
@@ -1142,7 +1142,7 @@ CahnHilliard<dim>::setup_dofs()
         if (type == BoundaryConditions::BoundaryType::periodic)
           {
             DoFTools::make_periodicity_constraints(
-              this->dof_handler,
+              *this->dof_handler,
               id,
               this->simulation_parameters.boundary_conditions_cahn_hilliard
                 .periodic_neighbor_id.at(id),
@@ -1157,7 +1157,7 @@ CahnHilliard<dim>::setup_dofs()
 
   // Sparse matrices initialization
   DynamicSparsityPattern dsp(locally_relevant_dofs);
-  DoFTools::make_sparsity_pattern(this->dof_handler,
+  DoFTools::make_sparsity_pattern(*this->dof_handler,
                                   dsp,
                                   nonzero_constraints,
                                   /*keep_constrained_dofs = */ true);
@@ -1172,11 +1172,11 @@ CahnHilliard<dim>::setup_dofs()
                        mpi_communicator);
 
   this->pcout << "   Number of Cahn-Hilliard degrees of freedom: "
-              << dof_handler.n_dofs() << std::endl;
+              << dof_handler->n_dofs() << std::endl;
 
   // Provide the cahn_hilliard dof_handler and present solution pointers to the
   // multiphysics interface
-  multiphysics->set_dof_handler(PhysicsID::cahn_hilliard, &this->dof_handler);
+  multiphysics->set_dof_handler(PhysicsID::cahn_hilliard, this->dof_handler);
   multiphysics->set_solution(PhysicsID::cahn_hilliard, &this->present_solution);
   multiphysics->set_filtered_solution(PhysicsID::cahn_hilliard,
                                       &this->filtered_solution);
@@ -1194,7 +1194,7 @@ CahnHilliard<dim>::update_boundary_conditions()
 
   double time = this->simulation_control->get_current_time();
   nonzero_constraints.clear();
-  DoFTools::make_hanging_node_constraints(this->dof_handler,
+  DoFTools::make_hanging_node_constraints(*this->dof_handler,
                                           nonzero_constraints);
 
   for (auto const &[id, type] :
@@ -1214,7 +1214,7 @@ CahnHilliard<dim>::update_boundary_conditions()
             ->phi.set_time(time);
 
           VectorTools::interpolate_boundary_values(
-            this->dof_handler,
+            *this->dof_handler,
             id,
             CahnHilliardFunctionDefined<dim>(
               &this->simulation_parameters.boundary_conditions_cahn_hilliard
@@ -1226,7 +1226,7 @@ CahnHilliard<dim>::update_boundary_conditions()
       if (type == BoundaryConditions::BoundaryType::periodic)
         {
           DoFTools::make_periodicity_constraints(
-            this->dof_handler,
+            *this->dof_handler,
             id,
             this->simulation_parameters.boundary_conditions_cahn_hilliard
               .periodic_neighbor_id.at(id),
@@ -1251,7 +1251,7 @@ CahnHilliard<dim>::set_initial_conditions()
 
   VectorTools::interpolate(
     *mapping,
-    dof_handler,
+    *dof_handler,
     simulation_parameters.initial_condition->cahn_hilliard,
     newton_update,
     fe->component_mask(phase_order));
@@ -1260,7 +1260,7 @@ CahnHilliard<dim>::set_initial_conditions()
   // later)
   VectorTools::interpolate(
     *mapping,
-    dof_handler,
+    *dof_handler,
     simulation_parameters.initial_condition->cahn_hilliard,
     newton_update,
     fe->component_mask(potential));
@@ -1372,11 +1372,11 @@ CahnHilliard<dim>::calculate_barycenter(const GlobalVectorType &solution,
       this->simulation_parameters.multiphysics.cahn_hilliard_parameters);
 
 
-  const DoFHandler<dim> *dof_handler_fd =
+  const DoFHandler<dim> &dof_handler_fd =
     multiphysics->get_dof_handler(PhysicsID::fluid_dynamics);
 
   FEValues<dim> fe_values_fd(*this->mapping,
-                             dof_handler_fd->get_fe(),
+                             dof_handler_fd.get_fe(),
                              *this->cell_quadrature,
                              update_values);
 
@@ -1396,7 +1396,7 @@ CahnHilliard<dim>::calculate_barycenter(const GlobalVectorType &solution,
 
   std::map<field, std::vector<double>> fields;
 
-  for (const auto &cell : this->dof_handler.active_cell_iterators())
+  for (const auto &cell : this->dof_handler->active_cell_iterators())
     {
       if (cell->is_locally_owned())
         {
@@ -1413,7 +1413,7 @@ CahnHilliard<dim>::calculate_barycenter(const GlobalVectorType &solution,
             &(*(this->triangulation)),
             cell->level(),
             cell->index(),
-            dof_handler_fd);
+            &dof_handler_fd);
 
           fe_values_fd.reinit(cell_fd);
           fe_values_fd[velocity].get_function_values(solution_fd,
@@ -1474,7 +1474,7 @@ CahnHilliard<dim>::apply_phase_filter()
     this->simulation_parameters.multiphysics.cahn_hilliard_parameters);
 
   // Apply filter to solution
-  for (const auto &cell : this->dof_handler.active_cell_iterators())
+  for (const auto &cell : this->dof_handler->active_cell_iterators())
     {
       if (cell->is_locally_owned())
         {
@@ -1534,9 +1534,9 @@ CahnHilliard<dim>::output_newton_update_norms(
     fe->component_mask(chemical_potential);
 
   const std::vector<IndexSet> index_set_phase_order =
-    DoFTools::locally_owned_dofs_per_component(dof_handler, phase_order_mask);
+    DoFTools::locally_owned_dofs_per_component(*dof_handler, phase_order_mask);
   const std::vector<IndexSet> index_set_chemical_potential =
-    DoFTools::locally_owned_dofs_per_component(dof_handler,
+    DoFTools::locally_owned_dofs_per_component(*dof_handler,
                                                chemical_potential_mask);
 
   double local_sum = 0.0;

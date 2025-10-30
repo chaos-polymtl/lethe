@@ -274,7 +274,7 @@ public:
   const DoFHandler<dim> &
   get_dof_handler() override
   {
-    return dof_handler;
+    return *dof_handler;
   }
 
   GlobalVectorType &
@@ -718,7 +718,7 @@ private:
   // Core elements for the VOF simulation
   std::shared_ptr<parallel::DistributedTriangulationBase<dim>> triangulation;
   std::shared_ptr<SimulationControl>  simulation_control;
-  DoFHandler<dim>                     dof_handler;
+  std::shared_ptr<DoFHandler<dim>>    dof_handler;
   std::shared_ptr<FiniteElement<dim>> fe;
   ConvergenceTable                    error_table;
 

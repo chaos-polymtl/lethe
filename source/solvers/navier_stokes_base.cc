@@ -86,8 +86,7 @@ NavierStokesBase<dim, VectorType, DofsType>::NavierStokesBase(
       triangulation =
         std::make_shared<parallel::fullydistributed::Triangulation<dim>>(
           this->mpi_communicator);
-      dof_handler.clear();
-      dof_handler.reinit(*this->triangulation);
+      dof_handler = std::make_shared<DoFHandler<dim>>(*this->triangulation);
     }
   else
     {
@@ -123,8 +122,7 @@ NavierStokesBase<dim, VectorType, DofsType>::NavierStokesBase(
             parallel::distributed::Triangulation<
               dim>::construct_multigrid_hierarchy :
             parallel::distributed::Triangulation<dim>::default_setting);
-      dof_handler.clear();
-      dof_handler.reinit(*this->triangulation);
+      dof_handler = std::make_shared<DoFHandler<dim>>(*this->triangulation);
     }
 
   this->pcout.set_condition(
@@ -204,7 +202,7 @@ NavierStokesBase<dim, VectorType, DofsType>::NavierStokesBase(
         Parameters::FluidDynamicsInitialConditionType::average_velocity_profile)
     average_velocities =
       std::make_shared<AverageVelocities<dim, VectorType, DofsType>>(
-        dof_handler);
+        *dof_handler);
 
   this->pcout << "Running on "
               << Utilities::MPI::n_mpi_processes(this->mpi_communicator)
@@ -224,7 +222,7 @@ NavierStokesBase<dim, VectorType, DofsType>::dynamic_flow_control()
     {
       // Calculate the average velocity
       double average_velocity = calculate_average_velocity(
-        this->dof_handler,
+        *this->dof_handler,
         this->present_solution,
         simulation_parameters.flow_control.boundary_flow_id,
         *this->face_quadrature,
@@ -279,7 +277,7 @@ NavierStokesBase<dim, VectorType, DofsType>::postprocessing_forces(
   TimerOutput::Scope t(this->computing_timer, "Calculate forces");
 
   this->forces_on_boundaries =
-    calculate_forces(this->dof_handler,
+    calculate_forces(*this->dof_handler,
                      evaluation_point,
                      simulation_parameters.physical_properties_manager,
                      simulation_parameters.boundary_conditions,
@@ -415,7 +413,7 @@ NavierStokesBase<dim, VectorType, DofsType>::postprocessing_torques(
   TimerOutput::Scope t(this->computing_timer, "Calculate torques");
 
   std::map<types::boundary_id, Tensor<1, 3>> torques_on_boundaries =
-    calculate_torques(this->dof_handler,
+    calculate_torques(*this->dof_handler,
                       evaluation_point,
                       simulation_parameters.physical_properties_manager,
                       simulation_parameters.boundary_conditions,
@@ -557,7 +555,7 @@ NavierStokesBase<dim, VectorType, DofsType>::finish_time_step()
                            "Calculate CFL and percolate time vectors");
 
       percolate_time_vectors_fd();
-      const double CFL = calculate_CFL(this->dof_handler,
+      const double CFL = calculate_CFL(*this->dof_handler,
                                        this->present_solution,
                                        simulation_control->get_time_step(),
                                        *this->cell_quadrature,
@@ -748,24 +746,24 @@ NavierStokesBase<dim, VectorType, DofsType>::
     }
 
   // For temperature-dependent constraints
-  const DoFHandler<dim> *dof_handler_ht =
+  const DoFHandler<dim> &dof_handler_ht =
     this->multiphysics->get_dof_handler(PhysicsID::heat_transfer);
 
   this->fe_values_temperature =
     std::make_shared<FEValues<dim>>(*this->get_mapping(),
-                                    dof_handler_ht->get_fe(),
+                                    dof_handler_ht.get_fe(),
                                     *this->cell_quadrature,
                                     update_values);
 
   // For VOF simulations
   if (this->simulation_parameters.multiphysics.VOF)
     {
-      const DoFHandler<dim> *dof_handler_vof =
+      const DoFHandler<dim> &dof_handler_vof =
         this->multiphysics->get_dof_handler(PhysicsID::heat_transfer);
 
       this->fe_values_vof =
         std::make_shared<FEValues<dim>>(*this->get_mapping(),
-                                        dof_handler_vof->get_fe(),
+                                        dof_handler_vof.get_fe(),
                                         *this->cell_quadrature,
                                         update_values);
     }
@@ -930,7 +928,7 @@ NavierStokesBase<dim, VectorType, DofsType>::box_refine_mesh(const bool restart)
           std::vector<typename DoFHandler<dim>::active_cell_iterator>
             cell_to_refine;
           cell_to_refine =
-            (LetheGridTools::find_cells_in_cells(this->dof_handler, cell));
+            (LetheGridTools::find_cells_in_cells(*this->dof_handler, cell));
           for (unsigned int j = 0; j < cell_to_refine.size(); ++j)
             {
               cell_to_refine[j]->set_refine_flag();
@@ -940,7 +938,7 @@ NavierStokesBase<dim, VectorType, DofsType>::box_refine_mesh(const bool restart)
       tria.prepare_coarsening_and_refinement();
 
       // Solution transfer objects for all the solutions
-      SolutionTransfer<dim, VectorType> solution_transfer(this->dof_handler,
+      SolutionTransfer<dim, VectorType> solution_transfer(*this->dof_handler,
                                                           true);
       std::vector<SolutionTransfer<dim, VectorType>>
         previous_solutions_transfer;
@@ -949,7 +947,7 @@ NavierStokesBase<dim, VectorType, DofsType>::box_refine_mesh(const bool restart)
       for (unsigned int i = 0; i < previous_solutions.size(); ++i)
         {
           previous_solutions_transfer.emplace_back(
-            SolutionTransfer<dim, VectorType>(this->dof_handler, true));
+            SolutionTransfer<dim, VectorType>(*this->dof_handler, true));
           if constexpr (std::is_same_v<
                           VectorType,
                           LinearAlgebra::distributed::Vector<double>>)
@@ -958,11 +956,11 @@ NavierStokesBase<dim, VectorType, DofsType>::box_refine_mesh(const bool restart)
             previous_solutions[i]);
         }
 
-      SolutionTransfer<dim, VectorType> solution_transfer_m1(this->dof_handler,
+      SolutionTransfer<dim, VectorType> solution_transfer_m1(*this->dof_handler,
                                                              true);
-      SolutionTransfer<dim, VectorType> solution_transfer_m2(this->dof_handler,
+      SolutionTransfer<dim, VectorType> solution_transfer_m2(*this->dof_handler,
                                                              true);
-      SolutionTransfer<dim, VectorType> solution_transfer_m3(this->dof_handler,
+      SolutionTransfer<dim, VectorType> solution_transfer_m3(*this->dof_handler,
                                                              true);
 
       if constexpr (std::is_same_v<VectorType,
@@ -1062,7 +1060,7 @@ NavierStokesBase<dim, VectorType, DofsType>::refine_mesh_kelly()
         {
           KellyErrorEstimator<dim>::estimate(
             *this->get_mapping(),
-            this->dof_handler,
+            *this->dof_handler,
             *this->face_quadrature,
             typename std::map<types::boundary_id,
                               const Function<dim, double> *>(),
@@ -1074,7 +1072,7 @@ NavierStokesBase<dim, VectorType, DofsType>::refine_mesh_kelly()
         {
           KellyErrorEstimator<dim>::estimate(
             *this->get_mapping(),
-            this->dof_handler,
+            *this->dof_handler,
             *this->face_quadrature,
             typename std::map<types::boundary_id,
                               const Function<dim, double> *>(),
@@ -1199,14 +1197,14 @@ NavierStokesBase<dim, VectorType, DofsType>::refine_mesh_kelly()
   tria.prepare_coarsening_and_refinement();
 
   // Solution transfer objects for all the solutions
-  SolutionTransfer<dim, VectorType> solution_transfer(this->dof_handler, true);
+  SolutionTransfer<dim, VectorType> solution_transfer(*this->dof_handler, true);
   std::vector<SolutionTransfer<dim, VectorType>> previous_solutions_transfer;
   // Important to reserve to prevent pointer dangling
   previous_solutions_transfer.reserve(previous_solutions.size());
   for (unsigned int i = 0; i < previous_solutions.size(); ++i)
     {
       previous_solutions_transfer.emplace_back(
-        SolutionTransfer<dim, VectorType>(this->dof_handler, true));
+        SolutionTransfer<dim, VectorType>(*this->dof_handler, true));
       if constexpr (std::is_same_v<VectorType,
                                    LinearAlgebra::distributed::Vector<double>>)
         previous_solutions[i].update_ghost_values();
@@ -1246,10 +1244,10 @@ NavierStokesBase<dim, VectorType, DofsType>::refine_mesh_uniform()
   TimerOutput::Scope t(this->computing_timer, "Refine");
 
   // Solution transfer objects for all the solutions
-  SolutionTransfer<dim, VectorType> solution_transfer(this->dof_handler, true);
-  SolutionTransfer<dim, VectorType> solution_transfer_m2(this->dof_handler,
+  SolutionTransfer<dim, VectorType> solution_transfer(*this->dof_handler, true);
+  SolutionTransfer<dim, VectorType> solution_transfer_m2(*this->dof_handler,
                                                          true);
-  SolutionTransfer<dim, VectorType> solution_transfer_m3(this->dof_handler,
+  SolutionTransfer<dim, VectorType> solution_transfer_m3(*this->dof_handler,
                                                          true);
 
   if constexpr (std::is_same_v<VectorType,
@@ -1266,7 +1264,7 @@ NavierStokesBase<dim, VectorType, DofsType>::refine_mesh_uniform()
   for (unsigned int i = 0; i < previous_solutions.size(); ++i)
     {
       previous_solutions_transfer.emplace_back(
-        SolutionTransfer<dim, VectorType>(this->dof_handler, true));
+        SolutionTransfer<dim, VectorType>(*this->dof_handler, true));
 
       if constexpr (std::is_same_v<VectorType,
                                    LinearAlgebra::distributed::Vector<double>>)
@@ -1347,7 +1345,7 @@ NavierStokesBase<dim, VectorType, DofsType>::postprocess_fd(bool firstIter)
     {
       TimerOutput::Scope t(this->computing_timer, "Calculate enstrophy");
 
-      double enstrophy = calculate_enstrophy(this->dof_handler,
+      double enstrophy = calculate_enstrophy(*this->dof_handler,
                                              present_solution,
                                              *this->cell_quadrature,
                                              *this->get_mapping());
@@ -1386,7 +1384,7 @@ NavierStokesBase<dim, VectorType, DofsType>::postprocess_fd(bool firstIter)
       TimerOutput::Scope t(this->computing_timer, "Calculate pressure power");
 
       const double pressure_power =
-        calculate_pressure_power(this->dof_handler,
+        calculate_pressure_power(*this->dof_handler,
                                  present_solution,
                                  *this->cell_quadrature,
                                  *this->get_mapping());
@@ -1427,7 +1425,7 @@ NavierStokesBase<dim, VectorType, DofsType>::postprocess_fd(bool firstIter)
                            "Calculate viscous dissipation");
 
       const double viscous_dissipation = calculate_viscous_dissipation(
-        this->dof_handler,
+        *this->dof_handler,
         present_solution,
         *this->cell_quadrature,
         *this->get_mapping(),
@@ -1482,7 +1480,7 @@ NavierStokesBase<dim, VectorType, DofsType>::postprocess_fd(bool firstIter)
     {
       TimerOutput::Scope t(this->computing_timer, "Calculate kinetic energy");
 
-      double kE = calculate_kinetic_energy(this->dof_handler,
+      double kE = calculate_kinetic_energy(*this->dof_handler,
                                            present_solution,
                                            *this->cell_quadrature,
                                            *this->get_mapping());
@@ -1519,7 +1517,7 @@ NavierStokesBase<dim, VectorType, DofsType>::postprocess_fd(bool firstIter)
                            "Calculate apparent viscosity");
 
       double apparent_viscosity = calculate_apparent_viscosity(
-        this->dof_handler,
+        *this->dof_handler,
         this->present_solution,
         *this->cell_quadrature,
         *this->get_mapping(),
@@ -1561,7 +1559,7 @@ NavierStokesBase<dim, VectorType, DofsType>::postprocess_fd(bool firstIter)
 
       double pressure_drop, total_pressure_drop;
       std::tie(pressure_drop, total_pressure_drop) = calculate_pressure_drop(
-        this->dof_handler,
+        *this->dof_handler,
         *this->get_mapping(),
         this->evaluation_point,
         *this->cell_quadrature,
@@ -1629,7 +1627,7 @@ NavierStokesBase<dim, VectorType, DofsType>::postprocess_fd(bool firstIter)
            simulation_parameters.boundary_conditions.type)
         {
           std::pair<double, double> boundary_flow_rate =
-            calculate_flow_rate(this->dof_handler,
+            calculate_flow_rate(*this->dof_handler,
                                 this->present_solution,
                                 boundary_id,
                                 *this->face_quadrature,
@@ -1719,7 +1717,7 @@ NavierStokesBase<dim, VectorType, DofsType>::postprocess_fd(bool firstIter)
           present_solution.update_ghost_values();
 
           const std::pair<double, double> errors =
-            calculate_L2_error(dof_handler,
+            calculate_L2_error(*dof_handler,
                                present_solution,
                                exact_solution,
                                *this->cell_quadrature,
@@ -1798,12 +1796,12 @@ NavierStokesBase<dim, VectorType, DofsType>::set_nodal_values()
   const FEValuesExtractors::Vector velocities(0);
   const FEValuesExtractors::Scalar pressure(dim);
   VectorTools::interpolate(*this->get_mapping(),
-                           this->dof_handler,
+                           *this->dof_handler,
                            this->simulation_parameters.initial_condition->uvwp,
                            this->newton_update,
                            this->fe->component_mask(velocities));
   VectorTools::interpolate(*this->get_mapping(),
-                           this->dof_handler,
+                           *this->dof_handler,
                            this->simulation_parameters.initial_condition->uvwp,
                            this->newton_update,
                            this->fe->component_mask(pressure));
@@ -1822,13 +1820,13 @@ NavierStokesBase<dim, VectorType, DofsType>::set_nodal_values()
           const FEValuesExtractors::Scalar pressure(dim);
           VectorTools::interpolate(
             *this->get_mapping(),
-            this->dof_handler,
+            *this->dof_handler,
             this->simulation_parameters.initial_condition->uvwp,
             this->newton_update,
             this->fe->component_mask(velocities));
           VectorTools::interpolate(
             *this->get_mapping(),
-            this->dof_handler,
+            *this->dof_handler,
             this->simulation_parameters.initial_condition->uvwp,
             this->newton_update,
             this->fe->component_mask(pressure));
@@ -1853,31 +1851,31 @@ NavierStokesBase<dim, VectorType, DofsType>::define_non_zero_constraints()
     {
       std::vector<unsigned int> block_component(dim + 1, 0);
       block_component[dim] = 1;
-      DoFRenumbering::component_wise(this->dof_handler, block_component);
+      DoFRenumbering::component_wise(*this->dof_handler, block_component);
       std::vector<types::global_dof_index> dofs_per_block =
-        DoFTools::count_dofs_per_fe_block(this->dof_handler, block_component);
+        DoFTools::count_dofs_per_fe_block(*this->dof_handler, block_component);
 
       unsigned int dof_u = dofs_per_block[0];
       unsigned int dof_p = dofs_per_block[1];
 
       IndexSet locally_relevant_dofs_acquisition;
       locally_relevant_dofs_acquisition =
-        DoFTools::extract_locally_relevant_dofs(this->dof_handler);
+        DoFTools::extract_locally_relevant_dofs(*this->dof_handler);
       this->locally_relevant_dofs.resize(2);
       this->locally_relevant_dofs[0] =
         locally_relevant_dofs_acquisition.get_view(0, dof_u);
       this->locally_relevant_dofs[1] =
         locally_relevant_dofs_acquisition.get_view(dof_u, dof_u + dof_p);
-      nonzero_constraints.reinit(this->dof_handler.locally_owned_dofs(),
+      nonzero_constraints.reinit(this->dof_handler->locally_owned_dofs(),
                                  locally_relevant_dofs_acquisition);
     }
   else
     {
-      nonzero_constraints.reinit(this->dof_handler.locally_owned_dofs(),
+      nonzero_constraints.reinit(this->dof_handler->locally_owned_dofs(),
                                  this->locally_relevant_dofs);
     }
 
-  DoFTools::make_hanging_node_constraints(this->dof_handler,
+  DoFTools::make_hanging_node_constraints(*this->dof_handler,
                                           nonzero_constraints);
   for (auto const &[id, type] :
        this->simulation_parameters.boundary_conditions.type)
@@ -1886,7 +1884,7 @@ NavierStokesBase<dim, VectorType, DofsType>::define_non_zero_constraints()
         {
           VectorTools::interpolate_boundary_values(
             *this->get_mapping(),
-            this->dof_handler,
+            *this->dof_handler,
             id,
             dealii::Functions::ZeroFunction<dim>(dim + 1),
             nonzero_constraints,
@@ -1897,7 +1895,7 @@ NavierStokesBase<dim, VectorType, DofsType>::define_non_zero_constraints()
           std::set<types::boundary_id> no_normal_flux_boundaries;
           no_normal_flux_boundaries.insert(id);
           VectorTools::compute_no_normal_flux_constraints(
-            this->dof_handler,
+            *this->dof_handler,
             0,
             no_normal_flux_boundaries,
             nonzero_constraints,
@@ -1917,7 +1915,7 @@ NavierStokesBase<dim, VectorType, DofsType>::define_non_zero_constraints()
             ->w.set_time(time);
           VectorTools::interpolate_boundary_values(
             *this->get_mapping(),
-            this->dof_handler,
+            *this->dof_handler,
             id,
             NavierStokesFunctionDefined<dim>(
               &this->simulation_parameters.boundary_conditions
@@ -1935,7 +1933,7 @@ NavierStokesBase<dim, VectorType, DofsType>::define_non_zero_constraints()
       else if (type == BoundaryConditions::BoundaryType::periodic)
         {
           DoFTools::make_periodicity_constraints(
-            this->dof_handler,
+            *this->dof_handler,
             id,
             this->simulation_parameters.boundary_conditions.periodic_neighbor_id
               .at(id),
@@ -1962,33 +1960,33 @@ NavierStokesBase<dim, VectorType, DofsType>::define_zero_constraints()
     {
       std::vector<unsigned int> block_component(dim + 1, 0);
       block_component[dim] = 1;
-      DoFRenumbering::component_wise(this->dof_handler, block_component);
+      DoFRenumbering::component_wise(*this->dof_handler, block_component);
       std::vector<types::global_dof_index> dofs_per_block =
-        DoFTools::count_dofs_per_fe_block(this->dof_handler, block_component);
+        DoFTools::count_dofs_per_fe_block(*this->dof_handler, block_component);
 
       unsigned int dof_u = dofs_per_block[0];
       unsigned int dof_p = dofs_per_block[1];
 
       IndexSet locally_relevant_dofs_acquisition;
       locally_relevant_dofs_acquisition =
-        DoFTools::extract_locally_relevant_dofs(this->dof_handler);
+        DoFTools::extract_locally_relevant_dofs(*this->dof_handler);
       this->locally_relevant_dofs.resize(2);
       this->locally_relevant_dofs[0] =
         locally_relevant_dofs_acquisition.get_view(0, dof_u);
       this->locally_relevant_dofs[1] =
         locally_relevant_dofs_acquisition.get_view(dof_u, dof_u + dof_p);
-      this->zero_constraints.reinit(this->dof_handler.locally_owned_dofs(),
+      this->zero_constraints.reinit(this->dof_handler->locally_owned_dofs(),
                                     locally_relevant_dofs_acquisition);
     }
   else
     {
       this->locally_relevant_dofs =
-        DoFTools::extract_locally_relevant_dofs(this->dof_handler);
-      this->zero_constraints.reinit(this->dof_handler.locally_owned_dofs(),
+        DoFTools::extract_locally_relevant_dofs(*this->dof_handler);
+      this->zero_constraints.reinit(this->dof_handler->locally_owned_dofs(),
                                     this->locally_relevant_dofs);
     }
 
-  DoFTools::make_hanging_node_constraints(this->dof_handler,
+  DoFTools::make_hanging_node_constraints(*this->dof_handler,
                                           this->zero_constraints);
 
   for (auto const &[id, type] :
@@ -1999,7 +1997,7 @@ NavierStokesBase<dim, VectorType, DofsType>::define_zero_constraints()
         {
           VectorTools::interpolate_boundary_values(
             *this->get_mapping(),
-            this->dof_handler,
+            *this->dof_handler,
             id,
             dealii::Functions::ZeroFunction<dim>(dim + 1),
             this->zero_constraints,
@@ -2010,7 +2008,7 @@ NavierStokesBase<dim, VectorType, DofsType>::define_zero_constraints()
           std::set<types::boundary_id> no_normal_flux_boundaries;
           no_normal_flux_boundaries.insert(id);
           VectorTools::compute_no_normal_flux_constraints(
-            this->dof_handler,
+            *this->dof_handler,
             0,
             no_normal_flux_boundaries,
             this->zero_constraints,
@@ -2020,7 +2018,7 @@ NavierStokesBase<dim, VectorType, DofsType>::define_zero_constraints()
       else if (type == BoundaryConditions::BoundaryType::periodic)
         {
           DoFTools::make_periodicity_constraints(
-            this->dof_handler,
+            *this->dof_handler,
             id,
             this->simulation_parameters.boundary_conditions.periodic_neighbor_id
               .at(id),
@@ -2072,21 +2070,21 @@ NavierStokesBase<dim, VectorType, DofsType>::reinit_mortar_operators()
   this->mortar_manager = std::make_shared<MortarManagerCircle<dim>>(
     *this->cell_quadrature,
     *this->get_mapping(),
-    this->dof_handler,
+    *this->dof_handler,
     this->simulation_parameters.mortar_parameters);
 
   // Create mortar coupling evaluator
   this->mortar_coupling_evaluator =
     std::make_shared<NavierStokesCouplingEvaluation<dim, double>>(
       *this->get_mapping(),
-      this->dof_handler,
+      *this->dof_handler,
       this->simulation_parameters.physical_properties_manager
         .get_kinematic_viscosity_scale());
 
   this->mortar_coupling_operator =
     std::make_shared<CouplingOperator<dim, double>>(
       *this->get_mapping(),
-      this->dof_handler,
+      *this->dof_handler,
       this->zero_constraints,
       this->mortar_coupling_evaluator,
       this->mortar_manager,
@@ -2135,7 +2133,7 @@ NavierStokesBase<dim, VectorType, DofsType>::rotate_rotor_mapping(
     std::make_shared<MappingQCache<dim>>(this->velocity_fem_degree);
 
   LetheGridTools::rotate_mapping(
-    this->dof_handler,
+    *this->dof_handler,
     *this->mapping_cache,
     *this->mapping,
     std::get<1>(compute_n_subdivisions_and_radius(
@@ -2296,7 +2294,7 @@ NavierStokesBase<dim, VectorType, DofsType>::set_solution_from_checkpoint(
                    this->mpi_communicator));
       x_system[i + 1] = &distributed_previous_solutions[i];
     }
-  SolutionTransfer<dim, VectorType> system_trans_vectors(this->dof_handler);
+  SolutionTransfer<dim, VectorType> system_trans_vectors(*this->dof_handler);
 
   if (simulation_parameters.post_processing.calculate_average_velocities ||
       this->simulation_parameters.initial_condition->type ==
@@ -2364,7 +2362,7 @@ NavierStokesBase<dim, VectorType, DofsType>::establish_solid_domain(
   // is used to 1) constraint the velocity degree of freedom to be zero in the
   // solid region and 2) to identify which pressure degrees of freedom are
   // connected to fluid cells
-  for (const auto &cell : dof_handler.active_cell_iterators())
+  for (const auto &cell : dof_handler->active_cell_iterators())
     {
       if (cell->is_locally_owned() || cell->is_ghost())
         {
@@ -2390,7 +2388,7 @@ NavierStokesBase<dim, VectorType, DofsType>::establish_solid_domain(
 
   // All pressure DOFs that are not connected to a fluid cell are constrained
   // to ensure that the system matrix has adequate conditioning.
-  for (const auto &cell : dof_handler.active_cell_iterators())
+  for (const auto &cell : dof_handler->active_cell_iterators())
     {
       if (cell->is_locally_owned() || cell->is_ghost())
         {
@@ -2447,7 +2445,7 @@ NavierStokesBase<dim, VectorType, DofsType>::constrain_stasis_with_temperature(
     *this->multiphysics->get_solution(PhysicsID::heat_transfer);
   std::vector<double> local_temperature_values(this->cell_quadrature->size());
 
-  for (const auto &cell : dof_handler.active_cell_iterators())
+  for (const auto &cell : dof_handler->active_cell_iterators())
     {
       if (cell->is_locally_owned() || cell->is_ghost())
         {
@@ -2507,7 +2505,7 @@ NavierStokesBase<dim, VectorType, DofsType>::
   for (StasisConstraintWithTemperature &stasis_constraint_struct :
        this->stasis_constraint_structs)
     {
-      for (const auto &cell : dof_handler.active_cell_iterators())
+      for (const auto &cell : dof_handler->active_cell_iterators())
         {
           if (cell->is_locally_owned() || cell->is_ghost())
             {
@@ -2607,13 +2605,16 @@ NavierStokesBase<dim, VectorType, DofsType>::gather_output_results(
     DataComponentInterpretation::component_is_scalar);
 
   OutputStructSolution<dim, VectorType> solution_fd_struct(
-    this->dof_handler, solution, solution_names, data_component_interpretation);
+    *this->dof_handler,
+    solution,
+    solution_names,
+    data_component_interpretation);
 
   // Add the interpretation of the solution to the output structs
   // using in_place_type to save memory allocation and avoid unnecessary copies
   solution_output_structs.emplace_back(
     std::in_place_type<OutputStructSolution<dim, VectorType>>,
-    this->dof_handler,
+    *this->dof_handler,
     solution,
     solution_names,
     data_component_interpretation);
@@ -2636,7 +2637,7 @@ NavierStokesBase<dim, VectorType, DofsType>::gather_output_results(
         DataComponentInterpretation::component_is_scalar);
       solution_output_structs.emplace_back(
         std::in_place_type<OutputStructSolution<dim, VectorType>>,
-        this->dof_handler,
+        *this->dof_handler,
         this->average_velocities->get_average_velocities(),
         average_solution_names,
         average_data_component_interpretation);
@@ -2674,7 +2675,7 @@ NavierStokesBase<dim, VectorType, DofsType>::gather_output_results(
 
       solution_output_structs.emplace_back(
         std::in_place_type<OutputStructSolution<dim, VectorType>>,
-        this->dof_handler,
+        *this->dof_handler,
         this->average_velocities->get_reynolds_normal_stresses(),
         reynolds_normal_stress_names,
         reynolds_normal_stress_data_component_interpretation);
@@ -2689,7 +2690,7 @@ NavierStokesBase<dim, VectorType, DofsType>::gather_output_results(
     std::make_shared<QCriterionPostprocessor<dim>>();
   solution_output_structs.emplace_back(
     std::in_place_type<OutputStructPostprocessor<dim, VectorType>>,
-    this->dof_handler,
+    *this->dof_handler,
     solution,
     qcriterion);
 
@@ -2697,7 +2698,7 @@ NavierStokesBase<dim, VectorType, DofsType>::gather_output_results(
     std::make_shared<DivergencePostprocessor<dim>>();
   solution_output_structs.emplace_back(
     std::in_place_type<OutputStructPostprocessor<dim, VectorType>>,
-    this->dof_handler,
+    *this->dof_handler,
     solution,
     divergence);
 
@@ -2705,7 +2706,7 @@ NavierStokesBase<dim, VectorType, DofsType>::gather_output_results(
     std::make_shared<VorticityPostprocessor<dim>>();
   solution_output_structs.emplace_back(
     std::in_place_type<OutputStructPostprocessor<dim, VectorType>>,
-    this->dof_handler,
+    *this->dof_handler,
     solution,
     vorticity);
 
@@ -2752,7 +2753,7 @@ NavierStokesBase<dim, VectorType, DofsType>::gather_output_results(
           this->simulation_parameters.multiphysics.cahn_hilliard)
         solution_output_structs.emplace_back(
           std::in_place_type<OutputStructPostprocessor<dim, VectorType>>,
-          this->dof_handler,
+          *this->dof_handler,
           solution,
           density_postprocessors[f_id]);
 
@@ -2761,7 +2762,7 @@ NavierStokesBase<dim, VectorType, DofsType>::gather_output_results(
         {
           solution_output_structs.emplace_back(
             std::in_place_type<OutputStructPostprocessor<dim, VectorType>>,
-            this->dof_handler,
+            *this->dof_handler,
             solution,
             kinematic_viscosity_postprocessors[f_id]);
 
@@ -2770,7 +2771,7 @@ NavierStokesBase<dim, VectorType, DofsType>::gather_output_results(
               this->simulation_parameters.multiphysics.cahn_hilliard)
             solution_output_structs.emplace_back(
               std::in_place_type<OutputStructPostprocessor<dim, VectorType>>,
-              this->dof_handler,
+              *this->dof_handler,
               solution,
               kinematic_viscosity_postprocessors[f_id]);
         }
@@ -2783,7 +2784,7 @@ NavierStokesBase<dim, VectorType, DofsType>::gather_output_results(
         std::make_shared<ShearRatePostprocessor<dim>>();
       solution_output_structs.emplace_back(
         std::in_place_type<OutputStructPostprocessor<dim, VectorType>>,
-        this->dof_handler,
+        *this->dof_handler,
         solution,
         shear_rate_processor);
     }
@@ -2796,7 +2797,7 @@ NavierStokesBase<dim, VectorType, DofsType>::gather_output_results(
       Parameters::VelocitySource::RotatingFrameType::srf)
     solution_output_structs.emplace_back(
       std::in_place_type<OutputStructPostprocessor<dim, VectorType>>,
-      this->dof_handler,
+      *this->dof_handler,
       solution,
       std::make_shared<SRFPostprocessor<dim>>(srf));
 
@@ -2846,7 +2847,7 @@ NavierStokesBase<dim, VectorType, DofsType>::write_output_results(
   data_out.set_flags(flags);
 
   // Attach DoF handler to data output object
-  data_out.attach_dof_handler(this->dof_handler);
+  data_out.attach_dof_handler(*this->dof_handler);
 
   // Fill data out object with solutions in structs
   for (const auto &solution_output_struct : solution_output_structs)
@@ -2966,7 +2967,7 @@ NavierStokesBase<dim, VectorType, DofsType>::write_output_results(
       data_out_faces.set_flags(flags);
 
       BoundaryPostprocessor<dim> boundary_id;
-      data_out_faces.attach_dof_handler(this->dof_handler);
+      data_out_faces.attach_dof_handler(*this->dof_handler);
       data_out_faces.add_data_vector(solution, boundary_id);
       data_out_faces.build_patches(*this->get_mapping(), subdivision);
 
@@ -3139,7 +3140,7 @@ NavierStokesBase<dim, VectorType, DofsType>::write_checkpoint()
                               av_set_transfer.end());
     }
 
-  SolutionTransfer<dim, VectorType> system_trans_vectors(this->dof_handler);
+  SolutionTransfer<dim, VectorType> system_trans_vectors(*this->dof_handler);
   system_trans_vectors.prepare_for_serialization(sol_set_transfer);
 
   multiphysics->write_checkpoint();
@@ -3176,7 +3177,7 @@ NavierStokesBase<dim, VectorType, DofsType>::
   // Map used to keep track of which DOFs have been looped over
   std::unordered_set<unsigned int> rescaled_dofs_set;
   rescaled_dofs_set.clear();
-  for (const auto &cell : dof_handler.active_cell_iterators())
+  for (const auto &cell : dof_handler->active_cell_iterators())
     {
       if (cell->is_locally_owned() || cell->is_ghost())
         {
@@ -3190,7 +3191,7 @@ NavierStokesBase<dim, VectorType, DofsType>::
                 {
                   const int component_index =
                     this->fe->system_to_component_index(j).first;
-                  if (this->dof_handler.locally_owned_dofs().is_element(
+                  if (this->dof_handler->locally_owned_dofs().is_element(
                         global_id) &&
                       component_index == dim)
                     {
@@ -3224,9 +3225,9 @@ NavierStokesBase<dim, VectorType, DofsType>::output_newton_update_norms(
       ComponentMask pressure_mask = fe->component_mask(pressure);
 
       const std::vector<IndexSet> index_set_velocity =
-        DoFTools::locally_owned_dofs_per_component(dof_handler, velocity_mask);
+        DoFTools::locally_owned_dofs_per_component(*dof_handler, velocity_mask);
       const std::vector<IndexSet> index_set_pressure =
-        DoFTools::locally_owned_dofs_per_component(dof_handler, pressure_mask);
+        DoFTools::locally_owned_dofs_per_component(*dof_handler, pressure_mask);
 
       double local_sum = 0.0;
       double local_max = std::numeric_limits<double>::lowest();
