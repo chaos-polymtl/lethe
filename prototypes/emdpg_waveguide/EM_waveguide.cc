@@ -1868,8 +1868,8 @@ namespace EM_DPG
     // solve_interior.
     if (solve_interior)
       {
-        locally_owned_solution_interior.compress(VectorOperation::insert);
-        locally_owned_residual_estimator.compress(VectorOperation::insert);
+        locally_owned_solution_interior.compress(VectorOperation::add);
+        locally_owned_residual_estimator.compress(VectorOperation::add);
 
         locally_relevant_solution_interior  = locally_owned_solution_interior;
         locally_relevant_residual_estimator = locally_owned_residual_estimator;
