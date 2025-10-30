@@ -1468,6 +1468,10 @@ NavierStokesStabilizedOperator<dim, number>::do_cell_integral_local(
   bool transient =
     (is_bdf(this->simulation_control->get_assembly_method())) ? true : false;
 
+  // To identify whether mortar feature is enabled (use local variable for
+  // efficiency)
+  bool enable_mortar = this->enable_mortar;
+
   const double kinematic_viscosity =
     this->properties_manager->get_rheology()->get_kinematic_viscosity();
 
@@ -1516,7 +1520,7 @@ NavierStokesStabilizedOperator<dim, number>::do_cell_integral_local(
           this->time_derivatives_previous_solutions(cell, q);
 
       Tensor<1, dim, VectorizedArray<number>> u_ale;
-      if (this->enable_mortar)
+      if (enable_mortar)
         u_ale = this->velocity_ale[cell][q];
 
       // Get stabilization parameter
@@ -1540,7 +1544,7 @@ NavierStokesStabilizedOperator<dim, number>::do_cell_integral_local(
                                  previous_gradient[i][k] * value[k];
 
               // -(v, (u_ale·∇)δu)
-              if (this->enable_mortar)
+              if (enable_mortar)
                 value_result[i] -= gradient[i][k] * u_ale[k];
             }
           // +(v,∂t δu)
@@ -1560,7 +1564,7 @@ NavierStokesStabilizedOperator<dim, number>::do_cell_integral_local(
                        previous_gradient[i][k] * value[k]);
 
               // -(u_ale·∇δu)·τ∇q
-              if (this->enable_mortar)
+              if (enable_mortar)
                 gradient_result[dim][i] -= tau * (gradient[i][k] * u_ale[k]);
             }
           // +(∂t δu)·τ∇q
@@ -1585,7 +1589,7 @@ NavierStokesStabilizedOperator<dim, number>::do_cell_integral_local(
                      previous_gradient[i][l] * value[l] -
                      kinematic_viscosity * hessian_diagonal[i][l]);
 
-                  if (this->enable_mortar)
+                  if (enable_mortar)
                     {
                       // -((u_ale·∇)δu)τ(u·∇)v
                       gradient_result[i][k] -=
@@ -1610,7 +1614,7 @@ NavierStokesStabilizedOperator<dim, number>::do_cell_integral_local(
                 gradient_result[i][k] +=
                   tau * previous_values[k] * ((*bdf_coefs)[0] * value[i]);
 
-              if (this->enable_mortar)
+              if (enable_mortar)
                 {
                   // -(∇δp)τ(u_ale·∇)v
                   gradient_result[i][k] -= tau * u_ale[k] * (gradient[dim][i]);
@@ -1630,7 +1634,7 @@ NavierStokesStabilizedOperator<dim, number>::do_cell_integral_local(
                      kinematic_viscosity * previous_hessian_diagonal[i][l]);
 
                   // -((u_ale·∇)u)τ(δu·∇)v
-                  if (this->enable_mortar)
+                  if (enable_mortar)
                     gradient_result[i][k] -=
                       tau * value[k] * previous_gradient[i][l] * u_ale[l];
                 }
@@ -1738,6 +1742,10 @@ NavierStokesStabilizedOperator<dim, number>::local_evaluate_residual(
         (is_bdf(this->simulation_control->get_assembly_method())) ? true :
                                                                     false;
 
+      // To identify whether mortar feature is enabled (use local variable for
+      // efficiency)
+      bool enable_mortar = this->enable_mortar;
+
       // Vector for BDF coefficients
       const Vector<double> *bdf_coefs;
       if (transient)
@@ -1773,7 +1781,7 @@ NavierStokesStabilizedOperator<dim, number>::local_evaluate_residual(
               this->time_derivatives_previous_solutions(cell, q);
 
           Tensor<1, dim, VectorizedArray<number>> u_ale;
-          if (this->enable_mortar)
+          if (enable_mortar)
             u_ale = this->velocity_ale[cell][q];
 
           // Get stabilization parameter
@@ -1810,7 +1818,7 @@ NavierStokesStabilizedOperator<dim, number>::local_evaluate_residual(
                   value_result[i] += gradient[i][k] * value[k];
 
                   // -(v, (u_ale·∇)u)
-                  if (this->enable_mortar)
+                  if (enable_mortar)
                     value_result[i] -= gradient[i][k] * u_ale[k];
                 }
             }
@@ -1826,7 +1834,7 @@ NavierStokesStabilizedOperator<dim, number>::local_evaluate_residual(
                            gradient[i][k] * value[k]);
 
                   // -((u_ale·∇)u)·τ∇q
-                  if (this->enable_mortar)
+                  if (enable_mortar)
                     gradient_result[dim][i] -= tau * gradient[i][k] * u_ale[k];
                 }
               // +(-f)·τ∇q
@@ -1856,7 +1864,7 @@ NavierStokesStabilizedOperator<dim, number>::local_evaluate_residual(
                       gradient_result[i][k] +=
                         tau * value[k] * gradient[i][l] * value[l];
 
-                      if (this->enable_mortar)
+                      if (enable_mortar)
                         {
                           // -((u_ale·∇)u)τ(u·∇)v
                           gradient_result[i][k] -=
@@ -1886,7 +1894,7 @@ NavierStokesStabilizedOperator<dim, number>::local_evaluate_residual(
                                              ((*bdf_coefs)[0] * value[i] +
                                               previous_time_derivatives[i]);
 
-                  if (this->enable_mortar)
+                  if (enable_mortar)
                     {
                       // - (∇p - f)τ(u_ale·∇)v
                       gradient_result[i][k] -=
