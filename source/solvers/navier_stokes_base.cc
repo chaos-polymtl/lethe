@@ -1977,7 +1977,6 @@ NavierStokesBase<dim, VectorType, DofsType>::define_non_zero_constraints()
         {
           std::set<types::boundary_id> no_normal_flux_boundaries;
           no_normal_flux_boundaries.insert(id);
-
           VectorTools::compute_no_normal_flux_constraints(
             this->dof_handler,
             0,
@@ -2091,7 +2090,6 @@ NavierStokesBase<dim, VectorType, DofsType>::define_zero_constraints()
         {
           std::set<types::boundary_id> no_normal_flux_boundaries;
           no_normal_flux_boundaries.insert(id);
-
           VectorTools::compute_no_normal_flux_constraints(
             this->dof_handler,
             0,
