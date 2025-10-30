@@ -132,7 +132,7 @@ public:
   {
     auto &system_rhs = get_system_rhs();
     return system_rhs.l2_norm();
-  };
+  }
 
   /**
    * @brief Return the current newton iteration of this physics solver.
