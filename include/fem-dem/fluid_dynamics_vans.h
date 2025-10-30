@@ -141,6 +141,10 @@ protected:
       ref_iter <
         (this->simulation_parameters.mesh_adaptation.initial_refinement + 1) &&
       restart == false);
+      
+      this->pcout
+    << "---------------------------------------------------------------"
+    << std::endl;
   }
 
   /**
