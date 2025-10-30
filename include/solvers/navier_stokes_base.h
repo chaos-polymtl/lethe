@@ -189,7 +189,7 @@ protected:
   /**
    * @brief Post-process simulation after an iteration
    *
-   * @param first_iteration Indicator if the simulation is at it's first simulation or not.
+   * @param first_iteration Indicator if the simulation is at its first simulation or not.
    */
   virtual void
   postprocess(bool first_iteration)
