@@ -1289,8 +1289,8 @@ CahnHilliard<dim>::solve_linear_system(const bool initial_step,
     simulation_parameters.linear_solver.at(PhysicsID::cahn_hilliard)
       .relative_residual;
 
-  const double normalize_volume = this->get_residual_normalize_volume();
-  const double current_residual = system_rhs.l2_norm() / normalize_volume;
+  const double normalize_metric = this->get_residual_normalization_metric();
+  const double current_residual = system_rhs.l2_norm() / normalize_metric;
   const double linear_solver_tolerance =
     std::max(relative_residual * current_residual, absolute_residual);
   if (this->simulation_parameters.linear_solver.at(PhysicsID::cahn_hilliard)
@@ -1300,7 +1300,7 @@ CahnHilliard<dim>::solve_linear_system(const bool initial_step,
                   << linear_solver_tolerance << std::endl;
     }
   const double non_normalized_linear_solver_tolerance =
-    linear_solver_tolerance * normalize_volume;
+    linear_solver_tolerance * normalize_metric;
 
   const unsigned int ilu_fill = static_cast<unsigned int>(
     simulation_parameters.linear_solver.at(PhysicsID::cahn_hilliard)
@@ -1347,7 +1347,7 @@ CahnHilliard<dim>::solve_linear_system(const bool initial_step,
     {
       this->pcout << "  -Iterative solver took : " << solver_control.last_step()
                   << " steps to reach a residual norm of "
-                  << solver_control.last_value() / normalize_volume
+                  << solver_control.last_value() / normalize_metric
                   << std::endl;
     }
 

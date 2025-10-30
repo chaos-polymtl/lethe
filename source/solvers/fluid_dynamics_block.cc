@@ -987,8 +987,8 @@ FluidDynamicsBlock<dim>::solve_system_GMRES(const bool   initial_step,
 {
   const AffineConstraints<double> &constraints_used =
     initial_step ? this->nonzero_constraints : this->zero_constraints;
-  const double normalize_volume = this->get_residual_normalize_volume();
-  const double current_residual = this->system_rhs.l2_norm() / normalize_volume;
+  const double normalize_metric = this->get_residual_normalization_metric();
+  const double current_residual = this->system_rhs.l2_norm() / normalize_metric;
   const double linear_solver_tolerance =
     std::max(relative_residual * current_residual, absolute_residual);
   if (this->simulation_parameters.linear_solver.at(PhysicsID::fluid_dynamics)
@@ -998,7 +998,7 @@ FluidDynamicsBlock<dim>::solve_system_GMRES(const bool   initial_step,
                   << linear_solver_tolerance << std::endl;
     }
   const double non_normalized_linear_solver_tolerance =
-    linear_solver_tolerance * normalize_volume;
+    linear_solver_tolerance * normalize_metric;
 
   GlobalBlockVectorType completely_distributed_solution(
     this->locally_owned_dofs, this->mpi_communicator);
@@ -1065,7 +1065,7 @@ FluidDynamicsBlock<dim>::solve_system_GMRES(const bool   initial_step,
         this->pcout << "  -Iterative solver took : "
                     << solver_control.last_step()
                     << " steps to reach a residual norm of "
-                    << solver_control.last_value() / normalize_volume
+                    << solver_control.last_value() / normalize_metric
                     << std::endl;
       }
 
@@ -1086,8 +1086,8 @@ FluidDynamicsBlock<dim>::solve_L2_system(const bool initial_step,
 
   const AffineConstraints<double> &constraints_used =
     initial_step ? nonzero_constraints : this->zero_constraints;
-  const double normalize_volume = this->get_residual_normalize_volume();
-  const double current_residual = this->system_rhs.l2_norm() / normalize_volume;
+  const double normalize_metric = this->get_residual_normalization_metric();
+  const double current_residual = this->system_rhs.l2_norm() / normalize_metric;
   const double linear_solver_tolerance =
     std::max(relative_residual * current_residual, absolute_residual);
   if (this->simulation_parameters.linear_solver.at(PhysicsID::fluid_dynamics)
@@ -1097,7 +1097,7 @@ FluidDynamicsBlock<dim>::solve_L2_system(const bool initial_step,
                   << linear_solver_tolerance << std::endl;
     }
   const double non_normalized_linear_solver_tolerance =
-    linear_solver_tolerance * normalize_volume;
+    linear_solver_tolerance * normalize_metric;
 
   GlobalBlockVectorType completely_distributed_solution(
     this->locally_owned_dofs, this->mpi_communicator);
