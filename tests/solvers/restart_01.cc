@@ -122,7 +122,7 @@ RestartNavierStokes<dim>::run()
   this->simulation_control->print_progression(this->pcout);
   this->iterate();
   this->postprocess_fd(false);
-  auto   errors_p1 = calculate_L2_error(this->dof_handler,
+  auto   errors_p1 = calculate_L2_error(*this->dof_handler,
                                       this->present_solution,
                                       this->exact_solution,
                                       *this->cell_quadrature,
@@ -133,7 +133,7 @@ RestartNavierStokes<dim>::run()
   this->write_checkpoint(); // write_checkpoint needs to be called explicitly
 
   this->present_solution = 0;
-  auto errors_p2         = calculate_L2_error(this->dof_handler,
+  auto errors_p2         = calculate_L2_error(*this->dof_handler,
                                       this->present_solution,
                                       this->exact_solution,
                                       *this->cell_quadrature,
@@ -150,7 +150,7 @@ RestartNavierStokes<dim>::run()
 
   this->set_initial_condition(
     this->simulation_parameters.initial_condition->type, true);
-  auto errors_p3 = calculate_L2_error(this->dof_handler,
+  auto errors_p3 = calculate_L2_error(*this->dof_handler,
                                       this->present_solution,
                                       this->exact_solution,
                                       *this->cell_quadrature,

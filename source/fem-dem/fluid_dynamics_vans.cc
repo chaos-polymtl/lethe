@@ -54,7 +54,7 @@ FluidDynamicsVANS<dim>::FluidDynamicsVANS(
 template <int dim>
 FluidDynamicsVANS<dim>::~FluidDynamicsVANS()
 {
-  this->dof_handler.clear();
+  this->dof_handler->clear();
 }
 
 template <int dim>
@@ -376,10 +376,10 @@ FluidDynamicsVANS<dim>::assemble_system_matrix()
 
     if (this->simulation_parameters.multiphysics.VOF)
       {
-        const DoFHandler<dim> *dof_handler_vof =
+        const DoFHandler<dim> &dof_handler_vof =
           this->multiphysics->get_dof_handler(PhysicsID::VOF);
         scratch_data.enable_vof(
-          dof_handler_vof->get_fe(),
+          dof_handler_vof.get_fe(),
           *this->cell_quadrature,
           *this->mapping,
           this->simulation_parameters.multiphysics.vof_parameters.phase_filter);
@@ -412,8 +412,8 @@ FluidDynamicsVANS<dim>::assemble_system_matrix()
       this->cfd_dem_simulation_parameters.cfd_dem.interpolated_void_fraction);
 
     WorkStream::run(
-      this->dof_handler.begin_active(),
-      this->dof_handler.end(),
+      this->dof_handler->begin_active(),
+      this->dof_handler->end(),
       *this,
       &FluidDynamicsVANS::assemble_local_system_matrix,
       &FluidDynamicsVANS::copy_local_matrix_to_global_matrix,
@@ -451,7 +451,7 @@ FluidDynamicsVANS<dim>::assemble_local_system_matrix(
       phase_cell.emplace(&(*(this->triangulation)),
                          cell->level(),
                          cell->index(),
-                         this->multiphysics->get_dof_handler(PhysicsID::VOF));
+                         &this->multiphysics->get_dof_handler(PhysicsID::VOF));
 
       scratch_data.reinit_vof(
         *phase_cell,
@@ -548,10 +548,10 @@ FluidDynamicsVANS<dim>::assemble_system_rhs()
 
   if (this->simulation_parameters.multiphysics.VOF)
     {
-      const DoFHandler<dim> *dof_handler_vof =
+      const DoFHandler<dim> &dof_handler_vof =
         this->multiphysics->get_dof_handler(PhysicsID::VOF);
       scratch_data.enable_vof(
-        dof_handler_vof->get_fe(),
+        dof_handler_vof.get_fe(),
         *this->cell_quadrature,
         *this->mapping,
         this->simulation_parameters.multiphysics.vof_parameters.phase_filter);
@@ -565,8 +565,8 @@ FluidDynamicsVANS<dim>::assemble_system_rhs()
     this->cfd_dem_simulation_parameters.cfd_dem.interpolated_void_fraction);
 
   WorkStream::run(
-    this->dof_handler.begin_active(),
-    this->dof_handler.end(),
+    this->dof_handler->begin_active(),
+    this->dof_handler->end(),
     *this,
     &FluidDynamicsVANS::assemble_local_system_rhs,
     &FluidDynamicsVANS::copy_local_rhs_to_global_rhs,
@@ -607,7 +607,7 @@ FluidDynamicsVANS<dim>::assemble_local_system_rhs(
       phase_cell.emplace(&(*(this->triangulation)),
                          cell->level(),
                          cell->index(),
-                         this->multiphysics->get_dof_handler(PhysicsID::VOF));
+                         &this->multiphysics->get_dof_handler(PhysicsID::VOF));
 
       scratch_data.reinit_vof(
         *phase_cell,
@@ -762,7 +762,7 @@ FluidDynamicsVANS<dim>::monitor_mass_conservation()
   const Vector<double> &bdf_coefs =
     this->simulation_control->get_bdf_coefficients();
 
-  for (const auto &cell : this->dof_handler.active_cell_iterators())
+  for (const auto &cell : this->dof_handler->active_cell_iterators())
     {
       if (cell->is_locally_owned())
         {

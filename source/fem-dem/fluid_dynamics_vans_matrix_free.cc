@@ -684,7 +684,7 @@ FluidDynamicsVANSMatrixFree<dim>::solve()
 
         particle_projector.calculate_particle_fluid_forces_projection(
           this->cfd_dem_simulation_parameters.cfd_dem,
-          this->dof_handler,
+          *this->dof_handler,
           this->present_solution,
           this->previous_solutions,
           NavierStokesScratchData<dim>(
@@ -746,7 +746,7 @@ FluidDynamicsVANSMatrixFree<dim>::create_GMG()
   this->gmg_preconditioner =
     std::make_shared<MFNavierStokesVANSPreconditionGMG<dim>>(
       this->cfd_dem_simulation_parameters,
-      this->dof_handler,
+      *this->dof_handler,
       this->dof_handler_fe_q_iso_q1);
 
   this->gmg_preconditioner->reinit(this->mapping,
