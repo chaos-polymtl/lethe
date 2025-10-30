@@ -1,5 +1,6 @@
 # SPDX-FileCopyrightText: Copyright (c) 2025 The Lethe Authors
 # SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
+# Checks the global coarsening multigrid preconditioner for a mortar Taylor-Couette example.
 
 # Listing of Parameters
 #----------------------
