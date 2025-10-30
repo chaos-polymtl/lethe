@@ -1250,12 +1250,12 @@ CFDDEMSolver<dim>::postprocess_fd(bool first_iteration)
     {
       write_dem_output_results();
     }
-  if (! first_iteration) 
-  {
-    this->pcout
-    << "---------------------------------------------------------------"
-    << std::endl;
-  } 
+  if (!first_iteration)
+    {
+      this->pcout
+        << "---------------------------------------------------------------"
+        << std::endl;
+    }
 }
 
 template <int dim>

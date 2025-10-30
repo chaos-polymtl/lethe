@@ -122,7 +122,7 @@ protected:
   void
   set_initial_condition(
     const Parameters::FluidDynamicsInitialConditionType initial_condition_type,
-    const bool                                          restart = false) override
+    const bool restart = false) override
   {
     unsigned int ref_iter = 0;
     do
@@ -141,10 +141,10 @@ protected:
       ref_iter <
         (this->simulation_parameters.mesh_adaptation.initial_refinement + 1) &&
       restart == false);
-      
-      this->pcout
-    << "---------------------------------------------------------------"
-    << std::endl;
+
+    this->pcout
+      << "---------------------------------------------------------------"
+      << std::endl;
   }
 
   /**
