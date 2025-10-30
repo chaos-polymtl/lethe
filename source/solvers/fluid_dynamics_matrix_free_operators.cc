@@ -1470,7 +1470,7 @@ NavierStokesStabilizedOperator<dim, number>::do_cell_integral_local(
 
   // To identify whether mortar feature is enabled (use local variable for
   // efficiency)
-  bool enable_mortar = this->enable_mortar;
+  const bool enable_mortar = this->enable_mortar;
 
   const double kinematic_viscosity =
     this->properties_manager->get_rheology()->get_kinematic_viscosity();
@@ -1744,7 +1744,7 @@ NavierStokesStabilizedOperator<dim, number>::local_evaluate_residual(
 
       // To identify whether mortar feature is enabled (use local variable for
       // efficiency)
-      bool enable_mortar = this->enable_mortar;
+      const bool enable_mortar = this->enable_mortar;
 
       // Vector for BDF coefficients
       const Vector<double> *bdf_coefs;
