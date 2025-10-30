@@ -1974,7 +1974,7 @@ NavierStokesBase<dim, VectorType, DofsType>::define_non_zero_constraints()
           // If mortar is enabled, we need to change one default parameter of
           // the function that computes normal vectors. In this case, we cannot
           // use the manifold to compute them, since it leads to issues at the
-          // mortar interface. Hence we use the mapping instead
+          // mortar interface. Hence we use the mapping instead.
           bool use_manifold_for_normal = true;
           if (this->simulation_parameters.mortar_parameters.enable)
             use_manifold_for_normal = false;
@@ -2096,7 +2096,7 @@ NavierStokesBase<dim, VectorType, DofsType>::define_zero_constraints()
           // If mortar is enabled, we need to change one default parameter of
           // the function that computes normal vectors. In this case, we cannot
           // use the manifold to compute them, since it leads to issues at the
-          // mortar interface. Hence we use the mapping instead
+          // mortar interface. Hence we use the mapping instead.
           bool use_manifold_for_normal = true;
           if (this->simulation_parameters.mortar_parameters.enable)
             use_manifold_for_normal = false;
