@@ -9,6 +9,8 @@
 #include <core/solid_objects_parameters.h>
 #include <core/tensors_and_points_dimension_manipulation.h>
 
+#include <dem/data_containers.h>
+
 #include <deal.II/base/function.h>
 
 #include <deal.II/dofs/dof_handler.h>
@@ -68,7 +70,16 @@ public:
   setup_dof_handler();
 
   /**
-   * @brief Returns the shared pointer to the solid object triangulation
+   * @brief Builds the neighboring cells information for each cell of the solid
+   * object. These containers store for each of these cells which neighboring
+   * cells are sharing a vertex or an edge (two vertex). Also stores which of
+   * these neighboring cells are coplanar or non-coplanar.
+   */
+  void
+  setup_containers();
+
+  /**
+   * @brief Returns the shared pointer to the solid object triangulation.
    *
    * @return shared_ptr of the solid triangulation
    */
@@ -92,9 +103,9 @@ public:
   get_displacement_vector();
 
   /**
-   * @brief Calculates the max displacement of the solid object. The max displacement is defined as
-   *  the L^\infty norm of the displacement components. This is a measure of the
-   * maximal displacement in any direction.
+   * @brief Calculates the max displacement of the solid object. The max
+   * displacement is defined as the L^\infty norm of the displacement
+   * components. This is a measure of the maximal displacement in any direction.
    *
    * @return The reference to the vector of the displacement since the mapping
    */
@@ -109,11 +120,7 @@ public:
   inline Tensor<1, 3>
   get_translational_velocity() const
   {
-    if constexpr (spacedim == 3)
-      return this->current_translational_velocity;
-
-    else if constexpr (spacedim == 2) // spacedim == 2
-      return tensor_nd_to_3d(this->current_translational_velocity);
+    return tensor_nd_to_3d(this->current_translational_velocity);
   }
 
   /**
@@ -177,6 +184,34 @@ public:
     return id;
   }
 
+  typedef std::map<
+    typename Triangulation<dim, spacedim>::active_cell_iterator,
+    std::vector<typename Triangulation<dim, spacedim>::active_cell_iterator>,
+    DEM::cut_cell_comparison<spacedim>>
+    triangulation_cell_neighbors_map;
+
+  /**
+   * @brief Returns the neighboring cells maps of the solid object triangulation.
+   * These maps store for each cell of the solid object which neighboring cells
+   * are sharing a vertex or an edge (two vertex). Also stores which of these
+   * neighboring cells are coplanar or non-coplanar. 1. coplanar edge-sharing,
+   * 2. coplanar vertex-sharing, 3. non-coplanar edge-sharing, 4. non-coplanar
+   * vertex-sharing.
+   *
+   * @return A tuple containing the four neighboring cells maps.
+   */
+  inline std::tuple<triangulation_cell_neighbors_map,
+                    triangulation_cell_neighbors_map,
+                    triangulation_cell_neighbors_map,
+                    triangulation_cell_neighbors_map>
+  get_neighbors_maps() const
+  {
+    return std::tie(cp_es_neighbors,
+                    cp_vs_neighbors,
+                    np_es_neighbors,
+                    np_vs_neighbors);
+  }
+
   /**
    * @brief Update the temperature of the solid object, which is a function of time.
    *
@@ -193,7 +228,6 @@ public:
    * in order to allow correct checkpointing of the triangulation.
    *
    * @param time_step The time_step value for this iteration
-   *
    * @param initial_time The initial time (time t) of the timestep. This is used to
    * set the time of the velocity function.
    */
@@ -259,7 +293,6 @@ private:
    * @brief Rotates the grid by a given angle around an axis
    *
    * @param angle The angle (in rad) with which the solid is rotated
-   *
    * @param axis The axis over which the solid is rotated.
    *
    */
@@ -309,6 +342,14 @@ private:
   std::shared_ptr<Function<spacedim>> solid_temperature;
   Parameters::ThermalBoundaryType     thermal_boundary_type;
   double                              current_solid_temperature;
+
+  // Neighboring cells maps
+  // CP : coplanar
+  // NP : non-coplanar
+  // ES : edge-sharing
+  // VS : vertex-sharing
+  triangulation_cell_neighbors_map cp_es_neighbors, np_es_neighbors,
+    cp_vs_neighbors, np_vs_neighbors;
 };
 
 #endif
