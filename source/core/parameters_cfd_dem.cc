@@ -109,7 +109,7 @@ namespace Parameters
 
     project_particle_velocity = prm.get_bool("project particle velocity");
 
-    project_particle_forces    = prm.get_bool("project particle forces");
+    project_particle_forces = prm.get_bool("project particle forces");
 
     if (project_particle_forces && !project_particle_velocity)
       throw(std::runtime_error(

@@ -2237,9 +2237,9 @@ VANSAssemblerFPIProj<dim>::assemble_matrix(
   const unsigned int n_dofs     = scratch_data.n_dofs;
 
   // Copy data elements
-  auto &strong_residual        = copy_data.strong_residual;
-  auto &strong_jacobian        = copy_data.strong_jacobian;
-  auto &local_matrix           = copy_data.local_matrix;
+  auto &strong_residual = copy_data.strong_residual;
+  auto &strong_jacobian = copy_data.strong_jacobian;
+  auto &local_matrix    = copy_data.local_matrix;
 
 
   // Loop over the quadrature points
@@ -2248,15 +2248,16 @@ VANSAssemblerFPIProj<dim>::assemble_matrix(
       // Gather into local variables the relevant fields
       const Tensor<1, dim> velocity = scratch_data.velocity_values[q];
       const Tensor<1, dim> particles_velocity =
-    scratch_data.particle_velocity_values[q];
-      const Tensor<1, dim> fluid_particle_relative_velocity = velocity -
-       particles_velocity;
-      const Tensor<1, dim> &undisturbed_flow_force = 
-      scratch_data.particle_two_way_coupling_force_values[q];
+        scratch_data.particle_velocity_values[q];
+      const Tensor<1, dim> fluid_particle_relative_velocity =
+        velocity - particles_velocity;
+      const Tensor<1, dim> &undisturbed_flow_force =
+        scratch_data.particle_two_way_coupling_force_values[q];
       // We divide by the cell's volume to get the volumeric force
-      const Tensor<1, dim> &fluid_drag = 
-      scratch_data.particle_drag_values[q]/scratch_data.cell_volume;
-      const Tensor<1, dim> beta_drag = fluid_drag.norm()/fluid_particle_relative_velocity.norm();
+      const Tensor<1, dim> &fluid_drag =
+        scratch_data.particle_drag_values[q] / scratch_data.cell_volume;
+      const double beta_drag =
+        fluid_drag.norm() / fluid_particle_relative_velocity.norm();
 
       // Store JxW in local variable for faster access;
       const double JxW = JxW_vec[q];
@@ -2309,19 +2310,18 @@ VANSAssemblerFPIProj<dim>::assemble_rhs(
   const unsigned int n_dofs     = scratch_data.n_dofs;
 
   // Copy data elements
-  auto &strong_residual        = copy_data.strong_residual;
-  auto &local_rhs              = copy_data.local_rhs;
+  auto &strong_residual = copy_data.strong_residual;
+  auto &local_rhs       = copy_data.local_rhs;
 
   // Loop over the quadrature points
   for (unsigned int q = 0; q < n_q_points; ++q)
     {
       // Velocity
-      const Tensor<1, dim> velocity = scratch_data.velocity_values[q];
-      const Tensor<1, dim> &undisturbed_flow_force = 
-      scratch_data.particle_two_way_coupling_force_values[q];
+      const Tensor<1, dim> &undisturbed_flow_force =
+        scratch_data.particle_two_way_coupling_force_values[q];
       // We divide by the cell's volume to get the volumeric force
-      const Tensor<1, dim> &fluid_drag = 
-      scratch_data.particle_drag_values[q]/scratch_data.cell_volume;
+      const Tensor<1, dim> &fluid_drag =
+        scratch_data.particle_drag_values[q] / scratch_data.cell_volume;
 
       // Store JxW in local variable for faster access;
       const double JxW = JxW_vec[q];
@@ -2330,13 +2330,12 @@ VANSAssemblerFPIProj<dim>::assemble_rhs(
       if (cfd_dem.vans_model == Parameters::VANSModel::modelB)
         {
           strong_residual[q] += // Drag Force
-            (-fluid_drag +
-             undisturbed_flow_force);
+            (-fluid_drag + undisturbed_flow_force);
         }
       else if (cfd_dem.vans_model == Parameters::VANSModel::modelA)
         {
           strong_residual[q] += // Drag Force
-           -fluid_drag;
+            -fluid_drag;
         }
 
       // Assembly of the right-hand side
@@ -2348,16 +2347,12 @@ VANSAssemblerFPIProj<dim>::assemble_rhs(
           if (cfd_dem.vans_model == Parameters::VANSModel::modelB)
             {
               local_rhs(i) -=
-                (-fluid_drag +
-                 undisturbed_flow_force) *
-                phi_u_i * JxW;
+                (-fluid_drag + undisturbed_flow_force) * phi_u_i * JxW;
             }
           //  Model A of the VANS
           if (cfd_dem.vans_model == Parameters::VANSModel::modelA)
             {
-              local_rhs(i) -=
-                (-fluid_drag) *
-                phi_u_i * JxW;
+              local_rhs(i) -= (-fluid_drag) * phi_u_i * JxW;
             }
         }
     }
