@@ -339,7 +339,8 @@ FluidDynamicsVANS<dim>::setup_assemblers()
     }
 
   //  Fluid_Particle Interactions Assembler
-  if (this->cfd_dem_simulation_parameters.void_fraction.project_particle_forces)
+  if (this->cfd_dem_simulation_parameters.void_fraction
+        ->project_particle_forces)
     {
       this->assemblers.push_back(std::make_shared<VANSAssemblerFPIProj<dim>>(
         this->cfd_dem_simulation_parameters.cfd_dem));
@@ -481,7 +482,8 @@ FluidDynamicsVANS<dim>::assemble_local_system_matrix(
 
   scratch_data.calculate_physical_properties();
 
-  if (!this->cfd_dem_simulation_parameters.void_fraction.project_particle_forces)
+  if (!this->cfd_dem_simulation_parameters.void_fraction
+         ->project_particle_forces)
     {
       if (this->simulation_parameters.multiphysics.VOF)
         {
@@ -513,8 +515,12 @@ FluidDynamicsVANS<dim>::assemble_local_system_matrix(
     }
   else
     {
-      scratch_data.calculate_particle_fields_values(cell,
-                                                           particle_projector);
+      scratch_data.calculate_particle_fields_values(
+        cell,
+        particle_projector.particle_fluid_drag.particle_field_solution,
+        particle_projector.particle_fluid_force_two_way_coupling
+          .particle_field_solution,
+        particle_projector.particle_velocity.particle_field_solution);
     }
 
 
@@ -644,7 +650,8 @@ FluidDynamicsVANS<dim>::assemble_local_system_rhs(
 
   scratch_data.calculate_physical_properties();
 
-  if (!this->cfd_dem_simulation_parameters.void_fraction.project_particle_forces)
+  if (!this->cfd_dem_simulation_parameters.void_fraction
+         ->project_particle_forces)
     {
       if (this->simulation_parameters.multiphysics.VOF)
         {
@@ -674,10 +681,14 @@ FluidDynamicsVANS<dim>::assemble_local_system_rhs(
           pf_assembler->calculate_particle_fluid_interactions(scratch_data);
         }
     }
-    else
+  else
     {
-      scratch_data.calculate_particle_fields_values(cell,
-                                                           particle_projector);
+      scratch_data.calculate_particle_fields_values(
+        cell,
+        particle_projector.particle_fluid_drag.particle_field_solution,
+        particle_projector.particle_fluid_force_two_way_coupling
+          .particle_field_solution,
+        particle_projector.particle_velocity.particle_field_solution);
     }
 
   copy_data.reset();
