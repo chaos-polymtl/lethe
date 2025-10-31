@@ -549,7 +549,7 @@ DEMSolver<dim, PropertiesIndex>::particle_wall_contact_force()
     {
       particle_wall_contact_force_object
         ->calculate_particle_solid_object_contact(
-          contact_manager.get_particle_floating_mesh_in_contact(),
+          contact_manager.get_particle_floating_mesh_potentially_in_contact(),
           simulation_control->get_time_step(),
           solid_surfaces,
           contact_outcome);

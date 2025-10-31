@@ -343,21 +343,23 @@ update_fine_search_candidates<
 template void
 update_fine_search_candidates<
   2,
-  DEM::dem_data_structures<2>::particle_triangle_cell_from_mesh_in_contact,
+  DEM::dem_data_structures<
+    2>::particle_triangle_cell_from_mesh_potentially_in_contact,
   DEM::dem_data_structures<2>::particle_floating_wall_from_mesh_candidates,
   ContactType::particle_floating_mesh>(
-  DEM::dem_data_structures<2>::particle_triangle_cell_from_mesh_in_contact
-    &adjacent_particles,
+  DEM::dem_data_structures<2>::
+    particle_triangle_cell_from_mesh_potentially_in_contact &adjacent_particles,
   DEM::dem_data_structures<2>::particle_floating_wall_from_mesh_candidates
     &contact_pair_candidates);
 
 template void
 update_fine_search_candidates<
   3,
-  DEM::dem_data_structures<3>::particle_triangle_cell_from_mesh_in_contact,
+  DEM::dem_data_structures<
+    3>::particle_triangle_cell_from_mesh_potentially_in_contact,
   DEM::dem_data_structures<3>::particle_floating_wall_from_mesh_candidates,
   ContactType::particle_floating_mesh>(
-  DEM::dem_data_structures<3>::particle_triangle_cell_from_mesh_in_contact
-    &adjacent_particles,
+  DEM::dem_data_structures<3>::
+    particle_triangle_cell_from_mesh_potentially_in_contact &adjacent_particles,
   DEM::dem_data_structures<3>::particle_floating_wall_from_mesh_candidates
     &contact_pair_candidates);

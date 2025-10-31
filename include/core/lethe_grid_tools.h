@@ -260,6 +260,10 @@ namespace LetheGridTools
     std::vector<SerialSolid<structdim, spacedim>> &list_of_objects);
 
 
+  /** brief
+   * @enum ContactIndicator
+   * Enum to indicate the type of contact between a particle and a triangle.
+   */
   enum class ContactIndicator : std::uint8_t
   {
     face_contact,
@@ -287,8 +291,9 @@ namespace LetheGridTools
    * @param n_particles_in_base_cell Number of particles in the base cell
    *
    * @return A tuple in which 0. a vector of bools to determine if the particle is
-   * close to the triangle plane, 1. a vector of projected location of particles
-   * on the triangle, 2. a vector of normal vectors of the triangles
+   * less than a radius away from the triangle plane, 1. a vector of projected
+   * location of particles on the triangle, 2. a vector of normal vectors of the
+   * triangles, 3. the type of contact between the particle and the triangle.
    */
   template <int dim, typename PropertiesIndex>
   std::tuple<std::vector<bool>,
@@ -441,7 +446,7 @@ namespace LetheGridTools
   /**
    * @brief Function that checks if two cells are coplanar within a given tolerance.
    *
-   * @param cell_A
+   * @param cell_A First cell to compare.
    * @param cell_B Second cell to compare.
    * @param tol Tolerance for coplanarity check.
    */
@@ -454,12 +459,11 @@ namespace LetheGridTools
 
 
   /**
-   * @brief
-   * Map the vertex index to the cells that includes that vertex.
+   * @brief Map the vertex index to the cells that includes that vertex.
    *
-   * @param tria Triangualtion
+   * @param tria Triangulation
    * @param vertices_cell_map The map container of vertex ids with its set of
-   * neighbor cells
+   * neighbor cells.
    */
   template <int dim, int spacedim>
   void
@@ -472,13 +476,13 @@ namespace LetheGridTools
 
 
   /**
-   * @brief Return a vector of cells around a cell. The vector of cells includes all
-   * the cells that share a vertex with the initial cell, including the
-   initial
-   * cell.
+   * @brief Return a vector of cells around a cell. This vector includes
+   * all the cells that share a vertex with the initial cell, including the
+   * initial cell.
    *
-   * @param cell The initial cell. We want to know all the cells that share a vertex with this cell.
-   * @param vertices_cell_map see vertices_cell_mapping function description.
+   * @param cell The initial cell. We want to know all the cells that share a
+   * vertex with this cell.
+   * @param vertices_cell_map Map of vertex ids to the set of neighbor cells.
    */
   template <int dim, int spacedim = dim>
   std::vector<typename Triangulation<dim, spacedim>::active_cell_iterator>
