@@ -167,6 +167,13 @@ NavierStokesBase<dim, VectorType, DofsType>::NavierStokesBase(
   multiphysics = std::make_shared<MultiphysicsInterface<dim>>(
     simulation_parameters, triangulation, simulation_control, this->pcout);
 
+  // If mortar is enabled, we need to change one default parameter of the
+  // function that computes normal vectors. In this case, we cannot use the
+  // manifold to compute them, since it leads to issues at the mortar interface.
+  // Hence we use the mapping instead.
+  this->use_manifold_for_normal = true;
+  if (this->simulation_parameters.mortar_parameters.enable)
+    this->use_manifold_for_normal = false;
 
   if (this->simulation_control->is_sdirk())
     {
@@ -1975,7 +1982,8 @@ NavierStokesBase<dim, VectorType, DofsType>::define_non_zero_constraints()
             0,
             no_normal_flux_boundaries,
             nonzero_constraints,
-            *this->get_mapping());
+            *this->get_mapping(),
+            this->use_manifold_for_normal);
         }
       else if (type == BoundaryConditions::BoundaryType::function)
         {
@@ -2087,7 +2095,8 @@ NavierStokesBase<dim, VectorType, DofsType>::define_zero_constraints()
             0,
             no_normal_flux_boundaries,
             this->zero_constraints,
-            *this->get_mapping());
+            *this->get_mapping(),
+            this->use_manifold_for_normal);
         }
       else if (type == BoundaryConditions::BoundaryType::periodic)
         {

@@ -5,6 +5,10 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
 ### [Master] - 2025-10-29
 
+### Changed
+
+- MINOR This PR changes the parameter use_manifold_for_normal, used in slip BCs, to false when mortar is enabled. This way only the mapping is used to compute normal vectors.[#1743](https://github.com/chaos-polymtl/lethe/pull/1743)
+
 ### Added
 
 - MINOR This PR adds ALE terms for transient mortar problems in the matrix-free solver. It is similar to what has been done for the matrix-based solver in #1597 and #1638.[#1744](https://github.com/chaos-polymtl/lethe/pull/1744)

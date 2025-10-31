@@ -317,6 +317,10 @@ protected:
   /// Transfer operator for global coarsening for the temperature
   std::shared_ptr<GCTransferType> mg_transfer_gc_temperature;
 
+  /// Boolean that indicates whether manifolds are used for the normal vectors
+  /// computation in slip BCs
+  bool use_manifold_for_normal;
+
 public:
   /// Timer for specific geometric multigrid components.
   mutable TimerOutput mg_setup_timer;

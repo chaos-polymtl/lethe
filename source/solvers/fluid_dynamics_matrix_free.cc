@@ -742,6 +742,14 @@ MFNavierStokesPreconditionGMGBase<dim>::MFNavierStokesPreconditionGMGBase(
   , mg_vmult_timer(this->pcout, TimerOutput::never, TimerOutput::wall_times)
 {
   (void)dof_handler_fe_q_iso_q1; // TODO: remove
+
+  // If mortar is enabled, we need to change one default parameter of the
+  // function that computes normal vectors. In this case, we cannot use the
+  // manifold to compute them, since it leads to issues at the mortar interface.
+  // Hence we use the mapping instead.
+  this->use_manifold_for_normal = true;
+  if (this->simulation_parameters.mortar_parameters.enable)
+    this->use_manifold_for_normal = false;
 }
 
 template <int dim>
@@ -1473,7 +1481,8 @@ MFNavierStokesPreconditionGMGBase<dim>::reinit(
                     0,
                     no_normal_flux_boundaries,
                     level_constraint,
-                    *mapping);
+                    *mapping,
+                    this->use_manifold_for_normal);
                 }
               else if (type == BoundaryConditions::BoundaryType::periodic)
                 {
