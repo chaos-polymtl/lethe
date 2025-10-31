@@ -9,6 +9,8 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
 - MINOR This PR changes the parameter use_manifold_for_normal, used in slip BCs, to false when mortar is enabled. This way only the mapping is used to compute normal vectors.[#1743](https://github.com/chaos-polymtl/lethe/pull/1743)
 
+- MINOR Some DEM applications-tests results changed due to a modification related to the smallest solid object mapping criterion. This criterion now uses the std::numbers::inv_sqrt3 function instead of a hardcoded value. The position of the particles does not change, only the number of contact detection iteration. [#1740](https://github.com/chaos-polymtl/lethe/pull/1740)
+
 ### Added
 
 - MINOR This PR adds ALE terms for transient mortar problems in the matrix-free solver. It is similar to what has been done for the matrix-based solver in #1597 and #1638.[#1744](https://github.com/chaos-polymtl/lethe/pull/1744)

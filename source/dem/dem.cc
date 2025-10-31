@@ -40,7 +40,7 @@ DEMSolver<dim, PropertiesIndex>::DEMSolver(
   , n_mpi_processes(Utilities::MPI::n_mpi_processes(mpi_communicator))
   , this_mpi_process(Utilities::MPI::this_mpi_process(mpi_communicator))
   , pcout(std::cout, Utilities::MPI::this_mpi_process(MPI_COMM_WORLD) == 0)
-  , parameters(dem_parameters)
+  , parameters(std::move(dem_parameters))
   , checkpoint_controller(parameters.restart)
   , triangulation(this->mpi_communicator)
   , mapping(1)
@@ -355,9 +355,11 @@ DEMSolver<dim, PropertiesIndex>::setup_triangulation_dependent_parameters()
   // this value.
   smallest_solid_object_mapping_criterion = [&] {
     if constexpr (dim == 2) // 2^-0.5 * D_c,min
-      return 0.70710678118 * GridTools::minimal_cell_diameter(triangulation);
+      return 0.5 * std::numbers::sqrt2 *
+             GridTools::minimal_cell_diameter(triangulation);
     if constexpr (dim == 3) // 3^-0.5 * D_c,min
-      return 0.57735026919 * GridTools::minimal_cell_diameter(triangulation);
+      return std::numbers::inv_sqrt3 *
+             GridTools::minimal_cell_diameter(triangulation);
   }();
 
   // Setup background dof
@@ -872,7 +874,7 @@ DEMSolver<dim, PropertiesIndex>::sort_particles_into_subdomains_and_cells()
     }
 
   // Always reset the displacement values since we are doing a search detection
-  std::fill(displacement.begin(), displacement.end(), 0.);
+  std::ranges::fill(displacement, 0.);
 }
 
 template <int dim, typename PropertiesIndex>
