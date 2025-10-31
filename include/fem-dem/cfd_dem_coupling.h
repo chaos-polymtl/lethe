@@ -129,9 +129,10 @@ private:
    * @brief Set the initial condition. The version in this class does not output
    * the solution, since the void fraction is not initialized yet.
    *
-   * @param initial_condition_type Type of method  use to impose initial condition.
+   * @param[in] initial_condition_type Type of method  use to impose initial
+   *condition.
    *
-   * @param restart Indicator if the simulation is being restarted or not.
+   * @param[in] restart Indicator if the simulation is being restarted or not.
    *
    **/
 
