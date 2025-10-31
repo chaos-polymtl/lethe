@@ -1309,7 +1309,7 @@ NavierStokesBase<dim, VectorType, DofsType>::refine_mesh_kelly()
 
   // If mortar is enabled, update mapping cache with refined triangulation
   if (this->simulation_parameters.mortar_parameters.enable)
-    this->mapping_cache->initialize(*this->mapping, *this->triangulation);
+    this->mapping_cache->initialize(*this->mapping, tria);
 
   setup_dofs();
 
