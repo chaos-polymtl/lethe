@@ -4,6 +4,13 @@ All notable changes to the Lethe project will be documented in this file.
 The changelog for the previous releases of Lethe are located in the release_notes folder.
 The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
+### [Master] - 2025-11-01
+
+### Fixed
+
+- MINOR A warning related to Trillinos and Kokkos was occuring when compiling Lethe with gcc. The warning was occuring in the "get_face_transformation_jacobian" function. This PR fixes this warning by adding an "if" statement. [#1748](https://github.com/chaos-polymtl/lethe/pull/1748)   
+
+
 ### [Master] - 2025-10-29
 
 ### Changed
