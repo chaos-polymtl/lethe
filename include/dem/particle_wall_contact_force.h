@@ -55,16 +55,17 @@ public:
    * @brief Calculate the contact outcomes for particle-solid objects contacts
    * using the contact pair information and physical properties.
    *
-   * @param[in] particle_floating_mesh_in_contact A container that stores the
-   * information of particle-floating mesh contact.
+   * @param[in] particle_floating_mesh_potentially_in_contact A container that
+   * stores the information of particle-floating mesh contact.
    * @param[in] dt DEM time step.
    * @param[in] solids Floating solids.
    * @param[out] contact_outcome Interaction outcomes.
    */
   virtual void
   calculate_particle_solid_object_contact(
-    typename DEM::dem_data_structures<dim>::particle_floating_mesh_in_contact
-                &particle_floating_mesh_in_contact,
+    typename DEM::dem_data_structures<
+      dim>::particle_floating_mesh_potentially_in_contact
+                &particle_floating_mesh_potentially_in_contact,
     const double dt,
     const std::vector<std::shared_ptr<SerialSolid<dim - 1, dim>>> &solids,
     ParticleInteractionOutcomes<PropertiesIndex> &contact_outcome) = 0;
@@ -111,16 +112,17 @@ public:
    * @brief Calculate the contact outcomes for particle-solid objects contacts
    * using the contact pair information and physical properties.
    *
-   * @param[in] particle_floating_mesh_in_contact A container that stores the
-   * information of particle-floating mesh contact.
+   * @param[in] particle_floating_mesh_potentially_in_contact A container that
+   * stores the information of particle-floating mesh contact.
    * @param[in] dt DEM time step.
    * @param[in] solids Floating solids.
    * @param[out] contact_outcome Interaction outcomes.
    */
   virtual void
   calculate_particle_solid_object_contact(
-    typename DEM::dem_data_structures<dim>::particle_floating_mesh_in_contact
-                &particle_floating_mesh_in_contact,
+    typename DEM::dem_data_structures<
+      dim>::particle_floating_mesh_potentially_in_contact
+                &particle_floating_mesh_potentially_in_contact,
     const double dt,
     const std::vector<std::shared_ptr<SerialSolid<dim - 1, dim>>> &solids,
     ParticleInteractionOutcomes<PropertiesIndex> &contact_outcome) override;

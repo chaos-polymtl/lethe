@@ -170,10 +170,11 @@ void
 particle_floating_mesh_fine_search(
   const typename dem_data_structures<dim>::particle_floating_mesh_candidates
     &particle_floating_mesh_contact_candidates,
-  typename dem_data_structures<dim>::particle_floating_mesh_in_contact
-    &particle_floating_mesh_in_contact)
+  typename dem_data_structures<
+    dim>::particle_floating_mesh_potentially_in_contact
+    &particle_floating_mesh_potentially_in_contact)
 {
-  particle_floating_mesh_in_contact.resize(
+  particle_floating_mesh_potentially_in_contact.resize(
     particle_floating_mesh_contact_candidates.size());
 
   for (unsigned int solid_counter = 0;
@@ -181,7 +182,7 @@ particle_floating_mesh_fine_search(
        ++solid_counter)
     {
       auto &particle_floating_mesh_element =
-        particle_floating_mesh_in_contact[solid_counter];
+        particle_floating_mesh_potentially_in_contact[solid_counter];
 
       auto &candidates =
         particle_floating_mesh_contact_candidates[solid_counter];
@@ -244,12 +245,12 @@ template void
 particle_floating_mesh_fine_search<2>(
   const typename dem_data_structures<2>::particle_floating_mesh_candidates
     &particle_floating_mesh_contact_candidates,
-  typename dem_data_structures<2>::particle_floating_mesh_in_contact
-    &particle_floating_mesh_in_contact);
+  typename dem_data_structures<2>::particle_floating_mesh_potentially_in_contact
+    &particle_floating_mesh_potentially_in_contact);
 
 template void
 particle_floating_mesh_fine_search<3>(
   const typename dem_data_structures<3>::particle_floating_mesh_candidates
     &particle_floating_mesh_contact_candidates,
-  typename dem_data_structures<3>::particle_floating_mesh_in_contact
-    &particle_floating_mesh_in_contact);
+  typename dem_data_structures<3>::particle_floating_mesh_potentially_in_contact
+    &particle_floating_mesh_potentially_in_contact);

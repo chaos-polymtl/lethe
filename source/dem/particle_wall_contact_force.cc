@@ -7,7 +7,7 @@
 #include <dem/particle_heat_transfer.h>
 #include <dem/particle_wall_contact_force.h>
 
-#include <algorithm> // for std::ranges::find
+#include <algorithm>
 #include <ranges>
 #include <vector>
 
@@ -90,12 +90,12 @@ ParticleWallContactForce<dim,
 
           if (normal_overlap > force_calculation_threshold_distance)
             {
+              Tensor<1, 3> tangential_relative_velocity;
+              double       normal_relative_velocity_value;
               Tensor<1, 3> normal_force;
               Tensor<1, 3> tangential_force;
               Tensor<1, 3> tangential_torque;
               Tensor<1, 3> rolling_resistance_torque;
-              double       normal_relative_velocity_value;
-              Tensor<1, 3> tangential_relative_velocity;
 
               // Updating contact information
               this->update_contact_information(contact_info,
@@ -132,7 +132,8 @@ ParticleWallContactForce<dim,
                                            particle_torque,
                                            particle_force);
             }
-          else
+          else // If there is no contact (or interaction), we need to clear the
+               // tangential displacement and rolling resistance torque
             {
               contact_info.tangential_displacement.clear();
               contact_info.rolling_resistance_spring_torque.clear();
@@ -151,8 +152,9 @@ ParticleWallContactForce<dim,
                          contact_model,
                          rolling_friction_model>::
   calculate_particle_solid_object_contact(
-    typename dem_data_structures<dim>::particle_floating_mesh_in_contact
-                &particle_floating_mesh_in_contact,
+    typename dem_data_structures<
+      dim>::particle_floating_mesh_potentially_in_contact
+                &particle_floating_mesh_potentially_in_contact,
     const double dt,
     const std::vector<std::shared_ptr<SerialSolid<dim - 1, dim>>> &solids,
     ParticleInteractionOutcomes<PropertiesIndex> &contact_outcome)
@@ -171,19 +173,21 @@ ParticleWallContactForce<dim,
   for (unsigned int solid_counter = 0; solid_counter < solids.size();
        ++solid_counter)
     {
-      const auto [this_solid_cp_es_neighbors,
-                  this_solid_cp_vs_neighbors,
-                  this_solid_np_es_neighbors,
-                  this_solid_np_vs_neighbors] =
+      // Extract the neighboring cell maps of this solid objects
+      const auto &[this_solid_cp_es_neighbors,
+                   this_solid_cp_vs_neighbors,
+                   this_solid_np_es_neighbors,
+                   this_solid_np_vs_neighbors] =
         solids[solid_counter]->get_neighbors_maps();
 
       // For each solid surface, we create a map used to store every contact.
       // The key of that map is the particle local ID.
       // The value is a vector of tuple storing the required information to
       // compute the contact force later on.
-      // The information includes the type of contact : face contact,
-      // edge contact, vertex contact
-      using particle_triangle_contact_description = std::list<
+      // The information includes: 1. The triangle cell with which the contact
+      // is occuring, 2. The normal overlap, 3. The type of contact (face, edge
+      // or vertex) 4. The contact info associated.
+      using particle_triangle_contact_description = std::vector<
         std::tuple<typename Triangulation<dim - 1, dim>::active_cell_iterator,
                    double,
                    LetheGridTools::ContactIndicator,
@@ -194,15 +198,18 @@ ParticleWallContactForce<dim,
                                      particle_triangle_contact_description>;
 
       particle_triangle_contact_record contact_record;
-      contact_record.reserve(1000);
+
+      // In general, a particle should not be in contact with a huge number of
+      // triangle. 10 contact is a reasonable upper limit for most cases.
+      contact_record.reserve(10);
 
       typename dem_data_structures<
-        dim>::particle_triangle_cell_from_mesh_in_contact
-        &particle_floating_mesh_contact_pair =
-          particle_floating_mesh_in_contact[solid_counter];
+        dim>::particle_triangle_cell_from_mesh_potentially_in_contact
+        &particle_floating_mesh_potential_contact_pair =
+          particle_floating_mesh_potentially_in_contact[solid_counter];
 
       for (auto &[triangle_cell_iterator, map_info] :
-           particle_floating_mesh_contact_pair)
+           particle_floating_mesh_potential_contact_pair)
         {
           if (!map_info.empty())
             {
@@ -375,7 +382,7 @@ ParticleWallContactForce<dim,
 
                       // If C1 is a face contact and C2 is a vertex
                       // contact.
-                      // C2 is always invalid
+                      // C2 is always invalid.
                       clear_contact_info(contact_info_C2);
                       contact_2 = this_contact_record.erase(contact_2);
                       continue;
@@ -492,15 +499,15 @@ ParticleWallContactForce<dim,
 
           // Get translational and rotational velocities and center of
           // rotation of solid object
-          Tensor<1, 3> translational_velocity =
+          const Tensor<1, 3> translational_velocity =
             solids[solid_counter]->get_translational_velocity();
-          Tensor<1, 3> angular_velocity =
+          const Tensor<1, 3> angular_velocity =
             solids[solid_counter]->get_angular_velocity();
-          Point<3> center_of_rotation =
+          const Point<3> center_of_rotation =
             solids[solid_counter]->get_center_of_rotation();
 
           // Multiphysics properties
-          Parameters::ThermalBoundaryType thermal_boundary_type =
+          const Parameters::ThermalBoundaryType thermal_boundary_type =
             solids[solid_counter]->get_thermal_boundary_type();
 
           for (auto contact = this_contact_record.begin();
@@ -547,20 +554,14 @@ ParticleWallContactForce<dim,
                                       rolling_resistance_torque);
 
               // Applying the calculated forces and torques on the particle
-              // types::particle_index particle_id =
-              //  particle->get_local_index();
 
-              Tensor<1, 3> &particle_torque =
-                contact_outcome.torque[particle_index];
-              Tensor<1, 3> &particle_force =
-                contact_outcome.force[particle_index];
-
-              this->apply_force_and_torque(normal_force,
-                                           tangential_force,
-                                           tangential_torque,
-                                           rolling_resistance_torque,
-                                           particle_torque,
-                                           particle_force);
+              this->apply_force_and_torque(
+                normal_force,
+                tangential_force,
+                tangential_torque,
+                rolling_resistance_torque,
+                contact_outcome.torque[particle_index],
+                contact_outcome.force[particle_index]);
               if constexpr (std::is_same_v<
                               PropertiesIndex,
                               DEM::DEMMPProperties::PropertiesIndex>)
@@ -596,7 +597,7 @@ ParticleWallContactForce<dim,
                         normal_force.norm(),
                         thermal_conductance);
 
-                      double temperature_wall =
+                      const double temperature_wall =
                         solids[solid_counter]->get_temperature();
 
                       // Apply the heat transfer to the particle

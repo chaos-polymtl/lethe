@@ -201,10 +201,11 @@ public:
   /**
    * @brief Return the particle-floating mesh contact container.
    */
-  inline typename dem_data_structures<dim>::particle_floating_mesh_in_contact &
-  get_particle_floating_mesh_in_contact()
+  inline typename dem_data_structures<
+    dim>::particle_floating_mesh_potentially_in_contact &
+  get_particle_floating_mesh_potentially_in_contact()
   {
-    return particle_floating_mesh_in_contact;
+    return particle_floating_mesh_potentially_in_contact;
   }
 
   /**
@@ -352,8 +353,9 @@ private:
 
   // Container with all the contact information of the object in contact
   // with a particle
-  typename dem_data_structures<dim>::particle_floating_mesh_in_contact
-    particle_floating_mesh_in_contact;
+  typename dem_data_structures<
+    dim>::particle_floating_mesh_potentially_in_contact
+    particle_floating_mesh_potentially_in_contact;
   typename dem_data_structures<dim>::particle_wall_in_contact
     particle_floating_wall_in_contact;
   typename dem_data_structures<dim>::particle_wall_in_contact
