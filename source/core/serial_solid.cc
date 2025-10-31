@@ -637,15 +637,15 @@ SerialSolid<dim, spacedim>::setup_containers()
 
       // Store the vertices index of the main cell in a vector
       std::vector<unsigned int> main_cell_vertex_indices;
+      main_cell_vertex_indices.reserve(n_vertices_main_cell);
       for (unsigned int v = 0; v < n_vertices_main_cell; ++v)
         main_cell_vertex_indices.push_back(main_cell->vertex_index(v));
 
       // Find the cell iterators around the main cell. This includes the main
       // cell itself.
-      std::vector<typename Triangulation<dim, spacedim>::active_cell_iterator>
-        neighboring_cells =
-          LetheGridTools::find_cells_around_cell<dim, spacedim>(
-            vertices_cell_map, main_cell);
+      auto neighboring_cells =
+        LetheGridTools::find_cells_around_cell<dim, spacedim>(vertices_cell_map,
+                                                              main_cell);
 
       // Loop on the neighboring cells of the main cell
       for (const auto &neigh_cell : neighboring_cells)
@@ -683,7 +683,6 @@ SerialSolid<dim, spacedim>::setup_containers()
               if (n_sharing_vertices == 1)
                 cp_vs_main_cell.push_back(neigh_cell);
               else // Sharing 2 vertex
-
                 cp_es_main_cell.push_back(neigh_cell);
             }
           else
