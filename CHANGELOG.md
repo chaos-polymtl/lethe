@@ -12,12 +12,15 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
 - MINOR Fixes a bug introduced in [#1731]. Essentially, the wrong function was used to write the boundaries checkpoint pvd file (read instead of save) and this would crash the simulation when trying to write a new checkpoint file from zero. This PR fixes this by calling the correct function. [](https://github.com/chaos-polymtl/lethe/pull/)
 
-
-### [Master] - 2025-10-13
+### [Master] - 2025-11-01
 
 ### Fixed
 
-- MINOR This PR output the void fraction at iteration 0 when using the CFD-DEM sovler.[#1730](https://github.com/chaos-polymtl/lethe/pull/1730)
+- MINOR A warning related to Trillinos and Kokkos was occuring when compiling Lethe with gcc. The warning was occuring in the "get_face_transformation_jacobian" function. This PR fixes this warning by adding an "if" statement. [#1748](https://github.com/chaos-polymtl/lethe/pull/1748)   
+
+### Fixed
+
+- MINOR Fixes the output of the void fraction at iteration 0 when using the CFD-DEM solver. The void fraction was not calculated before the first post-processing iteratio, which means that a zero void fraction was always displayed as the initial condition. This is now fixed and the void fraction is correctly calculated before the first output. [#1730](https://github.com/chaos-polymtl/lethe/pull/1730)
 
 ### [Master] - 2025-10-29
 
