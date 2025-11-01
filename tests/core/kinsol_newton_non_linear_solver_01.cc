@@ -21,10 +21,11 @@ test()
     Parameters::Verbosity::quiet,
     Parameters::NonLinearSolver::SolverType::kinsol_newton,
     Parameters::NonLinearSolver::KinsolStrategy::line_search, // kinsol strategy
-    1e-8,                                                     // tolerance
-    20,                                                       // maxIter
-    4,    // display precision
-    false // force rhs calculation
+    false, // normalize by volume
+    1e-8,  // tolerance
+    20,    // maxIter
+    4,     // display precision
+    false  // force rhs calculation
   };
 
   deallog << "Creating solver" << std::endl;

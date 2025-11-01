@@ -25,6 +25,8 @@
 #include <deal.II/distributed/solution_transfer.h>
 #include <deal.II/distributed/tria_base.h>
 
+#include <deal.II/grid/grid_tools.h>
+
 #include <deal.II/lac/trilinos_precondition.h>
 #include <deal.II/lac/trilinos_sparse_matrix.h>
 #include <deal.II/lac/trilinos_vector.h>
@@ -357,6 +359,22 @@ public:
                 << std::setw(6) << "\t||dphi||_Linfty = "
                 << std::setprecision(display_precision)
                 << newton_update.linfty_norm() << std::endl;
+  }
+
+  /**
+   * @brief Get metric for residual normalization. By default, should return 1.
+   * In solvers, if normalize by volume is activated, the overridden method
+   * should return the global volume of the triangulation.
+   *
+   * @return Normalization metric.
+   */
+  virtual double
+  get_residual_normalization_metric() const override
+  {
+    return simulation_parameters.non_linear_solver.at(PhysicsID::fluid_dynamics)
+               .normalize_residual_by_volume ?
+             GridTools::volume(*this->triangulation, *this->mapping) :
+             1.;
   }
 
 private:

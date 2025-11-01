@@ -459,21 +459,21 @@ Return a bool that describes  if a cell contains a specific point
                     Point<dim> point);
 
   /**
-   * @brief
-   *  A override of the get_current_residual to take into account the particles
+   * @brief A override of the get_current_residual to take into account the particles
    * coupling residual.
+   *
+   * @return The maximum between the fluid residual and the particle residual time the scaling.
    */
   double
   get_current_residual() override
   {
-    double scalling = this->simulation_parameters.non_linear_solver
-                        .at(PhysicsID::fluid_dynamics)
-                        .tolerance /
-                      this->simulation_parameters.particlesParameters
-                        ->particle_nonlinear_tolerance;
-    return std::max(this->system_rhs.l2_norm(), particle_residual * scalling);
+    double scaling = this->simulation_parameters.non_linear_solver
+                       .at(PhysicsID::fluid_dynamics)
+                       .tolerance /
+                     this->simulation_parameters.particlesParameters
+                       ->particle_nonlinear_tolerance;
+    return std::max(this->system_rhs.l2_norm(), particle_residual * scaling);
   }
-
   /**
    * @brief
    *This function updates the precalculations for every immersed particle

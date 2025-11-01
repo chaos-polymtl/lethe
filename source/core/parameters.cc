@@ -2383,6 +2383,7 @@ namespace Parameters
                           "10",
                           Patterns::Integer(),
                           "Maximum number of Newton Iterations");
+
         prm.declare_entry(
           "step tolerance",
           "0.9",
@@ -2430,6 +2431,11 @@ namespace Parameters
           "false",
           Patterns::Bool(),
           "Aborts Lethe by throwing an exception if non-linear solver convergence has failed");
+        prm.declare_entry(
+          "normalize residual",
+          "false",
+          Patterns::Bool(),
+          "Normalize the residual by the volume of the triangulation");
       }
       prm.leave_subsection();
     }
@@ -2483,6 +2489,7 @@ namespace Parameters
         reuse_preconditioner  = prm.get_bool("reuse preconditioner");
         abort_at_convergence_failure =
           prm.get_bool("abort at convergence failure");
+        normalize_residual_by_volume = prm.get_bool("normalize residual");
       }
       prm.leave_subsection();
     }

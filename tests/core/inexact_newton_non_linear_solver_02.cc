@@ -23,6 +23,7 @@ test()
     Parameters::NonLinearSolver::SolverType::inexact_newton,
     Parameters::NonLinearSolver::KinsolStrategy::
       normal_newton, // kinsol strategy, not used in this case
+    false,           // normalize volume by triangulation
     1e-8,            // tolerance
     10,              // maxIter
     4,               // display precision
