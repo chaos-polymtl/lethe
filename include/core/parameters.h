@@ -1173,9 +1173,6 @@ namespace Parameters
     // Kinsol solver strategy
     KinsolStrategy kinsol_strategy;
 
-    // Normalize residual by triangulation volume
-    bool normalize_residual_by_volume;
-
     // Tolerance
     double tolerance;
 
@@ -1211,6 +1208,9 @@ namespace Parameters
 
     // Abort solver if non-linear solution has not reached tolerance
     bool abort_at_convergence_failure;
+
+    // Normalize residual by triangulation volume
+    bool normalize_residual_by_volume;
 
     static void
     declare_parameters(ParameterHandler &prm, const std::string &physics_name);
