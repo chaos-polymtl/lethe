@@ -339,6 +339,7 @@ CFDDEMSolver<dim>::initialize_dem_parameters()
   this->pcout << "Finished initializing DEM parameters" << std::endl
               << "DEM time-step is " << dem_time_step << " s" << std::endl;
 }
+
 template <int dim>
 void
 CFDDEMSolver<dim>::read_dem()
@@ -1242,16 +1243,18 @@ template <int dim>
 void
 CFDDEMSolver<dim>::postprocess_fd(bool first_iteration)
 {
-  this->pcout
-    << "---------------------------------------------------------------"
-    << std::endl;
-
   this->FluidDynamicsMatrixBased<dim>::postprocess_fd(first_iteration);
 
   // Visualization
   if (this->simulation_control->is_output_iteration())
     {
       write_dem_output_results();
+    }
+  if (!first_iteration)
+    {
+      this->pcout
+        << "---------------------------------------------------------------"
+        << std::endl;
     }
 }
 
@@ -1617,6 +1620,16 @@ CFDDEMSolver<dim>::solve()
   if (!dem_action_manager->check_restart_simulation())
     this->particle_projector.initialize_void_fraction(
       this->simulation_control->get_current_time());
+
+  // Output the solution after initializing the void fraction
+  if (!this->cfd_dem_simulation_parameters.cfd_parameters.restart_parameters
+         .restart)
+    {
+      this->postprocess_fd(true);
+      this->multiphysics->postprocess(true);
+      if (this->simulation_control->is_output_iteration())
+        this->write_output_results(this->present_solution);
+    }
 
   while (this->simulation_control->integrate())
     {

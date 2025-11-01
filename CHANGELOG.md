@@ -4,6 +4,12 @@ All notable changes to the Lethe project will be documented in this file.
 The changelog for the previous releases of Lethe are located in the release_notes folder.
 The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
+### [Master] - 2025-10-13
+
+### Fixed
+
+- MINOR This PR output the void fraction at iteration 0 when using the CFD-DEM sovler.[#1730](https://github.com/chaos-polymtl/lethe/pull/1730)
+
 ### [Master] - 2025-10-29
 
 ### Changed

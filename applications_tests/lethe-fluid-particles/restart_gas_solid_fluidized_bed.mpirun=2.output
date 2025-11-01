@@ -9,6 +9,7 @@ DEM time-step is 3.65413% of Rayleigh time step
    Number of active cells:       2560
    Number of degrees of freedom: 16100
    Volume of triangulation:      0.00108
+---------------------------------------------------------------
 Initializing DEM parameters
 Warning: expansion of particle-wall contact list is disabled. 
 This feature is useful in geometries with concave boundaries. 
@@ -31,8 +32,8 @@ DEM contact search at dem step 0
 DEM contact search at dem step 32
 DEM contact search at dem step 49
 Finished 50 DEM iterations
----------------------------------------------------------------
 Pressure drop: 9.78948 Pa
 Total pressure drop: 9.74 Pa
+---------------------------------------------------------------
 Global continuity equation error: -5.07193e-11 s^-1
 Max local continuity error: 2.94812e-06 s^-1

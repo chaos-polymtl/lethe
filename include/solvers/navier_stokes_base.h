@@ -189,7 +189,7 @@ protected:
   /**
    * @brief Post-process simulation after an iteration
    *
-   * @param first_iteration Indicator if the simulation is at it's first simulation or not.
+   * @param first_iteration Indicator if the simulation is at its first simulation or not.
    */
   virtual void
   postprocess(bool first_iteration)
@@ -223,8 +223,8 @@ protected:
 
   virtual void
   set_initial_condition(
-    Parameters::FluidDynamicsInitialConditionType initial_condition_type,
-    bool                                          restart = false)
+    const Parameters::FluidDynamicsInitialConditionType initial_condition_type,
+    const bool                                          restart = false)
   {
     unsigned int ref_iter = 0;
     do
