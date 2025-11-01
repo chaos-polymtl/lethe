@@ -2812,7 +2812,7 @@ FluidDynamicsMatrixFree<dim>::setup_dofs_fd()
     }
 
   double global_volume =
-    GridTools::volume(*this->triangulation, *this->mapping);
+    GridTools::volume(*this->triangulation, *this->get_mapping());
 
   this->pcout << "   Number of active cells:       "
               << this->triangulation->n_global_active_cells() << std::endl

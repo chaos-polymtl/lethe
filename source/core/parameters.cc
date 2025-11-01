@@ -2382,11 +2382,7 @@ namespace Parameters
                           "10",
                           Patterns::Integer(),
                           "Maximum number of Newton Iterations");
-        prm.declare_entry(
-          "normalize residual",
-          "false",
-          Patterns::Bool(),
-          "Normalize the residua by the volume of the triangulation");
+
         prm.declare_entry(
           "step tolerance",
           "0.9",
@@ -2434,6 +2430,11 @@ namespace Parameters
           "false",
           Patterns::Bool(),
           "Aborts Lethe by throwing an exception if non-linear solver convergence has failed");
+        prm.declare_entry(
+          "normalize residual",
+          "false",
+          Patterns::Bool(),
+          "Normalize the residual by the volume of the triangulation");
       }
       prm.leave_subsection();
     }
@@ -2477,17 +2478,17 @@ namespace Parameters
           throw(std::runtime_error(
             "Invalid strategy for kinsol non-linear solver "));
 
-        tolerance                    = prm.get_double("tolerance");
-        normalize_residual_by_volume = prm.get_bool("normalize residual");
-        step_tolerance               = prm.get_double("step tolerance");
-        matrix_tolerance             = prm.get_double("matrix tolerance");
-        max_iterations               = prm.get_integer("max iterations");
-        display_precision            = prm.get_integer("residual precision");
-        force_rhs_calculation        = prm.get_bool("force rhs calculation");
-        reuse_matrix                 = prm.get_bool("reuse matrix");
-        reuse_preconditioner         = prm.get_bool("reuse preconditioner");
+        tolerance             = prm.get_double("tolerance");
+        step_tolerance        = prm.get_double("step tolerance");
+        matrix_tolerance      = prm.get_double("matrix tolerance");
+        max_iterations        = prm.get_integer("max iterations");
+        display_precision     = prm.get_integer("residual precision");
+        force_rhs_calculation = prm.get_bool("force rhs calculation");
+        reuse_matrix          = prm.get_bool("reuse matrix");
+        reuse_preconditioner  = prm.get_bool("reuse preconditioner");
         abort_at_convergence_failure =
           prm.get_bool("abort at convergence failure");
+        normalize_residual_by_volume = prm.get_bool("normalize residual");
       }
       prm.leave_subsection();
     }

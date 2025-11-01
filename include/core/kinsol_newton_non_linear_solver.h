@@ -66,6 +66,8 @@ KinsolNewtonNonLinearSolver<VectorType>::solve(const bool is_initial_step)
   VectorType &present_solution = solver->get_present_solution();
 
   typename SUNDIALS::KINSOL<VectorType>::AdditionalData additional_data;
+  additional_data.normalize_residual_by_volume =
+    this->params.normalize_residual_by_volume;
   additional_data.function_tolerance            = this->params.tolerance;
   additional_data.maximum_non_linear_iterations = this->params.max_iterations;
   additional_data.step_tolerance                = this->params.tolerance;
