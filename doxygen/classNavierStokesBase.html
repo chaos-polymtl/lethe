@@ -133,8 +133,8 @@ Protected Member Functions</h2></td></tr>
 <tr class="separator:afa94cca1eda06ce834a666528574d0c5"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:adf2f852055a04e76674325e408807a74" id="r_adf2f852055a04e76674325e408807a74"><td class="memItemLeft" align="right" valign="top">virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classNavierStokesBase.html#adf2f852055a04e76674325e408807a74">setup_dofs</a> ()</td></tr>
 <tr class="separator:adf2f852055a04e76674325e408807a74"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a99cc4f5fb004748bd47eb04f4657d236" id="r_a99cc4f5fb004748bd47eb04f4657d236"><td class="memItemLeft" align="right" valign="top">virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classNavierStokesBase.html#a99cc4f5fb004748bd47eb04f4657d236">set_initial_condition</a> (<a class="el" href="namespaceParameters.html#a87f2367892b0cda4800d7fac3b21fc12">Parameters::FluidDynamicsInitialConditionType</a> initial_condition_type, bool restart=false)</td></tr>
-<tr class="separator:a99cc4f5fb004748bd47eb04f4657d236"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a18c7e94509bc492226891d12ec13302d" id="r_a18c7e94509bc492226891d12ec13302d"><td class="memItemLeft" align="right" valign="top">virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classNavierStokesBase.html#a18c7e94509bc492226891d12ec13302d">set_initial_condition</a> (const <a class="el" href="namespaceParameters.html#a87f2367892b0cda4800d7fac3b21fc12">Parameters::FluidDynamicsInitialConditionType</a> initial_condition_type, const bool restart=false)</td></tr>
+<tr class="separator:a18c7e94509bc492226891d12ec13302d"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a66e07e67baaf085649cea34a8aec24a3" id="r_a66e07e67baaf085649cea34a8aec24a3"><td class="memItemLeft" align="right" valign="top">virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classNavierStokesBase.html#a66e07e67baaf085649cea34a8aec24a3">finish_time_step</a> ()</td></tr>
 <tr class="separator:a66e07e67baaf085649cea34a8aec24a3"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:add394a755303214dd4a9edbdcd992f6c" id="r_add394a755303214dd4a9edbdcd992f6c"><td class="memItemLeft" align="right" valign="top">virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classNavierStokesBase.html#add394a755303214dd4a9edbdcd992f6c">percolate_time_vectors_fd</a> ()</td></tr>
@@ -2056,7 +2056,7 @@ template&lt;int dim, typename VectorType , typename DofsType &gt; </div>
 <p>Post-process simulation after an iteration. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">first_iteration</td><td>Indicator if the simulation is at it's first simulation or not. </td></tr>
+    <tr><td class="paramname">first_iteration</td><td>Indicator if the simulation is at its first simulation or not. </td></tr>
   </table>
   </dd>
 </dl>
@@ -2402,8 +2402,8 @@ template&lt;int dim, typename VectorType , typename DofsType &gt; </div>
 
 </div>
 </div>
-<a id="a99cc4f5fb004748bd47eb04f4657d236" name="a99cc4f5fb004748bd47eb04f4657d236"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a99cc4f5fb004748bd47eb04f4657d236">&#9670;&#160;</a></span>set_initial_condition()</h2>
+<a id="a18c7e94509bc492226891d12ec13302d" name="a18c7e94509bc492226891d12ec13302d"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a18c7e94509bc492226891d12ec13302d">&#9670;&#160;</a></span>set_initial_condition()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -2416,13 +2416,13 @@ template&lt;int dim, typename VectorType , typename DofsType &gt; </div>
         <tr>
           <td class="memname">virtual void <a class="el" href="classNavierStokesBase.html">NavierStokesBase</a>&lt; dim, VectorType, DofsType &gt;::set_initial_condition </td>
           <td>(</td>
-          <td class="paramtype"><a class="el" href="namespaceParameters.html#a87f2367892b0cda4800d7fac3b21fc12">Parameters::FluidDynamicsInitialConditionType</a>&#160;</td>
+          <td class="paramtype">const <a class="el" href="namespaceParameters.html#a87f2367892b0cda4800d7fac3b21fc12">Parameters::FluidDynamicsInitialConditionType</a>&#160;</td>
           <td class="paramname"><em>initial_condition_type</em>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">bool&#160;</td>
+          <td class="paramtype">const bool&#160;</td>
           <td class="paramname"><em>restart</em> = <code>false</code>&#160;</td>
         </tr>
         <tr>
@@ -2446,6 +2446,8 @@ template&lt;int dim, typename VectorType , typename DofsType &gt; </div>
   </table>
   </dd>
 </dl>
+
+<p>Reimplemented in <a class="el" href="classCFDDEMSolver.html#a788b8a3a20d758ef9482763c1680499b">CFDDEMSolver&lt; dim &gt;</a>.</p>
 
 <p class="definition">Definition at line <a class="el" href="navier__stokes__base_8h_source.html#l00225">225</a> of file <a class="el" href="navier__stokes__base_8h_source.html">navier_stokes_base.h</a>.</p>
 
