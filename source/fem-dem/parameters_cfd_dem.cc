@@ -190,8 +190,8 @@ namespace Parameters
     prm.declare_entry(
       "drag coupling",
       "semi-implicit",
-      Patterns::Selection("implicit|semi-implicit|explicit|midpoint"),
-      "Formulation for the drag force. Choices are implicit|semi-implicit|explicit|midpoint. The default value is semi-implicit, which represents the legacy coupling method.");
+      Patterns::Selection("implicit|semi-implicit|explicit"),
+      "Formulation for the drag force. Choices are implicit|semi-implicit|explicit. The default value is semi-implicit, which represents the legacy coupling method.");
 
     prm.leave_subsection();
   }
