@@ -8,7 +8,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
 ### Fixed
 
-- MINOR  Two of the files using the std::numbers namespace were actually missing the "numbers" include. Ths created a compilation issue on Apple CLANG. This has been fixed by adding the correct include in the sdirk and dem files. 
+- MINOR  Two of the files using the std::numbers namespace were actually missing the "numbers" include. Ths created a compilation issue on Apple CLANG. This has been fixed by adding the correct include in the sdirk and dem files. [#1750](https://github.com/chaos-polymtl/lethe/pull/1750)
 
 ### [Master] - 2025-10-13
 
