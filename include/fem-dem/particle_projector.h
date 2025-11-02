@@ -4,13 +4,12 @@
 #ifndef lethe_void_fraction_h
 #define lethe_void_fraction_h
 
+#include <core/parameters_cfd_dem.h>
 #include <core/vector.h>
 
 #include <solvers/navier_stokes_scratch_data.h>
 #include <solvers/physics_subequations_solver.h>
 #include <solvers/simulation_parameters.h>
-
-#include <fem-dem/parameters_cfd_dem.h>
 
 #include <deal.II/base/index_set.h>
 #include <deal.II/base/utilities.h>

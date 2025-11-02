@@ -700,7 +700,7 @@ NavierStokesScratchData<dim>::extract_particle_properties()
   this->average_particle_velocity = 0;
   // Loop over particles in cell
   this->total_particle_volume = 0;
-  unsigned int i_particle            = 0;
+  unsigned int i_particle     = 0;
 
   for (auto &particle : pic)
     {

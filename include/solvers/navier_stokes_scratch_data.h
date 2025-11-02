@@ -941,7 +941,7 @@ public:
   reinit_particle_fluid_interactions(
     const typename DoFHandler<dim>::active_cell_iterator &velocity_cell,
     const typename DoFHandler<dim>::active_cell_iterator &void_fraction_cell,
-    const VectorType & velocity_pressure_solution,
+    const VectorType                      &velocity_pressure_solution,
     const VectorType                      &previous_velocity_pressure_solution,
     const VectorType                      &void_fraction_solution,
     const Particles::ParticleHandler<dim> &particle_handler)
@@ -1373,9 +1373,9 @@ public:
   unsigned int                max_number_of_particles_per_cell;
   unsigned int                number_of_particles;
   typename Particles::ParticleHandler<dim>::particle_iterator_range pic;
-  double total_particle_volume;
-  double                                                            cell_volume;
-  double                                                            beta_drag;
+  double         total_particle_volume;
+  double         cell_volume;
+  double         beta_drag;
   Tensor<1, dim> undisturbed_flow_force;
 
 
