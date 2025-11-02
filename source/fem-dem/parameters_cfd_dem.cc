@@ -187,6 +187,12 @@ namespace Parameters
       Patterns::Bool(),
       "Outputs statistics about the particles such as their total kinetic energy, angular momentum, etc.");
 
+    prm.declare_entry(
+      "drag coupling",
+      "semi-implicit",
+      Patterns::Selection("implicit|semi-implicit|explicit|midpoint"),
+      "Formulation for the drag force. Choices are implicit|semi-implicit|explicit|midpoint. The default value is semi-implicit, which represents the legacy coupling method.");
+
     prm.leave_subsection();
   }
 
@@ -225,7 +231,17 @@ namespace Parameters
     else if (op == "gidaspow")
       drag_model = Parameters::DragModel::gidaspow;
     else
-      throw(std::runtime_error("Invalid drag model"));
+      AssertThrow(false, ExcMessage("Invalid drag model"));
+
+    const std::string drag_coupling_str = prm.get("drag coupling");
+    if (drag_coupling_str == "implicit")
+      drag_coupling = Parameters::DragCoupling::fully_implicit;
+    else if (drag_coupling_str == "explicit")
+      drag_coupling = Parameters::DragCoupling::fully_explicit;
+    else if (drag_coupling_str == "semi-implicit")
+      drag_coupling = Parameters::DragCoupling::semi_implicit;
+    else
+      AssertThrow(false, ExcMessage("Drag coupling formulation"));
 
     const std::string op1 = prm.get("vans model");
     if (op1 == "modelA")

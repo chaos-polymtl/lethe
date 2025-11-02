@@ -43,6 +43,48 @@ namespace Parameters
     gidaspow
   };
 
+
+  /**
+   * @enum DragCoupling
+   * @brief Defines the numerical coupling strategy used for drag force computation between fluid and particles.
+   *
+   * This enumeration specifies how the drag interaction term is treated in time
+   * integration schemes for coupled CFD-DEM or multiphase simulations. The
+   * choice of coupling affects both stability and computational cost. The
+   * fully_implicit and fully_explicit schemes are named this way since explicit
+   * is a reserved keyword in C++. Thus, we use fully_implicit and
+   * fully_explicit to ensure a coherent terminology.
+   *
+   * - **fully_implicit**:
+   *   The drag force is evaluated using the current (implicit) fluid
+   *   velocities and previous (explicit) particle velocity. The resulting
+   *   drag is applied to both the particles and the fluid.
+   *   Provides maximum stability, but requires more Newton iterations.
+   *
+   * - **semi_implicit**:
+   *   The drag is computed the previous velocity of the particles and the
+   * fluid. The resulting drag is applied to the particles. On the fluid, the
+   * drag is used to calculate the momentum transfer coefficient and the new
+   * fluid velocity velocity is calculated using an implicit formulation.
+   * Provides extensive stability, but for larger time-step this may lead to a
+   * slight violation of Newton's third law since the drag applied on the fluid
+   *   is not strictly equal to the drag applied to the particles.
+   *
+   * - **fully_explicit**:
+   *   The drag is evaluated entirely using known quantities from the previous
+   *   time step. The outcome conditionally stable and may require very small
+   *   coupling time-step when the density of the fluid is much lower than the
+   * density of the particles
+   *
+   */
+  enum class DragCoupling
+  {
+    fully_implicit,
+    semi_implicit,
+    fully_explicit
+  };
+
+
   enum class VANSModel
   {
     modelA,
@@ -86,6 +128,7 @@ namespace Parameters
   {
     bool         grad_div;
     DragModel    drag_model;
+    DragCoupling drag_coupling;
     VANSModel    vans_model;
     unsigned int coupling_frequency;
     bool         drag_force;
