@@ -10,6 +10,9 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
 - MINOR  Two of the files using the std::numbers namespace were actually missing the "numbers" include. Ths created a compilation issue on Apple CLANG. This has been fixed by adding the correct include in the sdirk and dem files. [#1750](https://github.com/chaos-polymtl/lethe/pull/1750)
 
+- MINOR Fixes a bug introduced in [#1731]. Essentially, the wrong function was used to write the boundaries checkpoint pvd file (read instead of save) and this would crash the simulation when trying to write a new checkpoint file from zero. This PR fixes this by calling the correct function. [](https://github.com/chaos-polymtl/lethe/pull/)
+
+
 ### [Master] - 2025-10-13
 
 ### Fixed
