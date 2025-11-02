@@ -3196,7 +3196,7 @@ NavierStokesBase<dim, VectorType, DofsType>::write_checkpoint()
             this->simulation_parameters.restart_parameters.filename +
             ".boundary";
 
-          this->pvdhandler_boundary.read(prefix_boundary);
+          this->pvdhandler_boundary.save(prefix_boundary);
         }
     }
 
