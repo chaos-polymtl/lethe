@@ -1568,7 +1568,8 @@ ParticleProjector<dim>::calculate_particle_fluid_forces_projection(
               fluid_solution,
               fluid_previous_solutions[0],
               void_fraction_solution,
-              *particle_handler);
+              *particle_handler,
+              cfd_dem_parameters.drag_coupling);
           else
             {
               // In this case the global vector type is not a deal.II vector.
@@ -1578,7 +1579,8 @@ ParticleProjector<dim>::calculate_particle_fluid_forces_projection(
                 fluid_solution,
                 fluid_previous_solutions[0],
                 void_fraction_locally_relevant,
-                *particle_handler);
+                *particle_handler,
+                cfd_dem_parameters.drag_coupling);
             }
 
 

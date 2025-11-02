@@ -4,6 +4,7 @@
 #ifndef lethe_navier_stokes_scratch_data_h
 #define lethe_navier_stokes_scratch_data_h
 
+#include "core/parameters_cfd_dem.h"
 #include <core/bdf.h>
 #include <core/dem_properties.h>
 #include <core/parameters.h>
@@ -694,7 +695,9 @@ public:
   calculate_fluid_fields_at_particle_location(
     const Quadrature<dim>                                &q_particles_location,
     const typename DoFHandler<dim>::active_cell_iterator &velocity_cell,
-    const VectorType &velocity_pressure_solution)
+    const VectorType               &present_velocity_pressure_solution,
+    const VectorType               &previous_velocity_pressure_solution,
+    const Parameters::DragCoupling &drag_coupling)
   {
     FEValues<dim> fe_values_local_particles(this->fe_values.get_fe(),
                                             q_particles_location,
@@ -710,6 +713,13 @@ public:
     fluid_velocity_curls_at_particle_location_2d.resize(number_of_particles);
     fluid_velocity_curls_at_particle_location_3d.resize(number_of_particles);
     fluid_pressure_gradients_at_particle_location.resize(number_of_particles);
+
+    // Take velocity_pressure_solution according to the type of coupling used.
+    auto velocity_pressure_solution =
+      drag_coupling == Parameters::DragCoupling::fully_implicit ?
+        present_velocity_pressure_solution :
+        previous_velocity_pressure_solution;
+
 
     fe_values_local_particles.reinit(velocity_cell);
 
@@ -926,6 +936,9 @@ public:
    * @param[in] void_fraction_cell The active cell associated with the void
    * fraction DoFHandler
    *
+   * @param[in] present_velocity_pressure_solution The solution at the present
+   * time step for the fluid's velocity and pressure
+   *
    * @param[in] previous_velocity_pressure_solution The solution at the previous
    * time step for the fluid's velocity and pressure
    *
@@ -934,6 +947,9 @@ public:
    *
    * @param[in] particle_handler The particle handler object that stores and
    * manages the particles in the simulations
+   *
+   * @param[in] drag_coupling Parameter that controls what drag coupling method
+   * is used
    */
 
   template <typename VectorType>
@@ -941,10 +957,11 @@ public:
   reinit_particle_fluid_interactions(
     const typename DoFHandler<dim>::active_cell_iterator &velocity_cell,
     const typename DoFHandler<dim>::active_cell_iterator &void_fraction_cell,
-    const VectorType                      &velocity_pressure_solution,
+    const VectorType                      &present_velocity_pressure_solution,
     const VectorType                      &previous_velocity_pressure_solution,
     const VectorType                      &void_fraction_solution,
-    const Particles::ParticleHandler<dim> &particle_handler)
+    const Particles::ParticleHandler<dim> &particle_handler,
+    const Parameters::DragCoupling        &drag_coupling)
   {
     Assert(
       gather_particles_information,
@@ -965,7 +982,11 @@ public:
       gather_particles_reference_location();
 
     calculate_fluid_fields_at_particle_location(
-      q_particles_location, velocity_cell, previous_velocity_pressure_solution);
+      q_particles_location,
+      velocity_cell,
+      present_velocity_pressure_solution,
+      previous_velocity_pressure_solution,
+      drag_coupling);
 
     if (this->interpolated_void_fraction)
       {
@@ -1008,10 +1029,11 @@ public:
     const typename DoFHandler<dim>::active_cell_iterator &velocity_cell,
     const typename DoFHandler<dim>::active_cell_iterator &void_fraction_cell,
     const typename DoFHandler<dim>::active_cell_iterator &phase_cell,
-    const VectorType & /*velocity_pressure_solution*/,
+    const VectorType                      &velocity_pressure_solution,
     const VectorType                      &previous_velocity_pressure_solution,
     const VectorType                      &void_fraction_solution,
     const Particles::ParticleHandler<dim> &particle_handler,
+    const Parameters::DragCoupling        &drag_coupling,
     const VectorType                      &current_filtered_solution)
   {
     pic = particle_handler.particles_in_cell(velocity_cell);
@@ -1025,7 +1047,11 @@ public:
     Quadrature<dim> q_particles_location =
       gather_particles_reference_location();
     calculate_fluid_fields_at_particle_location(
-      q_particles_location, velocity_cell, previous_velocity_pressure_solution);
+      q_particles_location,
+      velocity_cell,
+      velocity_pressure_solution,
+      previous_velocity_pressure_solution,
+      drag_coupling);
 
     if (this->interpolated_void_fraction)
       {
