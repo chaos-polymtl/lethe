@@ -645,11 +645,9 @@ public:
 
   /**
    * @brief Extracts the velocity of the particles and calculates their total volume
-   * in the cell
-   *
-   * @return Total volume of the particles in the cell
+   * in the cell. Both outcomes are stored as members of the scratch data class.
    */
-  double
+  void
   extract_particle_properties();
 
   /**
@@ -943,7 +941,7 @@ public:
   reinit_particle_fluid_interactions(
     const typename DoFHandler<dim>::active_cell_iterator &velocity_cell,
     const typename DoFHandler<dim>::active_cell_iterator &void_fraction_cell,
-    const VectorType & /*velocity_pressure_solution*/,
+    const VectorType & velocity_pressure_solution,
     const VectorType                      &previous_velocity_pressure_solution,
     const VectorType                      &void_fraction_solution,
     const Particles::ParticleHandler<dim> &particle_handler)
@@ -956,9 +954,7 @@ public:
 
     pic = particle_handler.particles_in_cell(velocity_cell);
 
-    double total_particle_volume = 0;
     reinit_particle_fluid_forces();
-    total_particle_volume = extract_particle_properties();
 
     calculate_cell_void_fraction(total_particle_volume);
 
@@ -967,6 +963,7 @@ public:
 
     Quadrature<dim> q_particles_location =
       gather_particles_reference_location();
+
     calculate_fluid_fields_at_particle_location(
       q_particles_location, velocity_cell, previous_velocity_pressure_solution);
 
@@ -1019,8 +1016,6 @@ public:
   {
     pic = particle_handler.particles_in_cell(velocity_cell);
 
-    double total_particle_volume = 0;
-    total_particle_volume        = extract_particle_properties();
     reinit_particle_fluid_forces();
     calculate_cell_void_fraction(total_particle_volume);
 
@@ -1378,6 +1373,7 @@ public:
   unsigned int                max_number_of_particles_per_cell;
   unsigned int                number_of_particles;
   typename Particles::ParticleHandler<dim>::particle_iterator_range pic;
+  double total_particle_volume;
   double                                                            cell_volume;
   double                                                            beta_drag;
   Tensor<1, dim> undisturbed_flow_force;

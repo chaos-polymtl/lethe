@@ -694,12 +694,12 @@ NavierStokesScratchData<dim>::reinit_particle_fluid_forces()
 }
 
 template <int dim>
-double
+void
 NavierStokesScratchData<dim>::extract_particle_properties()
 {
-  average_particle_velocity = 0;
+  this->average_particle_velocity = 0;
   // Loop over particles in cell
-  double       total_particle_volume = 0;
+  this->total_particle_volume = 0;
   unsigned int i_particle            = 0;
 
   for (auto &particle : pic)
@@ -730,7 +730,6 @@ NavierStokesScratchData<dim>::extract_particle_properties()
       average_particle_velocity =
         average_particle_velocity / number_of_particles;
     }
-  return total_particle_volume;
 }
 
 template <int dim>
