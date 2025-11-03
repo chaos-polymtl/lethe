@@ -1406,7 +1406,7 @@ public:
   double         total_particle_volume;
   double         cell_volume;
   double         beta_drag;
-  Tensor<1, dim> undisturbed_flow_force;
+  Tensor<1, dim> explicit_particle_volumetric_acceleration_on_fluid;
 
 
   /**
