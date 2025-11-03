@@ -66,7 +66,7 @@ This subsection includes parameters related to multiphase flow simulations using
     Since the viscous torque model is not complete without the vortical component, ``rotational viscous torque`` should be used with caution.
 
 * The ``drag coupling`` parameter controls the time level at which the fluid velocity is evaluated when computing the drag and hydrodynamic forces.  
-  When ``drag coupling = semi-implicit``, the drag force is computed at time :math:`t` but is partially implicit on the fluid to ensure stable coupling.  
+  When ``drag coupling = semi-implicit``, the drag force is computed at time :math:`t` but is partially implicit on the fluid to ensure stable coupling. The default value is to use a ``drag coupling = semi-implicit``. 
   When ``drag coupling = implicit``, the drag force (including the drag coefficient) is evaluated implicitly using the fluid velocity at time :math:`t + \Delta t`.
   When ``drag coupling = explicit``, the drag force is computed explicitly using the fluid velocity at time :math:`t`.
 
