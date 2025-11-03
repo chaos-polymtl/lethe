@@ -685,9 +685,17 @@ public:
    * @param[in] velocity_cell The active cell associated with the velocity and
    * pressure DoFHandler
    *
-   * @param[in] velocity_pressure_solution The solution (velocity and
-   * pressure) that is used to interpolate the velocity and pressure at the
-   * particles locations.
+   * @param[in] present_velocity_pressure_solution The solution (velocity and
+   * pressure) at the current time step. This solution is used in the implicit
+   * coupling to establish the particle-fluid force.
+   *
+   * @param[in] previous_velocity_pressure_solution The solution (velocity and
+   * pressure) at the previous time step. This solution is used in the explicit
+   * and semi-implicit coupling to calculate the particle-fluid force.
+   *
+   * @param[in] drag_coupling Indicator for the type of coupling that is used.
+   * This parameter essentially decides which velocity_pressure solution is
+   * interpolated at the location of the particles.
    */
 
   template <typename VectorType>
@@ -936,11 +944,13 @@ public:
    * @param[in] void_fraction_cell The active cell associated with the void
    * fraction DoFHandler
    *
-   * @param[in] present_velocity_pressure_solution The solution at the present
-   * time step for the fluid's velocity and pressure
+   * @param[in] present_velocity_pressure_solution The solution (velocity and
+   * pressure) at the current time step. This solution is used in the implicit
+   * coupling to establish the particle-fluid force.
    *
-   * @param[in] previous_velocity_pressure_solution The solution at the previous
-   * time step for the fluid's velocity and pressure
+   * @param[in] previous_velocity_pressure_solution The solution (velocity and
+   * pressure) at the previous time step. This solution is used in the explicit
+   * and semi-implicit coupling to calculate the particle-fluid force.
    *
    * @param[in] void_fraction_solution The void fraction value calculated with
    * one of the methods of the VoidFractionBase class.
@@ -948,8 +958,9 @@ public:
    * @param[in] particle_handler The particle handler object that stores and
    * manages the particles in the simulations
    *
-   * @param[in] drag_coupling Parameter that controls what drag coupling method
-   * is used
+   * @param[in] drag_coupling Indicator for the type of coupling that is used.
+   * This parameter essentially decides which velocity_pressure solution is
+   * interpolated at the location of the particles.
    */
 
   template <typename VectorType>
@@ -1005,26 +1016,33 @@ public:
    * with CFD-DEM.
    *
    * @param[in] velocity_cell The active cell associated with the velocity and
-   * pressure DoFHandler
+   * pressure DoFHandler.
    *
    * @param[in] void_fraction_cell The active cell associated with the void
-   * fraction DoFHandler
+   * fraction DoFHandler.
    *
-   * @param[in] phase_cell The active cell associated with the VOF DoFHandler
+   * @param[in] phase_cell The active cell associated with the VOF DoFHandler.
    *
-   * @param velocity_pressure_solution
+   * @param[in] present_velocity_pressure_solution The solution (velocity and
+   * pressure) at the current time step. This solution is used in the implicit
+   * coupling to establish the particle-fluid force.
    *
-   * @param[in] previous_velocity_pressure_solution The solution at the previous
-   * time step for the fluid's velocity and pressure
+   * @param[in] previous_velocity_pressure_solution The solution (velocity and
+   * pressure) at the previous time step. This solution is used in the explicit
+   * and semi-implicit coupling to calculate the particle-fluid force.
    *
    * @param[in] void_fraction_solution The void fraction value calculated with
    * one of the methods of the VoidFractionBase class.
    *
    * @param[in] particle_handler The particle handler object that stores and
-   * manages the particles in the simulations
+   * manages the particles in the simulations.
    *
-   * @param[in] current_filtered_solution The present value of the VOF solution
-   * at the dofs of the cell
+   * @param[in] current_filtered_VOF_solution The present value of the VOF
+   * solution.
+   *
+   * @param[in] drag_coupling Indicator for the type of coupling that is
+   * used. This parameter essentially decides which velocity_pressure solution
+   * is interpolated at the location of the particles.
    */
   template <typename VectorType>
   void
@@ -1032,12 +1050,12 @@ public:
     const typename DoFHandler<dim>::active_cell_iterator &velocity_cell,
     const typename DoFHandler<dim>::active_cell_iterator &void_fraction_cell,
     const typename DoFHandler<dim>::active_cell_iterator &phase_cell,
-    const VectorType                      &velocity_pressure_solution,
+    const VectorType                      &present_velocity_pressure_solution,
     const VectorType                      &previous_velocity_pressure_solution,
     const VectorType                      &void_fraction_solution,
     const Particles::ParticleHandler<dim> &particle_handler,
     const Parameters::DragCoupling        &drag_coupling,
-    const VectorType                      &current_filtered_solution)
+    const VectorType                      &current_filtered_VOF_solution)
   {
     pic = particle_handler.particles_in_cell(velocity_cell);
 
@@ -1053,7 +1071,7 @@ public:
     calculate_fluid_fields_at_particle_location(
       q_particles_location,
       velocity_cell,
-      velocity_pressure_solution,
+      present_velocity_pressure_solution,
       previous_velocity_pressure_solution,
       drag_coupling);
 
@@ -1065,7 +1083,7 @@ public:
       }
     calculate_vof_at_particle_location(q_particles_location,
                                        phase_cell,
-                                       current_filtered_solution);
+                                       current_filtered_VOF_solution);
     calculate_fluid_properties_at_particle_location();
     calculate_force_parameters_at_particle_location();
   }
