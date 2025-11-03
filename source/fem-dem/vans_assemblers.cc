@@ -928,6 +928,10 @@ VANSAssemblerDiFelice<dim>::calculate_particle_fluid_interactions(
   const auto &density   = scratch_data.density_at_particle_location;
   auto       &beta_drag = scratch_data.beta_drag;
 
+  // The undisturbed_flow_force variable is used to store the drag if the
+  // coupling is explicit.
+  auto &undisturbed_flow_force = scratch_data.undisturbed_flow_force;
+
   Tensor<1, dim> drag_force;
 
   const auto pic = scratch_data.pic;
@@ -968,6 +972,11 @@ VANSAssemblerDiFelice<dim>::calculate_particle_fluid_interactions(
       drag_force = density[i_particle] * momentum_transfer_coefficient *
                    relative_velocity[i_particle];
 
+      if (cfd_dem.drag_coupling == Parameters::DragCoupling::fully_explicit)
+        undisturbed_flow_force += momentum_transfer_coefficient *
+                                  relative_velocity[i_particle] /
+                                  scratch_data.cell_volume;
+
       for (int d = 0; d < dim; ++d)
         {
           particle_properties
@@ -1005,6 +1014,10 @@ VANSAssemblerRong<dim>::calculate_particle_fluid_interactions(
   const auto &Re_p      = scratch_data.Re_particle;
   const auto &density   = scratch_data.density_at_particle_location;
   auto       &beta_drag = scratch_data.beta_drag;
+
+  // The undisturbed_flow_force variable is used to store the drag if the
+  // coupling is explicit.
+  auto &undisturbed_flow_force = scratch_data.undisturbed_flow_force;
 
   Tensor<1, dim> drag_force;
 
@@ -1045,6 +1058,11 @@ VANSAssemblerRong<dim>::calculate_particle_fluid_interactions(
       drag_force = density[i_particle] * momentum_transfer_coefficient *
                    relative_velocity[i_particle];
 
+      if (cfd_dem.drag_coupling == Parameters::DragCoupling::fully_explicit)
+        undisturbed_flow_force += momentum_transfer_coefficient *
+                                  relative_velocity[i_particle] /
+                                  scratch_data.cell_volume;
+
       for (int d = 0; d < dim; ++d)
         {
           particle_properties
@@ -1084,6 +1102,10 @@ VANSAssemblerDallavalle<dim>::calculate_particle_fluid_interactions(
   const auto &density   = scratch_data.density_at_particle_location;
   auto       &beta_drag = scratch_data.beta_drag;
 
+  // The undisturbed_flow_force variable is used to store the drag if the
+  // coupling is explicit.
+  auto &undisturbed_flow_force = scratch_data.undisturbed_flow_force;
+
   Tensor<1, dim> drag_force;
 
   const auto pic          = scratch_data.pic;
@@ -1111,6 +1133,11 @@ VANSAssemblerDallavalle<dim>::calculate_particle_fluid_interactions(
 
       drag_force = density[i_particle] * momentum_transfer_coefficient *
                    relative_velocity[i_particle];
+
+      if (cfd_dem.drag_coupling == Parameters::DragCoupling::fully_explicit)
+        undisturbed_flow_force += momentum_transfer_coefficient *
+                                  relative_velocity[i_particle] /
+                                  scratch_data.cell_volume;
 
       for (int d = 0; d < dim; ++d)
         {
@@ -1152,6 +1179,10 @@ VANSAssemblerKochHill<dim>::calculate_particle_fluid_interactions(
   const auto &kinematic_viscosity =
     scratch_data.kinematic_viscosity_at_particle_location;
   auto &beta_drag = scratch_data.beta_drag;
+
+  // The undisturbed_flow_force variable is used to store the drag if the
+  // coupling is explicit.
+  auto &undisturbed_flow_force = scratch_data.undisturbed_flow_force;
 
   Tensor<1, dim> drag_force;
 
@@ -1209,6 +1240,11 @@ VANSAssemblerKochHill<dim>::calculate_particle_fluid_interactions(
       drag_force = density[i_particle] * momentum_transfer_coefficient *
                    relative_velocity[i_particle];
 
+      if (cfd_dem.drag_coupling == Parameters::DragCoupling::fully_explicit)
+        undisturbed_flow_force += momentum_transfer_coefficient *
+                                  relative_velocity[i_particle] /
+                                  scratch_data.cell_volume;
+
       for (int d = 0; d < dim; ++d)
         {
           particle_properties
@@ -1251,6 +1287,10 @@ VANSAssemblerBeetstra<dim>::calculate_particle_fluid_interactions(
     scratch_data.kinematic_viscosity_at_particle_location;
   auto &beta_drag = scratch_data.beta_drag;
 
+  // The undisturbed_flow_force variable is used to store the drag if the
+  // coupling is explicit.
+  auto &undisturbed_flow_force = scratch_data.undisturbed_flow_force;
+
   Tensor<1, dim> drag_force;
 
   const auto pic          = scratch_data.pic;
@@ -1289,6 +1329,11 @@ VANSAssemblerBeetstra<dim>::calculate_particle_fluid_interactions(
 
       drag_force = density[i_particle] * momentum_transfer_coefficient *
                    relative_velocity[i_particle];
+
+      if (cfd_dem.drag_coupling == Parameters::DragCoupling::fully_explicit)
+        undisturbed_flow_force += momentum_transfer_coefficient *
+                                  relative_velocity[i_particle] /
+                                  scratch_data.cell_volume;
 
       for (int d = 0; d < dim; ++d)
         {
@@ -1330,6 +1375,11 @@ VANSAssemblerGidaspow<dim>::calculate_particle_fluid_interactions(
   const auto &kinematic_viscosity =
     scratch_data.kinematic_viscosity_at_particle_location;
   auto &beta_drag = scratch_data.beta_drag;
+
+  // The undisturbed_flow_force variable is used to store the drag if the
+  // coupling is explicit.
+  auto &undisturbed_flow_force = scratch_data.undisturbed_flow_force;
+
 
   Tensor<1, dim> drag_force;
 
@@ -1388,6 +1438,11 @@ VANSAssemblerGidaspow<dim>::calculate_particle_fluid_interactions(
 
       drag_force = density[i_particle] * momentum_transfer_coefficient *
                    relative_velocity[i_particle];
+
+      if (cfd_dem.drag_coupling == Parameters::DragCoupling::fully_explicit)
+        undisturbed_flow_force += momentum_transfer_coefficient *
+                                  relative_velocity[i_particle] /
+                                  scratch_data.cell_volume;
 
       for (int d = 0; d < dim; ++d)
         {
@@ -2022,7 +2077,8 @@ VANSAssemblerFPI<dim>::assemble_matrix(
       else if (cfd_dem.vans_model == Parameters::VANSModel::modelA)
         {
           strong_residual[q] += // Drag Force
-            beta_drag * (velocity - average_particles_velocity);
+            beta_drag * (velocity - average_particles_velocity) +
+            undisturbed_flow_force;
         }
 
       for (unsigned int j = 0; j < n_dofs; ++j)
@@ -2086,7 +2142,8 @@ VANSAssemblerFPI<dim>::assemble_rhs(
       else if (cfd_dem.vans_model == Parameters::VANSModel::modelA)
         {
           strong_residual[q] += // Drag Force
-            beta_drag * (velocity - average_particles_velocity);
+            beta_drag * (velocity - average_particles_velocity) +
+            undisturbed_flow_force;
         }
 
       // Assembly of the right-hand side
@@ -2106,7 +2163,8 @@ VANSAssemblerFPI<dim>::assemble_rhs(
           if (cfd_dem.vans_model == Parameters::VANSModel::modelA)
             {
               local_rhs(i) -=
-                (beta_drag * (velocity - average_particles_velocity)) *
+                (beta_drag * (velocity - average_particles_velocity) +
+                 undisturbed_flow_force) *
                 phi_u_i * JxW;
             }
         }
