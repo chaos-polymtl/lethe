@@ -85,6 +85,27 @@ VelocityField<dim>::divergence_value(const Point<dim> &p, double &value) const
   value = (p(0) - p(1)) * (-p(0) - p(1)) * std::pow(invert_norm, -2.);
 }
 
+template <int dim>
+class ConcentrationField : public Function<dim>
+{
+public:
+  ConcentrationField()
+    : Function<dim>(1)
+  {}
+
+  double
+  value(const Point<dim> &p, const unsigned int /*component*/ = 0) const override;
+};
+
+template <int dim>
+double
+ConcentrationField<dim>::value(const Point<dim> &p,
+                               const unsigned int /*component*/) const
+{
+  const double r = p.norm();
+  return 0.5 - 0.5 * tanh((r - 0.5) / 0.001);
+}
+
 // Right-hand side function (zero in the initial case. To be modified later)
 template <int dim>
 class RHS : public Function<dim>
@@ -101,6 +122,26 @@ public:
     values(0) = 0.0;
   }
 };
+
+// Nucleation source term
+template <int dim>
+class NucleationSource : public Function<dim>
+{
+public:
+  NucleationSource()
+    : Function<dim>(1){}
+
+  double
+  value(const Point<dim> &p, const unsigned int /*component*/ = 0) const override;
+};
+
+template <int dim>
+double
+NucleationSource<dim>::value(const Point<dim> &p,
+                             const unsigned int /*component*/) const
+{
+  return 0;
+}
 
 // Structure to hold FEValues and FEInterfaceValues objects for each cell
 template <int dim>
@@ -274,10 +315,11 @@ private:
   TimerOutput computing_timer;
 
   VelocityField<dim>     velocity_field;
+  ConcentrationField<dim> concentration_field;
   SparseMatrix<double>   system_matrix;
   Vector<double>         system_rhs;
   const DirichletBC<dim> dirichlet_bc_function;
-  Vector<double>         solution;
+  Vector<double>    solution;
   const bool             use_divergence;
 };
 
@@ -342,7 +384,7 @@ DGAdvectionMoments<dim>::setup_dofs()
   system_matrix.reinit(sparsity_pattern);
   system_rhs.reinit(dof_handler.n_dofs());
   solution.reinit(dof_handler.n_dofs());
-  // system_rhs.reinit(dof_handler.n_dofs());
+  system_rhs.reinit(dof_handler.n_dofs());
 
   std::cout << "Number of active cells: " << triangulation.n_active_cells()
             << std::endl
@@ -461,9 +503,9 @@ DGAdvectionMoments<dim>::assemble_system()
         // Evaluate Dirichlet BC (scalar)
         const double g = dirichlet_bc_function.value(q_point);
 
-        const double normal_velocity = velocity * normals[q];
+        const double velocity_dot_n = velocity * normals[q];
 
-        if (normal_velocity > 0.0)
+        if (velocity_dot_n > 0.0)
           {
             for (unsigned int i = 0; i < dofs_per_face; ++i)
               {
@@ -472,7 +514,7 @@ DGAdvectionMoments<dim>::assemble_system()
                   {
                     const double phi_j = fe_face.shape_value(j, q);
                     copy_data.cell_matrix(i, j) +=
-                      (phi_i * phi_j * normal_velocity) * JxW[q];
+                      (phi_i * phi_j * velocity_dot_n) * JxW[q];
                   }
               }
           }
@@ -482,7 +524,7 @@ DGAdvectionMoments<dim>::assemble_system()
               {
                 const double phi_i = fe_face.shape_value(i, q);
                 copy_data.cell_rhs(i) +=
-                  (-phi_i * g * normal_velocity) * JxW[q];
+                  (-phi_i * g * velocity_dot_n) * JxW[q];
               }
           }
       }
@@ -516,7 +558,7 @@ DGAdvectionMoments<dim>::assemble_system()
         Tensor<1, dim> velocity;
         velocity_field.vector_value(q_points[q], velocity);
 
-        auto normal_velocity = velocity * normals[q];
+        auto velocity_dot_n = velocity * normals[q];
         for (unsigned int i = 0; i < n_dofs; ++i)
           // Gather shape function value at quadrature point q}
           // The index i corresponds to the test function
@@ -525,8 +567,8 @@ DGAdvectionMoments<dim>::assemble_system()
             for (unsigned int j = 0; j < n_dofs; ++j)
               {
                 copy_data_face.cell_matrix(i, j) +=
-                  (phi_i * fe_iv.shape_value((normal_velocity > 0), j, q) *
-                   normal_velocity) *
+                  (phi_i * fe_iv.shape_value((velocity_dot_n > 0), j, q) *
+                   velocity_dot_n) *
                   JxW[q];
               }
           }
@@ -595,9 +637,15 @@ DGAdvectionMoments<dim>::output_results(const int cycle) const
   std::cout << "  Writing solution to <" << filename << '>' << std::endl;
   std::ofstream output(filename);
 
+  Vector<double> concentration_values(dof_handler.n_dofs());
+  VectorTools::interpolate(dof_handler, ConcentrationField<dim>(), concentration_values);
+
   DataOut<dim> data_out;
   data_out.attach_dof_handler(dof_handler);
   data_out.add_data_vector(solution, "moment", DataOut<dim>::type_dof_data);
+  data_out.add_data_vector(concentration_values,
+                           "concentration",
+                           DataOut<dim>::type_dof_data);
 
   data_out.build_patches(mapping);
 
