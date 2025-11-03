@@ -2235,6 +2235,8 @@ VANSAssemblerFPIProj<dim>::assemble_matrix(
   const auto        &JxW_vec    = scratch_data.JxW;
   const unsigned int n_q_points = scratch_data.n_q_points;
   const unsigned int n_dofs     = scratch_data.n_dofs;
+  // The CFD-DEM solver only supports constant density for now
+  const double density          = scratch_data.density_scale;
 
   // Copy data elements
   auto &strong_residual = copy_data.strong_residual;
@@ -2253,10 +2255,11 @@ VANSAssemblerFPIProj<dim>::assemble_matrix(
       const Tensor<1, dim> fluid_particle_relative_velocity =
         velocity - particles_velocity;
       const Tensor<1, dim> &undisturbed_flow_force =
-        scratch_data.particle_two_way_coupling_force_values[q];
+        scratch_data.particle_two_way_coupling_force_values[q]/
+                  (scratch_data.cell_volume * density);
       // We divide by the cell's volume to get the volumeric force
       const Tensor<1, dim> &fluid_drag =
-        scratch_data.particle_drag_values[q] / scratch_data.cell_volume;
+        scratch_data.particle_drag_values[q] / (scratch_data.cell_volume * density);
       const double beta_drag =
         fluid_drag.norm() / (fluid_particle_relative_velocity.norm() + eps);
 
@@ -2309,6 +2312,8 @@ VANSAssemblerFPIProj<dim>::assemble_rhs(
   const auto        &JxW_vec    = scratch_data.JxW;
   const unsigned int n_q_points = scratch_data.n_q_points;
   const unsigned int n_dofs     = scratch_data.n_dofs;
+  // The CFD-DEM solver only supports constant density for now
+  const double density          = scratch_data.density_scale;
 
   // Copy data elements
   auto &strong_residual = copy_data.strong_residual;
@@ -2319,10 +2324,11 @@ VANSAssemblerFPIProj<dim>::assemble_rhs(
     {
       // Velocity
       const Tensor<1, dim> &undisturbed_flow_force =
-        scratch_data.particle_two_way_coupling_force_values[q];
+        scratch_data.particle_two_way_coupling_force_values[q]/ 
+        (scratch_data.cell_volume * density);
       // We divide by the cell's volume to get the volumeric force
       const Tensor<1, dim> &fluid_drag =
-        scratch_data.particle_drag_values[q] / scratch_data.cell_volume;
+        scratch_data.particle_drag_values[q] / (scratch_data.cell_volume * density);
 
       // Store JxW in local variable for faster access;
       const double JxW = JxW_vec[q];
