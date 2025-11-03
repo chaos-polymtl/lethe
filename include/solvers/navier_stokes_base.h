@@ -899,11 +899,11 @@ protected:
   /**
    * @brief Gather solution information to generate output results
    *
-   * @param[in] solution Vector of present solution
+   * @param[in] solution Vector of the present solution
    * @param[in,out] solution_output_structs Vector of OutputStructs that will be
    * used to write the output results as VTU files
    */
-  void
+  virtual void
   gather_output_results(
     const VectorType                           &solution,
     std::vector<OutputStruct<dim, VectorType>> &solution_output_structs);
@@ -914,7 +914,7 @@ protected:
    *
    * @param[in] solution Vector of present solution
    */
-  void
+  virtual void
   write_output_results(const VectorType &solution);
 
   /**

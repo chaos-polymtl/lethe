@@ -717,6 +717,51 @@ CFDDEMSolver<dim>::read_checkpoint()
 }
 
 template <int dim>
+std::vector<OutputStruct<dim, GlobalVectorType>>
+CFDDEMSolver<dim>::gather_output_hook()
+{
+  std::vector<OutputStruct<dim, GlobalVectorType>> solution_output_structs;
+
+  if (this->cfd_dem_simulation_parameters.void_fraction
+        ->project_particle_velocity)
+    {
+      solution_output_structs.emplace_back(
+        std::in_place_type<OutputStructSolution<dim, GlobalVectorType>>,
+        this->particle_projector.particle_velocity.dof_handler,
+        this->particle_projector.particle_velocity
+          .particle_field_locally_relevant,
+        std::vector<std::string>(dim, "Particle_velocity"),
+        std::vector<DataComponentInterpretation::DataComponentInterpretation>(
+          dim, DataComponentInterpretation::component_is_part_of_vector));
+    }
+
+  if (this->cfd_dem_simulation_parameters.void_fraction
+        ->project_particle_forces)
+    {
+      solution_output_structs.emplace_back(
+        std::in_place_type<OutputStructSolution<dim, GlobalVectorType>>,
+        this->particle_projector.particle_fluid_drag.dof_handler,
+        this->particle_projector.particle_fluid_drag
+          .particle_field_locally_relevant,
+        std::vector<std::string>(dim, "Particle_drag"),
+        std::vector<DataComponentInterpretation::DataComponentInterpretation>(
+          dim, DataComponentInterpretation::component_is_part_of_vector));
+
+      solution_output_structs.emplace_back(
+        std::in_place_type<OutputStructSolution<dim, GlobalVectorType>>,
+        this->particle_projector.particle_fluid_force_two_way_coupling
+          .dof_handler,
+        this->particle_projector.particle_fluid_force_two_way_coupling
+          .particle_field_locally_relevant,
+        std::vector<std::string>(dim, "Particle_two_way_coupling_force"),
+        std::vector<DataComponentInterpretation::DataComponentInterpretation>(
+          dim, DataComponentInterpretation::component_is_part_of_vector));
+    }
+
+  return solution_output_structs;
+}
+
+template <int dim>
 void
 CFDDEMSolver<dim>::check_contact_detection_method(unsigned int counter)
 {
