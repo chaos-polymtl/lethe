@@ -112,8 +112,9 @@ public:
 
   /**
    * @brief Return the metric for residual normalization. By default, the routine returns 1.
-   * In children solver classes, if the normalize_residual_by_volume flag is set to true, the overridden method
-   * returns the global volume of the triangulation.
+   * In children solver classes, if the normalize_residual_by_volume flag is set
+   * to true, the overridden method returns the global volume of the
+   * triangulation.
    *
    * @return Normalization metric.
    */

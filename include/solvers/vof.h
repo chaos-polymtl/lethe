@@ -362,9 +362,9 @@ public:
   }
 
   /**
-   * @brief Get metric for residual normalization. By default, should return 1.
-   * In solvers, if normalize by volume is activated, the overridden method
-   * should return the global volume of the triangulation.
+   * @brief Return the metric for residual normalization. By default, should return 1.
+   * If the normalize_residual_by_volume is set to true, the method
+   * returns the global volume of the triangulation.
    *
    * @return Normalization metric.
    */
