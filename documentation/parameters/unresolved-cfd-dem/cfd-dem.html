@@ -463,6 +463,7 @@
   set interpolated void fraction    = true
   set vans model                    = modelA
   set drag force                    = true
+  set drag coupling                 = semi-implicit # semi-implicit | implicit | explicit
   set drag model                    = difelice
   set saffman lift force            = false
   set magnus lift force             = false
@@ -524,6 +525,15 @@ In case <code class="docutils literal notranslate"><span class="pre">set</span> 
 Since the viscous torque model is not complete without the vortical component, <code class="docutils literal notranslate"><span class="pre">rotational</span> <span class="pre">viscous</span> <span class="pre">torque</span></code> should be used with caution.</p>
 </div>
 <ul class="simple">
+<li><dl class="simple">
+<dt>The <code class="docutils literal notranslate"><span class="pre">drag</span> <span class="pre">coupling</span></code> parameter controls the time level at which the fluid velocity is evaluated when computing the drag and hydrodynamic forces.</dt><dd><ul>
+<li><p><code class="docutils literal notranslate"><span class="pre">drag</span> <span class="pre">coupling</span> <span class="pre">=</span> <span class="pre">semi-implicit</span></code>:  the drag force on the particles is computed using the velocity of both the particles and the fluid at time <span class="math notranslate nohighlight">\(t\)</span> . When transferring momentum to the fluid, the previous fluid velocity is used to evaluate the momentum transfer coefficient, while the current fluid velocity is used to calculate relative velocity between the particle and the fluid. This provides extensive stability, but for larger time-step may lead to a slight violation of Newton’s third law since the drag applied on the fluid is not strictly equal to the drag applied to the particles. the drag force is computed but is partially implicit on the fluid to ensure stable coupling. The default value is to use a <code class="docutils literal notranslate"><span class="pre">drag</span> <span class="pre">coupling</span> <span class="pre">=</span> <span class="pre">semi-implicit</span></code>.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">drag</span> <span class="pre">coupling</span> <span class="pre">=</span> <span class="pre">implicit</span></code>: the drag force (including the drag coefficient) is evaluated implicitly using the fluid velocity at time <span class="math notranslate nohighlight">\(t + \Delta t\)</span>.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">drag</span> <span class="pre">coupling</span> <span class="pre">=</span> <span class="pre">explicit</span></code>: the drag force is computed explicitly using the fluid velocity at time <span class="math notranslate nohighlight">\(t\)</span>.</p></li>
+</ul>
+</dd>
+</dl>
+</li>
 <li><p>The <code class="docutils literal notranslate"><span class="pre">drag</span> <span class="pre">model</span></code> parameter allows one to choose the type of drag model to be implemented for the calculation of the drag force between the particles and the fluids. Given <span class="math notranslate nohighlight">\(F_d = \beta (\bf{u} - \bf{v})\)</span>, the available drag models at the time are:</p></li>
 </ul>
 <div class="table-wrapper docutils container">

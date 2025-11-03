@@ -1,5 +1,5 @@
-<map id="/home/runner/work/lethe/lethe/include/fem&#45;dem/parameters_cfd_dem.h" name="/home/runner/work/lethe/lethe/include/fem&#45;dem/parameters_cfd_dem.h">
-<area shape="rect" id="Node000001" title=" " alt="" coords="89,5,272,60"/>
+<map id="/home/runner/work/lethe/lethe/include/core/parameters_cfd_dem.h" name="/home/runner/work/lethe/lethe/include/core/parameters_cfd_dem.h">
+<area shape="rect" id="Node000001" title=" " alt="" coords="70,5,291,60"/>
 <area shape="rect" id="Node000002" title=" " alt="" coords="5,108,175,148"/>
 <area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="157,62,120,100,116,96,153,58"/>
 <area shape="rect" id="Node000003" title=" " alt="" coords="199,108,344,148"/>

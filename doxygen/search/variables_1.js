@@ -1,6 +1,6 @@
 var searchData=
 [
-  ['b_0',['b',['../structSDIRKTable.html#a8dffb0a6775b20ebc05ab9950fd83948',1,'SDIRKTable::b'],['../classThermalConductivityLinear.html#a65bdace70d96173f07f99231031daeb6',1,'ThermalConductivityLinear::B']]],
+  ['b_0',['b',['../classThermalConductivityLinear.html#a65bdace70d96173f07f99231031daeb6',1,'ThermalConductivityLinear::B'],['../structSDIRKTable.html#a8dffb0a6775b20ebc05ab9950fd83948',1,'SDIRKTable::b']]],
   ['b_5fi_1',['b_i',['../classSDIRKStageData.html#a3d7c3a736a0cdc2529e9d705e84ea427',1,'SDIRKStageData']]],
   ['background_5fconstraints_2',['background_constraints',['../classDEMSolver.html#a3926006d70a9fb14cfffe6f79bdce0d4',1,'DEMSolver']]],
   ['background_5fdh_3',['background_dh',['../classDEMSolver.html#a3f17096d0118455699306606ec86e66a',1,'DEMSolver::background_dh'],['../classRayTracingSolver.html#a9a62c44febba6fc0e9f3ab22bd943487',1,'RayTracingSolver::background_dh']]],
@@ -67,6 +67,6 @@ var searchData=
   ['bounding_5fbox_5fhalf_5flength_64',['bounding_box_half_length',['../classShape.html#ab1080a0361811deb866dfbb51d9da340',1,'Shape']]],
   ['bounding_5fconstraints_65',['bounding_constraints',['../classVolumeOfFluid.html#a24e30e8df399275b379f24a54735156f',1,'VolumeOfFluid']]],
   ['box_5fmesh_66',['box_mesh',['../structParameters_1_1MeshBoxRefinement.html#ab5fd71e00cfbcbd5b559ce6e390bf877',1,'Parameters::MeshBoxRefinement']]],
-  ['buoyancy_5fforce_67',['buoyancy_force',['../structParameters_1_1Multiphysics.html#aaa334803b65e6ea0092588f8aa78c31b',1,'Parameters::Multiphysics::buoyancy_force'],['../structParameters_1_1CFDDEM.html#a7199b79f866744d36b1001b7d3a56acf',1,'Parameters::CFDDEM::buoyancy_force']]],
+  ['buoyancy_5fforce_67',['buoyancy_force',['../structParameters_1_1CFDDEM.html#a7199b79f866744d36b1001b7d3a56acf',1,'Parameters::CFDDEM::buoyancy_force'],['../structParameters_1_1Multiphysics.html#aaa334803b65e6ea0092588f8aa78c31b',1,'Parameters::Multiphysics::buoyancy_force']]],
   ['buoyancy_5fterm_68',['buoyancy_term',['../classNavierStokesOperatorBase.html#aa9199e8db697c18155a310ae4d0200ee',1,'NavierStokesOperatorBase']]]
 ];

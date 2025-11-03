@@ -129,7 +129,7 @@ var searchData=
   ['contact_5fsearch_5ftrigger_126',['contact_search_trigger',['../classDEMActionManager.html#adbe1e073825c758d23ef7b376d39b323',1,'DEMActionManager']]],
   ['cor_127',['cor',['../classParameters_1_1NitscheObject.html#a1985eac7fa63bef9aeda998d5f59baeb',1,'Parameters::NitscheObject']]],
   ['cost_5ffunction_5ftype_128',['cost_function_type',['../structParameters_1_1RPTTuningParameters.html#abc86743273ad9cf8e3bdec146bbc6f71',1,'Parameters::RPTTuningParameters']]],
-  ['coupling_5ffrequency_129',['coupling_frequency',['../classParameters_1_1IBParticles.html#a3e1c7256851691a4c64290b9f4b28d52',1,'Parameters::IBParticles::coupling_frequency'],['../classCFDDEMSolver.html#a5211b344539c82079852bac18c1c03bc',1,'CFDDEMSolver::coupling_frequency'],['../structParameters_1_1CFDDEM.html#ae01d0c363ceadbb6dd18a59e41ac283d',1,'Parameters::CFDDEM::coupling_frequency']]],
+  ['coupling_5ffrequency_129',['coupling_frequency',['../classParameters_1_1IBParticles.html#a3e1c7256851691a4c64290b9f4b28d52',1,'Parameters::IBParticles::coupling_frequency'],['../structParameters_1_1CFDDEM.html#ae01d0c363ceadbb6dd18a59e41ac283d',1,'Parameters::CFDDEM::coupling_frequency'],['../classCFDDEMSolver.html#a5211b344539c82079852bac18c1c03bc',1,'CFDDEMSolver::coupling_frequency']]],
   ['cp_5fl_130',['cp_l',['../structParameters_1_1PhaseChange.html#a142d592998fbda35586e88270f5b9f73',1,'Parameters::PhaseChange']]],
   ['cp_5fs_131',['cp_s',['../structParameters_1_1PhaseChange.html#aa6efc0f78d5fbecca11488c842f9e905',1,'Parameters::PhaseChange']]],
   ['cstar_132',['cstar',['../structParameters_1_1CFDDEM.html#a5be9dd7c77a1c8ba694b3a88e78b2621',1,'Parameters::CFDDEM']]],

@@ -11,6 +11,7 @@ This subsection includes parameters related to multiphase flow simulations using
     set interpolated void fraction    = true
     set vans model                    = modelA
     set drag force                    = true
+    set drag coupling                 = semi-implicit # semi-implicit | implicit | explicit
     set drag model                    = difelice
     set saffman lift force            = false
     set magnus lift force             = false
@@ -63,6 +64,11 @@ This subsection includes parameters related to multiphase flow simulations using
 .. warning::
     We do not recommend the use of ``vortical viscous torque`` with coarse meshes, especially when Q1 elements are used. In such case, the space resolution may not be enough to properly capture vorticity.
     Since the viscous torque model is not complete without the vortical component, ``rotational viscous torque`` should be used with caution.
+
+* The ``drag coupling`` parameter controls the time level at which the fluid velocity is evaluated when computing the drag and hydrodynamic forces.  
+    - ``drag coupling = semi-implicit``:  the drag force on the particles is computed using the velocity of both the particles and the fluid at time :math:`t` . When transferring momentum to the fluid, the previous fluid velocity is used to evaluate the momentum transfer coefficient, while the current fluid velocity is used to calculate relative velocity between the particle and the fluid. This provides extensive stability, but for larger time-step may lead to a slight violation of Newton's third law since the drag applied on the fluid is not strictly equal to the drag applied to the particles. the drag force is computed but is partially implicit on the fluid to ensure stable coupling. The default value is to use a ``drag coupling = semi-implicit``.
+    - ``drag coupling = implicit``: the drag force (including the drag coefficient) is evaluated implicitly using the fluid velocity at time :math:`t + \Delta t`.
+    - ``drag coupling = explicit``: the drag force is computed explicitly using the fluid velocity at time :math:`t`.
 
 * The ``drag model`` parameter allows one to choose the type of drag model to be implemented for the calculation of the drag force between the particles and the fluids. Given :math:`F_d = \beta (\bf{u} - \bf{v})`, the available drag models at the time are:
 
