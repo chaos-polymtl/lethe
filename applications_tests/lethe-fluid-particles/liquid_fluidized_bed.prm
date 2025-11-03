@@ -20,7 +20,6 @@ subsection simulation control
   set time step            = 0.0001
   set subdivision          = 1
   set log precision        = 10
-  #  set output boundaries    = true
 end
 
 #---------------------------------------------------
