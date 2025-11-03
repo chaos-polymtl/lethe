@@ -1209,7 +1209,7 @@ namespace Parameters
     // Abort solver if non-linear solution has not reached tolerance
     bool abort_at_convergence_failure;
 
-    // Normalize residual by triangulation volume
+    // Normalize residual by triangulation volume flag
     bool normalize_residual_by_volume;
 
     static void

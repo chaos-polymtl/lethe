@@ -111,9 +111,9 @@ public:
   output_newton_update_norms(const unsigned int display_precision) = 0;
 
   /**
-   * @brief Get metric for residual normalization. By default, should return 1.
-   * In solvers, if normalize by volume is activated, the overridden method
-   * should return the global volume of the triangulation.
+   * @brief Return the metric for residual normalization. By default, the routine returns 1.
+   * In children solver classes, if the normalize_residual_by_volume flag is set to true, the overridden method
+   * returns the global volume of the triangulation.
    *
    * @return Normalization metric.
    */

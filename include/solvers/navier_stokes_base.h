@@ -179,7 +179,7 @@ protected:
    *
    * @return Normalization metric.
    */
-  virtual double
+  double
   get_residual_normalization_metric() const override
   {
     return simulation_parameters.non_linear_solver.at(PhysicsID::fluid_dynamics)
