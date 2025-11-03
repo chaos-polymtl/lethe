@@ -74,7 +74,7 @@ while current_t <= t_end:
     i += 1
 
 # Get simulated and analytical particle position
-time, position = get_time_position_from_simuation(args.particle_pvd)
+time, position = get_time_position_from_simulation(args.particle_pvd)
 
 # Plot position as a function of time and compare to analytical solution
 plt.plot(time, position*convert_m_to_cm, label="Simulation", lw=0, marker='o')

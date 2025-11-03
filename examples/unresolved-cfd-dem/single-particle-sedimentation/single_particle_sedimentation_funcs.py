@@ -64,7 +64,7 @@ def get_time_and_velocity_from_simulation(path_to_pvd):
 
     return time, velocity
 
-def get_time_position_from_simuation(path_to_pvd):
+def get_time_position_from_simulation(path_to_pvd):
     reader = pv.PVDReader(path_to_pvd)
 
     time = reader.time_values
