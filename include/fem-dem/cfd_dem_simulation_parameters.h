@@ -7,11 +7,11 @@
 #include <core/boundary_conditions.h>
 #include <core/manifolds.h>
 #include <core/parameters.h>
+#include <core/parameters_cfd_dem.h>
 
 #include <solvers/simulation_parameters.h>
 
 #include <dem/dem_solver_parameters.h>
-#include <fem-dem/parameters_cfd_dem.h>
 
 
 template <int dim>

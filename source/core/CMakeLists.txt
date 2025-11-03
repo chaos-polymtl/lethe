@@ -17,6 +17,7 @@ add_library(lethe-core
   mortar_coupling_manager.cc
   output_struct.cc
   parameters.cc
+  parameters_cfd_dem.cc
   parameters_lagrangian.cc
   parameters_multiphysics.cc
   pvd_handler.cc
@@ -61,8 +62,9 @@ add_library(lethe-core
   ../../include/core/multiphysics.h
   ../../include/core/newton_non_linear_solver.h
   ../../include/core/non_linear_solver.h
-   ../../include/core/output_struct.h
+  ../../include/core/output_struct.h
   ../../include/core/parameters.h
+  ../../include/core/parameters_cfd_dem.h
   ../../include/core/parameters_lagrangian.h
   ../../include/core/parameters_multiphysics.h
   ../../include/core/periodic_hills_grid.h

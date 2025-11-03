@@ -27,32 +27,34 @@ define_plot_style()
 # Parameters for the analytical solution
 convert_m_to_cm = 100
 # Data:
-dp = 0.002663
+dp = 0.0025
 Vp = 4/3 * np.pi * (0.5 * dp)**3
 rhop = 1029.
 Mp = rhop * Vp
 
 # Constants:
-nu = 0.0000008379
-rhof = 996.7775
+nu = 1e-6
+rhof = 1e3
 mu = nu * rhof
 g = -9.81
 
 # Parameters
-dt = 0.05
+dt = 0.0001
+# Intervals between the points taken in the plot
+plot_sampling=500
 t_end = 2
 initial_position = 0.08
 initial_urel = 0.
 
 # Calculate the analytical solution
 analytical_time = np.arange(0, t_end, dt)
+print (analytical_time)
 analytical_velocity = np.zeros_like(analytical_time)
 analytical_position = np.zeros_like(analytical_time)
 analytical_position[0] = initial_position
 
 i = 1
-current_t = dt
-while current_t <= t_end:
+for current_t in analytical_time[1:]:
     # Calculate forces
     Fg = fg(Mp, g)
     Fb = fb(Vp, rhof, g)
@@ -74,11 +76,11 @@ while current_t <= t_end:
     i += 1
 
 # Get simulated and analytical particle position
-time, position = get_time_position_from_simulation(args.particle_pvd)
+time, position = get_time_position_from_simuation(args.particle_pvd)
 
 # Plot position as a function of time and compare to analytical solution
 plt.plot(time, position*convert_m_to_cm, label="Simulation", lw=0, marker='o')
-plt.plot(analytical_time, analytical_position*convert_m_to_cm, label="Analytical", lw=0, marker='s')
+plt.plot(analytical_time[::plot_sampling], analytical_position[::plot_sampling]*convert_m_to_cm, label="Analytical", lw=0, marker='s')
 plt.xlabel("Time [s]")
 plt.ylabel("Particle position [cm]")
 plt.legend()
@@ -92,24 +94,10 @@ rmse = compare_to_analytical(analytical_velocity, velocity)
 
 # Plot velocity as a function of time and compare to analytical solution
 plt.plot(time, -velocity*convert_m_to_cm, label=f"Simulation - RMSE = {convert_m_to_cm*rmse:.2f} cm/s", lw=0, marker='o')
-plt.plot(analytical_time, -analytical_velocity*convert_m_to_cm, label="Analytical", lw=0, marker='s')
+plt.plot(analytical_time[::plot_sampling], -analytical_velocity[::plot_sampling]*convert_m_to_cm, label="Analytical", lw=0, marker='s')
 plt.xlabel("Time [s]")
 plt.ylabel("Particle velocity [cm/s]")
 plt.legend()
 plt.show()
 
-# Define points to find sampled void fraction
-time_points_to_sample_voidfraction = [1, len(time)//2, -1]
-
-# For time points
-for i in time_points_to_sample_voidfraction:
-    # Get center void fraction from simulation
-    time, center_void_fraction = get_center_void_fraction_from_simulation(args.fluid_pvd, time_point=i)
-
-    # Plot center void fraction as a function of position in y
-    plt.plot(center_void_fraction.points[:, 1]*convert_m_to_cm, center_void_fraction['void_fraction'], label=f"{time:.2f} s")
-plt.xlabel("Position in y [cm]")
-plt.ylabel("Center void fraction")
-plt.legend(title="Time")
-plt.show()
 

@@ -928,6 +928,11 @@ VANSAssemblerDiFelice<dim>::calculate_particle_fluid_interactions(
   const auto &density   = scratch_data.density_at_particle_location;
   auto       &beta_drag = scratch_data.beta_drag;
 
+  // The explicit_particle_volumetric_acceleration_on_fluid variable is used to
+  // store the drag if the coupling is explicit.
+  auto &explicit_particle_volumetric_acceleration_on_fluid =
+    scratch_data.explicit_particle_volumetric_acceleration_on_fluid;
+
   Tensor<1, dim> drag_force;
 
   const auto pic = scratch_data.pic;
@@ -961,10 +966,17 @@ VANSAssemblerDiFelice<dim>::calculate_particle_fluid_interactions(
          4) *
         relative_velocity[i_particle].norm();
 
-      beta_drag += momentum_transfer_coefficient;
+      if (cfd_dem.drag_coupling == Parameters::DragCoupling::fully_implicit ||
+          cfd_dem.drag_coupling == Parameters::DragCoupling::semi_implicit)
+        beta_drag += momentum_transfer_coefficient;
 
       drag_force = density[i_particle] * momentum_transfer_coefficient *
                    relative_velocity[i_particle];
+
+      if (cfd_dem.drag_coupling == Parameters::DragCoupling::fully_explicit)
+        explicit_particle_volumetric_acceleration_on_fluid -=
+          momentum_transfer_coefficient * relative_velocity[i_particle] /
+          scratch_data.cell_volume;
 
       for (int d = 0; d < dim; ++d)
         {
@@ -1004,6 +1016,11 @@ VANSAssemblerRong<dim>::calculate_particle_fluid_interactions(
   const auto &density   = scratch_data.density_at_particle_location;
   auto       &beta_drag = scratch_data.beta_drag;
 
+  // The explicit_particle_volumetric_acceleration_on_fluid variable is used to
+  // store the drag if the coupling is explicit.
+  auto &explicit_particle_volumetric_acceleration_on_fluid =
+    scratch_data.explicit_particle_volumetric_acceleration_on_fluid;
+
   Tensor<1, dim> drag_force;
 
   const auto pic          = scratch_data.pic;
@@ -1036,10 +1053,17 @@ VANSAssemblerRong<dim>::calculate_particle_fluid_interactions(
          0.25) *
         relative_velocity[i_particle].norm();
 
-      beta_drag += momentum_transfer_coefficient;
+      if (cfd_dem.drag_coupling == Parameters::DragCoupling::fully_implicit ||
+          cfd_dem.drag_coupling == Parameters::DragCoupling::semi_implicit)
+        beta_drag += momentum_transfer_coefficient;
 
       drag_force = density[i_particle] * momentum_transfer_coefficient *
                    relative_velocity[i_particle];
+
+      if (cfd_dem.drag_coupling == Parameters::DragCoupling::fully_explicit)
+        explicit_particle_volumetric_acceleration_on_fluid -=
+          momentum_transfer_coefficient * relative_velocity[i_particle] /
+          scratch_data.cell_volume;
 
       for (int d = 0; d < dim; ++d)
         {
@@ -1080,6 +1104,11 @@ VANSAssemblerDallavalle<dim>::calculate_particle_fluid_interactions(
   const auto &density   = scratch_data.density_at_particle_location;
   auto       &beta_drag = scratch_data.beta_drag;
 
+  // The explicit_particle_volumetric_acceleration_on_fluid variable is used to
+  // store the drag if the coupling is explicit.
+  auto &explicit_particle_volumetric_acceleration_on_fluid =
+    scratch_data.explicit_particle_volumetric_acceleration_on_fluid;
+
   Tensor<1, dim> drag_force;
 
   const auto pic          = scratch_data.pic;
@@ -1101,10 +1130,17 @@ VANSAssemblerDallavalle<dim>::calculate_particle_fluid_interactions(
          0.25) *
         relative_velocity[i_particle].norm();
 
-      beta_drag += momentum_transfer_coefficient;
+      if (cfd_dem.drag_coupling == Parameters::DragCoupling::fully_implicit ||
+          cfd_dem.drag_coupling == Parameters::DragCoupling::semi_implicit)
+        beta_drag += momentum_transfer_coefficient;
 
       drag_force = density[i_particle] * momentum_transfer_coefficient *
                    relative_velocity[i_particle];
+
+      if (cfd_dem.drag_coupling == Parameters::DragCoupling::fully_explicit)
+        explicit_particle_volumetric_acceleration_on_fluid -=
+          momentum_transfer_coefficient * relative_velocity[i_particle] /
+          scratch_data.cell_volume;
 
       for (int d = 0; d < dim; ++d)
         {
@@ -1146,6 +1182,11 @@ VANSAssemblerKochHill<dim>::calculate_particle_fluid_interactions(
   const auto &kinematic_viscosity =
     scratch_data.kinematic_viscosity_at_particle_location;
   auto &beta_drag = scratch_data.beta_drag;
+
+  // The explicit_particle_volumetric_acceleration_on_fluid variable is used to
+  // store the drag if the coupling is explicit.
+  auto &explicit_particle_volumetric_acceleration_on_fluid =
+    scratch_data.explicit_particle_volumetric_acceleration_on_fluid;
 
   Tensor<1, dim> drag_force;
 
@@ -1196,10 +1237,17 @@ VANSAssemblerKochHill<dim>::calculate_particle_fluid_interactions(
          (2 * dim)) /
         (1 - cell_void_fraction + DBL_MIN);
 
-      beta_drag += momentum_transfer_coefficient;
+      if (cfd_dem.drag_coupling == Parameters::DragCoupling::fully_implicit ||
+          cfd_dem.drag_coupling == Parameters::DragCoupling::semi_implicit)
+        beta_drag += momentum_transfer_coefficient;
 
       drag_force = density[i_particle] * momentum_transfer_coefficient *
                    relative_velocity[i_particle];
+
+      if (cfd_dem.drag_coupling == Parameters::DragCoupling::fully_explicit)
+        explicit_particle_volumetric_acceleration_on_fluid -=
+          momentum_transfer_coefficient * relative_velocity[i_particle] /
+          scratch_data.cell_volume;
 
       for (int d = 0; d < dim; ++d)
         {
@@ -1243,6 +1291,11 @@ VANSAssemblerBeetstra<dim>::calculate_particle_fluid_interactions(
     scratch_data.kinematic_viscosity_at_particle_location;
   auto &beta_drag = scratch_data.beta_drag;
 
+  // The explicit_particle_volumetric_acceleration_on_fluid variable is used to
+  // store the drag if the coupling is explicit.
+  auto &explicit_particle_volumetric_acceleration_on_fluid =
+    scratch_data.explicit_particle_volumetric_acceleration_on_fluid;
+
   Tensor<1, dim> drag_force;
 
   const auto pic          = scratch_data.pic;
@@ -1275,10 +1328,17 @@ VANSAssemblerBeetstra<dim>::calculate_particle_fluid_interactions(
         F0 * 3 * M_PI * kinematic_viscosity[i_particle] * cell_void_fraction *
         particle_properties[DEM::CFDDEMProperties::PropertiesIndex::dp];
 
-      beta_drag += momentum_transfer_coefficient;
+      if (cfd_dem.drag_coupling == Parameters::DragCoupling::fully_implicit ||
+          cfd_dem.drag_coupling == Parameters::DragCoupling::semi_implicit)
+        beta_drag += momentum_transfer_coefficient;
 
       drag_force = density[i_particle] * momentum_transfer_coefficient *
                    relative_velocity[i_particle];
+
+      if (cfd_dem.drag_coupling == Parameters::DragCoupling::fully_explicit)
+        explicit_particle_volumetric_acceleration_on_fluid -=
+          momentum_transfer_coefficient * relative_velocity[i_particle] /
+          scratch_data.cell_volume;
 
       for (int d = 0; d < dim; ++d)
         {
@@ -1320,6 +1380,12 @@ VANSAssemblerGidaspow<dim>::calculate_particle_fluid_interactions(
   const auto &kinematic_viscosity =
     scratch_data.kinematic_viscosity_at_particle_location;
   auto &beta_drag = scratch_data.beta_drag;
+
+  // The explicit_particle_volumetric_acceleration_on_fluid variable is used to
+  // store the drag if the coupling is explicit.
+  auto &explicit_particle_volumetric_acceleration_on_fluid =
+    scratch_data.explicit_particle_volumetric_acceleration_on_fluid;
+
 
   Tensor<1, dim> drag_force;
 
@@ -1372,10 +1438,17 @@ VANSAssemblerGidaspow<dim>::calculate_particle_fluid_interactions(
               particle_density));
         }
 
-      beta_drag += momentum_transfer_coefficient;
+      if (cfd_dem.drag_coupling == Parameters::DragCoupling::fully_implicit ||
+          cfd_dem.drag_coupling == Parameters::DragCoupling::semi_implicit)
+        beta_drag += momentum_transfer_coefficient;
 
       drag_force = density[i_particle] * momentum_transfer_coefficient *
                    relative_velocity[i_particle];
+
+      if (cfd_dem.drag_coupling == Parameters::DragCoupling::fully_explicit)
+        explicit_particle_volumetric_acceleration_on_fluid -=
+          momentum_transfer_coefficient * relative_velocity[i_particle] /
+          scratch_data.cell_volume;
 
       for (int d = 0; d < dim; ++d)
         {
@@ -1427,7 +1500,8 @@ VANSAssemblerSaffmanMei<dim>::calculate_particle_fluid_interactions(
     scratch_data.fluid_velocity_curls_at_particle_location_2d;
   auto &vorticity_3d =
     scratch_data.fluid_velocity_curls_at_particle_location_3d;
-  auto &undisturbed_flow_force = scratch_data.undisturbed_flow_force;
+  auto &explicit_particle_volumetric_acceleration_on_fluid =
+    scratch_data.explicit_particle_volumetric_acceleration_on_fluid;
 
   Tensor<1, dim> lift_force;
 
@@ -1485,7 +1559,7 @@ VANSAssemblerSaffmanMei<dim>::calculate_particle_fluid_interactions(
                                   d] += lift_force[d];
 
               // Apply lift force on the fluid
-              undisturbed_flow_force[d] +=
+              explicit_particle_volumetric_acceleration_on_fluid[d] -=
                 lift_force[d] / scratch_data.cell_volume;
             }
 
@@ -1531,7 +1605,7 @@ VANSAssemblerSaffmanMei<dim>::calculate_particle_fluid_interactions(
                                   d] += lift_force[d];
 
               // Apply lift force on the fluid
-              undisturbed_flow_force[d] +=
+              explicit_particle_volumetric_acceleration_on_fluid[d] -=
                 lift_force[d] / scratch_data.cell_volume;
             }
           i_particle += 1;
@@ -1561,7 +1635,8 @@ VANSAssemblerMagnus<dim>::calculate_particle_fluid_interactions(
   const auto &Re_p    = scratch_data.Re_particle;
   const auto &density = scratch_data.density_at_particle_location;
 
-  auto &undisturbed_flow_force = scratch_data.undisturbed_flow_force;
+  auto &explicit_particle_volumetric_acceleration_on_fluid =
+    scratch_data.explicit_particle_volumetric_acceleration_on_fluid;
 
   Tensor<1, dim> lift_force;
 
@@ -1619,7 +1694,7 @@ VANSAssemblerMagnus<dim>::calculate_particle_fluid_interactions(
                                   d] += lift_force[d];
 
               // Apply lift force on the fluid
-              undisturbed_flow_force[d] +=
+              explicit_particle_volumetric_acceleration_on_fluid[d] +=
                 lift_force[d] / scratch_data.cell_volume;
             }
           i_particle += 1;
@@ -1678,7 +1753,7 @@ VANSAssemblerMagnus<dim>::calculate_particle_fluid_interactions(
                                   d] += lift_force[d];
 
               // Apply lift force on the fluid
-              undisturbed_flow_force[d] +=
+              explicit_particle_volumetric_acceleration_on_fluid[d] +=
                 lift_force[d] / scratch_data.cell_volume;
             }
           i_particle += 1;
@@ -1847,9 +1922,10 @@ VANSAssemblerPressureForce<dim>::calculate_particle_fluid_interactions(
     RequiresConstantDensity(
       "VANSAssemblerPressureForce<dim>::calculate_particle_fluid_interactions"));
 
-  const auto pic                    = scratch_data.pic;
-  auto      &undisturbed_flow_force = scratch_data.undisturbed_flow_force;
-  auto       pressure_gradients =
+  const auto pic = scratch_data.pic;
+  auto      &explicit_particle_volumetric_acceleration_on_fluid =
+    scratch_data.explicit_particle_volumetric_acceleration_on_fluid;
+  auto pressure_gradients =
     scratch_data.fluid_pressure_gradients_at_particle_location;
   Tensor<1, dim> pressure_force;
 
@@ -1875,7 +1951,7 @@ VANSAssemblerPressureForce<dim>::calculate_particle_fluid_interactions(
           // Apply pressure force to the particles only, when we are solving
           // model A of the VANS. When we are solving Model B, apply the
           // pressure force back on the fluid by lumping it in the
-          // undisturbed_flow_force.
+          // explicit_particle_volumetric_acceleration_on_fluid.
           if (cfd_dem.vans_model == Parameters::VANSModel::modelA)
             {
               particle_properties[DEM::CFDDEMProperties::PropertiesIndex::
@@ -1887,7 +1963,7 @@ VANSAssemblerPressureForce<dim>::calculate_particle_fluid_interactions(
               particle_properties[DEM::CFDDEMProperties::PropertiesIndex::
                                     fem_force_two_way_coupling_x +
                                   d] += pressure_force[d] * density[i_particle];
-              undisturbed_flow_force[d] +=
+              explicit_particle_volumetric_acceleration_on_fluid[d] +=
                 pressure_force[d] / scratch_data.cell_volume;
             }
         }
@@ -1916,9 +1992,10 @@ VANSAssemblerShearForce<dim>::calculate_particle_fluid_interactions(
     RequiresConstantDensity(
       "VANSAssemblerShearForce<dim>::calculate_particle_fluid_interactions"));
 
-  const auto pic                    = scratch_data.pic;
-  auto      &undisturbed_flow_force = scratch_data.undisturbed_flow_force;
-  auto      &velocity_laplacians =
+  const auto pic = scratch_data.pic;
+  auto      &explicit_particle_volumetric_acceleration_on_fluid =
+    scratch_data.explicit_particle_volumetric_acceleration_on_fluid;
+  auto &velocity_laplacians =
     scratch_data.fluid_velocity_laplacian_at_particle_location;
   Tensor<1, dim> shear_force;
 
@@ -1946,7 +2023,7 @@ VANSAssemblerShearForce<dim>::calculate_particle_fluid_interactions(
           // Apply shear force to the particles only, when we are solving
           // model A of the VANS. When we are solving Model B, apply the shear
           // force back on the fluid by lumping it in the
-          // undisturbed_flow_force.
+          // explicit_particle_volumetric_acceleration_on_fluid.
 
           if (cfd_dem.vans_model == Parameters::VANSModel::modelA)
             {
@@ -1959,7 +2036,7 @@ VANSAssemblerShearForce<dim>::calculate_particle_fluid_interactions(
               particle_properties[DEM::CFDDEMProperties::PropertiesIndex::
                                     fem_force_two_way_coupling_x +
                                   d] += shear_force[d] * density[i_particle];
-              undisturbed_flow_force[d] +=
+              explicit_particle_volumetric_acceleration_on_fluid[d] +=
                 shear_force[d] / scratch_data.cell_volume;
             }
         }
@@ -1983,11 +2060,12 @@ VANSAssemblerFPI<dim>::assemble_matrix(
   const unsigned int n_dofs     = scratch_data.n_dofs;
 
   // Copy data elements
-  auto &strong_residual        = copy_data.strong_residual;
-  auto &strong_jacobian        = copy_data.strong_jacobian;
-  auto &local_matrix           = copy_data.local_matrix;
-  auto  beta_drag              = scratch_data.beta_drag;
-  auto &undisturbed_flow_force = scratch_data.undisturbed_flow_force;
+  auto &strong_residual = copy_data.strong_residual;
+  auto &strong_jacobian = copy_data.strong_jacobian;
+  auto &local_matrix    = copy_data.local_matrix;
+  auto  beta_drag       = scratch_data.beta_drag;
+  auto &explicit_particle_volumetric_acceleration_on_fluid =
+    scratch_data.explicit_particle_volumetric_acceleration_on_fluid;
   const Tensor<1, dim> average_particles_velocity =
     scratch_data.average_particle_velocity;
 
@@ -2004,13 +2082,14 @@ VANSAssemblerFPI<dim>::assemble_matrix(
       if (cfd_dem.vans_model == Parameters::VANSModel::modelB)
         {
           strong_residual[q] += // Drag Force
-            (beta_drag * (velocity - average_particles_velocity) +
-             undisturbed_flow_force);
+            (beta_drag * (velocity - average_particles_velocity) -
+             explicit_particle_volumetric_acceleration_on_fluid);
         }
       else if (cfd_dem.vans_model == Parameters::VANSModel::modelA)
         {
           strong_residual[q] += // Drag Force
-            beta_drag * (velocity - average_particles_velocity);
+            beta_drag * (velocity - average_particles_velocity) -
+            explicit_particle_volumetric_acceleration_on_fluid;
         }
 
       for (unsigned int j = 0; j < n_dofs; ++j)
@@ -2048,10 +2127,11 @@ VANSAssemblerFPI<dim>::assemble_rhs(
   const unsigned int n_dofs     = scratch_data.n_dofs;
 
   // Copy data elements
-  auto &strong_residual        = copy_data.strong_residual;
-  auto &local_rhs              = copy_data.local_rhs;
-  auto  beta_drag              = scratch_data.beta_drag;
-  auto &undisturbed_flow_force = scratch_data.undisturbed_flow_force;
+  auto &strong_residual = copy_data.strong_residual;
+  auto &local_rhs       = copy_data.local_rhs;
+  auto  beta_drag       = scratch_data.beta_drag;
+  auto &explicit_particle_volumetric_acceleration_on_fluid =
+    scratch_data.explicit_particle_volumetric_acceleration_on_fluid;
   const Tensor<1, dim> average_particles_velocity =
     scratch_data.average_particle_velocity;
 
@@ -2068,13 +2148,14 @@ VANSAssemblerFPI<dim>::assemble_rhs(
       if (cfd_dem.vans_model == Parameters::VANSModel::modelB)
         {
           strong_residual[q] += // Drag Force
-            (beta_drag * (velocity - average_particles_velocity) +
-             undisturbed_flow_force);
+            (beta_drag * (velocity - average_particles_velocity) -
+             explicit_particle_volumetric_acceleration_on_fluid);
         }
       else if (cfd_dem.vans_model == Parameters::VANSModel::modelA)
         {
           strong_residual[q] += // Drag Force
-            beta_drag * (velocity - average_particles_velocity);
+            beta_drag * (velocity - average_particles_velocity) -
+            explicit_particle_volumetric_acceleration_on_fluid;
         }
 
       // Assembly of the right-hand side
@@ -2086,15 +2167,16 @@ VANSAssemblerFPI<dim>::assemble_rhs(
           if (cfd_dem.vans_model == Parameters::VANSModel::modelB)
             {
               local_rhs(i) -=
-                (beta_drag * (velocity - average_particles_velocity) +
-                 undisturbed_flow_force) *
+                (beta_drag * (velocity - average_particles_velocity) -
+                 explicit_particle_volumetric_acceleration_on_fluid) *
                 phi_u_i * JxW;
             }
           //  Model A of the VANS
           if (cfd_dem.vans_model == Parameters::VANSModel::modelA)
             {
               local_rhs(i) -=
-                (beta_drag * (velocity - average_particles_velocity)) *
+                (beta_drag * (velocity - average_particles_velocity) -
+                 explicit_particle_volumetric_acceleration_on_fluid) *
                 phi_u_i * JxW;
             }
         }

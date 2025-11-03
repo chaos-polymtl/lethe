@@ -4,6 +4,7 @@
 #ifndef lethe_navier_stokes_scratch_data_h
 #define lethe_navier_stokes_scratch_data_h
 
+#include "core/parameters_cfd_dem.h"
 #include <core/bdf.h>
 #include <core/dem_properties.h>
 #include <core/parameters.h>
@@ -645,11 +646,9 @@ public:
 
   /**
    * @brief Extracts the velocity of the particles and calculates their total volume
-   * in the cell
-   *
-   * @return Total volume of the particles in the cell
+   * in the cell. Both outcomes are stored as members of the scratch data class.
    */
-  double
+  void
   extract_particle_properties();
 
   /**
@@ -686,9 +685,17 @@ public:
    * @param[in] velocity_cell The active cell associated with the velocity and
    * pressure DoFHandler
    *
-   * @param[in] velocity_pressure_solution The solution (velocity and
-   * pressure) that is used to interpolate the velocity and pressure at the
-   * particles locations.
+   * @param[in] present_velocity_pressure_solution The solution (velocity and
+   * pressure) at the current time step. This solution is used in the implicit
+   * coupling to establish the particle-fluid force.
+   *
+   * @param[in] previous_velocity_pressure_solution The solution (velocity and
+   * pressure) at the previous time step. This solution is used in the explicit
+   * and semi-implicit coupling to calculate the particle-fluid force.
+   *
+   * @param[in] drag_coupling Indicator for the type of coupling that is used.
+   * This parameter essentially decides which velocity_pressure solution is
+   * interpolated at the location of the particles.
    */
 
   template <typename VectorType>
@@ -696,7 +703,9 @@ public:
   calculate_fluid_fields_at_particle_location(
     const Quadrature<dim>                                &q_particles_location,
     const typename DoFHandler<dim>::active_cell_iterator &velocity_cell,
-    const VectorType &velocity_pressure_solution)
+    const VectorType               &present_velocity_pressure_solution,
+    const VectorType               &previous_velocity_pressure_solution,
+    const Parameters::DragCoupling &drag_coupling)
   {
     FEValues<dim> fe_values_local_particles(this->fe_values.get_fe(),
                                             q_particles_location,
@@ -712,6 +721,13 @@ public:
     fluid_velocity_curls_at_particle_location_2d.resize(number_of_particles);
     fluid_velocity_curls_at_particle_location_3d.resize(number_of_particles);
     fluid_pressure_gradients_at_particle_location.resize(number_of_particles);
+
+    // Take velocity_pressure_solution according to the type of coupling used.
+    auto velocity_pressure_solution =
+      drag_coupling == Parameters::DragCoupling::fully_implicit ?
+        present_velocity_pressure_solution :
+        previous_velocity_pressure_solution;
+
 
     fe_values_local_particles.reinit(velocity_cell);
 
@@ -928,14 +944,23 @@ public:
    * @param[in] void_fraction_cell The active cell associated with the void
    * fraction DoFHandler
    *
-   * @param[in] previous_velocity_pressure_solution The solution at the previous
-   * time step for the fluid's velocity and pressure
+   * @param[in] present_velocity_pressure_solution The solution (velocity and
+   * pressure) at the current time step. This solution is used in the implicit
+   * coupling to establish the particle-fluid force.
+   *
+   * @param[in] previous_velocity_pressure_solution The solution (velocity and
+   * pressure) at the previous time step. This solution is used in the explicit
+   * and semi-implicit coupling to calculate the particle-fluid force.
    *
    * @param[in] void_fraction_solution The void fraction value calculated with
    * one of the methods of the VoidFractionBase class.
    *
    * @param[in] particle_handler The particle handler object that stores and
    * manages the particles in the simulations
+   *
+   * @param[in] drag_coupling Indicator for the type of coupling that is used.
+   * This parameter essentially decides which velocity_pressure solution is
+   * interpolated at the location of the particles.
    */
 
   template <typename VectorType>
@@ -943,10 +968,11 @@ public:
   reinit_particle_fluid_interactions(
     const typename DoFHandler<dim>::active_cell_iterator &velocity_cell,
     const typename DoFHandler<dim>::active_cell_iterator &void_fraction_cell,
-    const VectorType & /*velocity_pressure_solution*/,
+    const VectorType                      &present_velocity_pressure_solution,
     const VectorType                      &previous_velocity_pressure_solution,
     const VectorType                      &void_fraction_solution,
-    const Particles::ParticleHandler<dim> &particle_handler)
+    const Particles::ParticleHandler<dim> &particle_handler,
+    const Parameters::DragCoupling        &drag_coupling)
   {
     Assert(
       gather_particles_information,
@@ -956,9 +982,8 @@ public:
 
     pic = particle_handler.particles_in_cell(velocity_cell);
 
-    double total_particle_volume = 0;
+    extract_particle_properties();
     reinit_particle_fluid_forces();
-    total_particle_volume = extract_particle_properties();
 
     calculate_cell_void_fraction(total_particle_volume);
 
@@ -967,8 +992,13 @@ public:
 
     Quadrature<dim> q_particles_location =
       gather_particles_reference_location();
+
     calculate_fluid_fields_at_particle_location(
-      q_particles_location, velocity_cell, previous_velocity_pressure_solution);
+      q_particles_location,
+      velocity_cell,
+      present_velocity_pressure_solution,
+      previous_velocity_pressure_solution,
+      drag_coupling);
 
     if (this->interpolated_void_fraction)
       {
@@ -986,24 +1016,33 @@ public:
    * with CFD-DEM.
    *
    * @param[in] velocity_cell The active cell associated with the velocity and
-   * pressure DoFHandler
+   * pressure DoFHandler.
    *
    * @param[in] void_fraction_cell The active cell associated with the void
-   * fraction DoFHandler
+   * fraction DoFHandler.
    *
-   * @param[in] phase_cell The active cell associated with the VOF DoFHandler
+   * @param[in] phase_cell The active cell associated with the VOF DoFHandler.
    *
-   * @param[in] previous_velocity_pressure_solution The solution at the previous
-   * time step for the fluid's velocity and pressure
+   * @param[in] present_velocity_pressure_solution The solution (velocity and
+   * pressure) at the current time step. This solution is used in the implicit
+   * coupling to establish the particle-fluid force.
+   *
+   * @param[in] previous_velocity_pressure_solution The solution (velocity and
+   * pressure) at the previous time step. This solution is used in the explicit
+   * and semi-implicit coupling to calculate the particle-fluid force.
    *
    * @param[in] void_fraction_solution The void fraction value calculated with
    * one of the methods of the VoidFractionBase class.
    *
    * @param[in] particle_handler The particle handler object that stores and
-   * manages the particles in the simulations
+   * manages the particles in the simulations.
    *
-   * @param[in] current_filtered_solution The present value of the VOF solution
-   * at the dofs of the cell
+   * @param[in] current_filtered_VOF_solution The present value of the VOF
+   * solution.
+   *
+   * @param[in] drag_coupling Indicator for the type of coupling that is
+   * used. This parameter essentially decides which velocity_pressure solution
+   * is interpolated at the location of the particles.
    */
   template <typename VectorType>
   void
@@ -1011,16 +1050,16 @@ public:
     const typename DoFHandler<dim>::active_cell_iterator &velocity_cell,
     const typename DoFHandler<dim>::active_cell_iterator &void_fraction_cell,
     const typename DoFHandler<dim>::active_cell_iterator &phase_cell,
-    const VectorType & /*velocity_pressure_solution*/,
+    const VectorType                      &present_velocity_pressure_solution,
     const VectorType                      &previous_velocity_pressure_solution,
     const VectorType                      &void_fraction_solution,
     const Particles::ParticleHandler<dim> &particle_handler,
-    const VectorType                      &current_filtered_solution)
+    const Parameters::DragCoupling        &drag_coupling,
+    const VectorType                      &current_filtered_VOF_solution)
   {
     pic = particle_handler.particles_in_cell(velocity_cell);
 
-    double total_particle_volume = 0;
-    total_particle_volume        = extract_particle_properties();
+    extract_particle_properties();
     reinit_particle_fluid_forces();
     calculate_cell_void_fraction(total_particle_volume);
 
@@ -1030,7 +1069,11 @@ public:
     Quadrature<dim> q_particles_location =
       gather_particles_reference_location();
     calculate_fluid_fields_at_particle_location(
-      q_particles_location, velocity_cell, previous_velocity_pressure_solution);
+      q_particles_location,
+      velocity_cell,
+      present_velocity_pressure_solution,
+      previous_velocity_pressure_solution,
+      drag_coupling);
 
     if (this->interpolated_void_fraction)
       {
@@ -1040,7 +1083,7 @@ public:
       }
     calculate_vof_at_particle_location(q_particles_location,
                                        phase_cell,
-                                       current_filtered_solution);
+                                       current_filtered_VOF_solution);
     calculate_fluid_properties_at_particle_location();
     calculate_force_parameters_at_particle_location();
   }
@@ -1378,9 +1421,10 @@ public:
   unsigned int                max_number_of_particles_per_cell;
   unsigned int                number_of_particles;
   typename Particles::ParticleHandler<dim>::particle_iterator_range pic;
-  double                                                            cell_volume;
-  double                                                            beta_drag;
-  Tensor<1, dim> undisturbed_flow_force;
+  double         total_particle_volume;
+  double         cell_volume;
+  double         beta_drag;
+  Tensor<1, dim> explicit_particle_volumetric_acceleration_on_fluid;
 
 
   /**

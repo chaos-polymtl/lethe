@@ -483,6 +483,7 @@ FluidDynamicsVANS<dim>::assemble_local_system_matrix(
         this->previous_solutions[0],
         this->particle_projector.void_fraction_locally_relevant,
         particle_handler,
+        cfd_dem_simulation_parameters.cfd_dem.drag_coupling,
         *this->multiphysics->get_filtered_solution(PhysicsID::VOF));
     }
   else
@@ -493,7 +494,8 @@ FluidDynamicsVANS<dim>::assemble_local_system_matrix(
         this->evaluation_point,
         this->previous_solutions[0],
         this->particle_projector.void_fraction_locally_relevant,
-        particle_handler);
+        particle_handler,
+        cfd_dem_simulation_parameters.cfd_dem.drag_coupling);
     }
 
   copy_data.reset();
@@ -637,6 +639,7 @@ FluidDynamicsVANS<dim>::assemble_local_system_rhs(
         this->previous_solutions[0],
         particle_projector.void_fraction_locally_relevant,
         particle_handler,
+        cfd_dem_simulation_parameters.cfd_dem.drag_coupling,
         *this->multiphysics->get_filtered_solution(PhysicsID::VOF));
     }
   else
@@ -647,7 +650,8 @@ FluidDynamicsVANS<dim>::assemble_local_system_rhs(
         this->evaluation_point,
         this->previous_solutions[0],
         particle_projector.void_fraction_locally_relevant,
-        particle_handler);
+        particle_handler,
+        cfd_dem_simulation_parameters.cfd_dem.drag_coupling);
     }
 
   copy_data.reset();

@@ -4,6 +4,14 @@ All notable changes to the Lethe project will be documented in this file.
 The changelog for the previous releases of Lethe are located in the release_notes folder.
 The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
+
+### [Master] - 2025-11-03
+
+### Added
+- MAJOR The particle-fluid coupling the VANS and CFD-DEM solver currently rely on a semi-implicit coupling where the drag force is calculated explicitely and partially implicited on the fluid side. This is a bit problematic for some cases and I want to introduce capability to control what we are essentially doing. This change introduces 3 coupling mode. The semi-implicit (which is the one we actually use right now) as well as a fully implicit and a fully explicit coupling mode. In the fully implicit mode, the particle-fluid forces are calculated using the full velocity solution at time t+delta t. Surprisingly, this is a lot more stable than I thought and it leads to very good results. In the fully explicit formulation, the particle-fluid forces are calculated at time t and are applied to both the particle and the fluid. In this case, there is no Jacobian matrix and the solver is fully explicit. This means that these is a stability criterion. To make this work well, I had to move the CFD-DEM parameters to the core solver so that the library may be used within the scratch data (since I need to know the drag mode in the calculation of the velocity at the particle location). I also found some slight issues with the two-way coupling for the lift forces and there were some signs that were conmfusing (for example the lift force was applied to both the fluid and the particle with the same sign and the - sign came later), this was kinda confusing and I took the opportunity to clarify this here. As a consequence, some tests results have slightly changed. [#1752](https://github.com/chaos-polymtl/lethe/pull/1752)
+
+
+
 ### [Master] - 2025-11-02
 
 ### Fixed
