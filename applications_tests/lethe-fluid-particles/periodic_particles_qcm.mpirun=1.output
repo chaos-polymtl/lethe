@@ -32,9 +32,9 @@ Void Fraction
 Volume-Averaged Fluid Dynamics
 -------------------------------
 Particle Summary
-id, x, y, z, v_x, v_y, v_z
-0 0.1199 0.00499572 0.019 0 2.24509e-14 0
-1 0.2399 0.00499572 0.019 0 2.24509e-14 0
+id,           x,            y,            z,            v_x,          v_y,          v_z           
+0             0.1199        0.00499572    0.019         0             -3.83398e-15  0             
+1             0.2399        0.00499572    0.019         0             -3.83398e-15  0             
 ----
 DEM
 ----
@@ -42,8 +42,8 @@ DEM contact search at dem step 0
 DEM contact search at dem step 99
 Finished 100 DEM iterations
 ---------------------------------------------------------------
-Global continuity equation error: -2.0574e-21 s^-1
-Max local continuity error: 6.91039e-09 s^-1
+Global continuity equation error: 1.36671e-21 s^-1
+Max local continuity error: 6.91045e-09 s^-1
 
 *********************************************************************************
 Transient iteration: 2        Time: 0.002    Time step: 0.001    CFL: 0.00504878
@@ -61,9 +61,9 @@ Void Fraction
 Volume-Averaged Fluid Dynamics
 -------------------------------
 Particle Summary
-id, x, y, z, v_x, v_y, v_z
-0 0.119901 0.00499574 0.019 0.000930352 2.76724e-05 0
-1 0.239901 0.00499574 0.019 0.000930352 2.76724e-05 0
+id,           x,            y,            z,            v_x,          v_y,          v_z           
+0             0.119901      0.00499574    0.019         0.000930352   2.76724e-05   0             
+1             0.239901      0.00499574    0.019         0.000930352   2.76724e-05   0             
 ----
 DEM
 ----
@@ -71,8 +71,8 @@ DEM contact search at dem step 0
 DEM contact search at dem step 99
 Finished 100 DEM iterations
 ---------------------------------------------------------------
-Global continuity equation error: -1.06177e-20 s^-1
-Max local continuity error: 1.14804e-08 s^-1
+Global continuity equation error: 5.00113e-21 s^-1
+Max local continuity error: 1.14812e-08 s^-1
 
 *********************************************************************************
 Transient iteration: 3        Time: 0.003    Time step: 0.001    CFL: 0.00946787
@@ -90,9 +90,9 @@ Void Fraction
 Volume-Averaged Fluid Dynamics
 -------------------------------
 Particle Summary
-id, x, y, z, v_x, v_y, v_z
-0 0.119902 0.00499575 0.019 0.00172965 -1.45139e-05 -1.05142e-10
-1 0.239902 0.00499575 0.019 0.00172965 -1.45139e-05 -1.05351e-10
+id,           x,            y,            z,            v_x,          v_y,          v_z           
+0             0.119902      0.00499575    0.019         0.00172965    -1.45139e-05  -1.05024e-10  
+1             0.239902      0.00499575    0.019         0.00172965    -1.45139e-05  -1.05023e-10  
 ----
 DEM
 ----
@@ -100,8 +100,8 @@ DEM contact search at dem step 0
 DEM contact search at dem step 99
 Finished 100 DEM iterations
 ---------------------------------------------------------------
-Global continuity equation error: -7.10548e-21 s^-1
-Max local continuity error: 2.63311e-08 s^-1
+Global continuity equation error: 1.02901e-20 s^-1
+Max local continuity error: 2.63286e-08 s^-1
 
 ********************************************************************************
 Transient iteration: 4        Time: 0.004    Time step: 0.001    CFL: 0.0205151
@@ -119,9 +119,9 @@ Void Fraction
 Volume-Averaged Fluid Dynamics
 -------------------------------
 Particle Summary
-id, x, y, z, v_x, v_y, v_z
-0 0.119905 0.00499573 0.019 0.00380249 -1.71296e-05 -6.58298e-08
-1 0.239905 0.00499573 0.019 0.00380249 -1.71296e-05 -6.58298e-08
+id,           x,            y,            z,            v_x,          v_y,          v_z           
+0             0.119905      0.00499573    0.019         0.00380249    -1.71296e-05  -6.58438e-08  
+1             0.239905      0.00499573    0.019         0.00380249    -1.71296e-05  -6.58469e-08  
 ----
 DEM
 ----
@@ -129,8 +129,8 @@ DEM contact search at dem step 0
 DEM contact search at dem step 99
 Finished 100 DEM iterations
 ---------------------------------------------------------------
-Global continuity equation error: -4.52981e-20 s^-1
-Max local continuity error: 4.64439e-08 s^-1
+Global continuity equation error: -4.28893e-20 s^-1
+Max local continuity error: 4.64435e-08 s^-1
 
 ********************************************************************************
 Transient iteration: 5        Time: 0.005    Time step: 0.001    CFL: 0.0337781
@@ -148,9 +148,9 @@ Void Fraction
 Volume-Averaged Fluid Dynamics
 -------------------------------
 Particle Summary
-id, x, y, z, v_x, v_y, v_z
-0 0.11991 0.00499573 0.019 0.00626449 2.18704e-05 -2.92819e-07
-1 0.23991 0.00499573 0.019 0.00626449 2.18704e-05 -2.9282e-07
+id,           x,            y,            z,            v_x,          v_y,          v_z           
+0             0.11991       0.00499573    0.019         0.00626449    2.18703e-05   -2.92627e-07  
+1             0.23991       0.00499573    0.019         0.00626449    2.18704e-05   -2.92727e-07  
 ----
 DEM
 ----
@@ -158,8 +158,8 @@ DEM contact search at dem step 0
 DEM contact search at dem step 99
 Finished 100 DEM iterations
 ---------------------------------------------------------------
-Global continuity equation error: -5.45013e-20 s^-1
-Max local continuity error: 7.01908e-08 s^-1
+Global continuity equation error: 1.0669e-19 s^-1
+Max local continuity error: 7.01965e-08 s^-1
 
 ********************************************************************************
 Transient iteration: 6        Time: 0.006    Time step: 0.001    CFL: 0.0453943
@@ -177,9 +177,9 @@ Void Fraction
 Volume-Averaged Fluid Dynamics
 -------------------------------
 Particle Summary
-id, x, y, z, v_x, v_y, v_z
-0 0.119917 0.00499575 0.019 0.00855568 3.58991e-06 -9.98483e-07
-1 0.239917 0.00499575 0.019 0.00855568 3.58991e-06 -9.9848e-07
+id,           x,            y,            z,            v_x,          v_y,          v_z           
+0             0.119917      0.00499575    0.019         0.00855568    3.58982e-06   -9.96576e-07  
+1             0.239917      0.00499575    0.019         0.00855568    3.58986e-06   -9.97544e-07  
 ----
 DEM
 ----
@@ -187,8 +187,8 @@ DEM contact search at dem step 0
 DEM contact search at dem step 99
 Finished 100 DEM iterations
 ---------------------------------------------------------------
-Global continuity equation error: -1.31489e-20 s^-1
-Max local continuity error: 1.06043e-07 s^-1
+Global continuity equation error: 7.16669e-21 s^-1
+Max local continuity error: 1.06063e-07 s^-1
 
 ********************************************************************************
 Transient iteration: 7        Time: 0.007    Time step: 0.001    CFL: 0.0528785
@@ -206,9 +206,9 @@ Void Fraction
 Volume-Averaged Fluid Dynamics
 -------------------------------
 Particle Summary
-id, x, y, z, v_x, v_y, v_z
-0 0.119926 0.00499573 0.019 0.0100861 -2.17352e-05 -2.42014e-06
-1 0.239926 0.00499573 0.019 0.0100861 -2.17352e-05 -2.42014e-06
+id,           x,            y,            z,            v_x,          v_y,          v_z           
+0             0.119926      0.00499573    0.019         0.0100861     -2.17346e-05  -2.40894e-06  
+1             0.239926      0.00499573    0.019         0.0100861     -2.17348e-05  -2.41464e-06  
 ----
 DEM
 ----
@@ -216,11 +216,11 @@ DEM contact search at dem step 0
 DEM contact search at dem step 99
 Finished 100 DEM iterations
 ---------------------------------------------------------------
-Global continuity equation error: 8.02034e-21 s^-1
-Max local continuity error: 1.48686e-07 s^-1
+Global continuity equation error: -4.44163e-20 s^-1
+Max local continuity error: 1.48741e-07 s^-1
 
 ********************************************************************************
-Transient iteration: 8        Time: 0.008    Time step: 0.001    CFL: 0.0553992
+Transient iteration: 8        Time: 0.008    Time step: 0.001    CFL: 0.0553993
 ********************************************************************************
 ---------------------
 Flow control summary
@@ -235,9 +235,9 @@ Void Fraction
 Volume-Averaged Fluid Dynamics
 -------------------------------
 Particle Summary
-id, x, y, z, v_x, v_y, v_z
-0 0.119937 0.00499573 0.019 0.0108395 7.90442e-06 -4.49058e-06
-1 0.239937 0.00499573 0.019 0.0108395 7.90441e-06 -4.49057e-06
+id,           x,            y,            z,            v_x,          v_y,          v_z           
+0             0.119937      0.00499573    0.019         0.0108395     7.90714e-06   -4.44947e-06  
+1             0.239937      0.00499573    0.019         0.0108395     7.90583e-06   -4.47045e-06  
 ----
 DEM
 ----
@@ -245,18 +245,18 @@ DEM contact search at dem step 0
 DEM contact search at dem step 99
 Finished 100 DEM iterations
 ---------------------------------------------------------------
-Global continuity equation error: -2.15265e-20 s^-1
-Max local continuity error: 1.86896e-07 s^-1
+Global continuity equation error: 2.35713e-20 s^-1
+Max local continuity error: 1.87001e-07 s^-1
 
 ********************************************************************************
-Transient iteration: 9        Time: 0.009    Time step: 0.001    CFL: 0.0535726
+Transient iteration: 9        Time: 0.009    Time step: 0.001    CFL: 0.0535728
 ********************************************************************************
 ---------------------
 Flow control summary
 ---------------------
 Fluid space-average velocity: 1.32281
 Fluid beta force: -115.107
-Particle beta force: -1.20863
+Particle beta force: -1.20862
 --------------
 Void Fraction
 --------------
@@ -264,9 +264,9 @@ Void Fraction
 Volume-Averaged Fluid Dynamics
 -------------------------------
 Particle Summary
-id, x, y, z, v_x, v_y, v_z
-0 0.119948 0.00499574 0.019 0.0107293 1.5116e-05 -6.83968e-06
-1 0.239948 0.00499574 0.019 0.0107293 1.5116e-05 -6.83966e-06
+id,           x,            y,            z,            v_x,          v_y,          v_z           
+0             0.119948      0.00499574    0.019         0.0107293     1.51204e-05   -6.73399e-06  
+1             0.239948      0.00499574    0.019         0.0107293     1.51183e-05   -6.788e-06    
 ----
 DEM
 ----
@@ -274,11 +274,11 @@ DEM contact search at dem step 0
 DEM contact search at dem step 99
 Finished 100 DEM iterations
 ---------------------------------------------------------------
-Global continuity equation error: 3.26439e-20 s^-1
-Max local continuity error: 2.16463e-07 s^-1
+Global continuity equation error: -9.74882e-20 s^-1
+Max local continuity error: 2.16614e-07 s^-1
 
 ********************************************************************************
-Transient iteration: 10       Time: 0.01     Time step: 0.001    CFL: 0.0489475
+Transient iteration: 10       Time: 0.01     Time step: 0.001    CFL: 0.0489477
 ********************************************************************************
 ---------------------
 Flow control summary
@@ -293,9 +293,9 @@ Void Fraction
 Volume-Averaged Fluid Dynamics
 -------------------------------
 Particle Summary
-id, x, y, z, v_x, v_y, v_z
-0 0.119958 0.00499574 0.019 0.0101584 -1.49249e-05 -9.036e-06
-1 0.239958 0.00499574 0.019 0.0101584 -1.49249e-05 -9.03597e-06
+id,           x,            y,            z,            v_x,          v_y,          v_z           
+0             0.119958      0.00499574    0.019         0.0101584     -1.49214e-05  -8.82707e-06  
+1             0.239958      0.00499574    0.019         0.0101584     -1.4923e-05   -8.93378e-06  
 ----
 DEM
 ----
@@ -303,11 +303,11 @@ DEM contact search at dem step 0
 DEM contact search at dem step 99
 Finished 100 DEM iterations
 ---------------------------------------------------------------
-Global continuity equation error: -8.26784e-20 s^-1
-Max local continuity error: 2.36899e-07 s^-1
+Global continuity equation error: -7.05949e-20 s^-1
+Max local continuity error: 2.37077e-07 s^-1
 
 ********************************************************************************
-Transient iteration: 11       Time: 0.011    Time step: 0.001    CFL: 0.0433848
+Transient iteration: 11       Time: 0.011    Time step: 0.001    CFL: 0.0433852
 ********************************************************************************
 ---------------------
 Flow control summary
@@ -322,9 +322,9 @@ Void Fraction
 Volume-Averaged Fluid Dynamics
 -------------------------------
 Particle Summary
-id, x, y, z, v_x, v_y, v_z
-0 0.119968 0.00499573 0.019 0.00929774 -5.4763e-06 -1.07919e-05
-1 0.239968 0.00499573 0.019 0.00929774 -5.4763e-06 -1.07919e-05
+id,           x,            y,            z,            v_x,          v_y,          v_z           
+0             0.119968      0.00499573    0.019         0.00929776    -5.47487e-06  -1.04506e-05  
+1             0.239968      0.00499573    0.019         0.00929778    -5.4755e-06   -1.06246e-05  
 ----
 DEM
 ----
@@ -332,18 +332,18 @@ DEM contact search at dem step 0
 DEM contact search at dem step 99
 Finished 100 DEM iterations
 ---------------------------------------------------------------
-Global continuity equation error: -4.63221e-21 s^-1
-Max local continuity error: 2.50626e-07 s^-1
+Global continuity equation error: 3.87518e-20 s^-1
+Max local continuity error: 2.50803e-07 s^-1
 
 ********************************************************************************
-Transient iteration: 12       Time: 0.012    Time step: 0.001    CFL: 0.0385147
+Transient iteration: 12       Time: 0.012    Time step: 0.001    CFL: 0.0385153
 ********************************************************************************
 ---------------------
 Flow control summary
 ---------------------
 Fluid space-average velocity: 0.948226
-Fluid beta force: -77.7129
-Particle beta force: -0.815986
+Fluid beta force: -77.7128
+Particle beta force: -0.815985
 --------------
 Void Fraction
 --------------
@@ -351,9 +351,9 @@ Void Fraction
 Volume-Averaged Fluid Dynamics
 -------------------------------
 Particle Summary
-id, x, y, z, v_x, v_y, v_z
-0 0.119977 0.00499574 0.019 0.00858746 1.64206e-05 -1.20426e-05
-1 0.239977 0.00499574 0.019 0.00858746 1.64206e-05 -1.20425e-05
+id,           x,            y,            z,            v_x,          v_y,          v_z           
+0             0.119977      0.00499574    0.019         0.0085875     1.64209e-05   -1.15562e-05  
+1             0.239977      0.00499574    0.019         0.00858753    1.64208e-05   -1.18035e-05  
 ----
 DEM
 ----
@@ -361,18 +361,18 @@ DEM contact search at dem step 0
 DEM contact search at dem step 99
 Finished 100 DEM iterations
 ---------------------------------------------------------------
-Global continuity equation error: 3.59327e-20 s^-1
-Max local continuity error: 2.60987e-07 s^-1
+Global continuity equation error: -3.17505e-20 s^-1
+Max local continuity error: 2.61139e-07 s^-1
 
 ********************************************************************************
-Transient iteration: 13       Time: 0.013    Time step: 0.001    CFL: 0.0353864
+Transient iteration: 13       Time: 0.013    Time step: 0.001    CFL: 0.0353871
 ********************************************************************************
 ---------------------
 Flow control summary
 ---------------------
 Fluid space-average velocity: 0.870429
-Fluid beta force: -25.8711
-Particle beta force: -0.271647
+Fluid beta force: -25.871
+Particle beta force: -0.271646
 --------------
 Void Fraction
 --------------
@@ -380,9 +380,9 @@ Void Fraction
 Volume-Averaged Fluid Dynamics
 -------------------------------
 Particle Summary
-id, x, y, z, v_x, v_y, v_z
-0 0.119985 0.00499574 0.0189999 0.00810204 -3.54348e-06 -1.28767e-05
-1 0.239985 0.00499574 0.0189999 0.00810204 -3.54348e-06 -1.28766e-05
+id,           x,            y,            z,            v_x,          v_y,          v_z           
+0             0.119985      0.00499574    0.0189999     0.00810208    -3.54363e-06  -1.22466e-05  
+1             0.239985      0.00499574    0.0189999     0.00810213    -3.54356e-06  -1.25661e-05  
 ----
 DEM
 ----
@@ -390,18 +390,18 @@ DEM contact search at dem step 0
 DEM contact search at dem step 99
 Finished 100 DEM iterations
 ---------------------------------------------------------------
-Global continuity equation error: 7.47771e-21 s^-1
-Max local continuity error: 2.70961e-07 s^-1
+Global continuity equation error: -1.37378e-20 s^-1
+Max local continuity error: 2.71069e-07 s^-1
 
 ********************************************************************************
-Transient iteration: 14       Time: 0.014    Time step: 0.001    CFL: 0.0343508
+Transient iteration: 14       Time: 0.014    Time step: 0.001    CFL: 0.0343517
 ********************************************************************************
 ---------------------
 Flow control summary
 ---------------------
 Fluid space-average velocity: 0.844483
-Fluid beta force: 19.4946
-Particle beta force: 0.204694
+Fluid beta force: 19.4947
+Particle beta force: 0.204695
 --------------
 Void Fraction
 --------------
@@ -409,9 +409,9 @@ Void Fraction
 Volume-Averaged Fluid Dynamics
 -------------------------------
 Particle Summary
-id, x, y, z, v_x, v_y, v_z
-0 0.119993 0.00499573 0.0189999 0.00804132 -1.26822e-05 -1.34485e-05
-1 0.239993 0.00499573 0.0189999 0.00804132 -1.26822e-05 -1.34484e-05
+id,           x,            y,            z,            v_x,          v_y,          v_z           
+0             0.119993      0.00499573    0.0189999     0.00804136    -1.26827e-05  -1.26816e-05  
+1             0.239993      0.00499573    0.0189999     0.00804143    -1.26825e-05  -1.30699e-05  
 ----
 DEM
 ----
@@ -419,18 +419,18 @@ DEM contact search at dem step 0
 DEM contact search at dem step 99
 Finished 100 DEM iterations
 ---------------------------------------------------------------
-Global continuity equation error: 2.80315e-20 s^-1
-Max local continuity error: 2.82453e-07 s^-1
+Global continuity equation error: 1.52334e-20 s^-1
+Max local continuity error: 2.82512e-07 s^-1
 
 ********************************************************************************
-Transient iteration: 15       Time: 0.015    Time step: 0.001    CFL: 0.0351478
+Transient iteration: 15       Time: 0.015    Time step: 0.001    CFL: 0.0351488
 ********************************************************************************
 ---------------------
 Flow control summary
 ---------------------
 Fluid space-average velocity: 0.863903
-Fluid beta force: 48.664
-Particle beta force: 0.510972
+Fluid beta force: 48.6641
+Particle beta force: 0.510973
 --------------
 Void Fraction
 --------------
@@ -438,9 +438,9 @@ Void Fraction
 Volume-Averaged Fluid Dynamics
 -------------------------------
 Particle Summary
-id, x, y, z, v_x, v_y, v_z
-0 0.120001 0.00499573 0.0189999 0.00826334 9.87315e-06 -1.38959e-05
-1 1.30736e-06 0.00499573 0.0189999 0.00826334 9.87315e-06 -1.38958e-05
+id,           x,            y,            z,            v_x,          v_y,          v_z           
+0             0.120001      0.00499573    0.0189999     0.00826339    9.87335e-06   -1.29963e-05  
+1             1.30779e-06   0.00499573    0.0189999     0.00826348    9.87324e-06   -1.34518e-05  
 ----
 DEM
 ----
@@ -448,18 +448,18 @@ DEM contact search at dem step 0
 DEM contact search at dem step 99
 Finished 100 DEM iterations
 ---------------------------------------------------------------
-Global continuity equation error: -3.42254e-20 s^-1
-Max local continuity error: 2.76965e-07 s^-1
+Global continuity equation error: 4.5581e-20 s^-1
+Max local continuity error: 2.76871e-07 s^-1
 
 ********************************************************************************
-Transient iteration: 16       Time: 0.016    Time step: 0.001    CFL: 0.0371182
+Transient iteration: 16       Time: 0.016    Time step: 0.001    CFL: 0.0371194
 ********************************************************************************
 ---------------------
 Flow control summary
 ---------------------
 Fluid space-average velocity: 0.912486
-Fluid beta force: 58.3966
-Particle beta force: 0.613165
+Fluid beta force: 58.3967
+Particle beta force: 0.613166
 --------------
 Void Fraction
 --------------
@@ -467,9 +467,9 @@ Void Fraction
 Volume-Averaged Fluid Dynamics
 -------------------------------
 Particle Summary
-id, x, y, z, v_x, v_y, v_z
-0 0.12001 0.00499574 0.0189999 0.00875099 6.12884e-06 -1.4451e-05
-1 9.85577e-06 0.00499574 0.0189999 0.00875099 6.12885e-06 -1.44509e-05
+id,           x,            y,            z,            v_x,          v_y,          v_z           
+0             0.12001       0.00499574    0.0189999     0.00875103    6.13019e-06   -1.34192e-05  
+1             9.85635e-06   0.00499574    0.0189999     0.00875116    6.12941e-06   -1.39438e-05  
 ----
 DEM
 ----
@@ -477,18 +477,18 @@ DEM contact search at dem step 0
 DEM contact search at dem step 99
 Finished 100 DEM iterations
 ---------------------------------------------------------------
-Global continuity equation error: -5.58645e-20 s^-1
-Max local continuity error: 2.7877e-07 s^-1
+Global continuity equation error: 5.94379e-20 s^-1
+Max local continuity error: 2.78576e-07 s^-1
 
 ********************************************************************************
-Transient iteration: 17       Time: 0.017    Time step: 0.001    CFL: 0.0394839
+Transient iteration: 17       Time: 0.017    Time step: 0.001    CFL: 0.0394852
 ********************************************************************************
 ---------------------
 Flow control summary
 ---------------------
 Fluid space-average velocity: 0.970793
-Fluid beta force: 51.1219
-Particle beta force: 0.53678
+Fluid beta force: 51.122
+Particle beta force: 0.536781
 --------------
 Void Fraction
 --------------
@@ -496,9 +496,9 @@ Void Fraction
 Volume-Averaged Fluid Dynamics
 -------------------------------
 Particle Summary
-id, x, y, z, v_x, v_y, v_z
-0 0.120019 0.00499574 0.0189999 0.00928522 -1.10684e-05 -1.24623e-05
-1 1.88508e-05 0.00499574 0.0189999 0.00928522 -1.10684e-05 -1.24622e-05
+id,           x,            y,            z,            v_x,          v_y,          v_z           
+0             0.120019      0.00499574    0.0189999     0.00928527    -1.10707e-05  -1.13372e-05  
+1             1.88516e-05   0.00499574    0.0189999     0.00928541    -1.10544e-05  -1.18557e-05  
 ----
 DEM
 ----
@@ -506,18 +506,18 @@ DEM contact search at dem step 0
 DEM contact search at dem step 99
 Finished 100 DEM iterations
 ---------------------------------------------------------------
-Global continuity equation error: 2.3439e-20 s^-1
-Max local continuity error: 2.79776e-07 s^-1
+Global continuity equation error: 1.38569e-20 s^-1
+Max local continuity error: 2.79533e-07 s^-1
 
 ********************************************************************************
-Transient iteration: 18       Time: 0.018    Time step: 0.001    CFL: 0.0415582
+Transient iteration: 18       Time: 0.018    Time step: 0.001    CFL: 0.0415592
 ********************************************************************************
 ---------------------
 Flow control summary
 ---------------------
 Fluid space-average velocity: 1.02181
 Fluid beta force: 32.913
-Particle beta force: 0.345586
+Particle beta force: 0.345587
 --------------
 Void Fraction
 --------------
@@ -525,9 +525,9 @@ Void Fraction
 Volume-Averaged Fluid Dynamics
 -------------------------------
 Particle Summary
-id, x, y, z, v_x, v_y, v_z
-0 0.120028 0.00499573 0.0189999 0.0098231 3.46378e-07 -1.04038e-05
-1 2.84262e-05 0.00499573 0.0189999 0.0098231 3.46361e-07 -1.04037e-05
+id,           x,            y,            z,            v_x,          v_y,          v_z           
+0             0.120028      0.00499573    0.0189999     0.00982315    3.51592e-07   -9.15511e-06  
+1             2.84272e-05   0.00499573    0.0189999     0.0098233     3.4321e-07    -9.67497e-06  
 ----
 DEM
 ----
@@ -535,11 +535,11 @@ DEM contact search at dem step 0
 DEM contact search at dem step 99
 Finished 100 DEM iterations
 ---------------------------------------------------------------
-Global continuity equation error: 2.43654e-20 s^-1
-Max local continuity error: 2.80206e-07 s^-1
+Global continuity equation error: 6.46127e-20 s^-1
+Max local continuity error: 2.79954e-07 s^-1
 
 ********************************************************************************
-Transient iteration: 19       Time: 0.019    Time step: 0.001    CFL: 0.0429015
+Transient iteration: 19       Time: 0.019    Time step: 0.001    CFL: 0.0429025
 ********************************************************************************
 ---------------------
 Flow control summary
@@ -554,9 +554,9 @@ Void Fraction
 Volume-Averaged Fluid Dynamics
 -------------------------------
 Particle Summary
-id, x, y, z, v_x, v_y, v_z
-0 0.120038 0.00499574 0.0189999 0.0101991 9.72819e-06 -8.04781e-06
-1 3.84148e-05 0.00499574 0.0189999 0.0101991 9.7282e-06 -8.04775e-06
+id,           x,            y,            z,            v_x,          v_y,          v_z           
+0             0.120038      0.00499574    0.0189999     0.0101991     9.73296e-06   -6.65254e-06  
+1             3.8416e-05    0.00499574    0.0189999     0.0101993     9.72255e-06   -7.17287e-06  
 ----
 DEM
 ----
@@ -564,18 +564,18 @@ DEM contact search at dem step 0
 DEM contact search at dem step 99
 Finished 100 DEM iterations
 ---------------------------------------------------------------
-Global continuity equation error: -4.38472e-20 s^-1
-Max local continuity error: 2.79688e-07 s^-1
+Global continuity equation error: 2.32934e-20 s^-1
+Max local continuity error: 2.79456e-07 s^-1
 
 ********************************************************************************
-Transient iteration: 20       Time: 0.02     Time step: 0.001    CFL: 0.0433607
+Transient iteration: 20       Time: 0.02     Time step: 0.001    CFL: 0.0433619
 ********************************************************************************
 ---------------------
 Flow control summary
 ---------------------
 Fluid space-average velocity: 1.06556
-Fluid beta force: -8.07001
-Particle beta force: -0.0847351
+Fluid beta force: -8.0701
+Particle beta force: -0.084736
 --------------
 Void Fraction
 --------------
@@ -583,9 +583,9 @@ Void Fraction
 Volume-Averaged Fluid Dynamics
 -------------------------------
 Particle Summary
-id, x, y, z, v_x, v_y, v_z
-0 0.120049 0.00499574 0.0189999 0.0104584 -5.38532e-06 -5.59477e-06
-1 4.87537e-05 0.00499574 0.0189999 0.0104584 -5.38531e-06 -5.59469e-06
+id,           x,            y,            z,            v_x,          v_y,          v_z           
+0             0.120049      0.00499574    0.0189999     0.0104585     -5.3869e-06   -4.01896e-06  
+1             4.87551e-05   0.00499574    0.0189999     0.0104587     -5.37415e-06  -4.54716e-06  
 ----
 DEM
 ----
@@ -593,18 +593,18 @@ DEM contact search at dem step 0
 DEM contact search at dem step 99
 Finished 100 DEM iterations
 ---------------------------------------------------------------
-Global continuity equation error: -1.32944e-19 s^-1
-Max local continuity error: 2.78025e-07 s^-1
+Global continuity equation error: -6.8292e-21 s^-1
+Max local continuity error: 2.77837e-07 s^-1
 
 ********************************************************************************
-Transient iteration: 21       Time: 0.021    Time step: 0.001    CFL: 0.0430456
+Transient iteration: 21       Time: 0.021    Time step: 0.001    CFL: 0.0430469
 ********************************************************************************
 ---------------------
 Flow control summary
 ---------------------
 Fluid space-average velocity: 1.05738
-Fluid beta force: -20.3697
-Particle beta force: -0.213882
+Fluid beta force: -20.3699
+Particle beta force: -0.213884
 --------------
 Void Fraction
 --------------
@@ -612,9 +612,9 @@ Void Fraction
 Volume-Averaged Fluid Dynamics
 -------------------------------
 Particle Summary
-id, x, y, z, v_x, v_y, v_z
-0 0.120059 0.00499573 0.0189999 0.0105426 -5.85155e-06 -2.86174e-06
-1 5.9237e-05 0.00499573 0.0189999 0.0105426 -5.85156e-06 -2.86165e-06
+id,           x,            y,            z,            v_x,          v_y,          v_z           
+0             0.120059      0.00499573    0.0189999     0.0105426     -5.85012e-06  -1.08751e-06  
+1             5.92387e-05   0.00499573    0.0189999     0.0105428     -5.84766e-06  -1.61959e-06  
 ----
 DEM
 ----
@@ -622,18 +622,18 @@ DEM contact search at dem step 0
 DEM contact search at dem step 99
 Finished 100 DEM iterations
 ---------------------------------------------------------------
-Global continuity equation error: -1.8145e-20 s^-1
-Max local continuity error: 2.75243e-07 s^-1
+Global continuity equation error: 5.23043e-20 s^-1
+Max local continuity error: 2.75116e-07 s^-1
 
-********************************************************************************
-Transient iteration: 22       Time: 0.022    Time step: 0.001    CFL: 0.0422316
-********************************************************************************
+*******************************************************************************
+Transient iteration: 22       Time: 0.022    Time step: 0.001    CFL: 0.042233
+*******************************************************************************
 ---------------------
 Flow control summary
 ---------------------
 Fluid space-average velocity: 1.0369
-Fluid beta force: -24.4756
-Particle beta force: -0.256994
+Fluid beta force: -24.4758
+Particle beta force: -0.256996
 --------------
 Void Fraction
 --------------
@@ -641,9 +641,9 @@ Void Fraction
 Volume-Averaged Fluid Dynamics
 -------------------------------
 Particle Summary
-id, x, y, z, v_x, v_y, v_z
-0 0.12007 0.00499573 0.0189999 0.0105636 7.86561e-06 -1.74062e-07
-1 6.97978e-05 0.00499573 0.0189999 0.0105636 7.86561e-06 -1.73969e-07
+id,           x,            y,            z,            v_x,          v_y,          v_z           
+0             0.12007       0.00499573    0.0189999     0.0105636     7.86996e-06   1.82508e-06   
+1             6.97996e-05   0.00499573    0.0189999     0.0105638     7.85718e-06   1.28211e-06   
 ----
 DEM
 ----
@@ -651,18 +651,18 @@ DEM contact search at dem step 0
 DEM contact search at dem step 99
 Finished 100 DEM iterations
 ---------------------------------------------------------------
-Global continuity equation error: -3.44769e-20 s^-1
-Max local continuity error: 2.75165e-07 s^-1
+Global continuity equation error: 5.56924e-20 s^-1
+Max local continuity error: 2.75937e-07 s^-1
 
 ********************************************************************************
-Transient iteration: 23       Time: 0.023    Time step: 0.001    CFL: 0.0412498
+Transient iteration: 23       Time: 0.023    Time step: 0.001    CFL: 0.0412512
 ********************************************************************************
 ---------------------
 Flow control summary
 ---------------------
 Fluid space-average velocity: 1.01232
-Fluid beta force: -21.4111
-Particle beta force: -0.224816
+Fluid beta force: -21.4114
+Particle beta force: -0.22482
 --------------
 Void Fraction
 --------------
@@ -670,9 +670,9 @@ Void Fraction
 Volume-Averaged Fluid Dynamics
 -------------------------------
 Particle Summary
-id, x, y, z, v_x, v_y, v_z
-0 0.12008 0.00499574 0.0189999 0.0105182 1.06995e-06 2.66355e-06
-1 8.03295e-05 0.00499574 0.0189999 0.0105182 1.06996e-06 2.66365e-06
+id,           x,            y,            z,            v_x,          v_y,          v_z           
+0             0.12008       0.00499574    0.0189999     0.0105182     1.06885e-06   4.89351e-06   
+1             8.03316e-05   0.00499574    0.0189999     0.0105184     1.07327e-06   4.3447e-06    
 ----
 DEM
 ----
@@ -680,18 +680,18 @@ DEM contact search at dem step 0
 DEM contact search at dem step 99
 Finished 100 DEM iterations
 ---------------------------------------------------------------
-Global continuity equation error: -8.31151e-21 s^-1
-Max local continuity error: 2.77264e-07 s^-1
+Global continuity equation error: -1.24011e-20 s^-1
+Max local continuity error: 2.78084e-07 s^-1
 
 ********************************************************************************
-Transient iteration: 24       Time: 0.024    Time step: 0.001    CFL: 0.0403899
+Transient iteration: 24       Time: 0.024    Time step: 0.001    CFL: 0.0403914
 ********************************************************************************
 ---------------------
 Flow control summary
 ---------------------
 Fluid space-average velocity: 0.990811
-Fluid beta force: -13.7361
-Particle beta force: -0.144229
+Fluid beta force: -13.7365
+Particle beta force: -0.144233
 --------------
 Void Fraction
 --------------
@@ -699,9 +699,9 @@ Void Fraction
 Volume-Averaged Fluid Dynamics
 -------------------------------
 Particle Summary
-id, x, y, z, v_x, v_y, v_z
-0 0.120091 0.00499574 0.0189999 0.0105144 -7.61478e-06 5.36926e-06
-1 9.08543e-05 0.00499574 0.0189999 0.0105144 -7.61479e-06 5.36937e-06
+id,           x,            y,            z,            v_x,          v_y,          v_z           
+0             0.120091      0.00499574    0.0189999     0.0105144     -7.61684e-06  7.84438e-06   
+1             9.08566e-05   0.00499574    0.0189999     0.0105147     -7.60782e-06  7.28352e-06   
 ----
 DEM
 ----
@@ -709,18 +709,18 @@ DEM contact search at dem step 0
 DEM contact search at dem step 99
 Finished 100 DEM iterations
 ---------------------------------------------------------------
-Global continuity equation error: 4.63486e-20 s^-1
-Max local continuity error: 2.76079e-07 s^-1
+Global continuity equation error: -1.58157e-20 s^-1
+Max local continuity error: 2.76952e-07 s^-1
 
 ********************************************************************************
-Transient iteration: 25       Time: 0.025    Time step: 0.001    CFL: 0.0398385
+Transient iteration: 25       Time: 0.025    Time step: 0.001    CFL: 0.0398401
 ********************************************************************************
 ---------------------
 Flow control summary
 ---------------------
-Fluid space-average velocity: 0.976978
-Fluid beta force: -4.52247
-Particle beta force: -0.0474859
+Fluid space-average velocity: 0.976979
+Fluid beta force: -4.52295
+Particle beta force: -0.047491
 --------------
 Void Fraction
 --------------
@@ -728,9 +728,9 @@ Void Fraction
 Volume-Averaged Fluid Dynamics
 -------------------------------
 Particle Summary
-id, x, y, z, v_x, v_y, v_z
-0 0.120101 0.00499573 0.0189999 0.0105381 3.01127e-06 8.18911e-06
-1 0.000101377 0.00499573 0.0189999 0.0105381 3.01126e-06 8.18922e-06
+id,           x,            y,            z,            v_x,          v_y,          v_z           
+0             0.120101      0.00499573    0.0189999     0.0105381     3.01378e-06   1.09065e-05   
+1             0.00010138    0.00499573    0.0189999     0.0105384     3.00504e-06   1.03386e-05   
 ----
 DEM
 ----
@@ -738,5 +738,5 @@ DEM contact search at dem step 0
 DEM contact search at dem step 99
 Finished 100 DEM iterations
 ---------------------------------------------------------------
-Global continuity equation error: 3.58533e-20 s^-1
-Max local continuity error: 2.9317e-07 s^-1
+Global continuity equation error: 4.72221e-20 s^-1
+Max local continuity error: 2.91643e-07 s^-1
