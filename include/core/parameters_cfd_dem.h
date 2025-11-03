@@ -62,11 +62,11 @@ namespace Parameters
    *   Provides maximum stability, but requires more Newton iterations.
    *
    * - **semi_implicit**:
-   *   The drag is computed the previous velocity of the particles and the
-   * fluid. The resulting drag is applied to the particles. On the fluid, the
-   * drag is used to calculate the momentum transfer coefficient and the new
-   * fluid velocity velocity is calculated using an implicit formulation.
-   * Provides extensive stability, but for larger time-step this may lead to a
+   *  The drag force on the particles is computed using the previous velocities of both the particles and the fluid. 
+   * When transferring momentum to the fluid, the previous fluid velocity is used to evaluate the momentum   
+   * transfer coefficient, while the current fluid velocity is used to calculate relative velocity between the particle
+   * and the fluid.
+   * This provides extensive stability, but for larger time-step may lead to a
    * slight violation of Newton's third law since the drag applied on the fluid
    *   is not strictly equal to the drag applied to the particles.
    *
