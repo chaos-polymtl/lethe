@@ -661,12 +661,14 @@ namespace InterfaceTools
     {
       for (unsigned int i = 0; i < dim; ++i)
         {
-          unsigned int k = 0;
+          int k = 0;
           for (unsigned int j = 0; j < dim; ++j)
             {
               if (local_face_id / 2 == j)
                 continue;
-              face_transformation_jac[i][k] = cell_transformation_jac[i][j];
+
+              if (k < dim - 1)
+                face_transformation_jac[i][k] = cell_transformation_jac[i][j];
               k += 1;
             }
         }
