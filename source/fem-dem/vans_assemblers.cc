@@ -2241,6 +2241,7 @@ VANSAssemblerFPIProj<dim>::assemble_matrix(
   auto &strong_jacobian = copy_data.strong_jacobian;
   auto &local_matrix    = copy_data.local_matrix;
 
+  const double eps = 1e-12;
 
   // Loop over the quadrature points
   for (unsigned int q = 0; q < n_q_points; ++q)
@@ -2257,7 +2258,7 @@ VANSAssemblerFPIProj<dim>::assemble_matrix(
       const Tensor<1, dim> &fluid_drag =
         scratch_data.particle_drag_values[q] / scratch_data.cell_volume;
       const double beta_drag =
-        fluid_drag.norm() / fluid_particle_relative_velocity.norm();
+        fluid_drag.norm() / (fluid_particle_relative_velocity.norm() + eps);
 
       // Store JxW in local variable for faster access;
       const double JxW = JxW_vec[q];

@@ -1285,21 +1285,24 @@ public:
    * @param[in] particle_velocity Object containing the projection of the
    * particle velocities onto the fluid dofs
    */
+  template <typename VectorType>
   void
   calculate_particle_fields_values(
-    const typename DoFHandler<dim>::active_cell_iterator &cell,
-    const LinearAlgebra::distributed::Vector<double>      particle_fluid_drag,
-    const LinearAlgebra::distributed::Vector<double>
-      particle_fluid_force_two_way_coupling,
-    const LinearAlgebra::distributed::Vector<double> particle_velocity)
+    const VectorType      particle_fluid_drag,
+    const VectorType      particle_fluid_force_two_way_coupling,
+    const VectorType      particle_velocity)
   {
     // Compute cell volume since it is needed in the assemblers of the projected
     // drag and two-way coupling forces
     cell_volume = compute_cell_measure_with_JxW(
       this->fe_values_void_fraction->get_JxW_values());
 
-    // There is no need to reinit fe_values as it is already reinitialized as it
-    // is already reinitialized for the cell in question in scratch_data.reinit
+    this->particle_drag_values.resize(fe_values.n_quadrature_points);
+    this->particle_two_way_coupling_force_values.resize(fe_values.n_quadrature_points);
+    this->particle_velocity_values.resize(fe_values.n_quadrature_points);
+
+    // There is no need to reinit fe_values as it is already reinitialized
+    // for the cell in question in scratch_data.reinit
     this->fe_values[velocities].get_function_values(particle_fluid_drag,
                                                     this->particle_drag_values);
     this->fe_values[velocities].get_function_values(

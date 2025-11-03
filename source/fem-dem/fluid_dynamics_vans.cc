@@ -518,11 +518,10 @@ FluidDynamicsVANS<dim>::assemble_local_system_matrix(
   else
     {
       scratch_data.calculate_particle_fields_values(
-        cell,
-        particle_projector.particle_fluid_drag.particle_field_solution,
+        particle_projector.particle_fluid_drag.particle_field_locally_relevant,
         particle_projector.particle_fluid_force_two_way_coupling
-          .particle_field_solution,
-        particle_projector.particle_velocity.particle_field_solution);
+          .particle_field_locally_relevant,
+        particle_projector.particle_velocity.particle_field_locally_relevant);
     }
 
   copy_data.reset();
@@ -686,11 +685,11 @@ FluidDynamicsVANS<dim>::assemble_local_system_rhs(
   else
     {
       scratch_data.calculate_particle_fields_values(
-        cell,
-        particle_projector.particle_fluid_drag.particle_field_solution,
+
+        particle_projector.particle_fluid_drag.particle_field_locally_relevant,
         particle_projector.particle_fluid_force_two_way_coupling
-          .particle_field_solution,
-        particle_projector.particle_velocity.particle_field_solution);
+          .particle_field_locally_relevant,
+        particle_projector.particle_velocity.particle_field_locally_relevant);
     }
 
   copy_data.reset();
@@ -742,6 +741,29 @@ FluidDynamicsVANS<dim>::gather_output_hook()
         particle_projector.particle_velocity.particle_field_locally_relevant,
         names,
         data_interpretation);
+    }
+
+      if (this->cfd_dem_simulation_parameters.void_fraction
+        ->project_particle_forces)
+    {
+      solution_output_structs.emplace_back(
+        std::in_place_type<OutputStructSolution<dim, GlobalVectorType>>,
+        this->particle_projector.particle_fluid_drag.dof_handler,
+        this->particle_projector.particle_fluid_drag
+          .particle_field_locally_relevant,
+        std::vector<std::string>(dim, "Particle_drag"),
+        std::vector<DataComponentInterpretation::DataComponentInterpretation>(
+          dim, DataComponentInterpretation::component_is_part_of_vector));
+
+      solution_output_structs.emplace_back(
+        std::in_place_type<OutputStructSolution<dim, GlobalVectorType>>,
+        this->particle_projector.particle_fluid_force_two_way_coupling
+          .dof_handler,
+        this->particle_projector.particle_fluid_force_two_way_coupling
+          .particle_field_locally_relevant,
+        std::vector<std::string>(dim, "Particle_two_way_coupling_force"),
+        std::vector<DataComponentInterpretation::DataComponentInterpretation>(
+          dim, DataComponentInterpretation::component_is_part_of_vector));
     }
   return solution_output_structs;
 }
