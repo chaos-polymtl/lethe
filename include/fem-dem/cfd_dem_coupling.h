@@ -188,6 +188,16 @@ private:
   write_checkpoint() override;
 
   /**
+   * @brief Gather and return vector of output structs that are particular to the
+   * CFD-DEM solver.
+   *
+   * @return Vector of OutputStructs that will be used to write the output
+   * results as VTU files.
+   */
+  std::vector<OutputStruct<dim, GlobalVectorType>>
+  gather_output_hook() override;
+
+  /**
    * @brief Read CFD-DEM simulation checkpoint files.
    *
    * Loads the complete simulation state from previously written checkpoint
