@@ -1,4 +1,4 @@
-// SPDX-FileCopyrightText: Copyright (c) 2019 The Lethe Authors
+// SPDX-FileCopyrightText: Copyright (c) 2025 The Lethe Authors
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
 // Prototype of advection solver using Discontinuous Galerkin method with
@@ -52,24 +52,24 @@ public:
     : Function<dim>(dim)
   {}
 
-  virtual void
-  vector_value(const Point<dim> &p, Vector<double> &value) const override;
+  void
+  vector_value(const Point<dim> &p, Tensor<1, dim> &values) const;
 };
 
 template <int dim>
 void
 VelocityField<dim>::vector_value(const Point<dim> &p,
-                                 Vector<double>   &values) const
+                                 Tensor<1, dim>   &values) const
 {
-  AssertDimension(values.size(), dim);
+  AssertDimension(values.dimension, dim);
   // 3D velocity field not yet implemented
   Assert(dim == 2, ExcNotImplemented());
   // 2D velocity field of Couette flow
   if constexpr (dim == 2)
     {
       double invert_norm = 1. / std::max(p.norm(), 1e-10);
-      values(0)          = -p(1) * invert_norm; // u(0) = -x(1)/|x|
-      values(1)          = p(0) * invert_norm;  // u(1) =  x(0)/|x|
+      values[0]          = -p(1) * invert_norm; // u(0) = -x(1)/|x|
+      values[1]          = p(0) * invert_norm;  // u(1) =  x(0)/|x|
     }
 }
 
@@ -82,11 +82,11 @@ public:
     : Function<dim>(1)
   {}
 
-  virtual void
-  vector_value(const Point<dim> &p, Vector<double> &values) const override
+  void
+  vector_value(const Point<dim> &, Vector<double> &values) const override
   {
-    values(0) = 0;
-    values(1) = 0;
+    AssertDimension(values.size(), 1);
+    values(0) = 0.0;
   }
 };
 
@@ -131,6 +131,7 @@ struct CopyDataFace
   std::vector<types::global_dof_index> joint_dof_indices;
 };
 
+
 struct CopyData
 {
   FullMatrix<double>                   cell_matrix;
@@ -157,22 +158,22 @@ template <int dim>
 class DirichletBC : public Function<dim>
 {
 public:
-  DirichletBC()
-    : Function<dim>(1)
-  {}
-
+  DirichletBC() = default;
   virtual void
   vector_value(const Point<dim> &p, Vector<double> &values) const override
   {
-    for (unsigned int d = 0; d < dim; ++d)
-      {
-        if (p(0) < 0.5)
-          values(d) = 1.;
-        else
-          values(d) = 0.;
-      }
+    AssertDimension(values.size(), 1);
+    values(0) = (p(0) < 0.5) ? 1.0 : 0.0;
+  }
+
+  double
+  value(const Point<dim> &p,
+        const unsigned int /*component*/ = 0) const override
+  {
+    return (p(0) < 0.5) ? 1.0 : 0.0;
   }
 };
+
 
 // Main class for the DG advection solver
 template <int dim>
@@ -184,13 +185,13 @@ public:
     : fe_degree(fe_degree)
     , n_refinements(n_refinements)
     , triangulation()
+    , mapping()
     , dof_handler(triangulation)
     , fe(fe_degree)
     , quadrature(fe_degree + 1)
     , quadrature_face(fe_degree + 1)
-    , pcout(std::cout, Utilities::MPI::this_mpi_process(MPI_COMM_WORLD) == 0)
-    , computing_timer(MPI_COMM_WORLD,
-                      pcout,
+    // , pcout(std::cout, Utilities::MPI::this_mpi_process(MPI_COMM_WORLD) == 0)
+    , computing_timer(std::cout,
                       TimerOutput::summary,
                       TimerOutput::wall_times){};
 
@@ -248,6 +249,7 @@ private:
   const unsigned int fe_degree;
   const unsigned int n_refinements;
   Triangulation<dim> triangulation;
+  MappingQ1<dim>     mapping;
 
   DoFHandler<dim> dof_handler;
   FE_DGQ<dim>     fe;
@@ -256,12 +258,12 @@ private:
   const QGauss<dim>     quadrature;
   const QGauss<dim - 1> quadrature_face;
 
-  ConditionalOStream pcout;
-  TimerOutput        computing_timer;
+  // ConditionalOStream pcout;
+  TimerOutput computing_timer;
 
   VelocityField<dim>     velocity_field;
   SparseMatrix<double>   system_matrix;
-  const RHS<dim>         system_rhs;
+  Vector<double>         system_rhs;
   const DirichletBC<dim> dirichlet_bc_function;
   Vector<double>         solution;
 };
@@ -307,35 +309,39 @@ DGAdvectionMoments<dim>::setup_dofs()
 
   // Initialize system matrix, solution and rhs vectors with their proper sizes
   system_matrix.reinit(sparsity_pattern);
-  solution.reinit(dof_handler.n_dofs());
   system_rhs.reinit(dof_handler.n_dofs());
+  solution.reinit(dof_handler.n_dofs());
+  // system_rhs.reinit(dof_handler.n_dofs());
 
-  pcout << "Number of active cells: " << triangulation.n_active_cells()
-        << std::endl
-        << "Total number of cells: " << triangulation.n_cells() << std::endl
-        << "Number of degrees of freedom: " << dof_handler.n_dofs()
-        << std::endl;
+  std::cout << "Number of active cells: " << triangulation.n_active_cells()
+            << std::endl
+            << "Total number of cells: " << triangulation.n_cells() << std::endl
+            << "Number of degrees of freedom: " << dof_handler.n_dofs()
+            << std::endl;
 }
 
 template <int dim>
 void
 DGAdvectionMoments<dim>::assemble_system()
 {
+  setup_dofs();
   TimerOutput::Scope t(computing_timer, "assemble system");
 
   // Since we want to use the MeshWorker framework to avoid code repetition, we
   // need to instantiate an iterator for the active cells
   using Iterator = typename DoFHandler<dim>::active_cell_iterator;
 
-  // Instantiate Dirichlet boundary condition function to be evaluater for each
+  // Instantiate Dirichlet boundary condition function to be evaluator for each
   // quadrature point
   const DirichletBC<dim> dirichlet_bc_function;
 
-  // I
+  std::cout << "Dirichlet BC defined" << std::endl;
+
+  // Iterator
   const auto cell_worker = [&](const Iterator   &cell,
                                ScratchData<dim> &scratch_data,
                                CopyData         &copy_data) {
-    TimerOutput::Scope t(computing_timer, "assemble cell terms");
+    // TimerOutput::Scope t(computing_timer, "assemble cell terms");
 
     // Get number of DoFs per cell
     const unsigned int dofs_per_cell =
@@ -347,7 +353,7 @@ DGAdvectionMoments<dim>::assemble_system()
 
     // Get quadrature points from fe_values
     const std::vector<Point<dim>> &q_points =
-      scratch_data.get_quadrature_points();
+      scratch_data.fe_values.get_quadrature_points();
 
     // Get references to fe_values and JxW values
     const FEValues<dim>       &fe_values = scratch_data.fe_values;
@@ -357,7 +363,7 @@ DGAdvectionMoments<dim>::assemble_system()
     for (unsigned int q = 0; q < fe_values.n_quadrature_points; ++q)
       {
         // Get velocity at quadrature point q using velocity field function
-        Vector<double> velocity(dim);
+        Tensor<1, dim> velocity;
         velocity_field.vector_value(q_points[q], velocity);
 
         // Loop over dofs in cell
@@ -365,14 +371,12 @@ DGAdvectionMoments<dim>::assemble_system()
           {
             // Gather shape function value and gradient at quadrature point q
             // The index i corresponds to the test function
-            const double         phi_i      = fe_values.shape_value(i, q);
             const Tensor<1, dim> grad_phi_i = fe_values.shape_grad(i, q);
 
             for (unsigned int j = 0; j < dofs_per_cell; ++j)
               {
                 // The index j corresponds to the trial function
-                const double         phi_j      = fe_values.shape_value(j, q);
-                const Tensor<1, dim> grad_phi_j = fe_values.shape_grad(j, q);
+                const double phi_j = fe_values.shape_value(j, q);
 
                 // Add entry to the local cell matrix
                 // Weak form: (\nabla \phi_i, u \phi_j)
@@ -383,94 +387,199 @@ DGAdvectionMoments<dim>::assemble_system()
       }
   };
 
+  std::cout << "Cell iterator defined" << std::endl;
+
   // Assemble boundary face flux terms
   const auto boundary_face_worker = [&](const Iterator   &cell,
-                               ScratchData<dim> &scratch_data,
-                               CopyData         &copy_data) {
-    TimerOutput::Scope t(computing_timer, "assemble boundary face terms");
+                                        const int         face_no,
+                                        ScratchData<dim> &scratch_data,
+                                        CopyData         &copy_data) {
+    // TimerOutput::Scope t(computing_timer, "assemble boundary face terms");
 
     // Reinitialize FEInterfaceValues for the current cell
-    FEInterfaceValues<dim> &fe_interface_values =
-      scratch_data.fe_interface_values;
-    fe_interface_values.reinit(cell);
+    FEInterfaceValues<dim> &fe_iv = scratch_data.fe_interface_values;
+    fe_iv.reinit(cell, face_no);
 
-    // Get quadrature points from fe_interface_values
-    const std::vector<Point<dim>> &q_points =
-      fe_interface_values.get_quadrature_points();
-
-    // Get velocity in direction normal to the face
-    Vector<double> velocity(dim);
-    velocity_field.vector_value(q_points, velocity);
-
-
-    // Evaluate Dirichlet BC at quadrature point q
-    Vector<double> g(dim);
-    dirichlet_bc_function.vector_value(q_points, g);
+    const FEFaceValuesBase<dim>   &fe_face  = fe_iv.get_fe_face_values(0);
+    const std::vector<Point<dim>> &q_points = fe_face.get_quadrature_points();
 
     // Get number of DoFs per face
-    const unsigned int dofs_per_face =
-      fe_interface_values.get_fe().n_dofs_per_cell();
+    const unsigned int dofs_per_face = fe_face.get_fe().n_dofs_per_cell();
 
     // Get normal unit vectors
-    const std::vector<Tensor<1, dim>> &normals =
-      fe_interface_values.get_normal_vectors();
+    const std::vector<Tensor<1, dim>> &normals = fe_face.get_normal_vectors();
 
     // Get JxW values
-    const std::vector<double> &JxW = fe_interface_values.get_JxW_values();
+    const std::vector<double> &JxW = fe_face.get_JxW_values();
 
     // Loop over quadrature points
-    for (unsigned int q = 0; q < q_points.size(); ++q)
+    for (unsigned int q = 0; q < fe_face.n_quadrature_points; ++q)
       {
-        const double normal_velocity = velocity(q) * normals(q);
+        auto q_point = q_points[q];
 
-        // If normal_velocity > 0, flow is leaving the cell. As such, use
-        // interior value
-        if (normal_velocity > 0)
+        // Get velocity at quadrature point q using velocity field function
+        Tensor<1, dim> velocity;
+        velocity_field.vector_value(q_point, velocity);
+
+        // Evaluate Dirichlet BC at quadrature point q
+        // Evaluate Dirichlet BC (scalar)
+        const double g = dirichlet_bc_function.value(q_point);
+
+        const double normal_velocity = velocity * normals[q];
+
+        if (normal_velocity > 0.0)
           {
             for (unsigned int i = 0; i < dofs_per_face; ++i)
               {
-                // Gather shape function value at quadrature point q}
-                // The index i corresponds to the test function
-                const double phi_i = fe_interface_values.shape_value(i, q);
-
+                const double phi_i = fe_face.shape_value(i, q);
                 for (unsigned int j = 0; j < dofs_per_face; ++j)
                   {
-                    // The index j corresponds to the trial function
-                    const double phi_j = fe_interface_values.shape_value(j, q);
-
-                    // Upwind flux: (phi_i, u * phi_j)_face
+                    const double phi_j = fe_face.shape_value(j, q);
                     copy_data.cell_matrix(i, j) +=
                       (phi_i * phi_j * normal_velocity) * JxW[q];
                   }
               }
           }
-
         else
           {
             for (unsigned int i = 0; i < dofs_per_face; ++i)
               {
-                // Gather shape function value at quadrature point q
-                const double phi_i = fe_interface_values.shape_value(i, q);
-
-                // Add entry to local cell rhs vector
-                // (phi_i, g * u * n) where g is the Dirichlet BC
-                // value
+                const double phi_i = fe_face.shape_value(i, q);
                 copy_data.cell_rhs(i) +=
-                  (-phi_i * g(q) * normal_velocity) * JxW[q];
+                  (-phi_i * g * normal_velocity) * JxW[q];
               }
           }
       }
   };
+
+  std::cout << "Boundary iterator defined" << std::endl;
+  const auto face_worker = [&](const Iterator     &cell,
+                               const unsigned int &f,
+                               const unsigned int &sf,
+                               const Iterator     &ncell,
+                               const unsigned int &nf,
+                               const unsigned int &nsf,
+                               ScratchData<dim>   &scratch_data,
+                               CopyData           &copy_data) {
+    FEInterfaceValues<dim> &fe_iv = scratch_data.fe_interface_values;
+    fe_iv.reinit(cell, f, sf, ncell, nf, nsf);
+    const auto &q_points = fe_iv.get_quadrature_points();
+
+    copy_data.face_data.emplace_back();
+    CopyDataFace &copy_data_face = copy_data.face_data.back();
+
+    const unsigned int n_dofs        = fe_iv.n_current_interface_dofs();
+    copy_data_face.joint_dof_indices = fe_iv.get_interface_dof_indices();
+
+    copy_data_face.cell_matrix.reinit(n_dofs, n_dofs);
+
+    const std::vector<double>         &JxW     = fe_iv.get_JxW_values();
+    const std::vector<Tensor<1, dim>> &normals = fe_iv.get_normal_vectors();
+
+    for (unsigned int q = 0; q < q_points.size(); ++q)
+      {
+        Tensor<1, dim> velocity;
+        velocity_field.vector_value(q_points[q], velocity);
+
+        auto normal_velocity = velocity * normals[q];
+        for (unsigned int i = 0; i < n_dofs; ++i)
+          // Gather shape function value at quadrature point q}
+          // The index i corresponds to the test function
+          {
+            const double phi_i = fe_iv.jump_in_shape_values(i, q);
+            for (unsigned int j = 0; j < n_dofs; ++j)
+              {
+                copy_data_face.cell_matrix(i, j) +=
+                  (phi_i * fe_iv.shape_value((normal_velocity > 0), j, q) *
+                   normal_velocity) *
+                  JxW[q];
+              }
+          }
+      }
+  };
+
+  std::cout << "Face iterator defined" << std::endl;
+
+  const AffineConstraints<double> constraints;
+
+  std::cout << "Initialize constraints" << std::endl;
+
+  const auto copier = [&](const CopyData &c) {
+    std::cout << "CopyData" << std::endl;
+    constraints.distribute_local_to_global(c.cell_matrix,
+                                           c.cell_rhs,
+                                           c.local_dof_indices,
+                                           system_matrix,
+                                           system_rhs);
+
+    for (const auto &cdf : c.face_data)
+      constraints.distribute_local_to_global(cdf.cell_matrix,
+                                             cdf.joint_dof_indices,
+                                             system_matrix);
+  };
+
+  ScratchData<dim> scratch_data(mapping, fe, quadrature, quadrature_face);
+  CopyData         copy_data;
+
+  MeshWorker::mesh_loop(dof_handler.begin_active(),
+                        dof_handler.end(),
+                        cell_worker,
+                        copier,
+                        scratch_data,
+                        copy_data,
+                        MeshWorker::assemble_own_cells |
+                          MeshWorker::assemble_boundary_faces |
+                          MeshWorker::assemble_own_interior_faces_once,
+                        boundary_face_worker,
+                        face_worker);
+}
+
+template <int dim>
+void
+DGAdvectionMoments<dim>::solve()
+{
+  SolverControl solver_control(1000, 1e-6 * system_rhs.l2_norm());
+
+  SolverGMRES<Vector<double>>::AdditionalData ad;
+  ad.max_basis_size = 100;
+
+  SolverGMRES<Vector<double>> solver(solver_control, ad);
+
+  PreconditionBlockSSOR<SparseMatrix<double>> prec;
+  prec.initialize(system_matrix, fe.n_dofs_per_cell());
+
+  solver.solve(system_matrix, solution, system_rhs, prec);
+
+  std::cout << "  GMRES iterations: " << solver_control.last_step() << '\n';
+}
+
+template <int dim>
+void
+DGAdvectionMoments<dim>::run()
+{
+  std::cout << "Running DGAdvectionMoments" << std::endl;
+  make_grid();
+  refine_grid();
+  assemble_system();
+  solve();
 }
 
 
-
 int
-main()
+main() //(int argc, char *argv[])
 {
+  // Utilities::MPI::MPI_InitFinalize       mpi_init(argc, argv, 1);
+  // dealii::Utilities::System::MemoryStats stats;
+  // dealii::Utilities::System::get_memory_stats(stats);
+  //
+  // ConditionalOStream pcout(std::cout,
+  //                          Utilities::MPI::this_mpi_process(MPI_COMM_WORLD)
+  //                          ==
+  //                            0);
   try
     {
       DGAdvectionMoments<2> dg_advection_moments(1, 4);
+      dg_advection_moments.run();
     }
   catch (std::exception &exc)
     {
