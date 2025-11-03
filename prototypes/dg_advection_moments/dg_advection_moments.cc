@@ -54,6 +54,9 @@ public:
 
   void
   vector_value(const Point<dim> &p, Tensor<1, dim> &values) const;
+
+  void
+  divergence_value(const Point<dim> &p, double &value) const;
 };
 
 template <int dim>
@@ -71,6 +74,15 @@ VelocityField<dim>::vector_value(const Point<dim> &p,
       values[0]          = -p(1) * invert_norm; // u(0) = -x(1)/|x|
       values[1]          = p(0) * invert_norm;  // u(1) =  x(0)/|x|
     }
+}
+template <int dim>
+void
+VelocityField<dim>::divergence_value(const Point<dim> &p, double &value) const
+{
+  // 3D velocity field not yet implemented
+  Assert(dim == 2, ExcNotImplemented());
+  double invert_norm = 1. / std::max(p.norm(), 1e-10);
+  value = (p(0) - p(1)) * (-p(0) - p(1)) * std::pow(invert_norm, -2.);
 }
 
 // Right-hand side function (zero in the initial case. To be modified later)
@@ -180,8 +192,9 @@ template <int dim>
 class DGAdvectionMoments
 {
 public:
-  DGAdvectionMoments(const unsigned int &fe_degree     = 1,
-                     const unsigned int &n_refinements = 4)
+  DGAdvectionMoments(const unsigned int &fe_degree      = 1,
+                     const unsigned int &n_refinements  = 4,
+                     const bool          use_divergence = false)
     : fe_degree(fe_degree)
     , n_refinements(n_refinements)
     , triangulation()
@@ -190,10 +203,9 @@ public:
     , fe(fe_degree)
     , quadrature(fe_degree + 1)
     , quadrature_face(fe_degree + 1)
+    , computing_timer(std::cout, TimerOutput::summary, TimerOutput::wall_times)
     // , pcout(std::cout, Utilities::MPI::this_mpi_process(MPI_COMM_WORLD) == 0)
-    , computing_timer(std::cout,
-                      TimerOutput::summary,
-                      TimerOutput::wall_times){};
+    , use_divergence(use_divergence){};
 
   void
   run();
@@ -243,7 +255,7 @@ private:
   solve();
 
   void
-  output_results() const;
+  output_results(const int cycle) const;
 
   // Attributes:
   const unsigned int fe_degree;
@@ -266,6 +278,7 @@ private:
   Vector<double>         system_rhs;
   const DirichletBC<dim> dirichlet_bc_function;
   Vector<double>         solution;
+  const bool             use_divergence;
 };
 
 template <int dim>
@@ -287,6 +300,24 @@ void
 DGAdvectionMoments<dim>::refine_grid()
 {
   TimerOutput::Scope t(computing_timer, "refine grid");
+  Vector<float>      gradient_indicator(triangulation.n_active_cells());
+
+  DerivativeApproximation::approximate_gradient(mapping,
+                                                dof_handler,
+                                                solution,
+                                                gradient_indicator);
+
+  unsigned int cell_no = 0;
+  for (const auto &cell : dof_handler.active_cell_iterators())
+    gradient_indicator(cell_no++) *=
+      std::pow(cell->diameter(), 1 + 1.0 * dim / 2);
+
+  GridRefinement::refine_and_coarsen_fixed_number(triangulation,
+                                                  gradient_indicator,
+                                                  0.3,
+                                                  0.1);
+
+  triangulation.execute_coarsening_and_refinement();
 }
 
 template <int dim>
@@ -324,7 +355,6 @@ template <int dim>
 void
 DGAdvectionMoments<dim>::assemble_system()
 {
-  setup_dofs();
   TimerOutput::Scope t(computing_timer, "assemble system");
 
   // Since we want to use the MeshWorker framework to avoid code repetition, we
@@ -335,13 +365,11 @@ DGAdvectionMoments<dim>::assemble_system()
   // quadrature point
   const DirichletBC<dim> dirichlet_bc_function;
 
-  std::cout << "Dirichlet BC defined" << std::endl;
-
   // Iterator
   const auto cell_worker = [&](const Iterator   &cell,
                                ScratchData<dim> &scratch_data,
                                CopyData         &copy_data) {
-    // TimerOutput::Scope t(computing_timer, "assemble cell terms");
+    TimerOutput::Scope t(computing_timer, "assemble cell terms");
 
     // Get number of DoFs per cell
     const unsigned int dofs_per_cell =
@@ -365,12 +393,15 @@ DGAdvectionMoments<dim>::assemble_system()
         // Get velocity at quadrature point q using velocity field function
         Tensor<1, dim> velocity;
         velocity_field.vector_value(q_points[q], velocity);
+        double div_velocity;
+        velocity_field.divergence_value(q_points[q], div_velocity);
 
         // Loop over dofs in cell
         for (unsigned int i = 0; i < dofs_per_cell; ++i)
           {
             // Gather shape function value and gradient at quadrature point q
             // The index i corresponds to the test function
+            const double         phi_i      = fe_values.shape_value(i, q);
             const Tensor<1, dim> grad_phi_i = fe_values.shape_grad(i, q);
 
             for (unsigned int j = 0; j < dofs_per_cell; ++j)
@@ -382,19 +413,22 @@ DGAdvectionMoments<dim>::assemble_system()
                 // Weak form: (\nabla \phi_i, u \phi_j)
                 copy_data.cell_matrix(i, j) +=
                   (-grad_phi_i * velocity * phi_j) * JxW[q];
+
+                // Add divergence of the velocity
+                if (use_divergence)
+                  copy_data.cell_matrix(i, j) +=
+                    (-phi_i * div_velocity * phi_j) * JxW[q];
               }
           }
       }
   };
-
-  std::cout << "Cell iterator defined" << std::endl;
 
   // Assemble boundary face flux terms
   const auto boundary_face_worker = [&](const Iterator   &cell,
                                         const int         face_no,
                                         ScratchData<dim> &scratch_data,
                                         CopyData         &copy_data) {
-    // TimerOutput::Scope t(computing_timer, "assemble boundary face terms");
+    TimerOutput::Scope t(computing_timer, "assemble boundary face terms");
 
     // Reinitialize FEInterfaceValues for the current cell
     FEInterfaceValues<dim> &fe_iv = scratch_data.fe_interface_values;
@@ -420,6 +454,8 @@ DGAdvectionMoments<dim>::assemble_system()
         // Get velocity at quadrature point q using velocity field function
         Tensor<1, dim> velocity;
         velocity_field.vector_value(q_point, velocity);
+        double div_velocity;
+        velocity_field.divergence_value(q_points[q], div_velocity);
 
         // Evaluate Dirichlet BC at quadrature point q
         // Evaluate Dirichlet BC (scalar)
@@ -452,7 +488,6 @@ DGAdvectionMoments<dim>::assemble_system()
       }
   };
 
-  std::cout << "Boundary iterator defined" << std::endl;
   const auto face_worker = [&](const Iterator     &cell,
                                const unsigned int &f,
                                const unsigned int &sf,
@@ -498,14 +533,9 @@ DGAdvectionMoments<dim>::assemble_system()
       }
   };
 
-  std::cout << "Face iterator defined" << std::endl;
-
   const AffineConstraints<double> constraints;
 
-  std::cout << "Initialize constraints" << std::endl;
-
   const auto copier = [&](const CopyData &c) {
-    std::cout << "CopyData" << std::endl;
     constraints.distribute_local_to_global(c.cell_matrix,
                                            c.cell_rhs,
                                            c.local_dof_indices,
@@ -555,13 +585,70 @@ DGAdvectionMoments<dim>::solve()
 
 template <int dim>
 void
+DGAdvectionMoments<dim>::output_results(const int cycle) const
+{
+  std::string filename;
+  if (use_divergence)
+    filename = "solution-div-" + std::to_string(cycle) + ".vtk";
+  else
+    filename = "solution-" + std::to_string(cycle) + ".vtk";
+  std::cout << "  Writing solution to <" << filename << '>' << std::endl;
+  std::ofstream output(filename);
+
+  DataOut<dim> data_out;
+  data_out.attach_dof_handler(dof_handler);
+  data_out.add_data_vector(solution, "moment", DataOut<dim>::type_dof_data);
+
+  data_out.build_patches(mapping);
+
+  data_out.write_vtk(output);
+
+  {
+    Vector<float> values(triangulation.n_active_cells());
+    VectorTools::integrate_difference(mapping,
+                                      dof_handler,
+                                      solution,
+                                      Functions::ZeroFunction<dim>(),
+                                      values,
+                                      quadrature,
+                                      VectorTools::Linfty_norm);
+    const double l_infty =
+      VectorTools::compute_global_error(triangulation,
+                                        values,
+                                        VectorTools::Linfty_norm);
+    std::cout << "  L-infinity norm: " << l_infty << std::endl;
+  }
+}
+
+template <int dim>
+void
 DGAdvectionMoments<dim>::run()
 {
-  std::cout << "Running DGAdvectionMoments" << std::endl;
-  make_grid();
-  refine_grid();
-  assemble_system();
-  solve();
+  for (unsigned int cycle = 0; cycle < 6; ++cycle)
+    {
+      std::cout << "Cycle " << cycle << std::endl;
+
+      if (cycle == 0)
+        {
+          GridGenerator::hyper_cube(triangulation);
+          triangulation.refine_global(3);
+        }
+      else
+        refine_grid();
+
+      std::cout << "  Number of active cells:       "
+                << triangulation.n_active_cells() << std::endl;
+
+      setup_dofs();
+
+      std::cout << "  Number of degrees of freedom: " << dof_handler.n_dofs()
+                << std::endl;
+
+      assemble_system();
+      solve();
+
+      output_results(cycle);
+    }
 }
 
 
@@ -578,8 +665,10 @@ main() //(int argc, char *argv[])
   //                            0);
   try
     {
-      DGAdvectionMoments<2> dg_advection_moments(1, 4);
+      DGAdvectionMoments<2> dg_advection_moments(1, 4, false);
       dg_advection_moments.run();
+      DGAdvectionMoments<2> dg_advection_moments_div(1, 4, true);
+      dg_advection_moments_div.run();
     }
   catch (std::exception &exc)
     {
