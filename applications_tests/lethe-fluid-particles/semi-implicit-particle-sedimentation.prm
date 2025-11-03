@@ -24,7 +24,6 @@ subsection simulation control
   set output frequency = 0
   set time end         = 0.5
   set time step        = 0.005
-  set output path      = ./output/
 end
 
 #---------------------------------------------------
