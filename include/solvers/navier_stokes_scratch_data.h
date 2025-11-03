@@ -971,6 +971,7 @@ public:
 
     pic = particle_handler.particles_in_cell(velocity_cell);
 
+    extract_particle_properties();
     reinit_particle_fluid_forces();
 
     calculate_cell_void_fraction(total_particle_volume);
@@ -1011,6 +1012,8 @@ public:
    *
    * @param[in] phase_cell The active cell associated with the VOF DoFHandler
    *
+   * @param velocity_pressure_solution
+   *
    * @param[in] previous_velocity_pressure_solution The solution at the previous
    * time step for the fluid's velocity and pressure
    *
@@ -1038,6 +1041,7 @@ public:
   {
     pic = particle_handler.particles_in_cell(velocity_cell);
 
+    extract_particle_properties();
     reinit_particle_fluid_forces();
     calculate_cell_void_fraction(total_particle_volume);
 
