@@ -412,7 +412,7 @@ public:
   double
   get_residual_normalization_metric() const override
   {
-    return simulation_parameters.non_linear_solver.at(PhysicsID::fluid_dynamics)
+    return simulation_parameters.non_linear_solver.at(PhysicsID::heat_transfer)
                .normalize_residual_by_volume ?
              GridTools::volume(*this->triangulation,
                                *this->temperature_mapping) :
