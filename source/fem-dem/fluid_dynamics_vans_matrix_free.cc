@@ -410,6 +410,18 @@ template <int dim>
 void
 FluidDynamicsVANSMatrixFree<dim>::assemble_system_rhs()
 {
+  TimerOutput::Scope t(this->computing_timer, "Assemble RHS");
+
+
+  // Update the precomputed values needed for the evaluation of the residual.
+  // This is needed, otherwise the line-search mechanism used in the Newton
+  // method might fail even though the Newton step should have been accepted
+  // due to a wrong evaluation of the residual and, consequently, a wrong
+  // evaluation of the step length.
+  this->evaluation_point.update_ghost_values();
+  this->system_operator->evaluate_non_linear_term_and_calculate_tau(
+    this->evaluation_point);
+
   // First we update the particle-fluid coupling terms.
   // The base matrix-free operator is not aware of the various VANS
   // coupling term. We must do a cast here to ensure that the operator is
@@ -417,9 +429,6 @@ FluidDynamicsVANSMatrixFree<dim>::assemble_system_rhs()
   if (auto mf_operator =
         dynamic_cast<VANSOperator<dim, double> *>(this->system_operator.get()))
     {
-      TimerOutput::Scope t(this->computing_timer,
-                           "Prepare MF operator for VANS");
-
       // Project again the forces acting on the particles
       particle_projector.calculate_particle_fluid_forces_projection(
         this->cfd_dem_simulation_parameters.cfd_dem,
@@ -444,18 +453,6 @@ FluidDynamicsVANSMatrixFree<dim>::assemble_system_rhs()
         particle_projector.particle_velocity.dof_handler,
         particle_projector.particle_velocity.particle_field_solution);
     }
-
-  TimerOutput::Scope t(this->computing_timer, "Assemble RHS");
-
-
-  // Update the precomputed values needed for the evaluation of the residual.
-  // This is needed, otherwise the line-search mechanism used in the Newton
-  // method might fail even though the Newton step should have been accepted
-  // due to a wrong evaluation of the residual and, consequently, a wrong
-  // evaluation of the step length.
-  this->evaluation_point.update_ghost_values();
-  this->system_operator->evaluate_non_linear_term_and_calculate_tau(
-    this->evaluation_point);
 
   this->system_operator->evaluate_residual(this->system_rhs,
                                            this->evaluation_point);
