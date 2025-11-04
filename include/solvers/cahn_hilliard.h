@@ -332,7 +332,8 @@ public:
   {
     return simulation_parameters.non_linear_solver.at(PhysicsID::cahn_hilliard)
                .normalize_residual_by_volume ?
-             GridTools::volume(*this->triangulation, *this->mapping) :
+             std::sqrt(
+               GridTools::volume(*this->triangulation, *this->mapping)) :
              1.;
   }
 

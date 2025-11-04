@@ -414,8 +414,8 @@ public:
   {
     return simulation_parameters.non_linear_solver.at(PhysicsID::heat_transfer)
                .normalize_residual_by_volume ?
-             GridTools::volume(*this->triangulation,
-                               *this->temperature_mapping) :
+             std::sqrt(GridTools::volume(*this->triangulation,
+                                         *this->temperature_mapping)) :
              1.;
   }
 
