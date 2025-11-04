@@ -513,8 +513,21 @@ FluidDynamicsVANSMatrixFree<dim>::gather_output_hook()
       force_names,
       force_component_interpretation);
 
+  std::vector<std::string> particle_velocity_names(dim, "particle_velocity");
+  std::vector<DataComponentInterpretation::DataComponentInterpretation>
+    particle_velocity_component_interpretation(
+      dim, DataComponentInterpretation::component_is_part_of_vector);
 
-  return {void_fraction_struct, particle_fluid_drag_struct};
+  OutputStructSolution<dim, LinearAlgebra::distributed::Vector<double>>
+    particle_velocity_struct(
+      particle_projector.particle_velocity.dof_handler,
+      particle_projector.particle_velocity.particle_field_solution,
+      particle_velocity_names,
+      particle_velocity_component_interpretation);
+
+  return {void_fraction_struct,
+          particle_fluid_drag_struct,
+          particle_velocity_struct};
 }
 
 template <int dim>

@@ -200,9 +200,8 @@ VANSOperator<dim, number>::compute_particle_fluid_force(
 }
 
 /**
- * Calculates the Jacobian of VANS equations. Here, we note f_fp the force
- * that are applied on the particles due to the fluid, whereas f_pf would be
- * the forces from the particles to the fluid. f_pf=-f_fp.
+ * Calculates the Jacobian of VANS equations. Here, we note  f_pf
+ * the forces from the particles to the fluid.
  * The expressions calculated in this cell integral are:
  * (Continuity equation)
  * (q,ε∇·δu) + (q,δu·∇ε) +
@@ -210,6 +209,7 @@ VANSOperator<dim, number>::compute_particle_fluid_force(
  * \+ (v, ε ∂t δu)  -> Time derivative
  * \+ (v, ε (u·∇)δu) + (v, ε (δu·∇)u) -> Advection
  * \- (∇·v, ε δp) - (v,p∇ε) -> Pressure
+ * \+ (v, βu) -> Drag force (this is positive because f_pf = - beta(u-v))
  * \+ ε*ν(∇v,∇δu)  +  ν(v,∇ε·∇δu)   -> Viscous term  ---> There are currently
  * two terms missing here which would be:
  *\+ ε*ν(∇v,∇δu^T)  +  ν(v,∇ε·∇δu^T)
@@ -260,20 +260,20 @@ VANSOperator<dim, number>::do_cell_integral_local(
 
       // Gather particle-fluid force, will be zero if they have not been
       // gathered.
-      auto pf_force_value    = this->particle_fluid_force(cell, q);
-      auto pf_drag_value     = this->particle_fluid_drag(cell, q);
-      auto particle_velocity = this->particle_velocity(cell, q);
+      auto pf_force_value = this->particle_fluid_force(cell, q);
+      auto pf_drag_value  = this->particle_fluid_drag(cell, q);
+      auto p_velocity     = this->particle_velocity(cell, q);
+
+      // Add to source term the particle-fluid force and the drag force
+      source_value = pf_force_value + pf_drag_value;
 
       // Evaluate source term function if enabled
       if (this->forcing_function)
-        source_value = vf_value * this->forcing_terms(cell, q);
+        source_value += vf_value * this->forcing_terms(cell, q);
 
       // Add to source term the dynamic flow control force (zero if not
       // enabled)
       source_value += vf_value * this->beta_force;
-
-      // Add to source term the particle-fluid force and the drag force
-      source_value += pf_force_value + pf_drag_value;
 
       // Gather the original value/gradient
       typename FECellIntegrator::value_type    value = integrator.get_value(q);
@@ -295,27 +295,26 @@ VANSOperator<dim, number>::do_cell_integral_local(
       auto previous_hessian_diagonal =
         this->nonlinear_previous_hessian_diagonal(cell, q);
 
-
-
       // Calculate norm of the relative velocity and of the drag force and use
-      // it to calculate the beta momentum exchnage coefficient A tolerance is
+      // it to calculate the beta momentum exchange coefficient A tolerance is
       // added (1e-9) to prevent division by 0 and occurence of NaN.
       VectorizedArray<number> relative_velocity_norm_squared = 0.;
-      VectorizedArray<number> drag_force_dot_u_rel           = 0.;
+      VectorizedArray<number> drag_force_norm_squared        = 0.;
 
       for (unsigned int i = 0; i < dim; ++i)
         {
-          drag_force_dot_u_rel +=
-            pf_drag_value[i] * (particle_velocity[i] - previous_values[i]);
-          relative_velocity_norm_squared += Utilities::fixed_power<2>(
-            particle_velocity[i] - previous_values[i]);
+          drag_force_norm_squared +=
+            Utilities::fixed_power<2>(pf_drag_value[i]);
+          relative_velocity_norm_squared +=
+            Utilities::fixed_power<2>(previous_values[i] - p_velocity[i]);
         }
-      relative_velocity_norm_squared += 1e-6;
+      relative_velocity_norm_squared += 1e-20;
       // Since the drag force and the relative velocity are both first rank
       // tensor extracting beta is that directly define. We do it in a
       // projection fashion.
       VectorizedArray<number> beta_momentum_exchange =
-        drag_force_dot_u_rel / relative_velocity_norm_squared;
+        std::sqrt(drag_force_norm_squared / relative_velocity_norm_squared);
+
 
       Tensor<1, dim + 1, VectorizedArray<number>> previous_time_derivatives;
       if (transient)
@@ -341,8 +340,7 @@ VANSOperator<dim, number>::do_cell_integral_local(
           value_result[dim] += vf_value * gradient[i][i];
           // +(q,∇ɛ·δu)
           value_result[dim] += vf_gradient[i] * value[i];
-
-          // (v, βu) (since the forcing is f_pf = beta (v-u))
+          // +(v, βu)
           value_result[i] += beta_momentum_exchange * value[i];
 
           for (int k = 0; k < dim; ++k)
@@ -374,7 +372,7 @@ VANSOperator<dim, number>::do_cell_integral_local(
             gradient_result[dim][i] +=
               tau * vf_value * (*bdf_coefs)[0] * value[i];
 
-          // βδu·τ∇q
+          // +βδu·τ∇q
           gradient_result[dim][i] += tau * beta_momentum_exchange * value[i];
         }
       // (ɛ∇δp)τ·∇q
@@ -467,11 +465,11 @@ VANSOperator<dim, number>::do_cell_integral_local(
  * The expressions calculated in this cell integral are:
  * (q, ɛ ∇·u) + (q, u·∇ɛ) (Continuity equation)
  * \+(v,ɛ∂t u) + (v,ɛ(u·∇)u) - (∇·v,ɛp) - (v,p∇ɛ)
- * \+ ɛν(∇v,∇u) + ν(v,∇u∇ɛ) - (v,ɛf) (Weak form of VANS),
+ * \+ ɛν(∇v,∇u) + ν(v,∇u∇ɛ) - (v, f_pf) - (v,ɛf) (Weak form of VANS),
  * plus two additional terms in the case of SUPG-PSPG
  * stabilization:
- * \+ (ɛ∂t u +ɛ(u·∇)u + ɛ∇p - νɛ∆u - ɛf)τ∇·q (PSPG term)
- * \+ (ɛ∂t u +ɛ(u·∇)u + ɛ∇p - νɛ∆u - ɛf)τu·∇v (SUPG term),
+ * \+ (ɛ∂t u +ɛ(u·∇)u + ɛ∇p - νɛ∆u - f_pf - ɛf)τ∇·q (PSPG term)
+ * \+ (ɛ∂t u +ɛ(u·∇)u + ɛ∇p - νɛ∆u - f_pf - ɛf)τu·∇v (SUPG term),
  * With additional grad-div stabilization
  * (∇·v,γ(ɛ∇·u+u·∇ɛ)) (grad-div term)
  */
