@@ -182,7 +182,7 @@ protected:
   double
   get_residual_rescale_metric() const override
   {
-    return simulation_parameters.non_linear_solver.at(PhysicsID::cahn_hilliard)
+    return simulation_parameters.non_linear_solver.at(PhysicsID::fluid_dynamics)
                .rescale_residual_by_volume ?
              std::sqrt(
                GridTools::volume(*this->triangulation, *this->mapping)) :

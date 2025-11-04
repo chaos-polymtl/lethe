@@ -412,10 +412,10 @@ public:
   double
   get_residual_rescale_metric() const override
   {
-    return simulation_parameters.non_linear_solver.at(PhysicsID::cahn_hilliard)
+    return simulation_parameters.non_linear_solver.at(PhysicsID::heat_transfer)
                .rescale_residual_by_volume ?
-             std::sqrt(
-               GridTools::volume(*this->triangulation, *this->mapping)) :
+             std::sqrt(GridTools::volume(*this->triangulation,
+                                         *this->temperature_mapping)) :
              1.;
   }
 
