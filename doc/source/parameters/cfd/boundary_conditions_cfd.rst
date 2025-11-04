@@ -59,7 +59,7 @@ where :math:`\beta` is a constant  and :math:`(\mathbf{u}\cdot \mathbf{n})_{-}` 
     end
   end
 
-* ``number`` specifies the number of boundary conditions of the problem. Periodicity between 2 boundaries counts as 1 condition even if it requires two distinct boundary ids.
+* ``number`` specifies the number of boundary conditions of the problem. Hence, ``set number`` refers to the number of bc subsections, and not the number of boundary ids in the mesh. For instance, periodicity between 2 boundaries counts as 1 condition even if it requires two distinct boundary ids.
 
 .. warning::
     The ``number`` of boundary conditions must be specified explicitly. This is often a source of error.
