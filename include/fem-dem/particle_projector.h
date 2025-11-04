@@ -352,8 +352,8 @@ public:
   calculate_particle_fluid_forces_projection(
     const Parameters::CFDDEM      &cfd_dem_parameters,
     DoFHandler<dim>               &fluid_dof_handler,
-    const VectorType              &fluid_solution,
-    const std::vector<VectorType> &fluid_previous_solutions,
+    const VectorType              &present_velocity_pressure_solution,
+    const std::vector<VectorType> &previous_velocity_pressure_solution,
     NavierStokesScratchData<dim>   scratch_data);
 
   /**

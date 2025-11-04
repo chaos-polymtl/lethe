@@ -1410,8 +1410,8 @@ void
 ParticleProjector<dim>::calculate_particle_fluid_forces_projection(
   const Parameters::CFDDEM      &cfd_dem_parameters,
   DoFHandler<dim>               &fluid_dof_handler,
-  const VectorType              &fluid_solution,
-  const std::vector<VectorType> &fluid_previous_solutions,
+  const VectorType              &present_velocity_pressure_solution,
+  const std::vector<VectorType> &previous_velocity_pressure_solution,
   NavierStokesScratchData<dim>   scratch_data)
 {
   // If the mode to calculate the void fraction is function, then the VANS
@@ -1568,8 +1568,8 @@ ParticleProjector<dim>::calculate_particle_fluid_forces_projection(
             scratch_data.reinit_particle_fluid_interactions(
               cell,
               void_fraction_cell,
-              fluid_solution,
-              fluid_solution,
+              present_velocity_pressure_solution,
+              previous_velocity_pressure_solution[0],
               void_fraction_solution,
               *particle_handler,
               cfd_dem_parameters.drag_coupling);
@@ -1579,8 +1579,8 @@ ParticleProjector<dim>::calculate_particle_fluid_forces_projection(
               scratch_data.reinit_particle_fluid_interactions(
                 cell,
                 void_fraction_cell,
-                fluid_solution,
-                fluid_solution,
+                present_velocity_pressure_solution,
+                previous_velocity_pressure_solution[0],
                 void_fraction_locally_relevant,
                 *particle_handler,
                 cfd_dem_parameters.drag_coupling);
