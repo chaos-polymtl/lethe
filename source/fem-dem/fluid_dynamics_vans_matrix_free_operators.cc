@@ -265,7 +265,7 @@ VANSOperator<dim, number>::do_cell_integral_local(
       auto p_velocity     = this->particle_velocity(cell, q);
 
       // Add to source term the particle-fluid force and the drag force
-      source_value = pf_force_value;
+      source_value = pf_force_value + pf_drag_value;
 
       // Evaluate source term function if enabled
       if (this->forcing_function)
@@ -297,27 +297,24 @@ VANSOperator<dim, number>::do_cell_integral_local(
 
       // Calculate norm of the relative velocity and of the drag force and use
       // it to calculate the beta momentum exchange coefficient A tolerance is
-      // added (1e-9) to prevent division by 0 and occurrence of NaN.
-      VectorizedArray<number> relative_velocity_norm_squared = 1e-12;
+      // added (1e-9) to prevent division by 0 and occurence of NaN.
+      VectorizedArray<number> relative_velocity_norm_squared = 0.;
       VectorizedArray<number> drag_force_norm_squared        = 0.;
 
-      for (int i = 0; i < dim; ++i)
+      for (unsigned int i = 0; i < dim; ++i)
         {
           drag_force_norm_squared +=
             Utilities::fixed_power<2>(pf_drag_value[i]);
           relative_velocity_norm_squared +=
-            Utilities::fixed_power<2>(p_velocity[i] - previous_values[i]);
+            Utilities::fixed_power<2>(previous_values[i] - p_velocity[i]);
         }
+      relative_velocity_norm_squared += 1e-20;
       // Since the drag force and the relative velocity are both first rank
       // tensor extracting beta is that directly define. We do it in a
       // projection fashion.
       VectorizedArray<number> beta_momentum_exchange =
         std::sqrt(drag_force_norm_squared / relative_velocity_norm_squared);
 
-      // We add beta*(v-u) to the source term instead of the drag force
-      for (int i = 0; i < dim; ++i)
-        source_value[i] +=
-          beta_momentum_exchange * (p_velocity[i] - previous_values[i]);
 
       Tensor<1, dim + 1, VectorizedArray<number>> previous_time_derivatives;
       if (transient)
@@ -518,7 +515,6 @@ VANSOperator<dim, number>::local_evaluate_residual(
           // have not been gathered.
           auto pf_force_value = this->particle_fluid_force(cell, q);
           auto pf_drag_value  = this->particle_fluid_drag(cell, q);
-          auto p_velocity     = this->particle_velocity(cell, q);
           // Add to source term the particle-fluid force (zero if not enabled)
           // We divide this source by the void fraction value since it is
           // multiplied by the void fraction value within the assembler.
@@ -554,31 +550,6 @@ VANSOperator<dim, number>::local_evaluate_residual(
 
           // Get stabilization parameter
           const auto tau = this->stabilization_parameter[cell][q];
-
-          // Calculate norm of the relative velocity and of the drag force and
-          // use it to calculate the beta momentum exchange coefficient A
-          // tolerance is added (1e-9) to prevent division by 0 and occurrence
-          // of NaN.
-          VectorizedArray<number> relative_velocity_norm_squared = 1e-12;
-          VectorizedArray<number> drag_force_norm_squared        = 0.;
-
-          for (unsigned int i = 0; i < dim; ++i)
-            {
-              drag_force_norm_squared +=
-                Utilities::fixed_power<2>(pf_drag_value[i]);
-              relative_velocity_norm_squared +=
-                Utilities::fixed_power<2>(p_velocity[i] - value[i]);
-            }
-          // Since the drag force and the relative velocity are both first rank
-          // tensor extracting beta is that directly define. We do it in a
-          // projection fashion.
-          VectorizedArray<number> beta_momentum_exchange =
-            std::sqrt(drag_force_norm_squared / relative_velocity_norm_squared);
-
-          // We add beta*(v-u) to the source term instead of the drag force
-          for (int i = 0; i < dim; ++i)
-            source_value[i] +=
-              beta_momentum_exchange * (p_velocity[i] - value[i]);
 
           // Result value/gradient we will use
           typename FECellIntegrator::value_type    value_result;
