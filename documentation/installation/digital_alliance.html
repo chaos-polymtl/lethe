@@ -501,7 +501,7 @@ export PATH=$PATH:$HOME/lethe/inst/bin/
 </pre></div>
 </div>
 <p>We can compile <code class="docutils literal notranslate"><span class="pre">dealii</span></code> in the <code class="docutils literal notranslate"><span class="pre">$HOME/dealii/build</span></code> folder, by defining the paths to installation folders of <code class="docutils literal notranslate"><span class="pre">Trilinos</span></code>, <code class="docutils literal notranslate"><span class="pre">Parmetis</span></code> and <code class="docutils literal notranslate"><span class="pre">P4est</span></code>. To increase the speed of this step, we skip <code class="docutils literal notranslate"><span class="pre">dealii</span></code> tests and compile in release mode only.</p>
-<div class="copy-button highlight-text notranslate"><div class="highlight"><pre><span></span>cmake ../dealii -DDEAL_II_WITH_MPI=ON -DDEAL_II_WITH_TRILINOS=ON   -DTRILINOS_DIR=$EBROOTTRILINOS  -DDEAL_II_WITH_P4EST=ON -DCMAKE_INSTALL_PREFIX=$HOME/dealii/inst/ -DDEAL_II_WITH_METIS=ON -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=../inst/ -DDEAL_II_COMPONENT_EXAMPLES=OFF  -DCMAKE_CXX_FLAGS=&quot;-march=native&quot; -G Ninja
+<div class="copy-button highlight-text notranslate"><div class="highlight"><pre><span></span>cmake ../dealii -DDEAL_II_WITH_MPI=ON -DDEAL_II_WITH_TRILINOS=ON   -DTRILINOS_DIR=$EBROOTTRILINOS  -DDEAL_II_WITH_P4EST=ON  -DDEAL_II_WITH_METIS=ON -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=$HOME/dealii/inst/ -DDEAL_II_COMPONENT_EXAMPLES=OFF  -DCMAKE_CXX_FLAGS=&quot;-march=native&quot; -G Ninja
 </pre></div>
 </div>
 <div class="admonition tip">
