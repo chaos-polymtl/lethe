@@ -57,7 +57,6 @@ end
 
 subsection post-processing
   set verbosity = verbose
-  #set calculate temperature range = true
 end
 
 #---------------------------------------------------
