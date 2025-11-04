@@ -99,7 +99,7 @@ subsection boundary conditions
 end
 
 subsection boundary conditions heat transfer
-  set number = 3
+  set number = 5
   subsection bc 0
     set id   = 0
     set type = temperature
@@ -115,7 +115,15 @@ subsection boundary conditions heat transfer
     end
   end
   subsection bc 2
-    set id   = 1,2,4
+    set id   = 1
+    set type = noflux
+  end
+  subsection bc 3
+    set id   = 2
+    set type = noflux
+  end
+  subsection bc 4
+    set id   = 4
     set type = noflux
   end
 end
