@@ -2431,10 +2431,10 @@ namespace Parameters
           Patterns::Bool(),
           "Aborts Lethe by throwing an exception if non-linear solver convergence has failed");
         prm.declare_entry(
-          "normalize residual",
+          "rescale residual",
           "false",
           Patterns::Bool(),
-          "Normalize the residual by the volume of the triangulation");
+          "Rescale the residual by the square root of the volume of the triangulation");
       }
       prm.leave_subsection();
     }
@@ -2488,7 +2488,7 @@ namespace Parameters
         reuse_preconditioner  = prm.get_bool("reuse preconditioner");
         abort_at_convergence_failure =
           prm.get_bool("abort at convergence failure");
-        normalize_residual_by_volume = prm.get_bool("normalize residual");
+        rescale_residual_by_volume = prm.get_bool("rescale residual");
       }
       prm.leave_subsection();
     }

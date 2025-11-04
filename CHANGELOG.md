@@ -8,7 +8,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
 ### Added
 
-- MAJOR Allow residual normalization. This PR introduces a new parameter ("normalize residual") to the non-linear solver subsection. When the parameter is true, all residuals are normalized by the volume of the triangulation. This is very convenient because, when activated, tolerances are independent of the mesh size. [1728](https://github.com/chaos-polymtl/lethe/pull/1728)
+- MAJOR Allow residual rescaling by sqrt of the volume of the triangulation. This PR introduces a new parameter ("rescale residual") to the non-linear solver subsection. When the parameter is true, all residuals are rescaled by the sqrt of the volume of the triangulation. This is very convenient because, when activated, tolerances are independent of the domain size. [1728](https://github.com/chaos-polymtl/lethe/pull/1728)
 
 ### [Master] - 2025-11-08
 

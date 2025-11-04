@@ -1209,8 +1209,8 @@ namespace Parameters
     // Abort solver if non-linear solution has not reached tolerance
     bool abort_at_convergence_failure;
 
-    // Normalize residual by triangulation volume flag
-    bool normalize_residual_by_volume;
+    // Rescale residual by the sqrt of the triangulation volume flag
+    bool rescale_residual_by_volume;
 
     static void
     declare_parameters(ParameterHandler &prm, const std::string &physics_name);

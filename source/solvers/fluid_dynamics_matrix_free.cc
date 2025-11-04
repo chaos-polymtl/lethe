@@ -3455,8 +3455,8 @@ FluidDynamicsMatrixFree<dim>::solve_system_GMRES(const bool   initial_step,
 
   const AffineConstraints<double> &constraints_used =
     initial_step ? nonzero_constraints : this->zero_constraints;
-  const double normalize_metric = this->get_residual_normalization_metric();
-  const double current_residual = this->system_rhs.l2_norm() / normalize_metric;
+  const double rescale_metric   = this->get_residual_rescale_metric();
+  const double current_residual = this->system_rhs.l2_norm() / rescale_metric;
   const double linear_solver_tolerance =
     std::max(relative_residual * current_residual, absolute_residual);
   if (this->simulation_parameters.linear_solver.at(PhysicsID::fluid_dynamics)
@@ -3465,15 +3465,15 @@ FluidDynamicsMatrixFree<dim>::solve_system_GMRES(const bool   initial_step,
       this->pcout << "  -Tolerance of iterative solver is : "
                   << linear_solver_tolerance << std::endl;
     }
-  const double non_normalized_linear_solver_tolerance =
-    linear_solver_tolerance * normalize_metric;
+  const double non_rescaled_linear_solver_tolerance =
+    linear_solver_tolerance * rescale_metric;
   GlobalVectorType completely_distributed_solution(this->locally_owned_dofs,
                                                    this->mpi_communicator);
 
   SolverControl solver_control(this->simulation_parameters.linear_solver
                                  .at(PhysicsID::fluid_dynamics)
                                  .max_iterations,
-                               non_normalized_linear_solver_tolerance,
+                               non_rescaled_linear_solver_tolerance,
                                true,
                                true);
 
@@ -3535,8 +3535,7 @@ FluidDynamicsMatrixFree<dim>::solve_system_GMRES(const bool   initial_step,
     {
       this->pcout << "  -Iterative solver took : " << solver_control.last_step()
                   << " steps to reach a residual norm of "
-                  << solver_control.last_value() / normalize_metric
-                  << std::endl;
+                  << solver_control.last_value() / rescale_metric << std::endl;
     }
 
   this->computing_timer.enter_subsection(
@@ -3559,17 +3558,17 @@ FluidDynamicsMatrixFree<dim>::solve_system_direct(
 
   const AffineConstraints<double> &constraints_used =
     initial_step ? nonzero_constraints : this->zero_constraints;
-  const double normalize_metric = this->get_residual_normalization_metric();
-  const double current_residual = this->system_rhs.l2_norm() / normalize_metric;
+  const double rescale_metric   = this->get_residual_rescale_metric();
+  const double current_residual = this->system_rhs.l2_norm() / rescale_metric;
   const double linear_solver_tolerance =
     std::max(relative_residual * current_residual, absolute_residual);
-  const double non_normalized_linear_solver_tolerance =
-    linear_solver_tolerance * normalize_metric;
+  const double non_rescaled_linear_solver_tolerance =
+    linear_solver_tolerance * rescale_metric;
 
   SolverControl solver_control(this->simulation_parameters.linear_solver
                                  .at(PhysicsID::fluid_dynamics)
                                  .max_iterations,
-                               non_normalized_linear_solver_tolerance,
+                               non_rescaled_linear_solver_tolerance,
                                true,
                                true);
 

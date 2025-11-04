@@ -117,18 +117,18 @@ VOFLinearSubequationsSolver<dim>::solve_linear_system_and_update_solution()
     }
 
   // Set tolerance
-  const double normalize_metric =
+  const double rescale_metric =
     simulation_parameters.non_linear_solver.at(PhysicsID::VOF)
-        .normalize_residual_by_volume ?
+        .rescale_residual_by_volume ?
       GridTools::volume(*this->triangulation, *this->mapping) :
       1.0;
   const double linear_solver_tolerance =
     this->simulation_parameters.linear_solver.at(PhysicsID::VOF)
       .minimum_residual /
-    normalize_metric;
+    rescale_metric;
 
-  const double non_normalized_linear_solver_tolerance =
-    linear_solver_tolerance * normalize_metric;
+  const double non_rescaled_linear_solver_tolerance =
+    linear_solver_tolerance * rescale_metric;
 
   // Solution vector
   GlobalVectorType completely_distributed_solution(this->locally_owned_dofs,
@@ -162,7 +162,7 @@ VOFLinearSubequationsSolver<dim>::solve_linear_system_and_update_solution()
   // CG solver
   SolverControl solver_control(
     this->simulation_parameters.linear_solver.at(PhysicsID::VOF).max_iterations,
-    non_normalized_linear_solver_tolerance,
+    non_rescaled_linear_solver_tolerance,
     true,
     true);
 
@@ -177,8 +177,7 @@ VOFLinearSubequationsSolver<dim>::solve_linear_system_and_update_solution()
     {
       this->pcout << "    -Iterative solver took " << solver_control.last_step()
                   << " steps to reach a residual norm of "
-                  << solver_control.last_value() / normalize_metric
-                  << std::endl;
+                  << solver_control.last_value() / rescale_metric << std::endl;
     }
 
   // Update constraints vector

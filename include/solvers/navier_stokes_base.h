@@ -173,17 +173,17 @@ protected:
   output_newton_update_norms(const unsigned int display_precision) override;
 
   /**
-   * @brief Return the metric for residual normalization. By default, should return 1.
-   * If the normalize_residual_by_volume is set to true, the method
+   * @brief Return the metric for residual rescaling. By default, should return 1.
+   * If the rescale_residual_by_volume is set to true, the method
    * returns the global volume of the triangulation.
    *
-   * @return Normalization metric.
+   * @return Rescale metric.
    */
   double
-  get_residual_normalization_metric() const override
+  get_residual_rescale_metric() const override
   {
-    return simulation_parameters.non_linear_solver.at(PhysicsID::fluid_dynamics)
-               .normalize_residual_by_volume ?
+    return simulation_parameters.non_linear_solver.at(PhysicsID::cahn_hilliard)
+               .rescale_residual_by_volume ?
              std::sqrt(
                GridTools::volume(*this->triangulation, *this->mapping)) :
              1.;

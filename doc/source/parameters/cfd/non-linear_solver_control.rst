@@ -31,8 +31,8 @@ In the example below, only ``fluid dynamics`` is shown but the same block can be
       # Newton solver tolerance
       set tolerance                    = 1e-6
 
-      # Normalize solver residuals by the volume of the mesh
-      set normalize residual           = false
+      # Rescale solver residuals by the sqrt of the volume of the mesh
+      set rescale residual           = false
 
       # Tolerance for the acceptation of the step
       set step tolerance               = 0.9
@@ -87,7 +87,7 @@ In the example below, only ``fluid dynamics`` is shown but the same block can be
 
 	For simple simulations, the tolerance can be set quite low, for instance ``set tolerance = 1e-12``. However, such a tolerance can be impossible to attain for more complex simulations : the step tolerance of the non-linear solver can be increased, for instance ``set tolerance = 1e-4``
 
-* The ``normalize residual`` parameter normalizes the L2 norm of the residual by the square root of the volume of the mesh. This can be useful when comparing the convergence of simulations with different mesh sizes. When set to ``true``, the residual displayed on the terminal and compared to the ``tolerance`` is divided by the volume of the mesh. By default, this parameter is set to ``false``. The definition of the residual obtained becomes:
+* The ``rescale residual`` parameter rescales the L2 norm of the residual by the square root of the volume of the mesh. This can be useful when comparing the convergence of simulations with different mesh sizes. When set to ``true``, the residual displayed on the terminal and compared to the ``tolerance`` is divided by the volume of the mesh. By default, this parameter is set to ``false``. The definition of the residual obtained becomes:
     .. math::
 
         \textup{Residual} = \frac{\left\| {R} \right\|_{L_2}}{V^{1/2}}
