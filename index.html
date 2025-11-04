@@ -72,31 +72,54 @@
 				<div class="latest-articles">
 					<h1>Latest Publications</h1>
 
-<!--				Add here the latest publications and delete from the bottom of the list; the current implementation allows 5 publications -->
+<!--				Add here the latest publications and delete from the bottom of the list; 
+					the current implementation requires to change the number of slideshow pages in
+					the script section -->
+					<div class="article-slide fade">
+					  	<img src="images/publications/2025-Alphonius-et-al.png" alt="Lethe 1.0: An open-source parallel high-order computational fluid dynamics software framework for single and multiphase flows">
+						<br>
+						<a href="https://doi.org/10.1016/j.cpc.2025.109880" class="slide-button" target="_blank">View publication</a>
+					</div>
+					<div class="article-slide fade">
+					  	<img src="images/publications/2025-Prieto-Saavedra-et-al.png" alt="A matrix-free stabilized solver for the incompressible Navier-Stokes equations">
+						<br>
+						<a href="https://doi.org/10.1016/j.jcp.2025.114186" class="slide-button" target="_blank">View publication</a>
+					</div>
+					<div class="article-slide fade">
+						<img src="images/publications/2025-Collard-Daigneault-et-al.png" alt="Enhancing the computational performance of granular flow simulations in DEM and CFD-DEM with Adaptive Sparse Contacts (ASC)">
+						<br>
+						<a href="https://doi.org/10.1016/j.powtec.2024.120530" class="slide-button" target="_blank">View publication</a>
+					</div>
+					<div class="article-slide fade">
+						<img src="images/publications/2025-Guevremont-et-al.png" alt="Robust pore-resolved CFD through porous monoliths reconstructed by micro-computed tomography: From digitization to flow prediction">
+						<br>
+						<a href="https://doi.org/10.1016/j.cej.2024.158577" class="slide-button" target="_blank">View publication</a>
+					</div>
+					<div class="article-slide fade">
+					  	<img src="images/publications/2025-Mirakhori-et-al.png" alt="AI-enhanced radioactive particle tracking: A practical methodology for accelerating industrial process development">
+						<br>
+						<a href="https://doi.org/10.1016/j.ces.2025.122173" class="slide-button" target="_blank">View publication</a>
+					</div>
 					<div class="article-slide fade">
 						<img src="images/publications/2024-Barbeau-et-al.png" alt="High-order moving immersed boundary and its application to a resolved CFD-DEM model">
 						<br>
 						<a href="https://doi.org/10.1016/j.compfluid.2023.106094" class="slide-button" target="_blank">View publication</a>
 					</div>
-
 					<div class="article-slide fade">
 						<img src="images/publications/2023-Fazli-et-al.png" alt="Application of immersed boundary methods to non-Newtonian yield-pseudoplastic flows">
 						<br>
 						<a href="https://doi.org/10.1016/j.apm.2023.07.034" class="slide-button" target="_blank">View publication</a>
 					</div>
-
 					<div class="article-slide fade">
 						<img src="images/publications/2023-Mirakhori-et-al.png" alt="An improved position reconstruction method for radioactive particle tracking">
 						<br>
 						<a href="https://doi.org/10.1016/j.nima.2023.168504" class="slide-button" target="_blank">View publication</a>
 					</div>
-
 					<div class="article-slide fade">
 					  	<img src="images/publications/2023-Joachim-et-al.png" alt="A parallel and adaptative Nitsche immersed boundary method to simulate viscous mixing">
 						<br>
 						<a href="https://doi.org/10.1016/j.jcp.2023.112189" class="slide-button" target="_blank">View publication</a>
 					</div>
-
 					<div class="article-slide fade">
 					  	<img src="images/publications/2023-Ferreira-et-al.png" alt="In-depth validation of unresolved CFD-DEM simulations of liquid fluidized beds">
 						<br>
@@ -114,6 +137,11 @@
 						<span class="dot" onclick="currentSlide(3,0)"></span>
 						<span class="dot" onclick="currentSlide(4,0)"></span>
 						<span class="dot" onclick="currentSlide(5,0)"></span>
+						<span class="dot" onclick="currentSlide(6,0)"></span>
+						<span class="dot" onclick="currentSlide(7,0)"></span>
+						<span class="dot" onclick="currentSlide(8,0)"></span>
+						<span class="dot" onclick="currentSlide(9,0)"></span>
+						<span class="dot" onclick="currentSlide(10,0)"></span>
 					</div>
 				</div>
 			</div>
@@ -124,7 +152,8 @@
 				<div class="benchmarks">
 					<h1>Explore Examples</h1>
 
-<!--				Add here new examples; the current implementation allows 6 examples -->
+<!--				Add here new examples; the current implementation requires to change the number of
+	                slideshow pages in the script section -->
 					<div class="benchmark-slide fade">
 						<iframe src="https://www.youtube.com/embed/GGij2g_yz5g?rel=0&vq=hd720" title="Taylor-Green Vortex - Velocity
 						Contours" frameborder="0" allow="accelerometer; autoplay; clipboard-write;
@@ -180,8 +209,11 @@
 			</div>
 
 			<script>
-				let slideIndex = [1,1];
-				let number_of_slides = [5,6]
+				let slideIndex = [1,1]
+				/* Define the number of slides in each slideshow:
+				    - the first index corresponds to the publication slideshow
+				    - the second index corresponds to the benchmark videos slideshow */
+				let number_of_slides = [10,6]
 				let count = [0,number_of_slides[0]]
 				// Class the members of each slideshow group with different CSS classes
 				let slideId = ["article-slide", "benchmark-slide"]
