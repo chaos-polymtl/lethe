@@ -81,12 +81,18 @@ In the example below, only ``fluid dynamics`` is shown but the same block can be
 
 * The ``step tolerance`` parameter controls how much the L2 norm of the residual must decrease to proceed to the next non-linear step. If the ``new_residual``:math:`<` ``old_residual``:math:`\times` ``step tolerance``, then a Newton iteration is accepted. If this condition is not reached, then a relaxation of the step is applied (increasing the ``alpha`` parameter, as printed on the terminal if ``set verbosity = verbose``) until this condition is reached.
 * The ``tolerance`` parameter controls the value under which the residual must be to proceed to the next iteration.
-* The ``normalize residual`` parameter normalizes the residual by the volume of the mesh. This can be useful when comparing the convergence of simulations with different mesh sizes. When set to ``true``, the residual displayed on the terminal and compared to the ``tolerance`` is divided by the volume of the mesh. By default, this parameter is set to ``false``.
 
 .. hint::
 	The ``tolerance`` parameter is directly linked to the numerical convergence of the simulation, but also to the computational cost (number of Newton iteration).
 
 	For simple simulations, the tolerance can be set quite low, for instance ``set tolerance = 1e-12``. However, such a tolerance can be impossible to attain for more complex simulations : the step tolerance of the non-linear solver can be increased, for instance ``set tolerance = 1e-4``
+
+* The ``normalize residual`` parameter normalizes the L2 norm of the residual by the square root of the volume of the mesh. This can be useful when comparing the convergence of simulations with different mesh sizes. When set to ``true``, the residual displayed on the terminal and compared to the ``tolerance`` is divided by the volume of the mesh. By default, this parameter is set to ``false``. The definition of the residual obtained becomes:
+    .. math::
+
+        \textup{Residual} = \frac{\left\| {R} \right\|_{L_2}}{V^{1/2}}
+
+    where :math:`R` is the residual and :math:`V` is the volume of the entire mesh.
 
 * The ``max iterations`` parameter sets a hard limit to the number of Newton iterations, even if the ``tolerance`` is not reached.
 

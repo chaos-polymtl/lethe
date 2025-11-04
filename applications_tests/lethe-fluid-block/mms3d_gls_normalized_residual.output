@@ -9,8 +9,8 @@ Steady iteration:        1/1
 ---------------
 Fluid Dynamics
 ---------------
-Newton iteration: 0  - Residual:  0.0541456
-	alpha =      1 res = 1.67e-07	||du||_L2 = 0.0026	||du||_Linfty = 0.001
+Newton iteration: 0  - Residual:  0.00484293
+	alpha =      1 res = 1.49e-08	||du||_L2 = 0.0026	||du||_Linfty = 0.001
 	||dp||_L2 =  0.461	||dp||_Linfty = 0.133
 cells error_velocity error_pressure 
    64 2.897222e-04 - 1.855844e-03 - 
