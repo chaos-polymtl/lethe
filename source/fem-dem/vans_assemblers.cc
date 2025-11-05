@@ -2257,9 +2257,11 @@ VANSAssemblerFPIProj<dim>::assemble_matrix(
       const Tensor<1, dim> &undisturbed_flow_force =
         scratch_data.particle_two_way_coupling_force_values[q]/
                   (scratch_data.cell_volume * density);
-      // We divide by the cell's volume to get the volumeric force
+      // We divide by the cell's volume to get the volumeric force and we
+      // divide by the fluid density to get the term to be included in the
+      // equation
       const Tensor<1, dim> &fluid_drag =
-        scratch_data.particle_drag_values[q] / (scratch_data.cell_volume * density);
+        -scratch_data.particle_drag_values[q] / (scratch_data.cell_volume * density);
       const double beta_drag =
         fluid_drag.norm() / (fluid_particle_relative_velocity.norm() + eps);
 
@@ -2322,18 +2324,17 @@ VANSAssemblerFPIProj<dim>::assemble_rhs(
   // Loop over the quadrature points
   for (unsigned int q = 0; q < n_q_points; ++q)
     {
-      // Velocity
       const Tensor<1, dim> &undisturbed_flow_force =
         scratch_data.particle_two_way_coupling_force_values[q]/ 
         (scratch_data.cell_volume * density);
       // We divide by the cell's volume to get the volumeric force
       const Tensor<1, dim> &fluid_drag =
-        scratch_data.particle_drag_values[q] / (scratch_data.cell_volume * density);
+        -scratch_data.particle_drag_values[q] / (scratch_data.cell_volume * density);
 
       // Store JxW in local variable for faster access;
       const double JxW = JxW_vec[q];
 
-      // Calculate the strong residual for GLS stabilization
+       // Calculate the strong residual for GLS stabilization
       if (cfd_dem.vans_model == Parameters::VANSModel::modelB)
         {
           strong_residual[q] += // Drag Force
