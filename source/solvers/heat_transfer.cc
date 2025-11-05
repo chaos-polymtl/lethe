@@ -54,7 +54,7 @@ HeatTransfer<dim>::assemble_nitsche_heat_restriction(bool assemble_matrix)
     !this->simulation_parameters.physical_properties_manager.is_non_newtonian(),
     RequiresConstantViscosity("assemble_nitsche_heat_restriction"));
 
-  auto solids = *this->multiphysics->get_solids(
+  auto &solids = this->multiphysics->get_solids(
     this->simulation_parameters.nitsche->number_solids);
 
   // Loops over solids
@@ -171,7 +171,7 @@ template <int dim>
 void
 HeatTransfer<dim>::postprocess_heat_flux_on_nitsche_ib()
 {
-  auto solids = *this->multiphysics->get_solids(
+  auto &solids = this->multiphysics->get_solids(
     this->simulation_parameters.nitsche->number_solids);
   std::vector<double> heat_flux_on_nitsche_ib_vector(solids.size(), 0);
 
