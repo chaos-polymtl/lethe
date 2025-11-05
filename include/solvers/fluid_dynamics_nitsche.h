@@ -165,7 +165,8 @@ private:
   virtual void
   read_checkpoint() override;
 
-  std::vector<std::shared_ptr<SolidBase<dim, spacedim>>> solids;
+  std::shared_ptr<std::vector<std::shared_ptr<SolidBase<dim, spacedim>>>>
+                          solids;
   std::vector<PVDHandler> pvdhandler_solid_triangulation;
   std::vector<PVDHandler> pvdhandler_solid_particles;
 

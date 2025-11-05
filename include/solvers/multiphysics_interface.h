@@ -540,13 +540,15 @@ public:
     * HeatTransfer<dim>::assemble_nitsche_heat_restriction,
     * which is itself called only if number_solids > 0
     */
-  std::vector<std::shared_ptr<SolidBase<dim, dim>>> *
+  std::vector<std::shared_ptr<SolidBase<dim, dim>>> &
   get_solids(const int number_solids)
   {
     Assert(number_solids > 0, NoSolidWarning("the"));
+    AssertThrow(solids != nullptr,
+                dealii::ExcMessage("solids is not initialized"));
     // to prevent "unused parameter" warning in Release build
     (void)(number_solids);
-    return solids;
+    return *solids;
   }
 
   /**
@@ -644,7 +646,8 @@ public:
    * @param solids_input The reference to the vector of solidBase object
    */
   void
-  set_solid(std::vector<std::shared_ptr<SolidBase<dim, dim>>> *solids_input)
+  set_solid(std::shared_ptr<std::vector<std::shared_ptr<SolidBase<dim, dim>>>>
+              solids_input)
   {
     solids = solids_input;
   }
@@ -905,7 +908,7 @@ private:
 
   std::map<PhysicsID, std::shared_ptr<DoFHandler<dim>>> physics_dof_handler;
 
-  std::vector<std::shared_ptr<SolidBase<dim, dim>>> *solids;
+  std::shared_ptr<std::vector<std::shared_ptr<SolidBase<dim, dim>>>> solids;
 
 
   // present filtered solution (VOF->STF)

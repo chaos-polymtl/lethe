@@ -157,7 +157,7 @@ public:
   assemble_rhs();
 
   /**
-   * @brief Call for the assembly of the matrix and the right-hand side of the Nitsche restriction for the heat transfert equation.
+   * @brief Call for the assembly of the matrix and the right-hand side of the Nitsche restriction for the heat transfer equation.
    *
    * @param assemble_matrix Boolean that is true for matrix assembly, and false for rhs assembly.
    */

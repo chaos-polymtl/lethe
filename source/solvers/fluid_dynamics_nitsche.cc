@@ -28,9 +28,17 @@ FluidDynamicsNitsche<dim, spacedim>::FluidDynamicsNitsche(
   const unsigned int n_solids =
     this->simulation_parameters.nitsche->number_solids;
 
+  // Initialize shared pointer with an empty vector
+  solids =
+    std::make_shared<std::vector<std::shared_ptr<SolidBase<dim, spacedim>>>>();
+
+  // Reserve memory
+  solids->reserve(n_solids);
+
+  // Fill with solids
   for (unsigned int i_solid = 0; i_solid < n_solids; ++i_solid)
     {
-      solids.emplace_back(std::make_shared<SolidBase<dim, spacedim>>(
+      solids->emplace_back(std::make_shared<SolidBase<dim, spacedim>>(
         this->simulation_parameters.nitsche->nitsche_solids[i_solid],
         this->triangulation,
         this->mapping));
@@ -66,10 +74,10 @@ FluidDynamicsNitsche<dim, spacedim>::assemble_nitsche_restriction()
   const double dt  = time_steps_vector[0];
   const double sdt = 1. / dt;
 
-  for (unsigned int i_solid = 0; i_solid < solids.size(); ++i_solid)
+  for (unsigned int i_solid = 0; i_solid < solids->size(); ++i_solid)
     {
       std::shared_ptr<Particles::ParticleHandler<spacedim>> &solid_ph =
-        solids[i_solid]->get_solid_particle_handler();
+        (*solids)[i_solid]->get_solid_particle_handler();
 
 
       const unsigned int dofs_per_cell = this->fe->dofs_per_cell;
@@ -81,7 +89,7 @@ FluidDynamicsNitsche<dim, spacedim>::assemble_nitsche_restriction()
 
       Tensor<1, spacedim> velocity;
       Function<spacedim> *solid_velocity =
-        solids[i_solid]->get_solid_velocity();
+        (*solids)[i_solid]->get_solid_velocity();
 
       solid_velocity->set_time(this->simulation_control->get_current_time());
 
@@ -223,7 +231,7 @@ FluidDynamicsNitsche<2, 3>::calculate_forces_on_solid(
   const unsigned int i_solid)
 {
   std::shared_ptr<Particles::ParticleHandler<3>> &solid_ph =
-    solids[i_solid]->get_solid_particle_handler();
+    (*solids)[i_solid]->get_solid_particle_handler();
 
   const unsigned int dofs_per_cell = this->fe->dofs_per_cell;
 
@@ -310,7 +318,7 @@ FluidDynamicsNitsche<dim, spacedim>::calculate_forces_on_solid(
   const unsigned int i_solid)
 {
   std::shared_ptr<Particles::ParticleHandler<dim, spacedim>> &solid_ph =
-    solids[i_solid]->get_solid_particle_handler();
+    (*solids)[i_solid]->get_solid_particle_handler();
 
   const unsigned int dofs_per_cell = this->fe->dofs_per_cell;
 
@@ -320,7 +328,7 @@ FluidDynamicsNitsche<dim, spacedim>::calculate_forces_on_solid(
   const double beta =
     this->simulation_parameters.nitsche->nitsche_solids[i_solid]->beta;
   Tensor<1, spacedim> velocity;
-  Function<spacedim> *solid_velocity = solids[i_solid]->get_solid_velocity();
+  Function<spacedim> *solid_velocity = (*solids)[i_solid]->get_solid_velocity();
   Tensor<1, spacedim> force;
   for (int i = 0; i < spacedim; ++i)
     force[i] = 0;
@@ -386,7 +394,7 @@ FluidDynamicsNitsche<dim, spacedim>::calculate_torque_on_solid(
   const unsigned int i_solid)
 {
   std::shared_ptr<Particles::ParticleHandler<spacedim>> &solid_ph =
-    solids[i_solid]->get_solid_particle_handler();
+    (*solids)[i_solid]->get_solid_particle_handler();
 
   const unsigned int dofs_per_cell = this->fe->dofs_per_cell;
 
@@ -396,7 +404,7 @@ FluidDynamicsNitsche<dim, spacedim>::calculate_torque_on_solid(
   const double beta =
     this->simulation_parameters.nitsche->nitsche_solids[i_solid]->beta;
   Tensor<1, spacedim> velocity;
-  Function<spacedim> *solid_velocity = solids[i_solid]->get_solid_velocity();
+  Function<spacedim> *solid_velocity = (*solids)[i_solid]->get_solid_velocity();
 
 
   Tensor<1, 3> torque;
@@ -666,9 +674,9 @@ FluidDynamicsNitsche<dim, spacedim>::solve()
     {
       TimerOutput::Scope t(this->computing_timer,
                            "Nitsche setup solid mesh and particles");
-      for (unsigned int i_solid = 0; i_solid < solids.size(); ++i_solid)
+      for (unsigned int i_solid = 0; i_solid < solids->size(); ++i_solid)
         {
-          solids[i_solid]->initial_setup();
+          (*solids)[i_solid]->initial_setup();
 
           // Output initial configuration, if output_frequency!=0
           if (this->simulation_control->is_output_iteration())
@@ -679,8 +687,8 @@ FluidDynamicsNitsche<dim, spacedim>::solve()
         }
       if constexpr (dim == spacedim)
         {
-          // Parse the nitsche solids to the multiphysics interface
-          this->multiphysics->set_solid(&solids);
+          // Share the Nitsche solids to the multiphysics interface
+          this->multiphysics->set_solid(solids);
         }
     }
 
@@ -697,7 +705,7 @@ FluidDynamicsNitsche<dim, spacedim>::solve()
 
       {
         TimerOutput::Scope t(this->computing_timer, "Nitsche move particles");
-        for (unsigned int i_solid = 0; i_solid < solids.size(); ++i_solid)
+        for (unsigned int i_solid = 0; i_solid < solids->size(); ++i_solid)
           {
             if (this->simulation_parameters.nitsche->nitsche_solids[i_solid]
                   ->enable_particles_motion)
@@ -709,16 +717,18 @@ FluidDynamicsNitsche<dim, spacedim>::solve()
                 const double initial_time =
                   this->simulation_control->get_current_time() - time_step;
 
-                solids[i_solid]->update_temperature_time(time_step);
-                solids[i_solid]->integrate_velocity(time_step, initial_time);
-                solids[i_solid]->move_solid_triangulation(time_step,
-                                                          initial_time);
+                (*solids)[i_solid]->update_temperature_time(time_step);
+                (*solids)[i_solid]->integrate_velocity(time_step, initial_time);
+                (*solids)[i_solid]->move_solid_triangulation(time_step,
+                                                             initial_time);
               }
           }
         if constexpr (dim == spacedim)
           {
-            // Parse the nitsche solids to the multiphysics interface
-            this->multiphysics->set_solid(&solids);
+            // Share the Nitsche solids to the multiphysics interface
+            this->multiphysics->set_solid(
+              solids); // TODO AA check if it has to be set here or if it is
+                       // dynamically evolving after the first set
           }
       }
       if (this->simulation_control->is_at_start())
@@ -765,9 +775,9 @@ FluidDynamicsNitsche<dim, spacedim>::solve()
     }
   if (this->simulation_parameters.test.enabled)
     {
-      for (unsigned int i_solid = 0; i_solid < solids.size(); ++i_solid)
+      for (unsigned int i_solid = 0; i_solid < solids->size(); ++i_solid)
         {
-          solids[i_solid]->print_particle_positions();
+          (*solids)[i_solid]->print_particle_positions();
         }
     }
   this->finish_simulation();
@@ -779,7 +789,7 @@ FluidDynamicsNitsche<dim, spacedim>::output_solid_particles(
   const unsigned int i_solid)
 {
   std::shared_ptr<Particles::ParticleHandler<spacedim>> &particle_handler =
-    solids[i_solid]->get_solid_particle_handler();
+    (*solids)[i_solid]->get_solid_particle_handler();
   Particles::DataOut<spacedim, spacedim> particles_out;
   particles_out.build_patches(*particle_handler);
 
@@ -808,11 +818,11 @@ FluidDynamicsNitsche<dim, spacedim>::output_solid_triangulation(
 {
   DataOut<dim, spacedim>     data_out;
   DoFHandler<dim, spacedim> &solid_dh =
-    solids[i_solid]->get_solid_dof_handler();
+    (*solids)[i_solid]->get_solid_dof_handler();
   data_out.attach_dof_handler(solid_dh);
 
   DoFHandler<dim, spacedim> &displacement_dh =
-    solids[i_solid]->get_displacement_dof_handler();
+    (*solids)[i_solid]->get_displacement_dof_handler();
   data_out.attach_dof_handler(displacement_dh);
 
   std::vector<std::string> solution_names(spacedim, "displacement");
@@ -820,7 +830,7 @@ FluidDynamicsNitsche<dim, spacedim>::output_solid_triangulation(
     data_component_interpretation(
       spacedim, DataComponentInterpretation::component_is_part_of_vector);
   GlobalVectorType &displacement_vector =
-    solids[i_solid]->get_displacement_vector();
+    (*solids)[i_solid]->get_displacement_vector();
 
   data_out.add_data_vector(displacement_vector,
                            solution_names,
@@ -870,7 +880,7 @@ FluidDynamicsNitsche<dim, spacedim>::refine_mesh()
       // Prepare the solid particle handlers for the mesh refinement
       // All type of refinement except none will require that the particle
       // handler be prepared for refinement
-      for (const auto &solid : solids)
+      for (const auto &solid : *solids)
         solid->get_solid_particle_handler()
           ->prepare_for_coarsening_and_refinement();
 
@@ -884,7 +894,7 @@ FluidDynamicsNitsche<dim, spacedim>::refine_mesh()
         this->refine_mesh_uniform();
 
       // Unpact them after refinement has occured
-      for (const auto &solid : solids)
+      for (const auto &solid : *solids)
         solid->get_solid_particle_handler()
           ->unpack_after_coarsening_and_refinement();
     }
@@ -958,14 +968,14 @@ void
 FluidDynamicsNitsche<dim, spacedim>::write_checkpoint()
 {
   // Write solid base checkpoint
-  for (unsigned int i_solid = 0; i_solid < solids.size(); ++i_solid)
+  for (unsigned int i_solid = 0; i_solid < solids->size(); ++i_solid)
     {
       std::string filename =
         this->simulation_parameters.simulation_control.output_folder +
         this->simulation_parameters.restart_parameters.filename + "_solid_" +
         Utilities::int_to_string(i_solid, 2);
 
-      this->solids[i_solid]->write_checkpoint(filename);
+      (*this->solids)[i_solid]->write_checkpoint(filename);
     }
 
   // Call regular checkpointing routine
@@ -982,7 +992,7 @@ FluidDynamicsNitsche<dim, spacedim>::write_checkpoint()
       // Navier-Stokes
       this->pvdhandler.save(prefix);
       // Nitche
-      for (unsigned int i_solid = 0; i_solid < solids.size(); ++i_solid)
+      for (unsigned int i_solid = 0; i_solid < solids->size(); ++i_solid)
         {
           pvdhandler_solid_particles[i_solid].save(
             prefix + "_solid_particles_" +
@@ -1017,14 +1027,14 @@ FluidDynamicsNitsche<dim, spacedim>::read_checkpoint()
   // This must be done after the background triangulation is read
   // because the solid particle_handler is deserialized physically
   // after the triangulation is read.
-  for (unsigned int i_solid = 0; i_solid < solids.size(); ++i_solid)
+  for (unsigned int i_solid = 0; i_solid < solids->size(); ++i_solid)
     {
       std::string prefix =
         this->simulation_parameters.simulation_control.output_folder +
         this->simulation_parameters.restart_parameters.filename + "_solid_" +
         Utilities::int_to_string(i_solid, 2);
 
-      solids[i_solid]->read_checkpoint(prefix);
+      (*solids)[i_solid]->read_checkpoint(prefix);
     }
 
 
@@ -1032,7 +1042,7 @@ FluidDynamicsNitsche<dim, spacedim>::read_checkpoint()
   std::string prefix =
     this->simulation_parameters.simulation_control.output_folder +
     this->simulation_parameters.restart_parameters.filename;
-  for (unsigned int i_solid = 0; i_solid < solids.size(); ++i_solid)
+  for (unsigned int i_solid = 0; i_solid < solids->size(); ++i_solid)
     {
       // Load Paraview pvd handler for solid triangulation and particles
       pvdhandler_solid_particles[i_solid].read(
