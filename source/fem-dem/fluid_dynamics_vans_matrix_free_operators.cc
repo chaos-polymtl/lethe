@@ -287,6 +287,8 @@ VANSOperator<dim, number>::do_cell_integral_local(
       auto pf_force_value = this->particle_fluid_force(cell, q);
       auto pf_drag_value  = this->particle_fluid_drag(cell, q);
       auto p_velocity     = this->particle_velocity(cell, q);
+      auto beta_momentum_transfer =
+        this->momentum_transfer_coefficient(cell, q);
 
       // Add to source term the particle-fluid force and the drag force
       source_value = pf_force_value + pf_drag_value;
@@ -322,22 +324,22 @@ VANSOperator<dim, number>::do_cell_integral_local(
       // Calculate norm of the relative velocity and of the drag force and use
       // it to calculate the beta momentum exchange coefficient A tolerance is
       // added (1e-9) to prevent division by 0 and occurence of NaN.
-      VectorizedArray<number> relative_velocity_norm_squared = 0.;
-      VectorizedArray<number> drag_force_norm_squared        = 0.;
-
-      for (unsigned int i = 0; i < dim; ++i)
-        {
-          drag_force_norm_squared +=
-            Utilities::fixed_power<2>(pf_drag_value[i]);
-          relative_velocity_norm_squared +=
-            Utilities::fixed_power<2>(previous_values[i] - p_velocity[i]);
-        }
-      relative_velocity_norm_squared += 1e-20;
+      // VectorizedArray<number> relative_velocity_norm_squared = 0.;
+      // VectorizedArray<number> drag_force_norm_squared        = 0.;
+      //
+      // for (unsigned int i = 0; i < dim; ++i)
+      //  {
+      //    drag_force_norm_squared +=
+      //      Utilities::fixed_power<2>(pf_drag_value[i]);
+      //    relative_velocity_norm_squared +=
+      //      Utilities::fixed_power<2>(previous_values[i] - p_velocity[i]);
+      //  }
+      // relative_velocity_norm_squared += 1e-20;
       // Since the drag force and the relative velocity are both first rank
       // tensor extracting beta is that directly define. We do it in a
       // projection fashion.
-      VectorizedArray<number> beta_momentum_exchange =
-        std::sqrt(drag_force_norm_squared / relative_velocity_norm_squared);
+      //  VectorizedArray<number> beta_momentum_exchange =
+      //  std::sqrt(drag_force_norm_squared / relative_velocity_norm_squared);
 
 
       Tensor<1, dim + 1, VectorizedArray<number>> previous_time_derivatives;
@@ -365,7 +367,7 @@ VANSOperator<dim, number>::do_cell_integral_local(
           // +(q,∇ɛ·δu)
           value_result[dim] += vf_gradient[i] * value[i];
           // +(v, βu)
-          value_result[i] += beta_momentum_exchange * value[i];
+          value_result[i] += beta_momentum_transfer * value[i];
 
           for (int k = 0; k < dim; ++k)
             {
@@ -397,7 +399,7 @@ VANSOperator<dim, number>::do_cell_integral_local(
               tau * vf_value * (*bdf_coefs)[0] * value[i];
 
           // +βδu·τ∇q
-          gradient_result[dim][i] += tau * beta_momentum_exchange * value[i];
+          gradient_result[dim][i] += tau * beta_momentum_transfer * value[i];
         }
       // (ɛ∇δp)τ·∇q
       gradient_result[dim] += tau * vf_value * gradient[dim];
@@ -443,7 +445,7 @@ VANSOperator<dim, number>::do_cell_integral_local(
 
               // +(βδu)τ(u·∇)v
               gradient_result[i][k] +=
-                beta_momentum_exchange * value[i] * tau * previous_values[k];
+                beta_momentum_transfer * value[i] * tau * previous_values[k];
 
               // Part 2
               for (int l = 0; l < dim; ++l)
@@ -467,7 +469,7 @@ VANSOperator<dim, number>::do_cell_integral_local(
 
               // +(βu)τ(δu·∇)v
               gradient_result[i][k] +=
-                beta_momentum_exchange * previous_values[i] * tau * value[k];
+                beta_momentum_transfer * previous_values[i] * tau * value[k];
             }
         }
 
