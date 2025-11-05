@@ -3,8 +3,8 @@
 
 # Tests normalize residual option in heat transfer and fluid flow using matrix-based solver.
 # This test should have the exact same result as the other conjucated heat transfer
-# test, as tolerances are adjusted to follow the non-normalized residual version.
-# If one of the tests change, the other should change accordingly.
+# test (conjugated_heat_transfer_two_boxes), as tolerances are adjusted to follow the
+# non-normalized residual version. If one of the tests change, the other should change accordingly.
 
 # Listing of Parameters
 #----------------------

@@ -1,6 +1,7 @@
 # SPDX-FileCopyrightText: Copyright (c) 2025 The Lethe Authors
 # SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
-# This MMS tests a second order homogeneous reaction using DG tracer elements.
+# This is a test for the rescale residuals parameter for the tracer.
+# We have a single non-linear iteration so it is not sensitive to the machine.
 
 set dimension = 2
 
