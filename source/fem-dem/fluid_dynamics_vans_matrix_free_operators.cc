@@ -291,7 +291,7 @@ VANSOperator<dim, number>::do_cell_integral_local(
         this->momentum_transfer_coefficient(cell, q);
 
       // Add to source term the particle-fluid force and the drag force
-      source_value = pf_force_value + pf_drag_value;
+      source_value = pf_force_value; // + pf_drag_value;
 
       // Evaluate source term function if enabled
       if (this->forcing_function)
@@ -341,6 +341,10 @@ VANSOperator<dim, number>::do_cell_integral_local(
       //  VectorizedArray<number> beta_momentum_exchange =
       //  std::sqrt(drag_force_norm_squared / relative_velocity_norm_squared);
 
+      // Add the drag force with the momentum coupling
+      for (int d = 0; d < dim; ++d)
+        source_value[d] +=
+          beta_momentum_transfer * (p_velocity[d] - previous_values[d]);
 
       Tensor<1, dim + 1, VectorizedArray<number>> previous_time_derivatives;
       if (transient)
@@ -541,11 +545,14 @@ VANSOperator<dim, number>::local_evaluate_residual(
           // have not been gathered.
           auto pf_force_value = this->particle_fluid_force(cell, q);
           auto pf_drag_value  = this->particle_fluid_drag(cell, q);
+          auto p_velocity     = this->particle_velocity(cell, q);
+          auto beta_momentum_transfer =
+            this->momentum_transfer_coefficient(cell, q);
           // Add to source term the particle-fluid force (zero if not enabled)
           // We divide this source by the void fraction value since it is
           // multiplied by the void fraction value within the assembler.
           Tensor<1, dim, VectorizedArray<number>> source_value =
-            pf_force_value + pf_drag_value;
+            pf_force_value; // pf_drag_value;
 
           // Gather void fraction value and gradient
           auto vf_value    = this->void_fraction(cell, q);
@@ -564,6 +571,11 @@ VANSOperator<dim, number>::local_evaluate_residual(
           typename FECellIntegrator::gradient_type gradient =
             integrator.get_gradient(q);
           typename FECellIntegrator::gradient_type hessian_diagonal;
+
+          // Add the drag force with the momentum coupling
+          for (int d = 0; d < dim; ++d)
+            source_value[d] +=
+              beta_momentum_transfer * (p_velocity[d] - value[d]);
 
           if (this->enable_hessians_residual)
             hessian_diagonal = integrator.get_hessian_diagonal(q);
