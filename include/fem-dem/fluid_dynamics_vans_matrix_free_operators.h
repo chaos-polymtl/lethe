@@ -88,7 +88,10 @@ public:
     const LinearAlgebra::distributed::Vector<double> &fp_drag_solution,
     const DoFHandler<dim> &particle_velocity_dof_handler,
     const LinearAlgebra::distributed::Vector<double>
-      &particle_velocity_solution);
+                          &particle_velocity_solution,
+    const DoFHandler<dim> &momentum_transfer_coefficient_dof_handler,
+    const LinearAlgebra::distributed::Vector<double>
+      &momentum_transfer_coefficient_solution);
 
 protected:
   /**

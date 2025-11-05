@@ -112,7 +112,10 @@ VANSOperator<dim, number>::compute_particle_fluid_force(
   const DoFHandler<dim>                            &fp_drag_dof_handler,
   const LinearAlgebra::distributed::Vector<double> &fp_drag_solution,
   const DoFHandler<dim> &particle_velocity_dof_handler,
-  const LinearAlgebra::distributed::Vector<double> &particle_velocity_solution)
+  const LinearAlgebra::distributed::Vector<double> &particle_velocity_solution,
+  const DoFHandler<dim> &momentum_transfer_coefficient_dof_handler,
+  const LinearAlgebra::distributed::Vector<double>
+    &momentum_transfer_coefficient_solution)
 {
   this->timer.enter_subsection("operator::compute_particle_fluid_forces");
 
@@ -142,13 +145,21 @@ VANSOperator<dim, number>::compute_particle_fluid_force(
     this->matrix_free.get_quadrature(),
     update_values);
 
+  FEValues<dim> fe_values_momentum_transfer_coefficient(
+    *(this->matrix_free.get_mapping_info().mapping),
+    momentum_transfer_coefficient_dof_handler.get_fe(),
+    this->matrix_free.get_quadrature(),
+    update_values);
+
   std::vector<Tensor<1, dim>> cell_fp_force(
     fe_values_force.n_quadrature_points);
   std::vector<Tensor<1, dim>> cell_fp_drag(fe_values_drag.n_quadrature_points);
   std::vector<Tensor<1, dim>> cell_particle_velocity(
     fe_values_particle_velocity.n_quadrature_points);
+  std::vector<double> cell_momentum_transfer_coefficient(
+    fe_values_force.n_quadrature_points);
 
-  constexpr FEValuesExtractors::Vector force(0);
+  constexpr FEValuesExtractors::Vector vector_index(0);
 
   for (unsigned int cell = 0; cell < n_cells; ++cell)
     {
@@ -161,24 +172,34 @@ VANSOperator<dim, number>::compute_particle_fluid_force(
             this->matrix_free.get_cell_iterator(cell, lane)
               ->as_dof_handler_iterator(fp_force_dof_handler));
 
-          fe_values_force[force].get_function_values(fp_force_solution,
-                                                     cell_fp_force);
+          fe_values_force[vector_index].get_function_values(fp_force_solution,
+                                                            cell_fp_force);
 
           // Reinit the drag
           fe_values_drag.reinit(
             this->matrix_free.get_cell_iterator(cell, lane)
               ->as_dof_handler_iterator(fp_drag_dof_handler));
 
-          fe_values_drag[force].get_function_values(fp_drag_solution,
-                                                    cell_fp_drag);
+          fe_values_drag[vector_index].get_function_values(fp_drag_solution,
+                                                           cell_fp_drag);
 
           // Reinit the particle velocity
           fe_values_particle_velocity.reinit(
             this->matrix_free.get_cell_iterator(cell, lane)
               ->as_dof_handler_iterator(particle_velocity_dof_handler));
 
-          fe_values_force[force].get_function_values(particle_velocity_solution,
-                                                     cell_particle_velocity);
+          fe_values_particle_velocity[vector_index].get_function_values(
+            particle_velocity_solution, cell_particle_velocity);
+
+          // Reinit the momentum transfer coefficient
+          fe_values_momentum_transfer_coefficient.reinit(
+            this->matrix_free.get_cell_iterator(cell, lane)
+              ->as_dof_handler_iterator(
+                momentum_transfer_coefficient_dof_handler));
+
+          fe_values_momentum_transfer_coefficient.get_function_values(
+            momentum_transfer_coefficient_solution,
+            cell_momentum_transfer_coefficient);
 
           for (const auto q : fe_values_force.quadrature_point_indices())
             {
@@ -192,6 +213,8 @@ VANSOperator<dim, number>::compute_particle_fluid_force(
                   particle_velocity[cell][q][c][lane] =
                     cell_particle_velocity[q][c];
                 }
+              momentum_transfer_coefficient[cell][q][lane] =
+                cell_momentum_transfer_coefficient[q];
             }
         }
     }

@@ -302,7 +302,9 @@ MFNavierStokesVANSPreconditionGMG<dim>::initialize(
                 this->pf_drag_dof_handlers[l],
                 mg_pf_drag_solution[l],
                 this->particle_velocity_dof_handlers[l],
-                mg_particle_velocity_solution[l]);
+                mg_particle_velocity_solution[l],
+                this->momentum_transfer_coefficient_dof_handlers[l],
+                mg_momentum_tranfer_coefficient_solution[l]);
             }
         }
     }
@@ -492,7 +494,10 @@ FluidDynamicsVANSMatrixFree<dim>::assemble_system_rhs()
         particle_projector.fluid_drag_on_particles.dof_handler,
         particle_projector.fluid_drag_on_particles.particle_field_solution,
         particle_projector.particle_velocity.dof_handler,
-        particle_projector.particle_velocity.particle_field_solution);
+        particle_projector.particle_velocity.particle_field_solution,
+        particle_projector.momentum_transfer_coefficient.dof_handler,
+        particle_projector.momentum_transfer_coefficient
+          .particle_field_solution);
     }
 
   TimerOutput::Scope t(this->computing_timer, "Assemble RHS");
@@ -716,7 +721,10 @@ FluidDynamicsVANSMatrixFree<dim>::solve()
               particle_projector.fluid_drag_on_particles
                 .particle_field_solution,
               particle_projector.particle_velocity.dof_handler,
-              particle_projector.particle_velocity.particle_field_solution);
+              particle_projector.particle_velocity.particle_field_solution,
+              particle_projector.momentum_transfer_coefficient.dof_handler,
+              particle_projector.momentum_transfer_coefficient
+                .particle_field_solution);
           }
       }
 
