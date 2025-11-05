@@ -125,6 +125,7 @@ VANSOperator<dim, number>::compute_particle_fluid_force(
   particle_fluid_force.reinit(n_cells, integrator.n_q_points);
   particle_fluid_drag.reinit(n_cells, integrator.n_q_points);
   particle_velocity.reinit(n_cells, integrator.n_q_points);
+  momentum_transfer_coefficient.reinit(n_cells, integrator.n_q_points);
 
 
   // We create one FE_values per field that we wish to interpolate. This comes

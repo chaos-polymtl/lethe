@@ -203,7 +203,7 @@ MFNavierStokesVANSPreconditionGMG<dim>::initialize(
         });
 
       this->mg_transfer_gc_momentum_transfer_coefficient->build(
-        particle_projector.particle_velocity.dof_handler,
+        particle_projector.momentum_transfer_coefficient.dof_handler,
         [&](const auto l, auto &vec) {
           vec.reinit(this->momentum_transfer_coefficient_dof_handlers[l]
                        .locally_owned_dofs(),
