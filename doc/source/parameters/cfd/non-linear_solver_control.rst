@@ -87,12 +87,12 @@ In the example below, only ``fluid dynamics`` is shown but the same block can be
 
 	For simple simulations, the tolerance can be set quite low, for instance ``set tolerance = 1e-12``. However, such a tolerance can be impossible to attain for more complex simulations : the step tolerance of the non-linear solver can be increased, for instance ``set tolerance = 1e-4``
 
-* The ``rescale residual`` parameter rescales the L2 norm of the residual by the square root of the volume of the mesh. This can be useful when comparing the convergence of simulations with different mesh sizes. When set to ``true``, the residual displayed on the terminal and compared to the ``tolerance`` is divided by the volume of the mesh. By default, this parameter is set to ``false``. The definition of the residual obtained becomes:
+* The ``rescale residual`` parameter rescales the L2 norm of the residual by the square root of the volume of the mesh. This can be useful when comparing the convergence of simulations with different domain sizes. When set to ``true``, the residual displayed on the terminal and compared to the ``tolerance`` is divided by the volume of the mesh. By default, this parameter is set to ``false``. The definition of the residual obtained becomes:
     .. math::
 
         \textup{Residual} = \frac{\left\| {R} \right\|_{L_2}}{V^{1/2}}
 
-    where :math:`R` is the residual and :math:`V` is the volume of the entire mesh.
+    where :math:`R` is the residual vector and :math:`V` is the volume of the entire mesh.
 
 * The ``max iterations`` parameter sets a hard limit to the number of Newton iterations, even if the ``tolerance`` is not reached.
 
