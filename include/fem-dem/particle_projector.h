@@ -136,23 +136,13 @@ public:
   {
     if (simplex)
       {
-        if constexpr (n_components == 1)
-          fe = FE_SimplexP<dim>(fe_degree);
-        else
-          {
-            const FE_SimplexP<dim> fe_temp(fe_degree);
-            fe = std::make_shared<FESystem<dim>>(fe_temp, n_components);
-          }
+        const FE_SimplexP<dim> fe_temp(fe_degree);
+        fe = std::make_shared<FESystem<dim>>(fe_temp, n_components);
       }
     else
       {
-        if constexpr (n_components == 1)
-          fe = FE_Q<dim>(fe_degree);
-        else
-          {
-            const FE_Q<dim> temp_fe(fe_degree);
-            fe = std::make_shared<FESystem<dim>>(temp_fe, dim);
-          }
+        const FE_Q<dim> temp_fe(fe_degree);
+        fe = std::make_shared<FESystem<dim>>(temp_fe, n_components);
       }
   }
 
@@ -256,6 +246,11 @@ public:
                                                 false,
                                                 true)
     , fluid_drag_on_particles(triangulation, fe_degree, simplex, false, true)
+    , momentum_transfer_coefficient(triangulation,
+                                    fe_degree,
+                                    simplex,
+                                    false,
+                                    true)
   {
     if (simplex)
       {
@@ -699,9 +694,16 @@ public:
     DEM::CFDDEMProperties::PropertiesIndex::fem_force_two_way_coupling_x>
     fluid_force_on_particles_two_way_coupling;
 
-  /// Projector used to store the drag force. The drag is stored as a seperate
+  /// Projector used to store the drag force. The drag is stored as a separate
   /// field since we may want to make implicit calculations of it.
   ParticleFieldQCM<dim, 3, DEM::CFDDEMProperties::PropertiesIndex::fem_drag_x>
     fluid_drag_on_particles;
+
+  /// Projector used to save the momentum transfer coefficient (beta)
+  ParticleFieldQCM<
+    dim,
+    1,
+    DEM::CFDDEMProperties::PropertiesIndex::momentum_transfer_coefficient>
+    momentum_transfer_coefficient;
 };
 #endif

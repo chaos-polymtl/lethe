@@ -76,14 +76,15 @@ namespace DEM
       fem_force_one_way_coupling_z = 14,
       // Drag force that derives from an interaction between an FEM fluid and
       // the particles
-      fem_drag_x              = 15,
-      fem_drag_y              = 16,
-      fem_drag_z              = 17,
-      fem_torque_x            = 18,
-      fem_torque_y            = 19,
-      fem_torque_z            = 20,
-      volumetric_contribution = 21,
-      n_properties            = 22
+      fem_drag_x                    = 15,
+      fem_drag_y                    = 16,
+      fem_drag_z                    = 17,
+      fem_torque_x                  = 18,
+      fem_torque_y                  = 19,
+      fem_torque_z                  = 20,
+      volumetric_contribution       = 21,
+      momentum_transfer_coefficient = 22,
+      n_properties                  = 23
     };
   } // namespace CFDDEMProperties
 

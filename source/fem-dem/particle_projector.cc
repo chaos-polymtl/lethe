@@ -153,6 +153,7 @@ ParticleProjector<dim>::setup_dofs()
   fluid_force_on_particles_two_way_coupling.setup_dofs();
   fluid_drag_on_particles.setup_dofs();
   particle_velocity.setup_dofs();
+  momentum_transfer_coefficient.setup_dofs();
 }
 
 
@@ -294,7 +295,7 @@ ParticleProjector<dim>::calculate_void_fraction_function(const double time)
                                     void_fraction_locally_relevant);
   void_fraction_solution.update_ghost_values();
 #else
-  void_fraction_solution            = void_fraction_locally_relevant;
+  void_fraction_solution = void_fraction_locally_relevant;
 #endif
 }
 
@@ -1155,13 +1156,18 @@ ParticleProjector<dim>::calculate_field_projection(
                                   volumetric_contribution]) :
                           particle_volume_in_sphere;
 
-
-
-                      for (int d = 0; d < n_components; ++d)
+                      if constexpr (n_components == 1)
+                        particle_field_in_sphere +=
+                          volumetric_contribution *
+                          particle_properties[property_start_index];
+                      else
                         {
-                          particle_field_in_sphere[d] +=
-                            volumetric_contribution *
-                            particle_properties[property_start_index + d];
+                          for (int d = 0; d < n_components; ++d)
+                            {
+                              particle_field_in_sphere[d] +=
+                                volumetric_contribution *
+                                particle_properties[property_start_index + d];
+                            }
                         }
                     }
                 }
@@ -1231,11 +1237,19 @@ ParticleProjector<dim>::calculate_field_projection(
                                   volumetric_contribution]) :
                           particle_volume_in_sphere;
 
-                      for (int d = 0; d < n_components; ++d)
+
+                      if constexpr (n_components == 1)
+                        particle_field_in_sphere +=
+                          volumetric_contribution *
+                          particle_properties[property_start_index];
+                      else
                         {
-                          particle_field_in_sphere[d] +=
-                            volumetric_contribution *
-                            particle_properties[property_start_index + d];
+                          for (int d = 0; d < n_components; ++d)
+                            {
+                              particle_field_in_sphere[d] +=
+                                volumetric_contribution *
+                                particle_properties[property_start_index + d];
+                            }
                         }
                     }
                 }
@@ -1251,7 +1265,7 @@ ParticleProjector<dim>::calculate_field_projection(
                   if constexpr (n_components == 1)
                     {
                       phi_vf[k]      = fe_values_field.shape_value(k, q);
-                      grad_phi_vf[k] = fe_values_field.shape_gradient(k, q);
+                      grad_phi_vf[k] = fe_values_field.shape_grad(k, q);
                     }
                 }
 
@@ -1606,6 +1620,7 @@ ParticleProjector<dim>::calculate_particle_fluid_forces_projection(
   calculate_field_projection(fluid_drag_on_particles);
   // announce_string(this->pcout, "Particle velocity");
   calculate_field_projection(particle_velocity);
+  calculate_field_projection(momentum_transfer_coefficient);
 }
 
 

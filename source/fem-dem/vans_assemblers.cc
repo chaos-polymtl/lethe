@@ -970,6 +970,10 @@ VANSAssemblerDiFelice<dim>::calculate_particle_fluid_interactions(
           cfd_dem.drag_coupling == Parameters::DragCoupling::semi_implicit)
         beta_drag += momentum_transfer_coefficient;
 
+      particle_properties[DEM::CFDDEMProperties::PropertiesIndex::
+                            momentum_transfer_coefficient] =
+        momentum_transfer_coefficient;
+
       drag_force = density[i_particle] * momentum_transfer_coefficient *
                    relative_velocity[i_particle];
 
@@ -1057,6 +1061,10 @@ VANSAssemblerRong<dim>::calculate_particle_fluid_interactions(
           cfd_dem.drag_coupling == Parameters::DragCoupling::semi_implicit)
         beta_drag += momentum_transfer_coefficient;
 
+      particle_properties[DEM::CFDDEMProperties::PropertiesIndex::
+                            momentum_transfer_coefficient] =
+        momentum_transfer_coefficient;
+
       drag_force = density[i_particle] * momentum_transfer_coefficient *
                    relative_velocity[i_particle];
 
@@ -1133,6 +1141,10 @@ VANSAssemblerDallavalle<dim>::calculate_particle_fluid_interactions(
       if (cfd_dem.drag_coupling == Parameters::DragCoupling::fully_implicit ||
           cfd_dem.drag_coupling == Parameters::DragCoupling::semi_implicit)
         beta_drag += momentum_transfer_coefficient;
+
+      particle_properties[DEM::CFDDEMProperties::PropertiesIndex::
+                            momentum_transfer_coefficient] =
+        momentum_transfer_coefficient;
 
       drag_force = density[i_particle] * momentum_transfer_coefficient *
                    relative_velocity[i_particle];
@@ -1241,6 +1253,10 @@ VANSAssemblerKochHill<dim>::calculate_particle_fluid_interactions(
           cfd_dem.drag_coupling == Parameters::DragCoupling::semi_implicit)
         beta_drag += momentum_transfer_coefficient;
 
+      particle_properties[DEM::CFDDEMProperties::PropertiesIndex::
+                            momentum_transfer_coefficient] =
+        momentum_transfer_coefficient;
+
       drag_force = density[i_particle] * momentum_transfer_coefficient *
                    relative_velocity[i_particle];
 
@@ -1331,6 +1347,10 @@ VANSAssemblerBeetstra<dim>::calculate_particle_fluid_interactions(
       if (cfd_dem.drag_coupling == Parameters::DragCoupling::fully_implicit ||
           cfd_dem.drag_coupling == Parameters::DragCoupling::semi_implicit)
         beta_drag += momentum_transfer_coefficient;
+
+      particle_properties[DEM::CFDDEMProperties::PropertiesIndex::
+                            momentum_transfer_coefficient] =
+        momentum_transfer_coefficient;
 
       drag_force = density[i_particle] * momentum_transfer_coefficient *
                    relative_velocity[i_particle];
@@ -1441,6 +1461,10 @@ VANSAssemblerGidaspow<dim>::calculate_particle_fluid_interactions(
       if (cfd_dem.drag_coupling == Parameters::DragCoupling::fully_implicit ||
           cfd_dem.drag_coupling == Parameters::DragCoupling::semi_implicit)
         beta_drag += momentum_transfer_coefficient;
+
+      particle_properties[DEM::CFDDEMProperties::PropertiesIndex::
+                            momentum_transfer_coefficient] =
+        momentum_transfer_coefficient;
 
       drag_force = density[i_particle] * momentum_transfer_coefficient *
                    relative_velocity[i_particle];

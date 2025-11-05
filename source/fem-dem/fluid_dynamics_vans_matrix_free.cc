@@ -61,6 +61,8 @@ MFNavierStokesVANSPreconditionGMG<dim>::initialize(
       this->pf_force_dof_handlers.resize(min_level, max_level);
       this->pf_drag_dof_handlers.resize(min_level, max_level);
       this->particle_velocity_dof_handlers.resize(min_level, max_level);
+      this->momentum_transfer_coefficient_dof_handlers.resize(min_level,
+                                                              max_level);
 
 
       for (unsigned int l = min_level; l <= max_level; l++)
@@ -89,12 +91,22 @@ MFNavierStokesVANSPreconditionGMG<dim>::initialize(
             this->dof_handlers[l].get_triangulation());
           this->particle_velocity_dof_handlers[l].distribute_dofs(
             particle_projector.particle_velocity.dof_handler.get_fe());
+
+          // Momentum exchange coefficient
+          this->momentum_transfer_coefficient_dof_handlers[l].reinit(
+            this->dof_handlers[l].get_triangulation());
+          this->momentum_transfer_coefficient_dof_handlers[l].distribute_dofs(
+            particle_projector.momentum_transfer_coefficient.dof_handler
+              .get_fe());
         }
 
       this->transfers_void_fraction.resize(min_level, max_level);
       this->transfers_pf_force.resize(min_level, max_level);
       this->transfers_pf_drag.resize(min_level, max_level);
       this->transfers_particle_velocity.resize(min_level, max_level);
+      this->transfers_momentum_transfer_coefficient.resize(min_level,
+                                                           max_level);
+
 
       for (unsigned int l = min_level; l < max_level; l++)
         {
@@ -121,6 +133,12 @@ MFNavierStokesVANSPreconditionGMG<dim>::initialize(
             this->particle_velocity_dof_handlers[l],
             {},
             {});
+
+          this->transfers_momentum_transfer_coefficient[l + 1].reinit(
+            this->momentum_transfer_coefficient_dof_handlers[l + 1],
+            this->momentum_transfer_coefficient_dof_handlers[l],
+            {},
+            {});
         }
 
       // Make the transfer operators for every field we will transfer
@@ -139,6 +157,11 @@ MFNavierStokesVANSPreconditionGMG<dim>::initialize(
       this->mg_transfer_gc_particle_velocity =
         std::make_shared<MFNavierStokesVANSPreconditionGMG::GCTransferType>(
           this->transfers_particle_velocity);
+
+      this->mg_transfer_gc_momentum_transfer_coefficient =
+        std::make_shared<MFNavierStokesVANSPreconditionGMG::GCTransferType>(
+          this->transfers_momentum_transfer_coefficient);
+
 
       // Build transfer operator for every field
       this->mg_transfer_gc_void_fraction->build(
@@ -179,6 +202,17 @@ MFNavierStokesVANSPreconditionGMG<dim>::initialize(
             this->particle_velocity_dof_handlers[l].get_mpi_communicator());
         });
 
+      this->mg_transfer_gc_momentum_transfer_coefficient->build(
+        particle_projector.particle_velocity.dof_handler,
+        [&](const auto l, auto &vec) {
+          vec.reinit(this->momentum_transfer_coefficient_dof_handlers[l]
+                       .locally_owned_dofs(),
+                     DoFTools::extract_locally_active_dofs(
+                       this->momentum_transfer_coefficient_dof_handlers[l]),
+                     this->momentum_transfer_coefficient_dof_handlers[l]
+                       .get_mpi_communicator());
+        });
+
       // Create the MG Level Object for every field
       MGLevelObject<MFNavierStokesVANSPreconditionGMG::MGVectorType>
         mg_void_fraction_solution(this->minlevel, this->maxlevel);
@@ -191,6 +225,10 @@ MFNavierStokesVANSPreconditionGMG<dim>::initialize(
 
       MGLevelObject<MFNavierStokesVANSPreconditionGMG::MGVectorType>
         mg_particle_velocity_solution(this->minlevel, this->maxlevel);
+
+      MGLevelObject<MFNavierStokesVANSPreconditionGMG::MGVectorType>
+        mg_momentum_tranfer_coefficient_solution(this->minlevel,
+                                                 this->maxlevel);
 
       // A deal.II vector is required here, so we take the deal.II vector
       // solution from the particle projector instead of the trilinos vector
@@ -231,12 +269,24 @@ MFNavierStokesVANSPreconditionGMG<dim>::initialize(
         mg_particle_velocity_solution,
         particle_projector.particle_velocity.particle_field_solution);
 
+      // Momentum transfer coefficient
+      particle_projector.momentum_transfer_coefficient.particle_field_solution
+        .update_ghost_values();
+
+      this->mg_transfer_gc_momentum_transfer_coefficient->interpolate_to_mg(
+        particle_projector.momentum_transfer_coefficient.dof_handler,
+        mg_momentum_tranfer_coefficient_solution,
+        particle_projector.momentum_transfer_coefficient
+          .particle_field_solution);
+
+
       for (unsigned int l = min_level; l <= max_level; l++)
         {
           mg_void_fraction_solution[l].update_ghost_values();
           mg_pf_forces_solution[l].update_ghost_values();
           mg_pf_drag_solution[l].update_ghost_values();
           mg_particle_velocity_solution[l].update_ghost_values();
+          mg_momentum_tranfer_coefficient_solution[l].update_ghost_values();
 
 
           if (auto mf_operator = dynamic_cast<VANSOperator<dim, double> *>(
@@ -525,9 +575,23 @@ FluidDynamicsVANSMatrixFree<dim>::gather_output_hook()
       particle_velocity_names,
       particle_velocity_component_interpretation);
 
+  std::vector<std::string> mtc_name(1, "momentum_transfer_coefficient");
+  std::vector<DataComponentInterpretation::DataComponentInterpretation>
+    mtc_component_interpretation(
+      1, DataComponentInterpretation::component_is_scalar);
+
+  OutputStructSolution<dim, LinearAlgebra::distributed::Vector<double>>
+    mtc_struct(
+      particle_projector.momentum_transfer_coefficient.dof_handler,
+      particle_projector.momentum_transfer_coefficient.particle_field_solution,
+      mtc_name,
+      mtc_component_interpretation);
+
+
   return {void_fraction_struct,
           particle_fluid_drag_struct,
-          particle_velocity_struct};
+          particle_velocity_struct,
+          mtc_struct};
 }
 
 template <int dim>

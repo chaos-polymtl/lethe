@@ -108,13 +108,25 @@ private:
   /// coarsening algorithm
   MGLevelObject<DoFHandler<dim>> particle_velocity_dof_handlers;
 
-  /// Particle-fluid drag transfers for each of the levels of the global
+  /// Particle velocity for each of the levels of the global
   /// coarsening algorithm
   MGLevelObject<MGTwoLevelTransfer<dim, MGVectorType>>
     transfers_particle_velocity;
 
-  /// Transfer operator for global coarsening for the particle-fluid drag
+  /// Transfer operator for global coarsening for the particle velocity
   std::shared_ptr<GCTransferType> mg_transfer_gc_particle_velocity;
+
+  /// Particle velocity DoF handlers for each of the levels of the global
+  /// coarsening algorithm
+  MGLevelObject<DoFHandler<dim>> momentum_transfer_coefficient_dof_handlers;
+
+  /// Particle-fluid drag transfers for each of the levels of the global
+  /// coarsening algorithm
+  MGLevelObject<MGTwoLevelTransfer<dim, MGVectorType>>
+    transfers_momentum_transfer_coefficient;
+
+  /// Transfer operator for global coarsening for the particle-fluid drag
+  std::shared_ptr<GCTransferType> mg_transfer_gc_momentum_transfer_coefficient;
 };
 
 /**
