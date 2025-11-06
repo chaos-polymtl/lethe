@@ -1,8 +1,7 @@
 # Listing of Parameters
 # ---------------------
+
 subsection Parameters
-
-
   # complex relative permittivity of medium
   set epsilon r = 1.,0.
 
@@ -45,13 +44,12 @@ subsection Parameters
   # maximum refinement level for adaptive refinement
   set max refinement level = 6
 
-  # order of the DGQ element 
+  # order of the DGQ element
   set degree = 2
 
-  # delta order for the test space 
+  # delta order for the test space
   set delta degree = 1
 
   # convergence criteria
   set convergence criteria = 1e-7
-
 end
