@@ -1222,22 +1222,16 @@ IBParticlesDEM<dim>::integrate_particles_motion(const double dt,
       // Solve each of the 4 step of the RK4 method
       for (unsigned int step = 0; step < 4; ++step)
         {
-          std::fill(current_fluid_force.begin(), current_fluid_force.end(), 0);
-          std::fill(current_fluid_torque.begin(),
-                    current_fluid_torque.end(),
-                    0);
-          std::fill(contact_torque.begin(), contact_torque.end(), 0);
-          std::fill(contact_force.begin(), contact_force.end(), 0);
-          std::fill(contact_wall_force.begin(), contact_wall_force.end(), 0);
-          std::fill(contact_wall_torque.begin(), contact_wall_torque.end(), 0);
-          std::fill(lubrication_force.begin(), lubrication_force.end(), 0);
-          std::fill(lubrication_torque.begin(), lubrication_torque.end(), 0);
-          std::fill(lubrication_wall_force.begin(),
-                    lubrication_wall_force.end(),
-                    0);
-          std::fill(lubrication_wall_torque.begin(),
-                    lubrication_wall_torque.end(),
-                    0);
+          std::ranges::fill(current_fluid_force, 0.);
+          std::ranges::fill(current_fluid_torque, 0.);
+          std::ranges::fill(contact_torque, 0.);
+          std::ranges::fill(contact_force, 0.);
+          std::ranges::fill(contact_wall_force, 0.);
+          std::ranges::fill(contact_wall_torque, 0.);
+          std::ranges::fill(lubrication_force, 0.);
+          std::ranges::fill(lubrication_torque, 0.);
+          std::ranges::fill(lubrication_wall_force, 0.);
+          std::ranges::fill(lubrication_wall_torque, 0.);
 
           // define local time of the rk step
           double local_dt = dt_dem * 0.5;
