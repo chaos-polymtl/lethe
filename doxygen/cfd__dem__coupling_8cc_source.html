@@ -1557,7 +1557,7 @@ $(document).ready(function() { init_codefold(0); });
 <div class="line"><a id="l01417" name="l01417"></a><span class="lineno"> 1417</span>    }</div>
 <div class="line"><a id="l01418" name="l01418"></a><span class="lineno"> 1418</span> </div>
 <div class="line"><a id="l01419" name="l01419"></a><span class="lineno"> 1419</span>  <span class="comment">// Always reset the displacement values since we are doing a search detection</span></div>
-<div class="line"><a id="l01420" name="l01420"></a><span class="lineno"> 1420</span>  std::fill(displacement.begin(), displacement.end(), 0.);</div>
+<div class="line"><a id="l01420" name="l01420"></a><span class="lineno"> 1420</span>  std::ranges::fill(displacement, 0.);</div>
 <div class="line"><a id="l01421" name="l01421"></a><span class="lineno"> 1421</span> </div>
 <div class="line"><a id="l01422" name="l01422"></a><span class="lineno"> 1422</span>  this-&gt;particle_handler.exchange_ghost_particles(<span class="keyword">true</span>);</div>
 <div class="line"><a id="l01423" name="l01423"></a><span class="lineno"> 1423</span>}</div>
