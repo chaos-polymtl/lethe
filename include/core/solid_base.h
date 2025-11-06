@@ -38,10 +38,11 @@ class SolidBase
 {
 public:
   // Member functions
-  SolidBase(std::shared_ptr<Parameters::NitscheObject<spacedim>> &param,
-            std::shared_ptr<parallel::DistributedTriangulationBase<spacedim>>
-                                               fluid_tria,
-            std::shared_ptr<Mapping<spacedim>> fluid_mapping);
+  SolidBase(
+    std::shared_ptr<Parameters::NitscheObject<spacedim>> &param,
+    const std::shared_ptr<parallel::DistributedTriangulationBase<spacedim>>
+                                             &fluid_tria,
+    const std::shared_ptr<Mapping<spacedim>> &fluid_mapping);
 
   /**
    * @brief Manages solid triangulation and particles setup

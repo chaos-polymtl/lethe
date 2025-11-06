@@ -421,7 +421,7 @@ SerialSolid<dim, spacedim>::displace_solid_triangulation()
                   const auto dof_index = cell->vertex_dof_index(vertex, 0);
                   Point<spacedim> &vertex_position = cell->vertex(vertex);
 
-                  for (unsigned d = 0; d < spacedim; ++d)
+                  for (int d = 0; d < spacedim; ++d)
                     {
                       vertex_position[d] =
                         vertex_position[d] + displacement[dof_index + d];
@@ -457,7 +457,7 @@ SerialSolid<dim, spacedim>::move_solid_triangulation_with_displacement()
               const auto       dof_index = cell->vertex_dof_index(vertex, 0);
               Point<spacedim> &vertex_position = cell->vertex(vertex);
 
-              for (unsigned d = 0; d < spacedim; ++d)
+              for (int d = 0; d < spacedim; ++d)
                 {
                   vertex_position[d] += displacement[dof_index + d];
                 }

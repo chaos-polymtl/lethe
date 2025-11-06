@@ -3,6 +3,8 @@
 
 #include <core/shape_parsing.h>
 
+#include <algorithm>
+
 template <int dim>
 std::shared_ptr<Shape<dim>>
 ShapeGenerator::initialize_shape(const std::string  &type,
@@ -70,7 +72,7 @@ ShapeGenerator::initialize_shape_from_vector(
         {
           Tensor<1, dim> half_lengths{};
           Tensor<1, dim> exponents{};
-          for (unsigned int d = 0; d < dim; d++)
+          for (int d = 0; d < dim; d++)
             {
               half_lengths[d] = shape_arguments[d];
               exponents[d]    = shape_arguments[d + dim];
@@ -225,14 +227,7 @@ ShapeGenerator::initialize_shape_from_file(const std::string  &type,
                       unsigned int identifier = stoi(list_of_words_clean[0]);
                       const std::string &type_str      = list_of_words_clean[1];
                       std::string        arguments_str = list_of_words_clean[2];
-                      // When we switch to the Clang V20 CI, we should use the
-                      // line below.
-                      // std::ranges::replace(arguments_str, ':', ';');
-                      // Until then
-                      std::replace(arguments_str.begin(),
-                                   arguments_str.end(),
-                                   ':',
-                                   ';');
+                      std::ranges::replace(arguments_str, ':', ';');
                       const std::string &position_str = list_of_words_clean[3];
                       const std::string &orientation_str =
                         list_of_words_clean[4];

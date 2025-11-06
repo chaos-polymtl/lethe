@@ -35,9 +35,10 @@
 
 template <int dim, int spacedim>
 SolidBase<dim, spacedim>::SolidBase(
-  std::shared_ptr<Parameters::NitscheObject<spacedim>>             &param,
-  std::shared_ptr<parallel::DistributedTriangulationBase<spacedim>> fluid_tria,
-  std::shared_ptr<Mapping<spacedim>> fluid_mapping)
+  std::shared_ptr<Parameters::NitscheObject<spacedim>> &param,
+  const std::shared_ptr<parallel::DistributedTriangulationBase<spacedim>>
+                                           &fluid_tria,
+  const std::shared_ptr<Mapping<spacedim>> &fluid_mapping)
   : mpi_communicator(MPI_COMM_WORLD)
   , n_mpi_processes(Utilities::MPI::n_mpi_processes(mpi_communicator))
   , this_mpi_process(Utilities::MPI::this_mpi_process(mpi_communicator))
