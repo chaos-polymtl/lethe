@@ -780,8 +780,8 @@ $(document).ready(function() { init_codefold(0); });
 <div class="line"><a id="l00660" name="l00660"></a><span class="lineno">  660</span>                          MPI_COMM_WORLD);</div>
 <div class="line"><a id="l00661" name="l00661"></a><span class="lineno">  661</span> </div>
 <div class="line"><a id="l00662" name="l00662"></a><span class="lineno">  662</span>  Table&lt;2, DoFTools::Coupling&gt; coupling(dim + 1, dim + 1);</div>
-<div class="line"><a id="l00663" name="l00663"></a><span class="lineno">  663</span>  <span class="keywordflow">for</span> (<span class="keywordtype">unsigned</span> <span class="keywordtype">int</span> c = 0; c &lt; dim + 1; ++c)</div>
-<div class="line"><a id="l00664" name="l00664"></a><span class="lineno">  664</span>    <span class="keywordflow">for</span> (<span class="keywordtype">unsigned</span> <span class="keywordtype">int</span> d = 0; d &lt; dim + 1; ++d)</div>
+<div class="line"><a id="l00663" name="l00663"></a><span class="lineno">  663</span>  <span class="keywordflow">for</span> (<span class="keywordtype">int</span> c = 0; c &lt; dim + 1; ++c)</div>
+<div class="line"><a id="l00664" name="l00664"></a><span class="lineno">  664</span>    <span class="keywordflow">for</span> (<span class="keywordtype">int</span> d = 0; d &lt; dim + 1; ++d)</div>
 <div class="line"><a id="l00665" name="l00665"></a><span class="lineno">  665</span>      <span class="keywordflow">if</span> (!((c == dim) &amp;&amp; (d == dim)))</div>
 <div class="line"><a id="l00666" name="l00666"></a><span class="lineno">  666</span>        coupling[c][d] = DoFTools::always;</div>
 <div class="line"><a id="l00667" name="l00667"></a><span class="lineno">  667</span>      <span class="keywordflow">else</span></div>
