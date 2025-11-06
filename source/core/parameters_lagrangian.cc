@@ -1916,7 +1916,7 @@ namespace Parameters
         insertion_directions_units_vector.reserve(3);
         n_photons_each_directions.reserve(3);
         step_between_photons_each_directions.reserve(3);
-        for (unsigned int i = 0; i < dim; i++)
+        for (int i = 0; i < dim; i++)
           {
             Tensor<1, dim> temp_direction_tensor =
               value_string_to_tensor<dim>(insertion_unit_tensors_string.at(i));
@@ -1965,8 +1965,8 @@ namespace Parameters
     template class GridMotion<3>;
     template class InsertionInfo<2>;
     template class InsertionInfo<3>;
-    template class ParticleRayTracing<2>;
-    template class ParticleRayTracing<3>;
+    template struct ParticleRayTracing<2>;
+    template struct ParticleRayTracing<3>;
 
   } // namespace Lagrangian
 } // namespace Parameters

@@ -6,6 +6,8 @@
 
 #include <deal.II/base/exceptions.h>
 
+#include <algorithm>
+
 DeclException2(
   PhaseChangeIntervalError,
   double,
@@ -261,10 +263,7 @@ namespace Parameters
 
       output_folder = prm.get("output path");
       output_name   = prm.get("output name");
-      output_name.erase(std::remove(output_name.begin(),
-                                    output_name.end(),
-                                    '/'),
-                        output_name.end());
+      std::erase(output_name, '/');
       output_iteration_frequency = prm.get_integer("output frequency");
       output_time_frequency      = prm.get_double("output time frequency");
       output_times_vector =
