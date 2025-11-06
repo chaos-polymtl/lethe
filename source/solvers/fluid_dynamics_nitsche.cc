@@ -322,7 +322,7 @@ FluidDynamicsNitsche<dim, spacedim>::calculate_forces_on_solid(
   Tensor<1, spacedim> velocity;
   Function<spacedim> *solid_velocity = solids[i_solid]->get_solid_velocity();
   Tensor<1, spacedim> force;
-  for (unsigned int i = 0; i < spacedim; ++i)
+  for (int i = 0; i < spacedim; ++i)
     force[i] = 0;
 
   // Loop over all local particles
