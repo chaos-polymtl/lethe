@@ -827,12 +827,15 @@ MFNavierStokesPreconditionGMGBase<dim>::reinit(
               "The mg level min cells specified are larger than the cells of the finest mg level."));
 
           for (unsigned int level = min_h_level; level <= max_h_level; ++level)
-            if (n_cells_on_levels[level] >=
-                static_cast<unsigned int>(mg_level_min_cells))
-              {
-                min_h_level = level;
-                break;
-              }
+            {
+              const int n_cells_on_level =
+                static_cast<int>(n_cells_on_levels[level]);
+              if (n_cells_on_level >= mg_level_min_cells)
+                {
+                  min_h_level = level;
+                  break;
+                }
+            }
         }
 
       // p-multigrid
