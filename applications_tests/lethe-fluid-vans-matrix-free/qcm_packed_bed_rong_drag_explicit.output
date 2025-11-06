@@ -18,16 +18,14 @@ Void Fraction
 --------------
   -Tolerance of iterative solver is : 1e-12
   -Iterative solver took : 5 steps 
-----------------------
-Particle-fluid forces
-----------------------
   -Tolerance of iterative solver is : 1e-12
   -Iterative solver took : 0 steps 
---------------------
-Particle-fluid drag
---------------------
   -Tolerance of iterative solver is : 1e-12
   -Iterative solver took : 3 steps 
+  -Tolerance of iterative solver is : 1e-12
+  -Iterative solver took : 9 steps 
+  -Tolerance of iterative solver is : 1e-12
+  -Iterative solver took : 0 steps 
 
   -Eigenvalue estimation level 0:
     Relaxation parameter: 1.38637
@@ -159,16 +157,14 @@ Void Fraction
 --------------
   -Tolerance of iterative solver is : 1e-12
   -Iterative solver took : 5 steps 
-----------------------
-Particle-fluid forces
-----------------------
   -Tolerance of iterative solver is : 1e-12
   -Iterative solver took : 0 steps 
---------------------
-Particle-fluid drag
---------------------
   -Tolerance of iterative solver is : 1e-12
   -Iterative solver took : 6 steps 
+  -Tolerance of iterative solver is : 1e-12
+  -Iterative solver took : 0 steps 
+  -Tolerance of iterative solver is : 1e-12
+  -Iterative solver took : 0 steps 
 
   -Eigenvalue estimation level 0:
     Relaxation parameter: 1.08492
@@ -300,16 +296,14 @@ Void Fraction
 --------------
   -Tolerance of iterative solver is : 1e-12
   -Iterative solver took : 5 steps 
-----------------------
-Particle-fluid forces
-----------------------
   -Tolerance of iterative solver is : 1e-12
   -Iterative solver took : 0 steps 
---------------------
-Particle-fluid drag
---------------------
   -Tolerance of iterative solver is : 1e-12
   -Iterative solver took : 5 steps 
+  -Tolerance of iterative solver is : 1e-12
+  -Iterative solver took : 0 steps 
+  -Tolerance of iterative solver is : 1e-12
+  -Iterative solver took : 0 steps 
 
   -Eigenvalue estimation level 0:
     Relaxation parameter: 1.08498
@@ -441,16 +435,14 @@ Void Fraction
 --------------
   -Tolerance of iterative solver is : 1e-12
   -Iterative solver took : 5 steps 
-----------------------
-Particle-fluid forces
-----------------------
   -Tolerance of iterative solver is : 1e-12
   -Iterative solver took : 0 steps 
---------------------
-Particle-fluid drag
---------------------
   -Tolerance of iterative solver is : 1e-12
   -Iterative solver took : 5 steps 
+  -Tolerance of iterative solver is : 1e-12
+  -Iterative solver took : 0 steps 
+  -Tolerance of iterative solver is : 1e-12
+  -Iterative solver took : 0 steps 
 
   -Eigenvalue estimation level 0:
     Relaxation parameter: 1.08505
@@ -582,16 +574,14 @@ Void Fraction
 --------------
   -Tolerance of iterative solver is : 1e-12
   -Iterative solver took : 5 steps 
-----------------------
-Particle-fluid forces
-----------------------
   -Tolerance of iterative solver is : 1e-12
   -Iterative solver took : 0 steps 
---------------------
-Particle-fluid drag
---------------------
   -Tolerance of iterative solver is : 1e-12
   -Iterative solver took : 5 steps 
+  -Tolerance of iterative solver is : 1e-12
+  -Iterative solver took : 0 steps 
+  -Tolerance of iterative solver is : 1e-12
+  -Iterative solver took : 0 steps 
 
   -Eigenvalue estimation level 0:
     Relaxation parameter: 1.08513
@@ -723,16 +713,14 @@ Void Fraction
 --------------
   -Tolerance of iterative solver is : 1e-12
   -Iterative solver took : 5 steps 
-----------------------
-Particle-fluid forces
-----------------------
   -Tolerance of iterative solver is : 1e-12
   -Iterative solver took : 0 steps 
---------------------
-Particle-fluid drag
---------------------
   -Tolerance of iterative solver is : 1e-12
   -Iterative solver took : 5 steps 
+  -Tolerance of iterative solver is : 1e-12
+  -Iterative solver took : 0 steps 
+  -Tolerance of iterative solver is : 1e-12
+  -Iterative solver took : 0 steps 
 
   -Eigenvalue estimation level 0:
     Relaxation parameter: 1.08522
@@ -864,16 +852,14 @@ Void Fraction
 --------------
   -Tolerance of iterative solver is : 1e-12
   -Iterative solver took : 5 steps 
-----------------------
-Particle-fluid forces
-----------------------
   -Tolerance of iterative solver is : 1e-12
   -Iterative solver took : 0 steps 
---------------------
-Particle-fluid drag
---------------------
   -Tolerance of iterative solver is : 1e-12
   -Iterative solver took : 5 steps 
+  -Tolerance of iterative solver is : 1e-12
+  -Iterative solver took : 0 steps 
+  -Tolerance of iterative solver is : 1e-12
+  -Iterative solver took : 0 steps 
 
   -Eigenvalue estimation level 0:
     Relaxation parameter: 1.08531
@@ -1005,16 +991,14 @@ Void Fraction
 --------------
   -Tolerance of iterative solver is : 1e-12
   -Iterative solver took : 5 steps 
-----------------------
-Particle-fluid forces
-----------------------
   -Tolerance of iterative solver is : 1e-12
   -Iterative solver took : 0 steps 
---------------------
-Particle-fluid drag
---------------------
   -Tolerance of iterative solver is : 1e-12
   -Iterative solver took : 5 steps 
+  -Tolerance of iterative solver is : 1e-12
+  -Iterative solver took : 0 steps 
+  -Tolerance of iterative solver is : 1e-12
+  -Iterative solver took : 0 steps 
 
   -Eigenvalue estimation level 0:
     Relaxation parameter: 1.0854
@@ -1146,16 +1130,14 @@ Void Fraction
 --------------
   -Tolerance of iterative solver is : 1e-12
   -Iterative solver took : 5 steps 
-----------------------
-Particle-fluid forces
-----------------------
   -Tolerance of iterative solver is : 1e-12
   -Iterative solver took : 0 steps 
---------------------
-Particle-fluid drag
---------------------
   -Tolerance of iterative solver is : 1e-12
   -Iterative solver took : 5 steps 
+  -Tolerance of iterative solver is : 1e-12
+  -Iterative solver took : 0 steps 
+  -Tolerance of iterative solver is : 1e-12
+  -Iterative solver took : 0 steps 
 
   -Eigenvalue estimation level 0:
     Relaxation parameter: 1.08549
@@ -1287,16 +1269,14 @@ Void Fraction
 --------------
   -Tolerance of iterative solver is : 1e-12
   -Iterative solver took : 5 steps 
-----------------------
-Particle-fluid forces
-----------------------
   -Tolerance of iterative solver is : 1e-12
   -Iterative solver took : 0 steps 
---------------------
-Particle-fluid drag
---------------------
   -Tolerance of iterative solver is : 1e-12
   -Iterative solver took : 5 steps 
+  -Tolerance of iterative solver is : 1e-12
+  -Iterative solver took : 0 steps 
+  -Tolerance of iterative solver is : 1e-12
+  -Iterative solver took : 0 steps 
 
   -Eigenvalue estimation level 0:
     Relaxation parameter: 1.08558

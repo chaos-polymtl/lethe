@@ -472,19 +472,23 @@ FluidDynamicsVANSMatrixFree<dim>::assemble_system_rhs()
       TimerOutput::Scope t(this->computing_timer,
                            "Prepare MF operator for VANS");
 
-      // Project again the forces acting on the particles
-      particle_projector.calculate_particle_fluid_forces_projection(
-        this->cfd_dem_simulation_parameters.cfd_dem,
-        this->dof_handler,
-        this->evaluation_point,
-        this->previous_solutions,
-        NavierStokesScratchData<dim>(
-          this->simulation_control,
-          this->simulation_parameters.physical_properties_manager,
-          *this->fe,
-          *this->cell_quadrature,
-          *this->mapping,
-          *this->face_quadrature));
+      // If the coupling is implicit, we need to carry out the projection of
+      // the particle information onto the CFD mesh at every RHS evaluation
+      // since the momentum exchange term evolves.
+      if (cfd_dem_simulation_parameters.cfd_dem.drag_coupling ==
+          Parameters::DragCoupling::fully_implicit)
+        particle_projector.calculate_particle_fluid_forces_projection(
+          this->cfd_dem_simulation_parameters.cfd_dem,
+          this->dof_handler,
+          this->evaluation_point,
+          this->previous_solutions,
+          NavierStokesScratchData<dim>(
+            this->simulation_control,
+            this->simulation_parameters.physical_properties_manager,
+            *this->fe,
+            *this->cell_quadrature,
+            *this->mapping,
+            *this->face_quadrature));
 
       mf_operator->compute_particle_fluid_interaction(
         particle_projector.fluid_force_on_particles_two_way_coupling
