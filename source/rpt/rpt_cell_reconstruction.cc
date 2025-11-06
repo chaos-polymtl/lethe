@@ -1,4 +1,4 @@
-// SPDX-FileCopyrightText: Copyright (c) 2021-2024 The Lethe Authors
+// SPDX-FileCopyrightText: Copyright (c) 2021-2025 The Lethe Authors
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
 #include <deal.II/grid/cell_id.h>
@@ -327,10 +327,8 @@ RPTCellReconstruction<dim>::find_cells(
                     map_vertices_index[vertex_index].second[j];
                 }
               // Get the min/max counts values
-              min = *std::min_element(counts_vertices.begin(),
-                                      counts_vertices.end());
-              max = *std::max_element(counts_vertices.begin(),
-                                      counts_vertices.end());
+              min = *std::ranges::min_element(counts_vertices);
+              max = *std::ranges::max_element(counts_vertices);
 
               // If counts is in the range, counts for the detector is true
               if (particle_reconstruction_counts[j] >= min &&
