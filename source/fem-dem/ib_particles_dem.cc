@@ -1222,16 +1222,16 @@ IBParticlesDEM<dim>::integrate_particles_motion(const double dt,
       // Solve each of the 4 step of the RK4 method
       for (unsigned int step = 0; step < 4; ++step)
         {
-          std::ranges::fill(current_fluid_force, 0.);
-          std::ranges::fill(current_fluid_torque, 0.);
-          std::ranges::fill(contact_torque, 0.);
-          std::ranges::fill(contact_force, 0.);
-          std::ranges::fill(contact_wall_force, 0.);
-          std::ranges::fill(contact_wall_torque, 0.);
-          std::ranges::fill(lubrication_force, 0.);
-          std::ranges::fill(lubrication_torque, 0.);
-          std::ranges::fill(lubrication_wall_force, 0.);
-          std::ranges::fill(lubrication_wall_torque, 0.);
+          std::ranges::fill(current_fluid_force, 0);
+          std::ranges::fill(current_fluid_torque, 0);
+          std::ranges::fill(contact_torque, 0);
+          std::ranges::fill(contact_force, 0);
+          std::ranges::fill(contact_wall_force, 0);
+          std::ranges::fill(contact_wall_torque, 0);
+          std::ranges::fill(lubrication_force, 0);
+          std::ranges::fill(lubrication_torque, 0);
+          std::ranges::fill(lubrication_wall_force, 0);
+          std::ranges::fill(lubrication_wall_torque, 0);
 
           // define local time of the rk step
           double local_dt = dt_dem * 0.5;
