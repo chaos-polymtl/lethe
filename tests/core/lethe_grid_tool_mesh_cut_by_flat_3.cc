@@ -14,6 +14,8 @@
 
 #include <deal.II/numerics/data_out.h>
 
+#include <algorithm>
+
 // This include is only required for 9.7 and above.
 #if DEAL_II_VERSION_GTE(9, 7, 0)
 #  include <deal.II/grid/cell_data.h>
@@ -80,14 +82,13 @@ test()
                                                           flat_cell,
                                                           vertice_to_cell);
 
-  std::sort(cells_cut.begin(),
-            cells_cut.end(),
-            [](typename DoFHandler<3>::active_cell_iterator cell_1,
-               typename DoFHandler<3>::active_cell_iterator cell_2) {
-              return cell_1->global_active_cell_index() <
-                     cell_2->global_active_cell_index();
-            });
-
+  std::ranges::sort(
+    cells_cut,
+    [](const typename DoFHandler<3>::active_cell_iterator &cell_1,
+       const typename DoFHandler<3>::active_cell_iterator &cell_2) {
+      return cell_1->global_active_cell_index() <
+             cell_2->global_active_cell_index();
+    });
 
   for (auto &cell : cells_cut)
     {
