@@ -36,6 +36,7 @@ DEAL::Property 18 : 0.00000
 DEAL::Property 19 : 0.00000
 DEAL::Property 20 : 0.00000
 DEAL::Property 21 : 0.00000
+DEAL::Property 22 : 0.00000
 DEAL::Output of the original particle handler
 DEAL::Particle 0
 DEAL::Position : 0.500000 0.500000 0.500000
@@ -73,3 +74,4 @@ DEAL::Property 18 : 0.00000
 DEAL::Property 19 : 0.00000
 DEAL::Property 20 : 0.00000
 DEAL::Property 21 : 0.00000
+DEAL::Property 22 : 0.00000
