@@ -2430,11 +2430,6 @@ namespace Parameters
           "false",
           Patterns::Bool(),
           "Aborts Lethe by throwing an exception if non-linear solver convergence has failed");
-        prm.declare_entry(
-          "rescale residual",
-          "false",
-          Patterns::Bool(),
-          "Rescale the residual by the square root of the volume of the triangulation");
       }
       prm.leave_subsection();
     }
@@ -2488,7 +2483,6 @@ namespace Parameters
         reuse_preconditioner  = prm.get_bool("reuse preconditioner");
         abort_at_convergence_failure =
           prm.get_bool("abort at convergence failure");
-        rescale_residual_by_volume = prm.get_bool("rescale residual");
       }
       prm.leave_subsection();
     }
@@ -2702,6 +2696,11 @@ namespace Parameters
           "The iterative solver for the linear system of equations. "
           "Choices are <gmres|bicgstab|direct>.");
 
+        prm.declare_entry(
+          "rescale residual",
+          "false",
+          Patterns::Bool(),
+          "Rescale the residual by the square root of the volume of the triangulation");
         prm.declare_entry("relative residual",
                           "1e-3",
                           Patterns::Double(),
@@ -2949,10 +2948,11 @@ namespace Parameters
           throw(
             std::runtime_error("Unknown verbosity mode for the linear solver"));
 
-        relative_residual        = prm.get_double("relative residual");
-        minimum_residual         = prm.get_double("minimum residual");
-        max_iterations           = prm.get_integer("max iters");
-        max_krylov_vectors       = prm.get_integer("max krylov vectors");
+        rescale_residual_by_volume = prm.get_bool("rescale residual");
+        relative_residual          = prm.get_double("relative residual");
+        minimum_residual           = prm.get_double("minimum residual");
+        max_iterations             = prm.get_integer("max iters");
+        max_krylov_vectors         = prm.get_integer("max krylov vectors");
         enable_hessians_jacobian = prm.get_bool("enable hessians in jacobian");
         enable_hessians_residual = prm.get_bool("enable hessians in residual");
 

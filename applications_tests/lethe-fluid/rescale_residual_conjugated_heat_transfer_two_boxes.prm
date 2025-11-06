@@ -137,13 +137,11 @@ subsection non-linear solver
     set tolerance        = 5e-8
     set max iterations   = 3
     set verbosity        = quiet
-    set rescale residual = true
   end
   subsection fluid dynamics
     set tolerance        = 5e-8
     set max iterations   = 3
     set verbosity        = quiet
-    set rescale residual = true
   end
 end
 
@@ -154,6 +152,7 @@ end
 subsection linear solver
   subsection fluid dynamics
     set method                                = gmres
+    set rescale residual                      = true
     set relative residual                     = 1e-3
     set minimum residual                      = 5e-9
     set preconditioner                        = ilu
@@ -164,6 +163,7 @@ subsection linear solver
   end
   subsection heat transfer
     set method                                = gmres
+    set rescale residual = true
     set relative residual                     = 1e-3
     set minimum residual                      = 5e-9
     set preconditioner                        = ilu

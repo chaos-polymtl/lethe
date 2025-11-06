@@ -1209,9 +1209,6 @@ namespace Parameters
     // Abort solver if non-linear solution has not reached tolerance
     bool abort_at_convergence_failure;
 
-    // Rescale residual by the sqrt of the triangulation volume flag
-    bool rescale_residual_by_volume;
-
     static void
     declare_parameters(ParameterHandler &prm, const std::string &physics_name);
     void
@@ -1237,6 +1234,10 @@ namespace Parameters
 
     /// Verbosity of linear solver
     Verbosity verbosity;
+
+    /// Rescale linear and non-linear residuals by the sqrt of the triangulation
+    /// volume flag
+    bool rescale_residual_by_volume;
 
     /// Relative residuals of the iterative solver
     double relative_residual;

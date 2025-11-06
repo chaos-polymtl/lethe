@@ -118,7 +118,7 @@ VOFLinearSubequationsSolver<dim>::solve_linear_system_and_update_solution()
 
   // Set tolerance
   const double rescale_metric =
-    simulation_parameters.non_linear_solver.at(PhysicsID::VOF)
+    simulation_parameters.linear_solver.at(PhysicsID::VOF)
         .rescale_residual_by_volume ?
       GridTools::volume(*this->triangulation, *this->mapping) :
       1.0;

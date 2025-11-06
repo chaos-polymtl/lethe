@@ -89,7 +89,6 @@ subsection non-linear solver
     set max iterations     = 1
     set residual precision = 3
     set verbosity          = verbose
-    set rescale residual   = true
   end
 end
 
@@ -99,8 +98,9 @@ end
 
 subsection linear solver
   subsection fluid dynamics
-    set method                                    = gmres
-    set preconditioner                            = amg
+    set method           = gmres
+    set rescale residual = true
+    set preconditioner   = amg
   end
 end
 
