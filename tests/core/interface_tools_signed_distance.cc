@@ -49,7 +49,7 @@ test()
 
   Point<dim> p_0 = Point<dim>();
   Point<dim> p_1 = Point<dim>();
-  for (unsigned int n = 0; n < dim; n++)
+  for (int n = 0; n < dim; n++)
     {
       p_0[n] = 0.0;
       p_1[n] = 1.0;
@@ -79,7 +79,7 @@ test()
 
   const double sphere_radius = 0.25;
   Point<dim>   sphere_center = Point<dim>();
-  for (unsigned int n = 0; n < dim; n++)
+  for (int n = 0; n < dim; n++)
     {
       sphere_center[n] = 0.5;
     }
