@@ -314,7 +314,7 @@ CahnHilliard<dim>::gather_output_hook()
   solution_output_structs.emplace_back(
     std::in_place_type<OutputStructSolution<dim, GlobalVectorType>>,
     *dof_handler,
-    filtered_solution,
+    *filtered_solution,
     solution_names_filtered,
     data_component_interpretation);
 
@@ -1061,9 +1061,9 @@ CahnHilliard<dim>::setup_dofs()
                           locally_relevant_dofs,
                           mpi_communicator);
 
-  filtered_solution.reinit(this->locally_owned_dofs,
-                           this->locally_relevant_dofs,
-                           mpi_communicator);
+  filtered_solution->reinit(this->locally_owned_dofs,
+                            this->locally_relevant_dofs,
+                            mpi_communicator);
 
   // Previous solutions for transient schemes
   for (auto &solution : this->previous_solutions)
@@ -1179,7 +1179,7 @@ CahnHilliard<dim>::setup_dofs()
   multiphysics->set_dof_handler(PhysicsID::cahn_hilliard, this->dof_handler);
   multiphysics->set_solution(PhysicsID::cahn_hilliard, &this->present_solution);
   multiphysics->set_filtered_solution(PhysicsID::cahn_hilliard,
-                                      &this->filtered_solution);
+                                      this->filtered_solution);
   multiphysics->set_previous_solutions(PhysicsID::cahn_hilliard,
                                        &this->previous_solutions);
 }
@@ -1461,7 +1461,7 @@ CahnHilliard<dim>::apply_phase_filter()
                                            mpi_communicator);
   filtered_solution_owned = this->present_solution;
 
-  filtered_solution.reinit(this->present_solution);
+  filtered_solution->reinit(this->present_solution);
 
   // std::unordered_map<unsigned int, bool> filtered_cell_list;
   std::unordered_set<unsigned int> filtered_cell_list;
@@ -1506,13 +1506,13 @@ CahnHilliard<dim>::apply_phase_filter()
         }
     }
 
-  filtered_solution = filtered_solution_owned;
+  *filtered_solution = filtered_solution_owned;
 
   if (this->simulation_parameters.multiphysics.cahn_hilliard_parameters
         .cahn_hilliard_phase_filter.verbosity == Parameters::Verbosity::verbose)
     {
       this->pcout << "Filtered phase values: " << std::endl;
-      for (const double filtered_phase : filtered_solution)
+      for (const double filtered_phase : *filtered_solution)
         {
           this->pcout << filtered_phase << std::endl;
         }

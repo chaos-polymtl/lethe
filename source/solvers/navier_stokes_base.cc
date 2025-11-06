@@ -2491,7 +2491,7 @@ NavierStokesBase<dim, VectorType, DofsType>::
 
   // Get filtered phase fraction solution
   const auto filtered_phase_fraction_solution =
-    *this->multiphysics->get_filtered_solution(PhysicsID::VOF);
+    this->multiphysics->get_filtered_solution(PhysicsID::VOF);
   std::vector<double> local_filtered_phase_fraction_values(
     this->cell_quadrature->size());
 

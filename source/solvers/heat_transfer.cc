@@ -541,7 +541,7 @@ HeatTransfer<dim>::assemble_local_system_matrix(
         &dof_handler_vof);
 
       scratch_data.reinit_vof(
-        phase_cell, *this->multiphysics->get_filtered_solution(PhysicsID::VOF));
+        phase_cell, this->multiphysics->get_filtered_solution(PhysicsID::VOF));
     }
 
   scratch_data.calculate_physical_properties();
@@ -716,7 +716,7 @@ HeatTransfer<dim>::assemble_local_system_rhs(
         &dof_handler_vof);
 
       scratch_data.reinit_vof(
-        phase_cell, *this->multiphysics->get_filtered_solution(PhysicsID::VOF));
+        phase_cell, this->multiphysics->get_filtered_solution(PhysicsID::VOF));
     }
 
   scratch_data.calculate_physical_properties();
@@ -1718,7 +1718,7 @@ HeatTransfer<dim>::postprocess_temperature_statistics(
               // Gather VOF information
               fe_values_vof->reinit(cell_vof);
               fe_values_vof->get_function_values(
-                *this->multiphysics->get_filtered_solution(PhysicsID::VOF),
+                this->multiphysics->get_filtered_solution(PhysicsID::VOF),
                 filtered_phase_values);
             }
 
@@ -1787,7 +1787,7 @@ HeatTransfer<dim>::postprocess_temperature_statistics(
               // Gather VOF information
               fe_values_vof->reinit(cell_vof);
               fe_values_vof->get_function_values(
-                *this->multiphysics->get_filtered_solution(PhysicsID::VOF),
+                this->multiphysics->get_filtered_solution(PhysicsID::VOF),
                 filtered_phase_values);
             }
 
@@ -1928,7 +1928,7 @@ HeatTransfer<dim>::postprocess_liquid_fraction(const bool gather_vof)
               // Gather VOF information
               fe_values_vof->reinit(cell_vof);
               fe_values_vof->get_function_values(
-                *this->multiphysics->get_filtered_solution(PhysicsID::VOF),
+                this->multiphysics->get_filtered_solution(PhysicsID::VOF),
                 filtered_phase_values);
             }
 
@@ -2187,7 +2187,7 @@ HeatTransfer<dim>::postprocess_heat_flux_on_bc(
                       // Gather VOF information
                       fe_face_values_vof->reinit(cell_vof, face);
                       fe_face_values_vof->get_function_values(
-                        *this->multiphysics->get_filtered_solution(
+                        this->multiphysics->get_filtered_solution(
                           PhysicsID::VOF),
                         filtered_phase_values);
                     }
@@ -2436,7 +2436,7 @@ HeatTransfer<dim>::postprocess_thermal_energy_in_fluid(
               // Gather VOF information
               fe_values_vof->reinit(cell_vof);
               fe_values_vof->get_function_values(
-                *this->multiphysics->get_filtered_solution(PhysicsID::VOF),
+                this->multiphysics->get_filtered_solution(PhysicsID::VOF),
                 filtered_phase_values);
             }
 

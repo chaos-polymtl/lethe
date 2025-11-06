@@ -454,17 +454,19 @@ public:
   /**
    * @brief Request the present filtered solution of a given physics (used in
    * VOF or CahnHilliard physics for STF calculation)
-   * @param physics_id ID of the physics for which the solution is being
-   * requested
+   *
+   * @param[in] physics_id ID of the physics for which the filtered solution is
+   * being requested
+   * @return Reference to the requested filtered solution vector.
    */
-  GlobalVectorType *
+  GlobalVectorType &
   get_filtered_solution(const PhysicsID physics_id)
   {
     AssertThrow((std::find(active_physics.begin(),
                            active_physics.end(),
                            physics_id) != active_physics.end()),
                 ExcInternalError());
-    return physics_filtered_solutions[physics_id];
+    return *physics_filtered_solutions[physics_id];
   }
 
   /**
@@ -658,13 +660,14 @@ public:
    * @param physics_id ID of the physics for which the DOF handler is being
    * requested
    *
-   * @param filtered_solution_vector The reference to the filtered solution
+   * @param filtered_solution_vector Shared pointer to the filtered solution
    * vector of the physics; this was implemented for VOF and CahnHilliard
    * physics
    */
   void
-  set_filtered_solution(const PhysicsID   physics_id,
-                        GlobalVectorType *filtered_solution_vector)
+  set_filtered_solution(
+    const PhysicsID                   physics_id,
+    std::shared_ptr<GlobalVectorType> filtered_solution_vector)
   {
     AssertThrow((std::find(active_physics.begin(),
                            active_physics.end(),
@@ -853,8 +856,10 @@ private:
 
 
   // present filtered solution (VOF->STF)
-  std::map<PhysicsID, GlobalVectorType *>      physics_filtered_solutions;
-  std::map<PhysicsID, GlobalBlockVectorType *> block_physics_filtered_solutions;
+  std::map<PhysicsID, std::shared_ptr<GlobalVectorType>>
+    physics_filtered_solutions;
+  std::map<PhysicsID, std::shared_ptr<GlobalVectorType>>
+    block_physics_filtered_solutions;
 
   // present solution
   std::map<PhysicsID, GlobalVectorType *>      physics_solutions;

@@ -731,16 +731,16 @@ private:
   IndexSet locally_owned_dofs;
   IndexSet locally_relevant_dofs;
 
-  GlobalVectorType               evaluation_point;
-  GlobalVectorType               local_evaluation_point;
-  GlobalVectorType               newton_update;
-  GlobalVectorType               present_solution;
-  GlobalVectorType               system_rhs;
-  AffineConstraints<double>      nonzero_constraints;
-  AffineConstraints<double>      bounding_constraints;
-  AffineConstraints<double>      zero_constraints;
-  TrilinosWrappers::SparseMatrix system_matrix;
-  GlobalVectorType               filtered_solution;
+  GlobalVectorType                  evaluation_point;
+  GlobalVectorType                  local_evaluation_point;
+  GlobalVectorType                  newton_update;
+  GlobalVectorType                  present_solution;
+  GlobalVectorType                  system_rhs;
+  AffineConstraints<double>         nonzero_constraints;
+  AffineConstraints<double>         bounding_constraints;
+  AffineConstraints<double>         zero_constraints;
+  TrilinosWrappers::SparseMatrix    system_matrix;
+  std::shared_ptr<GlobalVectorType> filtered_solution;
 
   /// Level-set field obtained from the phase fraction field using a tanh-based
   /// transformation

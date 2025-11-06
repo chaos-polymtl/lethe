@@ -496,7 +496,7 @@ FluidDynamicsVANSMatrixFree<dim>::assemble_system_rhs()
           Parameters::DragCoupling::fully_implicit)
         particle_projector.calculate_particle_fluid_forces_projection(
           this->cfd_dem_simulation_parameters.cfd_dem,
-          this->dof_handler,
+          *this->dof_handler,
           this->evaluation_point,
           this->previous_solutions,
           this->cfd_dem_simulation_parameters.dem_parameters

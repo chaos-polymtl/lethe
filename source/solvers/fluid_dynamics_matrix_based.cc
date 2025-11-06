@@ -717,7 +717,7 @@ FluidDynamicsMatrixBased<dim>::assemble_local_system_matrix(
       scratch_data.reinit_vof(
         phase_cell,
         *this->multiphysics->get_solution(PhysicsID::VOF),
-        *this->multiphysics->get_filtered_solution(PhysicsID::VOF),
+        this->multiphysics->get_filtered_solution(PhysicsID::VOF),
         *this->multiphysics->get_previous_solutions(PhysicsID::VOF));
 
       if (this->simulation_parameters.multiphysics.vof_parameters
@@ -765,7 +765,7 @@ FluidDynamicsMatrixBased<dim>::assemble_local_system_matrix(
       scratch_data.reinit_cahn_hilliard(
         phase_cell,
         *this->multiphysics->get_solution(PhysicsID::cahn_hilliard),
-        *this->multiphysics->get_filtered_solution(PhysicsID::cahn_hilliard));
+        this->multiphysics->get_filtered_solution(PhysicsID::cahn_hilliard));
     }
 
   if (this->simulation_parameters.multiphysics.heat_transfer)
@@ -956,7 +956,7 @@ FluidDynamicsMatrixBased<dim>::assemble_local_system_rhs(
       scratch_data.reinit_vof(
         phase_cell,
         *this->multiphysics->get_solution(PhysicsID::VOF),
-        *this->multiphysics->get_filtered_solution(PhysicsID::VOF),
+        this->multiphysics->get_filtered_solution(PhysicsID::VOF),
         *this->multiphysics->get_previous_solutions(PhysicsID::VOF));
 
       if (this->simulation_parameters.multiphysics.vof_parameters
@@ -1000,7 +1000,7 @@ FluidDynamicsMatrixBased<dim>::assemble_local_system_rhs(
       scratch_data.reinit_cahn_hilliard(
         phase_cell,
         *this->multiphysics->get_solution(PhysicsID::cahn_hilliard),
-        *this->multiphysics->get_filtered_solution(PhysicsID::cahn_hilliard));
+        this->multiphysics->get_filtered_solution(PhysicsID::cahn_hilliard));
     }
 
   if (this->simulation_parameters.multiphysics.heat_transfer)
