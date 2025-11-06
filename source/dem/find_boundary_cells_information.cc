@@ -438,7 +438,7 @@ BoundaryCellsInformation<dim>::find_particle_point_and_line_contact_cells(
                 {
                   for (unsigned int v = 0; v < face->n_vertices(); ++v)
                     {
-                      if (boundary_vertices.count(face->vertex_index(v)) > 0)
+                      if (boundary_vertices.contains(face->vertex_index(v)))
                         {
                           Point<3> vertex;
 
@@ -541,10 +541,10 @@ BoundaryCellsInformation<dim>::add_cells_with_boundary_lines_to_boundary_cells(
                   if (counter_one > counter_two)
                     {
                       // Get the pair of cells
-                      typename Triangulation<dim>::active_cell_iterator
-                        cell_one = boundary_neighbor_cells[counter_one];
-                      typename Triangulation<dim>::active_cell_iterator
-                        cell_two = boundary_neighbor_cells[counter_two];
+                      const typename Triangulation<dim>::active_cell_iterator
+                        &cell_one = boundary_neighbor_cells[counter_one];
+                      const typename Triangulation<dim>::active_cell_iterator
+                        &cell_two = boundary_neighbor_cells[counter_two];
 
                       // Loop on all faces of the 2 cells
                       for (const auto &face_one : cell_one->face_iterators())
