@@ -1,4 +1,4 @@
-// SPDX-FileCopyrightText: Copyright (c) 2023-2024 The Lethe Authors
+// SPDX-FileCopyrightText: Copyright (c) 2023-2025 The Lethe Authors
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
 #include <core/bdf.h>
@@ -6,6 +6,8 @@
 
 #include <solvers/cahn_hilliard_assemblers.h>
 #include <solvers/copy_data.h>
+
+#include <numbers>
 
 template <int dim>
 void
@@ -29,8 +31,8 @@ CahnHilliardAssemblerCore<dim>::assemble_matrix(
 
   for (unsigned int q = 0; q < n_q_points; ++q)
     {
-      const double lambda =
-        3 * epsilon * scratch_data.surface_tension[q] / (2 * sqrt(2));
+      const double lambda = 3 * epsilon * scratch_data.surface_tension[q] /
+                            (2 * std::numbers::sqrt2);
 
       const double mobility = scratch_data.mobility_cahn_hilliard[q];
       const double mobility_gradient =
@@ -113,8 +115,8 @@ CahnHilliardAssemblerCore<dim>::assemble_rhs(
 
   for (unsigned int q = 0; q < n_q_points; ++q)
     {
-      const double lambda =
-        3 * epsilon * scratch_data.surface_tension[q] / (2 * sqrt(2));
+      const double lambda = 3 * epsilon * scratch_data.surface_tension[q] /
+                            (2 * std::numbers::sqrt2);
       const double mobility = scratch_data.mobility_cahn_hilliard[q];
 
 
@@ -199,7 +201,7 @@ CahnHilliardAssemblerAngleOfContact<dim>::assemble_matrix(
                     scratch_data.face_phase_grad_values[f][q];
                   const double lambda = 3 * epsilon *
                                         scratch_data.surface_tension[q] /
-                                        (2 * sqrt(2));
+                                        (2 * std::numbers::sqrt2);
 
                   const double JxW_face = scratch_data.face_JxW[f][q];
 
@@ -261,7 +263,7 @@ CahnHilliardAssemblerAngleOfContact<dim>::assemble_rhs(
 
                   const double lambda = 3 * epsilon *
                                         scratch_data.surface_tension[q] /
-                                        (2 * sqrt(2));
+                                        (2 * std::numbers::sqrt2);
 
                   const double JxW_face = scratch_data.face_JxW[f][q];
 
@@ -315,7 +317,7 @@ CahnHilliardAssemblerFreeAngle<dim>::assemble_matrix(
 
                   const double lambda = 3 * epsilon *
                                         scratch_data.surface_tension[q] /
-                                        (2 * sqrt(2));
+                                        (2 * std::numbers::sqrt2);
 
                   for (unsigned int i = 0; i < scratch_data.n_dofs; ++i)
                     {
@@ -370,7 +372,7 @@ CahnHilliardAssemblerFreeAngle<dim>::assemble_rhs(
 
                   const double lambda = 3 * epsilon *
                                         scratch_data.surface_tension[q] /
-                                        (2 * sqrt(2));
+                                        (2 * std::numbers::sqrt2);
 
                   for (unsigned int i = 0; i < scratch_data.n_dofs; ++i)
                     {
