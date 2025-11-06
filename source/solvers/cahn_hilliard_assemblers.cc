@@ -7,6 +7,8 @@
 #include <solvers/cahn_hilliard_assemblers.h>
 #include <solvers/copy_data.h>
 
+#include <numbers>
+
 template <int dim>
 void
 CahnHilliardAssemblerCore<dim>::assemble_matrix(
