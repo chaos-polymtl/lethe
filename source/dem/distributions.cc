@@ -1,4 +1,4 @@
-// SPDX-FileCopyrightText: Copyright (c) 2023-2024 The Lethe Authors
+// SPDX-FileCopyrightText: Copyright (c) 2023-2025 The Lethe Authors
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
 #include <core/utilities.h>
@@ -115,9 +115,7 @@ CustomDistribution::particle_size_sampling(const unsigned int &particle_number)
   for (unsigned int i = 0; i < particle_number; ++i)
     {
       // Search to find the appropriate diameter index
-      auto it = std::upper_bound(diameter_custom_cumul_prob.begin(),
-                                 diameter_custom_cumul_prob.end(),
-                                 dis(gen));
+      auto it = std::ranges::upper_bound(diameter_custom_cumul_prob, dis(gen));
 
       // if dis(gen) returns exactly the maximum value of the cumulative
       // distribution vector
@@ -136,13 +134,11 @@ CustomDistribution::particle_size_sampling(const unsigned int &particle_number)
 double
 CustomDistribution::find_min_diameter()
 {
-  return *std::min_element(diameter_custom_values.begin(),
-                           diameter_custom_values.end());
+  return *std::ranges::min_element(diameter_custom_values);
 }
 
 double
 CustomDistribution::find_max_diameter()
 {
-  return *std::max_element(diameter_custom_values.begin(),
-                           diameter_custom_values.end());
+  return *std::ranges::max_element(diameter_custom_values);
 }
