@@ -93,9 +93,9 @@ test()
 
           /* Create interface recontruction triangulation (surface
           triangulation) in the intersected volume cell */
-          std::vector<Point<3>> surface_vertices =
+          const std::vector<Point<3>> &surface_vertices =
             interface_reconstruction_vertices.at(cell_index);
-          std::vector<CellData<2>> surface_cells = intersected_cell.second;
+          const std::vector<CellData<2>> &surface_cells = intersected_cell.second;
 
           Triangulation<2, 3> surface_triangulation;
           surface_triangulation.create_triangulation(surface_vertices,
