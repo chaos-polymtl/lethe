@@ -660,8 +660,8 @@ FluidDynamicsBlock<dim>::setup_dofs_fd()
                           MPI_COMM_WORLD);
 
   Table<2, DoFTools::Coupling> coupling(dim + 1, dim + 1);
-  for (unsigned int c = 0; c < dim + 1; ++c)
-    for (unsigned int d = 0; d < dim + 1; ++d)
+  for (int c = 0; c < dim + 1; ++c)
+    for (int d = 0; d < dim + 1; ++d)
       if (!((c == dim) && (d == dim)))
         coupling[c][d] = DoFTools::always;
       else
