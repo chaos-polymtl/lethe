@@ -1417,7 +1417,7 @@ CFDDEMSolver<dim>::sort_particles_into_subdomains_and_cells()
     }
 
   // Always reset the displacement values since we are doing a search detection
-  std::fill(displacement.begin(), displacement.end(), 0.);
+  std::ranges::fill(displacement, 0.);
 
   this->particle_handler.exchange_ghost_particles(true);
 }
