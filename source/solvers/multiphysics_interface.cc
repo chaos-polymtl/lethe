@@ -152,7 +152,8 @@ const GlobalVectorType &
 MultiphysicsInterface<dim>::get_projected_phase_fraction_gradient_solution()
 {
   // Throw error if VOF is not enabled
-  AssertThrow((std::ranges::find(active_physics, PhysicsID::VOF) != active_physics.end()),
+  AssertThrow((std::ranges::find(active_physics, PhysicsID::VOF) !=
+               active_physics.end()),
               ExcInternalError());
   // Throw error if surface tension force is not enabled
   AssertThrow(
@@ -168,7 +169,8 @@ const GlobalVectorType &
 MultiphysicsInterface<dim>::get_curvature_solution()
 {
   // Throw error if VOF is not enabled
-  AssertThrow((std::ranges::find(active_physics, PhysicsID::VOF) != active_physics.end()),
+  AssertThrow((std::ranges::find(active_physics, PhysicsID::VOF) !=
+               active_physics.end()),
               ExcInternalError());
   // Throw error if surface tension force is not enabled
   AssertThrow(
@@ -184,7 +186,8 @@ const DoFHandler<dim> &
 MultiphysicsInterface<dim>::get_curvature_dof_handler()
 {
   // Throw error if VOF is not enabled
-  AssertThrow((std::ranges::find(active_physics, PhysicsID::VOF) != active_physics.end()),
+  AssertThrow((std::ranges::find(active_physics, PhysicsID::VOF) !=
+               active_physics.end()),
               ExcInternalError());
   // Throw error if surface tension force is not enabled
   AssertThrow(
@@ -200,7 +203,8 @@ const DoFHandler<dim> &
 MultiphysicsInterface<dim>::get_projected_phase_fraction_gradient_dof_handler()
 {
   // Throw error if VOF is not enabled
-  AssertThrow((std::ranges::find(active_physics, PhysicsID::VOF) != active_physics.end()),
+  AssertThrow((std::ranges::find(active_physics, PhysicsID::VOF) !=
+               active_physics.end()),
               ExcInternalError());
   // Throw error if surface tension force is not enabled
   AssertThrow(
