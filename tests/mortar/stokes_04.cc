@@ -225,8 +225,9 @@ run(const std::string &formulation, const std::string &grid = "hyper_cube")
 
       for (auto &[k, vec] : map)
         {
-          std::sort(vec.begin(), vec.end());
-          vec.erase(std::unique(vec.begin(), vec.end()), vec.end());
+          std::ranges::sort(vec);
+          auto last = std::ranges::unique(vec);
+          vec.erase(last.begin(), last.end());
 
           for (unsigned int i = 1; i < vec.size(); ++i)
             if (indices.find(vec[i]) == indices.end())
@@ -353,7 +354,7 @@ run(const std::string &formulation, const std::string &grid = "hyper_cube")
                 const auto point = fe_values.quadrature_point(q);
 
                 Tensor<1, dim> source;
-                for (int d = 0; d < dim; ++d)
+                for (unsigned int d = 0; d < dim; ++d)
                   source[d] = rhs_func->value(point, d);
 
                 for (const unsigned int i : fe_values.dof_indices())
