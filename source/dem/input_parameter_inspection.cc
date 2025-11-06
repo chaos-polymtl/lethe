@@ -13,7 +13,7 @@ input_parameter_inspection(const DEMSolverParameters<dim> &dem_parameters,
                              &size_distribution_object_container)
 {
   // Getting the input parameters as local variable
-  auto   parameters          = dem_parameters;
+  const auto &parameters     = dem_parameters;
   auto   physical_properties = dem_parameters.lagrangian_physical_properties;
   double rayleigh_time_step  = DBL_MAX;
   for (unsigned int i = 0; i < physical_properties.particle_type_number; ++i)

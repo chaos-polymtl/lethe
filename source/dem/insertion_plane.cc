@@ -5,6 +5,8 @@
 
 #include <dem/insertion_plane.h>
 
+#include <algorithm>
+
 using namespace DEM;
 
 // The constructor of plane insertion class. In the constructor, we find which
@@ -226,9 +228,8 @@ InsertionPlane<dim, PropertiesIndex>::insert(
               starting_IDs_on_every_proc[i] = starting_id_on_proc;
               starting_id_on_proc += number_of_particles_to_insert_per_core[i];
             }
-          std::fill(remained_particles_for_every_proc.begin(),
-                    remained_particles_for_every_proc.end(),
-                    particles_of_each_type_remaining);
+          std::ranges::fill(remained_particles_for_every_proc,
+                            particles_of_each_type_remaining);
         }
 
       // Now, processor zero knows how many particles will be inserted by every
