@@ -1,7 +1,7 @@
 # SPDX-FileCopyrightText: Copyright (c) 2025 The Lethe Authors
 # SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
-# Test normalize residual by triangulation volume. We have a single
+# Test rescale residual by sqrt of triangulation volume. We have a single
 # non-linear iteration so it is not sensitive to the machine.
 
 # Listing of Parameters
@@ -98,9 +98,9 @@ end
 
 subsection linear solver
   subsection fluid dynamics
-    set method           = gmres
-    set rescale residual = true
-    set preconditioner   = amg
+    set method                                    = gmres
+    set rescale residual                          = true
+    set preconditioner                            = amg
   end
 end
 

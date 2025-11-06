@@ -10,8 +10,10 @@ Steady iteration:        1/1
 Fluid Dynamics
 ---------------
 Newton iteration: 0  - Residual:  0.00484295
-	alpha =      1 res = 2.89e-07
-	||du||_L2 = 0.00306	||du||_Linfty = 0.000903
-	||dp||_L2 =  0.109	||dp||_Linfty = 0.0236
+  -Tolerance of iterative solver is : 4.84295e-06
+  -Iterative solver took : 3 steps to reach a residual norm of 1.38233e-06
+	alpha =      1 res = 1.38e-06
+	||du||_L2 = 0.00306	||du||_Linfty = 0.000904
+	||dp||_L2 =  0.109	||dp||_Linfty = 0.0237
 cells error_velocity error_pressure 
-   64 2.924278e-04 - 4.308323e-04 - 
+   64 2.924274e-04 - 4.308789e-04 - 
