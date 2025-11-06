@@ -18,23 +18,25 @@ void
 test()
 {
   Parameters::NonLinearSolver params{
-    Parameters::Verbosity::verbose,
-    Parameters::NonLinearSolver::SolverType::inexact_newton,
-    Parameters::NonLinearSolver::KinsolStrategy::
-      normal_newton, // kinsol strategy, not used in this case
-    1e-8,            // tolerance
-    10,              // maxIter
-    4,               // display precision
-    false,           // force rhs calculation
-    0.1,             // matrix tolerance
-    0.99,            // step_tolerance
-    false            // reuse matrix accross problems
-  };
+    .verbosity = Parameters::Verbosity::verbose,
+    .solver    = Parameters::NonLinearSolver::SolverType::inexact_newton,
+    .kinsol_strategy =
+      Parameters::NonLinearSolver::KinsolStrategy::normal_newton,
+    .tolerance                    = 1e-8,
+    .max_iterations               = 10,
+    .display_precision            = 4,
+    .force_rhs_calculation        = false,
+    .matrix_tolerance             = 0.1,
+    .step_tolerance               = 0.99,
+    .reuse_matrix                 = false,
+    .reuse_preconditioner         = false,
+    .abort_at_convergence_failure = false};
+
 
   deallog << "Creating solver" << std::endl;
 
   // Create an instantiation of the Test Class
-  std::unique_ptr<NonLinearProblemTestClass> solver =
+  const std::unique_ptr<NonLinearProblemTestClass> solver =
     std::make_unique<NonLinearProblemTestClass>(params);
 
 
