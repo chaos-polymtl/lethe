@@ -5,7 +5,6 @@
 [![Debug](https://github.com/chaos-polymtl/lethe/actions/workflows/debug.yml/badge.svg)](https://github.com/chaos-polymtl/lethe/actions/workflows/debug.yml)
 [![Release](https://github.com/chaos-polymtl/lethe/actions/workflows/release.yml/badge.svg)](https://github.com/chaos-polymtl/lethe/actions/workflows/release.yml)
 [![Warnings](https://github.com/chaos-polymtl/lethe/actions/workflows/warnings-gcc.yml/badge.svg)](https://github.com/chaos-polymtl/lethe/actions/workflows/warnings-gcc.yml)
-[![Tidy](https://github.com/chaos-polymtl/lethe/actions/workflows/clang-tidy.yml/badge.svg)](https://github.com/chaos-polymtl/lethe/actions/workflows/clang-tidy.yml)
 [![Examples](https://github.com/chaos-polymtl/lethe/actions/workflows/examples-parameter-files.yml/badge.svg)](https://github.com/chaos-polymtl/lethe/actions/workflows/examples-parameter-files.yml)
 [![Documentation](https://github.com/chaos-polymtl/lethe/actions/workflows/doc-github-pages.yml/badge.svg)](https://github.com/chaos-polymtl/lethe/actions/workflows/doc-github-pages.yml)
 [![Docker Image](https://github.com/chaos-polymtl/lethe/actions/workflows/docker.yml/badge.svg)](https://github.com/chaos-polymtl/lethe/actions/workflows/docker.yml)
