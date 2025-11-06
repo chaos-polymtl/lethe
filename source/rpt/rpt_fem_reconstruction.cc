@@ -1,4 +1,4 @@
-// SPDX-FileCopyrightText: Copyright (c) 2021-2024 The Lethe Authors
+// SPDX-FileCopyrightText: Copyright (c) 2021-2025 The Lethe Authors
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
 #include <deal.II/base/multithread_info.h>
@@ -387,7 +387,7 @@ RPTL2Projection<dim>::output_raw_results()
                it != dof_index_and_location.end();
                ++it)
             {
-              for (unsigned p = 0; p < dim; ++p)
+              for (int p = 0; p < dim; ++p)
                 myfile << it->second[p] << sep;
 
               for (unsigned int d = 0; d < n_detector; ++d)
@@ -406,7 +406,7 @@ RPTL2Projection<dim>::output_raw_results()
                it != dof_index_and_location.end();
                ++it)
             {
-              for (unsigned p = 0; p < dim; ++p)
+              for (int p = 0; p < dim; ++p)
                 myfile << it->second[p] << sep;
 
               for (unsigned int d = 0; d < n_detector; ++d)
@@ -515,9 +515,9 @@ assemble_matrix_and_rhs(
       Parameters::RPTFEMReconstructionParameters::FEMCostFunction::absolute)
     {
       // Assembling sys_matrix (Jacobian)
-      for (unsigned int i = 0; i < dim; ++i)
+      for (int i = 0; i < dim; ++i)
         {
-          for (unsigned int j = 0; j < dim; ++j)
+          for (int j = 0; j < dim; ++j)
             {
               for (unsigned int d = 0; d < detector_size; ++d)
                 {
@@ -530,7 +530,7 @@ assemble_matrix_and_rhs(
         }
 
       // Assembling sys_rhs
-      for (unsigned int i = 0; i < dim; ++i)
+      for (int i = 0; i < dim; ++i)
         {
           for (unsigned int d = 0; d < detector_size; ++d)
             {
@@ -550,9 +550,9 @@ assemble_matrix_and_rhs(
         denom[d] = 1 / (experimental_count[d] * experimental_count[d]);
 
       // Assembling sys_matrix
-      for (unsigned int i = 0; i < dim; ++i)
+      for (int i = 0; i < dim; ++i)
         {
-          for (unsigned int j = 0; j < dim; ++j)
+          for (int j = 0; j < dim; ++j)
             {
               for (unsigned int d = 0; d < detector_size; ++d)
                 {
@@ -566,7 +566,7 @@ assemble_matrix_and_rhs(
         }
 
       // Assembling sys_rhs
-      for (unsigned int i = 0; i < dim; ++i)
+      for (int i = 0; i < dim; ++i)
         {
           for (unsigned int d = 0; d < detector_size; ++d)
             {
@@ -599,7 +599,7 @@ RPTFEMReconstruction<dim>::calculate_reference_location_error(
   double              norm_error_coordinates = 0;
 
   // Check if the location is a valid one
-  for (unsigned int i = 0; i < dim; ++i)
+  for (int i = 0; i < dim; ++i)
     {
       // e_1 = \xi - 1; e_2 = \eta - 1; e_3 = \zeta - 1;
       if (reference_location[i] > 1)
@@ -653,7 +653,7 @@ RPTFEMReconstruction<dim>::calculate_cost(
           count +=
             (nodal_counts[d][cell->vertex_dof_index(0, 0)] * last_constraint);
 
-          for (unsigned int i = 0; i < dim; ++i)
+          for (int i = 0; i < dim; ++i)
             {
               count += (nodal_counts[d][cell->vertex_dof_index(i + 1, 0)] *
                         reference_location[i]);
@@ -679,7 +679,7 @@ RPTFEMReconstruction<dim>::calculate_cost(
 
           denom[d] = 1 / (experimental_count[d] * experimental_count[d]);
 
-          for (unsigned int i = 0; i < dim; ++i)
+          for (int i = 0; i < dim; ++i)
             {
               count += (nodal_counts[d][cell->vertex_dof_index(i + 1, 0)] *
                         reference_location[i]);
@@ -1040,7 +1040,7 @@ RPTFEMReconstruction<dim>::export_found_positions()
 
           for (const Point<dim> &position : found_positions)
             {
-              for (unsigned int i = 0; i < dim; ++i)
+              for (int i = 0; i < dim; ++i)
                 myfile << position[i] << sep;
               myfile << std::endl;
               std::cout << position << std::endl;
