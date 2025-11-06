@@ -31,7 +31,7 @@ template <int dim, int spacedim>
 void
 output_mesh(const Triangulation<dim, spacedim> &tria,
             const unsigned int                  mapping_degree,
-            const std::string                   file_name)
+            const std::string                  &file_name)
 {
   MappingQ<dim, spacedim> mapping(mapping_degree);
 
