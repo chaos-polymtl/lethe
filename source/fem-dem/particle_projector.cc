@@ -1054,15 +1054,16 @@ ParticleProjector<dim>::calculate_field_projection(
   // number of components. We currently assume either 1 or dim components.
   std::conditional_t<n_components == 1,
                      std::vector<double>,
-                     std::vector<Tensor<1, dim>>>::type phi_vf(dofs_per_cell);
+                     std::vector<Tensor<1, dim>>>
+    phi_vf(dofs_per_cell);
   std::conditional_t<n_components == 1,
                      std::vector<Tensor<1, dim>>,
-                     std::vector<Tensor<2, dim>>>::type
+                     std::vector<Tensor<2, dim>>>
     grad_phi_vf(dofs_per_cell);
 
   double r_sphere = 0.0;
   double total_volume_of_particles_in_sphere;
-  std::conditional_t<n_components == 1, double, Tensor<1, dim>>::type
+  std::conditional_t<n_components == 1, double, Tensor<1, dim>>
          particle_field_in_sphere;
   double qcm_sphere_diameter = void_fraction_parameters->qcm_sphere_diameter;
 
