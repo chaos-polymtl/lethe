@@ -2684,11 +2684,11 @@ FluidDynamicsSharp<dim>::Visualization_IB::build_patches(
       // Check to see if the property is a vector
       if (components_number == 3)
         {
-          vector_datasets.emplace_back(std::make_tuple(
+          vector_datasets.emplace_back(
             field_position,
             field_position + components_number - 1,
             field_name,
-            DataComponentInterpretation::component_is_part_of_vector));
+            DataComponentInterpretation::component_is_part_of_vector);
         }
       dataset_names.push_back(field_name);
       ++field_position;
