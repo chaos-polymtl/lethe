@@ -108,9 +108,10 @@ Public Member Functions</h2></td></tr>
 <tr class="separator:af32e77c2066c035b9c1b9da86fb7ffd9"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:abcc47dd8e6d8e249e3c32d02dae6c899" id="r_abcc47dd8e6d8e249e3c32d02dae6c899"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classPreconditionAdapter.html#abcc47dd8e6d8e249e3c32d02dae6c899">vmult</a> (VectorType &amp;dst, const VectorType &amp;src) const override</td></tr>
 <tr class="separator:abcc47dd8e6d8e249e3c32d02dae6c899"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ac9dbc8f050bbf71f803c2f968b9b54ed" id="r_ac9dbc8f050bbf71f803c2f968b9b54ed"><td class="memTemplParams" colspan="2">template&lt;typename U  = VectorTypePrecondition, std::enable_if_t&lt;!std::is_same_v&lt; VectorType, U &gt;, VectorType &gt; *  = nullptr&gt; </td></tr>
-<tr class="memitem:ac9dbc8f050bbf71f803c2f968b9b54ed"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classPreconditionAdapter.html#ac9dbc8f050bbf71f803c2f968b9b54ed">vmult</a> (U &amp;dst, const U &amp;src) const</td></tr>
-<tr class="separator:ac9dbc8f050bbf71f803c2f968b9b54ed"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a907fe42871bf48d14aa369c7a4e88a89" id="r_a907fe42871bf48d14aa369c7a4e88a89"><td class="memTemplParams" colspan="2">template&lt;typename U  = VectorTypePrecondition&gt; <br />
+requires (!std::is_same_v&lt;VectorType, U&gt;)</td></tr>
+<tr class="memitem:a907fe42871bf48d14aa369c7a4e88a89"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classPreconditionAdapter.html#a907fe42871bf48d14aa369c7a4e88a89">vmult</a> (U &amp;dst, const U &amp;src) const</td></tr>
+<tr class="separator:a907fe42871bf48d14aa369c7a4e88a89"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="inherit_header pub_methods_classPreconditionBase"><td colspan="2" onclick="javascript:toggleInherit('pub_methods_classPreconditionBase')"><img src="closed.png" alt="-"/>&#160;Public Member Functions inherited from <a class="el" href="classPreconditionBase.html">PreconditionBase&lt; VectorType &gt;</a></td></tr>
 <tr class="memitem:a9218b7586475c0edf46ed05cb282450b inherit pub_methods_classPreconditionBase" id="r_a9218b7586475c0edf46ed05cb282450b"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classPreconditionBase.html#a9218b7586475c0edf46ed05cb282450b">PreconditionBase</a> ()</td></tr>
 <tr class="separator:a9218b7586475c0edf46ed05cb282450b inherit pub_methods_classPreconditionBase"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -184,15 +185,16 @@ template&lt;typename PreconditionType &gt; </div>
 </div>
 </div>
 <h2 class="groupheader">Member Function Documentation</h2>
-<a id="ac9dbc8f050bbf71f803c2f968b9b54ed" name="ac9dbc8f050bbf71f803c2f968b9b54ed"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ac9dbc8f050bbf71f803c2f968b9b54ed">&#9670;&#160;</a></span>vmult() <span class="overload">[1/2]</span></h2>
+<a id="a907fe42871bf48d14aa369c7a4e88a89" name="a907fe42871bf48d14aa369c7a4e88a89"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a907fe42871bf48d14aa369c7a4e88a89">&#9670;&#160;</a></span>vmult() <span class="overload">[1/2]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
 template&lt;typename VectorType , typename VectorTypePrecondition &gt; </div>
 <div class="memtemplate">
-template&lt;typename U  = VectorTypePrecondition, std::enable_if_t&lt;!std::is_same_v&lt; VectorType, U &gt;, VectorType &gt; *  = nullptr&gt; </div>
+template&lt;typename U  = VectorTypePrecondition&gt; <br />
+requires (!std::is_same_v&lt;VectorType, U&gt;)</div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
@@ -231,9 +233,9 @@ template&lt;typename U  = VectorTypePrecondition, std::enable_if_t&lt;!std::is_s
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="fluid__dynamics__matrix__free_8cc_source.html#l00150">150</a> of file <a class="el" href="fluid__dynamics__matrix__free_8cc_source.html">fluid_dynamics_matrix_free.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="fluid__dynamics__matrix__free_8cc_source.html#l00149">149</a> of file <a class="el" href="fluid__dynamics__matrix__free_8cc_source.html">fluid_dynamics_matrix_free.cc</a>.</p>
 
-<p class="reference">References <a class="el" href="fluid__dynamics__matrix__free_8cc_source.html#l00159">PreconditionAdapter&lt; VectorType, VectorTypePrecondition &gt;::fu_preconditioner</a>.</p>
+<p class="reference">References <a class="el" href="fluid__dynamics__matrix__free_8cc_source.html#l00158">PreconditionAdapter&lt; VectorType, VectorTypePrecondition &gt;::fu_preconditioner</a>.</p>
 
 </div>
 </div>
@@ -286,7 +288,7 @@ template&lt;typename VectorType , typename VectorTypePrecondition &gt; </div>
 
 <p class="definition">Definition at line <a class="el" href="fluid__dynamics__matrix__free_8cc_source.html#l00123">123</a> of file <a class="el" href="fluid__dynamics__matrix__free_8cc_source.html">fluid_dynamics_matrix_free.cc</a>.</p>
 
-<p class="reference">References <a class="el" href="fluid__dynamics__matrix__free_8cc_source.html#l00165">PreconditionAdapter&lt; VectorType, VectorTypePrecondition &gt;::dst_</a>, <a class="el" href="fluid__dynamics__matrix__free_8cc_source.html#l00159">PreconditionAdapter&lt; VectorType, VectorTypePrecondition &gt;::fu_preconditioner</a>, and <a class="el" href="fluid__dynamics__matrix__free_8cc_source.html#l00162">PreconditionAdapter&lt; VectorType, VectorTypePrecondition &gt;::src_</a>.</p>
+<p class="reference">References <a class="el" href="fluid__dynamics__matrix__free_8cc_source.html#l00164">PreconditionAdapter&lt; VectorType, VectorTypePrecondition &gt;::dst_</a>, <a class="el" href="fluid__dynamics__matrix__free_8cc_source.html#l00158">PreconditionAdapter&lt; VectorType, VectorTypePrecondition &gt;::fu_preconditioner</a>, and <a class="el" href="fluid__dynamics__matrix__free_8cc_source.html#l00161">PreconditionAdapter&lt; VectorType, VectorTypePrecondition &gt;::src_</a>.</p>
 
 </div>
 </div>
@@ -315,7 +317,7 @@ template&lt;typename VectorType , typename VectorTypePrecondition &gt; </div>
 
 <p>Destination vector supported by the preconditioner. </p>
 
-<p class="definition">Definition at line <a class="el" href="fluid__dynamics__matrix__free_8cc_source.html#l00165">165</a> of file <a class="el" href="fluid__dynamics__matrix__free_8cc_source.html">fluid_dynamics_matrix_free.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="fluid__dynamics__matrix__free_8cc_source.html#l00164">164</a> of file <a class="el" href="fluid__dynamics__matrix__free_8cc_source.html">fluid_dynamics_matrix_free.cc</a>.</p>
 
 </div>
 </div>
@@ -343,7 +345,7 @@ template&lt;typename VectorType , typename VectorTypePrecondition &gt; </div>
 
 <p>Preconditioner. </p>
 
-<p class="definition">Definition at line <a class="el" href="fluid__dynamics__matrix__free_8cc_source.html#l00159">159</a> of file <a class="el" href="fluid__dynamics__matrix__free_8cc_source.html">fluid_dynamics_matrix_free.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="fluid__dynamics__matrix__free_8cc_source.html#l00158">158</a> of file <a class="el" href="fluid__dynamics__matrix__free_8cc_source.html">fluid_dynamics_matrix_free.cc</a>.</p>
 
 </div>
 </div>
@@ -371,7 +373,7 @@ template&lt;typename VectorType , typename VectorTypePrecondition &gt; </div>
 
 <p>Source vector supported by the preconditioner. </p>
 
-<p class="definition">Definition at line <a class="el" href="fluid__dynamics__matrix__free_8cc_source.html#l00162">162</a> of file <a class="el" href="fluid__dynamics__matrix__free_8cc_source.html">fluid_dynamics_matrix_free.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="fluid__dynamics__matrix__free_8cc_source.html#l00161">161</a> of file <a class="el" href="fluid__dynamics__matrix__free_8cc_source.html">fluid_dynamics_matrix_free.cc</a>.</p>
 
 </div>
 </div>
