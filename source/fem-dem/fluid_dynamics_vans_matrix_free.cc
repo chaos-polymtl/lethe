@@ -296,7 +296,7 @@ MFNavierStokesVANSPreconditionGMG<dim>::initialize(
                 this->void_fraction_dof_handlers[l],
                 mg_void_fraction_solution[l]);
 
-              mf_operator->compute_particle_fluid_force(
+              mf_operator->compute_particle_fluid_interaction(
                 this->pf_force_dof_handlers[l],
                 mg_pf_forces_solution[l],
                 this->pf_drag_dof_handlers[l],
@@ -486,7 +486,7 @@ FluidDynamicsVANSMatrixFree<dim>::assemble_system_rhs()
           *this->mapping,
           *this->face_quadrature));
 
-      mf_operator->compute_particle_fluid_force(
+      mf_operator->compute_particle_fluid_interaction(
         particle_projector.fluid_force_on_particles_two_way_coupling
           .dof_handler,
         particle_projector.fluid_force_on_particles_two_way_coupling
@@ -712,7 +712,7 @@ FluidDynamicsVANSMatrixFree<dim>::solve()
             particle_projector.particle_velocity.particle_field_solution
               .update_ghost_values();
 
-            mf_operator->compute_particle_fluid_force(
+            mf_operator->compute_particle_fluid_interaction(
               particle_projector.fluid_force_on_particles_two_way_coupling
                 .dof_handler,
               particle_projector.fluid_force_on_particles_two_way_coupling

@@ -81,7 +81,7 @@ public:
    *
    */
   void
-  compute_particle_fluid_force(
+  compute_particle_fluid_interaction(
     const DoFHandler<dim>                            &fp_force_dof_handler,
     const LinearAlgebra::distributed::Vector<double> &fp_force_solution,
     const DoFHandler<dim>                            &fp_drag_dof_handler,

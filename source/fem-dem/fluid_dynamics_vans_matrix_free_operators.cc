@@ -106,7 +106,7 @@ VANSOperator<dim, number>::compute_void_fraction(
 
 template <int dim, typename number>
 void
-VANSOperator<dim, number>::compute_particle_fluid_force(
+VANSOperator<dim, number>::compute_particle_fluid_interaction(
   const DoFHandler<dim>                            &fp_force_dof_handler,
   const LinearAlgebra::distributed::Vector<double> &fp_force_solution,
   const DoFHandler<dim>                            &fp_drag_dof_handler,
@@ -341,26 +341,6 @@ VANSOperator<dim, number>::do_cell_integral_local(
       auto previous_gradient = this->nonlinear_previous_gradient(cell, q);
       auto previous_hessian_diagonal =
         this->nonlinear_previous_hessian_diagonal(cell, q);
-
-      // Calculate norm of the relative velocity and of the drag force and use
-      // it to calculate the beta momentum exchange coefficient A tolerance is
-      // added (1e-9) to prevent division by 0 and occurence of NaN.
-      // VectorizedArray<number> relative_velocity_norm_squared = 0.;
-      // VectorizedArray<number> drag_force_norm_squared        = 0.;
-      //
-      // for (unsigned int i = 0; i < dim; ++i)
-      //  {
-      //    drag_force_norm_squared +=
-      //      Utilities::fixed_power<2>(pf_drag_value[i]);
-      //    relative_velocity_norm_squared +=
-      //      Utilities::fixed_power<2>(previous_values[i] - p_velocity[i]);
-      //  }
-      // relative_velocity_norm_squared += 1e-20;
-      // Since the drag force and the relative velocity are both first rank
-      // tensor extracting beta is that directly define. We do it in a
-      // projection fashion.
-      //  VectorizedArray<number> beta_momentum_exchange =
-      //  std::sqrt(drag_force_norm_squared / relative_velocity_norm_squared);
 
       // Add the drag force with the momentum coupling
       for (int d = 0; d < dim; ++d)
