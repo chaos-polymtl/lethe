@@ -737,7 +737,7 @@ VolumeOfFluid<dim>::gather_output_hook()
       std::vector<DataComponentInterpretation::DataComponentInterpretation>
         projected_phase_fraction_gradient_component_interpretation(
           dim, DataComponentInterpretation::component_is_scalar);
-      for (unsigned int i = 0; i < dim; ++i)
+      for (int i = 0; i < dim; ++i)
         projected_phase_fraction_gradient_component_interpretation[i] =
           DataComponentInterpretation::component_is_part_of_vector;
 
