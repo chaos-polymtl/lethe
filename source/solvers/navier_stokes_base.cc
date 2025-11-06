@@ -3269,7 +3269,7 @@ NavierStokesBase<dim, VectorType, DofsType>::
               auto iterator = rescaled_dofs_set.find(global_id);
               if (iterator == rescaled_dofs_set.end())
                 {
-                  const unsigned int component_index =
+                  const int component_index =
                     this->fe->system_to_component_index(j).first;
                   if (this->dof_handler.locally_owned_dofs().is_element(
                         global_id) &&

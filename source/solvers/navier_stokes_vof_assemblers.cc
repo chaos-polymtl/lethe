@@ -136,7 +136,7 @@ GLSNavierStokesVOFAssemblerCore<dim>::assemble_matrix(
 
       for (unsigned int i = 0; i < n_dofs; ++i)
         {
-          const unsigned int component_i = scratch_data.components[i];
+          const int component_i = scratch_data.components[i];
 
           const auto &phi_u_i      = scratch_data.phi_u[q][i];
           const auto &grad_phi_u_i = scratch_data.grad_phi_u[q][i];
@@ -151,7 +151,7 @@ GLSNavierStokesVOFAssemblerCore<dim>::assemble_matrix(
 
           for (unsigned int j = 0; j < n_dofs; ++j)
             {
-              const unsigned int component_j = scratch_data.components[j];
+              const int component_j = scratch_data.components[j];
 
               const auto &phi_u_j      = scratch_data.phi_u[q][j];
               const auto &grad_phi_u_j = scratch_data.grad_phi_u[q][j];
@@ -310,7 +310,7 @@ GLSNavierStokesVOFAssemblerCore<dim>::assemble_rhs(
       // Assembly of the right-hand side
       for (unsigned int i = 0; i < n_dofs; ++i)
         {
-          const unsigned int component_i = scratch_data.components[i];
+          const int component_i = scratch_data.components[i];
 
           const auto phi_u_i      = scratch_data.phi_u[q][i];
           const auto grad_phi_u_i = scratch_data.grad_phi_u[q][i];
