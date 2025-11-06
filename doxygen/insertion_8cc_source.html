@@ -118,7 +118,7 @@ $(document).ready(function() { init_codefold(0); });
 <div class="line"><a id="l00022" name="l00022"></a><span class="lineno">   22</span>  this-&gt;<a class="code hl_variable" href="classInsertion.html#a5d7992614d04517eea7a579853a45292">change_to_triangulation</a> = triangulation.signals.any_change.connect(</div>
 <div class="line"><a id="l00023" name="l00023"></a><span class="lineno">   23</span>    [&amp;] { this-&gt;<a class="code hl_variable" href="classInsertion.html#a235d97d47b5fe75ed3c8e78d6ae14efc">mark_for_update</a> = <span class="keyword">true</span>; });</div>
 <div class="line"><a id="l00024" name="l00024"></a><span class="lineno">   24</span> </div>
-<div class="line"><a id="l00025" name="l00025"></a><span class="lineno">   25</span>  <span class="keywordflow">for</span> (<span class="keywordtype">unsigned</span> <span class="keywordtype">int</span> i = 0; i &lt; dim; ++i)</div>
+<div class="line"><a id="l00025" name="l00025"></a><span class="lineno">   25</span>  <span class="keywordflow">for</span> (<span class="keywordtype">int</span> i = 0; i &lt; dim; ++i)</div>
 <div class="line"><a id="l00026" name="l00026"></a><span class="lineno">   26</span>    {</div>
 <div class="line"><a id="l00027" name="l00027"></a><span class="lineno">   27</span>      <span class="keywordflow">if</span> (dem_parameters.<a class="code hl_variable" href="classDEMSolverParameters.html#aa1a30c87a373541625cb8ba443016cea">insertion_info</a>.clear_box_point_1[i] &lt;=</div>
 <div class="line"><a id="l00028" name="l00028"></a><span class="lineno">   28</span>          dem_parameters.<a class="code hl_variable" href="classDEMSolverParameters.html#aa1a30c87a373541625cb8ba443016cea">insertion_info</a>.clear_box_point_2[i])</div>

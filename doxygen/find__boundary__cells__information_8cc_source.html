@@ -542,7 +542,7 @@ $(document).ready(function() { init_codefold(0); });
 <div class="line"><a id="l00438" name="l00438"></a><span class="lineno">  438</span>                {</div>
 <div class="line"><a id="l00439" name="l00439"></a><span class="lineno">  439</span>                  <span class="keywordflow">for</span> (<span class="keywordtype">unsigned</span> <span class="keywordtype">int</span> v = 0; v &lt; face-&gt;n_vertices(); ++v)</div>
 <div class="line"><a id="l00440" name="l00440"></a><span class="lineno">  440</span>                    {</div>
-<div class="line"><a id="l00441" name="l00441"></a><span class="lineno">  441</span>                      <span class="keywordflow">if</span> (boundary_vertices.count(face-&gt;vertex_index(v)) &gt; 0)</div>
+<div class="line"><a id="l00441" name="l00441"></a><span class="lineno">  441</span>                      <span class="keywordflow">if</span> (boundary_vertices.contains(face-&gt;vertex_index(v)))</div>
 <div class="line"><a id="l00442" name="l00442"></a><span class="lineno">  442</span>                        {</div>
 <div class="line"><a id="l00443" name="l00443"></a><span class="lineno">  443</span>                          Point&lt;3&gt; vertex;</div>
 <div class="line"><a id="l00444" name="l00444"></a><span class="lineno">  444</span> </div>
@@ -649,10 +649,10 @@ $(document).ready(function() { init_codefold(0); });
 <div class="line"><a id="l00541" name="l00541"></a><span class="lineno">  541</span>                  <span class="keywordflow">if</span> (counter_one &gt; counter_two)</div>
 <div class="line"><a id="l00542" name="l00542"></a><span class="lineno">  542</span>                    {</div>
 <div class="line"><a id="l00543" name="l00543"></a><span class="lineno">  543</span>                      <span class="comment">// Get the pair of cells</span></div>
-<div class="line"><a id="l00544" name="l00544"></a><span class="lineno">  544</span>                      <span class="keyword">typename</span> Triangulation&lt;dim&gt;::active_cell_iterator</div>
-<div class="line"><a id="l00545" name="l00545"></a><span class="lineno">  545</span>                        cell_one = boundary_neighbor_cells[counter_one];</div>
-<div class="line"><a id="l00546" name="l00546"></a><span class="lineno">  546</span>                      <span class="keyword">typename</span> Triangulation&lt;dim&gt;::active_cell_iterator</div>
-<div class="line"><a id="l00547" name="l00547"></a><span class="lineno">  547</span>                        cell_two = boundary_neighbor_cells[counter_two];</div>
+<div class="line"><a id="l00544" name="l00544"></a><span class="lineno">  544</span>                      <span class="keyword">const</span> <span class="keyword">typename</span> Triangulation&lt;dim&gt;::active_cell_iterator</div>
+<div class="line"><a id="l00545" name="l00545"></a><span class="lineno">  545</span>                        &amp;cell_one = boundary_neighbor_cells[counter_one];</div>
+<div class="line"><a id="l00546" name="l00546"></a><span class="lineno">  546</span>                      <span class="keyword">const</span> <span class="keyword">typename</span> Triangulation&lt;dim&gt;::active_cell_iterator</div>
+<div class="line"><a id="l00547" name="l00547"></a><span class="lineno">  547</span>                        &amp;cell_two = boundary_neighbor_cells[counter_two];</div>
 <div class="line"><a id="l00548" name="l00548"></a><span class="lineno">  548</span> </div>
 <div class="line"><a id="l00549" name="l00549"></a><span class="lineno">  549</span>                      <span class="comment">// Loop on all faces of the 2 cells</span></div>
 <div class="line"><a id="l00550" name="l00550"></a><span class="lineno">  550</span>                      <span class="keywordflow">for</span> (<span class="keyword">const</span> <span class="keyword">auto</span> &amp;face_one : cell_one-&gt;face_iterators())</div>
