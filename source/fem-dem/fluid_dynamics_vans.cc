@@ -685,7 +685,6 @@ FluidDynamicsVANS<dim>::assemble_local_system_rhs(
   else
     {
       scratch_data.calculate_particle_fields_values(
-
         particle_projector.particle_fluid_drag.particle_field_locally_relevant,
         particle_projector.particle_fluid_force_two_way_coupling
           .particle_field_locally_relevant,

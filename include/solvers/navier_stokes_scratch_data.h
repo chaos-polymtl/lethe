@@ -1288,18 +1288,18 @@ public:
   template <typename VectorType>
   void
   calculate_particle_fields_values(
-    const VectorType      particle_fluid_drag,
-    const VectorType      particle_fluid_force_two_way_coupling,
-    const VectorType      particle_velocity)
+    const VectorType      &particle_fluid_drag,
+    const VectorType      &particle_fluid_force_two_way_coupling,
+    const VectorType      &particle_velocity)
   {
     // Compute cell volume since it is needed in the assemblers of the projected
     // drag and two-way coupling forces
     cell_volume = compute_cell_measure_with_JxW(
       this->fe_values_void_fraction->get_JxW_values());
 
-    this->particle_drag_values.resize(fe_values.n_quadrature_points);
-    this->particle_two_way_coupling_force_values.resize(fe_values.n_quadrature_points);
-    this->particle_velocity_values.resize(fe_values.n_quadrature_points);
+    this->particle_drag_values.resize(n_q_points);
+    this->particle_two_way_coupling_force_values.resize(n_q_points);
+    this->particle_velocity_values.resize(n_q_points);
 
     // There is no need to reinit fe_values as it is already reinitialized
     // for the cell in question in scratch_data.reinit
