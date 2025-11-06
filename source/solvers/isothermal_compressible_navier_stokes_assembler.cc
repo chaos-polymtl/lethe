@@ -1,4 +1,4 @@
-// SPDX-FileCopyrightText: Copyright (c) 2023-2024 The Lethe Authors
+// SPDX-FileCopyrightText: Copyright (c) 2023-2025 The Lethe Authors
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
 #include <core/bdf.h>
@@ -117,7 +117,7 @@ GLSIsothermalCompressibleNavierStokesAssemblerCore<dim>::assemble_matrix(
 
       for (unsigned int i = 0; i < n_dofs; ++i)
         {
-          const unsigned int component_i = scratch_data.components[i];
+          const int component_i = scratch_data.components[i];
 
           const auto &phi_u_i      = scratch_data.phi_u[q][i];
           const auto &grad_phi_u_i = scratch_data.grad_phi_u[q][i];
@@ -132,7 +132,7 @@ GLSIsothermalCompressibleNavierStokesAssemblerCore<dim>::assemble_matrix(
 
           for (unsigned int j = 0; j < n_dofs; ++j)
             {
-              const unsigned int component_j = scratch_data.components[j];
+              const int component_j = scratch_data.components[j];
 
               const auto &phi_u_j = scratch_data.phi_u[q][j];
 
