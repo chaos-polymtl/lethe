@@ -143,9 +143,8 @@ public:
    * @param[in,out] dst Destination vector holding the result.
    * @param[in] src Input source vector.
    */
-  template <
-    typename U = VectorTypePrecondition,
-    std::enable_if_t<!std::is_same_v<VectorType, U>, VectorType> * = nullptr>
+  template <typename U = VectorTypePrecondition>
+    requires(!std::is_same_v<VectorType, U>)
   void
   vmult(U &dst, const U &src) const
   {
@@ -206,7 +205,7 @@ class PreconditionASM : public PreconditionBase<VectorType>
 {
 private:
   /// Weighting type.
-  enum class WeightingType
+  enum WeightingType : std::uint8_t
   {
     none,
     left,
