@@ -119,6 +119,20 @@ VANSOperator<dim, number>::compute_particle_fluid_force(
 {
   this->timer.enter_subsection("operator::compute_particle_fluid_forces");
 
+
+  // If the coupling is explicit, we do not need to gather the momentum transfer
+  // and the particle velocity. Consequently, these FEValues will never be
+  // reinit and used.
+  const bool is_explicit = cfd_dem_parameters.drag_coupling ==
+                           Parameters::DragCoupling::fully_explicit;
+
+  // If the coupling is implicit, we do not need to gather the drag force since
+  // the drag is calculated from the momentum_transfer term. Consequently, these
+  // two FEValues will never be reinit and used.
+  const bool is_implicit = cfd_dem_parameters.drag_coupling !=
+                           Parameters::DragCoupling::fully_explicit;
+
+
   const unsigned int n_cells = this->matrix_free.n_cell_batches();
   FECellIntegrator   integrator(this->matrix_free);
 
@@ -158,7 +172,7 @@ VANSOperator<dim, number>::compute_particle_fluid_force(
   std::vector<Tensor<1, dim>> cell_particle_velocity(
     fe_values_particle_velocity.n_quadrature_points);
   std::vector<double> cell_momentum_transfer_coefficient(
-    fe_values_force.n_quadrature_points);
+    fe_values_force.n_quadrature_points, 0.);
 
   constexpr FEValuesExtractors::Vector vector_index(0);
 
@@ -176,31 +190,38 @@ VANSOperator<dim, number>::compute_particle_fluid_force(
           fe_values_force[vector_index].get_function_values(fp_force_solution,
                                                             cell_fp_force);
 
-          // Reinit the drag
-          fe_values_drag.reinit(
-            this->matrix_free.get_cell_iterator(cell, lane)
-              ->as_dof_handler_iterator(fp_drag_dof_handler));
+          // Drag only needs to be re-init and collected if the drag model
+          // is explicit
+          if (is_explicit)
+            {
+              fe_values_drag.reinit(
+                this->matrix_free.get_cell_iterator(cell, lane)
+                  ->as_dof_handler_iterator(fp_drag_dof_handler));
 
-          fe_values_drag[vector_index].get_function_values(fp_drag_solution,
-                                                           cell_fp_drag);
+              fe_values_drag[vector_index].get_function_values(fp_drag_solution,
+                                                               cell_fp_drag);
+            }
 
-          // Reinit the particle velocity
-          fe_values_particle_velocity.reinit(
-            this->matrix_free.get_cell_iterator(cell, lane)
-              ->as_dof_handler_iterator(particle_velocity_dof_handler));
+          if (is_implicit)
+            {
+              // Reinit the particle velocity
+              fe_values_particle_velocity.reinit(
+                this->matrix_free.get_cell_iterator(cell, lane)
+                  ->as_dof_handler_iterator(particle_velocity_dof_handler));
 
-          fe_values_particle_velocity[vector_index].get_function_values(
-            particle_velocity_solution, cell_particle_velocity);
+              fe_values_particle_velocity[vector_index].get_function_values(
+                particle_velocity_solution, cell_particle_velocity);
 
-          // Reinit the momentum transfer coefficient
-          fe_values_momentum_transfer_coefficient.reinit(
-            this->matrix_free.get_cell_iterator(cell, lane)
-              ->as_dof_handler_iterator(
-                momentum_transfer_coefficient_dof_handler));
+              // Reinit the momentum transfer coefficient
+              fe_values_momentum_transfer_coefficient.reinit(
+                this->matrix_free.get_cell_iterator(cell, lane)
+                  ->as_dof_handler_iterator(
+                    momentum_transfer_coefficient_dof_handler));
 
-          fe_values_momentum_transfer_coefficient.get_function_values(
-            momentum_transfer_coefficient_solution,
-            cell_momentum_transfer_coefficient);
+              fe_values_momentum_transfer_coefficient.get_function_values(
+                momentum_transfer_coefficient_solution,
+                cell_momentum_transfer_coefficient);
+            }
 
           for (const auto q : fe_values_force.quadrature_point_indices())
             {
@@ -290,8 +311,8 @@ VANSOperator<dim, number>::do_cell_integral_local(
       auto beta_momentum_transfer =
         this->momentum_transfer_coefficient(cell, q);
 
-      // Add to source term the particle-fluid force and the drag force
-      source_value = pf_force_value; // + pf_drag_value;
+      // Add to source term the particle-fluid force and the  explicitdrag force
+      source_value = pf_force_value + pf_drag_value;
 
       // Evaluate source term function if enabled
       if (this->forcing_function)
@@ -548,11 +569,10 @@ VANSOperator<dim, number>::local_evaluate_residual(
           auto p_velocity     = this->particle_velocity(cell, q);
           auto beta_momentum_transfer =
             this->momentum_transfer_coefficient(cell, q);
-          // Add to source term the particle-fluid force (zero if not enabled)
-          // We divide this source by the void fraction value since it is
-          // multiplied by the void fraction value within the assembler.
+
+          // Add the particle-fluid force and the explicit drag
           Tensor<1, dim, VectorizedArray<number>> source_value =
-            pf_force_value; // pf_drag_value;
+            pf_force_value + pf_drag_value;
 
           // Gather void fraction value and gradient
           auto vf_value    = this->void_fraction(cell, q);
@@ -572,7 +592,7 @@ VANSOperator<dim, number>::local_evaluate_residual(
             integrator.get_gradient(q);
           typename FECellIntegrator::gradient_type hessian_diagonal;
 
-          // Add the drag force with the momentum coupling
+          // Add the implicit drag force with the momentum coupling
           for (int d = 0; d < dim; ++d)
             source_value[d] +=
               beta_momentum_transfer * (p_velocity[d] - value[d]);
