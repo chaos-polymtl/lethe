@@ -53,7 +53,7 @@ end
 subsection insertion info
   set insertion method    = list
   set insertion frequency = 10000
-  set list x              = 0.9, 1.1, 1.0 
+  set list x              = 0.9, 1.1, 1.0
   set list y              = 1.0, 1.0, 1.0
   set list z              = 1.0, 1.0, 0.8
   set list diameters      = 0.2, 0.2, 0.2
@@ -73,6 +73,7 @@ end
 #---------------------------------------------------
 # Ray tracing
 #---------------------------------------------------
+
 subsection particle ray tracing
   set starting photon insertion position                  = 0.0, 0.0, 1.95
   set insertion unit tensors                              = 1., 0., 0. : 0., 1., 0.: 0., 0 , -1.
@@ -84,5 +85,3 @@ subsection particle ray tracing
   set photon maximum angular offset                       = 0.034906585 # 2 degrees
   set photon angular offset prn seed                      = 1
 end
-
-

@@ -184,9 +184,9 @@ end
 
 subsection non-linear solver
   subsection fluid dynamics
-    set solver           = newton
-    set tolerance        = 1e-12
-    set verbosity        = quiet
+    set solver    = newton
+    set tolerance = 1e-12
+    set verbosity = quiet
   end
 end
 
