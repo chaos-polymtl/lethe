@@ -1,4 +1,4 @@
-// SPDX-FileCopyrightText: Copyright (c) 2024 The Lethe Authors
+// SPDX-FileCopyrightText: Copyright (c) 2024-2025 The Lethe Authors
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
 /**
@@ -69,7 +69,7 @@ test()
   for (unsigned int i = 0; i < (displacement_vector.size() / spacedim); ++i)
     {
       deallog << "Vertex " << i << " displacement: ";
-      for (unsigned int j = 0; j < spacedim; ++j)
+      for (int j = 0; j < spacedim; ++j)
         {
           deallog << displacement_vector[i * spacedim + j] << " ";
         }
