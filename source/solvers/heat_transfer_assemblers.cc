@@ -892,7 +892,7 @@ HeatTransferAssemblerLaserExponentialDecay<dim>::assemble_rhs(
 
       // Get laser location on the operation surface
       Point<dim - 1> laser_location_on_surface;
-      for (unsigned int d = 0; d < dim - 1; d++)
+      for (int d = 0; d < dim - 1; d++)
         laser_location_on_surface[d] = laser_location[d];
 
       const unsigned int n_q_points = scratch_data.n_q_points;
@@ -1023,7 +1023,7 @@ HeatTransferAssemblerLaserGaussianHeatFluxVOFInterface<dim>::assemble_rhs(
 
       // Get laser location on the operation surface
       Point<dim - 1> laser_location_on_surface;
-      for (unsigned int d = 0; d < dim - 1; d++)
+      for (int d = 0; d < dim - 1; d++)
         laser_location_on_surface[d] = laser_location[d];
 
       const unsigned int n_q_points = scratch_data.n_q_points;
@@ -1152,7 +1152,7 @@ HeatTransferAssemblerLaserExponentialDecayVOF<dim>::assemble_rhs(
 
       // Get laser location on the operation surface
       Point<dim - 1> laser_location_on_surface;
-      for (unsigned int d = 0; d < dim - 1; d++)
+      for (int d = 0; d < dim - 1; d++)
         laser_location_on_surface[d] = laser_location[d];
 
       const unsigned int n_q_points = scratch_data.n_q_points;
@@ -1293,7 +1293,7 @@ HeatTransferAssemblerLaserUniformHeatFluxVOFInterface<dim>::assemble_rhs(
 
       // Get laser location on the operation surface
       Point<dim - 1> laser_location_on_surface;
-      for (unsigned int d = 0; d < dim - 1; d++)
+      for (int d = 0; d < dim - 1; d++)
         laser_location_on_surface[d] = laser_location[d];
 
       const unsigned int n_q_points = scratch_data.n_q_points;
