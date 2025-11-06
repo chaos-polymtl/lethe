@@ -136,19 +136,19 @@ VANSAssemblerCoreModelB<dim>::assemble_matrix(
 
       for (unsigned int i = 0; i < n_dofs; ++i)
         {
-          const unsigned int component_i  = scratch_data.components[i];
-          const auto        &phi_u_i      = scratch_data.phi_u[q][i];
-          const auto        &grad_phi_u_i = scratch_data.grad_phi_u[q][i];
-          const auto        &div_phi_u_i  = scratch_data.div_phi_u[q][i];
-          const auto        &phi_p_i      = scratch_data.phi_p[q][i];
-          const auto        &grad_phi_p_i = scratch_data.grad_phi_p[q][i];
+          const int   component_i  = scratch_data.components[i];
+          const auto &phi_u_i      = scratch_data.phi_u[q][i];
+          const auto &grad_phi_u_i = scratch_data.grad_phi_u[q][i];
+          const auto &div_phi_u_i  = scratch_data.div_phi_u[q][i];
+          const auto &phi_p_i      = scratch_data.phi_p[q][i];
+          const auto &grad_phi_p_i = scratch_data.grad_phi_p[q][i];
 
           for (unsigned int j = 0; j < n_dofs; ++j)
             {
-              const unsigned int component_j  = scratch_data.components[j];
-              const auto        &phi_u_j      = scratch_data.phi_u[q][j];
-              const auto        &grad_phi_u_j = scratch_data.grad_phi_u[q][j];
-              const auto        &div_phi_u_j  = scratch_data.div_phi_u[q][j];
+              const int   component_j  = scratch_data.components[j];
+              const auto &phi_u_j      = scratch_data.phi_u[q][j];
+              const auto &grad_phi_u_j = scratch_data.grad_phi_u[q][j];
+              const auto &div_phi_u_j  = scratch_data.div_phi_u[q][j];
 
               const auto &phi_p_j =
                 pressure_scaling_factor * scratch_data.phi_p[q][j];
@@ -321,12 +321,12 @@ VANSAssemblerCoreModelB<dim>::assemble_rhs(
       // Assembly of the right-hand side
       for (unsigned int i = 0; i < n_dofs; ++i)
         {
-          const unsigned int component_i  = scratch_data.components[i];
-          const auto         phi_u_i      = scratch_data.phi_u[q][i];
-          const auto         grad_phi_u_i = scratch_data.grad_phi_u[q][i];
-          const auto         phi_p_i      = scratch_data.phi_p[q][i];
-          const auto         grad_phi_p_i = scratch_data.grad_phi_p[q][i];
-          const auto         div_phi_u_i  = scratch_data.div_phi_u[q][i];
+          const int  component_i  = scratch_data.components[i];
+          const auto phi_u_i      = scratch_data.phi_u[q][i];
+          const auto grad_phi_u_i = scratch_data.grad_phi_u[q][i];
+          const auto phi_p_i      = scratch_data.phi_p[q][i];
+          const auto grad_phi_p_i = scratch_data.grad_phi_p[q][i];
+          const auto div_phi_u_i  = scratch_data.div_phi_u[q][i];
 
           double local_rhs_i = 0;
 
@@ -505,20 +505,20 @@ VANSAssemblerCoreModelA<dim>::assemble_matrix(
 
       for (unsigned int i = 0; i < n_dofs; ++i)
         {
-          const unsigned int component_i  = scratch_data.components[i];
-          const auto        &phi_u_i      = scratch_data.phi_u[q][i];
-          const auto        &grad_phi_u_i = scratch_data.grad_phi_u[q][i];
-          const auto        &div_phi_u_i  = scratch_data.div_phi_u[q][i];
-          const auto        &phi_p_i      = scratch_data.phi_p[q][i];
-          const auto        &grad_phi_p_i = scratch_data.grad_phi_p[q][i];
+          const int   component_i  = scratch_data.components[i];
+          const auto &phi_u_i      = scratch_data.phi_u[q][i];
+          const auto &grad_phi_u_i = scratch_data.grad_phi_u[q][i];
+          const auto &div_phi_u_i  = scratch_data.div_phi_u[q][i];
+          const auto &phi_p_i      = scratch_data.phi_p[q][i];
+          const auto &grad_phi_p_i = scratch_data.grad_phi_p[q][i];
 
           for (unsigned int j = 0; j < n_dofs; ++j)
             {
-              const unsigned int component_j  = scratch_data.components[j];
-              const auto        &phi_u_j      = scratch_data.phi_u[q][j];
-              const auto        &grad_phi_u_j = scratch_data.grad_phi_u[q][j];
-              const auto        &div_phi_u_j  = scratch_data.div_phi_u[q][j];
-              const auto        &phi_p_j =
+              const int   component_j  = scratch_data.components[j];
+              const auto &phi_u_j      = scratch_data.phi_u[q][j];
+              const auto &grad_phi_u_j = scratch_data.grad_phi_u[q][j];
+              const auto &div_phi_u_j  = scratch_data.div_phi_u[q][j];
+              const auto &phi_p_j =
                 pressure_scaling_factor * scratch_data.phi_p[q][j];
 
               const auto &strong_jac = strong_jacobian_vec[q][j];
@@ -690,7 +690,7 @@ VANSAssemblerCoreModelA<dim>::assemble_rhs(
       // Assembly of the right-hand side
       for (unsigned int i = 0; i < n_dofs; ++i)
         {
-          const unsigned int component_i = scratch_data.components[i];
+          const int component_i = scratch_data.components[i];
 
           const auto phi_u_i      = scratch_data.phi_u[q][i];
           const auto grad_phi_u_i = scratch_data.grad_phi_u[q][i];
@@ -1799,7 +1799,7 @@ VANSAssemblerViscousTorque<dim>::calculate_particle_fluid_interactions(
           particle_properties[DEM::CFDDEMProperties::PropertiesIndex::dp]) *
         kinematic_viscosity[i_particle] * density[i_particle] * 0.5;
 
-      for (unsigned int d = 0; d < dim; d++)
+      for (int d = 0; d < dim; d++)
         {
           particle_properties
             [DEM::CFDDEMProperties::PropertiesIndex::fem_torque_x + d] -=
@@ -1854,7 +1854,7 @@ VANSAssemblerVorticalTorque<dim>::calculate_particle_fluid_interactions(
           particle_properties[DEM::CFDDEMProperties::PropertiesIndex::dp]) *
         kinematic_viscosity[i_particle] * density[i_particle] * 0.5;
 
-      for (unsigned int d = 0; d < dim; d++)
+      for (int d = 0; d < dim; d++)
         {
           // Calculate and apply viscous torque
           particle_properties
