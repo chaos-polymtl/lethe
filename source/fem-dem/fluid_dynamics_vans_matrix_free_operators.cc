@@ -40,7 +40,7 @@ VANSOperator<dim, number>::evaluate_non_linear_term_and_calculate_tau(
         {
           // Get the velocity magnitude to calculate the grad_div constant
           VectorizedArray<number> u_mag_squared = 0;
-          for (unsigned int k = 0; k < dim; ++k)
+          for (int k = 0; k < dim; ++k)
             u_mag_squared +=
               Utilities::fixed_power<2>(integrator.get_value(q)[k]);
           VectorizedArray<number> u = std::sqrt(u_mag_squared);
@@ -92,7 +92,7 @@ VANSOperator<dim, number>::compute_void_fraction(
 
           for (const auto q : fe_values.quadrature_point_indices())
             {
-              for (unsigned int c = 0; c < dim; ++c)
+              for (int c = 0; c < dim; ++c)
                 void_fraction_gradient[cell][q][c][lane] =
                   cell_void_fraction_gradient[q][c];
 
@@ -157,7 +157,7 @@ VANSOperator<dim, number>::compute_particle_fluid_force(
 
           for (const auto q : fe_values_force.quadrature_point_indices())
             {
-              for (unsigned int c = 0; c < dim; ++c)
+              for (int c = 0; c < dim; ++c)
                 {
                   particle_fluid_force[cell][q][c][lane] =
                     cell_pf_force[q][c] + cell_pf_drag[q][c];
@@ -267,7 +267,7 @@ VANSOperator<dim, number>::do_cell_integral_local(
 
       // Weak form Jacobian
       value_result[dim] = 0;
-      for (unsigned int i = 0; i < dim; ++i)
+      for (int i = 0; i < dim; ++i)
         {
           // ν(∇v,ɛ∇δu)
           gradient_result[i] = kinematic_viscosity * vf_value * gradient[i];
@@ -282,7 +282,7 @@ VANSOperator<dim, number>::do_cell_integral_local(
           // +(q,∇ɛ·δu)
           value_result[dim] += vf_gradient[i] * value[i];
 
-          for (unsigned int k = 0; k < dim; ++k)
+          for (int k = 0; k < dim; ++k)
             {
               // +(v,ɛ(u·∇)δu + ɛ(δu·∇)u)
               value_result[i] +=
@@ -295,9 +295,9 @@ VANSOperator<dim, number>::do_cell_integral_local(
         }
 
       // PSPG Jacobian
-      for (unsigned int i = 0; i < dim; ++i)
+      for (int i = 0; i < dim; ++i)
         {
-          for (unsigned int k = 0; k < dim; ++k)
+          for (int k = 0; k < dim; ++k)
             {
               // (-νɛ∆δu + ɛ(u·∇)δu + ɛ(δu·∇)u)·τ∇q
               gradient_result[dim][i] +=
@@ -318,9 +318,9 @@ VANSOperator<dim, number>::do_cell_integral_local(
       // (∇·v,γ(ɛ∇·δu+δu·∇ɛ))
       if (cfd_dem_parameters.grad_div == true)
         {
-          for (unsigned int i = 0; i < dim; ++i)
+          for (int i = 0; i < dim; ++i)
             {
-              for (unsigned int k = 0; k < dim; ++k)
+              for (int k = 0; k < dim; ++k)
                 {
                   gradient_result[i][i] +=
                     grad_div_gamma(cell, q) *
@@ -330,12 +330,12 @@ VANSOperator<dim, number>::do_cell_integral_local(
         }
 
       // SUPG Jacobian
-      for (unsigned int i = 0; i < dim; ++i)
+      for (int i = 0; i < dim; ++i)
         {
-          for (unsigned int k = 0; k < dim; ++k)
+          for (int k = 0; k < dim; ++k)
             {
               // Part 1
-              for (unsigned int l = 0; l < dim; ++l)
+              for (int l = 0; l < dim; ++l)
                 {
                   // +(ɛ(u·∇)δu + ɛ(δu·∇)u - νɛ∆δu)τ(u·∇)v
                   gradient_result[i][k] +=
@@ -354,7 +354,7 @@ VANSOperator<dim, number>::do_cell_integral_local(
                                          ((*bdf_coefs)[0] * value[i]);
 
               // Part 2
-              for (unsigned int l = 0; l < dim; ++l)
+              for (int l = 0; l < dim; ++l)
                 {
                   // +(ɛ(u·∇)u - νɛ∆u)τ(δu·∇)v
                   gradient_result[i][k] +=
@@ -487,7 +487,7 @@ VANSOperator<dim, number>::local_evaluate_residual(
 
           value_result[dim] = 0;
           // Weak form
-          for (unsigned int i = 0; i < dim; ++i)
+          for (int i = 0; i < dim; ++i)
             {
               // ν(∇v,ɛ∇u)
               gradient_result[i] = kinematic_viscosity * vf_value * gradient[i];
@@ -511,7 +511,7 @@ VANSOperator<dim, number>::local_evaluate_residual(
               // +(q,∇ɛ·u)
               value_result[dim] += value[i] * vf_gradient[i];
 
-              for (unsigned int k = 0; k < dim; ++k)
+              for (int k = 0; k < dim; ++k)
                 {
                   // ν(v,∇u∇ɛ)
                   value_result[i] +=
@@ -522,9 +522,9 @@ VANSOperator<dim, number>::local_evaluate_residual(
             }
 
           // PSPG term
-          for (unsigned int i = 0; i < dim; ++i)
+          for (int i = 0; i < dim; ++i)
             {
-              for (unsigned int k = 0; k < dim; ++k)
+              for (int k = 0; k < dim; ++k)
                 {
                   // (-νɛ∆u + ɛ(u·∇)u)·τ∇q
                   gradient_result[dim][i] +=
@@ -548,9 +548,9 @@ VANSOperator<dim, number>::local_evaluate_residual(
           // (∇·v,γ(ɛ∇·u+u·∇ɛ))
           if (cfd_dem_parameters.grad_div == true)
             {
-              for (unsigned int i = 0; i < dim; ++i)
+              for (int i = 0; i < dim; ++i)
                 {
-                  for (unsigned int k = 0; k < dim; ++k)
+                  for (int k = 0; k < dim; ++k)
                     {
                       gradient_result[i][i] +=
                         grad_div_gamma(cell, q) *
@@ -560,11 +560,11 @@ VANSOperator<dim, number>::local_evaluate_residual(
             }
 
           // SUPG term
-          for (unsigned int i = 0; i < dim; ++i)
+          for (int i = 0; i < dim; ++i)
             {
-              for (unsigned int k = 0; k < dim; ++k)
+              for (int k = 0; k < dim; ++k)
                 {
-                  for (unsigned int l = 0; l < dim; ++l)
+                  for (int l = 0; l < dim; ++l)
                     {
                       // (-νɛ∆u )τ(u·∇)v
                       gradient_result[i][k] += -tau * kinematic_viscosity *
