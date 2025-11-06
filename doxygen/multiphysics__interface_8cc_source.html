@@ -250,180 +250,176 @@ $(document).ready(function() { init_codefold(0); });
 <div class="line"><a id="l00152" name="l00152"></a><span class="lineno"><a class="line" href="classMultiphysicsInterface.html#aa7b23d559fd4322f3e30723f2bb8874c">  152</a></span><a class="code hl_function" href="classMultiphysicsInterface.html#aa7b23d559fd4322f3e30723f2bb8874c">MultiphysicsInterface&lt;dim&gt;::get_projected_phase_fraction_gradient_solution</a>()</div>
 <div class="line"><a id="l00153" name="l00153"></a><span class="lineno">  153</span>{</div>
 <div class="line"><a id="l00154" name="l00154"></a><span class="lineno">  154</span>  <span class="comment">// Throw error if VOF is not enabled</span></div>
-<div class="line"><a id="l00155" name="l00155"></a><span class="lineno">  155</span>  AssertThrow((std::find(active_physics.begin(),</div>
-<div class="line"><a id="l00156" name="l00156"></a><span class="lineno">  156</span>                         active_physics.end(),</div>
-<div class="line"><a id="l00157" name="l00157"></a><span class="lineno">  157</span>                         <a class="code hl_enumvalue" href="multiphysics_8h.html#ae14bb720bc9a37edc36fb8d90df712c2acbc0ad67f70aa071fb58cc555ff266f9">PhysicsID::VOF</a>) != active_physics.end()),</div>
-<div class="line"><a id="l00158" name="l00158"></a><span class="lineno">  158</span>              ExcInternalError());</div>
-<div class="line"><a id="l00159" name="l00159"></a><span class="lineno">  159</span>  <span class="comment">// Throw error if surface tension force is not enabled</span></div>
-<div class="line"><a id="l00160" name="l00160"></a><span class="lineno">  160</span>  AssertThrow(</div>
-<div class="line"><a id="l00161" name="l00161"></a><span class="lineno">  161</span>    (multiphysics_parameters.vof_parameters.surface_tension_force.enable),</div>
-<div class="line"><a id="l00162" name="l00162"></a><span class="lineno">  162</span>    ExcInternalError());</div>
-<div class="line"><a id="l00163" name="l00163"></a><span class="lineno">  163</span> </div>
-<div class="line"><a id="l00164" name="l00164"></a><span class="lineno">  164</span>  <span class="keywordflow">return</span> <span class="keyword">dynamic_cast&lt;</span><a class="code hl_class" href="classVolumeOfFluid.html">VolumeOfFluid&lt;dim&gt;</a> &amp;<span class="keyword">&gt;</span>(*physics[<a class="code hl_enumvalue" href="multiphysics_8h.html#ae14bb720bc9a37edc36fb8d90df712c2acbc0ad67f70aa071fb58cc555ff266f9">PhysicsID::VOF</a>])</div>
-<div class="line"><a id="l00165" name="l00165"></a><span class="lineno">  165</span>    .get_projected_phase_fraction_gradient_solution();</div>
-<div class="line"><a id="l00166" name="l00166"></a><span class="lineno">  166</span>}</div>
+<div class="line"><a id="l00155" name="l00155"></a><span class="lineno">  155</span>  AssertThrow((std::ranges::find(active_physics, <a class="code hl_enumvalue" href="multiphysics_8h.html#ae14bb720bc9a37edc36fb8d90df712c2acbc0ad67f70aa071fb58cc555ff266f9">PhysicsID::VOF</a>) !=</div>
+<div class="line"><a id="l00156" name="l00156"></a><span class="lineno">  156</span>               active_physics.end()),</div>
+<div class="line"><a id="l00157" name="l00157"></a><span class="lineno">  157</span>              ExcInternalError());</div>
+<div class="line"><a id="l00158" name="l00158"></a><span class="lineno">  158</span>  <span class="comment">// Throw error if surface tension force is not enabled</span></div>
+<div class="line"><a id="l00159" name="l00159"></a><span class="lineno">  159</span>  AssertThrow(</div>
+<div class="line"><a id="l00160" name="l00160"></a><span class="lineno">  160</span>    (multiphysics_parameters.vof_parameters.surface_tension_force.enable),</div>
+<div class="line"><a id="l00161" name="l00161"></a><span class="lineno">  161</span>    ExcInternalError());</div>
+<div class="line"><a id="l00162" name="l00162"></a><span class="lineno">  162</span> </div>
+<div class="line"><a id="l00163" name="l00163"></a><span class="lineno">  163</span>  <span class="keywordflow">return</span> <span class="keyword">dynamic_cast&lt;</span><a class="code hl_class" href="classVolumeOfFluid.html">VolumeOfFluid&lt;dim&gt;</a> &amp;<span class="keyword">&gt;</span>(*physics[<a class="code hl_enumvalue" href="multiphysics_8h.html#ae14bb720bc9a37edc36fb8d90df712c2acbc0ad67f70aa071fb58cc555ff266f9">PhysicsID::VOF</a>])</div>
+<div class="line"><a id="l00164" name="l00164"></a><span class="lineno">  164</span>    .get_projected_phase_fraction_gradient_solution();</div>
+<div class="line"><a id="l00165" name="l00165"></a><span class="lineno">  165</span>}</div>
 </div>
-<div class="line"><a id="l00167" name="l00167"></a><span class="lineno">  167</span> </div>
-<div class="line"><a id="l00168" name="l00168"></a><span class="lineno">  168</span><span class="keyword">template</span> &lt;<span class="keywordtype">int</span> dim&gt;</div>
-<div class="line"><a id="l00169" name="l00169"></a><span class="lineno">  169</span><span class="keyword">const</span> <a class="code hl_typedef" href="vector_8h.html#a4ea4005d75c88e60bee47d4e79a13a39">GlobalVectorType</a> &amp;</div>
-<div class="foldopen" id="foldopen00170" data-start="{" data-end="}">
-<div class="line"><a id="l00170" name="l00170"></a><span class="lineno"><a class="line" href="classMultiphysicsInterface.html#a711ce06986740c92d8b5ac15bfd49964">  170</a></span><a class="code hl_function" href="classMultiphysicsInterface.html#a711ce06986740c92d8b5ac15bfd49964">MultiphysicsInterface&lt;dim&gt;::get_curvature_solution</a>()</div>
-<div class="line"><a id="l00171" name="l00171"></a><span class="lineno">  171</span>{</div>
-<div class="line"><a id="l00172" name="l00172"></a><span class="lineno">  172</span>  <span class="comment">// Throw error if VOF is not enabled</span></div>
-<div class="line"><a id="l00173" name="l00173"></a><span class="lineno">  173</span>  AssertThrow((std::find(active_physics.begin(),</div>
-<div class="line"><a id="l00174" name="l00174"></a><span class="lineno">  174</span>                         active_physics.end(),</div>
-<div class="line"><a id="l00175" name="l00175"></a><span class="lineno">  175</span>                         <a class="code hl_enumvalue" href="multiphysics_8h.html#ae14bb720bc9a37edc36fb8d90df712c2acbc0ad67f70aa071fb58cc555ff266f9">PhysicsID::VOF</a>) != active_physics.end()),</div>
-<div class="line"><a id="l00176" name="l00176"></a><span class="lineno">  176</span>              ExcInternalError());</div>
-<div class="line"><a id="l00177" name="l00177"></a><span class="lineno">  177</span>  <span class="comment">// Throw error if surface tension force is not enabled</span></div>
-<div class="line"><a id="l00178" name="l00178"></a><span class="lineno">  178</span>  AssertThrow(</div>
-<div class="line"><a id="l00179" name="l00179"></a><span class="lineno">  179</span>    (multiphysics_parameters.vof_parameters.surface_tension_force.enable),</div>
-<div class="line"><a id="l00180" name="l00180"></a><span class="lineno">  180</span>    ExcInternalError());</div>
-<div class="line"><a id="l00181" name="l00181"></a><span class="lineno">  181</span> </div>
-<div class="line"><a id="l00182" name="l00182"></a><span class="lineno">  182</span>  <span class="keywordflow">return</span> <span class="keyword">dynamic_cast&lt;</span><a class="code hl_class" href="classVolumeOfFluid.html">VolumeOfFluid&lt;dim&gt;</a> &amp;<span class="keyword">&gt;</span>(*physics[<a class="code hl_enumvalue" href="multiphysics_8h.html#ae14bb720bc9a37edc36fb8d90df712c2acbc0ad67f70aa071fb58cc555ff266f9">PhysicsID::VOF</a>])</div>
-<div class="line"><a id="l00183" name="l00183"></a><span class="lineno">  183</span>    .get_curvature_solution();</div>
-<div class="line"><a id="l00184" name="l00184"></a><span class="lineno">  184</span>}</div>
+<div class="line"><a id="l00166" name="l00166"></a><span class="lineno">  166</span> </div>
+<div class="line"><a id="l00167" name="l00167"></a><span class="lineno">  167</span><span class="keyword">template</span> &lt;<span class="keywordtype">int</span> dim&gt;</div>
+<div class="line"><a id="l00168" name="l00168"></a><span class="lineno">  168</span><span class="keyword">const</span> <a class="code hl_typedef" href="vector_8h.html#a4ea4005d75c88e60bee47d4e79a13a39">GlobalVectorType</a> &amp;</div>
+<div class="foldopen" id="foldopen00169" data-start="{" data-end="}">
+<div class="line"><a id="l00169" name="l00169"></a><span class="lineno"><a class="line" href="classMultiphysicsInterface.html#a711ce06986740c92d8b5ac15bfd49964">  169</a></span><a class="code hl_function" href="classMultiphysicsInterface.html#a711ce06986740c92d8b5ac15bfd49964">MultiphysicsInterface&lt;dim&gt;::get_curvature_solution</a>()</div>
+<div class="line"><a id="l00170" name="l00170"></a><span class="lineno">  170</span>{</div>
+<div class="line"><a id="l00171" name="l00171"></a><span class="lineno">  171</span>  <span class="comment">// Throw error if VOF is not enabled</span></div>
+<div class="line"><a id="l00172" name="l00172"></a><span class="lineno">  172</span>  AssertThrow((std::ranges::find(active_physics, <a class="code hl_enumvalue" href="multiphysics_8h.html#ae14bb720bc9a37edc36fb8d90df712c2acbc0ad67f70aa071fb58cc555ff266f9">PhysicsID::VOF</a>) !=</div>
+<div class="line"><a id="l00173" name="l00173"></a><span class="lineno">  173</span>               active_physics.end()),</div>
+<div class="line"><a id="l00174" name="l00174"></a><span class="lineno">  174</span>              ExcInternalError());</div>
+<div class="line"><a id="l00175" name="l00175"></a><span class="lineno">  175</span>  <span class="comment">// Throw error if surface tension force is not enabled</span></div>
+<div class="line"><a id="l00176" name="l00176"></a><span class="lineno">  176</span>  AssertThrow(</div>
+<div class="line"><a id="l00177" name="l00177"></a><span class="lineno">  177</span>    (multiphysics_parameters.vof_parameters.surface_tension_force.enable),</div>
+<div class="line"><a id="l00178" name="l00178"></a><span class="lineno">  178</span>    ExcInternalError());</div>
+<div class="line"><a id="l00179" name="l00179"></a><span class="lineno">  179</span> </div>
+<div class="line"><a id="l00180" name="l00180"></a><span class="lineno">  180</span>  <span class="keywordflow">return</span> <span class="keyword">dynamic_cast&lt;</span><a class="code hl_class" href="classVolumeOfFluid.html">VolumeOfFluid&lt;dim&gt;</a> &amp;<span class="keyword">&gt;</span>(*physics[<a class="code hl_enumvalue" href="multiphysics_8h.html#ae14bb720bc9a37edc36fb8d90df712c2acbc0ad67f70aa071fb58cc555ff266f9">PhysicsID::VOF</a>])</div>
+<div class="line"><a id="l00181" name="l00181"></a><span class="lineno">  181</span>    .get_curvature_solution();</div>
+<div class="line"><a id="l00182" name="l00182"></a><span class="lineno">  182</span>}</div>
 </div>
-<div class="line"><a id="l00185" name="l00185"></a><span class="lineno">  185</span> </div>
-<div class="line"><a id="l00186" name="l00186"></a><span class="lineno">  186</span><span class="keyword">template</span> &lt;<span class="keywordtype">int</span> dim&gt;</div>
-<div class="line"><a id="l00187" name="l00187"></a><span class="lineno">  187</span><span class="keyword">const</span> DoFHandler&lt;dim&gt; &amp;</div>
-<div class="foldopen" id="foldopen00188" data-start="{" data-end="}">
-<div class="line"><a id="l00188" name="l00188"></a><span class="lineno"><a class="line" href="classMultiphysicsInterface.html#a42dda4a84b218a2ab19ba6ed323ad283">  188</a></span><a class="code hl_function" href="classMultiphysicsInterface.html#a42dda4a84b218a2ab19ba6ed323ad283">MultiphysicsInterface&lt;dim&gt;::get_curvature_dof_handler</a>()</div>
-<div class="line"><a id="l00189" name="l00189"></a><span class="lineno">  189</span>{</div>
-<div class="line"><a id="l00190" name="l00190"></a><span class="lineno">  190</span>  <span class="comment">// Throw error if VOF is not enabled</span></div>
-<div class="line"><a id="l00191" name="l00191"></a><span class="lineno">  191</span>  AssertThrow((std::find(active_physics.begin(),</div>
-<div class="line"><a id="l00192" name="l00192"></a><span class="lineno">  192</span>                         active_physics.end(),</div>
-<div class="line"><a id="l00193" name="l00193"></a><span class="lineno">  193</span>                         <a class="code hl_enumvalue" href="multiphysics_8h.html#ae14bb720bc9a37edc36fb8d90df712c2acbc0ad67f70aa071fb58cc555ff266f9">PhysicsID::VOF</a>) != active_physics.end()),</div>
-<div class="line"><a id="l00194" name="l00194"></a><span class="lineno">  194</span>              ExcInternalError());</div>
-<div class="line"><a id="l00195" name="l00195"></a><span class="lineno">  195</span>  <span class="comment">// Throw error if surface tension force is not enabled</span></div>
-<div class="line"><a id="l00196" name="l00196"></a><span class="lineno">  196</span>  AssertThrow(</div>
-<div class="line"><a id="l00197" name="l00197"></a><span class="lineno">  197</span>    (multiphysics_parameters.vof_parameters.surface_tension_force.enable),</div>
-<div class="line"><a id="l00198" name="l00198"></a><span class="lineno">  198</span>    ExcInternalError());</div>
-<div class="line"><a id="l00199" name="l00199"></a><span class="lineno">  199</span> </div>
-<div class="line"><a id="l00200" name="l00200"></a><span class="lineno">  200</span>  <span class="keywordflow">return</span> <span class="keyword">dynamic_cast&lt;</span><a class="code hl_class" href="classVolumeOfFluid.html">VolumeOfFluid&lt;dim&gt;</a> &amp;<span class="keyword">&gt;</span>(*physics[<a class="code hl_enumvalue" href="multiphysics_8h.html#ae14bb720bc9a37edc36fb8d90df712c2acbc0ad67f70aa071fb58cc555ff266f9">PhysicsID::VOF</a>])</div>
-<div class="line"><a id="l00201" name="l00201"></a><span class="lineno">  201</span>    .get_curvature_dof_handler();</div>
-<div class="line"><a id="l00202" name="l00202"></a><span class="lineno">  202</span>}</div>
+<div class="line"><a id="l00183" name="l00183"></a><span class="lineno">  183</span> </div>
+<div class="line"><a id="l00184" name="l00184"></a><span class="lineno">  184</span><span class="keyword">template</span> &lt;<span class="keywordtype">int</span> dim&gt;</div>
+<div class="line"><a id="l00185" name="l00185"></a><span class="lineno">  185</span><span class="keyword">const</span> DoFHandler&lt;dim&gt; &amp;</div>
+<div class="foldopen" id="foldopen00186" data-start="{" data-end="}">
+<div class="line"><a id="l00186" name="l00186"></a><span class="lineno"><a class="line" href="classMultiphysicsInterface.html#a42dda4a84b218a2ab19ba6ed323ad283">  186</a></span><a class="code hl_function" href="classMultiphysicsInterface.html#a42dda4a84b218a2ab19ba6ed323ad283">MultiphysicsInterface&lt;dim&gt;::get_curvature_dof_handler</a>()</div>
+<div class="line"><a id="l00187" name="l00187"></a><span class="lineno">  187</span>{</div>
+<div class="line"><a id="l00188" name="l00188"></a><span class="lineno">  188</span>  <span class="comment">// Throw error if VOF is not enabled</span></div>
+<div class="line"><a id="l00189" name="l00189"></a><span class="lineno">  189</span>  AssertThrow((std::ranges::find(active_physics, <a class="code hl_enumvalue" href="multiphysics_8h.html#ae14bb720bc9a37edc36fb8d90df712c2acbc0ad67f70aa071fb58cc555ff266f9">PhysicsID::VOF</a>) !=</div>
+<div class="line"><a id="l00190" name="l00190"></a><span class="lineno">  190</span>               active_physics.end()),</div>
+<div class="line"><a id="l00191" name="l00191"></a><span class="lineno">  191</span>              ExcInternalError());</div>
+<div class="line"><a id="l00192" name="l00192"></a><span class="lineno">  192</span>  <span class="comment">// Throw error if surface tension force is not enabled</span></div>
+<div class="line"><a id="l00193" name="l00193"></a><span class="lineno">  193</span>  AssertThrow(</div>
+<div class="line"><a id="l00194" name="l00194"></a><span class="lineno">  194</span>    (multiphysics_parameters.vof_parameters.surface_tension_force.enable),</div>
+<div class="line"><a id="l00195" name="l00195"></a><span class="lineno">  195</span>    ExcInternalError());</div>
+<div class="line"><a id="l00196" name="l00196"></a><span class="lineno">  196</span> </div>
+<div class="line"><a id="l00197" name="l00197"></a><span class="lineno">  197</span>  <span class="keywordflow">return</span> <span class="keyword">dynamic_cast&lt;</span><a class="code hl_class" href="classVolumeOfFluid.html">VolumeOfFluid&lt;dim&gt;</a> &amp;<span class="keyword">&gt;</span>(*physics[<a class="code hl_enumvalue" href="multiphysics_8h.html#ae14bb720bc9a37edc36fb8d90df712c2acbc0ad67f70aa071fb58cc555ff266f9">PhysicsID::VOF</a>])</div>
+<div class="line"><a id="l00198" name="l00198"></a><span class="lineno">  198</span>    .get_curvature_dof_handler();</div>
+<div class="line"><a id="l00199" name="l00199"></a><span class="lineno">  199</span>}</div>
 </div>
-<div class="line"><a id="l00203" name="l00203"></a><span class="lineno">  203</span> </div>
-<div class="line"><a id="l00204" name="l00204"></a><span class="lineno">  204</span><span class="keyword">template</span> &lt;<span class="keywordtype">int</span> dim&gt;</div>
-<div class="line"><a id="l00205" name="l00205"></a><span class="lineno">  205</span><span class="keyword">const</span> DoFHandler&lt;dim&gt; &amp;</div>
-<div class="foldopen" id="foldopen00206" data-start="{" data-end="}">
-<div class="line"><a id="l00206" name="l00206"></a><span class="lineno"><a class="line" href="classMultiphysicsInterface.html#ac76eac3059bd87155d3583136b760756">  206</a></span><a class="code hl_function" href="classMultiphysicsInterface.html#ac76eac3059bd87155d3583136b760756">MultiphysicsInterface&lt;dim&gt;::get_projected_phase_fraction_gradient_dof_handler</a>()</div>
-<div class="line"><a id="l00207" name="l00207"></a><span class="lineno">  207</span>{</div>
-<div class="line"><a id="l00208" name="l00208"></a><span class="lineno">  208</span>  <span class="comment">// Throw error if VOF is not enabled</span></div>
-<div class="line"><a id="l00209" name="l00209"></a><span class="lineno">  209</span>  AssertThrow((std::find(active_physics.begin(),</div>
-<div class="line"><a id="l00210" name="l00210"></a><span class="lineno">  210</span>                         active_physics.end(),</div>
-<div class="line"><a id="l00211" name="l00211"></a><span class="lineno">  211</span>                         <a class="code hl_enumvalue" href="multiphysics_8h.html#ae14bb720bc9a37edc36fb8d90df712c2acbc0ad67f70aa071fb58cc555ff266f9">PhysicsID::VOF</a>) != active_physics.end()),</div>
-<div class="line"><a id="l00212" name="l00212"></a><span class="lineno">  212</span>              ExcInternalError());</div>
-<div class="line"><a id="l00213" name="l00213"></a><span class="lineno">  213</span>  <span class="comment">// Throw error if surface tension force is not enabled</span></div>
-<div class="line"><a id="l00214" name="l00214"></a><span class="lineno">  214</span>  AssertThrow(</div>
-<div class="line"><a id="l00215" name="l00215"></a><span class="lineno">  215</span>    (multiphysics_parameters.vof_parameters.surface_tension_force.enable),</div>
-<div class="line"><a id="l00216" name="l00216"></a><span class="lineno">  216</span>    ExcInternalError());</div>
+<div class="line"><a id="l00200" name="l00200"></a><span class="lineno">  200</span> </div>
+<div class="line"><a id="l00201" name="l00201"></a><span class="lineno">  201</span><span class="keyword">template</span> &lt;<span class="keywordtype">int</span> dim&gt;</div>
+<div class="line"><a id="l00202" name="l00202"></a><span class="lineno">  202</span><span class="keyword">const</span> DoFHandler&lt;dim&gt; &amp;</div>
+<div class="foldopen" id="foldopen00203" data-start="{" data-end="}">
+<div class="line"><a id="l00203" name="l00203"></a><span class="lineno"><a class="line" href="classMultiphysicsInterface.html#ac76eac3059bd87155d3583136b760756">  203</a></span><a class="code hl_function" href="classMultiphysicsInterface.html#ac76eac3059bd87155d3583136b760756">MultiphysicsInterface&lt;dim&gt;::get_projected_phase_fraction_gradient_dof_handler</a>()</div>
+<div class="line"><a id="l00204" name="l00204"></a><span class="lineno">  204</span>{</div>
+<div class="line"><a id="l00205" name="l00205"></a><span class="lineno">  205</span>  <span class="comment">// Throw error if VOF is not enabled</span></div>
+<div class="line"><a id="l00206" name="l00206"></a><span class="lineno">  206</span>  AssertThrow((std::ranges::find(active_physics, <a class="code hl_enumvalue" href="multiphysics_8h.html#ae14bb720bc9a37edc36fb8d90df712c2acbc0ad67f70aa071fb58cc555ff266f9">PhysicsID::VOF</a>) !=</div>
+<div class="line"><a id="l00207" name="l00207"></a><span class="lineno">  207</span>               active_physics.end()),</div>
+<div class="line"><a id="l00208" name="l00208"></a><span class="lineno">  208</span>              ExcInternalError());</div>
+<div class="line"><a id="l00209" name="l00209"></a><span class="lineno">  209</span>  <span class="comment">// Throw error if surface tension force is not enabled</span></div>
+<div class="line"><a id="l00210" name="l00210"></a><span class="lineno">  210</span>  AssertThrow(</div>
+<div class="line"><a id="l00211" name="l00211"></a><span class="lineno">  211</span>    (multiphysics_parameters.vof_parameters.surface_tension_force.enable),</div>
+<div class="line"><a id="l00212" name="l00212"></a><span class="lineno">  212</span>    ExcInternalError());</div>
+<div class="line"><a id="l00213" name="l00213"></a><span class="lineno">  213</span> </div>
+<div class="line"><a id="l00214" name="l00214"></a><span class="lineno">  214</span>  <span class="keywordflow">return</span> <span class="keyword">dynamic_cast&lt;</span><a class="code hl_class" href="classVolumeOfFluid.html">VolumeOfFluid&lt;dim&gt;</a> &amp;<span class="keyword">&gt;</span>(*physics[<a class="code hl_enumvalue" href="multiphysics_8h.html#ae14bb720bc9a37edc36fb8d90df712c2acbc0ad67f70aa071fb58cc555ff266f9">PhysicsID::VOF</a>])</div>
+<div class="line"><a id="l00215" name="l00215"></a><span class="lineno">  215</span>    .get_projected_phase_fraction_gradient_dof_handler();</div>
+<div class="line"><a id="l00216" name="l00216"></a><span class="lineno">  216</span>}</div>
+</div>
 <div class="line"><a id="l00217" name="l00217"></a><span class="lineno">  217</span> </div>
-<div class="line"><a id="l00218" name="l00218"></a><span class="lineno">  218</span>  <span class="keywordflow">return</span> <span class="keyword">dynamic_cast&lt;</span><a class="code hl_class" href="classVolumeOfFluid.html">VolumeOfFluid&lt;dim&gt;</a> &amp;<span class="keyword">&gt;</span>(*physics[<a class="code hl_enumvalue" href="multiphysics_8h.html#ae14bb720bc9a37edc36fb8d90df712c2acbc0ad67f70aa071fb58cc555ff266f9">PhysicsID::VOF</a>])</div>
-<div class="line"><a id="l00219" name="l00219"></a><span class="lineno">  219</span>    .get_projected_phase_fraction_gradient_dof_handler();</div>
-<div class="line"><a id="l00220" name="l00220"></a><span class="lineno">  220</span>}</div>
+<div class="line"><a id="l00218" name="l00218"></a><span class="lineno">  218</span><span class="keyword">template</span> &lt;<span class="keywordtype">int</span> dim&gt;</div>
+<div class="line"><a id="l00219" name="l00219"></a><span class="lineno">  219</span><a class="code hl_class" href="classShape.html">Shape&lt;dim&gt;</a> *</div>
+<div class="foldopen" id="foldopen00220" data-start="{" data-end="}">
+<div class="line"><a id="l00220" name="l00220"></a><span class="lineno"><a class="line" href="classMultiphysicsInterface.html#ae9a2eca5278a1446e60dbd44421dbdb7">  220</a></span><a class="code hl_function" href="classMultiphysicsInterface.html#ae9a2eca5278a1446e60dbd44421dbdb7">MultiphysicsInterface&lt;dim&gt;::get_immersed_solid_shape</a>()</div>
+<div class="line"><a id="l00221" name="l00221"></a><span class="lineno">  221</span>{</div>
+<div class="line"><a id="l00222" name="l00222"></a><span class="lineno">  222</span>  <span class="comment">// This pointer is also used to check if an immersed boundary solid method is</span></div>
+<div class="line"><a id="l00223" name="l00223"></a><span class="lineno">  223</span>  <span class="comment">// being used, depending on whether the pointer is assigned.</span></div>
+<div class="line"><a id="l00224" name="l00224"></a><span class="lineno">  224</span>  <span class="keywordflow">return</span> immersed_solid_shape;</div>
+<div class="line"><a id="l00225" name="l00225"></a><span class="lineno">  225</span>}</div>
 </div>
-<div class="line"><a id="l00221" name="l00221"></a><span class="lineno">  221</span> </div>
-<div class="line"><a id="l00222" name="l00222"></a><span class="lineno">  222</span><span class="keyword">template</span> &lt;<span class="keywordtype">int</span> dim&gt;</div>
-<div class="line"><a id="l00223" name="l00223"></a><span class="lineno">  223</span><a class="code hl_class" href="classShape.html">Shape&lt;dim&gt;</a> *</div>
-<div class="foldopen" id="foldopen00224" data-start="{" data-end="}">
-<div class="line"><a id="l00224" name="l00224"></a><span class="lineno"><a class="line" href="classMultiphysicsInterface.html#ae9a2eca5278a1446e60dbd44421dbdb7">  224</a></span><a class="code hl_function" href="classMultiphysicsInterface.html#ae9a2eca5278a1446e60dbd44421dbdb7">MultiphysicsInterface&lt;dim&gt;::get_immersed_solid_shape</a>()</div>
-<div class="line"><a id="l00225" name="l00225"></a><span class="lineno">  225</span>{</div>
-<div class="line"><a id="l00226" name="l00226"></a><span class="lineno">  226</span>  <span class="comment">// This pointer is also used to check if an immersed boundary solid method is</span></div>
-<div class="line"><a id="l00227" name="l00227"></a><span class="lineno">  227</span>  <span class="comment">// being used, depending on whether the pointer is assigned.</span></div>
-<div class="line"><a id="l00228" name="l00228"></a><span class="lineno">  228</span>  <span class="keywordflow">return</span> immersed_solid_shape;</div>
-<div class="line"><a id="l00229" name="l00229"></a><span class="lineno">  229</span>}</div>
+<div class="line"><a id="l00226" name="l00226"></a><span class="lineno">  226</span> </div>
+<div class="line"><a id="l00227" name="l00227"></a><span class="lineno">  227</span><span class="keyword">template</span> &lt;<span class="keywordtype">int</span> dim&gt;</div>
+<div class="line"><a id="l00228" name="l00228"></a><span class="lineno">  228</span><span class="keywordtype">void</span></div>
+<div class="foldopen" id="foldopen00229" data-start="{" data-end="}">
+<div class="line"><a id="l00229" name="l00229"></a><span class="lineno"><a class="line" href="classMultiphysicsInterface.html#a75edde8a3131755c75813bee6ce03ebc">  229</a></span><a class="code hl_function" href="classMultiphysicsInterface.html#a75edde8a3131755c75813bee6ce03ebc">MultiphysicsInterface&lt;dim&gt;::set_immersed_solid_shape</a>(<a class="code hl_class" href="classShape.html">Shape&lt;dim&gt;</a> *shape)</div>
+<div class="line"><a id="l00230" name="l00230"></a><span class="lineno">  230</span>{</div>
+<div class="line"><a id="l00231" name="l00231"></a><span class="lineno">  231</span>  immersed_solid_shape = shape;</div>
+<div class="line"><a id="l00232" name="l00232"></a><span class="lineno">  232</span>}</div>
 </div>
-<div class="line"><a id="l00230" name="l00230"></a><span class="lineno">  230</span> </div>
-<div class="line"><a id="l00231" name="l00231"></a><span class="lineno">  231</span><span class="keyword">template</span> &lt;<span class="keywordtype">int</span> dim&gt;</div>
-<div class="line"><a id="l00232" name="l00232"></a><span class="lineno">  232</span><span class="keywordtype">void</span></div>
-<div class="foldopen" id="foldopen00233" data-start="{" data-end="}">
-<div class="line"><a id="l00233" name="l00233"></a><span class="lineno"><a class="line" href="classMultiphysicsInterface.html#a75edde8a3131755c75813bee6ce03ebc">  233</a></span><a class="code hl_function" href="classMultiphysicsInterface.html#a75edde8a3131755c75813bee6ce03ebc">MultiphysicsInterface&lt;dim&gt;::set_immersed_solid_shape</a>(<a class="code hl_class" href="classShape.html">Shape&lt;dim&gt;</a> *shape)</div>
-<div class="line"><a id="l00234" name="l00234"></a><span class="lineno">  234</span>{</div>
-<div class="line"><a id="l00235" name="l00235"></a><span class="lineno">  235</span>  immersed_solid_shape = shape;</div>
-<div class="line"><a id="l00236" name="l00236"></a><span class="lineno">  236</span>}</div>
-</div>
-<div class="line"><a id="l00237" name="l00237"></a><span class="lineno">  237</span> </div>
-<div class="line"><a id="l00238" name="l00238"></a><span class="lineno">  238</span><span class="keyword">template</span> &lt;<span class="keywordtype">int</span> dim&gt;</div>
-<div class="line"><a id="l00239" name="l00239"></a><span class="lineno">  239</span><span class="keywordtype">void</span></div>
-<div class="foldopen" id="foldopen00240" data-start="{" data-end="}">
-<div class="line"><a id="l00240" name="l00240"></a><span class="lineno"><a class="line" href="classMultiphysicsInterface.html#aaada3e3716bfe0c453d4f1e101b3bd60">  240</a></span><a class="code hl_function" href="classMultiphysicsInterface.html#aaada3e3716bfe0c453d4f1e101b3bd60">MultiphysicsInterface&lt;dim&gt;::inspect_multiphysics_models_dependencies</a>(</div>
-<div class="line"><a id="l00241" name="l00241"></a><span class="lineno">  241</span>  <span class="keyword">const</span> <a class="code hl_class" href="classSimulationParameters.html">SimulationParameters&lt;dim&gt;</a> &amp;nsparam)</div>
-<div class="line"><a id="l00242" name="l00242"></a><span class="lineno">  242</span>{</div>
-<div class="line"><a id="l00243" name="l00243"></a><span class="lineno">  243</span>  <span class="keywordtype">bool</span> buoyancy_force_enabled = nsparam.<a class="code hl_variable" href="classSimulationParameters.html#a6232756a0eb911c47803a7b801c8e94e">multiphysics</a>.<a class="code hl_variable" href="structParameters_1_1Multiphysics.html#aaa334803b65e6ea0092588f8aa78c31b">buoyancy_force</a>;</div>
-<div class="line"><a id="l00244" name="l00244"></a><span class="lineno">  244</span>  <span class="keywordtype">bool</span> heat_transfer_enabled  = nsparam.<a class="code hl_variable" href="classSimulationParameters.html#a6232756a0eb911c47803a7b801c8e94e">multiphysics</a>.<a class="code hl_variable" href="structParameters_1_1Multiphysics.html#ac2f5a0a1073e4136350d14cfa1c059fb">heat_transfer</a>;</div>
-<div class="line"><a id="l00245" name="l00245"></a><span class="lineno">  245</span>  <span class="keywordtype">bool</span> marangoni_effect_enabled =</div>
-<div class="line"><a id="l00246" name="l00246"></a><span class="lineno">  246</span>    nsparam.<a class="code hl_variable" href="classSimulationParameters.html#a6232756a0eb911c47803a7b801c8e94e">multiphysics</a>.<a class="code hl_variable" href="structParameters_1_1Multiphysics.html#abdedafcd7954c3b70c14e33de92e6a65">vof_parameters</a>.<a class="code hl_variable" href="structParameters_1_1VOF.html#a43382d77552a2ecfc2d1488f3257af68">surface_tension_force</a></div>
-<div class="line"><a id="l00247" name="l00247"></a><span class="lineno">  247</span>      .<a class="code hl_variable" href="structParameters_1_1VOF__SurfaceTensionForce.html#ac0467ffef438ccf5e0689a0a35e5e2a0">enable_marangoni_effect</a>;</div>
-<div class="line"><a id="l00248" name="l00248"></a><span class="lineno">  248</span>  <span class="keywordtype">bool</span> surface_tension_force_enabled =</div>
-<div class="line"><a id="l00249" name="l00249"></a><span class="lineno">  249</span>    nsparam.<a class="code hl_variable" href="classSimulationParameters.html#a6232756a0eb911c47803a7b801c8e94e">multiphysics</a>.<a class="code hl_variable" href="structParameters_1_1Multiphysics.html#abdedafcd7954c3b70c14e33de92e6a65">vof_parameters</a>.<a class="code hl_variable" href="structParameters_1_1VOF.html#a43382d77552a2ecfc2d1488f3257af68">surface_tension_force</a>.<a class="code hl_variable" href="structParameters_1_1VOF__SurfaceTensionForce.html#a1dc4d5fd932045f4125e11bff3793bc7">enable</a>;</div>
-<div class="line"><a id="l00250" name="l00250"></a><span class="lineno">  250</span>  <span class="keywordtype">bool</span> fluid_dynamics_enabled = nsparam.<a class="code hl_variable" href="classSimulationParameters.html#a6232756a0eb911c47803a7b801c8e94e">multiphysics</a>.<a class="code hl_variable" href="structParameters_1_1Multiphysics.html#a0f159b51ad03a88bd5efe46ab0a10146">fluid_dynamics</a>;</div>
-<div class="line"><a id="l00251" name="l00251"></a><span class="lineno">  251</span>  <span class="keywordtype">bool</span> interface_sharpening_enabled =</div>
-<div class="line"><a id="l00252" name="l00252"></a><span class="lineno">  252</span>    nsparam.<a class="code hl_variable" href="classSimulationParameters.html#a6232756a0eb911c47803a7b801c8e94e">multiphysics</a>.<a class="code hl_variable" href="structParameters_1_1Multiphysics.html#abdedafcd7954c3b70c14e33de92e6a65">vof_parameters</a>.<a class="code hl_variable" href="structParameters_1_1VOF.html#a32cf8a2cfee3ef09b86f00e7e3e19908">regularization_method</a>.<a class="code hl_variable" href="structParameters_1_1VOF__RegularizationMethod.html#a694451dcfbe496e4a8b72f998aec9592">sharpening</a>.<a class="code hl_variable" href="structParameters_1_1VOF__InterfaceSharpening.html#a871e32290d676a16864bfcb64914807d">enable</a>;</div>
-<div class="line"><a id="l00253" name="l00253"></a><span class="lineno">  253</span>  <span class="keywordtype">bool</span> VOF_enabled = nsparam.<a class="code hl_variable" href="classSimulationParameters.html#a6232756a0eb911c47803a7b801c8e94e">multiphysics</a>.<a class="code hl_variable" href="structParameters_1_1Multiphysics.html#a255981fc9b05fa20e129517182533502">VOF</a>;</div>
-<div class="line"><a id="l00254" name="l00254"></a><span class="lineno">  254</span> </div>
-<div class="line"><a id="l00255" name="l00255"></a><span class="lineno">  255</span>  <span class="comment">// To avoid getting unused parameter warning</span></div>
-<div class="line"><a id="l00256" name="l00256"></a><span class="lineno">  256</span>  <a class="code hl_define" href="multiphysics__interface_8cc.html#a0d638fe48e408fa87f9b8f86164d38b1">_unused</a>(buoyancy_force_enabled &amp;&amp; heat_transfer_enabled &amp;&amp;</div>
-<div class="line"><a id="l00257" name="l00257"></a><span class="lineno">  257</span>          marangoni_effect_enabled &amp;&amp; surface_tension_force_enabled &amp;&amp;</div>
-<div class="line"><a id="l00258" name="l00258"></a><span class="lineno">  258</span>          fluid_dynamics_enabled &amp;&amp; interface_sharpening_enabled &amp;&amp;</div>
-<div class="line"><a id="l00259" name="l00259"></a><span class="lineno">  259</span>          VOF_enabled);</div>
-<div class="line"><a id="l00260" name="l00260"></a><span class="lineno">  260</span> </div>
-<div class="line"><a id="l00261" name="l00261"></a><span class="lineno">  261</span>  <span class="comment">// Dependence of buoyant force on fluid dynamics</span></div>
-<div class="line"><a id="l00262" name="l00262"></a><span class="lineno">  262</span>  AssertThrow(!(buoyancy_force_enabled == <span class="keyword">true</span> &amp;&amp;</div>
-<div class="line"><a id="l00263" name="l00263"></a><span class="lineno">  263</span>                fluid_dynamics_enabled == <span class="keyword">false</span>),</div>
-<div class="line"><a id="l00264" name="l00264"></a><span class="lineno">  264</span>              BuoyancyWithoutFluidDynamicsError(buoyancy_force_enabled));</div>
-<div class="line"><a id="l00265" name="l00265"></a><span class="lineno">  265</span> </div>
-<div class="line"><a id="l00266" name="l00266"></a><span class="lineno">  266</span>  <span class="comment">// Dependence of buoyant force on heat transfer</span></div>
-<div class="line"><a id="l00267" name="l00267"></a><span class="lineno">  267</span>  AssertThrow(!(buoyancy_force_enabled == <span class="keyword">true</span> &amp;&amp;</div>
-<div class="line"><a id="l00268" name="l00268"></a><span class="lineno">  268</span>                heat_transfer_enabled == <span class="keyword">false</span>),</div>
-<div class="line"><a id="l00269" name="l00269"></a><span class="lineno">  269</span>              BuoyancyWithoutHeatTransferError(buoyancy_force_enabled));</div>
-<div class="line"><a id="l00270" name="l00270"></a><span class="lineno">  270</span> </div>
-<div class="line"><a id="l00271" name="l00271"></a><span class="lineno">  271</span>  <span class="comment">// Dependence of Marangoni effect on fluid dynamics</span></div>
-<div class="line"><a id="l00272" name="l00272"></a><span class="lineno">  272</span>  AssertThrow(!(marangoni_effect_enabled == <span class="keyword">true</span> &amp;&amp;</div>
-<div class="line"><a id="l00273" name="l00273"></a><span class="lineno">  273</span>                fluid_dynamics_enabled == <span class="keyword">false</span>),</div>
-<div class="line"><a id="l00274" name="l00274"></a><span class="lineno">  274</span>              MarangoniWithoutFluidDynamicsError(marangoni_effect_enabled));</div>
-<div class="line"><a id="l00275" name="l00275"></a><span class="lineno">  275</span> </div>
-<div class="line"><a id="l00276" name="l00276"></a><span class="lineno">  276</span>  <span class="comment">// Dependence of Marangoni effect on heat transfer</span></div>
-<div class="line"><a id="l00277" name="l00277"></a><span class="lineno">  277</span>  AssertThrow(!(marangoni_effect_enabled == <span class="keyword">true</span> &amp;&amp;</div>
-<div class="line"><a id="l00278" name="l00278"></a><span class="lineno">  278</span>                heat_transfer_enabled == <span class="keyword">false</span>),</div>
-<div class="line"><a id="l00279" name="l00279"></a><span class="lineno">  279</span>              MarangoniWithoutHeatTransferError(marangoni_effect_enabled));</div>
-<div class="line"><a id="l00280" name="l00280"></a><span class="lineno">  280</span> </div>
-<div class="line"><a id="l00281" name="l00281"></a><span class="lineno">  281</span>  <span class="comment">// Dependence of Marangoni effect on surface tension force</span></div>
-<div class="line"><a id="l00282" name="l00282"></a><span class="lineno">  282</span>  AssertThrow(!(marangoni_effect_enabled == <span class="keyword">true</span> &amp;&amp;</div>
-<div class="line"><a id="l00283" name="l00283"></a><span class="lineno">  283</span>                surface_tension_force_enabled == <span class="keyword">false</span>),</div>
-<div class="line"><a id="l00284" name="l00284"></a><span class="lineno">  284</span>              MarangoniWithoutSurfaceTensionForceError(</div>
-<div class="line"><a id="l00285" name="l00285"></a><span class="lineno">  285</span>                marangoni_effect_enabled));</div>
-<div class="line"><a id="l00286" name="l00286"></a><span class="lineno">  286</span> </div>
-<div class="line"><a id="l00287" name="l00287"></a><span class="lineno">  287</span>  <span class="comment">// Dependence of surface tension force on VOF</span></div>
-<div class="line"><a id="l00288" name="l00288"></a><span class="lineno">  288</span>  AssertThrow(!(surface_tension_force_enabled == <span class="keyword">true</span> &amp;&amp; VOF_enabled == <span class="keyword">false</span>),</div>
-<div class="line"><a id="l00289" name="l00289"></a><span class="lineno">  289</span>              SurfaceTensionForceWithoutVOFError(</div>
-<div class="line"><a id="l00290" name="l00290"></a><span class="lineno">  290</span>                surface_tension_force_enabled));</div>
+<div class="line"><a id="l00233" name="l00233"></a><span class="lineno">  233</span> </div>
+<div class="line"><a id="l00234" name="l00234"></a><span class="lineno">  234</span><span class="keyword">template</span> &lt;<span class="keywordtype">int</span> dim&gt;</div>
+<div class="line"><a id="l00235" name="l00235"></a><span class="lineno">  235</span><span class="keywordtype">void</span></div>
+<div class="foldopen" id="foldopen00236" data-start="{" data-end="}">
+<div class="line"><a id="l00236" name="l00236"></a><span class="lineno"><a class="line" href="classMultiphysicsInterface.html#aaada3e3716bfe0c453d4f1e101b3bd60">  236</a></span><a class="code hl_function" href="classMultiphysicsInterface.html#aaada3e3716bfe0c453d4f1e101b3bd60">MultiphysicsInterface&lt;dim&gt;::inspect_multiphysics_models_dependencies</a>(</div>
+<div class="line"><a id="l00237" name="l00237"></a><span class="lineno">  237</span>  <span class="keyword">const</span> <a class="code hl_class" href="classSimulationParameters.html">SimulationParameters&lt;dim&gt;</a> &amp;nsparam)</div>
+<div class="line"><a id="l00238" name="l00238"></a><span class="lineno">  238</span>{</div>
+<div class="line"><a id="l00239" name="l00239"></a><span class="lineno">  239</span>  <span class="keywordtype">bool</span> buoyancy_force_enabled = nsparam.<a class="code hl_variable" href="classSimulationParameters.html#a6232756a0eb911c47803a7b801c8e94e">multiphysics</a>.<a class="code hl_variable" href="structParameters_1_1Multiphysics.html#aaa334803b65e6ea0092588f8aa78c31b">buoyancy_force</a>;</div>
+<div class="line"><a id="l00240" name="l00240"></a><span class="lineno">  240</span>  <span class="keywordtype">bool</span> heat_transfer_enabled  = nsparam.<a class="code hl_variable" href="classSimulationParameters.html#a6232756a0eb911c47803a7b801c8e94e">multiphysics</a>.<a class="code hl_variable" href="structParameters_1_1Multiphysics.html#ac2f5a0a1073e4136350d14cfa1c059fb">heat_transfer</a>;</div>
+<div class="line"><a id="l00241" name="l00241"></a><span class="lineno">  241</span>  <span class="keywordtype">bool</span> marangoni_effect_enabled =</div>
+<div class="line"><a id="l00242" name="l00242"></a><span class="lineno">  242</span>    nsparam.<a class="code hl_variable" href="classSimulationParameters.html#a6232756a0eb911c47803a7b801c8e94e">multiphysics</a>.<a class="code hl_variable" href="structParameters_1_1Multiphysics.html#abdedafcd7954c3b70c14e33de92e6a65">vof_parameters</a>.<a class="code hl_variable" href="structParameters_1_1VOF.html#a43382d77552a2ecfc2d1488f3257af68">surface_tension_force</a></div>
+<div class="line"><a id="l00243" name="l00243"></a><span class="lineno">  243</span>      .<a class="code hl_variable" href="structParameters_1_1VOF__SurfaceTensionForce.html#ac0467ffef438ccf5e0689a0a35e5e2a0">enable_marangoni_effect</a>;</div>
+<div class="line"><a id="l00244" name="l00244"></a><span class="lineno">  244</span>  <span class="keywordtype">bool</span> surface_tension_force_enabled =</div>
+<div class="line"><a id="l00245" name="l00245"></a><span class="lineno">  245</span>    nsparam.<a class="code hl_variable" href="classSimulationParameters.html#a6232756a0eb911c47803a7b801c8e94e">multiphysics</a>.<a class="code hl_variable" href="structParameters_1_1Multiphysics.html#abdedafcd7954c3b70c14e33de92e6a65">vof_parameters</a>.<a class="code hl_variable" href="structParameters_1_1VOF.html#a43382d77552a2ecfc2d1488f3257af68">surface_tension_force</a>.<a class="code hl_variable" href="structParameters_1_1VOF__SurfaceTensionForce.html#a1dc4d5fd932045f4125e11bff3793bc7">enable</a>;</div>
+<div class="line"><a id="l00246" name="l00246"></a><span class="lineno">  246</span>  <span class="keywordtype">bool</span> fluid_dynamics_enabled = nsparam.<a class="code hl_variable" href="classSimulationParameters.html#a6232756a0eb911c47803a7b801c8e94e">multiphysics</a>.<a class="code hl_variable" href="structParameters_1_1Multiphysics.html#a0f159b51ad03a88bd5efe46ab0a10146">fluid_dynamics</a>;</div>
+<div class="line"><a id="l00247" name="l00247"></a><span class="lineno">  247</span>  <span class="keywordtype">bool</span> interface_sharpening_enabled =</div>
+<div class="line"><a id="l00248" name="l00248"></a><span class="lineno">  248</span>    nsparam.<a class="code hl_variable" href="classSimulationParameters.html#a6232756a0eb911c47803a7b801c8e94e">multiphysics</a>.<a class="code hl_variable" href="structParameters_1_1Multiphysics.html#abdedafcd7954c3b70c14e33de92e6a65">vof_parameters</a>.<a class="code hl_variable" href="structParameters_1_1VOF.html#a32cf8a2cfee3ef09b86f00e7e3e19908">regularization_method</a>.<a class="code hl_variable" href="structParameters_1_1VOF__RegularizationMethod.html#a694451dcfbe496e4a8b72f998aec9592">sharpening</a>.<a class="code hl_variable" href="structParameters_1_1VOF__InterfaceSharpening.html#a871e32290d676a16864bfcb64914807d">enable</a>;</div>
+<div class="line"><a id="l00249" name="l00249"></a><span class="lineno">  249</span>  <span class="keywordtype">bool</span> VOF_enabled = nsparam.<a class="code hl_variable" href="classSimulationParameters.html#a6232756a0eb911c47803a7b801c8e94e">multiphysics</a>.<a class="code hl_variable" href="structParameters_1_1Multiphysics.html#a255981fc9b05fa20e129517182533502">VOF</a>;</div>
+<div class="line"><a id="l00250" name="l00250"></a><span class="lineno">  250</span> </div>
+<div class="line"><a id="l00251" name="l00251"></a><span class="lineno">  251</span>  <span class="comment">// To avoid getting unused parameter warning</span></div>
+<div class="line"><a id="l00252" name="l00252"></a><span class="lineno">  252</span>  <a class="code hl_define" href="multiphysics__interface_8cc.html#a0d638fe48e408fa87f9b8f86164d38b1">_unused</a>(buoyancy_force_enabled &amp;&amp; heat_transfer_enabled &amp;&amp;</div>
+<div class="line"><a id="l00253" name="l00253"></a><span class="lineno">  253</span>          marangoni_effect_enabled &amp;&amp; surface_tension_force_enabled &amp;&amp;</div>
+<div class="line"><a id="l00254" name="l00254"></a><span class="lineno">  254</span>          fluid_dynamics_enabled &amp;&amp; interface_sharpening_enabled &amp;&amp;</div>
+<div class="line"><a id="l00255" name="l00255"></a><span class="lineno">  255</span>          VOF_enabled);</div>
+<div class="line"><a id="l00256" name="l00256"></a><span class="lineno">  256</span> </div>
+<div class="line"><a id="l00257" name="l00257"></a><span class="lineno">  257</span>  <span class="comment">// Dependence of buoyant force on fluid dynamics</span></div>
+<div class="line"><a id="l00258" name="l00258"></a><span class="lineno">  258</span>  AssertThrow(!(buoyancy_force_enabled == <span class="keyword">true</span> &amp;&amp;</div>
+<div class="line"><a id="l00259" name="l00259"></a><span class="lineno">  259</span>                fluid_dynamics_enabled == <span class="keyword">false</span>),</div>
+<div class="line"><a id="l00260" name="l00260"></a><span class="lineno">  260</span>              BuoyancyWithoutFluidDynamicsError(buoyancy_force_enabled));</div>
+<div class="line"><a id="l00261" name="l00261"></a><span class="lineno">  261</span> </div>
+<div class="line"><a id="l00262" name="l00262"></a><span class="lineno">  262</span>  <span class="comment">// Dependence of buoyant force on heat transfer</span></div>
+<div class="line"><a id="l00263" name="l00263"></a><span class="lineno">  263</span>  AssertThrow(!(buoyancy_force_enabled == <span class="keyword">true</span> &amp;&amp;</div>
+<div class="line"><a id="l00264" name="l00264"></a><span class="lineno">  264</span>                heat_transfer_enabled == <span class="keyword">false</span>),</div>
+<div class="line"><a id="l00265" name="l00265"></a><span class="lineno">  265</span>              BuoyancyWithoutHeatTransferError(buoyancy_force_enabled));</div>
+<div class="line"><a id="l00266" name="l00266"></a><span class="lineno">  266</span> </div>
+<div class="line"><a id="l00267" name="l00267"></a><span class="lineno">  267</span>  <span class="comment">// Dependence of Marangoni effect on fluid dynamics</span></div>
+<div class="line"><a id="l00268" name="l00268"></a><span class="lineno">  268</span>  AssertThrow(!(marangoni_effect_enabled == <span class="keyword">true</span> &amp;&amp;</div>
+<div class="line"><a id="l00269" name="l00269"></a><span class="lineno">  269</span>                fluid_dynamics_enabled == <span class="keyword">false</span>),</div>
+<div class="line"><a id="l00270" name="l00270"></a><span class="lineno">  270</span>              MarangoniWithoutFluidDynamicsError(marangoni_effect_enabled));</div>
+<div class="line"><a id="l00271" name="l00271"></a><span class="lineno">  271</span> </div>
+<div class="line"><a id="l00272" name="l00272"></a><span class="lineno">  272</span>  <span class="comment">// Dependence of Marangoni effect on heat transfer</span></div>
+<div class="line"><a id="l00273" name="l00273"></a><span class="lineno">  273</span>  AssertThrow(!(marangoni_effect_enabled == <span class="keyword">true</span> &amp;&amp;</div>
+<div class="line"><a id="l00274" name="l00274"></a><span class="lineno">  274</span>                heat_transfer_enabled == <span class="keyword">false</span>),</div>
+<div class="line"><a id="l00275" name="l00275"></a><span class="lineno">  275</span>              MarangoniWithoutHeatTransferError(marangoni_effect_enabled));</div>
+<div class="line"><a id="l00276" name="l00276"></a><span class="lineno">  276</span> </div>
+<div class="line"><a id="l00277" name="l00277"></a><span class="lineno">  277</span>  <span class="comment">// Dependence of Marangoni effect on surface tension force</span></div>
+<div class="line"><a id="l00278" name="l00278"></a><span class="lineno">  278</span>  AssertThrow(!(marangoni_effect_enabled == <span class="keyword">true</span> &amp;&amp;</div>
+<div class="line"><a id="l00279" name="l00279"></a><span class="lineno">  279</span>                surface_tension_force_enabled == <span class="keyword">false</span>),</div>
+<div class="line"><a id="l00280" name="l00280"></a><span class="lineno">  280</span>              MarangoniWithoutSurfaceTensionForceError(</div>
+<div class="line"><a id="l00281" name="l00281"></a><span class="lineno">  281</span>                marangoni_effect_enabled));</div>
+<div class="line"><a id="l00282" name="l00282"></a><span class="lineno">  282</span> </div>
+<div class="line"><a id="l00283" name="l00283"></a><span class="lineno">  283</span>  <span class="comment">// Dependence of surface tension force on VOF</span></div>
+<div class="line"><a id="l00284" name="l00284"></a><span class="lineno">  284</span>  AssertThrow(!(surface_tension_force_enabled == <span class="keyword">true</span> &amp;&amp; VOF_enabled == <span class="keyword">false</span>),</div>
+<div class="line"><a id="l00285" name="l00285"></a><span class="lineno">  285</span>              SurfaceTensionForceWithoutVOFError(</div>
+<div class="line"><a id="l00286" name="l00286"></a><span class="lineno">  286</span>                surface_tension_force_enabled));</div>
+<div class="line"><a id="l00287" name="l00287"></a><span class="lineno">  287</span> </div>
+<div class="line"><a id="l00288" name="l00288"></a><span class="lineno">  288</span>  <span class="comment">// Dependence of Marangoni effect on VOF</span></div>
+<div class="line"><a id="l00289" name="l00289"></a><span class="lineno">  289</span>  AssertThrow(!(marangoni_effect_enabled == <span class="keyword">true</span> &amp;&amp; VOF_enabled == <span class="keyword">false</span>),</div>
+<div class="line"><a id="l00290" name="l00290"></a><span class="lineno">  290</span>              MarangoniWithoutVOFError(marangoni_effect_enabled));</div>
 <div class="line"><a id="l00291" name="l00291"></a><span class="lineno">  291</span> </div>
-<div class="line"><a id="l00292" name="l00292"></a><span class="lineno">  292</span>  <span class="comment">// Dependence of Marangoni effect on VOF</span></div>
-<div class="line"><a id="l00293" name="l00293"></a><span class="lineno">  293</span>  AssertThrow(!(marangoni_effect_enabled == <span class="keyword">true</span> &amp;&amp; VOF_enabled == <span class="keyword">false</span>),</div>
-<div class="line"><a id="l00294" name="l00294"></a><span class="lineno">  294</span>              MarangoniWithoutVOFError(marangoni_effect_enabled));</div>
-<div class="line"><a id="l00295" name="l00295"></a><span class="lineno">  295</span> </div>
-<div class="line"><a id="l00296" name="l00296"></a><span class="lineno">  296</span>  <span class="comment">// Dependence of interface sharpening on VOF</span></div>
-<div class="line"><a id="l00297" name="l00297"></a><span class="lineno">  297</span>  AssertThrow(!(interface_sharpening_enabled == <span class="keyword">true</span> &amp;&amp; VOF_enabled == <span class="keyword">false</span>),</div>
-<div class="line"><a id="l00298" name="l00298"></a><span class="lineno">  298</span>              InterfaceSharpeningWithoutVOFError(interface_sharpening_enabled));</div>
-<div class="line"><a id="l00299" name="l00299"></a><span class="lineno">  299</span>}</div>
+<div class="line"><a id="l00292" name="l00292"></a><span class="lineno">  292</span>  <span class="comment">// Dependence of interface sharpening on VOF</span></div>
+<div class="line"><a id="l00293" name="l00293"></a><span class="lineno">  293</span>  AssertThrow(!(interface_sharpening_enabled == <span class="keyword">true</span> &amp;&amp; VOF_enabled == <span class="keyword">false</span>),</div>
+<div class="line"><a id="l00294" name="l00294"></a><span class="lineno">  294</span>              InterfaceSharpeningWithoutVOFError(interface_sharpening_enabled));</div>
+<div class="line"><a id="l00295" name="l00295"></a><span class="lineno">  295</span>}</div>
 </div>
-<div class="line"><a id="l00300" name="l00300"></a><span class="lineno">  300</span> </div>
-<div class="line"><a id="l00301" name="l00301"></a><span class="lineno">  301</span><span class="keyword">template</span> <span class="keyword">class </span><a class="code hl_class" href="classMultiphysicsInterface.html">MultiphysicsInterface&lt;2&gt;</a>;</div>
-<div class="line"><a id="l00302" name="l00302"></a><span class="lineno">  302</span><span class="keyword">template</span> <span class="keyword">class </span><a class="code hl_class" href="classMultiphysicsInterface.html">MultiphysicsInterface&lt;3&gt;</a>;</div>
+<div class="line"><a id="l00296" name="l00296"></a><span class="lineno">  296</span> </div>
+<div class="line"><a id="l00297" name="l00297"></a><span class="lineno">  297</span><span class="keyword">template</span> <span class="keyword">class </span><a class="code hl_class" href="classMultiphysicsInterface.html">MultiphysicsInterface&lt;2&gt;</a>;</div>
+<div class="line"><a id="l00298" name="l00298"></a><span class="lineno">  298</span><span class="keyword">template</span> <span class="keyword">class </span><a class="code hl_class" href="classMultiphysicsInterface.html">MultiphysicsInterface&lt;3&gt;</a>;</div>
 <div class="ttc" id="acahn__hilliard_8h_html"><div class="ttname"><a href="cahn__hilliard_8h.html">cahn_hilliard.h</a></div></div>
 <div class="ttc" id="aclassMultiphysicsInterface_html"><div class="ttname"><a href="classMultiphysicsInterface.html">MultiphysicsInterface</a></div><div class="ttdef"><b>Definition</b> <a href="multiphysics__interface_8h_source.html#l00036">multiphysics_interface.h:37</a></div></div>
 <div class="ttc" id="aclassMultiphysicsInterface_html_a0f9da9403c8164b4f59e67bad6ef5d1a"><div class="ttname"><a href="classMultiphysicsInterface.html#a0f9da9403c8164b4f59e67bad6ef5d1a">MultiphysicsInterface::physics</a></div><div class="ttdeci">std::map&lt; PhysicsID, std::shared_ptr&lt; AuxiliaryPhysics&lt; dim, GlobalVectorType &gt; &gt; &gt; physics</div><div class="ttdef"><b>Definition</b> <a href="multiphysics__interface_8h_source.html#l00900">multiphysics_interface.h:900</a></div></div>
 <div class="ttc" id="aclassMultiphysicsInterface_html_a14dce6e8da33be1ccb85f215c6df0634"><div class="ttname"><a href="classMultiphysicsInterface.html#a14dce6e8da33be1ccb85f215c6df0634">MultiphysicsInterface::active_physics</a></div><div class="ttdeci">std::vector&lt; PhysicsID &gt; active_physics</div><div class="ttdef"><b>Definition</b> <a href="multiphysics__interface_8h_source.html#l00887">multiphysics_interface.h:887</a></div></div>
 <div class="ttc" id="aclassMultiphysicsInterface_html_a27f42b3d6dfed363f457a8c02721741c"><div class="ttname"><a href="classMultiphysicsInterface.html#a27f42b3d6dfed363f457a8c02721741c">MultiphysicsInterface::MultiphysicsInterface</a></div><div class="ttdeci">MultiphysicsInterface(const SimulationParameters&lt; dim &gt; &amp;nsparam, std::shared_ptr&lt; parallel::DistributedTriangulationBase&lt; dim &gt; &gt; p_triangulation, std::shared_ptr&lt; SimulationControl &gt; p_simulation_control, ConditionalOStream &amp;p_pcout)</div><div class="ttdoc">Construct the Multiphysics interface from the simulation parameters. Depending on which multiphysics ...</div><div class="ttdef"><b>Definition</b> <a href="multiphysics__interface_8cc_source.html#l00070">multiphysics_interface.cc:70</a></div></div>
-<div class="ttc" id="aclassMultiphysicsInterface_html_a42dda4a84b218a2ab19ba6ed323ad283"><div class="ttname"><a href="classMultiphysicsInterface.html#a42dda4a84b218a2ab19ba6ed323ad283">MultiphysicsInterface::get_curvature_dof_handler</a></div><div class="ttdeci">const DoFHandler&lt; dim &gt; &amp; get_curvature_dof_handler()</div><div class="ttdoc">Request the projected curvature DOF handler.</div><div class="ttdef"><b>Definition</b> <a href="multiphysics__interface_8cc_source.html#l00188">multiphysics_interface.cc:188</a></div></div>
-<div class="ttc" id="aclassMultiphysicsInterface_html_a711ce06986740c92d8b5ac15bfd49964"><div class="ttname"><a href="classMultiphysicsInterface.html#a711ce06986740c92d8b5ac15bfd49964">MultiphysicsInterface::get_curvature_solution</a></div><div class="ttdeci">const GlobalVectorType &amp; get_curvature_solution()</div><div class="ttdoc">Request the present solution of the curvature.</div><div class="ttdef"><b>Definition</b> <a href="multiphysics__interface_8cc_source.html#l00170">multiphysics_interface.cc:170</a></div></div>
-<div class="ttc" id="aclassMultiphysicsInterface_html_a75edde8a3131755c75813bee6ce03ebc"><div class="ttname"><a href="classMultiphysicsInterface.html#a75edde8a3131755c75813bee6ce03ebc">MultiphysicsInterface::set_immersed_solid_shape</a></div><div class="ttdeci">void set_immersed_solid_shape(Shape&lt; dim &gt; *shape)</div><div class="ttdoc">Share immersed solid shape.</div><div class="ttdef"><b>Definition</b> <a href="multiphysics__interface_8cc_source.html#l00233">multiphysics_interface.cc:233</a></div></div>
+<div class="ttc" id="aclassMultiphysicsInterface_html_a42dda4a84b218a2ab19ba6ed323ad283"><div class="ttname"><a href="classMultiphysicsInterface.html#a42dda4a84b218a2ab19ba6ed323ad283">MultiphysicsInterface::get_curvature_dof_handler</a></div><div class="ttdeci">const DoFHandler&lt; dim &gt; &amp; get_curvature_dof_handler()</div><div class="ttdoc">Request the projected curvature DOF handler.</div><div class="ttdef"><b>Definition</b> <a href="multiphysics__interface_8cc_source.html#l00186">multiphysics_interface.cc:186</a></div></div>
+<div class="ttc" id="aclassMultiphysicsInterface_html_a711ce06986740c92d8b5ac15bfd49964"><div class="ttname"><a href="classMultiphysicsInterface.html#a711ce06986740c92d8b5ac15bfd49964">MultiphysicsInterface::get_curvature_solution</a></div><div class="ttdeci">const GlobalVectorType &amp; get_curvature_solution()</div><div class="ttdoc">Request the present solution of the curvature.</div><div class="ttdef"><b>Definition</b> <a href="multiphysics__interface_8cc_source.html#l00169">multiphysics_interface.cc:169</a></div></div>
+<div class="ttc" id="aclassMultiphysicsInterface_html_a75edde8a3131755c75813bee6ce03ebc"><div class="ttname"><a href="classMultiphysicsInterface.html#a75edde8a3131755c75813bee6ce03ebc">MultiphysicsInterface::set_immersed_solid_shape</a></div><div class="ttdeci">void set_immersed_solid_shape(Shape&lt; dim &gt; *shape)</div><div class="ttdoc">Share immersed solid shape.</div><div class="ttdef"><b>Definition</b> <a href="multiphysics__interface_8cc_source.html#l00229">multiphysics_interface.cc:229</a></div></div>
 <div class="ttc" id="aclassMultiphysicsInterface_html_a77e4650e2e491558b5eace431a2bf365"><div class="ttname"><a href="classMultiphysicsInterface.html#a77e4650e2e491558b5eace431a2bf365">MultiphysicsInterface::multiphysics_parameters</a></div><div class="ttdeci">const Parameters::Multiphysics multiphysics_parameters</div><div class="ttdef"><b>Definition</b> <a href="multiphysics__interface_8h_source.html#l00882">multiphysics_interface.h:882</a></div></div>
 <div class="ttc" id="aclassMultiphysicsInterface_html_aa7b23d559fd4322f3e30723f2bb8874c"><div class="ttname"><a href="classMultiphysicsInterface.html#aa7b23d559fd4322f3e30723f2bb8874c">MultiphysicsInterface::get_projected_phase_fraction_gradient_solution</a></div><div class="ttdeci">const GlobalVectorType &amp; get_projected_phase_fraction_gradient_solution()</div><div class="ttdoc">Request the present solution of the projected phase fraction gradient (PFG)</div><div class="ttdef"><b>Definition</b> <a href="multiphysics__interface_8cc_source.html#l00152">multiphysics_interface.cc:152</a></div></div>
-<div class="ttc" id="aclassMultiphysicsInterface_html_aaada3e3716bfe0c453d4f1e101b3bd60"><div class="ttname"><a href="classMultiphysicsInterface.html#aaada3e3716bfe0c453d4f1e101b3bd60">MultiphysicsInterface::inspect_multiphysics_models_dependencies</a></div><div class="ttdeci">void inspect_multiphysics_models_dependencies(const SimulationParameters&lt; dim &gt; &amp;nsparam)</div><div class="ttdef"><b>Definition</b> <a href="multiphysics__interface_8cc_source.html#l00240">multiphysics_interface.cc:240</a></div></div>
-<div class="ttc" id="aclassMultiphysicsInterface_html_ac76eac3059bd87155d3583136b760756"><div class="ttname"><a href="classMultiphysicsInterface.html#ac76eac3059bd87155d3583136b760756">MultiphysicsInterface::get_projected_phase_fraction_gradient_dof_handler</a></div><div class="ttdeci">const DoFHandler&lt; dim &gt; &amp; get_projected_phase_fraction_gradient_dof_handler()</div><div class="ttdoc">Request the projected phase fraction gradient (pfg) DOF handler.</div><div class="ttdef"><b>Definition</b> <a href="multiphysics__interface_8cc_source.html#l00206">multiphysics_interface.cc:206</a></div></div>
-<div class="ttc" id="aclassMultiphysicsInterface_html_ae9a2eca5278a1446e60dbd44421dbdb7"><div class="ttname"><a href="classMultiphysicsInterface.html#ae9a2eca5278a1446e60dbd44421dbdb7">MultiphysicsInterface::get_immersed_solid_shape</a></div><div class="ttdeci">Shape&lt; dim &gt; * get_immersed_solid_shape()</div><div class="ttdoc">Request immersed solid shape.</div><div class="ttdef"><b>Definition</b> <a href="multiphysics__interface_8cc_source.html#l00224">multiphysics_interface.cc:224</a></div></div>
+<div class="ttc" id="aclassMultiphysicsInterface_html_aaada3e3716bfe0c453d4f1e101b3bd60"><div class="ttname"><a href="classMultiphysicsInterface.html#aaada3e3716bfe0c453d4f1e101b3bd60">MultiphysicsInterface::inspect_multiphysics_models_dependencies</a></div><div class="ttdeci">void inspect_multiphysics_models_dependencies(const SimulationParameters&lt; dim &gt; &amp;nsparam)</div><div class="ttdef"><b>Definition</b> <a href="multiphysics__interface_8cc_source.html#l00236">multiphysics_interface.cc:236</a></div></div>
+<div class="ttc" id="aclassMultiphysicsInterface_html_ac76eac3059bd87155d3583136b760756"><div class="ttname"><a href="classMultiphysicsInterface.html#ac76eac3059bd87155d3583136b760756">MultiphysicsInterface::get_projected_phase_fraction_gradient_dof_handler</a></div><div class="ttdeci">const DoFHandler&lt; dim &gt; &amp; get_projected_phase_fraction_gradient_dof_handler()</div><div class="ttdoc">Request the projected phase fraction gradient (pfg) DOF handler.</div><div class="ttdef"><b>Definition</b> <a href="multiphysics__interface_8cc_source.html#l00203">multiphysics_interface.cc:203</a></div></div>
+<div class="ttc" id="aclassMultiphysicsInterface_html_ae9a2eca5278a1446e60dbd44421dbdb7"><div class="ttname"><a href="classMultiphysicsInterface.html#ae9a2eca5278a1446e60dbd44421dbdb7">MultiphysicsInterface::get_immersed_solid_shape</a></div><div class="ttdeci">Shape&lt; dim &gt; * get_immersed_solid_shape()</div><div class="ttdoc">Request immersed solid shape.</div><div class="ttdef"><b>Definition</b> <a href="multiphysics__interface_8cc_source.html#l00220">multiphysics_interface.cc:220</a></div></div>
 <div class="ttc" id="aclassMultiphysicsInterface_html_aed5e8530ca759ffd64a11b3d3f872c92"><div class="ttname"><a href="classMultiphysicsInterface.html#aed5e8530ca759ffd64a11b3d3f872c92">MultiphysicsInterface::verbosity</a></div><div class="ttdeci">std::map&lt; PhysicsID, Parameters::Verbosity &gt; verbosity</div><div class="ttdef"><b>Definition</b> <a href="multiphysics__interface_8h_source.html#l00883">multiphysics_interface.h:883</a></div></div>
 <div class="ttc" id="aclassShape_html"><div class="ttname"><a href="classShape.html">Shape</a></div><div class="ttdoc">A base class used to represent geometrical entities. Its main uses are to return signed distance and ...</div><div class="ttdef"><b>Definition</b> <a href="shape_8h_source.html#l00051">shape.h:52</a></div></div>
 <div class="ttc" id="aclassSimulationParameters_html"><div class="ttname"><a href="classSimulationParameters.html">SimulationParameters</a></div><div class="ttdef"><b>Definition</b> <a href="simulation__parameters_8h_source.html#l00023">simulation_parameters.h:24</a></div></div>
