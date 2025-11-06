@@ -116,6 +116,7 @@ write_boundaries_vtu_and_pvd(PVDHandler              &pvd_handler_boundary,
       const unsigned int n_files =
         (group_files == 0) ? n_processes : std::min(group_files, n_processes);
 
+      filenames.reserve(n_files);
       for (unsigned int i = 0; i < n_files; ++i)
         filenames.push_back(file_prefix + "." +
                             Utilities::int_to_string(iter, digits) + "." +

@@ -18,6 +18,8 @@
 
 #include <deal.II/numerics/vector_tools.h>
 
+#include <type_traits>
+
 using namespace dealii;
 
 template <int dim, int n_components, int component_start>
@@ -1050,18 +1052,18 @@ ParticleProjector<dim>::calculate_field_projection(
 
   // Declare the vectors for the shape function differently depending on the
   // number of components. We currently assume either 1 or dim components.
-  typename std::conditional<n_components == 1,
-                            std::vector<double>,
-                            std::vector<Tensor<1, dim>>>::type
+  std::conditional_t<n_components == 1,
+                     std::vector<double>,
+                     std::vector<Tensor<1, dim>>>
     phi_vf(dofs_per_cell);
-  typename std::conditional<n_components == 1,
-                            std::vector<Tensor<1, dim>>,
-                            std::vector<Tensor<2, dim>>>::type
+  std::conditional_t<n_components == 1,
+                     std::vector<Tensor<1, dim>>,
+                     std::vector<Tensor<2, dim>>>
     grad_phi_vf(dofs_per_cell);
 
   double r_sphere = 0.0;
   double total_volume_of_particles_in_sphere;
-  typename std::conditional<n_components == 1, double, Tensor<1, dim>>::type
+  std::conditional_t<n_components == 1, double, Tensor<1, dim>>
          particle_field_in_sphere;
   double qcm_sphere_diameter = void_fraction_parameters->qcm_sphere_diameter;
 
@@ -1158,7 +1160,7 @@ ParticleProjector<dim>::calculate_field_projection(
 
 
 
-                      for (unsigned int d = 0; d < n_components; ++d)
+                      for (int d = 0; d < n_components; ++d)
                         {
                           particle_field_in_sphere[d] +=
                             volumetric_contribution *
@@ -1232,7 +1234,7 @@ ParticleProjector<dim>::calculate_field_projection(
                                   volumetric_contribution]) :
                           particle_volume_in_sphere;
 
-                      for (unsigned int d = 0; d < n_components; ++d)
+                      for (int d = 0; d < n_components; ++d)
                         {
                           particle_field_in_sphere[d] +=
                             volumetric_contribution *
