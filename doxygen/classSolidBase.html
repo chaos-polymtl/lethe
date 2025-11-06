@@ -93,8 +93,8 @@ $(function() {
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pub-methods" name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
-<tr class="memitem:a5fa56aef5d65e8b247f4ba755dfcaa33" id="r_a5fa56aef5d65e8b247f4ba755dfcaa33"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classSolidBase.html#a5fa56aef5d65e8b247f4ba755dfcaa33">SolidBase</a> (std::shared_ptr&lt; <a class="el" href="classParameters_1_1NitscheObject.html">Parameters::NitscheObject</a>&lt; spacedim &gt; &gt; &amp;<a class="el" href="classSolidBase.html#a9c6307f13534cbff5a31109c5915bcc7">param</a>, std::shared_ptr&lt; parallel::DistributedTriangulationBase&lt; spacedim &gt; &gt; <a class="el" href="classSolidBase.html#aa9660d32f7027f1e4da1d6a0dfc0b992">fluid_tria</a>, std::shared_ptr&lt; Mapping&lt; spacedim &gt; &gt; <a class="el" href="classSolidBase.html#a8854df1daf4ffc7765b14b7172a5872b">fluid_mapping</a>)</td></tr>
-<tr class="separator:a5fa56aef5d65e8b247f4ba755dfcaa33"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aaafc2cb450613241f5e975921db102de" id="r_aaafc2cb450613241f5e975921db102de"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classSolidBase.html#aaafc2cb450613241f5e975921db102de">SolidBase</a> (std::shared_ptr&lt; <a class="el" href="classParameters_1_1NitscheObject.html">Parameters::NitscheObject</a>&lt; spacedim &gt; &gt; &amp;<a class="el" href="classSolidBase.html#a9c6307f13534cbff5a31109c5915bcc7">param</a>, const std::shared_ptr&lt; parallel::DistributedTriangulationBase&lt; spacedim &gt; &gt; &amp;<a class="el" href="classSolidBase.html#aa9660d32f7027f1e4da1d6a0dfc0b992">fluid_tria</a>, const std::shared_ptr&lt; Mapping&lt; spacedim &gt; &gt; &amp;<a class="el" href="classSolidBase.html#a8854df1daf4ffc7765b14b7172a5872b">fluid_mapping</a>)</td></tr>
+<tr class="separator:aaafc2cb450613241f5e975921db102de"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a92aea3e357d30cf2cb021cac7c3a8ffa" id="r_a92aea3e357d30cf2cb021cac7c3a8ffa"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classSolidBase.html#a92aea3e357d30cf2cb021cac7c3a8ffa">initial_setup</a> ()</td></tr>
 <tr class="separator:a92aea3e357d30cf2cb021cac7c3a8ffa"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a7f7dc77812dcd58d7e749b48b29516c4" id="r_a7f7dc77812dcd58d7e749b48b29516c4"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classSolidBase.html#a7f7dc77812dcd58d7e749b48b29516c4">setup_triangulation</a> (const bool restart)</td></tr>
@@ -213,8 +213,8 @@ class SolidBase&lt; dim, spacedim &gt;</div><p>A base class that generates a par
 
 <p class="definition">Definition at line <a class="el" href="solid__base_8h_source.html#l00037">37</a> of file <a class="el" href="solid__base_8h_source.html">solid_base.h</a>.</p>
 </div><h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
-<a id="a5fa56aef5d65e8b247f4ba755dfcaa33" name="a5fa56aef5d65e8b247f4ba755dfcaa33"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a5fa56aef5d65e8b247f4ba755dfcaa33">&#9670;&#160;</a></span>SolidBase()</h2>
+<a id="aaafc2cb450613241f5e975921db102de" name="aaafc2cb450613241f5e975921db102de"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aaafc2cb450613241f5e975921db102de">&#9670;&#160;</a></span>SolidBase()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -230,13 +230,13 @@ template&lt;int dim, int spacedim&gt; </div>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">std::shared_ptr&lt; parallel::DistributedTriangulationBase&lt; spacedim &gt; &gt;&#160;</td>
+          <td class="paramtype">const std::shared_ptr&lt; parallel::DistributedTriangulationBase&lt; spacedim &gt; &gt; &amp;&#160;</td>
           <td class="paramname"><em>fluid_tria</em>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">std::shared_ptr&lt; Mapping&lt; spacedim &gt; &gt;&#160;</td>
+          <td class="paramtype">const std::shared_ptr&lt; Mapping&lt; spacedim &gt; &gt; &amp;&#160;</td>
           <td class="paramname"><em>fluid_mapping</em>&#160;</td>
         </tr>
         <tr>
@@ -249,7 +249,7 @@ template&lt;int dim, int spacedim&gt; </div>
 
 <p class="definition">Definition at line <a class="el" href="solid__base_8cc_source.html#l00037">37</a> of file <a class="el" href="solid__base_8cc_source.html">solid_base.cc</a>.</p>
 
-<p class="reference">References <a class="el" href="solid__base_8h_source.html#l00231">SolidBase&lt; dim, spacedim &gt;::displacement_dh</a>, <a class="el" href="solid__base_8h_source.html#l00232">SolidBase&lt; dim, spacedim &gt;::displacement_fe</a>, <a class="el" href="solid__base_8h_source.html#l00224">SolidBase&lt; dim, spacedim &gt;::fe</a>, <a class="el" href="solid__base_8h_source.html#l00214">SolidBase&lt; dim, spacedim &gt;::mpi_communicator</a>, <a class="el" href="solid__base_8h_source.html#l00237">SolidBase&lt; dim, spacedim &gt;::param</a>, <a class="el" href="solid__base_8h_source.html#l00228">SolidBase&lt; dim, spacedim &gt;::quadrature</a>, <a class="el" href="solid__base_8h_source.html#l00221">SolidBase&lt; dim, spacedim &gt;::solid_dh</a>, <a class="el" href="solid__base_8h_source.html#l00226">SolidBase&lt; dim, spacedim &gt;::solid_mapping</a>, and <a class="el" href="solid__base_8h_source.html#l00219">SolidBase&lt; dim, spacedim &gt;::solid_tria</a>.</p>
+<p class="reference">References <a class="el" href="solid__base_8h_source.html#l00232">SolidBase&lt; dim, spacedim &gt;::displacement_dh</a>, <a class="el" href="solid__base_8h_source.html#l00233">SolidBase&lt; dim, spacedim &gt;::displacement_fe</a>, <a class="el" href="solid__base_8h_source.html#l00225">SolidBase&lt; dim, spacedim &gt;::fe</a>, <a class="el" href="solid__base_8h_source.html#l00215">SolidBase&lt; dim, spacedim &gt;::mpi_communicator</a>, <a class="el" href="solid__base_8h_source.html#l00238">SolidBase&lt; dim, spacedim &gt;::param</a>, <a class="el" href="solid__base_8h_source.html#l00229">SolidBase&lt; dim, spacedim &gt;::quadrature</a>, <a class="el" href="solid__base_8h_source.html#l00222">SolidBase&lt; dim, spacedim &gt;::solid_dh</a>, <a class="el" href="solid__base_8h_source.html#l00227">SolidBase&lt; dim, spacedim &gt;::solid_mapping</a>, and <a class="el" href="solid__base_8h_source.html#l00220">SolidBase&lt; dim, spacedim &gt;::solid_tria</a>.</p>
 
 </div>
 </div>
@@ -272,7 +272,7 @@ template&lt;int dim, int spacedim&gt; </div>
 </div><div class="memdoc">
 <dl class="section return"><dt>Returns</dt><dd>the reference to the displacement dof handler </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="solid__base_8cc_source.html#l00412">412</a> of file <a class="el" href="solid__base_8cc_source.html">solid_base.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="solid__base_8cc_source.html#l00413">413</a> of file <a class="el" href="solid__base_8cc_source.html">solid_base.cc</a>.</p>
 
 </div>
 </div>
@@ -294,7 +294,7 @@ template&lt;int dim, int spacedim&gt; </div>
 </div><div class="memdoc">
 <dl class="section return"><dt>Returns</dt><dd>the reference to the displacement vector </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="solid__base_8cc_source.html#l00420">420</a> of file <a class="el" href="solid__base_8cc_source.html">solid_base.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="solid__base_8cc_source.html#l00421">421</a> of file <a class="el" href="solid__base_8cc_source.html">solid_base.cc</a>.</p>
 
 </div>
 </div>
@@ -316,7 +316,7 @@ template&lt;int dim, int spacedim&gt; </div>
 </div><div class="memdoc">
 <dl class="section return"><dt>Returns</dt><dd>the reference to the solid dof handler </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="solid__base_8cc_source.html#l00405">405</a> of file <a class="el" href="solid__base_8cc_source.html">solid_base.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="solid__base_8cc_source.html#l00406">406</a> of file <a class="el" href="solid__base_8cc_source.html">solid_base.cc</a>.</p>
 
 </div>
 </div>
@@ -338,7 +338,7 @@ template&lt;int dim, int spacedim&gt; </div>
 </div><div class="memdoc">
 <dl class="section return"><dt>Returns</dt><dd>the reference to the std::shared_ptr of a Particles::ParticleHandler&lt;spacedim&gt; that contains the solid particle handler </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="solid__base_8cc_source.html#l00428">428</a> of file <a class="el" href="solid__base_8cc_source.html">solid_base.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="solid__base_8cc_source.html#l00429">429</a> of file <a class="el" href="solid__base_8cc_source.html">solid_base.cc</a>.</p>
 
 </div>
 </div>
@@ -359,7 +359,7 @@ template&lt;int dim, int spacedim&gt; </div>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="solid__base_8cc_source.html#l00448">448</a> of file <a class="el" href="solid__base_8cc_source.html">solid_base.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="solid__base_8cc_source.html#l00449">449</a> of file <a class="el" href="solid__base_8cc_source.html">solid_base.cc</a>.</p>
 
 <p class="reference">References <a class="el" href="physical__property__model_8h_source.html#l00040">temperature</a>.</p>
 
@@ -383,7 +383,7 @@ template&lt;int dim, int spacedim&gt; </div>
 </div><div class="memdoc">
 <dl class="section return"><dt>Returns</dt><dd>shared_ptr of the solid triangulation </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="solid__base_8cc_source.html#l00435">435</a> of file <a class="el" href="solid__base_8cc_source.html">solid_base.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="solid__base_8cc_source.html#l00436">436</a> of file <a class="el" href="solid__base_8cc_source.html">solid_base.cc</a>.</p>
 
 </div>
 </div>
@@ -405,7 +405,7 @@ template&lt;int dim, int spacedim&gt; </div>
 </div><div class="memdoc">
 <dl class="section return"><dt>Returns</dt><dd>Function&lt;spacedim&gt; of the solid velocity </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="solid__base_8cc_source.html#l00442">442</a> of file <a class="el" href="solid__base_8cc_source.html">solid_base.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="solid__base_8cc_source.html#l00443">443</a> of file <a class="el" href="solid__base_8cc_source.html">solid_base.cc</a>.</p>
 
 <p class="reference">References <a class="el" href="multiphysics_8h.html#a2cbb04ef215561a69b48772159577fddaac1a453d0cdc1f19d9479ccfaa8b082c">velocity</a>.</p>
 
@@ -430,7 +430,7 @@ template&lt;int dim, int spacedim&gt; </div>
 
 <p>Manages solid triangulation and particles setup. </p>
 
-<p class="definition">Definition at line <a class="el" href="solid__base_8cc_source.html#l00095">95</a> of file <a class="el" href="solid__base_8cc_source.html">solid_base.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="solid__base_8cc_source.html#l00096">96</a> of file <a class="el" href="solid__base_8cc_source.html">solid_base.cc</a>.</p>
 
 </div>
 </div>
@@ -471,7 +471,7 @@ template&lt;int dim, int spacedim&gt; </div>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="solid__base_8cc_source.html#l00462">462</a> of file <a class="el" href="solid__base_8cc_source.html">solid_base.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="solid__base_8cc_source.html#l00463">463</a> of file <a class="el" href="solid__base_8cc_source.html">solid_base.cc</a>.</p>
 
 <p class="reference">References <a class="el" href="multiphysics_8h.html#a2cbb04ef215561a69b48772159577fddaac1a453d0cdc1f19d9479ccfaa8b082c">velocity</a>.</p>
 
@@ -497,7 +497,7 @@ template&lt;int dim, int spacedim&gt; </div>
 
 <p>Loads a particle handler in the fluid triangulation domain that holds the particles of the solid according to a specific quadrature, and sets up dofs. </p>
 
-<p class="definition">Definition at line <a class="el" href="solid__base_8cc_source.html#l00384">384</a> of file <a class="el" href="solid__base_8cc_source.html">solid_base.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="solid__base_8cc_source.html#l00385">385</a> of file <a class="el" href="solid__base_8cc_source.html">solid_base.cc</a>.</p>
 
 </div>
 </div>
@@ -521,7 +521,7 @@ template&lt;int dim, int spacedim&gt; </div>
 
 <p>Loads a solid triangulation from a restart file. </p>
 
-<p class="definition">Definition at line <a class="el" href="solid__base_8cc_source.html#l00267">267</a> of file <a class="el" href="solid__base_8cc_source.html">solid_base.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="solid__base_8cc_source.html#l00268">268</a> of file <a class="el" href="solid__base_8cc_source.html">solid_base.cc</a>.</p>
 
 </div>
 </div>
@@ -562,7 +562,7 @@ template&lt;int dim, int spacedim&gt; </div>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="solid__base_8cc_source.html#l00568">568</a> of file <a class="el" href="solid__base_8cc_source.html">solid_base.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="solid__base_8cc_source.html#l00569">569</a> of file <a class="el" href="solid__base_8cc_source.html">solid_base.cc</a>.</p>
 
 <p class="reference">References <a class="el" href="multiphysics_8h.html#a2cbb04ef215561a69b48772159577fddaac1a453d0cdc1f19d9479ccfaa8b082c">velocity</a>.</p>
 
@@ -587,7 +587,7 @@ template&lt;int dim, int spacedim&gt; </div>
 
 <p>Moves the dofs of the solid_triangulation by using the displacement vector. This is only use to move the solid triangulation at the correct location when the simulation is restarted. </p>
 
-<p class="definition">Definition at line <a class="el" href="solid__base_8cc_source.html#l00650">650</a> of file <a class="el" href="solid__base_8cc_source.html">solid_base.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="solid__base_8cc_source.html#l00651">651</a> of file <a class="el" href="solid__base_8cc_source.html">solid_base.cc</a>.</p>
 
 </div>
 </div>
@@ -610,7 +610,7 @@ template&lt;int dim, int spacedim&gt; </div>
 
 <p>prints the positions of the particles </p>
 
-<p class="definition">Definition at line <a class="el" href="solid__base_8cc_source.html#l00684">684</a> of file <a class="el" href="solid__base_8cc_source.html">solid_base.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="solid__base_8cc_source.html#l00685">685</a> of file <a class="el" href="solid__base_8cc_source.html">solid_base.cc</a>.</p>
 
 </div>
 </div>
@@ -634,7 +634,7 @@ template&lt;int dim, int spacedim&gt; </div>
 
 <p>read solid base triangulation checkpoint </p>
 
-<p class="definition">Definition at line <a class="el" href="solid__base_8cc_source.html#l00745">745</a> of file <a class="el" href="solid__base_8cc_source.html">solid_base.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="solid__base_8cc_source.html#l00746">746</a> of file <a class="el" href="solid__base_8cc_source.html">solid_base.cc</a>.</p>
 
 </div>
 </div>
@@ -664,7 +664,7 @@ template&lt;int dim, int spacedim&gt; </div>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="solid__base_8cc_source.html#l00224">224</a> of file <a class="el" href="solid__base_8cc_source.html">solid_base.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="solid__base_8cc_source.html#l00225">225</a> of file <a class="el" href="solid__base_8cc_source.html">solid_base.cc</a>.</p>
 
 </div>
 </div>
@@ -733,7 +733,7 @@ template&lt;int dim, int spacedim = dim&gt; </div>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="solid__base_8cc_source.html#l00232">232</a> of file <a class="el" href="solid__base_8cc_source.html">solid_base.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="solid__base_8cc_source.html#l00233">233</a> of file <a class="el" href="solid__base_8cc_source.html">solid_base.cc</a>.</p>
 
 </div>
 </div>
@@ -763,7 +763,7 @@ template&lt;int dim, int spacedim = dim&gt; </div>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="solid__base_8cc_source.html#l00238">238</a> of file <a class="el" href="solid__base_8cc_source.html">solid_base.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="solid__base_8cc_source.html#l00239">239</a> of file <a class="el" href="solid__base_8cc_source.html">solid_base.cc</a>.</p>
 
 </div>
 </div>
@@ -786,7 +786,7 @@ template&lt;int dim, int spacedim&gt; </div>
 
 <p>Sets-up particles with particle handler, in the fluid triangulation domain that holds the particles of the solid according to a specific quadrature. </p>
 
-<p class="definition">Definition at line <a class="el" href="solid__base_8cc_source.html#l00814">814</a> of file <a class="el" href="solid__base_8cc_source.html">solid_base.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="solid__base_8cc_source.html#l00815">815</a> of file <a class="el" href="solid__base_8cc_source.html">solid_base.cc</a>.</p>
 
 </div>
 </div>
@@ -809,7 +809,7 @@ template&lt;int dim, int spacedim&gt; </div>
 
 <p>Sets-up particles with particle handler, in the fluid triangulation domain that holds the particles of the solid according to a specific quadrature. </p>
 
-<p class="definition">Definition at line <a class="el" href="solid__base_8cc_source.html#l00302">302</a> of file <a class="el" href="solid__base_8cc_source.html">solid_base.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="solid__base_8cc_source.html#l00303">303</a> of file <a class="el" href="solid__base_8cc_source.html">solid_base.cc</a>.</p>
 
 </div>
 </div>
@@ -832,7 +832,7 @@ template&lt;int dim, int spacedim&gt; </div>
 
 <p>Creates a particle handler in the fluid triangulation domain. </p>
 
-<p class="definition">Definition at line <a class="el" href="solid__base_8cc_source.html#l00289">289</a> of file <a class="el" href="solid__base_8cc_source.html">solid_base.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="solid__base_8cc_source.html#l00290">290</a> of file <a class="el" href="solid__base_8cc_source.html">solid_base.cc</a>.</p>
 
 </div>
 </div>
@@ -856,7 +856,7 @@ template&lt;int dim, int spacedim&gt; </div>
 
 <p>Generates a solid triangulation from a dealii or gmsh mesh. </p>
 
-<p class="definition">Definition at line <a class="el" href="solid__base_8cc_source.html#l00108">108</a> of file <a class="el" href="solid__base_8cc_source.html">solid_base.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="solid__base_8cc_source.html#l00109">109</a> of file <a class="el" href="solid__base_8cc_source.html">solid_base.cc</a>.</p>
 
 <p class="reference">References <a class="el" href="structParameters_1_1Mesh.html#a98b00ca6e2274cc90b7bec52bdc7c50ba3c4b939087811f328575e358443a5880">Parameters::Mesh::dealii</a>, and <a class="el" href="structParameters_1_1Mesh.html#a98b00ca6e2274cc90b7bec52bdc7c50bab7c7797f3a0a1098b484e5e3a780e025">Parameters::Mesh::gmsh</a>.</p>
 
@@ -906,7 +906,7 @@ template&lt;int dim, int spacedim = dim&gt; </div>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="solid__base_8cc_source.html#l00245">245</a> of file <a class="el" href="solid__base_8cc_source.html">solid_base.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="solid__base_8cc_source.html#l00246">246</a> of file <a class="el" href="solid__base_8cc_source.html">solid_base.cc</a>.</p>
 
 </div>
 </div>
@@ -926,7 +926,7 @@ template&lt;int dim, int spacedim = dim&gt; </div>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="solid__base_8cc_source.html#l00252">252</a> of file <a class="el" href="solid__base_8cc_source.html">solid_base.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="solid__base_8cc_source.html#l00253">253</a> of file <a class="el" href="solid__base_8cc_source.html">solid_base.cc</a>.</p>
 
 </div>
 </div>
@@ -946,7 +946,7 @@ template&lt;int dim, int spacedim = dim&gt; </div>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="solid__base_8cc_source.html#l00259">259</a> of file <a class="el" href="solid__base_8cc_source.html">solid_base.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="solid__base_8cc_source.html#l00260">260</a> of file <a class="el" href="solid__base_8cc_source.html">solid_base.cc</a>.</p>
 
 </div>
 </div>
@@ -970,7 +970,7 @@ template&lt;int dim, int spacedim&gt; </div>
 
 <p>Updates the time in the function used to describe the solid temperature. </p>
 
-<p class="definition">Definition at line <a class="el" href="solid__base_8cc_source.html#l00455">455</a> of file <a class="el" href="solid__base_8cc_source.html">solid_base.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="solid__base_8cc_source.html#l00456">456</a> of file <a class="el" href="solid__base_8cc_source.html">solid_base.cc</a>.</p>
 
 <p class="reference">References <a class="el" href="physical__property__model_8h_source.html#l00040">temperature</a>.</p>
 
@@ -996,7 +996,7 @@ template&lt;int dim, int spacedim&gt; </div>
 
 <p>write solid base triangulation checkpoint </p>
 
-<p class="definition">Definition at line <a class="el" href="solid__base_8cc_source.html#l00708">708</a> of file <a class="el" href="solid__base_8cc_source.html">solid_base.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="solid__base_8cc_source.html#l00709">709</a> of file <a class="el" href="solid__base_8cc_source.html">solid_base.cc</a>.</p>
 
 </div>
 </div>
@@ -1023,7 +1023,7 @@ template&lt;int dim, int spacedim = dim&gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="solid__base_8h_source.html#l00233">233</a> of file <a class="el" href="solid__base_8h_source.html">solid_base.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="solid__base_8h_source.html#l00234">234</a> of file <a class="el" href="solid__base_8h_source.html">solid_base.h</a>.</p>
 
 </div>
 </div>
@@ -1049,7 +1049,7 @@ template&lt;int dim, int spacedim = dim&gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="solid__base_8h_source.html#l00231">231</a> of file <a class="el" href="solid__base_8h_source.html">solid_base.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="solid__base_8h_source.html#l00232">232</a> of file <a class="el" href="solid__base_8h_source.html">solid_base.h</a>.</p>
 
 </div>
 </div>
@@ -1075,7 +1075,7 @@ template&lt;int dim, int spacedim = dim&gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="solid__base_8h_source.html#l00232">232</a> of file <a class="el" href="solid__base_8h_source.html">solid_base.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="solid__base_8h_source.html#l00233">233</a> of file <a class="el" href="solid__base_8h_source.html">solid_base.h</a>.</p>
 
 </div>
 </div>
@@ -1101,7 +1101,7 @@ template&lt;int dim, int spacedim = dim&gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="solid__base_8h_source.html#l00234">234</a> of file <a class="el" href="solid__base_8h_source.html">solid_base.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="solid__base_8h_source.html#l00235">235</a> of file <a class="el" href="solid__base_8h_source.html">solid_base.h</a>.</p>
 
 </div>
 </div>
@@ -1127,7 +1127,7 @@ template&lt;int dim, int spacedim = dim&gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="solid__base_8h_source.html#l00224">224</a> of file <a class="el" href="solid__base_8h_source.html">solid_base.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="solid__base_8h_source.html#l00225">225</a> of file <a class="el" href="solid__base_8h_source.html">solid_base.h</a>.</p>
 
 </div>
 </div>
@@ -1153,7 +1153,7 @@ template&lt;int dim, int spacedim = dim&gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="solid__base_8h_source.html#l00227">227</a> of file <a class="el" href="solid__base_8h_source.html">solid_base.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="solid__base_8h_source.html#l00228">228</a> of file <a class="el" href="solid__base_8h_source.html">solid_base.h</a>.</p>
 
 </div>
 </div>
@@ -1179,7 +1179,7 @@ template&lt;int dim, int spacedim = dim&gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="solid__base_8h_source.html#l00220">220</a> of file <a class="el" href="solid__base_8h_source.html">solid_base.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="solid__base_8h_source.html#l00221">221</a> of file <a class="el" href="solid__base_8h_source.html">solid_base.h</a>.</p>
 
 </div>
 </div>
@@ -1205,7 +1205,7 @@ template&lt;int dim, int spacedim = dim&gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="solid__base_8h_source.html#l00242">242</a> of file <a class="el" href="solid__base_8h_source.html">solid_base.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="solid__base_8h_source.html#l00243">243</a> of file <a class="el" href="solid__base_8h_source.html">solid_base.h</a>.</p>
 
 </div>
 </div>
@@ -1231,7 +1231,7 @@ template&lt;int dim, int spacedim = dim&gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="solid__base_8h_source.html#l00211">211</a> of file <a class="el" href="solid__base_8h_source.html">solid_base.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="solid__base_8h_source.html#l00212">212</a> of file <a class="el" href="solid__base_8h_source.html">solid_base.h</a>.</p>
 
 </div>
 </div>
@@ -1257,7 +1257,7 @@ template&lt;int dim, int spacedim = dim&gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="solid__base_8h_source.html#l00212">212</a> of file <a class="el" href="solid__base_8h_source.html">solid_base.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="solid__base_8h_source.html#l00213">213</a> of file <a class="el" href="solid__base_8h_source.html">solid_base.h</a>.</p>
 
 </div>
 </div>
@@ -1283,7 +1283,7 @@ template&lt;int dim, int spacedim = dim&gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="solid__base_8h_source.html#l00214">214</a> of file <a class="el" href="solid__base_8h_source.html">solid_base.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="solid__base_8h_source.html#l00215">215</a> of file <a class="el" href="solid__base_8h_source.html">solid_base.h</a>.</p>
 
 </div>
 </div>
@@ -1309,7 +1309,7 @@ template&lt;int dim, int spacedim = dim&gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="solid__base_8h_source.html#l00215">215</a> of file <a class="el" href="solid__base_8h_source.html">solid_base.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="solid__base_8h_source.html#l00216">216</a> of file <a class="el" href="solid__base_8h_source.html">solid_base.h</a>.</p>
 
 </div>
 </div>
@@ -1335,7 +1335,7 @@ template&lt;int dim, int spacedim = dim&gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="solid__base_8h_source.html#l00237">237</a> of file <a class="el" href="solid__base_8h_source.html">solid_base.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="solid__base_8h_source.html#l00238">238</a> of file <a class="el" href="solid__base_8h_source.html">solid_base.h</a>.</p>
 
 </div>
 </div>
@@ -1361,7 +1361,7 @@ template&lt;int dim, int spacedim = dim&gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="solid__base_8h_source.html#l00228">228</a> of file <a class="el" href="solid__base_8h_source.html">solid_base.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="solid__base_8h_source.html#l00229">229</a> of file <a class="el" href="solid__base_8h_source.html">solid_base.h</a>.</p>
 
 </div>
 </div>
@@ -1387,7 +1387,7 @@ template&lt;int dim, int spacedim = dim&gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="solid__base_8h_source.html#l00221">221</a> of file <a class="el" href="solid__base_8h_source.html">solid_base.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="solid__base_8h_source.html#l00222">222</a> of file <a class="el" href="solid__base_8h_source.html">solid_base.h</a>.</p>
 
 </div>
 </div>
@@ -1413,7 +1413,7 @@ template&lt;int dim, int spacedim = dim&gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="solid__base_8h_source.html#l00226">226</a> of file <a class="el" href="solid__base_8h_source.html">solid_base.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="solid__base_8h_source.html#l00227">227</a> of file <a class="el" href="solid__base_8h_source.html">solid_base.h</a>.</p>
 
 </div>
 </div>
@@ -1439,7 +1439,7 @@ template&lt;int dim, int spacedim = dim&gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="solid__base_8h_source.html#l00222">222</a> of file <a class="el" href="solid__base_8h_source.html">solid_base.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="solid__base_8h_source.html#l00223">223</a> of file <a class="el" href="solid__base_8h_source.html">solid_base.h</a>.</p>
 
 </div>
 </div>
@@ -1465,7 +1465,7 @@ template&lt;int dim, int spacedim = dim&gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="solid__base_8h_source.html#l00219">219</a> of file <a class="el" href="solid__base_8h_source.html">solid_base.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="solid__base_8h_source.html#l00220">220</a> of file <a class="el" href="solid__base_8h_source.html">solid_base.h</a>.</p>
 
 </div>
 </div>
@@ -1491,7 +1491,7 @@ template&lt;int dim, int spacedim = dim&gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="solid__base_8h_source.html#l00240">240</a> of file <a class="el" href="solid__base_8h_source.html">solid_base.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="solid__base_8h_source.html#l00241">241</a> of file <a class="el" href="solid__base_8h_source.html">solid_base.h</a>.</p>
 
 </div>
 </div>
@@ -1517,7 +1517,7 @@ template&lt;int dim, int spacedim = dim&gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="solid__base_8h_source.html#l00216">216</a> of file <a class="el" href="solid__base_8h_source.html">solid_base.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="solid__base_8h_source.html#l00217">217</a> of file <a class="el" href="solid__base_8h_source.html">solid_base.h</a>.</p>
 
 </div>
 </div>
@@ -1543,7 +1543,7 @@ template&lt;int dim, int spacedim = dim&gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="solid__base_8h_source.html#l00239">239</a> of file <a class="el" href="solid__base_8h_source.html">solid_base.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="solid__base_8h_source.html#l00240">240</a> of file <a class="el" href="solid__base_8h_source.html">solid_base.h</a>.</p>
 
 </div>
 </div>

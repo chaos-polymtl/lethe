@@ -553,7 +553,7 @@ $(document).ready(function() { init_codefold(0); });
 <div class="line"><a id="l00421" name="l00421"></a><span class="lineno">  421</span>                  <span class="keyword">const</span> <span class="keyword">auto</span> dof_index = cell-&gt;vertex_dof_index(vertex, 0);</div>
 <div class="line"><a id="l00422" name="l00422"></a><span class="lineno">  422</span>                  Point&lt;spacedim&gt; &amp;vertex_position = cell-&gt;vertex(vertex);</div>
 <div class="line"><a id="l00423" name="l00423"></a><span class="lineno">  423</span> </div>
-<div class="line"><a id="l00424" name="l00424"></a><span class="lineno">  424</span>                  <span class="keywordflow">for</span> (<span class="keywordtype">unsigned</span> d = 0; d &lt; spacedim; ++d)</div>
+<div class="line"><a id="l00424" name="l00424"></a><span class="lineno">  424</span>                  <span class="keywordflow">for</span> (<span class="keywordtype">int</span> d = 0; d &lt; spacedim; ++d)</div>
 <div class="line"><a id="l00425" name="l00425"></a><span class="lineno">  425</span>                    {</div>
 <div class="line"><a id="l00426" name="l00426"></a><span class="lineno">  426</span>                      vertex_position[d] =</div>
 <div class="line"><a id="l00427" name="l00427"></a><span class="lineno">  427</span>                        vertex_position[d] + displacement[dof_index + d];</div>
@@ -591,7 +591,7 @@ $(document).ready(function() { init_codefold(0); });
 <div class="line"><a id="l00457" name="l00457"></a><span class="lineno">  457</span>              <span class="keyword">const</span> <span class="keyword">auto</span>       dof_index = cell-&gt;vertex_dof_index(vertex, 0);</div>
 <div class="line"><a id="l00458" name="l00458"></a><span class="lineno">  458</span>              Point&lt;spacedim&gt; &amp;vertex_position = cell-&gt;vertex(vertex);</div>
 <div class="line"><a id="l00459" name="l00459"></a><span class="lineno">  459</span> </div>
-<div class="line"><a id="l00460" name="l00460"></a><span class="lineno">  460</span>              <span class="keywordflow">for</span> (<span class="keywordtype">unsigned</span> d = 0; d &lt; spacedim; ++d)</div>
+<div class="line"><a id="l00460" name="l00460"></a><span class="lineno">  460</span>              <span class="keywordflow">for</span> (<span class="keywordtype">int</span> d = 0; d &lt; spacedim; ++d)</div>
 <div class="line"><a id="l00461" name="l00461"></a><span class="lineno">  461</span>                {</div>
 <div class="line"><a id="l00462" name="l00462"></a><span class="lineno">  462</span>                  vertex_position[d] += displacement[dof_index + d];</div>
 <div class="line"><a id="l00463" name="l00463"></a><span class="lineno">  463</span>                }</div>
