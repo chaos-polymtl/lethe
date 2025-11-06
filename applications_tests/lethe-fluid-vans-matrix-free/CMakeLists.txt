@@ -43,5 +43,4 @@ deal_ii_pickup_tests()
 
 if(CMAKE_BUILD_TYPE STREQUAL "Debug")
   set_tests_properties(lethe-fluid-vans-matrix-free/tanh_vans_A.debug PROPERTIES TIMEOUT 2000)
-  set_tests_properties(lethe-fluid-vans-matrix-free/qcm_packed_bed_rong_drag.debug PROPERTIES TIMEOUT 2000)
 endif()
