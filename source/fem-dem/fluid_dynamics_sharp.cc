@@ -23,6 +23,8 @@
 
 #include <deal.II/lac/full_matrix.h>
 
+#include <numbers>
+
 // Constructor for class FluidDynamicsSharp
 template <int dim>
 FluidDynamicsSharp<dim>::FluidDynamicsSharp(
@@ -737,7 +739,7 @@ FluidDynamicsSharp<dim>::generate_cut_cell_candidates(
               projected_point_over_face = false;
             }
 
-          for (unsigned int d = 0; d != dim; d++)
+          for (int d = 0; d != dim; d++)
             {
               if (projected_point_tensor[d] < 0 ||
                   projected_point_tensor[d] > 1)
@@ -797,10 +799,10 @@ FluidDynamicsSharp<dim>::define_particles()
 
   check_whether_all_particles_are_sphere();
 
-  std::vector<std::shared_ptr<Shape<dim>>> all_shapes;
+  std::vector<std::shared_ptr<Shape<dim>>> all_shapes(particles.size());
   for (const IBParticle<dim> &particle : particles)
     {
-      all_shapes.push_back(particle.shape);
+      all_shapes[particle.particle_id] = particle.shape;
     }
   combined_shapes =
     std::make_shared<CompositeShape<dim>>(all_shapes, Point<dim>(), Point<3>());
@@ -1055,7 +1057,7 @@ FluidDynamicsSharp<dim>::force_on_ib()
   std::vector<Tensor<2, dim>>              velocity_gradients(ib_coef.size());
   std::vector<std::vector<Tensor<1, dim>>> velocity_gradients_component(dim +
                                                                         1);
-  for (unsigned int i = 0; i < dim + 1; ++i)
+  for (int i = 0; i < dim + 1; ++i)
     velocity_gradients_component[i].resize(ib_coef.size());
   Tensor<2, dim>              fluid_viscous_stress;
   Tensor<2, dim>              fluid_pressure;
@@ -1159,7 +1161,7 @@ FluidDynamicsSharp<dim>::force_on_ib()
 
                               // Define the vertices of the surface cell.
                               // Create the list of vertices
-                              for (unsigned int j = 0; j < dim; ++j)
+                              for (int j = 0; j < dim; ++j)
                                 {
                                   vertices_of_face_projection[i][j] =
                                     vertex_projection[j];
@@ -2101,7 +2103,8 @@ FluidDynamicsSharp<dim>::integrate_particles()
   double time  = this->simulation_control->get_current_time();
   double alpha = this->simulation_parameters.particlesParameters->alpha;
   this->simulation_parameters.particlesParameters->f_gravity->set_time(time);
-  double dr = GridTools::minimal_cell_diameter(*this->triangulation) / sqrt(2);
+  double dr = GridTools::minimal_cell_diameter(*this->triangulation) /
+              std::numbers::sqrt2;
 
   const auto rheological_model =
     this->simulation_parameters.physical_properties_manager.get_rheology();
@@ -2681,11 +2684,11 @@ FluidDynamicsSharp<dim>::Visualization_IB::build_patches(
       // Check to see if the property is a vector
       if (components_number == 3)
         {
-          vector_datasets.emplace_back(std::make_tuple(
+          vector_datasets.emplace_back(
             field_position,
             field_position + components_number - 1,
             field_name,
-            DataComponentInterpretation::component_is_part_of_vector));
+            DataComponentInterpretation::component_is_part_of_vector);
         }
       dataset_names.push_back(field_name);
       ++field_position;
@@ -3134,7 +3137,8 @@ FluidDynamicsSharp<dim>::sharp_edge()
   std::set<unsigned int>               clear_line;
 
   // Define minimal cell length
-  double dr = GridTools::minimal_cell_diameter(*this->triangulation) / sqrt(2);
+  double dr = GridTools::minimal_cell_diameter(*this->triangulation) /
+              std::numbers::sqrt2;
 
   // Define cell iterator
   const auto &cell_iterator = this->dof_handler.active_cell_iterators();
@@ -3179,7 +3183,7 @@ FluidDynamicsSharp<dim>::sharp_edge()
 
               for (unsigned int i = 0; i < local_dof_indices.size(); ++i)
                 {
-                  const unsigned int component_i =
+                  const int component_i =
                     this->fe->system_to_component_index(i).first;
                   if (this->zero_constraints.is_constrained(
                         local_dof_indices[i]) == false &&
@@ -3250,7 +3254,7 @@ FluidDynamicsSharp<dim>::sharp_edge()
                   unsigned int global_index_overwrite = local_dof_indices[i];
                   if (ib_done[global_index_overwrite].first == false)
                     {
-                      const unsigned int component_i =
+                      const int component_i =
                         this->fe->system_to_component_index(i).first;
                       bool dof_is_inside =
                         particles[ib_particle_id].get_levelset(
@@ -3572,7 +3576,7 @@ FluidDynamicsSharp<dim>::sharp_edge()
                                    j < local_dof_indices_2.size();
                                    ++j)
                                 {
-                                  const unsigned int component_j =
+                                  const int component_j =
                                     this->fe->system_to_component_index(j)
                                       .first;
                                   if (component_j == component_i)
@@ -3665,7 +3669,7 @@ FluidDynamicsSharp<dim>::sharp_edge()
                                     particles[ib_particle_id].get_levelset(
                                       support_points[local_dof_indices[k]],
                                       cell_cut) <= 0;
-                                  const unsigned int component_k =
+                                  const int component_k =
                                     this->fe->system_to_component_index(k)
                                       .first;
                                   if (component_k == dim &&
