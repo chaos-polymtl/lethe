@@ -356,7 +356,7 @@ NavierStokesOperatorBase<dim, number>::compute_buoyancy_term(
               // Store in table the total buoyancy term given as:
               // (1 - β (T -Tref))g where the g has already been precomputed in
               // compute_forcing_term() function.
-              for (unsigned int c = 0; c < dim; ++c)
+              for (int c = 0; c < dim; ++c)
                 buoyancy_term[cell][q][c][lane] =
                   forcing_terms[cell][q][c][lane] * scaling;
             }
@@ -836,7 +836,7 @@ NavierStokesOperatorBase<dim, number>::
 
           // Calculate tau
           VectorizedArray<number> u_mag_squared = 1e-12;
-          for (unsigned int k = 0; k < dim; ++k)
+          for (int k = 0; k < dim; ++k)
             u_mag_squared +=
               Utilities::fixed_power<2>(integrator.get_value(q)[k]);
 
@@ -867,9 +867,9 @@ NavierStokesOperatorBase<dim, number>::
                 integrator.get_hessian(q);
 
               // Calculate shear rate
-              for (unsigned int i = 0; i < dim; ++i)
+              for (int i = 0; i < dim; ++i)
                 {
-                  for (unsigned int j = 0; j < dim; ++j)
+                  for (int j = 0; j < dim; ++j)
                     {
                       shear_rate[i][j] = gradient[i][j] + gradient[j][i];
                     }
@@ -893,9 +893,9 @@ NavierStokesOperatorBase<dim, number>::
               for (int d = 0; d < dim; ++d)
                 {
                   grad_shear_rate[d] = 0.;
-                  for (unsigned int i = 0; i < dim; ++i)
+                  for (int i = 0; i < dim; ++i)
                     {
-                      for (unsigned int k = 0; k < dim; ++k)
+                      for (int k = 0; k < dim; ++k)
                         {
                           grad_shear_rate[d] +=
                             VectorizedArray<number>(0.5) *
@@ -937,7 +937,7 @@ NavierStokesOperatorBase<dim, number>::
               // Recalculate stabilization parameter using kinematic
               // viscosity vector
               VectorizedArray<number> u_mag_squared = 1e-12;
-              for (unsigned int k = 0; k < dim; ++k)
+              for (int k = 0; k < dim; ++k)
                 u_mag_squared +=
                   Utilities::fixed_power<2>(integrator.get_value(q)[k]);
 
@@ -1349,11 +1349,11 @@ NavierStokesOperatorBase<dim, number>::do_boundary_face_integral_local(
               value_result[d] += penalty_parameter * value[d];
 
               // Assemble ν(v,∇δu·n)
-              for (unsigned int i = 0; i < dim; ++i)
+              for (int i = 0; i < dim; ++i)
                 value_result[d] -=
                   kinematic_viscosity * gradient[d][i] * normal_vector[i];
               // Assemble ν(∇v·n,(u-u_target))
-              for (unsigned int i = 0; i < dim; ++i)
+              for (int i = 0; i < dim; ++i)
                 gradient_result[d][i] -=
                   kinematic_viscosity * value[d] * normal_vector[i];
             }
@@ -1528,7 +1528,7 @@ NavierStokesStabilizedOperator<dim, number>::do_cell_integral_local(
       const auto tau_lsic = this->stabilization_parameter_lsic[cell][q];
 
       // Weak form Jacobian
-      for (unsigned int i = 0; i < dim; ++i)
+      for (int i = 0; i < dim; ++i)
         {
           // ν(∇v,∇δu)
           gradient_result[i] = kinematic_viscosity * gradient[i];
@@ -1537,7 +1537,7 @@ NavierStokesStabilizedOperator<dim, number>::do_cell_integral_local(
           // +(q,∇δu)
           value_result[dim] += gradient[i][i];
 
-          for (unsigned int k = 0; k < dim; ++k)
+          for (int k = 0; k < dim; ++k)
             {
               // +(v,(u·∇)δu + (δu·∇)u)
               value_result[i] += gradient[i][k] * previous_values[k] +
@@ -1553,9 +1553,9 @@ NavierStokesStabilizedOperator<dim, number>::do_cell_integral_local(
         }
 
       // PSPG Jacobian
-      for (unsigned int i = 0; i < dim; ++i)
+      for (int i = 0; i < dim; ++i)
         {
-          for (unsigned int k = 0; k < dim; ++k)
+          for (int k = 0; k < dim; ++k)
             {
               // (-ν∆δu + (u·∇)δu + (δu·∇)u)·τ∇q
               gradient_result[dim][i] +=
@@ -1575,12 +1575,12 @@ NavierStokesStabilizedOperator<dim, number>::do_cell_integral_local(
       gradient_result[dim] += tau * gradient[dim];
 
       // SUPG Jacobian
-      for (unsigned int i = 0; i < dim; ++i)
+      for (int i = 0; i < dim; ++i)
         {
-          for (unsigned int k = 0; k < dim; ++k)
+          for (int k = 0; k < dim; ++k)
             {
               // Part 1
-              for (unsigned int l = 0; l < dim; ++l)
+              for (int l = 0; l < dim; ++l)
                 {
                   // +((u·∇)δu + (δu·∇)u - ν∆δu)τ(u·∇)v
                   gradient_result[i][k] +=
@@ -1625,7 +1625,7 @@ NavierStokesStabilizedOperator<dim, number>::do_cell_integral_local(
                 }
 
               // Part 2
-              for (unsigned int l = 0; l < dim; ++l)
+              for (int l = 0; l < dim; ++l)
                 {
                   // +((u·∇)u - ν∆u)τ(δu·∇)v
                   gradient_result[i][k] +=
@@ -1654,13 +1654,13 @@ NavierStokesStabilizedOperator<dim, number>::do_cell_integral_local(
           Parameters::Stabilization::NavierStokesStabilization::gls)
         {
           // GLS Jacobian
-          for (unsigned int i = 0; i < dim; ++i)
+          for (int i = 0; i < dim; ++i)
             {
-              for (unsigned int k = 0; k < dim; ++k)
+              for (int k = 0; k < dim; ++k)
                 {
                   if (this->enable_hessians_jacobian)
                     {
-                      for (unsigned int l = 0; l < dim; ++l)
+                      for (int l = 0; l < dim; ++l)
                         {
                           // +((u·∇)δu + (δu·∇)u - ν∆δu)τ(−ν∆v)
                           hessian_result[i][k][k] +=
@@ -1794,7 +1794,7 @@ NavierStokesStabilizedOperator<dim, number>::local_evaluate_residual(
           typename FECellIntegrator::hessian_type  hessian_result;
 
           // Weak form
-          for (unsigned int i = 0; i < dim; ++i)
+          for (int i = 0; i < dim; ++i)
             {
               // ν(∇v,∇u)
               gradient_result[i] = kinematic_viscosity * gradient[i];
@@ -1812,7 +1812,7 @@ NavierStokesStabilizedOperator<dim, number>::local_evaluate_residual(
               // +(q,∇·u)
               value_result[dim] += gradient[i][i];
 
-              for (unsigned int k = 0; k < dim; ++k)
+              for (int k = 0; k < dim; ++k)
                 {
                   // +(v,(u·∇)u)
                   value_result[i] += gradient[i][k] * value[k];
@@ -1824,9 +1824,9 @@ NavierStokesStabilizedOperator<dim, number>::local_evaluate_residual(
             }
 
           // PSPG term
-          for (unsigned int i = 0; i < dim; ++i)
+          for (int i = 0; i < dim; ++i)
             {
-              for (unsigned int k = 0; k < dim; ++k)
+              for (int k = 0; k < dim; ++k)
                 {
                   // (-ν∆u + (u·∇)u)·τ∇q
                   gradient_result[dim][i] +=
@@ -1849,11 +1849,11 @@ NavierStokesStabilizedOperator<dim, number>::local_evaluate_residual(
           gradient_result[dim] += tau * gradient[dim];
 
           // SUPG term
-          for (unsigned int i = 0; i < dim; ++i)
+          for (int i = 0; i < dim; ++i)
             {
-              for (unsigned int k = 0; k < dim; ++k)
+              for (int k = 0; k < dim; ++k)
                 {
-                  for (unsigned int l = 0; l < dim; ++l)
+                  for (int l = 0; l < dim; ++l)
                     {
                       // (-ν∆u)τ(u·∇)v
                       gradient_result[i][k] += -tau * kinematic_viscosity *
@@ -1913,13 +1913,13 @@ NavierStokesStabilizedOperator<dim, number>::local_evaluate_residual(
               Parameters::Stabilization::NavierStokesStabilization::gls)
             {
               // GLS term
-              for (unsigned int i = 0; i < dim; ++i)
+              for (int i = 0; i < dim; ++i)
                 {
-                  for (unsigned int k = 0; k < dim; ++k)
+                  for (int k = 0; k < dim; ++k)
                     {
                       if (this->enable_hessians_residual)
                         {
-                          for (unsigned int l = 0; l < dim; ++l)
+                          for (int l = 0; l < dim; ++l)
                             {
                               // (-ν∆u + (u·∇)u)τ(−ν∆v)
                               hessian_result[i][k][k] +=
@@ -2068,9 +2068,9 @@ NavierStokesNonNewtonianStabilizedOperator<dim, number>::do_cell_integral_local(
 
       // Calculate shear rate per component
       typename FECellIntegrator::gradient_type shear_rate;
-      for (unsigned int i = 0; i < dim; ++i)
+      for (int i = 0; i < dim; ++i)
         {
-          for (unsigned int j = 0; j < dim; ++j)
+          for (int j = 0; j < dim; ++j)
             {
               shear_rate[i][j] = gradient[i][j] + gradient[j][i];
             }
@@ -2081,9 +2081,9 @@ NavierStokesNonNewtonianStabilizedOperator<dim, number>::do_cell_integral_local(
       VectorizedArray<number> shear_rate_previous_product =
         VectorizedArray<number>(0.);
 
-      for (unsigned int i = 0; i < dim; ++i)
+      for (int i = 0; i < dim; ++i)
         {
-          for (unsigned int k = 0; k < dim; ++k)
+          for (int k = 0; k < dim; ++k)
             {
               shear_rate_previous_product +=
                 shear_rate[i][k] * previous_shear_rate[k][i];
@@ -2092,7 +2092,7 @@ NavierStokesNonNewtonianStabilizedOperator<dim, number>::do_cell_integral_local(
 
       // Weak form Jacobian
       value_result[dim] = VectorizedArray<number>(0.);
-      for (unsigned int i = 0; i < dim; ++i)
+      for (int i = 0; i < dim; ++i)
         {
           // -(∇·v,δp)
           gradient_result[i][i] = -value[dim];
@@ -2100,7 +2100,7 @@ NavierStokesNonNewtonianStabilizedOperator<dim, number>::do_cell_integral_local(
           value_result[dim] += gradient[i][i];
           // ν(∇v,(∇δu + ∇δuT))
           gradient_result[i] += kinematic_viscosity * shear_rate[i];
-          for (unsigned int k = 0; k < dim; ++k)
+          for (int k = 0; k < dim; ++k)
             {
               // (∇v, 0.5/γ_dot (∂ν/∂γ_dot)(∇u + ∇uT)(∇δu + ∇δuT)(∇u + ∇uT))
               gradient_result[i][k] += 0.5 / previous_shear_rate_magnitude *
@@ -2117,9 +2117,9 @@ NavierStokesNonNewtonianStabilizedOperator<dim, number>::do_cell_integral_local(
         }
 
       // PSPG Jacobian
-      for (unsigned int i = 0; i < dim; ++i)
+      for (int i = 0; i < dim; ++i)
         {
-          for (unsigned int k = 0; k < dim; ++k)
+          for (int k = 0; k < dim; ++k)
             {
               // (-ν∆δu - (∇ν)(∇δu + ∇δuT) + (u·∇)δu + (δu·∇)u)·τ∇q
               gradient_result[dim][i] +=
@@ -2136,12 +2136,12 @@ NavierStokesNonNewtonianStabilizedOperator<dim, number>::do_cell_integral_local(
       gradient_result[dim] += tau * gradient[dim];
 
       // SUPG Jacobian
-      for (unsigned int i = 0; i < dim; ++i)
+      for (int i = 0; i < dim; ++i)
         {
-          for (unsigned int k = 0; k < dim; ++k)
+          for (int k = 0; k < dim; ++k)
             {
               // Part 1
-              for (unsigned int l = 0; l < dim; ++l)
+              for (int l = 0; l < dim; ++l)
                 {
                   // +((u·∇)δu + (δu·∇)u - ν∆δu  - (∇ν)(∇δu + ∇δuT))τ(u·∇)v
                   gradient_result[i][k] +=
@@ -2162,7 +2162,7 @@ NavierStokesNonNewtonianStabilizedOperator<dim, number>::do_cell_integral_local(
 
 
               // Part 2
-              for (unsigned int l = 0; l < dim; ++l)
+              for (int l = 0; l < dim; ++l)
                 {
                   // +((u·∇)u - ν∆u - (∇ν)((∇u + ∇uT))τ(δu·∇)v
                   gradient_result[i][k] +=
@@ -2286,16 +2286,16 @@ NavierStokesNonNewtonianStabilizedOperator<dim, number>::
           typename FECellIntegrator::gradient_type shear_rate;
 
           // Calculate shear rate per component
-          for (unsigned int i = 0; i < dim; ++i)
+          for (int i = 0; i < dim; ++i)
             {
-              for (unsigned int j = 0; j < dim; ++j)
+              for (int j = 0; j < dim; ++j)
                 {
                   shear_rate[i][j] = gradient[i][j] + gradient[j][i];
                 }
             }
 
           // Weak form
-          for (unsigned int i = 0; i < dim; ++i)
+          for (int i = 0; i < dim; ++i)
             {
               // ν(∇v,(∇u + ∇uT))
               gradient_result[i] = kinematic_viscosity * shear_rate[i];
@@ -2313,7 +2313,7 @@ NavierStokesNonNewtonianStabilizedOperator<dim, number>::
               // +(q,∇·u)
               value_result[dim] += gradient[i][i];
 
-              for (unsigned int k = 0; k < dim; ++k)
+              for (int k = 0; k < dim; ++k)
                 {
                   // +(v,(u·∇)u)
                   value_result[i] += gradient[i][k] * value[k];
@@ -2321,9 +2321,9 @@ NavierStokesNonNewtonianStabilizedOperator<dim, number>::
             }
 
           // PSPG term
-          for (unsigned int i = 0; i < dim; ++i)
+          for (int i = 0; i < dim; ++i)
             {
-              for (unsigned int k = 0; k < dim; ++k)
+              for (int k = 0; k < dim; ++k)
                 {
                   // (-ν∆u - (∇ν)((∇u + ∇uT)) + (u·∇)u)·τ∇q
                   gradient_result[dim][i] +=
@@ -2343,11 +2343,11 @@ NavierStokesNonNewtonianStabilizedOperator<dim, number>::
           gradient_result[dim] += tau * gradient[dim];
 
           // SUPG term
-          for (unsigned int i = 0; i < dim; ++i)
+          for (int i = 0; i < dim; ++i)
             {
-              for (unsigned int k = 0; k < dim; ++k)
+              for (int k = 0; k < dim; ++k)
                 {
-                  for (unsigned int l = 0; l < dim; ++l)
+                  for (int l = 0; l < dim; ++l)
                     {
                       // (-ν∆u - (∇ν)((∇u + ∇uT)))τ(u·∇)v
                       gradient_result[i][k] +=
