@@ -143,9 +143,8 @@ public:
    * @param[in,out] dst Destination vector holding the result.
    * @param[in] src Input source vector.
    */
-  template <
-    typename U = VectorTypePrecondition,
-    std::enable_if_t<!std::is_same_v<VectorType, U>, VectorType> * = nullptr>
+  template <typename U = VectorTypePrecondition>
+    requires(!std::is_same_v<VectorType, U>)
   void
   vmult(U &dst, const U &src) const
   {
@@ -206,7 +205,7 @@ class PreconditionASM : public PreconditionBase<VectorType>
 {
 private:
   /// Weighting type.
-  enum class WeightingType
+  enum WeightingType : std::uint8_t
   {
     none,
     left,
@@ -828,12 +827,15 @@ MFNavierStokesPreconditionGMGBase<dim>::reinit(
               "The mg level min cells specified are larger than the cells of the finest mg level."));
 
           for (unsigned int level = min_h_level; level <= max_h_level; ++level)
-            if (static_cast<int>(n_cells_on_levels[level]) >=
-                mg_level_min_cells)
-              {
-                min_h_level = level;
-                break;
-              }
+            {
+              const int n_cells_on_level =
+                static_cast<int>(n_cells_on_levels[level]);
+              if (n_cells_on_level >= mg_level_min_cells)
+                {
+                  min_h_level = level;
+                  break;
+                }
+            }
         }
 
       // p-multigrid
