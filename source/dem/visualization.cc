@@ -43,11 +43,11 @@ Visualization<dim, PropertiesIndex>::build_patches(
           // are part of a vector. Do not forget that since we added the ID
           // of the particles, we need to shift the field_position by 1. Hence,
           // we add 1 to field_position
-          vector_datasets.emplace_back(std::make_tuple(
+          vector_datasets.emplace_back(
             field_position + 1,
             field_position + n_components,
             field_name,
-            DataComponentInterpretation::component_is_part_of_vector));
+            DataComponentInterpretation::component_is_part_of_vector);
         }
       dataset_names.emplace_back(field_name);
     }
