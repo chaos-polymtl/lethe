@@ -52,9 +52,9 @@ if ! [ -x "$(command -v run-clang-tidy)" ] || ! [ -x "$(command -v clang++)" ]; 
     exit 2
 fi
 
-CC=clang CXX=clang++ cmake "${ARGS[@]}" "$SRC" || (echo "cmake failed!"; false) || exit 2
+CC=clang CXX=clang++ -DCMAKE_CXX_FLAGS="-fuse-ld=lld -Wno-unknown-warning-option" cmake "${ARGS[@]}" "$SRC" || (echo "cmake failed!"; false) || exit 2
 
-CXXFLAGS="-fuse-ld=lld -Wno-unknown-warning-option";  cmake --build . -j 12 
+cmake --build . -j 12 
 
 # generate allheaders.h
 #(cd include; find . -name '*.h'; cd $SRC/include/; find . -name '*.h') | grep -v allheaders.h | grep -v undefine_macros.h | sed 's|^./|#include <|' | sed 's|$|>|' >include/deal.II/allheaders.h
