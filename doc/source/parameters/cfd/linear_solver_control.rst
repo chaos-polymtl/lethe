@@ -91,16 +91,19 @@ When set to ``extra verbose``, the residual at each iteration of the linear solv
 	A good rule of thumb is to set the linear solver ``minimum residual`` at least :math:`10` times (preferably :math:`100` times) smaller than the :doc:`non-linear_solver_control`, ``tolerance`` parameter, and keep the relative residual reasonable, for instance ``set relative residual = 1e-3``. To lower the computational cost for more complex simulations, it can be lowered to ``set relative residual = 1e-4``.
 
 .. _rescale_residual_parameter:
-* The ``rescale residual`` parameter rescales the L2 norm of the residual by the square root of the volume of the mesh. This can be useful when comparing the convergence of simulations with different domain sizes. When set to ``true``, the residual displayed on the terminal and compared to the ``tolerance`` is divided by the square root of the volume of the geometry represented by the mesh. By default, this parameter is set to ``false``. The definition of the residual obtained becomes:
-    .. math::
 
-        \textup{Residual} = \frac{\left\| {R} \right\|_{L_2}}{V^{1/2}}
+* The ``rescale residual`` parameter rescales the L2 norm of the residual by the square root of the volume of the mesh. This can be useful when comparing the convergence of simulations with different domain sizes. When set to ``true``, the residual displayed on the terminal and compared to the ``tolerance`` is divided by the square root of the volume of the geometry represented by the mesh. By default, this parameter is set to ``false``. The definition of the residual obtained becomes:
+
+.. math::
+
+    \textup{Residual} = \frac{\left\| {R} \right\|_{L_2}}{V^{1/2}}
 
     where :math:`R` is the residual vector and :math:`V` is the volume of the entire mesh.
 
+
 .. warning::
 
-    This paremeter also affects the residuals used in the non-linear solver convergence check. Tolerances for both linear and non-linear solvers should be adjusted accordingly when using this option.
+    This parameter also affects the residuals used in the non-linear solver convergence check. Tolerances for both linear and non-linear solvers should be adjusted accordingly when using this option.
 
 * The ``max iters`` puts a hard stop on the number of solver iterations (number of steps printed when ``set verbosity = verbose``).
 
