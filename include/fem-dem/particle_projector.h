@@ -403,6 +403,25 @@ public:
     ParticleFieldQCM<dim, property_start_index, n_components> &field_qcm);
 
 
+  /**
+   * @brief Zeros out and update the ghost values of the auxiliary fields.
+   * This is necessary when the void fraction calculation mode does not rely on
+   * particles.
+   */
+  void
+  zero_out_and_ghost_auxiliary_fields()
+  {
+    fluid_force_on_particles_two_way_coupling.particle_field_solution = 0.;
+    fluid_force_on_particles_two_way_coupling.particle_field_solution
+      .update_ghost_values();
+    momentum_transfer_coefficient.particle_field_solution = 0.;
+    momentum_transfer_coefficient.particle_field_solution.update_ghost_values();
+    particle_velocity.particle_field_solution = 0.;
+    particle_velocity.particle_field_solution.update_ghost_values();
+    fluid_drag_on_particles.particle_field_solution = 0.;
+    fluid_drag_on_particles.particle_field_solution.update_ghost_values();
+  }
+
   /// DoFHandler that manages the void fraction
   DoFHandler<dim> dof_handler;
 

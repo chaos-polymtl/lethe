@@ -295,7 +295,7 @@ ParticleProjector<dim>::calculate_void_fraction_function(const double time)
                                     void_fraction_locally_relevant);
   void_fraction_solution.update_ghost_values();
 #else
-  void_fraction_solution = void_fraction_locally_relevant;
+  void_fraction_solution            = void_fraction_locally_relevant;
 #endif
 }
 
@@ -1432,7 +1432,10 @@ ParticleProjector<dim>::calculate_particle_fluid_forces_projection(
   // solver is running with a user defined function so there are no
   // particle-fluid force yet the simulation is a valid simulation.
   if (void_fraction_parameters->mode == Parameters::VoidFractionMode::function)
-    return;
+    {
+      zero_out_and_ghost_auxiliary_fields();
+      return;
+    }
 
   // If the mode is either SPM or PCM, then information required for the
   // projection is not available. Consequently, we should throw and not
@@ -1579,14 +1582,16 @@ ParticleProjector<dim>::calculate_particle_fluid_forces_projection(
           if constexpr (std::is_same_v<
                           VectorType,
                           LinearAlgebra::distributed::Vector<double>>)
-            scratch_data.reinit_particle_fluid_interactions(
-              cell,
-              void_fraction_cell,
-              present_velocity_pressure_solution,
-              previous_velocity_pressure_solution[0],
-              void_fraction_solution,
-              *particle_handler,
-              cfd_dem_parameters.drag_coupling);
+            {
+              scratch_data.reinit_particle_fluid_interactions(
+                cell,
+                void_fraction_cell,
+                present_velocity_pressure_solution,
+                previous_velocity_pressure_solution[0],
+                void_fraction_solution,
+                *particle_handler,
+                cfd_dem_parameters.drag_coupling);
+            }
           else
             {
               // In this case the global vector type is not a deal.II vector.
@@ -1614,11 +1619,11 @@ ParticleProjector<dim>::calculate_particle_fluid_forces_projection(
   particle_handler->update_ghost_particles();
 
   // We project both the fluid force (without drag) and the drag force.
-  // announce_string(this->pcout, "Particle-fluid forces");
+  // We do not announce the string since the projection can be called
+  // multiple time if this is a non-linear problem and the coupling is
+  // implicit.
   calculate_field_projection(fluid_force_on_particles_two_way_coupling);
-  // announce_string(this->pcout, "Particle-fluid drag");
   calculate_field_projection(fluid_drag_on_particles);
-  // announce_string(this->pcout, "Particle velocity");
   calculate_field_projection(particle_velocity);
   calculate_field_projection(momentum_transfer_coefficient);
 }

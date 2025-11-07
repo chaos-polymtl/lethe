@@ -634,6 +634,8 @@ FluidDynamicsVANSMatrixFree<dim>::solve()
     this->simulation_parameters.initial_condition->type,
     this->simulation_parameters.restart_parameters.restart);
 
+
+
   // Only needed if other physics apart from fluid dynamics are enabled.
   if (this->multiphysics->get_active_physics().size() > 1)
     this->update_multiphysics_time_average_solution();
@@ -680,9 +682,6 @@ FluidDynamicsVANSMatrixFree<dim>::solve()
         particle_projector.calculate_void_fraction(
           this->simulation_control->get_current_time());
 
-        // The particle-fluid force projection
-        // will be zero if there are no particles in
-        // the particle handler
         particle_projector.calculate_particle_fluid_forces_projection(
           this->cfd_dem_simulation_parameters.cfd_dem,
           this->dof_handler,
@@ -704,17 +703,10 @@ FluidDynamicsVANSMatrixFree<dim>::solve()
           {
             TimerOutput::Scope t(this->computing_timer,
                                  "Prepare MF operator for VANS");
+
             mf_operator->compute_void_fraction(
               particle_projector.dof_handler,
               particle_projector.void_fraction_solution);
-
-            particle_projector.fluid_force_on_particles_two_way_coupling
-              .particle_field_solution.update_ghost_values();
-
-            particle_projector.fluid_drag_on_particles.particle_field_solution
-              .update_ghost_values();
-            particle_projector.particle_velocity.particle_field_solution
-              .update_ghost_values();
 
             mf_operator->compute_particle_fluid_interaction(
               particle_projector.fluid_force_on_particles_two_way_coupling
@@ -731,7 +723,6 @@ FluidDynamicsVANSMatrixFree<dim>::solve()
                 .particle_field_solution);
           }
       }
-
 
       this->iterate();
       this->postprocess(false);
