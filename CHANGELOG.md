@@ -4,6 +4,11 @@ All notable changes to the Lethe project will be documented in this file.
 The changelog for the previous releases of Lethe are located in the release_notes folder.
 The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
+### [Master] - 2025-11-07
+
+### Fixed
+
+- MINOR Change the linker used by the Clang Tidy workflwo from Mold to LLD. This ensures adequate compilation before the clang tidy runs. It does not change anything, but I always found the non-compilation with Clang before running the Tidy to be alarming. This fixes this by allowing compilation. [#1795](https://github.com/chaos-polymtl/lethe/pull/1795)
 
 ### [Master] - 2025-11-03
 
