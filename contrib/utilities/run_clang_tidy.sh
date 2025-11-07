@@ -56,7 +56,7 @@ if ! [ -x "$(command -v run-clang-tidy)" ] || ! [ -x "$(command -v clang++)" ]; 
     exit 2
 fi
 
-cmake -DCMAKE_VERBOSE_MAKEFILE=ON -DCMAKE_RULE_MESSAGES=ON "${ARGS[@]}" "$SRC" || (echo "cmake failed!"; false) || exit 2
+cmake -DCMAKE_CXX_FLAGS="-fuse-ld=lld" -DCMAKE_EXE_LINKER_FLAGS="-fuse-ld=lld" -DCMAKE_SHARED_LINKER_FLAGS="-fuse-ld=lld" -DCMAKE_MODULE_LINKER_FLAGS="-fuse-ld=lld"  "${ARGS[@]}" "$SRC" || (echo "cmake failed!"; false) || exit 2
 
 cmake --build . -j 12 
 
