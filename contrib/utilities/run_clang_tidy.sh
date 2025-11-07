@@ -32,6 +32,9 @@
 SRC=$1
 SRC=$(cd "$SRC";pwd)
 shift
+export CC=clang
+export CXX=clang++
+export CXXFLAGS="-fuse-ld=lld -Wno-unknown-warning-option"
 
 if test ! -d "$SRC/source" -o ! -d "$SRC/include" -o ! -d "$SRC/examples" -o ! -f "$SRC/CMakeLists.txt" ; then
     echo "Usage:"
@@ -52,7 +55,7 @@ if ! [ -x "$(command -v run-clang-tidy)" ] || ! [ -x "$(command -v clang++)" ]; 
     exit 2
 fi
 
-CC=clang CXX=clang++ CMAKE_CXX_FLAGS="-fuse-ld=lld -Wno-unknown-warning-option" cmake "${ARGS[@]}" "$SRC" || (echo "cmake failed!"; false) || exit 2
+cmake "${ARGS[@]}" "$SRC" || (echo "cmake failed!"; false) || exit 2
 
 cmake --build . -j 12 
 
