@@ -1,4 +1,4 @@
-// SPDX-FileCopyrightText: Copyright (c) 2021-2023 The Lethe Authors
+// SPDX-FileCopyrightText: Copyright (c) 2021-2025 The Lethe Authors
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
 /**
@@ -149,11 +149,11 @@ public:
   std::vector<Detector<dim>> detectors;
   unsigned int               n_detector;
 
-  AffineConstraints<double>   constraints;
-  TrilinosWrappers::SparseMatrix       system_matrix;
-  TrilinosWrappers::MPI::Vector             system_rhs;
-  TrilinosWrappers::MPI::Vector             solution;
-  std::vector<Vector<double>> nodal_counts;
+  AffineConstraints<double>      constraints;
+  TrilinosWrappers::SparseMatrix system_matrix;
+  TrilinosWrappers::MPI::Vector  system_rhs;
+  TrilinosWrappers::MPI::Vector  solution;
+  std::vector<Vector<double>>    nodal_counts;
 
   ConditionalOStream pcout;
   TimerOutput        computing_timer;

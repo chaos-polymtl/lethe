@@ -209,13 +209,14 @@ RPTL2Projection<dim>::setup_system()
   for (Vector<double> &nodal_counts_for_one_detector : nodal_counts)
     nodal_counts_for_one_detector.reinit(locally_owned_dofs.size());
 
-  const IndexSet locally_relevant_dofs = DoFTools::extract_locally_relevant_dofs(dof_handler);
+  const IndexSet locally_relevant_dofs =
+    DoFTools::extract_locally_relevant_dofs(dof_handler);
 
   SparsityTools::distribute_sparsity_pattern(
-  dsp,
-  this->dof_handler.locally_owned_dofs(),
-  this->mpi_communicator,
-  locally_relevant_dofs);
+    dsp,
+    this->dof_handler.locally_owned_dofs(),
+    this->mpi_communicator,
+    locally_relevant_dofs);
 
   system_matrix.reinit(locally_owned_dofs,
                        locally_owned_dofs,
@@ -233,7 +234,7 @@ RPTL2Projection<dim>::solve_linear_system(unsigned detector_no)
 
   this->pcout << "Norm of RHS is : " << system_rhs.l2_norm() << std::endl;
 
-  SolverControl   solver_control(10000000,
+  SolverControl                 solver_control(10000000,
                                std::max(1e-6, system_rhs.l2_norm() * 1e-6));
   TrilinosWrappers::SolverGMRES solver(solver_control);
 
