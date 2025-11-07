@@ -1,10 +1,10 @@
 # SPDX-FileCopyrightText: Copyright (c) 2025 The Lethe Authors
 # SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
-# Tests normalize residual option in heat transfer and fluid flow using matrix-based solver.
+# Tests rescale residual option in heat transfer and fluid flow using matrix-based solver.
 # This test should have the exact same result as the other conjucated heat transfer
 # test (conjugated_heat_transfer_two_boxes), as tolerances are adjusted to follow the
-# non-normalized residual version. If one of the tests change, the other should change accordingly.
+# non-rescaled residual version. If one of the tests change, the other should change accordingly.
 
 # Listing of Parameters
 #----------------------
