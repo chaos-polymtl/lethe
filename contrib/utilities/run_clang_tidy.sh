@@ -52,7 +52,7 @@ if ! [ -x "$(command -v run-clang-tidy)" ] || ! [ -x "$(command -v clang++)" ]; 
     exit 2
 fi
 
-CC=clang CXX=clang++ -DCMAKE_CXX_FLAGS="-fuse-ld=lld -Wno-unknown-warning-option" cmake "${ARGS[@]}" "$SRC" || (echo "cmake failed!"; false) || exit 2
+CC=clang CXX=clang++ CMAKE_CXX_FLAGS="-fuse-ld=lld -Wno-unknown-warning-option" cmake "${ARGS[@]}" "$SRC" || (echo "cmake failed!"; false) || exit 2
 
 cmake --build . -j 12 
 
