@@ -196,6 +196,7 @@ RPTL2Projection<dim>::setup_system()
   DynamicSparsityPattern dsp(dof_handler.n_dofs(), dof_handler.n_dofs());
   DoFTools::make_sparsity_pattern(dof_handler, dsp, constraints, false);
 
+
   const std::vector<IndexSet> locally_owned_dofs_per_proc =
     DoFTools::locally_owned_dofs_per_subdomain(dof_handler);
 
@@ -207,6 +208,14 @@ RPTL2Projection<dim>::setup_system()
   nodal_counts.resize(n_detector);
   for (Vector<double> &nodal_counts_for_one_detector : nodal_counts)
     nodal_counts_for_one_detector.reinit(locally_owned_dofs.size());
+
+  const IndexSet locally_relevant_dofs = DoFTools::extract_locally_relevant_dofs(dof_handler);
+
+  SparsityTools::distribute_sparsity_pattern(
+  dsp,
+  this->dof_handler.locally_owned_dofs(),
+  this->mpi_communicator,
+  locally_relevant_dofs);
 
   system_matrix.reinit(locally_owned_dofs,
                        locally_owned_dofs,
@@ -226,10 +235,10 @@ RPTL2Projection<dim>::solve_linear_system(unsigned detector_no)
 
   SolverControl   solver_control(10000000,
                                std::max(1e-6, system_rhs.l2_norm() * 1e-6));
-  LA::SolverGMRES solver(solver_control);
+  TrilinosWrappers::SolverGMRES solver(solver_control);
 
-  LA::MPI::PreconditionILU                 preconditioner;
-  LA::MPI::PreconditionILU::AdditionalData data(0, 1e-10, 1, 0);
+  TrilinosWrappers::PreconditionILU                 preconditioner;
+  TrilinosWrappers::PreconditionILU::AdditionalData data(0, 1e-10, 1, 0);
   preconditioner.initialize(system_matrix, data);
 
   solver.solve(system_matrix, solution, system_rhs, preconditioner);

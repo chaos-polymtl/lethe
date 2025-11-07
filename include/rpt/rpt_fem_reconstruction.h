@@ -42,21 +42,6 @@
 #include <rpt/rpt_calculating_parameters.h>
 #include <rpt/rpt_utilities.h>
 
-
-#define FORCE_USE_OF_TRILINOS
-namespace LA
-{
-#if defined(DEAL_II_WITH_PETSC) && !defined(DEAL_II_PETSC_WITH_COMPLEX) && \
-  !(defined(DEAL_II_WITH_TRILINOS) && defined(FORCE_USE_OF_TRILINOS))
-  using namespace dealii::LinearAlgebraPETSc;
-#  define USE_PETSC_LA
-#elif defined(DEAL_II_WITH_TRILINOS)
-  using namespace dealii::LinearAlgebraTrilinos;
-#else
-#  error DEAL_II_WITH_PETSC or DEAL_II_WITH_TRILINOS required
-#endif
-} // namespace LA
-
 using namespace dealii;
 
 
@@ -165,9 +150,9 @@ public:
   unsigned int               n_detector;
 
   AffineConstraints<double>   constraints;
-  LA::MPI::SparseMatrix       system_matrix;
-  LA::MPI::Vector             system_rhs;
-  LA::MPI::Vector             solution;
+  TrilinosWrappers::SparseMatrix       system_matrix;
+  TrilinosWrappers::MPI::Vector             system_rhs;
+  TrilinosWrappers::MPI::Vector             solution;
   std::vector<Vector<double>> nodal_counts;
 
   ConditionalOStream pcout;
