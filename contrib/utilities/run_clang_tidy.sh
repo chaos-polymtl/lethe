@@ -36,6 +36,7 @@ export CC=clang
 export CXX=clang++
 export CXXFLAGS="-fuse-ld=lld -Wno-unknown-warning-option"
 
+
 if test ! -d "$SRC/source" -o ! -d "$SRC/include" -o ! -d "$SRC/examples" -o ! -f "$SRC/CMakeLists.txt" ; then
     echo "Usage:"
     echo "  run_clang_tidy.sh /path/to/dealII"
@@ -55,7 +56,7 @@ if ! [ -x "$(command -v run-clang-tidy)" ] || ! [ -x "$(command -v clang++)" ]; 
     exit 2
 fi
 
-cmake "${ARGS[@]}" "$SRC" || (echo "cmake failed!"; false) || exit 2
+cmake -DCMAKE_VERBOSE_MAKEFILE=ON -DCMAKE_RULE_MESSAGES=ON "${ARGS[@]}" "$SRC" || (echo "cmake failed!"; false) || exit 2
 
 cmake --build . -j 12 
 
