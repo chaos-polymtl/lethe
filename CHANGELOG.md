@@ -5,6 +5,12 @@ The changelog for the previous releases of Lethe are located in the release_note
 The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
 
+### [Master] - 2025-11-07
+
+### Fixed
+
+- MINOR The RPT FEM reconstruction had the capability to use both PETSC and Trilinos vectors, but this was never implemented. This seems to create ambiguity at the linking stage for CLang compiler and leads to a linking error. I have changed this to explicitely use Trilinos Vectors. This does not change anything in the way the module works, but it makes the compilation more explicit and prevents this CLang error. [#1794](https://github.com/chaos-polymtl/lethe/pull/1794)
+
 ### [Master] - 2025-11-03
 
 ### Added
