@@ -47,6 +47,24 @@ file(COPY packed_bed_files/dem_0.triangulation.info DESTINATION "${CMAKE_CURRENT
 file(COPY packed_bed_files/dem_0.triangulation_fixed.data DESTINATION "${CMAKE_CURRENT_BINARY_DIR}/qcm_packed_bed_rong_drag_semi-implicit.${_build_type}/serial/")
 file(COPY packed_bed_files/dem_0.triangulation_variable.data DESTINATION "${CMAKE_CURRENT_BINARY_DIR}/qcm_packed_bed_rong_drag_semi-implicit.${_build_type}/serial/")
 
+file(COPY packed_bed_files/dem.checkpoint_controller DESTINATION "${CMAKE_CURRENT_BINARY_DIR}/qcm_water_packed_bed_difelice_drag_explicit.${_build_type}/serial/")
+file(COPY packed_bed_files/dem_0.particles DESTINATION "${CMAKE_CURRENT_BINARY_DIR}/qcm_water_packed_bed_difelice_drag_explicit.${_build_type}/serial/")
+file(COPY packed_bed_files/dem_0.pvdhandler DESTINATION "${CMAKE_CURRENT_BINARY_DIR}/qcm_water_packed_bed_difelice_drag_explicit.${_build_type}/serial/")
+file(COPY packed_bed_files/dem_0.simulationcontrol DESTINATION "${CMAKE_CURRENT_BINARY_DIR}/qcm_water_packed_bed_difelice_drag_explicit.${_build_type}/serial/")
+file(COPY packed_bed_files/dem_0.triangulation DESTINATION "${CMAKE_CURRENT_BINARY_DIR}/qcm_water_packed_bed_difelice_drag_explicit.${_build_type}/serial/")
+file(COPY packed_bed_files/dem_0.triangulation.info DESTINATION "${CMAKE_CURRENT_BINARY_DIR}/qcm_water_packed_bed_difelice_drag_explicit.${_build_type}/serial/")
+file(COPY packed_bed_files/dem_0.triangulation_fixed.data DESTINATION "${CMAKE_CURRENT_BINARY_DIR}/qcm_water_packed_bed_difelice_drag_explicit.${_build_type}/serial/")
+file(COPY packed_bed_files/dem_0.triangulation_variable.data DESTINATION "${CMAKE_CURRENT_BINARY_DIR}/qcm_water_packed_bed_difelice_drag_explicit.${_build_type}/serial/")
+
+file(COPY packed_bed_files/dem.checkpoint_controller DESTINATION "${CMAKE_CURRENT_BINARY_DIR}/qcm_water_packed_bed_difelice_drag_implicit.${_build_type}/serial/")
+file(COPY packed_bed_files/dem_0.particles DESTINATION "${CMAKE_CURRENT_BINARY_DIR}/qcm_water_packed_bed_difelice_drag_implicit.${_build_type}/serial/")
+file(COPY packed_bed_files/dem_0.pvdhandler DESTINATION "${CMAKE_CURRENT_BINARY_DIR}/qcm_water_packed_bed_difelice_drag_implicit.${_build_type}/serial/")
+file(COPY packed_bed_files/dem_0.simulationcontrol DESTINATION "${CMAKE_CURRENT_BINARY_DIR}/qcm_water_packed_bed_difelice_drag_implicit.${_build_type}/serial/")
+file(COPY packed_bed_files/dem_0.triangulation DESTINATION "${CMAKE_CURRENT_BINARY_DIR}/qcm_water_packed_bed_difelice_drag_implicit.${_build_type}/serial/")
+file(COPY packed_bed_files/dem_0.triangulation.info DESTINATION "${CMAKE_CURRENT_BINARY_DIR}/qcm_water_packed_bed_difelice_drag_implicit.${_build_type}/serial/")
+file(COPY packed_bed_files/dem_0.triangulation_fixed.data DESTINATION "${CMAKE_CURRENT_BINARY_DIR}/qcm_water_packed_bed_difelice_drag_implicit.${_build_type}/serial/")
+file(COPY packed_bed_files/dem_0.triangulation_variable.data DESTINATION "${CMAKE_CURRENT_BINARY_DIR}/qcm_water_packed_bed_difelice_drag_implicit.${_build_type}/serial/")
+
 
 deal_ii_pickup_tests()
 
