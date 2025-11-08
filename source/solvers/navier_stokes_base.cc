@@ -1329,7 +1329,6 @@ NavierStokesBase<dim, VectorType, DofsType>::refine_mesh_uniform()
   AssertThrow(this->triangulation->all_reference_cells_are_hyper_cube(),
               ExcMessage("Uniform refinement is not supported for "
                          "simplex meshes."));
-
   TimerOutput::Scope t(this->computing_timer, "Refine");
 
   // Solution transfer objects for all the solutions
