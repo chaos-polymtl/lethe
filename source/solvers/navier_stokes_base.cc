@@ -1329,6 +1329,11 @@ NavierStokesBase<dim, VectorType, DofsType>::refine_mesh_uniform()
   AssertThrow(this->triangulation->all_reference_cells_are_hyper_cube(),
               ExcMessage("Uniform refinement is not supported for "
                          "simplex meshes."));
+
+  if (dynamic_cast<parallel::distributed::Triangulation<dim> *>(
+        this->triangulation.get()) == nullptr)
+    return;
+
   TimerOutput::Scope t(this->computing_timer, "Refine");
 
   // Solution transfer objects for all the solutions
@@ -1363,6 +1368,11 @@ NavierStokesBase<dim, VectorType, DofsType>::refine_mesh_uniform()
     }
 
   multiphysics->prepare_for_mesh_adaptation();
+  if (this->simulation_parameters.post_processing
+        .calculate_average_velocities ||
+      this->simulation_parameters.initial_condition->type ==
+        Parameters::FluidDynamicsInitialConditionType::average_velocity_profile)
+    average_velocities->prepare_for_mesh_adaptation();
 
   // Refine
   this->triangulation->refine_global(1);
