@@ -132,6 +132,19 @@ VANSOperator<dim, number>::compute_particle_fluid_interaction(
   const bool is_implicit = cfd_dem_parameters.drag_coupling !=
                            Parameters::DragCoupling::fully_explicit;
 
+  // The calculation of the volumetric source term arising from the force
+  // requires the density of the fluid at the particle location. Right now the
+  // model only supports the usage of a constant density. Consequently, we can
+  // gather the reference density as a contant density.
+  AssertThrow(
+    this->properties_manager->density_is_constant(),
+    ExcMessage(
+      "The matrix-free VANS operator does not support variable density. Simulation will abort"));
+  const double inv_density =
+    1. / this->properties_manager->get_density()->get_density_ref();
+  // Ensure that the inverse density is well-defined before moving on to
+  // gathering the terms.
+  AssertIsFinite(inv_density);
 
   const unsigned int n_cells = this->matrix_free.n_cell_batches();
   FECellIntegrator   integrator(this->matrix_free);
@@ -229,14 +242,21 @@ VANSOperator<dim, number>::compute_particle_fluid_interaction(
                 {
                   // The force applied on the fluid from the particle is (-) the
                   // force applied on the particles by the fluid following
-                  // Newton's third law.
-                  particle_fluid_force[cell][q][c][lane] = -cell_fp_force[q][c];
-                  particle_fluid_drag[cell][q][c][lane]  = -cell_fp_drag[q][c];
+                  // Newton's third law. They are also divided by the density of
+                  // the fluid phase.
+                  particle_fluid_force[cell][q][c][lane] =
+                    -cell_fp_force[q][c] * inv_density;
+                  particle_fluid_drag[cell][q][c][lane] =
+                    -cell_fp_drag[q][c] * inv_density;
+
+                  // The particle velocity is not divided by the fluid density.
                   particle_velocity[cell][q][c][lane] =
                     cell_particle_velocity[q][c];
                 }
+              // The momentum transfer coefficient is also divided by the
+              // fluid's density.
               momentum_transfer_coefficient[cell][q][lane] =
-                cell_momentum_transfer_coefficient[q];
+                cell_momentum_transfer_coefficient[q] * inv_density;
             }
         }
     }
