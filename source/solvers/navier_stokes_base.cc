@@ -1330,10 +1330,6 @@ NavierStokesBase<dim, VectorType, DofsType>::refine_mesh_uniform()
               ExcMessage("Uniform refinement is not supported for "
                          "simplex meshes."));
 
-  if (dynamic_cast<parallel::distributed::Triangulation<dim> *>(
-        this->triangulation.get()) == nullptr)
-    return;
-
   TimerOutput::Scope t(this->computing_timer, "Refine");
 
   // Solution transfer objects for all the solutions
