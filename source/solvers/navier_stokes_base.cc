@@ -1363,6 +1363,11 @@ NavierStokesBase<dim, VectorType, DofsType>::refine_mesh_uniform()
     }
 
   multiphysics->prepare_for_mesh_adaptation();
+  if (this->simulation_parameters.post_processing
+        .calculate_average_velocities ||
+      this->simulation_parameters.initial_condition->type ==
+        Parameters::FluidDynamicsInitialConditionType::average_velocity_profile)
+    average_velocities->prepare_for_mesh_adaptation();
 
   // Refine
   this->triangulation->refine_global(1);
