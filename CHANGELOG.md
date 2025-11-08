@@ -15,6 +15,9 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/).
 ### Fixed
 - MINOR A segmentation fault was appearing when using uniform refinement with velocity average postprocessing. This was because the velocity average postprocessor prepare_for_mesh_adaptation() function was never being called for the uniform mesh adaptation. A call was added and now the segfault is fixed. [#1797](https://github.com/chaos-polymtl/lethe/pull/1797)
 
+### Added
+- MAJOR The particle-fluid coupling in the VANS matrix-free solver only allowed for explicit particle-fluid force coupling. This is because the Jacobian matrix of the particle-fluid coupling is difficult to establish. This PR changes this by adding the capability of filtering the particle-fluid force and the momentum transfer coefficient between the particles and the fluid. The momentum transfer coefficient is used to establish the implicit particle-fluid coupling whereas in the explicit coupling mode, the drag force is applied directly onto the fluid. The explicit mode is much faster since it does not require solving as many non-linear iterations, but it has a constraint on the time step. That constraint is, however, not a severe limitation in the case where the fluid is a liquid. With this PR, full particle-fluid coupling within the matrix-free vans solver may be established. Many test cases were added to test this coupling with gas and with a dense fluid (water). [#1757](https://github.com/chaos-polymtl/lethe/pull/1757)
+
 ### [Master] - 2025-11-03
 
 ### Added
