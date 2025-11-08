@@ -253,9 +253,10 @@ VANSOperator<dim, number>::compute_particle_fluid_interaction(
                   particle_velocity[cell][q][c][lane] =
                     cell_particle_velocity[q][c];
                 }
-              // The momentum transfer coefficient does not need to be divided by
-              // the density since it is by construction divided by density.
-              // This is something to keep in mind later on if we allow for variable density.
+              // The momentum transfer coefficient does not need to be divided
+              // by the density since it is by construction divided by density.
+              // This is something to keep in mind later on if we allow for
+              // variable density.
               momentum_transfer_coefficient[cell][q][lane] =
                 cell_momentum_transfer_coefficient[q];
             }
