@@ -86,7 +86,7 @@ In the example below, only ``fluid dynamics`` is shown but the same block can be
 
 .. warning::
 
-    The tolerances are affected by the ``rescale residual`` parameter in the ``subsection linear solver``. When the parameter is activated, the L2 norm of the residual is divided by the square root of the domain's volume. Hence, tolerances must be adapted accordingly. For further details, please refer to the `Linear Solver parameters <./linear_solver_control.html>`_ section of this guide.
+    The residual of the non-linear solver is affected by the ``rescale residual`` parameter in the ``subsection linear solver``. When the parameter is activated, the L2 norm of the residual is divided by the square root of the domain's volume. Hence, the tolerance of the non-linear solver must be adapted accordingly. For further details, please refer to the `Linear Solver parameters <./linear_solver_control.html>`_ section of this guide.
 
 * The ``max iterations`` parameter sets a hard limit to the number of Newton iterations, even if the ``tolerance`` is not reached.
 
