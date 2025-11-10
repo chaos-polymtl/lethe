@@ -2329,9 +2329,8 @@ VANSAssemblerFPIProj<dim>::assemble_rhs(
   for (unsigned int q = 0; q < n_q_points; ++q)
     {
       const Tensor<1, dim> &undisturbed_flow_force =
-        -scratch_data.particle_two_way_coupling_force_values[q]/ density;
-      // We divide by the cell's volume to get the volumeric force
-      const Tensor<1, dim> &fluid_drag = -scratch_data.particle_drag_values[q]/ density;
+        -scratch_data.particle_two_way_coupling_force_values[q] / density;
+      const Tensor<1, dim> &fluid_drag = -scratch_data.particle_drag_values[q] / density;
 
       // Store JxW in local variable for faster access;
       const double JxW = JxW_vec[q];
@@ -2339,13 +2338,13 @@ VANSAssemblerFPIProj<dim>::assemble_rhs(
       // Calculate the strong residual for GLS stabilization
       if (cfd_dem.vans_model == Parameters::VANSModel::modelB)
         {
-          strong_residual[q] += // Drag Force
-            (-fluid_drag - undisturbed_flow_force);
+          strong_residual[q] -= // Drag Force
+            (fluid_drag - undisturbed_flow_force);
         }
       else if (cfd_dem.vans_model == Parameters::VANSModel::modelA)
         {
-          strong_residual[q] += // Drag Force
-            -fluid_drag;
+          strong_residual[q] -= // Drag Force
+            fluid_drag;
         }
 
       // Assembly of the right-hand side
@@ -2356,13 +2355,13 @@ VANSAssemblerFPIProj<dim>::assemble_rhs(
           //  Model B of the VANS
           if (cfd_dem.vans_model == Parameters::VANSModel::modelB)
             {
-              local_rhs(i) -=
-                (-fluid_drag + undisturbed_flow_force) * phi_u_i * JxW;
+              local_rhs(i) +=
+                (fluid_drag - undisturbed_flow_force) * phi_u_i * JxW;
             }
           //  Model A of the VANS
           if (cfd_dem.vans_model == Parameters::VANSModel::modelA)
             {
-              local_rhs(i) -= (-fluid_drag) * phi_u_i * JxW;
+              local_rhs(i) += fluid_drag * phi_u_i * JxW;
             }
         }
     }
