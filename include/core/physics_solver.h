@@ -170,6 +170,9 @@ PhysicsSolver<VectorType>::PhysicsSolver(
         non_linear_solver = new InexactNewtonNonLinearSolver<VectorType>(
           this, non_linear_solver_parameters);
         break;
+      case Parameters::NonLinearSolver::SolverType::disabled:
+        non_linear_solver = nullptr;
+        break;
       default:
         break;
     }
