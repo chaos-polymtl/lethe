@@ -1154,7 +1154,8 @@ namespace Parameters
     {
       newton,
       inexact_newton,
-      kinsol_newton
+      kinsol_newton,
+      disabled
     };
 
     // Kinsol solver strategy
@@ -1226,6 +1227,7 @@ namespace Parameters
     enum class SolverType : std::int8_t
     {
       gmres,
+      cg,
       bicgstab,
       direct
     };
@@ -1263,7 +1265,8 @@ namespace Parameters
       ilu,
       amg,
       lsmg,
-      gcmg
+      gcmg,
+      none
     };
     PreconditionerType preconditioner;
 

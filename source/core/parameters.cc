@@ -2359,14 +2359,14 @@ namespace Parameters
         prm.declare_entry(
           "solver",
           "newton",
-          Patterns::Selection("newton|kinsol_newton|inexact_newton"),
+          Patterns::Selection("newton|kinsol_newton|inexact_newton|disabled"),
           "Non-linear solver that will be used "
-          "Choices are <newton|kinsol_newton|inexact_newton>."
+          "Choices are <newton|kinsol_newton|inexact_newton|disabled>."
           " The newton solver is a traditional newton solver with"
           "an analytical jacobian formulation. The jacobian matrix and the preconditioner"
           "are assembled every iteration. In the kinsol_newton method, the nonlinear solver"
           "Kinsol from the SUNDIALS library is used. This solver has an internal algorithm"
-          "that decides whether to reassemble the Jacobian matrix or not.");
+          "that decides whether to reassemble the Jacobian matrix or not. When the non-linear solver is disabled, no Jacobian matrix is assembled and the system is solved only once by the linear solver.");
 
         prm.declare_entry(
           "kinsol strategy",
@@ -2459,6 +2459,8 @@ namespace Parameters
           solver = SolverType::kinsol_newton;
         else if (str_solver == "inexact_newton")
           solver = SolverType::inexact_newton;
+        else if (str_solver == "disabled")
+          solver = SolverType::disabled;
         else
           throw(std::runtime_error("Invalid non-linear solver "));
 
@@ -2692,9 +2694,9 @@ namespace Parameters
         prm.declare_entry(
           "method",
           "gmres",
-          Patterns::Selection("gmres|bicgstab|direct"),
+          Patterns::Selection("gmres|cg|bicgstab|direct"),
           "The iterative solver for the linear system of equations. "
-          "Choices are <gmres|bicgstab|direct>.");
+          "Choices are <gmres|cg|bicgstab|direct>.");
 
         prm.declare_entry(
           "rescale residual",
@@ -2731,11 +2733,12 @@ namespace Parameters
           Patterns::Bool(),
           "Turns off the terms involving the hessian in the rhs");
 
-        prm.declare_entry("preconditioner",
-                          "ilu",
-                          Patterns::Selection("amg|ilu|lsmg|gcmg"),
-                          "The preconditioner for the linear solver."
-                          "Choices are <amg|ilu|lsmg|gcmg>.");
+        prm.declare_entry(
+          "preconditioner",
+          "ilu",
+          Patterns::Selection("amg|ilu|lsmg|gcmg|none"),
+          "The preconditioner for the linear solver."
+          "Choices are <amg|ilu|lsmg|gcmg|none>. None means that the matrix to precondition the system is the identity matrix.");
 
 
         prm.declare_entry("ilu preconditioner fill",
@@ -2929,6 +2932,8 @@ namespace Parameters
         const std::string sv = prm.get("method");
         if (sv == "gmres")
           solver = SolverType::gmres;
+        else if (sv == "cg")
+          solver = SolverType::cg;
         else if (sv == "bicgstab")
           solver = SolverType::bicgstab;
         else if (sv == "direct")
@@ -2968,6 +2973,8 @@ namespace Parameters
           preconditioner = PreconditionerType::lsmg;
         else if (precond == "gcmg")
           preconditioner = PreconditionerType::gcmg;
+        else if (precond == "none")
+          preconditioner = PreconditionerType::none;
         else
           throw std::logic_error(
             "Error, invalid preconditioner type. Choices are amg, ilu, lsmg or gcmg.");
