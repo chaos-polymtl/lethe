@@ -153,6 +153,7 @@ public:
     gather_temperature                       = false;
     gather_cahn_hilliard                     = false;
     gather_mortar                            = false;
+    gather_particle_field_project            = false;
     gather_hessian = properties_manager.is_non_newtonian();
 
     if (sd.gather_vof)
@@ -188,6 +189,13 @@ public:
                            sd.cahn_hilliard_filter);
     if (sd.gather_mortar)
       enable_mortar();
+
+    if (sd.gather_particle_field_project)
+      enable_particle_field_projection(sd.fe_values_particle_drag->get_quadrature(),
+                                       sd.fe_values_particle_drag->get_mapping(),
+                                       sd.fe_values_particle_drag->get_fe(),
+                                       sd.fe_values_particle_two_way_coupling_force->get_fe(),
+                                       sd.fe_values_particle_velocity->get_fe());
 
     gather_hessian = sd.gather_hessian;
   }
@@ -583,6 +591,29 @@ public:
   enable_void_fraction(const FiniteElement<dim> &fe,
                        const Quadrature<dim>    &quadrature,
                        const Mapping<dim>       &mapping);
+
+  /**
+   * @brief enable_particle_field_projection Enables the collection of the particle fields
+   * projection data by the scratch
+   *
+   * @param quadrature Quadrature rule of the Navier-Stokes problem assembly
+   *
+   * @param mapping Mapping used for the Navier-Stokes problem assembly
+   * 
+   * @param fe_particle_drag_proj FiniteElement associated with the projected particle drag force
+   *
+   * @param fe_particle_two_way_coupling_force_proj FiniteElement associated with the projected
+   * particle two-way coupling force
+   *
+   * @param fe_particle_velocity_proj FiniteElement associated with the projected particle velocity
+   */
+  void
+  enable_particle_field_projection(
+    const Quadrature<dim>    &quadrature,
+    const Mapping<dim>       &mapping,
+    const FESystem<dim> &fe_particle_drag_proj,
+    const FESystem<dim> &fe_particle_two_way_coupling_force_proj,
+    const FESystem<dim> &fe_particle_velocity_proj);
 
   /**
    *  @brief Reinitialize the content of the scratch for the void fraction
@@ -1273,7 +1304,14 @@ public:
    * the fluid dofs at the quadrature points of the velocity and pressure FE.
    * The values are stored in the corresponding variables in scratch data.
    *
-   * @param[in] cell Iterator pointing to the current active cell
+   * @param[in] particle_drag_cell Iterator pointing to the current active cell
+   * using the particle drag force DoFHandler
+   *
+   * @param[in] particle_two_way_coupling_force Iterator pointing to the current
+   * active cell using the particle two-way coupling force DoFHandler
+   *
+   * @param[in] particle_velocity_cell Iterator pointing to the current active
+   * cell using the particle velocity DoFHandler
    *
    * @param[in] particle_fluid_drag Object containing the projection of the
    * particle drag onto the fluid dofs
@@ -1288,27 +1326,32 @@ public:
   template <typename VectorType>
   void
   calculate_particle_fields_values(
-    const VectorType      &particle_fluid_drag,
-    const VectorType      &particle_fluid_force_two_way_coupling,
-    const VectorType      &particle_velocity)
+    const typename DoFHandler<dim>::active_cell_iterator &particle_drag_cell,
+    const typename DoFHandler<dim>::active_cell_iterator
+      &particle_two_way_coupling_force_cell,
+    const typename DoFHandler<dim>::active_cell_iterator
+                     &particle_velocity_cell,
+    const VectorType &particle_fluid_drag,
+    const VectorType &particle_fluid_force_two_way_coupling,
+    const VectorType &particle_velocity)
   {
-    // Compute cell volume since it is needed in the assemblers of the projected
-    // drag and two-way coupling forces
-    cell_volume = compute_cell_measure_with_JxW(
-      this->fe_values_void_fraction->get_JxW_values());
+    cout << "Before fe_values_particle_drag is reinit" << std::endl;
+    std::cout << "fe_values_particle_drag: " 
+          << (fe_values_particle_drag ? "OK" : "NULL") << "\n";
+    this->fe_values_particle_drag->reinit(particle_drag_cell);
+    cout << "fe_values_particle_drag is reinit" << std::endl;
+    this->fe_values_particle_two_way_coupling_force->reinit(
+      particle_two_way_coupling_force_cell);
+    this->fe_values_particle_velocity->reinit(particle_velocity_cell);
 
-    this->particle_drag_values.resize(n_q_points);
-    this->particle_two_way_coupling_force_values.resize(n_q_points);
-    this->particle_velocity_values.resize(n_q_points);
+    constexpr FEValuesExtractors::Vector vector_index(0);
 
-    // There is no need to reinit fe_values as it is already reinitialized
-    // for the cell in question in scratch_data.reinit
-    this->fe_values[velocities].get_function_values(particle_fluid_drag,
-                                                    this->particle_drag_values);
-    this->fe_values[velocities].get_function_values(
+    (*this->fe_values_particle_drag)[vector_index].get_function_values(
+      particle_fluid_drag, this->particle_drag_values);
+    (*this->fe_values_particle_two_way_coupling_force)[vector_index].get_function_values(
       particle_fluid_force_two_way_coupling,
       this->particle_two_way_coupling_force_values);
-    this->fe_values[velocities].get_function_values(
+    (*this->fe_values_particle_velocity)[vector_index].get_function_values(
       particle_velocity, this->particle_velocity_values);
   }
 
@@ -1452,6 +1495,11 @@ public:
   bool gather_particles_information;
   bool interpolated_void_fraction;
 
+  std::shared_ptr<FEValues<dim>> fe_values_particle_drag;
+  std::shared_ptr<FEValues<dim>> fe_values_particle_two_way_coupling_force;
+  std::shared_ptr<FEValues<dim>> fe_values_particle_velocity;
+
+  bool                        gather_particle_field_project;
   std::vector<Tensor<1, dim>> particle_velocity;
   std::vector<Tensor<1, dim>> particle_velocity_values;
   std::vector<Tensor<1, dim>> particle_drag_values;
