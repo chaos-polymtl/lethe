@@ -59,7 +59,8 @@ In the example below, only ``fluid dynamics`` is shown but the same block can be
 
 	* ``kinsol_newton`` solver, that uses the Newton-Raphson solver through deal.II, as implemented in the `Sundials library <https://computing.llnl.gov/projects/sundials/kinsol>`_. This solver has an internal algorithm that decides whether to reassemble the Jacobian matrix or not. This non-linear solver is still being tested.
 		* ``kinsol strategy`` parameter enables to choose the strategy that will be used by the kinsol newton solver, and can be ``line_search`` (default value), ``normal_newton``, ``fixed_point`` or ``picard``.
-  * ``disabled`` is used to build systems that are inherently linear. Accordingly, the system is assembled directly in its linear form without constructing a Jacobian matrix. This option is not applicable to the fluid problem.
+
+	* ``disabled`` is used to build systems that are inherently linear. Accordingly, the system is assembled directly in its linear form without constructing a Jacobian matrix. This option is not applicable to the fluid problem.
 
 * The ``verbosity`` option enables the display of the residual at each non-linear iteration, to monitor the progress of the non-linear iterations.
 
