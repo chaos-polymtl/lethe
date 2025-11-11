@@ -256,7 +256,7 @@ VANSOperator<dim, number>::compute_particle_fluid_interaction(
               // The momentum transfer coefficient does not need to be divided
               // by the density since it is by construction divided by density.
               // This is something to keep in mind later on if we allow for
-              // variable density.
+              // a variable density.
               momentum_transfer_coefficient[cell][q][lane] =
                 cell_momentum_transfer_coefficient[q];
             }
@@ -275,7 +275,7 @@ VANSOperator<dim, number>::compute_particle_fluid_interaction(
  * (VANS equations)
  * \+ (v, ε ∂t δu)  -> Time derivative
  * \+ (v, ε (u·∇)δu) + (v, ε (δu·∇)u) -> Advection
- * \- (∇·v, ε δp) - (v,p∇ε) -> Pressure
+ * \- (∇·v, ε δp) - (v,δp∇ε) -> Pressure
  * \+ (v, βu) -> Drag force (this is positive because f_pf = - beta(u-v))
  * \+ ε*ν(∇v,∇δu)  +  ν(v,∇ε·∇δu)   -> Viscous term  ---> There are currently
  * two terms missing here which would be:
@@ -318,22 +318,21 @@ VANSOperator<dim, number>::do_cell_integral_local(
   for (const auto q : integrator.quadrature_point_indices())
     {
       // Gather void fraction value and gradient
-      // We gather the void fraction force since we will use it in the forcing
-      // terms (beta and source terms).
       auto vf_value    = this->void_fraction(cell, q);
       auto vf_gradient = this->void_fraction_gradient(cell, q);
 
       Tensor<1, dim, VectorizedArray<number>> source_value;
 
       // Gather particle-fluid force, will be zero if they have not been
-      // gathered.
+      // been projected or if there are no particles in the simulation.
       auto pf_force_value = this->particle_fluid_force(cell, q);
       auto pf_drag_value  = this->particle_fluid_drag(cell, q);
       auto p_velocity     = this->particle_velocity(cell, q);
       auto beta_momentum_transfer =
         this->momentum_transfer_coefficient(cell, q);
 
-      // Add to source term the particle-fluid force and the  explicitdrag force
+      // Add to source term the particle-fluid force and the  explicit drag
+      // force
       source_value = pf_force_value + pf_drag_value;
 
       // Evaluate source term function if enabled
@@ -393,7 +392,7 @@ VANSOperator<dim, number>::do_cell_integral_local(
           value_result[dim] += vf_value * gradient[i][i];
           // +(q,∇ɛ·δu)
           value_result[dim] += vf_gradient[i] * value[i];
-          // +(v, βu)
+          // +(v, βδu)
           value_result[i] += beta_momentum_transfer * value[i];
 
           for (int k = 0; k < dim; ++k)

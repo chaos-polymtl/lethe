@@ -228,7 +228,7 @@ MFNavierStokesVANSPreconditionGMG<dim>::initialize(
 
       MGLevelObject<MFNavierStokesVANSPreconditionGMG::MGVectorType>
         mg_momentum_transfer_coefficient_solution(this->minlevel,
-                                                 this->maxlevel);
+                                                  this->maxlevel);
 
       // A deal.II vector is required here, so we take the deal.II vector
       // solution from the particle projector instead of the Trillinos vector
@@ -464,7 +464,7 @@ FluidDynamicsVANSMatrixFree<dim>::assemble_system_rhs()
 {
   // First we update the particle-fluid coupling terms.
   // The base matrix-free operator is not aware of the various VANS
-  // coupling term. We must do a cast here to ensure that the operator is
+  // coupling terms. We must do a cast here to ensure that the operator is
   // of the right type.
   if (auto mf_operator =
         dynamic_cast<VANSOperator<dim, double> *>(this->system_operator.get()))
