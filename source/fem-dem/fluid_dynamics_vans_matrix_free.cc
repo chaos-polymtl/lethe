@@ -227,11 +227,11 @@ MFNavierStokesVANSPreconditionGMG<dim>::initialize(
         mg_particle_velocity_solution(this->minlevel, this->maxlevel);
 
       MGLevelObject<MFNavierStokesVANSPreconditionGMG::MGVectorType>
-        mg_momentum_tranfer_coefficient_solution(this->minlevel,
+        mg_momentum_transfer_coefficient_solution(this->minlevel,
                                                  this->maxlevel);
 
       // A deal.II vector is required here, so we take the deal.II vector
-      // solution from the particle projector instead of the trilinos vector
+      // solution from the particle projector instead of the Trillinos vector
       // one. This is done for every field.
 
       // Void fraction
@@ -275,7 +275,7 @@ MFNavierStokesVANSPreconditionGMG<dim>::initialize(
 
       this->mg_transfer_gc_momentum_transfer_coefficient->interpolate_to_mg(
         particle_projector.momentum_transfer_coefficient.dof_handler,
-        mg_momentum_tranfer_coefficient_solution,
+        mg_momentum_transfer_coefficient_solution,
         particle_projector.momentum_transfer_coefficient
           .particle_field_solution);
 
@@ -286,7 +286,7 @@ MFNavierStokesVANSPreconditionGMG<dim>::initialize(
           mg_pf_forces_solution[l].update_ghost_values();
           mg_pf_drag_solution[l].update_ghost_values();
           mg_particle_velocity_solution[l].update_ghost_values();
-          mg_momentum_tranfer_coefficient_solution[l].update_ghost_values();
+          mg_momentum_transfer_coefficient_solution[l].update_ghost_values();
 
 
           if (auto mf_operator = dynamic_cast<VANSOperator<dim, double> *>(
@@ -304,7 +304,7 @@ MFNavierStokesVANSPreconditionGMG<dim>::initialize(
                 this->particle_velocity_dof_handlers[l],
                 mg_particle_velocity_solution[l],
                 this->momentum_transfer_coefficient_dof_handlers[l],
-                mg_momentum_tranfer_coefficient_solution[l]);
+                mg_momentum_transfer_coefficient_solution[l]);
             }
         }
     }
