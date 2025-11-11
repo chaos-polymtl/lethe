@@ -389,11 +389,6 @@ FluidDynamicsBlock<dim>::setup_preconditioner()
           system_amg_preconditioner == nullptr)
         setup_AMG();
     }
-  else
-    AssertThrow(
-      this->simulation_parameters.linear_solver.at(PhysicsID::fluid_dynamics)
-            .preconditioner ==
-          Parameters::LinearSolver::PreconditionerType::ilu ||
         this->simulation_parameters.linear_solver.at(PhysicsID::fluid_dynamics)
             .preconditioner ==
           Parameters::LinearSolver::PreconditionerType::amg,

@@ -2733,12 +2733,11 @@ namespace Parameters
           Patterns::Bool(),
           "Turns off the terms involving the hessian in the rhs");
 
-        prm.declare_entry(
-          "preconditioner",
-          "ilu",
-          Patterns::Selection("amg|ilu|lsmg|gcmg|none"),
-          "The preconditioner for the linear solver."
-          "Choices are <amg|ilu|lsmg|gcmg|none>. None means that the matrix to precondition the system is the identity matrix.");
+        prm.declare_entry("preconditioner",
+                          "ilu",
+                          Patterns::Selection("amg|ilu|lsmg|gcmg|none"),
+                          "The preconditioner for the linear solver."
+                          "Choices are <amg|ilu|lsmg|gcmg|none>. ");
 
 
         prm.declare_entry("ilu preconditioner fill",
@@ -2940,7 +2939,7 @@ namespace Parameters
           solver = SolverType::direct;
         else
           throw std::logic_error(
-            "Error, invalid iterative solver type. Choices are amg, gmres, bicgstab or direct");
+            "Error, invalid iterative solver type. Choices are gmres, cg, bicgstab or direct");
 
         const std::string op = prm.get("verbosity");
         if (op == "verbose")
@@ -2977,7 +2976,7 @@ namespace Parameters
           preconditioner = PreconditionerType::none;
         else
           throw std::logic_error(
-            "Error, invalid preconditioner type. Choices are amg, ilu, lsmg or gcmg.");
+            "Error, invalid preconditioner type. Choices are amg, ilu, lsmg, gcmg or none.");
 
 
         ilu_precond_fill = prm.get_integer("ilu preconditioner fill");
