@@ -374,9 +374,6 @@ FluidDynamicsBlock<dim>::setup_preconditioner()
   if (this->simulation_parameters.linear_solver.at(PhysicsID::fluid_dynamics)
         .preconditioner == Parameters::LinearSolver::PreconditionerType::ilu)
     {
-      if (velocity_ilu_preconditioner == nullptr ||
-          pressure_ilu_preconditioner == nullptr ||
-          system_ilu_preconditioner == nullptr)
         setup_ILU();
     }
   else if (this->simulation_parameters.linear_solver
@@ -384,9 +381,6 @@ FluidDynamicsBlock<dim>::setup_preconditioner()
              .preconditioner ==
            Parameters::LinearSolver::PreconditionerType::amg)
     {
-      if (velocity_amg_preconditioner == nullptr ||
-          pressure_amg_preconditioner == nullptr ||
-          system_amg_preconditioner == nullptr)
         setup_AMG();
     }
   else
