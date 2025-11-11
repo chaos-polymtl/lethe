@@ -4,6 +4,15 @@ All notable changes to the Lethe project will be documented in this file.
 The changelog for the previous releases of Lethe are located in the release_notes folder.
 The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
+### [Master] - 2025-11-11
+
+### Fixed
+
+- MINOR Changed the NonLinearSolver, LinearSolver and preconditionner options to take into account future arguments for the Electromagnetic solver. [#1798](https://github.com/chaos-polymtl/lethe/pull/1758)
+
+- MINOR Remove the argument "renewed_matrix" of the solve_linear_system definition at the same time since I saw a comment that said TODO. 
+
+
 ### [Master] - 2025-11-04
 
 ### Added
