@@ -116,8 +116,8 @@ private:
   /// Transfer operator for global coarsening for the particle velocity
   std::shared_ptr<GCTransferType> mg_transfer_gc_particle_velocity;
 
-  /// Particle momentum transfer coefficient DoF handlers for each of the levels of the global
-  /// coarsening algorithm
+  /// Particle momentum transfer coefficient DoF handlers for each of the levels
+  /// of the global coarsening algorithm
   MGLevelObject<DoFHandler<dim>> momentum_transfer_coefficient_dof_handlers;
 
   /// Particle-fluid drag transfers for each of the levels of the global
