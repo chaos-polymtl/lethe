@@ -702,11 +702,16 @@ private:
 
 public:
   /// Projector used to save the particle velocity field onto the mesh
+  /// This field is not volumetric, meaning that the integral over the
+  /// entire domain of this field will not yield the sum of the particle
+  /// velocity over all the particles.
   ParticleFieldQCM<dim, 3, DEM::CFDDEMProperties::PropertiesIndex::v_x>
     particle_velocity;
 
   /// Projector used to save the forces used in the two-way coupling scheme,
-  /// without drag.
+  /// without drag. This field is volumetric. The integral of this field over
+  /// the entire domain will result in the sum of the force (without drag) over
+  /// all of the particles.
   ParticleFieldQCM<
     dim,
     3,
@@ -714,11 +719,16 @@ public:
     fluid_force_on_particles_two_way_coupling;
 
   /// Projector used to store the drag force. The drag is stored as a separate
-  /// field since we may want to make implicit calculations of it.
+  /// field since we may want to make implicit calculations of it. This field
+  /// is volumetric. The integral of this field over the entire domain will
+  /// result in the sum of the drag force over all the particles.
   ParticleFieldQCM<dim, 3, DEM::CFDDEMProperties::PropertiesIndex::fem_drag_x>
     fluid_drag_on_particles;
 
-  /// Projector used to save the momentum transfer coefficient (beta)
+  /// Projector used to save the momentum transfer coefficient (beta). This
+  /// field is volumetric. The integral of this field over the entire domain
+  /// will result in the sum of the momentum transfer coefficient over all
+  /// particles.
   ParticleFieldQCM<
     dim,
     1,
