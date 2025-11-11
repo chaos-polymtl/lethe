@@ -396,8 +396,7 @@ public:
    * one for the system of equation or not.
    */
   void
-  solve_linear_system(const PhysicsID physics_id,
-                      const bool      initial_step)
+  solve_linear_system(const PhysicsID physics_id, const bool initial_step)
   {
     AssertThrow((std::find(active_physics.begin(),
                            active_physics.end(),

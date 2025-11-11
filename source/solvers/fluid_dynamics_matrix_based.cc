@@ -1342,8 +1342,7 @@ FluidDynamicsMatrixBased<dim>::assemble_L2_projection()
 
 template <int dim>
 void
-FluidDynamicsMatrixBased<dim>::solve_linear_system(
-  const bool initial_step)
+FluidDynamicsMatrixBased<dim>::solve_linear_system(const bool initial_step)
 {
   const double absolute_residual =
     this->simulation_parameters.linear_solver.at(PhysicsID::fluid_dynamics)
