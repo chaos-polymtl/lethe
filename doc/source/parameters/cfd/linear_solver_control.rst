@@ -45,9 +45,9 @@ In the example below, only ``fluid dynamics`` is used, however, the same block c
 
 * The ``method`` parameter enables to choose an iterative solver for the linear system of equations. Lethe currently supports the following core solution strategies:
 	* ``gmres`` (default parameter value), a preconditioned GMRES iterative solver.
+	* ``cg``, a preconditioned Conjugate Gradient iterative solver (only for symmetric positive definite systems).
 	* ``bicgstab``, a preconditioned BICGSTAB iterative solver.
 	* ``direct``, a direct solver using `TrilinosWrappers::SolverDirect <https://www.dealii.org/current/doxygen/deal.II/classTrilinosWrappers_1_1SolverDirect.html>`_.
-  * ``cg``, a preconditioned Conjugate Gradient iterative solver (only for symmetric positive definite systems).
 
 	.. hint::
 		Which solver is the most efficient for a given problem?
