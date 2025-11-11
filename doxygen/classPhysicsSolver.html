@@ -174,6 +174,8 @@ Public Member Functions</h2></td></tr>
 <tr class="separator:abf527a264ed49a5327db8f48e16ee182"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a33c67d4913c1e92d0404cc67f70caca4" id="r_a33c67d4913c1e92d0404cc67f70caca4"><td class="memItemLeft" align="right" valign="top">virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classPhysicsSolver.html#a33c67d4913c1e92d0404cc67f70caca4">output_newton_update_norms</a> (const unsigned int display_precision)=0</td></tr>
 <tr class="separator:a33c67d4913c1e92d0404cc67f70caca4"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a365035283c1495135aaee11de8abaa19" id="r_a365035283c1495135aaee11de8abaa19"><td class="memItemLeft" align="right" valign="top">virtual double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classPhysicsSolver.html#a365035283c1495135aaee11de8abaa19">get_residual_rescale_metric</a> () const =0</td></tr>
+<tr class="separator:a365035283c1495135aaee11de8abaa19"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a890a9818cde0d3b89e38ece859b7733e" id="r_a890a9818cde0d3b89e38ece859b7733e"><td class="memItemLeft" align="right" valign="top">virtual double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classPhysicsSolver.html#a890a9818cde0d3b89e38ece859b7733e">get_current_residual</a> ()</td></tr>
 <tr class="separator:a890a9818cde0d3b89e38ece859b7733e"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a556929601fd0996edf883aaab9cd4e16" id="r_a556929601fd0996edf883aaab9cd4e16"><td class="memItemLeft" align="right" valign="top">unsigned int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classPhysicsSolver.html#a556929601fd0996edf883aaab9cd4e16">get_current_newton_iteration</a> () const</td></tr>
@@ -221,9 +223,9 @@ template&lt;typename VectorType &gt; </div>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="physics__solver_8h_source.html#l00142">142</a> of file <a class="el" href="physics__solver_8h_source.html">physics_solver.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="physics__solver_8h_source.html#l00154">154</a> of file <a class="el" href="physics__solver_8h_source.html">physics_solver.h</a>.</p>
 
-<p class="reference">References <a class="el" href="structParameters_1_1NonLinearSolver.html#a9d1844967a4984adba50fc94732dc172afd664c4aab2a1842f691c6c005c63ce0">Parameters::NonLinearSolver::inexact_newton</a>, <a class="el" href="structParameters_1_1NonLinearSolver.html#a9d1844967a4984adba50fc94732dc172a8b8658b5ecaa6986a18b5fbba6a8230f">Parameters::NonLinearSolver::kinsol_newton</a>, <a class="el" href="structParameters_1_1NonLinearSolver.html#a9d1844967a4984adba50fc94732dc172ada6fa909f1c0188c539feb08d4496eb7">Parameters::NonLinearSolver::newton</a>, <a class="el" href="physics__solver_8h_source.html#l00138">PhysicsSolver&lt; VectorType &gt;::non_linear_solver</a>, and <a class="el" href="parameters_8h_source.html#l01171">Parameters::NonLinearSolver::solver</a>.</p>
+<p class="reference">References <a class="el" href="structParameters_1_1NonLinearSolver.html#a9d1844967a4984adba50fc94732dc172afd664c4aab2a1842f691c6c005c63ce0">Parameters::NonLinearSolver::inexact_newton</a>, <a class="el" href="structParameters_1_1NonLinearSolver.html#a9d1844967a4984adba50fc94732dc172a8b8658b5ecaa6986a18b5fbba6a8230f">Parameters::NonLinearSolver::kinsol_newton</a>, <a class="el" href="structParameters_1_1NonLinearSolver.html#a9d1844967a4984adba50fc94732dc172ada6fa909f1c0188c539feb08d4496eb7">Parameters::NonLinearSolver::newton</a>, <a class="el" href="physics__solver_8h_source.html#l00150">PhysicsSolver&lt; VectorType &gt;::non_linear_solver</a>, and <a class="el" href="parameters_8h_source.html#l01171">Parameters::NonLinearSolver::solver</a>.</p>
 
 </div>
 </div>
@@ -254,7 +256,7 @@ template&lt;typename VectorType &gt; </div>
 
 <p class="definition">Definition at line <a class="el" href="physics__solver_8h_source.html#l00030">30</a> of file <a class="el" href="physics__solver_8h_source.html">physics_solver.h</a>.</p>
 
-<p class="reference">References <a class="el" href="physics__solver_8h_source.html#l00138">PhysicsSolver&lt; VectorType &gt;::non_linear_solver</a>.</p>
+<p class="reference">References <a class="el" href="physics__solver_8h_source.html#l00150">PhysicsSolver&lt; VectorType &gt;::non_linear_solver</a>.</p>
 
 </div>
 </div>
@@ -381,9 +383,9 @@ template&lt;typename VectorType &gt; </div>
 
 <p>Return the current newton iteration of this physics solver. </p>
 
-<p class="definition">Definition at line <a class="el" href="physics__solver_8h_source.html#l00129">129</a> of file <a class="el" href="physics__solver_8h_source.html">physics_solver.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="physics__solver_8h_source.html#l00141">141</a> of file <a class="el" href="physics__solver_8h_source.html">physics_solver.h</a>.</p>
 
-<p class="reference">References <a class="el" href="physics__solver_8h_source.html#l00138">PhysicsSolver&lt; VectorType &gt;::non_linear_solver</a>.</p>
+<p class="reference">References <a class="el" href="physics__solver_8h_source.html#l00150">PhysicsSolver&lt; VectorType &gt;::non_linear_solver</a>.</p>
 
 </div>
 </div>
@@ -412,11 +414,12 @@ template&lt;typename VectorType &gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p>Default way to evaluate the residual for the nonlinear solver. Some application may use more complex evaluation of the residual and override this method. </p>
+<p>Default way to evaluate the residual for the nonlinear solver, which is simply the norm of the RHS vector. Some application may use more complex evaluation of the residual and override this method. </p>
+<dl class="section return"><dt>Returns</dt><dd>l2 norm of the RHS vector. </dd></dl>
 
 <p>Reimplemented in <a class="el" href="classFluidDynamicsSharp.html#a84ad77a2439c541b39467e8c4713b3e2">FluidDynamicsSharp&lt; dim &gt;</a>.</p>
 
-<p class="definition">Definition at line <a class="el" href="physics__solver_8h_source.html#l00119">119</a> of file <a class="el" href="physics__solver_8h_source.html">physics_solver.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="physics__solver_8h_source.html#l00131">131</a> of file <a class="el" href="physics__solver_8h_source.html">physics_solver.h</a>.</p>
 
 <p class="reference">References <a class="el" href="classPhysicsSolver.html#aaadb8be69e716aaa9541f4984a20508f">PhysicsSolver&lt; VectorType &gt;::get_system_rhs()</a>.</p>
 
@@ -566,6 +569,38 @@ template&lt;typename VectorType &gt; </div>
 </div><div class="memdoc">
 
 <p>Implemented in <a class="el" href="classCahnHilliard.html#ada8a61e9136686960dadd11637a6bf25">CahnHilliard&lt; dim &gt;</a>, <a class="el" href="classHeatTransfer.html#a624f88b48d4543918e9a22056b43a18a">HeatTransfer&lt; dim &gt;</a>, <a class="el" href="classNavierStokesBase.html#a83c12cf9c8444df2fe0e9c3cc4234560">NavierStokesBase&lt; dim, VectorType, DofsType &gt;</a>, <a class="el" href="classNavierStokesBase.html#a83c12cf9c8444df2fe0e9c3cc4234560">NavierStokesBase&lt; dim, GlobalBlockVectorType, std::vector&lt; IndexSet &gt; &gt;</a>, <a class="el" href="classNavierStokesBase.html#a83c12cf9c8444df2fe0e9c3cc4234560">NavierStokesBase&lt; dim, GlobalVectorType, IndexSet &gt;</a>, <a class="el" href="classNavierStokesBase.html#a83c12cf9c8444df2fe0e9c3cc4234560">NavierStokesBase&lt; dim, LinearAlgebra::distributed::Vector&lt; double &gt;, IndexSet &gt;</a>, <a class="el" href="classTracer.html#a11d06915e668e2d5e40095036a8db9cc">Tracer&lt; dim &gt;</a>, <a class="el" href="classVolumeOfFluid.html#ab2ad0cefb3e76511416f53f7adbe75c4">VolumeOfFluid&lt; dim &gt;</a>, and <a class="el" href="classVOFAlgebraicInterfaceReinitialization.html#a10f46b135ee3ce0e7fcee2de98b5e6c9">VOFAlgebraicInterfaceReinitialization&lt; dim &gt;</a>.</p>
+
+</div>
+</div>
+<a id="a365035283c1495135aaee11de8abaa19" name="a365035283c1495135aaee11de8abaa19"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a365035283c1495135aaee11de8abaa19">&#9670;&#160;</a></span>get_residual_rescale_metric()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename VectorType &gt; </div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">virtual double <a class="el" href="classPhysicsSolver.html">PhysicsSolver</a>&lt; VectorType &gt;::get_residual_rescale_metric </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td> const</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">pure virtual</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Return the metric for residual rescaling. By default, should return 1. If the rescale_residual_by_volume is set to true, the method returns the square root of the global volume of the triangulation. </p>
+<dl class="section return"><dt>Returns</dt><dd>Rescale metric. </dd></dl>
+
+<p>Implemented in <a class="el" href="classCahnHilliard.html#ad36bd97e4148737a79228f211b976f1d">CahnHilliard&lt; dim &gt;</a>, <a class="el" href="classHeatTransfer.html#aad19ec75bfee83084d7ca870fcd6d3fe">HeatTransfer&lt; dim &gt;</a>, <a class="el" href="classNavierStokesBase.html#a17b73199dbbb5f6c5b49f24fc727bb13">NavierStokesBase&lt; dim, VectorType, DofsType &gt;</a>, <a class="el" href="classNavierStokesBase.html#a17b73199dbbb5f6c5b49f24fc727bb13">NavierStokesBase&lt; dim, GlobalBlockVectorType, std::vector&lt; IndexSet &gt; &gt;</a>, <a class="el" href="classNavierStokesBase.html#a17b73199dbbb5f6c5b49f24fc727bb13">NavierStokesBase&lt; dim, GlobalVectorType, IndexSet &gt;</a>, <a class="el" href="classNavierStokesBase.html#a17b73199dbbb5f6c5b49f24fc727bb13">NavierStokesBase&lt; dim, LinearAlgebra::distributed::Vector&lt; double &gt;, IndexSet &gt;</a>, <a class="el" href="classTracer.html#a772f8c0d8a44d6072873f5ba49dada67">Tracer&lt; dim &gt;</a>, <a class="el" href="classVolumeOfFluid.html#a188d364a40da0bd95e5cdf6d56aa91ac">VolumeOfFluid&lt; dim &gt;</a>, and <a class="el" href="classVOFAlgebraicInterfaceReinitialization.html#a00005ed4d4f7bd3c5251f3c0213a16cf">VOFAlgebraicInterfaceReinitialization&lt; dim &gt;</a>.</p>
 
 </div>
 </div>
@@ -742,7 +777,7 @@ template&lt;typename VectorType &gt; </div>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="physics__solver_8h_source.html#l00168">168</a> of file <a class="el" href="physics__solver_8h_source.html">physics_solver.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="physics__solver_8h_source.html#l00180">180</a> of file <a class="el" href="physics__solver_8h_source.html">physics_solver.h</a>.</p>
 
 </div>
 </div>
@@ -769,7 +804,7 @@ template&lt;typename VectorType &gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="physics__solver_8h_source.html#l00138">138</a> of file <a class="el" href="physics__solver_8h_source.html">physics_solver.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="physics__solver_8h_source.html#l00150">150</a> of file <a class="el" href="physics__solver_8h_source.html">physics_solver.h</a>.</p>
 
 </div>
 </div>
@@ -787,7 +822,7 @@ template&lt;typename VectorType &gt; </div>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="physics__solver_8h_source.html#l00134">134</a> of file <a class="el" href="physics__solver_8h_source.html">physics_solver.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="physics__solver_8h_source.html#l00146">146</a> of file <a class="el" href="physics__solver_8h_source.html">physics_solver.h</a>.</p>
 
 </div>
 </div>
@@ -805,7 +840,7 @@ template&lt;typename VectorType &gt; </div>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="physics__solver_8h_source.html#l00135">135</a> of file <a class="el" href="physics__solver_8h_source.html">physics_solver.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="physics__solver_8h_source.html#l00147">147</a> of file <a class="el" href="physics__solver_8h_source.html">physics_solver.h</a>.</p>
 
 </div>
 </div>

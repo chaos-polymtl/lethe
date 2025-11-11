@@ -476,6 +476,9 @@
     # Linear solver residual
     set relative residual                = 1e-3
 
+    # Rescale solver residuals by the sqrt of the volume of the mesh
+    set rescale residual                 = false
+
     # Maximum solver iterations
     set max iters                        = 1000
 
@@ -554,6 +557,17 @@ end
 <div class="admonition tip">
 <p class="admonition-title">Tip</p>
 <p>A good rule of thumb is to set the linear solver <code class="docutils literal notranslate"><span class="pre">minimum</span> <span class="pre">residual</span></code> at least <span class="math notranslate nohighlight">\(10\)</span> times (preferably <span class="math notranslate nohighlight">\(100\)</span> times) smaller than the <a class="reference internal" href="non-linear_solver_control.html"><span class="doc">Non-linear Solver</span></a>, <code class="docutils literal notranslate"><span class="pre">tolerance</span></code> parameter, and keep the relative residual reasonable, for instance <code class="docutils literal notranslate"><span class="pre">set</span> <span class="pre">relative</span> <span class="pre">residual</span> <span class="pre">=</span> <span class="pre">1e-3</span></code>. To lower the computational cost for more complex simulations, it can be lowered to <code class="docutils literal notranslate"><span class="pre">set</span> <span class="pre">relative</span> <span class="pre">residual</span> <span class="pre">=</span> <span class="pre">1e-4</span></code>.</p>
+</div>
+<ul class="simple" id="rescale-residual-parameter">
+<li><p>The <code class="docutils literal notranslate"><span class="pre">rescale</span> <span class="pre">residual</span></code> parameter rescales the L2 norm of the residual by the square root of the volume of the mesh. This can be useful when comparing the convergence of simulations with different domain sizes. When set to <code class="docutils literal notranslate"><span class="pre">true</span></code>, the residual displayed on the terminal and compared to the <code class="docutils literal notranslate"><span class="pre">tolerance</span></code> is divided by the square root of the volume of the geometry represented by the mesh. By default, this parameter is set to <code class="docutils literal notranslate"><span class="pre">false</span></code>. The definition of the residual obtained becomes:</p></li>
+</ul>
+<div class="math-wrapper docutils container">
+<div class="math notranslate nohighlight">
+\[ \begin{align}\begin{aligned}\textup{Residual} = \frac{\left\| {R} \right\|_{L_2}}{V^{1/2}}\\where :math:`R` is the residual vector and :math:`V` is the volume of the entire mesh.\end{aligned}\end{align} \]</div>
+</div>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>This parameter also affects the residuals used in the non-linear solver convergence check. Tolerances for both linear and non-linear solvers should be adjusted accordingly when using this option.</p>
 </div>
 <ul class="simple">
 <li><p>The <code class="docutils literal notranslate"><span class="pre">max</span> <span class="pre">iters</span></code> puts a hard stop on the number of solver iterations (number of steps printed when <code class="docutils literal notranslate"><span class="pre">set</span> <span class="pre">verbosity</span> <span class="pre">=</span> <span class="pre">verbose</span></code>).</p></li>

@@ -554,6 +554,10 @@ Newton iteration: 3  - Residual:  1.12e-08
 <p>The <code class="docutils literal notranslate"><span class="pre">tolerance</span></code> parameter is directly linked to the numerical convergence of the simulation, but also to the computational cost (number of Newton iteration).</p>
 <p>For simple simulations, the tolerance can be set quite low, for instance <code class="docutils literal notranslate"><span class="pre">set</span> <span class="pre">tolerance</span> <span class="pre">=</span> <span class="pre">1e-12</span></code>. However, such a tolerance can be impossible to attain for more complex simulations : the step tolerance of the non-linear solver can be increased, for instance <code class="docutils literal notranslate"><span class="pre">set</span> <span class="pre">tolerance</span> <span class="pre">=</span> <span class="pre">1e-4</span></code></p>
 </div>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>The residual of the non-linear solver is affected by the <code class="docutils literal notranslate"><span class="pre">rescale</span> <span class="pre">residual</span></code> parameter in the <code class="docutils literal notranslate"><span class="pre">subsection</span> <span class="pre">linear</span> <span class="pre">solver</span></code>. When the parameter is activated, the L2 norm of the residual is divided by the square root of the domain’s volume. Hence, the tolerance of the non-linear solver must be adapted accordingly. For further details, please refer to the <a class="reference external" href="./linear_solver_control.html">Linear Solver parameters</a> section of this guide.</p>
+</div>
 <ul class="simple">
 <li><p>The <code class="docutils literal notranslate"><span class="pre">max</span> <span class="pre">iterations</span></code> parameter sets a hard limit to the number of Newton iterations, even if the <code class="docutils literal notranslate"><span class="pre">tolerance</span></code> is not reached.</p></li>
 </ul>
