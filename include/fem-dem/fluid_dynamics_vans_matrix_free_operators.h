@@ -148,7 +148,7 @@ protected:
   Table<2, Tensor<1, dim, VectorizedArray<number>>> particle_fluid_force;
 
   /// Table with correct alignment for vectorization to store the values of the
-  /// particle-fluid drag.
+  /// particle-fluid drag. The drag force in this table is volumetric, resulting from the projection used.
   Table<2, Tensor<1, dim, VectorizedArray<number>>> particle_fluid_drag;
 
   /// Table with correct alignment for vectorization to store the values of the
