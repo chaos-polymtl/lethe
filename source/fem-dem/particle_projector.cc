@@ -12,6 +12,7 @@
 #include <deal.II/fe/fe_values.h>
 
 #include <deal.II/grid/grid_generator.h>
+#include <deal.II/grid/grid_tools.h>
 
 #include <deal.II/lac/sparsity_tools.h>
 #include <deal.II/lac/trilinos_solver.h>
@@ -1337,9 +1338,17 @@ ParticleProjector<dim>::calculate_field_projection(
   field_qcm.system_matrix.compress(VectorOperation::add);
   field_qcm.system_rhs.compress(VectorOperation::add);
 
+  // Calculate rescale metric in case rescale is active.
+  const double rescale_metric =
+    linear_solver_parameters.rescale_residual_by_volume ?
+      std::sqrt(GridTools::volume(*triangulation)) :
+      1.0;
+
   // Solve the L2 projection system
-  const double linear_solver_tolerance =
+  const double non_rescaled_linear_solver_tolerance =
     linear_solver_parameters.minimum_residual;
+  const double linear_solver_tolerance =
+    non_rescaled_linear_solver_tolerance / rescale_metric;
 
   if (linear_solver_parameters.verbosity != Parameters::Verbosity::quiet)
     {
@@ -1348,7 +1357,7 @@ ParticleProjector<dim>::calculate_field_projection(
     }
 
   SolverControl solver_control(linear_solver_parameters.max_iterations,
-                               linear_solver_tolerance,
+                               non_rescaled_linear_solver_tolerance,
                                true,
                                true);
 
@@ -1376,8 +1385,9 @@ ParticleProjector<dim>::calculate_field_projection(
 
   if (linear_solver_parameters.verbosity != Parameters::Verbosity::quiet)
     {
-      this->pcout << "  -Iterative solver took : " << solver_control.last_step()
-                  << " steps " << std::endl;
+      this->pcout << "  -Iterative solver took : "
+                  << solver_control.last_step() / rescale_metric << " steps "
+                  << std::endl;
     }
 
   field_qcm.particle_field_constraints.distribute(
@@ -1646,9 +1656,17 @@ template <int dim>
 void
 ParticleProjector<dim>::solve_linear_system_and_update_solution()
 {
+  // Calculate rescale metric in case rescale is active.
+  const double rescale_metric =
+    linear_solver_parameters.rescale_residual_by_volume ?
+      std::sqrt(GridTools::volume(*triangulation)) :
+      1.0;
+
   // Solve the L2 projection system
-  const double linear_solver_tolerance =
+  const double non_rescaled_linear_solver_tolerance =
     linear_solver_parameters.minimum_residual;
+  const double linear_solver_tolerance =
+    non_rescaled_linear_solver_tolerance / rescale_metric;
 
   if (linear_solver_parameters.verbosity != Parameters::Verbosity::quiet)
     {
@@ -1662,7 +1680,7 @@ ParticleProjector<dim>::solve_linear_system_and_update_solution()
     locally_owned_dofs, this->triangulation->get_mpi_communicator());
 
   SolverControl solver_control(linear_solver_parameters.max_iterations,
-                               linear_solver_tolerance,
+                               non_rescaled_linear_solver_tolerance,
                                true,
                                true);
 
@@ -1690,8 +1708,9 @@ ParticleProjector<dim>::solve_linear_system_and_update_solution()
 
   if (linear_solver_parameters.verbosity != Parameters::Verbosity::quiet)
     {
-      this->pcout << "  -Iterative solver took : " << solver_control.last_step()
-                  << " steps " << std::endl;
+      this->pcout << "  -Iterative solver took : "
+                  << solver_control.last_step() / rescale_metric << " steps "
+                  << std::endl;
     }
 
   void_fraction_constraints.distribute(completely_distributed_solution);

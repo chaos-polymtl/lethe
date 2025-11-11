@@ -111,9 +111,21 @@ public:
   output_newton_update_norms(const unsigned int display_precision) = 0;
 
   /**
-   * @brief Default way to evaluate the residual for the nonlinear solver.
+   * @brief Return the metric for residual rescaling. By default, should return 1.
+   * If the rescale_residual_by_volume is set to true, the method
+   * returns the square root of the global volume of the triangulation.
+   *
+   * @return Rescale metric.
+   */
+  virtual double
+  get_residual_rescale_metric() const = 0;
+
+  /**
+   * @brief Default way to evaluate the residual for the nonlinear solver, which is simply the norm of the RHS vector.
    * Some application may use more complex evaluation of the residual and
    * override this method.
+   *
+   * @return l2 norm of the RHS vector.
    */
   virtual double
   get_current_residual()

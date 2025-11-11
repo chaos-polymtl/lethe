@@ -2620,8 +2620,12 @@ VolumeOfFluid<dim>::solve_linear_system(const bool initial_step,
   const double relative_residual =
     simulation_parameters.linear_solver.at(PhysicsID::VOF).relative_residual;
 
+  const double rescale_metric   = this->get_residual_rescale_metric();
+  const double current_residual = this->system_rhs.l2_norm() / rescale_metric;
   const double linear_solver_tolerance =
-    std::max(relative_residual * this->system_rhs.l2_norm(), absolute_residual);
+    std::max(relative_residual * current_residual, absolute_residual);
+  const double non_rescaled_linear_solver_tolerance =
+    linear_solver_tolerance * rescale_metric;
 
   if (this->simulation_parameters.linear_solver.at(PhysicsID::VOF).verbosity !=
       Parameters::Verbosity::quiet)
@@ -2648,7 +2652,7 @@ VolumeOfFluid<dim>::solve_linear_system(const bool initial_step,
 
   SolverControl solver_control(
     simulation_parameters.linear_solver.at(PhysicsID::VOF).max_iterations,
-    linear_solver_tolerance,
+    non_rescaled_linear_solver_tolerance,
     true,
     true);
 
@@ -2668,7 +2672,7 @@ VolumeOfFluid<dim>::solve_linear_system(const bool initial_step,
     {
       this->pcout << "  -Iterative solver took : " << solver_control.last_step()
                   << " steps to reach a residual norm of "
-                  << solver_control.last_value() << std::endl;
+                  << solver_control.last_value() / rescale_metric << std::endl;
     }
 
   // Update constraints and newton vectors

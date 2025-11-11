@@ -27,6 +27,8 @@
 #include <deal.II/fe/mapping_fe.h>
 #include <deal.II/fe/mapping_q.h>
 
+#include <deal.II/grid/grid_tools.h>
+
 #include <deal.II/lac/trilinos_sparse_matrix.h>
 #include <deal.II/lac/trilinos_vector.h>
 
@@ -398,6 +400,23 @@ public:
                 << std::setw(6)
                 << "\t||dT||_Linfty = " << std::setprecision(display_precision)
                 << newton_update.linfty_norm() << std::endl;
+  }
+
+  /**
+   * @brief Return the metric for residual rescaling. By default, should return 1.
+   * If the rescale_residual_by_volume is set to true, the method
+   * returns the global volume of the triangulation.
+   *
+   * @return Rescale metric.
+   */
+  double
+  get_residual_rescale_metric() const override
+  {
+    return simulation_parameters.linear_solver.at(PhysicsID::heat_transfer)
+               .rescale_residual_by_volume ?
+             std::sqrt(GridTools::volume(*this->triangulation,
+                                         *this->temperature_mapping)) :
+             1.;
   }
 
 private:

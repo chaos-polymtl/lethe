@@ -110,7 +110,6 @@ protected:
   virtual void
   check_dependencies_validity() = 0;
 
-
   const VOFSubequationsID        subequation_id;
   VOFSubequationsInterface<dim> &subequations_interface;
 

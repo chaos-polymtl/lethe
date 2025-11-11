@@ -1,4 +1,4 @@
-// SPDX-FileCopyrightText: Copyright (c) 2019-2025 The Lethe Authors
+// SPDX-FileCopyrightText: Copyright (c) 2019-2021, 2024 The Lethe Authors
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
 /**
@@ -38,6 +38,7 @@ test()
   // Create an instantiation of the Test Class
   std::unique_ptr<NonLinearProblemTestClass> solver =
     std::make_unique<NonLinearProblemTestClass>(params);
+
 
   deallog << "Solving non-linear system " << std::endl;
   // Solve the non-linear system of equation

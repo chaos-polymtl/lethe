@@ -25,6 +25,8 @@
 #include <deal.II/distributed/solution_transfer.h>
 #include <deal.II/distributed/tria_base.h>
 
+#include <deal.II/grid/grid_tools.h>
+
 #include <deal.II/lac/trilinos_precondition.h>
 #include <deal.II/lac/trilinos_sparse_matrix.h>
 #include <deal.II/lac/trilinos_vector.h>
@@ -357,6 +359,23 @@ public:
                 << std::setw(6) << "\t||dphi||_Linfty = "
                 << std::setprecision(display_precision)
                 << newton_update.linfty_norm() << std::endl;
+  }
+
+  /**
+   * @brief Return the metric for residual rescaling. By default, should return 1.
+   * If the rescale_residual_by_volume is set to true, the method
+   * returns the square root of the global volume of the triangulation.
+   *
+   * @return Rescale metric.
+   */
+  double
+  get_residual_rescale_metric() const override
+  {
+    return simulation_parameters.linear_solver.at(PhysicsID::VOF)
+               .rescale_residual_by_volume ?
+             std::sqrt(
+               GridTools::volume(*this->triangulation, *this->mapping)) :
+             1.;
   }
 
 private:

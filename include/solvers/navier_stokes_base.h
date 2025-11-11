@@ -39,6 +39,7 @@
 #include <deal.II/fe/mapping_q_cache.h>
 
 #include <deal.II/grid/grid_out.h>
+#include <deal.II/grid/grid_tools.h>
 
 #include <deal.II/lac/affine_constraints.h>
 
@@ -170,6 +171,23 @@ protected:
    */
   virtual void
   output_newton_update_norms(const unsigned int display_precision) override;
+
+  /**
+   * @brief Return the metric for residual rescaling. By default, should return 1.
+   * If the rescale_residual_by_volume is set to true, the method
+   * returns the global volume of the triangulation.
+   *
+   * @return Rescale metric.
+   */
+  double
+  get_residual_rescale_metric() const override
+  {
+    return simulation_parameters.linear_solver.at(PhysicsID::fluid_dynamics)
+               .rescale_residual_by_volume ?
+             std::sqrt(
+               GridTools::volume(*this->triangulation, *this->mapping)) :
+             1.;
+  }
 
   /**
    *  Generic interface routine to allow the CFD solver

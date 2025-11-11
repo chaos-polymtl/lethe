@@ -1464,15 +1464,18 @@ Tracer<dim>::solve_linear_system(const bool initial_step,
   const double relative_residual =
     simulation_parameters.linear_solver.at(PhysicsID::tracer).relative_residual;
 
+  const double rescale_metric   = this->get_residual_rescale_metric();
+  const double current_residual = system_rhs.l2_norm() / rescale_metric;
   const double linear_solver_tolerance =
-    std::max(relative_residual * system_rhs.l2_norm(), absolute_residual);
-
+    std::max(relative_residual * current_residual, absolute_residual);
   if (this->simulation_parameters.linear_solver.at(PhysicsID::tracer)
         .verbosity != Parameters::Verbosity::quiet)
     {
       this->pcout << "  -Tolerance of iterative solver is : "
                   << linear_solver_tolerance << std::endl;
     }
+  const double non_rescaled_linear_solver_tolerance =
+    linear_solver_tolerance * rescale_metric;
 
   const unsigned int ilu_fill =
     simulation_parameters.linear_solver.at(PhysicsID::tracer).ilu_precond_fill;
@@ -1492,7 +1495,7 @@ Tracer<dim>::solve_linear_system(const bool initial_step,
 
   SolverControl solver_control(
     simulation_parameters.linear_solver.at(PhysicsID::tracer).max_iterations,
-    linear_solver_tolerance,
+    non_rescaled_linear_solver_tolerance,
     true,
     true);
 
@@ -1515,7 +1518,7 @@ Tracer<dim>::solve_linear_system(const bool initial_step,
     {
       this->pcout << "  -Iterative solver took : " << solver_control.last_step()
                   << " steps to reach a residual norm of "
-                  << solver_control.last_value() << std::endl;
+                  << solver_control.last_value() / rescale_metric << std::endl;
     }
 
   constraints_used.distribute(completely_distributed_solution);

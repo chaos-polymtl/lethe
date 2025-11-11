@@ -1235,6 +1235,10 @@ namespace Parameters
     /// Verbosity of linear solver
     Verbosity verbosity;
 
+    /// Flag to rescale linear and non-linear residuals by the sqrt of the
+    /// triangulation volume
+    bool rescale_residual_by_volume;
+
     /// Relative residuals of the iterative solver
     double relative_residual;
 

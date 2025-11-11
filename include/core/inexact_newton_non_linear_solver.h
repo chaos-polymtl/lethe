@@ -78,6 +78,8 @@ InexactNewtonNonLinearSolver<VectorType>::solve(const bool is_initial_step)
 
   PhysicsSolver<VectorType> *solver = this->physics_solver;
 
+  const double rescale_metric = solver->get_residual_rescale_metric();
+
   auto &evaluation_point = solver->get_evaluation_point();
   auto &present_solution = solver->get_present_solution();
 
@@ -101,7 +103,7 @@ InexactNewtonNonLinearSolver<VectorType>::solve(const bool is_initial_step)
       if (outer_iteration == 0)
         {
           auto &system_rhs = solver->get_system_rhs();
-          current_res      = system_rhs.l2_norm();
+          current_res      = system_rhs.l2_norm() / rescale_metric;
           last_res         = current_res;
         }
 
@@ -126,7 +128,7 @@ InexactNewtonNonLinearSolver<VectorType>::solve(const bool is_initial_step)
           solver->assemble_system_rhs();
 
           auto &system_rhs = solver->get_system_rhs();
-          current_res      = system_rhs.l2_norm();
+          current_res      = system_rhs.l2_norm() / rescale_metric;
 
           if (this->params.verbosity != Parameters::Verbosity::quiet)
             {
@@ -180,7 +182,7 @@ InexactNewtonNonLinearSolver<VectorType>::solve(const bool is_initial_step)
           alpha_iter++;
         }
 
-      global_res       = solver->get_current_residual();
+      global_res       = solver->get_current_residual() / rescale_metric;
       present_solution = evaluation_point;
       last_res         = current_res;
       ++outer_iteration;

@@ -621,8 +621,12 @@ VOFAlgebraicInterfaceReinitialization<dim>::solve_linear_system(
       .relative_residual;
 
   // Set linear solver tolerance
+  const double rescale_metric   = this->get_residual_rescale_metric();
+  const double current_residual = this->system_rhs.l2_norm() / rescale_metric;
   const double linear_solver_tolerance =
-    std::max(relative_residual * this->system_rhs.l2_norm(), absolute_residual);
+    std::max(relative_residual * current_residual, absolute_residual);
+  const double non_rescaled_linear_solver_tolerance =
+    linear_solver_tolerance * rescale_metric;
 
   if (verbose)
     {
@@ -657,7 +661,7 @@ VOFAlgebraicInterfaceReinitialization<dim>::solve_linear_system(
     this->simulation_parameters.vof_subequations_linear_solvers
       .at(VOFSubequationsID::algebraic_interface_reinitialization)
       .max_iterations,
-    linear_solver_tolerance,
+    non_rescaled_linear_solver_tolerance,
     true,
     true);
 
@@ -678,7 +682,7 @@ VOFAlgebraicInterfaceReinitialization<dim>::solve_linear_system(
     {
       this->pcout << "  -Iterative solver took: " << solver_control.last_step()
                   << " steps to reach a residual norm of "
-                  << solver_control.last_value() << std::endl;
+                  << solver_control.last_value() / rescale_metric << std::endl;
     }
 
   // Update constraints and newton vectors

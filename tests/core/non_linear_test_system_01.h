@@ -1,4 +1,4 @@
-// SPDX-FileCopyrightText: Copyright (c) 2019-2021, 2024 The Lethe Authors
+// SPDX-FileCopyrightText: Copyright (c) 2019-2021, 2024-2025 The Lethe Authors
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
 // Deal.II includes
@@ -138,6 +138,11 @@ public:
   {
     return dummy_constraints;
   };
+  virtual double
+  get_residual_rescale_metric() const override
+  {
+    return 1.0;
+  }
 
   // Reset present solution to initial value
   void
