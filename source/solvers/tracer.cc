@@ -1449,8 +1449,7 @@ Tracer<dim>::compute_kelly(
 
 template <int dim>
 void
-Tracer<dim>::solve_linear_system(const bool initial_step,
-                                 const bool /*renewed_matrix*/)
+Tracer<dim>::solve_linear_system(const bool initial_step)
 {
   TimerOutput::Scope t(this->computing_timer, "Solve linear system");
 
