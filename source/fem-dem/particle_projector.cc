@@ -146,17 +146,14 @@ ParticleProjector<dim>::setup_dofs()
   // Vertices to cell mapping
   LetheGridTools::vertices_cell_mapping(this->dof_handler, vertices_to_cell);
 
-  // If particle projection is enabled, we also setup the dofs for the particle
-  // velocity
-  if (void_fraction_parameters->project_particle_velocity)
-    particle_velocity.setup_dofs();
-
   // TODO BB both these fields are always set-up even if they are not used. This
   // is ok since this will just take a little bit of extra memory. If this
   // becomes an issue, we can enable/disable their allocation with an additional
   // bool parameter inside the CFD-DEM parameters.
-  particle_fluid_force_two_way_coupling.setup_dofs();
-  particle_fluid_drag.setup_dofs();
+  fluid_force_on_particles_two_way_coupling.setup_dofs();
+  fluid_drag_on_particles.setup_dofs();
+  particle_velocity.setup_dofs();
+  momentum_transfer_coefficient.setup_dofs();
 }
 
 
@@ -1159,13 +1156,18 @@ ParticleProjector<dim>::calculate_field_projection(
                                   volumetric_contribution]) :
                           particle_volume_in_sphere;
 
-
-
-                      for (int d = 0; d < n_components; ++d)
+                      if constexpr (n_components == 1)
+                        particle_field_in_sphere +=
+                          volumetric_contribution *
+                          particle_properties[property_start_index];
+                      else
                         {
-                          particle_field_in_sphere[d] +=
-                            volumetric_contribution *
-                            particle_properties[property_start_index + d];
+                          for (int d = 0; d < n_components; ++d)
+                            {
+                              particle_field_in_sphere[d] +=
+                                volumetric_contribution *
+                                particle_properties[property_start_index + d];
+                            }
                         }
                     }
                 }
@@ -1235,11 +1237,19 @@ ParticleProjector<dim>::calculate_field_projection(
                                   volumetric_contribution]) :
                           particle_volume_in_sphere;
 
-                      for (int d = 0; d < n_components; ++d)
+
+                      if constexpr (n_components == 1)
+                        particle_field_in_sphere +=
+                          volumetric_contribution *
+                          particle_properties[property_start_index];
+                      else
                         {
-                          particle_field_in_sphere[d] +=
-                            volumetric_contribution *
-                            particle_properties[property_start_index + d];
+                          for (int d = 0; d < n_components; ++d)
+                            {
+                              particle_field_in_sphere[d] +=
+                                volumetric_contribution *
+                                particle_properties[property_start_index + d];
+                            }
                         }
                     }
                 }
@@ -1255,7 +1265,7 @@ ParticleProjector<dim>::calculate_field_projection(
                   if constexpr (n_components == 1)
                     {
                       phi_vf[k]      = fe_values_field.shape_value(k, q);
-                      grad_phi_vf[k] = fe_values_field.shape_gradient(k, q);
+                      grad_phi_vf[k] = fe_values_field.shape_grad(k, q);
                     }
                 }
 
@@ -1414,15 +1424,18 @@ void
 ParticleProjector<dim>::calculate_particle_fluid_forces_projection(
   const Parameters::CFDDEM      &cfd_dem_parameters,
   DoFHandler<dim>               &fluid_dof_handler,
-  const VectorType              &fluid_solution,
-  const std::vector<VectorType> &fluid_previous_solutions,
+  const VectorType              &present_velocity_pressure_solution,
+  const std::vector<VectorType> &previous_velocity_pressure_solution,
   NavierStokesScratchData<dim>   scratch_data)
 {
   // If the mode to calculate the void fraction is function, then the VANS
   // solver is running with a user defined function so there are no
   // particle-fluid force yet the simulation is a valid simulation.
   if (void_fraction_parameters->mode == Parameters::VoidFractionMode::function)
-    return;
+    {
+      zero_out_and_ghost_auxiliary_fields();
+      return;
+    }
 
   // If the mode is either SPM or PCM, then information required for the
   // projection is not available. Consequently, we should throw and not
@@ -1534,11 +1547,6 @@ ParticleProjector<dim>::calculate_particle_fluid_forces_projection(
           std::make_shared<VANSAssemblerShearForce<dim>>(cfd_dem_parameters));
     }
 
-  AssertThrow(
-    cfd_dem_parameters.buoyancy_force == false,
-    ExcMessage(
-      "The use of the buoyancy force is currently not supported with the volume-projection mechanism for the particle-fluid forces."));
-
   scratch_data.enable_void_fraction(*fe, *quadrature, *mapping);
 
   scratch_data.enable_particle_fluid_interactions(
@@ -1574,22 +1582,24 @@ ParticleProjector<dim>::calculate_particle_fluid_forces_projection(
           if constexpr (std::is_same_v<
                           VectorType,
                           LinearAlgebra::distributed::Vector<double>>)
-            scratch_data.reinit_particle_fluid_interactions(
-              cell,
-              void_fraction_cell,
-              fluid_solution,
-              fluid_previous_solutions[0],
-              void_fraction_solution,
-              *particle_handler,
-              cfd_dem_parameters.drag_coupling);
+            {
+              scratch_data.reinit_particle_fluid_interactions(
+                cell,
+                void_fraction_cell,
+                present_velocity_pressure_solution,
+                previous_velocity_pressure_solution[0],
+                void_fraction_solution,
+                *particle_handler,
+                cfd_dem_parameters.drag_coupling);
+            }
           else
             {
               // In this case the global vector type is not a deal.II vector.
               scratch_data.reinit_particle_fluid_interactions(
                 cell,
                 void_fraction_cell,
-                fluid_solution,
-                fluid_previous_solutions[0],
+                present_velocity_pressure_solution,
+                previous_velocity_pressure_solution[0],
                 void_fraction_locally_relevant,
                 *particle_handler,
                 cfd_dem_parameters.drag_coupling);
@@ -1609,10 +1619,13 @@ ParticleProjector<dim>::calculate_particle_fluid_forces_projection(
   particle_handler->update_ghost_particles();
 
   // We project both the fluid force (without drag) and the drag force.
-  announce_string(this->pcout, "Particle-fluid forces");
-  calculate_field_projection(particle_fluid_force_two_way_coupling);
-  announce_string(this->pcout, "Particle-fluid drag");
-  calculate_field_projection(particle_fluid_drag);
+  // We do not announce the string since the projection can be called
+  // multiple time if this is a non-linear problem and the coupling is
+  // implicit.
+  calculate_field_projection(fluid_force_on_particles_two_way_coupling);
+  calculate_field_projection(fluid_drag_on_particles);
+  calculate_field_projection(particle_velocity);
+  calculate_field_projection(momentum_transfer_coefficient);
 }
 
 

@@ -205,7 +205,7 @@ test_void_fraction_qcm(const unsigned int fe_degree,
   // Calculate the force projection
   // For this we only need to calculate the field projection!
   particle_projector.calculate_field_projection(
-    particle_projector.particle_fluid_force_two_way_coupling);
+    particle_projector.fluid_force_on_particles_two_way_coupling);
 
 
   for (unsigned int r = 0; r < n_procs; ++r)
@@ -214,7 +214,7 @@ test_void_fraction_qcm(const unsigned int fe_degree,
         {
           deallog << "Rank " << r << " owns: ";
           for (const auto &i :
-               particle_projector.particle_fluid_force_two_way_coupling
+               particle_projector.fluid_force_on_particles_two_way_coupling
                  .particle_field_solution)
             deallog << i << " ";
           deallog << std::endl;
@@ -225,7 +225,7 @@ test_void_fraction_qcm(const unsigned int fe_degree,
   // Integrate the force field over the cells to check force conservation
   FEValues<3> fe_values(
     *particle_projector.mapping,
-    *particle_projector.particle_fluid_force_two_way_coupling.fe,
+    *particle_projector.fluid_force_on_particles_two_way_coupling.fe,
     *particle_projector.quadrature,
     update_values | update_JxW_values);
 
@@ -235,12 +235,12 @@ test_void_fraction_qcm(const unsigned int fe_degree,
   Tensor<1, 3>              total_particle_force_on_fluid({0, 0, 0});
   std::vector<Tensor<1, 3>> force_values(fe_values.n_quadrature_points);
   for (const auto &cell :
-       particle_projector.particle_fluid_force_two_way_coupling.dof_handler
+       particle_projector.fluid_force_on_particles_two_way_coupling.dof_handler
          .active_cell_iterators())
     {
       fe_values.reinit((cell));
       fe_values[vector_extractor].get_function_values(
-        particle_projector.particle_fluid_force_two_way_coupling
+        particle_projector.fluid_force_on_particles_two_way_coupling
           .particle_field_solution,
         force_values);
       for (unsigned int q = 0; q < fe_values.n_quadrature_points; ++q)
@@ -259,8 +259,9 @@ test_void_fraction_qcm(const unsigned int fe_degree,
                                particle_projector.void_fraction_solution,
                                "void_fraction");
       data_out.add_data_vector(
-        particle_projector.particle_fluid_force_two_way_coupling.dof_handler,
-        particle_projector.particle_fluid_force_two_way_coupling
+        particle_projector.fluid_force_on_particles_two_way_coupling
+          .dof_handler,
+        particle_projector.fluid_force_on_particles_two_way_coupling
           .particle_field_solution,
         "force_pf");
       data_out.build_patches();

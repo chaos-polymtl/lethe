@@ -55,33 +55,57 @@ MFNavierStokesVANSPreconditionGMG<dim>::initialize(
       const unsigned int min_level = this->minlevel;
       const unsigned int max_level = this->maxlevel;
 
+      // Resize all of the dof handlers related to every field for the
+      // particle-fluid coupling
       this->void_fraction_dof_handlers.resize(min_level, max_level);
       this->pf_force_dof_handlers.resize(min_level, max_level);
       this->pf_drag_dof_handlers.resize(min_level, max_level);
+      this->particle_velocity_dof_handlers.resize(min_level, max_level);
+      this->momentum_transfer_coefficient_dof_handlers.resize(min_level,
+                                                              max_level);
 
 
       for (unsigned int l = min_level; l <= max_level; l++)
         {
+          // Void fraction
           this->void_fraction_dof_handlers[l].reinit(
             this->dof_handlers[l].get_triangulation());
           this->void_fraction_dof_handlers[l].distribute_dofs(
             particle_projector.dof_handler.get_fe());
 
+          // Particle-fluid force
           this->pf_force_dof_handlers[l].reinit(
             this->dof_handlers[l].get_triangulation());
           this->pf_force_dof_handlers[l].distribute_dofs(
-            particle_projector.particle_fluid_force_two_way_coupling.dof_handler
-              .get_fe());
+            particle_projector.fluid_force_on_particles_two_way_coupling
+              .dof_handler.get_fe());
 
+          // Particle-fluid drag
           this->pf_drag_dof_handlers[l].reinit(
             this->dof_handlers[l].get_triangulation());
           this->pf_drag_dof_handlers[l].distribute_dofs(
-            particle_projector.particle_fluid_drag.dof_handler.get_fe());
+            particle_projector.fluid_drag_on_particles.dof_handler.get_fe());
+
+          // Particle velocity field
+          this->particle_velocity_dof_handlers[l].reinit(
+            this->dof_handlers[l].get_triangulation());
+          this->particle_velocity_dof_handlers[l].distribute_dofs(
+            particle_projector.particle_velocity.dof_handler.get_fe());
+
+          // Momentum exchange coefficient
+          this->momentum_transfer_coefficient_dof_handlers[l].reinit(
+            this->dof_handlers[l].get_triangulation());
+          this->momentum_transfer_coefficient_dof_handlers[l].distribute_dofs(
+            particle_projector.momentum_transfer_coefficient.dof_handler
+              .get_fe());
         }
 
       this->transfers_void_fraction.resize(min_level, max_level);
       this->transfers_pf_force.resize(min_level, max_level);
       this->transfers_pf_drag.resize(min_level, max_level);
+      this->transfers_particle_velocity.resize(min_level, max_level);
+      this->transfers_momentum_transfer_coefficient.resize(min_level,
+                                                           max_level);
 
 
       for (unsigned int l = min_level; l < max_level; l++)
@@ -103,8 +127,21 @@ MFNavierStokesVANSPreconditionGMG<dim>::initialize(
             this->pf_drag_dof_handlers[l],
             {},
             {});
+
+          this->transfers_particle_velocity[l + 1].reinit(
+            this->particle_velocity_dof_handlers[l + 1],
+            this->particle_velocity_dof_handlers[l],
+            {},
+            {});
+
+          this->transfers_momentum_transfer_coefficient[l + 1].reinit(
+            this->momentum_transfer_coefficient_dof_handlers[l + 1],
+            this->momentum_transfer_coefficient_dof_handlers[l],
+            {},
+            {});
         }
 
+      // Make the transfer operators for every field we will transfer
       this->mg_transfer_gc_void_fraction =
         std::make_shared<MFNavierStokesVANSPreconditionGMG::GCTransferType>(
           this->transfers_void_fraction);
@@ -117,7 +154,16 @@ MFNavierStokesVANSPreconditionGMG<dim>::initialize(
         std::make_shared<MFNavierStokesVANSPreconditionGMG::GCTransferType>(
           this->transfers_pf_drag);
 
-#if DEAL_II_VERSION_GTE(9, 7, 0)
+      this->mg_transfer_gc_particle_velocity =
+        std::make_shared<MFNavierStokesVANSPreconditionGMG::GCTransferType>(
+          this->transfers_particle_velocity);
+
+      this->mg_transfer_gc_momentum_transfer_coefficient =
+        std::make_shared<MFNavierStokesVANSPreconditionGMG::GCTransferType>(
+          this->transfers_momentum_transfer_coefficient);
+
+
+      // Build transfer operator for every field
       this->mg_transfer_gc_void_fraction->build(
         particle_projector.dof_handler, [&](const auto l, auto &vec) {
           vec.reinit(
@@ -128,7 +174,8 @@ MFNavierStokesVANSPreconditionGMG<dim>::initialize(
         });
 
       this->mg_transfer_gc_pf_force->build(
-        particle_projector.particle_fluid_force_two_way_coupling.dof_handler,
+        particle_projector.fluid_force_on_particles_two_way_coupling
+          .dof_handler,
         [&](const auto l, auto &vec) {
           vec.reinit(this->pf_force_dof_handlers[l].locally_owned_dofs(),
                      DoFTools::extract_locally_active_dofs(
@@ -137,15 +184,36 @@ MFNavierStokesVANSPreconditionGMG<dim>::initialize(
         });
 
       this->mg_transfer_gc_pf_force->build(
-        particle_projector.particle_fluid_drag.dof_handler,
+        particle_projector.fluid_drag_on_particles.dof_handler,
         [&](const auto l, auto &vec) {
           vec.reinit(this->pf_drag_dof_handlers[l].locally_owned_dofs(),
                      DoFTools::extract_locally_active_dofs(
                        this->pf_drag_dof_handlers[l]),
                      this->pf_drag_dof_handlers[l].get_mpi_communicator());
         });
-#endif
 
+      this->mg_transfer_gc_particle_velocity->build(
+        particle_projector.particle_velocity.dof_handler,
+        [&](const auto l, auto &vec) {
+          vec.reinit(
+            this->particle_velocity_dof_handlers[l].locally_owned_dofs(),
+            DoFTools::extract_locally_active_dofs(
+              this->particle_velocity_dof_handlers[l]),
+            this->particle_velocity_dof_handlers[l].get_mpi_communicator());
+        });
+
+      this->mg_transfer_gc_momentum_transfer_coefficient->build(
+        particle_projector.momentum_transfer_coefficient.dof_handler,
+        [&](const auto l, auto &vec) {
+          vec.reinit(this->momentum_transfer_coefficient_dof_handlers[l]
+                       .locally_owned_dofs(),
+                     DoFTools::extract_locally_active_dofs(
+                       this->momentum_transfer_coefficient_dof_handlers[l]),
+                     this->momentum_transfer_coefficient_dof_handlers[l]
+                       .get_mpi_communicator());
+        });
+
+      // Create the MG Level Object for every field
       MGLevelObject<MFNavierStokesVANSPreconditionGMG::MGVectorType>
         mg_void_fraction_solution(this->minlevel, this->maxlevel);
 
@@ -155,37 +223,70 @@ MFNavierStokesVANSPreconditionGMG<dim>::initialize(
       MGLevelObject<MFNavierStokesVANSPreconditionGMG::MGVectorType>
         mg_pf_drag_solution(this->minlevel, this->maxlevel);
 
+      MGLevelObject<MFNavierStokesVANSPreconditionGMG::MGVectorType>
+        mg_particle_velocity_solution(this->minlevel, this->maxlevel);
+
+      MGLevelObject<MFNavierStokesVANSPreconditionGMG::MGVectorType>
+        mg_momentum_transfer_coefficient_solution(this->minlevel,
+                                                  this->maxlevel);
+
       // A deal.II vector is required here, so we take the deal.II vector
-      // solution from the particle projector instead of the trilinos vector
-      // one.
+      // solution from the particle projector instead of the Trillinos vector
+      // one. This is done for every field.
+
+      // Void fraction
       this->mg_transfer_gc_void_fraction->interpolate_to_mg(
         particle_projector.dof_handler,
         mg_void_fraction_solution,
         particle_projector.void_fraction_solution);
 
-      particle_projector.particle_fluid_force_two_way_coupling
+      particle_projector.fluid_force_on_particles_two_way_coupling
         .particle_field_solution.update_ghost_values();
 
+      // Particle-fluid force
       this->mg_transfer_gc_pf_force->interpolate_to_mg(
-        particle_projector.particle_fluid_force_two_way_coupling.dof_handler,
+        particle_projector.fluid_force_on_particles_two_way_coupling
+          .dof_handler,
         mg_pf_forces_solution,
-        particle_projector.particle_fluid_force_two_way_coupling
+        particle_projector.fluid_force_on_particles_two_way_coupling
           .particle_field_solution);
 
-
-      particle_projector.particle_fluid_drag.particle_field_solution
+      // Particle-fluid drag
+      particle_projector.fluid_drag_on_particles.particle_field_solution
         .update_ghost_values();
 
       this->mg_transfer_gc_pf_force->interpolate_to_mg(
-        particle_projector.particle_fluid_drag.dof_handler,
+        particle_projector.fluid_drag_on_particles.dof_handler,
         mg_pf_drag_solution,
-        particle_projector.particle_fluid_drag.particle_field_solution);
+        particle_projector.fluid_drag_on_particles.particle_field_solution);
+
+      // Particle-velocity
+      particle_projector.particle_velocity.particle_field_solution
+        .update_ghost_values();
+
+      this->mg_transfer_gc_pf_force->interpolate_to_mg(
+        particle_projector.particle_velocity.dof_handler,
+        mg_particle_velocity_solution,
+        particle_projector.particle_velocity.particle_field_solution);
+
+      // Momentum transfer coefficient
+      particle_projector.momentum_transfer_coefficient.particle_field_solution
+        .update_ghost_values();
+
+      this->mg_transfer_gc_momentum_transfer_coefficient->interpolate_to_mg(
+        particle_projector.momentum_transfer_coefficient.dof_handler,
+        mg_momentum_transfer_coefficient_solution,
+        particle_projector.momentum_transfer_coefficient
+          .particle_field_solution);
+
 
       for (unsigned int l = min_level; l <= max_level; l++)
         {
           mg_void_fraction_solution[l].update_ghost_values();
           mg_pf_forces_solution[l].update_ghost_values();
           mg_pf_drag_solution[l].update_ghost_values();
+          mg_particle_velocity_solution[l].update_ghost_values();
+          mg_momentum_transfer_coefficient_solution[l].update_ghost_values();
 
 
           if (auto mf_operator = dynamic_cast<VANSOperator<dim, double> *>(
@@ -195,11 +296,15 @@ MFNavierStokesVANSPreconditionGMG<dim>::initialize(
                 this->void_fraction_dof_handlers[l],
                 mg_void_fraction_solution[l]);
 
-              mf_operator->compute_particle_fluid_force(
+              mf_operator->compute_particle_fluid_interaction(
                 this->pf_force_dof_handlers[l],
                 mg_pf_forces_solution[l],
                 this->pf_drag_dof_handlers[l],
-                mg_pf_drag_solution[l]);
+                mg_pf_drag_solution[l],
+                this->particle_velocity_dof_handlers[l],
+                mg_particle_velocity_solution[l],
+                this->momentum_transfer_coefficient_dof_handlers[l],
+                mg_momentum_transfer_coefficient_solution[l]);
             }
         }
     }
@@ -355,6 +460,83 @@ FluidDynamicsVANSMatrixFree<dim>::read_dem()
 
 template <int dim>
 void
+FluidDynamicsVANSMatrixFree<dim>::assemble_system_rhs()
+{
+  // First we update the particle-fluid coupling terms.
+  // The base matrix-free operator is not aware of the various VANS
+  // coupling terms. We must do a cast here to ensure that the operator is
+  // of the right type.
+  if (auto mf_operator =
+        dynamic_cast<VANSOperator<dim, double> *>(this->system_operator.get()))
+    {
+      TimerOutput::Scope t(this->computing_timer,
+                           "Prepare MF operator for VANS");
+
+      // If the coupling is implicit, we need to carry out the projection of
+      // the particle information onto the CFD mesh at every RHS evaluation
+      // since the momentum exchange term evolves.
+      if (cfd_dem_simulation_parameters.cfd_dem.drag_coupling ==
+          Parameters::DragCoupling::fully_implicit)
+        particle_projector.calculate_particle_fluid_forces_projection(
+          this->cfd_dem_simulation_parameters.cfd_dem,
+          this->dof_handler,
+          this->evaluation_point,
+          this->previous_solutions,
+          NavierStokesScratchData<dim>(
+            this->simulation_control,
+            this->simulation_parameters.physical_properties_manager,
+            *this->fe,
+            *this->cell_quadrature,
+            *this->mapping,
+            *this->face_quadrature));
+
+      mf_operator->compute_particle_fluid_interaction(
+        particle_projector.fluid_force_on_particles_two_way_coupling
+          .dof_handler,
+        particle_projector.fluid_force_on_particles_two_way_coupling
+          .particle_field_solution,
+        particle_projector.fluid_drag_on_particles.dof_handler,
+        particle_projector.fluid_drag_on_particles.particle_field_solution,
+        particle_projector.particle_velocity.dof_handler,
+        particle_projector.particle_velocity.particle_field_solution,
+        particle_projector.momentum_transfer_coefficient.dof_handler,
+        particle_projector.momentum_transfer_coefficient
+          .particle_field_solution);
+    }
+
+  TimerOutput::Scope t(this->computing_timer, "Assemble RHS");
+
+
+  // Update the precomputed values needed for the evaluation of the residual.
+  // This is needed, otherwise the line-search mechanism used in the Newton
+  // method might fail even though the Newton step should have been accepted
+  // due to a wrong evaluation of the residual and, consequently, a wrong
+  // evaluation of the step length.
+  this->evaluation_point.update_ghost_values();
+  this->system_operator->evaluate_non_linear_term_and_calculate_tau(
+    this->evaluation_point);
+
+  this->system_operator->evaluate_residual(this->system_rhs,
+                                           this->evaluation_point);
+
+  // If mortar is enabled, add RHS entries
+  if (this->simulation_parameters.mortar_parameters.enable)
+    {
+      this->system_operator->mortar_coupling_operator_mf->vmult_add(
+        this->system_rhs, this->evaluation_point);
+      this->system_rhs.compress(VectorOperation::add);
+    }
+
+  this->system_rhs *= -1.0;
+
+  // Provide residual to simulation control for stopping criterion when using
+  // steady bdf
+  if (this->simulation_control->is_first_assembly())
+    this->simulation_control->provide_residual(this->system_rhs.l2_norm());
+}
+
+template <int dim>
+void
 FluidDynamicsVANSMatrixFree<dim>::finish_time_step_fd()
 {
   // Void fraction percolation must be done before the time step is finished to
@@ -377,7 +559,48 @@ FluidDynamicsVANSMatrixFree<dim>::gather_output_hook()
                          particle_projector.void_fraction_solution,
                          name,
                          component_interpretation);
-  return {void_fraction_struct};
+
+  std::vector<std::string> force_names(dim, "fluid_drag_on_particles");
+  std::vector<DataComponentInterpretation::DataComponentInterpretation>
+    force_component_interpretation(
+      dim, DataComponentInterpretation::component_is_part_of_vector);
+
+  OutputStructSolution<dim, LinearAlgebra::distributed::Vector<double>>
+    particle_fluid_drag_struct(
+      particle_projector.fluid_drag_on_particles.dof_handler,
+      particle_projector.fluid_drag_on_particles.particle_field_solution,
+      force_names,
+      force_component_interpretation);
+
+  std::vector<std::string> particle_velocity_names(dim, "particle_velocity");
+  std::vector<DataComponentInterpretation::DataComponentInterpretation>
+    particle_velocity_component_interpretation(
+      dim, DataComponentInterpretation::component_is_part_of_vector);
+
+  OutputStructSolution<dim, LinearAlgebra::distributed::Vector<double>>
+    particle_velocity_struct(
+      particle_projector.particle_velocity.dof_handler,
+      particle_projector.particle_velocity.particle_field_solution,
+      particle_velocity_names,
+      particle_velocity_component_interpretation);
+
+  std::vector<std::string> mtc_name(1, "momentum_transfer_coefficient");
+  std::vector<DataComponentInterpretation::DataComponentInterpretation>
+    mtc_component_interpretation(
+      1, DataComponentInterpretation::component_is_scalar);
+
+  OutputStructSolution<dim, LinearAlgebra::distributed::Vector<double>>
+    mtc_struct(
+      particle_projector.momentum_transfer_coefficient.dof_handler,
+      particle_projector.momentum_transfer_coefficient.particle_field_solution,
+      mtc_name,
+      mtc_component_interpretation);
+
+
+  return {void_fraction_struct,
+          particle_fluid_drag_struct,
+          particle_velocity_struct,
+          mtc_struct};
 }
 
 template <int dim>
@@ -410,6 +633,8 @@ FluidDynamicsVANSMatrixFree<dim>::solve()
   this->set_initial_condition(
     this->simulation_parameters.initial_condition->type,
     this->simulation_parameters.restart_parameters.restart);
+
+
 
   // Only needed if other physics apart from fluid dynamics are enabled.
   if (this->multiphysics->get_active_physics().size() > 1)
@@ -457,9 +682,6 @@ FluidDynamicsVANSMatrixFree<dim>::solve()
         particle_projector.calculate_void_fraction(
           this->simulation_control->get_current_time());
 
-        // The particle-fluid force projection
-        // will be zero if there are no particles in
-        // the particle handler
         particle_projector.calculate_particle_fluid_forces_projection(
           this->cfd_dem_simulation_parameters.cfd_dem,
           this->dof_handler,
@@ -481,26 +703,26 @@ FluidDynamicsVANSMatrixFree<dim>::solve()
           {
             TimerOutput::Scope t(this->computing_timer,
                                  "Prepare MF operator for VANS");
+
             mf_operator->compute_void_fraction(
               particle_projector.dof_handler,
               particle_projector.void_fraction_solution);
 
-            particle_projector.particle_fluid_force_two_way_coupling
-              .particle_field_solution.update_ghost_values();
-
-            particle_projector.particle_fluid_drag.particle_field_solution
-              .update_ghost_values();
-
-            mf_operator->compute_particle_fluid_force(
-              particle_projector.particle_fluid_force_two_way_coupling
+            mf_operator->compute_particle_fluid_interaction(
+              particle_projector.fluid_force_on_particles_two_way_coupling
                 .dof_handler,
-              particle_projector.particle_fluid_force_two_way_coupling
+              particle_projector.fluid_force_on_particles_two_way_coupling
                 .particle_field_solution,
-              particle_projector.particle_fluid_drag.dof_handler,
-              particle_projector.particle_fluid_drag.particle_field_solution);
+              particle_projector.fluid_drag_on_particles.dof_handler,
+              particle_projector.fluid_drag_on_particles
+                .particle_field_solution,
+              particle_projector.particle_velocity.dof_handler,
+              particle_projector.particle_velocity.particle_field_solution,
+              particle_projector.momentum_transfer_coefficient.dof_handler,
+              particle_projector.momentum_transfer_coefficient
+                .particle_field_solution);
           }
       }
-
 
       this->iterate();
       this->postprocess(false);

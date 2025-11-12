@@ -14,12 +14,6 @@ Steady iteration:        1/1
 --------------
 Void Fraction
 --------------
-----------------------
-Particle-fluid forces
-----------------------
---------------------
-Particle-fluid drag
---------------------
 
   -Levels of MG preconditioner:
     Level 0: 544 DoFs, 80 cells

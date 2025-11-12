@@ -136,23 +136,13 @@ public:
   {
     if (simplex)
       {
-        if constexpr (n_components == 1)
-          fe = FE_SimplexP<dim>(fe_degree);
-        else
-          {
-            const FE_SimplexP<dim> fe_temp(fe_degree);
-            fe = std::make_shared<FESystem<dim>>(fe_temp, n_components);
-          }
+        const FE_SimplexP<dim> fe_temp(fe_degree);
+        fe = std::make_shared<FESystem<dim>>(fe_temp, n_components);
       }
     else
       {
-        if constexpr (n_components == 1)
-          fe = FE_Q<dim>(fe_degree);
-        else
-          {
-            const FE_Q<dim> temp_fe(fe_degree);
-            fe = std::make_shared<FESystem<dim>>(temp_fe, dim);
-          }
+        const FE_Q<dim> temp_fe(fe_degree);
+        fe = std::make_shared<FESystem<dim>>(temp_fe, n_components);
       }
   }
 
@@ -250,12 +240,17 @@ public:
     , particle_handler(particle_handler)
     , particle_have_been_projected(false)
     , particle_velocity(triangulation, fe_degree, simplex, true, false)
-    , particle_fluid_force_two_way_coupling(triangulation,
-                                            fe_degree,
-                                            simplex,
-                                            false,
-                                            true)
-    , particle_fluid_drag(triangulation, fe_degree, simplex, false, true)
+    , fluid_force_on_particles_two_way_coupling(triangulation,
+                                                fe_degree,
+                                                simplex,
+                                                false,
+                                                true)
+    , fluid_drag_on_particles(triangulation, fe_degree, simplex, false, true)
+    , momentum_transfer_coefficient(triangulation,
+                                    fe_degree,
+                                    simplex,
+                                    false,
+                                    true)
   {
     if (simplex)
       {
@@ -352,8 +347,8 @@ public:
   calculate_particle_fluid_forces_projection(
     const Parameters::CFDDEM      &cfd_dem_parameters,
     DoFHandler<dim>               &fluid_dof_handler,
-    const VectorType              &fluid_solution,
-    const std::vector<VectorType> &fluid_previous_solutions,
+    const VectorType              &present_velocity_pressure_solution,
+    const std::vector<VectorType> &previous_velocity_pressure_solution,
     NavierStokesScratchData<dim>   scratch_data);
 
   /**
@@ -407,6 +402,25 @@ public:
   calculate_field_projection(
     ParticleFieldQCM<dim, property_start_index, n_components> &field_qcm);
 
+
+  /**
+   * @brief Zeros out and update the ghost values of the auxiliary fields.
+   * This is necessary when the void fraction calculation mode does not rely on
+   * particles.
+   */
+  void
+  zero_out_and_ghost_auxiliary_fields()
+  {
+    fluid_force_on_particles_two_way_coupling.particle_field_solution = 0.;
+    fluid_force_on_particles_two_way_coupling.particle_field_solution
+      .update_ghost_values();
+    momentum_transfer_coefficient.particle_field_solution = 0.;
+    momentum_transfer_coefficient.particle_field_solution.update_ghost_values();
+    particle_velocity.particle_field_solution = 0.;
+    particle_velocity.particle_field_solution.update_ghost_values();
+    fluid_drag_on_particles.particle_field_solution = 0.;
+    fluid_drag_on_particles.particle_field_solution.update_ghost_values();
+  }
 
   /// DoFHandler that manages the void fraction
   DoFHandler<dim> dof_handler;
@@ -688,20 +702,37 @@ private:
 
 public:
   /// Projector used to save the particle velocity field onto the mesh
+  /// This field is not volumetric, meaning that the integral over the
+  /// entire domain of this field will not yield the sum of the particle
+  /// velocity over all the particles.
   ParticleFieldQCM<dim, 3, DEM::CFDDEMProperties::PropertiesIndex::v_x>
     particle_velocity;
 
   /// Projector used to save the forces used in the two-way coupling scheme,
-  /// without drag.
+  /// without drag. This field is volumetric. The integral of this field over
+  /// the entire domain will result in the sum of the force (without drag) over
+  /// all of the particles.
   ParticleFieldQCM<
     dim,
     3,
     DEM::CFDDEMProperties::PropertiesIndex::fem_force_two_way_coupling_x>
-    particle_fluid_force_two_way_coupling;
+    fluid_force_on_particles_two_way_coupling;
 
-  /// Projector used to store the drag force. The drag is stored as a seperate
-  /// field since we may want to make implicit calculations of it.
+  /// Projector used to store the drag force. The drag is stored as a separate
+  /// field since we may want to make implicit calculations of it. This field
+  /// is volumetric. The integral of this field over the entire domain will
+  /// result in the sum of the drag force over all the particles.
   ParticleFieldQCM<dim, 3, DEM::CFDDEMProperties::PropertiesIndex::fem_drag_x>
-    particle_fluid_drag;
+    fluid_drag_on_particles;
+
+  /// Projector used to save the momentum transfer coefficient (beta). This
+  /// field is volumetric. The integral of this field over the entire domain
+  /// will result in the sum of the momentum transfer coefficient over all
+  /// particles.
+  ParticleFieldQCM<
+    dim,
+    1,
+    DEM::CFDDEMProperties::PropertiesIndex::momentum_transfer_coefficient>
+    momentum_transfer_coefficient;
 };
 #endif

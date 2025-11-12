@@ -59,22 +59,39 @@ public:
     const LinearAlgebra::distributed::Vector<double> &void_fraction_solution);
 
   /**
-   * @brief Compute the terms the particle-fluid (pf) forces at the fluid quadrature points.
+   * @brief Compute the terms required to assemble the particle-fluid forces at
+   * the gauss points. The function gathers the particle-fluid force (without
+   * drag), the particle-fluid drag and the particle velocity. The function
+   * assumes that the all of the fields gathered from the projectors are the
+   * forces acting on the particles due to the fluid. Consequently, since this
+   * aims to gather the forces that apply on the fluid due to the particles, a
+   * (-) multiplicator is applied during the gathering stage. With these three
+   * elements, the full particle-fluid coupling and its jacobian can be
+   * established within the matrix-free operator.
    *
-   * @param[in] pf_force_dof_handler The dof handler associated with the
+   * @param[in] fp_force_dof_handler The dof handler associated with the
    * particle-fluid forces.
-   * @param[in] pf_force_solution The solution of the particle-fluid forces.
-   * @param[in] pf_drag_dof_handler The dof handler associated with the
+   * @param[in] fp_force_solution The solution of the particle-fluid forces.
+   * @param[in] fp_drag_dof_handler The dof handler associated with the
    * drag force.
-   * @param[in] pf_drag_solution The solution of the drag force.
+   * @param[in] fp_drag_solution The solution of the drag force.
+   * @param[in] particle_velocity_dof_handler The dof handler associated with
+   * the particle velocity.
+   * @param[in] fp_drag_solution The solution of the particle velocity.
    *
    */
   void
-  compute_particle_fluid_force(
-    const DoFHandler<dim>                            &pf_force_dof_handler,
-    const LinearAlgebra::distributed::Vector<double> &pf_force_solution,
-    const DoFHandler<dim>                            &pf_drag_dof_handler,
-    const LinearAlgebra::distributed::Vector<double> &pf_drag_solution);
+  compute_particle_fluid_interaction(
+    const DoFHandler<dim>                            &fp_force_dof_handler,
+    const LinearAlgebra::distributed::Vector<double> &fp_force_solution,
+    const DoFHandler<dim>                            &fp_drag_dof_handler,
+    const LinearAlgebra::distributed::Vector<double> &fp_drag_solution,
+    const DoFHandler<dim> &particle_velocity_dof_handler,
+    const LinearAlgebra::distributed::Vector<double>
+                          &particle_velocity_solution,
+    const DoFHandler<dim> &momentum_transfer_coefficient_dof_handler,
+    const LinearAlgebra::distributed::Vector<double>
+      &momentum_transfer_coefficient_solution);
 
 protected:
   /**
@@ -125,10 +142,23 @@ protected:
   Table<2, Tensor<1, dim, VectorizedArray<number>>> void_fraction_gradient;
 
   /// Table with correct alignment for vectorization to store the values of the
-  /// particle-fluid forces. These are the resulting forces applied on the
-  /// particles due to hydrodynamic interaction, normalized by the volume
-  /// of the cells.
+  /// particle-fluid forces (without drag). These are the resulting forces
+  /// applied on the particles due to hydrodynamic interaction, normalized by
+  /// the volume of the cells.
   Table<2, Tensor<1, dim, VectorizedArray<number>>> particle_fluid_force;
+
+  /// Table with correct alignment for vectorization to store the values of the
+  /// particle-fluid drag. The drag force in this table is volumetric, resulting
+  /// from the projection used.
+  Table<2, Tensor<1, dim, VectorizedArray<number>>> particle_fluid_drag;
+
+  /// Table with correct alignment for vectorization to store the values of the
+  /// particle velocity.
+  Table<2, Tensor<1, dim, VectorizedArray<number>>> particle_velocity;
+
+  /// Table with correct alignment for vectorization to store the values of the
+  /// momentum transfer coefficient.
+  Table<2, VectorizedArray<number>> momentum_transfer_coefficient;
 
   /// Table with correct alignment for vectorization to store the values of the
   /// grad-div gamma parameter

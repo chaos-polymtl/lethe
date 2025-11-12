@@ -723,11 +723,10 @@ public:
     fluid_pressure_gradients_at_particle_location.resize(number_of_particles);
 
     // Take velocity_pressure_solution according to the type of coupling used.
-    auto velocity_pressure_solution =
+    const auto &velocity_pressure_solution =
       drag_coupling == Parameters::DragCoupling::fully_implicit ?
         present_velocity_pressure_solution :
         previous_velocity_pressure_solution;
-
 
     fe_values_local_particles.reinit(velocity_cell);
 
@@ -787,6 +786,10 @@ public:
       q_particles_location,
       update_values);
 
+    Assert(
+      cell_void_fraction.size() == q_particles_location.size(),
+      ExcMessage(
+        "The vector for the void fraction at the particle location does not have the same size as the quadrature used to evaluate it."));
     fe_values_particles_void_fraction.reinit(void_fraction_cell);
 
     fe_values_particles_void_fraction.get_function_values(

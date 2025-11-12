@@ -103,6 +103,30 @@ private:
 
   /// Transfer operator for global coarsening for the particle-fluid drag
   std::shared_ptr<GCTransferType> mg_transfer_gc_pf_drag;
+
+  /// Particle velocity DoF handlers for each of the levels of the global
+  /// coarsening algorithm
+  MGLevelObject<DoFHandler<dim>> particle_velocity_dof_handlers;
+
+  /// Particle velocity for each of the levels of the global
+  /// coarsening algorithm
+  MGLevelObject<MGTwoLevelTransfer<dim, MGVectorType>>
+    transfers_particle_velocity;
+
+  /// Transfer operator for global coarsening for the particle velocity
+  std::shared_ptr<GCTransferType> mg_transfer_gc_particle_velocity;
+
+  /// Particle momentum transfer coefficient DoF handlers for each of the levels
+  /// of the global coarsening algorithm
+  MGLevelObject<DoFHandler<dim>> momentum_transfer_coefficient_dof_handlers;
+
+  /// Particle-fluid drag transfers for each of the levels of the global
+  /// coarsening algorithm
+  MGLevelObject<MGTwoLevelTransfer<dim, MGVectorType>>
+    transfers_momentum_transfer_coefficient;
+
+  /// Transfer operator for global coarsening for the particle-fluid drag
+  std::shared_ptr<GCTransferType> mg_transfer_gc_momentum_transfer_coefficient;
 };
 
 /**
@@ -153,6 +177,14 @@ protected:
    */
   void
   setup_dofs() override;
+
+  /**
+   * @brief Assembles the RHS of the VANS system of equation. This function
+   * also recalculates the particle-fluid interaction when the drag coupling
+   * is implicit.
+   */
+  void
+  assemble_system_rhs() override;
 
   /**
    * @brief Finish the time-step and manage the time-step end for the void
