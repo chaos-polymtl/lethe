@@ -179,6 +179,18 @@ Private Attributes</h2></td></tr>
 <tr class="separator:acf8d35b0ffe80388eb2f47aa02597c33"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a4aff656ed9aa6bff9c8586bc5dcd407f" id="r_a4aff656ed9aa6bff9c8586bc5dcd407f"><td class="memItemLeft" align="right" valign="top">std::shared_ptr&lt; <a class="el" href="classMFNavierStokesVANSPreconditionGMG.html#ab536f8c540d4b73599dbba7be7dd4ab7">GCTransferType</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classMFNavierStokesVANSPreconditionGMG.html#a4aff656ed9aa6bff9c8586bc5dcd407f">mg_transfer_gc_pf_drag</a></td></tr>
 <tr class="separator:a4aff656ed9aa6bff9c8586bc5dcd407f"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ad57beefae76b644097ee1c0054496825" id="r_ad57beefae76b644097ee1c0054496825"><td class="memItemLeft" align="right" valign="top">MGLevelObject&lt; DoFHandler&lt; dim &gt; &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classMFNavierStokesVANSPreconditionGMG.html#ad57beefae76b644097ee1c0054496825">particle_velocity_dof_handlers</a></td></tr>
+<tr class="separator:ad57beefae76b644097ee1c0054496825"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a6ddeee40555b4829ede041d9de8534e8" id="r_a6ddeee40555b4829ede041d9de8534e8"><td class="memItemLeft" align="right" valign="top">MGLevelObject&lt; MGTwoLevelTransfer&lt; dim, <a class="el" href="classMFNavierStokesVANSPreconditionGMG.html#a477d58a9e2097e47bc38657dfb6bd80a">MGVectorType</a> &gt; &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classMFNavierStokesVANSPreconditionGMG.html#a6ddeee40555b4829ede041d9de8534e8">transfers_particle_velocity</a></td></tr>
+<tr class="separator:a6ddeee40555b4829ede041d9de8534e8"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a9c46ebcef245299402a420fb42abbf67" id="r_a9c46ebcef245299402a420fb42abbf67"><td class="memItemLeft" align="right" valign="top">std::shared_ptr&lt; <a class="el" href="classMFNavierStokesVANSPreconditionGMG.html#ab536f8c540d4b73599dbba7be7dd4ab7">GCTransferType</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classMFNavierStokesVANSPreconditionGMG.html#a9c46ebcef245299402a420fb42abbf67">mg_transfer_gc_particle_velocity</a></td></tr>
+<tr class="separator:a9c46ebcef245299402a420fb42abbf67"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a4e3a7c4e69180212fc610ddba8f21fc3" id="r_a4e3a7c4e69180212fc610ddba8f21fc3"><td class="memItemLeft" align="right" valign="top">MGLevelObject&lt; DoFHandler&lt; dim &gt; &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classMFNavierStokesVANSPreconditionGMG.html#a4e3a7c4e69180212fc610ddba8f21fc3">momentum_transfer_coefficient_dof_handlers</a></td></tr>
+<tr class="separator:a4e3a7c4e69180212fc610ddba8f21fc3"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a5c4c8fe01c810e7c27f0a7da59d6396d" id="r_a5c4c8fe01c810e7c27f0a7da59d6396d"><td class="memItemLeft" align="right" valign="top">MGLevelObject&lt; MGTwoLevelTransfer&lt; dim, <a class="el" href="classMFNavierStokesVANSPreconditionGMG.html#a477d58a9e2097e47bc38657dfb6bd80a">MGVectorType</a> &gt; &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classMFNavierStokesVANSPreconditionGMG.html#a5c4c8fe01c810e7c27f0a7da59d6396d">transfers_momentum_transfer_coefficient</a></td></tr>
+<tr class="separator:a5c4c8fe01c810e7c27f0a7da59d6396d"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a3385c89a1e27ca5a04edeec44f5392d7" id="r_a3385c89a1e27ca5a04edeec44f5392d7"><td class="memItemLeft" align="right" valign="top">std::shared_ptr&lt; <a class="el" href="classMFNavierStokesVANSPreconditionGMG.html#ab536f8c540d4b73599dbba7be7dd4ab7">GCTransferType</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classMFNavierStokesVANSPreconditionGMG.html#a3385c89a1e27ca5a04edeec44f5392d7">mg_transfer_gc_momentum_transfer_coefficient</a></td></tr>
+<tr class="separator:a3385c89a1e27ca5a04edeec44f5392d7"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="inherited" name="inherited"></a>
 Additional Inherited Members</h2></td></tr>
@@ -535,7 +547,7 @@ template&lt;int dim&gt; </div>
 
 <p class="definition">Definition at line <a class="el" href="fluid__dynamics__vans__matrix__free_8cc_source.html#l00038">38</a> of file <a class="el" href="fluid__dynamics__vans__matrix__free_8cc_source.html">fluid_dynamics_vans_matrix_free.cc</a>.</p>
 
-<p class="reference">References <a class="el" href="particle__projector_8h_source.html#l00160">ParticleFieldQCM&lt; dim, n_components, property_start_index &gt;::dof_handler</a>, <a class="el" href="particle__projector_8h_source.html#l00412">ParticleProjector&lt; dim &gt;::dof_handler</a>, <a class="el" href="multiphysics_8h_source.html#l00009">fluid_dynamics</a>, <a class="el" href="structParameters_1_1LinearSolver.html#abcc346895a204b69b5fa4edabd810834ae0941be0c6a876b60f0d7f9e6d33d341">Parameters::LinearSolver::gcmg</a>, <a class="el" href="fluid__dynamics__matrix__free_8cc_source.html#l01696">MFNavierStokesPreconditionGMGBase&lt; dim &gt;::initialize()</a>, <a class="el" href="structParameters_1_1LinearSolver.html#abcc346895a204b69b5fa4edabd810834a5d266332fc0c9664dfb1414b629535f6">Parameters::LinearSolver::lsmg</a>, <a class="el" href="particle__projector_8h_source.html#l00166">ParticleFieldQCM&lt; dim, n_components, property_start_index &gt;::particle_field_solution</a>, <a class="el" href="particle__projector_8h_source.html#l00705">ParticleProjector&lt; dim &gt;::particle_fluid_drag</a>, <a class="el" href="particle__projector_8h_source.html#l00700">ParticleProjector&lt; dim &gt;::particle_fluid_force_two_way_coupling</a>, and <a class="el" href="particle__projector_8h_source.html#l00428">ParticleProjector&lt; dim &gt;::void_fraction_solution</a>.</p>
+<p class="reference">References <a class="el" href="particle__projector_8h_source.html#l00150">ParticleFieldQCM&lt; dim, n_components, property_start_index &gt;::dof_handler</a>, <a class="el" href="particle__projector_8h_source.html#l00426">ParticleProjector&lt; dim &gt;::dof_handler</a>, <a class="el" href="particle__projector_8h_source.html#l00726">ParticleProjector&lt; dim &gt;::fluid_drag_on_particles</a>, <a class="el" href="multiphysics_8h_source.html#l00009">fluid_dynamics</a>, <a class="el" href="particle__projector_8h_source.html#l00719">ParticleProjector&lt; dim &gt;::fluid_force_on_particles_two_way_coupling</a>, <a class="el" href="structParameters_1_1LinearSolver.html#abcc346895a204b69b5fa4edabd810834ae0941be0c6a876b60f0d7f9e6d33d341">Parameters::LinearSolver::gcmg</a>, <a class="el" href="fluid__dynamics__matrix__free_8cc_source.html#l01696">MFNavierStokesPreconditionGMGBase&lt; dim &gt;::initialize()</a>, <a class="el" href="structParameters_1_1LinearSolver.html#abcc346895a204b69b5fa4edabd810834a5d266332fc0c9664dfb1414b629535f6">Parameters::LinearSolver::lsmg</a>, <a class="el" href="particle__projector_8h_source.html#l00736">ParticleProjector&lt; dim &gt;::momentum_transfer_coefficient</a>, <a class="el" href="particle__projector_8h_source.html#l00156">ParticleFieldQCM&lt; dim, n_components, property_start_index &gt;::particle_field_solution</a>, <a class="el" href="particle__projector_8h_source.html#l00709">ParticleProjector&lt; dim &gt;::particle_velocity</a>, and <a class="el" href="particle__projector_8h_source.html#l00442">ParticleProjector&lt; dim &gt;::void_fraction_solution</a>.</p>
 
 </div>
 </div>
@@ -565,6 +577,62 @@ template&lt;int dim&gt; </div>
 <p>Reference to the simulation parameters. </p>
 
 <p class="definition">Definition at line <a class="el" href="fluid__dynamics__vans__matrix__free_8h_source.html#l00072">72</a> of file <a class="el" href="fluid__dynamics__vans__matrix__free_8h_source.html">fluid_dynamics_vans_matrix_free.h</a>.</p>
+
+</div>
+</div>
+<a id="a3385c89a1e27ca5a04edeec44f5392d7" name="a3385c89a1e27ca5a04edeec44f5392d7"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a3385c89a1e27ca5a04edeec44f5392d7">&#9670;&#160;</a></span>mg_transfer_gc_momentum_transfer_coefficient</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;int dim&gt; </div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">std::shared_ptr&lt;<a class="el" href="classMFNavierStokesVANSPreconditionGMG.html#ab536f8c540d4b73599dbba7be7dd4ab7">GCTransferType</a>&gt; <a class="el" href="classMFNavierStokesVANSPreconditionGMG.html">MFNavierStokesVANSPreconditionGMG</a>&lt; dim &gt;::mg_transfer_gc_momentum_transfer_coefficient</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">private</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Transfer operator for global coarsening for the particle-fluid drag. </p>
+
+<p class="definition">Definition at line <a class="el" href="fluid__dynamics__vans__matrix__free_8h_source.html#l00129">129</a> of file <a class="el" href="fluid__dynamics__vans__matrix__free_8h_source.html">fluid_dynamics_vans_matrix_free.h</a>.</p>
+
+</div>
+</div>
+<a id="a9c46ebcef245299402a420fb42abbf67" name="a9c46ebcef245299402a420fb42abbf67"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a9c46ebcef245299402a420fb42abbf67">&#9670;&#160;</a></span>mg_transfer_gc_particle_velocity</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;int dim&gt; </div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">std::shared_ptr&lt;<a class="el" href="classMFNavierStokesVANSPreconditionGMG.html#ab536f8c540d4b73599dbba7be7dd4ab7">GCTransferType</a>&gt; <a class="el" href="classMFNavierStokesVANSPreconditionGMG.html">MFNavierStokesVANSPreconditionGMG</a>&lt; dim &gt;::mg_transfer_gc_particle_velocity</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">private</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Transfer operator for global coarsening for the particle velocity. </p>
+
+<p class="definition">Definition at line <a class="el" href="fluid__dynamics__vans__matrix__free_8h_source.html#l00117">117</a> of file <a class="el" href="fluid__dynamics__vans__matrix__free_8h_source.html">fluid_dynamics_vans_matrix_free.h</a>.</p>
 
 </div>
 </div>
@@ -652,6 +720,60 @@ template&lt;int dim&gt; </div>
 
 </div>
 </div>
+<a id="a4e3a7c4e69180212fc610ddba8f21fc3" name="a4e3a7c4e69180212fc610ddba8f21fc3"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a4e3a7c4e69180212fc610ddba8f21fc3">&#9670;&#160;</a></span>momentum_transfer_coefficient_dof_handlers</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;int dim&gt; </div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">MGLevelObject&lt;DoFHandler&lt;dim&gt; &gt; <a class="el" href="classMFNavierStokesVANSPreconditionGMG.html">MFNavierStokesVANSPreconditionGMG</a>&lt; dim &gt;::momentum_transfer_coefficient_dof_handlers</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">private</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+<p>Particle momentum transfer coefficient DoF handlers for each of the levels of the global coarsening algorithm </p>
+
+<p class="definition">Definition at line <a class="el" href="fluid__dynamics__vans__matrix__free_8h_source.html#l00121">121</a> of file <a class="el" href="fluid__dynamics__vans__matrix__free_8h_source.html">fluid_dynamics_vans_matrix_free.h</a>.</p>
+
+</div>
+</div>
+<a id="ad57beefae76b644097ee1c0054496825" name="ad57beefae76b644097ee1c0054496825"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ad57beefae76b644097ee1c0054496825">&#9670;&#160;</a></span>particle_velocity_dof_handlers</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;int dim&gt; </div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">MGLevelObject&lt;DoFHandler&lt;dim&gt; &gt; <a class="el" href="classMFNavierStokesVANSPreconditionGMG.html">MFNavierStokesVANSPreconditionGMG</a>&lt; dim &gt;::particle_velocity_dof_handlers</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">private</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+<p>Particle velocity DoF handlers for each of the levels of the global coarsening algorithm </p>
+
+<p class="definition">Definition at line <a class="el" href="fluid__dynamics__vans__matrix__free_8h_source.html#l00109">109</a> of file <a class="el" href="fluid__dynamics__vans__matrix__free_8h_source.html">fluid_dynamics_vans_matrix_free.h</a>.</p>
+
+</div>
+</div>
 <a id="adbe94feda3f19a1885ffa9f4b9ff65db" name="adbe94feda3f19a1885ffa9f4b9ff65db"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#adbe94feda3f19a1885ffa9f4b9ff65db">&#9670;&#160;</a></span>pf_drag_dof_handlers</h2>
 
@@ -703,6 +825,60 @@ template&lt;int dim&gt; </div>
 <p>Particle-fluid force DoF handlers for each of the levels of the global coarsening algorithm </p>
 
 <p class="definition">Definition at line <a class="el" href="fluid__dynamics__vans__matrix__free_8h_source.html#l00087">87</a> of file <a class="el" href="fluid__dynamics__vans__matrix__free_8h_source.html">fluid_dynamics_vans_matrix_free.h</a>.</p>
+
+</div>
+</div>
+<a id="a5c4c8fe01c810e7c27f0a7da59d6396d" name="a5c4c8fe01c810e7c27f0a7da59d6396d"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a5c4c8fe01c810e7c27f0a7da59d6396d">&#9670;&#160;</a></span>transfers_momentum_transfer_coefficient</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;int dim&gt; </div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">MGLevelObject&lt;MGTwoLevelTransfer&lt;dim, <a class="el" href="classMFNavierStokesVANSPreconditionGMG.html#a477d58a9e2097e47bc38657dfb6bd80a">MGVectorType</a>&gt; &gt; <a class="el" href="classMFNavierStokesVANSPreconditionGMG.html">MFNavierStokesVANSPreconditionGMG</a>&lt; dim &gt;::transfers_momentum_transfer_coefficient</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">private</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+<p>Particle-fluid drag transfers for each of the levels of the global coarsening algorithm </p>
+
+<p class="definition">Definition at line <a class="el" href="fluid__dynamics__vans__matrix__free_8h_source.html#l00126">126</a> of file <a class="el" href="fluid__dynamics__vans__matrix__free_8h_source.html">fluid_dynamics_vans_matrix_free.h</a>.</p>
+
+</div>
+</div>
+<a id="a6ddeee40555b4829ede041d9de8534e8" name="a6ddeee40555b4829ede041d9de8534e8"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a6ddeee40555b4829ede041d9de8534e8">&#9670;&#160;</a></span>transfers_particle_velocity</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;int dim&gt; </div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">MGLevelObject&lt;MGTwoLevelTransfer&lt;dim, <a class="el" href="classMFNavierStokesVANSPreconditionGMG.html#a477d58a9e2097e47bc38657dfb6bd80a">MGVectorType</a>&gt; &gt; <a class="el" href="classMFNavierStokesVANSPreconditionGMG.html">MFNavierStokesVANSPreconditionGMG</a>&lt; dim &gt;::transfers_particle_velocity</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">private</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+<p>Particle velocity for each of the levels of the global coarsening algorithm </p>
+
+<p class="definition">Definition at line <a class="el" href="fluid__dynamics__vans__matrix__free_8h_source.html#l00114">114</a> of file <a class="el" href="fluid__dynamics__vans__matrix__free_8h_source.html">fluid_dynamics_vans_matrix_free.h</a>.</p>
 
 </div>
 </div>
