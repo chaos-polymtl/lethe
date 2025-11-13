@@ -6,11 +6,9 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
 ### [Master] - 2025-11-11
 
-### Fixed
+### Added
 
-- MINOR Changed the NonLinearSolver, LinearSolver and preconditionner options to take into account future arguments for the Electromagnetic solver. [#1798](https://github.com/chaos-polymtl/lethe/pull/1758)
-
-- MINOR Remove the argument "renewed_matrix" of the solve_linear_system definition at the same time since I saw a comment that said TODO. 
+- MINOR Added the possibility to have a disabled NonLinearSolver, to build the future Electromagnetic solver. [#1798](https://github.com/chaos-polymtl/lethe/pull/1758)
 
 
 ### [Master] - 2025-11-04

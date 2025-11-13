@@ -370,36 +370,7 @@ FluidDynamicsBlock<dim>::assemble_system_rhs()
 template <int dim>
 void
 FluidDynamicsBlock<dim>::setup_preconditioner()
-{
-  if (this->simulation_parameters.linear_solver.at(PhysicsID::fluid_dynamics)
-        .preconditioner == Parameters::LinearSolver::PreconditionerType::ilu)
-    {
-      if (velocity_ilu_preconditioner == nullptr ||
-          pressure_ilu_preconditioner == nullptr ||
-          system_ilu_preconditioner == nullptr)
-        setup_ILU();
-    }
-  else if (this->simulation_parameters.linear_solver
-             .at(PhysicsID::fluid_dynamics)
-             .preconditioner ==
-           Parameters::LinearSolver::PreconditionerType::amg)
-    {
-      if (velocity_amg_preconditioner == nullptr ||
-          pressure_amg_preconditioner == nullptr ||
-          system_amg_preconditioner == nullptr)
-        setup_AMG();
-    }
-  else
-    AssertThrow(
-      this->simulation_parameters.linear_solver.at(PhysicsID::fluid_dynamics)
-            .preconditioner ==
-          Parameters::LinearSolver::PreconditionerType::ilu ||
-        this->simulation_parameters.linear_solver.at(PhysicsID::fluid_dynamics)
-            .preconditioner ==
-          Parameters::LinearSolver::PreconditionerType::amg,
-      ExcMessage(
-        "This linear solver does not support this preconditioner. Only <ilu> and <amg> preconditioners are supported."));
-}
+{}
 
 template <int dim>
 void
@@ -1041,7 +1012,24 @@ FluidDynamicsBlock<dim>::solve_system_GMRES(const bool   initial_step,
 
   SolverFGMRES<GlobalBlockVectorType> solver(solver_control);
 
-  setup_preconditioner();
+  if (this->simulation_parameters.linear_solver.at(PhysicsID::fluid_dynamics)
+        .preconditioner == Parameters::LinearSolver::PreconditionerType::ilu)
+    {
+      if (renewed_matrix || velocity_ilu_preconditioner == nullptr ||
+          pressure_ilu_preconditioner == nullptr ||
+          system_ilu_preconditioner == nullptr)
+        setup_ILU();
+    }
+  else if (this->simulation_parameters.linear_solver
+             .at(PhysicsID::fluid_dynamics)
+             .preconditioner ==
+           Parameters::LinearSolver::PreconditionerType::amg)
+    {
+      if (renewed_matrix || velocity_amg_preconditioner == nullptr ||
+          pressure_amg_preconditioner == nullptr ||
+          system_amg_preconditioner == nullptr)
+        setup_AMG();
+    }
 
   {
     TimerOutput::Scope t(this->computing_timer, "Solve linear system");
