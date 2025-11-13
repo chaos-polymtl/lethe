@@ -8,7 +8,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
 ### Added
 
-- MINOR Add the SDIRK method to the lethe-fluid-matrix-free solver. The SDIRK scheme is now available for both MatrixBased and MatrixFree [#1616](https://github.com/chaos-polymtl/lethe/pull/1616/)
+- MINOR Add the SDIRK time integration method to the lethe-fluid-matrix-free solver. The SDIRK scheme is now available for both MatrixBased and MatrixFree solvers. However, it does not support multiphysics components at the moment. This will be added in a near future. [#1616](https://github.com/chaos-polymtl/lethe/pull/1616/)
 
 
 ### [Master] - 2025-11-23

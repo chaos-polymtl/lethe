@@ -1662,7 +1662,7 @@ NavierStokesStabilizedOperator<dim, number>::do_cell_integral_local(
                     gradient_result[i][k] -=
                       tau * u_ale[k] * ((*bdf_coefs)[0] * value[i]);
                 }
-                
+
               if (test_is_sdirk)
                 {
                   gradient_result[i][k] +=
@@ -1811,10 +1811,10 @@ NavierStokesStabilizedOperator<dim, number>::local_evaluate_residual(
       auto time_stepping_data =
         this->initialize_time_stepping_data(test_is_bdf, test_is_sdirk);
 
-      double                a_ii      = time_stepping_data.a_ii;
-      double                dt        = time_stepping_data.dt;
+      double a_ii = time_stepping_data.a_ii;
+      double dt   = time_stepping_data.dt;
       if (transient)
-          bdf_coefs = time_stepping_data.bdf_coefs;
+        bdf_coefs = time_stepping_data.bdf_coefs;
 
       for (const auto q : integrator.quadrature_point_indices())
         {
@@ -1980,7 +1980,7 @@ NavierStokesStabilizedOperator<dim, number>::local_evaluate_residual(
                                                  ((*bdf_coefs)[0] * value[i] +
                                                   previous_time_derivatives[i]);
                     }
-                    
+
                   if (test_is_sdirk)
                     gradient_result[i][k] += tau * value[k] *
                                              ((1.0 / (dt * a_ii)) * value[i] +
