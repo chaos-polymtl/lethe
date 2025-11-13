@@ -1436,6 +1436,8 @@ CFDDEMMatrixFree<dim>::solve()
         this->dof_handler,
         this->present_solution,
         this->previous_solutions,
+        this->cfd_dem_simulation_parameters.dem_parameters
+          .lagrangian_physical_properties.g,
         NavierStokesScratchData<dim>(
           this->simulation_control,
           this->simulation_parameters.physical_properties_manager,

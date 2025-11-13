@@ -349,6 +349,7 @@ public:
     DoFHandler<dim>               &fluid_dof_handler,
     const VectorType              &present_velocity_pressure_solution,
     const std::vector<VectorType> &previous_velocity_pressure_solution,
+    const Tensor<1, 3>            &gravity,
     NavierStokesScratchData<dim>   scratch_data);
 
   /**

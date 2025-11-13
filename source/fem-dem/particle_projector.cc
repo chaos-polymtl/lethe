@@ -1436,6 +1436,7 @@ ParticleProjector<dim>::calculate_particle_fluid_forces_projection(
   DoFHandler<dim>               &fluid_dof_handler,
   const VectorType              &present_velocity_pressure_solution,
   const std::vector<VectorType> &previous_velocity_pressure_solution,
+  const Tensor<1, 3>            &gravity,
   NavierStokesScratchData<dim>   scratch_data)
 {
   // If the mode to calculate the void fraction is function, then the VANS
@@ -1519,6 +1520,11 @@ ParticleProjector<dim>::calculate_particle_fluid_forces_projection(
             std::make_shared<VANSAssemblerGidaspow<dim>>(cfd_dem_parameters));
         }
     }
+
+  if (cfd_dem_parameters.buoyancy_force == true)
+    // Buoyancy Force Assembler
+    particle_fluid_assemblers.push_back(
+      std::make_shared<VANSAssemblerBuoyancy<dim>>(gravity));
 
   if (cfd_dem_parameters.saffman_lift_force == true)
     // Saffman Mei Lift Force Assembler
@@ -1645,6 +1651,7 @@ ParticleProjector<2>::calculate_particle_fluid_forces_projection(
   DoFHandler<2>                       &dof_handler,
   const GlobalVectorType              &fluid_solution,
   const std::vector<GlobalVectorType> &fluid_previous_solutions,
+  const Tensor<1, 3>                  &gravity,
   NavierStokesScratchData<2>           scratch_data);
 
 template void
@@ -1653,6 +1660,7 @@ ParticleProjector<3>::calculate_particle_fluid_forces_projection(
   DoFHandler<3>                       &dof_handler,
   const GlobalVectorType              &fluid_solution,
   const std::vector<GlobalVectorType> &fluid_previous_solutions,
+  const Tensor<1, 3>                  &gravity,
   NavierStokesScratchData<3>           scratch_data);
 
 #ifndef LETHE_USE_LDV
@@ -1663,6 +1671,7 @@ ParticleProjector<2>::calculate_particle_fluid_forces_projection(
   const LinearAlgebra::distributed::Vector<double> &fluid_solution,
   const std::vector<LinearAlgebra::distributed::Vector<double>>
                             &fluid_previous_solutions,
+  const Tensor<1, 3>        &gravity,
   NavierStokesScratchData<2> scratch_data);
 
 template void
@@ -1672,6 +1681,7 @@ ParticleProjector<3>::calculate_particle_fluid_forces_projection(
   const LinearAlgebra::distributed::Vector<double> &fluid_solution,
   const std::vector<LinearAlgebra::distributed::Vector<double>>
                             &fluid_previous_solutions,
+  const Tensor<1, 3>        &gravity,
   NavierStokesScratchData<3> scratch_data);
 #endif
 
