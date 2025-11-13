@@ -1497,6 +1497,8 @@ NavierStokesStabilizedOperator<dim, number>::do_cell_integral_local(
   const bool test_is_sdirk =
     is_sdirk(this->simulation_control->get_assembly_method());
 
+  const bool transient = test_is_bdf || test_is_sdirk;
+
   // To identify whether mortar feature is enabled (use local variable for
   // efficiency)
   const bool enable_mortar = this->enable_mortar;
@@ -1800,6 +1802,7 @@ NavierStokesStabilizedOperator<dim, number>::local_evaluate_residual(
         is_bdf(this->simulation_control->get_assembly_method());
       const bool test_is_sdirk =
         is_sdirk(this->simulation_control->get_assembly_method());
+      const bool transient = test_is_bdf || test_is_sdirk;
 
       // To identify whether mortar feature is enabled (use local variable for
       // efficiency)
