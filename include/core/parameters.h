@@ -1227,7 +1227,6 @@ namespace Parameters
     enum class SolverType : std::int8_t
     {
       gmres,
-      cg,
       bicgstab,
       direct
     };
@@ -1265,8 +1264,7 @@ namespace Parameters
       ilu,
       amg,
       lsmg,
-      gcmg,
-      none
+      gcmg
     };
     PreconditionerType preconditioner;
 
