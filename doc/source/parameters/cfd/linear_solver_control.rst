@@ -45,7 +45,6 @@ In the example below, only ``fluid dynamics`` is used, however, the same block c
 
 * The ``method`` parameter enables to choose an iterative solver for the linear system of equations. Lethe currently supports the following core solution strategies:
 	* ``gmres`` (default parameter value), a preconditioned GMRES iterative solver.
-	* ``cg``, a preconditioned Conjugate Gradient iterative solver (only for symmetric positive definite systems).
 	* ``bicgstab``, a preconditioned BICGSTAB iterative solver.
 	* ``direct``, a direct solver using `TrilinosWrappers::SolverDirect <https://www.dealii.org/current/doxygen/deal.II/classTrilinosWrappers_1_1SolverDirect.html>`_.
 
@@ -60,7 +59,7 @@ In the example below, only ``fluid dynamics`` is used, however, the same block c
 			* large :math:`\text{CFL}` condition (:math:`\text{CFL}>10`) and/or very large mesh: ``gmres`` solver with ``amg`` preconditioner may become preferable.
 
 	.. caution:: 
-		The use of ``direct`` solver should be in general avoided as it is not efficient for large problems. It can be, however, used for debugging purposes or the development of new features. Also, the ``cg`` solver is not available for fluid dynamics problems as the system matrix is not symmetric positive definite.
+		The use of ``direct`` solver should be in general avoided as it is not efficient for large problems. It can be, however, used for debugging purposes or the development of new features.
 
 
 * The ``verbosity`` option enables the display of the residual at each non-linear iteration, to monitor the progress of the linear iterations.
@@ -127,7 +126,7 @@ where :math:`R` is the residual vector and :math:`V` is the volume of the entire
 .. tip::
 	Consider using ``set max krylov vectors = 200`` for complex simulations with convergence issues. 
 
-* ``preconditioner`` sets the type of preconditioning used for the linear solver. It can be either ``ilu`` for an Incomplete LU decomposition, ``amg`` for an Algebraic Multigrid, ``lsmg`` for a Local Smoothing Multigrid, ``gcmg`` for a Global Coarsening Multigrid, or ``none`` for no preconditioning.
+* ``preconditioner`` sets the type of preconditioning used for the linear solver. It can be either ``ilu`` for an Incomplete LU decomposition, ``amg`` for an Algebraic Multigrid, ``lsmg`` for a Local Smoothing Multigrid, or ``gcmg`` for a Global Coarsening Multigrid.
 
 .. warning::
     Currently, the ``lethe-fluid-sharp`` solver makes it almost impossible to reach convergence with the ``amg`` preconditioner. Therefore, it is recommended to use ``ilu`` instead, even for fine meshes. In addition, the ``VOF``, ``heat transfer``, ``cahn hilliard`` and ``tracer`` physics only support ``ilu``.
