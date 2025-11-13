@@ -650,8 +650,6 @@ FluidDynamicsVANSMatrixFree<dim>::solve()
     this->simulation_parameters.initial_condition->type,
     this->simulation_parameters.restart_parameters.restart);
 
-
-
   // Only needed if other physics apart from fluid dynamics are enabled.
   if (this->multiphysics->get_active_physics().size() > 1)
     this->update_multiphysics_time_average_solution();

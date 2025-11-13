@@ -758,6 +758,14 @@ template <int dim>
 void
 CFDDEMMatrixFree<dim>::load_balance()
 {
+  load_balancing.check_load_balance_iteration();
+
+  // If not a load balance iteration, exit the function
+  if (!dem_action_manager->check_load_balance())
+    return;
+
+  // Otherwise, we do not support load balancing at the present time, throw and
+  // exit gracefully.
   AssertThrow(false, ExcMessage("Load balancing is currently not supportedi"));
 }
 
@@ -1325,6 +1333,8 @@ template <int dim>
 void
 CFDDEMMatrixFree<dim>::solve()
 {
+  this->computing_timer.enter_subsection("Read mesh, manifolds and particles");
+
   read_mesh_and_manifolds(
     *this->triangulation,
     this->cfd_dem_simulation_parameters.cfd_parameters.mesh,
@@ -1339,6 +1349,9 @@ CFDDEMMatrixFree<dim>::solve()
       !this->cfd_dem_simulation_parameters.cfd_parameters.restart_parameters
          .restart)
     read_dem();
+
+  this->computing_timer.leave_subsection("Read mesh, manifolds and particles");
+
 
   this->setup_dofs();
 
@@ -1393,6 +1406,24 @@ CFDDEMMatrixFree<dim>::solve()
         {
           this->refine_mesh();
           this->vertices_cell_mapping();
+        }
+
+      if (is_bdf(this->simulation_control->get_assembly_method()))
+        {
+          this->computing_timer.enter_subsection(
+            "Calculate time derivative previous solutions");
+
+          this->calculate_time_derivative_previous_solutions();
+          this->time_derivative_previous_solutions.update_ghost_values();
+          this->system_operator->evaluate_time_derivative_previous_solutions(
+            this->time_derivative_previous_solutions);
+
+          this->computing_timer.leave_subsection(
+            "Calculate time derivative previous solutions");
+
+          if (this->simulation_parameters.flow_control.enable_flow_control)
+            this->system_operator->update_beta_force(
+              this->flow_control.get_beta());
         }
 
       // We calculate the void fraction and the particle-fluid interaction using
