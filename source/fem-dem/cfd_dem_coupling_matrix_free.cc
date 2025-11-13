@@ -1494,4 +1494,4 @@ CFDDEMMatrixFree<dim>::solve()
 
 // Pre-compile the 2D and 3D CFD-DEM matrix-free solver
 template class CFDDEMMatrixFree<2>;
-// template class CFDDEMMatrixFree<3>;
+template class CFDDEMMatrixFree<3>;
