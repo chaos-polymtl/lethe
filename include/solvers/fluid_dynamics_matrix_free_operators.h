@@ -4,8 +4,8 @@
 #ifndef lethe_fluid_dynamics_matrix_free_operators_h
 #define lethe_fluid_dynamics_matrix_free_operators_h
 
-#include <core/mortar_coupling_manager.h>
 #include <core/bdf.h>
+#include <core/mortar_coupling_manager.h>
 #include <core/sdirk_stage_data.h>
 #include <core/simulation_control.h>
 
