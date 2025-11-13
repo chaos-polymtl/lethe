@@ -565,6 +565,11 @@ protected:
   // times vector
   bool no_more_output_times;
 
+  // Variable to override the time step with the set value upon restart
+  // Only applies in restarted simulations with adaptive time stepping, where
+  // the default behavior would have been to use the checkpointed time step
+  bool override_time_step_on_restart;
+
   // Time interval for output of transient iterations either with time output
   // control or iterations control
   std::vector<double> output_time_interval;
