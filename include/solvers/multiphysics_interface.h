@@ -554,10 +554,18 @@ public:
   }
 
   /**
-   * @brief Request the present solution of the projected phase fraction gradient (PFG)
+   * @brief Request the present solution of the projected phase fraction
+   * gradient (PFG)
    */
   const GlobalVectorType &
   get_projected_phase_fraction_gradient_solution();
+
+  /**
+   * @brief Request the normalized present solution of the projected phase
+   * fraction gradient (PFG). The values represent unit interface normal vector
+   */
+  const GlobalVectorType &
+  get_normalized_projected_phase_fraction_gradient_solution();
 
   /**
    * @brief Request the present solution of the curvature
