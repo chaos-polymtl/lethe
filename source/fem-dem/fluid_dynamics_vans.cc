@@ -451,6 +451,14 @@ FluidDynamicsVANS<dim>::assemble_local_system_matrix(
   NavierStokesScratchData<dim>                         &scratch_data,
   StabilizedMethodsTensorCopyData<dim>                 &copy_data)
 {
+  if (particle_projector.particle_fluid_drag.fe != nullptr)
+    std::cout << "FE exists!\n";
+else
+    std::cout << "FE does not exist!\n";
+
+  scratch_data.fe_values_particle_drag->get_fe();
+      cout << "Copied scratch data has the finite element" << endl;
+
   copy_data.cell_is_local = cell->is_locally_owned();
   if (!cell->is_locally_owned())
     return;
@@ -528,11 +536,6 @@ FluidDynamicsVANS<dim>::assemble_local_system_matrix(
     }
   else
     {
-      std::cout << "void fraction FE pointer: " << particle_projector.fe.get() << std::endl;
-      std::cout << "particle_drag FE pointer: " << particle_projector.particle_fluid_drag.fe.get() << std::endl;
-std::cout << "particle_two_way FE pointer: " << particle_projector.particle_fluid_force_two_way_coupling.fe.get() << std::endl;
-std::cout << "particle_velocity FE pointer: " << particle_projector.particle_velocity.fe.get() << std::endl;
-
       typename DoFHandler<dim>::active_cell_iterator particle_drag_cell(
         &(*(this->triangulation)),
         cell->level(),

@@ -344,11 +344,13 @@ NavierStokesScratchData<dim>::enable_particle_field_projection(
 
   fe_values_particle_drag = std::make_shared<FEValues<dim>>(
     mapping, fe_particle_drag_proj, quadrature, update_values);
+  fe_values_particle_drag->get_fe();
+  cout << "Enable call has the finite element" << endl;
   fe_values_particle_two_way_coupling_force =
     std::make_shared<FEValues<dim>>(mapping,
                                     fe_particle_two_way_coupling_force_proj,
                                     quadrature,
-                                    update_values);                                
+                                    update_values);                                                                   
   fe_values_particle_velocity = std::make_shared<FEValues<dim>>(
     mapping, fe_particle_velocity_proj, quadrature, update_values);
 
