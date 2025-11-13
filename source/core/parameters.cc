@@ -2694,9 +2694,9 @@ namespace Parameters
         prm.declare_entry(
           "method",
           "gmres",
-          Patterns::Selection("gmres|cg|bicgstab|direct"),
+          Patterns::Selection("gmres|bicgstab|direct"),
           "The iterative solver for the linear system of equations. "
-          "Choices are <gmres|cg|bicgstab|direct>.");
+          "Choices are <gmres|bicgstab|direct>.");
 
         prm.declare_entry(
           "rescale residual",
@@ -2735,9 +2735,9 @@ namespace Parameters
 
         prm.declare_entry("preconditioner",
                           "ilu",
-                          Patterns::Selection("amg|ilu|lsmg|gcmg|none"),
+                          Patterns::Selection("amg|ilu|lsmg|gcmg"),
                           "The preconditioner for the linear solver."
-                          "Choices are <amg|ilu|lsmg|gcmg|none>. ");
+                          "Choices are <amg|ilu|lsmg|gcmg>. ");
 
 
         prm.declare_entry("ilu preconditioner fill",
@@ -2931,15 +2931,13 @@ namespace Parameters
         const std::string sv = prm.get("method");
         if (sv == "gmres")
           solver = SolverType::gmres;
-        else if (sv == "cg")
-          solver = SolverType::cg;
         else if (sv == "bicgstab")
           solver = SolverType::bicgstab;
         else if (sv == "direct")
           solver = SolverType::direct;
         else
           throw std::logic_error(
-            "Error, invalid iterative solver type. Choices are gmres, cg, bicgstab or direct");
+            "Error, invalid iterative solver type. Choices are amg, bicgstab or direct");
 
         const std::string op = prm.get("verbosity");
         if (op == "verbose")
@@ -2972,11 +2970,9 @@ namespace Parameters
           preconditioner = PreconditionerType::lsmg;
         else if (precond == "gcmg")
           preconditioner = PreconditionerType::gcmg;
-        else if (precond == "none")
-          preconditioner = PreconditionerType::none;
         else
           throw std::logic_error(
-            "Error, invalid preconditioner type. Choices are amg, ilu, lsmg, gcmg or none.");
+            "Error, invalid preconditioner type. Choices are amg, ilu, lsmg, gcmg.");
 
 
         ilu_precond_fill = prm.get_integer("ilu preconditioner fill");
