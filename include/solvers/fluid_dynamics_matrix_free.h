@@ -532,9 +532,13 @@ protected:
    * @param[in] initial_step Indicates if this is the first solution of the
    * linear system. If this is the case, the non_zero version of the
    * constraints are used for the Dirichlet boundary conditions.
+   *
+   * @param[in] renewed_matrix Indicates if the matrix has been reassembled,
+   * and thus the preconditioner needs to be reassembled.
    */
   void
-  solve_linear_system(const bool initial_step) override;
+  solve_linear_system(const bool initial_step,
+                      const bool renewed_matrix = true) override;
 
 private:
   /**

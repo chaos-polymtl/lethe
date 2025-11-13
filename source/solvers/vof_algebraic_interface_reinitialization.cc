@@ -597,7 +597,8 @@ VOFAlgebraicInterfaceReinitialization<dim>::assemble_system_rhs()
 template <int dim>
 void
 VOFAlgebraicInterfaceReinitialization<dim>::solve_linear_system(
-  const bool initial_step)
+  const bool initial_step,
+  const bool /*renewed_matrix*/)
 {
   auto mpi_communicator = this->triangulation->get_mpi_communicator();
 

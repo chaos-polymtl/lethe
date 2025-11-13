@@ -394,16 +394,20 @@ public:
    *
    * @param initial_step Provides the linear solver with indication if this solution is the first
    * one for the system of equation or not.
+   *
+   * @param renewed_matrix Indicates to the linear solve if the system matrix has been recalculated or not.
    */
   void
-  solve_linear_system(const PhysicsID physics_id, const bool initial_step)
+  solve_linear_system(const PhysicsID physics_id,
+                      const bool      initial_step,
+                      const bool      renewed_matrix = true)
   {
     AssertThrow((std::find(active_physics.begin(),
                            active_physics.end(),
                            physics_id) != active_physics.end()),
                 ExcInternalError());
 
-    physics[physics_id]->solve_linear_system(initial_step);
+    physics[physics_id]->solve_linear_system(initial_step, renewed_matrix);
   };
 
   /**

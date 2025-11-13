@@ -816,7 +816,8 @@ FluidDynamicsBlock<dim>::set_initial_condition_fd(
 
 template <int dim>
 void
-FluidDynamicsBlock<dim>::solve_linear_system(const bool initial_step)
+FluidDynamicsBlock<dim>::solve_linear_system(const bool initial_step,
+                                             const bool renewed_matrix)
 {
   const double absolute_residual =
     this->simulation_parameters.linear_solver.at(PhysicsID::fluid_dynamics)
@@ -827,7 +828,10 @@ FluidDynamicsBlock<dim>::solve_linear_system(const bool initial_step)
 
   if (this->simulation_parameters.linear_solver.at(PhysicsID::fluid_dynamics)
         .solver == Parameters::LinearSolver::SolverType::gmres)
-    solve_system_GMRES(initial_step, absolute_residual, relative_residual);
+    solve_system_GMRES(initial_step,
+                       absolute_residual,
+                       relative_residual,
+                       renewed_matrix);
   else
     AssertThrow(
       this->simulation_parameters.linear_solver.at(PhysicsID::fluid_dynamics)
@@ -1007,7 +1011,8 @@ template <int dim>
 void
 FluidDynamicsBlock<dim>::solve_system_GMRES(const bool   initial_step,
                                             const double absolute_residual,
-                                            const double relative_residual)
+                                            const double relative_residual,
+                                            const bool   renewed_matrix)
 {
   const AffineConstraints<double> &constraints_used =
     initial_step ? this->nonzero_constraints : this->zero_constraints;

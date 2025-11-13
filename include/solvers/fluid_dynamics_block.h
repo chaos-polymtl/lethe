@@ -190,7 +190,8 @@ private:
    */
 
   void
-  solve_linear_system(const bool initial_step) override;
+  solve_linear_system(const bool initial_step,
+                      const bool renewed_matrix) override;
 
   /**
    * GMRES solver with ILU preconditioning or AMG preconditioning
@@ -198,7 +199,8 @@ private:
   void
   solve_system_GMRES(const bool   initial_step,
                      const double relative_residual,
-                     const double minimum_residual);
+                     const double minimum_residual,
+                     const bool   renewed_matrix);
 
   /**
    * Set-up AMG preconditioner

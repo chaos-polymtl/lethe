@@ -1557,7 +1557,8 @@ HeatTransfer<dim>::set_initial_conditions()
 
 template <int dim>
 void
-HeatTransfer<dim>::solve_linear_system(const bool initial_step)
+HeatTransfer<dim>::solve_linear_system(const bool initial_step,
+                                       const bool /*renewed_matrix*/)
 {
   TimerOutput::Scope t(this->computing_timer, "Solve linear system");
 
