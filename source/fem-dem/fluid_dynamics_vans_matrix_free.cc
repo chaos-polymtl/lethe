@@ -43,7 +43,14 @@ MFNavierStokesVANSPreconditionGMG<dim>::initialize(
   const ParticleProjector<dim>             &particle_projector)
 {
   if (this->simulation_parameters.linear_solver.at(PhysicsID::fluid_dynamics)
-        .preconditioner == Parameters::LinearSolver::PreconditionerType::gcmg)
+        .preconditioner == Parameters::LinearSolver::PreconditionerType::lsmg)
+    {
+      AssertThrow(false, ExcNotImplemented());
+    }
+  else if (this->simulation_parameters.linear_solver
+             .at(PhysicsID::fluid_dynamics)
+             .preconditioner ==
+           Parameters::LinearSolver::PreconditionerType::gcmg)
     {
       const unsigned int min_level = this->minlevel;
       const unsigned int max_level = this->maxlevel;
@@ -301,12 +308,6 @@ MFNavierStokesVANSPreconditionGMG<dim>::initialize(
             }
         }
     }
-  else
-    AssertThrow(
-      this->simulation_parameters.linear_solver.at(PhysicsID::fluid_dynamics)
-          .preconditioner == Parameters::LinearSolver::PreconditionerType::gcmg,
-      ExcMessage(
-        "This linear solver does not support this preconditioner. Only <gcmg> preconditioner is supported."));
 
   MFNavierStokesPreconditionGMG<dim>::initialize(
     simulation_control,
