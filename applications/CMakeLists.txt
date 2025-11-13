@@ -9,6 +9,7 @@ foreach(_target IN ITEMS
     lethe-fluid-vans
     lethe-fluid-matrix-free
     lethe-fluid-vans-matrix-free
+    lethe-fluid-particles-matrix-free
     lethe-parameter-check
     lethe-rpt-3d
     lethe-rpt-cell-reconstruction-3d
