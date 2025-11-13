@@ -384,6 +384,9 @@ public:
     calculate_void_fraction(time);
     for (auto &previous_solution : this->previous_void_fraction)
       previous_solution = void_fraction_locally_relevant;
+
+    for (auto &previous_solution : this->void_fraction_previous_solution)
+      previous_solution = void_fraction_solution;
   }
 
   /**
@@ -440,6 +443,10 @@ public:
 
   /// deal.II vector for the void fraction
   LinearAlgebra::distributed::Vector<double> void_fraction_solution;
+
+  /// deal.II vector the previous void fraction
+  std::vector<LinearAlgebra::distributed::Vector<double>>
+    void_fraction_previous_solution;
 
   /// Finite element for the void fraction
   std::shared_ptr<FiniteElement<dim>> fe;

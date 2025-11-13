@@ -4,6 +4,9 @@
 #include <core/grids.h>
 #include <core/solutions_output.h>
 
+#include <solvers/postprocessing_cfd.h>
+#include <solvers/postprocessing_velocities.h>
+
 #include <dem/dem_post_processing.h>
 #include <dem/explicit_euler_integrator.h>
 #include <dem/find_contact_detection_step.h>
@@ -19,7 +22,7 @@
 #include <fem-dem/cfd_dem_coupling_matrix_free.h>
 #include <fem-dem/fluid_dynamics_vans_matrix_free.h>
 #include <fem-dem/fluid_dynamics_vans_matrix_free_operators.h>
-
+#include <fem-dem/postprocessing_cfd_dem.h>
 
 
 // Constructor for the class CFD-DEM class
@@ -27,6 +30,55 @@ template <int dim>
 CFDDEMMatrixFree<dim>::CFDDEMMatrixFree(CFDDEMSimulationParameters<dim> &param)
   : FluidDynamicsVANSMatrixFree<dim>(param)
 {}
+
+template <int dim>
+void
+CFDDEMMatrixFree<dim>::setup_distribution_type()
+{
+  // Use namespace and alias to make the code more readable
+  using namespace Parameters::Lagrangian;
+  const unsigned int this_mpi_process =
+    Utilities::MPI::this_mpi_process(this->mpi_communicator);
+  LagrangianPhysicalProperties &lpp =
+    dem_parameters.lagrangian_physical_properties;
+
+  maximum_particle_diameter = 0;
+  for (unsigned int particle_type = 0; particle_type < lpp.particle_type_number;
+       particle_type++)
+    {
+      switch (lpp.distribution_type.at(particle_type))
+        {
+          case SizeDistributionType::uniform:
+            size_distribution_object_container[particle_type] =
+              std::make_shared<UniformDistribution>(
+                lpp.particle_average_diameter.at(particle_type));
+            break;
+          case SizeDistributionType::normal:
+            size_distribution_object_container[particle_type] =
+              std::make_shared<NormalDistribution>(
+                lpp.particle_average_diameter.at(particle_type),
+                lpp.particle_size_std.at(particle_type),
+                lpp.seed_for_distributions[particle_type] + this_mpi_process);
+            break;
+          case SizeDistributionType::custom:
+            size_distribution_object_container[particle_type] =
+              std::make_shared<CustomDistribution>(
+                lpp.particle_custom_diameter.at(particle_type),
+                lpp.particle_custom_probability.at(particle_type),
+                lpp.seed_for_distributions[particle_type] + this_mpi_process);
+            break;
+        }
+
+      maximum_particle_diameter = std::max(
+        maximum_particle_diameter,
+        size_distribution_object_container[particle_type]->find_max_diameter());
+    }
+
+  neighborhood_threshold_squared =
+    std::pow(dem_parameters.model_parameters.neighborhood_threshold *
+               maximum_particle_diameter,
+             2);
+}
 
 template <int dim>
 void
@@ -403,6 +455,8 @@ template <int dim>
 void
 CFDDEMMatrixFree<dim>::write_checkpoint()
 {
+  using VectorType = LinearAlgebra::distributed::Vector<double>;
+
   TimerOutput::Scope timer(this->computing_timer, "Write checkpoint");
 
   std::string prefix =
@@ -433,7 +487,7 @@ CFDDEMMatrixFree<dim>::write_checkpoint()
   std::ofstream output(particle_filename.c_str());
   output << oss.str() << std::endl;
 
-  std::vector<const GlobalVectorType *> sol_set_transfer;
+  std::vector<const VectorType *> sol_set_transfer;
   sol_set_transfer.push_back(&this->present_solution);
   for (unsigned int i = 0; i < this->previous_solutions.size(); ++i)
     {
@@ -442,7 +496,7 @@ CFDDEMMatrixFree<dim>::write_checkpoint()
 
   if (this->simulation_parameters.post_processing.calculate_average_velocities)
     {
-      std::vector<const GlobalVectorType *> av_set_transfer =
+      std::vector<const VectorType *> av_set_transfer =
         this->average_velocities->save(prefix);
 
       // Insert average velocities vectors into the set transfer vector
@@ -452,29 +506,27 @@ CFDDEMMatrixFree<dim>::write_checkpoint()
     }
 
   // Prepare for Serialization
-  SolutionTransfer<dim, GlobalVectorType> system_trans_vectors(
-    this->dof_handler);
+  SolutionTransfer<dim, VectorType> system_trans_vectors(this->dof_handler);
   system_trans_vectors.prepare_for_serialization(sol_set_transfer);
 
   // Prepare particle handler for serialization
   this->particle_handler.prepare_for_serialization();
 
   // Void Fraction
-  std::vector<const GlobalVectorType *> vf_set_transfer;
-  vf_set_transfer.push_back(
-    &this->particle_projector.void_fraction_locally_relevant);
+  std::vector<const VectorType *> vf_set_transfer;
+  vf_set_transfer.push_back(&this->particle_projector.void_fraction_solution);
   for (unsigned int i = 0;
-       i < this->particle_projector.previous_void_fraction.size();
+       i < this->particle_projector.void_fraction_previous_solution.size();
        ++i)
     {
       vf_set_transfer.push_back(
-        &this->particle_projector.previous_void_fraction[i]);
+        &this->particle_projector.void_fraction_previous_solution[i]);
     }
 
   this->multiphysics->write_checkpoint();
 
   // Prepare for Serialization
-  SolutionTransfer<dim, GlobalVectorType> vf_system_trans_vectors(
+  SolutionTransfer<dim, VectorType> vf_system_trans_vectors(
     this->particle_projector.dof_handler);
   vf_system_trans_vectors.prepare_for_serialization(vf_set_transfer);
 
@@ -493,7 +545,7 @@ CFDDEMMatrixFree<dim>::write_checkpoint()
   // Serialize the default post-processing tables that are members of
   // NavierStokesBase
   const std::vector<OutputStructTableHandler> &table_output_structs =
-    NavierStokesBase<dim, GlobalVectorType, IndexSet>::gather_tables();
+    NavierStokesBase<dim, VectorType, IndexSet>::gather_tables();
   serialize_tables_vector(table_output_structs, this->mpi_communicator);
 }
 
@@ -502,7 +554,8 @@ void
 CFDDEMMatrixFree<dim>::read_checkpoint()
 {
   TimerOutput::Scope timer(this->computing_timer, "Read checkpoint");
-  std::string        prefix =
+  using VectorType = LinearAlgebra::distributed::Vector<double>;
+  std::string prefix =
     this->simulation_parameters.simulation_control.output_folder +
     this->simulation_parameters.restart_parameters.filename;
   std::string prefix_particles = prefix + "_particles";
@@ -565,30 +618,29 @@ CFDDEMMatrixFree<dim>::read_checkpoint()
     }
 
   // Velocity Vectors
-  std::vector<GlobalVectorType *> x_system(1 + this->previous_solutions.size());
+  std::vector<VectorType *> x_system(1 + this->previous_solutions.size());
 
-  GlobalVectorType distributed_system(this->locally_owned_dofs,
-                                      this->mpi_communicator);
+  VectorType distributed_system(this->locally_owned_dofs,
+                                this->mpi_communicator);
 
   x_system[0] = &(distributed_system);
 
-  std::vector<GlobalVectorType> distributed_previous_solutions;
+  std::vector<VectorType> distributed_previous_solutions;
 
   distributed_previous_solutions.reserve(this->previous_solutions.size());
 
   for (unsigned int i = 0; i < this->previous_solutions.size(); ++i)
     {
       distributed_previous_solutions.emplace_back(
-        GlobalVectorType(this->locally_owned_dofs, this->mpi_communicator));
+        VectorType(this->locally_owned_dofs, this->mpi_communicator));
       x_system[i + 1] = &distributed_previous_solutions[i];
     }
 
-  SolutionTransfer<dim, GlobalVectorType> system_trans_vectors(
-    this->dof_handler);
+  SolutionTransfer<dim, VectorType> system_trans_vectors(this->dof_handler);
 
   if (this->simulation_parameters.post_processing.calculate_average_velocities)
     {
-      std::vector<GlobalVectorType *> sum_vectors =
+      std::vector<VectorType *> sum_vectors =
         this->average_velocities->read(prefix);
 
       x_system.insert(x_system.end(), sum_vectors.begin(), sum_vectors.end());
@@ -660,7 +712,7 @@ CFDDEMMatrixFree<dim>::read_checkpoint()
   // Deserialize the default post-processing tables that are members of
   // NavierStokesBase
   std::vector<OutputStructTableHandler> table_output_structs =
-    NavierStokesBase<dim, GlobalVectorType, IndexSet>::gather_tables();
+    NavierStokesBase<dim, VectorType, IndexSet>::gather_tables();
   deserialize_tables_vector(table_output_structs, this->mpi_communicator);
 }
 
@@ -1029,7 +1081,7 @@ CFDDEMMatrixFree<dim>::dynamic_flow_control()
         this->dof_handler,
         this->particle_projector.dof_handler,
         this->present_solution,
-        this->particle_projector.void_fraction_locally_relevant,
+        this->particle_projector.void_fraction_solution,
         flow_direction,
         *this->cell_quadrature,
         *this->mapping);

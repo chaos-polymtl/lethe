@@ -1645,3 +1645,27 @@ calculate_average_velocity(
   const unsigned int     &flow_direction,
   const Quadrature<3>    &quadrature_formula,
   const Mapping<3>       &mapping);
+
+#ifndef LETHE_USE_LDV
+template double
+calculate_average_velocity(
+  const DoFHandler<2>                              &dof_handler,
+  const DoFHandler<2>                              &void_fraction_dof_handler,
+  const LinearAlgebra::distributed::Vector<double> &present_solution,
+  const LinearAlgebra::distributed::Vector<double>
+                      &present_void_fraction_solution,
+  const unsigned int  &flow_direction,
+  const Quadrature<2> &quadrature_formula,
+  const Mapping<2>    &mapping);
+
+template double
+calculate_average_velocity(
+  const DoFHandler<3>                              &dof_handler,
+  const DoFHandler<3>                              &void_fraction_dof_handler,
+  const LinearAlgebra::distributed::Vector<double> &present_solution,
+  const LinearAlgebra::distributed::Vector<double>
+                      &present_void_fraction_solution,
+  const unsigned int  &flow_direction,
+  const Quadrature<3> &quadrature_formula,
+  const Mapping<3>    &mapping);
+#endif

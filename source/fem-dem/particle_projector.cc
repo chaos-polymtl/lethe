@@ -120,6 +120,16 @@ ParticleProjector<dim>::setup_dofs()
     DoFTools::extract_locally_active_dofs(dof_handler),
     this->triangulation->get_mpi_communicator());
 
+  this->void_fraction_previous_solution.resize(
+    maximum_number_of_previous_solutions());
+  // Initialize vector of previous solutions for the void fraction
+  for (auto &solution : this->void_fraction_previous_solution)
+    {
+      solution.reinit(dof_handler.locally_owned_dofs(),
+                      DoFTools::extract_locally_active_dofs(dof_handler),
+                      this->triangulation->get_mpi_communicator());
+    }
+
   DynamicSparsityPattern dsp(locally_relevant_dofs);
   DoFTools::make_sparsity_pattern(dof_handler,
                                   dsp,
