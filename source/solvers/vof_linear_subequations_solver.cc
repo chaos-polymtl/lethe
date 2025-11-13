@@ -74,6 +74,9 @@ VOFLinearSubequationsSolver<dim>::setup_dofs()
   this->present_solution->reinit(this->locally_owned_dofs,
                                  this->locally_relevant_dofs,
                                  mpi_communicator);
+  this->present_normalized_solution->reinit(this->locally_owned_dofs,
+                                            this->locally_relevant_dofs,
+                                            mpi_communicator);
   this->evaluation_point = *this->present_solution;
 
 
@@ -92,6 +95,12 @@ VOFLinearSubequationsSolver<dim>::setup_dofs()
                                                this->dof_handler);
   this->subequations_interface.set_solution(this->subequation_id,
                                             this->present_solution);
+  // Only the phase fraction gradient is normalized
+  if (this->subequation_id == VOFSubequationsID::phase_gradient_projection)
+    {
+      this->subequations_interface.set_normalized_solution(
+        this->subequation_id, this->present_normalized_solution);
+    }
 }
 
 
@@ -196,6 +205,7 @@ VOFLinearSubequationsSolver<dim>::solve()
   check_dependencies_validity();
   assemble_system_matrix_and_rhs();
   solve_linear_system_and_update_solution();
+  compute_normalized_vector_solution();
   this->subequations_interface.set_solution_valid(this->subequation_id);
 }
 

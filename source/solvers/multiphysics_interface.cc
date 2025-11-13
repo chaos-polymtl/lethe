@@ -175,6 +175,25 @@ MultiphysicsInterface<dim>::get_projected_phase_fraction_gradient_solution()
 
 template <int dim>
 const GlobalVectorType &
+MultiphysicsInterface<
+  dim>::get_normalized_projected_phase_fraction_gradient_solution()
+{
+  // Throw error if VOF is not enabled
+  AssertThrow((std::find(active_physics.begin(),
+                         active_physics.end(),
+                         PhysicsID::VOF) != active_physics.end()),
+              ExcInternalError());
+  // Throw error if surface tension force is not enabled
+  AssertThrow(
+    (multiphysics_parameters.vof_parameters.surface_tension_force.enable),
+    ExcInternalError());
+
+  return dynamic_cast<VolumeOfFluid<dim> &>(*physics[PhysicsID::VOF])
+    .get_normalized_projected_phase_fraction_gradient_solution();
+}
+
+template <int dim>
+const GlobalVectorType &
 MultiphysicsInterface<dim>::get_curvature_solution()
 {
   // Throw error if VOF is not enabled

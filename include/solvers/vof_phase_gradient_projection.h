@@ -119,6 +119,12 @@ private:
    */
   void
   check_dependencies_validity() override;
+
+  /**
+   * @brief For vector values, compute the normalized vector field.
+   */
+  void
+  compute_normalized_vector_solution() override;
 };
 
 #endif
