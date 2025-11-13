@@ -2737,7 +2737,7 @@ namespace Parameters
                           "ilu",
                           Patterns::Selection("amg|ilu|lsmg|gcmg"),
                           "The preconditioner for the linear solver."
-                          "Choices are <amg|ilu|lsmg|gcmg>. ");
+                          "Choices are <amg|ilu|lsmg|gcmg>.");
 
 
         prm.declare_entry("ilu preconditioner fill",
@@ -2937,7 +2937,7 @@ namespace Parameters
           solver = SolverType::direct;
         else
           throw std::logic_error(
-            "Error, invalid iterative solver type. Choices are amg, bicgstab or direct");
+            "Error, invalid iterative solver type. Choices are amg, gmres, bicgstab or direct");
 
         const std::string op = prm.get("verbosity");
         if (op == "verbose")
@@ -2972,7 +2972,7 @@ namespace Parameters
           preconditioner = PreconditionerType::gcmg;
         else
           throw std::logic_error(
-            "Error, invalid preconditioner type. Choices are amg, ilu, lsmg, gcmg.");
+            "Error, invalid preconditioner type. Choices are amg, ilu, lsmg or gcmg.");
 
 
         ilu_precond_fill = prm.get_integer("ilu preconditioner fill");
