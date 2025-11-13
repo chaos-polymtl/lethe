@@ -65,8 +65,9 @@ public:
         p_simulation_parameters.linear_solver.at(PhysicsID::VOF).verbosity)
     , subequation_verbosity(p_subequation_verbosity)
   {
-    // Ensure that the shared pointer is properly allocated
-    this->present_solution = std::make_shared<GlobalVectorType>();
+    // Ensure that shared pointers are properly allocated
+    this->present_solution            = std::make_shared<GlobalVectorType>();
+    this->present_normalized_solution = std::make_shared<GlobalVectorType>();
   }
 
   /**
@@ -110,6 +111,13 @@ protected:
   virtual void
   check_dependencies_validity() = 0;
 
+  /**
+   * @brief For vector values, compute the normalized vector field.
+   * @warning The method is only implemented for the projected phase gradient
+   */
+  virtual void
+  compute_normalized_vector_solution() = 0;
+
   const VOFSubequationsID        subequation_id;
   VOFSubequationsInterface<dim> &subequations_interface;
 
@@ -126,13 +134,14 @@ protected:
   std::shared_ptr<Quadrature<dim>> cell_quadrature;
 
   // Solution storage
-  IndexSet                                           locally_owned_dofs;
-  IndexSet                                           locally_relevant_dofs;
-  GlobalVectorType                                   evaluation_point;
-  std::shared_ptr<GlobalVectorType>                  present_solution;
-  GlobalVectorType                                   system_rhs;
-  AffineConstraints<double>                          constraints;
-  TrilinosWrappers::SparseMatrix                     system_matrix;
+  IndexSet                          locally_owned_dofs;
+  IndexSet                          locally_relevant_dofs;
+  GlobalVectorType                  evaluation_point;
+  std::shared_ptr<GlobalVectorType> present_solution;
+  std::shared_ptr<GlobalVectorType> present_normalized_solution;
+  GlobalVectorType                  system_rhs;
+  AffineConstraints<double>         constraints;
+  TrilinosWrappers::SparseMatrix    system_matrix;
   std::shared_ptr<TrilinosWrappers::PreconditionILU> ilu_preconditioner;
 
   // Verbosity

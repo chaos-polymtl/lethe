@@ -93,6 +93,16 @@ private:
    */
   void
   check_dependencies_validity() override;
+
+  /**
+   * @brief For vector values, compute the normalized vector field.
+   * @warning The method is only implemented for the projected phase gradient.
+   */
+  void
+  compute_normalized_vector_solution() override
+  {
+    return; // Do nothing
+  }
 };
 
 #endif
