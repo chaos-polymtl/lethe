@@ -20,9 +20,15 @@ DeclException1(
   std::string,
   "The current solution of the "
     << arg1
-    << "is invalid. \n"
+    << " is invalid. \n"
        "A new VOF solution has been set but the subequation was not solved "
        "afterwards.");
+
+DeclException1(
+  SharedPtrNotInitialized,
+  std::string,
+  "The shared pointer of normalized vector solution of the subequation "
+    << arg1 << " has not been initialized. \n");
 
 DeclException2(PhaseGradientProjectionIsInvalid,
                std::string,
@@ -212,6 +218,28 @@ public:
   }
 
   /**
+   * @brief Get a reference to the solution vector of a specific subequation.
+   *
+   * @param[in] subequation_id Identifier associated with a specific
+   * subequation.
+   *
+   * @return Reference to the normalized solution vector of the specified
+   * subequation.
+   */
+  const GlobalVectorType &
+  get_normalized_solution(const VOFSubequationsID &subequation_id)
+  {
+    AssertThrow(this->get_solution_validity(subequation_id),
+                InvalidSubequationSolution(
+                  this->get_subequation_string(subequation_id)));
+    AssertThrow(this->subequations_normalized_solutions[subequation_id],
+                SharedPtrNotInitialized(
+                  this->get_subequation_string(subequation_id)));
+
+    return *this->subequations_normalized_solutions[subequation_id];
+  }
+
+  /**
    * @brief Get a reference to the filtered phase fraction solution vector.
    *
    * @return Reference to the filtered phase fraction solution vector.
@@ -366,6 +394,29 @@ public:
   }
 
   /**
+   * @brief Set the normalized solution associated with a specific subequation
+   * in the interface.
+   *
+   * @param[in] subequation_id Identifier associated with a specific
+   * subequation.
+   *
+   * @param[in] normalized_solution_vector Shared pointer to the solution vector
+   * of a specific subequation.
+   */
+  void
+  set_normalized_solution(
+    const VOFSubequationsID          &subequation_id,
+    std::shared_ptr<GlobalVectorType> normalized_solution_vector)
+  {
+    AssertThrow((std::find(this->active_subequations.begin(),
+                           this->active_subequations.end(),
+                           subequation_id) != this->active_subequations.end()),
+                ExcInternalError());
+    this->subequations_normalized_solutions[subequation_id] =
+      normalized_solution_vector;
+  }
+
+  /**
    * @brief Set a new VOF solution vector and DoFHandler for the subequations to
    * be solved.
    *
@@ -464,6 +515,10 @@ private:
   /// Present solutions map
   std::map<VOFSubequationsID, std::shared_ptr<GlobalVectorType>>
     subequations_solutions;
+
+  /// Present normalized solutions map (for vector solution fields)
+  std::map<VOFSubequationsID, std::shared_ptr<GlobalVectorType>>
+    subequations_normalized_solutions;
 
   /**
    * Booleans indicating if the subequation has been solved with the set VOF

@@ -1,10 +1,12 @@
-// SPDX-FileCopyrightText: Copyright (c) 2019-2024 The Lethe Authors
+// SPDX-FileCopyrightText: Copyright (c) 2019-2025 The Lethe Authors
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
 #ifndef lethe_postprocessors_h
 #define lethe_postprocessors_h
 
+#include <core/density_model.h>
 #include <core/rheological_model.h>
+#include <core/thermal_conductivity_model.h>
 
 #include <deal.II/base/tensor.h>
 
@@ -853,4 +855,50 @@ private:
   /// Boolean indicating if the simulation has solids.
   const bool solid_phase_present;
 };
+
+template <int dim>
+class InterfaceNormalDivergencePostprocessor
+  : public DataPostprocessorScalar<dim>
+{
+public:
+  /**
+   * @brief Constructor of the unit interface normal divergence scalar field.
+   */
+  InterfaceNormalDivergencePostprocessor()
+    : DataPostprocessorScalar<dim>("interface_normal_divergence",
+                                   update_gradients)
+  {}
+
+  /**
+   * @brief Compute the divergence of the unit interface normal vector field at
+   * given evaluation points.
+   *
+   * @param[in] inputs Projected unit interface normal vector field.
+   *
+   * @param[out] computed_quantities Computed interface normal divergence values
+   * at evaluation points.
+   */
+  virtual void
+  evaluate_vector_field(
+    const DataPostprocessorInputs::Vector<dim> &inputs,
+    std::vector<Vector<double>> &computed_quantities) const override
+  {
+    AssertDimension(inputs.solution_gradients.size(),
+                    computed_quantities.size());
+
+    const unsigned int n_evaluation_points = inputs.solution_gradients.size();
+
+    for (unsigned int p = 0; p < n_evaluation_points; ++p)
+      {
+        AssertDimension(computed_quantities[p].size(), 1);
+
+        double interface_normal_divergence = 0;
+        for (int d = 0; d < dim; ++d)
+          interface_normal_divergence += inputs.solution_gradients[p][d][d];
+
+        computed_quantities[p] = interface_normal_divergence;
+      }
+  }
+};
+
 #endif

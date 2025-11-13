@@ -11,6 +11,7 @@
 
 #include <solvers/auxiliary_physics.h>
 #include <solvers/multiphysics_interface.h>
+#include <solvers/postprocessors.h>
 #include <solvers/signed_distance_transformation.h>
 #include <solvers/vof_assemblers.h>
 #include <solvers/vof_filter.h>
@@ -331,6 +332,13 @@ public:
   get_projected_phase_fraction_gradient_solution()
   {
     return this->vof_subequations_interface->get_solution(
+      VOFSubequationsID::phase_gradient_projection);
+  }
+
+  const GlobalVectorType &
+  get_normalized_projected_phase_fraction_gradient_solution()
+  {
+    return this->vof_subequations_interface->get_normalized_solution(
       VOFSubequationsID::phase_gradient_projection);
   }
 
