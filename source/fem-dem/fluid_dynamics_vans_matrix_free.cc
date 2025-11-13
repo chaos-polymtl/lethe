@@ -3,6 +3,7 @@
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
 #include <core/grids.h>
+#include <core/lethe_grid_tools.h>
 #include <core/manifolds.h>
 #include <core/time_integration_utilities.h>
 #include <core/utilities.h>
@@ -601,6 +602,21 @@ FluidDynamicsVANSMatrixFree<dim>::gather_output_hook()
           particle_fluid_drag_struct,
           particle_velocity_struct,
           mtc_struct};
+}
+
+template <int dim>
+void
+FluidDynamicsVANSMatrixFree<dim>::vertices_cell_mapping()
+{
+  // Find all the cells around each vertex
+  TimerOutput::Scope t(this->computing_timer, "Map vertices to cell");
+
+  LetheGridTools::vertices_cell_mapping(this->particle_projector.dof_handler,
+                                        vertices_to_cell);
+
+  if (has_periodic_boundaries)
+    LetheGridTools::vertices_cell_mapping_with_periodic_boundaries(
+      this->particle_projector.dof_handler, vertices_to_periodic_cell);
 }
 
 template <int dim>

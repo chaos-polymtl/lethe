@@ -168,7 +168,7 @@ protected:
   /**
    * @brief Read particles arising from a DEM simulation
    */
-  void
+  virtual void
   read_dem();
 
   /**
@@ -213,6 +213,16 @@ protected:
   void
   initialize_GMG() override;
 
+  /**
+   * @brief Create mapping between vertices and cells.
+   *
+   * Establishes the relationship between mesh vertices and the cells
+   * that contain them, which is needed for efficient void fraction
+   * and particle-fluid coupling calculations.
+   */
+  void
+  vertices_cell_mapping();
+
   /// Simulation parameters for CFD-DEM simulations
   CFDDEMSimulationParameters<dim> cfd_dem_simulation_parameters;
 
@@ -230,5 +240,17 @@ protected:
   bool           has_periodic_boundaries;
   Tensor<1, dim> periodic_offset;
   unsigned int   periodic_direction;
+
+
+  /// Mapping from vertex indices to sets of cells containing each vertex
+  std::map<unsigned int,
+           std::set<typename DoFHandler<dim>::active_cell_iterator>>
+    vertices_to_cell;
+
+  /// Mapping from vertex indices to sets of periodic cells containing each
+  /// vertex
+  std::map<unsigned int,
+           std::set<typename DoFHandler<dim>::active_cell_iterator>>
+    vertices_to_periodic_cell;
 };
 #endif
