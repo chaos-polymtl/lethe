@@ -374,14 +374,14 @@ FluidDynamicsBlock<dim>::setup_preconditioner()
   if (this->simulation_parameters.linear_solver.at(PhysicsID::fluid_dynamics)
         .preconditioner == Parameters::LinearSolver::PreconditionerType::ilu)
     {
-        setup_ILU();
+      setup_ILU();
     }
   else if (this->simulation_parameters.linear_solver
              .at(PhysicsID::fluid_dynamics)
              .preconditioner ==
            Parameters::LinearSolver::PreconditionerType::amg)
     {
-        setup_AMG();
+      setup_AMG();
     }
   else
     AssertThrow(
@@ -821,9 +821,7 @@ FluidDynamicsBlock<dim>::solve_linear_system(const bool initial_step)
 
   if (this->simulation_parameters.linear_solver.at(PhysicsID::fluid_dynamics)
         .solver == Parameters::LinearSolver::SolverType::gmres)
-    solve_system_GMRES(initial_step,
-                       absolute_residual,
-                       relative_residual);
+    solve_system_GMRES(initial_step, absolute_residual, relative_residual);
   else
     AssertThrow(
       this->simulation_parameters.linear_solver.at(PhysicsID::fluid_dynamics)

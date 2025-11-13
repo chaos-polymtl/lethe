@@ -2731,12 +2731,11 @@ namespace Parameters
           Patterns::Bool(),
           "Turns off the terms involving the hessian in the rhs");
 
-        prm.declare_entry(
-          "preconditioner",
-          "ilu",
-          Patterns::Selection("amg|ilu|lsmg|gcmg"),
-          "The preconditioner for the linear solver."
-          "Choices are <amg|ilu|lsmg|gcmg>.");
+        prm.declare_entry("preconditioner",
+                          "ilu",
+                          Patterns::Selection("amg|ilu|lsmg|gcmg"),
+                          "The preconditioner for the linear solver."
+                          "Choices are <amg|ilu|lsmg|gcmg>.");
 
 
         prm.declare_entry("ilu preconditioner fill",
