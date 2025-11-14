@@ -70,7 +70,7 @@ public:
    */
 
   void
-  solve_linear_system(const bool const bool) override
+  solve_linear_system(const bool, const bool) override
   {
     system_matrix.solve(system_rhs);
     present_solution = system_rhs;
@@ -78,24 +78,34 @@ public:
 
   virtual void
   apply_constraints() override
-  {}
+  {
+    throw std::runtime_error(
+      "Newton iteration disabled, no constraints to apply.");
+  }
 
   virtual Vector<double> &
   get_evaluation_point() override
   {
-    return evaluation_point;
+    throw std::runtime_error(
+      "Newton iteration disabled, no evaluation point available.");
   };
   virtual Vector<double> &
   get_local_evaluation_point() override
   {
+    throw std::runtime_error(
+      "Newton iteration disabled, no local evaluation point available.");
   };
   virtual Vector<double> &
   get_newton_update() override
   {
+    throw std::runtime_error(
+      "Newton iteration disabled, no newton update available.");
   };
   virtual void
   output_newton_update_norms(const unsigned int display_precision) override
   {
+    throw std::runtime_error(
+      "Newton iteration disabled, no newton update norms available.");
   };
   virtual Vector<double> &
   get_present_solution() override
@@ -110,16 +120,19 @@ public:
   virtual AffineConstraints<double> &
   get_nonzero_constraints() override
   {
+    throw std::runtime_error(
+      "Newton iteration disabled, no constraints available.");
   };
   virtual double
   get_residual_rescale_metric() const override
   {
-    return 1.0;
+    throw std::runtime_error(
+      "Newton iteration disabled, no residual rescale metric available.");
   }
 
 
 private:
-  LAPACKFullMatrix<double>  system_matrix;
-  Vector<double>            system_rhs;
-  Vector<double>            present_solution;
+  LAPACKFullMatrix<double> system_matrix;
+  Vector<double>           system_rhs;
+  Vector<double>           present_solution;
 };
