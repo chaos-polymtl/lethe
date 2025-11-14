@@ -1546,22 +1546,17 @@ ParticleProjector<dim>::calculate_particle_fluid_forces_projection(
     particle_fluid_assemblers.push_back(
       std::make_shared<VANSAssemblerVorticalTorque<dim>>());
 
-  // If the VANS model if model B, then the pressure and shear forces
-  // will be applied on both the particles and the fluid. Otherwise,
-  // they will be applied only on the particles
-  if (cfd_dem_parameters.vans_model == Parameters::VANSModel::modelB)
-    {
-      if (cfd_dem_parameters.pressure_force == true)
-        // Pressure Force
-        particle_fluid_assemblers.push_back(
-          std::make_shared<VANSAssemblerPressureForce<dim>>(
-            cfd_dem_parameters));
 
-      if (cfd_dem_parameters.shear_force == true)
-        // Shear Force
-        particle_fluid_assemblers.push_back(
-          std::make_shared<VANSAssemblerShearForce<dim>>(cfd_dem_parameters));
-    }
+  if (cfd_dem_parameters.pressure_force == true)
+    // Pressure Force
+    particle_fluid_assemblers.push_back(
+      std::make_shared<VANSAssemblerPressureForce<dim>>(cfd_dem_parameters));
+
+  if (cfd_dem_parameters.shear_force == true)
+    // Shear Force
+    particle_fluid_assemblers.push_back(
+      std::make_shared<VANSAssemblerShearForce<dim>>(cfd_dem_parameters));
+
 
   scratch_data.enable_void_fraction(*fe, *quadrature, *mapping);
 
