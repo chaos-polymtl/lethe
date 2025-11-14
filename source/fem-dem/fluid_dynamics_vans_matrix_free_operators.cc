@@ -56,7 +56,7 @@ VANSOperator<dim, number>::compute_void_fraction(
   const DoFHandler<dim>                            &void_fraction_dof_handler,
   const LinearAlgebra::distributed::Vector<double> &void_fraction_solution,
   const LinearAlgebra::distributed::Vector<double>
-    &time_derivative_void_fraction)
+    &time_derivative_void_fraction_solution)
 {
   this->timer.enter_subsection("operator::compute_void_fraction");
 
@@ -66,13 +66,18 @@ VANSOperator<dim, number>::compute_void_fraction(
 
   void_fraction.reinit(n_cells, integrator.n_q_points);
   void_fraction_gradient.reinit(n_cells, integrator.n_q_points);
+  time_derivative_void_fraction.reinit(n_cells, integrator.n_q_points);
+
 
   FEValues<dim> fe_values(*(this->matrix_free.get_mapping_info().mapping),
                           void_fraction_dof_handler.get_fe(),
                           this->matrix_free.get_quadrature(),
                           update_values | update_gradients);
 
-  std::vector<double>         cell_void_fraction(fe_values.n_quadrature_points);
+  std::vector<double> cell_void_fraction(fe_values.n_quadrature_points);
+  std::vector<double> cell_time_derivative_void_fraction(
+    fe_values.n_quadrature_points);
+
   std::vector<Tensor<1, dim>> cell_void_fraction_gradient(
     fe_values.n_quadrature_points);
 
@@ -89,6 +94,8 @@ VANSOperator<dim, number>::compute_void_fraction(
 
           fe_values.get_function_values(void_fraction_solution,
                                         cell_void_fraction);
+          fe_values.get_function_values(time_derivative_void_fraction_solution,
+                                        cell_time_derivative_void_fraction);
           fe_values.get_function_gradients(void_fraction_solution,
                                            cell_void_fraction_gradient);
 
@@ -99,6 +106,8 @@ VANSOperator<dim, number>::compute_void_fraction(
                   cell_void_fraction_gradient[q][c];
 
               void_fraction[cell][q][lane] = cell_void_fraction[q];
+              time_derivative_void_fraction[cell][q][lane] =
+                cell_time_derivative_void_fraction[q];
             }
         }
     }
@@ -517,7 +526,7 @@ VANSOperator<dim, number>::do_cell_integral_local(
 
 /**
  * The expressions calculated in this cell integral are:
- * (q, ɛ ∇·u) + (q, u·∇ɛ) (Continuity equation)
+ * (q, ∂tɛ) + (q, ɛ ∇·u) + (q, u·∇ɛ) (Continuity equation)
  * \+(v,ɛ∂t u) + (v,ɛ(u·∇)u) - (∇·v,ɛp) - (v,p∇ɛ)
  * \+ ɛν(∇v,∇u) + ν(v,∇u∇ɛ) - (v, f_pf) - (v,ɛf) (Weak form of VANS),
  * plus two additional terms in the case of SUPG-PSPG
@@ -525,7 +534,7 @@ VANSOperator<dim, number>::do_cell_integral_local(
  * \+ (ɛ∂t u +ɛ(u·∇)u + ɛ∇p - νɛ∆u - f_pf - ɛf)τ∇·q (PSPG term)
  * \+ (ɛ∂t u +ɛ(u·∇)u + ɛ∇p - νɛ∆u - f_pf - ɛf)τu·∇v (SUPG term),
  * With additional grad-div stabilization
- * (∇·v,γ(ɛ∇·u+u·∇ɛ)) (grad-div term)
+ * (∇·v,γ(∂tɛ+ɛ∇·u+u·∇ɛ)) (grad-div term)
  */
 template <int dim, typename number>
 void
@@ -580,6 +589,8 @@ VANSOperator<dim, number>::local_evaluate_residual(
           // Gather void fraction value and gradient
           auto vf_value    = this->void_fraction(cell, q);
           auto vf_gradient = this->void_fraction_gradient(cell, q);
+          auto vf_time_derivative =
+            this->time_derivative_void_fraction(cell, q);
 
           // Evaluate source term function if enabled
           if (this->forcing_function)
@@ -635,8 +646,12 @@ VANSOperator<dim, number>::local_evaluate_residual(
 
               // +(v,ɛ∂t u)
               if (transient)
-                value_result[i] += vf_value * ((*bdf_coefs)[0] * value[i] +
-                                               previous_time_derivatives[i]);
+                {
+                  value_result[i] += vf_value * ((*bdf_coefs)[0] * value[i] +
+                                                 previous_time_derivatives[i]);
+                  // +(q,∂t ɛ)
+                  value_result[dim] += vf_time_derivative;
+                }
 
               // +(q,ɛ∇·u)
               value_result[dim] += vf_value * gradient[i][i];
@@ -686,7 +701,8 @@ VANSOperator<dim, number>::local_evaluate_residual(
                     {
                       gradient_result[i][i] +=
                         grad_div_gamma(cell, q) *
-                        (vf_value * gradient[k][k] + value[k] * vf_gradient[k]);
+                        (vf_value * gradient[k][k] + value[k] * vf_gradient[k] +
+                         vf_time_derivative);
                     }
                 }
             }

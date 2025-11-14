@@ -383,8 +383,10 @@ FluidDynamicsVANSMatrixFree<dim>::setup_dofs()
     this->cfd_dem_simulation_parameters.cfd_parameters.boundary_conditions);
 
   // Initialize the time derivative of the void fraction.
-  this->system_operator->initialize_dof_vector(
-    this->time_derivative_void_fraction);
+  this->time_derivative_void_fraction.reinit(
+    particle_projector.dof_handler.locally_owned_dofs(),
+    DoFTools::extract_locally_relevant_dofs(particle_projector.dof_handler),
+    this->mpi_communicator);
 }
 
 template <int dim>
@@ -640,6 +642,11 @@ void
 FluidDynamicsVANSMatrixFree<dim>::evaluate_time_derivative_void_fraction()
 {
   this->time_derivative_void_fraction = 0;
+
+  // If the void fraction time derivative is disabled, we just leave it at zero.
+  if (cfd_dem_simulation_parameters.cfd_dem.void_fraction_time_derivative ==
+      false)
+    return;
 
   // Time stepping information
   const auto method = this->simulation_control->get_assembly_method();

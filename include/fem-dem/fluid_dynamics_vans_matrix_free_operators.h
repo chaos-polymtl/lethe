@@ -52,8 +52,8 @@ public:
    *
    * @param[in] void_fraction_solution The solution of the void fraction
    *
-   * @param[in] time_derivative_void_fraction The time derivative of the void
-   * fraction.
+   * @param[in] time_derivative_void_fraction_solution The time derivative of
+   * the void fraction.
    *
    */
   void
@@ -61,7 +61,7 @@ public:
     const DoFHandler<dim>                            &void_fraction_dof_handler,
     const LinearAlgebra::distributed::Vector<double> &void_fraction_solution,
     const LinearAlgebra::distributed::Vector<double>
-      &time_derivative_void_fraction);
+      &time_derivative_void_fraction_solution);
 
   /**
    * @brief Compute the terms required to assemble the particle-fluid forces at
@@ -145,6 +145,10 @@ protected:
   /// Table with correct alignment for vectorization to store the values of the
   /// void fraction gradient
   Table<2, Tensor<1, dim, VectorizedArray<number>>> void_fraction_gradient;
+
+  /// Table with correct alignment for vectorization to store the values of the
+  /// time deriative of the void fraction
+  Table<2, VectorizedArray<number>> time_derivative_void_fraction;
 
   /// Table with correct alignment for vectorization to store the values of the
   /// particle-fluid forces (without drag). These are the resulting forces
