@@ -4,11 +4,18 @@ All notable changes to the Lethe project will be documented in this file.
 The changelog for the previous releases of Lethe are located in the release_notes folder.
 The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
+
+### [Master] - 2025-11-14
+
+### Fixed
+
+- MAJOR A bug had been introduced in [#1752] that prevented paraview from opening the vtu, pvtu and pvd files for the particle results in the CFD-DEM solver. This was because the new property (momentum_transfer_coefficient) was not given a name and this prevented the output from being adequately named. This PR fixes it by giving an appropriate name to that property which fixes the output of the particles. [#1800](https://github.com/chaos-polymtl/lethe/pull/1800)
+
 ### [Master] - 2025-11-04
 
 ### Added
 
-- MAJOR The residual displayed in the non-linear and linear solver are affected by the total volume of the triangulation (mesh). Consequently, if a simulation is carried out on a triangulation with a small volume, very small residuals are obtained at the initial solution step. This complicates the choice of the linear and non-linear tolerances since they need to be adjusted in a case-dependent fashion. This change introduces a new parameter ("rescale residual") to the linear solver subsection. When the parameter is true, all residuals (linear and non-linear) are rescaled by the squared root of the volume of the triangulation. This is very convenient because, when activated, tolerances are independent of the domain size. [1728](https://github.com/chaos-polymtl/lethe/pull/1728)
+- MAJOR The residual displayed in the non-linear and linear solver are affected by the total volume of the triangulation (mesh). Consequently, if a simulation is carried out on a triangulation with a small volume, very small residuals are obtained at the initial solution step. This complicates the choice of the linear and non-linear tolerances since they need to be adjusted in a case-dependent fashion. This change introduces a new parameter ("rescale residual") to the linear solver subsection. When the parameter is true, all residuals (linear and non-linear) are rescaled by the squared root of the volume of the triangulation. This is very convenient because, when activated, tolerances are independent of the domain size. [#1728](https://github.com/chaos-polymtl/lethe/pull/1728)
 
 ### [Master] - 2025-11-08
 
