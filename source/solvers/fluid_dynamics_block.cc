@@ -385,12 +385,7 @@ FluidDynamicsBlock<dim>::setup_preconditioner()
     }
   else
     AssertThrow(
-      this->simulation_parameters.linear_solver.at(PhysicsID::fluid_dynamics)
-            .preconditioner ==
-          Parameters::LinearSolver::PreconditionerType::ilu ||
-        this->simulation_parameters.linear_solver.at(PhysicsID::fluid_dynamics)
-            .preconditioner ==
-          Parameters::LinearSolver::PreconditionerType::amg,
+      false,
       ExcMessage(
         "This linear solver does not support this preconditioner. Only <ilu> and <amg> preconditioners are supported."));
 }
