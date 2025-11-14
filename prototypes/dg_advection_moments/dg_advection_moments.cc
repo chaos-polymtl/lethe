@@ -23,6 +23,7 @@
 #include <deal.II/grid/grid_out.h>
 #include <deal.II/grid/grid_refinement.h>
 #include <deal.II/grid/tria.h>
+#include <deal.II/grid/grid_tools.h>
 
 #include <deal.II/lac/dynamic_sparsity_pattern.h>
 #include <deal.II/lac/precondition_block.h>
@@ -64,25 +65,29 @@ void
 VelocityField<dim>::vector_value(const Point<dim> &p,
                                  Tensor<1, dim>   &values) const
 {
-  AssertDimension(values.dimension, dim);
-  // 3D velocity field not yet implemented
-  Assert(dim == 2, ExcNotImplemented());
-  // 2D velocity field of Couette flow
-  if constexpr (dim == 2)
+  if constexpr (dim == 1)
+    {
+      values[0] = 2.0 * std::numbers::pi;
+    }
+  else if constexpr (dim == 2)
     {
       double invert_norm = 1. / std::max(p.norm(), 1e-10);
       values[0]          = -p(1) * invert_norm; // u(0) = -x(1)/|x|
       values[1]          = p(0) * invert_norm;  // u(1) =  x(0)/|x|
     }
+
 }
 template <int dim>
 void
 VelocityField<dim>::divergence_value(const Point<dim> &p, double &value) const
 {
-  // 3D velocity field not yet implemented
-  Assert(dim == 2, ExcNotImplemented());
-  double invert_norm = 1. / std::max(p.norm(), 1e-10);
-  value = (p(0) - p(1)) * (-p(0) - p(1)) * std::pow(invert_norm, -2.);
+  if constexpr (dim == 1)
+    value = 0.;
+  else if constexpr (dim == 2)
+    {
+      double invert_norm = 1. / std::max(p.norm(), 1e-10);
+      value = (p(0) - p(1)) * (-p(0) - p(1)) * std::pow(invert_norm, -2.);
+    }
 }
 
 template <int dim>
@@ -94,7 +99,8 @@ public:
   {}
 
   double
-  value(const Point<dim> &p, const unsigned int /*component*/ = 0) const override;
+  value(const Point<dim> &p,
+        const unsigned int /*component*/ = 0) const override;
 };
 
 template <int dim>
@@ -102,8 +108,13 @@ double
 ConcentrationField<dim>::value(const Point<dim> &p,
                                const unsigned int /*component*/) const
 {
-  const double r = p.norm();
-  return 0.5 - 0.5 * tanh((r - 0.5) / 0.001);
+  if constexpr (dim == 1)
+    return 0.;
+  else if constexpr (dim == 2)
+    {
+      const double r = p.norm();
+      return 0.5 - 0.5 * tanh((r - 0.5) / 0.001);
+    }
 }
 
 // Right-hand side function (zero in the initial case. To be modified later)
@@ -122,26 +133,6 @@ public:
     values(0) = 0.0;
   }
 };
-
-// Nucleation source term
-template <int dim>
-class NucleationSource : public Function<dim>
-{
-public:
-  NucleationSource()
-    : Function<dim>(1){}
-
-  double
-  value(const Point<dim> &p, const unsigned int /*component*/ = 0) const override;
-};
-
-template <int dim>
-double
-NucleationSource<dim>::value(const Point<dim> &p,
-                             const unsigned int /*component*/) const
-{
-  return 0;
-}
 
 // Structure to hold FEValues and FEInterfaceValues objects for each cell
 template <int dim>
@@ -181,6 +172,7 @@ struct ScratchData
 struct CopyDataFace
 {
   FullMatrix<double>                   cell_matrix;
+  Vector<double>                       cell_rhs;
   std::vector<types::global_dof_index> joint_dof_indices;
 };
 
@@ -216,14 +208,20 @@ public:
   vector_value(const Point<dim> &p, Vector<double> &values) const override
   {
     AssertDimension(values.size(), 1);
-    values(0) = (p(0) < 0.5) ? 1.0 : 0.0;
+    if constexpr (dim == 1)
+      values(0) = -std::sin(2 * std::numbers::pi * p(0));
+    else if constexpr (dim == 2)
+      values(0) = (p(0) < 0.5) ? 1.0 : 0.0;
   }
 
   double
   value(const Point<dim> &p,
         const unsigned int /*component*/ = 0) const override
   {
-    return (p(0) < 0.5) ? 1.0 : 0.0;
+    if constexpr (dim == 1)
+      return -std::sin(2 * std::numbers::pi * p(0));
+    else if constexpr (dim == 2)
+      return (p(0) < 0.5) ? 1.0 : 0.0;
   }
 };
 
@@ -262,6 +260,16 @@ private:
   void
   assemble_system();
   void
+  compute_cfl_number()
+  {
+    const double min_cell_diameter =
+      GridTools::minimal_cell_diameter(triangulation);
+    const double dt = time_step;
+    const double max_velocity_magnitude = 1.0; // Since our velocity field is normalized
+    const double cfl_number = (max_velocity_magnitude * dt) / min_cell_diameter;
+    std::cout << "CFL number: " << cfl_number << std::endl;
+}
+  void
   assemble_cell_terms(const FEValues<dim>      &fe_values,
                       const FullMatrix<double> &cell_matrix,
                       Vector<double>           &local_vector);
@@ -296,7 +304,7 @@ private:
   solve();
 
   void
-  output_results(const int cycle) const;
+  output_results(const int time_step) const;
 
   // Attributes:
   const unsigned int fe_degree;
@@ -314,13 +322,18 @@ private:
   // ConditionalOStream pcout;
   TimerOutput computing_timer;
 
-  VelocityField<dim>     velocity_field;
+  VelocityField<dim>      velocity_field;
   ConcentrationField<dim> concentration_field;
-  SparseMatrix<double>   system_matrix;
-  Vector<double>         system_rhs;
-  const DirichletBC<dim> dirichlet_bc_function;
-  Vector<double>    solution;
-  const bool             use_divergence;
+  SparseMatrix<double>    system_matrix;
+  Vector<double>          system_rhs;
+  const DirichletBC<dim>  dirichlet_bc_function;
+  Vector<double>          solution;
+  Vector<double>          previous_solution;
+  const double            time_step    = 0.001;
+  const double            time_end     = 1;
+  const unsigned int      n_time_steps = time_end / time_step;
+  const bool              use_divergence;
+  const bool              implicit = false;
 };
 
 template <int dim>
@@ -329,12 +342,16 @@ DGAdvectionMoments<dim>::make_grid()
 {
   TimerOutput::Scope t(computing_timer, "make grid");
 
-  // Make sure 2D. 3D not yet implemented
-  Assert(dim == 2, ExcNotImplemented());
-
-  // Create a simple square mesh
-  GridGenerator::hyper_cube(triangulation, 0, 1);
-  triangulation.refine_global(n_refinements);
+  if constexpr (dim == 1)
+    {
+      GridGenerator::hyper_cube(triangulation, 0, 2 * std::numbers::pi);
+    }
+  else if constexpr (dim == 2)
+    {
+      // Create a simple square mesh
+      GridGenerator::hyper_cube(triangulation, 0, 1);
+      triangulation.refine_global(n_refinements);
+    }
 }
 
 template <int dim>
@@ -384,6 +401,7 @@ DGAdvectionMoments<dim>::setup_dofs()
   system_matrix.reinit(sparsity_pattern);
   system_rhs.reinit(dof_handler.n_dofs());
   solution.reinit(dof_handler.n_dofs());
+  previous_solution.reinit(dof_handler.n_dofs());
   system_rhs.reinit(dof_handler.n_dofs());
 
   std::cout << "Number of active cells: " << triangulation.n_active_cells()
@@ -407,59 +425,80 @@ DGAdvectionMoments<dim>::assemble_system()
   // quadrature point
   const DirichletBC<dim> dirichlet_bc_function;
 
+  system_matrix = 0.0;
+  system_rhs    = 0.0;
+
   // Iterator
   const auto cell_worker = [&](const Iterator   &cell,
                                ScratchData<dim> &scratch_data,
                                CopyData         &copy_data) {
     TimerOutput::Scope t(computing_timer, "assemble cell terms");
 
-    // Get number of DoFs per cell
     const unsigned int dofs_per_cell =
       scratch_data.fe_values.get_fe().dofs_per_cell;
 
-    // Reinitialize copy_data and fe_values for the current cell
+    // Gather previous solution dof values (cell-local)
+    Vector<double> prev_sol(dofs_per_cell);
+    cell->get_dof_values(previous_solution, prev_sol);
+
     copy_data.reinit(cell, dofs_per_cell);
     scratch_data.fe_values.reinit(cell);
 
-    // Get quadrature points from fe_values
-    const std::vector<Point<dim>> &q_points =
-      scratch_data.fe_values.get_quadrature_points();
+    const auto &q_points = scratch_data.fe_values.get_quadrature_points();
+    const FEValues<dim> &fe_values = scratch_data.fe_values;
+    const auto          &JxW       = fe_values.get_JxW_values();
 
-    // Get references to fe_values and JxW values
-    const FEValues<dim>       &fe_values = scratch_data.fe_values;
-    const std::vector<double> &JxW       = fe_values.get_JxW_values();
-
-    // Assemble cell internal terms
     for (unsigned int q = 0; q < fe_values.n_quadrature_points; ++q)
       {
-        // Get velocity at quadrature point q using velocity field function
         Tensor<1, dim> velocity;
         velocity_field.vector_value(q_points[q], velocity);
-        double div_velocity;
-        velocity_field.divergence_value(q_points[q], div_velocity);
 
-        // Loop over dofs in cell
+        double div_velocity = 0.0;
+        if (use_divergence)
+          velocity_field.divergence_value(q_points[q], div_velocity);
+
+        // u^n at this quadrature point
+        double m_n_q = 0.0;
+        for (unsigned int j = 0; j < dofs_per_cell; ++j)
+          m_n_q += prev_sol[j] * fe_values.shape_value(j, q);
+
         for (unsigned int i = 0; i < dofs_per_cell; ++i)
           {
-            // Gather shape function value and gradient at quadrature point q
-            // The index i corresponds to the test function
             const double         phi_i      = fe_values.shape_value(i, q);
             const Tensor<1, dim> grad_phi_i = fe_values.shape_grad(i, q);
 
             for (unsigned int j = 0; j < dofs_per_cell; ++j)
               {
-                // The index j corresponds to the trial function
                 const double phi_j = fe_values.shape_value(j, q);
 
-                // Add entry to the local cell matrix
-                // Weak form: (\nabla \phi_i, u \phi_j)
-                copy_data.cell_matrix(i, j) +=
-                  (-grad_phi_i * velocity * phi_j) * JxW[q];
+                if (implicit)
+                  {
+                    // conservative IBP volume term: - (∇phi_i · v) * (phi_j)
+                    copy_data.cell_matrix(i, j) +=
+                      (-(grad_phi_i * velocity) * phi_j) * JxW[q];
+                  }
 
-                // Add divergence of the velocity
                 if (use_divergence)
-                  copy_data.cell_matrix(i, j) +=
-                    (-phi_i * div_velocity * phi_j) * JxW[q];
+                  {
+                    copy_data.cell_matrix(i, j) -=
+                      (+phi_i * div_velocity * phi_j) * JxW[q];
+                  }
+
+                // mass term
+                copy_data.cell_matrix(i, j) +=
+                  (1.0 / time_step) * (phi_i * phi_j) * JxW[q];
+              }
+
+            // mass RHS: (1/dt) * (phi_i * u^n(q))
+            copy_data.cell_rhs(i) += (1.0 / time_step) * phi_i * m_n_q * JxW[q];
+
+            if (!implicit)
+              {
+                // explicit convective volume term moved to RHS:
+                // + ∫ (∇phi_i · v) * u^n  (since the matrix counterpart was -
+                // ... on the LHS)
+                copy_data.cell_rhs(i) +=
+                  ((grad_phi_i * velocity) * m_n_q) * JxW[q];
               }
           }
       }
@@ -481,6 +520,10 @@ DGAdvectionMoments<dim>::assemble_system()
 
     // Get number of DoFs per face
     const unsigned int dofs_per_face = fe_face.get_fe().n_dofs_per_cell();
+
+    // Gather previous solution
+    Vector<double> prev_sol(dofs_per_face);
+    cell->get_dof_values(previous_solution, prev_sol);
 
     // Get normal unit vectors
     const std::vector<Tensor<1, dim>> &normals = fe_face.get_normal_vectors();
@@ -505,17 +548,28 @@ DGAdvectionMoments<dim>::assemble_system()
 
         const double velocity_dot_n = velocity * normals[q];
 
+        // u^n at this quadrature point
+        double m_n_q = 0.0;
+        for (unsigned int j = 0; j < dofs_per_face; ++j)
+          m_n_q += prev_sol[j] * fe_face.shape_value(j, q);
+
         if (velocity_dot_n > 0.0)
           {
             for (unsigned int i = 0; i < dofs_per_face; ++i)
               {
                 const double phi_i = fe_face.shape_value(i, q);
-                for (unsigned int j = 0; j < dofs_per_face; ++j)
+                if (implicit)
                   {
-                    const double phi_j = fe_face.shape_value(j, q);
-                    copy_data.cell_matrix(i, j) +=
-                      (phi_i * phi_j * velocity_dot_n) * JxW[q];
+                    for (unsigned int j = 0; j < dofs_per_face; ++j)
+                      {
+                        const double phi_j = fe_face.shape_value(j, q);
+                        copy_data.cell_matrix(i, j) +=
+                          (phi_i * phi_j * velocity_dot_n) * JxW[q];
+                      }
                   }
+                else
+                  copy_data.cell_rhs(i) -=
+                    (phi_i * m_n_q * velocity_dot_n) * JxW[q];
               }
           }
         else
@@ -523,8 +577,7 @@ DGAdvectionMoments<dim>::assemble_system()
             for (unsigned int i = 0; i < dofs_per_face; ++i)
               {
                 const double phi_i = fe_face.shape_value(i, q);
-                copy_data.cell_rhs(i) +=
-                  (-phi_i * g * velocity_dot_n) * JxW[q];
+                copy_data.cell_rhs(i) += (-phi_i * g * velocity_dot_n) * JxW[q];
               }
           }
       }
@@ -548,13 +601,22 @@ DGAdvectionMoments<dim>::assemble_system()
     const unsigned int n_dofs        = fe_iv.n_current_interface_dofs();
     copy_data_face.joint_dof_indices = fe_iv.get_interface_dof_indices();
 
+    // Gather previous solution
+    Vector<double> prev_sol(n_dofs);
+    cell->get_dof_values(previous_solution, prev_sol);
+
     copy_data_face.cell_matrix.reinit(n_dofs, n_dofs);
+    copy_data_face.cell_rhs.reinit(n_dofs);
 
     const std::vector<double>         &JxW     = fe_iv.get_JxW_values();
     const std::vector<Tensor<1, dim>> &normals = fe_iv.get_normal_vectors();
 
+
+
     for (unsigned int q = 0; q < q_points.size(); ++q)
       {
+        // u^n at this quadrature point
+        double m_n_q = 0.0;
         Tensor<1, dim> velocity;
         velocity_field.vector_value(q_points[q], velocity);
 
@@ -564,12 +626,29 @@ DGAdvectionMoments<dim>::assemble_system()
           // The index i corresponds to the test function
           {
             const double phi_i = fe_iv.jump_in_shape_values(i, q);
-            for (unsigned int j = 0; j < n_dofs; ++j)
+            // if (implicit)
               {
-                copy_data_face.cell_matrix(i, j) +=
-                  (phi_i * fe_iv.shape_value((velocity_dot_n > 0), j, q) *
-                   velocity_dot_n) *
-                  JxW[q];
+                for (unsigned int j = 0; j < n_dofs; ++j)
+                  {
+                    copy_data_face.cell_matrix(i, j) +=
+                      (phi_i * fe_iv.shape_value((velocity_dot_n >= 0), j, q) *
+                       velocity_dot_n) *
+                      JxW[q];
+                  }
+              }
+            // else
+              {
+                // choose plus-side if inflow (vn < 0), minus-side otherwise
+                const bool is_plus_up = (velocity_dot_n < 0.0);
+
+                double m_up = 0.0;
+                for (unsigned int j = 0; j < n_dofs; ++j)
+                  m_up +=
+                    m_n_q *
+                    fe_iv.shape_value(is_plus_up, j, q);
+
+                copy_data_face.cell_rhs(i) -=
+                  (phi_i * m_up * velocity_dot_n) * JxW[q];
               }
           }
       }
@@ -586,8 +665,10 @@ DGAdvectionMoments<dim>::assemble_system()
 
     for (const auto &cdf : c.face_data)
       constraints.distribute_local_to_global(cdf.cell_matrix,
+                                             cdf.cell_rhs,
                                              cdf.joint_dof_indices,
-                                             system_matrix);
+                                             system_matrix,
+                                             system_rhs);
   };
 
   ScratchData<dim> scratch_data(mapping, fe, quadrature, quadrature_face);
@@ -610,7 +691,7 @@ template <int dim>
 void
 DGAdvectionMoments<dim>::solve()
 {
-  SolverControl solver_control(1000, 1e-6 * system_rhs.l2_norm());
+  SolverControl solver_control(5000, 1e-8);
 
   SolverGMRES<Vector<double>>::AdditionalData ad;
   ad.max_basis_size = 100;
@@ -623,22 +704,25 @@ DGAdvectionMoments<dim>::solve()
   solver.solve(system_matrix, solution, system_rhs, prec);
 
   std::cout << "  GMRES iterations: " << solver_control.last_step() << '\n';
+  previous_solution = solution;
 }
 
 template <int dim>
 void
-DGAdvectionMoments<dim>::output_results(const int cycle) const
+DGAdvectionMoments<dim>::output_results(const int time_step) const
 {
   std::string filename;
   if (use_divergence)
-    filename = "solution-div-" + std::to_string(cycle) + ".vtk";
+    filename = "output/solution-div-" + std::to_string(time_step) + ".vtk";
   else
-    filename = "solution-" + std::to_string(cycle) + ".vtk";
+    filename = "output/solution-" + std::to_string(time_step) + ".vtk";
   std::cout << "  Writing solution to <" << filename << '>' << std::endl;
   std::ofstream output(filename);
 
   Vector<double> concentration_values(dof_handler.n_dofs());
-  VectorTools::interpolate(dof_handler, ConcentrationField<dim>(), concentration_values);
+  VectorTools::interpolate(dof_handler,
+                           ConcentrationField<dim>(),
+                           concentration_values);
 
   DataOut<dim> data_out;
   data_out.attach_dof_handler(dof_handler);
@@ -659,12 +743,11 @@ DGAdvectionMoments<dim>::output_results(const int cycle) const
                                       Functions::ZeroFunction<dim>(),
                                       values,
                                       quadrature,
-                                      VectorTools::Linfty_norm);
-    const double l_infty =
-      VectorTools::compute_global_error(triangulation,
-                                        values,
-                                        VectorTools::Linfty_norm);
-    std::cout << "  L-infinity norm: " << l_infty << std::endl;
+                                      VectorTools::L2_norm);
+    const double l2 = VectorTools::compute_global_error(triangulation,
+                                                        values,
+                                                        VectorTools::L2_norm);
+    std::cout << "  L2 norm: " << l2 << std::endl;
   }
 }
 
@@ -672,30 +755,24 @@ template <int dim>
 void
 DGAdvectionMoments<dim>::run()
 {
-  for (unsigned int cycle = 0; cycle < 6; ++cycle)
+  GridGenerator::hyper_cube(triangulation);
+  triangulation.refine_global(7);
+  // refine_grid();
+
+  setup_dofs();
+
+  compute_cfl_number();
+
+  output_results(0);
+
+  for (unsigned int time_step_no = 1; time_step_no < n_time_steps;
+       ++time_step_no)
     {
-      std::cout << "Cycle " << cycle << std::endl;
-
-      if (cycle == 0)
-        {
-          GridGenerator::hyper_cube(triangulation);
-          triangulation.refine_global(3);
-        }
-      else
-        refine_grid();
-
-      std::cout << "  Number of active cells:       "
-                << triangulation.n_active_cells() << std::endl;
-
-      setup_dofs();
-
-      std::cout << "  Number of degrees of freedom: " << dof_handler.n_dofs()
+      std::cout << "  Time step " << time_step_no + 1 << " / " << n_time_steps
                 << std::endl;
-
       assemble_system();
       solve();
-
-      output_results(cycle);
+      output_results(time_step_no);
     }
 }
 
@@ -713,10 +790,12 @@ main() //(int argc, char *argv[])
   //                            0);
   try
     {
-      DGAdvectionMoments<2> dg_advection_moments(1, 4, false);
-      dg_advection_moments.run();
-      DGAdvectionMoments<2> dg_advection_moments_div(1, 4, true);
-      dg_advection_moments_div.run();
+      // DGAdvectionMoments<2> dg_advection_moments(1, 4, false);
+      // dg_advection_moments.run();
+      // DGAdvectionMoments<2> dg_advection_moments_div(1, 4, true);
+      // dg_advection_moments_div.run();
+      DGAdvectionMoments<1> dg_advection_moments_1d(1, 7, false);
+      dg_advection_moments_1d.run();
     }
   catch (std::exception &exc)
     {
