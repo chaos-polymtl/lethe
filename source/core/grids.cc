@@ -432,10 +432,6 @@ read_mesh_and_manifolds_for_stator_and_rotor(
     ExcMessage(
       "The mesh types for the rotor and stator geometries must be the same."));
 
-  // Faces at rotor-stator interface
-  unsigned int n_faces_rotor_interface  = 0;
-  unsigned int n_faces_stator_interface = 0;
-
   // Since the rotor and stator meshes are read separately, a dummy
   // triangulation is created for each part of the domain and then merged
 
@@ -468,17 +464,9 @@ read_mesh_and_manifolds_for_stator_and_rotor(
       // Shift rotor boundary IDs #
       unsigned int n_boundary_ids_stator =
         stator_temp_tria.get_boundary_ids().size();
-      // Check number of faces at rotor interface with stator
       for (const auto &face : rotor_temp_tria.active_face_iterators())
-        {
-          if (face->at_boundary())
-            {
-              face->set_boundary_id(face->boundary_id() +
-                                    n_boundary_ids_stator);
-              if (face->boundary_id() == mortar_parameters.rotor_boundary_id)
-                n_faces_rotor_interface++;
-            }
-        }
+        if (face->at_boundary())
+          face->set_boundary_id(face->boundary_id() + n_boundary_ids_stator);
 
       // Keep track of modified IDs in faces and lines
       std::vector<bool> changed_manifold_ids_faces(
@@ -517,16 +505,6 @@ read_mesh_and_manifolds_for_stator_and_rotor(
             }
         }
 
-      // Check number of faces at stator interface with rotor
-      for (const auto &face : stator_temp_tria.active_face_iterators())
-        {
-          if (face->at_boundary())
-            {
-              if (face->boundary_id() == mortar_parameters.stator_boundary_id)
-                n_faces_stator_interface++;
-            }
-        }
-
       // Store rotor manifolds in shifted IDs #
       for (unsigned int m = 0; m < rotor_temp_tria.get_manifold_ids().size();
            m++)
@@ -562,18 +540,6 @@ read_mesh_and_manifolds_for_stator_and_rotor(
       GridGenerator::merge_triangulations(
         stator_temp_tria, rotor_temp_tria, triangulation, 0.0, true, true);
 
-      // Check number of faces at the rotor-stator interface
-      for (const auto &face : triangulation.active_face_iterators())
-        {
-          if (face->at_boundary())
-            {
-              if (face->boundary_id() == mortar_parameters.rotor_boundary_id)
-                n_faces_rotor_interface++;
-              if (face->boundary_id() == mortar_parameters.stator_boundary_id)
-                n_faces_stator_interface++;
-            }
-        }
-
       // Gather all the manifold ids within a set
       std::set<int> manifold_ids;
       for (unsigned int i = 0; i < manifolds_parameters.size; ++i)
@@ -599,14 +565,6 @@ read_mesh_and_manifolds_for_stator_and_rotor(
   else
     throw std::runtime_error(
       "Unsupported mesh type - mesh will not be created");
-
-  AssertThrow(
-    n_faces_rotor_interface == n_faces_stator_interface,
-    ExcMessage(
-      "The number of faces at the rotor interface ID #" +
-      std::to_string(mortar_parameters.rotor_boundary_id) +
-      " is different from the number of faces at the stator interface ID #" +
-      std::to_string(mortar_parameters.stator_boundary_id) + "."));
 
   // Setup boundary conditions
   setup_periodic_boundary_conditions(triangulation, boundary_conditions);
@@ -638,6 +596,42 @@ read_mesh_and_manifolds_for_stator_and_rotor(
             triangulation);
         }
     }
+
+  // Faces at rotor-stator interface
+  unsigned int n_faces_rotor_interface  = 0;
+  unsigned int n_faces_stator_interface = 0;
+
+  // Check number of faces at the rotor-stator interface
+  for (const auto &cell : triangulation.active_cell_iterators())
+    if (cell->is_locally_owned())
+      for (const auto face_no : cell->face_indices())
+        if (cell->face(face_no)->at_boundary())
+          {
+            if (cell->face(face_no)->boundary_id() ==
+                mortar_parameters.rotor_boundary_id)
+              n_faces_rotor_interface++;
+            if (cell->face(face_no)->boundary_id() ==
+                mortar_parameters.stator_boundary_id)
+              n_faces_stator_interface++;
+          }
+
+  // Total number of faces
+  const unsigned int n_faces_rotor_interface_total =
+    Utilities::MPI::sum(n_faces_rotor_interface,
+                        triangulation.get_mpi_communicator());
+  const unsigned int n_faces_stator_interface_total =
+    Utilities::MPI::sum(n_faces_stator_interface,
+                        triangulation.get_mpi_communicator());
+
+  AssertThrow(
+    n_faces_rotor_interface_total == n_faces_stator_interface_total,
+    ExcMessage(
+      "The number of faces at the rotor interface ID #" +
+      std::to_string(mortar_parameters.rotor_boundary_id) + " (" +
+      std::to_string(n_faces_rotor_interface_total) +
+      ") is different from the number of faces at the stator interface ID #" +
+      std::to_string(mortar_parameters.stator_boundary_id) + " (" +
+      std::to_string(n_faces_rotor_interface_total) + ")."));
 }
 
 template void
