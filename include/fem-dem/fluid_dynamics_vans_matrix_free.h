@@ -9,6 +9,7 @@
 #include <fem-dem/cfd_dem_simulation_parameters.h>
 #include <fem-dem/particle_projector.h>
 
+
 /**
  * @brief A geometric multigrid preconditioner implementation for
  * incompressible VANS equations.
@@ -65,6 +66,7 @@ public:
              FlowControl<dim>                         &flow_control,
              const VectorType                         &present_solution,
              const VectorType             &time_derivative_previous_solutions,
+             const VectorType             &time_derivative_void_fraction,
              const ParticleProjector<dim> &particle_projector);
 
 private:
@@ -146,6 +148,8 @@ private:
 template <int dim>
 class FluidDynamicsVANSMatrixFree : public FluidDynamicsMatrixFree<dim>
 {
+  using VectorType = LinearAlgebra::distributed::Vector<double>;
+
 public:
   /**
    * @brief Constructor that sets the finite element degree and system operator
@@ -223,6 +227,14 @@ protected:
   void
   vertices_cell_mapping();
 
+  /**
+   * @brief Evaluate the time derivative of the void fraction.
+   * This evaluates the time-derivative as a solution vector which can be passed
+   * to the matrix-free operator.
+   */
+  void
+  evaluate_time_derivative_void_fraction();
+
   /// Simulation parameters for CFD-DEM simulations
   CFDDEMSimulationParameters<dim> cfd_dem_simulation_parameters;
 
@@ -252,5 +264,8 @@ protected:
   std::map<unsigned int,
            std::set<typename DoFHandler<dim>::active_cell_iterator>>
     vertices_to_periodic_cell;
+
+  /// Vector to store the time derivative of the void fraction
+  VectorType time_derivative_void_fraction;
 };
 #endif

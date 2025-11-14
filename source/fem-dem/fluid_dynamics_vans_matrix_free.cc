@@ -41,6 +41,7 @@ MFNavierStokesVANSPreconditionGMG<dim>::initialize(
   FlowControl<dim>                         &flow_control,
   const VectorType                         &present_solution,
   const VectorType                         &time_derivative_previous_solutions,
+  const VectorType                         &time_derivative_void_fraction,
   const ParticleProjector<dim>             &particle_projector)
 {
   if (this->simulation_parameters.linear_solver.at(PhysicsID::fluid_dynamics)
@@ -219,6 +220,9 @@ MFNavierStokesVANSPreconditionGMG<dim>::initialize(
         mg_void_fraction_solution(this->minlevel, this->maxlevel);
 
       MGLevelObject<MFNavierStokesVANSPreconditionGMG::MGVectorType>
+        mg_time_derivative_void_fraction(this->minlevel, this->maxlevel);
+
+      MGLevelObject<MFNavierStokesVANSPreconditionGMG::MGVectorType>
         mg_pf_forces_solution(this->minlevel, this->maxlevel);
 
       MGLevelObject<MFNavierStokesVANSPreconditionGMG::MGVectorType>
@@ -240,6 +244,11 @@ MFNavierStokesVANSPreconditionGMG<dim>::initialize(
         particle_projector.dof_handler,
         mg_void_fraction_solution,
         particle_projector.void_fraction_solution);
+
+      this->mg_transfer_gc_void_fraction->interpolate_to_mg(
+        particle_projector.dof_handler,
+        mg_time_derivative_void_fraction,
+        time_derivative_void_fraction);
 
       particle_projector.fluid_force_on_particles_two_way_coupling
         .particle_field_solution.update_ghost_values();
@@ -295,7 +304,8 @@ MFNavierStokesVANSPreconditionGMG<dim>::initialize(
             {
               mf_operator->compute_void_fraction(
                 this->void_fraction_dof_handlers[l],
-                mg_void_fraction_solution[l]);
+                mg_void_fraction_solution[l],
+                mg_time_derivative_void_fraction[l]);
 
               mf_operator->compute_particle_fluid_interaction(
                 this->pf_force_dof_handlers[l],
@@ -371,6 +381,10 @@ FluidDynamicsVANSMatrixFree<dim>::setup_dofs()
   particle_projector.setup_dofs();
   particle_projector.setup_constraints(
     this->cfd_dem_simulation_parameters.cfd_parameters.boundary_conditions);
+
+  // Initialize the time derivative of the void fraction.
+  this->system_operator->initialize_dof_vector(
+    this->time_derivative_void_fraction);
 }
 
 template <int dim>
@@ -623,6 +637,28 @@ FluidDynamicsVANSMatrixFree<dim>::vertices_cell_mapping()
 
 template <int dim>
 void
+FluidDynamicsVANSMatrixFree<dim>::evaluate_time_derivative_void_fraction()
+{
+  this->time_derivative_void_fraction = 0;
+
+  // Time stepping information
+  const auto method = this->simulation_control->get_assembly_method();
+  // Vector for the BDF coefficients
+  const Vector<double> &bdf_coefs =
+    this->simulation_control->get_bdf_coefficients();
+
+  this->time_derivative_void_fraction.add(
+    bdf_coefs[0], this->particle_projector.void_fraction_solution);
+  for (unsigned int p = 0; p < number_of_previous_solutions(method); ++p)
+    {
+      this->time_derivative_void_fraction.add(
+        bdf_coefs[p + 1],
+        this->particle_projector.void_fraction_previous_solution[p]);
+    }
+}
+
+template <int dim>
+void
 FluidDynamicsVANSMatrixFree<dim>::solve()
 {
   this->computing_timer.enter_subsection("Read mesh, manifolds and particles");
@@ -724,7 +760,8 @@ FluidDynamicsVANSMatrixFree<dim>::solve()
 
             mf_operator->compute_void_fraction(
               particle_projector.dof_handler,
-              particle_projector.void_fraction_solution);
+              particle_projector.void_fraction_solution,
+              this->time_derivative_void_fraction);
 
             mf_operator->compute_particle_fluid_interaction(
               particle_projector.fluid_force_on_particles_two_way_coupling
@@ -785,6 +822,7 @@ FluidDynamicsVANSMatrixFree<dim>::initialize_GMG()
                  this->flow_control,
                  this->present_solution,
                  this->time_derivative_previous_solutions,
+                 this->time_derivative_void_fraction,
                  this->particle_projector);
 }
 

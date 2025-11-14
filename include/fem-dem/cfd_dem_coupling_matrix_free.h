@@ -353,6 +353,7 @@ private:
   dem_contact_build(unsigned int counter);
 
 
+
   /// Frequency of coupling between CFD and DEM solvers (in DEM time steps)
   unsigned int coupling_frequency;
 

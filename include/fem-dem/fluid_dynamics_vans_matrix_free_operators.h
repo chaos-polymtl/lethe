@@ -52,11 +52,16 @@ public:
    *
    * @param[in] void_fraction_solution The solution of the void fraction
    *
+   * @param[in] time_derivative_void_fraction The time derivative of the void
+   * fraction.
+   *
    */
   void
   compute_void_fraction(
     const DoFHandler<dim>                            &void_fraction_dof_handler,
-    const LinearAlgebra::distributed::Vector<double> &void_fraction_solution);
+    const LinearAlgebra::distributed::Vector<double> &void_fraction_solution,
+    const LinearAlgebra::distributed::Vector<double>
+      &time_derivative_void_fraction);
 
   /**
    * @brief Compute the terms required to assemble the particle-fluid forces at

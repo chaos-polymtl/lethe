@@ -54,7 +54,9 @@ template <int dim, typename number>
 void
 VANSOperator<dim, number>::compute_void_fraction(
   const DoFHandler<dim>                            &void_fraction_dof_handler,
-  const LinearAlgebra::distributed::Vector<double> &void_fraction_solution)
+  const LinearAlgebra::distributed::Vector<double> &void_fraction_solution,
+  const LinearAlgebra::distributed::Vector<double>
+    &time_derivative_void_fraction)
 {
   this->timer.enter_subsection("operator::compute_void_fraction");
 

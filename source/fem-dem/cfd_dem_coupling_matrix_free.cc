@@ -754,6 +754,8 @@ CFDDEMMatrixFree<dim>::check_contact_detection_method(unsigned int counter)
     }
 }
 
+
+
 template <int dim>
 void
 CFDDEMMatrixFree<dim>::load_balance()
@@ -1403,28 +1405,30 @@ CFDDEMMatrixFree<dim>::solve()
           this->vertices_cell_mapping();
         }
 
+      // We calculate the void fraction and the particle-fluid interaction using
+      // the particle projector.
+      this->particle_projector.calculate_void_fraction(
+        this->simulation_control->get_current_time());
+
       if (is_bdf(this->simulation_control->get_assembly_method()))
         {
-          this->computing_timer.enter_subsection(
-            "Calculate time derivative previous solutions");
+          this->computing_timer.enter_subsection("Calculate time derivatives");
 
           this->calculate_time_derivative_previous_solutions();
           this->time_derivative_previous_solutions.update_ghost_values();
           this->system_operator->evaluate_time_derivative_previous_solutions(
             this->time_derivative_previous_solutions);
 
-          this->computing_timer.leave_subsection(
-            "Calculate time derivative previous solutions");
+          this->evaluate_time_derivative_void_fraction();
+          this->time_derivative_void_fraction.update_ghost_values();
+
+          this->computing_timer.leave_subsection("Calculate time derivatives");
 
           if (this->simulation_parameters.flow_control.enable_flow_control)
             this->system_operator->update_beta_force(
               this->flow_control.get_beta());
         }
 
-      // We calculate the void fraction and the particle-fluid interaction using
-      // the particle projector.
-      this->particle_projector.calculate_void_fraction(
-        this->simulation_control->get_current_time());
 
       this->particle_projector.calculate_particle_fluid_forces_projection(
         this->cfd_dem_simulation_parameters.cfd_dem,
@@ -1452,7 +1456,8 @@ CFDDEMMatrixFree<dim>::solve()
 
           mf_operator->compute_void_fraction(
             this->particle_projector.dof_handler,
-            this->particle_projector.void_fraction_solution);
+            this->particle_projector.void_fraction_solution,
+            this->time_derivative_void_fraction);
 
           mf_operator->compute_particle_fluid_interaction(
             this->particle_projector.fluid_force_on_particles_two_way_coupling
