@@ -24,7 +24,7 @@ public:
    *
    */
   DisabledNonLinearSolver(PhysicsSolver<VectorType>         *physics_solver,
-                        const Parameters::NonLinearSolver &param);
+                          const Parameters::NonLinearSolver &param);
 
 
   /**
@@ -59,18 +59,18 @@ DisabledNonLinearSolver<VectorType>::solve(const bool is_initial_step)
 
   if (this->params.verbosity != Parameters::Verbosity::quiet)
     {
-      solver->pcout
-        << "Newton iteration disabled, solving linear system only." << std::endl;
+      solver->pcout << "Non-linear solver disabled, solving linear system only."
+                    << std::endl;
     }
 
   solver->assemble_system_matrix();
   solver->setup_preconditioner();
   solver->assemble_system_rhs();
 
-  //The linear system is solved only once, therefore initial_step is always true
+  // The linear system is solved only once, therefore initial_step is always
+  // true
   solver->solve_linear_system(true);
   present_solution = solver->get_present_solution();
-
 }
 
 #endif
