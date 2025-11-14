@@ -4,6 +4,8 @@
 #ifndef lethe_physics_solver_h
 #define lethe_physics_solver_h
 
+
+#include <core/disabled_non_linear_solver.h>
 #include <core/inexact_newton_non_linear_solver.h>
 #include <core/kinsol_newton_non_linear_solver.h>
 #include <core/newton_non_linear_solver.h>
@@ -161,7 +163,8 @@ PhysicsSolver<VectorType>::PhysicsSolver(
           this, non_linear_solver_parameters);
         break;
       case Parameters::NonLinearSolver::SolverType::disabled:
-        non_linear_solver = nullptr;
+        non_linear_solver = new DisabledNonLinearSolver<VectorType>(
+          this, non_linear_solver_parameters);
         break;
       default:
         break;

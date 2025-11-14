@@ -46,6 +46,7 @@ add_library(lethe-core
   ../../include/core/dem_properties.h
   ../../include/core/density_model.h
   ../../include/core/dimensionality.h
+  ../../include/core/disabled_non_linear_solver.h
   ../../include/core/evaporation_model.h
   ../../include/core/exceptions.h
   ../../include/core/grids.h
