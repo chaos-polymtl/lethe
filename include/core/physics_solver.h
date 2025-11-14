@@ -163,8 +163,9 @@ PhysicsSolver<VectorType>::PhysicsSolver(
           this, non_linear_solver_parameters);
         break;
       case Parameters::NonLinearSolver::SolverType::disabled:
-        non_linear_solver = new DisabledNonLinearSolver<VectorType>(
-          this, non_linear_solver_parameters);
+        non_linear_solver =
+          new DisabledNonLinearSolver<VectorType>(this,
+                                                  non_linear_solver_parameters);
         break;
       default:
         break;

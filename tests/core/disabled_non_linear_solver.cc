@@ -9,8 +9,9 @@
 // Lethe
 #include <core/parameters.h>
 
-// Tests 
+// Tests
 #include <../tests/core/linear_test_system_01.h>
+
 #include <../tests/tests.h>
 
 void
@@ -22,14 +23,14 @@ test()
     .kinsol_strategy =
       Parameters::NonLinearSolver::KinsolStrategy::normal_newton, // not used in
                                                                   // this case
-    .tolerance                    = 1e-8, // not used in this case
-    .max_iterations               = 10, // not used in this case
-    .display_precision            = 4, // not used in this case
-    .force_rhs_calculation        = false, // not used in this case
-    .matrix_tolerance             = 0.1, // not used in this case
-    .step_tolerance               = 0.99, // not used in this case
-    .reuse_matrix                 = false, // not used in this case
-    .reuse_preconditioner         = false, // not used in this case
+    .tolerance                    = 1e-8,   // not used in this case
+    .max_iterations               = 10,     // not used in this case
+    .display_precision            = 4,      // not used in this case
+    .force_rhs_calculation        = false,  // not used in this case
+    .matrix_tolerance             = 0.1,    // not used in this case
+    .step_tolerance               = 0.99,   // not used in this case
+    .reuse_matrix                 = false,  // not used in this case
+    .reuse_preconditioner         = false,  // not used in this case
     .abort_at_convergence_failure = false}; // not used in this case
 
   deallog << "Creating solver" << std::endl;
@@ -40,7 +41,8 @@ test()
 
 
   deallog << "Solving linear system " << std::endl;
-  // We use solve_non_linear_system of equation even if the system is linear because it inherits from the NonLinearSolver base class.
+  // We use solve_non_linear_system of equation even if the system is linear
+  // because it inherits from the NonLinearSolver base class.
   solver->solve_non_linear_system(true);
 
   auto &present_solution = solver->get_present_solution();
