@@ -50,6 +50,8 @@ namespace DEM
           std::make_pair("fem_torque", 1);
         properties[PropertiesIndex::volumetric_contribution] =
           std::make_pair("volumetric_contribution", 1);
+        properties[PropertiesIndex::momentum_transfer_coefficient] =
+          std::make_pair("momentum_transfer_coefficient", 1);
       }
 
     if constexpr (std::is_same_v<PropertiesIndex,
