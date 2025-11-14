@@ -86,7 +86,10 @@ FluidDynamicsMatrixBased<dim>::setup_dofs_fd()
   this->define_zero_constraints();
 
   // If enabled, create mortar operators
-  this->reinit_mortar_operators();
+  // if (this->simulation_control->get_step_number() == 0)
+  this->reinit_mortar_operators(true);
+  // else
+  //   this->reinit_mortar_operators(false);
 
   // Operations on the following vectors (addition, multiplication, etc.) can
   // only be done if these are reinitialized WITHOUT locally_relevant_dofs. This
@@ -237,7 +240,7 @@ FluidDynamicsMatrixBased<dim>::update_mortar_configuration()
       this->define_zero_constraints();
 
       // Create mortar manager, operator, and evaluator
-      this->reinit_mortar_operators();
+      this->reinit_mortar_operators(false);
 
       // Create dynamic sparsity pattern
       DynamicSparsityPattern dsp(this->locally_relevant_dofs);

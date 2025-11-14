@@ -229,6 +229,10 @@ public:
                       const DoFHandler<dim>         &dof_handler,
                       const Parameters::Mortar<dim> &mortar_parameters);
 
+  /// Initial rotation angle used for computing mortar locations, accounting for
+  /// cases here the element edges are not aligned with the x axis
+  const double pre_rotation_angle;
+
 protected:
   Point<dim>
   from_1D(const double rad) const override;
@@ -238,10 +242,6 @@ protected:
 
   Tensor<1, dim, double>
   get_normal(const Point<dim> &point) const override;
-
-  /// Initial rotation angle used for computing mortar locations, accounting for
-  /// cases here the element edges are not aligned with the x axis
-  const double pre_rotation_angle;
 
   /// Center of rotation
   const Point<dim> center_of_rotation;

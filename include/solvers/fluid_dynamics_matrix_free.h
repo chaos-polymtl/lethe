@@ -486,7 +486,7 @@ protected:
    * solver.
    */
   void
-  reinit_mortar_operators_mf();
+  reinit_mortar_operators_mf(bool is_first);
 
   /**
    * @brief  Update the average velocity field solution in the multiphyscics interface.

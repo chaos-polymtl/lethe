@@ -489,7 +489,7 @@ protected:
    * @brief Initialize mortar coupling manager, operator, and evaluator
    */
   void
-  reinit_mortar_operators();
+  reinit_mortar_operators(bool is_first);
 
   /**
    * @brief Returns the mapping shared pointer. A MappingQCache is

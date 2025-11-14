@@ -2152,19 +2152,41 @@ NavierStokesBase<dim, VectorType, DofsType>::define_zero_constraints()
 
 template <int dim, typename VectorType, typename DofsType>
 void
-NavierStokesBase<dim, VectorType, DofsType>::reinit_mortar_operators()
+NavierStokesBase<dim, VectorType, DofsType>::reinit_mortar_operators(
+  bool is_first)
 {
   if (!this->simulation_parameters.mortar_parameters.enable)
     return;
 
   TimerOutput::Scope t(this->computing_timer, "Reinit mortar operators");
 
+  // Compute variables
+  std::vector<unsigned int> n_subdivisions;
+  std::vector<double>       radius;
+  double                    pre_rotation_angle;
+
+  if (is_first)
+    std::tie(n_subdivisions, radius, pre_rotation_angle) =
+      compute_n_subdivisions_and_radius(
+        *this->triangulation,
+        *this->mapping,
+        this->simulation_parameters.mortar_parameters);
+  else
+    {
+      n_subdivisions     = this->mortar_manager->n_subdivisions;
+      radius             = this->mortar_manager->radius;
+      pre_rotation_angle = this->mortar_manager->pre_rotation_angle;
+    }
+
   // Create mortar manager
   this->mortar_manager = std::make_shared<MortarManagerCircle<dim>>(
+    n_subdivisions,
+    radius,
     *this->cell_quadrature,
-    *this->get_mapping(),
-    this->dof_handler,
-    this->simulation_parameters.mortar_parameters);
+    this->simulation_parameters.mortar_parameters.rotor_rotation_angle->value(
+      Point<dim>()),
+    this->simulation_parameters.mortar_parameters.center_of_rotation,
+    pre_rotation_angle);
 
   // Create mortar coupling evaluator
   this->mortar_coupling_evaluator =
@@ -2221,6 +2243,16 @@ NavierStokesBase<dim, VectorType, DofsType>::rotate_rotor_mapping(
                   << std::endl;
     }
 
+  // Compute radius if this is the first iteration
+  double radius;
+  if (this->simulation_control->get_step_number() == 0)
+    radius = std::get<1>(compute_n_subdivisions_and_radius(
+      *this->triangulation,
+      *this->mapping,
+      this->simulation_parameters.mortar_parameters))[0];
+  else
+    radius = this->mortar_manager->radius[0];
+
   // Create new mapping cache
   this->mapping_cache =
     std::make_shared<MappingQCache<dim>>(this->velocity_fem_degree);
@@ -2229,10 +2261,7 @@ NavierStokesBase<dim, VectorType, DofsType>::rotate_rotor_mapping(
     this->dof_handler,
     *this->mapping_cache,
     *this->mapping,
-    std::get<1>(compute_n_subdivisions_and_radius(
-      *this->triangulation,
-      *this->mapping,
-      this->simulation_parameters.mortar_parameters))[0],
+    radius,
     rotation_angle,
     this->simulation_parameters.mortar_parameters.center_of_rotation,
     this->simulation_parameters.mortar_parameters.rotation_axis);

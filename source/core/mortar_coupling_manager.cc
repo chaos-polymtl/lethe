@@ -452,7 +452,6 @@ compute_n_subdivisions_and_radius(
 {
   // Number of subdivisions per process
   unsigned int n_subdivisions_local = 0;
-  unsigned int n_subdivisions_local_stator = 0;
   // Number of subdivisions in the radial direction per process
   unsigned int n_subdivisions_plane_local = 0;
   // Tolerance for rotor radius computation
@@ -523,7 +522,6 @@ compute_n_subdivisions_and_radius(
   const double coord_ref =
     Utilities::MPI::min(coord_ref_local, triangulation.get_mpi_communicator());
 
-  std::cout << "cells identified at the boundary: " << std::endl;
   // Check number of faces and vertices at the rotor-stator interface
   for (const auto &cell : triangulation.active_cell_iterators())
     {
@@ -533,101 +531,87 @@ compute_n_subdivisions_and_radius(
             {
               const auto face = cell->face(face_no);
 
-              // if (face->at_boundary())
-              //   {
-                  if (face->boundary_id() ==
-                      mortar_parameters.rotor_boundary_id)
-                    {
-                      n_subdivisions_local++;
-                      std::cout << "BID " << face->boundary_id() << ", " << cell->index() << " , ";
+              if (face->boundary_id() == mortar_parameters.rotor_boundary_id)
+                {
+                  n_subdivisions_local++;
 
-                      // Store the number of subdivisions in the radial
-                      // direction
+                  // Store the number of subdivisions in the radial
+                  // direction
+                  if constexpr (dim == 3)
+                    {
+                      // Check if the current cell is contained in the same
+                      // plane as the reference cell
+                      if (std::abs(cell->center()[direction] - coord_ref) <
+                          tolerance)
+                        n_subdivisions_plane_local++;
+                    }
+                  else
+                    {
+                      n_subdivisions_plane_local++;
+                    }
+
+                  const auto vertices = mapping.get_vertices(cell, face_no);
+
+                  for (unsigned int vertex_index = 0;
+                       vertex_index < face->n_vertices();
+                       vertex_index++)
+                    {
+                      const auto v = vertices[vertex_index];
+                      double     radius_current =
+                        v.distance(mortar_parameters.center_of_rotation);
+
+                      // In 3D, the interface radius to be computed is
+                      // actually with respect to the rotation axis. For
+                      // this computation, we use the relation:
+                      // radius_current = ||VC x d||/||d||, where VC is the
+                      // current vertex minus the center of rotation, and d
+                      // is the rotation axis
                       if constexpr (dim == 3)
                         {
-                          // Check if the current cell is contained in the same
-                          // plane as the reference cell
-                          if (std::abs(cell->center()[direction] - coord_ref) <
-                              tolerance)
-                            n_subdivisions_plane_local++;
+                          vertex_min = std::min(vertex_min, v[direction]);
+                          vertex_max = std::max(vertex_max, v[direction]);
+
+                          const auto aux = cross_product_3d(
+                            (v - mortar_parameters.center_of_rotation),
+                            mortar_parameters.rotation_axis /
+                              mortar_parameters.rotation_axis.norm());
+                          const double num = aux.norm();
+                          const double den =
+                            mortar_parameters.rotation_axis.norm();
+                          radius_current = num / den;
                         }
-                      else
-                        {
-                          n_subdivisions_plane_local++;
-                        }
 
-                      const auto vertices = mapping.get_vertices(cell, face_no);
-                      std::cout << "vertices: ";
-
-                      for (unsigned int vertex_index = 0;
-                           vertex_index < face->n_vertices();
-                           vertex_index++)
-                        {
-                          const auto v = vertices[vertex_index];
-                          double     radius_current =
-                            v.distance(mortar_parameters.center_of_rotation);
-
-                          std::cout << v << " ; R: " << radius_current << " ; ";
-                          // In 3D, the interface radius to be computed is
-                          // actually with respect to the rotation axis. For
-                          // this computation, we use the relation:
-                          // radius_current = ||VC x d||/||d||, where VC is the
-                          // current vertex minus the center of rotation, and d
-                          // is the rotation axis
-                          if constexpr (dim == 3)
-                            {
-                              vertex_min = std::min(vertex_min, v[direction]);
-                              vertex_max = std::max(vertex_max, v[direction]);
-
-                              const auto aux = cross_product_3d(
-                                (v - mortar_parameters.center_of_rotation),
-                                mortar_parameters.rotation_axis /
-                                  mortar_parameters.rotation_axis.norm());
-                              const double num = aux.norm();
-                              const double den =
-                                mortar_parameters.rotation_axis.norm();
-                              radius_current = num / den;
-                            }
-
-                          radius_min = std::min(radius_min, radius_current);
-                          radius_max = std::max(radius_max, radius_current);
-                        }
-                      std::cout << std::endl;
+                      radius_min = std::min(radius_min, radius_current);
+                      radius_max = std::max(radius_max, radius_current);
                     }
-                  // Obtain the minimum initial rotation angle based on the
-                  // stator interface
-                  else if (cell->face(face_no)->boundary_id() == 
-                           mortar_parameters.stator_boundary_id)
+                }
+              // Obtain the minimum initial rotation angle based on the
+              // stator interface
+              else if (cell->face(face_no)->boundary_id() ==
+                       mortar_parameters.stator_boundary_id)
+                {
+                  const auto vertices = mapping.get_vertices(cell, face_no);
+
+                  for (unsigned int vertex_index = 0;
+                       vertex_index < face->n_vertices();
+                       vertex_index++)
                     {
-                      n_subdivisions_local_stator++;
-                      const auto vertices = mapping.get_vertices(cell, face_no);
+                      const auto v = vertices[vertex_index];
 
-                      for (unsigned int vertex_index = 0;
-                           vertex_index < face->n_vertices();
-                           vertex_index++)
-                        {
-                          const auto v = vertices[vertex_index];
-
-                          pre_rotation_min = std::min(
-                            pre_rotation_min,
-                            point_to_angle(mortar_parameters.center_of_rotation,
-                                           v));
-                        }
+                      pre_rotation_min =
+                        std::min(pre_rotation_min,
+                                 point_to_angle(
+                                   mortar_parameters.center_of_rotation, v));
                     }
                 }
             }
-        // }
+        }
     }
-    std::cout << std::endl;
 
   // Total number of faces
   const unsigned int n_subdivisions =
     Utilities::MPI::sum(n_subdivisions_local,
                         triangulation.get_mpi_communicator());
-  const unsigned int n_subdivisions_stator =
-    Utilities::MPI::sum(n_subdivisions_local_stator,
-                        triangulation.get_mpi_communicator());
-  std::cout << "----------------- total number of subdivisions: " << n_subdivisions << ", " << n_subdivisions_stator << std::endl;
 
   // Total number of faces at the radial direction
   const unsigned int n_subdivisions_plane =
@@ -777,8 +761,6 @@ CouplingOperator<dim, Number>::CouplingOperator(
 
             const auto local_dofs = this->get_dof_indices(cell);
 
-            // std::cout << "cell: " << cell->id().to_string() << ", BID: " << cell->face(face_no)->boundary_id() << ", center " << center << ", indices: " << indices[0];
-
             // Loop over the mortar indices at the rotor-stator
             // interface. The logic of local (rotor) and ghost (stator) is the
             // same as in the previous loop.
@@ -797,7 +779,6 @@ CouplingOperator<dim, Number>::CouplingOperator(
                     id_local = i + n_sub_cells;
                     id_ghost = i;
                   }
-                // std::cout << ", id local: " << id_local << ", id ghost: " << id_ghost;
 
 #  ifdef DEBUG
                 vec_local_cells[id_local] += 1.0;
@@ -810,7 +791,7 @@ CouplingOperator<dim, Number>::CouplingOperator(
                   dof_indices.emplace_back(l_dof);
               }
 
-            // std::cout << std::endl;
+            std::cout << std::endl;
             // Weights of quadrature points
             const auto weights =
               mortar_manager->get_weights(get_face_center(cell, face),

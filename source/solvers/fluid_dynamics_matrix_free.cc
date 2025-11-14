@@ -4,6 +4,7 @@
 #include <core/bdf.h>
 #include <core/grids.h>
 #include <core/manifolds.h>
+#include <core/mortar_coupling_manager.h>
 #include <core/multiphysics.h>
 #include <core/time_integration_utilities.h>
 #include <core/utilities.h>
@@ -2759,7 +2760,7 @@ FluidDynamicsMatrixFree<dim>::setup_dofs_fd()
   this->define_zero_constraints();
 
   // If enabled, create mortar operators
-  this->reinit_mortar_operators_mf();
+  this->reinit_mortar_operators_mf(true);
 
   // Initialize matrix-free object
   unsigned int mg_level = numbers::invalid_unsigned_int;
@@ -2883,26 +2884,55 @@ FluidDynamicsMatrixFree<dim>::update_mortar_configuration()
       this->define_zero_constraints();
 
       // Create mortar manager, operator, and evaluator
-      this->reinit_mortar_operators_mf();
+      this->reinit_mortar_operators_mf(false);
     }
 }
 
 template <int dim>
 void
-FluidDynamicsMatrixFree<dim>::reinit_mortar_operators_mf()
+FluidDynamicsMatrixFree<dim>::reinit_mortar_operators_mf(bool is_first)
 {
   if (!this->simulation_parameters.mortar_parameters.enable)
     return;
 
   TimerOutput::Scope t(this->computing_timer, "Reinit mortar operators");
 
+  // Compute variables
+  std::vector<unsigned int> n_subdivisions;
+  std::vector<double>       radius;
+  double                    pre_rotation_angle;
+
+  if (is_first)
+    std::tie(n_subdivisions, radius, pre_rotation_angle) =
+      compute_n_subdivisions_and_radius(
+        *this->triangulation,
+        *this->mapping,
+        this->simulation_parameters.mortar_parameters);
+  else
+    {
+      n_subdivisions = this->system_operator->mortar_manager_mf->n_subdivisions;
+      radius         = this->system_operator->mortar_manager_mf->radius;
+      pre_rotation_angle =
+        this->system_operator->mortar_manager_mf->pre_rotation_angle;
+    }
+
   // Create mortar manager
+  // this->system_operator->mortar_manager_mf =
+  //   std::make_shared<MortarManagerCircle<dim>>(
+  //     *this->cell_quadrature,
+  //     *this->get_mapping(),
+  //     this->dof_handler,
+  //     this->simulation_parameters.mortar_parameters);
+
   this->system_operator->mortar_manager_mf =
     std::make_shared<MortarManagerCircle<dim>>(
+      n_subdivisions,
+      radius,
       *this->cell_quadrature,
-      *this->get_mapping(),
-      this->dof_handler,
-      this->simulation_parameters.mortar_parameters);
+      this->simulation_parameters.mortar_parameters.rotor_rotation_angle->value(
+        Point<dim>()),
+      this->simulation_parameters.mortar_parameters.center_of_rotation,
+      pre_rotation_angle);
 
   // Create mortar coupling evaluator
   this->system_operator->mortar_coupling_evaluator_mf =
