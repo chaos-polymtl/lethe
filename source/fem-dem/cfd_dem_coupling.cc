@@ -1581,6 +1581,7 @@ template <int dim>
 void
 CFDDEMSolver<dim>::solve()
 {
+  this->computing_timer.enter_subsection("Read mesh, manifolds and particles");
   read_mesh_and_manifolds(
     *this->triangulation,
     this->cfd_dem_simulation_parameters.cfd_parameters.mesh,
@@ -1595,6 +1596,8 @@ CFDDEMSolver<dim>::solve()
       !this->cfd_dem_simulation_parameters.cfd_parameters.restart_parameters
          .restart)
     read_dem();
+
+  this->computing_timer.leave_subsection("Read mesh, manifolds and particles");
 
   this->setup_dofs();
 

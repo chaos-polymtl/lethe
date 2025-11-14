@@ -1360,16 +1360,11 @@ CFDDEMMatrixFree<dim>::solve()
     this->cfd_dem_simulation_parameters.cfd_parameters.restart_parameters
       .restart);
 
-  // In the case the simulation is being restarted from a checkpoint file, the
-  // restart_simulation parameter is set to true. This allows to perform all
-  // operations related to restarting a simulation. Once all operations have
-  // been performed, this restart_simulation is reset to false. It is only set
-  // once and reset once since restarting only occurs once.
   if (this->cfd_dem_simulation_parameters.cfd_parameters.restart_parameters
         .restart)
     dem_action_manager->restart_simulation();
 
-  // Initialize the DEM parameters and generate the required ghost particles
+  // Initialize the DEM parameters and generate the ghost particles
   initialize_dem_parameters();
 
   // Calculate first instance of void fraction once particles are set up
