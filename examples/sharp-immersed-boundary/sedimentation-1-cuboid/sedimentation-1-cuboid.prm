@@ -12,7 +12,6 @@ set dimension = 3
 
 subsection simulation control
   set method             = bdf2
-  set bdf startup method = multiple step bdf
   set time step          = 0.0005
   set adapt              = true
   set output frequency   = 10
