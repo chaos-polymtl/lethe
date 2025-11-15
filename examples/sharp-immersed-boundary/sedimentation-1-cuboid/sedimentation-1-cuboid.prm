@@ -6,6 +6,12 @@
 
 set dimension = 3
 
+# This case was changed in 2025-11-15 to include adaptive mesh time-stepping.
+# Starting PR #1722 it started to crash at the end of the simulation
+# when the particle hits the bottom wall if a constant time-step of
+# 0.0005 is used. Using adaptive time-stepping with a max CFL of 0.5
+# resolves the issue, leads to the same results, and reduces the computational time.
+
 #---------------------------------------------------
 # Simulation Control
 #---------------------------------------------------
