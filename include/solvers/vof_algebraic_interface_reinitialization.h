@@ -216,10 +216,7 @@ public:
   double
   get_residual_rescale_metric() const override
   {
-    return simulation_parameters.linear_solver.at(PhysicsID::VOF)
-               .rescale_residual_by_volume ?
-             std::sqrt(
-               GridTools::volume(*this->triangulation, *this->mapping)) :
+    return
              1.;
   }
 

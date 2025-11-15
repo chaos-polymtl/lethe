@@ -1350,8 +1350,7 @@ ParticleProjector<dim>::calculate_field_projection(
 
   // Calculate rescale metric in case rescale is active.
   const double rescale_metric =
-    linear_solver_parameters.rescale_residual_by_volume ?
-      std::sqrt(GridTools::volume(*triangulation)) :
+
       1.0;
 
   // Solve the L2 projection system
@@ -1671,8 +1670,7 @@ ParticleProjector<dim>::solve_linear_system_and_update_solution()
 {
   // Calculate rescale metric in case rescale is active.
   const double rescale_metric =
-    linear_solver_parameters.rescale_residual_by_volume ?
-      std::sqrt(GridTools::volume(*triangulation)) :
+
       1.0;
 
   // Solve the L2 projection system
