@@ -255,8 +255,8 @@ IBParticle<dim>::clear_shape_cache()
 
 template <int dim>
 void
-IBParticle<dim>::initialize_shape(const std::string         &type,
-                                  const std::vector<double> &shape_arguments)
+IBParticle<dim>::initialize_shape(const std::string         type,
+                                  const std::vector<double> shape_arguments)
 {
   shape = ShapeGenerator::initialize_shape_from_vector(type,
                                                        shape_arguments,
@@ -266,8 +266,8 @@ IBParticle<dim>::initialize_shape(const std::string         &type,
 
 template <int dim>
 void
-IBParticle<dim>::initialize_shape(const std::string &type,
-                                  const std::string &raw_arguments)
+IBParticle<dim>::initialize_shape(const std::string type,
+                                  const std::string raw_arguments)
 {
   shape = ShapeGenerator::initialize_shape(type,
                                            raw_arguments,
