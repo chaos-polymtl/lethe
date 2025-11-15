@@ -20,7 +20,6 @@ public:
   Parameters::Timer                               timer;
   Parameters::SimulationControl                   simulation_control;
   Parameters::Lagrangian::InsertionInfo<dim>      particle_insertion_info;
-  Parameters::Lagrangian::ParticleRayTracing<dim> ray_tracing_info;
   Parameters::Lagrangian::ModelParameters<dim>    model_parameters;
 
   /**
@@ -45,7 +44,6 @@ public:
     Parameters::Timer::declare_parameters(prm);
     Parameters::SimulationControl::declare_parameters(prm);
     Parameters::Lagrangian::InsertionInfo<dim>::declare_parameters(prm);
-    Parameters::Lagrangian::ParticleRayTracing<dim>::declare_parameters(prm);
     Parameters::Lagrangian::ModelParameters<dim>::declare_parameters(prm);
   }
 
@@ -60,7 +58,6 @@ public:
     timer.parse_parameters(prm);
     simulation_control.parse_parameters(prm);
     particle_insertion_info.parse_parameters(prm);
-    ray_tracing_info.parse_parameters(prm);
     model_parameters.parse_parameters(prm);
   }
 };

@@ -222,32 +222,23 @@ RayTracingSolver<dim>::insert_particles_and_photons()
   std::vector<std::vector<double>> photon_properties;
 
   // Create variables for readability
-  const std::vector<unsigned int> &n_photons_each_directions =
-    parameters.ray_tracing_info.n_photons_each_directions;
+ std::vector<unsigned int> n_photons_each_directions ;
 
   // Starting point
-  const Point<dim> starting_insertion_point =
-    parameters.ray_tracing_info.starting_point;
+  Point<dim> starting_insertion_point ;
 
   // Insertion directions
-  const Tensor<1, dim> first_dir =
-    parameters.ray_tracing_info.insertion_directions_units_vector.at(0);
-  const Tensor<1, dim> second_dir =
-    parameters.ray_tracing_info.insertion_directions_units_vector.at(1);
-  const Tensor<1, dim> third_dir =
-    parameters.ray_tracing_info.insertion_directions_units_vector.at(2);
+  Tensor<1, dim> first_dir ;
+  Tensor<1, dim> second_dir;
+  Tensor<1, dim> third_dir;
 
   // Steps
-  const double step_first_dir =
-    parameters.ray_tracing_info.step_between_photons_each_directions.at(0);
-  const double step_second_dir =
-    parameters.ray_tracing_info.step_between_photons_each_directions.at(1);
-  const double step_third_dir =
-    parameters.ray_tracing_info.step_between_photons_each_directions.at(2);
+ double step_first_dir ;
+ double step_second_dir;
+ double step_third_dir;
 
   // Reference displacement direction
-  const Tensor<1, 3> ref_displacement_dir =
-    parameters.ray_tracing_info.ref_displacement_tensor_unit;
+  const Tensor<1, 3> ref_displacement_dir;
 
   // Total number of photons to insert
   const unsigned int n_total_photons_to_insert =
@@ -290,20 +281,19 @@ RayTracingSolver<dim>::insert_particles_and_photons()
   create_random_number_container(
     random_number_angular_1,
     n_photons_to_insert_this_proc,
-    2.0 * M_PI,
-    parameters.ray_tracing_info.prn_seed_photon_displacement);
+    2.0 * M_PI,1);
 
   create_random_number_container(
     random_number_angular_2,
     n_photons_to_insert_this_proc,
-    parameters.ray_tracing_info.max_angular_offset,
-    parameters.ray_tracing_info.prn_seed_photon_displacement);
+    1,
+    1);
 
   create_random_number_container(
     random_number_position,
     3 * n_photons_to_insert_this_proc,
-    parameters.ray_tracing_info.max_insertion_offset,
-    parameters.ray_tracing_info.prn_seed_photon_insertion);
+    1,
+    1);
 
   // For the displacement direction randomness, we need to find two vectors
   // normal to ref_displacement_dir.
