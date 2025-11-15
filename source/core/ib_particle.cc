@@ -174,80 +174,6 @@ IBParticle<dim>::get_properties()
 
 template <int dim>
 void
-IBParticle<dim>::closest_surface_point(
-  const Point<dim>                                     &p,
-  Point<dim>                                           &closest_point,
-  const typename DoFHandler<dim>::active_cell_iterator &cell_guess)
-{
-  shape->closest_surface_point(p, closest_point, cell_guess);
-}
-
-template <int dim>
-void
-IBParticle<dim>::closest_surface_point(const Point<dim> &p,
-                                       Point<dim>       &closest_point)
-{
-  shape->closest_surface_point(p, closest_point);
-}
-
-template <int dim>
-bool
-IBParticle<dim>::is_inside_crown(
-  const Point<dim>                                     &evaluation_point,
-  const double                                          outer_radius,
-  const double                                          inside_radius,
-  const bool                                            absolute_distance,
-  const typename DoFHandler<dim>::active_cell_iterator &cell_guess)
-{
-  const double effective_radius = shape->effective_radius;
-
-  double distance = shape->value_with_cell_guess(evaluation_point, cell_guess);
-  bool   is_inside_outer_ring;
-  bool   is_outside_inner_ring;
-  if (absolute_distance)
-    {
-      is_inside_outer_ring  = distance <= outer_radius;
-      is_outside_inner_ring = distance >= inside_radius;
-    }
-  else
-    {
-      is_inside_outer_ring = distance <= effective_radius * (outer_radius - 1);
-      is_outside_inner_ring =
-        distance >= effective_radius * (inside_radius - 1);
-    }
-
-  return is_inside_outer_ring && is_outside_inner_ring;
-}
-
-template <int dim>
-bool
-IBParticle<dim>::is_inside_crown(const Point<dim> &evaluation_point,
-                                 const double      outer_radius,
-                                 const double      inside_radius,
-                                 const bool        absolute_distance)
-{
-  const double effective_radius = shape->effective_radius;
-
-  double distance = shape->value(evaluation_point);
-  bool   is_inside_outer_ring;
-  bool   is_outside_inner_ring;
-  if (absolute_distance)
-    {
-      is_inside_outer_ring  = distance <= outer_radius;
-      is_outside_inner_ring = distance >= inside_radius;
-    }
-  else
-    {
-      is_inside_outer_ring = distance <= effective_radius * (outer_radius - 1);
-      is_outside_inner_ring =
-        distance >= effective_radius * (inside_radius - 1);
-    }
-
-  return is_inside_outer_ring && is_outside_inner_ring;
-}
-
-template <int dim>
-void
 IBParticle<dim>::clear_shape_cache()
 {
   this->shape->clear_cache();
@@ -277,7 +203,79 @@ IBParticle<dim>::initialize_shape(const std::string type,
 
 template <int dim>
 void
-IBParticle<dim>::set_orientation(const Tensor<1, 3> &new_orientation)
+IBParticle<dim>::closest_surface_point(
+  const Point<dim>                                     &p,
+  Point<dim>                                           &closest_point,
+  const typename DoFHandler<dim>::active_cell_iterator &cell_guess)
+{
+  shape->closest_surface_point(p, closest_point, cell_guess);
+}
+
+template <int dim>
+void
+IBParticle<dim>::closest_surface_point(const Point<dim> &p,
+                                       Point<dim>       &closest_point)
+{
+  shape->closest_surface_point(p, closest_point);
+}
+
+template <int dim>
+bool
+IBParticle<dim>::is_inside_crown(
+  const Point<dim>                                     &evaluation_point,
+  const double                                          outer_radius,
+  const double                                          inside_radius,
+  const bool                                            absolute_distance,
+  const typename DoFHandler<dim>::active_cell_iterator &cell_guess)
+{
+  const double radius = shape->effective_radius;
+
+  double distance = shape->value_with_cell_guess(evaluation_point, cell_guess);
+  bool   is_inside_outer_ring;
+  bool   is_outside_inner_ring;
+  if (absolute_distance)
+    {
+      is_inside_outer_ring  = distance <= outer_radius;
+      is_outside_inner_ring = distance >= inside_radius;
+    }
+  else
+    {
+      is_inside_outer_ring  = distance <= radius * (outer_radius - 1);
+      is_outside_inner_ring = distance >= radius * (inside_radius - 1);
+    }
+
+  return is_inside_outer_ring && is_outside_inner_ring;
+}
+
+template <int dim>
+bool
+IBParticle<dim>::is_inside_crown(const Point<dim> &evaluation_point,
+                                 const double      outer_radius,
+                                 const double      inside_radius,
+                                 const bool        absolute_distance)
+{
+  const double radius = shape->effective_radius;
+
+  double distance = shape->value(evaluation_point);
+  bool   is_inside_outer_ring;
+  bool   is_outside_inner_ring;
+  if (absolute_distance)
+    {
+      is_inside_outer_ring  = distance <= outer_radius;
+      is_outside_inner_ring = distance >= inside_radius;
+    }
+  else
+    {
+      is_inside_outer_ring  = distance <= radius * (outer_radius - 1);
+      is_outside_inner_ring = distance >= radius * (inside_radius - 1);
+    }
+
+  return is_inside_outer_ring && is_outside_inner_ring;
+}
+
+template <int dim>
+void
+IBParticle<dim>::set_orientation(const Tensor<1, 3> new_orientation)
 {
   this->orientation = new_orientation;
   this->shape->set_orientation(new_orientation);
@@ -287,7 +285,7 @@ IBParticle<dim>::set_orientation(const Tensor<1, 3> &new_orientation)
 template <int dim>
 void
 IBParticle<dim>::update_precalculations(DoFHandler<dim> &updated_dof_handler,
-                                        const bool       precalculations)
+                                        const bool mesh_based_precalculations)
 {
   if (integrate_motion || velocity.norm() > 1e-16 || omega.norm() > 1e-16)
     {
@@ -296,26 +294,28 @@ IBParticle<dim>::update_precalculations(DoFHandler<dim> &updated_dof_handler,
   if (typeid(*shape) == typeid(RBFShape<dim>))
     {
       std::static_pointer_cast<RBFShape<dim>>(shape)->update_precalculations(
-        updated_dof_handler, precalculations);
+        updated_dof_handler, mesh_based_precalculations);
     }
   else if (typeid(*shape) == typeid(CompositeShape<dim>))
     {
       std::static_pointer_cast<CompositeShape<dim>>(shape)
-        ->update_precalculations(updated_dof_handler, precalculations);
+        ->update_precalculations(updated_dof_handler,
+                                 mesh_based_precalculations);
     }
 }
 
 template <int dim>
 void
 IBParticle<dim>::remove_superfluous_data(DoFHandler<dim> &updated_dof_handler,
-                                         const bool       precalculations)
+                                         const bool mesh_based_precalculations)
 {
   if (typeid(*shape) == typeid(RBFShape<dim>))
     std::static_pointer_cast<RBFShape<dim>>(shape)->remove_superfluous_data(
-      updated_dof_handler, precalculations);
+      updated_dof_handler, mesh_based_precalculations);
   else if (typeid(*shape) == typeid(CompositeShape<dim>))
     std::static_pointer_cast<CompositeShape<dim>>(shape)
-      ->remove_superfluous_data(updated_dof_handler, precalculations);
+      ->remove_superfluous_data(updated_dof_handler,
+                                mesh_based_precalculations);
 }
 
 template <int dim>

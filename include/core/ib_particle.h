@@ -219,7 +219,7 @@ public:
    * @param[in] orientation New orientation to set the particle at.
    */
   void
-  set_orientation(const Tensor<1, 3> &orientation);
+  set_orientation(const Tensor<1, 3> orientation);
 
   /**
    * @brief Set the layer thickening value (positive or negative) of the shape.
