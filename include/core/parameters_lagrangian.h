@@ -15,7 +15,7 @@ namespace Parameters
 {
   namespace Lagrangian
   {
-    enum class ParticleParticleContactForceModel : std::uint8_t
+    enum class ParticleParticleContactForceModel
     {
       linear,
       hertz_mindlin_limit_force,
@@ -25,7 +25,7 @@ namespace Parameters
       DMT
     };
 
-    enum class ParticleWallContactForceModel : std::uint8_t
+    enum class ParticleWallContactForceModel
     {
       linear,
       nonlinear,
@@ -33,7 +33,7 @@ namespace Parameters
       DMT
     };
 
-    enum RollingResistanceMethod : std::uint8_t
+    enum RollingResistanceMethod
     {
       none,
       constant,
@@ -41,7 +41,7 @@ namespace Parameters
       epsd
     };
 
-    enum class SizeDistributionType : std::uint8_t
+    enum class SizeDistributionType
     {
       uniform,
       normal,
@@ -189,89 +189,49 @@ namespace Parameters
       double molecular_mean_free_path_gas;
 
       void
-      declare_parameters(ParameterHandler &prm) const;
+      declare_parameters(ParameterHandler &prm);
       void
       parse_parameters(ParameterHandler &prm);
-      static void
+      void
       declareDefaultEntry(ParameterHandler &prm);
       void
-      parse_particle_properties(const unsigned int     &particle_type,
-                                const ParameterHandler &prm);
+      parse_particle_properties(const unsigned int &particle_type,
+                                ParameterHandler   &prm);
 
     private:
       unsigned int particle_type_maximum_number = 5;
 
-      /**
-       * @brief initialize_containers - Initialize the containers
-       * used to store the physical properties of each particle type.
-       *
-       * @param[in,out] p_average_diameter Average diameter of each particle
-       * type.
-       * @param[in,out] p_size_std Size standard deviation of each particle
-       * type.
-       * @param[in,out] dist_types Distribution type of each particle type.
-       * @param[in,out] p_custom_diameter List of diameters for the custom
-       * distribution for each particle type.
-       * @param[in,out] p_custom_probability Probability of each diameter value
-       * based on volume fraction for the custom distribution for each particle
-       * type.
-       * @param[in,out] seed_for_dist Random seed for the size distribution.
-       * @param[in,out] p_number Number of each particle type.
-       * @param[in,out] p_density Density of each particle type.
-       * @param[in,out] p_youngs_modulus Young's modulus of each particle type.
-       * @param[in,out] p_poisson_ratio Poisson's ratio of each particle type.
-       * @param[in,out] p_restitution_coefficient Coefficients of restitution
-       * of each particle type.
-       * @param[in,out] p_friction_coefficient Friction coefficient of each
-       * particle type.
-       * @param[in,out] p_rolling_viscous_damping_coefficient Rolling viscous
-       * damping coefficient of each particle type.
-       * @param[in,out] p_rolling_friction_coefficient Rolling friction
-       * coefficient of each particle type.
-       * @param[in,out] p_surface_energy Surface energy of each particle type.
-       * @param[in,out] p_hamaker_constant Hamaker constant of each particle
-       * type.
-       * @param[in,out] p_thermal_conductivity Thermal conductivity of each
-       * particle type.
-       * @param[in,out] p_specific_heat Specific heat of each particle type.
-       * @param[in,out] p_microhardness Microhardness of each particle type.
-       * @param[in,out] p_surface_slope Surface slope of each particle type.
-       * @param[in,out] p_surface_roughness Surface roughness of each particle
-       * type.
-       * @param[in,out] p_thermal_accommodation Thermal accommodation
-       * coefficient of each particle type.
-       * @param[in,out] p_real_youngs_modulus Real Young's modulus of each
-       * particle type.
-       */
       void
       initialize_containers(
-        std::unordered_map<unsigned int, double> &p_average_diameter,
-        std::unordered_map<unsigned int, double> &p_size_std,
-        std::vector<SizeDistributionType>        &dist_types,
+        std::unordered_map<unsigned int, double> &particle_average_diameter,
+        std::unordered_map<unsigned int, double> &particle_size_std,
+        std::vector<SizeDistributionType>        &distribution_type,
         std::unordered_map<unsigned int, std::vector<double>>
-          &p_custom_diameter,
+          &particle_custom_diameter,
         std::unordered_map<unsigned int, std::vector<double>>
-                                                 &p_custom_probability,
-        std::vector<unsigned int>                &seed_for_dist,
-        std::unordered_map<unsigned int, int>    &p_number,
-        std::unordered_map<unsigned int, double> &p_density,
-        std::unordered_map<unsigned int, double> &p_youngs_modulus,
-        std::unordered_map<unsigned int, double> &p_poisson_ratio,
-        std::unordered_map<unsigned int, double> &p_restitution_coefficient,
-        std::unordered_map<unsigned int, double> &p_friction_coefficient,
+                                                 &particle_custom_probability,
+        std::vector<unsigned int>                &seed_for_distributions,
+        std::unordered_map<unsigned int, int>    &number,
+        std::unordered_map<unsigned int, double> &density_particle,
+        std::unordered_map<unsigned int, double> &youngs_modulus_particle,
+        std::unordered_map<unsigned int, double> &poisson_ratio_particle,
         std::unordered_map<unsigned int, double>
-          &p_rolling_viscous_damping_coefficient,
+          &restitution_coefficient_particle,
+        std::unordered_map<unsigned int, double> &friction_coefficient_particle,
         std::unordered_map<unsigned int, double>
-          &p_rolling_friction_coefficient,
-        std::unordered_map<unsigned int, double> &p_surface_energy,
-        std::unordered_map<unsigned int, double> &p_hamaker_constant,
-        std::unordered_map<unsigned int, double> &p_thermal_conductivity,
-        std::unordered_map<unsigned int, double> &p_specific_heat,
-        std::unordered_map<unsigned int, double> &p_microhardness,
-        std::unordered_map<unsigned int, double> &p_surface_slope,
-        std::unordered_map<unsigned int, double> &p_surface_roughness,
-        std::unordered_map<unsigned int, double> &p_thermal_accommodation,
-        std::unordered_map<unsigned int, double> &p_real_youngs_modulus) const;
+          &rolling_viscous_dampimg_coefficient_particle,
+        std::unordered_map<unsigned int, double>
+          &rolling_friction_coefficient_particle,
+        std::unordered_map<unsigned int, double> &surface_energy_particle,
+        std::unordered_map<unsigned int, double> &hamaker_constant_particle,
+        std::unordered_map<unsigned int, double> &thermal_conductivity_particle,
+        std::unordered_map<unsigned int, double> &specific_heat_particle,
+        std::unordered_map<unsigned int, double> &microhardness_particle,
+        std::unordered_map<unsigned int, double> &surface_slope_particle,
+        std::unordered_map<unsigned int, double> &surface_roughness_particle,
+        std::unordered_map<unsigned int, double>
+          &thermal_accommodation_particle,
+        std::unordered_map<unsigned int, double> &real_youngs_modulus_particle);
     };
 
     template <int dim>
@@ -463,7 +423,7 @@ namespace Parameters
       // Center of mass
       Point<3> point_center_mass;
 
-      static void
+      void
       declare_parameters(ParameterHandler &prm);
       void
       parse_parameters(ParameterHandler &prm);
@@ -489,10 +449,10 @@ namespace Parameters
       std::vector<double> time_end;
 
       void
-      declare_parameters(ParameterHandler &prm) const;
+      declare_parameters(ParameterHandler &prm);
       void
       parse_parameters(ParameterHandler &prm);
-      static void
+      void
       declareDefaultEntry(ParameterHandler &prm);
       void
       parse_floating_wall(ParameterHandler &prm);
@@ -544,24 +504,26 @@ namespace Parameters
 
 
       void
-      declare_parameters(ParameterHandler &prm) const;
+      declare_parameters(ParameterHandler &prm);
       void
       parse_parameters(ParameterHandler &prm);
-      static void
+      void
       declareDefaultEntry(ParameterHandler &prm);
       void
-      parse_boundary_conditions(const ParameterHandler &prm);
+      parse_boundary_conditions(ParameterHandler &prm);
 
     private:
       unsigned int DEM_BC_number_max = 10;
       void
       initialize_containers(
-        std::unordered_map<unsigned int, Tensor<1, 3>> &boundary_trans_velocity,
-        std::unordered_map<unsigned int, double>       &boundary_rot_speed,
-        std::unordered_map<unsigned int, Tensor<1, 3>> &boundary_rot_vector,
-        std::unordered_map<unsigned int, Point<3>>     &point_on_rot_axis,
-        std::vector<unsigned int>                      &outlet_boundaries_id,
-        std::vector<BoundaryType>                      &boundaries_types) const;
+        std::unordered_map<unsigned int, Tensor<1, 3>>
+          &boundary_translational_velocity,
+        std::unordered_map<unsigned int, double> &boundary_rotational_speed,
+        std::unordered_map<unsigned int, Tensor<1, 3>>
+                                                   &boundary_rotational_vector,
+        std::unordered_map<unsigned int, Point<3>> &point_on_rotation_axis,
+        std::vector<unsigned int>                  &outlet_boundaries,
+        std::vector<BoundaryType>                  &bc_types);
     };
 
     template <int dim>
@@ -640,45 +602,6 @@ namespace Parameters
       double time_end;
 
       void
-      declare_parameters(ParameterHandler &prm);
-      void
-      parse_parameters(ParameterHandler &prm);
-    };
-
-    /**
-     * @brief Defines parameters used to construct particle
-     * ray tracing class.
-     */
-    template <int dim>
-    struct ParticleRayTracing
-    {
-      // Location of the first photon to be inserted
-      Point<3> starting_point;
-
-      // In which directions will the photons be inserted relative to the first
-      // photon.
-      std::vector<Tensor<1, 3>> insertion_directions_units_vector;
-
-      // How many photon will be inserted in each of those directions.
-      std::vector<unsigned int> n_photons_each_directions;
-
-      // What is the distance between each photon in each of those directions
-      // considering an offset equal to 0.
-      std::vector<double> step_between_photons_each_directions;
-
-      // Reference displacement unit tensor
-      Tensor<1, 3> ref_displacement_tensor_unit;
-
-      // Related to the offset insertion position.
-      double       max_insertion_offset;
-      unsigned int prn_seed_photon_insertion;
-
-      // Related to the offset in the displacement direction.
-      double       max_angular_offset;
-      unsigned int prn_seed_photon_displacement;
-
-      // Declare and parse function
-      static void
       declare_parameters(ParameterHandler &prm);
       void
       parse_parameters(ParameterHandler &prm);
