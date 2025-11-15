@@ -42,7 +42,7 @@ namespace Parameters
   SizeOfSubsections
   get_size_of_subsections(const std::string &file_name);
 
-  enum class Verbosity : std::uint8_t
+  enum class Verbosity
   {
     quiet,
     verbose,
@@ -56,7 +56,7 @@ namespace Parameters
    * This is used for multiphase simulations, in PostProcessing and in
    * VOF (see parameter_multiphysics.h)
    */
-  enum class FluidIndicator : std::uint8_t
+  enum class FluidIndicator
   {
     fluid0,
     fluid1,
@@ -71,7 +71,7 @@ namespace Parameters
   struct SimulationControl
   {
     // Method used for time progression of eulerian solvers (steady, unsteady)
-    enum class TimeSteppingMethod : std::uint8_t
+    enum class TimeSteppingMethod
     {
       steady,
       steady_bdf,
@@ -84,7 +84,7 @@ namespace Parameters
     } method;
 
     // Method used for time progression (steady, unsteady)
-    enum class LagrangianTimeSteppingMethod : std::uint8_t
+    enum class LagrangianTimeSteppingMethod
     {
       explicit_euler,
       velocity_verlet,
@@ -128,13 +128,13 @@ namespace Parameters
     // Prefix for simulation output
     std::string output_name;
 
-    enum class OutputControl : std::uint8_t
+    enum class OutputControl
     {
       iteration,
       time
     } output_control;
 
-    enum class BDFStartupMethods : std::uint8_t
+    enum class BDFStartupMethods
     {
       initial_solution,
       multiple_step_bdf,
@@ -227,18 +227,18 @@ namespace Parameters
     static void
     declare_parameters(ParameterHandler &prm);
     void
-    parse_parameters(ParameterHandler &prm, const Dimensionality &dimensions);
+    parse_parameters(ParameterHandler &prm, const Dimensionality dimensions);
   };
 
   /**
-   * @brief Power-law rheological model to solve for non-Newtonian
+   * @brief Power-law rheological model to solve for non Newtonian
    * flows.
    */
   struct PowerLawParameters
   {
     // Fluid consistency index
     double K;
-    // Flow behavior index
+    // Flow behavior index"
     double n;
     // Minimal shear rate magnitude for which we calculate kinematic viscosity,
     // since power-law does not allow for minimal kinematic viscosity
@@ -247,11 +247,11 @@ namespace Parameters
     static void
     declare_parameters(ParameterHandler &prm);
     void
-    parse_parameters(ParameterHandler &prm, const Dimensionality &dimensions);
+    parse_parameters(ParameterHandler &prm, const Dimensionality dimensions);
   };
 
   /**
-   * @brief Carreau model to solve for non-Newtonian
+   * @brief Carreau model to solve for non Newtonian
    * flows.
    */
   struct CarreauParameters
@@ -271,11 +271,11 @@ namespace Parameters
     static void
     declare_parameters(ParameterHandler &prm);
     void
-    parse_parameters(ParameterHandler &prm, const Dimensionality &dimensions);
+    parse_parameters(ParameterHandler &prm, const Dimensionality dimensions);
   };
 
   /**
-   * @brief non-Newtonian - Defines the parameters for non-Newtonian flows
+   * @brief Non Newtonian - Defines the parameters for non newtonian flows
    * according to the chosen rheological model.
    */
   struct NonNewtonian
@@ -284,9 +284,9 @@ namespace Parameters
     PowerLawParameters powerlaw_parameters;
 
     void
-    declare_parameters(ParameterHandler &prm) const;
+    declare_parameters(ParameterHandler &prm);
     void
-    parse_parameters(ParameterHandler &prm, const Dimensionality &dimensions);
+    parse_parameters(ParameterHandler &prm, const Dimensionality dimensions);
   };
 
   /**
@@ -304,7 +304,7 @@ namespace Parameters
     static void
     declare_parameters(ParameterHandler &prm);
     void
-    parse_parameters(ParameterHandler &prm, const Dimensionality &dimensions);
+    parse_parameters(ParameterHandler &prm, const Dimensionality dimensions);
   };
 
   /**
@@ -323,7 +323,7 @@ namespace Parameters
     static void
     declare_parameters(ParameterHandler &prm);
     void
-    parse_parameters(ParameterHandler &prm, const Dimensionality &dimensions);
+    parse_parameters(ParameterHandler &prm, const Dimensionality dimensions);
   };
 
   /**
@@ -342,7 +342,7 @@ namespace Parameters
     static void
     declare_parameters(ParameterHandler &prm);
     void
-    parse_parameters(ParameterHandler &prm, const Dimensionality &dimensions);
+    parse_parameters(ParameterHandler &prm, const Dimensionality dimensions);
   };
 
   /**
@@ -371,7 +371,7 @@ namespace Parameters
      *
      * @param[in,out] prm The ParameterHandler.
      */
-    static void
+    void
     declare_parameters(ParameterHandler &prm);
     void
     /**
@@ -379,11 +379,11 @@ namespace Parameters
      *
      * @param[in,out] prm The ParameterHandler.
      *
-     * @param[in] dimensions The Dimensionality object controlling the
+     * @param[in] dimensions The Dimensionality object controling the
      * fundamental dimensions (length, time, mass, temperature) of the problem.
      */
-    parse_parameters(const ParameterHandler           &prm,
-                     const Parameters::Dimensionality &dimensions);
+    parse_parameters(ParameterHandler                &prm,
+                     const Parameters::Dimensionality dimensions);
   };
 
   /**
@@ -400,7 +400,7 @@ namespace Parameters
      *
      * @param[in,out] prm The ParameterHandler.
      */
-    static void
+    void
     declare_parameters(ParameterHandler &prm);
 
     /**
@@ -408,12 +408,12 @@ namespace Parameters
      *
      * @param[in,out] prm The ParameterHandler.
      *
-     * @param[in] dimensions The Dimensionality object controlling the
+     * @param[in] dimensions The Dimensionality object controling the
      * fundamental dimensions (length, time, mass, temperature) of the problem.
      */
     void
-    parse_parameters(const ParameterHandler           &prm,
-                     const Parameters::Dimensionality &dimensions);
+    parse_parameters(ParameterHandler                &prm,
+                     const Parameters::Dimensionality dimensions);
   };
 
 
@@ -425,17 +425,18 @@ namespace Parameters
   class Material
   {
   public:
-    Material() = default;
+    Material()
+    {}
 
     void
     declare_parameters(ParameterHandler  &prm,
                        const std::string &material_prefix,
-                       unsigned int       id) const;
+                       unsigned int       id);
     void
-    parse_parameters(ParameterHandler     &prm,
-                     const std::string    &material_prefix,
-                     const unsigned int    id,
-                     const Dimensionality &dimensions);
+    parse_parameters(ParameterHandler    &prm,
+                     const std::string   &material_prefix,
+                     const unsigned int   id,
+                     const Dimensionality dimensions);
 
     // Kinematic viscosity (nu = mu/rho) in units of L^2/s
     double kinematic_viscosity;
@@ -459,8 +460,8 @@ namespace Parameters
     // Phase change parameters
     PhaseChange phase_change_parameters;
 
-    // non-Newtonian model parameters
-    enum class RheologicalModel : std::int8_t
+    // Non Newtonian model parameters
+    enum class RheologicalModel
     {
       powerlaw,
       carreau,
@@ -469,40 +470,40 @@ namespace Parameters
     } rheological_model;
     NonNewtonian non_newtonian_parameters;
 
-    enum class DensityModel : std::int8_t
+    enum class DensityModel
     {
       constant,
       isothermal_ideal_gas
     } density_model;
     IsothermalIdealGasDensityParameters isothermal_ideal_gas_density_parameters;
 
-    enum class SpecificHeatModel : std::int8_t
+    enum class SpecificHeatModel
     {
       constant,
       phase_change
     } specific_heat_model;
 
-    enum class ThermalConductivityModel : std::int8_t
+    enum class ThermalConductivityModel
     {
       constant,
       linear,
       phase_change
     } thermal_conductivity_model;
 
-    enum class ThermalExpansionModel : std::int8_t
+    enum class ThermalExpansionModel
     {
       constant,
       phase_change
     } thermal_expansion_model;
 
-    enum class TracerDiffusivityModel : std::int8_t
+    enum class TracerDiffusivityModel
     {
       constant,
       immersed_boundary_tanh,
       immersed_boundary_gaussian
     } tracer_diffusivity_model;
 
-    enum class TracerReactionPrefactorModel : std::int8_t
+    enum class TracerReactionPrefactorModel
     {
       none,
       constant,
@@ -529,16 +530,17 @@ namespace Parameters
   class MaterialInteractions
   {
   public:
-    MaterialInteractions() = default;
+    MaterialInteractions()
+    {}
 
-    enum class MaterialInteractionsType : std::int8_t
+    enum class MaterialInteractionsType
     {
       fluid_fluid,
       fluid_solid
     } material_interaction_type;
 
     // Surface tension models
-    enum class SurfaceTensionModel : std::int8_t
+    enum class SurfaceTensionModel
     {
       constant,
       linear,
@@ -547,7 +549,7 @@ namespace Parameters
     SurfaceTensionParameters surface_tension_parameters;
 
     // Cahn-Hilliard mobility models
-    enum class MobilityCahnHilliardModel : std::int8_t
+    enum class MobilityCahnHilliardModel
     {
       constant,
       quartic
@@ -567,7 +569,7 @@ namespace Parameters
      * @param[in] id The material id.
      */
     void
-    declare_parameters(ParameterHandler &prm, unsigned int id) const;
+    declare_parameters(ParameterHandler &prm, unsigned int id);
 
     /**
      * @brief Parse the parameters.
@@ -576,13 +578,13 @@ namespace Parameters
      *
      * @param[in] id The material id.
      *
-     * @param[in] dimensions The Dimensionality object controlling the
+     * @param[in] dimensions The Dimensionality object controling the
      * fundamental dimensions (length, time, mass, temperature) of the problem.
      */
     void
-    parse_parameters(ParameterHandler                 &prm,
-                     const unsigned int                id,
-                     const Parameters::Dimensionality &dimensions);
+    parse_parameters(ParameterHandler                &prm,
+                     const unsigned int               id,
+                     const Parameters::Dimensionality dimensions);
   };
 
   /**
@@ -595,22 +597,23 @@ namespace Parameters
   class PhysicalProperties
   {
   public:
-    PhysicalProperties() = default;
+    PhysicalProperties()
+    {}
 
     // Fluid objects for multiphase simulations
-    std::vector<Material>         fluids;
-    unsigned int                  number_of_fluids;
-    static constexpr unsigned int max_fluids = 2;
+    std::vector<Material>     fluids;
+    unsigned int              number_of_fluids;
+    static const unsigned int max_fluids = 2;
 
     // Solid objects for conjugated simulations
-    std::vector<Material>         solids;
-    unsigned int                  number_of_solids;
-    static constexpr unsigned int max_solids = 1;
+    std::vector<Material>     solids;
+    unsigned int              number_of_solids;
+    static const unsigned int max_solids = 1;
 
     // Fluid-fluid or fluid-solid interactions
     std::vector<MaterialInteractions> material_interactions;
     unsigned int                      number_of_material_interactions;
-    static constexpr unsigned int     max_material_interactions = 3;
+    static const unsigned int         max_material_interactions = 3;
     std::map<std::pair<unsigned int, unsigned int>, unsigned int>
       fluid_fluid_interactions_with_material_interaction_ids;
     std::map<std::pair<unsigned int, unsigned int>, unsigned int>
@@ -625,8 +628,8 @@ namespace Parameters
     void
     declare_parameters(ParameterHandler &prm);
     void
-    parse_parameters(ParameterHandler     &prm,
-                     const Dimensionality &dimensions = Dimensionality());
+    parse_parameters(ParameterHandler    &prm,
+                     const Dimensionality dimensions = Dimensionality());
   };
 
   /**
@@ -702,7 +705,7 @@ namespace Parameters
      * @param[in,out] prm ParameterHandler object.
      *
      */
-    static void
+    void
     declare_default_entries(ParameterHandler &prm);
 
     /**
@@ -715,8 +718,8 @@ namespace Parameters
      * numbering starts at 0.
      */
     void
-    parse_constraint_parameters(const ParameterHandler &prm,
-                                const unsigned int      constraint_id);
+    parse_constraint_parameters(ParameterHandler  &prm,
+                                const unsigned int constraint_id);
   };
 
   /**
@@ -737,14 +740,14 @@ namespace Parameters
     // pressure and velocity have very different scales
     double pressure_scaling_factor;
 
-    enum class NavierStokesStabilization : std::int8_t
+    enum class NavierStokesStabilization
     {
       pspg_supg,
       gls,
       grad_div
     } stabilization;
 
-    enum class ScalarLimiters : std::int8_t
+    enum class ScalarLimiters
     {
       moe,
       none
@@ -759,14 +762,14 @@ namespace Parameters
   /**
    * @brief Timer - Defines the parameters that control the timing of the simulation.
    * Lethe supports advanced timing features which supports the monitoring of
-   * specific subsections of the software to evaluate the relative
+   * specific sub-sections of the software to evaluate the relative
    * workload.
    */
   struct Timer
   {
     // Time measurement in the simulation. None, at each iteration, only at the
     // end
-    enum class Type : std::int8_t
+    enum class Type
     {
       none,
       iteration,
@@ -854,7 +857,7 @@ namespace Parameters
     // "heat_flux_vof_interface", the laser behaves as a surface flux at the
     // interface between fluids (VOF auxiliary physic must be enabled to use
     // this model).
-    enum class LaserType : std::int8_t
+    enum class LaserType
     {
       exponential_decay,
       gaussian_heat_flux_vof_interface,
@@ -893,7 +896,7 @@ namespace Parameters
     // the orientation of the laser beam will be in the z direction. Note that
     // this parameter cannot be equal to z in two-dimensional simulations.
     // Plus and minus shows the direction of the laser beam
-    enum class BeamOrientation : std::int8_t
+    enum class BeamOrientation
     {
       x_plus,
       y_plus,
@@ -1150,7 +1153,7 @@ namespace Parameters
   struct NonLinearSolver
   {
     // Type of non-linear solver
-    enum class SolverType : std::int8_t
+    enum class SolverType
     {
       newton,
       inexact_newton,
@@ -1158,7 +1161,7 @@ namespace Parameters
     };
 
     // Kinsol solver strategy
-    enum class KinsolStrategy : std::int8_t
+    enum class KinsolStrategy
     {
       normal_newton,
       line_search,
@@ -1223,7 +1226,7 @@ namespace Parameters
   struct LinearSolver
   {
     // Type of linear solver
-    enum class SolverType : std::int8_t
+    enum class SolverType
     {
       gmres,
       bicgstab,
@@ -1234,10 +1237,6 @@ namespace Parameters
 
     /// Verbosity of linear solver
     Verbosity verbosity;
-
-    /// Flag to rescale linear and non-linear residuals by the sqrt of the
-    /// triangulation volume
-    bool rescale_residual_by_volume;
 
     /// Relative residuals of the iterative solver
     double relative_residual;
@@ -1258,7 +1257,7 @@ namespace Parameters
     bool enable_hessians_residual;
 
     /// Type of preconditioner
-    enum class PreconditionerType : std::int8_t
+    enum class PreconditionerType
     {
       ilu,
       amg,
@@ -1300,7 +1299,7 @@ namespace Parameters
     /// AMG Smoother sweeps
     unsigned int amg_smoother_sweeps;
 
-    /// AMG Smoother overlap
+    /// AMG Smoother overalp
     unsigned int amg_smoother_overlap;
 
     /// Block linear solver to throw error.
@@ -1319,7 +1318,7 @@ namespace Parameters
     bool mg_enable_hessians_jacobian;
 
     /// Type of multigrid
-    enum class MultigridCoarseningSequenceType : std::int8_t
+    enum class MultigridCoarseningSequenceType
     {
       h,
       p,
@@ -1339,7 +1338,7 @@ namespace Parameters
     double mg_smoother_relaxation;
 
     /// Type of preconditioner for the MG smoother
-    enum class MultigridSmootherPreconditionerType : std::int8_t
+    enum class MultigridSmootherPreconditionerType
     {
       InverseDiagonal,
       AdditiveSchwarzMethod
@@ -1359,7 +1358,7 @@ namespace Parameters
     Verbosity eig_estimation_verbose;
 
     /// Type of coarse grid solver
-    enum class CoarseGridSolverType : std::int8_t
+    enum class CoarseGridSolverType
     {
       gmres,
       amg,
@@ -1404,7 +1403,7 @@ namespace Parameters
   struct Mesh
   {
     // GMSH or dealii
-    enum class Type : std::int8_t
+    enum class Type
     {
       gmsh,
       dealii,
@@ -1491,7 +1490,7 @@ namespace Parameters
     unsigned int initial_refinement;
 
     // Type of mesh adaptation
-    enum class Type : std::int8_t
+    enum class Type
     {
       none,
       uniform,
@@ -1508,7 +1507,7 @@ namespace Parameters
     MultipleAdaptationParameters var_adaptation_param;
 
     // Decision factor for Kelly refinement (number or fraction)
-    enum class FractionType : std::int8_t
+    enum class FractionType
     {
       number,
       fraction
@@ -1566,7 +1565,7 @@ namespace Parameters
   {
     bool enabled;
 
-    enum class TestType : std::int8_t
+    enum class TestType
     {
       particles,
       mobility_status,
@@ -1608,14 +1607,14 @@ namespace Parameters
 
   struct VelocitySource
   {
-    enum class DarcySourceType : std::int8_t
+    enum class DarcySourceType
     {
       none,        // No Darcy source term
       phase_change // Phase change darcy source term which applies a
                    // penalization depending on the phase change model
     };
 
-    enum class RotatingFrameType : std::int8_t
+    enum class RotatingFrameType
     {
       none,
       srf
@@ -1769,7 +1768,7 @@ namespace Parameters
     double alpha;
 
     // If beta at n+1 step is in this threshold over beta at n step, beta n+1
-    // is kept as beta n. This avoids a new term of force in the matrix
+    // is kept as beta n. This avoid a new term of force in the matrix
     double beta_threshold;
 
     // Type of verbosity for the flow control
@@ -1791,7 +1790,7 @@ namespace Parameters
    */
   struct Evaporation
   {
-    enum class EvaporativeMassFluxModelType : std::int8_t
+    enum class EvaporativeMassFluxModelType
     {
       constant,
       temperature_dependent
