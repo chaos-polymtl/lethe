@@ -171,8 +171,8 @@ Private Member Functions</h2></td></tr>
 <tr class="separator:a6c27c7a37eb30b0971eb6eb5b7d3a7b4"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a469bc3e790ec7d6ac171757f26029cdd" id="r_a469bc3e790ec7d6ac171757f26029cdd"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classVOFAlgebraicInterfaceReinitialization.html#a469bc3e790ec7d6ac171757f26029cdd">assemble_system_rhs</a> () override</td></tr>
 <tr class="separator:a469bc3e790ec7d6ac171757f26029cdd"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a07f86d62e4123e0240f0a15e57537d72" id="r_a07f86d62e4123e0240f0a15e57537d72"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classVOFAlgebraicInterfaceReinitialization.html#a07f86d62e4123e0240f0a15e57537d72">solve_linear_system</a> (const bool initial_step, const bool renewed_matrix=true) override</td></tr>
-<tr class="separator:a07f86d62e4123e0240f0a15e57537d72"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a52b59ee006f728239687954638e9ffe8" id="r_a52b59ee006f728239687954638e9ffe8"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classVOFAlgebraicInterfaceReinitialization.html#a52b59ee006f728239687954638e9ffe8">solve_linear_system</a> (const bool initial_step) override</td></tr>
+<tr class="separator:a52b59ee006f728239687954638e9ffe8"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:adfeb92439829e2ca7ae5396135597156" id="r_adfeb92439829e2ca7ae5396135597156"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classVOFAlgebraicInterfaceReinitialization.html#adfeb92439829e2ca7ae5396135597156">continue_iterating</a> (const double time_step_inv, const unsigned int step_number)</td></tr>
 <tr class="separator:adfeb92439829e2ca7ae5396135597156"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a33ace3e40a5b1a05c8380955c10f93dc" id="r_a33ace3e40a5b1a05c8380955c10f93dc"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classVOFAlgebraicInterfaceReinitialization.html#a33ace3e40a5b1a05c8380955c10f93dc">check_dependencies_validity</a> ()</td></tr>
@@ -322,7 +322,7 @@ template&lt;int dim&gt; </div>
 
 <p class="definition">Definition at line <a class="el" href="vof__algebraic__interface__reinitialization_8h_source.html#l00053">53</a> of file <a class="el" href="vof__algebraic__interface__reinitialization_8h_source.html">vof_algebraic_interface_reinitialization.h</a>.</p>
 
-<p class="reference">References <a class="el" href="vof__algebraic__interface__reinitialization_8h_source.html#l00418">VOFAlgebraicInterfaceReinitialization&lt; dim &gt;::cell_quadrature</a>, <a class="el" href="vof__algebraic__interface__reinitialization_8h_source.html#l00414">VOFAlgebraicInterfaceReinitialization&lt; dim &gt;::fe</a>, <a class="el" href="vof__algebraic__interface__reinitialization_8h_source.html#l00417">VOFAlgebraicInterfaceReinitialization&lt; dim &gt;::mapping</a>, <a class="el" href="vof__algebraic__interface__reinitialization_8h_source.html#l00427">VOFAlgebraicInterfaceReinitialization&lt; dim &gt;::present_solution</a>, and <a class="el" href="vof__algebraic__interface__reinitialization_8h_source.html#l00399">VOFAlgebraicInterfaceReinitialization&lt; dim &gt;::simulation_parameters</a>.</p>
+<p class="reference">References <a class="el" href="vof__algebraic__interface__reinitialization_8h_source.html#l00414">VOFAlgebraicInterfaceReinitialization&lt; dim &gt;::cell_quadrature</a>, <a class="el" href="vof__algebraic__interface__reinitialization_8h_source.html#l00410">VOFAlgebraicInterfaceReinitialization&lt; dim &gt;::fe</a>, <a class="el" href="vof__algebraic__interface__reinitialization_8h_source.html#l00413">VOFAlgebraicInterfaceReinitialization&lt; dim &gt;::mapping</a>, <a class="el" href="vof__algebraic__interface__reinitialization_8h_source.html#l00423">VOFAlgebraicInterfaceReinitialization&lt; dim &gt;::present_solution</a>, and <a class="el" href="vof__algebraic__interface__reinitialization_8h_source.html#l00395">VOFAlgebraicInterfaceReinitialization&lt; dim &gt;::simulation_parameters</a>.</p>
 
 </div>
 </div>
@@ -453,7 +453,7 @@ template&lt;int dim&gt; </div>
 
 <p>Check if the phase gradient and curvature L2 projections have been solved. </p>
 
-<p class="definition">Definition at line <a class="el" href="vof__algebraic__interface__reinitialization_8cc_source.html#l00845">845</a> of file <a class="el" href="vof__algebraic__interface__reinitialization_8cc_source.html">vof_algebraic_interface_reinitialization.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="vof__algebraic__interface__reinitialization_8cc_source.html#l00844">844</a> of file <a class="el" href="vof__algebraic__interface__reinitialization_8cc_source.html">vof_algebraic_interface_reinitialization.cc</a>.</p>
 
 <p class="reference">References <a class="el" href="vof__subequations_8h.html#a24bad343f5052b85d1cc3dbd877b3a12a039fcc8d0c5faa96965d91e8d069958f">curvature_projection</a>, and <a class="el" href="vof__subequations_8h.html#a24bad343f5052b85d1cc3dbd877b3a12a9940c4a3bfe89c505b3e4b825d8ef89b">phase_gradient_projection</a>.</p>
 
@@ -496,7 +496,7 @@ template&lt;int dim&gt; </div>
 
 <p class="definition">Definition at line <a class="el" href="vof__algebraic__interface__reinitialization_8h_source.html#l00247">247</a> of file <a class="el" href="vof__algebraic__interface__reinitialization_8h_source.html">vof_algebraic_interface_reinitialization.h</a>.</p>
 
-<p class="reference">References <a class="el" href="vof__algebraic__interface__reinitialization_8h_source.html#l00399">VOFAlgebraicInterfaceReinitialization&lt; dim &gt;::simulation_parameters</a>.</p>
+<p class="reference">References <a class="el" href="vof__algebraic__interface__reinitialization_8h_source.html#l00395">VOFAlgebraicInterfaceReinitialization&lt; dim &gt;::simulation_parameters</a>.</p>
 
 </div>
 </div>
@@ -530,7 +530,7 @@ template&lt;int dim&gt; </div>
 
 <p class="definition">Definition at line <a class="el" href="vof__algebraic__interface__reinitialization_8h_source.html#l00267">267</a> of file <a class="el" href="vof__algebraic__interface__reinitialization_8h_source.html">vof_algebraic_interface_reinitialization.h</a>.</p>
 
-<p class="reference">References <a class="el" href="vof__algebraic__interface__reinitialization_8h_source.html#l00418">VOFAlgebraicInterfaceReinitialization&lt; dim &gt;::cell_quadrature</a>, <a class="el" href="vof__algebraic__interface__reinitialization_8h_source.html#l00413">VOFAlgebraicInterfaceReinitialization&lt; dim &gt;::dof_handler</a>, <a class="el" href="utilities_8h_source.html#l00780">identify_minimum_cell_size()</a>, <a class="el" href="vof__algebraic__interface__reinitialization_8h_source.html#l00417">VOFAlgebraicInterfaceReinitialization&lt; dim &gt;::mapping</a>, <a class="el" href="vof__algebraic__interface__reinitialization_8h_source.html#l00399">VOFAlgebraicInterfaceReinitialization&lt; dim &gt;::simulation_parameters</a>, and <a class="el" href="vof__algebraic__interface__reinitialization_8h_source.html#l00412">VOFAlgebraicInterfaceReinitialization&lt; dim &gt;::triangulation</a>.</p>
+<p class="reference">References <a class="el" href="vof__algebraic__interface__reinitialization_8h_source.html#l00414">VOFAlgebraicInterfaceReinitialization&lt; dim &gt;::cell_quadrature</a>, <a class="el" href="vof__algebraic__interface__reinitialization_8h_source.html#l00409">VOFAlgebraicInterfaceReinitialization&lt; dim &gt;::dof_handler</a>, <a class="el" href="utilities_8h_source.html#l00780">identify_minimum_cell_size()</a>, <a class="el" href="vof__algebraic__interface__reinitialization_8h_source.html#l00413">VOFAlgebraicInterfaceReinitialization&lt; dim &gt;::mapping</a>, <a class="el" href="vof__algebraic__interface__reinitialization_8h_source.html#l00395">VOFAlgebraicInterfaceReinitialization&lt; dim &gt;::simulation_parameters</a>, and <a class="el" href="vof__algebraic__interface__reinitialization_8h_source.html#l00408">VOFAlgebraicInterfaceReinitialization&lt; dim &gt;::triangulation</a>.</p>
 
 </div>
 </div>
@@ -580,9 +580,9 @@ template&lt;int dim&gt; </div>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>Boolean indicating if the algebraic reinitialization should continue </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="vof__algebraic__interface__reinitialization_8h_source.html#l00341">341</a> of file <a class="el" href="vof__algebraic__interface__reinitialization_8h_source.html">vof_algebraic_interface_reinitialization.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="vof__algebraic__interface__reinitialization_8h_source.html#l00337">337</a> of file <a class="el" href="vof__algebraic__interface__reinitialization_8h_source.html">vof_algebraic_interface_reinitialization.h</a>.</p>
 
-<p class="reference">References <a class="el" href="namespaceParameters.html#a91f1943180a615249347b911b0ed3919ae5cbb8171b496f26a4488b9e15a0fe52">Parameters::extra_verbose</a>, <a class="el" href="vof__algebraic__interface__reinitialization_8h_source.html#l00424">VOFAlgebraicInterfaceReinitialization&lt; dim &gt;::local_evaluation_point</a>, <a class="el" href="physics__subequations__solver_8h_source.html#l00112">PhysicsNonlinearSubequationsSolver&lt; dim, GlobalVectorType &gt;::pcout</a>, <a class="el" href="vof__algebraic__interface__reinitialization_8h_source.html#l00425">VOFAlgebraicInterfaceReinitialization&lt; dim &gt;::previous_local_evaluation_point</a>, <a class="el" href="vof__algebraic__interface__reinitialization_8h_source.html#l00399">VOFAlgebraicInterfaceReinitialization&lt; dim &gt;::simulation_parameters</a>, and <a class="el" href="vof__algebraic__interface__reinitialization_8h_source.html#l00435">VOFAlgebraicInterfaceReinitialization&lt; dim &gt;::subequation_verbosity</a>.</p>
+<p class="reference">References <a class="el" href="namespaceParameters.html#a91f1943180a615249347b911b0ed3919ae5cbb8171b496f26a4488b9e15a0fe52">Parameters::extra_verbose</a>, <a class="el" href="vof__algebraic__interface__reinitialization_8h_source.html#l00420">VOFAlgebraicInterfaceReinitialization&lt; dim &gt;::local_evaluation_point</a>, <a class="el" href="physics__subequations__solver_8h_source.html#l00112">PhysicsNonlinearSubequationsSolver&lt; dim, GlobalVectorType &gt;::pcout</a>, <a class="el" href="vof__algebraic__interface__reinitialization_8h_source.html#l00421">VOFAlgebraicInterfaceReinitialization&lt; dim &gt;::previous_local_evaluation_point</a>, <a class="el" href="vof__algebraic__interface__reinitialization_8h_source.html#l00395">VOFAlgebraicInterfaceReinitialization&lt; dim &gt;::simulation_parameters</a>, and <a class="el" href="vof__algebraic__interface__reinitialization_8h_source.html#l00431">VOFAlgebraicInterfaceReinitialization&lt; dim &gt;::subequation_verbosity</a>.</p>
 
 </div>
 </div>
@@ -684,7 +684,7 @@ template&lt;int dim&gt; </div>
 
 <p class="definition">Definition at line <a class="el" href="vof__algebraic__interface__reinitialization_8h_source.html#l00124">124</a> of file <a class="el" href="vof__algebraic__interface__reinitialization_8h_source.html">vof_algebraic_interface_reinitialization.h</a>.</p>
 
-<p class="reference">References <a class="el" href="vof__algebraic__interface__reinitialization_8h_source.html#l00423">VOFAlgebraicInterfaceReinitialization&lt; dim &gt;::evaluation_point</a>.</p>
+<p class="reference">References <a class="el" href="vof__algebraic__interface__reinitialization_8h_source.html#l00419">VOFAlgebraicInterfaceReinitialization&lt; dim &gt;::evaluation_point</a>.</p>
 
 </div>
 </div>
@@ -720,7 +720,7 @@ template&lt;int dim&gt; </div>
 
 <p class="definition">Definition at line <a class="el" href="vof__algebraic__interface__reinitialization_8h_source.html#l00137">137</a> of file <a class="el" href="vof__algebraic__interface__reinitialization_8h_source.html">vof_algebraic_interface_reinitialization.h</a>.</p>
 
-<p class="reference">References <a class="el" href="vof__algebraic__interface__reinitialization_8h_source.html#l00424">VOFAlgebraicInterfaceReinitialization&lt; dim &gt;::local_evaluation_point</a>.</p>
+<p class="reference">References <a class="el" href="vof__algebraic__interface__reinitialization_8h_source.html#l00420">VOFAlgebraicInterfaceReinitialization&lt; dim &gt;::local_evaluation_point</a>.</p>
 
 </div>
 </div>
@@ -756,7 +756,7 @@ template&lt;int dim&gt; </div>
 
 <p class="definition">Definition at line <a class="el" href="vof__algebraic__interface__reinitialization_8h_source.html#l00149">149</a> of file <a class="el" href="vof__algebraic__interface__reinitialization_8h_source.html">vof_algebraic_interface_reinitialization.h</a>.</p>
 
-<p class="reference">References <a class="el" href="vof__algebraic__interface__reinitialization_8h_source.html#l00426">VOFAlgebraicInterfaceReinitialization&lt; dim &gt;::newton_update</a>.</p>
+<p class="reference">References <a class="el" href="vof__algebraic__interface__reinitialization_8h_source.html#l00422">VOFAlgebraicInterfaceReinitialization&lt; dim &gt;::newton_update</a>.</p>
 
 </div>
 </div>
@@ -792,7 +792,7 @@ template&lt;int dim&gt; </div>
 
 <p class="definition">Definition at line <a class="el" href="vof__algebraic__interface__reinitialization_8h_source.html#l00187">187</a> of file <a class="el" href="vof__algebraic__interface__reinitialization_8h_source.html">vof_algebraic_interface_reinitialization.h</a>.</p>
 
-<p class="reference">References <a class="el" href="vof__algebraic__interface__reinitialization_8h_source.html#l00431">VOFAlgebraicInterfaceReinitialization&lt; dim &gt;::nonzero_constraints</a>.</p>
+<p class="reference">References <a class="el" href="vof__algebraic__interface__reinitialization_8h_source.html#l00427">VOFAlgebraicInterfaceReinitialization&lt; dim &gt;::nonzero_constraints</a>.</p>
 
 </div>
 </div>
@@ -828,7 +828,7 @@ template&lt;int dim&gt; </div>
 
 <p class="definition">Definition at line <a class="el" href="vof__algebraic__interface__reinitialization_8h_source.html#l00161">161</a> of file <a class="el" href="vof__algebraic__interface__reinitialization_8h_source.html">vof_algebraic_interface_reinitialization.h</a>.</p>
 
-<p class="reference">References <a class="el" href="vof__algebraic__interface__reinitialization_8h_source.html#l00427">VOFAlgebraicInterfaceReinitialization&lt; dim &gt;::present_solution</a>.</p>
+<p class="reference">References <a class="el" href="vof__algebraic__interface__reinitialization_8h_source.html#l00423">VOFAlgebraicInterfaceReinitialization&lt; dim &gt;::present_solution</a>.</p>
 
 </div>
 </div>
@@ -864,7 +864,7 @@ template&lt;int dim&gt; </div>
 
 <p class="definition">Definition at line <a class="el" href="vof__algebraic__interface__reinitialization_8h_source.html#l00217">217</a> of file <a class="el" href="vof__algebraic__interface__reinitialization_8h_source.html">vof_algebraic_interface_reinitialization.h</a>.</p>
 
-<p class="reference">References <a class="el" href="vof__algebraic__interface__reinitialization_8h_source.html#l00417">VOFAlgebraicInterfaceReinitialization&lt; dim &gt;::mapping</a>, <a class="el" href="vof__algebraic__interface__reinitialization_8h_source.html#l00399">VOFAlgebraicInterfaceReinitialization&lt; dim &gt;::simulation_parameters</a>, <a class="el" href="vof__algebraic__interface__reinitialization_8h_source.html#l00412">VOFAlgebraicInterfaceReinitialization&lt; dim &gt;::triangulation</a>, and <a class="el" href="multiphysics_8h_source.html#l00012">VOF</a>.</p>
+<p class="reference">References <a class="el" href="vof__algebraic__interface__reinitialization_8h_source.html#l00413">VOFAlgebraicInterfaceReinitialization&lt; dim &gt;::mapping</a>, <a class="el" href="vof__algebraic__interface__reinitialization_8h_source.html#l00395">VOFAlgebraicInterfaceReinitialization&lt; dim &gt;::simulation_parameters</a>, <a class="el" href="vof__algebraic__interface__reinitialization_8h_source.html#l00408">VOFAlgebraicInterfaceReinitialization&lt; dim &gt;::triangulation</a>, and <a class="el" href="multiphysics_8h_source.html#l00012">VOF</a>.</p>
 
 </div>
 </div>
@@ -900,7 +900,7 @@ template&lt;int dim&gt; </div>
 
 <p class="definition">Definition at line <a class="el" href="vof__algebraic__interface__reinitialization_8h_source.html#l00173">173</a> of file <a class="el" href="vof__algebraic__interface__reinitialization_8h_source.html">vof_algebraic_interface_reinitialization.h</a>.</p>
 
-<p class="reference">References <a class="el" href="vof__algebraic__interface__reinitialization_8h_source.html#l00429">VOFAlgebraicInterfaceReinitialization&lt; dim &gt;::system_rhs</a>.</p>
+<p class="reference">References <a class="el" href="vof__algebraic__interface__reinitialization_8h_source.html#l00425">VOFAlgebraicInterfaceReinitialization&lt; dim &gt;::system_rhs</a>.</p>
 
 </div>
 </div>
@@ -942,7 +942,7 @@ template&lt;int dim&gt; </div>
 
 <p class="definition">Definition at line <a class="el" href="vof__algebraic__interface__reinitialization_8h_source.html#l00199">199</a> of file <a class="el" href="vof__algebraic__interface__reinitialization_8h_source.html">vof_algebraic_interface_reinitialization.h</a>.</p>
 
-<p class="reference">References <a class="el" href="vof__algebraic__interface__reinitialization_8h_source.html#l00426">VOFAlgebraicInterfaceReinitialization&lt; dim &gt;::newton_update</a>, and <a class="el" href="physics__subequations__solver_8h_source.html#l00112">PhysicsNonlinearSubequationsSolver&lt; dim, GlobalVectorType &gt;::pcout</a>.</p>
+<p class="reference">References <a class="el" href="vof__algebraic__interface__reinitialization_8h_source.html#l00422">VOFAlgebraicInterfaceReinitialization&lt; dim &gt;::newton_update</a>, and <a class="el" href="physics__subequations__solver_8h_source.html#l00112">PhysicsNonlinearSubequationsSolver&lt; dim, GlobalVectorType &gt;::pcout</a>.</p>
 
 </div>
 </div>
@@ -1041,14 +1041,14 @@ template&lt;int dim&gt; </div>
 
 <p>Implements <a class="el" href="classPhysicsSubequationsSolverBase.html#a4ad4b59beac16fd37a200e55ccd24991">PhysicsSubequationsSolverBase</a>.</p>
 
-<p class="definition">Definition at line <a class="el" href="vof__algebraic__interface__reinitialization_8cc_source.html#l00696">696</a> of file <a class="el" href="vof__algebraic__interface__reinitialization_8cc_source.html">vof_algebraic_interface_reinitialization.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="vof__algebraic__interface__reinitialization_8cc_source.html#l00695">695</a> of file <a class="el" href="vof__algebraic__interface__reinitialization_8cc_source.html">vof_algebraic_interface_reinitialization.cc</a>.</p>
 
 <p class="reference">References <a class="el" href="vof__subequations_8h.html#a24bad343f5052b85d1cc3dbd877b3a12a95a3deae4fb177241e3f65f1193835cd">algebraic_interface_reinitialization</a>, <a class="el" href="utilities_8h_source.html#l00465">announce_string()</a>, and <a class="el" href="namespaceParameters.html#a91f1943180a615249347b911b0ed3919a556966c7830465dc4623d62e32cec31d">Parameters::quiet</a>.</p>
 
 </div>
 </div>
-<a id="a07f86d62e4123e0240f0a15e57537d72" name="a07f86d62e4123e0240f0a15e57537d72"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a07f86d62e4123e0240f0a15e57537d72">&#9670;&#160;</a></span>solve_linear_system()</h2>
+<a id="a52b59ee006f728239687954638e9ffe8" name="a52b59ee006f728239687954638e9ffe8"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a52b59ee006f728239687954638e9ffe8">&#9670;&#160;</a></span>solve_linear_system()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -1062,18 +1062,8 @@ template&lt;int dim&gt; </div>
           <td class="memname">void <a class="el" href="classVOFAlgebraicInterfaceReinitialization.html">VOFAlgebraicInterfaceReinitialization</a>&lt; dim &gt;::solve_linear_system </td>
           <td>(</td>
           <td class="paramtype">const bool&#160;</td>
-          <td class="paramname"><em>initial_step</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
+          <td class="paramname"><em>initial_step</em></td><td>)</td>
           <td></td>
-          <td class="paramtype">const bool&#160;</td>
-          <td class="paramname"><em>renewed_matrix</em> = <code>true</code>&#160;</td>
-        </tr>
-        <tr>
-          <td></td>
-          <td>)</td>
-          <td></td><td></td>
         </tr>
       </table>
   </td>
@@ -1086,13 +1076,12 @@ template&lt;int dim&gt; </div>
 <p>Solve the linear system. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramdir">[in]</td><td class="paramname">initial_step</td><td>Provides the linear solver with indication if this solution is the first one for the system of equation or not.</td></tr>
-    <tr><td class="paramdir">[in]</td><td class="paramname">renewed_matrix</td><td>Indicates to the linear solve if the system matrix has been recalculated or not. </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">initial_step</td><td>Provides the linear solver with indication if this solution is the first one for the system of equation or not. </td></tr>
   </table>
   </dd>
 </dl>
 
-<p>Implements <a class="el" href="classPhysicsSolver.html#a210eb1a42329bbc5b66e0d449bd815b1">PhysicsSolver&lt; VectorType &gt;</a>.</p>
+<p>Implements <a class="el" href="classPhysicsSolver.html#a7111f33094ebb0c1bf9a62a25b7a8f5d">PhysicsSolver&lt; VectorType &gt;</a>.</p>
 
 <p class="definition">Definition at line <a class="el" href="vof__algebraic__interface__reinitialization_8cc_source.html#l00599">599</a> of file <a class="el" href="vof__algebraic__interface__reinitialization_8cc_source.html">vof_algebraic_interface_reinitialization.cc</a>.</p>
 
@@ -1135,7 +1124,7 @@ template&lt;int dim&gt; </div>
 </dl>
 <dl class="section note"><dt>Note</dt><dd>Only the reinitialization steps of the last global time-step (simulation time-step) ran are outputted. </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="vof__algebraic__interface__reinitialization_8cc_source.html#l00782">782</a> of file <a class="el" href="vof__algebraic__interface__reinitialization_8cc_source.html">vof_algebraic_interface_reinitialization.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="vof__algebraic__interface__reinitialization_8cc_source.html#l00781">781</a> of file <a class="el" href="vof__algebraic__interface__reinitialization_8cc_source.html">vof_algebraic_interface_reinitialization.cc</a>.</p>
 
 <p class="reference">References <a class="el" href="vof__subequations_8h.html#a24bad343f5052b85d1cc3dbd877b3a12a039fcc8d0c5faa96965d91e8d069958f">curvature_projection</a>, and <a class="el" href="vof__subequations_8h.html#a24bad343f5052b85d1cc3dbd877b3a12a9940c4a3bfe89c505b3e4b825d8ef89b">phase_gradient_projection</a>.</p>
 
@@ -1164,7 +1153,7 @@ template&lt;int dim&gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="vof__algebraic__interface__reinitialization_8h_source.html#l00418">418</a> of file <a class="el" href="vof__algebraic__interface__reinitialization_8h_source.html">vof_algebraic_interface_reinitialization.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="vof__algebraic__interface__reinitialization_8h_source.html#l00414">414</a> of file <a class="el" href="vof__algebraic__interface__reinitialization_8h_source.html">vof_algebraic_interface_reinitialization.h</a>.</p>
 
 </div>
 </div>
@@ -1190,7 +1179,7 @@ template&lt;int dim&gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="vof__algebraic__interface__reinitialization_8h_source.html#l00408">408</a> of file <a class="el" href="vof__algebraic__interface__reinitialization_8h_source.html">vof_algebraic_interface_reinitialization.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="vof__algebraic__interface__reinitialization_8h_source.html#l00404">404</a> of file <a class="el" href="vof__algebraic__interface__reinitialization_8h_source.html">vof_algebraic_interface_reinitialization.h</a>.</p>
 
 </div>
 </div>
@@ -1216,7 +1205,7 @@ template&lt;int dim&gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="vof__algebraic__interface__reinitialization_8h_source.html#l00413">413</a> of file <a class="el" href="vof__algebraic__interface__reinitialization_8h_source.html">vof_algebraic_interface_reinitialization.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="vof__algebraic__interface__reinitialization_8h_source.html#l00409">409</a> of file <a class="el" href="vof__algebraic__interface__reinitialization_8h_source.html">vof_algebraic_interface_reinitialization.h</a>.</p>
 
 </div>
 </div>
@@ -1242,7 +1231,7 @@ template&lt;int dim&gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="vof__algebraic__interface__reinitialization_8h_source.html#l00423">423</a> of file <a class="el" href="vof__algebraic__interface__reinitialization_8h_source.html">vof_algebraic_interface_reinitialization.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="vof__algebraic__interface__reinitialization_8h_source.html#l00419">419</a> of file <a class="el" href="vof__algebraic__interface__reinitialization_8h_source.html">vof_algebraic_interface_reinitialization.h</a>.</p>
 
 </div>
 </div>
@@ -1268,7 +1257,7 @@ template&lt;int dim&gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="vof__algebraic__interface__reinitialization_8h_source.html#l00414">414</a> of file <a class="el" href="vof__algebraic__interface__reinitialization_8h_source.html">vof_algebraic_interface_reinitialization.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="vof__algebraic__interface__reinitialization_8h_source.html#l00410">410</a> of file <a class="el" href="vof__algebraic__interface__reinitialization_8h_source.html">vof_algebraic_interface_reinitialization.h</a>.</p>
 
 </div>
 </div>
@@ -1294,7 +1283,7 @@ template&lt;int dim&gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="vof__algebraic__interface__reinitialization_8h_source.html#l00424">424</a> of file <a class="el" href="vof__algebraic__interface__reinitialization_8h_source.html">vof_algebraic_interface_reinitialization.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="vof__algebraic__interface__reinitialization_8h_source.html#l00420">420</a> of file <a class="el" href="vof__algebraic__interface__reinitialization_8h_source.html">vof_algebraic_interface_reinitialization.h</a>.</p>
 
 </div>
 </div>
@@ -1320,7 +1309,7 @@ template&lt;int dim&gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="vof__algebraic__interface__reinitialization_8h_source.html#l00421">421</a> of file <a class="el" href="vof__algebraic__interface__reinitialization_8h_source.html">vof_algebraic_interface_reinitialization.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="vof__algebraic__interface__reinitialization_8h_source.html#l00417">417</a> of file <a class="el" href="vof__algebraic__interface__reinitialization_8h_source.html">vof_algebraic_interface_reinitialization.h</a>.</p>
 
 </div>
 </div>
@@ -1346,7 +1335,7 @@ template&lt;int dim&gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="vof__algebraic__interface__reinitialization_8h_source.html#l00422">422</a> of file <a class="el" href="vof__algebraic__interface__reinitialization_8h_source.html">vof_algebraic_interface_reinitialization.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="vof__algebraic__interface__reinitialization_8h_source.html#l00418">418</a> of file <a class="el" href="vof__algebraic__interface__reinitialization_8h_source.html">vof_algebraic_interface_reinitialization.h</a>.</p>
 
 </div>
 </div>
@@ -1372,7 +1361,7 @@ template&lt;int dim&gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="vof__algebraic__interface__reinitialization_8h_source.html#l00417">417</a> of file <a class="el" href="vof__algebraic__interface__reinitialization_8h_source.html">vof_algebraic_interface_reinitialization.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="vof__algebraic__interface__reinitialization_8h_source.html#l00413">413</a> of file <a class="el" href="vof__algebraic__interface__reinitialization_8h_source.html">vof_algebraic_interface_reinitialization.h</a>.</p>
 
 </div>
 </div>
@@ -1398,7 +1387,7 @@ template&lt;int dim&gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="vof__algebraic__interface__reinitialization_8h_source.html#l00426">426</a> of file <a class="el" href="vof__algebraic__interface__reinitialization_8h_source.html">vof_algebraic_interface_reinitialization.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="vof__algebraic__interface__reinitialization_8h_source.html#l00422">422</a> of file <a class="el" href="vof__algebraic__interface__reinitialization_8h_source.html">vof_algebraic_interface_reinitialization.h</a>.</p>
 
 </div>
 </div>
@@ -1424,7 +1413,7 @@ template&lt;int dim&gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="vof__algebraic__interface__reinitialization_8h_source.html#l00431">431</a> of file <a class="el" href="vof__algebraic__interface__reinitialization_8h_source.html">vof_algebraic_interface_reinitialization.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="vof__algebraic__interface__reinitialization_8h_source.html#l00427">427</a> of file <a class="el" href="vof__algebraic__interface__reinitialization_8h_source.html">vof_algebraic_interface_reinitialization.h</a>.</p>
 
 </div>
 </div>
@@ -1450,7 +1439,7 @@ template&lt;int dim&gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="vof__algebraic__interface__reinitialization_8h_source.html#l00427">427</a> of file <a class="el" href="vof__algebraic__interface__reinitialization_8h_source.html">vof_algebraic_interface_reinitialization.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="vof__algebraic__interface__reinitialization_8h_source.html#l00423">423</a> of file <a class="el" href="vof__algebraic__interface__reinitialization_8h_source.html">vof_algebraic_interface_reinitialization.h</a>.</p>
 
 </div>
 </div>
@@ -1476,7 +1465,7 @@ template&lt;int dim&gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="vof__algebraic__interface__reinitialization_8h_source.html#l00425">425</a> of file <a class="el" href="vof__algebraic__interface__reinitialization_8h_source.html">vof_algebraic_interface_reinitialization.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="vof__algebraic__interface__reinitialization_8h_source.html#l00421">421</a> of file <a class="el" href="vof__algebraic__interface__reinitialization_8h_source.html">vof_algebraic_interface_reinitialization.h</a>.</p>
 
 </div>
 </div>
@@ -1502,7 +1491,7 @@ template&lt;int dim&gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="vof__algebraic__interface__reinitialization_8h_source.html#l00428">428</a> of file <a class="el" href="vof__algebraic__interface__reinitialization_8h_source.html">vof_algebraic_interface_reinitialization.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="vof__algebraic__interface__reinitialization_8h_source.html#l00424">424</a> of file <a class="el" href="vof__algebraic__interface__reinitialization_8h_source.html">vof_algebraic_interface_reinitialization.h</a>.</p>
 
 </div>
 </div>
@@ -1528,7 +1517,7 @@ template&lt;int dim&gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="vof__algebraic__interface__reinitialization_8h_source.html#l00405">405</a> of file <a class="el" href="vof__algebraic__interface__reinitialization_8h_source.html">vof_algebraic_interface_reinitialization.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="vof__algebraic__interface__reinitialization_8h_source.html#l00401">401</a> of file <a class="el" href="vof__algebraic__interface__reinitialization_8h_source.html">vof_algebraic_interface_reinitialization.h</a>.</p>
 
 </div>
 </div>
@@ -1554,7 +1543,7 @@ template&lt;int dim&gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="vof__algebraic__interface__reinitialization_8h_source.html#l00402">402</a> of file <a class="el" href="vof__algebraic__interface__reinitialization_8h_source.html">vof_algebraic_interface_reinitialization.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="vof__algebraic__interface__reinitialization_8h_source.html#l00398">398</a> of file <a class="el" href="vof__algebraic__interface__reinitialization_8h_source.html">vof_algebraic_interface_reinitialization.h</a>.</p>
 
 </div>
 </div>
@@ -1580,7 +1569,7 @@ template&lt;int dim&gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="vof__algebraic__interface__reinitialization_8h_source.html#l00399">399</a> of file <a class="el" href="vof__algebraic__interface__reinitialization_8h_source.html">vof_algebraic_interface_reinitialization.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="vof__algebraic__interface__reinitialization_8h_source.html#l00395">395</a> of file <a class="el" href="vof__algebraic__interface__reinitialization_8h_source.html">vof_algebraic_interface_reinitialization.h</a>.</p>
 
 </div>
 </div>
@@ -1606,7 +1595,7 @@ template&lt;int dim&gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="vof__algebraic__interface__reinitialization_8h_source.html#l00395">395</a> of file <a class="el" href="vof__algebraic__interface__reinitialization_8h_source.html">vof_algebraic_interface_reinitialization.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="vof__algebraic__interface__reinitialization_8h_source.html#l00391">391</a> of file <a class="el" href="vof__algebraic__interface__reinitialization_8h_source.html">vof_algebraic_interface_reinitialization.h</a>.</p>
 
 </div>
 </div>
@@ -1632,7 +1621,7 @@ template&lt;int dim&gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="vof__algebraic__interface__reinitialization_8h_source.html#l00435">435</a> of file <a class="el" href="vof__algebraic__interface__reinitialization_8h_source.html">vof_algebraic_interface_reinitialization.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="vof__algebraic__interface__reinitialization_8h_source.html#l00431">431</a> of file <a class="el" href="vof__algebraic__interface__reinitialization_8h_source.html">vof_algebraic_interface_reinitialization.h</a>.</p>
 
 </div>
 </div>
@@ -1658,7 +1647,7 @@ template&lt;int dim&gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="vof__algebraic__interface__reinitialization_8h_source.html#l00396">396</a> of file <a class="el" href="vof__algebraic__interface__reinitialization_8h_source.html">vof_algebraic_interface_reinitialization.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="vof__algebraic__interface__reinitialization_8h_source.html#l00392">392</a> of file <a class="el" href="vof__algebraic__interface__reinitialization_8h_source.html">vof_algebraic_interface_reinitialization.h</a>.</p>
 
 </div>
 </div>
@@ -1684,7 +1673,7 @@ template&lt;int dim&gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="vof__algebraic__interface__reinitialization_8h_source.html#l00432">432</a> of file <a class="el" href="vof__algebraic__interface__reinitialization_8h_source.html">vof_algebraic_interface_reinitialization.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="vof__algebraic__interface__reinitialization_8h_source.html#l00428">428</a> of file <a class="el" href="vof__algebraic__interface__reinitialization_8h_source.html">vof_algebraic_interface_reinitialization.h</a>.</p>
 
 </div>
 </div>
@@ -1710,7 +1699,7 @@ template&lt;int dim&gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="vof__algebraic__interface__reinitialization_8h_source.html#l00429">429</a> of file <a class="el" href="vof__algebraic__interface__reinitialization_8h_source.html">vof_algebraic_interface_reinitialization.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="vof__algebraic__interface__reinitialization_8h_source.html#l00425">425</a> of file <a class="el" href="vof__algebraic__interface__reinitialization_8h_source.html">vof_algebraic_interface_reinitialization.h</a>.</p>
 
 </div>
 </div>
@@ -1736,7 +1725,7 @@ template&lt;int dim&gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="vof__algebraic__interface__reinitialization_8h_source.html#l00409">409</a> of file <a class="el" href="vof__algebraic__interface__reinitialization_8h_source.html">vof_algebraic_interface_reinitialization.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="vof__algebraic__interface__reinitialization_8h_source.html#l00405">405</a> of file <a class="el" href="vof__algebraic__interface__reinitialization_8h_source.html">vof_algebraic_interface_reinitialization.h</a>.</p>
 
 </div>
 </div>
@@ -1762,7 +1751,7 @@ template&lt;int dim&gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="vof__algebraic__interface__reinitialization_8h_source.html#l00412">412</a> of file <a class="el" href="vof__algebraic__interface__reinitialization_8h_source.html">vof_algebraic_interface_reinitialization.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="vof__algebraic__interface__reinitialization_8h_source.html#l00408">408</a> of file <a class="el" href="vof__algebraic__interface__reinitialization_8h_source.html">vof_algebraic_interface_reinitialization.h</a>.</p>
 
 </div>
 </div>
@@ -1788,7 +1777,7 @@ template&lt;int dim&gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="vof__algebraic__interface__reinitialization_8h_source.html#l00430">430</a> of file <a class="el" href="vof__algebraic__interface__reinitialization_8h_source.html">vof_algebraic_interface_reinitialization.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="vof__algebraic__interface__reinitialization_8h_source.html#l00426">426</a> of file <a class="el" href="vof__algebraic__interface__reinitialization_8h_source.html">vof_algebraic_interface_reinitialization.h</a>.</p>
 
 </div>
 </div>
