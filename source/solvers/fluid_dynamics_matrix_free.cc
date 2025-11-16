@@ -3415,9 +3415,7 @@ FluidDynamicsMatrixFree<dim>::setup_preconditioner()
 
 template <int dim>
 void
-FluidDynamicsMatrixFree<dim>::solve_linear_system(
-  const bool initial_step,
-  const bool /* renewed_matrix */)
+FluidDynamicsMatrixFree<dim>::solve_linear_system(const bool initial_step)
 {
   const double absolute_residual =
     this->simulation_parameters.linear_solver.at(PhysicsID::fluid_dynamics)

@@ -7,9 +7,14 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
 ### [Master] - 2025-11-14
 
+- MINOR Remove the deprecated argument "renewed_matrix" of the solve_linear_system definition. 
+
+### [Master] - 2025-11-14
+
 ### Fixed
 
 - MAJOR A bug had been introduced in [#1752] that prevented paraview from opening the vtu, pvtu and pvd files for the particle results in the CFD-DEM solver. This was because the new property (momentum_transfer_coefficient) was not given a name and this prevented the output from being adequately named. This PR fixes it by giving an appropriate name to that property which fixes the output of the particles. [#1800](https://github.com/chaos-polymtl/lethe/pull/1800)
+
 
 ### [Master] - 2025-11-04
 

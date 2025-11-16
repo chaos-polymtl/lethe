@@ -2605,8 +2605,7 @@ VolumeOfFluid<dim>::set_initial_conditions()
 
 template <int dim>
 void
-VolumeOfFluid<dim>::solve_linear_system(const bool initial_step,
-                                        const bool /*renewed_matrix*/)
+VolumeOfFluid<dim>::solve_linear_system(const bool initial_step)
 {
   TimerOutput::Scope t(this->computing_timer, "Solve linear system");
 
