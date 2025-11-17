@@ -3,6 +3,7 @@
 
 #include <core/bdf.h>
 #include <core/grids.h>
+#include <core/lethe_grid_tools.h>
 #include <core/manifolds.h>
 #include <core/mortar_coupling_manager.h>
 #include <core/multiphysics.h>
@@ -2606,7 +2607,7 @@ FluidDynamicsMatrixFree<dim>::solve()
       // Create and initialize mapping cache
       this->mapping_cache =
         std::make_shared<MappingQCache<dim>>(this->velocity_fem_degree);
-      this->rotate_rotor_mapping(true);
+      this->rotate_rotor_mapping_mf(true);
     }
   else
     read_mesh_and_manifolds(
@@ -2735,7 +2736,7 @@ FluidDynamicsMatrixFree<dim>::setup_dofs_fd()
     DoFTools::extract_locally_relevant_dofs(this->dof_handler);
 
   // If enabled, rotate rotor mapping
-  this->rotate_rotor_mapping(false);
+  this->rotate_rotor_mapping_mf(false);
 
   // Non-zero constraints
   this->define_non_zero_constraints();
@@ -2875,7 +2876,7 @@ FluidDynamicsMatrixFree<dim>::update_mortar_configuration()
       ilu_preconditioner.reset();
 
       // Rotate mapping
-      this->rotate_rotor_mapping(false);
+      this->rotate_rotor_mapping_mf(false);
 
       // Non Zero constraints
       this->define_non_zero_constraints();
@@ -2897,11 +2898,14 @@ FluidDynamicsMatrixFree<dim>::reinit_mortar_operators_mf(bool is_first)
 
   TimerOutput::Scope t(this->computing_timer, "Reinit mortar operators");
 
-  // Compute variables
+  // Initialize variables
   std::vector<unsigned int> n_subdivisions;
   std::vector<double>       radius;
   double                    pre_rotation_angle;
 
+  // If this is the first time that the mortar operators are created, first
+  // compute the number of subdivisions at the mortar interface and radius.
+  // Otherwise, use previously stored stored values
   if (is_first)
     std::tie(n_subdivisions, radius, pre_rotation_angle) =
       compute_n_subdivisions_and_radius(
@@ -2917,13 +2921,6 @@ FluidDynamicsMatrixFree<dim>::reinit_mortar_operators_mf(bool is_first)
     }
 
   // Create mortar manager
-  // this->system_operator->mortar_manager_mf =
-  //   std::make_shared<MortarManagerCircle<dim>>(
-  //     *this->cell_quadrature,
-  //     *this->get_mapping(),
-  //     this->dof_handler,
-  //     this->simulation_parameters.mortar_parameters);
-
   this->system_operator->mortar_manager_mf =
     std::make_shared<MortarManagerCircle<dim>>(
       n_subdivisions,
@@ -2942,6 +2939,7 @@ FluidDynamicsMatrixFree<dim>::reinit_mortar_operators_mf(bool is_first)
       this->physical_properties_manager->get_rheology()
         ->get_kinematic_viscosity());
 
+  // Create mortar coupling operator
   this->system_operator->mortar_coupling_operator_mf =
     std::make_shared<CouplingOperator<dim, double>>(
       *this->get_mapping(),
@@ -2952,6 +2950,64 @@ FluidDynamicsMatrixFree<dim>::reinit_mortar_operators_mf(bool is_first)
       this->simulation_parameters.mortar_parameters.rotor_boundary_id,
       this->simulation_parameters.mortar_parameters.stator_boundary_id,
       this->simulation_parameters.mortar_parameters.sip_factor);
+}
+
+template <int dim>
+void
+FluidDynamicsMatrixFree<dim>::rotate_rotor_mapping_mf(const bool is_first)
+{
+  if (!this->simulation_parameters.mortar_parameters.enable)
+    return;
+
+  TimerOutput::Scope t(this->computing_timer, "Rotate rotor mapping");
+
+  // Get updated rotation angle (radians)
+  this->simulation_parameters.mortar_parameters.rotor_rotation_angle->set_time(
+    this->simulation_control->get_current_time());
+  const double rotation_angle =
+    this->simulation_parameters.mortar_parameters.rotor_rotation_angle->value(
+      Point<dim>());
+
+  // Get updated angular velocity (radians/time)
+  this->simulation_parameters.mortar_parameters.rotor_angular_velocity
+    ->set_time(this->simulation_control->get_current_time());
+  const double angular_velocity =
+    this->simulation_parameters.mortar_parameters.rotor_angular_velocity->value(
+      Point<dim>());
+
+  if (this->simulation_parameters.mortar_parameters.verbosity ==
+        Parameters::Verbosity::verbose &&
+      !is_first)
+    {
+      this->pcout << "Mortar - Rotor grid angle is: " << rotation_angle
+                  << " rad \n"
+                  << "         Rotor grid velocity is: " << angular_velocity
+                  << " rad/time \n"
+                  << std::endl;
+    }
+
+  // Compute radius if this is the first iteration
+  double radius;
+  if (this->simulation_control->get_step_number() == 0)
+    radius = std::get<1>(compute_n_subdivisions_and_radius(
+      *this->triangulation,
+      *this->mapping,
+      this->simulation_parameters.mortar_parameters))[0];
+  else
+    radius = this->system_operator->mortar_manager_mf->radius[0];
+
+  // Create new mapping cache
+  this->mapping_cache =
+    std::make_shared<MappingQCache<dim>>(this->velocity_fem_degree);
+
+  LetheGridTools::rotate_mapping(
+    this->dof_handler,
+    *this->mapping_cache,
+    *this->mapping,
+    radius,
+    rotation_angle,
+    this->simulation_parameters.mortar_parameters.center_of_rotation,
+    this->simulation_parameters.mortar_parameters.rotation_axis);
 }
 
 template <int dim>

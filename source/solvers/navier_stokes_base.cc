@@ -1313,11 +1313,6 @@ NavierStokesBase<dim, VectorType, DofsType>::refine_mesh_kelly()
     average_velocities->prepare_for_mesh_adaptation();
 
   tria.execute_coarsening_and_refinement();
-
-  // If mortar is enabled, update mapping cache with refined triangulation
-  if (this->simulation_parameters.mortar_parameters.enable)
-    this->mapping_cache->initialize(*this->mapping, tria);
-
   setup_dofs();
 
   // Transfer solution
@@ -2160,11 +2155,14 @@ NavierStokesBase<dim, VectorType, DofsType>::reinit_mortar_operators(
 
   TimerOutput::Scope t(this->computing_timer, "Reinit mortar operators");
 
-  // Compute variables
+  // Initialize variables
   std::vector<unsigned int> n_subdivisions;
   std::vector<double>       radius;
   double                    pre_rotation_angle;
 
+  // If this is the first time that the mortar operators are created, first
+  // compute the number of subdivisions at the mortar interface and radius.
+  // Otherwise, use previously stored stored values
   if (is_first)
     std::tie(n_subdivisions, radius, pre_rotation_angle) =
       compute_n_subdivisions_and_radius(
@@ -2196,6 +2194,7 @@ NavierStokesBase<dim, VectorType, DofsType>::reinit_mortar_operators(
       this->simulation_parameters.physical_properties_manager
         .get_kinematic_viscosity_scale());
 
+  // Create mortar coupling operator
   this->mortar_coupling_operator =
     std::make_shared<CouplingOperator<dim, double>>(
       *this->get_mapping(),

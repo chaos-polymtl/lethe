@@ -546,9 +546,7 @@ compute_n_subdivisions_and_radius(
                         n_subdivisions_plane_local++;
                     }
                   else
-                    {
-                      n_subdivisions_plane_local++;
-                    }
+                    n_subdivisions_plane_local++;
 
                   const auto vertices = mapping.get_vertices(cell, face_no);
 
@@ -587,7 +585,7 @@ compute_n_subdivisions_and_radius(
                 }
               // Obtain the minimum initial rotation angle based on the
               // stator interface
-              else if (cell->face(face_no)->boundary_id() ==
+              else if (face->boundary_id() ==
                        mortar_parameters.stator_boundary_id)
                 {
                   const auto vertices = mapping.get_vertices(cell, face_no);
@@ -651,7 +649,7 @@ compute_n_subdivisions_and_radius(
 #else
 template <int dim>
 std::tuple<std::vector<unsigned int>, std::vector<double>, double>
-compute_n_subdivisions_and_radius(const DoFHandler<dim> &,
+compute_n_subdivisions_and_radius(const Triangulation<dim> &,
                                   const Mapping<dim> &,
                                   const Parameters::Mortar<dim> &)
 {
@@ -791,7 +789,6 @@ CouplingOperator<dim, Number>::CouplingOperator(
                   dof_indices.emplace_back(l_dof);
               }
 
-            std::cout << std::endl;
             // Weights of quadrature points
             const auto weights =
               mortar_manager->get_weights(get_face_center(cell, face),

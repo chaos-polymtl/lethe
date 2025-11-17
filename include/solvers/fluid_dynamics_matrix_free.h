@@ -489,6 +489,19 @@ protected:
   reinit_mortar_operators_mf(bool is_first);
 
   /**
+   * @brief Rotate rotor mapping in mortar method for the matrix-free solver.
+   *
+   * @param[in] is_first Whether this is the first mapping rotation. This
+   * boolean is used only for printing output purposes; since the mapping needs
+   * to be rotated before setting up dofs, but also after the constraints are
+   * first defined, this function is called twice before the iterate() loop. The
+   * parameter is_first just prevents the mortar verbosity from being printed
+   * twice
+   */
+  void
+  rotate_rotor_mapping_mf(bool is_first);
+
+  /**
    * @brief  Update the average velocity field solution in the multiphyscics interface.
    */
   virtual void
