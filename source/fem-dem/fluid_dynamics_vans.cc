@@ -451,14 +451,6 @@ FluidDynamicsVANS<dim>::assemble_local_system_matrix(
   NavierStokesScratchData<dim>                         &scratch_data,
   StabilizedMethodsTensorCopyData<dim>                 &copy_data)
 {
-  if (particle_projector.particle_fluid_drag.fe != nullptr)
-    std::cout << "FE exists!\n";
-else
-    std::cout << "FE does not exist!\n";
-
-  scratch_data.fe_values_particle_drag->get_fe();
-      cout << "Copied scratch data has the finite element" << endl;
-
   copy_data.cell_is_local = cell->is_locally_owned();
   if (!cell->is_locally_owned())
     return;
@@ -622,16 +614,17 @@ FluidDynamicsVANS<dim>::assemble_system_rhs()
   scratch_data.enable_void_fraction(*particle_projector.fe,
                                     *this->cell_quadrature,
                                     *this->mapping);
+
   if (this->cfd_dem_simulation_parameters.void_fraction
-          ->project_particle_forces)
-      {
-        scratch_data.enable_particle_field_projection(
-          *this->cell_quadrature,
-          *this->mapping,
-          *particle_projector.particle_fluid_drag.fe,
-          *particle_projector.particle_fluid_force_two_way_coupling.fe,
-          *particle_projector.particle_velocity.fe);
-      }
+        ->project_particle_forces)
+    {
+      scratch_data.enable_particle_field_projection(
+        *this->cell_quadrature,
+        *this->mapping,
+        *particle_projector.particle_fluid_drag.fe,
+        *particle_projector.particle_fluid_force_two_way_coupling.fe,
+        *particle_projector.particle_velocity.fe);
+    }
 
   scratch_data.enable_particle_fluid_interactions(
     particle_handler.n_global_max_particles_per_cell(),
