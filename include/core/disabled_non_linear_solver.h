@@ -7,7 +7,7 @@
 #include <core/non_linear_solver.h>
 
 /**
- * @brief The disabled non-linear solver class is used to solve the physics in a linear way. This is only useful if the physic under consideration is linear.
+ * @brief The linear physics class is used to solve the physics as a linear problem.
  */
 template <typename VectorType>
 class DisabledNonLinearSolver : public NonLinearSolver<VectorType>
@@ -49,17 +49,13 @@ template <typename VectorType>
 void
 DisabledNonLinearSolver<VectorType>::solve(const bool is_initial_step)
 {
-  // We set the outer iteration to zero since there is no non-linear
-  // iterations to be done.
-  this->outer_iteration = 0;
 
   PhysicsSolver<VectorType> *solver = this->physics_solver;
 
-  auto &present_solution = solver->get_present_solution();
 
   if (this->params.verbosity != Parameters::Verbosity::quiet)
     {
-      solver->pcout << "Non-linear solver disabled, solving linear system only."
+      solver->pcout << "Linear physics, solving physics as a linear problem." 
                     << std::endl;
     }
 
@@ -70,7 +66,6 @@ DisabledNonLinearSolver<VectorType>::solve(const bool is_initial_step)
   // The linear system is solved only once, therefore initial_step is always
   // true
   solver->solve_linear_system(true);
-  present_solution = solver->get_present_solution();
 }
 
 #endif

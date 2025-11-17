@@ -17,7 +17,7 @@
  *
  * The system that is solved is :
  * x_0 + x_1 = 0
- *       2*x_1 + 3 = 0
+ *       2*x_1 = -3
  *
  */
 
@@ -40,7 +40,7 @@ public:
     system_matrix.reinit(2);
     // System
     // x_0 +x_1 = 0
-    // 2*x_1 + 3 = 0
+    // 2*x_1 = -3 
     //
 
     system_matrix.set(0, 0, 1);
