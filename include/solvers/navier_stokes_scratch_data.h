@@ -613,9 +613,9 @@ public:
   enable_particle_field_projection(
     const Quadrature<dim> &quadrature,
     const Mapping<dim>    &mapping,
-    const FESystem<dim>   &fe_particle_drag_proj,
-    const FESystem<dim>   &fe_particle_two_way_coupling_force_proj,
-    const FESystem<dim>   &fe_particle_velocity_proj);
+    const FiniteElement<dim>   &fe_particle_drag_proj,
+    const FiniteElement<dim>   &fe_particle_two_way_coupling_force_proj,
+    const FiniteElement<dim>   &fe_particle_velocity_proj);
 
   /**
    *  @brief Reinitialize the content of the scratch for the void fraction
@@ -1336,13 +1336,8 @@ public:
     const VectorType &particle_fluid_drag,
     const VectorType &particle_fluid_force_two_way_coupling,
     const VectorType &particle_velocity)
-  {
-    cout << "Before fe_values_particle_drag is reinit" << std::endl;
-
-    fe_values_particle_drag->get_fe();
-    cout << "After get_fe()" << std::endl;
+  { 
     this->fe_values_particle_drag->reinit(particle_drag_cell);
-    cout << "fe_values_particle_drag is reinit" << std::endl;
     this->fe_values_particle_two_way_coupling_force->reinit(
       particle_two_way_coupling_force_cell);
     this->fe_values_particle_velocity->reinit(particle_velocity_cell);
