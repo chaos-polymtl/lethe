@@ -1027,24 +1027,7 @@ FluidDynamicsBlock<dim>::solve_system_GMRES(const bool   initial_step,
 
   SolverFGMRES<GlobalBlockVectorType> solver(solver_control);
 
-  if (this->simulation_parameters.linear_solver.at(PhysicsID::fluid_dynamics)
-        .preconditioner == Parameters::LinearSolver::PreconditionerType::ilu)
-    {
-      if (renewed_matrix || velocity_ilu_preconditioner == nullptr ||
-          pressure_ilu_preconditioner == nullptr ||
-          system_ilu_preconditioner == nullptr)
-        setup_ILU();
-    }
-  else if (this->simulation_parameters.linear_solver
-             .at(PhysicsID::fluid_dynamics)
-             .preconditioner ==
-           Parameters::LinearSolver::PreconditionerType::amg)
-    {
-      if (renewed_matrix || velocity_amg_preconditioner == nullptr ||
-          pressure_amg_preconditioner == nullptr ||
-          system_amg_preconditioner == nullptr)
-        setup_AMG();
-    }
+  setup_preconditioner();
 
   {
     TimerOutput::Scope t(this->computing_timer, "Solve linear system");
