@@ -56,7 +56,7 @@ Simulation Control
       set output path        = out/
     end
 
-* The ``time step`` is set to  ``0.0005``. This is very small for this case but it ensures that the particle is properly accelerated from rest at the beginning of the simulation. In order to reduce the computational time, we use use adaptive time stepping with a maximum cfl of ``0.5``. This will allow the time step to increase as the particle accelerates and the flow becomes less transient.
+* The ``time step`` is set to  ``0.0005``. This is very small for this case but it ensures that the particle is properly accelerated from rest at the beginning of the simulation. In order to reduce the computational time, we use use adaptive time stepping with a maximum CFL of ``0.5``. This will allow the time step to increase as the particle accelerates and the flow becomes more steady around the particle.
 
 * The ``time end`` is set to  ``0.6``. This is approximately the sedimentation time of the particles as recorded in the article by Wang `et al.` [#Wang2024]_.
 
