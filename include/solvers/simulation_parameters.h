@@ -160,7 +160,8 @@ public:
       {
         PhysicsID physics_id = get_physics_id(physics_name);
         linear_solver[physics_id].parse_parameters(prm, physics_name);
-        physics_solving_strategy[physics_id].parse_parameters(prm, physics_name);
+        physics_solving_strategy[physics_id].parse_parameters(prm,
+                                                              physics_name);
       }
     for (const auto &vof_subequation_name : vof_subequations_names)
       {

@@ -4,8 +4,8 @@
 #ifndef lethe_kinsol_non_linear_solver_h
 #define lethe_kinsol_non_linear_solver_h
 
-#include <core/physics_solver_strategy.h>
 #include <core/parameters.h>
+#include <core/physics_solver_strategy.h>
 
 #include <deal.II/sundials/kinsol.h>
 
