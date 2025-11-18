@@ -24,15 +24,6 @@ jobs:
     - name: Checkout code
       uses: actions/checkout@v2
 
-    - name: setup
+    - name: Check parameter files indentation
       run: |
-        find . -name '*.prm' -type f -execdir "$PWD/contrib/utilities/prmindent" -i '{}' \;
-    - name: indent
-      run: |
-        if ! git diff --quiet; then
-          echo "The following files were modified by prmindent.sh:"
-          git diff --name-only
-          echo ""
-          echo "Please run prmindent locally and commit the results."
-          exit 1
-        fi
+        ./contrib/utilities/check_parameter_files_indentation.sh
