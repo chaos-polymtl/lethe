@@ -1651,6 +1651,7 @@ ParticleProjector<dim>::calculate_particle_fluid_forces_projection(
   // We do not announce the string since the projection can be called
   // multiple time if this is a non-linear problem and the coupling is
   // implicit.
+  announce_string(this->pcout, "Particle-fluid forces");
   calculate_field_projection(fluid_force_on_particles_two_way_coupling);
   calculate_field_projection(fluid_drag_on_particles);
   calculate_field_projection(particle_velocity);

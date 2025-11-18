@@ -64,7 +64,7 @@ namespace Parameters
       "project particle forces",
       "false",
       Patterns::Bool(),
-      "Specify whether in the VANS equations, the two-way coupling forces, including the drag, are calculated by projecting the forces acting on the particles to the fluid grid. If set to true, this option requires 'project particle velocity' to be true as well.");
+      "Specify whether in the VANS equations, the two-way coupling forces, including the drag, are calculated by projecting the forces acting on the particles to the fluid grid.");
 
     prm.leave_subsection();
   }
@@ -111,9 +111,9 @@ namespace Parameters
 
     project_particle_forces = prm.get_bool("project particle forces");
 
-    if (project_particle_forces && !project_particle_velocity)
-      throw(std::runtime_error(
-        "'project particle forces' requires 'project particle velocity' to be true as well."));
+    // if (project_particle_forces && !project_particle_velocity)
+    //   throw(std::runtime_error(
+    //     "'project particle forces' requires 'project particle velocity' to be true as well."));
 
     prm.leave_subsection();
   }
