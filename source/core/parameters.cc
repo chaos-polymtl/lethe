@@ -2366,7 +2366,7 @@ namespace Parameters
           "an analytical jacobian formulation. The jacobian matrix and the preconditioner"
           "are assembled every iteration. In the kinsol_newton method, the nonlinear solver"
           "Kinsol from the SUNDIALS library is used. This solver has an internal algorithm"
-          "that decides whether to reassemble the Jacobian matrix or not.  When the non-linear solver is disabled, no Jacobian matrix is assembled and the system is solved only once by the linear solver. This is only supported by the linear physics.");  
+          "that decides whether to reassemble the Jacobian matrix or not.  When the non-linear solver is disabled, no Jacobian matrix is assembled and the system is solved only once by the linear solver. This is only supported by the linear physics.");
 
         prm.declare_entry(
           "kinsol strategy",

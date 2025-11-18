@@ -76,7 +76,8 @@ public:
                                                   p_triangulation,
                std::shared_ptr<SimulationControl> p_simulation_control)
     : AuxiliaryPhysics<dim, GlobalVectorType>(
-        p_simulation_parameters.physics_solving_strategy.at(PhysicsID::heat_transfer))
+        p_simulation_parameters.physics_solving_strategy.at(
+          PhysicsID::heat_transfer))
     , multiphysics(multiphysics_interface)
     , computing_timer(p_triangulation->get_mpi_communicator(),
                       this->pcout,

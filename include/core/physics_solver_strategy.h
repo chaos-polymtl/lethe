@@ -28,7 +28,7 @@ public:
    *
    */
   PhysicsSolverStrategy(PhysicsSolver<VectorType>         *physics_solver,
-                  const Parameters::NonLinearSolver &params);
+                        const Parameters::NonLinearSolver &params);
 
   /**
    * @brief Destructor.
