@@ -74,7 +74,7 @@ MultiphysicsInterface<dim>::MultiphysicsInterface(
   ConditionalOStream                &p_pcout)
   : multiphysics_parameters(nsparam.multiphysics)
   // ,
-  // verbosity(nsparam.non_linear_solver.at(PhysicsID::fluid_dynamics).verbosity)
+  // verbosity(nsparam.physics_solving_strategy.at(PhysicsID::fluid_dynamics).verbosity)
   , pcout(p_pcout)
 {
   inspect_multiphysics_models_dependencies(nsparam);
@@ -85,7 +85,7 @@ MultiphysicsInterface<dim>::MultiphysicsInterface(
   // prevents solving it, but not allocating it.
   {
     // verbosity[PhysicsID::fluid_dynamics] =
-    // (nsparam.non_linear_solver.at(PhysicsID::fluid_dynamics).verbosity  !=
+    // (nsparam.physics_solving_strategy.at(PhysicsID::fluid_dynamics).verbosity  !=
     // Parameters::Verbosity::quiet ||
     // nsparam.linear_solver.at(PhysicsID::fluid_dynamics).verbosity  !=
     // Parameters::Verbosity::quiet) ? Parameters::Verbosity::verbose :
@@ -95,7 +95,7 @@ MultiphysicsInterface<dim>::MultiphysicsInterface(
   if (multiphysics_parameters.heat_transfer)
     {
       verbosity[PhysicsID::heat_transfer] =
-        (nsparam.non_linear_solver.at(PhysicsID::heat_transfer).verbosity !=
+        (nsparam.physics_solving_strategy.at(PhysicsID::heat_transfer).verbosity !=
            Parameters::Verbosity::quiet ||
          nsparam.linear_solver.at(PhysicsID::heat_transfer).verbosity !=
            Parameters::Verbosity::quiet) ?
@@ -108,7 +108,7 @@ MultiphysicsInterface<dim>::MultiphysicsInterface(
   if (multiphysics_parameters.tracer)
     {
       verbosity[PhysicsID::tracer] =
-        (nsparam.non_linear_solver.at(PhysicsID::tracer).verbosity !=
+        (nsparam.physics_solving_strategy.at(PhysicsID::tracer).verbosity !=
            Parameters::Verbosity::quiet ||
          nsparam.linear_solver.at(PhysicsID::tracer).verbosity !=
            Parameters::Verbosity::quiet) ?
@@ -121,7 +121,7 @@ MultiphysicsInterface<dim>::MultiphysicsInterface(
   if (multiphysics_parameters.VOF)
     {
       verbosity[PhysicsID::VOF] =
-        (nsparam.non_linear_solver.at(PhysicsID::VOF).verbosity !=
+        (nsparam.physics_solving_strategy.at(PhysicsID::VOF).verbosity !=
            Parameters::Verbosity::quiet ||
          nsparam.linear_solver.at(PhysicsID::VOF).verbosity !=
            Parameters::Verbosity::quiet) ?
@@ -135,7 +135,7 @@ MultiphysicsInterface<dim>::MultiphysicsInterface(
   if (multiphysics_parameters.cahn_hilliard)
     {
       verbosity[PhysicsID::cahn_hilliard] =
-        (nsparam.non_linear_solver.at(PhysicsID::cahn_hilliard).verbosity !=
+        (nsparam.physics_solving_strategy.at(PhysicsID::cahn_hilliard).verbosity !=
            Parameters::Verbosity::quiet ||
          nsparam.linear_solver.at(PhysicsID::cahn_hilliard).verbosity !=
            Parameters::Verbosity::quiet) ?
