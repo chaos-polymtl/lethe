@@ -142,7 +142,7 @@ public:
                 const Parameters::SimulationControl::TimeSteppingMethod
                   time_stepping_method)
   {
-    // Announce physic solved (verbosity = non_linear_solver.verbosity)
+    // Announce physic solved (verbosity = physics_solving_strategy.verbosity)
     if (verbosity.at(physics_id) != Parameters::Verbosity::quiet)
       announce_physics(physics_id);
 
@@ -166,7 +166,7 @@ public:
                       const Parameters::SimulationControl::TimeSteppingMethod
                         time_stepping_method)
   {
-    // Announce physic solved (verbosity = non_linear_solver.verbosity)
+    // Announce physic solved (verbosity = physics_solving_strategy.verbosity)
     if (verbosity.at(physics_id) != Parameters::Verbosity::quiet)
       announce_physics(physics_id);
 

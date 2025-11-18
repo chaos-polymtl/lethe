@@ -62,7 +62,7 @@ add_library(lethe-core
   ../../include/core/mobility_cahn_hilliard_model.h
   ../../include/core/multiphysics.h
   ../../include/core/newton_non_linear_solver.h
-  ../../include/core/non_linear_solver.h
+  ../../include/core/physics_solver_strategy.h
   ../../include/core/output_struct.h
   ../../include/core/parameters.h
   ../../include/core/parameters_cfd_dem.h

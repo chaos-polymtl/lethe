@@ -4,7 +4,7 @@
 #ifndef lethe_newton_non_linear_solver_h
 #define lethe_newton_non_linear_solver_h
 
-#include <core/non_linear_solver.h>
+#include <core/physics_solver_strategy.h>
 
 /**
  * @brief Non-linear solver for non-linear systems of equations which uses a Newton
@@ -12,7 +12,7 @@
  * monotonically decreasing.
  */
 template <typename VectorType>
-class NewtonNonLinearSolver : public NonLinearSolver<VectorType>
+class NewtonNonLinearSolver : public PhysicsSolverStrategy<VectorType>
 {
 public:
   /**
@@ -41,7 +41,7 @@ template <typename VectorType>
 NewtonNonLinearSolver<VectorType>::NewtonNonLinearSolver(
   PhysicsSolver<VectorType>         *physics_solver,
   const Parameters::NonLinearSolver &params)
-  : NonLinearSolver<VectorType>(physics_solver, params)
+  : PhysicsSolverStrategy<VectorType>(physics_solver, params)
 {}
 
 template <typename VectorType>

@@ -9,7 +9,7 @@
 #include <core/inexact_newton_non_linear_solver.h>
 #include <core/kinsol_newton_non_linear_solver.h>
 #include <core/newton_non_linear_solver.h>
-#include <core/non_linear_solver.h>
+#include <core/physics_solver_strategy.h>
 #include <core/parameters.h>
 
 #include <deal.II/lac/affine_constraints.h>
@@ -31,7 +31,7 @@ public:
 
   virtual ~PhysicsSolver()
   {
-    delete non_linear_solver;
+    delete physics_solving_strategy;
   }
 
   /**
@@ -132,14 +132,14 @@ public:
   inline unsigned int
   get_current_newton_iteration() const
   {
-    return non_linear_solver->get_current_newton_iteration();
+    return physics_solving_strategy->get_current_newton_iteration();
   }
 
   ConditionalOStream                                pcout;
   Parameters::SimulationControl::TimeSteppingMethod time_stepping_method;
 
 private:
-  NonLinearSolver<VectorType> *non_linear_solver;
+  PhysicsSolverStrategy<VectorType> *physics_solving_strategy;
 };
 
 template <typename VectorType>
@@ -150,21 +150,21 @@ PhysicsSolver<VectorType>::PhysicsSolver(
   switch (non_linear_solver_parameters.solver)
     {
       case Parameters::NonLinearSolver::SolverType::newton:
-        non_linear_solver =
+        physics_solving_strategy =
           new NewtonNonLinearSolver<VectorType>(this,
                                                 non_linear_solver_parameters);
         break;
       case Parameters::NonLinearSolver::SolverType::kinsol_newton:
-        non_linear_solver = new KinsolNewtonNonLinearSolver<VectorType>(
+        physics_solving_strategy = new KinsolNewtonNonLinearSolver<VectorType>(
           this, non_linear_solver_parameters);
         break;
       case Parameters::NonLinearSolver::SolverType::inexact_newton:
-        non_linear_solver = new InexactNewtonNonLinearSolver<VectorType>(
+        physics_solving_strategy = new InexactNewtonNonLinearSolver<VectorType>(
           this, non_linear_solver_parameters);
         break;
-      case Parameters::NonLinearSolver::SolverType::linear:
-        non_linear_solver =
-          new LinearNonLinearSolver<VectorType>(this,
+      case Parameters::NonLinearSolver::SolverType::disabled:
+        physics_solving_strategy =
+          new DisabledNonLinearSolver<VectorType>(this,
                                                   non_linear_solver_parameters);
         break;
       default:
@@ -177,7 +177,7 @@ void
 PhysicsSolver<VectorType>::solve_non_linear_system()
 {
   {
-    this->non_linear_solver->solve();
+    this->physics_solving_strategy->solve();
   }
 }
 #endif

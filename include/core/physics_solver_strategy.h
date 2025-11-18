@@ -1,8 +1,8 @@
 // SPDX-FileCopyrightText: Copyright (c) 2019-2025 The Lethe Authors
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
-#ifndef lethe_non_linear_solver_h
-#define lethe_non_linear_solver_h
+#ifndef lethe_physics_solver_strategy_h
+#define lethe_physics_solver_strategy_h
 
 #include <core/parameters.h>
 
@@ -14,7 +14,7 @@ class PhysicsSolver;
  *
  */
 template <typename VectorType>
-class NonLinearSolver
+class PhysicsSolverStrategy
 {
 public:
   /**
@@ -27,14 +27,14 @@ public:
    * simulation parameter file.
    *
    */
-  NonLinearSolver(PhysicsSolver<VectorType>         *physics_solver,
+  PhysicsSolverStrategy(PhysicsSolver<VectorType>         *physics_solver,
                   const Parameters::NonLinearSolver &params);
 
   /**
    * @brief Destructor.
    *
    */
-  virtual ~NonLinearSolver()
+  virtual ~PhysicsSolverStrategy()
   {}
 
   /**
@@ -78,7 +78,7 @@ protected:
 };
 
 template <typename VectorType>
-NonLinearSolver<VectorType>::NonLinearSolver(
+PhysicsSolverStrategy<VectorType>::PhysicsSolverStrategy(
   PhysicsSolver<VectorType>         *physics_solver,
   const Parameters::NonLinearSolver &params)
   : physics_solver(physics_solver)

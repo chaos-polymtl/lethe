@@ -467,7 +467,7 @@ Return a bool that describes  if a cell contains a specific point
   double
   get_current_residual() override
   {
-    double scaling = this->simulation_parameters.non_linear_solver
+    double scaling = this->simulation_parameters.physics_solving_strategy
                        .at(PhysicsID::fluid_dynamics)
                        .tolerance /
                      this->simulation_parameters.particlesParameters
