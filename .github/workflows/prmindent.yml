@@ -1,0 +1,29 @@
+name: Check_prm_indent
+
+on:
+  push:
+    # Runs on every push on master branch
+    branches:
+      - master
+  # Runs on every push on master branch. If a push contains multiple commits, it will be ran on the latest one.
+  pull_request:
+
+# Cancels running instances when a pull request is updated by a commit
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref || github.run_id }}
+  cancel-in-progress: ${{github.event_name == 'pull_request'}}
+
+jobs:
+  indent:
+
+    name: prm-indent
+    runs-on: [ubuntu-latest]
+
+    steps:
+    # Checks-out Lethe with branch of triggering commit
+    - name: Checkout code
+      uses: actions/checkout@v2
+
+    - name: Check parameter files indentation
+      run: |
+        ./contrib/utilities/check_parameter_files_indentation.sh
