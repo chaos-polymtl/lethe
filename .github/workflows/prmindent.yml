@@ -29,10 +29,10 @@ jobs:
         find . -name '*.prm' -type f -execdir "$PWD/contrib/utilities/prmindent" -i '{}' \;
     - name: indent
       run: |
-          if ! git diff --quiet; then
-            echo "The following files were modified by prmindent.sh:"
-            git diff --name-only
-            echo ""
-            echo "Please run prmindent.sh locally and commit the results."
-            exit 1
-          fi
+        if ! git diff --quiet; then
+          echo "The following files were modified by prmindent.sh:"
+          git diff --name-only
+          echo ""
+          echo "Please run prmindent locally and commit the results."
+          exit 1
+        fi
