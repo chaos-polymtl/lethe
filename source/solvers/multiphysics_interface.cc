@@ -85,8 +85,8 @@ MultiphysicsInterface<dim>::MultiphysicsInterface(
   // prevents solving it, but not allocating it.
   {
     // verbosity[PhysicsID::fluid_dynamics] =
-    // (nsparam.physics_solving_strategy.at(PhysicsID::fluid_dynamics).verbosity  !=
-    // Parameters::Verbosity::quiet ||
+    // (nsparam.physics_solving_strategy.at(PhysicsID::fluid_dynamics).verbosity
+    // != Parameters::Verbosity::quiet ||
     // nsparam.linear_solver.at(PhysicsID::fluid_dynamics).verbosity  !=
     // Parameters::Verbosity::quiet) ? Parameters::Verbosity::verbose :
     // Parameters::Verbosity::quiet;
@@ -95,8 +95,8 @@ MultiphysicsInterface<dim>::MultiphysicsInterface(
   if (multiphysics_parameters.heat_transfer)
     {
       verbosity[PhysicsID::heat_transfer] =
-        (nsparam.physics_solving_strategy.at(PhysicsID::heat_transfer).verbosity !=
-           Parameters::Verbosity::quiet ||
+        (nsparam.physics_solving_strategy.at(PhysicsID::heat_transfer)
+             .verbosity != Parameters::Verbosity::quiet ||
          nsparam.linear_solver.at(PhysicsID::heat_transfer).verbosity !=
            Parameters::Verbosity::quiet) ?
           Parameters::Verbosity::verbose :
@@ -135,8 +135,8 @@ MultiphysicsInterface<dim>::MultiphysicsInterface(
   if (multiphysics_parameters.cahn_hilliard)
     {
       verbosity[PhysicsID::cahn_hilliard] =
-        (nsparam.physics_solving_strategy.at(PhysicsID::cahn_hilliard).verbosity !=
-           Parameters::Verbosity::quiet ||
+        (nsparam.physics_solving_strategy.at(PhysicsID::cahn_hilliard)
+             .verbosity != Parameters::Verbosity::quiet ||
          nsparam.linear_solver.at(PhysicsID::cahn_hilliard).verbosity !=
            Parameters::Verbosity::quiet) ?
           Parameters::Verbosity::verbose :

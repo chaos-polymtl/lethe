@@ -49,13 +49,12 @@ template <typename VectorType>
 void
 DisabledNonLinearSolver<VectorType>::solve(const bool is_initial_step)
 {
-
   PhysicsSolver<VectorType> *solver = this->physics_solver;
 
 
   if (this->params.verbosity != Parameters::Verbosity::quiet)
     {
-      solver->pcout << "Linear physics, solving physics as a linear problem." 
+      solver->pcout << "Linear physics, solving physics as a linear problem."
                     << std::endl;
     }
 
