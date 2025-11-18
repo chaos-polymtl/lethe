@@ -70,7 +70,7 @@ public:
    */
 
   void
-  solve_linear_system(const bool, const bool) override
+  solve_linear_system(const bool) override
   {
     system_matrix.solve(system_rhs);
     present_solution = system_rhs;
