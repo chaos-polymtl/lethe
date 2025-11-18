@@ -491,15 +491,17 @@
 <h3>Simulation Control<a class="headerlink" href="#simulation-control" title="Link to this heading">#</a></h3>
 <div class="highlight-text notranslate"><div class="highlight"><pre><span></span>subsection simulation control
   set method             = bdf2
-  set bdf startup method = multiple step bdf
   set time step          = 0.0005
+  set adapt              = true
+  set output frequency   = 10
+  set max cfl            = 0.5
   set time end           = 0.6
   set output path        = out/
 end
 </pre></div>
 </div>
 <ul class="simple">
-<li><p>The <code class="docutils literal notranslate"><span class="pre">time</span> <span class="pre">step</span></code> is set to  <code class="docutils literal notranslate"><span class="pre">0.0005</span></code>. This is very small for this case but it ensures that the particle is properly accelerated from rest at the beginning of the simulation. In order to reduce the computational time, one could use an adaptive time step/time scaling to increase the time step once the particle has sufficiently accelerated.</p></li>
+<li><p>The <code class="docutils literal notranslate"><span class="pre">time</span> <span class="pre">step</span></code> is set to  <code class="docutils literal notranslate"><span class="pre">0.0005</span></code>. This is very small for this case but it ensures that the particle is properly accelerated from rest at the beginning of the simulation. In order to reduce the computational time, we use use adaptive time stepping with a maximum CFL of <code class="docutils literal notranslate"><span class="pre">0.5</span></code>. This will allow the time step to increase as the particle accelerates and the flow becomes more steady around the particle.</p></li>
 <li><p>The <code class="docutils literal notranslate"><span class="pre">time</span> <span class="pre">end</span></code> is set to  <code class="docutils literal notranslate"><span class="pre">0.6</span></code>. This is approximately the sedimentation time of the particles as recorded in the article by Wang <cite>et al.</cite> <a class="footnote-reference brackets" href="#wang2024" id="id2" role="doc-noteref"><span class="fn-bracket">[</span>1<span class="fn-bracket">]</span></a>.</p></li>
 </ul>
 </section>

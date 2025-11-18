@@ -563,8 +563,9 @@ end
 </ul>
 <div class="math-wrapper docutils container">
 <div class="math notranslate nohighlight">
-\[ \begin{align}\begin{aligned}\textup{Residual} = \frac{\left\| {R} \right\|_{L_2}}{V^{1/2}}\\where :math:`R` is the residual vector and :math:`V` is the volume of the entire mesh.\end{aligned}\end{align} \]</div>
+\[\textup{Residual} = \frac{\left\| {R} \right\|_{L_2}}{V^{1/2}}\]</div>
 </div>
+<p>where <span class="math notranslate nohighlight">\(R\)</span> is the residual vector and <span class="math notranslate nohighlight">\(V\)</span> is the volume of the entire mesh.</p>
 <div class="admonition warning">
 <p class="admonition-title">Warning</p>
 <p>This parameter also affects the residuals used in the non-linear solver convergence check. Tolerances for both linear and non-linear solvers should be adjusted accordingly when using this option.</p>

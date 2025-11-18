@@ -98,7 +98,7 @@ When set to ``extra verbose``, the residual at each iteration of the linear solv
 
     \textup{Residual} = \frac{\left\| {R} \right\|_{L_2}}{V^{1/2}}
 
-    where :math:`R` is the residual vector and :math:`V` is the volume of the entire mesh.
+where :math:`R` is the residual vector and :math:`V` is the volume of the entire mesh.
 
 
 .. warning::

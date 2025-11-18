@@ -48,13 +48,15 @@ Simulation Control
 
     subsection simulation control
       set method             = bdf2
-      set bdf startup method = multiple step bdf
       set time step          = 0.0005 
+      set adapt              = true
+      set output frequency   = 10
+      set max cfl            = 0.5
       set time end           = 0.6    
       set output path        = out/
     end
 
-* The ``time step`` is set to  ``0.0005``. This is very small for this case but it ensures that the particle is properly accelerated from rest at the beginning of the simulation. In order to reduce the computational time, one could use an adaptive time step/time scaling to increase the time step once the particle has sufficiently accelerated.
+* The ``time step`` is set to  ``0.0005``. This is very small for this case but it ensures that the particle is properly accelerated from rest at the beginning of the simulation. In order to reduce the computational time, we use use adaptive time stepping with a maximum CFL of ``0.5``. This will allow the time step to increase as the particle accelerates and the flow becomes more steady around the particle.
 
 * The ``time end`` is set to  ``0.6``. This is approximately the sedimentation time of the particles as recorded in the article by Wang `et al.` [#Wang2024]_.
 
