@@ -4,6 +4,12 @@ All notable changes to the Lethe project will be documented in this file.
 The changelog for the previous releases of Lethe are located in the release_notes folder.
 The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
+### [Master] - 2025-11-15
+
+### Fixed
+
+- MINOR Since PR [#1722], the sedimentation-1-cuboid example crashes when the particle collides with the bottom wall. The previous case used to run, but the non-linear and linear solver struggled pretty hard during the collision. I suspect that the case itself was actually unstable and that PR [#1722] did not break anything in particular. Using adaptive time-stepping with a max CFL of 0.5 resolves the issue, leads to the same results, and reduces the computational time. We will keep on monitoring this test case to ensure that it remains stable. [#1805](https://github.com/chaos-polymtl/lethe/pull/1805)
+
 
 ### [Master] - 2025-11-14
 
