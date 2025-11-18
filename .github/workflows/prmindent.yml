@@ -23,9 +23,10 @@ jobs:
     runs-on: [ubuntu-latest]
 
     steps:
-    - uses: actions/checkout@v4
-      with:
-        fetch-depth: 100
+    # Checks-out Lethe with branch of triggering commit
+    - name: Checkout code
+      uses: actions/checkout@v2
+
     - name: setup
       run: |
         find . -name '*.prm' -type f -execdir "$PWD/contrib/utilities/prmindent" -i '{}' \;
