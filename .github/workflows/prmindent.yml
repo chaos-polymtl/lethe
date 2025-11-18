@@ -1,0 +1,40 @@
+name: Check_prm_indent
+
+on:
+  push:
+    # Runs on every push on master branch
+    branches:
+      - master
+  pull_request:
+    paths-ignore:
+      - 'doc/**'
+
+concurrency:
+  group: ${ {github.event_name }}-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: ${{github.event_name == 'pull_request'}}
+
+permissions:
+  contents: read
+
+jobs:
+  indent:
+
+    name: prm-indent
+    runs-on: [ubuntu-latest]
+
+    steps:
+    - uses: actions/checkout@v4
+      with:
+        fetch-depth: 100
+    - name: setup
+      run: |
+        find . -name '*.prm' -type f -execdir "$PWD/contrib/utilities/prmindent" -i '{}' \;
+    - name: indent
+      run: |
+          if ! git diff --quiet; then
+            echo "The following files were modified by prmindent.sh:"
+            git diff --name-only
+            echo ""
+            echo "Please run prmindent.sh locally and commit the results."
+            exit 1
+          fi
