@@ -14,8 +14,8 @@ set dimension = 3
 #---------------------------------------------------
 
 subsection simulation control
-  set method            = steady
-  set output frequency  = 0
+  set method           = steady
+  set output frequency = 0
 end
 
 #---------------------------------------------------
@@ -98,9 +98,8 @@ end
 
 subsection linear solver
   subsection fluid dynamics
-    set method                                    = gmres
-    set rescale residual                          = true
-    set preconditioner                            = amg
+    set method           = gmres
+    set rescale residual = true
+    set preconditioner   = amg
   end
 end
-
