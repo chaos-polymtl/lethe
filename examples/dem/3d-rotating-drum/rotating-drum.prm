@@ -14,8 +14,8 @@ subsection simulation control
   set time step         = 1e-5
   set time end          = 10
   set log frequency     = 1000
-  set output frequency                        = 1000
-  set output boundaries =                  false
+  set output frequency  = 1000
+  set output boundaries = false
   set output path       = ./output/
 end
 
@@ -25,9 +25,9 @@ end
 
 subsection model parameters
   subsection contact detection
-    set contact detection method                =              dynamic
+    set contact detection method                = dynamic
     set dynamic contact search size coefficient = 0.8
-    set neighborhood threshold                                 = 1.3
+    set neighborhood threshold                  = 1.3
   end
   subsection load balancing
     set load balance method = frequent
