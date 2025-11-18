@@ -362,6 +362,9 @@ public:
   /**
    * @brief Percolate the time vector for the void fraction. This operation is called at the end of a time-step. It percolates both the deal.II and the Trilinos vectors.
    *
+   * TODO - Refactor the ParticleProjector class to use deal.II vectors for
+   * everything instead of a blend of Trilinos and deal.II vector.
+   *
    */
   void
   percolate_void_fraction()

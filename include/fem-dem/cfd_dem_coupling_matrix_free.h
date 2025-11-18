@@ -19,7 +19,7 @@
 using namespace dealii;
 
 /**
- * @brief Solver class for coupled Computational Fluid Dynamics and Discrete Element Method (CFD-DEM) simulations.
+ * @brief Solver class for coupled Computational Fluid Dynamics and Discrete Element Method (CFD-DEM) simulations using a matrix-free formulation.
  *
  * This class implements a two-way coupled CFD-DEM solver that combines the
  * Volume-averaged Navier-Stokes (VANS) equations for fluid flow with the
@@ -29,9 +29,11 @@ using namespace dealii;
  *
  * The CFD component uses Galerkin Least Squares (GLS) stabilization for
  * the VANS equations, while the DEM component handles particle-particle
- * and particle-wall collisions using the soft-sphere contact model.
+ * and particle-wall collisions using the soft-sphere contact model. A
+ * matrix-free formulation is used to solve the VANS equation.
  *
- * @tparam dim Spatial dimension of the simulation (2 or 3)
+ * @tparam dim Spatial dimension of the simulation (2 or 3).
+ * While 2D simulation are theoretically supported, they have not been tested.
  *
  * @ingroup solvers
  */
@@ -261,16 +263,6 @@ private:
   report_particle_statistics();
 
   /**
-   * @brief Print final summary of particle simulation results.
-   *
-   * Outputs a comprehensive summary of the particle simulation including
-   * final particle positions, velocities, and other relevant information
-   * at the end of the simulation.
-   */
-  void
-  print_particles_summary();
-
-  /**
    * @brief Perform fluid dynamics post-processing after each iteration.
    *
    * Executes post-processing operations specific to the fluid dynamics
@@ -312,7 +304,7 @@ private:
   sort_particles_into_subdomains_and_cells();
 
   /**
-   * @brief Execute a complete DEM iteration step.
+   * @brief Execute a DEM time step.
    *
    * Performs a full DEM time step including particle-particle and
    * particle-wall contact force calculations, time integration of
@@ -352,12 +344,11 @@ private:
   void
   dem_contact_build(unsigned int counter);
 
-
-
   /// Frequency of coupling between CFD and DEM solvers (in DEM time steps)
   unsigned int coupling_frequency;
 
   /// Gravitational acceleration vector
+  // TODO - Refactor the gravity to not be a dangling Tensor in the class (BB)
   Tensor<1, 3> g;
 
   /// Container for particle interaction outcomes (forces and torques)

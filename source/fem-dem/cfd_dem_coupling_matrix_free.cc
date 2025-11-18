@@ -1262,12 +1262,16 @@ template <int dim>
 void
 CFDDEMMatrixFree<dim>::dem_contact_build(unsigned int counter)
 {
-  // For the contact search at the last CFD iteration
-  if (counter == (coupling_frequency - 1))
-    dem_action_manager->last_dem_of_cfddem_iteration_step();
+  // If this is not the lasts DEM iteration before the next CFD iteration, check
+  // if a contact detection step is necessary
+  if (counter != (coupling_frequency - 1))
+    check_contact_detection_method(counter);
 
-  // Check contact detection step by detection method
-  check_contact_detection_method(counter);
+  // Otherwise, force a contact search at the last DEM iteration before a CFD
+  // iteration to ensure that the particles are adequately located before
+  // calculating the coupling between particle and fluid.
+  else
+    dem_action_manager->last_dem_of_cfddem_iteration_step();
 
   // Sort particles in cells
   if (dem_action_manager->check_contact_search())
