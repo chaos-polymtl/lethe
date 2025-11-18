@@ -4,7 +4,7 @@
 #ifndef lethe_inexact_newton_non_linear_solver_h
 #define lethe_inexact_newton_non_linear_solver_h
 
-#include <core/non_linear_solver.h>
+#include <core/physics_solver_strategy.h>
 
 #include <iomanip>
 
@@ -16,7 +16,7 @@
  *
  */
 template <typename VectorType>
-class InexactNewtonNonLinearSolver : public NonLinearSolver<VectorType>
+class InexactNewtonNonLinearSolver : public PhysicsSolverStrategy<VectorType>
 {
 public:
   /**
@@ -48,7 +48,7 @@ template <typename VectorType>
 InexactNewtonNonLinearSolver<VectorType>::InexactNewtonNonLinearSolver(
   PhysicsSolver<VectorType>         *physics_solver,
   const Parameters::NonLinearSolver &params)
-  : NonLinearSolver<VectorType>(physics_solver, params)
+  : PhysicsSolverStrategy<VectorType>(physics_solver, params)
   , matrix_requires_assembly(true)
 {}
 

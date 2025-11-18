@@ -25,7 +25,7 @@ class SimulationParameters
 public:
   Parameters::Testing                              test;
   std::map<PhysicsID, Parameters::LinearSolver>    linear_solver;
-  std::map<PhysicsID, Parameters::NonLinearSolver> non_linear_solver;
+  std::map<PhysicsID, Parameters::NonLinearSolver> physics_solving_strategy;
   std::map<VOFSubequationsID, Parameters::LinearSolver>
     vof_subequations_linear_solvers;
   std::map<VOFSubequationsID, Parameters::NonLinearSolver>
@@ -160,7 +160,7 @@ public:
       {
         PhysicsID physics_id = get_physics_id(physics_name);
         linear_solver[physics_id].parse_parameters(prm, physics_name);
-        non_linear_solver[physics_id].parse_parameters(prm, physics_name);
+        physics_solving_strategy[physics_id].parse_parameters(prm, physics_name);
       }
     for (const auto &vof_subequation_name : vof_subequations_names)
       {

@@ -2584,7 +2584,7 @@ FluidDynamicsSharp<dim>::integrate_particles()
       if (clear_combined_shape_cache)
         combined_shapes->clear_cache();
 
-      if (this->simulation_parameters.non_linear_solver
+      if (this->simulation_parameters.physics_solving_strategy
             .at(PhysicsID::fluid_dynamics)
             .verbosity != Parameters::Verbosity::quiet)
         {
