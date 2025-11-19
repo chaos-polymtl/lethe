@@ -293,11 +293,11 @@ MFNavierStokesVANSPreconditionGMG<dim>::initialize(
       for (unsigned int l = min_level; l <= max_level; l++)
         {
           mg_void_fraction_solution[l].update_ghost_values();
+          mg_time_derivative_void_fraction[l].update_ghost_values();
           mg_pf_forces_solution[l].update_ghost_values();
           mg_pf_drag_solution[l].update_ghost_values();
           mg_particle_velocity_solution[l].update_ghost_values();
           mg_momentum_transfer_coefficient_solution[l].update_ghost_values();
-
 
           if (auto mf_operator = dynamic_cast<VANSOperator<dim, double> *>(
                 &(*this->mg_operators[l])))
@@ -646,8 +646,11 @@ FluidDynamicsVANSMatrixFree<dim>::evaluate_time_derivative_void_fraction()
   // If the void fraction time derivative is disabled, we just leave it at zero.
   if (cfd_dem_simulation_parameters.cfd_dem.void_fraction_time_derivative ==
       false)
-    return;
-
+    {
+      // Even though it is zero, we still need to update its ghost values.
+      time_derivative_void_fraction.update_ghost_values();
+      return;
+    }
   // Time stepping information
   const auto method = this->simulation_control->get_assembly_method();
   // Vector for the BDF coefficients
@@ -662,6 +665,10 @@ FluidDynamicsVANSMatrixFree<dim>::evaluate_time_derivative_void_fraction()
         bdf_coefs[p + 1],
         this->particle_projector.void_fraction_previous_solution[p]);
     }
+
+  // After the void fraction time derivative is calculated, we update its ghost
+  // values.
+  time_derivative_void_fraction.update_ghost_values();
 }
 
 template <int dim>
@@ -688,7 +695,7 @@ FluidDynamicsVANSMatrixFree<dim>::solve()
 
   this->setup_dofs();
 
-  particle_projector.calculate_void_fraction(
+  particle_projector.initialize_void_fraction(
     this->simulation_control->get_current_time());
 
   this->set_initial_condition(
@@ -738,8 +745,12 @@ FluidDynamicsVANSMatrixFree<dim>::solve()
         TimerOutput::Scope t(this->computing_timer,
                              "Calculate particle-fluid projection");
 
+        // Calculate the new void fraction
         particle_projector.calculate_void_fraction(
           this->simulation_control->get_current_time());
+
+        // and its derivative
+        evaluate_time_derivative_void_fraction();
 
         particle_projector.calculate_particle_fluid_forces_projection(
           this->cfd_dem_simulation_parameters.cfd_dem,
