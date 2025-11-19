@@ -7,6 +7,10 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
 ### [Master] - 2025-11-21
 
+### Added
+
+- MAJOR Adds a new solver (cfd_dem_coupling_matrix_free) which uses the matrix-free architecture for the VANS equations and couples it with the discrete element method. Thus far, this solver is a lot more robust (and faster), especially when using high-order element. It is, however, a very experimental solver and it has not been fully tested nor validated. It should thus be used with a grain of salt. To integrate this solver, some refactoring had to be done in the particle projector and some slight issues were identified. There is some code duplication between the new cfd_dem solver and the previous one, but to avoid having a large PR that combines a new feature and refactoring, we will live with this code duplication for now and it will be refactored step-by-step in a near future. [#1801](https://github.com/chaos-polymtl/lethe/pull/1801)
+
 ### Fixed
 
 - MINOR In MultiphysicsInterface, there were two methods with the exact same function `set_block_previous_solutions` and `set_previous_block_solutions`. `set_previous_block_solutions` was removed to avoid redundancy and improve code clarity. [#1816](https://github.com/chaos-polymtl/lethe/pull/1816)
@@ -32,7 +36,6 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/).
 ### Fixed
 
 - MAJOR A bug had been introduced in [#1752] that prevented paraview from opening the vtu, pvtu and pvd files for the particle results in the CFD-DEM solver. This was because the new property (momentum_transfer_coefficient) was not given a name and this prevented the output from being adequately named. This PR fixes it by giving an appropriate name to that property which fixes the output of the particles. [#1800](https://github.com/chaos-polymtl/lethe/pull/1800)
-
 
 ### [Master] - 2025-11-04
 
