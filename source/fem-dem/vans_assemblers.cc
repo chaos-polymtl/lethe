@@ -2339,7 +2339,7 @@ VANSAssemblerFPIProj<dim>::assemble_rhs(
       if (cfd_dem.vans_model == Parameters::VANSModel::modelB)
         {
           strong_residual[q] -= // Drag Force
-            (fluid_drag - undisturbed_flow_force);
+            (fluid_drag + undisturbed_flow_force);
         }
       else if (cfd_dem.vans_model == Parameters::VANSModel::modelA)
         {
@@ -2356,7 +2356,7 @@ VANSAssemblerFPIProj<dim>::assemble_rhs(
           if (cfd_dem.vans_model == Parameters::VANSModel::modelB)
             {
               local_rhs(i) +=
-                (fluid_drag - undisturbed_flow_force) * phi_u_i * JxW;
+                (fluid_drag + undisturbed_flow_force) * phi_u_i * JxW;
             }
           //  Model A of the VANS
           if (cfd_dem.vans_model == Parameters::VANSModel::modelA)
