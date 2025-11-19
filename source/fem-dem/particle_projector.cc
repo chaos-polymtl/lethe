@@ -9,6 +9,8 @@
 
 #include <deal.II/base/timer.h>
 
+#include <deal.II/dofs/dof_tools.h>
+
 #include <deal.II/fe/fe_values.h>
 
 #include <deal.II/grid/grid_generator.h>
@@ -55,11 +57,16 @@ ParticleFieldQCM<dim, n_components, component_start>::setup_dofs()
 
   particle_field_constraints.close();
 
+  // The particle field matrix sparsity pattern is always a Diagonal matrix
+  // meaning that the particle fields are never coupled with one another.
+  // We enforce this directly inside of the sparsity pattern.
+  Table<2, DoFTools::Coupling> coupling_table(n_components, n_components);
+  for (int i = 0; i < n_components; ++i)
+    coupling_table[i][i] = DoFTools::Coupling::always;
+
   DynamicSparsityPattern dsp(locally_relevant_dofs);
-  DoFTools::make_sparsity_pattern(dof_handler,
-                                  dsp,
-                                  particle_field_constraints,
-                                  false);
+  DoFTools::make_sparsity_pattern(
+    dof_handler, coupling_table, dsp, particle_field_constraints, false);
 
   SparsityTools::distribute_sparsity_pattern(dsp,
                                              locally_owned_dofs,
