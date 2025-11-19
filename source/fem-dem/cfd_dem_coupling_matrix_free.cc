@@ -1361,6 +1361,9 @@ CFDDEMMatrixFree<dim>::solve()
 
   this->setup_dofs();
 
+  this->particle_projector.initialize_void_fraction(
+    this->simulation_control->get_current_time());
+
   this->set_initial_condition(
     this->cfd_dem_simulation_parameters.cfd_parameters.initial_condition->type,
     this->cfd_dem_simulation_parameters.cfd_parameters.restart_parameters
@@ -1422,10 +1425,7 @@ CFDDEMMatrixFree<dim>::solve()
           this->time_derivative_previous_solutions.update_ghost_values();
           this->system_operator->evaluate_time_derivative_previous_solutions(
             this->time_derivative_previous_solutions);
-
           this->evaluate_time_derivative_void_fraction();
-          this->time_derivative_void_fraction.update_ghost_values();
-
           this->computing_timer.leave_subsection("Calculate time derivatives");
 
           if (this->simulation_parameters.flow_control.enable_flow_control)
