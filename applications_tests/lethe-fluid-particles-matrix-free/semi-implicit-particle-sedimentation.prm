@@ -49,9 +49,9 @@ end
 #---------------------------------------------------
 
 subsection mesh
-  set type               = dealii
-  set grid type          = subdivided_hyper_rectangle
-  set grid arguments     = 4,8,4:-0.025,0,-0.025:0.025,0.10,0.025:false
+  set type           = dealii
+  set grid type      = subdivided_hyper_rectangle
+  set grid arguments = 4,8,4:-0.025,0,-0.025:0.025,0.10,0.025:false
 end
 
 #---------------------------------------------------
