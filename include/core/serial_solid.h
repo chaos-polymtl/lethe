@@ -194,7 +194,8 @@ public:
    * @brief Returns the neighboring cells maps of the solid object triangulation.
    * These maps store for each cell of the solid object which neighboring cells
    * are sharing a vertex or an edge (two vertex). Also stores which of these
-   * neighboring cells are coplanar (cp) or non-coplanar (ncp). 1. coplanar edge-sharing,
+   * neighboring cells are coplanar (cp) or non-coplanar (ncp). 1. coplanar
+   * edge-sharing,
    * 2. coplanar vertex-sharing, 3. non-coplanar edge-sharing, 4. non-coplanar
    * vertex-sharing.
    *
