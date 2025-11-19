@@ -7,7 +7,7 @@
 # Test the sedimentation of a single particle with the implicit coupling.
 # The particle should follow the analytical solution but slightly overshoot
 # it due to the two-way coupling.
-# This test is identical to 
+# This test is identical to
 # /lethe-fluid-particles/implicit-particle-sedimentation.prm
 # but uses the matrix-free CFD-DEM formulation.
 
