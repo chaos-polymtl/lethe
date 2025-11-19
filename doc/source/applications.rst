@@ -30,10 +30,10 @@ Lethe has several applications that can be used depending on the problem to be s
      -  This application performs particle ray tracing to reconstruct the geometry of the surface of an assembly of particles, similar to a virtual profilometry technique. It emits rays through the simulation domain and detects particle intersections to represent the surface.
    * - ``lethe-fluid-particles``
      - * Particle-laden flows
-     - This application allows to run unresolved Computational Fluid Dynamics-Discrete Element Method simulations.
-    * - ``lethe-fluid-particles``
+     - This application runs unresolved Computational Fluid Dynamics-Discrete Element Method simulations.
+   * - ``lethe-fluid-particles-matrix-free``
      - * Particle-laden flows
-     - This application allows to run unresolved Computational Fluid Dynamics-Discrete Element Method simulations using a matrix-free approach for the fluid dynamics. **This solver is still experimental**.
+     - This application runs unresolved Computational Fluid Dynamics-Discrete Element Method simulations using a matrix-free approach for the fluid dynamics. **This solver is still experimental**.
    * - ``lethe-fluid-sharp``
      - * Single-phase flows
        * Particle-laden flows
