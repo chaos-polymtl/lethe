@@ -59,10 +59,16 @@ ParticleFieldQCM<dim, n_components, component_start>::setup_dofs()
 
   // The particle field matrix sparsity pattern is always a Diagonal matrix
   // meaning that the particle fields are never coupled with one another.
-  // We enforce this directly inside of the sparsity pattern.
+  // We enforce this directly inside the sparsity pattern.
   Table<2, DoFTools::Coupling> coupling_table(n_components, n_components);
   for (int i = 0; i < n_components; ++i)
-    coupling_table[i][i] = DoFTools::Coupling::always;
+    for (int j = 0; j < n_components; ++j)
+      {
+        if (i != j)
+          coupling_table[i][j] = DoFTools::Coupling::none;
+        else
+          coupling_table[i][j] = DoFTools::Coupling::always;
+      }
 
   DynamicSparsityPattern dsp(locally_relevant_dofs);
   DoFTools::make_sparsity_pattern(
@@ -864,6 +870,11 @@ ParticleProjector<dim>::calculate_void_fraction_quadrature_centered_method()
               sum_quadrature_weights += fe_values_void_fraction.JxW(q);
             }
 
+          Assert(
+            sum_quadrature_weights > 0,
+            ExcMessage(
+              "The sum of the quadrature weight should be strictly positive."));
+
           // Define the volume of the reference sphere to be used as the
           // averaging volume for the QCM
           if (calculate_reference_sphere_radius)
@@ -900,8 +911,7 @@ ParticleProjector<dim>::calculate_void_fraction_quadrature_centered_method()
                     particle_handler->particles_in_cell(active_neighbors[m]);
                   for (auto &particle : pic)
                     {
-                      double distance            = 0;
-                      auto   particle_properties = particle.get_properties();
+                      auto particle_properties = particle.get_properties();
                       const double r_particle =
                         particle_properties
                           [DEM::CFDDEMProperties::PropertiesIndex::dp] *
@@ -918,7 +928,7 @@ ParticleProjector<dim>::calculate_void_fraction_quadrature_centered_method()
 
                       // Distance between particle and quadrature point
                       // centers
-                      distance = particle.get_location().distance(
+                      const double distance = particle.get_location().distance(
                         quadrature_point_location[q]);
 
                       // Calculate the normalized particle contribution
@@ -944,8 +954,7 @@ ParticleProjector<dim>::calculate_void_fraction_quadrature_centered_method()
                     active_periodic_neighbors[m]);
                   for (auto &particle : pic)
                     {
-                      double distance            = 0;
-                      auto   particle_properties = particle.get_properties();
+                      auto particle_properties = particle.get_properties();
                       const double r_particle =
                         particle_properties
                           [DEM::CFDDEMProperties::PropertiesIndex::dp] *
@@ -967,7 +976,7 @@ ParticleProjector<dim>::calculate_void_fraction_quadrature_centered_method()
 
                       // Distance between particle and quadrature point
                       // centers
-                      distance = particle_location.distance(
+                      const double distance = particle_location.distance(
                         quadrature_point_location[q]);
 
                       // Calculate the ratio between the particle volume and the
