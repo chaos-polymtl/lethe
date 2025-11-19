@@ -61,7 +61,7 @@ particle_floating_wall_fine_search(
  * @param particle_floating_mesh_contact_candidates The output of particle-floating mesh
  * broad search which shows contact pair candidates
  * @param particle_floating_mesh_potentially_in_contact A map of maps which stores
- * all the particle-floating mesh pairs which are in contact
+ * all the particle-floating mesh pairs which are potentially in contact
  */
 template <int dim>
 void

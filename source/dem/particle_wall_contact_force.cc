@@ -174,10 +174,7 @@ ParticleWallContactForce<dim,
        ++solid_counter)
     {
       // Extract the neighboring cell maps of this solid objects
-      const auto &[this_solid_cp_es_neighbors,
-                   this_solid_cp_vs_neighbors,
-                   this_solid_np_es_neighbors,
-                   this_solid_np_vs_neighbors] =
+      const auto &[this_solid_es_neighbors, this_solid_vs_neighbors] =
         solids[solid_counter]->get_neighbors_maps();
 
       // For each solid surface, we create a map used to store every contact.
@@ -185,12 +182,12 @@ ParticleWallContactForce<dim,
       // The value is a vector of tuple storing the required information to
       // compute the contact force later on.
       // The information includes: 1. The triangle cell with which the contact
-      // is occuring, 2. The normal overlap, 3. The type of contact (face, edge
+      // is occurring, 2. The normal overlap, 3. The type of contact (face, edge
       // or vertex) 4. The contact info associated.
       using particle_triangle_contact_description = std::vector<
         std::tuple<typename Triangulation<dim - 1, dim>::active_cell_iterator,
                    double,
-                   LetheGridTools::ContactIndicator,
+                   LetheGridTools::ParticleTriangleContactIndicator,
                    particle_wall_contact_info<dim>>>;
 
       using particle_triangle_contact_record =
@@ -201,7 +198,6 @@ ParticleWallContactForce<dim,
 
       // In general, a particle should not be in contact with a huge number of
       // triangle. 10 contact is a reasonable upper limit for most cases.
-      contact_record.reserve(10);
 
       typename dem_data_structures<
         dim>::particle_triangle_cell_from_mesh_potentially_in_contact
@@ -306,16 +302,10 @@ ParticleWallContactForce<dim,
               // Assigning the triangle neighboring list of T1;
               const std::vector<
                 typename Triangulation<dim - 1, dim>::active_cell_iterator>
-                &T1_cp_es_neighbors = this_solid_cp_es_neighbors.at(T1_cell);
+                &T1_es_neighbors = this_solid_es_neighbors.at(T1_cell);
               const std::vector<
                 typename Triangulation<dim - 1, dim>::active_cell_iterator>
-                &T1_cp_vs_neighbors = this_solid_cp_vs_neighbors.at(T1_cell);
-              const std::vector<
-                typename Triangulation<dim - 1, dim>::active_cell_iterator>
-                &T1_np_es_neighbors = this_solid_np_es_neighbors.at(T1_cell);
-              const std::vector<
-                typename Triangulation<dim - 1, dim>::active_cell_iterator>
-                &T1_np_vs_neighbors = this_solid_np_vs_neighbors.at(T1_cell);
+                &T1_vs_neighbors = this_solid_vs_neighbors.at(T1_cell);
 
               // Initialize variables. We need to compare C1 to every other
               // contact that was compared yet.
@@ -332,14 +322,10 @@ ParticleWallContactForce<dim,
                   // First, we check if both triangle are neighbors. If they
                   // are not neighbors, C1 and C2 are automatically valid.
                   // (Disconnected triangles)
-                  if (std::ranges::find(T1_cp_es_neighbors, T2_cell) ==
-                        T1_cp_es_neighbors.end() &&
-                      std::ranges::find(T1_np_es_neighbors, T2_cell) ==
-                        T1_np_es_neighbors.end() &&
-                      std::ranges::find(T1_cp_vs_neighbors, T2_cell) ==
-                        T1_cp_vs_neighbors.end() &&
-                      std::ranges::find(T1_np_vs_neighbors, T2_cell) ==
-                        T1_np_vs_neighbors.end())
+                  if (std::ranges::find(T1_es_neighbors, T2_cell) ==
+                        T1_es_neighbors.end() &&
+                      std::ranges::find(T1_es_neighbors, T2_cell) ==
+                        T1_es_neighbors.end())
                     {
                       ++contact_2;
                       continue;
@@ -348,27 +334,30 @@ ParticleWallContactForce<dim,
                   // check for double contacts.
                   // If C1 is a face contact
                   if (contact_indicator_C1 ==
-                      LetheGridTools::ContactIndicator::face_contact)
+                      LetheGridTools::ParticleTriangleContactIndicator::
+                        face_contact)
                     {
                       // If C1 and C2 are both face contacts, they
                       // are both valid. This case is either can happen with
                       // either edge sharing or vertex sharing triangles
                       // that are non-coplanar.
                       if (contact_indicator_C2 ==
-                          LetheGridTools::ContactIndicator::face_contact)
+                          LetheGridTools::ParticleTriangleContactIndicator::
+                            face_contact)
                         {
                           ++contact_2;
                           continue;
                         }
                       // If C1 is a face contact and C2 is an edge contact.
                       if (contact_indicator_C2 ==
-                          LetheGridTools::ContactIndicator::edge_contact)
+                          LetheGridTools::ParticleTriangleContactIndicator::
+                            edge_contact)
                         {
                           // If T1 and T2 are non-coplanar and vertex
                           // sharing, C1 and C2 are valid. This could happen
                           // with two concave triangles.
-                          if (std::ranges::find(T1_np_vs_neighbors, T2_cell) !=
-                              T1_np_vs_neighbors.end())
+                          if (std::ranges::find(T1_vs_neighbors, T2_cell) !=
+                              T1_vs_neighbors.end())
                             {
                               ++contact_2;
                               continue;
@@ -388,14 +377,15 @@ ParticleWallContactForce<dim,
                       continue;
                     }
 
-
                   // If C1 is an edge contact.
                   if (contact_indicator_C1 ==
-                      LetheGridTools::ContactIndicator::edge_contact)
+                      LetheGridTools::ParticleTriangleContactIndicator::
+                        edge_contact)
                     {
                       // If C1 is an edge contact and C2 is a face contact.
                       if (contact_indicator_C2 ==
-                          LetheGridTools::ContactIndicator::face_contact)
+                          LetheGridTools::ParticleTriangleContactIndicator::
+                            face_contact)
                         {
                           // C2 is valid.
                           // C1 is invalid if T1 and T2 are connected. We
@@ -408,16 +398,15 @@ ParticleWallContactForce<dim,
                         }
                       // If C1 and C2 are edge contacts,
                       if (contact_indicator_C2 ==
-                          LetheGridTools::ContactIndicator::edge_contact)
+                          LetheGridTools::ParticleTriangleContactIndicator::
+                            edge_contact)
                         {
                           // C1 is always valid.
                           // C2 is invalid if T1 and T2 are edge sharing.
                           // This case means that both contacts occur on the
                           // same edge which is connecting both triangles.
-                          if (std::ranges::find(T1_cp_es_neighbors, T2_cell) !=
-                                T1_cp_es_neighbors.end() ||
-                              std::ranges::find(T1_np_es_neighbors, T2_cell) !=
-                                T1_np_es_neighbors.end())
+                          if (std::ranges::find(T1_es_neighbors, T2_cell) !=
+                              T1_es_neighbors.end())
                             {
                               clear_contact_info(contact_info_C2);
                               contact_2 = this_contact_record.erase(contact_2);
@@ -435,11 +424,13 @@ ParticleWallContactForce<dim,
                     }
                   // If C1 is a vertex contact
                   if (contact_indicator_C1 ==
-                      LetheGridTools::ContactIndicator::vertex_contact)
+                      LetheGridTools::ParticleTriangleContactIndicator::
+                        vertex_contact)
                     {
                       // If C1 is a vertex contact and C2 is a face contact.
                       if (contact_indicator_C2 ==
-                          LetheGridTools::ContactIndicator::face_contact)
+                          LetheGridTools::ParticleTriangleContactIndicator::
+                            face_contact)
                         {
                           // C2 is valid.
                           // C1 is invalid if T1 and T2 are connected. We
@@ -453,17 +444,16 @@ ParticleWallContactForce<dim,
                       // If C1 is a vertex contact and C2 is an edge
                       // contact.
                       if (contact_indicator_C2 ==
-                          LetheGridTools::ContactIndicator::edge_contact)
+                          LetheGridTools::ParticleTriangleContactIndicator::
+                            edge_contact)
                         {
                           // C2 is valid
                           // C1 is invalid if T1 and T2 are vertex sharing.
                           // This case means that both contacts occur on the
                           // same vertex which is connecting both triangles,
                           // thus C1 and C2 are double contacts.
-                          if (std::ranges::find(T1_cp_vs_neighbors, T2_cell) !=
-                                T1_cp_vs_neighbors.end() ||
-                              std::ranges::find(T1_np_vs_neighbors, T2_cell) !=
-                                T1_np_vs_neighbors.end())
+                          if (std::ranges::find(T1_vs_neighbors, T2_cell) !=
+                              T1_vs_neighbors.end())
                             {
                               erase_contact_1 = true;
                               break;
@@ -473,7 +463,8 @@ ParticleWallContactForce<dim,
                         }
                       // If C1 and C2 are vertex contacts,
                       if (contact_indicator_C2 ==
-                          LetheGridTools::ContactIndicator::vertex_contact)
+                          LetheGridTools::ParticleTriangleContactIndicator::
+                            vertex_contact)
                         {
                           // C2 is invalid
                           clear_contact_info(contact_info_C2);
@@ -554,7 +545,6 @@ ParticleWallContactForce<dim,
                                       rolling_resistance_torque);
 
               // Applying the calculated forces and torques on the particle
-
               this->apply_force_and_torque(
                 normal_force,
                 tangential_force,

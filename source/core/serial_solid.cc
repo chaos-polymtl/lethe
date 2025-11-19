@@ -630,7 +630,7 @@ SerialSolid<dim, spacedim>::setup_containers()
     {
       // Initializing the containers associated with the main cell
       std::vector<typename Triangulation<dim, spacedim>::active_cell_iterator>
-        cp_es_main_cell, np_es_main_cell, cp_vs_main_cell, np_vs_main_cell;
+        es_main_cell, vs_main_cell;
 
       // Number of vertices of the main cell
       const unsigned int n_vertices_main_cell = main_cell->n_vertices();
@@ -654,12 +654,6 @@ SerialSolid<dim, spacedim>::setup_containers()
           if (neigh_cell == main_cell)
             continue;
 
-          // Check if the neighboring and main cells are coplanar. This bool
-          // is used later in the loop.
-          bool coplanar =
-            LetheGridTools::triangle_cells_are_coplanar<dim, spacedim>(
-              main_cell, neigh_cell);
-
           // Number of sharing vertices between main cell and neighboring
           // cell. We know it is high either 1 or 2.
           unsigned int n_sharing_vertices = 0;
@@ -676,28 +670,14 @@ SerialSolid<dim, spacedim>::setup_containers()
                   main_cell_vertex_indices.end())
                 n_sharing_vertices++;
             }
-          // Coplanar
-          if (coplanar)
-            {
-              // Sharing 1 vertex
-              if (n_sharing_vertices == 1)
-                cp_vs_main_cell.push_back(neigh_cell);
-              else // Sharing 2 vertex
-                cp_es_main_cell.push_back(neigh_cell);
-            }
-          else
-            {
-              // Sharing 1 vertex
-              if (n_sharing_vertices == 1)
-                np_vs_main_cell.push_back(neigh_cell);
-              else // Sharing 2 vertex
-                np_es_main_cell.push_back(neigh_cell);
-            }
+          // Sharing 1 vertex
+          if (n_sharing_vertices == 1)
+            vs_main_cell.push_back(neigh_cell);
+          else // Sharing 2 vertex
+            es_main_cell.push_back(neigh_cell);
         }
-      cp_es_neighbors.insert(std::make_pair(main_cell, cp_es_main_cell));
-      cp_vs_neighbors.insert(std::make_pair(main_cell, cp_vs_main_cell));
-      np_es_neighbors.insert(std::make_pair(main_cell, np_es_main_cell));
-      np_vs_neighbors.insert(std::make_pair(main_cell, np_vs_main_cell));
+      es_neighbors.insert(std::make_pair(main_cell, es_main_cell));
+      vs_neighbors.insert(std::make_pair(main_cell, vs_main_cell));
     }
 }
 // Pre-compile the 2D, 3D and the 2D in 3D versions with the types that can

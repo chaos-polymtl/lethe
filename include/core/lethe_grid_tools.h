@@ -261,10 +261,10 @@ namespace LetheGridTools
 
 
   /** brief
-   * @enum ContactIndicator
+   * @enum ParticleTriangleContactIndicator
    * Enum to indicate the type of contact between a particle and a triangle.
    */
-  enum class ContactIndicator : std::uint8_t
+  enum class ParticleTriangleContactIndicator : std::uint8_t
   {
     face_contact,
     edge_contact,
@@ -293,13 +293,14 @@ namespace LetheGridTools
    * @return A tuple in which 0. a vector of bools to determine if the particle is
    * less than a radius away from the triangle plane, 1. a vector of projected
    * location of particles on the triangle, 2. a vector of normal vectors of the
-   * triangles, 3. the type of contact between the particle and the triangle.
+   * triangles, 3. a vector of the contact type between the particle and the
+   * triangle.
    */
   template <int dim, typename PropertiesIndex>
   std::tuple<std::vector<bool>,
              std::vector<Point<3>>,
              std::vector<Tensor<1, 3>>,
-             std::vector<ContactIndicator>>
+             std::vector<ParticleTriangleContactIndicator>>
   find_particle_triangle_projection(
     const std::vector<Point<dim>>                       &triangle,
     const std::vector<Particles::ParticleIterator<dim>> &particles,
@@ -444,7 +445,9 @@ namespace LetheGridTools
   };
 
   /**
-   * @brief Function that checks if two cells are coplanar within a given tolerance.
+   * @brief Checks whether two cells are coplanar within a given tolerance by
+   * using the scalar product of each normal unit vector. If the cells are
+   * coplanar, the scalar product should be equal to 1.
    *
    * @param cell_A First cell to compare.
    * @param cell_B Second cell to compare.
@@ -457,9 +460,8 @@ namespace LetheGridTools
     const typename Triangulation<dim, spacedim>::active_cell_iterator &cell_B,
     double tol = 1e-6);
 
-
   /**
-   * @brief Map the vertex index to the cells that includes that vertex.
+   * @brief Map the vertex index to the cells which include that vertex.
    *
    * @param tria Triangulation
    * @param vertices_cell_map The map container of vertex ids with its set of
