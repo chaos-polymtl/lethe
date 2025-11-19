@@ -1,3 +1,8 @@
+# Test description:
+# In this test, a single particle is bouncing on a solid-surface made of two triangles that are coplanar (CP) and edge sharing (ES).
+# The particle is bouncing exactly on the sharing edge.
+# This test checks that the code doesn't apply the contact force twice on the particle.
+
 # Listing of Parameters
 #----------------------
 

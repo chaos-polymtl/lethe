@@ -41,7 +41,6 @@ file(COPY moving_solid_surface_files/square.msh DESTINATION "${CMAKE_CURRENT_BIN
 file(COPY insert_and_remove_with_files_files/particles_00.input DESTINATION "${CMAKE_CURRENT_BINARY_DIR}/insert_and_remove_with_files.${_build_type}")
 file(COPY insert_and_remove_with_files_files/particles_01.input DESTINATION "${CMAKE_CURRENT_BINARY_DIR}/insert_and_remove_with_files.${_build_type}")
 file(COPY solid_surfaces_mesh/90deg_triangles.msh DESTINATION "${CMAKE_CURRENT_BINARY_DIR}/particle_solid_surface_NPES_double_edge_contact.${_build_type}")
-file(COPY solid_surfaces_mesh/90deg_triangles.msh DESTINATION "${CMAKE_CURRENT_BINARY_DIR}/particle_solid_surface_NPES_double_face_contact.${_build_type}")
 file(COPY solid_surfaces_mesh/flat_triangles.msh DESTINATION "${CMAKE_CURRENT_BINARY_DIR}/particle_solid_surface_CPES_double_edge_contact.${_build_type}")
 
 file(COPY restart_moving_receptacle_files/restart.checkpoint_controller DESTINATION "${CMAKE_CURRENT_BINARY_DIR}/restart_moving_receptacle.${_build_type}/mpirun=1/")
@@ -68,8 +67,6 @@ file(COPY restart_file_insertion_files/restart_file_insertion_1.triangulation.in
 file(COPY restart_file_insertion_files/restart_file_insertion_1.triangulation_fixed.data DESTINATION "${CMAKE_CURRENT_BINARY_DIR}/restart_file_insertion.${_build_type}/mpirun=1/")
 file(COPY restart_file_insertion_files/restart_file_insertion_1.triangulation_variable.data DESTINATION "${CMAKE_CURRENT_BINARY_DIR}/restart_file_insertion.${_build_type}/mpirun=1/")
 file(COPY restart_file_insertion_files/particles_01.input DESTINATION "${CMAKE_CURRENT_BINARY_DIR}/restart_file_insertion.${_build_type}/mpirun=1/")
-
-
 
 deal_ii_pickup_tests()
 

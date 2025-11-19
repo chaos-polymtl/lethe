@@ -1,3 +1,10 @@
+# Test description:
+# In this test, a single particle is bouncing on a solid-surface made of two triangles that are non-coplanar (NP) and edge sharing (ES).
+# The two triangles are making a 90 deg angle on the sharing edge, making an UPRIGHT "v".
+# The particle is LOCATED exactly on the sharing edge, but doesn't contact that edge due to the angle of the two triangles.
+# The particle contact both triangle faces, thus two contact forces should be applied since it is not the same contact point.
+# This test checks that the code applies those two contact forces.
+
 # Listing of Parameters
 #----------------------
 
