@@ -282,7 +282,7 @@ protected:
    * @param[in] vector_b The projection vector of vector_a
    * @return The projection of vector_a on vector_b
    */
-  inline Tensor<1, 3>
+  static inline Tensor<1, 3>
   find_projection(const Tensor<1, 3> &vector_a, const Tensor<1, 3> &vector_b)
   {
     Tensor<1, 3> vector_c;

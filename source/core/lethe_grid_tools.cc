@@ -1222,7 +1222,7 @@ template <int dim, typename PropertiesIndex>
 std::tuple<std::vector<bool>,
            std::vector<Point<3>>,
            std::vector<Tensor<1, 3>>,
-           std::vector<LetheGridTools::ContactIndicator>>
+           std::vector<LetheGridTools::ParticleTriangleContactIndicator>>
 LetheGridTools::find_particle_triangle_projection(
   const std::vector<Point<dim>>                       &triangle,
   const std::vector<Particles::ParticleIterator<dim>> &particles,
@@ -1231,8 +1231,8 @@ LetheGridTools::find_particle_triangle_projection(
   std::vector<bool>         pass_distance_check(n_particles_in_base_cell);
   std::vector<Point<3>>     projection_points(n_particles_in_base_cell);
   std::vector<Tensor<1, 3>> normal_vectors(n_particles_in_base_cell);
-  std::vector<LetheGridTools::ContactIndicator> contact_indicators(
-    n_particles_in_base_cell);
+  std::vector<LetheGridTools::ParticleTriangleContactIndicator>
+    contact_indicators(n_particles_in_base_cell);
 
   auto &p_0 = triangle[0];
   auto &p_1 = triangle[1];
@@ -1263,7 +1263,7 @@ LetheGridTools::find_particle_triangle_projection(
       Point<dim>   particle_position = part->get_location();
       vector_to_plane                = p_0 - particle_position;
 
-      ContactIndicator this_contact_indicator;
+      ParticleTriangleContactIndicator this_contact_indicator;
       // A bool variable for region 0
       bool region_zero = false;
 
@@ -1300,7 +1300,8 @@ LetheGridTools::find_particle_triangle_projection(
               if (t < 0)
                 {
                   // Region 4
-                  this_contact_indicator = ContactIndicator::vertex_contact;
+                  this_contact_indicator =
+                    ParticleTriangleContactIndicator::vertex_contact;
                   if (d < 0)
                     {
                       t = 0;
@@ -1323,7 +1324,8 @@ LetheGridTools::find_particle_triangle_projection(
               else
                 {
                   // Region 3
-                  this_contact_indicator = ContactIndicator::edge_contact;
+                  this_contact_indicator =
+                    ParticleTriangleContactIndicator::edge_contact;
 
                   s = 0;
                   if (e >= 0)
@@ -1337,7 +1339,8 @@ LetheGridTools::find_particle_triangle_projection(
           else if (t < 0)
             {
               // Region 5
-              this_contact_indicator = ContactIndicator::edge_contact;
+              this_contact_indicator =
+                ParticleTriangleContactIndicator::edge_contact;
 
               t = 0;
               if (d >= 0)
@@ -1362,8 +1365,9 @@ LetheGridTools::find_particle_triangle_projection(
               if constexpr (dim == 2)
                 unit_normal_3d = tensor_nd_to_3d(unit_normal);
 
-              region_zero            = true;
-              this_contact_indicator = ContactIndicator::face_contact;
+              region_zero = true;
+              this_contact_indicator =
+                ParticleTriangleContactIndicator::face_contact;
             }
         }
       else
@@ -1371,7 +1375,8 @@ LetheGridTools::find_particle_triangle_projection(
           if (s < 0)
             {
               // Region 2
-              this_contact_indicator = ContactIndicator::vertex_contact;
+              this_contact_indicator =
+                ParticleTriangleContactIndicator::vertex_contact;
 
               const double tmp0 = b + d;
               const double tmp1 = c + e;
@@ -1400,7 +1405,8 @@ LetheGridTools::find_particle_triangle_projection(
           else if (t < 0)
             {
               // Region 6
-              this_contact_indicator = ContactIndicator::vertex_contact;
+              this_contact_indicator =
+                ParticleTriangleContactIndicator::vertex_contact;
 
               const double tmp0 = b + e;
               const double tmp1 = a + d;
@@ -1428,7 +1434,8 @@ LetheGridTools::find_particle_triangle_projection(
           else
             {
               // Region 1
-              this_contact_indicator = ContactIndicator::edge_contact;
+              this_contact_indicator =
+                ParticleTriangleContactIndicator::edge_contact;
 
               const double numer = (c + e) - (b + d);
               if (numer <= 0)
@@ -1479,60 +1486,66 @@ LetheGridTools::find_particle_triangle_projection(
                          contact_indicators);
 }
 
-template std::tuple<std::vector<bool>,
-                    std::vector<Point<3>>,
-                    std::vector<Tensor<1, 3>>,
-                    std::vector<LetheGridTools::ContactIndicator>>
+template std::tuple<
+  std::vector<bool>,
+  std::vector<Point<3>>,
+  std::vector<Tensor<1, 3>>,
+  std::vector<LetheGridTools::ParticleTriangleContactIndicator>>
 LetheGridTools::
   find_particle_triangle_projection<2, DEM::DEMProperties::PropertiesIndex>(
     const std::vector<Point<2>>                       &triangle,
     const std::vector<Particles::ParticleIterator<2>> &particles,
     const unsigned int &n_particles_in_base_cell);
 
-template std::tuple<std::vector<bool>,
-                    std::vector<Point<3>>,
-                    std::vector<Tensor<1, 3>>,
-                    std::vector<LetheGridTools::ContactIndicator>>
+template std::tuple<
+  std::vector<bool>,
+  std::vector<Point<3>>,
+  std::vector<Tensor<1, 3>>,
+  std::vector<LetheGridTools::ParticleTriangleContactIndicator>>
 LetheGridTools::
   find_particle_triangle_projection<2, DEM::CFDDEMProperties::PropertiesIndex>(
     const std::vector<Point<2>>                       &triangle,
     const std::vector<Particles::ParticleIterator<2>> &particles,
     const unsigned int &n_particles_in_base_cell);
 
-template std::tuple<std::vector<bool>,
-                    std::vector<Point<3>>,
-                    std::vector<Tensor<1, 3>>,
-                    std::vector<LetheGridTools::ContactIndicator>>
+template std::tuple<
+  std::vector<bool>,
+  std::vector<Point<3>>,
+  std::vector<Tensor<1, 3>>,
+  std::vector<LetheGridTools::ParticleTriangleContactIndicator>>
 LetheGridTools::
   find_particle_triangle_projection<2, DEM::DEMMPProperties::PropertiesIndex>(
     const std::vector<Point<2>>                       &triangle,
     const std::vector<Particles::ParticleIterator<2>> &particles,
     const unsigned int &n_particles_in_base_cell);
 
-template std::tuple<std::vector<bool>,
-                    std::vector<Point<3>>,
-                    std::vector<Tensor<1, 3>>,
-                    std::vector<LetheGridTools::ContactIndicator>>
+template std::tuple<
+  std::vector<bool>,
+  std::vector<Point<3>>,
+  std::vector<Tensor<1, 3>>,
+  std::vector<LetheGridTools::ParticleTriangleContactIndicator>>
 LetheGridTools::
   find_particle_triangle_projection<3, DEM::DEMProperties::PropertiesIndex>(
     const std::vector<Point<3>>                       &triangle,
     const std::vector<Particles::ParticleIterator<3>> &particles,
     const unsigned int &n_particles_in_base_cell);
 
-template std::tuple<std::vector<bool>,
-                    std::vector<Point<3>>,
-                    std::vector<Tensor<1, 3>>,
-                    std::vector<LetheGridTools::ContactIndicator>>
+template std::tuple<
+  std::vector<bool>,
+  std::vector<Point<3>>,
+  std::vector<Tensor<1, 3>>,
+  std::vector<LetheGridTools::ParticleTriangleContactIndicator>>
 LetheGridTools::
   find_particle_triangle_projection<3, DEM::CFDDEMProperties::PropertiesIndex>(
     const std::vector<Point<3>>                       &triangle,
     const std::vector<Particles::ParticleIterator<3>> &particles,
     const unsigned int &n_particles_in_base_cell);
 
-template std::tuple<std::vector<bool>,
-                    std::vector<Point<3>>,
-                    std::vector<Tensor<1, 3>>,
-                    std::vector<LetheGridTools::ContactIndicator>>
+template std::tuple<
+  std::vector<bool>,
+  std::vector<Point<3>>,
+  std::vector<Tensor<1, 3>>,
+  std::vector<LetheGridTools::ParticleTriangleContactIndicator>>
 LetheGridTools::
   find_particle_triangle_projection<3, DEM::DEMMPProperties::PropertiesIndex>(
     const std::vector<Point<3>>                       &triangle,

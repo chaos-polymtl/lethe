@@ -194,22 +194,17 @@ public:
    * @brief Returns the neighboring cells maps of the solid object triangulation.
    * These maps store for each cell of the solid object which neighboring cells
    * are sharing a vertex or an edge (two vertex). Also stores which of these
-   * neighboring cells are coplanar or non-coplanar. 1. coplanar edge-sharing,
+   * neighboring cells are coplanar (cp) or non-coplanar (ncp). 1. coplanar edge-sharing,
    * 2. coplanar vertex-sharing, 3. non-coplanar edge-sharing, 4. non-coplanar
    * vertex-sharing.
    *
    * @return A tuple containing the four neighboring cells maps.
    */
   inline std::tuple<triangulation_cell_neighbors_map,
-                    triangulation_cell_neighbors_map,
-                    triangulation_cell_neighbors_map,
                     triangulation_cell_neighbors_map>
   get_neighbors_maps() const
   {
-    return std::tie(cp_es_neighbors,
-                    cp_vs_neighbors,
-                    np_es_neighbors,
-                    np_vs_neighbors);
+    return std::tie(es_neighbors, vs_neighbors);
   }
 
   /**
@@ -300,7 +295,7 @@ private:
   rotate_grid(const double angle, [[maybe_unused]] const Tensor<1, 3> &axis);
 
   /**
-   * @brief Translate the grid. In spacedim=2, the third component is ignore
+   * @brief Translate the grid. In spacedim=2, the third component is ignored
    *
    * @param translate The vector with which the solid is translated.
    */
@@ -344,12 +339,9 @@ private:
   double                              current_solid_temperature;
 
   // Neighboring cells maps
-  // CP : coplanar
-  // NP : non-coplanar
   // ES : edge-sharing
   // VS : vertex-sharing
-  triangulation_cell_neighbors_map cp_es_neighbors, np_es_neighbors,
-    cp_vs_neighbors, np_vs_neighbors;
+  triangulation_cell_neighbors_map es_neighbors, vs_neighbors;
 };
 
 #endif
