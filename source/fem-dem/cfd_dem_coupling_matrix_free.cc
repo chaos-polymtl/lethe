@@ -487,7 +487,7 @@ CFDDEMMatrixFree<dim>::write_checkpoint()
   output << oss.str() << std::endl;
 
   std::vector<const VectorType *> sol_set_transfer;
-  sol_set_transfer.push_back(&this->present_solution);
+  sol_set_transfer.push_back(&(*this->present_solution));
   for (unsigned int i = 0; i < this->previous_solutions.size(); ++i)
     {
       sol_set_transfer.push_back(&this->previous_solutions[i]);
@@ -505,7 +505,7 @@ CFDDEMMatrixFree<dim>::write_checkpoint()
     }
 
   // Prepare for Serialization
-  SolutionTransfer<dim, VectorType> system_trans_vectors(this->dof_handler);
+  SolutionTransfer<dim, VectorType> system_trans_vectors(*this->dof_handler);
   system_trans_vectors.prepare_for_serialization(sol_set_transfer);
 
   // Prepare particle handler for serialization
@@ -635,7 +635,7 @@ CFDDEMMatrixFree<dim>::read_checkpoint()
       x_system[i + 1] = &distributed_previous_solutions[i];
     }
 
-  SolutionTransfer<dim, VectorType> system_trans_vectors(this->dof_handler);
+  SolutionTransfer<dim, VectorType> system_trans_vectors(*this->dof_handler);
 
   if (this->simulation_parameters.post_processing.calculate_average_velocities)
     {
@@ -647,7 +647,7 @@ CFDDEMMatrixFree<dim>::read_checkpoint()
 
   system_trans_vectors.deserialize(x_system);
 
-  this->present_solution = distributed_system;
+  *this->present_solution = distributed_system;
   for (unsigned int i = 0; i < this->previous_solutions.size(); ++i)
     {
       this->previous_solutions[i] = distributed_previous_solutions[i];
@@ -991,7 +991,7 @@ CFDDEMMatrixFree<dim>::report_particle_statistics()
       write_post_processing_results<dim>(
         *parallel_triangulation,
         grid_pvdhandler,
-        this->dof_handler,
+        *this->dof_handler,
         this->particle_handler,
         dem_parameters,
         this->simulation_control->get_current_time(),
@@ -1093,9 +1093,9 @@ CFDDEMMatrixFree<dim>::dynamic_flow_control()
       unsigned int flow_direction =
         this->simulation_parameters.flow_control.flow_direction;
       double average_velocity = calculate_average_velocity(
-        this->dof_handler,
+        *this->dof_handler,
         this->particle_projector.dof_handler,
-        this->present_solution,
+        *this->present_solution,
         this->particle_projector.void_fraction_solution,
         flow_direction,
         *this->cell_quadrature,
@@ -1394,7 +1394,7 @@ CFDDEMMatrixFree<dim>::solve()
       this->postprocess_fd(true);
       this->multiphysics->postprocess(true);
       if (this->simulation_control->is_output_iteration())
-        this->write_output_results(this->present_solution);
+        this->write_output_results(*this->present_solution);
     }
 
   while (this->simulation_control->integrate())
@@ -1440,8 +1440,8 @@ CFDDEMMatrixFree<dim>::solve()
 
       this->particle_projector.calculate_particle_fluid_forces_projection(
         this->cfd_dem_simulation_parameters.cfd_dem,
-        this->dof_handler,
-        this->present_solution,
+        *this->dof_handler,
+        *this->present_solution,
         this->previous_solutions,
         this->cfd_dem_simulation_parameters.dem_parameters
           .lagrangian_physical_properties.g,

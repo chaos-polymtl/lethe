@@ -99,6 +99,9 @@ public:
         face_quadrature = std::make_shared<QGauss<dim - 1>>(fe->degree + 1);
       }
 
+    // Initialize solution shared_ptr
+    present_solution = std::make_shared<GlobalVectorType>();
+
     // Allocate solution transfer
     solution_transfer =
       std::make_shared<SolutionTransfer<dim, GlobalVectorType>>(*dof_handler);
@@ -266,7 +269,7 @@ public:
   GlobalVectorType &
   get_present_solution() override
   {
-    return present_solution;
+    return *present_solution;
   }
   GlobalVectorType &
   get_system_rhs() override
@@ -491,7 +494,7 @@ private:
                                     this->evaluation_point,
                                     this->local_evaluation_point);
 
-            present_solution = this->local_evaluation_point;
+            *present_solution = this->local_evaluation_point;
           }
       }
   };
@@ -544,7 +547,7 @@ private:
             scratch_data.reinit_face_velocity(
               velocity_cell,
               face_no,
-              *multiphysics->get_block_solution(PhysicsID::fluid_dynamics),
+              multiphysics->get_block_solution(PhysicsID::fluid_dynamics),
               this->simulation_parameters.ale,
               this->simulation_parameters.tracer_drift_velocity.drift_velocity);
           }
@@ -574,7 +577,7 @@ private:
             scratch_data.reinit_face_velocity(
               velocity_cell,
               face_no,
-              *multiphysics->get_solution(PhysicsID::fluid_dynamics),
+              multiphysics->get_solution(PhysicsID::fluid_dynamics),
               this->simulation_parameters.ale,
               this->simulation_parameters.tracer_drift_velocity.drift_velocity);
           }
@@ -610,14 +613,14 @@ private:
   IndexSet locally_owned_dofs;
   IndexSet locally_relevant_dofs;
 
-  GlobalVectorType               evaluation_point;
-  GlobalVectorType               local_evaluation_point;
-  GlobalVectorType               newton_update;
-  GlobalVectorType               present_solution;
-  GlobalVectorType               system_rhs;
-  AffineConstraints<double>      nonzero_constraints;
-  AffineConstraints<double>      zero_constraints;
-  TrilinosWrappers::SparseMatrix system_matrix;
+  GlobalVectorType                  evaluation_point;
+  GlobalVectorType                  local_evaluation_point;
+  GlobalVectorType                  newton_update;
+  std::shared_ptr<GlobalVectorType> present_solution;
+  GlobalVectorType                  system_rhs;
+  AffineConstraints<double>         nonzero_constraints;
+  AffineConstraints<double>         zero_constraints;
+  TrilinosWrappers::SparseMatrix    system_matrix;
 
   // Previous solutions vectors
   std::vector<GlobalVectorType> previous_solutions;

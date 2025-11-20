@@ -740,7 +740,7 @@ FluidDynamicsVANSMatrixFree<dim>::solve()
         particle_projector.calculate_particle_fluid_forces_projection(
           this->cfd_dem_simulation_parameters.cfd_dem,
           *this->dof_handler,
-          this->present_solution,
+          *this->present_solution,
           this->previous_solutions,
           cfd_dem_simulation_parameters.dem_parameters
             .lagrangian_physical_properties.g,
@@ -823,7 +823,7 @@ FluidDynamicsVANSMatrixFree<dim>::initialize_GMG()
     this->gmg_preconditioner.get())
     ->initialize(this->simulation_control,
                  this->flow_control,
-                 this->present_solution,
+                 *this->present_solution,
                  this->time_derivative_previous_solutions,
                  this->time_derivative_void_fraction,
                  this->particle_projector);

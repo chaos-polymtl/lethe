@@ -151,7 +151,7 @@ protected:
   virtual VectorType &
   get_present_solution() override
   {
-    return present_solution;
+    return *present_solution;
   };
   virtual VectorType &
   get_system_rhs() override
@@ -216,7 +216,7 @@ protected:
     multiphysics->postprocess(first_iteration);
 
     if (this->simulation_control->is_output_iteration())
-      this->write_output_results(this->present_solution);
+      this->write_output_results(*this->present_solution);
   };
 
   /**
@@ -267,7 +267,7 @@ protected:
         this->postprocess_fd(true);
         multiphysics->postprocess(true);
         if (this->simulation_control->is_output_iteration())
-          this->write_output_results(this->present_solution);
+          this->write_output_results(*this->present_solution);
       }
   }
 
@@ -999,11 +999,11 @@ protected:
   bool use_manifold_for_normal;
 
   // Present solution and non-linear solution components
-  VectorType evaluation_point;
-  VectorType local_evaluation_point;
-  VectorType newton_update;
-  VectorType present_solution;
-  VectorType system_rhs;
+  VectorType                  evaluation_point;
+  VectorType                  local_evaluation_point;
+  VectorType                  newton_update;
+  std::shared_ptr<VectorType> present_solution;
+  VectorType                  system_rhs;
 
   // Previous solutions vectors
   std::vector<VectorType> previous_solutions;

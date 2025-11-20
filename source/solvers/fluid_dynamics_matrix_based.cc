@@ -92,9 +92,9 @@ FluidDynamicsMatrixBased<dim>::setup_dofs_fd()
   // only be done if these are reinitialized WITHOUT locally_relevant_dofs (i.e.
   // without ghost DoFs). This is why most of them are reinitialized both with
   // and without locally_relevant_dofs.
-  this->present_solution.reinit(this->locally_owned_dofs,
-                                this->locally_relevant_dofs,
-                                this->mpi_communicator);
+  this->present_solution->reinit(this->locally_owned_dofs,
+                                 this->locally_relevant_dofs,
+                                 this->mpi_communicator);
   this->local_evaluation_point.reinit(this->locally_owned_dofs,
                                       this->mpi_communicator);
   this->evaluation_point.reinit(this->locally_owned_dofs,
@@ -188,7 +188,7 @@ FluidDynamicsMatrixBased<dim>::setup_dofs_fd()
   this->multiphysics->set_dof_handler(PhysicsID::fluid_dynamics,
                                       this->dof_handler);
   this->multiphysics->set_solution(PhysicsID::fluid_dynamics,
-                                   &this->present_solution);
+                                   this->present_solution);
   this->multiphysics->set_previous_solutions(PhysicsID::fluid_dynamics,
                                              &this->previous_solutions);
 }
@@ -716,7 +716,7 @@ FluidDynamicsMatrixBased<dim>::assemble_local_system_matrix(
 
       scratch_data.reinit_vof(
         phase_cell,
-        *this->multiphysics->get_solution(PhysicsID::VOF),
+        this->multiphysics->get_solution(PhysicsID::VOF),
         this->multiphysics->get_filtered_solution(PhysicsID::VOF),
         *this->multiphysics->get_previous_solutions(PhysicsID::VOF));
 
@@ -764,7 +764,7 @@ FluidDynamicsMatrixBased<dim>::assemble_local_system_matrix(
 
       scratch_data.reinit_cahn_hilliard(
         phase_cell,
-        *this->multiphysics->get_solution(PhysicsID::cahn_hilliard),
+        this->multiphysics->get_solution(PhysicsID::cahn_hilliard),
         this->multiphysics->get_filtered_solution(PhysicsID::cahn_hilliard));
     }
 
@@ -781,7 +781,7 @@ FluidDynamicsMatrixBased<dim>::assemble_local_system_matrix(
 
       scratch_data.reinit_heat_transfer(
         temperature_cell,
-        *this->multiphysics->get_solution(PhysicsID::heat_transfer),
+        this->multiphysics->get_solution(PhysicsID::heat_transfer),
         *this->multiphysics->get_previous_solutions(PhysicsID::heat_transfer));
     }
 
@@ -955,7 +955,7 @@ FluidDynamicsMatrixBased<dim>::assemble_local_system_rhs(
 
       scratch_data.reinit_vof(
         phase_cell,
-        *this->multiphysics->get_solution(PhysicsID::VOF),
+        this->multiphysics->get_solution(PhysicsID::VOF),
         this->multiphysics->get_filtered_solution(PhysicsID::VOF),
         *this->multiphysics->get_previous_solutions(PhysicsID::VOF));
 
@@ -999,7 +999,7 @@ FluidDynamicsMatrixBased<dim>::assemble_local_system_rhs(
 
       scratch_data.reinit_cahn_hilliard(
         phase_cell,
-        *this->multiphysics->get_solution(PhysicsID::cahn_hilliard),
+        this->multiphysics->get_solution(PhysicsID::cahn_hilliard),
         this->multiphysics->get_filtered_solution(PhysicsID::cahn_hilliard));
     }
 
@@ -1016,7 +1016,7 @@ FluidDynamicsMatrixBased<dim>::assemble_local_system_rhs(
 
       scratch_data.reinit_heat_transfer(
         temperature_cell,
-        *this->multiphysics->get_solution(PhysicsID::heat_transfer),
+        this->multiphysics->get_solution(PhysicsID::heat_transfer),
         *this->multiphysics->get_previous_solutions(PhysicsID::heat_transfer));
     }
 
@@ -1089,7 +1089,7 @@ FluidDynamicsMatrixBased<dim>::set_initial_condition_fd(
             .solver == Parameters::LinearSolver::SolverType::gmres)
         solve_system_GMRES(true, 1e-15, 1e-15);
 
-      this->present_solution = this->newton_update;
+      *this->present_solution = this->newton_update;
       this->finish_time_step();
     }
   else if (initial_condition_type ==
@@ -1251,7 +1251,7 @@ FluidDynamicsMatrixBased<dim>::set_initial_condition_fd(
 
       this->local_evaluation_point =
         this->average_velocities->get_average_velocities();
-      this->present_solution = this->local_evaluation_point;
+      *this->present_solution = this->local_evaluation_point;
     }
   else
     {
@@ -1847,7 +1847,7 @@ FluidDynamicsMatrixBased<dim>::multi_stage_postresolution(
   Parameters::SimulationControl::TimeSteppingMethod method,
   double                                            time_step)
 {
-  auto &present_solution       = this->present_solution;
+  auto &present_solution       = *this->present_solution;
   auto &previous_solutions     = this->previous_solutions;
   auto &local_evaluation_point = this->local_evaluation_point;
 
@@ -1890,7 +1890,7 @@ template <int dim>
 void
 FluidDynamicsMatrixBased<dim>::update_multi_stage_solution(double time_step)
 {
-  auto &present_solution       = this->present_solution;
+  auto &present_solution       = *this->present_solution;
   auto &previous_solutions     = this->previous_solutions;
   auto &local_evaluation_point = this->local_evaluation_point;
 

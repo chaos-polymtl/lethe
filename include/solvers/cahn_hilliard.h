@@ -139,7 +139,8 @@ public:
           SolutionTransfer<dim, GlobalVectorType>(*this->dof_handler));
       }
 
-    // Initialize filtered solution shared_ptr
+    // Initialize solutions shared_ptr
+    present_solution  = std::make_shared<GlobalVectorType>();
     filtered_solution = std::make_shared<GlobalVectorType>();
 
     // Change the behavior of the timer for situations when you don't want
@@ -297,7 +298,7 @@ public:
   GlobalVectorType &
   get_present_solution() override
   {
-    return present_solution;
+    return *present_solution;
   }
   GlobalVectorType &
   get_system_rhs() override
@@ -509,7 +510,7 @@ private:
   GlobalVectorType                  evaluation_point;
   GlobalVectorType                  local_evaluation_point;
   GlobalVectorType                  newton_update;
-  GlobalVectorType                  present_solution;
+  std::shared_ptr<GlobalVectorType> present_solution;
   GlobalVectorType                  system_rhs;
   AffineConstraints<double>         nonzero_constraints;
   AffineConstraints<double>         zero_constraints;

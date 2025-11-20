@@ -1688,7 +1688,7 @@ FluidDynamicsSharp<dim>::gather_output_hook()
   solution_output_structs.emplace_back(
     std::in_place_type<OutputStructPostprocessor<dim, GlobalVectorType>>,
     *this->dof_handler,
-    this->present_solution,
+    *this->present_solution,
     levelset_postprocessor);
 
   Vector<float> cell_cuts(this->triangulation->n_active_cells());
@@ -1747,7 +1747,7 @@ FluidDynamicsSharp<dim>::gather_output_hook()
       solution_output_structs.emplace_back(
         std::in_place_type<OutputStructPostprocessor<dim, GlobalVectorType>>,
         *this->dof_handler,
-        this->present_solution,
+        *this->present_solution,
         levelset_gradient_postprocessor);
     }
   return solution_output_structs;
@@ -1971,7 +1971,8 @@ FluidDynamicsSharp<dim>::calculate_L2_error_particles()
 
                           fe_face_values.reinit(cell, face);
                           fe_face_values[velocities].get_function_values(
-                            this->present_solution, local_face_velocity_values);
+                            *this->present_solution,
+                            local_face_velocity_values);
                           for (unsigned int q = 0; q < n_q_points_face; q++)
                             {
                               double u_x = local_face_velocity_values[q][0];
@@ -2004,7 +2005,7 @@ FluidDynamicsSharp<dim>::calculate_L2_error_particles()
           if (!cell_is_cut && !cell_is_overconstrained)
             {
               auto &evaluation_point = this->evaluation_point;
-              auto &present_solution = this->present_solution;
+              auto &present_solution = *this->present_solution;
               fe_values.reinit(cell);
               fe_values[velocities].get_function_values(present_solution,
                                                         local_velocity_values);
@@ -4007,7 +4008,7 @@ FluidDynamicsSharp<dim>::assemble_local_system_matrix(
 
       scratch_data.reinit_vof(
         phase_cell,
-        *this->multiphysics->get_solution(PhysicsID::VOF),
+        this->multiphysics->get_solution(PhysicsID::VOF),
         this->multiphysics->get_filtered_solution(PhysicsID::VOF),
         *this->multiphysics->get_previous_solutions(PhysicsID::VOF));
     }
@@ -4099,7 +4100,7 @@ FluidDynamicsSharp<dim>::assemble_local_system_rhs(
 
       scratch_data.reinit_vof(
         phase_cell,
-        *this->multiphysics->get_solution(PhysicsID::VOF),
+        this->multiphysics->get_solution(PhysicsID::VOF),
         this->multiphysics->get_filtered_solution(PhysicsID::VOF),
         *this->multiphysics->get_previous_solutions(PhysicsID::VOF));
     }

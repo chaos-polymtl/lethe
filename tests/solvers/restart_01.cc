@@ -1,4 +1,4 @@
-// SPDX-FileCopyrightText: Copyright (c) 2019-2024 The Lethe Authors
+// SPDX-FileCopyrightText: Copyright (c) 2019-2025 The Lethe Authors
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
 /**
@@ -123,7 +123,7 @@ RestartNavierStokes<dim>::run()
   this->iterate();
   this->postprocess_fd(false);
   auto   errors_p1 = calculate_L2_error(*this->dof_handler,
-                                      this->present_solution,
+                                      *this->present_solution,
                                       this->exact_solution,
                                       *this->cell_quadrature,
                                       *this->mapping);
@@ -132,9 +132,9 @@ RestartNavierStokes<dim>::run()
   this->finish_time_step();
   this->write_checkpoint(); // write_checkpoint needs to be called explicitly
 
-  this->present_solution = 0;
-  auto errors_p2         = calculate_L2_error(*this->dof_handler,
-                                      this->present_solution,
+  *this->present_solution = 0;
+  auto errors_p2          = calculate_L2_error(*this->dof_handler,
+                                      *this->present_solution,
                                       this->exact_solution,
                                       *this->cell_quadrature,
                                       *this->mapping);
@@ -151,7 +151,7 @@ RestartNavierStokes<dim>::run()
   this->set_initial_condition(
     this->simulation_parameters.initial_condition->type, true);
   auto errors_p3 = calculate_L2_error(*this->dof_handler,
-                                      this->present_solution,
+                                      *this->present_solution,
                                       this->exact_solution,
                                       *this->cell_quadrature,
                                       *this->mapping);

@@ -485,7 +485,7 @@ CFDDEMSolver<dim>::write_checkpoint()
   output << oss.str() << std::endl;
 
   std::vector<const GlobalVectorType *> sol_set_transfer;
-  sol_set_transfer.push_back(&this->present_solution);
+  sol_set_transfer.push_back(&(*this->present_solution));
   for (unsigned int i = 0; i < this->previous_solutions.size(); ++i)
     {
       sol_set_transfer.push_back(&this->previous_solutions[i]);
@@ -647,7 +647,7 @@ CFDDEMSolver<dim>::read_checkpoint()
 
   system_trans_vectors.deserialize(x_system);
 
-  this->present_solution = distributed_system;
+  *this->present_solution = distributed_system;
   for (unsigned int i = 0; i < this->previous_solutions.size(); ++i)
     {
       this->previous_solutions[i] = distributed_previous_solutions[i];
@@ -764,7 +764,7 @@ CFDDEMSolver<dim>::load_balance()
     return;
 
   std::vector<const GlobalVectorType *> sol_set_transfer;
-  sol_set_transfer.push_back(&this->present_solution);
+  sol_set_transfer.push_back(&(*this->present_solution));
   for (unsigned int i = 0; i < this->previous_solutions.size(); ++i)
     {
       sol_set_transfer.push_back(&this->previous_solutions[i]);
@@ -877,7 +877,7 @@ CFDDEMSolver<dim>::load_balance()
 
   system_trans_vectors.interpolate(x_system);
 
-  this->present_solution = distributed_system;
+  *this->present_solution = distributed_system;
   for (unsigned int i = 0; i < this->previous_solutions.size(); ++i)
     {
       this->previous_solutions[i] = distributed_previous_solutions[i];
@@ -1332,7 +1332,7 @@ CFDDEMSolver<dim>::dynamic_flow_control()
       double average_velocity = calculate_average_velocity(
         *this->dof_handler,
         this->particle_projector.dof_handler,
-        this->present_solution,
+        *this->present_solution,
         this->particle_projector.void_fraction_locally_relevant,
         flow_direction,
         *this->cell_quadrature,
@@ -1631,7 +1631,7 @@ CFDDEMSolver<dim>::solve()
       this->postprocess_fd(true);
       this->multiphysics->postprocess(true);
       if (this->simulation_control->is_output_iteration())
-        this->write_output_results(this->present_solution);
+        this->write_output_results(*this->present_solution);
     }
 
   while (this->simulation_control->integrate())

@@ -230,7 +230,7 @@ HeatTransfer<dim>::postprocess_heat_flux_on_nitsche_ib()
                       // Get the fluid temperature at non-quadrature point
                       // (particle in fluid)
                       fluid_temperature +=
-                        this->present_solution[heat_dof_indices[k]] *
+                        (*this->present_solution)[heat_dof_indices[k]] *
                         this->fe->shape_value(k, ref_q);
                     }
                   // Calculate heat flux on the Nitsche IB
@@ -498,10 +498,10 @@ HeatTransfer<dim>::assemble_local_system_matrix(
       else
         {
           if (!this->simulation_parameters.ale.enabled())
-            scratch_data.reinit_fluid_dynamics(
-              fd_cell,
-              *multiphysics->get_block_solution(PhysicsID::fluid_dynamics),
-              this->simulation_parameters.ale);
+            scratch_data.reinit_fluid_dynamics(fd_cell,
+                                               multiphysics->get_block_solution(
+                                                 PhysicsID::fluid_dynamics),
+                                               this->simulation_parameters.ale);
         }
     }
   else
@@ -524,7 +524,7 @@ HeatTransfer<dim>::assemble_local_system_matrix(
       else
         {
           scratch_data.reinit_fluid_dynamics(fd_cell,
-                                             *multiphysics->get_solution(
+                                             multiphysics->get_solution(
                                                PhysicsID::fluid_dynamics),
                                              this->simulation_parameters.ale);
         }
@@ -669,12 +669,12 @@ HeatTransfer<dim>::assemble_local_system_rhs(
       else
         {
           scratch_data.reinit_fluid_dynamics(fd_cell,
-                                             *multiphysics->get_block_solution(
+                                             multiphysics->get_block_solution(
                                                PhysicsID::fluid_dynamics),
                                              this->simulation_parameters.ale);
         }
       scratch_data.reinit_velocity_gradient(
-        *multiphysics->get_block_solution(PhysicsID::fluid_dynamics));
+        multiphysics->get_block_solution(PhysicsID::fluid_dynamics));
     }
   else
     {
@@ -696,13 +696,13 @@ HeatTransfer<dim>::assemble_local_system_rhs(
       else
         {
           scratch_data.reinit_fluid_dynamics(fd_cell,
-                                             *multiphysics->get_solution(
+                                             multiphysics->get_solution(
                                                PhysicsID::fluid_dynamics),
                                              this->simulation_parameters.ale);
         }
 
       scratch_data.reinit_velocity_gradient(
-        *multiphysics->get_solution(PhysicsID::fluid_dynamics));
+        multiphysics->get_solution(PhysicsID::fluid_dynamics));
     }
 
   if (this->simulation_parameters.multiphysics.VOF)
@@ -754,7 +754,7 @@ HeatTransfer<dim>::gather_output_hook()
   solution_output_structs.emplace_back(
     std::in_place_type<OutputStructSolution<dim, GlobalVectorType>>,
     *this->dof_handler,
-    this->present_solution,
+    *this->present_solution,
     std::vector<std::string>{"temperature"},
     std::vector<DataComponentInterpretation::DataComponentInterpretation>{
       DataComponentInterpretation::component_is_scalar});
@@ -786,7 +786,7 @@ HeatTransfer<dim>::gather_output_hook()
       solution_output_structs.emplace_back(
         std::in_place_type<OutputStructPostprocessor<dim, GlobalVectorType>>,
         *this->dof_handler,
-        this->present_solution,
+        *this->present_solution,
         std::make_shared<HeatFluxPostprocessor<dim>>(
           heat_flux_postprocessors[f_id]));
     }
@@ -803,7 +803,7 @@ HeatTransfer<dim>::gather_output_hook()
       solution_output_structs.emplace_back(
         std::in_place_type<OutputStructPostprocessor<dim, GlobalVectorType>>,
         *this->dof_handler,
-        this->present_solution,
+        *this->present_solution,
         std::make_shared<HeatFluxPostprocessor<dim>>(
           heat_flux_postprocessors[m_id]));
     }
@@ -872,8 +872,8 @@ HeatTransfer<dim>::calculate_delta_T_ref(double minimum_delta_T_ref)
 #ifndef LETHE_USE_LDV
   if (is_steady(simulation_parameters.simulation_control.method))
     {
-      solution_maximum = this->present_solution.max();
-      solution_minimum = this->present_solution.min();
+      solution_maximum = this->present_solution->max();
+      solution_minimum = this->present_solution->min();
     }
   else
     {
@@ -917,7 +917,7 @@ HeatTransfer<dim>::calculate_L2_error()
       if (cell->is_locally_owned())
         {
           fe_values.reinit(cell);
-          fe_values.get_function_values(present_solution, q_scalar_values);
+          fe_values.get_function_values(*present_solution, q_scalar_values);
 
           // Get the exact solution at all gauss points
           exact_solution.value_list(fe_values.get_quadrature_points(),
@@ -971,7 +971,7 @@ HeatTransfer<dim>::percolate_time_vectors()
     {
       previous_solutions[i] = previous_solutions[i - 1];
     }
-  previous_solutions[0] = this->present_solution;
+  previous_solutions[0] = *this->present_solution;
 }
 
 template <int dim>
@@ -998,7 +998,7 @@ HeatTransfer<dim>::postprocess(bool first_iteration)
   if (simulation_parameters.post_processing.calculate_average_temp_and_hf)
     {
       this->average_temperature->calculate_average_scalar(
-        this->present_solution,
+        *this->present_solution,
         this->simulation_parameters.post_processing,
         simulation_control->get_current_time(),
         simulation_control->get_time_step());
@@ -1067,24 +1067,24 @@ HeatTransfer<dim>::postprocess(bool first_iteration)
       if (multiphysics->fluid_dynamics_is_block())
         {
           postprocess_heat_flux_on_bc(gather_vof,
-                                      *multiphysics->get_block_solution(
+                                      multiphysics->get_block_solution(
                                         PhysicsID::fluid_dynamics));
 
           postprocess_thermal_energy_in_fluid(gather_vof,
                                               monitored_fluid,
                                               domain_name,
-                                              *multiphysics->get_block_solution(
+                                              multiphysics->get_block_solution(
                                                 PhysicsID::fluid_dynamics));
         }
       else
         {
           postprocess_heat_flux_on_bc(
-            gather_vof, *multiphysics->get_solution(PhysicsID::fluid_dynamics));
+            gather_vof, multiphysics->get_solution(PhysicsID::fluid_dynamics));
 
           postprocess_thermal_energy_in_fluid(gather_vof,
                                               monitored_fluid,
                                               domain_name,
-                                              *multiphysics->get_solution(
+                                              multiphysics->get_solution(
                                                 PhysicsID::fluid_dynamics));
         }
 
@@ -1124,7 +1124,7 @@ template <int dim>
 void
 HeatTransfer<dim>::pre_mesh_adaptation()
 {
-  solution_transfer->prepare_for_coarsening_and_refinement(present_solution);
+  solution_transfer->prepare_for_coarsening_and_refinement(*present_solution);
 
   for (unsigned int i = 0; i < previous_solutions.size(); ++i)
     {
@@ -1153,7 +1153,7 @@ HeatTransfer<dim>::post_mesh_adaptation()
   nonzero_constraints.distribute(tmp);
 
   // Fix on the new mesh
-  present_solution = tmp;
+  *present_solution = tmp;
 
   // Transfer previous solutions
   for (unsigned int i = 0; i < previous_solutions.size(); ++i)
@@ -1185,7 +1185,7 @@ HeatTransfer<dim>::compute_kelly(
         *this->dof_handler,
         *this->face_quadrature,
         typename std::map<types::boundary_id, const Function<dim, double> *>(),
-        this->present_solution,
+        *this->present_solution,
         estimated_error_per_cell,
         this->fe->component_mask(temperature));
     }
@@ -1243,7 +1243,7 @@ HeatTransfer<dim>::write_checkpoint()
   solution_transfer =
     std::make_shared<SolutionTransfer<dim, GlobalVectorType>>(*dof_handler);
 
-  sol_set_transfer.emplace_back(&present_solution);
+  sol_set_transfer.emplace_back(&(*present_solution));
   for (const auto &previous_solution : previous_solutions)
     {
       sol_set_transfer.emplace_back(&previous_solution);
@@ -1329,7 +1329,7 @@ HeatTransfer<dim>::read_checkpoint()
       this->average_temperature->sanitize_after_restart();
     }
 
-  present_solution = distributed_system;
+  *present_solution = distributed_system;
   for (unsigned int i = 0; i < previous_solutions.size(); ++i)
     {
       previous_solutions[i] = distributed_previous_solutions[i];
@@ -1359,9 +1359,9 @@ HeatTransfer<dim>::setup_dofs()
   locally_owned_dofs    = dof_handler->locally_owned_dofs();
   locally_relevant_dofs = DoFTools::extract_locally_relevant_dofs(*dof_handler);
 
-  present_solution.reinit(locally_owned_dofs,
-                          locally_relevant_dofs,
-                          mpi_communicator);
+  present_solution->reinit(locally_owned_dofs,
+                           locally_relevant_dofs,
+                           mpi_communicator);
 
   // Previous solutions for transient schemes
   for (auto &solution : this->previous_solutions)
@@ -1478,7 +1478,7 @@ HeatTransfer<dim>::setup_dofs()
   // Provide the heat transfer dof_handler and present solution pointers to the
   // multiphysics interface
   multiphysics->set_dof_handler(PhysicsID::heat_transfer, this->dof_handler);
-  multiphysics->set_solution(PhysicsID::heat_transfer, &this->present_solution);
+  multiphysics->set_solution(PhysicsID::heat_transfer, this->present_solution);
   multiphysics->set_previous_solutions(PhysicsID::heat_transfer,
                                        &this->previous_solutions);
 }
@@ -1552,7 +1552,7 @@ HeatTransfer<dim>::set_initial_conditions()
                            simulation_parameters.initial_condition->temperature,
                            newton_update);
   nonzero_constraints.distribute(newton_update);
-  present_solution = newton_update;
+  *present_solution = newton_update;
   percolate_time_vectors();
 }
 
@@ -1695,7 +1695,7 @@ HeatTransfer<dim>::postprocess_temperature_statistics(
 
           if (!time_average)
             {
-              fe_values_ht.get_function_values(this->present_solution,
+              fe_values_ht.get_function_values(*this->present_solution,
                                                local_temperature_values);
             }
           else
@@ -1764,7 +1764,7 @@ HeatTransfer<dim>::postprocess_temperature_statistics(
 
           if (!time_average)
             {
-              fe_values_ht.get_function_values(this->present_solution,
+              fe_values_ht.get_function_values(*this->present_solution,
                                                local_temperature_values);
             }
           else
@@ -1913,7 +1913,7 @@ HeatTransfer<dim>::postprocess_liquid_fraction(const bool gather_vof)
         {
           // Gather heat transfer information
           fe_values_ht.reinit(cell);
-          fe_values_ht.get_function_values(this->present_solution,
+          fe_values_ht.get_function_values(*this->present_solution,
                                            local_temperature_values);
 
           if (gather_vof)
@@ -2159,9 +2159,9 @@ HeatTransfer<dim>::postprocess_heat_flux_on_bc(
                   // Gather heat transfer information
                   fe_face_values_ht.reinit(cell, face);
                   fe_face_values_ht.get_function_values(
-                    this->present_solution, local_temperature_values);
+                    *this->present_solution, local_temperature_values);
                   fe_face_values_ht.get_function_gradients(
-                    this->present_solution, temperature_gradient);
+                    *this->present_solution, temperature_gradient);
 
                   // Get fluid dynamics active cell iterator
                   typename DoFHandler<dim>::active_cell_iterator cell_fd(
@@ -2409,7 +2409,7 @@ HeatTransfer<dim>::postprocess_thermal_energy_in_fluid(
         {
           // Gather heat transfer information
           fe_values_ht.reinit(cell);
-          fe_values_ht.get_function_values(this->present_solution,
+          fe_values_ht.get_function_values(*this->present_solution,
                                            local_temperature_values);
 
           // Get fluid dynamics active cell iterator

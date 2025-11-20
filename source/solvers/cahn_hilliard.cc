@@ -150,14 +150,14 @@ CahnHilliard<dim>::assemble_local_system_matrix(
   if (multiphysics->fluid_dynamics_is_block())
     {
       scratch_data.reinit_velocity(velocity_cell,
-                                   *multiphysics->get_block_solution(
+                                   multiphysics->get_block_solution(
                                      PhysicsID::fluid_dynamics),
                                    this->simulation_parameters.ale);
     }
   else
     {
       scratch_data.reinit_velocity(velocity_cell,
-                                   *multiphysics->get_solution(
+                                   multiphysics->get_solution(
                                      PhysicsID::fluid_dynamics),
                                    this->simulation_parameters.ale);
     }
@@ -247,14 +247,14 @@ CahnHilliard<dim>::assemble_local_system_rhs(
   if (multiphysics->fluid_dynamics_is_block())
     {
       scratch_data.reinit_velocity(velocity_cell,
-                                   *multiphysics->get_block_solution(
+                                   multiphysics->get_block_solution(
                                      PhysicsID::fluid_dynamics),
                                    this->simulation_parameters.ale);
     }
   else
     {
       scratch_data.reinit_velocity(velocity_cell,
-                                   *multiphysics->get_solution(
+                                   multiphysics->get_solution(
                                      PhysicsID::fluid_dynamics),
                                    this->simulation_parameters.ale);
     }
@@ -302,7 +302,7 @@ CahnHilliard<dim>::gather_output_hook()
   solution_output_structs.emplace_back(
     std::in_place_type<OutputStructSolution<dim, GlobalVectorType>>,
     *dof_handler,
-    present_solution,
+    *present_solution,
     solution_names,
     data_component_interpretation);
 
@@ -425,10 +425,10 @@ CahnHilliard<dim>::calculate_phase_statistics()
       if (cell->is_locally_owned())
         {
           fe_values.reinit(cell);
-          fe_values[phase_order].get_function_values(present_solution,
+          fe_values[phase_order].get_function_values(*present_solution,
                                                      local_phase_order_values);
           fe_values[phase_order].get_function_gradients(
-            present_solution, local_phase_order_gradients);
+            *present_solution, local_phase_order_gradients);
           for (unsigned int q = 0; q < n_q_points; q++)
             {
               integral += local_phase_order_values[q] * fe_values.JxW(q);
@@ -535,10 +535,10 @@ CahnHilliard<dim>::calculate_phase_energy()
       if (cell->is_locally_owned())
         {
           fe_values.reinit(cell);
-          fe_values[phase_order].get_function_values(present_solution,
+          fe_values[phase_order].get_function_values(*present_solution,
                                                      local_phase_order_values);
           fe_values[phase_order].get_function_gradients(
-            present_solution, local_phase_order_gradients);
+            *present_solution, local_phase_order_gradients);
           for (unsigned int q = 0; q < n_q_points; q++)
             {
               bulk_energy += (1 - local_phase_order_values[q] *
@@ -643,7 +643,7 @@ CahnHilliard<dim>::percolate_time_vectors()
     {
       previous_solutions[i] = previous_solutions[i - 1];
     }
-  previous_solutions[0] = this->present_solution;
+  previous_solutions[0] = *this->present_solution;
 }
 
 template <int dim>
@@ -748,15 +748,15 @@ CahnHilliard<dim>::postprocess(bool first_iteration)
                   .initial_time_for_average_velocities)
             {
               position_and_velocity = calculate_barycenter(
-                this->present_solution,
+                *this->present_solution,
                 *multiphysics->get_block_time_average_solution(
                   PhysicsID::fluid_dynamics));
             }
           else
             {
               position_and_velocity =
-                calculate_barycenter(this->present_solution,
-                                     *multiphysics->get_block_solution(
+                calculate_barycenter(*this->present_solution,
+                                     multiphysics->get_block_solution(
                                        PhysicsID::fluid_dynamics));
             }
         }
@@ -773,15 +773,15 @@ CahnHilliard<dim>::postprocess(bool first_iteration)
                   .initial_time_for_average_velocities)
             {
               position_and_velocity =
-                calculate_barycenter(this->present_solution,
+                calculate_barycenter(*this->present_solution,
                                      *multiphysics->get_time_average_solution(
                                        PhysicsID::fluid_dynamics));
             }
           else
             {
               position_and_velocity =
-                calculate_barycenter(this->present_solution,
-                                     *multiphysics->get_solution(
+                calculate_barycenter(*this->present_solution,
+                                     multiphysics->get_solution(
                                        PhysicsID::fluid_dynamics));
             }
         }
@@ -870,7 +870,7 @@ template <int dim>
 void
 CahnHilliard<dim>::pre_mesh_adaptation()
 {
-  solution_transfer->prepare_for_coarsening_and_refinement(present_solution);
+  solution_transfer->prepare_for_coarsening_and_refinement(*present_solution);
 
   for (unsigned int i = 0; i < previous_solutions.size(); ++i)
     {
@@ -895,7 +895,7 @@ CahnHilliard<dim>::post_mesh_adaptation()
   nonzero_constraints.distribute(tmp);
 
   // Fix on the new mesh
-  present_solution = tmp;
+  *present_solution = tmp;
 
   // Transfer previous solutions
   for (unsigned int i = 0; i < previous_solutions.size(); ++i)
@@ -925,7 +925,7 @@ CahnHilliard<dim>::compute_kelly(
         *this->dof_handler,
         *this->face_quadrature,
         typename std::map<types::boundary_id, const Function<dim, double> *>(),
-        present_solution,
+        *present_solution,
         estimated_error_per_cell,
         this->fe->component_mask(phase_order));
     }
@@ -936,7 +936,7 @@ CahnHilliard<dim>::compute_kelly(
         *this->dof_handler,
         *this->face_quadrature,
         typename std::map<types::boundary_id, const Function<dim, double> *>(),
-        present_solution,
+        *present_solution,
         estimated_error_per_cell,
         this->fe->component_mask(chemical_potential));
     }
@@ -991,7 +991,7 @@ CahnHilliard<dim>::write_checkpoint()
   solution_transfer =
     std::make_shared<SolutionTransfer<dim, GlobalVectorType>>(*dof_handler);
 
-  sol_set_transfer.emplace_back(&present_solution);
+  sol_set_transfer.emplace_back(&(*present_solution));
   for (const auto &previous_solution : previous_solutions)
     {
       sol_set_transfer.emplace_back(&previous_solution);
@@ -1028,7 +1028,7 @@ CahnHilliard<dim>::read_checkpoint()
 
   solution_transfer->deserialize(input_vectors);
 
-  present_solution = distributed_system;
+  *present_solution = distributed_system;
   for (unsigned int i = 0; i < previous_solutions.size(); ++i)
     {
       previous_solutions[i] = distributed_previous_solutions[i];
@@ -1057,9 +1057,9 @@ CahnHilliard<dim>::setup_dofs()
   locally_owned_dofs    = dof_handler->locally_owned_dofs();
   locally_relevant_dofs = DoFTools::extract_locally_relevant_dofs(*dof_handler);
 
-  present_solution.reinit(locally_owned_dofs,
-                          locally_relevant_dofs,
-                          mpi_communicator);
+  present_solution->reinit(locally_owned_dofs,
+                           locally_relevant_dofs,
+                           mpi_communicator);
 
   filtered_solution->reinit(this->locally_owned_dofs,
                             this->locally_relevant_dofs,
@@ -1177,7 +1177,7 @@ CahnHilliard<dim>::setup_dofs()
   // Provide the cahn_hilliard dof_handler and present solution pointers to the
   // multiphysics interface
   multiphysics->set_dof_handler(PhysicsID::cahn_hilliard, this->dof_handler);
-  multiphysics->set_solution(PhysicsID::cahn_hilliard, &this->present_solution);
+  multiphysics->set_solution(PhysicsID::cahn_hilliard, this->present_solution);
   multiphysics->set_filtered_solution(PhysicsID::cahn_hilliard,
                                       this->filtered_solution);
   multiphysics->set_previous_solutions(PhysicsID::cahn_hilliard,
@@ -1239,7 +1239,7 @@ CahnHilliard<dim>::update_boundary_conditions()
   nonzero_constraints.close();
   auto &nonzero_constraints = this->nonzero_constraints;
   nonzero_constraints.distribute(this->local_evaluation_point);
-  this->present_solution = this->local_evaluation_point;
+  *this->present_solution = this->local_evaluation_point;
 }
 
 template <int dim>
@@ -1266,7 +1266,7 @@ CahnHilliard<dim>::set_initial_conditions()
     fe->component_mask(potential));
 
   nonzero_constraints.distribute(newton_update);
-  present_solution = newton_update;
+  *present_solution = newton_update;
   apply_phase_filter();
   percolate_time_vectors();
 }
@@ -1459,9 +1459,9 @@ CahnHilliard<dim>::apply_phase_filter()
 
   GlobalVectorType filtered_solution_owned(this->locally_owned_dofs,
                                            mpi_communicator);
-  filtered_solution_owned = this->present_solution;
+  filtered_solution_owned = *this->present_solution;
 
-  filtered_solution->reinit(this->present_solution);
+  filtered_solution->reinit(*this->present_solution);
 
   // std::unordered_map<unsigned int, bool> filtered_cell_list;
   std::unordered_set<unsigned int> filtered_cell_list;

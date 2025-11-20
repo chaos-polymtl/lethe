@@ -682,7 +682,7 @@ protected:
    * @brief Trilinos vector storing the present solution that is provided to other physics.
    *
    */
-  TrilinosWrappers::MPI::Vector multiphysics_present_solution;
+  std::shared_ptr<TrilinosWrappers::MPI::Vector> multiphysics_present_solution;
 
   /**
    * @brief Vector storing trilinos vectors containing the previous solutions that are

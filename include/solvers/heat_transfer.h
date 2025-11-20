@@ -111,6 +111,9 @@ public:
         face_quadrature     = std::make_shared<QGauss<dim - 1>>(fe->degree + 1);
       }
 
+    // Initialize solution shared_ptr
+    present_solution = std::make_shared<GlobalVectorType>();
+
     // Allocate solution transfer
     solution_transfer =
       std::make_shared<SolutionTransfer<dim, GlobalVectorType>>(*dof_handler);
@@ -351,7 +354,7 @@ public:
   GlobalVectorType &
   get_present_solution() override
   {
-    return present_solution;
+    return *present_solution;
   }
 
   /**
@@ -740,7 +743,7 @@ private:
   /**
    * @brief A vector containing all the values of the solution.
    */
-  GlobalVectorType present_solution;
+  std::shared_ptr<GlobalVectorType> present_solution;
   /**
    * @brief The right hand side vector.
    */
