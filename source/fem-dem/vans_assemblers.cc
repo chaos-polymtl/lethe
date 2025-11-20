@@ -1612,7 +1612,8 @@ VANSAssemblerSaffmanMei<dim>::calculate_particle_fluid_interactions(
 
               // Apply lift force on the fluid
               explicit_particle_volumetric_acceleration_on_fluid[d] -=
-                lift_force[d] / (density[i_particle]*scratch_data.cell_volume);
+                lift_force[d] /
+                (density[i_particle] * scratch_data.cell_volume);
             }
 
           i_particle += 1;
@@ -1658,7 +1659,8 @@ VANSAssemblerSaffmanMei<dim>::calculate_particle_fluid_interactions(
 
               // Apply lift force on the fluid
               explicit_particle_volumetric_acceleration_on_fluid[d] -=
-                lift_force[d] / (density[i_particle]*scratch_data.cell_volume);
+                lift_force[d] /
+                (density[i_particle] * scratch_data.cell_volume);
             }
           i_particle += 1;
         }
@@ -1747,7 +1749,8 @@ VANSAssemblerMagnus<dim>::calculate_particle_fluid_interactions(
 
               // Apply lift force on the fluid
               explicit_particle_volumetric_acceleration_on_fluid[d] -=
-                lift_force[d] / (density[i_particle]*scratch_data.cell_volume);
+                lift_force[d] /
+                (density[i_particle] * scratch_data.cell_volume);
             }
           i_particle += 1;
         }
@@ -1806,7 +1809,8 @@ VANSAssemblerMagnus<dim>::calculate_particle_fluid_interactions(
 
               // Apply lift force on the fluid
               explicit_particle_volumetric_acceleration_on_fluid[d] -=
-                lift_force[d] / (density[i_particle]*scratch_data.cell_volume);
+                lift_force[d] /
+                (density[i_particle] * scratch_data.cell_volume);
             }
           i_particle += 1;
         }
