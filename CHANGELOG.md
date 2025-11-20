@@ -8,7 +8,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
 ### Fixed
 
-- MINOR As noted in issue [#1503], the SimulationControl class contained a duplicated function to set the time-step. This was overly confusing and unclear. There is now only a single function that sets the time-stpe and this is all it does, set the time-step. It does not append the time-step to the time list or whatsoever, it just sets the timestep. Some documentation was added also on some of the parameter of the class to enhance the readability of some of the parameters. [#1812](https://github.com/chaos-polymtl/lethe/pull/1812)
+- MINOR As noted in issue [#1503], the SimulationControl class contained a duplicated function to set the time-step. This was overly confusing and unclear. There is now only a single function that sets the time-step and this is all it does. It does not append the time-step to the time list, it just sets the time-step. Some documentation was added also on some methods and members of the class to enhance their readability. [#1812](https://github.com/chaos-polymtl/lethe/pull/1812)
 
 ### [Master] - 2025-11-15
 
