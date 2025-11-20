@@ -1583,7 +1583,16 @@ template <int dim>
 void
 CFDDEMSolver<dim>::solve()
 {
+  AssertThrow(
+    this->cfd_dem_simulation_parameters.void_fraction
+        ->project_particle_forces &&
+      this->cfd_dem_simulation_parameters.cfd_dem.drag_coupling ==
+        Parameters::DragCoupling::fully_explicit,
+    ExcMessage(
+      "The CFD-DEM solver only supports the projection of the particle force fields when the drag coupling is set to fully explicit."));
+
   this->computing_timer.enter_subsection("Read mesh, manifolds and particles");
+  
   read_mesh_and_manifolds(
     *this->triangulation,
     this->cfd_dem_simulation_parameters.cfd_parameters.mesh,
