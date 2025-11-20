@@ -553,7 +553,8 @@ FluidDynamicsVANS<dim>::assemble_local_system_matrix(
           .particle_field_locally_relevant,
         particle_projector.fluid_force_on_particles_two_way_coupling
           .particle_field_locally_relevant,
-        particle_projector.particle_velocity.particle_field_locally_relevant);
+        particle_projector.particle_velocity.particle_field_locally_relevant,
+        cfd_dem_simulation_parameters.cfd_dem.drag_coupling);
     }
 
   copy_data.reset();
@@ -753,7 +754,8 @@ FluidDynamicsVANS<dim>::assemble_local_system_rhs(
           .particle_field_locally_relevant,
         particle_projector.fluid_force_on_particles_two_way_coupling
           .particle_field_locally_relevant,
-        particle_projector.particle_velocity.particle_field_locally_relevant);
+        particle_projector.particle_velocity.particle_field_locally_relevant,
+        cfd_dem_simulation_parameters.cfd_dem.drag_coupling);
     }
 
   copy_data.reset();

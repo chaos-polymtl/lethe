@@ -192,12 +192,12 @@ public:
       enable_mortar();
 
     if (sd.gather_particle_field_project)
-        enable_particle_field_projection(
-          sd.fe_values_particle_drag->get_quadrature(),
-          sd.fe_values_particle_drag->get_mapping(),
-          sd.fe_values_particle_drag->get_fe(),
-          sd.fe_values_particle_two_way_coupling_force->get_fe(),
-          sd.fe_values_particle_velocity->get_fe());
+      enable_particle_field_projection(
+        sd.fe_values_particle_drag->get_quadrature(),
+        sd.fe_values_particle_drag->get_mapping(),
+        sd.fe_values_particle_drag->get_fe(),
+        sd.fe_values_particle_two_way_coupling_force->get_fe(),
+        sd.fe_values_particle_velocity->get_fe());
 
     gather_hessian = sd.gather_hessian;
   }
@@ -611,11 +611,11 @@ public:
    */
   void
   enable_particle_field_projection(
-    const Quadrature<dim> &quadrature,
-    const Mapping<dim>    &mapping,
-    const FiniteElement<dim>   &fe_particle_drag_proj,
-    const FiniteElement<dim>   &fe_particle_two_way_coupling_force_proj,
-    const FiniteElement<dim>   &fe_particle_velocity_proj);
+    const Quadrature<dim>    &quadrature,
+    const Mapping<dim>       &mapping,
+    const FiniteElement<dim> &fe_particle_drag_proj,
+    const FiniteElement<dim> &fe_particle_two_way_coupling_force_proj,
+    const FiniteElement<dim> &fe_particle_velocity_proj);
 
   /**
    *  @brief Reinitialize the content of the scratch for the void fraction
@@ -1325,6 +1325,7 @@ public:
    * @param[in] particle_velocity Object containing the projection of the
    * particle velocities onto the fluid dofs
    */
+  // beta will be added here for the implicit/semi-implicit coupling
   template <typename VectorType>
   void
   calculate_particle_fields_values(
@@ -1335,22 +1336,30 @@ public:
                      &particle_velocity_cell,
     const VectorType &particle_fluid_drag,
     const VectorType &particle_fluid_force_two_way_coupling,
-    const VectorType &particle_velocity)
-  { 
-    this->fe_values_particle_drag->reinit(particle_drag_cell);
-    this->fe_values_particle_two_way_coupling_force->reinit(
-      particle_two_way_coupling_force_cell);
-    this->fe_values_particle_velocity->reinit(particle_velocity_cell);
-
+    const VectorType &particle_velocity,
+    const Parameters::DragCoupling &drag_coupling)
+  {
     constexpr FEValuesExtractors::Vector vector_index(0);
 
-    (*this->fe_values_particle_drag)[vector_index].get_function_values(
-      particle_fluid_drag, this->particle_drag_values);
+    this->fe_values_particle_two_way_coupling_force->reinit(
+      particle_two_way_coupling_force_cell);
     (*this->fe_values_particle_two_way_coupling_force)[vector_index]
       .get_function_values(particle_fluid_force_two_way_coupling,
                            this->particle_two_way_coupling_force_values);
-    (*this->fe_values_particle_velocity)[vector_index].get_function_values(
-      particle_velocity, this->particle_velocity_values);
+
+    if (drag_coupling == Parameters::DragCoupling::fully_explicit)
+      {// These values will remain zero in the implicit and semi-implicit coupling
+        this->fe_values_particle_drag->reinit(particle_drag_cell);
+        (*this->fe_values_particle_drag)[vector_index].get_function_values(
+          particle_fluid_drag, this->particle_drag_values);
+      }
+    else
+      {
+        this->fe_values_particle_velocity->reinit(particle_velocity_cell);
+        (*this->fe_values_particle_velocity)[vector_index].get_function_values(
+          particle_velocity, this->particle_velocity_values);
+        // Add the momentum transfer coefficient here
+      }
   }
 
   // For auxiliary physics solution extrapolation

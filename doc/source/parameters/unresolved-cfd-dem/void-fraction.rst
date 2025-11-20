@@ -33,6 +33,7 @@ If the ``mode`` chosen is ``pcm``, then the void fraction is calculated using th
   set quadrature rule              = gauss
   set n quadrature points          = 0
   set project particle velocity    = false
+  set project particle forces      = false
 
 
 * The ``read dem`` allows us to read an already existing dem simulation result which can be obtained from checkpointing the Lethe-DEM simulation. This is important as the `lethe-fluid-vans` solver requires reading an initial dem triangulation and particle information to simulate flows in the presence of particles. 
@@ -44,5 +45,6 @@ If the ``mode`` chosen is ``pcm``, then the void fraction is calculated using th
 * The ``n quadrature points`` is only required for the ``qcm``. The parameter allows us to specify the number of quadrature points to be used in the void fraction calculation. If the number of quadrature points is not specified or it is set to ``0``, the default value will be void_fraction_degree + 1 (in general 2) for the case of Gauss quadrature rule and void_fraction_degree+2 (in general 3) for the case of Gauss-Lobatto quadrature rule.
 * The ``particle refinement factor`` is only required for the ``spm``. It allows to determine the number of pseudo-particles that we want to divide our particle into. By default, it is set to 0 refinements, and results in no refinement of the original meshed particle (division into 7 particles in 3D). Every additional refinement results in a :math:`2^{dim}` times more particles. The figure below shows how the number of pseudo-particles change with every refinement. Every cell in the particle mesh represents a pseudo-particle in the satellite point method.
 * The ``project particle velocity`` allows to project the particle velocity field onto the fluid mesh. This is useful to visualize the particle velocity field in paraview. This option is only compatible with the ``qcm`` method since it relies on the same mechanisms.
+* The ``project particle forces`` allows the integration of the particle-fluid forces terms in the VANS equations, by projecting them from the particles to the fluid, using the ``qcm`` filter. Thus, it is only compatible with the ``qcm`` method.
 
 .. image:: images/refinement.png
