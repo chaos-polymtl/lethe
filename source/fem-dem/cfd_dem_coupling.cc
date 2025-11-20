@@ -1585,10 +1585,11 @@ CFDDEMSolver<dim>::solve()
 {
   AssertThrow(
     (this->cfd_dem_simulation_parameters.void_fraction
-        ->project_particle_forces == false) || (this->cfd_dem_simulation_parameters.void_fraction
-        ->project_particle_forces &&
-      this->cfd_dem_simulation_parameters.cfd_dem.drag_coupling ==
-        Parameters::DragCoupling::fully_explicit),
+       ->project_particle_forces == false) ||
+      (this->cfd_dem_simulation_parameters.void_fraction
+         ->project_particle_forces &&
+       this->cfd_dem_simulation_parameters.cfd_dem.drag_coupling ==
+         Parameters::DragCoupling::fully_explicit),
     ExcMessage(
       "The CFD-DEM solver only supports the projection of the particle force fields when the drag coupling is set to fully explicit."));
 
