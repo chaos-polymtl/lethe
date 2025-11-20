@@ -334,11 +334,11 @@ NavierStokesScratchData<dim>::enable_void_fraction(
 template <int dim>
 void
 NavierStokesScratchData<dim>::enable_particle_field_projection(
-  const Quadrature<dim> &quadrature,
-  const Mapping<dim>    &mapping,
-  const FiniteElement<dim>   &fe_particle_drag_proj,
-  const FiniteElement<dim>   &fe_particle_two_way_coupling_force_proj,
-  const FiniteElement<dim>   &fe_particle_velocity_proj)
+  const Quadrature<dim>    &quadrature,
+  const Mapping<dim>       &mapping,
+  const FiniteElement<dim> &fe_particle_drag_proj,
+  const FiniteElement<dim> &fe_particle_two_way_coupling_force_proj,
+  const FiniteElement<dim> &fe_particle_velocity_proj)
 {
   gather_particle_field_project = true;
 
@@ -349,7 +349,7 @@ NavierStokesScratchData<dim>::enable_particle_field_projection(
     std::make_shared<FEValues<dim>>(mapping,
                                     fe_particle_two_way_coupling_force_proj,
                                     quadrature,
-                                    update_values);                                                                   
+                                    update_values);
   fe_values_particle_velocity = std::make_shared<FEValues<dim>>(
     mapping, fe_particle_velocity_proj, quadrature, update_values);
 
