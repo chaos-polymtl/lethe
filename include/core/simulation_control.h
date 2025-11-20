@@ -390,7 +390,7 @@ public:
   {
     return iteration_number;
   }
-  
+
   std::string
   get_output_name() const
   {
