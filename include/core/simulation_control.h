@@ -308,7 +308,10 @@ public:
   /**
    * @brief Check if this is the first assembly of the present iteration.
    * If it indeed is the first assembly, then the first_assembly is set to
-   * false.
+   * false. This function is used when providing the residual to the simulation
+   * control object when using steady-bdf methods. Since the residual must be
+   * provided once per time step (and at the beginning) this function is used to
+   * identify that.
    */
   virtual bool
   is_first_assembly()
@@ -346,23 +349,12 @@ public:
   void
   set_current_time_step(const double new_time_step)
   {
-    time_step = new_time_step;
-    add_time_step(new_time_step);
-  }
-
-  /**
-   * @brief Suggest the value of the time step for the next iteration. Note that
-   * for adaptative simulations this time step may be altered
-   *
-   * @param[in] new_time_step The new value of the time step.
-   * This time step is not added to the time step vector
-   */
-  void
-  set_suggested_time_step(const double new_time_step)
-  {
+    Assert(
+      time_step >= 0,
+      ExcMessage(
+        "You are trying to set a negative time-step in a SimulationControl. This is now allowed, we cannot go backward in time."));
     time_step = new_time_step;
   }
-
 
   /**
    * @brief Provide the value of the residual at the beginning
@@ -378,7 +370,6 @@ public:
   }
 
   // Relatively trivial getters.
-
   double
   get_time_step() const
   {

@@ -88,8 +88,8 @@ SimulationControl::update_assembly_method()
         {
           assembly_method =
             Parameters::SimulationControl::TimeSteppingMethod::bdf2;
-          set_suggested_time_step(initial_time_step *
-                                  (1 - startup_timestep_scaling));
+          set_current_time_step(initial_time_step *
+                                (1 - startup_timestep_scaling));
         }
       else if (iteration_number == 3 &&
                method ==
@@ -97,7 +97,7 @@ SimulationControl::update_assembly_method()
         {
           assembly_method =
             Parameters::SimulationControl::TimeSteppingMethod::bdf2;
-          set_suggested_time_step(initial_time_step);
+          set_current_time_step(initial_time_step);
         }
       else if (iteration_number <= 1 &&
                method ==
@@ -113,7 +113,7 @@ SimulationControl::update_assembly_method()
         {
           assembly_method =
             Parameters::SimulationControl::TimeSteppingMethod::bdf2;
-          set_suggested_time_step(initial_time_step * startup_timestep_scaling);
+          set_current_time_step(initial_time_step * startup_timestep_scaling);
         }
       else if (iteration_number == 3 &&
                method ==
@@ -121,8 +121,8 @@ SimulationControl::update_assembly_method()
         {
           assembly_method =
             Parameters::SimulationControl::TimeSteppingMethod::bdf3;
-          set_suggested_time_step(initial_time_step *
-                                  (1 - 2 * startup_timestep_scaling));
+          set_current_time_step(initial_time_step *
+                                (1 - 2 * startup_timestep_scaling));
         }
       else if (iteration_number == 4 &&
                method ==
@@ -130,7 +130,7 @@ SimulationControl::update_assembly_method()
         {
           assembly_method =
             Parameters::SimulationControl::TimeSteppingMethod::bdf3;
-          set_suggested_time_step(initial_time_step);
+          set_current_time_step(initial_time_step);
         }
     }
   else
@@ -288,9 +288,22 @@ SimulationControlTransient::integrate()
 {
   if (!is_at_end())
     {
-      previous_time  = current_time;
+      // We store the value of the time at the previous iteration
+      // before we change the current time.
+      previous_time = current_time;
+
+      // Reset the first assembly to true to indicate that we are starting
+      // the time-step. This variable is used to monitor the initial residual
+      // of the set of non-linear equation which can be used for example in
+      // steady-bdf methods
       first_assembly = true;
+
+      // We increment the iteration number since its initial value is zero.
       iteration_number++;
+
+      // Update assembly method is used to change the time marching method
+      // in the case where the methods are not self-starting (all BDF of order 2
+      // and above)
       update_assembly_method();
       add_time_step(calculate_time_step());
       current_time += time_step;
