@@ -8,7 +8,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
 ### Fixed
 
-- MINOR Issue [#1803] pointed out that the parameter `initial_step` in solve_linear_system function is not used. This PR is to solve this issue and remove the parameter. In addition, this parameter was comming upstream from solve_non_linear_system so it was removed from there also. [#1813](https://github.com/chaos-polymtl/lethe/pull/1813)
+- MINOR Issue [#1803] pointed out that the parameter `initial_step` in solve_linear_system function is not used. This PR is to solve this issue and remove the parameter. In addition, this parameter was coming upstream from solve_non_linear_system so it was removed from there also. [#1813](https://github.com/chaos-polymtl/lethe/pull/1813)
 
 
 ### [Master] - 2025-11-15
