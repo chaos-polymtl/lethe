@@ -350,7 +350,7 @@ public:
   set_current_time_step(const double new_time_step)
   {
     Assert(
-      time_step >= 0,
+      time_step > 0,
       ExcMessage(
         "You are trying to set a negative time-step in a SimulationControl. This is now allowed, we cannot go backward in time."));
     time_step = new_time_step;
