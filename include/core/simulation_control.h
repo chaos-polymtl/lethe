@@ -369,7 +369,11 @@ public:
     residual = new_residual;
   }
 
-  // Relatively trivial getters.
+  /**
+   * @brief Get current time step
+   *
+   * @return Current time step value.
+   */
   double
   get_time_step() const
   {
@@ -386,7 +390,7 @@ public:
   {
     return iteration_number;
   }
-
+  
   std::string
   get_output_name() const
   {
