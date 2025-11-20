@@ -60,6 +60,12 @@ namespace Parameters
       "false",
       Patterns::Bool(),
       "Specify whether the particle velocity is projected using QCM");
+    prm.declare_entry(
+      "project particle forces",
+      "false",
+      Patterns::Bool(),
+      "Specify whether in the VANS equations, the two-way coupling forces, including the drag, are calculated by projecting the forces acting on the particles to the fluid grid.");
+
     prm.leave_subsection();
   }
 
@@ -102,6 +108,8 @@ namespace Parameters
     n_quadrature_points = prm.get_integer("n quadrature points");
 
     project_particle_velocity = prm.get_bool("project particle velocity");
+
+    project_particle_forces = prm.get_bool("project particle forces");
 
     prm.leave_subsection();
   }
