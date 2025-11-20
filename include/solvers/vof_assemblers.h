@@ -169,8 +169,10 @@ public:
    * transient simulations.
    */
   VOFAssemblerDCDDStabilization(
-    const std::shared_ptr<SimulationControl> &simulation_control)
-    : simulation_control(simulation_control)
+    const std::shared_ptr<SimulationControl> &simulation_control,
+    const Parameters::Stabilization          &stabilization_parameters)
+    : simulation_control(simulation_control),
+    diffusion_constant(stabilization_parameters.dcdd_diff_coeff)
   {}
 
   /**
@@ -196,6 +198,9 @@ public:
                StabilizedMethodsCopyData &copy_data) override;
 
   const std::shared_ptr<SimulationControl> simulation_control;
+
+  const double diffusion_constant;
+
 };
 
 

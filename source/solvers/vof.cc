@@ -207,7 +207,8 @@ VolumeOfFluid<dim>::setup_assemblers()
       if (this->simulation_parameters.stabilization.vof_dcdd_stabilization)
         this->assemblers.emplace_back(
           std::make_shared<VOFAssemblerDCDDStabilization<dim>>(
-            this->simulation_control));
+            this->simulation_control,
+        this->simulation_parameters.stabilization));
     }
 }
 
@@ -775,21 +776,21 @@ VolumeOfFluid<dim>::gather_output_hook()
   if (simulation_parameters.multiphysics.vof_parameters.regularization_method
         .geometric_interface_reinitialization.enable)
     {
-      if ((simulation_control->get_step_number() %
-             simulation_parameters.multiphysics.vof_parameters
-               .regularization_method.frequency !=
-           0) ||
-          (simulation_control->get_step_number() == 0))
-        {
-          TimerOutput::Scope t(this->computing_timer, "Signed distance output");
+      // if ((simulation_control->get_step_number() %
+      //        simulation_parameters.multiphysics.vof_parameters
+      //          .regularization_method.frequency !=
+      //      0) ||
+      //     (simulation_control->get_step_number() == 0))
+      //   {
+      //     TimerOutput::Scope t(this->computing_timer, "Signed distance output");
 
-          signed_distance_solver->setup_dofs();
+      //     signed_distance_solver->setup_dofs();
 
           signed_distance_solver->set_level_set_from_background_mesh(
             *dof_handler, *this->present_solution);
 
-          signed_distance_solver->solve();
-        }
+      //     signed_distance_solver->solve();
+      //   }
       for (auto &output_struct : signed_distance_solver->gather_output_hook())
         solution_output_structs.push_back(output_struct);
 
