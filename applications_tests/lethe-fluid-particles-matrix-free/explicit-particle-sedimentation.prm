@@ -21,7 +21,7 @@ subsection simulation control
   set method           = bdf1
   set output name      = result
   set output frequency = 0
-  set time end         = 0.5
+  set time end         = 0.25
   set time step        = 0.005
 end
 
