@@ -371,7 +371,7 @@ VOFAssemblerDCDDStabilization<dim>::assemble_matrix(
 
       // Compute the artificial viscosity of the shock capture
       const double nu_dcdd =
-        (0.5 * h * h) * velocity.norm() * phase_gradient_norm;
+        (diffusion_constant * h * h) * velocity.norm() * phase_gradient_norm;
 
       // Assemble DCDD shock capturing contributions
       for (unsigned int i = 0; i < n_dofs; ++i)
@@ -442,7 +442,7 @@ VOFAssemblerDCDDStabilization<dim>::assemble_rhs(
 
       // Compute the artificial viscosity of the shock capture
       const double nu_dcdd =
-        (0.5 * h * h) * velocity.norm() * phase_gradient_norm;
+        (diffusion_constant * h * h) * velocity.norm() * phase_gradient_norm;
 
       // Assemble DCDD shock capturing contributions
       for (unsigned int i = 0; i < n_dofs; ++i)
