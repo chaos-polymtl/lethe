@@ -2231,81 +2231,7 @@ VANSAssemblerFPIProj<dim>::assemble_matrix(
   const NavierStokesScratchData<dim>   &scratch_data,
   StabilizedMethodsTensorCopyData<dim> &copy_data)
 {
-  // // Loop and quadrature informations
-  // const auto        &JxW_vec    = scratch_data.JxW;
-  // const unsigned int n_q_points = scratch_data.n_q_points;
-  // const unsigned int n_dofs     = scratch_data.n_dofs;
-  // // The CFD-DEM solver only supports constant density for now
-  // const double density = scratch_data.density_scale;
-
-  // // Copy data elements
-  // auto &strong_residual = copy_data.strong_residual;
-  // auto &strong_jacobian = copy_data.strong_jacobian;
-  // auto &local_matrix    = copy_data.local_matrix;
-
-  // const double eps = 1e-6;
-
-  // // Loop over the quadrature points
-  // for (unsigned int q = 0; q < n_q_points; ++q)
-  //   {
-  //     // Gather into local variables the relevant fields
-  //     const Tensor<1, dim> velocity = scratch_data.velocity_values[q];
-  //     const Tensor<1, dim> particles_velocity =
-  //       scratch_data.particle_velocity_values[q];
-  //     const Tensor<1, dim> fluid_particle_relative_velocity =
-  //       velocity - particles_velocity;
-
-  //     // We divide by the cell's volume to get the volumeric force and we
-  //     // divide by the fluid density to get the term to be included in the
-  //     // equation
-  //     const Tensor<1, dim> &undisturbed_flow_force =
-  //       -scratch_data.particle_two_way_coupling_force_values[q] /
-  //       (scratch_data.cell_volume * density);
-  //     const Tensor<1, dim> &fluid_drag = -scratch_data.particle_drag_values[q] /
-  //                                        (scratch_data.cell_volume * density);
-  //     const double beta_drag =
-  //       fluid_drag.norm() / (fluid_particle_relative_velocity.norm() + eps);
-
-  //     // const double beta_drag =
-  //     //   fluid_drag*fluid_particle_relative_velocity / 
-  //     //      (Utilities::fixed_power<2>(fluid_particle_relative_velocity.norm()) + eps);
-
-  //     // Store JxW in local variable for faster access;
-  //     const double JxW = JxW_vec[q];
-
-  //     // Calculate the strong residual for GLS stabilization
-  //     if (cfd_dem.vans_model == Parameters::VANSModel::modelB)
-  //       {
-  //         strong_residual[q] += // Drag Force
-  //           (-fluid_drag - undisturbed_flow_force);
-  //       }
-  //     else if (cfd_dem.vans_model == Parameters::VANSModel::modelA)
-  //       {
-  //         strong_residual[q] += // Drag Force
-  //           -fluid_drag;
-  //       }
-
-  //     for (unsigned int j = 0; j < n_dofs; ++j)
-  //       {
-  //         const auto &phi_u_j = scratch_data.phi_u[q][j];
-  //         strong_jacobian[q][j] +=
-  //           // Drag Force
-  //           beta_drag * phi_u_j;
-  //       }
-
-  //     for (unsigned int i = 0; i < n_dofs; ++i)
-  //       {
-  //         const auto &phi_u_i = scratch_data.phi_u[q][i];
-
-  //         for (unsigned int j = 0; j < n_dofs; ++j)
-  //           {
-  //             const auto &phi_u_j = scratch_data.phi_u[q][j];
-
-  //             local_matrix(i, j) += // Drag Force
-  //               beta_drag * phi_u_j * phi_u_i * JxW;
-  //           }
-  //       }
-  //   }
+  // To be modified for the implicit and semi-implicit drag coupling
 }
 
 template <int dim>
@@ -2328,41 +2254,27 @@ VANSAssemblerFPIProj<dim>::assemble_rhs(
   // Loop over the quadrature points
   for (unsigned int q = 0; q < n_q_points; ++q)
     {
-      const Tensor<1, dim> &undisturbed_flow_force =
+      const Tensor<1, dim> &two_way_coupling_force =
         -scratch_data.particle_two_way_coupling_force_values[q] / density;
-      const Tensor<1, dim> &fluid_drag = -scratch_data.particle_drag_values[q] / density;
+      const Tensor<1, dim> &fluid_drag =
+        -scratch_data.particle_drag_values[q] / density;
 
       // Store JxW in local variable for faster access;
       const double JxW = JxW_vec[q];
 
       // Calculate the strong residual for GLS stabilization
-      if (cfd_dem.vans_model == Parameters::VANSModel::modelB)
-        {
-          strong_residual[q] -= // Drag Force
-            (fluid_drag + undisturbed_flow_force);
-        }
-      else if (cfd_dem.vans_model == Parameters::VANSModel::modelA)
-        {
-          strong_residual[q] -= // Drag Force
-            (fluid_drag + undisturbed_flow_force);
-        }
+      strong_residual[q] -= // Drag Force
+        (fluid_drag + two_way_coupling_force);
 
       // Assembly of the right-hand side
       for (unsigned int i = 0; i < n_dofs; ++i)
         {
           const auto phi_u_i = scratch_data.phi_u[q][i];
           // Drag Force
-          //  Model B of the VANS
-          if (cfd_dem.vans_model == Parameters::VANSModel::modelB)
-            {
-              local_rhs(i) +=
-                (fluid_drag + undisturbed_flow_force) * phi_u_i * JxW;
-            }
-          //  Model A of the VANS
-          if (cfd_dem.vans_model == Parameters::VANSModel::modelA)
-            {
-              local_rhs(i) += (fluid_drag + undisturbed_flow_force) * phi_u_i * JxW;
-            }
+          //  Models A and B of the VANS eqts have now the same line here, since
+          //  the disctinction
+          // is made in the shear and pressure forces assemblers.
+          local_rhs(i) += (fluid_drag + two_way_coupling_force) * phi_u_i * JxW;
         }
     }
 }
