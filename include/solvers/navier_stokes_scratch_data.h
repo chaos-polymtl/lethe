@@ -1333,10 +1333,10 @@ public:
     const typename DoFHandler<dim>::active_cell_iterator
       &particle_two_way_coupling_force_cell,
     const typename DoFHandler<dim>::active_cell_iterator
-                     &particle_velocity_cell,
-    const VectorType &particle_fluid_drag,
-    const VectorType &particle_fluid_force_two_way_coupling,
-    const VectorType &particle_velocity,
+                                   &particle_velocity_cell,
+    const VectorType               &particle_fluid_drag,
+    const VectorType               &particle_fluid_force_two_way_coupling,
+    const VectorType               &particle_velocity,
     const Parameters::DragCoupling &drag_coupling)
   {
     constexpr FEValuesExtractors::Vector vector_index(0);
@@ -1348,7 +1348,8 @@ public:
                            this->particle_two_way_coupling_force_values);
 
     if (drag_coupling == Parameters::DragCoupling::fully_explicit)
-      {// These values will remain zero in the implicit and semi-implicit coupling
+      { // These values will remain zero in the implicit and semi-implicit
+        // coupling
         this->fe_values_particle_drag->reinit(particle_drag_cell);
         (*this->fe_values_particle_drag)[vector_index].get_function_values(
           particle_fluid_drag, this->particle_drag_values);

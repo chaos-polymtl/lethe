@@ -113,7 +113,8 @@ namespace Parameters
 
     // if (project_particle_forces && !project_particle_velocity)
     //   throw(std::runtime_error(
-    //     "'project particle forces' requires 'project particle velocity' to be true as well."));
+    //     "'project particle forces' requires 'project particle velocity' to be
+    //     true as well."));
 
     prm.leave_subsection();
   }
