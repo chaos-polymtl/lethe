@@ -370,9 +370,9 @@ public:
   }
 
   /**
-   * @brief Get current time step
+   * @brief Get current time-step
    *
-   * @return Current time step value.
+   * @return Current time-step value.
    */
   double
   get_time_step() const
