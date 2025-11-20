@@ -219,7 +219,7 @@ public:
   const GlobalVectorType &
   get_vof_filtered_solution()
   {
-    return this->vof_filtered_solution_vector;
+    return *this->vof_filtered_solution_vector;
   }
 
   /**
@@ -230,7 +230,7 @@ public:
   const GlobalVectorType &
   get_vof_solution()
   {
-    return this->vof_solution_vector;
+    return *this->vof_solution_vector;
   }
 
   /**
@@ -360,8 +360,9 @@ public:
     reset_subequations_solutions_validity();
 
     // Set solution values and DoFHandler
-    this->vof_filtered_solution_vector = vof_filtered_solution_vector;
-    this->dof_handler_vof              = std::cref(dof_handler_vof);
+    this->vof_filtered_solution_vector =
+      std::cref(vof_filtered_solution_vector);
+    this->dof_handler_vof = std::cref(dof_handler_vof);
   }
 
   /**
@@ -380,7 +381,7 @@ public:
     // By checking if the validity map has been reset, we make sure that the VOF
     // solution is consistent with the set filtered solution and the DoFHandler.
     AssertThrow(validity_map_has_been_reset(), ValidityMapNotReset());
-    this->vof_solution_vector = vof_solution_vector;
+    this->vof_solution_vector = std::cref(vof_solution_vector);
   }
 
   /**
@@ -440,11 +441,13 @@ private:
 
   /** Filtered VOF solution field associated with solved equations
    * @note Used in the computation of VOF phase gradient projection */
-  GlobalVectorType vof_filtered_solution_vector;
+  std::optional<std::reference_wrapper<const GlobalVectorType>>
+    vof_filtered_solution_vector;
 
   /** VOF solution field associated with solved equations
    * @note Serves as initial condition in algebraic reinitialization */
-  GlobalVectorType vof_solution_vector;
+  std::optional<std::reference_wrapper<const GlobalVectorType>>
+    vof_solution_vector;
 
   /// Data structure that stores all enabled subequations
   std::vector<VOFSubequationsID> active_subequations;

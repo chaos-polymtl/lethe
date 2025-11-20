@@ -301,7 +301,7 @@ public:
   GlobalVectorType &
   get_present_solution() override
   {
-    return present_solution;
+    return *present_solution;
   }
 
   GlobalVectorType &
@@ -695,7 +695,7 @@ private:
       {
         scratch_data.reinit_face_velocity(velocity_cell,
                                           face_no,
-                                          *multiphysics->get_block_solution(
+                                          multiphysics->get_block_solution(
                                             PhysicsID::fluid_dynamics),
                                           this->simulation_parameters.ale);
       }
@@ -703,7 +703,7 @@ private:
       {
         scratch_data.reinit_face_velocity(velocity_cell,
                                           face_no,
-                                          *multiphysics->get_solution(
+                                          multiphysics->get_solution(
                                             PhysicsID::fluid_dynamics),
                                           this->simulation_parameters.ale);
       }
@@ -737,7 +737,7 @@ private:
   GlobalVectorType                  evaluation_point;
   GlobalVectorType                  local_evaluation_point;
   GlobalVectorType                  newton_update;
-  GlobalVectorType                  present_solution;
+  std::shared_ptr<GlobalVectorType> present_solution;
   GlobalVectorType                  system_rhs;
   AffineConstraints<double>         nonzero_constraints;
   AffineConstraints<double>         bounding_constraints;

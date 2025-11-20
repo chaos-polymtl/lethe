@@ -87,6 +87,9 @@ VolumeOfFluid<dim>::VolumeOfFluid(
       face_quadrature = std::make_shared<QGauss<dim - 1>>(fe->degree + 1);
     }
 
+  // Initialize solution shared_ptr
+  present_solution = std::make_shared<GlobalVectorType>();
+
   // Allocate solution transfer
   solution_transfer =
     std::make_shared<SolutionTransfer<dim, GlobalVectorType>>(*dof_handler);
@@ -397,7 +400,7 @@ VolumeOfFluid<dim>::assemble_local_system_matrix(
         {
           scratch_data.reinit_velocity(
             velocity_cell,
-            *multiphysics->get_block_solution(PhysicsID::fluid_dynamics),
+            multiphysics->get_block_solution(PhysicsID::fluid_dynamics),
             *multiphysics->get_block_previous_solutions(
               PhysicsID::fluid_dynamics),
             this->simulation_parameters.ale);
@@ -425,7 +428,7 @@ VolumeOfFluid<dim>::assemble_local_system_matrix(
         {
           scratch_data.reinit_velocity(
             velocity_cell,
-            *multiphysics->get_solution(PhysicsID::fluid_dynamics),
+            multiphysics->get_solution(PhysicsID::fluid_dynamics),
             *multiphysics->get_previous_solutions(PhysicsID::fluid_dynamics),
             this->simulation_parameters.ale);
         }
@@ -642,7 +645,7 @@ VolumeOfFluid<dim>::assemble_local_system_rhs(
         {
           scratch_data.reinit_velocity(
             velocity_cell,
-            *multiphysics->get_block_solution(PhysicsID::fluid_dynamics),
+            multiphysics->get_block_solution(PhysicsID::fluid_dynamics),
             *multiphysics->get_block_previous_solutions(
               PhysicsID::fluid_dynamics),
             this->simulation_parameters.ale);
@@ -670,7 +673,7 @@ VolumeOfFluid<dim>::assemble_local_system_rhs(
         {
           scratch_data.reinit_velocity(
             velocity_cell,
-            *multiphysics->get_solution(PhysicsID::fluid_dynamics),
+            multiphysics->get_solution(PhysicsID::fluid_dynamics),
             *multiphysics->get_previous_solutions(PhysicsID::fluid_dynamics),
             this->simulation_parameters.ale);
         }
@@ -714,7 +717,7 @@ VolumeOfFluid<dim>::gather_output_hook()
   solution_output_structs.emplace_back(
     std::in_place_type<OutputStructSolution<dim, GlobalVectorType>>,
     *this->dof_handler,
-    this->present_solution,
+    *this->present_solution,
     solution_names,
     solution_component_interpretation);
 
@@ -781,7 +784,7 @@ VolumeOfFluid<dim>::gather_output_hook()
           signed_distance_solver->setup_dofs();
 
           signed_distance_solver->set_level_set_from_background_mesh(
-            *dof_handler, this->present_solution);
+            *dof_handler, *this->present_solution);
 
           signed_distance_solver->solve();
         }
@@ -824,7 +827,7 @@ VolumeOfFluid<dim>::calculate_L2_error()
       if (cell->is_locally_owned())
         {
           fe_values_vof.reinit(cell);
-          fe_values_vof.get_function_values(this->present_solution,
+          fe_values_vof.get_function_values(*this->present_solution,
                                             phase_values);
 
           // Get the exact solution at all gauss points
@@ -1192,7 +1195,7 @@ VolumeOfFluid<dim>::percolate_time_vectors()
     {
       this->previous_solutions[i] = this->previous_solutions[i - 1];
     }
-  this->previous_solutions[0] = this->present_solution;
+  this->previous_solutions[0] = *this->present_solution;
 }
 
 template <int dim>
@@ -1273,8 +1276,11 @@ VolumeOfFluid<dim>::postprocess(bool first_iteration)
       if (!simulation_parameters.fem_parameters.VOF_uses_dg)
         {
           std::tie(geometric_volume_outside, surface) =
-            InterfaceTools::compute_surface_and_volume(
-              *dof_handler, *fe, this->present_solution, 0.5, mpi_communicator);
+            InterfaceTools::compute_surface_and_volume(*dof_handler,
+                                                       *fe,
+                                                       *this->present_solution,
+                                                       0.5,
+                                                       mpi_communicator);
 
           // Compute geometric inside volume (fluid 1)
           const double global_volume =
@@ -1285,15 +1291,15 @@ VolumeOfFluid<dim>::postprocess(bool first_iteration)
       for (unsigned int i = 0; i < n_fluids; i++)
         {
           // Calculate volume and mass
-          calculate_volume_and_mass(this->present_solution,
-                                    *multiphysics->get_solution(
+          calculate_volume_and_mass(*this->present_solution,
+                                    multiphysics->get_solution(
                                       PhysicsID::fluid_dynamics),
                                     fluid_indicators[i]);
 
           // Calculate momentum
           const Tensor<1, dim> momentum =
-            calculate_momentum(this->present_solution,
-                               *multiphysics->get_solution(
+            calculate_momentum(*this->present_solution,
+                               multiphysics->get_solution(
                                  PhysicsID::fluid_dynamics),
                                fluid_indicators[i]);
 
@@ -1499,15 +1505,15 @@ VolumeOfFluid<dim>::postprocess(bool first_iteration)
                   .initial_time_for_average_velocities)
             {
               position_and_velocity = calculate_barycenter(
-                this->present_solution,
+                *this->present_solution,
                 *multiphysics->get_block_time_average_solution(
                   PhysicsID::fluid_dynamics));
             }
           else
             {
               position_and_velocity =
-                calculate_barycenter(this->present_solution,
-                                     *multiphysics->get_block_solution(
+                calculate_barycenter(*this->present_solution,
+                                     multiphysics->get_block_solution(
                                        PhysicsID::fluid_dynamics));
             }
         }
@@ -1524,15 +1530,15 @@ VolumeOfFluid<dim>::postprocess(bool first_iteration)
                   .initial_time_for_average_velocities)
             {
               position_and_velocity =
-                calculate_barycenter(this->present_solution,
+                calculate_barycenter(*this->present_solution,
                                      *multiphysics->get_time_average_solution(
                                        PhysicsID::fluid_dynamics));
             }
           else
             {
               position_and_velocity =
-                calculate_barycenter(this->present_solution,
-                                     *multiphysics->get_solution(
+                calculate_barycenter(*this->present_solution,
+                                     multiphysics->get_solution(
                                        PhysicsID::fluid_dynamics));
             }
         }
@@ -1681,7 +1687,7 @@ VolumeOfFluid<dim>::modify_solution()
     reinitialize_interface_with_geometric_method();
 
   // Apply filter to phase fraction values
-  apply_phase_filter(this->present_solution, *this->filtered_solution);
+  apply_phase_filter(*this->present_solution, *this->filtered_solution);
 
   // Solve phase fraction gradient and curvature projections
   if (simulation_parameters.multiphysics.vof_parameters.surface_tension_force
@@ -1735,7 +1741,7 @@ VolumeOfFluid<dim>::handle_interface_sharpening()
     }
 
   // Sharpen the interface of all solutions (present and previous)
-  sharpen_interface(this->present_solution, this->sharpening_threshold, true);
+  sharpen_interface(*this->present_solution, this->sharpening_threshold, true);
 }
 
 
@@ -1872,14 +1878,14 @@ VolumeOfFluid<dim>::calculate_mass_deviation(
   const double                     sharpening_threshold)
 {
   // Copy present solution VOF
-  evaluation_point = this->present_solution;
+  evaluation_point = *this->present_solution;
 
   // Sharpen interface using the tested threshold value
   sharpen_interface(evaluation_point, sharpening_threshold, false);
 
   // Calculate mass of the monitored phase
   calculate_volume_and_mass(evaluation_point,
-                            *multiphysics->get_solution(
+                            multiphysics->get_solution(
                               PhysicsID::fluid_dynamics),
                             monitored_fluid);
 
@@ -2101,7 +2107,7 @@ void
 VolumeOfFluid<dim>::pre_mesh_adaptation()
 {
   this->solution_transfer->prepare_for_coarsening_and_refinement(
-    this->present_solution);
+    *this->present_solution);
 
   for (unsigned int i = 0; i < this->previous_solutions.size(); ++i)
     {
@@ -2127,7 +2133,7 @@ VolumeOfFluid<dim>::post_mesh_adaptation()
   this->nonzero_constraints.distribute(tmp);
 
   // Fix on the new mesh
-  this->present_solution = tmp;
+  *this->present_solution = tmp;
 
   // Transfer previous solutions
   for (unsigned int i = 0; i < this->previous_solutions.size(); ++i)
@@ -2140,7 +2146,7 @@ VolumeOfFluid<dim>::post_mesh_adaptation()
     }
 
   // Apply filter to phase fraction
-  apply_phase_filter(this->present_solution, *this->filtered_solution);
+  apply_phase_filter(*this->present_solution, *this->filtered_solution);
 }
 
 template <int dim>
@@ -2159,7 +2165,7 @@ VolumeOfFluid<dim>::compute_kelly(
         *this->dof_handler,
         *this->face_quadrature,
         typename std::map<types::boundary_id, const Function<dim, double> *>(),
-        this->present_solution,
+        *this->present_solution,
         estimated_error_per_cell,
         this->fe->component_mask(phase));
     }
@@ -2210,7 +2216,7 @@ VolumeOfFluid<dim>::write_checkpoint()
   solution_transfer =
     std::make_shared<SolutionTransfer<dim, GlobalVectorType>>(*dof_handler);
 
-  sol_set_transfer.emplace_back(&this->present_solution);
+  sol_set_transfer.emplace_back(&(*this->present_solution));
   for (const auto &previous_solution : this->previous_solutions)
     {
       sol_set_transfer.emplace_back(&previous_solution);
@@ -2250,14 +2256,14 @@ VolumeOfFluid<dim>::read_checkpoint()
 
   this->solution_transfer->deserialize(input_vectors);
 
-  this->present_solution = distributed_system;
+  *this->present_solution = distributed_system;
   for (unsigned int i = 0; i < previous_solutions_size; ++i)
     {
       this->previous_solutions[i] = distributed_previous_solutions[i];
     }
 
   // Apply filter to phase fraction
-  apply_phase_filter(this->present_solution, *this->filtered_solution);
+  apply_phase_filter(*this->present_solution, *this->filtered_solution);
 
   // Deserialize all post-processing tables that are currently used with the VOF
   // solver
@@ -2271,8 +2277,8 @@ VolumeOfFluid<dim>::read_checkpoint()
     {
       // Calculate volume and mass
       calculate_volume_and_mass(
-        this->present_solution,
-        *multiphysics->get_solution(PhysicsID::fluid_dynamics),
+        *this->present_solution,
+        multiphysics->get_solution(PhysicsID::fluid_dynamics),
         this->simulation_parameters.multiphysics.vof_parameters
           .regularization_method.sharpening.monitored_fluid);
 
@@ -2300,9 +2306,9 @@ VolumeOfFluid<dim>::setup_dofs()
   this->locally_relevant_dofs =
     DoFTools::extract_locally_relevant_dofs(*this->dof_handler);
 
-  this->present_solution.reinit(this->locally_owned_dofs,
-                                this->locally_relevant_dofs,
-                                mpi_communicator);
+  this->present_solution->reinit(this->locally_owned_dofs,
+                                 this->locally_relevant_dofs,
+                                 mpi_communicator);
 
   this->filtered_solution->reinit(this->locally_owned_dofs,
                                   this->locally_relevant_dofs,
@@ -2396,7 +2402,7 @@ VolumeOfFluid<dim>::setup_dofs()
   // Provide the VOF dof_handler and solution pointers to the
   // multiphysics interface
   multiphysics->set_dof_handler(PhysicsID::VOF, this->dof_handler);
-  multiphysics->set_solution(PhysicsID::VOF, &this->present_solution);
+  multiphysics->set_solution(PhysicsID::VOF, this->present_solution);
   multiphysics->set_filtered_solution(PhysicsID::VOF, this->filtered_solution);
   multiphysics->set_previous_solutions(PhysicsID::VOF,
                                        &this->previous_solutions);
@@ -2527,20 +2533,20 @@ VolumeOfFluid<dim>::set_initial_conditions()
                            simulation_parameters.initial_condition->VOF,
                            this->newton_update);
   this->nonzero_constraints.distribute(this->newton_update);
-  this->present_solution = this->newton_update;
+  *this->present_solution = this->newton_update;
 
 
   if (simulation_parameters.initial_condition
         ->vof_initial_condition_smoothing ==
       Parameters::VOFInitialConditionType::diffusive)
-    smooth_phase_fraction(this->present_solution);
+    smooth_phase_fraction(*this->present_solution);
 
   else if (simulation_parameters.initial_condition
              ->vof_initial_condition_smoothing ==
            Parameters::VOFInitialConditionType::geometric)
     reinitialize_interface_with_geometric_method();
 
-  apply_phase_filter(this->present_solution, *this->filtered_solution);
+  apply_phase_filter(*this->present_solution, *this->filtered_solution);
 
   if (this->simulation_parameters.multiphysics.vof_parameters
         .regularization_method.sharpening.type ==
@@ -2548,8 +2554,8 @@ VolumeOfFluid<dim>::set_initial_conditions()
     {
       // Calculate volume and mass
       calculate_volume_and_mass(
-        this->present_solution,
-        *multiphysics->get_solution(PhysicsID::fluid_dynamics),
+        *this->present_solution,
+        multiphysics->get_solution(PhysicsID::fluid_dynamics),
         this->simulation_parameters.multiphysics.vof_parameters
           .regularization_method.sharpening.monitored_fluid);
 
@@ -3036,10 +3042,10 @@ VolumeOfFluid<dim>::reinitialize_interface_with_algebraic_method()
 
   // Apply filter to solution and set VOF information in the subequation
   // interface
-  apply_phase_filter(this->present_solution, *this->filtered_solution);
+  apply_phase_filter(*this->present_solution, *this->filtered_solution);
   this->vof_subequations_interface->set_vof_filtered_solution_and_dof_handler(
     *this->filtered_solution, *this->dof_handler);
-  this->vof_subequations_interface->set_vof_solution(this->present_solution);
+  this->vof_subequations_interface->set_vof_solution(*this->present_solution);
 
   // Solve phase gradient and curvature projections followed by algebraic
   // interface reinitialization steps
@@ -3054,7 +3060,7 @@ VolumeOfFluid<dim>::reinitialize_interface_with_algebraic_method()
     *this->dof_handler,
     this->nonzero_constraints,
     this->local_evaluation_point);
-  this->present_solution = this->local_evaluation_point;
+  *this->present_solution = this->local_evaluation_point;
 }
 
 template <int dim>
@@ -3151,7 +3157,7 @@ VolumeOfFluid<dim>::reinitialize_interface_with_geometric_method()
                 << std::endl;
 
   signed_distance_solver->set_level_set_from_background_mesh(
-    *dof_handler, this->present_solution);
+    *dof_handler, *this->present_solution);
 
   signed_distance_solver->solve();
 
@@ -3167,7 +3173,7 @@ VolumeOfFluid<dim>::reinitialize_interface_with_geometric_method()
   this->level_set = level_set_owned;
 
   compute_phase_fraction_from_level_set(this->level_set,
-                                        this->present_solution);
+                                        *this->present_solution);
 }
 
 

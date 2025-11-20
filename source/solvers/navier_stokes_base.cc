@@ -128,6 +128,9 @@ NavierStokesBase<dim, VectorType, DofsType>::NavierStokesBase(
   this->pcout.set_condition(
     Utilities::MPI::this_mpi_process(this->mpi_communicator) == 0);
 
+  // Initialize solution shared_ptr
+  present_solution = std::make_shared<VectorType>();
+
   // Check if the output directory exists
   std::string output_dir_name =
     simulation_parameters.simulation_control.output_folder;
@@ -223,7 +226,7 @@ NavierStokesBase<dim, VectorType, DofsType>::dynamic_flow_control()
       // Calculate the average velocity
       double average_velocity = calculate_average_velocity(
         *this->dof_handler,
-        this->present_solution,
+        *this->present_solution,
         simulation_parameters.flow_control.boundary_flow_id,
         *this->face_quadrature,
         *this->get_mapping());
@@ -540,7 +543,7 @@ NavierStokesBase<dim, VectorType, DofsType>::percolate_time_vectors_fd()
     {
       previous_solutions[i] = previous_solutions[i - 1];
     }
-  previous_solutions[0] = this->present_solution;
+  previous_solutions[0] = *this->present_solution;
 }
 
 
@@ -556,7 +559,7 @@ NavierStokesBase<dim, VectorType, DofsType>::finish_time_step()
 
       percolate_time_vectors_fd();
       const double CFL = calculate_CFL(*this->dof_handler,
-                                       this->present_solution,
+                                       *this->present_solution,
                                        simulation_control->get_time_step(),
                                        *this->cell_quadrature,
                                        *this->get_mapping());
@@ -634,7 +637,7 @@ NavierStokesBase<dim, VectorType, DofsType>::multi_stage_postresolution(
   double                                            time_step)
 {
   // Copy the reference to some of the vectors to enhance readability below
-  auto &present_solution       = this->present_solution;
+  auto &present_solution       = *this->present_solution;
   auto &previous_solutions     = this->previous_solutions;
   auto &local_evaluation_point = this->local_evaluation_point;
   auto &local_sum_over_previous_stages =
@@ -675,7 +678,7 @@ NavierStokesBase<dim, VectorType, DofsType>::update_multi_stage_solution(
   double time_step)
 {
   // Copy the reference to some of the vectors to enhance readability below
-  auto &present_solution       = this->present_solution;
+  auto &present_solution       = *this->present_solution;
   auto &previous_solutions     = this->previous_solutions;
   auto &local_evaluation_point = this->local_evaluation_point;
   auto &sum_bi_ki              = this->sdirk_vectors.sum_bi_ki;
@@ -702,7 +705,7 @@ NavierStokesBase<dim, VectorType, DofsType>::iterate()
   const auto         time_step = this->simulation_control->get_time_step();
   const unsigned int n_stages = SimulationControl::get_number_of_stages(method);
 
-  auto &present_solution = this->present_solution;
+  auto &present_solution = *this->present_solution;
 
   // For a multi-stages method, at each time iteration, we reset the value of
   // sum_bi_ki
@@ -1002,7 +1005,7 @@ NavierStokesBase<dim, VectorType, DofsType>::box_refine_mesh(const bool restart)
 
 
       Vector<float> estimated_error_per_cell(tria.n_active_cells());
-      auto         &present_solution = this->present_solution;
+      auto         &present_solution = *this->present_solution;
 
       const auto &cell_iterator =
         box_to_refine_dof_handler.active_cell_iterators();
@@ -1108,12 +1111,12 @@ NavierStokesBase<dim, VectorType, DofsType>::refine_mesh_kelly()
   Vector<float> estimated_error_per_cell(tria.n_active_cells());
   const FEValuesExtractors::Vector velocity(0);
   const FEValuesExtractors::Scalar pressure(dim);
-  auto                            &present_solution = this->present_solution;
+  auto                            &present_solution = *this->present_solution;
   VectorType                       locally_relevant_solution;
   locally_relevant_solution.reinit(this->locally_owned_dofs,
                                    this->locally_relevant_dofs,
                                    this->mpi_communicator);
-  locally_relevant_solution = this->present_solution;
+  locally_relevant_solution = *this->present_solution;
   locally_relevant_solution.update_ghost_values();
 
   // Global flags
@@ -1338,10 +1341,10 @@ NavierStokesBase<dim, VectorType, DofsType>::refine_mesh_uniform()
 
   if constexpr (std::is_same_v<VectorType,
                                LinearAlgebra::distributed::Vector<double>>)
-    present_solution.update_ghost_values();
+    present_solution->update_ghost_values();
 
   solution_transfer.prepare_for_coarsening_and_refinement(
-    this->present_solution);
+    *this->present_solution);
 
   std::vector<SolutionTransfer<dim, VectorType>> previous_solutions_transfer;
   // Important to reserve to prevent pointer dangling
@@ -1397,7 +1400,7 @@ NavierStokesBase<dim, VectorType, DofsType>::transfer_solution(
   nonzero_constraints.distribute(tmp);
 
   // Fix on the new mesh
-  present_solution = tmp;
+  *present_solution = tmp;
 
   // Set up the vectors for the transfer
   for (unsigned int i = 0; i < previous_solutions.size(); ++i)
@@ -1424,7 +1427,7 @@ template <int dim, typename VectorType, typename DofsType>
 void
 NavierStokesBase<dim, VectorType, DofsType>::postprocess_fd(bool firstIter)
 {
-  auto &present_solution = this->present_solution;
+  auto &present_solution = *this->present_solution;
 
   // Enstrophy
   if (this->simulation_parameters.post_processing.calculate_enstrophy)
@@ -1604,7 +1607,7 @@ NavierStokesBase<dim, VectorType, DofsType>::postprocess_fd(bool firstIter)
 
       double apparent_viscosity = calculate_apparent_viscosity(
         *this->dof_handler,
-        this->present_solution,
+        *this->present_solution,
         *this->cell_quadrature,
         *this->get_mapping(),
         this->simulation_parameters.physical_properties_manager);
@@ -1714,7 +1717,7 @@ NavierStokesBase<dim, VectorType, DofsType>::postprocess_fd(bool firstIter)
         {
           std::pair<double, double> boundary_flow_rate =
             calculate_flow_rate(*this->dof_handler,
-                                this->present_solution,
+                                *this->present_solution,
                                 boundary_id,
                                 *this->face_quadrature,
                                 *this->get_mapping());
@@ -1892,7 +1895,7 @@ NavierStokesBase<dim, VectorType, DofsType>::set_nodal_values()
                            this->newton_update,
                            this->fe->component_mask(pressure));
   this->nonzero_constraints.distribute(this->newton_update);
-  this->present_solution = this->newton_update;
+  *this->present_solution = this->newton_update;
   if (this->simulation_parameters.simulation_control.bdf_startup_method ==
       Parameters::SimulationControl::BDFStartupMethods::initial_solution)
     {
@@ -2242,7 +2245,7 @@ NavierStokesBase<dim, VectorType, DofsType>::update_boundary_conditions()
   // at the right value its value must always be reinitialized from the present
   // solution. This may appear trivial, but this is extremely important when we
   // are checkpointing. Trust me future Bruno.
-  this->local_evaluation_point = this->present_solution;
+  this->local_evaluation_point = *this->present_solution;
 
   double time = this->simulation_control->get_current_time();
 
@@ -2273,7 +2276,7 @@ NavierStokesBase<dim, VectorType, DofsType>::update_boundary_conditions()
   // Distribute constraints
   auto &nonzero_constraints = this->nonzero_constraints;
   nonzero_constraints.distribute(this->local_evaluation_point);
-  this->present_solution = this->local_evaluation_point;
+  *this->present_solution = this->local_evaluation_point;
 }
 
 template <int dim, typename VectorType, typename DofsType>
@@ -2393,7 +2396,7 @@ NavierStokesBase<dim, VectorType, DofsType>::set_solution_from_checkpoint(
     }
 
   system_trans_vectors.deserialize(x_system);
-  this->present_solution = distributed_system;
+  *this->present_solution = distributed_system;
   for (unsigned int i = 0; i < previous_solutions.size(); ++i)
     {
       previous_solutions[i] = distributed_previous_solutions[i];
@@ -2528,7 +2531,7 @@ NavierStokesBase<dim, VectorType, DofsType>::constrain_stasis_with_temperature(
 
   // Get temperature solution
   const auto temperature_solution =
-    *this->multiphysics->get_solution(PhysicsID::heat_transfer);
+    this->multiphysics->get_solution(PhysicsID::heat_transfer);
   std::vector<double> local_temperature_values(this->cell_quadrature->size());
 
   for (const auto &cell : dof_handler->active_cell_iterators())
@@ -2583,7 +2586,7 @@ NavierStokesBase<dim, VectorType, DofsType>::
 
   // Get temperature solution
   const auto temperature_solution =
-    *this->multiphysics->get_solution(PhysicsID::heat_transfer);
+    this->multiphysics->get_solution(PhysicsID::heat_transfer);
   std::vector<double> local_temperature_values(this->cell_quadrature->size());
 
   // Loop over structs containing fluid id, temperature and phase fraction range
@@ -2921,7 +2924,7 @@ NavierStokesBase<dim, VectorType, DofsType>::write_output_results(
   std::vector<OutputStruct<dim, VectorType>> solution_output_structs;
 
   // Gather all results in vector container
-  gather_output_results(this->present_solution, solution_output_structs);
+  gather_output_results(*this->present_solution, solution_output_structs);
 
   // Create data output object
   DataOut<dim> data_out;
@@ -3207,7 +3210,7 @@ NavierStokesBase<dim, VectorType, DofsType>::write_checkpoint()
     }
 
   std::vector<const VectorType *> sol_set_transfer;
-  sol_set_transfer.emplace_back(&this->present_solution);
+  sol_set_transfer.emplace_back(&(*this->present_solution));
   for (unsigned int i = 0; i < previous_solutions.size(); ++i)
     {
       sol_set_transfer.emplace_back(&previous_solutions[i]);

@@ -455,7 +455,7 @@ FluidDynamicsVANS<dim>::assemble_local_system_matrix(
 
       scratch_data.reinit_vof(
         *phase_cell,
-        *this->multiphysics->get_solution(PhysicsID::VOF),
+        this->multiphysics->get_solution(PhysicsID::VOF),
         this->multiphysics->get_filtered_solution(PhysicsID::VOF),
         *this->multiphysics->get_previous_solutions(PhysicsID::VOF));
     }
@@ -611,7 +611,7 @@ FluidDynamicsVANS<dim>::assemble_local_system_rhs(
 
       scratch_data.reinit_vof(
         *phase_cell,
-        *this->multiphysics->get_solution(PhysicsID::VOF),
+        this->multiphysics->get_solution(PhysicsID::VOF),
         this->multiphysics->get_filtered_solution(PhysicsID::VOF),
         *this->multiphysics->get_previous_solutions(PhysicsID::VOF));
     }

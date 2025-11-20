@@ -302,7 +302,7 @@ Tracer<dim>::assemble_local_system_matrix(
         {
           scratch_data.reinit_velocity(
             velocity_cell,
-            *multiphysics->get_block_solution(PhysicsID::fluid_dynamics),
+            multiphysics->get_block_solution(PhysicsID::fluid_dynamics),
             this->simulation_parameters.ale,
             this->simulation_parameters.tracer_drift_velocity.drift_velocity);
         }
@@ -329,7 +329,7 @@ Tracer<dim>::assemble_local_system_matrix(
         {
           scratch_data.reinit_velocity(
             velocity_cell,
-            *multiphysics->get_solution(PhysicsID::fluid_dynamics),
+            multiphysics->get_solution(PhysicsID::fluid_dynamics),
             this->simulation_parameters.ale,
             this->simulation_parameters.tracer_drift_velocity.drift_velocity);
         }
@@ -591,7 +591,7 @@ Tracer<dim>::assemble_local_system_rhs(
         {
           scratch_data.reinit_velocity(
             velocity_cell,
-            *multiphysics->get_block_solution(PhysicsID::fluid_dynamics),
+            multiphysics->get_block_solution(PhysicsID::fluid_dynamics),
             this->simulation_parameters.ale,
             this->simulation_parameters.tracer_drift_velocity.drift_velocity);
         }
@@ -618,7 +618,7 @@ Tracer<dim>::assemble_local_system_rhs(
         {
           scratch_data.reinit_velocity(
             velocity_cell,
-            *multiphysics->get_solution(PhysicsID::fluid_dynamics),
+            multiphysics->get_solution(PhysicsID::fluid_dynamics),
             this->simulation_parameters.ale,
             this->simulation_parameters.tracer_drift_velocity.drift_velocity);
         }
@@ -661,7 +661,7 @@ Tracer<dim>::gather_output_hook()
   solution_output_structs.emplace_back(
     std::in_place_type<OutputStructSolution<dim, GlobalVectorType>>,
     *dof_handler,
-    present_solution,
+    *present_solution,
     solution_names,
     component_interpretation);
   return solution_output_structs;
@@ -694,7 +694,7 @@ Tracer<dim>::calculate_L2_error()
       if (cell->is_locally_owned())
         {
           fe_values.reinit(cell);
-          fe_values.get_function_values(present_solution, q_scalar_values);
+          fe_values.get_function_values(*present_solution, q_scalar_values);
 
           // Get the exact solution at all gauss points
           exact_solution.value_list(fe_values.get_quadrature_points(),
@@ -747,7 +747,7 @@ Tracer<dim>::percolate_time_vectors()
     {
       previous_solutions[i] = previous_solutions[i - 1];
     }
-  previous_solutions[0] = this->present_solution;
+  previous_solutions[0] = *this->present_solution;
 }
 
 template <int dim>
@@ -794,12 +794,12 @@ Tracer<dim>::postprocess(bool first_iteration)
       if (multiphysics->fluid_dynamics_is_block())
         {
           tracer_flow_rates = postprocess_tracer_flow_rate(
-            *multiphysics->get_block_solution(PhysicsID::fluid_dynamics));
+            multiphysics->get_block_solution(PhysicsID::fluid_dynamics));
         }
       else
         {
           tracer_flow_rates = postprocess_tracer_flow_rate(
-            *multiphysics->get_solution(PhysicsID::fluid_dynamics));
+            multiphysics->get_solution(PhysicsID::fluid_dynamics));
         }
       this->write_tracer_flow_rates(tracer_flow_rates);
     }
@@ -837,7 +837,7 @@ Tracer<dim>::calculate_tracer_statistics()
       if (cell->is_locally_owned())
         {
           fe_values.reinit(cell);
-          fe_values.get_function_values(present_solution, q_tracer_values);
+          fe_values.get_function_values(*present_solution, q_tracer_values);
 
           for (unsigned int q = 0; q < n_q_points; q++)
             {
@@ -858,7 +858,7 @@ Tracer<dim>::calculate_tracer_statistics()
       if (cell->is_locally_owned())
         {
           fe_values.reinit(cell);
-          fe_values.get_function_values(present_solution, q_tracer_values);
+          fe_values.get_function_values(*present_solution, q_tracer_values);
 
           for (unsigned int q = 0; q < n_q_points; q++)
             {
@@ -963,9 +963,9 @@ Tracer<dim>::postprocess_tracer_flow_rate(const VectorType &current_solution_fd)
                   // Gather tracer information
                   fe_face_values_tracer.reinit(cell, face);
                   fe_face_values_tracer.get_function_values(
-                    this->present_solution, tracer_values);
+                    *this->present_solution, tracer_values);
                   fe_face_values_tracer.get_function_gradients(
-                    this->present_solution, tracer_gradient);
+                    *this->present_solution, tracer_gradient);
 
                   // We update the fields required by the diffusivity
                   // model
@@ -1091,7 +1091,7 @@ template <int dim>
 void
 Tracer<dim>::pre_mesh_adaptation()
 {
-  solution_transfer->prepare_for_coarsening_and_refinement(present_solution);
+  solution_transfer->prepare_for_coarsening_and_refinement(*present_solution);
 
   for (unsigned int i = 0; i < previous_solutions.size(); ++i)
     {
@@ -1116,7 +1116,7 @@ Tracer<dim>::post_mesh_adaptation()
   nonzero_constraints.distribute(tmp);
 
   // Fix on the new mesh
-  present_solution = tmp;
+  *present_solution = tmp;
 
   // Transfer previous solutions
   for (unsigned int i = 0; i < previous_solutions.size(); ++i)
@@ -1172,7 +1172,7 @@ Tracer<dim>::write_checkpoint()
   solution_transfer =
     std::make_shared<SolutionTransfer<dim, GlobalVectorType>>(*dof_handler);
 
-  sol_set_transfer.emplace_back(&present_solution);
+  sol_set_transfer.emplace_back(&(*present_solution));
   for (const auto &previous_solution : previous_solutions)
     {
       sol_set_transfer.emplace_back(&previous_solution);
@@ -1209,7 +1209,7 @@ Tracer<dim>::read_checkpoint()
 
   solution_transfer->deserialize(input_vectors);
 
-  present_solution = distributed_system;
+  *present_solution = distributed_system;
   for (unsigned int i = 0; i < previous_solutions.size(); ++i)
     {
       previous_solutions[i] = distributed_previous_solutions[i];
@@ -1238,9 +1238,9 @@ Tracer<dim>::setup_dofs()
   locally_owned_dofs    = dof_handler->locally_owned_dofs();
   locally_relevant_dofs = DoFTools::extract_locally_relevant_dofs(*dof_handler);
 
-  present_solution.reinit(locally_owned_dofs,
-                          locally_relevant_dofs,
-                          mpi_communicator);
+  present_solution->reinit(locally_owned_dofs,
+                           locally_relevant_dofs,
+                           mpi_communicator);
 
   // Previous solutions for transient schemes
   for (auto &solution : this->previous_solutions)
@@ -1360,7 +1360,7 @@ Tracer<dim>::setup_dofs()
   // Provide the tracer dof_handler and present solution pointers to the
   // multiphysics interface
   multiphysics->set_dof_handler(PhysicsID::tracer, this->dof_handler);
-  multiphysics->set_solution(PhysicsID::tracer, &this->present_solution);
+  multiphysics->set_solution(PhysicsID::tracer, this->present_solution);
   multiphysics->set_previous_solutions(PhysicsID::tracer,
                                        &this->previous_solutions);
 }
@@ -1408,7 +1408,7 @@ Tracer<dim>::update_boundary_conditions()
     }
   nonzero_constraints.close();
   nonzero_constraints.distribute(this->local_evaluation_point);
-  this->present_solution = this->local_evaluation_point;
+  *this->present_solution = this->local_evaluation_point;
 }
 
 template <int dim>
@@ -1420,7 +1420,7 @@ Tracer<dim>::set_initial_conditions()
                            simulation_parameters.initial_condition->tracer,
                            newton_update);
   nonzero_constraints.distribute(newton_update);
-  present_solution = newton_update;
+  *present_solution = newton_update;
   percolate_time_vectors();
 }
 
@@ -1441,7 +1441,7 @@ Tracer<dim>::compute_kelly(
         *this->dof_handler,
         *this->face_quadrature,
         typename std::map<types::boundary_id, const Function<dim, double> *>(),
-        this->present_solution,
+        *this->present_solution,
         estimated_error_per_cell,
         this->fe->component_mask(tracer));
     }

@@ -2558,6 +2558,10 @@ FluidDynamicsMatrixFree<dim>::FluidDynamicsMatrixFree(
   this->fe = std::make_shared<FESystem<dim>>(
     FE_Q<dim>(nsparam.fem_parameters.velocity_order), dim + 1);
 
+  // Initialize solution shared_ptr
+  multiphysics_present_solution =
+    std::make_shared<TrilinosWrappers::MPI::Vector>();
+
   physical_properties_manager = std::make_shared<PhysicalPropertiesManager>(
     this->simulation_parameters.physical_properties_manager);
 
@@ -2782,7 +2786,7 @@ FluidDynamicsMatrixFree<dim>::setup_dofs_fd()
 
 
   // Initialize vectors using operator
-  this->system_operator->initialize_dof_vector(this->present_solution);
+  this->system_operator->initialize_dof_vector(*this->present_solution);
   this->system_operator->initialize_dof_vector(this->evaluation_point);
   this->system_operator->initialize_dof_vector(this->newton_update);
   this->system_operator->initialize_dof_vector(this->system_rhs);
@@ -2823,9 +2827,9 @@ FluidDynamicsMatrixFree<dim>::setup_dofs_fd()
 
   // Initialize Trilinos vectors used to pass solution to multiphysics
   // interface
-  this->multiphysics_present_solution.reinit(this->locally_owned_dofs,
-                                             this->locally_relevant_dofs,
-                                             this->mpi_communicator);
+  this->multiphysics_present_solution->reinit(this->locally_owned_dofs,
+                                              this->locally_relevant_dofs,
+                                              this->mpi_communicator);
 
   // Pre-allocate memory for the previous solutions using the information
   // of the BDF schemes
@@ -2941,7 +2945,7 @@ FluidDynamicsMatrixFree<dim>::set_initial_condition_fd(
            Parameters::FluidDynamicsInitialConditionType::nodal)
     {
       this->set_nodal_values();
-      this->present_solution.update_ghost_values();
+      this->present_solution->update_ghost_values();
       this->finish_time_step();
     }
   else if (initial_condition_type ==
@@ -2949,7 +2953,7 @@ FluidDynamicsMatrixFree<dim>::set_initial_condition_fd(
     {
       // Set the nodal values to have an initial condition that is adequate
       this->set_nodal_values();
-      this->present_solution.update_ghost_values();
+      this->present_solution->update_ghost_values();
 
       // Get viscosity model
       std::shared_ptr<RheologicalModel> original_viscosity_model =
@@ -2984,7 +2988,7 @@ FluidDynamicsMatrixFree<dim>::set_initial_condition_fd(
 
       // Set the nodal values to have an initial condition that is adequate
       this->set_nodal_values();
-      this->present_solution.update_ghost_values();
+      this->present_solution->update_ghost_values();
 
       // Create a pointer to the current viscosity model
       std::shared_ptr<RheologicalModel> viscosity_model =
@@ -3179,7 +3183,7 @@ FluidDynamicsMatrixFree<dim>::initialize_GMG()
   dynamic_cast<MFNavierStokesPreconditionGMG<dim> *>(gmg_preconditioner.get())
     ->initialize(this->simulation_control,
                  this->flow_control,
-                 this->present_solution,
+                 *this->present_solution,
                  this->time_derivative_previous_solutions);
 }
 
@@ -3288,16 +3292,16 @@ FluidDynamicsMatrixFree<dim>::update_solutions_for_multiphysics()
   TrilinosWrappers::MPI::Vector temp_solution(this->locally_owned_dofs,
                                               this->mpi_communicator);
 
-  this->present_solution.update_ghost_values();
-  convert_vector_dealii_to_trilinos(temp_solution, this->present_solution);
-  multiphysics_present_solution = temp_solution;
+  this->present_solution->update_ghost_values();
+  convert_vector_dealii_to_trilinos(temp_solution, *this->present_solution);
+  *multiphysics_present_solution = temp_solution;
 
 #ifndef LETHE_USE_LDV
   this->multiphysics->set_solution(PhysicsID::fluid_dynamics,
-                                   &this->multiphysics_present_solution);
+                                   this->multiphysics_present_solution);
 #else
   this->multiphysics->set_solution(PhysicsID::fluid_dynamics,
-                                   &this->present_solution);
+                                   this->present_solution);
 #endif
 
   // Convert the previous solutions to multiphysics vector type and provide
@@ -3340,7 +3344,7 @@ FluidDynamicsMatrixFree<dim>::update_solutions_for_fluid_dynamics()
     {
       // Get present solution and dof handler of the heat transfer
       const auto &heat_solution =
-        *this->multiphysics->get_solution(PhysicsID::heat_transfer);
+        this->multiphysics->get_solution(PhysicsID::heat_transfer);
 
 #ifndef LETHE_USE_LDV
       const auto &heat_dof_handler =
@@ -3373,12 +3377,12 @@ template <int dim>
 void
 FluidDynamicsMatrixFree<dim>::setup_preconditioner()
 {
-  this->present_solution.update_ghost_values();
+  this->present_solution->update_ghost_values();
 
   this->computing_timer.enter_subsection("Evaluate non linear term and tau");
 
   this->system_operator->evaluate_non_linear_term_and_calculate_tau(
-    this->present_solution);
+    *this->present_solution);
 
   if (this->simulation_parameters.mortar_parameters.enable)
     this->system_operator->evaluate_velocity_ale(

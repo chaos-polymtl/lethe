@@ -443,14 +443,14 @@ public:
    *
    * @param physics_id The physics of the solution being requested
    */
-  GlobalVectorType *
+  GlobalVectorType &
   get_solution(const PhysicsID physics_id)
   {
     AssertThrow((std::find(active_physics.begin(),
                            active_physics.end(),
                            physics_id) != active_physics.end()),
                 ExcInternalError());
-    return physics_solutions[physics_id];
+    return *physics_solutions[physics_id];
   }
 
   /**
@@ -476,14 +476,14 @@ public:
    *
    * @param physics_id The physics of the solution being requested
    */
-  GlobalBlockVectorType *
+  GlobalBlockVectorType &
   get_block_solution(const PhysicsID physics_id)
   {
     AssertThrow((std::find(active_physics.begin(),
                            active_physics.end(),
                            physics_id) != active_physics.end()),
                 ExcInternalError());
-    return block_physics_solutions[physics_id];
+    return *block_physics_solutions[physics_id];
   }
 
 
@@ -659,10 +659,11 @@ public:
    *
    * @param physics_id The physics of the DOF handler being requested
    *
-   * @param solution_vector The reference to the solution vector of the physics
+   * @param solution_vector Shared pointer to the reference to the solution vector of the physics
    */
   void
-  set_solution(const PhysicsID physics_id, GlobalVectorType *solution_vector)
+  set_solution(const PhysicsID                   physics_id,
+               std::shared_ptr<GlobalVectorType> solution_vector)
   {
     AssertThrow((std::find(active_physics.begin(),
                            active_physics.end(),
@@ -742,8 +743,8 @@ public:
    * @param solution_vector The reference to the solution vector of the physics
    */
   void
-  set_block_solution(const PhysicsID        physics_id,
-                     GlobalBlockVectorType *solution_vector)
+  set_block_solution(const PhysicsID                        physics_id,
+                     std::shared_ptr<GlobalBlockVectorType> solution_vector)
   {
     AssertThrow((std::find(active_physics.begin(),
                            active_physics.end(),
@@ -921,8 +922,9 @@ private:
     block_physics_filtered_solutions;
 
   // present solution
-  std::map<PhysicsID, GlobalVectorType *>      physics_solutions;
-  std::map<PhysicsID, GlobalBlockVectorType *> block_physics_solutions;
+  std::map<PhysicsID, std::shared_ptr<GlobalVectorType>> physics_solutions;
+  std::map<PhysicsID, std::shared_ptr<GlobalBlockVectorType>>
+    block_physics_solutions;
 
   // previous solutions
   std::map<PhysicsID, std::vector<GlobalVectorType> *>
