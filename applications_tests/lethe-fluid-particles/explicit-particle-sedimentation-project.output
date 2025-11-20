@@ -22,9 +22,6 @@ Transient iteration: 1        Time: 0.005    Time step: 0.005    CFL: 0
 --------------
 Void Fraction
 --------------
-----------------------
-Particle-fluid forces
-----------------------
 -------------------------------
 Volume-Averaged Fluid Dynamics
 -------------------------------
@@ -52,9 +49,6 @@ Transient iteration: 2        Time: 0.01     Time step: 0.005    CFL: 0
 --------------
 Void Fraction
 --------------
-----------------------
-Particle-fluid forces
-----------------------
 -------------------------------
 Volume-Averaged Fluid Dynamics
 -------------------------------
@@ -82,9 +76,6 @@ Transient iteration: 3        Time: 0.015    Time step: 0.005    CFL: 1.41967e-0
 --------------
 Void Fraction
 --------------
-----------------------
-Particle-fluid forces
-----------------------
 -------------------------------
 Volume-Averaged Fluid Dynamics
 -------------------------------
@@ -112,9 +103,6 @@ Transient iteration: 4        Time: 0.02     Time step: 0.005    CFL: 4.86286e-0
 --------------
 Void Fraction
 --------------
-----------------------
-Particle-fluid forces
-----------------------
 -------------------------------
 Volume-Averaged Fluid Dynamics
 -------------------------------
@@ -142,9 +130,6 @@ Transient iteration: 5        Time: 0.025    Time step: 0.005    CFL: 1.0711e-07
 --------------
 Void Fraction
 --------------
-----------------------
-Particle-fluid forces
-----------------------
 -------------------------------
 Volume-Averaged Fluid Dynamics
 -------------------------------
@@ -172,9 +157,6 @@ Transient iteration: 6        Time: 0.03     Time step: 0.005    CFL: 1.92193e-0
 --------------
 Void Fraction
 --------------
-----------------------
-Particle-fluid forces
-----------------------
 -------------------------------
 Volume-Averaged Fluid Dynamics
 -------------------------------
@@ -202,9 +184,6 @@ Transient iteration: 7        Time: 0.035    Time step: 0.005    CFL: 3.05589e-0
 --------------
 Void Fraction
 --------------
-----------------------
-Particle-fluid forces
-----------------------
 -------------------------------
 Volume-Averaged Fluid Dynamics
 -------------------------------
@@ -232,9 +211,6 @@ Transient iteration: 8        Time: 0.04     Time step: 0.005    CFL: 4.48361e-0
 --------------
 Void Fraction
 --------------
-----------------------
-Particle-fluid forces
-----------------------
 -------------------------------
 Volume-Averaged Fluid Dynamics
 -------------------------------
@@ -262,9 +238,6 @@ Transient iteration: 9        Time: 0.045    Time step: 0.005    CFL: 6.21215e-0
 --------------
 Void Fraction
 --------------
-----------------------
-Particle-fluid forces
-----------------------
 -------------------------------
 Volume-Averaged Fluid Dynamics
 -------------------------------
@@ -292,9 +265,6 @@ Transient iteration: 10       Time: 0.05     Time step: 0.005    CFL: 8.25171e-0
 --------------
 Void Fraction
 --------------
-----------------------
-Particle-fluid forces
-----------------------
 -------------------------------
 Volume-Averaged Fluid Dynamics
 -------------------------------
@@ -322,9 +292,6 @@ Transient iteration: 11       Time: 0.055    Time step: 0.005    CFL: 1.06038e-0
 --------------
 Void Fraction
 --------------
-----------------------
-Particle-fluid forces
-----------------------
 -------------------------------
 Volume-Averaged Fluid Dynamics
 -------------------------------
@@ -352,9 +319,6 @@ Transient iteration: 12       Time: 0.06     Time step: 0.005    CFL: 1.32763e-0
 --------------
 Void Fraction
 --------------
-----------------------
-Particle-fluid forces
-----------------------
 -------------------------------
 Volume-Averaged Fluid Dynamics
 -------------------------------
@@ -382,9 +346,6 @@ Transient iteration: 13       Time: 0.065    Time step: 0.005    CFL: 1.62623e-0
 --------------
 Void Fraction
 --------------
-----------------------
-Particle-fluid forces
-----------------------
 -------------------------------
 Volume-Averaged Fluid Dynamics
 -------------------------------
@@ -412,9 +373,6 @@ Transient iteration: 14       Time: 0.07     Time step: 0.005    CFL: 1.95587e-0
 --------------
 Void Fraction
 --------------
-----------------------
-Particle-fluid forces
-----------------------
 -------------------------------
 Volume-Averaged Fluid Dynamics
 -------------------------------
@@ -442,9 +400,6 @@ Transient iteration: 15       Time: 0.075    Time step: 0.005    CFL: 2.31514e-0
 --------------
 Void Fraction
 --------------
-----------------------
-Particle-fluid forces
-----------------------
 -------------------------------
 Volume-Averaged Fluid Dynamics
 -------------------------------
@@ -472,9 +427,6 @@ Transient iteration: 16       Time: 0.08     Time step: 0.005    CFL: 2.70203e-0
 --------------
 Void Fraction
 --------------
-----------------------
-Particle-fluid forces
-----------------------
 -------------------------------
 Volume-Averaged Fluid Dynamics
 -------------------------------
@@ -502,9 +454,6 @@ Transient iteration: 17       Time: 0.085    Time step: 0.005    CFL: 3.11364e-0
 --------------
 Void Fraction
 --------------
-----------------------
-Particle-fluid forces
-----------------------
 -------------------------------
 Volume-Averaged Fluid Dynamics
 -------------------------------
@@ -532,9 +481,6 @@ Transient iteration: 18       Time: 0.09     Time step: 0.005    CFL: 3.54628e-0
 --------------
 Void Fraction
 --------------
-----------------------
-Particle-fluid forces
-----------------------
 -------------------------------
 Volume-Averaged Fluid Dynamics
 -------------------------------
@@ -562,9 +508,6 @@ Transient iteration: 19       Time: 0.095    Time step: 0.005    CFL: 3.99553e-0
 --------------
 Void Fraction
 --------------
-----------------------
-Particle-fluid forces
-----------------------
 -------------------------------
 Volume-Averaged Fluid Dynamics
 -------------------------------
@@ -592,9 +535,6 @@ Transient iteration: 20       Time: 0.1      Time step: 0.005    CFL: 4.45775e-0
 --------------
 Void Fraction
 --------------
-----------------------
-Particle-fluid forces
-----------------------
 -------------------------------
 Volume-Averaged Fluid Dynamics
 -------------------------------
@@ -622,9 +562,6 @@ Transient iteration: 21       Time: 0.105    Time step: 0.005    CFL: 4.92973e-0
 --------------
 Void Fraction
 --------------
-----------------------
-Particle-fluid forces
-----------------------
 -------------------------------
 Volume-Averaged Fluid Dynamics
 -------------------------------
@@ -652,9 +589,6 @@ Transient iteration: 22       Time: 0.11     Time step: 0.005    CFL: 5.40836e-0
 --------------
 Void Fraction
 --------------
-----------------------
-Particle-fluid forces
-----------------------
 -------------------------------
 Volume-Averaged Fluid Dynamics
 -------------------------------
@@ -682,9 +616,6 @@ Transient iteration: 23       Time: 0.115    Time step: 0.005    CFL: 5.8913e-06
 --------------
 Void Fraction
 --------------
-----------------------
-Particle-fluid forces
-----------------------
 -------------------------------
 Volume-Averaged Fluid Dynamics
 -------------------------------
@@ -712,9 +643,6 @@ Transient iteration: 24       Time: 0.12     Time step: 0.005    CFL: 6.37735e-0
 --------------
 Void Fraction
 --------------
-----------------------
-Particle-fluid forces
-----------------------
 -------------------------------
 Volume-Averaged Fluid Dynamics
 -------------------------------
@@ -742,9 +670,6 @@ Transient iteration: 25       Time: 0.125    Time step: 0.005    CFL: 6.86457e-0
 --------------
 Void Fraction
 --------------
-----------------------
-Particle-fluid forces
-----------------------
 -------------------------------
 Volume-Averaged Fluid Dynamics
 -------------------------------
@@ -772,9 +697,6 @@ Transient iteration: 26       Time: 0.13     Time step: 0.005    CFL: 7.35399e-0
 --------------
 Void Fraction
 --------------
-----------------------
-Particle-fluid forces
-----------------------
 -------------------------------
 Volume-Averaged Fluid Dynamics
 -------------------------------
@@ -802,9 +724,6 @@ Transient iteration: 27       Time: 0.135    Time step: 0.005    CFL: 7.84473e-0
 --------------
 Void Fraction
 --------------
-----------------------
-Particle-fluid forces
-----------------------
 -------------------------------
 Volume-Averaged Fluid Dynamics
 -------------------------------
@@ -832,9 +751,6 @@ Transient iteration: 28       Time: 0.14     Time step: 0.005    CFL: 8.33676e-0
 --------------
 Void Fraction
 --------------
-----------------------
-Particle-fluid forces
-----------------------
 -------------------------------
 Volume-Averaged Fluid Dynamics
 -------------------------------
@@ -862,9 +778,6 @@ Transient iteration: 29       Time: 0.145    Time step: 0.005    CFL: 8.83035e-0
 --------------
 Void Fraction
 --------------
-----------------------
-Particle-fluid forces
-----------------------
 -------------------------------
 Volume-Averaged Fluid Dynamics
 -------------------------------
@@ -892,9 +805,6 @@ Transient iteration: 30       Time: 0.15     Time step: 0.005    CFL: 9.32575e-0
 --------------
 Void Fraction
 --------------
-----------------------
-Particle-fluid forces
-----------------------
 -------------------------------
 Volume-Averaged Fluid Dynamics
 -------------------------------
@@ -922,9 +832,6 @@ Transient iteration: 31       Time: 0.155    Time step: 0.005    CFL: 9.82304e-0
 --------------
 Void Fraction
 --------------
-----------------------
-Particle-fluid forces
-----------------------
 -------------------------------
 Volume-Averaged Fluid Dynamics
 -------------------------------
@@ -952,9 +859,6 @@ Transient iteration: 32       Time: 0.16     Time step: 0.005    CFL: 1.03222e-0
 --------------
 Void Fraction
 --------------
-----------------------
-Particle-fluid forces
-----------------------
 -------------------------------
 Volume-Averaged Fluid Dynamics
 -------------------------------
@@ -982,9 +886,6 @@ Transient iteration: 33       Time: 0.165    Time step: 0.005    CFL: 1.08232e-0
 --------------
 Void Fraction
 --------------
-----------------------
-Particle-fluid forces
-----------------------
 -------------------------------
 Volume-Averaged Fluid Dynamics
 -------------------------------
@@ -1012,9 +913,6 @@ Transient iteration: 34       Time: 0.17     Time step: 0.005    CFL: 1.13254e-0
 --------------
 Void Fraction
 --------------
-----------------------
-Particle-fluid forces
-----------------------
 -------------------------------
 Volume-Averaged Fluid Dynamics
 -------------------------------
@@ -1042,9 +940,6 @@ Transient iteration: 35       Time: 0.175    Time step: 0.005    CFL: 1.18271e-0
 --------------
 Void Fraction
 --------------
-----------------------
-Particle-fluid forces
-----------------------
 -------------------------------
 Volume-Averaged Fluid Dynamics
 -------------------------------
@@ -1072,9 +967,6 @@ Transient iteration: 36       Time: 0.18     Time step: 0.005    CFL: 1.23256e-0
 --------------
 Void Fraction
 --------------
-----------------------
-Particle-fluid forces
-----------------------
 -------------------------------
 Volume-Averaged Fluid Dynamics
 -------------------------------
@@ -1102,9 +994,6 @@ Transient iteration: 37       Time: 0.185    Time step: 0.005    CFL: 1.28176e-0
 --------------
 Void Fraction
 --------------
-----------------------
-Particle-fluid forces
-----------------------
 -------------------------------
 Volume-Averaged Fluid Dynamics
 -------------------------------
@@ -1132,9 +1021,6 @@ Transient iteration: 38       Time: 0.19     Time step: 0.005    CFL: 1.32996e-0
 --------------
 Void Fraction
 --------------
-----------------------
-Particle-fluid forces
-----------------------
 -------------------------------
 Volume-Averaged Fluid Dynamics
 -------------------------------
@@ -1162,9 +1048,6 @@ Transient iteration: 39       Time: 0.195    Time step: 0.005    CFL: 1.37667e-0
 --------------
 Void Fraction
 --------------
-----------------------
-Particle-fluid forces
-----------------------
 -------------------------------
 Volume-Averaged Fluid Dynamics
 -------------------------------
@@ -1192,9 +1075,6 @@ Transient iteration: 40       Time: 0.2      Time step: 0.005    CFL: 1.42138e-0
 --------------
 Void Fraction
 --------------
-----------------------
-Particle-fluid forces
-----------------------
 -------------------------------
 Volume-Averaged Fluid Dynamics
 -------------------------------
@@ -1222,9 +1102,6 @@ Transient iteration: 41       Time: 0.205    Time step: 0.005    CFL: 1.46376e-0
 --------------
 Void Fraction
 --------------
-----------------------
-Particle-fluid forces
-----------------------
 -------------------------------
 Volume-Averaged Fluid Dynamics
 -------------------------------
@@ -1252,9 +1129,6 @@ Transient iteration: 42       Time: 0.21     Time step: 0.005    CFL: 1.50366e-0
 --------------
 Void Fraction
 --------------
-----------------------
-Particle-fluid forces
-----------------------
 -------------------------------
 Volume-Averaged Fluid Dynamics
 -------------------------------
@@ -1282,9 +1156,6 @@ Transient iteration: 43       Time: 0.215    Time step: 0.005    CFL: 1.54118e-0
 --------------
 Void Fraction
 --------------
-----------------------
-Particle-fluid forces
-----------------------
 -------------------------------
 Volume-Averaged Fluid Dynamics
 -------------------------------
@@ -1312,9 +1183,6 @@ Transient iteration: 44       Time: 0.22     Time step: 0.005    CFL: 1.57652e-0
 --------------
 Void Fraction
 --------------
-----------------------
-Particle-fluid forces
-----------------------
 -------------------------------
 Volume-Averaged Fluid Dynamics
 -------------------------------
@@ -1342,9 +1210,6 @@ Transient iteration: 45       Time: 0.225    Time step: 0.005    CFL: 1.61043e-0
 --------------
 Void Fraction
 --------------
-----------------------
-Particle-fluid forces
-----------------------
 -------------------------------
 Volume-Averaged Fluid Dynamics
 -------------------------------
@@ -1372,9 +1237,6 @@ Transient iteration: 46       Time: 0.23     Time step: 0.005    CFL: 1.64823e-0
 --------------
 Void Fraction
 --------------
-----------------------
-Particle-fluid forces
-----------------------
 -------------------------------
 Volume-Averaged Fluid Dynamics
 -------------------------------
@@ -1402,9 +1264,6 @@ Transient iteration: 47       Time: 0.235    Time step: 0.005    CFL: 1.68549e-0
 --------------
 Void Fraction
 --------------
-----------------------
-Particle-fluid forces
-----------------------
 -------------------------------
 Volume-Averaged Fluid Dynamics
 -------------------------------
@@ -1432,9 +1291,6 @@ Transient iteration: 48       Time: 0.24     Time step: 0.005    CFL: 1.72216e-0
 --------------
 Void Fraction
 --------------
-----------------------
-Particle-fluid forces
-----------------------
 -------------------------------
 Volume-Averaged Fluid Dynamics
 -------------------------------
@@ -1462,9 +1318,6 @@ Transient iteration: 49       Time: 0.245    Time step: 0.005    CFL: 1.7579e-05
 --------------
 Void Fraction
 --------------
-----------------------
-Particle-fluid forces
-----------------------
 -------------------------------
 Volume-Averaged Fluid Dynamics
 -------------------------------
@@ -1492,9 +1345,6 @@ Transient iteration: 50       Time: 0.25     Time step: 0.005    CFL: 1.79237e-0
 --------------
 Void Fraction
 --------------
-----------------------
-Particle-fluid forces
-----------------------
 -------------------------------
 Volume-Averaged Fluid Dynamics
 -------------------------------
@@ -1522,9 +1372,6 @@ Transient iteration: 51       Time: 0.255    Time step: 0.005    CFL: 1.82527e-0
 --------------
 Void Fraction
 --------------
-----------------------
-Particle-fluid forces
-----------------------
 -------------------------------
 Volume-Averaged Fluid Dynamics
 -------------------------------
@@ -1552,9 +1399,6 @@ Transient iteration: 52       Time: 0.26     Time step: 0.005    CFL: 1.85649e-0
 --------------
 Void Fraction
 --------------
-----------------------
-Particle-fluid forces
-----------------------
 -------------------------------
 Volume-Averaged Fluid Dynamics
 -------------------------------
@@ -1582,9 +1426,6 @@ Transient iteration: 53       Time: 0.265    Time step: 0.005    CFL: 1.88629e-0
 --------------
 Void Fraction
 --------------
-----------------------
-Particle-fluid forces
-----------------------
 -------------------------------
 Volume-Averaged Fluid Dynamics
 -------------------------------
@@ -1612,9 +1453,6 @@ Transient iteration: 54       Time: 0.27     Time step: 0.005    CFL: 1.91509e-0
 --------------
 Void Fraction
 --------------
-----------------------
-Particle-fluid forces
-----------------------
 -------------------------------
 Volume-Averaged Fluid Dynamics
 -------------------------------
@@ -1642,9 +1480,6 @@ Transient iteration: 55       Time: 0.275    Time step: 0.005    CFL: 1.94327e-0
 --------------
 Void Fraction
 --------------
-----------------------
-Particle-fluid forces
-----------------------
 -------------------------------
 Volume-Averaged Fluid Dynamics
 -------------------------------
@@ -1672,9 +1507,6 @@ Transient iteration: 56       Time: 0.28     Time step: 0.005    CFL: 1.97106e-0
 --------------
 Void Fraction
 --------------
-----------------------
-Particle-fluid forces
-----------------------
 -------------------------------
 Volume-Averaged Fluid Dynamics
 -------------------------------
@@ -1702,9 +1534,6 @@ Transient iteration: 57       Time: 0.285    Time step: 0.005    CFL: 1.99843e-0
 --------------
 Void Fraction
 --------------
-----------------------
-Particle-fluid forces
-----------------------
 -------------------------------
 Volume-Averaged Fluid Dynamics
 -------------------------------
@@ -1732,9 +1561,6 @@ Transient iteration: 58       Time: 0.29     Time step: 0.005    CFL: 2.02522e-0
 --------------
 Void Fraction
 --------------
-----------------------
-Particle-fluid forces
-----------------------
 -------------------------------
 Volume-Averaged Fluid Dynamics
 -------------------------------
@@ -1762,9 +1588,6 @@ Transient iteration: 59       Time: 0.295    Time step: 0.005    CFL: 2.05104e-0
 --------------
 Void Fraction
 --------------
-----------------------
-Particle-fluid forces
-----------------------
 -------------------------------
 Volume-Averaged Fluid Dynamics
 -------------------------------
@@ -1792,9 +1615,6 @@ Transient iteration: 60       Time: 0.3      Time step: 0.005    CFL: 2.07561e-0
 --------------
 Void Fraction
 --------------
-----------------------
-Particle-fluid forces
-----------------------
 -------------------------------
 Volume-Averaged Fluid Dynamics
 -------------------------------
@@ -1822,9 +1642,6 @@ Transient iteration: 61       Time: 0.305    Time step: 0.005    CFL: 2.0988e-05
 --------------
 Void Fraction
 --------------
-----------------------
-Particle-fluid forces
-----------------------
 -------------------------------
 Volume-Averaged Fluid Dynamics
 -------------------------------
@@ -1852,9 +1669,6 @@ Transient iteration: 62       Time: 0.31     Time step: 0.005    CFL: 2.12049e-0
 --------------
 Void Fraction
 --------------
-----------------------
-Particle-fluid forces
-----------------------
 -------------------------------
 Volume-Averaged Fluid Dynamics
 -------------------------------
@@ -1882,9 +1696,6 @@ Transient iteration: 63       Time: 0.315    Time step: 0.005    CFL: 2.14074e-0
 --------------
 Void Fraction
 --------------
-----------------------
-Particle-fluid forces
-----------------------
 -------------------------------
 Volume-Averaged Fluid Dynamics
 -------------------------------
@@ -1912,9 +1723,6 @@ Transient iteration: 64       Time: 0.32     Time step: 0.005    CFL: 2.15978e-0
 --------------
 Void Fraction
 --------------
-----------------------
-Particle-fluid forces
-----------------------
 -------------------------------
 Volume-Averaged Fluid Dynamics
 -------------------------------
@@ -1942,9 +1750,6 @@ Transient iteration: 65       Time: 0.325    Time step: 0.005    CFL: 2.17789e-0
 --------------
 Void Fraction
 --------------
-----------------------
-Particle-fluid forces
-----------------------
 -------------------------------
 Volume-Averaged Fluid Dynamics
 -------------------------------
@@ -1972,9 +1777,6 @@ Transient iteration: 66       Time: 0.33     Time step: 0.005    CFL: 2.1954e-05
 --------------
 Void Fraction
 --------------
-----------------------
-Particle-fluid forces
-----------------------
 -------------------------------
 Volume-Averaged Fluid Dynamics
 -------------------------------
@@ -2002,9 +1804,6 @@ Transient iteration: 67       Time: 0.335    Time step: 0.005    CFL: 2.21253e-0
 --------------
 Void Fraction
 --------------
-----------------------
-Particle-fluid forces
-----------------------
 -------------------------------
 Volume-Averaged Fluid Dynamics
 -------------------------------
@@ -2032,9 +1831,6 @@ Transient iteration: 68       Time: 0.34     Time step: 0.005    CFL: 2.22958e-0
 --------------
 Void Fraction
 --------------
-----------------------
-Particle-fluid forces
-----------------------
 -------------------------------
 Volume-Averaged Fluid Dynamics
 -------------------------------
@@ -2062,9 +1858,6 @@ Transient iteration: 69       Time: 0.345    Time step: 0.005    CFL: 2.24668e-0
 --------------
 Void Fraction
 --------------
-----------------------
-Particle-fluid forces
-----------------------
 -------------------------------
 Volume-Averaged Fluid Dynamics
 -------------------------------
@@ -2092,9 +1885,6 @@ Transient iteration: 70       Time: 0.35     Time step: 0.005    CFL: 2.26403e-0
 --------------
 Void Fraction
 --------------
-----------------------
-Particle-fluid forces
-----------------------
 -------------------------------
 Volume-Averaged Fluid Dynamics
 -------------------------------
@@ -2122,9 +1912,6 @@ Transient iteration: 71       Time: 0.355    Time step: 0.005    CFL: 2.2815e-05
 --------------
 Void Fraction
 --------------
-----------------------
-Particle-fluid forces
-----------------------
 -------------------------------
 Volume-Averaged Fluid Dynamics
 -------------------------------
@@ -2152,9 +1939,6 @@ Transient iteration: 72       Time: 0.36     Time step: 0.005    CFL: 2.2991e-05
 --------------
 Void Fraction
 --------------
-----------------------
-Particle-fluid forces
-----------------------
 -------------------------------
 Volume-Averaged Fluid Dynamics
 -------------------------------
@@ -2182,9 +1966,6 @@ Transient iteration: 73       Time: 0.365    Time step: 0.005    CFL: 2.31679e-0
 --------------
 Void Fraction
 --------------
-----------------------
-Particle-fluid forces
-----------------------
 -------------------------------
 Volume-Averaged Fluid Dynamics
 -------------------------------
@@ -2212,9 +1993,6 @@ Transient iteration: 74       Time: 0.37     Time step: 0.005    CFL: 2.33453e-0
 --------------
 Void Fraction
 --------------
-----------------------
-Particle-fluid forces
-----------------------
 -------------------------------
 Volume-Averaged Fluid Dynamics
 -------------------------------
@@ -2242,9 +2020,6 @@ Transient iteration: 75       Time: 0.375    Time step: 0.005    CFL: 2.35228e-0
 --------------
 Void Fraction
 --------------
-----------------------
-Particle-fluid forces
-----------------------
 -------------------------------
 Volume-Averaged Fluid Dynamics
 -------------------------------
@@ -2272,9 +2047,6 @@ Transient iteration: 76       Time: 0.38     Time step: 0.005    CFL: 2.37002e-0
 --------------
 Void Fraction
 --------------
-----------------------
-Particle-fluid forces
-----------------------
 -------------------------------
 Volume-Averaged Fluid Dynamics
 -------------------------------
@@ -2302,9 +2074,6 @@ Transient iteration: 77       Time: 0.385    Time step: 0.005    CFL: 2.38768e-0
 --------------
 Void Fraction
 --------------
-----------------------
-Particle-fluid forces
-----------------------
 -------------------------------
 Volume-Averaged Fluid Dynamics
 -------------------------------
@@ -2332,9 +2101,6 @@ Transient iteration: 78       Time: 0.39     Time step: 0.005    CFL: 2.4052e-05
 --------------
 Void Fraction
 --------------
-----------------------
-Particle-fluid forces
-----------------------
 -------------------------------
 Volume-Averaged Fluid Dynamics
 -------------------------------
@@ -2362,9 +2128,6 @@ Transient iteration: 79       Time: 0.395    Time step: 0.005    CFL: 2.42257e-0
 --------------
 Void Fraction
 --------------
-----------------------
-Particle-fluid forces
-----------------------
 -------------------------------
 Volume-Averaged Fluid Dynamics
 -------------------------------
@@ -2392,9 +2155,6 @@ Transient iteration: 80       Time: 0.4      Time step: 0.005    CFL: 2.43978e-0
 --------------
 Void Fraction
 --------------
-----------------------
-Particle-fluid forces
-----------------------
 -------------------------------
 Volume-Averaged Fluid Dynamics
 -------------------------------
@@ -2422,9 +2182,6 @@ Transient iteration: 81       Time: 0.405    Time step: 0.005    CFL: 2.45686e-0
 --------------
 Void Fraction
 --------------
-----------------------
-Particle-fluid forces
-----------------------
 -------------------------------
 Volume-Averaged Fluid Dynamics
 -------------------------------
@@ -2452,9 +2209,6 @@ Transient iteration: 82       Time: 0.41     Time step: 0.005    CFL: 2.50382e-0
 --------------
 Void Fraction
 --------------
-----------------------
-Particle-fluid forces
-----------------------
 -------------------------------
 Volume-Averaged Fluid Dynamics
 -------------------------------
@@ -2482,9 +2236,6 @@ Transient iteration: 83       Time: 0.415    Time step: 0.005    CFL: 2.55277e-0
 --------------
 Void Fraction
 --------------
-----------------------
-Particle-fluid forces
-----------------------
 -------------------------------
 Volume-Averaged Fluid Dynamics
 -------------------------------
@@ -2512,9 +2263,6 @@ Transient iteration: 84       Time: 0.42     Time step: 0.005    CFL: 2.60042e-0
 --------------
 Void Fraction
 --------------
-----------------------
-Particle-fluid forces
-----------------------
 -------------------------------
 Volume-Averaged Fluid Dynamics
 -------------------------------
@@ -2542,9 +2290,6 @@ Transient iteration: 85       Time: 0.425    Time step: 0.005    CFL: 2.64617e-0
 --------------
 Void Fraction
 --------------
-----------------------
-Particle-fluid forces
-----------------------
 -------------------------------
 Volume-Averaged Fluid Dynamics
 -------------------------------
@@ -2572,9 +2317,6 @@ Transient iteration: 86       Time: 0.43     Time step: 0.005    CFL: 2.68959e-0
 --------------
 Void Fraction
 --------------
-----------------------
-Particle-fluid forces
-----------------------
 -------------------------------
 Volume-Averaged Fluid Dynamics
 -------------------------------
@@ -2602,9 +2344,6 @@ Transient iteration: 87       Time: 0.435    Time step: 0.005    CFL: 2.73048e-0
 --------------
 Void Fraction
 --------------
-----------------------
-Particle-fluid forces
-----------------------
 -------------------------------
 Volume-Averaged Fluid Dynamics
 -------------------------------
@@ -2632,9 +2371,6 @@ Transient iteration: 88       Time: 0.44     Time step: 0.005    CFL: 2.76883e-0
 --------------
 Void Fraction
 --------------
-----------------------
-Particle-fluid forces
-----------------------
 -------------------------------
 Volume-Averaged Fluid Dynamics
 -------------------------------
@@ -2662,9 +2398,6 @@ Transient iteration: 89       Time: 0.445    Time step: 0.005    CFL: 2.80479e-0
 --------------
 Void Fraction
 --------------
-----------------------
-Particle-fluid forces
-----------------------
 -------------------------------
 Volume-Averaged Fluid Dynamics
 -------------------------------
@@ -2692,9 +2425,6 @@ Transient iteration: 90       Time: 0.45     Time step: 0.005    CFL: 2.83876e-0
 --------------
 Void Fraction
 --------------
-----------------------
-Particle-fluid forces
-----------------------
 -------------------------------
 Volume-Averaged Fluid Dynamics
 -------------------------------
@@ -2722,9 +2452,6 @@ Transient iteration: 91       Time: 0.455    Time step: 0.005    CFL: 2.87144e-0
 --------------
 Void Fraction
 --------------
-----------------------
-Particle-fluid forces
-----------------------
 -------------------------------
 Volume-Averaged Fluid Dynamics
 -------------------------------
@@ -2752,9 +2479,6 @@ Transient iteration: 92       Time: 0.46     Time step: 0.005    CFL: 2.90325e-0
 --------------
 Void Fraction
 --------------
-----------------------
-Particle-fluid forces
-----------------------
 -------------------------------
 Volume-Averaged Fluid Dynamics
 -------------------------------
@@ -2782,9 +2506,6 @@ Transient iteration: 93       Time: 0.465    Time step: 0.005    CFL: 2.93433e-0
 --------------
 Void Fraction
 --------------
-----------------------
-Particle-fluid forces
-----------------------
 -------------------------------
 Volume-Averaged Fluid Dynamics
 -------------------------------
@@ -2812,9 +2533,6 @@ Transient iteration: 94       Time: 0.47     Time step: 0.005    CFL: 2.96433e-0
 --------------
 Void Fraction
 --------------
-----------------------
-Particle-fluid forces
-----------------------
 -------------------------------
 Volume-Averaged Fluid Dynamics
 -------------------------------
@@ -2842,9 +2560,6 @@ Transient iteration: 95       Time: 0.475    Time step: 0.005    CFL: 2.99275e-0
 --------------
 Void Fraction
 --------------
-----------------------
-Particle-fluid forces
-----------------------
 -------------------------------
 Volume-Averaged Fluid Dynamics
 -------------------------------
@@ -2872,9 +2587,6 @@ Transient iteration: 96       Time: 0.48     Time step: 0.005    CFL: 3.01919e-0
 --------------
 Void Fraction
 --------------
-----------------------
-Particle-fluid forces
-----------------------
 -------------------------------
 Volume-Averaged Fluid Dynamics
 -------------------------------
@@ -2902,9 +2614,6 @@ Transient iteration: 97       Time: 0.485    Time step: 0.005    CFL: 3.04331e-0
 --------------
 Void Fraction
 --------------
-----------------------
-Particle-fluid forces
-----------------------
 -------------------------------
 Volume-Averaged Fluid Dynamics
 -------------------------------
@@ -2932,9 +2641,6 @@ Transient iteration: 98       Time: 0.49     Time step: 0.005    CFL: 3.06527e-0
 --------------
 Void Fraction
 --------------
-----------------------
-Particle-fluid forces
-----------------------
 -------------------------------
 Volume-Averaged Fluid Dynamics
 -------------------------------
@@ -2962,9 +2668,6 @@ Transient iteration: 99       Time: 0.495    Time step: 0.005    CFL: 3.0856e-05
 --------------
 Void Fraction
 --------------
-----------------------
-Particle-fluid forces
-----------------------
 -------------------------------
 Volume-Averaged Fluid Dynamics
 -------------------------------
@@ -2992,9 +2695,6 @@ Transient iteration: 100      Time: 0.5      Time step: 0.005    CFL: 3.1048e-05
 --------------
 Void Fraction
 --------------
-----------------------
-Particle-fluid forces
-----------------------
 -------------------------------
 Volume-Averaged Fluid Dynamics
 -------------------------------
