@@ -310,7 +310,7 @@ public:
    * If it indeed is the first assembly, then the first_assembly is set to
    * false. This function is used when providing the residual to the simulation
    * control object when using steady-bdf methods. Since the residual must be
-   * provided once per time step (and at the beginning) this function is used to
+   * provided once per time-step (and at the beginning) this function is used to
    * identify that.
    */
   virtual bool
