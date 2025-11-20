@@ -56,7 +56,6 @@ void
 KinsolNewtonNonLinearSolver<VectorType>::solve(const bool is_initial_step)
 {
 #ifdef DEAL_II_WITH_SUNDIALS
-  bool first_step = is_initial_step;
 
   PhysicsSolver<VectorType> *solver = this->physics_solver;
 
@@ -122,7 +121,7 @@ KinsolNewtonNonLinearSolver<VectorType>::solve(const bool is_initial_step)
                                              VectorType &dst,
                                              const double /* tolerance */) {
     solver->pcout << "Solving linear system..." << std::endl;
-    solver->solve_linear_system(first_step);
+    solver->solve_linear_system();
     dst = solver->get_newton_update();
     return 0;
   };

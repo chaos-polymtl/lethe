@@ -239,12 +239,9 @@ public:
   /**
    * @brief Call for the solution of the linear system of equation using a strategy appropriate
    * to the auxiliary physics
-   *
-   * @param initial_step Provides the linear solver with indication if this solution is the first
-   * one for the system of equation or not
    */
   void
-  solve_linear_system(const bool initial_step) override;
+  solve_linear_system() override;
 
   /**
    * @brief Getter methods to get the private attributes for the physic currently solved

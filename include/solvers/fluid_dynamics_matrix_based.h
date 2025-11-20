@@ -188,7 +188,7 @@ protected:
    * the Dirichlet boundary conditions
    */
   void
-  solve_linear_system(const bool initial_step) override;
+  solve_linear_system() override;
 
 private:
   /**

@@ -1085,7 +1085,7 @@ FluidDynamicsMatrixBased<dim>::set_initial_condition_fd(
       if (this->simulation_parameters.linear_solver
             .at(PhysicsID::fluid_dynamics)
             .solver == Parameters::LinearSolver::SolverType::gmres)
-        solve_system_GMRES(true, 1e-15, 1e-15);
+        solve_system_GMRES(true,1e-15, 1e-15);
 
       this->present_solution = this->newton_update;
       this->finish_time_step();
@@ -1342,7 +1342,7 @@ FluidDynamicsMatrixBased<dim>::assemble_L2_projection()
 
 template <int dim>
 void
-FluidDynamicsMatrixBased<dim>::solve_linear_system(const bool initial_step)
+FluidDynamicsMatrixBased<dim>::solve_linear_system()
 {
   const double absolute_residual =
     this->simulation_parameters.linear_solver.at(PhysicsID::fluid_dynamics)
@@ -1353,15 +1353,15 @@ FluidDynamicsMatrixBased<dim>::solve_linear_system(const bool initial_step)
 
   if (this->simulation_parameters.linear_solver.at(PhysicsID::fluid_dynamics)
         .solver == Parameters::LinearSolver::SolverType::gmres)
-    solve_system_GMRES(initial_step, absolute_residual, relative_residual);
+    solve_system_GMRES(false, absolute_residual, relative_residual);
   else if (this->simulation_parameters.linear_solver
              .at(PhysicsID::fluid_dynamics)
              .solver == Parameters::LinearSolver::SolverType::bicgstab)
-    solve_system_BiCGStab(initial_step, absolute_residual, relative_residual);
+    solve_system_BiCGStab(false, absolute_residual, relative_residual);
   else if (this->simulation_parameters.linear_solver
              .at(PhysicsID::fluid_dynamics)
              .solver == Parameters::LinearSolver::SolverType::direct)
-    solve_system_direct(initial_step, absolute_residual, relative_residual);
+    solve_system_direct(false, absolute_residual, relative_residual);
   else
     AssertThrow(
       this->simulation_parameters.linear_solver.at(PhysicsID::fluid_dynamics)

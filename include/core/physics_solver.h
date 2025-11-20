@@ -53,12 +53,9 @@ public:
 
   /**
    * @brief Solve the linear system of equations.
-   *
-   * @param[in] initial_step Provides the linear solver with indication if this
-   * solution is the first one for the system of equation or not.
    */
   virtual void
-  solve_linear_system(const bool initial_step) = 0;
+  solve_linear_system() = 0;
 
   /**
    * @brief Solve the non linear system of equations.

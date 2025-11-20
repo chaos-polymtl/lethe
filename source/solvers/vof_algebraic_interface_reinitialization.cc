@@ -596,13 +596,11 @@ VOFAlgebraicInterfaceReinitialization<dim>::assemble_system_rhs()
 
 template <int dim>
 void
-VOFAlgebraicInterfaceReinitialization<dim>::solve_linear_system(
-  const bool initial_step)
+VOFAlgebraicInterfaceReinitialization<dim>::solve_linear_system()
 {
   auto mpi_communicator = this->triangulation->get_mpi_communicator();
 
-  const AffineConstraints<double> &constraints_used =
-    initial_step ? this->nonzero_constraints : this->zero_constraints;
+  const AffineConstraints<double> &constraints_used = this->zero_constraints;
 
   const bool verbose(
     this->simulation_parameters.vof_subequations_linear_solvers

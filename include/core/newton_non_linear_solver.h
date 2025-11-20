@@ -54,7 +54,6 @@ NewtonNonLinearSolver<VectorType>::solve(const bool is_initial_step)
   double global_res;
   double current_res;
   double last_res;
-  bool   first_step     = is_initial_step;
   this->outer_iteration = 0;
   last_res              = 1e6;
   current_res           = 1e6;
@@ -101,7 +100,7 @@ NewtonNonLinearSolver<VectorType>::solve(const bool is_initial_step)
                         << "  - Residual:  " << current_res << std::endl;
         }
 
-      solver->solve_linear_system(first_step);
+      solver->solve_linear_system();
       double last_alpha_res = current_res;
 
       unsigned int alpha_iter = 0;

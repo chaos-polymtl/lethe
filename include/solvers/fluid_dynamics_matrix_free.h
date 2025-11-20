@@ -528,13 +528,9 @@ protected:
   /**
    * @brief Solve the linear system of equations using the method specified in
    * the simulation parameters.
-   *
-   * @param[in] initial_step Indicates if this is the first solution of the
-   * linear system. If this is the case, the non_zero version of the
-   * constraints are used for the Dirichlet boundary conditions.
    */
   void
-  solve_linear_system(const bool initial_step) override;
+  solve_linear_system() override;
 
 private:
   /**

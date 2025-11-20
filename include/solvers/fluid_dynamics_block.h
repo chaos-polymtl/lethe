@@ -190,7 +190,7 @@ private:
    */
 
   void
-  solve_linear_system(const bool initial_step) override;
+  solve_linear_system() override;
 
   /**
    * GMRES solver with ILU preconditioning or AMG preconditioning

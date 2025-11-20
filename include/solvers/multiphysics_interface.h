@@ -392,18 +392,16 @@ public:
   /**
    * @brief Call for the solution of the linear system of an auxiliary physics.
    *
-   * @param initial_step Provides the linear solver with indication if this solution is the first
-   * one for the system of equation or not.
    */
   void
-  solve_linear_system(const PhysicsID physics_id, const bool initial_step)
+  solve_linear_system(const PhysicsID physics_id)
   {
     AssertThrow((std::find(active_physics.begin(),
                            active_physics.end(),
                            physics_id) != active_physics.end()),
                 ExcInternalError());
 
-    physics[physics_id]->solve_linear_system(initial_step);
+    physics[physics_id]->solve_linear_system();
   };
 
   /**

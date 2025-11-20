@@ -286,12 +286,9 @@ public:
   /**
    * @brief Call for the solution of the linear system of equation using ILU
    * or GMRES.
-   *
-   * @param initial_step Provide the linear solver with indication if this
-   * solution is the first one for the system of equation or not.
    */
   void
-  solve_linear_system(const bool initial_step) override;
+  solve_linear_system( ) override;
 
   /**
    * @brief Getter method to access the private attribute dof_handler for the
