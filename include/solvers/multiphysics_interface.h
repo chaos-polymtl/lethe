@@ -800,26 +800,6 @@ public:
   }
 
   /**
-   * @brief  Sets the pointer to the vector of previous solutions of the block physics in the multiphysics interface
-   *
-   * @param physics_id The physics of the DOF handler
-   *
-   * @param previous_solutions_vector The pointer to the vector of previous block solutions
-   */
-  void
-  set_previous_block_solutions(
-    const PhysicsID                     physics_id,
-    std::vector<GlobalBlockVectorType> *previous_solutions_vector)
-  {
-    AssertThrow((std::find(active_physics.begin(),
-                           active_physics.end(),
-                           physics_id) != active_physics.end()),
-                ExcInternalError());
-    block_physics_previous_solutions[physics_id] = previous_solutions_vector;
-  }
-
-
-  /**
    * @brief Mesh refinement according to an auxiliary physic parameter
    *
    * @param ivar The current element of the map simulation_parameters.mesh_adaptation.variables
