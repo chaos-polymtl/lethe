@@ -1450,7 +1450,7 @@ CFDDEMMatrixFree<dim>::solve()
           *this->face_quadrature));
 
       // The base matrix-free operator is not aware of the various VANS
-      // coupling term. We must do a cast here to ensure that the operator is
+      // coupling terms. We must do a cast here to ensure that the operator is
       // of the right type.
       if (auto mf_operator = dynamic_cast<VANSOperator<dim, double> *>(
             this->system_operator.get()))
