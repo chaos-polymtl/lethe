@@ -739,13 +739,6 @@ VOFAlgebraicInterfaceReinitialization<dim>::solve()
                       << std::endl;
         }
 
-      if (step == 1)
-        {
-          // Solve non-linear equation
-          this->solve_non_linear_system(true);
-        }
-      else
-        {
           // Update previous solution
           this->previous_solution               = *this->present_solution;
           this->previous_local_evaluation_point = this->local_evaluation_point;
@@ -754,14 +747,13 @@ VOFAlgebraicInterfaceReinitialization<dim>::solve()
           define_non_zero_constraints();
 
           // Solve non-linear equation
-          this->solve_non_linear_system(false);
+          this->solve_non_linear_system();
 
           // For debugging purposes
           if (this->simulation_parameters.multiphysics.vof_parameters
                 .regularization_method.algebraic_interface_reinitialization
                 .output_reinitialization_steps)
             write_output_results(step);
-        }
 
       // Increment step number
       step++;

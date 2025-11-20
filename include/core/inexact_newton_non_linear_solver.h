@@ -36,12 +36,9 @@ public:
   /**
    * @brief Solve the non-linear system of equations.
    *
-   * @param[in] is_initial_step Boolean variable that controls which constraints
-   * are going to be applied to the equations depending on the time step.
-   *
    */
   void
-  solve(const bool is_initial_step) override;
+  solve() override;
 
 private:
   bool matrix_requires_assembly;
@@ -57,7 +54,7 @@ InexactNewtonNonLinearSolver<VectorType>::InexactNewtonNonLinearSolver(
 
 template <typename VectorType>
 void
-InexactNewtonNonLinearSolver<VectorType>::solve(const bool is_initial_step)
+InexactNewtonNonLinearSolver<VectorType>::solve()
 {
   double       global_res;
   double       current_res;

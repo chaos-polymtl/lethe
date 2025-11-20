@@ -40,12 +40,9 @@ public:
   /**
    * @brief Solve the non-linear system of equations.
    *
-   * @param[in] is_initial_step Boolean variable that controls which constraints
-   * are going to be applied to the equations depending on the time step.
-   *
    */
   virtual void
-  solve(const bool is_initial_step) = 0;
+  solve() = 0;
 
 
   /**

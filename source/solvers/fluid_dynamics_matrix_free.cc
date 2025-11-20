@@ -2967,7 +2967,7 @@ FluidDynamicsMatrixFree<dim>::set_initial_condition_fd(
       this->simulation_control->set_assembly_method(
         Parameters::SimulationControl::TimeSteppingMethod::steady);
       PhysicsSolver<LinearAlgebra::distributed::Vector<double>>::
-        solve_non_linear_system(false);
+        solve_non_linear_system();
       this->finish_time_step();
 
       // Reset original rheology for the system operator
@@ -3023,7 +3023,7 @@ FluidDynamicsMatrixFree<dim>::set_initial_condition_fd(
 
           // Solve the problem with the temporary viscosity
           PhysicsSolver<LinearAlgebra::distributed::Vector<double>>::
-            solve_non_linear_system(false);
+            solve_non_linear_system();
           this->finish_time_step();
 
           // Update the viscosity to the next one in the ramp parameters
