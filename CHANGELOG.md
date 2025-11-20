@@ -4,12 +4,17 @@ All notable changes to the Lethe project will be documented in this file.
 The changelog for the previous releases of Lethe are located in the release_notes folder.
 The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
+### [Master] - 2025-11-20
+
+### Fixed
+
+- MINOR As noted in issue [#1503], the SimulationControl class contained a duplicated function to set the time-step. This was overly confusing and unclear. There is now only a single function that sets the time-stpe and this is all it does, set the time-step. It does not append the time-step to the time list or whatsoever, it just sets the timestep. Some documentation was added also on some of the parameter of the class to enhance the readability of some of the parameters. [#1812](https://github.com/chaos-polymtl/lethe/pull/1812)
+
 ### [Master] - 2025-11-15
 
 ### Fixed
 
 - MINOR Since PR [#1722], the sedimentation-1-cuboid example crashes when the particle collides with the bottom wall. The previous case used to run, but the non-linear and linear solver struggled pretty hard during the collision. I suspect that the case itself was actually unstable and that PR [#1722] did not break anything in particular. Using adaptive time-stepping with a max CFL of 0.5 resolves the issue, leads to the same results, and reduces the computational time. We will keep on monitoring this test case to ensure that it remains stable. [#1805](https://github.com/chaos-polymtl/lethe/pull/1805)
-
 
 ### [Master] - 2025-11-14
 
