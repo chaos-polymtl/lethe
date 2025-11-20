@@ -302,8 +302,8 @@ SimulationControlTransient::integrate()
       iteration_number++;
 
       // Update assembly method is used to change the time marching method
-      // in the case where the methods are not self-starting (all BDF of orders 2
-      // and above)
+      // in the case where the methods are not self-starting (all BDF of orders
+      // 2 and above)
       update_assembly_method();
       add_time_step(calculate_time_step());
       current_time += time_step;
