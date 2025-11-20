@@ -72,63 +72,66 @@ SimulationControl::is_output_iteration()
 void
 SimulationControl::update_assembly_method()
 {
-  if (iteration_number <= 1 &&
-      method == Parameters::SimulationControl::TimeSteppingMethod::bdf2 &&
-      bdf_start_method ==
-        Parameters::SimulationControl::BDFStartupMethods::multiple_step_bdf)
+  if (bdf_start_method ==
+      Parameters::SimulationControl::BDFStartupMethods::multiple_step_bdf)
     {
-      assembly_method = Parameters::SimulationControl::TimeSteppingMethod::bdf1;
-      set_current_time_step(initial_time_step * startup_timestep_scaling);
-    }
-  else if (iteration_number == 2 &&
-           method == Parameters::SimulationControl::TimeSteppingMethod::bdf2 &&
-           bdf_start_method == Parameters::SimulationControl::
-                                 BDFStartupMethods::multiple_step_bdf)
-    {
-      assembly_method = Parameters::SimulationControl::TimeSteppingMethod::bdf2;
-      set_suggested_time_step(initial_time_step *
-                              (1 - startup_timestep_scaling));
-    }
-  else if (iteration_number == 3 &&
-           method == Parameters::SimulationControl::TimeSteppingMethod::bdf2 &&
-           bdf_start_method == Parameters::SimulationControl::
-                                 BDFStartupMethods::multiple_step_bdf)
-    {
-      assembly_method = Parameters::SimulationControl::TimeSteppingMethod::bdf2;
-      set_suggested_time_step(initial_time_step);
-    }
-  else if (iteration_number <= 1 &&
-           method == Parameters::SimulationControl::TimeSteppingMethod::bdf3 &&
-           bdf_start_method == Parameters::SimulationControl::
-                                 BDFStartupMethods::multiple_step_bdf)
-    {
-      assembly_method = Parameters::SimulationControl::TimeSteppingMethod::bdf1;
-      set_current_time_step(initial_time_step * startup_timestep_scaling);
-    }
-  else if (iteration_number == 2 &&
-           method == Parameters::SimulationControl::TimeSteppingMethod::bdf3 &&
-           bdf_start_method == Parameters::SimulationControl::
-                                 BDFStartupMethods::multiple_step_bdf)
-    {
-      assembly_method = Parameters::SimulationControl::TimeSteppingMethod::bdf2;
-      set_suggested_time_step(initial_time_step * startup_timestep_scaling);
-    }
-  else if (iteration_number == 3 &&
-           method == Parameters::SimulationControl::TimeSteppingMethod::bdf3 &&
-           bdf_start_method == Parameters::SimulationControl::
-                                 BDFStartupMethods::multiple_step_bdf)
-    {
-      assembly_method = Parameters::SimulationControl::TimeSteppingMethod::bdf3;
-      set_suggested_time_step(initial_time_step *
-                              (1 - 2 * startup_timestep_scaling));
-    }
-  else if (iteration_number == 4 &&
-           method == Parameters::SimulationControl::TimeSteppingMethod::bdf3 &&
-           bdf_start_method == Parameters::SimulationControl::
-                                 BDFStartupMethods::multiple_step_bdf)
-    {
-      assembly_method = Parameters::SimulationControl::TimeSteppingMethod::bdf3;
-      set_suggested_time_step(initial_time_step);
+      if (iteration_number <= 1 &&
+          method == Parameters::SimulationControl::TimeSteppingMethod::bdf2)
+        {
+          assembly_method =
+            Parameters::SimulationControl::TimeSteppingMethod::bdf1;
+          set_current_time_step(initial_time_step * startup_timestep_scaling);
+        }
+      else if (iteration_number == 2 &&
+               method ==
+                 Parameters::SimulationControl::TimeSteppingMethod::bdf2)
+        {
+          assembly_method =
+            Parameters::SimulationControl::TimeSteppingMethod::bdf2;
+          set_suggested_time_step(initial_time_step *
+                                  (1 - startup_timestep_scaling));
+        }
+      else if (iteration_number == 3 &&
+               method ==
+                 Parameters::SimulationControl::TimeSteppingMethod::bdf2)
+        {
+          assembly_method =
+            Parameters::SimulationControl::TimeSteppingMethod::bdf2;
+          set_suggested_time_step(initial_time_step);
+        }
+      else if (iteration_number <= 1 &&
+               method ==
+                 Parameters::SimulationControl::TimeSteppingMethod::bdf3)
+        {
+          assembly_method =
+            Parameters::SimulationControl::TimeSteppingMethod::bdf1;
+          set_current_time_step(initial_time_step * startup_timestep_scaling);
+        }
+      else if (iteration_number == 2 &&
+               method ==
+                 Parameters::SimulationControl::TimeSteppingMethod::bdf3)
+        {
+          assembly_method =
+            Parameters::SimulationControl::TimeSteppingMethod::bdf2;
+          set_suggested_time_step(initial_time_step * startup_timestep_scaling);
+        }
+      else if (iteration_number == 3 &&
+               method ==
+                 Parameters::SimulationControl::TimeSteppingMethod::bdf3)
+        {
+          assembly_method =
+            Parameters::SimulationControl::TimeSteppingMethod::bdf3;
+          set_suggested_time_step(initial_time_step *
+                                  (1 - 2 * startup_timestep_scaling));
+        }
+      else if (iteration_number == 4 &&
+               method ==
+                 Parameters::SimulationControl::TimeSteppingMethod::bdf3)
+        {
+          assembly_method =
+            Parameters::SimulationControl::TimeSteppingMethod::bdf3;
+          set_suggested_time_step(initial_time_step);
+        }
     }
   else
     {
