@@ -1085,7 +1085,7 @@ FluidDynamicsMatrixBased<dim>::set_initial_condition_fd(
       if (this->simulation_parameters.linear_solver
             .at(PhysicsID::fluid_dynamics)
             .solver == Parameters::LinearSolver::SolverType::gmres)
-        solve_system_GMRES(true,1e-15, 1e-15);
+        solve_system_GMRES(true, 1e-15, 1e-15);
 
       this->present_solution = this->newton_update;
       this->finish_time_step();

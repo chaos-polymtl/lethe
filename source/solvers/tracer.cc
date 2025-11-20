@@ -1454,7 +1454,7 @@ Tracer<dim>::solve_linear_system()
   TimerOutput::Scope t(this->computing_timer, "Solve linear system");
 
   auto mpi_communicator = triangulation->get_mpi_communicator();
-  
+
   const AffineConstraints<double> &constraints_used = this->zero_constraints;
 
   const double absolute_residual =

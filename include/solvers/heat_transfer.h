@@ -288,7 +288,7 @@ public:
    * or GMRES.
    */
   void
-  solve_linear_system( ) override;
+  solve_linear_system() override;
 
   /**
    * @brief Getter method to access the private attribute dof_handler for the
