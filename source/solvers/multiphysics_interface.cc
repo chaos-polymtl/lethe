@@ -216,17 +216,18 @@ MultiphysicsInterface<dim>::get_projected_phase_fraction_gradient_dof_handler()
 }
 
 template <int dim>
-Shape<dim> *
+std::shared_ptr<Shape<dim>>
 MultiphysicsInterface<dim>::get_immersed_solid_shape()
 {
-  // This pointer is also used to check if an immersed boundary solid method is
-  // being used, depending on whether the pointer is assigned.
+  // This shared pointer is also used to check if an immersed boundary solid
+  // method is being used, depending on whether the pointer is assigned.
   return immersed_solid_shape;
 }
 
 template <int dim>
 void
-MultiphysicsInterface<dim>::set_immersed_solid_shape(Shape<dim> *shape)
+MultiphysicsInterface<dim>::set_immersed_solid_shape(
+  std::shared_ptr<Shape<dim>> shape)
 {
   immersed_solid_shape = shape;
 }

@@ -196,16 +196,17 @@ public:
     boundary_index = 0;
   }
 
-  /** @brief Reinitializes the signed distance vector of the scratch.
+  /**
+   * @brief Reinitializes the signed distance vector of the scratch.
    *
    * @param[in] cell The cell over which the assembly is being carried.
-   * @param[in] immersed_solid_shape The shape describing the particles (if
-   * there are any).
+   * @param[in] immersed_solid_shape Shared pointer to the shape describing the
+   * particles (if there are any).
    */
   void
   reinit_signed_distance(
     const typename DoFHandler<dim>::active_cell_iterator &cell,
-    Shape<dim>                                           *immersed_solid_shape)
+    std::shared_ptr<Shape<dim>>                           immersed_solid_shape)
   {
     if (properties_manager.field_is_required(field::levelset))
       {
@@ -229,14 +230,14 @@ public:
    *
    * @param[in] cell The cell over which the assembly is being carried.
    * @param[in] face_no The face index associated with the cell
-   * @param[in] immersed_solid_shape The shape describing the particles (if
-   * there are any).
+   * @param[in] immersed_solid_shape Shared pointer to the shape describing the
+   * particles (if there are any).
    */
   void
   reinit_signed_distance_at_face(
     const typename DoFHandler<dim>::active_cell_iterator &cell,
     const unsigned int                                   &face_no,
-    Shape<dim>                                           *immersed_solid_shape)
+    std::shared_ptr<Shape<dim>>                           immersed_solid_shape)
   {
     if (properties_manager.field_is_required(field::levelset))
       {
