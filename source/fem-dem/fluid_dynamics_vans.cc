@@ -438,7 +438,7 @@ FluidDynamicsVANS<dim>::assemble_local_system_matrix(
   scratch_data.reinit(
     cell,
     this->evaluation_point,
-    this->previous_solutions,
+    *this->previous_solutions,
     this->sdirk_vectors.sum_over_previous_stages,
     this->forcing_function,
     this->flow_control.get_beta(),
@@ -457,7 +457,7 @@ FluidDynamicsVANS<dim>::assemble_local_system_matrix(
         *phase_cell,
         this->multiphysics->get_solution(PhysicsID::VOF),
         this->multiphysics->get_filtered_solution(PhysicsID::VOF),
-        *this->multiphysics->get_previous_solutions(PhysicsID::VOF));
+        this->multiphysics->get_previous_solutions(PhysicsID::VOF));
     }
 
   typename DoFHandler<dim>::active_cell_iterator void_fraction_cell(
@@ -480,7 +480,7 @@ FluidDynamicsVANS<dim>::assemble_local_system_matrix(
         void_fraction_cell,
         *phase_cell,
         this->evaluation_point,
-        this->previous_solutions[0],
+        (*this->previous_solutions)[0],
         this->particle_projector.void_fraction_locally_relevant,
         particle_handler,
         cfd_dem_simulation_parameters.cfd_dem.drag_coupling,
@@ -492,7 +492,7 @@ FluidDynamicsVANS<dim>::assemble_local_system_matrix(
         cell,
         void_fraction_cell,
         this->evaluation_point,
-        this->previous_solutions[0],
+        (*this->previous_solutions)[0],
         this->particle_projector.void_fraction_locally_relevant,
         particle_handler,
         cfd_dem_simulation_parameters.cfd_dem.drag_coupling);
@@ -594,7 +594,7 @@ FluidDynamicsVANS<dim>::assemble_local_system_rhs(
   scratch_data.reinit(
     cell,
     this->evaluation_point,
-    this->previous_solutions,
+    *this->previous_solutions,
     this->sdirk_vectors.sum_over_previous_stages,
     this->forcing_function,
     this->flow_control.get_beta(),
@@ -613,7 +613,7 @@ FluidDynamicsVANS<dim>::assemble_local_system_rhs(
         *phase_cell,
         this->multiphysics->get_solution(PhysicsID::VOF),
         this->multiphysics->get_filtered_solution(PhysicsID::VOF),
-        *this->multiphysics->get_previous_solutions(PhysicsID::VOF));
+        this->multiphysics->get_previous_solutions(PhysicsID::VOF));
     }
 
   typename DoFHandler<dim>::active_cell_iterator void_fraction_cell(
@@ -636,7 +636,7 @@ FluidDynamicsVANS<dim>::assemble_local_system_rhs(
         void_fraction_cell,
         *phase_cell,
         this->evaluation_point,
-        this->previous_solutions[0],
+        (*this->previous_solutions)[0],
         particle_projector.void_fraction_locally_relevant,
         particle_handler,
         cfd_dem_simulation_parameters.cfd_dem.drag_coupling,
@@ -648,7 +648,7 @@ FluidDynamicsVANS<dim>::assemble_local_system_rhs(
         cell,
         void_fraction_cell,
         this->evaluation_point,
-        this->previous_solutions[0],
+        (*this->previous_solutions)[0],
         particle_projector.void_fraction_locally_relevant,
         particle_handler,
         cfd_dem_simulation_parameters.cfd_dem.drag_coupling);

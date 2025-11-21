@@ -1006,7 +1006,7 @@ protected:
   VectorType                  system_rhs;
 
   // Previous solutions vectors
-  std::vector<VectorType> previous_solutions;
+  std::shared_ptr<std::vector<VectorType>> previous_solutions;
 
   /**
    * @brief Structure that stores all SDIRK-related vectors used during the time integration process.

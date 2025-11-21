@@ -3988,7 +3988,7 @@ FluidDynamicsSharp<dim>::assemble_local_system_matrix(
   scratch_data.reinit(
     cell,
     this->evaluation_point,
-    this->previous_solutions,
+    *this->previous_solutions,
     this->sdirk_vectors.sum_over_previous_stages,
     this->forcing_function,
     this->flow_control.get_beta(),
@@ -4008,7 +4008,7 @@ FluidDynamicsSharp<dim>::assemble_local_system_matrix(
         phase_cell,
         this->multiphysics->get_solution(PhysicsID::VOF),
         this->multiphysics->get_filtered_solution(PhysicsID::VOF),
-        *this->multiphysics->get_previous_solutions(PhysicsID::VOF));
+        this->multiphysics->get_previous_solutions(PhysicsID::VOF));
     }
 
   scratch_data.calculate_physical_properties();
@@ -4080,7 +4080,7 @@ FluidDynamicsSharp<dim>::assemble_local_system_rhs(
   scratch_data.reinit(
     cell,
     this->evaluation_point,
-    this->previous_solutions,
+    *this->previous_solutions,
     this->sdirk_vectors.sum_over_previous_stages,
     this->forcing_function,
     this->flow_control.get_beta(),
@@ -4100,7 +4100,7 @@ FluidDynamicsSharp<dim>::assemble_local_system_rhs(
         phase_cell,
         this->multiphysics->get_solution(PhysicsID::VOF),
         this->multiphysics->get_filtered_solution(PhysicsID::VOF),
-        *this->multiphysics->get_previous_solutions(PhysicsID::VOF));
+        this->multiphysics->get_previous_solutions(PhysicsID::VOF));
     }
 
   scratch_data.calculate_physical_properties();
