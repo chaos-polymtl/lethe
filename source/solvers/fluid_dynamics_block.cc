@@ -179,7 +179,7 @@ FluidDynamicsBlock<dim>::update_multiphysics_time_average_solution()
     {
       this->multiphysics->set_block_time_average_solution(
         PhysicsID::fluid_dynamics,
-        &this->average_velocities->get_average_velocities());
+        this->average_velocities->get_average_velocities());
     }
 }
 

@@ -79,13 +79,14 @@ public:
   /**
    * @brief Give the average of solutions with ghost cells.
    *
-   * @return The vector of average solutions.
+   * @return Shared pointer to the vector of average solutions.
    *
    */
-  VectorType &
+  std::shared_ptr<VectorType>
   get_average_velocities()
   {
-    return get_av = average_velocities;
+    *get_av = average_velocities;
+    return get_av;
   }
 
   /**
@@ -220,10 +221,10 @@ private:
   VectorType average_velocities;
 
   /**
-   * @brief Getter vector for the average velocities.
+   * @brief Shared pointer to the getter vector for the average velocities.
    *
    */
-  VectorType get_av;
+  std::shared_ptr<VectorType> get_av;
 
   /**
    * @brief Vector to store the velocities multiplied by the time step to

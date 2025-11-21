@@ -294,7 +294,7 @@ Tracer<dim>::assemble_local_system_matrix(
         {
           scratch_data.reinit_velocity(
             velocity_cell,
-            *multiphysics->get_block_time_average_solution(
+            multiphysics->get_block_time_average_solution(
               PhysicsID::fluid_dynamics),
             this->simulation_parameters.ale,
             this->simulation_parameters.tracer_drift_velocity.drift_velocity);
@@ -322,7 +322,7 @@ Tracer<dim>::assemble_local_system_matrix(
         {
           scratch_data.reinit_velocity(
             velocity_cell,
-            *multiphysics->get_time_average_solution(PhysicsID::fluid_dynamics),
+            multiphysics->get_time_average_solution(PhysicsID::fluid_dynamics),
             this->simulation_parameters.ale,
             this->simulation_parameters.tracer_drift_velocity.drift_velocity);
         }
@@ -583,7 +583,7 @@ Tracer<dim>::assemble_local_system_rhs(
         {
           scratch_data.reinit_velocity(
             velocity_cell,
-            *multiphysics->get_block_time_average_solution(
+            multiphysics->get_block_time_average_solution(
               PhysicsID::fluid_dynamics),
             this->simulation_parameters.ale,
             this->simulation_parameters.tracer_drift_velocity.drift_velocity);
@@ -611,7 +611,7 @@ Tracer<dim>::assemble_local_system_rhs(
         {
           scratch_data.reinit_velocity(
             velocity_cell,
-            *multiphysics->get_time_average_solution(PhysicsID::fluid_dynamics),
+            multiphysics->get_time_average_solution(PhysicsID::fluid_dynamics),
             this->simulation_parameters.ale,
             this->simulation_parameters.tracer_drift_velocity.drift_velocity);
         }

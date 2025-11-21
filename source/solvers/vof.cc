@@ -392,7 +392,7 @@ VolumeOfFluid<dim>::assemble_local_system_matrix(
         {
           scratch_data.reinit_velocity(
             velocity_cell,
-            *multiphysics->get_block_time_average_solution(
+            multiphysics->get_block_time_average_solution(
               PhysicsID::fluid_dynamics),
             multiphysics->get_block_previous_solutions(
               PhysicsID::fluid_dynamics),
@@ -422,7 +422,7 @@ VolumeOfFluid<dim>::assemble_local_system_matrix(
         {
           scratch_data.reinit_velocity(
             velocity_cell,
-            *multiphysics->get_time_average_solution(PhysicsID::fluid_dynamics),
+            multiphysics->get_time_average_solution(PhysicsID::fluid_dynamics),
             multiphysics->get_previous_solutions(PhysicsID::fluid_dynamics),
             this->simulation_parameters.ale);
         }
@@ -637,7 +637,7 @@ VolumeOfFluid<dim>::assemble_local_system_rhs(
         {
           scratch_data.reinit_velocity(
             velocity_cell,
-            *multiphysics->get_block_time_average_solution(
+            multiphysics->get_block_time_average_solution(
               PhysicsID::fluid_dynamics),
             multiphysics->get_block_previous_solutions(
               PhysicsID::fluid_dynamics),
@@ -667,7 +667,7 @@ VolumeOfFluid<dim>::assemble_local_system_rhs(
         {
           scratch_data.reinit_velocity(
             velocity_cell,
-            *multiphysics->get_time_average_solution(PhysicsID::fluid_dynamics),
+            multiphysics->get_time_average_solution(PhysicsID::fluid_dynamics),
             multiphysics->get_previous_solutions(PhysicsID::fluid_dynamics),
             this->simulation_parameters.ale);
         }
@@ -1508,7 +1508,7 @@ VolumeOfFluid<dim>::postprocess(bool first_iteration)
             {
               position_and_velocity = calculate_barycenter(
                 *this->present_solution,
-                *multiphysics->get_block_time_average_solution(
+                multiphysics->get_block_time_average_solution(
                   PhysicsID::fluid_dynamics));
             }
           else
@@ -1533,7 +1533,7 @@ VolumeOfFluid<dim>::postprocess(bool first_iteration)
             {
               position_and_velocity =
                 calculate_barycenter(*this->present_solution,
-                                     *multiphysics->get_time_average_solution(
+                                     multiphysics->get_time_average_solution(
                                        PhysicsID::fluid_dynamics));
             }
           else

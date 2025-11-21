@@ -3218,16 +3218,18 @@ FluidDynamicsMatrixFree<dim>::update_multiphysics_time_average_solution()
         this->locally_owned_dofs, this->mpi_communicator);
       convert_vector_dealii_to_trilinos(
         temp_average_velocities,
-        this->average_velocities->get_average_velocities());
+        *this->average_velocities->get_average_velocities());
       this->multiphysics_average_velocities = temp_average_velocities;
 
 #ifndef LETHE_USE_LDV
       this->multiphysics->set_time_average_solution(
-        PhysicsID::fluid_dynamics, &this->multiphysics_average_velocities);
+        PhysicsID::fluid_dynamics,
+        std::make_shared<TrilinosWrappers::MPI::Vector>(
+          this->multiphysics_average_velocities));
 #else
       this->multiphysics->set_time_average_solution(
         PhysicsID::fluid_dynamics,
-        &this->average_velocities->get_average_velocities());
+        this->average_velocities->get_average_velocities());
 #endif
     }
 }

@@ -97,7 +97,7 @@ test()
             simulation_control->get_current_time(),
             simulation_control->get_time_step());
 
-          average_solution = average.get_average_velocities();
+          average_solution = *average.get_average_velocities();
 
           deallog << " Time :             " << time << std::endl;
           deallog << " Average solution : " << average_solution[0] << " "

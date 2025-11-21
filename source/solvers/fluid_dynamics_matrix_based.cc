@@ -273,7 +273,7 @@ FluidDynamicsMatrixBased<dim>::update_multiphysics_time_average_solution()
     {
       this->multiphysics->set_time_average_solution(
         PhysicsID::fluid_dynamics,
-        &this->average_velocities->get_average_velocities());
+        this->average_velocities->get_average_velocities());
     }
 }
 
@@ -1250,7 +1250,7 @@ FluidDynamicsMatrixBased<dim>::set_initial_condition_fd(
         simulation_control_info[1]); // Checkpointed time step
 
       this->local_evaluation_point =
-        this->average_velocities->get_average_velocities();
+        *this->average_velocities->get_average_velocities();
       *this->present_solution = this->local_evaluation_point;
     }
   else

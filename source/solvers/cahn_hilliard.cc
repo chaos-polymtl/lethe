@@ -749,7 +749,7 @@ CahnHilliard<dim>::postprocess(bool first_iteration)
             {
               position_and_velocity = calculate_barycenter(
                 *this->present_solution,
-                *multiphysics->get_block_time_average_solution(
+                multiphysics->get_block_time_average_solution(
                   PhysicsID::fluid_dynamics));
             }
           else
@@ -774,7 +774,7 @@ CahnHilliard<dim>::postprocess(bool first_iteration)
             {
               position_and_velocity =
                 calculate_barycenter(*this->present_solution,
-                                     *multiphysics->get_time_average_solution(
+                                     multiphysics->get_time_average_solution(
                                        PhysicsID::fluid_dynamics));
             }
           else

@@ -491,7 +491,7 @@ HeatTransfer<dim>::assemble_local_system_matrix(
         {
           scratch_data.reinit_fluid_dynamics(
             fd_cell,
-            *multiphysics->get_block_time_average_solution(
+            multiphysics->get_block_time_average_solution(
               PhysicsID::fluid_dynamics),
             this->simulation_parameters.ale);
         }
@@ -518,7 +518,7 @@ HeatTransfer<dim>::assemble_local_system_matrix(
         {
           scratch_data.reinit_fluid_dynamics(
             fd_cell,
-            *multiphysics->get_time_average_solution(PhysicsID::fluid_dynamics),
+            multiphysics->get_time_average_solution(PhysicsID::fluid_dynamics),
             this->simulation_parameters.ale);
         }
       else
@@ -662,7 +662,7 @@ HeatTransfer<dim>::assemble_local_system_rhs(
         {
           scratch_data.reinit_fluid_dynamics(
             fd_cell,
-            *multiphysics->get_block_time_average_solution(
+            multiphysics->get_block_time_average_solution(
               PhysicsID::fluid_dynamics),
             this->simulation_parameters.ale);
         }
@@ -690,7 +690,7 @@ HeatTransfer<dim>::assemble_local_system_rhs(
         {
           scratch_data.reinit_fluid_dynamics(
             fd_cell,
-            *multiphysics->get_time_average_solution(PhysicsID::fluid_dynamics),
+            multiphysics->get_time_average_solution(PhysicsID::fluid_dynamics),
             this->simulation_parameters.ale);
         }
       else

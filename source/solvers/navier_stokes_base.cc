@@ -695,7 +695,7 @@ NavierStokesBase<dim, VectorType, DofsType>::iterate()
             {
               // We get the solution via the average solution
               this->local_evaluation_point =
-                this->average_velocities->get_average_velocities();
+                *this->average_velocities->get_average_velocities();
               present_solution = this->local_evaluation_point;
             }
           else
@@ -2642,7 +2642,7 @@ NavierStokesBase<dim, VectorType, DofsType>::gather_output_results(
       solution_output_structs.emplace_back(
         std::in_place_type<OutputStructSolution<dim, VectorType>>,
         *this->dof_handler,
-        this->average_velocities->get_average_velocities(),
+        *this->average_velocities->get_average_velocities(),
         average_solution_names,
         average_data_component_interpretation);
 

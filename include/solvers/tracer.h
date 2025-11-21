@@ -539,7 +539,7 @@ private:
             scratch_data.reinit_face_velocity(
               velocity_cell,
               face_no,
-              *multiphysics->get_block_time_average_solution(
+              multiphysics->get_block_time_average_solution(
                 PhysicsID::fluid_dynamics),
               this->simulation_parameters.ale,
               this->simulation_parameters.tracer_drift_velocity.drift_velocity);
@@ -569,7 +569,7 @@ private:
             scratch_data.reinit_face_velocity(
               velocity_cell,
               face_no,
-              *multiphysics->get_time_average_solution(
+              multiphysics->get_time_average_solution(
                 PhysicsID::fluid_dynamics),
               this->simulation_parameters.ale,
               this->simulation_parameters.tracer_drift_velocity.drift_velocity);
