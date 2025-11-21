@@ -20,7 +20,6 @@
 #include <dem/set_particle_wall_contact_force_model.h>
 #include <dem/velocity_verlet_integrator.h>
 #include <fem-dem/cfd_dem_coupling_matrix_free.h>
-#include <fem-dem/fluid_dynamics_vans_matrix_free.h>
 #include <fem-dem/fluid_dynamics_vans_matrix_free_operators.h>
 #include <fem-dem/postprocessing_cfd_dem.h>
 
@@ -1272,7 +1271,7 @@ template <int dim>
 void
 CFDDEMMatrixFree<dim>::dem_contact_build(unsigned int counter)
 {
-  // If this is not the lasts DEM iteration before the next CFD iteration, check
+  // If this is not the last DEM iteration before the next CFD iteration, check
   // if a contact detection step is necessary
   if (counter != (coupling_frequency - 1))
     check_contact_detection_method(counter);
@@ -1384,7 +1383,6 @@ CFDDEMMatrixFree<dim>::solve()
   initialize_dem_parameters();
 
   // Calculate first instance of void fraction once particles are set up
-  this->vertices_cell_mapping();
   if (!dem_action_manager->check_restart_simulation())
     this->particle_projector.initialize_void_fraction(
       this->simulation_control->get_current_time());
@@ -1416,7 +1414,6 @@ CFDDEMMatrixFree<dim>::solve()
       if (!this->simulation_control->is_at_start())
         {
           this->refine_mesh();
-          this->vertices_cell_mapping();
         }
 
       // We calculate the void fraction and the particle-fluid interaction using

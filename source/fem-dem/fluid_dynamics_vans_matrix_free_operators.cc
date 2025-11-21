@@ -692,7 +692,7 @@ VANSOperator<dim, number>::local_evaluate_residual(
           gradient_result[dim] += tau * vf_value * gradient[dim];
 
           // Grad-div stabilization
-          // (∇·v,γ(ɛ∇·u+u·∇ɛ))
+          // (∇·v,γ(∂tɛ+ɛ∇·u+u·∇ɛ))
           if (cfd_dem_parameters.grad_div == true)
             {
               for (int i = 0; i < dim; ++i)

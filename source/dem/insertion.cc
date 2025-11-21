@@ -1,7 +1,6 @@
 // SPDX-FileCopyrightText: Copyright (c) 2020-2025 The Lethe Authors
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
-#include "fem-dem/cfd_dem_coupling_matrix_free.h"
 #include <dem/insertion.h>
 #include <dem/insertion_file.h>
 #include <dem/insertion_list.h>

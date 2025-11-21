@@ -57,9 +57,11 @@ ParticleFieldQCM<dim, n_components, component_start>::setup_dofs()
 
   particle_field_constraints.close();
 
-  // The particle field matrix sparsity pattern is always a Diagonal matrix
-  // meaning that the particle fields are never coupled with one another.
-  // We enforce this directly inside the sparsity pattern.
+  // The particle field matrix sparsity pattern is always a block diagonal
+  // matrix meaning that the components of the particle fields are never coupled
+  // with one another. We can enforce this directly inside the sparsity pattern.
+  // This makes it significantly cheaper to solve the linear systems associated
+  // with the projection.
   Table<2, DoFTools::Coupling> coupling_table(n_components, n_components);
   for (int i = 0; i < n_components; ++i)
     for (int j = 0; j < n_components; ++j)

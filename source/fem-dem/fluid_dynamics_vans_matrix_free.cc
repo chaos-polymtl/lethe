@@ -624,21 +624,6 @@ FluidDynamicsVANSMatrixFree<dim>::gather_output_hook()
 
 template <int dim>
 void
-FluidDynamicsVANSMatrixFree<dim>::vertices_cell_mapping()
-{
-  // Find all the cells around each vertex
-  TimerOutput::Scope t(this->computing_timer, "Map vertices to cell");
-
-  LetheGridTools::vertices_cell_mapping(this->particle_projector.dof_handler,
-                                        vertices_to_cell);
-
-  if (has_periodic_boundaries)
-    LetheGridTools::vertices_cell_mapping_with_periodic_boundaries(
-      this->particle_projector.dof_handler, vertices_to_periodic_cell);
-}
-
-template <int dim>
-void
 FluidDynamicsVANSMatrixFree<dim>::evaluate_time_derivative_void_fraction()
 {
   this->time_derivative_void_fraction = 0;
