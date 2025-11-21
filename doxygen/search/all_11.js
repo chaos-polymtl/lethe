@@ -333,7 +333,7 @@ var searchData=
   ['picard_330',['picard',['../structParameters_1_1NonLinearSolver.html#aadd162b7703a436847050b2aaae3871dae24fa5f1901c2c38540e9adef2e3b0a1',1,'Parameters::NonLinearSolver']]],
   ['piecewise_5fpolynomial_331',['piecewise_polynomial',['../namespaceParameters.html#a34edd9cb3faad925234f73958172eb84a338eb4303c1c9e5f2b2eed4bce1fd873',1,'Parameters']]],
   ['pitch_332',['pitch',['../classCylindricalHelix.html#a9e915209058f5c0823b1f882caab45cd',1,'CylindricalHelix']]],
-  ['plane_333',['plane',['../classPlane.html',1,'Plane&lt; dim &gt;'],['../classParameters_1_1Lagrangian_1_1InsertionInfo.html#a8935f71b97c7cce069b63a2e28949a4babb302c9b5204d593ba3657055842a5fb',1,'Parameters::Lagrangian::InsertionInfo::plane'],['../classPlane.html#a044673be757c5d21dd50a93f1a54f336',1,'Plane::Plane()']]],
+  ['plane_333',['plane',['../classPlane.html',1,'Plane&lt; dim &gt;'],['../classPlane.html#a044673be757c5d21dd50a93f1a54f336',1,'Plane::Plane()'],['../classParameters_1_1Lagrangian_1_1InsertionInfo.html#a8935f71b97c7cce069b63a2e28949a4babb302c9b5204d593ba3657055842a5fb',1,'Parameters::Lagrangian::InsertionInfo::plane']]],
   ['plane_5fcells_5ffor_5finsertion_334',['plane_cells_for_insertion',['../classInsertionPlane.html#a56d358ecf9a2ef3faf86a85bac1fee32',1,'InsertionPlane']]],
   ['pmass_5fpreconditioner_335',['pmass_preconditioner',['../classBlockSchurPreconditioner.html#ac49fb77cb8b93c901e85dc48c76c6479',1,'BlockSchurPreconditioner']]],
   ['pmat_5fpreconditioner_336',['pmat_preconditioner',['../classBlockDiagPreconditioner.html#a8ed8f235ec2f1ac3845aa55e58af203e',1,'BlockDiagPreconditioner']]],
