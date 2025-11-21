@@ -94,12 +94,13 @@ VolumeOfFluid<dim>::VolumeOfFluid(
   solution_transfer =
     std::make_shared<SolutionTransfer<dim, GlobalVectorType>>(*dof_handler);
 
-  // Set size of previous solutions using BDF schemes information
-  previous_solutions.resize(maximum_number_of_previous_solutions());
+  // Initialize and set size of previous solutions using BDF schemes information
+  previous_solutions = std::make_shared<std::vector<GlobalVectorType>>(
+    maximum_number_of_previous_solutions());
 
   // Prepare previous solutions transfer
-  previous_solutions_transfer.reserve(previous_solutions.size());
-  for (unsigned int i = 0; i < previous_solutions.size(); ++i)
+  previous_solutions_transfer.reserve(previous_solutions->size());
+  for (unsigned int i = 0; i < previous_solutions->size(); ++i)
     {
       previous_solutions_transfer.emplace_back(
         SolutionTransfer<dim, GlobalVectorType>(*this->dof_handler));
@@ -369,7 +370,7 @@ VolumeOfFluid<dim>::assemble_local_system_matrix(
   if (!cell->is_locally_owned())
     return;
 
-  scratch_data.reinit(cell, this->evaluation_point, this->previous_solutions);
+  scratch_data.reinit(cell, this->evaluation_point, *this->previous_solutions);
 
   const DoFHandler<dim> &dof_handler_fd =
     multiphysics->get_dof_handler(PhysicsID::fluid_dynamics);
@@ -393,7 +394,7 @@ VolumeOfFluid<dim>::assemble_local_system_matrix(
             velocity_cell,
             *multiphysics->get_block_time_average_solution(
               PhysicsID::fluid_dynamics),
-            *multiphysics->get_block_previous_solutions(
+            multiphysics->get_block_previous_solutions(
               PhysicsID::fluid_dynamics),
             this->simulation_parameters.ale);
         }
@@ -402,7 +403,7 @@ VolumeOfFluid<dim>::assemble_local_system_matrix(
           scratch_data.reinit_velocity(
             velocity_cell,
             multiphysics->get_block_solution(PhysicsID::fluid_dynamics),
-            *multiphysics->get_block_previous_solutions(
+            multiphysics->get_block_previous_solutions(
               PhysicsID::fluid_dynamics),
             this->simulation_parameters.ale);
         }
@@ -422,7 +423,7 @@ VolumeOfFluid<dim>::assemble_local_system_matrix(
           scratch_data.reinit_velocity(
             velocity_cell,
             *multiphysics->get_time_average_solution(PhysicsID::fluid_dynamics),
-            *multiphysics->get_previous_solutions(PhysicsID::fluid_dynamics),
+            multiphysics->get_previous_solutions(PhysicsID::fluid_dynamics),
             this->simulation_parameters.ale);
         }
       else
@@ -430,7 +431,7 @@ VolumeOfFluid<dim>::assemble_local_system_matrix(
           scratch_data.reinit_velocity(
             velocity_cell,
             multiphysics->get_solution(PhysicsID::fluid_dynamics),
-            *multiphysics->get_previous_solutions(PhysicsID::fluid_dynamics),
+            multiphysics->get_previous_solutions(PhysicsID::fluid_dynamics),
             this->simulation_parameters.ale);
         }
     }
@@ -614,7 +615,7 @@ VolumeOfFluid<dim>::assemble_local_system_rhs(
   if (!cell->is_locally_owned())
     return;
 
-  scratch_data.reinit(cell, this->evaluation_point, this->previous_solutions);
+  scratch_data.reinit(cell, this->evaluation_point, *this->previous_solutions);
 
   const DoFHandler<dim> &dof_handler_fd =
     multiphysics->get_dof_handler(PhysicsID::fluid_dynamics);
@@ -638,7 +639,7 @@ VolumeOfFluid<dim>::assemble_local_system_rhs(
             velocity_cell,
             *multiphysics->get_block_time_average_solution(
               PhysicsID::fluid_dynamics),
-            *multiphysics->get_block_previous_solutions(
+            multiphysics->get_block_previous_solutions(
               PhysicsID::fluid_dynamics),
             this->simulation_parameters.ale);
         }
@@ -647,7 +648,7 @@ VolumeOfFluid<dim>::assemble_local_system_rhs(
           scratch_data.reinit_velocity(
             velocity_cell,
             multiphysics->get_block_solution(PhysicsID::fluid_dynamics),
-            *multiphysics->get_block_previous_solutions(
+            multiphysics->get_block_previous_solutions(
               PhysicsID::fluid_dynamics),
             this->simulation_parameters.ale);
         }
@@ -667,7 +668,7 @@ VolumeOfFluid<dim>::assemble_local_system_rhs(
           scratch_data.reinit_velocity(
             velocity_cell,
             *multiphysics->get_time_average_solution(PhysicsID::fluid_dynamics),
-            *multiphysics->get_previous_solutions(PhysicsID::fluid_dynamics),
+            multiphysics->get_previous_solutions(PhysicsID::fluid_dynamics),
             this->simulation_parameters.ale);
         }
       else
@@ -675,7 +676,7 @@ VolumeOfFluid<dim>::assemble_local_system_rhs(
           scratch_data.reinit_velocity(
             velocity_cell,
             multiphysics->get_solution(PhysicsID::fluid_dynamics),
-            *multiphysics->get_previous_solutions(PhysicsID::fluid_dynamics),
+            multiphysics->get_previous_solutions(PhysicsID::fluid_dynamics),
             this->simulation_parameters.ale);
         }
     }
@@ -1192,11 +1193,11 @@ template <int dim>
 void
 VolumeOfFluid<dim>::percolate_time_vectors()
 {
-  for (unsigned int i = this->previous_solutions.size() - 1; i > 0; --i)
+  for (unsigned int i = this->previous_solutions->size() - 1; i > 0; --i)
     {
-      this->previous_solutions[i] = this->previous_solutions[i - 1];
+      (*this->previous_solutions)[i] = (*this->previous_solutions)[i - 1];
     }
-  this->previous_solutions[0] = *this->present_solution;
+  (*this->previous_solutions)[0] = *this->present_solution;
 }
 
 template <int dim>
@@ -1907,7 +1908,7 @@ VolumeOfFluid<dim>::sharpen_interface(GlobalVectorType &solution,
   update_solution_and_constraints(solution);
   if (sharpen_previous_solutions)
     {
-      for (auto &previous_solution : previous_solutions)
+      for (auto &previous_solution : *previous_solutions)
         update_solution_and_constraints(previous_solution);
     }
 
@@ -1917,7 +1918,7 @@ VolumeOfFluid<dim>::sharpen_interface(GlobalVectorType &solution,
 
   if (sharpen_previous_solutions)
     {
-      for (auto &previous_solution : previous_solutions)
+      for (auto &previous_solution : *previous_solutions)
         {
           assemble_L2_projection_interface_sharpening(previous_solution,
                                                       sharpening_threshold);
@@ -1930,7 +1931,7 @@ VolumeOfFluid<dim>::sharpen_interface(GlobalVectorType &solution,
   update_solution_and_constraints(solution);
   if (sharpen_previous_solutions)
     {
-      for (auto &previous_solution : previous_solutions)
+      for (auto &previous_solution : *previous_solutions)
         update_solution_and_constraints(previous_solution);
     }
 }
@@ -2110,10 +2111,10 @@ VolumeOfFluid<dim>::pre_mesh_adaptation()
   this->solution_transfer->prepare_for_coarsening_and_refinement(
     *this->present_solution);
 
-  for (unsigned int i = 0; i < this->previous_solutions.size(); ++i)
+  for (unsigned int i = 0; i < this->previous_solutions->size(); ++i)
     {
       this->previous_solutions_transfer[i]
-        .prepare_for_coarsening_and_refinement(this->previous_solutions[i]);
+        .prepare_for_coarsening_and_refinement((*this->previous_solutions)[i]);
     }
 }
 
@@ -2137,13 +2138,13 @@ VolumeOfFluid<dim>::post_mesh_adaptation()
   *this->present_solution = tmp;
 
   // Transfer previous solutions
-  for (unsigned int i = 0; i < this->previous_solutions.size(); ++i)
+  for (unsigned int i = 0; i < this->previous_solutions->size(); ++i)
     {
       GlobalVectorType tmp_previous_solution(this->locally_owned_dofs,
                                              mpi_communicator);
       this->previous_solutions_transfer[i].interpolate(tmp_previous_solution);
       this->nonzero_constraints.distribute(tmp_previous_solution);
-      this->previous_solutions[i] = tmp_previous_solution;
+      (*this->previous_solutions)[i] = tmp_previous_solution;
     }
 
   // Apply filter to phase fraction
@@ -2218,7 +2219,7 @@ VolumeOfFluid<dim>::write_checkpoint()
     std::make_shared<SolutionTransfer<dim, GlobalVectorType>>(*dof_handler);
 
   sol_set_transfer.emplace_back(&(*this->present_solution));
-  for (const auto &previous_solution : this->previous_solutions)
+  for (const auto &previous_solution : *this->previous_solutions)
     {
       sol_set_transfer.emplace_back(&previous_solution);
     }
@@ -2237,7 +2238,7 @@ VolumeOfFluid<dim>::read_checkpoint()
 {
   auto mpi_communicator = this->triangulation->get_mpi_communicator();
 
-  auto previous_solutions_size = this->previous_solutions.size();
+  auto previous_solutions_size = this->previous_solutions->size();
   this->pcout << "Reading VOF checkpoint" << std::endl;
 
   std::vector<GlobalVectorType *> input_vectors(1 + previous_solutions_size);
@@ -2260,7 +2261,7 @@ VolumeOfFluid<dim>::read_checkpoint()
   *this->present_solution = distributed_system;
   for (unsigned int i = 0; i < previous_solutions_size; ++i)
     {
-      this->previous_solutions[i] = distributed_previous_solutions[i];
+      (*this->previous_solutions)[i] = distributed_previous_solutions[i];
     }
 
   // Apply filter to phase fraction
@@ -2320,7 +2321,7 @@ VolumeOfFluid<dim>::setup_dofs()
                          mpi_communicator);
 
   // Previous solutions for transient schemes
-  for (auto &solution : this->previous_solutions)
+  for (auto &solution : *this->previous_solutions)
     {
       solution.reinit(this->locally_owned_dofs,
                       this->locally_relevant_dofs,
@@ -2406,7 +2407,7 @@ VolumeOfFluid<dim>::setup_dofs()
   multiphysics->set_solution(PhysicsID::VOF, this->present_solution);
   multiphysics->set_filtered_solution(PhysicsID::VOF, this->filtered_solution);
   multiphysics->set_previous_solutions(PhysicsID::VOF,
-                                       &this->previous_solutions);
+                                       this->previous_solutions);
 
   if (simulation_parameters.multiphysics.vof_parameters.regularization_method
         .geometric_interface_reinitialization.enable)
@@ -3014,7 +3015,7 @@ VolumeOfFluid<dim>::reinitialize_interface_with_algebraic_method()
                                                   mpi_communicator);
 
       // Apply filter to previous solution
-      apply_phase_filter(this->previous_solutions[0],
+      apply_phase_filter((*this->previous_solutions)[0],
                          previous_filtered_solution);
 
       // Set VOF information in the VOF subequations interface
@@ -3022,7 +3023,7 @@ VolumeOfFluid<dim>::reinitialize_interface_with_algebraic_method()
         ->set_vof_filtered_solution_and_dof_handler(previous_filtered_solution,
                                                     *this->dof_handler);
       this->vof_subequations_interface->set_vof_solution(
-        this->previous_solutions[0]);
+        (*this->previous_solutions)[0]);
 
       // Solve phase gradient and curvature projections followed by algebraic
       // interface reinitialization steps
@@ -3037,7 +3038,7 @@ VolumeOfFluid<dim>::reinitialize_interface_with_algebraic_method()
         *this->dof_handler,
         this->nonzero_constraints,
         previous_reinitialized_solution_owned);
-      this->previous_solutions[0] = previous_reinitialized_solution_owned;
+      (*this->previous_solutions)[0] = previous_reinitialized_solution_owned;
     }
 
   // Apply filter to solution and set VOF information in the subequation
@@ -3131,7 +3132,7 @@ VolumeOfFluid<dim>::reinitialize_interface_with_geometric_method()
         .frequency != 1)
     {
       signed_distance_solver->set_level_set_from_background_mesh(
-        *dof_handler, this->previous_solutions[0]);
+        *dof_handler, (*this->previous_solutions)[0]);
 
       signed_distance_solver->solve();
 
@@ -3148,7 +3149,7 @@ VolumeOfFluid<dim>::reinitialize_interface_with_geometric_method()
       previous_level_set = previous_level_set_owned;
 
       compute_phase_fraction_from_level_set(previous_level_set,
-                                            this->previous_solutions[0]);
+                                            (*this->previous_solutions)[0]);
     }
 
   if (simulation_parameters.multiphysics.vof_parameters.regularization_method

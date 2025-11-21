@@ -488,9 +488,9 @@ CFDDEMMatrixFree<dim>::write_checkpoint()
 
   std::vector<const VectorType *> sol_set_transfer;
   sol_set_transfer.push_back(&(*this->present_solution));
-  for (unsigned int i = 0; i < this->previous_solutions.size(); ++i)
+  for (unsigned int i = 0; i < this->previous_solutions->size(); ++i)
     {
-      sol_set_transfer.push_back(&this->previous_solutions[i]);
+      sol_set_transfer.push_back(&(*this->previous_solutions)[i]);
     }
 
   if (this->simulation_parameters.post_processing.calculate_average_velocities)
@@ -617,7 +617,7 @@ CFDDEMMatrixFree<dim>::read_checkpoint()
     }
 
   // Velocity Vectors
-  std::vector<VectorType *> x_system(1 + this->previous_solutions.size());
+  std::vector<VectorType *> x_system(1 + this->previous_solutions->size());
 
   VectorType distributed_system(this->locally_owned_dofs,
                                 this->mpi_communicator);
@@ -626,9 +626,9 @@ CFDDEMMatrixFree<dim>::read_checkpoint()
 
   std::vector<VectorType> distributed_previous_solutions;
 
-  distributed_previous_solutions.reserve(this->previous_solutions.size());
+  distributed_previous_solutions.reserve(this->previous_solutions->size());
 
-  for (unsigned int i = 0; i < this->previous_solutions.size(); ++i)
+  for (unsigned int i = 0; i < this->previous_solutions->size(); ++i)
     {
       distributed_previous_solutions.emplace_back(
         VectorType(this->locally_owned_dofs, this->mpi_communicator));
@@ -648,9 +648,9 @@ CFDDEMMatrixFree<dim>::read_checkpoint()
   system_trans_vectors.deserialize(x_system);
 
   *this->present_solution = distributed_system;
-  for (unsigned int i = 0; i < this->previous_solutions.size(); ++i)
+  for (unsigned int i = 0; i < this->previous_solutions->size(); ++i)
     {
-      this->previous_solutions[i] = distributed_previous_solutions[i];
+      (*this->previous_solutions)[i] = distributed_previous_solutions[i];
     }
 
   // Void Fraction Vectors
@@ -1442,7 +1442,7 @@ CFDDEMMatrixFree<dim>::solve()
         this->cfd_dem_simulation_parameters.cfd_dem,
         *this->dof_handler,
         *this->present_solution,
-        this->previous_solutions,
+        *this->previous_solutions,
         this->cfd_dem_simulation_parameters.dem_parameters
           .lagrangian_physical_properties.g,
         NavierStokesScratchData<dim>(

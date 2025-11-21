@@ -466,7 +466,7 @@ HeatTransfer<dim>::assemble_local_system_matrix(
 
   scratch_data.reinit(cell,
                       this->evaluation_point,
-                      this->previous_solutions,
+                      *this->previous_solutions,
                       &(*source_term));
 
   const DoFHandler<dim> &dof_handler_fluid =
@@ -637,7 +637,7 @@ HeatTransfer<dim>::assemble_local_system_rhs(
 
   scratch_data.reinit(cell,
                       this->evaluation_point,
-                      this->previous_solutions,
+                      *this->previous_solutions,
                       &(*source_term));
 
   const DoFHandler<dim> &dof_handler_fluid =
@@ -877,8 +877,8 @@ HeatTransfer<dim>::calculate_delta_T_ref(double minimum_delta_T_ref)
     }
   else
     {
-      solution_maximum = this->previous_solutions[0].max();
-      solution_minimum = this->previous_solutions[0].min();
+      solution_maximum = (*this->previous_solutions)[0].max();
+      solution_minimum = (*this->previous_solutions)[0].min();
     }
 #endif
 
@@ -967,11 +967,11 @@ template <int dim>
 void
 HeatTransfer<dim>::percolate_time_vectors()
 {
-  for (unsigned int i = previous_solutions.size() - 1; i > 0; --i)
+  for (unsigned int i = previous_solutions->size() - 1; i > 0; --i)
     {
-      previous_solutions[i] = previous_solutions[i - 1];
+      (*previous_solutions)[i] = (*previous_solutions)[i - 1];
     }
-  previous_solutions[0] = *this->present_solution;
+  (*previous_solutions)[0] = *this->present_solution;
 }
 
 template <int dim>
@@ -1126,10 +1126,10 @@ HeatTransfer<dim>::pre_mesh_adaptation()
 {
   solution_transfer->prepare_for_coarsening_and_refinement(*present_solution);
 
-  for (unsigned int i = 0; i < previous_solutions.size(); ++i)
+  for (unsigned int i = 0; i < previous_solutions->size(); ++i)
     {
       previous_solutions_transfer[i].prepare_for_coarsening_and_refinement(
-        previous_solutions[i]);
+        (*previous_solutions)[i]);
     }
 
   if (simulation_parameters.post_processing.calculate_average_temp_and_hf)
@@ -1156,13 +1156,13 @@ HeatTransfer<dim>::post_mesh_adaptation()
   *present_solution = tmp;
 
   // Transfer previous solutions
-  for (unsigned int i = 0; i < previous_solutions.size(); ++i)
+  for (unsigned int i = 0; i < previous_solutions->size(); ++i)
     {
       GlobalVectorType tmp_previous_solution(locally_owned_dofs,
                                              mpi_communicator);
       previous_solutions_transfer[i].interpolate(tmp_previous_solution);
       nonzero_constraints.distribute(tmp_previous_solution);
-      previous_solutions[i] = tmp_previous_solution;
+      (*previous_solutions)[i] = tmp_previous_solution;
     }
 
   if (simulation_parameters.post_processing.calculate_average_temp_and_hf)
@@ -1244,7 +1244,7 @@ HeatTransfer<dim>::write_checkpoint()
     std::make_shared<SolutionTransfer<dim, GlobalVectorType>>(*dof_handler);
 
   sol_set_transfer.emplace_back(&(*present_solution));
-  for (const auto &previous_solution : previous_solutions)
+  for (const auto &previous_solution : *previous_solutions)
     {
       sol_set_transfer.emplace_back(&previous_solution);
     }
@@ -1279,14 +1279,14 @@ HeatTransfer<dim>::read_checkpoint()
   auto mpi_communicator = triangulation->get_mpi_communicator();
   this->pcout << "Reading heat transfer checkpoint" << std::endl;
 
-  std::vector<GlobalVectorType *> input_vectors(1 + previous_solutions.size());
+  std::vector<GlobalVectorType *> input_vectors(1 + previous_solutions->size());
   GlobalVectorType distributed_system(locally_owned_dofs, mpi_communicator);
   input_vectors[0] = &distributed_system;
 
 
   std::vector<GlobalVectorType> distributed_previous_solutions;
-  distributed_previous_solutions.reserve(previous_solutions.size());
-  for (unsigned int i = 0; i < previous_solutions.size(); ++i)
+  distributed_previous_solutions.reserve(previous_solutions->size());
+  for (unsigned int i = 0; i < previous_solutions->size(); ++i)
     {
       distributed_previous_solutions.emplace_back(
         GlobalVectorType(locally_owned_dofs, mpi_communicator));
@@ -1330,9 +1330,9 @@ HeatTransfer<dim>::read_checkpoint()
     }
 
   *present_solution = distributed_system;
-  for (unsigned int i = 0; i < previous_solutions.size(); ++i)
+  for (unsigned int i = 0; i < previous_solutions->size(); ++i)
     {
-      previous_solutions[i] = distributed_previous_solutions[i];
+      (*previous_solutions)[i] = distributed_previous_solutions[i];
     }
 
   // Deserialize all post-processing tables that are currently used with the
@@ -1364,7 +1364,7 @@ HeatTransfer<dim>::setup_dofs()
                            mpi_communicator);
 
   // Previous solutions for transient schemes
-  for (auto &solution : this->previous_solutions)
+  for (auto &solution : *this->previous_solutions)
     {
       solution.reinit(locally_owned_dofs,
                       locally_relevant_dofs,
@@ -1480,7 +1480,7 @@ HeatTransfer<dim>::setup_dofs()
   multiphysics->set_dof_handler(PhysicsID::heat_transfer, this->dof_handler);
   multiphysics->set_solution(PhysicsID::heat_transfer, this->present_solution);
   multiphysics->set_previous_solutions(PhysicsID::heat_transfer,
-                                       &this->previous_solutions);
+                                       this->previous_solutions);
 }
 
 template <int dim>

@@ -106,12 +106,14 @@ public:
     solution_transfer =
       std::make_shared<SolutionTransfer<dim, GlobalVectorType>>(*dof_handler);
 
-    // Set size of previous solutions using BDF schemes information
-    previous_solutions.resize(maximum_number_of_previous_solutions());
+    // Initialize and set size of previous solutions using BDF schemes
+    // information
+    previous_solutions = std::make_shared<std::vector<GlobalVectorType>>(
+      maximum_number_of_previous_solutions());
 
     // Prepare previous solutions transfer
-    previous_solutions_transfer.reserve(previous_solutions.size());
-    for (unsigned int i = 0; i < previous_solutions.size(); ++i)
+    previous_solutions_transfer.reserve(previous_solutions->size());
+    for (unsigned int i = 0; i < previous_solutions->size(); ++i)
       {
         previous_solutions_transfer.emplace_back(
           SolutionTransfer<dim, GlobalVectorType>(*this->dof_handler));
@@ -623,7 +625,7 @@ private:
   TrilinosWrappers::SparseMatrix    system_matrix;
 
   // Previous solutions vectors
-  std::vector<GlobalVectorType> previous_solutions;
+  std::shared_ptr<std::vector<GlobalVectorType>> previous_solutions;
 
   // Solution transfer classes
   std::shared_ptr<SolutionTransfer<dim, GlobalVectorType>> solution_transfer;

@@ -186,7 +186,8 @@ NavierStokesBase<dim, VectorType, DofsType>::NavierStokesBase(
     }
   // Pre-allocate memory for the previous solutions using the information
   // of the BDF schemes
-  previous_solutions.resize(maximum_number_of_previous_solutions());
+  previous_solutions = std::make_shared<std::vector<VectorType>>(
+    maximum_number_of_previous_solutions());
 
   // Change the behavior of the timer for situations when you don't want
   // outputs
@@ -539,11 +540,11 @@ template <int dim, typename VectorType, typename DofsType>
 void
 NavierStokesBase<dim, VectorType, DofsType>::percolate_time_vectors_fd()
 {
-  for (unsigned int i = previous_solutions.size() - 1; i > 0; --i)
+  for (unsigned int i = previous_solutions->size() - 1; i > 0; --i)
     {
-      previous_solutions[i] = previous_solutions[i - 1];
+      (*previous_solutions)[i] = (*previous_solutions)[i - 1];
     }
-  previous_solutions[0] = *this->present_solution;
+  (*previous_solutions)[0] = *this->present_solution;
 }
 
 
@@ -946,17 +947,17 @@ NavierStokesBase<dim, VectorType, DofsType>::box_refine_mesh(const bool restart)
       std::vector<SolutionTransfer<dim, VectorType>>
         previous_solutions_transfer;
       // Important to reserve to prevent pointer dangling
-      previous_solutions_transfer.reserve(previous_solutions.size());
-      for (unsigned int i = 0; i < previous_solutions.size(); ++i)
+      previous_solutions_transfer.reserve(previous_solutions->size());
+      for (unsigned int i = 0; i < previous_solutions->size(); ++i)
         {
           previous_solutions_transfer.emplace_back(
             SolutionTransfer<dim, VectorType>(*this->dof_handler, true));
           if constexpr (std::is_same_v<
                           VectorType,
                           LinearAlgebra::distributed::Vector<double>>)
-            previous_solutions[i].update_ghost_values();
+            (*previous_solutions)[i].update_ghost_values();
           previous_solutions_transfer[i].prepare_for_coarsening_and_refinement(
-            previous_solutions[i]);
+            (*previous_solutions)[i]);
         }
 
       SolutionTransfer<dim, VectorType> solution_transfer_m1(*this->dof_handler,
@@ -992,12 +993,12 @@ NavierStokesBase<dim, VectorType, DofsType>::box_refine_mesh(const bool restart)
       // Fix on the new mesh
       present_solution = tmp;
 
-      for (unsigned int i = 0; i < previous_solutions.size(); ++i)
+      for (unsigned int i = 0; i < previous_solutions->size(); ++i)
         {
           VectorType tmp_previous_solution = init_temporary_vector();
           previous_solutions_transfer[i].interpolate(tmp_previous_solution);
           nonzero_constraints.distribute(tmp_previous_solution);
-          previous_solutions[i] = tmp_previous_solution;
+          (*previous_solutions)[i] = tmp_previous_solution;
         }
 
       multiphysics->post_mesh_adaptation();
@@ -1203,16 +1204,16 @@ NavierStokesBase<dim, VectorType, DofsType>::refine_mesh_kelly()
   SolutionTransfer<dim, VectorType> solution_transfer(*this->dof_handler, true);
   std::vector<SolutionTransfer<dim, VectorType>> previous_solutions_transfer;
   // Important to reserve to prevent pointer dangling
-  previous_solutions_transfer.reserve(previous_solutions.size());
-  for (unsigned int i = 0; i < previous_solutions.size(); ++i)
+  previous_solutions_transfer.reserve(previous_solutions->size());
+  for (unsigned int i = 0; i < previous_solutions->size(); ++i)
     {
       previous_solutions_transfer.emplace_back(
         SolutionTransfer<dim, VectorType>(*this->dof_handler, true));
       if constexpr (std::is_same_v<VectorType,
                                    LinearAlgebra::distributed::Vector<double>>)
-        previous_solutions[i].update_ghost_values();
+        (*previous_solutions)[i].update_ghost_values();
       previous_solutions_transfer[i].prepare_for_coarsening_and_refinement(
-        previous_solutions[i]);
+        (*previous_solutions)[i]);
     }
 
   if constexpr (std::is_same_v<VectorType,
@@ -1262,19 +1263,19 @@ NavierStokesBase<dim, VectorType, DofsType>::refine_mesh_uniform()
 
   std::vector<SolutionTransfer<dim, VectorType>> previous_solutions_transfer;
   // Important to reserve to prevent pointer dangling
-  previous_solutions_transfer.reserve(previous_solutions.size());
+  previous_solutions_transfer.reserve(previous_solutions->size());
 
-  for (unsigned int i = 0; i < previous_solutions.size(); ++i)
+  for (unsigned int i = 0; i < previous_solutions->size(); ++i)
     {
       previous_solutions_transfer.emplace_back(
         SolutionTransfer<dim, VectorType>(*this->dof_handler, true));
 
       if constexpr (std::is_same_v<VectorType,
                                    LinearAlgebra::distributed::Vector<double>>)
-        previous_solutions[i].update_ghost_values();
+        (*previous_solutions)[i].update_ghost_values();
 
       previous_solutions_transfer[i].prepare_for_coarsening_and_refinement(
-        previous_solutions[i]);
+        (*previous_solutions)[i]);
     }
 
   multiphysics->prepare_for_mesh_adaptation();
@@ -1317,12 +1318,12 @@ NavierStokesBase<dim, VectorType, DofsType>::transfer_solution(
   *present_solution = tmp;
 
   // Set up the vectors for the transfer
-  for (unsigned int i = 0; i < previous_solutions.size(); ++i)
+  for (unsigned int i = 0; i < previous_solutions->size(); ++i)
     {
       VectorType tmp_previous_solution = init_temporary_vector();
       previous_solutions_transfer[i].interpolate(tmp_previous_solution);
       nonzero_constraints.distribute(tmp_previous_solution);
-      previous_solutions[i] = tmp_previous_solution;
+      (*previous_solutions)[i] = tmp_previous_solution;
     }
 
   multiphysics->post_mesh_adaptation();
@@ -1813,7 +1814,7 @@ NavierStokesBase<dim, VectorType, DofsType>::set_nodal_values()
   if (this->simulation_parameters.simulation_control.bdf_startup_method ==
       Parameters::SimulationControl::BDFStartupMethods::initial_solution)
     {
-      for (unsigned int i = 1; i < this->previous_solutions.size(); ++i)
+      for (unsigned int i = 1; i < this->previous_solutions->size(); ++i)
         {
           double previous_solution_time =
             -this->simulation_parameters.simulation_control.dt * i;
@@ -1833,7 +1834,7 @@ NavierStokesBase<dim, VectorType, DofsType>::set_nodal_values()
             this->simulation_parameters.initial_condition->uvwp,
             this->newton_update,
             this->fe->component_mask(pressure));
-          this->previous_solutions[i - 1] = this->newton_update;
+          (*this->previous_solutions)[i - 1] = this->newton_update;
         }
     }
 }
@@ -2280,7 +2281,7 @@ NavierStokesBase<dim, VectorType, DofsType>::set_solution_from_checkpoint(
   // for Trilinos vectors because of an assertion. A workaround will be
   // implemented in a near future
 
-  std::vector<VectorType *> x_system(1 + previous_solutions.size());
+  std::vector<VectorType *> x_system(1 + previous_solutions->size());
 
   VectorType distributed_system(locally_owned_dofs,
                                 this->locally_relevant_dofs,
@@ -2288,8 +2289,8 @@ NavierStokesBase<dim, VectorType, DofsType>::set_solution_from_checkpoint(
   x_system[0] = &(distributed_system);
 
   std::vector<VectorType> distributed_previous_solutions;
-  distributed_previous_solutions.reserve(previous_solutions.size());
-  for (unsigned int i = 0; i < previous_solutions.size(); ++i)
+  distributed_previous_solutions.reserve(previous_solutions->size());
+  for (unsigned int i = 0; i < previous_solutions->size(); ++i)
     {
       distributed_previous_solutions.emplace_back(
         VectorType(locally_owned_dofs,
@@ -2311,9 +2312,9 @@ NavierStokesBase<dim, VectorType, DofsType>::set_solution_from_checkpoint(
 
   system_trans_vectors.deserialize(x_system);
   *this->present_solution = distributed_system;
-  for (unsigned int i = 0; i < previous_solutions.size(); ++i)
+  for (unsigned int i = 0; i < previous_solutions->size(); ++i)
     {
-      previous_solutions[i] = distributed_previous_solutions[i];
+      (*previous_solutions)[i] = distributed_previous_solutions[i];
     }
 
   // Reset the average velocity profile if the initial time to average the
@@ -3125,9 +3126,9 @@ NavierStokesBase<dim, VectorType, DofsType>::write_checkpoint()
 
   std::vector<const VectorType *> sol_set_transfer;
   sol_set_transfer.emplace_back(&(*this->present_solution));
-  for (unsigned int i = 0; i < previous_solutions.size(); ++i)
+  for (unsigned int i = 0; i < previous_solutions->size(); ++i)
     {
-      sol_set_transfer.emplace_back(&previous_solutions[i]);
+      sol_set_transfer.emplace_back(&(*previous_solutions)[i]);
     }
 
   if (simulation_parameters.post_processing.calculate_average_velocities ||

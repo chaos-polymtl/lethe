@@ -486,9 +486,9 @@ CFDDEMSolver<dim>::write_checkpoint()
 
   std::vector<const GlobalVectorType *> sol_set_transfer;
   sol_set_transfer.push_back(&(*this->present_solution));
-  for (unsigned int i = 0; i < this->previous_solutions.size(); ++i)
+  for (unsigned int i = 0; i < this->previous_solutions->size(); ++i)
     {
-      sol_set_transfer.push_back(&this->previous_solutions[i]);
+      sol_set_transfer.push_back(&(*this->previous_solutions)[i]);
     }
 
   if (this->simulation_parameters.post_processing.calculate_average_velocities)
@@ -616,7 +616,8 @@ CFDDEMSolver<dim>::read_checkpoint()
     }
 
   // Velocity Vectors
-  std::vector<GlobalVectorType *> x_system(1 + this->previous_solutions.size());
+  std::vector<GlobalVectorType *> x_system(1 +
+                                           this->previous_solutions->size());
 
   GlobalVectorType distributed_system(this->locally_owned_dofs,
                                       this->mpi_communicator);
@@ -625,9 +626,9 @@ CFDDEMSolver<dim>::read_checkpoint()
 
   std::vector<GlobalVectorType> distributed_previous_solutions;
 
-  distributed_previous_solutions.reserve(this->previous_solutions.size());
+  distributed_previous_solutions.reserve(this->previous_solutions->size());
 
-  for (unsigned int i = 0; i < this->previous_solutions.size(); ++i)
+  for (unsigned int i = 0; i < this->previous_solutions->size(); ++i)
     {
       distributed_previous_solutions.emplace_back(
         GlobalVectorType(this->locally_owned_dofs, this->mpi_communicator));
@@ -648,9 +649,9 @@ CFDDEMSolver<dim>::read_checkpoint()
   system_trans_vectors.deserialize(x_system);
 
   *this->present_solution = distributed_system;
-  for (unsigned int i = 0; i < this->previous_solutions.size(); ++i)
+  for (unsigned int i = 0; i < this->previous_solutions->size(); ++i)
     {
-      this->previous_solutions[i] = distributed_previous_solutions[i];
+      (*this->previous_solutions)[i] = distributed_previous_solutions[i];
     }
 
   // Void Fraction Vectors
@@ -765,9 +766,9 @@ CFDDEMSolver<dim>::load_balance()
 
   std::vector<const GlobalVectorType *> sol_set_transfer;
   sol_set_transfer.push_back(&(*this->present_solution));
-  for (unsigned int i = 0; i < this->previous_solutions.size(); ++i)
+  for (unsigned int i = 0; i < this->previous_solutions->size(); ++i)
     {
-      sol_set_transfer.push_back(&this->previous_solutions[i]);
+      sol_set_transfer.push_back(&(*this->previous_solutions)[i]);
     }
 
   // Prepare for Serialization
@@ -857,7 +858,8 @@ CFDDEMSolver<dim>::load_balance()
     this->particle_projector.dof_handler);
 
   // Velocity Vectors
-  std::vector<GlobalVectorType *> x_system(1 + this->previous_solutions.size());
+  std::vector<GlobalVectorType *> x_system(1 +
+                                           this->previous_solutions->size());
 
   GlobalVectorType distributed_system(this->locally_owned_dofs,
                                       this->mpi_communicator);
@@ -866,9 +868,9 @@ CFDDEMSolver<dim>::load_balance()
 
   std::vector<GlobalVectorType> distributed_previous_solutions;
 
-  distributed_previous_solutions.reserve(this->previous_solutions.size());
+  distributed_previous_solutions.reserve(this->previous_solutions->size());
 
-  for (unsigned int i = 0; i < this->previous_solutions.size(); ++i)
+  for (unsigned int i = 0; i < this->previous_solutions->size(); ++i)
     {
       distributed_previous_solutions.emplace_back(
         GlobalVectorType(this->locally_owned_dofs, this->mpi_communicator));
@@ -878,9 +880,9 @@ CFDDEMSolver<dim>::load_balance()
   system_trans_vectors.interpolate(x_system);
 
   *this->present_solution = distributed_system;
-  for (unsigned int i = 0; i < this->previous_solutions.size(); ++i)
+  for (unsigned int i = 0; i < this->previous_solutions->size(); ++i)
     {
-      this->previous_solutions[i] = distributed_previous_solutions[i];
+      (*this->previous_solutions)[i] = distributed_previous_solutions[i];
     }
 
   x_system.clear();

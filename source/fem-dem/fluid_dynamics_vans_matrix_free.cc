@@ -498,7 +498,7 @@ FluidDynamicsVANSMatrixFree<dim>::assemble_system_rhs()
           this->cfd_dem_simulation_parameters.cfd_dem,
           *this->dof_handler,
           this->evaluation_point,
-          this->previous_solutions,
+          *this->previous_solutions,
           this->cfd_dem_simulation_parameters.dem_parameters
             .lagrangian_physical_properties.g,
           NavierStokesScratchData<dim>(
@@ -741,7 +741,7 @@ FluidDynamicsVANSMatrixFree<dim>::solve()
           this->cfd_dem_simulation_parameters.cfd_dem,
           *this->dof_handler,
           *this->present_solution,
-          this->previous_solutions,
+          *this->previous_solutions,
           cfd_dem_simulation_parameters.dem_parameters
             .lagrangian_physical_properties.g,
           NavierStokesScratchData<dim>(

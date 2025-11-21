@@ -689,7 +689,8 @@ protected:
    * provided to other physics.
    *
    */
-  std::vector<TrilinosWrappers::MPI::Vector> multiphysics_previous_solutions;
+  std::shared_ptr<std::vector<TrilinosWrappers::MPI::Vector>>
+    multiphysics_previous_solutions;
 
   /**
    * @brief Vector storing the present temperature solution from the heat transfer solver.

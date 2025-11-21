@@ -747,7 +747,7 @@ private:
   GlobalVectorType level_set;
 
   // Previous solutions vectors
-  std::vector<GlobalVectorType> previous_solutions;
+  std::shared_ptr<std::vector<GlobalVectorType>> previous_solutions;
 
   // Solution transfer classes
   std::shared_ptr<SolutionTransfer<dim, GlobalVectorType>> solution_transfer;

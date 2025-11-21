@@ -2651,7 +2651,7 @@ FluidDynamicsMatrixFree<dim>::multi_stage_postresolution(
   // sum b_i*k_i with k_i = (u*_{i} - u_{n})/(time_step*a_ii) -
   // sum_over_previous_stages
   this->local_evaluation_point = *this->present_solution;
-  this->local_evaluation_point.add(-1.0, this->previous_solutions[0]);
+  this->local_evaluation_point.add(-1.0, (*this->previous_solutions)[0]);
   this->local_evaluation_point.add((1.0 / (time_step * a_ii)) - 1,
                                    this->local_evaluation_point);
   this->local_evaluation_point.add(
@@ -2673,7 +2673,7 @@ void
 FluidDynamicsMatrixFree<dim>::update_multi_stage_solution(double time_step)
 {
   // At each time iteration, we update the value of present_solution
-  this->local_evaluation_point = this->previous_solutions[0];
+  this->local_evaluation_point = (*this->previous_solutions)[0];
   this->local_evaluation_point.add(time_step,
                                    this->sdirk_vectors.local_sum_bi_ki);
   *this->present_solution = this->local_evaluation_point;
@@ -2887,7 +2887,7 @@ FluidDynamicsMatrixFree<dim>::setup_dofs_fd()
     this->time_derivative_previous_solutions);
 
   // Initialize vectors of previous solutions
-  for (auto &solution : this->previous_solutions)
+  for (auto &solution : *this->previous_solutions)
     {
       this->system_operator->initialize_dof_vector(solution);
     }
@@ -2929,7 +2929,13 @@ FluidDynamicsMatrixFree<dim>::setup_dofs_fd()
                                               this->locally_relevant_dofs,
                                               this->mpi_communicator);
 
-  for (auto &solution : this->multiphysics_previous_solutions)
+  // Pre-allocate memory for the previous solutions using the information
+  // of the BDF schemes
+  this->multiphysics_previous_solutions =
+    std::make_shared<std::vector<TrilinosWrappers::MPI::Vector>>(
+      this->simulation_control->get_number_of_previous_solution_in_assembly());
+
+  for (auto &solution : *this->multiphysics_previous_solutions)
     solution.reinit(this->locally_owned_dofs,
                     this->locally_relevant_dofs,
                     this->mpi_communicator);
@@ -3244,8 +3250,8 @@ FluidDynamicsMatrixFree<dim>::calculate_time_derivative_previous_solutions()
       const auto           time_steps_vector =
         this->simulation_control->get_time_steps_vector();
       const double dt = time_steps_vector[0];
-      this->time_derivative_previous_solutions.add(-1 / (dt * a_ii),
-                                                   this->previous_solutions[0]);
+      this->time_derivative_previous_solutions.add(
+        -1 / (dt * a_ii), (*this->previous_solutions)[0]);
       this->time_derivative_previous_solutions.add(
         -1, this->sdirk_vectors.sum_over_previous_stages);
     }
@@ -3259,7 +3265,7 @@ FluidDynamicsMatrixFree<dim>::calculate_time_derivative_previous_solutions()
       for (unsigned int p = 0; p < number_of_previous_solutions(method); ++p)
         {
           this->time_derivative_previous_solutions.add(
-            bdf_coefs[p + 1], this->previous_solutions[p]);
+            bdf_coefs[p + 1], (*this->previous_solutions)[p]);
         }
     }
 }
@@ -3429,19 +3435,19 @@ FluidDynamicsMatrixFree<dim>::update_solutions_for_multiphysics()
 
   for (unsigned int i = 0; i < number_of_previous_solutions; i++)
     {
-      this->previous_solutions[i].update_ghost_values();
+      (*this->previous_solutions)[i].update_ghost_values();
       convert_vector_dealii_to_trilinos(temp_previous_solutions[i],
-                                        this->previous_solutions[i]);
+                                        (*this->previous_solutions)[i]);
 
-      this->multiphysics_previous_solutions[i] = temp_previous_solutions[i];
+      (*this->multiphysics_previous_solutions)[i] = temp_previous_solutions[i];
     }
 
 #ifndef LETHE_USE_LDV
   this->multiphysics->set_previous_solutions(
-    PhysicsID::fluid_dynamics, &this->multiphysics_previous_solutions);
+    PhysicsID::fluid_dynamics, this->multiphysics_previous_solutions);
 #else
   this->multiphysics->set_previous_solutions(PhysicsID::fluid_dynamics,
-                                             &this->previous_solutions);
+                                             this->previous_solutions);
 #endif
 }
 

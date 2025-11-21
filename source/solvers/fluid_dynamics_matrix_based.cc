@@ -102,7 +102,7 @@ FluidDynamicsMatrixBased<dim>::setup_dofs_fd()
                                 this->mpi_communicator);
 
   // Initialize vector of previous solutions
-  for (auto &solution : this->previous_solutions)
+  for (auto &solution : *this->previous_solutions)
     {
       solution.reinit(this->locally_owned_dofs,
                       this->locally_relevant_dofs,
@@ -190,7 +190,7 @@ FluidDynamicsMatrixBased<dim>::setup_dofs_fd()
   this->multiphysics->set_solution(PhysicsID::fluid_dynamics,
                                    this->present_solution);
   this->multiphysics->set_previous_solutions(PhysicsID::fluid_dynamics,
-                                             &this->previous_solutions);
+                                             this->previous_solutions);
 }
 
 template <int dim>
@@ -698,7 +698,7 @@ FluidDynamicsMatrixBased<dim>::assemble_local_system_matrix(
   scratch_data.reinit(
     cell,
     this->evaluation_point,
-    this->previous_solutions,
+    *this->previous_solutions,
     this->sdirk_vectors.sum_over_previous_stages,
     this->forcing_function,
     this->flow_control.get_beta(),
@@ -718,7 +718,7 @@ FluidDynamicsMatrixBased<dim>::assemble_local_system_matrix(
         phase_cell,
         this->multiphysics->get_solution(PhysicsID::VOF),
         this->multiphysics->get_filtered_solution(PhysicsID::VOF),
-        *this->multiphysics->get_previous_solutions(PhysicsID::VOF));
+        this->multiphysics->get_previous_solutions(PhysicsID::VOF));
 
       if (this->simulation_parameters.multiphysics.vof_parameters
             .surface_tension_force.enable)
@@ -782,7 +782,7 @@ FluidDynamicsMatrixBased<dim>::assemble_local_system_matrix(
       scratch_data.reinit_heat_transfer(
         temperature_cell,
         this->multiphysics->get_solution(PhysicsID::heat_transfer),
-        *this->multiphysics->get_previous_solutions(PhysicsID::heat_transfer));
+        this->multiphysics->get_previous_solutions(PhysicsID::heat_transfer));
     }
 
   if (this->simulation_parameters.mortar_parameters.enable)
@@ -937,7 +937,7 @@ FluidDynamicsMatrixBased<dim>::assemble_local_system_rhs(
   scratch_data.reinit(
     cell,
     this->evaluation_point,
-    this->previous_solutions,
+    *this->previous_solutions,
     this->sdirk_vectors.sum_over_previous_stages,
     this->forcing_function,
     this->flow_control.get_beta(),
@@ -957,7 +957,7 @@ FluidDynamicsMatrixBased<dim>::assemble_local_system_rhs(
         phase_cell,
         this->multiphysics->get_solution(PhysicsID::VOF),
         this->multiphysics->get_filtered_solution(PhysicsID::VOF),
-        *this->multiphysics->get_previous_solutions(PhysicsID::VOF));
+        this->multiphysics->get_previous_solutions(PhysicsID::VOF));
 
       if (this->simulation_parameters.multiphysics.vof_parameters
             .surface_tension_force.enable)
@@ -1017,7 +1017,7 @@ FluidDynamicsMatrixBased<dim>::assemble_local_system_rhs(
       scratch_data.reinit_heat_transfer(
         temperature_cell,
         this->multiphysics->get_solution(PhysicsID::heat_transfer),
-        *this->multiphysics->get_previous_solutions(PhysicsID::heat_transfer));
+        this->multiphysics->get_previous_solutions(PhysicsID::heat_transfer));
     }
 
   if (this->simulation_parameters.mortar_parameters.enable)
@@ -1848,7 +1848,7 @@ FluidDynamicsMatrixBased<dim>::multi_stage_postresolution(
   double                                            time_step)
 {
   auto &present_solution       = *this->present_solution;
-  auto &previous_solutions     = this->previous_solutions;
+  auto &previous_solutions     = *this->previous_solutions;
   auto &local_evaluation_point = this->local_evaluation_point;
 
   auto &local_sum_over_previous_stages =
@@ -1891,7 +1891,7 @@ void
 FluidDynamicsMatrixBased<dim>::update_multi_stage_solution(double time_step)
 {
   auto &present_solution       = *this->present_solution;
-  auto &previous_solutions     = this->previous_solutions;
+  auto &previous_solutions     = *this->previous_solutions;
   auto &local_evaluation_point = this->local_evaluation_point;
 
   // The following variables are used for the SDIRK method
