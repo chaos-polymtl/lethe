@@ -2459,8 +2459,6 @@ namespace Parameters
           solver = SolverType::kinsol_newton;
         else if (str_solver == "inexact_newton")
           solver = SolverType::inexact_newton;
-        else if (str_solver == "disabled")
-          solver = SolverType::disabled;
         else
           throw(std::runtime_error("Invalid non-linear solver "));
 

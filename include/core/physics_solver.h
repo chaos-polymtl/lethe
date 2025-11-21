@@ -5,7 +5,7 @@
 #define lethe_physics_solver_h
 
 
-#include <core/disabled_non_linear_solver.h>
+#include <core/linear_solver_strategy.h>
 #include <core/inexact_newton_non_linear_solver.h>
 #include <core/kinsol_newton_non_linear_solver.h>
 #include <core/newton_non_linear_solver.h>
@@ -27,8 +27,28 @@ template <typename VectorType>
 class PhysicsSolver
 {
 public:
+
+  /**
+   * @brief Constructor for the non-linear physics.
+   *
+   * @param[in] param Non-linear solver parameters as specified in the
+   * simulation parameter file.
+   *
+   */
   PhysicsSolver(const Parameters::NonLinearSolver non_linear_solver_parameters);
 
+
+  /**
+   * @brief Constructor for the linear physics.
+   *
+   */
+  PhysicsSolver();
+
+
+  /**
+   * @brief Destructor.
+   *
+   */
   virtual ~PhysicsSolver()
   {
     delete physics_solving_strategy;
@@ -63,7 +83,11 @@ public:
    * @brief Solve the non linear system of equations.
    */
   void
-  solve_non_linear_system();
+  solve_governing_system();
+
+  /**
+   * 
+   */
 
   /**
    * @brief Applies constraints to a local_evaluation_point.
@@ -162,19 +186,23 @@ PhysicsSolver<VectorType>::PhysicsSolver(
         physics_solving_strategy = new InexactNewtonNonLinearSolver<VectorType>(
           this, non_linear_solver_parameters);
         break;
-      case Parameters::NonLinearSolver::SolverType::disabled:
-        physics_solving_strategy =
-          new DisabledNonLinearSolver<VectorType>(this,
-                                                  non_linear_solver_parameters);
-        break;
       default:
         break;
     }
 }
 
 template <typename VectorType>
+PhysicsSolver<VectorType>::PhysicsSolver()
+  : pcout(std::cout, Utilities::MPI::this_mpi_process(MPI_COMM_WORLD) == 0)
+{
+  physics_solving_strategy =
+          new LinearSolverStrategy<VectorType>(this);
+}
+
+
+template <typename VectorType>
 void
-PhysicsSolver<VectorType>::solve_non_linear_system()
+PhysicsSolver<VectorType>::solve_governing_system()
 {
   {
     this->physics_solving_strategy->solve();
