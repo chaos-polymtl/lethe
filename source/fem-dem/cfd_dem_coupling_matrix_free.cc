@@ -768,13 +768,19 @@ CFDDEMMatrixFree<dim>::load_balance()
 
   // Otherwise, we do not support load balancing at the present time, throw and
   // exit gracefully.
-  AssertThrow(false, ExcMessage("Load balancing is currently not supportedi"));
+  AssertThrow(false, ExcMessage("Load balancing is currently not supported"));
 }
 
 template <int dim>
 void
 CFDDEMMatrixFree<dim>::add_fluid_particle_interaction()
 {
+  /// Reference to torque vector from contact outcomes
+  std::vector<Tensor<1, 3>> &torque = contact_outcome.torque;
+
+  /// Reference to force vector from contact outcomes
+  std::vector<Tensor<1, 3>> &force = contact_outcome.force;
+
   for (auto particle = this->particle_handler.begin();
        particle != this->particle_handler.end();
        ++particle)
@@ -860,7 +866,7 @@ CFDDEMMatrixFree<dim>::particle_wall_contact_force()
     .calculate_particle_point_contact_force(
       &contact_manager.get_particle_points_in_contact(),
       dem_parameters.lagrangian_physical_properties,
-      force);
+      contact_outcome.force);
 
   if constexpr (dim == 3)
     {
@@ -868,7 +874,7 @@ CFDDEMMatrixFree<dim>::particle_wall_contact_force()
         .calculate_particle_line_contact_force(
           &contact_manager.get_particle_lines_in_contact(),
           dem_parameters.lagrangian_physical_properties,
-          force);
+          contact_outcome.force);
     }
 }
 
@@ -1215,7 +1221,7 @@ CFDDEMMatrixFree<dim>::dem_iterator(unsigned int counter)
   // agitation.
   // Update the cell average velocities and accelerations
   sparse_contacts_object.update_average_velocities_acceleration(
-    this->particle_handler, g, force, dem_time_step);
+    this->particle_handler, g, contact_outcome.force, dem_time_step);
 
   // Integration correction step (after force calculation)
   // In the first step, we have to obtain location of particles at half-step
@@ -1223,8 +1229,12 @@ CFDDEMMatrixFree<dim>::dem_iterator(unsigned int counter)
   // TODO do all DEM time step at first CFD time step are half step?
   if (this->simulation_control->get_step_number() == 0)
     {
-      integrator_object->integrate_half_step_location(
-        this->particle_handler, g, dem_time_step, torque, force, MOI);
+      integrator_object->integrate_half_step_location(this->particle_handler,
+                                                      g,
+                                                      dem_time_step,
+                                                      contact_outcome.torque,
+                                                      contact_outcome.force,
+                                                      MOI);
     }
   else
     {
@@ -1234,8 +1244,8 @@ CFDDEMMatrixFree<dim>::dem_iterator(unsigned int counter)
       integrator_object->integrate(this->particle_handler,
                                    g,
                                    dem_time_step,
-                                   torque,
-                                   force,
+                                   contact_outcome.torque,
+                                   contact_outcome.force,
                                    MOI,
                                    *parallel_triangulation,
                                    sparse_contacts_object);

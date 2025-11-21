@@ -355,12 +355,6 @@ private:
   ParticleInteractionOutcomes<DEM::CFDDEMProperties::PropertiesIndex>
     contact_outcome;
 
-  /// Reference to torque vector from contact outcomes
-  std::vector<Tensor<1, 3>> &torque = contact_outcome.torque;
-
-  /// Reference to force vector from contact outcomes
-  std::vector<Tensor<1, 3>> &force = contact_outcome.force;
-
   /// Displacement vector for particle motion calculations
   std::vector<double> displacement;
 
