@@ -1,4 +1,4 @@
-// SPDX-FileCopyrightText: Copyright (c) 2020-2024 The Lethe Authors
+// SPDX-FileCopyrightText: Copyright (c) 2020-2025 The Lethe Authors
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
 #include <core/vector.h>
@@ -15,7 +15,10 @@ AverageVelocities<dim, VectorType, DofsType>::AverageVelocities(
   , solution_transfer_sum_reynolds_shear_stress_dt(dof_handler, true)
   , total_time_for_average(0.0)
   , has_started_averaging(false)
-{}
+{
+  // Initialize average velocity solution vector shared pointer
+  get_av = std::make_shared<VectorType>();
+}
 
 template <int dim, typename VectorType, typename DofsType>
 void
@@ -304,7 +307,7 @@ AverageVelocities<dim, VectorType, DofsType>::initialize_vectors(
   velocity_dt.reinit(locally_owned_dofs, mpi_communicator);
   sum_velocity_dt.reinit(locally_owned_dofs, mpi_communicator);
   average_velocities.reinit(locally_owned_dofs, mpi_communicator);
-  get_av.reinit(locally_owned_dofs, locally_relevant_dofs, mpi_communicator);
+  get_av->reinit(locally_owned_dofs, locally_relevant_dofs, mpi_communicator);
 
   // Reinitialize independent components of stress tensor vectors.
   reynolds_normal_stress_dt.reinit(locally_owned_dofs, mpi_communicator);
@@ -334,11 +337,11 @@ template <int dim, typename VectorType, typename DofsType>
 void
 AverageVelocities<dim, VectorType, DofsType>::prepare_for_mesh_adaptation()
 {
-  get_av  = sum_velocity_dt;
+  *get_av = sum_velocity_dt;
   get_rns = sum_reynolds_normal_stress_dt;
   get_rss = sum_reynolds_shear_stress_dt;
   solution_transfer_sum_velocity_dt.prepare_for_coarsening_and_refinement(
-    get_av);
+    *get_av);
   solution_transfer_sum_reynolds_normal_stress_dt
     .prepare_for_coarsening_and_refinement(get_rns);
   solution_transfer_sum_reynolds_shear_stress_dt

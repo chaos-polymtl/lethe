@@ -107,7 +107,7 @@ test()
                                                time,
                                                dt);
 
-          average_solution = average.get_average_velocities();
+          average_solution = *average.get_average_velocities();
 
           deallog << " Time :             " << time << std::endl;
           deallog << " Time step :        " << dt << std::endl;
