@@ -1,6 +1,6 @@
 <map id="/home/runner/work/lethe/lethe/include/solvers/isothermal_compressible_navier_stokes_vof_assembler.h" name="/home/runner/work/lethe/lethe/include/solvers/isothermal_compressible_navier_stokes_vof_assembler.h">
 <area shape="rect" id="Node000001" title=" " alt="" coords="2373,5,2606,75"/>
-<area shape="rect" id="Node000002" href="$simulation__control_8h.html" title=" " alt="" coords="2381,394,2568,419"/>
+<area shape="rect" id="Node000002" href="$simulation__control_8h.html" title="Simulation control classes for managing time&#45;stepping and iteration control in Lethe." alt="" coords="2381,394,2568,419"/>
 <area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="2570,73,2624,104,2673,145,2691,168,2704,194,2709,222,2705,251,2696,280,2685,302,2670,321,2647,341,2622,358,2595,372,2541,393,2539,388,2593,367,2619,353,2644,337,2666,317,2680,299,2691,278,2700,250,2704,222,2699,196,2687,171,2669,148,2621,108,2567,77"/>
 <area shape="rect" id="Node000043" href="$auxiliary__physics_8h.html" title=" " alt="" coords="503,218,702,243"/>
 <area shape="poly" id="edge24_Node000001_Node000043" title=" " alt="" coords="2373,56,716,221,715,215,2372,50"/>

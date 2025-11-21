@@ -48,7 +48,7 @@
 <area shape="poly" id="edge62_Node000019_Node000007" title=" " alt="" coords="600,136,474,173,394,203,310,241,225,288,145,345,109,377,75,412,44,450,18,490,9,517,12,542,24,566,44,588,70,609,99,627,159,657,156,662,97,632,67,613,41,592,20,569,7,543,4,516,13,488,40,447,71,409,105,374,142,341,222,284,307,236,392,198,472,168,599,131"/>
 <area shape="rect" id="Node000020" href="$parameters__lagrangian_8h.html" title=" " alt="" coords="1315,255,1532,280"/>
 <area shape="poly" id="edge27_Node000019_Node000020" title=" " alt="" coords="713,131,1349,249,1349,255,712,136"/>
-<area shape="rect" id="Node000054" href="$simulation__control_8h.html" title=" " alt="" coords="1307,181,1494,207"/>
+<area shape="rect" id="Node000054" href="$simulation__control_8h.html" title="Simulation control classes for managing time&#45;stepping and iteration control in Lethe." alt="" coords="1307,181,1494,207"/>
 <area shape="poly" id="edge54_Node000019_Node000054" title=" " alt="" coords="734,127,1294,180,1294,185,734,132"/>
 <area shape="rect" id="Node000021" href="$parameters_8h.html" title=" " alt="" coords="1639,328,1781,353"/>
 <area shape="poly" id="edge28_Node000020_Node000021" title=" " alt="" coords="1470,277,1651,322,1650,327,1469,283"/>

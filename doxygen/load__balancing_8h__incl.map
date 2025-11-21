@@ -2,7 +2,7 @@
 <area shape="rect" id="Node000001" title=" " alt="" coords="2310,5,2493,60"/>
 <area shape="rect" id="Node000002" href="$parameters__lagrangian_8h.html" title=" " alt="" coords="725,181,942,207"/>
 <area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="2310,46,956,183,956,178,2309,41"/>
-<area shape="rect" id="Node000040" href="$simulation__control_8h.html" title=" " alt="" coords="2229,108,2416,133"/>
+<area shape="rect" id="Node000040" href="$simulation__control_8h.html" title="Simulation control classes for managing time&#45;stepping and iteration control in Lethe." alt="" coords="2229,108,2416,133"/>
 <area shape="poly" id="edge41_Node000001_Node000040" title=" " alt="" coords="2379,62,2345,99,2341,96,2375,58"/>
 <area shape="rect" id="Node000044" href="$adaptive__sparse__contacts_8h.html" title=" " alt="" coords="2624,328,2787,368"/>
 <area shape="poly" id="edge48_Node000001_Node000044" title=" " alt="" coords="2429,58,2680,316,2676,320,2425,62"/>

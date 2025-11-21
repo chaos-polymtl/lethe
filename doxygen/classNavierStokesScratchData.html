@@ -575,7 +575,7 @@ template&lt;int dim&gt; </div>
 <p>Constructor. The constructor creates the fe_values that will be used to fill the member variables of the scratch. It also allocated the necessary memory for all member variables. However, it does not do any evaluation, since this needs to be done at the cell level. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">simulation_control</td><td>The <a class="el" href="classSimulationControl.html" title="The SimulationControl class is responsible for the control of steady-state and transient simulations ...">SimulationControl</a> object that holds information related to the control of the steady-state or transient simulation. This is used to extrapolate auxiliary physics solutions in time for transient simulation.</td></tr>
+    <tr><td class="paramname">simulation_control</td><td>The <a class="el" href="classSimulationControl.html" title="Base class for controlling steady-state and transient simulations in Lethe.">SimulationControl</a> object that holds information related to the control of the steady-state or transient simulation. This is used to extrapolate auxiliary physics solutions in time for transient simulation.</td></tr>
     <tr><td class="paramname">properties_manager</td><td>The <a class="el" href="classPhysicalPropertiesManager.html" title="Class that manages the physical properties model which are required to calculate the various physical...">PhysicalPropertiesManager</a> object that stores physical property models.</td></tr>
     <tr><td class="paramname">fe</td><td>The FESystem used to solve the Navier-Stokes equations</td></tr>
     <tr><td class="paramname">quadrature</td><td>The quadrature to use for the assembly</td></tr>

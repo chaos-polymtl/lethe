@@ -1,6 +1,6 @@
 <map id="/home/runner/work/lethe/lethe/include/fem&#45;dem/vans_assemblers.h" name="/home/runner/work/lethe/lethe/include/fem&#45;dem/vans_assemblers.h">
 <area shape="rect" id="Node000001" title=" " alt="" coords="391,5,574,60"/>
-<area shape="rect" id="Node000002" href="$simulation__control_8h.html" title=" " alt="" coords="245,555,432,581"/>
+<area shape="rect" id="Node000002" href="$simulation__control_8h.html" title="Simulation control classes for managing time&#45;stepping and iteration control in Lethe." alt="" coords="245,555,432,581"/>
 <area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="462,62,416,122,391,159,370,197,353,243,341,292,333,341,330,390,331,478,337,541,332,542,326,478,325,390,328,341,335,291,348,242,366,195,387,156,411,119,458,59"/>
 <area shape="rect" id="Node000042" title=" " alt="" coords="182,636,357,676"/>
 <area shape="poly" id="edge106_Node000001_Node000042" title=" " alt="" coords="392,42,300,56,253,69,208,86,169,109,138,137,117,173,111,193,109,215,109,393,113,429,123,464,138,497,156,528,199,583,239,625,235,629,195,587,152,531,133,500,118,466,108,430,104,393,104,215,106,192,112,170,133,134,166,105,206,82,251,64,299,51,391,36"/>

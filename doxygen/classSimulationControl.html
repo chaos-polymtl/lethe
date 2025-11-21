@@ -98,16 +98,16 @@ Inheritance diagram for SimulationControl:</div>
 <div class="dyncontent">
 <div class="center"><img src="classSimulationControl__inherit__graph.png" border="0" usemap="#aSimulationControl_inherit__map" alt="Inheritance graph"/></div>
 <map name="aSimulationControl_inherit__map" id="aSimulationControl_inherit__map">
-<area shape="rect" title="The SimulationControl class is responsible for the control of steady&#45;state and transient simulations ..." alt="" coords="263,5,401,31"/>
-<area shape="rect" href="classSimulationControlRayTracing.html" title=" " alt="" coords="5,79,216,104"/>
+<area shape="rect" title="Base class for controlling steady&#45;state and transient simulations in Lethe." alt="" coords="263,5,401,31"/>
+<area shape="rect" href="classSimulationControlRayTracing.html" title="Simulation control for ray tracing simulations." alt="" coords="5,79,216,104"/>
 <area shape="poly" title=" " alt="" coords="284,37,147,81,146,76,283,32"/>
-<area shape="rect" href="classSimulationControlSteady.html" title=" " alt="" coords="240,79,424,104"/>
+<area shape="rect" href="classSimulationControlSteady.html" title="Simulation control for steady&#45;state simulations." alt="" coords="240,79,424,104"/>
 <area shape="poly" title=" " alt="" coords="335,44,335,79,329,79,329,44"/>
-<area shape="rect" href="classSimulationControlTransient.html" title=" " alt="" coords="449,79,647,104"/>
+<area shape="rect" href="classSimulationControlTransient.html" title="Simulation control for transient simulations." alt="" coords="449,79,647,104"/>
 <area shape="poly" title=" " alt="" coords="381,32,514,76,512,81,379,37"/>
-<area shape="rect" href="classSimulationControlAdjointSteady.html" title=" " alt="" coords="339,152,525,192"/>
+<area shape="rect" href="classSimulationControlAdjointSteady.html" title="Simulation control for adjoint steady&#45;state simulations." alt="" coords="339,152,525,192"/>
 <area shape="poly" title=" " alt="" coords="521,114,461,154,458,150,518,110"/>
-<area shape="rect" href="classSimulationControlTransientDEM.html" title="Transient simulation control tailored around the discrete element method." alt="" coords="549,159,777,185"/>
+<area shape="rect" href="classSimulationControlTransientDEM.html" title="Transient simulation control tailored for the Discrete Element Method (DEM)" alt="" coords="549,159,777,185"/>
 <area shape="poly" title=" " alt="" coords="578,110,647,157,644,161,575,114"/>
 </map>
 <center><span class="legend">[<a href="graph_legend.html">legend</a>]</span></center></div>
@@ -272,9 +272,17 @@ Static Protected Attributes</h2></td></tr>
 <tr class="separator:ae9e9c4c00dd2b6dfb9de9e735a1b2b7f"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
-<div class="textblock"><p>The <a class="el" href="classSimulationControl.html" title="The SimulationControl class is responsible for the control of steady-state and transient simulations ...">SimulationControl</a> class is responsible for the control of steady-state and transient simulations carried out with Lethe. This base class is a pure virtual class and cannot be instantiated. However, it stores the core variables which are necessary for its serialization (write and read) </p>
+<div class="textblock"><p>Base class for controlling steady-state and transient simulations in Lethe. </p>
+<p>The <a class="el" href="classSimulationControl.html" title="Base class for controlling steady-state and transient simulations in Lethe.">SimulationControl</a> class is responsible for managing the progression of simulations carried out with Lethe. This is a pure virtual base class that cannot be instantiated directly. It stores core variables necessary for time-stepping control, output management, and serialization.</p>
+<p>The class supports multiple time-stepping methods including:</p><ul>
+<li>Backward Differentiation Formula (BDF) methods: BDF1, BDF2, BDF3</li>
+<li>Singly Diagonally Implicit Runge-Kutta (SDIRK) methods</li>
+<li>Steady-state methods</li>
+</ul>
+<p>Derived classes implement specific simulation control strategies for transient, steady-state, adjoint, and specialized simulations (e.g., <a class="el" href="namespaceDEM.html" title="This namespace defines all the data containers and required operations on these containers for the DE...">DEM</a>, ray tracing).</p>
+<dl class="section note"><dt>Note</dt><dd>This class handles serialization through <a class="el" href="classSimulationControl.html#a9711044f9d9cba8a344f640d55c0e1ff" title="Save the simulation control information to a checkpoint file.">save()</a> and <a class="el" href="classSimulationControl.html#a414fd0b7da77e067991b56af939ee66f" title="Read the simulation control information from a checkpoint file.">read()</a> methods to enable checkpointing and restart capabilities. </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="simulation__control_8h_source.html#l00019">19</a> of file <a class="el" href="simulation__control_8h_source.html">simulation_control.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="simulation__control_8h_source.html#l00042">42</a> of file <a class="el" href="simulation__control_8h_source.html">simulation_control.h</a>.</p>
 </div><h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
 <a id="aa2c150f3aa97201fe583745738a41148" name="aa2c150f3aa97201fe583745738a41148"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#aa2c150f3aa97201fe583745738a41148">&#9670;&#160;</a></span>SimulationControl()</h2>
@@ -292,7 +300,8 @@ Static Protected Attributes</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p>The simulation control class is constructed by a simple parameter structure from which it draws it's arguments. This structure is not kept internally. This means that require information is copied from the struct to the class. </p>
+<p>Construct a <a class="el" href="classSimulationControl.html" title="Base class for controlling steady-state and transient simulations in Lethe.">SimulationControl</a> object from parameter structure. </p>
+<p>The simulation control class is constructed from a parameter structure from which it draws its arguments. This structure is not kept internally. This means that required information is copied from the struct to the class.</p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramdir">[in]</td><td class="paramname">param</td><td>Structure of the parameters for the simulation control </td></tr>
@@ -302,7 +311,7 @@ Static Protected Attributes</h2></td></tr>
 
 <p class="definition">Definition at line <a class="el" href="simulation__control_8cc_source.html#l00012">12</a> of file <a class="el" href="simulation__control_8cc_source.html">simulation_control.cc</a>.</p>
 
-<p class="reference">References <a class="el" href="simulation__control_8h_source.html#l00125">bdf_coefs</a>, <a class="el" href="parameters_8h_source.html#l00095">Parameters::SimulationControl::dt</a>, <a class="el" href="simulation__control_8h_source.html#l00081">n_previous_time_steps</a>, and <a class="el" href="simulation__control_8h_source.html#l00051">time_step_vector</a>.</p>
+<p class="reference">References <a class="el" href="simulation__control_8h_source.html#l00199">bdf_coefs</a>, <a class="el" href="parameters_8h_source.html#l00095">Parameters::SimulationControl::dt</a>, <a class="el" href="simulation__control_8h_source.html#l00138">n_previous_time_steps</a>, and <a class="el" href="simulation__control_8h_source.html#l00090">time_step_vector</a>.</p>
 
 </div>
 </div>
@@ -350,17 +359,18 @@ Static Protected Attributes</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p>Add a time step and stores the previous one in a list. </p>
+<p>Add a time step and store the previous one in the history. </p>
+<p>This method updates the time step history by adding the new time step to the time_step_vector. The history is maintained for BDF methods that require knowledge of previous time steps.</p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramdir">[in]</td><td class="paramname">p_timestep</td><td>the new value of the time step for the present iteration. </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">p_timestep</td><td>The new value of the time step for the present iteration </td></tr>
   </table>
   </dd>
 </dl>
 
 <p class="definition">Definition at line <a class="el" href="simulation__control_8cc_source.html#l00049">49</a> of file <a class="el" href="simulation__control_8cc_source.html">simulation_control.cc</a>.</p>
 
-<p class="reference">References <a class="el" href="simulation__control_8h_source.html#l00037">time_step</a>, and <a class="el" href="simulation__control_8h_source.html#l00051">time_step_vector</a>.</p>
+<p class="reference">References <a class="el" href="simulation__control_8h_source.html#l00065">time_step</a>, and <a class="el" href="simulation__control_8h_source.html#l00090">time_step_vector</a>.</p>
 
 </div>
 </div>
@@ -387,13 +397,15 @@ Static Protected Attributes</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p>Calculate the next value of the time step. The base function returns the value of the time step, but derived class may implement adaptative time stepping. </p>
+<p>Calculate the next value of the time step. </p>
+<p>The base function returns the value of the current time step, but derived classes may implement adaptive time stepping based on CFL conditions or other criteria.</p>
+<dl class="section return"><dt>Returns</dt><dd>The calculated time step value </dd></dl>
 
 <p>Reimplemented in <a class="el" href="classSimulationControlTransient.html#a74d0fb44b9447a364e2a7df92620d7b9">SimulationControlTransient</a>.</p>
 
-<p class="definition">Definition at line <a class="el" href="simulation__control_8h_source.html#l00261">261</a> of file <a class="el" href="simulation__control_8h_source.html">simulation_control.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="simulation__control_8h_source.html#l00356">356</a> of file <a class="el" href="simulation__control_8h_source.html">simulation_control.h</a>.</p>
 
-<p class="reference">References <a class="el" href="simulation__control_8h_source.html#l00037">time_step</a>.</p>
+<p class="reference">References <a class="el" href="simulation__control_8h_source.html#l00065">time_step</a>.</p>
 
 </div>
 </div>
@@ -420,9 +432,12 @@ Static Protected Attributes</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="simulation__control_8h_source.html#l00462">462</a> of file <a class="el" href="simulation__control_8h_source.html">simulation_control.h</a>.</p>
+<p>Get current assembly method. </p>
+<dl class="section return"><dt>Returns</dt><dd>Current time stepping method used for assembly </dd></dl>
 
-<p class="reference">References <a class="el" href="simulation__control_8h_source.html#l00028">assembly_method</a>.</p>
+<p class="definition">Definition at line <a class="el" href="simulation__control_8h_source.html#l00647">647</a> of file <a class="el" href="simulation__control_8h_source.html">simulation_control.h</a>.</p>
+
+<p class="reference">References <a class="el" href="simulation__control_8h_source.html#l00056">assembly_method</a>.</p>
 
 </div>
 </div>
@@ -449,9 +464,13 @@ Static Protected Attributes</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="simulation__control_8h_source.html#l00495">495</a> of file <a class="el" href="simulation__control_8h_source.html">simulation_control.h</a>.</p>
+<p>Get BDF coefficients. </p>
+<p>Returns the BDF coefficients used for time integration. These coefficients are updated by <a class="el" href="classSimulationControl.html#abe52d59fd85debfd1210c552f1356424" title="Update the BDF coefficients.">update_bdf_coefficients()</a> when the time step or assembly method changes.</p>
+<dl class="section return"><dt>Returns</dt><dd>Const reference to the BDF coefficients vector </dd></dl>
 
-<p class="reference">References <a class="el" href="simulation__control_8h_source.html#l00125">bdf_coefs</a>.</p>
+<p class="definition">Definition at line <a class="el" href="simulation__control_8h_source.html#l00711">711</a> of file <a class="el" href="simulation__control_8h_source.html">simulation_control.h</a>.</p>
+
+<p class="reference">References <a class="el" href="simulation__control_8h_source.html#l00199">bdf_coefs</a>.</p>
 
 </div>
 </div>
@@ -478,9 +497,12 @@ Static Protected Attributes</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="simulation__control_8h_source.html#l00438">438</a> of file <a class="el" href="simulation__control_8h_source.html">simulation_control.h</a>.</p>
+<p>Get current CFL number. </p>
+<dl class="section return"><dt>Returns</dt><dd>Current CFL condition value </dd></dl>
 
-<p class="reference">References <a class="el" href="simulation__control_8h_source.html#l00064">CFL</a>.</p>
+<p class="definition">Definition at line <a class="el" href="simulation__control_8h_source.html#l00603">603</a> of file <a class="el" href="simulation__control_8h_source.html">simulation_control.h</a>.</p>
+
+<p class="reference">References <a class="el" href="simulation__control_8h_source.html#l00109">CFL</a>.</p>
 
 </div>
 </div>
@@ -500,18 +522,19 @@ Static Protected Attributes</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p>Reads and returns the simulation control information from the checkpoint file filename without updating the simulation control information. </p>
+<p>Read and return simulation control information from checkpoint without updating. </p>
+<p>Reads and returns the simulation control information from the checkpoint file without updating the internal simulation control state. Useful for querying checkpoint information without modifying the current simulation state.</p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramdir">[in]</td><td class="paramname">prefix</td><td>The prefix of the checkpoint of the simulation</td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">prefix</td><td>The prefix of the checkpoint file for the simulation</td></tr>
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd>A vector containing the last checkpointed file and time step. </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>A vector containing the last checkpointed iteration number and time step </dd></dl>
 
 <p class="definition">Definition at line <a class="el" href="simulation__control_8cc_source.html#l00218">218</a> of file <a class="el" href="simulation__control_8cc_source.html">simulation_control.cc</a>.</p>
 
-<p class="reference">References <a class="el" href="simulation__control_8h_source.html#l00051">time_step_vector</a>.</p>
+<p class="reference">References <a class="el" href="simulation__control_8h_source.html#l00090">time_step_vector</a>.</p>
 
 </div>
 </div>
@@ -538,9 +561,12 @@ Static Protected Attributes</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="simulation__control_8h_source.html#l00419">419</a> of file <a class="el" href="simulation__control_8h_source.html">simulation_control.h</a>.</p>
+<p>Get current simulation time. </p>
+<dl class="section return"><dt>Returns</dt><dd>Current simulation time </dd></dl>
 
-<p class="reference">References <a class="el" href="simulation__control_8h_source.html#l00031">current_time</a>.</p>
+<p class="definition">Definition at line <a class="el" href="simulation__control_8h_source.html#l00570">570</a> of file <a class="el" href="simulation__control_8h_source.html">simulation_control.h</a>.</p>
+
+<p class="reference">References <a class="el" href="simulation__control_8h_source.html#l00059">current_time</a>.</p>
 
 </div>
 </div>
@@ -567,9 +593,12 @@ Static Protected Attributes</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="simulation__control_8h_source.html#l00407">407</a> of file <a class="el" href="simulation__control_8h_source.html">simulation_control.h</a>.</p>
+<p>Get number of parallel files to generate for output. </p>
+<dl class="section return"><dt>Returns</dt><dd>Number of parallel output files </dd></dl>
 
-<p class="reference">References <a class="el" href="simulation__control_8h_source.html#l00101">group_files</a>.</p>
+<p class="definition">Definition at line <a class="el" href="simulation__control_8h_source.html#l00548">548</a> of file <a class="el" href="simulation__control_8h_source.html">simulation_control.h</a>.</p>
+
+<p class="reference">References <a class="el" href="simulation__control_8h_source.html#l00168">group_files</a>.</p>
 
 </div>
 </div>
@@ -597,11 +626,11 @@ Static Protected Attributes</h2></td></tr>
 </div><div class="memdoc">
 
 <p>Get current iteration number. </p>
-<dl class="section return"><dt>Returns</dt><dd>Current iteration number. </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>Current iteration number </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="simulation__control_8h_source.html#l00389">389</a> of file <a class="el" href="simulation__control_8h_source.html">simulation_control.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="simulation__control_8h_source.html#l00515">515</a> of file <a class="el" href="simulation__control_8h_source.html">simulation_control.h</a>.</p>
 
-<p class="reference">References <a class="el" href="simulation__control_8h_source.html#l00055">iteration_number</a>.</p>
+<p class="reference">References <a class="el" href="simulation__control_8h_source.html#l00097">iteration_number</a>.</p>
 
 </div>
 </div>
@@ -628,9 +657,12 @@ Static Protected Attributes</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="simulation__control_8h_source.html#l00456">456</a> of file <a class="el" href="simulation__control_8h_source.html">simulation_control.h</a>.</p>
+<p>Get log frequency. </p>
+<dl class="section return"><dt>Returns</dt><dd>Frequency at which the status of the simulation is written to the terminal </dd></dl>
 
-<p class="reference">References <a class="el" href="simulation__control_8h_source.html#l00091">log_frequency</a>.</p>
+<p class="definition">Definition at line <a class="el" href="simulation__control_8h_source.html#l00636">636</a> of file <a class="el" href="simulation__control_8h_source.html">simulation_control.h</a>.</p>
+
+<p class="reference">References <a class="el" href="simulation__control_8h_source.html#l00154">log_frequency</a>.</p>
 
 </div>
 </div>
@@ -657,9 +689,12 @@ Static Protected Attributes</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="simulation__control_8h_source.html#l00413">413</a> of file <a class="el" href="simulation__control_8h_source.html">simulation_control.h</a>.</p>
+<p>Get log precision. </p>
+<dl class="section return"><dt>Returns</dt><dd>Number of significant digits displayed on the standard outputs </dd></dl>
 
-<p class="reference">References <a class="el" href="simulation__control_8h_source.html#l00095">log_precision</a>.</p>
+<p class="definition">Definition at line <a class="el" href="simulation__control_8h_source.html#l00559">559</a> of file <a class="el" href="simulation__control_8h_source.html">simulation_control.h</a>.</p>
+
+<p class="reference">References <a class="el" href="simulation__control_8h_source.html#l00162">log_precision</a>.</p>
 
 </div>
 </div>
@@ -686,9 +721,13 @@ Static Protected Attributes</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="simulation__control_8h_source.html#l00475">475</a> of file <a class="el" href="simulation__control_8h_source.html">simulation_control.h</a>.</p>
+<p>Get number of previous solutions required in assembly. </p>
+<p>Returns the number of previous solution vectors required for the current time stepping method (e.g., 1 for BDF1, 2 for BDF2, etc.).</p>
+<dl class="section return"><dt>Returns</dt><dd>Number of previous solutions needed for the current method </dd></dl>
 
-<p class="reference">References <a class="el" href="simulation__control_8h_source.html#l00023">method</a>, and <a class="el" href="bdf_8h_source.html#l00097">number_of_previous_solutions()</a>.</p>
+<p class="definition">Definition at line <a class="el" href="simulation__control_8h_source.html#l00673">673</a> of file <a class="el" href="simulation__control_8h_source.html">simulation_control.h</a>.</p>
+
+<p class="reference">References <a class="el" href="simulation__control_8h_source.html#l00046">method</a>, and <a class="el" href="bdf_8h_source.html#l00097">number_of_previous_solutions()</a>.</p>
 
 </div>
 </div>
@@ -727,7 +766,7 @@ Static Protected Attributes</h2></td></tr>
 
 <p class="definition">Definition at line <a class="el" href="simulation__control_8cc_source.html#l00143">143</a> of file <a class="el" href="simulation__control_8cc_source.html">simulation_control.cc</a>.</p>
 
-<p class="reference">References <a class="el" href="simulation__control_8h_source.html#l00023">method</a>.</p>
+<p class="reference">References <a class="el" href="simulation__control_8h_source.html#l00046">method</a>.</p>
 
 </div>
 </div>
@@ -754,9 +793,12 @@ Static Protected Attributes</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="simulation__control_8h_source.html#l00450">450</a> of file <a class="el" href="simulation__control_8h_source.html">simulation_control.h</a>.</p>
+<p>Get number of mesh subdivisions for output. </p>
+<dl class="section return"><dt>Returns</dt><dd>Number of mesh subdivisions to be used when outputting the results </dd></dl>
 
-<p class="reference">References <a class="el" href="simulation__control_8h_source.html#l00098">subdivision</a>.</p>
+<p class="definition">Definition at line <a class="el" href="simulation__control_8h_source.html#l00625">625</a> of file <a class="el" href="simulation__control_8h_source.html">simulation_control.h</a>.</p>
+
+<p class="reference">References <a class="el" href="simulation__control_8h_source.html#l00165">subdivision</a>.</p>
 
 </div>
 </div>
@@ -784,10 +826,11 @@ Static Protected Attributes</h2></td></tr>
 </div><div class="memdoc">
 
 <p>Check if the boundaries of the domain should be outputted when writing results. </p>
+<dl class="section return"><dt>Returns</dt><dd>true if boundaries should be included in output, false otherwise </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="simulation__control_8h_source.html#l00296">296</a> of file <a class="el" href="simulation__control_8h_source.html">simulation_control.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="simulation__control_8h_source.html#l00401">401</a> of file <a class="el" href="simulation__control_8h_source.html">simulation_control.h</a>.</p>
 
-<p class="reference">References <a class="el" href="simulation__control_8h_source.html#l00112">output_boundaries</a>.</p>
+<p class="reference">References <a class="el" href="simulation__control_8h_source.html#l00182">output_boundaries</a>.</p>
 
 </div>
 </div>
@@ -814,9 +857,12 @@ Static Protected Attributes</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="simulation__control_8h_source.html#l00395">395</a> of file <a class="el" href="simulation__control_8h_source.html">simulation_control.h</a>.</p>
+<p>Get output file name prefix. </p>
+<dl class="section return"><dt>Returns</dt><dd>Output file name prefix </dd></dl>
 
-<p class="reference">References <a class="el" href="simulation__control_8h_source.html#l00104">output_name</a>.</p>
+<p class="definition">Definition at line <a class="el" href="simulation__control_8h_source.html#l00526">526</a> of file <a class="el" href="simulation__control_8h_source.html">simulation_control.h</a>.</p>
+
+<p class="reference">References <a class="el" href="simulation__control_8h_source.html#l00171">output_name</a>.</p>
 
 </div>
 </div>
@@ -843,9 +889,12 @@ Static Protected Attributes</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="simulation__control_8h_source.html#l00401">401</a> of file <a class="el" href="simulation__control_8h_source.html">simulation_control.h</a>.</p>
+<p>Get output directory path. </p>
+<dl class="section return"><dt>Returns</dt><dd>Output directory path </dd></dl>
 
-<p class="reference">References <a class="el" href="simulation__control_8h_source.html#l00107">output_path</a>.</p>
+<p class="definition">Definition at line <a class="el" href="simulation__control_8h_source.html#l00537">537</a> of file <a class="el" href="simulation__control_8h_source.html">simulation_control.h</a>.</p>
+
+<p class="reference">References <a class="el" href="simulation__control_8h_source.html#l00174">output_path</a>.</p>
 
 </div>
 </div>
@@ -872,9 +921,12 @@ Static Protected Attributes</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="simulation__control_8h_source.html#l00425">425</a> of file <a class="el" href="simulation__control_8h_source.html">simulation_control.h</a>.</p>
+<p>Get previous simulation time. </p>
+<dl class="section return"><dt>Returns</dt><dd>Previous simulation time </dd></dl>
 
-<p class="reference">References <a class="el" href="simulation__control_8h_source.html#l00034">previous_time</a>.</p>
+<p class="definition">Definition at line <a class="el" href="simulation__control_8h_source.html#l00581">581</a> of file <a class="el" href="simulation__control_8h_source.html">simulation_control.h</a>.</p>
+
+<p class="reference">References <a class="el" href="simulation__control_8h_source.html#l00062">previous_time</a>.</p>
 
 </div>
 </div>
@@ -901,9 +953,13 @@ Static Protected Attributes</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="simulation__control_8h_source.html#l00481">481</a> of file <a class="el" href="simulation__control_8h_source.html">simulation_control.h</a>.</p>
+<p>Get simulation times for current and previous time steps. </p>
+<p>Creates a vector containing the current time and previous times based on the time step history. The times are calculated by subtracting the accumulated time steps from the current time.</p>
+<dl class="section return"><dt>Returns</dt><dd>Vector of simulation times (current and previous) </dd></dl>
 
-<p class="reference">References <a class="el" href="simulation__control_8h_source.html#l00031">current_time</a>, <a class="el" href="simulation__control_8h_source.html#l00081">n_previous_time_steps</a>, and <a class="el" href="simulation__control_8h_source.html#l00051">time_step_vector</a>.</p>
+<p class="definition">Definition at line <a class="el" href="simulation__control_8h_source.html#l00688">688</a> of file <a class="el" href="simulation__control_8h_source.html">simulation_control.h</a>.</p>
+
+<p class="reference">References <a class="el" href="simulation__control_8h_source.html#l00059">current_time</a>, <a class="el" href="simulation__control_8h_source.html#l00138">n_previous_time_steps</a>, and <a class="el" href="simulation__control_8h_source.html#l00090">time_step_vector</a>.</p>
 
 </div>
 </div>
@@ -930,9 +986,12 @@ Static Protected Attributes</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="simulation__control_8h_source.html#l00444">444</a> of file <a class="el" href="simulation__control_8h_source.html">simulation_control.h</a>.</p>
+<p>Get step number (alias for get_iteration_number) </p>
+<dl class="section return"><dt>Returns</dt><dd>Current iteration/step number </dd></dl>
 
-<p class="reference">References <a class="el" href="simulation__control_8h_source.html#l00055">iteration_number</a>.</p>
+<p class="definition">Definition at line <a class="el" href="simulation__control_8h_source.html#l00614">614</a> of file <a class="el" href="simulation__control_8h_source.html">simulation_control.h</a>.</p>
+
+<p class="reference">References <a class="el" href="simulation__control_8h_source.html#l00097">iteration_number</a>.</p>
 
 </div>
 </div>
@@ -959,12 +1018,12 @@ Static Protected Attributes</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p>Get current time-step. </p>
-<dl class="section return"><dt>Returns</dt><dd>Current time-step value. </dd></dl>
+<p>Get current time step. </p>
+<dl class="section return"><dt>Returns</dt><dd>Current time step value </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="simulation__control_8h_source.html#l00378">378</a> of file <a class="el" href="simulation__control_8h_source.html">simulation_control.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="simulation__control_8h_source.html#l00504">504</a> of file <a class="el" href="simulation__control_8h_source.html">simulation_control.h</a>.</p>
 
-<p class="reference">References <a class="el" href="simulation__control_8h_source.html#l00037">time_step</a>.</p>
+<p class="reference">References <a class="el" href="simulation__control_8h_source.html#l00065">time_step</a>.</p>
 
 </div>
 </div>
@@ -991,9 +1050,12 @@ Static Protected Attributes</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="simulation__control_8h_source.html#l00432">432</a> of file <a class="el" href="simulation__control_8h_source.html">simulation_control.h</a>.</p>
+<p>Get time step history vector. </p>
+<dl class="section return"><dt>Returns</dt><dd>Vector containing previous time steps </dd></dl>
 
-<p class="reference">References <a class="el" href="simulation__control_8h_source.html#l00051">time_step_vector</a>.</p>
+<p class="definition">Definition at line <a class="el" href="simulation__control_8h_source.html#l00592">592</a> of file <a class="el" href="simulation__control_8h_source.html">simulation_control.h</a>.</p>
+
+<p class="reference">References <a class="el" href="simulation__control_8h_source.html#l00090">time_step_vector</a>.</p>
 
 </div>
 </div>
@@ -1020,7 +1082,9 @@ Static Protected Attributes</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p>Pure virtual function to control the progression of the simulation. As long as integrate returns true, a simulation should proceed. The criteria used to stop/continue the simulation in iterate is a property of each individual time stepping control. For example, steady-state simulation will proceed until the number of required mesh adaptation has been performed. </p>
+<p>Pure virtual function to control the progression of the simulation. </p>
+<p>As long as integrate returns true, a simulation should proceed. The criteria used to stop/continue the simulation in integrate is a property of each individual time stepping control. For example, steady-state simulation will proceed until the number of required mesh adaptations has been performed.</p>
+<dl class="section return"><dt>Returns</dt><dd>true if the simulation should continue, false otherwise </dd></dl>
 
 <p>Implemented in <a class="el" href="classSimulationControlTransient.html#a9323f75f9c5d9ab8463f1340c83fa539">SimulationControlTransient</a>, <a class="el" href="classSimulationControlSteady.html#a1a841b038955ea6ba6b6d8a938d442f9">SimulationControlSteady</a>, and <a class="el" href="classSimulationControlRayTracing.html#ae87a76cfa8ca3b1a4dba2c5b01ff4e76">SimulationControlRayTracing</a>.</p>
 
@@ -1050,7 +1114,8 @@ Static Protected Attributes</h2></td></tr>
 </div><div class="memdoc">
 
 <p>Indicate if the simulation uses adaptive time stepping or not. </p>
-<dl class="section return"><dt>Returns</dt><dd>is_adaptive A boolean indicating if the simulation has adaptive time stepping </dd></dl>
+<p>Pure virtual function to be implemented by derived classes based on their specific time stepping strategy.</p>
+<dl class="section return"><dt>Returns</dt><dd>true if the simulation has adaptive time stepping, false otherwise </dd></dl>
 
 <p>Implemented in <a class="el" href="classSimulationControlTransient.html#a036c4105e266efe7053a09b75c5ace0f">SimulationControlTransient</a>, <a class="el" href="classSimulationControlSteady.html#a85aa77566b417c4a337c457b1a92dee4">SimulationControlSteady</a>, and <a class="el" href="classSimulationControlRayTracing.html#a6a37f45fbdd791312b9599a275b5d076">SimulationControlRayTracing</a>.</p>
 
@@ -1079,7 +1144,9 @@ Static Protected Attributes</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p>Establishes if a simulation has reached it's end or not. The concrete implementation of the class decides what is the stopping criteria (iteration number, time_end reached, etc.) </p>
+<p>Establishes if a simulation has reached its end. </p>
+<p>The concrete implementation of the class decides what is the stopping criteria (iteration number, time_end reached, residual tolerance, etc.)</p>
+<dl class="section return"><dt>Returns</dt><dd>true if the simulation has reached its end condition, false otherwise </dd></dl>
 
 <p>Implemented in <a class="el" href="classSimulationControlTransient.html#aa319da7751b899049697edecee141d66">SimulationControlTransient</a>, <a class="el" href="classSimulationControlSteady.html#a9131dcc7cba2713e43ed16653da5f7c0">SimulationControlSteady</a>, <a class="el" href="classSimulationControlAdjointSteady.html#ac8534ba715f32012c81368600656323d">SimulationControlAdjointSteady</a>, and <a class="el" href="classSimulationControlRayTracing.html#a53bbbd46ef5219e3d6a86f28d5fed228">SimulationControlRayTracing</a>.</p>
 
@@ -1109,10 +1176,11 @@ Static Protected Attributes</h2></td></tr>
 </div><div class="memdoc">
 
 <p>Establish if the iteration is the first iteration or if the simulation has not begun. </p>
+<dl class="section return"><dt>Returns</dt><dd>true if iteration_number &lt;= 1, false otherwise </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="simulation__control_8h_source.html#l00206">206</a> of file <a class="el" href="simulation__control_8h_source.html">simulation_control.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="simulation__control_8h_source.html#l00296">296</a> of file <a class="el" href="simulation__control_8h_source.html">simulation_control.h</a>.</p>
 
-<p class="reference">References <a class="el" href="simulation__control_8h_source.html#l00055">iteration_number</a>.</p>
+<p class="reference">References <a class="el" href="simulation__control_8h_source.html#l00097">iteration_number</a>.</p>
 
 </div>
 </div>
@@ -1139,12 +1207,12 @@ Static Protected Attributes</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p>Establish if the method is a bdf method. </p>
-<dl class="section return"><dt>Returns</dt><dd>true if the method is BDF1, BDF2, BDF3, or steady BDF, false otherwise. </dd></dl>
+<p>Establish if the method is a BDF method. </p>
+<dl class="section return"><dt>Returns</dt><dd>true if the method is BDF1, BDF2, BDF3, or steady BDF, false otherwise </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="simulation__control_8h_source.html#l00230">230</a> of file <a class="el" href="simulation__control_8h_source.html">simulation_control.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="simulation__control_8h_source.html#l00321">321</a> of file <a class="el" href="simulation__control_8h_source.html">simulation_control.h</a>.</p>
 
-<p class="reference">References <a class="el" href="structParameters_1_1SimulationControl.html#a86daf86652a712eb783c105c953eb7f8a0267dc6b1db4ed7cf48c60fa776c8843">Parameters::SimulationControl::bdf1</a>, <a class="el" href="structParameters_1_1SimulationControl.html#a86daf86652a712eb783c105c953eb7f8a7e23e875a6c062a276f90cb43a6280c0">Parameters::SimulationControl::bdf2</a>, <a class="el" href="structParameters_1_1SimulationControl.html#a86daf86652a712eb783c105c953eb7f8a62fd133dd9c35c94e867fc65606aeffe">Parameters::SimulationControl::bdf3</a>, <a class="el" href="simulation__control_8h_source.html#l00023">method</a>, and <a class="el" href="structParameters_1_1SimulationControl.html#a86daf86652a712eb783c105c953eb7f8ace68ebd29c010930ed70df3b718e02b9">Parameters::SimulationControl::steady_bdf</a>.</p>
+<p class="reference">References <a class="el" href="structParameters_1_1SimulationControl.html#a86daf86652a712eb783c105c953eb7f8a0267dc6b1db4ed7cf48c60fa776c8843">Parameters::SimulationControl::bdf1</a>, <a class="el" href="structParameters_1_1SimulationControl.html#a86daf86652a712eb783c105c953eb7f8a7e23e875a6c062a276f90cb43a6280c0">Parameters::SimulationControl::bdf2</a>, <a class="el" href="structParameters_1_1SimulationControl.html#a86daf86652a712eb783c105c953eb7f8a62fd133dd9c35c94e867fc65606aeffe">Parameters::SimulationControl::bdf3</a>, <a class="el" href="simulation__control_8h_source.html#l00046">method</a>, and <a class="el" href="structParameters_1_1SimulationControl.html#a86daf86652a712eb783c105c953eb7f8ace68ebd29c010930ed70df3b718e02b9">Parameters::SimulationControl::steady_bdf</a>.</p>
 
 </div>
 </div>
@@ -1171,11 +1239,14 @@ Static Protected Attributes</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p>Check if this is the first assembly of the present iteration. If it indeed is the first assembly, then the first_assembly is set to false. This function is used when providing the residual to the simulation control object when using steady-bdf methods. Since the residual must be provided once per time-step (and at the beginning) this function is used to identify that. </p>
+<p>Check if this is the first assembly of the present iteration. </p>
+<p>If it indeed is the first assembly, then the first_assembly flag is set to false. This function is used when providing the residual to the simulation control object when using steady-bdf methods. Since the residual must be provided once per time-step (and at the beginning), this function is used to identify that.</p>
+<dl class="section return"><dt>Returns</dt><dd>true if this is the first assembly, false otherwise</dd></dl>
+<dl class="section note"><dt>Note</dt><dd>This method has a side effect: it sets first_assembly to false after being called when it returns true. </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="simulation__control_8h_source.html#l00317">317</a> of file <a class="el" href="simulation__control_8h_source.html">simulation_control.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="simulation__control_8h_source.html#l00432">432</a> of file <a class="el" href="simulation__control_8h_source.html">simulation_control.h</a>.</p>
 
-<p class="reference">References <a class="el" href="simulation__control_8h_source.html#l00115">first_assembly</a>.</p>
+<p class="reference">References <a class="el" href="simulation__control_8h_source.html#l00185">first_assembly</a>.</p>
 
 </div>
 </div>
@@ -1202,13 +1273,15 @@ Static Protected Attributes</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p>Check if the present iteration is an output iteration depending on the output control chosen. </p>
+<p>Check if the present iteration is an output iteration. </p>
+<p>Determines whether output should be written at the current iteration based on the output control chosen (iteration-based or time-based).</p>
+<dl class="section return"><dt>Returns</dt><dd>true if output should be written at this iteration, false otherwise </dd></dl>
 
 <p>Reimplemented in <a class="el" href="classSimulationControlTransient.html#ac1951b02a3fe1c7a7a2536c0dc08d513">SimulationControlTransient</a>.</p>
 
 <p class="definition">Definition at line <a class="el" href="simulation__control_8cc_source.html#l00061">61</a> of file <a class="el" href="simulation__control_8cc_source.html">simulation_control.cc</a>.</p>
 
-<p class="reference">References <a class="el" href="simulation__control_8h_source.html#l00444">get_step_number()</a>, and <a class="el" href="simulation__control_8h_source.html#l00086">output_iteration_frequency</a>.</p>
+<p class="reference">References <a class="el" href="simulation__control_8h_source.html#l00614">get_step_number()</a>, and <a class="el" href="simulation__control_8h_source.html#l00146">output_iteration_frequency</a>.</p>
 
 </div>
 </div>
@@ -1235,12 +1308,12 @@ Static Protected Attributes</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p>Establish if the method is a sdirk method. </p>
-<dl class="section return"><dt>Returns</dt><dd>true if the method is sdirk, false otherwise. </dd></dl>
+<p>Establish if the method is an SDIRK method. </p>
+<dl class="section return"><dt>Returns</dt><dd>true if the method is sdirk22, sdirk33, or sdirk43, false otherwise </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="simulation__control_8h_source.html#l00245">245</a> of file <a class="el" href="simulation__control_8h_source.html">simulation_control.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="simulation__control_8h_source.html#l00336">336</a> of file <a class="el" href="simulation__control_8h_source.html">simulation_control.h</a>.</p>
 
-<p class="reference">References <a class="el" href="simulation__control_8h_source.html#l00023">method</a>, <a class="el" href="structParameters_1_1SimulationControl.html#a86daf86652a712eb783c105c953eb7f8a0675922ff4c4a16ee033b34e48ee33ee">Parameters::SimulationControl::sdirk22</a>, <a class="el" href="structParameters_1_1SimulationControl.html#a86daf86652a712eb783c105c953eb7f8aaeba79e7430a4815eb11453c271ce6f4">Parameters::SimulationControl::sdirk33</a>, and <a class="el" href="structParameters_1_1SimulationControl.html#a86daf86652a712eb783c105c953eb7f8a7d1d28e0c34d45b88cd359397ba4ab23">Parameters::SimulationControl::sdirk43</a>.</p>
+<p class="reference">References <a class="el" href="simulation__control_8h_source.html#l00046">method</a>, <a class="el" href="structParameters_1_1SimulationControl.html#a86daf86652a712eb783c105c953eb7f8a0675922ff4c4a16ee033b34e48ee33ee">Parameters::SimulationControl::sdirk22</a>, <a class="el" href="structParameters_1_1SimulationControl.html#a86daf86652a712eb783c105c953eb7f8aaeba79e7430a4815eb11453c271ce6f4">Parameters::SimulationControl::sdirk33</a>, and <a class="el" href="structParameters_1_1SimulationControl.html#a86daf86652a712eb783c105c953eb7f8a7d1d28e0c34d45b88cd359397ba4ab23">Parameters::SimulationControl::sdirk43</a>.</p>
 
 </div>
 </div>
@@ -1267,11 +1340,12 @@ Static Protected Attributes</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p>Establish if the simulation is a steady-state simulation or no. </p>
+<p>Establish if the simulation is a steady-state simulation. </p>
+<dl class="section return"><dt>Returns</dt><dd>true if the method is steady or steady_bdf, false otherwise </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="simulation__control_8h_source.html#l00216">216</a> of file <a class="el" href="simulation__control_8h_source.html">simulation_control.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="simulation__control_8h_source.html#l00307">307</a> of file <a class="el" href="simulation__control_8h_source.html">simulation_control.h</a>.</p>
 
-<p class="reference">References <a class="el" href="simulation__control_8h_source.html#l00023">method</a>, <a class="el" href="structParameters_1_1SimulationControl.html#a86daf86652a712eb783c105c953eb7f8a4f997f546b68779b58e9f6f19dc2b9e5">Parameters::SimulationControl::steady</a>, and <a class="el" href="structParameters_1_1SimulationControl.html#a86daf86652a712eb783c105c953eb7f8ace68ebd29c010930ed70df3b718e02b9">Parameters::SimulationControl::steady_bdf</a>.</p>
+<p class="reference">References <a class="el" href="simulation__control_8h_source.html#l00046">method</a>, <a class="el" href="structParameters_1_1SimulationControl.html#a86daf86652a712eb783c105c953eb7f8a4f997f546b68779b58e9f6f19dc2b9e5">Parameters::SimulationControl::steady</a>, and <a class="el" href="structParameters_1_1SimulationControl.html#a86daf86652a712eb783c105c953eb7f8ace68ebd29c010930ed70df3b718e02b9">Parameters::SimulationControl::steady_bdf</a>.</p>
 
 </div>
 </div>
@@ -1298,11 +1372,13 @@ Static Protected Attributes</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p>Check if the present iteration is a verbose iteration where output should be written to the terminal. </p>
+<p>Check if the present iteration is a verbose iteration. </p>
+<p>Determines if output should be written to the terminal at the current iteration based on the log_frequency setting.</p>
+<dl class="section return"><dt>Returns</dt><dd>true if verbose output should be written at this iteration, false otherwise </dd></dl>
 
 <p class="definition">Definition at line <a class="el" href="simulation__control_8cc_source.html#l00180">180</a> of file <a class="el" href="simulation__control_8cc_source.html">simulation_control.cc</a>.</p>
 
-<p class="reference">References <a class="el" href="simulation__control_8h_source.html#l00444">get_step_number()</a>, and <a class="el" href="simulation__control_8h_source.html#l00091">log_frequency</a>.</p>
+<p class="reference">References <a class="el" href="simulation__control_8h_source.html#l00614">get_step_number()</a>, and <a class="el" href="simulation__control_8h_source.html#l00154">log_frequency</a>.</p>
 
 </div>
 </div>
@@ -1331,9 +1407,9 @@ Static Protected Attributes</h2></td></tr>
 
 <p>Check if VTU/PVTU/PVD outputs are disabled. </p>
 
-<p class="definition">Definition at line <a class="el" href="simulation__control_8h_source.html#l00279">279</a> of file <a class="el" href="simulation__control_8h_source.html">simulation_control.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="simulation__control_8h_source.html#l00379">379</a> of file <a class="el" href="simulation__control_8h_source.html">simulation_control.h</a>.</p>
 
-<p class="reference">References <a class="el" href="simulation__control_8h_source.html#l00086">output_iteration_frequency</a>.</p>
+<p class="reference">References <a class="el" href="simulation__control_8h_source.html#l00146">output_iteration_frequency</a>.</p>
 
 </div>
 </div>
@@ -1361,10 +1437,11 @@ Static Protected Attributes</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p>print_progress Function that prints the current progress status of the simulation </p>
+<p>Print the current progress status of the simulation. </p>
+<p>Pure virtual function that prints simulation progress information to the terminal. The specific format and content depend on the derived class implementation.</p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramdir">[in]</td><td class="paramname">pcout</td><td>Parallel cout used to print the information </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">pcout</td><td>Parallel conditional output stream used to print the information </td></tr>
   </table>
   </dd>
 </dl>
@@ -1398,6 +1475,7 @@ Static Protected Attributes</h2></td></tr>
 </div><div class="memdoc">
 
 <p>Provide the value of the residual at the beginning of the iteration to the simulation controller. </p>
+<p>Used primarily in adjoint time-stepping to track convergence.</p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramdir">[in]</td><td class="paramname">new_residual</td><td>Value of the residual at the beginning of an adjoint time-stepping time step </td></tr>
@@ -1405,9 +1483,9 @@ Static Protected Attributes</h2></td></tr>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="simulation__control_8h_source.html#l00367">367</a> of file <a class="el" href="simulation__control_8h_source.html">simulation_control.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="simulation__control_8h_source.html#l00493">493</a> of file <a class="el" href="simulation__control_8h_source.html">simulation_control.h</a>.</p>
 
-<p class="reference">References <a class="el" href="simulation__control_8h_source.html#l00072">residual</a>.</p>
+<p class="reference">References <a class="el" href="simulation__control_8h_source.html#l00120">residual</a>.</p>
 
 </div>
 </div>
@@ -1435,10 +1513,11 @@ Static Protected Attributes</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p>Reads the simulation control information from the checkpoint file and updates the time step vector, the CFL value, the time and the iteration number. </p>
+<p>Read the simulation control information from a checkpoint file. </p>
+<p>Reads and updates the time step vector, the CFL value, the time and the iteration number from a checkpoint file to restart the simulation.</p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramdir">[in]</td><td class="paramname">prefix</td><td>The prefix of the checkpoint of the simulation </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">prefix</td><td>The prefix of the checkpoint file for the simulation </td></tr>
   </table>
   </dd>
 </dl>
@@ -1447,7 +1526,7 @@ Static Protected Attributes</h2></td></tr>
 
 <p class="definition">Definition at line <a class="el" href="simulation__control_8cc_source.html#l00199">199</a> of file <a class="el" href="simulation__control_8cc_source.html">simulation_control.cc</a>.</p>
 
-<p class="reference">References <a class="el" href="simulation__control_8h_source.html#l00064">CFL</a>, <a class="el" href="simulation__control_8h_source.html#l00031">current_time</a>, <a class="el" href="simulation__control_8h_source.html#l00055">iteration_number</a>, <a class="el" href="simulation__control_8h_source.html#l00037">time_step</a>, and <a class="el" href="simulation__control_8h_source.html#l00051">time_step_vector</a>.</p>
+<p class="reference">References <a class="el" href="simulation__control_8h_source.html#l00109">CFL</a>, <a class="el" href="simulation__control_8h_source.html#l00059">current_time</a>, <a class="el" href="simulation__control_8h_source.html#l00097">iteration_number</a>, <a class="el" href="simulation__control_8h_source.html#l00065">time_step</a>, and <a class="el" href="simulation__control_8h_source.html#l00090">time_step_vector</a>.</p>
 
 </div>
 </div>
@@ -1475,10 +1554,11 @@ Static Protected Attributes</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p>Save the simulation control information from the checkpoint file and updates the time step vector, the CFL value, the time and the iteration number. </p>
+<p>Save the simulation control information to a checkpoint file. </p>
+<p>Saves the time step vector, the CFL value, the time and the iteration number to enable restart capabilities.</p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramdir">[in]</td><td class="paramname">prefix</td><td>The prefix of the checkpoint of the simulation </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">prefix</td><td>The prefix of the checkpoint file for the simulation </td></tr>
   </table>
   </dd>
 </dl>
@@ -1487,7 +1567,7 @@ Static Protected Attributes</h2></td></tr>
 
 <p class="definition">Definition at line <a class="el" href="simulation__control_8cc_source.html#l00186">186</a> of file <a class="el" href="simulation__control_8cc_source.html">simulation_control.cc</a>.</p>
 
-<p class="reference">References <a class="el" href="simulation__control_8h_source.html#l00064">CFL</a>, <a class="el" href="simulation__control_8h_source.html#l00031">current_time</a>, <a class="el" href="simulation__control_8h_source.html#l00055">iteration_number</a>, and <a class="el" href="simulation__control_8h_source.html#l00051">time_step_vector</a>.</p>
+<p class="reference">References <a class="el" href="simulation__control_8h_source.html#l00109">CFL</a>, <a class="el" href="simulation__control_8h_source.html#l00059">current_time</a>, <a class="el" href="simulation__control_8h_source.html#l00097">iteration_number</a>, and <a class="el" href="simulation__control_8h_source.html#l00090">time_step_vector</a>.</p>
 
 </div>
 </div>
@@ -1515,9 +1595,17 @@ Static Protected Attributes</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="simulation__control_8h_source.html#l00468">468</a> of file <a class="el" href="simulation__control_8h_source.html">simulation_control.h</a>.</p>
+<p>Set the assembly method. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramdir">[in]</td><td class="paramname">a_method</td><td>The time stepping method to use for assembly </td></tr>
+  </table>
+  </dd>
+</dl>
 
-<p class="reference">References <a class="el" href="simulation__control_8h_source.html#l00028">assembly_method</a>.</p>
+<p class="definition">Definition at line <a class="el" href="simulation__control_8h_source.html#l00658">658</a> of file <a class="el" href="simulation__control_8h_source.html">simulation_control.h</a>.</p>
+
+<p class="reference">References <a class="el" href="simulation__control_8h_source.html#l00056">assembly_method</a>.</p>
 
 </div>
 </div>
@@ -1546,16 +1634,17 @@ Static Protected Attributes</h2></td></tr>
 </div><div class="memdoc">
 
 <p>Set the value of the CFL condition. </p>
+<p>The solver calculates and provides the CFL number to the simulation control for use in adaptive time stepping.</p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramdir">[in]</td><td class="paramname">p_CFL</td><td>Value of the CFL condition calculated by the solver. </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">p_CFL</td><td>Value of the CFL condition calculated by the solver </td></tr>
   </table>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="simulation__control_8h_source.html#l00337">337</a> of file <a class="el" href="simulation__control_8h_source.html">simulation_control.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="simulation__control_8h_source.html#l00458">458</a> of file <a class="el" href="simulation__control_8h_source.html">simulation_control.h</a>.</p>
 
-<p class="reference">References <a class="el" href="simulation__control_8h_source.html#l00064">CFL</a>.</p>
+<p class="reference">References <a class="el" href="simulation__control_8h_source.html#l00109">CFL</a>.</p>
 
 </div>
 </div>
@@ -1584,16 +1673,18 @@ Static Protected Attributes</h2></td></tr>
 </div><div class="memdoc">
 
 <p>Manually force the value of the time step for the present iteration. </p>
+<p>Sets the time step to a specific value. This time step is appended to the time step history.</p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramdir">[in]</td><td class="paramname">new_time_step</td><td>The new value of the time step. This time step is appended to the time step history </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">new_time_step</td><td>The new value of the time step</td></tr>
   </table>
   </dd>
 </dl>
+<dl class="section pre"><dt>Precondition</dt><dd>new_time_step must be positive (cannot go backward in time) </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="simulation__control_8h_source.html#l00350">350</a> of file <a class="el" href="simulation__control_8h_source.html">simulation_control.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="simulation__control_8h_source.html#l00475">475</a> of file <a class="el" href="simulation__control_8h_source.html">simulation_control.h</a>.</p>
 
-<p class="reference">References <a class="el" href="simulation__control_8h_source.html#l00037">time_step</a>.</p>
+<p class="reference">References <a class="el" href="simulation__control_8h_source.html#l00065">time_step</a>.</p>
 
 </div>
 </div>
@@ -1612,11 +1703,12 @@ Static Protected Attributes</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p>Define the assembly method to use while integrating. Use to start bdf 2 and bdf 3 scheme. </p>
+<p>Define the assembly method to use while integrating. </p>
+<p>Used to start BDF2 and BDF3 schemes with lower-order methods before transitioning to the full-order scheme. This ensures stability during the initial time steps. </p>
 
 <p class="definition">Definition at line <a class="el" href="simulation__control_8cc_source.html#l00073">73</a> of file <a class="el" href="simulation__control_8cc_source.html">simulation_control.cc</a>.</p>
 
-<p class="reference">References <a class="el" href="simulation__control_8h_source.html#l00028">assembly_method</a>, <a class="el" href="structParameters_1_1SimulationControl.html#a86daf86652a712eb783c105c953eb7f8a0267dc6b1db4ed7cf48c60fa776c8843">Parameters::SimulationControl::bdf1</a>, <a class="el" href="structParameters_1_1SimulationControl.html#a86daf86652a712eb783c105c953eb7f8a7e23e875a6c062a276f90cb43a6280c0">Parameters::SimulationControl::bdf2</a>, <a class="el" href="structParameters_1_1SimulationControl.html#a86daf86652a712eb783c105c953eb7f8a62fd133dd9c35c94e867fc65606aeffe">Parameters::SimulationControl::bdf3</a>, <a class="el" href="simulation__control_8h_source.html#l00118">bdf_start_method</a>, <a class="el" href="simulation__control_8h_source.html#l00040">initial_time_step</a>, <a class="el" href="simulation__control_8h_source.html#l00055">iteration_number</a>, <a class="el" href="simulation__control_8h_source.html#l00023">method</a>, <a class="el" href="structParameters_1_1SimulationControl.html#a5fef9c9888f530e256aed538f319fd23a1c37ff61e0d4dfbb46475ead409a821c">Parameters::SimulationControl::multiple_step_bdf</a>, <a class="el" href="simulation__control_8h_source.html#l00350">set_current_time_step()</a>, and <a class="el" href="simulation__control_8h_source.html#l00122">startup_timestep_scaling</a>.</p>
+<p class="reference">References <a class="el" href="simulation__control_8h_source.html#l00056">assembly_method</a>, <a class="el" href="structParameters_1_1SimulationControl.html#a86daf86652a712eb783c105c953eb7f8a0267dc6b1db4ed7cf48c60fa776c8843">Parameters::SimulationControl::bdf1</a>, <a class="el" href="structParameters_1_1SimulationControl.html#a86daf86652a712eb783c105c953eb7f8a7e23e875a6c062a276f90cb43a6280c0">Parameters::SimulationControl::bdf2</a>, <a class="el" href="structParameters_1_1SimulationControl.html#a86daf86652a712eb783c105c953eb7f8a62fd133dd9c35c94e867fc65606aeffe">Parameters::SimulationControl::bdf3</a>, <a class="el" href="simulation__control_8h_source.html#l00188">bdf_start_method</a>, <a class="el" href="simulation__control_8h_source.html#l00068">initial_time_step</a>, <a class="el" href="simulation__control_8h_source.html#l00097">iteration_number</a>, <a class="el" href="simulation__control_8h_source.html#l00046">method</a>, <a class="el" href="structParameters_1_1SimulationControl.html#a5fef9c9888f530e256aed538f319fd23a1c37ff61e0d4dfbb46475ead409a821c">Parameters::SimulationControl::multiple_step_bdf</a>, <a class="el" href="simulation__control_8h_source.html#l00475">set_current_time_step()</a>, and <a class="el" href="simulation__control_8h_source.html#l00196">startup_timestep_scaling</a>.</p>
 
 </div>
 </div>
@@ -1643,11 +1735,13 @@ Static Protected Attributes</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p>Update the BDF coefficients. It is necessary to update the coefficients when there is a change in the time step values or the time stepping scheme. </p>
+<p>Update the BDF coefficients. </p>
+<p>It is necessary to update the coefficients when there is a change in the time step values or the time stepping scheme. This method recalculates the BDF coefficients based on the current assembly method and time step history.</p>
+<dl class="section see"><dt>See also</dt><dd><a class="el" href="bdf_8h.html#a585ba53d846bcdb132f1fbc13a0c5180" title="Calculate the coefficients required for backward differentiation formula (BDF) integration of order .">calculate_bdf_coefficients</a> </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="simulation__control_8h_source.html#l00133">133</a> of file <a class="el" href="simulation__control_8h_source.html">simulation_control.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="simulation__control_8h_source.html#l00212">212</a> of file <a class="el" href="simulation__control_8h_source.html">simulation_control.h</a>.</p>
 
-<p class="reference">References <a class="el" href="simulation__control_8h_source.html#l00028">assembly_method</a>, <a class="el" href="simulation__control_8h_source.html#l00125">bdf_coefs</a>, <a class="el" href="bdf_8cc_source.html#l00042">calculate_bdf_coefficients()</a>, and <a class="el" href="simulation__control_8h_source.html#l00051">time_step_vector</a>.</p>
+<p class="reference">References <a class="el" href="simulation__control_8h_source.html#l00056">assembly_method</a>, <a class="el" href="simulation__control_8h_source.html#l00199">bdf_coefs</a>, <a class="el" href="bdf_8cc_source.html#l00042">calculate_bdf_coefficients()</a>, and <a class="el" href="simulation__control_8h_source.html#l00090">time_step_vector</a>.</p>
 
 </div>
 </div>
@@ -1672,7 +1766,10 @@ Static Protected Attributes</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="simulation__control_8h_source.html#l00028">28</a> of file <a class="el" href="simulation__control_8h_source.html">simulation_control.h</a>.</p>
+<p>Current method used for the present assembly. </p>
+<p>This is used to differentiate the substeps of SDIRK methods or to start-up BDF simulations. For example, BDF2 and BDF3 schemes may start with lower-order methods before transitioning to the full-order scheme. </p>
+
+<p class="definition">Definition at line <a class="el" href="simulation__control_8h_source.html#l00056">56</a> of file <a class="el" href="simulation__control_8h_source.html">simulation_control.h</a>.</p>
 
 </div>
 </div>
@@ -1698,7 +1795,7 @@ Static Protected Attributes</h2></td></tr>
 
 <p>BDF coefficients used for time-stepping methods. </p>
 
-<p class="definition">Definition at line <a class="el" href="simulation__control_8h_source.html#l00125">125</a> of file <a class="el" href="simulation__control_8h_source.html">simulation_control.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="simulation__control_8h_source.html#l00199">199</a> of file <a class="el" href="simulation__control_8h_source.html">simulation_control.h</a>.</p>
 
 </div>
 </div>
@@ -1722,7 +1819,9 @@ Static Protected Attributes</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="simulation__control_8h_source.html#l00118">118</a> of file <a class="el" href="simulation__control_8h_source.html">simulation_control.h</a>.</p>
+<p>The method used to start high-order BDF schemes. </p>
+
+<p class="definition">Definition at line <a class="el" href="simulation__control_8h_source.html#l00188">188</a> of file <a class="el" href="simulation__control_8h_source.html">simulation_control.h</a>.</p>
 
 </div>
 </div>
@@ -1746,7 +1845,10 @@ Static Protected Attributes</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="simulation__control_8h_source.html#l00064">64</a> of file <a class="el" href="simulation__control_8h_source.html">simulation_control.h</a>.</p>
+<p>Courant-Friedrich-Levy (CFL) condition value. </p>
+<p>Since the simulation control is unaware of the information propagation mechanism (for instance the velocity), the current CFL must be set by the solver itself using <a class="el" href="classSimulationControl.html#a1e331c2c77dae4d02e9e749f980124fc" title="Set the value of the CFL condition.">set_CFL()</a>. </p>
+
+<p class="definition">Definition at line <a class="el" href="simulation__control_8h_source.html#l00109">109</a> of file <a class="el" href="simulation__control_8h_source.html">simulation_control.h</a>.</p>
 
 </div>
 </div>
@@ -1770,7 +1872,9 @@ Static Protected Attributes</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="simulation__control_8h_source.html#l00031">31</a> of file <a class="el" href="simulation__control_8h_source.html">simulation_control.h</a>.</p>
+<p>Time of the current iteration being solved for. </p>
+
+<p class="definition">Definition at line <a class="el" href="simulation__control_8h_source.html#l00059">59</a> of file <a class="el" href="simulation__control_8h_source.html">simulation_control.h</a>.</p>
 
 </div>
 </div>
@@ -1794,7 +1898,9 @@ Static Protected Attributes</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="simulation__control_8h_source.html#l00043">43</a> of file <a class="el" href="simulation__control_8h_source.html">simulation_control.h</a>.</p>
+<p>Simulation end time. </p>
+
+<p class="definition">Definition at line <a class="el" href="simulation__control_8h_source.html#l00071">71</a> of file <a class="el" href="simulation__control_8h_source.html">simulation_control.h</a>.</p>
 
 </div>
 </div>
@@ -1818,7 +1924,9 @@ Static Protected Attributes</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="simulation__control_8h_source.html#l00115">115</a> of file <a class="el" href="simulation__control_8h_source.html">simulation_control.h</a>.</p>
+<p>Indicator to tell if this is the first assembly of a time step. </p>
+
+<p class="definition">Definition at line <a class="el" href="simulation__control_8h_source.html#l00185">185</a> of file <a class="el" href="simulation__control_8h_source.html">simulation_control.h</a>.</p>
 
 </div>
 </div>
@@ -1842,7 +1950,9 @@ Static Protected Attributes</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="simulation__control_8h_source.html#l00101">101</a> of file <a class="el" href="simulation__control_8h_source.html">simulation_control.h</a>.</p>
+<p>Number of parallel files to generate for output. </p>
+
+<p class="definition">Definition at line <a class="el" href="simulation__control_8h_source.html#l00168">168</a> of file <a class="el" href="simulation__control_8h_source.html">simulation_control.h</a>.</p>
 
 </div>
 </div>
@@ -1866,7 +1976,9 @@ Static Protected Attributes</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="simulation__control_8h_source.html#l00040">40</a> of file <a class="el" href="simulation__control_8h_source.html">simulation_control.h</a>.</p>
+<p>Initial time step given in the parameter file. </p>
+
+<p class="definition">Definition at line <a class="el" href="simulation__control_8h_source.html#l00068">68</a> of file <a class="el" href="simulation__control_8h_source.html">simulation_control.h</a>.</p>
 
 </div>
 </div>
@@ -1890,7 +2002,10 @@ Static Protected Attributes</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="simulation__control_8h_source.html#l00055">55</a> of file <a class="el" href="simulation__control_8h_source.html">simulation_control.h</a>.</p>
+<p>Iteration number. </p>
+<p>Iterations start at 0, but the first actual iteration is iteration 1. </p>
+
+<p class="definition">Definition at line <a class="el" href="simulation__control_8h_source.html#l00097">97</a> of file <a class="el" href="simulation__control_8h_source.html">simulation_control.h</a>.</p>
 
 </div>
 </div>
@@ -1914,7 +2029,10 @@ Static Protected Attributes</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="simulation__control_8h_source.html#l00091">91</a> of file <a class="el" href="simulation__control_8h_source.html">simulation_control.h</a>.</p>
+<p>Log iteration frequency. </p>
+<p>Controls the frequency at which the status of the simulation is written to the terminal. </p>
+
+<p class="definition">Definition at line <a class="el" href="simulation__control_8h_source.html#l00154">154</a> of file <a class="el" href="simulation__control_8h_source.html">simulation_control.h</a>.</p>
 
 </div>
 </div>
@@ -1938,7 +2056,10 @@ Static Protected Attributes</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="simulation__control_8h_source.html#l00095">95</a> of file <a class="el" href="simulation__control_8h_source.html">simulation_control.h</a>.</p>
+<p>Log precision. </p>
+<p>Controls the number of significant digits displayed on the standard outputs. </p>
+
+<p class="definition">Definition at line <a class="el" href="simulation__control_8h_source.html#l00162">162</a> of file <a class="el" href="simulation__control_8h_source.html">simulation_control.h</a>.</p>
 
 </div>
 </div>
@@ -1962,7 +2083,10 @@ Static Protected Attributes</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="simulation__control_8h_source.html#l00069">69</a> of file <a class="el" href="simulation__control_8h_source.html">simulation_control.h</a>.</p>
+<p>Maximal CFL condition for adaptive time stepping. </p>
+<p>This is used to control adaptive time stepping. In the case of constant time stepping or steady-state simulations, this parameter remains unused. </p>
+
+<p class="definition">Definition at line <a class="el" href="simulation__control_8h_source.html#l00117">117</a> of file <a class="el" href="simulation__control_8h_source.html">simulation_control.h</a>.</p>
 
 </div>
 </div>
@@ -1986,7 +2110,9 @@ Static Protected Attributes</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="simulation__control_8h_source.html#l00023">23</a> of file <a class="el" href="simulation__control_8h_source.html">simulation_control.h</a>.</p>
+<p>Time stepping method used for the simulation (BDF, SDIRK, steady, etc.) </p>
+
+<p class="definition">Definition at line <a class="el" href="simulation__control_8h_source.html#l00046">46</a> of file <a class="el" href="simulation__control_8h_source.html">simulation_control.h</a>.</p>
 
 </div>
 </div>
@@ -2010,7 +2136,11 @@ Static Protected Attributes</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="simulation__control_8h_source.html#l00081">81</a> of file <a class="el" href="simulation__control_8h_source.html">simulation_control.h</a>.</p>
+<p>Number of time steps stored. </p>
+<p>BDF methods require a number of previous time steps. This number is known a priori and depends on the method used. We do not keep all the time steps to prevent the accumulation within a large vector.</p>
+<dl class="section note"><dt>Note</dt><dd>Currently set to 4 to support up to BDF3 methods. </dd></dl>
+
+<p class="definition">Definition at line <a class="el" href="simulation__control_8h_source.html#l00138">138</a> of file <a class="el" href="simulation__control_8h_source.html">simulation_control.h</a>.</p>
 
 </div>
 </div>
@@ -2034,7 +2164,9 @@ Static Protected Attributes</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="simulation__control_8h_source.html#l00058">58</a> of file <a class="el" href="simulation__control_8h_source.html">simulation_control.h</a>.</p>
+<p>Number of mesh adaptation iterations performed. </p>
+
+<p class="definition">Definition at line <a class="el" href="simulation__control_8h_source.html#l00100">100</a> of file <a class="el" href="simulation__control_8h_source.html">simulation_control.h</a>.</p>
 
 </div>
 </div>
@@ -2058,7 +2190,10 @@ Static Protected Attributes</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="simulation__control_8h_source.html#l00112">112</a> of file <a class="el" href="simulation__control_8h_source.html">simulation_control.h</a>.</p>
+<p>Output boundaries flag. </p>
+<p>Controls if the boundaries of the domain are outputted when writing results. </p>
+
+<p class="definition">Definition at line <a class="el" href="simulation__control_8h_source.html#l00182">182</a> of file <a class="el" href="simulation__control_8h_source.html">simulation_control.h</a>.</p>
 
 </div>
 </div>
@@ -2082,7 +2217,10 @@ Static Protected Attributes</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="simulation__control_8h_source.html#l00086">86</a> of file <a class="el" href="simulation__control_8h_source.html">simulation_control.h</a>.</p>
+<p>Output iteration frequency. </p>
+<p>Controls the output of the simulation results when the output is controlled by the iteration number. A value of 0 disables output. </p>
+
+<p class="definition">Definition at line <a class="el" href="simulation__control_8h_source.html#l00146">146</a> of file <a class="el" href="simulation__control_8h_source.html">simulation_control.h</a>.</p>
 
 </div>
 </div>
@@ -2106,7 +2244,9 @@ Static Protected Attributes</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="simulation__control_8h_source.html#l00104">104</a> of file <a class="el" href="simulation__control_8h_source.html">simulation_control.h</a>.</p>
+<p>Output file name prefix. </p>
+
+<p class="definition">Definition at line <a class="el" href="simulation__control_8h_source.html#l00171">171</a> of file <a class="el" href="simulation__control_8h_source.html">simulation_control.h</a>.</p>
 
 </div>
 </div>
@@ -2130,7 +2270,9 @@ Static Protected Attributes</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="simulation__control_8h_source.html#l00107">107</a> of file <a class="el" href="simulation__control_8h_source.html">simulation_control.h</a>.</p>
+<p>Output directory path. </p>
+
+<p class="definition">Definition at line <a class="el" href="simulation__control_8h_source.html#l00174">174</a> of file <a class="el" href="simulation__control_8h_source.html">simulation_control.h</a>.</p>
 
 </div>
 </div>
@@ -2154,7 +2296,9 @@ Static Protected Attributes</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="simulation__control_8h_source.html#l00034">34</a> of file <a class="el" href="simulation__control_8h_source.html">simulation_control.h</a>.</p>
+<p>Time of the previous iteration. </p>
+
+<p class="definition">Definition at line <a class="el" href="simulation__control_8h_source.html#l00062">62</a> of file <a class="el" href="simulation__control_8h_source.html">simulation_control.h</a>.</p>
 
 </div>
 </div>
@@ -2178,7 +2322,9 @@ Static Protected Attributes</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="simulation__control_8h_source.html#l00072">72</a> of file <a class="el" href="simulation__control_8h_source.html">simulation_control.h</a>.</p>
+<p>Current value of the norm of the right-hand side residual. </p>
+
+<p class="definition">Definition at line <a class="el" href="simulation__control_8h_source.html#l00120">120</a> of file <a class="el" href="simulation__control_8h_source.html">simulation_control.h</a>.</p>
 
 </div>
 </div>
@@ -2202,7 +2348,10 @@ Static Protected Attributes</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="simulation__control_8h_source.html#l00122">122</a> of file <a class="el" href="simulation__control_8h_source.html">simulation_control.h</a>.</p>
+<p>The time scaling used for small time-steps at the startup of the simulation. </p>
+<p>This scaling factor is applied during the startup phase when using high-order BDF methods to gradually transition to the full-order scheme. </p>
+
+<p class="definition">Definition at line <a class="el" href="simulation__control_8h_source.html#l00196">196</a> of file <a class="el" href="simulation__control_8h_source.html">simulation_control.h</a>.</p>
 
 </div>
 </div>
@@ -2226,7 +2375,10 @@ Static Protected Attributes</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="simulation__control_8h_source.html#l00075">75</a> of file <a class="el" href="simulation__control_8h_source.html">simulation_control.h</a>.</p>
+<p>Residual tolerance at which the simulation stops. </p>
+<p>This is used when adjoint time-stepping is employed. </p>
+
+<p class="definition">Definition at line <a class="el" href="simulation__control_8h_source.html#l00127">127</a> of file <a class="el" href="simulation__control_8h_source.html">simulation_control.h</a>.</p>
 
 </div>
 </div>
@@ -2250,7 +2402,9 @@ Static Protected Attributes</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="simulation__control_8h_source.html#l00098">98</a> of file <a class="el" href="simulation__control_8h_source.html">simulation_control.h</a>.</p>
+<p>Number of mesh subdivisions to be used when outputting the results. </p>
+
+<p class="definition">Definition at line <a class="el" href="simulation__control_8h_source.html#l00165">165</a> of file <a class="el" href="simulation__control_8h_source.html">simulation_control.h</a>.</p>
 
 </div>
 </div>
@@ -2274,7 +2428,9 @@ Static Protected Attributes</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="simulation__control_8h_source.html#l00037">37</a> of file <a class="el" href="simulation__control_8h_source.html">simulation_control.h</a>.</p>
+<p>Time step linking the previous iteration and the current time. </p>
+
+<p class="definition">Definition at line <a class="el" href="simulation__control_8h_source.html#l00065">65</a> of file <a class="el" href="simulation__control_8h_source.html">simulation_control.h</a>.</p>
 
 </div>
 </div>
@@ -2298,7 +2454,10 @@ Static Protected Attributes</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="simulation__control_8h_source.html#l00047">47</a> of file <a class="el" href="simulation__control_8h_source.html">simulation_control.h</a>.</p>
+<p>Boolean to keep the time step for the last iteration regardless of the end time. </p>
+<p>When true, the last time step is not adjusted to match the end time exactly. Applies to both fixed time step and adaptive time step simulations. </p>
+
+<p class="definition">Definition at line <a class="el" href="simulation__control_8h_source.html#l00080">80</a> of file <a class="el" href="simulation__control_8h_source.html">simulation_control.h</a>.</p>
 
 </div>
 </div>
@@ -2322,7 +2481,10 @@ Static Protected Attributes</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="simulation__control_8h_source.html#l00051">51</a> of file <a class="el" href="simulation__control_8h_source.html">simulation_control.h</a>.</p>
+<p>Time step vector storing previous time steps. </p>
+<p>This vector accumulates the time steps of the previous iterations. This is required for multiple-step methods such as BDF schemes. The vector size is limited by n_previous_time_steps to prevent accumulation within a large vector. </p>
+
+<p class="definition">Definition at line <a class="el" href="simulation__control_8h_source.html#l00090">90</a> of file <a class="el" href="simulation__control_8h_source.html">simulation_control.h</a>.</p>
 
 </div>
 </div>

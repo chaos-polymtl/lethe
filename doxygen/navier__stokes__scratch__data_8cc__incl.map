@@ -88,7 +88,7 @@
 <area shape="poly" id="edge36_Node000042_Node000005" title=" " alt="" coords="2049,853,2037,889,2018,936,1991,986,1956,1030,1924,1054,1890,1073,1887,1068,1921,1050,1952,1026,1987,983,2013,934,2032,888,2044,852"/>
 <area shape="poly" id="edge37_Node000042_Node000037" title=" " alt="" coords="1974,850,1674,905,1673,900,1973,845"/>
 <area shape="poly" id="edge42_Node000043_Node000003" title=" " alt="" coords="836,514,870,561,910,627,928,656,955,689,999,728,995,732,951,693,923,659,905,630,865,564,831,517"/>
-<area shape="rect" id="Node000044" href="$simulation__control_8h.html" title=" " alt="" coords="669,570,855,595"/>
+<area shape="rect" id="Node000044" href="$simulation__control_8h.html" title="Simulation control classes for managing time&#45;stepping and iteration control in Lethe." alt="" coords="669,570,855,595"/>
 <area shape="poly" id="edge43_Node000043_Node000044" title=" " alt="" coords="809,516,780,560,775,557,804,513"/>
 <area shape="poly" id="edge44_Node000044_Node000002" title=" " alt="" coords="717,598,478,658,477,652,716,593"/>
 <area shape="poly" id="edge45_Node000044_Node000003" title=" " alt="" coords="776,593,827,638,898,688,941,712,983,731,981,736,939,717,895,693,824,642,773,597"/>

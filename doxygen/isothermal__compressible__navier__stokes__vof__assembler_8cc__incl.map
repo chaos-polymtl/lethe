@@ -2,7 +2,7 @@
 <area shape="rect" id="Node000001" title=" " alt="" coords="1955,5,2194,75"/>
 <area shape="rect" id="Node000002" href="$bdf_8h.html" title=" " alt="" coords="993,585,1079,610"/>
 <area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="1955,44,1497,51,1202,61,899,78,616,103,490,119,380,139,288,161,218,186,193,199,175,214,164,229,160,244,160,422,166,429,186,438,259,460,496,508,769,553,980,585,979,590,768,559,495,513,258,465,184,443,163,433,155,424,155,244,159,226,171,210,190,195,216,181,287,155,379,133,489,114,615,98,899,73,1202,56,1497,46,1955,39"/>
-<area shape="rect" id="Node000041" href="$simulation__control_8h.html" title=" " alt="" coords="1917,497,2104,522"/>
+<area shape="rect" id="Node000041" href="$simulation__control_8h.html" title="Simulation control classes for managing time&#45;stepping and iteration control in Lethe." alt="" coords="1917,497,2104,522"/>
 <area shape="poly" id="edge20_Node000001_Node000041" title=" " alt="" coords="2056,76,2037,123,2030,171,2029,211,2041,282,2053,352,2053,394,2045,442,2028,485,2023,483,2040,441,2047,393,2048,353,2036,282,2024,211,2024,170,2032,122,2051,74"/>
 <area shape="rect" id="Node000043" href="$isothermal__compressible__navier__stokes__vof__assembler_8h.html" title=" " alt="" coords="2047,123,2233,177"/>
 <area shape="poly" id="edge24_Node000001_Node000043" title=" " alt="" coords="2097,73,2119,109,2115,112,2093,76"/>

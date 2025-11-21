@@ -2,7 +2,7 @@
 <area shape="rect" id="Node000001" title=" " alt="" coords="1244,5,1451,60"/>
 <area shape="rect" id="Node000002" href="$evaporation__model_8h.html" title=" " alt="" coords="490,115,682,141"/>
 <area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="1244,49,693,116,693,111,1244,44"/>
-<area shape="rect" id="Node000041" href="$simulation__control_8h.html" title=" " alt="" coords="493,284,679,309"/>
+<area shape="rect" id="Node000041" href="$simulation__control_8h.html" title="Simulation control classes for managing time&#45;stepping and iteration control in Lethe." alt="" coords="493,284,679,309"/>
 <area shape="poly" id="edge29_Node000001_Node000041" title=" " alt="" coords="1272,63,633,282,631,277,1271,57"/>
 <area shape="rect" id="Node000045" href="$copy__data_8h.html" title=" " alt="" coords="103,453,255,478"/>
 <area shape="poly" id="edge30_Node000001_Node000045" title=" " alt="" coords="1244,41,1061,49,840,64,630,84,544,96,479,111,403,125,335,135,309,145,288,160,275,182,270,215,270,298,263,341,246,382,223,417,202,444,197,441,219,414,241,379,258,340,265,298,265,214,270,180,284,156,306,140,334,130,402,119,477,105,543,91,629,79,839,58,1060,44,1244,35"/>

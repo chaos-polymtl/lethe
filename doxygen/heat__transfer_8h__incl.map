@@ -2,7 +2,7 @@
 <area shape="rect" id="Node000001" title=" " alt="" coords="2196,5,2379,60"/>
 <area shape="rect" id="Node000002" href="$bdf_8h.html" title=" " alt="" coords="293,453,380,478"/>
 <area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="2196,38,1799,46,1255,60,743,82,557,95,448,111,372,124,304,134,277,144,256,159,243,182,238,215,238,305,242,353,263,396,284,422,309,443,306,447,281,426,258,399,237,354,233,305,233,214,238,180,252,155,274,139,302,129,371,118,447,105,557,90,743,76,1254,55,1799,40,2195,33"/>
-<area shape="rect" id="Node000041" href="$simulation__control_8h.html" title=" " alt="" coords="273,372,459,397"/>
+<area shape="rect" id="Node000041" href="$simulation__control_8h.html" title="Simulation control classes for managing time&#45;stepping and iteration control in Lethe." alt="" coords="273,372,459,397"/>
 <area shape="poly" id="edge6_Node000001_Node000041" title=" " alt="" coords="2196,38,1874,43,1433,56,993,78,810,93,672,111,587,121,518,128,487,135,457,148,427,168,395,198,381,215,372,235,362,279,361,322,364,358,359,359,355,323,356,279,367,234,377,213,391,194,423,164,455,143,486,130,517,123,586,115,671,105,809,87,992,72,1433,51,1874,38,2195,32"/>
 <area shape="rect" id="Node000043" href="$vector_8h.html" title=" " alt="" coords="1733,453,1839,478"/>
 <area shape="poly" id="edge10_Node000001_Node000043" title=" " alt="" coords="2258,62,1812,446,1808,442,2255,58"/>

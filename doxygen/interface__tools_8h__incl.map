@@ -46,7 +46,7 @@
 <area shape="rect" id="Node000004" href="$pvd__handler_8h.html" title=" " alt="" coords="1074,284,1219,309"/>
 <area shape="poly" id="edge3_Node000003_Node000004" title=" " alt="" coords="779,226,813,233,1064,279,1063,284,811,239,778,231"/>
 <area shape="poly" id="edge35_Node000003_Node000021" title=" " alt="" coords="733,229,727,376,727,467,721,511,706,553,687,590,669,619,665,616,683,587,701,551,716,510,721,466,721,376,727,229"/>
-<area shape="rect" id="Node000042" href="$simulation__control_8h.html" title=" " alt="" coords="812,284,999,309"/>
+<area shape="rect" id="Node000042" href="$simulation__control_8h.html" title="Simulation control classes for managing time&#45;stepping and iteration control in Lethe." alt="" coords="812,284,999,309"/>
 <area shape="poly" id="edge21_Node000003_Node000042" title=" " alt="" coords="757,226,868,276,866,281,755,231"/>
 <area shape="rect" id="Node000045" title=" " alt="" coords="762,357,937,397"/>
 <area shape="poly" id="edge37_Node000003_Node000045" title=" " alt="" coords="741,227,829,344,825,348,737,230"/>

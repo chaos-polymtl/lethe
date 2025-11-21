@@ -118,7 +118,7 @@
 <area shape="poly" id="edge62_Node000059_Node000016" title=" " alt="" coords="2432,257,2450,328,2457,374,2460,420,2460,672,2460,813,2455,813,2455,672,2455,420,2452,374,2445,329,2427,259"/>
 <area shape="poly" id="edge61_Node000059_Node000018" title=" " alt="" coords="2424,259,2415,329,2409,420,2409,592,2404,630,2392,668,2358,729,2353,726,2387,665,2399,629,2404,591,2404,420,2409,329,2418,258"/>
 <area shape="poly" id="edge63_Node000059_Node000019" title=" " alt="" coords="2478,256,2556,287,2641,327,2678,349,2709,373,2730,396,2737,420,2737,591,2743,633,2759,672,2779,706,2798,734,2794,737,2774,709,2754,674,2738,634,2732,592,2732,420,2725,399,2705,376,2675,354,2638,332,2554,291,2476,261"/>
-<area shape="rect" id="Node000076" href="$simulation__control_8h.html" title=" " alt="" coords="513,409,700,434"/>
+<area shape="rect" id="Node000076" href="$simulation__control_8h.html" title="Simulation control classes for managing time&#45;stepping and iteration control in Lethe." alt="" coords="513,409,700,434"/>
 <area shape="poly" id="edge48_Node000059_Node000076" title=" " alt="" coords="2343,251,1913,298,1336,356,1047,379,758,404,707,410,707,404,757,399,1046,374,1336,351,1912,293,2342,246"/>
 <area shape="rect" id="Node000109" href="$navier__stokes__assemblers_8h.html" title=" " alt="" coords="600,313,763,353"/>
 <area shape="poly" id="edge51_Node000059_Node000109" title=" " alt="" coords="2342,250,2127,268,1457,302,776,331,776,325,1457,296,2126,263,2342,245"/>

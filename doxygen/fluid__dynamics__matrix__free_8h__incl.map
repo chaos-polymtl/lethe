@@ -30,7 +30,7 @@
 <area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="5171,319,5106,366,5103,362,5167,315"/>
 <area shape="rect" id="Node000005" href="$mortar__coupling__manager_8h.html" title=" " alt="" coords="1335,196,1495,236"/>
 <area shape="poly" id="edge4_Node000004_Node000005" title=" " alt="" coords="1085,145,1322,193,1321,198,1084,151"/>
-<area shape="rect" id="Node000047" href="$simulation__control_8h.html" title=" " alt="" coords="1818,291,2005,317"/>
+<area shape="rect" id="Node000047" href="$simulation__control_8h.html" title="Simulation control classes for managing time&#45;stepping and iteration control in Lethe." alt="" coords="1818,291,2005,317"/>
 <area shape="poly" id="edge8_Node000004_Node000047" title=" " alt="" coords="1085,133,1316,155,1428,172,1474,182,1508,194,1524,203,1535,214,1544,224,1559,234,1605,248,1669,263,1813,287,1812,292,1668,268,1603,254,1557,238,1541,228,1531,218,1521,207,1506,198,1472,187,1427,177,1316,160,1084,138"/>
 <area shape="rect" id="Node000051" href="$simulation__parameters_8h.html" title=" " alt="" coords="1168,196,1311,236"/>
 <area shape="poly" id="edge10_Node000004_Node000051" title=" " alt="" coords="1047,146,1173,189,1171,194,1045,151"/>

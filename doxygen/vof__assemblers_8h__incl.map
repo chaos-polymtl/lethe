@@ -1,6 +1,6 @@
 <map id="/home/runner/work/lethe/lethe/include/solvers/vof_assemblers.h" name="/home/runner/work/lethe/lethe/include/solvers/vof_assemblers.h">
 <area shape="rect" id="Node000001" title=" " alt="" coords="249,5,431,60"/>
-<area shape="rect" id="Node000002" href="$simulation__control_8h.html" title=" " alt="" coords="396,291,583,317"/>
+<area shape="rect" id="Node000002" href="$simulation__control_8h.html" title="Simulation control classes for managing time&#45;stepping and iteration control in Lethe." alt="" coords="396,291,583,317"/>
 <area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="321,62,306,84,296,109,285,145,278,175,280,203,295,234,314,249,345,263,422,286,420,291,343,268,311,254,291,238,275,205,272,175,279,144,291,107,302,81,316,59"/>
 <area shape="rect" id="Node000043" href="$copy__data_8h.html" title=" " alt="" coords="29,467,181,493"/>
 <area shape="poly" id="edge32_Node000001_Node000043" title=" " alt="" coords="250,57,188,79,129,112,105,133,86,157,74,184,69,215,69,305,72,346,80,387,99,454,94,455,75,388,67,347,64,305,64,214,69,182,82,154,101,129,126,108,186,74,248,52"/>

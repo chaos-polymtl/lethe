@@ -1,5 +1,5 @@
 <map id="/home/runner/work/lethe/lethe/include/core/simulation_control.h" name="/home/runner/work/lethe/lethe/include/core/simulation_control.h">
-<area shape="rect" id="Node000001" title=" " alt="" coords="755,5,970,60"/>
+<area shape="rect" id="Node000001" title="Simulation control classes for managing time&#45;stepping and iteration control in Lethe." alt="" coords="755,5,970,60"/>
 <area shape="rect" id="Node000002" href="$bdf_8h.html" title=" " alt="" coords="717,115,803,141"/>
 <area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="835,62,785,108,781,104,832,58"/>
 <area shape="rect" id="Node000003" href="$parameters_8h.html" title=" " alt="" coords="813,196,955,221"/>

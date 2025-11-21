@@ -10,7 +10,7 @@
 <area shape="poly" id="edge116_Node000001_Node000045" title=" " alt="" coords="3288,24,3413,29,3546,39,3664,59,3711,73,3745,91,3765,110,3775,130,3786,181,3794,210,3793,224,3785,238,3762,256,3728,271,3639,294,3536,308,3440,316,3440,311,3536,303,3638,289,3727,266,3759,252,3781,234,3788,222,3788,211,3781,182,3770,132,3761,113,3742,96,3709,78,3663,64,3546,45,3413,34,3288,29"/>
 <area shape="rect" id="Node000003" href="$bdf_8h.html" title=" " alt="" coords="2418,189,2601,229"/>
 <area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="2299,135,2454,186,2452,191,2298,140"/>
-<area shape="rect" id="Node000004" href="$simulation__control_8h.html" title=" " alt="" coords="2260,291,2474,346"/>
+<area shape="rect" id="Node000004" href="$simulation__control_8h.html" title="Simulation control classes for managing time&#45;stepping and iteration control in Lethe." alt="" coords="2260,291,2474,346"/>
 <area shape="poly" id="edge78_Node000002_Node000004" title=" " alt="" coords="2251,143,2313,234,2351,289,2347,292,2309,238,2247,146"/>
 <area shape="rect" id="Node000005" href="$physical__property__model_8h.html" title=" " alt="" coords="3639,401,3839,456"/>
 <area shape="poly" id="edge68_Node000002_Node000005" title=" " alt="" coords="2359,113,2732,117,3196,127,3415,136,3601,147,3733,161,3774,170,3796,179,3813,205,3820,234,3820,265,3813,296,3788,355,3760,402,3756,400,3784,353,3808,295,3814,264,3815,235,3808,207,3792,183,3773,175,3733,166,3600,152,3415,141,3196,133,2732,122,2359,118"/>

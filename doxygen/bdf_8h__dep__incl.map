@@ -1,6 +1,6 @@
 <map id="/home/runner/work/lethe/lethe/include/core/bdf.h" name="/home/runner/work/lethe/lethe/include/core/bdf.h">
 <area shape="rect" id="Node000001" title=" " alt="" coords="3711,5,3893,45"/>
-<area shape="rect" id="Node000002" href="$simulation__control_8h.html" title=" " alt="" coords="1939,101,2153,155"/>
+<area shape="rect" id="Node000002" href="$simulation__control_8h.html" title="Simulation control classes for managing time&#45;stepping and iteration control in Lethe." alt="" coords="1939,101,2153,155"/>
 <area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="3697,34,3187,59,2512,96,2154,121,2153,116,2511,91,3187,53,3697,29"/>
 <area shape="rect" id="Node000016" href="$navier__stokes__scratch__data_8h.html" title=" " alt="" coords="921,335,1139,390"/>
 <area shape="poly" id="edge84_Node000001_Node000016" title=" " alt="" coords="3697,30,3250,35,2616,46,1973,65,1705,79,1502,96,1407,101,1322,98,1243,92,1171,89,1104,93,1072,101,1040,112,1009,128,977,150,946,178,915,212,905,229,903,244,906,260,915,279,940,310,972,333,969,337,936,313,910,281,901,262,897,244,900,227,911,209,942,174,974,145,1006,123,1038,107,1070,95,1103,88,1171,83,1244,87,1322,93,1407,96,1502,91,1705,74,1973,60,2616,40,3250,29,3697,25"/>
