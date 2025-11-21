@@ -29,6 +29,8 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
 ### [Master] - 2025-11-14
 
+### Fixed
+
 - MINOR Remove the deprecated argument "renewed_matrix" of the solve_linear_system definition. 
 
 ### [Master] - 2025-11-14

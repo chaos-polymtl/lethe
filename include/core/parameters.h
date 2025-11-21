@@ -1154,7 +1154,8 @@ namespace Parameters
     {
       newton,
       inexact_newton,
-      kinsol_newton
+      kinsol_newton,
+      disabled
     };
 
     // Kinsol solver strategy

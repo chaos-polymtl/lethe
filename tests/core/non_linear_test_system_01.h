@@ -10,7 +10,7 @@
 /**
  * @brief The NonLinearProblemTestClass houses a very simple non-linear system that is used to test the various non-linear solvers
  * The linear solution is obtained using LAPACK
- * it uses a LAPACKMatrix and a Vector to store the analytical jacobian et the
+ * it uses a LAPACKMatrix and a Vector to store the analytical jacobian and the
  * right-hand side respectively
  *
  * We use the base deal.II types (Vector<double>) to store the information as

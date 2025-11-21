@@ -4,8 +4,8 @@
 #ifndef lethe_kinsol_non_linear_solver_h
 #define lethe_kinsol_non_linear_solver_h
 
-#include <core/non_linear_solver.h>
 #include <core/parameters.h>
+#include <core/physics_solver_strategy.h>
 
 #include <deal.II/sundials/kinsol.h>
 
@@ -16,7 +16,7 @@
  * reassemble the Jacobian matrix or not.
  */
 template <typename VectorType>
-class KinsolNewtonNonLinearSolver : public NonLinearSolver<VectorType>
+class KinsolNewtonNonLinearSolver : public PhysicsSolverStrategy<VectorType>
 {
 public:
   /**
@@ -48,7 +48,7 @@ template <typename VectorType>
 KinsolNewtonNonLinearSolver<VectorType>::KinsolNewtonNonLinearSolver(
   PhysicsSolver<VectorType>         *physics_solver,
   const Parameters::NonLinearSolver &params)
-  : NonLinearSolver<VectorType>(physics_solver, params)
+  : PhysicsSolverStrategy<VectorType>(physics_solver, params)
 {}
 
 template <typename VectorType>
