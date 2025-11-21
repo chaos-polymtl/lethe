@@ -17,37 +17,20 @@
 void
 test()
 {
-  Parameters::NonLinearSolver params{
-    .verbosity = Parameters::Verbosity::verbose,
-    .solver    = Parameters::NonLinearSolver::SolverType::disabled,
-    .kinsol_strategy =
-      Parameters::NonLinearSolver::KinsolStrategy::normal_newton, // not used in
-                                                                  // this case
-    .tolerance                    = 1e-8,   // not used in this case
-    .max_iterations               = 10,     // not used in this case
-    .display_precision            = 4,      // not used in this case
-    .force_rhs_calculation        = false,  // not used in this case
-    .matrix_tolerance             = 0.1,    // not used in this case
-    .step_tolerance               = 0.99,   // not used in this case
-    .reuse_matrix                 = false,  // not used in this case
-    .reuse_preconditioner         = false,  // not used in this case
-    .abort_at_convergence_failure = false}; // not used in this case
 
   deallog << "Creating solver" << std::endl;
 
   // Create an instantiation of the Test Class
   std::unique_ptr<LinearProblemTestClass> solver =
-    std::make_unique<LinearProblemTestClass>(params);
+    std::make_unique<LinearProblemTestClass>();
 
 
   deallog << "Solving linear system " << std::endl;
-  // We use solve_non_linear_system of equation even if the system is linear
-  // because it inherits from the NonLinearSolver base class.
-  solver->solve_non_linear_system(true);
+  solver->solve_governing_system();
 
-  auto &present_solution = solver->get_present_solution();
-  deallog << "The final solution is : " << present_solution[0] << " "
-          << present_solution[1] << std::endl;
+  auto &solution = solver->get_system_rhs();
+  deallog << "The final solution is : " << solution[0] << " "
+          << solution[1] << std::endl;
 }
 
 int
