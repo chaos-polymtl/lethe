@@ -3,9 +3,6 @@ DEM time-step is 2203.52% of Rayleigh time step
    Number of active cells:       128
    Number of degrees of freedom: 900
    Volume of triangulation:      0.00025
---------------
-Void Fraction
---------------
 ---------------------------------------------------------------
 Initializing DEM parameters
 Warning: expansion of particle-wall contact list is disabled. 
