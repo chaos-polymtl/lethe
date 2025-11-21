@@ -10,7 +10,7 @@ template <typename VectorType>
 class PhysicsSolver;
 
 /**
- * @brief Base class that works as an interface for all non-linear solvers for all non-linear systems of equations.
+ * @brief Base class that works as an interface for all solver strategies (either non-linear or linear) for all non-linear systems of equations and linear systems of equations.
  *
  */
 template <typename VectorType>
@@ -18,10 +18,10 @@ class PhysicsSolverStrategy
 {
 public:
   /**
-   * @brief Constructor.
+   * @brief Constructor for the non-linear solver strategies.
    *
    * @param[in] physics_solver A pointer to the physics solver to which the
-   * non-linear solver is attached.
+   * solving strategy is attached.
    *
    * @param[in] param Non-linear solver parameters as specified in the
    * simulation parameter file.
@@ -31,6 +31,15 @@ public:
                         const Parameters::NonLinearSolver &params);
 
   /**
+   * @brief Constructor for the linear solver strategy.
+   *
+   * @param[in] physics_solver A pointer to the physics solver to which the
+   * solving strategy is attached.
+   *
+   */
+  PhysicsSolverStrategy(PhysicsSolver<VectorType>         *physics_solver);
+
+  /**
    * @brief Destructor.
    *
    */
@@ -38,7 +47,7 @@ public:
   {}
 
   /**
-   * @brief Solve the non-linear system of equations.
+   * @brief Solve the system of equations.
    *
    */
   virtual void
@@ -84,6 +93,12 @@ PhysicsSolverStrategy<VectorType>::PhysicsSolverStrategy(
   : physics_solver(physics_solver)
   , params(params)
   , outer_iteration(0)
+{}
+
+template <typename VectorType>
+PhysicsSolverStrategy<VectorType>::PhysicsSolverStrategy(
+  PhysicsSolver<VectorType> *physics_solver)
+  : physics_solver(physics_solver)
 {}
 
 #endif
