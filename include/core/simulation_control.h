@@ -33,7 +33,8 @@
  * - Steady-state methods
  *
  * Derived classes implement specific simulation control strategies for
- * transient, steady-state, adjoint, and specialized simulations (e.g., DEM, ray tracing).
+ * transient, steady-state, adjoint, and specialized simulations (e.g., DEM, ray
+ * tracing).
  *
  * @note This class handles serialization through save() and read() methods
  * to enable checkpointing and restart capabilities.
@@ -72,8 +73,9 @@ protected:
   /**
    * @brief Boolean to keep the time step for the last iteration regardless of the end time
    *
-   * When true, the last time step is not adjusted to match the end time exactly.
-   * Applies to both fixed time step and adaptive time step simulations.
+   * When true, the last time step is not adjusted to match the end time
+   * exactly. Applies to both fixed time step and adaptive time step
+   * simulations.
    */
   bool time_step_independent_of_end_time;
 
@@ -154,7 +156,8 @@ protected:
   /**
    * @brief Log precision
    *
-   * Controls the number of significant digits displayed on the standard outputs.
+   * Controls the number of significant digits displayed on the standard
+   * outputs.
    */
   unsigned int log_precision;
 
@@ -173,7 +176,8 @@ protected:
   /**
    * @brief Output boundaries flag
    *
-   * Controls if the boundaries of the domain are outputted when writing results.
+   * Controls if the boundaries of the domain are outputted when writing
+   * results.
    */
   bool output_boundaries;
 
@@ -216,7 +220,8 @@ public:
    *
    * The simulation control class is constructed from a parameter structure
    * from which it draws its arguments. This structure is not kept internally.
-   * This means that required information is copied from the struct to the class.
+   * This means that required information is copied from the struct to the
+   * class.
    *
    * @param[in] param Structure of the parameters for the simulation control
    */
@@ -260,8 +265,8 @@ public:
   /**
    * @brief Establishes if a simulation has reached its end
    *
-   * The concrete implementation of the class decides what is the stopping criteria
-   * (iteration number, time_end reached, residual tolerance, etc.)
+   * The concrete implementation of the class decides what is the stopping
+   * criteria (iteration number, time_end reached, residual tolerance, etc.)
    *
    * @return true if the simulation has reached its end condition, false otherwise
    */
@@ -275,7 +280,8 @@ public:
    * to the time_step_vector. The history is maintained for BDF methods that
    * require knowledge of previous time steps.
    *
-   * @param[in] p_timestep The new value of the time step for the present iteration
+   * @param[in] p_timestep The new value of the time step for the present
+   * iteration
    */
   void
   add_time_step(double p_timestep);
@@ -360,7 +366,8 @@ public:
    * terminal. The specific format and content depend on the derived class
    * implementation.
    *
-   * @param[in] pcout Parallel conditional output stream used to print the information
+   * @param[in] pcout Parallel conditional output stream used to print the
+   * information
    */
   virtual void
   print_progression(const ConditionalOStream &pcout) = 0;
@@ -413,8 +420,8 @@ public:
    * If it indeed is the first assembly, then the first_assembly flag is set to
    * false. This function is used when providing the residual to the simulation
    * control object when using steady-bdf methods. Since the residual must be
-   * provided once per time-step (and at the beginning), this function is used to
-   * identify that.
+   * provided once per time-step (and at the beginning), this function is used
+   * to identify that.
    *
    * @return true if this is the first assembly, false otherwise
    *
@@ -479,7 +486,8 @@ public:
    *
    * Used primarily in adjoint time-stepping to track convergence.
    *
-   * @param[in] new_residual Value of the residual at the beginning of an adjoint time-stepping time step
+   * @param[in] new_residual Value of the residual at the beginning of an
+   * adjoint time-stepping time step
    */
   void
   provide_residual(const double new_residual)
@@ -719,8 +727,8 @@ public:
   /**
    * @brief Save the simulation control information to a checkpoint file
    *
-   * Saves the time step vector, the CFL value, the time and the iteration number
-   * to enable restart capabilities.
+   * Saves the time step vector, the CFL value, the time and the iteration
+   * number to enable restart capabilities.
    *
    * @param[in] prefix The prefix of the checkpoint file for the simulation
    */
@@ -741,9 +749,10 @@ public:
   /**
    * @brief Read and return simulation control information from checkpoint without updating
    *
-   * Reads and returns the simulation control information from the checkpoint file
-   * without updating the internal simulation control state. Useful for querying
-   * checkpoint information without modifying the current simulation state.
+   * Reads and returns the simulation control information from the checkpoint
+   * file without updating the internal simulation control state. Useful for
+   * querying checkpoint information without modifying the current simulation
+   * state.
    *
    * @param[in] prefix The prefix of the checkpoint file for the simulation
    *
@@ -804,7 +813,8 @@ protected:
   /**
    * @brief Flag indicating whether there are more output times to check
    *
-   * Set to true when all specific output times in output_times_vector have been reached.
+   * Set to true when all specific output times in output_times_vector have been
+   * reached.
    */
   bool no_more_output_times;
 
@@ -824,9 +834,10 @@ protected:
    *
    * If adaptation is enabled, the time step is calculated to ensure that the
    * CFL condition is bound by the maximal CFL value. The new time step is
-   * scaled by adaptative_time_step_scaling. If the time_step_independent_of_end_time
-   * is set to false, the time step is adjusted to meet exactly the end time;
-   * the default is to not modify the time step.
+   * scaled by adaptative_time_step_scaling. If the
+   * time_step_independent_of_end_time is set to false, the time step is
+   * adjusted to meet exactly the end time; the default is to not modify the
+   * time step.
    *
    * @return The calculated time step value
    */
@@ -844,7 +855,8 @@ public:
   /**
    * @brief Print the current progress status of the simulation
    *
-   * @param[in] pcout Parallel conditional output stream used to print the information
+   * @param[in] pcout Parallel conditional output stream used to print the
+   * information
    */
   virtual void
   print_progression(const ConditionalOStream &pcout) override;
@@ -903,9 +915,10 @@ public:
   /**
    * @brief Read the simulation control information from a checkpoint file
    *
-   * Reads and updates the time step vector, the CFL value, the time, the iteration
-   * number and the index of the output times vector if time control is used.
-   * Allows changing the time step if adaptive time stepping is disabled.
+   * Reads and updates the time step vector, the CFL value, the time, the
+   * iteration number and the index of the output times vector if time control
+   * is used. Allows changing the time step if adaptive time stepping is
+   * disabled.
    *
    * @param[in] prefix The prefix of the checkpoint file for the simulation
    */
@@ -934,7 +947,8 @@ public:
    *
    * Provides DEM-specific formatting and information in the progress output.
    *
-   * @param[in] pcout Parallel conditional output stream used to print the information
+   * @param[in] pcout Parallel conditional output stream used to print the
+   * information
    */
   virtual void
   print_progression(const ConditionalOStream &pcout) override;
@@ -963,7 +977,8 @@ public:
   /**
    * @brief Print the current progress status of the steady-state simulation
    *
-   * @param[in] pcout Parallel conditional output stream used to print the information
+   * @param[in] pcout Parallel conditional output stream used to print the
+   * information
    */
   virtual void
   print_progression(const ConditionalOStream &pcout) override;
@@ -1022,7 +1037,8 @@ public:
   /**
    * @brief Print the current progress status of the adjoint simulation
    *
-   * @param[in] pcout Parallel conditional output stream used to print the information
+   * @param[in] pcout Parallel conditional output stream used to print the
+   * information
    */
   virtual void
   print_progression(const ConditionalOStream &pcout) override;
@@ -1055,7 +1071,8 @@ public:
    * @brief Construct a ray tracing simulation control object
    *
    * @param[in] param Structure of the parameters for the simulation control
-   * @param[in] input_photon_handler The particle handler containing the photons to be traced
+   * @param[in] input_photon_handler The particle handler containing the photons
+   * to be traced
    */
   SimulationControlRayTracing(
     const Parameters::SimulationControl &param,
@@ -1093,7 +1110,8 @@ public:
   /**
    * @brief Print the current progress status of the ray tracing simulation
    *
-   * @param[in] pcout Parallel conditional output stream used to print the information
+   * @param[in] pcout Parallel conditional output stream used to print the
+   * information
    */
   void
   print_progression(const ConditionalOStream &pcout) override;
