@@ -1,18 +1,22 @@
 <map id="/home/runner/work/lethe/lethe/include/dem/grid_motion.h" name="/home/runner/work/lethe/lethe/include/dem/grid_motion.h">
-<area shape="rect" id="Node000001" title=" " alt="" coords="239,5,421,60"/>
-<area shape="rect" id="Node000002" href="$dem_8h.html" title=" " alt="" coords="132,115,320,155"/>
-<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="295,72,248,117,244,113,291,68"/>
-<area shape="rect" id="Node000008" href="$grid__motion_8cc.html" title=" " alt="" coords="344,108,527,163"/>
-<area shape="poly" id="edge8_Node000001_Node000008" title=" " alt="" coords="369,68,410,106,406,110,366,72"/>
-<area shape="rect" id="Node000003" href="$cfd__dem__coupling_8h.html" title=" " alt="" coords="5,313,188,368"/>
-<area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="177,165,149,186,126,212,113,237,105,264,99,313,94,313,100,263,108,235,121,209,145,182,174,160"/>
-<area shape="rect" id="Node000005" href="$fluid__dynamics__vans_8h.html" title=" " alt="" coords="135,211,317,265"/>
-<area shape="poly" id="edge4_Node000002_Node000005" title=" " alt="" coords="229,169,229,210,223,210,223,169"/>
-<area shape="rect" id="Node000007" href="$dem_8cc.html" title=" " alt="" coords="341,218,532,258"/>
-<area shape="poly" id="edge7_Node000002_Node000007" title=" " alt="" coords="279,159,398,216,396,220,277,164"/>
-<area shape="rect" id="Node000004" href="$cfd__dem__coupling_8cc.html" title=" " alt="" coords="5,416,188,471"/>
-<area shape="poly" id="edge3_Node000003_Node000004" title=" " alt="" coords="99,382,99,416,94,416,94,382"/>
-<area shape="poly" id="edge5_Node000005_Node000003" title=" " alt="" coords="183,276,132,315,129,311,180,271"/>
-<area shape="rect" id="Node000006" href="$fluid__dynamics__vans_8cc.html" title=" " alt="" coords="212,313,395,368"/>
-<area shape="poly" id="edge6_Node000005_Node000006" title=" " alt="" coords="257,275,285,312,281,315,253,278"/>
+<area shape="rect" id="Node000001" title=" " alt="" coords="378,5,561,60"/>
+<area shape="rect" id="Node000002" href="$dem_8h.html" title=" " alt="" coords="271,115,459,155"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="434,72,387,117,383,113,430,68"/>
+<area shape="rect" id="Node000010" href="$grid__motion_8cc.html" title=" " alt="" coords="483,108,666,163"/>
+<area shape="poly" id="edge10_Node000001_Node000010" title=" " alt="" coords="509,68,549,106,545,110,505,72"/>
+<area shape="rect" id="Node000003" href="$cfd__dem__coupling_8h.html" title=" " alt="" coords="225,321,407,375"/>
+<area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="348,169,329,211,319,269,318,321,312,320,314,269,324,210,343,167"/>
+<area shape="rect" id="Node000005" href="$cfd__dem__coupling__matrix__free_8h.html" title=" " alt="" coords="11,211,250,265"/>
+<area shape="poly" id="edge4_Node000002_Node000005" title=" " alt="" coords="310,163,193,213,191,208,308,158"/>
+<area shape="rect" id="Node000007" href="$fluid__dynamics__vans_8h.html" title=" " alt="" coords="339,211,522,265"/>
+<area shape="poly" id="edge6_Node000002_Node000007" title=" " alt="" coords="387,165,416,209,411,212,383,168"/>
+<area shape="rect" id="Node000009" href="$dem_8cc.html" title=" " alt="" coords="546,218,737,258"/>
+<area shape="poly" id="edge9_Node000002_Node000009" title=" " alt="" coords="431,158,591,215,589,220,429,163"/>
+<area shape="rect" id="Node000004" href="$cfd__dem__coupling_8cc.html" title=" " alt="" coords="225,431,407,485"/>
+<area shape="poly" id="edge3_Node000003_Node000004" title=" " alt="" coords="319,390,319,430,313,430,313,390"/>
+<area shape="rect" id="Node000006" href="$cfd__dem__coupling__matrix__free_8cc.html" title=" " alt="" coords="5,313,200,383"/>
+<area shape="poly" id="edge5_Node000005_Node000006" title=" " alt="" coords="123,280,114,314,109,312,118,278"/>
+<area shape="poly" id="edge7_Node000007_Node000003" title=" " alt="" coords="394,277,346,322,342,318,390,273"/>
+<area shape="rect" id="Node000008" href="$fluid__dynamics__vans_8cc.html" title=" " alt="" coords="431,321,614,375"/>
+<area shape="poly" id="edge8_Node000007_Node000008" title=" " alt="" coords="464,274,502,319,498,322,460,278"/>
 </map>

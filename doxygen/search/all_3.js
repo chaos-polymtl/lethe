@@ -1,6 +1,6 @@
 var searchData=
 [
-  ['b_0',['b',['../classThermalConductivityLinear.html#a65bdace70d96173f07f99231031daeb6',1,'ThermalConductivityLinear::B'],['../structSDIRKTable.html#a8dffb0a6775b20ebc05ab9950fd83948',1,'SDIRKTable::b']]],
+  ['b_0',['b',['../structSDIRKTable.html#a8dffb0a6775b20ebc05ab9950fd83948',1,'SDIRKTable::b'],['../classThermalConductivityLinear.html#a65bdace70d96173f07f99231031daeb6',1,'ThermalConductivityLinear::B']]],
   ['b_201_20b_20gamma_20gamma_1',['|   b    1-b-gamma  gamma|',['../sdirk_8cc.html#autotoc_md1',1,'']]],
   ['b_5fi_2',['b_i',['../classSDIRKStageData.html#a3d7c3a736a0cdc2529e9d705e84ea427',1,'SDIRKStageData']]],
   ['background_5fconstraints_3',['background_constraints',['../classDEMSolver.html#a3926006d70a9fb14cfffe6f79bdce0d4',1,'DEMSolver']]],
@@ -57,7 +57,7 @@ var searchData=
   ['both_54',['both',['../namespaceParameters.html#af7808f8635a6a7dc05ee8c1487118f2faf6cb3e816496528d4187db53bc66567f',1,'Parameters']]],
   ['boundaries_5fto_5ffix_55',['boundaries_to_fix',['../structParameters_1_1MeshAdaptation.html#acdbb0259a02aeb4f0900ce6fab57d8cd',1,'Parameters::MeshAdaptation']]],
   ['boundaries_5fto_5frefine_56',['boundaries_to_refine',['../structParameters_1_1Mesh.html#a88553c9d1dd7239a33d0c53b7d0bcae9',1,'Parameters::Mesh']]],
-  ['boundary_5fcell_5fobject_57',['boundary_cell_object',['../classCFDDEMSolver.html#aedf8168ad937f17c24bd4ef7d93cecc6',1,'CFDDEMSolver::boundary_cell_object'],['../classDEMSolver.html#a541a0864bcd4bc87d52042aca547efaa',1,'DEMSolver::boundary_cell_object']]],
+  ['boundary_5fcell_5fobject_57',['boundary_cell_object',['../classCFDDEMMatrixFree.html#a0a3d9b147613fda7046fa89c2205fd70',1,'CFDDEMMatrixFree::boundary_cell_object'],['../classDEMSolver.html#a541a0864bcd4bc87d52042aca547efaa',1,'DEMSolver::boundary_cell_object'],['../classCFDDEMSolver.html#aedf8168ad937f17c24bd4ef7d93cecc6',1,'CFDDEMSolver::boundary_cell_object']]],
   ['boundary_5fcells_58',['boundary_cells',['../classIBParticlesDEM.html#a3d34e45792721525f65652647a935067',1,'IBParticlesDEM']]],
   ['boundary_5fcells_5ffor_5ffloating_5fwalls_59',['boundary_cells_for_floating_walls',['../classBoundaryCellsInformation.html#a25770a72ee4794bf1b20435944496f78',1,'BoundaryCellsInformation']]],
   ['boundary_5fcells_5finfo_5fstruct_60',['boundary_cells_info_struct',['../structboundary__cells__info__struct.html',1,'']]],

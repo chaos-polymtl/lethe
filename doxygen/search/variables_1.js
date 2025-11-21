@@ -1,6 +1,6 @@
 var searchData=
 [
-  ['b_0',['b',['../classThermalConductivityLinear.html#a65bdace70d96173f07f99231031daeb6',1,'ThermalConductivityLinear::B'],['../structSDIRKTable.html#a8dffb0a6775b20ebc05ab9950fd83948',1,'SDIRKTable::b']]],
+  ['b_0',['b',['../structSDIRKTable.html#a8dffb0a6775b20ebc05ab9950fd83948',1,'SDIRKTable::b'],['../classThermalConductivityLinear.html#a65bdace70d96173f07f99231031daeb6',1,'ThermalConductivityLinear::B']]],
   ['b_5fi_1',['b_i',['../classSDIRKStageData.html#a3d7c3a736a0cdc2529e9d705e84ea427',1,'SDIRKStageData']]],
   ['background_5fconstraints_2',['background_constraints',['../classDEMSolver.html#a3926006d70a9fb14cfffe6f79bdce0d4',1,'DEMSolver']]],
   ['background_5fdh_3',['background_dh',['../classDEMSolver.html#a3f17096d0118455699306606ec86e66a',1,'DEMSolver::background_dh'],['../classRayTracingSolver.html#a9a62c44febba6fc0e9f3ab22bd943487',1,'RayTracingSolver::background_dh']]],
@@ -39,7 +39,7 @@ var searchData=
   ['bool_5fdof_5fmask_36',['bool_dof_mask',['../classNavierStokesOperatorBase.html#a19396fe6188e28386b2edcbd7869dd14',1,'NavierStokesOperatorBase']]],
   ['boundaries_5fto_5ffix_37',['boundaries_to_fix',['../structParameters_1_1MeshAdaptation.html#acdbb0259a02aeb4f0900ce6fab57d8cd',1,'Parameters::MeshAdaptation']]],
   ['boundaries_5fto_5frefine_38',['boundaries_to_refine',['../structParameters_1_1Mesh.html#a88553c9d1dd7239a33d0c53b7d0bcae9',1,'Parameters::Mesh']]],
-  ['boundary_5fcell_5fobject_39',['boundary_cell_object',['../classDEMSolver.html#a541a0864bcd4bc87d52042aca547efaa',1,'DEMSolver::boundary_cell_object'],['../classCFDDEMSolver.html#aedf8168ad937f17c24bd4ef7d93cecc6',1,'CFDDEMSolver::boundary_cell_object']]],
+  ['boundary_5fcell_5fobject_39',['boundary_cell_object',['../classDEMSolver.html#a541a0864bcd4bc87d52042aca547efaa',1,'DEMSolver::boundary_cell_object'],['../classCFDDEMMatrixFree.html#a0a3d9b147613fda7046fa89c2205fd70',1,'CFDDEMMatrixFree::boundary_cell_object'],['../classCFDDEMSolver.html#aedf8168ad937f17c24bd4ef7d93cecc6',1,'CFDDEMSolver::boundary_cell_object']]],
   ['boundary_5fcells_40',['boundary_cells',['../classIBParticlesDEM.html#a3d34e45792721525f65652647a935067',1,'IBParticlesDEM']]],
   ['boundary_5fcells_5ffor_5ffloating_5fwalls_41',['boundary_cells_for_floating_walls',['../classBoundaryCellsInformation.html#a25770a72ee4794bf1b20435944496f78',1,'BoundaryCellsInformation']]],
   ['boundary_5fcells_5finformation_42',['boundary_cells_information',['../classBoundaryCellsInformation.html#ae83901cb7b77b12b885aa479c97f76df',1,'BoundaryCellsInformation']]],

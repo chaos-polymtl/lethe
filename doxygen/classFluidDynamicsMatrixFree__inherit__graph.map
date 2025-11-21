@@ -6,4 +6,6 @@
 <area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="121,147,121,181,115,181,115,147"/>
 <area shape="rect" id="Node000003" href="$classPhysicsSolver.html" title="Contain all the common elements of a physics solver. It creates the non&#45;linear solver as specified by..." alt="" coords="11,5,225,31"/>
 <area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="121,44,121,79,115,79,115,44"/>
+<area shape="rect" id="Node000005" href="$classCFDDEMMatrixFree.html" title="Solver class for coupled Computational Fluid Dynamics and Discrete Element Method (CFD&#45;DEM) simulatio..." alt="" coords="16,357,220,383"/>
+<area shape="poly" id="edge4_Node000004_Node000005" title=" " alt="" coords="121,323,121,357,115,357,115,323"/>
 </map>

@@ -1,9 +1,13 @@
 <map id="/home/runner/work/lethe/lethe/include/solvers/fluid_dynamics_matrix_free.h" name="/home/runner/work/lethe/lethe/include/solvers/fluid_dynamics_matrix_free.h">
-<area shape="rect" id="Node000001" title=" " alt="" coords="146,5,365,60"/>
-<area shape="rect" id="Node000002" href="$fluid__dynamics__vans__matrix__free_8h.html" title=" " alt="" coords="5,115,263,170"/>
-<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="217,71,165,117,162,113,213,67"/>
-<area shape="rect" id="Node000004" href="$fluid__dynamics__matrix__free_8cc.html" title=" " alt="" coords="287,108,469,177"/>
-<area shape="poly" id="edge3_Node000001_Node000004" title=" " alt="" coords="298,68,341,106,338,110,294,72"/>
-<area shape="rect" id="Node000003" href="$fluid__dynamics__vans__matrix__free_8cc.html" title=" " alt="" coords="28,225,240,295"/>
-<area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="137,183,137,225,131,225,131,183"/>
+<area shape="rect" id="Node000001" title=" " alt="" coords="261,5,479,60"/>
+<area shape="rect" id="Node000002" href="$fluid__dynamics__vans__matrix__free_8h.html" title=" " alt="" coords="120,115,377,170"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="332,71,280,117,277,113,328,67"/>
+<area shape="rect" id="Node000006" href="$fluid__dynamics__matrix__free_8cc.html" title=" " alt="" coords="401,108,584,177"/>
+<area shape="poly" id="edge5_Node000001_Node000006" title=" " alt="" coords="412,68,456,106,453,110,409,72"/>
+<area shape="rect" id="Node000003" href="$cfd__dem__coupling__matrix__free_8h.html" title=" " alt="" coords="5,233,244,287"/>
+<area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="212,181,155,234,151,230,209,177"/>
+<area shape="rect" id="Node000005" href="$fluid__dynamics__vans__matrix__free_8cc.html" title=" " alt="" coords="268,225,480,295"/>
+<area shape="poly" id="edge4_Node000002_Node000005" title=" " alt="" coords="289,177,339,223,335,227,285,181"/>
+<area shape="rect" id="Node000004" href="$cfd__dem__coupling__matrix__free_8cc.html" title=" " alt="" coords="27,343,222,412"/>
+<area shape="poly" id="edge3_Node000003_Node000004" title=" " alt="" coords="127,301,127,342,122,342,122,301"/>
 </map>

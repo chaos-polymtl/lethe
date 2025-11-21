@@ -9,7 +9,7 @@ var searchData=
   ['ramp_5fn_6',['ramp_n',['../structParameters_1_1Ramp.html#a8654989a65534c10ae6cbcf185eb7582',1,'Parameters::Ramp']]],
   ['ramp_5fviscosity_7',['ramp_viscosity',['../structParameters_1_1Ramp.html#a1f0b020a72b5d33f7198d2c041b61cc6',1,'Parameters::Ramp']]],
   ['ray_5ftracing_5finfo_8',['ray_tracing_info',['../classRayTracingSolverParameters.html#ab7ac52b91229c69d39b8e30cea7c9205',1,'RayTracingSolverParameters']]],
-  ['rayleigh_5ftime_5fstep_9',['rayleigh_time_step',['../classCFDDEMSolver.html#a420b8033386312f89ffe3003a0f7298d',1,'CFDDEMSolver']]],
+  ['rayleigh_5ftime_5fstep_9',['rayleigh_time_step',['../classCFDDEMSolver.html#a420b8033386312f89ffe3003a0f7298d',1,'CFDDEMSolver::rayleigh_time_step'],['../classCFDDEMMatrixFree.html#a5aaa6d10c7a3fd9141635de890fa71fd',1,'CFDDEMMatrixFree::rayleigh_time_step']]],
   ['re_5fparticle_10',['Re_particle',['../classNavierStokesScratchData.html#a91011b4cd4861cad33fe26dd60c010b8',1,'NavierStokesScratchData']]],
   ['reactor_5fheight_11',['reactor_height',['../structParameters_1_1RPTParameters.html#a8e8bddbdcb395e002d574de36d9a81d4',1,'Parameters::RPTParameters']]],
   ['reactor_5fradius_12',['reactor_radius',['../structParameters_1_1RPTParameters.html#aa4ca720ab2c38bf8fbc335b3cb81c819',1,'Parameters::RPTParameters']]],

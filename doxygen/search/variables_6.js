@@ -1,6 +1,6 @@
 var searchData=
 [
-  ['g_0',['g',['../classDEMSolver.html#a1492afb72e77a6d9fd5c15f4ac88e0d2',1,'DEMSolver::g'],['../structParameters_1_1Lagrangian_1_1LagrangianPhysicalProperties.html#a389f64ac77ee4d9ad464a9daf07806ab',1,'Parameters::Lagrangian::LagrangianPhysicalProperties::g'],['../classCFDDEMSolver.html#aaadfca8bb60b6233ceccb2a316b358cb',1,'CFDDEMSolver::g']]],
+  ['g_0',['g',['../classDEMSolver.html#a1492afb72e77a6d9fd5c15f4ac88e0d2',1,'DEMSolver::g'],['../structParameters_1_1Lagrangian_1_1LagrangianPhysicalProperties.html#a389f64ac77ee4d9ad464a9daf07806ab',1,'Parameters::Lagrangian::LagrangianPhysicalProperties::g'],['../classCFDDEMMatrixFree.html#a192fc6203ea69c2d2f39295a972936db',1,'CFDDEMMatrixFree::g'],['../classCFDDEMSolver.html#aaadfca8bb60b6233ceccb2a316b358cb',1,'CFDDEMSolver::g']]],
   ['gamma_1',['gamma',['../classBlockSchurPreconditioner.html#af4f1abb540d57aa7e33f076f99e1c7ac',1,'BlockSchurPreconditioner::gamma'],['../classFluidDynamicsBlock.html#a19f99172c895f6b8feceb0e28c4d55ab',1,'FluidDynamicsBlock::gamma']]],
   ['gamma_5frays_5femitted_2',['gamma_rays_emitted',['../structParameters_1_1RPTParameters.html#a81f5f7f07cb966bc17910397c8446807',1,'Parameters::RPTParameters']]],
   ['gas_5fparameter_5fm_3',['gas_parameter_m',['../classParticleParticleContactForce.html#a7ea86ff3c08bf0aed162c98a0dee3292',1,'ParticleParticleContactForce::gas_parameter_m'],['../classParticleWallContactForce.html#a1d8d7f3ba0f20e1eec06fc1f79d75a6c',1,'ParticleWallContactForce::gas_parameter_m']]],
@@ -57,7 +57,7 @@ var searchData=
   ['grid_5fmotion_54',['grid_motion',['../classDEMSolverParameters.html#a941be40f6a4b11025ed8423e01505f02',1,'DEMSolverParameters::grid_motion'],['../classGridMotion.html#a1745560a13aac56edf35999822d085ca',1,'GridMotion::grid_motion']]],
   ['grid_5fmotion_5fenabled_55',['grid_motion_enabled',['../classDEMActionManager.html#a1720b5e9b311b454b1b6a0fab3b64378',1,'DEMActionManager']]],
   ['grid_5fmotion_5fobject_56',['grid_motion_object',['../classDEMSolver.html#a3e94cc060d813060cf77fbe302cea794',1,'DEMSolver']]],
-  ['grid_5fpvdhandler_57',['grid_pvdhandler',['../classDEMSolver.html#ae7294f95591eeb34ae7d5de9a2e447dc',1,'DEMSolver::grid_pvdhandler'],['../classCFDDEMSolver.html#a1a0df92996255fc9c8ca6dd16f2e1848',1,'CFDDEMSolver::grid_pvdhandler']]],
+  ['grid_5fpvdhandler_57',['grid_pvdhandler',['../classDEMSolver.html#ae7294f95591eeb34ae7d5de9a2e447dc',1,'DEMSolver::grid_pvdhandler'],['../classCFDDEMSolver.html#a1a0df92996255fc9c8ca6dd16f2e1848',1,'CFDDEMSolver::grid_pvdhandler'],['../classCFDDEMMatrixFree.html#adddefa1001ffb821792289de713e9309',1,'CFDDEMMatrixFree::grid_pvdhandler']]],
   ['grid_5frotational_5faxis_58',['grid_rotational_axis',['../classParameters_1_1Lagrangian_1_1GridMotion.html#a3c50b5b9e22ab8061b25a5dacc47feed',1,'Parameters::Lagrangian::GridMotion']]],
   ['grid_5frotational_5fspeed_59',['grid_rotational_speed',['../classParameters_1_1Lagrangian_1_1GridMotion.html#a0ecd15ea150e6ed71db326c144f59157',1,'Parameters::Lagrangian::GridMotion']]],
   ['grid_5ftranslational_5fvelocity_60',['grid_translational_velocity',['../classParameters_1_1Lagrangian_1_1GridMotion.html#ae323fadb3a867eb74024f043fba6a052',1,'Parameters::Lagrangian::GridMotion']]],

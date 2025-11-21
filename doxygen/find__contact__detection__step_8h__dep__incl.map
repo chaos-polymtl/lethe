@@ -1,9 +1,11 @@
 <map id="/home/runner/work/lethe/lethe/include/dem/find_contact_detection_step.h" name="/home/runner/work/lethe/lethe/include/dem/find_contact_detection_step.h">
-<area shape="rect" id="Node000001" title=" " alt="" coords="223,5,415,60"/>
-<area shape="rect" id="Node000002" href="$dem_8cc.html" title=" " alt="" coords="5,115,196,155"/>
-<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="251,68,143,118,141,113,249,63"/>
-<area shape="rect" id="Node000003" href="$find__contact__detection__step_8cc.html" title=" " alt="" coords="220,108,419,163"/>
-<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="322,74,322,108,317,108,317,74"/>
-<area shape="rect" id="Node000004" href="$cfd__dem__coupling_8cc.html" title=" " alt="" coords="443,108,625,163"/>
-<area shape="poly" id="edge3_Node000001_Node000004" title=" " alt="" coords="389,63,479,106,477,110,386,68"/>
+<area shape="rect" id="Node000001" title=" " alt="" coords="330,5,522,60"/>
+<area shape="rect" id="Node000002" href="$dem_8cc.html" title=" " alt="" coords="5,123,196,163"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="335,67,158,125,157,120,333,62"/>
+<area shape="rect" id="Node000003" href="$find__contact__detection__step_8cc.html" title=" " alt="" coords="220,115,419,170"/>
+<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="392,72,347,117,344,113,388,68"/>
+<area shape="rect" id="Node000004" href="$cfd__dem__coupling_8cc.html" title=" " alt="" coords="443,115,625,170"/>
+<area shape="poly" id="edge3_Node000001_Node000004" title=" " alt="" coords="464,68,509,113,506,117,461,72"/>
+<area shape="rect" id="Node000005" href="$cfd__dem__coupling__matrix__free_8cc.html" title=" " alt="" coords="650,108,845,177"/>
+<area shape="poly" id="edge4_Node000001_Node000005" title=" " alt="" coords="518,62,651,106,649,111,516,67"/>
 </map>

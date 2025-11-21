@@ -509,9 +509,16 @@
 <li><p>Particle-laden flows</p></li>
 </ul>
 </td>
-<td><p>This application allows to run unresolved Computational Fluid Dynamics-Discrete Element Method simulations.</p></td>
+<td><p>This application runs unresolved Computational Fluid Dynamics-Discrete Element Method simulations.</p></td>
 </tr>
-<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">lethe-fluid-sharp</span></code></p></td>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">lethe-fluid-particles-matrix-free</span></code></p></td>
+<td><ul class="simple">
+<li><p>Particle-laden flows</p></li>
+</ul>
+</td>
+<td><p>This application runs unresolved Computational Fluid Dynamics-Discrete Element Method simulations using a matrix-free approach for the fluid dynamics. <strong>This solver is still experimental</strong>.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">lethe-fluid-sharp</span></code></p></td>
 <td><ul class="simple">
 <li><p>Single-phase flows</p></li>
 <li><p>Particle-laden flows</p></li>
@@ -520,7 +527,7 @@
 </td>
 <td><p>This application solves the Navier-Stokes equations for particle-laden flows. A sharp-edge method is used to impose immersed boundary conditions at the particle walls, removing the requirement of a boundary-conforming mesh. This application allows to perform resolved Computational Fluid Dynamics-Discrete Element Method simulations.</p></td>
 </tr>
-<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">lethe-fluid-nitsche</span></code></p></td>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">lethe-fluid-nitsche</span></code></p></td>
 <td><ul class="simple">
 <li><p>Single-phase flows</p></li>
 <li><p>Fluid-fluid flows</p></li>
@@ -530,42 +537,42 @@
 </td>
 <td><p>This application solves the Navier-Stokes equations by imposing immersed boundary conditions without discretizing the boundaries using the Nitsche method.</p></td>
 </tr>
-<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">lethe-fluid-vans</span></code></p></td>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">lethe-fluid-vans</span></code></p></td>
 <td><ul class="simple">
 <li><p>Single phase volume-averaged flows</p></li>
 </ul>
 </td>
 <td><p>This application solves the Volume-Averaged Navier-Stokes equations in a monolithic way. It supports calculation of the void fraction from particles, but the particles remain static.</p></td>
 </tr>
-<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">lethe-fluid-block</span></code></p></td>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">lethe-fluid-block</span></code></p></td>
 <td><ul class="simple">
 <li><p>Steady-state single-phase flows</p></li>
 </ul>
 </td>
 <td><p>This application solves the Navier-Stokes equations in a monolithic way using block preconditioner. <strong>This solver is experimental and is only adequate for steady-state simulations</strong>.</p></td>
 </tr>
-<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">lethe-rpt-3d</span></code></p></td>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">lethe-rpt-3d</span></code></p></td>
 <td><ul class="simple">
 <li><p>Radioactive Particle Tracking</p></li>
 </ul>
 </td>
 <td><p>This application solves the Beam Monte-Carlo model for the interaction between gamma ray emitting particles and detectors.</p></td>
 </tr>
-<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">lethe-rpt-cell-reconstruction-3d</span></code></p></td>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">lethe-rpt-cell-reconstruction-3d</span></code></p></td>
 <td><ul class="simple">
 <li><p>Radioactive Particle Tracking</p></li>
 </ul>
 </td>
 <td><p>This application reconstructs the position of particles using a cellular decomposition approach.</p></td>
 </tr>
-<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">lethe-rpt-fem-reconstruction-3d</span></code></p></td>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">lethe-rpt-fem-reconstruction-3d</span></code></p></td>
 <td><ul class="simple">
 <li><p>Radioactive Particle Tracking</p></li>
 </ul>
 </td>
 <td><p>This application allows to reconstruct positions from ray tracing experimental measurements obtained by Radioactive Particle Tracking.</p></td>
 </tr>
-<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">lethe-rpt-l2-projection-3d</span></code></p></td>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">lethe-rpt-l2-projection-3d</span></code></p></td>
 <td><ul class="simple">
 <li><p>Radioactive Particle Tracking</p></li>
 </ul>

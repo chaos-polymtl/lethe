@@ -953,7 +953,7 @@ template&lt;int dim, typename VectorType , typename DofsType &gt; </div>
 
 <p>If set to enable, dynamic_flow_control allows to control the flow by executing space-average velocity and beta coefficient force calculation at each time step. </p>
 
-<p>Reimplemented in <a class="el" href="classCFDDEMSolver.html#a58687be4a84054002bf2ac1d0e523550">CFDDEMSolver&lt; dim &gt;</a>.</p>
+<p>Reimplemented in <a class="el" href="classCFDDEMSolver.html#a58687be4a84054002bf2ac1d0e523550">CFDDEMSolver&lt; dim &gt;</a>, and <a class="el" href="classCFDDEMMatrixFree.html#ac4c1eb863a0e68cd39dcf2c4064f2680">CFDDEMMatrixFree&lt; dim &gt;</a>.</p>
 
 <p class="definition">Definition at line <a class="el" href="navier__stokes__base_8cc_source.html#l00219">219</a> of file <a class="el" href="navier__stokes__base_8cc_source.html">navier_stokes_base.cc</a>.</p>
 
@@ -1346,7 +1346,7 @@ template&lt;int dim, typename VectorType , typename DofsType &gt; </div>
 <p>Returns a vector of references to TableHandler objects that needs to be serialized/ deserialized for a given solver. </p>
 <dl class="section return"><dt>Returns</dt><dd>Structure containing a vector of references to TableHandler objects that needs to be serialized/deserialized for a given solver, and their corresponding file names. </dd></dl>
 
-<p>Reimplemented in <a class="el" href="classCFDDEMSolver.html#a3ac66d723494bdadd8ec221043cc1878">CFDDEMSolver&lt; dim &gt;</a>, and <a class="el" href="classFluidDynamicsNitsche.html#a70db00a80d2713ea91311020ce472ca3">FluidDynamicsNitsche&lt; dim, spacedim &gt;</a>.</p>
+<p>Reimplemented in <a class="el" href="classCFDDEMSolver.html#a3ac66d723494bdadd8ec221043cc1878">CFDDEMSolver&lt; dim &gt;</a>, <a class="el" href="classCFDDEMMatrixFree.html#a739637b70e23ed9b676ad2f714febb9c">CFDDEMMatrixFree&lt; dim &gt;</a>, and <a class="el" href="classFluidDynamicsNitsche.html#a70db00a80d2713ea91311020ce472ca3">FluidDynamicsNitsche&lt; dim, spacedim &gt;</a>.</p>
 
 <p class="definition">Definition at line <a class="el" href="navier__stokes__base_8cc_source.html#l03113">3113</a> of file <a class="el" href="navier__stokes__base_8cc_source.html">navier_stokes_base.cc</a>.</p>
 
@@ -2133,7 +2133,7 @@ template&lt;int dim, typename VectorType , typename DofsType &gt; </div>
 
 <p>Post-process fluid dynamics after an iteration. </p>
 
-<p>Reimplemented in <a class="el" href="classCFDDEMSolver.html#aef7bc5774f96b116540adad012ffdc65">CFDDEMSolver&lt; dim &gt;</a>, and <a class="el" href="classFluidDynamicsSharp.html#ae9b51761f62a86bbcb29e876913f5eca">FluidDynamicsSharp&lt; dim &gt;</a>.</p>
+<p>Reimplemented in <a class="el" href="classCFDDEMSolver.html#aef7bc5774f96b116540adad012ffdc65">CFDDEMSolver&lt; dim &gt;</a>, <a class="el" href="classCFDDEMMatrixFree.html#ade90819876b36a2ef1efbd2702f7cc7f">CFDDEMMatrixFree&lt; dim &gt;</a>, and <a class="el" href="classFluidDynamicsSharp.html#ae9b51761f62a86bbcb29e876913f5eca">FluidDynamicsSharp&lt; dim &gt;</a>.</p>
 
 <p class="definition">Definition at line <a class="el" href="navier__stokes__base_8cc_source.html#l01427">1427</a> of file <a class="el" href="navier__stokes__base_8cc_source.html">navier_stokes_base.cc</a>.</p>
 
@@ -2233,7 +2233,7 @@ template&lt;int dim, typename VectorType , typename DofsType &gt; </div>
 
 <p>Restart a previous simulation from a checkpoint file. </p>
 
-<p>Reimplemented in <a class="el" href="classCFDDEMSolver.html#a8e1bf1e148eb7c08ddc4da5d1b1f2304">CFDDEMSolver&lt; dim &gt;</a>, <a class="el" href="classFluidDynamicsSharp.html#a0cf0af6991bf6050350de577b2ecd668">FluidDynamicsSharp&lt; dim &gt;</a>, and <a class="el" href="classFluidDynamicsNitsche.html#a88be8f986d3c498385efe4595c152bd4">FluidDynamicsNitsche&lt; dim, spacedim &gt;</a>.</p>
+<p>Reimplemented in <a class="el" href="classCFDDEMSolver.html#a8e1bf1e148eb7c08ddc4da5d1b1f2304">CFDDEMSolver&lt; dim &gt;</a>, <a class="el" href="classCFDDEMMatrixFree.html#a8045d71b4a56f93383da078d10019ae0">CFDDEMMatrixFree&lt; dim &gt;</a>, <a class="el" href="classFluidDynamicsSharp.html#a0cf0af6991bf6050350de577b2ecd668">FluidDynamicsSharp&lt; dim &gt;</a>, and <a class="el" href="classFluidDynamicsNitsche.html#a88be8f986d3c498385efe4595c152bd4">FluidDynamicsNitsche&lt; dim, spacedim &gt;</a>.</p>
 
 <p class="definition">Definition at line <a class="el" href="navier__stokes__base_8cc_source.html#l02283">2283</a> of file <a class="el" href="navier__stokes__base_8cc_source.html">navier_stokes_base.cc</a>.</p>
 
@@ -2487,7 +2487,7 @@ template&lt;int dim, typename VectorType , typename DofsType &gt; </div>
   </dd>
 </dl>
 
-<p>Reimplemented in <a class="el" href="classCFDDEMSolver.html#a788b8a3a20d758ef9482763c1680499b">CFDDEMSolver&lt; dim &gt;</a>.</p>
+<p>Reimplemented in <a class="el" href="classCFDDEMSolver.html#a788b8a3a20d758ef9482763c1680499b">CFDDEMSolver&lt; dim &gt;</a>, and <a class="el" href="classCFDDEMMatrixFree.html#aa84ed2ab820c62e4cb09d6437f66423d">CFDDEMMatrixFree&lt; dim &gt;</a>.</p>
 
 <p class="definition">Definition at line <a class="el" href="navier__stokes__base_8h_source.html#l00243">243</a> of file <a class="el" href="navier__stokes__base_8h_source.html">navier_stokes_base.h</a>.</p>
 
@@ -2974,7 +2974,7 @@ template&lt;int dim, typename VectorType , typename DofsType &gt; </div>
 
 <p>Write the checkpoint. </p>
 
-<p>Reimplemented in <a class="el" href="classCFDDEMSolver.html#af85e466d9fa806d09e531d1e9203c53a">CFDDEMSolver&lt; dim &gt;</a>, <a class="el" href="classFluidDynamicsSharp.html#a2114b03f4318546330da75b20dd566b3">FluidDynamicsSharp&lt; dim &gt;</a>, and <a class="el" href="classFluidDynamicsNitsche.html#ae1d624e0643d99abd921cf3306df2f74">FluidDynamicsNitsche&lt; dim, spacedim &gt;</a>.</p>
+<p>Reimplemented in <a class="el" href="classCFDDEMSolver.html#af85e466d9fa806d09e531d1e9203c53a">CFDDEMSolver&lt; dim &gt;</a>, <a class="el" href="classCFDDEMMatrixFree.html#a0e02d0c9f3539d127388b67dbdc1f796">CFDDEMMatrixFree&lt; dim &gt;</a>, <a class="el" href="classFluidDynamicsSharp.html#a2114b03f4318546330da75b20dd566b3">FluidDynamicsSharp&lt; dim &gt;</a>, and <a class="el" href="classFluidDynamicsNitsche.html#ae1d624e0643d99abd921cf3306df2f74">FluidDynamicsNitsche&lt; dim, spacedim &gt;</a>.</p>
 
 <p class="definition">Definition at line <a class="el" href="navier__stokes__base_8cc_source.html#l03183">3183</a> of file <a class="el" href="navier__stokes__base_8cc_source.html">navier_stokes_base.cc</a>.</p>
 

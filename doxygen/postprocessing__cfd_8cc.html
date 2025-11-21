@@ -432,6 +432,10 @@ Functions</h2></td></tr>
 <tr class="separator:a3e5f3d5aac24280f2ad9a4b5d9df2441"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aba0447e7cad79c9fd0c45cd1e75fe10c" id="r_aba0447e7cad79c9fd0c45cd1e75fe10c"><td class="memItemLeft" align="right" valign="top">template double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="postprocessing__cfd_8cc.html#aba0447e7cad79c9fd0c45cd1e75fe10c">calculate_average_velocity</a> (const DoFHandler&lt; 3 &gt; &amp;dof_handler, const DoFHandler&lt; 3 &gt; &amp;void_fraction_dof_handler, const <a class="el" href="vector_8h.html#a4ea4005d75c88e60bee47d4e79a13a39">GlobalVectorType</a> &amp;present_solution, const <a class="el" href="vector_8h.html#a4ea4005d75c88e60bee47d4e79a13a39">GlobalVectorType</a> &amp;present_void_fraction_solution, const unsigned int &amp;flow_direction, const Quadrature&lt; 3 &gt; &amp;quadrature_formula, const Mapping&lt; 3 &gt; &amp;mapping)</td></tr>
 <tr class="separator:aba0447e7cad79c9fd0c45cd1e75fe10c"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a0d954ac537ea0f69bd4054034f6f365b" id="r_a0d954ac537ea0f69bd4054034f6f365b"><td class="memItemLeft" align="right" valign="top">template double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="postprocessing__cfd_8cc.html#a0d954ac537ea0f69bd4054034f6f365b">calculate_average_velocity</a> (const DoFHandler&lt; 2 &gt; &amp;dof_handler, const DoFHandler&lt; 2 &gt; &amp;void_fraction_dof_handler, const LinearAlgebra::distributed::Vector&lt; double &gt; &amp;present_solution, const LinearAlgebra::distributed::Vector&lt; double &gt; &amp;present_void_fraction_solution, const unsigned int &amp;flow_direction, const Quadrature&lt; 2 &gt; &amp;quadrature_formula, const Mapping&lt; 2 &gt; &amp;mapping)</td></tr>
+<tr class="separator:a0d954ac537ea0f69bd4054034f6f365b"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ada1949e66911ddae3a9c6a41942d65e8" id="r_ada1949e66911ddae3a9c6a41942d65e8"><td class="memItemLeft" align="right" valign="top">template double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="postprocessing__cfd_8cc.html#ada1949e66911ddae3a9c6a41942d65e8">calculate_average_velocity</a> (const DoFHandler&lt; 3 &gt; &amp;dof_handler, const DoFHandler&lt; 3 &gt; &amp;void_fraction_dof_handler, const LinearAlgebra::distributed::Vector&lt; double &gt; &amp;present_solution, const LinearAlgebra::distributed::Vector&lt; double &gt; &amp;present_void_fraction_solution, const unsigned int &amp;flow_direction, const Quadrature&lt; 3 &gt; &amp;quadrature_formula, const Mapping&lt; 3 &gt; &amp;mapping)</td></tr>
+<tr class="separator:ada1949e66911ddae3a9c6a41942d65e8"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <h2 class="groupheader">Function Documentation</h2>
 <a id="a435a5183c6ea1ba3055d9d24b1a699da" name="a435a5183c6ea1ba3055d9d24b1a699da"></a>
@@ -776,7 +780,7 @@ template&lt;int dim, typename VectorType &gt; </div>
 </div>
 </div>
 <a id="a3e5f3d5aac24280f2ad9a4b5d9df2441" name="a3e5f3d5aac24280f2ad9a4b5d9df2441"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a3e5f3d5aac24280f2ad9a4b5d9df2441">&#9670;&#160;</a></span>calculate_average_velocity() <span class="overload">[1/10]</span></h2>
+<h2 class="memtitle"><span class="permalink"><a href="#a3e5f3d5aac24280f2ad9a4b5d9df2441">&#9670;&#160;</a></span>calculate_average_velocity() <span class="overload">[1/12]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -833,8 +837,66 @@ template&lt;int dim, typename VectorType &gt; </div>
 
 </div>
 </div>
+<a id="a0d954ac537ea0f69bd4054034f6f365b" name="a0d954ac537ea0f69bd4054034f6f365b"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a0d954ac537ea0f69bd4054034f6f365b">&#9670;&#160;</a></span>calculate_average_velocity() <span class="overload">[2/12]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">template double calculate_average_velocity </td>
+          <td>(</td>
+          <td class="paramtype">const DoFHandler&lt; 2 &gt; &amp;&#160;</td>
+          <td class="paramname"><em>dof_handler</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const DoFHandler&lt; 2 &gt; &amp;&#160;</td>
+          <td class="paramname"><em>void_fraction_dof_handler</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const LinearAlgebra::distributed::Vector&lt; double &gt; &amp;&#160;</td>
+          <td class="paramname"><em>present_solution</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const LinearAlgebra::distributed::Vector&lt; double &gt; &amp;&#160;</td>
+          <td class="paramname"><em>present_void_fraction_solution</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const unsigned int &amp;&#160;</td>
+          <td class="paramname"><em>flow_direction</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const Quadrature&lt; 2 &gt; &amp;&#160;</td>
+          <td class="paramname"><em>quadrature_formula</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const Mapping&lt; 2 &gt; &amp;&#160;</td>
+          <td class="paramname"><em>mapping</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
 <a id="aae4f731cb2bc91f0682c0a43222bca9f" name="aae4f731cb2bc91f0682c0a43222bca9f"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#aae4f731cb2bc91f0682c0a43222bca9f">&#9670;&#160;</a></span>calculate_average_velocity() <span class="overload">[2/10]</span></h2>
+<h2 class="memtitle"><span class="permalink"><a href="#aae4f731cb2bc91f0682c0a43222bca9f">&#9670;&#160;</a></span>calculate_average_velocity() <span class="overload">[3/12]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -880,7 +942,7 @@ template&lt;int dim, typename VectorType &gt; </div>
 </div>
 </div>
 <a id="acce6650a81c6a17b8564815c2aa6c2ab" name="acce6650a81c6a17b8564815c2aa6c2ab"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#acce6650a81c6a17b8564815c2aa6c2ab">&#9670;&#160;</a></span>calculate_average_velocity() <span class="overload">[3/10]</span></h2>
+<h2 class="memtitle"><span class="permalink"><a href="#acce6650a81c6a17b8564815c2aa6c2ab">&#9670;&#160;</a></span>calculate_average_velocity() <span class="overload">[4/12]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -926,7 +988,7 @@ template&lt;int dim, typename VectorType &gt; </div>
 </div>
 </div>
 <a id="a6860f8353292cf1462a1a2c904c2e132" name="a6860f8353292cf1462a1a2c904c2e132"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a6860f8353292cf1462a1a2c904c2e132">&#9670;&#160;</a></span>calculate_average_velocity() <span class="overload">[4/10]</span></h2>
+<h2 class="memtitle"><span class="permalink"><a href="#a6860f8353292cf1462a1a2c904c2e132">&#9670;&#160;</a></span>calculate_average_velocity() <span class="overload">[5/12]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -972,7 +1034,7 @@ template&lt;int dim, typename VectorType &gt; </div>
 </div>
 </div>
 <a id="aba0447e7cad79c9fd0c45cd1e75fe10c" name="aba0447e7cad79c9fd0c45cd1e75fe10c"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#aba0447e7cad79c9fd0c45cd1e75fe10c">&#9670;&#160;</a></span>calculate_average_velocity() <span class="overload">[5/10]</span></h2>
+<h2 class="memtitle"><span class="permalink"><a href="#aba0447e7cad79c9fd0c45cd1e75fe10c">&#9670;&#160;</a></span>calculate_average_velocity() <span class="overload">[6/12]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -1029,8 +1091,66 @@ template&lt;int dim, typename VectorType &gt; </div>
 
 </div>
 </div>
+<a id="ada1949e66911ddae3a9c6a41942d65e8" name="ada1949e66911ddae3a9c6a41942d65e8"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ada1949e66911ddae3a9c6a41942d65e8">&#9670;&#160;</a></span>calculate_average_velocity() <span class="overload">[7/12]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">template double calculate_average_velocity </td>
+          <td>(</td>
+          <td class="paramtype">const DoFHandler&lt; 3 &gt; &amp;&#160;</td>
+          <td class="paramname"><em>dof_handler</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const DoFHandler&lt; 3 &gt; &amp;&#160;</td>
+          <td class="paramname"><em>void_fraction_dof_handler</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const LinearAlgebra::distributed::Vector&lt; double &gt; &amp;&#160;</td>
+          <td class="paramname"><em>present_solution</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const LinearAlgebra::distributed::Vector&lt; double &gt; &amp;&#160;</td>
+          <td class="paramname"><em>present_void_fraction_solution</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const unsigned int &amp;&#160;</td>
+          <td class="paramname"><em>flow_direction</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const Quadrature&lt; 3 &gt; &amp;&#160;</td>
+          <td class="paramname"><em>quadrature_formula</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const Mapping&lt; 3 &gt; &amp;&#160;</td>
+          <td class="paramname"><em>mapping</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
 <a id="a6401a2ff749b3ab814d345d9456d5f12" name="a6401a2ff749b3ab814d345d9456d5f12"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a6401a2ff749b3ab814d345d9456d5f12">&#9670;&#160;</a></span>calculate_average_velocity() <span class="overload">[6/10]</span></h2>
+<h2 class="memtitle"><span class="permalink"><a href="#a6401a2ff749b3ab814d345d9456d5f12">&#9670;&#160;</a></span>calculate_average_velocity() <span class="overload">[8/12]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -1076,7 +1196,7 @@ template&lt;int dim, typename VectorType &gt; </div>
 </div>
 </div>
 <a id="a207b173600edce0f0c41c20899dc4542" name="a207b173600edce0f0c41c20899dc4542"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a207b173600edce0f0c41c20899dc4542">&#9670;&#160;</a></span>calculate_average_velocity() <span class="overload">[7/10]</span></h2>
+<h2 class="memtitle"><span class="permalink"><a href="#a207b173600edce0f0c41c20899dc4542">&#9670;&#160;</a></span>calculate_average_velocity() <span class="overload">[9/12]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -1122,7 +1242,7 @@ template&lt;int dim, typename VectorType &gt; </div>
 </div>
 </div>
 <a id="a3a7e586d61f4ae39be88f9b4c01f0368" name="a3a7e586d61f4ae39be88f9b4c01f0368"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a3a7e586d61f4ae39be88f9b4c01f0368">&#9670;&#160;</a></span>calculate_average_velocity() <span class="overload">[8/10]</span></h2>
+<h2 class="memtitle"><span class="permalink"><a href="#a3a7e586d61f4ae39be88f9b4c01f0368">&#9670;&#160;</a></span>calculate_average_velocity() <span class="overload">[10/12]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -1168,7 +1288,7 @@ template&lt;int dim, typename VectorType &gt; </div>
 </div>
 </div>
 <a id="aee1fb4336881f211ecf53258f34d712e" name="aee1fb4336881f211ecf53258f34d712e"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#aee1fb4336881f211ecf53258f34d712e">&#9670;&#160;</a></span>calculate_average_velocity() <span class="overload">[9/10]</span></h2>
+<h2 class="memtitle"><span class="permalink"><a href="#aee1fb4336881f211ecf53258f34d712e">&#9670;&#160;</a></span>calculate_average_velocity() <span class="overload">[11/12]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -1247,7 +1367,7 @@ template&lt;int dim, typename VectorType &gt; </div>
 </div>
 </div>
 <a id="a885519f82401f5f66cb4f0363b9715a9" name="a885519f82401f5f66cb4f0363b9715a9"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a885519f82401f5f66cb4f0363b9715a9">&#9670;&#160;</a></span>calculate_average_velocity() <span class="overload">[10/10]</span></h2>
+<h2 class="memtitle"><span class="permalink"><a href="#a885519f82401f5f66cb4f0363b9715a9">&#9670;&#160;</a></span>calculate_average_velocity() <span class="overload">[12/12]</span></h2>
 
 <div class="memitem">
 <div class="memproto">

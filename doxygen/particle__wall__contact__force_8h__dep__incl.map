@@ -1,32 +1,37 @@
 <map id="/home/runner/work/lethe/lethe/include/dem/particle_wall_contact_force.h" name="/home/runner/work/lethe/lethe/include/dem/particle_wall_contact_force.h">
-<area shape="rect" id="Node000001" title=" " alt="" coords="541,5,737,60"/>
-<area shape="rect" id="Node000002" href="$dem_8h.html" title=" " alt="" coords="167,123,355,163"/>
-<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="535,66,328,125,326,120,533,61"/>
-<area shape="rect" id="Node000008" href="$set__particle__wall__contact__force__model_8h.html" title=" " alt="" coords="445,108,628,177"/>
-<area shape="poly" id="edge8_Node000001_Node000008" title=" " alt="" coords="607,72,571,110,567,106,603,68"/>
-<area shape="rect" id="Node000010" href="$ib__particles__dem_8h.html" title=" " alt="" coords="716,115,899,170"/>
-<area shape="poly" id="edge12_Node000001_Node000010" title=" " alt="" coords="693,65,768,113,765,117,690,70"/>
-<area shape="rect" id="Node000014" href="$particle__wall__contact__force_8cc.html" title=" " alt="" coords="923,115,1115,170"/>
-<area shape="poly" id="edge16_Node000001_Node000014" title=" " alt="" coords="751,61,912,105,936,113,935,118,911,111,750,66"/>
-<area shape="rect" id="Node000003" href="$cfd__dem__coupling_8h.html" title=" " alt="" coords="5,343,188,397"/>
-<area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="155,164,127,174,101,188,78,205,59,227,52,240,49,255,53,285,64,315,79,341,75,344,60,317,48,286,44,254,47,239,54,224,74,201,98,183,125,169,153,159"/>
-<area shape="rect" id="Node000005" href="$fluid__dynamics__vans_8h.html" title=" " alt="" coords="69,233,252,287"/>
-<area shape="poly" id="edge4_Node000002_Node000005" title=" " alt="" coords="237,175,186,234,182,231,233,171"/>
-<area shape="rect" id="Node000007" href="$dem_8cc.html" title=" " alt="" coords="276,240,467,280"/>
-<area shape="poly" id="edge7_Node000002_Node000007" title=" " alt="" coords="290,171,355,238,351,242,286,174"/>
-<area shape="rect" id="Node000004" href="$cfd__dem__coupling_8cc.html" title=" " alt="" coords="209,445,392,500"/>
-<area shape="poly" id="edge3_Node000003_Node000004" title=" " alt="" coords="163,401,249,443,246,448,161,406"/>
-<area shape="poly" id="edge5_Node000005_Node000003" title=" " alt="" coords="140,301,115,344,110,341,136,298"/>
-<area shape="rect" id="Node000006" href="$fluid__dynamics__vans_8cc.html" title=" " alt="" coords="212,343,395,397"/>
-<area shape="poly" id="edge6_Node000005_Node000006" title=" " alt="" coords="208,294,270,340,267,344,205,298"/>
-<area shape="poly" id="edge11_Node000008_Node000004" title=" " alt="" coords="525,191,507,239,482,294,449,349,408,399,378,425,346,447,343,443,374,421,404,395,444,346,477,291,502,237,520,189"/>
-<area shape="poly" id="edge9_Node000008_Node000007" title=" " alt="" coords="479,188,400,242,397,238,476,183"/>
-<area shape="rect" id="Node000009" href="$set__particle__wall__contact__force__model_8cc.html" title=" " alt="" coords="543,225,725,295"/>
-<area shape="poly" id="edge10_Node000008_Node000009" title=" " alt="" coords="576,187,608,223,603,227,572,190"/>
-<area shape="rect" id="Node000011" href="$fluid__dynamics__sharp_8h.html" title=" " alt="" coords="749,233,932,287"/>
-<area shape="poly" id="edge13_Node000010_Node000011" title=" " alt="" coords="821,182,836,232,830,233,816,184"/>
-<area shape="rect" id="Node000013" href="$ib__particles__dem_8cc.html" title=" " alt="" coords="956,233,1139,287"/>
-<area shape="poly" id="edge15_Node000010_Node000013" title=" " alt="" coords="875,173,994,230,992,235,873,178"/>
-<area shape="rect" id="Node000012" href="$fluid__dynamics__sharp_8cc.html" title=" " alt="" coords="748,343,933,397"/>
-<area shape="poly" id="edge14_Node000011_Node000012" title=" " alt="" coords="843,302,843,342,838,342,838,302"/>
+<area shape="rect" id="Node000001" title=" " alt="" coords="823,5,1019,60"/>
+<area shape="rect" id="Node000002" href="$dem_8h.html" title=" " alt="" coords="301,123,489,163"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="810,59,487,125,486,120,809,54"/>
+<area shape="rect" id="Node000010" href="$set__particle__wall__contact__force__model_8h.html" title=" " alt="" coords="727,108,909,177"/>
+<area shape="poly" id="edge10_Node000001_Node000010" title=" " alt="" coords="888,72,852,110,848,106,884,68"/>
+<area shape="rect" id="Node000012" href="$ib__particles__dem_8h.html" title=" " alt="" coords="997,115,1180,170"/>
+<area shape="poly" id="edge15_Node000001_Node000012" title=" " alt="" coords="975,65,1049,113,1046,117,972,70"/>
+<area shape="rect" id="Node000016" href="$particle__wall__contact__force_8cc.html" title=" " alt="" coords="1205,115,1397,170"/>
+<area shape="poly" id="edge19_Node000001_Node000016" title=" " alt="" coords="1033,61,1193,105,1218,113,1216,118,1192,111,1031,66"/>
+<area shape="rect" id="Node000003" href="$cfd__dem__coupling_8h.html" title=" " alt="" coords="5,350,188,405"/>
+<area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="288,158,219,169,151,184,94,203,73,215,59,227,51,241,47,256,51,288,63,321,80,348,75,351,59,323,46,290,42,255,46,239,55,224,70,210,91,198,149,179,218,164,287,153"/>
+<area shape="rect" id="Node000005" href="$cfd__dem__coupling__matrix__free_8h.html" title=" " alt="" coords="276,233,515,287"/>
+<area shape="poly" id="edge4_Node000002_Node000005" title=" " alt="" coords="398,177,398,232,393,232,393,177"/>
+<area shape="rect" id="Node000007" href="$fluid__dynamics__vans_8h.html" title=" " alt="" coords="69,233,252,287"/>
+<area shape="poly" id="edge6_Node000002_Node000007" title=" " alt="" coords="346,171,215,235,213,230,343,166"/>
+<area shape="rect" id="Node000009" href="$dem_8cc.html" title=" " alt="" coords="539,240,729,280"/>
+<area shape="poly" id="edge9_Node000002_Node000009" title=" " alt="" coords="447,166,596,238,594,242,445,171"/>
+<area shape="rect" id="Node000004" href="$cfd__dem__coupling_8cc.html" title=" " alt="" coords="365,460,548,515"/>
+<area shape="poly" id="edge3_Node000003_Node000004" title=" " alt="" coords="190,406,200,409,365,458,364,463,199,415,188,411"/>
+<area shape="rect" id="Node000006" href="$cfd__dem__coupling__matrix__free_8cc.html" title=" " alt="" coords="503,343,698,412"/>
+<area shape="poly" id="edge5_Node000005_Node000006" title=" " alt="" coords="455,292,542,340,539,345,452,296"/>
+<area shape="poly" id="edge7_Node000007_Node000003" title=" " alt="" coords="142,301,114,351,109,348,137,298"/>
+<area shape="rect" id="Node000008" href="$fluid__dynamics__vans_8cc.html" title=" " alt="" coords="212,350,395,405"/>
+<area shape="poly" id="edge8_Node000007_Node000008" title=" " alt="" coords="206,294,272,348,269,352,202,298"/>
+<area shape="poly" id="edge13_Node000010_Node000004" title=" " alt="" coords="816,192,806,245,787,306,757,365,736,392,712,414,674,438,632,456,549,478,548,473,630,451,671,433,708,410,732,388,752,362,782,304,801,244,811,191"/>
+<area shape="poly" id="edge14_Node000010_Node000006" title=" " alt="" coords="805,192,780,245,763,272,743,297,712,323,677,345,675,340,708,319,739,293,758,269,775,242,800,189"/>
+<area shape="poly" id="edge11_Node000010_Node000009" title=" " alt="" coords="754,187,665,242,663,238,752,182"/>
+<area shape="rect" id="Node000011" href="$set__particle__wall__contact__force__model_8cc.html" title=" " alt="" coords="856,225,1039,295"/>
+<area shape="poly" id="edge12_Node000010_Node000011" title=" " alt="" coords="868,184,911,223,908,227,864,188"/>
+<area shape="rect" id="Node000013" href="$fluid__dynamics__sharp_8h.html" title=" " alt="" coords="1269,233,1452,287"/>
+<area shape="poly" id="edge16_Node000012_Node000013" title=" " alt="" coords="1164,173,1300,230,1298,235,1162,178"/>
+<area shape="rect" id="Node000015" href="$ib__particles__dem_8cc.html" title=" " alt="" coords="1063,233,1245,287"/>
+<area shape="poly" id="edge18_Node000012_Node000015" title=" " alt="" coords="1113,181,1141,231,1137,234,1108,183"/>
+<area shape="rect" id="Node000014" href="$fluid__dynamics__sharp_8cc.html" title=" " alt="" coords="1268,350,1453,405"/>
+<area shape="poly" id="edge17_Node000013_Node000014" title=" " alt="" coords="1363,301,1363,350,1358,350,1358,301"/>
 </map>

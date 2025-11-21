@@ -1,9 +1,11 @@
 <map id="/home/runner/work/lethe/lethe/include/dem/set_particle_wall_contact_force_model.h" name="/home/runner/work/lethe/lethe/include/dem/set_particle_wall_contact_force_model.h">
-<area shape="rect" id="Node000001" title=" " alt="" coords="220,5,403,75"/>
+<area shape="rect" id="Node000001" title=" " alt="" coords="323,5,505,75"/>
 <area shape="rect" id="Node000002" href="$dem_8cc.html" title=" " alt="" coords="5,137,196,177"/>
-<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="239,84,136,140,134,135,236,79"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="311,82,153,140,151,135,309,77"/>
 <area shape="rect" id="Node000003" href="$set__particle__wall__contact__force__model_8cc.html" title=" " alt="" coords="220,123,403,192"/>
-<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="314,89,314,122,309,122,309,89"/>
+<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="377,87,343,124,339,121,373,83"/>
 <area shape="rect" id="Node000004" href="$cfd__dem__coupling_8cc.html" title=" " alt="" coords="427,130,609,185"/>
-<area shape="poly" id="edge3_Node000001_Node000004" title=" " alt="" coords="385,79,472,128,470,132,382,84"/>
+<area shape="poly" id="edge3_Node000001_Node000004" title=" " alt="" coords="456,83,496,128,492,132,452,87"/>
+<area shape="rect" id="Node000005" href="$cfd__dem__coupling__matrix__free_8cc.html" title=" " alt="" coords="634,123,829,192"/>
+<area shape="poly" id="edge4_Node000001_Node000005" title=" " alt="" coords="519,77,640,120,638,125,517,82"/>
 </map>
