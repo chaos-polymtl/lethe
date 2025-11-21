@@ -1371,9 +1371,6 @@ CFDDEMMatrixFree<dim>::solve()
 
   this->setup_dofs();
 
-  this->particle_projector.initialize_void_fraction(
-    this->simulation_control->get_current_time());
-
   this->set_initial_condition(
     this->cfd_dem_simulation_parameters.cfd_parameters.initial_condition->type,
     this->cfd_dem_simulation_parameters.cfd_parameters.restart_parameters
