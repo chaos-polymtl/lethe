@@ -3,6 +3,7 @@
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
 #include <core/grids.h>
+#include <core/lethe_grid_tools.h>
 #include <core/manifolds.h>
 #include <core/time_integration_utilities.h>
 #include <core/utilities.h>
@@ -40,6 +41,7 @@ MFNavierStokesVANSPreconditionGMG<dim>::initialize(
   FlowControl<dim>                         &flow_control,
   const VectorType                         &present_solution,
   const VectorType                         &time_derivative_previous_solutions,
+  const VectorType                         &time_derivative_void_fraction,
   const ParticleProjector<dim>             &particle_projector)
 {
   if (this->simulation_parameters.linear_solver.at(PhysicsID::fluid_dynamics)
@@ -218,6 +220,9 @@ MFNavierStokesVANSPreconditionGMG<dim>::initialize(
         mg_void_fraction_solution(this->minlevel, this->maxlevel);
 
       MGLevelObject<MFNavierStokesVANSPreconditionGMG::MGVectorType>
+        mg_time_derivative_void_fraction(this->minlevel, this->maxlevel);
+
+      MGLevelObject<MFNavierStokesVANSPreconditionGMG::MGVectorType>
         mg_pf_forces_solution(this->minlevel, this->maxlevel);
 
       MGLevelObject<MFNavierStokesVANSPreconditionGMG::MGVectorType>
@@ -239,6 +244,11 @@ MFNavierStokesVANSPreconditionGMG<dim>::initialize(
         particle_projector.dof_handler,
         mg_void_fraction_solution,
         particle_projector.void_fraction_solution);
+
+      this->mg_transfer_gc_void_fraction->interpolate_to_mg(
+        particle_projector.dof_handler,
+        mg_time_derivative_void_fraction,
+        time_derivative_void_fraction);
 
       particle_projector.fluid_force_on_particles_two_way_coupling
         .particle_field_solution.update_ghost_values();
@@ -283,18 +293,19 @@ MFNavierStokesVANSPreconditionGMG<dim>::initialize(
       for (unsigned int l = min_level; l <= max_level; l++)
         {
           mg_void_fraction_solution[l].update_ghost_values();
+          mg_time_derivative_void_fraction[l].update_ghost_values();
           mg_pf_forces_solution[l].update_ghost_values();
           mg_pf_drag_solution[l].update_ghost_values();
           mg_particle_velocity_solution[l].update_ghost_values();
           mg_momentum_transfer_coefficient_solution[l].update_ghost_values();
-
 
           if (auto mf_operator = dynamic_cast<VANSOperator<dim, double> *>(
                 &(*this->mg_operators[l])))
             {
               mf_operator->compute_void_fraction(
                 this->void_fraction_dof_handlers[l],
-                mg_void_fraction_solution[l]);
+                mg_void_fraction_solution[l],
+                mg_time_derivative_void_fraction[l]);
 
               mf_operator->compute_particle_fluid_interaction(
                 this->pf_force_dof_handlers[l],
@@ -370,6 +381,12 @@ FluidDynamicsVANSMatrixFree<dim>::setup_dofs()
   particle_projector.setup_dofs();
   particle_projector.setup_constraints(
     this->cfd_dem_simulation_parameters.cfd_parameters.boundary_conditions);
+
+  // Initialize the time derivative of the void fraction.
+  this->time_derivative_void_fraction.reinit(
+    particle_projector.dof_handler.locally_owned_dofs(),
+    DoFTools::extract_locally_relevant_dofs(particle_projector.dof_handler),
+    this->mpi_communicator);
 }
 
 template <int dim>
@@ -482,6 +499,8 @@ FluidDynamicsVANSMatrixFree<dim>::assemble_system_rhs()
           this->dof_handler,
           this->evaluation_point,
           this->previous_solutions,
+          this->cfd_dem_simulation_parameters.dem_parameters
+            .lagrangian_physical_properties.g,
           NavierStokesScratchData<dim>(
             this->simulation_control,
             this->simulation_parameters.physical_properties_manager,
@@ -605,6 +624,40 @@ FluidDynamicsVANSMatrixFree<dim>::gather_output_hook()
 
 template <int dim>
 void
+FluidDynamicsVANSMatrixFree<dim>::evaluate_time_derivative_void_fraction()
+{
+  this->time_derivative_void_fraction = 0;
+
+  // If the void fraction time derivative is disabled, we just leave it at zero.
+  if (cfd_dem_simulation_parameters.cfd_dem.void_fraction_time_derivative ==
+      false)
+    {
+      // Even though it is zero, we still need to update its ghost values.
+      time_derivative_void_fraction.update_ghost_values();
+      return;
+    }
+  // Time stepping information
+  const auto method = this->simulation_control->get_assembly_method();
+  // Vector for the BDF coefficients
+  const Vector<double> &bdf_coefs =
+    this->simulation_control->get_bdf_coefficients();
+
+  this->time_derivative_void_fraction.add(
+    bdf_coefs[0], this->particle_projector.void_fraction_solution);
+  for (unsigned int p = 0; p < number_of_previous_solutions(method); ++p)
+    {
+      this->time_derivative_void_fraction.add(
+        bdf_coefs[p + 1],
+        this->particle_projector.void_fraction_previous_solution[p]);
+    }
+
+  // After the void fraction time derivative is calculated, we update its ghost
+  // values.
+  time_derivative_void_fraction.update_ghost_values();
+}
+
+template <int dim>
+void
 FluidDynamicsVANSMatrixFree<dim>::solve()
 {
   this->computing_timer.enter_subsection("Read mesh, manifolds and particles");
@@ -627,14 +680,12 @@ FluidDynamicsVANSMatrixFree<dim>::solve()
 
   this->setup_dofs();
 
-  particle_projector.calculate_void_fraction(
+  particle_projector.initialize_void_fraction(
     this->simulation_control->get_current_time());
 
   this->set_initial_condition(
     this->simulation_parameters.initial_condition->type,
     this->simulation_parameters.restart_parameters.restart);
-
-
 
   // Only needed if other physics apart from fluid dynamics are enabled.
   if (this->multiphysics->get_active_physics().size() > 1)
@@ -679,14 +730,20 @@ FluidDynamicsVANSMatrixFree<dim>::solve()
         TimerOutput::Scope t(this->computing_timer,
                              "Calculate particle-fluid projection");
 
+        // Calculate the new void fraction
         particle_projector.calculate_void_fraction(
           this->simulation_control->get_current_time());
+
+        // and its derivative
+        evaluate_time_derivative_void_fraction();
 
         particle_projector.calculate_particle_fluid_forces_projection(
           this->cfd_dem_simulation_parameters.cfd_dem,
           this->dof_handler,
           this->present_solution,
           this->previous_solutions,
+          cfd_dem_simulation_parameters.dem_parameters
+            .lagrangian_physical_properties.g,
           NavierStokesScratchData<dim>(
             this->simulation_control,
             this->simulation_parameters.physical_properties_manager,
@@ -706,7 +763,8 @@ FluidDynamicsVANSMatrixFree<dim>::solve()
 
             mf_operator->compute_void_fraction(
               particle_projector.dof_handler,
-              particle_projector.void_fraction_solution);
+              particle_projector.void_fraction_solution,
+              this->time_derivative_void_fraction);
 
             mf_operator->compute_particle_fluid_interaction(
               particle_projector.fluid_force_on_particles_two_way_coupling
@@ -767,6 +825,7 @@ FluidDynamicsVANSMatrixFree<dim>::initialize_GMG()
                  this->flow_control,
                  this->present_solution,
                  this->time_derivative_previous_solutions,
+                 this->time_derivative_void_fraction,
                  this->particle_projector);
 }
 

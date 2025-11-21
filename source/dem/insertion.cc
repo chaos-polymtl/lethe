@@ -2,6 +2,10 @@
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
 #include <dem/insertion.h>
+#include <dem/insertion_file.h>
+#include <dem/insertion_list.h>
+#include <dem/insertion_plane.h>
+#include <dem/insertion_volume.h>
 
 #include <cmath>
 #include <sstream>

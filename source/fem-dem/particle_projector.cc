@@ -9,6 +9,8 @@
 
 #include <deal.II/base/timer.h>
 
+#include <deal.II/dofs/dof_tools.h>
+
 #include <deal.II/fe/fe_values.h>
 
 #include <deal.II/grid/grid_generator.h>
@@ -55,11 +57,24 @@ ParticleFieldQCM<dim, n_components, component_start>::setup_dofs()
 
   particle_field_constraints.close();
 
+  // The particle field matrix sparsity pattern is always a block diagonal
+  // matrix meaning that the components of the particle fields are never coupled
+  // with one another. We can enforce this directly inside the sparsity pattern.
+  // This makes it significantly cheaper to solve the linear systems associated
+  // with the projection.
+  Table<2, DoFTools::Coupling> coupling_table(n_components, n_components);
+  for (int i = 0; i < n_components; ++i)
+    for (int j = 0; j < n_components; ++j)
+      {
+        if (i != j)
+          coupling_table[i][j] = DoFTools::Coupling::none;
+        else
+          coupling_table[i][j] = DoFTools::Coupling::always;
+      }
+
   DynamicSparsityPattern dsp(locally_relevant_dofs);
-  DoFTools::make_sparsity_pattern(dof_handler,
-                                  dsp,
-                                  particle_field_constraints,
-                                  false);
+  DoFTools::make_sparsity_pattern(
+    dof_handler, coupling_table, dsp, particle_field_constraints, false);
 
   SparsityTools::distribute_sparsity_pattern(dsp,
                                              locally_owned_dofs,
@@ -119,6 +134,16 @@ ParticleProjector<dim>::setup_dofs()
     dof_handler.locally_owned_dofs(),
     DoFTools::extract_locally_active_dofs(dof_handler),
     this->triangulation->get_mpi_communicator());
+
+  this->void_fraction_previous_solution.resize(
+    maximum_number_of_previous_solutions());
+  // Initialize vector of previous solutions for the void fraction
+  for (auto &solution : this->void_fraction_previous_solution)
+    {
+      solution.reinit(dof_handler.locally_owned_dofs(),
+                      DoFTools::extract_locally_active_dofs(dof_handler),
+                      this->triangulation->get_mpi_communicator());
+    }
 
   DynamicSparsityPattern dsp(locally_relevant_dofs);
   DoFTools::make_sparsity_pattern(dof_handler,
@@ -847,6 +872,11 @@ ParticleProjector<dim>::calculate_void_fraction_quadrature_centered_method()
               sum_quadrature_weights += fe_values_void_fraction.JxW(q);
             }
 
+          Assert(
+            sum_quadrature_weights > 0,
+            ExcMessage(
+              "The sum of the quadrature weight should be strictly positive."));
+
           // Define the volume of the reference sphere to be used as the
           // averaging volume for the QCM
           if (calculate_reference_sphere_radius)
@@ -883,8 +913,7 @@ ParticleProjector<dim>::calculate_void_fraction_quadrature_centered_method()
                     particle_handler->particles_in_cell(active_neighbors[m]);
                   for (auto &particle : pic)
                     {
-                      double distance            = 0;
-                      auto   particle_properties = particle.get_properties();
+                      auto particle_properties = particle.get_properties();
                       const double r_particle =
                         particle_properties
                           [DEM::CFDDEMProperties::PropertiesIndex::dp] *
@@ -901,7 +930,7 @@ ParticleProjector<dim>::calculate_void_fraction_quadrature_centered_method()
 
                       // Distance between particle and quadrature point
                       // centers
-                      distance = particle.get_location().distance(
+                      const double distance = particle.get_location().distance(
                         quadrature_point_location[q]);
 
                       // Calculate the normalized particle contribution
@@ -927,8 +956,7 @@ ParticleProjector<dim>::calculate_void_fraction_quadrature_centered_method()
                     active_periodic_neighbors[m]);
                   for (auto &particle : pic)
                     {
-                      double distance            = 0;
-                      auto   particle_properties = particle.get_properties();
+                      auto particle_properties = particle.get_properties();
                       const double r_particle =
                         particle_properties
                           [DEM::CFDDEMProperties::PropertiesIndex::dp] *
@@ -950,7 +978,7 @@ ParticleProjector<dim>::calculate_void_fraction_quadrature_centered_method()
 
                       // Distance between particle and quadrature point
                       // centers
-                      distance = particle_location.distance(
+                      const double distance = particle_location.distance(
                         quadrature_point_location[q]);
 
                       // Calculate the ratio between the particle volume and the
@@ -1426,6 +1454,7 @@ ParticleProjector<dim>::calculate_particle_fluid_forces_projection(
   DoFHandler<dim>               &fluid_dof_handler,
   const VectorType              &present_velocity_pressure_solution,
   const std::vector<VectorType> &previous_velocity_pressure_solution,
+  const Tensor<1, 3>            &gravity,
   NavierStokesScratchData<dim>   scratch_data)
 {
   // If the mode to calculate the void fraction is function, then the VANS
@@ -1510,6 +1539,11 @@ ParticleProjector<dim>::calculate_particle_fluid_forces_projection(
         }
     }
 
+  if (cfd_dem_parameters.buoyancy_force == true)
+    // Buoyancy Force Assembler
+    particle_fluid_assemblers.push_back(
+      std::make_shared<VANSAssemblerBuoyancy<dim>>(gravity));
+
   if (cfd_dem_parameters.saffman_lift_force == true)
     // Saffman Mei Lift Force Assembler
     particle_fluid_assemblers.push_back(
@@ -1530,22 +1564,17 @@ ParticleProjector<dim>::calculate_particle_fluid_forces_projection(
     particle_fluid_assemblers.push_back(
       std::make_shared<VANSAssemblerVorticalTorque<dim>>());
 
-  // If the VANS model if model B, then the pressure and shear forces
-  // will be applied on both the particles and the fluid. Otherwise,
-  // they will be applied only on the particles
-  if (cfd_dem_parameters.vans_model == Parameters::VANSModel::modelB)
-    {
-      if (cfd_dem_parameters.pressure_force == true)
-        // Pressure Force
-        particle_fluid_assemblers.push_back(
-          std::make_shared<VANSAssemblerPressureForce<dim>>(
-            cfd_dem_parameters));
 
-      if (cfd_dem_parameters.shear_force == true)
-        // Shear Force
-        particle_fluid_assemblers.push_back(
-          std::make_shared<VANSAssemblerShearForce<dim>>(cfd_dem_parameters));
-    }
+  if (cfd_dem_parameters.pressure_force == true)
+    // Pressure Force
+    particle_fluid_assemblers.push_back(
+      std::make_shared<VANSAssemblerPressureForce<dim>>(cfd_dem_parameters));
+
+  if (cfd_dem_parameters.shear_force == true)
+    // Shear Force
+    particle_fluid_assemblers.push_back(
+      std::make_shared<VANSAssemblerShearForce<dim>>(cfd_dem_parameters));
+
 
   scratch_data.enable_void_fraction(*fe, *quadrature, *mapping);
 
@@ -1635,6 +1664,7 @@ ParticleProjector<2>::calculate_particle_fluid_forces_projection(
   DoFHandler<2>                       &dof_handler,
   const GlobalVectorType              &fluid_solution,
   const std::vector<GlobalVectorType> &fluid_previous_solutions,
+  const Tensor<1, 3>                  &gravity,
   NavierStokesScratchData<2>           scratch_data);
 
 template void
@@ -1643,6 +1673,7 @@ ParticleProjector<3>::calculate_particle_fluid_forces_projection(
   DoFHandler<3>                       &dof_handler,
   const GlobalVectorType              &fluid_solution,
   const std::vector<GlobalVectorType> &fluid_previous_solutions,
+  const Tensor<1, 3>                  &gravity,
   NavierStokesScratchData<3>           scratch_data);
 
 #ifndef LETHE_USE_LDV
@@ -1653,6 +1684,7 @@ ParticleProjector<2>::calculate_particle_fluid_forces_projection(
   const LinearAlgebra::distributed::Vector<double> &fluid_solution,
   const std::vector<LinearAlgebra::distributed::Vector<double>>
                             &fluid_previous_solutions,
+  const Tensor<1, 3>        &gravity,
   NavierStokesScratchData<2> scratch_data);
 
 template void
@@ -1662,6 +1694,7 @@ ParticleProjector<3>::calculate_particle_fluid_forces_projection(
   const LinearAlgebra::distributed::Vector<double> &fluid_solution,
   const std::vector<LinearAlgebra::distributed::Vector<double>>
                             &fluid_previous_solutions,
+  const Tensor<1, 3>        &gravity,
   NavierStokesScratchData<3> scratch_data);
 #endif
 

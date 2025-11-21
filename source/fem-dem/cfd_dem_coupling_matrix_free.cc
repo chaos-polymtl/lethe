@@ -1,12 +1,16 @@
-// SPDX-FileCopyrightText: Copyright (c) 2021-2025 The Lethe Authors
+// SPDX-FileCopyrightText: Copyright (c) 2025 The Lethe Authors
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
 #include <core/grids.h>
 #include <core/solutions_output.h>
 
+#include <solvers/postprocessing_cfd.h>
+#include <solvers/postprocessing_velocities.h>
+
 #include <dem/dem_post_processing.h>
 #include <dem/explicit_euler_integrator.h>
 #include <dem/find_contact_detection_step.h>
+#include <dem/insertion.h>
 #include <dem/insertion_file.h>
 #include <dem/insertion_list.h>
 #include <dem/insertion_plane.h>
@@ -15,26 +19,69 @@
 #include <dem/set_particle_particle_contact_force_model.h>
 #include <dem/set_particle_wall_contact_force_model.h>
 #include <dem/velocity_verlet_integrator.h>
-#include <fem-dem/cfd_dem_coupling.h>
+#include <fem-dem/cfd_dem_coupling_matrix_free.h>
+#include <fem-dem/fluid_dynamics_vans_matrix_free_operators.h>
 #include <fem-dem/postprocessing_cfd_dem.h>
 
-#include <fstream>
-#include <sstream>
 
 // Constructor for the class CFD-DEM class
 template <int dim>
-CFDDEMSolver<dim>::CFDDEMSolver(CFDDEMSimulationParameters<dim> &nsparam)
-  : FluidDynamicsVANS<dim>(nsparam)
-  , this_mpi_process(Utilities::MPI::this_mpi_process(this->mpi_communicator))
-  , n_mpi_processes(Utilities::MPI::n_mpi_processes(this->mpi_communicator))
+CFDDEMMatrixFree<dim>::CFDDEMMatrixFree(CFDDEMSimulationParameters<dim> &param)
+  : FluidDynamicsVANSMatrixFree<dim>(param)
 {}
 
 template <int dim>
-CFDDEMSolver<dim>::~CFDDEMSolver() = default;
+void
+CFDDEMMatrixFree<dim>::setup_distribution_type()
+{
+  // Use namespace and alias to make the code more readable
+  using namespace Parameters::Lagrangian;
+  const unsigned int this_mpi_process =
+    Utilities::MPI::this_mpi_process(this->mpi_communicator);
+  LagrangianPhysicalProperties &lpp =
+    dem_parameters.lagrangian_physical_properties;
+
+  maximum_particle_diameter = 0;
+  for (unsigned int particle_type = 0; particle_type < lpp.particle_type_number;
+       particle_type++)
+    {
+      switch (lpp.distribution_type.at(particle_type))
+        {
+          case SizeDistributionType::uniform:
+            size_distribution_object_container[particle_type] =
+              std::make_shared<UniformDistribution>(
+                lpp.particle_average_diameter.at(particle_type));
+            break;
+          case SizeDistributionType::normal:
+            size_distribution_object_container[particle_type] =
+              std::make_shared<NormalDistribution>(
+                lpp.particle_average_diameter.at(particle_type),
+                lpp.particle_size_std.at(particle_type),
+                lpp.seed_for_distributions[particle_type] + this_mpi_process);
+            break;
+          case SizeDistributionType::custom:
+            size_distribution_object_container[particle_type] =
+              std::make_shared<CustomDistribution>(
+                lpp.particle_custom_diameter.at(particle_type),
+                lpp.particle_custom_probability.at(particle_type),
+                lpp.seed_for_distributions[particle_type] + this_mpi_process);
+            break;
+        }
+
+      maximum_particle_diameter = std::max(
+        maximum_particle_diameter,
+        size_distribution_object_container[particle_type]->find_max_diameter());
+    }
+
+  neighborhood_threshold_squared =
+    std::pow(dem_parameters.model_parameters.neighborhood_threshold *
+               maximum_particle_diameter,
+             2);
+}
 
 template <int dim>
 void
-CFDDEMSolver<dim>::dem_setup_parameters()
+CFDDEMMatrixFree<dim>::dem_setup_parameters()
 {
   coupling_frequency =
     this->cfd_dem_simulation_parameters.cfd_dem.coupling_frequency;
@@ -88,7 +135,6 @@ CFDDEMSolver<dim>::dem_setup_parameters()
     }
 
   setup_distribution_type();
-
 
   // Calculate the Rayleigh critical time step ratio
   rayleigh_time_step = DBL_MAX;
@@ -148,56 +194,10 @@ CFDDEMSolver<dim>::dem_setup_parameters()
   contact_search_total_number = 0;
 }
 
-template <int dim>
-void
-CFDDEMSolver<dim>::setup_distribution_type()
-{
-  // Use namespace and alias to make the code more readable
-  using namespace Parameters::Lagrangian;
-  LagrangianPhysicalProperties &lpp =
-    dem_parameters.lagrangian_physical_properties;
-
-  maximum_particle_diameter = 0;
-  for (unsigned int particle_type = 0; particle_type < lpp.particle_type_number;
-       particle_type++)
-    {
-      switch (lpp.distribution_type.at(particle_type))
-        {
-          case SizeDistributionType::uniform:
-            size_distribution_object_container[particle_type] =
-              std::make_shared<UniformDistribution>(
-                lpp.particle_average_diameter.at(particle_type));
-            break;
-          case SizeDistributionType::normal:
-            size_distribution_object_container[particle_type] =
-              std::make_shared<NormalDistribution>(
-                lpp.particle_average_diameter.at(particle_type),
-                lpp.particle_size_std.at(particle_type),
-                lpp.seed_for_distributions[particle_type] + this_mpi_process);
-            break;
-          case SizeDistributionType::custom:
-            size_distribution_object_container[particle_type] =
-              std::make_shared<CustomDistribution>(
-                lpp.particle_custom_diameter.at(particle_type),
-                lpp.particle_custom_probability.at(particle_type),
-                lpp.seed_for_distributions[particle_type] + this_mpi_process);
-            break;
-        }
-
-      maximum_particle_diameter = std::max(
-        maximum_particle_diameter,
-        size_distribution_object_container[particle_type]->find_max_diameter());
-    }
-
-  neighborhood_threshold_squared =
-    std::pow(dem_parameters.model_parameters.neighborhood_threshold *
-               maximum_particle_diameter,
-             2);
-}
 
 template <int dim>
 std::shared_ptr<Insertion<dim, DEM::CFDDEMProperties::PropertiesIndex>>
-CFDDEMSolver<dim>::set_insertion_type()
+CFDDEMMatrixFree<dim>::set_insertion_type()
 {
   using namespace Parameters::Lagrangian;
   typename InsertionInfo<dim>::InsertionMethod insertion_method =
@@ -249,7 +249,7 @@ CFDDEMSolver<dim>::set_insertion_type()
 
 template <int dim>
 std::shared_ptr<Integrator<dim, DEM::CFDDEMProperties::PropertiesIndex>>
-CFDDEMSolver<dim>::set_integrator_type()
+CFDDEMMatrixFree<dim>::set_integrator_type()
 {
   using namespace Parameters::Lagrangian;
   typename ModelParameters<dim>::IntegrationMethod integration_method =
@@ -272,7 +272,7 @@ CFDDEMSolver<dim>::set_integrator_type()
 
 template <int dim>
 void
-CFDDEMSolver<dim>::initialize_dem_parameters()
+CFDDEMMatrixFree<dim>::initialize_dem_parameters()
 {
   this->pcout << "Initializing DEM parameters" << std::endl;
 
@@ -342,7 +342,7 @@ CFDDEMSolver<dim>::initialize_dem_parameters()
 
 template <int dim>
 void
-CFDDEMSolver<dim>::read_dem()
+CFDDEMMatrixFree<dim>::read_dem()
 {
   this->pcout << "Reading DEM checkpoint" << std::endl;
 
@@ -434,7 +434,7 @@ CFDDEMSolver<dim>::read_dem()
 
 template <int dim>
 std::vector<OutputStructTableHandler>
-CFDDEMSolver<dim>::gather_tables()
+CFDDEMMatrixFree<dim>::gather_tables()
 {
   std::vector<OutputStructTableHandler> table_output_structs;
 
@@ -452,8 +452,10 @@ CFDDEMSolver<dim>::gather_tables()
 
 template <int dim>
 void
-CFDDEMSolver<dim>::write_checkpoint()
+CFDDEMMatrixFree<dim>::write_checkpoint()
 {
+  using VectorType = LinearAlgebra::distributed::Vector<double>;
+
   TimerOutput::Scope timer(this->computing_timer, "Write checkpoint");
 
   std::string prefix =
@@ -484,7 +486,7 @@ CFDDEMSolver<dim>::write_checkpoint()
   std::ofstream output(particle_filename.c_str());
   output << oss.str() << std::endl;
 
-  std::vector<const GlobalVectorType *> sol_set_transfer;
+  std::vector<const VectorType *> sol_set_transfer;
   sol_set_transfer.push_back(&this->present_solution);
   for (unsigned int i = 0; i < this->previous_solutions.size(); ++i)
     {
@@ -493,7 +495,7 @@ CFDDEMSolver<dim>::write_checkpoint()
 
   if (this->simulation_parameters.post_processing.calculate_average_velocities)
     {
-      std::vector<const GlobalVectorType *> av_set_transfer =
+      std::vector<const VectorType *> av_set_transfer =
         this->average_velocities->save(prefix);
 
       // Insert average velocities vectors into the set transfer vector
@@ -503,29 +505,27 @@ CFDDEMSolver<dim>::write_checkpoint()
     }
 
   // Prepare for Serialization
-  SolutionTransfer<dim, GlobalVectorType> system_trans_vectors(
-    this->dof_handler);
+  SolutionTransfer<dim, VectorType> system_trans_vectors(this->dof_handler);
   system_trans_vectors.prepare_for_serialization(sol_set_transfer);
 
   // Prepare particle handler for serialization
   this->particle_handler.prepare_for_serialization();
 
   // Void Fraction
-  std::vector<const GlobalVectorType *> vf_set_transfer;
-  vf_set_transfer.push_back(
-    &this->particle_projector.void_fraction_locally_relevant);
+  std::vector<const VectorType *> vf_set_transfer;
+  vf_set_transfer.push_back(&this->particle_projector.void_fraction_solution);
   for (unsigned int i = 0;
-       i < this->particle_projector.previous_void_fraction.size();
+       i < this->particle_projector.void_fraction_previous_solution.size();
        ++i)
     {
       vf_set_transfer.push_back(
-        &this->particle_projector.previous_void_fraction[i]);
+        &this->particle_projector.void_fraction_previous_solution[i]);
     }
 
   this->multiphysics->write_checkpoint();
 
   // Prepare for Serialization
-  SolutionTransfer<dim, GlobalVectorType> vf_system_trans_vectors(
+  SolutionTransfer<dim, VectorType> vf_system_trans_vectors(
     this->particle_projector.dof_handler);
   vf_system_trans_vectors.prepare_for_serialization(vf_set_transfer);
 
@@ -544,16 +544,17 @@ CFDDEMSolver<dim>::write_checkpoint()
   // Serialize the default post-processing tables that are members of
   // NavierStokesBase
   const std::vector<OutputStructTableHandler> &table_output_structs =
-    NavierStokesBase<dim, GlobalVectorType, IndexSet>::gather_tables();
+    NavierStokesBase<dim, VectorType, IndexSet>::gather_tables();
   serialize_tables_vector(table_output_structs, this->mpi_communicator);
 }
 
 template <int dim>
 void
-CFDDEMSolver<dim>::read_checkpoint()
+CFDDEMMatrixFree<dim>::read_checkpoint()
 {
   TimerOutput::Scope timer(this->computing_timer, "Read checkpoint");
-  std::string        prefix =
+  using VectorType = LinearAlgebra::distributed::Vector<double>;
+  std::string prefix =
     this->simulation_parameters.simulation_control.output_folder +
     this->simulation_parameters.restart_parameters.filename;
   std::string prefix_particles = prefix + "_particles";
@@ -616,30 +617,29 @@ CFDDEMSolver<dim>::read_checkpoint()
     }
 
   // Velocity Vectors
-  std::vector<GlobalVectorType *> x_system(1 + this->previous_solutions.size());
+  std::vector<VectorType *> x_system(1 + this->previous_solutions.size());
 
-  GlobalVectorType distributed_system(this->locally_owned_dofs,
-                                      this->mpi_communicator);
+  VectorType distributed_system(this->locally_owned_dofs,
+                                this->mpi_communicator);
 
   x_system[0] = &(distributed_system);
 
-  std::vector<GlobalVectorType> distributed_previous_solutions;
+  std::vector<VectorType> distributed_previous_solutions;
 
   distributed_previous_solutions.reserve(this->previous_solutions.size());
 
   for (unsigned int i = 0; i < this->previous_solutions.size(); ++i)
     {
       distributed_previous_solutions.emplace_back(
-        GlobalVectorType(this->locally_owned_dofs, this->mpi_communicator));
+        VectorType(this->locally_owned_dofs, this->mpi_communicator));
       x_system[i + 1] = &distributed_previous_solutions[i];
     }
 
-  SolutionTransfer<dim, GlobalVectorType> system_trans_vectors(
-    this->dof_handler);
+  SolutionTransfer<dim, VectorType> system_trans_vectors(this->dof_handler);
 
   if (this->simulation_parameters.post_processing.calculate_average_velocities)
     {
-      std::vector<GlobalVectorType *> sum_vectors =
+      std::vector<VectorType *> sum_vectors =
         this->average_velocities->read(prefix);
 
       x_system.insert(x_system.end(), sum_vectors.begin(), sum_vectors.end());
@@ -711,13 +711,13 @@ CFDDEMSolver<dim>::read_checkpoint()
   // Deserialize the default post-processing tables that are members of
   // NavierStokesBase
   std::vector<OutputStructTableHandler> table_output_structs =
-    NavierStokesBase<dim, GlobalVectorType, IndexSet>::gather_tables();
+    NavierStokesBase<dim, VectorType, IndexSet>::gather_tables();
   deserialize_tables_vector(table_output_structs, this->mpi_communicator);
 }
 
 template <int dim>
 void
-CFDDEMSolver<dim>::check_contact_detection_method(unsigned int counter)
+CFDDEMMatrixFree<dim>::check_contact_detection_method(unsigned int counter)
 {
   // Use namespace and alias to make the code more readable
   using namespace Parameters::Lagrangian;
@@ -753,9 +753,11 @@ CFDDEMSolver<dim>::check_contact_detection_method(unsigned int counter)
     }
 }
 
+
+
 template <int dim>
 void
-CFDDEMSolver<dim>::load_balance()
+CFDDEMMatrixFree<dim>::load_balance()
 {
   load_balancing.check_load_balance_iteration();
 
@@ -763,177 +765,21 @@ CFDDEMSolver<dim>::load_balance()
   if (!dem_action_manager->check_load_balance())
     return;
 
-  std::vector<const GlobalVectorType *> sol_set_transfer;
-  sol_set_transfer.push_back(&this->present_solution);
-  for (unsigned int i = 0; i < this->previous_solutions.size(); ++i)
-    {
-      sol_set_transfer.push_back(&this->previous_solutions[i]);
-    }
-
-  // Prepare for Serialization
-  SolutionTransfer<dim, GlobalVectorType> system_trans_vectors(
-    this->dof_handler);
-  system_trans_vectors.prepare_for_coarsening_and_refinement(sol_set_transfer);
-
-  // Void Fraction
-  std::vector<const GlobalVectorType *> vf_set_transfer;
-  vf_set_transfer.push_back(
-    &this->particle_projector.void_fraction_locally_relevant);
-  for (unsigned int i = 0;
-       i < this->particle_projector.previous_void_fraction.size();
-       ++i)
-    {
-      vf_set_transfer.push_back(
-        &this->particle_projector.previous_void_fraction[i]);
-    }
-
-  // Prepare for Serialization
-  SolutionTransfer<dim, GlobalVectorType> vf_system_trans_vectors(
-    this->particle_projector.dof_handler);
-  vf_system_trans_vectors.prepare_for_coarsening_and_refinement(
-    vf_set_transfer);
-
-  // Prepare particle handle for serialization
-  this->particle_handler.prepare_for_coarsening_and_refinement();
-
-  this->pcout << "-->Repartitioning triangulation" << std::endl;
-
-  const auto parallel_triangulation =
-    dynamic_cast<parallel::distributed::Triangulation<dim> *>(
-      &*this->triangulation);
-
-  parallel_triangulation->repartition();
-
-  // If PBC are enabled remap periodic cells
-  periodic_boundaries_object.map_periodic_cells(
-    *parallel_triangulation, periodic_boundaries_cells_information);
-
-  // Update cell neighbors
-  contact_manager.update_cell_neighbors(*parallel_triangulation,
-                                        periodic_boundaries_cells_information);
-
-  boundary_cell_object.build(
-    *parallel_triangulation,
-    dem_parameters.floating_walls,
-    dem_parameters.boundary_conditions.outlet_boundaries,
-    this->cfd_dem_simulation_parameters.cfd_parameters.mesh
-      .check_for_diamond_cells,
-    this->cfd_dem_simulation_parameters.cfd_parameters.mesh
-      .expand_particle_wall_contact_search,
-    this->pcout);
-
-  const auto average_minimum_maximum_cells =
-    Utilities::MPI::min_max_avg(parallel_triangulation->n_active_cells(),
-                                this->mpi_communicator);
-
-  const auto average_minimum_maximum_particles = Utilities::MPI::min_max_avg(
-    this->particle_handler.n_locally_owned_particles(), this->mpi_communicator);
-
-  this->pcout << "Load balance finished" << std::endl;
-  this->pcout
-    << "Average, minimum and maximum number of particles on the processors are "
-    << average_minimum_maximum_particles.avg << " , "
-    << average_minimum_maximum_particles.min << " and "
-    << average_minimum_maximum_particles.max << std::endl;
-  this->pcout
-    << "Minimum and maximum number of cells owned by the processors are "
-    << average_minimum_maximum_cells.min << " and "
-    << average_minimum_maximum_cells.max << std::endl;
-
-  this->pcout << "Setup DOFs" << std::endl;
-  this->setup_dofs();
-
-  // TODO BB
-  // Remap periodic nodes after setup of dofs
-  if (dem_action_manager->check_periodic_boundaries_enabled() &&
-      dem_action_manager->check_sparse_contacts_enabled())
-    {
-      sparse_contacts_object.map_periodic_nodes(
-        this->particle_projector.void_fraction_constraints);
-    }
-
-  // Update the local and ghost cells (if ASC enabled)
-  sparse_contacts_object.update_local_and_ghost_cell_set(
-    this->particle_projector.dof_handler);
-
-  // Velocity Vectors
-  std::vector<GlobalVectorType *> x_system(1 + this->previous_solutions.size());
-
-  GlobalVectorType distributed_system(this->locally_owned_dofs,
-                                      this->mpi_communicator);
-
-  x_system[0] = &(distributed_system);
-
-  std::vector<GlobalVectorType> distributed_previous_solutions;
-
-  distributed_previous_solutions.reserve(this->previous_solutions.size());
-
-  for (unsigned int i = 0; i < this->previous_solutions.size(); ++i)
-    {
-      distributed_previous_solutions.emplace_back(
-        GlobalVectorType(this->locally_owned_dofs, this->mpi_communicator));
-      x_system[i + 1] = &distributed_previous_solutions[i];
-    }
-
-  system_trans_vectors.interpolate(x_system);
-
-  this->present_solution = distributed_system;
-  for (unsigned int i = 0; i < this->previous_solutions.size(); ++i)
-    {
-      this->previous_solutions[i] = distributed_previous_solutions[i];
-    }
-
-  x_system.clear();
-
-  // Void Fraction Vectors
-  std::vector<GlobalVectorType *> vf_system(
-    1 + this->particle_projector.previous_void_fraction.size());
-
-  GlobalVectorType vf_distributed_system(
-    this->particle_projector.locally_owned_dofs, this->mpi_communicator);
-
-  vf_system[0] = &(vf_distributed_system);
-
-  std::vector<GlobalVectorType> vf_distributed_previous_solutions;
-
-  vf_distributed_previous_solutions.reserve(
-    this->particle_projector.previous_void_fraction.size());
-
-  for (unsigned int i = 0;
-       i < this->particle_projector.previous_void_fraction.size();
-       ++i)
-    {
-      vf_distributed_previous_solutions.emplace_back(
-        GlobalVectorType(this->particle_projector.locally_owned_dofs,
-                         this->mpi_communicator));
-      vf_system[i + 1] = &vf_distributed_previous_solutions[i];
-    }
-
-  vf_system_trans_vectors.interpolate(vf_system);
-
-  this->particle_projector.void_fraction_locally_relevant =
-    vf_distributed_system;
-  for (unsigned int i = 0;
-       i < this->particle_projector.previous_void_fraction.size();
-       ++i)
-    {
-      this->particle_projector.previous_void_fraction[i] =
-        vf_distributed_previous_solutions[i];
-    }
-
-  vf_system.clear();
-
-  // Unpack particle handler after load balancing step
-  this->particle_handler.unpack_after_coarsening_and_refinement();
-
-  // Regenerate vertex to cell map
-  this->vertices_cell_mapping();
+  // Otherwise, we do not support load balancing at the present time, throw and
+  // exit gracefully.
+  AssertThrow(false, ExcMessage("Load balancing is currently not supported"));
 }
 
 template <int dim>
 void
-CFDDEMSolver<dim>::add_fluid_particle_interaction_force()
+CFDDEMMatrixFree<dim>::add_fluid_particle_interaction()
 {
+  /// Reference to torque vector from contact outcomes
+  std::vector<Tensor<1, 3>> &torque = contact_outcome.torque;
+
+  /// Reference to force vector from contact outcomes
+  std::vector<Tensor<1, 3>> &force = contact_outcome.force;
+
   for (auto particle = this->particle_handler.begin();
        particle != this->particle_handler.end();
        ++particle)
@@ -960,21 +806,6 @@ CFDDEMSolver<dim>::add_fluid_particle_interaction_force()
         particle_properties[DEM::CFDDEMProperties::PropertiesIndex::
                               fem_force_one_way_coupling_z] +
         particle_properties[DEM::CFDDEMProperties::PropertiesIndex::fem_drag_z];
-    }
-}
-
-template <int dim>
-void
-CFDDEMSolver<dim>::add_fluid_particle_interaction_torque()
-{
-  for (auto particle = this->particle_handler.begin();
-       particle != this->particle_handler.end();
-       ++particle)
-    {
-      auto particle_properties = particle->get_properties();
-
-      types::particle_index particle_id = particle->get_local_index();
-
       torque[particle_id][0] += particle_properties
         [DEM::CFDDEMProperties::PropertiesIndex::fem_torque_x];
       torque[particle_id][1] += particle_properties
@@ -986,7 +817,7 @@ CFDDEMSolver<dim>::add_fluid_particle_interaction_torque()
 
 template <int dim>
 void
-CFDDEMSolver<dim>::insert_particles()
+CFDDEMMatrixFree<dim>::insert_particles()
 {
   // If the insertion frequency is set to 0, then no particles are going
   // to be inserted in the CFD-DEM simulation and the function returns
@@ -1013,7 +844,7 @@ CFDDEMSolver<dim>::insert_particles()
 
 template <int dim>
 void
-CFDDEMSolver<dim>::particle_wall_contact_force()
+CFDDEMMatrixFree<dim>::particle_wall_contact_force()
 {
   // Particle-wall contact force
   particle_wall_contact_force_object->calculate_particle_wall_contact(
@@ -1034,7 +865,7 @@ CFDDEMSolver<dim>::particle_wall_contact_force()
     .calculate_particle_point_contact_force(
       &contact_manager.get_particle_points_in_contact(),
       dem_parameters.lagrangian_physical_properties,
-      force);
+      contact_outcome.force);
 
   if constexpr (dim == 3)
     {
@@ -1042,13 +873,13 @@ CFDDEMSolver<dim>::particle_wall_contact_force()
         .calculate_particle_line_contact_force(
           &contact_manager.get_particle_lines_in_contact(),
           dem_parameters.lagrangian_physical_properties,
-          force);
+          contact_outcome.force);
     }
 }
 
 template <int dim>
 void
-CFDDEMSolver<dim>::write_dem_output_results()
+CFDDEMMatrixFree<dim>::write_dem_output_results()
 {
   const std::string folder = dem_parameters.simulation_control.output_folder;
   const std::string particles_solution_name =
@@ -1073,10 +904,13 @@ CFDDEMSolver<dim>::write_dem_output_results()
                             this->mpi_communicator);
 }
 
+
 template <int dim>
 void
-CFDDEMSolver<dim>::report_particle_statistics()
+CFDDEMMatrixFree<dim>::report_particle_statistics()
 {
+  const auto this_mpi_process =
+    Utilities::MPI::this_mpi_process(this->mpi_communicator);
   // Update statistics on contact list
   double number_of_list_built_since_last_log =
     double(contact_search_total_number) - contact_list.total;
@@ -1169,81 +1003,9 @@ CFDDEMSolver<dim>::report_particle_statistics()
 
 template <int dim>
 void
-CFDDEMSolver<dim>::print_particles_summary()
+CFDDEMMatrixFree<dim>::postprocess_fd(bool first_iteration)
 {
-  const int display_width = this->simulation_control->get_log_precision() + 8;
-  this->pcout << "Particle Summary" << std::endl;
-
-  this->pcout << std::setw(display_width) << std::left << "id, "
-              << std::setw(display_width) << std::left << "x, "
-              << std::setw(display_width) << std::left << "y, "
-              << std::setw(display_width) << std::left << "z, "
-              << std::setw(display_width) << std::left << "v_x, "
-              << std::setw(display_width) << std::left << "v_y, "
-              << std::setw(display_width) << std::left << "v_z" << std::endl;
-  // Aggressively force synchronization of the header line
-  usleep(500);
-  MPI_Barrier(this->mpi_communicator);
-  usleep(500);
-  MPI_Barrier(this->mpi_communicator);
-
-  std::map<int, Particles::ParticleIterator<dim>> global_particles;
-  unsigned int current_id, current_id_max = 0;
-
-  // Mapping of all particles & find the max id on current processor
-  for (auto particle = this->particle_handler.begin();
-       particle != this->particle_handler.end();
-       ++particle)
-    {
-      current_id     = particle->get_id();
-      current_id_max = std::max(current_id, current_id_max);
-
-      global_particles.insert({current_id, particle});
-    }
-
-  // Find global max particle index
-  unsigned int id_max =
-    Utilities::MPI::max(current_id_max, this->mpi_communicator);
-
-  for (unsigned int i = 0; i <= id_max; i++)
-    {
-      for (auto &iterator : global_particles)
-        {
-          unsigned int id = iterator.first;
-          if (id == i)
-            {
-              auto particle            = iterator.second;
-              auto particle_properties = particle->get_properties();
-              auto particle_location   = particle->get_location();
-
-              std::cout << std::setprecision(
-                             this->simulation_control->get_log_precision())
-                        << std::setw(display_width) << std::left << id;
-              for (int d = 0; d < dim; ++d)
-                std::cout << std::setw(display_width) << std::left
-                          << particle_location[d];
-              std::cout << std::setw(display_width) << std::left
-                        << particle_properties
-                             [DEM::CFDDEMProperties::PropertiesIndex::v_x]
-                        << std::setw(display_width) << std::left
-                        << particle_properties
-                             [DEM::CFDDEMProperties::PropertiesIndex::v_y]
-                        << std::setw(display_width) << std::left
-                        << particle_properties
-                             [DEM::CFDDEMProperties::PropertiesIndex::v_z]
-                        << std::endl;
-            }
-        }
-      usleep(500);
-      MPI_Barrier(this->mpi_communicator);
-    }
-}
-
-template <int dim>
-void
-CFDDEMSolver<dim>::postprocess_fd(bool first_iteration)
-{
-  this->FluidDynamicsMatrixBased<dim>::postprocess_fd(first_iteration);
+  this->FluidDynamicsMatrixFree<dim>::postprocess_fd(first_iteration);
 
   // Visualization
   if (this->simulation_control->is_output_iteration())
@@ -1260,7 +1022,7 @@ CFDDEMSolver<dim>::postprocess_fd(bool first_iteration)
 
 template <int dim>
 void
-CFDDEMSolver<dim>::postprocess_cfd_dem()
+CFDDEMMatrixFree<dim>::postprocess_cfd_dem()
 {
   // Calculate total volume of fluid and solid
   if (this->simulation_parameters.post_processing.calculate_phase_volumes)
@@ -1318,9 +1080,10 @@ CFDDEMSolver<dim>::postprocess_cfd_dem()
     }
 }
 
+
 template <int dim>
 void
-CFDDEMSolver<dim>::dynamic_flow_control()
+CFDDEMMatrixFree<dim>::dynamic_flow_control()
 {
   if (this->simulation_parameters.flow_control.enable_flow_control &&
       this->simulation_parameters.simulation_control.method !=
@@ -1333,7 +1096,7 @@ CFDDEMSolver<dim>::dynamic_flow_control()
         this->dof_handler,
         this->particle_projector.dof_handler,
         this->present_solution,
-        this->particle_projector.void_fraction_locally_relevant,
+        this->particle_projector.void_fraction_solution,
         flow_direction,
         *this->cell_quadrature,
         *this->mapping);
@@ -1383,9 +1146,10 @@ CFDDEMSolver<dim>::dynamic_flow_control()
     }
 }
 
+
 template <int dim>
 inline void
-CFDDEMSolver<dim>::sort_particles_into_subdomains_and_cells()
+CFDDEMMatrixFree<dim>::sort_particles_into_subdomains_and_cells()
 {
   this->particle_handler.sort_particles_into_subdomains_and_cells();
 
@@ -1424,7 +1188,7 @@ CFDDEMSolver<dim>::sort_particles_into_subdomains_and_cells()
 
 template <int dim>
 void
-CFDDEMSolver<dim>::dem_iterator(unsigned int counter)
+CFDDEMMatrixFree<dim>::dem_iterator(unsigned int counter)
 {
   // dem_contact_build carries out the particle-particle and particle-wall
   // broad and fine searches, sort_particles_into_subdomains_and_cells, and
@@ -1445,12 +1209,7 @@ CFDDEMSolver<dim>::dem_iterator(unsigned int counter)
   particle_wall_contact_force();
 
   // Add fluid-particle interaction force to the force container
-  add_fluid_particle_interaction_force();
-
-  // Add fluid-particle interaction torque to the torque container
-  if (this->cfd_dem_simulation_parameters.cfd_dem.rotational_viscous_torque ||
-      this->cfd_dem_simulation_parameters.cfd_dem.vortical_viscous_torque)
-    add_fluid_particle_interaction_torque();
+  add_fluid_particle_interaction();
 
   // The cell average velocities and accelerations are updated
   // from the fully computed forces at step 0, but we do not use the
@@ -1461,7 +1220,7 @@ CFDDEMSolver<dim>::dem_iterator(unsigned int counter)
   // agitation.
   // Update the cell average velocities and accelerations
   sparse_contacts_object.update_average_velocities_acceleration(
-    this->particle_handler, g, force, dem_time_step);
+    this->particle_handler, g, contact_outcome.force, dem_time_step);
 
   // Integration correction step (after force calculation)
   // In the first step, we have to obtain location of particles at half-step
@@ -1469,8 +1228,12 @@ CFDDEMSolver<dim>::dem_iterator(unsigned int counter)
   // TODO do all DEM time step at first CFD time step are half step?
   if (this->simulation_control->get_step_number() == 0)
     {
-      integrator_object->integrate_half_step_location(
-        this->particle_handler, g, dem_time_step, torque, force, MOI);
+      integrator_object->integrate_half_step_location(this->particle_handler,
+                                                      g,
+                                                      dem_time_step,
+                                                      contact_outcome.torque,
+                                                      contact_outcome.force,
+                                                      MOI);
     }
   else
     {
@@ -1480,8 +1243,8 @@ CFDDEMSolver<dim>::dem_iterator(unsigned int counter)
       integrator_object->integrate(this->particle_handler,
                                    g,
                                    dem_time_step,
-                                   torque,
-                                   force,
+                                   contact_outcome.torque,
+                                   contact_outcome.force,
                                    MOI,
                                    *parallel_triangulation,
                                    sparse_contacts_object);
@@ -1506,14 +1269,18 @@ CFDDEMSolver<dim>::dem_iterator(unsigned int counter)
 
 template <int dim>
 void
-CFDDEMSolver<dim>::dem_contact_build(unsigned int counter)
+CFDDEMMatrixFree<dim>::dem_contact_build(unsigned int counter)
 {
-  // For the contact search at the last CFD iteration
-  if (counter == (coupling_frequency - 1))
-    dem_action_manager->last_dem_of_cfddem_iteration_step();
+  // If this is not the last DEM iteration before the next CFD iteration, check
+  // if a contact detection step is necessary
+  if (counter != (coupling_frequency - 1))
+    check_contact_detection_method(counter);
 
-  // Check contact detection step by detection method
-  check_contact_detection_method(counter);
+  // Otherwise, force a contact search at the last DEM iteration before a CFD
+  // iteration to ensure that the particles are adequately located before
+  // calculating the coupling between particle and fluid.
+  else
+    dem_action_manager->last_dem_of_cfddem_iteration_step();
 
   // Sort particles in cells
   if (dem_action_manager->check_contact_search())
@@ -1579,9 +1346,10 @@ CFDDEMSolver<dim>::dem_contact_build(unsigned int counter)
 
 template <int dim>
 void
-CFDDEMSolver<dim>::solve()
+CFDDEMMatrixFree<dim>::solve()
 {
   this->computing_timer.enter_subsection("Read mesh, manifolds and particles");
+
   read_mesh_and_manifolds(
     *this->triangulation,
     this->cfd_dem_simulation_parameters.cfd_parameters.mesh,
@@ -1599,6 +1367,7 @@ CFDDEMSolver<dim>::solve()
 
   this->computing_timer.leave_subsection("Read mesh, manifolds and particles");
 
+
   this->setup_dofs();
 
   this->set_initial_condition(
@@ -1606,20 +1375,14 @@ CFDDEMSolver<dim>::solve()
     this->cfd_dem_simulation_parameters.cfd_parameters.restart_parameters
       .restart);
 
-  // In the case the simulation is being restarted from a checkpoint file, the
-  // restart_simulation parameter is set to true. This allows to perform all
-  // operations related to restarting a simulation. Once all operations have
-  // been performed, this restart_simulation is reset to false. It is only set
-  // once and reset once since restarting only occurs once.
   if (this->cfd_dem_simulation_parameters.cfd_parameters.restart_parameters
         .restart)
     dem_action_manager->restart_simulation();
 
-  // Initialize the DEM parameters and generate the required ghost particles
+  // Initialize the DEM parameters and generate the ghost particles
   initialize_dem_parameters();
 
   // Calculate first instance of void fraction once particles are set up
-  this->vertices_cell_mapping();
   if (!dem_action_manager->check_restart_simulation())
     this->particle_projector.initialize_void_fraction(
       this->simulation_control->get_current_time());
@@ -1650,47 +1413,76 @@ CFDDEMSolver<dim>::solve()
 
       if (!this->simulation_control->is_at_start())
         {
-          NavierStokesBase<dim, GlobalVectorType, IndexSet>::refine_mesh();
-          this->vertices_cell_mapping();
+          this->refine_mesh();
         }
 
-      this->calculate_void_fraction(
+      // We calculate the void fraction and the particle-fluid interaction using
+      // the particle projector.
+      this->particle_projector.calculate_void_fraction(
         this->simulation_control->get_current_time());
-      this->iterate();
 
-      if (this->cfd_dem_simulation_parameters.cfd_parameters.test.enabled)
+      if (is_bdf(this->simulation_control->get_assembly_method()))
         {
-          switch (
-            this->cfd_dem_simulation_parameters.cfd_parameters.test.test_type)
-            {
-              case Parameters::Testing::TestType::particles:
-                {
-                  print_particles_summary();
-                  break;
-                }
-              case Parameters::Testing::TestType::mobility_status:
-                {
-                  if (this->simulation_control->is_at_end())
+          this->computing_timer.enter_subsection("Calculate time derivatives");
 
-                    {
-                      // Get mobility status vector sorted by cell id
-                      Vector<float> mobility_status(
-                        this->triangulation->n_active_cells());
-                      sparse_contacts_object.get_mobility_status_vector(
-                        mobility_status);
+          this->calculate_time_derivative_previous_solutions();
+          this->time_derivative_previous_solutions.update_ghost_values();
+          this->system_operator->evaluate_time_derivative_previous_solutions(
+            this->time_derivative_previous_solutions);
+          this->evaluate_time_derivative_void_fraction();
+          this->computing_timer.leave_subsection("Calculate time derivatives");
 
-                      // Output mobility status vector
-                      visualization_object.print_intermediate_format(
-                        mobility_status,
-                        this->particle_projector.dof_handler,
-                        this->mpi_communicator);
-                    }
-                  break;
-                }
-              default:
-                print_particles_summary();
-            }
+          if (this->simulation_parameters.flow_control.enable_flow_control)
+            this->system_operator->update_beta_force(
+              this->flow_control.get_beta());
         }
+
+
+      this->particle_projector.calculate_particle_fluid_forces_projection(
+        this->cfd_dem_simulation_parameters.cfd_dem,
+        this->dof_handler,
+        this->present_solution,
+        this->previous_solutions,
+        this->cfd_dem_simulation_parameters.dem_parameters
+          .lagrangian_physical_properties.g,
+        NavierStokesScratchData<dim>(
+          this->simulation_control,
+          this->simulation_parameters.physical_properties_manager,
+          *this->fe,
+          *this->cell_quadrature,
+          *this->mapping,
+          *this->face_quadrature));
+
+      // The base matrix-free operator is not aware of the various VANS
+      // coupling terms. We must do a cast here to ensure that the operator is
+      // of the right type.
+      if (auto mf_operator = dynamic_cast<VANSOperator<dim, double> *>(
+            this->system_operator.get()))
+        {
+          TimerOutput::Scope t(this->computing_timer,
+                               "Prepare MF operator for VANS");
+
+          mf_operator->compute_void_fraction(
+            this->particle_projector.dof_handler,
+            this->particle_projector.void_fraction_solution,
+            this->time_derivative_void_fraction);
+
+          mf_operator->compute_particle_fluid_interaction(
+            this->particle_projector.fluid_force_on_particles_two_way_coupling
+              .dof_handler,
+            this->particle_projector.fluid_force_on_particles_two_way_coupling
+              .particle_field_solution,
+            this->particle_projector.fluid_drag_on_particles.dof_handler,
+            this->particle_projector.fluid_drag_on_particles
+              .particle_field_solution,
+            this->particle_projector.particle_velocity.dof_handler,
+            this->particle_projector.particle_velocity.particle_field_solution,
+            this->particle_projector.momentum_transfer_coefficient.dof_handler,
+            this->particle_projector.momentum_transfer_coefficient
+              .particle_field_solution);
+        }
+
+      this->iterate();
 
       {
         announce_string(this->pcout, "DEM");
@@ -1726,23 +1518,21 @@ CFDDEMSolver<dim>::solve()
       this->postprocess_cfd_dem();
       this->finish_time_step_fd();
 
-      this->FluidDynamicsVANS<dim>::monitor_mass_conservation();
-
       if (this->cfd_dem_simulation_parameters.cfd_dem.particle_statistics)
         report_particle_statistics();
     }
 
   // Write particle-wall collision statistics file if enabled
-  if (dem_parameters.post_processing.particle_wall_collision_statistics)
-    write_collision_stats(dem_parameters,
-                          collision_event_log,
-                          this->mpi_communicator);
+  // if (dem_parameters.post_processing.particle_wall_collision_statistics)
+  // write_collision_stats(dem_parameters,
+  //                        collision_event_log,
+  //                        this->mpi_communicator);
+  if (this->simulation_parameters.timer.type == Parameters::Timer::Type::end)
+    this->print_mg_setup_times();
 
   this->finish_simulation();
 }
 
-// Pre-compile the 2D and 3D CFD-DEM solver to ensure that the
-// library is valid before we actually compile the solver This greatly
-// helps with debugging
-template class CFDDEMSolver<2>;
-template class CFDDEMSolver<3>;
+// Pre-compile the 2D and 3D CFD-DEM matrix-free solver
+template class CFDDEMMatrixFree<2>;
+template class CFDDEMMatrixFree<3>;

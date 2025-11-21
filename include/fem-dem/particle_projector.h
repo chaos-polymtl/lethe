@@ -349,6 +349,7 @@ public:
     DoFHandler<dim>               &fluid_dof_handler,
     const VectorType              &present_velocity_pressure_solution,
     const std::vector<VectorType> &previous_velocity_pressure_solution,
+    const Tensor<1, 3>            &gravity,
     NavierStokesScratchData<dim>   scratch_data);
 
   /**
@@ -359,7 +360,10 @@ public:
   {}
 
   /**
-   * @brief Percolate the time vector for the void fraction. This operation is called at the end of a time-step.
+   * @brief Percolate the time vector for the void fraction. This operation is called at the end of a time-step. It percolates both the deal.II and the Trilinos vectors.
+   *
+   * TODO - Refactor the ParticleProjector class to use deal.II vectors for
+   * everything instead of a blend of Trilinos and deal.II vector.
    *
    */
   void
@@ -368,8 +372,11 @@ public:
     for (unsigned int i = previous_void_fraction.size() - 1; i > 0; --i)
       {
         previous_void_fraction[i] = previous_void_fraction[i - 1];
+        void_fraction_previous_solution[i] =
+          void_fraction_previous_solution[i - 1];
       }
-    previous_void_fraction[0] = void_fraction_locally_relevant;
+    previous_void_fraction[0]          = void_fraction_locally_relevant;
+    void_fraction_previous_solution[0] = void_fraction_solution;
   }
 
   /**
@@ -384,6 +391,9 @@ public:
     calculate_void_fraction(time);
     for (auto &previous_solution : this->previous_void_fraction)
       previous_solution = void_fraction_locally_relevant;
+
+    for (auto &previous_solution : this->void_fraction_previous_solution)
+      previous_solution = void_fraction_solution;
   }
 
   /**
@@ -440,6 +450,10 @@ public:
 
   /// deal.II vector for the void fraction
   LinearAlgebra::distributed::Vector<double> void_fraction_solution;
+
+  /// deal.II vector the previous void fraction
+  std::vector<LinearAlgebra::distributed::Vector<double>>
+    void_fraction_previous_solution;
 
   /// Finite element for the void fraction
   std::shared_ptr<FiniteElement<dim>> fe;
