@@ -570,18 +570,18 @@ public:
   get_projected_phase_fraction_gradient_dof_handler();
 
   /**
-   * @brief Request immersed solid shape
+   * @brief Request reference to immersed solid shape
    */
-  Shape<dim> *
+  std::shared_ptr<Shape<dim>>
   get_immersed_solid_shape();
 
   /**
    * @brief Share immersed solid shape
    *
-   * @param[in] shape The immersed solid shape
+   * @param[in] shape The shared pointer to the immersed solid shape
    */
   void
-  set_immersed_solid_shape(Shape<dim> *shape);
+  set_immersed_solid_shape(std::shared_ptr<Shape<dim>> shape);
 
   /**
    * @brief Request the reference to the vector of previous solutions of a given
@@ -910,7 +910,7 @@ private:
     block_physics_time_average_solutions;
 
   // Immersed solid shape to be used by auxiliary physics
-  Shape<dim> *immersed_solid_shape;
+  std::shared_ptr<Shape<dim>> immersed_solid_shape;
 
   // past (minus 1) solution
   std::map<PhysicsID, GlobalVectorType *>      physics_solutions_m1;

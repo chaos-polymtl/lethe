@@ -272,7 +272,7 @@ Tracer<dim>::assemble_local_system_matrix(
                       &(*simulation_parameters.source_term.tracer_source));
 
   scratch_data.reinit_signed_distance(
-    cell, &(*this->multiphysics->get_immersed_solid_shape()));
+    cell, this->multiphysics->get_immersed_solid_shape());
 
   const DoFHandler<dim> &dof_handler_fluid =
     multiphysics->get_dof_handler(PhysicsID::fluid_dynamics);
@@ -561,7 +561,7 @@ Tracer<dim>::assemble_local_system_rhs(
                       &(*source_term));
 
   scratch_data.reinit_signed_distance(
-    cell, &(*this->multiphysics->get_immersed_solid_shape()));
+    cell, this->multiphysics->get_immersed_solid_shape());
 
   const DoFHandler<dim> &dof_handler_fluid =
     multiphysics->get_dof_handler(PhysicsID::fluid_dynamics);
