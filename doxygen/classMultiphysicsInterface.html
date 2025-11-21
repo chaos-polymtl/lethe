@@ -184,8 +184,6 @@ Public Member Functions</h2></td></tr>
 <tr class="separator:aa9254dbc7d713b2034b5f1fdd64de62a"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aa2e183b7ce22521036bdd9ab14107cf1" id="r_aa2e183b7ce22521036bdd9ab14107cf1"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classMultiphysicsInterface.html#aa2e183b7ce22521036bdd9ab14107cf1">set_block_previous_solutions</a> (const <a class="el" href="multiphysics_8h.html#ae14bb720bc9a37edc36fb8d90df712c2">PhysicsID</a> physics_id, std::vector&lt; <a class="el" href="vector_8h.html#ac71ba75c5119edae876800f9e80b59e7">GlobalBlockVectorType</a> &gt; *previous_solutions_vector)</td></tr>
 <tr class="separator:aa2e183b7ce22521036bdd9ab14107cf1"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a1c1e0a5cd0ae4e3cb11270a0273cce76" id="r_a1c1e0a5cd0ae4e3cb11270a0273cce76"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classMultiphysicsInterface.html#a1c1e0a5cd0ae4e3cb11270a0273cce76">set_previous_block_solutions</a> (const <a class="el" href="multiphysics_8h.html#ae14bb720bc9a37edc36fb8d90df712c2">PhysicsID</a> physics_id, std::vector&lt; <a class="el" href="vector_8h.html#ac71ba75c5119edae876800f9e80b59e7">GlobalBlockVectorType</a> &gt; *previous_solutions_vector)</td></tr>
-<tr class="separator:a1c1e0a5cd0ae4e3cb11270a0273cce76"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a15cf83b4790297dab4cc6cf32a70e5c6" id="r_a15cf83b4790297dab4cc6cf32a70e5c6"><td class="memItemLeft" align="right" valign="top">virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classMultiphysicsInterface.html#a15cf83b4790297dab4cc6cf32a70e5c6">compute_kelly</a> (const std::pair&lt; const <a class="el" href="multiphysics_8h.html#a2cbb04ef215561a69b48772159577fdd">Variable</a>, <a class="el" href="structParameters_1_1MultipleAdaptationParameters.html">Parameters::MultipleAdaptationParameters</a> &gt; &amp;ivar, dealii::Vector&lt; float &gt; &amp;estimated_error_per_cell)</td></tr>
 <tr class="separator:a15cf83b4790297dab4cc6cf32a70e5c6"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aea4b7d6af2a1da9e935a4e40e524ab8e" id="r_aea4b7d6af2a1da9e935a4e40e524ab8e"><td class="memItemLeft" align="right" valign="top">virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classMultiphysicsInterface.html#aea4b7d6af2a1da9e935a4e40e524ab8e">write_checkpoint</a> ()</td></tr>
@@ -292,7 +290,7 @@ template&lt;int dim&gt; </div>
 
 <p class="definition">Definition at line <a class="el" href="multiphysics__interface_8cc_source.html#l00070">70</a> of file <a class="el" href="multiphysics__interface_8cc_source.html">multiphysics_interface.cc</a>.</p>
 
-<p class="reference">References <a class="el" href="multiphysics__interface_8h_source.html#l00883">MultiphysicsInterface&lt; dim &gt;::active_physics</a>, <a class="el" href="multiphysics_8h_source.html#l00013">cahn_hilliard</a>, <a class="el" href="parameters__multiphysics_8h_source.html#l00394">Parameters::Multiphysics::cahn_hilliard</a>, <a class="el" href="multiphysics_8h_source.html#l00009">fluid_dynamics</a>, <a class="el" href="multiphysics_8h_source.html#l00010">heat_transfer</a>, <a class="el" href="parameters__multiphysics_8h_source.html#l00391">Parameters::Multiphysics::heat_transfer</a>, <a class="el" href="multiphysics__interface_8cc_source.html#l00236">MultiphysicsInterface&lt; dim &gt;::inspect_multiphysics_models_dependencies()</a>, <a class="el" href="simulation__parameters_8h_source.html#l00027">SimulationParameters&lt; dim &gt;::linear_solver</a>, <a class="el" href="multiphysics__interface_8h_source.html#l00878">MultiphysicsInterface&lt; dim &gt;::multiphysics_parameters</a>, <a class="el" href="simulation__parameters_8h_source.html#l00028">SimulationParameters&lt; dim &gt;::non_linear_solver</a>, <a class="el" href="multiphysics__interface_8h_source.html#l00896">MultiphysicsInterface&lt; dim &gt;::physics</a>, <a class="el" href="namespaceParameters.html#a91f1943180a615249347b911b0ed3919a556966c7830465dc4623d62e32cec31d">Parameters::quiet</a>, <a class="el" href="multiphysics_8h_source.html#l00011">tracer</a>, <a class="el" href="parameters__multiphysics_8h_source.html#l00392">Parameters::Multiphysics::tracer</a>, <a class="el" href="namespaceParameters.html#a91f1943180a615249347b911b0ed3919a2c7aea4237e25b4f8ee3b0bf77d6fed0">Parameters::verbose</a>, <a class="el" href="multiphysics__interface_8h_source.html#l00879">MultiphysicsInterface&lt; dim &gt;::verbosity</a>, <a class="el" href="multiphysics_8h_source.html#l00012">VOF</a>, and <a class="el" href="parameters__multiphysics_8h_source.html#l00393">Parameters::Multiphysics::VOF</a>.</p>
+<p class="reference">References <a class="el" href="multiphysics__interface_8h_source.html#l00863">MultiphysicsInterface&lt; dim &gt;::active_physics</a>, <a class="el" href="multiphysics_8h_source.html#l00013">cahn_hilliard</a>, <a class="el" href="parameters__multiphysics_8h_source.html#l00394">Parameters::Multiphysics::cahn_hilliard</a>, <a class="el" href="multiphysics_8h_source.html#l00009">fluid_dynamics</a>, <a class="el" href="multiphysics_8h_source.html#l00010">heat_transfer</a>, <a class="el" href="parameters__multiphysics_8h_source.html#l00391">Parameters::Multiphysics::heat_transfer</a>, <a class="el" href="multiphysics__interface_8cc_source.html#l00236">MultiphysicsInterface&lt; dim &gt;::inspect_multiphysics_models_dependencies()</a>, <a class="el" href="simulation__parameters_8h_source.html#l00027">SimulationParameters&lt; dim &gt;::linear_solver</a>, <a class="el" href="multiphysics__interface_8h_source.html#l00858">MultiphysicsInterface&lt; dim &gt;::multiphysics_parameters</a>, <a class="el" href="simulation__parameters_8h_source.html#l00028">SimulationParameters&lt; dim &gt;::non_linear_solver</a>, <a class="el" href="multiphysics__interface_8h_source.html#l00876">MultiphysicsInterface&lt; dim &gt;::physics</a>, <a class="el" href="namespaceParameters.html#a91f1943180a615249347b911b0ed3919a556966c7830465dc4623d62e32cec31d">Parameters::quiet</a>, <a class="el" href="multiphysics_8h_source.html#l00011">tracer</a>, <a class="el" href="parameters__multiphysics_8h_source.html#l00392">Parameters::Multiphysics::tracer</a>, <a class="el" href="namespaceParameters.html#a91f1943180a615249347b911b0ed3919a2c7aea4237e25b4f8ee3b0bf77d6fed0">Parameters::verbose</a>, <a class="el" href="multiphysics__interface_8h_source.html#l00859">MultiphysicsInterface&lt; dim &gt;::verbosity</a>, <a class="el" href="multiphysics_8h_source.html#l00012">VOF</a>, and <a class="el" href="parameters__multiphysics_8h_source.html#l00393">Parameters::Multiphysics::VOF</a>.</p>
 
 </div>
 </div>
@@ -362,7 +360,7 @@ template&lt;int dim&gt; </div>
 
 <p class="definition">Definition at line <a class="el" href="multiphysics__interface_8h_source.html#l00068">68</a> of file <a class="el" href="multiphysics__interface_8h_source.html">multiphysics_interface.h</a>.</p>
 
-<p class="reference">References <a class="el" href="utilities_8h_source.html#l00465">announce_string()</a>, <a class="el" href="multiphysics_8h_source.html#l00013">cahn_hilliard</a>, <a class="el" href="multiphysics_8h_source.html#l00010">heat_transfer</a>, <a class="el" href="multiphysics__interface_8h_source.html#l00880">MultiphysicsInterface&lt; dim &gt;::pcout</a>, <a class="el" href="multiphysics_8h_source.html#l00011">tracer</a>, and <a class="el" href="multiphysics_8h_source.html#l00012">VOF</a>.</p>
+<p class="reference">References <a class="el" href="utilities_8h_source.html#l00465">announce_string()</a>, <a class="el" href="multiphysics_8h_source.html#l00013">cahn_hilliard</a>, <a class="el" href="multiphysics_8h_source.html#l00010">heat_transfer</a>, <a class="el" href="multiphysics__interface_8h_source.html#l00860">MultiphysicsInterface&lt; dim &gt;::pcout</a>, <a class="el" href="multiphysics_8h_source.html#l00011">tracer</a>, and <a class="el" href="multiphysics_8h_source.html#l00012">VOF</a>.</p>
 
 </div>
 </div>
@@ -411,9 +409,9 @@ template&lt;int dim&gt; </div>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="multiphysics__interface_8h_source.html#l00830">830</a> of file <a class="el" href="multiphysics__interface_8h_source.html">multiphysics_interface.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="multiphysics__interface_8h_source.html#l00810">810</a> of file <a class="el" href="multiphysics__interface_8h_source.html">multiphysics_interface.h</a>.</p>
 
-<p class="reference">References <a class="el" href="multiphysics__interface_8h_source.html#l00900">MultiphysicsInterface&lt; dim &gt;::block_physics</a>, and <a class="el" href="multiphysics__interface_8h_source.html#l00896">MultiphysicsInterface&lt; dim &gt;::physics</a>.</p>
+<p class="reference">References <a class="el" href="multiphysics__interface_8h_source.html#l00880">MultiphysicsInterface&lt; dim &gt;::block_physics</a>, and <a class="el" href="multiphysics__interface_8h_source.html#l00876">MultiphysicsInterface&lt; dim &gt;::physics</a>.</p>
 
 </div>
 </div>
@@ -446,7 +444,7 @@ template&lt;int dim&gt; </div>
 
 <p class="definition">Definition at line <a class="el" href="multiphysics__interface_8h_source.html#l00229">229</a> of file <a class="el" href="multiphysics__interface_8h_source.html">multiphysics_interface.h</a>.</p>
 
-<p class="reference">References <a class="el" href="multiphysics__interface_8h_source.html#l00900">MultiphysicsInterface&lt; dim &gt;::block_physics</a>, and <a class="el" href="multiphysics__interface_8h_source.html#l00896">MultiphysicsInterface&lt; dim &gt;::physics</a>.</p>
+<p class="reference">References <a class="el" href="multiphysics__interface_8h_source.html#l00880">MultiphysicsInterface&lt; dim &gt;::block_physics</a>, and <a class="el" href="multiphysics__interface_8h_source.html#l00876">MultiphysicsInterface&lt; dim &gt;::physics</a>.</p>
 
 </div>
 </div>
@@ -480,7 +478,7 @@ template&lt;int dim&gt; </div>
 
 <p class="definition">Definition at line <a class="el" href="multiphysics__interface_8h_source.html#l00417">417</a> of file <a class="el" href="multiphysics__interface_8h_source.html">multiphysics_interface.h</a>.</p>
 
-<p class="reference">References <a class="el" href="multiphysics__interface_8h_source.html#l00914">MultiphysicsInterface&lt; dim &gt;::block_physics_solutions</a>, and <a class="el" href="multiphysics_8h_source.html#l00009">fluid_dynamics</a>.</p>
+<p class="reference">References <a class="el" href="multiphysics__interface_8h_source.html#l00894">MultiphysicsInterface&lt; dim &gt;::block_physics_solutions</a>, and <a class="el" href="multiphysics_8h_source.html#l00009">fluid_dynamics</a>.</p>
 
 </div>
 </div>
@@ -514,7 +512,7 @@ template&lt;int dim&gt; </div>
 
 <p class="definition">Definition at line <a class="el" href="multiphysics__interface_8h_source.html#l00209">209</a> of file <a class="el" href="multiphysics__interface_8h_source.html">multiphysics_interface.h</a>.</p>
 
-<p class="reference">References <a class="el" href="multiphysics__interface_8h_source.html#l00900">MultiphysicsInterface&lt; dim &gt;::block_physics</a>.</p>
+<p class="reference">References <a class="el" href="multiphysics__interface_8h_source.html#l00880">MultiphysicsInterface&lt; dim &gt;::block_physics</a>.</p>
 
 </div>
 </div>
@@ -548,7 +546,7 @@ template&lt;int dim&gt; </div>
 
 <p class="definition">Definition at line <a class="el" href="multiphysics__interface_8h_source.html#l00189">189</a> of file <a class="el" href="multiphysics__interface_8h_source.html">multiphysics_interface.h</a>.</p>
 
-<p class="reference">References <a class="el" href="multiphysics__interface_8h_source.html#l00896">MultiphysicsInterface&lt; dim &gt;::physics</a>.</p>
+<p class="reference">References <a class="el" href="multiphysics__interface_8h_source.html#l00876">MultiphysicsInterface&lt; dim &gt;::physics</a>.</p>
 
 </div>
 </div>
@@ -579,7 +577,7 @@ template&lt;int dim&gt; </div>
 
 <p class="definition">Definition at line <a class="el" href="multiphysics__interface_8h_source.html#l00057">57</a> of file <a class="el" href="multiphysics__interface_8h_source.html">multiphysics_interface.h</a>.</p>
 
-<p class="reference">References <a class="el" href="multiphysics__interface_8h_source.html#l00883">MultiphysicsInterface&lt; dim &gt;::active_physics</a>.</p>
+<p class="reference">References <a class="el" href="multiphysics__interface_8h_source.html#l00863">MultiphysicsInterface&lt; dim &gt;::active_physics</a>.</p>
 
 </div>
 </div>
@@ -619,7 +617,7 @@ template&lt;int dim&gt; </div>
 
 <p class="definition">Definition at line <a class="el" href="multiphysics__interface_8h_source.html#l00612">612</a> of file <a class="el" href="multiphysics__interface_8h_source.html">multiphysics_interface.h</a>.</p>
 
-<p class="reference">References <a class="el" href="multiphysics__interface_8h_source.html#l00883">MultiphysicsInterface&lt; dim &gt;::active_physics</a>, and <a class="el" href="multiphysics__interface_8h_source.html#l00920">MultiphysicsInterface&lt; dim &gt;::block_physics_previous_solutions</a>.</p>
+<p class="reference">References <a class="el" href="multiphysics__interface_8h_source.html#l00863">MultiphysicsInterface&lt; dim &gt;::active_physics</a>, and <a class="el" href="multiphysics__interface_8h_source.html#l00900">MultiphysicsInterface&lt; dim &gt;::block_physics_previous_solutions</a>.</p>
 
 </div>
 </div>
@@ -659,7 +657,7 @@ template&lt;int dim&gt; </div>
 
 <p class="definition">Definition at line <a class="el" href="multiphysics__interface_8h_source.html#l00478">478</a> of file <a class="el" href="multiphysics__interface_8h_source.html">multiphysics_interface.h</a>.</p>
 
-<p class="reference">References <a class="el" href="multiphysics__interface_8h_source.html#l00883">MultiphysicsInterface&lt; dim &gt;::active_physics</a>, and <a class="el" href="multiphysics__interface_8h_source.html#l00914">MultiphysicsInterface&lt; dim &gt;::block_physics_solutions</a>.</p>
+<p class="reference">References <a class="el" href="multiphysics__interface_8h_source.html#l00863">MultiphysicsInterface&lt; dim &gt;::active_physics</a>, and <a class="el" href="multiphysics__interface_8h_source.html#l00894">MultiphysicsInterface&lt; dim &gt;::block_physics_solutions</a>.</p>
 
 </div>
 </div>
@@ -699,7 +697,7 @@ template&lt;int dim&gt; </div>
 
 <p class="definition">Definition at line <a class="el" href="multiphysics__interface_8h_source.html#l00509">509</a> of file <a class="el" href="multiphysics__interface_8h_source.html">multiphysics_interface.h</a>.</p>
 
-<p class="reference">References <a class="el" href="multiphysics__interface_8h_source.html#l00883">MultiphysicsInterface&lt; dim &gt;::active_physics</a>, and <a class="el" href="multiphysics__interface_8h_source.html#l00928">MultiphysicsInterface&lt; dim &gt;::block_physics_time_average_solutions</a>.</p>
+<p class="reference">References <a class="el" href="multiphysics__interface_8h_source.html#l00863">MultiphysicsInterface&lt; dim &gt;::active_physics</a>, and <a class="el" href="multiphysics__interface_8h_source.html#l00908">MultiphysicsInterface&lt; dim &gt;::block_physics_time_average_solutions</a>.</p>
 
 </div>
 </div>
@@ -789,7 +787,7 @@ template&lt;int dim&gt; </div>
 
 <p class="definition">Definition at line <a class="el" href="multiphysics__interface_8h_source.html#l00431">431</a> of file <a class="el" href="multiphysics__interface_8h_source.html">multiphysics_interface.h</a>.</p>
 
-<p class="reference">References <a class="el" href="multiphysics__interface_8h_source.html#l00883">MultiphysicsInterface&lt; dim &gt;::active_physics</a>, and <a class="el" href="multiphysics__interface_8h_source.html#l00903">MultiphysicsInterface&lt; dim &gt;::physics_dof_handler</a>.</p>
+<p class="reference">References <a class="el" href="multiphysics__interface_8h_source.html#l00863">MultiphysicsInterface&lt; dim &gt;::active_physics</a>, and <a class="el" href="multiphysics__interface_8h_source.html#l00883">MultiphysicsInterface&lt; dim &gt;::physics_dof_handler</a>.</p>
 
 </div>
 </div>
@@ -829,7 +827,7 @@ template&lt;int dim&gt; </div>
 
 <p class="definition">Definition at line <a class="el" href="multiphysics__interface_8h_source.html#l00463">463</a> of file <a class="el" href="multiphysics__interface_8h_source.html">multiphysics_interface.h</a>.</p>
 
-<p class="reference">References <a class="el" href="multiphysics__interface_8h_source.html#l00883">MultiphysicsInterface&lt; dim &gt;::active_physics</a>, and <a class="el" href="multiphysics__interface_8h_source.html#l00909">MultiphysicsInterface&lt; dim &gt;::physics_filtered_solutions</a>.</p>
+<p class="reference">References <a class="el" href="multiphysics__interface_8h_source.html#l00863">MultiphysicsInterface&lt; dim &gt;::active_physics</a>, and <a class="el" href="multiphysics__interface_8h_source.html#l00889">MultiphysicsInterface&lt; dim &gt;::physics_filtered_solutions</a>.</p>
 
 </div>
 </div>
@@ -892,7 +890,7 @@ template&lt;int dim&gt; </div>
 
 <p class="definition">Definition at line <a class="el" href="multiphysics__interface_8h_source.html#l00596">596</a> of file <a class="el" href="multiphysics__interface_8h_source.html">multiphysics_interface.h</a>.</p>
 
-<p class="reference">References <a class="el" href="multiphysics__interface_8h_source.html#l00883">MultiphysicsInterface&lt; dim &gt;::active_physics</a>, and <a class="el" href="multiphysics__interface_8h_source.html#l00918">MultiphysicsInterface&lt; dim &gt;::physics_previous_solutions</a>.</p>
+<p class="reference">References <a class="el" href="multiphysics__interface_8h_source.html#l00863">MultiphysicsInterface&lt; dim &gt;::active_physics</a>, and <a class="el" href="multiphysics__interface_8h_source.html#l00898">MultiphysicsInterface&lt; dim &gt;::physics_previous_solutions</a>.</p>
 
 </div>
 </div>
@@ -982,7 +980,7 @@ template&lt;int dim&gt; </div>
 
 <p class="definition">Definition at line <a class="el" href="multiphysics__interface_8h_source.html#l00525">525</a> of file <a class="el" href="multiphysics__interface_8h_source.html">multiphysics_interface.h</a>.</p>
 
-<p class="reference">References <a class="el" href="multiphysics__interface_8h_source.html#l00883">MultiphysicsInterface&lt; dim &gt;::active_physics</a>, and <a class="el" href="multiphysics__interface_8h_source.html#l00932">MultiphysicsInterface&lt; dim &gt;::reynolds_stress_solutions</a>.</p>
+<p class="reference">References <a class="el" href="multiphysics__interface_8h_source.html#l00863">MultiphysicsInterface&lt; dim &gt;::active_physics</a>, and <a class="el" href="multiphysics__interface_8h_source.html#l00912">MultiphysicsInterface&lt; dim &gt;::reynolds_stress_solutions</a>.</p>
 
 </div>
 </div>
@@ -1017,7 +1015,7 @@ template&lt;int dim&gt; </div>
 
 <p class="definition">Definition at line <a class="el" href="multiphysics__interface_8h_source.html#l00544">544</a> of file <a class="el" href="multiphysics__interface_8h_source.html">multiphysics_interface.h</a>.</p>
 
-<p class="reference">References <a class="el" href="multiphysics__interface_8h_source.html#l00905">MultiphysicsInterface&lt; dim &gt;::solids</a>.</p>
+<p class="reference">References <a class="el" href="multiphysics__interface_8h_source.html#l00885">MultiphysicsInterface&lt; dim &gt;::solids</a>.</p>
 
 </div>
 </div>
@@ -1057,7 +1055,7 @@ template&lt;int dim&gt; </div>
 
 <p class="definition">Definition at line <a class="el" href="multiphysics__interface_8h_source.html#l00447">447</a> of file <a class="el" href="multiphysics__interface_8h_source.html">multiphysics_interface.h</a>.</p>
 
-<p class="reference">References <a class="el" href="multiphysics__interface_8h_source.html#l00883">MultiphysicsInterface&lt; dim &gt;::active_physics</a>, and <a class="el" href="multiphysics__interface_8h_source.html#l00913">MultiphysicsInterface&lt; dim &gt;::physics_solutions</a>.</p>
+<p class="reference">References <a class="el" href="multiphysics__interface_8h_source.html#l00863">MultiphysicsInterface&lt; dim &gt;::active_physics</a>, and <a class="el" href="multiphysics__interface_8h_source.html#l00893">MultiphysicsInterface&lt; dim &gt;::physics_solutions</a>.</p>
 
 </div>
 </div>
@@ -1097,7 +1095,7 @@ template&lt;int dim&gt; </div>
 
 <p class="definition">Definition at line <a class="el" href="multiphysics__interface_8h_source.html#l00494">494</a> of file <a class="el" href="multiphysics__interface_8h_source.html">multiphysics_interface.h</a>.</p>
 
-<p class="reference">References <a class="el" href="multiphysics__interface_8h_source.html#l00883">MultiphysicsInterface&lt; dim &gt;::active_physics</a>, and <a class="el" href="multiphysics__interface_8h_source.html#l00924">MultiphysicsInterface&lt; dim &gt;::physics_time_average_solutions</a>.</p>
+<p class="reference">References <a class="el" href="multiphysics__interface_8h_source.html#l00863">MultiphysicsInterface&lt; dim &gt;::active_physics</a>, and <a class="el" href="multiphysics__interface_8h_source.html#l00904">MultiphysicsInterface&lt; dim &gt;::physics_time_average_solutions</a>.</p>
 
 </div>
 </div>
@@ -1169,7 +1167,7 @@ template&lt;int dim&gt; </div>
 
 <p class="definition">Definition at line <a class="el" href="multiphysics__interface_8h_source.html#l00250">250</a> of file <a class="el" href="multiphysics__interface_8h_source.html">multiphysics_interface.h</a>.</p>
 
-<p class="reference">References <a class="el" href="multiphysics__interface_8h_source.html#l00900">MultiphysicsInterface&lt; dim &gt;::block_physics</a>, <a class="el" href="multiphysics__interface_8h_source.html#l00896">MultiphysicsInterface&lt; dim &gt;::physics</a>, and <a class="el" href="multiphysics__interface_8h_source.html#l00887">MultiphysicsInterface&lt; dim &gt;::solve_pre_fluid</a>.</p>
+<p class="reference">References <a class="el" href="multiphysics__interface_8h_source.html#l00880">MultiphysicsInterface&lt; dim &gt;::block_physics</a>, <a class="el" href="multiphysics__interface_8h_source.html#l00876">MultiphysicsInterface&lt; dim &gt;::physics</a>, and <a class="el" href="multiphysics__interface_8h_source.html#l00867">MultiphysicsInterface&lt; dim &gt;::solve_pre_fluid</a>.</p>
 
 </div>
 </div>
@@ -1202,7 +1200,7 @@ template&lt;int dim&gt; </div>
 
 <p class="definition">Definition at line <a class="el" href="multiphysics__interface_8h_source.html#l00341">341</a> of file <a class="el" href="multiphysics__interface_8h_source.html">multiphysics_interface.h</a>.</p>
 
-<p class="reference">References <a class="el" href="multiphysics__interface_8h_source.html#l00900">MultiphysicsInterface&lt; dim &gt;::block_physics</a>, and <a class="el" href="multiphysics__interface_8h_source.html#l00896">MultiphysicsInterface&lt; dim &gt;::physics</a>.</p>
+<p class="reference">References <a class="el" href="multiphysics__interface_8h_source.html#l00880">MultiphysicsInterface&lt; dim &gt;::block_physics</a>, and <a class="el" href="multiphysics__interface_8h_source.html#l00876">MultiphysicsInterface&lt; dim &gt;::physics</a>.</p>
 
 </div>
 </div>
@@ -1236,7 +1234,7 @@ template&lt;int dim&gt; </div>
 
 <p class="definition">Definition at line <a class="el" href="multiphysics__interface_8h_source.html#l00308">308</a> of file <a class="el" href="multiphysics__interface_8h_source.html">multiphysics_interface.h</a>.</p>
 
-<p class="reference">References <a class="el" href="multiphysics__interface_8h_source.html#l00900">MultiphysicsInterface&lt; dim &gt;::block_physics</a>, and <a class="el" href="multiphysics__interface_8h_source.html#l00896">MultiphysicsInterface&lt; dim &gt;::physics</a>.</p>
+<p class="reference">References <a class="el" href="multiphysics__interface_8h_source.html#l00880">MultiphysicsInterface&lt; dim &gt;::block_physics</a>, and <a class="el" href="multiphysics__interface_8h_source.html#l00876">MultiphysicsInterface&lt; dim &gt;::physics</a>.</p>
 
 </div>
 </div>
@@ -1269,7 +1267,7 @@ template&lt;int dim&gt; </div>
 
 <p class="definition">Definition at line <a class="el" href="multiphysics__interface_8h_source.html#l00325">325</a> of file <a class="el" href="multiphysics__interface_8h_source.html">multiphysics_interface.h</a>.</p>
 
-<p class="reference">References <a class="el" href="multiphysics__interface_8h_source.html#l00900">MultiphysicsInterface&lt; dim &gt;::block_physics</a>, and <a class="el" href="multiphysics__interface_8h_source.html#l00896">MultiphysicsInterface&lt; dim &gt;::physics</a>.</p>
+<p class="reference">References <a class="el" href="multiphysics__interface_8h_source.html#l00880">MultiphysicsInterface&lt; dim &gt;::block_physics</a>, and <a class="el" href="multiphysics__interface_8h_source.html#l00876">MultiphysicsInterface&lt; dim &gt;::physics</a>.</p>
 
 </div>
 </div>
@@ -1300,9 +1298,9 @@ template&lt;int dim&gt; </div>
 
 <p>Read solution from checkpoint from auxiliary physics. </p>
 
-<p class="definition">Definition at line <a class="el" href="multiphysics__interface_8h_source.html#l00865">865</a> of file <a class="el" href="multiphysics__interface_8h_source.html">multiphysics_interface.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="multiphysics__interface_8h_source.html#l00845">845</a> of file <a class="el" href="multiphysics__interface_8h_source.html">multiphysics_interface.h</a>.</p>
 
-<p class="reference">References <a class="el" href="multiphysics__interface_8h_source.html#l00900">MultiphysicsInterface&lt; dim &gt;::block_physics</a>, and <a class="el" href="multiphysics__interface_8h_source.html#l00896">MultiphysicsInterface&lt; dim &gt;::physics</a>.</p>
+<p class="reference">References <a class="el" href="multiphysics__interface_8h_source.html#l00880">MultiphysicsInterface&lt; dim &gt;::block_physics</a>, and <a class="el" href="multiphysics__interface_8h_source.html#l00876">MultiphysicsInterface&lt; dim &gt;::physics</a>.</p>
 
 </div>
 </div>
@@ -1353,7 +1351,7 @@ template&lt;int dim&gt; </div>
 
 <p class="definition">Definition at line <a class="el" href="multiphysics__interface_8h_source.html#l00791">791</a> of file <a class="el" href="multiphysics__interface_8h_source.html">multiphysics_interface.h</a>.</p>
 
-<p class="reference">References <a class="el" href="multiphysics__interface_8h_source.html#l00883">MultiphysicsInterface&lt; dim &gt;::active_physics</a>, and <a class="el" href="multiphysics__interface_8h_source.html#l00920">MultiphysicsInterface&lt; dim &gt;::block_physics_previous_solutions</a>.</p>
+<p class="reference">References <a class="el" href="multiphysics__interface_8h_source.html#l00863">MultiphysicsInterface&lt; dim &gt;::active_physics</a>, and <a class="el" href="multiphysics__interface_8h_source.html#l00900">MultiphysicsInterface&lt; dim &gt;::block_physics_previous_solutions</a>.</p>
 
 </div>
 </div>
@@ -1404,7 +1402,7 @@ template&lt;int dim&gt; </div>
 
 <p class="definition">Definition at line <a class="el" href="multiphysics__interface_8h_source.html#l00736">736</a> of file <a class="el" href="multiphysics__interface_8h_source.html">multiphysics_interface.h</a>.</p>
 
-<p class="reference">References <a class="el" href="multiphysics__interface_8h_source.html#l00883">MultiphysicsInterface&lt; dim &gt;::active_physics</a>, and <a class="el" href="multiphysics__interface_8h_source.html#l00914">MultiphysicsInterface&lt; dim &gt;::block_physics_solutions</a>.</p>
+<p class="reference">References <a class="el" href="multiphysics__interface_8h_source.html#l00863">MultiphysicsInterface&lt; dim &gt;::active_physics</a>, and <a class="el" href="multiphysics__interface_8h_source.html#l00894">MultiphysicsInterface&lt; dim &gt;::block_physics_solutions</a>.</p>
 
 </div>
 </div>
@@ -1455,7 +1453,7 @@ template&lt;int dim&gt; </div>
 
 <p class="definition">Definition at line <a class="el" href="multiphysics__interface_8h_source.html#l00754">754</a> of file <a class="el" href="multiphysics__interface_8h_source.html">multiphysics_interface.h</a>.</p>
 
-<p class="reference">References <a class="el" href="multiphysics__interface_8h_source.html#l00883">MultiphysicsInterface&lt; dim &gt;::active_physics</a>, and <a class="el" href="multiphysics__interface_8h_source.html#l00928">MultiphysicsInterface&lt; dim &gt;::block_physics_time_average_solutions</a>.</p>
+<p class="reference">References <a class="el" href="multiphysics__interface_8h_source.html#l00863">MultiphysicsInterface&lt; dim &gt;::active_physics</a>, and <a class="el" href="multiphysics__interface_8h_source.html#l00908">MultiphysicsInterface&lt; dim &gt;::block_physics_time_average_solutions</a>.</p>
 
 </div>
 </div>
@@ -1506,7 +1504,7 @@ template&lt;int dim&gt; </div>
 
 <p class="definition">Definition at line <a class="el" href="multiphysics__interface_8h_source.html#l00629">629</a> of file <a class="el" href="multiphysics__interface_8h_source.html">multiphysics_interface.h</a>.</p>
 
-<p class="reference">References <a class="el" href="multiphysics__interface_8h_source.html#l00883">MultiphysicsInterface&lt; dim &gt;::active_physics</a>, and <a class="el" href="multiphysics__interface_8h_source.html#l00903">MultiphysicsInterface&lt; dim &gt;::physics_dof_handler</a>.</p>
+<p class="reference">References <a class="el" href="multiphysics__interface_8h_source.html#l00863">MultiphysicsInterface&lt; dim &gt;::active_physics</a>, and <a class="el" href="multiphysics__interface_8h_source.html#l00883">MultiphysicsInterface&lt; dim &gt;::physics_dof_handler</a>.</p>
 
 </div>
 </div>
@@ -1557,7 +1555,7 @@ template&lt;int dim&gt; </div>
 
 <p class="definition">Definition at line <a class="el" href="multiphysics__interface_8h_source.html#l00678">678</a> of file <a class="el" href="multiphysics__interface_8h_source.html">multiphysics_interface.h</a>.</p>
 
-<p class="reference">References <a class="el" href="multiphysics__interface_8h_source.html#l00883">MultiphysicsInterface&lt; dim &gt;::active_physics</a>, and <a class="el" href="multiphysics__interface_8h_source.html#l00909">MultiphysicsInterface&lt; dim &gt;::physics_filtered_solutions</a>.</p>
+<p class="reference">References <a class="el" href="multiphysics__interface_8h_source.html#l00863">MultiphysicsInterface&lt; dim &gt;::active_physics</a>, and <a class="el" href="multiphysics__interface_8h_source.html#l00889">MultiphysicsInterface&lt; dim &gt;::physics_filtered_solutions</a>.</p>
 
 </div>
 </div>
@@ -1620,58 +1618,7 @@ template&lt;int dim&gt; </div>
 
 <p class="definition">Definition at line <a class="el" href="multiphysics__interface_8h_source.html#l00379">379</a> of file <a class="el" href="multiphysics__interface_8h_source.html">multiphysics_interface.h</a>.</p>
 
-<p class="reference">References <a class="el" href="multiphysics__interface_8h_source.html#l00900">MultiphysicsInterface&lt; dim &gt;::block_physics</a>, and <a class="el" href="multiphysics__interface_8h_source.html#l00896">MultiphysicsInterface&lt; dim &gt;::physics</a>.</p>
-
-</div>
-</div>
-<a id="a1c1e0a5cd0ae4e3cb11270a0273cce76" name="a1c1e0a5cd0ae4e3cb11270a0273cce76"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a1c1e0a5cd0ae4e3cb11270a0273cce76">&#9670;&#160;</a></span>set_previous_block_solutions()</h2>
-
-<div class="memitem">
-<div class="memproto">
-<div class="memtemplate">
-template&lt;int dim&gt; </div>
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">void <a class="el" href="classMultiphysicsInterface.html">MultiphysicsInterface</a>&lt; dim &gt;::set_previous_block_solutions </td>
-          <td>(</td>
-          <td class="paramtype">const <a class="el" href="multiphysics_8h.html#ae14bb720bc9a37edc36fb8d90df712c2">PhysicsID</a>&#160;</td>
-          <td class="paramname"><em>physics_id</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">std::vector&lt; <a class="el" href="vector_8h.html#ac71ba75c5119edae876800f9e80b59e7">GlobalBlockVectorType</a> &gt; *&#160;</td>
-          <td class="paramname"><em>previous_solutions_vector</em>&#160;</td>
-        </tr>
-        <tr>
-          <td></td>
-          <td>)</td>
-          <td></td><td></td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p>Sets the pointer to the vector of previous solutions of the block physics in the multiphysics interface. </p>
-<dl class="params"><dt>Parameters</dt><dd>
-  <table class="params">
-    <tr><td class="paramname">physics_id</td><td>The physics of the DOF handler</td></tr>
-    <tr><td class="paramname">previous_solutions_vector</td><td>The pointer to the vector of previous block solutions </td></tr>
-  </table>
-  </dd>
-</dl>
-
-<p class="definition">Definition at line <a class="el" href="multiphysics__interface_8h_source.html#l00810">810</a> of file <a class="el" href="multiphysics__interface_8h_source.html">multiphysics_interface.h</a>.</p>
-
-<p class="reference">References <a class="el" href="multiphysics__interface_8h_source.html#l00883">MultiphysicsInterface&lt; dim &gt;::active_physics</a>, and <a class="el" href="multiphysics__interface_8h_source.html#l00920">MultiphysicsInterface&lt; dim &gt;::block_physics_previous_solutions</a>.</p>
+<p class="reference">References <a class="el" href="multiphysics__interface_8h_source.html#l00880">MultiphysicsInterface&lt; dim &gt;::block_physics</a>, and <a class="el" href="multiphysics__interface_8h_source.html#l00876">MultiphysicsInterface&lt; dim &gt;::physics</a>.</p>
 
 </div>
 </div>
@@ -1722,7 +1669,7 @@ template&lt;int dim&gt; </div>
 
 <p class="definition">Definition at line <a class="el" href="multiphysics__interface_8h_source.html#l00772">772</a> of file <a class="el" href="multiphysics__interface_8h_source.html">multiphysics_interface.h</a>.</p>
 
-<p class="reference">References <a class="el" href="multiphysics__interface_8h_source.html#l00883">MultiphysicsInterface&lt; dim &gt;::active_physics</a>, and <a class="el" href="multiphysics__interface_8h_source.html#l00918">MultiphysicsInterface&lt; dim &gt;::physics_previous_solutions</a>.</p>
+<p class="reference">References <a class="el" href="multiphysics__interface_8h_source.html#l00863">MultiphysicsInterface&lt; dim &gt;::active_physics</a>, and <a class="el" href="multiphysics__interface_8h_source.html#l00898">MultiphysicsInterface&lt; dim &gt;::physics_previous_solutions</a>.</p>
 
 </div>
 </div>
@@ -1773,7 +1720,7 @@ template&lt;int dim&gt; </div>
 
 <p class="definition">Definition at line <a class="el" href="multiphysics__interface_8h_source.html#l00717">717</a> of file <a class="el" href="multiphysics__interface_8h_source.html">multiphysics_interface.h</a>.</p>
 
-<p class="reference">References <a class="el" href="multiphysics__interface_8h_source.html#l00883">MultiphysicsInterface&lt; dim &gt;::active_physics</a>, and <a class="el" href="multiphysics__interface_8h_source.html#l00924">MultiphysicsInterface&lt; dim &gt;::physics_time_average_solutions</a>.</p>
+<p class="reference">References <a class="el" href="multiphysics__interface_8h_source.html#l00863">MultiphysicsInterface&lt; dim &gt;::active_physics</a>, and <a class="el" href="multiphysics__interface_8h_source.html#l00904">MultiphysicsInterface&lt; dim &gt;::physics_time_average_solutions</a>.</p>
 
 </div>
 </div>
@@ -1813,7 +1760,7 @@ template&lt;int dim&gt; </div>
 
 <p class="definition">Definition at line <a class="el" href="multiphysics__interface_8h_source.html#l00644">644</a> of file <a class="el" href="multiphysics__interface_8h_source.html">multiphysics_interface.h</a>.</p>
 
-<p class="reference">References <a class="el" href="multiphysics__interface_8h_source.html#l00905">MultiphysicsInterface&lt; dim &gt;::solids</a>.</p>
+<p class="reference">References <a class="el" href="multiphysics__interface_8h_source.html#l00885">MultiphysicsInterface&lt; dim &gt;::solids</a>.</p>
 
 </div>
 </div>
@@ -1864,7 +1811,7 @@ template&lt;int dim&gt; </div>
 
 <p class="definition">Definition at line <a class="el" href="multiphysics__interface_8h_source.html#l00657">657</a> of file <a class="el" href="multiphysics__interface_8h_source.html">multiphysics_interface.h</a>.</p>
 
-<p class="reference">References <a class="el" href="multiphysics__interface_8h_source.html#l00883">MultiphysicsInterface&lt; dim &gt;::active_physics</a>, and <a class="el" href="multiphysics__interface_8h_source.html#l00913">MultiphysicsInterface&lt; dim &gt;::physics_solutions</a>.</p>
+<p class="reference">References <a class="el" href="multiphysics__interface_8h_source.html#l00863">MultiphysicsInterface&lt; dim &gt;::active_physics</a>, and <a class="el" href="multiphysics__interface_8h_source.html#l00893">MultiphysicsInterface&lt; dim &gt;::physics_solutions</a>.</p>
 
 </div>
 </div>
@@ -1915,7 +1862,7 @@ template&lt;int dim&gt; </div>
 
 <p class="definition">Definition at line <a class="el" href="multiphysics__interface_8h_source.html#l00697">697</a> of file <a class="el" href="multiphysics__interface_8h_source.html">multiphysics_interface.h</a>.</p>
 
-<p class="reference">References <a class="el" href="multiphysics__interface_8h_source.html#l00883">MultiphysicsInterface&lt; dim &gt;::active_physics</a>, and <a class="el" href="multiphysics__interface_8h_source.html#l00924">MultiphysicsInterface&lt; dim &gt;::physics_time_average_solutions</a>.</p>
+<p class="reference">References <a class="el" href="multiphysics__interface_8h_source.html#l00863">MultiphysicsInterface&lt; dim &gt;::active_physics</a>, and <a class="el" href="multiphysics__interface_8h_source.html#l00904">MultiphysicsInterface&lt; dim &gt;::physics_time_average_solutions</a>.</p>
 
 </div>
 </div>
@@ -1948,7 +1895,7 @@ template&lt;int dim&gt; </div>
 
 <p class="definition">Definition at line <a class="el" href="multiphysics__interface_8h_source.html#l00359">359</a> of file <a class="el" href="multiphysics__interface_8h_source.html">multiphysics_interface.h</a>.</p>
 
-<p class="reference">References <a class="el" href="multiphysics__interface_8h_source.html#l00900">MultiphysicsInterface&lt; dim &gt;::block_physics</a>, and <a class="el" href="multiphysics__interface_8h_source.html#l00896">MultiphysicsInterface&lt; dim &gt;::physics</a>.</p>
+<p class="reference">References <a class="el" href="multiphysics__interface_8h_source.html#l00880">MultiphysicsInterface&lt; dim &gt;::block_physics</a>, and <a class="el" href="multiphysics__interface_8h_source.html#l00876">MultiphysicsInterface&lt; dim &gt;::physics</a>.</p>
 
 </div>
 </div>
@@ -1999,7 +1946,7 @@ template&lt;int dim&gt; </div>
 
 <p class="definition">Definition at line <a class="el" href="multiphysics__interface_8h_source.html#l00098">98</a> of file <a class="el" href="multiphysics__interface_8h_source.html">multiphysics_interface.h</a>.</p>
 
-<p class="reference">References <a class="el" href="multiphysics__interface_8h_source.html#l00900">MultiphysicsInterface&lt; dim &gt;::block_physics</a>, <a class="el" href="multiphysics__interface_8h_source.html#l00896">MultiphysicsInterface&lt; dim &gt;::physics</a>, <a class="el" href="multiphysics__interface_8h_source.html#l00165">MultiphysicsInterface&lt; dim &gt;::solve_block_physics()</a>, <a class="el" href="multiphysics__interface_8h_source.html#l00141">MultiphysicsInterface&lt; dim &gt;::solve_physics()</a>, and <a class="el" href="multiphysics__interface_8h_source.html#l00887">MultiphysicsInterface&lt; dim &gt;::solve_pre_fluid</a>.</p>
+<p class="reference">References <a class="el" href="multiphysics__interface_8h_source.html#l00880">MultiphysicsInterface&lt; dim &gt;::block_physics</a>, <a class="el" href="multiphysics__interface_8h_source.html#l00876">MultiphysicsInterface&lt; dim &gt;::physics</a>, <a class="el" href="multiphysics__interface_8h_source.html#l00165">MultiphysicsInterface&lt; dim &gt;::solve_block_physics()</a>, <a class="el" href="multiphysics__interface_8h_source.html#l00141">MultiphysicsInterface&lt; dim &gt;::solve_physics()</a>, and <a class="el" href="multiphysics__interface_8h_source.html#l00867">MultiphysicsInterface&lt; dim &gt;::solve_pre_fluid</a>.</p>
 
 </div>
 </div>
@@ -2049,7 +1996,7 @@ template&lt;int dim&gt; </div>
 
 <p class="definition">Definition at line <a class="el" href="multiphysics__interface_8h_source.html#l00165">165</a> of file <a class="el" href="multiphysics__interface_8h_source.html">multiphysics_interface.h</a>.</p>
 
-<p class="reference">References <a class="el" href="multiphysics__interface_8h_source.html#l00883">MultiphysicsInterface&lt; dim &gt;::active_physics</a>, <a class="el" href="multiphysics__interface_8h_source.html#l00068">MultiphysicsInterface&lt; dim &gt;::announce_physics()</a>, <a class="el" href="multiphysics__interface_8h_source.html#l00900">MultiphysicsInterface&lt; dim &gt;::block_physics</a>, <a class="el" href="namespaceParameters.html#a91f1943180a615249347b911b0ed3919a556966c7830465dc4623d62e32cec31d">Parameters::quiet</a>, and <a class="el" href="multiphysics__interface_8h_source.html#l00879">MultiphysicsInterface&lt; dim &gt;::verbosity</a>.</p>
+<p class="reference">References <a class="el" href="multiphysics__interface_8h_source.html#l00863">MultiphysicsInterface&lt; dim &gt;::active_physics</a>, <a class="el" href="multiphysics__interface_8h_source.html#l00068">MultiphysicsInterface&lt; dim &gt;::announce_physics()</a>, <a class="el" href="multiphysics__interface_8h_source.html#l00880">MultiphysicsInterface&lt; dim &gt;::block_physics</a>, <a class="el" href="namespaceParameters.html#a91f1943180a615249347b911b0ed3919a556966c7830465dc4623d62e32cec31d">Parameters::quiet</a>, and <a class="el" href="multiphysics__interface_8h_source.html#l00859">MultiphysicsInterface&lt; dim &gt;::verbosity</a>.</p>
 
 </div>
 </div>
@@ -2099,7 +2046,7 @@ template&lt;int dim&gt; </div>
 
 <p class="definition">Definition at line <a class="el" href="multiphysics__interface_8h_source.html#l00399">399</a> of file <a class="el" href="multiphysics__interface_8h_source.html">multiphysics_interface.h</a>.</p>
 
-<p class="reference">References <a class="el" href="multiphysics__interface_8h_source.html#l00883">MultiphysicsInterface&lt; dim &gt;::active_physics</a>, and <a class="el" href="multiphysics__interface_8h_source.html#l00896">MultiphysicsInterface&lt; dim &gt;::physics</a>.</p>
+<p class="reference">References <a class="el" href="multiphysics__interface_8h_source.html#l00863">MultiphysicsInterface&lt; dim &gt;::active_physics</a>, and <a class="el" href="multiphysics__interface_8h_source.html#l00876">MultiphysicsInterface&lt; dim &gt;::physics</a>.</p>
 
 </div>
 </div>
@@ -2149,7 +2096,7 @@ template&lt;int dim&gt; </div>
 
 <p class="definition">Definition at line <a class="el" href="multiphysics__interface_8h_source.html#l00141">141</a> of file <a class="el" href="multiphysics__interface_8h_source.html">multiphysics_interface.h</a>.</p>
 
-<p class="reference">References <a class="el" href="multiphysics__interface_8h_source.html#l00883">MultiphysicsInterface&lt; dim &gt;::active_physics</a>, <a class="el" href="multiphysics__interface_8h_source.html#l00068">MultiphysicsInterface&lt; dim &gt;::announce_physics()</a>, <a class="el" href="multiphysics__interface_8h_source.html#l00896">MultiphysicsInterface&lt; dim &gt;::physics</a>, <a class="el" href="namespaceParameters.html#a91f1943180a615249347b911b0ed3919a556966c7830465dc4623d62e32cec31d">Parameters::quiet</a>, and <a class="el" href="multiphysics__interface_8h_source.html#l00879">MultiphysicsInterface&lt; dim &gt;::verbosity</a>.</p>
+<p class="reference">References <a class="el" href="multiphysics__interface_8h_source.html#l00863">MultiphysicsInterface&lt; dim &gt;::active_physics</a>, <a class="el" href="multiphysics__interface_8h_source.html#l00068">MultiphysicsInterface&lt; dim &gt;::announce_physics()</a>, <a class="el" href="multiphysics__interface_8h_source.html#l00876">MultiphysicsInterface&lt; dim &gt;::physics</a>, <a class="el" href="namespaceParameters.html#a91f1943180a615249347b911b0ed3919a556966c7830465dc4623d62e32cec31d">Parameters::quiet</a>, and <a class="el" href="multiphysics__interface_8h_source.html#l00859">MultiphysicsInterface&lt; dim &gt;::verbosity</a>.</p>
 
 </div>
 </div>
@@ -2186,7 +2133,7 @@ template&lt;int dim&gt; </div>
 
 <p class="definition">Definition at line <a class="el" href="multiphysics__interface_8h_source.html#l00288">288</a> of file <a class="el" href="multiphysics__interface_8h_source.html">multiphysics_interface.h</a>.</p>
 
-<p class="reference">References <a class="el" href="multiphysics__interface_8h_source.html#l00900">MultiphysicsInterface&lt; dim &gt;::block_physics</a>, and <a class="el" href="multiphysics__interface_8h_source.html#l00896">MultiphysicsInterface&lt; dim &gt;::physics</a>.</p>
+<p class="reference">References <a class="el" href="multiphysics__interface_8h_source.html#l00880">MultiphysicsInterface&lt; dim &gt;::block_physics</a>, and <a class="el" href="multiphysics__interface_8h_source.html#l00876">MultiphysicsInterface&lt; dim &gt;::physics</a>.</p>
 
 </div>
 </div>
@@ -2217,9 +2164,9 @@ template&lt;int dim&gt; </div>
 
 <p>Prepares auxiliary physics to write simulation checkpoint. </p>
 
-<p class="definition">Definition at line <a class="el" href="multiphysics__interface_8h_source.html#l00848">848</a> of file <a class="el" href="multiphysics__interface_8h_source.html">multiphysics_interface.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="multiphysics__interface_8h_source.html#l00828">828</a> of file <a class="el" href="multiphysics__interface_8h_source.html">multiphysics_interface.h</a>.</p>
 
-<p class="reference">References <a class="el" href="multiphysics__interface_8h_source.html#l00900">MultiphysicsInterface&lt; dim &gt;::block_physics</a>, and <a class="el" href="multiphysics__interface_8h_source.html#l00896">MultiphysicsInterface&lt; dim &gt;::physics</a>.</p>
+<p class="reference">References <a class="el" href="multiphysics__interface_8h_source.html#l00880">MultiphysicsInterface&lt; dim &gt;::block_physics</a>, and <a class="el" href="multiphysics__interface_8h_source.html#l00876">MultiphysicsInterface&lt; dim &gt;::physics</a>.</p>
 
 </div>
 </div>
@@ -2246,7 +2193,7 @@ template&lt;int dim&gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="multiphysics__interface_8h_source.html#l00883">883</a> of file <a class="el" href="multiphysics__interface_8h_source.html">multiphysics_interface.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="multiphysics__interface_8h_source.html#l00863">863</a> of file <a class="el" href="multiphysics__interface_8h_source.html">multiphysics_interface.h</a>.</p>
 
 </div>
 </div>
@@ -2272,7 +2219,7 @@ template&lt;int dim&gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="multiphysics__interface_8h_source.html#l00900">900</a> of file <a class="el" href="multiphysics__interface_8h_source.html">multiphysics_interface.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="multiphysics__interface_8h_source.html#l00880">880</a> of file <a class="el" href="multiphysics__interface_8h_source.html">multiphysics_interface.h</a>.</p>
 
 </div>
 </div>
@@ -2298,7 +2245,7 @@ template&lt;int dim&gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="multiphysics__interface_8h_source.html#l00910">910</a> of file <a class="el" href="multiphysics__interface_8h_source.html">multiphysics_interface.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="multiphysics__interface_8h_source.html#l00890">890</a> of file <a class="el" href="multiphysics__interface_8h_source.html">multiphysics_interface.h</a>.</p>
 
 </div>
 </div>
@@ -2324,7 +2271,7 @@ template&lt;int dim&gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="multiphysics__interface_8h_source.html#l00920">920</a> of file <a class="el" href="multiphysics__interface_8h_source.html">multiphysics_interface.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="multiphysics__interface_8h_source.html#l00900">900</a> of file <a class="el" href="multiphysics__interface_8h_source.html">multiphysics_interface.h</a>.</p>
 
 </div>
 </div>
@@ -2350,7 +2297,7 @@ template&lt;int dim&gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="multiphysics__interface_8h_source.html#l00914">914</a> of file <a class="el" href="multiphysics__interface_8h_source.html">multiphysics_interface.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="multiphysics__interface_8h_source.html#l00894">894</a> of file <a class="el" href="multiphysics__interface_8h_source.html">multiphysics_interface.h</a>.</p>
 
 </div>
 </div>
@@ -2376,7 +2323,7 @@ template&lt;int dim&gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="multiphysics__interface_8h_source.html#l00939">939</a> of file <a class="el" href="multiphysics__interface_8h_source.html">multiphysics_interface.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="multiphysics__interface_8h_source.html#l00919">919</a> of file <a class="el" href="multiphysics__interface_8h_source.html">multiphysics_interface.h</a>.</p>
 
 </div>
 </div>
@@ -2402,7 +2349,7 @@ template&lt;int dim&gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="multiphysics__interface_8h_source.html#l00928">928</a> of file <a class="el" href="multiphysics__interface_8h_source.html">multiphysics_interface.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="multiphysics__interface_8h_source.html#l00908">908</a> of file <a class="el" href="multiphysics__interface_8h_source.html">multiphysics_interface.h</a>.</p>
 
 </div>
 </div>
@@ -2428,7 +2375,7 @@ template&lt;int dim&gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="multiphysics__interface_8h_source.html#l00935">935</a> of file <a class="el" href="multiphysics__interface_8h_source.html">multiphysics_interface.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="multiphysics__interface_8h_source.html#l00915">915</a> of file <a class="el" href="multiphysics__interface_8h_source.html">multiphysics_interface.h</a>.</p>
 
 </div>
 </div>
@@ -2454,7 +2401,7 @@ template&lt;int dim&gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="multiphysics__interface_8h_source.html#l00878">878</a> of file <a class="el" href="multiphysics__interface_8h_source.html">multiphysics_interface.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="multiphysics__interface_8h_source.html#l00858">858</a> of file <a class="el" href="multiphysics__interface_8h_source.html">multiphysics_interface.h</a>.</p>
 
 </div>
 </div>
@@ -2480,7 +2427,7 @@ template&lt;int dim&gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="multiphysics__interface_8h_source.html#l00880">880</a> of file <a class="el" href="multiphysics__interface_8h_source.html">multiphysics_interface.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="multiphysics__interface_8h_source.html#l00860">860</a> of file <a class="el" href="multiphysics__interface_8h_source.html">multiphysics_interface.h</a>.</p>
 
 </div>
 </div>
@@ -2506,7 +2453,7 @@ template&lt;int dim&gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="multiphysics__interface_8h_source.html#l00896">896</a> of file <a class="el" href="multiphysics__interface_8h_source.html">multiphysics_interface.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="multiphysics__interface_8h_source.html#l00876">876</a> of file <a class="el" href="multiphysics__interface_8h_source.html">multiphysics_interface.h</a>.</p>
 
 </div>
 </div>
@@ -2532,7 +2479,7 @@ template&lt;int dim&gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="multiphysics__interface_8h_source.html#l00903">903</a> of file <a class="el" href="multiphysics__interface_8h_source.html">multiphysics_interface.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="multiphysics__interface_8h_source.html#l00883">883</a> of file <a class="el" href="multiphysics__interface_8h_source.html">multiphysics_interface.h</a>.</p>
 
 </div>
 </div>
@@ -2558,7 +2505,7 @@ template&lt;int dim&gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="multiphysics__interface_8h_source.html#l00909">909</a> of file <a class="el" href="multiphysics__interface_8h_source.html">multiphysics_interface.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="multiphysics__interface_8h_source.html#l00889">889</a> of file <a class="el" href="multiphysics__interface_8h_source.html">multiphysics_interface.h</a>.</p>
 
 </div>
 </div>
@@ -2584,7 +2531,7 @@ template&lt;int dim&gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="multiphysics__interface_8h_source.html#l00918">918</a> of file <a class="el" href="multiphysics__interface_8h_source.html">multiphysics_interface.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="multiphysics__interface_8h_source.html#l00898">898</a> of file <a class="el" href="multiphysics__interface_8h_source.html">multiphysics_interface.h</a>.</p>
 
 </div>
 </div>
@@ -2610,7 +2557,7 @@ template&lt;int dim&gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="multiphysics__interface_8h_source.html#l00913">913</a> of file <a class="el" href="multiphysics__interface_8h_source.html">multiphysics_interface.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="multiphysics__interface_8h_source.html#l00893">893</a> of file <a class="el" href="multiphysics__interface_8h_source.html">multiphysics_interface.h</a>.</p>
 
 </div>
 </div>
@@ -2636,7 +2583,7 @@ template&lt;int dim&gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="multiphysics__interface_8h_source.html#l00938">938</a> of file <a class="el" href="multiphysics__interface_8h_source.html">multiphysics_interface.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="multiphysics__interface_8h_source.html#l00918">918</a> of file <a class="el" href="multiphysics__interface_8h_source.html">multiphysics_interface.h</a>.</p>
 
 </div>
 </div>
@@ -2662,7 +2609,7 @@ template&lt;int dim&gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="multiphysics__interface_8h_source.html#l00924">924</a> of file <a class="el" href="multiphysics__interface_8h_source.html">multiphysics_interface.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="multiphysics__interface_8h_source.html#l00904">904</a> of file <a class="el" href="multiphysics__interface_8h_source.html">multiphysics_interface.h</a>.</p>
 
 </div>
 </div>
@@ -2688,7 +2635,7 @@ template&lt;int dim&gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="multiphysics__interface_8h_source.html#l00932">932</a> of file <a class="el" href="multiphysics__interface_8h_source.html">multiphysics_interface.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="multiphysics__interface_8h_source.html#l00912">912</a> of file <a class="el" href="multiphysics__interface_8h_source.html">multiphysics_interface.h</a>.</p>
 
 </div>
 </div>
@@ -2714,7 +2661,7 @@ template&lt;int dim&gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="multiphysics__interface_8h_source.html#l00905">905</a> of file <a class="el" href="multiphysics__interface_8h_source.html">multiphysics_interface.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="multiphysics__interface_8h_source.html#l00885">885</a> of file <a class="el" href="multiphysics__interface_8h_source.html">multiphysics_interface.h</a>.</p>
 
 </div>
 </div>
@@ -2750,7 +2697,7 @@ template&lt;int dim&gt; </div>
 <div class="ttc" id="amultiphysics_8h_html_ae14bb720bc9a37edc36fb8d90df712c2ad4151ddbc1976755e1fcd118d2917fa8"><div class="ttname"><a href="multiphysics_8h.html#ae14bb720bc9a37edc36fb8d90df712c2ad4151ddbc1976755e1fcd118d2917fa8">heat_transfer</a></div><div class="ttdeci">@ heat_transfer</div><div class="ttdef"><b>Definition</b> <a href="multiphysics_8h_source.html#l00010">multiphysics.h:10</a></div></div>
 <div class="ttc" id="amultiphysics_8h_html_ae14bb720bc9a37edc36fb8d90df712c2adb9b8e35efba351d474020dd829e49dd"><div class="ttname"><a href="multiphysics_8h.html#ae14bb720bc9a37edc36fb8d90df712c2adb9b8e35efba351d474020dd829e49dd">cahn_hilliard</a></div><div class="ttdeci">@ cahn_hilliard</div><div class="ttdef"><b>Definition</b> <a href="multiphysics_8h_source.html#l00013">multiphysics.h:13</a></div></div>
 </div><!-- fragment -->
-<p class="definition">Definition at line <a class="el" href="multiphysics__interface_8h_source.html#l00887">887</a> of file <a class="el" href="multiphysics__interface_8h_source.html">multiphysics_interface.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="multiphysics__interface_8h_source.html#l00867">867</a> of file <a class="el" href="multiphysics__interface_8h_source.html">multiphysics_interface.h</a>.</p>
 
 </div>
 </div>
@@ -2776,7 +2723,7 @@ template&lt;int dim&gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="multiphysics__interface_8h_source.html#l00879">879</a> of file <a class="el" href="multiphysics__interface_8h_source.html">multiphysics_interface.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="multiphysics__interface_8h_source.html#l00859">859</a> of file <a class="el" href="multiphysics__interface_8h_source.html">multiphysics_interface.h</a>.</p>
 
 </div>
 </div>
