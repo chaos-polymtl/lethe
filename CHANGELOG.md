@@ -4,6 +4,13 @@ All notable changes to the Lethe project will be documented in this file.
 The changelog for the previous releases of Lethe are located in the release_notes folder.
 The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
+
+### [Master] - 2025-11-21
+
+### Fixed
+
+- MINOR In MultiphysicsInterface, there were two methods with the exact same function `set_block_previous_solutions` and `set_previous_block_solutions`. `set_previous_block_solutions` was removed to avoid redundancy and improve code clarity. [#1816](https://github.com/chaos-polymtl/lethe/pull/1816)
+
 ### [Master] - 2025-11-20
 
 ### Fixed
