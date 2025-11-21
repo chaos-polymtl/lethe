@@ -5,6 +5,12 @@ The changelog for the previous releases of Lethe are located in the release_note
 The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
 
+### [Master] - 2025-11-22
+
+### Fixed
+
+- MINOR Contacts between particles and solid surfaces had a problem when the contact was occurring with many triangles at the same time. Contacts we being duplicated even if the solid surface represent a single surface. In this PR, duplicated contacts are identified and removed following the logic described in https://doi.org/10.1002/nme.4487. [#1745](https://github.com/chaos-polymtl/lethe/pull/1745)
+
 ### [Master] - 2025-11-21
 
 ### Added
