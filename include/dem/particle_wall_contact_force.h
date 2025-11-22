@@ -55,16 +55,17 @@ public:
    * @brief Calculate the contact outcomes for particle-solid objects contacts
    * using the contact pair information and physical properties.
    *
-   * @param[in] particle_floating_mesh_in_contact A container that stores the
-   * information of particle-floating mesh contact.
+   * @param[in] particle_floating_mesh_potentially_in_contact A container that
+   * stores the information of particle-floating mesh contact.
    * @param[in] dt DEM time step.
    * @param[in] solids Floating solids.
    * @param[out] contact_outcome Interaction outcomes.
    */
   virtual void
   calculate_particle_solid_object_contact(
-    typename DEM::dem_data_structures<dim>::particle_floating_mesh_in_contact
-                &particle_floating_mesh_in_contact,
+    typename DEM::dem_data_structures<
+      dim>::particle_floating_mesh_potentially_in_contact
+                &particle_floating_mesh_potentially_in_contact,
     const double dt,
     const std::vector<std::shared_ptr<SerialSolid<dim - 1, dim>>> &solids,
     ParticleInteractionOutcomes<PropertiesIndex> &contact_outcome) = 0;
@@ -111,16 +112,17 @@ public:
    * @brief Calculate the contact outcomes for particle-solid objects contacts
    * using the contact pair information and physical properties.
    *
-   * @param[in] particle_floating_mesh_in_contact A container that stores the
-   * information of particle-floating mesh contact.
+   * @param[in] particle_floating_mesh_potentially_in_contact A container that
+   * stores the information of particle-floating mesh contact.
    * @param[in] dt DEM time step.
    * @param[in] solids Floating solids.
    * @param[out] contact_outcome Interaction outcomes.
    */
   virtual void
   calculate_particle_solid_object_contact(
-    typename DEM::dem_data_structures<dim>::particle_floating_mesh_in_contact
-                &particle_floating_mesh_in_contact,
+    typename DEM::dem_data_structures<
+      dim>::particle_floating_mesh_potentially_in_contact
+                &particle_floating_mesh_potentially_in_contact,
     const double dt,
     const std::vector<std::shared_ptr<SerialSolid<dim - 1, dim>>> &solids,
     ParticleInteractionOutcomes<PropertiesIndex> &contact_outcome) override;
@@ -280,7 +282,7 @@ protected:
    * @param[in] vector_b The projection vector of vector_a
    * @return The projection of vector_a on vector_b
    */
-  inline Tensor<1, 3>
+  static inline Tensor<1, 3>
   find_projection(const Tensor<1, 3> &vector_a, const Tensor<1, 3> &vector_b)
   {
     Tensor<1, 3> vector_c;
@@ -1039,6 +1041,18 @@ private:
   void
   set_multiphysic_properties(const DEMSolverParameters<dim> &dem_parameters);
 
+  /**
+   * @brief Clears the tangential displacement and rolling resistance spring torque
+   * from a contact info structure.
+   *
+   */
+  static void
+  clear_contact_info(particle_wall_contact_info<dim> &contact_info)
+  {
+    contact_info.tangential_displacement.clear();
+    contact_info.rolling_resistance_spring_torque.clear();
+  }
+
   // Members of the class
 
   unsigned int        n_particle_types;
@@ -1069,6 +1083,18 @@ private:
   std::unordered_map<unsigned int, Point<3>>     point_on_rotation_vector;
   const unsigned int                             vertices_per_triangle = 3;
   Point<3>                                       center_mass_container;
+
+  // Containers
+  typedef std::vector<
+    std::tuple<typename Triangulation<dim - 1, dim>::active_cell_iterator,
+               double,
+               LetheGridTools::ParticleTriangleContactIndicator,
+               particle_wall_contact_info<dim>>>
+    particle_triangle_contact_description;
+
+  typedef ankerl::unordered_dense::map<types::particle_index,
+                                       particle_triangle_contact_description>
+    particle_triangle_contact_record;
 };
 
 #endif

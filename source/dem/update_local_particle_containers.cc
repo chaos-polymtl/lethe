@@ -154,11 +154,11 @@ update_contact_container_iterators(
               adjacent_map_iterator->second.particle =
                 particle_container.at(particle_id);
 
-              // Note : particle_triangle_cell_from_mesh_in_contact is stored as
-              // <cell iterator, <particle id, particle-wall info>> and
-              // particle_wall_in_contact as is stored as
-              // <particle id, <face id, particle-wall info>>,
-              // which restrains to use the same iterator loop logic
+              // Note : particle_triangle_cell_from_mesh_potentially_in_contact
+              // is stored as <cell iterator, <particle id, particle-wall info>>
+              // and particle_wall_in_contact as is stored as <particle id,
+              // <face id, particle-wall info>>, which restrains to use the same
+              // iterator loop logic
             }
         }
 
@@ -336,20 +336,22 @@ update_contact_container_iterators<
 template void
 update_contact_container_iterators<
   2,
-  DEM::dem_data_structures<2>::particle_triangle_cell_from_mesh_in_contact,
+  DEM::dem_data_structures<
+    2>::particle_triangle_cell_from_mesh_potentially_in_contact,
   ContactType::particle_floating_mesh>(
-  DEM::dem_data_structures<2>::particle_triangle_cell_from_mesh_in_contact
-    &pairs_in_contact,
+  DEM::dem_data_structures<2>::
+    particle_triangle_cell_from_mesh_potentially_in_contact &pairs_in_contact,
   const DEM::dem_data_structures<2>::particle_index_iterator_map
     &particle_container);
 
 template void
 update_contact_container_iterators<
   3,
-  DEM::dem_data_structures<3>::particle_triangle_cell_from_mesh_in_contact,
+  DEM::dem_data_structures<
+    3>::particle_triangle_cell_from_mesh_potentially_in_contact,
   ContactType::particle_floating_mesh>(
-  DEM::dem_data_structures<3>::particle_triangle_cell_from_mesh_in_contact
-    &pairs_in_contact,
+  DEM::dem_data_structures<3>::
+    particle_triangle_cell_from_mesh_potentially_in_contact &pairs_in_contact,
   const DEM::dem_data_structures<3>::particle_index_iterator_map
     &particle_container);
 
