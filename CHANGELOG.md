@@ -25,6 +25,13 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
 ### Fixed
 
+- MINOR Issue [#1803] pointed out that the parameter `initial_step` in solve_linear_system function is not used. This solves this issue and removes the parameter. In addition, this parameter was coming upstream from solve_non_linear_system so it was removed from there also. [#1813](https://github.com/chaos-polymtl/lethe/pull/1813)
+
+
+### [Master] - 2025-11-15
+
+### Fixed
+
 - MINOR Since PR [#1722], the sedimentation-1-cuboid example crashes when the particle collides with the bottom wall. The previous case used to run, but the non-linear and linear solver struggled pretty hard during the collision. I suspect that the case itself was actually unstable and that PR [#1722] did not break anything in particular. Using adaptive time-stepping with a max CFL of 0.5 resolves the issue, leads to the same results, and reduces the computational time. We will keep on monitoring this test case to ensure that it remains stable. [#1805](https://github.com/chaos-polymtl/lethe/pull/1805)
 
 ### [Master] - 2025-11-14

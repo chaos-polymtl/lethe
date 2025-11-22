@@ -791,7 +791,7 @@ FluidDynamicsBlock<dim>::set_initial_condition_fd(
 
       this->simulation_control->set_assembly_method(
         Parameters::SimulationControl::TimeSteppingMethod::steady);
-      PhysicsSolver<GlobalBlockVectorType>::solve_non_linear_system(false);
+      PhysicsSolver<GlobalBlockVectorType>::solve_non_linear_system();
       this->finish_time_step();
 
       this->simulation_parameters.physical_properties_manager.set_rheology(
@@ -805,7 +805,7 @@ FluidDynamicsBlock<dim>::set_initial_condition_fd(
 
 template <int dim>
 void
-FluidDynamicsBlock<dim>::solve_linear_system(const bool initial_step)
+FluidDynamicsBlock<dim>::solve_linear_system()
 {
   const double absolute_residual =
     this->simulation_parameters.linear_solver.at(PhysicsID::fluid_dynamics)
@@ -816,7 +816,7 @@ FluidDynamicsBlock<dim>::solve_linear_system(const bool initial_step)
 
   if (this->simulation_parameters.linear_solver.at(PhysicsID::fluid_dynamics)
         .solver == Parameters::LinearSolver::SolverType::gmres)
-    solve_system_GMRES(initial_step, absolute_residual, relative_residual);
+    solve_system_GMRES(false, absolute_residual, relative_residual);
   else
     AssertThrow(
       this->simulation_parameters.linear_solver.at(PhysicsID::fluid_dynamics)

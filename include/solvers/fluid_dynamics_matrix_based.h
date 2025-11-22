@@ -1,4 +1,4 @@
-// SPDX-FileCopyrightText: Copyright (c) 2019-2024 The Lethe Authors
+// SPDX-FileCopyrightText: Copyright (c) 2019-2025 The Lethe Authors
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
 #ifndef lethe_fluid_dynamics_matrix_based_h
@@ -188,7 +188,7 @@ protected:
    * the Dirichlet boundary conditions
    */
   void
-  solve_linear_system(const bool initial_step) override;
+  solve_linear_system() override;
 
 private:
   /**

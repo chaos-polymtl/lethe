@@ -596,13 +596,11 @@ VOFAlgebraicInterfaceReinitialization<dim>::assemble_system_rhs()
 
 template <int dim>
 void
-VOFAlgebraicInterfaceReinitialization<dim>::solve_linear_system(
-  const bool initial_step)
+VOFAlgebraicInterfaceReinitialization<dim>::solve_linear_system()
 {
   auto mpi_communicator = this->triangulation->get_mpi_communicator();
 
-  const AffineConstraints<double> &constraints_used =
-    initial_step ? this->nonzero_constraints : this->zero_constraints;
+  const AffineConstraints<double> &constraints_used = this->zero_constraints;
 
   const bool verbose(
     this->simulation_parameters.vof_subequations_linear_solvers
@@ -741,29 +739,21 @@ VOFAlgebraicInterfaceReinitialization<dim>::solve()
                       << std::endl;
         }
 
-      if (step == 1)
-        {
-          // Solve non-linear equation
-          this->solve_non_linear_system(true);
-        }
-      else
-        {
-          // Update previous solution
-          this->previous_solution               = *this->present_solution;
-          this->previous_local_evaluation_point = this->local_evaluation_point;
+      // Update previous solution
+      this->previous_solution               = *this->present_solution;
+      this->previous_local_evaluation_point = this->local_evaluation_point;
 
-          // Update non-zero constraints
-          define_non_zero_constraints();
+      // Update non-zero constraints
+      define_non_zero_constraints();
 
-          // Solve non-linear equation
-          this->solve_non_linear_system(false);
+      // Solve non-linear equation
+      this->solve_non_linear_system();
 
-          // For debugging purposes
-          if (this->simulation_parameters.multiphysics.vof_parameters
-                .regularization_method.algebraic_interface_reinitialization
-                .output_reinitialization_steps)
-            write_output_results(step);
-        }
+      // For debugging purposes
+      if (this->simulation_parameters.multiphysics.vof_parameters
+            .regularization_method.algebraic_interface_reinitialization
+            .output_reinitialization_steps)
+        write_output_results(step);
 
       // Increment step number
       step++;

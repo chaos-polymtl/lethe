@@ -1557,14 +1557,13 @@ HeatTransfer<dim>::set_initial_conditions()
 
 template <int dim>
 void
-HeatTransfer<dim>::solve_linear_system(const bool initial_step)
+HeatTransfer<dim>::solve_linear_system()
 {
   TimerOutput::Scope t(this->computing_timer, "Solve linear system");
 
   auto mpi_communicator = triangulation->get_mpi_communicator();
 
-  const AffineConstraints<double> &constraints_used =
-    initial_step ? nonzero_constraints : this->zero_constraints;
+  const AffineConstraints<double> &constraints_used = this->zero_constraints;
 
   const double absolute_residual =
     simulation_parameters.linear_solver.at(PhysicsID::heat_transfer)

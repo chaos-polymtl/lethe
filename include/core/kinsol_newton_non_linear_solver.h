@@ -35,13 +35,9 @@ public:
 
   /**
    * @brief Solve the non-linear system of equations.
-   *
-   * @param[in] is_initial_step Boolean variable that controls which constraints
-   * are going to be applied to the equations depending on the time step.
-   *
    */
   void
-  solve(const bool is_initial_step) override;
+  solve() override;
 };
 
 template <typename VectorType>
@@ -53,10 +49,9 @@ KinsolNewtonNonLinearSolver<VectorType>::KinsolNewtonNonLinearSolver(
 
 template <typename VectorType>
 void
-KinsolNewtonNonLinearSolver<VectorType>::solve(const bool is_initial_step)
+KinsolNewtonNonLinearSolver<VectorType>::solve()
 {
 #ifdef DEAL_II_WITH_SUNDIALS
-  bool first_step = is_initial_step;
 
   PhysicsSolver<VectorType> *solver = this->physics_solver;
 
@@ -122,7 +117,7 @@ KinsolNewtonNonLinearSolver<VectorType>::solve(const bool is_initial_step)
                                              VectorType &dst,
                                              const double /* tolerance */) {
     solver->pcout << "Solving linear system..." << std::endl;
-    solver->solve_linear_system(first_step);
+    solver->solve_linear_system();
     dst = solver->get_newton_update();
     return 0;
   };
@@ -132,7 +127,6 @@ KinsolNewtonNonLinearSolver<VectorType>::solve(const bool is_initial_step)
   nonlinear_solver.solve(local_evaluation_point);
   present_solution = local_evaluation_point;
 #else
-  (void)is_initial_step;
   throw std::runtime_error(
     "Kinsol newton nonlinear solver requires DEAL_II to be compiled with SUNDIALS");
 #endif // DEAL_II_WITH_SUNDIALS

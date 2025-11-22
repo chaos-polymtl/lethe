@@ -89,7 +89,7 @@ public:
    */
 
   void
-  solve_linear_system(const bool) override
+  solve_linear_system() override
   {
     system_matrix.solve(system_rhs);
     newton_update = system_rhs;

@@ -194,7 +194,7 @@ FluidDynamicsVANS<dim>::iterate()
   this->forcing_function->set_time(
     this->simulation_control->get_current_time());
 
-  PhysicsSolver<GlobalVectorType>::solve_non_linear_system(false);
+  PhysicsSolver<GlobalVectorType>::solve_non_linear_system();
 }
 
 template <int dim>

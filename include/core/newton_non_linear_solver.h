@@ -1,4 +1,4 @@
-// SPDX-FileCopyrightText: Copyright (c) 2019-2024 The Lethe Authors
+// SPDX-FileCopyrightText: Copyright (c) 2019-2025 The Lethe Authors
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
 #ifndef lethe_newton_non_linear_solver_h
@@ -32,12 +32,9 @@ public:
   /**
    * @brief Solve the non-linear system of equations.
    *
-   * @param[in] is_initial_step Boolean variable that controls which constraints
-   * are going to be applied to the equations depending on the time step.
-   *
    */
   void
-  solve(const bool is_initial_step) override;
+  solve() override;
 };
 
 template <typename VectorType>
@@ -49,12 +46,11 @@ NewtonNonLinearSolver<VectorType>::NewtonNonLinearSolver(
 
 template <typename VectorType>
 void
-NewtonNonLinearSolver<VectorType>::solve(const bool is_initial_step)
+NewtonNonLinearSolver<VectorType>::solve()
 {
   double global_res;
   double current_res;
   double last_res;
-  bool   first_step     = is_initial_step;
   this->outer_iteration = 0;
   last_res              = 1e6;
   current_res           = 1e6;
@@ -101,7 +97,7 @@ NewtonNonLinearSolver<VectorType>::solve(const bool is_initial_step)
                         << "  - Residual:  " << current_res << std::endl;
         }
 
-      solver->solve_linear_system(first_step);
+      solver->solve_linear_system();
       double last_alpha_res = current_res;
 
       unsigned int alpha_iter = 0;

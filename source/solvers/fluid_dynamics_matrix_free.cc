@@ -2966,8 +2966,8 @@ FluidDynamicsMatrixFree<dim>::set_initial_condition_fd(
       // Solve the problem with the temporary viscosity
       this->simulation_control->set_assembly_method(
         Parameters::SimulationControl::TimeSteppingMethod::steady);
-      PhysicsSolver<LinearAlgebra::distributed::Vector<double>>::
-        solve_non_linear_system(false);
+      PhysicsSolver<
+        LinearAlgebra::distributed::Vector<double>>::solve_non_linear_system();
       this->finish_time_step();
 
       // Reset original rheology for the system operator
@@ -3023,7 +3023,7 @@ FluidDynamicsMatrixFree<dim>::set_initial_condition_fd(
 
           // Solve the problem with the temporary viscosity
           PhysicsSolver<LinearAlgebra::distributed::Vector<double>>::
-            solve_non_linear_system(false);
+            solve_non_linear_system();
           this->finish_time_step();
 
           // Update the viscosity to the next one in the ramp parameters
@@ -3415,7 +3415,7 @@ FluidDynamicsMatrixFree<dim>::setup_preconditioner()
 
 template <int dim>
 void
-FluidDynamicsMatrixFree<dim>::solve_linear_system(const bool initial_step)
+FluidDynamicsMatrixFree<dim>::solve_linear_system()
 {
   const double absolute_residual =
     this->simulation_parameters.linear_solver.at(PhysicsID::fluid_dynamics)
@@ -3426,11 +3426,11 @@ FluidDynamicsMatrixFree<dim>::solve_linear_system(const bool initial_step)
 
   if (this->simulation_parameters.linear_solver.at(PhysicsID::fluid_dynamics)
         .solver == Parameters::LinearSolver::SolverType::gmres)
-    solve_system_GMRES(initial_step, absolute_residual, relative_residual);
+    solve_system_GMRES(false, absolute_residual, relative_residual);
   else if (this->simulation_parameters.linear_solver
              .at(PhysicsID::fluid_dynamics)
              .solver == Parameters::LinearSolver::SolverType::direct)
-    solve_system_direct(initial_step, absolute_residual, relative_residual);
+    solve_system_direct(false, absolute_residual, relative_residual);
   else
     AssertThrow(false, ExcMessage("This solver is not allowed"));
   this->rescale_pressure_dofs_in_newton_update();

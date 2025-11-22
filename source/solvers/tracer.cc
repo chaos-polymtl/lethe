@@ -1449,14 +1449,13 @@ Tracer<dim>::compute_kelly(
 
 template <int dim>
 void
-Tracer<dim>::solve_linear_system(const bool initial_step)
+Tracer<dim>::solve_linear_system()
 {
   TimerOutput::Scope t(this->computing_timer, "Solve linear system");
 
   auto mpi_communicator = triangulation->get_mpi_communicator();
 
-  const AffineConstraints<double> &constraints_used =
-    initial_step ? nonzero_constraints : this->zero_constraints;
+  const AffineConstraints<double> &constraints_used = this->zero_constraints;
 
   const double absolute_residual =
     simulation_parameters.linear_solver.at(PhysicsID::tracer).minimum_residual;

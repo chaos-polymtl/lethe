@@ -1,4 +1,4 @@
-// SPDX-FileCopyrightText: Copyright (c) 2019-2024 The Lethe Authors
+// SPDX-FileCopyrightText: Copyright (c) 2019-2025 The Lethe Authors
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
 #include <core/bdf.h>
@@ -1114,7 +1114,7 @@ FluidDynamicsMatrixBased<dim>::set_initial_condition_fd(
 
       this->simulation_control->set_assembly_method(
         Parameters::SimulationControl::TimeSteppingMethod::steady);
-      PhysicsSolver<GlobalVectorType>::solve_non_linear_system(false);
+      PhysicsSolver<GlobalVectorType>::solve_non_linear_system();
       this->finish_time_step();
 
       this->simulation_parameters.physical_properties_manager.set_rheology(
@@ -1175,7 +1175,7 @@ FluidDynamicsMatrixBased<dim>::set_initial_condition_fd(
 
           this->simulation_control->set_assembly_method(
             Parameters::SimulationControl::TimeSteppingMethod::steady);
-          PhysicsSolver<GlobalVectorType>::solve_non_linear_system(false);
+          PhysicsSolver<GlobalVectorType>::solve_non_linear_system();
           this->finish_time_step();
 
           n += alpha_n * (n_end - n);
@@ -1197,7 +1197,7 @@ FluidDynamicsMatrixBased<dim>::set_initial_condition_fd(
 
           this->simulation_control->set_assembly_method(
             Parameters::SimulationControl::TimeSteppingMethod::steady);
-          PhysicsSolver<GlobalVectorType>::solve_non_linear_system(false);
+          PhysicsSolver<GlobalVectorType>::solve_non_linear_system();
           this->finish_time_step();
 
           kinematic_viscosity +=
@@ -1342,7 +1342,7 @@ FluidDynamicsMatrixBased<dim>::assemble_L2_projection()
 
 template <int dim>
 void
-FluidDynamicsMatrixBased<dim>::solve_linear_system(const bool initial_step)
+FluidDynamicsMatrixBased<dim>::solve_linear_system()
 {
   const double absolute_residual =
     this->simulation_parameters.linear_solver.at(PhysicsID::fluid_dynamics)
@@ -1353,15 +1353,15 @@ FluidDynamicsMatrixBased<dim>::solve_linear_system(const bool initial_step)
 
   if (this->simulation_parameters.linear_solver.at(PhysicsID::fluid_dynamics)
         .solver == Parameters::LinearSolver::SolverType::gmres)
-    solve_system_GMRES(initial_step, absolute_residual, relative_residual);
+    solve_system_GMRES(false, absolute_residual, relative_residual);
   else if (this->simulation_parameters.linear_solver
              .at(PhysicsID::fluid_dynamics)
              .solver == Parameters::LinearSolver::SolverType::bicgstab)
-    solve_system_BiCGStab(initial_step, absolute_residual, relative_residual);
+    solve_system_BiCGStab(false, absolute_residual, relative_residual);
   else if (this->simulation_parameters.linear_solver
              .at(PhysicsID::fluid_dynamics)
              .solver == Parameters::LinearSolver::SolverType::direct)
-    solve_system_direct(initial_step, absolute_residual, relative_residual);
+    solve_system_direct(false, absolute_residual, relative_residual);
   else
     AssertThrow(
       this->simulation_parameters.linear_solver.at(PhysicsID::fluid_dynamics)
