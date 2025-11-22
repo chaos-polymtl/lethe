@@ -1083,6 +1083,18 @@ private:
   std::unordered_map<unsigned int, Point<3>>     point_on_rotation_vector;
   const unsigned int                             vertices_per_triangle = 3;
   Point<3>                                       center_mass_container;
+
+  // Containers
+  typedef std::vector<
+    std::tuple<typename Triangulation<dim - 1, dim>::active_cell_iterator,
+               double,
+               LetheGridTools::ParticleTriangleContactIndicator,
+               particle_wall_contact_info<dim>>>
+    particle_triangle_contact_description;
+
+  typedef ankerl::unordered_dense::map<types::particle_index,
+                                       particle_triangle_contact_description>
+    particle_triangle_contact_record;
 };
 
 #endif

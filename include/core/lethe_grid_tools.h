@@ -290,7 +290,7 @@ namespace LetheGridTools
    * located in the background (base) cell
    * @param n_particles_in_base_cell Number of particles in the base cell
    *
-   * @return A tuple in which 0. a vector of bools to determine if the particle is
+   * @return A tuple in which: 0. a vector of bools to determine if the particle is
    * less than a radius away from the triangle plane, 1. a vector of projected
    * location of particles on the triangle, 2. a vector of normal vectors of the
    * triangles, 3. a vector of the contact type between the particle and the
@@ -447,7 +447,8 @@ namespace LetheGridTools
   /**
    * @brief Checks whether two cells are coplanar within a given tolerance by
    * using the scalar product of each normal unit vector. If the cells are
-   * coplanar, the scalar product should be equal to 1.
+   * coplanar, the absolute value of the scalar product should be above
+   * (1-tolerance).
    *
    * @param cell_A First cell to compare.
    * @param cell_B Second cell to compare.
