@@ -156,10 +156,10 @@ Public Member Functions</h2></td></tr>
 <tr class="separator:a74110493860247f4ed2da56ef3050f08"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a566177a0569619dcf0c3a5f2fb1cdf4d" id="r_a566177a0569619dcf0c3a5f2fb1cdf4d"><td class="memItemLeft" align="right" valign="top">virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classPhysicsSolver.html#a566177a0569619dcf0c3a5f2fb1cdf4d">setup_preconditioner</a> ()=0</td></tr>
 <tr class="separator:a566177a0569619dcf0c3a5f2fb1cdf4d"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a7111f33094ebb0c1bf9a62a25b7a8f5d" id="r_a7111f33094ebb0c1bf9a62a25b7a8f5d"><td class="memItemLeft" align="right" valign="top">virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classPhysicsSolver.html#a7111f33094ebb0c1bf9a62a25b7a8f5d">solve_linear_system</a> (const bool initial_step)=0</td></tr>
-<tr class="separator:a7111f33094ebb0c1bf9a62a25b7a8f5d"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ae98422d82284b2d4d55d42ca454a300a" id="r_ae98422d82284b2d4d55d42ca454a300a"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classPhysicsSolver.html#ae98422d82284b2d4d55d42ca454a300a">solve_non_linear_system</a> (const bool first_iteration)</td></tr>
-<tr class="separator:ae98422d82284b2d4d55d42ca454a300a"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a375f91bc1e5a05dac2c71f5ae5575f84" id="r_a375f91bc1e5a05dac2c71f5ae5575f84"><td class="memItemLeft" align="right" valign="top">virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classPhysicsSolver.html#a375f91bc1e5a05dac2c71f5ae5575f84">solve_linear_system</a> ()=0</td></tr>
+<tr class="separator:a375f91bc1e5a05dac2c71f5ae5575f84"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a8fd9b9a0c38adf805a8dcde732abe3d5" id="r_a8fd9b9a0c38adf805a8dcde732abe3d5"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classPhysicsSolver.html#a8fd9b9a0c38adf805a8dcde732abe3d5">solve_non_linear_system</a> ()</td></tr>
+<tr class="separator:a8fd9b9a0c38adf805a8dcde732abe3d5"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:afcbaa24bbccef95e74f88926d5d3e7eb" id="r_afcbaa24bbccef95e74f88926d5d3e7eb"><td class="memItemLeft" align="right" valign="top">virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classPhysicsSolver.html#afcbaa24bbccef95e74f88926d5d3e7eb">apply_constraints</a> ()</td></tr>
 <tr class="separator:afcbaa24bbccef95e74f88926d5d3e7eb"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:afb198eb8763f9770a48edccd21073731" id="r_afb198eb8763f9770a48edccd21073731"><td class="memItemLeft" align="right" valign="top">virtual VectorType &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classPhysicsSolver.html#afb198eb8763f9770a48edccd21073731">get_evaluation_point</a> ()=0</td></tr>
@@ -225,9 +225,9 @@ template&lt;typename VectorType &gt; </div>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="physics__solver_8h_source.html#l00150">150</a> of file <a class="el" href="physics__solver_8h_source.html">physics_solver.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="physics__solver_8h_source.html#l00144">144</a> of file <a class="el" href="physics__solver_8h_source.html">physics_solver.h</a>.</p>
 
-<p class="reference">References <a class="el" href="structParameters_1_1NonLinearSolver.html#a9d1844967a4984adba50fc94732dc172afd664c4aab2a1842f691c6c005c63ce0">Parameters::NonLinearSolver::inexact_newton</a>, <a class="el" href="structParameters_1_1NonLinearSolver.html#a9d1844967a4984adba50fc94732dc172a8b8658b5ecaa6986a18b5fbba6a8230f">Parameters::NonLinearSolver::kinsol_newton</a>, <a class="el" href="structParameters_1_1NonLinearSolver.html#a9d1844967a4984adba50fc94732dc172ada6fa909f1c0188c539feb08d4496eb7">Parameters::NonLinearSolver::newton</a>, <a class="el" href="physics__solver_8h_source.html#l00146">PhysicsSolver&lt; VectorType &gt;::non_linear_solver</a>, and <a class="el" href="parameters_8h_source.html#l01171">Parameters::NonLinearSolver::solver</a>.</p>
+<p class="reference">References <a class="el" href="structParameters_1_1NonLinearSolver.html#a9d1844967a4984adba50fc94732dc172afd664c4aab2a1842f691c6c005c63ce0">Parameters::NonLinearSolver::inexact_newton</a>, <a class="el" href="structParameters_1_1NonLinearSolver.html#a9d1844967a4984adba50fc94732dc172a8b8658b5ecaa6986a18b5fbba6a8230f">Parameters::NonLinearSolver::kinsol_newton</a>, <a class="el" href="structParameters_1_1NonLinearSolver.html#a9d1844967a4984adba50fc94732dc172ada6fa909f1c0188c539feb08d4496eb7">Parameters::NonLinearSolver::newton</a>, <a class="el" href="physics__solver_8h_source.html#l00140">PhysicsSolver&lt; VectorType &gt;::non_linear_solver</a>, and <a class="el" href="parameters_8h_source.html#l01171">Parameters::NonLinearSolver::solver</a>.</p>
 
 </div>
 </div>
@@ -258,7 +258,7 @@ template&lt;typename VectorType &gt; </div>
 
 <p class="definition">Definition at line <a class="el" href="physics__solver_8h_source.html#l00030">30</a> of file <a class="el" href="physics__solver_8h_source.html">physics_solver.h</a>.</p>
 
-<p class="reference">References <a class="el" href="physics__solver_8h_source.html#l00146">PhysicsSolver&lt; VectorType &gt;::non_linear_solver</a>.</p>
+<p class="reference">References <a class="el" href="physics__solver_8h_source.html#l00140">PhysicsSolver&lt; VectorType &gt;::non_linear_solver</a>.</p>
 
 </div>
 </div>
@@ -290,7 +290,7 @@ template&lt;typename VectorType &gt; </div>
 
 <p>Applies constraints to a local_evaluation_point. </p>
 
-<p class="definition">Definition at line <a class="el" href="physics__solver_8h_source.html#l00076">76</a> of file <a class="el" href="physics__solver_8h_source.html">physics_solver.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="physics__solver_8h_source.html#l00070">70</a> of file <a class="el" href="physics__solver_8h_source.html">physics_solver.h</a>.</p>
 
 <p class="reference">References <a class="el" href="classPhysicsSolver.html#ae6cc2bfa320526e438a44bd6dc8ee804">PhysicsSolver&lt; VectorType &gt;::get_local_evaluation_point()</a>, and <a class="el" href="classPhysicsSolver.html#abf527a264ed49a5327db8f48e16ee182">PhysicsSolver&lt; VectorType &gt;::get_nonzero_constraints()</a>.</p>
 
@@ -385,9 +385,9 @@ template&lt;typename VectorType &gt; </div>
 
 <p>Return the current newton iteration of this physics solver. </p>
 
-<p class="definition">Definition at line <a class="el" href="physics__solver_8h_source.html#l00137">137</a> of file <a class="el" href="physics__solver_8h_source.html">physics_solver.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="physics__solver_8h_source.html#l00131">131</a> of file <a class="el" href="physics__solver_8h_source.html">physics_solver.h</a>.</p>
 
-<p class="reference">References <a class="el" href="physics__solver_8h_source.html#l00146">PhysicsSolver&lt; VectorType &gt;::non_linear_solver</a>.</p>
+<p class="reference">References <a class="el" href="physics__solver_8h_source.html#l00140">PhysicsSolver&lt; VectorType &gt;::non_linear_solver</a>.</p>
 
 </div>
 </div>
@@ -421,7 +421,7 @@ template&lt;typename VectorType &gt; </div>
 
 <p>Reimplemented in <a class="el" href="classFluidDynamicsSharp.html#a84ad77a2439c541b39467e8c4713b3e2">FluidDynamicsSharp&lt; dim &gt;</a>.</p>
 
-<p class="definition">Definition at line <a class="el" href="physics__solver_8h_source.html#l00127">127</a> of file <a class="el" href="physics__solver_8h_source.html">physics_solver.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="physics__solver_8h_source.html#l00121">121</a> of file <a class="el" href="physics__solver_8h_source.html">physics_solver.h</a>.</p>
 
 <p class="reference">References <a class="el" href="classPhysicsSolver.html#aaadb8be69e716aaa9541f4984a20508f">PhysicsSolver&lt; VectorType &gt;::get_system_rhs()</a>.</p>
 
@@ -704,8 +704,8 @@ template&lt;typename VectorType &gt; </div>
 
 </div>
 </div>
-<a id="a7111f33094ebb0c1bf9a62a25b7a8f5d" name="a7111f33094ebb0c1bf9a62a25b7a8f5d"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a7111f33094ebb0c1bf9a62a25b7a8f5d">&#9670;&#160;</a></span>solve_linear_system()</h2>
+<a id="a375f91bc1e5a05dac2c71f5ae5575f84" name="a375f91bc1e5a05dac2c71f5ae5575f84"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a375f91bc1e5a05dac2c71f5ae5575f84">&#9670;&#160;</a></span>solve_linear_system()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -718,8 +718,7 @@ template&lt;typename VectorType &gt; </div>
         <tr>
           <td class="memname">virtual void <a class="el" href="classPhysicsSolver.html">PhysicsSolver</a>&lt; VectorType &gt;::solve_linear_system </td>
           <td>(</td>
-          <td class="paramtype">const bool&#160;</td>
-          <td class="paramname"><em>initial_step</em></td><td>)</td>
+          <td class="paramname"></td><td>)</td>
           <td></td>
         </tr>
       </table>
@@ -731,19 +730,13 @@ template&lt;typename VectorType &gt; </div>
 </div><div class="memdoc">
 
 <p>Solve the linear system of equations. </p>
-<dl class="params"><dt>Parameters</dt><dd>
-  <table class="params">
-    <tr><td class="paramdir">[in]</td><td class="paramname">initial_step</td><td>Provides the linear solver with indication if this solution is the first one for the system of equation or not. </td></tr>
-  </table>
-  </dd>
-</dl>
 
-<p>Implemented in <a class="el" href="classCahnHilliard.html#a2d7e8c97a8f5c3bac9f4844369a421b8">CahnHilliard&lt; dim &gt;</a>, <a class="el" href="classFluidDynamicsBlock.html#a16c2ae833255652806f53fce31210117">FluidDynamicsBlock&lt; dim &gt;</a>, <a class="el" href="classFluidDynamicsMatrixBased.html#a700aed667b13c3fc0aa186d1ff84d7a1">FluidDynamicsMatrixBased&lt; dim &gt;</a>, <a class="el" href="classFluidDynamicsMatrixFree.html#a3cb6044397528cf48d0bb114b1164615">FluidDynamicsMatrixFree&lt; dim &gt;</a>, <a class="el" href="classHeatTransfer.html#ab3d6dbc1ebb9785d0d88360f715fde32">HeatTransfer&lt; dim &gt;</a>, <a class="el" href="classTracer.html#ae60eba49f196721cba5a648c64868f6e">Tracer&lt; dim &gt;</a>, <a class="el" href="classVolumeOfFluid.html#ae4a8e878f9555ee6d44dcd508bb5e49b">VolumeOfFluid&lt; dim &gt;</a>, and <a class="el" href="classVOFAlgebraicInterfaceReinitialization.html#a52b59ee006f728239687954638e9ffe8">VOFAlgebraicInterfaceReinitialization&lt; dim &gt;</a>.</p>
+<p>Implemented in <a class="el" href="classCahnHilliard.html#a2741b0b4074cd16655d529d0291f704d">CahnHilliard&lt; dim &gt;</a>, <a class="el" href="classFluidDynamicsBlock.html#a07694b4d44003841b04ed41b9acbd6cb">FluidDynamicsBlock&lt; dim &gt;</a>, <a class="el" href="classFluidDynamicsMatrixBased.html#a4add48e2f99950445403d5ce9d5dd8f9">FluidDynamicsMatrixBased&lt; dim &gt;</a>, <a class="el" href="classFluidDynamicsMatrixFree.html#ae492ef75ec21d559ed3c7e906caef77c">FluidDynamicsMatrixFree&lt; dim &gt;</a>, <a class="el" href="classHeatTransfer.html#a15ce02746078d2e8bc30ada5900f5f91">HeatTransfer&lt; dim &gt;</a>, <a class="el" href="classTracer.html#a0028e0bd8742d8e98488ed428fe9e2b0">Tracer&lt; dim &gt;</a>, <a class="el" href="classVolumeOfFluid.html#a53faf2a2a6c5856b4fd6593c506559d1">VolumeOfFluid&lt; dim &gt;</a>, and <a class="el" href="classVOFAlgebraicInterfaceReinitialization.html#ae55fe3f330dfbb423f254b60d2e9d773">VOFAlgebraicInterfaceReinitialization&lt; dim &gt;</a>.</p>
 
 </div>
 </div>
-<a id="ae98422d82284b2d4d55d42ca454a300a" name="ae98422d82284b2d4d55d42ca454a300a"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ae98422d82284b2d4d55d42ca454a300a">&#9670;&#160;</a></span>solve_non_linear_system()</h2>
+<a id="a8fd9b9a0c38adf805a8dcde732abe3d5" name="a8fd9b9a0c38adf805a8dcde732abe3d5"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a8fd9b9a0c38adf805a8dcde732abe3d5">&#9670;&#160;</a></span>solve_non_linear_system()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -753,22 +746,15 @@ template&lt;typename VectorType &gt; </div>
         <tr>
           <td class="memname">void <a class="el" href="classPhysicsSolver.html">PhysicsSolver</a>&lt; VectorType &gt;::solve_non_linear_system </td>
           <td>(</td>
-          <td class="paramtype">const bool&#160;</td>
-          <td class="paramname"><em>first_iteration</em></td><td>)</td>
+          <td class="paramname"></td><td>)</td>
           <td></td>
         </tr>
       </table>
 </div><div class="memdoc">
 
 <p>Solve the non linear system of equations. </p>
-<dl class="params"><dt>Parameters</dt><dd>
-  <table class="params">
-    <tr><td class="paramdir">[in]</td><td class="paramname">first_iteration</td><td>Indicates whether it is the first iteration of the non-linear solver or not. </td></tr>
-  </table>
-  </dd>
-</dl>
 
-<p class="definition">Definition at line <a class="el" href="physics__solver_8h_source.html#l00176">176</a> of file <a class="el" href="physics__solver_8h_source.html">physics_solver.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="physics__solver_8h_source.html#l00170">170</a> of file <a class="el" href="physics__solver_8h_source.html">physics_solver.h</a>.</p>
 
 </div>
 </div>
@@ -795,7 +781,7 @@ template&lt;typename VectorType &gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="physics__solver_8h_source.html#l00146">146</a> of file <a class="el" href="physics__solver_8h_source.html">physics_solver.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="physics__solver_8h_source.html#l00140">140</a> of file <a class="el" href="physics__solver_8h_source.html">physics_solver.h</a>.</p>
 
 </div>
 </div>
@@ -813,7 +799,7 @@ template&lt;typename VectorType &gt; </div>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="physics__solver_8h_source.html#l00142">142</a> of file <a class="el" href="physics__solver_8h_source.html">physics_solver.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="physics__solver_8h_source.html#l00136">136</a> of file <a class="el" href="physics__solver_8h_source.html">physics_solver.h</a>.</p>
 
 </div>
 </div>
@@ -831,7 +817,7 @@ template&lt;typename VectorType &gt; </div>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="physics__solver_8h_source.html#l00143">143</a> of file <a class="el" href="physics__solver_8h_source.html">physics_solver.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="physics__solver_8h_source.html#l00137">137</a> of file <a class="el" href="physics__solver_8h_source.html">physics_solver.h</a>.</p>
 
 </div>
 </div>

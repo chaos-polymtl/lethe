@@ -1603,86 +1603,85 @@ $(document).ready(function() { init_codefold(0); });
 <div class="line"><a id="l01450" name="l01450"></a><span class="lineno"> 1450</span><span class="keyword">template</span> &lt;<span class="keywordtype">int</span> dim&gt;</div>
 <div class="line"><a id="l01451" name="l01451"></a><span class="lineno"> 1451</span><span class="keywordtype">void</span></div>
 <div class="foldopen" id="foldopen01452" data-start="{" data-end="}">
-<div class="line"><a id="l01452" name="l01452"></a><span class="lineno"><a class="line" href="classTracer.html#ae60eba49f196721cba5a648c64868f6e"> 1452</a></span><a class="code hl_function" href="classTracer.html#ae60eba49f196721cba5a648c64868f6e">Tracer&lt;dim&gt;::solve_linear_system</a>(<span class="keyword">const</span> <span class="keywordtype">bool</span> initial_step)</div>
+<div class="line"><a id="l01452" name="l01452"></a><span class="lineno"><a class="line" href="classTracer.html#a0028e0bd8742d8e98488ed428fe9e2b0"> 1452</a></span><a class="code hl_function" href="classTracer.html#a0028e0bd8742d8e98488ed428fe9e2b0">Tracer&lt;dim&gt;::solve_linear_system</a>()</div>
 <div class="line"><a id="l01453" name="l01453"></a><span class="lineno"> 1453</span>{</div>
 <div class="line"><a id="l01454" name="l01454"></a><span class="lineno"> 1454</span>  TimerOutput::Scope t(this-&gt;computing_timer, <span class="stringliteral">&quot;Solve linear system&quot;</span>);</div>
 <div class="line"><a id="l01455" name="l01455"></a><span class="lineno"> 1455</span> </div>
 <div class="line"><a id="l01456" name="l01456"></a><span class="lineno"> 1456</span>  <span class="keyword">auto</span> mpi_communicator = triangulation-&gt;get_mpi_communicator();</div>
 <div class="line"><a id="l01457" name="l01457"></a><span class="lineno"> 1457</span> </div>
-<div class="line"><a id="l01458" name="l01458"></a><span class="lineno"> 1458</span>  <span class="keyword">const</span> AffineConstraints&lt;double&gt; &amp;constraints_used =</div>
-<div class="line"><a id="l01459" name="l01459"></a><span class="lineno"> 1459</span>    initial_step ? nonzero_constraints : this-&gt;zero_constraints;</div>
-<div class="line"><a id="l01460" name="l01460"></a><span class="lineno"> 1460</span> </div>
-<div class="line"><a id="l01461" name="l01461"></a><span class="lineno"> 1461</span>  <span class="keyword">const</span> <span class="keywordtype">double</span> absolute_residual =</div>
-<div class="line"><a id="l01462" name="l01462"></a><span class="lineno"> 1462</span>    simulation_parameters.linear_solver.at(<a class="code hl_enumvalue" href="multiphysics_8h.html#ae14bb720bc9a37edc36fb8d90df712c2a50955dac125ab3c822a8f3bb4f6fcaef">PhysicsID::tracer</a>).minimum_residual;</div>
-<div class="line"><a id="l01463" name="l01463"></a><span class="lineno"> 1463</span>  <span class="keyword">const</span> <span class="keywordtype">double</span> relative_residual =</div>
-<div class="line"><a id="l01464" name="l01464"></a><span class="lineno"> 1464</span>    simulation_parameters.linear_solver.at(<a class="code hl_enumvalue" href="multiphysics_8h.html#ae14bb720bc9a37edc36fb8d90df712c2a50955dac125ab3c822a8f3bb4f6fcaef">PhysicsID::tracer</a>).relative_residual;</div>
-<div class="line"><a id="l01465" name="l01465"></a><span class="lineno"> 1465</span> </div>
-<div class="line"><a id="l01466" name="l01466"></a><span class="lineno"> 1466</span>  <span class="keyword">const</span> <span class="keywordtype">double</span> rescale_metric   = this-&gt;get_residual_rescale_metric();</div>
-<div class="line"><a id="l01467" name="l01467"></a><span class="lineno"> 1467</span>  <span class="keyword">const</span> <span class="keywordtype">double</span> current_residual = system_rhs.l2_norm() / rescale_metric;</div>
-<div class="line"><a id="l01468" name="l01468"></a><span class="lineno"> 1468</span>  <span class="keyword">const</span> <span class="keywordtype">double</span> linear_solver_tolerance =</div>
-<div class="line"><a id="l01469" name="l01469"></a><span class="lineno"> 1469</span>    std::max(relative_residual * current_residual, absolute_residual);</div>
-<div class="line"><a id="l01470" name="l01470"></a><span class="lineno"> 1470</span>  <span class="keywordflow">if</span> (this-&gt;simulation_parameters.linear_solver.at(<a class="code hl_enumvalue" href="multiphysics_8h.html#ae14bb720bc9a37edc36fb8d90df712c2a50955dac125ab3c822a8f3bb4f6fcaef">PhysicsID::tracer</a>)</div>
-<div class="line"><a id="l01471" name="l01471"></a><span class="lineno"> 1471</span>        .verbosity != <a class="code hl_enumvalue" href="namespaceParameters.html#a91f1943180a615249347b911b0ed3919a556966c7830465dc4623d62e32cec31d">Parameters::Verbosity::quiet</a>)</div>
-<div class="line"><a id="l01472" name="l01472"></a><span class="lineno"> 1472</span>    {</div>
-<div class="line"><a id="l01473" name="l01473"></a><span class="lineno"> 1473</span>      this-&gt;pcout &lt;&lt; <span class="stringliteral">&quot;  -Tolerance of iterative solver is : &quot;</span></div>
-<div class="line"><a id="l01474" name="l01474"></a><span class="lineno"> 1474</span>                  &lt;&lt; linear_solver_tolerance &lt;&lt; std::endl;</div>
-<div class="line"><a id="l01475" name="l01475"></a><span class="lineno"> 1475</span>    }</div>
-<div class="line"><a id="l01476" name="l01476"></a><span class="lineno"> 1476</span>  <span class="keyword">const</span> <span class="keywordtype">double</span> non_rescaled_linear_solver_tolerance =</div>
-<div class="line"><a id="l01477" name="l01477"></a><span class="lineno"> 1477</span>    linear_solver_tolerance * rescale_metric;</div>
-<div class="line"><a id="l01478" name="l01478"></a><span class="lineno"> 1478</span> </div>
-<div class="line"><a id="l01479" name="l01479"></a><span class="lineno"> 1479</span>  <span class="keyword">const</span> <span class="keywordtype">unsigned</span> <span class="keywordtype">int</span> ilu_fill =</div>
-<div class="line"><a id="l01480" name="l01480"></a><span class="lineno"> 1480</span>    simulation_parameters.linear_solver.at(<a class="code hl_enumvalue" href="multiphysics_8h.html#ae14bb720bc9a37edc36fb8d90df712c2a50955dac125ab3c822a8f3bb4f6fcaef">PhysicsID::tracer</a>).ilu_precond_fill;</div>
-<div class="line"><a id="l01481" name="l01481"></a><span class="lineno"> 1481</span>  <span class="keyword">const</span> <span class="keywordtype">double</span> ilu_atol =</div>
-<div class="line"><a id="l01482" name="l01482"></a><span class="lineno"> 1482</span>    simulation_parameters.linear_solver.at(<a class="code hl_enumvalue" href="multiphysics_8h.html#ae14bb720bc9a37edc36fb8d90df712c2a50955dac125ab3c822a8f3bb4f6fcaef">PhysicsID::tracer</a>).ilu_precond_atol;</div>
-<div class="line"><a id="l01483" name="l01483"></a><span class="lineno"> 1483</span>  <span class="keyword">const</span> <span class="keywordtype">double</span> ilu_rtol =</div>
-<div class="line"><a id="l01484" name="l01484"></a><span class="lineno"> 1484</span>    simulation_parameters.linear_solver.at(<a class="code hl_enumvalue" href="multiphysics_8h.html#ae14bb720bc9a37edc36fb8d90df712c2a50955dac125ab3c822a8f3bb4f6fcaef">PhysicsID::tracer</a>).ilu_precond_rtol;</div>
-<div class="line"><a id="l01485" name="l01485"></a><span class="lineno"> 1485</span>  TrilinosWrappers::PreconditionILU::AdditionalData preconditionerOptions(</div>
-<div class="line"><a id="l01486" name="l01486"></a><span class="lineno"> 1486</span>    ilu_fill, ilu_atol, ilu_rtol, 0);</div>
-<div class="line"><a id="l01487" name="l01487"></a><span class="lineno"> 1487</span> </div>
-<div class="line"><a id="l01488" name="l01488"></a><span class="lineno"> 1488</span>  TrilinosWrappers::PreconditionILU ilu_preconditioner;</div>
-<div class="line"><a id="l01489" name="l01489"></a><span class="lineno"> 1489</span> </div>
-<div class="line"><a id="l01490" name="l01490"></a><span class="lineno"> 1490</span>  ilu_preconditioner.initialize(system_matrix, preconditionerOptions);</div>
-<div class="line"><a id="l01491" name="l01491"></a><span class="lineno"> 1491</span> </div>
-<div class="line"><a id="l01492" name="l01492"></a><span class="lineno"> 1492</span>  <a class="code hl_typedef" href="vector_8h.html#a4ea4005d75c88e60bee47d4e79a13a39">GlobalVectorType</a> completely_distributed_solution(locally_owned_dofs,</div>
-<div class="line"><a id="l01493" name="l01493"></a><span class="lineno"> 1493</span>                                                   mpi_communicator);</div>
-<div class="line"><a id="l01494" name="l01494"></a><span class="lineno"> 1494</span> </div>
-<div class="line"><a id="l01495" name="l01495"></a><span class="lineno"> 1495</span>  SolverControl solver_control(</div>
-<div class="line"><a id="l01496" name="l01496"></a><span class="lineno"> 1496</span>    simulation_parameters.linear_solver.at(<a class="code hl_enumvalue" href="multiphysics_8h.html#ae14bb720bc9a37edc36fb8d90df712c2a50955dac125ab3c822a8f3bb4f6fcaef">PhysicsID::tracer</a>).max_iterations,</div>
-<div class="line"><a id="l01497" name="l01497"></a><span class="lineno"> 1497</span>    non_rescaled_linear_solver_tolerance,</div>
-<div class="line"><a id="l01498" name="l01498"></a><span class="lineno"> 1498</span>    <span class="keyword">true</span>,</div>
-<div class="line"><a id="l01499" name="l01499"></a><span class="lineno"> 1499</span>    <span class="keyword">true</span>);</div>
-<div class="line"><a id="l01500" name="l01500"></a><span class="lineno"> 1500</span> </div>
-<div class="line"><a id="l01501" name="l01501"></a><span class="lineno"> 1501</span>  TrilinosWrappers::SolverGMRES::AdditionalData solver_parameters(</div>
-<div class="line"><a id="l01502" name="l01502"></a><span class="lineno"> 1502</span>    <span class="keyword">false</span>,</div>
-<div class="line"><a id="l01503" name="l01503"></a><span class="lineno"> 1503</span>    simulation_parameters.linear_solver.at(<a class="code hl_enumvalue" href="multiphysics_8h.html#ae14bb720bc9a37edc36fb8d90df712c2a50955dac125ab3c822a8f3bb4f6fcaef">PhysicsID::tracer</a>)</div>
-<div class="line"><a id="l01504" name="l01504"></a><span class="lineno"> 1504</span>      .max_krylov_vectors);</div>
+<div class="line"><a id="l01458" name="l01458"></a><span class="lineno"> 1458</span>  <span class="keyword">const</span> AffineConstraints&lt;double&gt; &amp;constraints_used = this-&gt;zero_constraints;</div>
+<div class="line"><a id="l01459" name="l01459"></a><span class="lineno"> 1459</span> </div>
+<div class="line"><a id="l01460" name="l01460"></a><span class="lineno"> 1460</span>  <span class="keyword">const</span> <span class="keywordtype">double</span> absolute_residual =</div>
+<div class="line"><a id="l01461" name="l01461"></a><span class="lineno"> 1461</span>    simulation_parameters.linear_solver.at(<a class="code hl_enumvalue" href="multiphysics_8h.html#ae14bb720bc9a37edc36fb8d90df712c2a50955dac125ab3c822a8f3bb4f6fcaef">PhysicsID::tracer</a>).minimum_residual;</div>
+<div class="line"><a id="l01462" name="l01462"></a><span class="lineno"> 1462</span>  <span class="keyword">const</span> <span class="keywordtype">double</span> relative_residual =</div>
+<div class="line"><a id="l01463" name="l01463"></a><span class="lineno"> 1463</span>    simulation_parameters.linear_solver.at(<a class="code hl_enumvalue" href="multiphysics_8h.html#ae14bb720bc9a37edc36fb8d90df712c2a50955dac125ab3c822a8f3bb4f6fcaef">PhysicsID::tracer</a>).relative_residual;</div>
+<div class="line"><a id="l01464" name="l01464"></a><span class="lineno"> 1464</span> </div>
+<div class="line"><a id="l01465" name="l01465"></a><span class="lineno"> 1465</span>  <span class="keyword">const</span> <span class="keywordtype">double</span> rescale_metric   = this-&gt;get_residual_rescale_metric();</div>
+<div class="line"><a id="l01466" name="l01466"></a><span class="lineno"> 1466</span>  <span class="keyword">const</span> <span class="keywordtype">double</span> current_residual = system_rhs.l2_norm() / rescale_metric;</div>
+<div class="line"><a id="l01467" name="l01467"></a><span class="lineno"> 1467</span>  <span class="keyword">const</span> <span class="keywordtype">double</span> linear_solver_tolerance =</div>
+<div class="line"><a id="l01468" name="l01468"></a><span class="lineno"> 1468</span>    std::max(relative_residual * current_residual, absolute_residual);</div>
+<div class="line"><a id="l01469" name="l01469"></a><span class="lineno"> 1469</span>  <span class="keywordflow">if</span> (this-&gt;simulation_parameters.linear_solver.at(<a class="code hl_enumvalue" href="multiphysics_8h.html#ae14bb720bc9a37edc36fb8d90df712c2a50955dac125ab3c822a8f3bb4f6fcaef">PhysicsID::tracer</a>)</div>
+<div class="line"><a id="l01470" name="l01470"></a><span class="lineno"> 1470</span>        .verbosity != <a class="code hl_enumvalue" href="namespaceParameters.html#a91f1943180a615249347b911b0ed3919a556966c7830465dc4623d62e32cec31d">Parameters::Verbosity::quiet</a>)</div>
+<div class="line"><a id="l01471" name="l01471"></a><span class="lineno"> 1471</span>    {</div>
+<div class="line"><a id="l01472" name="l01472"></a><span class="lineno"> 1472</span>      this-&gt;pcout &lt;&lt; <span class="stringliteral">&quot;  -Tolerance of iterative solver is : &quot;</span></div>
+<div class="line"><a id="l01473" name="l01473"></a><span class="lineno"> 1473</span>                  &lt;&lt; linear_solver_tolerance &lt;&lt; std::endl;</div>
+<div class="line"><a id="l01474" name="l01474"></a><span class="lineno"> 1474</span>    }</div>
+<div class="line"><a id="l01475" name="l01475"></a><span class="lineno"> 1475</span>  <span class="keyword">const</span> <span class="keywordtype">double</span> non_rescaled_linear_solver_tolerance =</div>
+<div class="line"><a id="l01476" name="l01476"></a><span class="lineno"> 1476</span>    linear_solver_tolerance * rescale_metric;</div>
+<div class="line"><a id="l01477" name="l01477"></a><span class="lineno"> 1477</span> </div>
+<div class="line"><a id="l01478" name="l01478"></a><span class="lineno"> 1478</span>  <span class="keyword">const</span> <span class="keywordtype">unsigned</span> <span class="keywordtype">int</span> ilu_fill =</div>
+<div class="line"><a id="l01479" name="l01479"></a><span class="lineno"> 1479</span>    simulation_parameters.linear_solver.at(<a class="code hl_enumvalue" href="multiphysics_8h.html#ae14bb720bc9a37edc36fb8d90df712c2a50955dac125ab3c822a8f3bb4f6fcaef">PhysicsID::tracer</a>).ilu_precond_fill;</div>
+<div class="line"><a id="l01480" name="l01480"></a><span class="lineno"> 1480</span>  <span class="keyword">const</span> <span class="keywordtype">double</span> ilu_atol =</div>
+<div class="line"><a id="l01481" name="l01481"></a><span class="lineno"> 1481</span>    simulation_parameters.linear_solver.at(<a class="code hl_enumvalue" href="multiphysics_8h.html#ae14bb720bc9a37edc36fb8d90df712c2a50955dac125ab3c822a8f3bb4f6fcaef">PhysicsID::tracer</a>).ilu_precond_atol;</div>
+<div class="line"><a id="l01482" name="l01482"></a><span class="lineno"> 1482</span>  <span class="keyword">const</span> <span class="keywordtype">double</span> ilu_rtol =</div>
+<div class="line"><a id="l01483" name="l01483"></a><span class="lineno"> 1483</span>    simulation_parameters.linear_solver.at(<a class="code hl_enumvalue" href="multiphysics_8h.html#ae14bb720bc9a37edc36fb8d90df712c2a50955dac125ab3c822a8f3bb4f6fcaef">PhysicsID::tracer</a>).ilu_precond_rtol;</div>
+<div class="line"><a id="l01484" name="l01484"></a><span class="lineno"> 1484</span>  TrilinosWrappers::PreconditionILU::AdditionalData preconditionerOptions(</div>
+<div class="line"><a id="l01485" name="l01485"></a><span class="lineno"> 1485</span>    ilu_fill, ilu_atol, ilu_rtol, 0);</div>
+<div class="line"><a id="l01486" name="l01486"></a><span class="lineno"> 1486</span> </div>
+<div class="line"><a id="l01487" name="l01487"></a><span class="lineno"> 1487</span>  TrilinosWrappers::PreconditionILU ilu_preconditioner;</div>
+<div class="line"><a id="l01488" name="l01488"></a><span class="lineno"> 1488</span> </div>
+<div class="line"><a id="l01489" name="l01489"></a><span class="lineno"> 1489</span>  ilu_preconditioner.initialize(system_matrix, preconditionerOptions);</div>
+<div class="line"><a id="l01490" name="l01490"></a><span class="lineno"> 1490</span> </div>
+<div class="line"><a id="l01491" name="l01491"></a><span class="lineno"> 1491</span>  <a class="code hl_typedef" href="vector_8h.html#a4ea4005d75c88e60bee47d4e79a13a39">GlobalVectorType</a> completely_distributed_solution(locally_owned_dofs,</div>
+<div class="line"><a id="l01492" name="l01492"></a><span class="lineno"> 1492</span>                                                   mpi_communicator);</div>
+<div class="line"><a id="l01493" name="l01493"></a><span class="lineno"> 1493</span> </div>
+<div class="line"><a id="l01494" name="l01494"></a><span class="lineno"> 1494</span>  SolverControl solver_control(</div>
+<div class="line"><a id="l01495" name="l01495"></a><span class="lineno"> 1495</span>    simulation_parameters.linear_solver.at(<a class="code hl_enumvalue" href="multiphysics_8h.html#ae14bb720bc9a37edc36fb8d90df712c2a50955dac125ab3c822a8f3bb4f6fcaef">PhysicsID::tracer</a>).max_iterations,</div>
+<div class="line"><a id="l01496" name="l01496"></a><span class="lineno"> 1496</span>    non_rescaled_linear_solver_tolerance,</div>
+<div class="line"><a id="l01497" name="l01497"></a><span class="lineno"> 1497</span>    <span class="keyword">true</span>,</div>
+<div class="line"><a id="l01498" name="l01498"></a><span class="lineno"> 1498</span>    <span class="keyword">true</span>);</div>
+<div class="line"><a id="l01499" name="l01499"></a><span class="lineno"> 1499</span> </div>
+<div class="line"><a id="l01500" name="l01500"></a><span class="lineno"> 1500</span>  TrilinosWrappers::SolverGMRES::AdditionalData solver_parameters(</div>
+<div class="line"><a id="l01501" name="l01501"></a><span class="lineno"> 1501</span>    <span class="keyword">false</span>,</div>
+<div class="line"><a id="l01502" name="l01502"></a><span class="lineno"> 1502</span>    simulation_parameters.linear_solver.at(<a class="code hl_enumvalue" href="multiphysics_8h.html#ae14bb720bc9a37edc36fb8d90df712c2a50955dac125ab3c822a8f3bb4f6fcaef">PhysicsID::tracer</a>)</div>
+<div class="line"><a id="l01503" name="l01503"></a><span class="lineno"> 1503</span>      .max_krylov_vectors);</div>
+<div class="line"><a id="l01504" name="l01504"></a><span class="lineno"> 1504</span> </div>
 <div class="line"><a id="l01505" name="l01505"></a><span class="lineno"> 1505</span> </div>
-<div class="line"><a id="l01506" name="l01506"></a><span class="lineno"> 1506</span> </div>
-<div class="line"><a id="l01507" name="l01507"></a><span class="lineno"> 1507</span>  TrilinosWrappers::SolverGMRES solver(solver_control, solver_parameters);</div>
+<div class="line"><a id="l01506" name="l01506"></a><span class="lineno"> 1506</span>  TrilinosWrappers::SolverGMRES solver(solver_control, solver_parameters);</div>
+<div class="line"><a id="l01507" name="l01507"></a><span class="lineno"> 1507</span> </div>
 <div class="line"><a id="l01508" name="l01508"></a><span class="lineno"> 1508</span> </div>
-<div class="line"><a id="l01509" name="l01509"></a><span class="lineno"> 1509</span> </div>
-<div class="line"><a id="l01510" name="l01510"></a><span class="lineno"> 1510</span>  solver.solve(system_matrix,</div>
-<div class="line"><a id="l01511" name="l01511"></a><span class="lineno"> 1511</span>               completely_distributed_solution,</div>
-<div class="line"><a id="l01512" name="l01512"></a><span class="lineno"> 1512</span>               system_rhs,</div>
-<div class="line"><a id="l01513" name="l01513"></a><span class="lineno"> 1513</span>               ilu_preconditioner);</div>
-<div class="line"><a id="l01514" name="l01514"></a><span class="lineno"> 1514</span> </div>
-<div class="line"><a id="l01515" name="l01515"></a><span class="lineno"> 1515</span>  <span class="keywordflow">if</span> (simulation_parameters.linear_solver.at(<a class="code hl_enumvalue" href="multiphysics_8h.html#ae14bb720bc9a37edc36fb8d90df712c2a50955dac125ab3c822a8f3bb4f6fcaef">PhysicsID::tracer</a>).verbosity !=</div>
-<div class="line"><a id="l01516" name="l01516"></a><span class="lineno"> 1516</span>      <a class="code hl_enumvalue" href="namespaceParameters.html#a91f1943180a615249347b911b0ed3919a556966c7830465dc4623d62e32cec31d">Parameters::Verbosity::quiet</a>)</div>
-<div class="line"><a id="l01517" name="l01517"></a><span class="lineno"> 1517</span>    {</div>
-<div class="line"><a id="l01518" name="l01518"></a><span class="lineno"> 1518</span>      this-&gt;pcout &lt;&lt; <span class="stringliteral">&quot;  -Iterative solver took : &quot;</span> &lt;&lt; solver_control.last_step()</div>
-<div class="line"><a id="l01519" name="l01519"></a><span class="lineno"> 1519</span>                  &lt;&lt; <span class="stringliteral">&quot; steps to reach a residual norm of &quot;</span></div>
-<div class="line"><a id="l01520" name="l01520"></a><span class="lineno"> 1520</span>                  &lt;&lt; solver_control.last_value() / rescale_metric &lt;&lt; std::endl;</div>
-<div class="line"><a id="l01521" name="l01521"></a><span class="lineno"> 1521</span>    }</div>
-<div class="line"><a id="l01522" name="l01522"></a><span class="lineno"> 1522</span> </div>
-<div class="line"><a id="l01523" name="l01523"></a><span class="lineno"> 1523</span>  constraints_used.distribute(completely_distributed_solution);</div>
-<div class="line"><a id="l01524" name="l01524"></a><span class="lineno"> 1524</span>  newton_update = completely_distributed_solution;</div>
-<div class="line"><a id="l01525" name="l01525"></a><span class="lineno"> 1525</span>}</div>
+<div class="line"><a id="l01509" name="l01509"></a><span class="lineno"> 1509</span>  solver.solve(system_matrix,</div>
+<div class="line"><a id="l01510" name="l01510"></a><span class="lineno"> 1510</span>               completely_distributed_solution,</div>
+<div class="line"><a id="l01511" name="l01511"></a><span class="lineno"> 1511</span>               system_rhs,</div>
+<div class="line"><a id="l01512" name="l01512"></a><span class="lineno"> 1512</span>               ilu_preconditioner);</div>
+<div class="line"><a id="l01513" name="l01513"></a><span class="lineno"> 1513</span> </div>
+<div class="line"><a id="l01514" name="l01514"></a><span class="lineno"> 1514</span>  <span class="keywordflow">if</span> (simulation_parameters.linear_solver.at(<a class="code hl_enumvalue" href="multiphysics_8h.html#ae14bb720bc9a37edc36fb8d90df712c2a50955dac125ab3c822a8f3bb4f6fcaef">PhysicsID::tracer</a>).verbosity !=</div>
+<div class="line"><a id="l01515" name="l01515"></a><span class="lineno"> 1515</span>      <a class="code hl_enumvalue" href="namespaceParameters.html#a91f1943180a615249347b911b0ed3919a556966c7830465dc4623d62e32cec31d">Parameters::Verbosity::quiet</a>)</div>
+<div class="line"><a id="l01516" name="l01516"></a><span class="lineno"> 1516</span>    {</div>
+<div class="line"><a id="l01517" name="l01517"></a><span class="lineno"> 1517</span>      this-&gt;pcout &lt;&lt; <span class="stringliteral">&quot;  -Iterative solver took : &quot;</span> &lt;&lt; solver_control.last_step()</div>
+<div class="line"><a id="l01518" name="l01518"></a><span class="lineno"> 1518</span>                  &lt;&lt; <span class="stringliteral">&quot; steps to reach a residual norm of &quot;</span></div>
+<div class="line"><a id="l01519" name="l01519"></a><span class="lineno"> 1519</span>                  &lt;&lt; solver_control.last_value() / rescale_metric &lt;&lt; std::endl;</div>
+<div class="line"><a id="l01520" name="l01520"></a><span class="lineno"> 1520</span>    }</div>
+<div class="line"><a id="l01521" name="l01521"></a><span class="lineno"> 1521</span> </div>
+<div class="line"><a id="l01522" name="l01522"></a><span class="lineno"> 1522</span>  constraints_used.distribute(completely_distributed_solution);</div>
+<div class="line"><a id="l01523" name="l01523"></a><span class="lineno"> 1523</span>  newton_update = completely_distributed_solution;</div>
+<div class="line"><a id="l01524" name="l01524"></a><span class="lineno"> 1524</span>}</div>
 </div>
+<div class="line"><a id="l01525" name="l01525"></a><span class="lineno"> 1525</span> </div>
 <div class="line"><a id="l01526" name="l01526"></a><span class="lineno"> 1526</span> </div>
 <div class="line"><a id="l01527" name="l01527"></a><span class="lineno"> 1527</span> </div>
-<div class="line"><a id="l01528" name="l01528"></a><span class="lineno"> 1528</span> </div>
-<div class="line"><a id="l01529" name="l01529"></a><span class="lineno"> 1529</span><span class="keyword">template</span> <span class="keyword">class </span><a class="code hl_class" href="classTracer.html">Tracer&lt;2&gt;</a>;</div>
-<div class="line"><a id="l01530" name="l01530"></a><span class="lineno"> 1530</span><span class="keyword">template</span> <span class="keyword">class </span><a class="code hl_class" href="classTracer.html">Tracer&lt;3&gt;</a>;</div>
+<div class="line"><a id="l01528" name="l01528"></a><span class="lineno"> 1528</span><span class="keyword">template</span> <span class="keyword">class </span><a class="code hl_class" href="classTracer.html">Tracer&lt;2&gt;</a>;</div>
+<div class="line"><a id="l01529" name="l01529"></a><span class="lineno"> 1529</span><span class="keyword">template</span> <span class="keyword">class </span><a class="code hl_class" href="classTracer.html">Tracer&lt;3&gt;</a>;</div>
 <div class="ttc" id="abdf_8h_html"><div class="ttname"><a href="bdf_8h.html">bdf.h</a></div></div>
 <div class="ttc" id="aclassStabilizedDGMethodsCopyData_html"><div class="ttname"><a href="classStabilizedDGMethodsCopyData.html">StabilizedDGMethodsCopyData</a></div><div class="ttdoc">Responsible for storing the information calculated using the discontinuous galerkin (DG) assembly of ...</div><div class="ttdef"><b>Definition</b> <a href="copy__data_8h_source.html#l00125">copy_data.h:126</a></div></div>
 <div class="ttc" id="aclassStabilizedDGMethodsCopyData_html_a640d8d13ddb024540d51a17c8677ac8c"><div class="ttname"><a href="classStabilizedDGMethodsCopyData.html#a640d8d13ddb024540d51a17c8677ac8c">StabilizedDGMethodsCopyData::face_data</a></div><div class="ttdeci">std::vector&lt; CopyDataFace &gt; face_data</div><div class="ttdef"><b>Definition</b> <a href="copy__data_8h_source.html#l00148">copy_data.h:148</a></div></div>
@@ -1702,6 +1701,7 @@ $(document).ready(function() { init_codefold(0); });
 <div class="ttc" id="aclassTracerScratchData_html_a76785e295498cebd6065f73952a2cebf"><div class="ttname"><a href="classTracerScratchData.html#a76785e295498cebd6065f73952a2cebf">TracerScratchData::calculate_physical_properties</a></div><div class="ttdeci">void calculate_physical_properties()</div><div class="ttdoc">Calculates the physical properties. This function calculates the physical properties that may be requ...</div><div class="ttdef"><b>Definition</b> <a href="tracer__scratch__data_8cc_source.html#l00069">tracer_scratch_data.cc:69</a></div></div>
 <div class="ttc" id="aclassTracerScratchData_html_afd65777a054d80408e8bfffc25dc9fd0"><div class="ttname"><a href="classTracerScratchData.html#afd65777a054d80408e8bfffc25dc9fd0">TracerScratchData::reinit</a></div><div class="ttdeci">void reinit(const typename DoFHandler&lt; dim &gt;::active_cell_iterator &amp;cell, const VectorType &amp;current_solution, const std::vector&lt; VectorType &gt; &amp;previous_solutions, const Function&lt; dim &gt; *source_function)</div><div class="ttdoc">Reinitializes the content of the scratch.</div><div class="ttdef"><b>Definition</b> <a href="tracer__scratch__data_8h_source.html#l00147">tracer_scratch_data.h:147</a></div></div>
 <div class="ttc" id="aclassTracer_html"><div class="ttname"><a href="classTracer.html">Tracer</a></div><div class="ttdef"><b>Definition</b> <a href="tracer_8h_source.html#l00050">tracer.h:51</a></div></div>
+<div class="ttc" id="aclassTracer_html_a0028e0bd8742d8e98488ed428fe9e2b0"><div class="ttname"><a href="classTracer.html#a0028e0bd8742d8e98488ed428fe9e2b0">Tracer::solve_linear_system</a></div><div class="ttdeci">void solve_linear_system() override</div><div class="ttdoc">Call for the solution of the linear system of equation using a strategy appropriate to the auxiliary ...</div><div class="ttdef"><b>Definition</b> <a href="tracer_8cc_source.html#l01452">tracer.cc:1452</a></div></div>
 <div class="ttc" id="aclassTracer_html_a03a741348bdd0c0b661d6c8ff1ec489d"><div class="ttname"><a href="classTracer.html#a03a741348bdd0c0b661d6c8ff1ec489d">Tracer::assemble_system_rhs_cg</a></div><div class="ttdeci">void assemble_system_rhs_cg()</div><div class="ttdoc">Assembles the matrix associated with the solver when CG elements are used. This uses the WorkStream p...</div><div class="ttdef"><b>Definition</b> <a href="tracer_8cc_source.html#l00389">tracer.cc:389</a></div></div>
 <div class="ttc" id="aclassTracer_html_a0a252bcc7b27a68eece263ff2623b3b1"><div class="ttname"><a href="classTracer.html#a0a252bcc7b27a68eece263ff2623b3b1">Tracer::gather_tables</a></div><div class="ttdeci">std::vector&lt; OutputStructTableHandler &gt; gather_tables() override</div><div class="ttdoc">Returns a vector of references to TableHandler objects that needs to be serialized/deserialized for t...</div><div class="ttdef"><b>Definition</b> <a href="tracer_8cc_source.html#l01134">tracer.cc:1134</a></div></div>
 <div class="ttc" id="aclassTracer_html_a12866b1322b64054e5dfff2571df661f"><div class="ttname"><a href="classTracer.html#a12866b1322b64054e5dfff2571df661f">Tracer::assemble_system_matrix_dg</a></div><div class="ttdeci">void assemble_system_matrix_dg()</div><div class="ttdoc">Assembles the matrix associated with the solver when DG elements are used. This uses the MeshWorker p...</div><div class="ttdef"><b>Definition</b> <a href="tracer_8cc_source.html#l00124">tracer.cc:124</a></div></div>
@@ -1726,7 +1726,6 @@ $(document).ready(function() { init_codefold(0); });
 <div class="ttc" id="aclassTracer_html_ad8ca9f8d848ec5159227bd766471f5c6"><div class="ttname"><a href="classTracer.html#ad8ca9f8d848ec5159227bd766471f5c6">Tracer::assemble_system_rhs</a></div><div class="ttdeci">void assemble_system_rhs() override</div><div class="ttdoc">Assemble the rhs associated with the solver.</div><div class="ttdef"><b>Definition</b> <a href="tracer_8cc_source.html#l00366">tracer.cc:366</a></div></div>
 <div class="ttc" id="aclassTracer_html_adcc81d835a1e2e9b71ea0c897d16dcf9"><div class="ttname"><a href="classTracer.html#adcc81d835a1e2e9b71ea0c897d16dcf9">Tracer::calculate_tracer_statistics</a></div><div class="ttdeci">void calculate_tracer_statistics()</div><div class="ttdoc">Calculate tracer statistics : Max, min, average and standard-deviation.</div><div class="ttdef"><b>Definition</b> <a href="tracer_8cc_source.html#l00818">tracer.cc:818</a></div></div>
 <div class="ttc" id="aclassTracer_html_ae37db3727824079215f6379e56fd7f60"><div class="ttname"><a href="classTracer.html#ae37db3727824079215f6379e56fd7f60">Tracer::compute_kelly</a></div><div class="ttdeci">void compute_kelly(const std::pair&lt; const Variable, Parameters::MultipleAdaptationParameters &gt; &amp;, dealii::Vector&lt; float &gt; &amp;estimated_error_per_cell) override</div><div class="ttdoc">Compute the Kelly error estimator for mesh refinement. NB : not implemented for the tracer parameter ...</div><div class="ttdef"><b>Definition</b> <a href="tracer_8cc_source.html#l01430">tracer.cc:1430</a></div></div>
-<div class="ttc" id="aclassTracer_html_ae60eba49f196721cba5a648c64868f6e"><div class="ttname"><a href="classTracer.html#ae60eba49f196721cba5a648c64868f6e">Tracer::solve_linear_system</a></div><div class="ttdeci">void solve_linear_system(const bool initial_step) override</div><div class="ttdoc">Call for the solution of the linear system of equation using a strategy appropriate to the auxiliary ...</div><div class="ttdef"><b>Definition</b> <a href="tracer_8cc_source.html#l01452">tracer.cc:1452</a></div></div>
 <div class="ttc" id="aclassTracer_html_ae9356d51b14f4d8db3505e21e179d82c"><div class="ttname"><a href="classTracer.html#ae9356d51b14f4d8db3505e21e179d82c">Tracer::finish_simulation</a></div><div class="ttdeci">void finish_simulation() override</div><div class="ttdoc">Carry out the operations required to finish a simulation correctly.</div><div class="ttdef"><b>Definition</b> <a href="tracer_8cc_source.html#l00717">tracer.cc:717</a></div></div>
 <div class="ttc" id="aclassTracer_html_aeb8ac98be79872fb1ea9d30414e8cc5a"><div class="ttname"><a href="classTracer.html#aeb8ac98be79872fb1ea9d30414e8cc5a">Tracer::read_checkpoint</a></div><div class="ttdeci">void read_checkpoint() override</div><div class="ttdoc">Allows tracer physics to set up solution vector from checkpoint file;.</div><div class="ttdef"><b>Definition</b> <a href="tracer_8cc_source.html#l01191">tracer.cc:1191</a></div></div>
 <div class="ttc" id="aclassTracer_html_aed23220122e490c3ebda3336276adf3a"><div class="ttname"><a href="classTracer.html#aed23220122e490c3ebda3336276adf3a">Tracer::gather_output_hook</a></div><div class="ttdeci">virtual std::vector&lt; OutputStruct&lt; dim, GlobalVectorType &gt; &gt; gather_output_hook() override</div><div class="ttdoc">Gather and return vector of output structs that are particular to some applications.</div><div class="ttdef"><b>Definition</b> <a href="tracer_8cc_source.html#l00654">tracer.cc:654</a></div></div>

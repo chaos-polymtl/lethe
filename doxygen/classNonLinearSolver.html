@@ -111,8 +111,8 @@ Public Member Functions</h2></td></tr>
 <tr class="separator:a64cc52ea704a9407555ec08f6a262294"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a711a5f38c728ef9025dc3ae46368209e" id="r_a711a5f38c728ef9025dc3ae46368209e"><td class="memItemLeft" align="right" valign="top">virtual&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classNonLinearSolver.html#a711a5f38c728ef9025dc3ae46368209e">~NonLinearSolver</a> ()</td></tr>
 <tr class="separator:a711a5f38c728ef9025dc3ae46368209e"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:abb030d08140fe6f2ecd6d8b73491bac7" id="r_abb030d08140fe6f2ecd6d8b73491bac7"><td class="memItemLeft" align="right" valign="top">virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classNonLinearSolver.html#abb030d08140fe6f2ecd6d8b73491bac7">solve</a> (const bool is_initial_step)=0</td></tr>
-<tr class="separator:abb030d08140fe6f2ecd6d8b73491bac7"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a35ccca71eb89ffcc9738e67c526eccde" id="r_a35ccca71eb89ffcc9738e67c526eccde"><td class="memItemLeft" align="right" valign="top">virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classNonLinearSolver.html#a35ccca71eb89ffcc9738e67c526eccde">solve</a> ()=0</td></tr>
+<tr class="separator:a35ccca71eb89ffcc9738e67c526eccde"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ad43a0c8cd50744caf83bd37bc86580d4" id="r_ad43a0c8cd50744caf83bd37bc86580d4"><td class="memItemLeft" align="right" valign="top">unsigned int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classNonLinearSolver.html#ad43a0c8cd50744caf83bd37bc86580d4">get_current_newton_iteration</a> () const</td></tr>
 <tr class="separator:ad43a0c8cd50744caf83bd37bc86580d4"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
@@ -168,7 +168,7 @@ template&lt;typename VectorType &gt; </div>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="non__linear__solver_8h_source.html#l00084">84</a> of file <a class="el" href="non__linear__solver_8h_source.html">non_linear_solver.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="non__linear__solver_8h_source.html#l00081">81</a> of file <a class="el" href="non__linear__solver_8h_source.html">non_linear_solver.h</a>.</p>
 
 </div>
 </div>
@@ -232,14 +232,14 @@ template&lt;typename VectorType &gt; </div>
 <p>Get the current newton iteration. </p>
 <dl class="section return"><dt>Returns</dt><dd>Iteration number. </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="non__linear__solver_8h_source.html#l00058">58</a> of file <a class="el" href="non__linear__solver_8h_source.html">non_linear_solver.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="non__linear__solver_8h_source.html#l00055">55</a> of file <a class="el" href="non__linear__solver_8h_source.html">non_linear_solver.h</a>.</p>
 
-<p class="reference">References <a class="el" href="non__linear__solver_8h_source.html#l00080">NonLinearSolver&lt; VectorType &gt;::outer_iteration</a>.</p>
+<p class="reference">References <a class="el" href="non__linear__solver_8h_source.html#l00077">NonLinearSolver&lt; VectorType &gt;::outer_iteration</a>.</p>
 
 </div>
 </div>
-<a id="abb030d08140fe6f2ecd6d8b73491bac7" name="abb030d08140fe6f2ecd6d8b73491bac7"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#abb030d08140fe6f2ecd6d8b73491bac7">&#9670;&#160;</a></span>solve()</h2>
+<a id="a35ccca71eb89ffcc9738e67c526eccde" name="a35ccca71eb89ffcc9738e67c526eccde"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a35ccca71eb89ffcc9738e67c526eccde">&#9670;&#160;</a></span>solve()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -252,8 +252,7 @@ template&lt;typename VectorType &gt; </div>
         <tr>
           <td class="memname">virtual void <a class="el" href="classNonLinearSolver.html">NonLinearSolver</a>&lt; VectorType &gt;::solve </td>
           <td>(</td>
-          <td class="paramtype">const bool&#160;</td>
-          <td class="paramname"><em>is_initial_step</em></td><td>)</td>
+          <td class="paramname"></td><td>)</td>
           <td></td>
         </tr>
       </table>
@@ -265,14 +264,8 @@ template&lt;typename VectorType &gt; </div>
 </div><div class="memdoc">
 
 <p>Solve the non-linear system of equations. </p>
-<dl class="params"><dt>Parameters</dt><dd>
-  <table class="params">
-    <tr><td class="paramdir">[in]</td><td class="paramname">is_initial_step</td><td>Boolean variable that controls which constraints are going to be applied to the equations depending on the time step. </td></tr>
-  </table>
-  </dd>
-</dl>
 
-<p>Implemented in <a class="el" href="classInexactNewtonNonLinearSolver.html#a60831c74a53644aaae2d2fc55482e851">InexactNewtonNonLinearSolver&lt; VectorType &gt;</a>, <a class="el" href="classKinsolNewtonNonLinearSolver.html#a062f5a79d615d143ff6db81575584f11">KinsolNewtonNonLinearSolver&lt; VectorType &gt;</a>, and <a class="el" href="classNewtonNonLinearSolver.html#a55484f9456e1ea16e9b5c2f0c0e0ea56">NewtonNonLinearSolver&lt; VectorType &gt;</a>.</p>
+<p>Implemented in <a class="el" href="classInexactNewtonNonLinearSolver.html#afcd84adb3591025668b0ab586bbadf63">InexactNewtonNonLinearSolver&lt; VectorType &gt;</a>, <a class="el" href="classKinsolNewtonNonLinearSolver.html#a7cda7cc93f1f28559f0614f7681c8d99">KinsolNewtonNonLinearSolver&lt; VectorType &gt;</a>, and <a class="el" href="classNewtonNonLinearSolver.html#a4501092a7279aaf088cd941d8ed04570">NewtonNonLinearSolver&lt; VectorType &gt;</a>.</p>
 
 </div>
 </div>
@@ -301,7 +294,7 @@ template&lt;typename VectorType &gt; </div>
 
 <p>Number of current Newton iteration. </p>
 
-<p class="definition">Definition at line <a class="el" href="non__linear__solver_8h_source.html#l00080">80</a> of file <a class="el" href="non__linear__solver_8h_source.html">non_linear_solver.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="non__linear__solver_8h_source.html#l00077">77</a> of file <a class="el" href="non__linear__solver_8h_source.html">non_linear_solver.h</a>.</p>
 
 </div>
 </div>
@@ -329,7 +322,7 @@ template&lt;typename VectorType &gt; </div>
 
 <p>Non linear solver parameters. </p>
 
-<p class="definition">Definition at line <a class="el" href="non__linear__solver_8h_source.html#l00074">74</a> of file <a class="el" href="non__linear__solver_8h_source.html">non_linear_solver.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="non__linear__solver_8h_source.html#l00071">71</a> of file <a class="el" href="non__linear__solver_8h_source.html">non_linear_solver.h</a>.</p>
 
 </div>
 </div>
@@ -357,7 +350,7 @@ template&lt;typename VectorType &gt; </div>
 
 <p>Physics solver for which we need a non-linear solver. </p>
 
-<p class="definition">Definition at line <a class="el" href="non__linear__solver_8h_source.html#l00068">68</a> of file <a class="el" href="non__linear__solver_8h_source.html">non_linear_solver.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="non__linear__solver_8h_source.html#l00065">65</a> of file <a class="el" href="non__linear__solver_8h_source.html">non_linear_solver.h</a>.</p>
 
 </div>
 </div>
