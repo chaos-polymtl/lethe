@@ -514,22 +514,6 @@ public:
   }
 
   /**
-   * @brief Request the reynolds_stress solution of a given physics.
-   * WIP for an upcoming PR, not yet implemented in the solver.
-   *
-   * @param physics_id The physics of the solution being requested
-   */
-  GlobalVectorType *
-  get_reynolds_stress_solution(const PhysicsID physics_id)
-  {
-    AssertThrow((std::find(active_physics.begin(),
-                           active_physics.end(),
-                           physics_id) != active_physics.end()),
-                ExcInternalError());
-    return reynolds_stress_solutions;
-  }
-
-  /**
    @brief Request the solid objects. Used an auxiliary physics
     * needs to apply a boundary condition on a solid through
     * Nitsche immersed boundary method.
@@ -701,27 +685,6 @@ public:
                 ExcInternalError());
     physics_time_average_solutions[physics_id] = solution_vector;
   }
-
-
-  /**
-   * @brief Sets the reference to the Reynolds stress of the physics in the multiphysics interface.
-   * WIP for an upcoming PR, not yet implemented in the solver.
-   *
-   * @param physics_id The physics of the DOF handler being requested
-   *
-   * @param solution_vector The reference to the solution vector of the physics
-   */
-  void
-  set_reynolds_stress_solutions(const PhysicsID   physics_id,
-                                GlobalVectorType *solution_vector)
-  {
-    AssertThrow((std::find(active_physics.begin(),
-                           active_physics.end(),
-                           physics_id) != active_physics.end()),
-                ExcInternalError());
-    physics_time_average_solutions[physics_id] = solution_vector;
-  }
-
 
   /**
    * @brief Sets the reference to the solution of the physics in the multiphysics interface
@@ -904,10 +867,6 @@ private:
   // average solution
   std::map<PhysicsID, GlobalBlockVectorType *>
     block_physics_time_average_solutions;
-
-  // reynolds stress solution. This is WIP and is not yet implemented in the
-  // solver.
-  GlobalVectorType *reynolds_stress_solutions;
 
   // Immersed solid shape to be used by auxiliary physics
   Shape<dim> *immersed_solid_shape;
