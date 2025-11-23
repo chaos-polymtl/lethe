@@ -5,6 +5,12 @@ The changelog for the previous releases of Lethe are located in the release_note
 The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
 
+### [Master] - 2025-11-23
+
+### Removed
+
+- MINOR Reynolds stress solutions were to be integrated into MultiphysicsInterface. The integration work began in 2022 but was never completed. Since they are not used through MultiphysicsInterface and the implementation that had been started was flawed, the relevant code elements have been removed. This can be reworked when it becomes necessary to integrate Reynolds stress solutions into MultiphysicsInterface. [#1822](https://github.com/chaos-polymtl/lethe/pull/1822)
+
 ### [Master] - 2025-11-21
 
 ### Added
