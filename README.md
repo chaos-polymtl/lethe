@@ -75,6 +75,7 @@ Follow the instructions in the
 - Jeanne Joachim
 - Rajeshwari Kamble
 - Martin Kronbichler
+- Justin Lamouche
 - Maxime Landry
 - Pierre Laurentin
 - Charles Le Pailleur
