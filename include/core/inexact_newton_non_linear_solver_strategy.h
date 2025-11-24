@@ -1,18 +1,22 @@
-// SPDX-FileCopyrightText: Copyright (c) 2019-2025 The Lethe Authors
+// SPDX-FileCopyrightText: Copyright (c) 2021-2025 The Lethe Authors
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
-#ifndef lethe_newton_non_linear_solver_h
-#define lethe_newton_non_linear_solver_h
+#ifndef lethe_inexact_newton_non_linear_solver_strategy_h
+#define lethe_inexact_newton_non_linear_solver_strategy_h
 
 #include <core/physics_solver_strategy.h>
 
+#include <iomanip>
+
 /**
- * @brief Non-linear solver for non-linear systems of equations which uses a Newton
- * method with \f$\alpha\f$ relaxation to ensure that the residual is
- * monotonically decreasing.
+ * @brief Non-linear solver for non-linear systems of equations which uses an inexact
+ * Newton method with \f$\alpha\f$ relaxation to ensure that the residual is
+ * monotonically decreasing. It allows to reuse the matrix and avoid its
+ * reassembly for every Newton step.
+ *
  */
 template <typename VectorType>
-class NewtonNonLinearSolver : public PhysicsSolverStrategy<VectorType>
+class InexactNewtonNonLinearSolver : public PhysicsSolverStrategy<VectorType>
 {
 public:
   /**
@@ -25,8 +29,8 @@ public:
    * simulation parameter file.
    *
    */
-  NewtonNonLinearSolver(PhysicsSolver<VectorType>         *physics_solver,
-                        const Parameters::NonLinearSolver &param);
+  InexactNewtonNonLinearSolver(PhysicsSolver<VectorType> *physics_solver,
+                               const Parameters::NonLinearSolver &param);
 
 
   /**
@@ -35,26 +39,30 @@ public:
    */
   void
   solve() override;
+
+private:
+  bool matrix_requires_assembly;
 };
 
 template <typename VectorType>
-NewtonNonLinearSolver<VectorType>::NewtonNonLinearSolver(
+InexactNewtonNonLinearSolver<VectorType>::InexactNewtonNonLinearSolver(
   PhysicsSolver<VectorType>         *physics_solver,
   const Parameters::NonLinearSolver &params)
   : PhysicsSolverStrategy<VectorType>(physics_solver, params)
+  , matrix_requires_assembly(true)
 {}
 
 template <typename VectorType>
 void
-NewtonNonLinearSolver<VectorType>::solve()
+InexactNewtonNonLinearSolver<VectorType>::solve()
 {
-  double global_res;
-  double current_res;
-  double last_res;
-  this->outer_iteration = 0;
-  last_res              = 1e6;
-  current_res           = 1e6;
-  global_res            = 1e6;
+  double       global_res;
+  double       current_res;
+  double       last_res;
+  unsigned int outer_iteration = 0;
+  last_res                     = 1e6;
+  current_res                  = 1e6;
+  global_res                   = 1e6;
 
   // current_res and global_res are different as one is defined based on the l2
   // norm of the residual vector (current_res) and the other (global_res) is
@@ -71,20 +79,24 @@ NewtonNonLinearSolver<VectorType>::solve()
   auto &evaluation_point = solver->get_evaluation_point();
   auto &present_solution = solver->get_present_solution();
 
+  if (!this->params.reuse_matrix)
+    matrix_requires_assembly = true;
+
   while ((global_res > this->params.tolerance) &&
-         this->outer_iteration < this->params.max_iterations)
+         outer_iteration < this->params.max_iterations)
     {
       evaluation_point = present_solution;
 
-      solver->assemble_system_matrix();
+      if (matrix_requires_assembly)
+        {
+          solver->assemble_system_matrix();
+          solver->setup_preconditioner();
+        }
 
-      if (!this->params.reuse_preconditioner || this->outer_iteration == 0)
-        solver->setup_preconditioner();
-
-      if (this->params.force_rhs_calculation || this->outer_iteration == 0)
+      if (this->params.force_rhs_calculation || outer_iteration == 0)
         solver->assemble_system_rhs();
 
-      if (this->outer_iteration == 0)
+      if (outer_iteration == 0)
         {
           auto &system_rhs = solver->get_system_rhs();
           current_res      = system_rhs.l2_norm() / rescale_metric;
@@ -93,7 +105,7 @@ NewtonNonLinearSolver<VectorType>::solve()
 
       if (this->params.verbosity != Parameters::Verbosity::quiet)
         {
-          solver->pcout << "Newton iteration: " << this->outer_iteration
+          solver->pcout << "Newton iteration: " << outer_iteration
                         << "  - Residual:  " << current_res << std::endl;
         }
 
@@ -126,9 +138,9 @@ NewtonNonLinearSolver<VectorType>::solve()
             }
 
           // If it's not the first iteration of alpha check if the residual is
-          // smaller than the last alpha iteration. If it's not smaller, we fall
-          // back to the last alpha iteration.
-          if (current_res > last_alpha_res and alpha_iter != 0)
+          // smaller then the last alpha iteration. If it's not smaller we fall
+          // back to the last alpha iteration, which is generally the first one.
+          if (alpha_iter != 0 and current_res > last_alpha_res)
             {
               alpha                  = 2 * alpha;
               local_evaluation_point = present_solution;
@@ -149,6 +161,17 @@ NewtonNonLinearSolver<VectorType>::solve()
           if (current_res < this->params.step_tolerance * last_res ||
               last_res < this->params.tolerance)
             {
+              // If the current residual has decreased  by less than
+              // the last residual * matrix_tolerance or more than one alpha
+              // iteration was required, the jacobian approximation has become
+              // insufficiently performant and, consequently, it is preferable
+              // to renew the jacobian matrix
+              if (current_res > this->params.matrix_tolerance * last_res ||
+                  alpha_iter > 0)
+                matrix_requires_assembly = true;
+              else
+                matrix_requires_assembly = false;
+
               break;
             }
           last_alpha_res = current_res;
@@ -158,13 +181,13 @@ NewtonNonLinearSolver<VectorType>::solve()
       global_res       = solver->get_current_residual() / rescale_metric;
       present_solution = evaluation_point;
       last_res         = current_res;
-      ++this->outer_iteration;
+      ++outer_iteration;
     }
 
   // If the non-linear solver has not converged abort simulation if
   // abort_at_convergence_failure=true
   if ((global_res > this->params.tolerance) &&
-      this->outer_iteration >= this->params.max_iterations &&
+      outer_iteration >= this->params.max_iterations &&
       this->params.abort_at_convergence_failure)
     {
       throw(std::runtime_error(

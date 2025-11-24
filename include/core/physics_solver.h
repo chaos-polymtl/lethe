@@ -5,10 +5,10 @@
 #define lethe_physics_solver_h
 
 
-#include <core/inexact_newton_non_linear_solver.h>
-#include <core/kinsol_newton_non_linear_solver.h>
+#include <core/inexact_newton_non_linear_solver_strategy.h>
+#include <core/kinsol_newton_non_linear_solver_strategy.h>
 #include <core/linear_solver_strategy.h>
-#include <core/newton_non_linear_solver.h>
+#include <core/newton_non_linear_solver_strategy.h>
 #include <core/parameters.h>
 #include <core/physics_solver_strategy.h>
 

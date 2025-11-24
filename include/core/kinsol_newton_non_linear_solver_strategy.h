@@ -1,8 +1,8 @@
 // SPDX-FileCopyrightText: Copyright (c) 2021, 2023-2024 The Lethe Authors
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
-#ifndef lethe_kinsol_non_linear_solver_h
-#define lethe_kinsol_non_linear_solver_h
+#ifndef lethe_kinsol_newton_non_linear_solver_strategy_h
+#define lethe_kinsol_newton_non_linear_solver_strategy_h
 
 #include <core/parameters.h>
 #include <core/physics_solver_strategy.h>

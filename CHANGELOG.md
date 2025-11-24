@@ -4,6 +4,12 @@ All notable changes to the Lethe project will be documented in this file.
 The changelog for the previous releases of Lethe are located in the release_notes folder.
 The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
+### [Master] - 2025-11-23
+
+### Added
+
+- MAJOR We now need the possibility to solve linear system of equations for futur physics, consequently the `physics_solver` ant the `non_linear_solver` classes have now an overloaded constructor to enable this functionality. To have a better semantics with this new architecture, the general name of "solver_stratgy" is used instead of "non_linear" when it is useful. A new `linear_solver_strategy` is also introduced with is associated unit test. [#1804] (https://github.com/chaos-polymtl/lethe/pull/1804)
+
 
 ### [Master] - 2025-11-23
 
