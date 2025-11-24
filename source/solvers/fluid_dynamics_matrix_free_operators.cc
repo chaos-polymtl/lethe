@@ -266,7 +266,7 @@ NavierStokesOperatorBase<dim, number>::initialize_time_stepping_data(
 
   if (test_is_bdf)
     {
-      data.bdf_coefs = &this->simulation_control->get_bdf_coefficients();
+      data.bdf_coefficients = &this->simulation_control->get_bdf_coefficients();
     }
 
   if (test_is_sdirk)
@@ -1510,9 +1510,9 @@ NavierStokesStabilizedOperator<dim, number>::do_cell_integral_local(
   auto time_stepping_data =
     this->initialize_time_stepping_data(is_bdf, is_sdirk);
 
-  const double          a_ii      = time_stepping_data.a_ii;
-  const double          dt        = time_stepping_data.dt;
-  const Vector<double> *bdf_coefs = time_stepping_data.bdf_coefs;
+  const double          a_ii             = time_stepping_data.a_ii;
+  const double          dt               = time_stepping_data.dt;
+  const Vector<double> *bdf_coefficients = time_stepping_data.bdf_coefficients;
 
   for (const auto q : integrator.quadrature_point_indices())
     {
@@ -1583,7 +1583,7 @@ NavierStokesStabilizedOperator<dim, number>::do_cell_integral_local(
             }
           // +(v,∂t δu)
           if (is_bdf)
-            value_result[i] += (*bdf_coefs)[0] * value[i];
+            value_result[i] += (*bdf_coefficients)[0] * value[i];
           if (is_sdirk)
             {
               value_result[i] += (1.0 / (dt * a_ii)) * value[i];
@@ -1607,7 +1607,7 @@ NavierStokesStabilizedOperator<dim, number>::do_cell_integral_local(
             }
           // +(∂t δu)·τ∇q
           if (is_bdf)
-            gradient_result[dim][i] += tau * (*bdf_coefs)[0] * value[i];
+            gradient_result[dim][i] += tau * (*bdf_coefficients)[0] * value[i];
 
           if (is_sdirk)
             gradient_result[dim][i] += tau * (1.0 / (dt * a_ii)) * value[i];
@@ -1652,8 +1652,8 @@ NavierStokesStabilizedOperator<dim, number>::do_cell_integral_local(
 
               // +(∂t δu)τ(u·∇)v
               if (is_bdf)
-                gradient_result[i][k] +=
-                  tau * previous_values[k] * ((*bdf_coefs)[0] * value[i]);
+                gradient_result[i][k] += tau * previous_values[k] *
+                                         ((*bdf_coefficients)[0] * value[i]);
 
               if (enable_mortar)
                 {
@@ -1662,7 +1662,7 @@ NavierStokesStabilizedOperator<dim, number>::do_cell_integral_local(
                   // -(∂t δu)τ(u_ale·∇)v
                   if (transient)
                     gradient_result[i][k] -=
-                      tau * u_ale[k] * ((*bdf_coefs)[0] * value[i]);
+                      tau * u_ale[k] * ((*bdf_coefficients)[0] * value[i]);
                 }
 
               if (is_sdirk)
@@ -1691,9 +1691,10 @@ NavierStokesStabilizedOperator<dim, number>::do_cell_integral_local(
 
               // +(∂t u)τ(δu·∇)v
               if (is_bdf)
-                gradient_result[i][k] += tau * value[k] *
-                                         ((*bdf_coefs)[0] * previous_values[i] +
-                                          previous_time_derivatives[i]);
+                gradient_result[i][k] +=
+                  tau * value[k] *
+                  ((*bdf_coefficients)[0] * previous_values[i] +
+                   previous_time_derivatives[i]);
               if (is_sdirk)
                 {
                   gradient_result[i][k] +=
@@ -1730,8 +1731,9 @@ NavierStokesStabilizedOperator<dim, number>::do_cell_integral_local(
 
                       // +(∂t δu)τ(−ν∆v)
                       if (is_bdf)
-                        hessian_result[i][k][k] += tau * -kinematic_viscosity *
-                                                   ((*bdf_coefs)[0] * value[i]);
+                        hessian_result[i][k][k] +=
+                          tau * -kinematic_viscosity *
+                          ((*bdf_coefficients)[0] * value[i]);
                       if (is_sdirk)
                         {
                           hessian_result[i][k][k] +=
@@ -1820,7 +1822,7 @@ NavierStokesStabilizedOperator<dim, number>::local_evaluate_residual(
       const double a_ii = time_stepping_data.a_ii;
       const double dt   = time_stepping_data.dt;
       if (is_bdf)
-        bdf_coefs = time_stepping_data.bdf_coefs;
+        bdf_coefs = time_stepping_data.bdf_coefficients;
 
       for (const auto q : integrator.quadrature_point_indices())
         {
@@ -2112,7 +2114,7 @@ NavierStokesNonNewtonianStabilizedOperator<dim, number>::do_cell_integral_local(
 
   const double          a_ii      = time_stepping_data.a_ii;
   const double          dt        = time_stepping_data.dt;
-  const Vector<double> *bdf_coefs = time_stepping_data.bdf_coefs;
+  const Vector<double> *bdf_coefs = time_stepping_data.bdf_coefficients;
 
   for (const auto q : integrator.quadrature_point_indices())
     {
@@ -2358,7 +2360,7 @@ NavierStokesNonNewtonianStabilizedOperator<dim, number>::
 
       double                a_ii      = time_stepping_data.a_ii;
       double                dt        = time_stepping_data.dt;
-      const Vector<double> *bdf_coefs = time_stepping_data.bdf_coefs;
+      const Vector<double> *bdf_coefs = time_stepping_data.bdf_coefficients;
 
       for (const auto q : integrator.quadrature_point_indices())
         {

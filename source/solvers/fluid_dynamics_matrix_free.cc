@@ -2634,13 +2634,13 @@ FluidDynamicsMatrixFree<dim>::multi_stage_preresolution(
 template <int dim>
 void
 FluidDynamicsMatrixFree<dim>::multi_stage_postresolution(
-  unsigned int                                      stage,
-  Parameters::SimulationControl::TimeSteppingMethod method,
-  double                                            time_step)
+  const unsigned int                                      stage,
+  const Parameters::SimulationControl::TimeSteppingMethod method,
+  const double                                            time_step)
 {
-  SDIRKTable     table = sdirk_table(method);
-  SDIRKStageData stage_data(table, stage + 1);
-  const double   a_ii = stage_data.a_ij[stage];
+  const SDIRKTable     table = sdirk_table(method);
+  const SDIRKStageData stage_data(table, stage + 1);
+  const double         a_ii = stage_data.a_ij[stage];
 
   // Once we have solved the nonlinear system for the velocity, we
   // want to store the value of the coefficient k_i for the final

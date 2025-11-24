@@ -65,7 +65,8 @@ FluidDynamicsBlock<dim>::setup_assemblers()
   if (this->simulation_parameters.multiphysics.VOF)
     {
       // Time-stepping schemes
-      if (time_stepping_is_bdf(this->simulation_control->get_assembly_method()) &&
+      if (time_stepping_is_bdf(
+            this->simulation_control->get_assembly_method()) &&
           this->simulation_parameters.physical_properties_manager
             .density_is_constant())
         {
@@ -73,7 +74,8 @@ FluidDynamicsBlock<dim>::setup_assemblers()
             std::make_shared<GLSNavierStokesVOFAssemblerBDF<dim>>(
               this->simulation_control));
         }
-      else if (time_stepping_is_bdf(this->simulation_control->get_assembly_method()))
+      else if (time_stepping_is_bdf(
+                 this->simulation_control->get_assembly_method()))
         {
           this->assemblers.emplace_back(
             std::make_shared<

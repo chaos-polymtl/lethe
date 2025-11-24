@@ -461,6 +461,7 @@ protected:
    *
    * @param stage An unsigned integer which gives the index of the current stage
    * @param method SDIRK methods for now (BDF methods are single stage)
+   * @param time_step Current time step value
    */
   virtual void
   multi_stage_postresolution(

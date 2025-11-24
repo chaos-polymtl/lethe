@@ -35,9 +35,10 @@ template <int dim>
 void
 Tracer<dim>::setup_assemblers()
 {
-  AssertThrow(
-    time_stepping_is_sdirk(this->simulation_control->get_assembly_method()) == false,
-    ExcMessage("The SDIRK scheme is not yet supported for this physics"));
+  AssertThrow(time_stepping_is_sdirk(
+                this->simulation_control->get_assembly_method()) == false,
+              ExcMessage(
+                "The SDIRK scheme is not yet supported for this physics"));
 
   this->assemblers.clear();
 
