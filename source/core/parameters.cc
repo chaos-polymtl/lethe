@@ -2359,14 +2359,14 @@ namespace Parameters
         prm.declare_entry(
           "solver",
           "newton",
-          Patterns::Selection("newton|kinsol_newton|inexact_newton|disabled"),
+          Patterns::Selection("newton|kinsol_newton|inexact_newton"),
           "Non-linear solver that will be used "
-          "Choices are <newton|kinsol_newton|inexact_newton|disabled>."
+          "Choices are <newton|kinsol_newton|inexact_newton>."
           " The newton solver is a traditional newton solver with"
           "an analytical jacobian formulation. The jacobian matrix and the preconditioner"
           "are assembled every iteration. In the kinsol_newton method, the nonlinear solver"
           "Kinsol from the SUNDIALS library is used. This solver has an internal algorithm"
-          "that decides whether to reassemble the Jacobian matrix or not.  When the non-linear solver is disabled, no Jacobian matrix is assembled and the system is solved only once by the linear solver. This is only supported by the linear physics.");
+          "that decides whether to reassemble the Jacobian matrix or not.");
 
         prm.declare_entry(
           "kinsol strategy",

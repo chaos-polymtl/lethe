@@ -55,8 +55,8 @@ add_library(lethe-core
   ../../include/core/interface_property_model.h
   ../../include/core/interface_tools.h
   ../../include/core/kinsol_newton_non_linear_solver_strategy.h
-  ../../include/core/linear_solver_strategy.h
   ../../include/core/lethe_grid_tools.h
+  ../../include/core/linear_solver_strategy.h
   ../../include/core/manifolds.h
   ../../include/core/mesh_controller.h
   ../../include/core/mobility_cahn_hilliard_model.h
