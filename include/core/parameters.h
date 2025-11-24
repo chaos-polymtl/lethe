@@ -119,6 +119,9 @@ namespace Parameters
     // BDF startup time scaling
     double startup_timestep_scaling;
 
+    // True if the time-step should be available upon restart
+    bool override_time_step_on_restart;
+
     // Number of mesh adaptation (steady simulations)
     unsigned int number_mesh_adaptation;
 

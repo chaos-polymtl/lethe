@@ -258,6 +258,7 @@ SimulationControlTransient::SimulationControlTransient(
   , output_times_vector(param.output_times_vector)
   , output_times_counter(0)
   , no_more_output_times(false)
+  , override_time_step_on_restart(param.override_time_step_on_restart)
   , output_time_interval(param.output_time_interval)
   , output_control(param.output_control)
 {}
@@ -494,10 +495,10 @@ SimulationControlTransient::read(const std::string &prefix)
       input >> buffer >> output_times_counter;
     }
 
-  if (!adapt)
+  if (override_time_step_on_restart)
     // Fix the time step to the new provided value.
-    // We understand that users providing this value when adaptive time stepping
-    // is not enabled means a time step change is the desired effect.
+    // We understand that users may wish to override the checkpointed time step
+    // value with another one and that it may be a desired effect.
     set_current_time_step(initial_time_step);
 }
 

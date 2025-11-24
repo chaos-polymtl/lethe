@@ -819,6 +819,14 @@ protected:
   bool no_more_output_times;
 
   /**
+   * @brief Flag to override the time-step with the set value upon restart
+   *
+   * Only applies in restarted simulations with adaptive time stepping, where
+   * the default behavior would have been to use the checkpointed time step
+   */
+  bool override_time_step_on_restart;
+
+  /**
    * @brief Time interval for output of transient iterations
    *
    * Used with either time output control or iteration control to define
