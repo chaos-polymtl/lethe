@@ -292,9 +292,9 @@ namespace LetheGridTools
    *
    * @return A tuple in which: 0. a vector of bools to determine if the particle is
    * less than a radius away from the triangle plane, 1. a vector of projected
-   * location of particles on the triangle, 2. a vector of normal vectors of the
-   * triangles, 3. a vector of the contact type between the particle and the
-   * triangle.
+   * location of particles on the triangle, 2. a vector of normal contact
+   * vectors between the triangle and the particles, 3. a vector of the contact
+   * type between the particle and the triangle.
    */
   template <int dim, typename PropertiesIndex>
   std::tuple<std::vector<bool>,
