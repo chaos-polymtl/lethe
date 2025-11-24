@@ -913,8 +913,9 @@ private:
   std::shared_ptr<Shape<dim>> immersed_solid_shape;
 
   // past (minus 1) solution
-  std::map<PhysicsID, GlobalVectorType *>      physics_solutions_m1;
-  std::map<PhysicsID, GlobalBlockVectorType *> block_physics_solutions_m1;
+  std::map<PhysicsID, std::shared_ptr<GlobalVectorType>> physics_solutions_m1;
+  std::map<PhysicsID, std::shared_ptr<GlobalBlockVectorType>>
+    block_physics_solutions_m1;
 
   // Checks the required dependencies between multiphase models and handles the
   // corresponding assertions
