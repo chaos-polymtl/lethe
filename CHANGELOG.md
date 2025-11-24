@@ -6,10 +6,12 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
 ### [Master] - 2025-11-25
 
+### Fixed
+- MAJOR As identified in issue [#1518](https://github.com/chaos-polymtl/lethe/issues/1518), in MultiphysicsInterface solutions anf DoFHandlers were stored and shared through raw pointers. To avoid memory leak issues, these are now handled with shared pointers (`std::shared_ptr`). [1823](https://github.com/chaos-polymtl/lethe/pull/1823)
+
 ### Added
 
 - MINOR Add the SDIRK time integration method to the lethe-fluid-matrix-free solver. The SDIRK scheme is now available for both MatrixBased and MatrixFree solvers. However, it does not support multiphysics components at the moment. This will be added in a near future. [#1616](https://github.com/chaos-polymtl/lethe/pull/1616/)
-
 
 ### [Master] - 2025-11-23
 
