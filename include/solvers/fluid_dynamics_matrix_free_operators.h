@@ -25,7 +25,7 @@
 using namespace dealii;
 
 /**
- * @brief Data structure to store time-stepping data in the matrix-free operator.
+ * @brief Data structure to store time-stepping data in the matrix-free operator. This is a very small structure that is used to simplify the operator process instead of relying on function calls to the SimulationControl object. It should not be used outside of the operator.
  *
  */
 struct TimeSteppingData
@@ -36,6 +36,15 @@ struct TimeSteppingData
   double dt = 0.0;
   // Coefficients used in the bdf methods
   const Vector<double> *bdf_coefficients = nullptr;
+
+  // Boolean indicating that the method is an SDIRK method
+  bool is_sdirk = false;
+
+  /// Boolean indicating that the method is a BDF method
+  bool is_bdf = false;
+
+  /// Boolean indicating if the method is transient
+  bool is_transient = false;
 };
 
 
@@ -545,13 +554,12 @@ protected:
   /**
    * @brief Initialize time stepping data such as the time step size and BDF
    * coefficients.
-   * @param[out] a_ii The diagonal coefficient of the time stepping method.
-   * @param[out] dt The time step size.
-   * @param[out] bdf_coefs The BDF coefficients if the BDF method is used.
+   *
+   * @return TimeSteppingData structure containing all of the information for time-stepping
+
    */
   TimeSteppingData
-  initialize_time_stepping_data(const bool test_is_bdf,
-                                const bool test_is_sdirk) const;
+  initialize_time_stepping_data() const;
 
 
 private:

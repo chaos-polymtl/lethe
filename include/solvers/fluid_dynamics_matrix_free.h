@@ -437,9 +437,7 @@ protected:
   /**
    * @brief Setup the degrees of freedom, system constraints, system operator
    * and solution vectors.
-   *
-   * @param stage An unsigned integer which gives the index of the current stage
-   * @param method SDIRK methods for now (BDF methods are single stage)
+
    */
   virtual void
   setup_dofs_fd() override;
@@ -478,7 +476,6 @@ protected:
   update_multi_stage_solution(double time_step) override;
 
   /**
-   * @brief Set the initial conditions for the solver. If the simulation is
    * restarted from a checkpoint, the initial solution setting is bypassed
    * and the checkpoint is instead read.
    *
