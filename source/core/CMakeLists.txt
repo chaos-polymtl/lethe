@@ -46,7 +46,6 @@ add_library(lethe-core
   ../../include/core/dem_properties.h
   ../../include/core/density_model.h
   ../../include/core/dimensionality.h
-  ../../include/core/disabled_non_linear_solver.h
   ../../include/core/evaporation_model.h
   ../../include/core/exceptions.h
   ../../include/core/grids.h
@@ -56,6 +55,7 @@ add_library(lethe-core
   ../../include/core/interface_property_model.h
   ../../include/core/interface_tools.h
   ../../include/core/kinsol_newton_non_linear_solver.h
+  ../../include/core/linear_solver_strategy.h
   ../../include/core/lethe_grid_tools.h
   ../../include/core/manifolds.h
   ../../include/core/mesh_controller.h

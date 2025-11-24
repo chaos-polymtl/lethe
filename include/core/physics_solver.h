@@ -5,9 +5,9 @@
 #define lethe_physics_solver_h
 
 
-#include <core/linear_solver_strategy.h>
 #include <core/inexact_newton_non_linear_solver.h>
 #include <core/kinsol_newton_non_linear_solver.h>
+#include <core/linear_solver_strategy.h>
 #include <core/newton_non_linear_solver.h>
 #include <core/parameters.h>
 #include <core/physics_solver_strategy.h>
@@ -27,7 +27,6 @@ template <typename VectorType>
 class PhysicsSolver
 {
 public:
-
   /**
    * @brief Constructor for the non-linear physics.
    *
@@ -80,13 +79,13 @@ public:
   solve_linear_system() = 0;
 
   /**
-   * @brief Solve the non linear system of equations.
+   * @brief Solve the global system of equations according to a given strategy, either linear or not.
    */
   void
   solve_governing_system();
 
   /**
-   * 
+   *
    */
 
   /**
@@ -195,8 +194,7 @@ template <typename VectorType>
 PhysicsSolver<VectorType>::PhysicsSolver()
   : pcout(std::cout, Utilities::MPI::this_mpi_process(MPI_COMM_WORLD) == 0)
 {
-  physics_solving_strategy =
-          new LinearSolverStrategy<VectorType>(this);
+  physics_solving_strategy = new LinearSolverStrategy<VectorType>(this);
 }
 
 

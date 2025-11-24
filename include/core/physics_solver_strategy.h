@@ -37,7 +37,7 @@ public:
    * solving strategy is attached.
    *
    */
-  PhysicsSolverStrategy(PhysicsSolver<VectorType>         *physics_solver);
+  PhysicsSolverStrategy(PhysicsSolver<VectorType> *physics_solver);
 
   /**
    * @brief Destructor.

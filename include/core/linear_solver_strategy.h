@@ -20,7 +20,7 @@ public:
    * solving strategy is attached.
    *
    */
-  LinearSolverStrategy(PhysicsSolver<VectorType>         *physics_solver);
+  LinearSolverStrategy(PhysicsSolver<VectorType> *physics_solver);
 
 
   /**
@@ -32,7 +32,7 @@ public:
 
 template <typename VectorType>
 LinearSolverStrategy<VectorType>::LinearSolverStrategy(
-  PhysicsSolver<VectorType>         *physics_solver)
+  PhysicsSolver<VectorType> *physics_solver)
   : PhysicsSolverStrategy<VectorType>(physics_solver)
 {}
 

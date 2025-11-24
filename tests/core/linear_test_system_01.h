@@ -37,7 +37,6 @@ public:
   virtual void
   assemble_system_matrix() override
   {
-
     // System
     // x_0 +x_1 = 0
     // 2*x_1 = -3
@@ -70,10 +69,10 @@ public:
    */
 
   void
-  solve_linear_system(const bool) override
+  solve_linear_system() override
   {
+    // LAPACK solve the linear system and replace the system_rhs by the solution
     system_matrix.solve(system_rhs);
-    present_solution = system_rhs;
   }
 
   virtual void
