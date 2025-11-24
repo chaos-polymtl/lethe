@@ -1900,67 +1900,6 @@ LetheGridTools::rotate_mapping(const DoFHandler<3> &dof_handler,
                                const Point<3>      &center_of_rotation,
                                const Tensor<1, 3>  &rotation_axis);
 
-
-template <int dim, int spacedim>
-bool
-LetheGridTools::triangle_cells_are_coplanar(
-  const typename Triangulation<dim, spacedim>::active_cell_iterator &cell_A,
-  const typename Triangulation<dim, spacedim>::active_cell_iterator &cell_B,
-  const double                                                       tol)
-{
-  // Point of each triangle cell
-  std::vector<Point<spacedim>> points_A, points_B;
-  points_A.reserve(3);
-  points_B.reserve(3);
-
-  for (unsigned int i = 0; i < 3; ++i)
-    {
-      points_A.push_back(cell_A->vertex(i));
-      points_B.push_back(cell_B->vertex(i));
-    }
-
-  // Every tensor needed
-  Tensor<1, spacedim> u_A, v_A, u_B, v_B, normal_A, normal_B;
-  u_A = points_A[1] - points_A[0];
-  v_A = points_A[2] - points_A[0];
-  u_B = points_B[1] - points_B[0];
-  v_B = points_B[2] - points_B[0];
-
-  // Normal of each triangle
-  normal_A = cross_product_3d(u_A, v_A);
-  normal_B = cross_product_3d(u_B, v_B);
-
-  if (std::abs(scalar_product(normal_A, normal_B)) >=
-      normal_A.norm() * normal_B.norm() * (1.0 - tol))
-    return true;
-
-  return false;
-}
-
-template bool
-LetheGridTools::triangle_cells_are_coplanar<1, 2>(
-  const typename Triangulation<1, 2>::active_cell_iterator &cell_A,
-  const typename Triangulation<1, 2>::active_cell_iterator &cell_B,
-  const double                                              tol);
-
-template bool
-LetheGridTools::triangle_cells_are_coplanar<2, 2>(
-  const typename Triangulation<2, 2>::active_cell_iterator &cell_A,
-  const typename Triangulation<2, 2>::active_cell_iterator &cell_B,
-  const double                                              tol);
-
-template bool
-LetheGridTools::triangle_cells_are_coplanar<2, 3>(
-  const typename Triangulation<2, 3>::active_cell_iterator &cell_A,
-  const typename Triangulation<2, 3>::active_cell_iterator &cell_B,
-  const double                                              tol);
-
-template bool
-LetheGridTools::triangle_cells_are_coplanar<3, 3>(
-  const typename Triangulation<3, 3>::active_cell_iterator &cell_A,
-  const typename Triangulation<3, 3>::active_cell_iterator &cell_B,
-  const double                                              tol);
-
 template <int dim, int spacedim>
 void
 LetheGridTools::vertices_cell_mapping(
