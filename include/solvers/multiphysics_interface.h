@@ -587,7 +587,7 @@ public:
    * @brief Request the reference to the vector of previous solutions of a given
    * physics
    *
-   * @param physics_id The physics ID of the solution being requested
+   * @param[in] physics_id The physics ID of the solution being requested
    */
   std::vector<GlobalVectorType> &
   get_previous_solutions(const PhysicsID physics_id)
@@ -738,11 +738,11 @@ public:
    * @brief Sets the shared pointer to the time-average solution of the block
    * physics in the multiphysics interface
    *
-   * @param physics_id The physics ID of the time averaged block vector solution
-   * being set
+   * @param[in] physics_id The physics ID of the time averaged block vector
+   * solution being set
    *
-   * @param solution_vector The shared pointer to the block solution vector of
-   * the physics
+   * @param[in] solution_vector The shared pointer to the block solution vector
+   * of the physics
    */
   void
   set_block_time_average_solution(
@@ -878,41 +878,78 @@ private:
            std::shared_ptr<AuxiliaryPhysics<dim, GlobalBlockVectorType>>>
     block_physics;
 
-
+  /// Map of physics and shared pointers to their respective DoFHandler
   std::map<PhysicsID, std::shared_ptr<DoFHandler<dim>>> physics_dof_handler;
 
+  /// Shared pointer to the vector containing shared pointers to solid objects
   std::shared_ptr<std::vector<std::shared_ptr<SolidBase<dim, dim>>>> solids;
 
-
-  // present filtered solution (VOF->STF)
-  std::map<PhysicsID, std::shared_ptr<GlobalVectorType>>
-    physics_filtered_solutions;
-  std::map<PhysicsID, std::shared_ptr<GlobalVectorType>>
-    block_physics_filtered_solutions;
-
-  // present solution
+  /// Map of physics and shared pointers to their respective solutions.
   std::map<PhysicsID, std::shared_ptr<GlobalVectorType>> physics_solutions;
+
+  /**
+   * Map of physics and shared pointers to their respective solutions.
+   * Same as MultiphysicsInterface::physics_solutions, but used with
+   * BlockVector.
+   */
   std::map<PhysicsID, std::shared_ptr<GlobalBlockVectorType>>
     block_physics_solutions;
 
-  // previous solutions
+  /**
+   * Map of physics and shared pointers to their respective filtered solutions.
+   * These solutions are used with both VOF and Cahn-Hilliard multiphase flow
+   * approaches for surface tension force calculation in the momentum equation.
+   */
+  std::map<PhysicsID, std::shared_ptr<GlobalVectorType>>
+    physics_filtered_solutions;
+
+  /**
+   * Map of physics and shared pointers to their respective filtered solutions.
+   * Same as MultiphysicsInterface::physics_filtered_solutions, but used with
+   * BlockVector.
+   */
+  std::map<PhysicsID, std::shared_ptr<GlobalVectorType>>
+    block_physics_filtered_solutions;
+
+  /**
+   * Map of physics and shared pointers to their respective vector of previous
+   * solutions.
+   */
   std::map<PhysicsID, std::shared_ptr<std::vector<GlobalVectorType>>>
     physics_previous_solutions;
+
+  /**
+   * Map of physics and shared pointers to their respective vector of previous
+   * solutions.
+   * Same as MultiphysicsInterface::physics_previous_solutions, but used with
+   * BlockVector.
+   */
   std::map<PhysicsID, std::shared_ptr<std::vector<GlobalBlockVectorType>>>
     block_physics_previous_solutions;
 
-  // average solution
+  /**
+   * Map of physics and shared pointers to their respective time-averaged
+   * solutions.
+   */
   std::map<PhysicsID, std::shared_ptr<GlobalVectorType>>
     physics_time_average_solutions;
 
-  // average solution
+  /**
+   * Map of physics and shared pointers to their respective time-averaged
+   * solutions.
+   * Same as MultiphysicsInterface::physics_time_average_solutions, but used
+   * with BlockVector.
+   */
   std::map<PhysicsID, std::shared_ptr<GlobalBlockVectorType>>
     block_physics_time_average_solutions;
 
-  // Immersed solid shape to be used by auxiliary physics
+  /// Shared pointer to immersed solid shapes to be used by auxiliary physics
   std::shared_ptr<Shape<dim>> immersed_solid_shape;
 
-  // past (minus 1) solution
+  /**
+   * Map of physics and shared pointers to their respective previous (n-1)
+   * solutions.
+   */
   std::map<PhysicsID, std::shared_ptr<GlobalVectorType>> physics_solutions_m1;
   std::map<PhysicsID, std::shared_ptr<GlobalBlockVectorType>>
     block_physics_solutions_m1;
