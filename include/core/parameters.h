@@ -119,7 +119,7 @@ namespace Parameters
     // BDF startup time scaling
     double startup_timestep_scaling;
 
-    // True if the time-step should be available upon restart
+    // True if the time-step should be overriden upon restart
     bool override_time_step_on_restart;
 
     // Number of mesh adaptation (steady simulations)
