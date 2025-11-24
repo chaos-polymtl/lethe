@@ -11,7 +11,6 @@
 #include <core/utilities.h>
 
 #include <solvers/flow_control.h>
-#include <solvers/fluid_dynamics_matrix_free.h>
 #include <solvers/navier_stokes_base.h>
 #include <solvers/postprocessing_cfd.h>
 #include <solvers/postprocessing_velocities.h>
