@@ -16,11 +16,11 @@ file(COPY cylinder_close_outlet.msh DESTINATION "${CMAKE_CURRENT_BINARY_DIR}")
 file(COPY jurins-law-2d-mesh-dimensioned.msh DESTINATION "${CMAKE_CURRENT_BINARY_DIR}")
 file(COPY dg_tracer_sharp_edge_90_degrees_curve.msh DESTINATION "${CMAKE_CURRENT_BINARY_DIR}")
 
-file(COPY override_time_step/restart.pvdhandler DESTINATION "${CMAKE_CURRENT_BINARY_DIR}/override_time_step.${_build_type}/mpirun=1/")
-file(COPY override_time_step/restart.simulationcontrol DESTINATION "${CMAKE_CURRENT_BINARY_DIR}/override_time_step.${_build_type}/mpirun=1/")
-file(COPY override_time_step/restart.triangulation DESTINATION "${CMAKE_CURRENT_BINARY_DIR}/override_time_step.${_build_type}/mpirun=1/")
-file(COPY override_time_step/restart.triangulation.info DESTINATION "${CMAKE_CURRENT_BINARY_DIR}/override_time_step.${_build_type}/mpirun=1/")
-file(COPY override_time_step/restart.triangulation_fixed.data DESTINATION "${CMAKE_CURRENT_BINARY_DIR}/override_time_step.${_build_type}/mpirun=1/")
+file(COPY override_time_step_restart_files/restart.pvdhandler DESTINATION "${CMAKE_CURRENT_BINARY_DIR}/override_time_step.${_build_type}/mpirun=1/")
+file(COPY override_time_step_restart_files/restart.simulationcontrol DESTINATION "${CMAKE_CURRENT_BINARY_DIR}/override_time_step.${_build_type}/mpirun=1/")
+file(COPY override_time_step_restart_files/restart.triangulation DESTINATION "${CMAKE_CURRENT_BINARY_DIR}/override_time_step.${_build_type}/mpirun=1/")
+file(COPY override_time_step_restart_files/restart.triangulation.info DESTINATION "${CMAKE_CURRENT_BINARY_DIR}/override_time_step.${_build_type}/mpirun=1/")
+file(COPY override_time_step_restart_files/restart.triangulation_fixed.data DESTINATION "${CMAKE_CURRENT_BINARY_DIR}/override_time_step.${_build_type}/mpirun=1/")
 
 file(COPY cavity_ht_average_velocity_initial_condition_files/restart.averagevelocities DESTINATION "${CMAKE_CURRENT_BINARY_DIR}/cavity_ht_average_velocity_as_initial_condition.${_build_type}/mpirun=1/")
 file(COPY cavity_ht_average_velocity_initial_condition_files/restart.pvdhandler DESTINATION "${CMAKE_CURRENT_BINARY_DIR}/cavity_ht_average_velocity_as_initial_condition.${_build_type}/mpirun=1/")
@@ -73,7 +73,6 @@ file(COPY heat_transfer_vof_lpbf_benchmark_restart_files/restart.triangulation.i
 file(COPY heat_transfer_vof_lpbf_benchmark_restart_files/restart.triangulation_fixed.data DESTINATION "${CMAKE_CURRENT_BINARY_DIR}/heat_transfer_vof_lpbf_benchmark.${_build_type}/mpirun=1/")
 file(COPY heat_transfer_vof_lpbf_benchmark_restart_files/mass_conservation_information.checkpoint DESTINATION "${CMAKE_CURRENT_BINARY_DIR}/heat_transfer_vof_lpbf_benchmark.${_build_type}/mpirun=1/")
 file(COPY heat_transfer_vof_lpbf_benchmark_restart_files/temperature_statistics.checkpoint DESTINATION "${CMAKE_CURRENT_BINARY_DIR}/heat_transfer_vof_lpbf_benchmark.${_build_type}/mpirun=1/")
-
 
 file(COPY heat_transfer_vof_lpbf_benchmark_box_ref_restart_files/restart.pvdhandler DESTINATION "${CMAKE_CURRENT_BINARY_DIR}/heat_transfer_vof_lpbf_benchmark_box_ref.${_build_type}/mpirun=1/")
 file(COPY heat_transfer_vof_lpbf_benchmark_box_ref_restart_files/restart.simulationcontrol DESTINATION "${CMAKE_CURRENT_BINARY_DIR}/heat_transfer_vof_lpbf_benchmark_box_ref.${_build_type}/mpirun=1/")
