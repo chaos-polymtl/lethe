@@ -1082,12 +1082,7 @@ FluidDynamicsMatrixBased<dim>::set_initial_condition_fd(
            Parameters::FluidDynamicsInitialConditionType::L2projection)
     {
       assemble_L2_projection();
-      setup_preconditioner();
-
-      if (this->simulation_parameters.linear_solver
-            .at(PhysicsID::fluid_dynamics)
-            .solver == Parameters::LinearSolver::SolverType::gmres)
-        solve_system_GMRES(true, 1e-15, 1e-15);
+      solve_system_GMRES(1e-15, 1e-15);
 
       *this->present_solution = this->newton_update;
       this->finish_time_step();
@@ -1355,15 +1350,15 @@ FluidDynamicsMatrixBased<dim>::solve_linear_system()
 
   if (this->simulation_parameters.linear_solver.at(PhysicsID::fluid_dynamics)
         .solver == Parameters::LinearSolver::SolverType::gmres)
-    solve_system_GMRES(false, absolute_residual, relative_residual);
+    solve_system_GMRES(absolute_residual, relative_residual);
   else if (this->simulation_parameters.linear_solver
              .at(PhysicsID::fluid_dynamics)
              .solver == Parameters::LinearSolver::SolverType::bicgstab)
-    solve_system_BiCGStab(false, absolute_residual, relative_residual);
+    solve_system_BiCGStab(absolute_residual, relative_residual);
   else if (this->simulation_parameters.linear_solver
              .at(PhysicsID::fluid_dynamics)
              .solver == Parameters::LinearSolver::SolverType::direct)
-    solve_system_direct(false, absolute_residual, relative_residual);
+    solve_system_direct(absolute_residual, relative_residual);
   else
     AssertThrow(
       this->simulation_parameters.linear_solver.at(PhysicsID::fluid_dynamics)
@@ -1498,7 +1493,6 @@ FluidDynamicsMatrixBased<dim>::setup_AMG()
 template <int dim>
 void
 FluidDynamicsMatrixBased<dim>::solve_system_GMRES(
-  const bool   initial_step,
   const double absolute_residual,
   const double relative_residual)
 {
@@ -1506,17 +1500,13 @@ FluidDynamicsMatrixBased<dim>::solve_system_GMRES(
   unsigned int       iter     = 0;
   bool               success  = false;
 
-
   auto &system_rhs          = this->system_rhs;
-  auto &nonzero_constraints = this->nonzero_constraints;
 
-  const AffineConstraints<double> &zero_constraints_used =
+  const AffineConstraints<double> &constraints_used =
     (!this->simulation_parameters.constrain_solid_domain.enable) ?
       this->zero_constraints :
       this->dynamic_zero_constraints;
 
-  const AffineConstraints<double> &constraints_used =
-    initial_step ? nonzero_constraints : zero_constraints_used;
   const double rescale_metric   = this->get_residual_rescale_metric();
   const double current_residual = this->system_rhs.l2_norm() / rescale_metric;
   const double linear_solver_tolerance =
@@ -1637,6 +1627,141 @@ FluidDynamicsMatrixBased<dim>::solve_system_GMRES(
   current_preconditioner_fill_level = initial_preconditioner_fill_level;
 }
 
+
+template <int dim>
+void
+FluidDynamicsMatrixBased<dim>::solve_L2_system(
+                                         double     absolute_residual,
+                                         double     relative_residual)
+{
+  const unsigned int max_iter = 3;
+  unsigned int       iter     = 0;
+  bool               success  = false;
+
+  auto &nonzero_constraints = this->nonzero_constraints;
+
+  const AffineConstraints<double> &constraints_used = nonzero_constraints;
+  const double rescale_metric   = this->get_residual_rescale_metric();
+  const double current_residual = this->system_rhs.l2_norm() / rescale_metric;
+  const double linear_solver_tolerance =
+    std::max(relative_residual * current_residual, absolute_residual);
+  if (this->simulation_parameters.linear_solver.at(PhysicsID::fluid_dynamics)
+        .verbosity != Parameters::Verbosity::quiet)
+    {
+      this->pcout << "  -Tolerance of iterative solver is : "
+                  << linear_solver_tolerance << std::endl;
+    }
+  const double non_rescaled_linear_solver_tolerance =
+    linear_solver_tolerance * rescale_metric;
+
+  GlobalVectorType completely_distributed_solution(this->locally_owned_dofs,
+                                                   this->mpi_communicator);
+
+  SolverControl solver_control(this->simulation_parameters.linear_solver
+                                 .at(PhysicsID::fluid_dynamics)
+                                 .max_iterations,
+                               non_rescaled_linear_solver_tolerance,
+                               true,
+                               true);
+  bool          extra_verbose = false;
+  if (this->simulation_parameters.linear_solver.at(PhysicsID::fluid_dynamics)
+        .verbosity == Parameters::Verbosity::extra_verbose)
+    extra_verbose = true;
+
+  TrilinosWrappers::SolverGMRES::AdditionalData solver_parameters(
+    extra_verbose,
+    this->simulation_parameters.linear_solver.at(PhysicsID::fluid_dynamics)
+      .max_krylov_vectors);
+
+  // The solver starts from the initial fill level for the ILU(n) or the ILU
+  // smoother provided in the parameter file. If for any reason the linear
+  // solver crashes, it will restart with a fill level increased by 1. This
+  // restart happens up to a maximum of 20 times, after which it will let the
+  // solver crash. If a change happened on the fill level, it will go back
+  // to its original value at the end of the restart process.
+  while (success == false and iter < max_iter)
+    {
+      try
+        {
+          if (!ilu_preconditioner && !amg_preconditioner)
+            setup_preconditioner();
+
+          TrilinosWrappers::SolverGMRES solver(solver_control,
+                                               solver_parameters);
+
+          {
+            TimerOutput::Scope t(this->computing_timer, "Solve linear system");
+
+            if (this->simulation_parameters.linear_solver
+                  .at(PhysicsID::fluid_dynamics)
+                  .preconditioner ==
+                Parameters::LinearSolver::PreconditionerType::ilu)
+              solver.solve(system_matrix,
+                           completely_distributed_solution,
+                           this->system_rhs,
+                           *ilu_preconditioner);
+            else if (this->simulation_parameters.linear_solver
+                       .at(PhysicsID::fluid_dynamics)
+                       .preconditioner ==
+                     Parameters::LinearSolver::PreconditionerType::amg)
+              solver.solve(system_matrix,
+                           completely_distributed_solution,
+                           this->system_rhs,
+                           *amg_preconditioner);
+            else
+              AssertThrow(
+                this->simulation_parameters.linear_solver
+                      .at(PhysicsID::fluid_dynamics)
+                      .preconditioner ==
+                    Parameters::LinearSolver::PreconditionerType::ilu ||
+                  this->simulation_parameters.linear_solver
+                      .at(PhysicsID::fluid_dynamics)
+                      .preconditioner ==
+                    Parameters::LinearSolver::PreconditionerType::amg,
+                ExcMessage(
+                  "This linear solver does not support this preconditioner. Only <ilu> and <amg> preconditioners are supported."));
+
+            if (this->simulation_parameters.linear_solver
+                  .at(PhysicsID::fluid_dynamics)
+                  .verbosity != Parameters::Verbosity::quiet)
+              {
+                this->pcout
+                  << "  -Iterative solver took : " << solver_control.last_step()
+                  << " steps to reach a residual norm of "
+                  << solver_control.last_value() / rescale_metric << std::endl;
+              }
+          }
+
+          this->computing_timer.enter_subsection(
+            "Distribute constraints after linear solve");
+
+          constraints_used.distribute(completely_distributed_solution);
+
+          this->computing_timer.leave_subsection(
+            "Distribute constraints after linear solve");
+
+          auto &newton_update = this->newton_update;
+          newton_update       = completely_distributed_solution;
+          success             = true;
+        }
+      catch (std::exception &e)
+        {
+          current_preconditioner_fill_level += 1;
+          this->pcout
+            << " GMRES solver failed while doing the L2 projection problem! Trying with a higher preconditioner fill level. New fill = "
+            << current_preconditioner_fill_level << std::endl;
+          setup_preconditioner();
+
+          if (iter == max_iter - 1 && !this->simulation_parameters.linear_solver
+                                         .at(PhysicsID::fluid_dynamics)
+                                         .force_linear_solver_continuation)
+            throw e;
+        }
+      iter += 1;
+    }
+  current_preconditioner_fill_level = initial_preconditioner_fill_level;
+}
+
 // The solver starts from the initial fill level provided in the parameter file.
 // If for any reason the linear solver crashes, it will restart with a fill
 // level increased by 1. This restart happens up to a maximum of 20 times, after
@@ -1645,7 +1770,6 @@ FluidDynamicsMatrixBased<dim>::solve_system_GMRES(
 template <int dim>
 void
 FluidDynamicsMatrixBased<dim>::solve_system_BiCGStab(
-  const bool   initial_step,
   const double absolute_residual,
   const double relative_residual)
 {
@@ -1656,15 +1780,11 @@ FluidDynamicsMatrixBased<dim>::solve_system_BiCGStab(
 
 
   auto &system_rhs          = this->system_rhs;
-  auto &nonzero_constraints = this->nonzero_constraints;
 
-  const AffineConstraints<double> &zero_constraints_used =
+  const AffineConstraints<double> &constraints_used =
     (!this->simulation_parameters.constrain_solid_domain.enable) ?
       this->zero_constraints :
       this->dynamic_zero_constraints;
-
-  const AffineConstraints<double> &constraints_used =
-    initial_step ? nonzero_constraints : zero_constraints_used;
 
   const double rescale_metric   = this->get_residual_rescale_metric();
   const double current_residual = this->system_rhs.l2_norm() / rescale_metric;
@@ -1757,20 +1877,16 @@ FluidDynamicsMatrixBased<dim>::solve_system_BiCGStab(
 template <int dim>
 void
 FluidDynamicsMatrixBased<dim>::solve_system_direct(
-  const bool   initial_step,
   const double absolute_residual,
   const double relative_residual)
 {
   auto &system_rhs          = this->system_rhs;
-  auto &nonzero_constraints = this->nonzero_constraints;
 
-  const AffineConstraints<double> &zero_constraints_used =
+  const AffineConstraints<double> &constraints_used =
     (!this->simulation_parameters.constrain_solid_domain.enable) ?
       this->zero_constraints :
       this->dynamic_zero_constraints;
 
-  const AffineConstraints<double> &constraints_used =
-    initial_step ? nonzero_constraints : zero_constraints_used;
   const double rescale_metric   = this->get_residual_rescale_metric();
   const double current_residual = this->system_rhs.l2_norm() / rescale_metric;
   const double linear_solver_tolerance =

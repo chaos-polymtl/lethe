@@ -3550,11 +3550,11 @@ FluidDynamicsMatrixFree<dim>::solve_linear_system()
 
   if (this->simulation_parameters.linear_solver.at(PhysicsID::fluid_dynamics)
         .solver == Parameters::LinearSolver::SolverType::gmres)
-    solve_system_GMRES(false, absolute_residual, relative_residual);
+    solve_system_GMRES(absolute_residual, relative_residual);
   else if (this->simulation_parameters.linear_solver
              .at(PhysicsID::fluid_dynamics)
              .solver == Parameters::LinearSolver::SolverType::direct)
-    solve_system_direct(false, absolute_residual, relative_residual);
+    solve_system_direct(absolute_residual, relative_residual);
   else
     AssertThrow(false, ExcMessage("This solver is not allowed"));
   this->rescale_pressure_dofs_in_newton_update();
@@ -3569,14 +3569,12 @@ FluidDynamicsMatrixFree<dim>::assemble_L2_projection()
 
 template <int dim>
 void
-FluidDynamicsMatrixFree<dim>::solve_system_GMRES(const bool   initial_step,
+FluidDynamicsMatrixFree<dim>::solve_system_GMRES(
                                                  const double absolute_residual,
                                                  const double relative_residual)
 {
-  auto &nonzero_constraints = this->nonzero_constraints;
 
-  const AffineConstraints<double> &constraints_used =
-    initial_step ? nonzero_constraints : this->zero_constraints;
+  const AffineConstraints<double> &constraints_used = this->zero_constraints;
   const double rescale_metric   = this->get_residual_rescale_metric();
   const double current_residual = this->system_rhs.l2_norm() / rescale_metric;
   const double linear_solver_tolerance =
@@ -3672,14 +3670,11 @@ FluidDynamicsMatrixFree<dim>::solve_system_GMRES(const bool   initial_step,
 template <int dim>
 void
 FluidDynamicsMatrixFree<dim>::solve_system_direct(
-  const bool   initial_step,
   const double absolute_residual,
   const double relative_residual)
 {
-  auto &nonzero_constraints = this->nonzero_constraints;
 
-  const AffineConstraints<double> &constraints_used =
-    initial_step ? nonzero_constraints : this->zero_constraints;
+  const AffineConstraints<double> &constraints_used = this->zero_constraints;
   const double rescale_metric   = this->get_residual_rescale_metric();
   const double current_residual = this->system_rhs.l2_norm() / rescale_metric;
   const double linear_solver_tolerance =

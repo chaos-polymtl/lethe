@@ -232,12 +232,21 @@ private:
   assemble_L2_projection();
 
 
+  /**
+   * @brief Solver for the L2 Projection linear system at the initial time step to apply this initial condition.
+   */
+
+  void
+  solve_L2_system(
+                  double relative_residual,
+                  double minimum_residual);
+
 
   /**
    * @brief GMRES solver with ILU(N) preconditioning or AMG preconditioning
    */
   void
-  solve_system_GMRES(const bool   initial_step,
+  solve_system_GMRES(
                      const double absolute_residual,
                      const double relative_residual);
 
@@ -245,7 +254,7 @@ private:
    * @brief BiCGStab solver with ILU(N) preconditioning
    */
   void
-  solve_system_BiCGStab(const bool   initial_step,
+  solve_system_BiCGStab(
                         const double absolute_residual,
                         const double relative_residual);
   /**
@@ -253,7 +262,7 @@ private:
    * The use of this solver should be avoided for 3D problems
    */
   void
-  solve_system_direct(const bool   initial_step,
+  solve_system_direct(
                       const double absolute_residual,
                       const double relative_residual);
 
