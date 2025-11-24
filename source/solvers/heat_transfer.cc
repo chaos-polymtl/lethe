@@ -274,7 +274,7 @@ void
 HeatTransfer<dim>::setup_assemblers()
 {
   AssertThrow(
-    is_sdirk(this->simulation_control->get_assembly_method()) == false,
+    time_stepping_is_sdirk(this->simulation_control->get_assembly_method()) == false,
     ExcMessage("The SDIRK scheme is not yet supported for this physics"));
 
   this->assemblers.clear();
@@ -388,7 +388,7 @@ HeatTransfer<dim>::setup_assemblers()
     }
 
   // Time-stepping schemes
-  if (is_bdf(this->simulation_control->get_assembly_method()))
+  if (time_stepping_is_bdf(this->simulation_control->get_assembly_method()))
     {
       this->assemblers.emplace_back(
         std::make_shared<HeatTransferAssemblerBDF<dim>>(

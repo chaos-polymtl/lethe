@@ -1,7 +1,8 @@
 # SPDX-FileCopyrightText: Copyright (c) 2025 The Lethe Authors
 # SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
-# Test if the SDIRK method combined with the matrix free resolution is correctly implemented
+#Test that the SDIRK method combined with the matrix-free solver is implemented correctly. The tests `tgv_sdirk33_dt1` and `tgv_sdirk33_dt2` are complementary: in the `dt1` test, a single time step advances the solution from 0 to 0.2, whereas in `dt2`, two time steps are used to reach 0.2. The L2 norm of the velocity error should decrease by a factor of 8. When the test was written, the `dt1` error was 1.616501e-03 and the `dt2` error was 2.213048e-04, giving a ratio of 7.3, which corresponds to an observed order of 2.87.
+
 
 # Listing of Parameters
 #----------------------
@@ -14,11 +15,11 @@ set dimension = 2
 
 subsection simulation control
   set method            = sdirk33
-  set time step         = 0.01 # Time step
-  set number mesh adapt = 0    # If steady, nb mesh adaptation
-  set time end          = 1.00 # End time of simulation
-  set output name       = tgv  # Prefix for VTU outputs
-  set output frequency  = 0    # Frequency of simulation output
+  set time step         = 0.10 
+  set number mesh adapt = 0    
+  set time end          = 0.20 
+  set output name       = tgv  
+  set output frequency  = 0    
 end
 
 #---------------------------------------------------
@@ -26,8 +27,8 @@ end
 #---------------------------------------------------
 
 subsection FEM
-  set velocity order = 1
-  set pressure order = 1
+  set velocity order = 3
+  set pressure order = 3
 end
 
 #---------------------------------------------------
@@ -35,7 +36,7 @@ end
 #---------------------------------------------------
 
 subsection timer
-  set type = none # <none|iteration|end>
+  set type = none 
 end
 
 #---------------------------------------------------
@@ -56,7 +57,7 @@ end
 subsection physical properties
   set number of fluids = 1
   subsection fluid 0
-    set kinematic viscosity = 1.000
+    set kinematic viscosity = 1.
   end
 end
 
@@ -68,7 +69,7 @@ subsection analytical solution
   set verbosity = verbose
   set enable    = true
   subsection uvwp
-    set Function constants  = viscosity=1
+    set Function constants  = viscosity=1.
     set Function expression = exp(-2*viscosity*t)*   cos(x) * sin(y) ; -sin(x) * cos(y) * exp(-2*viscosity*t); 0
   end
 end
@@ -108,17 +109,18 @@ end
 
 subsection boundary conditions
   set number = 2
+  set fix pressure constant = true
   subsection bc 0
     set type               = periodic
     set id                 = 0
-    set periodic_id        = 1
-    set periodic_direction = 0
+    set periodic id        = 1
+    set periodic direction = 0
   end
   subsection bc 1
     set type               = periodic
     set id                 = 2
-    set periodic_id        = 3
-    set periodic_direction = 1
+    set periodic id        = 3
+    set periodic direction = 1
   end
 end
 
@@ -138,9 +140,8 @@ end
 
 subsection non-linear solver
   subsection fluid dynamics
-    set verbosity      = quiet
-    set tolerance      = 1e-6
-    set max iterations = 5
+    set verbosity      = verbose
+    set tolerance      = 1e-9
   end
 end
 
@@ -150,21 +151,32 @@ end
 
 subsection linear solver
   subsection fluid dynamics
-    set verbosity                             = quiet
-    set method                                = gmres
-    set max iters                             = 5000
-    set relative residual                     = 1e-4
-    set minimum residual                      = 1e-9
-    set preconditioner                        = ilu
-    set ilu preconditioner fill               = 1
-    set ilu preconditioner absolute tolerance = 1e-10
-    set ilu preconditioner relative tolerance = 1.00
+    set method            = gmres
+    set max iters         = 100
+    set relative residual = 1e-4
+    set minimum residual  = 1e-11
+    set preconditioner    = gcmg
+    set verbosity         = quiet
+
+    # MG parameters
+    set mg verbosity                   = quiet
+    set mg enable hessians in jacobian = false
+
+    # Smoother
+    set mg smoother iterations          = 2
+    set mg smoother eig estimation      = true
+    set mg smoother preconditioner type = additive schwarz method
+
+    # Eigenvalue estimation parameters
+    set eig estimation smoothing range = 5
+    set eig estimation cg n iterations = 20
+    set eig estimation verbosity       = quiet
+
+    #coarse-grid solver
+    set mg coarse grid solver = direct
   end
 end
 
-#--------------------------------------------------
-# Stabilization
-#--------------------------------------------------
 
 subsection stabilization
   set use default stabilization = false

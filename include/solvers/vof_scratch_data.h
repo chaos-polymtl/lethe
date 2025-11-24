@@ -322,7 +322,7 @@ public:
     // Extrapolate velocity to t+dt using the BDF scheme if the simulation is
     // transient
     const auto method = this->simulation_control->get_assembly_method();
-    if (is_bdf(method))
+    if (time_stepping_is_bdf(method))
       {
         // Extrapolate velocity
         std::vector<double> time_vector =

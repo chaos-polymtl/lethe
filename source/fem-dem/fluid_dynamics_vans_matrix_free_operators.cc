@@ -316,7 +316,9 @@ VANSOperator<dim, number>::do_cell_integral_local(
 
   // To identify whether the problem is transient or steady
   bool transient =
-    (is_bdf(this->simulation_control->get_assembly_method())) ? true : false;
+    (time_stepping_is_bdf(this->simulation_control->get_assembly_method())) ?
+      true :
+      false;
 
   const double kinematic_viscosity =
     this->properties_manager->get_rheology()->get_kinematic_viscosity();
@@ -563,9 +565,10 @@ VANSOperator<dim, number>::local_evaluate_residual(
                             EvaluationFlags::gradients);
 
       // To identify whether the problem is transient or steady
-      bool transient =
-        (is_bdf(this->simulation_control->get_assembly_method())) ? true :
-                                                                    false;
+      bool transient = (time_stepping_is_bdf(
+                         this->simulation_control->get_assembly_method())) ?
+                         true :
+                         false;
 
       // Vector for BDF coefficients
       const Vector<double> *bdf_coefs;

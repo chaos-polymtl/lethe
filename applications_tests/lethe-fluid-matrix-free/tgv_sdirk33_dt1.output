@@ -1,0 +1,60 @@
+Running on 1 MPI rank(s)...
+   Number of active cells:       1024
+   Number of degrees of freedom: 28227
+   Volume of triangulation:      39.4784
+Enstrophy: 0.5
+Kinetic energy: 0.25
+
+*******************************************************************************
+Transient iteration: 1        Time: 0.2      Time step: 0.2      CFL: 2.70761 
+*******************************************************************************
+---------------
+Fluid Dynamics
+---------------
+Newton iteration: 0  - Residual:  0.654268
+	alpha =      1 res = 0.005067
+	||du||_L2 =  10.18	||du||_Linfty = 0.1485
+	||dp||_L2 =  7.468	||dp||_Linfty = 0.166
+Newton iteration: 1  - Residual:  0.005067
+	alpha =      1 res = 1.128e-07
+	||du||_L2 = 0.000131	||du||_Linfty = 3.651e-06
+	||dp||_L2 = 0.5338	||dp||_Linfty = 0.01105
+Newton iteration: 2  - Residual:  1.128e-07
+	alpha =      1 res = 1.002e-11
+	||du||_L2 = 1.627e-07	||du||_Linfty = 5.676e-09
+	||dp||_L2 = 5.541e-06	||dp||_Linfty = 2.376e-07
+---------------
+Fluid Dynamics
+---------------
+Newton iteration: 0  - Residual:  0.3605
+	alpha =      1 res = 0.001539
+	||du||_L2 =  5.611	||du||_Linfty = 0.08181
+	||dp||_L2 =  3.506	||dp||_Linfty = 0.07796
+Newton iteration: 1  - Residual:  0.001539
+	alpha =      1 res = 3.534e-08
+	||du||_L2 = 7.218e-05	||du||_Linfty = 2.006e-06
+	||dp||_L2 = 0.1621	||dp||_Linfty = 0.003365
+Newton iteration: 2  - Residual:  3.534e-08
+	alpha =      1 res = 3.252e-12
+	||du||_L2 = 5.061e-08	||du||_Linfty = 1.581e-09
+	||dp||_L2 = 1.609e-06	||dp||_Linfty = 5.925e-08
+---------------
+Fluid Dynamics
+---------------
+Newton iteration: 0  - Residual:  0.4397
+	alpha =      1 res = 0.002289
+	||du||_L2 =  6.843	||du||_Linfty = 0.09977
+	||dp||_L2 =  3.864	||dp||_Linfty = 0.08591
+Newton iteration: 1  - Residual:  0.002289
+	alpha =      1 res = 5.213e-08
+	||du||_L2 = 8.807e-05	||du||_Linfty = 2.446e-06
+	||dp||_L2 = 0.2411	||dp||_Linfty = 0.004999
+Newton iteration: 2  - Residual:  5.213e-08
+	alpha =      1 res = 4.737e-12
+	||du||_L2 = 7.38e-08	||du||_Linfty = 2.4e-09
+	||dp||_L2 = 2.372e-06	||dp||_Linfty = 9.212e-08
+Enstrophy: 0.2244
+Kinetic energy: 0.1122
+L2 error velocity: 0.00161596
+ time  error_velocity 
+0.2000   1.615955e-03 

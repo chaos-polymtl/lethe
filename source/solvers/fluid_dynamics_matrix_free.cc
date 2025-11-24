@@ -2386,8 +2386,9 @@ MFNavierStokesPreconditionGMG<dim>::initialize(
   const VectorType                         &present_solution,
   const VectorType                         &time_derivative_previous_solutions)
 {
-  const bool transient = is_bdf(simulation_control->get_assembly_method()) ||
-                         is_sdirk(simulation_control->get_assembly_method());
+  const bool transient =
+    time_stepping_is_bdf(simulation_control->get_assembly_method()) ||
+    time_stepping_is_sdirk(simulation_control->get_assembly_method());
   // Local objects for the different levels
   MGLevelObject<MGVectorType> mg_solution(this->minlevel, this->maxlevel);
   MGLevelObject<MGVectorType> mg_time_derivative_previous_solutions(
@@ -2732,7 +2733,7 @@ FluidDynamicsMatrixFree<dim>::solve()
           NavierStokesBase<dim, VectorType, IndexSet>::refine_mesh();
         }
 
-      if (is_bdf(this->simulation_control->get_assembly_method()))
+      if (time_stepping_is_bdf(this->simulation_control->get_assembly_method()))
         {
           this->computing_timer.enter_subsection(
             "Calculate time derivative previous solutions");
@@ -3230,13 +3231,13 @@ FluidDynamicsMatrixFree<dim>::calculate_time_derivative_previous_solutions()
   // Time stepping information
   const auto method = this->simulation_control->get_assembly_method();
 
-  if (is_sdirk(this->simulation_control->get_assembly_method()))
+  if (time_stepping_is_sdirk(this->simulation_control->get_assembly_method()))
     {
       // For SDIRK, we only have one previous solution
-      SDIRKTable     table = sdirk_table(method);
-      SDIRKStageData stage_data(table, 1);
-      const double   a_ii = stage_data.a_ij[0];
-      const auto     time_steps_vector =
+      const SDIRKTable     table = sdirk_table(method);
+      const SDIRKStageData stage_data(table, 1);
+      const double         a_ii = stage_data.a_ij[0];
+      const auto           time_steps_vector =
         this->simulation_control->get_time_steps_vector();
       const double dt = time_steps_vector[0];
       this->time_derivative_previous_solutions.add(-1 / (dt * a_ii),
