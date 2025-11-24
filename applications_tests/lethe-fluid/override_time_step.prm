@@ -1,0 +1,69 @@
+# SPDX-FileCopyrightText: Copyright (c) 2025 The Lethe Authors
+# SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
+
+set dimension = 2
+
+subsection simulation control
+  set method                        = bdf1
+  set time step                     = 2
+  set time end                      = 5
+  set override time step on restart = true
+  set output frequency              = 0
+end
+
+subsection restart
+  set checkpoint = false
+  set frequency  = 1
+  set restart    = true
+end
+
+subsection physical properties
+  subsection fluid 0
+    set kinematic viscosity = 0.01
+  end
+end
+
+subsection mesh
+  set type               = dealii
+  set grid type          = subdivided_hyper_rectangle
+  set grid arguments     = 1,  1: -0.1, -0.1: 0.1, 0.1 : true
+  set initial refinement = 3
+end
+
+subsection boundary conditions
+  set number         = 4
+  set time dependent = true
+  subsection bc 0
+    set id   = 0
+    set type = function
+    subsection u
+      set Function expression = 1
+    end
+  end
+  subsection bc 1
+    set id   = 1
+    set type = outlet
+  end
+  subsection bc 2
+    set id   = 2
+    set type = noslip
+  end
+  subsection bc 3
+    set id   = 3
+    set type = noslip
+  end
+end
+
+subsection non-linear solver
+  subsection fluid dynamics
+    set verbosity      = quiet
+    set tolerance      = 1e-4
+    set max iterations = 10
+  end
+end
+
+subsection linear solver
+  subsection fluid dynamics
+    set verbosity = quiet
+  end
+end

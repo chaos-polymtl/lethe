@@ -16,6 +16,12 @@ file(COPY cylinder_close_outlet.msh DESTINATION "${CMAKE_CURRENT_BINARY_DIR}")
 file(COPY jurins-law-2d-mesh-dimensioned.msh DESTINATION "${CMAKE_CURRENT_BINARY_DIR}")
 file(COPY dg_tracer_sharp_edge_90_degrees_curve.msh DESTINATION "${CMAKE_CURRENT_BINARY_DIR}")
 
+file(COPY override_time_step/restart.pvdhandler DESTINATION "${CMAKE_CURRENT_BINARY_DIR}/override_time_step.${_build_type}/mpirun=1/")
+file(COPY override_time_step/restart.simulationcontrol DESTINATION "${CMAKE_CURRENT_BINARY_DIR}/override_time_step.${_build_type}/mpirun=1/")
+file(COPY override_time_step/restart.triangulation DESTINATION "${CMAKE_CURRENT_BINARY_DIR}/override_time_step.${_build_type}/mpirun=1/")
+file(COPY override_time_step/restart.triangulation.info DESTINATION "${CMAKE_CURRENT_BINARY_DIR}/override_time_step.${_build_type}/mpirun=1/")
+file(COPY override_time_step/restart.triangulation_fixed.data DESTINATION "${CMAKE_CURRENT_BINARY_DIR}/override_time_step.${_build_type}/mpirun=1/")
+
 file(COPY cavity_ht_average_velocity_initial_condition_files/restart.averagevelocities DESTINATION "${CMAKE_CURRENT_BINARY_DIR}/cavity_ht_average_velocity_as_initial_condition.${_build_type}/mpirun=1/")
 file(COPY cavity_ht_average_velocity_initial_condition_files/restart.pvdhandler DESTINATION "${CMAKE_CURRENT_BINARY_DIR}/cavity_ht_average_velocity_as_initial_condition.${_build_type}/mpirun=1/")
 file(COPY cavity_ht_average_velocity_initial_condition_files/restart.simulationcontrol DESTINATION "${CMAKE_CURRENT_BINARY_DIR}/cavity_ht_average_velocity_as_initial_condition.${_build_type}/mpirun=1/")

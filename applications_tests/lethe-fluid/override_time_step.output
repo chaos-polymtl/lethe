@@ -1,0 +1,19 @@
+Running on 1 MPI rank(s)...
+   Number of active cells:       1
+   Number of degrees of freedom: 12
+   Volume of triangulation:      0.04
+************************
+---> Simulation Restart 
+************************
+   Number of active cells:       64
+   Number of degrees of freedom: 243
+   Volume of triangulation:      0.04
+
+*******************************************************************************
+Transient iteration: 2        Time: 3        Time step: 2        CFL: 51.4836 
+*******************************************************************************
+
+*******************************************************************************
+Transient iteration: 3        Time: 5        Time step: 2        CFL: 104.28  
+*******************************************************************************
+
