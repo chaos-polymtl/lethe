@@ -7,7 +7,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/).
 ### [Master] - 2025-11-25
 
 ### Fixed
-- MAJOR As identified in issue [#1518](https://github.com/chaos-polymtl/lethe/issues/1518), in MultiphysicsInterface solutions and DoFHandler were stored and shared through raw pointers. To avoid memory leak issues, these are now handled with shared pointers (`std::shared_ptr`). [1823](https://github.com/chaos-polymtl/lethe/pull/1823)
+- MAJOR As identified in issue [#1518](https://github.com/chaos-polymtl/lethe/issues/1518), in MultiphysicsInterface solutions and DoFHandler were stored and shared through raw pointers. To avoid memory leak issues, these are now handled with shared pointers (`std::shared_ptr`). [#1823](https://github.com/chaos-polymtl/lethe/pull/1823)
 
 ### Added
 

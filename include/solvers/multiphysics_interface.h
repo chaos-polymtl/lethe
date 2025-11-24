@@ -445,7 +445,7 @@ public:
    *
    * @return Reference to the solution vector of the requested physics
    */
-  GlobalVectorType &
+  const GlobalVectorType &
   get_solution(const PhysicsID physics_id)
   {
     AssertThrow((std::find(active_physics.begin(),
@@ -465,7 +465,7 @@ public:
    *
    * @return Reference to the requested filtered solution vector.
    */
-  GlobalVectorType &
+  const GlobalVectorType &
   get_filtered_solution(const PhysicsID physics_id)
   {
     AssertThrow((std::find(active_physics.begin(),
@@ -481,7 +481,7 @@ public:
    *
    * @param[in] physics_id The physics ID of the solution being requested
    */
-  GlobalBlockVectorType &
+  const GlobalBlockVectorType &
   get_block_solution(const PhysicsID physics_id)
   {
     AssertThrow((std::find(active_physics.begin(),
@@ -497,7 +497,7 @@ public:
    *
    * @param[in] physics_id The physics ID of the solution being requested
    */
-  GlobalVectorType &
+  const GlobalVectorType &
   get_time_average_solution(const PhysicsID physics_id)
   {
     AssertThrow((std::find(active_physics.begin(),
@@ -513,7 +513,7 @@ public:
    *
    * @param[in] physics_id The physics ID of the solution being requested
    */
-  GlobalBlockVectorType &
+  const GlobalBlockVectorType &
   get_block_time_average_solution(const PhysicsID physics_id)
   {
     AssertThrow((std::find(active_physics.begin(),
@@ -524,22 +524,23 @@ public:
   }
 
   /**
-   @brief Request the solid objects. Used an auxiliary physics
-    * needs to apply a boundary condition on a solid through
-    * Nitsche immersed boundary method.
-    *
-    * NB: this method is called only in
-    * HeatTransfer<dim>::assemble_nitsche_heat_restriction,
-    * which is itself called only if number_solids > 0
-    */
-  std::vector<std::shared_ptr<SolidBase<dim, dim>>> &
-  get_solids(const int number_solids)
+  * @brief Request the solid objects. Used an auxiliary physics
+  * needs to apply a boundary condition on a solid through
+  * Nitsche immersed boundary method.
+  *
+  * @param[in] number_solids The number of solids declared in the parameter file.
+  * The value is used to ensure that at least one solid has been declared.
+  *
+  * @note The method is called only in
+  * HeatTransfer<dim>::assemble_nitsche_heat_restriction,
+  * which is itself called only if number_solids > 0
+  */
+  const std::vector<std::shared_ptr<SolidBase<dim, dim>>> &
+  get_solids([[maybe_unused]]const int number_solids)
   {
     Assert(number_solids > 0, NoSolidWarning("the"));
     AssertThrow(solids != nullptr,
                 dealii::ExcMessage("solids is not initialized"));
-    // to prevent "unused parameter" warning in Release build
-    (void)(number_solids);
     return *solids;
   }
 
@@ -570,7 +571,7 @@ public:
   get_projected_phase_fraction_gradient_dof_handler();
 
   /**
-   * @brief Request reference to immersed solid shape
+   * @brief Request shared pointer to immersed solid shape
    */
   std::shared_ptr<Shape<dim>>
   get_immersed_solid_shape();
@@ -578,10 +579,11 @@ public:
   /**
    * @brief Share immersed solid shape
    *
-   * @param[in] shape The shared pointer to the immersed solid shape
+   * @param[in] shape The reference to the shared pointer pointing to the
+   * immersed solid shape
    */
   void
-  set_immersed_solid_shape(std::shared_ptr<Shape<dim>> shape);
+  set_immersed_solid_shape(const std::shared_ptr<Shape<dim>> &shape);
 
   /**
    * @brief Request the reference to the vector of previous solutions of a given
@@ -589,7 +591,7 @@ public:
    *
    * @param[in] physics_id The physics ID of the solution being requested
    */
-  std::vector<GlobalVectorType> &
+  const std::vector<GlobalVectorType> &
   get_previous_solutions(const PhysicsID physics_id)
   {
     AssertThrow((std::find(active_physics.begin(),
@@ -606,7 +608,7 @@ public:
    *
    * @param[in] physics_id The physics ID of the solution being requested
    */
-  std::vector<GlobalBlockVectorType> &
+  const std::vector<GlobalBlockVectorType> &
   get_block_previous_solutions(const PhysicsID physics_id)
   {
     AssertThrow((std::find(active_physics.begin(),

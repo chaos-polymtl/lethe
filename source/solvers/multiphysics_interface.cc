@@ -227,7 +227,7 @@ MultiphysicsInterface<dim>::get_immersed_solid_shape()
 template <int dim>
 void
 MultiphysicsInterface<dim>::set_immersed_solid_shape(
-  std::shared_ptr<Shape<dim>> shape)
+  const std::shared_ptr<Shape<dim>> &shape)
 {
   immersed_solid_shape = shape;
 }
