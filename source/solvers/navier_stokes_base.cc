@@ -651,7 +651,7 @@ NavierStokesBase<dim, VectorType, DofsType>::iterate()
               multi_stage_preresolution(stage, method);
             }
 
-          PhysicsSolver<VectorType>::solve_non_linear_system();
+          PhysicsSolver<VectorType>::solve_governing_system();
 
           if (n_stages > 1)
             {

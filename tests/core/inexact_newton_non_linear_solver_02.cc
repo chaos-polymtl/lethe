@@ -43,12 +43,12 @@ test()
 
   deallog << "Solving non-linear system " << std::endl;
   // Solve the non-linear system of equation a first time
-  solver->solve_non_linear_system();
+  solver->solve_governing_system();
 
   solver->reset();
 
   // Solve it again reusing the system matrix
-  solver->solve_non_linear_system();
+  solver->solve_governing_system();
 
   auto &present_solution = solver->get_present_solution();
   deallog << "The final solution is : " << present_solution[0] << " "

@@ -152,7 +152,7 @@ public:
                 ExcInternalError());
 
     physics[physics_id]->time_stepping_method = time_stepping_method;
-    physics[physics_id]->solve_non_linear_system();
+    physics[physics_id]->solve_governing_system();
     physics[physics_id]->modify_solution();
   }
 
@@ -176,7 +176,7 @@ public:
                 ExcInternalError());
 
     block_physics[physics_id]->time_stepping_method = time_stepping_method;
-    block_physics[physics_id]->solve_non_linear_system();
+    block_physics[physics_id]->solve_governing_system();
     block_physics[physics_id]->modify_solution();
   }
 

@@ -1116,7 +1116,7 @@ FluidDynamicsMatrixBased<dim>::set_initial_condition_fd(
 
       this->simulation_control->set_assembly_method(
         Parameters::SimulationControl::TimeSteppingMethod::steady);
-      PhysicsSolver<GlobalVectorType>::solve_non_linear_system();
+      PhysicsSolver<GlobalVectorType>::solve_governing_system();
       this->finish_time_step();
 
       this->simulation_parameters.physical_properties_manager.set_rheology(
@@ -1177,7 +1177,7 @@ FluidDynamicsMatrixBased<dim>::set_initial_condition_fd(
 
           this->simulation_control->set_assembly_method(
             Parameters::SimulationControl::TimeSteppingMethod::steady);
-          PhysicsSolver<GlobalVectorType>::solve_non_linear_system();
+          PhysicsSolver<GlobalVectorType>::solve_governing_system();
           this->finish_time_step();
 
           n += alpha_n * (n_end - n);
@@ -1199,7 +1199,7 @@ FluidDynamicsMatrixBased<dim>::set_initial_condition_fd(
 
           this->simulation_control->set_assembly_method(
             Parameters::SimulationControl::TimeSteppingMethod::steady);
-          PhysicsSolver<GlobalVectorType>::solve_non_linear_system();
+          PhysicsSolver<GlobalVectorType>::solve_governing_system();
           this->finish_time_step();
 
           kinematic_viscosity +=

@@ -747,7 +747,7 @@ VOFAlgebraicInterfaceReinitialization<dim>::solve()
       define_non_zero_constraints();
 
       // Solve non-linear equation
-      this->solve_non_linear_system();
+      this->solve_governing_system();
 
       // For debugging purposes
       if (this->simulation_parameters.multiphysics.vof_parameters

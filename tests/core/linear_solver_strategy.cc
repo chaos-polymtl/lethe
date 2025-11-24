@@ -2,8 +2,7 @@
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
 /**
- * @brief The TestClass tests the non-linear solvers using a simple system of two
- * equations, only one of which is non-linear
+ * @brief The TestClass tests the linear solver strategy using a simple matrix built from two simple linear equations.
  */
 
 // Lethe
@@ -17,7 +16,6 @@
 void
 test()
 {
-
   deallog << "Creating solver" << std::endl;
 
   // Create an instantiation of the Test Class
@@ -29,8 +27,8 @@ test()
   solver->solve_governing_system();
 
   auto &solution = solver->get_system_rhs();
-  deallog << "The final solution is : " << solution[0] << " "
-          << solution[1] << std::endl;
+  deallog << "The final solution is : " << solution[0] << " " << solution[1]
+          << std::endl;
 }
 
 int
