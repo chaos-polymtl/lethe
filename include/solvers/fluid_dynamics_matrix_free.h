@@ -437,7 +437,6 @@ protected:
   /**
    * @brief Setup the degrees of freedom, system constraints, system operator
    * and solution vectors.
-
    */
   virtual void
   setup_dofs_fd() override;
