@@ -1,6 +1,8 @@
 // SPDX-FileCopyrightText: Copyright (c) 2023-2025 The Lethe Authors
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
+// Description : This file defines two parallel triangles that are sharing an edge. The two triangles are making a square.
+
 // Define a variable
 
 ymin= 0.;

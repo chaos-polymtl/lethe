@@ -1,8 +1,9 @@
 // SPDX-FileCopyrightText: Copyright (c) 2023-2025 The Lethe Authors
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
-// Define a variable
+// Description : This file defines two perpendicular triangles that are sharing an edge.
 
+// Define a variable
 ymin= -1.;
 ymax= 0.;
 zmax= 1;
