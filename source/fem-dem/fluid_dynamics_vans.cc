@@ -332,7 +332,7 @@ FluidDynamicsVANS<dim>::setup_assemblers()
         this->cfd_dem_simulation_parameters.cfd_dem));
 
   // Time-stepping schemes
-  if (is_bdf(this->simulation_control->get_assembly_method()))
+  if (time_stepping_is_bdf(this->simulation_control->get_assembly_method()))
     {
       this->assemblers.push_back(std::make_shared<VANSAssemblerBDF<dim>>(
         this->simulation_control, this->cfd_dem_simulation_parameters.cfd_dem));

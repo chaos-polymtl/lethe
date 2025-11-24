@@ -708,7 +708,7 @@ FluidDynamicsVANSMatrixFree<dim>::solve()
           this->refine_mesh();
         }
 
-      if (is_bdf(this->simulation_control->get_assembly_method()))
+      if (time_stepping_is_bdf(this->simulation_control->get_assembly_method()))
         {
           this->computing_timer.enter_subsection(
             "Calculate time derivative previous solutions");

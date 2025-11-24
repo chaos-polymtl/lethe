@@ -4,7 +4,9 @@
 #ifndef lethe_fluid_dynamics_matrix_free_operators_h
 #define lethe_fluid_dynamics_matrix_free_operators_h
 
+#include <core/bdf.h>
 #include <core/mortar_coupling_manager.h>
+#include <core/sdirk_stage_data.h>
 #include <core/simulation_control.h>
 
 #include <solvers/simulation_parameters.h>
@@ -21,6 +23,30 @@
 #include <deal.II/matrix_free/tools.h>
 
 using namespace dealii;
+
+/**
+ * @brief Data structure to store time-stepping data in the matrix-free operator. This is a very small structure that is used to simplify the operator process instead of relying on function calls to the SimulationControl object. It should not be used outside of the operator.
+ *
+ */
+struct TimeSteppingData
+{
+  // Diagonal coefficient for sdirk methods
+  double a_ii = 0.0;
+  // Time step
+  double dt = 0.0;
+  // Coefficients used in the bdf methods
+  const Vector<double> *bdf_coefficients = nullptr;
+
+  // Boolean indicating that the method is an SDIRK method
+  bool is_sdirk = false;
+
+  /// Boolean indicating that the method is a BDF method
+  bool is_bdf = false;
+
+  /// Boolean indicating if the method is transient
+  bool is_transient = false;
+};
+
 
 /**
  * @brief Evaluate the value of a function at a batch of points to obtain a vectorized array of numbers
@@ -525,6 +551,16 @@ protected:
     const VectorType                            &src,
     const std::pair<unsigned int, unsigned int> &range) const = 0;
 
+  /**
+   * @brief Initialize time stepping data such as the time step size and BDF
+   * coefficients.
+   *
+   * @return TimeSteppingData structure containing all of the information for time-stepping
+
+   */
+  TimeSteppingData
+  initialize_time_stepping_data() const;
+
 
 private:
   /**
@@ -820,6 +856,7 @@ protected:
    *
    */
   ConditionalOStream pcout;
+
 
 public:
   /**

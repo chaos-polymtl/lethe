@@ -96,9 +96,10 @@ public:
                      update_values | update_quadrature_points |
                        update_JxW_values | update_gradients | update_hessians |
                        update_normal_vectors)
-    , sdirk_table(is_sdirk(simulation_control->get_assembly_method()) ?
-                    ::sdirk_table(simulation_control->get_assembly_method()) :
-                    SDIRKTable())
+    , sdirk_table(
+        time_stepping_is_sdirk(simulation_control->get_assembly_method()) ?
+          ::sdirk_table(simulation_control->get_assembly_method()) :
+          SDIRKTable())
   {
     allocate();
 
@@ -1142,7 +1143,7 @@ public:
     // Extrapolate temperature and temperature gradient to t+dt using the BDF
     // if the simulation is transient
     const auto method = this->simulation_control->get_assembly_method();
-    if (is_bdf(method))
+    if (time_stepping_is_bdf(method))
       {
         // Gather previous temperature and temperature gradient values
         for (unsigned int p = 0; p < previous_solutions.size(); ++p)
@@ -1508,7 +1509,7 @@ public:
   Table<3, double>         face_phi_p;
   Table<3, Tensor<1, dim>> face_grad_phi_p;
 
-  /// SDIRK table for SDIRK time integration
+  /// SDIRK Butcher table with coefficients for the SDIRK time-stepping method
   SDIRKTable sdirk_table;
 };
 

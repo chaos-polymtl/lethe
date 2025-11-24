@@ -5,6 +5,7 @@
 #include <core/grids.h>
 #include <core/manifolds.h>
 #include <core/multiphysics.h>
+#include <core/sdirk_stage_data.h>
 #include <core/time_integration_utilities.h>
 #include <core/utilities.h>
 
@@ -2385,6 +2386,9 @@ MFNavierStokesPreconditionGMG<dim>::initialize(
   const VectorType                         &present_solution,
   const VectorType                         &time_derivative_previous_solutions)
 {
+  const bool transient =
+    time_stepping_is_bdf(simulation_control->get_assembly_method()) ||
+    time_stepping_is_sdirk(simulation_control->get_assembly_method());
   // Local objects for the different levels
   MGLevelObject<MGVectorType> mg_solution(this->minlevel, this->maxlevel);
   MGLevelObject<MGVectorType> mg_time_derivative_previous_solutions(
@@ -2393,7 +2397,7 @@ MFNavierStokesPreconditionGMG<dim>::initialize(
   for (unsigned int level = this->minlevel; level <= this->maxlevel; ++level)
     {
       this->mg_operators[level]->initialize_dof_vector(mg_solution[level]);
-      if (is_bdf(simulation_control->get_assembly_method()))
+      if (transient)
         this->mg_operators[level]->initialize_dof_vector(
           mg_time_derivative_previous_solutions[level]);
     }
@@ -2409,7 +2413,7 @@ MFNavierStokesPreconditionGMG<dim>::initialize(
                                               mg_solution,
                                               present_solution);
 
-      if (is_bdf(simulation_control->get_assembly_method()))
+      if (transient)
         this->mg_transfer_ls->interpolate_to_mg(
           this->dof_handler,
           mg_time_derivative_previous_solutions,
@@ -2427,7 +2431,7 @@ MFNavierStokesPreconditionGMG<dim>::initialize(
                                               mg_solution,
                                               present_solution);
 
-      if (is_bdf(simulation_control->get_assembly_method()))
+      if (transient)
         this->mg_transfer_gc->interpolate_to_mg(
           this->dof_handler,
           mg_time_derivative_previous_solutions,
@@ -2456,7 +2460,7 @@ MFNavierStokesPreconditionGMG<dim>::initialize(
           this->simulation_parameters.mortar_parameters.center_of_rotation,
           this->simulation_parameters.mortar_parameters.rotor_angular_velocity);
 
-      if (is_bdf(simulation_control->get_assembly_method()))
+      if (transient)
         {
           mg_time_derivative_previous_solutions[level].update_ghost_values();
           this->mg_operators[level]
@@ -2589,6 +2593,90 @@ FluidDynamicsMatrixFree<dim>::~FluidDynamicsMatrixFree()
 
 template <int dim>
 void
+FluidDynamicsMatrixFree<dim>::multi_stage_preresolution(
+  unsigned int                                      stage,
+  Parameters::SimulationControl::TimeSteppingMethod method)
+{
+  SDIRKTable     table = sdirk_table(method);
+  SDIRKStageData stage_data(table, stage + 1);
+  const double   a_ii = stage_data.a_ij[stage];
+
+  this->sdirk_vectors.sum_over_previous_stages = 0;
+
+  if (stage > 0)
+    {
+      // At the first stage, the sum_over_previous_stages is equal to 0
+      // For the next stages, we have to compute this sum
+      for (unsigned int p = 0; p < stage; ++p)
+        {
+          // sum((a_ij/a_ii) * k_j)
+          this->sdirk_vectors.sum_over_previous_stages.add(
+            stage_data.a_ij[p] / a_ii,
+            this->sdirk_vectors.previous_k_j_solutions[p]);
+        }
+    }
+
+  this->computing_timer.enter_subsection(
+    "Calculate time derivative previous solutions");
+
+  calculate_time_derivative_previous_solutions();
+  this->time_derivative_previous_solutions.update_ghost_values();
+  this->system_operator->evaluate_time_derivative_previous_solutions(
+    this->time_derivative_previous_solutions);
+
+  this->computing_timer.leave_subsection(
+    "Calculate time derivative previous solutions");
+
+  if (this->simulation_parameters.flow_control.enable_flow_control)
+    this->system_operator->update_beta_force(this->flow_control.get_beta());
+}
+
+template <int dim>
+void
+FluidDynamicsMatrixFree<dim>::multi_stage_postresolution(
+  const unsigned int                                      stage,
+  const Parameters::SimulationControl::TimeSteppingMethod method,
+  const double                                            time_step)
+{
+  const SDIRKTable     table = sdirk_table(method);
+  const SDIRKStageData stage_data(table, stage + 1);
+  const double         a_ii = stage_data.a_ij[stage];
+
+  // Once we have solved the nonlinear system for the velocity, we
+  // want to store the value of the coefficient k_i for the final
+  // sum b_i*k_i with k_i = (u*_{i} - u_{n})/(time_step*a_ii) -
+  // sum_over_previous_stages
+  this->local_evaluation_point = this->present_solution;
+  this->local_evaluation_point.add(-1.0, this->previous_solutions[0]);
+  this->local_evaluation_point.add((1.0 / (time_step * a_ii)) - 1,
+                                   this->local_evaluation_point);
+  this->local_evaluation_point.add(
+    -1.0, this->sdirk_vectors.sum_over_previous_stages);
+
+  // We store the value of the present_k_i_solution in the
+  // previous_k_j_solutions vector.
+  this->sdirk_vectors.previous_k_j_solutions[stage] =
+    this->local_evaluation_point;
+
+  // We update the sum of b_i*k_i
+  // The name 'temp' is just used to match the syntax of Matrix Based resolution
+  const double b_i = stage_data.b_i;
+  this->sdirk_vectors.local_sum_bi_ki.add(b_i, this->local_evaluation_point);
+}
+
+template <int dim>
+void
+FluidDynamicsMatrixFree<dim>::update_multi_stage_solution(double time_step)
+{
+  // At each time iteration, we update the value of present_solution
+  this->local_evaluation_point = this->previous_solutions[0];
+  this->local_evaluation_point.add(time_step,
+                                   this->sdirk_vectors.local_sum_bi_ki);
+  this->present_solution = this->local_evaluation_point;
+}
+
+template <int dim>
+void
 FluidDynamicsMatrixFree<dim>::solve()
 {
   this->computing_timer.enter_subsection("Read mesh and manifolds");
@@ -2645,7 +2733,7 @@ FluidDynamicsMatrixFree<dim>::solve()
           NavierStokesBase<dim, VectorType, IndexSet>::refine_mesh();
         }
 
-      if (is_bdf(this->simulation_control->get_assembly_method()))
+      if (time_stepping_is_bdf(this->simulation_control->get_assembly_method()))
         {
           this->computing_timer.enter_subsection(
             "Calculate time derivative previous solutions");
@@ -2784,6 +2872,10 @@ FluidDynamicsMatrixFree<dim>::setup_dofs_fd()
   // Initialize vectors using operator
   this->system_operator->initialize_dof_vector(this->present_solution);
   this->system_operator->initialize_dof_vector(this->evaluation_point);
+  this->system_operator->initialize_dof_vector(
+    this->sdirk_vectors.sum_over_previous_stages);
+  this->system_operator->initialize_dof_vector(
+    this->sdirk_vectors.local_sum_bi_ki);
   this->system_operator->initialize_dof_vector(this->newton_update);
   this->system_operator->initialize_dof_vector(this->system_rhs);
   this->system_operator->initialize_dof_vector(this->local_evaluation_point);
@@ -2792,6 +2884,12 @@ FluidDynamicsMatrixFree<dim>::setup_dofs_fd()
 
   // Initialize vectors of previous solutions
   for (auto &solution : this->previous_solutions)
+    {
+      this->system_operator->initialize_dof_vector(solution);
+    }
+
+  // Initialize vectors of previous solutions
+  for (auto &solution : this->sdirk_vectors.previous_k_j_solutions)
     {
       this->system_operator->initialize_dof_vector(solution);
     }
@@ -2826,11 +2924,6 @@ FluidDynamicsMatrixFree<dim>::setup_dofs_fd()
   this->multiphysics_present_solution.reinit(this->locally_owned_dofs,
                                              this->locally_relevant_dofs,
                                              this->mpi_communicator);
-
-  // Pre-allocate memory for the previous solutions using the information
-  // of the BDF schemes
-  this->multiphysics_previous_solutions.resize(
-    this->simulation_control->get_number_of_previous_solution_in_assembly());
 
   for (auto &solution : this->multiphysics_previous_solutions)
     solution.reinit(this->locally_owned_dofs,
@@ -3137,14 +3230,33 @@ FluidDynamicsMatrixFree<dim>::calculate_time_derivative_previous_solutions()
 
   // Time stepping information
   const auto method = this->simulation_control->get_assembly_method();
-  // Vector for the BDF coefficients
-  const Vector<double> &bdf_coefs =
-    this->simulation_control->get_bdf_coefficients();
 
-  for (unsigned int p = 0; p < number_of_previous_solutions(method); ++p)
+  if (time_stepping_is_sdirk(this->simulation_control->get_assembly_method()))
     {
-      this->time_derivative_previous_solutions.add(bdf_coefs[p + 1],
-                                                   this->previous_solutions[p]);
+      // For SDIRK, we only have one previous solution
+      const SDIRKTable     table = sdirk_table(method);
+      const SDIRKStageData stage_data(table, 1);
+      const double         a_ii = stage_data.a_ij[0];
+      const auto           time_steps_vector =
+        this->simulation_control->get_time_steps_vector();
+      const double dt = time_steps_vector[0];
+      this->time_derivative_previous_solutions.add(-1 / (dt * a_ii),
+                                                   this->previous_solutions[0]);
+      this->time_derivative_previous_solutions.add(
+        -1, this->sdirk_vectors.sum_over_previous_stages);
+    }
+
+  else
+    {
+      // Vector for the BDF coefficients
+      const Vector<double> &bdf_coefs =
+        this->simulation_control->get_bdf_coefficients();
+
+      for (unsigned int p = 0; p < number_of_previous_solutions(method); ++p)
+        {
+          this->time_derivative_previous_solutions.add(
+            bdf_coefs[p + 1], this->previous_solutions[p]);
+        }
     }
 }
 

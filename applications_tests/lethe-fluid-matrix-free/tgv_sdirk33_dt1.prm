@@ -1,0 +1,184 @@
+# SPDX-FileCopyrightText: Copyright (c) 2025 The Lethe Authors
+# SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
+
+# Test that the SDIRK method combined with the matrix-free solver is
+# implemented correctly. The tests `tgv_sdirk33_dt1` and `tgv_sdirk33_dt2`
+# are complementary: in the `dt1` test, a single time step
+# advances the solution from 0 to 0.2, whereas in `dt2`,
+# two time steps are used to reach 0.2. The L2 norm of the velocity error
+# should decrease by a factor of 8. When the test was written, the `dt1`
+# error was 1.616501e-03 and the `dt2` error was 2.213048e-04, giving a
+# ratio of 7.3, which corresponds to an observed order of 2.87.
+
+# Listing of Parameters
+#----------------------
+
+set dimension = 2
+
+#---------------------------------------------------
+# Simulation Control
+#---------------------------------------------------
+
+subsection simulation control
+  set method            = sdirk33
+  set time step         = 0.2
+  set number mesh adapt = 0
+  set time end          = 0.20
+  set output name       = tgv
+  set output frequency  = 0
+end
+
+#---------------------------------------------------
+# FEM
+#---------------------------------------------------
+
+subsection FEM
+  set velocity order = 3
+  set pressure order = 3
+end
+
+#---------------------------------------------------
+# Timer
+#---------------------------------------------------
+
+subsection timer
+  set type = none # <none|iteration|end>
+end
+
+#---------------------------------------------------
+# Initial condition
+#---------------------------------------------------
+
+subsection initial conditions
+  set type = nodal
+  subsection uvwp
+    set Function expression = cos(x)*sin(y); -sin(x)*cos(y); -1./4*(cos(2*x)+cos(2*y));
+  end
+end
+
+#---------------------------------------------------
+# Physical Properties
+#---------------------------------------------------
+
+subsection physical properties
+  set number of fluids = 1
+  subsection fluid 0
+    set kinematic viscosity = 1.00
+  end
+end
+
+#---------------------------------------------------
+# Analytical Solution
+#---------------------------------------------------
+
+subsection analytical solution
+  set verbosity = verbose
+  set enable    = true
+  subsection uvwp
+    set Function constants  = viscosity=1
+    set Function expression = exp(-2*viscosity*t)*   cos(x) * sin(y) ; -sin(x) * cos(y) * exp(-2*viscosity*t); 0
+  end
+end
+
+#---------------------------------------------------
+# Post-Processing
+#---------------------------------------------------
+
+subsection post-processing
+  set verbosity                = verbose
+  set calculate enstrophy      = true
+  set calculate kinetic energy = true
+end
+
+#---------------------------------------------------
+# Mesh
+#---------------------------------------------------
+
+subsection mesh
+  set type               = dealii
+  set grid type          = hyper_cube
+  set grid arguments     = 0 : 6.28318530718 : true
+  set initial refinement = 5 # initial mesh refinement
+end
+
+#---------------------------------------------------
+# Mesh Adaptation Control
+#---------------------------------------------------
+
+subsection mesh adaptation
+  set type = none
+end
+
+#---------------------------------------------------
+# Boundary Conditions
+#---------------------------------------------------
+
+subsection boundary conditions
+  set number                = 2
+  set fix pressure constant = true
+  subsection bc 0
+    set type               = periodic
+    set id                 = 0
+    set periodic id        = 1
+    set periodic direction = 0
+  end
+  subsection bc 1
+    set type               = periodic
+    set id                 = 2
+    set periodic id        = 3
+    set periodic direction = 1
+  end
+end
+
+#---------------------------------------------------
+# Source term
+#---------------------------------------------------
+
+subsection source term
+  subsection fluid dynamics
+    set enable = false
+  end
+end
+
+#---------------------------------------------------
+# Non-Linear Solver Control
+#---------------------------------------------------
+
+subsection non-linear solver
+  subsection fluid dynamics
+    set verbosity = verbose
+    set tolerance = 1e-9
+  end
+end
+
+#---------------------------------------------------
+# Linear Solver Control
+#---------------------------------------------------
+
+subsection linear solver
+  subsection fluid dynamics
+    set method            = gmres
+    set max iters         = 100
+    set relative residual = 1e-4
+    set minimum residual  = 1e-11
+    set preconditioner    = gcmg
+    set verbosity         = quiet
+
+    # MG parameters
+    set mg verbosity                   = quiet
+    set mg enable hessians in jacobian = false
+
+    # Smoother
+    set mg smoother iterations          = 2
+    set mg smoother eig estimation      = true
+    set mg smoother preconditioner type = additive schwarz method
+
+    # Eigenvalue estimation parameters
+    set eig estimation smoothing range = 5
+    set eig estimation cg n iterations = 20
+    set eig estimation verbosity       = quiet
+
+    #coarse-grid solver
+    set mg coarse grid solver = direct
+  end
+end

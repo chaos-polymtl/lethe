@@ -89,9 +89,9 @@ FluidDynamicsMatrixBased<dim>::setup_dofs_fd()
   this->reinit_mortar_operators();
 
   // Operations on the following vectors (addition, multiplication, etc.) can
-  // only be done if these are reinitialized WITHOUT locally_relevant_dofs. This
-  // is why most of them are reinitialized both with and without
-  // locally_relevant_dofs.
+  // only be done if these are reinitialized WITHOUT locally_relevant_dofs (i.e.
+  // without ghost DoFs). This is why most of them are reinitialized both with
+  // and without locally_relevant_dofs.
   this->present_solution.reinit(this->locally_owned_dofs,
                                 this->locally_relevant_dofs,
                                 this->mpi_communicator);
@@ -376,7 +376,7 @@ FluidDynamicsMatrixBased<dim>::setup_assemblers()
   if (this->simulation_parameters.multiphysics.cahn_hilliard)
     {
       // Time-stepping schemes
-      if (is_bdf(this->simulation_control->get_assembly_method()))
+      if (time_stepping_is_bdf(this->simulation_control->get_assembly_method()))
         {
           this->assemblers.emplace_back(
             std::make_shared<GLSNavierStokesCahnHilliardAssemblerBDF<dim>>(
@@ -395,7 +395,8 @@ FluidDynamicsMatrixBased<dim>::setup_assemblers()
   if (this->simulation_parameters.multiphysics.VOF)
     {
       // Time-stepping schemes
-      if (is_bdf(this->simulation_control->get_assembly_method()) &&
+      if (time_stepping_is_bdf(
+            this->simulation_control->get_assembly_method()) &&
           this->simulation_parameters.physical_properties_manager
             .density_is_constant())
         {
@@ -403,7 +404,8 @@ FluidDynamicsMatrixBased<dim>::setup_assemblers()
             std::make_shared<GLSNavierStokesVOFAssemblerBDF<dim>>(
               this->simulation_control));
         }
-      else if (is_bdf(this->simulation_control->get_assembly_method()))
+      else if (time_stepping_is_bdf(
+                 this->simulation_control->get_assembly_method()))
         {
           this->assemblers.emplace_back(
             std::make_shared<
@@ -480,7 +482,7 @@ FluidDynamicsMatrixBased<dim>::setup_assemblers()
       !this->simulation_parameters.multiphysics.cahn_hilliard)
     {
       // Time-stepping schemes
-      if (is_bdf(this->simulation_control->get_assembly_method()))
+      if (time_stepping_is_bdf(this->simulation_control->get_assembly_method()))
         {
           if (!this->simulation_parameters.physical_properties_manager
                  .density_is_constant())
@@ -1792,6 +1794,116 @@ FluidDynamicsMatrixBased<dim>::solve_system_direct(
   constraints_used.distribute(completely_distributed_solution);
   auto &newton_update = this->newton_update;
   newton_update       = completely_distributed_solution;
+}
+
+template <int dim>
+void
+FluidDynamicsMatrixBased<dim>::multi_stage_preresolution(
+  unsigned int                                      stage,
+  Parameters::SimulationControl::TimeSteppingMethod method)
+{
+  // Copy the reference to some of the vectors to enhance readability below
+  auto &previous_k_j_solutions   = this->sdirk_vectors.previous_k_j_solutions;
+  auto &sum_over_previous_stages = this->sdirk_vectors.sum_over_previous_stages;
+  auto &local_sum_over_previous_stages =
+    this->sdirk_vectors.local_sum_over_previous_stages;
+  auto &locally_owned_for_calculation =
+    this->sdirk_vectors.locally_owned_for_calculation;
+
+  // If a SDIRK method is selected, we need to solve as many
+  // nonlinear systems as the number of stages.
+
+  // At each stage, the value of the (a_ij), (b_i) and (c_i)
+  // coefficients are differents
+
+  SDIRKTable     table = sdirk_table(method);
+  SDIRKStageData stage_data(table, stage + 1);
+  const double   a_ii = stage_data.a_ij[stage];
+
+  // At each stage, we need to recompute sum(a_{ij} * k_j)
+  // = sum_over_previous_stages
+  local_sum_over_previous_stages = 0;
+
+  if (stage > 0)
+    {
+      // At the first stage, the sum_over_previous_stages is set to
+      // 0. But for the next stages, we need to update this
+      // sum_over_previous_stages
+      for (unsigned int p = 0; p < stage; ++p)
+        {
+          locally_owned_for_calculation = previous_k_j_solutions[p];
+          local_sum_over_previous_stages.add(stage_data.a_ij[p] / a_ii,
+                                             locally_owned_for_calculation);
+        }
+    }
+
+  sum_over_previous_stages = local_sum_over_previous_stages;
+}
+
+template <int dim>
+void
+FluidDynamicsMatrixBased<dim>::multi_stage_postresolution(
+  unsigned int                                      stage,
+  Parameters::SimulationControl::TimeSteppingMethod method,
+  double                                            time_step)
+{
+  auto &present_solution       = this->present_solution;
+  auto &previous_solutions     = this->previous_solutions;
+  auto &local_evaluation_point = this->local_evaluation_point;
+
+  auto &local_sum_over_previous_stages =
+    this->sdirk_vectors.local_sum_over_previous_stages;
+
+  auto &locally_owned_for_calculation =
+    this->sdirk_vectors.locally_owned_for_calculation;
+
+  auto &previous_k_j_solutions = this->sdirk_vectors.previous_k_j_solutions;
+
+  auto &sum_bi_ki       = this->sdirk_vectors.sum_bi_ki;
+  auto &local_sum_bi_ki = this->sdirk_vectors.local_sum_bi_ki;
+
+  SDIRKTable     table = sdirk_table(method);
+  SDIRKStageData stage_data(table, stage + 1);
+  const double   a_ii = stage_data.a_ij[stage];
+
+  // Once we have solved the nonlinear system for the velocity, we
+  // want to store the value of the coefficient k_i for the final
+  // sum b_i*k_i with k_i = (u*_{i} - u_{n})/(time_step*a_ii) -
+  // sum_over_previous_stages
+  locally_owned_for_calculation = previous_solutions[0];
+  local_evaluation_point        = present_solution;
+  local_evaluation_point.add(-1.0, locally_owned_for_calculation);
+  local_evaluation_point *= 1.0 / (time_step * a_ii);
+  local_evaluation_point.add(-1.0, local_sum_over_previous_stages);
+
+  // We store the value of the present_k_i_solution in the
+  // previous_k_j_solutions vector.
+  previous_k_j_solutions[stage] = local_evaluation_point;
+
+  // We update the sum of b_i*k_i
+  const double b_i = stage_data.b_i;
+  local_sum_bi_ki.add(b_i, local_evaluation_point);
+  sum_bi_ki = local_sum_bi_ki;
+}
+
+template <int dim>
+void
+FluidDynamicsMatrixBased<dim>::update_multi_stage_solution(double time_step)
+{
+  auto &present_solution       = this->present_solution;
+  auto &previous_solutions     = this->previous_solutions;
+  auto &local_evaluation_point = this->local_evaluation_point;
+
+  // The following variables are used for the SDIRK method
+  // u_{n+1} = u_n + sum(b_i * k_i)
+  auto &sum_bi_ki       = this->sdirk_vectors.sum_bi_ki;
+  auto &local_sum_bi_ki = this->sdirk_vectors.local_sum_bi_ki;
+
+  // At each time iteration, we update the value of present_solution
+  local_sum_bi_ki        = sum_bi_ki;
+  local_evaluation_point = previous_solutions[0];
+  local_evaluation_point.add(time_step, local_sum_bi_ki);
+  present_solution = local_evaluation_point;
 }
 
 template <int dim>

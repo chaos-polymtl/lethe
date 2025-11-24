@@ -1421,7 +1421,7 @@ CFDDEMMatrixFree<dim>::solve()
       this->particle_projector.calculate_void_fraction(
         this->simulation_control->get_current_time());
 
-      if (is_bdf(this->simulation_control->get_assembly_method()))
+      if (time_stepping_is_bdf(this->simulation_control->get_assembly_method()))
         {
           this->computing_timer.enter_subsection("Calculate time derivatives");
 

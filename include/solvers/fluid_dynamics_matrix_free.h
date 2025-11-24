@@ -442,7 +442,39 @@ protected:
   setup_dofs_fd() override;
 
   /**
-   * @brief Set the initial conditions for the solver. If the simulation is
+   * @brief Update the sum_over_previous_stages variable to use it in the solver.
+   *
+   * @param stage An unsigned integer which gives the index of the current stage
+   * @param method SDIRK method for now (BDF methods are single stage)
+   */
+  void
+  multi_stage_preresolution(
+    unsigned int                                      stage,
+    Parameters::SimulationControl::TimeSteppingMethod method) override;
+
+  /**
+   * @brief Calculate \f$ k_i \f$ from \f$ u*_i : k_i = \frac{u*_i - u_n}{time_step*a_ii} - \sum{j=1}^{i-1} a_ij * k_j \f$
+   * Update \f$ \sum_{i=1}^{N_{stages}} b_i * k_i \f$
+   *
+   * @param stage An unsigned integer which gives the index of the current stage
+   * @param method SDIRK methods for now (BDF methods are single stage)
+   * @param time_step Current time step value
+   */
+  virtual void
+  multi_stage_postresolution(
+    unsigned int                                      stage,
+    Parameters::SimulationControl::TimeSteppingMethod method,
+    double                                            time_step) override;
+
+  /**
+   * @brief \f$ u_{n+1} = u_n + time_step * \sum_{i=1}^{N_{stages}} b_i * k_i \f$
+   *
+   * @param time_step The current time step to build the solution at the next time step
+   */
+  virtual void
+  update_multi_stage_solution(double time_step) override;
+
+  /**
    * restarted from a checkpoint, the initial solution setting is bypassed
    * and the checkpoint is instead read.
    *

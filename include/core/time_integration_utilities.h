@@ -23,7 +23,8 @@ is_steady(const Parameters::SimulationControl::TimeSteppingMethod method)
  * @param method A time integration method
  */
 inline bool
-is_bdf1(const Parameters::SimulationControl::TimeSteppingMethod method)
+time_stepping_is_bdf1(
+  const Parameters::SimulationControl::TimeSteppingMethod method)
 {
   return (method ==
             Parameters::SimulationControl::TimeSteppingMethod::steady_bdf ||
@@ -38,7 +39,8 @@ is_bdf1(const Parameters::SimulationControl::TimeSteppingMethod method)
  * @return true if the method is BDF1, BDF2, BDF3, or steady BDF, false otherwise.
  */
 inline bool
-is_bdf(const Parameters::SimulationControl::TimeSteppingMethod method)
+time_stepping_is_bdf(
+  const Parameters::SimulationControl::TimeSteppingMethod method)
 {
   return (method ==
             Parameters::SimulationControl::TimeSteppingMethod::steady_bdf ||
@@ -55,7 +57,8 @@ is_bdf(const Parameters::SimulationControl::TimeSteppingMethod method)
  * @return true if the method is SDIRK, false otherwise.
  */
 inline bool
-is_sdirk(const Parameters::SimulationControl::TimeSteppingMethod method)
+time_stepping_is_sdirk(
+  const Parameters::SimulationControl::TimeSteppingMethod method)
 {
   return (
     method == Parameters::SimulationControl::TimeSteppingMethod::sdirk22 ||
@@ -69,7 +72,7 @@ is_sdirk(const Parameters::SimulationControl::TimeSteppingMethod method)
  * @param method A time integration method
  */
 inline bool
-is_bdf_high_order(
+time_stepping_is_bdf_high_order(
   const Parameters::SimulationControl::TimeSteppingMethod method)
 {
   return (method == Parameters::SimulationControl::TimeSteppingMethod::bdf2 ||
