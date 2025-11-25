@@ -750,15 +750,8 @@ VolumeOfFluid<dim>::gather_output_hook()
         projected_phase_fraction_gradient_component_interpretation[i] =
           DataComponentInterpretation::component_is_part_of_vector;
 
-      std::vector<std::string> phase_gradient_projection_name(
-        dim, "phase_fraction_gradient");
-
-      std::vector<std::string> normalized_phase_gradient_projection_name(
-        dim, "normalized_phase_fraction_gradient");
-
-      std::shared_ptr<InterfaceNormalDivergencePostprocessor<dim>>
-        interface_normal_divergence_postprocessor =
-          std::make_shared<InterfaceNormalDivergencePostprocessor<dim>>();
+      std::vector<std::string> solution_names_new(dim,
+                                                  "phase_fraction_gradient");
 
       solution_output_structs.emplace_back(
         std::in_place_type<OutputStructSolution<dim, GlobalVectorType>>,
@@ -766,25 +759,8 @@ VolumeOfFluid<dim>::gather_output_hook()
           VOFSubequationsID::phase_gradient_projection),
         this->vof_subequations_interface->get_solution(
           VOFSubequationsID::phase_gradient_projection),
-        phase_gradient_projection_name,
+        solution_names_new,
         projected_phase_fraction_gradient_component_interpretation);
-
-      solution_output_structs.emplace_back(
-        std::in_place_type<OutputStructSolution<dim, GlobalVectorType>>,
-        this->vof_subequations_interface->get_dof_handler(
-          VOFSubequationsID::phase_gradient_projection),
-        this->vof_subequations_interface->get_normalized_solution(
-          VOFSubequationsID::phase_gradient_projection),
-        normalized_phase_gradient_projection_name,
-        projected_phase_fraction_gradient_component_interpretation);
-
-      solution_output_structs.emplace_back(
-        std::in_place_type<OutputStructPostprocessor<dim, GlobalVectorType>>,
-        this->vof_subequations_interface->get_dof_handler(
-          VOFSubequationsID::phase_gradient_projection),
-        this->vof_subequations_interface->get_normalized_solution(
-          VOFSubequationsID::phase_gradient_projection),
-        interface_normal_divergence_postprocessor);
 
       solution_output_structs.emplace_back(
         std::in_place_type<OutputStructSolution<dim, GlobalVectorType>>,
@@ -2602,10 +2578,6 @@ VolumeOfFluid<dim>::set_initial_conditions()
       simulation_parameters.multiphysics.vof_parameters.regularization_method
         .algebraic_interface_reinitialization.enable)
     {
-      // TODO AA change for unfiltered solution
-      // this->vof_subequations_interface
-      //   ->set_vof_filtered_solution_and_dof_handler(this->filtered_solution,
-      //                                               this->dof_handler);
       this->vof_subequations_interface
         ->set_vof_filtered_solution_and_dof_handler(*this->present_solution,
                                                     *this->dof_handler);
@@ -3060,13 +3032,9 @@ VolumeOfFluid<dim>::reinitialize_interface_with_algebraic_method()
       this->vof_subequations_interface->set_vof_solution(
         (*this->previous_solutions)[0]);
 
-      // Solve phase gradient projection followed by algebraic interface
-      // reinitialization steps
-      this->vof_subequations_interface->solve_specific_subequation(
-        VOFSubequationsID::phase_gradient_projection);
-      this->vof_subequations_interface->solve_specific_subequation(
-        VOFSubequationsID::algebraic_interface_reinitialization);
-      // this->vof_subequations_interface->solve();
+      // Solve phase gradient and curvature projections followed by algebraic
+      // interface reinitialization steps
+      this->vof_subequations_interface->solve();
 
       // Overwrite VOF previous solution with the reinitialized result
       FETools::interpolate(
@@ -3091,13 +3059,9 @@ VolumeOfFluid<dim>::reinitialize_interface_with_algebraic_method()
     *this->present_solution, *this->dof_handler);
   this->vof_subequations_interface->set_vof_solution(*this->present_solution);
 
-  // Solve phase gradient projection followed by algebraic interface
-  // reinitialization steps
-  this->vof_subequations_interface->solve_specific_subequation(
-    VOFSubequationsID::phase_gradient_projection);
-  this->vof_subequations_interface->solve_specific_subequation(
-    VOFSubequationsID::algebraic_interface_reinitialization);
-  // this->vof_subequations_interface->solve();
+  // Solve phase gradient and curvature projections followed by algebraic
+  // interface reinitialization steps
+  this->vof_subequations_interface->solve();
 
   // Overwrite the VOF solution with the algebraic interface reinitialization
   FETools::interpolate(
