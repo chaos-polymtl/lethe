@@ -12,8 +12,6 @@ subsection simulation control
 end
 
 subsection restart
-  set checkpoint = false
-  set frequency  = 1
   set restart    = true
 end
 
