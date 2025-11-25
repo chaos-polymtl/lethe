@@ -12,7 +12,7 @@ subsection simulation control
 end
 
 subsection restart
-  set restart    = true
+  set restart = true
 end
 
 subsection physical properties
