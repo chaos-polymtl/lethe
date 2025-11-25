@@ -170,16 +170,18 @@ PhysicsSolver<VectorType>::PhysicsSolver(
     {
       case Parameters::NonLinearSolver::SolverType::newton:
         physics_solving_strategy =
-          new NewtonNonLinearSolverStrategy<VectorType>(this,
-                                                non_linear_solver_parameters);
+          new NewtonNonLinearSolverStrategy<VectorType>(
+            this, non_linear_solver_parameters);
         break;
       case Parameters::NonLinearSolver::SolverType::kinsol_newton:
-        physics_solving_strategy = new KinsolNewtonNonLinearSolverStrategy<VectorType>(
-          this, non_linear_solver_parameters);
+        physics_solving_strategy =
+          new KinsolNewtonNonLinearSolverStrategy<VectorType>(
+            this, non_linear_solver_parameters);
         break;
       case Parameters::NonLinearSolver::SolverType::inexact_newton:
-        physics_solving_strategy = new InexactNewtonNonLinearSolverStrategy<VectorType>(
-          this, non_linear_solver_parameters);
+        physics_solving_strategy =
+          new InexactNewtonNonLinearSolverStrategy<VectorType>(
+            this, non_linear_solver_parameters);
         break;
       default:
         break;

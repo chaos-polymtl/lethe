@@ -25,8 +25,8 @@ public:
    * simulation parameter file.
    *
    */
-  NewtonNonLinearSolverStrategy(PhysicsSolver<VectorType>         *physics_solver,
-                        const Parameters::NonLinearSolver &param);
+  NewtonNonLinearSolverStrategy(PhysicsSolver<VectorType> *physics_solver,
+                                const Parameters::NonLinearSolver &param);
 
 
   /**

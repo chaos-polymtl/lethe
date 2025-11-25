@@ -16,7 +16,8 @@
  * reassemble the Jacobian matrix or not.
  */
 template <typename VectorType>
-class KinsolNewtonNonLinearSolverStrategy : public PhysicsSolverStrategy<VectorType>
+class KinsolNewtonNonLinearSolverStrategy
+  : public PhysicsSolverStrategy<VectorType>
 {
 public:
   /**
@@ -29,7 +30,7 @@ public:
    * simulation parameter file.
    *
    */
-  KinsolNewtonNonLinearSolverStrategy(PhysicsSolver<VectorType>         *physics_solver,
+  KinsolNewtonNonLinearSolverStrategy(PhysicsSolver<VectorType> *physics_solver,
                                       const Parameters::NonLinearSolver &param);
 
 
@@ -41,9 +42,9 @@ public:
 };
 
 template <typename VectorType>
-KinsolNewtonNonLinearSolverStrategy<VectorType>::KinsolNewtonNonLinearSolverStrategy(
-  PhysicsSolver<VectorType>         *physics_solver,
-  const Parameters::NonLinearSolver &params)
+KinsolNewtonNonLinearSolverStrategy<VectorType>::
+  KinsolNewtonNonLinearSolverStrategy(PhysicsSolver<VectorType> *physics_solver,
+                                      const Parameters::NonLinearSolver &params)
   : PhysicsSolverStrategy<VectorType>(physics_solver, params)
 {}
 
