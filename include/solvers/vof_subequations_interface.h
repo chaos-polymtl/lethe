@@ -20,7 +20,7 @@ DeclException1(
   std::string,
   "The current solution of the "
     << arg1
-    << "is invalid. \n"
+    << " is invalid. \n"
        "A new VOF solution has been set but the subequation was not solved "
        "afterwards.");
 
