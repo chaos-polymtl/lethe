@@ -4,11 +4,13 @@
 #ifndef lethe_physics_solver_h
 #define lethe_physics_solver_h
 
-#include <core/inexact_newton_non_linear_solver.h>
-#include <core/kinsol_newton_non_linear_solver.h>
-#include <core/newton_non_linear_solver.h>
-#include <core/non_linear_solver.h>
+
+#include <core/inexact_newton_non_linear_solver_strategy.h>
+#include <core/kinsol_newton_non_linear_solver_strategy.h>
+#include <core/linear_solver_strategy.h>
+#include <core/newton_non_linear_solver_strategy.h>
 #include <core/parameters.h>
+#include <core/physics_solver_strategy.h>
 
 #include <deal.II/lac/affine_constraints.h>
 
@@ -25,11 +27,30 @@ template <typename VectorType>
 class PhysicsSolver
 {
 public:
+  /**
+   * @brief Constructor for the non-linear physics.
+   *
+   * @param[in] Non-linear solver parameters as specified in the
+   * simulation parameter file.
+   *
+   */
   PhysicsSolver(const Parameters::NonLinearSolver non_linear_solver_parameters);
 
+
+  /**
+   * @brief Constructor for the linear physics. Since the Physics is linear, a LinearSolutionStrategy is automatically generated as a PhysicsSolverStrategy.
+   *
+   */
+  PhysicsSolver();
+
+
+  /**
+   * @brief Destructor.
+   *
+   */
   virtual ~PhysicsSolver()
   {
-    delete non_linear_solver;
+    delete physics_solving_strategy;
   }
 
   /**
@@ -58,10 +79,10 @@ public:
   solve_linear_system() = 0;
 
   /**
-   * @brief Solve the non linear system of equations.
+   * @brief Solve the global system of equations according to a given strategy, either linear or not.
    */
   void
-  solve_non_linear_system();
+  solve_governing_system();
 
   /**
    * @brief Applies constraints to a local_evaluation_point.
@@ -130,14 +151,14 @@ public:
   inline unsigned int
   get_current_newton_iteration() const
   {
-    return non_linear_solver->get_current_newton_iteration();
+    return physics_solving_strategy->get_current_newton_iteration();
   }
 
   ConditionalOStream                                pcout;
   Parameters::SimulationControl::TimeSteppingMethod time_stepping_method;
 
 private:
-  NonLinearSolver<VectorType> *non_linear_solver;
+  PhysicsSolverStrategy<VectorType> *physics_solving_strategy;
 };
 
 template <typename VectorType>
@@ -148,17 +169,19 @@ PhysicsSolver<VectorType>::PhysicsSolver(
   switch (non_linear_solver_parameters.solver)
     {
       case Parameters::NonLinearSolver::SolverType::newton:
-        non_linear_solver =
-          new NewtonNonLinearSolver<VectorType>(this,
-                                                non_linear_solver_parameters);
+        physics_solving_strategy =
+          new NewtonNonLinearSolverStrategy<VectorType>(
+            this, non_linear_solver_parameters);
         break;
       case Parameters::NonLinearSolver::SolverType::kinsol_newton:
-        non_linear_solver = new KinsolNewtonNonLinearSolver<VectorType>(
-          this, non_linear_solver_parameters);
+        physics_solving_strategy =
+          new KinsolNewtonNonLinearSolverStrategy<VectorType>(
+            this, non_linear_solver_parameters);
         break;
       case Parameters::NonLinearSolver::SolverType::inexact_newton:
-        non_linear_solver = new InexactNewtonNonLinearSolver<VectorType>(
-          this, non_linear_solver_parameters);
+        physics_solving_strategy =
+          new InexactNewtonNonLinearSolverStrategy<VectorType>(
+            this, non_linear_solver_parameters);
         break;
       default:
         break;
@@ -166,11 +189,19 @@ PhysicsSolver<VectorType>::PhysicsSolver(
 }
 
 template <typename VectorType>
+PhysicsSolver<VectorType>::PhysicsSolver()
+  : pcout(std::cout, Utilities::MPI::this_mpi_process(MPI_COMM_WORLD) == 0)
+{
+  physics_solving_strategy = new LinearSolverStrategy<VectorType>(this);
+}
+
+
+template <typename VectorType>
 void
-PhysicsSolver<VectorType>::solve_non_linear_system()
+PhysicsSolver<VectorType>::solve_governing_system()
 {
   {
-    this->non_linear_solver->solve();
+    this->physics_solving_strategy->solve();
   }
 }
 #endif

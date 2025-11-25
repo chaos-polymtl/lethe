@@ -1,52 +1,33 @@
-// SPDX-FileCopyrightText: Copyright (c) 2021, 2024 The Lethe Authors
+// SPDX-FileCopyrightText: Copyright (c) 2025 The Lethe Authors
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
 /**
- * @brief The TestClass tests the non-linear solvers using a simple systme of two
- * equations, only one of which is non-linear
+ * @brief The Test Class tests the linear solver strategy using a simple matrix built from two simple linear equations.
  */
 
 // Lethe
 #include <core/parameters.h>
 
-// Tests (with common definitions)
-#include <../tests/core/non_linear_test_system_01.h>
+// Tests
+#include <../tests/core/linear_test_system_01.h>
 
 #include <../tests/tests.h>
 
 void
 test()
 {
-  Parameters::NonLinearSolver params{
-    .verbosity = Parameters::Verbosity::verbose,
-    .solver    = Parameters::NonLinearSolver::SolverType::inexact_newton,
-    .kinsol_strategy =
-      Parameters::NonLinearSolver::KinsolStrategy::normal_newton,
-    .tolerance                    = 1e-8,
-    .max_iterations               = 10,
-    .display_precision            = 4,
-    .force_rhs_calculation        = false,
-    .matrix_tolerance             = 0.1,
-    .step_tolerance               = 0.99,
-    .reuse_matrix                 = false,
-    .reuse_preconditioner         = false,
-    .abort_at_convergence_failure = false};
-
-
   deallog << "Creating solver" << std::endl;
 
   // Create an instantiation of the Test Class
-  std::unique_ptr<NonLinearProblemTestClass> solver =
-    std::make_unique<NonLinearProblemTestClass>(params);
+  std::unique_ptr<LinearProblemTestClass> solver =
+    std::make_unique<LinearProblemTestClass>();
 
-
-  deallog << "Solving non-linear system " << std::endl;
-  // Solve the non-linear system of equation
+  deallog << "Solving linear governing system " << std::endl;
   solver->solve_governing_system();
 
-  auto &present_solution = solver->get_present_solution();
-  deallog << "The final solution is : " << present_solution[0] << " "
-          << present_solution[1] << std::endl;
+  auto &solution = solver->get_system_rhs();
+  deallog << "The final solution is : " << solution[0] << " " << solution[1]
+          << std::endl;
 }
 
 int

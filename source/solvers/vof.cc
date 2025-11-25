@@ -24,7 +24,7 @@ VolumeOfFluid<dim>::VolumeOfFluid(
   std::shared_ptr<parallel::DistributedTriangulationBase<dim>> p_triangulation,
   std::shared_ptr<SimulationControl> p_simulation_control)
   : AuxiliaryPhysics<dim, GlobalVectorType>(
-      p_simulation_parameters.non_linear_solver.at(PhysicsID::VOF))
+      p_simulation_parameters.physics_solving_strategy.at(PhysicsID::VOF))
   , multiphysics(multiphysics_interface)
   , computing_timer(p_triangulation->get_mpi_communicator(),
                     this->pcout,

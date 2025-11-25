@@ -793,7 +793,7 @@ FluidDynamicsBlock<dim>::set_initial_condition_fd(
 
       this->simulation_control->set_assembly_method(
         Parameters::SimulationControl::TimeSteppingMethod::steady);
-      PhysicsSolver<GlobalBlockVectorType>::solve_non_linear_system();
+      PhysicsSolver<GlobalBlockVectorType>::solve_governing_system();
       this->finish_time_step();
 
       this->simulation_parameters.physical_properties_manager.set_rheology(

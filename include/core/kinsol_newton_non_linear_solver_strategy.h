@@ -1,11 +1,11 @@
-// SPDX-FileCopyrightText: Copyright (c) 2021, 2023-2024 The Lethe Authors
+// SPDX-FileCopyrightText: Copyright (c) 2021, 2023-2025 The Lethe Authors
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
-#ifndef lethe_kinsol_non_linear_solver_h
-#define lethe_kinsol_non_linear_solver_h
+#ifndef lethe_kinsol_newton_non_linear_solver_strategy_h
+#define lethe_kinsol_newton_non_linear_solver_strategy_h
 
-#include <core/non_linear_solver.h>
 #include <core/parameters.h>
+#include <core/physics_solver_strategy.h>
 
 #include <deal.II/sundials/kinsol.h>
 
@@ -16,7 +16,8 @@
  * reassemble the Jacobian matrix or not.
  */
 template <typename VectorType>
-class KinsolNewtonNonLinearSolver : public NonLinearSolver<VectorType>
+class KinsolNewtonNonLinearSolverStrategy
+  : public PhysicsSolverStrategy<VectorType>
 {
 public:
   /**
@@ -29,8 +30,8 @@ public:
    * simulation parameter file.
    *
    */
-  KinsolNewtonNonLinearSolver(PhysicsSolver<VectorType>         *physics_solver,
-                              const Parameters::NonLinearSolver &param);
+  KinsolNewtonNonLinearSolverStrategy(PhysicsSolver<VectorType> *physics_solver,
+                                      const Parameters::NonLinearSolver &param);
 
 
   /**
@@ -41,15 +42,15 @@ public:
 };
 
 template <typename VectorType>
-KinsolNewtonNonLinearSolver<VectorType>::KinsolNewtonNonLinearSolver(
-  PhysicsSolver<VectorType>         *physics_solver,
-  const Parameters::NonLinearSolver &params)
-  : NonLinearSolver<VectorType>(physics_solver, params)
+KinsolNewtonNonLinearSolverStrategy<VectorType>::
+  KinsolNewtonNonLinearSolverStrategy(PhysicsSolver<VectorType> *physics_solver,
+                                      const Parameters::NonLinearSolver &params)
+  : PhysicsSolverStrategy<VectorType>(physics_solver, params)
 {}
 
 template <typename VectorType>
 void
-KinsolNewtonNonLinearSolver<VectorType>::solve()
+KinsolNewtonNonLinearSolverStrategy<VectorType>::solve()
 {
 #ifdef DEAL_II_WITH_SUNDIALS
 
