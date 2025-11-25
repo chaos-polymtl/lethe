@@ -1612,7 +1612,8 @@ VANSAssemblerSaffmanMei<dim>::calculate_particle_fluid_interactions(
 
               // Apply lift force on the fluid
               explicit_particle_volumetric_acceleration_on_fluid[d] -=
-                lift_force[d] / scratch_data.cell_volume;
+                lift_force[d] /
+                (density[i_particle] * scratch_data.cell_volume);
             }
 
           i_particle += 1;
@@ -1658,7 +1659,8 @@ VANSAssemblerSaffmanMei<dim>::calculate_particle_fluid_interactions(
 
               // Apply lift force on the fluid
               explicit_particle_volumetric_acceleration_on_fluid[d] -=
-                lift_force[d] / scratch_data.cell_volume;
+                lift_force[d] /
+                (density[i_particle] * scratch_data.cell_volume);
             }
           i_particle += 1;
         }
@@ -1746,8 +1748,9 @@ VANSAssemblerMagnus<dim>::calculate_particle_fluid_interactions(
                                   d] += lift_force[d];
 
               // Apply lift force on the fluid
-              explicit_particle_volumetric_acceleration_on_fluid[d] +=
-                lift_force[d] / scratch_data.cell_volume;
+              explicit_particle_volumetric_acceleration_on_fluid[d] -=
+                lift_force[d] /
+                (density[i_particle] * scratch_data.cell_volume);
             }
           i_particle += 1;
         }
@@ -1805,8 +1808,9 @@ VANSAssemblerMagnus<dim>::calculate_particle_fluid_interactions(
                                   d] += lift_force[d];
 
               // Apply lift force on the fluid
-              explicit_particle_volumetric_acceleration_on_fluid[d] +=
-                lift_force[d] / scratch_data.cell_volume;
+              explicit_particle_volumetric_acceleration_on_fluid[d] -=
+                lift_force[d] /
+                (density[i_particle] * scratch_data.cell_volume);
             }
           i_particle += 1;
         }
@@ -2015,7 +2019,7 @@ VANSAssemblerPressureForce<dim>::calculate_particle_fluid_interactions(
               particle_properties[DEM::CFDDEMProperties::PropertiesIndex::
                                     fem_force_two_way_coupling_x +
                                   d] += pressure_force[d] * density[i_particle];
-              explicit_particle_volumetric_acceleration_on_fluid[d] +=
+              explicit_particle_volumetric_acceleration_on_fluid[d] -=
                 pressure_force[d] / scratch_data.cell_volume;
             }
         }
@@ -2088,7 +2092,7 @@ VANSAssemblerShearForce<dim>::calculate_particle_fluid_interactions(
               particle_properties[DEM::CFDDEMProperties::PropertiesIndex::
                                     fem_force_two_way_coupling_x +
                                   d] += shear_force[d] * density[i_particle];
-              explicit_particle_volumetric_acceleration_on_fluid[d] +=
+              explicit_particle_volumetric_acceleration_on_fluid[d] -=
                 shear_force[d] / scratch_data.cell_volume;
             }
         }
@@ -2130,19 +2134,13 @@ VANSAssemblerFPI<dim>::assemble_matrix(
       // Store JxW in local variable for faster access;
       const double JxW = JxW_vec[q];
 
-      // Calculate the strong residual for GLS stabilization
-      if (cfd_dem.vans_model == Parameters::VANSModel::modelB)
-        {
-          strong_residual[q] += // Drag Force
-            (beta_drag * (velocity - average_particles_velocity) -
-             explicit_particle_volumetric_acceleration_on_fluid);
-        }
-      else if (cfd_dem.vans_model == Parameters::VANSModel::modelA)
-        {
-          strong_residual[q] += // Drag Force
-            beta_drag * (velocity - average_particles_velocity) -
-            explicit_particle_volumetric_acceleration_on_fluid;
-        }
+      // Subtraction of forces applied on fluid from the residual for GLS
+      // stabilization
+      strong_residual[q] -=
+        // drag applied on fluid
+        (-beta_drag * (velocity - average_particles_velocity)
+         // other two-way coupling forces applied on the fluid
+         + explicit_particle_volumetric_acceleration_on_fluid);
 
       for (unsigned int j = 0; j < n_dofs; ++j)
         {
@@ -2197,40 +2195,30 @@ VANSAssemblerFPI<dim>::assemble_rhs(
       const double JxW = JxW_vec[q];
 
       // Calculate the strong residual for GLS stabilization
-      if (cfd_dem.vans_model == Parameters::VANSModel::modelB)
-        {
-          strong_residual[q] += // Drag Force
-            (beta_drag * (velocity - average_particles_velocity) -
-             explicit_particle_volumetric_acceleration_on_fluid);
-        }
-      else if (cfd_dem.vans_model == Parameters::VANSModel::modelA)
-        {
-          strong_residual[q] += // Drag Force
-            beta_drag * (velocity - average_particles_velocity) -
-            explicit_particle_volumetric_acceleration_on_fluid;
-        }
+      // No need to have separate codes for models A and B here, as the
+      // correct forces are included in
+      // explicit_particle_volumetric_acceleration_on_fluid in the
+      // particle-fluid interaction assemblers, depending on the VANS model.
+
+      // Subtraction of forces applied on fluid from the residual for GLS
+      // stabilization
+      strong_residual[q] -=
+        // drag applied on fluid
+        (-beta_drag * (velocity - average_particles_velocity)
+         // other two-way coupling forces applied on the fluid
+         + explicit_particle_volumetric_acceleration_on_fluid);
 
       // Assembly of the right-hand side
       for (unsigned int i = 0; i < n_dofs; ++i)
         {
           const auto phi_u_i = scratch_data.phi_u[q][i];
-          // Drag Force
-          //  Model B of the VANS
-          if (cfd_dem.vans_model == Parameters::VANSModel::modelB)
-            {
-              local_rhs(i) -=
-                (beta_drag * (velocity - average_particles_velocity) -
-                 explicit_particle_volumetric_acceleration_on_fluid) *
-                phi_u_i * JxW;
-            }
-          //  Model A of the VANS
-          if (cfd_dem.vans_model == Parameters::VANSModel::modelA)
-            {
-              local_rhs(i) -=
-                (beta_drag * (velocity - average_particles_velocity) -
-                 explicit_particle_volumetric_acceleration_on_fluid) *
-                phi_u_i * JxW;
-            }
+
+          local_rhs(i) +=
+            // + drag applied on fluid
+            (-beta_drag * (velocity - average_particles_velocity) +
+             // + other two-way coupling forces applied on the fluid
+             explicit_particle_volumetric_acceleration_on_fluid) *
+            phi_u_i * JxW;
         }
     }
 }
