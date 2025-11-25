@@ -726,9 +726,7 @@ FluidDynamicsNitsche<dim, spacedim>::solve()
         if constexpr (dim == spacedim)
           {
             // Share the Nitsche solids to the multiphysics interface
-            this->multiphysics->set_solid(
-              solids); // TODO AA check if it has to be set here or if it is
-                       // dynamically evolving after the first set
+            this->multiphysics->set_solid(solids);
           }
       }
       if (this->simulation_control->is_at_start())

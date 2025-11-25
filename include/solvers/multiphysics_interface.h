@@ -524,19 +524,20 @@ public:
   }
 
   /**
-  * @brief Request the solid objects. Used an auxiliary physics
-  * needs to apply a boundary condition on a solid through
-  * Nitsche immersed boundary method.
-  *
-  * @param[in] number_solids The number of solids declared in the parameter file.
-  * The value is used to ensure that at least one solid has been declared.
-  *
-  * @note The method is called only in
-  * HeatTransfer<dim>::assemble_nitsche_heat_restriction,
-  * which is itself called only if number_solids > 0
-  */
+   * @brief Request the solid objects. Used an auxiliary physics
+   * needs to apply a boundary condition on a solid through
+   * Nitsche immersed boundary method.
+   *
+   * @param[in] number_solids The number of solids declared in the parameter
+   * file. The value is used to ensure that at least one solid has been
+   * declared.
+   *
+   * @note The method is called only in
+   * HeatTransfer<dim>::assemble_nitsche_heat_restriction,
+   * which is itself called only if number_solids > 0
+   */
   const std::vector<std::shared_ptr<SolidBase<dim, dim>>> &
-  get_solids([[maybe_unused]]const int number_solids)
+  get_solids([[maybe_unused]] const int number_solids)
   {
     Assert(number_solids > 0, NoSolidWarning("the"));
     AssertThrow(solids != nullptr,
