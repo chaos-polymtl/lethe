@@ -6,6 +6,10 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
 ### [Master] - 2025-11-25
 
+### Added
+
+- - MAJOR We now need the possibility to solve linear system of equations for future physics, consequently the `physics_solver` and the `non_linear_solver` classes have now an overloaded constructor to enable this functionality. To improve the semantics with this new architecture, the general name  "solver_strategy" is used instead of "non_linear" where appropriate. A new `linear_solver_strategy` class is also introduced with is associated unit test. [#1804] (https://github.com/chaos-polymtl/lethe/pull/1804)
+
 ### Fixed
 - MAJOR As identified in issue [#1518](https://github.com/chaos-polymtl/lethe/issues/1518), in MultiphysicsInterface solutions and DoFHandler were stored and shared through raw pointers. To avoid memory leak issues, these are now handled with shared pointers (`std::shared_ptr`). [#1823](https://github.com/chaos-polymtl/lethe/pull/1823)
 
