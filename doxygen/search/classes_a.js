@@ -10,5 +10,6 @@ var searchData=
   ['levelsetgradientpostprocessor_7',['LevelsetGradientPostprocessor',['../classLevelsetGradientPostprocessor.html',1,'']]],
   ['levelsetpostprocessor_8',['LevelsetPostprocessor',['../classLevelsetPostprocessor.html',1,'']]],
   ['linearsolver_9',['LinearSolver',['../structParameters_1_1LinearSolver.html',1,'Parameters']]],
-  ['local_10',['local',['../structRayTracingSolver_1_1neighbor__list__types_1_1local.html',1,'RayTracingSolver::neighbor_list_types']]]
+  ['linearsolverstrategy_10',['LinearSolverStrategy',['../classLinearSolverStrategy.html',1,'']]],
+  ['local_11',['local',['../structRayTracingSolver_1_1neighbor__list__types_1_1local.html',1,'RayTracingSolver::neighbor_list_types']]]
 ];

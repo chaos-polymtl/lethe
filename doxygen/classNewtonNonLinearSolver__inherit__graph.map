@@ -1,5 +1,0 @@
-<map id="NewtonNonLinearSolver&lt; VectorType &gt;" name="NewtonNonLinearSolver&lt; VectorType &gt;">
-<area shape="rect" id="Node000001" title="Non&#45;linear solver for non&#45;linear systems of equations which uses a Newton method with &#160;relaxation to ..." alt="" coords="31,79,210,119"/>
-<area shape="rect" id="Node000002" href="$classNonLinearSolver.html" title="Base class that works as an interface for all non&#45;linear solvers for all non&#45;linear systems of equati..." alt="" coords="5,5,236,31"/>
-<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="123,44,123,79,118,79,118,44"/>
-</map>

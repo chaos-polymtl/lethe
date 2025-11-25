@@ -6,7 +6,7 @@ var searchData=
   ['ib_5fparticles_5fdem_2eh_3',['ib_particles_dem.h',['../ib__particles__dem_8h.html',1,'']]],
   ['ib_5fstencil_2ecc_4',['ib_stencil.cc',['../ib__stencil_8cc.html',1,'']]],
   ['ib_5fstencil_2eh_5',['ib_stencil.h',['../ib__stencil_8h.html',1,'']]],
-  ['inexact_5fnewton_5fnon_5flinear_5fsolver_2eh_6',['inexact_newton_non_linear_solver.h',['../inexact__newton__non__linear__solver_8h.html',1,'']]],
+  ['inexact_5fnewton_5fnon_5flinear_5fsolver_5fstrategy_2eh_6',['inexact_newton_non_linear_solver_strategy.h',['../inexact__newton__non__linear__solver__strategy_8h.html',1,'']]],
   ['initial_5fconditions_2ecc_7',['initial_conditions.cc',['../initial__conditions_8cc.html',1,'']]],
   ['initial_5fconditions_2eh_8',['initial_conditions.h',['../initial__conditions_8h.html',1,'']]],
   ['input_5fparameter_5finspection_2ecc_9',['input_parameter_inspection.cc',['../input__parameter__inspection_8cc.html',1,'']]],

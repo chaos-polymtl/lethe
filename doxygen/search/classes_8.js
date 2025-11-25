@@ -6,7 +6,7 @@ var searchData=
   ['ibstencil_3',['IBStencil',['../classIBStencil.html',1,'']]],
   ['immersedsolidgaussianparameters_4',['ImmersedSolidGaussianParameters',['../structParameters_1_1ImmersedSolidGaussianParameters.html',1,'Parameters']]],
   ['immersedsolidtanhparameters_5',['ImmersedSolidTanhParameters',['../structParameters_1_1ImmersedSolidTanhParameters.html',1,'Parameters']]],
-  ['inexactnewtonnonlinearsolver_6',['InexactNewtonNonLinearSolver',['../classInexactNewtonNonLinearSolver.html',1,'']]],
+  ['inexactnewtonnonlinearsolverstrategy_6',['InexactNewtonNonLinearSolverStrategy',['../classInexactNewtonNonLinearSolverStrategy.html',1,'']]],
   ['initialconditions_7',['InitialConditions',['../classParameters_1_1InitialConditions.html',1,'Parameters']]],
   ['insertion_8',['Insertion',['../classInsertion.html',1,'']]],
   ['insertionfile_9',['InsertionFile',['../classInsertionFile.html',1,'']]],

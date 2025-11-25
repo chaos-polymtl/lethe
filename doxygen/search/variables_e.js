@@ -22,7 +22,7 @@ var searchData=
   ['operations_19',['operations',['../classCompositeShape.html#a5ec8e4564a31735d3ad0bd3cd4c37796',1,'CompositeShape']]],
   ['order_20',['order',['../classParameters_1_1IBParticles.html#ad02e32af360690287cdaef5c03409df0',1,'Parameters::IBParticles']]],
   ['orientation_21',['orientation',['../classIBParticle.html#a114a3e0194b458b3882b3e7c4ff5a59a',1,'IBParticle::orientation'],['../classShape.html#a2ca8b6d6616659ad6ea4727762ab0d9f',1,'Shape::orientation']]],
-  ['outer_5fiteration_22',['outer_iteration',['../classNonLinearSolver.html#a142761399c74556acf0f393b326e5626',1,'NonLinearSolver']]],
+  ['outer_5fiteration_22',['outer_iteration',['../classPhysicsSolverStrategy.html#a00db2ad6f7ab907d878e2ec8744b4496',1,'PhysicsSolverStrategy']]],
   ['outlet_5fboundaries_23',['outlet_boundaries',['../structParameters_1_1Lagrangian_1_1BCDEM.html#a70c98e9e4ab8f5142d429679d4a77e4f',1,'Parameters::Lagrangian::BCDEM']]],
   ['outlet_5fboundary_5fid_24',['outlet_boundary_id',['../structParameters_1_1PostProcessing.html#a06d0a753a9b0c259099a991d2c9aad54',1,'Parameters::PostProcessing']]],
   ['output_5fbool_25',['output_bool',['../classSerialSolid.html#a8932937a408d94a824546a94bf762806',1,'SerialSolid::output_bool'],['../classParameters_1_1RigidSolidObject.html#a39d6d19f030edbb0796cabf9876d24d5',1,'Parameters::RigidSolidObject::output_bool']]],

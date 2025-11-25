@@ -1,0 +1,5 @@
+<map id="KinsolNewtonNonLinearSolverStrategy&lt; VectorType &gt;" name="KinsolNewtonNonLinearSolverStrategy&lt; VectorType &gt;">
+<area shape="rect" id="Node000001" title="Non&#45;linear Newton solver for non&#45;linear systems of equations implemented in the SUNDIALS suite,..." alt="" coords="5,93,224,133"/>
+<area shape="rect" id="Node000002" href="$classPhysicsSolverStrategy.html" title="Base class that works as an interface for all solver strategies (either non&#45;linear or linear) for all..." alt="" coords="31,5,198,45"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="117,59,117,93,112,93,112,59"/>
+</map>

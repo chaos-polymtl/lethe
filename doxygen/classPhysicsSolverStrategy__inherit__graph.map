@@ -1,0 +1,11 @@
+<map id="PhysicsSolverStrategy&lt; VectorType &gt;" name="PhysicsSolverStrategy&lt; VectorType &gt;">
+<area shape="rect" id="Node000001" title="Base class that works as an interface for all solver strategies (either non&#45;linear or linear) for all..." alt="" coords="5,101,172,141"/>
+<area shape="rect" id="Node000002" href="$classInexactNewtonNonLinearSolverStrategy.html" title="Non&#45;linear solver for non&#45;linear systems of equations which uses an inexact Newton method with &#160;relax..." alt="" coords="224,5,451,45"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="137,92,219,55,255,43,256,48,221,60,139,97"/>
+<area shape="rect" id="Node000003" href="$classKinsolNewtonNonLinearSolverStrategy.html" title="Non&#45;linear Newton solver for non&#45;linear systems of equations implemented in the SUNDIALS suite,..." alt="" coords="228,69,447,109"/>
+<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="185,106,227,101,228,106,186,112"/>
+<area shape="rect" id="Node000004" href="$classLinearSolverStrategy.html" title="The linear solver strategy class is used to solve the physics as a linear problem." alt="" coords="258,133,417,173"/>
+<area shape="poly" id="edge3_Node000001_Node000004" title=" " alt="" coords="186,131,258,141,258,146,185,136"/>
+<area shape="rect" id="Node000005" href="$classNewtonNonLinearSolverStrategy.html" title="Non&#45;linear solver for non&#45;linear systems of equations which uses a Newton method with &#160;relaxation to ..." alt="" coords="220,197,455,237"/>
+<area shape="poly" id="edge4_Node000001_Node000005" title=" " alt="" coords="139,145,221,183,256,195,255,200,219,188,137,150"/>
+</map>

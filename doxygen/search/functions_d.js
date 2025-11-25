@@ -10,7 +10,7 @@ var searchData=
   ['navierstokesstabilizedoperator_7',['NavierStokesStabilizedOperator',['../classNavierStokesStabilizedOperator.html#aad3166f7c16353535efa60236593e01e',1,'NavierStokesStabilizedOperator']]],
   ['navierstokesvofassemblerevaporation_8',['NavierStokesVOFAssemblerEvaporation',['../classNavierStokesVOFAssemblerEvaporation.html#ac8c1be30707b57c6b003f75b9a8f7782',1,'NavierStokesVOFAssemblerEvaporation']]],
   ['newtonian_9',['Newtonian',['../classNewtonian.html#a2a4bcd9e0941337c268d18211388354c',1,'Newtonian']]],
-  ['newtonnonlinearsolver_10',['NewtonNonLinearSolver',['../classNewtonNonLinearSolver.html#a5f54296a8bbdb8e8775d401e7b0e9f6e',1,'NewtonNonLinearSolver']]],
+  ['newtonnonlinearsolverstrategy_10',['NewtonNonLinearSolverStrategy',['../classNewtonNonLinearSolverStrategy.html#a6d38d57968d773f32f6ece45956cf5c7',1,'NewtonNonLinearSolverStrategy']]],
   ['nitsche_11',['Nitsche',['../classParameters_1_1Nitsche.html#a6e8b3d5d805461975d3ee95333b005e0',1,'Parameters::Nitsche']]],
   ['nitscheobject_12',['NitscheObject',['../classParameters_1_1NitscheObject.html#a951386a6c0d0a21ec942df40e10994dd',1,'Parameters::NitscheObject']]],
   ['no_5ffluid_5ffluid_5finteraction_5ferror_13',['no_fluid_fluid_interaction_error',['../classSimulationParameters.html#a16cd27d99504c763010d3c9084f2db84',1,'SimulationParameters']]],
@@ -18,9 +18,8 @@ var searchData=
   ['no_5frolling_5fresistance_5ftorque_15',['no_rolling_resistance_torque',['../rolling__resistance__torque__models_8h.html#abdd60e13449c7d675c40c8032997f37a',1,'rolling_resistance_torque_models.h']]],
   ['no_5frolling_5ftorque_16',['no_rolling_torque',['../particle__wall__rolling__resistance__torque_8h.html#a8697aa56bb93f52a9d8257092a2aa388',1,'particle_wall_rolling_resistance_torque.h']]],
   ['nonetracerreactionprefactor_17',['NoneTracerReactionPrefactor',['../classNoneTracerReactionPrefactor.html#a1767dca0bf3b0ae49a9a3c0752a2ea57',1,'NoneTracerReactionPrefactor']]],
-  ['nonlinearsolver_18',['NonLinearSolver',['../classNonLinearSolver.html#a64cc52ea704a9407555ec08f6a262294',1,'NonLinearSolver']]],
-  ['normaldistribution_19',['NormalDistribution',['../classNormalDistribution.html#ade4049ccd44bc724e7978e9237b0e511',1,'NormalDistribution']]],
-  ['number_5fof_5finterpolation_5fsupport_5fpoints_20',['number_of_interpolation_support_points',['../classIBStencil.html#af81d22f6ee5c9960571d8a1089364645',1,'IBStencil']]],
-  ['number_5fof_5fprevious_5fsolutions_21',['number_of_previous_solutions',['../bdf_8h.html#a79e44dc10ababc737a8659c2f5f8c18a',1,'bdf.h']]],
-  ['numerical_5fjacobian_22',['numerical_jacobian',['../classInterfacePropertyModel.html#a1447682647905a04a66677e0692b7a0f',1,'InterfacePropertyModel::numerical_jacobian()'],['../classPhysicalPropertyModel.html#a6be82a7f56166add6af232ac511194d4',1,'PhysicalPropertyModel::numerical_jacobian()']]]
+  ['normaldistribution_18',['NormalDistribution',['../classNormalDistribution.html#ade4049ccd44bc724e7978e9237b0e511',1,'NormalDistribution']]],
+  ['number_5fof_5finterpolation_5fsupport_5fpoints_19',['number_of_interpolation_support_points',['../classIBStencil.html#af81d22f6ee5c9960571d8a1089364645',1,'IBStencil']]],
+  ['number_5fof_5fprevious_5fsolutions_20',['number_of_previous_solutions',['../bdf_8h.html#a79e44dc10ababc737a8659c2f5f8c18a',1,'bdf.h']]],
+  ['numerical_5fjacobian_21',['numerical_jacobian',['../classInterfacePropertyModel.html#a1447682647905a04a66677e0692b7a0f',1,'InterfacePropertyModel::numerical_jacobian()'],['../classPhysicalPropertyModel.html#a6be82a7f56166add6af232ac511194d4',1,'PhysicalPropertyModel::numerical_jacobian()']]]
 ];

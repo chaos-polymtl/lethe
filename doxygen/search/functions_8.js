@@ -5,7 +5,7 @@ var searchData=
   ['identify_5fminimum_5fcell_5fsize_2',['identify_minimum_cell_size',['../utilities_8h.html#a47c096b4659adc4e0aa45d4aeb994dad',1,'utilities.h']]],
   ['identify_5fmobility_5fstatus_3',['identify_mobility_status',['../classAdaptiveSparseContacts.html#a87a6ec374e003a88ec304fcfac8e919b',1,'AdaptiveSparseContacts']]],
   ['increment_5fcheckpoint_5fid_4',['increment_checkpoint_id',['../classCheckpointControl.html#aa43a19ed2cebe2b2131bf0c3942974e6',1,'CheckpointControl']]],
-  ['inexactnewtonnonlinearsolver_5',['InexactNewtonNonLinearSolver',['../classInexactNewtonNonLinearSolver.html#a6ffed3df0985d28a1eed051c982e0727',1,'InexactNewtonNonLinearSolver']]],
+  ['inexactnewtonnonlinearsolverstrategy_5',['InexactNewtonNonLinearSolverStrategy',['../classInexactNewtonNonLinearSolverStrategy.html#a7d8f2a00efc898f3d0f64b3f72366b19',1,'InexactNewtonNonLinearSolverStrategy']]],
   ['init_5ftemporary_5fvector_6',['init_temporary_vector',['../classNavierStokesBase.html#aafccb927a868ab52abb8411752067137',1,'NavierStokesBase']]],
   ['initial_5fsetup_7',['initial_setup',['../classSerialSolid.html#a638e083c3505ef7729194357add903a7',1,'SerialSolid::initial_setup()'],['../classSolidBase.html#a92aea3e357d30cf2cb021cac7c3a8ffa',1,'SolidBase::initial_setup()']]],
   ['initialconditions_8',['InitialConditions',['../classParameters_1_1InitialConditions.html#ae3b50407178541902f1c59a089c9322e',1,'Parameters::InitialConditions']]],

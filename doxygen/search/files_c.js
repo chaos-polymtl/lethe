@@ -10,6 +10,5 @@ var searchData=
   ['navier_5fstokes_5fscratch_5fdata_2eh_7',['navier_stokes_scratch_data.h',['../navier__stokes__scratch__data_8h.html',1,'']]],
   ['navier_5fstokes_5fvof_5fassemblers_2ecc_8',['navier_stokes_vof_assemblers.cc',['../navier__stokes__vof__assemblers_8cc.html',1,'']]],
   ['navier_5fstokes_5fvof_5fassemblers_2eh_9',['navier_stokes_vof_assemblers.h',['../navier__stokes__vof__assemblers_8h.html',1,'']]],
-  ['newton_5fnon_5flinear_5fsolver_2eh_10',['newton_non_linear_solver.h',['../newton__non__linear__solver_8h.html',1,'']]],
-  ['non_5flinear_5fsolver_2eh_11',['non_linear_solver.h',['../non__linear__solver_8h.html',1,'']]]
+  ['newton_5fnon_5flinear_5fsolver_5fstrategy_2eh_10',['newton_non_linear_solver_strategy.h',['../newton__non__linear__solver__strategy_8h.html',1,'']]]
 ];

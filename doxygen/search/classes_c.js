@@ -14,16 +14,13 @@ var searchData=
   ['navierstokesvofassemblerevaporation_11',['NavierStokesVOFAssemblerEvaporation',['../classNavierStokesVOFAssemblerEvaporation.html',1,'']]],
   ['neighbor_5flist_5ftypes_12',['neighbor_list_types',['../structRayTracingSolver_1_1neighbor__list__types.html',1,'RayTracingSolver']]],
   ['newtonian_13',['Newtonian',['../classNewtonian.html',1,'']]],
-  ['newtonnonlinearsolver_14',['NewtonNonLinearSolver',['../classNewtonNonLinearSolver.html',1,'']]],
+  ['newtonnonlinearsolverstrategy_14',['NewtonNonLinearSolverStrategy',['../classNewtonNonLinearSolverStrategy.html',1,'']]],
   ['nitsche_15',['Nitsche',['../classParameters_1_1Nitsche.html',1,'Parameters']]],
   ['nitscheobject_16',['NitscheObject',['../classParameters_1_1NitscheObject.html',1,'Parameters']]],
   ['nonetracerreactionprefactor_17',['NoneTracerReactionPrefactor',['../classNoneTracerReactionPrefactor.html',1,'']]],
-  ['nonlinearsolver_18',['nonlinearsolver',['../classNonLinearSolver.html',1,'NonLinearSolver&lt; VectorType &gt;'],['../structParameters_1_1NonLinearSolver.html',1,'Parameters::NonLinearSolver']]],
-  ['nonlinearsolver_3c_20globalblockvectortype_20_3e_19',['NonLinearSolver&lt; GlobalBlockVectorType &gt;',['../classNonLinearSolver.html',1,'']]],
-  ['nonlinearsolver_3c_20globalvectortype_20_3e_20',['NonLinearSolver&lt; GlobalVectorType &gt;',['../classNonLinearSolver.html',1,'']]],
-  ['nonlinearsolver_3c_20linearalgebra_3a_3adistributed_3a_3avector_3c_20double_20_3e_20_3e_21',['NonLinearSolver&lt; LinearAlgebra::distributed::Vector&lt; double &gt; &gt;',['../classNonLinearSolver.html',1,'']]],
-  ['nonnewtonian_22',['NonNewtonian',['../structParameters_1_1NonNewtonian.html',1,'Parameters']]],
-  ['normaldistribution_23',['NormalDistribution',['../classNormalDistribution.html',1,'']]],
-  ['nsboundaryconditions_24',['NSBoundaryConditions',['../classBoundaryConditions_1_1NSBoundaryConditions.html',1,'BoundaryConditions']]],
-  ['nsboundaryfunctions_25',['NSBoundaryFunctions',['../classBoundaryConditions_1_1NSBoundaryFunctions.html',1,'BoundaryConditions']]]
+  ['nonlinearsolver_18',['NonLinearSolver',['../structParameters_1_1NonLinearSolver.html',1,'Parameters']]],
+  ['nonnewtonian_19',['NonNewtonian',['../structParameters_1_1NonNewtonian.html',1,'Parameters']]],
+  ['normaldistribution_20',['NormalDistribution',['../classNormalDistribution.html',1,'']]],
+  ['nsboundaryconditions_21',['NSBoundaryConditions',['../classBoundaryConditions_1_1NSBoundaryConditions.html',1,'BoundaryConditions']]],
+  ['nsboundaryfunctions_22',['NSBoundaryFunctions',['../classBoundaryConditions_1_1NSBoundaryFunctions.html',1,'BoundaryConditions']]]
 ];
