@@ -15,7 +15,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
 ### Fixed
 
-- MINOR In the calculate_particle_fluid_interactions function of the VANS assemblers for lift, pressure, and shear forces, the expressions for forces applied to the fluid were corrected. This includes adjustments to the signs and division by the fluid density where needed in the computation of explicit_particle_volumetric_acceleration_on_fluid. For the pressure and shear forces, only model B of the vans equation is affected since model A does not use the explicit pressure force. [#1815](https://github.com/chaos-polymtl/lethe/pull/1815)
+- MINOR In the calculate_particle_fluid_interactions function of the VANS assemblers for lift, pressure, and shear forces, the expressions for forces applied to the fluid were corrected. This includes adjustments to the signs and division by the fluid density where needed in the computation of explicit_particle_volumetric_acceleration_on_fluid. For the pressure and shear forces, only model B of the vans equation is affected since model A does not use the explicit pressure and shear forces. [#1815](https://github.com/chaos-polymtl/lethe/pull/1815)
 
 ### [Master] - 2025-11-23
 
