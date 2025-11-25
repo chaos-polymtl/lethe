@@ -16,7 +16,7 @@
  *
  */
 template <typename VectorType>
-class InexactNewtonNonLinearSolver : public PhysicsSolverStrategy<VectorType>
+class InexactNewtonNonLinearSolverStrategy : public PhysicsSolverStrategy<VectorType>
 {
 public:
   /**
@@ -29,7 +29,7 @@ public:
    * simulation parameter file.
    *
    */
-  InexactNewtonNonLinearSolver(PhysicsSolver<VectorType> *physics_solver,
+  InexactNewtonNonLinearSolverStrategy(PhysicsSolver<VectorType> *physics_solver,
                                const Parameters::NonLinearSolver &param);
 
 
@@ -45,7 +45,7 @@ private:
 };
 
 template <typename VectorType>
-InexactNewtonNonLinearSolver<VectorType>::InexactNewtonNonLinearSolver(
+InexactNewtonNonLinearSolverStrategy<VectorType>::InexactNewtonNonLinearSolverStrategy(
   PhysicsSolver<VectorType>         *physics_solver,
   const Parameters::NonLinearSolver &params)
   : PhysicsSolverStrategy<VectorType>(physics_solver, params)

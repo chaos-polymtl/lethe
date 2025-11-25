@@ -12,7 +12,7 @@
  * monotonically decreasing.
  */
 template <typename VectorType>
-class NewtonNonLinearSolver : public PhysicsSolverStrategy<VectorType>
+class NewtonNonLinearSolverStrategy : public PhysicsSolverStrategy<VectorType>
 {
 public:
   /**
@@ -25,7 +25,7 @@ public:
    * simulation parameter file.
    *
    */
-  NewtonNonLinearSolver(PhysicsSolver<VectorType>         *physics_solver,
+  NewtonNonLinearSolverStrategy(PhysicsSolver<VectorType>         *physics_solver,
                         const Parameters::NonLinearSolver &param);
 
 
@@ -38,7 +38,7 @@ public:
 };
 
 template <typename VectorType>
-NewtonNonLinearSolver<VectorType>::NewtonNonLinearSolver(
+NewtonNonLinearSolverStrategy<VectorType>::NewtonNonLinearSolverStrategy(
   PhysicsSolver<VectorType>         *physics_solver,
   const Parameters::NonLinearSolver &params)
   : PhysicsSolverStrategy<VectorType>(physics_solver, params)
@@ -46,7 +46,7 @@ NewtonNonLinearSolver<VectorType>::NewtonNonLinearSolver(
 
 template <typename VectorType>
 void
-NewtonNonLinearSolver<VectorType>::solve()
+NewtonNonLinearSolverStrategy<VectorType>::solve()
 {
   double global_res;
   double current_res;
