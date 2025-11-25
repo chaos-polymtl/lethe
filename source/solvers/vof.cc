@@ -750,27 +750,31 @@ VolumeOfFluid<dim>::gather_output_hook()
         projected_phase_fraction_gradient_component_interpretation[i] =
           DataComponentInterpretation::component_is_part_of_vector;
 
-      std::vector<std::string> solution_names_new(dim,
-                                                  "phase_fraction_gradient");
-
+      std::vector<std::string> phase_gradient_projection_name(
+        dim, "phase_fraction_gradient");
       solution_output_structs.emplace_back(
         std::in_place_type<OutputStructSolution<dim, GlobalVectorType>>,
         this->vof_subequations_interface->get_dof_handler(
           VOFSubequationsID::phase_gradient_projection),
         this->vof_subequations_interface->get_solution(
           VOFSubequationsID::phase_gradient_projection),
-        solution_names_new,
+        phase_gradient_projection_name,
         projected_phase_fraction_gradient_component_interpretation);
 
-      solution_output_structs.emplace_back(
-        std::in_place_type<OutputStructSolution<dim, GlobalVectorType>>,
-        this->vof_subequations_interface->get_dof_handler(
-          VOFSubequationsID::curvature_projection),
-        this->vof_subequations_interface->get_solution(
-          VOFSubequationsID::curvature_projection),
-        std::vector<std::string>(1, "curvature"),
-        std::vector<DataComponentInterpretation::DataComponentInterpretation>(
-          1, DataComponentInterpretation::component_is_scalar));
+      if (vof_parameters.surface_tension_force.enable &&
+          vof_parameters.surface_tension_force.output_vof_auxiliary_fields)
+        {
+          solution_output_structs.emplace_back(
+            std::in_place_type<OutputStructSolution<dim, GlobalVectorType>>,
+            this->vof_subequations_interface->get_dof_handler(
+              VOFSubequationsID::curvature_projection),
+            this->vof_subequations_interface->get_solution(
+              VOFSubequationsID::curvature_projection),
+            std::vector<std::string>(1, "curvature"),
+            std::vector<
+              DataComponentInterpretation::DataComponentInterpretation>(
+              1, DataComponentInterpretation::component_is_scalar));
+        }
     }
 
   if (simulation_parameters.multiphysics.vof_parameters.regularization_method
@@ -3032,9 +3036,13 @@ VolumeOfFluid<dim>::reinitialize_interface_with_algebraic_method()
       this->vof_subequations_interface->set_vof_solution(
         (*this->previous_solutions)[0]);
 
-      // Solve phase gradient and curvature projections followed by algebraic
-      // interface reinitialization steps
-      this->vof_subequations_interface->solve();
+      // Solve phase gradient projection followed by algebraic interface
+      // reinitialization steps
+      this->vof_subequations_interface->solve_specific_subequation(
+        VOFSubequationsID::phase_gradient_projection);
+      this->vof_subequations_interface->solve_specific_subequation(
+        VOFSubequationsID::algebraic_interface_reinitialization);
+      // this->vof_subequations_interface->solve();
 
       // Overwrite VOF previous solution with the reinitialized result
       FETools::interpolate(
@@ -3059,9 +3067,14 @@ VolumeOfFluid<dim>::reinitialize_interface_with_algebraic_method()
     *this->present_solution, *this->dof_handler);
   this->vof_subequations_interface->set_vof_solution(*this->present_solution);
 
-  // Solve phase gradient and curvature projections followed by algebraic
-  // interface reinitialization steps
-  this->vof_subequations_interface->solve();
+
+  // Solve phase gradient projection followed by algebraic interface
+  // reinitialization steps
+  this->vof_subequations_interface->solve_specific_subequation(
+    VOFSubequationsID::phase_gradient_projection);
+  this->vof_subequations_interface->solve_specific_subequation(
+    VOFSubequationsID::algebraic_interface_reinitialization);
+  // this->vof_subequations_interface->solve();
 
   // Overwrite the VOF solution with the algebraic interface reinitialization
   FETools::interpolate(
