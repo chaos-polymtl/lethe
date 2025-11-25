@@ -25,6 +25,7 @@
  */
 template <typename VectorType>
 class PhysicsSolver
+  : public std::enable_shared_from_this<PhysicsSolver<VectorType>>
 {
 public:
   /**
@@ -34,14 +35,21 @@ public:
    * simulation parameter file.
    *
    */
-  PhysicsSolver(const Parameters::NonLinearSolver non_linear_solver_parameters);
+  PhysicsSolver(const Parameters::NonLinearSolver non_linear_solver_parameters)
+    : pcout(std::cout, Utilities::MPI::this_mpi_process(MPI_COMM_WORLD) == 0)
+    , non_linear_solver_parameters(non_linear_solver_parameters)
+  {}
+
+  PhysicsSolver()
+    : pcout(std::cout, Utilities::MPI::this_mpi_process(MPI_COMM_WORLD) == 0)
+  {}
 
 
-  /**
-   * @brief Constructor for the linear physics.
-   *
-   */
-  PhysicsSolver();
+  // /**
+  //  * @brief Constructor for the linear physics.
+  //  *
+  //  */
+  // PhysicsSolver();
 
 
   /**
@@ -50,7 +58,50 @@ public:
    */
   virtual ~PhysicsSolver()
   {
-    delete physics_solving_strategy;
+    // delete physics_solving_strategy;
+  }
+
+  void
+  configue_solver_strategy()
+  {
+    // Assertion to avoid bad weak_ptr issues when the solver is not initialized
+    // as a shared_ptr
+    auto self = this->weak_from_this().lock();
+    AssertThrow(
+      self,
+      ExcMessage(
+        "The PhysicsSolver child object used must be initialized as a shared pointer."));
+
+    if (non_linear_solver_parameters
+          .has_value()) // A non-linear solving strategy is requested
+      {
+        switch (non_linear_solver_parameters->solver)
+          {
+            case Parameters::NonLinearSolver::SolverType::newton:
+              physics_solving_strategy =
+                std::make_shared<NewtonNonLinearSolver<VectorType>>(
+                  this->shared_from_this(), *non_linear_solver_parameters);
+              break;
+            case Parameters::NonLinearSolver::SolverType::kinsol_newton:
+              physics_solving_strategy =
+                std::make_shared<KinsolNewtonNonLinearSolver<VectorType>>(
+                  this->shared_from_this(), *non_linear_solver_parameters);
+              break;
+            case Parameters::NonLinearSolver::SolverType::inexact_newton:
+              physics_solving_strategy =
+                std::make_shared<InexactNewtonNonLinearSolver<VectorType>>(
+                  this->shared_from_this(), *non_linear_solver_parameters);
+              break;
+            default:
+              break;
+          }
+      }
+    else // A linear solving strategy is requested
+      {
+        physics_solving_strategy =
+          std::make_shared<LinearSolverStrategy<VectorType>>(
+            this->shared_from_this());
+      }
   }
 
   /**
@@ -162,10 +213,11 @@ public:
   Parameters::SimulationControl::TimeSteppingMethod time_stepping_method;
 
 private:
-  PhysicsSolverStrategy<VectorType> *physics_solving_strategy;
+  std::shared_ptr<PhysicsSolverStrategy<VectorType>> physics_solving_strategy;
+  std::optional<Parameters::NonLinearSolver> non_linear_solver_parameters;
 };
 
-template <typename VectorType>
+/*template <typename VectorType>
 PhysicsSolver<VectorType>::PhysicsSolver(
   const Parameters::NonLinearSolver non_linear_solver_parameters)
   : pcout(std::cout, Utilities::MPI::this_mpi_process(MPI_COMM_WORLD) == 0)
@@ -174,16 +226,18 @@ PhysicsSolver<VectorType>::PhysicsSolver(
     {
       case Parameters::NonLinearSolver::SolverType::newton:
         physics_solving_strategy =
-          new NewtonNonLinearSolver<VectorType>(this,
-                                                non_linear_solver_parameters);
+          std::make_shared<NewtonNonLinearSolver<VectorType>>(
+            this->shared_from_this(), non_linear_solver_parameters);
         break;
       case Parameters::NonLinearSolver::SolverType::kinsol_newton:
-        physics_solving_strategy = new KinsolNewtonNonLinearSolver<VectorType>(
-          this, non_linear_solver_parameters);
+        physics_solving_strategy =
+          std::make_shared<KinsolNewtonNonLinearSolver<VectorType>>(
+            this->shared_from_this(), non_linear_solver_parameters);
         break;
       case Parameters::NonLinearSolver::SolverType::inexact_newton:
-        physics_solving_strategy = new InexactNewtonNonLinearSolver<VectorType>(
-          this, non_linear_solver_parameters);
+        physics_solving_strategy =
+          std::make_shared<InexactNewtonNonLinearSolver<VectorType>>(
+            this->shared_from_this(), non_linear_solver_parameters);
         break;
       default:
         break;
@@ -194,8 +248,9 @@ template <typename VectorType>
 PhysicsSolver<VectorType>::PhysicsSolver()
   : pcout(std::cout, Utilities::MPI::this_mpi_process(MPI_COMM_WORLD) == 0)
 {
-  physics_solving_strategy = new LinearSolverStrategy<VectorType>(this);
-}
+  physics_solving_strategy = std::make_shared<LinearSolverStrategy<VectorType>>(
+    this->shared_from_this());
+}*/
 
 
 template <typename VectorType>

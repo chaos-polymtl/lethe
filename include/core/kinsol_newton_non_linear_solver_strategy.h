@@ -29,8 +29,9 @@ public:
    * simulation parameter file.
    *
    */
-  KinsolNewtonNonLinearSolver(PhysicsSolver<VectorType>         *physics_solver,
-                              const Parameters::NonLinearSolver &param);
+  KinsolNewtonNonLinearSolver(
+    std::shared_ptr<PhysicsSolver<VectorType>> physics_solver,
+    const Parameters::NonLinearSolver         &param);
 
 
   /**
@@ -42,8 +43,8 @@ public:
 
 template <typename VectorType>
 KinsolNewtonNonLinearSolver<VectorType>::KinsolNewtonNonLinearSolver(
-  PhysicsSolver<VectorType>         *physics_solver,
-  const Parameters::NonLinearSolver &params)
+  std::shared_ptr<PhysicsSolver<VectorType>> physics_solver,
+  const Parameters::NonLinearSolver         &params)
   : PhysicsSolverStrategy<VectorType>(physics_solver, params)
 {}
 
@@ -53,7 +54,7 @@ KinsolNewtonNonLinearSolver<VectorType>::solve()
 {
 #ifdef DEAL_II_WITH_SUNDIALS
 
-  PhysicsSolver<VectorType> *solver = this->physics_solver;
+  PhysicsSolver<VectorType> *solver = this->physics_solver.get();
 
   auto &local_evaluation_point = solver->get_local_evaluation_point();
 

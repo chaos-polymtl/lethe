@@ -29,8 +29,9 @@ public:
    * simulation parameter file.
    *
    */
-  InexactNewtonNonLinearSolver(PhysicsSolver<VectorType> *physics_solver,
-                               const Parameters::NonLinearSolver &param);
+  InexactNewtonNonLinearSolver(
+    std::shared_ptr<PhysicsSolver<VectorType>> physics_solver,
+    const Parameters::NonLinearSolver         &param);
 
 
   /**
@@ -46,8 +47,8 @@ private:
 
 template <typename VectorType>
 InexactNewtonNonLinearSolver<VectorType>::InexactNewtonNonLinearSolver(
-  PhysicsSolver<VectorType>         *physics_solver,
-  const Parameters::NonLinearSolver &params)
+  std::shared_ptr<PhysicsSolver<VectorType>> physics_solver,
+  const Parameters::NonLinearSolver         &params)
   : PhysicsSolverStrategy<VectorType>(physics_solver, params)
   , matrix_requires_assembly(true)
 {}
@@ -72,7 +73,7 @@ InexactNewtonNonLinearSolver<VectorType>::solve()
   // the alpha scheme as this scheme only monitors the convergence of the
   // non-linear system of equation (the matrix problem).
 
-  PhysicsSolver<VectorType> *solver = this->physics_solver;
+  PhysicsSolver<VectorType> *solver = this->physics_solver.get();
 
   const double rescale_metric = solver->get_residual_rescale_metric();
 

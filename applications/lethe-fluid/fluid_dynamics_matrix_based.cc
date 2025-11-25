@@ -67,8 +67,11 @@ main(int argc, char *argv[])
           if (Utilities::MPI::this_mpi_process(MPI_COMM_WORLD) == 0)
             print_parameters_to_output_file(pcout, prm, file_name);
 
-          FluidDynamicsMatrixBased<2> problem(NSparam);
-          problem.solve();
+          // FluidDynamicsMatrixBased<2> problem(NSparam);
+          std::shared_ptr<FluidDynamicsMatrixBased<2>> problem =
+            std::make_shared<FluidDynamicsMatrixBased<2>>(NSparam);
+          problem->configue_solver_strategy();
+          problem->solve();
         }
 
       else if (dim == 3)

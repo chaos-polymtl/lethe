@@ -25,8 +25,9 @@ public:
    * simulation parameter file.
    *
    */
-  NewtonNonLinearSolver(PhysicsSolver<VectorType>         *physics_solver,
-                        const Parameters::NonLinearSolver &param);
+  NewtonNonLinearSolver(
+    std::shared_ptr<PhysicsSolver<VectorType>> physics_solver,
+    const Parameters::NonLinearSolver         &param);
 
 
   /**
@@ -39,8 +40,8 @@ public:
 
 template <typename VectorType>
 NewtonNonLinearSolver<VectorType>::NewtonNonLinearSolver(
-  PhysicsSolver<VectorType>         *physics_solver,
-  const Parameters::NonLinearSolver &params)
+  std::shared_ptr<PhysicsSolver<VectorType>> physics_solver,
+  const Parameters::NonLinearSolver         &params)
   : PhysicsSolverStrategy<VectorType>(physics_solver, params)
 {}
 
@@ -64,7 +65,7 @@ NewtonNonLinearSolver<VectorType>::solve()
   // the alpha scheme as this scheme only monitors the convergence of the
   // non-linear system of equation (the matrix problem).
 
-  PhysicsSolver<VectorType> *solver = this->physics_solver;
+  PhysicsSolver<VectorType> *solver = this->physics_solver.get();
 
   const double rescale_metric = solver->get_residual_rescale_metric();
 

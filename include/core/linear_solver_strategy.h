@@ -20,7 +20,8 @@ public:
    * solving strategy is attached.
    *
    */
-  LinearSolverStrategy(PhysicsSolver<VectorType> *physics_solver);
+  LinearSolverStrategy(
+    std::shared_ptr<PhysicsSolver<VectorType>> physics_solver);
 
 
   /**
@@ -32,7 +33,7 @@ public:
 
 template <typename VectorType>
 LinearSolverStrategy<VectorType>::LinearSolverStrategy(
-  PhysicsSolver<VectorType> *physics_solver)
+  std::shared_ptr<PhysicsSolver<VectorType>> physics_solver)
   : PhysicsSolverStrategy<VectorType>(physics_solver)
 {}
 
@@ -40,8 +41,7 @@ template <typename VectorType>
 void
 LinearSolverStrategy<VectorType>::solve()
 {
-  PhysicsSolver<VectorType> *solver = this->physics_solver;
-
+  PhysicsSolver<VectorType> *solver = this->physics_solver.get();
 
   solver->assemble_system_matrix();
   solver->setup_preconditioner();

@@ -15,6 +15,7 @@ class PhysicsSolver;
  */
 template <typename VectorType>
 class PhysicsSolverStrategy
+  : public std::enable_shared_from_this<PhysicsSolverStrategy<VectorType>>
 {
 public:
   /**
@@ -27,8 +28,9 @@ public:
    * simulation parameter file.
    *
    */
-  PhysicsSolverStrategy(PhysicsSolver<VectorType>         *physics_solver,
-                        const Parameters::NonLinearSolver &params);
+  PhysicsSolverStrategy(
+    std::shared_ptr<PhysicsSolver<VectorType>> physics_solver,
+    const Parameters::NonLinearSolver         &params);
 
   /**
    * @brief Constructor for the linear solver strategy.
@@ -37,7 +39,8 @@ public:
    * solving strategy is attached.
    *
    */
-  PhysicsSolverStrategy(PhysicsSolver<VectorType> *physics_solver);
+  PhysicsSolverStrategy(
+    std::shared_ptr<PhysicsSolver<VectorType>> physics_solver);
 
   /**
    * @brief Destructor.
@@ -71,7 +74,7 @@ protected:
    * @brief Physics solver for which we need a non-linear solver.
    *
    */
-  PhysicsSolver<VectorType> *physics_solver;
+  std::shared_ptr<PhysicsSolver<VectorType>> physics_solver;
 
   /**
    * @brief Non linear solver parameters.
@@ -88,8 +91,8 @@ protected:
 
 template <typename VectorType>
 PhysicsSolverStrategy<VectorType>::PhysicsSolverStrategy(
-  PhysicsSolver<VectorType>         *physics_solver,
-  const Parameters::NonLinearSolver &params)
+  std::shared_ptr<PhysicsSolver<VectorType>> physics_solver,
+  const Parameters::NonLinearSolver         &params)
   : physics_solver(physics_solver)
   , params(params)
   , outer_iteration(0)
@@ -97,7 +100,7 @@ PhysicsSolverStrategy<VectorType>::PhysicsSolverStrategy(
 
 template <typename VectorType>
 PhysicsSolverStrategy<VectorType>::PhysicsSolverStrategy(
-  PhysicsSolver<VectorType> *physics_solver)
+  std::shared_ptr<PhysicsSolver<VectorType>> physics_solver)
   : physics_solver(physics_solver)
 {}
 
