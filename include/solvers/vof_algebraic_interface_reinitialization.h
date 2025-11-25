@@ -326,15 +326,13 @@ private:
    * checking if at least one of the two stop criteria (steady-state criterion
    * or maximum number of reinitialization steps) is met.
    *
-   * @param[in] time_step_inv Inverse of the current reinitialization time-step.
-   *
    * @param[in] step_number Algebraic interface reinitialization step number.
    *
    * @return Boolean indicating if the algebraic reinitialization should
    * continue
    */
   inline bool
-  continue_iterating(const double time_step_inv, const unsigned int step_number)
+  continue_iterating(const unsigned int step_number)
   {
     if (step_number == 1) // Initial condition
       {
@@ -352,13 +350,6 @@ private:
             .regularization_method.algebraic_interface_reinitialization
             .steady_state_criterion;
 
-        /*// Evaluate the solution difference between the 2 last solutions
-        auto solution_diff = local_evaluation_point;
-        solution_diff -= previous_local_evaluation_point;
-
-        // Evaluate the current steady-state criterion value
-        double stop_criterion = time_step_inv * solution_diff.l2_norm();*/
-
         // Evaluate the solution difference between the 2 last solutions
         auto solution_diff = local_evaluation_point;
         solution_diff -= previous_local_evaluation_point;
@@ -372,7 +363,6 @@ private:
             this->pcout
               << "Algebraic reinitialization solution norm difference = "
               << solution_diff.l2_norm() << std::endl;
-            // << solution_diff.linfty_norm() << std::endl;
             this->pcout
               << "Algebraic reinitialization steady-state criterion value = "
               << stop_criterion << std::endl;
