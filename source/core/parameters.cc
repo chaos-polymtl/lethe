@@ -113,7 +113,7 @@ namespace Parameters
         "override time step on restart",
         "false",
         Patterns::Bool(),
-        "Override checkpointed time step upon restart <true|false>");
+        "Override checkpointed time-step upon restart <true|false>");
       prm.declare_entry(
         "time step independent of end time",
         "true",

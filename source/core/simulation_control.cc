@@ -496,9 +496,9 @@ SimulationControlTransient::read(const std::string &prefix)
     }
 
   if (override_time_step_on_restart)
-    // Fix the time step to the new provided value.
+    // Fix the time-step to the new provided value.
     // We understand that users may wish to override the checkpointed time step
-    // value with another one and that it may be a desired effect.
+    // value with another one.
     set_current_time_step(initial_time_step);
 }
 

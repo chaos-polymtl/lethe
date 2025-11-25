@@ -151,7 +151,7 @@ Transient simulations parameters
 
 * ``adapt``: controls if adaptive time-stepping is enabled. If set to ``true``, the time-step will evolve to ensure that the ``max cfl`` value is reached.
 
-* ``override time step on restart``: controls if the time step should be overriden by the set value upon restart. If set to ``true``, the time-step will be set to the value of ``time step``, as opposed to being matched to the time-step value of the checkpointed data.
+* ``override time step on restart``: controls if the time step should be overridden by the set value upon restart. If set to ``true``, the time-step will be set to the value of ``time step``, as opposed to being matched to the time-step value recorded at the last checkpoint.
 
 * ``max cfl``: maximum value of the :math:`\text{CFL}` condition that can be reached during the simulation. This parameter is only used when ``set adapt = true``.
 
