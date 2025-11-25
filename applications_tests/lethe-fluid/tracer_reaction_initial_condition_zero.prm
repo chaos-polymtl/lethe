@@ -1,0 +1,154 @@
+# SPDX-FileCopyrightText: Copyright (c) 2025 The Lethe Authors
+# SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
+# This MMS tests a 0.5th-order homogeneous reaction using CG tracer elements starting from the default initial condition (tracer = 0).
+
+set dimension = 2
+
+subsection simulation control
+  set method            = steady
+  set output frequency  = 0
+  set number mesh adapt = 2
+end
+
+subsection multiphysics
+  set fluid dynamics = true
+  set tracer         = true
+end
+
+subsection FEM
+  set velocity order = 1
+  set pressure order = 1
+  set tracer order   = 1
+end
+
+subsection mesh
+  set type               = dealii
+  set grid type          = subdivided_hyper_rectangle
+  set grid arguments     = 1,  1: 0, 0: 1, 1 : true
+  set initial refinement = 4
+end
+
+subsection mesh adaptation
+  set type = uniform
+end
+
+subsection boundary conditions
+  set number = 4
+  subsection bc 0
+    set id   = 0
+    set type = noslip
+  end
+  subsection bc 1
+    set id   = 1
+    set type = noslip
+  end
+  subsection bc 2
+    set id   = 2
+    set type = noslip
+  end
+  subsection bc 3
+    set id   = 3
+    set type = noslip
+  end
+end
+
+subsection boundary conditions tracer
+  set number         = 4
+  set time dependent = false
+  subsection bc 0
+    set id   = 0
+    set type = dirichlet
+    subsection dirichlet
+      set Function expression = sin(pi*x)*cos(pi*y)/2 + 1/2
+    end
+  end
+  subsection bc 1
+    set id   = 1
+    set type = dirichlet
+    subsection dirichlet
+      set Function expression = sin(pi*x)*cos(pi*y)/2 + 1/2
+    end
+  end
+  subsection bc 2
+    set id   = 2
+    set type = dirichlet
+    subsection dirichlet
+      set Function expression = sin(pi*x)*cos(pi*y)/2 + 1/2
+    end
+  end
+  subsection bc 3
+    set id   = 3
+    set type = dirichlet
+    subsection dirichlet
+      set Function expression = sin(pi*x)*cos(pi*y)/2 + 1/2
+    end
+  end
+end
+
+subsection initial conditions
+  set type = nodal
+  subsection tracer
+    set Function expression = 0
+  end
+end
+
+subsection physical properties
+  set number of fluids = 1
+  subsection fluid 0
+    set kinematic viscosity            = 1
+    set tracer diffusivity model       = constant
+    set tracer diffusivity             = 1
+    set tracer reaction constant model = constant
+    set tracer reaction constant       = 9.86960440109
+    set tracer reaction order          = 0.5
+    set tracer reaction epsilon        = 1e-8
+  end
+end
+
+subsection analytical solution
+  set enable    = true
+  set verbosity = verbose
+  subsection uvwp
+    set Function expression = sin(pi*x)^2*sin(pi*y)*cos(pi*y); -sin(pi*x)*sin(pi*y)^2*cos(pi*x); sin(pi*x)+sin(pi*y)
+  end
+  subsection tracer
+    set Function expression = sin(pi*x)*cos(pi*y)/2 + 1/2
+  end
+end
+
+subsection source term
+  subsection tracer
+    set Function expression = pi*(1.4142135623731*pi*(sin(pi*x)*cos(pi*y) + 1)^0.5 + 1.0*sin(pi*x)^2*sin(pi*y)*cos(pi*x) + 2.0*pi*sin(pi*x)*cos(pi*y))/2
+  end
+  subsection fluid dynamics
+    set Function expression = pi*(sin(pi*x)^3*sin(pi*y)^2*cos(pi*x) + 8*pi*sin(pi*x)^2*sin(pi*y)*cos(pi*y) - 2*pi*sin(pi*y)*cos(pi*y) + cos(pi*x)); pi*(sin(pi*x)^2*sin(pi*y)^3*cos(pi*y) - 8*pi*sin(pi*x)*sin(pi*y)^2*cos(pi*x) + 2*pi*sin(pi*x)*cos(pi*x) + cos(pi*y)); 0
+  end
+end
+
+subsection non-linear solver
+  subsection fluid dynamics
+    set verbosity      = quiet
+    set tolerance      = 1e-12
+    set max iterations = 10
+  end
+  subsection tracer
+    set verbosity      = quiet
+    set tolerance      = 1e-14
+    set max iterations = 10
+  end
+end
+
+subsection linear solver
+  subsection fluid dynamics
+    set verbosity         = quiet
+    set method            = gmres
+    set relative residual = 1e-3
+    set minimum residual  = 1e-13
+  end
+  subsection tracer
+    set verbosity         = quiet
+    set method            = gmres
+    set relative residual = 1e-6
+    set minimum residual  = 1e-16
+  end
+end
