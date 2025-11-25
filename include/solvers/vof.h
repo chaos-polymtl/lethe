@@ -274,7 +274,7 @@ public:
   const DoFHandler<dim> &
   get_dof_handler() override
   {
-    return dof_handler;
+    return *dof_handler;
   }
 
   GlobalVectorType &
@@ -298,7 +298,7 @@ public:
   GlobalVectorType &
   get_present_solution() override
   {
-    return present_solution;
+    return *present_solution;
   }
 
   GlobalVectorType &
@@ -692,7 +692,7 @@ private:
       {
         scratch_data.reinit_face_velocity(velocity_cell,
                                           face_no,
-                                          *multiphysics->get_block_solution(
+                                          multiphysics->get_block_solution(
                                             PhysicsID::fluid_dynamics),
                                           this->simulation_parameters.ale);
       }
@@ -700,7 +700,7 @@ private:
       {
         scratch_data.reinit_face_velocity(velocity_cell,
                                           face_no,
-                                          *multiphysics->get_solution(
+                                          multiphysics->get_solution(
                                             PhysicsID::fluid_dynamics),
                                           this->simulation_parameters.ale);
       }
@@ -718,7 +718,7 @@ private:
   // Core elements for the VOF simulation
   std::shared_ptr<parallel::DistributedTriangulationBase<dim>> triangulation;
   std::shared_ptr<SimulationControl>  simulation_control;
-  DoFHandler<dim>                     dof_handler;
+  std::shared_ptr<DoFHandler<dim>>    dof_handler;
   std::shared_ptr<FiniteElement<dim>> fe;
   ConvergenceTable                    error_table;
 
@@ -731,23 +731,23 @@ private:
   IndexSet locally_owned_dofs;
   IndexSet locally_relevant_dofs;
 
-  GlobalVectorType               evaluation_point;
-  GlobalVectorType               local_evaluation_point;
-  GlobalVectorType               newton_update;
-  GlobalVectorType               present_solution;
-  GlobalVectorType               system_rhs;
-  AffineConstraints<double>      nonzero_constraints;
-  AffineConstraints<double>      bounding_constraints;
-  AffineConstraints<double>      zero_constraints;
-  TrilinosWrappers::SparseMatrix system_matrix;
-  GlobalVectorType               filtered_solution;
+  GlobalVectorType                  evaluation_point;
+  GlobalVectorType                  local_evaluation_point;
+  GlobalVectorType                  newton_update;
+  std::shared_ptr<GlobalVectorType> present_solution;
+  GlobalVectorType                  system_rhs;
+  AffineConstraints<double>         nonzero_constraints;
+  AffineConstraints<double>         bounding_constraints;
+  AffineConstraints<double>         zero_constraints;
+  TrilinosWrappers::SparseMatrix    system_matrix;
+  std::shared_ptr<GlobalVectorType> filtered_solution;
 
   /// Level-set field obtained from the phase fraction field using a tanh-based
   /// transformation
   GlobalVectorType level_set;
 
   // Previous solutions vectors
-  std::vector<GlobalVectorType> previous_solutions;
+  std::shared_ptr<std::vector<GlobalVectorType>> previous_solutions;
 
   // Solution transfer classes
   std::shared_ptr<SolutionTransfer<dim, GlobalVectorType>> solution_transfer;

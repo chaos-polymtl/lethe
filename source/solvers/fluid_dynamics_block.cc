@@ -36,7 +36,7 @@ FluidDynamicsBlock<dim>::FluidDynamicsBlock(
 template <int dim>
 FluidDynamicsBlock<dim>::~FluidDynamicsBlock()
 {
-  this->dof_handler.clear();
+  this->dof_handler->clear();
 }
 
 template <int dim>
@@ -179,7 +179,7 @@ FluidDynamicsBlock<dim>::update_multiphysics_time_average_solution()
     {
       this->multiphysics->set_block_time_average_solution(
         PhysicsID::fluid_dynamics,
-        &this->average_velocities->get_average_velocities());
+        this->average_velocities->get_average_velocities());
     }
 }
 
@@ -203,10 +203,10 @@ FluidDynamicsBlock<dim>::assemble_system_matrix()
 
   if (this->simulation_parameters.multiphysics.VOF)
     {
-      const DoFHandler<dim> *dof_handler_vof =
+      const DoFHandler<dim> &dof_handler_vof =
         this->multiphysics->get_dof_handler(PhysicsID::VOF);
       scratch_data.enable_vof(
-        dof_handler_vof->get_fe(),
+        dof_handler_vof.get_fe(),
         *this->cell_quadrature,
         *this->mapping,
         this->simulation_parameters.multiphysics.vof_parameters.phase_filter);
@@ -214,8 +214,8 @@ FluidDynamicsBlock<dim>::assemble_system_matrix()
 
 
   WorkStream::run(
-    this->dof_handler.begin_active(),
-    this->dof_handler.end(),
+    this->dof_handler->begin_active(),
+    this->dof_handler->end(),
     *this,
     &FluidDynamicsBlock::assemble_local_system_matrix,
     &FluidDynamicsBlock::copy_local_matrix_to_global_matrix,
@@ -255,33 +255,33 @@ FluidDynamicsBlock<dim>::assemble_local_system_matrix(
   scratch_data.reinit(
     cell,
     this->evaluation_point,
-    this->previous_solutions,
+    *this->previous_solutions,
     this->sdirk_vectors.sum_over_previous_stages,
     this->forcing_function,
     this->flow_control.get_beta(),
     this->simulation_parameters.stabilization.pressure_scaling_factor);
   if (this->simulation_parameters.multiphysics.VOF)
     {
-      const DoFHandler<dim> *dof_handler_vof =
+      const DoFHandler<dim> &dof_handler_vof =
         this->multiphysics->get_dof_handler(PhysicsID::VOF);
       typename DoFHandler<dim>::active_cell_iterator phase_cell(
         &(*(this->triangulation)),
         cell->level(),
         cell->index(),
-        dof_handler_vof);
+        &dof_handler_vof);
 
       scratch_data.reinit_vof(
         phase_cell,
-        *this->multiphysics->get_solution(PhysicsID::VOF),
-        *this->multiphysics->get_filtered_solution(PhysicsID::VOF),
-        *this->multiphysics->get_previous_solutions(PhysicsID::VOF));
+        this->multiphysics->get_solution(PhysicsID::VOF),
+        this->multiphysics->get_filtered_solution(PhysicsID::VOF),
+        this->multiphysics->get_previous_solutions(PhysicsID::VOF));
     }
 
   if (this->simulation_parameters.multiphysics.heat_transfer)
     {
-      const DoFHandler<dim> *dof_handler_ht =
+      const DoFHandler<dim> &dof_handler_ht =
         this->multiphysics->get_dof_handler(PhysicsID::heat_transfer);
-      scratch_data.enable_heat_transfer(dof_handler_ht->get_fe(),
+      scratch_data.enable_heat_transfer(dof_handler_ht.get_fe(),
                                         *this->cell_quadrature,
                                         *this->mapping);
     }
@@ -334,10 +334,10 @@ FluidDynamicsBlock<dim>::assemble_system_rhs()
 
   if (this->simulation_parameters.multiphysics.VOF)
     {
-      const DoFHandler<dim> *dof_handler_vof =
+      const DoFHandler<dim> &dof_handler_vof =
         this->multiphysics->get_dof_handler(PhysicsID::VOF);
       scratch_data.enable_vof(
-        dof_handler_vof->get_fe(),
+        dof_handler_vof.get_fe(),
         *this->cell_quadrature,
         *this->mapping,
         this->simulation_parameters.multiphysics.vof_parameters.phase_filter);
@@ -345,17 +345,17 @@ FluidDynamicsBlock<dim>::assemble_system_rhs()
 
   if (this->simulation_parameters.multiphysics.heat_transfer)
     {
-      const DoFHandler<dim> *dof_handler_ht =
+      const DoFHandler<dim> &dof_handler_ht =
         this->multiphysics->get_dof_handler(PhysicsID::heat_transfer);
-      scratch_data.enable_heat_transfer(dof_handler_ht->get_fe(),
+      scratch_data.enable_heat_transfer(dof_handler_ht.get_fe(),
                                         *this->cell_quadrature,
                                         *this->mapping);
     }
 
 
   WorkStream::run(
-    this->dof_handler.begin_active(),
-    this->dof_handler.end(),
+    this->dof_handler->begin_active(),
+    this->dof_handler->end(),
     *this,
     &FluidDynamicsBlock::assemble_local_system_rhs,
     &FluidDynamicsBlock::copy_local_rhs_to_global_rhs,
@@ -406,7 +406,7 @@ FluidDynamicsBlock<dim>::assemble_local_system_rhs(
   scratch_data.reinit(
     cell,
     this->evaluation_point,
-    this->previous_solutions,
+    *this->previous_solutions,
     this->sdirk_vectors.sum_over_previous_stages,
     this->forcing_function,
     this->flow_control.get_beta(),
@@ -414,36 +414,36 @@ FluidDynamicsBlock<dim>::assemble_local_system_rhs(
 
   if (this->simulation_parameters.multiphysics.VOF)
     {
-      const DoFHandler<dim> *dof_handler_vof =
+      const DoFHandler<dim> &dof_handler_vof =
         this->multiphysics->get_dof_handler(PhysicsID::VOF);
       typename DoFHandler<dim>::active_cell_iterator phase_cell(
         &(*(this->triangulation)),
         cell->level(),
         cell->index(),
-        dof_handler_vof);
+        &dof_handler_vof);
 
       scratch_data.reinit_vof(
         phase_cell,
-        *this->multiphysics->get_solution(PhysicsID::VOF),
-        *this->multiphysics->get_filtered_solution(PhysicsID::VOF),
-        *this->multiphysics->get_previous_solutions(PhysicsID::VOF));
+        this->multiphysics->get_solution(PhysicsID::VOF),
+        this->multiphysics->get_filtered_solution(PhysicsID::VOF),
+        this->multiphysics->get_previous_solutions(PhysicsID::VOF));
     }
 
   if (this->simulation_parameters.multiphysics.heat_transfer)
     {
-      const DoFHandler<dim> *dof_handler_ht =
+      const DoFHandler<dim> &dof_handler_ht =
         this->multiphysics->get_dof_handler(PhysicsID::heat_transfer);
 
       typename DoFHandler<dim>::active_cell_iterator temperature_cell(
         &(*(this->triangulation)),
         cell->level(),
         cell->index(),
-        dof_handler_ht);
+        &dof_handler_ht);
 
       scratch_data.reinit_heat_transfer(
         temperature_cell,
-        *this->multiphysics->get_solution(PhysicsID::heat_transfer),
-        *this->multiphysics->get_previous_solutions(PhysicsID::heat_transfer));
+        this->multiphysics->get_solution(PhysicsID::heat_transfer),
+        this->multiphysics->get_previous_solutions(PhysicsID::heat_transfer));
     }
 
   scratch_data.calculate_physical_properties();
@@ -503,7 +503,7 @@ FluidDynamicsBlock<dim>::assemble_L2_projection()
   std::vector<Tensor<1, dim>> phi_u(dofs_per_cell);
   std::vector<double>         phi_p(dofs_per_cell);
 
-  for (const auto &cell : this->dof_handler.active_cell_iterators())
+  for (const auto &cell : this->dof_handler->active_cell_iterators())
     {
       if (cell->is_locally_owned())
         {
@@ -568,32 +568,32 @@ FluidDynamicsBlock<dim>::setup_dofs_fd()
 
   system_matrix.clear();
 
-  this->dof_handler.distribute_dofs(*this->fe);
+  this->dof_handler->distribute_dofs(*this->fe);
   // DoFRenumbering::Cuthill_McKee(this->dof_handler);
 
 
   std::vector<unsigned int> block_component(dim + 1, 0);
   block_component[dim] = 1;
-  DoFRenumbering::component_wise(this->dof_handler, block_component);
+  DoFRenumbering::component_wise(*this->dof_handler, block_component);
 
 
   // To be used to replace the above part once 9.2 release is out and TRAVIS-CI
   // version is updated
   dofs_per_block =
-    DoFTools::count_dofs_per_fe_block(this->dof_handler, block_component);
+    DoFTools::count_dofs_per_fe_block(*this->dof_handler, block_component);
 
   unsigned int dof_u = dofs_per_block[0];
   unsigned int dof_p = dofs_per_block[1];
 
   this->locally_owned_dofs.resize(2);
   this->locally_owned_dofs[0] =
-    this->dof_handler.locally_owned_dofs().get_view(0, dof_u);
+    this->dof_handler->locally_owned_dofs().get_view(0, dof_u);
   this->locally_owned_dofs[1] =
-    this->dof_handler.locally_owned_dofs().get_view(dof_u, dof_u + dof_p);
+    this->dof_handler->locally_owned_dofs().get_view(dof_u, dof_u + dof_p);
 
   IndexSet locally_relevant_dofs_acquisition;
   locally_relevant_dofs_acquisition =
-    DoFTools::extract_locally_relevant_dofs(this->dof_handler);
+    DoFTools::extract_locally_relevant_dofs(*this->dof_handler);
   this->locally_relevant_dofs.resize(2);
   this->locally_relevant_dofs[0] =
     locally_relevant_dofs_acquisition.get_view(0, dof_u);
@@ -626,9 +626,9 @@ FluidDynamicsBlock<dim>::setup_dofs_fd()
   // multiplication, etc.) can only be done if these are reinitialized WITHOUT
   // locally_relevant_dofs (i.e. without ghost DoFs). This is why most of them
   // are reinitialized both with and without locally_relevant_dofs.
-  this->present_solution.reinit(this->locally_owned_dofs,
-                                this->locally_relevant_dofs,
-                                this->mpi_communicator);
+  this->present_solution->reinit(this->locally_owned_dofs,
+                                 this->locally_relevant_dofs,
+                                 this->mpi_communicator);
   this->local_evaluation_point.reinit(this->locally_owned_dofs,
                                       this->mpi_communicator);
   this->evaluation_point.reinit(this->locally_owned_dofs,
@@ -636,7 +636,7 @@ FluidDynamicsBlock<dim>::setup_dofs_fd()
                                 this->mpi_communicator);
 
   // Initialize vector of previous solutions
-  for (auto &solution : this->previous_solutions)
+  for (auto &solution : *this->previous_solutions)
     {
       solution.reinit(this->locally_owned_dofs,
                       this->locally_relevant_dofs,
@@ -687,7 +687,7 @@ FluidDynamicsBlock<dim>::setup_dofs_fd()
       else
         coupling[c][d] = DoFTools::always;
 
-  DoFTools::make_sparsity_pattern(this->dof_handler,
+  DoFTools::make_sparsity_pattern(*this->dof_handler,
                                   coupling,
                                   sparsity_pattern,
                                   this->nonzero_constraints,
@@ -723,16 +723,16 @@ FluidDynamicsBlock<dim>::setup_dofs_fd()
   this->pcout << "   Number of active cells:       "
               << this->triangulation->n_global_active_cells() << std::endl
               << "   Number of degrees of freedom: "
-              << this->dof_handler.n_dofs() << std::endl;
+              << this->dof_handler->n_dofs() << std::endl;
   this->pcout << "   Volume of triangulation:      " << global_volume
               << std::endl;
 
   this->multiphysics->set_dof_handler(PhysicsID::fluid_dynamics,
-                                      &this->dof_handler);
+                                      this->dof_handler);
   this->multiphysics->set_block_solution(PhysicsID::fluid_dynamics,
-                                         &this->present_solution);
+                                         this->present_solution);
   this->multiphysics->set_block_previous_solutions(PhysicsID::fluid_dynamics,
-                                                   &this->previous_solutions);
+                                                   this->previous_solutions);
 }
 
 
@@ -740,7 +740,7 @@ template <int dim>
 void
 FluidDynamicsBlock<dim>::set_solution_vector(double value)
 {
-  this->present_solution = value;
+  *this->present_solution = value;
 }
 
 
@@ -765,7 +765,7 @@ FluidDynamicsBlock<dim>::set_initial_condition_fd(
     {
       assemble_L2_projection();
       solve_L2_system(true, 1e-15, 1e-15);
-      this->present_solution = this->newton_update;
+      *this->present_solution = this->newton_update;
       this->finish_time_step();
     }
   else if (initial_condition_type ==
@@ -887,14 +887,14 @@ FluidDynamicsBlock<dim>::setup_AMG()
 
   ComponentMask velocity_components = this->fe->component_mask(velocities);
   velocity_constant_modes =
-    DoFTools::extract_constant_modes(this->dof_handler, velocity_components);
+    DoFTools::extract_constant_modes(*this->dof_handler, velocity_components);
 
   // Constant modes for pressure
   std::vector<std::vector<bool>> pressure_constant_modes;
   FEValuesExtractors::Scalar     pressure(dim);
   ComponentMask pressure_components = this->fe->component_mask(pressure);
   pressure_constant_modes =
-    DoFTools::extract_constant_modes(this->dof_handler, pressure_components);
+    DoFTools::extract_constant_modes(*this->dof_handler, pressure_components);
 
   this->computing_timer.enter_subsection("AMG_velocity");
   const bool elliptic_velocity     = false;
@@ -1199,8 +1199,8 @@ FluidDynamicsBlock<dim>::multi_stage_postresolution(
   double                                            time_step)
 {
   // Copy the reference to some of the vectors to enhance readability below
-  auto &present_solution       = this->present_solution;
-  auto &previous_solutions     = this->previous_solutions;
+  auto &present_solution       = *this->present_solution;
+  auto &previous_solutions     = *this->previous_solutions;
   auto &local_evaluation_point = this->local_evaluation_point;
   auto &local_sum_over_previous_stages =
     this->sdirk_vectors.local_sum_over_previous_stages;
@@ -1239,8 +1239,8 @@ void
 FluidDynamicsBlock<dim>::update_multi_stage_solution(double time_step)
 {
   // Copy the reference to some of the vectors to enhance readability below
-  auto &present_solution       = this->present_solution;
-  auto &previous_solutions     = this->previous_solutions;
+  auto &present_solution       = *this->present_solution;
+  auto &previous_solutions     = *this->previous_solutions;
   auto &local_evaluation_point = this->local_evaluation_point;
   auto &sum_bi_ki              = this->sdirk_vectors.sum_bi_ki;
   auto &local_sum_bi_ki        = this->sdirk_vectors.local_sum_bi_ki;

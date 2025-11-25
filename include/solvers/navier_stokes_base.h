@@ -151,7 +151,7 @@ protected:
   virtual VectorType &
   get_present_solution() override
   {
-    return present_solution;
+    return *present_solution;
   };
   virtual VectorType &
   get_system_rhs() override
@@ -216,7 +216,7 @@ protected:
     multiphysics->postprocess(first_iteration);
 
     if (this->simulation_control->is_output_iteration())
-      this->write_output_results(this->present_solution);
+      this->write_output_results(*this->present_solution);
   };
 
   /**
@@ -267,7 +267,7 @@ protected:
         this->postprocess_fd(true);
         multiphysics->postprocess(true);
         if (this->simulation_control->is_output_iteration())
-          this->write_output_results(this->present_solution);
+          this->write_output_results(*this->present_solution);
       }
   }
 
@@ -952,8 +952,8 @@ protected:
   void
   verify_consistency_of_boundary_conditions()
   {
-    // Sanity check all of the boundary conditions of the triangulation to
-    // ensure that they have a type.
+    // Sanity check all the boundary conditions of the triangulation to ensure
+    // that they have a type.
     std::vector<types::boundary_id> boundary_ids_in_triangulation =
       this->triangulation->get_boundary_ids();
     for (auto const &boundary_id_in_tria : boundary_ids_in_triangulation)
@@ -974,7 +974,7 @@ protected:
   const unsigned int this_mpi_process;
 
   std::shared_ptr<parallel::DistributedTriangulationBase<dim>> triangulation;
-  DoFHandler<dim>                                              dof_handler;
+  std::shared_ptr<DoFHandler<dim>>                             dof_handler;
   std::shared_ptr<FESystem<dim>>                               fe;
 
   TimerOutput computing_timer;
@@ -999,14 +999,14 @@ protected:
   bool use_manifold_for_normal;
 
   // Present solution and non-linear solution components
-  VectorType evaluation_point;
-  VectorType local_evaluation_point;
-  VectorType newton_update;
-  VectorType present_solution;
-  VectorType system_rhs;
+  VectorType                  evaluation_point;
+  VectorType                  local_evaluation_point;
+  VectorType                  newton_update;
+  std::shared_ptr<VectorType> present_solution;
+  VectorType                  system_rhs;
 
   // Previous solutions vectors
-  std::vector<VectorType> previous_solutions;
+  std::shared_ptr<std::vector<VectorType>> previous_solutions;
 
   /**
    * @brief Structure that stores all SDIRK-related vectors used during the time integration process.

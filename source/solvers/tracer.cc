@@ -96,7 +96,7 @@ template <int dim>
 void
 Tracer<dim>::assemble_system_matrix_cg()
 {
-  const DoFHandler<dim> *dof_handler_fluid =
+  const DoFHandler<dim> &dof_handler_fluid =
     multiphysics->get_dof_handler(PhysicsID::fluid_dynamics);
 
   auto scratch_data = TracerScratchData<dim>(
@@ -105,10 +105,10 @@ Tracer<dim>::assemble_system_matrix_cg()
     *this->cell_quadrature,
     *this->face_quadrature,
     *this->mapping,
-    dof_handler_fluid->get_fe());
+    dof_handler_fluid.get_fe());
 
-  WorkStream::run(this->dof_handler.begin_active(),
-                  this->dof_handler.end(),
+  WorkStream::run(this->dof_handler->begin_active(),
+                  this->dof_handler->end(),
                   *this,
                   &Tracer::assemble_local_system_matrix,
                   &Tracer::copy_local_matrix_to_global_matrix,
@@ -124,7 +124,7 @@ template <int dim>
 void
 Tracer<dim>::assemble_system_matrix_dg()
 {
-  const DoFHandler<dim> *dof_handler_fluid =
+  const DoFHandler<dim> &dof_handler_fluid =
     multiphysics->get_dof_handler(PhysicsID::fluid_dynamics);
 
   auto scratch_data = TracerScratchData<dim>(
@@ -133,7 +133,7 @@ Tracer<dim>::assemble_system_matrix_dg()
     *this->cell_quadrature,
     *this->face_quadrature,
     *this->mapping,
-    dof_handler_fluid->get_fe());
+    dof_handler_fluid.get_fe());
 
   StabilizedDGMethodsCopyData copy_data(this->fe->n_dofs_per_cell(),
                                         this->cell_quadrature->size());
@@ -164,11 +164,11 @@ Tracer<dim>::assemble_system_matrix_dg()
         cell, face_no, this->multiphysics->get_immersed_solid_shape());
 
       // Gather velocity information at the face to properly advect
-      const DoFHandler<dim> *dof_handler_fluid =
+      const DoFHandler<dim> &dof_handler_fluid =
         multiphysics->get_dof_handler(PhysicsID::fluid_dynamics);
       // Get the cell that corresponds to the fluid dynamics
       typename DoFHandler<dim>::active_cell_iterator velocity_cell(
-        &(*triangulation), cell->level(), cell->index(), dof_handler_fluid);
+        &(*triangulation), cell->level(), cell->index(), &dof_handler_fluid);
 
       // Reinit the internal face velocity within the scratch data
       reinit_face_velocity_with_adequate_solution(velocity_cell,
@@ -210,11 +210,11 @@ Tracer<dim>::assemble_system_matrix_dg()
         scratch_data.fe_interface_values_tracer.get_interface_dof_indices();
 
       // Gather velocity information at the face to properly advect
-      const DoFHandler<dim> *dof_handler_fluid =
+      const DoFHandler<dim> &dof_handler_fluid =
         multiphysics->get_dof_handler(PhysicsID::fluid_dynamics);
       // Get the cell that corresponds to the fluid dynamics
       typename DoFHandler<dim>::active_cell_iterator velocity_cell(
-        &(*triangulation), cell->level(), cell->index(), dof_handler_fluid);
+        &(*triangulation), cell->level(), cell->index(), &dof_handler_fluid);
 
       // Reinit the internal face velocity within the scratch data
       reinit_face_velocity_with_adequate_solution(velocity_cell,
@@ -239,8 +239,8 @@ Tracer<dim>::assemble_system_matrix_dg()
       }
   };
 
-  MeshWorker::mesh_loop(this->dof_handler.begin_active(),
-                        this->dof_handler.end(),
+  MeshWorker::mesh_loop(this->dof_handler->begin_active(),
+                        this->dof_handler->end(),
                         cell_worker,
                         copier,
                         scratch_data,
@@ -268,17 +268,17 @@ Tracer<dim>::assemble_local_system_matrix(
 
   scratch_data.reinit(cell,
                       this->evaluation_point,
-                      this->previous_solutions,
+                      *this->previous_solutions,
                       &(*simulation_parameters.source_term.tracer_source));
 
   scratch_data.reinit_signed_distance(
-    cell, &(*this->multiphysics->get_immersed_solid_shape()));
+    cell, this->multiphysics->get_immersed_solid_shape());
 
-  const DoFHandler<dim> *dof_handler_fluid =
+  const DoFHandler<dim> &dof_handler_fluid =
     multiphysics->get_dof_handler(PhysicsID::fluid_dynamics);
 
   typename DoFHandler<dim>::active_cell_iterator velocity_cell(
-    &(*triangulation), cell->level(), cell->index(), dof_handler_fluid);
+    &(*triangulation), cell->level(), cell->index(), &dof_handler_fluid);
 
   if (multiphysics->fluid_dynamics_is_block())
     {
@@ -294,7 +294,7 @@ Tracer<dim>::assemble_local_system_matrix(
         {
           scratch_data.reinit_velocity(
             velocity_cell,
-            *multiphysics->get_block_time_average_solution(
+            multiphysics->get_block_time_average_solution(
               PhysicsID::fluid_dynamics),
             this->simulation_parameters.ale,
             this->simulation_parameters.tracer_drift_velocity.drift_velocity);
@@ -303,7 +303,7 @@ Tracer<dim>::assemble_local_system_matrix(
         {
           scratch_data.reinit_velocity(
             velocity_cell,
-            *multiphysics->get_block_solution(PhysicsID::fluid_dynamics),
+            multiphysics->get_block_solution(PhysicsID::fluid_dynamics),
             this->simulation_parameters.ale,
             this->simulation_parameters.tracer_drift_velocity.drift_velocity);
         }
@@ -322,7 +322,7 @@ Tracer<dim>::assemble_local_system_matrix(
         {
           scratch_data.reinit_velocity(
             velocity_cell,
-            *multiphysics->get_time_average_solution(PhysicsID::fluid_dynamics),
+            multiphysics->get_time_average_solution(PhysicsID::fluid_dynamics),
             this->simulation_parameters.ale,
             this->simulation_parameters.tracer_drift_velocity.drift_velocity);
         }
@@ -330,7 +330,7 @@ Tracer<dim>::assemble_local_system_matrix(
         {
           scratch_data.reinit_velocity(
             velocity_cell,
-            *multiphysics->get_solution(PhysicsID::fluid_dynamics),
+            multiphysics->get_solution(PhysicsID::fluid_dynamics),
             this->simulation_parameters.ale,
             this->simulation_parameters.tracer_drift_velocity.drift_velocity);
         }
@@ -389,7 +389,7 @@ template <int dim>
 void
 Tracer<dim>::assemble_system_rhs_cg()
 {
-  const DoFHandler<dim> *dof_handler_fluid =
+  const DoFHandler<dim> &dof_handler_fluid =
     multiphysics->get_dof_handler(PhysicsID::fluid_dynamics);
 
   auto scratch_data = TracerScratchData<dim>(
@@ -398,10 +398,10 @@ Tracer<dim>::assemble_system_rhs_cg()
     *this->cell_quadrature,
     *this->face_quadrature,
     *this->mapping,
-    dof_handler_fluid->get_fe());
+    dof_handler_fluid.get_fe());
 
-  WorkStream::run(this->dof_handler.begin_active(),
-                  this->dof_handler.end(),
+  WorkStream::run(this->dof_handler->begin_active(),
+                  this->dof_handler->end(),
                   *this,
                   &Tracer::assemble_local_system_rhs,
                   &Tracer::copy_local_rhs_to_global_rhs,
@@ -416,7 +416,7 @@ template <int dim>
 void
 Tracer<dim>::assemble_system_rhs_dg()
 {
-  const DoFHandler<dim> *dof_handler_fluid =
+  const DoFHandler<dim> &dof_handler_fluid =
     multiphysics->get_dof_handler(PhysicsID::fluid_dynamics);
 
   auto scratch_data = TracerScratchData<dim>(
@@ -425,7 +425,7 @@ Tracer<dim>::assemble_system_rhs_dg()
     *this->cell_quadrature,
     *this->face_quadrature,
     *this->mapping,
-    dof_handler_fluid->get_fe());
+    dof_handler_fluid.get_fe());
 
   StabilizedDGMethodsCopyData copy_data(this->fe->n_dofs_per_cell(),
                                         this->cell_quadrature->size());
@@ -455,11 +455,11 @@ Tracer<dim>::assemble_system_rhs_dg()
 
       // Gather velocity information at the face to properly advect
       // First gather the dof handler for the fluid dynamics
-      const DoFHandler<dim> *dof_handler_fluid =
+      const DoFHandler<dim> &dof_handler_fluid =
         multiphysics->get_dof_handler(PhysicsID::fluid_dynamics);
       // Get the cell that corresponds to the fluid dynamics
       typename DoFHandler<dim>::active_cell_iterator velocity_cell(
-        &(*triangulation), cell->level(), cell->index(), dof_handler_fluid);
+        &(*triangulation), cell->level(), cell->index(), &dof_handler_fluid);
 
       reinit_face_velocity_with_adequate_solution(velocity_cell,
                                                   face_no,
@@ -500,11 +500,11 @@ Tracer<dim>::assemble_system_rhs_dg()
 
     // Gather velocity information at the face to properly advect
     // First gather the dof handler for the fluid dynamics
-    const DoFHandler<dim> *dof_handler_fluid =
+    const DoFHandler<dim> &dof_handler_fluid =
       multiphysics->get_dof_handler(PhysicsID::fluid_dynamics);
     // Get the cell that corresponds to the fluid dynamics
     typename DoFHandler<dim>::active_cell_iterator velocity_cell(
-      &(*triangulation), cell->level(), cell->index(), dof_handler_fluid);
+      &(*triangulation), cell->level(), cell->index(), &dof_handler_fluid);
 
     reinit_face_velocity_with_adequate_solution(velocity_cell,
                                                 face_no,
@@ -527,8 +527,8 @@ Tracer<dim>::assemble_system_rhs_dg()
       }
   };
 
-  MeshWorker::mesh_loop(this->dof_handler.begin_active(),
-                        this->dof_handler.end(),
+  MeshWorker::mesh_loop(this->dof_handler->begin_active(),
+                        this->dof_handler->end(),
                         cell_worker,
                         copier,
                         scratch_data,
@@ -557,17 +557,17 @@ Tracer<dim>::assemble_local_system_rhs(
 
   scratch_data.reinit(cell,
                       this->evaluation_point,
-                      this->previous_solutions,
+                      *this->previous_solutions,
                       &(*source_term));
 
   scratch_data.reinit_signed_distance(
-    cell, &(*this->multiphysics->get_immersed_solid_shape()));
+    cell, this->multiphysics->get_immersed_solid_shape());
 
-  const DoFHandler<dim> *dof_handler_fluid =
+  const DoFHandler<dim> &dof_handler_fluid =
     multiphysics->get_dof_handler(PhysicsID::fluid_dynamics);
 
   typename DoFHandler<dim>::active_cell_iterator velocity_cell(
-    &(*triangulation), cell->level(), cell->index(), dof_handler_fluid);
+    &(*triangulation), cell->level(), cell->index(), &dof_handler_fluid);
 
   if (multiphysics->fluid_dynamics_is_block())
     {
@@ -583,7 +583,7 @@ Tracer<dim>::assemble_local_system_rhs(
         {
           scratch_data.reinit_velocity(
             velocity_cell,
-            *multiphysics->get_block_time_average_solution(
+            multiphysics->get_block_time_average_solution(
               PhysicsID::fluid_dynamics),
             this->simulation_parameters.ale,
             this->simulation_parameters.tracer_drift_velocity.drift_velocity);
@@ -592,7 +592,7 @@ Tracer<dim>::assemble_local_system_rhs(
         {
           scratch_data.reinit_velocity(
             velocity_cell,
-            *multiphysics->get_block_solution(PhysicsID::fluid_dynamics),
+            multiphysics->get_block_solution(PhysicsID::fluid_dynamics),
             this->simulation_parameters.ale,
             this->simulation_parameters.tracer_drift_velocity.drift_velocity);
         }
@@ -611,7 +611,7 @@ Tracer<dim>::assemble_local_system_rhs(
         {
           scratch_data.reinit_velocity(
             velocity_cell,
-            *multiphysics->get_time_average_solution(PhysicsID::fluid_dynamics),
+            multiphysics->get_time_average_solution(PhysicsID::fluid_dynamics),
             this->simulation_parameters.ale,
             this->simulation_parameters.tracer_drift_velocity.drift_velocity);
         }
@@ -619,7 +619,7 @@ Tracer<dim>::assemble_local_system_rhs(
         {
           scratch_data.reinit_velocity(
             velocity_cell,
-            *multiphysics->get_solution(PhysicsID::fluid_dynamics),
+            multiphysics->get_solution(PhysicsID::fluid_dynamics),
             this->simulation_parameters.ale,
             this->simulation_parameters.tracer_drift_velocity.drift_velocity);
         }
@@ -661,8 +661,8 @@ Tracer<dim>::gather_output_hook()
                              DataComponentInterpretation::component_is_scalar);
   solution_output_structs.emplace_back(
     std::in_place_type<OutputStructSolution<dim, GlobalVectorType>>,
-    dof_handler,
-    present_solution,
+    *dof_handler,
+    *present_solution,
     solution_names,
     component_interpretation);
   return solution_output_structs;
@@ -690,12 +690,12 @@ Tracer<dim>::calculate_L2_error()
 
   double l2error = 0.;
 
-  for (const auto &cell : dof_handler.active_cell_iterators())
+  for (const auto &cell : dof_handler->active_cell_iterators())
     {
       if (cell->is_locally_owned())
         {
           fe_values.reinit(cell);
-          fe_values.get_function_values(present_solution, q_scalar_values);
+          fe_values.get_function_values(*present_solution, q_scalar_values);
 
           // Get the exact solution at all gauss points
           exact_solution.value_list(fe_values.get_quadrature_points(),
@@ -744,11 +744,11 @@ template <int dim>
 void
 Tracer<dim>::percolate_time_vectors()
 {
-  for (unsigned int i = previous_solutions.size() - 1; i > 0; --i)
+  for (unsigned int i = previous_solutions->size() - 1; i > 0; --i)
     {
-      previous_solutions[i] = previous_solutions[i - 1];
+      (*previous_solutions)[i] = (*previous_solutions)[i - 1];
     }
-  previous_solutions[0] = this->present_solution;
+  (*previous_solutions)[0] = *this->present_solution;
 }
 
 template <int dim>
@@ -795,12 +795,12 @@ Tracer<dim>::postprocess(bool first_iteration)
       if (multiphysics->fluid_dynamics_is_block())
         {
           tracer_flow_rates = postprocess_tracer_flow_rate(
-            *multiphysics->get_block_solution(PhysicsID::fluid_dynamics));
+            multiphysics->get_block_solution(PhysicsID::fluid_dynamics));
         }
       else
         {
           tracer_flow_rates = postprocess_tracer_flow_rate(
-            *multiphysics->get_solution(PhysicsID::fluid_dynamics));
+            multiphysics->get_solution(PhysicsID::fluid_dynamics));
         }
       this->write_tracer_flow_rates(tracer_flow_rates);
     }
@@ -833,12 +833,12 @@ Tracer<dim>::calculate_tracer_statistics()
   double max_tracer_value = DBL_MIN;
   double min_tracer_value = DBL_MAX;
 
-  for (const auto &cell : dof_handler.active_cell_iterators())
+  for (const auto &cell : dof_handler->active_cell_iterators())
     {
       if (cell->is_locally_owned())
         {
           fe_values.reinit(cell);
-          fe_values.get_function_values(present_solution, q_tracer_values);
+          fe_values.get_function_values(*present_solution, q_tracer_values);
 
           for (unsigned int q = 0; q < n_q_points; q++)
             {
@@ -854,12 +854,12 @@ Tracer<dim>::calculate_tracer_statistics()
 
   double variance_integral = 0;
 
-  for (const auto &cell : dof_handler.active_cell_iterators())
+  for (const auto &cell : dof_handler->active_cell_iterators())
     {
       if (cell->is_locally_owned())
         {
           fe_values.reinit(cell);
-          fe_values.get_function_values(present_solution, q_tracer_values);
+          fe_values.get_function_values(*present_solution, q_tracer_values);
 
           for (unsigned int q = 0; q < n_q_points; q++)
             {
@@ -915,13 +915,13 @@ std::map<types::boundary_id, double>
 Tracer<dim>::postprocess_tracer_flow_rate(const VectorType &current_solution_fd)
 {
   const unsigned int n_q_points_face = this->face_quadrature->size();
-  const MPI_Comm mpi_communicator    = this->dof_handler.get_mpi_communicator();
+  const MPI_Comm mpi_communicator = this->dof_handler->get_mpi_communicator();
 
   // Initialize tracer information
   std::vector<double>         tracer_values(n_q_points_face);
   std::vector<Tensor<1, dim>> tracer_gradient(n_q_points_face);
   FEFaceValues<dim>           fe_face_values_tracer(*this->mapping,
-                                          this->dof_handler.get_fe(),
+                                          this->dof_handler->get_fe(),
                                           *this->face_quadrature,
                                           update_values | update_gradients |
                                             update_JxW_values |
@@ -929,12 +929,12 @@ Tracer<dim>::postprocess_tracer_flow_rate(const VectorType &current_solution_fd)
                                             update_quadrature_points);
 
   // Initialize fluid dynamics information
-  const DoFHandler<dim> *dof_handler_fd =
+  const DoFHandler<dim> &dof_handler_fd =
     multiphysics->get_dof_handler(PhysicsID::fluid_dynamics);
   const FEValuesExtractors::Vector velocities(0);
   std::vector<Tensor<1, dim>>      velocity_values(n_q_points_face);
   FEFaceValues<dim>                fe_face_values_fd(*this->mapping,
-                                      dof_handler_fd->get_fe(),
+                                      dof_handler_fd.get_fe(),
                                       *this->face_quadrature,
                                       update_values);
 
@@ -951,7 +951,7 @@ Tracer<dim>::postprocess_tracer_flow_rate(const VectorType &current_solution_fd)
   std::map<types::boundary_id, double> tracer_flow_rate;
 
   // Get vector of all boundary conditions
-  for (const auto &cell : this->dof_handler.active_cell_iterators())
+  for (const auto &cell : this->dof_handler->active_cell_iterators())
     {
       if (cell->is_locally_owned() && cell->at_boundary())
         {
@@ -964,9 +964,9 @@ Tracer<dim>::postprocess_tracer_flow_rate(const VectorType &current_solution_fd)
                   // Gather tracer information
                   fe_face_values_tracer.reinit(cell, face);
                   fe_face_values_tracer.get_function_values(
-                    this->present_solution, tracer_values);
+                    *this->present_solution, tracer_values);
                   fe_face_values_tracer.get_function_gradients(
-                    this->present_solution, tracer_gradient);
+                    *this->present_solution, tracer_gradient);
 
                   // We update the fields required by the diffusivity
                   // model
@@ -993,7 +993,7 @@ Tracer<dim>::postprocess_tracer_flow_rate(const VectorType &current_solution_fd)
                     &(*(this->triangulation)),
                     cell->level(),
                     cell->index(),
-                    dof_handler_fd);
+                    &dof_handler_fd);
 
                   // Gather fluid dynamics information
                   fe_face_values_fd.reinit(cell_fd, face);
@@ -1092,12 +1092,12 @@ template <int dim>
 void
 Tracer<dim>::pre_mesh_adaptation()
 {
-  solution_transfer->prepare_for_coarsening_and_refinement(present_solution);
+  solution_transfer->prepare_for_coarsening_and_refinement(*present_solution);
 
-  for (unsigned int i = 0; i < previous_solutions.size(); ++i)
+  for (unsigned int i = 0; i < previous_solutions->size(); ++i)
     {
       previous_solutions_transfer[i].prepare_for_coarsening_and_refinement(
-        previous_solutions[i]);
+        (*previous_solutions)[i]);
     }
 }
 
@@ -1117,16 +1117,16 @@ Tracer<dim>::post_mesh_adaptation()
   nonzero_constraints.distribute(tmp);
 
   // Fix on the new mesh
-  present_solution = tmp;
+  *present_solution = tmp;
 
   // Transfer previous solutions
-  for (unsigned int i = 0; i < previous_solutions.size(); ++i)
+  for (unsigned int i = 0; i < previous_solutions->size(); ++i)
     {
       GlobalVectorType tmp_previous_solution(locally_owned_dofs,
                                              mpi_communicator);
       previous_solutions_transfer[i].interpolate(tmp_previous_solution);
       nonzero_constraints.distribute(tmp_previous_solution);
-      previous_solutions[i] = tmp_previous_solution;
+      (*previous_solutions)[i] = tmp_previous_solution;
     }
 }
 
@@ -1171,10 +1171,10 @@ Tracer<dim>::write_checkpoint()
   std::vector<const GlobalVectorType *> sol_set_transfer;
 
   solution_transfer =
-    std::make_shared<SolutionTransfer<dim, GlobalVectorType>>(dof_handler);
+    std::make_shared<SolutionTransfer<dim, GlobalVectorType>>(*dof_handler);
 
-  sol_set_transfer.emplace_back(&present_solution);
-  for (const auto &previous_solution : previous_solutions)
+  sol_set_transfer.emplace_back(&(*present_solution));
+  for (const auto &previous_solution : *previous_solutions)
     {
       sol_set_transfer.emplace_back(&previous_solution);
     }
@@ -1194,14 +1194,14 @@ Tracer<dim>::read_checkpoint()
   auto mpi_communicator = triangulation->get_mpi_communicator();
   this->pcout << "Reading tracer checkpoint" << std::endl;
 
-  std::vector<GlobalVectorType *> input_vectors(1 + previous_solutions.size());
+  std::vector<GlobalVectorType *> input_vectors(1 + previous_solutions->size());
   GlobalVectorType distributed_system(locally_owned_dofs, mpi_communicator);
   input_vectors[0] = &distributed_system;
 
 
   std::vector<GlobalVectorType> distributed_previous_solutions;
-  distributed_previous_solutions.reserve(previous_solutions.size());
-  for (unsigned int i = 0; i < previous_solutions.size(); ++i)
+  distributed_previous_solutions.reserve(previous_solutions->size());
+  for (unsigned int i = 0; i < previous_solutions->size(); ++i)
     {
       distributed_previous_solutions.emplace_back(
         GlobalVectorType(locally_owned_dofs, mpi_communicator));
@@ -1210,10 +1210,10 @@ Tracer<dim>::read_checkpoint()
 
   solution_transfer->deserialize(input_vectors);
 
-  present_solution = distributed_system;
-  for (unsigned int i = 0; i < previous_solutions.size(); ++i)
+  *present_solution = distributed_system;
+  for (unsigned int i = 0; i < previous_solutions->size(); ++i)
     {
-      previous_solutions[i] = distributed_previous_solutions[i];
+      (*previous_solutions)[i] = distributed_previous_solutions[i];
     }
 
   // Deserialize all post-processing tables that are currently used with the
@@ -1230,21 +1230,21 @@ Tracer<dim>::setup_dofs()
 {
   verify_consistency_of_boundary_conditions();
 
-  dof_handler.distribute_dofs(*fe);
-  DoFRenumbering::Cuthill_McKee(this->dof_handler);
+  dof_handler->distribute_dofs(*fe);
+  DoFRenumbering::Cuthill_McKee(*this->dof_handler);
 
   auto mpi_communicator = triangulation->get_mpi_communicator();
 
 
-  locally_owned_dofs    = dof_handler.locally_owned_dofs();
-  locally_relevant_dofs = DoFTools::extract_locally_relevant_dofs(dof_handler);
+  locally_owned_dofs    = dof_handler->locally_owned_dofs();
+  locally_relevant_dofs = DoFTools::extract_locally_relevant_dofs(*dof_handler);
 
-  present_solution.reinit(locally_owned_dofs,
-                          locally_relevant_dofs,
-                          mpi_communicator);
+  present_solution->reinit(locally_owned_dofs,
+                           locally_relevant_dofs,
+                           mpi_communicator);
 
   // Previous solutions for transient schemes
-  for (auto &solution : this->previous_solutions)
+  for (auto &solution : *this->previous_solutions)
     {
       solution.reinit(locally_owned_dofs,
                       locally_relevant_dofs,
@@ -1260,7 +1260,7 @@ Tracer<dim>::setup_dofs()
   {
     nonzero_constraints.clear();
     nonzero_constraints.reinit(locally_owned_dofs, this->locally_relevant_dofs);
-    DoFTools::make_hanging_node_constraints(this->dof_handler,
+    DoFTools::make_hanging_node_constraints(*this->dof_handler,
                                             nonzero_constraints);
 
     for (auto const &[id, type] :
@@ -1270,7 +1270,7 @@ Tracer<dim>::setup_dofs()
         if (type == BoundaryConditions::BoundaryType::tracer_dirichlet)
           {
             VectorTools::interpolate_boundary_values(
-              this->dof_handler,
+              *this->dof_handler,
               id,
               *this->simulation_parameters.boundary_conditions_tracer.tracer.at(
                 id),
@@ -1279,7 +1279,7 @@ Tracer<dim>::setup_dofs()
         if (type == BoundaryConditions::BoundaryType::periodic)
           {
             DoFTools::make_periodicity_constraints(
-              this->dof_handler,
+              *this->dof_handler,
               id,
               this->simulation_parameters.boundary_conditions_tracer
                 .periodic_neighbor_id.at(id),
@@ -1296,7 +1296,7 @@ Tracer<dim>::setup_dofs()
     zero_constraints.clear();
     zero_constraints.reinit(this->locally_owned_dofs,
                             this->locally_relevant_dofs);
-    DoFTools::make_hanging_node_constraints(this->dof_handler,
+    DoFTools::make_hanging_node_constraints(*this->dof_handler,
                                             zero_constraints);
 
     for (auto const &[id, type] :
@@ -1305,7 +1305,7 @@ Tracer<dim>::setup_dofs()
         if (type == BoundaryConditions::BoundaryType::tracer_dirichlet)
           {
             VectorTools::interpolate_boundary_values(
-              this->dof_handler,
+              *this->dof_handler,
               id,
               Functions::ZeroFunction<dim>(),
               zero_constraints);
@@ -1313,7 +1313,7 @@ Tracer<dim>::setup_dofs()
         if (type == BoundaryConditions::BoundaryType::periodic)
           {
             DoFTools::make_periodicity_constraints(
-              this->dof_handler,
+              *this->dof_handler,
               id,
               this->simulation_parameters.boundary_conditions_tracer
                 .periodic_neighbor_id.at(id),
@@ -1331,14 +1331,14 @@ Tracer<dim>::setup_dofs()
 
   if (simulation_parameters.fem_parameters.tracer_uses_dg)
     {
-      DoFTools::make_flux_sparsity_pattern(this->dof_handler,
+      DoFTools::make_flux_sparsity_pattern(*this->dof_handler,
                                            dsp,
                                            nonzero_constraints,
                                            /*keep_constrained_dofs = */ true);
     }
   else
     {
-      DoFTools::make_sparsity_pattern(this->dof_handler,
+      DoFTools::make_sparsity_pattern(*this->dof_handler,
                                       dsp,
                                       nonzero_constraints,
                                       /*keep_constrained_dofs = */ true);
@@ -1356,14 +1356,14 @@ Tracer<dim>::setup_dofs()
                        mpi_communicator);
 
   this->pcout << "   Number of tracer degrees of freedom: "
-              << dof_handler.n_dofs() << std::endl;
+              << dof_handler->n_dofs() << std::endl;
 
   // Provide the tracer dof_handler and present solution pointers to the
   // multiphysics interface
-  multiphysics->set_dof_handler(PhysicsID::tracer, &this->dof_handler);
-  multiphysics->set_solution(PhysicsID::tracer, &this->present_solution);
+  multiphysics->set_dof_handler(PhysicsID::tracer, this->dof_handler);
+  multiphysics->set_solution(PhysicsID::tracer, this->present_solution);
   multiphysics->set_previous_solutions(PhysicsID::tracer,
-                                       &this->previous_solutions);
+                                       this->previous_solutions);
 }
 
 template <int dim>
@@ -1377,7 +1377,7 @@ Tracer<dim>::update_boundary_conditions()
   nonzero_constraints.clear();
   nonzero_constraints.reinit(this->locally_owned_dofs,
                              this->locally_relevant_dofs);
-  DoFTools::make_hanging_node_constraints(this->dof_handler,
+  DoFTools::make_hanging_node_constraints(*this->dof_handler,
                                           nonzero_constraints);
 
   for (auto const &[id, type] :
@@ -1389,7 +1389,7 @@ Tracer<dim>::update_boundary_conditions()
           this->simulation_parameters.boundary_conditions_tracer.tracer.at(id)
             ->set_time(time);
           VectorTools::interpolate_boundary_values(
-            this->dof_handler,
+            *this->dof_handler,
             id,
             *this->simulation_parameters.boundary_conditions_tracer.tracer.at(
               id),
@@ -1398,7 +1398,7 @@ Tracer<dim>::update_boundary_conditions()
       if (type == BoundaryConditions::BoundaryType::periodic)
         {
           DoFTools::make_periodicity_constraints(
-            this->dof_handler,
+            *this->dof_handler,
             id,
             this->simulation_parameters.boundary_conditions_tracer
               .periodic_neighbor_id.at(id),
@@ -1409,7 +1409,7 @@ Tracer<dim>::update_boundary_conditions()
     }
   nonzero_constraints.close();
   nonzero_constraints.distribute(this->local_evaluation_point);
-  this->present_solution = this->local_evaluation_point;
+  *this->present_solution = this->local_evaluation_point;
 }
 
 template <int dim>
@@ -1417,11 +1417,11 @@ void
 Tracer<dim>::set_initial_conditions()
 {
   VectorTools::interpolate(*mapping,
-                           dof_handler,
+                           *dof_handler,
                            simulation_parameters.initial_condition->tracer,
                            newton_update);
   nonzero_constraints.distribute(newton_update);
-  present_solution = newton_update;
+  *present_solution = newton_update;
   percolate_time_vectors();
 }
 
@@ -1439,10 +1439,10 @@ Tracer<dim>::compute_kelly(
 
       KellyErrorEstimator<dim>::estimate(
         *this->mapping,
-        this->dof_handler,
+        *this->dof_handler,
         *this->face_quadrature,
         typename std::map<types::boundary_id, const Function<dim, double> *>(),
-        this->present_solution,
+        *this->present_solution,
         estimated_error_per_cell,
         this->fe->component_mask(tracer));
     }

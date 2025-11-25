@@ -46,7 +46,7 @@ FluidDynamicsSharp<dim>::vertices_cell_mapping()
   // Find all the cells around each vertex
   TimerOutput::Scope t(this->computing_timer, "Map vertices to cell");
 
-  LetheGridTools::vertices_cell_mapping(this->dof_handler, vertices_to_cell);
+  LetheGridTools::vertices_cell_mapping(*this->dof_handler, vertices_to_cell);
 }
 
 template <int dim>
@@ -90,11 +90,11 @@ FluidDynamicsSharp<dim>::generate_cut_cells_map()
 
 
   // A vector of the unordered map. Each map stores if a point is inside or
-  // outside of a given particle.
+  // outside a given particle.
   std::vector<std::unordered_map<types::global_dof_index, bool>>
     inside_outside_support_point_vector(particles.size());
   std::map<types::global_dof_index, Point<dim>> support_points =
-    DoFTools::map_dofs_to_support_points(*this->mapping, this->dof_handler);
+    DoFTools::map_dofs_to_support_points(*this->mapping, *this->dof_handler);
 
   // When the finite element order > 1, overconstrained cells are impossible
   // since there is always at least a DOF inside the element that is not
@@ -116,7 +116,7 @@ FluidDynamicsSharp<dim>::generate_cut_cells_map()
                                  this->mpi_communicator);
     }
 
-  const auto        &cell_iterator = this->dof_handler.active_cell_iterators();
+  const auto        &cell_iterator = this->dof_handler->active_cell_iterators();
   const unsigned int dofs_per_cell = this->fe->dofs_per_cell;
   const unsigned int dofs_per_face = this->fe->dofs_per_face;
 
@@ -432,7 +432,7 @@ FluidDynamicsSharp<dim>::refinement_control(const bool initial_refinement)
         {
           TimerOutput::Scope t(this->computing_timer, "Remove RBF nodes");
           particles[p_i].remove_superfluous_data(
-            this->dof_handler, particles[p_i].mesh_based_precalculations);
+            *this->dof_handler, particles[p_i].mesh_based_precalculations);
         }
     }
 }
@@ -508,7 +508,7 @@ FluidDynamicsSharp<dim>::optimized_generate_cut_cells_map()
 
   cut_cells_map.clear();
   cells_inside_map.clear();
-  for (const auto &cell : this->dof_handler.active_cell_iterators())
+  for (const auto &cell : this->dof_handler->active_cell_iterators())
     {
       if (cell->is_locally_owned() || cell->is_ghost())
         {
@@ -529,16 +529,16 @@ FluidDynamicsSharp<dim>::optimized_generate_cut_cells_map()
 
       // Fix max level search
       unsigned int max_lvl_search =
-        this->dof_handler.get_triangulation().n_levels() - 2;
+        this->dof_handler->get_triangulation().n_levels() - 2;
       if (max_lvl_search < 4)
-        max_lvl_search = this->dof_handler.get_triangulation().n_levels();
+        max_lvl_search = this->dof_handler->get_triangulation().n_levels();
 
       // Search for candidates until at least one is found or until the
       // max_lvl_search is reached
       while (empty || lvl_iter < max_lvl_search)
         {
           const auto &cell_iterator =
-            this->dof_handler.cell_iterators_on_level(lvl_iter);
+            this->dof_handler->cell_iterators_on_level(lvl_iter);
 
           // Loop over the cells on level lvl_iter of the mesh
           for (const auto &cell : cell_iterator)
@@ -806,7 +806,7 @@ FluidDynamicsSharp<dim>::define_particles()
     }
   combined_shapes =
     std::make_shared<CompositeShape<dim>>(all_shapes, Point<dim>(), Point<3>());
-  this->multiphysics->set_immersed_solid_shape(&(*combined_shapes));
+  this->multiphysics->set_immersed_solid_shape(combined_shapes);
 }
 
 
@@ -847,7 +847,7 @@ FluidDynamicsSharp<dim>::refine_ib(const bool initial_refinement)
                        "Refine around immersed boundary");
   Point<dim>                                    center_immersed;
   std::map<types::global_dof_index, Point<dim>> support_points =
-    DoFTools::map_dofs_to_support_points(*this->mapping, this->dof_handler);
+    DoFTools::map_dofs_to_support_points(*this->mapping, *this->dof_handler);
 
   double dt = this->simulation_control->get_time_steps_vector()[0];
 
@@ -867,7 +867,7 @@ FluidDynamicsSharp<dim>::refine_ib(const bool initial_refinement)
   if (minimal_crown_refinement_enabled)
     {
       const auto &cell_iterator_smallest_cell =
-        this->dof_handler.active_cell_iterators();
+        this->dof_handler->active_cell_iterators();
       for (const auto &cell : cell_iterator_smallest_cell)
         {
           if (cell->is_locally_owned())
@@ -877,7 +877,7 @@ FluidDynamicsSharp<dim>::refine_ib(const bool initial_refinement)
         Utilities::MPI::min(smallest_cut_cell, this->mpi_communicator);
     }
 
-  const auto &cell_iterator = this->dof_handler.active_cell_iterators();
+  const auto &cell_iterator = this->dof_handler->active_cell_iterators();
   for (const auto &cell : cell_iterator)
     {
       if (cell->is_locally_owned())
@@ -999,7 +999,7 @@ FluidDynamicsSharp<dim>::force_on_ib()
     this->simulation_control->get_time_steps_vector();
   // Define a map to all DOFs and their support points
   std::map<types::global_dof_index, Point<dim>> support_points =
-    DoFTools::map_dofs_to_support_points(*this->mapping, this->dof_handler);
+    DoFTools::map_dofs_to_support_points(*this->mapping, *this->dof_handler);
 
   // Initalize fe value objects in order to do calculation with it later
   QGauss<dim>            q_formula(this->number_quadrature_points);
@@ -1088,7 +1088,7 @@ FluidDynamicsSharp<dim>::force_on_ib()
     force_eval;
 
   // Define cell iterator
-  const auto &cell_iterator = this->dof_handler.active_cell_iterators();
+  const auto &cell_iterator = this->dof_handler->active_cell_iterators();
 
   // Clear particle force and torque
   for (unsigned int i = 0; i < particles.size(); ++i)
@@ -1258,7 +1258,7 @@ FluidDynamicsSharp<dim>::force_on_ib()
                                             {
                                               cell_2 = LetheGridTools::
                                                 find_cell_around_point_with_neighbors<
-                                                  dim>(this->dof_handler,
+                                                  dim>(*this->dof_handler,
                                                        vertices_to_cell,
                                                        cell,
                                                        point_to_find_cell);
@@ -1687,8 +1687,8 @@ FluidDynamicsSharp<dim>::gather_output_hook()
     std::make_shared<LevelsetPostprocessor<dim>>(combined_shapes);
   solution_output_structs.emplace_back(
     std::in_place_type<OutputStructPostprocessor<dim, GlobalVectorType>>,
-    this->dof_handler,
-    this->present_solution,
+    *this->dof_handler,
+    *this->present_solution,
     levelset_postprocessor);
 
   Vector<float> cell_cuts(this->triangulation->n_active_cells());
@@ -1701,7 +1701,7 @@ FluidDynamicsSharp<dim>::gather_output_hook()
         ->enable_extra_sharp_interface_vtu_output_field)
     {
       // Define cell iterator
-      const auto  &cell_iterator = this->dof_handler.active_cell_iterators();
+      const auto  &cell_iterator = this->dof_handler->active_cell_iterators();
       unsigned int i             = 0;
 
       for (const auto &cell : cell_iterator)
@@ -1746,8 +1746,8 @@ FluidDynamicsSharp<dim>::gather_output_hook()
         std::make_shared<LevelsetGradientPostprocessor<dim>>(combined_shapes);
       solution_output_structs.emplace_back(
         std::in_place_type<OutputStructPostprocessor<dim, GlobalVectorType>>,
-        this->dof_handler,
-        this->present_solution,
+        *this->dof_handler,
+        *this->present_solution,
         levelset_gradient_postprocessor);
     }
   return solution_output_structs;
@@ -1858,7 +1858,7 @@ FluidDynamicsSharp<dim>::calculate_L2_error_particles()
   Function<dim> *l_exact_solution = this->exact_solution;
 
   std::map<types::global_dof_index, Point<dim>> support_points =
-    DoFTools::map_dofs_to_support_points(*this->mapping, this->dof_handler);
+    DoFTools::map_dofs_to_support_points(*this->mapping, *this->dof_handler);
 
   double l2errorU                  = 0.;
   double l2errorU_boundary         = 0.;
@@ -1870,8 +1870,9 @@ FluidDynamicsSharp<dim>::calculate_L2_error_particles()
 
   // loop over elements
   typename DoFHandler<dim>::active_cell_iterator cell = this->dof_handler
-                                                          .begin_active(),
-                                                 endc = this->dof_handler.end();
+                                                          ->begin_active(),
+                                                 endc =
+                                                   this->dof_handler->end();
 
   // loop over elements to calculate average pressure
   for (; cell != endc; ++cell)
@@ -1924,7 +1925,7 @@ FluidDynamicsSharp<dim>::calculate_L2_error_particles()
 
   double average_pressure       = pressure_integral / volume;
   double average_exact_pressure = exact_pressure_integral / volume;
-  cell = this->dof_handler.begin_active(), endc = this->dof_handler.end();
+  cell = this->dof_handler->begin_active(), endc = this->dof_handler->end();
 
   for (; cell != endc; ++cell)
     {
@@ -1970,7 +1971,8 @@ FluidDynamicsSharp<dim>::calculate_L2_error_particles()
 
                           fe_face_values.reinit(cell, face);
                           fe_face_values[velocities].get_function_values(
-                            this->present_solution, local_face_velocity_values);
+                            *this->present_solution,
+                            local_face_velocity_values);
                           for (unsigned int q = 0; q < n_q_points_face; q++)
                             {
                               double u_x = local_face_velocity_values[q][0];
@@ -2003,7 +2005,7 @@ FluidDynamicsSharp<dim>::calculate_L2_error_particles()
           if (!cell_is_cut && !cell_is_overconstrained)
             {
               auto &evaluation_point = this->evaluation_point;
-              auto &present_solution = this->present_solution;
+              auto &present_solution = *this->present_solution;
               fe_values.reinit(cell);
               fe_values[velocities].get_function_values(present_solution,
                                                         local_velocity_values);
@@ -2325,7 +2327,7 @@ FluidDynamicsSharp<dim>::integrate_particles()
                 {
                   const auto &cell =
                     LetheGridTools::find_cell_around_point_with_tree(
-                      this->dof_handler, particles[p].position);
+                      *this->dof_handler, particles[p].position);
                   (void)cell;
                 }
               catch (...)
@@ -3109,7 +3111,7 @@ FluidDynamicsSharp<dim>::sharp_edge()
     this->simulation_control->get_time_steps_vector();
   // Define a map to all DOFs and their support points
   std::map<types::global_dof_index, Point<dim>> support_points =
-    DoFTools::map_dofs_to_support_points(*this->mapping, this->dof_handler);
+    DoFTools::map_dofs_to_support_points(*this->mapping, *this->dof_handler);
 
   // Initalize fe value objects in order to do calculation with it later
   QGauss<dim>        q_formula(this->number_quadrature_points);
@@ -3141,7 +3143,7 @@ FluidDynamicsSharp<dim>::sharp_edge()
               std::numbers::sqrt2;
 
   // Define cell iterator
-  const auto &cell_iterator = this->dof_handler.active_cell_iterators();
+  const auto &cell_iterator = this->dof_handler->active_cell_iterators();
   double      dt            = time_steps_vector[0];
   if (Parameters::SimulationControl::TimeSteppingMethod::steady ==
       this->simulation_parameters.simulation_control.method)
@@ -3158,7 +3160,7 @@ FluidDynamicsSharp<dim>::sharp_edge()
 
 
           const auto &cell = LetheGridTools::find_cell_around_point_with_tree(
-            this->dof_handler, pressure_reference_location);
+            *this->dof_handler, pressure_reference_location);
 
           if (cell->is_locally_owned())
             {
@@ -3450,7 +3452,7 @@ FluidDynamicsSharp<dim>::sharp_edge()
                             {
                               stencil_cell = LetheGridTools::
                                 find_cell_around_point_with_neighbors<dim>(
-                                  this->dof_handler,
+                                  *this->dof_handler,
                                   vertices_to_cell,
                                   cell_cut,
                                   point_to_find_cell);
@@ -3988,7 +3990,7 @@ FluidDynamicsSharp<dim>::assemble_local_system_matrix(
   scratch_data.reinit(
     cell,
     this->evaluation_point,
-    this->previous_solutions,
+    *this->previous_solutions,
     this->sdirk_vectors.sum_over_previous_stages,
     this->forcing_function,
     this->flow_control.get_beta(),
@@ -3996,19 +3998,19 @@ FluidDynamicsSharp<dim>::assemble_local_system_matrix(
 
   if (this->simulation_parameters.multiphysics.VOF)
     {
-      const DoFHandler<dim> *dof_handler_vof =
+      const DoFHandler<dim> &dof_handler_vof =
         this->multiphysics->get_dof_handler(PhysicsID::VOF);
       typename DoFHandler<dim>::active_cell_iterator phase_cell(
         &(*(this->triangulation)),
         cell->level(),
         cell->index(),
-        dof_handler_vof);
+        &dof_handler_vof);
 
       scratch_data.reinit_vof(
         phase_cell,
-        *this->multiphysics->get_solution(PhysicsID::VOF),
-        *this->multiphysics->get_filtered_solution(PhysicsID::VOF),
-        *this->multiphysics->get_previous_solutions(PhysicsID::VOF));
+        this->multiphysics->get_solution(PhysicsID::VOF),
+        this->multiphysics->get_filtered_solution(PhysicsID::VOF),
+        this->multiphysics->get_previous_solutions(PhysicsID::VOF));
     }
 
   scratch_data.calculate_physical_properties();
@@ -4080,7 +4082,7 @@ FluidDynamicsSharp<dim>::assemble_local_system_rhs(
   scratch_data.reinit(
     cell,
     this->evaluation_point,
-    this->previous_solutions,
+    *this->previous_solutions,
     this->sdirk_vectors.sum_over_previous_stages,
     this->forcing_function,
     this->flow_control.get_beta(),
@@ -4088,19 +4090,19 @@ FluidDynamicsSharp<dim>::assemble_local_system_rhs(
 
   if (this->simulation_parameters.multiphysics.VOF)
     {
-      const DoFHandler<dim> *dof_handler_vof =
+      const DoFHandler<dim> &dof_handler_vof =
         this->multiphysics->get_dof_handler(PhysicsID::VOF);
       typename DoFHandler<dim>::active_cell_iterator phase_cell(
         &(*(this->triangulation)),
         cell->level(),
         cell->index(),
-        dof_handler_vof);
+        &dof_handler_vof);
 
       scratch_data.reinit_vof(
         phase_cell,
-        *this->multiphysics->get_solution(PhysicsID::VOF),
-        *this->multiphysics->get_filtered_solution(PhysicsID::VOF),
-        *this->multiphysics->get_previous_solutions(PhysicsID::VOF));
+        this->multiphysics->get_solution(PhysicsID::VOF),
+        this->multiphysics->get_filtered_solution(PhysicsID::VOF),
+        this->multiphysics->get_previous_solutions(PhysicsID::VOF));
     }
 
   scratch_data.calculate_physical_properties();
@@ -4515,7 +4517,7 @@ FluidDynamicsSharp<dim>::read_checkpoint()
     {
       TimerOutput::Scope t(this->computing_timer, "Remove RBF nodes");
       particles[p_i].remove_superfluous_data(
-        this->dof_handler, particles[p_i].mesh_based_precalculations);
+        *this->dof_handler, particles[p_i].mesh_based_precalculations);
     }
 }
 
@@ -4813,7 +4815,7 @@ FluidDynamicsSharp<dim>::update_precalculations_for_ib()
   for (unsigned int p_i = 0; p_i < particles.size(); ++p_i)
     {
       particles[p_i].update_precalculations(
-        this->dof_handler, particles[p_i].mesh_based_precalculations);
+        *this->dof_handler, particles[p_i].mesh_based_precalculations);
     }
 }
 
@@ -4870,7 +4872,7 @@ FluidDynamicsSharp<dim>::solve()
           update_precalculations_for_ib();
 
           ib_dem.update_particles_boundary_contact(this->particles,
-                                                   this->dof_handler,
+                                                   *this->dof_handler,
                                                    *this->face_quadrature,
                                                    *this->mapping);
           ib_dem.update_contact_candidates();
@@ -4883,7 +4885,7 @@ FluidDynamicsSharp<dim>::solve()
           vertices_cell_mapping();
 
           ib_dem.update_particles_boundary_contact(this->particles,
-                                                   this->dof_handler,
+                                                   *this->dof_handler,
                                                    *this->face_quadrature,
                                                    *this->mapping);
           if (this->simulation_control->get_step_number() == 0 ||

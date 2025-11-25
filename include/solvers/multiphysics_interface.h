@@ -424,8 +424,10 @@ public:
    * @brief Request a DOF handler for a given physics ID
    *
    * @param physics_id The physics of the DOF handler being requested
+   *
+   * @return Reference to the DOF handler of the requested physics
    */
-  DoFHandler<dim> *
+  const DoFHandler<dim> &
   get_dof_handler(const PhysicsID physics_id)
   {
     AssertThrow((std::find(active_physics.begin(),
@@ -433,182 +435,202 @@ public:
                            physics_id) != active_physics.end()),
                 ExcInternalError());
 
-    return physics_dof_handler[physics_id];
+    return *physics_dof_handler[physics_id];
   }
 
   /**
-   * @brief Request the present solution of a given physics
+   * @brief Request the reference to the present solution of a given physics
    *
-   * @param physics_id The physics of the solution being requested
+   * @param physics_id The physics ID of the solution being requested
+   *
+   * @return Reference to the solution vector of the requested physics
    */
-  GlobalVectorType *
+  const GlobalVectorType &
   get_solution(const PhysicsID physics_id)
   {
     AssertThrow((std::find(active_physics.begin(),
                            active_physics.end(),
                            physics_id) != active_physics.end()),
                 ExcInternalError());
-    return physics_solutions[physics_id];
+    return *physics_solutions[physics_id];
   }
 
   /**
-   * @brief Request the present filtered solution of a given physics (used in
-   * VOF or CahnHilliard physics for STF calculation)
-   * @param physics_id ID of the physics for which the solution is being
-   * requested
+   * @brief Request the reference to the present filtered solution of a given
+   * physics (used in VOF or CahnHilliard physics for STF calculation in the
+   * momentum balance)
+   *
+   * @param[in] physics_id ID of the physics for which the filtered solution is
+   * being requested
+   *
+   * @return Reference to the requested filtered solution vector.
    */
-  GlobalVectorType *
+  const GlobalVectorType &
   get_filtered_solution(const PhysicsID physics_id)
   {
     AssertThrow((std::find(active_physics.begin(),
                            active_physics.end(),
                            physics_id) != active_physics.end()),
                 ExcInternalError());
-    return physics_filtered_solutions[physics_id];
+    return *physics_filtered_solutions[physics_id];
   }
 
   /**
-   * @brief Request the present block solution of a given physics
+   * @brief Request the reference to the present block solution of a given
+   * physics
    *
-   * @param physics_id The physics of the solution being requested
+   * @param[in] physics_id The physics ID of the solution being requested
    */
-  GlobalBlockVectorType *
+  const GlobalBlockVectorType &
   get_block_solution(const PhysicsID physics_id)
   {
     AssertThrow((std::find(active_physics.begin(),
                            active_physics.end(),
                            physics_id) != active_physics.end()),
                 ExcInternalError());
-    return block_physics_solutions[physics_id];
+    return *block_physics_solutions[physics_id];
   }
 
 
   /**
-   * @brief Request the time-average solution of a given physics
+   * @brief Request the reference to the time-average solution of a given physics
    *
-   * @param physics_id The physics of the solution being requested
+   * @param[in] physics_id The physics ID of the solution being requested
    */
-  GlobalVectorType *
+  const GlobalVectorType &
   get_time_average_solution(const PhysicsID physics_id)
   {
     AssertThrow((std::find(active_physics.begin(),
                            active_physics.end(),
                            physics_id) != active_physics.end()),
                 ExcInternalError());
-    return physics_time_average_solutions[physics_id];
+    return *physics_time_average_solutions[physics_id];
   }
 
   /**
-   * @brief Request the present block average solution of a given physics
+   * @brief Request the reference to the present block average solution of a
+   * given physics
    *
-   * @param physics_id The physics of the solution being requested
+   * @param[in] physics_id The physics ID of the solution being requested
    */
-  GlobalBlockVectorType *
+  const GlobalBlockVectorType &
   get_block_time_average_solution(const PhysicsID physics_id)
   {
     AssertThrow((std::find(active_physics.begin(),
                            active_physics.end(),
                            physics_id) != active_physics.end()),
                 ExcInternalError());
-    return block_physics_time_average_solutions[physics_id];
+    return *block_physics_time_average_solutions[physics_id];
   }
 
   /**
-   @brief Request the solid objects. Used an auxiliary physics
-    * needs to apply a boundary condition on a solid through
-    * Nitsche immersed boundary method.
-    *
-    * NB: this method is called only in
-    * HeatTransfer<dim>::assemble_nitsche_heat_restriction,
-    * which is itself called only if number_solids > 0
-    */
-  std::vector<std::shared_ptr<SolidBase<dim, dim>>> *
-  get_solids(const int number_solids)
+   * @brief Request the solid objects. Used an auxiliary physics
+   * needs to apply a boundary condition on a solid through
+   * Nitsche immersed boundary method.
+   *
+   * @param[in] number_solids The number of solids declared in the parameter
+   * file. The value is used to ensure that at least one solid has been
+   * declared.
+   *
+   * @note The method is called only in
+   * HeatTransfer<dim>::assemble_nitsche_heat_restriction,
+   * which is itself called only if number_solids > 0
+   */
+  const std::vector<std::shared_ptr<SolidBase<dim, dim>>> &
+  get_solids([[maybe_unused]] const int number_solids)
   {
     Assert(number_solids > 0, NoSolidWarning("the"));
-    // to prevent "unused parameter" warning in Release build
-    (void)(number_solids);
-    return solids;
+    AssertThrow(solids != nullptr,
+                dealii::ExcMessage("solids is not initialized"));
+    return *solids;
   }
 
   /**
-   * @brief Request the present solution of the projected phase fraction gradient (PFG)
+   * @brief Request the reference to the present solution vector of the
+   * projected phase fraction gradient (PFG)
    */
   const GlobalVectorType &
   get_projected_phase_fraction_gradient_solution();
 
   /**
-   * @brief Request the present solution of the curvature
+   * @brief Request the reference to the present solution of the curvature
    */
   const GlobalVectorType &
   get_curvature_solution();
 
   /**
-   * @brief Request the projected curvature DOF handler
+   * @brief Request the reference to the projected curvature DOF handler
    */
   const DoFHandler<dim> &
   get_curvature_dof_handler();
 
   /**
-   * @brief Request the projected phase fraction gradient (pfg) DOF handler
+   * @brief Request the reference to the projected phase fraction gradient (PFG)
+   * DOF handler
    */
   const DoFHandler<dim> &
   get_projected_phase_fraction_gradient_dof_handler();
 
   /**
-   * @brief Request immersed solid shape
+   * @brief Request shared pointer to immersed solid shape
    */
-  Shape<dim> *
+  std::shared_ptr<Shape<dim>>
   get_immersed_solid_shape();
 
   /**
    * @brief Share immersed solid shape
    *
-   * @param[in] shape The immersed solid shape
+   * @param[in] shape The reference to the shared pointer pointing to the
+   * immersed solid shape
    */
   void
-  set_immersed_solid_shape(Shape<dim> *shape);
+  set_immersed_solid_shape(const std::shared_ptr<Shape<dim>> &shape);
 
   /**
-   * @brief Request the previous solutions of a given physics
+   * @brief Request the reference to the vector of previous solutions of a given
+   * physics
    *
-   * @param physics_id The physics of the solution being requested
+   * @param[in] physics_id The physics ID of the solution being requested
    */
-  std::vector<GlobalVectorType> *
+  const std::vector<GlobalVectorType> &
   get_previous_solutions(const PhysicsID physics_id)
   {
     AssertThrow((std::find(active_physics.begin(),
                            active_physics.end(),
                            physics_id) != active_physics.end()),
                 ExcInternalError());
-    return physics_previous_solutions[physics_id];
+    return *physics_previous_solutions[physics_id];
   }
 
 
   /**
-   * @brief Request the previous solutions of a given block physics
+   * @brief Request the reference to the vector of previous solutions of a given
+   * block physics
    *
-   * @param physics_id The physics of the solution being requested
+   * @param[in] physics_id The physics ID of the solution being requested
    */
-  std::vector<GlobalBlockVectorType> *
+  const std::vector<GlobalBlockVectorType> &
   get_block_previous_solutions(const PhysicsID physics_id)
   {
     AssertThrow((std::find(active_physics.begin(),
                            active_physics.end(),
                            physics_id) != active_physics.end()),
                 ExcInternalError());
-    return block_physics_previous_solutions[physics_id];
+    return *block_physics_previous_solutions[physics_id];
   }
 
   /**
-   * @brief Sets the reference to the DOFHandler of the physics in the multiphysics interface
+   * @brief Sets the shared pointer to the DOFHandler of the physics in the
+   * multiphysics interface
    *
-   * @param physics_id The physics of the DOF handler being requested
+   * @param[in] physics_id The physics of the DOF handler being requested
    *
-   * @param dof_handler The dof handler for which the reference is stored
+   * @param[in] dof_handler Shared pointer to the dof handler for which the
+   * reference is stored
    */
   void
-  set_dof_handler(const PhysicsID physics_id, DoFHandler<dim> *dof_handler)
+  set_dof_handler(const PhysicsID                  physics_id,
+                  std::shared_ptr<DoFHandler<dim>> dof_handler)
   {
     AssertThrow((std::find(active_physics.begin(),
                            active_physics.end(),
@@ -618,25 +640,31 @@ public:
   }
 
   /**
-   * @brief Sets the reference to the vector of the SolidBase object. This allows the use of the solid base object in multiple physics at the same time.
+   * @brief Sets the shared pointer to the vector of the SolidBase object. This
+   * allows the use of the solid base object in multiple physics at the same
+   * time.
    *
-   * @param solids_input The reference to the vector of solidBase object
+   * @param[in] solids_input Shared pointer to the vector of solidBase object
    */
   void
-  set_solid(std::vector<std::shared_ptr<SolidBase<dim, dim>>> *solids_input)
+  set_solid(std::shared_ptr<std::vector<std::shared_ptr<SolidBase<dim, dim>>>>
+              solids_input)
   {
     solids = solids_input;
   }
 
   /**
-   * @brief Sets the reference to the solution of the physics in the multiphysics interface
+   * @brief Sets the shared pointer to the solution of the physics in the
+   * multiphysics interface
    *
-   * @param physics_id The physics of the DOF handler being requested
+   * @param[in] physics_id The physics ID the present solution being set
    *
-   * @param solution_vector The reference to the solution vector of the physics
+   * @param[in] solution_vector Shared pointer to the solution vector of the
+   * physics
    */
   void
-  set_solution(const PhysicsID physics_id, GlobalVectorType *solution_vector)
+  set_solution(const PhysicsID                   physics_id,
+               std::shared_ptr<GlobalVectorType> solution_vector)
   {
     AssertThrow((std::find(active_physics.begin(),
                            active_physics.end(),
@@ -646,19 +674,21 @@ public:
   }
 
   /**
-   * @brief Sets the reference to the filtered solution of the physics in the
-   * multiphysics interface (used in VOF or CahnHilliard physics for STF
-   * calculation)
-   * @param physics_id ID of the physics for which the DOF handler is being
-   * requested
+   * @brief Sets the shared pointer to the filtered solution of the physics in
+   * the multiphysics interface (used in VOF or CahnHilliard physics for STF
+   * calculation in the momentum balance)
    *
-   * @param filtered_solution_vector The reference to the filtered solution
+   * @param[in] physics_id ID of the physics for which the filtered solution is
+   * being set
+   *
+   * @param[in] filtered_solution_vector Shared pointer to the filtered solution
    * vector of the physics; this was implemented for VOF and CahnHilliard
    * physics
    */
   void
-  set_filtered_solution(const PhysicsID   physics_id,
-                        GlobalVectorType *filtered_solution_vector)
+  set_filtered_solution(
+    const PhysicsID                   physics_id,
+    std::shared_ptr<GlobalVectorType> filtered_solution_vector)
   {
     AssertThrow((std::find(active_physics.begin(),
                            active_physics.end(),
@@ -669,15 +699,17 @@ public:
 
 
   /**
-   * @brief Sets the reference to the time-average solution of the physics in the multiphysics interface
+   * @brief Sets the shared pointer to the time-average solution of the physics in the multiphysics interface
    *
-   * @param physics_id The physics of the DOF handler being requested
+   * @param[in] physics_id The physics ID of the time averaged solution being
+   * set
    *
-   * @param solution_vector The reference to the solution vector of the physics
+   * @param[in] solution_vector The shared pointer to the time averaged solution
+   * vector of the physics
    */
   void
-  set_time_average_solution(const PhysicsID   physics_id,
-                            GlobalVectorType *solution_vector)
+  set_time_average_solution(const PhysicsID                   physics_id,
+                            std::shared_ptr<GlobalVectorType> solution_vector)
   {
     AssertThrow((std::find(active_physics.begin(),
                            active_physics.end(),
@@ -689,13 +721,14 @@ public:
   /**
    * @brief Sets the reference to the solution of the physics in the multiphysics interface
    *
-   * @param physics_id The physics of the DOF handler being requested
+   * @param[in] physics_id The physics ID of the DOF handler being requested
    *
-   * @param solution_vector The reference to the solution vector of the physics
+   * @param[in] solution_vector The shared pointer to the solution vector of the
+   * requested physics
    */
   void
-  set_block_solution(const PhysicsID        physics_id,
-                     GlobalBlockVectorType *solution_vector)
+  set_block_solution(const PhysicsID                        physics_id,
+                     std::shared_ptr<GlobalBlockVectorType> solution_vector)
   {
     AssertThrow((std::find(active_physics.begin(),
                            active_physics.end(),
@@ -705,15 +738,19 @@ public:
   }
 
   /**
-   * @brief Sets the reference to the time-average solution of the physics in the multiphysics interface
+   * @brief Sets the shared pointer to the time-average solution of the block
+   * physics in the multiphysics interface
    *
-   * @param physics_id The physics of the DOF handler being requested
+   * @param[in] physics_id The physics ID of the time averaged block vector
+   * solution being set
    *
-   * @param solution_vector The reference to the solution vector of the physics
+   * @param[in] solution_vector The shared pointer to the block solution vector
+   * of the physics
    */
   void
-  set_block_time_average_solution(const PhysicsID        physics_id,
-                                  GlobalBlockVectorType *solution_vector)
+  set_block_time_average_solution(
+    const PhysicsID                        physics_id,
+    std::shared_ptr<GlobalBlockVectorType> solution_vector)
   {
     AssertThrow((std::find(active_physics.begin(),
                            active_physics.end(),
@@ -725,14 +762,15 @@ public:
   /**
    * @brief Sets the pointer to the vector of previous solutions of the physics in the multiphysics interface
    *
-   * @param physics_id The physics of the DOF handler
+   * @param[in] physics_id The physics of the DOF handler
    *
-   * @param previous_solutions_vector The pointer to the vector of previous solutions
+   * @param[in] previous_solutions_vector The shared pointer to the vector of
+   * previous solutions
    */
   void
   set_previous_solutions(
-    const PhysicsID                physics_id,
-    std::vector<GlobalVectorType> *previous_solutions_vector)
+    const PhysicsID                                physics_id,
+    std::shared_ptr<std::vector<GlobalVectorType>> previous_solutions_vector)
   {
     AssertThrow((std::find(active_physics.begin(),
                            active_physics.end(),
@@ -742,16 +780,19 @@ public:
   }
 
   /**
-   * @brief Sets the pointer to the vector of previous solutions of the block physics in the multiphysics interface
+   * @brief Sets the pointer to the vector of previous solutions of the block
+   * physics in the multiphysics interface
    *
-   * @param physics_id The physics of the DOF handler
+   * @param[in] physics_id The physics of the DOF handler
    *
-   * @param previous_solutions_vector The pointer to the vector of previous solutions
+   * @param[in] previous_solutions_vector The shared pointer to the vector of
+   * previous block vector solutions
    */
   void
   set_block_previous_solutions(
-    const PhysicsID                     physics_id,
-    std::vector<GlobalBlockVectorType> *previous_solutions_vector)
+    const PhysicsID physics_id,
+    std::shared_ptr<std::vector<GlobalBlockVectorType>>
+      previous_solutions_vector)
   {
     AssertThrow((std::find(active_physics.begin(),
                            active_physics.end(),
@@ -840,40 +881,81 @@ private:
            std::shared_ptr<AuxiliaryPhysics<dim, GlobalBlockVectorType>>>
     block_physics;
 
+  /// Map of physics and shared pointers to their respective DoFHandler
+  std::map<PhysicsID, std::shared_ptr<DoFHandler<dim>>> physics_dof_handler;
 
-  std::map<PhysicsID, DoFHandler<dim> *> physics_dof_handler;
+  /// Shared pointer to the vector containing shared pointers to solid objects
+  std::shared_ptr<std::vector<std::shared_ptr<SolidBase<dim, dim>>>> solids;
 
-  std::vector<std::shared_ptr<SolidBase<dim, dim>>> *solids;
+  /// Map of physics and shared pointers to their respective solutions.
+  std::map<PhysicsID, std::shared_ptr<GlobalVectorType>> physics_solutions;
 
+  /**
+   * Map of physics and shared pointers to their respective solutions.
+   * Same as MultiphysicsInterface::physics_solutions, but used with
+   * BlockVector.
+   */
+  std::map<PhysicsID, std::shared_ptr<GlobalBlockVectorType>>
+    block_physics_solutions;
 
-  // present filtered solution (VOF->STF)
-  std::map<PhysicsID, GlobalVectorType *>      physics_filtered_solutions;
-  std::map<PhysicsID, GlobalBlockVectorType *> block_physics_filtered_solutions;
+  /**
+   * Map of physics and shared pointers to their respective filtered solutions.
+   * These solutions are used with both VOF and Cahn-Hilliard multiphase flow
+   * approaches for surface tension force calculation in the momentum equation.
+   */
+  std::map<PhysicsID, std::shared_ptr<GlobalVectorType>>
+    physics_filtered_solutions;
 
-  // present solution
-  std::map<PhysicsID, GlobalVectorType *>      physics_solutions;
-  std::map<PhysicsID, GlobalBlockVectorType *> block_physics_solutions;
+  /**
+   * Map of physics and shared pointers to their respective filtered solutions.
+   * Same as MultiphysicsInterface::physics_filtered_solutions, but used with
+   * BlockVector.
+   */
+  std::map<PhysicsID, std::shared_ptr<GlobalVectorType>>
+    block_physics_filtered_solutions;
 
-  // previous solutions
-  std::map<PhysicsID, std::vector<GlobalVectorType> *>
+  /**
+   * Map of physics and shared pointers to their respective vector of previous
+   * solutions.
+   */
+  std::map<PhysicsID, std::shared_ptr<std::vector<GlobalVectorType>>>
     physics_previous_solutions;
-  std::map<PhysicsID, std::vector<GlobalBlockVectorType> *>
+
+  /**
+   * Map of physics and shared pointers to their respective vector of previous
+   * solutions.
+   * Same as MultiphysicsInterface::physics_previous_solutions, but used with
+   * BlockVector.
+   */
+  std::map<PhysicsID, std::shared_ptr<std::vector<GlobalBlockVectorType>>>
     block_physics_previous_solutions;
 
+  /**
+   * Map of physics and shared pointers to their respective time-averaged
+   * solutions.
+   */
+  std::map<PhysicsID, std::shared_ptr<GlobalVectorType>>
+    physics_time_average_solutions;
 
-  // average solution
-  std::map<PhysicsID, GlobalVectorType *> physics_time_average_solutions;
-
-  // average solution
-  std::map<PhysicsID, GlobalBlockVectorType *>
+  /**
+   * Map of physics and shared pointers to their respective time-averaged
+   * solutions.
+   * Same as MultiphysicsInterface::physics_time_average_solutions, but used
+   * with BlockVector.
+   */
+  std::map<PhysicsID, std::shared_ptr<GlobalBlockVectorType>>
     block_physics_time_average_solutions;
 
-  // Immersed solid shape to be used by auxiliary physics
-  Shape<dim> *immersed_solid_shape;
+  /// Shared pointer to immersed solid shapes to be used by auxiliary physics
+  std::shared_ptr<Shape<dim>> immersed_solid_shape;
 
-  // past (minus 1) solution
-  std::map<PhysicsID, GlobalVectorType *>      physics_solutions_m1;
-  std::map<PhysicsID, GlobalBlockVectorType *> block_physics_solutions_m1;
+  /**
+   * Map of physics and shared pointers to their respective previous (n-1)
+   * solutions.
+   */
+  std::map<PhysicsID, std::shared_ptr<GlobalVectorType>> physics_solutions_m1;
+  std::map<PhysicsID, std::shared_ptr<GlobalBlockVectorType>>
+    block_physics_solutions_m1;
 
   // Checks the required dependencies between multiphase models and handles the
   // corresponding assertions

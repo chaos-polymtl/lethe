@@ -85,7 +85,7 @@ public:
     , simulation_parameters(p_simulation_parameters)
     , triangulation(p_triangulation)
     , simulation_control(p_simulation_control)
-    , dof_handler(*triangulation)
+    , dof_handler(std::make_shared<DoFHandler<dim>>(*triangulation))
     , thermal_conductivity_models(
         p_simulation_parameters.physical_properties_manager
           .get_thermal_conductivity_vector())
@@ -111,19 +111,24 @@ public:
         face_quadrature     = std::make_shared<QGauss<dim - 1>>(fe->degree + 1);
       }
 
+    // Initialize solution shared_ptr
+    present_solution = std::make_shared<GlobalVectorType>();
+
     // Allocate solution transfer
     solution_transfer =
-      std::make_shared<SolutionTransfer<dim, GlobalVectorType>>(dof_handler);
+      std::make_shared<SolutionTransfer<dim, GlobalVectorType>>(*dof_handler);
 
-    // Set size of previous solutions using BDF schemes information
-    previous_solutions.resize(maximum_number_of_previous_solutions());
+    // Initialize and set size of previous solutions using BDF schemes
+    // information
+    previous_solutions = std::make_shared<std::vector<GlobalVectorType>>(
+      maximum_number_of_previous_solutions());
 
     // Prepare previous solutions transfer
-    previous_solutions_transfer.reserve(previous_solutions.size());
-    for (unsigned int i = 0; i < previous_solutions.size(); ++i)
+    previous_solutions_transfer.reserve(previous_solutions->size());
+    for (unsigned int i = 0; i < previous_solutions->size(); ++i)
       {
         previous_solutions_transfer.emplace_back(
-          SolutionTransfer<dim, GlobalVectorType>(this->dof_handler));
+          SolutionTransfer<dim, GlobalVectorType>(*this->dof_handler));
       }
 
     // Change the behavior of the timer for situations when you don't want
@@ -134,7 +139,7 @@ public:
     if (simulation_parameters.post_processing.calculate_average_temp_and_hf)
       {
         average_temperature =
-          std::make_shared<AverageScalar<dim>>(this->dof_handler);
+          std::make_shared<AverageScalar<dim>>(*this->dof_handler);
       }
   }
 
@@ -157,7 +162,7 @@ public:
   assemble_rhs();
 
   /**
-   * @brief Call for the assembly of the matrix and the right-hand side of the Nitsche restriction for the heat transfert equation.
+   * @brief Call for the assembly of the matrix and the right-hand side of the Nitsche restriction for the heat transfer equation.
    *
    * @param assemble_matrix Boolean that is true for matrix assembly, and false for rhs assembly.
    */
@@ -300,7 +305,7 @@ public:
   const DoFHandler<dim> &
   get_dof_handler() override
   {
-    return dof_handler;
+    return *dof_handler;
   }
 
   /**
@@ -351,7 +356,7 @@ public:
   GlobalVectorType &
   get_present_solution() override
   {
-    return present_solution;
+    return *present_solution;
   }
 
   /**
@@ -677,7 +682,7 @@ private:
    * class enumerates degrees of freedom on all vertices, edges, faces, and
    * cells of the triangulation.
    */
-  DoFHandler<dim> dof_handler;
+  std::shared_ptr<DoFHandler<dim>> dof_handler;
   /**
    * @brief The base class for finite element.
    */
@@ -740,7 +745,7 @@ private:
   /**
    * @brief A vector containing all the values of the solution.
    */
-  GlobalVectorType present_solution;
+  std::shared_ptr<GlobalVectorType> present_solution;
   /**
    * @brief The right hand side vector.
    */
@@ -761,7 +766,7 @@ private:
   /**
    * @brief Previous solution vector.
    */
-  std::vector<GlobalVectorType> previous_solutions;
+  std::shared_ptr<std::vector<GlobalVectorType>> previous_solutions;
 
   /**
    * @brief SolutionTransfer<dim, GlobalVectorType>> is

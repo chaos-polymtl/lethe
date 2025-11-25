@@ -1,4 +1,4 @@
-// SPDX-FileCopyrightText: Copyright (c) 2024 The Lethe Authors
+// SPDX-FileCopyrightText: Copyright (c) 2024-2025 The Lethe Authors
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
 /**
@@ -102,7 +102,7 @@ test()
             simulation_control->get_current_time(),
             simulation_control->get_time_step());
 
-          average_solution = average.get_average_velocities();
+          average_solution = *average.get_average_velocities();
 
           deallog << " Time :             " << time << std::endl;
           deallog << " Average solution : " << average_solution[0] << " "

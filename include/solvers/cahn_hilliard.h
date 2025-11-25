@@ -70,7 +70,7 @@ public:
     , simulation_parameters(p_simulation_parameters)
     , triangulation(p_triangulation)
     , simulation_control(p_simulation_control)
-    , dof_handler(*triangulation)
+    , dof_handler(std::make_shared<DoFHandler<dim>>(*triangulation))
   {
     if (simulation_parameters.mesh.simplex)
       {
@@ -126,18 +126,24 @@ public:
 
     // Allocate solution transfer
     solution_transfer =
-      std::make_shared<SolutionTransfer<dim, GlobalVectorType>>(dof_handler);
+      std::make_shared<SolutionTransfer<dim, GlobalVectorType>>(*dof_handler);
 
-    // Set size of previous solutions using BDF schemes information
-    previous_solutions.resize(maximum_number_of_previous_solutions());
+    // Initialize and set size of previous solutions using BDF schemes
+    // information
+    previous_solutions = std::make_shared<std::vector<GlobalVectorType>>(
+      maximum_number_of_previous_solutions());
 
     // Prepare previous solutions transfer
-    previous_solutions_transfer.reserve(previous_solutions.size());
-    for (unsigned int i = 0; i < previous_solutions.size(); ++i)
+    previous_solutions_transfer.reserve(previous_solutions->size());
+    for (unsigned int i = 0; i < previous_solutions->size(); ++i)
       {
         previous_solutions_transfer.emplace_back(
-          SolutionTransfer<dim, GlobalVectorType>(this->dof_handler));
+          SolutionTransfer<dim, GlobalVectorType>(*this->dof_handler));
       }
+
+    // Initialize solutions shared_ptr
+    present_solution  = std::make_shared<GlobalVectorType>();
+    filtered_solution = std::make_shared<GlobalVectorType>();
 
     // Change the behavior of the timer for situations when you don't want
     // outputs
@@ -240,7 +246,7 @@ public:
   const DoFHandler<dim> &
   get_dof_handler() override
   {
-    return dof_handler;
+    return *dof_handler;
   }
 
   /**
@@ -294,7 +300,7 @@ public:
   GlobalVectorType &
   get_present_solution() override
   {
-    return present_solution;
+    return *present_solution;
   }
   GlobalVectorType &
   get_system_rhs() override
@@ -487,7 +493,7 @@ private:
   // Core elements for the Cahn-Hilliard equations variables (Phi and eta)
   std::shared_ptr<parallel::DistributedTriangulationBase<dim>> triangulation;
   std::shared_ptr<SimulationControl> simulation_control;
-  DoFHandler<dim>                    dof_handler;
+  std::shared_ptr<DoFHandler<dim>>   dof_handler;
 
   // Finite element space
   std::shared_ptr<FESystem<dim>> fe;
@@ -503,19 +509,19 @@ private:
   IndexSet locally_owned_dofs;
   IndexSet locally_relevant_dofs;
 
-  GlobalVectorType               evaluation_point;
-  GlobalVectorType               local_evaluation_point;
-  GlobalVectorType               newton_update;
-  GlobalVectorType               present_solution;
-  GlobalVectorType               system_rhs;
-  AffineConstraints<double>      nonzero_constraints;
-  AffineConstraints<double>      zero_constraints;
-  TrilinosWrappers::SparseMatrix system_matrix;
-  GlobalVectorType               filtered_solution;
+  GlobalVectorType                  evaluation_point;
+  GlobalVectorType                  local_evaluation_point;
+  GlobalVectorType                  newton_update;
+  std::shared_ptr<GlobalVectorType> present_solution;
+  GlobalVectorType                  system_rhs;
+  AffineConstraints<double>         nonzero_constraints;
+  AffineConstraints<double>         zero_constraints;
+  TrilinosWrappers::SparseMatrix    system_matrix;
+  std::shared_ptr<GlobalVectorType> filtered_solution;
 
 
   // Previous solutions vectors
-  std::vector<GlobalVectorType> previous_solutions;
+  std::shared_ptr<std::vector<GlobalVectorType>> previous_solutions;
 
   // Solution transfer classes
   std::shared_ptr<SolutionTransfer<dim, GlobalVectorType>> solution_transfer;

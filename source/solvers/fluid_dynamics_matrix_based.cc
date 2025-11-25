@@ -50,7 +50,7 @@ FluidDynamicsMatrixBased<dim>::FluidDynamicsMatrixBased(
 template <int dim>
 FluidDynamicsMatrixBased<dim>::~FluidDynamicsMatrixBased()
 {
-  this->dof_handler.clear();
+  this->dof_handler->clear();
 }
 
 template <int dim>
@@ -69,12 +69,12 @@ FluidDynamicsMatrixBased<dim>::setup_dofs_fd()
   // Now reset system matrix
   system_matrix.clear();
 
-  this->dof_handler.distribute_dofs(*this->fe);
-  DoFRenumbering::Cuthill_McKee(this->dof_handler);
+  this->dof_handler->distribute_dofs(*this->fe);
+  DoFRenumbering::Cuthill_McKee(*this->dof_handler);
 
-  this->locally_owned_dofs = this->dof_handler.locally_owned_dofs();
+  this->locally_owned_dofs = this->dof_handler->locally_owned_dofs();
   this->locally_relevant_dofs =
-    DoFTools::extract_locally_relevant_dofs(this->dof_handler);
+    DoFTools::extract_locally_relevant_dofs(*this->dof_handler);
 
   // If enabled, rotate rotor mapping
   this->rotate_rotor_mapping(false);
@@ -92,9 +92,9 @@ FluidDynamicsMatrixBased<dim>::setup_dofs_fd()
   // only be done if these are reinitialized WITHOUT locally_relevant_dofs (i.e.
   // without ghost DoFs). This is why most of them are reinitialized both with
   // and without locally_relevant_dofs.
-  this->present_solution.reinit(this->locally_owned_dofs,
-                                this->locally_relevant_dofs,
-                                this->mpi_communicator);
+  this->present_solution->reinit(this->locally_owned_dofs,
+                                 this->locally_relevant_dofs,
+                                 this->mpi_communicator);
   this->local_evaluation_point.reinit(this->locally_owned_dofs,
                                       this->mpi_communicator);
   this->evaluation_point.reinit(this->locally_owned_dofs,
@@ -102,7 +102,7 @@ FluidDynamicsMatrixBased<dim>::setup_dofs_fd()
                                 this->mpi_communicator);
 
   // Initialize vector of previous solutions
-  for (auto &solution : this->previous_solutions)
+  for (auto &solution : *this->previous_solutions)
     {
       solution.reinit(this->locally_owned_dofs,
                       this->locally_relevant_dofs,
@@ -140,7 +140,7 @@ FluidDynamicsMatrixBased<dim>::setup_dofs_fd()
 
   auto                  &nonzero_constraints = this->get_nonzero_constraints();
   DynamicSparsityPattern dsp(this->locally_relevant_dofs);
-  DoFTools::make_sparsity_pattern(this->dof_handler,
+  DoFTools::make_sparsity_pattern(*this->dof_handler,
                                   dsp,
                                   nonzero_constraints,
                                   false);
@@ -151,7 +151,7 @@ FluidDynamicsMatrixBased<dim>::setup_dofs_fd()
 
   SparsityTools::distribute_sparsity_pattern(
     dsp,
-    this->dof_handler.locally_owned_dofs(),
+    this->dof_handler->locally_owned_dofs(),
     this->mpi_communicator,
     this->locally_relevant_dofs);
 
@@ -178,7 +178,7 @@ FluidDynamicsMatrixBased<dim>::setup_dofs_fd()
   this->pcout << "   Number of active cells:       "
               << this->triangulation->n_global_active_cells() << std::endl
               << "   Number of degrees of freedom: "
-              << this->dof_handler.n_dofs() << std::endl;
+              << this->dof_handler->n_dofs() << std::endl;
   this->pcout << "   Volume of triangulation:      " << global_volume
               << std::endl;
 
@@ -186,11 +186,11 @@ FluidDynamicsMatrixBased<dim>::setup_dofs_fd()
   // Provide the fluid dynamics dof_handler and present solution to the
   // multiphysics interface
   this->multiphysics->set_dof_handler(PhysicsID::fluid_dynamics,
-                                      &this->dof_handler);
+                                      this->dof_handler);
   this->multiphysics->set_solution(PhysicsID::fluid_dynamics,
-                                   &this->present_solution);
+                                   this->present_solution);
   this->multiphysics->set_previous_solutions(PhysicsID::fluid_dynamics,
-                                             &this->previous_solutions);
+                                             this->previous_solutions);
 }
 
 template <int dim>
@@ -241,7 +241,7 @@ FluidDynamicsMatrixBased<dim>::update_mortar_configuration()
 
       // Create dynamic sparsity pattern
       DynamicSparsityPattern dsp(this->locally_relevant_dofs);
-      DoFTools::make_sparsity_pattern(this->dof_handler,
+      DoFTools::make_sparsity_pattern(*this->dof_handler,
                                       dsp,
                                       this->get_nonzero_constraints(),
                                       false);
@@ -251,7 +251,7 @@ FluidDynamicsMatrixBased<dim>::update_mortar_configuration()
 
       SparsityTools::distribute_sparsity_pattern(
         dsp,
-        this->dof_handler.locally_owned_dofs(),
+        this->dof_handler->locally_owned_dofs(),
         this->mpi_communicator,
         this->locally_relevant_dofs);
 
@@ -273,7 +273,7 @@ FluidDynamicsMatrixBased<dim>::update_multiphysics_time_average_solution()
     {
       this->multiphysics->set_time_average_solution(
         PhysicsID::fluid_dynamics,
-        &this->average_velocities->get_average_velocities());
+        this->average_velocities->get_average_velocities());
     }
 }
 
@@ -288,20 +288,20 @@ FluidDynamicsMatrixBased<dim>::define_dynamic_zero_constraints()
   this->dynamic_zero_constraints.reinit(this->locally_owned_dofs,
                                         this->locally_relevant_dofs);
 
-  DoFTools::make_hanging_node_constraints(this->dof_handler,
+  DoFTools::make_hanging_node_constraints(*this->dof_handler,
                                           this->dynamic_zero_constraints);
 
-  const DoFHandler<dim> *dof_handler_ht =
+  const DoFHandler<dim> &dof_handler_ht =
     this->multiphysics->get_dof_handler(PhysicsID::heat_transfer);
 
   if (!this->simulation_parameters.multiphysics.VOF)
-    this->constrain_stasis_with_temperature(dof_handler_ht);
+    this->constrain_stasis_with_temperature(&dof_handler_ht);
   else
     {
-      const DoFHandler<dim> *dof_handler_vof =
+      const DoFHandler<dim> &dof_handler_vof =
         this->multiphysics->get_dof_handler(PhysicsID::VOF);
-      this->constrain_stasis_with_temperature_vof(dof_handler_vof,
-                                                  dof_handler_ht);
+      this->constrain_stasis_with_temperature_vof(&dof_handler_vof,
+                                                  &dof_handler_ht);
     }
 
   this->dynamic_zero_constraints.merge(
@@ -618,10 +618,10 @@ FluidDynamicsMatrixBased<dim>::assemble_system_matrix()
 
   if (this->simulation_parameters.multiphysics.VOF)
     {
-      const DoFHandler<dim> *dof_handler_vof =
+      const DoFHandler<dim> &dof_handler_vof =
         this->multiphysics->get_dof_handler(PhysicsID::VOF);
       scratch_data.enable_vof(
-        dof_handler_vof->get_fe(),
+        dof_handler_vof.get_fe(),
         *this->cell_quadrature,
         *this->get_mapping(),
         this->simulation_parameters.multiphysics.vof_parameters.phase_filter);
@@ -645,10 +645,10 @@ FluidDynamicsMatrixBased<dim>::assemble_system_matrix()
     }
   else if (this->simulation_parameters.multiphysics.cahn_hilliard)
     {
-      const DoFHandler<dim> *dof_handler_cahn_hilliard =
+      const DoFHandler<dim> &dof_handler_cahn_hilliard =
         this->multiphysics->get_dof_handler(PhysicsID::cahn_hilliard);
       scratch_data.enable_cahn_hilliard(
-        dof_handler_cahn_hilliard->get_fe(),
+        dof_handler_cahn_hilliard.get_fe(),
         *this->cell_quadrature,
         *this->get_mapping(),
         this->simulation_parameters.multiphysics.cahn_hilliard_parameters);
@@ -656,9 +656,9 @@ FluidDynamicsMatrixBased<dim>::assemble_system_matrix()
 
   if (this->simulation_parameters.multiphysics.heat_transfer)
     {
-      const DoFHandler<dim> *dof_handler_ht =
+      const DoFHandler<dim> &dof_handler_ht =
         this->multiphysics->get_dof_handler(PhysicsID::heat_transfer);
-      scratch_data.enable_heat_transfer(dof_handler_ht->get_fe(),
+      scratch_data.enable_heat_transfer(dof_handler_ht.get_fe(),
                                         *this->cell_quadrature,
                                         *this->get_mapping());
     }
@@ -667,8 +667,8 @@ FluidDynamicsMatrixBased<dim>::assemble_system_matrix()
     scratch_data.enable_mortar();
 
   WorkStream::run(
-    this->dof_handler.begin_active(),
-    this->dof_handler.end(),
+    this->dof_handler->begin_active(),
+    this->dof_handler->end(),
     *this,
     &FluidDynamicsMatrixBased::assemble_local_system_matrix,
     &FluidDynamicsMatrixBased::copy_local_matrix_to_global_matrix,
@@ -698,7 +698,7 @@ FluidDynamicsMatrixBased<dim>::assemble_local_system_matrix(
   scratch_data.reinit(
     cell,
     this->evaluation_point,
-    this->previous_solutions,
+    *this->previous_solutions,
     this->sdirk_vectors.sum_over_previous_stages,
     this->forcing_function,
     this->flow_control.get_beta(),
@@ -706,19 +706,19 @@ FluidDynamicsMatrixBased<dim>::assemble_local_system_matrix(
 
   if (this->simulation_parameters.multiphysics.VOF)
     {
-      const DoFHandler<dim> *dof_handler_vof =
+      const DoFHandler<dim> &dof_handler_vof =
         this->multiphysics->get_dof_handler(PhysicsID::VOF);
       typename DoFHandler<dim>::active_cell_iterator phase_cell(
         &(*(this->triangulation)),
         cell->level(),
         cell->index(),
-        dof_handler_vof);
+        &dof_handler_vof);
 
       scratch_data.reinit_vof(
         phase_cell,
-        *this->multiphysics->get_solution(PhysicsID::VOF),
-        *this->multiphysics->get_filtered_solution(PhysicsID::VOF),
-        *this->multiphysics->get_previous_solutions(PhysicsID::VOF));
+        this->multiphysics->get_solution(PhysicsID::VOF),
+        this->multiphysics->get_filtered_solution(PhysicsID::VOF),
+        this->multiphysics->get_previous_solutions(PhysicsID::VOF));
 
       if (this->simulation_parameters.multiphysics.vof_parameters
             .surface_tension_force.enable)
@@ -754,35 +754,35 @@ FluidDynamicsMatrixBased<dim>::assemble_local_system_matrix(
     }
   else if (this->simulation_parameters.multiphysics.cahn_hilliard)
     {
-      const DoFHandler<dim> *dof_handler_cahn_hilliard =
+      const DoFHandler<dim> &dof_handler_cahn_hilliard =
         this->multiphysics->get_dof_handler(PhysicsID::cahn_hilliard);
       typename DoFHandler<dim>::active_cell_iterator phase_cell(
         &(*(this->triangulation)),
         cell->level(),
         cell->index(),
-        dof_handler_cahn_hilliard);
+        &dof_handler_cahn_hilliard);
 
       scratch_data.reinit_cahn_hilliard(
         phase_cell,
-        *this->multiphysics->get_solution(PhysicsID::cahn_hilliard),
-        *this->multiphysics->get_filtered_solution(PhysicsID::cahn_hilliard));
+        this->multiphysics->get_solution(PhysicsID::cahn_hilliard),
+        this->multiphysics->get_filtered_solution(PhysicsID::cahn_hilliard));
     }
 
   if (this->simulation_parameters.multiphysics.heat_transfer)
     {
-      const DoFHandler<dim> *dof_handler_ht =
+      const DoFHandler<dim> &dof_handler_ht =
         this->multiphysics->get_dof_handler(PhysicsID::heat_transfer);
 
       typename DoFHandler<dim>::active_cell_iterator temperature_cell(
         &(*(this->triangulation)),
         cell->level(),
         cell->index(),
-        dof_handler_ht);
+        &dof_handler_ht);
 
       scratch_data.reinit_heat_transfer(
         temperature_cell,
-        *this->multiphysics->get_solution(PhysicsID::heat_transfer),
-        *this->multiphysics->get_previous_solutions(PhysicsID::heat_transfer));
+        this->multiphysics->get_solution(PhysicsID::heat_transfer),
+        this->multiphysics->get_previous_solutions(PhysicsID::heat_transfer));
     }
 
   if (this->simulation_parameters.mortar_parameters.enable)
@@ -844,10 +844,10 @@ FluidDynamicsMatrixBased<dim>::assemble_system_rhs()
 
   if (this->simulation_parameters.multiphysics.VOF)
     {
-      const DoFHandler<dim> *dof_handler_vof =
+      const DoFHandler<dim> &dof_handler_vof =
         this->multiphysics->get_dof_handler(PhysicsID::VOF);
       scratch_data.enable_vof(
-        dof_handler_vof->get_fe(),
+        dof_handler_vof.get_fe(),
         *this->cell_quadrature,
         *this->get_mapping(),
         this->simulation_parameters.multiphysics.vof_parameters.phase_filter);
@@ -873,10 +873,10 @@ FluidDynamicsMatrixBased<dim>::assemble_system_rhs()
 
   else if (this->simulation_parameters.multiphysics.cahn_hilliard)
     {
-      const DoFHandler<dim> *dof_handler_cahn_hilliard =
+      const DoFHandler<dim> &dof_handler_cahn_hilliard =
         this->multiphysics->get_dof_handler(PhysicsID::cahn_hilliard);
       scratch_data.enable_cahn_hilliard(
-        dof_handler_cahn_hilliard->get_fe(),
+        dof_handler_cahn_hilliard.get_fe(),
         *this->cell_quadrature,
         *this->get_mapping(),
         this->simulation_parameters.multiphysics.cahn_hilliard_parameters);
@@ -884,9 +884,9 @@ FluidDynamicsMatrixBased<dim>::assemble_system_rhs()
 
   if (this->simulation_parameters.multiphysics.heat_transfer)
     {
-      const DoFHandler<dim> *dof_handler_ht =
+      const DoFHandler<dim> &dof_handler_ht =
         this->multiphysics->get_dof_handler(PhysicsID::heat_transfer);
-      scratch_data.enable_heat_transfer(dof_handler_ht->get_fe(),
+      scratch_data.enable_heat_transfer(dof_handler_ht.get_fe(),
                                         *this->cell_quadrature,
                                         *this->get_mapping());
     }
@@ -895,8 +895,8 @@ FluidDynamicsMatrixBased<dim>::assemble_system_rhs()
     scratch_data.enable_mortar();
 
   WorkStream::run(
-    this->dof_handler.begin_active(),
-    this->dof_handler.end(),
+    this->dof_handler->begin_active(),
+    this->dof_handler->end(),
     *this,
     &FluidDynamicsMatrixBased::assemble_local_system_rhs,
     &FluidDynamicsMatrixBased::copy_local_rhs_to_global_rhs,
@@ -937,7 +937,7 @@ FluidDynamicsMatrixBased<dim>::assemble_local_system_rhs(
   scratch_data.reinit(
     cell,
     this->evaluation_point,
-    this->previous_solutions,
+    *this->previous_solutions,
     this->sdirk_vectors.sum_over_previous_stages,
     this->forcing_function,
     this->flow_control.get_beta(),
@@ -945,19 +945,19 @@ FluidDynamicsMatrixBased<dim>::assemble_local_system_rhs(
 
   if (this->simulation_parameters.multiphysics.VOF)
     {
-      const DoFHandler<dim> *dof_handler_vof =
+      const DoFHandler<dim> &dof_handler_vof =
         this->multiphysics->get_dof_handler(PhysicsID::VOF);
       typename DoFHandler<dim>::active_cell_iterator phase_cell(
         &(*(this->triangulation)),
         cell->level(),
         cell->index(),
-        dof_handler_vof);
+        &dof_handler_vof);
 
       scratch_data.reinit_vof(
         phase_cell,
-        *this->multiphysics->get_solution(PhysicsID::VOF),
-        *this->multiphysics->get_filtered_solution(PhysicsID::VOF),
-        *this->multiphysics->get_previous_solutions(PhysicsID::VOF));
+        this->multiphysics->get_solution(PhysicsID::VOF),
+        this->multiphysics->get_filtered_solution(PhysicsID::VOF),
+        this->multiphysics->get_previous_solutions(PhysicsID::VOF));
 
       if (this->simulation_parameters.multiphysics.vof_parameters
             .surface_tension_force.enable)
@@ -989,35 +989,35 @@ FluidDynamicsMatrixBased<dim>::assemble_local_system_rhs(
     }
   else if (this->simulation_parameters.multiphysics.cahn_hilliard)
     {
-      const DoFHandler<dim> *dof_handler_cahn_hilliard =
+      const DoFHandler<dim> &dof_handler_cahn_hilliard =
         this->multiphysics->get_dof_handler(PhysicsID::cahn_hilliard);
       typename DoFHandler<dim>::active_cell_iterator phase_cell(
         &(*(this->triangulation)),
         cell->level(),
         cell->index(),
-        dof_handler_cahn_hilliard);
+        &dof_handler_cahn_hilliard);
 
       scratch_data.reinit_cahn_hilliard(
         phase_cell,
-        *this->multiphysics->get_solution(PhysicsID::cahn_hilliard),
-        *this->multiphysics->get_filtered_solution(PhysicsID::cahn_hilliard));
+        this->multiphysics->get_solution(PhysicsID::cahn_hilliard),
+        this->multiphysics->get_filtered_solution(PhysicsID::cahn_hilliard));
     }
 
   if (this->simulation_parameters.multiphysics.heat_transfer)
     {
-      const DoFHandler<dim> *dof_handler_ht =
+      const DoFHandler<dim> &dof_handler_ht =
         this->multiphysics->get_dof_handler(PhysicsID::heat_transfer);
 
       typename DoFHandler<dim>::active_cell_iterator temperature_cell(
         &(*(this->triangulation)),
         cell->level(),
         cell->index(),
-        dof_handler_ht);
+        &dof_handler_ht);
 
       scratch_data.reinit_heat_transfer(
         temperature_cell,
-        *this->multiphysics->get_solution(PhysicsID::heat_transfer),
-        *this->multiphysics->get_previous_solutions(PhysicsID::heat_transfer));
+        this->multiphysics->get_solution(PhysicsID::heat_transfer),
+        this->multiphysics->get_previous_solutions(PhysicsID::heat_transfer));
     }
 
   if (this->simulation_parameters.mortar_parameters.enable)
@@ -1089,7 +1089,7 @@ FluidDynamicsMatrixBased<dim>::set_initial_condition_fd(
             .solver == Parameters::LinearSolver::SolverType::gmres)
         solve_system_GMRES(true, 1e-15, 1e-15);
 
-      this->present_solution = this->newton_update;
+      *this->present_solution = this->newton_update;
       this->finish_time_step();
     }
   else if (initial_condition_type ==
@@ -1250,8 +1250,8 @@ FluidDynamicsMatrixBased<dim>::set_initial_condition_fd(
         simulation_control_info[1]); // Checkpointed time step
 
       this->local_evaluation_point =
-        this->average_velocities->get_average_velocities();
-      this->present_solution = this->local_evaluation_point;
+        *this->average_velocities->get_average_velocities();
+      *this->present_solution = this->local_evaluation_point;
     }
   else
     {
@@ -1286,7 +1286,7 @@ FluidDynamicsMatrixBased<dim>::assemble_L2_projection()
   std::vector<Tensor<1, dim>> phi_u(dofs_per_cell);
   std::vector<double>         phi_p(dofs_per_cell);
 
-  for (const auto &cell : this->dof_handler.active_cell_iterators())
+  for (const auto &cell : this->dof_handler->active_cell_iterators())
     {
       if (cell->is_locally_owned())
         {
@@ -1435,7 +1435,7 @@ FluidDynamicsMatrixBased<dim>::setup_AMG()
   // Constant modes include pressure since everything is in the same matrix
   ComponentMask components(dim + 1, true);
   constant_modes =
-    DoFTools::extract_constant_modes(this->dof_handler, components);
+    DoFTools::extract_constant_modes(*this->dof_handler, components);
 
   const bool elliptic              = false;
   bool       higher_order_elements = false;
@@ -1847,8 +1847,8 @@ FluidDynamicsMatrixBased<dim>::multi_stage_postresolution(
   Parameters::SimulationControl::TimeSteppingMethod method,
   double                                            time_step)
 {
-  auto &present_solution       = this->present_solution;
-  auto &previous_solutions     = this->previous_solutions;
+  auto &present_solution       = *this->present_solution;
+  auto &previous_solutions     = *this->previous_solutions;
   auto &local_evaluation_point = this->local_evaluation_point;
 
   auto &local_sum_over_previous_stages =
@@ -1890,8 +1890,8 @@ template <int dim>
 void
 FluidDynamicsMatrixBased<dim>::update_multi_stage_solution(double time_step)
 {
-  auto &present_solution       = this->present_solution;
-  auto &previous_solutions     = this->previous_solutions;
+  auto &present_solution       = *this->present_solution;
+  auto &previous_solutions     = *this->previous_solutions;
   auto &local_evaluation_point = this->local_evaluation_point;
 
   // The following variables are used for the SDIRK method
