@@ -54,7 +54,7 @@ InexactNewtonNonLinearSolverStrategy<VectorType>::InexactNewtonNonLinearSolverSt
 
 template <typename VectorType>
 void
-InexactNewtonNonLinearSolver<VectorType>::solve()
+InexactNewtonNonLinearSolverStrategy<VectorType>::solve()
 {
   double       global_res;
   double       current_res;

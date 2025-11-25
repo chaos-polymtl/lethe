@@ -30,7 +30,7 @@ public:
   /**
    * @brief Constructor for the non-linear physics.
    *
-   * @param[in] param Non-linear solver parameters as specified in the
+   * @param[in] Non-linear solver parameters as specified in the
    * simulation parameter file.
    *
    */
@@ -38,7 +38,7 @@ public:
 
 
   /**
-   * @brief Constructor for the linear physics.
+   * @brief Constructor for the linear physics. Since the Physics is linear, a LinearSolutionStrategy is automatically generated as a PhysicsSolverStrategy.
    *
    */
   PhysicsSolver();
@@ -83,10 +83,6 @@ public:
    */
   void
   solve_governing_system();
-
-  /**
-   *
-   */
 
   /**
    * @brief Applies constraints to a local_evaluation_point.

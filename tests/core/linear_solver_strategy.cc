@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
 /**
- * @brief The TestClass tests the linear solver strategy using a simple matrix built from two simple linear equations.
+ * @brief The Test Class tests the linear solver strategy using a simple matrix built from two simple linear equations.
  */
 
 // Lethe
@@ -22,8 +22,7 @@ test()
   std::unique_ptr<LinearProblemTestClass> solver =
     std::make_unique<LinearProblemTestClass>();
 
-
-  deallog << "Solving linear system " << std::endl;
+  deallog << "Solving linear governing system " << std::endl;
   solver->solve_governing_system();
 
   auto &solution = solver->get_system_rhs();

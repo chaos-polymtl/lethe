@@ -7,7 +7,7 @@
 #include <core/physics_solver_strategy.h>
 
 /**
- * @brief The linear physics class is used to solve the physics as a linear problem.
+ * @brief The linear solver strategy class is used to solve the physics as a linear problem.
  */
 template <typename VectorType>
 class LinearSolverStrategy : public PhysicsSolverStrategy<VectorType>
@@ -41,7 +41,6 @@ void
 LinearSolverStrategy<VectorType>::solve()
 {
   PhysicsSolver<VectorType> *solver = this->physics_solver;
-
 
   solver->assemble_system_matrix();
   solver->setup_preconditioner();
