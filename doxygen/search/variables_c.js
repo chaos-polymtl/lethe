@@ -142,6 +142,6 @@ var searchData=
   ['multiphysics_139',['multiphysics',['../classCahnHilliard.html#a8ff818ef8ba8f941b7c83816978acddb',1,'CahnHilliard::multiphysics'],['../classHeatTransfer.html#a2ef243387898f88aa5b8d4851de169d0',1,'HeatTransfer::multiphysics'],['../classNavierStokesBase.html#accd6ec2d22ee6e6d789948d4ead4e681',1,'NavierStokesBase::multiphysics'],['../classSimulationParameters.html#a6232756a0eb911c47803a7b801c8e94e',1,'SimulationParameters::multiphysics'],['../classTracer.html#a3298668e1f12db561cb9234d243a74bb',1,'Tracer::multiphysics'],['../classVolumeOfFluid.html#a5648aae68429f09e3143b6f25f3a595b',1,'VolumeOfFluid::multiphysics']]],
   ['multiphysics_5faverage_5fvelocities_140',['multiphysics_average_velocities',['../classFluidDynamicsMatrixFree.html#a138b3a4fc0132e9b953b9687158fb419',1,'FluidDynamicsMatrixFree']]],
   ['multiphysics_5fparameters_141',['multiphysics_parameters',['../classMultiphysicsInterface.html#a77e4650e2e491558b5eace431a2bf365',1,'MultiphysicsInterface']]],
-  ['multiphysics_5fpresent_5fsolution_142',['multiphysics_present_solution',['../classFluidDynamicsMatrixFree.html#a8b4aafafb3e9fb7597f03e1b2180d01a',1,'FluidDynamicsMatrixFree']]],
-  ['multiphysics_5fprevious_5fsolutions_143',['multiphysics_previous_solutions',['../classFluidDynamicsMatrixFree.html#a6dafa12fe242eed650a907649f970d16',1,'FluidDynamicsMatrixFree']]]
+  ['multiphysics_5fpresent_5fsolution_142',['multiphysics_present_solution',['../classFluidDynamicsMatrixFree.html#a825c39c4ea9bd4b00dcd8005f328b4a7',1,'FluidDynamicsMatrixFree']]],
+  ['multiphysics_5fprevious_5fsolutions_143',['multiphysics_previous_solutions',['../classFluidDynamicsMatrixFree.html#a31d3b35b29effcad4e8dc51dbc61a70c',1,'FluidDynamicsMatrixFree']]]
 ];

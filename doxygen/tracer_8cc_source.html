@@ -196,7 +196,7 @@ $(document).ready(function() { init_codefold(0); });
 <div class="foldopen" id="foldopen00097" data-start="{" data-end="}">
 <div class="line"><a id="l00097" name="l00097"></a><span class="lineno"><a class="line" href="classTracer.html#a57a99174155bd6cfdfa9f944cf1c05d1">   97</a></span><a class="code hl_function" href="classTracer.html#a57a99174155bd6cfdfa9f944cf1c05d1">Tracer&lt;dim&gt;::assemble_system_matrix_cg</a>()</div>
 <div class="line"><a id="l00098" name="l00098"></a><span class="lineno">   98</span>{</div>
-<div class="line"><a id="l00099" name="l00099"></a><span class="lineno">   99</span>  <span class="keyword">const</span> DoFHandler&lt;dim&gt; *dof_handler_fluid =</div>
+<div class="line"><a id="l00099" name="l00099"></a><span class="lineno">   99</span>  <span class="keyword">const</span> DoFHandler&lt;dim&gt; &amp;dof_handler_fluid =</div>
 <div class="line"><a id="l00100" name="l00100"></a><span class="lineno">  100</span>    multiphysics-&gt;get_dof_handler(<a class="code hl_enumvalue" href="multiphysics_8h.html#ae14bb720bc9a37edc36fb8d90df712c2a0bb34d58a3e8914bc47bf4b415f206c2">PhysicsID::fluid_dynamics</a>);</div>
 <div class="line"><a id="l00101" name="l00101"></a><span class="lineno">  101</span> </div>
 <div class="line"><a id="l00102" name="l00102"></a><span class="lineno">  102</span>  <span class="keyword">auto</span> scratch_data = <a class="code hl_class" href="classTracerScratchData.html">TracerScratchData&lt;dim&gt;</a>(</div>
@@ -205,10 +205,10 @@ $(document).ready(function() { init_codefold(0); });
 <div class="line"><a id="l00105" name="l00105"></a><span class="lineno">  105</span>    *this-&gt;cell_quadrature,</div>
 <div class="line"><a id="l00106" name="l00106"></a><span class="lineno">  106</span>    *this-&gt;face_quadrature,</div>
 <div class="line"><a id="l00107" name="l00107"></a><span class="lineno">  107</span>    *this-&gt;mapping,</div>
-<div class="line"><a id="l00108" name="l00108"></a><span class="lineno">  108</span>    dof_handler_fluid-&gt;get_fe());</div>
+<div class="line"><a id="l00108" name="l00108"></a><span class="lineno">  108</span>    dof_handler_fluid.get_fe());</div>
 <div class="line"><a id="l00109" name="l00109"></a><span class="lineno">  109</span> </div>
-<div class="line"><a id="l00110" name="l00110"></a><span class="lineno">  110</span>  WorkStream::run(this-&gt;dof_handler.begin_active(),</div>
-<div class="line"><a id="l00111" name="l00111"></a><span class="lineno">  111</span>                  this-&gt;dof_handler.end(),</div>
+<div class="line"><a id="l00110" name="l00110"></a><span class="lineno">  110</span>  WorkStream::run(this-&gt;dof_handler-&gt;begin_active(),</div>
+<div class="line"><a id="l00111" name="l00111"></a><span class="lineno">  111</span>                  this-&gt;dof_handler-&gt;end(),</div>
 <div class="line"><a id="l00112" name="l00112"></a><span class="lineno">  112</span>                  *<span class="keyword">this</span>,</div>
 <div class="line"><a id="l00113" name="l00113"></a><span class="lineno">  113</span>                  &amp;<a class="code hl_function" href="classTracer.html#a491e4202d0eae76c48c4c1f6cf6abe0f">Tracer::assemble_local_system_matrix</a>,</div>
 <div class="line"><a id="l00114" name="l00114"></a><span class="lineno">  114</span>                  &amp;<a class="code hl_function" href="classTracer.html#acde0311373b63944d1201d3ebce09aa2">Tracer::copy_local_matrix_to_global_matrix</a>,</div>
@@ -226,7 +226,7 @@ $(document).ready(function() { init_codefold(0); });
 <div class="foldopen" id="foldopen00125" data-start="{" data-end="}">
 <div class="line"><a id="l00125" name="l00125"></a><span class="lineno"><a class="line" href="classTracer.html#a12866b1322b64054e5dfff2571df661f">  125</a></span><a class="code hl_function" href="classTracer.html#a12866b1322b64054e5dfff2571df661f">Tracer&lt;dim&gt;::assemble_system_matrix_dg</a>()</div>
 <div class="line"><a id="l00126" name="l00126"></a><span class="lineno">  126</span>{</div>
-<div class="line"><a id="l00127" name="l00127"></a><span class="lineno">  127</span>  <span class="keyword">const</span> DoFHandler&lt;dim&gt; *dof_handler_fluid =</div>
+<div class="line"><a id="l00127" name="l00127"></a><span class="lineno">  127</span>  <span class="keyword">const</span> DoFHandler&lt;dim&gt; &amp;dof_handler_fluid =</div>
 <div class="line"><a id="l00128" name="l00128"></a><span class="lineno">  128</span>    multiphysics-&gt;get_dof_handler(<a class="code hl_enumvalue" href="multiphysics_8h.html#ae14bb720bc9a37edc36fb8d90df712c2a0bb34d58a3e8914bc47bf4b415f206c2">PhysicsID::fluid_dynamics</a>);</div>
 <div class="line"><a id="l00129" name="l00129"></a><span class="lineno">  129</span> </div>
 <div class="line"><a id="l00130" name="l00130"></a><span class="lineno">  130</span>  <span class="keyword">auto</span> scratch_data = <a class="code hl_class" href="classTracerScratchData.html">TracerScratchData&lt;dim&gt;</a>(</div>
@@ -235,7 +235,7 @@ $(document).ready(function() { init_codefold(0); });
 <div class="line"><a id="l00133" name="l00133"></a><span class="lineno">  133</span>    *this-&gt;cell_quadrature,</div>
 <div class="line"><a id="l00134" name="l00134"></a><span class="lineno">  134</span>    *this-&gt;face_quadrature,</div>
 <div class="line"><a id="l00135" name="l00135"></a><span class="lineno">  135</span>    *this-&gt;mapping,</div>
-<div class="line"><a id="l00136" name="l00136"></a><span class="lineno">  136</span>    dof_handler_fluid-&gt;get_fe());</div>
+<div class="line"><a id="l00136" name="l00136"></a><span class="lineno">  136</span>    dof_handler_fluid.get_fe());</div>
 <div class="line"><a id="l00137" name="l00137"></a><span class="lineno">  137</span> </div>
 <div class="line"><a id="l00138" name="l00138"></a><span class="lineno">  138</span>  <a class="code hl_class" href="classStabilizedDGMethodsCopyData.html">StabilizedDGMethodsCopyData</a> copy_data(this-&gt;fe-&gt;n_dofs_per_cell(),</div>
 <div class="line"><a id="l00139" name="l00139"></a><span class="lineno">  139</span>                                        this-&gt;cell_quadrature-&gt;size());</div>
@@ -266,11 +266,11 @@ $(document).ready(function() { init_codefold(0); });
 <div class="line"><a id="l00164" name="l00164"></a><span class="lineno">  164</span>        cell, face_no, this-&gt;multiphysics-&gt;get_immersed_solid_shape());</div>
 <div class="line"><a id="l00165" name="l00165"></a><span class="lineno">  165</span> </div>
 <div class="line"><a id="l00166" name="l00166"></a><span class="lineno">  166</span>      <span class="comment">// Gather velocity information at the face to properly advect</span></div>
-<div class="line"><a id="l00167" name="l00167"></a><span class="lineno">  167</span>      <span class="keyword">const</span> DoFHandler&lt;dim&gt; *dof_handler_fluid =</div>
+<div class="line"><a id="l00167" name="l00167"></a><span class="lineno">  167</span>      <span class="keyword">const</span> DoFHandler&lt;dim&gt; &amp;dof_handler_fluid =</div>
 <div class="line"><a id="l00168" name="l00168"></a><span class="lineno">  168</span>        multiphysics-&gt;get_dof_handler(<a class="code hl_enumvalue" href="multiphysics_8h.html#ae14bb720bc9a37edc36fb8d90df712c2a0bb34d58a3e8914bc47bf4b415f206c2">PhysicsID::fluid_dynamics</a>);</div>
 <div class="line"><a id="l00169" name="l00169"></a><span class="lineno">  169</span>      <span class="comment">// Get the cell that corresponds to the fluid dynamics</span></div>
 <div class="line"><a id="l00170" name="l00170"></a><span class="lineno">  170</span>      <span class="keyword">typename</span> DoFHandler&lt;dim&gt;::active_cell_iterator velocity_cell(</div>
-<div class="line"><a id="l00171" name="l00171"></a><span class="lineno">  171</span>        &amp;(*triangulation), cell-&gt;level(), cell-&gt;index(), dof_handler_fluid);</div>
+<div class="line"><a id="l00171" name="l00171"></a><span class="lineno">  171</span>        &amp;(*triangulation), cell-&gt;level(), cell-&gt;index(), &amp;dof_handler_fluid);</div>
 <div class="line"><a id="l00172" name="l00172"></a><span class="lineno">  172</span> </div>
 <div class="line"><a id="l00173" name="l00173"></a><span class="lineno">  173</span>      <span class="comment">// Reinit the internal face velocity within the scratch data</span></div>
 <div class="line"><a id="l00174" name="l00174"></a><span class="lineno">  174</span>      reinit_face_velocity_with_adequate_solution(velocity_cell,</div>
@@ -312,11 +312,11 @@ $(document).ready(function() { init_codefold(0); });
 <div class="line"><a id="l00210" name="l00210"></a><span class="lineno">  210</span>        scratch_data.fe_interface_values_tracer.get_interface_dof_indices();</div>
 <div class="line"><a id="l00211" name="l00211"></a><span class="lineno">  211</span> </div>
 <div class="line"><a id="l00212" name="l00212"></a><span class="lineno">  212</span>      <span class="comment">// Gather velocity information at the face to properly advect</span></div>
-<div class="line"><a id="l00213" name="l00213"></a><span class="lineno">  213</span>      <span class="keyword">const</span> DoFHandler&lt;dim&gt; *dof_handler_fluid =</div>
+<div class="line"><a id="l00213" name="l00213"></a><span class="lineno">  213</span>      <span class="keyword">const</span> DoFHandler&lt;dim&gt; &amp;dof_handler_fluid =</div>
 <div class="line"><a id="l00214" name="l00214"></a><span class="lineno">  214</span>        multiphysics-&gt;get_dof_handler(<a class="code hl_enumvalue" href="multiphysics_8h.html#ae14bb720bc9a37edc36fb8d90df712c2a0bb34d58a3e8914bc47bf4b415f206c2">PhysicsID::fluid_dynamics</a>);</div>
 <div class="line"><a id="l00215" name="l00215"></a><span class="lineno">  215</span>      <span class="comment">// Get the cell that corresponds to the fluid dynamics</span></div>
 <div class="line"><a id="l00216" name="l00216"></a><span class="lineno">  216</span>      <span class="keyword">typename</span> DoFHandler&lt;dim&gt;::active_cell_iterator velocity_cell(</div>
-<div class="line"><a id="l00217" name="l00217"></a><span class="lineno">  217</span>        &amp;(*triangulation), cell-&gt;level(), cell-&gt;index(), dof_handler_fluid);</div>
+<div class="line"><a id="l00217" name="l00217"></a><span class="lineno">  217</span>        &amp;(*triangulation), cell-&gt;level(), cell-&gt;index(), &amp;dof_handler_fluid);</div>
 <div class="line"><a id="l00218" name="l00218"></a><span class="lineno">  218</span> </div>
 <div class="line"><a id="l00219" name="l00219"></a><span class="lineno">  219</span>      <span class="comment">// Reinit the internal face velocity within the scratch data</span></div>
 <div class="line"><a id="l00220" name="l00220"></a><span class="lineno">  220</span>      reinit_face_velocity_with_adequate_solution(velocity_cell,</div>
@@ -341,8 +341,8 @@ $(document).ready(function() { init_codefold(0); });
 <div class="line"><a id="l00239" name="l00239"></a><span class="lineno">  239</span>      }</div>
 <div class="line"><a id="l00240" name="l00240"></a><span class="lineno">  240</span>  };</div>
 <div class="line"><a id="l00241" name="l00241"></a><span class="lineno">  241</span> </div>
-<div class="line"><a id="l00242" name="l00242"></a><span class="lineno">  242</span>  MeshWorker::mesh_loop(this-&gt;dof_handler.begin_active(),</div>
-<div class="line"><a id="l00243" name="l00243"></a><span class="lineno">  243</span>                        this-&gt;dof_handler.end(),</div>
+<div class="line"><a id="l00242" name="l00242"></a><span class="lineno">  242</span>  MeshWorker::mesh_loop(this-&gt;dof_handler-&gt;begin_active(),</div>
+<div class="line"><a id="l00243" name="l00243"></a><span class="lineno">  243</span>                        this-&gt;dof_handler-&gt;end(),</div>
 <div class="line"><a id="l00244" name="l00244"></a><span class="lineno">  244</span>                        cell_worker,</div>
 <div class="line"><a id="l00245" name="l00245"></a><span class="lineno">  245</span>                        copier,</div>
 <div class="line"><a id="l00246" name="l00246"></a><span class="lineno">  246</span>                        scratch_data,</div>
@@ -372,17 +372,17 @@ $(document).ready(function() { init_codefold(0); });
 <div class="line"><a id="l00268" name="l00268"></a><span class="lineno">  268</span> </div>
 <div class="line"><a id="l00269" name="l00269"></a><span class="lineno">  269</span>  scratch_data.<a class="code hl_function" href="classTracerScratchData.html#afd65777a054d80408e8bfffc25dc9fd0">reinit</a>(cell,</div>
 <div class="line"><a id="l00270" name="l00270"></a><span class="lineno">  270</span>                      this-&gt;evaluation_point,</div>
-<div class="line"><a id="l00271" name="l00271"></a><span class="lineno">  271</span>                      this-&gt;previous_solutions,</div>
+<div class="line"><a id="l00271" name="l00271"></a><span class="lineno">  271</span>                      *this-&gt;previous_solutions,</div>
 <div class="line"><a id="l00272" name="l00272"></a><span class="lineno">  272</span>                      &amp;(*simulation_parameters.source_term.tracer_source));</div>
 <div class="line"><a id="l00273" name="l00273"></a><span class="lineno">  273</span> </div>
-<div class="line"><a id="l00274" name="l00274"></a><span class="lineno">  274</span>  scratch_data.<a class="code hl_function" href="classTracerScratchData.html#a01547ab97dbbf540e6786ea1b25be6be">reinit_signed_distance</a>(</div>
-<div class="line"><a id="l00275" name="l00275"></a><span class="lineno">  275</span>    cell, &amp;(*this-&gt;multiphysics-&gt;get_immersed_solid_shape()));</div>
+<div class="line"><a id="l00274" name="l00274"></a><span class="lineno">  274</span>  scratch_data.<a class="code hl_function" href="classTracerScratchData.html#a9f81a61cac9e16d445fd2ca0a62effce">reinit_signed_distance</a>(</div>
+<div class="line"><a id="l00275" name="l00275"></a><span class="lineno">  275</span>    cell, this-&gt;multiphysics-&gt;get_immersed_solid_shape());</div>
 <div class="line"><a id="l00276" name="l00276"></a><span class="lineno">  276</span> </div>
-<div class="line"><a id="l00277" name="l00277"></a><span class="lineno">  277</span>  <span class="keyword">const</span> DoFHandler&lt;dim&gt; *dof_handler_fluid =</div>
+<div class="line"><a id="l00277" name="l00277"></a><span class="lineno">  277</span>  <span class="keyword">const</span> DoFHandler&lt;dim&gt; &amp;dof_handler_fluid =</div>
 <div class="line"><a id="l00278" name="l00278"></a><span class="lineno">  278</span>    multiphysics-&gt;get_dof_handler(<a class="code hl_enumvalue" href="multiphysics_8h.html#ae14bb720bc9a37edc36fb8d90df712c2a0bb34d58a3e8914bc47bf4b415f206c2">PhysicsID::fluid_dynamics</a>);</div>
 <div class="line"><a id="l00279" name="l00279"></a><span class="lineno">  279</span> </div>
 <div class="line"><a id="l00280" name="l00280"></a><span class="lineno">  280</span>  <span class="keyword">typename</span> DoFHandler&lt;dim&gt;::active_cell_iterator velocity_cell(</div>
-<div class="line"><a id="l00281" name="l00281"></a><span class="lineno">  281</span>    &amp;(*triangulation), cell-&gt;level(), cell-&gt;index(), dof_handler_fluid);</div>
+<div class="line"><a id="l00281" name="l00281"></a><span class="lineno">  281</span>    &amp;(*triangulation), cell-&gt;level(), cell-&gt;index(), &amp;dof_handler_fluid);</div>
 <div class="line"><a id="l00282" name="l00282"></a><span class="lineno">  282</span> </div>
 <div class="line"><a id="l00283" name="l00283"></a><span class="lineno">  283</span>  <span class="keywordflow">if</span> (multiphysics-&gt;fluid_dynamics_is_block())</div>
 <div class="line"><a id="l00284" name="l00284"></a><span class="lineno">  284</span>    {</div>
@@ -398,7 +398,7 @@ $(document).ready(function() { init_codefold(0); });
 <div class="line"><a id="l00294" name="l00294"></a><span class="lineno">  294</span>        {</div>
 <div class="line"><a id="l00295" name="l00295"></a><span class="lineno">  295</span>          scratch_data.<a class="code hl_function" href="classTracerScratchData.html#a562036bff335d8380ca8430c00ede811">reinit_velocity</a>(</div>
 <div class="line"><a id="l00296" name="l00296"></a><span class="lineno">  296</span>            velocity_cell,</div>
-<div class="line"><a id="l00297" name="l00297"></a><span class="lineno">  297</span>            *multiphysics-&gt;get_block_time_average_solution(</div>
+<div class="line"><a id="l00297" name="l00297"></a><span class="lineno">  297</span>            multiphysics-&gt;get_block_time_average_solution(</div>
 <div class="line"><a id="l00298" name="l00298"></a><span class="lineno">  298</span>              <a class="code hl_enumvalue" href="multiphysics_8h.html#ae14bb720bc9a37edc36fb8d90df712c2a0bb34d58a3e8914bc47bf4b415f206c2">PhysicsID::fluid_dynamics</a>),</div>
 <div class="line"><a id="l00299" name="l00299"></a><span class="lineno">  299</span>            this-&gt;simulation_parameters.ale,</div>
 <div class="line"><a id="l00300" name="l00300"></a><span class="lineno">  300</span>            this-&gt;simulation_parameters.tracer_drift_velocity.drift_velocity);</div>
@@ -407,7 +407,7 @@ $(document).ready(function() { init_codefold(0); });
 <div class="line"><a id="l00303" name="l00303"></a><span class="lineno">  303</span>        {</div>
 <div class="line"><a id="l00304" name="l00304"></a><span class="lineno">  304</span>          scratch_data.<a class="code hl_function" href="classTracerScratchData.html#a562036bff335d8380ca8430c00ede811">reinit_velocity</a>(</div>
 <div class="line"><a id="l00305" name="l00305"></a><span class="lineno">  305</span>            velocity_cell,</div>
-<div class="line"><a id="l00306" name="l00306"></a><span class="lineno">  306</span>            *multiphysics-&gt;get_block_solution(<a class="code hl_enumvalue" href="multiphysics_8h.html#ae14bb720bc9a37edc36fb8d90df712c2a0bb34d58a3e8914bc47bf4b415f206c2">PhysicsID::fluid_dynamics</a>),</div>
+<div class="line"><a id="l00306" name="l00306"></a><span class="lineno">  306</span>            multiphysics-&gt;get_block_solution(<a class="code hl_enumvalue" href="multiphysics_8h.html#ae14bb720bc9a37edc36fb8d90df712c2a0bb34d58a3e8914bc47bf4b415f206c2">PhysicsID::fluid_dynamics</a>),</div>
 <div class="line"><a id="l00307" name="l00307"></a><span class="lineno">  307</span>            this-&gt;simulation_parameters.ale,</div>
 <div class="line"><a id="l00308" name="l00308"></a><span class="lineno">  308</span>            this-&gt;simulation_parameters.tracer_drift_velocity.drift_velocity);</div>
 <div class="line"><a id="l00309" name="l00309"></a><span class="lineno">  309</span>        }</div>
@@ -426,7 +426,7 @@ $(document).ready(function() { init_codefold(0); });
 <div class="line"><a id="l00322" name="l00322"></a><span class="lineno">  322</span>        {</div>
 <div class="line"><a id="l00323" name="l00323"></a><span class="lineno">  323</span>          scratch_data.<a class="code hl_function" href="classTracerScratchData.html#a562036bff335d8380ca8430c00ede811">reinit_velocity</a>(</div>
 <div class="line"><a id="l00324" name="l00324"></a><span class="lineno">  324</span>            velocity_cell,</div>
-<div class="line"><a id="l00325" name="l00325"></a><span class="lineno">  325</span>            *multiphysics-&gt;get_time_average_solution(<a class="code hl_enumvalue" href="multiphysics_8h.html#ae14bb720bc9a37edc36fb8d90df712c2a0bb34d58a3e8914bc47bf4b415f206c2">PhysicsID::fluid_dynamics</a>),</div>
+<div class="line"><a id="l00325" name="l00325"></a><span class="lineno">  325</span>            multiphysics-&gt;get_time_average_solution(<a class="code hl_enumvalue" href="multiphysics_8h.html#ae14bb720bc9a37edc36fb8d90df712c2a0bb34d58a3e8914bc47bf4b415f206c2">PhysicsID::fluid_dynamics</a>),</div>
 <div class="line"><a id="l00326" name="l00326"></a><span class="lineno">  326</span>            this-&gt;simulation_parameters.ale,</div>
 <div class="line"><a id="l00327" name="l00327"></a><span class="lineno">  327</span>            this-&gt;simulation_parameters.tracer_drift_velocity.drift_velocity);</div>
 <div class="line"><a id="l00328" name="l00328"></a><span class="lineno">  328</span>        }</div>
@@ -434,7 +434,7 @@ $(document).ready(function() { init_codefold(0); });
 <div class="line"><a id="l00330" name="l00330"></a><span class="lineno">  330</span>        {</div>
 <div class="line"><a id="l00331" name="l00331"></a><span class="lineno">  331</span>          scratch_data.<a class="code hl_function" href="classTracerScratchData.html#a562036bff335d8380ca8430c00ede811">reinit_velocity</a>(</div>
 <div class="line"><a id="l00332" name="l00332"></a><span class="lineno">  332</span>            velocity_cell,</div>
-<div class="line"><a id="l00333" name="l00333"></a><span class="lineno">  333</span>            *multiphysics-&gt;get_solution(<a class="code hl_enumvalue" href="multiphysics_8h.html#ae14bb720bc9a37edc36fb8d90df712c2a0bb34d58a3e8914bc47bf4b415f206c2">PhysicsID::fluid_dynamics</a>),</div>
+<div class="line"><a id="l00333" name="l00333"></a><span class="lineno">  333</span>            multiphysics-&gt;get_solution(<a class="code hl_enumvalue" href="multiphysics_8h.html#ae14bb720bc9a37edc36fb8d90df712c2a0bb34d58a3e8914bc47bf4b415f206c2">PhysicsID::fluid_dynamics</a>),</div>
 <div class="line"><a id="l00334" name="l00334"></a><span class="lineno">  334</span>            this-&gt;simulation_parameters.ale,</div>
 <div class="line"><a id="l00335" name="l00335"></a><span class="lineno">  335</span>            this-&gt;simulation_parameters.tracer_drift_velocity.drift_velocity);</div>
 <div class="line"><a id="l00336" name="l00336"></a><span class="lineno">  336</span>        }</div>
@@ -499,7 +499,7 @@ $(document).ready(function() { init_codefold(0); });
 <div class="foldopen" id="foldopen00390" data-start="{" data-end="}">
 <div class="line"><a id="l00390" name="l00390"></a><span class="lineno"><a class="line" href="classTracer.html#a03a741348bdd0c0b661d6c8ff1ec489d">  390</a></span><a class="code hl_function" href="classTracer.html#a03a741348bdd0c0b661d6c8ff1ec489d">Tracer&lt;dim&gt;::assemble_system_rhs_cg</a>()</div>
 <div class="line"><a id="l00391" name="l00391"></a><span class="lineno">  391</span>{</div>
-<div class="line"><a id="l00392" name="l00392"></a><span class="lineno">  392</span>  <span class="keyword">const</span> DoFHandler&lt;dim&gt; *dof_handler_fluid =</div>
+<div class="line"><a id="l00392" name="l00392"></a><span class="lineno">  392</span>  <span class="keyword">const</span> DoFHandler&lt;dim&gt; &amp;dof_handler_fluid =</div>
 <div class="line"><a id="l00393" name="l00393"></a><span class="lineno">  393</span>    multiphysics-&gt;get_dof_handler(<a class="code hl_enumvalue" href="multiphysics_8h.html#ae14bb720bc9a37edc36fb8d90df712c2a0bb34d58a3e8914bc47bf4b415f206c2">PhysicsID::fluid_dynamics</a>);</div>
 <div class="line"><a id="l00394" name="l00394"></a><span class="lineno">  394</span> </div>
 <div class="line"><a id="l00395" name="l00395"></a><span class="lineno">  395</span>  <span class="keyword">auto</span> scratch_data = <a class="code hl_class" href="classTracerScratchData.html">TracerScratchData&lt;dim&gt;</a>(</div>
@@ -508,10 +508,10 @@ $(document).ready(function() { init_codefold(0); });
 <div class="line"><a id="l00398" name="l00398"></a><span class="lineno">  398</span>    *this-&gt;cell_quadrature,</div>
 <div class="line"><a id="l00399" name="l00399"></a><span class="lineno">  399</span>    *this-&gt;face_quadrature,</div>
 <div class="line"><a id="l00400" name="l00400"></a><span class="lineno">  400</span>    *this-&gt;mapping,</div>
-<div class="line"><a id="l00401" name="l00401"></a><span class="lineno">  401</span>    dof_handler_fluid-&gt;get_fe());</div>
+<div class="line"><a id="l00401" name="l00401"></a><span class="lineno">  401</span>    dof_handler_fluid.get_fe());</div>
 <div class="line"><a id="l00402" name="l00402"></a><span class="lineno">  402</span> </div>
-<div class="line"><a id="l00403" name="l00403"></a><span class="lineno">  403</span>  WorkStream::run(this-&gt;dof_handler.begin_active(),</div>
-<div class="line"><a id="l00404" name="l00404"></a><span class="lineno">  404</span>                  this-&gt;dof_handler.end(),</div>
+<div class="line"><a id="l00403" name="l00403"></a><span class="lineno">  403</span>  WorkStream::run(this-&gt;dof_handler-&gt;begin_active(),</div>
+<div class="line"><a id="l00404" name="l00404"></a><span class="lineno">  404</span>                  this-&gt;dof_handler-&gt;end(),</div>
 <div class="line"><a id="l00405" name="l00405"></a><span class="lineno">  405</span>                  *<span class="keyword">this</span>,</div>
 <div class="line"><a id="l00406" name="l00406"></a><span class="lineno">  406</span>                  &amp;<a class="code hl_function" href="classTracer.html#a96d3194cc9e920c50b639a13be7ceb65">Tracer::assemble_local_system_rhs</a>,</div>
 <div class="line"><a id="l00407" name="l00407"></a><span class="lineno">  407</span>                  &amp;<a class="code hl_function" href="classTracer.html#a43f8facd06187b6f2e2f219883e2a698">Tracer::copy_local_rhs_to_global_rhs</a>,</div>
@@ -528,7 +528,7 @@ $(document).ready(function() { init_codefold(0); });
 <div class="foldopen" id="foldopen00417" data-start="{" data-end="}">
 <div class="line"><a id="l00417" name="l00417"></a><span class="lineno"><a class="line" href="classTracer.html#a3e0c10786164903ae8148de471c5fb99">  417</a></span><a class="code hl_function" href="classTracer.html#a3e0c10786164903ae8148de471c5fb99">Tracer&lt;dim&gt;::assemble_system_rhs_dg</a>()</div>
 <div class="line"><a id="l00418" name="l00418"></a><span class="lineno">  418</span>{</div>
-<div class="line"><a id="l00419" name="l00419"></a><span class="lineno">  419</span>  <span class="keyword">const</span> DoFHandler&lt;dim&gt; *dof_handler_fluid =</div>
+<div class="line"><a id="l00419" name="l00419"></a><span class="lineno">  419</span>  <span class="keyword">const</span> DoFHandler&lt;dim&gt; &amp;dof_handler_fluid =</div>
 <div class="line"><a id="l00420" name="l00420"></a><span class="lineno">  420</span>    multiphysics-&gt;get_dof_handler(<a class="code hl_enumvalue" href="multiphysics_8h.html#ae14bb720bc9a37edc36fb8d90df712c2a0bb34d58a3e8914bc47bf4b415f206c2">PhysicsID::fluid_dynamics</a>);</div>
 <div class="line"><a id="l00421" name="l00421"></a><span class="lineno">  421</span> </div>
 <div class="line"><a id="l00422" name="l00422"></a><span class="lineno">  422</span>  <span class="keyword">auto</span> scratch_data = <a class="code hl_class" href="classTracerScratchData.html">TracerScratchData&lt;dim&gt;</a>(</div>
@@ -537,7 +537,7 @@ $(document).ready(function() { init_codefold(0); });
 <div class="line"><a id="l00425" name="l00425"></a><span class="lineno">  425</span>    *this-&gt;cell_quadrature,</div>
 <div class="line"><a id="l00426" name="l00426"></a><span class="lineno">  426</span>    *this-&gt;face_quadrature,</div>
 <div class="line"><a id="l00427" name="l00427"></a><span class="lineno">  427</span>    *this-&gt;mapping,</div>
-<div class="line"><a id="l00428" name="l00428"></a><span class="lineno">  428</span>    dof_handler_fluid-&gt;get_fe());</div>
+<div class="line"><a id="l00428" name="l00428"></a><span class="lineno">  428</span>    dof_handler_fluid.get_fe());</div>
 <div class="line"><a id="l00429" name="l00429"></a><span class="lineno">  429</span> </div>
 <div class="line"><a id="l00430" name="l00430"></a><span class="lineno">  430</span>  <a class="code hl_class" href="classStabilizedDGMethodsCopyData.html">StabilizedDGMethodsCopyData</a> copy_data(this-&gt;fe-&gt;n_dofs_per_cell(),</div>
 <div class="line"><a id="l00431" name="l00431"></a><span class="lineno">  431</span>                                        this-&gt;cell_quadrature-&gt;size());</div>
@@ -567,11 +567,11 @@ $(document).ready(function() { init_codefold(0); });
 <div class="line"><a id="l00455" name="l00455"></a><span class="lineno">  455</span> </div>
 <div class="line"><a id="l00456" name="l00456"></a><span class="lineno">  456</span>      <span class="comment">// Gather velocity information at the face to properly advect</span></div>
 <div class="line"><a id="l00457" name="l00457"></a><span class="lineno">  457</span>      <span class="comment">// First gather the dof handler for the fluid dynamics</span></div>
-<div class="line"><a id="l00458" name="l00458"></a><span class="lineno">  458</span>      <span class="keyword">const</span> DoFHandler&lt;dim&gt; *dof_handler_fluid =</div>
+<div class="line"><a id="l00458" name="l00458"></a><span class="lineno">  458</span>      <span class="keyword">const</span> DoFHandler&lt;dim&gt; &amp;dof_handler_fluid =</div>
 <div class="line"><a id="l00459" name="l00459"></a><span class="lineno">  459</span>        multiphysics-&gt;get_dof_handler(<a class="code hl_enumvalue" href="multiphysics_8h.html#ae14bb720bc9a37edc36fb8d90df712c2a0bb34d58a3e8914bc47bf4b415f206c2">PhysicsID::fluid_dynamics</a>);</div>
 <div class="line"><a id="l00460" name="l00460"></a><span class="lineno">  460</span>      <span class="comment">// Get the cell that corresponds to the fluid dynamics</span></div>
 <div class="line"><a id="l00461" name="l00461"></a><span class="lineno">  461</span>      <span class="keyword">typename</span> DoFHandler&lt;dim&gt;::active_cell_iterator velocity_cell(</div>
-<div class="line"><a id="l00462" name="l00462"></a><span class="lineno">  462</span>        &amp;(*triangulation), cell-&gt;level(), cell-&gt;index(), dof_handler_fluid);</div>
+<div class="line"><a id="l00462" name="l00462"></a><span class="lineno">  462</span>        &amp;(*triangulation), cell-&gt;level(), cell-&gt;index(), &amp;dof_handler_fluid);</div>
 <div class="line"><a id="l00463" name="l00463"></a><span class="lineno">  463</span> </div>
 <div class="line"><a id="l00464" name="l00464"></a><span class="lineno">  464</span>      reinit_face_velocity_with_adequate_solution(velocity_cell,</div>
 <div class="line"><a id="l00465" name="l00465"></a><span class="lineno">  465</span>                                                  face_no,</div>
@@ -612,11 +612,11 @@ $(document).ready(function() { init_codefold(0); });
 <div class="line"><a id="l00500" name="l00500"></a><span class="lineno">  500</span> </div>
 <div class="line"><a id="l00501" name="l00501"></a><span class="lineno">  501</span>    <span class="comment">// Gather velocity information at the face to properly advect</span></div>
 <div class="line"><a id="l00502" name="l00502"></a><span class="lineno">  502</span>    <span class="comment">// First gather the dof handler for the fluid dynamics</span></div>
-<div class="line"><a id="l00503" name="l00503"></a><span class="lineno">  503</span>    <span class="keyword">const</span> DoFHandler&lt;dim&gt; *dof_handler_fluid =</div>
+<div class="line"><a id="l00503" name="l00503"></a><span class="lineno">  503</span>    <span class="keyword">const</span> DoFHandler&lt;dim&gt; &amp;dof_handler_fluid =</div>
 <div class="line"><a id="l00504" name="l00504"></a><span class="lineno">  504</span>      multiphysics-&gt;get_dof_handler(<a class="code hl_enumvalue" href="multiphysics_8h.html#ae14bb720bc9a37edc36fb8d90df712c2a0bb34d58a3e8914bc47bf4b415f206c2">PhysicsID::fluid_dynamics</a>);</div>
 <div class="line"><a id="l00505" name="l00505"></a><span class="lineno">  505</span>    <span class="comment">// Get the cell that corresponds to the fluid dynamics</span></div>
 <div class="line"><a id="l00506" name="l00506"></a><span class="lineno">  506</span>    <span class="keyword">typename</span> DoFHandler&lt;dim&gt;::active_cell_iterator velocity_cell(</div>
-<div class="line"><a id="l00507" name="l00507"></a><span class="lineno">  507</span>      &amp;(*triangulation), cell-&gt;level(), cell-&gt;index(), dof_handler_fluid);</div>
+<div class="line"><a id="l00507" name="l00507"></a><span class="lineno">  507</span>      &amp;(*triangulation), cell-&gt;level(), cell-&gt;index(), &amp;dof_handler_fluid);</div>
 <div class="line"><a id="l00508" name="l00508"></a><span class="lineno">  508</span> </div>
 <div class="line"><a id="l00509" name="l00509"></a><span class="lineno">  509</span>    reinit_face_velocity_with_adequate_solution(velocity_cell,</div>
 <div class="line"><a id="l00510" name="l00510"></a><span class="lineno">  510</span>                                                face_no,</div>
@@ -639,8 +639,8 @@ $(document).ready(function() { init_codefold(0); });
 <div class="line"><a id="l00527" name="l00527"></a><span class="lineno">  527</span>      }</div>
 <div class="line"><a id="l00528" name="l00528"></a><span class="lineno">  528</span>  };</div>
 <div class="line"><a id="l00529" name="l00529"></a><span class="lineno">  529</span> </div>
-<div class="line"><a id="l00530" name="l00530"></a><span class="lineno">  530</span>  MeshWorker::mesh_loop(this-&gt;dof_handler.begin_active(),</div>
-<div class="line"><a id="l00531" name="l00531"></a><span class="lineno">  531</span>                        this-&gt;dof_handler.end(),</div>
+<div class="line"><a id="l00530" name="l00530"></a><span class="lineno">  530</span>  MeshWorker::mesh_loop(this-&gt;dof_handler-&gt;begin_active(),</div>
+<div class="line"><a id="l00531" name="l00531"></a><span class="lineno">  531</span>                        this-&gt;dof_handler-&gt;end(),</div>
 <div class="line"><a id="l00532" name="l00532"></a><span class="lineno">  532</span>                        cell_worker,</div>
 <div class="line"><a id="l00533" name="l00533"></a><span class="lineno">  533</span>                        copier,</div>
 <div class="line"><a id="l00534" name="l00534"></a><span class="lineno">  534</span>                        scratch_data,</div>
@@ -671,17 +671,17 @@ $(document).ready(function() { init_codefold(0); });
 <div class="line"><a id="l00557" name="l00557"></a><span class="lineno">  557</span> </div>
 <div class="line"><a id="l00558" name="l00558"></a><span class="lineno">  558</span>  scratch_data.<a class="code hl_function" href="classTracerScratchData.html#afd65777a054d80408e8bfffc25dc9fd0">reinit</a>(cell,</div>
 <div class="line"><a id="l00559" name="l00559"></a><span class="lineno">  559</span>                      this-&gt;evaluation_point,</div>
-<div class="line"><a id="l00560" name="l00560"></a><span class="lineno">  560</span>                      this-&gt;previous_solutions,</div>
+<div class="line"><a id="l00560" name="l00560"></a><span class="lineno">  560</span>                      *this-&gt;previous_solutions,</div>
 <div class="line"><a id="l00561" name="l00561"></a><span class="lineno">  561</span>                      &amp;(*source_term));</div>
 <div class="line"><a id="l00562" name="l00562"></a><span class="lineno">  562</span> </div>
-<div class="line"><a id="l00563" name="l00563"></a><span class="lineno">  563</span>  scratch_data.<a class="code hl_function" href="classTracerScratchData.html#a01547ab97dbbf540e6786ea1b25be6be">reinit_signed_distance</a>(</div>
-<div class="line"><a id="l00564" name="l00564"></a><span class="lineno">  564</span>    cell, &amp;(*this-&gt;multiphysics-&gt;get_immersed_solid_shape()));</div>
+<div class="line"><a id="l00563" name="l00563"></a><span class="lineno">  563</span>  scratch_data.<a class="code hl_function" href="classTracerScratchData.html#a9f81a61cac9e16d445fd2ca0a62effce">reinit_signed_distance</a>(</div>
+<div class="line"><a id="l00564" name="l00564"></a><span class="lineno">  564</span>    cell, this-&gt;multiphysics-&gt;get_immersed_solid_shape());</div>
 <div class="line"><a id="l00565" name="l00565"></a><span class="lineno">  565</span> </div>
-<div class="line"><a id="l00566" name="l00566"></a><span class="lineno">  566</span>  <span class="keyword">const</span> DoFHandler&lt;dim&gt; *dof_handler_fluid =</div>
+<div class="line"><a id="l00566" name="l00566"></a><span class="lineno">  566</span>  <span class="keyword">const</span> DoFHandler&lt;dim&gt; &amp;dof_handler_fluid =</div>
 <div class="line"><a id="l00567" name="l00567"></a><span class="lineno">  567</span>    multiphysics-&gt;get_dof_handler(<a class="code hl_enumvalue" href="multiphysics_8h.html#ae14bb720bc9a37edc36fb8d90df712c2a0bb34d58a3e8914bc47bf4b415f206c2">PhysicsID::fluid_dynamics</a>);</div>
 <div class="line"><a id="l00568" name="l00568"></a><span class="lineno">  568</span> </div>
 <div class="line"><a id="l00569" name="l00569"></a><span class="lineno">  569</span>  <span class="keyword">typename</span> DoFHandler&lt;dim&gt;::active_cell_iterator velocity_cell(</div>
-<div class="line"><a id="l00570" name="l00570"></a><span class="lineno">  570</span>    &amp;(*triangulation), cell-&gt;level(), cell-&gt;index(), dof_handler_fluid);</div>
+<div class="line"><a id="l00570" name="l00570"></a><span class="lineno">  570</span>    &amp;(*triangulation), cell-&gt;level(), cell-&gt;index(), &amp;dof_handler_fluid);</div>
 <div class="line"><a id="l00571" name="l00571"></a><span class="lineno">  571</span> </div>
 <div class="line"><a id="l00572" name="l00572"></a><span class="lineno">  572</span>  <span class="keywordflow">if</span> (multiphysics-&gt;fluid_dynamics_is_block())</div>
 <div class="line"><a id="l00573" name="l00573"></a><span class="lineno">  573</span>    {</div>
@@ -697,7 +697,7 @@ $(document).ready(function() { init_codefold(0); });
 <div class="line"><a id="l00583" name="l00583"></a><span class="lineno">  583</span>        {</div>
 <div class="line"><a id="l00584" name="l00584"></a><span class="lineno">  584</span>          scratch_data.<a class="code hl_function" href="classTracerScratchData.html#a562036bff335d8380ca8430c00ede811">reinit_velocity</a>(</div>
 <div class="line"><a id="l00585" name="l00585"></a><span class="lineno">  585</span>            velocity_cell,</div>
-<div class="line"><a id="l00586" name="l00586"></a><span class="lineno">  586</span>            *multiphysics-&gt;get_block_time_average_solution(</div>
+<div class="line"><a id="l00586" name="l00586"></a><span class="lineno">  586</span>            multiphysics-&gt;get_block_time_average_solution(</div>
 <div class="line"><a id="l00587" name="l00587"></a><span class="lineno">  587</span>              <a class="code hl_enumvalue" href="multiphysics_8h.html#ae14bb720bc9a37edc36fb8d90df712c2a0bb34d58a3e8914bc47bf4b415f206c2">PhysicsID::fluid_dynamics</a>),</div>
 <div class="line"><a id="l00588" name="l00588"></a><span class="lineno">  588</span>            this-&gt;simulation_parameters.ale,</div>
 <div class="line"><a id="l00589" name="l00589"></a><span class="lineno">  589</span>            this-&gt;simulation_parameters.tracer_drift_velocity.drift_velocity);</div>
@@ -706,7 +706,7 @@ $(document).ready(function() { init_codefold(0); });
 <div class="line"><a id="l00592" name="l00592"></a><span class="lineno">  592</span>        {</div>
 <div class="line"><a id="l00593" name="l00593"></a><span class="lineno">  593</span>          scratch_data.<a class="code hl_function" href="classTracerScratchData.html#a562036bff335d8380ca8430c00ede811">reinit_velocity</a>(</div>
 <div class="line"><a id="l00594" name="l00594"></a><span class="lineno">  594</span>            velocity_cell,</div>
-<div class="line"><a id="l00595" name="l00595"></a><span class="lineno">  595</span>            *multiphysics-&gt;get_block_solution(<a class="code hl_enumvalue" href="multiphysics_8h.html#ae14bb720bc9a37edc36fb8d90df712c2a0bb34d58a3e8914bc47bf4b415f206c2">PhysicsID::fluid_dynamics</a>),</div>
+<div class="line"><a id="l00595" name="l00595"></a><span class="lineno">  595</span>            multiphysics-&gt;get_block_solution(<a class="code hl_enumvalue" href="multiphysics_8h.html#ae14bb720bc9a37edc36fb8d90df712c2a0bb34d58a3e8914bc47bf4b415f206c2">PhysicsID::fluid_dynamics</a>),</div>
 <div class="line"><a id="l00596" name="l00596"></a><span class="lineno">  596</span>            this-&gt;simulation_parameters.ale,</div>
 <div class="line"><a id="l00597" name="l00597"></a><span class="lineno">  597</span>            this-&gt;simulation_parameters.tracer_drift_velocity.drift_velocity);</div>
 <div class="line"><a id="l00598" name="l00598"></a><span class="lineno">  598</span>        }</div>
@@ -725,7 +725,7 @@ $(document).ready(function() { init_codefold(0); });
 <div class="line"><a id="l00611" name="l00611"></a><span class="lineno">  611</span>        {</div>
 <div class="line"><a id="l00612" name="l00612"></a><span class="lineno">  612</span>          scratch_data.<a class="code hl_function" href="classTracerScratchData.html#a562036bff335d8380ca8430c00ede811">reinit_velocity</a>(</div>
 <div class="line"><a id="l00613" name="l00613"></a><span class="lineno">  613</span>            velocity_cell,</div>
-<div class="line"><a id="l00614" name="l00614"></a><span class="lineno">  614</span>            *multiphysics-&gt;get_time_average_solution(<a class="code hl_enumvalue" href="multiphysics_8h.html#ae14bb720bc9a37edc36fb8d90df712c2a0bb34d58a3e8914bc47bf4b415f206c2">PhysicsID::fluid_dynamics</a>),</div>
+<div class="line"><a id="l00614" name="l00614"></a><span class="lineno">  614</span>            multiphysics-&gt;get_time_average_solution(<a class="code hl_enumvalue" href="multiphysics_8h.html#ae14bb720bc9a37edc36fb8d90df712c2a0bb34d58a3e8914bc47bf4b415f206c2">PhysicsID::fluid_dynamics</a>),</div>
 <div class="line"><a id="l00615" name="l00615"></a><span class="lineno">  615</span>            this-&gt;simulation_parameters.ale,</div>
 <div class="line"><a id="l00616" name="l00616"></a><span class="lineno">  616</span>            this-&gt;simulation_parameters.tracer_drift_velocity.drift_velocity);</div>
 <div class="line"><a id="l00617" name="l00617"></a><span class="lineno">  617</span>        }</div>
@@ -733,7 +733,7 @@ $(document).ready(function() { init_codefold(0); });
 <div class="line"><a id="l00619" name="l00619"></a><span class="lineno">  619</span>        {</div>
 <div class="line"><a id="l00620" name="l00620"></a><span class="lineno">  620</span>          scratch_data.<a class="code hl_function" href="classTracerScratchData.html#a562036bff335d8380ca8430c00ede811">reinit_velocity</a>(</div>
 <div class="line"><a id="l00621" name="l00621"></a><span class="lineno">  621</span>            velocity_cell,</div>
-<div class="line"><a id="l00622" name="l00622"></a><span class="lineno">  622</span>            *multiphysics-&gt;get_solution(<a class="code hl_enumvalue" href="multiphysics_8h.html#ae14bb720bc9a37edc36fb8d90df712c2a0bb34d58a3e8914bc47bf4b415f206c2">PhysicsID::fluid_dynamics</a>),</div>
+<div class="line"><a id="l00622" name="l00622"></a><span class="lineno">  622</span>            multiphysics-&gt;get_solution(<a class="code hl_enumvalue" href="multiphysics_8h.html#ae14bb720bc9a37edc36fb8d90df712c2a0bb34d58a3e8914bc47bf4b415f206c2">PhysicsID::fluid_dynamics</a>),</div>
 <div class="line"><a id="l00623" name="l00623"></a><span class="lineno">  623</span>            this-&gt;simulation_parameters.ale,</div>
 <div class="line"><a id="l00624" name="l00624"></a><span class="lineno">  624</span>            this-&gt;simulation_parameters.tracer_drift_velocity.drift_velocity);</div>
 <div class="line"><a id="l00625" name="l00625"></a><span class="lineno">  625</span>        }</div>
@@ -779,8 +779,8 @@ $(document).ready(function() { init_codefold(0); });
 <div class="line"><a id="l00661" name="l00661"></a><span class="lineno">  661</span>                             DataComponentInterpretation::component_is_scalar);</div>
 <div class="line"><a id="l00662" name="l00662"></a><span class="lineno">  662</span>  solution_output_structs.emplace_back(</div>
 <div class="line"><a id="l00663" name="l00663"></a><span class="lineno">  663</span>    std::in_place_type&lt;<a class="code hl_struct" href="structOutputStructSolution.html">OutputStructSolution&lt;dim, GlobalVectorType&gt;</a>&gt;,</div>
-<div class="line"><a id="l00664" name="l00664"></a><span class="lineno">  664</span>    dof_handler,</div>
-<div class="line"><a id="l00665" name="l00665"></a><span class="lineno">  665</span>    present_solution,</div>
+<div class="line"><a id="l00664" name="l00664"></a><span class="lineno">  664</span>    *dof_handler,</div>
+<div class="line"><a id="l00665" name="l00665"></a><span class="lineno">  665</span>    *present_solution,</div>
 <div class="line"><a id="l00666" name="l00666"></a><span class="lineno">  666</span>    solution_names,</div>
 <div class="line"><a id="l00667" name="l00667"></a><span class="lineno">  667</span>    component_interpretation);</div>
 <div class="line"><a id="l00668" name="l00668"></a><span class="lineno">  668</span>  <span class="keywordflow">return</span> solution_output_structs;</div>
@@ -810,12 +810,12 @@ $(document).ready(function() { init_codefold(0); });
 <div class="line"><a id="l00690" name="l00690"></a><span class="lineno">  690</span> </div>
 <div class="line"><a id="l00691" name="l00691"></a><span class="lineno">  691</span>  <span class="keywordtype">double</span> l2error = 0.;</div>
 <div class="line"><a id="l00692" name="l00692"></a><span class="lineno">  692</span> </div>
-<div class="line"><a id="l00693" name="l00693"></a><span class="lineno">  693</span>  <span class="keywordflow">for</span> (<span class="keyword">const</span> <span class="keyword">auto</span> &amp;cell : dof_handler.active_cell_iterators())</div>
+<div class="line"><a id="l00693" name="l00693"></a><span class="lineno">  693</span>  <span class="keywordflow">for</span> (<span class="keyword">const</span> <span class="keyword">auto</span> &amp;cell : dof_handler-&gt;active_cell_iterators())</div>
 <div class="line"><a id="l00694" name="l00694"></a><span class="lineno">  694</span>    {</div>
 <div class="line"><a id="l00695" name="l00695"></a><span class="lineno">  695</span>      <span class="keywordflow">if</span> (cell-&gt;is_locally_owned())</div>
 <div class="line"><a id="l00696" name="l00696"></a><span class="lineno">  696</span>        {</div>
 <div class="line"><a id="l00697" name="l00697"></a><span class="lineno">  697</span>          fe_values.reinit(cell);</div>
-<div class="line"><a id="l00698" name="l00698"></a><span class="lineno">  698</span>          fe_values.get_function_values(present_solution, q_scalar_values);</div>
+<div class="line"><a id="l00698" name="l00698"></a><span class="lineno">  698</span>          fe_values.get_function_values(*present_solution, q_scalar_values);</div>
 <div class="line"><a id="l00699" name="l00699"></a><span class="lineno">  699</span> </div>
 <div class="line"><a id="l00700" name="l00700"></a><span class="lineno">  700</span>          <span class="comment">// Get the exact solution at all gauss points</span></div>
 <div class="line"><a id="l00701" name="l00701"></a><span class="lineno">  701</span>          exact_solution.value_list(fe_values.get_quadrature_points(),</div>
@@ -868,11 +868,11 @@ $(document).ready(function() { init_codefold(0); });
 <div class="foldopen" id="foldopen00745" data-start="{" data-end="}">
 <div class="line"><a id="l00745" name="l00745"></a><span class="lineno"><a class="line" href="classTracer.html#ac03b008aba02e9b4a43562d3b2857039">  745</a></span><a class="code hl_function" href="classTracer.html#ac03b008aba02e9b4a43562d3b2857039">Tracer&lt;dim&gt;::percolate_time_vectors</a>()</div>
 <div class="line"><a id="l00746" name="l00746"></a><span class="lineno">  746</span>{</div>
-<div class="line"><a id="l00747" name="l00747"></a><span class="lineno">  747</span>  <span class="keywordflow">for</span> (<span class="keywordtype">unsigned</span> <span class="keywordtype">int</span> i = previous_solutions.size() - 1; i &gt; 0; --i)</div>
+<div class="line"><a id="l00747" name="l00747"></a><span class="lineno">  747</span>  <span class="keywordflow">for</span> (<span class="keywordtype">unsigned</span> <span class="keywordtype">int</span> i = previous_solutions-&gt;size() - 1; i &gt; 0; --i)</div>
 <div class="line"><a id="l00748" name="l00748"></a><span class="lineno">  748</span>    {</div>
-<div class="line"><a id="l00749" name="l00749"></a><span class="lineno">  749</span>      previous_solutions[i] = previous_solutions[i - 1];</div>
+<div class="line"><a id="l00749" name="l00749"></a><span class="lineno">  749</span>      (*previous_solutions)[i] = (*previous_solutions)[i - 1];</div>
 <div class="line"><a id="l00750" name="l00750"></a><span class="lineno">  750</span>    }</div>
-<div class="line"><a id="l00751" name="l00751"></a><span class="lineno">  751</span>  previous_solutions[0] = this-&gt;present_solution;</div>
+<div class="line"><a id="l00751" name="l00751"></a><span class="lineno">  751</span>  (*previous_solutions)[0] = *this-&gt;present_solution;</div>
 <div class="line"><a id="l00752" name="l00752"></a><span class="lineno">  752</span>}</div>
 </div>
 <div class="line"><a id="l00753" name="l00753"></a><span class="lineno">  753</span> </div>
@@ -921,12 +921,12 @@ $(document).ready(function() { init_codefold(0); });
 <div class="line"><a id="l00795" name="l00795"></a><span class="lineno">  795</span>      <span class="keywordflow">if</span> (multiphysics-&gt;fluid_dynamics_is_block())</div>
 <div class="line"><a id="l00796" name="l00796"></a><span class="lineno">  796</span>        {</div>
 <div class="line"><a id="l00797" name="l00797"></a><span class="lineno">  797</span>          tracer_flow_rates = postprocess_tracer_flow_rate(</div>
-<div class="line"><a id="l00798" name="l00798"></a><span class="lineno">  798</span>            *multiphysics-&gt;get_block_solution(<a class="code hl_enumvalue" href="multiphysics_8h.html#ae14bb720bc9a37edc36fb8d90df712c2a0bb34d58a3e8914bc47bf4b415f206c2">PhysicsID::fluid_dynamics</a>));</div>
+<div class="line"><a id="l00798" name="l00798"></a><span class="lineno">  798</span>            multiphysics-&gt;get_block_solution(<a class="code hl_enumvalue" href="multiphysics_8h.html#ae14bb720bc9a37edc36fb8d90df712c2a0bb34d58a3e8914bc47bf4b415f206c2">PhysicsID::fluid_dynamics</a>));</div>
 <div class="line"><a id="l00799" name="l00799"></a><span class="lineno">  799</span>        }</div>
 <div class="line"><a id="l00800" name="l00800"></a><span class="lineno">  800</span>      <span class="keywordflow">else</span></div>
 <div class="line"><a id="l00801" name="l00801"></a><span class="lineno">  801</span>        {</div>
 <div class="line"><a id="l00802" name="l00802"></a><span class="lineno">  802</span>          tracer_flow_rates = postprocess_tracer_flow_rate(</div>
-<div class="line"><a id="l00803" name="l00803"></a><span class="lineno">  803</span>            *multiphysics-&gt;get_solution(<a class="code hl_enumvalue" href="multiphysics_8h.html#ae14bb720bc9a37edc36fb8d90df712c2a0bb34d58a3e8914bc47bf4b415f206c2">PhysicsID::fluid_dynamics</a>));</div>
+<div class="line"><a id="l00803" name="l00803"></a><span class="lineno">  803</span>            multiphysics-&gt;get_solution(<a class="code hl_enumvalue" href="multiphysics_8h.html#ae14bb720bc9a37edc36fb8d90df712c2a0bb34d58a3e8914bc47bf4b415f206c2">PhysicsID::fluid_dynamics</a>));</div>
 <div class="line"><a id="l00804" name="l00804"></a><span class="lineno">  804</span>        }</div>
 <div class="line"><a id="l00805" name="l00805"></a><span class="lineno">  805</span>      this-&gt;write_tracer_flow_rates(tracer_flow_rates);</div>
 <div class="line"><a id="l00806" name="l00806"></a><span class="lineno">  806</span>    }</div>
@@ -961,12 +961,12 @@ $(document).ready(function() { init_codefold(0); });
 <div class="line"><a id="l00833" name="l00833"></a><span class="lineno">  833</span>  <span class="keywordtype">double</span> max_tracer_value = DBL_MIN;</div>
 <div class="line"><a id="l00834" name="l00834"></a><span class="lineno">  834</span>  <span class="keywordtype">double</span> min_tracer_value = DBL_MAX;</div>
 <div class="line"><a id="l00835" name="l00835"></a><span class="lineno">  835</span> </div>
-<div class="line"><a id="l00836" name="l00836"></a><span class="lineno">  836</span>  <span class="keywordflow">for</span> (<span class="keyword">const</span> <span class="keyword">auto</span> &amp;cell : dof_handler.active_cell_iterators())</div>
+<div class="line"><a id="l00836" name="l00836"></a><span class="lineno">  836</span>  <span class="keywordflow">for</span> (<span class="keyword">const</span> <span class="keyword">auto</span> &amp;cell : dof_handler-&gt;active_cell_iterators())</div>
 <div class="line"><a id="l00837" name="l00837"></a><span class="lineno">  837</span>    {</div>
 <div class="line"><a id="l00838" name="l00838"></a><span class="lineno">  838</span>      <span class="keywordflow">if</span> (cell-&gt;is_locally_owned())</div>
 <div class="line"><a id="l00839" name="l00839"></a><span class="lineno">  839</span>        {</div>
 <div class="line"><a id="l00840" name="l00840"></a><span class="lineno">  840</span>          fe_values.reinit(cell);</div>
-<div class="line"><a id="l00841" name="l00841"></a><span class="lineno">  841</span>          fe_values.get_function_values(present_solution, q_tracer_values);</div>
+<div class="line"><a id="l00841" name="l00841"></a><span class="lineno">  841</span>          fe_values.get_function_values(*present_solution, q_tracer_values);</div>
 <div class="line"><a id="l00842" name="l00842"></a><span class="lineno">  842</span> </div>
 <div class="line"><a id="l00843" name="l00843"></a><span class="lineno">  843</span>          <span class="keywordflow">for</span> (<span class="keywordtype">unsigned</span> <span class="keywordtype">int</span> q = 0; q &lt; n_q_points; q++)</div>
 <div class="line"><a id="l00844" name="l00844"></a><span class="lineno">  844</span>            {</div>
@@ -982,12 +982,12 @@ $(document).ready(function() { init_codefold(0); });
 <div class="line"><a id="l00854" name="l00854"></a><span class="lineno">  854</span> </div>
 <div class="line"><a id="l00855" name="l00855"></a><span class="lineno">  855</span>  <span class="keywordtype">double</span> variance_integral = 0;</div>
 <div class="line"><a id="l00856" name="l00856"></a><span class="lineno">  856</span> </div>
-<div class="line"><a id="l00857" name="l00857"></a><span class="lineno">  857</span>  <span class="keywordflow">for</span> (<span class="keyword">const</span> <span class="keyword">auto</span> &amp;cell : dof_handler.active_cell_iterators())</div>
+<div class="line"><a id="l00857" name="l00857"></a><span class="lineno">  857</span>  <span class="keywordflow">for</span> (<span class="keyword">const</span> <span class="keyword">auto</span> &amp;cell : dof_handler-&gt;active_cell_iterators())</div>
 <div class="line"><a id="l00858" name="l00858"></a><span class="lineno">  858</span>    {</div>
 <div class="line"><a id="l00859" name="l00859"></a><span class="lineno">  859</span>      <span class="keywordflow">if</span> (cell-&gt;is_locally_owned())</div>
 <div class="line"><a id="l00860" name="l00860"></a><span class="lineno">  860</span>        {</div>
 <div class="line"><a id="l00861" name="l00861"></a><span class="lineno">  861</span>          fe_values.reinit(cell);</div>
-<div class="line"><a id="l00862" name="l00862"></a><span class="lineno">  862</span>          fe_values.get_function_values(present_solution, q_tracer_values);</div>
+<div class="line"><a id="l00862" name="l00862"></a><span class="lineno">  862</span>          fe_values.get_function_values(*present_solution, q_tracer_values);</div>
 <div class="line"><a id="l00863" name="l00863"></a><span class="lineno">  863</span> </div>
 <div class="line"><a id="l00864" name="l00864"></a><span class="lineno">  864</span>          <span class="keywordflow">for</span> (<span class="keywordtype">unsigned</span> <span class="keywordtype">int</span> q = 0; q &lt; n_q_points; q++)</div>
 <div class="line"><a id="l00865" name="l00865"></a><span class="lineno">  865</span>            {</div>
@@ -1045,13 +1045,13 @@ $(document).ready(function() { init_codefold(0); });
 <div class="line"><a id="l00915" name="l00915"></a><span class="lineno"><a class="line" href="classTracer.html#a3330097d0fbcbe57535ea0a397b9894e">  915</a></span><a class="code hl_function" href="classTracer.html#af90f22587fcaa2edc164be3b7af9b6df">Tracer&lt;dim&gt;::postprocess_tracer_flow_rate</a>(<span class="keyword">const</span> VectorType &amp;current_solution_fd)</div>
 <div class="line"><a id="l00916" name="l00916"></a><span class="lineno">  916</span>{</div>
 <div class="line"><a id="l00917" name="l00917"></a><span class="lineno">  917</span>  <span class="keyword">const</span> <span class="keywordtype">unsigned</span> <span class="keywordtype">int</span> n_q_points_face = this-&gt;face_quadrature-&gt;size();</div>
-<div class="line"><a id="l00918" name="l00918"></a><span class="lineno">  918</span>  <span class="keyword">const</span> MPI_Comm mpi_communicator    = this-&gt;dof_handler.get_mpi_communicator();</div>
+<div class="line"><a id="l00918" name="l00918"></a><span class="lineno">  918</span>  <span class="keyword">const</span> MPI_Comm mpi_communicator = this-&gt;dof_handler-&gt;get_mpi_communicator();</div>
 <div class="line"><a id="l00919" name="l00919"></a><span class="lineno">  919</span> </div>
 <div class="line"><a id="l00920" name="l00920"></a><span class="lineno">  920</span>  <span class="comment">// Initialize tracer information</span></div>
 <div class="line"><a id="l00921" name="l00921"></a><span class="lineno">  921</span>  std::vector&lt;double&gt;         tracer_values(n_q_points_face);</div>
 <div class="line"><a id="l00922" name="l00922"></a><span class="lineno">  922</span>  std::vector&lt;Tensor&lt;1, dim&gt;&gt; tracer_gradient(n_q_points_face);</div>
 <div class="line"><a id="l00923" name="l00923"></a><span class="lineno">  923</span>  FEFaceValues&lt;dim&gt;           fe_face_values_tracer(*this-&gt;mapping,</div>
-<div class="line"><a id="l00924" name="l00924"></a><span class="lineno">  924</span>                                          this-&gt;dof_handler.get_fe(),</div>
+<div class="line"><a id="l00924" name="l00924"></a><span class="lineno">  924</span>                                          this-&gt;dof_handler-&gt;get_fe(),</div>
 <div class="line"><a id="l00925" name="l00925"></a><span class="lineno">  925</span>                                          *this-&gt;face_quadrature,</div>
 <div class="line"><a id="l00926" name="l00926"></a><span class="lineno">  926</span>                                          update_values | update_gradients |</div>
 <div class="line"><a id="l00927" name="l00927"></a><span class="lineno">  927</span>                                            update_JxW_values |</div>
@@ -1059,12 +1059,12 @@ $(document).ready(function() { init_codefold(0); });
 <div class="line"><a id="l00929" name="l00929"></a><span class="lineno">  929</span>                                            update_quadrature_points);</div>
 <div class="line"><a id="l00930" name="l00930"></a><span class="lineno">  930</span> </div>
 <div class="line"><a id="l00931" name="l00931"></a><span class="lineno">  931</span>  <span class="comment">// Initialize fluid dynamics information</span></div>
-<div class="line"><a id="l00932" name="l00932"></a><span class="lineno">  932</span>  <span class="keyword">const</span> DoFHandler&lt;dim&gt; *dof_handler_fd =</div>
+<div class="line"><a id="l00932" name="l00932"></a><span class="lineno">  932</span>  <span class="keyword">const</span> DoFHandler&lt;dim&gt; &amp;dof_handler_fd =</div>
 <div class="line"><a id="l00933" name="l00933"></a><span class="lineno">  933</span>    multiphysics-&gt;get_dof_handler(<a class="code hl_enumvalue" href="multiphysics_8h.html#ae14bb720bc9a37edc36fb8d90df712c2a0bb34d58a3e8914bc47bf4b415f206c2">PhysicsID::fluid_dynamics</a>);</div>
 <div class="line"><a id="l00934" name="l00934"></a><span class="lineno">  934</span>  <span class="keyword">const</span> FEValuesExtractors::Vector velocities(0);</div>
 <div class="line"><a id="l00935" name="l00935"></a><span class="lineno">  935</span>  std::vector&lt;Tensor&lt;1, dim&gt;&gt;      velocity_values(n_q_points_face);</div>
 <div class="line"><a id="l00936" name="l00936"></a><span class="lineno">  936</span>  FEFaceValues&lt;dim&gt;                fe_face_values_fd(*this-&gt;mapping,</div>
-<div class="line"><a id="l00937" name="l00937"></a><span class="lineno">  937</span>                                      dof_handler_fd-&gt;get_fe(),</div>
+<div class="line"><a id="l00937" name="l00937"></a><span class="lineno">  937</span>                                      dof_handler_fd.get_fe(),</div>
 <div class="line"><a id="l00938" name="l00938"></a><span class="lineno">  938</span>                                      *this-&gt;face_quadrature,</div>
 <div class="line"><a id="l00939" name="l00939"></a><span class="lineno">  939</span>                                      update_values);</div>
 <div class="line"><a id="l00940" name="l00940"></a><span class="lineno">  940</span> </div>
@@ -1081,7 +1081,7 @@ $(document).ready(function() { init_codefold(0); });
 <div class="line"><a id="l00951" name="l00951"></a><span class="lineno">  951</span>  std::map&lt;types::boundary_id, double&gt; tracer_flow_rate;</div>
 <div class="line"><a id="l00952" name="l00952"></a><span class="lineno">  952</span> </div>
 <div class="line"><a id="l00953" name="l00953"></a><span class="lineno">  953</span>  <span class="comment">// Get vector of all boundary conditions</span></div>
-<div class="line"><a id="l00954" name="l00954"></a><span class="lineno">  954</span>  <span class="keywordflow">for</span> (<span class="keyword">const</span> <span class="keyword">auto</span> &amp;cell : this-&gt;dof_handler.active_cell_iterators())</div>
+<div class="line"><a id="l00954" name="l00954"></a><span class="lineno">  954</span>  <span class="keywordflow">for</span> (<span class="keyword">const</span> <span class="keyword">auto</span> &amp;cell : this-&gt;dof_handler-&gt;active_cell_iterators())</div>
 <div class="line"><a id="l00955" name="l00955"></a><span class="lineno">  955</span>    {</div>
 <div class="line"><a id="l00956" name="l00956"></a><span class="lineno">  956</span>      <span class="keywordflow">if</span> (cell-&gt;is_locally_owned() &amp;&amp; cell-&gt;at_boundary())</div>
 <div class="line"><a id="l00957" name="l00957"></a><span class="lineno">  957</span>        {</div>
@@ -1094,9 +1094,9 @@ $(document).ready(function() { init_codefold(0); });
 <div class="line"><a id="l00964" name="l00964"></a><span class="lineno">  964</span>                  <span class="comment">// Gather tracer information</span></div>
 <div class="line"><a id="l00965" name="l00965"></a><span class="lineno">  965</span>                  fe_face_values_tracer.reinit(cell, face);</div>
 <div class="line"><a id="l00966" name="l00966"></a><span class="lineno">  966</span>                  fe_face_values_tracer.get_function_values(</div>
-<div class="line"><a id="l00967" name="l00967"></a><span class="lineno">  967</span>                    this-&gt;present_solution, tracer_values);</div>
+<div class="line"><a id="l00967" name="l00967"></a><span class="lineno">  967</span>                    *this-&gt;present_solution, tracer_values);</div>
 <div class="line"><a id="l00968" name="l00968"></a><span class="lineno">  968</span>                  fe_face_values_tracer.get_function_gradients(</div>
-<div class="line"><a id="l00969" name="l00969"></a><span class="lineno">  969</span>                    this-&gt;present_solution, tracer_gradient);</div>
+<div class="line"><a id="l00969" name="l00969"></a><span class="lineno">  969</span>                    *this-&gt;present_solution, tracer_gradient);</div>
 <div class="line"><a id="l00970" name="l00970"></a><span class="lineno">  970</span> </div>
 <div class="line"><a id="l00971" name="l00971"></a><span class="lineno">  971</span>                  <span class="comment">// We update the fields required by the diffusivity</span></div>
 <div class="line"><a id="l00972" name="l00972"></a><span class="lineno">  972</span>                  <span class="comment">// model</span></div>
@@ -1123,7 +1123,7 @@ $(document).ready(function() { init_codefold(0); });
 <div class="line"><a id="l00993" name="l00993"></a><span class="lineno">  993</span>                    &amp;(*(this-&gt;triangulation)),</div>
 <div class="line"><a id="l00994" name="l00994"></a><span class="lineno">  994</span>                    cell-&gt;level(),</div>
 <div class="line"><a id="l00995" name="l00995"></a><span class="lineno">  995</span>                    cell-&gt;index(),</div>
-<div class="line"><a id="l00996" name="l00996"></a><span class="lineno">  996</span>                    dof_handler_fd);</div>
+<div class="line"><a id="l00996" name="l00996"></a><span class="lineno">  996</span>                    &amp;dof_handler_fd);</div>
 <div class="line"><a id="l00997" name="l00997"></a><span class="lineno">  997</span> </div>
 <div class="line"><a id="l00998" name="l00998"></a><span class="lineno">  998</span>                  <span class="comment">// Gather fluid dynamics information</span></div>
 <div class="line"><a id="l00999" name="l00999"></a><span class="lineno">  999</span>                  fe_face_values_fd.reinit(cell_fd, face);</div>
@@ -1228,12 +1228,12 @@ $(document).ready(function() { init_codefold(0); });
 <div class="foldopen" id="foldopen01093" data-start="{" data-end="}">
 <div class="line"><a id="l01093" name="l01093"></a><span class="lineno"><a class="line" href="classTracer.html#a5c2e4178c68808459672f3607e0b80b1"> 1093</a></span><a class="code hl_function" href="classTracer.html#a5c2e4178c68808459672f3607e0b80b1">Tracer&lt;dim&gt;::pre_mesh_adaptation</a>()</div>
 <div class="line"><a id="l01094" name="l01094"></a><span class="lineno"> 1094</span>{</div>
-<div class="line"><a id="l01095" name="l01095"></a><span class="lineno"> 1095</span>  solution_transfer-&gt;prepare_for_coarsening_and_refinement(present_solution);</div>
+<div class="line"><a id="l01095" name="l01095"></a><span class="lineno"> 1095</span>  solution_transfer-&gt;prepare_for_coarsening_and_refinement(*present_solution);</div>
 <div class="line"><a id="l01096" name="l01096"></a><span class="lineno"> 1096</span> </div>
-<div class="line"><a id="l01097" name="l01097"></a><span class="lineno"> 1097</span>  <span class="keywordflow">for</span> (<span class="keywordtype">unsigned</span> <span class="keywordtype">int</span> i = 0; i &lt; previous_solutions.size(); ++i)</div>
+<div class="line"><a id="l01097" name="l01097"></a><span class="lineno"> 1097</span>  <span class="keywordflow">for</span> (<span class="keywordtype">unsigned</span> <span class="keywordtype">int</span> i = 0; i &lt; previous_solutions-&gt;size(); ++i)</div>
 <div class="line"><a id="l01098" name="l01098"></a><span class="lineno"> 1098</span>    {</div>
 <div class="line"><a id="l01099" name="l01099"></a><span class="lineno"> 1099</span>      previous_solutions_transfer[i].prepare_for_coarsening_and_refinement(</div>
-<div class="line"><a id="l01100" name="l01100"></a><span class="lineno"> 1100</span>        previous_solutions[i]);</div>
+<div class="line"><a id="l01100" name="l01100"></a><span class="lineno"> 1100</span>        (*previous_solutions)[i]);</div>
 <div class="line"><a id="l01101" name="l01101"></a><span class="lineno"> 1101</span>    }</div>
 <div class="line"><a id="l01102" name="l01102"></a><span class="lineno"> 1102</span>}</div>
 </div>
@@ -1255,16 +1255,16 @@ $(document).ready(function() { init_codefold(0); });
 <div class="line"><a id="l01117" name="l01117"></a><span class="lineno"> 1117</span>  nonzero_constraints.distribute(tmp);</div>
 <div class="line"><a id="l01118" name="l01118"></a><span class="lineno"> 1118</span> </div>
 <div class="line"><a id="l01119" name="l01119"></a><span class="lineno"> 1119</span>  <span class="comment">// Fix on the new mesh</span></div>
-<div class="line"><a id="l01120" name="l01120"></a><span class="lineno"> 1120</span>  present_solution = tmp;</div>
+<div class="line"><a id="l01120" name="l01120"></a><span class="lineno"> 1120</span>  *present_solution = tmp;</div>
 <div class="line"><a id="l01121" name="l01121"></a><span class="lineno"> 1121</span> </div>
 <div class="line"><a id="l01122" name="l01122"></a><span class="lineno"> 1122</span>  <span class="comment">// Transfer previous solutions</span></div>
-<div class="line"><a id="l01123" name="l01123"></a><span class="lineno"> 1123</span>  <span class="keywordflow">for</span> (<span class="keywordtype">unsigned</span> <span class="keywordtype">int</span> i = 0; i &lt; previous_solutions.size(); ++i)</div>
+<div class="line"><a id="l01123" name="l01123"></a><span class="lineno"> 1123</span>  <span class="keywordflow">for</span> (<span class="keywordtype">unsigned</span> <span class="keywordtype">int</span> i = 0; i &lt; previous_solutions-&gt;size(); ++i)</div>
 <div class="line"><a id="l01124" name="l01124"></a><span class="lineno"> 1124</span>    {</div>
 <div class="line"><a id="l01125" name="l01125"></a><span class="lineno"> 1125</span>      <a class="code hl_typedef" href="vector_8h.html#a4ea4005d75c88e60bee47d4e79a13a39">GlobalVectorType</a> tmp_previous_solution(locally_owned_dofs,</div>
 <div class="line"><a id="l01126" name="l01126"></a><span class="lineno"> 1126</span>                                             mpi_communicator);</div>
 <div class="line"><a id="l01127" name="l01127"></a><span class="lineno"> 1127</span>      previous_solutions_transfer[i].interpolate(tmp_previous_solution);</div>
 <div class="line"><a id="l01128" name="l01128"></a><span class="lineno"> 1128</span>      nonzero_constraints.distribute(tmp_previous_solution);</div>
-<div class="line"><a id="l01129" name="l01129"></a><span class="lineno"> 1129</span>      previous_solutions[i] = tmp_previous_solution;</div>
+<div class="line"><a id="l01129" name="l01129"></a><span class="lineno"> 1129</span>      (*previous_solutions)[i] = tmp_previous_solution;</div>
 <div class="line"><a id="l01130" name="l01130"></a><span class="lineno"> 1130</span>    }</div>
 <div class="line"><a id="l01131" name="l01131"></a><span class="lineno"> 1131</span>}</div>
 </div>
@@ -1313,10 +1313,10 @@ $(document).ready(function() { init_codefold(0); });
 <div class="line"><a id="l01171" name="l01171"></a><span class="lineno"> 1171</span>  std::vector&lt;const GlobalVectorType *&gt; sol_set_transfer;</div>
 <div class="line"><a id="l01172" name="l01172"></a><span class="lineno"> 1172</span> </div>
 <div class="line"><a id="l01173" name="l01173"></a><span class="lineno"> 1173</span>  solution_transfer =</div>
-<div class="line"><a id="l01174" name="l01174"></a><span class="lineno"> 1174</span>    std::make_shared&lt;SolutionTransfer&lt;dim, GlobalVectorType&gt;&gt;(dof_handler);</div>
+<div class="line"><a id="l01174" name="l01174"></a><span class="lineno"> 1174</span>    std::make_shared&lt;SolutionTransfer&lt;dim, GlobalVectorType&gt;&gt;(*dof_handler);</div>
 <div class="line"><a id="l01175" name="l01175"></a><span class="lineno"> 1175</span> </div>
-<div class="line"><a id="l01176" name="l01176"></a><span class="lineno"> 1176</span>  sol_set_transfer.emplace_back(&amp;present_solution);</div>
-<div class="line"><a id="l01177" name="l01177"></a><span class="lineno"> 1177</span>  <span class="keywordflow">for</span> (<span class="keyword">const</span> <span class="keyword">auto</span> &amp;previous_solution : previous_solutions)</div>
+<div class="line"><a id="l01176" name="l01176"></a><span class="lineno"> 1176</span>  sol_set_transfer.emplace_back(&amp;(*present_solution));</div>
+<div class="line"><a id="l01177" name="l01177"></a><span class="lineno"> 1177</span>  <span class="keywordflow">for</span> (<span class="keyword">const</span> <span class="keyword">auto</span> &amp;previous_solution : *previous_solutions)</div>
 <div class="line"><a id="l01178" name="l01178"></a><span class="lineno"> 1178</span>    {</div>
 <div class="line"><a id="l01179" name="l01179"></a><span class="lineno"> 1179</span>      sol_set_transfer.emplace_back(&amp;previous_solution);</div>
 <div class="line"><a id="l01180" name="l01180"></a><span class="lineno"> 1180</span>    }</div>
@@ -1338,14 +1338,14 @@ $(document).ready(function() { init_codefold(0); });
 <div class="line"><a id="l01194" name="l01194"></a><span class="lineno"> 1194</span>  <span class="keyword">auto</span> mpi_communicator = triangulation-&gt;get_mpi_communicator();</div>
 <div class="line"><a id="l01195" name="l01195"></a><span class="lineno"> 1195</span>  this-&gt;pcout &lt;&lt; <span class="stringliteral">&quot;Reading tracer checkpoint&quot;</span> &lt;&lt; std::endl;</div>
 <div class="line"><a id="l01196" name="l01196"></a><span class="lineno"> 1196</span> </div>
-<div class="line"><a id="l01197" name="l01197"></a><span class="lineno"> 1197</span>  std::vector&lt;GlobalVectorType *&gt; input_vectors(1 + previous_solutions.size());</div>
+<div class="line"><a id="l01197" name="l01197"></a><span class="lineno"> 1197</span>  std::vector&lt;GlobalVectorType *&gt; input_vectors(1 + previous_solutions-&gt;size());</div>
 <div class="line"><a id="l01198" name="l01198"></a><span class="lineno"> 1198</span>  <a class="code hl_typedef" href="vector_8h.html#a4ea4005d75c88e60bee47d4e79a13a39">GlobalVectorType</a> distributed_system(locally_owned_dofs, mpi_communicator);</div>
 <div class="line"><a id="l01199" name="l01199"></a><span class="lineno"> 1199</span>  input_vectors[0] = &amp;distributed_system;</div>
 <div class="line"><a id="l01200" name="l01200"></a><span class="lineno"> 1200</span> </div>
 <div class="line"><a id="l01201" name="l01201"></a><span class="lineno"> 1201</span> </div>
 <div class="line"><a id="l01202" name="l01202"></a><span class="lineno"> 1202</span>  std::vector&lt;GlobalVectorType&gt; distributed_previous_solutions;</div>
-<div class="line"><a id="l01203" name="l01203"></a><span class="lineno"> 1203</span>  distributed_previous_solutions.reserve(previous_solutions.size());</div>
-<div class="line"><a id="l01204" name="l01204"></a><span class="lineno"> 1204</span>  <span class="keywordflow">for</span> (<span class="keywordtype">unsigned</span> <span class="keywordtype">int</span> i = 0; i &lt; previous_solutions.size(); ++i)</div>
+<div class="line"><a id="l01203" name="l01203"></a><span class="lineno"> 1203</span>  distributed_previous_solutions.reserve(previous_solutions-&gt;size());</div>
+<div class="line"><a id="l01204" name="l01204"></a><span class="lineno"> 1204</span>  <span class="keywordflow">for</span> (<span class="keywordtype">unsigned</span> <span class="keywordtype">int</span> i = 0; i &lt; previous_solutions-&gt;size(); ++i)</div>
 <div class="line"><a id="l01205" name="l01205"></a><span class="lineno"> 1205</span>    {</div>
 <div class="line"><a id="l01206" name="l01206"></a><span class="lineno"> 1206</span>      distributed_previous_solutions.emplace_back(</div>
 <div class="line"><a id="l01207" name="l01207"></a><span class="lineno"> 1207</span>        <a class="code hl_typedef" href="vector_8h.html#a4ea4005d75c88e60bee47d4e79a13a39">GlobalVectorType</a>(locally_owned_dofs, mpi_communicator));</div>
@@ -1354,10 +1354,10 @@ $(document).ready(function() { init_codefold(0); });
 <div class="line"><a id="l01210" name="l01210"></a><span class="lineno"> 1210</span> </div>
 <div class="line"><a id="l01211" name="l01211"></a><span class="lineno"> 1211</span>  solution_transfer-&gt;deserialize(input_vectors);</div>
 <div class="line"><a id="l01212" name="l01212"></a><span class="lineno"> 1212</span> </div>
-<div class="line"><a id="l01213" name="l01213"></a><span class="lineno"> 1213</span>  present_solution = distributed_system;</div>
-<div class="line"><a id="l01214" name="l01214"></a><span class="lineno"> 1214</span>  <span class="keywordflow">for</span> (<span class="keywordtype">unsigned</span> <span class="keywordtype">int</span> i = 0; i &lt; previous_solutions.size(); ++i)</div>
+<div class="line"><a id="l01213" name="l01213"></a><span class="lineno"> 1213</span>  *present_solution = distributed_system;</div>
+<div class="line"><a id="l01214" name="l01214"></a><span class="lineno"> 1214</span>  <span class="keywordflow">for</span> (<span class="keywordtype">unsigned</span> <span class="keywordtype">int</span> i = 0; i &lt; previous_solutions-&gt;size(); ++i)</div>
 <div class="line"><a id="l01215" name="l01215"></a><span class="lineno"> 1215</span>    {</div>
-<div class="line"><a id="l01216" name="l01216"></a><span class="lineno"> 1216</span>      previous_solutions[i] = distributed_previous_solutions[i];</div>
+<div class="line"><a id="l01216" name="l01216"></a><span class="lineno"> 1216</span>      (*previous_solutions)[i] = distributed_previous_solutions[i];</div>
 <div class="line"><a id="l01217" name="l01217"></a><span class="lineno"> 1217</span>    }</div>
 <div class="line"><a id="l01218" name="l01218"></a><span class="lineno"> 1218</span> </div>
 <div class="line"><a id="l01219" name="l01219"></a><span class="lineno"> 1219</span>  <span class="comment">// Deserialize all post-processing tables that are currently used with the</span></div>
@@ -1376,21 +1376,21 @@ $(document).ready(function() { init_codefold(0); });
 <div class="line"><a id="l01230" name="l01230"></a><span class="lineno"> 1230</span>{</div>
 <div class="line"><a id="l01231" name="l01231"></a><span class="lineno"> 1231</span>  verify_consistency_of_boundary_conditions();</div>
 <div class="line"><a id="l01232" name="l01232"></a><span class="lineno"> 1232</span> </div>
-<div class="line"><a id="l01233" name="l01233"></a><span class="lineno"> 1233</span>  dof_handler.distribute_dofs(*fe);</div>
-<div class="line"><a id="l01234" name="l01234"></a><span class="lineno"> 1234</span>  DoFRenumbering::Cuthill_McKee(this-&gt;dof_handler);</div>
+<div class="line"><a id="l01233" name="l01233"></a><span class="lineno"> 1233</span>  dof_handler-&gt;distribute_dofs(*fe);</div>
+<div class="line"><a id="l01234" name="l01234"></a><span class="lineno"> 1234</span>  DoFRenumbering::Cuthill_McKee(*this-&gt;dof_handler);</div>
 <div class="line"><a id="l01235" name="l01235"></a><span class="lineno"> 1235</span> </div>
 <div class="line"><a id="l01236" name="l01236"></a><span class="lineno"> 1236</span>  <span class="keyword">auto</span> mpi_communicator = triangulation-&gt;get_mpi_communicator();</div>
 <div class="line"><a id="l01237" name="l01237"></a><span class="lineno"> 1237</span> </div>
 <div class="line"><a id="l01238" name="l01238"></a><span class="lineno"> 1238</span> </div>
-<div class="line"><a id="l01239" name="l01239"></a><span class="lineno"> 1239</span>  locally_owned_dofs    = dof_handler.locally_owned_dofs();</div>
-<div class="line"><a id="l01240" name="l01240"></a><span class="lineno"> 1240</span>  locally_relevant_dofs = DoFTools::extract_locally_relevant_dofs(dof_handler);</div>
+<div class="line"><a id="l01239" name="l01239"></a><span class="lineno"> 1239</span>  locally_owned_dofs    = dof_handler-&gt;locally_owned_dofs();</div>
+<div class="line"><a id="l01240" name="l01240"></a><span class="lineno"> 1240</span>  locally_relevant_dofs = DoFTools::extract_locally_relevant_dofs(*dof_handler);</div>
 <div class="line"><a id="l01241" name="l01241"></a><span class="lineno"> 1241</span> </div>
-<div class="line"><a id="l01242" name="l01242"></a><span class="lineno"> 1242</span>  present_solution.reinit(locally_owned_dofs,</div>
-<div class="line"><a id="l01243" name="l01243"></a><span class="lineno"> 1243</span>                          locally_relevant_dofs,</div>
-<div class="line"><a id="l01244" name="l01244"></a><span class="lineno"> 1244</span>                          mpi_communicator);</div>
+<div class="line"><a id="l01242" name="l01242"></a><span class="lineno"> 1242</span>  present_solution-&gt;reinit(locally_owned_dofs,</div>
+<div class="line"><a id="l01243" name="l01243"></a><span class="lineno"> 1243</span>                           locally_relevant_dofs,</div>
+<div class="line"><a id="l01244" name="l01244"></a><span class="lineno"> 1244</span>                           mpi_communicator);</div>
 <div class="line"><a id="l01245" name="l01245"></a><span class="lineno"> 1245</span> </div>
 <div class="line"><a id="l01246" name="l01246"></a><span class="lineno"> 1246</span>  <span class="comment">// Previous solutions for transient schemes</span></div>
-<div class="line"><a id="l01247" name="l01247"></a><span class="lineno"> 1247</span>  <span class="keywordflow">for</span> (<span class="keyword">auto</span> &amp;solution : this-&gt;previous_solutions)</div>
+<div class="line"><a id="l01247" name="l01247"></a><span class="lineno"> 1247</span>  <span class="keywordflow">for</span> (<span class="keyword">auto</span> &amp;solution : *this-&gt;previous_solutions)</div>
 <div class="line"><a id="l01248" name="l01248"></a><span class="lineno"> 1248</span>    {</div>
 <div class="line"><a id="l01249" name="l01249"></a><span class="lineno"> 1249</span>      solution.reinit(locally_owned_dofs,</div>
 <div class="line"><a id="l01250" name="l01250"></a><span class="lineno"> 1250</span>                      locally_relevant_dofs,</div>
@@ -1406,7 +1406,7 @@ $(document).ready(function() { init_codefold(0); });
 <div class="line"><a id="l01260" name="l01260"></a><span class="lineno"> 1260</span>  {</div>
 <div class="line"><a id="l01261" name="l01261"></a><span class="lineno"> 1261</span>    nonzero_constraints.clear();</div>
 <div class="line"><a id="l01262" name="l01262"></a><span class="lineno"> 1262</span>    nonzero_constraints.reinit(locally_owned_dofs, this-&gt;locally_relevant_dofs);</div>
-<div class="line"><a id="l01263" name="l01263"></a><span class="lineno"> 1263</span>    DoFTools::make_hanging_node_constraints(this-&gt;dof_handler,</div>
+<div class="line"><a id="l01263" name="l01263"></a><span class="lineno"> 1263</span>    DoFTools::make_hanging_node_constraints(*this-&gt;dof_handler,</div>
 <div class="line"><a id="l01264" name="l01264"></a><span class="lineno"> 1264</span>                                            nonzero_constraints);</div>
 <div class="line"><a id="l01265" name="l01265"></a><span class="lineno"> 1265</span> </div>
 <div class="line"><a id="l01266" name="l01266"></a><span class="lineno"> 1266</span>    <span class="keywordflow">for</span> (<span class="keyword">auto</span> <span class="keyword">const</span> &amp;[<span class="keywordtype">id</span>, type] :</div>
@@ -1416,7 +1416,7 @@ $(document).ready(function() { init_codefold(0); });
 <div class="line"><a id="l01270" name="l01270"></a><span class="lineno"> 1270</span>        <span class="keywordflow">if</span> (type == <a class="code hl_enumvalue" href="namespaceBoundaryConditions.html#a07df76d63cde5cb5bcbea0d9c25a54b8a73b05af1b2487b24f8027cf106e0651f">BoundaryConditions::BoundaryType::tracer_dirichlet</a>)</div>
 <div class="line"><a id="l01271" name="l01271"></a><span class="lineno"> 1271</span>          {</div>
 <div class="line"><a id="l01272" name="l01272"></a><span class="lineno"> 1272</span>            VectorTools::interpolate_boundary_values(</div>
-<div class="line"><a id="l01273" name="l01273"></a><span class="lineno"> 1273</span>              this-&gt;dof_handler,</div>
+<div class="line"><a id="l01273" name="l01273"></a><span class="lineno"> 1273</span>              *this-&gt;dof_handler,</div>
 <div class="line"><a id="l01274" name="l01274"></a><span class="lineno"> 1274</span>              <span class="keywordtype">id</span>,</div>
 <div class="line"><a id="l01275" name="l01275"></a><span class="lineno"> 1275</span>              *this-&gt;simulation_parameters.boundary_conditions_tracer.tracer.at(</div>
 <div class="line"><a id="l01276" name="l01276"></a><span class="lineno"> 1276</span>                <span class="keywordtype">id</span>),</div>
@@ -1425,7 +1425,7 @@ $(document).ready(function() { init_codefold(0); });
 <div class="line"><a id="l01279" name="l01279"></a><span class="lineno"> 1279</span>        <span class="keywordflow">if</span> (type == <a class="code hl_enumvalue" href="namespaceBoundaryConditions.html#a07df76d63cde5cb5bcbea0d9c25a54b8ae6ffdec5e14fce371eb7ae99edebbbee">BoundaryConditions::BoundaryType::periodic</a>)</div>
 <div class="line"><a id="l01280" name="l01280"></a><span class="lineno"> 1280</span>          {</div>
 <div class="line"><a id="l01281" name="l01281"></a><span class="lineno"> 1281</span>            DoFTools::make_periodicity_constraints(</div>
-<div class="line"><a id="l01282" name="l01282"></a><span class="lineno"> 1282</span>              this-&gt;dof_handler,</div>
+<div class="line"><a id="l01282" name="l01282"></a><span class="lineno"> 1282</span>              *this-&gt;dof_handler,</div>
 <div class="line"><a id="l01283" name="l01283"></a><span class="lineno"> 1283</span>              <span class="keywordtype">id</span>,</div>
 <div class="line"><a id="l01284" name="l01284"></a><span class="lineno"> 1284</span>              this-&gt;simulation_parameters.boundary_conditions_tracer</div>
 <div class="line"><a id="l01285" name="l01285"></a><span class="lineno"> 1285</span>                .periodic_neighbor_id.at(<span class="keywordtype">id</span>),</div>
@@ -1442,7 +1442,7 @@ $(document).ready(function() { init_codefold(0); });
 <div class="line"><a id="l01296" name="l01296"></a><span class="lineno"> 1296</span>    zero_constraints.clear();</div>
 <div class="line"><a id="l01297" name="l01297"></a><span class="lineno"> 1297</span>    zero_constraints.reinit(this-&gt;locally_owned_dofs,</div>
 <div class="line"><a id="l01298" name="l01298"></a><span class="lineno"> 1298</span>                            this-&gt;locally_relevant_dofs);</div>
-<div class="line"><a id="l01299" name="l01299"></a><span class="lineno"> 1299</span>    DoFTools::make_hanging_node_constraints(this-&gt;dof_handler,</div>
+<div class="line"><a id="l01299" name="l01299"></a><span class="lineno"> 1299</span>    DoFTools::make_hanging_node_constraints(*this-&gt;dof_handler,</div>
 <div class="line"><a id="l01300" name="l01300"></a><span class="lineno"> 1300</span>                                            zero_constraints);</div>
 <div class="line"><a id="l01301" name="l01301"></a><span class="lineno"> 1301</span> </div>
 <div class="line"><a id="l01302" name="l01302"></a><span class="lineno"> 1302</span>    <span class="keywordflow">for</span> (<span class="keyword">auto</span> <span class="keyword">const</span> &amp;[<span class="keywordtype">id</span>, type] :</div>
@@ -1451,7 +1451,7 @@ $(document).ready(function() { init_codefold(0); });
 <div class="line"><a id="l01305" name="l01305"></a><span class="lineno"> 1305</span>        <span class="keywordflow">if</span> (type == <a class="code hl_enumvalue" href="namespaceBoundaryConditions.html#a07df76d63cde5cb5bcbea0d9c25a54b8a73b05af1b2487b24f8027cf106e0651f">BoundaryConditions::BoundaryType::tracer_dirichlet</a>)</div>
 <div class="line"><a id="l01306" name="l01306"></a><span class="lineno"> 1306</span>          {</div>
 <div class="line"><a id="l01307" name="l01307"></a><span class="lineno"> 1307</span>            VectorTools::interpolate_boundary_values(</div>
-<div class="line"><a id="l01308" name="l01308"></a><span class="lineno"> 1308</span>              this-&gt;dof_handler,</div>
+<div class="line"><a id="l01308" name="l01308"></a><span class="lineno"> 1308</span>              *this-&gt;dof_handler,</div>
 <div class="line"><a id="l01309" name="l01309"></a><span class="lineno"> 1309</span>              <span class="keywordtype">id</span>,</div>
 <div class="line"><a id="l01310" name="l01310"></a><span class="lineno"> 1310</span>              Functions::ZeroFunction&lt;dim&gt;(),</div>
 <div class="line"><a id="l01311" name="l01311"></a><span class="lineno"> 1311</span>              zero_constraints);</div>
@@ -1459,7 +1459,7 @@ $(document).ready(function() { init_codefold(0); });
 <div class="line"><a id="l01313" name="l01313"></a><span class="lineno"> 1313</span>        <span class="keywordflow">if</span> (type == <a class="code hl_enumvalue" href="namespaceBoundaryConditions.html#a07df76d63cde5cb5bcbea0d9c25a54b8ae6ffdec5e14fce371eb7ae99edebbbee">BoundaryConditions::BoundaryType::periodic</a>)</div>
 <div class="line"><a id="l01314" name="l01314"></a><span class="lineno"> 1314</span>          {</div>
 <div class="line"><a id="l01315" name="l01315"></a><span class="lineno"> 1315</span>            DoFTools::make_periodicity_constraints(</div>
-<div class="line"><a id="l01316" name="l01316"></a><span class="lineno"> 1316</span>              this-&gt;dof_handler,</div>
+<div class="line"><a id="l01316" name="l01316"></a><span class="lineno"> 1316</span>              *this-&gt;dof_handler,</div>
 <div class="line"><a id="l01317" name="l01317"></a><span class="lineno"> 1317</span>              <span class="keywordtype">id</span>,</div>
 <div class="line"><a id="l01318" name="l01318"></a><span class="lineno"> 1318</span>              this-&gt;simulation_parameters.boundary_conditions_tracer</div>
 <div class="line"><a id="l01319" name="l01319"></a><span class="lineno"> 1319</span>                .periodic_neighbor_id.at(<span class="keywordtype">id</span>),</div>
@@ -1477,14 +1477,14 @@ $(document).ready(function() { init_codefold(0); });
 <div class="line"><a id="l01331" name="l01331"></a><span class="lineno"> 1331</span> </div>
 <div class="line"><a id="l01332" name="l01332"></a><span class="lineno"> 1332</span>  <span class="keywordflow">if</span> (simulation_parameters.fem_parameters.tracer_uses_dg)</div>
 <div class="line"><a id="l01333" name="l01333"></a><span class="lineno"> 1333</span>    {</div>
-<div class="line"><a id="l01334" name="l01334"></a><span class="lineno"> 1334</span>      DoFTools::make_flux_sparsity_pattern(this-&gt;dof_handler,</div>
+<div class="line"><a id="l01334" name="l01334"></a><span class="lineno"> 1334</span>      DoFTools::make_flux_sparsity_pattern(*this-&gt;dof_handler,</div>
 <div class="line"><a id="l01335" name="l01335"></a><span class="lineno"> 1335</span>                                           dsp,</div>
 <div class="line"><a id="l01336" name="l01336"></a><span class="lineno"> 1336</span>                                           nonzero_constraints,</div>
 <div class="line"><a id="l01337" name="l01337"></a><span class="lineno"> 1337</span>                                           <span class="comment">/*keep_constrained_dofs = */</span> <span class="keyword">true</span>);</div>
 <div class="line"><a id="l01338" name="l01338"></a><span class="lineno"> 1338</span>    }</div>
 <div class="line"><a id="l01339" name="l01339"></a><span class="lineno"> 1339</span>  <span class="keywordflow">else</span></div>
 <div class="line"><a id="l01340" name="l01340"></a><span class="lineno"> 1340</span>    {</div>
-<div class="line"><a id="l01341" name="l01341"></a><span class="lineno"> 1341</span>      DoFTools::make_sparsity_pattern(this-&gt;dof_handler,</div>
+<div class="line"><a id="l01341" name="l01341"></a><span class="lineno"> 1341</span>      DoFTools::make_sparsity_pattern(*this-&gt;dof_handler,</div>
 <div class="line"><a id="l01342" name="l01342"></a><span class="lineno"> 1342</span>                                      dsp,</div>
 <div class="line"><a id="l01343" name="l01343"></a><span class="lineno"> 1343</span>                                      nonzero_constraints,</div>
 <div class="line"><a id="l01344" name="l01344"></a><span class="lineno"> 1344</span>                                      <span class="comment">/*keep_constrained_dofs = */</span> <span class="keyword">true</span>);</div>
@@ -1502,14 +1502,14 @@ $(document).ready(function() { init_codefold(0); });
 <div class="line"><a id="l01356" name="l01356"></a><span class="lineno"> 1356</span>                       mpi_communicator);</div>
 <div class="line"><a id="l01357" name="l01357"></a><span class="lineno"> 1357</span> </div>
 <div class="line"><a id="l01358" name="l01358"></a><span class="lineno"> 1358</span>  this-&gt;pcout &lt;&lt; <span class="stringliteral">&quot;   Number of tracer degrees of freedom: &quot;</span></div>
-<div class="line"><a id="l01359" name="l01359"></a><span class="lineno"> 1359</span>              &lt;&lt; dof_handler.n_dofs() &lt;&lt; std::endl;</div>
+<div class="line"><a id="l01359" name="l01359"></a><span class="lineno"> 1359</span>              &lt;&lt; dof_handler-&gt;n_dofs() &lt;&lt; std::endl;</div>
 <div class="line"><a id="l01360" name="l01360"></a><span class="lineno"> 1360</span> </div>
 <div class="line"><a id="l01361" name="l01361"></a><span class="lineno"> 1361</span>  <span class="comment">// Provide the tracer dof_handler and present solution pointers to the</span></div>
 <div class="line"><a id="l01362" name="l01362"></a><span class="lineno"> 1362</span>  <span class="comment">// multiphysics interface</span></div>
-<div class="line"><a id="l01363" name="l01363"></a><span class="lineno"> 1363</span>  multiphysics-&gt;set_dof_handler(<a class="code hl_enumvalue" href="multiphysics_8h.html#ae14bb720bc9a37edc36fb8d90df712c2a50955dac125ab3c822a8f3bb4f6fcaef">PhysicsID::tracer</a>, &amp;this-&gt;dof_handler);</div>
-<div class="line"><a id="l01364" name="l01364"></a><span class="lineno"> 1364</span>  multiphysics-&gt;set_solution(<a class="code hl_enumvalue" href="multiphysics_8h.html#ae14bb720bc9a37edc36fb8d90df712c2a50955dac125ab3c822a8f3bb4f6fcaef">PhysicsID::tracer</a>, &amp;this-&gt;present_solution);</div>
+<div class="line"><a id="l01363" name="l01363"></a><span class="lineno"> 1363</span>  multiphysics-&gt;set_dof_handler(<a class="code hl_enumvalue" href="multiphysics_8h.html#ae14bb720bc9a37edc36fb8d90df712c2a50955dac125ab3c822a8f3bb4f6fcaef">PhysicsID::tracer</a>, this-&gt;dof_handler);</div>
+<div class="line"><a id="l01364" name="l01364"></a><span class="lineno"> 1364</span>  multiphysics-&gt;set_solution(<a class="code hl_enumvalue" href="multiphysics_8h.html#ae14bb720bc9a37edc36fb8d90df712c2a50955dac125ab3c822a8f3bb4f6fcaef">PhysicsID::tracer</a>, this-&gt;present_solution);</div>
 <div class="line"><a id="l01365" name="l01365"></a><span class="lineno"> 1365</span>  multiphysics-&gt;set_previous_solutions(<a class="code hl_enumvalue" href="multiphysics_8h.html#ae14bb720bc9a37edc36fb8d90df712c2a50955dac125ab3c822a8f3bb4f6fcaef">PhysicsID::tracer</a>,</div>
-<div class="line"><a id="l01366" name="l01366"></a><span class="lineno"> 1366</span>                                       &amp;this-&gt;previous_solutions);</div>
+<div class="line"><a id="l01366" name="l01366"></a><span class="lineno"> 1366</span>                                       this-&gt;previous_solutions);</div>
 <div class="line"><a id="l01367" name="l01367"></a><span class="lineno"> 1367</span>}</div>
 </div>
 <div class="line"><a id="l01368" name="l01368"></a><span class="lineno"> 1368</span> </div>
@@ -1525,7 +1525,7 @@ $(document).ready(function() { init_codefold(0); });
 <div class="line"><a id="l01377" name="l01377"></a><span class="lineno"> 1377</span>  nonzero_constraints.clear();</div>
 <div class="line"><a id="l01378" name="l01378"></a><span class="lineno"> 1378</span>  nonzero_constraints.reinit(this-&gt;locally_owned_dofs,</div>
 <div class="line"><a id="l01379" name="l01379"></a><span class="lineno"> 1379</span>                             this-&gt;locally_relevant_dofs);</div>
-<div class="line"><a id="l01380" name="l01380"></a><span class="lineno"> 1380</span>  DoFTools::make_hanging_node_constraints(this-&gt;dof_handler,</div>
+<div class="line"><a id="l01380" name="l01380"></a><span class="lineno"> 1380</span>  DoFTools::make_hanging_node_constraints(*this-&gt;dof_handler,</div>
 <div class="line"><a id="l01381" name="l01381"></a><span class="lineno"> 1381</span>                                          nonzero_constraints);</div>
 <div class="line"><a id="l01382" name="l01382"></a><span class="lineno"> 1382</span> </div>
 <div class="line"><a id="l01383" name="l01383"></a><span class="lineno"> 1383</span>  <span class="keywordflow">for</span> (<span class="keyword">auto</span> <span class="keyword">const</span> &amp;[<span class="keywordtype">id</span>, type] :</div>
@@ -1537,7 +1537,7 @@ $(document).ready(function() { init_codefold(0); });
 <div class="line"><a id="l01389" name="l01389"></a><span class="lineno"> 1389</span>          this-&gt;simulation_parameters.boundary_conditions_tracer.tracer.at(<span class="keywordtype">id</span>)</div>
 <div class="line"><a id="l01390" name="l01390"></a><span class="lineno"> 1390</span>            -&gt;set_time(time);</div>
 <div class="line"><a id="l01391" name="l01391"></a><span class="lineno"> 1391</span>          VectorTools::interpolate_boundary_values(</div>
-<div class="line"><a id="l01392" name="l01392"></a><span class="lineno"> 1392</span>            this-&gt;dof_handler,</div>
+<div class="line"><a id="l01392" name="l01392"></a><span class="lineno"> 1392</span>            *this-&gt;dof_handler,</div>
 <div class="line"><a id="l01393" name="l01393"></a><span class="lineno"> 1393</span>            <span class="keywordtype">id</span>,</div>
 <div class="line"><a id="l01394" name="l01394"></a><span class="lineno"> 1394</span>            *this-&gt;simulation_parameters.boundary_conditions_tracer.tracer.at(</div>
 <div class="line"><a id="l01395" name="l01395"></a><span class="lineno"> 1395</span>              <span class="keywordtype">id</span>),</div>
@@ -1546,7 +1546,7 @@ $(document).ready(function() { init_codefold(0); });
 <div class="line"><a id="l01398" name="l01398"></a><span class="lineno"> 1398</span>      <span class="keywordflow">if</span> (type == <a class="code hl_enumvalue" href="namespaceBoundaryConditions.html#a07df76d63cde5cb5bcbea0d9c25a54b8ae6ffdec5e14fce371eb7ae99edebbbee">BoundaryConditions::BoundaryType::periodic</a>)</div>
 <div class="line"><a id="l01399" name="l01399"></a><span class="lineno"> 1399</span>        {</div>
 <div class="line"><a id="l01400" name="l01400"></a><span class="lineno"> 1400</span>          DoFTools::make_periodicity_constraints(</div>
-<div class="line"><a id="l01401" name="l01401"></a><span class="lineno"> 1401</span>            this-&gt;dof_handler,</div>
+<div class="line"><a id="l01401" name="l01401"></a><span class="lineno"> 1401</span>            *this-&gt;dof_handler,</div>
 <div class="line"><a id="l01402" name="l01402"></a><span class="lineno"> 1402</span>            <span class="keywordtype">id</span>,</div>
 <div class="line"><a id="l01403" name="l01403"></a><span class="lineno"> 1403</span>            this-&gt;simulation_parameters.boundary_conditions_tracer</div>
 <div class="line"><a id="l01404" name="l01404"></a><span class="lineno"> 1404</span>              .periodic_neighbor_id.at(<span class="keywordtype">id</span>),</div>
@@ -1557,7 +1557,7 @@ $(document).ready(function() { init_codefold(0); });
 <div class="line"><a id="l01409" name="l01409"></a><span class="lineno"> 1409</span>    }</div>
 <div class="line"><a id="l01410" name="l01410"></a><span class="lineno"> 1410</span>  nonzero_constraints.close();</div>
 <div class="line"><a id="l01411" name="l01411"></a><span class="lineno"> 1411</span>  nonzero_constraints.distribute(this-&gt;local_evaluation_point);</div>
-<div class="line"><a id="l01412" name="l01412"></a><span class="lineno"> 1412</span>  this-&gt;present_solution = this-&gt;local_evaluation_point;</div>
+<div class="line"><a id="l01412" name="l01412"></a><span class="lineno"> 1412</span>  *this-&gt;present_solution = this-&gt;local_evaluation_point;</div>
 <div class="line"><a id="l01413" name="l01413"></a><span class="lineno"> 1413</span>}</div>
 </div>
 <div class="line"><a id="l01414" name="l01414"></a><span class="lineno"> 1414</span> </div>
@@ -1567,11 +1567,11 @@ $(document).ready(function() { init_codefold(0); });
 <div class="line"><a id="l01417" name="l01417"></a><span class="lineno"><a class="line" href="classTracer.html#ab09781c62a32bbf7bfcc87e501deb8a0"> 1417</a></span><a class="code hl_function" href="classTracer.html#ab09781c62a32bbf7bfcc87e501deb8a0">Tracer&lt;dim&gt;::set_initial_conditions</a>()</div>
 <div class="line"><a id="l01418" name="l01418"></a><span class="lineno"> 1418</span>{</div>
 <div class="line"><a id="l01419" name="l01419"></a><span class="lineno"> 1419</span>  VectorTools::interpolate(*mapping,</div>
-<div class="line"><a id="l01420" name="l01420"></a><span class="lineno"> 1420</span>                           dof_handler,</div>
+<div class="line"><a id="l01420" name="l01420"></a><span class="lineno"> 1420</span>                           *dof_handler,</div>
 <div class="line"><a id="l01421" name="l01421"></a><span class="lineno"> 1421</span>                           simulation_parameters.initial_condition-&gt;tracer,</div>
 <div class="line"><a id="l01422" name="l01422"></a><span class="lineno"> 1422</span>                           newton_update);</div>
 <div class="line"><a id="l01423" name="l01423"></a><span class="lineno"> 1423</span>  nonzero_constraints.distribute(newton_update);</div>
-<div class="line"><a id="l01424" name="l01424"></a><span class="lineno"> 1424</span>  present_solution = newton_update;</div>
+<div class="line"><a id="l01424" name="l01424"></a><span class="lineno"> 1424</span>  *present_solution = newton_update;</div>
 <div class="line"><a id="l01425" name="l01425"></a><span class="lineno"> 1425</span>  percolate_time_vectors();</div>
 <div class="line"><a id="l01426" name="l01426"></a><span class="lineno"> 1426</span>}</div>
 </div>
@@ -1591,10 +1591,10 @@ $(document).ready(function() { init_codefold(0); });
 <div class="line"><a id="l01439" name="l01439"></a><span class="lineno"> 1439</span> </div>
 <div class="line"><a id="l01440" name="l01440"></a><span class="lineno"> 1440</span>      KellyErrorEstimator&lt;dim&gt;::estimate(</div>
 <div class="line"><a id="l01441" name="l01441"></a><span class="lineno"> 1441</span>        *this-&gt;mapping,</div>
-<div class="line"><a id="l01442" name="l01442"></a><span class="lineno"> 1442</span>        this-&gt;dof_handler,</div>
+<div class="line"><a id="l01442" name="l01442"></a><span class="lineno"> 1442</span>        *this-&gt;dof_handler,</div>
 <div class="line"><a id="l01443" name="l01443"></a><span class="lineno"> 1443</span>        *this-&gt;face_quadrature,</div>
 <div class="line"><a id="l01444" name="l01444"></a><span class="lineno"> 1444</span>        <span class="keyword">typename</span> std::map&lt;types::boundary_id, <span class="keyword">const</span> Function&lt;dim, double&gt; *&gt;(),</div>
-<div class="line"><a id="l01445" name="l01445"></a><span class="lineno"> 1445</span>        this-&gt;present_solution,</div>
+<div class="line"><a id="l01445" name="l01445"></a><span class="lineno"> 1445</span>        *this-&gt;present_solution,</div>
 <div class="line"><a id="l01446" name="l01446"></a><span class="lineno"> 1446</span>        estimated_error_per_cell,</div>
 <div class="line"><a id="l01447" name="l01447"></a><span class="lineno"> 1447</span>        this-&gt;fe-&gt;component_mask(<a class="code hl_enumvalue" href="multiphysics_8h.html#ae14bb720bc9a37edc36fb8d90df712c2a50955dac125ab3c822a8f3bb4f6fcaef">tracer</a>));</div>
 <div class="line"><a id="l01448" name="l01448"></a><span class="lineno"> 1448</span>    }</div>
@@ -1697,9 +1697,9 @@ $(document).ready(function() { init_codefold(0); });
 <div class="ttc" id="aclassTracerAssemblerDGCore_html"><div class="ttname"><a href="classTracerAssemblerDGCore.html">TracerAssemblerDGCore</a></div><div class="ttdoc">Class that assembles the core (cells) of the Tracer equation for DG elements. This class assembles th...</div><div class="ttdef"><b>Definition</b> <a href="tracer__assemblers_8h_source.html#l00092">tracer_assemblers.h:93</a></div></div>
 <div class="ttc" id="aclassTracerAssemblerReaction_html"><div class="ttname"><a href="classTracerAssemblerReaction.html">TracerAssemblerReaction</a></div><div class="ttdoc">Class that assembles the reaction source term of the Tracer equation. It assembles the term:  Where C...</div><div class="ttdef"><b>Definition</b> <a href="tracer__assemblers_8h_source.html#l00267">tracer_assemblers.h:268</a></div></div>
 <div class="ttc" id="aclassTracerScratchData_html"><div class="ttname"><a href="classTracerScratchData.html">TracerScratchData</a></div><div class="ttdoc">Class that stores the information required by the assembly procedure for a Tracer advection-diffusion...</div><div class="ttdef"><b>Definition</b> <a href="tracer__scratch__data_8h_source.html#l00043">tracer_scratch_data.h:44</a></div></div>
-<div class="ttc" id="aclassTracerScratchData_html_a01547ab97dbbf540e6786ea1b25be6be"><div class="ttname"><a href="classTracerScratchData.html#a01547ab97dbbf540e6786ea1b25be6be">TracerScratchData::reinit_signed_distance</a></div><div class="ttdeci">void reinit_signed_distance(const typename DoFHandler&lt; dim &gt;::active_cell_iterator &amp;cell, Shape&lt; dim &gt; *immersed_solid_shape)</div><div class="ttdoc">Reinitializes the signed distance vector of the scratch.</div><div class="ttdef"><b>Definition</b> <a href="tracer__scratch__data_8h_source.html#l00206">tracer_scratch_data.h:206</a></div></div>
-<div class="ttc" id="aclassTracerScratchData_html_a562036bff335d8380ca8430c00ede811"><div class="ttname"><a href="classTracerScratchData.html#a562036bff335d8380ca8430c00ede811">TracerScratchData::reinit_velocity</a></div><div class="ttdeci">void reinit_velocity(const typename DoFHandler&lt; dim &gt;::active_cell_iterator &amp;cell, const VectorType &amp;velocity_solution, const Parameters::ALE&lt; dim &gt; &amp;ale, std::shared_ptr&lt; Functions::ParsedFunction&lt; dim &gt; &gt; drift_velocity)</div><div class="ttdoc">Reinitialize the velocity, calculated by the fluid dynamics while also taking into account ALE.</div><div class="ttdef"><b>Definition</b> <a href="tracer__scratch__data_8h_source.html#l00276">tracer_scratch_data.h:276</a></div></div>
+<div class="ttc" id="aclassTracerScratchData_html_a562036bff335d8380ca8430c00ede811"><div class="ttname"><a href="classTracerScratchData.html#a562036bff335d8380ca8430c00ede811">TracerScratchData::reinit_velocity</a></div><div class="ttdeci">void reinit_velocity(const typename DoFHandler&lt; dim &gt;::active_cell_iterator &amp;cell, const VectorType &amp;velocity_solution, const Parameters::ALE&lt; dim &gt; &amp;ale, std::shared_ptr&lt; Functions::ParsedFunction&lt; dim &gt; &gt; drift_velocity)</div><div class="ttdoc">Reinitialize the velocity, calculated by the fluid dynamics while also taking into account ALE.</div><div class="ttdef"><b>Definition</b> <a href="tracer__scratch__data_8h_source.html#l00277">tracer_scratch_data.h:277</a></div></div>
 <div class="ttc" id="aclassTracerScratchData_html_a76785e295498cebd6065f73952a2cebf"><div class="ttname"><a href="classTracerScratchData.html#a76785e295498cebd6065f73952a2cebf">TracerScratchData::calculate_physical_properties</a></div><div class="ttdeci">void calculate_physical_properties()</div><div class="ttdoc">Calculates the physical properties. This function calculates the physical properties that may be requ...</div><div class="ttdef"><b>Definition</b> <a href="tracer__scratch__data_8cc_source.html#l00069">tracer_scratch_data.cc:69</a></div></div>
+<div class="ttc" id="aclassTracerScratchData_html_a9f81a61cac9e16d445fd2ca0a62effce"><div class="ttname"><a href="classTracerScratchData.html#a9f81a61cac9e16d445fd2ca0a62effce">TracerScratchData::reinit_signed_distance</a></div><div class="ttdeci">void reinit_signed_distance(const typename DoFHandler&lt; dim &gt;::active_cell_iterator &amp;cell, std::shared_ptr&lt; Shape&lt; dim &gt; &gt; immersed_solid_shape)</div><div class="ttdoc">Reinitializes the signed distance vector of the scratch.</div><div class="ttdef"><b>Definition</b> <a href="tracer__scratch__data_8h_source.html#l00207">tracer_scratch_data.h:207</a></div></div>
 <div class="ttc" id="aclassTracerScratchData_html_afd65777a054d80408e8bfffc25dc9fd0"><div class="ttname"><a href="classTracerScratchData.html#afd65777a054d80408e8bfffc25dc9fd0">TracerScratchData::reinit</a></div><div class="ttdeci">void reinit(const typename DoFHandler&lt; dim &gt;::active_cell_iterator &amp;cell, const VectorType &amp;current_solution, const std::vector&lt; VectorType &gt; &amp;previous_solutions, const Function&lt; dim &gt; *source_function)</div><div class="ttdoc">Reinitializes the content of the scratch.</div><div class="ttdef"><b>Definition</b> <a href="tracer__scratch__data_8h_source.html#l00147">tracer_scratch_data.h:147</a></div></div>
 <div class="ttc" id="aclassTracer_html"><div class="ttname"><a href="classTracer.html">Tracer</a></div><div class="ttdef"><b>Definition</b> <a href="tracer_8h_source.html#l00050">tracer.h:51</a></div></div>
 <div class="ttc" id="aclassTracer_html_a0028e0bd8742d8e98488ed428fe9e2b0"><div class="ttname"><a href="classTracer.html#a0028e0bd8742d8e98488ed428fe9e2b0">Tracer::solve_linear_system</a></div><div class="ttdeci">void solve_linear_system() override</div><div class="ttdoc">Call for the solution of the linear system of equation using a strategy appropriate to the auxiliary ...</div><div class="ttdef"><b>Definition</b> <a href="tracer_8cc_source.html#l01453">tracer.cc:1453</a></div></div>

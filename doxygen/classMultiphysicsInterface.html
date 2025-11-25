@@ -132,20 +132,20 @@ Public Member Functions</h2></td></tr>
 <tr class="separator:a0ef6c5239b3edd1b882659faa41b03d9"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a02b1ef8ec7a30caa81764aa669a71991" id="r_a02b1ef8ec7a30caa81764aa669a71991"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classMultiphysicsInterface.html#a02b1ef8ec7a30caa81764aa669a71991">fluid_dynamics_is_block</a> () const</td></tr>
 <tr class="separator:a02b1ef8ec7a30caa81764aa669a71991"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ae758340be034404f631ea0bb5492e0ca" id="r_ae758340be034404f631ea0bb5492e0ca"><td class="memItemLeft" align="right" valign="top">DoFHandler&lt; dim &gt; *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classMultiphysicsInterface.html#ae758340be034404f631ea0bb5492e0ca">get_dof_handler</a> (const <a class="el" href="multiphysics_8h.html#ae14bb720bc9a37edc36fb8d90df712c2">PhysicsID</a> physics_id)</td></tr>
-<tr class="separator:ae758340be034404f631ea0bb5492e0ca"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a249cdcd43460726d29ab042599f8e095" id="r_a249cdcd43460726d29ab042599f8e095"><td class="memItemLeft" align="right" valign="top"><a class="el" href="vector_8h.html#a4ea4005d75c88e60bee47d4e79a13a39">GlobalVectorType</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classMultiphysicsInterface.html#a249cdcd43460726d29ab042599f8e095">get_solution</a> (const <a class="el" href="multiphysics_8h.html#ae14bb720bc9a37edc36fb8d90df712c2">PhysicsID</a> physics_id)</td></tr>
-<tr class="separator:a249cdcd43460726d29ab042599f8e095"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:abf1871ab5a3c6ea39d625d5312096dcc" id="r_abf1871ab5a3c6ea39d625d5312096dcc"><td class="memItemLeft" align="right" valign="top"><a class="el" href="vector_8h.html#a4ea4005d75c88e60bee47d4e79a13a39">GlobalVectorType</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classMultiphysicsInterface.html#abf1871ab5a3c6ea39d625d5312096dcc">get_filtered_solution</a> (const <a class="el" href="multiphysics_8h.html#ae14bb720bc9a37edc36fb8d90df712c2">PhysicsID</a> physics_id)</td></tr>
-<tr class="separator:abf1871ab5a3c6ea39d625d5312096dcc"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a6ba77c91e54de13eb329d6bf56212ce2" id="r_a6ba77c91e54de13eb329d6bf56212ce2"><td class="memItemLeft" align="right" valign="top"><a class="el" href="vector_8h.html#ac71ba75c5119edae876800f9e80b59e7">GlobalBlockVectorType</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classMultiphysicsInterface.html#a6ba77c91e54de13eb329d6bf56212ce2">get_block_solution</a> (const <a class="el" href="multiphysics_8h.html#ae14bb720bc9a37edc36fb8d90df712c2">PhysicsID</a> physics_id)</td></tr>
-<tr class="separator:a6ba77c91e54de13eb329d6bf56212ce2"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a123eaba0d03eed44f0365aeabd925712" id="r_a123eaba0d03eed44f0365aeabd925712"><td class="memItemLeft" align="right" valign="top"><a class="el" href="vector_8h.html#a4ea4005d75c88e60bee47d4e79a13a39">GlobalVectorType</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classMultiphysicsInterface.html#a123eaba0d03eed44f0365aeabd925712">get_time_average_solution</a> (const <a class="el" href="multiphysics_8h.html#ae14bb720bc9a37edc36fb8d90df712c2">PhysicsID</a> physics_id)</td></tr>
-<tr class="separator:a123eaba0d03eed44f0365aeabd925712"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a8f533cb660595e4409bd9a7fc13b4fcb" id="r_a8f533cb660595e4409bd9a7fc13b4fcb"><td class="memItemLeft" align="right" valign="top"><a class="el" href="vector_8h.html#ac71ba75c5119edae876800f9e80b59e7">GlobalBlockVectorType</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classMultiphysicsInterface.html#a8f533cb660595e4409bd9a7fc13b4fcb">get_block_time_average_solution</a> (const <a class="el" href="multiphysics_8h.html#ae14bb720bc9a37edc36fb8d90df712c2">PhysicsID</a> physics_id)</td></tr>
-<tr class="separator:a8f533cb660595e4409bd9a7fc13b4fcb"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a5830eb87b57d776d758c679d28a33122" id="r_a5830eb87b57d776d758c679d28a33122"><td class="memItemLeft" align="right" valign="top">std::vector&lt; std::shared_ptr&lt; <a class="el" href="classSolidBase.html">SolidBase</a>&lt; dim, dim &gt; &gt; &gt; *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classMultiphysicsInterface.html#a5830eb87b57d776d758c679d28a33122">get_solids</a> (const int number_solids)</td></tr>
-<tr class="separator:a5830eb87b57d776d758c679d28a33122"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a7b1003d64c1a89552f9a84393e1e62e8" id="r_a7b1003d64c1a89552f9a84393e1e62e8"><td class="memItemLeft" align="right" valign="top">const DoFHandler&lt; dim &gt; &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classMultiphysicsInterface.html#a7b1003d64c1a89552f9a84393e1e62e8">get_dof_handler</a> (const <a class="el" href="multiphysics_8h.html#ae14bb720bc9a37edc36fb8d90df712c2">PhysicsID</a> physics_id)</td></tr>
+<tr class="separator:a7b1003d64c1a89552f9a84393e1e62e8"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a13d942673cbbf1cc2d79bd4ced3f6461" id="r_a13d942673cbbf1cc2d79bd4ced3f6461"><td class="memItemLeft" align="right" valign="top">const <a class="el" href="vector_8h.html#a4ea4005d75c88e60bee47d4e79a13a39">GlobalVectorType</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classMultiphysicsInterface.html#a13d942673cbbf1cc2d79bd4ced3f6461">get_solution</a> (const <a class="el" href="multiphysics_8h.html#ae14bb720bc9a37edc36fb8d90df712c2">PhysicsID</a> physics_id)</td></tr>
+<tr class="separator:a13d942673cbbf1cc2d79bd4ced3f6461"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a1ab87bf78a18bb8d7b97a769c62f5e0c" id="r_a1ab87bf78a18bb8d7b97a769c62f5e0c"><td class="memItemLeft" align="right" valign="top">const <a class="el" href="vector_8h.html#a4ea4005d75c88e60bee47d4e79a13a39">GlobalVectorType</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classMultiphysicsInterface.html#a1ab87bf78a18bb8d7b97a769c62f5e0c">get_filtered_solution</a> (const <a class="el" href="multiphysics_8h.html#ae14bb720bc9a37edc36fb8d90df712c2">PhysicsID</a> physics_id)</td></tr>
+<tr class="separator:a1ab87bf78a18bb8d7b97a769c62f5e0c"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ab5ed8ce10b2d8afae98ca6791bf4ae32" id="r_ab5ed8ce10b2d8afae98ca6791bf4ae32"><td class="memItemLeft" align="right" valign="top">const <a class="el" href="vector_8h.html#ac71ba75c5119edae876800f9e80b59e7">GlobalBlockVectorType</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classMultiphysicsInterface.html#ab5ed8ce10b2d8afae98ca6791bf4ae32">get_block_solution</a> (const <a class="el" href="multiphysics_8h.html#ae14bb720bc9a37edc36fb8d90df712c2">PhysicsID</a> physics_id)</td></tr>
+<tr class="separator:ab5ed8ce10b2d8afae98ca6791bf4ae32"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a2c1b105320c21f8b5baef05ba93b7c77" id="r_a2c1b105320c21f8b5baef05ba93b7c77"><td class="memItemLeft" align="right" valign="top">const <a class="el" href="vector_8h.html#a4ea4005d75c88e60bee47d4e79a13a39">GlobalVectorType</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classMultiphysicsInterface.html#a2c1b105320c21f8b5baef05ba93b7c77">get_time_average_solution</a> (const <a class="el" href="multiphysics_8h.html#ae14bb720bc9a37edc36fb8d90df712c2">PhysicsID</a> physics_id)</td></tr>
+<tr class="separator:a2c1b105320c21f8b5baef05ba93b7c77"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a10f9f67e6e654cd537e9f123d767c3e5" id="r_a10f9f67e6e654cd537e9f123d767c3e5"><td class="memItemLeft" align="right" valign="top">const <a class="el" href="vector_8h.html#ac71ba75c5119edae876800f9e80b59e7">GlobalBlockVectorType</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classMultiphysicsInterface.html#a10f9f67e6e654cd537e9f123d767c3e5">get_block_time_average_solution</a> (const <a class="el" href="multiphysics_8h.html#ae14bb720bc9a37edc36fb8d90df712c2">PhysicsID</a> physics_id)</td></tr>
+<tr class="separator:a10f9f67e6e654cd537e9f123d767c3e5"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ae9fdd065251330837764899f4865988e" id="r_ae9fdd065251330837764899f4865988e"><td class="memItemLeft" align="right" valign="top">const std::vector&lt; std::shared_ptr&lt; <a class="el" href="classSolidBase.html">SolidBase</a>&lt; dim, dim &gt; &gt; &gt; &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classMultiphysicsInterface.html#ae9fdd065251330837764899f4865988e">get_solids</a> (const int number_solids)</td></tr>
+<tr class="separator:ae9fdd065251330837764899f4865988e"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aa7b23d559fd4322f3e30723f2bb8874c" id="r_aa7b23d559fd4322f3e30723f2bb8874c"><td class="memItemLeft" align="right" valign="top">const <a class="el" href="vector_8h.html#a4ea4005d75c88e60bee47d4e79a13a39">GlobalVectorType</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classMultiphysicsInterface.html#aa7b23d559fd4322f3e30723f2bb8874c">get_projected_phase_fraction_gradient_solution</a> ()</td></tr>
 <tr class="separator:aa7b23d559fd4322f3e30723f2bb8874c"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a711ce06986740c92d8b5ac15bfd49964" id="r_a711ce06986740c92d8b5ac15bfd49964"><td class="memItemLeft" align="right" valign="top">const <a class="el" href="vector_8h.html#a4ea4005d75c88e60bee47d4e79a13a39">GlobalVectorType</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classMultiphysicsInterface.html#a711ce06986740c92d8b5ac15bfd49964">get_curvature_solution</a> ()</td></tr>
@@ -154,32 +154,32 @@ Public Member Functions</h2></td></tr>
 <tr class="separator:a42dda4a84b218a2ab19ba6ed323ad283"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ac76eac3059bd87155d3583136b760756" id="r_ac76eac3059bd87155d3583136b760756"><td class="memItemLeft" align="right" valign="top">const DoFHandler&lt; dim &gt; &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classMultiphysicsInterface.html#ac76eac3059bd87155d3583136b760756">get_projected_phase_fraction_gradient_dof_handler</a> ()</td></tr>
 <tr class="separator:ac76eac3059bd87155d3583136b760756"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ae9a2eca5278a1446e60dbd44421dbdb7" id="r_ae9a2eca5278a1446e60dbd44421dbdb7"><td class="memItemLeft" align="right" valign="top"><a class="el" href="classShape.html">Shape</a>&lt; dim &gt; *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classMultiphysicsInterface.html#ae9a2eca5278a1446e60dbd44421dbdb7">get_immersed_solid_shape</a> ()</td></tr>
-<tr class="separator:ae9a2eca5278a1446e60dbd44421dbdb7"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a75edde8a3131755c75813bee6ce03ebc" id="r_a75edde8a3131755c75813bee6ce03ebc"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classMultiphysicsInterface.html#a75edde8a3131755c75813bee6ce03ebc">set_immersed_solid_shape</a> (<a class="el" href="classShape.html">Shape</a>&lt; dim &gt; *shape)</td></tr>
-<tr class="separator:a75edde8a3131755c75813bee6ce03ebc"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a60aba0e53d5a34542d0536df8da00b06" id="r_a60aba0e53d5a34542d0536df8da00b06"><td class="memItemLeft" align="right" valign="top">std::vector&lt; <a class="el" href="vector_8h.html#a4ea4005d75c88e60bee47d4e79a13a39">GlobalVectorType</a> &gt; *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classMultiphysicsInterface.html#a60aba0e53d5a34542d0536df8da00b06">get_previous_solutions</a> (const <a class="el" href="multiphysics_8h.html#ae14bb720bc9a37edc36fb8d90df712c2">PhysicsID</a> physics_id)</td></tr>
-<tr class="separator:a60aba0e53d5a34542d0536df8da00b06"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:af5a119ef873521c61eb71c71cebbe971" id="r_af5a119ef873521c61eb71c71cebbe971"><td class="memItemLeft" align="right" valign="top">std::vector&lt; <a class="el" href="vector_8h.html#ac71ba75c5119edae876800f9e80b59e7">GlobalBlockVectorType</a> &gt; *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classMultiphysicsInterface.html#af5a119ef873521c61eb71c71cebbe971">get_block_previous_solutions</a> (const <a class="el" href="multiphysics_8h.html#ae14bb720bc9a37edc36fb8d90df712c2">PhysicsID</a> physics_id)</td></tr>
-<tr class="separator:af5a119ef873521c61eb71c71cebbe971"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aa1c6b6666b773be05fe6027c5dcbe353" id="r_aa1c6b6666b773be05fe6027c5dcbe353"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classMultiphysicsInterface.html#aa1c6b6666b773be05fe6027c5dcbe353">set_dof_handler</a> (const <a class="el" href="multiphysics_8h.html#ae14bb720bc9a37edc36fb8d90df712c2">PhysicsID</a> physics_id, DoFHandler&lt; dim &gt; *dof_handler)</td></tr>
-<tr class="separator:aa1c6b6666b773be05fe6027c5dcbe353"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a3dc11df1406b2d74d14437ddea4f45f7" id="r_a3dc11df1406b2d74d14437ddea4f45f7"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classMultiphysicsInterface.html#a3dc11df1406b2d74d14437ddea4f45f7">set_solid</a> (std::vector&lt; std::shared_ptr&lt; <a class="el" href="classSolidBase.html">SolidBase</a>&lt; dim, dim &gt; &gt; &gt; *solids_input)</td></tr>
-<tr class="separator:a3dc11df1406b2d74d14437ddea4f45f7"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a24c4630b62ccf275391781c0138d2ff5" id="r_a24c4630b62ccf275391781c0138d2ff5"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classMultiphysicsInterface.html#a24c4630b62ccf275391781c0138d2ff5">set_solution</a> (const <a class="el" href="multiphysics_8h.html#ae14bb720bc9a37edc36fb8d90df712c2">PhysicsID</a> physics_id, <a class="el" href="vector_8h.html#a4ea4005d75c88e60bee47d4e79a13a39">GlobalVectorType</a> *solution_vector)</td></tr>
-<tr class="separator:a24c4630b62ccf275391781c0138d2ff5"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a9416751da885340423298ad0fcca72c6" id="r_a9416751da885340423298ad0fcca72c6"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classMultiphysicsInterface.html#a9416751da885340423298ad0fcca72c6">set_filtered_solution</a> (const <a class="el" href="multiphysics_8h.html#ae14bb720bc9a37edc36fb8d90df712c2">PhysicsID</a> physics_id, <a class="el" href="vector_8h.html#a4ea4005d75c88e60bee47d4e79a13a39">GlobalVectorType</a> *filtered_solution_vector)</td></tr>
-<tr class="separator:a9416751da885340423298ad0fcca72c6"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a791f019b8c5706bfe27dd903813e7f6d" id="r_a791f019b8c5706bfe27dd903813e7f6d"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classMultiphysicsInterface.html#a791f019b8c5706bfe27dd903813e7f6d">set_time_average_solution</a> (const <a class="el" href="multiphysics_8h.html#ae14bb720bc9a37edc36fb8d90df712c2">PhysicsID</a> physics_id, <a class="el" href="vector_8h.html#a4ea4005d75c88e60bee47d4e79a13a39">GlobalVectorType</a> *solution_vector)</td></tr>
-<tr class="separator:a791f019b8c5706bfe27dd903813e7f6d"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ac15d59229a7589efa7e45d29a2baf0b4" id="r_ac15d59229a7589efa7e45d29a2baf0b4"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classMultiphysicsInterface.html#ac15d59229a7589efa7e45d29a2baf0b4">set_block_solution</a> (const <a class="el" href="multiphysics_8h.html#ae14bb720bc9a37edc36fb8d90df712c2">PhysicsID</a> physics_id, <a class="el" href="vector_8h.html#ac71ba75c5119edae876800f9e80b59e7">GlobalBlockVectorType</a> *solution_vector)</td></tr>
-<tr class="separator:ac15d59229a7589efa7e45d29a2baf0b4"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aca86184bb948dd4ecddf696300e84bcf" id="r_aca86184bb948dd4ecddf696300e84bcf"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classMultiphysicsInterface.html#aca86184bb948dd4ecddf696300e84bcf">set_block_time_average_solution</a> (const <a class="el" href="multiphysics_8h.html#ae14bb720bc9a37edc36fb8d90df712c2">PhysicsID</a> physics_id, <a class="el" href="vector_8h.html#ac71ba75c5119edae876800f9e80b59e7">GlobalBlockVectorType</a> *solution_vector)</td></tr>
-<tr class="separator:aca86184bb948dd4ecddf696300e84bcf"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aa9254dbc7d713b2034b5f1fdd64de62a" id="r_aa9254dbc7d713b2034b5f1fdd64de62a"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classMultiphysicsInterface.html#aa9254dbc7d713b2034b5f1fdd64de62a">set_previous_solutions</a> (const <a class="el" href="multiphysics_8h.html#ae14bb720bc9a37edc36fb8d90df712c2">PhysicsID</a> physics_id, std::vector&lt; <a class="el" href="vector_8h.html#a4ea4005d75c88e60bee47d4e79a13a39">GlobalVectorType</a> &gt; *previous_solutions_vector)</td></tr>
-<tr class="separator:aa9254dbc7d713b2034b5f1fdd64de62a"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aa2e183b7ce22521036bdd9ab14107cf1" id="r_aa2e183b7ce22521036bdd9ab14107cf1"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classMultiphysicsInterface.html#aa2e183b7ce22521036bdd9ab14107cf1">set_block_previous_solutions</a> (const <a class="el" href="multiphysics_8h.html#ae14bb720bc9a37edc36fb8d90df712c2">PhysicsID</a> physics_id, std::vector&lt; <a class="el" href="vector_8h.html#ac71ba75c5119edae876800f9e80b59e7">GlobalBlockVectorType</a> &gt; *previous_solutions_vector)</td></tr>
-<tr class="separator:aa2e183b7ce22521036bdd9ab14107cf1"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a80bd632a48bb2f058693459dd6f047c6" id="r_a80bd632a48bb2f058693459dd6f047c6"><td class="memItemLeft" align="right" valign="top">std::shared_ptr&lt; <a class="el" href="classShape.html">Shape</a>&lt; dim &gt; &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classMultiphysicsInterface.html#a80bd632a48bb2f058693459dd6f047c6">get_immersed_solid_shape</a> ()</td></tr>
+<tr class="separator:a80bd632a48bb2f058693459dd6f047c6"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a616d9aa02101f700b767cc740bfb1ed9" id="r_a616d9aa02101f700b767cc740bfb1ed9"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classMultiphysicsInterface.html#a616d9aa02101f700b767cc740bfb1ed9">set_immersed_solid_shape</a> (const std::shared_ptr&lt; <a class="el" href="classShape.html">Shape</a>&lt; dim &gt; &gt; &amp;shape)</td></tr>
+<tr class="separator:a616d9aa02101f700b767cc740bfb1ed9"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a29eef6b597d37b88d696f43c36f16efb" id="r_a29eef6b597d37b88d696f43c36f16efb"><td class="memItemLeft" align="right" valign="top">const std::vector&lt; <a class="el" href="vector_8h.html#a4ea4005d75c88e60bee47d4e79a13a39">GlobalVectorType</a> &gt; &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classMultiphysicsInterface.html#a29eef6b597d37b88d696f43c36f16efb">get_previous_solutions</a> (const <a class="el" href="multiphysics_8h.html#ae14bb720bc9a37edc36fb8d90df712c2">PhysicsID</a> physics_id)</td></tr>
+<tr class="separator:a29eef6b597d37b88d696f43c36f16efb"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a261cc6dc5d9d0852cbf1e171ec9e6d50" id="r_a261cc6dc5d9d0852cbf1e171ec9e6d50"><td class="memItemLeft" align="right" valign="top">const std::vector&lt; <a class="el" href="vector_8h.html#ac71ba75c5119edae876800f9e80b59e7">GlobalBlockVectorType</a> &gt; &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classMultiphysicsInterface.html#a261cc6dc5d9d0852cbf1e171ec9e6d50">get_block_previous_solutions</a> (const <a class="el" href="multiphysics_8h.html#ae14bb720bc9a37edc36fb8d90df712c2">PhysicsID</a> physics_id)</td></tr>
+<tr class="separator:a261cc6dc5d9d0852cbf1e171ec9e6d50"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ab4f728888762ada6ebe78f482f5c28e5" id="r_ab4f728888762ada6ebe78f482f5c28e5"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classMultiphysicsInterface.html#ab4f728888762ada6ebe78f482f5c28e5">set_dof_handler</a> (const <a class="el" href="multiphysics_8h.html#ae14bb720bc9a37edc36fb8d90df712c2">PhysicsID</a> physics_id, std::shared_ptr&lt; DoFHandler&lt; dim &gt; &gt; dof_handler)</td></tr>
+<tr class="separator:ab4f728888762ada6ebe78f482f5c28e5"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a1134906af9106de978d4bbf4c83ecaab" id="r_a1134906af9106de978d4bbf4c83ecaab"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classMultiphysicsInterface.html#a1134906af9106de978d4bbf4c83ecaab">set_solid</a> (std::shared_ptr&lt; std::vector&lt; std::shared_ptr&lt; <a class="el" href="classSolidBase.html">SolidBase</a>&lt; dim, dim &gt; &gt; &gt; &gt; solids_input)</td></tr>
+<tr class="separator:a1134906af9106de978d4bbf4c83ecaab"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ac8b057943852712ffbaac1f9b4fb03ce" id="r_ac8b057943852712ffbaac1f9b4fb03ce"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classMultiphysicsInterface.html#ac8b057943852712ffbaac1f9b4fb03ce">set_solution</a> (const <a class="el" href="multiphysics_8h.html#ae14bb720bc9a37edc36fb8d90df712c2">PhysicsID</a> physics_id, std::shared_ptr&lt; <a class="el" href="vector_8h.html#a4ea4005d75c88e60bee47d4e79a13a39">GlobalVectorType</a> &gt; solution_vector)</td></tr>
+<tr class="separator:ac8b057943852712ffbaac1f9b4fb03ce"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a613884c26d6f9f5339a7725ca481c283" id="r_a613884c26d6f9f5339a7725ca481c283"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classMultiphysicsInterface.html#a613884c26d6f9f5339a7725ca481c283">set_filtered_solution</a> (const <a class="el" href="multiphysics_8h.html#ae14bb720bc9a37edc36fb8d90df712c2">PhysicsID</a> physics_id, std::shared_ptr&lt; <a class="el" href="vector_8h.html#a4ea4005d75c88e60bee47d4e79a13a39">GlobalVectorType</a> &gt; filtered_solution_vector)</td></tr>
+<tr class="separator:a613884c26d6f9f5339a7725ca481c283"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a1cea173b3bd2e84d85b64f2510a48894" id="r_a1cea173b3bd2e84d85b64f2510a48894"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classMultiphysicsInterface.html#a1cea173b3bd2e84d85b64f2510a48894">set_time_average_solution</a> (const <a class="el" href="multiphysics_8h.html#ae14bb720bc9a37edc36fb8d90df712c2">PhysicsID</a> physics_id, std::shared_ptr&lt; <a class="el" href="vector_8h.html#a4ea4005d75c88e60bee47d4e79a13a39">GlobalVectorType</a> &gt; solution_vector)</td></tr>
+<tr class="separator:a1cea173b3bd2e84d85b64f2510a48894"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a471267e5faca7dfb58c35a6b73265b82" id="r_a471267e5faca7dfb58c35a6b73265b82"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classMultiphysicsInterface.html#a471267e5faca7dfb58c35a6b73265b82">set_block_solution</a> (const <a class="el" href="multiphysics_8h.html#ae14bb720bc9a37edc36fb8d90df712c2">PhysicsID</a> physics_id, std::shared_ptr&lt; <a class="el" href="vector_8h.html#ac71ba75c5119edae876800f9e80b59e7">GlobalBlockVectorType</a> &gt; solution_vector)</td></tr>
+<tr class="separator:a471267e5faca7dfb58c35a6b73265b82"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a405492fb5d4914c227465c228bec90a6" id="r_a405492fb5d4914c227465c228bec90a6"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classMultiphysicsInterface.html#a405492fb5d4914c227465c228bec90a6">set_block_time_average_solution</a> (const <a class="el" href="multiphysics_8h.html#ae14bb720bc9a37edc36fb8d90df712c2">PhysicsID</a> physics_id, std::shared_ptr&lt; <a class="el" href="vector_8h.html#ac71ba75c5119edae876800f9e80b59e7">GlobalBlockVectorType</a> &gt; solution_vector)</td></tr>
+<tr class="separator:a405492fb5d4914c227465c228bec90a6"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a9f10c6494fee2885dc980032101b5a16" id="r_a9f10c6494fee2885dc980032101b5a16"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classMultiphysicsInterface.html#a9f10c6494fee2885dc980032101b5a16">set_previous_solutions</a> (const <a class="el" href="multiphysics_8h.html#ae14bb720bc9a37edc36fb8d90df712c2">PhysicsID</a> physics_id, std::shared_ptr&lt; std::vector&lt; <a class="el" href="vector_8h.html#a4ea4005d75c88e60bee47d4e79a13a39">GlobalVectorType</a> &gt; &gt; previous_solutions_vector)</td></tr>
+<tr class="separator:a9f10c6494fee2885dc980032101b5a16"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a6bbd06530cf8e6fdf80e1afbbc65a7a1" id="r_a6bbd06530cf8e6fdf80e1afbbc65a7a1"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classMultiphysicsInterface.html#a6bbd06530cf8e6fdf80e1afbbc65a7a1">set_block_previous_solutions</a> (const <a class="el" href="multiphysics_8h.html#ae14bb720bc9a37edc36fb8d90df712c2">PhysicsID</a> physics_id, std::shared_ptr&lt; std::vector&lt; <a class="el" href="vector_8h.html#ac71ba75c5119edae876800f9e80b59e7">GlobalBlockVectorType</a> &gt; &gt; previous_solutions_vector)</td></tr>
+<tr class="separator:a6bbd06530cf8e6fdf80e1afbbc65a7a1"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a15cf83b4790297dab4cc6cf32a70e5c6" id="r_a15cf83b4790297dab4cc6cf32a70e5c6"><td class="memItemLeft" align="right" valign="top">virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classMultiphysicsInterface.html#a15cf83b4790297dab4cc6cf32a70e5c6">compute_kelly</a> (const std::pair&lt; const <a class="el" href="multiphysics_8h.html#a2cbb04ef215561a69b48772159577fdd">Variable</a>, <a class="el" href="structParameters_1_1MultipleAdaptationParameters.html">Parameters::MultipleAdaptationParameters</a> &gt; &amp;ivar, dealii::Vector&lt; float &gt; &amp;estimated_error_per_cell)</td></tr>
 <tr class="separator:a15cf83b4790297dab4cc6cf32a70e5c6"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aea4b7d6af2a1da9e935a4e40e524ab8e" id="r_aea4b7d6af2a1da9e935a4e40e524ab8e"><td class="memItemLeft" align="right" valign="top">virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classMultiphysicsInterface.html#aea4b7d6af2a1da9e935a4e40e524ab8e">write_checkpoint</a> ()</td></tr>
@@ -208,32 +208,32 @@ Private Attributes</h2></td></tr>
 <tr class="separator:a0f9da9403c8164b4f59e67bad6ef5d1a"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a74187d3ca9eb041d14f6a7bd27cfa3ba" id="r_a74187d3ca9eb041d14f6a7bd27cfa3ba"><td class="memItemLeft" align="right" valign="top">std::map&lt; <a class="el" href="multiphysics_8h.html#ae14bb720bc9a37edc36fb8d90df712c2">PhysicsID</a>, std::shared_ptr&lt; <a class="el" href="classAuxiliaryPhysics.html">AuxiliaryPhysics</a>&lt; dim, <a class="el" href="vector_8h.html#ac71ba75c5119edae876800f9e80b59e7">GlobalBlockVectorType</a> &gt; &gt; &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classMultiphysicsInterface.html#a74187d3ca9eb041d14f6a7bd27cfa3ba">block_physics</a></td></tr>
 <tr class="separator:a74187d3ca9eb041d14f6a7bd27cfa3ba"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a9a1fadb4782590fe0484a4b63ef63639" id="r_a9a1fadb4782590fe0484a4b63ef63639"><td class="memItemLeft" align="right" valign="top">std::map&lt; <a class="el" href="multiphysics_8h.html#ae14bb720bc9a37edc36fb8d90df712c2">PhysicsID</a>, DoFHandler&lt; dim &gt; * &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classMultiphysicsInterface.html#a9a1fadb4782590fe0484a4b63ef63639">physics_dof_handler</a></td></tr>
-<tr class="separator:a9a1fadb4782590fe0484a4b63ef63639"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a92263afddc12c8542f4bdfe463533c8b" id="r_a92263afddc12c8542f4bdfe463533c8b"><td class="memItemLeft" align="right" valign="top">std::vector&lt; std::shared_ptr&lt; <a class="el" href="classSolidBase.html">SolidBase</a>&lt; dim, dim &gt; &gt; &gt; *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classMultiphysicsInterface.html#a92263afddc12c8542f4bdfe463533c8b">solids</a></td></tr>
-<tr class="separator:a92263afddc12c8542f4bdfe463533c8b"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a04e672903a4964df6e590d3572ada1bd" id="r_a04e672903a4964df6e590d3572ada1bd"><td class="memItemLeft" align="right" valign="top">std::map&lt; <a class="el" href="multiphysics_8h.html#ae14bb720bc9a37edc36fb8d90df712c2">PhysicsID</a>, <a class="el" href="vector_8h.html#a4ea4005d75c88e60bee47d4e79a13a39">GlobalVectorType</a> * &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classMultiphysicsInterface.html#a04e672903a4964df6e590d3572ada1bd">physics_filtered_solutions</a></td></tr>
-<tr class="separator:a04e672903a4964df6e590d3572ada1bd"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a8b3431f89bc99bec1238987645d53bf2" id="r_a8b3431f89bc99bec1238987645d53bf2"><td class="memItemLeft" align="right" valign="top">std::map&lt; <a class="el" href="multiphysics_8h.html#ae14bb720bc9a37edc36fb8d90df712c2">PhysicsID</a>, <a class="el" href="vector_8h.html#ac71ba75c5119edae876800f9e80b59e7">GlobalBlockVectorType</a> * &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classMultiphysicsInterface.html#a8b3431f89bc99bec1238987645d53bf2">block_physics_filtered_solutions</a></td></tr>
-<tr class="separator:a8b3431f89bc99bec1238987645d53bf2"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aa02da295791592960ed3e59b78fe7946" id="r_aa02da295791592960ed3e59b78fe7946"><td class="memItemLeft" align="right" valign="top">std::map&lt; <a class="el" href="multiphysics_8h.html#ae14bb720bc9a37edc36fb8d90df712c2">PhysicsID</a>, <a class="el" href="vector_8h.html#a4ea4005d75c88e60bee47d4e79a13a39">GlobalVectorType</a> * &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classMultiphysicsInterface.html#aa02da295791592960ed3e59b78fe7946">physics_solutions</a></td></tr>
-<tr class="separator:aa02da295791592960ed3e59b78fe7946"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ad2d01cb26d8da7ff60437d74a3cbae12" id="r_ad2d01cb26d8da7ff60437d74a3cbae12"><td class="memItemLeft" align="right" valign="top">std::map&lt; <a class="el" href="multiphysics_8h.html#ae14bb720bc9a37edc36fb8d90df712c2">PhysicsID</a>, <a class="el" href="vector_8h.html#ac71ba75c5119edae876800f9e80b59e7">GlobalBlockVectorType</a> * &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classMultiphysicsInterface.html#ad2d01cb26d8da7ff60437d74a3cbae12">block_physics_solutions</a></td></tr>
-<tr class="separator:ad2d01cb26d8da7ff60437d74a3cbae12"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ae2bc1da31500c52f90cc89adf544ed8e" id="r_ae2bc1da31500c52f90cc89adf544ed8e"><td class="memItemLeft" align="right" valign="top">std::map&lt; <a class="el" href="multiphysics_8h.html#ae14bb720bc9a37edc36fb8d90df712c2">PhysicsID</a>, std::vector&lt; <a class="el" href="vector_8h.html#a4ea4005d75c88e60bee47d4e79a13a39">GlobalVectorType</a> &gt; * &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classMultiphysicsInterface.html#ae2bc1da31500c52f90cc89adf544ed8e">physics_previous_solutions</a></td></tr>
-<tr class="separator:ae2bc1da31500c52f90cc89adf544ed8e"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a56a25c6b91ea8e4efb8663fed633826d" id="r_a56a25c6b91ea8e4efb8663fed633826d"><td class="memItemLeft" align="right" valign="top">std::map&lt; <a class="el" href="multiphysics_8h.html#ae14bb720bc9a37edc36fb8d90df712c2">PhysicsID</a>, std::vector&lt; <a class="el" href="vector_8h.html#ac71ba75c5119edae876800f9e80b59e7">GlobalBlockVectorType</a> &gt; * &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classMultiphysicsInterface.html#a56a25c6b91ea8e4efb8663fed633826d">block_physics_previous_solutions</a></td></tr>
-<tr class="separator:a56a25c6b91ea8e4efb8663fed633826d"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a6679a79c963fb98bec7b41d2ac057248" id="r_a6679a79c963fb98bec7b41d2ac057248"><td class="memItemLeft" align="right" valign="top">std::map&lt; <a class="el" href="multiphysics_8h.html#ae14bb720bc9a37edc36fb8d90df712c2">PhysicsID</a>, <a class="el" href="vector_8h.html#a4ea4005d75c88e60bee47d4e79a13a39">GlobalVectorType</a> * &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classMultiphysicsInterface.html#a6679a79c963fb98bec7b41d2ac057248">physics_time_average_solutions</a></td></tr>
-<tr class="separator:a6679a79c963fb98bec7b41d2ac057248"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a1e8467fbb94062ce3ffadeb98c2ff6e2" id="r_a1e8467fbb94062ce3ffadeb98c2ff6e2"><td class="memItemLeft" align="right" valign="top">std::map&lt; <a class="el" href="multiphysics_8h.html#ae14bb720bc9a37edc36fb8d90df712c2">PhysicsID</a>, <a class="el" href="vector_8h.html#ac71ba75c5119edae876800f9e80b59e7">GlobalBlockVectorType</a> * &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classMultiphysicsInterface.html#a1e8467fbb94062ce3ffadeb98c2ff6e2">block_physics_time_average_solutions</a></td></tr>
-<tr class="separator:a1e8467fbb94062ce3ffadeb98c2ff6e2"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ac5aebf5bf8d7c461762f955fbdc55150" id="r_ac5aebf5bf8d7c461762f955fbdc55150"><td class="memItemLeft" align="right" valign="top"><a class="el" href="classShape.html">Shape</a>&lt; dim &gt; *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classMultiphysicsInterface.html#ac5aebf5bf8d7c461762f955fbdc55150">immersed_solid_shape</a></td></tr>
-<tr class="separator:ac5aebf5bf8d7c461762f955fbdc55150"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aa3d5eacc84646adc0357fe17e75e6f72" id="r_aa3d5eacc84646adc0357fe17e75e6f72"><td class="memItemLeft" align="right" valign="top">std::map&lt; <a class="el" href="multiphysics_8h.html#ae14bb720bc9a37edc36fb8d90df712c2">PhysicsID</a>, <a class="el" href="vector_8h.html#a4ea4005d75c88e60bee47d4e79a13a39">GlobalVectorType</a> * &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classMultiphysicsInterface.html#aa3d5eacc84646adc0357fe17e75e6f72">physics_solutions_m1</a></td></tr>
-<tr class="separator:aa3d5eacc84646adc0357fe17e75e6f72"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:abb30191ab6f77047514aa794e4abdbc4" id="r_abb30191ab6f77047514aa794e4abdbc4"><td class="memItemLeft" align="right" valign="top">std::map&lt; <a class="el" href="multiphysics_8h.html#ae14bb720bc9a37edc36fb8d90df712c2">PhysicsID</a>, <a class="el" href="vector_8h.html#ac71ba75c5119edae876800f9e80b59e7">GlobalBlockVectorType</a> * &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classMultiphysicsInterface.html#abb30191ab6f77047514aa794e4abdbc4">block_physics_solutions_m1</a></td></tr>
-<tr class="separator:abb30191ab6f77047514aa794e4abdbc4"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a4bbdda6e9147c97c561e5ba1fc555110" id="r_a4bbdda6e9147c97c561e5ba1fc555110"><td class="memItemLeft" align="right" valign="top">std::map&lt; <a class="el" href="multiphysics_8h.html#ae14bb720bc9a37edc36fb8d90df712c2">PhysicsID</a>, std::shared_ptr&lt; DoFHandler&lt; dim &gt; &gt; &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classMultiphysicsInterface.html#a4bbdda6e9147c97c561e5ba1fc555110">physics_dof_handler</a></td></tr>
+<tr class="separator:a4bbdda6e9147c97c561e5ba1fc555110"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a25fa7f9cc6c3587be450c7e21be5aa97" id="r_a25fa7f9cc6c3587be450c7e21be5aa97"><td class="memItemLeft" align="right" valign="top">std::shared_ptr&lt; std::vector&lt; std::shared_ptr&lt; <a class="el" href="classSolidBase.html">SolidBase</a>&lt; dim, dim &gt; &gt; &gt; &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classMultiphysicsInterface.html#a25fa7f9cc6c3587be450c7e21be5aa97">solids</a></td></tr>
+<tr class="separator:a25fa7f9cc6c3587be450c7e21be5aa97"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aa439052519abb5f6399ee0e1c2938131" id="r_aa439052519abb5f6399ee0e1c2938131"><td class="memItemLeft" align="right" valign="top">std::map&lt; <a class="el" href="multiphysics_8h.html#ae14bb720bc9a37edc36fb8d90df712c2">PhysicsID</a>, std::shared_ptr&lt; <a class="el" href="vector_8h.html#a4ea4005d75c88e60bee47d4e79a13a39">GlobalVectorType</a> &gt; &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classMultiphysicsInterface.html#aa439052519abb5f6399ee0e1c2938131">physics_solutions</a></td></tr>
+<tr class="separator:aa439052519abb5f6399ee0e1c2938131"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aebc9b720836728f99f2824e876a4084a" id="r_aebc9b720836728f99f2824e876a4084a"><td class="memItemLeft" align="right" valign="top">std::map&lt; <a class="el" href="multiphysics_8h.html#ae14bb720bc9a37edc36fb8d90df712c2">PhysicsID</a>, std::shared_ptr&lt; <a class="el" href="vector_8h.html#ac71ba75c5119edae876800f9e80b59e7">GlobalBlockVectorType</a> &gt; &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classMultiphysicsInterface.html#aebc9b720836728f99f2824e876a4084a">block_physics_solutions</a></td></tr>
+<tr class="separator:aebc9b720836728f99f2824e876a4084a"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ad4a78f2b0c33c9e39d2e936ee5a4b12f" id="r_ad4a78f2b0c33c9e39d2e936ee5a4b12f"><td class="memItemLeft" align="right" valign="top">std::map&lt; <a class="el" href="multiphysics_8h.html#ae14bb720bc9a37edc36fb8d90df712c2">PhysicsID</a>, std::shared_ptr&lt; <a class="el" href="vector_8h.html#a4ea4005d75c88e60bee47d4e79a13a39">GlobalVectorType</a> &gt; &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classMultiphysicsInterface.html#ad4a78f2b0c33c9e39d2e936ee5a4b12f">physics_filtered_solutions</a></td></tr>
+<tr class="separator:ad4a78f2b0c33c9e39d2e936ee5a4b12f"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ae797f2b715521715c3e9d403b373dc37" id="r_ae797f2b715521715c3e9d403b373dc37"><td class="memItemLeft" align="right" valign="top">std::map&lt; <a class="el" href="multiphysics_8h.html#ae14bb720bc9a37edc36fb8d90df712c2">PhysicsID</a>, std::shared_ptr&lt; <a class="el" href="vector_8h.html#a4ea4005d75c88e60bee47d4e79a13a39">GlobalVectorType</a> &gt; &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classMultiphysicsInterface.html#ae797f2b715521715c3e9d403b373dc37">block_physics_filtered_solutions</a></td></tr>
+<tr class="separator:ae797f2b715521715c3e9d403b373dc37"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a8f08573a799a221f9619eb181477d4b4" id="r_a8f08573a799a221f9619eb181477d4b4"><td class="memItemLeft" align="right" valign="top">std::map&lt; <a class="el" href="multiphysics_8h.html#ae14bb720bc9a37edc36fb8d90df712c2">PhysicsID</a>, std::shared_ptr&lt; std::vector&lt; <a class="el" href="vector_8h.html#a4ea4005d75c88e60bee47d4e79a13a39">GlobalVectorType</a> &gt; &gt; &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classMultiphysicsInterface.html#a8f08573a799a221f9619eb181477d4b4">physics_previous_solutions</a></td></tr>
+<tr class="separator:a8f08573a799a221f9619eb181477d4b4"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ac7631c8e804c81588dd5279da1249db1" id="r_ac7631c8e804c81588dd5279da1249db1"><td class="memItemLeft" align="right" valign="top">std::map&lt; <a class="el" href="multiphysics_8h.html#ae14bb720bc9a37edc36fb8d90df712c2">PhysicsID</a>, std::shared_ptr&lt; std::vector&lt; <a class="el" href="vector_8h.html#ac71ba75c5119edae876800f9e80b59e7">GlobalBlockVectorType</a> &gt; &gt; &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classMultiphysicsInterface.html#ac7631c8e804c81588dd5279da1249db1">block_physics_previous_solutions</a></td></tr>
+<tr class="separator:ac7631c8e804c81588dd5279da1249db1"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a6628f168a5a3ac7bb5a120242ec49ced" id="r_a6628f168a5a3ac7bb5a120242ec49ced"><td class="memItemLeft" align="right" valign="top">std::map&lt; <a class="el" href="multiphysics_8h.html#ae14bb720bc9a37edc36fb8d90df712c2">PhysicsID</a>, std::shared_ptr&lt; <a class="el" href="vector_8h.html#a4ea4005d75c88e60bee47d4e79a13a39">GlobalVectorType</a> &gt; &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classMultiphysicsInterface.html#a6628f168a5a3ac7bb5a120242ec49ced">physics_time_average_solutions</a></td></tr>
+<tr class="separator:a6628f168a5a3ac7bb5a120242ec49ced"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a10acdb7560891c1367365f9e5d3836a0" id="r_a10acdb7560891c1367365f9e5d3836a0"><td class="memItemLeft" align="right" valign="top">std::map&lt; <a class="el" href="multiphysics_8h.html#ae14bb720bc9a37edc36fb8d90df712c2">PhysicsID</a>, std::shared_ptr&lt; <a class="el" href="vector_8h.html#ac71ba75c5119edae876800f9e80b59e7">GlobalBlockVectorType</a> &gt; &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classMultiphysicsInterface.html#a10acdb7560891c1367365f9e5d3836a0">block_physics_time_average_solutions</a></td></tr>
+<tr class="separator:a10acdb7560891c1367365f9e5d3836a0"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ae4661fa66dae071e667ec73a2406cd0a" id="r_ae4661fa66dae071e667ec73a2406cd0a"><td class="memItemLeft" align="right" valign="top">std::shared_ptr&lt; <a class="el" href="classShape.html">Shape</a>&lt; dim &gt; &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classMultiphysicsInterface.html#ae4661fa66dae071e667ec73a2406cd0a">immersed_solid_shape</a></td></tr>
+<tr class="separator:ae4661fa66dae071e667ec73a2406cd0a"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a6a70c3d97f787d435f4d79c3bb1b7129" id="r_a6a70c3d97f787d435f4d79c3bb1b7129"><td class="memItemLeft" align="right" valign="top">std::map&lt; <a class="el" href="multiphysics_8h.html#ae14bb720bc9a37edc36fb8d90df712c2">PhysicsID</a>, std::shared_ptr&lt; <a class="el" href="vector_8h.html#a4ea4005d75c88e60bee47d4e79a13a39">GlobalVectorType</a> &gt; &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classMultiphysicsInterface.html#a6a70c3d97f787d435f4d79c3bb1b7129">physics_solutions_m1</a></td></tr>
+<tr class="separator:a6a70c3d97f787d435f4d79c3bb1b7129"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a3bbb64cd917794e3323b09b3daa29c35" id="r_a3bbb64cd917794e3323b09b3daa29c35"><td class="memItemLeft" align="right" valign="top">std::map&lt; <a class="el" href="multiphysics_8h.html#ae14bb720bc9a37edc36fb8d90df712c2">PhysicsID</a>, std::shared_ptr&lt; <a class="el" href="vector_8h.html#ac71ba75c5119edae876800f9e80b59e7">GlobalBlockVectorType</a> &gt; &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classMultiphysicsInterface.html#a3bbb64cd917794e3323b09b3daa29c35">block_physics_solutions_m1</a></td></tr>
+<tr class="separator:a3bbb64cd917794e3323b09b3daa29c35"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><div class="compoundTemplParams">template&lt;int dim&gt;<br />
@@ -284,7 +284,7 @@ template&lt;int dim&gt; </div>
 
 <p class="definition">Definition at line <a class="el" href="multiphysics__interface_8cc_source.html#l00070">70</a> of file <a class="el" href="multiphysics__interface_8cc_source.html">multiphysics_interface.cc</a>.</p>
 
-<p class="reference">References <a class="el" href="multiphysics__interface_8h_source.html#l00824">MultiphysicsInterface&lt; dim &gt;::active_physics</a>, <a class="el" href="multiphysics_8h_source.html#l00013">cahn_hilliard</a>, <a class="el" href="parameters__multiphysics_8h_source.html#l00394">Parameters::Multiphysics::cahn_hilliard</a>, <a class="el" href="multiphysics_8h_source.html#l00009">fluid_dynamics</a>, <a class="el" href="multiphysics_8h_source.html#l00010">heat_transfer</a>, <a class="el" href="parameters__multiphysics_8h_source.html#l00391">Parameters::Multiphysics::heat_transfer</a>, <a class="el" href="multiphysics__interface_8cc_source.html#l00236">MultiphysicsInterface&lt; dim &gt;::inspect_multiphysics_models_dependencies()</a>, <a class="el" href="simulation__parameters_8h_source.html#l00027">SimulationParameters&lt; dim &gt;::linear_solver</a>, <a class="el" href="multiphysics__interface_8h_source.html#l00819">MultiphysicsInterface&lt; dim &gt;::multiphysics_parameters</a>, <a class="el" href="simulation__parameters_8h_source.html#l00028">SimulationParameters&lt; dim &gt;::non_linear_solver</a>, <a class="el" href="multiphysics__interface_8h_source.html#l00837">MultiphysicsInterface&lt; dim &gt;::physics</a>, <a class="el" href="namespaceParameters.html#a91f1943180a615249347b911b0ed3919a556966c7830465dc4623d62e32cec31d">Parameters::quiet</a>, <a class="el" href="multiphysics_8h_source.html#l00011">tracer</a>, <a class="el" href="parameters__multiphysics_8h_source.html#l00392">Parameters::Multiphysics::tracer</a>, <a class="el" href="namespaceParameters.html#a91f1943180a615249347b911b0ed3919a2c7aea4237e25b4f8ee3b0bf77d6fed0">Parameters::verbose</a>, <a class="el" href="multiphysics__interface_8h_source.html#l00820">MultiphysicsInterface&lt; dim &gt;::verbosity</a>, <a class="el" href="multiphysics_8h_source.html#l00012">VOF</a>, and <a class="el" href="parameters__multiphysics_8h_source.html#l00393">Parameters::Multiphysics::VOF</a>.</p>
+<p class="reference">References <a class="el" href="multiphysics__interface_8h_source.html#l00865">MultiphysicsInterface&lt; dim &gt;::active_physics</a>, <a class="el" href="multiphysics_8h_source.html#l00013">cahn_hilliard</a>, <a class="el" href="parameters__multiphysics_8h_source.html#l00394">Parameters::Multiphysics::cahn_hilliard</a>, <a class="el" href="multiphysics_8h_source.html#l00009">fluid_dynamics</a>, <a class="el" href="multiphysics_8h_source.html#l00010">heat_transfer</a>, <a class="el" href="parameters__multiphysics_8h_source.html#l00391">Parameters::Multiphysics::heat_transfer</a>, <a class="el" href="multiphysics__interface_8cc_source.html#l00237">MultiphysicsInterface&lt; dim &gt;::inspect_multiphysics_models_dependencies()</a>, <a class="el" href="simulation__parameters_8h_source.html#l00027">SimulationParameters&lt; dim &gt;::linear_solver</a>, <a class="el" href="multiphysics__interface_8h_source.html#l00860">MultiphysicsInterface&lt; dim &gt;::multiphysics_parameters</a>, <a class="el" href="simulation__parameters_8h_source.html#l00028">SimulationParameters&lt; dim &gt;::non_linear_solver</a>, <a class="el" href="multiphysics__interface_8h_source.html#l00878">MultiphysicsInterface&lt; dim &gt;::physics</a>, <a class="el" href="namespaceParameters.html#a91f1943180a615249347b911b0ed3919a556966c7830465dc4623d62e32cec31d">Parameters::quiet</a>, <a class="el" href="multiphysics_8h_source.html#l00011">tracer</a>, <a class="el" href="parameters__multiphysics_8h_source.html#l00392">Parameters::Multiphysics::tracer</a>, <a class="el" href="namespaceParameters.html#a91f1943180a615249347b911b0ed3919a2c7aea4237e25b4f8ee3b0bf77d6fed0">Parameters::verbose</a>, <a class="el" href="multiphysics__interface_8h_source.html#l00861">MultiphysicsInterface&lt; dim &gt;::verbosity</a>, <a class="el" href="multiphysics_8h_source.html#l00012">VOF</a>, and <a class="el" href="parameters__multiphysics_8h_source.html#l00393">Parameters::Multiphysics::VOF</a>.</p>
 
 </div>
 </div>
@@ -354,7 +354,7 @@ template&lt;int dim&gt; </div>
 
 <p class="definition">Definition at line <a class="el" href="multiphysics__interface_8h_source.html#l00068">68</a> of file <a class="el" href="multiphysics__interface_8h_source.html">multiphysics_interface.h</a>.</p>
 
-<p class="reference">References <a class="el" href="utilities_8h_source.html#l00465">announce_string()</a>, <a class="el" href="multiphysics_8h_source.html#l00013">cahn_hilliard</a>, <a class="el" href="multiphysics_8h_source.html#l00010">heat_transfer</a>, <a class="el" href="multiphysics__interface_8h_source.html#l00821">MultiphysicsInterface&lt; dim &gt;::pcout</a>, <a class="el" href="multiphysics_8h_source.html#l00011">tracer</a>, and <a class="el" href="multiphysics_8h_source.html#l00012">VOF</a>.</p>
+<p class="reference">References <a class="el" href="utilities_8h_source.html#l00465">announce_string()</a>, <a class="el" href="multiphysics_8h_source.html#l00013">cahn_hilliard</a>, <a class="el" href="multiphysics_8h_source.html#l00010">heat_transfer</a>, <a class="el" href="multiphysics__interface_8h_source.html#l00862">MultiphysicsInterface&lt; dim &gt;::pcout</a>, <a class="el" href="multiphysics_8h_source.html#l00011">tracer</a>, and <a class="el" href="multiphysics_8h_source.html#l00012">VOF</a>.</p>
 
 </div>
 </div>
@@ -403,9 +403,9 @@ template&lt;int dim&gt; </div>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="multiphysics__interface_8h_source.html#l00771">771</a> of file <a class="el" href="multiphysics__interface_8h_source.html">multiphysics_interface.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="multiphysics__interface_8h_source.html#l00812">812</a> of file <a class="el" href="multiphysics__interface_8h_source.html">multiphysics_interface.h</a>.</p>
 
-<p class="reference">References <a class="el" href="multiphysics__interface_8h_source.html#l00841">MultiphysicsInterface&lt; dim &gt;::block_physics</a>, and <a class="el" href="multiphysics__interface_8h_source.html#l00837">MultiphysicsInterface&lt; dim &gt;::physics</a>.</p>
+<p class="reference">References <a class="el" href="multiphysics__interface_8h_source.html#l00882">MultiphysicsInterface&lt; dim &gt;::block_physics</a>, and <a class="el" href="multiphysics__interface_8h_source.html#l00878">MultiphysicsInterface&lt; dim &gt;::physics</a>.</p>
 
 </div>
 </div>
@@ -438,7 +438,7 @@ template&lt;int dim&gt; </div>
 
 <p class="definition">Definition at line <a class="el" href="multiphysics__interface_8h_source.html#l00229">229</a> of file <a class="el" href="multiphysics__interface_8h_source.html">multiphysics_interface.h</a>.</p>
 
-<p class="reference">References <a class="el" href="multiphysics__interface_8h_source.html#l00841">MultiphysicsInterface&lt; dim &gt;::block_physics</a>, and <a class="el" href="multiphysics__interface_8h_source.html#l00837">MultiphysicsInterface&lt; dim &gt;::physics</a>.</p>
+<p class="reference">References <a class="el" href="multiphysics__interface_8h_source.html#l00882">MultiphysicsInterface&lt; dim &gt;::block_physics</a>, and <a class="el" href="multiphysics__interface_8h_source.html#l00878">MultiphysicsInterface&lt; dim &gt;::physics</a>.</p>
 
 </div>
 </div>
@@ -472,7 +472,7 @@ template&lt;int dim&gt; </div>
 
 <p class="definition">Definition at line <a class="el" href="multiphysics__interface_8h_source.html#l00415">415</a> of file <a class="el" href="multiphysics__interface_8h_source.html">multiphysics_interface.h</a>.</p>
 
-<p class="reference">References <a class="el" href="multiphysics__interface_8h_source.html#l00855">MultiphysicsInterface&lt; dim &gt;::block_physics_solutions</a>, and <a class="el" href="multiphysics_8h_source.html#l00009">fluid_dynamics</a>.</p>
+<p class="reference">References <a class="el" href="multiphysics__interface_8h_source.html#l00899">MultiphysicsInterface&lt; dim &gt;::block_physics_solutions</a>, and <a class="el" href="multiphysics_8h_source.html#l00009">fluid_dynamics</a>.</p>
 
 </div>
 </div>
@@ -506,7 +506,7 @@ template&lt;int dim&gt; </div>
 
 <p class="definition">Definition at line <a class="el" href="multiphysics__interface_8h_source.html#l00209">209</a> of file <a class="el" href="multiphysics__interface_8h_source.html">multiphysics_interface.h</a>.</p>
 
-<p class="reference">References <a class="el" href="multiphysics__interface_8h_source.html#l00841">MultiphysicsInterface&lt; dim &gt;::block_physics</a>.</p>
+<p class="reference">References <a class="el" href="multiphysics__interface_8h_source.html#l00882">MultiphysicsInterface&lt; dim &gt;::block_physics</a>.</p>
 
 </div>
 </div>
@@ -540,7 +540,7 @@ template&lt;int dim&gt; </div>
 
 <p class="definition">Definition at line <a class="el" href="multiphysics__interface_8h_source.html#l00189">189</a> of file <a class="el" href="multiphysics__interface_8h_source.html">multiphysics_interface.h</a>.</p>
 
-<p class="reference">References <a class="el" href="multiphysics__interface_8h_source.html#l00837">MultiphysicsInterface&lt; dim &gt;::physics</a>.</p>
+<p class="reference">References <a class="el" href="multiphysics__interface_8h_source.html#l00878">MultiphysicsInterface&lt; dim &gt;::physics</a>.</p>
 
 </div>
 </div>
@@ -571,12 +571,12 @@ template&lt;int dim&gt; </div>
 
 <p class="definition">Definition at line <a class="el" href="multiphysics__interface_8h_source.html#l00057">57</a> of file <a class="el" href="multiphysics__interface_8h_source.html">multiphysics_interface.h</a>.</p>
 
-<p class="reference">References <a class="el" href="multiphysics__interface_8h_source.html#l00824">MultiphysicsInterface&lt; dim &gt;::active_physics</a>.</p>
+<p class="reference">References <a class="el" href="multiphysics__interface_8h_source.html#l00865">MultiphysicsInterface&lt; dim &gt;::active_physics</a>.</p>
 
 </div>
 </div>
-<a id="af5a119ef873521c61eb71c71cebbe971" name="af5a119ef873521c61eb71c71cebbe971"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#af5a119ef873521c61eb71c71cebbe971">&#9670;&#160;</a></span>get_block_previous_solutions()</h2>
+<a id="a261cc6dc5d9d0852cbf1e171ec9e6d50" name="a261cc6dc5d9d0852cbf1e171ec9e6d50"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a261cc6dc5d9d0852cbf1e171ec9e6d50">&#9670;&#160;</a></span>get_block_previous_solutions()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -587,7 +587,7 @@ template&lt;int dim&gt; </div>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">std::vector&lt; <a class="el" href="vector_8h.html#ac71ba75c5119edae876800f9e80b59e7">GlobalBlockVectorType</a> &gt; * <a class="el" href="classMultiphysicsInterface.html">MultiphysicsInterface</a>&lt; dim &gt;::get_block_previous_solutions </td>
+          <td class="memname">const std::vector&lt; <a class="el" href="vector_8h.html#ac71ba75c5119edae876800f9e80b59e7">GlobalBlockVectorType</a> &gt; &amp; <a class="el" href="classMultiphysicsInterface.html">MultiphysicsInterface</a>&lt; dim &gt;::get_block_previous_solutions </td>
           <td>(</td>
           <td class="paramtype">const <a class="el" href="multiphysics_8h.html#ae14bb720bc9a37edc36fb8d90df712c2">PhysicsID</a>&#160;</td>
           <td class="paramname"><em>physics_id</em></td><td>)</td>
@@ -601,22 +601,22 @@ template&lt;int dim&gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p>Request the previous solutions of a given block physics. </p>
+<p>Request the reference to the vector of previous solutions of a given block physics. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">physics_id</td><td>The physics of the solution being requested </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">physics_id</td><td>The physics ID of the solution being requested </td></tr>
   </table>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="multiphysics__interface_8h_source.html#l00594">594</a> of file <a class="el" href="multiphysics__interface_8h_source.html">multiphysics_interface.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="multiphysics__interface_8h_source.html#l00613">613</a> of file <a class="el" href="multiphysics__interface_8h_source.html">multiphysics_interface.h</a>.</p>
 
-<p class="reference">References <a class="el" href="multiphysics__interface_8h_source.html#l00824">MultiphysicsInterface&lt; dim &gt;::active_physics</a>, and <a class="el" href="multiphysics__interface_8h_source.html#l00861">MultiphysicsInterface&lt; dim &gt;::block_physics_previous_solutions</a>.</p>
+<p class="reference">References <a class="el" href="multiphysics__interface_8h_source.html#l00865">MultiphysicsInterface&lt; dim &gt;::active_physics</a>, and <a class="el" href="multiphysics__interface_8h_source.html#l00931">MultiphysicsInterface&lt; dim &gt;::block_physics_previous_solutions</a>.</p>
 
 </div>
 </div>
-<a id="a6ba77c91e54de13eb329d6bf56212ce2" name="a6ba77c91e54de13eb329d6bf56212ce2"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a6ba77c91e54de13eb329d6bf56212ce2">&#9670;&#160;</a></span>get_block_solution()</h2>
+<a id="ab5ed8ce10b2d8afae98ca6791bf4ae32" name="ab5ed8ce10b2d8afae98ca6791bf4ae32"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ab5ed8ce10b2d8afae98ca6791bf4ae32">&#9670;&#160;</a></span>get_block_solution()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -627,7 +627,7 @@ template&lt;int dim&gt; </div>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname"><a class="el" href="vector_8h.html#ac71ba75c5119edae876800f9e80b59e7">GlobalBlockVectorType</a> * <a class="el" href="classMultiphysicsInterface.html">MultiphysicsInterface</a>&lt; dim &gt;::get_block_solution </td>
+          <td class="memname">const <a class="el" href="vector_8h.html#ac71ba75c5119edae876800f9e80b59e7">GlobalBlockVectorType</a> &amp; <a class="el" href="classMultiphysicsInterface.html">MultiphysicsInterface</a>&lt; dim &gt;::get_block_solution </td>
           <td>(</td>
           <td class="paramtype">const <a class="el" href="multiphysics_8h.html#ae14bb720bc9a37edc36fb8d90df712c2">PhysicsID</a>&#160;</td>
           <td class="paramname"><em>physics_id</em></td><td>)</td>
@@ -641,22 +641,22 @@ template&lt;int dim&gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p>Request the present block solution of a given physics. </p>
+<p>Request the reference to the present block solution of a given physics. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">physics_id</td><td>The physics of the solution being requested </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">physics_id</td><td>The physics ID of the solution being requested </td></tr>
   </table>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="multiphysics__interface_8h_source.html#l00476">476</a> of file <a class="el" href="multiphysics__interface_8h_source.html">multiphysics_interface.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="multiphysics__interface_8h_source.html#l00485">485</a> of file <a class="el" href="multiphysics__interface_8h_source.html">multiphysics_interface.h</a>.</p>
 
-<p class="reference">References <a class="el" href="multiphysics__interface_8h_source.html#l00824">MultiphysicsInterface&lt; dim &gt;::active_physics</a>, and <a class="el" href="multiphysics__interface_8h_source.html#l00855">MultiphysicsInterface&lt; dim &gt;::block_physics_solutions</a>.</p>
+<p class="reference">References <a class="el" href="multiphysics__interface_8h_source.html#l00865">MultiphysicsInterface&lt; dim &gt;::active_physics</a>, and <a class="el" href="multiphysics__interface_8h_source.html#l00899">MultiphysicsInterface&lt; dim &gt;::block_physics_solutions</a>.</p>
 
 </div>
 </div>
-<a id="a8f533cb660595e4409bd9a7fc13b4fcb" name="a8f533cb660595e4409bd9a7fc13b4fcb"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a8f533cb660595e4409bd9a7fc13b4fcb">&#9670;&#160;</a></span>get_block_time_average_solution()</h2>
+<a id="a10f9f67e6e654cd537e9f123d767c3e5" name="a10f9f67e6e654cd537e9f123d767c3e5"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a10f9f67e6e654cd537e9f123d767c3e5">&#9670;&#160;</a></span>get_block_time_average_solution()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -667,7 +667,7 @@ template&lt;int dim&gt; </div>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname"><a class="el" href="vector_8h.html#ac71ba75c5119edae876800f9e80b59e7">GlobalBlockVectorType</a> * <a class="el" href="classMultiphysicsInterface.html">MultiphysicsInterface</a>&lt; dim &gt;::get_block_time_average_solution </td>
+          <td class="memname">const <a class="el" href="vector_8h.html#ac71ba75c5119edae876800f9e80b59e7">GlobalBlockVectorType</a> &amp; <a class="el" href="classMultiphysicsInterface.html">MultiphysicsInterface</a>&lt; dim &gt;::get_block_time_average_solution </td>
           <td>(</td>
           <td class="paramtype">const <a class="el" href="multiphysics_8h.html#ae14bb720bc9a37edc36fb8d90df712c2">PhysicsID</a>&#160;</td>
           <td class="paramname"><em>physics_id</em></td><td>)</td>
@@ -681,17 +681,17 @@ template&lt;int dim&gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p>Request the present block average solution of a given physics. </p>
+<p>Request the reference to the present block average solution of a given physics. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">physics_id</td><td>The physics of the solution being requested </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">physics_id</td><td>The physics ID of the solution being requested </td></tr>
   </table>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="multiphysics__interface_8h_source.html#l00507">507</a> of file <a class="el" href="multiphysics__interface_8h_source.html">multiphysics_interface.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="multiphysics__interface_8h_source.html#l00517">517</a> of file <a class="el" href="multiphysics__interface_8h_source.html">multiphysics_interface.h</a>.</p>
 
-<p class="reference">References <a class="el" href="multiphysics__interface_8h_source.html#l00824">MultiphysicsInterface&lt; dim &gt;::active_physics</a>, and <a class="el" href="multiphysics__interface_8h_source.html#l00869">MultiphysicsInterface&lt; dim &gt;::block_physics_time_average_solutions</a>.</p>
+<p class="reference">References <a class="el" href="multiphysics__interface_8h_source.html#l00865">MultiphysicsInterface&lt; dim &gt;::active_physics</a>, and <a class="el" href="multiphysics__interface_8h_source.html#l00947">MultiphysicsInterface&lt; dim &gt;::block_physics_time_average_solutions</a>.</p>
 
 </div>
 </div>
@@ -712,7 +712,7 @@ template&lt;int dim&gt; </div>
       </table>
 </div><div class="memdoc">
 
-<p>Request the projected curvature DOF handler. </p>
+<p>Request the reference to the projected curvature DOF handler. </p>
 
 <p class="definition">Definition at line <a class="el" href="multiphysics__interface_8cc_source.html#l00186">186</a> of file <a class="el" href="multiphysics__interface_8cc_source.html">multiphysics_interface.cc</a>.</p>
 
@@ -737,7 +737,7 @@ template&lt;int dim&gt; </div>
       </table>
 </div><div class="memdoc">
 
-<p>Request the present solution of the curvature. </p>
+<p>Request the reference to the present solution of the curvature. </p>
 
 <p class="definition">Definition at line <a class="el" href="multiphysics__interface_8cc_source.html#l00169">169</a> of file <a class="el" href="multiphysics__interface_8cc_source.html">multiphysics_interface.cc</a>.</p>
 
@@ -745,8 +745,8 @@ template&lt;int dim&gt; </div>
 
 </div>
 </div>
-<a id="ae758340be034404f631ea0bb5492e0ca" name="ae758340be034404f631ea0bb5492e0ca"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ae758340be034404f631ea0bb5492e0ca">&#9670;&#160;</a></span>get_dof_handler()</h2>
+<a id="a7b1003d64c1a89552f9a84393e1e62e8" name="a7b1003d64c1a89552f9a84393e1e62e8"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a7b1003d64c1a89552f9a84393e1e62e8">&#9670;&#160;</a></span>get_dof_handler()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -757,7 +757,7 @@ template&lt;int dim&gt; </div>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">DoFHandler&lt; dim &gt; * <a class="el" href="classMultiphysicsInterface.html">MultiphysicsInterface</a>&lt; dim &gt;::get_dof_handler </td>
+          <td class="memname">const DoFHandler&lt; dim &gt; &amp; <a class="el" href="classMultiphysicsInterface.html">MultiphysicsInterface</a>&lt; dim &gt;::get_dof_handler </td>
           <td>(</td>
           <td class="paramtype">const <a class="el" href="multiphysics_8h.html#ae14bb720bc9a37edc36fb8d90df712c2">PhysicsID</a>&#160;</td>
           <td class="paramname"><em>physics_id</em></td><td>)</td>
@@ -774,19 +774,20 @@ template&lt;int dim&gt; </div>
 <p>Request a DOF handler for a given physics ID. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">physics_id</td><td>The physics of the DOF handler being requested </td></tr>
+    <tr><td class="paramname">physics_id</td><td>The physics of the DOF handler being requested</td></tr>
   </table>
   </dd>
 </dl>
+<dl class="section return"><dt>Returns</dt><dd>Reference to the DOF handler of the requested physics </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="multiphysics__interface_8h_source.html#l00429">429</a> of file <a class="el" href="multiphysics__interface_8h_source.html">multiphysics_interface.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="multiphysics__interface_8h_source.html#l00431">431</a> of file <a class="el" href="multiphysics__interface_8h_source.html">multiphysics_interface.h</a>.</p>
 
-<p class="reference">References <a class="el" href="multiphysics__interface_8h_source.html#l00824">MultiphysicsInterface&lt; dim &gt;::active_physics</a>, and <a class="el" href="multiphysics__interface_8h_source.html#l00844">MultiphysicsInterface&lt; dim &gt;::physics_dof_handler</a>.</p>
+<p class="reference">References <a class="el" href="multiphysics__interface_8h_source.html#l00865">MultiphysicsInterface&lt; dim &gt;::active_physics</a>, and <a class="el" href="multiphysics__interface_8h_source.html#l00885">MultiphysicsInterface&lt; dim &gt;::physics_dof_handler</a>.</p>
 
 </div>
 </div>
-<a id="abf1871ab5a3c6ea39d625d5312096dcc" name="abf1871ab5a3c6ea39d625d5312096dcc"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#abf1871ab5a3c6ea39d625d5312096dcc">&#9670;&#160;</a></span>get_filtered_solution()</h2>
+<a id="a1ab87bf78a18bb8d7b97a769c62f5e0c" name="a1ab87bf78a18bb8d7b97a769c62f5e0c"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a1ab87bf78a18bb8d7b97a769c62f5e0c">&#9670;&#160;</a></span>get_filtered_solution()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -797,7 +798,7 @@ template&lt;int dim&gt; </div>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname"><a class="el" href="vector_8h.html#a4ea4005d75c88e60bee47d4e79a13a39">GlobalVectorType</a> * <a class="el" href="classMultiphysicsInterface.html">MultiphysicsInterface</a>&lt; dim &gt;::get_filtered_solution </td>
+          <td class="memname">const <a class="el" href="vector_8h.html#a4ea4005d75c88e60bee47d4e79a13a39">GlobalVectorType</a> &amp; <a class="el" href="classMultiphysicsInterface.html">MultiphysicsInterface</a>&lt; dim &gt;::get_filtered_solution </td>
           <td>(</td>
           <td class="paramtype">const <a class="el" href="multiphysics_8h.html#ae14bb720bc9a37edc36fb8d90df712c2">PhysicsID</a>&#160;</td>
           <td class="paramname"><em>physics_id</em></td><td>)</td>
@@ -811,22 +812,23 @@ template&lt;int dim&gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p>Request the present filtered solution of a given physics (used in VOF or <a class="el" href="classCahnHilliard.html">CahnHilliard</a> physics for STF calculation) </p>
+<p>Request the reference to the present filtered solution of a given physics (used in VOF or <a class="el" href="classCahnHilliard.html">CahnHilliard</a> physics for STF calculation in the momentum balance) </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">physics_id</td><td>ID of the physics for which the solution is being requested </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">physics_id</td><td>ID of the physics for which the filtered solution is being requested</td></tr>
   </table>
   </dd>
 </dl>
+<dl class="section return"><dt>Returns</dt><dd>Reference to the requested filtered solution vector. </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="multiphysics__interface_8h_source.html#l00461">461</a> of file <a class="el" href="multiphysics__interface_8h_source.html">multiphysics_interface.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="multiphysics__interface_8h_source.html#l00469">469</a> of file <a class="el" href="multiphysics__interface_8h_source.html">multiphysics_interface.h</a>.</p>
 
-<p class="reference">References <a class="el" href="multiphysics__interface_8h_source.html#l00824">MultiphysicsInterface&lt; dim &gt;::active_physics</a>, and <a class="el" href="multiphysics__interface_8h_source.html#l00850">MultiphysicsInterface&lt; dim &gt;::physics_filtered_solutions</a>.</p>
+<p class="reference">References <a class="el" href="multiphysics__interface_8h_source.html#l00865">MultiphysicsInterface&lt; dim &gt;::active_physics</a>, and <a class="el" href="multiphysics__interface_8h_source.html#l00907">MultiphysicsInterface&lt; dim &gt;::physics_filtered_solutions</a>.</p>
 
 </div>
 </div>
-<a id="ae9a2eca5278a1446e60dbd44421dbdb7" name="ae9a2eca5278a1446e60dbd44421dbdb7"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ae9a2eca5278a1446e60dbd44421dbdb7">&#9670;&#160;</a></span>get_immersed_solid_shape()</h2>
+<a id="a80bd632a48bb2f058693459dd6f047c6" name="a80bd632a48bb2f058693459dd6f047c6"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a80bd632a48bb2f058693459dd6f047c6">&#9670;&#160;</a></span>get_immersed_solid_shape()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -834,7 +836,7 @@ template&lt;int dim&gt; </div>
 template&lt;int dim&gt; </div>
       <table class="memname">
         <tr>
-          <td class="memname"><a class="el" href="classShape.html">Shape</a>&lt; dim &gt; * <a class="el" href="classMultiphysicsInterface.html">MultiphysicsInterface</a>&lt; dim &gt;::get_immersed_solid_shape </td>
+          <td class="memname">std::shared_ptr&lt; <a class="el" href="classShape.html">Shape</a>&lt; dim &gt; &gt; <a class="el" href="classMultiphysicsInterface.html">MultiphysicsInterface</a>&lt; dim &gt;::get_immersed_solid_shape </td>
           <td>(</td>
           <td class="paramname"></td><td>)</td>
           <td></td>
@@ -842,14 +844,14 @@ template&lt;int dim&gt; </div>
       </table>
 </div><div class="memdoc">
 
-<p>Request immersed solid shape. </p>
+<p>Request shared pointer to immersed solid shape. </p>
 
 <p class="definition">Definition at line <a class="el" href="multiphysics__interface_8cc_source.html#l00220">220</a> of file <a class="el" href="multiphysics__interface_8cc_source.html">multiphysics_interface.cc</a>.</p>
 
 </div>
 </div>
-<a id="a60aba0e53d5a34542d0536df8da00b06" name="a60aba0e53d5a34542d0536df8da00b06"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a60aba0e53d5a34542d0536df8da00b06">&#9670;&#160;</a></span>get_previous_solutions()</h2>
+<a id="a29eef6b597d37b88d696f43c36f16efb" name="a29eef6b597d37b88d696f43c36f16efb"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a29eef6b597d37b88d696f43c36f16efb">&#9670;&#160;</a></span>get_previous_solutions()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -860,7 +862,7 @@ template&lt;int dim&gt; </div>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">std::vector&lt; <a class="el" href="vector_8h.html#a4ea4005d75c88e60bee47d4e79a13a39">GlobalVectorType</a> &gt; * <a class="el" href="classMultiphysicsInterface.html">MultiphysicsInterface</a>&lt; dim &gt;::get_previous_solutions </td>
+          <td class="memname">const std::vector&lt; <a class="el" href="vector_8h.html#a4ea4005d75c88e60bee47d4e79a13a39">GlobalVectorType</a> &gt; &amp; <a class="el" href="classMultiphysicsInterface.html">MultiphysicsInterface</a>&lt; dim &gt;::get_previous_solutions </td>
           <td>(</td>
           <td class="paramtype">const <a class="el" href="multiphysics_8h.html#ae14bb720bc9a37edc36fb8d90df712c2">PhysicsID</a>&#160;</td>
           <td class="paramname"><em>physics_id</em></td><td>)</td>
@@ -874,17 +876,17 @@ template&lt;int dim&gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p>Request the previous solutions of a given physics. </p>
+<p>Request the reference to the vector of previous solutions of a given physics. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">physics_id</td><td>The physics of the solution being requested </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">physics_id</td><td>The physics ID of the solution being requested </td></tr>
   </table>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="multiphysics__interface_8h_source.html#l00578">578</a> of file <a class="el" href="multiphysics__interface_8h_source.html">multiphysics_interface.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="multiphysics__interface_8h_source.html#l00596">596</a> of file <a class="el" href="multiphysics__interface_8h_source.html">multiphysics_interface.h</a>.</p>
 
-<p class="reference">References <a class="el" href="multiphysics__interface_8h_source.html#l00824">MultiphysicsInterface&lt; dim &gt;::active_physics</a>, and <a class="el" href="multiphysics__interface_8h_source.html#l00859">MultiphysicsInterface&lt; dim &gt;::physics_previous_solutions</a>.</p>
+<p class="reference">References <a class="el" href="multiphysics__interface_8h_source.html#l00865">MultiphysicsInterface&lt; dim &gt;::active_physics</a>, and <a class="el" href="multiphysics__interface_8h_source.html#l00922">MultiphysicsInterface&lt; dim &gt;::physics_previous_solutions</a>.</p>
 
 </div>
 </div>
@@ -905,7 +907,7 @@ template&lt;int dim&gt; </div>
       </table>
 </div><div class="memdoc">
 
-<p>Request the projected phase fraction gradient (pfg) DOF handler. </p>
+<p>Request the reference to the projected phase fraction gradient (PFG) DOF handler. </p>
 
 <p class="definition">Definition at line <a class="el" href="multiphysics__interface_8cc_source.html#l00203">203</a> of file <a class="el" href="multiphysics__interface_8cc_source.html">multiphysics_interface.cc</a>.</p>
 
@@ -930,7 +932,7 @@ template&lt;int dim&gt; </div>
       </table>
 </div><div class="memdoc">
 
-<p>Request the present solution of the projected phase fraction gradient (PFG) </p>
+<p>Request the reference to the present solution vector of the projected phase fraction gradient (PFG) </p>
 
 <p class="definition">Definition at line <a class="el" href="multiphysics__interface_8cc_source.html#l00152">152</a> of file <a class="el" href="multiphysics__interface_8cc_source.html">multiphysics_interface.cc</a>.</p>
 
@@ -938,8 +940,8 @@ template&lt;int dim&gt; </div>
 
 </div>
 </div>
-<a id="a5830eb87b57d776d758c679d28a33122" name="a5830eb87b57d776d758c679d28a33122"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a5830eb87b57d776d758c679d28a33122">&#9670;&#160;</a></span>get_solids()</h2>
+<a id="ae9fdd065251330837764899f4865988e" name="ae9fdd065251330837764899f4865988e"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ae9fdd065251330837764899f4865988e">&#9670;&#160;</a></span>get_solids()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -950,7 +952,7 @@ template&lt;int dim&gt; </div>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">std::vector&lt; std::shared_ptr&lt; <a class="el" href="classSolidBase.html">SolidBase</a>&lt; dim, dim &gt; &gt; &gt; * <a class="el" href="classMultiphysicsInterface.html">MultiphysicsInterface</a>&lt; dim &gt;::get_solids </td>
+          <td class="memname">const std::vector&lt; std::shared_ptr&lt; <a class="el" href="classSolidBase.html">SolidBase</a>&lt; dim, dim &gt; &gt; &gt; &amp; <a class="el" href="classMultiphysicsInterface.html">MultiphysicsInterface</a>&lt; dim &gt;::get_solids </td>
           <td>(</td>
           <td class="paramtype">const int&#160;</td>
           <td class="paramname"><em>number_solids</em></td><td>)</td>
@@ -965,16 +967,22 @@ template&lt;int dim&gt; </div>
 </div><div class="memdoc">
 
 <p>Request the solid objects. Used an auxiliary physics needs to apply a boundary condition on a solid through Nitsche immersed boundary method. </p>
-<p>NB: this method is called only in <a class="el" href="classHeatTransfer.html#a108b901abfa86278bc44606211be2abc" title="Call for the assembly of the matrix and the right-hand side of the Nitsche restriction for the heat t...">HeatTransfer&lt;dim&gt;::assemble_nitsche_heat_restriction</a>, which is itself called only if number_solids &gt; 0 </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramdir">[in]</td><td class="paramname">number_solids</td><td>The number of solids declared in the parameter file. The value is used to ensure that at least one solid has been declared.</td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section note"><dt>Note</dt><dd>The method is called only in <a class="el" href="classHeatTransfer.html#a108b901abfa86278bc44606211be2abc" title="Call for the assembly of the matrix and the right-hand side of the Nitsche restriction for the heat t...">HeatTransfer&lt;dim&gt;::assemble_nitsche_heat_restriction</a>, which is itself called only if number_solids &gt; 0 </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="multiphysics__interface_8h_source.html#l00526">526</a> of file <a class="el" href="multiphysics__interface_8h_source.html">multiphysics_interface.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="multiphysics__interface_8h_source.html#l00540">540</a> of file <a class="el" href="multiphysics__interface_8h_source.html">multiphysics_interface.h</a>.</p>
 
-<p class="reference">References <a class="el" href="multiphysics__interface_8h_source.html#l00846">MultiphysicsInterface&lt; dim &gt;::solids</a>.</p>
+<p class="reference">References <a class="el" href="multiphysics__interface_8h_source.html#l00888">MultiphysicsInterface&lt; dim &gt;::solids</a>.</p>
 
 </div>
 </div>
-<a id="a249cdcd43460726d29ab042599f8e095" name="a249cdcd43460726d29ab042599f8e095"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a249cdcd43460726d29ab042599f8e095">&#9670;&#160;</a></span>get_solution()</h2>
+<a id="a13d942673cbbf1cc2d79bd4ced3f6461" name="a13d942673cbbf1cc2d79bd4ced3f6461"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a13d942673cbbf1cc2d79bd4ced3f6461">&#9670;&#160;</a></span>get_solution()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -985,7 +993,7 @@ template&lt;int dim&gt; </div>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname"><a class="el" href="vector_8h.html#a4ea4005d75c88e60bee47d4e79a13a39">GlobalVectorType</a> * <a class="el" href="classMultiphysicsInterface.html">MultiphysicsInterface</a>&lt; dim &gt;::get_solution </td>
+          <td class="memname">const <a class="el" href="vector_8h.html#a4ea4005d75c88e60bee47d4e79a13a39">GlobalVectorType</a> &amp; <a class="el" href="classMultiphysicsInterface.html">MultiphysicsInterface</a>&lt; dim &gt;::get_solution </td>
           <td>(</td>
           <td class="paramtype">const <a class="el" href="multiphysics_8h.html#ae14bb720bc9a37edc36fb8d90df712c2">PhysicsID</a>&#160;</td>
           <td class="paramname"><em>physics_id</em></td><td>)</td>
@@ -999,22 +1007,23 @@ template&lt;int dim&gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p>Request the present solution of a given physics. </p>
+<p>Request the reference to the present solution of a given physics. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">physics_id</td><td>The physics of the solution being requested </td></tr>
+    <tr><td class="paramname">physics_id</td><td>The physics ID of the solution being requested</td></tr>
   </table>
   </dd>
 </dl>
+<dl class="section return"><dt>Returns</dt><dd>Reference to the solution vector of the requested physics </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="multiphysics__interface_8h_source.html#l00445">445</a> of file <a class="el" href="multiphysics__interface_8h_source.html">multiphysics_interface.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="multiphysics__interface_8h_source.html#l00449">449</a> of file <a class="el" href="multiphysics__interface_8h_source.html">multiphysics_interface.h</a>.</p>
 
-<p class="reference">References <a class="el" href="multiphysics__interface_8h_source.html#l00824">MultiphysicsInterface&lt; dim &gt;::active_physics</a>, and <a class="el" href="multiphysics__interface_8h_source.html#l00854">MultiphysicsInterface&lt; dim &gt;::physics_solutions</a>.</p>
+<p class="reference">References <a class="el" href="multiphysics__interface_8h_source.html#l00865">MultiphysicsInterface&lt; dim &gt;::active_physics</a>, and <a class="el" href="multiphysics__interface_8h_source.html#l00891">MultiphysicsInterface&lt; dim &gt;::physics_solutions</a>.</p>
 
 </div>
 </div>
-<a id="a123eaba0d03eed44f0365aeabd925712" name="a123eaba0d03eed44f0365aeabd925712"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a123eaba0d03eed44f0365aeabd925712">&#9670;&#160;</a></span>get_time_average_solution()</h2>
+<a id="a2c1b105320c21f8b5baef05ba93b7c77" name="a2c1b105320c21f8b5baef05ba93b7c77"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a2c1b105320c21f8b5baef05ba93b7c77">&#9670;&#160;</a></span>get_time_average_solution()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -1025,7 +1034,7 @@ template&lt;int dim&gt; </div>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname"><a class="el" href="vector_8h.html#a4ea4005d75c88e60bee47d4e79a13a39">GlobalVectorType</a> * <a class="el" href="classMultiphysicsInterface.html">MultiphysicsInterface</a>&lt; dim &gt;::get_time_average_solution </td>
+          <td class="memname">const <a class="el" href="vector_8h.html#a4ea4005d75c88e60bee47d4e79a13a39">GlobalVectorType</a> &amp; <a class="el" href="classMultiphysicsInterface.html">MultiphysicsInterface</a>&lt; dim &gt;::get_time_average_solution </td>
           <td>(</td>
           <td class="paramtype">const <a class="el" href="multiphysics_8h.html#ae14bb720bc9a37edc36fb8d90df712c2">PhysicsID</a>&#160;</td>
           <td class="paramname"><em>physics_id</em></td><td>)</td>
@@ -1039,17 +1048,17 @@ template&lt;int dim&gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p>Request the time-average solution of a given physics. </p>
+<p>Request the reference to the time-average solution of a given physics. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">physics_id</td><td>The physics of the solution being requested </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">physics_id</td><td>The physics ID of the solution being requested </td></tr>
   </table>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="multiphysics__interface_8h_source.html#l00492">492</a> of file <a class="el" href="multiphysics__interface_8h_source.html">multiphysics_interface.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="multiphysics__interface_8h_source.html#l00501">501</a> of file <a class="el" href="multiphysics__interface_8h_source.html">multiphysics_interface.h</a>.</p>
 
-<p class="reference">References <a class="el" href="multiphysics__interface_8h_source.html#l00824">MultiphysicsInterface&lt; dim &gt;::active_physics</a>, and <a class="el" href="multiphysics__interface_8h_source.html#l00865">MultiphysicsInterface&lt; dim &gt;::physics_time_average_solutions</a>.</p>
+<p class="reference">References <a class="el" href="multiphysics__interface_8h_source.html#l00865">MultiphysicsInterface&lt; dim &gt;::active_physics</a>, and <a class="el" href="multiphysics__interface_8h_source.html#l00938">MultiphysicsInterface&lt; dim &gt;::physics_time_average_solutions</a>.</p>
 
 </div>
 </div>
@@ -1079,7 +1088,7 @@ template&lt;int dim&gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="multiphysics__interface_8cc_source.html#l00236">236</a> of file <a class="el" href="multiphysics__interface_8cc_source.html">multiphysics_interface.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="multiphysics__interface_8cc_source.html#l00237">237</a> of file <a class="el" href="multiphysics__interface_8cc_source.html">multiphysics_interface.cc</a>.</p>
 
 <p class="reference">References <a class="el" href="multiphysics__interface_8cc_source.html#l00011">_unused</a>, <a class="el" href="parameters__multiphysics_8h_source.html#l00398">Parameters::Multiphysics::buoyancy_force</a>, <a class="el" href="parameters__multiphysics_8h_source.html#l00133">Parameters::VOF_InterfaceSharpening::enable</a>, <a class="el" href="parameters__multiphysics_8h_source.html#l00167">Parameters::VOF_SurfaceTensionForce::enable</a>, <a class="el" href="parameters__multiphysics_8h_source.html#l00178">Parameters::VOF_SurfaceTensionForce::enable_marangoni_effect</a>, <a class="el" href="parameters__multiphysics_8h_source.html#l00390">Parameters::Multiphysics::fluid_dynamics</a>, <a class="el" href="parameters__multiphysics_8h_source.html#l00391">Parameters::Multiphysics::heat_transfer</a>, <a class="el" href="simulation__parameters_8h_source.html#l00058">SimulationParameters&lt; dim &gt;::multiphysics</a>, <a class="el" href="parameters__multiphysics_8h_source.html#l00342">Parameters::VOF::regularization_method</a>, <a class="el" href="parameters__multiphysics_8h_source.html#l00306">Parameters::VOF_RegularizationMethod::sharpening</a>, <a class="el" href="parameters__multiphysics_8h_source.html#l00340">Parameters::VOF::surface_tension_force</a>, <a class="el" href="parameters__multiphysics_8h_source.html#l00393">Parameters::Multiphysics::VOF</a>, and <a class="el" href="parameters__multiphysics_8h_source.html#l00400">Parameters::Multiphysics::vof_parameters</a>.</p>
 
@@ -1121,7 +1130,7 @@ template&lt;int dim&gt; </div>
 
 <p class="definition">Definition at line <a class="el" href="multiphysics__interface_8h_source.html#l00250">250</a> of file <a class="el" href="multiphysics__interface_8h_source.html">multiphysics_interface.h</a>.</p>
 
-<p class="reference">References <a class="el" href="multiphysics__interface_8h_source.html#l00841">MultiphysicsInterface&lt; dim &gt;::block_physics</a>, <a class="el" href="multiphysics__interface_8h_source.html#l00837">MultiphysicsInterface&lt; dim &gt;::physics</a>, and <a class="el" href="multiphysics__interface_8h_source.html#l00828">MultiphysicsInterface&lt; dim &gt;::solve_pre_fluid</a>.</p>
+<p class="reference">References <a class="el" href="multiphysics__interface_8h_source.html#l00882">MultiphysicsInterface&lt; dim &gt;::block_physics</a>, <a class="el" href="multiphysics__interface_8h_source.html#l00878">MultiphysicsInterface&lt; dim &gt;::physics</a>, and <a class="el" href="multiphysics__interface_8h_source.html#l00869">MultiphysicsInterface&lt; dim &gt;::solve_pre_fluid</a>.</p>
 
 </div>
 </div>
@@ -1154,7 +1163,7 @@ template&lt;int dim&gt; </div>
 
 <p class="definition">Definition at line <a class="el" href="multiphysics__interface_8h_source.html#l00341">341</a> of file <a class="el" href="multiphysics__interface_8h_source.html">multiphysics_interface.h</a>.</p>
 
-<p class="reference">References <a class="el" href="multiphysics__interface_8h_source.html#l00841">MultiphysicsInterface&lt; dim &gt;::block_physics</a>, and <a class="el" href="multiphysics__interface_8h_source.html#l00837">MultiphysicsInterface&lt; dim &gt;::physics</a>.</p>
+<p class="reference">References <a class="el" href="multiphysics__interface_8h_source.html#l00882">MultiphysicsInterface&lt; dim &gt;::block_physics</a>, and <a class="el" href="multiphysics__interface_8h_source.html#l00878">MultiphysicsInterface&lt; dim &gt;::physics</a>.</p>
 
 </div>
 </div>
@@ -1188,7 +1197,7 @@ template&lt;int dim&gt; </div>
 
 <p class="definition">Definition at line <a class="el" href="multiphysics__interface_8h_source.html#l00308">308</a> of file <a class="el" href="multiphysics__interface_8h_source.html">multiphysics_interface.h</a>.</p>
 
-<p class="reference">References <a class="el" href="multiphysics__interface_8h_source.html#l00841">MultiphysicsInterface&lt; dim &gt;::block_physics</a>, and <a class="el" href="multiphysics__interface_8h_source.html#l00837">MultiphysicsInterface&lt; dim &gt;::physics</a>.</p>
+<p class="reference">References <a class="el" href="multiphysics__interface_8h_source.html#l00882">MultiphysicsInterface&lt; dim &gt;::block_physics</a>, and <a class="el" href="multiphysics__interface_8h_source.html#l00878">MultiphysicsInterface&lt; dim &gt;::physics</a>.</p>
 
 </div>
 </div>
@@ -1221,7 +1230,7 @@ template&lt;int dim&gt; </div>
 
 <p class="definition">Definition at line <a class="el" href="multiphysics__interface_8h_source.html#l00325">325</a> of file <a class="el" href="multiphysics__interface_8h_source.html">multiphysics_interface.h</a>.</p>
 
-<p class="reference">References <a class="el" href="multiphysics__interface_8h_source.html#l00841">MultiphysicsInterface&lt; dim &gt;::block_physics</a>, and <a class="el" href="multiphysics__interface_8h_source.html#l00837">MultiphysicsInterface&lt; dim &gt;::physics</a>.</p>
+<p class="reference">References <a class="el" href="multiphysics__interface_8h_source.html#l00882">MultiphysicsInterface&lt; dim &gt;::block_physics</a>, and <a class="el" href="multiphysics__interface_8h_source.html#l00878">MultiphysicsInterface&lt; dim &gt;::physics</a>.</p>
 
 </div>
 </div>
@@ -1252,14 +1261,14 @@ template&lt;int dim&gt; </div>
 
 <p>Read solution from checkpoint from auxiliary physics. </p>
 
-<p class="definition">Definition at line <a class="el" href="multiphysics__interface_8h_source.html#l00806">806</a> of file <a class="el" href="multiphysics__interface_8h_source.html">multiphysics_interface.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="multiphysics__interface_8h_source.html#l00847">847</a> of file <a class="el" href="multiphysics__interface_8h_source.html">multiphysics_interface.h</a>.</p>
 
-<p class="reference">References <a class="el" href="multiphysics__interface_8h_source.html#l00841">MultiphysicsInterface&lt; dim &gt;::block_physics</a>, and <a class="el" href="multiphysics__interface_8h_source.html#l00837">MultiphysicsInterface&lt; dim &gt;::physics</a>.</p>
+<p class="reference">References <a class="el" href="multiphysics__interface_8h_source.html#l00882">MultiphysicsInterface&lt; dim &gt;::block_physics</a>, and <a class="el" href="multiphysics__interface_8h_source.html#l00878">MultiphysicsInterface&lt; dim &gt;::physics</a>.</p>
 
 </div>
 </div>
-<a id="aa2e183b7ce22521036bdd9ab14107cf1" name="aa2e183b7ce22521036bdd9ab14107cf1"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#aa2e183b7ce22521036bdd9ab14107cf1">&#9670;&#160;</a></span>set_block_previous_solutions()</h2>
+<a id="a6bbd06530cf8e6fdf80e1afbbc65a7a1" name="a6bbd06530cf8e6fdf80e1afbbc65a7a1"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a6bbd06530cf8e6fdf80e1afbbc65a7a1">&#9670;&#160;</a></span>set_block_previous_solutions()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -1278,7 +1287,7 @@ template&lt;int dim&gt; </div>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">std::vector&lt; <a class="el" href="vector_8h.html#ac71ba75c5119edae876800f9e80b59e7">GlobalBlockVectorType</a> &gt; *&#160;</td>
+          <td class="paramtype">std::shared_ptr&lt; std::vector&lt; <a class="el" href="vector_8h.html#ac71ba75c5119edae876800f9e80b59e7">GlobalBlockVectorType</a> &gt; &gt;&#160;</td>
           <td class="paramname"><em>previous_solutions_vector</em>&#160;</td>
         </tr>
         <tr>
@@ -1297,20 +1306,20 @@ template&lt;int dim&gt; </div>
 <p>Sets the pointer to the vector of previous solutions of the block physics in the multiphysics interface. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">physics_id</td><td>The physics of the DOF handler</td></tr>
-    <tr><td class="paramname">previous_solutions_vector</td><td>The pointer to the vector of previous solutions </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">physics_id</td><td>The physics of the DOF handler</td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">previous_solutions_vector</td><td>The shared pointer to the vector of previous block vector solutions </td></tr>
   </table>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="multiphysics__interface_8h_source.html#l00752">752</a> of file <a class="el" href="multiphysics__interface_8h_source.html">multiphysics_interface.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="multiphysics__interface_8h_source.html#l00792">792</a> of file <a class="el" href="multiphysics__interface_8h_source.html">multiphysics_interface.h</a>.</p>
 
-<p class="reference">References <a class="el" href="multiphysics__interface_8h_source.html#l00824">MultiphysicsInterface&lt; dim &gt;::active_physics</a>, and <a class="el" href="multiphysics__interface_8h_source.html#l00861">MultiphysicsInterface&lt; dim &gt;::block_physics_previous_solutions</a>.</p>
+<p class="reference">References <a class="el" href="multiphysics__interface_8h_source.html#l00865">MultiphysicsInterface&lt; dim &gt;::active_physics</a>, and <a class="el" href="multiphysics__interface_8h_source.html#l00931">MultiphysicsInterface&lt; dim &gt;::block_physics_previous_solutions</a>.</p>
 
 </div>
 </div>
-<a id="ac15d59229a7589efa7e45d29a2baf0b4" name="ac15d59229a7589efa7e45d29a2baf0b4"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ac15d59229a7589efa7e45d29a2baf0b4">&#9670;&#160;</a></span>set_block_solution()</h2>
+<a id="a471267e5faca7dfb58c35a6b73265b82" name="a471267e5faca7dfb58c35a6b73265b82"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a471267e5faca7dfb58c35a6b73265b82">&#9670;&#160;</a></span>set_block_solution()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -1329,7 +1338,7 @@ template&lt;int dim&gt; </div>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype"><a class="el" href="vector_8h.html#ac71ba75c5119edae876800f9e80b59e7">GlobalBlockVectorType</a> *&#160;</td>
+          <td class="paramtype">std::shared_ptr&lt; <a class="el" href="vector_8h.html#ac71ba75c5119edae876800f9e80b59e7">GlobalBlockVectorType</a> &gt;&#160;</td>
           <td class="paramname"><em>solution_vector</em>&#160;</td>
         </tr>
         <tr>
@@ -1348,20 +1357,20 @@ template&lt;int dim&gt; </div>
 <p>Sets the reference to the solution of the physics in the multiphysics interface. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">physics_id</td><td>The physics of the DOF handler being requested</td></tr>
-    <tr><td class="paramname">solution_vector</td><td>The reference to the solution vector of the physics </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">physics_id</td><td>The physics ID of the DOF handler being requested</td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">solution_vector</td><td>The shared pointer to the solution vector of the requested physics </td></tr>
   </table>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="multiphysics__interface_8h_source.html#l00697">697</a> of file <a class="el" href="multiphysics__interface_8h_source.html">multiphysics_interface.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="multiphysics__interface_8h_source.html#l00730">730</a> of file <a class="el" href="multiphysics__interface_8h_source.html">multiphysics_interface.h</a>.</p>
 
-<p class="reference">References <a class="el" href="multiphysics__interface_8h_source.html#l00824">MultiphysicsInterface&lt; dim &gt;::active_physics</a>, and <a class="el" href="multiphysics__interface_8h_source.html#l00855">MultiphysicsInterface&lt; dim &gt;::block_physics_solutions</a>.</p>
+<p class="reference">References <a class="el" href="multiphysics__interface_8h_source.html#l00865">MultiphysicsInterface&lt; dim &gt;::active_physics</a>, and <a class="el" href="multiphysics__interface_8h_source.html#l00899">MultiphysicsInterface&lt; dim &gt;::block_physics_solutions</a>.</p>
 
 </div>
 </div>
-<a id="aca86184bb948dd4ecddf696300e84bcf" name="aca86184bb948dd4ecddf696300e84bcf"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#aca86184bb948dd4ecddf696300e84bcf">&#9670;&#160;</a></span>set_block_time_average_solution()</h2>
+<a id="a405492fb5d4914c227465c228bec90a6" name="a405492fb5d4914c227465c228bec90a6"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a405492fb5d4914c227465c228bec90a6">&#9670;&#160;</a></span>set_block_time_average_solution()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -1380,7 +1389,7 @@ template&lt;int dim&gt; </div>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype"><a class="el" href="vector_8h.html#ac71ba75c5119edae876800f9e80b59e7">GlobalBlockVectorType</a> *&#160;</td>
+          <td class="paramtype">std::shared_ptr&lt; <a class="el" href="vector_8h.html#ac71ba75c5119edae876800f9e80b59e7">GlobalBlockVectorType</a> &gt;&#160;</td>
           <td class="paramname"><em>solution_vector</em>&#160;</td>
         </tr>
         <tr>
@@ -1396,23 +1405,23 @@ template&lt;int dim&gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p>Sets the reference to the time-average solution of the physics in the multiphysics interface. </p>
+<p>Sets the shared pointer to the time-average solution of the block physics in the multiphysics interface. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">physics_id</td><td>The physics of the DOF handler being requested</td></tr>
-    <tr><td class="paramname">solution_vector</td><td>The reference to the solution vector of the physics </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">physics_id</td><td>The physics ID of the time averaged block vector solution being set</td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">solution_vector</td><td>The shared pointer to the block solution vector of the physics </td></tr>
   </table>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="multiphysics__interface_8h_source.html#l00715">715</a> of file <a class="el" href="multiphysics__interface_8h_source.html">multiphysics_interface.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="multiphysics__interface_8h_source.html#l00751">751</a> of file <a class="el" href="multiphysics__interface_8h_source.html">multiphysics_interface.h</a>.</p>
 
-<p class="reference">References <a class="el" href="multiphysics__interface_8h_source.html#l00824">MultiphysicsInterface&lt; dim &gt;::active_physics</a>, and <a class="el" href="multiphysics__interface_8h_source.html#l00869">MultiphysicsInterface&lt; dim &gt;::block_physics_time_average_solutions</a>.</p>
+<p class="reference">References <a class="el" href="multiphysics__interface_8h_source.html#l00865">MultiphysicsInterface&lt; dim &gt;::active_physics</a>, and <a class="el" href="multiphysics__interface_8h_source.html#l00947">MultiphysicsInterface&lt; dim &gt;::block_physics_time_average_solutions</a>.</p>
 
 </div>
 </div>
-<a id="aa1c6b6666b773be05fe6027c5dcbe353" name="aa1c6b6666b773be05fe6027c5dcbe353"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#aa1c6b6666b773be05fe6027c5dcbe353">&#9670;&#160;</a></span>set_dof_handler()</h2>
+<a id="ab4f728888762ada6ebe78f482f5c28e5" name="ab4f728888762ada6ebe78f482f5c28e5"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ab4f728888762ada6ebe78f482f5c28e5">&#9670;&#160;</a></span>set_dof_handler()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -1431,7 +1440,7 @@ template&lt;int dim&gt; </div>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">DoFHandler&lt; dim &gt; *&#160;</td>
+          <td class="paramtype">std::shared_ptr&lt; DoFHandler&lt; dim &gt; &gt;&#160;</td>
           <td class="paramname"><em>dof_handler</em>&#160;</td>
         </tr>
         <tr>
@@ -1447,23 +1456,23 @@ template&lt;int dim&gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p>Sets the reference to the DOFHandler of the physics in the multiphysics interface. </p>
+<p>Sets the shared pointer to the DOFHandler of the physics in the multiphysics interface. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">physics_id</td><td>The physics of the DOF handler being requested</td></tr>
-    <tr><td class="paramname">dof_handler</td><td>The dof handler for which the reference is stored </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">physics_id</td><td>The physics of the DOF handler being requested</td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">dof_handler</td><td>Shared pointer to the dof handler for which the reference is stored </td></tr>
   </table>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="multiphysics__interface_8h_source.html#l00611">611</a> of file <a class="el" href="multiphysics__interface_8h_source.html">multiphysics_interface.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="multiphysics__interface_8h_source.html#l00632">632</a> of file <a class="el" href="multiphysics__interface_8h_source.html">multiphysics_interface.h</a>.</p>
 
-<p class="reference">References <a class="el" href="multiphysics__interface_8h_source.html#l00824">MultiphysicsInterface&lt; dim &gt;::active_physics</a>, and <a class="el" href="multiphysics__interface_8h_source.html#l00844">MultiphysicsInterface&lt; dim &gt;::physics_dof_handler</a>.</p>
+<p class="reference">References <a class="el" href="multiphysics__interface_8h_source.html#l00865">MultiphysicsInterface&lt; dim &gt;::active_physics</a>, and <a class="el" href="multiphysics__interface_8h_source.html#l00885">MultiphysicsInterface&lt; dim &gt;::physics_dof_handler</a>.</p>
 
 </div>
 </div>
-<a id="a9416751da885340423298ad0fcca72c6" name="a9416751da885340423298ad0fcca72c6"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a9416751da885340423298ad0fcca72c6">&#9670;&#160;</a></span>set_filtered_solution()</h2>
+<a id="a613884c26d6f9f5339a7725ca481c283" name="a613884c26d6f9f5339a7725ca481c283"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a613884c26d6f9f5339a7725ca481c283">&#9670;&#160;</a></span>set_filtered_solution()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -1482,7 +1491,7 @@ template&lt;int dim&gt; </div>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype"><a class="el" href="vector_8h.html#a4ea4005d75c88e60bee47d4e79a13a39">GlobalVectorType</a> *&#160;</td>
+          <td class="paramtype">std::shared_ptr&lt; <a class="el" href="vector_8h.html#a4ea4005d75c88e60bee47d4e79a13a39">GlobalVectorType</a> &gt;&#160;</td>
           <td class="paramname"><em>filtered_solution_vector</em>&#160;</td>
         </tr>
         <tr>
@@ -1498,23 +1507,23 @@ template&lt;int dim&gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p>Sets the reference to the filtered solution of the physics in the multiphysics interface (used in VOF or <a class="el" href="classCahnHilliard.html">CahnHilliard</a> physics for STF calculation) </p>
+<p>Sets the shared pointer to the filtered solution of the physics in the multiphysics interface (used in VOF or <a class="el" href="classCahnHilliard.html">CahnHilliard</a> physics for STF calculation in the momentum balance) </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">physics_id</td><td>ID of the physics for which the DOF handler is being requested</td></tr>
-    <tr><td class="paramname">filtered_solution_vector</td><td>The reference to the filtered solution vector of the physics; this was implemented for VOF and <a class="el" href="classCahnHilliard.html">CahnHilliard</a> physics </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">physics_id</td><td>ID of the physics for which the filtered solution is being set</td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">filtered_solution_vector</td><td>Shared pointer to the filtered solution vector of the physics; this was implemented for VOF and <a class="el" href="classCahnHilliard.html">CahnHilliard</a> physics </td></tr>
   </table>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="multiphysics__interface_8h_source.html#l00660">660</a> of file <a class="el" href="multiphysics__interface_8h_source.html">multiphysics_interface.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="multiphysics__interface_8h_source.html#l00689">689</a> of file <a class="el" href="multiphysics__interface_8h_source.html">multiphysics_interface.h</a>.</p>
 
-<p class="reference">References <a class="el" href="multiphysics__interface_8h_source.html#l00824">MultiphysicsInterface&lt; dim &gt;::active_physics</a>, and <a class="el" href="multiphysics__interface_8h_source.html#l00850">MultiphysicsInterface&lt; dim &gt;::physics_filtered_solutions</a>.</p>
+<p class="reference">References <a class="el" href="multiphysics__interface_8h_source.html#l00865">MultiphysicsInterface&lt; dim &gt;::active_physics</a>, and <a class="el" href="multiphysics__interface_8h_source.html#l00907">MultiphysicsInterface&lt; dim &gt;::physics_filtered_solutions</a>.</p>
 
 </div>
 </div>
-<a id="a75edde8a3131755c75813bee6ce03ebc" name="a75edde8a3131755c75813bee6ce03ebc"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a75edde8a3131755c75813bee6ce03ebc">&#9670;&#160;</a></span>set_immersed_solid_shape()</h2>
+<a id="a616d9aa02101f700b767cc740bfb1ed9" name="a616d9aa02101f700b767cc740bfb1ed9"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a616d9aa02101f700b767cc740bfb1ed9">&#9670;&#160;</a></span>set_immersed_solid_shape()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -1524,7 +1533,7 @@ template&lt;int dim&gt; </div>
         <tr>
           <td class="memname">void <a class="el" href="classMultiphysicsInterface.html">MultiphysicsInterface</a>&lt; dim &gt;::set_immersed_solid_shape </td>
           <td>(</td>
-          <td class="paramtype"><a class="el" href="classShape.html">Shape</a>&lt; dim &gt; *&#160;</td>
+          <td class="paramtype">const std::shared_ptr&lt; <a class="el" href="classShape.html">Shape</a>&lt; dim &gt; &gt; &amp;&#160;</td>
           <td class="paramname"><em>shape</em></td><td>)</td>
           <td></td>
         </tr>
@@ -1534,7 +1543,7 @@ template&lt;int dim&gt; </div>
 <p>Share immersed solid shape. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramdir">[in]</td><td class="paramname">shape</td><td>The immersed solid shape </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">shape</td><td>The reference to the shared pointer pointing to the immersed solid shape </td></tr>
   </table>
   </dd>
 </dl>
@@ -1572,12 +1581,12 @@ template&lt;int dim&gt; </div>
 
 <p class="definition">Definition at line <a class="el" href="multiphysics__interface_8h_source.html#l00379">379</a> of file <a class="el" href="multiphysics__interface_8h_source.html">multiphysics_interface.h</a>.</p>
 
-<p class="reference">References <a class="el" href="multiphysics__interface_8h_source.html#l00841">MultiphysicsInterface&lt; dim &gt;::block_physics</a>, and <a class="el" href="multiphysics__interface_8h_source.html#l00837">MultiphysicsInterface&lt; dim &gt;::physics</a>.</p>
+<p class="reference">References <a class="el" href="multiphysics__interface_8h_source.html#l00882">MultiphysicsInterface&lt; dim &gt;::block_physics</a>, and <a class="el" href="multiphysics__interface_8h_source.html#l00878">MultiphysicsInterface&lt; dim &gt;::physics</a>.</p>
 
 </div>
 </div>
-<a id="aa9254dbc7d713b2034b5f1fdd64de62a" name="aa9254dbc7d713b2034b5f1fdd64de62a"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#aa9254dbc7d713b2034b5f1fdd64de62a">&#9670;&#160;</a></span>set_previous_solutions()</h2>
+<a id="a9f10c6494fee2885dc980032101b5a16" name="a9f10c6494fee2885dc980032101b5a16"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a9f10c6494fee2885dc980032101b5a16">&#9670;&#160;</a></span>set_previous_solutions()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -1596,7 +1605,7 @@ template&lt;int dim&gt; </div>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">std::vector&lt; <a class="el" href="vector_8h.html#a4ea4005d75c88e60bee47d4e79a13a39">GlobalVectorType</a> &gt; *&#160;</td>
+          <td class="paramtype">std::shared_ptr&lt; std::vector&lt; <a class="el" href="vector_8h.html#a4ea4005d75c88e60bee47d4e79a13a39">GlobalVectorType</a> &gt; &gt;&#160;</td>
           <td class="paramname"><em>previous_solutions_vector</em>&#160;</td>
         </tr>
         <tr>
@@ -1615,20 +1624,20 @@ template&lt;int dim&gt; </div>
 <p>Sets the pointer to the vector of previous solutions of the physics in the multiphysics interface. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">physics_id</td><td>The physics of the DOF handler</td></tr>
-    <tr><td class="paramname">previous_solutions_vector</td><td>The pointer to the vector of previous solutions </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">physics_id</td><td>The physics of the DOF handler</td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">previous_solutions_vector</td><td>The shared pointer to the vector of previous solutions </td></tr>
   </table>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="multiphysics__interface_8h_source.html#l00733">733</a> of file <a class="el" href="multiphysics__interface_8h_source.html">multiphysics_interface.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="multiphysics__interface_8h_source.html#l00771">771</a> of file <a class="el" href="multiphysics__interface_8h_source.html">multiphysics_interface.h</a>.</p>
 
-<p class="reference">References <a class="el" href="multiphysics__interface_8h_source.html#l00824">MultiphysicsInterface&lt; dim &gt;::active_physics</a>, and <a class="el" href="multiphysics__interface_8h_source.html#l00859">MultiphysicsInterface&lt; dim &gt;::physics_previous_solutions</a>.</p>
+<p class="reference">References <a class="el" href="multiphysics__interface_8h_source.html#l00865">MultiphysicsInterface&lt; dim &gt;::active_physics</a>, and <a class="el" href="multiphysics__interface_8h_source.html#l00922">MultiphysicsInterface&lt; dim &gt;::physics_previous_solutions</a>.</p>
 
 </div>
 </div>
-<a id="a3dc11df1406b2d74d14437ddea4f45f7" name="a3dc11df1406b2d74d14437ddea4f45f7"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a3dc11df1406b2d74d14437ddea4f45f7">&#9670;&#160;</a></span>set_solid()</h2>
+<a id="a1134906af9106de978d4bbf4c83ecaab" name="a1134906af9106de978d4bbf4c83ecaab"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a1134906af9106de978d4bbf4c83ecaab">&#9670;&#160;</a></span>set_solid()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -1641,7 +1650,7 @@ template&lt;int dim&gt; </div>
         <tr>
           <td class="memname">void <a class="el" href="classMultiphysicsInterface.html">MultiphysicsInterface</a>&lt; dim &gt;::set_solid </td>
           <td>(</td>
-          <td class="paramtype">std::vector&lt; std::shared_ptr&lt; <a class="el" href="classSolidBase.html">SolidBase</a>&lt; dim, dim &gt; &gt; &gt; *&#160;</td>
+          <td class="paramtype">std::shared_ptr&lt; std::vector&lt; std::shared_ptr&lt; <a class="el" href="classSolidBase.html">SolidBase</a>&lt; dim, dim &gt; &gt; &gt; &gt;&#160;</td>
           <td class="paramname"><em>solids_input</em></td><td>)</td>
           <td></td>
         </tr>
@@ -1653,22 +1662,22 @@ template&lt;int dim&gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p>Sets the reference to the vector of the <a class="el" href="classSolidBase.html">SolidBase</a> object. This allows the use of the solid base object in multiple physics at the same time. </p>
+<p>Sets the shared pointer to the vector of the <a class="el" href="classSolidBase.html">SolidBase</a> object. This allows the use of the solid base object in multiple physics at the same time. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">solids_input</td><td>The reference to the vector of solidBase object </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">solids_input</td><td>Shared pointer to the vector of solidBase object </td></tr>
   </table>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="multiphysics__interface_8h_source.html#l00626">626</a> of file <a class="el" href="multiphysics__interface_8h_source.html">multiphysics_interface.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="multiphysics__interface_8h_source.html#l00650">650</a> of file <a class="el" href="multiphysics__interface_8h_source.html">multiphysics_interface.h</a>.</p>
 
-<p class="reference">References <a class="el" href="multiphysics__interface_8h_source.html#l00846">MultiphysicsInterface&lt; dim &gt;::solids</a>.</p>
+<p class="reference">References <a class="el" href="multiphysics__interface_8h_source.html#l00888">MultiphysicsInterface&lt; dim &gt;::solids</a>.</p>
 
 </div>
 </div>
-<a id="a24c4630b62ccf275391781c0138d2ff5" name="a24c4630b62ccf275391781c0138d2ff5"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a24c4630b62ccf275391781c0138d2ff5">&#9670;&#160;</a></span>set_solution()</h2>
+<a id="ac8b057943852712ffbaac1f9b4fb03ce" name="ac8b057943852712ffbaac1f9b4fb03ce"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ac8b057943852712ffbaac1f9b4fb03ce">&#9670;&#160;</a></span>set_solution()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -1687,7 +1696,7 @@ template&lt;int dim&gt; </div>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype"><a class="el" href="vector_8h.html#a4ea4005d75c88e60bee47d4e79a13a39">GlobalVectorType</a> *&#160;</td>
+          <td class="paramtype">std::shared_ptr&lt; <a class="el" href="vector_8h.html#a4ea4005d75c88e60bee47d4e79a13a39">GlobalVectorType</a> &gt;&#160;</td>
           <td class="paramname"><em>solution_vector</em>&#160;</td>
         </tr>
         <tr>
@@ -1703,23 +1712,23 @@ template&lt;int dim&gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p>Sets the reference to the solution of the physics in the multiphysics interface. </p>
+<p>Sets the shared pointer to the solution of the physics in the multiphysics interface. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">physics_id</td><td>The physics of the DOF handler being requested</td></tr>
-    <tr><td class="paramname">solution_vector</td><td>The reference to the solution vector of the physics </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">physics_id</td><td>The physics ID the present solution being set</td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">solution_vector</td><td>Shared pointer to the solution vector of the physics </td></tr>
   </table>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="multiphysics__interface_8h_source.html#l00639">639</a> of file <a class="el" href="multiphysics__interface_8h_source.html">multiphysics_interface.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="multiphysics__interface_8h_source.html#l00666">666</a> of file <a class="el" href="multiphysics__interface_8h_source.html">multiphysics_interface.h</a>.</p>
 
-<p class="reference">References <a class="el" href="multiphysics__interface_8h_source.html#l00824">MultiphysicsInterface&lt; dim &gt;::active_physics</a>, and <a class="el" href="multiphysics__interface_8h_source.html#l00854">MultiphysicsInterface&lt; dim &gt;::physics_solutions</a>.</p>
+<p class="reference">References <a class="el" href="multiphysics__interface_8h_source.html#l00865">MultiphysicsInterface&lt; dim &gt;::active_physics</a>, and <a class="el" href="multiphysics__interface_8h_source.html#l00891">MultiphysicsInterface&lt; dim &gt;::physics_solutions</a>.</p>
 
 </div>
 </div>
-<a id="a791f019b8c5706bfe27dd903813e7f6d" name="a791f019b8c5706bfe27dd903813e7f6d"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a791f019b8c5706bfe27dd903813e7f6d">&#9670;&#160;</a></span>set_time_average_solution()</h2>
+<a id="a1cea173b3bd2e84d85b64f2510a48894" name="a1cea173b3bd2e84d85b64f2510a48894"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a1cea173b3bd2e84d85b64f2510a48894">&#9670;&#160;</a></span>set_time_average_solution()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -1738,7 +1747,7 @@ template&lt;int dim&gt; </div>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype"><a class="el" href="vector_8h.html#a4ea4005d75c88e60bee47d4e79a13a39">GlobalVectorType</a> *&#160;</td>
+          <td class="paramtype">std::shared_ptr&lt; <a class="el" href="vector_8h.html#a4ea4005d75c88e60bee47d4e79a13a39">GlobalVectorType</a> &gt;&#160;</td>
           <td class="paramname"><em>solution_vector</em>&#160;</td>
         </tr>
         <tr>
@@ -1754,18 +1763,18 @@ template&lt;int dim&gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p>Sets the reference to the time-average solution of the physics in the multiphysics interface. </p>
+<p>Sets the shared pointer to the time-average solution of the physics in the multiphysics interface. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">physics_id</td><td>The physics of the DOF handler being requested</td></tr>
-    <tr><td class="paramname">solution_vector</td><td>The reference to the solution vector of the physics </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">physics_id</td><td>The physics ID of the time averaged solution being set</td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">solution_vector</td><td>The shared pointer to the time averaged solution vector of the physics </td></tr>
   </table>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="multiphysics__interface_8h_source.html#l00679">679</a> of file <a class="el" href="multiphysics__interface_8h_source.html">multiphysics_interface.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="multiphysics__interface_8h_source.html#l00711">711</a> of file <a class="el" href="multiphysics__interface_8h_source.html">multiphysics_interface.h</a>.</p>
 
-<p class="reference">References <a class="el" href="multiphysics__interface_8h_source.html#l00824">MultiphysicsInterface&lt; dim &gt;::active_physics</a>, and <a class="el" href="multiphysics__interface_8h_source.html#l00865">MultiphysicsInterface&lt; dim &gt;::physics_time_average_solutions</a>.</p>
+<p class="reference">References <a class="el" href="multiphysics__interface_8h_source.html#l00865">MultiphysicsInterface&lt; dim &gt;::active_physics</a>, and <a class="el" href="multiphysics__interface_8h_source.html#l00938">MultiphysicsInterface&lt; dim &gt;::physics_time_average_solutions</a>.</p>
 
 </div>
 </div>
@@ -1798,7 +1807,7 @@ template&lt;int dim&gt; </div>
 
 <p class="definition">Definition at line <a class="el" href="multiphysics__interface_8h_source.html#l00359">359</a> of file <a class="el" href="multiphysics__interface_8h_source.html">multiphysics_interface.h</a>.</p>
 
-<p class="reference">References <a class="el" href="multiphysics__interface_8h_source.html#l00841">MultiphysicsInterface&lt; dim &gt;::block_physics</a>, and <a class="el" href="multiphysics__interface_8h_source.html#l00837">MultiphysicsInterface&lt; dim &gt;::physics</a>.</p>
+<p class="reference">References <a class="el" href="multiphysics__interface_8h_source.html#l00882">MultiphysicsInterface&lt; dim &gt;::block_physics</a>, and <a class="el" href="multiphysics__interface_8h_source.html#l00878">MultiphysicsInterface&lt; dim &gt;::physics</a>.</p>
 
 </div>
 </div>
@@ -1849,7 +1858,7 @@ template&lt;int dim&gt; </div>
 
 <p class="definition">Definition at line <a class="el" href="multiphysics__interface_8h_source.html#l00098">98</a> of file <a class="el" href="multiphysics__interface_8h_source.html">multiphysics_interface.h</a>.</p>
 
-<p class="reference">References <a class="el" href="multiphysics__interface_8h_source.html#l00841">MultiphysicsInterface&lt; dim &gt;::block_physics</a>, <a class="el" href="multiphysics__interface_8h_source.html#l00837">MultiphysicsInterface&lt; dim &gt;::physics</a>, <a class="el" href="multiphysics__interface_8h_source.html#l00165">MultiphysicsInterface&lt; dim &gt;::solve_block_physics()</a>, <a class="el" href="multiphysics__interface_8h_source.html#l00141">MultiphysicsInterface&lt; dim &gt;::solve_physics()</a>, and <a class="el" href="multiphysics__interface_8h_source.html#l00828">MultiphysicsInterface&lt; dim &gt;::solve_pre_fluid</a>.</p>
+<p class="reference">References <a class="el" href="multiphysics__interface_8h_source.html#l00882">MultiphysicsInterface&lt; dim &gt;::block_physics</a>, <a class="el" href="multiphysics__interface_8h_source.html#l00878">MultiphysicsInterface&lt; dim &gt;::physics</a>, <a class="el" href="multiphysics__interface_8h_source.html#l00165">MultiphysicsInterface&lt; dim &gt;::solve_block_physics()</a>, <a class="el" href="multiphysics__interface_8h_source.html#l00141">MultiphysicsInterface&lt; dim &gt;::solve_physics()</a>, and <a class="el" href="multiphysics__interface_8h_source.html#l00869">MultiphysicsInterface&lt; dim &gt;::solve_pre_fluid</a>.</p>
 
 </div>
 </div>
@@ -1899,7 +1908,7 @@ template&lt;int dim&gt; </div>
 
 <p class="definition">Definition at line <a class="el" href="multiphysics__interface_8h_source.html#l00165">165</a> of file <a class="el" href="multiphysics__interface_8h_source.html">multiphysics_interface.h</a>.</p>
 
-<p class="reference">References <a class="el" href="multiphysics__interface_8h_source.html#l00824">MultiphysicsInterface&lt; dim &gt;::active_physics</a>, <a class="el" href="multiphysics__interface_8h_source.html#l00068">MultiphysicsInterface&lt; dim &gt;::announce_physics()</a>, <a class="el" href="multiphysics__interface_8h_source.html#l00841">MultiphysicsInterface&lt; dim &gt;::block_physics</a>, <a class="el" href="namespaceParameters.html#a91f1943180a615249347b911b0ed3919a556966c7830465dc4623d62e32cec31d">Parameters::quiet</a>, and <a class="el" href="multiphysics__interface_8h_source.html#l00820">MultiphysicsInterface&lt; dim &gt;::verbosity</a>.</p>
+<p class="reference">References <a class="el" href="multiphysics__interface_8h_source.html#l00865">MultiphysicsInterface&lt; dim &gt;::active_physics</a>, <a class="el" href="multiphysics__interface_8h_source.html#l00068">MultiphysicsInterface&lt; dim &gt;::announce_physics()</a>, <a class="el" href="multiphysics__interface_8h_source.html#l00882">MultiphysicsInterface&lt; dim &gt;::block_physics</a>, <a class="el" href="namespaceParameters.html#a91f1943180a615249347b911b0ed3919a556966c7830465dc4623d62e32cec31d">Parameters::quiet</a>, and <a class="el" href="multiphysics__interface_8h_source.html#l00861">MultiphysicsInterface&lt; dim &gt;::verbosity</a>.</p>
 
 </div>
 </div>
@@ -1933,7 +1942,7 @@ template&lt;int dim&gt; </div>
 
 <p class="definition">Definition at line <a class="el" href="multiphysics__interface_8h_source.html#l00397">397</a> of file <a class="el" href="multiphysics__interface_8h_source.html">multiphysics_interface.h</a>.</p>
 
-<p class="reference">References <a class="el" href="multiphysics__interface_8h_source.html#l00824">MultiphysicsInterface&lt; dim &gt;::active_physics</a>, and <a class="el" href="multiphysics__interface_8h_source.html#l00837">MultiphysicsInterface&lt; dim &gt;::physics</a>.</p>
+<p class="reference">References <a class="el" href="multiphysics__interface_8h_source.html#l00865">MultiphysicsInterface&lt; dim &gt;::active_physics</a>, and <a class="el" href="multiphysics__interface_8h_source.html#l00878">MultiphysicsInterface&lt; dim &gt;::physics</a>.</p>
 
 </div>
 </div>
@@ -1983,7 +1992,7 @@ template&lt;int dim&gt; </div>
 
 <p class="definition">Definition at line <a class="el" href="multiphysics__interface_8h_source.html#l00141">141</a> of file <a class="el" href="multiphysics__interface_8h_source.html">multiphysics_interface.h</a>.</p>
 
-<p class="reference">References <a class="el" href="multiphysics__interface_8h_source.html#l00824">MultiphysicsInterface&lt; dim &gt;::active_physics</a>, <a class="el" href="multiphysics__interface_8h_source.html#l00068">MultiphysicsInterface&lt; dim &gt;::announce_physics()</a>, <a class="el" href="multiphysics__interface_8h_source.html#l00837">MultiphysicsInterface&lt; dim &gt;::physics</a>, <a class="el" href="namespaceParameters.html#a91f1943180a615249347b911b0ed3919a556966c7830465dc4623d62e32cec31d">Parameters::quiet</a>, and <a class="el" href="multiphysics__interface_8h_source.html#l00820">MultiphysicsInterface&lt; dim &gt;::verbosity</a>.</p>
+<p class="reference">References <a class="el" href="multiphysics__interface_8h_source.html#l00865">MultiphysicsInterface&lt; dim &gt;::active_physics</a>, <a class="el" href="multiphysics__interface_8h_source.html#l00068">MultiphysicsInterface&lt; dim &gt;::announce_physics()</a>, <a class="el" href="multiphysics__interface_8h_source.html#l00878">MultiphysicsInterface&lt; dim &gt;::physics</a>, <a class="el" href="namespaceParameters.html#a91f1943180a615249347b911b0ed3919a556966c7830465dc4623d62e32cec31d">Parameters::quiet</a>, and <a class="el" href="multiphysics__interface_8h_source.html#l00861">MultiphysicsInterface&lt; dim &gt;::verbosity</a>.</p>
 
 </div>
 </div>
@@ -2020,7 +2029,7 @@ template&lt;int dim&gt; </div>
 
 <p class="definition">Definition at line <a class="el" href="multiphysics__interface_8h_source.html#l00288">288</a> of file <a class="el" href="multiphysics__interface_8h_source.html">multiphysics_interface.h</a>.</p>
 
-<p class="reference">References <a class="el" href="multiphysics__interface_8h_source.html#l00841">MultiphysicsInterface&lt; dim &gt;::block_physics</a>, and <a class="el" href="multiphysics__interface_8h_source.html#l00837">MultiphysicsInterface&lt; dim &gt;::physics</a>.</p>
+<p class="reference">References <a class="el" href="multiphysics__interface_8h_source.html#l00882">MultiphysicsInterface&lt; dim &gt;::block_physics</a>, and <a class="el" href="multiphysics__interface_8h_source.html#l00878">MultiphysicsInterface&lt; dim &gt;::physics</a>.</p>
 
 </div>
 </div>
@@ -2051,9 +2060,9 @@ template&lt;int dim&gt; </div>
 
 <p>Prepares auxiliary physics to write simulation checkpoint. </p>
 
-<p class="definition">Definition at line <a class="el" href="multiphysics__interface_8h_source.html#l00789">789</a> of file <a class="el" href="multiphysics__interface_8h_source.html">multiphysics_interface.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="multiphysics__interface_8h_source.html#l00830">830</a> of file <a class="el" href="multiphysics__interface_8h_source.html">multiphysics_interface.h</a>.</p>
 
-<p class="reference">References <a class="el" href="multiphysics__interface_8h_source.html#l00841">MultiphysicsInterface&lt; dim &gt;::block_physics</a>, and <a class="el" href="multiphysics__interface_8h_source.html#l00837">MultiphysicsInterface&lt; dim &gt;::physics</a>.</p>
+<p class="reference">References <a class="el" href="multiphysics__interface_8h_source.html#l00882">MultiphysicsInterface&lt; dim &gt;::block_physics</a>, and <a class="el" href="multiphysics__interface_8h_source.html#l00878">MultiphysicsInterface&lt; dim &gt;::physics</a>.</p>
 
 </div>
 </div>
@@ -2080,7 +2089,7 @@ template&lt;int dim&gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="multiphysics__interface_8h_source.html#l00824">824</a> of file <a class="el" href="multiphysics__interface_8h_source.html">multiphysics_interface.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="multiphysics__interface_8h_source.html#l00865">865</a> of file <a class="el" href="multiphysics__interface_8h_source.html">multiphysics_interface.h</a>.</p>
 
 </div>
 </div>
@@ -2106,12 +2115,12 @@ template&lt;int dim&gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="multiphysics__interface_8h_source.html#l00841">841</a> of file <a class="el" href="multiphysics__interface_8h_source.html">multiphysics_interface.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="multiphysics__interface_8h_source.html#l00882">882</a> of file <a class="el" href="multiphysics__interface_8h_source.html">multiphysics_interface.h</a>.</p>
 
 </div>
 </div>
-<a id="a8b3431f89bc99bec1238987645d53bf2" name="a8b3431f89bc99bec1238987645d53bf2"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a8b3431f89bc99bec1238987645d53bf2">&#9670;&#160;</a></span>block_physics_filtered_solutions</h2>
+<a id="ae797f2b715521715c3e9d403b373dc37" name="ae797f2b715521715c3e9d403b373dc37"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ae797f2b715521715c3e9d403b373dc37">&#9670;&#160;</a></span>block_physics_filtered_solutions</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -2122,7 +2131,7 @@ template&lt;int dim&gt; </div>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">std::map&lt;<a class="el" href="multiphysics_8h.html#ae14bb720bc9a37edc36fb8d90df712c2">PhysicsID</a>, <a class="el" href="vector_8h.html#ac71ba75c5119edae876800f9e80b59e7">GlobalBlockVectorType</a> *&gt; <a class="el" href="classMultiphysicsInterface.html">MultiphysicsInterface</a>&lt; dim &gt;::block_physics_filtered_solutions</td>
+          <td class="memname">std::map&lt;<a class="el" href="multiphysics_8h.html#ae14bb720bc9a37edc36fb8d90df712c2">PhysicsID</a>, std::shared_ptr&lt;<a class="el" href="vector_8h.html#a4ea4005d75c88e60bee47d4e79a13a39">GlobalVectorType</a>&gt; &gt; <a class="el" href="classMultiphysicsInterface.html">MultiphysicsInterface</a>&lt; dim &gt;::block_physics_filtered_solutions</td>
         </tr>
       </table>
   </td>
@@ -2131,13 +2140,14 @@ template&lt;int dim&gt; </div>
   </tr>
 </table>
 </div><div class="memdoc">
+<p>Map of physics and shared pointers to their respective filtered solutions. Same as <a class="el" href="classMultiphysicsInterface.html#ad4a78f2b0c33c9e39d2e936ee5a4b12f">MultiphysicsInterface::physics_filtered_solutions</a>, but used with BlockVector. </p>
 
-<p class="definition">Definition at line <a class="el" href="multiphysics__interface_8h_source.html#l00851">851</a> of file <a class="el" href="multiphysics__interface_8h_source.html">multiphysics_interface.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="multiphysics__interface_8h_source.html#l00915">915</a> of file <a class="el" href="multiphysics__interface_8h_source.html">multiphysics_interface.h</a>.</p>
 
 </div>
 </div>
-<a id="a56a25c6b91ea8e4efb8663fed633826d" name="a56a25c6b91ea8e4efb8663fed633826d"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a56a25c6b91ea8e4efb8663fed633826d">&#9670;&#160;</a></span>block_physics_previous_solutions</h2>
+<a id="ac7631c8e804c81588dd5279da1249db1" name="ac7631c8e804c81588dd5279da1249db1"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ac7631c8e804c81588dd5279da1249db1">&#9670;&#160;</a></span>block_physics_previous_solutions</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -2148,7 +2158,7 @@ template&lt;int dim&gt; </div>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">std::map&lt;<a class="el" href="multiphysics_8h.html#ae14bb720bc9a37edc36fb8d90df712c2">PhysicsID</a>, std::vector&lt;<a class="el" href="vector_8h.html#ac71ba75c5119edae876800f9e80b59e7">GlobalBlockVectorType</a>&gt; *&gt; <a class="el" href="classMultiphysicsInterface.html">MultiphysicsInterface</a>&lt; dim &gt;::block_physics_previous_solutions</td>
+          <td class="memname">std::map&lt;<a class="el" href="multiphysics_8h.html#ae14bb720bc9a37edc36fb8d90df712c2">PhysicsID</a>, std::shared_ptr&lt;std::vector&lt;<a class="el" href="vector_8h.html#ac71ba75c5119edae876800f9e80b59e7">GlobalBlockVectorType</a>&gt; &gt; &gt; <a class="el" href="classMultiphysicsInterface.html">MultiphysicsInterface</a>&lt; dim &gt;::block_physics_previous_solutions</td>
         </tr>
       </table>
   </td>
@@ -2157,13 +2167,14 @@ template&lt;int dim&gt; </div>
   </tr>
 </table>
 </div><div class="memdoc">
+<p>Map of physics and shared pointers to their respective vector of previous solutions. Same as <a class="el" href="classMultiphysicsInterface.html#a8f08573a799a221f9619eb181477d4b4">MultiphysicsInterface::physics_previous_solutions</a>, but used with BlockVector. </p>
 
-<p class="definition">Definition at line <a class="el" href="multiphysics__interface_8h_source.html#l00861">861</a> of file <a class="el" href="multiphysics__interface_8h_source.html">multiphysics_interface.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="multiphysics__interface_8h_source.html#l00931">931</a> of file <a class="el" href="multiphysics__interface_8h_source.html">multiphysics_interface.h</a>.</p>
 
 </div>
 </div>
-<a id="ad2d01cb26d8da7ff60437d74a3cbae12" name="ad2d01cb26d8da7ff60437d74a3cbae12"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ad2d01cb26d8da7ff60437d74a3cbae12">&#9670;&#160;</a></span>block_physics_solutions</h2>
+<a id="aebc9b720836728f99f2824e876a4084a" name="aebc9b720836728f99f2824e876a4084a"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aebc9b720836728f99f2824e876a4084a">&#9670;&#160;</a></span>block_physics_solutions</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -2174,7 +2185,7 @@ template&lt;int dim&gt; </div>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">std::map&lt;<a class="el" href="multiphysics_8h.html#ae14bb720bc9a37edc36fb8d90df712c2">PhysicsID</a>, <a class="el" href="vector_8h.html#ac71ba75c5119edae876800f9e80b59e7">GlobalBlockVectorType</a> *&gt; <a class="el" href="classMultiphysicsInterface.html">MultiphysicsInterface</a>&lt; dim &gt;::block_physics_solutions</td>
+          <td class="memname">std::map&lt;<a class="el" href="multiphysics_8h.html#ae14bb720bc9a37edc36fb8d90df712c2">PhysicsID</a>, std::shared_ptr&lt;<a class="el" href="vector_8h.html#ac71ba75c5119edae876800f9e80b59e7">GlobalBlockVectorType</a>&gt; &gt; <a class="el" href="classMultiphysicsInterface.html">MultiphysicsInterface</a>&lt; dim &gt;::block_physics_solutions</td>
         </tr>
       </table>
   </td>
@@ -2183,13 +2194,14 @@ template&lt;int dim&gt; </div>
   </tr>
 </table>
 </div><div class="memdoc">
+<p>Map of physics and shared pointers to their respective solutions. Same as <a class="el" href="classMultiphysicsInterface.html#aa439052519abb5f6399ee0e1c2938131" title="Map of physics and shared pointers to their respective solutions.">MultiphysicsInterface::physics_solutions</a>, but used with BlockVector. </p>
 
-<p class="definition">Definition at line <a class="el" href="multiphysics__interface_8h_source.html#l00855">855</a> of file <a class="el" href="multiphysics__interface_8h_source.html">multiphysics_interface.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="multiphysics__interface_8h_source.html#l00899">899</a> of file <a class="el" href="multiphysics__interface_8h_source.html">multiphysics_interface.h</a>.</p>
 
 </div>
 </div>
-<a id="abb30191ab6f77047514aa794e4abdbc4" name="abb30191ab6f77047514aa794e4abdbc4"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#abb30191ab6f77047514aa794e4abdbc4">&#9670;&#160;</a></span>block_physics_solutions_m1</h2>
+<a id="a3bbb64cd917794e3323b09b3daa29c35" name="a3bbb64cd917794e3323b09b3daa29c35"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a3bbb64cd917794e3323b09b3daa29c35">&#9670;&#160;</a></span>block_physics_solutions_m1</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -2200,7 +2212,7 @@ template&lt;int dim&gt; </div>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">std::map&lt;<a class="el" href="multiphysics_8h.html#ae14bb720bc9a37edc36fb8d90df712c2">PhysicsID</a>, <a class="el" href="vector_8h.html#ac71ba75c5119edae876800f9e80b59e7">GlobalBlockVectorType</a> *&gt; <a class="el" href="classMultiphysicsInterface.html">MultiphysicsInterface</a>&lt; dim &gt;::block_physics_solutions_m1</td>
+          <td class="memname">std::map&lt;<a class="el" href="multiphysics_8h.html#ae14bb720bc9a37edc36fb8d90df712c2">PhysicsID</a>, std::shared_ptr&lt;<a class="el" href="vector_8h.html#ac71ba75c5119edae876800f9e80b59e7">GlobalBlockVectorType</a>&gt; &gt; <a class="el" href="classMultiphysicsInterface.html">MultiphysicsInterface</a>&lt; dim &gt;::block_physics_solutions_m1</td>
         </tr>
       </table>
   </td>
@@ -2210,12 +2222,12 @@ template&lt;int dim&gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="multiphysics__interface_8h_source.html#l00876">876</a> of file <a class="el" href="multiphysics__interface_8h_source.html">multiphysics_interface.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="multiphysics__interface_8h_source.html#l00958">958</a> of file <a class="el" href="multiphysics__interface_8h_source.html">multiphysics_interface.h</a>.</p>
 
 </div>
 </div>
-<a id="a1e8467fbb94062ce3ffadeb98c2ff6e2" name="a1e8467fbb94062ce3ffadeb98c2ff6e2"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a1e8467fbb94062ce3ffadeb98c2ff6e2">&#9670;&#160;</a></span>block_physics_time_average_solutions</h2>
+<a id="a10acdb7560891c1367365f9e5d3836a0" name="a10acdb7560891c1367365f9e5d3836a0"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a10acdb7560891c1367365f9e5d3836a0">&#9670;&#160;</a></span>block_physics_time_average_solutions</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -2226,7 +2238,7 @@ template&lt;int dim&gt; </div>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">std::map&lt;<a class="el" href="multiphysics_8h.html#ae14bb720bc9a37edc36fb8d90df712c2">PhysicsID</a>, <a class="el" href="vector_8h.html#ac71ba75c5119edae876800f9e80b59e7">GlobalBlockVectorType</a> *&gt; <a class="el" href="classMultiphysicsInterface.html">MultiphysicsInterface</a>&lt; dim &gt;::block_physics_time_average_solutions</td>
+          <td class="memname">std::map&lt;<a class="el" href="multiphysics_8h.html#ae14bb720bc9a37edc36fb8d90df712c2">PhysicsID</a>, std::shared_ptr&lt;<a class="el" href="vector_8h.html#ac71ba75c5119edae876800f9e80b59e7">GlobalBlockVectorType</a>&gt; &gt; <a class="el" href="classMultiphysicsInterface.html">MultiphysicsInterface</a>&lt; dim &gt;::block_physics_time_average_solutions</td>
         </tr>
       </table>
   </td>
@@ -2235,13 +2247,14 @@ template&lt;int dim&gt; </div>
   </tr>
 </table>
 </div><div class="memdoc">
+<p>Map of physics and shared pointers to their respective time-averaged solutions. Same as <a class="el" href="classMultiphysicsInterface.html#a6628f168a5a3ac7bb5a120242ec49ced">MultiphysicsInterface::physics_time_average_solutions</a>, but used with BlockVector. </p>
 
-<p class="definition">Definition at line <a class="el" href="multiphysics__interface_8h_source.html#l00869">869</a> of file <a class="el" href="multiphysics__interface_8h_source.html">multiphysics_interface.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="multiphysics__interface_8h_source.html#l00947">947</a> of file <a class="el" href="multiphysics__interface_8h_source.html">multiphysics_interface.h</a>.</p>
 
 </div>
 </div>
-<a id="ac5aebf5bf8d7c461762f955fbdc55150" name="ac5aebf5bf8d7c461762f955fbdc55150"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ac5aebf5bf8d7c461762f955fbdc55150">&#9670;&#160;</a></span>immersed_solid_shape</h2>
+<a id="ae4661fa66dae071e667ec73a2406cd0a" name="ae4661fa66dae071e667ec73a2406cd0a"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ae4661fa66dae071e667ec73a2406cd0a">&#9670;&#160;</a></span>immersed_solid_shape</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -2252,7 +2265,7 @@ template&lt;int dim&gt; </div>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname"><a class="el" href="classShape.html">Shape</a>&lt;dim&gt;* <a class="el" href="classMultiphysicsInterface.html">MultiphysicsInterface</a>&lt; dim &gt;::immersed_solid_shape</td>
+          <td class="memname">std::shared_ptr&lt;<a class="el" href="classShape.html">Shape</a>&lt;dim&gt; &gt; <a class="el" href="classMultiphysicsInterface.html">MultiphysicsInterface</a>&lt; dim &gt;::immersed_solid_shape</td>
         </tr>
       </table>
   </td>
@@ -2262,7 +2275,9 @@ template&lt;int dim&gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="multiphysics__interface_8h_source.html#l00872">872</a> of file <a class="el" href="multiphysics__interface_8h_source.html">multiphysics_interface.h</a>.</p>
+<p>Shared pointer to immersed solid shapes to be used by auxiliary physics. </p>
+
+<p class="definition">Definition at line <a class="el" href="multiphysics__interface_8h_source.html#l00950">950</a> of file <a class="el" href="multiphysics__interface_8h_source.html">multiphysics_interface.h</a>.</p>
 
 </div>
 </div>
@@ -2288,7 +2303,7 @@ template&lt;int dim&gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="multiphysics__interface_8h_source.html#l00819">819</a> of file <a class="el" href="multiphysics__interface_8h_source.html">multiphysics_interface.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="multiphysics__interface_8h_source.html#l00860">860</a> of file <a class="el" href="multiphysics__interface_8h_source.html">multiphysics_interface.h</a>.</p>
 
 </div>
 </div>
@@ -2314,7 +2329,7 @@ template&lt;int dim&gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="multiphysics__interface_8h_source.html#l00821">821</a> of file <a class="el" href="multiphysics__interface_8h_source.html">multiphysics_interface.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="multiphysics__interface_8h_source.html#l00862">862</a> of file <a class="el" href="multiphysics__interface_8h_source.html">multiphysics_interface.h</a>.</p>
 
 </div>
 </div>
@@ -2340,12 +2355,12 @@ template&lt;int dim&gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="multiphysics__interface_8h_source.html#l00837">837</a> of file <a class="el" href="multiphysics__interface_8h_source.html">multiphysics_interface.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="multiphysics__interface_8h_source.html#l00878">878</a> of file <a class="el" href="multiphysics__interface_8h_source.html">multiphysics_interface.h</a>.</p>
 
 </div>
 </div>
-<a id="a9a1fadb4782590fe0484a4b63ef63639" name="a9a1fadb4782590fe0484a4b63ef63639"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a9a1fadb4782590fe0484a4b63ef63639">&#9670;&#160;</a></span>physics_dof_handler</h2>
+<a id="a4bbdda6e9147c97c561e5ba1fc555110" name="a4bbdda6e9147c97c561e5ba1fc555110"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a4bbdda6e9147c97c561e5ba1fc555110">&#9670;&#160;</a></span>physics_dof_handler</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -2356,7 +2371,7 @@ template&lt;int dim&gt; </div>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">std::map&lt;<a class="el" href="multiphysics_8h.html#ae14bb720bc9a37edc36fb8d90df712c2">PhysicsID</a>, DoFHandler&lt;dim&gt; *&gt; <a class="el" href="classMultiphysicsInterface.html">MultiphysicsInterface</a>&lt; dim &gt;::physics_dof_handler</td>
+          <td class="memname">std::map&lt;<a class="el" href="multiphysics_8h.html#ae14bb720bc9a37edc36fb8d90df712c2">PhysicsID</a>, std::shared_ptr&lt;DoFHandler&lt;dim&gt; &gt; &gt; <a class="el" href="classMultiphysicsInterface.html">MultiphysicsInterface</a>&lt; dim &gt;::physics_dof_handler</td>
         </tr>
       </table>
   </td>
@@ -2366,12 +2381,14 @@ template&lt;int dim&gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="multiphysics__interface_8h_source.html#l00844">844</a> of file <a class="el" href="multiphysics__interface_8h_source.html">multiphysics_interface.h</a>.</p>
+<p>Map of physics and shared pointers to their respective DoFHandler. </p>
+
+<p class="definition">Definition at line <a class="el" href="multiphysics__interface_8h_source.html#l00885">885</a> of file <a class="el" href="multiphysics__interface_8h_source.html">multiphysics_interface.h</a>.</p>
 
 </div>
 </div>
-<a id="a04e672903a4964df6e590d3572ada1bd" name="a04e672903a4964df6e590d3572ada1bd"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a04e672903a4964df6e590d3572ada1bd">&#9670;&#160;</a></span>physics_filtered_solutions</h2>
+<a id="ad4a78f2b0c33c9e39d2e936ee5a4b12f" name="ad4a78f2b0c33c9e39d2e936ee5a4b12f"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ad4a78f2b0c33c9e39d2e936ee5a4b12f">&#9670;&#160;</a></span>physics_filtered_solutions</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -2382,7 +2399,7 @@ template&lt;int dim&gt; </div>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">std::map&lt;<a class="el" href="multiphysics_8h.html#ae14bb720bc9a37edc36fb8d90df712c2">PhysicsID</a>, <a class="el" href="vector_8h.html#a4ea4005d75c88e60bee47d4e79a13a39">GlobalVectorType</a> *&gt; <a class="el" href="classMultiphysicsInterface.html">MultiphysicsInterface</a>&lt; dim &gt;::physics_filtered_solutions</td>
+          <td class="memname">std::map&lt;<a class="el" href="multiphysics_8h.html#ae14bb720bc9a37edc36fb8d90df712c2">PhysicsID</a>, std::shared_ptr&lt;<a class="el" href="vector_8h.html#a4ea4005d75c88e60bee47d4e79a13a39">GlobalVectorType</a>&gt; &gt; <a class="el" href="classMultiphysicsInterface.html">MultiphysicsInterface</a>&lt; dim &gt;::physics_filtered_solutions</td>
         </tr>
       </table>
   </td>
@@ -2391,13 +2408,14 @@ template&lt;int dim&gt; </div>
   </tr>
 </table>
 </div><div class="memdoc">
+<p>Map of physics and shared pointers to their respective filtered solutions. These solutions are used with both VOF and Cahn-Hilliard multiphase flow approaches for surface tension force calculation in the momentum equation. </p>
 
-<p class="definition">Definition at line <a class="el" href="multiphysics__interface_8h_source.html#l00850">850</a> of file <a class="el" href="multiphysics__interface_8h_source.html">multiphysics_interface.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="multiphysics__interface_8h_source.html#l00907">907</a> of file <a class="el" href="multiphysics__interface_8h_source.html">multiphysics_interface.h</a>.</p>
 
 </div>
 </div>
-<a id="ae2bc1da31500c52f90cc89adf544ed8e" name="ae2bc1da31500c52f90cc89adf544ed8e"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ae2bc1da31500c52f90cc89adf544ed8e">&#9670;&#160;</a></span>physics_previous_solutions</h2>
+<a id="a8f08573a799a221f9619eb181477d4b4" name="a8f08573a799a221f9619eb181477d4b4"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a8f08573a799a221f9619eb181477d4b4">&#9670;&#160;</a></span>physics_previous_solutions</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -2408,7 +2426,7 @@ template&lt;int dim&gt; </div>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">std::map&lt;<a class="el" href="multiphysics_8h.html#ae14bb720bc9a37edc36fb8d90df712c2">PhysicsID</a>, std::vector&lt;<a class="el" href="vector_8h.html#a4ea4005d75c88e60bee47d4e79a13a39">GlobalVectorType</a>&gt; *&gt; <a class="el" href="classMultiphysicsInterface.html">MultiphysicsInterface</a>&lt; dim &gt;::physics_previous_solutions</td>
+          <td class="memname">std::map&lt;<a class="el" href="multiphysics_8h.html#ae14bb720bc9a37edc36fb8d90df712c2">PhysicsID</a>, std::shared_ptr&lt;std::vector&lt;<a class="el" href="vector_8h.html#a4ea4005d75c88e60bee47d4e79a13a39">GlobalVectorType</a>&gt; &gt; &gt; <a class="el" href="classMultiphysicsInterface.html">MultiphysicsInterface</a>&lt; dim &gt;::physics_previous_solutions</td>
         </tr>
       </table>
   </td>
@@ -2417,13 +2435,14 @@ template&lt;int dim&gt; </div>
   </tr>
 </table>
 </div><div class="memdoc">
+<p>Map of physics and shared pointers to their respective vector of previous solutions. </p>
 
-<p class="definition">Definition at line <a class="el" href="multiphysics__interface_8h_source.html#l00859">859</a> of file <a class="el" href="multiphysics__interface_8h_source.html">multiphysics_interface.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="multiphysics__interface_8h_source.html#l00922">922</a> of file <a class="el" href="multiphysics__interface_8h_source.html">multiphysics_interface.h</a>.</p>
 
 </div>
 </div>
-<a id="aa02da295791592960ed3e59b78fe7946" name="aa02da295791592960ed3e59b78fe7946"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#aa02da295791592960ed3e59b78fe7946">&#9670;&#160;</a></span>physics_solutions</h2>
+<a id="aa439052519abb5f6399ee0e1c2938131" name="aa439052519abb5f6399ee0e1c2938131"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aa439052519abb5f6399ee0e1c2938131">&#9670;&#160;</a></span>physics_solutions</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -2434,7 +2453,7 @@ template&lt;int dim&gt; </div>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">std::map&lt;<a class="el" href="multiphysics_8h.html#ae14bb720bc9a37edc36fb8d90df712c2">PhysicsID</a>, <a class="el" href="vector_8h.html#a4ea4005d75c88e60bee47d4e79a13a39">GlobalVectorType</a> *&gt; <a class="el" href="classMultiphysicsInterface.html">MultiphysicsInterface</a>&lt; dim &gt;::physics_solutions</td>
+          <td class="memname">std::map&lt;<a class="el" href="multiphysics_8h.html#ae14bb720bc9a37edc36fb8d90df712c2">PhysicsID</a>, std::shared_ptr&lt;<a class="el" href="vector_8h.html#a4ea4005d75c88e60bee47d4e79a13a39">GlobalVectorType</a>&gt; &gt; <a class="el" href="classMultiphysicsInterface.html">MultiphysicsInterface</a>&lt; dim &gt;::physics_solutions</td>
         </tr>
       </table>
   </td>
@@ -2444,12 +2463,14 @@ template&lt;int dim&gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="multiphysics__interface_8h_source.html#l00854">854</a> of file <a class="el" href="multiphysics__interface_8h_source.html">multiphysics_interface.h</a>.</p>
+<p>Map of physics and shared pointers to their respective solutions. </p>
+
+<p class="definition">Definition at line <a class="el" href="multiphysics__interface_8h_source.html#l00891">891</a> of file <a class="el" href="multiphysics__interface_8h_source.html">multiphysics_interface.h</a>.</p>
 
 </div>
 </div>
-<a id="aa3d5eacc84646adc0357fe17e75e6f72" name="aa3d5eacc84646adc0357fe17e75e6f72"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#aa3d5eacc84646adc0357fe17e75e6f72">&#9670;&#160;</a></span>physics_solutions_m1</h2>
+<a id="a6a70c3d97f787d435f4d79c3bb1b7129" name="a6a70c3d97f787d435f4d79c3bb1b7129"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a6a70c3d97f787d435f4d79c3bb1b7129">&#9670;&#160;</a></span>physics_solutions_m1</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -2460,7 +2481,7 @@ template&lt;int dim&gt; </div>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">std::map&lt;<a class="el" href="multiphysics_8h.html#ae14bb720bc9a37edc36fb8d90df712c2">PhysicsID</a>, <a class="el" href="vector_8h.html#a4ea4005d75c88e60bee47d4e79a13a39">GlobalVectorType</a> *&gt; <a class="el" href="classMultiphysicsInterface.html">MultiphysicsInterface</a>&lt; dim &gt;::physics_solutions_m1</td>
+          <td class="memname">std::map&lt;<a class="el" href="multiphysics_8h.html#ae14bb720bc9a37edc36fb8d90df712c2">PhysicsID</a>, std::shared_ptr&lt;<a class="el" href="vector_8h.html#a4ea4005d75c88e60bee47d4e79a13a39">GlobalVectorType</a>&gt; &gt; <a class="el" href="classMultiphysicsInterface.html">MultiphysicsInterface</a>&lt; dim &gt;::physics_solutions_m1</td>
         </tr>
       </table>
   </td>
@@ -2469,13 +2490,14 @@ template&lt;int dim&gt; </div>
   </tr>
 </table>
 </div><div class="memdoc">
+<p>Map of physics and shared pointers to their respective previous (n-1) solutions. </p>
 
-<p class="definition">Definition at line <a class="el" href="multiphysics__interface_8h_source.html#l00875">875</a> of file <a class="el" href="multiphysics__interface_8h_source.html">multiphysics_interface.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="multiphysics__interface_8h_source.html#l00956">956</a> of file <a class="el" href="multiphysics__interface_8h_source.html">multiphysics_interface.h</a>.</p>
 
 </div>
 </div>
-<a id="a6679a79c963fb98bec7b41d2ac057248" name="a6679a79c963fb98bec7b41d2ac057248"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a6679a79c963fb98bec7b41d2ac057248">&#9670;&#160;</a></span>physics_time_average_solutions</h2>
+<a id="a6628f168a5a3ac7bb5a120242ec49ced" name="a6628f168a5a3ac7bb5a120242ec49ced"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a6628f168a5a3ac7bb5a120242ec49ced">&#9670;&#160;</a></span>physics_time_average_solutions</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -2486,7 +2508,7 @@ template&lt;int dim&gt; </div>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">std::map&lt;<a class="el" href="multiphysics_8h.html#ae14bb720bc9a37edc36fb8d90df712c2">PhysicsID</a>, <a class="el" href="vector_8h.html#a4ea4005d75c88e60bee47d4e79a13a39">GlobalVectorType</a> *&gt; <a class="el" href="classMultiphysicsInterface.html">MultiphysicsInterface</a>&lt; dim &gt;::physics_time_average_solutions</td>
+          <td class="memname">std::map&lt;<a class="el" href="multiphysics_8h.html#ae14bb720bc9a37edc36fb8d90df712c2">PhysicsID</a>, std::shared_ptr&lt;<a class="el" href="vector_8h.html#a4ea4005d75c88e60bee47d4e79a13a39">GlobalVectorType</a>&gt; &gt; <a class="el" href="classMultiphysicsInterface.html">MultiphysicsInterface</a>&lt; dim &gt;::physics_time_average_solutions</td>
         </tr>
       </table>
   </td>
@@ -2495,13 +2517,14 @@ template&lt;int dim&gt; </div>
   </tr>
 </table>
 </div><div class="memdoc">
+<p>Map of physics and shared pointers to their respective time-averaged solutions. </p>
 
-<p class="definition">Definition at line <a class="el" href="multiphysics__interface_8h_source.html#l00865">865</a> of file <a class="el" href="multiphysics__interface_8h_source.html">multiphysics_interface.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="multiphysics__interface_8h_source.html#l00938">938</a> of file <a class="el" href="multiphysics__interface_8h_source.html">multiphysics_interface.h</a>.</p>
 
 </div>
 </div>
-<a id="a92263afddc12c8542f4bdfe463533c8b" name="a92263afddc12c8542f4bdfe463533c8b"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a92263afddc12c8542f4bdfe463533c8b">&#9670;&#160;</a></span>solids</h2>
+<a id="a25fa7f9cc6c3587be450c7e21be5aa97" name="a25fa7f9cc6c3587be450c7e21be5aa97"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a25fa7f9cc6c3587be450c7e21be5aa97">&#9670;&#160;</a></span>solids</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -2512,7 +2535,7 @@ template&lt;int dim&gt; </div>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">std::vector&lt;std::shared_ptr&lt;<a class="el" href="classSolidBase.html">SolidBase</a>&lt;dim, dim&gt; &gt; &gt;* <a class="el" href="classMultiphysicsInterface.html">MultiphysicsInterface</a>&lt; dim &gt;::solids</td>
+          <td class="memname">std::shared_ptr&lt;std::vector&lt;std::shared_ptr&lt;<a class="el" href="classSolidBase.html">SolidBase</a>&lt;dim, dim&gt; &gt; &gt; &gt; <a class="el" href="classMultiphysicsInterface.html">MultiphysicsInterface</a>&lt; dim &gt;::solids</td>
         </tr>
       </table>
   </td>
@@ -2522,7 +2545,9 @@ template&lt;int dim&gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="multiphysics__interface_8h_source.html#l00846">846</a> of file <a class="el" href="multiphysics__interface_8h_source.html">multiphysics_interface.h</a>.</p>
+<p>Shared pointer to the vector containing shared pointers to solid objects. </p>
+
+<p class="definition">Definition at line <a class="el" href="multiphysics__interface_8h_source.html#l00888">888</a> of file <a class="el" href="multiphysics__interface_8h_source.html">multiphysics_interface.h</a>.</p>
 
 </div>
 </div>
@@ -2558,7 +2583,7 @@ template&lt;int dim&gt; </div>
 <div class="ttc" id="amultiphysics_8h_html_ae14bb720bc9a37edc36fb8d90df712c2ad4151ddbc1976755e1fcd118d2917fa8"><div class="ttname"><a href="multiphysics_8h.html#ae14bb720bc9a37edc36fb8d90df712c2ad4151ddbc1976755e1fcd118d2917fa8">heat_transfer</a></div><div class="ttdeci">@ heat_transfer</div><div class="ttdef"><b>Definition</b> <a href="multiphysics_8h_source.html#l00010">multiphysics.h:10</a></div></div>
 <div class="ttc" id="amultiphysics_8h_html_ae14bb720bc9a37edc36fb8d90df712c2adb9b8e35efba351d474020dd829e49dd"><div class="ttname"><a href="multiphysics_8h.html#ae14bb720bc9a37edc36fb8d90df712c2adb9b8e35efba351d474020dd829e49dd">cahn_hilliard</a></div><div class="ttdeci">@ cahn_hilliard</div><div class="ttdef"><b>Definition</b> <a href="multiphysics_8h_source.html#l00013">multiphysics.h:13</a></div></div>
 </div><!-- fragment -->
-<p class="definition">Definition at line <a class="el" href="multiphysics__interface_8h_source.html#l00828">828</a> of file <a class="el" href="multiphysics__interface_8h_source.html">multiphysics_interface.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="multiphysics__interface_8h_source.html#l00869">869</a> of file <a class="el" href="multiphysics__interface_8h_source.html">multiphysics_interface.h</a>.</p>
 
 </div>
 </div>
@@ -2584,7 +2609,7 @@ template&lt;int dim&gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="multiphysics__interface_8h_source.html#l00820">820</a> of file <a class="el" href="multiphysics__interface_8h_source.html">multiphysics_interface.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="multiphysics__interface_8h_source.html#l00861">861</a> of file <a class="el" href="multiphysics__interface_8h_source.html">multiphysics_interface.h</a>.</p>
 
 </div>
 </div>

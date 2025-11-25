@@ -19,7 +19,7 @@ var searchData=
   ['gc_5fmultigrid_5fpreconditioner_5fintermediate_16',['gc_multigrid_preconditioner_intermediate',['../classMFNavierStokesPreconditionGMGBase.html#a852a03763344c1d625405a8906cb688f',1,'MFNavierStokesPreconditionGMGBase']]],
   ['gen_17',['gen',['../classNormalDistribution.html#aa5dce1f2f07dcc009cd5942b50ecd474',1,'NormalDistribution::gen'],['../classCustomDistribution.html#a5d849699f8136a27020a24abe129b883',1,'CustomDistribution::gen']]],
   ['geometric_5finterface_5freinitialization_18',['geometric_interface_reinitialization',['../structParameters_1_1VOF__RegularizationMethod.html#a0f5be5a8bf29b0aa32e4b78fda167aa4',1,'Parameters::VOF_RegularizationMethod']]],
-  ['get_5fav_19',['get_av',['../classAverageVelocities.html#adb2efe0c26d5fd0cdb707b87bbf4c73c',1,'AverageVelocities']]],
+  ['get_5fav_19',['get_av',['../classAverageVelocities.html#a3b95065afa2e8a04c4953b16d644ea97',1,'AverageVelocities']]],
   ['get_5frns_20',['get_rns',['../classAverageVelocities.html#a51453267a4ce6dfc785b1a801042dd66',1,'AverageVelocities']]],
   ['get_5frss_21',['get_rss',['../classAverageVelocities.html#a61b139bf6299a4ef937379a4f5daf05e',1,'AverageVelocities']]],
   ['ggls_22',['ggls',['../classHeatTransfer.html#a8d07f04706e7256acf684ab6dd266d1a',1,'HeatTransfer::GGLS'],['../classHeatTransferAssemblerBDF.html#a58d359088731157c2ce1205e7dc5aa60',1,'HeatTransferAssemblerBDF::GGLS']]],
