@@ -1194,6 +1194,14 @@ namespace Parameters
         "Tracer reaction order for the fluid corresponding to Phase = " +
           Utilities::int_to_string(id, 1));
 
+      prm.declare_entry(
+        "tracer reaction epsilon",
+        "1e-8",
+        Patterns::Double(),
+        "Tracer reaction epsilon for the fluid corresponding to Phase = " +
+          Utilities::int_to_string(id, 1) + ". " +
+          "Lower values are more realistic but lead to stiffer linear systems when n < 1. ");
+
       // Declaration of the immersed solids models parameters
       immersed_solid_tanh_parameters.declare_parameters(prm);
       immersed_solid_gaussian_parameters.declare_parameters(prm);
@@ -1392,6 +1400,7 @@ namespace Parameters
           TracerReactionPrefactorModel::constant;
       tracer_reaction_constant = prm.get_double("tracer reaction constant");
       tracer_reaction_order    = prm.get_double("tracer reaction order");
+      tracer_reaction_epsilon  = prm.get_double("tracer reaction epsilon");
 
       // Parsing of the immersed solids models parameters
       immersed_solid_tanh_parameters.parse_parameters(prm, dimensions);
