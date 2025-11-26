@@ -1584,10 +1584,8 @@ void
 CFDDEMSolver<dim>::solve()
 {
   AssertThrow(
-    (this->cfd_dem_simulation_parameters.void_fraction
-       ->project_particle_forces == false) ||
-      (this->cfd_dem_simulation_parameters.void_fraction
-         ->project_particle_forces &&
+    (this->cfd_dem_simulation_parameters.cfd_dem.project_particle_forces == false) ||
+      (this->cfd_dem_simulation_parameters.cfd_dem.project_particle_forces &&
        this->cfd_dem_simulation_parameters.cfd_dem.drag_coupling ==
          Parameters::DragCoupling::fully_explicit),
     ExcMessage(
@@ -1671,8 +1669,7 @@ CFDDEMSolver<dim>::solve()
         this->simulation_control->get_current_time());
 
       // Project particle forces into the fluid mesh if the parameter is enabled
-      if (this->cfd_dem_simulation_parameters.void_fraction
-            ->project_particle_forces)
+      if (this->cfd_dem_simulation_parameters.cfd_dem.project_particle_forces)
         {
           this->particle_projector.calculate_particle_fluid_forces_projection(
             this->cfd_dem_simulation_parameters.cfd_dem,

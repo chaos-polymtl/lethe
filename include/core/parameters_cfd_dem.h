@@ -123,7 +123,6 @@ namespace Parameters
     VoidFractionQuadratureRule     quadrature_rule;
     unsigned int                   n_quadrature_points;
     bool                           project_particle_velocity;
-    bool                           project_particle_forces;
   };
 
   struct CFDDEM
@@ -146,6 +145,7 @@ namespace Parameters
     double       cstar;
     bool         implicit_stabilization;
     bool         particle_statistics;
+    bool         project_particle_forces;
 
     static void
     declare_parameters(ParameterHandler &prm);
