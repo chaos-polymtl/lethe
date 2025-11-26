@@ -793,9 +793,15 @@ FluidDynamicsVANS<dim>::gather_output_hook()
   if (this->cfd_dem_simulation_parameters.void_fraction
         ->project_particle_velocity)
     {
+      std::vector<std::string> names(dim, "particle_velocity");
+      std::vector<DataComponentInterpretation::DataComponentInterpretation>
+        data_interpretation(
+          dim, DataComponentInterpretation::component_is_part_of_vector);
+
+#ifndef LETHE_USE_LDV
       // Since the particle velocity field is now only a deal.II distributed
       // vector, we create a temporary GlobalVectorType (a Trilinos vector) and
-      // copy the content into it.
+      // copy the content into it if
 
       GlobalVectorType particle_velocity;
       particle_velocity.reinit(
@@ -806,17 +812,23 @@ FluidDynamicsVANS<dim>::gather_output_hook()
       convert_vector_dealii_to_trilinos(
         particle_velocity,
         particle_projector.particle_velocity.particle_field_solution);
-
-      std::vector<std::string> names(dim, "particle_velocity");
-      std::vector<DataComponentInterpretation::DataComponentInterpretation>
-        data_interpretation(
-          dim, DataComponentInterpretation::component_is_part_of_vector);
       solution_output_structs.emplace_back(
         std::in_place_type<OutputStructSolution<dim, GlobalVectorType>>,
         particle_projector.particle_velocity.dof_handler,
         particle_velocity,
         names,
         data_interpretation);
+#else
+      convert_vector_dealii_to_trilinos(
+        particle_velocity,
+        particle_projector.particle_velocity.particle_field_solution);
+      solution_output_structs.emplace_back(
+        std::in_place_type<OutputStructSolution<dim, GlobalVectorType>>,
+        particle_projector.particle_velocity.dof_handler,
+        particle_projector.particle_velocity.particle_field_solution),
+        names,
+        data_interpretation);
+#endif
     }
 
   if (this->cfd_dem_simulation_parameters.cfd_dem.project_particle_forces)
