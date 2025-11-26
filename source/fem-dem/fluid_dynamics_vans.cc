@@ -339,8 +339,7 @@ FluidDynamicsVANS<dim>::setup_assemblers()
     }
 
   //  Fluid_Particle Interactions Assembler
-  if (this->cfd_dem_simulation_parameters.void_fraction
-        ->project_particle_forces)
+  if (this->cfd_dem_simulation_parameters.cfd_dem.project_particle_forces)
     {
       this->assemblers.push_back(std::make_shared<VANSAssemblerFPIProj<dim>>(
         this->cfd_dem_simulation_parameters.cfd_dem));
@@ -416,8 +415,7 @@ FluidDynamicsVANS<dim>::assemble_system_matrix()
                                       *this->cell_quadrature,
                                       *this->mapping);
 
-    if (this->cfd_dem_simulation_parameters.void_fraction
-          ->project_particle_forces)
+    if (this->cfd_dem_simulation_parameters.cfd_dem.project_particle_forces)
       {
         scratch_data.enable_particle_field_projection(
           *this->cell_quadrature,
@@ -522,8 +520,7 @@ FluidDynamicsVANS<dim>::assemble_local_system_matrix(
     {
       pf_assembler->calculate_particle_fluid_interactions(scratch_data);
     }
-  if (this->cfd_dem_simulation_parameters.void_fraction
-        ->project_particle_forces)
+  if (this->cfd_dem_simulation_parameters.cfd_dem.project_particle_forces)
     {
       typename DoFHandler<dim>::active_cell_iterator particle_drag_cell(
         &(*(this->triangulation)),
@@ -614,8 +611,7 @@ FluidDynamicsVANS<dim>::assemble_system_rhs()
                                     *this->cell_quadrature,
                                     *this->mapping);
 
-  if (this->cfd_dem_simulation_parameters.void_fraction
-        ->project_particle_forces)
+  if (this->cfd_dem_simulation_parameters.cfd_dem.project_particle_forces)
     {
       scratch_data.enable_particle_field_projection(
         *this->cell_quadrature,
@@ -723,8 +719,7 @@ FluidDynamicsVANS<dim>::assemble_local_system_rhs(
       pf_assembler->calculate_particle_fluid_interactions(scratch_data);
     }
 
-  if (this->cfd_dem_simulation_parameters.void_fraction
-        ->project_particle_forces)
+  if (this->cfd_dem_simulation_parameters.cfd_dem.project_particle_forces)
     {
       typename DoFHandler<dim>::active_cell_iterator particle_drag_cell(
         &(*(this->triangulation)),
@@ -809,8 +804,7 @@ FluidDynamicsVANS<dim>::gather_output_hook()
         data_interpretation);
     }
 
-  if (this->cfd_dem_simulation_parameters.void_fraction
-        ->project_particle_forces)
+  if (this->cfd_dem_simulation_parameters.cfd_dem.project_particle_forces)
     {
       solution_output_structs.emplace_back(
         std::in_place_type<OutputStructSolution<dim, GlobalVectorType>>,

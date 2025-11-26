@@ -69,7 +69,6 @@ subsection void fraction
   set l2 smoothing length          = 0.0125
   set quadrature rule              = gauss-lobatto
   set n quadrature points          = 5
-  set project particle forces      = true
 end
 
 #---------------------------------------------------
@@ -88,6 +87,7 @@ subsection cfd-dem
   set grad-div length scale         = 0.005
   set vans model                    = modelA
   set drag coupling                 = explicit
+  set project particle forces      = true
 end
 
 #---------------------------------------------------
