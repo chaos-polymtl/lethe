@@ -204,6 +204,7 @@ test_void_fraction_qcm(const unsigned int fe_degree,
 
   // Calculate the force projection
   // For this we only need to calculate the field projection!
+  announce_string(pcout, "Force on particle");
   particle_projector.calculate_field_projection(
     particle_projector.fluid_force_on_particles_two_way_coupling);
 
