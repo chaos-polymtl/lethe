@@ -2807,7 +2807,7 @@ NavierStokesAssemblerMortarALE<dim>::assemble_matrix(
 
       // Calculation of the magnitude of the velocity for the
       // stabilization parameter
-      const double u_mag = std::max(velocity.norm(), 1e-12);
+      const double u_mag = std::max((velocity - velocity_ale).norm(), 1e-12);
 
       // Calculation of the GLS stabilization parameter. The
       // stabilization parameter used is different if the simulation
@@ -2933,9 +2933,9 @@ NavierStokesAssemblerMortarALE<dim>::assemble_rhs(
       const Tensor<1, dim> force       = scratch_data.force[q];
       double               mass_source = scratch_data.mass_source[q];
 
-      // Calculation of the magnitude of the
-      // velocity for the stabilization parameter
-      const double u_mag = std::max(velocity.norm(), 1e-12);
+      // Calculation of the magnitude of the velocity for the stabilization
+      // parameter
+      const double u_mag = std::max((velocity - velocity_ale).norm(), 1e-12);
 
       // Store JxW in local variable for faster access
       const double JxW = JxW_vec[q];
