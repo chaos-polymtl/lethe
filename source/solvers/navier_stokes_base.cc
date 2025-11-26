@@ -1953,8 +1953,8 @@ NavierStokesBase<dim, VectorType, DofsType>::define_non_zero_constraints()
 
       std::vector<types::global_dof_index> dof_indices;
 
-      const IndexSet locally_relevant_dofs_ =
-            DoFTools::extract_locally_relevant_dofs(this->dof_handler);
+      const IndexSet locally_relevant_dofs_set =
+        DoFTools::extract_locally_relevant_dofs(this->dof_handler);
 
       // Loop over the cells to identify the min index
       for (const auto &cell : this->dof_handler.active_cell_iterators())
@@ -1976,7 +1976,7 @@ NavierStokesBase<dim, VectorType, DofsType>::define_non_zero_constraints()
       min_index = Utilities::MPI::min(min_index,
                                       this->dof_handler.get_mpi_communicator());
 
-      if (locally_relevant_dofs_.is_element(min_index))
+      if (locally_relevant_dofs_set.is_element(min_index))
         nonzero_constraints.add_line(min_index);
     }
 
@@ -2095,9 +2095,9 @@ NavierStokesBase<dim, VectorType, DofsType>::define_zero_constraints()
 
       std::vector<types::global_dof_index> dof_indices;
 
-      const IndexSet locally_relevant_dofs_ =
-          DoFTools::extract_locally_relevant_dofs(this->dof_handler);
-            
+      const IndexSet locally_relevant_dofs_set =
+        DoFTools::extract_locally_relevant_dofs(this->dof_handler);
+
       // Loop over the cells to identify the min index
       for (const auto &cell : this->dof_handler.active_cell_iterators())
         {
@@ -2118,7 +2118,7 @@ NavierStokesBase<dim, VectorType, DofsType>::define_zero_constraints()
       min_index = Utilities::MPI::min(min_index,
                                       this->dof_handler.get_mpi_communicator());
 
-      if (locally_relevant_dofs_.is_element(min_index))
+      if (locally_relevant_dofs_set.is_element(min_index))
         zero_constraints.add_line(min_index);
     }
 
