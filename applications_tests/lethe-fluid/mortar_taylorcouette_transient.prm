@@ -1,6 +1,7 @@
 # SPDX-FileCopyrightText: Copyright (c) 2020-2025 The Lethe Authors
 # SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 # Checks the transient matrix-based mortar implementation for a Taylor-Couette example.
+# Also tests the option to fix pressure constant in a node.
 
 # Listing of Parameters
 #----------------------
