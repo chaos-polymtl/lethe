@@ -95,7 +95,7 @@ subsection insertion info
   set insertion method                               = volume
   set inserted number of particles at each time step = 200000
   set insertion frequency                            = 200000
-  set insertion box points coordinates               = -0.175, -0.0065, -0.0065 : 0.2, 0.0065, 0.0065
+  set insertion box points coordinates               = -0.179, -0.0065, -0.0065 : 0.2, 0.0065, 0.0065
   set insertion distance threshold                   = 1.1
   set insertion maximum offset                       = 0.02
   set insertion prn seed                             = 19
@@ -131,7 +131,9 @@ end
 
 subsection mesh
   set type               = cylinder
-  set grid type          = regularized
+  set grid type          = balanced
   set grid arguments     = 44:0.01:0.22
   set initial refinement = 2
+    set expand particle-wall contact search = true
+
 end
