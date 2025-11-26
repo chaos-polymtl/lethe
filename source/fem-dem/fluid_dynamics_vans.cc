@@ -819,13 +819,10 @@ FluidDynamicsVANS<dim>::gather_output_hook()
         names,
         data_interpretation);
 #else
-      convert_vector_dealii_to_trilinos(
-        particle_velocity,
-        particle_projector.particle_velocity.particle_field_solution);
       solution_output_structs.emplace_back(
         std::in_place_type<OutputStructSolution<dim, GlobalVectorType>>,
         particle_projector.particle_velocity.dof_handler,
-        particle_projector.particle_velocity.particle_field_solution),
+        particle_projector.particle_velocity.particle_field_solution,
         names,
         data_interpretation);
 #endif
