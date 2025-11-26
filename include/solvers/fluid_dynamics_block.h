@@ -222,9 +222,7 @@ private:
    */
 
   void
-  solve_L2_system(
-                  double relative_residual,
-                  double minimum_residual);
+  solve_L2_system(double relative_residual, double minimum_residual);
 
   /**
    * Solver for the NS linear system of equations
@@ -237,8 +235,7 @@ private:
    * GMRES solver with ILU preconditioning or AMG preconditioning
    */
   void
-  solve_system_GMRES(
-                     const double relative_residual,
+  solve_system_GMRES(const double relative_residual,
                      const double minimum_residual);
 
   /**

@@ -996,8 +996,7 @@ FluidDynamicsBlock<dim>::setup_AMG()
 
 template <int dim>
 void
-FluidDynamicsBlock<dim>::solve_system_GMRES(
-                                            const double absolute_residual,
+FluidDynamicsBlock<dim>::solve_system_GMRES(const double absolute_residual,
                                             const double relative_residual)
 {
   const AffineConstraints<double> &constraints_used = this->zero_constraints;
@@ -1072,9 +1071,8 @@ FluidDynamicsBlock<dim>::solve_system_GMRES(
 
 template <int dim>
 void
-FluidDynamicsBlock<dim>::solve_L2_system(
-                                         double     absolute_residual,
-                                         double     relative_residual)
+FluidDynamicsBlock<dim>::solve_L2_system(double absolute_residual,
+                                         double relative_residual)
 {
   auto &nonzero_constraints = this->nonzero_constraints;
 

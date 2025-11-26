@@ -3569,11 +3569,9 @@ FluidDynamicsMatrixFree<dim>::assemble_L2_projection()
 
 template <int dim>
 void
-FluidDynamicsMatrixFree<dim>::solve_system_GMRES(
-                                                 const double absolute_residual,
+FluidDynamicsMatrixFree<dim>::solve_system_GMRES(const double absolute_residual,
                                                  const double relative_residual)
 {
-
   const AffineConstraints<double> &constraints_used = this->zero_constraints;
   const double rescale_metric   = this->get_residual_rescale_metric();
   const double current_residual = this->system_rhs.l2_norm() / rescale_metric;
@@ -3673,7 +3671,6 @@ FluidDynamicsMatrixFree<dim>::solve_system_direct(
   const double absolute_residual,
   const double relative_residual)
 {
-
   const AffineConstraints<double> &constraints_used = this->zero_constraints;
   const double rescale_metric   = this->get_residual_rescale_metric();
   const double current_residual = this->system_rhs.l2_norm() / rescale_metric;

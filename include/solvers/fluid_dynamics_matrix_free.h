@@ -581,8 +581,7 @@ private:
    * @param[in] relative_residual Used to define the linear solver tolerance.
    */
   void
-  solve_system_GMRES(
-                     const double absolute_residual,
+  solve_system_GMRES(const double absolute_residual,
                      const double relative_residual);
 
   /**
@@ -593,8 +592,7 @@ private:
    * @param[in] relative_residual Used to define the linear solver tolerance.
    */
   void
-  solve_system_direct(
-                      const double absolute_residual,
+  solve_system_direct(const double absolute_residual,
                       const double relative_residual);
   /**
    * @brief  Create the geometric multigrid preconditioner.

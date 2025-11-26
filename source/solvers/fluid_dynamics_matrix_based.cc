@@ -1500,7 +1500,7 @@ FluidDynamicsMatrixBased<dim>::solve_system_GMRES(
   unsigned int       iter     = 0;
   bool               success  = false;
 
-  auto &system_rhs          = this->system_rhs;
+  auto &system_rhs = this->system_rhs;
 
   const AffineConstraints<double> &constraints_used =
     (!this->simulation_parameters.constrain_solid_domain.enable) ?
@@ -1630,9 +1630,8 @@ FluidDynamicsMatrixBased<dim>::solve_system_GMRES(
 
 template <int dim>
 void
-FluidDynamicsMatrixBased<dim>::solve_L2_system(
-                                         double     absolute_residual,
-                                         double     relative_residual)
+FluidDynamicsMatrixBased<dim>::solve_L2_system(double absolute_residual,
+                                               double relative_residual)
 {
   const unsigned int max_iter = 3;
   unsigned int       iter     = 0;
@@ -1779,7 +1778,7 @@ FluidDynamicsMatrixBased<dim>::solve_system_BiCGStab(
   bool               success  = false;
 
 
-  auto &system_rhs          = this->system_rhs;
+  auto &system_rhs = this->system_rhs;
 
   const AffineConstraints<double> &constraints_used =
     (!this->simulation_parameters.constrain_solid_domain.enable) ?
@@ -1880,7 +1879,7 @@ FluidDynamicsMatrixBased<dim>::solve_system_direct(
   const double absolute_residual,
   const double relative_residual)
 {
-  auto &system_rhs          = this->system_rhs;
+  auto &system_rhs = this->system_rhs;
 
   const AffineConstraints<double> &constraints_used =
     (!this->simulation_parameters.constrain_solid_domain.enable) ?

@@ -237,33 +237,28 @@ private:
    */
 
   void
-  solve_L2_system(
-                  double relative_residual,
-                  double minimum_residual);
+  solve_L2_system(double relative_residual, double minimum_residual);
 
 
   /**
    * @brief GMRES solver with ILU(N) preconditioning or AMG preconditioning
    */
   void
-  solve_system_GMRES(
-                     const double absolute_residual,
+  solve_system_GMRES(const double absolute_residual,
                      const double relative_residual);
 
   /**
    * @brief BiCGStab solver with ILU(N) preconditioning
    */
   void
-  solve_system_BiCGStab(
-                        const double absolute_residual,
+  solve_system_BiCGStab(const double absolute_residual,
                         const double relative_residual);
   /**
    * @brief Direct solver using TrilinosWrappers::SolverDirect
    * The use of this solver should be avoided for 3D problems
    */
   void
-  solve_system_direct(
-                      const double absolute_residual,
+  solve_system_direct(const double absolute_residual,
                       const double relative_residual);
 
   /**
