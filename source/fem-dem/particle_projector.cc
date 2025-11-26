@@ -82,7 +82,9 @@ ParticleFieldQCM<dim, n_components, component_start>::setup_dofs()
                        mpi_communicator);
 
 
-  system_rhs.reinit(locally_owned_dofs, mpi_communicator);
+  system_rhs.reinit(locally_owned_dofs,
+                    locally_relevant_dofs,
+                    mpi_communicator);
 }
 
 template <int dim>
@@ -1098,6 +1100,8 @@ ParticleProjector<dim>::calculate_field_projection(
       calculate_reference_sphere_radius = false;
     }
 
+  // Set the system rhs to zero, but also zero out the ghost values so that
+  // we can also write to the ghost values.
   field_qcm.system_rhs    = 0;
   field_qcm.system_matrix = 0;
 
@@ -1164,6 +1168,7 @@ ParticleProjector<dim>::calculate_field_projection(
 
                       total_volume_of_particles_in_sphere +=
                         particle_volume_in_sphere;
+
                       // If the projection is to be conservative, then the
                       // volumetric distribution is equal to the volume of the
                       // sphere divided by the volumetric contribution of the
@@ -1415,6 +1420,9 @@ ParticleProjector<dim>::calculate_field_projection(
                field_qcm.particle_field_solution,
                field_qcm.system_rhs,
                *ilu_preconditioner);
+
+  // Now that the solution has been solved for, update the ghost values.
+  field_qcm.particle_field_solution.update_ghost_values();
 
   if (linear_solver_parameters.verbosity != Parameters::Verbosity::quiet)
     {
