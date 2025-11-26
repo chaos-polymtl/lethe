@@ -445,23 +445,6 @@ namespace LetheGridTools
   };
 
   /**
-   * @brief Checks whether two cells are coplanar within a given tolerance by
-   * using the scalar product of each normal unit vector. If the cells are
-   * coplanar, the absolute value of the scalar product should be above
-   * (1-tolerance).
-   *
-   * @param cell_A First cell to compare.
-   * @param cell_B Second cell to compare.
-   * @param tol Tolerance for coplanarity check.
-   */
-  template <int dim, int spacedim>
-  bool
-  triangle_cells_are_coplanar(
-    const typename Triangulation<dim, spacedim>::active_cell_iterator &cell_A,
-    const typename Triangulation<dim, spacedim>::active_cell_iterator &cell_B,
-    double tol = 1e-6);
-
-  /**
    * @brief Map the vertex index to the cells which include that vertex.
    *
    * @param tria Triangulation
