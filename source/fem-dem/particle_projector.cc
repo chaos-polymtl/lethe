@@ -16,6 +16,7 @@
 #include <deal.II/grid/grid_generator.h>
 #include <deal.II/grid/grid_tools.h>
 
+#include <deal.II/lac/solver_cg.h>
 #include <deal.II/lac/sparsity_tools.h>
 #include <deal.II/lac/trilinos_solver.h>
 
@@ -37,12 +38,6 @@ ParticleFieldQCM<dim, n_components, component_start>::setup_dofs()
   locally_owned_dofs = dof_handler.locally_owned_dofs();
 
   locally_relevant_dofs = DoFTools::extract_locally_relevant_dofs(dof_handler);
-
-  particle_field_locally_relevant.reinit(locally_owned_dofs,
-                                         locally_relevant_dofs,
-                                         mpi_communicator);
-
-  particle_field_locally_owned.reinit(locally_owned_dofs, mpi_communicator);
 
   // deal.II vector that will also hold the solution
   this->particle_field_solution.reinit(dof_handler.locally_owned_dofs(),
@@ -320,7 +315,7 @@ ParticleProjector<dim>::calculate_void_fraction_function(const double time)
                                     void_fraction_locally_relevant);
   void_fraction_solution.update_ghost_values();
 #else
-  void_fraction_solution            = void_fraction_locally_relevant;
+  void_fraction_solution = void_fraction_locally_relevant;
 #endif
 }
 
@@ -1399,7 +1394,7 @@ ParticleProjector<dim>::calculate_field_projection(
                                true,
                                true);
 
-  TrilinosWrappers::SolverCG solver(solver_control);
+  SolverCG<LinearAlgebra::distributed::Vector<double>> solver(solver_control);
 
   //**********************************************
   // Trillinos Wrapper ILU Preconditioner
@@ -1417,7 +1412,7 @@ ParticleProjector<dim>::calculate_field_projection(
                                  preconditionerOptions);
 
   solver.solve(field_qcm.system_matrix,
-               field_qcm.particle_field_locally_owned,
+               field_qcm.particle_field_solution,
                field_qcm.system_rhs,
                *ilu_preconditioner);
 
@@ -1427,21 +1422,6 @@ ParticleProjector<dim>::calculate_field_projection(
                   << solver_control.last_step() / rescale_metric << " steps "
                   << std::endl;
     }
-
-  field_qcm.particle_field_constraints.distribute(
-    field_qcm.particle_field_locally_owned);
-  field_qcm.particle_field_locally_relevant =
-    field_qcm.particle_field_locally_owned;
-
-#ifndef LETHE_USE_LDV
-  // Perform copy between two vector types to ensure there is a deal.II vector
-  convert_vector_trilinos_to_dealii(field_qcm.particle_field_solution,
-                                    field_qcm.particle_field_locally_relevant);
-  field_qcm.particle_field_solution.update_ghost_values();
-#else
-  field_qcm.particle_field_solution = field_qcm.particle_field_locally_relevant;
-  field_qcm.particle_field_solution.update_ghost_values();
-#endif
 }
 
 
