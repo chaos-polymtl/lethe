@@ -801,8 +801,7 @@ FluidDynamicsVANS<dim>::gather_output_hook()
 #ifndef LETHE_USE_LDV
       // Since the particle velocity field is now only a deal.II distributed
       // vector, we create a temporary GlobalVectorType (a Trilinos vector) and
-      // copy the content into it if the matrix-based solver is used
-
+      // copy the content into it.
       GlobalVectorType particle_velocity;
       particle_velocity.reinit(
         particle_projector.particle_velocity.locally_owned_dofs,
