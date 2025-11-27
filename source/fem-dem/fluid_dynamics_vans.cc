@@ -341,8 +341,9 @@ FluidDynamicsVANS<dim>::setup_assemblers()
   //  Fluid_Particle Interactions Assembler
   if (this->cfd_dem_simulation_parameters.cfd_dem.project_particle_forces)
     {
-      this->assemblers.push_back(std::make_shared<VANSAssemblerFPIProjection<dim>>(
-        this->cfd_dem_simulation_parameters.cfd_dem));
+      this->assemblers.push_back(
+        std::make_shared<VANSAssemblerFPIProjection<dim>>(
+          this->cfd_dem_simulation_parameters.cfd_dem));
     }
   else
     {
@@ -498,11 +499,11 @@ FluidDynamicsVANS<dim>::assemble_local_system_matrix(
         void_fraction_cell,
         *phase_cell,
         this->evaluation_point,
-        this->previous_solutions[0],
+        (*this->previous_solutions)[0],
         this->particle_projector.void_fraction_locally_relevant,
         particle_handler,
         cfd_dem_simulation_parameters.cfd_dem.drag_coupling,
-        *this->multiphysics->get_filtered_solution(PhysicsID::VOF));
+        this->multiphysics->get_filtered_solution(PhysicsID::VOF));
     }
   else
     {
@@ -510,7 +511,7 @@ FluidDynamicsVANS<dim>::assemble_local_system_matrix(
         cell,
         void_fraction_cell,
         this->evaluation_point,
-        this->previous_solutions[0],
+        (*this->previous_solutions)[0],
         this->particle_projector.void_fraction_locally_relevant,
         particle_handler,
         cfd_dem_simulation_parameters.cfd_dem.drag_coupling);
@@ -697,11 +698,11 @@ FluidDynamicsVANS<dim>::assemble_local_system_rhs(
         void_fraction_cell,
         *phase_cell,
         this->evaluation_point,
-        this->previous_solutions[0],
+        (*this->previous_solutions)[0],
         particle_projector.void_fraction_locally_relevant,
         particle_handler,
         cfd_dem_simulation_parameters.cfd_dem.drag_coupling,
-        *this->multiphysics->get_filtered_solution(PhysicsID::VOF));
+        this->multiphysics->get_filtered_solution(PhysicsID::VOF));
     }
   else
     {
@@ -709,7 +710,7 @@ FluidDynamicsVANS<dim>::assemble_local_system_rhs(
         cell,
         void_fraction_cell,
         this->evaluation_point,
-        this->previous_solutions[0],
+        (*this->previous_solutions)[0],
         particle_projector.void_fraction_locally_relevant,
         particle_handler,
         cfd_dem_simulation_parameters.cfd_dem.drag_coupling);

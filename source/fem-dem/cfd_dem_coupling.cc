@@ -1584,7 +1584,8 @@ void
 CFDDEMSolver<dim>::solve()
 {
   AssertThrow(
-    (this->cfd_dem_simulation_parameters.cfd_dem.project_particle_forces == false) ||
+    (this->cfd_dem_simulation_parameters.cfd_dem.project_particle_forces ==
+     false) ||
       (this->cfd_dem_simulation_parameters.cfd_dem.project_particle_forces &&
        this->cfd_dem_simulation_parameters.cfd_dem.drag_coupling ==
          Parameters::DragCoupling::fully_explicit),
@@ -1592,7 +1593,7 @@ CFDDEMSolver<dim>::solve()
       "The CFD-DEM solver only supports the projection of the particle force fields when the drag coupling is set to fully explicit."));
 
   this->computing_timer.enter_subsection("Read mesh, manifolds and particles");
-  
+
   read_mesh_and_manifolds(
     *this->triangulation,
     this->cfd_dem_simulation_parameters.cfd_parameters.mesh,
@@ -1673,9 +1674,11 @@ CFDDEMSolver<dim>::solve()
         {
           this->particle_projector.calculate_particle_fluid_forces_projection(
             this->cfd_dem_simulation_parameters.cfd_dem,
-            this->dof_handler,
-            this->present_solution,
-            this->previous_solutions,
+            *this->dof_handler,
+            *this->present_solution,
+            *this->previous_solutions,
+            this->cfd_dem_simulation_parameters.dem_parameters
+              .lagrangian_physical_properties.g,
             NavierStokesScratchData<dim>(
               this->simulation_control,
               this->simulation_parameters.physical_properties_manager,

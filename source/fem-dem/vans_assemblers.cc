@@ -2230,8 +2230,7 @@ void
 VANSAssemblerFPIProjection<dim>::assemble_matrix(
   [[maybe_unused]] const NavierStokesScratchData<dim>   &scratch_data,
   [[maybe_unused]] StabilizedMethodsTensorCopyData<dim> &copy_data)
-{
-}
+{}
 
 template <int dim>
 void
@@ -2263,15 +2262,15 @@ VANSAssemblerFPIProjection<dim>::assemble_rhs(
 
       // Calculate the strong residual for GLS stabilization
       // Drag Force and other two-way coupling forces
-      strong_residual[q] -= 
-        (fluid_drag + two_way_coupling_force);
+      strong_residual[q] -= (fluid_drag + two_way_coupling_force);
 
       // Assembly of the right-hand side
       for (unsigned int i = 0; i < n_dofs; ++i)
         {
           const auto phi_u_i = scratch_data.phi_u[q][i];
           // Drag Force
-          //  The distinction between Model A and B of the VANS equations is made in the shear and pressure forces assemblers.
+          //  The distinction between Model A and B of the VANS equations is
+          //  made in the shear and pressure forces assemblers.
           local_rhs(i) += (fluid_drag + two_way_coupling_force) * phi_u_i * JxW;
         }
     }
