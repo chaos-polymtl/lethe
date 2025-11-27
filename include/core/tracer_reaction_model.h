@@ -9,12 +9,28 @@
 #include <algorithm>
 #include <cmath>
 
+/**
+ * @brief Computes the effective concentration above the threshold and with a
+ * smooth transition
+ *
+ * @param[in] C Concentration value
+ * @param[in] threshold Threshold value above which effective concentration will
+ * be
+ */
 inline double
 calculate_effective_concentration(const double C, const double threshold)
 {
   return std::sqrt(C * C + threshold * threshold);
 }
 
+/**
+ * @brief Computes the derivative of effective concentration in regards to the
+ * input concentration
+ *
+ * @param[in] C Concentration value
+ * @param[in] threshold Threshold value above which effective concentration will
+ * be
+ */
 inline double
 calculate_d_effective_concentration_dC(const double C, const double threshold)
 {
@@ -102,10 +118,9 @@ public:
 /**
  * @brief Constant tracer reaction prefactor.
  *
- *This model computes the prefactor as
- * \f[
- * k = alpha * C_eff^{n-1}, with a smooth floor C_eff = sqrt(C^2 + eps^2)
- * \f]
+ * This model computes the prefactor as
+ * \f[ k = \alpha C_\text{eff}^{n-1}, \f]
+ * with a smooth floor \f[C_\text{eff} = \sqrt{C^2 + \epsilon^2} \f]
  * where \f$ \alpha \f$ (the reaction constant) and the reaction order \f$ n \f$
  * are provided.
  */
@@ -115,8 +130,11 @@ public:
   /**
    * @brief Constructor.
    *
-   * @param p_tracer_reaction_constant The base reaction constant \f$ \alpha \f$.
-   * @param p_tracer_reaction_order The reaction order \f$ n \f$.
+   * @param[in] p_tracer_reaction_constant The base reaction constant \f$ \alpha
+   * \f$.
+   * @param[in] p_tracer_reaction_order The reaction order \f$ n \f$.
+   * @param[in] p_tracer_reaction_threshold The threshold value used to smoothly
+   * floor the concentration.
    */
   ConstantTracerReactionPrefactor(const double p_tracer_reaction_constant,
                                   const double p_tracer_reaction_order,
@@ -131,7 +149,7 @@ public:
   /**
    * @brief Compute the tracer reaction prefactor.
    *
-   * @param fields_value Map of field values.
+   * @param[in] fields_value Map of field values.
    * @return The computed prefactor value.
    */
   double
@@ -150,7 +168,7 @@ public:
   /**
    * @brief Compute the vector of tracer reaction prefactor values.
    *
-   * @param field_vectors Map of field vectors.
+   * @param[in] field_vectors Map of field vectors.
    * @param property_vector Vector to be filled with computed prefactor values.
    */
   void
@@ -176,8 +194,9 @@ public:
   /**
    * @brief Compute the jacobian (partial derivative) of the prefactor with respect to a field.
    *
-   * @param field_values Map of field values.
-   * @param id The field identifier with respect to which the derivative is computed.
+   * @param[in] field_values Map of field values.
+   * @param[in] id The field identifier with respect to which the derivative is
+   * computed.
    * @return The computed derivative value.
    */
   double
@@ -203,9 +222,11 @@ public:
   /**
    * @brief Compute the vector jacobian (partial derivatives) of the prefactor with respect to a field.
    *
-   * @param field_vectors Map of field vectors.
-   * @param id The field identifier with respect to which the derivative is computed.
-   * @param jacobian_vector Vector to be filled with computed derivative values.
+   * @param[in] field_vectors Map of field vectors.
+   * @param[in] id The field identifier with respect to which the derivative is
+   * computed.
+   * @param[out] jacobian_vector Vector to be filled with computed derivative
+   * values.
    */
   void
   vector_jacobian(const std::map<field, std::vector<double>> &field_vectors,
@@ -256,10 +277,14 @@ public:
   /**
    * @brief Constructor.
    *
-   * @param p_tracer_reaction_constant_outside Reaction constant \(\alpha\) outside the solid.
-   * @param p_tracer_reaction_constant_inside Reaction constant \(\alpha\) inside the solid.
-   * @param p_thickness Thickness for the tanh smoothing function.
-   * @param p_tracer_reaction_order The reaction order.
+   * @param[in] p_tracer_reaction_constant_outside Reaction constant \(\alpha\)
+   * outside the solid.
+   * @param[in] p_tracer_reaction_constant_inside Reaction constant \(\alpha\)
+   * inside the solid.
+   * @param[in] p_thickness Thickness for the tanh smoothing function.
+   * @param[in] p_tracer_reaction_order The reaction order.
+   * @param[in] p_tracer_reaction_threshold The threshold value used to smoothly
+   * floor the concentration.
    */
   TanhLevelsetTracerReactionPrefactor(
     const double p_tracer_reaction_constant_outside,
@@ -282,7 +307,7 @@ public:
   /**
    * @brief Compute the tracer reaction prefactor.
    *
-   * @param field_values Map of field values.
+   * @param[in] field_values Map of field values.
    * @return The computed prefactor value.
    */
   double
@@ -306,8 +331,9 @@ public:
   /**
    * @brief Compute a vector of tracer reaction prefactor values.
    *
-   * @param field_vectors Map of field vectors.
-   * @param property_vector Vector to be filled with computed prefactor values.
+   * @param[in] field_vectors Map of field vectors.
+   * @param[out] property_vector Vector to be filled with computed prefactor
+   * values.
    */
   void
   vector_value(const std::map<field, std::vector<double>> &field_vectors,
@@ -343,8 +369,9 @@ public:
   /**
    * @brief Compute the jacobian (partial derivative) of the prefactor with respect to a specified field.
    *
-   * @param field_values Map of field values.
-   * @param id The field identifier with respect to which the derivative is computed.
+   * @param[in] field_values Map of field values.
+   * @param[in] id The field identifier with respect to which the derivative is
+   * computed.
    * @return The computed derivative value.
    */
   double
@@ -389,9 +416,11 @@ public:
   /**
    * @brief Compute the vector jacobian (partial derivatives) of the prefactor with respect to a field.
    *
-   * @param field_vectors Map of field vectors.
-   * @param id The field identifier with respect to which the derivative is computed.
-   * @param jacobian_vector Vector to be filled with computed derivative values.
+   * @param[in] field_vectors Map of field vectors.
+   * @param[in] id The field identifier with respect to which the derivative is
+   * computed.
+   * @param[out] jacobian_vector Vector to be filled with computed derivative
+   * values.
    */
   void
   vector_jacobian(const std::map<field, std::vector<double>> &field_vectors,
@@ -474,6 +503,8 @@ public:
    * @param[in] p_thickness Thickness of the Gaussian function used to smooth
    * the property jump
    * @param[in] p_tracer_reaction_order The reaction order.
+   * @param[in] p_tracer_reaction_threshold The threshold value used to smoothly
+   * floor the concentration.
    */
   GaussianLevelsetTracerReactionPrefactor(
     const double p_tracer_reaction_constant_interface,
