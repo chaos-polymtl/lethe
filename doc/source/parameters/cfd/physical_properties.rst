@@ -39,7 +39,7 @@ Physical Properties
       set tracer reaction constant model = none
       set tracer reaction constant       = 0
       set tracer reaction order          = 1
-      set tracer reaction epsilon        = 1e-8
+      set tracer reaction threshold      = 1e-8
     end
 
     set number of solids = 0
@@ -124,7 +124,7 @@ Physical Properties
 
 * The ``tracer reaction order`` parameter (:math:`n`) is the reaction order of the tracer.
 
-* The ``tracer reaction epsilon`` parameter (:math:`\varepsilon`) is a minimal value set to prevent the explosion of stiffness for the linear solver, when concentration tends toward 0. This parameter is useful when the reaction order is lower than 1.
+* The ``tracer reaction threshold`` parameter (:math:`\varepsilon`) is a minimal value set to prevent the explosion of stiffness for the linear solver when concentration tends toward 0. This parameter is useful when the reaction order is lower than 1.
 
   .. math::
 
@@ -276,10 +276,10 @@ The equation of the ``immersed solid gaussian`` model is defined as follows. :ma
     subsection physical properties
       set number of fluids = 1
       subsection fluid 0
-        set kinematic viscosity      = 0.01
-        set tracer diffusivity model = immersed solid tanh # or immersed solid gaussian
-        set tracer reaction order    = 1
-        set tracer reaction epsilon  = 1e-8
+        set kinematic viscosity       = 0.01
+        set tracer diffusivity model  = immersed solid tanh # or immersed solid gaussian
+        set tracer reaction order     = 1
+        set tracer reaction threshold = 1e-8
         subsection immersed solid tanh
           set tracer diffusivity inside        = 1
           set tracer diffusivity outside       = 1
