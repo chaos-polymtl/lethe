@@ -458,8 +458,8 @@ namespace Parameters
     double tracer_reaction_constant;
     // tracer reaction order
     double tracer_reaction_order;
-    // tracer reaction epsilon to prevent null concentration in reaction model
-    double tracer_reaction_epsilon;
+    // tracer reaction threshold to prevent null concentration in reaction model
+    double tracer_reaction_threshold;
 
     // Phase change parameters
     PhaseChange phase_change_parameters;

@@ -10,15 +10,15 @@
 #include <cmath>
 
 inline double
-Ceffective(const double C, const double epsilon)
+calculate_effective_concentration(const double C, const double threshold)
 {
-  return std::sqrt(C * C + epsilon * epsilon);
+  return std::sqrt(C * C + threshold * threshold);
 }
 
 inline double
-dCeffective_dC(const double C, const double epsilon)
+calculate_d_effective_concentration_dC(const double C, const double threshold)
 {
-  const double Ce = Ceffective(C, epsilon);
+  const double Ce = calculate_effective_concentration(C, threshold);
   return (Ce > 0.0) ? (C / Ce) : 0.0;
 }
 
@@ -120,10 +120,10 @@ public:
    */
   ConstantTracerReactionPrefactor(const double p_tracer_reaction_constant,
                                   const double p_tracer_reaction_order,
-                                  const double p_tracer_reaction_epsilon)
+                                  const double p_tracer_reaction_threshold)
     : tracer_reaction_constant(p_tracer_reaction_constant)
     , tracer_reaction_order(p_tracer_reaction_order)
-    , tracer_reaction_epsilon(p_tracer_reaction_epsilon)
+    , tracer_reaction_threshold(p_tracer_reaction_threshold)
   {
     this->model_depends_on[field::tracer_concentration] = true;
   }
@@ -141,8 +141,8 @@ public:
            PhysicialPropertyModelFieldUndefined(
              "ConstantTracerReactionPrefactor", "tracer_concentration"));
 
-    const double Ceff = Ceffective(fields_value.at(field::tracer_concentration),
-                                   tracer_reaction_epsilon);
+    const double Ceff = calculate_effective_concentration(
+      fields_value.at(field::tracer_concentration), tracer_reaction_threshold);
     return tracer_reaction_constant *
            std::pow(Ceff, tracer_reaction_order - 1.);
   }
@@ -166,7 +166,8 @@ public:
     for (size_t i = 0; i < property_vector.size(); ++i)
       {
         const double Ceff =
-          Ceffective(concentration_vector[i], tracer_reaction_epsilon);
+          calculate_effective_concentration(concentration_vector[i],
+                                            tracer_reaction_threshold);
         property_vector[i] =
           tracer_reaction_constant * std::pow(Ceff, tracer_reaction_order - 1.);
       }
@@ -187,9 +188,11 @@ public:
              "ConstantTracerReactionPrefactor", "tracer_concentration"));
     if (id == field::tracer_concentration)
       {
-        const double C    = field_values.at(field::tracer_concentration);
-        const double Ceff = Ceffective(C, tracer_reaction_epsilon);
-        const double dCe  = dCeffective_dC(C, tracer_reaction_epsilon);
+        const double C = field_values.at(field::tracer_concentration);
+        const double Ceff =
+          calculate_effective_concentration(C, tracer_reaction_threshold);
+        const double dCe =
+          calculate_d_effective_concentration_dC(C, tracer_reaction_threshold);
 
         return tracer_reaction_constant * (tracer_reaction_order - 1.) *
                std::pow(Ceff, tracer_reaction_order - 2.) * dCe;
@@ -223,9 +226,11 @@ public:
     for (size_t i = 0; i < jacobian_vector.size(); ++i)
       {
         const double Ceff =
-          Ceffective(concentration_vector[i], tracer_reaction_epsilon);
+          calculate_effective_concentration(concentration_vector[i],
+                                            tracer_reaction_threshold);
         const double dCe =
-          dCeffective_dC(concentration_vector[i], tracer_reaction_epsilon);
+          calculate_d_effective_concentration_dC(concentration_vector[i],
+                                                 tracer_reaction_threshold);
         jacobian_vector[i] = tracer_reaction_constant *
                              (tracer_reaction_order - 1.) *
                              std::pow(Ceff, tracer_reaction_order - 2.) * dCe;
@@ -235,7 +240,7 @@ public:
 private:
   const double tracer_reaction_constant;
   const double tracer_reaction_order;
-  const double tracer_reaction_epsilon;
+  const double tracer_reaction_threshold;
 };
 
 /**
@@ -261,14 +266,14 @@ public:
     const double p_tracer_reaction_constant_inside,
     const double p_thickness,
     const double p_tracer_reaction_order,
-    const double p_tracer_reaction_epsilon)
+    const double p_tracer_reaction_threshold)
     : tracer_reaction_constant_outside(p_tracer_reaction_constant_outside)
     , tracer_reaction_constant_inside(p_tracer_reaction_constant_inside)
     , thickness(p_thickness)
     , delta_reaction_constant(tracer_reaction_constant_outside -
                               tracer_reaction_constant_inside)
     , tracer_reaction_order(p_tracer_reaction_order)
-    , tracer_reaction_epsilon(p_tracer_reaction_epsilon)
+    , tracer_reaction_threshold(p_tracer_reaction_threshold)
   {
     this->model_depends_on[field::levelset]             = true;
     this->model_depends_on[field::tracer_concentration] = true;
@@ -290,8 +295,8 @@ public:
            PhysicialPropertyModelFieldUndefined(
              "TanhLevelsetTracerReactionPrefactor", "tracer_concentration"));
     const double levelset = field_values.at(field::levelset);
-    const double Ceff = Ceffective(field_values.at(field::tracer_concentration),
-                                   tracer_reaction_epsilon);
+    const double Ceff     = calculate_effective_concentration(
+      field_values.at(field::tracer_concentration), tracer_reaction_threshold);
     const double k =
       tracer_reaction_constant_inside +
       delta_reaction_constant * (0.5 + 0.5 * std::tanh(levelset / thickness));
@@ -329,7 +334,8 @@ public:
                          delta_reaction_constant *
                            (0.5 + 0.5 * std::tanh(levelset_vec[i] / thickness));
         const double Ceff =
-          Ceffective(concentration_vector[i], tracer_reaction_epsilon);
+          calculate_effective_concentration(concentration_vector[i],
+                                            tracer_reaction_threshold);
         property_vector[i] = k * std::pow(Ceff, tracer_reaction_order - 1.);
       }
   }
@@ -353,7 +359,9 @@ public:
     const double levelset = field_values.at(field::levelset);
     const double concentration_val =
       field_values.at(field::tracer_concentration);
-    const double Ceff = Ceffective(concentration_val, tracer_reaction_epsilon);
+    const double Ceff =
+      calculate_effective_concentration(concentration_val,
+                                        tracer_reaction_threshold);
     if (id == field::levelset)
       {
         // dk/dlambda for tanh profile: Δk * 0.5 * (1 - tanh^2(lambda/sigma)) *
@@ -369,7 +377,8 @@ public:
                          delta_reaction_constant *
                            (0.5 + 0.5 * std::tanh(levelset / thickness));
         const double dCe =
-          dCeffective_dC(concentration_val, tracer_reaction_epsilon);
+          calculate_d_effective_concentration_dC(concentration_val,
+                                                 tracer_reaction_threshold);
         return k * (tracer_reaction_order - 1.) *
                std::pow(Ceff, tracer_reaction_order - 2.) * dCe;
       }
@@ -404,11 +413,12 @@ public:
       {
         for (unsigned int i = 0; i < n_values; ++i)
           {
-            const double tanh      = std::tanh(levelset_vec[i] / thickness);
-            const double dkdlambda = delta_reaction_constant * 0.5 *
-                                     (1.0 - std::pow(tanh, 2)) / thickness;
+            const double tanh = std::tanh(levelset_vec[i] / thickness);
+            const double dkdlambda =
+              delta_reaction_constant * 0.5 * (1.0 - tanh * tanh) / thickness;
             const double Ceff =
-              Ceffective(concentration_vec[i], tracer_reaction_epsilon);
+              calculate_effective_concentration(concentration_vec[i],
+                                                tracer_reaction_threshold);
             jacobian_vector[i] =
               dkdlambda * std::pow(Ceff, tracer_reaction_order - 1.);
           }
@@ -422,9 +432,11 @@ public:
               delta_reaction_constant *
                 (0.5 + 0.5 * std::tanh(levelset_vec[i] / thickness));
             const double Ceff =
-              Ceffective(concentration_vec[i], tracer_reaction_epsilon);
+              calculate_effective_concentration(concentration_vec[i],
+                                                tracer_reaction_threshold);
             const double dCe =
-              dCeffective_dC(concentration_vec[i], tracer_reaction_epsilon);
+              calculate_d_effective_concentration_dC(concentration_vec[i],
+                                                     tracer_reaction_threshold);
             jacobian_vector[i] = k * (tracer_reaction_order - 1.) *
                                  std::pow(Ceff, tracer_reaction_order - 2.) *
                                  dCe;
@@ -442,7 +454,7 @@ private:
   const double thickness;
   const double delta_reaction_constant;
   const double tracer_reaction_order;
-  const double tracer_reaction_epsilon;
+  const double tracer_reaction_threshold;
 };
 
 /**
@@ -468,14 +480,14 @@ public:
     const double p_tracer_reaction_constant_bulk,
     const double p_thickness,
     const double p_tracer_reaction_order,
-    const double p_tracer_reaction_epsilon)
+    const double p_tracer_reaction_threshold)
     : tracer_reaction_constant_interface(p_tracer_reaction_constant_interface)
     , tracer_reaction_constant_bulk(p_tracer_reaction_constant_bulk)
     , delta_reaction_constant(tracer_reaction_constant_interface -
                               tracer_reaction_constant_bulk)
-    , squared_thickness(std::pow(p_thickness, 2))
+    , squared_thickness(p_thickness * p_thickness)
     , tracer_reaction_order(p_tracer_reaction_order)
-    , tracer_reaction_epsilon(p_tracer_reaction_epsilon)
+    , tracer_reaction_threshold(p_tracer_reaction_threshold)
   {
     this->model_depends_on[field::levelset]             = true;
     this->model_depends_on[field::tracer_concentration] = true;
@@ -501,12 +513,13 @@ public:
              "GaussianLevelsetTracerReactionPrefactor",
              "tracer_concentration"));
     const double levelset_val = field_values.at(field::levelset);
-    const double Ceff = Ceffective(field_values.at(field::tracer_concentration),
-                                   tracer_reaction_epsilon);
+    const double Ceff         = calculate_effective_concentration(
+      field_values.at(field::tracer_concentration), tracer_reaction_threshold);
 
-    const double k = tracer_reaction_constant_bulk +
-                     delta_reaction_constant *
-                       std::exp(-std::pow(levelset_val, 2) / squared_thickness);
+    const double k =
+      tracer_reaction_constant_bulk +
+      delta_reaction_constant *
+        std::exp(-levelset_val * levelset_val / squared_thickness);
     return k * std::pow(Ceff, tracer_reaction_order - 1.);
   }
 
@@ -543,9 +556,10 @@ public:
         const double k =
           tracer_reaction_constant_bulk +
           delta_reaction_constant *
-            std::exp(-std::pow(levelset_vec[i], 2) / squared_thickness);
+            std::exp(-levelset_vec[i] * levelset_vec[i] / squared_thickness);
         const double Ceff =
-          Ceffective(concentration_vec[i], tracer_reaction_epsilon);
+          calculate_effective_concentration(concentration_vec[i],
+                                            tracer_reaction_threshold);
         property_vector[i] = k * std::pow(Ceff, tracer_reaction_order - 1.);
       }
   }
@@ -577,12 +591,14 @@ public:
     const double levelset_val = field_values.at(field::levelset);
     const double concentration_val =
       field_values.at(field::tracer_concentration);
-    const double Ceff = Ceffective(concentration_val, tracer_reaction_epsilon);
+    const double Ceff =
+      calculate_effective_concentration(concentration_val,
+                                        tracer_reaction_threshold);
     if (id == field::levelset)
       {
         // dk/dlambda = Δk * exp(-lambda^2/sigma^2) * (-2*lambda/sigma^2)
         const double exponential =
-          std::exp(-pow(levelset_val, 2) / squared_thickness);
+          std::exp(-levelset_val * levelset_val / squared_thickness);
         const double dkdlambda = delta_reaction_constant * exponential *
                                  (-2.0 * levelset_val / squared_thickness);
         return dkdlambda * std::pow(Ceff, tracer_reaction_order - 1.);
@@ -592,9 +608,10 @@ public:
         const double k =
           tracer_reaction_constant_bulk +
           delta_reaction_constant *
-            std::exp(-std::pow(levelset_val, 2) / squared_thickness);
+            std::exp(-levelset_val * levelset_val / squared_thickness);
         const double dCe =
-          dCeffective_dC(concentration_val, tracer_reaction_epsilon);
+          calculate_d_effective_concentration_dC(concentration_val,
+                                                 tracer_reaction_threshold);
         return k * (tracer_reaction_order - 1.) *
                std::pow(Ceff, tracer_reaction_order - 2.) * dCe;
       }
@@ -636,12 +653,13 @@ public:
         for (unsigned int i = 0; i < n_values; ++i)
           {
             const double exponential =
-              std::exp(-pow(levelset_vec[i], 2) / squared_thickness);
+              std::exp(-levelset_vec[i] * levelset_vec[i] / squared_thickness);
             const double dkdlambda =
               delta_reaction_constant * exponential *
               (-2.0 * levelset_vec[i] / squared_thickness);
             const double Ceff =
-              Ceffective(concentration_vec[i], tracer_reaction_epsilon);
+              calculate_effective_concentration(concentration_vec[i],
+                                                tracer_reaction_threshold);
             jacobian_vector[i] =
               dkdlambda * std::pow(Ceff, tracer_reaction_order - 1.);
           }
@@ -650,14 +668,16 @@ public:
       {
         for (unsigned int i = 0; i < n_values; ++i)
           {
-            const double k =
-              tracer_reaction_constant_bulk +
-              delta_reaction_constant *
-                std::exp(-std::pow(levelset_vec[i], 2) / squared_thickness);
+            const double k = tracer_reaction_constant_bulk +
+                             delta_reaction_constant *
+                               std::exp(-levelset_vec[i] * levelset_vec[i] /
+                                        squared_thickness);
             const double Ceff =
-              Ceffective(concentration_vec[i], tracer_reaction_epsilon);
+              calculate_effective_concentration(concentration_vec[i],
+                                                tracer_reaction_threshold);
             const double dCe =
-              dCeffective_dC(concentration_vec[i], tracer_reaction_epsilon);
+              calculate_d_effective_concentration_dC(concentration_vec[i],
+                                                     tracer_reaction_threshold);
             jacobian_vector[i] = k * (tracer_reaction_order - 1.) *
                                  std::pow(Ceff, tracer_reaction_order - 2.) *
                                  dCe;
@@ -673,7 +693,7 @@ private:
   const double delta_reaction_constant;
   const double squared_thickness;
   const double tracer_reaction_order;
-  const double tracer_reaction_epsilon;
+  const double tracer_reaction_threshold;
 };
 
 #endif
