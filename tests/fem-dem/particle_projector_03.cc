@@ -6,7 +6,7 @@
  * and a linear forcing field stored onto the particles.
  *
  * This test is very similar to particle_projector_02 with two main distinction:
- * 1. The mesh for the domain is refined furthermore to ensure that every
+ * 1. The mesh for the domain is refined further to ensure that every
  *    processor owns some cells.
  * 2. The test is adapted to be run in parallel. Essentially, it tests
  * furthermore the projection capabilities in both serial and parallel.
