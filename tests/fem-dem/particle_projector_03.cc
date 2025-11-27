@@ -5,7 +5,8 @@
  * @brief Test if the particle projector gives a valid solution for a constant
  * and a linear forcing field stored onto the particles.
  *
- * This test is very similar to particle_projector_02 with two main distinctions:
+ * This test is very similar to particle_projector_02 with two main
+ * distinctions:
  * 1. The mesh for the domain is refined further to ensure that every
  *    processor owns some cells.
  * 2. The test is adapted to be run in parallel. Essentially, it further tests
