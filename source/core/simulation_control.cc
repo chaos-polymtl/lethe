@@ -500,9 +500,9 @@ SimulationControlTransient::read(const std::string &prefix)
       // Fix the time-step to the new provided value.
       // We understand that users may wish to override the checkpointed
       // time-step value with another one.
-      set_current_time_step(initial_time_step);
       const double old_CFL       = CFL;
       const double old_time_step = time_step;
+      set_current_time_step(initial_time_step);
       set_CFL(old_CFL * initial_time_step / old_time_step);
     }
 }
