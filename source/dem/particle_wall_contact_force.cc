@@ -342,7 +342,8 @@ ParticleWallContactForce<dim,
                             edge_contact)
                         {
                           // If T1 and T2 are vertex-sharing, C1 and C2 are
-                          // valid. This could happen with two concave triangles.
+                          // valid. This could happen with two concave
+                          // triangles.
                           if (std::ranges::find(T1_vs_neighbors, T2_cell) !=
                               T1_vs_neighbors.end())
                             {
