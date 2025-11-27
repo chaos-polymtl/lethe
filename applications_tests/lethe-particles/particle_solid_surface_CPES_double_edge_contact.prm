@@ -1,5 +1,5 @@
-// SPDX-FileCopyrightText: Copyright (c) 2025 The Lethe Authors
-// SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
+# SPDX-FileCopyrightText: Copyright (c) 2025 The Lethe Authors
+# SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
 # Test description:
 # In this test, a single particle is bouncing on a solid-surface made of two triangles that are coplanar (CP) and edge sharing (ES).
