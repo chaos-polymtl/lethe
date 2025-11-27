@@ -87,7 +87,7 @@ subsection cfd-dem
   set grad-div length scale         = 0.005
   set vans model                    = modelA
   set drag coupling                 = explicit
-  set project particle forces      = true
+  set project particle forces       = true
 end
 
 #---------------------------------------------------
