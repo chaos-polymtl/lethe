@@ -8,8 +8,8 @@
  * This test is very similar to particle_projector_02 with two main distinctions:
  * 1. The mesh for the domain is refined further to ensure that every
  *    processor owns some cells.
- * 2. The test is adapted to be run in parallel. Essentially, it tests
- * furthermore the projection capabilities in both serial and parallel.
+ * 2. The test is adapted to be run in parallel. Essentially, it further tests
+ * the projection capabilities in both serial and parallel.
  *
  * The test consists of the following steps (which are the same as
  * projector_02). First, the test is run with a constant forcing applied to the
