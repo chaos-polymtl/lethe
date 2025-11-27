@@ -19,7 +19,7 @@ var searchData=
   ['particle_5ffield_5flocally_5frelevant_16',['particle_field_locally_relevant',['../classParticleFieldQCM.html#a50ce1621d39cfa01c09bdb0f95b22803',1,'ParticleFieldQCM']]],
   ['particle_5ffield_5fsolution_17',['particle_field_solution',['../classParticleFieldQCM.html#adee0078bc923dbd31c30b2f2b27b2482',1,'ParticleFieldQCM']]],
   ['particle_5ffloating_5fmesh_5fcandidates_18',['particle_floating_mesh_candidates',['../classDEMContactManager.html#acc0e4df5dbb4ff04bf07a6f88876c14a',1,'DEMContactManager']]],
-  ['particle_5ffloating_5fmesh_5fin_5fcontact_19',['particle_floating_mesh_in_contact',['../classDEMContactManager.html#af99b00fb1dac018b21af6c8417b37c8b',1,'DEMContactManager']]],
+  ['particle_5ffloating_5fmesh_5fpotentially_5fin_5fcontact_19',['particle_floating_mesh_potentially_in_contact',['../classDEMContactManager.html#a0754e30ca1134bfbf78c36727061e9e7',1,'DEMContactManager']]],
   ['particle_5ffloating_5fwall_5fcandidates_20',['particle_floating_wall_candidates',['../classDEMContactManager.html#ae315958e02440efcf58e26f25f0a3d6b',1,'DEMContactManager']]],
   ['particle_5ffloating_5fwall_5fin_5fcontact_21',['particle_floating_wall_in_contact',['../classDEMContactManager.html#a6f00979ce64058c8a31b15b856971469',1,'DEMContactManager']]],
   ['particle_5ffluid_5fassemblers_22',['particle_fluid_assemblers',['../classFluidDynamicsVANS.html#ad96082cb4c23d3f03e79c5404f794342',1,'FluidDynamicsVANS']]],

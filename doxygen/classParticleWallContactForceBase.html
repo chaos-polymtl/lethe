@@ -104,8 +104,8 @@ Inheritance diagram for ParticleWallContactForceBase&lt; dim, PropertiesIndex &g
 Public Member Functions</h2></td></tr>
 <tr class="memitem:aa76966deb89c17a2007443a3d95eb0c2" id="r_aa76966deb89c17a2007443a3d95eb0c2"><td class="memItemLeft" align="right" valign="top">virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classParticleWallContactForceBase.html#aa76966deb89c17a2007443a3d95eb0c2">calculate_particle_wall_contact</a> (typename <a class="el" href="structDEM_1_1dem__data__structures.html">DEM::dem_data_structures</a>&lt; dim &gt;::particle_wall_in_contact &amp;particle_wall_pairs_in_contact, const double dt, <a class="el" href="classParticleInteractionOutcomes.html">ParticleInteractionOutcomes</a>&lt; PropertiesIndex &gt; &amp;contact_outcome)=0</td></tr>
 <tr class="separator:aa76966deb89c17a2007443a3d95eb0c2"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a2d1e834f86a8fb2e777481a78b3425af" id="r_a2d1e834f86a8fb2e777481a78b3425af"><td class="memItemLeft" align="right" valign="top">virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classParticleWallContactForceBase.html#a2d1e834f86a8fb2e777481a78b3425af">calculate_particle_solid_object_contact</a> (typename <a class="el" href="structDEM_1_1dem__data__structures.html">DEM::dem_data_structures</a>&lt; dim &gt;::particle_floating_mesh_in_contact &amp;particle_floating_mesh_in_contact, const double dt, const std::vector&lt; std::shared_ptr&lt; <a class="el" href="classSerialSolid.html">SerialSolid</a>&lt; dim - 1, dim &gt; &gt; &gt; &amp;solids, <a class="el" href="classParticleInteractionOutcomes.html">ParticleInteractionOutcomes</a>&lt; PropertiesIndex &gt; &amp;contact_outcome)=0</td></tr>
-<tr class="separator:a2d1e834f86a8fb2e777481a78b3425af"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:adfdd9c3b25ad50e151eb2390ebf5510e" id="r_adfdd9c3b25ad50e151eb2390ebf5510e"><td class="memItemLeft" align="right" valign="top">virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classParticleWallContactForceBase.html#adfdd9c3b25ad50e151eb2390ebf5510e">calculate_particle_solid_object_contact</a> (typename <a class="el" href="structDEM_1_1dem__data__structures.html">DEM::dem_data_structures</a>&lt; dim &gt;::particle_floating_mesh_potentially_in_contact &amp;particle_floating_mesh_potentially_in_contact, const double dt, const std::vector&lt; std::shared_ptr&lt; <a class="el" href="classSerialSolid.html">SerialSolid</a>&lt; dim - 1, dim &gt; &gt; &gt; &amp;solids, <a class="el" href="classParticleInteractionOutcomes.html">ParticleInteractionOutcomes</a>&lt; PropertiesIndex &gt; &amp;contact_outcome)=0</td></tr>
+<tr class="separator:adfdd9c3b25ad50e151eb2390ebf5510e"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><div class="compoundTemplParams">template&lt;int dim, typename PropertiesIndex&gt;<br />
@@ -120,8 +120,8 @@ class ParticleWallContactForceBase&lt; dim, PropertiesIndex &gt;</div><p>Base cl
 
 <p class="definition">Definition at line <a class="el" href="particle__wall__contact__force_8h_source.html#l00035">35</a> of file <a class="el" href="particle__wall__contact__force_8h_source.html">particle_wall_contact_force.h</a>.</p>
 </div><h2 class="groupheader">Member Function Documentation</h2>
-<a id="a2d1e834f86a8fb2e777481a78b3425af" name="a2d1e834f86a8fb2e777481a78b3425af"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a2d1e834f86a8fb2e777481a78b3425af">&#9670;&#160;</a></span>calculate_particle_solid_object_contact()</h2>
+<a id="adfdd9c3b25ad50e151eb2390ebf5510e" name="adfdd9c3b25ad50e151eb2390ebf5510e"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#adfdd9c3b25ad50e151eb2390ebf5510e">&#9670;&#160;</a></span>calculate_particle_solid_object_contact()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -134,8 +134,8 @@ template&lt;int dim, typename PropertiesIndex &gt; </div>
         <tr>
           <td class="memname">virtual void <a class="el" href="classParticleWallContactForceBase.html">ParticleWallContactForceBase</a>&lt; dim, PropertiesIndex &gt;::calculate_particle_solid_object_contact </td>
           <td>(</td>
-          <td class="paramtype">typename <a class="el" href="structDEM_1_1dem__data__structures.html">DEM::dem_data_structures</a>&lt; dim &gt;::particle_floating_mesh_in_contact &amp;&#160;</td>
-          <td class="paramname"><em>particle_floating_mesh_in_contact</em>, </td>
+          <td class="paramtype">typename <a class="el" href="structDEM_1_1dem__data__structures.html">DEM::dem_data_structures</a>&lt; dim &gt;::particle_floating_mesh_potentially_in_contact &amp;&#160;</td>
+          <td class="paramname"><em>particle_floating_mesh_potentially_in_contact</em>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
@@ -171,7 +171,7 @@ template&lt;int dim, typename PropertiesIndex &gt; </div>
 <p>Calculate the contact outcomes for particle-solid objects contacts using the contact pair information and physical properties. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramdir">[in]</td><td class="paramname">particle_floating_mesh_in_contact</td><td>A container that stores the information of particle-floating mesh contact. </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">particle_floating_mesh_potentially_in_contact</td><td>A container that stores the information of particle-floating mesh contact. </td></tr>
     <tr><td class="paramdir">[in]</td><td class="paramname">dt</td><td><a class="el" href="namespaceDEM.html" title="This namespace defines all the data containers and required operations on these containers for the DE...">DEM</a> time step. </td></tr>
     <tr><td class="paramdir">[in]</td><td class="paramname">solids</td><td>Floating solids. </td></tr>
     <tr><td class="paramdir">[out]</td><td class="paramname">contact_outcome</td><td>Interaction outcomes. </td></tr>
@@ -179,7 +179,7 @@ template&lt;int dim, typename PropertiesIndex &gt; </div>
   </dd>
 </dl>
 
-<p>Implemented in <a class="el" href="classParticleWallContactForce.html#a466732b448b32a3378591c29f05746bd">ParticleWallContactForce&lt; dim, PropertiesIndex, contact_model, rolling_friction_model &gt;</a>.</p>
+<p>Implemented in <a class="el" href="classParticleWallContactForce.html#a954e774361237dece6e1cad0856b4826">ParticleWallContactForce&lt; dim, PropertiesIndex, contact_model, rolling_friction_model &gt;</a>.</p>
 
 </div>
 </div>

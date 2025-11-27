@@ -2,7 +2,7 @@ var searchData=
 [
   ['particle_5fcontact_5finfo_0',['particle_contact_info',['../structDEM_1_1dem__data__structures.html#a8410f89e19e0746b627be7168759e098',1,'DEM::dem_data_structures']]],
   ['particle_5ffloating_5fmesh_5fcandidates_1',['particle_floating_mesh_candidates',['../structDEM_1_1dem__data__structures.html#a34d9555cd6c00d064a4de21b3bd004b2',1,'DEM::dem_data_structures']]],
-  ['particle_5ffloating_5fmesh_5fin_5fcontact_2',['particle_floating_mesh_in_contact',['../structDEM_1_1dem__data__structures.html#a3d5054d9e9631346b30942666088f498',1,'DEM::dem_data_structures']]],
+  ['particle_5ffloating_5fmesh_5fpotentially_5fin_5fcontact_2',['particle_floating_mesh_potentially_in_contact',['../structDEM_1_1dem__data__structures.html#a1388846131632abbbd1dac9f6a4d540f',1,'DEM::dem_data_structures']]],
   ['particle_5ffloating_5fwall_5fcandidates_3',['particle_floating_wall_candidates',['../structDEM_1_1dem__data__structures.html#a1f112827a26379fc4d558b41c39d2c94',1,'DEM::dem_data_structures']]],
   ['particle_5ffloating_5fwall_5ffrom_5fmesh_5fcandidates_4',['particle_floating_wall_from_mesh_candidates',['../structDEM_1_1dem__data__structures.html#aef2684a971ef5a14e91c2c4bd28e2261',1,'DEM::dem_data_structures']]],
   ['particle_5findex_5fiterator_5fmap_5',['particle_index_iterator_map',['../structDEM_1_1dem__data__structures.html#aabe47013c692c38e2901a7aeca47aa43',1,'DEM::dem_data_structures']]],
@@ -11,10 +11,12 @@ var searchData=
   ['particle_5fparticle_5fcandidates_8',['particle_particle_candidates',['../structDEM_1_1dem__data__structures.html#a719904c6b3202732c1ba0d40b949b7ab',1,'DEM::dem_data_structures']]],
   ['particle_5fpoint_5fcandidates_9',['particle_point_candidates',['../structDEM_1_1dem__data__structures.html#a91aead48ba36b75a0fbf5360918becc5',1,'DEM::dem_data_structures']]],
   ['particle_5fpoint_5fin_5fcontact_10',['particle_point_in_contact',['../structDEM_1_1dem__data__structures.html#a4ce727ced98c9d77bb92949cd6b8bfdd',1,'DEM::dem_data_structures']]],
-  ['particle_5ftriangle_5fcell_5ffrom_5fmesh_5fin_5fcontact_11',['particle_triangle_cell_from_mesh_in_contact',['../structDEM_1_1dem__data__structures.html#ac73b64f7d642ae7dfa8341ed3d52bccf',1,'DEM::dem_data_structures']]],
-  ['particle_5fwall_5fcandidates_12',['particle_wall_candidates',['../structDEM_1_1dem__data__structures.html#aa6ee0ba8f43d17a376fa64027f3ab1fc',1,'DEM::dem_data_structures']]],
-  ['particle_5fwall_5fin_5fcontact_13',['particle_wall_in_contact',['../structDEM_1_1dem__data__structures.html#a192e455bef047459cba3816cd0c4874b',1,'DEM::dem_data_structures']]],
-  ['periodic_5fboundaries_5fcells_5finfo_14',['periodic_boundaries_cells_info',['../structDEM_1_1dem__data__structures.html#afa983e626eaa9743e96763cdddffff41',1,'DEM::dem_data_structures']]],
-  ['preconditionertypegc_15',['PreconditionerTypeGC',['../classMFNavierStokesPreconditionGMGBase.html#a36a22fea014ca1efd0c43ac656f99ef1',1,'MFNavierStokesPreconditionGMGBase']]],
-  ['preconditionertypels_16',['PreconditionerTypeLS',['../classMFNavierStokesPreconditionGMGBase.html#a2182b6449051eb85780675c00fd620b6',1,'MFNavierStokesPreconditionGMGBase']]]
+  ['particle_5ftriangle_5fcell_5ffrom_5fmesh_5fpotentially_5fin_5fcontact_11',['particle_triangle_cell_from_mesh_potentially_in_contact',['../structDEM_1_1dem__data__structures.html#a981e1bb6116c5f0a464f3267e63a4362',1,'DEM::dem_data_structures']]],
+  ['particle_5ftriangle_5fcontact_5fdescription_12',['particle_triangle_contact_description',['../classParticleWallContactForce.html#afa81cca0e3383c100472bdd99a76bf46',1,'ParticleWallContactForce']]],
+  ['particle_5ftriangle_5fcontact_5frecord_13',['particle_triangle_contact_record',['../classParticleWallContactForce.html#ac9d8a8049ee53958a46f6a8cbefefa0b',1,'ParticleWallContactForce']]],
+  ['particle_5fwall_5fcandidates_14',['particle_wall_candidates',['../structDEM_1_1dem__data__structures.html#aa6ee0ba8f43d17a376fa64027f3ab1fc',1,'DEM::dem_data_structures']]],
+  ['particle_5fwall_5fin_5fcontact_15',['particle_wall_in_contact',['../structDEM_1_1dem__data__structures.html#a192e455bef047459cba3816cd0c4874b',1,'DEM::dem_data_structures']]],
+  ['periodic_5fboundaries_5fcells_5finfo_16',['periodic_boundaries_cells_info',['../structDEM_1_1dem__data__structures.html#afa983e626eaa9743e96763cdddffff41',1,'DEM::dem_data_structures']]],
+  ['preconditionertypegc_17',['PreconditionerTypeGC',['../classMFNavierStokesPreconditionGMGBase.html#a36a22fea014ca1efd0c43ac656f99ef1',1,'MFNavierStokesPreconditionGMGBase']]],
+  ['preconditionertypels_18',['PreconditionerTypeLS',['../classMFNavierStokesPreconditionGMGBase.html#a2182b6449051eb85780675c00fd620b6',1,'MFNavierStokesPreconditionGMGBase']]]
 ];

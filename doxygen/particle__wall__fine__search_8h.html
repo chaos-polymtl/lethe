@@ -220,13 +220,13 @@ Functions</h2></td></tr>
 <tr class="memitem:a2196be813e3a2fc1a404ad36040263b3" id="r_a2196be813e3a2fc1a404ad36040263b3"><td class="memTemplParams" colspan="2">template&lt;int dim&gt; </td></tr>
 <tr class="memitem:a2196be813e3a2fc1a404ad36040263b3"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="particle__wall__fine__search_8h.html#a2196be813e3a2fc1a404ad36040263b3">particle_floating_wall_fine_search</a> (const typename <a class="el" href="structDEM_1_1dem__data__structures.html">DEM::dem_data_structures</a>&lt; dim &gt;::particle_floating_wall_candidates &amp;particle_floating_wall_contact_candidates, const <a class="el" href="classParameters_1_1Lagrangian_1_1FloatingWalls.html">Parameters::Lagrangian::FloatingWalls</a>&lt; dim &gt; &amp;floating_wall_properties, const double simulation_time, typename <a class="el" href="structDEM_1_1dem__data__structures.html">DEM::dem_data_structures</a>&lt; dim &gt;::particle_wall_in_contact &amp;particle_floating_wall_in_contact)</td></tr>
 <tr class="separator:a2196be813e3a2fc1a404ad36040263b3"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a43e1adb19e8d704bfab980a7cff4a27e" id="r_a43e1adb19e8d704bfab980a7cff4a27e"><td class="memTemplParams" colspan="2">template&lt;int dim&gt; </td></tr>
-<tr class="memitem:a43e1adb19e8d704bfab980a7cff4a27e"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="particle__wall__fine__search_8h.html#a43e1adb19e8d704bfab980a7cff4a27e">particle_floating_mesh_fine_search</a> (const typename <a class="el" href="structDEM_1_1dem__data__structures.html">DEM::dem_data_structures</a>&lt; dim &gt;::particle_floating_mesh_candidates &amp;particle_floating_mesh_contact_candidates, typename <a class="el" href="structDEM_1_1dem__data__structures.html">DEM::dem_data_structures</a>&lt; dim &gt;::particle_floating_mesh_in_contact &amp;particle_floating_mesh_in_contact)</td></tr>
-<tr class="separator:a43e1adb19e8d704bfab980a7cff4a27e"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a4f11c1466a9d8e4e043bc7ac2fa749fc" id="r_a4f11c1466a9d8e4e043bc7ac2fa749fc"><td class="memTemplParams" colspan="2">template&lt;int dim&gt; </td></tr>
+<tr class="memitem:a4f11c1466a9d8e4e043bc7ac2fa749fc"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="particle__wall__fine__search_8h.html#a4f11c1466a9d8e4e043bc7ac2fa749fc">particle_floating_mesh_fine_search</a> (const typename <a class="el" href="structDEM_1_1dem__data__structures.html">DEM::dem_data_structures</a>&lt; dim &gt;::particle_floating_mesh_candidates &amp;particle_floating_mesh_contact_candidates, typename <a class="el" href="structDEM_1_1dem__data__structures.html">DEM::dem_data_structures</a>&lt; dim &gt;::particle_floating_mesh_potentially_in_contact &amp;particle_floating_mesh_potentially_in_contact)</td></tr>
+<tr class="separator:a4f11c1466a9d8e4e043bc7ac2fa749fc"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <h2 class="groupheader">Function Documentation</h2>
-<a id="a43e1adb19e8d704bfab980a7cff4a27e" name="a43e1adb19e8d704bfab980a7cff4a27e"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a43e1adb19e8d704bfab980a7cff4a27e">&#9670;&#160;</a></span>particle_floating_mesh_fine_search()</h2>
+<a id="a4f11c1466a9d8e4e043bc7ac2fa749fc" name="a4f11c1466a9d8e4e043bc7ac2fa749fc"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a4f11c1466a9d8e4e043bc7ac2fa749fc">&#9670;&#160;</a></span>particle_floating_mesh_fine_search()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -242,8 +242,8 @@ template&lt;int dim&gt; </div>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">typename <a class="el" href="structDEM_1_1dem__data__structures.html">DEM::dem_data_structures</a>&lt; dim &gt;::particle_floating_mesh_in_contact &amp;&#160;</td>
-          <td class="paramname"><em>particle_floating_mesh_in_contact</em>&#160;</td>
+          <td class="paramtype">typename <a class="el" href="structDEM_1_1dem__data__structures.html">DEM::dem_data_structures</a>&lt; dim &gt;::particle_floating_mesh_potentially_in_contact &amp;&#160;</td>
+          <td class="paramname"><em>particle_floating_mesh_potentially_in_contact</em>&#160;</td>
         </tr>
         <tr>
           <td></td>
@@ -253,11 +253,11 @@ template&lt;int dim&gt; </div>
       </table>
 </div><div class="memdoc">
 
-<p>Iterate over the contact candidates from particle-floating mesh broad search (particle_floating_mesh_contact_candidates) to add new contact pairs to the particle_floating_mesh_in_contact container. </p>
+<p>Iterate over the contact candidates from particle-floating mesh broad search (particle_floating_mesh_contact_candidates) to add new contact pairs to the particle_floating_mesh_potentially_in_contact container. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">particle_floating_mesh_contact_candidates</td><td>The output of particle-floating mesh broad search which shows contact pair candidates </td></tr>
-    <tr><td class="paramname">particle_floating_mesh_in_contact</td><td>A map of maps which stores all the particle-floating mesh pairs which are in contact </td></tr>
+    <tr><td class="paramname">particle_floating_mesh_potentially_in_contact</td><td>A map of maps which stores all the particle-floating mesh pairs which are potentially in contact </td></tr>
   </table>
   </dd>
 </dl>
