@@ -3572,7 +3572,7 @@ void
 FluidDynamicsMatrixFree<dim>::solve_system_GMRES(const double absolute_residual,
                                                  const double relative_residual)
 {
-  const AffineConstraints<double> &constraints_used = this->zero_constraints;
+  const AffineConstraints<double> &zero_constraints = this->zero_constraints;
   const double rescale_metric   = this->get_residual_rescale_metric();
   const double current_residual = this->system_rhs.l2_norm() / rescale_metric;
   const double linear_solver_tolerance =
@@ -3659,7 +3659,7 @@ FluidDynamicsMatrixFree<dim>::solve_system_GMRES(const double absolute_residual,
   this->computing_timer.enter_subsection(
     "Distribute constraints after linear solve");
 
-  constraints_used.distribute(this->newton_update);
+  zero_constraints.distribute(this->newton_update);
 
   this->computing_timer.leave_subsection(
     "Distribute constraints after linear solve");
@@ -3671,7 +3671,7 @@ FluidDynamicsMatrixFree<dim>::solve_system_direct(
   const double absolute_residual,
   const double relative_residual)
 {
-  const AffineConstraints<double> &constraints_used = this->zero_constraints;
+  const AffineConstraints<double> &zero_constraints = this->zero_constraints;
   const double rescale_metric   = this->get_residual_rescale_metric();
   const double current_residual = this->system_rhs.l2_norm() / rescale_metric;
   const double linear_solver_tolerance =
@@ -3700,7 +3700,7 @@ FluidDynamicsMatrixFree<dim>::solve_system_direct(
   this->computing_timer.enter_subsection(
     "Distribute constraints after linear solve");
 
-  constraints_used.distribute(this->newton_update);
+  zero_constraints.distribute(this->newton_update);
 
   this->computing_timer.leave_subsection(
     "Distribute constraints after linear solve");

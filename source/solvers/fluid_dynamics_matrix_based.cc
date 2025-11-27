@@ -815,13 +815,13 @@ FluidDynamicsMatrixBased<dim>::copy_local_matrix_to_global_matrix(
   if (!copy_data.cell_is_local)
     return;
 
-  const AffineConstraints<double> &constraints_used =
+  const AffineConstraints<double> &zero_constraints_used =
     (!this->simulation_parameters.constrain_solid_domain.enable) ?
       this->zero_constraints :
       this->dynamic_zero_constraints;
-  constraints_used.distribute_local_to_global(copy_data.local_matrix,
-                                              copy_data.local_dof_indices,
-                                              this->system_matrix);
+  zero_constraints_used.distribute_local_to_global(copy_data.local_matrix,
+                                                   copy_data.local_dof_indices,
+                                                   this->system_matrix);
 }
 
 
@@ -1053,13 +1053,13 @@ FluidDynamicsMatrixBased<dim>::copy_local_rhs_to_global_rhs(
   if (!copy_data.cell_is_local)
     return;
 
-  const AffineConstraints<double> &constraints_used =
+  const AffineConstraints<double> &zero_constraints_used =
     (!this->simulation_parameters.constrain_solid_domain.enable) ?
       this->zero_constraints :
       this->dynamic_zero_constraints;
-  constraints_used.distribute_local_to_global(copy_data.local_rhs,
-                                              copy_data.local_dof_indices,
-                                              this->system_rhs);
+  zero_constraints_used.distribute_local_to_global(copy_data.local_rhs,
+                                                   copy_data.local_dof_indices,
+                                                   this->system_rhs);
 }
 
 /**
@@ -1082,7 +1082,7 @@ FluidDynamicsMatrixBased<dim>::set_initial_condition_fd(
            Parameters::FluidDynamicsInitialConditionType::L2projection)
     {
       assemble_L2_projection();
-      solve_system_GMRES(1e-15, 1e-15);
+      solve_L2_system(1e-15, 1e-15);
 
       *this->present_solution = this->newton_update;
       this->finish_time_step();
@@ -1502,7 +1502,7 @@ FluidDynamicsMatrixBased<dim>::solve_system_GMRES(
 
   auto &system_rhs = this->system_rhs;
 
-  const AffineConstraints<double> &constraints_used =
+  const AffineConstraints<double> &zero_constraints_used =
     (!this->simulation_parameters.constrain_solid_domain.enable) ?
       this->zero_constraints :
       this->dynamic_zero_constraints;
@@ -1600,7 +1600,7 @@ FluidDynamicsMatrixBased<dim>::solve_system_GMRES(
           this->computing_timer.enter_subsection(
             "Distribute constraints after linear solve");
 
-          constraints_used.distribute(completely_distributed_solution);
+          zero_constraints_used.distribute(completely_distributed_solution);
 
           this->computing_timer.leave_subsection(
             "Distribute constraints after linear solve");
@@ -1637,9 +1637,8 @@ FluidDynamicsMatrixBased<dim>::solve_L2_system(double absolute_residual,
   unsigned int       iter     = 0;
   bool               success  = false;
 
-  auto &nonzero_constraints = this->nonzero_constraints;
-
-  const AffineConstraints<double> &constraints_used = nonzero_constraints;
+  const AffineConstraints<double> &nonzero_constraints =
+    this->nonzero_constraints;
   const double rescale_metric   = this->get_residual_rescale_metric();
   const double current_residual = this->system_rhs.l2_norm() / rescale_metric;
   const double linear_solver_tolerance =
@@ -1734,7 +1733,7 @@ FluidDynamicsMatrixBased<dim>::solve_L2_system(double absolute_residual,
           this->computing_timer.enter_subsection(
             "Distribute constraints after linear solve");
 
-          constraints_used.distribute(completely_distributed_solution);
+          nonzero_constraints.distribute(completely_distributed_solution);
 
           this->computing_timer.leave_subsection(
             "Distribute constraints after linear solve");
@@ -1780,7 +1779,7 @@ FluidDynamicsMatrixBased<dim>::solve_system_BiCGStab(
 
   auto &system_rhs = this->system_rhs;
 
-  const AffineConstraints<double> &constraints_used =
+  const AffineConstraints<double> &zero_constraints_used =
     (!this->simulation_parameters.constrain_solid_domain.enable) ?
       this->zero_constraints :
       this->dynamic_zero_constraints;
@@ -1850,7 +1849,7 @@ FluidDynamicsMatrixBased<dim>::solve_system_BiCGStab(
                   << " steps to reach a residual norm of "
                   << solver_control.last_value() / rescale_metric << std::endl;
               }
-            constraints_used.distribute(completely_distributed_solution);
+            zero_constraints_used.distribute(completely_distributed_solution);
             this->newton_update = completely_distributed_solution;
           }
           success = true;
@@ -1881,7 +1880,7 @@ FluidDynamicsMatrixBased<dim>::solve_system_direct(
 {
   auto &system_rhs = this->system_rhs;
 
-  const AffineConstraints<double> &constraints_used =
+  const AffineConstraints<double> &zero_constraints_used =
     (!this->simulation_parameters.constrain_solid_domain.enable) ?
       this->zero_constraints :
       this->dynamic_zero_constraints;
@@ -1906,7 +1905,7 @@ FluidDynamicsMatrixBased<dim>::solve_system_direct(
 
   solver.initialize(system_matrix);
   solver.solve(completely_distributed_solution, system_rhs);
-  constraints_used.distribute(completely_distributed_solution);
+  zero_constraints_used.distribute(completely_distributed_solution);
   auto &newton_update = this->newton_update;
   newton_update       = completely_distributed_solution;
 }
