@@ -11,7 +11,7 @@
  * 2. The test is adapted to be run in parallel. Essentially, it tests
  * furthermore the projection capabilities in both serial and parallel.
  *
- * The test consists in the following steps (which are the same as
+ * The test consists of the following steps (which are the same as
  * projector_02). First, the test is run with a constant forcing applied to the
  * particles. The goal of the test is to verify if the forcing is conservative.
  * Afterward, the test is run with a linear force function. The goal of the
