@@ -341,7 +341,7 @@ FluidDynamicsVANS<dim>::setup_assemblers()
   //  Fluid_Particle Interactions Assembler
   if (this->cfd_dem_simulation_parameters.cfd_dem.project_particle_forces)
     {
-      this->assemblers.push_back(std::make_shared<VANSAssemblerFPIProj<dim>>(
+      this->assemblers.push_back(std::make_shared<VANSAssemblerFPIProjection<dim>>(
         this->cfd_dem_simulation_parameters.cfd_dem));
     }
   else

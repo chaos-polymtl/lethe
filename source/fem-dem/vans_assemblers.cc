@@ -2227,20 +2227,15 @@ template class VANSAssemblerFPI<3>;
 
 template <int dim>
 void
-VANSAssemblerFPIProj<dim>::assemble_matrix(
-  const NavierStokesScratchData<dim>   &scratch_data,
-  StabilizedMethodsTensorCopyData<dim> &copy_data)
+VANSAssemblerFPIProjection<dim>::assemble_matrix(
+  [[maybe_unused]] const NavierStokesScratchData<dim>   &scratch_data,
+  [[maybe_unused]] StabilizedMethodsTensorCopyData<dim> &copy_data)
 {
-  // The code in this function makes no sense at this moment. I just added it
-  // because the CI was failing if i do not use the arguments of the function.
-  // Please, disregard it for now.
-  (void)scratch_data;
-  (void)copy_data;
 }
 
 template <int dim>
 void
-VANSAssemblerFPIProj<dim>::assemble_rhs(
+VANSAssemblerFPIProjection<dim>::assemble_rhs(
   const NavierStokesScratchData<dim>   &scratch_data,
   StabilizedMethodsTensorCopyData<dim> &copy_data)
 {
@@ -2267,7 +2262,8 @@ VANSAssemblerFPIProj<dim>::assemble_rhs(
       const double JxW = JxW_vec[q];
 
       // Calculate the strong residual for GLS stabilization
-      strong_residual[q] -= // Drag Force
+      // Drag Force and other two-way coupling forces
+      strong_residual[q] -= 
         (fluid_drag + two_way_coupling_force);
 
       // Assembly of the right-hand side
@@ -2275,12 +2271,10 @@ VANSAssemblerFPIProj<dim>::assemble_rhs(
         {
           const auto phi_u_i = scratch_data.phi_u[q][i];
           // Drag Force
-          //  Models A and B of the VANS eqts have now the same line here, since
-          //  the disctinction
-          // is made in the shear and pressure forces assemblers.
+          //  The distinction between Model A and B of the VANS equations is made in the shear and pressure forces assemblers.
           local_rhs(i) += (fluid_drag + two_way_coupling_force) * phi_u_i * JxW;
         }
     }
 }
-template class VANSAssemblerFPIProj<2>;
-template class VANSAssemblerFPIProj<3>;
+template class VANSAssemblerFPIProjection<2>;
+template class VANSAssemblerFPIProjection<3>;

@@ -193,8 +193,8 @@ public:
 
     if (sd.gather_particle_field_project)
       enable_particle_field_projection(
-        sd.fe_values_particle_drag->get_quadrature(),
-        sd.fe_values_particle_drag->get_mapping(),
+        sd.fe_values.get_quadrature(),
+        sd.fe_values.get_mapping(),
         sd.fe_values_particle_drag->get_fe(),
         sd.fe_values_particle_two_way_coupling_force->get_fe(),
         sd.fe_values_particle_velocity->get_fe());
@@ -1359,7 +1359,6 @@ public:
         this->fe_values_particle_velocity->reinit(particle_velocity_cell);
         (*this->fe_values_particle_velocity)[vector_index].get_function_values(
           particle_velocity, this->particle_velocity_values);
-        // Add the momentum transfer coefficient here
       }
   }
 

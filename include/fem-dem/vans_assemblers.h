@@ -701,10 +701,10 @@ public:
  */
 
 template <int dim>
-class VANSAssemblerFPIProj : public NavierStokesAssemblerBase<dim>
+class VANSAssemblerFPIProjection : public NavierStokesAssemblerBase<dim>
 {
 public:
-  VANSAssemblerFPIProj(const Parameters::CFDDEM &cfd_dem)
+  VANSAssemblerFPIProjection(const Parameters::CFDDEM &cfd_dem)
     : cfd_dem(cfd_dem)
 
   {}
