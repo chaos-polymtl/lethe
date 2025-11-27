@@ -134,6 +134,5 @@ subsection mesh
   set grid type          = balanced
   set grid arguments     = 44:0.01:0.22
   set initial refinement = 2
-    set expand particle-wall contact search = true
-
+  set expand particle-wall contact search = true
 end
