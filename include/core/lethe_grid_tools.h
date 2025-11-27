@@ -91,7 +91,6 @@ namespace LetheGridTools
    * cell.
    *
    * @param cell The initial cell. We want to know all the cells that share a vertex with this cell.
-   *
    * @param vertices_cell_map see vertices_cell_mapping function description.
    */
   template <int dim>
@@ -260,6 +259,18 @@ namespace LetheGridTools
                                                   &vertices_cell_map,
     std::vector<SerialSolid<structdim, spacedim>> &list_of_objects);
 
+
+  /**
+   *  @enum ParticleTriangleContactIndicator
+   *  @brief Indicates the type of contact between a particle and a triangle.
+   */
+  enum class ParticleTriangleContactIndicator : std::uint8_t
+  {
+    face_contact,
+    edge_contact,
+    vertex_contact
+  };
+
   /**
    * @brief Calculates the distance between particles and a triangle (defined using
    * three vertices). The full calculation is taken from  Geometric Tools for
@@ -279,19 +290,21 @@ namespace LetheGridTools
    * located in the background (base) cell
    * @param n_particles_in_base_cell Number of particles in the base cell
    *
-   * @return A tuple in which 0. a vector of bools to determine if the particle is
-   * close to the triangle plane, 1. a vector of projected location of particles
-   * on the triangle, 2. a vector of normal vectors of the triangles
+   * @return A tuple in which: 0. a vector of bools to determine if the particle is
+   * less than a radius away from the triangle plane, 1. a vector of projected
+   * location of particles on the triangle, 2. a vector of normal contact
+   * vectors between the triangle and the particles, 3. a vector of the contact
+   * type between the particle and the triangle.
    */
-
   template <int dim, typename PropertiesIndex>
-  std::
-    tuple<std::vector<bool>, std::vector<Point<3>>, std::vector<Tensor<1, 3>>>
-    find_particle_triangle_projection(
-      const std::vector<Point<dim>>                       &triangle,
-      const std::vector<Particles::ParticleIterator<dim>> &particles,
-      const unsigned int &n_particles_in_base_cell);
-
+  std::tuple<std::vector<bool>,
+             std::vector<Point<3>>,
+             std::vector<Tensor<1, 3>>,
+             std::vector<ParticleTriangleContactIndicator>>
+  find_particle_triangle_projection(
+    const std::vector<Point<dim>>                       &triangle,
+    const std::vector<Particles::ParticleIterator<dim>> &particles,
+    const unsigned int &n_particles_in_base_cell);
 
   /**
    * @brief Calculates the distance between points and a triangle (defined using
@@ -431,7 +444,40 @@ namespace LetheGridTools
     }
   };
 
+  /**
+   * @brief Map the vertex index to the cells which include that vertex.
+   *
+   * @param tria Triangulation
+   * @param vertices_cell_map The map container of vertex ids with its set of
+   * neighbor cells.
+   */
+  template <int dim, int spacedim>
+  void
+  vertices_cell_mapping(
+    const Triangulation<dim, spacedim> &tria,
+    std::map<
+      unsigned int,
+      std::set<typename Triangulation<dim, spacedim>::active_cell_iterator>>
+      &vertices_cell_map);
+
+
+  /**
+   * @brief Return a vector of cells around a cell. This vector includes
+   * all the cells that share a vertex with the initial cell, including the
+   * initial cell.
+   *
+   * @param cell The initial cell. We want to know all the cells that share a
+   * vertex with this cell.
+   * @param vertices_cell_map Map of vertex ids to the set of neighbor cells.
+   */
+  template <int dim, int spacedim = dim>
+  std::vector<typename Triangulation<dim, spacedim>::active_cell_iterator>
+  find_cells_around_cell(
+    std::map<
+      unsigned int,
+      std::set<typename Triangulation<dim, spacedim>::active_cell_iterator>>
+      &vertices_cell_map,
+    const typename Triangulation<dim, spacedim>::active_cell_iterator &cell);
+
 } // namespace LetheGridTools
-
-
 #endif // lethe_lethegridtools_h

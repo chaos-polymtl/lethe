@@ -67,6 +67,13 @@ SerialSolid<dim, spacedim>::SerialSolid(
 
   // Load triangulation
   initial_setup();
+
+  if constexpr (dim == 2)
+    {
+      // Set-up containers
+      if (param->solid_mesh.simplex)
+        setup_containers();
+    }
 }
 
 template <int dim, int spacedim>
@@ -607,7 +614,72 @@ SerialSolid<dim, spacedim>::setup_dof_handler()
   displacement_since_mapped = 0;
 }
 
+template <int dim, int spacedim>
+void
+SerialSolid<dim, spacedim>::setup_containers()
+{
+  // Map : Vertices ID --> Cell iterator vector
+  std::map<
+    unsigned int,
+    std::set<typename Triangulation<dim, spacedim>::active_cell_iterator>>
+    vertices_cell_map;
+  LetheGridTools::vertices_cell_mapping(*solid_tria, vertices_cell_map);
 
+  // Loop on every cell
+  for (const auto &main_cell : solid_tria->active_cell_iterators())
+    {
+      // Initializing the containers associated with the main cell
+      std::vector<typename Triangulation<dim, spacedim>::active_cell_iterator>
+        es_main_cell, vs_main_cell;
+
+      // Number of vertices of the main cell
+      const unsigned int n_vertices_main_cell = main_cell->n_vertices();
+
+      // Store the vertices index of the main cell in a vector
+      std::vector<unsigned int> main_cell_vertex_indices;
+      main_cell_vertex_indices.reserve(n_vertices_main_cell);
+      for (unsigned int v = 0; v < n_vertices_main_cell; ++v)
+        main_cell_vertex_indices.push_back(main_cell->vertex_index(v));
+
+      // Find the cell iterators around the main cell. This includes the main
+      // cell itself.
+      auto neighboring_cells =
+        LetheGridTools::find_cells_around_cell<dim, spacedim>(vertices_cell_map,
+                                                              main_cell);
+
+      // Loop on the neighboring cells of the main cell
+      for (const auto &neigh_cell : neighboring_cells)
+        {
+          // Skip the first iterator since it is the main cell itself
+          if (neigh_cell == main_cell)
+            continue;
+
+          // Number of sharing vertices between main cell and neighboring
+          // cell. We know it is high either 1 or 2.
+          unsigned int n_sharing_vertices = 0;
+
+          // Loop on the vertices of that of the neighboring cell.
+          const unsigned int n_vertices_neigh_cell = neigh_cell->n_vertices();
+
+          for (unsigned int v = 0; v < n_vertices_neigh_cell; ++v)
+            {
+              unsigned int neigh_cell_vertex_index =
+                neigh_cell->vertex_index(v);
+              if (std::ranges::find(main_cell_vertex_indices,
+                                    neigh_cell_vertex_index) !=
+                  main_cell_vertex_indices.end())
+                n_sharing_vertices++;
+            }
+          // Sharing 1 vertex
+          if (n_sharing_vertices == 1)
+            vs_main_cell.push_back(neigh_cell);
+          else // Sharing 2 vertex
+            es_main_cell.push_back(neigh_cell);
+        }
+      es_neighbors.insert(std::make_pair(main_cell, es_main_cell));
+      vs_neighbors.insert(std::make_pair(main_cell, vs_main_cell));
+    }
+}
 // Pre-compile the 2D, 3D and the 2D in 3D versions with the types that can
 // occur
 template class SerialSolid<1, 2>;

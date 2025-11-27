@@ -1219,7 +1219,10 @@ LetheGridTools::find_cells_cut_by_object(
 
 
 template <int dim, typename PropertiesIndex>
-std::tuple<std::vector<bool>, std::vector<Point<3>>, std::vector<Tensor<1, 3>>>
+std::tuple<std::vector<bool>,
+           std::vector<Point<3>>,
+           std::vector<Tensor<1, 3>>,
+           std::vector<LetheGridTools::ParticleTriangleContactIndicator>>
 LetheGridTools::find_particle_triangle_projection(
   const std::vector<Point<dim>>                       &triangle,
   const std::vector<Particles::ParticleIterator<dim>> &particles,
@@ -1228,6 +1231,8 @@ LetheGridTools::find_particle_triangle_projection(
   std::vector<bool>         pass_distance_check(n_particles_in_base_cell);
   std::vector<Point<3>>     projection_points(n_particles_in_base_cell);
   std::vector<Tensor<1, 3>> normal_vectors(n_particles_in_base_cell);
+  std::vector<LetheGridTools::ParticleTriangleContactIndicator>
+    contact_indicators(n_particles_in_base_cell);
 
   auto &p_0 = triangle[0];
   auto &p_1 = triangle[1];
@@ -1247,7 +1252,6 @@ LetheGridTools::find_particle_triangle_projection(
   const double c   = e_1.norm_square();
   const double det = a * c - b * b;
 
-
   // Pre-allocation for speed
   Tensor<1, dim> vector_to_plane;
   Point<dim>     pt_in_triangle;
@@ -1259,6 +1263,7 @@ LetheGridTools::find_particle_triangle_projection(
       Point<dim>   particle_position = part->get_location();
       vector_to_plane                = p_0 - particle_position;
 
+      ParticleTriangleContactIndicator this_contact_indicator;
       // A bool variable for region 0
       bool region_zero = false;
 
@@ -1295,6 +1300,8 @@ LetheGridTools::find_particle_triangle_projection(
               if (t < 0)
                 {
                   // Region 4
+                  this_contact_indicator =
+                    ParticleTriangleContactIndicator::vertex_contact;
                   if (d < 0)
                     {
                       t = 0;
@@ -1317,6 +1324,9 @@ LetheGridTools::find_particle_triangle_projection(
               else
                 {
                   // Region 3
+                  this_contact_indicator =
+                    ParticleTriangleContactIndicator::edge_contact;
+
                   s = 0;
                   if (e >= 0)
                     t = 0;
@@ -1329,6 +1339,9 @@ LetheGridTools::find_particle_triangle_projection(
           else if (t < 0)
             {
               // Region 5
+              this_contact_indicator =
+                ParticleTriangleContactIndicator::edge_contact;
+
               t = 0;
               if (d >= 0)
                 s = 0;
@@ -1353,6 +1366,8 @@ LetheGridTools::find_particle_triangle_projection(
                 unit_normal_3d = tensor_nd_to_3d(unit_normal);
 
               region_zero = true;
+              this_contact_indicator =
+                ParticleTriangleContactIndicator::face_contact;
             }
         }
       else
@@ -1360,6 +1375,9 @@ LetheGridTools::find_particle_triangle_projection(
           if (s < 0)
             {
               // Region 2
+              this_contact_indicator =
+                ParticleTriangleContactIndicator::vertex_contact;
+
               const double tmp0 = b + d;
               const double tmp1 = c + e;
               if (tmp1 > tmp0)
@@ -1387,6 +1405,9 @@ LetheGridTools::find_particle_triangle_projection(
           else if (t < 0)
             {
               // Region 6
+              this_contact_indicator =
+                ParticleTriangleContactIndicator::vertex_contact;
+
               const double tmp0 = b + e;
               const double tmp1 = a + d;
               if (tmp1 > tmp0)
@@ -1413,6 +1434,9 @@ LetheGridTools::find_particle_triangle_projection(
           else
             {
               // Region 1
+              this_contact_indicator =
+                ParticleTriangleContactIndicator::edge_contact;
+
               const double numer = (c + e) - (b + d);
               if (numer <= 0)
                 s = 0;
@@ -1453,57 +1477,80 @@ LetheGridTools::find_particle_triangle_projection(
       projection_points[k]   = pt_in_triangle_3d;
       pass_distance_check[k] = true;
       normal_vectors[k]      = unit_normal_3d;
+      contact_indicators[k]  = this_contact_indicator;
       ++k;
     }
   return std::make_tuple(pass_distance_check,
                          projection_points,
-                         normal_vectors);
+                         normal_vectors,
+                         contact_indicators);
 }
 
-template std::
-  tuple<std::vector<bool>, std::vector<Point<3>>, std::vector<Tensor<1, 3>>>
-  LetheGridTools::
-    find_particle_triangle_projection<2, DEM::DEMProperties::PropertiesIndex>(
-      const std::vector<Point<2>>                       &triangle,
-      const std::vector<Particles::ParticleIterator<2>> &particles,
-      const unsigned int &n_particles_in_base_cell);
-template std::tuple<std::vector<bool>,
-                    std::vector<Point<3>>,
-                    std::vector<Tensor<1, 3>>>
+template std::tuple<
+  std::vector<bool>,
+  std::vector<Point<3>>,
+  std::vector<Tensor<1, 3>>,
+  std::vector<LetheGridTools::ParticleTriangleContactIndicator>>
+LetheGridTools::
+  find_particle_triangle_projection<2, DEM::DEMProperties::PropertiesIndex>(
+    const std::vector<Point<2>>                       &triangle,
+    const std::vector<Particles::ParticleIterator<2>> &particles,
+    const unsigned int &n_particles_in_base_cell);
+
+template std::tuple<
+  std::vector<bool>,
+  std::vector<Point<3>>,
+  std::vector<Tensor<1, 3>>,
+  std::vector<LetheGridTools::ParticleTriangleContactIndicator>>
 LetheGridTools::
   find_particle_triangle_projection<2, DEM::CFDDEMProperties::PropertiesIndex>(
     const std::vector<Point<2>>                       &triangle,
     const std::vector<Particles::ParticleIterator<2>> &particles,
     const unsigned int &n_particles_in_base_cell);
-template std::
-  tuple<std::vector<bool>, std::vector<Point<3>>, std::vector<Tensor<1, 3>>>
-  LetheGridTools::
-    find_particle_triangle_projection<2, DEM::DEMMPProperties::PropertiesIndex>(
-      const std::vector<Point<2>>                       &triangle,
-      const std::vector<Particles::ParticleIterator<2>> &particles,
-      const unsigned int &n_particles_in_base_cell);
-template std::
-  tuple<std::vector<bool>, std::vector<Point<3>>, std::vector<Tensor<1, 3>>>
-  LetheGridTools::
-    find_particle_triangle_projection<3, DEM::DEMProperties::PropertiesIndex>(
-      const std::vector<Point<3>>                       &triangle,
-      const std::vector<Particles::ParticleIterator<3>> &particles,
-      const unsigned int &n_particles_in_base_cell);
-template std::tuple<std::vector<bool>,
-                    std::vector<Point<3>>,
-                    std::vector<Tensor<1, 3>>>
+
+template std::tuple<
+  std::vector<bool>,
+  std::vector<Point<3>>,
+  std::vector<Tensor<1, 3>>,
+  std::vector<LetheGridTools::ParticleTriangleContactIndicator>>
+LetheGridTools::
+  find_particle_triangle_projection<2, DEM::DEMMPProperties::PropertiesIndex>(
+    const std::vector<Point<2>>                       &triangle,
+    const std::vector<Particles::ParticleIterator<2>> &particles,
+    const unsigned int &n_particles_in_base_cell);
+
+template std::tuple<
+  std::vector<bool>,
+  std::vector<Point<3>>,
+  std::vector<Tensor<1, 3>>,
+  std::vector<LetheGridTools::ParticleTriangleContactIndicator>>
+LetheGridTools::
+  find_particle_triangle_projection<3, DEM::DEMProperties::PropertiesIndex>(
+    const std::vector<Point<3>>                       &triangle,
+    const std::vector<Particles::ParticleIterator<3>> &particles,
+    const unsigned int &n_particles_in_base_cell);
+
+template std::tuple<
+  std::vector<bool>,
+  std::vector<Point<3>>,
+  std::vector<Tensor<1, 3>>,
+  std::vector<LetheGridTools::ParticleTriangleContactIndicator>>
 LetheGridTools::
   find_particle_triangle_projection<3, DEM::CFDDEMProperties::PropertiesIndex>(
     const std::vector<Point<3>>                       &triangle,
     const std::vector<Particles::ParticleIterator<3>> &particles,
     const unsigned int &n_particles_in_base_cell);
-template std::
-  tuple<std::vector<bool>, std::vector<Point<3>>, std::vector<Tensor<1, 3>>>
-  LetheGridTools::
-    find_particle_triangle_projection<3, DEM::DEMMPProperties::PropertiesIndex>(
-      const std::vector<Point<3>>                       &triangle,
-      const std::vector<Particles::ParticleIterator<3>> &particles,
-      const unsigned int &n_particles_in_base_cell);
+
+template std::tuple<
+  std::vector<bool>,
+  std::vector<Point<3>>,
+  std::vector<Tensor<1, 3>>,
+  std::vector<LetheGridTools::ParticleTriangleContactIndicator>>
+LetheGridTools::
+  find_particle_triangle_projection<3, DEM::DEMMPProperties::PropertiesIndex>(
+    const std::vector<Point<3>>                       &triangle,
+    const std::vector<Particles::ParticleIterator<3>> &particles,
+    const unsigned int &n_particles_in_base_cell);
 
 
 template <int dim>
@@ -1852,3 +1899,115 @@ LetheGridTools::rotate_mapping(const DoFHandler<3> &dof_handler,
                                const double        &rotation_angle,
                                const Point<3>      &center_of_rotation,
                                const Tensor<1, 3>  &rotation_axis);
+
+template <int dim, int spacedim>
+void
+LetheGridTools::vertices_cell_mapping(
+  const Triangulation<dim, spacedim> &tria,
+  std::map<
+    unsigned int,
+    std::set<typename Triangulation<dim, spacedim>::active_cell_iterator>>
+    &vertices_cell_map)
+{
+  vertices_cell_map.clear();
+  const auto &cell_iterator = tria.active_cell_iterators();
+
+  // Loop on all the cells and find their vertices, and fill
+  // the map with sets of cells around each vertex
+  for (const auto &cell : cell_iterator)
+    {
+      // Since this is a serial triangulation, no need to check if the cells
+      // are locally own.
+      const unsigned int vertices_per_cell = cell->n_vertices();
+      for (unsigned int i = 0; i < vertices_per_cell; i++)
+        {
+          // First obtain vertex index
+          unsigned int v_index = cell->vertex_index(i);
+
+          // Insert the cell into the set of cell around that vertex.
+          vertices_cell_map[v_index].insert(cell);
+        }
+    }
+}
+template void
+LetheGridTools::vertices_cell_mapping(
+  const Triangulation<1, 2> &tria,
+  std::map<unsigned int,
+           std::set<typename Triangulation<1, 2>::active_cell_iterator>>
+    &vertices_cell_map);
+template void
+LetheGridTools::vertices_cell_mapping(
+  const Triangulation<2, 2> &tria,
+  std::map<unsigned int,
+           std::set<typename Triangulation<2, 2>::active_cell_iterator>>
+    &vertices_cell_map);
+template void
+LetheGridTools::vertices_cell_mapping(
+  const Triangulation<2, 3> &tria,
+  std::map<unsigned int,
+           std::set<typename Triangulation<2, 3>::active_cell_iterator>>
+    &vertices_cell_map);
+template void
+LetheGridTools::vertices_cell_mapping(
+  const Triangulation<3, 3> &tria,
+  std::map<unsigned int,
+           std::set<typename Triangulation<3, 3>::active_cell_iterator>>
+    &vertices_cell_map);
+
+
+template <int dim, int spacedim>
+std::vector<typename Triangulation<dim, spacedim>::active_cell_iterator>
+LetheGridTools::find_cells_around_cell(
+  std::map<
+    unsigned int,
+    std::set<typename Triangulation<dim, spacedim>::active_cell_iterator>>
+    &vertices_cell_map,
+  const typename Triangulation<dim, spacedim>::active_cell_iterator &cell)
+{
+  // Find all the cells that share a vertex with a reference cell, including
+  // the initial cell.
+  std::set<typename Triangulation<dim, spacedim>::active_cell_iterator>
+    neighbors_cells;
+
+  // Loop over the vertices of the initial cell, find all the cells around
+  // each vertex and add them to the set of cells around the reference cell.
+  unsigned int vertices_per_cell = cell->n_vertices();
+  for (unsigned int i = 0; i < vertices_per_cell; i++)
+    {
+      unsigned int v_index = cell->vertex_index(i);
+      neighbors_cells.insert(vertices_cell_map[v_index].begin(),
+                             vertices_cell_map[v_index].end());
+    }
+
+  // Transform the set into a vector.
+  std::vector<typename Triangulation<dim, spacedim>::active_cell_iterator>
+    cells_sharing_vertices(neighbors_cells.begin(), neighbors_cells.end());
+  return cells_sharing_vertices;
+}
+
+template std::vector<typename Triangulation<1, 2>::active_cell_iterator>
+LetheGridTools::find_cells_around_cell<1, 2>(
+  std::map<unsigned int, std::set<Triangulation<1, 2>::active_cell_iterator>>
+                                                           &vertices_cell_map,
+  const typename Triangulation<1, 2>::active_cell_iterator &cell);
+
+template std::vector<typename Triangulation<2>::active_cell_iterator>
+LetheGridTools::find_cells_around_cell<2>(
+  std::map<unsigned int,
+           std::set<typename Triangulation<2>::active_cell_iterator>>
+                                                        &vertices_cell_map,
+  const typename Triangulation<2>::active_cell_iterator &cell);
+
+template std::vector<typename Triangulation<2, 3>::active_cell_iterator>
+LetheGridTools::find_cells_around_cell<2, 3>(
+  std::map<unsigned int,
+           std::set<typename Triangulation<2, 3>::active_cell_iterator>>
+                                                           &vertices_cell_map,
+  const typename Triangulation<2, 3>::active_cell_iterator &cell);
+
+template std::vector<typename Triangulation<3>::active_cell_iterator>
+LetheGridTools::find_cells_around_cell<3>(
+  std::map<unsigned int,
+           std::set<typename Triangulation<3>::active_cell_iterator>>
+                                                        &vertices_cell_map,
+  const typename Triangulation<3>::active_cell_iterator &cell);

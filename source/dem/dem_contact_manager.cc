@@ -1,4 +1,4 @@
-// SPDX-FileCopyrightText: Copyright (c) 2022-2024 The Lethe Authors
+// SPDX-FileCopyrightText: Copyright (c) 2022-2025 The Lethe Authors
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
 #include <dem/dem_action_manager.h>
@@ -124,20 +124,21 @@ DEMContactManager<dim, PropertiesIndex>::update_contacts()
     ContactType::particle_floating_wall>(particle_floating_wall_in_contact,
                                          particle_floating_wall_candidates);
 
-  // Update particle-floating mesh contacts in particle_floating_mesh_in_contact
-  // of fine search step with particle_floating_mesh_contact_candidates
+  // Update particle-floating mesh contacts in
+  // particle_floating_mesh_potentially_in_contact of fine search step with
+  // particle_floating_mesh_contact_candidates
   for (unsigned int solid_counter = 0;
-       solid_counter < particle_floating_mesh_in_contact.size();
+       solid_counter < particle_floating_mesh_potentially_in_contact.size();
        ++solid_counter)
     {
       update_fine_search_candidates<
         dim,
         typename dem_data_structures<
-          dim>::particle_triangle_cell_from_mesh_in_contact,
+          dim>::particle_triangle_cell_from_mesh_potentially_in_contact,
         typename dem_data_structures<
           dim>::particle_floating_wall_from_mesh_candidates,
         ContactType::particle_floating_mesh>(
-        particle_floating_mesh_in_contact[solid_counter],
+        particle_floating_mesh_potentially_in_contact[solid_counter],
         particle_floating_mesh_candidates[solid_counter]);
     }
 }
@@ -208,15 +209,16 @@ DEMContactManager<dim, PropertiesIndex>::update_local_particles_in_cells(
   // Update contact containers for particle-floating mesh pairs in contact for
   // every solid objects of mesh
   for (unsigned int solid_counter = 0;
-       solid_counter < particle_floating_mesh_in_contact.size();
+       solid_counter < particle_floating_mesh_potentially_in_contact.size();
        ++solid_counter)
     {
       update_contact_container_iterators<
         dim,
         typename dem_data_structures<
-          dim>::particle_triangle_cell_from_mesh_in_contact,
+          dim>::particle_triangle_cell_from_mesh_potentially_in_contact,
         ContactType::particle_floating_mesh>(
-        particle_floating_mesh_in_contact[solid_counter], particle_container);
+        particle_floating_mesh_potentially_in_contact[solid_counter],
+        particle_container);
     }
 
   // Update contact containers for particle-line pairs in contact
@@ -462,7 +464,8 @@ DEMContactManager<dim, PropertiesIndex>::execute_particle_wall_fine_search(
   if (DEMActionManager::get_action_manager()->check_solid_objects_enabled())
     {
       particle_floating_mesh_fine_search<dim>(
-        particle_floating_mesh_candidates, particle_floating_mesh_in_contact);
+        particle_floating_mesh_candidates,
+        particle_floating_mesh_potentially_in_contact);
     }
 
   particle_point_fine_search<dim, PropertiesIndex>(particle_point_candidates,
