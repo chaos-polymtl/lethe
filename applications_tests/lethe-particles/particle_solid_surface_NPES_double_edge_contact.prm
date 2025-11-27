@@ -1,7 +1,10 @@
+// SPDX-FileCopyrightText: Copyright (c) 2025 The Lethe Authors
+// SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
+
 # Test description:
 # In this test, a single particle is bouncing on a solid-surface made of two triangles that are non-coplanar (NP) and edge sharing (ES).
 # The two triangles are making a 90 deg angle on the edge they share, forming an UPSIDE-DOWN "v".
-# The particle is BOUNCING exactly on the sharing edge.
+# The particle is BOUNCING exactly on the edge that is shared.
 # This test checks that the code doesn't apply the contact force twice on the particle.
 
 # Listing of Parameters

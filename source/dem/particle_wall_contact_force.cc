@@ -299,7 +299,7 @@ ParticleWallContactForce<dim,
                 &T1_vs_neighbors = this_solid_vs_neighbors.at(T1_cell);
 
               // Initialize variables. We need to compare C1 to every other
-              // contact (C2) that was compared yet.
+              // contact (C2) that was not compared yet.
               bool erase_contact_1 = false;
               auto C2              = std::next(C1);
               while (C2 != this_contact_record.end())
@@ -326,10 +326,9 @@ ParticleWallContactForce<dim,
                       LetheGridTools::ParticleTriangleContactIndicator::
                         face_contact)
                     {
-                      // If C1 and C2 are both face contacts, they
-                      // are both valid. This case can happen with
-                      // either edge sharing or vertex sharing triangles
-                      // that are non-coplanar.
+                      // If C1 and C2 are both face contacts, they are both
+                      // valid. This case can happen with either edge-sharing or
+                      // vertex-sharing triangles that are non-coplanar.
                       if (contact_indicator_C2 ==
                           LetheGridTools::ParticleTriangleContactIndicator::
                             face_contact)
@@ -342,9 +341,8 @@ ParticleWallContactForce<dim,
                           LetheGridTools::ParticleTriangleContactIndicator::
                             edge_contact)
                         {
-                          // If T1 and T2 are vertex
-                          // sharing, C1 and C2 are valid. This could happen
-                          // with two concave triangles.
+                          // If T1 and T2 are vertex-sharing, C1 and C2 are
+                          // valid. This could happen with two concave triangles.
                           if (std::ranges::find(T1_vs_neighbors, T2_cell) !=
                               T1_vs_neighbors.end())
                             {
@@ -391,7 +389,7 @@ ParticleWallContactForce<dim,
                             edge_contact)
                         {
                           // C1 is always valid.
-                          // C2 is invalid if T1 and T2 are edge sharing.
+                          // C2 is invalid if T1 and T2 are edge-sharing.
                           // This case means that both contacts occur on the
                           // edge that is connecting both triangles.
                           if (std::ranges::find(T1_es_neighbors, T2_cell) !=
@@ -403,7 +401,7 @@ ParticleWallContactForce<dim,
                             }
                           else
                             {
-                              // If they are vertex sharing, this means that
+                              // If they are vertex-sharing, this means that
                               // each contact is occurring on two different
                               // edges. This is not a double contact, C2 is
                               // also valid.
@@ -437,7 +435,7 @@ ParticleWallContactForce<dim,
                             edge_contact)
                         {
                           // C2 is valid
-                          // C1 is invalid if T1 and T2 are vertex sharing.
+                          // C1 is invalid if T1 and T2 are vertex-sharing.
                           // This case means that both contacts occur on the
                           // vertex that is connecting both triangles,
                           // thus C1 and C2 are double contacts.

@@ -260,9 +260,9 @@ namespace LetheGridTools
     std::vector<SerialSolid<structdim, spacedim>> &list_of_objects);
 
 
-  /** brief
-   * @enum ParticleTriangleContactIndicator
-   * Enum to indicate the type of contact between a particle and a triangle.
+  /**
+   *  @enum ParticleTriangleContactIndicator
+   *  @brief Indicates the type of contact between a particle and a triangle.
    */
   enum class ParticleTriangleContactIndicator : std::uint8_t
   {
