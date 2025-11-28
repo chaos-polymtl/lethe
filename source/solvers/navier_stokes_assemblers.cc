@@ -51,8 +51,8 @@ PSPGSUPGNavierStokesAssemblerCore<dim>::assemble_matrix(
         scratch_data.velocity_gradients[q];
       const Tensor<1, dim> &velocity_laplacian =
         scratch_data.velocity_laplacians[q];
-      const Tensor<1, dim> &velocity_ale =
-        scratch_data.rotor_linear_velocity_values[q];
+      const Tensor<1, dim> &velocity_for_stabilization =
+        scratch_data.velocity_for_stabilization[q];
 
       const Tensor<1, dim> &pressure_gradient =
         scratch_data.pressure_gradients[q];
@@ -63,7 +63,7 @@ PSPGSUPGNavierStokesAssemblerCore<dim>::assemble_matrix(
 
       // Calculation of the magnitude of the velocity for the
       // stabilization parameter
-      const double u_mag = std::max((velocity - velocity_ale).norm(), 1e-12);
+      const double u_mag = std::max((velocity_for_stabilization).norm(), 1e-12);
 
       // Store JxW in local variable for faster access;
       const double JxW = JxW_vec[q];
@@ -228,8 +228,8 @@ PSPGSUPGNavierStokesAssemblerCore<dim>::assemble_rhs(
         scratch_data.velocity_gradients[q];
       const Tensor<1, dim> &velocity_laplacian =
         scratch_data.velocity_laplacians[q];
-      const Tensor<1, dim> &velocity_ale =
-        scratch_data.rotor_linear_velocity_values[q];
+      const Tensor<1, dim> &velocity_for_stabilization =
+        scratch_data.velocity_for_stabilization[q];
 
       // Pressure
       const double          pressure = scratch_data.pressure_values[q];
@@ -241,7 +241,7 @@ PSPGSUPGNavierStokesAssemblerCore<dim>::assemble_rhs(
       double                mass_source = scratch_data.mass_source[q];
       // Calculation of the magnitude of the
       // velocity for the stabilization parameter
-      const double u_mag = std::max((velocity - velocity_ale).norm(), 1e-12);
+      const double u_mag = std::max((velocity_for_stabilization).norm(), 1e-12);
 
       // Store JxW in local variable for faster access;
       const double JxW = JxW_vec[q];
@@ -2803,6 +2803,8 @@ NavierStokesAssemblerMortarALE<dim>::assemble_matrix(
       const Tensor<1, dim> &velocity = scratch_data.velocity_values[q];
       const Tensor<1, dim> &velocity_ale =
         scratch_data.rotor_linear_velocity_values[q];
+      const Tensor<1, dim> &velocity_for_stabilization =
+        scratch_data.velocity_for_stabilization[q];
       const Tensor<2, dim> &velocity_gradient =
         scratch_data.velocity_gradients[q];
 
@@ -2811,7 +2813,7 @@ NavierStokesAssemblerMortarALE<dim>::assemble_matrix(
 
       // Calculation of the magnitude of the velocity for the
       // stabilization parameter
-      const double u_mag = std::max((velocity - velocity_ale).norm(), 1e-12);
+      const double u_mag = std::max((velocity_for_stabilization).norm(), 1e-12);
 
       // Calculation of the GLS stabilization parameter. The
       // stabilization parameter used is different if the simulation
@@ -2924,6 +2926,8 @@ NavierStokesAssemblerMortarALE<dim>::assemble_rhs(
       const Tensor<1, dim> &velocity = scratch_data.velocity_values[q];
       const Tensor<1, dim> &velocity_ale =
         scratch_data.rotor_linear_velocity_values[q];
+      const Tensor<1, dim> &velocity_for_stabilization =
+        scratch_data.velocity_for_stabilization[q];
       const Tensor<2, dim> &velocity_gradient =
         scratch_data.velocity_gradients[q];
       const Tensor<1, dim> &velocity_laplacian =
@@ -2939,7 +2943,7 @@ NavierStokesAssemblerMortarALE<dim>::assemble_rhs(
 
       // Calculation of the magnitude of the velocity for the stabilization
       // parameter
-      const double u_mag = std::max((velocity - velocity_ale).norm(), 1e-12);
+      const double u_mag = std::max((velocity_for_stabilization).norm(), 1e-12);
 
       // Store JxW in local variable for faster access
       const double JxW = JxW_vec[q];
