@@ -85,6 +85,9 @@ FluidDynamicsMatrixBased<dim>::setup_dofs_fd()
   // Zero constraints
   this->define_zero_constraints();
 
+  // If enabled, fix pressure constant
+  this->define_pressure_constraints();
+
   // If enabled, create mortar operators
   this->reinit_mortar_operators();
 
@@ -236,6 +239,9 @@ FluidDynamicsMatrixBased<dim>::update_mortar_configuration()
       // Zero constraints
       this->define_zero_constraints();
 
+      // If enabled, fix pressure constant
+      this->define_pressure_constraints();
+
       // Create mortar manager, operator, and evaluator
       this->reinit_mortar_operators();
 
@@ -317,6 +323,50 @@ FluidDynamicsMatrixBased<dim>::define_dynamic_zero_constraints()
       stasis_constraint_struct.dofs_are_in_solid.clear();
       stasis_constraint_struct.dofs_are_connected_to_fluid.clear();
     }
+}
+
+template <int dim>
+void
+FluidDynamicsMatrixBased<dim>::define_pressure_constraints()
+{
+  if (!this->simulation_parameters.boundary_conditions.fix_pressure_constant)
+    return;
+
+  types::global_dof_index min_index = numbers::invalid_unsigned_int;
+
+  std::vector<types::global_dof_index> dof_indices;
+
+  const IndexSet locally_relevant_dofs_set =
+    DoFTools::extract_locally_relevant_dofs(*this->dof_handler);
+
+  // Loop over the cells to identify the min index
+  for (const auto &cell : this->dof_handler->active_cell_iterators())
+    {
+      if (cell->is_locally_owned())
+        {
+          const auto &fe = cell->get_fe();
+
+          dof_indices.resize(fe.n_dofs_per_cell());
+          cell->get_dof_indices(dof_indices);
+
+          for (unsigned int i = 0; i < dof_indices.size(); ++i)
+            if (fe.system_to_component_index(i).first == dim)
+              min_index = std::min(min_index, dof_indices[i]);
+        }
+    }
+
+  // Necessary to find the min across all cores.
+  min_index =
+    Utilities::MPI::min(min_index, this->dof_handler->get_mpi_communicator());
+
+  if (locally_relevant_dofs_set.is_element(min_index))
+    {
+      this->nonzero_constraints.add_line(min_index);
+      this->zero_constraints.add_line(min_index);
+    }
+
+  this->nonzero_constraints.close();
+  this->zero_constraints.close();
 }
 
 template <int dim>
