@@ -1351,7 +1351,7 @@ ParticleProjector<dim>::calculate_field_projection(
                       if (field_qcm.conservative_projection)
                         local_rhs(i) += phi_vf[i] * particle_field_in_sphere;
 
-                      // Else, the field is not a field for which we whish to
+                      // Else, the field is not a field for which we wish to
                       // conserve the total quantity, but a field for which we
                       // need a smooth representation (e.g. the particle
                       // velocity). Consequently, we need the jacobian on the
@@ -1586,8 +1586,8 @@ ParticleProjector<dim>::calculate_particle_fluid_forces_projection(
       if (cell->is_locally_owned())
         {
           // A. We reinit the scratch data at the particle location for the void
-          // fraction and the velocity This is what we will require to calculate
-          // the particle-fluid forces.
+          // fraction and the velocity. This is what we will require to
+          // calculate the particle-fluid forces.
           typename DoFHandler<dim>::active_cell_iterator void_fraction_cell(
             &(this->dof_handler.get_triangulation()),
             cell->level(),

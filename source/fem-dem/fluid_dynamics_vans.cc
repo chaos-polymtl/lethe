@@ -339,8 +339,17 @@ FluidDynamicsVANS<dim>::setup_assemblers()
     }
 
   //  Fluid_Particle Interactions Assembler
-  this->assemblers.push_back(std::make_shared<VANSAssemblerFPI<dim>>(
-    this->cfd_dem_simulation_parameters.cfd_dem));
+  if (this->cfd_dem_simulation_parameters.cfd_dem.project_particle_forces)
+    {
+      this->assemblers.push_back(
+        std::make_shared<VANSAssemblerFPIProjection<dim>>(
+          this->cfd_dem_simulation_parameters.cfd_dem));
+    }
+  else
+    {
+      this->assemblers.push_back(std::make_shared<VANSAssemblerFPI<dim>>(
+        this->cfd_dem_simulation_parameters.cfd_dem));
+    }
 
   // The core assembler should always be the last assembler to be called
   // in the stabilized formulation as to have all strong residual and
@@ -406,6 +415,16 @@ FluidDynamicsVANS<dim>::assemble_system_matrix()
     scratch_data.enable_void_fraction(*particle_projector.fe,
                                       *this->cell_quadrature,
                                       *this->mapping);
+
+    if (this->cfd_dem_simulation_parameters.cfd_dem.project_particle_forces)
+      {
+        scratch_data.enable_particle_field_projection(
+          *this->cell_quadrature,
+          *this->mapping,
+          *particle_projector.fluid_drag_on_particles.fe,
+          *particle_projector.fluid_force_on_particles_two_way_coupling.fe,
+          *particle_projector.particle_velocity.fe);
+      }
 
     scratch_data.enable_particle_fluid_interactions(
       particle_handler.n_global_max_particles_per_cell(),
@@ -498,12 +517,45 @@ FluidDynamicsVANS<dim>::assemble_local_system_matrix(
         cfd_dem_simulation_parameters.cfd_dem.drag_coupling);
     }
 
-  copy_data.reset();
-
   for (auto &pf_assembler : particle_fluid_assemblers)
     {
       pf_assembler->calculate_particle_fluid_interactions(scratch_data);
     }
+  if (this->cfd_dem_simulation_parameters.cfd_dem.project_particle_forces)
+    {
+      typename DoFHandler<dim>::active_cell_iterator particle_drag_cell(
+        &(*(this->triangulation)),
+        cell->level(),
+        cell->index(),
+        &this->particle_projector.fluid_drag_on_particles.dof_handler);
+
+      typename DoFHandler<dim>::active_cell_iterator
+        particle_two_way_coupling_force_cell(
+          &(*(this->triangulation)),
+          cell->level(),
+          cell->index(),
+          &this->particle_projector.fluid_force_on_particles_two_way_coupling
+             .dof_handler);
+
+      typename DoFHandler<dim>::active_cell_iterator particle_velocity_cell(
+        &(*(this->triangulation)),
+        cell->level(),
+        cell->index(),
+        &this->particle_projector.particle_velocity.dof_handler);
+
+      scratch_data.calculate_particle_fields_values(
+        particle_drag_cell,
+        particle_two_way_coupling_force_cell,
+        particle_velocity_cell,
+        particle_projector.fluid_drag_on_particles
+          .particle_field_locally_relevant,
+        particle_projector.fluid_force_on_particles_two_way_coupling
+          .particle_field_locally_relevant,
+        particle_projector.particle_velocity.particle_field_locally_relevant,
+        cfd_dem_simulation_parameters.cfd_dem.drag_coupling);
+    }
+
+  copy_data.reset();
 
   for (auto &assembler : this->assemblers)
     {
@@ -559,6 +611,16 @@ FluidDynamicsVANS<dim>::assemble_system_rhs()
   scratch_data.enable_void_fraction(*particle_projector.fe,
                                     *this->cell_quadrature,
                                     *this->mapping);
+
+  if (this->cfd_dem_simulation_parameters.cfd_dem.project_particle_forces)
+    {
+      scratch_data.enable_particle_field_projection(
+        *this->cell_quadrature,
+        *this->mapping,
+        *particle_projector.fluid_drag_on_particles.fe,
+        *particle_projector.fluid_force_on_particles_two_way_coupling.fe,
+        *particle_projector.particle_velocity.fe);
+    }
 
   scratch_data.enable_particle_fluid_interactions(
     particle_handler.n_global_max_particles_per_cell(),
@@ -653,13 +715,46 @@ FluidDynamicsVANS<dim>::assemble_local_system_rhs(
         particle_handler,
         cfd_dem_simulation_parameters.cfd_dem.drag_coupling);
     }
-
-  copy_data.reset();
-
   for (auto &pf_assembler : particle_fluid_assemblers)
     {
       pf_assembler->calculate_particle_fluid_interactions(scratch_data);
     }
+
+  if (this->cfd_dem_simulation_parameters.cfd_dem.project_particle_forces)
+    {
+      typename DoFHandler<dim>::active_cell_iterator particle_drag_cell(
+        &(*(this->triangulation)),
+        cell->level(),
+        cell->index(),
+        &this->particle_projector.fluid_drag_on_particles.dof_handler);
+
+      typename DoFHandler<dim>::active_cell_iterator
+        particle_two_way_coupling_force_cell(
+          &(*(this->triangulation)),
+          cell->level(),
+          cell->index(),
+          &this->particle_projector.fluid_force_on_particles_two_way_coupling
+             .dof_handler);
+
+      typename DoFHandler<dim>::active_cell_iterator particle_velocity_cell(
+        &(*(this->triangulation)),
+        cell->level(),
+        cell->index(),
+        &this->particle_projector.particle_velocity.dof_handler);
+
+      scratch_data.calculate_particle_fields_values(
+        particle_drag_cell,
+        particle_two_way_coupling_force_cell,
+        particle_velocity_cell,
+        particle_projector.fluid_drag_on_particles
+          .particle_field_locally_relevant,
+        particle_projector.fluid_force_on_particles_two_way_coupling
+          .particle_field_locally_relevant,
+        particle_projector.particle_velocity.particle_field_locally_relevant,
+        cfd_dem_simulation_parameters.cfd_dem.drag_coupling);
+    }
+
+  copy_data.reset();
 
   for (auto &assembler : this->assemblers)
     {
@@ -708,6 +803,28 @@ FluidDynamicsVANS<dim>::gather_output_hook()
         particle_projector.particle_velocity.particle_field_locally_relevant,
         names,
         data_interpretation);
+    }
+
+  if (this->cfd_dem_simulation_parameters.cfd_dem.project_particle_forces)
+    {
+      solution_output_structs.emplace_back(
+        std::in_place_type<OutputStructSolution<dim, GlobalVectorType>>,
+        this->particle_projector.fluid_drag_on_particles.dof_handler,
+        this->particle_projector.fluid_drag_on_particles
+          .particle_field_locally_relevant,
+        std::vector<std::string>(dim, "Particle_drag"),
+        std::vector<DataComponentInterpretation::DataComponentInterpretation>(
+          dim, DataComponentInterpretation::component_is_part_of_vector));
+
+      solution_output_structs.emplace_back(
+        std::in_place_type<OutputStructSolution<dim, GlobalVectorType>>,
+        this->particle_projector.fluid_force_on_particles_two_way_coupling
+          .dof_handler,
+        this->particle_projector.fluid_force_on_particles_two_way_coupling
+          .particle_field_locally_relevant,
+        std::vector<std::string>(dim, "Particle_two_way_coupling_force"),
+        std::vector<DataComponentInterpretation::DataComponentInterpretation>(
+          dim, DataComponentInterpretation::component_is_part_of_vector));
     }
   return solution_output_structs;
 }
