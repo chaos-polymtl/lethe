@@ -140,7 +140,7 @@ protected:
   define_dynamic_zero_constraints();
 
   /**
-   * @brief Fix a constant pressure on the minimum dof index. This can be enabled 
+   * @brief Fix a constant pressure on the minimum dof index. This can be enabled
    * in the simulation control parameters.
    */
   void
