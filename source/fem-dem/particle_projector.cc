@@ -16,6 +16,7 @@
 #include <deal.II/grid/grid_generator.h>
 #include <deal.II/grid/grid_tools.h>
 
+#include <deal.II/lac/solver_cg.h>
 #include <deal.II/lac/sparsity_tools.h>
 #include <deal.II/lac/trilinos_solver.h>
 
@@ -37,12 +38,6 @@ ParticleFieldQCM<dim, n_components, component_start>::setup_dofs()
   locally_owned_dofs = dof_handler.locally_owned_dofs();
 
   locally_relevant_dofs = DoFTools::extract_locally_relevant_dofs(dof_handler);
-
-  particle_field_locally_relevant.reinit(locally_owned_dofs,
-                                         locally_relevant_dofs,
-                                         mpi_communicator);
-
-  particle_field_locally_owned.reinit(locally_owned_dofs, mpi_communicator);
 
   // deal.II vector that will also hold the solution
   this->particle_field_solution.reinit(dof_handler.locally_owned_dofs(),
@@ -87,7 +82,9 @@ ParticleFieldQCM<dim, n_components, component_start>::setup_dofs()
                        mpi_communicator);
 
 
-  system_rhs.reinit(locally_owned_dofs, mpi_communicator);
+  system_rhs.reinit(locally_owned_dofs,
+                    locally_relevant_dofs,
+                    mpi_communicator);
 }
 
 template <int dim>
@@ -320,7 +317,7 @@ ParticleProjector<dim>::calculate_void_fraction_function(const double time)
                                     void_fraction_locally_relevant);
   void_fraction_solution.update_ghost_values();
 #else
-  void_fraction_solution            = void_fraction_locally_relevant;
+  void_fraction_solution = void_fraction_locally_relevant;
 #endif
 }
 
@@ -1103,6 +1100,8 @@ ParticleProjector<dim>::calculate_field_projection(
       calculate_reference_sphere_radius = false;
     }
 
+  // Set the system rhs to zero, but also zero out the ghost values so that
+  // we can also write to the ghost values.
   field_qcm.system_rhs    = 0;
   field_qcm.system_matrix = 0;
 
@@ -1169,6 +1168,7 @@ ParticleProjector<dim>::calculate_field_projection(
 
                       total_volume_of_particles_in_sphere +=
                         particle_volume_in_sphere;
+
                       // If the projection is to be conservative, then the
                       // volumetric distribution is equal to the volume of the
                       // sphere divided by the volumetric contribution of the
@@ -1399,7 +1399,7 @@ ParticleProjector<dim>::calculate_field_projection(
                                true,
                                true);
 
-  TrilinosWrappers::SolverCG solver(solver_control);
+  SolverCG<LinearAlgebra::distributed::Vector<double>> solver(solver_control);
 
   //**********************************************
   // Trillinos Wrapper ILU Preconditioner
@@ -1417,9 +1417,12 @@ ParticleProjector<dim>::calculate_field_projection(
                                  preconditionerOptions);
 
   solver.solve(field_qcm.system_matrix,
-               field_qcm.particle_field_locally_owned,
+               field_qcm.particle_field_solution,
                field_qcm.system_rhs,
                *ilu_preconditioner);
+
+  // Now that the solution has been solved for, update the ghost values.
+  field_qcm.particle_field_solution.update_ghost_values();
 
   if (linear_solver_parameters.verbosity != Parameters::Verbosity::quiet)
     {
@@ -1427,21 +1430,6 @@ ParticleProjector<dim>::calculate_field_projection(
                   << solver_control.last_step() / rescale_metric << " steps "
                   << std::endl;
     }
-
-  field_qcm.particle_field_constraints.distribute(
-    field_qcm.particle_field_locally_owned);
-  field_qcm.particle_field_locally_relevant =
-    field_qcm.particle_field_locally_owned;
-
-#ifndef LETHE_USE_LDV
-  // Perform copy between two vector types to ensure there is a deal.II vector
-  convert_vector_trilinos_to_dealii(field_qcm.particle_field_solution,
-                                    field_qcm.particle_field_locally_relevant);
-  field_qcm.particle_field_solution.update_ghost_values();
-#else
-  field_qcm.particle_field_solution = field_qcm.particle_field_locally_relevant;
-  field_qcm.particle_field_solution.update_ghost_values();
-#endif
 }
 
 

@@ -702,12 +702,34 @@ FluidDynamicsVANS<dim>::gather_output_hook()
       std::vector<DataComponentInterpretation::DataComponentInterpretation>
         data_interpretation(
           dim, DataComponentInterpretation::component_is_part_of_vector);
+
+#ifndef LETHE_USE_LDV
+      // Since the particle velocity field is now only a deal.II distributed
+      // vector, we create a temporary GlobalVectorType (a Trilinos vector) and
+      // copy the content into it.
+      GlobalVectorType particle_velocity;
+      particle_velocity.reinit(
+        particle_projector.particle_velocity.locally_owned_dofs,
+        particle_projector.particle_velocity.locally_relevant_dofs,
+        this->mpi_communicator);
+
+      convert_vector_dealii_to_trilinos(
+        particle_velocity,
+        particle_projector.particle_velocity.particle_field_solution);
       solution_output_structs.emplace_back(
         std::in_place_type<OutputStructSolution<dim, GlobalVectorType>>,
         particle_projector.particle_velocity.dof_handler,
-        particle_projector.particle_velocity.particle_field_locally_relevant,
+        particle_velocity,
         names,
         data_interpretation);
+#else
+      solution_output_structs.emplace_back(
+        std::in_place_type<OutputStructSolution<dim, GlobalVectorType>>,
+        particle_projector.particle_velocity.dof_handler,
+        particle_projector.particle_velocity.particle_field_solution,
+        names,
+        data_interpretation);
+#endif
     }
   return solution_output_structs;
 }
