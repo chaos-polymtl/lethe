@@ -234,9 +234,11 @@ private:
 
   /**
    * @brief Solver for the L2 Projection linear system at the initial time step to apply this initial condition. It always uses the GMRES solver with ILU(N) by default.
-   * 
-   * @param[in] absolute_residual Absolute residual for the solver stopping criterion.
-   * @param[in] relative_residual Relative residual for the solver stopping criterion.
+   *
+   * @param[in] absolute_residual Absolute residual for the solver stopping
+   * criterion.
+   * @param[in] relative_residual Relative residual for the solver stopping
+   * criterion.
    */
 
   void
@@ -245,8 +247,10 @@ private:
 
   /**
    * @brief GMRES solver with ILU(N) preconditioning or AMG preconditioning
-   * @param[in] absolute_residual Absolute residual for the solver stopping criterion.
-   * @param[in] relative_residual Relative residual for the solver stopping criterion.
+   * @param[in] absolute_residual Absolute residual for the solver stopping
+   * criterion.
+   * @param[in] relative_residual Relative residual for the solver stopping
+   * criterion.
    */
   void
   solve_system_GMRES(const double absolute_residual,
@@ -254,8 +258,10 @@ private:
 
   /**
    * @brief BiCGStab solver with ILU(N) preconditioning
-   * @param[in] absolute_residual Absolute residual for the solver stopping criterion.
-   * @param[in] relative_residual Relative residual for the solver stopping criterion.
+   * @param[in] absolute_residual Absolute residual for the solver stopping
+   * criterion.
+   * @param[in] relative_residual Relative residual for the solver stopping
+   * criterion.
    */
   void
   solve_system_BiCGStab(const double absolute_residual,
