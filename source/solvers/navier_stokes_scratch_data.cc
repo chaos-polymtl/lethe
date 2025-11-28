@@ -31,12 +31,13 @@ NavierStokesScratchData<dim>::allocate()
   this->pressure.component                = dim;
 
   // Velocity
-  this->velocity_values      = std::vector<Tensor<1, dim>>(n_q_points);
-  this->velocity_divergences = std::vector<double>(n_q_points);
-  this->velocity_gradients   = std::vector<Tensor<2, dim>>(n_q_points);
-  this->velocity_laplacians  = std::vector<Tensor<1, dim>>(n_q_points);
-  this->velocity_hessians    = std::vector<Tensor<3, dim>>(n_q_points);
-  this->shear_rate           = std::vector<double>(n_q_points);
+  this->velocity_values            = std::vector<Tensor<1, dim>>(n_q_points);
+  this->velocity_divergences       = std::vector<double>(n_q_points);
+  this->velocity_gradients         = std::vector<Tensor<2, dim>>(n_q_points);
+  this->velocity_laplacians        = std::vector<Tensor<1, dim>>(n_q_points);
+  this->velocity_hessians          = std::vector<Tensor<3, dim>>(n_q_points);
+  this->shear_rate                 = std::vector<double>(n_q_points);
+  this->velocity_for_stabilization = std::vector<Tensor<1, dim>>(n_q_points);
 
   // For SDIRK method: sum(a_ij * k_j)
   if (this->simulation_control->is_sdirk())
@@ -427,6 +428,10 @@ NavierStokesScratchData<dim>::reinit_mortar(
       const auto y                       = fe_values.quadrature_point(q)[1];
       rotor_linear_velocity_values[q][0] = -cell_rotor_angular_velocity * y;
       rotor_linear_velocity_values[q][1] = cell_rotor_angular_velocity * x;
+
+      // Update velocity for stabilization
+      this->velocity_for_stabilization[q] =
+        this->velocity_values[q] - rotor_linear_velocity_values[q];
     }
 }
 
