@@ -110,6 +110,11 @@ namespace Parameters
                         Patterns::Bool(),
                         "Adaptative time-stepping <true|false>");
       prm.declare_entry(
+        "override time step on restart",
+        "false",
+        Patterns::Bool(),
+        "Override checkpointed time-step upon restart <true|false>");
+      prm.declare_entry(
         "time step independent of end time",
         "true",
         Patterns::Bool(),
@@ -260,6 +265,8 @@ namespace Parameters
         prm.get_double("adaptative time step scaling");
       startup_timestep_scaling = prm.get_double("startup time scaling");
       number_mesh_adaptation   = prm.get_integer("number mesh adapt");
+      override_time_step_on_restart =
+        prm.get_bool("override time step on restart");
 
       output_folder = prm.get("output path");
       output_name   = prm.get("output name");

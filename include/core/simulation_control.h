@@ -819,6 +819,11 @@ protected:
   bool no_more_output_times;
 
   /**
+   * @brief Flag to override the time-step with the set value upon restart
+   */
+  bool override_time_step_on_restart;
+
+  /**
    * @brief Time interval for output of transient iterations
    *
    * Used with either time output control or iteration control to define
