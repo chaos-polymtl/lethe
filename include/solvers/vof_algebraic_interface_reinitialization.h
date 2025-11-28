@@ -282,7 +282,12 @@ private:
     // Compute diffusivity
     const double diffusivity_inv = 1.0 / compute_diffusivity(h_min);
 
-    return h_min * h_min * diffusivity_inv * cfl;
+    // Compute pseudo time step
+    const double dtau = h_min * h_min * diffusivity_inv * cfl;
+
+    // Use the smallest of the computed pseudo time-step and the simulation
+    // time-step for the reinitialization scheme
+    return std::min(dtau, this->simulation_control->get_time_step());
   }
 
   /**
@@ -356,7 +361,8 @@ private:
 
         // Evaluate the current steady-state criterion value
         double stop_criterion =
-          solution_diff.l2_norm() / previous_local_evaluation_point.l2_norm();
+          solution_diff.l2_norm() /
+          (previous_local_evaluation_point.l2_norm() + 1e-14);
 
         if (this->subequation_verbosity == Parameters::Verbosity::extra_verbose)
           {
