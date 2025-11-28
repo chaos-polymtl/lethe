@@ -1590,7 +1590,7 @@ CFDDEMSolver<dim>::solve()
        this->cfd_dem_simulation_parameters.cfd_dem.drag_coupling ==
          Parameters::DragCoupling::fully_explicit),
     ExcMessage(
-      "The CFD-DEM solver only supports the projection of the particle force fields when the drag coupling is set to fully explicit."));
+      "The CFD-DEM solver only supports the projection of the particle force fields when the drag coupling is set to explicit."));
 
   this->computing_timer.enter_subsection("Read mesh, manifolds and particles");
 
