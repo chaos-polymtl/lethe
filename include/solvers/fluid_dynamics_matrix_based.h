@@ -242,7 +242,8 @@ private:
    */
 
   void
-  solve_L2_system(double absolute_residual, double relative_residual);
+  solve_L2_system(const double absolute_residual,
+                  const double relative_residual);
 
 
   /**
