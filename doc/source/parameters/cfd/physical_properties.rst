@@ -130,6 +130,9 @@ Physical Properties
 
     C_\text{effective} = \sqrt{C^2 + \varepsilon^2}
 
+  .. note::
+    The threshold parameter indicates the concentration value below which modifications to the reaction rate become dominant. Depending on the scale, it can be modified as a way to keep numerical stability while remaining realistic, as long as :math:`C_\text{interest} \gg \varepsilon`. A scenario where the threshold might need to be lowered is for extremely fast heterogeneous reactions, where the concentration at the surface nears 0.
+
 * The ``number of solids`` parameter controls the number of solid regions. Solid regions are currently only implemented for `Conjugate Heat Transfer`_.
 
 * The ``number of material interactions`` parameter controls the number of physical properties that are due to the interaction between two materials. At the moment, only the surface tension between two fluids is implemented in `Two Phase Simulations`_.
