@@ -20,7 +20,7 @@ This subsection includes parameters related to multiphase flow simulations using
     set buoyancy force                = true
     set shear force                   = true
     set pressure force                = true
-    set project particle forces      = false
+    set project particle forces       = false
     set coupling frequency            = 100
     set implicit stabilization        = true
     set grad-div length scale         = 1

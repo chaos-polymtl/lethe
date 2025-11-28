@@ -33,7 +33,6 @@ If the ``mode`` chosen is ``pcm``, then the void fraction is calculated using th
   set quadrature rule              = gauss
   set n quadrature points          = 0
   set project particle velocity    = false
-  set project particle forces      = false
 
 
 * The ``read dem`` allows us to read an already existing dem simulation result which can be obtained from checkpointing the Lethe-DEM simulation. This is important as the `lethe-fluid-vans` solver requires reading an initial dem triangulation and particle information to simulate flows in the presence of particles. 
