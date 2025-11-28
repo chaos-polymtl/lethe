@@ -9,7 +9,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
 ### Fixed
 
-- MINOR As pointed out in issue [#1820] (https://github.com/chaos-polymtl/lethe/issues/1820), the `set_initial_condition_fd` function in `fluid_dynamics_matrix_based`, when the L2_projection boundary condition is apply, does not work if the solver is not GMRES. This PR aims at fixing it. [#1827](https://github.com/chaos-polymtl/lethe/issues/1827)
+- MINOR As pointed out in issue [#1820] (https://github.com/chaos-polymtl/lethe/issues/1820), the `set_initial_condition_fd` function in `fluid_dynamics_matrix_based`, when the L2_projection boundary condition is apply, does not work if the solver is not GMRES. This PR solve this issue by introducing a new dedicated function `solve_L2_system` that will always use GMRES regardless of the choice of solver by the user. This choice is justified because the L2 projection corresponds to a trivial linear problem involving only a mass matrix, for which GMRES converges rapidly. [#1827](https://github.com/chaos-polymtl/lethe/issues/1827)
 
 ### [Master] - 2025-11-25
 
