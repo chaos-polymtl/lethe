@@ -1,0 +1,5 @@
+set degree = 1
+set refinements = 6
+set time step = 0.005
+set end time = 1.
+set output frequency = 1

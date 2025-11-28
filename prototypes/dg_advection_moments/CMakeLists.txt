@@ -1,2 +1,7 @@
-add_executable(dg_advection_moments dg_advection_moments.cc)
-deal_ii_setup_target(dg_advection_moments)
+add_executable(dg_advection_invert_matrix_only dg_advection_invert_matrix_only.cc)
+add_executable(dg_advection_linear_system_assembly dg_advection_linear_system_assembly.cc)
+add_executable(dg_advection_time_stepper dg_advection_time_stepper.cc
+        dg_advection_time_stepper.cc)
+deal_ii_setup_target(dg_advection_invert_matrix_only)
+deal_ii_setup_target(dg_advection_linear_system_assembly)
+deal_ii_setup_target(dg_advection_time_stepper)
