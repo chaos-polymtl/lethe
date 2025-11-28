@@ -332,12 +332,16 @@ FluidDynamicsMatrixBased<dim>::define_pressure_constraints()
   if (!this->simulation_parameters.boundary_conditions.fix_pressure_constant)
     return;
 
+  // Create auxiliary constraints object to store pressure constraint, since at
+  // this point both zero_constraints and nonzero_constraints objects have been
+  // closed
+  AffineConstraints<double> constraints_extended;
+  constraints_extended.reinit(this->dof_handler->locally_owned_dofs(),
+                              this->locally_relevant_dofs);
+
   types::global_dof_index min_index = numbers::invalid_unsigned_int;
 
   std::vector<types::global_dof_index> dof_indices;
-
-  const IndexSet locally_relevant_dofs_set =
-    DoFTools::extract_locally_relevant_dofs(*this->dof_handler);
 
   // Loop over the cells to identify the min index
   for (const auto &cell : this->dof_handler->active_cell_iterators())
@@ -359,14 +363,18 @@ FluidDynamicsMatrixBased<dim>::define_pressure_constraints()
   min_index =
     Utilities::MPI::min(min_index, this->dof_handler->get_mpi_communicator());
 
-  if (locally_relevant_dofs_set.is_element(min_index))
-    {
-      this->nonzero_constraints.add_line(min_index);
-      this->zero_constraints.add_line(min_index);
-    }
+  if (this->locally_relevant_dofs.is_element(min_index))
+    constraints_extended.add_line(min_index);
 
-  this->nonzero_constraints.close();
-  this->zero_constraints.close();
+  // Merge auxiliary constraints object with existent constraints
+  this->nonzero_constraints.merge(
+    constraints_extended,
+    AffineConstraints<double>::MergeConflictBehavior::no_conflicts_allowed,
+    true);
+  this->zero_constraints.merge(
+    constraints_extended,
+    AffineConstraints<double>::MergeConflictBehavior::no_conflicts_allowed,
+    true);
 }
 
 template <int dim>
