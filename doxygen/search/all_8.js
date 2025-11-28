@@ -24,7 +24,7 @@ var searchData=
   ['gauss_21',['gauss',['../namespaceParameters.html#a3c3b515caf96bc00d4181a1085dfdb84a710a4950250286365cf841f765a790f1',1,'Parameters']]],
   ['gauss90_22',['gauss90',['../classRBFShape.html#a2060a8058a7a5a439d772319f39ec66bada58d378d11a57b15b031f9a5e79fcca',1,'RBFShape::GAUSS90'],['../classRBFShape.html#afcc70649ac96639b57456bd38e5a222e',1,'RBFShape::gauss90(const double distance)']]],
   ['gauss90_5fderivative_23',['gauss90_derivative',['../classRBFShape.html#a40217b3ae4880af9254d5c839f07f9d8',1,'RBFShape']]],
-  ['gauss95_24',['gauss95',['../classRBFShape.html#a2060a8058a7a5a439d772319f39ec66ba5152fe409882d54099012df9f595e579',1,'RBFShape::GAUSS95'],['../classRBFShape.html#a0136ef0bada828a44e21a53d067c4cbf',1,'RBFShape::gauss95(const double distance)']]],
+  ['gauss95_24',['gauss95',['../classRBFShape.html#a0136ef0bada828a44e21a53d067c4cbf',1,'RBFShape::gauss95(const double distance)'],['../classRBFShape.html#a2060a8058a7a5a439d772319f39ec66ba5152fe409882d54099012df9f595e579',1,'RBFShape::GAUSS95']]],
   ['gauss95_5fderivative_25',['gauss95_derivative',['../classRBFShape.html#af85fb383074fbe41bf03445d98f359de',1,'RBFShape']]],
   ['gauss99_26',['gauss99',['../classRBFShape.html#a3e39741a66bd4afac0b5340009105b23',1,'RBFShape::gauss99(const double distance)'],['../classRBFShape.html#a2060a8058a7a5a439d772319f39ec66bad809d8ceb9c7da6471334b9198c8e177',1,'RBFShape::GAUSS99']]],
   ['gauss99_5fderivative_27',['gauss99_derivative',['../classRBFShape.html#a63acec630af9f983064f387bb7ae9e26',1,'RBFShape']]],

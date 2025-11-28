@@ -499,6 +499,9 @@
   # Adaptative time-stepping
   set adapt = false
 
+  # True if the time-step should be overriden upon restart
+  set override time step on restart = false
+
   # Maximum CFL value
   set max cfl = 1
 
@@ -609,6 +612,7 @@ end
 <li><p><code class="docutils literal notranslate"><span class="pre">time</span> <span class="pre">end</span></code>: value of the time to end the transient simulation.</p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">time</span> <span class="pre">step</span></code>: value of the time step.</p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">adapt</span></code>: controls if adaptive time-stepping is enabled. If set to <code class="docutils literal notranslate"><span class="pre">true</span></code>, the time-step will evolve to ensure that the <code class="docutils literal notranslate"><span class="pre">max</span> <span class="pre">cfl</span></code> value is reached.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">override</span> <span class="pre">time</span> <span class="pre">step</span> <span class="pre">on</span> <span class="pre">restart</span></code>: controls if the time step should be overridden by the set value upon restart. If set to <code class="docutils literal notranslate"><span class="pre">true</span></code>, the time-step will be set to the value of <code class="docutils literal notranslate"><span class="pre">time</span> <span class="pre">step</span></code>, as opposed to being matched to the time-step value recorded at the last checkpoint.</p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">max</span> <span class="pre">cfl</span></code>: maximum value of the <span class="math notranslate nohighlight">\(\text{CFL}\)</span> condition that can be reached during the simulation. This parameter is only used when <code class="docutils literal notranslate"><span class="pre">set</span> <span class="pre">adapt</span> <span class="pre">=</span> <span class="pre">true</span></code>.</p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">max</span> <span class="pre">time</span> <span class="pre">step</span></code>: maximum time step value that can be reached during the simulation. This parameter is only used when <code class="docutils literal notranslate"><span class="pre">set</span> <span class="pre">adapt</span> <span class="pre">=</span> <span class="pre">true</span></code>. It is useful when the problem of interest has an additional time step constraint such as the capillary time step limit described in <a class="reference internal" href="../../examples/multiphysics/capillary-wave/capillary-wave.html"><span class="doc">Capillary Wave</span></a>.</p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">adaptative</span> <span class="pre">time</span> <span class="pre">step</span> <span class="pre">scaling</span></code>: rate of increase of the time step value. The new time step value is fixed by <code class="docutils literal notranslate"><span class="pre">adaptative</span> <span class="pre">time</span> <span class="pre">step</span> <span class="pre">scaling</span></code> * <code class="docutils literal notranslate"><span class="pre">previous</span> <span class="pre">value</span> <span class="pre">of</span> <span class="pre">the</span> <span class="pre">time</span> <span class="pre">step</span></code>.</p></li>

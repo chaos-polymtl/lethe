@@ -977,364 +977,370 @@ $(document).ready(function() { init_codefold(0); });
 <div class="line"><a id="l00819" name="l00819"></a><span class="lineno"><a class="line" href="classSimulationControlTransient.html#ac8d9b7077bb7c38ef2c3fb22e4cc916a">  819</a></span>  <span class="keywordtype">bool</span> <a class="code hl_variable" href="classSimulationControlTransient.html#ac8d9b7077bb7c38ef2c3fb22e4cc916a">no_more_output_times</a>;</div>
 <div class="line"><a id="l00820" name="l00820"></a><span class="lineno">  820</span><span class="comment"></span> </div>
 <div class="line"><a id="l00821" name="l00821"></a><span class="lineno">  821</span><span class="comment">  /**</span></div>
-<div class="line"><a id="l00822" name="l00822"></a><span class="lineno">  822</span><span class="comment">   * @brief Time interval for output of transient iterations</span></div>
-<div class="line"><a id="l00823" name="l00823"></a><span class="lineno">  823</span><span class="comment">   *</span></div>
-<div class="line"><a id="l00824" name="l00824"></a><span class="lineno">  824</span><span class="comment">   * Used with either time output control or iteration control to define</span></div>
-<div class="line"><a id="l00825" name="l00825"></a><span class="lineno">  825</span><span class="comment">   * intervals for output generation.</span></div>
-<div class="line"><a id="l00826" name="l00826"></a><span class="lineno">  826</span><span class="comment">   */</span></div>
-<div class="line"><a id="l00827" name="l00827"></a><span class="lineno"><a class="line" href="classSimulationControlTransient.html#a64d86676ed3f106ca7a0f11ff08bf978">  827</a></span>  std::vector&lt;double&gt; <a class="code hl_variable" href="classSimulationControlTransient.html#a64d86676ed3f106ca7a0f11ff08bf978">output_time_interval</a>;</div>
-<div class="line"><a id="l00828" name="l00828"></a><span class="lineno">  828</span><span class="comment"></span> </div>
-<div class="line"><a id="l00829" name="l00829"></a><span class="lineno">  829</span><span class="comment">  /// Output control type: iteration-based or time-based</span></div>
-<div class="line"><a id="l00830" name="l00830"></a><span class="lineno"><a class="line" href="classSimulationControlTransient.html#ae8d1e620dcf445c0a7e3dbbfb3085051">  830</a></span><span class="comment"></span>  <a class="code hl_enumeration" href="structParameters_1_1SimulationControl.html#afbdfe1836c2e09ec340042dc780c9d75">Parameters::SimulationControl::OutputControl</a> <a class="code hl_variable" href="classSimulationControlTransient.html#ae8d1e620dcf445c0a7e3dbbfb3085051">output_control</a>;</div>
-<div class="line"><a id="l00831" name="l00831"></a><span class="lineno">  831</span><span class="comment"></span> </div>
-<div class="line"><a id="l00832" name="l00832"></a><span class="lineno">  832</span><span class="comment">  /**</span></div>
-<div class="line"><a id="l00833" name="l00833"></a><span class="lineno">  833</span><span class="comment">   * @brief Calculate the next value of the time step</span></div>
-<div class="line"><a id="l00834" name="l00834"></a><span class="lineno">  834</span><span class="comment">   *</span></div>
-<div class="line"><a id="l00835" name="l00835"></a><span class="lineno">  835</span><span class="comment">   * If adaptation is enabled, the time step is calculated to ensure that the</span></div>
-<div class="line"><a id="l00836" name="l00836"></a><span class="lineno">  836</span><span class="comment">   * CFL condition is bound by the maximal CFL value. The new time step is</span></div>
-<div class="line"><a id="l00837" name="l00837"></a><span class="lineno">  837</span><span class="comment">   * scaled by adaptative_time_step_scaling. If the</span></div>
-<div class="line"><a id="l00838" name="l00838"></a><span class="lineno">  838</span><span class="comment">   * time_step_independent_of_end_time is set to false, the time step is</span></div>
-<div class="line"><a id="l00839" name="l00839"></a><span class="lineno">  839</span><span class="comment">   * adjusted to meet exactly the end time; the default is to not modify the</span></div>
-<div class="line"><a id="l00840" name="l00840"></a><span class="lineno">  840</span><span class="comment">   * time step.</span></div>
-<div class="line"><a id="l00841" name="l00841"></a><span class="lineno">  841</span><span class="comment">   *</span></div>
-<div class="line"><a id="l00842" name="l00842"></a><span class="lineno">  842</span><span class="comment">   * @return The calculated time step value</span></div>
-<div class="line"><a id="l00843" name="l00843"></a><span class="lineno">  843</span><span class="comment">   */</span></div>
-<div class="line"><a id="l00844" name="l00844"></a><span class="lineno">  844</span>  <span class="keyword">virtual</span> <span class="keywordtype">double</span></div>
-<div class="line"><a id="l00845" name="l00845"></a><span class="lineno">  845</span>  <a class="code hl_function" href="classSimulationControlTransient.html#a74d0fb44b9447a364e2a7df92620d7b9">calculate_time_step</a>() <span class="keyword">override</span>;</div>
-<div class="line"><a id="l00846" name="l00846"></a><span class="lineno">  846</span> </div>
-<div class="line"><a id="l00847" name="l00847"></a><span class="lineno">  847</span><span class="keyword">public</span>:<span class="comment"></span></div>
-<div class="line"><a id="l00848" name="l00848"></a><span class="lineno">  848</span><span class="comment">  /**</span></div>
-<div class="line"><a id="l00849" name="l00849"></a><span class="lineno">  849</span><span class="comment">   * @brief Construct a transient simulation control object</span></div>
-<div class="line"><a id="l00850" name="l00850"></a><span class="lineno">  850</span><span class="comment">   *</span></div>
-<div class="line"><a id="l00851" name="l00851"></a><span class="lineno">  851</span><span class="comment">   * @param[in] param Structure of the parameters for the simulation control</span></div>
-<div class="line"><a id="l00852" name="l00852"></a><span class="lineno">  852</span><span class="comment">   */</span></div>
-<div class="line"><a id="l00853" name="l00853"></a><span class="lineno">  853</span>  <a class="code hl_class" href="classSimulationControlTransient.html">SimulationControlTransient</a>(<span class="keyword">const</span> <a class="code hl_struct" href="structParameters_1_1SimulationControl.html">Parameters::SimulationControl</a> &amp;param);</div>
-<div class="line"><a id="l00854" name="l00854"></a><span class="lineno">  854</span><span class="comment"></span> </div>
-<div class="line"><a id="l00855" name="l00855"></a><span class="lineno">  855</span><span class="comment">  /**</span></div>
-<div class="line"><a id="l00856" name="l00856"></a><span class="lineno">  856</span><span class="comment">   * @brief Print the current progress status of the simulation</span></div>
-<div class="line"><a id="l00857" name="l00857"></a><span class="lineno">  857</span><span class="comment">   *</span></div>
-<div class="line"><a id="l00858" name="l00858"></a><span class="lineno">  858</span><span class="comment">   * @param[in] pcout Parallel conditional output stream used to print the</span></div>
-<div class="line"><a id="l00859" name="l00859"></a><span class="lineno">  859</span><span class="comment">   * information</span></div>
-<div class="line"><a id="l00860" name="l00860"></a><span class="lineno">  860</span><span class="comment">   */</span></div>
-<div class="line"><a id="l00861" name="l00861"></a><span class="lineno">  861</span>  <span class="keyword">virtual</span> <span class="keywordtype">void</span></div>
-<div class="line"><a id="l00862" name="l00862"></a><span class="lineno">  862</span>  <a class="code hl_function" href="classSimulationControlTransient.html#a6d580ae3849859e91e7ab43c2e7c08d9">print_progression</a>(<span class="keyword">const</span> ConditionalOStream &amp;pcout) <span class="keyword">override</span>;</div>
-<div class="line"><a id="l00863" name="l00863"></a><span class="lineno">  863</span><span class="comment"></span> </div>
-<div class="line"><a id="l00864" name="l00864"></a><span class="lineno">  864</span><span class="comment">  /**</span></div>
-<div class="line"><a id="l00865" name="l00865"></a><span class="lineno">  865</span><span class="comment">   * @brief Indicate if the simulation uses adaptive time stepping or not</span></div>
-<div class="line"><a id="l00866" name="l00866"></a><span class="lineno">  866</span><span class="comment">   *</span></div>
-<div class="line"><a id="l00867" name="l00867"></a><span class="lineno">  867</span><span class="comment">   * @return true if the simulation has adaptive time stepping, false otherwise</span></div>
-<div class="line"><a id="l00868" name="l00868"></a><span class="lineno">  868</span><span class="comment">   */</span></div>
-<div class="line"><a id="l00869" name="l00869"></a><span class="lineno">  869</span>  <span class="keywordtype">bool</span></div>
-<div class="foldopen" id="foldopen00870" data-start="{" data-end="}">
-<div class="line"><a id="l00870" name="l00870"></a><span class="lineno"><a class="line" href="classSimulationControlTransient.html#a036c4105e266efe7053a09b75c5ace0f">  870</a></span>  <a class="code hl_function" href="classSimulationControlTransient.html#a036c4105e266efe7053a09b75c5ace0f">is_adaptive_time_stepping</a>()<span class="keyword"> const override</span></div>
-<div class="line"><a id="l00871" name="l00871"></a><span class="lineno">  871</span><span class="keyword">  </span>{</div>
-<div class="line"><a id="l00872" name="l00872"></a><span class="lineno">  872</span>    <span class="keywordflow">return</span> <a class="code hl_variable" href="classSimulationControlTransient.html#a3274432c0d9c57df543ad78afd5267ee">adapt</a>;</div>
-<div class="line"><a id="l00873" name="l00873"></a><span class="lineno">  873</span>  }</div>
+<div class="line"><a id="l00822" name="l00822"></a><span class="lineno">  822</span><span class="comment">   * @brief Flag to override the time-step with the set value upon restart</span></div>
+<div class="line"><a id="l00823" name="l00823"></a><span class="lineno">  823</span><span class="comment">   */</span></div>
+<div class="line"><a id="l00824" name="l00824"></a><span class="lineno"><a class="line" href="classSimulationControlTransient.html#a20928086234ec81009e2323dcdcce55b">  824</a></span>  <span class="keywordtype">bool</span> <a class="code hl_variable" href="classSimulationControlTransient.html#a20928086234ec81009e2323dcdcce55b">override_time_step_on_restart</a>;</div>
+<div class="line"><a id="l00825" name="l00825"></a><span class="lineno">  825</span><span class="comment"></span> </div>
+<div class="line"><a id="l00826" name="l00826"></a><span class="lineno">  826</span><span class="comment">  /**</span></div>
+<div class="line"><a id="l00827" name="l00827"></a><span class="lineno">  827</span><span class="comment">   * @brief Time interval for output of transient iterations</span></div>
+<div class="line"><a id="l00828" name="l00828"></a><span class="lineno">  828</span><span class="comment">   *</span></div>
+<div class="line"><a id="l00829" name="l00829"></a><span class="lineno">  829</span><span class="comment">   * Used with either time output control or iteration control to define</span></div>
+<div class="line"><a id="l00830" name="l00830"></a><span class="lineno">  830</span><span class="comment">   * intervals for output generation.</span></div>
+<div class="line"><a id="l00831" name="l00831"></a><span class="lineno">  831</span><span class="comment">   */</span></div>
+<div class="line"><a id="l00832" name="l00832"></a><span class="lineno"><a class="line" href="classSimulationControlTransient.html#a64d86676ed3f106ca7a0f11ff08bf978">  832</a></span>  std::vector&lt;double&gt; <a class="code hl_variable" href="classSimulationControlTransient.html#a64d86676ed3f106ca7a0f11ff08bf978">output_time_interval</a>;</div>
+<div class="line"><a id="l00833" name="l00833"></a><span class="lineno">  833</span><span class="comment"></span> </div>
+<div class="line"><a id="l00834" name="l00834"></a><span class="lineno">  834</span><span class="comment">  /// Output control type: iteration-based or time-based</span></div>
+<div class="line"><a id="l00835" name="l00835"></a><span class="lineno"><a class="line" href="classSimulationControlTransient.html#ae8d1e620dcf445c0a7e3dbbfb3085051">  835</a></span><span class="comment"></span>  <a class="code hl_enumeration" href="structParameters_1_1SimulationControl.html#afbdfe1836c2e09ec340042dc780c9d75">Parameters::SimulationControl::OutputControl</a> <a class="code hl_variable" href="classSimulationControlTransient.html#ae8d1e620dcf445c0a7e3dbbfb3085051">output_control</a>;</div>
+<div class="line"><a id="l00836" name="l00836"></a><span class="lineno">  836</span><span class="comment"></span> </div>
+<div class="line"><a id="l00837" name="l00837"></a><span class="lineno">  837</span><span class="comment">  /**</span></div>
+<div class="line"><a id="l00838" name="l00838"></a><span class="lineno">  838</span><span class="comment">   * @brief Calculate the next value of the time step</span></div>
+<div class="line"><a id="l00839" name="l00839"></a><span class="lineno">  839</span><span class="comment">   *</span></div>
+<div class="line"><a id="l00840" name="l00840"></a><span class="lineno">  840</span><span class="comment">   * If adaptation is enabled, the time step is calculated to ensure that the</span></div>
+<div class="line"><a id="l00841" name="l00841"></a><span class="lineno">  841</span><span class="comment">   * CFL condition is bound by the maximal CFL value. The new time step is</span></div>
+<div class="line"><a id="l00842" name="l00842"></a><span class="lineno">  842</span><span class="comment">   * scaled by adaptative_time_step_scaling. If the</span></div>
+<div class="line"><a id="l00843" name="l00843"></a><span class="lineno">  843</span><span class="comment">   * time_step_independent_of_end_time is set to false, the time step is</span></div>
+<div class="line"><a id="l00844" name="l00844"></a><span class="lineno">  844</span><span class="comment">   * adjusted to meet exactly the end time; the default is to not modify the</span></div>
+<div class="line"><a id="l00845" name="l00845"></a><span class="lineno">  845</span><span class="comment">   * time step.</span></div>
+<div class="line"><a id="l00846" name="l00846"></a><span class="lineno">  846</span><span class="comment">   *</span></div>
+<div class="line"><a id="l00847" name="l00847"></a><span class="lineno">  847</span><span class="comment">   * @return The calculated time step value</span></div>
+<div class="line"><a id="l00848" name="l00848"></a><span class="lineno">  848</span><span class="comment">   */</span></div>
+<div class="line"><a id="l00849" name="l00849"></a><span class="lineno">  849</span>  <span class="keyword">virtual</span> <span class="keywordtype">double</span></div>
+<div class="line"><a id="l00850" name="l00850"></a><span class="lineno">  850</span>  <a class="code hl_function" href="classSimulationControlTransient.html#a74d0fb44b9447a364e2a7df92620d7b9">calculate_time_step</a>() <span class="keyword">override</span>;</div>
+<div class="line"><a id="l00851" name="l00851"></a><span class="lineno">  851</span> </div>
+<div class="line"><a id="l00852" name="l00852"></a><span class="lineno">  852</span><span class="keyword">public</span>:<span class="comment"></span></div>
+<div class="line"><a id="l00853" name="l00853"></a><span class="lineno">  853</span><span class="comment">  /**</span></div>
+<div class="line"><a id="l00854" name="l00854"></a><span class="lineno">  854</span><span class="comment">   * @brief Construct a transient simulation control object</span></div>
+<div class="line"><a id="l00855" name="l00855"></a><span class="lineno">  855</span><span class="comment">   *</span></div>
+<div class="line"><a id="l00856" name="l00856"></a><span class="lineno">  856</span><span class="comment">   * @param[in] param Structure of the parameters for the simulation control</span></div>
+<div class="line"><a id="l00857" name="l00857"></a><span class="lineno">  857</span><span class="comment">   */</span></div>
+<div class="line"><a id="l00858" name="l00858"></a><span class="lineno">  858</span>  <a class="code hl_class" href="classSimulationControlTransient.html">SimulationControlTransient</a>(<span class="keyword">const</span> <a class="code hl_struct" href="structParameters_1_1SimulationControl.html">Parameters::SimulationControl</a> &amp;param);</div>
+<div class="line"><a id="l00859" name="l00859"></a><span class="lineno">  859</span><span class="comment"></span> </div>
+<div class="line"><a id="l00860" name="l00860"></a><span class="lineno">  860</span><span class="comment">  /**</span></div>
+<div class="line"><a id="l00861" name="l00861"></a><span class="lineno">  861</span><span class="comment">   * @brief Print the current progress status of the simulation</span></div>
+<div class="line"><a id="l00862" name="l00862"></a><span class="lineno">  862</span><span class="comment">   *</span></div>
+<div class="line"><a id="l00863" name="l00863"></a><span class="lineno">  863</span><span class="comment">   * @param[in] pcout Parallel conditional output stream used to print the</span></div>
+<div class="line"><a id="l00864" name="l00864"></a><span class="lineno">  864</span><span class="comment">   * information</span></div>
+<div class="line"><a id="l00865" name="l00865"></a><span class="lineno">  865</span><span class="comment">   */</span></div>
+<div class="line"><a id="l00866" name="l00866"></a><span class="lineno">  866</span>  <span class="keyword">virtual</span> <span class="keywordtype">void</span></div>
+<div class="line"><a id="l00867" name="l00867"></a><span class="lineno">  867</span>  <a class="code hl_function" href="classSimulationControlTransient.html#a6d580ae3849859e91e7ab43c2e7c08d9">print_progression</a>(<span class="keyword">const</span> ConditionalOStream &amp;pcout) <span class="keyword">override</span>;</div>
+<div class="line"><a id="l00868" name="l00868"></a><span class="lineno">  868</span><span class="comment"></span> </div>
+<div class="line"><a id="l00869" name="l00869"></a><span class="lineno">  869</span><span class="comment">  /**</span></div>
+<div class="line"><a id="l00870" name="l00870"></a><span class="lineno">  870</span><span class="comment">   * @brief Indicate if the simulation uses adaptive time stepping or not</span></div>
+<div class="line"><a id="l00871" name="l00871"></a><span class="lineno">  871</span><span class="comment">   *</span></div>
+<div class="line"><a id="l00872" name="l00872"></a><span class="lineno">  872</span><span class="comment">   * @return true if the simulation has adaptive time stepping, false otherwise</span></div>
+<div class="line"><a id="l00873" name="l00873"></a><span class="lineno">  873</span><span class="comment">   */</span></div>
+<div class="line"><a id="l00874" name="l00874"></a><span class="lineno">  874</span>  <span class="keywordtype">bool</span></div>
+<div class="foldopen" id="foldopen00875" data-start="{" data-end="}">
+<div class="line"><a id="l00875" name="l00875"></a><span class="lineno"><a class="line" href="classSimulationControlTransient.html#a036c4105e266efe7053a09b75c5ace0f">  875</a></span>  <a class="code hl_function" href="classSimulationControlTransient.html#a036c4105e266efe7053a09b75c5ace0f">is_adaptive_time_stepping</a>()<span class="keyword"> const override</span></div>
+<div class="line"><a id="l00876" name="l00876"></a><span class="lineno">  876</span><span class="keyword">  </span>{</div>
+<div class="line"><a id="l00877" name="l00877"></a><span class="lineno">  877</span>    <span class="keywordflow">return</span> <a class="code hl_variable" href="classSimulationControlTransient.html#a3274432c0d9c57df543ad78afd5267ee">adapt</a>;</div>
+<div class="line"><a id="l00878" name="l00878"></a><span class="lineno">  878</span>  }</div>
 </div>
-<div class="line"><a id="l00874" name="l00874"></a><span class="lineno">  874</span><span class="comment"></span> </div>
-<div class="line"><a id="l00875" name="l00875"></a><span class="lineno">  875</span><span class="comment">  /**</span></div>
-<div class="line"><a id="l00876" name="l00876"></a><span class="lineno">  876</span><span class="comment">   * @brief Proceed with the simulation until the end condition is reached</span></div>
-<div class="line"><a id="l00877" name="l00877"></a><span class="lineno">  877</span><span class="comment">   *</span></div>
-<div class="line"><a id="l00878" name="l00878"></a><span class="lineno">  878</span><span class="comment">   * Advances the simulation by incrementing time and iteration number.</span></div>
-<div class="line"><a id="l00879" name="l00879"></a><span class="lineno">  879</span><span class="comment">   *</span></div>
-<div class="line"><a id="l00880" name="l00880"></a><span class="lineno">  880</span><span class="comment">   * @return true if the simulation should continue, false otherwise</span></div>
-<div class="line"><a id="l00881" name="l00881"></a><span class="lineno">  881</span><span class="comment">   */</span></div>
-<div class="line"><a id="l00882" name="l00882"></a><span class="lineno">  882</span>  <span class="keyword">virtual</span> <span class="keywordtype">bool</span></div>
-<div class="line"><a id="l00883" name="l00883"></a><span class="lineno">  883</span>  <a class="code hl_function" href="classSimulationControlTransient.html#a9323f75f9c5d9ab8463f1340c83fa539">integrate</a>() <span class="keyword">override</span>;</div>
-<div class="line"><a id="l00884" name="l00884"></a><span class="lineno">  884</span><span class="comment"></span> </div>
-<div class="line"><a id="l00885" name="l00885"></a><span class="lineno">  885</span><span class="comment">  /**</span></div>
-<div class="line"><a id="l00886" name="l00886"></a><span class="lineno">  886</span><span class="comment">   * @brief End the simulation when the end time is reached</span></div>
-<div class="line"><a id="l00887" name="l00887"></a><span class="lineno">  887</span><span class="comment">   *</span></div>
-<div class="line"><a id="l00888" name="l00888"></a><span class="lineno">  888</span><span class="comment">   * @return true if the current time has reached or exceeded the end time, false otherwise</span></div>
-<div class="line"><a id="l00889" name="l00889"></a><span class="lineno">  889</span><span class="comment">   */</span></div>
-<div class="line"><a id="l00890" name="l00890"></a><span class="lineno">  890</span>  <span class="keyword">virtual</span> <span class="keywordtype">bool</span></div>
-<div class="line"><a id="l00891" name="l00891"></a><span class="lineno">  891</span>  <a class="code hl_function" href="classSimulationControlTransient.html#aa319da7751b899049697edecee141d66">is_at_end</a>() <span class="keyword">override</span>;</div>
-<div class="line"><a id="l00892" name="l00892"></a><span class="lineno">  892</span><span class="comment"></span> </div>
-<div class="line"><a id="l00893" name="l00893"></a><span class="lineno">  893</span><span class="comment">  /**</span></div>
-<div class="line"><a id="l00894" name="l00894"></a><span class="lineno">  894</span><span class="comment">   * @brief Check if the current iteration is an output iteration</span></div>
-<div class="line"><a id="l00895" name="l00895"></a><span class="lineno">  895</span><span class="comment">   *</span></div>
-<div class="line"><a id="l00896" name="l00896"></a><span class="lineno">  896</span><span class="comment">   * Output iterations are determined based on the value of the output time,</span></div>
-<div class="line"><a id="l00897" name="l00897"></a><span class="lineno">  897</span><span class="comment">   * the output interval, and the output frequency within the interval.</span></div>
-<div class="line"><a id="l00898" name="l00898"></a><span class="lineno">  898</span><span class="comment">   *</span></div>
-<div class="line"><a id="l00899" name="l00899"></a><span class="lineno">  899</span><span class="comment">   * @return true if output should be written at this iteration, false otherwise</span></div>
-<div class="line"><a id="l00900" name="l00900"></a><span class="lineno">  900</span><span class="comment">   */</span></div>
-<div class="line"><a id="l00901" name="l00901"></a><span class="lineno">  901</span>  <span class="keyword">virtual</span> <span class="keywordtype">bool</span></div>
-<div class="line"><a id="l00902" name="l00902"></a><span class="lineno">  902</span>  <a class="code hl_function" href="classSimulationControlTransient.html#ac1951b02a3fe1c7a7a2536c0dc08d513">is_output_iteration</a>() <span class="keyword">override</span>;</div>
-<div class="line"><a id="l00903" name="l00903"></a><span class="lineno">  903</span><span class="comment"></span> </div>
-<div class="line"><a id="l00904" name="l00904"></a><span class="lineno">  904</span><span class="comment">  /**</span></div>
-<div class="line"><a id="l00905" name="l00905"></a><span class="lineno">  905</span><span class="comment">   * @brief Save the simulation control information to a checkpoint file</span></div>
-<div class="line"><a id="l00906" name="l00906"></a><span class="lineno">  906</span><span class="comment">   *</span></div>
-<div class="line"><a id="l00907" name="l00907"></a><span class="lineno">  907</span><span class="comment">   * Saves the time step vector, the CFL value, the time, the iteration number</span></div>
-<div class="line"><a id="l00908" name="l00908"></a><span class="lineno">  908</span><span class="comment">   * and the index of the output times vector if time control is used.</span></div>
-<div class="line"><a id="l00909" name="l00909"></a><span class="lineno">  909</span><span class="comment">   *</span></div>
-<div class="line"><a id="l00910" name="l00910"></a><span class="lineno">  910</span><span class="comment">   * @param[in] prefix The prefix of the checkpoint file for the simulation</span></div>
-<div class="line"><a id="l00911" name="l00911"></a><span class="lineno">  911</span><span class="comment">   */</span></div>
-<div class="line"><a id="l00912" name="l00912"></a><span class="lineno">  912</span>  <span class="keywordtype">void</span></div>
-<div class="line"><a id="l00913" name="l00913"></a><span class="lineno">  913</span>  <a class="code hl_function" href="classSimulationControlTransient.html#a3b42c02f3ee3cb90a33b5609f5f7879e">save</a>(<span class="keyword">const</span> std::string &amp;prefix) <span class="keyword">override</span>;</div>
-<div class="line"><a id="l00914" name="l00914"></a><span class="lineno">  914</span><span class="comment"></span> </div>
-<div class="line"><a id="l00915" name="l00915"></a><span class="lineno">  915</span><span class="comment">  /**</span></div>
-<div class="line"><a id="l00916" name="l00916"></a><span class="lineno">  916</span><span class="comment">   * @brief Read the simulation control information from a checkpoint file</span></div>
-<div class="line"><a id="l00917" name="l00917"></a><span class="lineno">  917</span><span class="comment">   *</span></div>
-<div class="line"><a id="l00918" name="l00918"></a><span class="lineno">  918</span><span class="comment">   * Reads and updates the time step vector, the CFL value, the time, the</span></div>
-<div class="line"><a id="l00919" name="l00919"></a><span class="lineno">  919</span><span class="comment">   * iteration number and the index of the output times vector if time control</span></div>
-<div class="line"><a id="l00920" name="l00920"></a><span class="lineno">  920</span><span class="comment">   * is used. Allows changing the time step if adaptive time stepping is</span></div>
-<div class="line"><a id="l00921" name="l00921"></a><span class="lineno">  921</span><span class="comment">   * disabled.</span></div>
+<div class="line"><a id="l00879" name="l00879"></a><span class="lineno">  879</span><span class="comment"></span> </div>
+<div class="line"><a id="l00880" name="l00880"></a><span class="lineno">  880</span><span class="comment">  /**</span></div>
+<div class="line"><a id="l00881" name="l00881"></a><span class="lineno">  881</span><span class="comment">   * @brief Proceed with the simulation until the end condition is reached</span></div>
+<div class="line"><a id="l00882" name="l00882"></a><span class="lineno">  882</span><span class="comment">   *</span></div>
+<div class="line"><a id="l00883" name="l00883"></a><span class="lineno">  883</span><span class="comment">   * Advances the simulation by incrementing time and iteration number.</span></div>
+<div class="line"><a id="l00884" name="l00884"></a><span class="lineno">  884</span><span class="comment">   *</span></div>
+<div class="line"><a id="l00885" name="l00885"></a><span class="lineno">  885</span><span class="comment">   * @return true if the simulation should continue, false otherwise</span></div>
+<div class="line"><a id="l00886" name="l00886"></a><span class="lineno">  886</span><span class="comment">   */</span></div>
+<div class="line"><a id="l00887" name="l00887"></a><span class="lineno">  887</span>  <span class="keyword">virtual</span> <span class="keywordtype">bool</span></div>
+<div class="line"><a id="l00888" name="l00888"></a><span class="lineno">  888</span>  <a class="code hl_function" href="classSimulationControlTransient.html#a9323f75f9c5d9ab8463f1340c83fa539">integrate</a>() <span class="keyword">override</span>;</div>
+<div class="line"><a id="l00889" name="l00889"></a><span class="lineno">  889</span><span class="comment"></span> </div>
+<div class="line"><a id="l00890" name="l00890"></a><span class="lineno">  890</span><span class="comment">  /**</span></div>
+<div class="line"><a id="l00891" name="l00891"></a><span class="lineno">  891</span><span class="comment">   * @brief End the simulation when the end time is reached</span></div>
+<div class="line"><a id="l00892" name="l00892"></a><span class="lineno">  892</span><span class="comment">   *</span></div>
+<div class="line"><a id="l00893" name="l00893"></a><span class="lineno">  893</span><span class="comment">   * @return true if the current time has reached or exceeded the end time, false otherwise</span></div>
+<div class="line"><a id="l00894" name="l00894"></a><span class="lineno">  894</span><span class="comment">   */</span></div>
+<div class="line"><a id="l00895" name="l00895"></a><span class="lineno">  895</span>  <span class="keyword">virtual</span> <span class="keywordtype">bool</span></div>
+<div class="line"><a id="l00896" name="l00896"></a><span class="lineno">  896</span>  <a class="code hl_function" href="classSimulationControlTransient.html#aa319da7751b899049697edecee141d66">is_at_end</a>() <span class="keyword">override</span>;</div>
+<div class="line"><a id="l00897" name="l00897"></a><span class="lineno">  897</span><span class="comment"></span> </div>
+<div class="line"><a id="l00898" name="l00898"></a><span class="lineno">  898</span><span class="comment">  /**</span></div>
+<div class="line"><a id="l00899" name="l00899"></a><span class="lineno">  899</span><span class="comment">   * @brief Check if the current iteration is an output iteration</span></div>
+<div class="line"><a id="l00900" name="l00900"></a><span class="lineno">  900</span><span class="comment">   *</span></div>
+<div class="line"><a id="l00901" name="l00901"></a><span class="lineno">  901</span><span class="comment">   * Output iterations are determined based on the value of the output time,</span></div>
+<div class="line"><a id="l00902" name="l00902"></a><span class="lineno">  902</span><span class="comment">   * the output interval, and the output frequency within the interval.</span></div>
+<div class="line"><a id="l00903" name="l00903"></a><span class="lineno">  903</span><span class="comment">   *</span></div>
+<div class="line"><a id="l00904" name="l00904"></a><span class="lineno">  904</span><span class="comment">   * @return true if output should be written at this iteration, false otherwise</span></div>
+<div class="line"><a id="l00905" name="l00905"></a><span class="lineno">  905</span><span class="comment">   */</span></div>
+<div class="line"><a id="l00906" name="l00906"></a><span class="lineno">  906</span>  <span class="keyword">virtual</span> <span class="keywordtype">bool</span></div>
+<div class="line"><a id="l00907" name="l00907"></a><span class="lineno">  907</span>  <a class="code hl_function" href="classSimulationControlTransient.html#ac1951b02a3fe1c7a7a2536c0dc08d513">is_output_iteration</a>() <span class="keyword">override</span>;</div>
+<div class="line"><a id="l00908" name="l00908"></a><span class="lineno">  908</span><span class="comment"></span> </div>
+<div class="line"><a id="l00909" name="l00909"></a><span class="lineno">  909</span><span class="comment">  /**</span></div>
+<div class="line"><a id="l00910" name="l00910"></a><span class="lineno">  910</span><span class="comment">   * @brief Save the simulation control information to a checkpoint file</span></div>
+<div class="line"><a id="l00911" name="l00911"></a><span class="lineno">  911</span><span class="comment">   *</span></div>
+<div class="line"><a id="l00912" name="l00912"></a><span class="lineno">  912</span><span class="comment">   * Saves the time step vector, the CFL value, the time, the iteration number</span></div>
+<div class="line"><a id="l00913" name="l00913"></a><span class="lineno">  913</span><span class="comment">   * and the index of the output times vector if time control is used.</span></div>
+<div class="line"><a id="l00914" name="l00914"></a><span class="lineno">  914</span><span class="comment">   *</span></div>
+<div class="line"><a id="l00915" name="l00915"></a><span class="lineno">  915</span><span class="comment">   * @param[in] prefix The prefix of the checkpoint file for the simulation</span></div>
+<div class="line"><a id="l00916" name="l00916"></a><span class="lineno">  916</span><span class="comment">   */</span></div>
+<div class="line"><a id="l00917" name="l00917"></a><span class="lineno">  917</span>  <span class="keywordtype">void</span></div>
+<div class="line"><a id="l00918" name="l00918"></a><span class="lineno">  918</span>  <a class="code hl_function" href="classSimulationControlTransient.html#a3b42c02f3ee3cb90a33b5609f5f7879e">save</a>(<span class="keyword">const</span> std::string &amp;prefix) <span class="keyword">override</span>;</div>
+<div class="line"><a id="l00919" name="l00919"></a><span class="lineno">  919</span><span class="comment"></span> </div>
+<div class="line"><a id="l00920" name="l00920"></a><span class="lineno">  920</span><span class="comment">  /**</span></div>
+<div class="line"><a id="l00921" name="l00921"></a><span class="lineno">  921</span><span class="comment">   * @brief Read the simulation control information from a checkpoint file</span></div>
 <div class="line"><a id="l00922" name="l00922"></a><span class="lineno">  922</span><span class="comment">   *</span></div>
-<div class="line"><a id="l00923" name="l00923"></a><span class="lineno">  923</span><span class="comment">   * @param[in] prefix The prefix of the checkpoint file for the simulation</span></div>
-<div class="line"><a id="l00924" name="l00924"></a><span class="lineno">  924</span><span class="comment">   */</span></div>
-<div class="line"><a id="l00925" name="l00925"></a><span class="lineno">  925</span>  <span class="keywordtype">void</span></div>
-<div class="line"><a id="l00926" name="l00926"></a><span class="lineno">  926</span>  <a class="code hl_function" href="classSimulationControlTransient.html#a429eb8571bdd48e1a9579435318296f0">read</a>(<span class="keyword">const</span> std::string &amp;prefix) <span class="keyword">override</span>;</div>
-<div class="line"><a id="l00927" name="l00927"></a><span class="lineno">  927</span>};</div>
+<div class="line"><a id="l00923" name="l00923"></a><span class="lineno">  923</span><span class="comment">   * Reads and updates the time step vector, the CFL value, the time, the</span></div>
+<div class="line"><a id="l00924" name="l00924"></a><span class="lineno">  924</span><span class="comment">   * iteration number and the index of the output times vector if time control</span></div>
+<div class="line"><a id="l00925" name="l00925"></a><span class="lineno">  925</span><span class="comment">   * is used. Allows changing the time step if adaptive time stepping is</span></div>
+<div class="line"><a id="l00926" name="l00926"></a><span class="lineno">  926</span><span class="comment">   * disabled.</span></div>
+<div class="line"><a id="l00927" name="l00927"></a><span class="lineno">  927</span><span class="comment">   *</span></div>
+<div class="line"><a id="l00928" name="l00928"></a><span class="lineno">  928</span><span class="comment">   * @param[in] prefix The prefix of the checkpoint file for the simulation</span></div>
+<div class="line"><a id="l00929" name="l00929"></a><span class="lineno">  929</span><span class="comment">   */</span></div>
+<div class="line"><a id="l00930" name="l00930"></a><span class="lineno">  930</span>  <span class="keywordtype">void</span></div>
+<div class="line"><a id="l00931" name="l00931"></a><span class="lineno">  931</span>  <a class="code hl_function" href="classSimulationControlTransient.html#a429eb8571bdd48e1a9579435318296f0">read</a>(<span class="keyword">const</span> std::string &amp;prefix) <span class="keyword">override</span>;</div>
+<div class="line"><a id="l00932" name="l00932"></a><span class="lineno">  932</span>};</div>
 </div>
-<div class="line"><a id="l00928" name="l00928"></a><span class="lineno">  928</span><span class="comment"></span> </div>
-<div class="line"><a id="l00929" name="l00929"></a><span class="lineno">  929</span><span class="comment">/**</span></div>
-<div class="line"><a id="l00930" name="l00930"></a><span class="lineno">  930</span><span class="comment"> * @brief Transient simulation control tailored for the Discrete Element Method (DEM)</span></div>
-<div class="line"><a id="l00931" name="l00931"></a><span class="lineno">  931</span><span class="comment"> *</span></div>
-<div class="line"><a id="l00932" name="l00932"></a><span class="lineno">  932</span><span class="comment"> * This class specializes SimulationControlTransient for DEM simulations.</span></div>
-<div class="line"><a id="l00933" name="l00933"></a><span class="lineno">  933</span><span class="comment"> * It provides DEM-specific progress reporting and output formatting.</span></div>
-<div class="line"><a id="l00934" name="l00934"></a><span class="lineno">  934</span><span class="comment"> */</span></div>
-<div class="foldopen" id="foldopen00935" data-start="{" data-end="};">
-<div class="line"><a id="l00935" name="l00935"></a><span class="lineno"><a class="line" href="classSimulationControlTransientDEM.html">  935</a></span><span class="keyword">class </span><a class="code hl_class" href="classSimulationControlTransientDEM.html">SimulationControlTransientDEM</a> : <span class="keyword">public</span> <a class="code hl_class" href="classSimulationControlTransient.html">SimulationControlTransient</a></div>
-<div class="line"><a id="l00936" name="l00936"></a><span class="lineno">  936</span>{</div>
-<div class="line"><a id="l00937" name="l00937"></a><span class="lineno">  937</span><span class="keyword">public</span>:<span class="comment"></span></div>
-<div class="line"><a id="l00938" name="l00938"></a><span class="lineno">  938</span><span class="comment">  /**</span></div>
-<div class="line"><a id="l00939" name="l00939"></a><span class="lineno">  939</span><span class="comment">   * @brief Construct a DEM transient simulation control object</span></div>
-<div class="line"><a id="l00940" name="l00940"></a><span class="lineno">  940</span><span class="comment">   *</span></div>
-<div class="line"><a id="l00941" name="l00941"></a><span class="lineno">  941</span><span class="comment">   * @param[in] param Structure of the parameters for the simulation control</span></div>
-<div class="line"><a id="l00942" name="l00942"></a><span class="lineno">  942</span><span class="comment">   */</span></div>
-<div class="line"><a id="l00943" name="l00943"></a><span class="lineno">  943</span>  <a class="code hl_class" href="classSimulationControlTransientDEM.html">SimulationControlTransientDEM</a>(<span class="keyword">const</span> <a class="code hl_struct" href="structParameters_1_1SimulationControl.html">Parameters::SimulationControl</a> &amp;param);</div>
-<div class="line"><a id="l00944" name="l00944"></a><span class="lineno">  944</span><span class="comment"></span> </div>
-<div class="line"><a id="l00945" name="l00945"></a><span class="lineno">  945</span><span class="comment">  /**</span></div>
-<div class="line"><a id="l00946" name="l00946"></a><span class="lineno">  946</span><span class="comment">   * @brief Print the current progress status of the DEM simulation</span></div>
-<div class="line"><a id="l00947" name="l00947"></a><span class="lineno">  947</span><span class="comment">   *</span></div>
-<div class="line"><a id="l00948" name="l00948"></a><span class="lineno">  948</span><span class="comment">   * Provides DEM-specific formatting and information in the progress output.</span></div>
-<div class="line"><a id="l00949" name="l00949"></a><span class="lineno">  949</span><span class="comment">   *</span></div>
-<div class="line"><a id="l00950" name="l00950"></a><span class="lineno">  950</span><span class="comment">   * @param[in] pcout Parallel conditional output stream used to print the</span></div>
-<div class="line"><a id="l00951" name="l00951"></a><span class="lineno">  951</span><span class="comment">   * information</span></div>
-<div class="line"><a id="l00952" name="l00952"></a><span class="lineno">  952</span><span class="comment">   */</span></div>
-<div class="line"><a id="l00953" name="l00953"></a><span class="lineno">  953</span>  <span class="keyword">virtual</span> <span class="keywordtype">void</span></div>
-<div class="line"><a id="l00954" name="l00954"></a><span class="lineno">  954</span>  <a class="code hl_function" href="classSimulationControlTransientDEM.html#a6760db7b27f43507bc6727a855beb4a3">print_progression</a>(<span class="keyword">const</span> ConditionalOStream &amp;pcout) <span class="keyword">override</span>;</div>
-<div class="line"><a id="l00955" name="l00955"></a><span class="lineno">  955</span>};</div>
+<div class="line"><a id="l00933" name="l00933"></a><span class="lineno">  933</span><span class="comment"></span> </div>
+<div class="line"><a id="l00934" name="l00934"></a><span class="lineno">  934</span><span class="comment">/**</span></div>
+<div class="line"><a id="l00935" name="l00935"></a><span class="lineno">  935</span><span class="comment"> * @brief Transient simulation control tailored for the Discrete Element Method (DEM)</span></div>
+<div class="line"><a id="l00936" name="l00936"></a><span class="lineno">  936</span><span class="comment"> *</span></div>
+<div class="line"><a id="l00937" name="l00937"></a><span class="lineno">  937</span><span class="comment"> * This class specializes SimulationControlTransient for DEM simulations.</span></div>
+<div class="line"><a id="l00938" name="l00938"></a><span class="lineno">  938</span><span class="comment"> * It provides DEM-specific progress reporting and output formatting.</span></div>
+<div class="line"><a id="l00939" name="l00939"></a><span class="lineno">  939</span><span class="comment"> */</span></div>
+<div class="foldopen" id="foldopen00940" data-start="{" data-end="};">
+<div class="line"><a id="l00940" name="l00940"></a><span class="lineno"><a class="line" href="classSimulationControlTransientDEM.html">  940</a></span><span class="keyword">class </span><a class="code hl_class" href="classSimulationControlTransientDEM.html">SimulationControlTransientDEM</a> : <span class="keyword">public</span> <a class="code hl_class" href="classSimulationControlTransient.html">SimulationControlTransient</a></div>
+<div class="line"><a id="l00941" name="l00941"></a><span class="lineno">  941</span>{</div>
+<div class="line"><a id="l00942" name="l00942"></a><span class="lineno">  942</span><span class="keyword">public</span>:<span class="comment"></span></div>
+<div class="line"><a id="l00943" name="l00943"></a><span class="lineno">  943</span><span class="comment">  /**</span></div>
+<div class="line"><a id="l00944" name="l00944"></a><span class="lineno">  944</span><span class="comment">   * @brief Construct a DEM transient simulation control object</span></div>
+<div class="line"><a id="l00945" name="l00945"></a><span class="lineno">  945</span><span class="comment">   *</span></div>
+<div class="line"><a id="l00946" name="l00946"></a><span class="lineno">  946</span><span class="comment">   * @param[in] param Structure of the parameters for the simulation control</span></div>
+<div class="line"><a id="l00947" name="l00947"></a><span class="lineno">  947</span><span class="comment">   */</span></div>
+<div class="line"><a id="l00948" name="l00948"></a><span class="lineno">  948</span>  <a class="code hl_class" href="classSimulationControlTransientDEM.html">SimulationControlTransientDEM</a>(<span class="keyword">const</span> <a class="code hl_struct" href="structParameters_1_1SimulationControl.html">Parameters::SimulationControl</a> &amp;param);</div>
+<div class="line"><a id="l00949" name="l00949"></a><span class="lineno">  949</span><span class="comment"></span> </div>
+<div class="line"><a id="l00950" name="l00950"></a><span class="lineno">  950</span><span class="comment">  /**</span></div>
+<div class="line"><a id="l00951" name="l00951"></a><span class="lineno">  951</span><span class="comment">   * @brief Print the current progress status of the DEM simulation</span></div>
+<div class="line"><a id="l00952" name="l00952"></a><span class="lineno">  952</span><span class="comment">   *</span></div>
+<div class="line"><a id="l00953" name="l00953"></a><span class="lineno">  953</span><span class="comment">   * Provides DEM-specific formatting and information in the progress output.</span></div>
+<div class="line"><a id="l00954" name="l00954"></a><span class="lineno">  954</span><span class="comment">   *</span></div>
+<div class="line"><a id="l00955" name="l00955"></a><span class="lineno">  955</span><span class="comment">   * @param[in] pcout Parallel conditional output stream used to print the</span></div>
+<div class="line"><a id="l00956" name="l00956"></a><span class="lineno">  956</span><span class="comment">   * information</span></div>
+<div class="line"><a id="l00957" name="l00957"></a><span class="lineno">  957</span><span class="comment">   */</span></div>
+<div class="line"><a id="l00958" name="l00958"></a><span class="lineno">  958</span>  <span class="keyword">virtual</span> <span class="keywordtype">void</span></div>
+<div class="line"><a id="l00959" name="l00959"></a><span class="lineno">  959</span>  <a class="code hl_function" href="classSimulationControlTransientDEM.html#a6760db7b27f43507bc6727a855beb4a3">print_progression</a>(<span class="keyword">const</span> ConditionalOStream &amp;pcout) <span class="keyword">override</span>;</div>
+<div class="line"><a id="l00960" name="l00960"></a><span class="lineno">  960</span>};</div>
 </div>
-<div class="line"><a id="l00956" name="l00956"></a><span class="lineno">  956</span><span class="comment"></span> </div>
-<div class="line"><a id="l00957" name="l00957"></a><span class="lineno">  957</span><span class="comment">/**</span></div>
-<div class="line"><a id="l00958" name="l00958"></a><span class="lineno">  958</span><span class="comment"> * @brief Simulation control for steady-state simulations</span></div>
-<div class="line"><a id="l00959" name="l00959"></a><span class="lineno">  959</span><span class="comment"> *</span></div>
-<div class="line"><a id="l00960" name="l00960"></a><span class="lineno">  960</span><span class="comment"> * This class handles steady-state simulations where time integration is not</span></div>
-<div class="line"><a id="l00961" name="l00961"></a><span class="lineno">  961</span><span class="comment"> * required. The simulation progresses through iterations until the specified</span></div>
-<div class="line"><a id="l00962" name="l00962"></a><span class="lineno">  962</span><span class="comment"> * number of mesh adaptations is reached or the maximum number of iterations</span></div>
-<div class="line"><a id="l00963" name="l00963"></a><span class="lineno">  963</span><span class="comment"> * is completed.</span></div>
+<div class="line"><a id="l00961" name="l00961"></a><span class="lineno">  961</span><span class="comment"></span> </div>
+<div class="line"><a id="l00962" name="l00962"></a><span class="lineno">  962</span><span class="comment">/**</span></div>
+<div class="line"><a id="l00963" name="l00963"></a><span class="lineno">  963</span><span class="comment"> * @brief Simulation control for steady-state simulations</span></div>
 <div class="line"><a id="l00964" name="l00964"></a><span class="lineno">  964</span><span class="comment"> *</span></div>
-<div class="line"><a id="l00965" name="l00965"></a><span class="lineno">  965</span><span class="comment"> * @note Steady-state simulations do not use adaptive time stepping.</span></div>
-<div class="line"><a id="l00966" name="l00966"></a><span class="lineno">  966</span><span class="comment"> */</span></div>
-<div class="foldopen" id="foldopen00967" data-start="{" data-end="};">
-<div class="line"><a id="l00967" name="l00967"></a><span class="lineno"><a class="line" href="classSimulationControlSteady.html">  967</a></span><span class="keyword">class </span><a class="code hl_class" href="classSimulationControlSteady.html">SimulationControlSteady</a> : <span class="keyword">public</span> <a class="code hl_class" href="classSimulationControl.html">SimulationControl</a></div>
-<div class="line"><a id="l00968" name="l00968"></a><span class="lineno">  968</span>{</div>
-<div class="line"><a id="l00969" name="l00969"></a><span class="lineno">  969</span><span class="keyword">public</span>:<span class="comment"></span></div>
-<div class="line"><a id="l00970" name="l00970"></a><span class="lineno">  970</span><span class="comment">  /**</span></div>
-<div class="line"><a id="l00971" name="l00971"></a><span class="lineno">  971</span><span class="comment">   * @brief Construct a steady-state simulation control object</span></div>
-<div class="line"><a id="l00972" name="l00972"></a><span class="lineno">  972</span><span class="comment">   *</span></div>
-<div class="line"><a id="l00973" name="l00973"></a><span class="lineno">  973</span><span class="comment">   * @param[in] param Structure of the parameters for the simulation control</span></div>
-<div class="line"><a id="l00974" name="l00974"></a><span class="lineno">  974</span><span class="comment">   */</span></div>
-<div class="line"><a id="l00975" name="l00975"></a><span class="lineno">  975</span>  <a class="code hl_class" href="classSimulationControlSteady.html">SimulationControlSteady</a>(<span class="keyword">const</span> <a class="code hl_struct" href="structParameters_1_1SimulationControl.html">Parameters::SimulationControl</a> &amp;param);</div>
-<div class="line"><a id="l00976" name="l00976"></a><span class="lineno">  976</span><span class="comment"></span> </div>
-<div class="line"><a id="l00977" name="l00977"></a><span class="lineno">  977</span><span class="comment">  /**</span></div>
-<div class="line"><a id="l00978" name="l00978"></a><span class="lineno">  978</span><span class="comment">   * @brief Print the current progress status of the steady-state simulation</span></div>
-<div class="line"><a id="l00979" name="l00979"></a><span class="lineno">  979</span><span class="comment">   *</span></div>
-<div class="line"><a id="l00980" name="l00980"></a><span class="lineno">  980</span><span class="comment">   * @param[in] pcout Parallel conditional output stream used to print the</span></div>
-<div class="line"><a id="l00981" name="l00981"></a><span class="lineno">  981</span><span class="comment">   * information</span></div>
-<div class="line"><a id="l00982" name="l00982"></a><span class="lineno">  982</span><span class="comment">   */</span></div>
-<div class="line"><a id="l00983" name="l00983"></a><span class="lineno">  983</span>  <span class="keyword">virtual</span> <span class="keywordtype">void</span></div>
-<div class="line"><a id="l00984" name="l00984"></a><span class="lineno">  984</span>  <a class="code hl_function" href="classSimulationControlSteady.html#af5cd362a775a8101ddc3ac7fe55376f8">print_progression</a>(<span class="keyword">const</span> ConditionalOStream &amp;pcout) <span class="keyword">override</span>;</div>
-<div class="line"><a id="l00985" name="l00985"></a><span class="lineno">  985</span><span class="comment"></span> </div>
-<div class="line"><a id="l00986" name="l00986"></a><span class="lineno">  986</span><span class="comment">  /**</span></div>
-<div class="line"><a id="l00987" name="l00987"></a><span class="lineno">  987</span><span class="comment">   * @brief Indicate if the simulation uses adaptive time stepping</span></div>
-<div class="line"><a id="l00988" name="l00988"></a><span class="lineno">  988</span><span class="comment">   *</span></div>
-<div class="line"><a id="l00989" name="l00989"></a><span class="lineno">  989</span><span class="comment">   * @return false (steady-state simulations do not use adaptive time stepping)</span></div>
-<div class="line"><a id="l00990" name="l00990"></a><span class="lineno">  990</span><span class="comment">   */</span></div>
-<div class="line"><a id="l00991" name="l00991"></a><span class="lineno">  991</span>  <span class="keywordtype">bool</span></div>
-<div class="foldopen" id="foldopen00992" data-start="{" data-end="}">
-<div class="line"><a id="l00992" name="l00992"></a><span class="lineno"><a class="line" href="classSimulationControlSteady.html#a85aa77566b417c4a337c457b1a92dee4">  992</a></span>  <a class="code hl_function" href="classSimulationControlSteady.html#a85aa77566b417c4a337c457b1a92dee4">is_adaptive_time_stepping</a>()<span class="keyword"> const override</span></div>
-<div class="line"><a id="l00993" name="l00993"></a><span class="lineno">  993</span><span class="keyword">  </span>{</div>
-<div class="line"><a id="l00994" name="l00994"></a><span class="lineno">  994</span>    <span class="keywordflow">return</span> <span class="keyword">false</span>;</div>
-<div class="line"><a id="l00995" name="l00995"></a><span class="lineno">  995</span>  }</div>
+<div class="line"><a id="l00965" name="l00965"></a><span class="lineno">  965</span><span class="comment"> * This class handles steady-state simulations where time integration is not</span></div>
+<div class="line"><a id="l00966" name="l00966"></a><span class="lineno">  966</span><span class="comment"> * required. The simulation progresses through iterations until the specified</span></div>
+<div class="line"><a id="l00967" name="l00967"></a><span class="lineno">  967</span><span class="comment"> * number of mesh adaptations is reached or the maximum number of iterations</span></div>
+<div class="line"><a id="l00968" name="l00968"></a><span class="lineno">  968</span><span class="comment"> * is completed.</span></div>
+<div class="line"><a id="l00969" name="l00969"></a><span class="lineno">  969</span><span class="comment"> *</span></div>
+<div class="line"><a id="l00970" name="l00970"></a><span class="lineno">  970</span><span class="comment"> * @note Steady-state simulations do not use adaptive time stepping.</span></div>
+<div class="line"><a id="l00971" name="l00971"></a><span class="lineno">  971</span><span class="comment"> */</span></div>
+<div class="foldopen" id="foldopen00972" data-start="{" data-end="};">
+<div class="line"><a id="l00972" name="l00972"></a><span class="lineno"><a class="line" href="classSimulationControlSteady.html">  972</a></span><span class="keyword">class </span><a class="code hl_class" href="classSimulationControlSteady.html">SimulationControlSteady</a> : <span class="keyword">public</span> <a class="code hl_class" href="classSimulationControl.html">SimulationControl</a></div>
+<div class="line"><a id="l00973" name="l00973"></a><span class="lineno">  973</span>{</div>
+<div class="line"><a id="l00974" name="l00974"></a><span class="lineno">  974</span><span class="keyword">public</span>:<span class="comment"></span></div>
+<div class="line"><a id="l00975" name="l00975"></a><span class="lineno">  975</span><span class="comment">  /**</span></div>
+<div class="line"><a id="l00976" name="l00976"></a><span class="lineno">  976</span><span class="comment">   * @brief Construct a steady-state simulation control object</span></div>
+<div class="line"><a id="l00977" name="l00977"></a><span class="lineno">  977</span><span class="comment">   *</span></div>
+<div class="line"><a id="l00978" name="l00978"></a><span class="lineno">  978</span><span class="comment">   * @param[in] param Structure of the parameters for the simulation control</span></div>
+<div class="line"><a id="l00979" name="l00979"></a><span class="lineno">  979</span><span class="comment">   */</span></div>
+<div class="line"><a id="l00980" name="l00980"></a><span class="lineno">  980</span>  <a class="code hl_class" href="classSimulationControlSteady.html">SimulationControlSteady</a>(<span class="keyword">const</span> <a class="code hl_struct" href="structParameters_1_1SimulationControl.html">Parameters::SimulationControl</a> &amp;param);</div>
+<div class="line"><a id="l00981" name="l00981"></a><span class="lineno">  981</span><span class="comment"></span> </div>
+<div class="line"><a id="l00982" name="l00982"></a><span class="lineno">  982</span><span class="comment">  /**</span></div>
+<div class="line"><a id="l00983" name="l00983"></a><span class="lineno">  983</span><span class="comment">   * @brief Print the current progress status of the steady-state simulation</span></div>
+<div class="line"><a id="l00984" name="l00984"></a><span class="lineno">  984</span><span class="comment">   *</span></div>
+<div class="line"><a id="l00985" name="l00985"></a><span class="lineno">  985</span><span class="comment">   * @param[in] pcout Parallel conditional output stream used to print the</span></div>
+<div class="line"><a id="l00986" name="l00986"></a><span class="lineno">  986</span><span class="comment">   * information</span></div>
+<div class="line"><a id="l00987" name="l00987"></a><span class="lineno">  987</span><span class="comment">   */</span></div>
+<div class="line"><a id="l00988" name="l00988"></a><span class="lineno">  988</span>  <span class="keyword">virtual</span> <span class="keywordtype">void</span></div>
+<div class="line"><a id="l00989" name="l00989"></a><span class="lineno">  989</span>  <a class="code hl_function" href="classSimulationControlSteady.html#af5cd362a775a8101ddc3ac7fe55376f8">print_progression</a>(<span class="keyword">const</span> ConditionalOStream &amp;pcout) <span class="keyword">override</span>;</div>
+<div class="line"><a id="l00990" name="l00990"></a><span class="lineno">  990</span><span class="comment"></span> </div>
+<div class="line"><a id="l00991" name="l00991"></a><span class="lineno">  991</span><span class="comment">  /**</span></div>
+<div class="line"><a id="l00992" name="l00992"></a><span class="lineno">  992</span><span class="comment">   * @brief Indicate if the simulation uses adaptive time stepping</span></div>
+<div class="line"><a id="l00993" name="l00993"></a><span class="lineno">  993</span><span class="comment">   *</span></div>
+<div class="line"><a id="l00994" name="l00994"></a><span class="lineno">  994</span><span class="comment">   * @return false (steady-state simulations do not use adaptive time stepping)</span></div>
+<div class="line"><a id="l00995" name="l00995"></a><span class="lineno">  995</span><span class="comment">   */</span></div>
+<div class="line"><a id="l00996" name="l00996"></a><span class="lineno">  996</span>  <span class="keywordtype">bool</span></div>
+<div class="foldopen" id="foldopen00997" data-start="{" data-end="}">
+<div class="line"><a id="l00997" name="l00997"></a><span class="lineno"><a class="line" href="classSimulationControlSteady.html#a85aa77566b417c4a337c457b1a92dee4">  997</a></span>  <a class="code hl_function" href="classSimulationControlSteady.html#a85aa77566b417c4a337c457b1a92dee4">is_adaptive_time_stepping</a>()<span class="keyword"> const override</span></div>
+<div class="line"><a id="l00998" name="l00998"></a><span class="lineno">  998</span><span class="keyword">  </span>{</div>
+<div class="line"><a id="l00999" name="l00999"></a><span class="lineno">  999</span>    <span class="keywordflow">return</span> <span class="keyword">false</span>;</div>
+<div class="line"><a id="l01000" name="l01000"></a><span class="lineno"> 1000</span>  }</div>
 </div>
-<div class="line"><a id="l00996" name="l00996"></a><span class="lineno">  996</span><span class="comment"></span> </div>
-<div class="line"><a id="l00997" name="l00997"></a><span class="lineno">  997</span><span class="comment">  /**</span></div>
-<div class="line"><a id="l00998" name="l00998"></a><span class="lineno">  998</span><span class="comment">   * @brief Proceed with the simulation until the end condition is reached</span></div>
-<div class="line"><a id="l00999" name="l00999"></a><span class="lineno">  999</span><span class="comment">   *</span></div>
-<div class="line"><a id="l01000" name="l01000"></a><span class="lineno"> 1000</span><span class="comment">   * Advances the simulation by incrementing the iteration number.</span></div>
-<div class="line"><a id="l01001" name="l01001"></a><span class="lineno"> 1001</span><span class="comment">   *</span></div>
-<div class="line"><a id="l01002" name="l01002"></a><span class="lineno"> 1002</span><span class="comment">   * @return true if the simulation should continue, false otherwise</span></div>
-<div class="line"><a id="l01003" name="l01003"></a><span class="lineno"> 1003</span><span class="comment">   */</span></div>
-<div class="line"><a id="l01004" name="l01004"></a><span class="lineno"> 1004</span>  <span class="keyword">virtual</span> <span class="keywordtype">bool</span></div>
-<div class="line"><a id="l01005" name="l01005"></a><span class="lineno"> 1005</span>  <a class="code hl_function" href="classSimulationControlSteady.html#a1a841b038955ea6ba6b6d8a938d442f9">integrate</a>() <span class="keyword">override</span>;</div>
-<div class="line"><a id="l01006" name="l01006"></a><span class="lineno"> 1006</span><span class="comment"></span> </div>
-<div class="line"><a id="l01007" name="l01007"></a><span class="lineno"> 1007</span><span class="comment">  /**</span></div>
-<div class="line"><a id="l01008" name="l01008"></a><span class="lineno"> 1008</span><span class="comment">   * @brief End the simulation when the number of mesh adaptations is reached</span></div>
-<div class="line"><a id="l01009" name="l01009"></a><span class="lineno"> 1009</span><span class="comment">   *</span></div>
-<div class="line"><a id="l01010" name="l01010"></a><span class="lineno"> 1010</span><span class="comment">   * @return true if the required number of mesh adaptations has been completed, false otherwise</span></div>
-<div class="line"><a id="l01011" name="l01011"></a><span class="lineno"> 1011</span><span class="comment">   */</span></div>
-<div class="line"><a id="l01012" name="l01012"></a><span class="lineno"> 1012</span>  <span class="keyword">virtual</span> <span class="keywordtype">bool</span></div>
-<div class="line"><a id="l01013" name="l01013"></a><span class="lineno"> 1013</span>  <a class="code hl_function" href="classSimulationControlSteady.html#a9131dcc7cba2713e43ed16653da5f7c0">is_at_end</a>() <span class="keyword">override</span>;</div>
-<div class="line"><a id="l01014" name="l01014"></a><span class="lineno"> 1014</span>};</div>
+<div class="line"><a id="l01001" name="l01001"></a><span class="lineno"> 1001</span><span class="comment"></span> </div>
+<div class="line"><a id="l01002" name="l01002"></a><span class="lineno"> 1002</span><span class="comment">  /**</span></div>
+<div class="line"><a id="l01003" name="l01003"></a><span class="lineno"> 1003</span><span class="comment">   * @brief Proceed with the simulation until the end condition is reached</span></div>
+<div class="line"><a id="l01004" name="l01004"></a><span class="lineno"> 1004</span><span class="comment">   *</span></div>
+<div class="line"><a id="l01005" name="l01005"></a><span class="lineno"> 1005</span><span class="comment">   * Advances the simulation by incrementing the iteration number.</span></div>
+<div class="line"><a id="l01006" name="l01006"></a><span class="lineno"> 1006</span><span class="comment">   *</span></div>
+<div class="line"><a id="l01007" name="l01007"></a><span class="lineno"> 1007</span><span class="comment">   * @return true if the simulation should continue, false otherwise</span></div>
+<div class="line"><a id="l01008" name="l01008"></a><span class="lineno"> 1008</span><span class="comment">   */</span></div>
+<div class="line"><a id="l01009" name="l01009"></a><span class="lineno"> 1009</span>  <span class="keyword">virtual</span> <span class="keywordtype">bool</span></div>
+<div class="line"><a id="l01010" name="l01010"></a><span class="lineno"> 1010</span>  <a class="code hl_function" href="classSimulationControlSteady.html#a1a841b038955ea6ba6b6d8a938d442f9">integrate</a>() <span class="keyword">override</span>;</div>
+<div class="line"><a id="l01011" name="l01011"></a><span class="lineno"> 1011</span><span class="comment"></span> </div>
+<div class="line"><a id="l01012" name="l01012"></a><span class="lineno"> 1012</span><span class="comment">  /**</span></div>
+<div class="line"><a id="l01013" name="l01013"></a><span class="lineno"> 1013</span><span class="comment">   * @brief End the simulation when the number of mesh adaptations is reached</span></div>
+<div class="line"><a id="l01014" name="l01014"></a><span class="lineno"> 1014</span><span class="comment">   *</span></div>
+<div class="line"><a id="l01015" name="l01015"></a><span class="lineno"> 1015</span><span class="comment">   * @return true if the required number of mesh adaptations has been completed, false otherwise</span></div>
+<div class="line"><a id="l01016" name="l01016"></a><span class="lineno"> 1016</span><span class="comment">   */</span></div>
+<div class="line"><a id="l01017" name="l01017"></a><span class="lineno"> 1017</span>  <span class="keyword">virtual</span> <span class="keywordtype">bool</span></div>
+<div class="line"><a id="l01018" name="l01018"></a><span class="lineno"> 1018</span>  <a class="code hl_function" href="classSimulationControlSteady.html#a9131dcc7cba2713e43ed16653da5f7c0">is_at_end</a>() <span class="keyword">override</span>;</div>
+<div class="line"><a id="l01019" name="l01019"></a><span class="lineno"> 1019</span>};</div>
 </div>
-<div class="line"><a id="l01015" name="l01015"></a><span class="lineno"> 1015</span><span class="comment"></span> </div>
-<div class="line"><a id="l01016" name="l01016"></a><span class="lineno"> 1016</span><span class="comment">/**</span></div>
-<div class="line"><a id="l01017" name="l01017"></a><span class="lineno"> 1017</span><span class="comment"> * @brief Simulation control for adjoint steady-state simulations</span></div>
-<div class="line"><a id="l01018" name="l01018"></a><span class="lineno"> 1018</span><span class="comment"> *</span></div>
-<div class="line"><a id="l01019" name="l01019"></a><span class="lineno"> 1019</span><span class="comment"> * This class manages adjoint simulations that use a pseudo-transient approach</span></div>
-<div class="line"><a id="l01020" name="l01020"></a><span class="lineno"> 1020</span><span class="comment"> * to converge to a steady state. The simulation terminates when the residual</span></div>
-<div class="line"><a id="l01021" name="l01021"></a><span class="lineno"> 1021</span><span class="comment"> * reaches a specified tolerance (stop_tolerance).</span></div>
-<div class="line"><a id="l01022" name="l01022"></a><span class="lineno"> 1022</span><span class="comment"> *</span></div>
-<div class="line"><a id="l01023" name="l01023"></a><span class="lineno"> 1023</span><span class="comment"> * The class inherits from SimulationControlTransient to leverage time-stepping</span></div>
-<div class="line"><a id="l01024" name="l01024"></a><span class="lineno"> 1024</span><span class="comment"> * mechanisms, but applies them in the context of an adjoint problem where time</span></div>
-<div class="line"><a id="l01025" name="l01025"></a><span class="lineno"> 1025</span><span class="comment"> * is a pseudo-parameter for convergence.</span></div>
-<div class="line"><a id="l01026" name="l01026"></a><span class="lineno"> 1026</span><span class="comment"> */</span></div>
-<div class="foldopen" id="foldopen01027" data-start="{" data-end="};">
-<div class="line"><a id="l01027" name="l01027"></a><span class="lineno"><a class="line" href="classSimulationControlAdjointSteady.html"> 1027</a></span><span class="keyword">class </span><a class="code hl_class" href="classSimulationControlAdjointSteady.html">SimulationControlAdjointSteady</a> : <span class="keyword">public</span> <a class="code hl_class" href="classSimulationControlTransient.html">SimulationControlTransient</a></div>
-<div class="line"><a id="l01028" name="l01028"></a><span class="lineno"> 1028</span>{</div>
-<div class="line"><a id="l01029" name="l01029"></a><span class="lineno"> 1029</span><span class="keyword">public</span>:<span class="comment"></span></div>
-<div class="line"><a id="l01030" name="l01030"></a><span class="lineno"> 1030</span><span class="comment">  /**</span></div>
-<div class="line"><a id="l01031" name="l01031"></a><span class="lineno"> 1031</span><span class="comment">   * @brief Construct an adjoint steady-state simulation control object</span></div>
-<div class="line"><a id="l01032" name="l01032"></a><span class="lineno"> 1032</span><span class="comment">   *</span></div>
-<div class="line"><a id="l01033" name="l01033"></a><span class="lineno"> 1033</span><span class="comment">   * @param[in] param Structure of the parameters for the simulation control</span></div>
-<div class="line"><a id="l01034" name="l01034"></a><span class="lineno"> 1034</span><span class="comment">   */</span></div>
-<div class="line"><a id="l01035" name="l01035"></a><span class="lineno"> 1035</span>  <a class="code hl_class" href="classSimulationControlAdjointSteady.html">SimulationControlAdjointSteady</a>(<span class="keyword">const</span> <a class="code hl_struct" href="structParameters_1_1SimulationControl.html">Parameters::SimulationControl</a> &amp;param);</div>
-<div class="line"><a id="l01036" name="l01036"></a><span class="lineno"> 1036</span><span class="comment"></span> </div>
-<div class="line"><a id="l01037" name="l01037"></a><span class="lineno"> 1037</span><span class="comment">  /**</span></div>
-<div class="line"><a id="l01038" name="l01038"></a><span class="lineno"> 1038</span><span class="comment">   * @brief Print the current progress status of the adjoint simulation</span></div>
-<div class="line"><a id="l01039" name="l01039"></a><span class="lineno"> 1039</span><span class="comment">   *</span></div>
-<div class="line"><a id="l01040" name="l01040"></a><span class="lineno"> 1040</span><span class="comment">   * @param[in] pcout Parallel conditional output stream used to print the</span></div>
-<div class="line"><a id="l01041" name="l01041"></a><span class="lineno"> 1041</span><span class="comment">   * information</span></div>
-<div class="line"><a id="l01042" name="l01042"></a><span class="lineno"> 1042</span><span class="comment">   */</span></div>
-<div class="line"><a id="l01043" name="l01043"></a><span class="lineno"> 1043</span>  <span class="keyword">virtual</span> <span class="keywordtype">void</span></div>
-<div class="line"><a id="l01044" name="l01044"></a><span class="lineno"> 1044</span>  <a class="code hl_function" href="classSimulationControlAdjointSteady.html#aebd269a2d8349f0a48a995d259002fe7">print_progression</a>(<span class="keyword">const</span> ConditionalOStream &amp;pcout) <span class="keyword">override</span>;</div>
-<div class="line"><a id="l01045" name="l01045"></a><span class="lineno"> 1045</span><span class="comment"></span> </div>
-<div class="line"><a id="l01046" name="l01046"></a><span class="lineno"> 1046</span><span class="comment">  /**</span></div>
-<div class="line"><a id="l01047" name="l01047"></a><span class="lineno"> 1047</span><span class="comment">   * @brief End the simulation when the desired residual tolerance is reached</span></div>
-<div class="line"><a id="l01048" name="l01048"></a><span class="lineno"> 1048</span><span class="comment">   *</span></div>
-<div class="line"><a id="l01049" name="l01049"></a><span class="lineno"> 1049</span><span class="comment">   * @return true if the residual has reached the stop_tolerance, false otherwise</span></div>
-<div class="line"><a id="l01050" name="l01050"></a><span class="lineno"> 1050</span><span class="comment">   */</span></div>
-<div class="line"><a id="l01051" name="l01051"></a><span class="lineno"> 1051</span>  <span class="keyword">virtual</span> <span class="keywordtype">bool</span></div>
-<div class="line"><a id="l01052" name="l01052"></a><span class="lineno"> 1052</span>  <a class="code hl_function" href="classSimulationControlAdjointSteady.html#ac8534ba715f32012c81368600656323d">is_at_end</a>() <span class="keyword">override</span>;</div>
-<div class="line"><a id="l01053" name="l01053"></a><span class="lineno"> 1053</span>};</div>
+<div class="line"><a id="l01020" name="l01020"></a><span class="lineno"> 1020</span><span class="comment"></span> </div>
+<div class="line"><a id="l01021" name="l01021"></a><span class="lineno"> 1021</span><span class="comment">/**</span></div>
+<div class="line"><a id="l01022" name="l01022"></a><span class="lineno"> 1022</span><span class="comment"> * @brief Simulation control for adjoint steady-state simulations</span></div>
+<div class="line"><a id="l01023" name="l01023"></a><span class="lineno"> 1023</span><span class="comment"> *</span></div>
+<div class="line"><a id="l01024" name="l01024"></a><span class="lineno"> 1024</span><span class="comment"> * This class manages adjoint simulations that use a pseudo-transient approach</span></div>
+<div class="line"><a id="l01025" name="l01025"></a><span class="lineno"> 1025</span><span class="comment"> * to converge to a steady state. The simulation terminates when the residual</span></div>
+<div class="line"><a id="l01026" name="l01026"></a><span class="lineno"> 1026</span><span class="comment"> * reaches a specified tolerance (stop_tolerance).</span></div>
+<div class="line"><a id="l01027" name="l01027"></a><span class="lineno"> 1027</span><span class="comment"> *</span></div>
+<div class="line"><a id="l01028" name="l01028"></a><span class="lineno"> 1028</span><span class="comment"> * The class inherits from SimulationControlTransient to leverage time-stepping</span></div>
+<div class="line"><a id="l01029" name="l01029"></a><span class="lineno"> 1029</span><span class="comment"> * mechanisms, but applies them in the context of an adjoint problem where time</span></div>
+<div class="line"><a id="l01030" name="l01030"></a><span class="lineno"> 1030</span><span class="comment"> * is a pseudo-parameter for convergence.</span></div>
+<div class="line"><a id="l01031" name="l01031"></a><span class="lineno"> 1031</span><span class="comment"> */</span></div>
+<div class="foldopen" id="foldopen01032" data-start="{" data-end="};">
+<div class="line"><a id="l01032" name="l01032"></a><span class="lineno"><a class="line" href="classSimulationControlAdjointSteady.html"> 1032</a></span><span class="keyword">class </span><a class="code hl_class" href="classSimulationControlAdjointSteady.html">SimulationControlAdjointSteady</a> : <span class="keyword">public</span> <a class="code hl_class" href="classSimulationControlTransient.html">SimulationControlTransient</a></div>
+<div class="line"><a id="l01033" name="l01033"></a><span class="lineno"> 1033</span>{</div>
+<div class="line"><a id="l01034" name="l01034"></a><span class="lineno"> 1034</span><span class="keyword">public</span>:<span class="comment"></span></div>
+<div class="line"><a id="l01035" name="l01035"></a><span class="lineno"> 1035</span><span class="comment">  /**</span></div>
+<div class="line"><a id="l01036" name="l01036"></a><span class="lineno"> 1036</span><span class="comment">   * @brief Construct an adjoint steady-state simulation control object</span></div>
+<div class="line"><a id="l01037" name="l01037"></a><span class="lineno"> 1037</span><span class="comment">   *</span></div>
+<div class="line"><a id="l01038" name="l01038"></a><span class="lineno"> 1038</span><span class="comment">   * @param[in] param Structure of the parameters for the simulation control</span></div>
+<div class="line"><a id="l01039" name="l01039"></a><span class="lineno"> 1039</span><span class="comment">   */</span></div>
+<div class="line"><a id="l01040" name="l01040"></a><span class="lineno"> 1040</span>  <a class="code hl_class" href="classSimulationControlAdjointSteady.html">SimulationControlAdjointSteady</a>(<span class="keyword">const</span> <a class="code hl_struct" href="structParameters_1_1SimulationControl.html">Parameters::SimulationControl</a> &amp;param);</div>
+<div class="line"><a id="l01041" name="l01041"></a><span class="lineno"> 1041</span><span class="comment"></span> </div>
+<div class="line"><a id="l01042" name="l01042"></a><span class="lineno"> 1042</span><span class="comment">  /**</span></div>
+<div class="line"><a id="l01043" name="l01043"></a><span class="lineno"> 1043</span><span class="comment">   * @brief Print the current progress status of the adjoint simulation</span></div>
+<div class="line"><a id="l01044" name="l01044"></a><span class="lineno"> 1044</span><span class="comment">   *</span></div>
+<div class="line"><a id="l01045" name="l01045"></a><span class="lineno"> 1045</span><span class="comment">   * @param[in] pcout Parallel conditional output stream used to print the</span></div>
+<div class="line"><a id="l01046" name="l01046"></a><span class="lineno"> 1046</span><span class="comment">   * information</span></div>
+<div class="line"><a id="l01047" name="l01047"></a><span class="lineno"> 1047</span><span class="comment">   */</span></div>
+<div class="line"><a id="l01048" name="l01048"></a><span class="lineno"> 1048</span>  <span class="keyword">virtual</span> <span class="keywordtype">void</span></div>
+<div class="line"><a id="l01049" name="l01049"></a><span class="lineno"> 1049</span>  <a class="code hl_function" href="classSimulationControlAdjointSteady.html#aebd269a2d8349f0a48a995d259002fe7">print_progression</a>(<span class="keyword">const</span> ConditionalOStream &amp;pcout) <span class="keyword">override</span>;</div>
+<div class="line"><a id="l01050" name="l01050"></a><span class="lineno"> 1050</span><span class="comment"></span> </div>
+<div class="line"><a id="l01051" name="l01051"></a><span class="lineno"> 1051</span><span class="comment">  /**</span></div>
+<div class="line"><a id="l01052" name="l01052"></a><span class="lineno"> 1052</span><span class="comment">   * @brief End the simulation when the desired residual tolerance is reached</span></div>
+<div class="line"><a id="l01053" name="l01053"></a><span class="lineno"> 1053</span><span class="comment">   *</span></div>
+<div class="line"><a id="l01054" name="l01054"></a><span class="lineno"> 1054</span><span class="comment">   * @return true if the residual has reached the stop_tolerance, false otherwise</span></div>
+<div class="line"><a id="l01055" name="l01055"></a><span class="lineno"> 1055</span><span class="comment">   */</span></div>
+<div class="line"><a id="l01056" name="l01056"></a><span class="lineno"> 1056</span>  <span class="keyword">virtual</span> <span class="keywordtype">bool</span></div>
+<div class="line"><a id="l01057" name="l01057"></a><span class="lineno"> 1057</span>  <a class="code hl_function" href="classSimulationControlAdjointSteady.html#ac8534ba715f32012c81368600656323d">is_at_end</a>() <span class="keyword">override</span>;</div>
+<div class="line"><a id="l01058" name="l01058"></a><span class="lineno"> 1058</span>};</div>
 </div>
-<div class="line"><a id="l01054" name="l01054"></a><span class="lineno"> 1054</span> </div>
-<div class="line"><a id="l01055" name="l01055"></a><span class="lineno"> 1055</span><span class="comment"></span> </div>
-<div class="line"><a id="l01056" name="l01056"></a><span class="lineno"> 1056</span><span class="comment">/**</span></div>
-<div class="line"><a id="l01057" name="l01057"></a><span class="lineno"> 1057</span><span class="comment"> * @brief Simulation control for ray tracing simulations</span></div>
-<div class="line"><a id="l01058" name="l01058"></a><span class="lineno"> 1058</span><span class="comment"> *</span></div>
-<div class="line"><a id="l01059" name="l01059"></a><span class="lineno"> 1059</span><span class="comment"> * This class manages ray tracing simulations where photons are traced through</span></div>
-<div class="line"><a id="l01060" name="l01060"></a><span class="lineno"> 1060</span><span class="comment"> * a computational domain. The simulation terminates when all photons have</span></div>
-<div class="line"><a id="l01061" name="l01061"></a><span class="lineno"> 1061</span><span class="comment"> * exited the triangulation or been absorbed.</span></div>
-<div class="line"><a id="l01062" name="l01062"></a><span class="lineno"> 1062</span><span class="comment"> *</span></div>
-<div class="line"><a id="l01063" name="l01063"></a><span class="lineno"> 1063</span><span class="comment"> * Ray tracing simulations do not use time stepping in the traditional sense;</span></div>
-<div class="line"><a id="l01064" name="l01064"></a><span class="lineno"> 1064</span><span class="comment"> * instead, iterations represent photon propagation steps until all photons</span></div>
-<div class="line"><a id="l01065" name="l01065"></a><span class="lineno"> 1065</span><span class="comment"> * have completed their trajectories.</span></div>
-<div class="line"><a id="l01066" name="l01066"></a><span class="lineno"> 1066</span><span class="comment"> */</span></div>
-<div class="foldopen" id="foldopen01067" data-start="{" data-end="};">
-<div class="line"><a id="l01067" name="l01067"></a><span class="lineno"><a class="line" href="classSimulationControlRayTracing.html"> 1067</a></span><span class="keyword">class </span><a class="code hl_class" href="classSimulationControlRayTracing.html">SimulationControlRayTracing</a> : <span class="keyword">public</span> <a class="code hl_class" href="classSimulationControl.html">SimulationControl</a></div>
-<div class="line"><a id="l01068" name="l01068"></a><span class="lineno"> 1068</span>{</div>
-<div class="line"><a id="l01069" name="l01069"></a><span class="lineno"> 1069</span><span class="keyword">public</span>:<span class="comment"></span></div>
-<div class="line"><a id="l01070" name="l01070"></a><span class="lineno"> 1070</span><span class="comment">  /**</span></div>
-<div class="line"><a id="l01071" name="l01071"></a><span class="lineno"> 1071</span><span class="comment">   * @brief Construct a ray tracing simulation control object</span></div>
-<div class="line"><a id="l01072" name="l01072"></a><span class="lineno"> 1072</span><span class="comment">   *</span></div>
-<div class="line"><a id="l01073" name="l01073"></a><span class="lineno"> 1073</span><span class="comment">   * @param[in] param Structure of the parameters for the simulation control</span></div>
-<div class="line"><a id="l01074" name="l01074"></a><span class="lineno"> 1074</span><span class="comment">   * @param[in] input_photon_handler The particle handler containing the photons</span></div>
-<div class="line"><a id="l01075" name="l01075"></a><span class="lineno"> 1075</span><span class="comment">   * to be traced</span></div>
-<div class="line"><a id="l01076" name="l01076"></a><span class="lineno"> 1076</span><span class="comment">   */</span></div>
-<div class="line"><a id="l01077" name="l01077"></a><span class="lineno"> 1077</span>  <a class="code hl_class" href="classSimulationControlRayTracing.html">SimulationControlRayTracing</a>(</div>
-<div class="line"><a id="l01078" name="l01078"></a><span class="lineno"> 1078</span>    <span class="keyword">const</span> <a class="code hl_struct" href="structParameters_1_1SimulationControl.html">Parameters::SimulationControl</a> &amp;param,</div>
-<div class="line"><a id="l01079" name="l01079"></a><span class="lineno"> 1079</span>    Particles::ParticleHandler&lt;3&gt;       &amp;input_photon_handler);</div>
-<div class="line"><a id="l01080" name="l01080"></a><span class="lineno"> 1080</span><span class="comment"></span> </div>
-<div class="line"><a id="l01081" name="l01081"></a><span class="lineno"> 1081</span><span class="comment">  /**</span></div>
-<div class="line"><a id="l01082" name="l01082"></a><span class="lineno"> 1082</span><span class="comment">   * @brief Proceed with the simulation until the end condition is reached</span></div>
-<div class="line"><a id="l01083" name="l01083"></a><span class="lineno"> 1083</span><span class="comment">   *</span></div>
-<div class="line"><a id="l01084" name="l01084"></a><span class="lineno"> 1084</span><span class="comment">   * Advances the ray tracing simulation by incrementing the iteration number.</span></div>
-<div class="line"><a id="l01085" name="l01085"></a><span class="lineno"> 1085</span><span class="comment">   *</span></div>
-<div class="line"><a id="l01086" name="l01086"></a><span class="lineno"> 1086</span><span class="comment">   * @return true if the simulation should continue, false otherwise</span></div>
-<div class="line"><a id="l01087" name="l01087"></a><span class="lineno"> 1087</span><span class="comment">   */</span></div>
-<div class="line"><a id="l01088" name="l01088"></a><span class="lineno"> 1088</span>  <span class="keyword">virtual</span> <span class="keywordtype">bool</span></div>
-<div class="line"><a id="l01089" name="l01089"></a><span class="lineno"> 1089</span>  <a class="code hl_function" href="classSimulationControlRayTracing.html#ae87a76cfa8ca3b1a4dba2c5b01ff4e76">integrate</a>() <span class="keyword">override</span>;</div>
-<div class="line"><a id="l01090" name="l01090"></a><span class="lineno"> 1090</span><span class="comment"></span> </div>
-<div class="line"><a id="l01091" name="l01091"></a><span class="lineno"> 1091</span><span class="comment">  /**</span></div>
-<div class="line"><a id="l01092" name="l01092"></a><span class="lineno"> 1092</span><span class="comment">   * @brief End the simulation when there are no longer any photons in the triangulation</span></div>
-<div class="line"><a id="l01093" name="l01093"></a><span class="lineno"> 1093</span><span class="comment">   *</span></div>
-<div class="line"><a id="l01094" name="l01094"></a><span class="lineno"> 1094</span><span class="comment">   * @return true if all photons have exited or been absorbed, false otherwise</span></div>
-<div class="line"><a id="l01095" name="l01095"></a><span class="lineno"> 1095</span><span class="comment">   */</span></div>
-<div class="line"><a id="l01096" name="l01096"></a><span class="lineno"> 1096</span>  <span class="keywordtype">bool</span></div>
-<div class="line"><a id="l01097" name="l01097"></a><span class="lineno"> 1097</span>  <a class="code hl_function" href="classSimulationControlRayTracing.html#a53bbbd46ef5219e3d6a86f28d5fed228">is_at_end</a>() <span class="keyword">override</span>;</div>
-<div class="line"><a id="l01098" name="l01098"></a><span class="lineno"> 1098</span><span class="comment"></span> </div>
-<div class="line"><a id="l01099" name="l01099"></a><span class="lineno"> 1099</span><span class="comment">  /**</span></div>
-<div class="line"><a id="l01100" name="l01100"></a><span class="lineno"> 1100</span><span class="comment">   * @brief Indicate if the simulation uses adaptive time stepping</span></div>
-<div class="line"><a id="l01101" name="l01101"></a><span class="lineno"> 1101</span><span class="comment">   *</span></div>
-<div class="line"><a id="l01102" name="l01102"></a><span class="lineno"> 1102</span><span class="comment">   * @return false (ray tracing simulations do not use adaptive time stepping)</span></div>
-<div class="line"><a id="l01103" name="l01103"></a><span class="lineno"> 1103</span><span class="comment">   */</span></div>
-<div class="line"><a id="l01104" name="l01104"></a><span class="lineno"> 1104</span>  <span class="keywordtype">bool</span></div>
-<div class="foldopen" id="foldopen01105" data-start="{" data-end="}">
-<div class="line"><a id="l01105" name="l01105"></a><span class="lineno"><a class="line" href="classSimulationControlRayTracing.html#a6a37f45fbdd791312b9599a275b5d076"> 1105</a></span>  <a class="code hl_function" href="classSimulationControlRayTracing.html#a6a37f45fbdd791312b9599a275b5d076">is_adaptive_time_stepping</a>()<span class="keyword"> const override</span></div>
-<div class="line"><a id="l01106" name="l01106"></a><span class="lineno"> 1106</span><span class="keyword">  </span>{</div>
-<div class="line"><a id="l01107" name="l01107"></a><span class="lineno"> 1107</span>    <span class="keywordflow">return</span> <span class="keyword">false</span>;</div>
-<div class="line"><a id="l01108" name="l01108"></a><span class="lineno"> 1108</span>  }</div>
+<div class="line"><a id="l01059" name="l01059"></a><span class="lineno"> 1059</span> </div>
+<div class="line"><a id="l01060" name="l01060"></a><span class="lineno"> 1060</span><span class="comment"></span> </div>
+<div class="line"><a id="l01061" name="l01061"></a><span class="lineno"> 1061</span><span class="comment">/**</span></div>
+<div class="line"><a id="l01062" name="l01062"></a><span class="lineno"> 1062</span><span class="comment"> * @brief Simulation control for ray tracing simulations</span></div>
+<div class="line"><a id="l01063" name="l01063"></a><span class="lineno"> 1063</span><span class="comment"> *</span></div>
+<div class="line"><a id="l01064" name="l01064"></a><span class="lineno"> 1064</span><span class="comment"> * This class manages ray tracing simulations where photons are traced through</span></div>
+<div class="line"><a id="l01065" name="l01065"></a><span class="lineno"> 1065</span><span class="comment"> * a computational domain. The simulation terminates when all photons have</span></div>
+<div class="line"><a id="l01066" name="l01066"></a><span class="lineno"> 1066</span><span class="comment"> * exited the triangulation or been absorbed.</span></div>
+<div class="line"><a id="l01067" name="l01067"></a><span class="lineno"> 1067</span><span class="comment"> *</span></div>
+<div class="line"><a id="l01068" name="l01068"></a><span class="lineno"> 1068</span><span class="comment"> * Ray tracing simulations do not use time stepping in the traditional sense;</span></div>
+<div class="line"><a id="l01069" name="l01069"></a><span class="lineno"> 1069</span><span class="comment"> * instead, iterations represent photon propagation steps until all photons</span></div>
+<div class="line"><a id="l01070" name="l01070"></a><span class="lineno"> 1070</span><span class="comment"> * have completed their trajectories.</span></div>
+<div class="line"><a id="l01071" name="l01071"></a><span class="lineno"> 1071</span><span class="comment"> */</span></div>
+<div class="foldopen" id="foldopen01072" data-start="{" data-end="};">
+<div class="line"><a id="l01072" name="l01072"></a><span class="lineno"><a class="line" href="classSimulationControlRayTracing.html"> 1072</a></span><span class="keyword">class </span><a class="code hl_class" href="classSimulationControlRayTracing.html">SimulationControlRayTracing</a> : <span class="keyword">public</span> <a class="code hl_class" href="classSimulationControl.html">SimulationControl</a></div>
+<div class="line"><a id="l01073" name="l01073"></a><span class="lineno"> 1073</span>{</div>
+<div class="line"><a id="l01074" name="l01074"></a><span class="lineno"> 1074</span><span class="keyword">public</span>:<span class="comment"></span></div>
+<div class="line"><a id="l01075" name="l01075"></a><span class="lineno"> 1075</span><span class="comment">  /**</span></div>
+<div class="line"><a id="l01076" name="l01076"></a><span class="lineno"> 1076</span><span class="comment">   * @brief Construct a ray tracing simulation control object</span></div>
+<div class="line"><a id="l01077" name="l01077"></a><span class="lineno"> 1077</span><span class="comment">   *</span></div>
+<div class="line"><a id="l01078" name="l01078"></a><span class="lineno"> 1078</span><span class="comment">   * @param[in] param Structure of the parameters for the simulation control</span></div>
+<div class="line"><a id="l01079" name="l01079"></a><span class="lineno"> 1079</span><span class="comment">   * @param[in] input_photon_handler The particle handler containing the photons</span></div>
+<div class="line"><a id="l01080" name="l01080"></a><span class="lineno"> 1080</span><span class="comment">   * to be traced</span></div>
+<div class="line"><a id="l01081" name="l01081"></a><span class="lineno"> 1081</span><span class="comment">   */</span></div>
+<div class="line"><a id="l01082" name="l01082"></a><span class="lineno"> 1082</span>  <a class="code hl_class" href="classSimulationControlRayTracing.html">SimulationControlRayTracing</a>(</div>
+<div class="line"><a id="l01083" name="l01083"></a><span class="lineno"> 1083</span>    <span class="keyword">const</span> <a class="code hl_struct" href="structParameters_1_1SimulationControl.html">Parameters::SimulationControl</a> &amp;param,</div>
+<div class="line"><a id="l01084" name="l01084"></a><span class="lineno"> 1084</span>    Particles::ParticleHandler&lt;3&gt;       &amp;input_photon_handler);</div>
+<div class="line"><a id="l01085" name="l01085"></a><span class="lineno"> 1085</span><span class="comment"></span> </div>
+<div class="line"><a id="l01086" name="l01086"></a><span class="lineno"> 1086</span><span class="comment">  /**</span></div>
+<div class="line"><a id="l01087" name="l01087"></a><span class="lineno"> 1087</span><span class="comment">   * @brief Proceed with the simulation until the end condition is reached</span></div>
+<div class="line"><a id="l01088" name="l01088"></a><span class="lineno"> 1088</span><span class="comment">   *</span></div>
+<div class="line"><a id="l01089" name="l01089"></a><span class="lineno"> 1089</span><span class="comment">   * Advances the ray tracing simulation by incrementing the iteration number.</span></div>
+<div class="line"><a id="l01090" name="l01090"></a><span class="lineno"> 1090</span><span class="comment">   *</span></div>
+<div class="line"><a id="l01091" name="l01091"></a><span class="lineno"> 1091</span><span class="comment">   * @return true if the simulation should continue, false otherwise</span></div>
+<div class="line"><a id="l01092" name="l01092"></a><span class="lineno"> 1092</span><span class="comment">   */</span></div>
+<div class="line"><a id="l01093" name="l01093"></a><span class="lineno"> 1093</span>  <span class="keyword">virtual</span> <span class="keywordtype">bool</span></div>
+<div class="line"><a id="l01094" name="l01094"></a><span class="lineno"> 1094</span>  <a class="code hl_function" href="classSimulationControlRayTracing.html#ae87a76cfa8ca3b1a4dba2c5b01ff4e76">integrate</a>() <span class="keyword">override</span>;</div>
+<div class="line"><a id="l01095" name="l01095"></a><span class="lineno"> 1095</span><span class="comment"></span> </div>
+<div class="line"><a id="l01096" name="l01096"></a><span class="lineno"> 1096</span><span class="comment">  /**</span></div>
+<div class="line"><a id="l01097" name="l01097"></a><span class="lineno"> 1097</span><span class="comment">   * @brief End the simulation when there are no longer any photons in the triangulation</span></div>
+<div class="line"><a id="l01098" name="l01098"></a><span class="lineno"> 1098</span><span class="comment">   *</span></div>
+<div class="line"><a id="l01099" name="l01099"></a><span class="lineno"> 1099</span><span class="comment">   * @return true if all photons have exited or been absorbed, false otherwise</span></div>
+<div class="line"><a id="l01100" name="l01100"></a><span class="lineno"> 1100</span><span class="comment">   */</span></div>
+<div class="line"><a id="l01101" name="l01101"></a><span class="lineno"> 1101</span>  <span class="keywordtype">bool</span></div>
+<div class="line"><a id="l01102" name="l01102"></a><span class="lineno"> 1102</span>  <a class="code hl_function" href="classSimulationControlRayTracing.html#a53bbbd46ef5219e3d6a86f28d5fed228">is_at_end</a>() <span class="keyword">override</span>;</div>
+<div class="line"><a id="l01103" name="l01103"></a><span class="lineno"> 1103</span><span class="comment"></span> </div>
+<div class="line"><a id="l01104" name="l01104"></a><span class="lineno"> 1104</span><span class="comment">  /**</span></div>
+<div class="line"><a id="l01105" name="l01105"></a><span class="lineno"> 1105</span><span class="comment">   * @brief Indicate if the simulation uses adaptive time stepping</span></div>
+<div class="line"><a id="l01106" name="l01106"></a><span class="lineno"> 1106</span><span class="comment">   *</span></div>
+<div class="line"><a id="l01107" name="l01107"></a><span class="lineno"> 1107</span><span class="comment">   * @return false (ray tracing simulations do not use adaptive time stepping)</span></div>
+<div class="line"><a id="l01108" name="l01108"></a><span class="lineno"> 1108</span><span class="comment">   */</span></div>
+<div class="line"><a id="l01109" name="l01109"></a><span class="lineno"> 1109</span>  <span class="keywordtype">bool</span></div>
+<div class="foldopen" id="foldopen01110" data-start="{" data-end="}">
+<div class="line"><a id="l01110" name="l01110"></a><span class="lineno"><a class="line" href="classSimulationControlRayTracing.html#a6a37f45fbdd791312b9599a275b5d076"> 1110</a></span>  <a class="code hl_function" href="classSimulationControlRayTracing.html#a6a37f45fbdd791312b9599a275b5d076">is_adaptive_time_stepping</a>()<span class="keyword"> const override</span></div>
+<div class="line"><a id="l01111" name="l01111"></a><span class="lineno"> 1111</span><span class="keyword">  </span>{</div>
+<div class="line"><a id="l01112" name="l01112"></a><span class="lineno"> 1112</span>    <span class="keywordflow">return</span> <span class="keyword">false</span>;</div>
+<div class="line"><a id="l01113" name="l01113"></a><span class="lineno"> 1113</span>  }</div>
 </div>
-<div class="line"><a id="l01109" name="l01109"></a><span class="lineno"> 1109</span><span class="comment"></span> </div>
-<div class="line"><a id="l01110" name="l01110"></a><span class="lineno"> 1110</span><span class="comment">  /**</span></div>
-<div class="line"><a id="l01111" name="l01111"></a><span class="lineno"> 1111</span><span class="comment">   * @brief Print the current progress status of the ray tracing simulation</span></div>
-<div class="line"><a id="l01112" name="l01112"></a><span class="lineno"> 1112</span><span class="comment">   *</span></div>
-<div class="line"><a id="l01113" name="l01113"></a><span class="lineno"> 1113</span><span class="comment">   * @param[in] pcout Parallel conditional output stream used to print the</span></div>
-<div class="line"><a id="l01114" name="l01114"></a><span class="lineno"> 1114</span><span class="comment">   * information</span></div>
-<div class="line"><a id="l01115" name="l01115"></a><span class="lineno"> 1115</span><span class="comment">   */</span></div>
-<div class="line"><a id="l01116" name="l01116"></a><span class="lineno"> 1116</span>  <span class="keywordtype">void</span></div>
-<div class="line"><a id="l01117" name="l01117"></a><span class="lineno"> 1117</span>  <a class="code hl_function" href="classSimulationControlRayTracing.html#a1456579c9f2067bc94639492c2ea5733">print_progression</a>(<span class="keyword">const</span> ConditionalOStream &amp;pcout) <span class="keyword">override</span>;</div>
-<div class="line"><a id="l01118" name="l01118"></a><span class="lineno"> 1118</span><span class="comment"></span> </div>
-<div class="line"><a id="l01119" name="l01119"></a><span class="lineno"> 1119</span><span class="comment">  /**</span></div>
-<div class="line"><a id="l01120" name="l01120"></a><span class="lineno"> 1120</span><span class="comment">   * @brief Reference to the photon handler used during the ray-tracing simulation</span></div>
-<div class="line"><a id="l01121" name="l01121"></a><span class="lineno"> 1121</span><span class="comment">   *</span></div>
-<div class="line"><a id="l01122" name="l01122"></a><span class="lineno"> 1122</span><span class="comment">   * This handler manages the photons being traced through the domain.</span></div>
-<div class="line"><a id="l01123" name="l01123"></a><span class="lineno"> 1123</span><span class="comment">   */</span></div>
-<div class="line"><a id="l01124" name="l01124"></a><span class="lineno"><a class="line" href="classSimulationControlRayTracing.html#a2d23670e9ed68210800aab43d6d87f61"> 1124</a></span>  Particles::ParticleHandler&lt;3&gt; &amp;<a class="code hl_variable" href="classSimulationControlRayTracing.html#a2d23670e9ed68210800aab43d6d87f61">photon_handler</a>;</div>
-<div class="line"><a id="l01125" name="l01125"></a><span class="lineno"> 1125</span>};</div>
+<div class="line"><a id="l01114" name="l01114"></a><span class="lineno"> 1114</span><span class="comment"></span> </div>
+<div class="line"><a id="l01115" name="l01115"></a><span class="lineno"> 1115</span><span class="comment">  /**</span></div>
+<div class="line"><a id="l01116" name="l01116"></a><span class="lineno"> 1116</span><span class="comment">   * @brief Print the current progress status of the ray tracing simulation</span></div>
+<div class="line"><a id="l01117" name="l01117"></a><span class="lineno"> 1117</span><span class="comment">   *</span></div>
+<div class="line"><a id="l01118" name="l01118"></a><span class="lineno"> 1118</span><span class="comment">   * @param[in] pcout Parallel conditional output stream used to print the</span></div>
+<div class="line"><a id="l01119" name="l01119"></a><span class="lineno"> 1119</span><span class="comment">   * information</span></div>
+<div class="line"><a id="l01120" name="l01120"></a><span class="lineno"> 1120</span><span class="comment">   */</span></div>
+<div class="line"><a id="l01121" name="l01121"></a><span class="lineno"> 1121</span>  <span class="keywordtype">void</span></div>
+<div class="line"><a id="l01122" name="l01122"></a><span class="lineno"> 1122</span>  <a class="code hl_function" href="classSimulationControlRayTracing.html#a1456579c9f2067bc94639492c2ea5733">print_progression</a>(<span class="keyword">const</span> ConditionalOStream &amp;pcout) <span class="keyword">override</span>;</div>
+<div class="line"><a id="l01123" name="l01123"></a><span class="lineno"> 1123</span><span class="comment"></span> </div>
+<div class="line"><a id="l01124" name="l01124"></a><span class="lineno"> 1124</span><span class="comment">  /**</span></div>
+<div class="line"><a id="l01125" name="l01125"></a><span class="lineno"> 1125</span><span class="comment">   * @brief Reference to the photon handler used during the ray-tracing simulation</span></div>
+<div class="line"><a id="l01126" name="l01126"></a><span class="lineno"> 1126</span><span class="comment">   *</span></div>
+<div class="line"><a id="l01127" name="l01127"></a><span class="lineno"> 1127</span><span class="comment">   * This handler manages the photons being traced through the domain.</span></div>
+<div class="line"><a id="l01128" name="l01128"></a><span class="lineno"> 1128</span><span class="comment">   */</span></div>
+<div class="line"><a id="l01129" name="l01129"></a><span class="lineno"><a class="line" href="classSimulationControlRayTracing.html#a2d23670e9ed68210800aab43d6d87f61"> 1129</a></span>  Particles::ParticleHandler&lt;3&gt; &amp;<a class="code hl_variable" href="classSimulationControlRayTracing.html#a2d23670e9ed68210800aab43d6d87f61">photon_handler</a>;</div>
+<div class="line"><a id="l01130" name="l01130"></a><span class="lineno"> 1130</span>};</div>
 </div>
-<div class="line"><a id="l01126" name="l01126"></a><span class="lineno"> 1126</span> </div>
-<div class="line"><a id="l01127" name="l01127"></a><span class="lineno"> 1127</span><span class="preprocessor">#endif</span></div>
+<div class="line"><a id="l01131" name="l01131"></a><span class="lineno"> 1131</span> </div>
+<div class="line"><a id="l01132" name="l01132"></a><span class="lineno"> 1132</span><span class="preprocessor">#endif</span></div>
 <div class="ttc" id="abdf_8h_html"><div class="ttname"><a href="bdf_8h.html">bdf.h</a></div></div>
 <div class="ttc" id="abdf_8h_html_a585ba53d846bcdb132f1fbc13a0c5180"><div class="ttname"><a href="bdf_8h.html#a585ba53d846bcdb132f1fbc13a0c5180">calculate_bdf_coefficients</a></div><div class="ttdeci">Vector&lt; double &gt; calculate_bdf_coefficients(Parameters::SimulationControl::TimeSteppingMethod method, const std::vector&lt; double &gt; &amp;time_steps)</div><div class="ttdoc">Calculate the coefficients required for backward differentiation formula (BDF) integration of order .</div><div class="ttdef"><b>Definition</b> <a href="bdf_8cc_source.html#l00042">bdf.cc:42</a></div></div>
 <div class="ttc" id="abdf_8h_html_a79e44dc10ababc737a8659c2f5f8c18a"><div class="ttname"><a href="bdf_8h.html#a79e44dc10ababc737a8659c2f5f8c18a">number_of_previous_solutions</a></div><div class="ttdeci">unsigned int number_of_previous_solutions(const Parameters::SimulationControl::TimeSteppingMethod method)</div><div class="ttdoc">Get the number of previous time steps for a specific BDF scheme.</div><div class="ttdef"><b>Definition</b> <a href="bdf_8h_source.html#l00097">bdf.h:97</a></div></div>
-<div class="ttc" id="aclassSimulationControlAdjointSteady_html"><div class="ttname"><a href="classSimulationControlAdjointSteady.html">SimulationControlAdjointSteady</a></div><div class="ttdoc">Simulation control for adjoint steady-state simulations.</div><div class="ttdef"><b>Definition</b> <a href="simulation__control_8h_source.html#l01027">simulation_control.h:1028</a></div></div>
-<div class="ttc" id="aclassSimulationControlAdjointSteady_html_ac8534ba715f32012c81368600656323d"><div class="ttname"><a href="classSimulationControlAdjointSteady.html#ac8534ba715f32012c81368600656323d">SimulationControlAdjointSteady::is_at_end</a></div><div class="ttdeci">virtual bool is_at_end() override</div><div class="ttdoc">End the simulation when the desired residual tolerance is reached.</div><div class="ttdef"><b>Definition</b> <a href="simulation__control_8cc_source.html#l00602">simulation_control.cc:602</a></div></div>
-<div class="ttc" id="aclassSimulationControlAdjointSteady_html_aebd269a2d8349f0a48a995d259002fe7"><div class="ttname"><a href="classSimulationControlAdjointSteady.html#aebd269a2d8349f0a48a995d259002fe7">SimulationControlAdjointSteady::print_progression</a></div><div class="ttdeci">virtual void print_progression(const ConditionalOStream &amp;pcout) override</div><div class="ttdoc">Print the current progress status of the adjoint simulation.</div><div class="ttdef"><b>Definition</b> <a href="simulation__control_8cc_source.html#l00580">simulation_control.cc:580</a></div></div>
-<div class="ttc" id="aclassSimulationControlRayTracing_html"><div class="ttname"><a href="classSimulationControlRayTracing.html">SimulationControlRayTracing</a></div><div class="ttdoc">Simulation control for ray tracing simulations.</div><div class="ttdef"><b>Definition</b> <a href="simulation__control_8h_source.html#l01067">simulation_control.h:1068</a></div></div>
-<div class="ttc" id="aclassSimulationControlRayTracing_html_a1456579c9f2067bc94639492c2ea5733"><div class="ttname"><a href="classSimulationControlRayTracing.html#a1456579c9f2067bc94639492c2ea5733">SimulationControlRayTracing::print_progression</a></div><div class="ttdeci">void print_progression(const ConditionalOStream &amp;pcout) override</div><div class="ttdoc">Print the current progress status of the ray tracing simulation.</div><div class="ttdef"><b>Definition</b> <a href="simulation__control_8cc_source.html#l00633">simulation_control.cc:633</a></div></div>
-<div class="ttc" id="aclassSimulationControlRayTracing_html_a2d23670e9ed68210800aab43d6d87f61"><div class="ttname"><a href="classSimulationControlRayTracing.html#a2d23670e9ed68210800aab43d6d87f61">SimulationControlRayTracing::photon_handler</a></div><div class="ttdeci">Particles::ParticleHandler&lt; 3 &gt; &amp; photon_handler</div><div class="ttdoc">Reference to the photon handler used during the ray-tracing simulation.</div><div class="ttdef"><b>Definition</b> <a href="simulation__control_8h_source.html#l01124">simulation_control.h:1124</a></div></div>
-<div class="ttc" id="aclassSimulationControlRayTracing_html_a53bbbd46ef5219e3d6a86f28d5fed228"><div class="ttname"><a href="classSimulationControlRayTracing.html#a53bbbd46ef5219e3d6a86f28d5fed228">SimulationControlRayTracing::is_at_end</a></div><div class="ttdeci">bool is_at_end() override</div><div class="ttdoc">End the simulation when there are no longer any photons in the triangulation.</div><div class="ttdef"><b>Definition</b> <a href="simulation__control_8cc_source.html#l00627">simulation_control.cc:627</a></div></div>
-<div class="ttc" id="aclassSimulationControlRayTracing_html_a6a37f45fbdd791312b9599a275b5d076"><div class="ttname"><a href="classSimulationControlRayTracing.html#a6a37f45fbdd791312b9599a275b5d076">SimulationControlRayTracing::is_adaptive_time_stepping</a></div><div class="ttdeci">bool is_adaptive_time_stepping() const override</div><div class="ttdoc">Indicate if the simulation uses adaptive time stepping.</div><div class="ttdef"><b>Definition</b> <a href="simulation__control_8h_source.html#l01105">simulation_control.h:1105</a></div></div>
-<div class="ttc" id="aclassSimulationControlRayTracing_html_ae87a76cfa8ca3b1a4dba2c5b01ff4e76"><div class="ttname"><a href="classSimulationControlRayTracing.html#ae87a76cfa8ca3b1a4dba2c5b01ff4e76">SimulationControlRayTracing::integrate</a></div><div class="ttdeci">virtual bool integrate() override</div><div class="ttdoc">Proceed with the simulation until the end condition is reached.</div><div class="ttdef"><b>Definition</b> <a href="simulation__control_8cc_source.html#l00615">simulation_control.cc:615</a></div></div>
-<div class="ttc" id="aclassSimulationControlSteady_html"><div class="ttname"><a href="classSimulationControlSteady.html">SimulationControlSteady</a></div><div class="ttdoc">Simulation control for steady-state simulations.</div><div class="ttdef"><b>Definition</b> <a href="simulation__control_8h_source.html#l00967">simulation_control.h:968</a></div></div>
-<div class="ttc" id="aclassSimulationControlSteady_html_a1a841b038955ea6ba6b6d8a938d442f9"><div class="ttname"><a href="classSimulationControlSteady.html#a1a841b038955ea6ba6b6d8a938d442f9">SimulationControlSteady::integrate</a></div><div class="ttdeci">virtual bool integrate() override</div><div class="ttdoc">Proceed with the simulation until the end condition is reached.</div><div class="ttdef"><b>Definition</b> <a href="simulation__control_8cc_source.html#l00535">simulation_control.cc:535</a></div></div>
-<div class="ttc" id="aclassSimulationControlSteady_html_a85aa77566b417c4a337c457b1a92dee4"><div class="ttname"><a href="classSimulationControlSteady.html#a85aa77566b417c4a337c457b1a92dee4">SimulationControlSteady::is_adaptive_time_stepping</a></div><div class="ttdeci">bool is_adaptive_time_stepping() const override</div><div class="ttdoc">Indicate if the simulation uses adaptive time stepping.</div><div class="ttdef"><b>Definition</b> <a href="simulation__control_8h_source.html#l00992">simulation_control.h:992</a></div></div>
-<div class="ttc" id="aclassSimulationControlSteady_html_a9131dcc7cba2713e43ed16653da5f7c0"><div class="ttname"><a href="classSimulationControlSteady.html#a9131dcc7cba2713e43ed16653da5f7c0">SimulationControlSteady::is_at_end</a></div><div class="ttdeci">virtual bool is_at_end() override</div><div class="ttdoc">End the simulation when the number of mesh adaptations is reached.</div><div class="ttdef"><b>Definition</b> <a href="simulation__control_8cc_source.html#l00569">simulation_control.cc:569</a></div></div>
-<div class="ttc" id="aclassSimulationControlSteady_html_af5cd362a775a8101ddc3ac7fe55376f8"><div class="ttname"><a href="classSimulationControlSteady.html#af5cd362a775a8101ddc3ac7fe55376f8">SimulationControlSteady::print_progression</a></div><div class="ttdeci">virtual void print_progression(const ConditionalOStream &amp;pcout) override</div><div class="ttdoc">Print the current progress status of the steady-state simulation.</div><div class="ttdef"><b>Definition</b> <a href="simulation__control_8cc_source.html#l00552">simulation_control.cc:552</a></div></div>
-<div class="ttc" id="aclassSimulationControlTransientDEM_html"><div class="ttname"><a href="classSimulationControlTransientDEM.html">SimulationControlTransientDEM</a></div><div class="ttdoc">Transient simulation control tailored for the Discrete Element Method (DEM)</div><div class="ttdef"><b>Definition</b> <a href="simulation__control_8h_source.html#l00935">simulation_control.h:936</a></div></div>
-<div class="ttc" id="aclassSimulationControlTransientDEM_html_a6760db7b27f43507bc6727a855beb4a3"><div class="ttname"><a href="classSimulationControlTransientDEM.html#a6760db7b27f43507bc6727a855beb4a3">SimulationControlTransientDEM::print_progression</a></div><div class="ttdeci">virtual void print_progression(const ConditionalOStream &amp;pcout) override</div><div class="ttdoc">Print the current progress status of the DEM simulation.</div><div class="ttdef"><b>Definition</b> <a href="simulation__control_8cc_source.html#l00510">simulation_control.cc:510</a></div></div>
+<div class="ttc" id="aclassSimulationControlAdjointSteady_html"><div class="ttname"><a href="classSimulationControlAdjointSteady.html">SimulationControlAdjointSteady</a></div><div class="ttdoc">Simulation control for adjoint steady-state simulations.</div><div class="ttdef"><b>Definition</b> <a href="simulation__control_8h_source.html#l01032">simulation_control.h:1033</a></div></div>
+<div class="ttc" id="aclassSimulationControlAdjointSteady_html_ac8534ba715f32012c81368600656323d"><div class="ttname"><a href="classSimulationControlAdjointSteady.html#ac8534ba715f32012c81368600656323d">SimulationControlAdjointSteady::is_at_end</a></div><div class="ttdeci">virtual bool is_at_end() override</div><div class="ttdoc">End the simulation when the desired residual tolerance is reached.</div><div class="ttdef"><b>Definition</b> <a href="simulation__control_8cc_source.html#l00608">simulation_control.cc:608</a></div></div>
+<div class="ttc" id="aclassSimulationControlAdjointSteady_html_aebd269a2d8349f0a48a995d259002fe7"><div class="ttname"><a href="classSimulationControlAdjointSteady.html#aebd269a2d8349f0a48a995d259002fe7">SimulationControlAdjointSteady::print_progression</a></div><div class="ttdeci">virtual void print_progression(const ConditionalOStream &amp;pcout) override</div><div class="ttdoc">Print the current progress status of the adjoint simulation.</div><div class="ttdef"><b>Definition</b> <a href="simulation__control_8cc_source.html#l00586">simulation_control.cc:586</a></div></div>
+<div class="ttc" id="aclassSimulationControlRayTracing_html"><div class="ttname"><a href="classSimulationControlRayTracing.html">SimulationControlRayTracing</a></div><div class="ttdoc">Simulation control for ray tracing simulations.</div><div class="ttdef"><b>Definition</b> <a href="simulation__control_8h_source.html#l01072">simulation_control.h:1073</a></div></div>
+<div class="ttc" id="aclassSimulationControlRayTracing_html_a1456579c9f2067bc94639492c2ea5733"><div class="ttname"><a href="classSimulationControlRayTracing.html#a1456579c9f2067bc94639492c2ea5733">SimulationControlRayTracing::print_progression</a></div><div class="ttdeci">void print_progression(const ConditionalOStream &amp;pcout) override</div><div class="ttdoc">Print the current progress status of the ray tracing simulation.</div><div class="ttdef"><b>Definition</b> <a href="simulation__control_8cc_source.html#l00639">simulation_control.cc:639</a></div></div>
+<div class="ttc" id="aclassSimulationControlRayTracing_html_a2d23670e9ed68210800aab43d6d87f61"><div class="ttname"><a href="classSimulationControlRayTracing.html#a2d23670e9ed68210800aab43d6d87f61">SimulationControlRayTracing::photon_handler</a></div><div class="ttdeci">Particles::ParticleHandler&lt; 3 &gt; &amp; photon_handler</div><div class="ttdoc">Reference to the photon handler used during the ray-tracing simulation.</div><div class="ttdef"><b>Definition</b> <a href="simulation__control_8h_source.html#l01129">simulation_control.h:1129</a></div></div>
+<div class="ttc" id="aclassSimulationControlRayTracing_html_a53bbbd46ef5219e3d6a86f28d5fed228"><div class="ttname"><a href="classSimulationControlRayTracing.html#a53bbbd46ef5219e3d6a86f28d5fed228">SimulationControlRayTracing::is_at_end</a></div><div class="ttdeci">bool is_at_end() override</div><div class="ttdoc">End the simulation when there are no longer any photons in the triangulation.</div><div class="ttdef"><b>Definition</b> <a href="simulation__control_8cc_source.html#l00633">simulation_control.cc:633</a></div></div>
+<div class="ttc" id="aclassSimulationControlRayTracing_html_a6a37f45fbdd791312b9599a275b5d076"><div class="ttname"><a href="classSimulationControlRayTracing.html#a6a37f45fbdd791312b9599a275b5d076">SimulationControlRayTracing::is_adaptive_time_stepping</a></div><div class="ttdeci">bool is_adaptive_time_stepping() const override</div><div class="ttdoc">Indicate if the simulation uses adaptive time stepping.</div><div class="ttdef"><b>Definition</b> <a href="simulation__control_8h_source.html#l01110">simulation_control.h:1110</a></div></div>
+<div class="ttc" id="aclassSimulationControlRayTracing_html_ae87a76cfa8ca3b1a4dba2c5b01ff4e76"><div class="ttname"><a href="classSimulationControlRayTracing.html#ae87a76cfa8ca3b1a4dba2c5b01ff4e76">SimulationControlRayTracing::integrate</a></div><div class="ttdeci">virtual bool integrate() override</div><div class="ttdoc">Proceed with the simulation until the end condition is reached.</div><div class="ttdef"><b>Definition</b> <a href="simulation__control_8cc_source.html#l00621">simulation_control.cc:621</a></div></div>
+<div class="ttc" id="aclassSimulationControlSteady_html"><div class="ttname"><a href="classSimulationControlSteady.html">SimulationControlSteady</a></div><div class="ttdoc">Simulation control for steady-state simulations.</div><div class="ttdef"><b>Definition</b> <a href="simulation__control_8h_source.html#l00972">simulation_control.h:973</a></div></div>
+<div class="ttc" id="aclassSimulationControlSteady_html_a1a841b038955ea6ba6b6d8a938d442f9"><div class="ttname"><a href="classSimulationControlSteady.html#a1a841b038955ea6ba6b6d8a938d442f9">SimulationControlSteady::integrate</a></div><div class="ttdeci">virtual bool integrate() override</div><div class="ttdoc">Proceed with the simulation until the end condition is reached.</div><div class="ttdef"><b>Definition</b> <a href="simulation__control_8cc_source.html#l00541">simulation_control.cc:541</a></div></div>
+<div class="ttc" id="aclassSimulationControlSteady_html_a85aa77566b417c4a337c457b1a92dee4"><div class="ttname"><a href="classSimulationControlSteady.html#a85aa77566b417c4a337c457b1a92dee4">SimulationControlSteady::is_adaptive_time_stepping</a></div><div class="ttdeci">bool is_adaptive_time_stepping() const override</div><div class="ttdoc">Indicate if the simulation uses adaptive time stepping.</div><div class="ttdef"><b>Definition</b> <a href="simulation__control_8h_source.html#l00997">simulation_control.h:997</a></div></div>
+<div class="ttc" id="aclassSimulationControlSteady_html_a9131dcc7cba2713e43ed16653da5f7c0"><div class="ttname"><a href="classSimulationControlSteady.html#a9131dcc7cba2713e43ed16653da5f7c0">SimulationControlSteady::is_at_end</a></div><div class="ttdeci">virtual bool is_at_end() override</div><div class="ttdoc">End the simulation when the number of mesh adaptations is reached.</div><div class="ttdef"><b>Definition</b> <a href="simulation__control_8cc_source.html#l00575">simulation_control.cc:575</a></div></div>
+<div class="ttc" id="aclassSimulationControlSteady_html_af5cd362a775a8101ddc3ac7fe55376f8"><div class="ttname"><a href="classSimulationControlSteady.html#af5cd362a775a8101ddc3ac7fe55376f8">SimulationControlSteady::print_progression</a></div><div class="ttdeci">virtual void print_progression(const ConditionalOStream &amp;pcout) override</div><div class="ttdoc">Print the current progress status of the steady-state simulation.</div><div class="ttdef"><b>Definition</b> <a href="simulation__control_8cc_source.html#l00558">simulation_control.cc:558</a></div></div>
+<div class="ttc" id="aclassSimulationControlTransientDEM_html"><div class="ttname"><a href="classSimulationControlTransientDEM.html">SimulationControlTransientDEM</a></div><div class="ttdoc">Transient simulation control tailored for the Discrete Element Method (DEM)</div><div class="ttdef"><b>Definition</b> <a href="simulation__control_8h_source.html#l00940">simulation_control.h:941</a></div></div>
+<div class="ttc" id="aclassSimulationControlTransientDEM_html_a6760db7b27f43507bc6727a855beb4a3"><div class="ttname"><a href="classSimulationControlTransientDEM.html#a6760db7b27f43507bc6727a855beb4a3">SimulationControlTransientDEM::print_progression</a></div><div class="ttdeci">virtual void print_progression(const ConditionalOStream &amp;pcout) override</div><div class="ttdoc">Print the current progress status of the DEM simulation.</div><div class="ttdef"><b>Definition</b> <a href="simulation__control_8cc_source.html#l00516">simulation_control.cc:516</a></div></div>
 <div class="ttc" id="aclassSimulationControlTransient_html"><div class="ttname"><a href="classSimulationControlTransient.html">SimulationControlTransient</a></div><div class="ttdoc">Simulation control for transient simulations.</div><div class="ttdef"><b>Definition</b> <a href="simulation__control_8h_source.html#l00780">simulation_control.h:781</a></div></div>
-<div class="ttc" id="aclassSimulationControlTransient_html_a036c4105e266efe7053a09b75c5ace0f"><div class="ttname"><a href="classSimulationControlTransient.html#a036c4105e266efe7053a09b75c5ace0f">SimulationControlTransient::is_adaptive_time_stepping</a></div><div class="ttdeci">bool is_adaptive_time_stepping() const override</div><div class="ttdoc">Indicate if the simulation uses adaptive time stepping or not.</div><div class="ttdef"><b>Definition</b> <a href="simulation__control_8h_source.html#l00870">simulation_control.h:870</a></div></div>
+<div class="ttc" id="aclassSimulationControlTransient_html_a036c4105e266efe7053a09b75c5ace0f"><div class="ttname"><a href="classSimulationControlTransient.html#a036c4105e266efe7053a09b75c5ace0f">SimulationControlTransient::is_adaptive_time_stepping</a></div><div class="ttdeci">bool is_adaptive_time_stepping() const override</div><div class="ttdoc">Indicate if the simulation uses adaptive time stepping or not.</div><div class="ttdef"><b>Definition</b> <a href="simulation__control_8h_source.html#l00875">simulation_control.h:875</a></div></div>
+<div class="ttc" id="aclassSimulationControlTransient_html_a20928086234ec81009e2323dcdcce55b"><div class="ttname"><a href="classSimulationControlTransient.html#a20928086234ec81009e2323dcdcce55b">SimulationControlTransient::override_time_step_on_restart</a></div><div class="ttdeci">bool override_time_step_on_restart</div><div class="ttdoc">Flag to override the time-step with the set value upon restart.</div><div class="ttdef"><b>Definition</b> <a href="simulation__control_8h_source.html#l00824">simulation_control.h:824</a></div></div>
 <div class="ttc" id="aclassSimulationControlTransient_html_a3274432c0d9c57df543ad78afd5267ee"><div class="ttname"><a href="classSimulationControlTransient.html#a3274432c0d9c57df543ad78afd5267ee">SimulationControlTransient::adapt</a></div><div class="ttdeci">bool adapt</div><div class="ttdoc">Enable adaptive time stepping.</div><div class="ttdef"><b>Definition</b> <a href="simulation__control_8h_source.html#l00784">simulation_control.h:784</a></div></div>
-<div class="ttc" id="aclassSimulationControlTransient_html_a3b42c02f3ee3cb90a33b5609f5f7879e"><div class="ttname"><a href="classSimulationControlTransient.html#a3b42c02f3ee3cb90a33b5609f5f7879e">SimulationControlTransient::save</a></div><div class="ttdeci">void save(const std::string &amp;prefix) override</div><div class="ttdoc">Save the simulation control information to a checkpoint file.</div><div class="ttdef"><b>Definition</b> <a href="simulation__control_8cc_source.html#l00466">simulation_control.cc:466</a></div></div>
-<div class="ttc" id="aclassSimulationControlTransient_html_a429eb8571bdd48e1a9579435318296f0"><div class="ttname"><a href="classSimulationControlTransient.html#a429eb8571bdd48e1a9579435318296f0">SimulationControlTransient::read</a></div><div class="ttdeci">void read(const std::string &amp;prefix) override</div><div class="ttdoc">Read the simulation control information from a checkpoint file.</div><div class="ttdef"><b>Definition</b> <a href="simulation__control_8cc_source.html#l00479">simulation_control.cc:479</a></div></div>
-<div class="ttc" id="aclassSimulationControlTransient_html_a64d86676ed3f106ca7a0f11ff08bf978"><div class="ttname"><a href="classSimulationControlTransient.html#a64d86676ed3f106ca7a0f11ff08bf978">SimulationControlTransient::output_time_interval</a></div><div class="ttdeci">std::vector&lt; double &gt; output_time_interval</div><div class="ttdoc">Time interval for output of transient iterations.</div><div class="ttdef"><b>Definition</b> <a href="simulation__control_8h_source.html#l00827">simulation_control.h:827</a></div></div>
-<div class="ttc" id="aclassSimulationControlTransient_html_a6d580ae3849859e91e7ab43c2e7c08d9"><div class="ttname"><a href="classSimulationControlTransient.html#a6d580ae3849859e91e7ab43c2e7c08d9">SimulationControlTransient::print_progression</a></div><div class="ttdeci">virtual void print_progression(const ConditionalOStream &amp;pcout) override</div><div class="ttdoc">Print the current progress status of the simulation.</div><div class="ttdef"><b>Definition</b> <a href="simulation__control_8cc_source.html#l00266">simulation_control.cc:266</a></div></div>
-<div class="ttc" id="aclassSimulationControlTransient_html_a74d0fb44b9447a364e2a7df92620d7b9"><div class="ttname"><a href="classSimulationControlTransient.html#a74d0fb44b9447a364e2a7df92620d7b9">SimulationControlTransient::calculate_time_step</a></div><div class="ttdeci">virtual double calculate_time_step() override</div><div class="ttdoc">Calculate the next value of the time step.</div><div class="ttdef"><b>Definition</b> <a href="simulation__control_8cc_source.html#l00328">simulation_control.cc:328</a></div></div>
+<div class="ttc" id="aclassSimulationControlTransient_html_a3b42c02f3ee3cb90a33b5609f5f7879e"><div class="ttname"><a href="classSimulationControlTransient.html#a3b42c02f3ee3cb90a33b5609f5f7879e">SimulationControlTransient::save</a></div><div class="ttdeci">void save(const std::string &amp;prefix) override</div><div class="ttdoc">Save the simulation control information to a checkpoint file.</div><div class="ttdef"><b>Definition</b> <a href="simulation__control_8cc_source.html#l00467">simulation_control.cc:467</a></div></div>
+<div class="ttc" id="aclassSimulationControlTransient_html_a429eb8571bdd48e1a9579435318296f0"><div class="ttname"><a href="classSimulationControlTransient.html#a429eb8571bdd48e1a9579435318296f0">SimulationControlTransient::read</a></div><div class="ttdeci">void read(const std::string &amp;prefix) override</div><div class="ttdoc">Read the simulation control information from a checkpoint file.</div><div class="ttdef"><b>Definition</b> <a href="simulation__control_8cc_source.html#l00480">simulation_control.cc:480</a></div></div>
+<div class="ttc" id="aclassSimulationControlTransient_html_a64d86676ed3f106ca7a0f11ff08bf978"><div class="ttname"><a href="classSimulationControlTransient.html#a64d86676ed3f106ca7a0f11ff08bf978">SimulationControlTransient::output_time_interval</a></div><div class="ttdeci">std::vector&lt; double &gt; output_time_interval</div><div class="ttdoc">Time interval for output of transient iterations.</div><div class="ttdef"><b>Definition</b> <a href="simulation__control_8h_source.html#l00832">simulation_control.h:832</a></div></div>
+<div class="ttc" id="aclassSimulationControlTransient_html_a6d580ae3849859e91e7ab43c2e7c08d9"><div class="ttname"><a href="classSimulationControlTransient.html#a6d580ae3849859e91e7ab43c2e7c08d9">SimulationControlTransient::print_progression</a></div><div class="ttdeci">virtual void print_progression(const ConditionalOStream &amp;pcout) override</div><div class="ttdoc">Print the current progress status of the simulation.</div><div class="ttdef"><b>Definition</b> <a href="simulation__control_8cc_source.html#l00267">simulation_control.cc:267</a></div></div>
+<div class="ttc" id="aclassSimulationControlTransient_html_a74d0fb44b9447a364e2a7df92620d7b9"><div class="ttname"><a href="classSimulationControlTransient.html#a74d0fb44b9447a364e2a7df92620d7b9">SimulationControlTransient::calculate_time_step</a></div><div class="ttdeci">virtual double calculate_time_step() override</div><div class="ttdoc">Calculate the next value of the time step.</div><div class="ttdef"><b>Definition</b> <a href="simulation__control_8cc_source.html#l00329">simulation_control.cc:329</a></div></div>
 <div class="ttc" id="aclassSimulationControlTransient_html_a7b4e9ec71ecb4d37cc6d18cb136fde04"><div class="ttname"><a href="classSimulationControlTransient.html#a7b4e9ec71ecb4d37cc6d18cb136fde04">SimulationControlTransient::output_times_vector</a></div><div class="ttdeci">std::vector&lt; double &gt; output_times_vector</div><div class="ttdoc">Specific output times for time output control.</div><div class="ttdef"><b>Definition</b> <a href="simulation__control_8h_source.html#l00808">simulation_control.h:808</a></div></div>
-<div class="ttc" id="aclassSimulationControlTransient_html_a9323f75f9c5d9ab8463f1340c83fa539"><div class="ttname"><a href="classSimulationControlTransient.html#a9323f75f9c5d9ab8463f1340c83fa539">SimulationControlTransient::integrate</a></div><div class="ttdeci">virtual bool integrate() override</div><div class="ttdoc">Proceed with the simulation until the end condition is reached.</div><div class="ttdef"><b>Definition</b> <a href="simulation__control_8cc_source.html#l00287">simulation_control.cc:287</a></div></div>
-<div class="ttc" id="aclassSimulationControlTransient_html_aa319da7751b899049697edecee141d66"><div class="ttname"><a href="classSimulationControlTransient.html#aa319da7751b899049697edecee141d66">SimulationControlTransient::is_at_end</a></div><div class="ttdeci">virtual bool is_at_end() override</div><div class="ttdoc">End the simulation when the end time is reached.</div><div class="ttdef"><b>Definition</b> <a href="simulation__control_8cc_source.html#l00321">simulation_control.cc:321</a></div></div>
+<div class="ttc" id="aclassSimulationControlTransient_html_a9323f75f9c5d9ab8463f1340c83fa539"><div class="ttname"><a href="classSimulationControlTransient.html#a9323f75f9c5d9ab8463f1340c83fa539">SimulationControlTransient::integrate</a></div><div class="ttdeci">virtual bool integrate() override</div><div class="ttdoc">Proceed with the simulation until the end condition is reached.</div><div class="ttdef"><b>Definition</b> <a href="simulation__control_8cc_source.html#l00288">simulation_control.cc:288</a></div></div>
+<div class="ttc" id="aclassSimulationControlTransient_html_aa319da7751b899049697edecee141d66"><div class="ttname"><a href="classSimulationControlTransient.html#aa319da7751b899049697edecee141d66">SimulationControlTransient::is_at_end</a></div><div class="ttdeci">virtual bool is_at_end() override</div><div class="ttdoc">End the simulation when the end time is reached.</div><div class="ttdef"><b>Definition</b> <a href="simulation__control_8cc_source.html#l00322">simulation_control.cc:322</a></div></div>
 <div class="ttc" id="aclassSimulationControlTransient_html_aa8265d680f30c6ef58e84ba3862e6036"><div class="ttname"><a href="classSimulationControlTransient.html#aa8265d680f30c6ef58e84ba3862e6036">SimulationControlTransient::output_times_counter</a></div><div class="ttdeci">unsigned int output_times_counter</div><div class="ttdoc">Counter to move between output times given in output_times_vector.</div><div class="ttdef"><b>Definition</b> <a href="simulation__control_8h_source.html#l00811">simulation_control.h:811</a></div></div>
 <div class="ttc" id="aclassSimulationControlTransient_html_abcf147462d0c172cfca7257b0d3f67ac"><div class="ttname"><a href="classSimulationControlTransient.html#abcf147462d0c172cfca7257b0d3f67ac">SimulationControlTransient::time_last_output</a></div><div class="ttdeci">double time_last_output</div><div class="ttdoc">Time of the last output.</div><div class="ttdef"><b>Definition</b> <a href="simulation__control_8h_source.html#l00798">simulation_control.h:798</a></div></div>
-<div class="ttc" id="aclassSimulationControlTransient_html_ac1951b02a3fe1c7a7a2536c0dc08d513"><div class="ttname"><a href="classSimulationControlTransient.html#ac1951b02a3fe1c7a7a2536c0dc08d513">SimulationControlTransient::is_output_iteration</a></div><div class="ttdeci">virtual bool is_output_iteration() override</div><div class="ttdoc">Check if the current iteration is an output iteration.</div><div class="ttdef"><b>Definition</b> <a href="simulation__control_8cc_source.html#l00355">simulation_control.cc:355</a></div></div>
+<div class="ttc" id="aclassSimulationControlTransient_html_ac1951b02a3fe1c7a7a2536c0dc08d513"><div class="ttname"><a href="classSimulationControlTransient.html#ac1951b02a3fe1c7a7a2536c0dc08d513">SimulationControlTransient::is_output_iteration</a></div><div class="ttdeci">virtual bool is_output_iteration() override</div><div class="ttdoc">Check if the current iteration is an output iteration.</div><div class="ttdef"><b>Definition</b> <a href="simulation__control_8cc_source.html#l00356">simulation_control.cc:356</a></div></div>
 <div class="ttc" id="aclassSimulationControlTransient_html_ac5b6fef0f679729b1035d52014cd8f8f"><div class="ttname"><a href="classSimulationControlTransient.html#ac5b6fef0f679729b1035d52014cd8f8f">SimulationControlTransient::max_dt</a></div><div class="ttdeci">double max_dt</div><div class="ttdoc">Maximum allowed time step.</div><div class="ttdef"><b>Definition</b> <a href="simulation__control_8h_source.html#l00795">simulation_control.h:795</a></div></div>
 <div class="ttc" id="aclassSimulationControlTransient_html_ac8d9b7077bb7c38ef2c3fb22e4cc916a"><div class="ttname"><a href="classSimulationControlTransient.html#ac8d9b7077bb7c38ef2c3fb22e4cc916a">SimulationControlTransient::no_more_output_times</a></div><div class="ttdeci">bool no_more_output_times</div><div class="ttdoc">Flag indicating whether there are more output times to check.</div><div class="ttdef"><b>Definition</b> <a href="simulation__control_8h_source.html#l00819">simulation_control.h:819</a></div></div>
 <div class="ttc" id="aclassSimulationControlTransient_html_ae5618d27fcd5e0eef634469aa6e42751"><div class="ttname"><a href="classSimulationControlTransient.html#ae5618d27fcd5e0eef634469aa6e42751">SimulationControlTransient::adaptative_time_step_scaling</a></div><div class="ttdeci">double adaptative_time_step_scaling</div><div class="ttdoc">Time step scaling factor for adaptive time stepping.</div><div class="ttdef"><b>Definition</b> <a href="simulation__control_8h_source.html#l00792">simulation_control.h:792</a></div></div>
-<div class="ttc" id="aclassSimulationControlTransient_html_ae8d1e620dcf445c0a7e3dbbfb3085051"><div class="ttname"><a href="classSimulationControlTransient.html#ae8d1e620dcf445c0a7e3dbbfb3085051">SimulationControlTransient::output_control</a></div><div class="ttdeci">Parameters::SimulationControl::OutputControl output_control</div><div class="ttdoc">Output control type: iteration-based or time-based.</div><div class="ttdef"><b>Definition</b> <a href="simulation__control_8h_source.html#l00830">simulation_control.h:830</a></div></div>
+<div class="ttc" id="aclassSimulationControlTransient_html_ae8d1e620dcf445c0a7e3dbbfb3085051"><div class="ttname"><a href="classSimulationControlTransient.html#ae8d1e620dcf445c0a7e3dbbfb3085051">SimulationControlTransient::output_control</a></div><div class="ttdeci">Parameters::SimulationControl::OutputControl output_control</div><div class="ttdoc">Output control type: iteration-based or time-based.</div><div class="ttdef"><b>Definition</b> <a href="simulation__control_8h_source.html#l00835">simulation_control.h:835</a></div></div>
 <div class="ttc" id="aclassSimulationControlTransient_html_aefd86904fd64cddfec7ccac8a0f3b1e5"><div class="ttname"><a href="classSimulationControlTransient.html#aefd86904fd64cddfec7ccac8a0f3b1e5">SimulationControlTransient::output_time_frequency</a></div><div class="ttdeci">double output_time_frequency</div><div class="ttdoc">Output frequency for time-based output control.</div><div class="ttdef"><b>Definition</b> <a href="simulation__control_8h_source.html#l00801">simulation_control.h:801</a></div></div>
 <div class="ttc" id="aclassSimulationControl_html"><div class="ttname"><a href="classSimulationControl.html">SimulationControl</a></div><div class="ttdoc">Base class for controlling steady-state and transient simulations in Lethe.</div><div class="ttdef"><b>Definition</b> <a href="simulation__control_8h_source.html#l00042">simulation_control.h:43</a></div></div>
 <div class="ttc" id="aclassSimulationControl_html_a037f676d4e45242bb481e0a4a71e2dc9"><div class="ttname"><a href="classSimulationControl.html#a037f676d4e45242bb481e0a4a71e2dc9">SimulationControl::is_output_iteration</a></div><div class="ttdeci">virtual bool is_output_iteration()</div><div class="ttdoc">Check if the present iteration is an output iteration.</div><div class="ttdef"><b>Definition</b> <a href="simulation__control_8cc_source.html#l00061">simulation_control.cc:61</a></div></div>
@@ -1410,7 +1416,7 @@ $(document).ready(function() { init_codefold(0); });
 <div class="ttc" id="aclassSimulationControl_html_afcef58567807100d062bceb13c9540a5"><div class="ttname"><a href="classSimulationControl.html#afcef58567807100d062bceb13c9540a5">SimulationControl::assembly_method</a></div><div class="ttdeci">Parameters::SimulationControl::TimeSteppingMethod assembly_method</div><div class="ttdoc">Current method used for the present assembly.</div><div class="ttdef"><b>Definition</b> <a href="simulation__control_8h_source.html#l00056">simulation_control.h:56</a></div></div>
 <div class="ttc" id="aparameters_8h_html"><div class="ttname"><a href="parameters_8h.html">parameters.h</a></div></div>
 <div class="ttc" id="astructParameters_1_1SimulationControl_html"><div class="ttname"><a href="structParameters_1_1SimulationControl.html">Parameters::SimulationControl</a></div><div class="ttdoc">SimulationControl - Defines the parameter that control the flow of the simulation as well as the freq...</div><div class="ttdef"><b>Definition</b> <a href="parameters_8h_source.html#l00071">parameters.h:72</a></div></div>
-<div class="ttc" id="astructParameters_1_1SimulationControl_html_a5fef9c9888f530e256aed538f319fd23"><div class="ttname"><a href="structParameters_1_1SimulationControl.html#a5fef9c9888f530e256aed538f319fd23">Parameters::SimulationControl::BDFStartupMethods</a></div><div class="ttdeci">BDFStartupMethods</div><div class="ttdef"><b>Definition</b> <a href="parameters_8h_source.html#l00137">parameters.h:138</a></div></div>
+<div class="ttc" id="astructParameters_1_1SimulationControl_html_a5fef9c9888f530e256aed538f319fd23"><div class="ttname"><a href="structParameters_1_1SimulationControl.html#a5fef9c9888f530e256aed538f319fd23">Parameters::SimulationControl::BDFStartupMethods</a></div><div class="ttdeci">BDFStartupMethods</div><div class="ttdef"><b>Definition</b> <a href="parameters_8h_source.html#l00140">parameters.h:141</a></div></div>
 <div class="ttc" id="astructParameters_1_1SimulationControl_html_a86daf86652a712eb783c105c953eb7f8"><div class="ttname"><a href="structParameters_1_1SimulationControl.html#a86daf86652a712eb783c105c953eb7f8">Parameters::SimulationControl::TimeSteppingMethod</a></div><div class="ttdeci">TimeSteppingMethod</div><div class="ttdef"><b>Definition</b> <a href="parameters_8h_source.html#l00074">parameters.h:75</a></div></div>
 <div class="ttc" id="astructParameters_1_1SimulationControl_html_a86daf86652a712eb783c105c953eb7f8a0267dc6b1db4ed7cf48c60fa776c8843"><div class="ttname"><a href="structParameters_1_1SimulationControl.html#a86daf86652a712eb783c105c953eb7f8a0267dc6b1db4ed7cf48c60fa776c8843">Parameters::SimulationControl::TimeSteppingMethod::bdf1</a></div><div class="ttdeci">@ bdf1</div></div>
 <div class="ttc" id="astructParameters_1_1SimulationControl_html_a86daf86652a712eb783c105c953eb7f8a0675922ff4c4a16ee033b34e48ee33ee"><div class="ttname"><a href="structParameters_1_1SimulationControl.html#a86daf86652a712eb783c105c953eb7f8a0675922ff4c4a16ee033b34e48ee33ee">Parameters::SimulationControl::TimeSteppingMethod::sdirk22</a></div><div class="ttdeci">@ sdirk22</div></div>
@@ -1420,7 +1426,7 @@ $(document).ready(function() { init_codefold(0); });
 <div class="ttc" id="astructParameters_1_1SimulationControl_html_a86daf86652a712eb783c105c953eb7f8a7e23e875a6c062a276f90cb43a6280c0"><div class="ttname"><a href="structParameters_1_1SimulationControl.html#a86daf86652a712eb783c105c953eb7f8a7e23e875a6c062a276f90cb43a6280c0">Parameters::SimulationControl::TimeSteppingMethod::bdf2</a></div><div class="ttdeci">@ bdf2</div></div>
 <div class="ttc" id="astructParameters_1_1SimulationControl_html_a86daf86652a712eb783c105c953eb7f8aaeba79e7430a4815eb11453c271ce6f4"><div class="ttname"><a href="structParameters_1_1SimulationControl.html#a86daf86652a712eb783c105c953eb7f8aaeba79e7430a4815eb11453c271ce6f4">Parameters::SimulationControl::TimeSteppingMethod::sdirk33</a></div><div class="ttdeci">@ sdirk33</div></div>
 <div class="ttc" id="astructParameters_1_1SimulationControl_html_a86daf86652a712eb783c105c953eb7f8ace68ebd29c010930ed70df3b718e02b9"><div class="ttname"><a href="structParameters_1_1SimulationControl.html#a86daf86652a712eb783c105c953eb7f8ace68ebd29c010930ed70df3b718e02b9">Parameters::SimulationControl::TimeSteppingMethod::steady_bdf</a></div><div class="ttdeci">@ steady_bdf</div></div>
-<div class="ttc" id="astructParameters_1_1SimulationControl_html_afbdfe1836c2e09ec340042dc780c9d75"><div class="ttname"><a href="structParameters_1_1SimulationControl.html#afbdfe1836c2e09ec340042dc780c9d75">Parameters::SimulationControl::OutputControl</a></div><div class="ttdeci">OutputControl</div><div class="ttdef"><b>Definition</b> <a href="parameters_8h_source.html#l00131">parameters.h:132</a></div></div>
+<div class="ttc" id="astructParameters_1_1SimulationControl_html_afbdfe1836c2e09ec340042dc780c9d75"><div class="ttname"><a href="structParameters_1_1SimulationControl.html#afbdfe1836c2e09ec340042dc780c9d75">Parameters::SimulationControl::OutputControl</a></div><div class="ttdeci">OutputControl</div><div class="ttdef"><b>Definition</b> <a href="parameters_8h_source.html#l00134">parameters.h:135</a></div></div>
 </div><!-- fragment --></div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>
