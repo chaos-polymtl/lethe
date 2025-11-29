@@ -1,4 +1,4 @@
-// SPDX-FileCopyrightText: Copyright (c) 2024 The Lethe Authors
+// SPDX-FileCopyrightText: Copyright (c) 2024-2025 The Lethe Authors
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
 #include <core/tracer_reaction_model.h>
@@ -16,7 +16,8 @@ TracerReactionPrefactorModel::model_cast(
       material_properties.immersed_solid_tanh_parameters
         .tracer_reaction_constant_inside,
       material_properties.immersed_solid_tanh_parameters.thickness,
-      material_properties.tracer_reaction_order);
+      material_properties.tracer_reaction_order,
+      material_properties.tracer_reaction_threshold);
   else if (material_properties.tracer_reaction_prefactor_model ==
            Parameters::Material::TracerReactionPrefactorModel::
              immersed_boundary_gaussian)
@@ -26,12 +27,14 @@ TracerReactionPrefactorModel::model_cast(
       material_properties.immersed_solid_gaussian_parameters
         .tracer_reaction_constant_bulk,
       material_properties.immersed_solid_gaussian_parameters.thickness,
-      material_properties.tracer_reaction_order);
+      material_properties.tracer_reaction_order,
+      material_properties.tracer_reaction_threshold);
   else if (material_properties.tracer_reaction_prefactor_model ==
            Parameters::Material::TracerReactionPrefactorModel::constant)
     return std::make_shared<ConstantTracerReactionPrefactor>(
       material_properties.tracer_reaction_constant,
-      material_properties.tracer_reaction_order);
+      material_properties.tracer_reaction_order,
+      material_properties.tracer_reaction_threshold);
   else
     return std::make_shared<NoneTracerReactionPrefactor>();
 }
