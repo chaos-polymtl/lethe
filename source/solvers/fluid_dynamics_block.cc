@@ -764,7 +764,7 @@ FluidDynamicsBlock<dim>::set_initial_condition_fd(
            Parameters::FluidDynamicsInitialConditionType::L2projection)
     {
       assemble_L2_projection();
-      solve_L2_system(true, 1e-15, 1e-15);
+      solve_L2_system(1e-15, 1e-15);
       *this->present_solution = this->newton_update;
       this->finish_time_step();
     }
@@ -818,7 +818,7 @@ FluidDynamicsBlock<dim>::solve_linear_system()
 
   if (this->simulation_parameters.linear_solver.at(PhysicsID::fluid_dynamics)
         .solver == Parameters::LinearSolver::SolverType::gmres)
-    solve_system_GMRES(false, absolute_residual, relative_residual);
+    solve_system_GMRES(absolute_residual, relative_residual);
   else
     AssertThrow(
       this->simulation_parameters.linear_solver.at(PhysicsID::fluid_dynamics)
@@ -996,12 +996,10 @@ FluidDynamicsBlock<dim>::setup_AMG()
 
 template <int dim>
 void
-FluidDynamicsBlock<dim>::solve_system_GMRES(const bool   initial_step,
-                                            const double absolute_residual,
+FluidDynamicsBlock<dim>::solve_system_GMRES(const double absolute_residual,
                                             const double relative_residual)
 {
-  const AffineConstraints<double> &constraints_used =
-    initial_step ? this->nonzero_constraints : this->zero_constraints;
+  const AffineConstraints<double> &zero_constraints = this->zero_constraints;
   const double rescale_metric   = this->get_residual_rescale_metric();
   const double current_residual = this->system_rhs.l2_norm() / rescale_metric;
   const double linear_solver_tolerance =
@@ -1067,23 +1065,19 @@ FluidDynamicsBlock<dim>::solve_system_GMRES(const bool   initial_step,
                     << std::endl;
       }
 
-    constraints_used.distribute(this->newton_update);
+    zero_constraints.distribute(this->newton_update);
   }
 }
 
 template <int dim>
 void
-FluidDynamicsBlock<dim>::solve_L2_system(const bool initial_step,
-                                         double     absolute_residual,
-                                         double     relative_residual)
+FluidDynamicsBlock<dim>::solve_L2_system(double absolute_residual,
+                                         double relative_residual)
 {
-  auto &system_rhs          = this->system_rhs;
-  auto &nonzero_constraints = this->nonzero_constraints;
-
   TimerOutput::Scope t(this->computing_timer, "Solve linear system");
 
-  const AffineConstraints<double> &constraints_used =
-    initial_step ? nonzero_constraints : this->zero_constraints;
+  const AffineConstraints<double> &nonzero_constraints =
+    this->nonzero_constraints;
   const double rescale_metric   = this->get_residual_rescale_metric();
   const double current_residual = this->system_rhs.l2_norm() / rescale_metric;
   const double linear_solver_tolerance =
@@ -1129,11 +1123,9 @@ FluidDynamicsBlock<dim>::solve_L2_system(const bool initial_step,
   const BlockDiagPreconditioner<TrilinosWrappers::PreconditionILU>
     preconditioner(system_matrix, pmass_preconditioner, solver_control);
 
-  // preconditioner.initialize(system_matrix, preconditionerOptions);
-
   solver.solve(system_matrix,
                completely_distributed_solution,
-               system_rhs,
+               this->system_rhs,
                preconditioner);
 
   if (this->simulation_parameters.linear_solver.at(PhysicsID::fluid_dynamics)
@@ -1143,7 +1135,7 @@ FluidDynamicsBlock<dim>::solve_L2_system(const bool initial_step,
                   << " steps " << std::endl;
     }
 
-  constraints_used.distribute(completely_distributed_solution);
+  nonzero_constraints.distribute(completely_distributed_solution);
   this->newton_update = completely_distributed_solution;
 }
 

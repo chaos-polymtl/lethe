@@ -157,10 +157,6 @@ private:
   copy_local_rhs_to_global_rhs(
     const StabilizedMethodsTensorCopyData<dim> &copy_data);
 
-  template <bool                                              assemble_matrix,
-            Parameters::SimulationControl::TimeSteppingMethod scheme>
-  void
-  assembleGD();
 
   void
   assemble_L2_projection();
@@ -226,9 +222,7 @@ private:
    */
 
   void
-  solve_L2_system(bool   initial_step,
-                  double relative_residual,
-                  double minimum_residual);
+  solve_L2_system(double relative_residual, double minimum_residual);
 
   /**
    * Solver for the NS linear system of equations
@@ -241,8 +235,7 @@ private:
    * GMRES solver with ILU preconditioning or AMG preconditioning
    */
   void
-  solve_system_GMRES(const bool   initial_step,
-                     const double relative_residual,
+  solve_system_GMRES(const double relative_residual,
                      const double minimum_residual);
 
   /**

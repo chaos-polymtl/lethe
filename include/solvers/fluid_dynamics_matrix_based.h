@@ -232,29 +232,47 @@ private:
   assemble_L2_projection();
 
 
+  /**
+   * @brief Solver for the L2 Projection linear system at the initial time step to apply this initial condition. It always uses the GMRES solver with ILU(N) by default.
+   *
+   * @param[in] absolute_residual Absolute residual for the solver stopping
+   * criterion.
+   * @param[in] relative_residual Relative residual for the solver stopping
+   * criterion.
+   */
+
+  void
+  solve_L2_system(const double absolute_residual,
+                  const double relative_residual);
+
 
   /**
    * @brief GMRES solver with ILU(N) preconditioning or AMG preconditioning
+   * @param[in] absolute_residual Absolute residual for the solver stopping
+   * criterion.
+   * @param[in] relative_residual Relative residual for the solver stopping
+   * criterion.
    */
   void
-  solve_system_GMRES(const bool   initial_step,
-                     const double absolute_residual,
+  solve_system_GMRES(const double absolute_residual,
                      const double relative_residual);
 
   /**
    * @brief BiCGStab solver with ILU(N) preconditioning
+   * @param[in] absolute_residual Absolute residual for the solver stopping
+   * criterion.
+   * @param[in] relative_residual Relative residual for the solver stopping
+   * criterion.
    */
   void
-  solve_system_BiCGStab(const bool   initial_step,
-                        const double absolute_residual,
+  solve_system_BiCGStab(const double absolute_residual,
                         const double relative_residual);
   /**
    * @brief Direct solver using TrilinosWrappers::SolverDirect
    * The use of this solver should be avoided for 3D problems
    */
   void
-  solve_system_direct(const bool   initial_step,
-                      const double absolute_residual,
+  solve_system_direct(const double absolute_residual,
                       const double relative_residual);
 
   /**
