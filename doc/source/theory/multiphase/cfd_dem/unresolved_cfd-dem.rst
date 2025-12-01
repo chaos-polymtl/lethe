@@ -57,10 +57,10 @@ where:
 
 In unresolved CFD-DEM, the drag force is calculated using correlations (frequently called drag models). The drag models implemented in Lethe are described in the `unresolved CFD-DEM parameters guide <../../../parameters/unresolved-cfd-dem/cfd-dem>`_.
 
-Volume Average Navier-Stokes
------------------------------
+Volume-Averaged Navier-Stokes
+------------------------------
 
-Since we represent the fluid at a meso-scale, the quantities calculated for the cells are averages among its volume. Additionally, as the volume of fluid is a fraction of the cell, the porosity (or void fraction) is taken into account. To do this, we apply the Volume Average Navier-Stokes (VANS) equations to represent the fluid phase. Mainly, the VANS equations are presented in two different formulations, so called Model A (or Set II) and Model B (or Set I) `[2] <https://doi.org/10.1017/S002211201000306X>`_.
+Since we represent the fluid at a meso-scale, the quantities calculated for the cells are filtered. Additionally, the fact that the volume that the fluid occupies varies as a function of time and space is taken into account through the void fraction (or porosity). The resulting equations are the Volumed-Averaged Navier-Stokes (VANS) equations and they are solved to obtain the velocity and the pressure of the continuous fluid phase. In Lethe, the VANS equations are presented in two different formulations, so called Model A (or Set II) and Model B (or Set I) `[2] <https://doi.org/10.1017/S002211201000306X>`_.
 
 Considering an incompressible flow, the continuity equation for both models is:
 
@@ -91,17 +91,19 @@ where:
 * :math:`\tau` is the shear stress;
 * :math:`\mathbf{F}_{pf}^A` and :math:`\mathbf{F}_{pf}^B` are the source terms representing the forces applied back in the fluid due to the interaction with particles for Models A and B, respectively.
 
-For Model A, since the pressure and shear stress terms are considered to be partially in the particle's phase, we can write the interaction term as:
+The volumetric interaction forces (:math:`\mathbf{F}_{pf}^A` and :math:`\mathbf{F}_{pf}^B`) are regularized using a kernel function :math:`k_r` [#evrard2020]_:
 
-.. math:: 
-    \mathbf{F}_{pf}^A = \frac{1}{V_{\Omega}}\sum_{i}^{n_p}\left ( \mathbf{f}_{pf, i} - \mathbf{f}_{\nabla p, i} - \mathbf{f}_{\nabla \cdot \tau, i} \right )
 
-while for Model B, since the pressure and shear stress are totally in the fluid, we write:
+.. math::
+    \bar{\mathbf{f}}_\mathrm{A}^{\mathrm{pf}} &= \sum_{N_p} k_r \left (\lVert \mathbf{x} - \mathbf{x}_i \rVert \right ) \left (\mathbf{F}_i^{\mathrm{pf}} - \mathbf{F}_i^{\nabla p} - \mathbf{f}_i^{\nabla \cdot \mathbf{\tau}} \right ) \\
+    \bar{\mathbf{f}}_\mathrm{B}^{\mathrm{pf}} &= \sum_{N_p} k_r \left (\lVert \mathbf{x} - \mathbf{x}_i \rVert \right ) \mathbf{F}_i^{\mathrm{pf}}
 
-.. math:: 
-    \mathbf{F}_{pf}^B = \frac{1}{V_{\Omega}}\sum_{i}^{n_p}\left ( \mathbf{f}_{pf, i} \right )
+with :math:`k_r` normalized such that
 
-where :math:`n_p` is the number of particles inside the cell :math:`\Omega` with volume :math:`V_{\Omega}`.
+.. math::
+    \int_{\Omega} k_r \left (\lVert \mathbf{x} \rVert \right ) \mathrm{d}\mathbf{x} = 1
+
+When the Particle-in-Cell method is used for the particle-fluid coupling, the regularization is carried out over the cells of the mesh. However, Lethe also supports filtering the solid-fluid forces using a spherical top-hat filter. This results in a filter definition that is independent of the mesh.
 
 Lethe is capable of simulating unresolved CFD-DEM cases with both Models A and B (see the :doc:`../../../parameters/unresolved-cfd-dem/cfd-dem` page of this guide).
 
@@ -143,9 +145,6 @@ This results in the PCM being discontinuous in space and time. The void fraction
     \varepsilon_f = 1 - \frac{\sum_{i}^{n_p} V_{p,i}}{V_\Omega}
 
 where :math:`n_p` is the number of particles with centroid inside the cell :math:`\Omega` with volume :math:`V_{\Omega}`.
-
-.. warning::
-    The void fraction of a single cell must always be close to the actual porosity of the media, regardless of the method applied on its calculation. If the cells are too small, the void fraction will be excessively low in some cells and excessively high in others. This leads to miscalculation of quantities highly dependent of the void fraction, such as the drag force. According to the literature, **cells should be at least 3 to 4 times larger than particles**. 
 
 
 The Satellite Point Method
@@ -191,6 +190,8 @@ References
 .. [#zhou2010] \Z. Y. Zhou, S. B. Kuang, K. W. Chu, and A. B. Yu, “Discrete particle simulation of particle–fluid flow: model formulations and their applicability,” *J. Fluid Mech.*, vol. 661, pp. 482–510, Oct. 2010, doi: `10.1017/S002211201000306X <https://doi.org/10.1017/S002211201000306X>`_\.
 
 .. [#nitsche1994] \L. C. Nitsche, “Microhydrodynamics: Principles and selected applications. By Sangtae Kim and Seppo J. Karrila, Butterworth-Heinemann, Boston, 1991” *AIChE J.*, vol. 40, no. 4, pp. 739–743, 1994, doi: `10.1002/aic.690400418 <https://doi.org/10.1002/aic.690400418>`_\.
+
+.. [#evrard2020] \B. Evrard, “Regularization of particulate source terms in CFD-DEM,” 2020.
 
 .. [#rong2013] \L. W. Rong, K. J. Dong, and A. B. Yu, “Lattice-Boltzmann simulation of fluid flow through packed beds of uniform spheres: Effect of porosity,” *Chem. Eng. Sci.*, vol. 99, pp. 44–58, Aug. 2013, doi: `10.1016/j.ces.2013.05.036 <http://dx.doi.org/10.1016/j.ces.2013.05.036>`_\.
 
