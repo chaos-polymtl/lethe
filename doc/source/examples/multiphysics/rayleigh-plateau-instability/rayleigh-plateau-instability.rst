@@ -2,7 +2,7 @@
 Rayleigh-Plateau Instability
 ================================
 
-This example simulates the transition of a continuous jet to a droplet regime under the influence of a perturbation. The case simulated in this example corresponds to the case J1 in absence of gravity from the work of Denner *et al.* [#denner2022]_ with the Weber number :math:`We = 20` and the Ohnesorge number :math:`Oh = 0.1`.
+This example simulates the transition of a continuous jet to a droplet regime under the influence of a perturbation. The case simulated in this example corresponds to the case J1 in absence of gravity from the work of Denner *et al.* [#denner2022]_ with the Weber number :math:`\mathrm{We} = 50` and the Ohnesorge number :math:`\mathrm{Oh} = 0.1`.
 
 ****
 
@@ -25,13 +25,13 @@ Files Used in This Example
 All files mentioned below are located in the example's folder (``examples/multiphysics/rayleigh-plateau-instability``).
 
 - Case generation and simulation launching Bash script: ``rayleigh-plateau-launch.sh``
-- Parameter file for case generation: ``rayleigh-plateau-J1-We020-Oh0_10.tpl``
-- Parameter file the for 2D case with an excitation amplitude (:math:`\delta_0`) of :math:`0.2`: ``rayleigh-plateau-J1-We020-Oh0_10_delta0_20/rayleigh-plateau-J1-We020-Oh0_10_delta0_20.prm``
+- Parameter file for case generation: ``rayleigh-plateau-J1-We050-Oh0_10.tpl``
+- Parameter file the for 2D case with an excitation amplitude (:math:`\delta_0`) of :math:`0.2`: ``rayleigh-plateau-J1-We050-Oh0_10_delta0_20/rayleigh-plateau-J1-We050-Oh0_10_delta0_20.prm``
 - Parameter file for the 3D case with :math:`\delta_0 = 0.3`: ``3D-delta0_30/rayleigh-plateau-J1-3D.prm``
 - Postprocessing Python script for breakup lengths extraction: ``rayleigh-plateau-postprocess.py``
 - Postprocessing Python script for code to code comparison: ``rayleigh-plateau-compare.py``
 - Postprocessing Bash script: ``rayleigh-plateau-postprocess.sh``
-- Reference results from Denner *et al.* [#denner2022]_ for code-to-code verification (:math:`We=20` and :math:`Oh=10`): ``denner-et-al-2022-We020.csv``
+- Reference results from Denner *et al.* [#denner2022]_ for code-to-code verification (:math:`\mathrm{We}=50` and :math:`\mathrm{Oh}=0.1`): ``denner-et-al-2022-We050.csv``
 
 ****
 
@@ -105,7 +105,7 @@ The ``multiphysics`` subsection is used to enable the VOF solver.
 Physical Properties
 ~~~~~~~~~~~~~~~~~~~~
 
-In the ``physical properties`` subsection, we define the jet fluid (``fluid 1``) as presented for case J1 in Denner *et al.* [#denner2022]_ The viscosity is deduced from the imposed Ohnesorge number :math:`\left(Oh=\frac{\mu_1}{\sigma\rho_1 R_\mathrm{inlet}} \right)` value of :math:`0.1`. The ambient fluid (``fluid 0``) is defined such that the density :math:`\left(\frac{\rho_1}{\rho_0} = 10^3 \right)` and dynamic viscosity :math:`\left(\frac{\mu_1}{\mu_0} = 10^2\right)` ratios are respected. A ``fluid-fluid`` type of material interaction is also defined to specify the ``surface tension model``. In this case, it is set to ``constant`` (default value) with the ``surface tension coefficient`` (:math:`\sigma`) set to :math:`0.0674 \; \mathrm{N \, m^{-1}}`.
+In the ``physical properties`` subsection, we define the jet fluid (``fluid 1``) as presented for case J1 in Denner *et al.* [#denner2022]_ The viscosity is deduced from the imposed Ohnesorge number :math:`\left(\mathrm{Oh}=\frac{\mu_1}{\sqrt{\sigma\rho_1 R_\mathrm{inlet}}} \right)` value of :math:`0.1`. The ambient fluid (``fluid 0``) is defined such that the density :math:`\left(\frac{\rho_1}{\rho_0} = 10^3 \right)` and dynamic viscosity :math:`\left(\frac{\mu_1}{\mu_0} = 10^2\right)` ratios are respected. A ``fluid-fluid`` type of material interaction is also defined to specify the ``surface tension model``. In this case, it is set to ``constant`` (default value) with the ``surface tension coefficient`` (:math:`\sigma`) set to :math:`0.0674 \; \mathrm{N \, m^{-1}}`.
 
 .. code-block:: text
 
@@ -164,7 +164,7 @@ Initial Conditions
 ~~~~~~~~~~~~~~~~~~
 
 In the ``initial conditions``, we define the initial condition as presented in the figure above.
-The uniform jet velocity :math:`(U = 1.569 \; \mathrm{m \, s^{-1}})` corresponds to :math:`We=\frac{\rho_1 R_\mathrm{inlet} U^2}{\sigma}=20`.
+The uniform jet velocity :math:`(U = 1.569 \; \mathrm{m \, s^{-1}})` corresponds to :math:`\mathrm{We}=\frac{\rho_1 R_\mathrm{inlet} U^2}{\sigma}=50`.
 
 .. code-block:: text
 
@@ -251,7 +251,7 @@ We can call ``lethe-fluid`` for each :math:`\delta_0` value. For :math:`\delta_0
 .. code-block:: text
   :class: copy-button
 
-  mpirun -np 14 lethe-fluid rayleigh-plateau-J1-We020-Oh0_10_delta0_20.prm
+  mpirun -np 14 lethe-fluid rayleigh-plateau-J1-We050-Oh0_10_delta0_20.prm
 
 to run the simulation using fourteen CPU cores. Feel free to use more CPU cores.
 
@@ -265,7 +265,7 @@ to run the simulation using fourteen CPU cores. Feel free to use more CPU cores.
   .. code-block:: text
     :class: copy-button
 
-    ./rayleigh-plateau-launch.sh rayleigh-plateau-J1-We020-Oh0_10.tpl "{0.05 0.1 0.15 0.2 0.25 0.3 0.35 0.4 0.5 0.6}"
+    ./rayleigh-plateau-launch.sh rayleigh-plateau-J1-We050-Oh0_10.tpl "{0.05 0.1 0.15 0.2 0.25 0.3 0.35 0.4 0.5 0.6}"
 
   where ``"{0.05 0.1 0.15 0.2 0.25 0.3 0.35 0.4 0.5 0.6}"`` is the sequence of :math:`\delta_0` values of the different cases.
 
@@ -311,9 +311,9 @@ The results can be postprocessed using the provided Bash script (``rayleigh-plat
 .. code-block:: text
   :class: copy-button
 
-  ./rayleigh-plateau-postprocess.sh denner-et-al-2022-We020.csv "{0.05 0.1 0.15 0.2 0.25 0.3 0.35 0.4 0.5 0.6}"
+  ./rayleigh-plateau-postprocess.sh denner-et-al-2022-We050.csv "{0.05 0.1 0.15 0.2 0.25 0.3 0.35 0.4 0.5 0.6}"
 
-with ``denner-et-al-2022-We020.csv`` being the path to the reference data csv file.
+with ``denner-et-al-2022-We050.csv`` being the path to the reference data csv file.
 
 .. important::
   You need to ensure that the ``lethe_pyvista_tools`` is working on your machine. Click :doc:`here <../../../tools/postprocessing/postprocessing_pyvista>` for details.
@@ -333,7 +333,7 @@ The script then calculates an average :math:`L_\mathrm{b}` which is used to eval
 +-------------------------------------------------------------------------------------------------------------------+
 
 As it can be seen above, for :math:`\delta_0 \leq 0.1`, we observe no breakup. The jet stabilizes despite the perturbation. An additional case was studied at :math:`\delta_0 = 0.12` to check the increasing stabilizing tendency of the jet for lower excitation amplitude values.
-We also observe that none of the other evaluation points match with the work of Denner *et al.* [#denner2022]_  However, a similar trend in values is observed for :math:`\delta_0 \in [0.2,0.5]`. At :math:`\delta_0 = 0.6`, a huge difference is observed. This is due to the way the satellite droplets are formed. As opposed to previous simulations, the satellite droplets are formed from the broken-off part of the jet, decreasing significantly :math:`L_\mathrm{b}` as displayed in the video below. This might have not been the case in the work of Denner *et al.* [#denner2022]_
+We also observe that none of the other evaluation points match with the work of Denner *et al.* [#denner2022]_  These differences can be due to the 2D simulation setup used to generate the results of Lethe, while the ones of Denner *et al.* are obtained from a 3D setup. At :math:`\delta_0 = 0.6`, a huge difference is observed. This is due to the way the satellite droplets are formed. As opposed to previous simulations, the satellite droplets are formed from the broken-off part of the jet, decreasing significantly :math:`L_\mathrm{b}` as displayed in the video below. This might have not been the case in the work of Denner *et al.* [#denner2022]_
 
 .. raw:: html
 
