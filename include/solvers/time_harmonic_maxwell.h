@@ -22,6 +22,7 @@
 #include <deal.II/fe/fe_dgq.h>
 #include <deal.II/fe/fe_nedelec_sz.h>
 #include <deal.II/fe/fe_system.h>
+#include <deal.II/fe/fe_values.h>
 
 #include <deal.II/numerics/data_out.h>
 
@@ -38,7 +39,7 @@
 
 /// TODO in this PR:
 /// [] Remplir chacune des fonctions
-///   [] Constructeur
+///   [x] Constructeur
 ///   [] Destructeur
 ///   [] Setup_dofs
 ///   [] Gather output hook
@@ -159,6 +160,14 @@ public:
         face_quadrature =
           std::make_shared<QGauss<dim - 1>>(fe_test->degree + 1);
       }
+
+    // Initialize solution shared_ptr
+    present_solution = std::make_shared<GlobalVectorType>();
+
+    // Allocate solution transfer
+    solution_transfer =
+      std::make_shared<SolutionTransfer<dim, GlobalVectorType>>(
+        *dof_handler_trial_interior);
   }
 
   /**
