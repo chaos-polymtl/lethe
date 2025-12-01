@@ -83,6 +83,17 @@ public:
       {
         announce_string(pcout, "Cahn-Hilliard");
       }
+    else if (physics_id == PhysicsID::electromagnetics)
+      {
+        announce_string(pcout, "Electromagnetics");
+      }
+    else
+      {
+        AssertThrow(
+          false,
+          ExcMessage(
+            "You are trying to declare an unknown physics. You have reached this point in the software because of a software bug. Simulation will stop because of this error."));
+      }
   }
 
   /**
