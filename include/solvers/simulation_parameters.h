@@ -110,10 +110,14 @@ public:
     Parameters::MeshAdaptation::declare_parameters(prm);
     mesh_box_refinement = std::make_shared<Parameters::MeshBoxRefinement>();
     mesh_box_refinement->declare_parameters(prm);
-    for (auto physics_name : physics_names)
+    for (auto physics_name : nonlinear_physics_names)
       {
         Parameters::LinearSolver::declare_parameters(prm, physics_name);
         Parameters::NonLinearSolver::declare_parameters(prm, physics_name);
+      }
+    for (auto physics_name : linear_physics_names)
+      {
+        Parameters::LinearSolver::declare_parameters(prm, physics_name);
       }
     for (const auto &vof_subequation_name : vof_subequations_names)
       {
@@ -156,12 +160,17 @@ public:
     dimensionality.parse_parameters(prm);
     test.parse_parameters(prm);
 
-    for (auto physics_name : physics_names)
+    for (auto physics_name : nonlinear_physics_names)
       {
         PhysicsID physics_id = get_physics_id(physics_name);
         linear_solver[physics_id].parse_parameters(prm, physics_name);
         physics_solving_strategy[physics_id].parse_parameters(prm,
                                                               physics_name);
+      }
+    for (auto physics_name : linear_physics_names)
+      {
+        PhysicsID physics_id = get_physics_id(physics_name);
+        linear_solver[physics_id].parse_parameters(prm, physics_name);
       }
     for (const auto &vof_subequation_name : vof_subequations_names)
       {
@@ -316,7 +325,10 @@ public:
                   }
               }
           }
-        else // non-constant surface tension model
+        else // non-constant
+             // surface
+             // tension
+             // model
           {
             if (physical_properties.number_of_material_interactions == 0)
               {
@@ -492,12 +504,13 @@ public:
 private:
   Parameters::PhysicalProperties physical_properties;
   // names for the physics supported by Lethe
-  std::vector<std::string> physics_names = {"fluid dynamics",
-                                            "heat transfer",
-                                            "tracer",
-                                            "VOF",
-                                            "cahn hilliard",
-                                            "void fraction"};
+  std::vector<std::string> nonlinear_physics_names = {"fluid dynamics",
+                                                      "heat transfer",
+                                                      "tracer",
+                                                      "VOF",
+                                                      "cahn hilliard",
+                                                      "void fraction"};
+  std::vector<std::string> linear_physics_names    = {"electromagnetics"};
   // Names of subequations within VOF that inherits from PhysicsSolver
   std::vector<std::string> vof_subequations_names = {
     "VOF algebraic interface reinitialization"};
