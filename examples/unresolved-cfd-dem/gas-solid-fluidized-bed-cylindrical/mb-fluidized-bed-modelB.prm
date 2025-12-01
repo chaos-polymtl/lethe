@@ -12,10 +12,10 @@ set dimension = 3
 
 subsection simulation control
   set method           = bdf1
-  set output frequency = 1
+  set output frequency = 5
   set time end         = 0.5
-  set time step        = 0.001
-  set output path      = ./output_modelB/
+  set time step        = 0.0002
+  set output path      = ./output_modelB_test/
 end
 
 #---------------------------------------------------
@@ -47,6 +47,7 @@ subsection mesh
   set grid type          = balanced
   set grid arguments     = 44:0.01:0.22
   set initial refinement = 2
+  set expand particle-wall contact search = true
 end
 
 #---------------------------------------------------
@@ -55,9 +56,10 @@ end
 
 subsection void fraction
   set mode                = qcm
+  set qcm sphere equal cell volume = true
   set read dem            = true
   set dem file name       = dem
-  set l2 smoothing length = 0.00000125
+  set l2 smoothing length = 0.001
 end
 
 #---------------------------------------------------
@@ -66,6 +68,7 @@ end
 
 subsection cfd-dem
   set grad div                      = true
+  set grad-div length scale         = 0.01
   set void fraction time derivative = true
   set drag force                    = true
   set buoyancy force                = true
