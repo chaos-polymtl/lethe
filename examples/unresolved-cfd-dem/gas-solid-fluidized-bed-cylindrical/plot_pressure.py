@@ -14,7 +14,7 @@ colors=['#1b9e77','#d95f02','#7570b3','#e7298a','#66a61e','#e6ab02']
 plt.rcParams['axes.prop_cycle'] = cycler(color=colors)
 
 t,p,p2 = np.loadtxt("output/pressure_drop.dat",unpack=True,skiprows=1)
-tt,pp,pp2 = np.loadtxt("output-bkup/pressure_drop.dat",unpack=True,skiprows=1)
+tt,pp,pp2 = np.loadtxt("output_modelA/pressure_drop.dat",unpack=True,skiprows=1)
 
 D= 0.02
 dp = 5e-4
@@ -41,7 +41,7 @@ print("  U_mf: ",U_mf_N)
 
 
 Re = 0.2*t * D / nu
-Repp=2*tt *D/nu
+Repp=0.2*tt *D/nu
 exp_p=408.34
 plt.plot(Re,p)
 plt.plot(Repp,pp)
