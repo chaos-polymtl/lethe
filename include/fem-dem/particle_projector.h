@@ -339,7 +339,7 @@ public:
   /**
    * @brief Calculate all the necessary information for the particle-fluid coupling.
    * This means calculating the projection of the particle-fluid interaction
-   * forces as well as the solid velociy onto the CFD mesh.
+   * forces as well as the solid velocity onto the CFD mesh.
    *
    */
   template <typename VectorType>

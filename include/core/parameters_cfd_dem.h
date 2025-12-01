@@ -145,6 +145,7 @@ namespace Parameters
     double       cstar;
     bool         implicit_stabilization;
     bool         particle_statistics;
+    bool         project_particle_forces;
 
     static void
     declare_parameters(ParameterHandler &prm);

@@ -2224,3 +2224,56 @@ VANSAssemblerFPI<dim>::assemble_rhs(
 }
 template class VANSAssemblerFPI<2>;
 template class VANSAssemblerFPI<3>;
+
+template <int dim>
+void
+VANSAssemblerFPIProjection<dim>::assemble_matrix(
+  [[maybe_unused]] const NavierStokesScratchData<dim>   &scratch_data,
+  [[maybe_unused]] StabilizedMethodsTensorCopyData<dim> &copy_data)
+{}
+
+template <int dim>
+void
+VANSAssemblerFPIProjection<dim>::assemble_rhs(
+  const NavierStokesScratchData<dim>   &scratch_data,
+  StabilizedMethodsTensorCopyData<dim> &copy_data)
+{
+  // Loop and quadrature informations
+  const auto        &JxW_vec    = scratch_data.JxW;
+  const unsigned int n_q_points = scratch_data.n_q_points;
+  const unsigned int n_dofs     = scratch_data.n_dofs;
+  // The CFD-DEM solver only supports constant density for now
+  const double density = scratch_data.density_scale;
+
+  // Copy data elements
+  auto &strong_residual = copy_data.strong_residual;
+  auto &local_rhs       = copy_data.local_rhs;
+
+  // Loop over the quadrature points
+  for (unsigned int q = 0; q < n_q_points; ++q)
+    {
+      const Tensor<1, dim> &two_way_coupling_force =
+        -scratch_data.particle_two_way_coupling_force_values[q] / density;
+      const Tensor<1, dim> &fluid_drag =
+        -scratch_data.particle_drag_values[q] / density;
+
+      // Store JxW in local variable for faster access;
+      const double JxW = JxW_vec[q];
+
+      // Calculate the strong residual for GLS stabilization
+      // Drag Force and other two-way coupling forces
+      strong_residual[q] -= (fluid_drag + two_way_coupling_force);
+
+      // Assembly of the right-hand side
+      for (unsigned int i = 0; i < n_dofs; ++i)
+        {
+          const auto phi_u_i = scratch_data.phi_u[q][i];
+          // Drag Force
+          //  The distinction between Model A and B of the VANS equations is
+          //  made in the shear and pressure forces assemblers.
+          local_rhs(i) += (fluid_drag + two_way_coupling_force) * phi_u_i * JxW;
+        }
+    }
+}
+template class VANSAssemblerFPIProjection<2>;
+template class VANSAssemblerFPIProjection<3>;

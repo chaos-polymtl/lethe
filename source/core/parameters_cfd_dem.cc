@@ -60,6 +60,7 @@ namespace Parameters
       "false",
       Patterns::Bool(),
       "Specify whether the particle velocity is projected using QCM");
+
     prm.leave_subsection();
   }
 
@@ -193,6 +194,12 @@ namespace Parameters
       Patterns::Selection("implicit|semi-implicit|explicit"),
       "Formulation for the drag force. Choices are implicit|semi-implicit|explicit. The default value is semi-implicit, which represents the legacy coupling method.");
 
+    prm.declare_entry(
+      "project particle forces",
+      "false",
+      Patterns::Bool(),
+      "In the VANS solver, specify whether the two-way coupling forces, including the drag, are calculated by projecting the forces acting on the particles onto the fluid grid using the QCM filter.");
+
     prm.leave_subsection();
   }
 
@@ -216,6 +223,7 @@ namespace Parameters
     cstar                      = prm.get_double("grad-div length scale");
     implicit_stabilization     = prm.get_bool("implicit stabilization");
     particle_statistics        = prm.get_bool("particle statistics");
+    project_particle_forces    = prm.get_bool("project particle forces");
 
     const std::string op = prm.get("drag model");
     if (op == "difelice")

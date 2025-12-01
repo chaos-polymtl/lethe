@@ -113,6 +113,7 @@ public:
     gather_temperature                       = false;
     gather_cahn_hilliard                     = false;
     gather_mortar                            = false;
+    gather_particle_field_project            = false;
     gather_hessian = properties_manager.is_non_newtonian();
   }
 
@@ -153,6 +154,7 @@ public:
     gather_temperature                       = false;
     gather_cahn_hilliard                     = false;
     gather_mortar                            = false;
+    gather_particle_field_project            = false;
     gather_hessian = properties_manager.is_non_newtonian();
 
     if (sd.gather_vof)
@@ -188,6 +190,14 @@ public:
                            sd.cahn_hilliard_filter);
     if (sd.gather_mortar)
       enable_mortar();
+
+    if (sd.gather_particle_field_project)
+      enable_particle_field_projection(
+        sd.fe_values.get_quadrature(),
+        sd.fe_values.get_mapping(),
+        sd.fe_values_particle_drag->get_fe(),
+        sd.fe_values_particle_two_way_coupling_force->get_fe(),
+        sd.fe_values_particle_velocity->get_fe());
 
     gather_hessian = sd.gather_hessian;
   }
@@ -583,6 +593,29 @@ public:
   enable_void_fraction(const FiniteElement<dim> &fe,
                        const Quadrature<dim>    &quadrature,
                        const Mapping<dim>       &mapping);
+
+  /**
+   * @brief enable_particle_field_projection Enables the collection of the particle fields
+   * projection data by the scratch
+   *
+   * @param quadrature Quadrature rule of the Navier-Stokes problem assembly
+   *
+   * @param mapping Mapping used for the Navier-Stokes problem assembly
+   *
+   * @param fe_particle_drag_proj FiniteElement associated with the projected particle drag force
+   *
+   * @param fe_particle_two_way_coupling_force_proj FiniteElement associated with the projected
+   * particle two-way coupling force
+   *
+   * @param fe_particle_velocity_proj FiniteElement associated with the projected particle velocity
+   */
+  void
+  enable_particle_field_projection(
+    const Quadrature<dim>    &quadrature,
+    const Mapping<dim>       &mapping,
+    const FiniteElement<dim> &fe_particle_drag_proj,
+    const FiniteElement<dim> &fe_particle_two_way_coupling_force_proj,
+    const FiniteElement<dim> &fe_particle_velocity_proj);
 
   /**
    *  @brief Reinitialize the content of the scratch for the void fraction
@@ -1268,6 +1301,67 @@ public:
   void
   calculate_physical_properties();
 
+  /**
+   * @brief Calculates the particle forces and velocities that were projected on
+   * the fluid dofs at the quadrature points of the velocity and pressure FE.
+   * The values are stored in the corresponding variables in scratch data.
+   *
+   * @param[in] particle_drag_cell Iterator pointing to the current active cell
+   * using the particle drag force DoFHandler
+   *
+   * @param[in] particle_two_way_coupling_force Iterator pointing to the current
+   * active cell using the particle two-way coupling force DoFHandler
+   *
+   * @param[in] particle_velocity_cell Iterator pointing to the current active
+   * cell using the particle velocity DoFHandler
+   *
+   * @param[in] particle_fluid_drag Object containing the projection of the
+   * particle drag onto the fluid dofs
+   *
+   * @param[in] particle_two_way_coupling_force Object containing the projection
+   * of the two-way coupling force projected from the particles onto the fluid
+   * dofs
+   *
+   * @param[in] particle_velocity Object containing the projection of the
+   * particle velocities onto the fluid dofs
+   */
+  template <typename VectorType>
+  void
+  calculate_particle_fields_values(
+    const typename DoFHandler<dim>::active_cell_iterator &particle_drag_cell,
+    const typename DoFHandler<dim>::active_cell_iterator
+      &particle_two_way_coupling_force_cell,
+    const typename DoFHandler<dim>::active_cell_iterator
+                                   &particle_velocity_cell,
+    const VectorType               &particle_fluid_drag,
+    const VectorType               &particle_fluid_force_two_way_coupling,
+    const VectorType               &particle_velocity,
+    const Parameters::DragCoupling &drag_coupling)
+  {
+    constexpr FEValuesExtractors::Vector vector_index(0);
+
+    this->fe_values_particle_two_way_coupling_force->reinit(
+      particle_two_way_coupling_force_cell);
+    (*this->fe_values_particle_two_way_coupling_force)[vector_index]
+      .get_function_values(particle_fluid_force_two_way_coupling,
+                           this->particle_two_way_coupling_force_values);
+
+    if (drag_coupling == Parameters::DragCoupling::fully_explicit)
+      { // particle_drag_values will remain zero in the implicit and
+        // semi-implicit coupling, since the momentum transfer
+        // coefficient is used instead
+        this->fe_values_particle_drag->reinit(particle_drag_cell);
+        (*this->fe_values_particle_drag)[vector_index].get_function_values(
+          particle_fluid_drag, this->particle_drag_values);
+      }
+    else
+      {
+        this->fe_values_particle_velocity->reinit(particle_velocity_cell);
+        (*this->fe_values_particle_velocity)[vector_index].get_function_values(
+          particle_velocity, this->particle_velocity_values);
+      }
+  }
+
   // For auxiliary physics solution extrapolation
   const std::shared_ptr<SimulationControl> simulation_control;
 
@@ -1408,7 +1502,15 @@ public:
   bool gather_particles_information;
   bool interpolated_void_fraction;
 
+  std::shared_ptr<FEValues<dim>> fe_values_particle_drag;
+  std::shared_ptr<FEValues<dim>> fe_values_particle_two_way_coupling_force;
+  std::shared_ptr<FEValues<dim>> fe_values_particle_velocity;
+
+  bool                        gather_particle_field_project;
   std::vector<Tensor<1, dim>> particle_velocity;
+  std::vector<Tensor<1, dim>> particle_velocity_values;
+  std::vector<Tensor<1, dim>> particle_drag_values;
+  std::vector<Tensor<1, dim>> particle_two_way_coupling_force_values;
   Tensor<1, dim>              average_particle_velocity;
   std::vector<Tensor<1, dim>> fluid_velocity_at_particle_location;
   std::vector<Tensor<1, dim>>

@@ -36,7 +36,6 @@ public:
    * @param scratch_data Scratch data containing the Navier-Stokes information.
    * It is important to note that the scratch data has to have been re-inited
    * before calling for matrix assembly.
-   * @param copy_data Destination where the local_rhs and loc
    */
 
   virtual void
@@ -70,8 +69,8 @@ public:
 
   /**
    * @brief assemble_matrix Assembles the matrix
-   * @param scratch_data (see base class)
-   * @param copy_data (see base class)
+   * @param[in] scratch_data (see base class)
+   * @param[in,out] copy_data (see base class)
    */
   virtual void
   assemble_matrix(const NavierStokesScratchData<dim>   &scratch_data,
@@ -79,8 +78,8 @@ public:
 
   /**
    * @brief assemble_rhs Assembles the rhs
-   * @param scratch_data (see base class)Particles::ParticleHandler
-   * @param copy_data (see base class)
+   * @param[in] scratch_data (see base class)Particles::ParticleHandler
+   * @param[in,out] copy_data (see base class)
    */
   virtual void
   assemble_rhs(const NavierStokesScratchData<dim>   &scratch_data,
@@ -112,8 +111,8 @@ public:
 
   /**
    * @brief Assembles the matrix
-   * @param scratch_data (see base class)
-   * @param copy_data (see base class)
+   * @param[in] scratch_data (see base class)
+   * @param[in,out] copy_data (see base class)
    */
   virtual void
   assemble_matrix(const NavierStokesScratchData<dim>   &scratch_data,
@@ -121,8 +120,8 @@ public:
 
   /**
    * @brief assemble_rhs Assembles the rhs
-   * @param scratch_data (see base class)Particles::ParticleHandler
-   * @param copy_data (see base class)
+   * @param[in] scratch_data (see base class)Particles::ParticleHandler
+   * @param[in,out] copy_data (see base class)
    */
   virtual void
   assemble_rhs(const NavierStokesScratchData<dim>   &scratch_data,
@@ -158,8 +157,8 @@ public:
 
   /**
    * @brief Assembles the matrix
-   * @param scratch_data (see base class)
-   * @param copy_data (see base class)
+   * @param[in] scratch_data (see base class)
+   * @param[in,out] copy_data (see base class)
    */
   virtual void
   assemble_matrix(const NavierStokesScratchData<dim>   &scratch_data,
@@ -167,8 +166,8 @@ public:
 
   /**
    * @brief Assembles the rhs
-   * @param scratch_data (see base class)
-   * @param copy_data (see base class)
+   * @param[in] scratch_data (see base class)
+   * @param[in,out] copy_data (see base class)
    */
   virtual void
   assemble_rhs(const NavierStokesScratchData<dim>   &scratch_data,
@@ -203,7 +202,7 @@ public:
 
   /**
    * @brief Calculated the solid_fluid interactions
-   * @param scratch_data (see base class)
+   * @param[in,out] scratch_data (see base class)
    */
   virtual void
   calculate_particle_fluid_interactions(
@@ -240,7 +239,7 @@ public:
   /**
    * @brief Calculated the solid_fluid interactions.
    *
-   * @param scratch_data (see base class)
+   * @param[in,out] scratch_data (see base class)
    */
   virtual void
   calculate_particle_fluid_interactions(
@@ -273,7 +272,7 @@ public:
   /**
    * @brief Calculted the solid_fluid interactions
    *
-   * @param scratch_data (see base class)
+   * @param[in,out] scratch_data (see base class)
    */
   virtual void
   calculate_particle_fluid_interactions(
@@ -322,7 +321,7 @@ public:
    * @brief calculate_particle_fluid_interactions  calculates the solid-fluid
    * interaction of the Koch-Hill drag model.
    *
-   * @param scratch_data (see base class)
+   * @param[in,out] scratch_data (see base class)
    */
   virtual void
   calculate_particle_fluid_interactions(
@@ -364,7 +363,7 @@ public:
 
   /**
    * @brief calculate_particle_fluid_interactions calculates the solid_fluid interactions
-   * @param scratch_data (see base class)
+   * @param[in,out] scratch_data (see base class)
    */
   virtual void
   calculate_particle_fluid_interactions(
@@ -416,8 +415,7 @@ public:
   /**
    * @brief calculate_particle_fluid_interactions calculted the solid_fluid interactions
    *
-   * @param scratch_data (see base class)
-   * @param copy_data (see base class)
+   * @param[in,out] scratch_data (see base class)
    */
   virtual void
   calculate_particle_fluid_interactions(
@@ -451,7 +449,7 @@ public:
 
   /**
    * @brief calculate_particle_fluid_interactions calculates the Saffman force.
-   * @param scratch_data (see base class)
+   * @param[in,out] scratch_data (see base class)
    */
   virtual void
   calculate_particle_fluid_interactions(
@@ -481,7 +479,7 @@ public:
 
   /**
    * @brief calculate_particle_fluid_interactions calculates the Magnus force.
-   * @param scratch_data (see base class)
+   * @param[in,out] scratch_data (see base class)
    */
   virtual void
   calculate_particle_fluid_interactions(
@@ -514,7 +512,7 @@ public:
 
   /**
    * @brief calculate_particle_fluid_interactions calculates the viscous torque dissipation
-   * @param scratch_data (see base class)
+   * @param[in] scratch_data (see base class)
    */
   virtual void
   calculate_particle_fluid_interactions(
@@ -546,7 +544,7 @@ public:
 
   /**
    * @brief calculate_particle_fluid_interactions calculates the viscous torque dissipation
-   * @param scratch_data (see base class)
+   * @param[in] scratch_data (see base class)
    */
   virtual void
   calculate_particle_fluid_interactions(
@@ -581,7 +579,7 @@ public:
 
   /**
    * @brief Calculate the buoyancy force.
-   * @param scratch_data (see base class)
+   * @param[in] scratch_data (see base class)
    */
   virtual void
   calculate_particle_fluid_interactions(
@@ -611,7 +609,7 @@ public:
   /**
    * @brief calculate_particle_fluid_interactions calculates the pressure force.
    *
-   * @param scratch_data (see base class)
+   * @param[in,out] scratch_data (see base class)
    */
   virtual void
   calculate_particle_fluid_interactions(
@@ -640,7 +638,7 @@ public:
   /**
    * @brief calculate_particle_fluid_interactions calculates the shear force.
    *
-   * @param scratch_data (see base class)
+   * @param[in,out] scratch_data (see base class)
    */
   virtual void
   calculate_particle_fluid_interactions(
@@ -670,8 +668,8 @@ public:
   /**
    * @brief assemble_matrix Assembles the matrix.
    *
-   * @param scratch_data (see base class)
-   * @param copy_data (see base class)
+   * @param[in] scratch_data (see base class)
+   * @param[in,out] copy_data (see base class)
    */
   virtual void
   assemble_matrix(const NavierStokesScratchData<dim>   &scratch_data,
@@ -680,8 +678,50 @@ public:
   /**
    * @brief assemble_rhs Assembles the rhs.
    *
-   * @param scratch_data (see base class)
-   * @param copy_data (see base class)
+   * @param[in] scratch_data (see base class)
+   * @param[in,out] copy_data (see base class)
+   */
+  virtual void
+  assemble_rhs(const NavierStokesScratchData<dim>   &scratch_data,
+               StabilizedMethodsTensorCopyData<dim> &copy_data) override;
+
+  const Parameters::CFDDEM cfd_dem;
+};
+
+/**
+ * @brief Class that assembles the fluid_particle interactions (FPI) for the
+ * VANS equations such as the drag force, when the forces are projected from the
+ * particles to the fluid grid.
+ *
+ * @tparam dim An integer that denotes the number of spatial dimensions
+ *
+ * @ingroup assemblers
+ */
+
+template <int dim>
+class VANSAssemblerFPIProjection : public NavierStokesAssemblerBase<dim>
+{
+public:
+  VANSAssemblerFPIProjection(const Parameters::CFDDEM &cfd_dem)
+    : cfd_dem(cfd_dem)
+
+  {}
+
+  /**
+   * @brief assemble_matrix Assembles the matrix.
+   *
+   * @param[in] scratch_data (see base class)
+   * @param[in,out] copy_data (see base class)
+   */
+  virtual void
+  assemble_matrix(const NavierStokesScratchData<dim>   &scratch_data,
+                  StabilizedMethodsTensorCopyData<dim> &copy_data) override;
+
+  /**
+   * @brief assemble_rhs Assembles the rhs.
+   *
+   * @param[in] scratch_data (see base class)
+   * @param[in,out] copy_data (see base class)
    */
   virtual void
   assemble_rhs(const NavierStokesScratchData<dim>   &scratch_data,
