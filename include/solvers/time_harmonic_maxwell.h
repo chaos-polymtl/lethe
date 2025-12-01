@@ -10,12 +10,18 @@
 #include <core/vector.h>
 
 #include <solvers/auxiliary_physics.h>
+#include <solvers/multiphysics_interface.h>
 #include <solvers/simulation_parameters.h>
 
 #include <deal.II/base/convergence_table.h>
+#include <deal.II/base/timer.h>
 
 #include <deal.II/distributed/solution_transfer.h>
 #include <deal.II/distributed/tria_base.h>
+
+#include <deal.II/fe/fe_dgq.h>
+#include <deal.II/fe/fe_nedelec_sz.h>
+#include <deal.II/fe/fe_system.h>
 
 #include <deal.II/numerics/data_out.h>
 
@@ -64,14 +70,96 @@ class TimeHarmonicMaxwell : public AuxiliaryPhysics<dim, VectorType>
 {
 public:
   /**
-   * @brief TimeHarmonicMaxwell - Base constructor for Auxiliary physics. At the present
-   * moment this is an interface with nothing. The auxiliary physics is a pure
-   * virtual class.
+   * @brief Constructor for the TimeHarmonicMaxwell object
+   *
+   * @param multiphysics_interface Map of the auxiliary physics that will be
+   * solved on top of a computational fluid dynamic simulation.
+   *
+   * @param p_simulation_parameters Contain the simulation parameter file
+   * information.
+   *
+   * @param p_triangulation Contain the mesh information. In a
+   * parallel::DistributedTriangulationBase<dim> not every detail may be known
+   * on each processor. The mesh is distributed between the processors.
+   *
+   * @param p_simulation_control Object responsible for the control of
+   * steady-state and transient simulations. Contains all the information
+   * related to time stepping and the stopping criteria.
+   *
    */
   TimeHarmonicMaxwell(
-    const Parameters::NonLinearSolver non_linear_solver_parameters)
-    : AuxiliaryPhysics<dim, VectorType>(non_linear_solver_parameters)
-  {}
+    MultiphysicsInterface<dim>      *multiphysics_interface,
+    const SimulationParameters<dim> &p_simulation_parameters,
+    std::shared_ptr<parallel::DistributedTriangulationBase<dim>>
+                                       p_triangulation,
+    std::shared_ptr<SimulationControl> p_simulation_control)
+    : AuxiliaryPhysics<dim, GlobalVectorType>(
+        p_simulation_parameters.physics_solving_strategy.at(
+          PhysicsID::electromagnetics))
+    , multiphysics(multiphysics_interface)
+    , computing_timer(p_triangulation->get_mpi_communicator(),
+                      this->pcout,
+                      TimerOutput::summary,
+                      TimerOutput::wall_times)
+    , simulation_parameters(p_simulation_parameters)
+    , triangulation(p_triangulation)
+    , dof_handler_trial_interior(
+        std::make_shared<DoFHandler<dim>>(*triangulation))
+    , dof_handler_trial_skeleton(
+        std::make_shared<DoFHandler<dim>>(*triangulation))
+    , dof_handler_test(std::make_shared<DoFHandler<dim>>(*triangulation))
+    , extractor_E_real(0)
+    , extractor_E_imag(dim)
+    , extractor_H_real(2 * dim)
+    , extractor_H_imag(3 * dim)
+  {
+    if (simulation_parameters.mesh.simplex)
+      {
+        // for simplex meshes
+        AssertThrow(
+          false,
+          "TimeHarmonicMaxwell solver not yet implemented for simplex meshes.");
+      }
+    else
+      {
+        // Usual case, for quad/hex meshes
+        fe_trial_interior = std::make_shared<FESystem<dim>>(
+          FE_DGQ<dim>(
+            simulation_parameters.fem_parameters.electromagnetic_order) ^
+            dim,
+          FE_DGQ<dim>(
+            simulation_parameters.fem_parameters.electromagnetic_order) ^
+            dim,
+          FE_DGQ<dim>(
+            simulation_parameters.fem_parameters.electromagnetic_order) ^
+            dim,
+          FE_DGQ<dim>(
+            simulation_parameters.fem_parameters.electromagnetic_order) ^
+            dim);
+        fe_trial_skeleton = std::make_shared<FESystem<dim>>(
+          FE_NedelecSZ<dim>(
+            simulation_parameters.fem_parameters.electromagnetic_order),
+          FE_NedelecSZ<dim>(
+            simulation_parameters.fem_parameters.electromagnetic_order),
+          FE_NedelecSZ<dim>(
+            simulation_parameters.fem_parameters.electromagnetic_order),
+          FE_NedelecSZ<dim>(
+            simulation_parameters.fem_parameters.electromagnetic_order));
+        fe_test = std::make_shared<FESystem<dim>>(
+          FE_NedelecSZ<dim>(
+            simulation_parameters.fem_parameters.electromagnetic_order),
+          FE_NedelecSZ<dim>(
+            simulation_parameters.fem_parameters.electromagnetic_order),
+          FE_NedelecSZ<dim>(
+            simulation_parameters.fem_parameters.electromagnetic_order),
+          FE_NedelecSZ<dim>(
+            simulation_parameters.fem_parameters.electromagnetic_order));
+        mapping = std::make_shared<MappingQ<dim>>(fe_trial_interior->degree);
+        cell_quadrature = std::make_shared<QGauss<dim>>(fe_test->degree + 1);
+        face_quadrature =
+          std::make_shared<QGauss<dim - 1>>(fe_test->degree + 1);
+      }
+  }
 
   /**
    * @brief TimeHarmonicMaxwell - Base destructor. At the present
@@ -120,13 +208,16 @@ public:
   update_boundary_conditions() {};
 
   /**
-   * @brief Provide the dof handler associated with an auxiliary physics
-   * TODO : delete as the auxiliary physics are supposed to pass their
-   * dof_handler to the multiphysics_interface directly
+   * @brief Getter method to access the private attribute dof_handler for the
+   * physic currently solved. NB : The dof_handler that is returned is the one
+   * for the interior trial space only has it is where the solution lives. The
+   * other two DoFHandlers of the class are used for computation only.
    */
   virtual const DoFHandler<dim> &
   get_dof_handler()
-  {}
+  {
+    return *dof_handler_trial_interior;
+  }
 
   /**
    * @brief Postprocess the auxiliary physics results. Post-processing this case implies
@@ -210,7 +301,23 @@ public:
   setup_preconditioner() override {};
 
 private:
-  /// Core elements of the TimeHarmonicMaxwell solver
+  /////// Auxiliary physics parameters for TimeHarmonicMaxwell solver ////////
+
+  MultiphysicsInterface<dim> *multiphysics;
+
+  /**
+   * @brief Store information related to the computing time such as CPU times or
+   * wall time.
+   */
+  TimerOutput computing_timer;
+
+  /**
+   * @brief Contain the simulation parameter file information.
+   */
+  const SimulationParameters<dim> &simulation_parameters;
+
+
+  ////////////// Core elements of the TimeHarmonicMaxwell solver //////////////
 
   /**
    * @brief Collection of cells that cover the domain on which one wants to
@@ -229,14 +336,40 @@ private:
   /**
    * @brief Given a triangulation and a description of a finite element, this
    * class enumerates degrees of freedom on all vertices, edges, faces, and
-   * cells of the triangulation.
+   * cells of the triangulation of the trial space for the interior dofs.
    */
-  std::shared_ptr<DoFHandler<dim>> dof_handler;
+  std::shared_ptr<DoFHandler<dim>> dof_handler_trial_interior;
 
   /**
-   * @brief The base class for finite element.
+   * @brief Given a triangulation and a description of a finite element, this
+   * class enumerates degrees of freedom on all vertices, edges, faces, and
+   * cells of the triangulation of the trial space for the skeleton dofs.
    */
-  std::shared_ptr<FiniteElement<dim>> fe;
+  std::shared_ptr<DoFHandler<dim>> dof_handler_trial_skeleton;
+
+  /**
+   * @brief Given a triangulation and a description of a finite element, this
+   * class enumerates degrees of freedom on all vertices, edges, faces, and
+   * cells of the triangulation of the test space dofs. Note that in DPG, the
+   * test space is not split into interior and skeleton dofs in opposition to
+   * the trial space.
+   */
+  std::shared_ptr<DoFHandler<dim>> dof_handler_test;
+
+  /**
+   * @brief The base class for finite elements. This class will manage everything related to the shape functions of the trial interior space.
+   */
+  std::shared_ptr<FiniteElement<dim>> fe_trial_interior;
+
+  /**
+   * @brief The base class for finite elements. This class will manage everything related to the shape functions of the trial skeleton space.
+   */
+  std::shared_ptr<FiniteElement<dim>> fe_trial_skeleton;
+
+  /**
+   * @brief The base class for finite elements. This class will manage everything related to the shape functions of the test space.
+   */
+  std::shared_ptr<FiniteElement<dim>> fe_test;
 
   /**
    * @brief Store some convergence data, such as residuals of the cg-method,
@@ -244,6 +377,8 @@ private:
    * Evaluate convergence rates or orders.
    */
   ConvergenceTable error_table;
+
+  /////////////               Mapping and Quadrature             /////////////
 
   /**
    * @brief Transformation which maps point in the reference cell to
@@ -261,6 +396,9 @@ private:
    */
   std::shared_ptr<Quadrature<dim - 1>> face_quadrature;
 
+
+  /////////////               Solution storage                /////////////
+
   /**
    * @brief The system matrix.
    */
@@ -277,12 +415,39 @@ private:
   GlobalVectorType system_rhs;
 
   /**
+   * @brief Store the nonzero constraints that arise from several sources such
+   * as boundary conditions and hanging nodes in the mesh. See the deal.II
+   * documentation on constraints on degrees of freedom for more information.
+   */
+  AffineConstraints<double> constraints;
+
+  /**
    * @brief SolutionTransfer<dim, GlobalVectorType>> is
    * used to implement the transfer of a discrete FE function
    * (e.g. a solution vector) from one mesh to another. This Deal.ii class is
    * used for mesh_refinement and simulation restarts.
    */
   std::shared_ptr<SolutionTransfer<dim, GlobalVectorType>> solution_transfer;
+
+
+  ///////         TimeHarmonicMaxwell specific parameters         ////////
+
+  /**
+   * @brief Extractor for the real part of the electric field vector.
+   */
+  const FEValuesExtractors::Vector extractor_E_real;
+  /**
+   * @brief Extractor for the imaginary part of the electric field vector.
+   */
+  const FEValuesExtractors::Vector extractor_E_imag;
+  /**
+   * @brief Extractor for the real part of the magnetic field vector.
+   */
+  const FEValuesExtractors::Vector extractor_H_real;
+  /**
+   * @brief Extractor for the imaginary part of the magnetic field vector.
+   */
+  const FEValuesExtractors::Vector extractor_H_imag;
 };
 
 
