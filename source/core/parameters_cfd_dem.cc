@@ -198,7 +198,7 @@ namespace Parameters
       "project particle forces",
       "false",
       Patterns::Bool(),
-      "Specify whether in the VANS equations, the two-way coupling forces, including the drag, are calculated by projecting the forces acting on the particles to the fluid grid.");
+      "In the VANS solver, specify whether the two-way coupling forces, including the drag, are calculated by projecting the forces acting on the particles onto the fluid grid using the QCM filter.");
 
     prm.leave_subsection();
   }

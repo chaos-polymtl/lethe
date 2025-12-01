@@ -78,7 +78,7 @@ This subsection includes parameters related to multiphase flow simulations using
    :header-rows: 1
    :align: center
 
-* The ``project particle forces`` allows incorporating the particle-fluid forces terms in the VANS equations, by projecting them from the particles to the fluid, using the ``qcm`` filter. Thus, it is only compatible with the ``qcm`` method, which can be selected in the void fraction subsection :doc:`void-fraction`. It is ``false`` by default.
+* The ``project particle forces`` option enables the inclusion of particle–fluid interaction forces directly in the VANS equations by projecting these forces from the particles onto the fluid using the ``qcm`` filter. Thus, it is only compatible with the ``qcm`` method, which can be selected in the void fraction subsection :doc:`void-fraction`. By default, this option is set to ``false``. In that case, the particle-fluid forces incorporated in the VANS equations are calculated in each cell as the average of the fluid forces acting on the particles within that cell.
 * The ``particle statistics`` parameter, when enabled, outputs statistics about the particles' velocity, kinetic energy, and the amount of contact detection.
 * The ``coupling frequency`` determines the number of DEM iterations per 1 CFD iteration.
 

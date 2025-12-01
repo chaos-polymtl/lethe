@@ -1325,7 +1325,6 @@ public:
    * @param[in] particle_velocity Object containing the projection of the
    * particle velocities onto the fluid dofs
    */
-  // beta will be added here for the implicit/semi-implicit coupling
   template <typename VectorType>
   void
   calculate_particle_fields_values(
@@ -1349,8 +1348,8 @@ public:
 
     if (drag_coupling == Parameters::DragCoupling::fully_explicit)
       { // particle_drag_values will remain zero in the implicit and
-        // semi-implicit
-        // coupling, since the momentum transfer coefficient is used instead
+        // semi-implicit coupling, since the momentum transfer 
+        // coefficient is used instead
         this->fe_values_particle_drag->reinit(particle_drag_cell);
         (*this->fe_values_particle_drag)[vector_index].get_function_values(
           particle_fluid_drag, this->particle_drag_values);

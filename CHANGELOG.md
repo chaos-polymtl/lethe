@@ -4,6 +4,11 @@ All notable changes to the Lethe project will be documented in this file.
 The changelog for the previous releases of Lethe are located in the release_notes folder.
 The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
+### [Master] - 2025-12-01
+
+### Added
+
+- MINOR This PR adds the option of using the filtered particle-fluid forces in the VANS equations for the matrix-based CFD-DEM solver, following the logic implemented starting from PR [#1618]. In this PR, only an explicit coupling is implemented for the fluid drag and one test case is performed, which is that of a single sedimenting particle. Subsequent PRs including the implicit and semi-implicit drag couplings, as well as more application tests are to follow. [#1813](https://github.com/chaos-polymtl/lethe/pull/1813)
 
 ### [Master] - 2025-11-26
 
