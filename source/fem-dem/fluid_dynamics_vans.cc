@@ -869,8 +869,8 @@ FluidDynamicsVANS<dim>::gather_output_hook()
       solution_output_structs.emplace_back(
         std::in_place_type<OutputStructSolution<dim, GlobalVectorType>>,
         this->particle_projector.fluid_drag_on_particles.dof_handler,
-        this->particle_projector.fluid_force_on_particles_two_way_coupling
-          .fluid_drag_on_particles.particle_field_solution,
+        this->particle_projector.fluid_drag_on_particles
+          .particle_field_solution,
         std::vector<std::string>(dim, "Particle_drag"),
         std::vector<DataComponentInterpretation::DataComponentInterpretation>(
           dim, DataComponentInterpretation::component_is_part_of_vector));
