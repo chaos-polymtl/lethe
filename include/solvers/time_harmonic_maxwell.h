@@ -7,11 +7,21 @@
 #include <core/output_struct.h>
 #include <core/parameters.h>
 #include <core/physics_solver.h>
+#include <core/vector.h>
 
 #include <solvers/auxiliary_physics.h>
 #include <solvers/simulation_parameters.h>
 
+#include <deal.II/base/convergence_table.h>
+
+#include <deal.II/distributed/solution_transfer.h>
+#include <deal.II/distributed/tria_base.h>
+
 #include <deal.II/numerics/data_out.h>
+
+#include <memory.h>
+
+
 
 /**
  * @class TimeHamonicMaxwell Auxiliary physics solver for the time harmonic
@@ -200,6 +210,79 @@ public:
   setup_preconditioner() override {};
 
 private:
+  /// Core elements of the TimeHarmonicMaxwell solver
+
+  /**
+   * @brief Collection of cells that cover the domain on which one wants to
+   * solve a partial differential equation.
+   */
+  std::shared_ptr<parallel::DistributedTriangulationBase<dim>> triangulation;
+
+  /**
+   * @brief Responsible for the control of steady-state and transient
+   * simulations. Contains all the information related to time stepping and the
+   * stopping criteria. See simulation_control abstract class for more
+   * information.
+   */
+  std::shared_ptr<SimulationControl> simulation_control;
+
+  /**
+   * @brief Given a triangulation and a description of a finite element, this
+   * class enumerates degrees of freedom on all vertices, edges, faces, and
+   * cells of the triangulation.
+   */
+  std::shared_ptr<DoFHandler<dim>> dof_handler;
+
+  /**
+   * @brief The base class for finite element.
+   */
+  std::shared_ptr<FiniteElement<dim>> fe;
+
+  /**
+   * @brief Store some convergence data, such as residuals of the cg-method,
+   * or some evaluated <i>L<sup>2</sup></i>-errors of discrete solutions.
+   * Evaluate convergence rates or orders.
+   */
+  ConvergenceTable error_table;
+
+  /**
+   * @brief Transformation which maps point in the reference cell to
+   * points in the actual grid cell.
+   */
+  std::shared_ptr<Mapping<dim>> mapping;
+  /**
+   * @brief Approximate an integral by evaluating the integrand at specific
+   * points and summing the point values with specific weights.
+   */
+  std::shared_ptr<Quadrature<dim>> cell_quadrature;
+  /**
+   * @brief Approximate an integral by evaluating the integrand at specific
+   * points and summing the point values with specific weights.
+   */
+  std::shared_ptr<Quadrature<dim - 1>> face_quadrature;
+
+  /**
+   * @brief The system matrix.
+   */
+  TrilinosWrappers::SparseMatrix system_matrix;
+
+  /**
+   * @brief A vector containing all the values of the solution.
+   */
+  std::shared_ptr<GlobalVectorType> present_solution;
+
+  /**
+   * @brief The right hand side vector.
+   */
+  GlobalVectorType system_rhs;
+
+  /**
+   * @brief SolutionTransfer<dim, GlobalVectorType>> is
+   * used to implement the transfer of a discrete FE function
+   * (e.g. a solution vector) from one mesh to another. This Deal.ii class is
+   * used for mesh_refinement and simulation restarts.
+   */
+  std::shared_ptr<SolutionTransfer<dim, GlobalVectorType>> solution_transfer;
 };
 
 
