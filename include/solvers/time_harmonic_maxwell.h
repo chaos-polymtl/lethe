@@ -66,7 +66,8 @@
 /// [] FEM section for DPG
 /// - Mesh adaptation
 
-template <int dim, typename VectorType>
+using VectorType = GlobalVectorType;
+template <int dim>
 class TimeHarmonicMaxwell : public AuxiliaryPhysics<dim, VectorType>
 {
 public:
