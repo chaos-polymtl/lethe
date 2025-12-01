@@ -191,7 +191,7 @@ References
 
 .. [#nitsche1994] \L. C. Nitsche, “Microhydrodynamics: Principles and selected applications. By Sangtae Kim and Seppo J. Karrila, Butterworth-Heinemann, Boston, 1991” *AIChE J.*, vol. 40, no. 4, pp. 739–743, 1994, doi: `10.1002/aic.690400418 <https://doi.org/10.1002/aic.690400418>`_\.
 
-.. [#evrard2020] \B. Evrard, “Regularization of particulate source terms in CFD-DEM,” 2020.
+.. [#evrard2020] \B. Evrard, “Regularization of particulate source terms in CFD-DEM”, 2020.
 
 .. [#rong2013] \L. W. Rong, K. J. Dong, and A. B. Yu, “Lattice-Boltzmann simulation of fluid flow through packed beds of uniform spheres: Effect of porosity,” *Chem. Eng. Sci.*, vol. 99, pp. 44–58, Aug. 2013, doi: `10.1016/j.ces.2013.05.036 <http://dx.doi.org/10.1016/j.ces.2013.05.036>`_\.
 
