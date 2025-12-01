@@ -547,11 +547,10 @@ FluidDynamicsVANS<dim>::assemble_local_system_matrix(
         particle_drag_cell,
         particle_two_way_coupling_force_cell,
         particle_velocity_cell,
-        particle_projector.fluid_drag_on_particles
-          .particle_field_locally_relevant,
+        particle_projector.fluid_drag_on_particles.particle_field_solution,
         particle_projector.fluid_force_on_particles_two_way_coupling
-          .particle_field_locally_relevant,
-        particle_projector.particle_velocity.particle_field_locally_relevant,
+          .particle_field_solution,
+        particle_projector.particle_velocity.particle_field_solution,
         cfd_dem_simulation_parameters.cfd_dem.drag_coupling);
     }
 
@@ -746,11 +745,10 @@ FluidDynamicsVANS<dim>::assemble_local_system_rhs(
         particle_drag_cell,
         particle_two_way_coupling_force_cell,
         particle_velocity_cell,
-        particle_projector.fluid_drag_on_particles
-          .particle_field_locally_relevant,
+        particle_projector.fluid_drag_on_particles.particle_field_solution,
         particle_projector.fluid_force_on_particles_two_way_coupling
-          .particle_field_locally_relevant,
-        particle_projector.particle_velocity.particle_field_locally_relevant,
+          .particle_field_solution,
+        particle_projector.particle_velocity.particle_field_solution,
         cfd_dem_simulation_parameters.cfd_dem.drag_coupling);
     }
 
@@ -817,6 +815,49 @@ FluidDynamicsVANS<dim>::gather_output_hook()
         particle_velocity,
         names,
         data_interpretation);
+
+      if (this->cfd_dem_simulation_parameters.cfd_dem.project_particle_forces)
+        {
+          GlobalVectorType fluid_drag_on_particles;
+          fluid_drag_on_particles.reinit(
+            particle_projector.particle_velocity.locally_owned_dofs,
+            particle_projector.particle_velocity.locally_relevant_dofs,
+            this->mpi_communicator);
+
+          convert_vector_dealii_to_trilinos(
+            fluid_drag_on_particles,
+            particle_projector.fluid_drag_on_particles.particle_field_solution);
+
+          solution_output_structs.emplace_back(
+            std::in_place_type<OutputStructSolution<dim, GlobalVectorType>>,
+            this->particle_projector.fluid_drag_on_particles.dof_handler,
+            fluid_drag_on_particles,
+            std::vector<std::string>(dim, "Particle_drag"),
+            std::vector<
+              DataComponentInterpretation::DataComponentInterpretation>(
+              dim, DataComponentInterpretation::component_is_part_of_vector));
+
+          GlobalVectorType fluid_force_on_particles_two_way_coupling;
+          fluid_force_on_particles_two_way_coupling.reinit(
+            particle_projector.particle_velocity.locally_owned_dofs,
+            particle_projector.particle_velocity.locally_relevant_dofs,
+            this->mpi_communicator);
+
+          convert_vector_dealii_to_trilinos(
+            fluid_force_on_particles_two_way_coupling,
+            particle_projector.fluid_force_on_particles_two_way_coupling
+              .particle_field_solution);
+
+          solution_output_structs.emplace_back(
+            std::in_place_type<OutputStructSolution<dim, GlobalVectorType>>,
+            this->particle_projector.fluid_force_on_particles_two_way_coupling
+              .dof_handler,
+            fluid_force_on_particles_two_way_coupling,
+            std::vector<std::string>(dim, "Particle_two_way_coupling_force"),
+            std::vector<
+              DataComponentInterpretation::DataComponentInterpretation>(
+              dim, DataComponentInterpretation::component_is_part_of_vector));
+        }
 #else
       solution_output_structs.emplace_back(
         std::in_place_type<OutputStructSolution<dim, GlobalVectorType>>,
@@ -824,16 +865,12 @@ FluidDynamicsVANS<dim>::gather_output_hook()
         particle_projector.particle_velocity.particle_field_solution,
         names,
         data_interpretation);
-#endif
-    }
 
-  if (this->cfd_dem_simulation_parameters.cfd_dem.project_particle_forces)
-    {
       solution_output_structs.emplace_back(
         std::in_place_type<OutputStructSolution<dim, GlobalVectorType>>,
         this->particle_projector.fluid_drag_on_particles.dof_handler,
-        this->particle_projector.fluid_drag_on_particles
-          .particle_field_locally_relevant,
+        this->particle_projector.fluid_force_on_particles_two_way_coupling
+          .fluid_drag_on_particles.particle_field_solution,
         std::vector<std::string>(dim, "Particle_drag"),
         std::vector<DataComponentInterpretation::DataComponentInterpretation>(
           dim, DataComponentInterpretation::component_is_part_of_vector));
@@ -843,11 +880,14 @@ FluidDynamicsVANS<dim>::gather_output_hook()
         this->particle_projector.fluid_force_on_particles_two_way_coupling
           .dof_handler,
         this->particle_projector.fluid_force_on_particles_two_way_coupling
-          .particle_field_locally_relevant,
+          .fluid_force_on_particles_two_way_coupling.particle_field_solution,
         std::vector<std::string>(dim, "Particle_two_way_coupling_force"),
         std::vector<DataComponentInterpretation::DataComponentInterpretation>(
           dim, DataComponentInterpretation::component_is_part_of_vector));
+#endif
     }
+
+
   return solution_output_structs;
 }
 
