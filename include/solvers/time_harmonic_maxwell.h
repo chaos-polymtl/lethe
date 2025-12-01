@@ -14,33 +14,41 @@
 #include <deal.II/numerics/data_out.h>
 
 /**
- * Au auxiliary physics is defined as a physics that is solved on top of
- * a core physics, the latter being the Navier-Stokes equations.
- * Auxiliary physics are simpler physics around which the entire simulation
- * process does not need to be tailored. Examples of auxiliary physics are
- * temperature and concentration. Generally, the auxiliary physics does not
- * affect the core physics. For example, temperature is advected by the fluid
- * flow, but buoyancy effects are not taken into account.
+ * @class TimeHamonicMaxwell Auxiliary physics solver for the time harmonic
+ * form of the Maxwell equations.
+ * TODO Add more details here.
  *
- * The auxiliary physics are managed by the multiphysics interface of Lethe.
- *
- * This base class is used to establish all of the routines that an auxiliary
- * physics must be able to provide to the Multiphysics interface. These
- *elements are then called at specific moments of a simulation.
- *
- * Auxiliary physics are templated by the dimension of the problem and the
- * vector type that is used to manage their data.
- *
- *
- * Current limitations:
- *
- * - Auxiliary physics are currently expected to be used in conjunction with a
- * flow solver which can provide a velocity field.
- * - Support for feedback from the auxiliary physics to the core physics is
- * there but presently not used anywhere
- * - Support for interaction between auxiliary physics is supported but has
- *not been tested
  **/
+
+/// TODO in this PR:
+/// [] Remplir chacune des fonctions
+///   [] Constructeur
+///   [] Destructeur
+///   [] Setup_dofs
+///   [] Gather output hook
+///   [] Finish simulation
+///   [] Percolate_time_vector
+///   - modify_solution
+///   [] update_boundary_conditions
+///   [] get_dof_handler
+///   [] postprocess
+///   [] pre_mesh_adaptation
+///   [] post_mesh_adaptation
+///   - write_checkpoint
+///   - read_checkpoint
+///   - gather_tables()
+///   - compute_kelly
+///   - set_initial_conditions
+///   [] setup_preconditioner
+/// [] Physics field
+/// [] Multiphysics interface components
+/// - Physical Properties
+///   - Electrical conductivity
+///   - Permetivity
+///   - Permeability
+/// [] FEM section for DPG
+/// - Mesh adaptation
+
 template <int dim, typename VectorType>
 class TimeHarmonicMaxwell : public AuxiliaryPhysics<dim, VectorType>
 {
@@ -52,7 +60,7 @@ public:
    */
   TimeHarmonicMaxwell(
     const Parameters::NonLinearSolver non_linear_solver_parameters)
-    : PhysicsSolver<VectorType>(non_linear_solver_parameters)
+    : AuxiliaryPhysics<dim, VectorType>(non_linear_solver_parameters)
   {}
 
   /**
@@ -190,6 +198,8 @@ public:
    */
   void
   setup_preconditioner() override {};
+
+private:
 };
 
 
