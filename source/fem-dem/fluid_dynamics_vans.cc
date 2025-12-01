@@ -880,7 +880,7 @@ FluidDynamicsVANS<dim>::gather_output_hook()
         this->particle_projector.fluid_force_on_particles_two_way_coupling
           .dof_handler,
         this->particle_projector.fluid_force_on_particles_two_way_coupling
-          .fluid_force_on_particles_two_way_coupling.particle_field_solution,
+          .particle_field_solution,
         std::vector<std::string>(dim, "Particle_two_way_coupling_force"),
         std::vector<DataComponentInterpretation::DataComponentInterpretation>(
           dim, DataComponentInterpretation::component_is_part_of_vector));
