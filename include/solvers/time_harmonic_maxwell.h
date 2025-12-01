@@ -40,11 +40,11 @@
 /// TODO in this PR:
 /// [] Remplir chacune des fonctions
 ///   [x] Constructeur
-///   [] Destructeur
+///   [x] Destructeur
 ///   [] Setup_dofs
 ///   [] Gather output hook
 ///   [] Finish simulation
-///   [] Percolate_time_vector
+///   [x] Percolate_time_vector
 ///   - modify_solution
 ///   [] update_boundary_conditions
 ///   [] get_dof_handler
@@ -95,9 +95,7 @@ public:
     std::shared_ptr<parallel::DistributedTriangulationBase<dim>>
                                        p_triangulation,
     std::shared_ptr<SimulationControl> p_simulation_control)
-    : AuxiliaryPhysics<dim, GlobalVectorType>(
-        p_simulation_parameters.physics_solving_strategy.at(
-          PhysicsID::electromagnetics))
+    : AuxiliaryPhysics<dim, GlobalVectorType>()
     , multiphysics(multiphysics_interface)
     , computing_timer(p_triangulation->get_mpi_communicator(),
                       this->pcout,
@@ -184,10 +182,7 @@ public:
    * @return Vector of OutputStructs that will be used to write the output results as VTU files.
    */
   virtual std::vector<OutputStruct<dim, VectorType>>
-  gather_output_hook()
-  {
-    return std::vector<OutputStruct<dim, VectorType>>();
-  };
+  gather_output_hook() override;
 
   /**
    * @brief Carry out the operations required to finish a simulation correctly.
