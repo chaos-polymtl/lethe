@@ -5,7 +5,7 @@ Heat Transfer Equations
 In Lethe, it is possible to solve the heat transfer in various loading conditions. The main equation is derived from the energy equation in incompressible flows. Assuming a constant heat capacity :math:`C_p` and dynamic viscosity :math:`\mu`, the equation takes the following form: 
 
 .. math::
-    \rho C_p \frac{\partial T}{\partial t} + \rho C_p (\mathbf{u} \cdot \nabla)T - \nabla \cdot (k \nabla T) = - \phi + Q
+    \rho C_p \frac{\partial T}{\partial t} + \rho C_p (\mathbf{u} \cdot \nabla)T - \nabla \cdot (k \nabla T) = \phi_v + Q
 
 where:
 
@@ -21,11 +21,11 @@ where:
 
 * :math:`k` is the thermal conductivity;
 
-* :math:`Q` is the energy source term or heat generation;
+* :math:`Q` is the energy source term or heat generation par unit of mass;
 
-* :math:`\phi` is the viscous dissipation term. For an incompressible fluid it takes the following form: :math:`\phi = \mu (\nabla \mathbf{u} + \nabla \mathbf{u}^T):\nabla \mathbf{u}`, where :math:`\mu` is the `dynamic viscosity <https://en.wikipedia.org/wiki/Viscosity>`_;
+* :math:`\phi_v` is the viscous dissipation term. For an incompressible fluid it takes the following form: :math:`\phi = \mu (\nabla \mathbf{u} + \nabla \mathbf{u}^T):\nabla \mathbf{u}`, where :math:`\mu` is the `dynamic viscosity <https://en.wikipedia.org/wiki/Viscosity>`_;
 
-Depending on the physics involved, the terms :math:`\phi` and :math:`Q` can be included or excluded and can take various definitions.
+Depending on the physics involved, the terms :math:`\phi_v` and :math:`Q` can be included or excluded and can take various definitions.
 
 ================================
 Finite Element Formulation
