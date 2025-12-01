@@ -60,7 +60,7 @@ In unresolved CFD-DEM, the drag force is calculated using correlations (frequent
 Volume-Averaged Navier-Stokes
 ------------------------------
 
-Since we represent the fluid at a meso-scale, the quantities calculated for the cells are filtered. Additionally, the fact that the volume that the fluid occupies varies as a function of time and space is taken into account through the void fraction (or porosity). The resulting equations are the Volumed-Averaged Navier-Stokes (VANS) equations and they are solved to obtain the velocity and the pressure of the continuous fluid phase. In Lethe, the VANS equations are presented in two different formulations, so called Model A (or Set II) and Model B (or Set I) `[2] <https://doi.org/10.1017/S002211201000306X>`_.
+Since we represent the fluid at a meso-scale, the quantities calculated for the cells are filtered. Additionally, variations in time and space of the volume occupied by the fluid are accounted for by the void fraction (or porosity). The resulting equations are the Volumed-Averaged Navier-Stokes (VANS) equations, which are solved to obtain the velocity and the pressure of the continuous fluid phase. In Lethe, the VANS equations are presented in two different formulations, so-called Model A (or Set II) and Model B (or Set I) `[2] <https://doi.org/10.1017/S002211201000306X>`_.
 
 Considering an incompressible flow, the continuity equation for both models is:
 
