@@ -11,12 +11,12 @@ In this guide, we summarize the theory behind DEM. For further details, we refer
 
 Where:
 
-* :math:`m_i` mass of the particule i;
-* :math:`\mathbf{v_i}` velocity of the particule i;
+* :math:`m_i` mass of particle i;
+* :math:`\mathbf{v_i}` velocity of particle i;
 * :math:`\mathcal C_i` particles in contact list;
 * :math:`\mathbf{F}_{ij}^\mathrm{n}` normal contact force due to the contact between particles i and j;
 * :math:`\mathbf{F}_{ij}^\mathrm{t}` tangential contact force due to the contact between particles i and j;
-* :math:`\mathbf{g}` gravitationnal acceleration;
+* :math:`\mathbf{g}` gravitational acceleration;
 * :math:`\mathbf{F}_i^\mathrm{ext}` external forces;
 * :math:`I_i` moment of inertia of particle i;
 * :math:`\mathbf{\omega_i}` angular velocity of particle i;
@@ -29,7 +29,7 @@ Where:
 Contact Force and Torque Models
 --------------------------------
 
-The normal and tangential contact forces use linear or nonlinear viscoelastic models and are calculated as followed:
+The normal and tangential contact forces use linear or nonlinear viscoelastic models and are calculated as follows:
 
 .. math::
     \mathbf{F}_{ij}^\mathrm{n} &= -(k_\mathrm{n}\delta_{\mathrm{n}})\mathbf{n}_{ij}-(\eta_\mathrm{n}\mathbf{v}_{rn}) \\
@@ -59,7 +59,7 @@ The contact normal vector :math:`\mathbf{n}_{ij}` is computed as:
     \mathbf{n}_{ij}=\frac{\mathbf{x}_{j}-\mathbf{x}_{i}}{\left|\mathbf{x}_{j}-\mathbf{x}_{i}\right|}
 
 The normal overlap (:math:`\delta_{\mathrm{n}}`) is the contact distance between the particles i and j. In the case of a collision between a particle and a wall, the wall is considered as j. The tangential displacement (:math:`\delta_\mathrm{t}`) depends on the contact history and is updated during a contact.
-The normal and tangential displacements are calculated as follow:
+The normal overlap and the tangential displacement are calculated as follows:
 
 .. math::
     \delta_{\mathrm{n}} =& \:R_i + R_j - |\mathbf{x}_{j} - \mathbf{x}_{i}| \\
@@ -106,7 +106,7 @@ Where:
 * :math:`R_{\mathrm{e}}` effective radius;
 * :math:`Y_\mathrm{e}` effective Young's modulus;
 * :math:`m_\mathrm{e}` effective mass;
-* :math:`V` characteristic impact velocity, this parameters is set to 1.0;
+* :math:`V` characteristic impact velocity, this parameter is set to 1.0;
 * :math:`e` coefficient of restitution;
 * :math:`G_\mathrm{e}` effective shear modulus;
 
@@ -123,7 +123,7 @@ These parameters are computed as follows:
 
 Where:
 
-* :math:`\nu_i, \nu_j` poisson coefficient of particle i or j;
+* :math:`\nu_i, \nu_j` Poisson coefficient of particle i or j;
 
 ~~~~~~~~~~~~~~~~~~~~
 Coulomb's limit
@@ -257,7 +257,7 @@ Johnson-Kendall-Roberts force model
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 The Johnson-Kendall-Roberts (JKR) model describes attractive forces due to van der Waals effects. [#coetzee2023]_
-This model modifies the Hertz formulation by defining a larger contact path radius (:math:`\mathbf{a}`) and by taking into account the effective surface energy (:math:`\mathbf{\gamma}_{e}`).
+This model modifies the Hertz formulation by defining a larger contact patch radius (:math:`\mathbf{a}`) and by taking into account the effective surface energy (:math:`\mathbf{\gamma}_{e}`).
 The model is defined by:
 
 .. math::

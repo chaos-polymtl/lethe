@@ -464,12 +464,12 @@ I_i\frac{d\mathbf{\omega_i}}{dt} &amp;= \sum_{j\in \mathcal C_i} (\mathbf{M}_{ij
 </div>
 <p>Where:</p>
 <ul class="simple">
-<li><p><span class="math notranslate nohighlight">\(m_i\)</span> mass of the particule i;</p></li>
-<li><p><span class="math notranslate nohighlight">\(\mathbf{v_i}\)</span> velocity of the particule i;</p></li>
+<li><p><span class="math notranslate nohighlight">\(m_i\)</span> mass of particle i;</p></li>
+<li><p><span class="math notranslate nohighlight">\(\mathbf{v_i}\)</span> velocity of particle i;</p></li>
 <li><p><span class="math notranslate nohighlight">\(\mathcal C_i\)</span> particles in contact list;</p></li>
 <li><p><span class="math notranslate nohighlight">\(\mathbf{F}_{ij}^\mathrm{n}\)</span> normal contact force due to the contact between particles i and j;</p></li>
 <li><p><span class="math notranslate nohighlight">\(\mathbf{F}_{ij}^\mathrm{t}\)</span> tangential contact force due to the contact between particles i and j;</p></li>
-<li><p><span class="math notranslate nohighlight">\(\mathbf{g}\)</span> gravitationnal acceleration;</p></li>
+<li><p><span class="math notranslate nohighlight">\(\mathbf{g}\)</span> gravitational acceleration;</p></li>
 <li><p><span class="math notranslate nohighlight">\(\mathbf{F}_i^\mathrm{ext}\)</span> external forces;</p></li>
 <li><p><span class="math notranslate nohighlight">\(I_i\)</span> moment of inertia of particle i;</p></li>
 <li><p><span class="math notranslate nohighlight">\(\mathbf{\omega_i}\)</span> angular velocity of particle i;</p></li>
@@ -479,7 +479,7 @@ I_i\frac{d\mathbf{\omega_i}}{dt} &amp;= \sum_{j\in \mathcal C_i} (\mathbf{M}_{ij
 </ul>
 <section id="contact-force-and-torque-models">
 <h2>Contact Force and Torque Models<a class="headerlink" href="#contact-force-and-torque-models" title="Link to this heading">#</a></h2>
-<p>The normal and tangential contact forces use linear or nonlinear viscoelastic models and are calculated as followed:</p>
+<p>The normal and tangential contact forces use linear or nonlinear viscoelastic models and are calculated as follows:</p>
 <div class="math-wrapper docutils container">
 <div class="math notranslate nohighlight">
 \[\begin{split}\mathbf{F}_{ij}^\mathrm{n} &amp;= -(k_\mathrm{n}\delta_{\mathrm{n}})\mathbf{n}_{ij}-(\eta_\mathrm{n}\mathbf{v}_{rn}) \\
@@ -507,7 +507,7 @@ I_i\frac{d\mathbf{\omega_i}}{dt} &amp;= \sum_{j\in \mathcal C_i} (\mathbf{M}_{ij
 \[\mathbf{n}_{ij}=\frac{\mathbf{x}_{j}-\mathbf{x}_{i}}{\left|\mathbf{x}_{j}-\mathbf{x}_{i}\right|}\]</div>
 </div>
 <p>The normal overlap (<span class="math notranslate nohighlight">\(\delta_{\mathrm{n}}\)</span>) is the contact distance between the particles i and j. In the case of a collision between a particle and a wall, the wall is considered as j. The tangential displacement (<span class="math notranslate nohighlight">\(\delta_\mathrm{t}\)</span>) depends on the contact history and is updated during a contact.
-The normal and tangential displacements are calculated as follow:</p>
+The normal overlap and the tangential displacement are calculated as follows:</p>
 <div class="math-wrapper docutils container">
 <div class="math notranslate nohighlight">
 \[\begin{split}\delta_{\mathrm{n}} =&amp; \:R_i + R_j - |\mathbf{x}_{j} - \mathbf{x}_{i}| \\
@@ -565,7 +565,7 @@ The normal and tangential displacements are calculated as follow:</p>
 <li><p><span class="math notranslate nohighlight">\(R_{\mathrm{e}}\)</span> effective radius;</p></li>
 <li><p><span class="math notranslate nohighlight">\(Y_\mathrm{e}\)</span> effective Young’s modulus;</p></li>
 <li><p><span class="math notranslate nohighlight">\(m_\mathrm{e}\)</span> effective mass;</p></li>
-<li><p><span class="math notranslate nohighlight">\(V\)</span> characteristic impact velocity, this parameters is set to 1.0;</p></li>
+<li><p><span class="math notranslate nohighlight">\(V\)</span> characteristic impact velocity, this parameter is set to 1.0;</p></li>
 <li><p><span class="math notranslate nohighlight">\(e\)</span> coefficient of restitution;</p></li>
 <li><p><span class="math notranslate nohighlight">\(G_\mathrm{e}\)</span> effective shear modulus;</p></li>
 </ul>
@@ -582,7 +582,7 @@ S_\mathrm{t} &amp;= 8G_{e}\sqrt{R_{\mathrm{e}}\delta_{\mathrm{n}}}\end{split}\]<
 </div>
 <p>Where:</p>
 <ul class="simple">
-<li><p><span class="math notranslate nohighlight">\(\nu_i, \nu_j\)</span> poisson coefficient of particle i or j;</p></li>
+<li><p><span class="math notranslate nohighlight">\(\nu_i, \nu_j\)</span> Poisson coefficient of particle i or j;</p></li>
 </ul>
 </section>
 <section id="coulomb-s-limit">
@@ -715,7 +715,7 @@ C_r &amp;= \eta_r C_r^{crit}\\
 <section id="johnson-kendall-roberts-force-model">
 <h3>Johnson-Kendall-Roberts force model<a class="headerlink" href="#johnson-kendall-roberts-force-model" title="Link to this heading">#</a></h3>
 <p>The Johnson-Kendall-Roberts (JKR) model describes attractive forces due to van der Waals effects. <a class="footnote-reference brackets" href="#coetzee2023" id="id7" role="doc-noteref"><span class="fn-bracket">[</span>6<span class="fn-bracket">]</span></a>
-This model modifies the Hertz formulation by defining a larger contact path radius (<span class="math notranslate nohighlight">\(\mathbf{a}\)</span>) and by taking into account the effective surface energy (<span class="math notranslate nohighlight">\(\mathbf{\gamma}_{e}\)</span>).
+This model modifies the Hertz formulation by defining a larger contact patch radius (<span class="math notranslate nohighlight">\(\mathbf{a}\)</span>) and by taking into account the effective surface energy (<span class="math notranslate nohighlight">\(\mathbf{\gamma}_{e}\)</span>).
 The model is defined by:</p>
 <div class="math-wrapper docutils container">
 <div class="math notranslate nohighlight">
