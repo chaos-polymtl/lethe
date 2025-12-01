@@ -57,13 +57,13 @@
 ///   - compute_kelly
 ///   - set_initial_conditions
 ///   [] setup_preconditioner
-/// [] Physics field
-/// [] Multiphysics interface components
-/// - Physical Properties
-///   - Electrical conductivity
-///   - Permetivity
-///   - Permeability
-/// [] FEM section for DPG
+/// [x] Physics field
+/// [x] Multiphysics interface components
+/// [] Physical Properties
+///   [] Electrical conductivity
+///   [] Permetivity
+///   [] Permeability
+/// [X] FEM section for DPG
 /// - Mesh adaptation
 
 using VectorType = GlobalVectorType;
@@ -118,42 +118,43 @@ public:
         // for simplex meshes
         AssertThrow(
           false,
-          "TimeHarmonicMaxwell solver not yet implemented for simplex meshes.");
+          ExcMessage(
+            "TimeHarmonicMaxwell solver not yet implemented for simplex meshes."));
       }
     else
       {
         // Usual case, for quad/hex meshes
         fe_trial_interior = std::make_shared<FESystem<dim>>(
           FE_DGQ<dim>(
-            simulation_parameters.fem_parameters.electromagnetic_order) ^
+            simulation_parameters.fem_parameters.electromagnetics_order) ^
             dim,
           FE_DGQ<dim>(
-            simulation_parameters.fem_parameters.electromagnetic_order) ^
+            simulation_parameters.fem_parameters.electromagnetics_order) ^
             dim,
           FE_DGQ<dim>(
-            simulation_parameters.fem_parameters.electromagnetic_order) ^
+            simulation_parameters.fem_parameters.electromagnetics_order) ^
             dim,
           FE_DGQ<dim>(
-            simulation_parameters.fem_parameters.electromagnetic_order) ^
+            simulation_parameters.fem_parameters.electromagnetics_order) ^
             dim);
         fe_trial_skeleton = std::make_shared<FESystem<dim>>(
           FE_NedelecSZ<dim>(
-            simulation_parameters.fem_parameters.electromagnetic_order),
+            simulation_parameters.fem_parameters.electromagnetics_order),
           FE_NedelecSZ<dim>(
-            simulation_parameters.fem_parameters.electromagnetic_order),
+            simulation_parameters.fem_parameters.electromagnetics_order),
           FE_NedelecSZ<dim>(
-            simulation_parameters.fem_parameters.electromagnetic_order),
+            simulation_parameters.fem_parameters.electromagnetics_order),
           FE_NedelecSZ<dim>(
-            simulation_parameters.fem_parameters.electromagnetic_order));
+            simulation_parameters.fem_parameters.electromagnetics_order));
         fe_test = std::make_shared<FESystem<dim>>(
           FE_NedelecSZ<dim>(
-            simulation_parameters.fem_parameters.electromagnetic_order),
+            simulation_parameters.fem_parameters.electromagnetics_order),
           FE_NedelecSZ<dim>(
-            simulation_parameters.fem_parameters.electromagnetic_order),
+            simulation_parameters.fem_parameters.electromagnetics_order),
           FE_NedelecSZ<dim>(
-            simulation_parameters.fem_parameters.electromagnetic_order),
+            simulation_parameters.fem_parameters.electromagnetics_order),
           FE_NedelecSZ<dim>(
-            simulation_parameters.fem_parameters.electromagnetic_order));
+            simulation_parameters.fem_parameters.electromagnetics_order));
         mapping = std::make_shared<MappingQ<dim>>(fe_trial_interior->degree);
         cell_quadrature = std::make_shared<QGauss<dim>>(fe_test->degree + 1);
         face_quadrature =
@@ -182,7 +183,10 @@ public:
    * @return Vector of OutputStructs that will be used to write the output results as VTU files.
    */
   virtual std::vector<OutputStruct<dim, VectorType>>
-  gather_output_hook() override;
+  gather_output_hook()
+  {
+    return std::vector<OutputStruct<dim, VectorType>>();
+  }
 
   /**
    * @brief Carry out the operations required to finish a simulation correctly.
@@ -196,21 +200,20 @@ public:
    * previous solution at the end of a time step
    */
   virtual void
-  percolate_time_vectors()
-  {}
+  percolate_time_vectors();
 
   /**
    * @brief Carry out modifications on the auxiliary physic solution.
    * To be defined for some physics only (eg. free surface, see vof.h).
    */
   virtual void
-  modify_solution() {};
+  modify_solution(){};
 
   /**
    * @brief Update non zero constraints if the boundary is time-dependent
    */
   virtual void
-  update_boundary_conditions() {};
+  update_boundary_conditions(){};
 
   /**
    * @brief Getter method to access the private attribute dof_handler for the
@@ -232,7 +235,7 @@ public:
    * function
    */
   virtual void
-  postprocess(bool first_iteration) {};
+  postprocess(bool first_iteration){};
 
 
   /**
@@ -240,25 +243,25 @@ public:
    * mesh refinement/coarsening
    */
   virtual void
-  pre_mesh_adaptation() {};
+  pre_mesh_adaptation(){};
 
   /**
    * @brief post_mesh_adaption Interpolates the auxiliary physics variables to the new mesh
    */
   virtual void
-  post_mesh_adaptation() {};
+  post_mesh_adaptation(){};
 
   /**
    * @brief Prepares auxiliary physics to write checkpoint
    */
   virtual void
-  write_checkpoint() {};
+  write_checkpoint(){};
 
   /**
    * @brief Set solution vector of Auxiliary Physics using checkpoint
    */
   virtual void
-  read_checkpoint() {};
+  read_checkpoint(){};
 
   /**
    * @brief Returns a vector of references to TableHandler objects that needs to
@@ -282,13 +285,13 @@ public:
   virtual void
   compute_kelly(const std::pair<const Variable,
                                 Parameters::MultipleAdaptationParameters> &ivar,
-                dealii::Vector<float> &estimated_error_per_cell) {};
+                dealii::Vector<float> &estimated_error_per_cell){};
 
   /**
    * @brief Sets-up the DofHandler and the degree of freedom associated with the physics.
    */
   virtual void
-  setup_dofs() {};
+  setup_dofs();
 
   /**
    * @brief Sets-up the initial conditions associated with the physics. Generally, physics
@@ -296,14 +299,14 @@ public:
    * the use of L2 projection or steady-state solutions.
    */
   virtual void
-  set_initial_conditions() {};
+  set_initial_conditions(){};
 
   /**
    * @brief Set up preconditioner. Not used for the auxiliary physics but
    * needed for the compilation of the non-linear solver.
    */
   void
-  setup_preconditioner() override {};
+  setup_preconditioner() override{};
 
 private:
   /////// Auxiliary physics parameters for TimeHarmonicMaxwell solver ////////
