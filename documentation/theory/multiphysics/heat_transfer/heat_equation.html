@@ -456,10 +456,10 @@
         <article role="main">
           <section id="heat-transfer-equations">
 <h1>Heat Transfer Equations<a class="headerlink" href="#heat-transfer-equations" title="Link to this heading">#</a></h1>
-<p>In Lethe, it is possible to solve the heat transfer in various loading conditions. The main equation is derived from the energy equation in incompressible flows. Assuming a constant heat capacity <span class="math notranslate nohighlight">\(C_p\)</span> and dynamic viscosity <span class="math notranslate nohighlight">\(\mu\)</span>, the equation takes the following form:</p>
+<p>In Lethe, it is possible to solve heat transfer problems under various loading conditions. The main equation is derived from the energy equation in incompressible flows. Assuming a constant heat capacity <span class="math notranslate nohighlight">\(C_p\)</span> and dynamic viscosity <span class="math notranslate nohighlight">\(\mu\)</span>, the equation takes the following form:</p>
 <div class="math-wrapper docutils container">
 <div class="math notranslate nohighlight">
-\[\rho C_p \frac{\partial T}{\partial t} + \rho C_p (\mathbf{u} \cdot \nabla)T - \nabla \cdot (k \nabla T) = - \phi + Q\]</div>
+\[\rho C_p \frac{\partial T}{\partial t} + \rho C_p (\mathbf{u} \cdot \nabla)T - \nabla \cdot (k \nabla T) = \phi_v + Q\]</div>
 </div>
 <p>where:</p>
 <ul class="simple">
@@ -469,24 +469,24 @@
 <li><p><span class="math notranslate nohighlight">\(\rho\)</span> is the density;</p></li>
 <li><p><span class="math notranslate nohighlight">\(C_p\)</span> is the isobaric heat capacity;</p></li>
 <li><p><span class="math notranslate nohighlight">\(k\)</span> is the thermal conductivity;</p></li>
-<li><p><span class="math notranslate nohighlight">\(Q\)</span> is the energy source term or heat generation;</p></li>
-<li><p><span class="math notranslate nohighlight">\(\phi\)</span> is the viscous dissipation term. For an incompressible fluid it takes the following form: <span class="math notranslate nohighlight">\(\phi = \mu (\nabla \mathbf{u} + \nabla \mathbf{u}^T):\nabla \mathbf{u}\)</span>, where <span class="math notranslate nohighlight">\(\mu\)</span> is the <a class="reference external" href="https://en.wikipedia.org/wiki/Viscosity">dynamic viscosity</a>;</p></li>
+<li><p><span class="math notranslate nohighlight">\(Q\)</span> is the energy source term or heat generation per unit of mass;</p></li>
+<li><p><span class="math notranslate nohighlight">\(\phi_v\)</span> is the viscous dissipation term. For an incompressible fluid it takes the following form: <span class="math notranslate nohighlight">\(\phi_v = \mu (\nabla \mathbf{u} + \nabla \mathbf{u}^T):\nabla \mathbf{u}\)</span>, where <span class="math notranslate nohighlight">\(\mu\)</span> is the <a class="reference external" href="https://en.wikipedia.org/wiki/Viscosity">dynamic viscosity</a>;</p></li>
 </ul>
-<p>Depending on the physics involved, the terms <span class="math notranslate nohighlight">\(\phi\)</span> and <span class="math notranslate nohighlight">\(Q\)</span> can be included or excluded and can take various definitions.</p>
+<p>Depending on the physics involved, the terms <span class="math notranslate nohighlight">\(\phi_v\)</span> and <span class="math notranslate nohighlight">\(Q\)</span> can be included or excluded and can take various definitions.</p>
 </section>
 <section id="finite-element-formulation">
 <h1>Finite Element Formulation<a class="headerlink" href="#finite-element-formulation" title="Link to this heading">#</a></h1>
-<p>For the finite element formulation, we start from the strong form of the equation as shown above. We consider a domain <span class="math notranslate nohighlight">\(\Omega\)</span> with boundary <span class="math notranslate nohighlight">\(\Gamma\)</span>. The applied boundary condition can vary depending on the problem being solved, but the main ones are the following:</p>
+<p>For the finite element formulation, we start from the strong form of the equation as shown above. We consider a domain <span class="math notranslate nohighlight">\(\Omega\)</span> with boundary <span class="math notranslate nohighlight">\(\Gamma\)</span>. The applied boundary conditions can vary depending on the problem being solved, but the main ones are the following:</p>
 <ul class="simple">
 <li><p>Dirichlet boundary condition: <span class="math notranslate nohighlight">\(T = T_0\)</span> on <span class="math notranslate nohighlight">\(\Gamma_D\)</span>;</p></li>
 <li><p>Neumann boundary condition: <span class="math notranslate nohighlight">\(\mathbf{n} \cdot \nabla T = q\)</span> on <span class="math notranslate nohighlight">\(\Gamma_N\)</span>;</p></li>
 <li><p>Robin boundary condition: <span class="math notranslate nohighlight">\(\mathbf{n} \cdot \nabla T + h(T - T_{\infty}) = 0\)</span> on <span class="math notranslate nohighlight">\(\Gamma_R\)</span>;</p></li>
 </ul>
 <p>where <span class="math notranslate nohighlight">\(\mathbf{n}\)</span> is the normal vector to the boundary, <span class="math notranslate nohighlight">\(q\)</span> is the heat flux, <span class="math notranslate nohighlight">\(h\)</span> is the heat transfer coefficient, and <span class="math notranslate nohighlight">\(T_{\infty}\)</span> is the ambient temperature.</p>
-<p>The weak form of the heat equation is obtained by multiplying the strong form by a test function <span class="math notranslate nohighlight">\(v\)</span> and integrating over the domain <span class="math notranslate nohighlight">\(\Omega\)</span>. After applying the integration by part and the Gauss-Ostrogradsky theorem, the weak form of the heat equation is given by the following equation:</p>
+<p>The weak form of the heat equation is obtained by multiplying the strong form by a test function <span class="math notranslate nohighlight">\(v\)</span> and integrating over the domain <span class="math notranslate nohighlight">\(\Omega\)</span>. After applying integration by parts and the Gauss-Ostrogradsky theorem, the weak form of the heat equation is given by the following equation:</p>
 <div class="math-wrapper docutils container">
 <div class="math notranslate nohighlight">
-\[\int_{\Omega} \left[ v \rho C_p \frac{\partial T}{\partial t} + v \rho C_p (\mathbf{u} \cdot \nabla)T + k (\nabla v \cdot \nabla T) \right] \;d\Omega - \int_{\Gamma} v k (\nabla T \cdot \mathbf{n}) \;d\Gamma = - \int_{\Omega} v \left[ \phi - Q \right] \;d\Omega\]</div>
+\[\int_{\Omega} \left[ v \rho C_p \frac{\partial T}{\partial t} + v \rho C_p (\mathbf{u} \cdot \nabla)T + k (\nabla v \cdot \nabla T) \right] \;d\Omega - \int_{\Gamma} v k (\nabla T \cdot \mathbf{n}) \;d\Gamma = \int_{\Omega} v \left[ \phi_v + Q \right] \;d\Omega\]</div>
 </div>
 <p>Note that this formulation treats the thermal conductivity <span class="math notranslate nohighlight">\(k\)</span> as a constant.</p>
 </section>
