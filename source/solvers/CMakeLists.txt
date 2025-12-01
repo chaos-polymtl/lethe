@@ -32,6 +32,7 @@ add_library(lethe-solvers
   simulation_parameters.cc
   source_terms.cc
   stabilization.cc
+  time_harmonic_maxwell.cc
   tracer.cc
   tracer_assemblers.cc
   tracer_drift_velocity.cc
@@ -83,6 +84,7 @@ add_library(lethe-solvers
   ../../include/solvers/simulation_parameters.h
   ../../include/solvers/source_terms.h
   ../../include/solvers/stabilization.h
+  ../../include/solvers/time_harmonic_maxwell.h
   ../../include/solvers/tracer.h
   ../../include/solvers/tracer_assemblers.h
   ../../include/solvers/tracer_drift_velocity.h
