@@ -107,6 +107,7 @@ $(function() {
 <li>particle_counts&#160;:&#160;<a class="el" href="classParticleVisualization.html#ac4e0d7a6ea011681fd7ed4123baec0a3">ParticleVisualization&lt; dim &gt;</a></li>
 <li>particle_custom_diameter&#160;:&#160;<a class="el" href="structParameters_1_1Lagrangian_1_1LagrangianPhysicalProperties.html#a3fe86d9f680dbff089796ce1feb8ed70">Parameters::Lagrangian::LagrangianPhysicalProperties</a></li>
 <li>particle_custom_probability&#160;:&#160;<a class="el" href="structParameters_1_1Lagrangian_1_1LagrangianPhysicalProperties.html#ae4a6b201cbd1f0de7f172896879a165f">Parameters::Lagrangian::LagrangianPhysicalProperties</a></li>
+<li>particle_drag_values&#160;:&#160;<a class="el" href="classNavierStokesScratchData.html#ad8fa7d26920654077bd2a84856587b0d">NavierStokesScratchData&lt; dim &gt;</a></li>
 <li>particle_field_constraints&#160;:&#160;<a class="el" href="classParticleFieldQCM.html#adf5f5cdbed13df9032a665b061a9ec36">ParticleFieldQCM&lt; dim, n_components, property_start_index &gt;</a></li>
 <li>particle_field_locally_owned&#160;:&#160;<a class="el" href="classParticleFieldQCM.html#a67d7ad35eef1a6327c29e189418b41d9">ParticleFieldQCM&lt; dim, n_components, property_start_index &gt;</a></li>
 <li>particle_field_locally_relevant&#160;:&#160;<a class="el" href="classParticleFieldQCM.html#a50ce1621d39cfa01c09bdb0f95b22803">ParticleFieldQCM&lt; dim, n_components, property_start_index &gt;</a></li>
@@ -155,10 +156,12 @@ $(function() {
 <li>particle_triangle_contact_description&#160;:&#160;<a class="el" href="classParticleWallContactForce.html#afa81cca0e3383c100472bdd99a76bf46">ParticleWallContactForce&lt; dim, PropertiesIndex, contact_model, rolling_friction_model &gt;</a></li>
 <li>particle_triangle_contact_record&#160;:&#160;<a class="el" href="classParticleWallContactForce.html#ac9d8a8049ee53958a46f6a8cbefefa0b">ParticleWallContactForce&lt; dim, PropertiesIndex, contact_model, rolling_friction_model &gt;</a></li>
 <li>particle_two&#160;:&#160;<a class="el" href="structparticle__particle__contact__info.html#a37a07ac081cd107c41819ec2b00c9755">particle_particle_contact_info&lt; dim &gt;</a></li>
+<li>particle_two_way_coupling_force_values&#160;:&#160;<a class="el" href="classNavierStokesScratchData.html#a69b1468479e6a831a64e3f908c0b9728">NavierStokesScratchData&lt; dim &gt;</a></li>
 <li>particle_type_maximum_number&#160;:&#160;<a class="el" href="structParameters_1_1Lagrangian_1_1LagrangianPhysicalProperties.html#aba1f27d0b4b886eb281dd523f5480e57">Parameters::Lagrangian::LagrangianPhysicalProperties</a></li>
 <li>particle_type_number&#160;:&#160;<a class="el" href="structParameters_1_1Lagrangian_1_1LagrangianPhysicalProperties.html#abb75740b4bc84088e1ee30c6063a2e55">Parameters::Lagrangian::LagrangianPhysicalProperties</a></li>
 <li>particle_velocity&#160;:&#160;<a class="el" href="classNavierStokesScratchData.html#ab1202093c4ca2dfbbce9b93b93cc9b14">NavierStokesScratchData&lt; dim &gt;</a>, <a class="el" href="classParticleProjector.html#a91df5d33aab7979a5c445ad32b2fc4eb">ParticleProjector&lt; dim &gt;</a>, <a class="el" href="classVANSOperator.html#a41b3b5432e39e7bfcc923313fa76a491">VANSOperator&lt; dim, number &gt;</a></li>
 <li>particle_velocity_dof_handlers&#160;:&#160;<a class="el" href="classMFNavierStokesVANSPreconditionGMG.html#ad57beefae76b644097ee1c0054496825">MFNavierStokesVANSPreconditionGMG&lt; dim &gt;</a></li>
+<li>particle_velocity_values&#160;:&#160;<a class="el" href="classNavierStokesScratchData.html#a7c8fd9c5427af50a3be4c4761b058593">NavierStokesScratchData&lt; dim &gt;</a></li>
 <li>particle_wall_candidates&#160;:&#160;<a class="el" href="structDEM_1_1dem__data__structures.html#aa6ee0ba8f43d17a376fa64027f3ab1fc">DEM::dem_data_structures&lt; dim &gt;</a>, <a class="el" href="classDEMContactManager.html#a3c9c8bb5aeb7712e6f391ed95c689d89">DEMContactManager&lt; dim, PropertiesIndex &gt;</a></li>
 <li>particle_wall_collision_boundary_ids&#160;:&#160;<a class="el" href="structParameters_1_1Lagrangian_1_1LagrangianPostProcessing.html#a96deafa9b540cb3bd1543c21b29180ba">Parameters::Lagrangian::LagrangianPostProcessing</a></li>
 <li>particle_wall_collision_statistics&#160;:&#160;<a class="el" href="structParameters_1_1Lagrangian_1_1LagrangianPostProcessing.html#a9f5187a69e555bb29b5419bcc36c759e">Parameters::Lagrangian::LagrangianPostProcessing</a></li>
@@ -404,6 +407,7 @@ $(function() {
 <li>print_xyz()&#160;:&#160;<a class="el" href="classVisualization.html#afbe7be953d1cc3d22da0f466e810b0ee">Visualization&lt; dim, PropertiesIndex &gt;</a></li>
 <li>prn_seed_photon_displacement&#160;:&#160;<a class="el" href="structParameters_1_1Lagrangian_1_1ParticleRayTracing.html#a27fbbdc4d134bd1ff3364beb1e2af544">Parameters::Lagrangian::ParticleRayTracing&lt; dim &gt;</a></li>
 <li>prn_seed_photon_insertion&#160;:&#160;<a class="el" href="structParameters_1_1Lagrangian_1_1ParticleRayTracing.html#ae08c99b50963157775b8523bd3e3cea9">Parameters::Lagrangian::ParticleRayTracing&lt; dim &gt;</a></li>
+<li>project_particle_forces&#160;:&#160;<a class="el" href="structParameters_1_1CFDDEM.html#a6e6770dc5a694e68b191fd5e729746f0">Parameters::CFDDEM</a></li>
 <li>project_particle_velocity&#160;:&#160;<a class="el" href="classParameters_1_1VoidFractionParameters.html#a4e099709696da9ade33f0e1e12bb1b58">Parameters::VoidFractionParameters&lt; dim &gt;</a></li>
 <li>projected_phase_fraction_gradient_values&#160;:&#160;<a class="el" href="classNavierStokesScratchData.html#a77a8a872036804121a9eb9f73a23b7f5">NavierStokesScratchData&lt; dim &gt;</a></li>
 <li>projection_step_diffusion_factor&#160;:&#160;<a class="el" href="classParameters_1_1InitialConditions.html#aaff3a389688210a82cf84239cf1a6b68">Parameters::InitialConditions&lt; dim &gt;</a></li>

@@ -1,0 +1,5 @@
+<map id="VANSAssemblerFPIProjection&lt; dim &gt;" name="VANSAssemblerFPIProjection&lt; dim &gt;">
+<area shape="rect" id="Node000001" title="Class that assembles the fluid_particle interactions (FPI) for the VANS equations such as the drag fo..." alt="" coords="5,93,217,133"/>
+<area shape="rect" id="Node000002" href="$classPhysicsAssemblerBase.html" title="Base class for assembler objects of physics and subequations." alt="" coords="7,5,216,45"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="114,59,114,93,109,93,109,59"/>
+</map>
