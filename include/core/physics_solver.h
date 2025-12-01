@@ -30,8 +30,8 @@ public:
   /**
    * @brief Constructor for the non-linear physics.
    *
-   * @param[in] Non-linear solver parameters as specified in the
-   * simulation parameter file.
+   * @param[in] non_linear_solver_parameters Non-linear solver parameters as
+   * specified in the simulation parameter file.
    *
    */
   PhysicsSolver(const Parameters::NonLinearSolver non_linear_solver_parameters);
