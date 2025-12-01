@@ -124,14 +124,14 @@ Physical Properties
 
 * The ``tracer reaction order`` parameter (:math:`n`) is the reaction order of the tracer.
 
-* The ``tracer reaction threshold`` parameter (:math:`\varepsilon`) is a minimal value set to prevent the explosion of stiffness for the linear solver when concentration tends toward 0. This parameter is useful when the reaction order is lower than 1.
+* The ``tracer reaction threshold`` parameter (:math:`\varepsilon`) is the minimal value of the tracer concentration used to calculate the reaction rate. For reaction order below 1, the concentration of the tracer appears in the denominator when calculating the Jacobian. To prevent undefined value of the Jacobian (e.g. NaN), a minimal value of the concentration is used when calculating the reaction rate. This minimal value is set by the  ``tracer reaction threshold``.
 
   .. math::
 
     C_\text{effective} = \sqrt{C^2 + \varepsilon^2}
 
   .. note::
-    The threshold parameter indicates the concentration value below which modifications to the reaction rate become dominant. Depending on the scale, it can be modified as a way to keep numerical stability while remaining realistic, as long as :math:`C_\text{interest} \gg \varepsilon`. A scenario where the threshold might need to be lowered is for extremely fast heterogeneous reactions, where the concentration at the surface nears 0.
+    The threshold parameter indicates the concentration value below which modifications to the reaction rate become dominant. Depending on the scale, it can be modified as a way to keep numerical stability while remaining realistic reaction rate as long as :math:`C_\text{interest} \gg \varepsilon`. A scenario where the threshold might need to be lowered is for extremely fast heterogeneous reactions, where the concentration at the surface is close to 0.
 
 * The ``number of solids`` parameter controls the number of solid regions. Solid regions are currently only implemented for `Conjugate Heat Transfer`_.
 

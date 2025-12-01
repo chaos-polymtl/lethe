@@ -43,7 +43,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/).
 - MAJOR We now need the possibility to solve linear system of equations for future physics, consequently the `physics_solver` and the `non_linear_solver` classes have now an overloaded constructor to enable this functionality. To improve the semantics with this new architecture, the general name  "solver_strategy" is used instead of "non_linear" where appropriate. A new `linear_solver_strategy` class is also introduced with its associated unit test. [#1804] (https://github.com/chaos-polymtl/lethe/pull/1804)
 
 ### Fixed
-- MINOR Tracer reaction models failed for reaction order below 1 due to negative powers of the initial concentration when set to 0. We add a smoothed minimum value that keeps concentrations of 0 from causing this crash in the linear solver. [#1825](https://github.com/chaos-polymtl/lethe/issues/1825)
+- MINOR Tracer reaction models failed for reaction order below 1 due to negative powers of the initial concentration when its values is 0. We add a smoothed minimum value that keeps the concentration above 0 and prevents this issue from arising. [#1825](https://github.com/chaos-polymtl/lethe/issues/1825)
 
 ### Fixed
 
