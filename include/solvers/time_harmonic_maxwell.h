@@ -316,7 +316,8 @@ public:
    * @brief Getter method to access the private attribute
    * present_solution for the physic currently solved. NB : present_solution is
    * now passed to the multiphysics interface at the end of the setup_dofs
-   * method.
+   * method. In the case of TimeHarmonicMaxwell, it corresponds to the solution
+   * in the interior trial space.
    *
    * @return A vector containing all the values of the solution.
    */
@@ -325,6 +326,23 @@ public:
   {
     return *present_solution;
   }
+
+
+  /**
+   * @brief Getter method to access the private attribute
+   * present_solution_skeleton for the physic currently solved. NB :
+   * present_solution_skeleton is not passed to the multiphysics interface at
+   * the end of the setup_dofs method. In the case of TimeHarmonicMaxwell, it
+   * corresponds to the solution on the skeleton for the trial space.
+   *
+   * @return A vector containing all the values of the solution.
+   */
+  GlobalVectorType &
+  get_present_solution_skeleton()
+  {
+    return *present_solution_skeleton;
+  }
+
 
   /**
    * @brief Getter method to access the private attribute
@@ -502,9 +520,14 @@ private:
   TrilinosWrappers::SparseMatrix system_matrix;
 
   /**
-   * @brief A vector containing all the values of the solution.
+   * @brief A vector containing all the values of the solution in the interior trial space.
    */
   std::shared_ptr<GlobalVectorType> present_solution;
+
+  /**
+   * @brief A vector containing all the values of the solution on the skeleton for the trial space.
+   */
+  std::shared_ptr<GlobalVectorType> present_solution_skeleton;
 
   /**
    * @brief The right hand side vector.
