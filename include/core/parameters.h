@@ -458,7 +458,9 @@ namespace Parameters
     double tracer_reaction_constant;
     // tracer reaction order
     double tracer_reaction_order;
-    // tracer reaction threshold to prevent null concentration in reaction model
+    // When the reaction order <1, concentrations are used in the denominator of
+    // a few terms. This threshold prevents the introduction of NaN entries as
+    // long as it is set above 0.
     double tracer_reaction_threshold;
 
     // Phase change parameters

@@ -13,6 +13,10 @@
  * @brief Computes the effective concentration above the threshold and with a
  * smooth transition
  *
+ * This function prevents NaN in the reaction rate computations when the
+ * reaction order is lower than 1 by introducing a small threshold value, to be
+ * set above 0.
+ *
  * @param[in] C Concentration value
  * @param[in] threshold Threshold value above which effective concentration will
  * be
