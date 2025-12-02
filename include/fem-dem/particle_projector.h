@@ -149,9 +149,6 @@ public:
   /// DoFHandler that manages the void fraction
   DoFHandler<dim> dof_handler;
 
-  /// Fully distributed (including locally relevant) solution
-  GlobalVectorType particle_field_locally_relevant;
-
   /// deal.II vector for the particle velocity
   LinearAlgebra::distributed::Vector<double> particle_field_solution;
 
@@ -164,16 +161,13 @@ public:
   /// Index set for the locally relevant degree of freedoms
   IndexSet locally_relevant_dofs;
 
-  /// Locally owned solution of particle field
-  GlobalVectorType particle_field_locally_owned;
-
   /// System matrix used to assemble the smoothed L2 projection of the void
   /// fraction
   TrilinosWrappers::SparseMatrix system_matrix;
 
   /// Right-hand side used to assemble the smoothed L2 projection of the void
   /// fraction
-  GlobalVectorType system_rhs;
+  LinearAlgebra::distributed::Vector<double> system_rhs;
 
   /// Constraints used for the boundary conditions of the particle field
   AffineConstraints<double> particle_field_constraints;

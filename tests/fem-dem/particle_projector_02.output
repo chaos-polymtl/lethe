@@ -8,11 +8,17 @@ Void Fraction
   -Tolerance of iterative solver is : 1.00000e-10
 DEAL::Check 1	3.81233e-14
 DEAL::Convergence step 1 value 3.81233e-14
-  -Iterative solver took : 1 steps 
+  -Iterative solver took : 1.00000 steps 
+------------------
+Force on particle
+------------------
   -Tolerance of iterative solver is : 1.00000e-10
-DEAL::Check 2	9.52869e-13
-DEAL::Convergence step 2 value 9.52869e-13
-  -Iterative solver took : 2 steps 
+DEAL:cg::Check 0	7525.54
+DEAL:cg::Starting value 7525.54
+DEAL:cg::Check 1	1.38556e-09
+DEAL:cg::Check 2	2.47068e-21
+DEAL:cg::Convergence step 2 value 2.47068e-21
+  -Iterative solver took : 2.00000 steps 
 DEAL::Rank 0 owns: 0.00000 32663.3 0.00000 0.00000 32796.8 0.00000 0.00000 32796.8 0.00000 0.00000 32771.4 0.00000 0.00000 32796.8 0.00000 0.00000 32771.4 0.00000 0.00000 32771.4 0.00000 0.00000 32776.0 0.00000 0.00000 32663.3 0.00000 0.00000 32796.8 0.00000 0.00000 32796.8 0.00000 0.00000 32771.4 0.00000 0.00000 32663.3 0.00000 0.00000 32796.8 0.00000 0.00000 32796.8 0.00000 0.00000 32771.4 0.00000 0.00000 32663.3 0.00000 0.00000 32796.8 0.00000 0.00000 32663.3 0.00000 0.00000 32796.8 0.00000 0.00000 32796.8 0.00000 0.00000 32771.4 0.00000 0.00000 32663.3 0.00000 0.00000 32796.8 0.00000 0.00000 32663.3 0.00000 0.00000 32796.8 0.00000 0.00000 32663.3 0.00000 
 DEAL::Total particle force on the fluid mesh 0.00000 32768.0 0.00000
 DEAL::Total particle force on the particles 0.00000 32768.0 0.00000
@@ -25,11 +31,17 @@ Void Fraction
   -Tolerance of iterative solver is : 1.00000e-10
 DEAL::Check 1	3.91332e-14
 DEAL::Convergence step 1 value 3.91332e-14
-  -Iterative solver took : 1 steps 
+  -Iterative solver took : 1.00000 steps 
+------------------
+Force on particle
+------------------
   -Tolerance of iterative solver is : 1.00000e-10
-DEAL::Check 2	1.16910e-12
-DEAL::Convergence step 2 value 1.16910e-12
-  -Iterative solver took : 2 steps 
+DEAL:cg::Check 0	7721.56
+DEAL:cg::Starting value 7721.56
+DEAL:cg::Check 1	1.09990e-09
+DEAL:cg::Check 2	1.36072e-21
+DEAL:cg::Convergence step 2 value 1.36072e-21
+  -Iterative solver took : 2.00000 steps 
 DEAL::Rank 0 owns: 0.00000 24676.1 0.00000 0.00000 30394.0 0.00000 0.00000 30394.0 0.00000 0.00000 35556.4 0.00000 0.00000 30394.0 0.00000 0.00000 35556.4 0.00000 0.00000 35556.4 0.00000 0.00000 39616.6 0.00000 0.00000 24676.1 0.00000 0.00000 30394.0 0.00000 0.00000 30394.0 0.00000 0.00000 35556.4 0.00000 0.00000 24676.1 0.00000 0.00000 30394.0 0.00000 0.00000 30394.0 0.00000 0.00000 35556.4 0.00000 0.00000 24676.1 0.00000 0.00000 30394.0 0.00000 0.00000 24676.1 0.00000 0.00000 30394.0 0.00000 0.00000 30394.0 0.00000 0.00000 35556.4 0.00000 0.00000 24676.1 0.00000 0.00000 30394.0 0.00000 0.00000 24676.1 0.00000 0.00000 30394.0 0.00000 0.00000 24676.1 0.00000 
 DEAL::Total particle force on the fluid mesh 0.00000 32768.0 0.00000
 DEAL::Total particle force on the particles 0.00000 32768.0 0.00000
@@ -42,11 +54,17 @@ Void Fraction
   -Tolerance of iterative solver is : 1.00000e-10
 DEAL::Check 1	3.81233e-14
 DEAL::Convergence step 1 value 3.81233e-14
-  -Iterative solver took : 1 steps 
+  -Iterative solver took : 1.00000 steps 
+------------------
+Force on particle
+------------------
   -Tolerance of iterative solver is : 1.00000e-10
-DEAL::Check 2	1.47300e-12
-DEAL::Convergence step 2 value 1.47300e-12
-  -Iterative solver took : 2 steps 
+DEAL:cg::Check 0	6926.42
+DEAL:cg::Starting value 6926.42
+DEAL:cg::Check 1	1.51978e-09
+DEAL:cg::Check 2	2.79563e-21
+DEAL:cg::Convergence step 2 value 2.79563e-21
+  -Iterative solver took : 2.00000 steps 
 DEAL::Rank 0 owns: 1208.22 1208.22 1208.22 1064.55 1064.55 16398.4 16398.4 1064.55 1064.55 16385.7 966.177 16385.7 1064.55 16398.4 1064.55 966.177 16385.7 16385.7 16385.7 16385.7 966.177 16388.0 16388.0 16388.0 1208.22 1208.22 31455.1 16398.4 1064.55 31732.3 1064.55 16398.4 31732.3 16385.7 16385.7 31805.2 31455.1 1208.22 1208.22 31732.3 1064.55 16398.4 31732.3 16398.4 1064.55 31805.2 16385.7 16385.7 31455.1 1208.22 31455.1 31732.3 16398.4 31732.3 1208.22 31455.1 1208.22 1064.55 31732.3 16398.4 16398.4 31732.3 1064.55 16385.7 31805.2 16385.7 1208.22 31455.1 31455.1 16398.4 31732.3 31732.3 31455.1 31455.1 1208.22 31732.3 31732.3 16398.4 31455.1 31455.1 31455.1 
 DEAL::Total particle force on the fluid mesh 16384.0 16384.0 16384.0
 DEAL::Total particle force on the particles 16384.0 16384.0 16384.0
@@ -59,11 +77,17 @@ Void Fraction
   -Tolerance of iterative solver is : 1.00000e-10
 DEAL::Check 1	3.91332e-14
 DEAL::Convergence step 1 value 3.91332e-14
-  -Iterative solver took : 1 steps 
+  -Iterative solver took : 1.00000 steps 
+------------------
+Force on particle
+------------------
   -Tolerance of iterative solver is : 1.00000e-10
-DEAL::Check 2	1.98474e-12
-DEAL::Convergence step 2 value 1.98474e-12
-  -Iterative solver took : 2 steps 
+DEAL:cg::Check 0	7091.91
+DEAL:cg::Starting value 7091.91
+DEAL:cg::Check 1	1.23223e-09
+DEAL:cg::Check 2	1.71013e-21
+DEAL:cg::Convergence step 2 value 1.71013e-21
+  -Iterative solver took : 2.00000 steps 
 DEAL::Rank 0 owns: -69.8001 -69.8001 -69.8001 -3.30773 -3.30773 15197.0 15197.0 -3.30773 -3.30773 17778.2 89.9195 17778.2 -3.30773 15197.0 -3.30773 89.9195 17778.2 17778.2 17778.2 17778.2 89.9195 19808.3 19808.3 19808.3 -69.8001 -69.8001 24745.9 15197.0 -3.30773 30397.3 -3.30773 15197.0 30397.3 17778.2 17778.2 35466.5 24745.9 -69.8001 -69.8001 30397.3 -3.30773 15197.0 30397.3 15197.0 -3.30773 35466.5 17778.2 17778.2 24745.9 -69.8001 24745.9 30397.3 15197.0 30397.3 -69.8001 24745.9 -69.8001 -3.30773 30397.3 15197.0 15197.0 30397.3 -3.30773 17778.2 35466.5 17778.2 -69.8001 24745.9 24745.9 15197.0 30397.3 30397.3 24745.9 24745.9 -69.8001 30397.3 30397.3 15197.0 24745.9 24745.9 24745.9 
 DEAL::Total particle force on the fluid mesh 16384.0 16384.0 16384.0
 DEAL::Total particle force on the particles 16384.0 16384.0 16384.0

@@ -16,6 +16,9 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
 - MINOR As pointed out in issue [#1820] (https://github.com/chaos-polymtl/lethe/issues/1820), the `set_initial_condition_fd` function in `fluid_dynamics_matrix_based`, when the L2_projection boundary condition is apply, does not work if the solver is not GMRES. This PR solves this issue by introducing a new dedicated function `solve_L2_system` that will always use GMRES regardless of the choice of solver by the user. This choice is justified because the L2 projection corresponds to a trivial linear problem involving only a mass matrix, for which GMRES converges rapidly. [#1827](https://github.com/chaos-polymtl/lethe/issues/1827)
 
+### Changed
+- MINOR As an effort to remove the number of vectors dangling around all over the place in Lethe, we are trying to move everything to use deal.II parallel vectors instead of a weird blend between Trilinos and deal.II parallel vectors. A first step towards this that is within reach is to refactor the ParticleProjector since that class needs to work with both the matrix-based and the matrix-free architecture. This change refactors the fields functionality of the ParticleProjector to only work with deal.II parallel vectors. This greatly reduces the number of vectors and simplifies the workflow of the code, yet does not change anything in the results. A small consequence of this is that the CG solver used is now the deal.II CG solver instead of the Trilinos one, but they behave similarly. A follow-up change will be to do this complete refactor with void fraction within the ParticleProjector class. [#1826](https://github.com/chaos-polymtl/lethe/pull/1826)
+
 ### [Master] - 2025-11-25
 
 ### Added
@@ -23,6 +26,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/).
 - MAJOR We now need the possibility to solve linear system of equations for future physics, consequently the `physics_solver` and the `non_linear_solver` classes have now an overloaded constructor to enable this functionality. To improve the semantics with this new architecture, the general name  "solver_strategy" is used instead of "non_linear" where appropriate. A new `linear_solver_strategy` class is also introduced with its associated unit test. [#1804] (https://github.com/chaos-polymtl/lethe/pull/1804)
 
 ### Fixed
+
 - MAJOR As identified in issue [#1518](https://github.com/chaos-polymtl/lethe/issues/1518), in MultiphysicsInterface solutions and DoFHandler were stored and shared through raw pointers. To avoid memory leak issues, these are now handled with shared pointers (`std::shared_ptr`). [#1823](https://github.com/chaos-polymtl/lethe/pull/1823)
 
 ### Added

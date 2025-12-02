@@ -547,11 +547,10 @@ FluidDynamicsVANS<dim>::assemble_local_system_matrix(
         particle_drag_cell,
         particle_two_way_coupling_force_cell,
         particle_velocity_cell,
-        particle_projector.fluid_drag_on_particles
-          .particle_field_locally_relevant,
+        particle_projector.fluid_drag_on_particles.particle_field_solution,
         particle_projector.fluid_force_on_particles_two_way_coupling
-          .particle_field_locally_relevant,
-        particle_projector.particle_velocity.particle_field_locally_relevant,
+          .particle_field_solution,
+        particle_projector.particle_velocity.particle_field_solution,
         cfd_dem_simulation_parameters.cfd_dem.drag_coupling);
     }
 
@@ -746,11 +745,10 @@ FluidDynamicsVANS<dim>::assemble_local_system_rhs(
         particle_drag_cell,
         particle_two_way_coupling_force_cell,
         particle_velocity_cell,
-        particle_projector.fluid_drag_on_particles
-          .particle_field_locally_relevant,
+        particle_projector.fluid_drag_on_particles.particle_field_solution,
         particle_projector.fluid_force_on_particles_two_way_coupling
-          .particle_field_locally_relevant,
-        particle_projector.particle_velocity.particle_field_locally_relevant,
+          .particle_field_solution,
+        particle_projector.particle_velocity.particle_field_solution,
         cfd_dem_simulation_parameters.cfd_dem.drag_coupling);
     }
 
@@ -797,21 +795,82 @@ FluidDynamicsVANS<dim>::gather_output_hook()
       std::vector<DataComponentInterpretation::DataComponentInterpretation>
         data_interpretation(
           dim, DataComponentInterpretation::component_is_part_of_vector);
+
+#ifndef LETHE_USE_LDV
+      // Since the particle velocity field is now only a deal.II distributed
+      // vector, we create a temporary GlobalVectorType (a Trilinos vector) and
+      // copy the content into it.
+      GlobalVectorType particle_velocity;
+      particle_velocity.reinit(
+        particle_projector.particle_velocity.locally_owned_dofs,
+        particle_projector.particle_velocity.locally_relevant_dofs,
+        this->mpi_communicator);
+
+      convert_vector_dealii_to_trilinos(
+        particle_velocity,
+        particle_projector.particle_velocity.particle_field_solution);
       solution_output_structs.emplace_back(
         std::in_place_type<OutputStructSolution<dim, GlobalVectorType>>,
         particle_projector.particle_velocity.dof_handler,
-        particle_projector.particle_velocity.particle_field_locally_relevant,
+        particle_velocity,
         names,
         data_interpretation);
-    }
 
-  if (this->cfd_dem_simulation_parameters.cfd_dem.project_particle_forces)
-    {
+      if (this->cfd_dem_simulation_parameters.cfd_dem.project_particle_forces)
+        {
+          GlobalVectorType fluid_drag_on_particles;
+          fluid_drag_on_particles.reinit(
+            particle_projector.particle_velocity.locally_owned_dofs,
+            particle_projector.particle_velocity.locally_relevant_dofs,
+            this->mpi_communicator);
+
+          convert_vector_dealii_to_trilinos(
+            fluid_drag_on_particles,
+            particle_projector.fluid_drag_on_particles.particle_field_solution);
+
+          solution_output_structs.emplace_back(
+            std::in_place_type<OutputStructSolution<dim, GlobalVectorType>>,
+            this->particle_projector.fluid_drag_on_particles.dof_handler,
+            fluid_drag_on_particles,
+            std::vector<std::string>(dim, "Particle_drag"),
+            std::vector<
+              DataComponentInterpretation::DataComponentInterpretation>(
+              dim, DataComponentInterpretation::component_is_part_of_vector));
+
+          GlobalVectorType fluid_force_on_particles_two_way_coupling;
+          fluid_force_on_particles_two_way_coupling.reinit(
+            particle_projector.particle_velocity.locally_owned_dofs,
+            particle_projector.particle_velocity.locally_relevant_dofs,
+            this->mpi_communicator);
+
+          convert_vector_dealii_to_trilinos(
+            fluid_force_on_particles_two_way_coupling,
+            particle_projector.fluid_force_on_particles_two_way_coupling
+              .particle_field_solution);
+
+          solution_output_structs.emplace_back(
+            std::in_place_type<OutputStructSolution<dim, GlobalVectorType>>,
+            this->particle_projector.fluid_force_on_particles_two_way_coupling
+              .dof_handler,
+            fluid_force_on_particles_two_way_coupling,
+            std::vector<std::string>(dim, "Particle_two_way_coupling_force"),
+            std::vector<
+              DataComponentInterpretation::DataComponentInterpretation>(
+              dim, DataComponentInterpretation::component_is_part_of_vector));
+        }
+#else
+      solution_output_structs.emplace_back(
+        std::in_place_type<OutputStructSolution<dim, GlobalVectorType>>,
+        particle_projector.particle_velocity.dof_handler,
+        particle_projector.particle_velocity.particle_field_solution,
+        names,
+        data_interpretation);
+
       solution_output_structs.emplace_back(
         std::in_place_type<OutputStructSolution<dim, GlobalVectorType>>,
         this->particle_projector.fluid_drag_on_particles.dof_handler,
         this->particle_projector.fluid_drag_on_particles
-          .particle_field_locally_relevant,
+          .particle_field_solution,
         std::vector<std::string>(dim, "Particle_drag"),
         std::vector<DataComponentInterpretation::DataComponentInterpretation>(
           dim, DataComponentInterpretation::component_is_part_of_vector));
@@ -821,11 +880,14 @@ FluidDynamicsVANS<dim>::gather_output_hook()
         this->particle_projector.fluid_force_on_particles_two_way_coupling
           .dof_handler,
         this->particle_projector.fluid_force_on_particles_two_way_coupling
-          .particle_field_locally_relevant,
+          .particle_field_solution,
         std::vector<std::string>(dim, "Particle_two_way_coupling_force"),
         std::vector<DataComponentInterpretation::DataComponentInterpretation>(
           dim, DataComponentInterpretation::component_is_part_of_vector));
+#endif
     }
+
+
   return solution_output_structs;
 }
 

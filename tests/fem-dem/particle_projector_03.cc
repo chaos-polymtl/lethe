@@ -4,8 +4,17 @@
 /**
  * @brief Test if the particle projector gives a valid solution for a constant
  * and a linear forcing field stored onto the particles.
- * First, the test is run with a constant forcing applied to the particles.
- * The goal of the test is to verify if the forcing is conservative.
+ *
+ * This test is very similar to particle_projector_02 with two main
+ * distinctions:
+ * 1. The mesh for the domain is refined further to ensure that every
+ *    processor owns some cells.
+ * 2. The test is adapted to be run in parallel. Essentially, it further tests
+ * the projection capabilities in both serial and parallel.
+ *
+ * The test consists of the following steps (which are the same as
+ * projector_02). First, the test is run with a constant forcing applied to the
+ * particles. The goal of the test is to verify if the forcing is conservative.
  * Afterward, the test is run with a linear force function. The goal of the
  * test is then to ensure that the forcing is conservative, but also that
  * it preserves the function that originally described the forcing (in this
@@ -78,6 +87,8 @@ generate_particle_grid(const Point<dim>          pt1,
                                            mapping,
                                            properties);
 
+  particle_handler.exchange_ghost_particles(true);
+
   deallog << "Number of particles inserted: "
           << particle_handler.n_global_particles() << std::endl;
 }
@@ -111,7 +122,7 @@ test_void_fraction_qcm(const unsigned int fe_degree,
   const auto         my_rank = Utilities::MPI::this_mpi_process(MPI_COMM_WORLD);
   const unsigned int n_procs = Utilities::MPI::n_mpi_processes(MPI_COMM_WORLD);
 
-  constexpr unsigned int n_refinements = 1;
+  constexpr unsigned int n_refinements = 2;
 
   // We make a background triangulation which consists in a 1x1x1 cube.
   parallel::distributed::Triangulation<3> domain_triangulation(MPI_COMM_WORLD);
@@ -175,12 +186,11 @@ test_void_fraction_qcm(const unsigned int fe_degree,
     make_default_linear_solver();
 
   linear_solver_parameters.minimum_residual = 1e-10;
+  linear_solver_parameters.verbosity        = Parameters::Verbosity::quiet;
 
   // Setup a pcout which is required by the ParticleProjector.
 
-  ConditionalOStream pcout(deallog.get_file_stream(),
-                           Utilities::MPI::this_mpi_process(MPI_COMM_WORLD) ==
-                             0);
+  ConditionalOStream pcout(deallog.get_file_stream(), true);
 
   BoundaryConditions::NSBoundaryConditions<3> boundary_conditions;
 
@@ -220,7 +230,6 @@ test_void_fraction_qcm(const unsigned int fe_degree,
             deallog << i << " ";
           deallog << std::endl;
         }
-      MPI_Barrier(MPI_COMM_WORLD);
     }
 
   // Integrate the force field over the cells to check force conservation
@@ -239,15 +248,27 @@ test_void_fraction_qcm(const unsigned int fe_degree,
        particle_projector.fluid_force_on_particles_two_way_coupling.dof_handler
          .active_cell_iterators())
     {
-      fe_values.reinit((cell));
-      fe_values[vector_extractor].get_function_values(
-        particle_projector.fluid_force_on_particles_two_way_coupling
-          .particle_field_solution,
-        force_values);
-      for (unsigned int q = 0; q < fe_values.n_quadrature_points; ++q)
-        total_particle_force_on_fluid +=
-          fe_values.get_JxW_values()[q] * force_values[q];
+      if (cell->is_locally_owned())
+        {
+          fe_values.reinit((cell));
+          fe_values[vector_extractor].get_function_values(
+            particle_projector.fluid_force_on_particles_two_way_coupling
+              .particle_field_solution,
+            force_values);
+          for (unsigned int q = 0; q < fe_values.n_quadrature_points; ++q)
+            total_particle_force_on_fluid +=
+              fe_values.get_JxW_values()[q] * force_values[q];
+        }
     }
+
+  // Sum the total force across all the processors
+  total_particle_force_on_fluid =
+    Utilities::MPI::sum(total_particle_force_on_fluid,
+                        domain_triangulation.get_mpi_communicator());
+  total_particle_force_on_particles =
+    Utilities::MPI::sum(total_particle_force_on_particles,
+                        domain_triangulation.get_mpi_communicator());
+
   deallog << "Total particle force on the fluid mesh "
           << total_particle_force_on_fluid << std::endl;
   deallog << "Total particle force on the particles "
@@ -277,15 +298,14 @@ main(int argc, char *argv[])
 {
   try
     {
-      initlog();
-
       Utilities::MPI::MPI_InitFinalize mpi_initialization(argc, argv, 1);
-
+      MPILogInitAll                    all;
       deallog
         << "Particle-fluid Constant Force: fe_degree=1    number_quadrature_points=2"
         << std::endl;
       Functions::ConstantFunction<3> constant_func({0, 1., 0});
       test_void_fraction_qcm(1, 2, constant_func, false, "constant");
+
       deallog
         << "Particle-fluid Constant Force: fe_degree=1    number_quadrature_points=3"
         << std::endl;
