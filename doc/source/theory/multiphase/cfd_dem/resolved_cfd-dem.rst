@@ -47,4 +47,4 @@ using Lagrange polynomials. The extrapolated values are used both to enforce the
 .. [#daunais2023] \Y. Daunais, L. Barbeau, C. Béguin, and B. Blais, “Extensive verification of a high-order sharp-interface immersed boundary method for incompressible flows,” *Int. J. Numer. Meth. Fluids*, vol. 95, no. 2, pp. 100–123, 2023.
 .. [#barbeau2024] \L. Barbeau, Y. Daunais, C. Béguin, and B. Blais, “An implicit sharp-interface immersed boundary method for fluid–solid interaction with moving boundaries,” 2024.
 .. [#hori2022] \N. Hori, M. E. Rosti, and S. Takagi, “An Eulerian-based immersed boundary method for particle suspensions with implicit lubrication model,” *Comput. Fluids*, vol. 236, p. 105278, 2022.
-.. [#guevremont2024] \V. Guèvremont, L. Barbeau, C. Béguin, and B. Blais, “Pore-resolved CFD digital twin of additive manufactured heat exchangers using radial basis function geometry descriptions,” 2024.
+.. [#guevremont2024] \V. Guévremont, L. Barbeau, C. Béguin, and B. Blais, “Pore-resolved CFD digital twin of additive manufactured heat exchangers using radial basis function geometry descriptions,” 2024.
