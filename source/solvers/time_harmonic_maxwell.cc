@@ -244,7 +244,31 @@ template <int dim>
 void
 TimeHarmonicMaxwell<dim>::finish_simulation()
 {
-  // TODO
+  auto         mpi_communicator = this->triangulation->get_mpi_communicator();
+  unsigned int this_mpi_process(
+    Utilities::MPI::this_mpi_process(mpi_communicator));
+
+  if (this_mpi_process == 0 &&
+      simulation_parameters.analytical_solution->verbosity !=
+        Parameters::Verbosity::quiet)
+    {
+      this->error_table.evaluate_all_convergence_rates(
+        ConvergenceTable::reduction_rate_log2);
+
+      this->error_table.set_scientific("error_E_real", true);
+      this->error_table.set_scientific("error_E_imag", true);
+      this->error_table.set_scientific("error_H_real", true);
+      this->error_table.set_scientific("error_H_imag", true);
+      this->error_table.set_precision(
+        "error_E_real", this->simulation_control->get_log_precision());
+      this->error_table.set_precision(
+        "error_E_imag", this->simulation_control->get_log_precision());
+      this->error_table.set_precision(
+        "error_H_real", this->simulation_control->get_log_precision());
+      this->error_table.set_precision(
+        "error_H_imag", this->simulation_control->get_log_precision());
+      this->error_table.write_text(std::cout);
+    }
 }
 
 template <int dim>
@@ -272,7 +296,39 @@ template <int dim>
 void
 TimeHarmonicMaxwell<dim>::postprocess(bool first_iteration)
 {
-  // TODO
+  if (simulation_parameters.analytical_solution->calculate_error() == true &&
+      !first_iteration)
+    {
+      std::vector<double> errors       = calculate_L2_error();
+      double              E_real_error = errors[0];
+      double              E_imag_error = errors[1];
+      double              H_real_error = errors[2];
+      double              H_imag_error = errors[3];
+
+      this->error_table.add_value("cells",
+                                  this->triangulation->n_global_active_cells());
+      this->error_table.add_value("error_E_real", E_real_error);
+      this->error_table.add_value("error_E_imag", E_imag_error);
+      this->error_table.add_value("error_H_real", H_real_error);
+      this->error_table.add_value("error_H_imag", H_imag_error);
+
+      if (simulation_parameters.analytical_solution->verbosity !=
+          Parameters::Verbosity::quiet)
+        {
+          this->pcout << "L2 error E real: " << E_real_error << std::endl;
+          this->pcout << "L2 error E imag: " << E_imag_error << std::endl;
+          this->pcout << "L2 error H real: " << H_real_error << std::endl;
+          this->pcout << "L2 error H imag: " << H_imag_error << std::endl;
+        }
+    }
+
+  if (this->simulation_parameters.timer.type ==
+      Parameters::Timer::Type::iteration)
+    {
+      announce_string(this->pcout, "Time Harmonic Electromagnetics");
+      this->computing_timer.print_summary();
+      this->computing_timer.reset();
+    }
 }
 
 template <int dim>
