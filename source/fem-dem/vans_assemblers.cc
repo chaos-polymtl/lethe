@@ -2215,7 +2215,7 @@ VANSAssemblerFPI<dim>::assemble_rhs(
 
           local_rhs(i) +=
             // + drag applied on fluid
-            (-beta_drag * (velocity - average_particles_velocity) +
+            (-beta_drag * (velocity - average_particles_velocity) -
              // + other two-way coupling forces applied on the fluid
              explicit_particle_volumetric_acceleration_on_fluid) *
             phi_u_i * JxW;
