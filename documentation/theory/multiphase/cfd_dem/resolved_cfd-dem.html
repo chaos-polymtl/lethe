@@ -136,7 +136,7 @@
           <svg class="theme-icon-when-light"><use href="#svg-sun"></use></svg>
         </button>
       </div>
-      <label class="toc-overlay-icon toc-header-icon no-toc" for="__toc">
+      <label class="toc-overlay-icon toc-header-icon" for="__toc">
         <div class="visually-hidden">Toggle table of contents sidebar</div>
         <i class="icon"><svg><use href="#svg-toc"></use></svg></i>
       </label>
@@ -448,7 +448,7 @@
               <svg class="theme-icon-when-light"><use href="#svg-sun"></use></svg>
             </button>
           </div>
-          <label class="toc-overlay-icon toc-content-icon no-toc" for="__toc">
+          <label class="toc-overlay-icon toc-content-icon" for="__toc">
             <div class="visually-hidden">Toggle table of contents sidebar</div>
             <i class="icon"><svg><use href="#svg-toc"></use></svg></i>
           </label>
@@ -456,7 +456,72 @@
         <article role="main">
           <section id="resolved-cfd-dem">
 <h1>Resolved CFD-DEM<a class="headerlink" href="#resolved-cfd-dem" title="Link to this heading">#</a></h1>
-<p><strong>Under construction</strong></p>
+<p>In resolved CFD-DEM, the incompressible Navier-Stokes equations are solved on a mesh that is significantly finer than the particle size. The particle-fluid coupling is then obtained directly by imposing a no-slip boundary condition on the surface of the moving particles <a class="footnote-reference brackets" href="#berard2020" id="id1" role="doc-noteref"><span class="fn-bracket">[</span>1<span class="fn-bracket">]</span></a>.</p>
+<section id="sharp-interface-immersed-boundary-method">
+<h2>Sharp-interface immersed boundary method<a class="headerlink" href="#sharp-interface-immersed-boundary-method" title="Link to this heading">#</a></h2>
+<p>Lethe uses a Sharp-Interface Immersed Boundary Method (SIBM) to impose the no-slip boundary condition on moving solids while coupling the solid dynamics and fluid flow implicitly. This implicit formulation keeps the resolved CFD-DEM solver stable even for large fluid-to-solid density ratios.</p>
+<p>The SIBM retains the order of convergence of the underlying finite element discretization (up to fourth order) for both stationary and moving boundaries <a class="footnote-reference brackets" href="#barbeau2022" id="id2" role="doc-noteref"><span class="fn-bracket">[</span>2<span class="fn-bracket">]</span></a> <a class="footnote-reference brackets" href="#daunais2023" id="id3" role="doc-noteref"><span class="fn-bracket">[</span>3<span class="fn-bracket">]</span></a> and its full algorithmic details are presented in <a class="footnote-reference brackets" href="#barbeau2024" id="id4" role="doc-noteref"><span class="fn-bracket">[</span>4<span class="fn-bracket">]</span></a>.</p>
+</section>
+<section id="hydrodynamic-forces-and-lubrication-correction">
+<h2>Hydrodynamic forces and lubrication correction<a class="headerlink" href="#hydrodynamic-forces-and-lubrication-correction" title="Link to this heading">#</a></h2>
+<p>The hydrodynamic force <span class="math notranslate nohighlight">\(\mathbf{F}^\mathrm{pf}\)</span> and torque <span class="math notranslate nohighlight">\(\mathbf{M}^\mathrm{pf}\)</span> acting on each particle are evaluated by integrating the fluid stress tensor over the particle surface (see the particle momentum balance in <a class="reference internal" href="../dem/dem.html"><span class="doc">Granular Flows - Discrete Element Method (DEM)</span></a>). When two particles approach, the finite grid resolution can under-resolve the lubrication force, so Lethe adds the correction proposed by <a class="footnote-reference brackets" href="#hori2022" id="id5" role="doc-noteref"><span class="fn-bracket">[</span>5<span class="fn-bracket">]</span></a>:</p>
+<div class="math-wrapper docutils container">
+<div class="math notranslate nohighlight">
+\[\begin{split}\mathbf{F}^\mathrm{l_c}_{ij} &amp;= \mathbf{F}^\mathrm{l}_{ij} - \mathbf{F}^\mathrm{l}_{ij} \big|_{l=\varepsilon_0} \\
+\mathbf{F}^\mathrm{l}_{ij} &amp;= \frac{3}{2} \pi \mu_f \left (\frac{d_{p_i} d_{p_j}}{d_{p_i} + d_{p_j}} \right )^2 \frac{1}{l} \left (\mathbf{v}_{ij} \cdot \mathbf{e}_{ij} \right ) \mathbf{e}_{ij}\end{split}\]</div>
+</div>
+<p>where:</p>
+<ul class="simple">
+<li><p><span class="math notranslate nohighlight">\(\mu_f\)</span> is the fluid dynamic viscosity;</p></li>
+<li><p><span class="math notranslate nohighlight">\(d_{p}\)</span> is the particle diameter;</p></li>
+<li><p><span class="math notranslate nohighlight">\(l\)</span> is the gap between the particles;</p></li>
+<li><p><span class="math notranslate nohighlight">\(\varepsilon_0\)</span> is a minimum gap used to regularize the lubrication force;</p></li>
+<li><p><span class="math notranslate nohighlight">\(\mathbf{v}_{ij}\)</span> is the relative velocity between particles <span class="math notranslate nohighlight">\(i\)</span> and <span class="math notranslate nohighlight">\(j\)</span>;</p></li>
+<li><p><span class="math notranslate nohighlight">\(\mathbf{e}_{ij}\)</span> is the unit vector pointing from particle <span class="math notranslate nohighlight">\(i\)</span> to <span class="math notranslate nohighlight">\(j\)</span>.</p></li>
+</ul>
+<p>The model is derived for spheres; it can be enabled for non-spherical solids, but results should be interpreted with care.</p>
+</section>
+<section id="signed-distance-functions-for-complex-solids">
+<h2>Signed distance functions for complex solids<a class="headerlink" href="#signed-distance-functions-for-complex-solids" title="Link to this heading">#</a></h2>
+<p>The SIBM supports multiple solid descriptions: spheres, cylinders, boxes, CAD geometries in <code class="docutils literal notranslate"><span class="pre">step</span></code>/<code class="docutils literal notranslate"><span class="pre">iges</span></code>/<code class="docutils literal notranslate"><span class="pre">stl</span></code> formats, Radial Basis Function (RBF) surfaces <a class="footnote-reference brackets" href="#guevremont2024" id="id6" role="doc-noteref"><span class="fn-bracket">[</span>6<span class="fn-bracket">]</span></a>, and composites defined using boolean operations. Each solid is represented through a Signed Distance Function (SDF) <span class="math notranslate nohighlight">\(\lambda\)</span>. For every node adjacent to a cut cell where <span class="math notranslate nohighlight">\(\lambda(\mathbf{x})=0\)</span>, the method extrapolates along the outward normal</p>
+<div class="math-wrapper docutils container">
+<div class="math notranslate nohighlight">
+\[\mathbf{n}(\mathbf{x}) = \nabla \lambda (\mathbf{x})\]</div>
+</div>
+<p>using Lagrange polynomials. The extrapolated values are used both to enforce the no-slip boundary condition at the moving interface and to evaluate stresses on the particle surface.</p>
+<aside class="footnote-list brackets">
+<aside class="footnote brackets" id="berard2020" role="doc-footnote">
+<span class="label"><span class="fn-bracket">[</span><a role="doc-backlink" href="#id1">1</a><span class="fn-bracket">]</span></span>
+<p>A. Bérard, G. S. Patience, and B. Blais, “Experimental methods in chemical engineering: Unresolved CFD-DEM,” <em>Canadian Journal of Chemical Engineering</em>, vol. 98, no. 2, pp. 424–440, 2020, doi: <a class="reference external" href="https://doi.org/10.1002/cjce.23686">10.1002/cjce.23686</a>.</p>
+</aside>
+<aside class="footnote brackets" id="barbeau2022" role="doc-footnote">
+<span class="label"><span class="fn-bracket">[</span><a role="doc-backlink" href="#id2">2</a><span class="fn-bracket">]</span></span>
+<p>L. Barbeau, S. Étienne, C. Béguin, and B. Blais, “Development of a high-order continuous Galerkin sharp-interface immersed boundary method and its application to incompressible flow problems,” <em>Computer &amp; Fluids</em>, vol. 239, p. 105415, May 2022, doi: <a class="reference external" href="https://doi.org/10.1016/j.compfluid.2022.105415">10.1016/j.compfluid.2022.105415</a>.</p>
+</aside>
+<aside class="footnote brackets" id="daunais2023" role="doc-footnote">
+<span class="label"><span class="fn-bracket">[</span><a role="doc-backlink" href="#id3">3</a><span class="fn-bracket">]</span></span>
+<p>C.-A. Daunais, L. Barbeau, and B. Blais, “An extensive study of shear thinning flow around a spherical particle for power-law and Carreau fluids,” <em>Journal of Non-Newtonian Fluid Mechanics</em>, vol. 311, p. 104951, 2023. doi: <a class="reference external" href="https://doi.org/10.1016/j.jnnfm.2022.104951">10.1016/j.jnnfm.2022.104951</a></p>
+</aside>
+<aside class="footnote brackets" id="barbeau2024" role="doc-footnote">
+<span class="label"><span class="fn-bracket">[</span><a role="doc-backlink" href="#id4">4</a><span class="fn-bracket">]</span></span>
+<ol class="upperalpha simple" start="3">
+<li><p>Barbeau, S. Golshan, J. Deng, S. Étienne, C. Béguin, and B. Blais, “High-order moving immersed boundary and its application to a resolved CFD-DEM model,” <em>Computer &amp; Fluids</em>, vol. 268, p. 106094, 2024. doi: <a class="reference external" href="https://doi.org/10.1016/j.compfluid.2023.106094">10.1016/j.compfluid.2023.106094</a></p></li>
+</ol>
+</aside>
+<aside class="footnote brackets" id="hori2022" role="doc-footnote">
+<span class="label"><span class="fn-bracket">[</span><a role="doc-backlink" href="#id5">5</a><span class="fn-bracket">]</span></span>
+<ol class="upperalpha simple" start="14">
+<li><p>Hori, M. E. Rosti, and S. Takagi, “An Eulerian-based immersed boundary method for particle suspensions with implicit lubrication model,” <em>Computer &amp; Fluids</em>, vol. 236, p. 105278, 2022. doi: <a class="reference external" href="https://doi.org/10.1016/j.compfluid.2021.105278">10.1016/j.compfluid.2021.105278</a></p></li>
+</ol>
+</aside>
+<aside class="footnote brackets" id="guevremont2024" role="doc-footnote">
+<span class="label"><span class="fn-bracket">[</span><a role="doc-backlink" href="#id6">6</a><span class="fn-bracket">]</span></span>
+<ol class="upperalpha simple" start="15">
+<li><p>Guévremont, L. Barbeau, V. Moreau, F. Galli, N. Virgilio, and B. Blais, “Robust pore-resolved CFD through porous monoliths reconstructed by micro-computed tomography: From digitization to flow prediction,” <em>Chemical Engineering Journal</em>, vol. 504, p. 158577, 2025. doi: <a class="reference external" href="https://doi.org/10.1016/j.cej.2024.158577">10.1016/j.cej.2024.158577</a></p></li>
+</ol>
+</aside>
+</aside>
+</section>
 </section>
 
         </article>
@@ -502,8 +567,29 @@
         
       </footer>
     </div>
-    <aside class="toc-drawer no-toc">
+    <aside class="toc-drawer">
       
+      
+      <div class="toc-sticky toc-scroll">
+        <div class="toc-title-container">
+          <span class="toc-title">
+            On this page
+          </span>
+        </div>
+        <div class="toc-tree-container">
+          <div class="toc-tree">
+            <ul>
+<li><a class="reference internal" href="#">Resolved CFD-DEM</a><ul>
+<li><a class="reference internal" href="#sharp-interface-immersed-boundary-method">Sharp-interface immersed boundary method</a></li>
+<li><a class="reference internal" href="#hydrodynamic-forces-and-lubrication-correction">Hydrodynamic forces and lubrication correction</a></li>
+<li><a class="reference internal" href="#signed-distance-functions-for-complex-solids">Signed distance functions for complex solids</a></li>
+</ul>
+</li>
+</ul>
+
+          </div>
+        </div>
+      </div>
       
       
     </aside>
@@ -514,5 +600,6 @@
     <script src="../../../_static/scripts/furo.js?v=32e29ea5"></script>
     <script src="../../../_static/clipboard.min.js?v=a7894cd8"></script>
     <script src="../../../_static/copybutton.js?v=7cec7674"></script>
+    <script async="async" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
     </body>
 </html>
