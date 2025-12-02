@@ -800,6 +800,14 @@ protected:
 
   /**
    * @brief Table with correct alignment for vectorization to store the values
+   * of the velocity used to compute the stabilization term.
+   *
+   */
+  Table<2, Tensor<1, dim + 1, VectorizedArray<number>>>
+    velocity_for_stabilization;
+
+  /**
+   * @brief Table with correct alignment for vectorization to store the values
    * of the ALE velocity used in mortar coupling terms.
    *
    */

@@ -836,6 +836,7 @@ NavierStokesOperatorBase<dim, number>::
   kinematic_viscosity_gradient.reinit(n_cells, integrator.n_q_points);
   previous_shear_rate.reinit(n_cells, integrator.n_q_points);
   previous_shear_rate_magnitude.reinit(n_cells, integrator.n_q_points);
+  velocity_for_stabilization.reinit(n_cells, integrator.n_q_points);
 
   // Define 1/dt if the simulation is transient
   double sdt = 0.0;
@@ -872,6 +873,12 @@ NavierStokesOperatorBase<dim, number>::
         {
           nonlinear_previous_values(cell, q)   = integrator.get_value(q);
           nonlinear_previous_gradient(cell, q) = integrator.get_gradient(q);
+          velocity_for_stabilization(cell, q)  = integrator.get_value(q);
+
+          // If mortar is enabled, correct the stabilization velocity with the
+          // ALE term
+          if (this->enable_mortar)
+            velocity_for_stabilization(cell, q) -= this->velocity_ale(cell, q);
 
           if (this->enable_hessians_jacobian)
             nonlinear_previous_hessian_diagonal(cell, q) =
@@ -880,8 +887,8 @@ NavierStokesOperatorBase<dim, number>::
           // Calculate tau
           VectorizedArray<number> u_mag_squared = 1e-12;
           for (int k = 0; k < dim; ++k)
-            u_mag_squared +=
-              Utilities::fixed_power<2>(integrator.get_value(q)[k]);
+            u_mag_squared += Utilities::fixed_power<2>(
+              this->velocity_for_stabilization(cell, q)[k]);
 
           stabilization_parameter(cell, q) =
             1. / std::sqrt(Utilities::fixed_power<2>(sdt) +
