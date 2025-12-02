@@ -181,7 +181,18 @@ DEMSolver<dim, PropertiesIndex>::setup_distribution_type()
               std::make_shared<NormalDistribution>(
                 lpp.particle_average_diameter.at(particle_type),
                 lpp.particle_size_std.at(particle_type),
-                lpp.seed_for_distributions[particle_type] + this_mpi_process);
+                lpp.seed_for_distributions[particle_type] + this_mpi_process,
+                lpp.diameter_min_cutoff[particle_type],
+                lpp.diameter_max_cutoff[particle_type]);
+            break;
+          case SizeDistributionType::lognormal:
+            size_distribution_object_container[particle_type] =
+              std::make_shared<LogNormalDistribution>(
+                lpp.particle_average_diameter.at(particle_type),
+                lpp.particle_size_std.at(particle_type),
+                lpp.seed_for_distributions[particle_type] + this_mpi_process,
+                lpp.diameter_min_cutoff[particle_type],
+                lpp.diameter_max_cutoff[particle_type]);
             break;
           case SizeDistributionType::custom:
             size_distribution_object_container[particle_type] =
