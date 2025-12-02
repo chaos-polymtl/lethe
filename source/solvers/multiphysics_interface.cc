@@ -148,11 +148,11 @@ MultiphysicsInterface<dim>::MultiphysicsInterface(
           Parameters::Verbosity::quiet;
 
       active_physics.push_back(PhysicsID::electromagnetics);
-      // physics[PhysicsID::electromagnetics] =
-      //   std::make_shared<TimeHarmonicMaxwell<dim>>(this,
-      //                                              nsparam,
-      //                                              p_triangulation,
-      //                                              p_simulation_control);
+      physics[PhysicsID::electromagnetics] =
+        std::make_shared<TimeHarmonicMaxwell<dim>>(this,
+                                                   nsparam,
+                                                   p_triangulation,
+                                                   p_simulation_control);
     }
 }
 
