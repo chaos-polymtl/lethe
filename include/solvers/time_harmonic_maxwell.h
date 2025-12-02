@@ -114,9 +114,9 @@ public:
   gather_output_hook() override;
 
   /**
-   * @brief Calculates the L2 error of the solution
+   * @brief Calculates the L2 error of the solution. It returns a vector of doubles containing the L2 errors of the real and imaginary parts of the electric and magnetic fields in the order [E_real, E_imag, H_real, H_imag].
    */
-  double
+  std::vector<double>
   calculate_L2_error();
 
   /**

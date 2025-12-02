@@ -61,6 +61,7 @@ namespace AnalyticalSolutions
       , temperature(1)
       , tracer(1)
       , cahn_hilliard(2)
+      , electromagnetics(4 * dim)
     {}
 
     /**
@@ -150,6 +151,12 @@ namespace AnalyticalSolutions
      * and the chemical potential.
      */
     Functions::ParsedFunction<dim> cahn_hilliard;
+
+    /**
+     * ParsedFunction that contains the analytical solution for the electric
+     * and magnetic fields (real and imaginary parts).
+     */
+    Functions::ParsedFunction<dim> electromagnetics;
   };
 } // namespace AnalyticalSolutions
 

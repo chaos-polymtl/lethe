@@ -57,6 +57,12 @@ namespace AnalyticalSolutions
       prm.leave_subsection();
     }
 
+    {
+      prm.enter_subsection("electromagnetics");
+      electromagnetics.declare_parameters(prm, 4 * dim);
+      prm.leave_subsection();
+    }
+
     prm.leave_subsection();
   }
 
@@ -100,6 +106,12 @@ namespace AnalyticalSolutions
     {
       prm.enter_subsection("cahn hilliard");
       cahn_hilliard.parse_parameters(prm);
+      prm.leave_subsection();
+    }
+
+    {
+      prm.enter_subsection("electromagnetics");
+      electromagnetics.parse_parameters(prm);
       prm.leave_subsection();
     }
 
