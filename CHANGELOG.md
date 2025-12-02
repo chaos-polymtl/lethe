@@ -6,6 +6,10 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
 ### [Master] - 2025-12-03
 
+### Added
+
+- MINOR This PR adds the option to fix pressure in a node within the matrix-based solver. The process is the same as what is already done in the coarse multigrid level of the matrix-free solver when fix pressure constant is set to true. [#1828](https://github.com/chaos-polymtl/lethe/pull/1828)
+
 ### Fixed
 
 - MINOR The velocity used to compute the stabilization parameter (tau) did not account for the ALE velocity component when the mortar feature is enabled. This led to inconsistent stabilization terms in the rotor and stator sides, and it has been fixed in this PR. [#1834](https://github.com/chaos-polymtl/lethe/pull/1834)
