@@ -16,20 +16,22 @@ In this subsection, gravitational acceleration, and the physical properties of t
     # Entering particle type 0
     subsection particle type 0
 
-      # Choices are uniform, normal or custom
+      # Choices are uniform, normal, lognormal or custom
       set size distribution type            = uniform
 
-      # If distribution type = uniform or normal
+      # If distribution type = uniform
       set diameter                          = 0.001
 
       # If distribution type = custom
       set custom diameters                  = 0.001 , 0.0005
       set custom volume fractions           = 0.6   , 0.4
 
-      # If distribution type = normal
+      # If distribution type = normal or lognormal
+      set average diameter                  = 0.001
       set standard deviation                = 0.0
-      # If distribution type = normal or custom
-      set distribution prn seed          = 1
+
+      # If distribution type = normal, lognormal  or custom
+      set distribution prn seed             = 1
 
       # For every distribution types
       set number of particles               = 0
@@ -49,7 +51,6 @@ In this subsection, gravitational acceleration, and the physical properties of t
       set surface roughness particles       = 1.e-9
       set thermal accommodation particles   = 0.7
       set real young modulus wall           = 0.
-
     end
 
     # Wall properties
@@ -85,10 +86,11 @@ In this subsection, gravitational acceleration, and the physical properties of t
 .. note::
     If the particles in a simulation are monodispersed and have the same physical properties, the ``number of particle types`` should be equal to zero. For polydispersed systems, the ``number of particle types`` is selected equal to the number of particles types in the simulation. For each particle type, a separate subsection ``particle type n`` should be defined (n starts from zero to ``number of particle types`` - 1) which contains all the physical properties related to that particle type.
 
-* The ``size distribution type`` parameter specifies the size distribution for each particle type. For each particle type, three ``size distribution type`` can be defined: ``uniform``, ``normal`` and ``custom``.
+* The ``size distribution type`` parameter specifies the size distribution for each particle type. For each particle type, four ``size distribution type`` can be defined: ``uniform``, ``normal``, ``lognormal`` and ``custom``.
 
   - For the ``uniform`` size distribution, the diameter of the particles is constant.
   - For the ``normal`` size distribution, the particle diameters are sampled from a normal distribution with an average diameter and a standard deviation.
+  - For the ``lognormal`` size distribution, the particle diameters are sampled from a lognormal distribution with an average diameter and a standard deviation.
   - For the ``custom`` size distribution, particle diameters are sampled from a list of diameters with a corresponding list of probabilities.
 
 .. note::
@@ -96,7 +98,19 @@ In this subsection, gravitational acceleration, and the physical properties of t
 
 * The ``diameter`` parameter defines the diameter of the particles in a ``uniform`` distribution. In the case of a ``normal`` distribution, this parameter indicates the average diameter.
 
-* For a ``normal`` distribution, the ``standard deviation`` parameter should be defined to indicate the standard deviation on the particle size distribution.
+* For a ``normal`` distribution, the ``average diameter`` and the ``standard deviation`` parameters should be defined to indicate the average (:math:`{\mu}`) and the standard deviation (:math:`{\sigma}`) of the particle size distribution.
+
+* For a ``lognormal`` distribution, the ``average diameter`` and the ``standard deviation`` parameters should be defined to indicate the average (:math:`{\mu_X}`) and the standard deviation (:math:`{\sigma_X}`) of the particle size distribution.
+
+.. note::
+   :math:`\mu_X` and :math:`\sigma_X` **are not** the mean (:math:`\mu`) and the standard deviation (:math:`\sigma`) of **the underlying normal distribution** (i.e., the natural logarithm of the variable).
+
+   .. math::
+
+      \sigma = \sqrt{\ln\left(1 + \left(\frac{\sigma_X}{\mu_X}\right)^2\right)}
+
+      \mu = \ln(\mu_X) - 0.5 \sigma^2
+
 
 * For a ``custom`` distribution, the ``custom diameters`` parameter defines the different diameter values used when generating particles. The ``custom volume fractions`` parameter defines the probabilities corresponding to each diameter value previously declared based on volume fraction. Both list must have the same length.
 
