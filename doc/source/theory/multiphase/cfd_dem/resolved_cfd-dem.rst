@@ -7,7 +7,7 @@ In resolved CFD-DEM, the incompressible Navier-Stokes equations are solved on a 
 Sharp-interface immersed boundary method
 ----------------------------------------
 
-Lethe uses a Sharp-Interface Immersed Boundary Method (SIBM) to impose the no-slip boundary condition on moving solids while coupling the solid dynamics and fluid flow implicitly. This implicit formulation keeps the resolved CFD-DEM solver stable even for large fluid-to-solid density ratios [#hu1992]_.
+Lethe uses a Sharp-Interface Immersed Boundary Method (SIBM) to impose the no-slip boundary condition on moving solids while coupling the solid dynamics and fluid flow implicitly. This implicit formulation keeps the resolved CFD-DEM solver stable even for large fluid-to-solid density ratios.
 
 The SIBM retains the order of convergence of the underlying finite element discretization (up to fourth order) for both stationary and moving boundaries [#barbeau2022]_ [#daunais2023]_ and its full algorithmic details are presented in [#barbeau2024]_.
 
@@ -41,10 +41,10 @@ The SIBM supports multiple solid descriptions: spheres, cylinders, boxes, CAD ge
 
 using Lagrange polynomials. The extrapolated values are used both to enforce the no-slip boundary condition at the moving interface and to evaluate stresses on the particle surface.
 
-.. [#berard2020] \A. Bérard, G. S. Patience, and B. Blais, “Experimental methods in chemical engineering: Unresolved CFD-DEM,” *Can. J. Chem. Eng.*, vol. 98, no. 2, pp. 424–440, 2020, doi: `10.1002/cjce.23686 <https://doi.org/10.1002/cjce.23686>`_\.
-.. [#hu1992] \H. H. Hu, N. A. Patankar, and M. Y. Zhu, “Direct numerical simulations of fluid–solid systems using the distributed Lagrange multiplier/fictitious domain method,” *Theor. Comput. Fluid Dyn.*, vol. 3, no. 3, pp. 285–306, 1992.
-.. [#barbeau2022] \L. Barbeau, S. Étienne, C. Béguin, and B. Blais, “Development of a high-order continuous Galerkin sharp-interface immersed boundary method and its application to incompressible flow problems,” *Comput. Fluids*, vol. 239, p. 105415, May 2022, doi: `10.1016/j.compfluid.2022.105415 <https://doi.org/10.1016/j.compfluid.2022.105415>`_\.
-.. [#daunais2023] \Y. Daunais, L. Barbeau, C. Béguin, and B. Blais, “Extensive verification of a high-order sharp-interface immersed boundary method for incompressible flows,” *Int. J. Numer. Meth. Fluids*, vol. 95, no. 2, pp. 100–123, 2023.
-.. [#barbeau2024] \L. Barbeau, Y. Daunais, C. Béguin, and B. Blais, “An implicit sharp-interface immersed boundary method for fluid–solid interaction with moving boundaries,” 2024.
-.. [#hori2022] \N. Hori, M. E. Rosti, and S. Takagi, “An Eulerian-based immersed boundary method for particle suspensions with implicit lubrication model,” *Comput. Fluids*, vol. 236, p. 105278, 2022.
-.. [#guevremont2024] \V. Guévremont, L. Barbeau, C. Béguin, and B. Blais, “Pore-resolved CFD digital twin of additive manufactured heat exchangers using radial basis function geometry descriptions,” 2024.
+.. [#berard2020] \A. Bérard, G. S. Patience, and B. Blais, “Experimental methods in chemical engineering: Unresolved CFD-DEM,” *Canadian Journal of Chemical Engineering*, vol. 98, no. 2, pp. 424–440, 2020, doi: `10.1002/cjce.23686 <https://doi.org/10.1002/cjce.23686>`_\.
+.. [#barbeau2022] \L. Barbeau, S. Étienne, C. Béguin, and B. Blais, “Development of a high-order continuous Galerkin sharp-interface immersed boundary method and its application to incompressible flow problems,” *Computer & Fluids*, vol. 239, p. 105415, May 2022, doi: `10.1016/j.compfluid.2022.105415 <https://doi.org/10.1016/j.compfluid.2022.105415>`_\.
+.. [#daunais2023] C.-A. Daunais, L. Barbeau, and B. Blais, "An extensive study of shear thinning flow around a spherical particle for power-law and Carreau fluids," *Journal of Non-Newtonian Fluid Mechanics*, vol. 311, p. 104951, 2023. doi: `10.1016/j.jnnfm.2022.104951 <https://doi.org/10.1016/j.jnnfm.2022.104951>`_
+.. [#barbeau2024] C. Barbeau, S. Golshan, J. Deng, S. Étienne, C. Béguin, and B. Blais, "High-order moving immersed boundary and its application to a resolved CFD-DEM model," *Computer & Fluids*, vol. 268, p. 106094, 2024. doi: `10.1016/j.compfluid.2023.106094 <https://doi.org/10.1016/j.compfluid.2023.106094>`_
+.. [#hori2022] N. Hori, M. E. Rosti, and S. Takagi, "An Eulerian-based immersed boundary method for particle suspensions with implicit lubrication model," *Computer & Fluids*, vol. 236, p. 105278, 2022. doi: `10.1016/j.compfluid.2021.105278 <https://doi.org/10.1016/j.compfluid.2021.105278>`_
+.. [#guevremont2024] O. Guévremont, L. Barbeau, V. Moreau, F. Galli, N. Virgilio, and B. Blais, "Robust pore-resolved CFD through porous monoliths reconstructed by micro-computed tomography: From digitization to flow prediction," *Chemical Engineering Journal*, vol. 504, p. 158577, 2025. doi: `10.1016/j.cej.2024.158577 <https://doi.org/10.1016/j.cej.2024.158577>`_
+
