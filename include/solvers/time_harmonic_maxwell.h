@@ -24,6 +24,8 @@
 #include <deal.II/fe/fe_system.h>
 #include <deal.II/fe/fe_values.h>
 
+#include <deal.II/grid/grid_tools.h>
+
 #include <deal.II/numerics/data_out.h>
 
 #include <memory.h>
@@ -94,81 +96,7 @@ public:
     const SimulationParameters<dim> &p_simulation_parameters,
     std::shared_ptr<parallel::DistributedTriangulationBase<dim>>
                                        p_triangulation,
-    std::shared_ptr<SimulationControl> p_simulation_control)
-    : AuxiliaryPhysics<dim, GlobalVectorType>()
-    , multiphysics(multiphysics_interface)
-    , computing_timer(p_triangulation->get_mpi_communicator(),
-                      this->pcout,
-                      TimerOutput::summary,
-                      TimerOutput::wall_times)
-    , simulation_parameters(p_simulation_parameters)
-    , triangulation(p_triangulation)
-    , dof_handler_trial_interior(
-        std::make_shared<DoFHandler<dim>>(*triangulation))
-    , dof_handler_trial_skeleton(
-        std::make_shared<DoFHandler<dim>>(*triangulation))
-    , dof_handler_test(std::make_shared<DoFHandler<dim>>(*triangulation))
-    , extractor_E_real(0)
-    , extractor_E_imag(dim)
-    , extractor_H_real(2 * dim)
-    , extractor_H_imag(3 * dim)
-  {
-    if (simulation_parameters.mesh.simplex)
-      {
-        // for simplex meshes
-        AssertThrow(
-          false,
-          ExcMessage(
-            "TimeHarmonicMaxwell solver not yet implemented for simplex meshes."));
-      }
-    else
-      {
-        // Usual case, for quad/hex meshes
-        fe_trial_interior = std::make_shared<FESystem<dim>>(
-          FE_DGQ<dim>(
-            simulation_parameters.fem_parameters.electromagnetics_order) ^
-            dim,
-          FE_DGQ<dim>(
-            simulation_parameters.fem_parameters.electromagnetics_order) ^
-            dim,
-          FE_DGQ<dim>(
-            simulation_parameters.fem_parameters.electromagnetics_order) ^
-            dim,
-          FE_DGQ<dim>(
-            simulation_parameters.fem_parameters.electromagnetics_order) ^
-            dim);
-        fe_trial_skeleton = std::make_shared<FESystem<dim>>(
-          FE_NedelecSZ<dim>(
-            simulation_parameters.fem_parameters.electromagnetics_order),
-          FE_NedelecSZ<dim>(
-            simulation_parameters.fem_parameters.electromagnetics_order),
-          FE_NedelecSZ<dim>(
-            simulation_parameters.fem_parameters.electromagnetics_order),
-          FE_NedelecSZ<dim>(
-            simulation_parameters.fem_parameters.electromagnetics_order));
-        fe_test = std::make_shared<FESystem<dim>>(
-          FE_NedelecSZ<dim>(
-            simulation_parameters.fem_parameters.electromagnetics_order),
-          FE_NedelecSZ<dim>(
-            simulation_parameters.fem_parameters.electromagnetics_order),
-          FE_NedelecSZ<dim>(
-            simulation_parameters.fem_parameters.electromagnetics_order),
-          FE_NedelecSZ<dim>(
-            simulation_parameters.fem_parameters.electromagnetics_order));
-        mapping = std::make_shared<MappingQ<dim>>(fe_trial_interior->degree);
-        cell_quadrature = std::make_shared<QGauss<dim>>(fe_test->degree + 1);
-        face_quadrature =
-          std::make_shared<QGauss<dim - 1>>(fe_test->degree + 1);
-      }
-
-    // Initialize solution shared_ptr
-    present_solution = std::make_shared<GlobalVectorType>();
-
-    // Allocate solution transfer
-    solution_transfer =
-      std::make_shared<SolutionTransfer<dim, GlobalVectorType>>(
-        *dof_handler_trial_interior);
-  }
+    std::shared_ptr<SimulationControl> p_simulation_control);
 
   /**
    * @brief TimeHarmonicMaxwell - Base destructor. At the present
@@ -183,49 +111,39 @@ public:
    * @return Vector of OutputStructs that will be used to write the output results as VTU files.
    */
   virtual std::vector<OutputStruct<dim, VectorType>>
-  gather_output_hook()
-  {
-    return std::vector<OutputStruct<dim, VectorType>>();
-  }
+  gather_output_hook() override;
+
+  /**
+   * @brief Calculates the L2 error of the solution
+   */
+  double
+  calculate_L2_error();
 
   /**
    * @brief Carry out the operations required to finish a simulation correctly.
    */
   virtual void
-  finish_simulation()
-  {}
+  finish_simulation() override;
 
   /**
    * @brief Carry out the operations required to rearrange the values of the
    * previous solution at the end of a time step
    */
   virtual void
-  percolate_time_vectors();
+  percolate_time_vectors() override;
 
   /**
    * @brief Carry out modifications on the auxiliary physic solution.
    * To be defined for some physics only (eg. free surface, see vof.h).
    */
   virtual void
-  modify_solution(){};
+  modify_solution() override;
 
   /**
    * @brief Update non zero constraints if the boundary is time-dependent
    */
   virtual void
-  update_boundary_conditions(){};
-
-  /**
-   * @brief Getter method to access the private attribute dof_handler for the
-   * physic currently solved. NB : The dof_handler that is returned is the one
-   * for the interior trial space only has it is where the solution lives. The
-   * other two DoFHandlers of the class are used for computation only.
-   */
-  virtual const DoFHandler<dim> &
-  get_dof_handler()
-  {
-    return *dof_handler_trial_interior;
-  }
+  update_boundary_conditions() override;
 
   /**
    * @brief Postprocess the auxiliary physics results. Post-processing this case implies
@@ -235,7 +153,7 @@ public:
    * function
    */
   virtual void
-  postprocess(bool first_iteration){};
+  postprocess(bool first_iteration) override;
 
 
   /**
@@ -243,25 +161,25 @@ public:
    * mesh refinement/coarsening
    */
   virtual void
-  pre_mesh_adaptation(){};
+  pre_mesh_adaptation() override;
 
   /**
    * @brief post_mesh_adaption Interpolates the auxiliary physics variables to the new mesh
    */
   virtual void
-  post_mesh_adaptation(){};
+  post_mesh_adaptation() override;
 
   /**
    * @brief Prepares auxiliary physics to write checkpoint
    */
   virtual void
-  write_checkpoint(){};
+  write_checkpoint() override;
 
   /**
    * @brief Set solution vector of Auxiliary Physics using checkpoint
    */
   virtual void
-  read_checkpoint(){};
+  read_checkpoint() override;
 
   /**
    * @brief Returns a vector of references to TableHandler objects that needs to
@@ -270,10 +188,7 @@ public:
    * @return Structure containing the TableHandler objects and their corresponding file names.
    */
   virtual std::vector<OutputStructTableHandler>
-  gather_tables()
-  {
-    return std::vector<OutputStructTableHandler>();
-  };
+  gather_tables() override;
 
   /**
    * @brief Compute the Kelly error estimator used to refine mesh on a auxiliary physic parameter.
@@ -285,13 +200,26 @@ public:
   virtual void
   compute_kelly(const std::pair<const Variable,
                                 Parameters::MultipleAdaptationParameters> &ivar,
-                dealii::Vector<float> &estimated_error_per_cell){};
+                dealii::Vector<float> &estimated_error_per_cell) override;
+
+  /**
+   * @brief Compute the DPG error estimator based on the energy norm residual used to refine mesh of the TimeHarmonicMaxwell physic.
+   *
+   * @param ivar The current element of the map simulation_parameters.mesh_adaptation.variables
+   *
+   * @param estimated_error_per_cell The deal.II vector of estimated_error_per_cell
+   */
+  virtual void
+  compute_energy_norm(
+    const std::pair<const Variable, Parameters::MultipleAdaptationParameters>
+                          &ivar,
+    dealii::Vector<float> &estimated_error_per_cell);
 
   /**
    * @brief Sets-up the DofHandler and the degree of freedom associated with the physics.
    */
   virtual void
-  setup_dofs();
+  setup_dofs() override;
 
   /**
    * @brief Sets-up the initial conditions associated with the physics. Generally, physics
@@ -299,16 +227,177 @@ public:
    * the use of L2 projection or steady-state solutions.
    */
   virtual void
-  set_initial_conditions(){};
+  set_initial_conditions() override
+  {
+    AssertThrow(
+      false,
+      ExcMessage(
+        " The TimeHarmonicMaxwell solver does not support initial conditions as it is a frequency domain solver. Consequently, this method always solves a steady-state problem."));
+  };
 
   /**
    * @brief Set up preconditioner. Not used for the auxiliary physics but
    * needed for the compilation of the non-linear solver.
    */
   void
-  setup_preconditioner() override{};
+  setup_preconditioner() override;
+
+  /**
+   * @brief Define the constraints for the TimeHarmonicMaxwell solver.
+   */
+  void
+  define_constraints();
+
+  /**
+   * @brief Call for the solution of the linear system of equation using CG solver.
+   */
+  void
+  solve_linear_system() override;
+
+  /**
+   * @brief Getter method to access the private attribute dof_handler for the
+   * physic currently solved. NB : The dof_handler that is returned is the one
+   * for the interior trial space only has it is where the solution lives. The
+   * other two DoFHandlers of the class are used for computation only.
+   */
+  virtual const DoFHandler<dim> &
+  get_dof_handler() override
+  {
+    return *dof_handler_trial_interior;
+  }
+
+  /**
+   * @brief Getter method to access the private attribute evaluation_point for
+   * the physic currently solved.
+   *
+   * @return The vector at which the evaluation is performed.
+   */
+  GlobalVectorType &
+  get_evaluation_point() override
+  {
+    AssertThrow(
+      false,
+      ExcMessage(
+        "The TimeHarmonicMaxwell solver is linear, this method should not be called."));
+  }
+
+  /**
+   * @brief Getter method to access the private attribute
+   * local_evaluation_point for the physic currently solved.
+   *
+   * @return The local evaluation point. Ghosts cells are not considered in
+   * this evaluation.
+   */
+  GlobalVectorType &
+  get_local_evaluation_point() override
+  {
+    AssertThrow(
+      false,
+      ExcMessage(
+        "The TimeHarmonicMaxwell solver is linear, this method should not be called."));
+  }
+
+  /**
+   * @brief Getter method to access the private attribute
+   * newton_update for the physic currently solved.
+   *
+   * @return The direction used to perform the newton iteration.
+   */
+  GlobalVectorType &
+  get_newton_update() override
+  {
+    AssertThrow(
+      false,
+      ExcMessage(
+        "The TimeHarmonicMaxwell solver is linear, this method should not be called."));
+  }
+
+  /**
+   * @brief Getter method to access the private attribute
+   * present_solution for the physic currently solved. NB : present_solution is
+   * now passed to the multiphysics interface at the end of the setup_dofs
+   * method.
+   *
+   * @return A vector containing all the values of the solution.
+   */
+  GlobalVectorType &
+  get_present_solution() override
+  {
+    return *present_solution;
+  }
+
+  /**
+   * @brief Getter method to access the private attribute
+   * system_rhs for the physic currently solved.
+   *
+   * @return Right hand side vector.
+   */
+  GlobalVectorType &
+  get_system_rhs() override
+  {
+    return system_rhs;
+  }
+
+  /**
+   * @brief Getter method to access the private attribute
+   * nonzero_constraints for the physic currently solved.
+   *
+   * @return The nonzero constraints that arise from several sources such
+   * as boundary conditions and hanging nodes in the mesh. See the deal.II
+   * documentation on constraints on degrees of freedom for more information.
+   */
+  AffineConstraints<double> &
+  get_nonzero_constraints() override
+  {
+    return nonzero_constraints;
+  }
+
+  /**
+   * @brief Output the L2 and Linfty norms of the correction vector.
+   *
+   * @param[in] display_precision Number of outputted digits.
+   */
+  void
+  output_newton_update_norms(const unsigned int display_precision) override
+  {
+    AssertThrow(
+      false,
+      ExcMessage(
+        "The TimeHarmonicMaxwell solver is linear, this method should not be called."));
+  }
+
+  /**
+   * @brief Return the metric for residual rescaling. By default, should return 1.
+   * If the rescale_residual_by_volume is set to true, the method
+   * returns the global volume of the triangulation.
+   *
+   * @return Rescale metric.
+   */
+  double
+  get_residual_rescale_metric() const override
+  {
+    return simulation_parameters.linear_solver.at(PhysicsID::VOF)
+               .rescale_residual_by_volume ?
+             std::sqrt(
+               GridTools::volume(*this->triangulation, *this->mapping)) :
+             1.;
+  }
 
 private:
+  ///////                Physics solver core functions               ////////
+
+  /**
+   *  @brief Assemble the matrix associated with the solver
+   */
+  void
+  assemble_system_matrix() override;
+
+  /**
+   * @brief Assemble the rhs associated with the solver
+   */
+  void
+  assemble_system_rhs() override;
+
   /////// Auxiliary physics parameters for TimeHarmonicMaxwell solver ////////
 
   MultiphysicsInterface<dim> *multiphysics;
@@ -426,8 +515,10 @@ private:
    * @brief Store the nonzero constraints that arise from several sources such
    * as boundary conditions and hanging nodes in the mesh. See the deal.II
    * documentation on constraints on degrees of freedom for more information.
+   * The zero constraints are not used in this solver as it solve a linear
+   * system.
    */
-  AffineConstraints<double> constraints;
+  AffineConstraints<double> nonzero_constraints;
 
   /**
    * @brief SolutionTransfer<dim, GlobalVectorType>> is
