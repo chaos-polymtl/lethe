@@ -430,8 +430,7 @@ NavierStokesScratchData<dim>::reinit_mortar(
       rotor_linear_velocity_values[q][1] = cell_rotor_angular_velocity * x;
 
       // Update velocity for stabilization
-      this->velocity_for_stabilization[q] =
-        this->velocity_values[q] - rotor_linear_velocity_values[q];
+      this->velocity_for_stabilization[q] -= rotor_linear_velocity_values[q];
     }
 }
 
