@@ -44,13 +44,14 @@
 ///   [x] Constructeur
 ///   [x] Destructeur
 ///   [] Setup_dofs
-///   [] Gather output hook
-///   [] Finish simulation
+///   [x] Gather output hook
+///   [x] Calculate_L2_error
+///   [x] Finish simulation
 ///   [x] Percolate_time_vector
 ///   - modify_solution
 ///   [] update_boundary_conditions
 ///   [] get_dof_handler
-///   [] postprocess
+///   [x] postprocess
 ///   [] pre_mesh_adaptation
 ///   [] post_mesh_adaptation
 ///   - write_checkpoint
