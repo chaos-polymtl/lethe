@@ -222,6 +222,7 @@ namespace Parameters
                         "0.001",
                         Patterns::Double(),
                         "Particle diameter");
+      prm.declare_alias("diameter", "average diameter");
       prm.declare_entry("standard deviation",
                         "0",
                         Patterns::Double(),
