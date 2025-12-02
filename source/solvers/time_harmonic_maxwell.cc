@@ -135,12 +135,110 @@ TimeHarmonicMaxwell<dim>::gather_output_hook()
 }
 
 template <int dim>
-double
+std::vector<double>
 TimeHarmonicMaxwell<dim>::calculate_L2_error()
 {
+  auto mpi_communicator = this->triangulation->get_mpi_communicator();
+
+  // Interior L2 error
+  FEValues<dim> fe_values_trial_interior(*this->mapping,
+                                         *this->fe_trial_interior,
+                                         *this->cell_quadrature,
+                                         update_values |
+                                           update_quadrature_points |
+                                           update_JxW_values);
+
+  const unsigned int n_q_points = this->cell_quadrature->size();
+
+  // The exact solution will be defined by user but will need to be on all
+  // possible fields of the ultraweak formulation so we need 4*dim components.
+  std::vector<Vector<double>> exact_solution_values(n_q_points,
+                                                    Vector<double>(4 * dim));
+  auto                       &exact_solution =
+    simulation_parameters.analytical_solution->electromagnetics;
+
+  // When looping on each cell we will extract the different field
+  // solution obtained numerically. The containers used to store the
+  // interpolated solution at the quadrature points are declared below.
+  std::vector<Tensor<1, dim>> local_E_values_real(n_q_points);
+  std::vector<Tensor<1, dim>> local_E_values_imag(n_q_points);
+  std::vector<Tensor<1, dim>> local_H_values_real(n_q_points);
+  std::vector<Tensor<1, dim>> local_H_values_imag(n_q_points);
+
+  // We create variables that will store all the integration result we are
+  // interested in.
+  double L2_error_E_real = 0;
+  double L2_error_E_imag = 0;
+  double L2_error_H_real = 0;
+  double L2_error_H_imag = 0;
+
+  for (const auto &cell : dof_handler_trial_interior->active_cell_iterators())
+    {
+      if (cell->is_locally_owned())
+        {
+          fe_values_trial_interior.reinit(cell);
+
+          // Get the simulated solution at quadrature points
+          fe_values_trial_interior[extractor_E_real].get_function_values(
+            *present_solution, local_E_values_real);
+          fe_values_trial_interior[extractor_E_imag].get_function_values(
+            *present_solution, local_E_values_imag);
+          fe_values_trial_interior[extractor_H_real].get_function_values(
+            *present_solution, local_H_values_real);
+          fe_values_trial_interior[extractor_H_imag].get_function_values(
+            *present_solution, local_H_values_imag);
+
+          // Get the exact solution at quadrature points
+          exact_solution.vector_value_list(
+            fe_values_trial_interior.get_quadrature_points(),
+            exact_solution_values);
+
+          // Loop on quadrature points to compute the L2 error contributions
+          for (unsigned int q = 0; q < n_q_points; ++q)
+            {
+              const double JxW = fe_values_trial_interior.JxW(q);
+
+              // Loop on dimensions to compute the squared error
+              for (unsigned int d = 0; d < dim; ++d)
+                {
+                  // E real part
+                  L2_error_E_real +=
+                    pow(local_E_values_real[q][d] - exact_solution_values[q][d],
+                        2) *
+                    JxW;
+
+                  // E imag part
+                  L2_error_E_imag += pow(local_E_values_imag[q][d] -
+                                           exact_solution_values[q][d + dim],
+                                         2) *
+                                     JxW;
+                  // H real part
+                  L2_error_H_real +=
+                    pow(local_H_values_real[q][d] -
+                          exact_solution_values[q][d + 2 * dim],
+                        2) *
+                    JxW;
+                  // H imag part
+                  L2_error_H_imag +=
+                    pow(local_H_values_imag[q][d] -
+                          exact_solution_values[q][d + 3 * dim],
+                        2) *
+                    JxW;
+                }
+            }
+        }
+    }
+  // Skeleton L2 error
   // TODO
-  return 0.0;
+
+  L2_error_E_real = Utilities::MPI::sum(L2_error_E_real, mpi_communicator);
+  L2_error_E_imag = Utilities::MPI::sum(L2_error_E_imag, mpi_communicator);
+  L2_error_H_real = Utilities::MPI::sum(L2_error_H_real, mpi_communicator);
+  L2_error_H_imag = Utilities::MPI::sum(L2_error_H_imag, mpi_communicator);
+
+  return {L2_error_E_real, L2_error_E_imag, L2_error_H_real, L2_error_H_imag};
 }
+
 
 template <int dim>
 void
