@@ -1176,11 +1176,12 @@ namespace Parameters
     bool enable_bubble_function_velocity;
     bool enable_bubble_function_pressure;
 
-    /// Polynomial order for the electromagnetics
-    /// This is the polynomial degree for the solution and not for the test
-    /// function since the DPG method is used to solve the time-harmonic Maxwell
-    /// equations
-    unsigned int electromagnetics_order;
+    /// Polynomial order for the electromagnetics different spaces.
+    /// The trial order sets the polynomial degree for the solution and the test
+    /// order is used for the computation when solving a system using the DPG
+    /// method. equations
+    unsigned int electromagnetics_trial_order;
+    unsigned int electromagnetics_test_order;
 
     static void
     declare_parameters(ParameterHandler &prm);

@@ -1731,10 +1731,15 @@ namespace Parameters
         Patterns::Integer(),
         "interpolation order chemical potential in the Cahn-Hilliard equations");
       prm.declare_entry(
-        "electromagnetics order",
+        "electromagnetics trial order",
         "1",
         Patterns::Integer(),
-        "interpolation order for the electromagnetics physics (time-harmonic Maxwell equations).");
+        "interpolation order for the trial space of the electromagnetics physics (time-harmonic Maxwell equations).");
+      prm.declare_entry(
+        "electromagnetics test order",
+        "2",
+        Patterns::Integer(),
+        "interpolation order for the test space of the electromagnetics physics (time-harmonic Maxwell equations).");
 
       prm.declare_entry(
         "tracer uses dg",
@@ -1777,7 +1782,10 @@ namespace Parameters
       phase_cahn_hilliard_order = prm.get_integer("phase cahn hilliard order");
       potential_cahn_hilliard_order =
         prm.get_integer("potential cahn hilliard order");
-      electromagnetics_order = prm.get_integer("electromagnetics order");
+      electromagnetics_trial_order =
+        prm.get_integer("electromagnetics trial order");
+      electromagnetics_test_order =
+        prm.get_integer("electromagnetics test order");
       enable_bubble_function_velocity =
         prm.get_bool("enable bubble function velocity");
       enable_bubble_function_pressure =
