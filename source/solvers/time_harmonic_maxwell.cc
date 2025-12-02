@@ -99,8 +99,39 @@ template <int dim>
 std::vector<OutputStruct<dim, GlobalVectorType>>
 TimeHarmonicMaxwell<dim>::gather_output_hook()
 {
-  // TODO
-  return std::vector<OutputStruct<dim, VectorType>>();
+  std::vector<OutputStruct<dim, GlobalVectorType>> solution_output_structs;
+
+  // Interior output setup
+  std::vector<std::string> solution_interior_names(dim, "E_real");
+  for (unsigned int i = 0; i < dim; ++i)
+    {
+      solution_interior_names.emplace_back("E_imag");
+    }
+  for (unsigned int i = 0; i < dim; ++i)
+    {
+      solution_interior_names.emplace_back("H_real");
+    }
+  for (unsigned int i = 0; i < dim; ++i)
+    {
+      solution_interior_names.emplace_back("H_imag");
+    }
+
+  std::vector<DataComponentInterpretation::DataComponentInterpretation>
+    solution_interior_data_component_interpretation(
+      4 * dim, DataComponentInterpretation::component_is_part_of_vector);
+
+  solution_output_structs.emplace_back(
+    std::in_place_type<OutputStructSolution<dim, GlobalVectorType>>,
+    *this->dof_handler_trial_interior,
+    *this->present_solution,
+    solution_interior_names,
+    solution_interior_data_component_interpretation);
+
+  // Skeleton output setup
+  // TODO:  it will need its own writer probably because we need to use
+  // DataOutFaces object
+
+  return solution_output_structs;
 }
 
 template <int dim>
