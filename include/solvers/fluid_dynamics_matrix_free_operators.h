@@ -811,7 +811,7 @@ protected:
    * of the ALE velocity used in mortar coupling terms.
    *
    */
-  Table<2, Tensor<1, dim, VectorizedArray<number>>> velocity_ale;
+  Table<2, Tensor<1, dim + 1, VectorizedArray<number>>> velocity_ale;
 
   /**
    * @brief Vector with the constrained indices used for the local smoothing approach.

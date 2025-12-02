@@ -1574,7 +1574,7 @@ NavierStokesStabilizedOperator<dim, number>::do_cell_integral_local(
         previous_time_derivatives =
           this->time_derivatives_previous_solutions(cell, q);
 
-      Tensor<1, dim, VectorizedArray<number>> u_ale;
+      Tensor<1, dim + 1, VectorizedArray<number>> u_ale;
       if (enable_mortar)
         u_ale = this->velocity_ale[cell][q];
 
@@ -1867,7 +1867,7 @@ NavierStokesStabilizedOperator<dim, number>::local_evaluate_residual(
             previous_time_derivatives =
               this->time_derivatives_previous_solutions(cell, q);
 
-          Tensor<1, dim, VectorizedArray<number>> u_ale;
+          Tensor<1, dim + 1, VectorizedArray<number>> u_ale;
           if (enable_mortar)
             u_ale = this->velocity_ale[cell][q];
 
