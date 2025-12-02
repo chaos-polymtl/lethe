@@ -34,7 +34,7 @@ The model is derived for spheres; it can be enabled for non-spherical solids, bu
 Signed distance functions for complex solids
 --------------------------------------------
 
-The SIBM supports multiple solid descriptions (spheres, cylinders, boxes, CAD geometries in ``step``/``iges``/``stl`` formats, and Radial Basis Function (RBF) surfaces) [#guevremont2024]_. Each solid is represented through a Signed Distance Function (SDF) :math:`\lambda`. For every node adjacent to a cut cell where :math:`\lambda(\mathbf{x})=0`, the method extrapolates along the outward normal
+The SIBM supports multiple solid descriptions: spheres, cylinders, boxes, CAD geometries in ``step``/``iges``/``stl`` formats, Radial Basis Function (RBF) surfaces [#guevremont2024]_, and composites defined using boolean operations. Each solid is represented through a Signed Distance Function (SDF) :math:`\lambda`. For every node adjacent to a cut cell where :math:`\lambda(\mathbf{x})=0`, the method extrapolates along the outward normal
 
 .. math::
     \mathbf{n}(\mathbf{x}) = \nabla \lambda (\mathbf{x})
