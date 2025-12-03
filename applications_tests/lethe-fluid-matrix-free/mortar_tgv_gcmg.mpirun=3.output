@@ -23,19 +23,19 @@ Mortar - Rotor grid angle is: 0.0012 rad
 
 
   -Eigenvalue estimation level 0:
-    Relaxation parameter: 0.639921
-    Minimum eigenvalue: 2.17041
-    Maximum eigenvalue: 2.60449
+    Relaxation parameter: 0.639946
+    Minimum eigenvalue: 2.17032
+    Maximum eigenvalue: 2.60438
 
 
   -Eigenvalue estimation level 1:
-    Relaxation parameter: 0.774467
-    Minimum eigenvalue: 1.79335
-    Maximum eigenvalue: 2.15202
+    Relaxation parameter: 0.774498
+    Minimum eigenvalue: 1.79328
+    Maximum eigenvalue: 2.15193
 
 
   -Eigenvalue estimation level 2:
-    Relaxation parameter: 0.760292
+    Relaxation parameter: 0.760293
     Minimum eigenvalue: 1.82678
     Maximum eigenvalue: 2.19214
 
@@ -47,26 +47,26 @@ Mortar - Rotor grid angle is: 0.0012 rad
 
 
   -Eigenvalue estimation level 0:
-    Relaxation parameter: 0.640855
-    Minimum eigenvalue: 2.16724
-    Maximum eigenvalue: 2.60069
+    Relaxation parameter: 0.640879
+    Minimum eigenvalue: 2.16716
+    Maximum eigenvalue: 2.60059
 
 
   -Eigenvalue estimation level 1:
-    Relaxation parameter: 0.774936
-    Minimum eigenvalue: 1.79226
-    Maximum eigenvalue: 2.15072
+    Relaxation parameter: 0.774965
+    Minimum eigenvalue: 1.7922
+    Maximum eigenvalue: 2.15064
 
 
   -Eigenvalue estimation level 2:
-    Relaxation parameter: 0.760685
+    Relaxation parameter: 0.760686
     Minimum eigenvalue: 1.82584
-    Maximum eigenvalue: 2.19101
+    Maximum eigenvalue: 2.191
 
 
   -Eigenvalue estimation level 3:
     Relaxation parameter: 0.706963
-    Minimum eigenvalue: 1.96458
+    Minimum eigenvalue: 1.96459
     Maximum eigenvalue: 2.3575
 
 Enstrophy: 0.428665
@@ -88,19 +88,19 @@ Mortar - Rotor grid angle is: 0.003 rad
 
 
   -Eigenvalue estimation level 0:
-    Relaxation parameter: 0.593933
-    Minimum eigenvalue: 2.33846
-    Maximum eigenvalue: 2.80615
+    Relaxation parameter: 0.593944
+    Minimum eigenvalue: 2.33842
+    Maximum eigenvalue: 2.8061
 
 
   -Eigenvalue estimation level 1:
-    Relaxation parameter: 0.755535
-    Minimum eigenvalue: 1.83829
-    Maximum eigenvalue: 2.20594
+    Relaxation parameter: 0.755561
+    Minimum eigenvalue: 1.83822
+    Maximum eigenvalue: 2.20587
 
 
   -Eigenvalue estimation level 2:
-    Relaxation parameter: 0.758966
+    Relaxation parameter: 0.758967
     Minimum eigenvalue: 1.82997
     Maximum eigenvalue: 2.19597
 
@@ -112,20 +112,20 @@ Mortar - Rotor grid angle is: 0.003 rad
 
 
   -Eigenvalue estimation level 0:
-    Relaxation parameter: 0.594471
-    Minimum eigenvalue: 2.33634
-    Maximum eigenvalue: 2.80361
+    Relaxation parameter: 0.594482
+    Minimum eigenvalue: 2.3363
+    Maximum eigenvalue: 2.80356
 
 
   -Eigenvalue estimation level 1:
-    Relaxation parameter: 0.75604
-    Minimum eigenvalue: 1.83706
-    Maximum eigenvalue: 2.20447
+    Relaxation parameter: 0.756064
+    Minimum eigenvalue: 1.837
+    Maximum eigenvalue: 2.2044
 
 
   -Eigenvalue estimation level 2:
     Relaxation parameter: 0.759402
-    Minimum eigenvalue: 1.82893
+    Minimum eigenvalue: 1.82892
     Maximum eigenvalue: 2.19471
 
 
@@ -153,39 +153,39 @@ Mortar - Rotor grid angle is: 0.006 rad
 
 
   -Eigenvalue estimation level 0:
-    Relaxation parameter: 0.620505
-    Minimum eigenvalue: 2.23832
-    Maximum eigenvalue: 2.68598
+    Relaxation parameter: 0.620528
+    Minimum eigenvalue: 2.23824
+    Maximum eigenvalue: 2.68588
 
 
   -Eigenvalue estimation level 1:
-    Relaxation parameter: 0.794084
-    Minimum eigenvalue: 1.74905
-    Maximum eigenvalue: 2.09885
+    Relaxation parameter: 0.79411
+    Minimum eigenvalue: 1.74899
+    Maximum eigenvalue: 2.09879
 
 
   -Eigenvalue estimation level 2:
-    Relaxation parameter: 0.756754
-    Minimum eigenvalue: 1.83532
+    Relaxation parameter: 0.756753
+    Minimum eigenvalue: 1.83533
     Maximum eigenvalue: 2.20239
 
 
   -Eigenvalue estimation level 3:
-    Relaxation parameter: 0.709179
+    Relaxation parameter: 0.709178
     Minimum eigenvalue: 1.95845
     Maximum eigenvalue: 2.35014
 
 
   -Eigenvalue estimation level 0:
-    Relaxation parameter: 0.62257
-    Minimum eigenvalue: 2.2309
-    Maximum eigenvalue: 2.67707
+    Relaxation parameter: 0.62259
+    Minimum eigenvalue: 2.23083
+    Maximum eigenvalue: 2.67699
 
 
   -Eigenvalue estimation level 1:
-    Relaxation parameter: 0.795219
-    Minimum eigenvalue: 1.74655
-    Maximum eigenvalue: 2.09586
+    Relaxation parameter: 0.79524
+    Minimum eigenvalue: 1.7465
+    Maximum eigenvalue: 2.0958
 
 
   -Eigenvalue estimation level 2:
@@ -195,7 +195,7 @@ Mortar - Rotor grid angle is: 0.006 rad
 
 
   -Eigenvalue estimation level 3:
-    Relaxation parameter: 0.709561
+    Relaxation parameter: 0.70956
     Minimum eigenvalue: 1.95739
     Maximum eigenvalue: 2.34887
 
@@ -218,15 +218,15 @@ Mortar - Rotor grid angle is: 0.009 rad
 
 
   -Eigenvalue estimation level 0:
-    Relaxation parameter: 0.631559
-    Minimum eigenvalue: 2.19914
-    Maximum eigenvalue: 2.63897
+    Relaxation parameter: 0.63158
+    Minimum eigenvalue: 2.19907
+    Maximum eigenvalue: 2.63888
 
 
   -Eigenvalue estimation level 1:
-    Relaxation parameter: 0.80016
-    Minimum eigenvalue: 1.73576
-    Maximum eigenvalue: 2.08292
+    Relaxation parameter: 0.800181
+    Minimum eigenvalue: 1.73572
+    Maximum eigenvalue: 2.08286
 
 
   -Eigenvalue estimation level 2:
@@ -242,15 +242,15 @@ Mortar - Rotor grid angle is: 0.009 rad
 
 
   -Eigenvalue estimation level 0:
-    Relaxation parameter: 0.633491
-    Minimum eigenvalue: 2.19244
-    Maximum eigenvalue: 2.63092
+    Relaxation parameter: 0.633509
+    Minimum eigenvalue: 2.19237
+    Maximum eigenvalue: 2.63085
 
 
   -Eigenvalue estimation level 1:
-    Relaxation parameter: 0.80088
-    Minimum eigenvalue: 1.7342
-    Maximum eigenvalue: 2.08104
+    Relaxation parameter: 0.800898
+    Minimum eigenvalue: 1.73416
+    Maximum eigenvalue: 2.081
 
 
   -Eigenvalue estimation level 2:
@@ -283,15 +283,15 @@ Mortar - Rotor grid angle is: 0.012 rad
 
 
   -Eigenvalue estimation level 0:
-    Relaxation parameter: 0.633448
-    Minimum eigenvalue: 2.19259
-    Maximum eigenvalue: 2.6311
+    Relaxation parameter: 0.633466
+    Minimum eigenvalue: 2.19252
+    Maximum eigenvalue: 2.63103
 
 
   -Eigenvalue estimation level 1:
-    Relaxation parameter: 0.800902
-    Minimum eigenvalue: 1.73416
-    Maximum eigenvalue: 2.08099
+    Relaxation parameter: 0.80092
+    Minimum eigenvalue: 1.73412
+    Maximum eigenvalue: 2.08094
 
 
   -Eigenvalue estimation level 2:
@@ -307,15 +307,15 @@ Mortar - Rotor grid angle is: 0.012 rad
 
 
   -Eigenvalue estimation level 0:
-    Relaxation parameter: 0.634998
-    Minimum eigenvalue: 2.18723
-    Maximum eigenvalue: 2.62468
+    Relaxation parameter: 0.635014
+    Minimum eigenvalue: 2.18718
+    Maximum eigenvalue: 2.62461
 
 
   -Eigenvalue estimation level 1:
-    Relaxation parameter: 0.80129
-    Minimum eigenvalue: 1.73332
-    Maximum eigenvalue: 2.07998
+    Relaxation parameter: 0.801304
+    Minimum eigenvalue: 1.73328
+    Maximum eigenvalue: 2.07994
 
 
   -Eigenvalue estimation level 2:

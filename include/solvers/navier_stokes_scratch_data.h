@@ -297,6 +297,11 @@ public:
       this->fe_values[velocities].get_function_hessians(
         current_solution, this->velocity_hessians);
 
+    // Gather velocity for stabilization (same as velocity_values unless ALE is
+    // enabled. The ALE correction is made within the correponding reinit
+    // function)
+    this->velocity_for_stabilization = this->velocity_values;
+
     for (unsigned int q = 0; q < this->n_q_points; ++q)
       {
         this->velocity_divergences[q] = trace(this->velocity_gradients[q]);
@@ -1447,6 +1452,7 @@ public:
   std::vector<Tensor<2, dim>>              velocity_gradients;
   std::vector<Tensor<1, dim>>              velocity_laplacians;
   std::vector<Tensor<3, dim>>              velocity_hessians;
+  std::vector<Tensor<1, dim>>              velocity_for_stabilization;
   std::vector<double>                      shear_rate;
   std::vector<double>                      pressure_values;
   std::vector<Tensor<1, dim>>              pressure_gradients;
