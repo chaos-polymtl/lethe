@@ -48,16 +48,16 @@ subsection lagrangian physical properties
   set g                        = 0, -9.81, 0.
   set number of particle types = 1
   subsection particle type 0
-    set size distribution type            = normal
-    set average diameter                  = 63.66e-6
-    set standard deviation                = 14.45e-6
-    set minimum diameter cutoff           = 20.e-6
-    set maximum diameter cutoff           = 100.e-6
+    set size distribution type            = lognormal
+    set average diameter                  = 6.366e-2
+    set standard deviation                = 1.445e-2
+    set minimum diameter cutoff           = 2.0e-2
+    set maximum diameter cutoff           = 10.0e-2
     set number of particles               = 1000
-    set density particles                 = 4386     
+    set density particles                 = 4386
     set young modulus particles           = 2625000
     set poisson ratio particles           = 0.342
-    set restitution coefficient particles = 0.90
+    set restitution coefficient particles = 0.
     set friction coefficient particles    = 0.2
     set rolling friction particles        = 0.1
     set surface energy particles          = 0.00035
@@ -76,13 +76,13 @@ end
 
 subsection insertion info
   set insertion method                               = volume
-  set inserted number of particles at each time step = 225000
+  set inserted number of particles at each time step = 1000
   set insertion frequency                            = 100
-  set insertion box points coordinates               = 0.00001, -0.001900, 0.000 : 0.019713, 0.0295,0.000950
+  set insertion box points coordinates               = 0.1, 0.1, 0.1: 2.9, 2.9, 2.9
   set insertion distance threshold                   = 1.125
   set insertion maximum offset                       = 0.0025
   set insertion prn seed                             = 21
-  
+
    # Directions of insertion (0: x, 1: y, 2: z)
   set insertion direction sequence                   = 0,2,1
 end
@@ -95,7 +95,7 @@ end
 subsection mesh
   set type               = dealii
   set grid type          = subdivided_hyper_rectangle
-  set grid arguments     = 34,30,1 : 0, -0.002900, 0 : 0.03621428571428571, 0.03, 0.001: true
-  set initial refinement = 1
+  set grid arguments     = 1,1,1 : 0., 0., 0. : 3., 3., 3.: true
+  set initial refinement = 4
 end
 

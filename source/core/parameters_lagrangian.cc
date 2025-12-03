@@ -215,9 +215,9 @@ namespace Parameters
     {
       prm.declare_entry("size distribution type",
                         "uniform",
-                        Patterns::Selection("uniform|normal|custom"),
+                        Patterns::Selection("uniform|normal|lognormal|custom"),
                         "Particle size distribution"
-                        "Choices are <uniform|normal|custom>.");
+                        "Choices are <uniform|normal|lognormal|custom>.");
       prm.declare_entry("average diameter",
                         "0.001",
                         Patterns::Double(),
@@ -341,7 +341,8 @@ namespace Parameters
         convert_string_to_vector<double>(prm, "custom volume fractions");
 
       // vectors
-      seed_for_distributions.push_back(prm.get_integer("random seed distribution"));
+      seed_for_distributions.push_back(
+        prm.get_integer("random seed distribution"));
       diameter_min_cutoff.push_back(prm.get_double("minimum diameter cutoff"));
       diameter_max_cutoff.push_back(prm.get_double("maximum diameter cutoff"));
 
@@ -418,7 +419,6 @@ namespace Parameters
           real_youngs_modulus_particle.at(particle_type) =
             youngs_modulus_particle.at(particle_type);
         }
-
     }
 
     void
