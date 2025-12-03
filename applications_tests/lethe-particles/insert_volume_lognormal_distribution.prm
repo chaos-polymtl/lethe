@@ -1,0 +1,101 @@
+# SPDX-FileCopyrightText: Copyright (c) 2025 The Lethe Authors
+# SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
+
+# Test description:
+
+set dimension = 3
+
+#---------------------------------------------------
+# Simulation and IO Control
+#---------------------------------------------------
+
+subsection simulation control
+  set time step        = 2.81609e-07
+  set time end         = 5.63218e-07
+  set output frequency = 0
+  set log frequency    = -1
+end
+
+#---------------------------------------------------
+# Test
+#---------------------------------------------------
+
+subsection test
+  set enable = true
+end
+
+#---------------------------------------------------
+# Model parameters
+#---------------------------------------------------
+
+subsection model parameters
+  subsection contact detection
+    set contact detection method                = dynamic
+    set neighborhood threshold                  = 1.15
+    set dynamic contact search size coefficient = 0.85
+    set frequency                               = 1
+  end
+
+  set particle particle contact force method = hertz
+  set particle wall contact force method     = nonlinear
+  set rolling resistance torque method       = viscous
+  set integration method                     = velocity_verlet
+end
+
+#---------------------------------------------------
+# Physical Properties
+#---------------------------------------------------
+
+subsection lagrangian physical properties
+  set g                        = 0, -9.81, 0.
+  set number of particle types = 1
+  subsection particle type 0
+    set size distribution type            = lognormal
+    set average diameter                  = 6.366e-2
+    set standard deviation                = 1.445e-2
+    set minimum diameter cutoff           = 2.0e-2
+    set maximum diameter cutoff           = 10.0e-2
+    set number of particles               = 1000
+    set density particles                 = 4386
+    set young modulus particles           = 2625000
+    set poisson ratio particles           = 0.342
+    set restitution coefficient particles = 0.
+    set friction coefficient particles    = 0.2
+    set rolling friction particles        = 0.1
+    set surface energy particles          = 0.00035
+  end
+  set young modulus wall           = 2625000
+  set poisson ratio wall           = 0.342
+  set restitution coefficient wall = 0.9
+  set friction coefficient wall    = 0.2
+  set rolling friction wall        = 0.1
+  set surface energy wall          = 0.00035
+end
+
+#---------------------------------------------------
+# Insertion Info
+#---------------------------------------------------
+
+subsection insertion info
+  set insertion method                               = volume
+  set inserted number of particles at each time step = 1000
+  set insertion frequency                            = 100
+  set insertion box points coordinates               = 0.1, 0.1, 0.1: 2.9, 2.9, 2.9
+  set insertion distance threshold                   = 1.125
+  set insertion maximum offset                       = 0.0025
+  set insertion prn seed                             = 21
+
+  # Directions of insertion (0: x, 1: y, 2: z)
+  set insertion direction sequence = 0,2,1
+end
+
+#---------------------------------------------------
+# Mesh
+#---------------------------------------------------
+
+subsection mesh
+  set type               = dealii
+  set grid type          = subdivided_hyper_rectangle
+  set grid arguments     = 1,1,1 : 0., 0., 0. : 3., 3., 3.: true
+  set initial refinement = 4
+end
