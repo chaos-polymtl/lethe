@@ -282,14 +282,20 @@ template <int dim>
 void
 TimeHarmonicMaxwell<dim>::modify_solution()
 {
-  // TODO
+  // No modification of the solution is required at the moment
 }
 
 template <int dim>
 void
 TimeHarmonicMaxwell<dim>::update_boundary_conditions()
 {
-  // TODO
+  if (!this->simulation_parameters.boundary_conditions.time_dependent)
+    return;
+
+  AssertThrow(
+    false,
+    ExcMessage(
+      "Time-dependent boundary conditions not yet implemented for TimeHarmonicMaxwell."));
 }
 
 template <int dim>
