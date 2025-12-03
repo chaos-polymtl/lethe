@@ -8,8 +8,8 @@
 NormalDistribution::NormalDistribution(const double       &d_average,
                                        const double       &d_standard_deviation,
                                        const unsigned int &prn_seed,
-                                       const double        min_cutoff,
-                                       const double        max_cutoff)
+                                       const double       &min_cutoff,
+                                       const double       &max_cutoff)
   : diameter_average(d_average)
   , standard_deviation(d_standard_deviation)
   , gen(prn_seed)
@@ -18,17 +18,17 @@ NormalDistribution::NormalDistribution(const double       &d_average,
     {
       // 2.5 -> approx 99% of all diameters are bigger
       dia_min_cutoff = diameter_average - 2.5 * standard_deviation;
+      if (dia_min_cutoff < 0.)
+        dia_min_cutoff = DBL_MIN;
     }
   else
     dia_min_cutoff = min_cutoff;
 
   if (max_cutoff < 0.)
-    {
       // 2.5 -> approx 99% of all diameters are smaller
-      dia_min_cutoff = diameter_average + 2.5 * standard_deviation;
-    }
+      dia_max_cutoff = diameter_average + 2.5 * standard_deviation;
   else
-    dia_max_cutoff = max_cutoff;
+      dia_max_cutoff = max_cutoff;
 
   AssertThrow(dia_min_cutoff < dia_max_cutoff,
               ExcMessage(
@@ -44,14 +44,22 @@ NormalDistribution::particle_size_sampling(const unsigned int &particle_number)
 
   std::normal_distribution<> distribution{diameter_average, standard_deviation};
 
-  for (unsigned int n = 0; n < particle_number; ++n)
-    this->particle_sizes.push_back(distribution(gen));
+  unsigned int n_created_diameter= 0;
+  while (n_created_diameter < particle_number)
+    {
+      const double temp_diameter = distribution(gen);
+      if (temp_diameter > dia_min_cutoff && temp_diameter < dia_max_cutoff)
+        {
+          n_created_diameter++;
+          this->particle_sizes.push_back(temp_diameter);
+        }
+    }
 }
 
 double
 NormalDistribution::find_min_diameter()
 {
-  return dia_max_cutoff;
+  return dia_min_cutoff;
 }
 
 double
@@ -67,27 +75,27 @@ LogNormalDistribution::LogNormalDistribution(const double &d_average,
                                              const double        max_cutoff)
   : sigma_ln(std::sqrt(std::log(
       1. + Utilities::fixed_power<2>(d_standard_deviation / d_average))))
-  , mu_ln(std::log(d_average) - 0.5 * Utilities::fixed_power<2>(d_standard_deviation))
+  , mu_ln(std::log(d_average) -
+          0.5 * Utilities::fixed_power<2>(d_standard_deviation))
   , gen(prn_seed)
 {
-
   if (min_cutoff < 0.)
     {
       // approx 99% of all diameters are bigger
-      dia_min_cutoff = std::exp(mu_ln - 2.5 * sigma_ln) ;
+      dia_min_cutoff = std::exp(mu_ln - 2.5 * sigma_ln);
+      if (dia_min_cutoff < 0.)
+        dia_min_cutoff = DBL_MIN;
     }
   else
     dia_min_cutoff = min_cutoff;
 
   if (max_cutoff < 0.)
-    {
       // approx 99% of all diameters are bigger
-      dia_max_cutoff = std::exp(mu_ln + 2.5 * sigma_ln) ;
-    }
+      dia_max_cutoff = std::exp(mu_ln + 2.5 * sigma_ln);
   else
     dia_max_cutoff = max_cutoff;
 
-  AssertThrow(min_cutoff < max_cutoff,
+  AssertThrow(dia_min_cutoff < dia_max_cutoff,
               ExcMessage(
                 "The \"minimum diameter cutoff\" parameter need to be smaller "
                 "than the \"maximum diameter cutoff\"."));
@@ -102,11 +110,16 @@ LogNormalDistribution::particle_size_sampling(
   this->particle_sizes.reserve(particle_number);
 
   std::lognormal_distribution<> distribution{mu_ln, sigma_ln};
-  for (unsigned int n = 0; n < particle_number; ++n)
+
+  unsigned int n_created_diameter= 0;
+  while (n_created_diameter < particle_number)
     {
-      double temp_diameter = distribution(gen);
+      const double temp_diameter = distribution(gen);
       if (temp_diameter > dia_min_cutoff && temp_diameter < dia_max_cutoff)
-        this->particle_sizes.emplace_back(temp_diameter);
+        {
+          n_created_diameter++;
+          this->particle_sizes.push_back(temp_diameter);
+        }
     }
 }
 

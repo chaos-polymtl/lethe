@@ -218,11 +218,11 @@ namespace Parameters
                         Patterns::Selection("uniform|normal|custom"),
                         "Particle size distribution"
                         "Choices are <uniform|normal|custom>.");
-      prm.declare_entry("diameter",
+      prm.declare_entry("average diameter",
                         "0.001",
                         Patterns::Double(),
                         "Particle diameter");
-      prm.declare_alias("diameter", "average diameter");
+      prm.declare_alias("average diameter", "diameter", false);
       prm.declare_entry("standard deviation",
                         "0",
                         Patterns::Double(),
@@ -331,7 +331,8 @@ namespace Parameters
       const ParameterHandler &prm)
     {
       // unordered maps
-      particle_average_diameter.at(particle_type) = prm.get_double("diameter");
+      particle_average_diameter.at(particle_type) =
+        prm.get_double("average diameter");
       particle_size_std.at(particle_type) =
         prm.get_double("standard deviation");
       particle_custom_diameter.at(particle_type) =
@@ -340,10 +341,9 @@ namespace Parameters
         convert_string_to_vector<double>(prm, "custom volume fractions");
 
       // vectors
-      seed_for_distributions.push_back(
-        prm.get_integer("random seed distribution"));
+      seed_for_distributions.push_back(prm.get_integer("random seed distribution"));
       diameter_min_cutoff.push_back(prm.get_double("minimum diameter cutoff"));
-      diameter_min_cutoff.push_back(prm.get_double("maximum diameter cutoff"));
+      diameter_max_cutoff.push_back(prm.get_double("maximum diameter cutoff"));
 
       double probability_sum =
         std::reduce(particle_custom_probability.at(particle_type).begin(),
@@ -364,6 +364,10 @@ namespace Parameters
       else if (size_distribution_type_str == "normal")
         {
           distribution_type.at(particle_type) = SizeDistributionType::normal;
+        }
+      else if (size_distribution_type_str == "lognormal")
+        {
+          distribution_type.at(particle_type) = SizeDistributionType::lognormal;
         }
       else if (size_distribution_type_str == "custom")
         {
@@ -414,6 +418,7 @@ namespace Parameters
           real_youngs_modulus_particle.at(particle_type) =
             youngs_modulus_particle.at(particle_type);
         }
+
     }
 
     void
@@ -425,8 +430,8 @@ namespace Parameters
       std::unordered_map<unsigned int, std::vector<double>>
                                                &p_custom_probability,
       std::vector<unsigned int>                &seed_for_dist,
-      std::vector<double>                      &diameter_min_cutoff,
-      std::vector<double>                      &diameter_max_cutoff,
+      std::vector<double>                      &d_min_cutoff,
+      std::vector<double>                      &d_max_cutoff,
       std::unordered_map<unsigned int, int>    &p_number,
       std::unordered_map<unsigned int, double> &p_density,
       std::unordered_map<unsigned int, double> &p_youngs_modulus,
@@ -473,8 +478,8 @@ namespace Parameters
           real_youngs_modulus_p.insert({counter, 0.});
         }
       seed_for_dist.reserve(particle_type_maximum_number);
-      diameter_min_cutoff.reserve(particle_type_maximum_number);
-      diameter_max_cutoff.reserve(particle_type_maximum_number);
+      d_min_cutoff.reserve(particle_type_maximum_number);
+      d_max_cutoff.reserve(particle_type_maximum_number);
     }
 
     template <int dim>

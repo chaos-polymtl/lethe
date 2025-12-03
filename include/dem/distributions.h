@@ -58,8 +58,8 @@ public:
   NormalDistribution(const double       &d_average,
                      const double       &d_standard_deviation,
                      const unsigned int &prn_seed,
-                     const double        min_cutoff,
-                     const double        max_cutoff);
+                     const double       &min_cutoff,
+                     const double       &max_cutoff);
 
   /**
    * @brief Carries out the size sampling of each particle inserted at an insertion
