@@ -1,7 +1,7 @@
 # SPDX-FileCopyrightText: Copyright (c) 2025 The Lethe Authors
 # SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
-# Test description: 
+# Test description:
 
 set dimension = 3
 
@@ -27,6 +27,7 @@ end
 #---------------------------------------------------
 # Model parameters
 #---------------------------------------------------
+
 subsection model parameters
   subsection contact detection
     set contact detection method                = dynamic
@@ -34,16 +35,17 @@ subsection model parameters
     set dynamic contact search size coefficient = 0.85
     set frequency                               = 1
   end
-  
+
   set particle particle contact force method = hertz
   set particle wall contact force method     = nonlinear
   set rolling resistance torque method       = viscous
   set integration method                     = velocity_verlet
-  
-end 
+end
+
 #---------------------------------------------------
 # Physical Properties
 #---------------------------------------------------
+
 subsection lagrangian physical properties
   set g                        = 0, -9.81, 0.
   set number of particle types = 1
@@ -83,10 +85,9 @@ subsection insertion info
   set insertion maximum offset                       = 0.0025
   set insertion prn seed                             = 21
 
-   # Directions of insertion (0: x, 1: y, 2: z)
-  set insertion direction sequence                   = 0,2,1
+  # Directions of insertion (0: x, 1: y, 2: z)
+  set insertion direction sequence = 0,2,1
 end
-
 
 #---------------------------------------------------
 # Mesh
@@ -98,4 +99,3 @@ subsection mesh
   set grid arguments     = 1,1,1 : 0., 0., 0. : 3., 3., 3.: true
   set initial refinement = 4
 end
-
