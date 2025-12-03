@@ -25,10 +25,10 @@ NormalDistribution::NormalDistribution(const double       &d_average,
     dia_min_cutoff = min_cutoff;
 
   if (max_cutoff < 0.)
-      // 2.5 -> approx 99% of all diameters are smaller
-      dia_max_cutoff = diameter_average + 2.5 * standard_deviation;
+    // 2.5 -> approx 99% of all diameters are smaller
+    dia_max_cutoff = diameter_average + 2.5 * standard_deviation;
   else
-      dia_max_cutoff = max_cutoff;
+    dia_max_cutoff = max_cutoff;
 
   AssertThrow(dia_min_cutoff < dia_max_cutoff,
               ExcMessage(
@@ -44,7 +44,7 @@ NormalDistribution::particle_size_sampling(const unsigned int &particle_number)
 
   std::normal_distribution<> distribution{diameter_average, standard_deviation};
 
-  unsigned int n_created_diameter= 0;
+  unsigned int n_created_diameter = 0;
   while (n_created_diameter < particle_number)
     {
       const double temp_diameter = distribution(gen);
@@ -90,8 +90,8 @@ LogNormalDistribution::LogNormalDistribution(const double &d_average,
     dia_min_cutoff = min_cutoff;
 
   if (max_cutoff < 0.)
-      // approx 99% of all diameters are bigger
-      dia_max_cutoff = std::exp(mu_ln + 2.5 * sigma_ln);
+    // approx 99% of all diameters are bigger
+    dia_max_cutoff = std::exp(mu_ln + 2.5 * sigma_ln);
   else
     dia_max_cutoff = max_cutoff;
 
@@ -111,7 +111,7 @@ LogNormalDistribution::particle_size_sampling(
 
   std::lognormal_distribution<> distribution{mu_ln, sigma_ln};
 
-  unsigned int n_created_diameter= 0;
+  unsigned int n_created_diameter = 0;
   while (n_created_diameter < particle_number)
     {
       const double temp_diameter = distribution(gen);
