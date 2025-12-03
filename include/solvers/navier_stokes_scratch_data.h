@@ -298,7 +298,7 @@ public:
         current_solution, this->velocity_hessians);
 
     // Gather velocity for stabilization (same as velocity_values unless ALE is
-    // enabled. The ALE correction is made within the correpondent reinit
+    // enabled. The ALE correction is made within the correponding reinit
     // function)
     this->velocity_for_stabilization = this->velocity_values;
 
