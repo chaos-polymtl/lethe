@@ -4,6 +4,12 @@ All notable changes to the Lethe project will be documented in this file.
 The changelog for the previous releases of Lethe are located in the release_notes folder.
 The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
+### [Master] - 2025-12-03
+
+### Fixed
+
+- MINOR The velocity used to compute the stabilization parameter did not account for the ALE velocity component when the mortar feature is enabled. This led to inconsistent stabilization terms in the rotor and stator sides, and it has been fixed in this PR. [#1834](https://github.com/chaos-polymtl/lethe/pull/1834)
+
 ### [Master] - 2025-12-01
 
 ### Added
