@@ -43,14 +43,12 @@
 /// [] Remplir chacune des fonctions
 ///   [x] Constructeur
 ///   [x] Destructeur
-///   [] Setup_dofs
 ///   [x] Gather output hook
 ///   [x] Calculate_L2_error
 ///   [x] Finish simulation
 ///   [x] Percolate_time_vector
-///   - modify_solution
-///   [] update_boundary_conditions
-///   [] get_dof_handler
+///   [x] modify_solution
+///   [x] update_boundary_conditions
 ///   [x] postprocess
 ///   [] pre_mesh_adaptation
 ///   [] post_mesh_adaptation
@@ -58,8 +56,26 @@
 ///   - read_checkpoint
 ///   - gather_tables()
 ///   - compute_kelly
-///   - set_initial_conditions
+///   - compute_energy_norm
+///   [] Setup_dofs
+///   [x] set_initial_conditions
 ///   [] setup_preconditioner
+///   [] define_constraints
+///   [] solve_linear_system
+///   [x] get_dof_handler
+///   [x] get_evaluation_point
+///   [x] get_local_evaluation_point
+///   [x] get_newton_update
+///   [x] get_present_solution
+///   [x] get_present_solution_skeleton
+///   [x] get_system_rhs
+///   [x] get_nonzero_constraints
+///   [x] output_newton_update_norms
+///   [x] get_residual_rescale_metric
+///   [] assemble_system_matrix
+///   [] assemble_system_rhs
+
+
 /// [x] Physics field
 /// [x] Multiphysics interface components
 /// [] Physical Properties
@@ -244,7 +260,7 @@ public:
   setup_preconditioner() override;
 
   /**
-   * @brief Define the constraints for the TimeHarmonicMaxwell solver.
+   * @brief Define the constraints for the TimeHarmonicMaxwell solver. This is equivalent to the define_non_zero_constraints method in other physics solvers, but here there is no need to separate zero and non-zero constraints.
    */
   void
   define_constraints();
