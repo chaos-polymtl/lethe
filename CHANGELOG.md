@@ -8,7 +8,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
 ### Fixed
 
-- MINOR The velocity used to compute the stabilization parameter did not account for the ALE velocity component when the mortar feature is enabled. This led to inconsistent stabilization terms in the rotor and stator sides, and it has been fixed in this PR. [#1834](https://github.com/chaos-polymtl/lethe/pull/1834)
+- MINOR The velocity used to compute the stabilization parameter (tau) did not account for the ALE velocity component when the mortar feature is enabled. This led to inconsistent stabilization terms in the rotor and stator sides, and it has been fixed in this PR. [#1834](https://github.com/chaos-polymtl/lethe/pull/1834)
 
 ### [Master] - 2025-12-01
 
