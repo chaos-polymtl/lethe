@@ -70,7 +70,7 @@
 ///   - compute_energy_norm
 ///   [x] Setup_dofs
 ///   [x] set_initial_conditions
-///   [] setup_preconditioner
+///   [x] setup_preconditioner
 ///   [] define_constraints
 ///   [] solve_linear_system
 ///   [x] get_dof_handler
@@ -610,6 +610,11 @@ private:
    * @brief The base class for finite elements. This class will manage everything related to the shape functions of the test space.
    */
   std::shared_ptr<FiniteElement<dim>> fe_test;
+
+  /**
+   * @brief Preconditioner for the linear solver. At the present moment, this is an identity preconditioner.
+   */
+  std::shared_ptr<TrilinosWrappers::PreconditionIdentity> preconditioner;
 
   /**
    * @brief Store some convergence data, such as residuals of the cg-method,
