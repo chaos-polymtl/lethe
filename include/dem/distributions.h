@@ -52,8 +52,8 @@ public:
    * @param d_standard_deviation Standard deviation of the diameter for a certain
    * normal distribution.
    * @param prn_seed Pseudo-random number seed for the diameter generation.
-   * @param min_cutoff
-   * @param max_cutoff
+   * @param min_cutoff Minimum cutoff diameter.
+   * @param max_cutoff Maximum cutoff diameter.
    */
   NormalDistribution(const double       &d_average,
                      const double       &d_standard_deviation,
@@ -120,8 +120,8 @@ public:
    * @param d_standard_deviation Standard deviation of the diameter for a certain
    * normal distribution.
    * @param prn_seed Pseudo-random number seed for the diameter generation.
-   * @param min_cutoff
-   * @param max_cutoff
+   * @param min_cutoff Minimum cutoff diameter.
+   * @param max_cutoff Maximum cutoff diameter.
    */
   LogNormalDistribution(const double       &d_average,
                         const double       &d_standard_deviation,
