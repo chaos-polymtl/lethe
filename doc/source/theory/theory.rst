@@ -9,13 +9,24 @@ To solve the flow of granular matter, Lethe uses the Discrete Element Method (DE
 Finally, Lethe also contains an unresolved and a resolved coupling between its CFD and DEM solvers. For an introduction on this topic, we refer the reader to another introductory review article by our group `[8] <https://doi.org/10.1002/cjce.23686>`_.
 
 
-This theory guide is divided into two global sections:
+This theory guide is divided into three main sections:
 
-* Multiphysics (physics supported in Lethe)
+* Notation: Explains the notation we use within the theory guide
 
-* Multiphase (methods employed for multiphase numerical representation)
+* Multiphysics: Presents the equations and the FEM formulation for the physics supported in Lethe
+
+* Multiphase: Presents the models that are used to support multiphase flows within Lethe.
 
 
+Notation
+=============================
+
+.. toctree::
+    :maxdepth: 2
+    :glob:
+    :titlesonly:
+
+    notation
 
 Multiphysics
 =============================
