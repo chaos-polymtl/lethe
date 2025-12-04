@@ -101,7 +101,7 @@ with :math:`k_r` normalized such that
 .. math::
     \int_{\Omega} k_r \left (\lVert \mathbf{x} \rVert \right ) \mathrm{d}\mathbf{x} = 1
 
-When the Particle-in-Cell method is used for the particle-fluid coupling, the regularization is carried out over the cells of the mesh by averaging the quantity over the cells. However, this is not ideal since this leads to a definition of force that depends on the mesh. To remediate this issue, Lethe also supports filtering the solid-fluid forces using a spherical top-hat filter through the Quadrature-Centered method (QCM). This results in a filter definition that is independent of the mesh and which only depends on the
+When the Particle-in-Cell method is used for the particle-fluid coupling, the regularization is carried out over the cells of the mesh by averaging the quantity over the cells. However, this is not ideal since it leads to a definition of the force that depends on the mesh. To remediate this issue, Lethe also supports filtering the solid-fluid forces using a spherical top-hat filter through the Quadrature-Centered method (QCM). This results in a filter definition that is independent of the mesh and that depends only on the top-hat filter radius.
 
 Lethe is capable of simulating unresolved CFD-DEM cases with both Models A and B (see the :doc:`../../../parameters/unresolved-cfd-dem/cfd-dem` page of this guide).
 
