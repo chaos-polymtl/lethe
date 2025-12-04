@@ -1758,23 +1758,23 @@ namespace BoundaryConditions
           prm);
         prm.leave_subsection();
 
-        prm.enter_subsection("e_x_imag");
-        imposed_electromagnetic_fields[boundary_id]->e_x_imag.parse_parameters(
-          prm);
-        prm.leave_subsection();
-
         prm.enter_subsection("e_y_real");
         imposed_electromagnetic_fields[boundary_id]->e_y_real.parse_parameters(
           prm);
         prm.leave_subsection();
 
-        prm.enter_subsection("e_y_imag");
-        imposed_electromagnetic_fields[boundary_id]->e_y_imag.parse_parameters(
+        prm.enter_subsection("e_z_real");
+        imposed_electromagnetic_fields[boundary_id]->e_z_real.parse_parameters(
           prm);
         prm.leave_subsection();
 
-        prm.enter_subsection("e_z_real");
-        imposed_electromagnetic_fields[boundary_id]->e_z_real.parse_parameters(
+        prm.enter_subsection("e_x_imag");
+        imposed_electromagnetic_fields[boundary_id]->e_x_imag.parse_parameters(
+          prm);
+        prm.leave_subsection();
+
+        prm.enter_subsection("e_y_imag");
+        imposed_electromagnetic_fields[boundary_id]->e_y_imag.parse_parameters(
           prm);
         prm.leave_subsection();
 
@@ -1788,23 +1788,23 @@ namespace BoundaryConditions
           prm);
         prm.leave_subsection();
 
-        prm.enter_subsection("h_x_imag");
-        imposed_electromagnetic_fields[boundary_id]->h_x_imag.parse_parameters(
-          prm);
-        prm.leave_subsection();
-
         prm.enter_subsection("h_y_real");
         imposed_electromagnetic_fields[boundary_id]->h_y_real.parse_parameters(
           prm);
         prm.leave_subsection();
 
-        prm.enter_subsection("h_y_imag");
-        imposed_electromagnetic_fields[boundary_id]->h_y_imag.parse_parameters(
+        prm.enter_subsection("h_z_real");
+        imposed_electromagnetic_fields[boundary_id]->h_z_real.parse_parameters(
           prm);
         prm.leave_subsection();
 
-        prm.enter_subsection("h_z_real");
-        imposed_electromagnetic_fields[boundary_id]->h_z_real.parse_parameters(
+        prm.enter_subsection("h_x_imag");
+        imposed_electromagnetic_fields[boundary_id]->h_x_imag.parse_parameters(
+          prm);
+        prm.leave_subsection();
+
+        prm.enter_subsection("h_y_imag");
+        imposed_electromagnetic_fields[boundary_id]->h_y_imag.parse_parameters(
           prm);
         prm.leave_subsection();
 
@@ -2090,26 +2090,26 @@ template <int dim>
 class TimeHarmonicMaxwellElectricFieldDefined : public Function<dim>
 {
   Functions::ParsedFunction<dim> *e_x_real;
-  Functions::ParsedFunction<dim> *e_x_imag;
   Functions::ParsedFunction<dim> *e_y_real;
-  Functions::ParsedFunction<dim> *e_y_imag;
   Functions::ParsedFunction<dim> *e_z_real;
+  Functions::ParsedFunction<dim> *e_x_imag;
+  Functions::ParsedFunction<dim> *e_y_imag;
   Functions::ParsedFunction<dim> *e_z_imag;
 
 public:
   TimeHarmonicMaxwellElectricFieldDefined(
     Functions::ParsedFunction<dim> *p_e_x_real,
-    Functions::ParsedFunction<dim> *p_e_x_imag,
     Functions::ParsedFunction<dim> *p_e_y_real,
-    Functions::ParsedFunction<dim> *p_e_y_imag,
     Functions::ParsedFunction<dim> *p_e_z_real,
+    Functions::ParsedFunction<dim> *p_e_x_imag,
+    Functions::ParsedFunction<dim> *p_e_y_imag,
     Functions::ParsedFunction<dim> *p_e_z_imag)
     : Function<dim>(4 * dim)
     , e_x_real(p_e_x_real)
-    , e_x_imag(p_e_x_imag)
     , e_y_real(p_e_y_real)
-    , e_y_imag(p_e_y_imag)
     , e_z_real(p_e_z_real)
+    , e_x_imag(p_e_x_imag)
+    , e_y_imag(p_e_y_imag)
     , e_z_imag(p_e_z_imag)
   {}
 
@@ -2169,26 +2169,26 @@ template <int dim>
 class TimeHarmonicMaxwellMagneticFieldDefined : public Function<dim>
 {
   Functions::ParsedFunction<dim> *h_x_real;
-  Functions::ParsedFunction<dim> *h_x_imag;
   Functions::ParsedFunction<dim> *h_y_real;
-  Functions::ParsedFunction<dim> *h_y_imag;
   Functions::ParsedFunction<dim> *h_z_real;
+  Functions::ParsedFunction<dim> *h_x_imag;
+  Functions::ParsedFunction<dim> *h_y_imag;
   Functions::ParsedFunction<dim> *h_z_imag;
 
 public:
   TimeHarmonicMaxwellMagneticFieldDefined(
     Functions::ParsedFunction<dim> *p_h_x_real,
-    Functions::ParsedFunction<dim> *p_h_x_imag,
     Functions::ParsedFunction<dim> *p_h_y_real,
-    Functions::ParsedFunction<dim> *p_h_y_imag,
     Functions::ParsedFunction<dim> *p_h_z_real,
+    Functions::ParsedFunction<dim> *p_h_x_imag,
+    Functions::ParsedFunction<dim> *p_h_y_imag,
     Functions::ParsedFunction<dim> *p_h_z_imag)
     : Function<dim>(4 * dim)
     , h_x_real(p_h_x_real)
-    , h_x_imag(p_h_x_imag)
     , h_y_real(p_h_y_real)
-    , h_y_imag(p_h_y_imag)
     , h_z_real(p_h_z_real)
+    , h_x_imag(p_h_x_imag)
+    , h_y_imag(p_h_y_imag)
     , h_z_imag(p_h_z_imag)
   {}
 
