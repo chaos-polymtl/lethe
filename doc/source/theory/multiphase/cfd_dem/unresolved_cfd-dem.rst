@@ -110,9 +110,9 @@ Void Fraction
 Determining the void fraction is an important step in unresolved CFD-DEM, as can be noted by the VANS equations and the drag models [#rong2013]_. There exist several methods for the calculation of the void fraction in a CFD-DEM simulation. Some are approximations while others are analytical approaches. In the finite element method, the void fraction is initially calculated inside a cell but must then be projected to the mesh nodes so that one can assemble the system of equations. This is done by :math:`\mathcal{L}^2` projection [#larson2013]_:
 
 .. math:: 
-    \min_{\varepsilon_f \in \mathbb{R}} \frac{1}{2} \sum_i \left (\sum_j \varepsilon_{f,j} \varphi_j - \epsilon_{f} \right ) \varphi_i
+    \min_{\varepsilon_{f,j} \in \mathbb{R}} \frac{1}{2} \sum_i \left (\sum_j \varepsilon_{f,j} \varphi_j - \epsilon_{f} \right )^2 \varphi_i
 
-where :math:`\epsilon_{f}` is the void fraction, :math:`\varphi_j` is the finite element shape function of the void fraction, and :math:`\varepsilon_{f,j}` the projected void fraction. The PCM void fraction is obtained through the following calculation:
+where :math:`\epsilon_{f}` is the void fraction, :math:`\varphi_j` is the finite element shape function of the void fraction, and :math:`\varepsilon_{f,j}` the nodal values of the projected void fraction. The PCM void fraction is obtained through the following calculation:
 
 Then, we assemble and solve the following:
 
