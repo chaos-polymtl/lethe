@@ -491,7 +491,7 @@ template <int dim>
 void
 TimeHarmonicMaxwell<dim>::setup_preconditioner()
 {
-  // TODO
+  preconditioner = std::make_shared<TrilinosWrappers::PreconditionIdentity>();
 }
 
 template <int dim>
