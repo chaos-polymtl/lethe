@@ -146,7 +146,7 @@ This results in the PCM being discontinuous in space and time. Consequently, the
 .. math:: 
     \epsilon_f = 1 - \frac{\sum_{i}^{n_p} V_{p,i}}{V_\Omega}
 
-where :math:`n_p` is the number of particles with centroid inside the cell :math:`\Omega` with volume :math:`V_{\Omega}`. 
+where :math:`n_p` is the number of particles whose centroids lie inside the cell :math:`\Omega` of volume :math:`V_{\Omega}`. 
 
 
 The Satellite Point Method
