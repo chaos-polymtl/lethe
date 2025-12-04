@@ -1,4 +1,4 @@
-# SPDX-FileCopyrightText: Copyright (c) 2021-2023 The Lethe Authors
+# SPDX-FileCopyrightText: Copyright (c) 2021-2025 The Lethe Authors
 # SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
 # Listing of Parameters
@@ -57,8 +57,6 @@ subsection void fraction
   set l2 smoothing length = 0.003
 end
 
-
-
 #---------------------------------------------------
 # CFD-DEM
 #---------------------------------------------------
@@ -71,7 +69,7 @@ subsection cfd-dem
   set buoyancy force                = true
   set drag model                    = rong
   set vans model                    = modelA
-  set drag coupling                 = implicit 
+  set drag coupling                 = implicit
 end
 
 #---------------------------------------------------
@@ -122,17 +120,16 @@ subsection timer
   set type = iteration
 end
 
-
 #---------------------------------------------------
 # Post-processing
 #---------------------------------------------------
 
 subsection post-processing
-  set verbosity                        = verbose
-  set calculate pressure drop          = true
-  set pressure drop name               = pressure_drop
-  set inlet boundary id                = 1
-  set outlet boundary id               = 2
+  set verbosity               = verbose
+  set calculate pressure drop = true
+  set pressure drop name      = pressure_drop
+  set inlet boundary id       = 1
+  set outlet boundary id      = 2
 end
 
 #---------------------------------------------------
