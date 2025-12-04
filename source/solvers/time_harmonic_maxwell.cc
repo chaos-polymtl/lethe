@@ -759,7 +759,58 @@ template <int dim>
 void
 TimeHarmonicMaxwell<dim>::solve_linear_system()
 {
-  // TODO
+  TimerOutput::Scope t(this->computing_timer, "Solve linear system");
+
+  auto mpi_communicator = this->triangulation->get_mpi_communicator();
+
+  // Define the linear solver tolerance
+  const double absolute_residual =
+    simulation_parameters.linear_solver.at(PhysicsID::electromagnetics)
+      .minimum_residual;
+  const double relative_residual =
+    simulation_parameters.linear_solver.at(PhysicsID::electromagnetics)
+      .relative_residual;
+
+  const double rescale_metric    = this->get_residual_rescale_metric();
+  const double rescaled_residual = this->system_rhs.l2_norm() / rescale_metric;
+  const double linear_solver_tolerance =
+    std::max(relative_residual * rescaled_residual, absolute_residual);
+
+  if (this->simulation_parameters.linear_solver.at(PhysicsID::electromagnetics)
+        .verbosity != Parameters::Verbosity::quiet)
+    {
+      this->pcout << "  -Tolerance of iterative solver is : "
+                  << linear_solver_tolerance << std::endl;
+    }
+
+  // Set up the solver control
+  setup_preconditioner();
+
+  SolverControl solver_control(this->dof_handler_trial_skeleton->n_dofs(),
+                               linear_solver_tolerance);
+
+  // Solve
+  GlobalVectorType completely_distributed_solution(
+    this->locally_owned_dofs_trial_skeleton, mpi_communicator);
+  TrilinosWrappers::SolverCG solver(solver_control);
+
+  solver.solve(this->system_matrix,
+               completely_distributed_solution,
+               this->system_rhs,
+               *this->preconditioner);
+
+  if (simulation_parameters.linear_solver.at(PhysicsID::electromagnetics)
+        .verbosity != Parameters::Verbosity::quiet)
+    {
+      this->pcout << "  -CG iterative solver took : "
+                  << solver_control.last_step()
+                  << " steps to reach a residual norm of "
+                  << solver_control.last_value() / rescale_metric << std::endl;
+    }
+
+  // Update the solution vector
+  nonzero_constraints.distribute(completely_distributed_solution);
+  *this->present_solution_skeleton = completely_distributed_solution;
 }
 
 template <int dim>
