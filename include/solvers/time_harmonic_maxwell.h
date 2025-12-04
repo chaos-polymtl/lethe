@@ -7,6 +7,7 @@
 #include <core/output_struct.h>
 #include <core/parameters.h>
 #include <core/physics_solver.h>
+#include <core/simulation_control.h>
 #include <core/vector.h>
 
 #include <solvers/auxiliary_physics.h>
@@ -19,12 +20,22 @@
 #include <deal.II/distributed/solution_transfer.h>
 #include <deal.II/distributed/tria_base.h>
 
+#include <deal.II/dofs/dof_renumbering.h>
+
 #include <deal.II/fe/fe_dgq.h>
 #include <deal.II/fe/fe_nedelec_sz.h>
 #include <deal.II/fe/fe_system.h>
 #include <deal.II/fe/fe_values.h>
 
 #include <deal.II/grid/grid_tools.h>
+
+#include <deal.II/lac/solver_control.h>
+#include <deal.II/lac/sparsity_pattern.h>
+#include <deal.II/lac/sparsity_tools.h>
+#include <deal.II/lac/trilinos_precondition.h>
+#include <deal.II/lac/trilinos_solver.h>
+#include <deal.II/lac/trilinos_sparse_matrix.h>
+#include <deal.II/lac/trilinos_vector.h>
 
 #include <deal.II/numerics/data_out.h>
 
@@ -50,14 +61,14 @@
 ///   [x] modify_solution
 ///   [x] update_boundary_conditions
 ///   [x] postprocess
-///   [] pre_mesh_adaptation
-///   [] post_mesh_adaptation
+///   [x] pre_mesh_adaptation
+///   [x] post_mesh_adaptation
 ///   - write_checkpoint
 ///   - read_checkpoint
 ///   - gather_tables()
 ///   - compute_kelly
 ///   - compute_energy_norm
-///   [] Setup_dofs
+///   [x] Setup_dofs
 ///   [x] set_initial_conditions
 ///   [] setup_preconditioner
 ///   [] define_constraints
@@ -74,8 +85,11 @@
 ///   [x] get_residual_rescale_metric
 ///   [] assemble_system_matrix
 ///   [] assemble_system_rhs
-
-
+///   - assemble_local_system_matrix
+///   - assemble_local_system_rhs
+///   - setup_assemblers
+///   - copy_local_matrix_to_global_matrix
+///   - copy_local_rhs_to_global_rhs
 /// [x] Physics field
 /// [x] Multiphysics interface components
 /// [] Physical Properties
@@ -86,6 +100,13 @@
 /// - Mesh adaptation
 
 using VectorType = GlobalVectorType;
+
+DeclException1(
+  TimeHarmonicMaxwellBoundaryConditionMissing,
+  types::boundary_id,
+  << "The boundary id: " << arg1
+  << " is defined in the triangulation, but not as a boundary condition for the TimeHarmonicMaxwell physics. Lethe does not assign a default boundary condition to boundary ids. Every boundary id defined within the triangulation must have a corresponding boundary condition defined in the input file.");
+
 template <int dim>
 class TimeHarmonicMaxwell : public AuxiliaryPhysics<dim, VectorType>
 {
@@ -422,6 +443,30 @@ private:
   ///////                Physics solver core functions               ////////
 
   /**
+   * @brief Verify consistency of the input parameters for boundary
+   * conditions to ensure that for every boundary condition within the
+   * triangulation, a boundary condition has been specified in the input file.
+   */
+  void
+  verify_consistency_of_boundary_conditions()
+  {
+    // Sanity check all of the boundary conditions of the triangulation to
+    // ensure that they have a type.
+    std::vector<types::boundary_id> boundary_ids_in_triangulation =
+      this->triangulation->get_boundary_ids();
+    for (auto const &boundary_id_in_tria : boundary_ids_in_triangulation)
+      {
+        AssertThrow(
+          simulation_parameters
+              .boundary_conditions_time_harmonic_electromagnetics.type.find(
+                boundary_id_in_tria) !=
+            simulation_parameters
+              .boundary_conditions_time_harmonic_electromagnetics.type.end(),
+          TimeHarmonicMaxwellBoundaryConditionMissing(boundary_id_in_tria));
+      }
+  }
+
+  /**
    *  @brief Assemble the matrix associated with the solver
    */
   void
@@ -432,6 +477,69 @@ private:
    */
   void
   assemble_system_rhs() override;
+  // TODO
+  // /**
+  //  * @brief Assemble the local matrix for a given cell.
+  //  *
+  //  * Use the WorkStream class to assemble the system matrix. It is
+  //  * a thread safe function.
+  //  *
+  //  * @param cell The cell for which the local matrix is assembled.
+  //  *
+  //  * @param scratch_data The scratch data which is used to store
+  //  * the calculated finite element information at the gauss point.
+  //  * See the documentation for TimeHarmonicMaxwellScratchData for more
+  //  * information
+  //  *
+  //  * @param copy_data The copy data which is used to store
+  //  * the results of the assembly over a cell
+  //  */
+  // virtual void
+  // assemble_local_system_matrix(
+  //   const typename DoFHandler<dim>::active_cell_iterator &cell,
+  //   TimeHarmonicMaxwellScratchData<dim>                  &scratch_data,
+  //   CopyData                                             &copy_data);
+
+  // /**
+  //  * @brief Assemble the local rhs for a given cell
+  //  *
+  //  * @param cell The cell for which the local matrix is assembled.
+  //  *
+  //  * @param scratch_data The scratch data which is used to store
+  //  * the calculated finite element information at the gauss point.
+  //  * See the documentation for TimeHarmonicMaxwellScratchData for more
+  //  * information
+  //  *
+  //  * @param copy_data The copy data which is used to store
+  //  * the results of the assembly over a cell
+  //  */
+  // virtual void
+  // assemble_local_system_rhs(
+  //   const typename DoFHandler<dim>::active_cell_iterator &cell,
+  //   TimeHarmonicMaxwellScratchData<dim>                  &scratch_data,
+  //   CopyData                                             &copy_data);
+
+  // /**
+  //  * @brief Set up the vector of assembler functions
+  //  */
+  // virtual void
+  // setup_assemblers();
+
+  // /**
+  //  * @brief Copy local cell information to global matrix
+  //  */
+
+  // virtual void
+  // copy_local_matrix_to_global_matrix(
+  //   const CopyData &copy_data);
+
+  // /**
+  //  * @brief Copy local cell rhs information to global rhs
+  //  */
+
+  // virtual void
+  // copy_local_rhs_to_global_rhs(const CopyData &copy_data);
+
 
   /////// Auxiliary physics parameters for TimeHarmonicMaxwell solver ////////
 
@@ -530,6 +638,36 @@ private:
 
 
   /////////////               Solution storage                /////////////
+
+  /**
+   * @brief IndexSet of the owned degrees of freedom for the interior trial space.
+   */
+  IndexSet locally_owned_dofs_trial_interior;
+
+  /**
+   * @brief IndexSet of the relevant degrees of freedom for the interior trial space.
+   */
+  IndexSet locally_relevant_dofs_trial_interior;
+
+  /**
+   * @brief IndexSet of the owned degrees of freedom for the skeleton trial space.
+   */
+  IndexSet locally_owned_dofs_trial_skeleton;
+
+  /**
+   * @brief IndexSet of the relevant degrees of freedom for the skeleton trial space.
+   */
+  IndexSet locally_relevant_dofs_trial_skeleton;
+
+  /**
+   * @brief IndexSet of the owned degrees of freedom for the test space.
+   */
+  IndexSet locally_owned_dofs_test;
+
+  /**
+   * @brief IndexSet of the relevant degrees of freedom for the test space.
+   */
+  IndexSet locally_relevant_dofs_test;
 
   /**
    * @brief The system matrix.
