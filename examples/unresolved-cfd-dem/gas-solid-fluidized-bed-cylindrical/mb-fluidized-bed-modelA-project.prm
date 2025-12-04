@@ -12,10 +12,10 @@ set dimension = 3
 
 subsection simulation control
   set method           = bdf1
-  set output frequency = 5
+  set output frequency = 10
   set time end         = 1.0
-  set time step        = 0.0002
-  set output path      = ./output_modelB_mb/
+  set time step        = 0.0001
+  set output path      = ./output_modelA_project_forces/
 end
 
 #---------------------------------------------------
@@ -75,8 +75,10 @@ subsection cfd-dem
   set shear force                   = true
   set pressure force                = true
   set drag model                    = difelice
+  set drag coupling                 = explicit
   set coupling frequency            = 100
-  set vans model                    = modelB
+  set vans model                    = modelA
+  set project particle forces       = true
 end
 
 #---------------------------------------------------
@@ -233,7 +235,7 @@ subsection post-processing
   set calculate pressure drop = true
   set inlet boundary id = 1
   set outlet boundary id = 2
-  set output frequency = 1
+  set output frequency = 10
   set verbosity = verbose
 end
 
@@ -242,7 +244,7 @@ end
 #---------------------------------------------------
 subsection restart
   set checkpoint = true
-  set frequency  = 10
+  set frequency  = 50
   set filename   = restart
   set restart    = false
 end

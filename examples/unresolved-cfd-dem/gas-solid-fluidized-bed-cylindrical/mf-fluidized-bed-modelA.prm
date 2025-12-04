@@ -12,10 +12,10 @@ set dimension = 3
 
 subsection simulation control
   set method           = bdf1
-  set output frequency = 20
-  set time end         = 0.15
+  set output frequency = 5
+  set time end         = 1.0
   set time step        = 0.0002
-  set output path      = ./output_modelB/
+  set output path      = ./output_modelA_mf/
 end
 
 #---------------------------------------------------
@@ -33,31 +33,35 @@ end
 
 subsection physical properties
   subsection fluid 0
-    set kinematic viscosity = 0.00001
+    set kinematic viscosity = 1e-5
     set density             = 1
   end
 end
 
+
 #---------------------------------------------------
 # Mesh
 #---------------------------------------------------
-
 subsection mesh
   set type               = cylinder
   set grid type          = balanced
   set grid arguments     = 44:0.01:0.22
   set initial refinement = 2
+  set expand particle-wall contact search = true
 end
+
+
 
 #---------------------------------------------------
 # Void Fraction
 #---------------------------------------------------
 
 subsection void fraction
-  set mode                = qcm
-  set read dem            = true
-  set dem file name       = dem
-  set l2 smoothing length = 0.001
+  set mode                         = qcm
+  set qcm sphere equal cell volume = true
+  set read dem                     = true
+  set dem file name                = dem
+  set l2 smoothing length          = 0.001
 end
 
 #---------------------------------------------------
@@ -74,7 +78,7 @@ subsection cfd-dem
   set pressure force                = true
   set drag model                    = difelice
   set coupling frequency            = 100
-  set vans model                    = modelB
+  set vans model                    = modelA
 end
 
 #---------------------------------------------------
@@ -102,8 +106,7 @@ subsection boundary conditions
     set id   = 1
     set type = function
     subsection u
-      set Function expression = min(2*t,0.2)
-      #set Function expression = min(0.2*t,0.2)
+      set Function expression = min(0.02 * floor(t / 0.05 + 1), 0.4)
     end
     subsection v
       set Function expression = 0
@@ -116,14 +119,6 @@ subsection boundary conditions
     set id   = 2
     set type = outlet
   end
-end
-
-#---------------------------------------------------
-# Mesh Adaptation Control
-#---------------------------------------------------
-
-subsection mesh adaptation
-  set type = none
 end
 
 #---------------------------------------------------
@@ -141,7 +136,12 @@ end
 subsection model parameters
   subsection contact detection
     set contact detection method = dynamic
-    set neighborhood threshold   = 1.1
+    set neighborhood threshold   = 1.3
+  end
+  subsection load balancing
+    set load balance method     = dynamic
+    set threshold               = 0.5
+    set dynamic check frequency = 10000
   end
   set particle particle contact force method = hertz_mindlin_limit_overlap
   set particle wall contact force method     = nonlinear
@@ -203,8 +203,7 @@ subsection non-linear solver
   subsection fluid dynamics
     set solver           = newton
     set tolerance        = 1e-8
-    set max iterations   = 10
-    set verbosity        = verbose
+    set max iterations   = 20
   end
 end
 
@@ -213,46 +212,45 @@ end
 #---------------------------------------------------
 
 subsection linear solver
+  subsection void fraction
+    set relative residual = 1e-13
+    set minimum residual  = 1e-13
+  end
   subsection fluid dynamics
-    set method                                = gmres
-    set max iters                             = 500
-    set relative residual                     = 1e-3
-    set minimum residual                      = 1e-10
-    set preconditioner                        = ilu
-    set ilu preconditioner fill               = 0
-    set ilu preconditioner absolute tolerance = 1e-14
-    set ilu preconditioner relative tolerance = 1.00
-    set verbosity                             = verbose
-    set max krylov vectors                    = 500
+    set method                          = gmres
+    set relative residual               = 1e-3
+    set minimum residual                = 1e-9
+    set preconditioner                  = gcmg
+    set verbosity                       = verbose
+    set mg verbosity                    = verbose
+    set mg smoother iterations          = 5
+    set mg smoother eig estimation      = true
+    set mg smoother preconditioner type = inverse diagonal
+    set eig estimation verbosity        = verbose
+    set mg coarse grid solver           = amg
+    set max krylov vectors = 400
+    set max iters = 400
   end
 end
 
 #---------------------------------------------------
 # Post-processing
 #---------------------------------------------------
-
 subsection post-processing
-  # Enable calculation of pressure drop
-  set calculate pressure drop = true
-
-  # Boundary id of the inlet for the pressure drop calculation
-  set inlet boundary id = 1
-
-  # Boundary id of the outlet for the pressure drop calculation
-  set outlet boundary id = 2
-
-  set output frequency = 1
-
+  set calculate pressure drop          = true
+  set inlet boundary id                = 1
+  set outlet boundary id               = 2
+  set output frequency                 = 1 
   set verbosity = verbose
 end
 
 #---------------------------------------------------
-# Restat
+# Restart
 #---------------------------------------------------
 subsection restart
   # Checkpointing parameters
   set checkpoint = true
-  set frequency  = 100
+  set frequency  = 10
 
   # Output/input files
   set filename   = restart
