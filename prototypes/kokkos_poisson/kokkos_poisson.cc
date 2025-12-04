@@ -187,8 +187,9 @@ public:
       phi(data);
     phi.read_dof_values(src);
     phi.evaluate(EvaluationFlags::gradients);
-    phi.apply_for_each_quad_point(
-      LaplaceOperatorQuad<dim, fe_degree, n_components, Number>());
+    LaplaceOperatorQuad<dim, fe_degree, n_components, Number> local_operator;
+    data->for_each_quad_point(
+      [&](const int &q_point) { local_operator(&phi, q_point); });
     phi.integrate(EvaluationFlags::gradients);
     phi.distribute_local_to_global(dst);
   }
