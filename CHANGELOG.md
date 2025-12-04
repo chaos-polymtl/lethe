@@ -13,6 +13,8 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
 - MINOR Tracer reaction models failed for reaction order below 1 due to undefined NaN values arising from negative powers of concentration, specifically at the initial condition of tracer = 0. We added a smoothed minimum value (`tracer reaction threshold`) that prevents this issue and a MMS test to ensure that the proper solution is recovered even at a `tracer reaction order = 0.5`. [#1825](https://github.com/chaos-polymtl/lethe/issues/1825)
 
+- MINOR The lethe-fluid-vans example for the flow through a particles was not working adequately since it was using a semi-implicit drag formulation. This is now fixed and the example now uses the fully implicit coupling. The results are much better now since they compare quite favorably with Ergun empirical equation (and the bonus is that the example actually runs correctly!). [#1840](https://github.com/chaos-polymtl/lethe/pull/1840)
+
 ### [Master] - 2025-12-03
 
 ### Added
