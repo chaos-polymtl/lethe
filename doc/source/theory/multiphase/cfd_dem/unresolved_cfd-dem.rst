@@ -29,7 +29,7 @@ where:
 * :math:`\mathbf{v}_i` is the velocity of the particle :math:`i`;
 * :math:`\mathbf{f}_{c,ij}` are the contact forces between particles :math:`i` and :math:`j` (detailed in the DEM section of this guide);
 * :math:`\mathbf{f}_{nc,ij}` are the non-contact forces between particles :math:`i` and :math:`j`, such as lubrication forces [#nitsche1994]_;
-* :math:`\mathbf{f}_{fp,i}` is the force exerted by the surrounding fluid over particle :math:`i`. Here :math:`fp` indicates the force exerted by the fluid on the particles;
+* :math:`\mathbf{f}_{fp,i}` is the force exerted by the surrounding fluid over particle :math:`i`. Here, the subscript :math:`fp` indicates the force exerted by the fluid on the particles;
 * :math:`\mathbf{f}_{g,i}` is the gravitational force;
 * :math:`I_i` is the moment of inertia;
 * :math:`\mathbf{\omega}_i` is the angular velocity;
