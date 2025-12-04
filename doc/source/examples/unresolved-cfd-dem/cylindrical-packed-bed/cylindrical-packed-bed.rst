@@ -325,7 +325,7 @@ We also enable ``grad div`` stabilisation in order to improve local mass conserv
     set drag coupling                 = implicit 
   end
     
-We determine the ``drag model`` to be used for the calculation of particle-fluid forces. Currently, Difelice, Rong and Dallavalle models are supported. Other optional forces that can be enabled are the ``buoyancy force``, the ``shear force`` and the ``pressure force``. As we are simulating a static bed, we choose to disable these forces. The VANS model we are solving is model A. Other possible option is model B. Furthermore, we set ``drag coupling = implicit`` since we are running a steady-state simulation. Using an explicit or semi-implicit formulation here would lead to unphysical results.
+We determine the ``drag model`` to be used for the calculation of particle-fluid forces. All of the supported drag models are listed in :doc:`CFD-DEM section of the parameters guide <../../../parameters/unresolved-cfd-dem/cfd-dem>`. Other optional forces that can be enabled are the ``buoyancy force``, the ``shear force`` and the ``pressure force``. As we are simulating a static bed, we choose to disable these forces. The VANS model we are solving is model A. Other possible option is model B. Furthermore, we set ``drag coupling = implicit`` since we are running a steady-state simulation. Using an explicit or semi-implicit formulation here would lead to unphysical results.
 
 Finally, the linear and non-linear solver controls are defined.
 

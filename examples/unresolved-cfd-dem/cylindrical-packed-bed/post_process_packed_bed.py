@@ -1,4 +1,4 @@
-# SPDX-FileCopyrightText: Copyright (c) 2022, 2024 The Lethe Authors
+# SPDX-FileCopyrightText: Copyright (c) 2022-2025 The Lethe Authors
 # SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
 """
@@ -24,6 +24,35 @@ colors=['#1b9e77','#d95f02','#7570b3','#e7298a','#66a61e','#e6ab02']
 #--------------------------------------------
 # Main
 #--------------------------------------------
+
+# Particle properties
+dp=0.001
+n_p=10000
+rhop=2500
+
+# Fluid properties
+nu_f=0.00001
+rho_f=1
+mu_f=nu_f*rho_f
+
+# Fluid inlet velocity (m/s)
+U=0.2
+
+# Column diameter
+dc=0.02
+# Packed bed porosity (loosely packed spheres)
+eps_packed=0.45
+
+# Packed bed height
+V_particles=n_p*(4/3)*np.pi*(dp/2)**3
+V_bed=V_particles/(1-eps_packed)
+A_bed=np.pi*(dc/2)**2
+H_bed=V_bed/A_bed
+print("Packed bed height: ",H_bed)
+
+# Pressure drop from the Ergun equation
+deltaP_ergun= (150*(1-eps_packed)**2*mu_f*U/(dp**2*eps_packed**3) + 1.75*(1-eps_packed)*rho_f*U**2/(dp*eps_packed**3))*H_bed
+print("Pressure drop from Ergun equation: ",deltaP_ergun)
 
 # Load VTU file
 vtu_file="./output/out.00001.00000.vtu"
@@ -54,6 +83,7 @@ fig, ax1 = plt.subplots()
 
 # Plot the data for the first y-axis
 ax1.plot(x,p,label="Pressure drop",color=colors[0])
+ax1.plot([0,max(x)],[deltaP_ergun,deltaP_ergun],'k--',label="Analytical pressure drop")
 ax1.set_xlabel('Position')  # Common x-axis label
 ax1.set_ylabel('Pressure', color=colors[0])
 ax1.set_ylim([-1,50])
