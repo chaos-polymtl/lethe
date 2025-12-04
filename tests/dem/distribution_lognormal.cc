@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
 /**
- * @brief Inserting particles following a normal distribution.
+ * @brief Inserting particles following a lognormal distribution.
  */
 
 // Deal.II includes
