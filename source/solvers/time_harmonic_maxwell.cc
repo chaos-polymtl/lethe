@@ -341,14 +341,28 @@ template <int dim>
 void
 TimeHarmonicMaxwell<dim>::pre_mesh_adaptation()
 {
-  // TODO
+  this->solution_transfer->prepare_for_coarsening_and_refinement(
+    *this->present_solution);
 }
 
 template <int dim>
 void
 TimeHarmonicMaxwell<dim>::post_mesh_adaptation()
 {
-  // TODO
+  auto mpi_communicator = this->triangulation->get_mpi_communicator();
+
+  // Set up the vectors for the transfer
+  GlobalVectorType tmp(this->locally_owned_dofs_trial_interior,
+                       mpi_communicator);
+
+  // Interpolate the solution at time and previous time
+  this->solution_transfer->interpolate(tmp);
+
+  // Distribute constraints
+  this->nonzero_constraints.distribute(tmp);
+
+  // Fix on the new mesh
+  *this->present_solution = tmp;
 }
 
 template <int dim>
@@ -397,7 +411,80 @@ template <int dim>
 void
 TimeHarmonicMaxwell<dim>::setup_dofs()
 {
-  // TODO
+  verify_consistency_of_boundary_conditions();
+
+  auto mpi_communicator = triangulation->get_mpi_communicator();
+
+  // Setup each dof handlers
+  this->dof_handler_trial_interior->distribute_dofs(*this->fe_trial_interior);
+  DoFRenumbering::Cuthill_McKee(*this->dof_handler_trial_interior);
+  this->dof_handler_trial_skeleton->distribute_dofs(*this->fe_trial_skeleton);
+  DoFRenumbering::Cuthill_McKee(*this->dof_handler_trial_skeleton);
+  this->dof_handler_test->distribute_dofs(*this->fe_test);
+  DoFRenumbering::Cuthill_McKee(*this->dof_handler_test);
+
+  // Get the locally owned dofs
+  this->locally_owned_dofs_trial_interior =
+    this->dof_handler_trial_interior->locally_owned_dofs();
+  this->locally_owned_dofs_trial_skeleton =
+    this->dof_handler_trial_skeleton->locally_owned_dofs();
+  this->locally_owned_dofs_test = this->dof_handler_test->locally_owned_dofs();
+
+  // Get the locally relevant dofs
+  this->locally_relevant_dofs_trial_interior =
+    DoFTools::extract_locally_relevant_dofs(*this->dof_handler_trial_interior);
+  this->locally_relevant_dofs_trial_skeleton =
+    DoFTools::extract_locally_relevant_dofs(*this->dof_handler_trial_skeleton);
+  this->locally_relevant_dofs_test =
+    DoFTools::extract_locally_relevant_dofs(*this->dof_handler_test);
+
+  // Initialize the solution vector
+  this->present_solution->reinit(this->locally_owned_dofs_trial_interior,
+                                 this->locally_relevant_dofs_trial_interior,
+                                 mpi_communicator);
+  this->present_solution_skeleton->reinit(
+    this->locally_owned_dofs_trial_skeleton,
+    this->locally_relevant_dofs_trial_skeleton,
+    mpi_communicator);
+
+  // We reinitialize the system rhs with the skeleton dofs because we have
+  // performed a static condensation of the interior dofs using the Schur
+  // complement.
+  this->system_rhs.reinit(this->locally_owned_dofs_trial_skeleton,
+                          mpi_communicator);
+
+  // Define constraints
+  define_constraints();
+
+  // Sparse matrices initialization
+  DynamicSparsityPattern dsp(this->locally_relevant_dofs_trial_skeleton);
+  DoFTools::make_sparsity_pattern(*this->dof_handler_trial_skeleton,
+                                  dsp,
+                                  this->nonzero_constraints,
+                                  /*keep_constrained_dofs = */ false);
+  SparsityTools::distribute_sparsity_pattern(
+    dsp,
+    this->locally_owned_dofs_trial_skeleton,
+    mpi_communicator,
+    this->locally_relevant_dofs_trial_skeleton);
+
+  this->system_matrix.reinit(this->locally_owned_dofs_trial_skeleton,
+                             this->locally_owned_dofs_trial_skeleton,
+                             dsp,
+                             mpi_communicator);
+
+  this->pcout << "   Number of skeleton degrees of freedom: "
+              << this->dof_handler_trial_skeleton->n_dofs() << std::endl;
+  this->pcout << "   Number of interior degrees of freedom: "
+              << this->dof_handler_trial_interior->n_dofs() << std::endl;
+
+  // Provide the TimeHarmonicMaxwell dof_handler and solution to the
+  // multiphysics interface. Note that we provide the interior dof_handler and
+  // solution has it is the one useful for the other physics.
+  multiphysics->set_dof_handler(PhysicsID::electromagnetics,
+                                this->dof_handler_trial_interior);
+  multiphysics->set_solution(PhysicsID::electromagnetics,
+                             this->present_solution);
 }
 
 template <int dim>
