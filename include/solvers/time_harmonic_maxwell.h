@@ -73,7 +73,7 @@
 ///   [x] set_initial_conditions
 ///   [x] setup_preconditioner
 ///   [x] define_constraints
-///   [] solve_linear_system
+///   [x] solve_linear_system
 ///   [x] get_dof_handler
 ///   [x] get_evaluation_point
 ///   [x] get_local_evaluation_point
