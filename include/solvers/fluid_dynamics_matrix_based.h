@@ -140,6 +140,13 @@ protected:
   define_dynamic_zero_constraints();
 
   /**
+   * @brief Fix a constant pressure on the minimum dof index. This can be enabled
+   * in the simulation control parameters.
+   */
+  void
+  define_pressure_constraints();
+
+  /**
    * @brief Update mortar configuration.
    *
    * When the rotor domain is rotated, the mortar cells need to be reinitialized

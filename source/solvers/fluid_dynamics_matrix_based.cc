@@ -85,6 +85,9 @@ FluidDynamicsMatrixBased<dim>::setup_dofs_fd()
   // Zero constraints
   this->define_zero_constraints();
 
+  // If enabled, fix pressure constant
+  this->define_pressure_constraints();
+
   // If enabled, create mortar operators
   this->reinit_mortar_operators();
 
@@ -236,6 +239,9 @@ FluidDynamicsMatrixBased<dim>::update_mortar_configuration()
       // Zero constraints
       this->define_zero_constraints();
 
+      // If enabled, fix pressure constant
+      this->define_pressure_constraints();
+
       // Create mortar manager, operator, and evaluator
       this->reinit_mortar_operators();
 
@@ -317,6 +323,58 @@ FluidDynamicsMatrixBased<dim>::define_dynamic_zero_constraints()
       stasis_constraint_struct.dofs_are_in_solid.clear();
       stasis_constraint_struct.dofs_are_connected_to_fluid.clear();
     }
+}
+
+template <int dim>
+void
+FluidDynamicsMatrixBased<dim>::define_pressure_constraints()
+{
+  if (!this->simulation_parameters.boundary_conditions.fix_pressure_constant)
+    return;
+
+  // Create auxiliary constraints object to store pressure constraint, since at
+  // this point both zero_constraints and nonzero_constraints objects have been
+  // closed
+  AffineConstraints<double> constraints_extended;
+  constraints_extended.reinit(this->dof_handler->locally_owned_dofs(),
+                              this->locally_relevant_dofs);
+
+  types::global_dof_index min_index = numbers::invalid_unsigned_int;
+
+  std::vector<types::global_dof_index> dof_indices;
+
+  // Loop over the cells to identify the min index
+  for (const auto &cell : this->dof_handler->active_cell_iterators())
+    {
+      if (cell->is_locally_owned())
+        {
+          const auto &fe = cell->get_fe();
+
+          dof_indices.resize(fe.n_dofs_per_cell());
+          cell->get_dof_indices(dof_indices);
+
+          for (unsigned int i = 0; i < dof_indices.size(); ++i)
+            if (fe.system_to_component_index(i).first == dim)
+              min_index = std::min(min_index, dof_indices[i]);
+        }
+    }
+
+  // Necessary to find the min across all cores.
+  min_index =
+    Utilities::MPI::min(min_index, this->dof_handler->get_mpi_communicator());
+
+  if (this->locally_relevant_dofs.is_element(min_index))
+    constraints_extended.add_line(min_index);
+
+  // Merge auxiliary constraints object with existent constraints
+  this->nonzero_constraints.merge(
+    constraints_extended,
+    AffineConstraints<double>::MergeConflictBehavior::no_conflicts_allowed,
+    true);
+  this->zero_constraints.merge(
+    constraints_extended,
+    AffineConstraints<double>::MergeConflictBehavior::no_conflicts_allowed,
+    true);
 }
 
 template <int dim>

@@ -1,6 +1,7 @@
 # SPDX-FileCopyrightText: Copyright (c) 2020-2025 The Lethe Authors
 # SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 # Checks the transient matrix-based mortar implementation for a Taylor-Couette example.
+# Also tests the option to fix pressure constant in a node.
 
 # Listing of Parameters
 #----------------------
@@ -12,11 +13,11 @@ set dimension = 2
 #---------------------------------------------------
 
 subsection simulation control
-  set method      = bdf1
-  set time step   = 0.2
-  set time end    = 0.6
-  set output name = couette_mortar
-  set subdivision = 2
+  set method           = bdf1
+  set time step        = 0.2
+  set time end         = 0.6
+  set subdivision      = 2
+  set output frequency = 0
 end
 
 #---------------------------------------------------
@@ -88,7 +89,7 @@ end
 
 subsection boundary conditions
   set number                = 4
-  set fix pressure constant = false
+  set fix pressure constant = true
   subsection bc 0
     set id   = 0
     set type = none

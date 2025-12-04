@@ -73,6 +73,11 @@ where :math:`\beta` is a constant  and :math:`(\mathbf{u}\cdot \mathbf{n})_{-}` 
 
 * ``fix pressure constant`` specifies if a zero pressure constraint should be applied on a single node of the coarse grid solver when using geometric multigrid preconditioning combined with the **lethe-fluid-matrix-free** solver. Essentially, this condition should be set to true whenever a user is using the **lethe-fluid-matrix-free** solver and simulating the flow within a closed domain (that is a domain on which all boundaries are either periodic or Dirichlet boundary conditions).
 
+.. note::
+  The option to ``fix pressure constant`` can also be used in the ``lethe-fluid`` solver to apply a zero pressure constraint on a single node. 
+  
+  Keep in mind that this is **not** the same behavior as in the ``lethe-fluid-matrix-free`` solver, where only the coarse grid solver (within the multigrid preconditioner) contains a fixed pressure node. In the ``lethe-fluid`` case, ``set fix pressure constant = true`` sets pressure as zero in a single node throughout the whole simulation.
+
 * Each fluid dynamics boundary condition is stored in a ``bc #`` subsection :
     * ``id``  is the number associated with the boundary condition. By default, Lethe assumes that the id is equivalent to the number ``#`` of the bc. The parameter also accepts a list of boundary ids, to which the same boundary condition will be applied. In this case, id numbers should be separated by commas, for example: ``set id = 0,1,2``.
     
