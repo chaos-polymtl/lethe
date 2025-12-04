@@ -4,6 +4,13 @@ All notable changes to the Lethe project will be documented in this file.
 The changelog for the previous releases of Lethe are located in the release_notes folder.
 The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
+
+### [Master] - 2025-12-04
+
+### Fixed
+
+- MINOR New changes to the portable matrix-free architecture in dealii (https://github.com/dealii/dealii/pull/19042) created a warning due to the change from apply_for_each_quad_point to for_each_quad_point. This PR ports the Kokkos infrastructure to this and fixes the warnings. [#1838](https://github.com/chaos-polymtl/lethe/pull/1838)
+
 ### [Master] - 2025-12-03
 
 ### Added
