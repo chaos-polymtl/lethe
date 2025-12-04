@@ -11,6 +11,8 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
 - MINOR New changes to the portable matrix-free architecture in dealii (https://github.com/dealii/dealii/pull/19042) created a warning due to the change from apply_for_each_quad_point to for_each_quad_point. This PR ports the Kokkos infrastructure to this and fixes the warnings. [#1838](https://github.com/chaos-polymtl/lethe/pull/1838)
 
+- MINOR Tracer reaction models failed for reaction order below 1 due to undefined NaN values arising from negative powers of concentration, specifically at the initial condition of tracer = 0. We added a smoothed minimum value (`tracer reaction threshold`) that prevents this issue and a MMS test to ensure that the proper solution is recovered even at a `tracer reaction order = 0.5`. [#1825](https://github.com/chaos-polymtl/lethe/issues/1825)
+
 ### [Master] - 2025-12-03
 
 ### Added

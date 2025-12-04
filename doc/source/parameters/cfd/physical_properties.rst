@@ -39,6 +39,7 @@ Physical Properties
       set tracer reaction constant model = none
       set tracer reaction constant       = 0
       set tracer reaction order          = 1
+      set tracer reaction threshold      = 1e-8
     end
 
     set number of solids = 0
@@ -122,6 +123,15 @@ Physical Properties
 * The ``tracer reaction constant`` parameter (:math:`\alpha`) is the reaction constant coefficient of the tracer in units of :math:`\text{Concentration}^{1-\text{order}}\text{Time}^{-\text{order}}` . In SI, this is :math:`(\text{m}^{\text{dim}}\text{g}^{-1})^{1-\text{order}} \text{s}^{-\text{order}}`.
 
 * The ``tracer reaction order`` parameter (:math:`n`) is the reaction order of the tracer.
+
+* The ``tracer reaction threshold`` parameter (:math:`\varepsilon`) is the minimal value of the tracer concentration used to calculate the reaction rate. For a reaction order below 1, a value of ``tracer reaction threshold > 0`` prevents numerical issues that would otherwise arise if :math:`C = 0` when computing the reaction rate. The effective concentration is defined as:
+
+  .. math::
+
+    C_\text{effective} = \sqrt{C^2 + \varepsilon^2}
+
+  .. note::
+    The threshold parameter indicates the concentration value below which modifications to the reaction rate become dominant. Depending on the scale, it can be modified as a way to keep numerical stability while keeping a realistic reaction rate as long as :math:`C_\text{interest} \gg \varepsilon`. A scenario where the threshold might need to be lowered is for extremely fast heterogeneous reactions, where the concentration at the surface is close to 0.
 
 * The ``number of solids`` parameter controls the number of solid regions. Solid regions are currently only implemented for `Conjugate Heat Transfer`_.
 
@@ -269,9 +279,10 @@ The equation of the ``immersed solid gaussian`` model is defined as follows. :ma
     subsection physical properties
       set number of fluids = 1
       subsection fluid 0
-        set kinematic viscosity      = 0.01
-        set tracer diffusivity model = immersed solid tanh # or immersed solid gaussian
-        set tracer reaction order    = 1
+        set kinematic viscosity       = 0.01
+        set tracer diffusivity model  = immersed solid tanh # or immersed solid gaussian
+        set tracer reaction order     = 1
+        set tracer reaction threshold = 1e-8
         subsection immersed solid tanh
           set tracer diffusivity inside        = 1
           set tracer diffusivity outside       = 1
