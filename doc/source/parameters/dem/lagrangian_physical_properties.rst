@@ -100,7 +100,7 @@ In this subsection, gravitational acceleration, and the physical properties of t
 
 * The ``diameter`` parameter defines the diameter of the particles in a ``uniform`` distribution.
 
-* For a ``normal`` or a ``lognormal``  distribution, the ``average diameter`` and the ``standard deviation`` parameters should be defined to indicate the average (:math:`{\mu_d}`) and the standard deviation (:math:`{\sigma_d}`) of the particle size distribution weighted by number. The ``minimum cutoff`` and ``maximum cutoff`` parameters can be used to limit the range of the diameter values generated to a lower and upper bound respectively. If set to ``-1``, those two bounds are set to :math:`\mu_d \pm2.5 \sigma_d` for the ``normal`` distribution and to :math:`e^{\mu \pm2.5 \sigma}` for the ``lognormal`` distribution.
+* For a ``normal`` or a ``lognormal``  distribution, the ``average diameter`` and the ``standard deviation`` parameters should be defined to indicate the average (:math:`{\mu_d}`) and the standard deviation (:math:`{\sigma_d}`) of the particle size distribution weighted by number. The ``minimum cutoff`` and ``maximum cutoff`` parameters can be used to limit the lower and upper value of the diameter sampled from the distribution. If set to ``-1``, those two bounds are set to :math:`\mu_d \pm2.5 \sigma_d` for the ``normal`` distribution and to :math:`e^{\mu \pm2.5 \sigma}` for the ``lognormal`` distribution.
 
 .. note::
    :math:`\mu_d` and :math:`\sigma_d` **are not** the mean (:math:`\mu`) and the standard deviation (:math:`\sigma`) of **the underlying normal distribution** (i.e., the natural logarithm of the variable).
