@@ -38,6 +38,7 @@
 #include <deal.II/lac/trilinos_vector.h>
 
 #include <deal.II/numerics/data_out.h>
+#include <deal.II/numerics/vector_tools.h>
 
 #include <memory.h>
 
@@ -71,7 +72,7 @@
 ///   [x] Setup_dofs
 ///   [x] set_initial_conditions
 ///   [x] setup_preconditioner
-///   [] define_constraints
+///   [x] define_constraints
 ///   [] solve_linear_system
 ///   [x] get_dof_handler
 ///   [x] get_evaluation_point

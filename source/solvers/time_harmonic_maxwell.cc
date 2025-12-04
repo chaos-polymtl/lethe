@@ -498,7 +498,261 @@ template <int dim>
 void
 TimeHarmonicMaxwell<dim>::define_constraints()
 {
-  // TODO
+  // Clear previous constraints
+  this->nonzero_constraints.clear();
+  this->nonzero_constraints.reinit(this->locally_owned_dofs_trial_skeleton,
+                                   this->locally_relevant_dofs_trial_skeleton);
+
+  DoFTools::make_hanging_node_constraints(*this->dof_handler_trial_skeleton,
+                                          this->nonzero_constraints);
+
+  // Loop over all boundary conditions defined
+  for (const auto &[id, type] :
+       this->simulation_parameters
+         .boundary_conditions_time_harmonic_electromagnetics.type)
+    {
+      if (type == BoundaryConditions::BoundaryType::pec)
+        {
+          // Perfect electric conductor (PEC) boundary condition
+          // Real
+          VectorTools::project_boundary_values_curl_conforming_l2(
+            *this->dof_handler_trial_skeleton,
+            0,
+            Functions::ZeroFunction<dim>(4 * dim),
+            id,
+            this->nonzero_constraints);
+
+          // Imaginary
+          VectorTools::project_boundary_values_curl_conforming_l2(
+            *this->dof_handler_trial_skeleton,
+            dim,
+            Functions::ZeroFunction<dim>(4 * dim),
+            id,
+            this->nonzero_constraints);
+        }
+      if (type == BoundaryConditions::BoundaryType::pmc)
+        {
+          // Perfect magnetic conductor (PMC) boundary condition
+          // Real
+          VectorTools::project_boundary_values_curl_conforming_l2(
+            *this->dof_handler_trial_skeleton,
+            2 * dim,
+            Functions::ZeroFunction<dim>(4 * dim),
+            id,
+            this->nonzero_constraints);
+
+          // Imaginary
+          VectorTools::project_boundary_values_curl_conforming_l2(
+            *this->dof_handler_trial_skeleton,
+            3 * dim,
+            Functions::ZeroFunction<dim>(4 * dim),
+            id,
+            this->nonzero_constraints);
+        }
+      if (type == BoundaryConditions::BoundaryType::imposed_electric_field)
+        {
+          // Imposed electric field boundary condition
+
+          // Real
+          VectorTools::project_boundary_values_curl_conforming_l2(
+            *this->dof_handler_trial_skeleton,
+            0,
+            TimeHarmonicMaxwellElectricFieldDefined<dim>(
+              &this->simulation_parameters
+                 .boundary_conditions_time_harmonic_electromagnetics
+                 .imposed_electromagnetic_fields.at(id)
+                 ->e_x_real,
+              &this->simulation_parameters
+                 .boundary_conditions_time_harmonic_electromagnetics
+                 .imposed_electromagnetic_fields.at(id)
+                 ->e_y_real,
+              &this->simulation_parameters
+                 .boundary_conditions_time_harmonic_electromagnetics
+                 .imposed_electromagnetic_fields.at(id)
+                 ->e_z_real,
+              &this->simulation_parameters
+                 .boundary_conditions_time_harmonic_electromagnetics
+                 .imposed_electromagnetic_fields.at(id)
+                 ->e_x_imag,
+              &this->simulation_parameters
+                 .boundary_conditions_time_harmonic_electromagnetics
+                 .imposed_electromagnetic_fields.at(id)
+                 ->e_y_imag,
+              &this->simulation_parameters
+                 .boundary_conditions_time_harmonic_electromagnetics
+                 .imposed_electromagnetic_fields.at(id)
+                 ->e_z_imag),
+            id,
+            this->nonzero_constraints);
+
+          // Imaginary
+          VectorTools::project_boundary_values_curl_conforming_l2(
+            *this->dof_handler_trial_skeleton,
+            dim,
+            TimeHarmonicMaxwellElectricFieldDefined<dim>(
+              &this->simulation_parameters
+                 .boundary_conditions_time_harmonic_electromagnetics
+                 .imposed_electromagnetic_fields.at(id)
+                 ->e_x_real,
+              &this->simulation_parameters
+                 .boundary_conditions_time_harmonic_electromagnetics
+                 .imposed_electromagnetic_fields.at(id)
+                 ->e_y_real,
+              &this->simulation_parameters
+                 .boundary_conditions_time_harmonic_electromagnetics
+                 .imposed_electromagnetic_fields.at(id)
+                 ->e_z_real,
+              &this->simulation_parameters
+                 .boundary_conditions_time_harmonic_electromagnetics
+                 .imposed_electromagnetic_fields.at(id)
+                 ->e_x_imag,
+              &this->simulation_parameters
+                 .boundary_conditions_time_harmonic_electromagnetics
+                 .imposed_electromagnetic_fields.at(id)
+                 ->e_y_imag,
+              &this->simulation_parameters
+                 .boundary_conditions_time_harmonic_electromagnetics
+                 .imposed_electromagnetic_fields.at(id)
+                 ->e_z_imag),
+            id,
+            this->nonzero_constraints);
+        }
+
+      if (type == BoundaryConditions::BoundaryType::imposed_magnetic_field)
+        {
+          // Imposed magnetic field boundary condition
+
+          // Real
+          VectorTools::project_boundary_values_curl_conforming_l2(
+            *this->dof_handler_trial_skeleton,
+            0,
+            TimeHarmonicMaxwellMagneticFieldDefined<dim>(
+              &this->simulation_parameters
+                 .boundary_conditions_time_harmonic_electromagnetics
+                 .imposed_electromagnetic_fields.at(id)
+                 ->h_x_real,
+              &this->simulation_parameters
+                 .boundary_conditions_time_harmonic_electromagnetics
+                 .imposed_electromagnetic_fields.at(id)
+                 ->h_y_real,
+              &this->simulation_parameters
+                 .boundary_conditions_time_harmonic_electromagnetics
+                 .imposed_electromagnetic_fields.at(id)
+                 ->h_z_real,
+              &this->simulation_parameters
+                 .boundary_conditions_time_harmonic_electromagnetics
+                 .imposed_electromagnetic_fields.at(id)
+                 ->h_x_imag,
+              &this->simulation_parameters
+                 .boundary_conditions_time_harmonic_electromagnetics
+                 .imposed_electromagnetic_fields.at(id)
+                 ->h_y_imag,
+              &this->simulation_parameters
+                 .boundary_conditions_time_harmonic_electromagnetics
+                 .imposed_electromagnetic_fields.at(id)
+                 ->h_z_imag),
+            id,
+            this->nonzero_constraints);
+
+          // Imaginary
+          VectorTools::project_boundary_values_curl_conforming_l2(
+            *this->dof_handler_trial_skeleton,
+            dim,
+            TimeHarmonicMaxwellMagneticFieldDefined<dim>(
+              &this->simulation_parameters
+                 .boundary_conditions_time_harmonic_electromagnetics
+                 .imposed_electromagnetic_fields.at(id)
+                 ->h_x_real,
+              &this->simulation_parameters
+                 .boundary_conditions_time_harmonic_electromagnetics
+                 .imposed_electromagnetic_fields.at(id)
+                 ->h_y_real,
+              &this->simulation_parameters
+                 .boundary_conditions_time_harmonic_electromagnetics
+                 .imposed_electromagnetic_fields.at(id)
+                 ->h_z_real,
+              &this->simulation_parameters
+                 .boundary_conditions_time_harmonic_electromagnetics
+                 .imposed_electromagnetic_fields.at(id)
+                 ->h_x_imag,
+              &this->simulation_parameters
+                 .boundary_conditions_time_harmonic_electromagnetics
+                 .imposed_electromagnetic_fields.at(id)
+                 ->h_y_imag,
+              &this->simulation_parameters
+                 .boundary_conditions_time_harmonic_electromagnetics
+                 .imposed_electromagnetic_fields.at(id)
+                 ->h_z_imag),
+            id,
+            this->nonzero_constraints);
+        }
+    }
+
+  // The DPG method requires the use of skeleton elements and shape functions.
+  // Because we want to use high-order Nedelec elements for the face, but dealii
+  // does not support a FE_FaceNedelec, we hack our way around by using full
+  // cell elements, but freezing the interior dofs using constrain_dofs_to_zero.
+  // To do so, we create a container for all dof indices and a container for the
+  // face dof indices and we loop on all the faces of each cell to find which
+  // dofs are on the face and flag them. The remaining dofs are then constrained
+  // to zero.
+
+  std::vector<types::global_dof_index> cell_dof_indices(
+    this->fe_trial_skeleton->n_dofs_per_cell());
+  std::vector<types::global_dof_index> face_dof_indices(
+    this->fe_trial_skeleton->n_dofs_per_face());
+  std::vector<bool> is_dof_on_face(this->fe_trial_skeleton->n_dofs_per_cell(),
+                                   false);
+
+  // Loop on all skeleton dofs and set the interior constraints to zero
+  for (const auto &cell :
+       this->dof_handler_trial_skeleton->active_cell_iterators())
+    {
+      if (cell->is_locally_owned())
+        {
+          // Get all dof indices on the cell
+          cell->get_dof_indices(cell_dof_indices);
+
+          // Loop on all the faces of the cell
+          for (const auto &face : cell->face_iterators())
+            {
+              face->get_dof_indices(face_dof_indices);
+
+              // Loop on all dofs on the face
+              for (const auto &face_dof : face_dof_indices)
+                {
+                  // Find the first iterator in the cell dof indices that
+                  // matches the face dof (find where the face dof is in the
+                  // cell dof indices)
+                  const auto it = std::find(cell_dof_indices.begin(),
+                                            cell_dof_indices.end(),
+                                            face_dof);
+
+                  // If the dof is on the face (find returns the second
+                  // iterator if no match is found), set the corresponding
+                  // flag to true
+                  if (it != cell_dof_indices.end())
+                    {
+                      is_dof_on_face[std::distance(cell_dof_indices.begin(),
+                                                   it)] = true;
+                    }
+                }
+            }
+
+          // Loop on all dofs on the cell and constrain the interior ones to
+          // zero
+          for (unsigned int index = 0; index < cell_dof_indices.size(); ++index)
+            {
+              // If the dof is not on a face, then it is an interior dof
+              if (!is_dof_on_face[index])
+                {
+                  this->nonzero_constraints.constrain_dof_to_zero(
+                    cell_dof_indices[index]);
+                }
+            }
+        }
+    }
+  this->nonzero_constraints.close();
 }
 
 template <int dim>
