@@ -105,8 +105,8 @@ Inheritance diagram for TanhLevelsetTracerReactionPrefactor:</div>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pub-methods" name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
-<tr class="memitem:a74fbe3fdf0aa666f83349f900ee64f56" id="r_a74fbe3fdf0aa666f83349f900ee64f56"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classTanhLevelsetTracerReactionPrefactor.html#a74fbe3fdf0aa666f83349f900ee64f56">TanhLevelsetTracerReactionPrefactor</a> (const double p_tracer_reaction_constant_outside, const double p_tracer_reaction_constant_inside, const double p_thickness, const double p_tracer_reaction_order)</td></tr>
-<tr class="separator:a74fbe3fdf0aa666f83349f900ee64f56"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a80799d93e7014337b1974029da2507a8" id="r_a80799d93e7014337b1974029da2507a8"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classTanhLevelsetTracerReactionPrefactor.html#a80799d93e7014337b1974029da2507a8">TanhLevelsetTracerReactionPrefactor</a> (const double p_tracer_reaction_constant_outside, const double p_tracer_reaction_constant_inside, const double p_thickness, const double p_tracer_reaction_order, const double p_tracer_reaction_threshold)</td></tr>
+<tr class="separator:a80799d93e7014337b1974029da2507a8"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a33f32caa720f53c245bc027c5ffa8273" id="r_a33f32caa720f53c245bc027c5ffa8273"><td class="memItemLeft" align="right" valign="top">double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classTanhLevelsetTracerReactionPrefactor.html#a33f32caa720f53c245bc027c5ffa8273">value</a> (const std::map&lt; <a class="el" href="physical__property__model_8h.html#a0b2c854385812ebfac83689a5c3ead58">field</a>, double &gt; &amp;field_values) override</td></tr>
 <tr class="separator:a33f32caa720f53c245bc027c5ffa8273"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aa4a7edb052763434879f7c58446801ee" id="r_aa4a7edb052763434879f7c58446801ee"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classTanhLevelsetTracerReactionPrefactor.html#aa4a7edb052763434879f7c58446801ee">vector_value</a> (const std::map&lt; <a class="el" href="physical__property__model_8h.html#a0b2c854385812ebfac83689a5c3ead58">field</a>, std::vector&lt; double &gt; &gt; &amp;field_vectors, std::vector&lt; double &gt; &amp;property_vector) override</td></tr>
@@ -141,6 +141,8 @@ Private Attributes</h2></td></tr>
 <tr class="separator:addbfd39f10b8d6bdf9adf539657ffebe"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aebb2e26e2588bbdf079d59c160323432" id="r_aebb2e26e2588bbdf079d59c160323432"><td class="memItemLeft" align="right" valign="top">const double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classTanhLevelsetTracerReactionPrefactor.html#aebb2e26e2588bbdf079d59c160323432">tracer_reaction_order</a></td></tr>
 <tr class="separator:aebb2e26e2588bbdf079d59c160323432"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ad27deef5fda024e124ff1fd38751ff3f" id="r_ad27deef5fda024e124ff1fd38751ff3f"><td class="memItemLeft" align="right" valign="top">const double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classTanhLevelsetTracerReactionPrefactor.html#ad27deef5fda024e124ff1fd38751ff3f">tracer_reaction_threshold</a></td></tr>
+<tr class="separator:ad27deef5fda024e124ff1fd38751ff3f"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="inherited" name="inherited"></a>
 Additional Inherited Members</h2></td></tr>
@@ -158,10 +160,10 @@ Additional Inherited Members</h2></td></tr>
 <div class="textblock"><p>Tanh level-set-dependent tracer reaction prefactor. </p>
 <p>This model computes a prefactor that depends on the level-set function, smoothly transitioning between a reaction constant (\alpha) inside and outside the solid. </p>
 
-<p class="definition">Definition at line <a class="el" href="tracer__reaction__model_8h_source.html#l00218">218</a> of file <a class="el" href="tracer__reaction__model_8h_source.html">tracer_reaction_model.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="tracer__reaction__model_8h_source.html#l00278">278</a> of file <a class="el" href="tracer__reaction__model_8h_source.html">tracer_reaction_model.h</a>.</p>
 </div><h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
-<a id="a74fbe3fdf0aa666f83349f900ee64f56" name="a74fbe3fdf0aa666f83349f900ee64f56"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a74fbe3fdf0aa666f83349f900ee64f56">&#9670;&#160;</a></span>TanhLevelsetTracerReactionPrefactor()</h2>
+<a id="a80799d93e7014337b1974029da2507a8" name="a80799d93e7014337b1974029da2507a8"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a80799d93e7014337b1974029da2507a8">&#9670;&#160;</a></span>TanhLevelsetTracerReactionPrefactor()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -191,7 +193,13 @@ Additional Inherited Members</h2></td></tr>
           <td class="paramkey"></td>
           <td></td>
           <td class="paramtype">const double&#160;</td>
-          <td class="paramname"><em>p_tracer_reaction_order</em>&#160;</td>
+          <td class="paramname"><em>p_tracer_reaction_order</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const double&#160;</td>
+          <td class="paramname"><em>p_tracer_reaction_threshold</em>&#160;</td>
         </tr>
         <tr>
           <td></td>
@@ -209,15 +217,16 @@ Additional Inherited Members</h2></td></tr>
 <p>Constructor. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">p_tracer_reaction_constant_outside</td><td>Reaction constant (\alpha) outside the solid. </td></tr>
-    <tr><td class="paramname">p_tracer_reaction_constant_inside</td><td>Reaction constant (\alpha) inside the solid. </td></tr>
-    <tr><td class="paramname">p_thickness</td><td>Thickness for the tanh smoothing function. </td></tr>
-    <tr><td class="paramname">p_tracer_reaction_order</td><td>The reaction order. </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">p_tracer_reaction_constant_outside</td><td>Reaction constant (\alpha) outside the solid. </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">p_tracer_reaction_constant_inside</td><td>Reaction constant (\alpha) inside the solid. </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">p_thickness</td><td>Thickness for the tanh smoothing function. </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">p_tracer_reaction_order</td><td>The reaction order. </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">p_tracer_reaction_threshold</td><td>The threshold value used to smoothly floor the concentration. </td></tr>
   </table>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="tracer__reaction__model_8h_source.html#l00229">229</a> of file <a class="el" href="tracer__reaction__model_8h_source.html">tracer_reaction_model.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="tracer__reaction__model_8h_source.html#l00293">293</a> of file <a class="el" href="tracer__reaction__model_8h_source.html">tracer_reaction_model.h</a>.</p>
 
 <p class="reference">References <a class="el" href="physical__property__model_8h_source.html#l00046">levelset</a>, <a class="el" href="physical__property__model_8h_source.html#l00235">PhysicalPropertyModel::model_depends_on</a>, and <a class="el" href="physical__property__model_8h_source.html#l00047">tracer_concentration</a>.</p>
 
@@ -261,8 +270,8 @@ Additional Inherited Members</h2></td></tr>
 <p>Compute the jacobian (partial derivative) of the prefactor with respect to a specified field. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">field_values</td><td>Map of field values. </td></tr>
-    <tr><td class="paramname">id</td><td>The field identifier with respect to which the derivative is computed. </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">field_values</td><td>Map of field values. </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">id</td><td>The field identifier with respect to which the derivative is computed. </td></tr>
   </table>
   </dd>
 </dl>
@@ -270,9 +279,9 @@ Additional Inherited Members</h2></td></tr>
 
 <p>Implements <a class="el" href="classPhysicalPropertyModel.html#a3fc51243a48832ed3c6e3b4ee797c6b2">PhysicalPropertyModel</a>.</p>
 
-<p class="definition">Definition at line <a class="el" href="tracer__reaction__model_8h_source.html#l00311">311</a> of file <a class="el" href="tracer__reaction__model_8h_source.html">tracer_reaction_model.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="tracer__reaction__model_8h_source.html#l00382">382</a> of file <a class="el" href="tracer__reaction__model_8h_source.html">tracer_reaction_model.h</a>.</p>
 
-<p class="reference">References <a class="el" href="tracer__reaction__model_8h_source.html#l00399">delta_reaction_constant</a>, <a class="el" href="physical__property__model_8h_source.html#l00046">levelset</a>, <a class="el" href="tracer__reaction__model_8h_source.html#l00398">thickness</a>, <a class="el" href="physical__property__model_8h_source.html#l00047">tracer_concentration</a>, <a class="el" href="tracer__reaction__model_8h_source.html#l00397">tracer_reaction_constant_inside</a>, and <a class="el" href="tracer__reaction__model_8h_source.html#l00400">tracer_reaction_order</a>.</p>
+<p class="reference">References <a class="el" href="tracer__reaction__model_8h_source.html#l00039">calculate_d_effective_concentration_dC()</a>, <a class="el" href="tracer__reaction__model_8h_source.html#l00025">calculate_effective_concentration()</a>, <a class="el" href="tracer__reaction__model_8h_source.html#l00488">delta_reaction_constant</a>, <a class="el" href="physical__property__model_8h_source.html#l00046">levelset</a>, <a class="el" href="tracer__reaction__model_8h_source.html#l00487">thickness</a>, <a class="el" href="physical__property__model_8h_source.html#l00047">tracer_concentration</a>, <a class="el" href="tracer__reaction__model_8h_source.html#l00486">tracer_reaction_constant_inside</a>, <a class="el" href="tracer__reaction__model_8h_source.html#l00489">tracer_reaction_order</a>, and <a class="el" href="tracer__reaction__model_8h_source.html#l00490">tracer_reaction_threshold</a>.</p>
 
 </div>
 </div>
@@ -303,7 +312,7 @@ Additional Inherited Members</h2></td></tr>
 <p>Compute the tracer reaction prefactor. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">field_values</td><td>Map of field values. </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">field_values</td><td>Map of field values. </td></tr>
   </table>
   </dd>
 </dl>
@@ -311,9 +320,9 @@ Additional Inherited Members</h2></td></tr>
 
 <p>Implements <a class="el" href="classPhysicalPropertyModel.html#a23d2b90f4f05ee9de4be96f6f9989a37">PhysicalPropertyModel</a>.</p>
 
-<p class="definition">Definition at line <a class="el" href="tracer__reaction__model_8h_source.html#l00252">252</a> of file <a class="el" href="tracer__reaction__model_8h_source.html">tracer_reaction_model.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="tracer__reaction__model_8h_source.html#l00318">318</a> of file <a class="el" href="tracer__reaction__model_8h_source.html">tracer_reaction_model.h</a>.</p>
 
-<p class="reference">References <a class="el" href="tracer__reaction__model_8h_source.html#l00399">delta_reaction_constant</a>, <a class="el" href="physical__property__model_8h_source.html#l00046">levelset</a>, <a class="el" href="tracer__reaction__model_8h_source.html#l00398">thickness</a>, <a class="el" href="physical__property__model_8h_source.html#l00047">tracer_concentration</a>, <a class="el" href="tracer__reaction__model_8h_source.html#l00397">tracer_reaction_constant_inside</a>, and <a class="el" href="tracer__reaction__model_8h_source.html#l00400">tracer_reaction_order</a>.</p>
+<p class="reference">References <a class="el" href="tracer__reaction__model_8h_source.html#l00025">calculate_effective_concentration()</a>, <a class="el" href="tracer__reaction__model_8h_source.html#l00488">delta_reaction_constant</a>, <a class="el" href="physical__property__model_8h_source.html#l00046">levelset</a>, <a class="el" href="tracer__reaction__model_8h_source.html#l00487">thickness</a>, <a class="el" href="physical__property__model_8h_source.html#l00047">tracer_concentration</a>, <a class="el" href="tracer__reaction__model_8h_source.html#l00486">tracer_reaction_constant_inside</a>, <a class="el" href="tracer__reaction__model_8h_source.html#l00489">tracer_reaction_order</a>, and <a class="el" href="tracer__reaction__model_8h_source.html#l00490">tracer_reaction_threshold</a>.</p>
 
 </div>
 </div>
@@ -360,18 +369,18 @@ Additional Inherited Members</h2></td></tr>
 <p>Compute the vector jacobian (partial derivatives) of the prefactor with respect to a field. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">field_vectors</td><td>Map of field vectors. </td></tr>
-    <tr><td class="paramname">id</td><td>The field identifier with respect to which the derivative is computed. </td></tr>
-    <tr><td class="paramname">jacobian_vector</td><td>Vector to be filled with computed derivative values. </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">field_vectors</td><td>Map of field vectors. </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">id</td><td>The field identifier with respect to which the derivative is computed. </td></tr>
+    <tr><td class="paramdir">[out]</td><td class="paramname">jacobian_vector</td><td>Vector to be filled with computed derivative values. </td></tr>
   </table>
   </dd>
 </dl>
 
 <p>Implements <a class="el" href="classPhysicalPropertyModel.html#a522b52d0f3353ebb4eecb353f5130adc">PhysicalPropertyModel</a>.</p>
 
-<p class="definition">Definition at line <a class="el" href="tracer__reaction__model_8h_source.html#l00352">352</a> of file <a class="el" href="tracer__reaction__model_8h_source.html">tracer_reaction_model.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="tracer__reaction__model_8h_source.html#l00430">430</a> of file <a class="el" href="tracer__reaction__model_8h_source.html">tracer_reaction_model.h</a>.</p>
 
-<p class="reference">References <a class="el" href="tracer__reaction__model_8h_source.html#l00399">delta_reaction_constant</a>, <a class="el" href="physical__property__model_8h_source.html#l00046">levelset</a>, <a class="el" href="tracer__reaction__model_8h_source.html#l00398">thickness</a>, <a class="el" href="physical__property__model_8h_source.html#l00047">tracer_concentration</a>, <a class="el" href="tracer__reaction__model_8h_source.html#l00397">tracer_reaction_constant_inside</a>, and <a class="el" href="tracer__reaction__model_8h_source.html#l00400">tracer_reaction_order</a>.</p>
+<p class="reference">References <a class="el" href="tracer__reaction__model_8h_source.html#l00039">calculate_d_effective_concentration_dC()</a>, <a class="el" href="tracer__reaction__model_8h_source.html#l00025">calculate_effective_concentration()</a>, <a class="el" href="tracer__reaction__model_8h_source.html#l00488">delta_reaction_constant</a>, <a class="el" href="physical__property__model_8h_source.html#l00046">levelset</a>, <a class="el" href="tracer__reaction__model_8h_source.html#l00487">thickness</a>, <a class="el" href="physical__property__model_8h_source.html#l00047">tracer_concentration</a>, <a class="el" href="tracer__reaction__model_8h_source.html#l00486">tracer_reaction_constant_inside</a>, <a class="el" href="tracer__reaction__model_8h_source.html#l00489">tracer_reaction_order</a>, and <a class="el" href="tracer__reaction__model_8h_source.html#l00490">tracer_reaction_threshold</a>.</p>
 
 </div>
 </div>
@@ -412,17 +421,17 @@ Additional Inherited Members</h2></td></tr>
 <p>Compute a vector of tracer reaction prefactor values. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">field_vectors</td><td>Map of field vectors. </td></tr>
-    <tr><td class="paramname">property_vector</td><td>Vector to be filled with computed prefactor values. </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">field_vectors</td><td>Map of field vectors. </td></tr>
+    <tr><td class="paramdir">[out]</td><td class="paramname">property_vector</td><td>Vector to be filled with computed prefactor values. </td></tr>
   </table>
   </dd>
 </dl>
 
 <p>Implements <a class="el" href="classPhysicalPropertyModel.html#abd11737cff6dd346fc7bd238e59ceac6">PhysicalPropertyModel</a>.</p>
 
-<p class="definition">Definition at line <a class="el" href="tracer__reaction__model_8h_source.html#l00275">275</a> of file <a class="el" href="tracer__reaction__model_8h_source.html">tracer_reaction_model.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="tracer__reaction__model_8h_source.html#l00343">343</a> of file <a class="el" href="tracer__reaction__model_8h_source.html">tracer_reaction_model.h</a>.</p>
 
-<p class="reference">References <a class="el" href="tracer__reaction__model_8h_source.html#l00399">delta_reaction_constant</a>, <a class="el" href="physical__property__model_8h_source.html#l00046">levelset</a>, <a class="el" href="tracer__reaction__model_8h_source.html#l00398">thickness</a>, <a class="el" href="physical__property__model_8h_source.html#l00047">tracer_concentration</a>, <a class="el" href="tracer__reaction__model_8h_source.html#l00397">tracer_reaction_constant_inside</a>, and <a class="el" href="tracer__reaction__model_8h_source.html#l00400">tracer_reaction_order</a>.</p>
+<p class="reference">References <a class="el" href="tracer__reaction__model_8h_source.html#l00025">calculate_effective_concentration()</a>, <a class="el" href="tracer__reaction__model_8h_source.html#l00488">delta_reaction_constant</a>, <a class="el" href="physical__property__model_8h_source.html#l00046">levelset</a>, <a class="el" href="tracer__reaction__model_8h_source.html#l00487">thickness</a>, <a class="el" href="physical__property__model_8h_source.html#l00047">tracer_concentration</a>, <a class="el" href="tracer__reaction__model_8h_source.html#l00486">tracer_reaction_constant_inside</a>, <a class="el" href="tracer__reaction__model_8h_source.html#l00489">tracer_reaction_order</a>, and <a class="el" href="tracer__reaction__model_8h_source.html#l00490">tracer_reaction_threshold</a>.</p>
 
 </div>
 </div>
@@ -447,7 +456,7 @@ Additional Inherited Members</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="tracer__reaction__model_8h_source.html#l00399">399</a> of file <a class="el" href="tracer__reaction__model_8h_source.html">tracer_reaction_model.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="tracer__reaction__model_8h_source.html#l00488">488</a> of file <a class="el" href="tracer__reaction__model_8h_source.html">tracer_reaction_model.h</a>.</p>
 
 </div>
 </div>
@@ -471,7 +480,7 @@ Additional Inherited Members</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="tracer__reaction__model_8h_source.html#l00398">398</a> of file <a class="el" href="tracer__reaction__model_8h_source.html">tracer_reaction_model.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="tracer__reaction__model_8h_source.html#l00487">487</a> of file <a class="el" href="tracer__reaction__model_8h_source.html">tracer_reaction_model.h</a>.</p>
 
 </div>
 </div>
@@ -495,7 +504,7 @@ Additional Inherited Members</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="tracer__reaction__model_8h_source.html#l00397">397</a> of file <a class="el" href="tracer__reaction__model_8h_source.html">tracer_reaction_model.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="tracer__reaction__model_8h_source.html#l00486">486</a> of file <a class="el" href="tracer__reaction__model_8h_source.html">tracer_reaction_model.h</a>.</p>
 
 </div>
 </div>
@@ -519,7 +528,7 @@ Additional Inherited Members</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="tracer__reaction__model_8h_source.html#l00396">396</a> of file <a class="el" href="tracer__reaction__model_8h_source.html">tracer_reaction_model.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="tracer__reaction__model_8h_source.html#l00485">485</a> of file <a class="el" href="tracer__reaction__model_8h_source.html">tracer_reaction_model.h</a>.</p>
 
 </div>
 </div>
@@ -543,7 +552,31 @@ Additional Inherited Members</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="tracer__reaction__model_8h_source.html#l00400">400</a> of file <a class="el" href="tracer__reaction__model_8h_source.html">tracer_reaction_model.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="tracer__reaction__model_8h_source.html#l00489">489</a> of file <a class="el" href="tracer__reaction__model_8h_source.html">tracer_reaction_model.h</a>.</p>
+
+</div>
+</div>
+<a id="ad27deef5fda024e124ff1fd38751ff3f" name="ad27deef5fda024e124ff1fd38751ff3f"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ad27deef5fda024e124ff1fd38751ff3f">&#9670;&#160;</a></span>tracer_reaction_threshold</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">const double TanhLevelsetTracerReactionPrefactor::tracer_reaction_threshold</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">private</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p class="definition">Definition at line <a class="el" href="tracer__reaction__model_8h_source.html#l00490">490</a> of file <a class="el" href="tracer__reaction__model_8h_source.html">tracer_reaction_model.h</a>.</p>
 
 </div>
 </div>

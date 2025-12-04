@@ -1,9 +1,13 @@
 <map id="/home/runner/work/lethe/lethe/source/core/tracer_reaction_model.cc" name="/home/runner/work/lethe/lethe/source/core/tracer_reaction_model.cc">
-<area shape="rect" id="Node000001" title=" " alt="" coords="537,5,719,60"/>
-<area shape="rect" id="Node000002" href="$tracer__reaction__model_8h.html" title=" " alt="" coords="552,108,704,148"/>
-<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="631,60,631,94,625,94,625,60"/>
+<area shape="rect" id="Node000001" title=" " alt="" coords="689,5,871,60"/>
+<area shape="rect" id="Node000002" href="$tracer__reaction__model_8h.html" title=" " alt="" coords="704,108,856,148"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="783,60,783,94,777,94,777,60"/>
 <area shape="rect" id="Node000003" href="$physical__property__model_8h.html" title=" " alt="" coords="543,196,713,236"/>
-<area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="631,148,631,182,625,182,625,148"/>
+<area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="748,150,674,192,672,187,745,146"/>
+<area shape="rect" id="Node000045" title=" " alt="" coords="737,203,823,229"/>
+<area shape="poly" id="edge29_Node000002_Node000045" title=" " alt="" coords="783,148,783,189,777,189,777,148"/>
+<area shape="rect" id="Node000046" title=" " alt="" coords="847,203,910,229"/>
+<area shape="poly" id="edge30_Node000002_Node000046" title=" " alt="" coords="804,146,857,192,853,196,800,150"/>
 <area shape="rect" id="Node000004" href="$parameters_8h.html" title=" " alt="" coords="600,445,741,471"/>
 <area shape="poly" id="edge3_Node000003_Node000004" title=" " alt="" coords="649,234,692,286,713,320,729,357,734,377,729,398,716,420,699,438,695,434,712,417,724,396,728,377,724,358,709,322,688,289,645,238"/>
 <area shape="rect" id="Node000041" href="$simulation__control_8h.html" title="Simulation control classes for managing time&#45;stepping and iteration control in Lethe." alt="" coords="469,284,656,309"/>

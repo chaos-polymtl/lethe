@@ -86,19 +86,26 @@ $(function() {
 </div><!-- top -->
 <div class="header">
   <div class="summary">
-<a href="#nested-classes">Classes</a>  </div>
+<a href="#nested-classes">Classes</a> &#124;
+<a href="#func-members">Functions</a>  </div>
   <div class="headertitle"><div class="title">tracer_reaction_model.h File Reference</div></div>
 </div><!--header-->
 <div class="contents">
 <div class="textblock"><code>#include &lt;<a class="el" href="physical__property__model_8h_source.html">core/physical_property_model.h</a>&gt;</code><br />
+<code>#include &lt;algorithm&gt;</code><br />
+<code>#include &lt;cmath&gt;</code><br />
 </div><div class="textblock"><div class="dynheader">
 Include dependency graph for tracer_reaction_model.h:</div>
 <div class="dyncontent">
 <div class="center"><img src="tracer__reaction__model_8h__incl.png" border="0" usemap="#a_2home_2runner_2work_2lethe_2lethe_2include_2core_2tracer__reaction__model_8h" alt=""/></div>
 <map name="a_2home_2runner_2work_2lethe_2lethe_2include_2core_2tracer__reaction__model_8h" id="a_2home_2runner_2work_2lethe_2lethe_2include_2core_2tracer__reaction__model_8h">
-<area shape="rect" title=" " alt="" coords="456,5,640,60"/>
+<area shape="rect" title=" " alt="" coords="608,5,792,60"/>
 <area shape="rect" href="physical__property__model_8h.html" title=" " alt="" coords="463,108,633,148"/>
-<area shape="poly" title=" " alt="" coords="551,60,551,94,545,94,545,60"/>
+<area shape="poly" title=" " alt="" coords="659,62,592,103,589,98,656,58"/>
+<area shape="rect" title=" " alt="" coords="657,115,743,141"/>
+<area shape="poly" title=" " alt="" coords="703,60,703,101,697,101,697,60"/>
+<area shape="rect" title=" " alt="" coords="767,115,830,141"/>
+<area shape="poly" title=" " alt="" coords="730,58,778,104,774,107,726,62"/>
 <area shape="rect" href="parameters_8h.html" title=" " alt="" coords="520,357,661,383"/>
 <area shape="poly" title=" " alt="" coords="569,146,612,198,633,232,649,269,654,289,649,310,636,332,619,350,615,346,632,329,644,308,648,289,644,270,629,234,608,201,565,150"/>
 <area shape="rect" href="simulation__control_8h.html" title="Simulation control classes for managing time&#45;stepping and iteration control in Lethe." alt="" coords="389,196,576,221"/>
@@ -336,7 +343,112 @@ Classes</h2></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classGaussianLevelsetTracerReactionPrefactor.html">GaussianLevelsetTracerReactionPrefactor</a></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table><table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="func-members" name="func-members"></a>
+Functions</h2></td></tr>
+<tr class="memitem:a17baa2cf677bbb99c2d9f28ef6f591b9" id="r_a17baa2cf677bbb99c2d9f28ef6f591b9"><td class="memItemLeft" align="right" valign="top">double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="tracer__reaction__model_8h.html#a17baa2cf677bbb99c2d9f28ef6f591b9">calculate_effective_concentration</a> (const double C, const double threshold)</td></tr>
+<tr class="separator:a17baa2cf677bbb99c2d9f28ef6f591b9"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ae63f9573c648bb6de89d9730bcbd699a" id="r_ae63f9573c648bb6de89d9730bcbd699a"><td class="memItemLeft" align="right" valign="top">double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="tracer__reaction__model_8h.html#ae63f9573c648bb6de89d9730bcbd699a">calculate_d_effective_concentration_dC</a> (const double C, const double threshold)</td></tr>
+<tr class="separator:ae63f9573c648bb6de89d9730bcbd699a"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
+<h2 class="groupheader">Function Documentation</h2>
+<a id="ae63f9573c648bb6de89d9730bcbd699a" name="ae63f9573c648bb6de89d9730bcbd699a"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ae63f9573c648bb6de89d9730bcbd699a">&#9670;&#160;</a></span>calculate_d_effective_concentration_dC()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">double calculate_d_effective_concentration_dC </td>
+          <td>(</td>
+          <td class="paramtype">const double&#160;</td>
+          <td class="paramname"><em>C</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const double&#160;</td>
+          <td class="paramname"><em>threshold</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Computes the derivative of effective concentration in regards to the input concentration. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramdir">[in]</td><td class="paramname">C</td><td>Concentration value </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">threshold</td><td>Threshold value above which effective concentration will be </td></tr>
+  </table>
+  </dd>
+</dl>
+
+<p class="definition">Definition at line <a class="el" href="tracer__reaction__model_8h_source.html#l00039">39</a> of file <a class="el" href="tracer__reaction__model_8h_source.html">tracer_reaction_model.h</a>.</p>
+
+<p class="reference">References <a class="el" href="tracer__reaction__model_8h_source.html#l00025">calculate_effective_concentration()</a>.</p>
+
+</div>
+</div>
+<a id="a17baa2cf677bbb99c2d9f28ef6f591b9" name="a17baa2cf677bbb99c2d9f28ef6f591b9"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a17baa2cf677bbb99c2d9f28ef6f591b9">&#9670;&#160;</a></span>calculate_effective_concentration()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">double calculate_effective_concentration </td>
+          <td>(</td>
+          <td class="paramtype">const double&#160;</td>
+          <td class="paramname"><em>C</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const double&#160;</td>
+          <td class="paramname"><em>threshold</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Computes the effective concentration above the threshold and with a smooth transition. </p>
+<p>This function prevents NaN in the reaction rate computations when the reaction order is lower than 1 by introducing a small threshold value, to be set above 0.</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramdir">[in]</td><td class="paramname">C</td><td>Concentration value </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">threshold</td><td>Threshold value above which effective concentration will be </td></tr>
+  </table>
+  </dd>
+</dl>
+
+<p class="definition">Definition at line <a class="el" href="tracer__reaction__model_8h_source.html#l00025">25</a> of file <a class="el" href="tracer__reaction__model_8h_source.html">tracer_reaction_model.h</a>.</p>
+
+</div>
+</div>
 </div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>

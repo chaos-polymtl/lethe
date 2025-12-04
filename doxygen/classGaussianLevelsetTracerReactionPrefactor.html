@@ -105,8 +105,8 @@ Inheritance diagram for GaussianLevelsetTracerReactionPrefactor:</div>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pub-methods" name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
-<tr class="memitem:ac3fc46f7438e82d13c711eef471813ae" id="r_ac3fc46f7438e82d13c711eef471813ae"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classGaussianLevelsetTracerReactionPrefactor.html#ac3fc46f7438e82d13c711eef471813ae">GaussianLevelsetTracerReactionPrefactor</a> (const double p_tracer_reaction_constant_interface, const double p_tracer_reaction_constant_bulk, const double p_thickness, const double p_tracer_reaction_order)</td></tr>
-<tr class="separator:ac3fc46f7438e82d13c711eef471813ae"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a2d0dd2d65f2fd19d12930231997bbe3d" id="r_a2d0dd2d65f2fd19d12930231997bbe3d"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classGaussianLevelsetTracerReactionPrefactor.html#a2d0dd2d65f2fd19d12930231997bbe3d">GaussianLevelsetTracerReactionPrefactor</a> (const double p_tracer_reaction_constant_interface, const double p_tracer_reaction_constant_bulk, const double p_thickness, const double p_tracer_reaction_order, const double p_tracer_reaction_threshold)</td></tr>
+<tr class="separator:a2d0dd2d65f2fd19d12930231997bbe3d"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:acaa519af6a7330880ec52e10f822f396" id="r_acaa519af6a7330880ec52e10f822f396"><td class="memItemLeft" align="right" valign="top">double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classGaussianLevelsetTracerReactionPrefactor.html#acaa519af6a7330880ec52e10f822f396">value</a> (const std::map&lt; <a class="el" href="physical__property__model_8h.html#a0b2c854385812ebfac83689a5c3ead58">field</a>, double &gt; &amp;field_values) override</td></tr>
 <tr class="separator:acaa519af6a7330880ec52e10f822f396"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a221d093b45a566ba1c5e9edcf417dd67" id="r_a221d093b45a566ba1c5e9edcf417dd67"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classGaussianLevelsetTracerReactionPrefactor.html#a221d093b45a566ba1c5e9edcf417dd67">vector_value</a> (const std::map&lt; <a class="el" href="physical__property__model_8h.html#a0b2c854385812ebfac83689a5c3ead58">field</a>, std::vector&lt; double &gt; &gt; &amp;field_vectors, std::vector&lt; double &gt; &amp;property_vector) override</td></tr>
@@ -141,6 +141,8 @@ Private Attributes</h2></td></tr>
 <tr class="separator:a9a8d78eb893ae9ced5f54cf125709058"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aaace80deba36a25b99c1d3c788693b19" id="r_aaace80deba36a25b99c1d3c788693b19"><td class="memItemLeft" align="right" valign="top">const double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classGaussianLevelsetTracerReactionPrefactor.html#aaace80deba36a25b99c1d3c788693b19">tracer_reaction_order</a></td></tr>
 <tr class="separator:aaace80deba36a25b99c1d3c788693b19"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a9f9ec7a41f09d5b6fd5723c6de299cf5" id="r_a9f9ec7a41f09d5b6fd5723c6de299cf5"><td class="memItemLeft" align="right" valign="top">const double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classGaussianLevelsetTracerReactionPrefactor.html#a9f9ec7a41f09d5b6fd5723c6de299cf5">tracer_reaction_threshold</a></td></tr>
+<tr class="separator:a9f9ec7a41f09d5b6fd5723c6de299cf5"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="inherited" name="inherited"></a>
 Additional Inherited Members</h2></td></tr>
@@ -157,10 +159,10 @@ Additional Inherited Members</h2></td></tr>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>Reaction prefactor that depends on the Gaussian of the level set. </p>
 
-<p class="definition">Definition at line <a class="el" href="tracer__reaction__model_8h_source.html#l00406">406</a> of file <a class="el" href="tracer__reaction__model_8h_source.html">tracer_reaction_model.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="tracer__reaction__model_8h_source.html#l00496">496</a> of file <a class="el" href="tracer__reaction__model_8h_source.html">tracer_reaction_model.h</a>.</p>
 </div><h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
-<a id="ac3fc46f7438e82d13c711eef471813ae" name="ac3fc46f7438e82d13c711eef471813ae"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ac3fc46f7438e82d13c711eef471813ae">&#9670;&#160;</a></span>GaussianLevelsetTracerReactionPrefactor()</h2>
+<a id="a2d0dd2d65f2fd19d12930231997bbe3d" name="a2d0dd2d65f2fd19d12930231997bbe3d"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a2d0dd2d65f2fd19d12930231997bbe3d">&#9670;&#160;</a></span>GaussianLevelsetTracerReactionPrefactor()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -190,7 +192,13 @@ Additional Inherited Members</h2></td></tr>
           <td class="paramkey"></td>
           <td></td>
           <td class="paramtype">const double&#160;</td>
-          <td class="paramname"><em>p_tracer_reaction_order</em>&#160;</td>
+          <td class="paramname"><em>p_tracer_reaction_order</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const double&#160;</td>
+          <td class="paramname"><em>p_tracer_reaction_threshold</em>&#160;</td>
         </tr>
         <tr>
           <td></td>
@@ -212,11 +220,12 @@ Additional Inherited Members</h2></td></tr>
     <tr><td class="paramdir">[in]</td><td class="paramname">p_tracer_reaction_constant_bulk</td><td>Reaction constant in the bulk of the phases </td></tr>
     <tr><td class="paramdir">[in]</td><td class="paramname">p_thickness</td><td>Thickness of the Gaussian function used to smooth the property jump </td></tr>
     <tr><td class="paramdir">[in]</td><td class="paramname">p_tracer_reaction_order</td><td>The reaction order. </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">p_tracer_reaction_threshold</td><td>The threshold value used to smoothly floor the concentration. </td></tr>
   </table>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="tracer__reaction__model_8h_source.html#l00421">421</a> of file <a class="el" href="tracer__reaction__model_8h_source.html">tracer_reaction_model.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="tracer__reaction__model_8h_source.html#l00513">513</a> of file <a class="el" href="tracer__reaction__model_8h_source.html">tracer_reaction_model.h</a>.</p>
 
 <p class="reference">References <a class="el" href="physical__property__model_8h_source.html#l00046">levelset</a>, <a class="el" href="physical__property__model_8h_source.html#l00235">PhysicalPropertyModel::model_depends_on</a>, and <a class="el" href="physical__property__model_8h_source.html#l00047">tracer_concentration</a>.</p>
 
@@ -269,9 +278,9 @@ Additional Inherited Members</h2></td></tr>
 
 <p>Implements <a class="el" href="classPhysicalPropertyModel.html#a3fc51243a48832ed3c6e3b4ee797c6b2">PhysicalPropertyModel</a>.</p>
 
-<p class="definition">Definition at line <a class="el" href="tracer__reaction__model_8h_source.html#l00518">518</a> of file <a class="el" href="tracer__reaction__model_8h_source.html">tracer_reaction_model.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="tracer__reaction__model_8h_source.html#l00616">616</a> of file <a class="el" href="tracer__reaction__model_8h_source.html">tracer_reaction_model.h</a>.</p>
 
-<p class="reference">References <a class="el" href="tracer__reaction__model_8h_source.html#l00614">delta_reaction_constant</a>, <a class="el" href="physical__property__model_8h_source.html#l00046">levelset</a>, <a class="el" href="tracer__reaction__model_8h_source.html#l00615">squared_thickness</a>, <a class="el" href="physical__property__model_8h_source.html#l00047">tracer_concentration</a>, <a class="el" href="tracer__reaction__model_8h_source.html#l00613">tracer_reaction_constant_bulk</a>, and <a class="el" href="tracer__reaction__model_8h_source.html#l00616">tracer_reaction_order</a>.</p>
+<p class="reference">References <a class="el" href="tracer__reaction__model_8h_source.html#l00039">calculate_d_effective_concentration_dC()</a>, <a class="el" href="tracer__reaction__model_8h_source.html#l00025">calculate_effective_concentration()</a>, <a class="el" href="tracer__reaction__model_8h_source.html#l00728">delta_reaction_constant</a>, <a class="el" href="physical__property__model_8h_source.html#l00046">levelset</a>, <a class="el" href="tracer__reaction__model_8h_source.html#l00729">squared_thickness</a>, <a class="el" href="physical__property__model_8h_source.html#l00047">tracer_concentration</a>, <a class="el" href="tracer__reaction__model_8h_source.html#l00727">tracer_reaction_constant_bulk</a>, <a class="el" href="tracer__reaction__model_8h_source.html#l00730">tracer_reaction_order</a>, and <a class="el" href="tracer__reaction__model_8h_source.html#l00731">tracer_reaction_threshold</a>.</p>
 
 </div>
 </div>
@@ -310,9 +319,9 @@ Additional Inherited Members</h2></td></tr>
 
 <p>Implements <a class="el" href="classPhysicalPropertyModel.html#a23d2b90f4f05ee9de4be96f6f9989a37">PhysicalPropertyModel</a>.</p>
 
-<p class="definition">Definition at line <a class="el" href="tracer__reaction__model_8h_source.html#l00447">447</a> of file <a class="el" href="tracer__reaction__model_8h_source.html">tracer_reaction_model.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="tracer__reaction__model_8h_source.html#l00541">541</a> of file <a class="el" href="tracer__reaction__model_8h_source.html">tracer_reaction_model.h</a>.</p>
 
-<p class="reference">References <a class="el" href="tracer__reaction__model_8h_source.html#l00614">delta_reaction_constant</a>, <a class="el" href="physical__property__model_8h_source.html#l00046">levelset</a>, <a class="el" href="tracer__reaction__model_8h_source.html#l00615">squared_thickness</a>, <a class="el" href="physical__property__model_8h_source.html#l00047">tracer_concentration</a>, <a class="el" href="tracer__reaction__model_8h_source.html#l00613">tracer_reaction_constant_bulk</a>, and <a class="el" href="tracer__reaction__model_8h_source.html#l00616">tracer_reaction_order</a>.</p>
+<p class="reference">References <a class="el" href="tracer__reaction__model_8h_source.html#l00025">calculate_effective_concentration()</a>, <a class="el" href="tracer__reaction__model_8h_source.html#l00728">delta_reaction_constant</a>, <a class="el" href="physical__property__model_8h_source.html#l00046">levelset</a>, <a class="el" href="tracer__reaction__model_8h_source.html#l00729">squared_thickness</a>, <a class="el" href="physical__property__model_8h_source.html#l00047">tracer_concentration</a>, <a class="el" href="tracer__reaction__model_8h_source.html#l00727">tracer_reaction_constant_bulk</a>, <a class="el" href="tracer__reaction__model_8h_source.html#l00730">tracer_reaction_order</a>, and <a class="el" href="tracer__reaction__model_8h_source.html#l00731">tracer_reaction_threshold</a>.</p>
 
 </div>
 </div>
@@ -368,9 +377,9 @@ Additional Inherited Members</h2></td></tr>
 
 <p>Implements <a class="el" href="classPhysicalPropertyModel.html#a522b52d0f3353ebb4eecb353f5130adc">PhysicalPropertyModel</a>.</p>
 
-<p class="definition">Definition at line <a class="el" href="tracer__reaction__model_8h_source.html#l00565">565</a> of file <a class="el" href="tracer__reaction__model_8h_source.html">tracer_reaction_model.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="tracer__reaction__model_8h_source.html#l00670">670</a> of file <a class="el" href="tracer__reaction__model_8h_source.html">tracer_reaction_model.h</a>.</p>
 
-<p class="reference">References <a class="el" href="tracer__reaction__model_8h_source.html#l00614">delta_reaction_constant</a>, <a class="el" href="physical__property__model_8h_source.html#l00046">levelset</a>, <a class="el" href="tracer__reaction__model_8h_source.html#l00615">squared_thickness</a>, <a class="el" href="physical__property__model_8h_source.html#l00047">tracer_concentration</a>, <a class="el" href="tracer__reaction__model_8h_source.html#l00613">tracer_reaction_constant_bulk</a>, and <a class="el" href="tracer__reaction__model_8h_source.html#l00616">tracer_reaction_order</a>.</p>
+<p class="reference">References <a class="el" href="tracer__reaction__model_8h_source.html#l00039">calculate_d_effective_concentration_dC()</a>, <a class="el" href="tracer__reaction__model_8h_source.html#l00025">calculate_effective_concentration()</a>, <a class="el" href="tracer__reaction__model_8h_source.html#l00728">delta_reaction_constant</a>, <a class="el" href="physical__property__model_8h_source.html#l00046">levelset</a>, <a class="el" href="tracer__reaction__model_8h_source.html#l00729">squared_thickness</a>, <a class="el" href="physical__property__model_8h_source.html#l00047">tracer_concentration</a>, <a class="el" href="tracer__reaction__model_8h_source.html#l00727">tracer_reaction_constant_bulk</a>, <a class="el" href="tracer__reaction__model_8h_source.html#l00730">tracer_reaction_order</a>, and <a class="el" href="tracer__reaction__model_8h_source.html#l00731">tracer_reaction_threshold</a>.</p>
 
 </div>
 </div>
@@ -419,9 +428,9 @@ Additional Inherited Members</h2></td></tr>
 
 <p>Implements <a class="el" href="classPhysicalPropertyModel.html#abd11737cff6dd346fc7bd238e59ceac6">PhysicalPropertyModel</a>.</p>
 
-<p class="definition">Definition at line <a class="el" href="tracer__reaction__model_8h_source.html#l00474">474</a> of file <a class="el" href="tracer__reaction__model_8h_source.html">tracer_reaction_model.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="tracer__reaction__model_8h_source.html#l00571">571</a> of file <a class="el" href="tracer__reaction__model_8h_source.html">tracer_reaction_model.h</a>.</p>
 
-<p class="reference">References <a class="el" href="tracer__reaction__model_8h_source.html#l00614">delta_reaction_constant</a>, <a class="el" href="physical__property__model_8h_source.html#l00046">levelset</a>, <a class="el" href="tracer__reaction__model_8h_source.html#l00615">squared_thickness</a>, <a class="el" href="physical__property__model_8h_source.html#l00047">tracer_concentration</a>, <a class="el" href="tracer__reaction__model_8h_source.html#l00613">tracer_reaction_constant_bulk</a>, and <a class="el" href="tracer__reaction__model_8h_source.html#l00616">tracer_reaction_order</a>.</p>
+<p class="reference">References <a class="el" href="tracer__reaction__model_8h_source.html#l00025">calculate_effective_concentration()</a>, <a class="el" href="tracer__reaction__model_8h_source.html#l00728">delta_reaction_constant</a>, <a class="el" href="physical__property__model_8h_source.html#l00046">levelset</a>, <a class="el" href="tracer__reaction__model_8h_source.html#l00729">squared_thickness</a>, <a class="el" href="physical__property__model_8h_source.html#l00047">tracer_concentration</a>, <a class="el" href="tracer__reaction__model_8h_source.html#l00727">tracer_reaction_constant_bulk</a>, <a class="el" href="tracer__reaction__model_8h_source.html#l00730">tracer_reaction_order</a>, and <a class="el" href="tracer__reaction__model_8h_source.html#l00731">tracer_reaction_threshold</a>.</p>
 
 </div>
 </div>
@@ -446,7 +455,7 @@ Additional Inherited Members</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="tracer__reaction__model_8h_source.html#l00614">614</a> of file <a class="el" href="tracer__reaction__model_8h_source.html">tracer_reaction_model.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="tracer__reaction__model_8h_source.html#l00728">728</a> of file <a class="el" href="tracer__reaction__model_8h_source.html">tracer_reaction_model.h</a>.</p>
 
 </div>
 </div>
@@ -470,7 +479,7 @@ Additional Inherited Members</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="tracer__reaction__model_8h_source.html#l00615">615</a> of file <a class="el" href="tracer__reaction__model_8h_source.html">tracer_reaction_model.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="tracer__reaction__model_8h_source.html#l00729">729</a> of file <a class="el" href="tracer__reaction__model_8h_source.html">tracer_reaction_model.h</a>.</p>
 
 </div>
 </div>
@@ -494,7 +503,7 @@ Additional Inherited Members</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="tracer__reaction__model_8h_source.html#l00613">613</a> of file <a class="el" href="tracer__reaction__model_8h_source.html">tracer_reaction_model.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="tracer__reaction__model_8h_source.html#l00727">727</a> of file <a class="el" href="tracer__reaction__model_8h_source.html">tracer_reaction_model.h</a>.</p>
 
 </div>
 </div>
@@ -518,7 +527,7 @@ Additional Inherited Members</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="tracer__reaction__model_8h_source.html#l00612">612</a> of file <a class="el" href="tracer__reaction__model_8h_source.html">tracer_reaction_model.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="tracer__reaction__model_8h_source.html#l00726">726</a> of file <a class="el" href="tracer__reaction__model_8h_source.html">tracer_reaction_model.h</a>.</p>
 
 </div>
 </div>
@@ -542,7 +551,31 @@ Additional Inherited Members</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="tracer__reaction__model_8h_source.html#l00616">616</a> of file <a class="el" href="tracer__reaction__model_8h_source.html">tracer_reaction_model.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="tracer__reaction__model_8h_source.html#l00730">730</a> of file <a class="el" href="tracer__reaction__model_8h_source.html">tracer_reaction_model.h</a>.</p>
+
+</div>
+</div>
+<a id="a9f9ec7a41f09d5b6fd5723c6de299cf5" name="a9f9ec7a41f09d5b6fd5723c6de299cf5"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a9f9ec7a41f09d5b6fd5723c6de299cf5">&#9670;&#160;</a></span>tracer_reaction_threshold</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">const double GaussianLevelsetTracerReactionPrefactor::tracer_reaction_threshold</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">private</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p class="definition">Definition at line <a class="el" href="tracer__reaction__model_8h_source.html#l00731">731</a> of file <a class="el" href="tracer__reaction__model_8h_source.html">tracer_reaction_model.h</a>.</p>
 
 </div>
 </div>

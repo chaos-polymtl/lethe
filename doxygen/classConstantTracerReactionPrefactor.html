@@ -105,8 +105,8 @@ Inheritance diagram for ConstantTracerReactionPrefactor:</div>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pub-methods" name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
-<tr class="memitem:a51833bfb5715c076391e5786a3b7dc16" id="r_a51833bfb5715c076391e5786a3b7dc16"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classConstantTracerReactionPrefactor.html#a51833bfb5715c076391e5786a3b7dc16">ConstantTracerReactionPrefactor</a> (const double p_tracer_reaction_constant, const double p_tracer_reaction_order)</td></tr>
-<tr class="separator:a51833bfb5715c076391e5786a3b7dc16"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a009053ad057901ad940859b6996e7b73" id="r_a009053ad057901ad940859b6996e7b73"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classConstantTracerReactionPrefactor.html#a009053ad057901ad940859b6996e7b73">ConstantTracerReactionPrefactor</a> (const double p_tracer_reaction_constant, const double p_tracer_reaction_order, const double p_tracer_reaction_threshold)</td></tr>
+<tr class="separator:a009053ad057901ad940859b6996e7b73"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:af41661abc0ea4a18369100453159fcb6" id="r_af41661abc0ea4a18369100453159fcb6"><td class="memItemLeft" align="right" valign="top">double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classConstantTracerReactionPrefactor.html#af41661abc0ea4a18369100453159fcb6">value</a> (const std::map&lt; <a class="el" href="physical__property__model_8h.html#a0b2c854385812ebfac83689a5c3ead58">field</a>, double &gt; &amp;fields_value) override</td></tr>
 <tr class="separator:af41661abc0ea4a18369100453159fcb6"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a708ea9de8c181f31c33c5201e97f5427" id="r_a708ea9de8c181f31c33c5201e97f5427"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classConstantTracerReactionPrefactor.html#a708ea9de8c181f31c33c5201e97f5427">vector_value</a> (const std::map&lt; <a class="el" href="physical__property__model_8h.html#a0b2c854385812ebfac83689a5c3ead58">field</a>, std::vector&lt; double &gt; &gt; &amp;field_vectors, std::vector&lt; double &gt; &amp;property_vector) override</td></tr>
@@ -135,6 +135,8 @@ Private Attributes</h2></td></tr>
 <tr class="separator:aff50e5f30bfad869991ad6df8dca22b9"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a0ebba2772f05a78bb06af9b6e4e37108" id="r_a0ebba2772f05a78bb06af9b6e4e37108"><td class="memItemLeft" align="right" valign="top">const double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classConstantTracerReactionPrefactor.html#a0ebba2772f05a78bb06af9b6e4e37108">tracer_reaction_order</a></td></tr>
 <tr class="separator:a0ebba2772f05a78bb06af9b6e4e37108"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a0a79f502f980323ec909ef5ce74045ca" id="r_a0a79f502f980323ec909ef5ce74045ca"><td class="memItemLeft" align="right" valign="top">const double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classConstantTracerReactionPrefactor.html#a0a79f502f980323ec909ef5ce74045ca">tracer_reaction_threshold</a></td></tr>
+<tr class="separator:a0a79f502f980323ec909ef5ce74045ca"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="inherited" name="inherited"></a>
 Additional Inherited Members</h2></td></tr>
@@ -150,17 +152,18 @@ Additional Inherited Members</h2></td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>Constant tracer reaction prefactor. </p>
-<p>This model computes the prefactor as  </p><p class="formulaDsp">
-\[
-  k = \alpha \, C^{(n-1)},
-\]
+<p>This model computes the prefactor as </p><p class="formulaDsp">
+\[ k = \alpha C_\text{eff}^{n-1}, \]
+</p>
+<p> with a smooth floor </p><p class="formulaDsp">
+\[C_\text{eff} = \sqrt{C^2 + \epsilon^2} \]
 </p>
 <p> where \( \alpha \) (the reaction constant) and the reaction order \( n \) are provided. </p>
 
-<p class="definition">Definition at line <a class="el" href="tracer__reaction__model_8h_source.html#l00096">96</a> of file <a class="el" href="tracer__reaction__model_8h_source.html">tracer_reaction_model.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="tracer__reaction__model_8h_source.html#l00131">131</a> of file <a class="el" href="tracer__reaction__model_8h_source.html">tracer_reaction_model.h</a>.</p>
 </div><h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
-<a id="a51833bfb5715c076391e5786a3b7dc16" name="a51833bfb5715c076391e5786a3b7dc16"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a51833bfb5715c076391e5786a3b7dc16">&#9670;&#160;</a></span>ConstantTracerReactionPrefactor()</h2>
+<a id="a009053ad057901ad940859b6996e7b73" name="a009053ad057901ad940859b6996e7b73"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a009053ad057901ad940859b6996e7b73">&#9670;&#160;</a></span>ConstantTracerReactionPrefactor()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -178,7 +181,13 @@ Additional Inherited Members</h2></td></tr>
           <td class="paramkey"></td>
           <td></td>
           <td class="paramtype">const double&#160;</td>
-          <td class="paramname"><em>p_tracer_reaction_order</em>&#160;</td>
+          <td class="paramname"><em>p_tracer_reaction_order</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const double&#160;</td>
+          <td class="paramname"><em>p_tracer_reaction_threshold</em>&#160;</td>
         </tr>
         <tr>
           <td></td>
@@ -196,13 +205,15 @@ Additional Inherited Members</h2></td></tr>
 <p>Constructor. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">p_tracer_reaction_constant</td><td>The base reaction constant \( \alpha \). </td></tr>
-    <tr><td class="paramname">p_tracer_reaction_order</td><td>The reaction order \( n \). </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">p_tracer_reaction_constant</td><td>The base reaction constant \( \alpha
+\). </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">p_tracer_reaction_order</td><td>The reaction order \( n \). </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">p_tracer_reaction_threshold</td><td>The threshold value used to smoothly floor the concentration. </td></tr>
   </table>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="tracer__reaction__model_8h_source.html#l00105">105</a> of file <a class="el" href="tracer__reaction__model_8h_source.html">tracer_reaction_model.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="tracer__reaction__model_8h_source.html#l00143">143</a> of file <a class="el" href="tracer__reaction__model_8h_source.html">tracer_reaction_model.h</a>.</p>
 
 <p class="reference">References <a class="el" href="physical__property__model_8h_source.html#l00235">PhysicalPropertyModel::model_depends_on</a>, and <a class="el" href="physical__property__model_8h_source.html#l00047">tracer_concentration</a>.</p>
 
@@ -246,8 +257,8 @@ Additional Inherited Members</h2></td></tr>
 <p>Compute the jacobian (partial derivative) of the prefactor with respect to a field. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">field_values</td><td>Map of field values. </td></tr>
-    <tr><td class="paramname">id</td><td>The field identifier with respect to which the derivative is computed. </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">field_values</td><td>Map of field values. </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">id</td><td>The field identifier with respect to which the derivative is computed. </td></tr>
   </table>
   </dd>
 </dl>
@@ -255,9 +266,9 @@ Additional Inherited Members</h2></td></tr>
 
 <p>Implements <a class="el" href="classPhysicalPropertyModel.html#a3fc51243a48832ed3c6e3b4ee797c6b2">PhysicalPropertyModel</a>.</p>
 
-<p class="definition">Definition at line <a class="el" href="tracer__reaction__model_8h_source.html#l00162">162</a> of file <a class="el" href="tracer__reaction__model_8h_source.html">tracer_reaction_model.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="tracer__reaction__model_8h_source.html#l00207">207</a> of file <a class="el" href="tracer__reaction__model_8h_source.html">tracer_reaction_model.h</a>.</p>
 
-<p class="reference">References <a class="el" href="physical__property__model_8h_source.html#l00047">tracer_concentration</a>, <a class="el" href="tracer__reaction__model_8h_source.html#l00207">tracer_reaction_constant</a>, and <a class="el" href="tracer__reaction__model_8h_source.html#l00208">tracer_reaction_order</a>.</p>
+<p class="reference">References <a class="el" href="tracer__reaction__model_8h_source.html#l00039">calculate_d_effective_concentration_dC()</a>, <a class="el" href="tracer__reaction__model_8h_source.html#l00025">calculate_effective_concentration()</a>, <a class="el" href="physical__property__model_8h_source.html#l00047">tracer_concentration</a>, <a class="el" href="tracer__reaction__model_8h_source.html#l00266">tracer_reaction_constant</a>, <a class="el" href="tracer__reaction__model_8h_source.html#l00267">tracer_reaction_order</a>, and <a class="el" href="tracer__reaction__model_8h_source.html#l00268">tracer_reaction_threshold</a>.</p>
 
 </div>
 </div>
@@ -288,7 +299,7 @@ Additional Inherited Members</h2></td></tr>
 <p>Compute the tracer reaction prefactor. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">fields_value</td><td>Map of field values. </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">fields_value</td><td>Map of field values. </td></tr>
   </table>
   </dd>
 </dl>
@@ -296,9 +307,9 @@ Additional Inherited Members</h2></td></tr>
 
 <p>Implements <a class="el" href="classPhysicalPropertyModel.html#a23d2b90f4f05ee9de4be96f6f9989a37">PhysicalPropertyModel</a>.</p>
 
-<p class="definition">Definition at line <a class="el" href="tracer__reaction__model_8h_source.html#l00120">120</a> of file <a class="el" href="tracer__reaction__model_8h_source.html">tracer_reaction_model.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="tracer__reaction__model_8h_source.html#l00160">160</a> of file <a class="el" href="tracer__reaction__model_8h_source.html">tracer_reaction_model.h</a>.</p>
 
-<p class="reference">References <a class="el" href="physical__property__model_8h_source.html#l00047">tracer_concentration</a>, <a class="el" href="tracer__reaction__model_8h_source.html#l00207">tracer_reaction_constant</a>, and <a class="el" href="tracer__reaction__model_8h_source.html#l00208">tracer_reaction_order</a>.</p>
+<p class="reference">References <a class="el" href="tracer__reaction__model_8h_source.html#l00025">calculate_effective_concentration()</a>, <a class="el" href="physical__property__model_8h_source.html#l00047">tracer_concentration</a>, <a class="el" href="tracer__reaction__model_8h_source.html#l00266">tracer_reaction_constant</a>, <a class="el" href="tracer__reaction__model_8h_source.html#l00267">tracer_reaction_order</a>, and <a class="el" href="tracer__reaction__model_8h_source.html#l00268">tracer_reaction_threshold</a>.</p>
 
 </div>
 </div>
@@ -345,18 +356,18 @@ Additional Inherited Members</h2></td></tr>
 <p>Compute the vector jacobian (partial derivatives) of the prefactor with respect to a field. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">field_vectors</td><td>Map of field vectors. </td></tr>
-    <tr><td class="paramname">id</td><td>The field identifier with respect to which the derivative is computed. </td></tr>
-    <tr><td class="paramname">jacobian_vector</td><td>Vector to be filled with computed derivative values. </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">field_vectors</td><td>Map of field vectors. </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">id</td><td>The field identifier with respect to which the derivative is computed. </td></tr>
+    <tr><td class="paramdir">[out]</td><td class="paramname">jacobian_vector</td><td>Vector to be filled with computed derivative values. </td></tr>
   </table>
   </dd>
 </dl>
 
 <p>Implements <a class="el" href="classPhysicalPropertyModel.html#a522b52d0f3353ebb4eecb353f5130adc">PhysicalPropertyModel</a>.</p>
 
-<p class="definition">Definition at line <a class="el" href="tracer__reaction__model_8h_source.html#l00183">183</a> of file <a class="el" href="tracer__reaction__model_8h_source.html">tracer_reaction_model.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="tracer__reaction__model_8h_source.html#l00236">236</a> of file <a class="el" href="tracer__reaction__model_8h_source.html">tracer_reaction_model.h</a>.</p>
 
-<p class="reference">References <a class="el" href="physical__property__model_8h_source.html#l00047">tracer_concentration</a>, <a class="el" href="tracer__reaction__model_8h_source.html#l00207">tracer_reaction_constant</a>, and <a class="el" href="tracer__reaction__model_8h_source.html#l00208">tracer_reaction_order</a>.</p>
+<p class="reference">References <a class="el" href="tracer__reaction__model_8h_source.html#l00039">calculate_d_effective_concentration_dC()</a>, <a class="el" href="tracer__reaction__model_8h_source.html#l00025">calculate_effective_concentration()</a>, <a class="el" href="physical__property__model_8h_source.html#l00047">tracer_concentration</a>, <a class="el" href="tracer__reaction__model_8h_source.html#l00266">tracer_reaction_constant</a>, <a class="el" href="tracer__reaction__model_8h_source.html#l00267">tracer_reaction_order</a>, and <a class="el" href="tracer__reaction__model_8h_source.html#l00268">tracer_reaction_threshold</a>.</p>
 
 </div>
 </div>
@@ -397,17 +408,17 @@ Additional Inherited Members</h2></td></tr>
 <p>Compute the vector of tracer reaction prefactor values. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">field_vectors</td><td>Map of field vectors. </td></tr>
-    <tr><td class="paramname">property_vector</td><td>Vector to be filled with computed prefactor values. </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">field_vectors</td><td>Map of field vectors. </td></tr>
+    <tr><td class="paramdir"></td><td class="paramname">property_vector</td><td>Vector to be filled with computed prefactor values. </td></tr>
   </table>
   </dd>
 </dl>
 
 <p>Implements <a class="el" href="classPhysicalPropertyModel.html#abd11737cff6dd346fc7bd238e59ceac6">PhysicalPropertyModel</a>.</p>
 
-<p class="definition">Definition at line <a class="el" href="tracer__reaction__model_8h_source.html#l00137">137</a> of file <a class="el" href="tracer__reaction__model_8h_source.html">tracer_reaction_model.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="tracer__reaction__model_8h_source.html#l00179">179</a> of file <a class="el" href="tracer__reaction__model_8h_source.html">tracer_reaction_model.h</a>.</p>
 
-<p class="reference">References <a class="el" href="physical__property__model_8h_source.html#l00047">tracer_concentration</a>, <a class="el" href="tracer__reaction__model_8h_source.html#l00207">tracer_reaction_constant</a>, and <a class="el" href="tracer__reaction__model_8h_source.html#l00208">tracer_reaction_order</a>.</p>
+<p class="reference">References <a class="el" href="tracer__reaction__model_8h_source.html#l00025">calculate_effective_concentration()</a>, <a class="el" href="physical__property__model_8h_source.html#l00047">tracer_concentration</a>, <a class="el" href="tracer__reaction__model_8h_source.html#l00266">tracer_reaction_constant</a>, <a class="el" href="tracer__reaction__model_8h_source.html#l00267">tracer_reaction_order</a>, and <a class="el" href="tracer__reaction__model_8h_source.html#l00268">tracer_reaction_threshold</a>.</p>
 
 </div>
 </div>
@@ -432,7 +443,7 @@ Additional Inherited Members</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="tracer__reaction__model_8h_source.html#l00207">207</a> of file <a class="el" href="tracer__reaction__model_8h_source.html">tracer_reaction_model.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="tracer__reaction__model_8h_source.html#l00266">266</a> of file <a class="el" href="tracer__reaction__model_8h_source.html">tracer_reaction_model.h</a>.</p>
 
 </div>
 </div>
@@ -456,7 +467,31 @@ Additional Inherited Members</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="tracer__reaction__model_8h_source.html#l00208">208</a> of file <a class="el" href="tracer__reaction__model_8h_source.html">tracer_reaction_model.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="tracer__reaction__model_8h_source.html#l00267">267</a> of file <a class="el" href="tracer__reaction__model_8h_source.html">tracer_reaction_model.h</a>.</p>
+
+</div>
+</div>
+<a id="a0a79f502f980323ec909ef5ce74045ca" name="a0a79f502f980323ec909ef5ce74045ca"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a0a79f502f980323ec909ef5ce74045ca">&#9670;&#160;</a></span>tracer_reaction_threshold</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">const double ConstantTracerReactionPrefactor::tracer_reaction_threshold</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">private</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p class="definition">Definition at line <a class="el" href="tracer__reaction__model_8h_source.html#l00268">268</a> of file <a class="el" href="tracer__reaction__model_8h_source.html">tracer_reaction_model.h</a>.</p>
 
 </div>
 </div>
