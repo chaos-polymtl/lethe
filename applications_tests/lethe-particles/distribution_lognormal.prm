@@ -1,7 +1,11 @@
 # SPDX-FileCopyrightText: Copyright (c) 2025 The Lethe Authors
 # SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
-# Test description:
+# Test description: This test inserts particles using a lognormal PSD
+# and compares the generated diameters to expected values.
+# A python script in lethe/contrib/postprocessing/extract-from-vtu/plot-particles_size_distribution-from-vtu.py
+# can be used to extract and plot the size distribution from the output
+# .vtu files of this test and compare it to the expected normal distribution.
 
 set dimension = 3
 
