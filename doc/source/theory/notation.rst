@@ -7,7 +7,7 @@ documentation.
 
 Conventions
 -----------
-n this documentation we use both traditional boldface vector/tensor
+In this documentation, we use both traditional boldface vector/tensor
 notation and Einstein (index) notation. All expressions are written in
 three-dimensional Cartesian coordinates with an orthonormal basis :math:`\{\mathbf{e}_1, \mathbf{e}_2, \mathbf{e}_3\}`.
 
