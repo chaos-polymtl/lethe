@@ -629,7 +629,7 @@ end
 <h3>Simulation Control<a class="headerlink" href="#id1" title="Link to this heading">#</a></h3>
 <p>The simulation is run in steady state. The simulation control section is shown:</p>
 <div class="highlight-text notranslate"><div class="highlight"><pre><span></span>subsection simulation control
-  set method      = bdf1
+  set method      = steady
   set output path = ./output/
 end
 </pre></div>
@@ -692,19 +692,19 @@ end
 </section>
 <section id="void-fraction">
 <h3>Void Fraction<a class="headerlink" href="#void-fraction" title="Link to this heading">#</a></h3>
-<p>Since we are calculating the void fraction using the packed bed of the DEM simulation, we set the mode to <code class="docutils literal notranslate"><span class="pre">dem</span></code>. For this, we need to read the dem files which we already wrote using check-pointing. We therefore set the read dem to <code class="docutils literal notranslate"><span class="pre">true</span></code> and specify the prefix of the <code class="docutils literal notranslate"><span class="pre">dem</span></code> files to be read. We now choose a smoothing length for the void fraction as to reduce discontinuity which can lead to oscillations in the velocity. The length we choose is around the square of twice the particle’s diameter.</p>
+<p>Since we are calculating the void fraction using the packed bed of the DEM simulation, we set the mode to <code class="docutils literal notranslate"><span class="pre">dem</span></code>. For this, we need to read the dem files which we already wrote using check-pointing. We therefore set the read dem to <code class="docutils literal notranslate"><span class="pre">true</span></code> and specify the prefix of the <code class="docutils literal notranslate"><span class="pre">dem</span></code> files to be read. We now choose a smoothing length for the void fraction as to reduce discontinuity which can lead to oscillations in the velocity. The length we choose is three time the particle diameter.</p>
 <div class="highlight-text notranslate"><div class="highlight"><pre><span></span>subsection void fraction
   set mode                = pcm
   set read dem            = true
   set dem file name       = dem
-  set l2 smoothing length = 0.002236067977
+  set l2 smoothing length = 0.003
 end
 </pre></div>
 </div>
 </section>
 <section id="cfd-dem">
 <h3>CFD-DEM<a class="headerlink" href="#cfd-dem" title="Link to this heading">#</a></h3>
-<p>We also enable <code class="docutils literal notranslate"><span class="pre">grad_div</span></code> stabilisation in order to improve local mass conservation.</p>
+<p>We also enable <code class="docutils literal notranslate"><span class="pre">grad</span> <span class="pre">div</span></code> stabilisation in order to improve local mass conservation. The default value of the grad div stabilization length, which is <span class="math notranslate nohighlight">\(1\)</span>, is used.</p>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
 <p>For certain simulations, this parameter should be disabled to improve stability of the solver.</p>
@@ -713,15 +713,14 @@ end
   set grad div                      = true
   set drag force                    = true
   set buoyancy force                = true
-  set shear force                   = false
-  set pressure force                = false
   set drag model                    = rong
   set post processing               = true
-  set vans model                    = modelB
+  set vans model                    = modelA
+  set drag coupling                 = implicit
 end
 </pre></div>
 </div>
-<p>We determine the <code class="docutils literal notranslate"><span class="pre">drag</span> <span class="pre">model</span></code> to be used for the calculation of particle-fluid forces. Currently, Difelice, Rong and Dallavalle models are supported. Other optional forces that can be enabled are the <code class="docutils literal notranslate"><span class="pre">buoyancy</span> <span class="pre">force</span></code>, the <code class="docutils literal notranslate"><span class="pre">shear</span> <span class="pre">force</span></code> and the <code class="docutils literal notranslate"><span class="pre">pressure</span> <span class="pre">force</span></code>. As we are simulating a static bed, we choose to disable these forces. The VANS model we are solving is model B. Other possible option is model A.</p>
+<p>We determine the <code class="docutils literal notranslate"><span class="pre">drag</span> <span class="pre">model</span></code> to be used for the calculation of particle-fluid forces. All of the supported drag models are listed in <a class="reference internal" href="../../../parameters/unresolved-cfd-dem/cfd-dem.html"><span class="doc">CFD-DEM section of the parameters guide</span></a>. Other optional forces that can be enabled are the <code class="docutils literal notranslate"><span class="pre">buoyancy</span> <span class="pre">force</span></code>, the <code class="docutils literal notranslate"><span class="pre">shear</span> <span class="pre">force</span></code> and the <code class="docutils literal notranslate"><span class="pre">pressure</span> <span class="pre">force</span></code>. As we are simulating a static bed, we choose to disable these forces. The VANS model we are solving is model A. Other possible option is model B. Furthermore, we set <code class="docutils literal notranslate"><span class="pre">drag</span> <span class="pre">coupling</span> <span class="pre">=</span> <span class="pre">implicit</span></code> since we are running a steady-state simulation. Using an explicit or semi-implicit formulation here would lead to unphysical results.</p>
 <p>Finally, the linear and non-linear solver controls are defined.</p>
 </section>
 <section id="non-linear-solver">
@@ -746,7 +745,7 @@ end
     set relative residual                     = 1e-3
     set minimum residual                      = 1e-10
     set preconditioner                        = ilu
-    set ilu preconditioner fill               = 4
+    set ilu preconditioner fill               = 2
     set ilu preconditioner absolute tolerance = 1e-12
     set ilu preconditioner relative tolerance = 1.00
     set verbosity                             = verbose
@@ -872,5 +871,6 @@ end
     <script src="../../../_static/scripts/furo.js?v=32e29ea5"></script>
     <script src="../../../_static/clipboard.min.js?v=a7894cd8"></script>
     <script src="../../../_static/copybutton.js?v=7cec7674"></script>
+    <script async="async" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
     </body>
 </html>

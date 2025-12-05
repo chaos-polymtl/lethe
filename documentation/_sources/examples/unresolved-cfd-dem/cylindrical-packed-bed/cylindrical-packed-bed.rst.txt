@@ -223,10 +223,10 @@ The simulation is run in steady state. The simulation control section is shown:
 
 .. code-block:: text
 
-    subsection simulation control
-      set method      = bdf1
-      set output path = ./output/
-    end
+  subsection simulation control
+    set method      = steady
+    set output path = ./output/
+  end
    
 Physical Properties
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -294,7 +294,7 @@ The additional sections that define the VANS solver are the void fraction subsec
 Void Fraction
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Since we are calculating the void fraction using the packed bed of the DEM simulation, we set the mode to ``dem``. For this, we need to read the dem files which we already wrote using check-pointing. We therefore set the read dem to ``true`` and specify the prefix of the ``dem`` files to be read. We now choose a smoothing length for the void fraction as to reduce discontinuity which can lead to oscillations in the velocity. The length we choose is around the square of twice the particle's diameter. 
+Since we are calculating the void fraction using the packed bed of the DEM simulation, we set the mode to ``dem``. For this, we need to read the dem files which we already wrote using check-pointing. We therefore set the read dem to ``true`` and specify the prefix of the ``dem`` files to be read. We now choose a smoothing length for the void fraction as to reduce discontinuity which can lead to oscillations in the velocity. The length we choose is three time the particle diameter. 
  
 .. code-block:: text
 
@@ -302,13 +302,13 @@ Since we are calculating the void fraction using the packed bed of the DEM simul
       set mode                = pcm
       set read dem            = true
       set dem file name       = dem
-      set l2 smoothing length = 0.002236067977
+      set l2 smoothing length = 0.003
     end
 
 CFD-DEM
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-We also enable ``grad_div`` stabilisation in order to improve local mass conservation. 
+We also enable ``grad div`` stabilisation in order to improve local mass conservation. The default value of the grad div stabilization length, which is :math:`1`, is used.
 
 .. note:: 
     For certain simulations, this parameter should be disabled to improve stability of the solver.
@@ -319,14 +319,13 @@ We also enable ``grad_div`` stabilisation in order to improve local mass conserv
     set grad div                      = true
     set drag force                    = true
     set buoyancy force                = true
-    set shear force                   = false
-    set pressure force                = false
     set drag model                    = rong
     set post processing               = true
-    set vans model                    = modelB
+    set vans model                    = modelA
+    set drag coupling                 = implicit 
   end
     
-We determine the ``drag model`` to be used for the calculation of particle-fluid forces. Currently, Difelice, Rong and Dallavalle models are supported. Other optional forces that can be enabled are the ``buoyancy force``, the ``shear force`` and the ``pressure force``. As we are simulating a static bed, we choose to disable these forces. The VANS model we are solving is model B. Other possible option is model A.
+We determine the ``drag model`` to be used for the calculation of particle-fluid forces. All of the supported drag models are listed in :doc:`CFD-DEM section of the parameters guide <../../../parameters/unresolved-cfd-dem/cfd-dem>`. Other optional forces that can be enabled are the ``buoyancy force``, the ``shear force`` and the ``pressure force``. As we are simulating a static bed, we choose to disable these forces. The VANS model we are solving is model A. Other possible option is model B. Furthermore, we set ``drag coupling = implicit`` since we are running a steady-state simulation. Using an explicit or semi-implicit formulation here would lead to unphysical results.
 
 Finally, the linear and non-linear solver controls are defined.
 
@@ -356,7 +355,7 @@ Linear Solver
       set relative residual                     = 1e-3
       set minimum residual                      = 1e-10
       set preconditioner                        = ilu
-      set ilu preconditioner fill               = 4
+      set ilu preconditioner fill               = 2
       set ilu preconditioner absolute tolerance = 1e-12
       set ilu preconditioner relative tolerance = 1.00
       set verbosity                             = verbose
