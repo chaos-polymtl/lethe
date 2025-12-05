@@ -65,12 +65,10 @@ test()
 
   // Calling uniform insertion
   std::vector<std::shared_ptr<Distribution>> distribution_object_container;
-  distribution_object_container.push_back(
-    std::make_shared<NormalDistribution>(
-      dem_parameters.lagrangian_physical_properties
-        .particle_average_diameter[0],
-      dem_parameters.lagrangian_physical_properties.particle_size_std[0],
-      dem_parameters.lagrangian_physical_properties.seed_for_distributions[0],
+  distribution_object_container.push_back(std::make_shared<NormalDistribution>(
+    dem_parameters.lagrangian_physical_properties.particle_average_diameter[0],
+    dem_parameters.lagrangian_physical_properties.particle_size_std[0],
+    dem_parameters.lagrangian_physical_properties.seed_for_distributions[0],
     dem_parameters.lagrangian_physical_properties.diameter_min_cutoff[0],
     dem_parameters.lagrangian_physical_properties.diameter_max_cutoff[0]));
 
