@@ -49,8 +49,8 @@ public:
    * distribution.
    *
    * @param[in] d_average Average diameters for a certain normal distribution.
-   * @param[in] d_standard_deviation Standard deviation of the diameter for a certain
-   * normal distribution.
+   * @param[in] d_standard_deviation Standard deviation of the diameter for a
+   * certain normal distribution.
    * @param[in] prn_seed Pseudo-random number seed for the diameter generation.
    * @param[in] min_cutoff Minimum cutoff diameter.
    * @param[in] max_cutoff Maximum cutoff diameter.
@@ -65,7 +65,8 @@ public:
    * @brief Carries out the size sampling of each particle inserted at an insertion
    * time step for the normal distribution.
    *
-   * @param[in] particle_number Number of particle inserted at a given insertion time step.
+   * @param[in] particle_number Number of particle inserted at a given insertion
+   * time step.
    */
   void
   particle_size_sampling(const unsigned int &particle_number) override;
@@ -117,8 +118,8 @@ public:
    * distribution.
    *
    * @param[in] d_average Average diameters for a certain normal distribution.
-   * @param[in] d_standard_deviation Standard deviation of the diameter for a certain
-   * normal distribution.
+   * @param[in] d_standard_deviation Standard deviation of the diameter for a
+   * certain normal distribution.
    * @param[in] prn_seed Pseudo-random number seed for the diameter generation.
    * @param[in] min_cutoff Minimum cutoff diameter.
    * @param[in] max_cutoff Maximum cutoff diameter.
@@ -133,7 +134,8 @@ public:
    * @brief Carries out the size sampling of each particle inserted at an insertion
    * time step for the normal distribution.
    *
-   * @param[in] particle_number Number of particle inserted at a given insertion time step.
+   * @param[in] particle_number Number of particle inserted at a given insertion
+   * time step.
    */
   void
   particle_size_sampling(const unsigned int &particle_number) override;
@@ -227,8 +229,8 @@ public:
    * distribution.
    *
    * @param[in] d_list Vector of diameter values.
-   * @param[in] d_probabilities Vector of probability values based on volume fraction
-   * with respect to each diameter value.
+   * @param[in] d_probabilities Vector of probability values based on volume
+   * fraction with respect to each diameter value.
    * @param[in] prn_seed Pseudo-random number seed for the diameter generation.
    */
   CustomDistribution(const std::vector<double> &d_list,
@@ -239,8 +241,8 @@ public:
    * @brief Carries out the size sampling of each particle inserted at an insertion
    * time step for the histogram distribution.
    *
-   * @param[in] particle_number Number of particles inserted at a given insertion time
-   * step.
+   * @param[in] particle_number Number of particles inserted at a given
+   * insertion time step.
    */
   void
   particle_size_sampling(const unsigned int &particle_number) override;
