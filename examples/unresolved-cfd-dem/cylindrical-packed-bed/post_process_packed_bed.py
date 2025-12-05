@@ -83,12 +83,26 @@ fig, ax1 = plt.subplots()
 
 # Plot the data for the first y-axis
 ax1.plot(x,p,label="Pressure drop",color=colors[0])
-ax1.plot([0,max(x)],[deltaP_ergun,deltaP_ergun],'k--',label="Analytical pressure drop")
+ax1.plot([0,max(x)],[deltaP_ergun,deltaP_ergun],'k--',label="Ergun correlation")
 ax1.set_xlabel('Position')  # Common x-axis label
 ax1.set_ylabel('Pressure', color=colors[0])
 ax1.set_ylim([-1,50])
 ax1.tick_params(axis='y', labelcolor=colors[0])  # Set y-axis tick color
 ax1.set_xticks([0,0.05,0.1,0.15,0.2]) #xticks(np.arange(min(x), max(x)+1, 1.0))
+
+
+# Add a nice arrow label for the Ergun correlation
+# Arrow + label
+x_mid = 0.15 * max(x)
+
+ax1.annotate(
+    "Ergun correlation",
+    xy=(x_mid, deltaP_ergun),          # point on the line
+    xytext=(x_mid, 0.85 * deltaP_ergun),  # text position (slightly above)
+    textcoords="data",
+    ha="center",
+    arrowprops=dict(arrowstyle="->", linewidth=1)
+)
 
 # Create a second y-axis sharing the same x-axis
 ax2 = ax1.twinx()
