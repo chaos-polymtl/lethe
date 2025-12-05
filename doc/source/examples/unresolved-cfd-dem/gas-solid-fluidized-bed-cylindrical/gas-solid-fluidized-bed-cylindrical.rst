@@ -29,17 +29,29 @@ All files mentioned below are located in the example's folder (``examples/unreso
 Description of the Case
 -----------------------
 
-
+This example simulates a gas–solid fluidized bed inside a cylindrical column (diameter 0.02 m, height 0.4 m). First, ``lethe-particles`` is used with ``particle-packing.prm`` to generate and pack spherical particles (diameter 0.0005 m, density 2500 kg·m⁻³) inside the column. After packing, the solid–fluid mixture is simulated with two solvers: the matrix-free solver ``lethe-fluid-particle-matrix-free`` and the matrix-based CFD–DEM solver ``lethe-fluid-particles``. For the matrix-based solver we test two VANS models (model A and model B), and for each model we project particle–fluid forces using one of two approaches: a cell-based filter or the Quadrature-Centered Method (QCM) filter. The superficial gas velocity at the inlet is varied from 0.02 to 0.4 m·s⁻¹ and the pressure drop across the bed is recorded. Results are compared with correlations from the literature for validation
 
 
 -------------------
 DEM Parameter File
 -------------------
 
+A detailed description of all the DEM parameter subsections can be found in the `parameter section <../../../parameters/dem.html>`_. The subsections in the DEM parameter file ``particle-packing.prm`` that are pertinent to this example are described below. 
 
 Mesh
 ~~~~~
 
+As mentioned in the example description, the particles are packed inside a cylindrical column. For this reason, the mesh type is set to ``cylinder`` with a ``balanced`` grid. This mesh uses the same input arguments as the ``GridGenerator::subdivided_cylinder`` function of Deal.II, yet leads to more uniform cells across the domain. An initial refinement level of 2 provides enough cells for the CFD solver while keeping the smallest cell size larger than the particle diameter. Finally, the particle–wall contact search expansion is enabled to ensure proper detection of particle–wall interactions in the curved convex geometry.
+
+.. code-block:: text
+
+    subsection mesh
+        set type               = cylinder
+        set grid type          = balanced
+        set grid arguments     = 44:0.01:0.22
+        set initial refinement = 2
+        set expand particle-wall contact search = true
+    end
     
 Simulation Control
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
