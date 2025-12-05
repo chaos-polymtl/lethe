@@ -2,8 +2,7 @@ Notation
 =========
 
 We first summarize the notation that we use in the Lethe theory guide.
-This is intended as a reference for the rest of the
-documentation.
+This is intended as a reference for the rest of the documentation.
 
 Conventions
 -----------
@@ -13,7 +12,7 @@ three-dimensional Cartesian coordinates with an orthonormal basis :math:`\{\math
 
 The following conventions are used:
 
-* Latin indices :math:`i,j,k,\ell` run from 1 to 3.
+* Latin indices :math:`i,j,k,l` run from 1 to 3.
 * Repeated indices in a single term imply summation over that index
   (Einstein summation convention).
 * An index that appears exactly once in each term of an equation is a
@@ -27,40 +26,44 @@ Simple contraction
 
 The simple contraction of two vectors :math:`\mathbf{a}` and
 :math:`\mathbf{b}` with components :math:`a_i` and :math:`b_i` is the
-scalar
+scalar:
 
 .. math::
 
-   a_i b_i,
+      a_i b_i \equiv  \mathbf{a} \cdot \mathbf{b}.
 
-which corresponds to the dot product
-
-.. math::
-
-   \mathbf{a} \cdot \mathbf{b}.
-
-A simple contraction sums over a single repeated index and reduces the
-rank of the quantity by one.
+A simple contraction sums over a single repeated index and reduces the rank of the quantity by one.
 
 Double contraction
 ~~~~~~~~~~~~~~~~~~
 
 The double contraction of two second-order tensors :math:`\mathbf{A}`
 and :math:`\mathbf{B}` with components :math:`A_{ij}` and
-:math:`B_{ij}` is the scalar
+:math:`B_{ij}` is the scalar:
 
 .. math::
 
-   A_{ij} B_{ij},
-
-which corresponds to the double contraction
-
-.. math::
-
-   \mathbf{A} : \mathbf{B}.
+   A_{ij} B_{ij} \equiv \mathbf{A} : \mathbf{B}.
 
 A double contraction sums over two repeated indices and reduces the
 rank of the quantity by two.
+
+Dyadic (tensor) product
+~~~~~~~~~~~~~~~~~~~~~~~
+
+The dyadic product (or tensor product) of two vectors :math:`\mathbf{a}` and :math:`\mathbf{b}` with components :math:`a_i` and :math:`b_j` is the second-order tensor
+
+.. math::
+
+   \mathbf{a} \otimes \mathbf{b},
+
+whose components are defined by
+
+.. math::
+
+   (\mathbf{a} \otimes \mathbf{b})_{ij} = a_i b_j.
+
+More generally, the tensor product combines two tensors by multiplying their components without summation over repeated indices, thereby increasing the total rank by the sum of the individual ranks.
 
 
 Weak formulations
