@@ -51,17 +51,11 @@ rank of the quantity by two.
 Dyadic (tensor) product
 ~~~~~~~~~~~~~~~~~~~~~~~
 
-The dyadic product (or tensor product) of two vectors :math:`\mathbf{a}` and :math:`\mathbf{b}` with components :math:`a_i` and :math:`b_j` is the second-order tensor
+The dyadic product (or tensor product) of two vectors :math:`\mathbf{a}` and :math:`\mathbf{b}` with components :math:`a_i` and :math:`b_j` is the second-order tensor:
 
 .. math::
 
-   \mathbf{a} \otimes \mathbf{b},
-
-whose components are defined by
-
-.. math::
-
-   (\mathbf{a} \otimes \mathbf{b})_{ij} = a_i b_j.
+   a_i b_j \equiv \mathbf{a} \otimes \mathbf{b} \equiv \mathbf{a} \mathbf{b}.
 
 More generally, the tensor product combines two tensors by multiplying their components without summation over repeated indices, thereby increasing the total rank by the sum of the individual ranks.
 
@@ -88,7 +82,7 @@ And in Einstein notation:
 
    \begin{aligned}
    (a, b)_{\Omega} &= \int a \, b \,\mathrm{d}\Omega \\
-   (\mathbf{a}, \mathbf{b})_{\Omega} &= \int a_i \, b_i \,\mathrm{d}\Omega \\
-   (\nabla \mathbf{a}, \nabla \mathbf{b})_{\Omega} &= \int \partial_j a_i \, \partial_j b_i \,\mathrm{d}\Omega \\
+   (a_i, b_i)_{\Omega} &= \int a_i \, b_i \,\mathrm{d}\Omega \\
+   (\partial_j a_i, \partial_j b_i)_{\Omega} &= \int \partial_j a_i \, \partial_j b_i \,\mathrm{d}\Omega \\
    (a, b)_{\Omega_e} &= \sum_e \int a \, b \,\mathrm{d}\Omega_e
    \end{aligned}
