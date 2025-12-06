@@ -48,20 +48,25 @@ public:
    * @brief The constructor stores the parameters necessary to define the normal
    * distribution.
    *
-   * @param d_average Average diameters for a certain normal distribution.
-   * @param d_standard_deviation Standard deviation of the diameter for a certain
-   * normal distribution.
-   * @param prn_seed Pseudo-random number seed for the diameter generation.
+   * @param[in] d_average Average diameters for a certain normal distribution.
+   * @param[in] d_standard_deviation Standard deviation of the diameter for a
+   * certain normal distribution.
+   * @param[in] prn_seed Pseudo-random number seed for the diameter generation.
+   * @param[in] min_cutoff Minimum cutoff diameter.
+   * @param[in] max_cutoff Maximum cutoff diameter.
    */
   NormalDistribution(const double       &d_average,
                      const double       &d_standard_deviation,
-                     const unsigned int &prn_seed);
+                     const unsigned int &prn_seed,
+                     const double       &min_cutoff,
+                     const double       &max_cutoff);
 
   /**
    * @brief Carries out the size sampling of each particle inserted at an insertion
    * time step for the normal distribution.
    *
-   * @param particle_number Number of particle inserted at a given insertion time step.
+   * @param[in] particle_number Number of particle inserted at a given insertion
+   * time step.
    */
   void
   particle_size_sampling(const unsigned int &particle_number) override;
@@ -97,6 +102,80 @@ private:
    * @brief Random number generator for the diameter selection.
    */
   std::mt19937 gen;
+
+  /**
+   * @brief Cut off diameters values.
+   */
+  double dia_min_cutoff, dia_max_cutoff;
+};
+
+
+class LogNormalDistribution : public Distribution
+{
+public:
+  /**
+   * @brief The constructor stores the parameters necessary to define the normal
+   * distribution.
+   *
+   * @param[in] d_average Average diameters for a certain normal distribution.
+   * @param[in] d_standard_deviation Standard deviation of the diameter for a
+   * certain normal distribution.
+   * @param[in] prn_seed Pseudo-random number seed for the diameter generation.
+   * @param[in] min_cutoff Minimum cutoff diameter.
+   * @param[in] max_cutoff Maximum cutoff diameter.
+   */
+  LogNormalDistribution(const double       &d_average,
+                        const double       &d_standard_deviation,
+                        const unsigned int &prn_seed,
+                        const double        min_cutoff,
+                        const double        max_cutoff);
+
+  /**
+   * @brief Carries out the size sampling of each particle inserted at an insertion
+   * time step for the normal distribution.
+   *
+   * @param[in] particle_number Number of particle inserted at a given insertion
+   * time step.
+   */
+  void
+  particle_size_sampling(const unsigned int &particle_number) override;
+
+  /**
+   * @brief Find the minimum diameter a normal distribution.
+   *
+   * @return The minimum diameter of a normal distribution.
+   */
+  double
+  find_min_diameter() override;
+
+  /**
+   * @brief Find the maximum diameter of the normal distribution.
+   *
+   * @return The maximum diameter of the normal distribution.
+   */
+  double
+  find_max_diameter() override;
+
+private:
+  /**
+   * @brief Standard deviation of distribution of the normal distribution.
+   */
+  const double sigma_ln;
+
+  /**
+   * @brief Average diameter of the normal distribution.
+   */
+  const double mu_ln;
+
+  /**
+   * @brief Random number generator for the diameter selection.
+   */
+  std::mt19937 gen;
+
+  /**
+   * @brief Cut off diameters values.
+   */
+  double dia_min_cutoff, dia_max_cutoff;
 };
 
 class UniformDistribution : public Distribution
@@ -149,10 +228,10 @@ public:
    * @brief The constructor stores the parameters necessary to define the histogram
    * distribution.
    *
-   * @param d_list Vector of diameter values.
-   * @param d_probabilities Vector of probability values based on volume fraction
-   * with respect to each diameter value.
-   * @param prn_seed Pseudo-random number seed for the diameter generation.
+   * @param[in] d_list Vector of diameter values.
+   * @param[in] d_probabilities Vector of probability values based on volume
+   * fraction with respect to each diameter value.
+   * @param[in] prn_seed Pseudo-random number seed for the diameter generation.
    */
   CustomDistribution(const std::vector<double> &d_list,
                      const std::vector<double> &d_probabilities,
@@ -162,8 +241,8 @@ public:
    * @brief Carries out the size sampling of each particle inserted at an insertion
    * time step for the histogram distribution.
    *
-   * @param particle_number Number of particles inserted at a given insertion time
-   * step.
+   * @param[in] particle_number Number of particles inserted at a given
+   * insertion time step.
    */
   void
   particle_size_sampling(const unsigned int &particle_number) override;

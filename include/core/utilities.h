@@ -18,6 +18,7 @@
 
 #include <boost/archive/text_iarchive.hpp>
 #include <boost/archive/text_oarchive.hpp>
+#include <boost/math/special_functions/erf.hpp>
 
 #include <fstream>
 #include <map>
