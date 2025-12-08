@@ -2,8 +2,12 @@
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
 /**
- * @brief Inserting particles following a lognormal distribution.
+* @brief Inserting particles following a lognormal distribution. At the end, the
+ * mean and standard deviation of the inserted particles is computed. By increasing
+ * the number of inserted particles, those two values should converge the parameter
+ * used as inputs.
  */
+
 
 // Deal.II includes
 #include <deal.II/fe/mapping_q.h>
@@ -15,6 +19,8 @@
 #include <dem/insertion_volume.h>
 
 // Tests (with common definitions)
+#include <deal.II/numerics/vector_tools_common.h>
+
 #include <../tests/tests.h>
 
 using namespace dealii;
@@ -30,7 +36,7 @@ test()
                             -1 * hyper_cube_length,
                             hyper_cube_length,
                             true);
-  int refinement_number = 2;
+  int refinement_number = 0;
   tr.refine_global(refinement_number);
 
   MappingQ<dim>            mapping(1);
@@ -40,7 +46,7 @@ test()
   dem_parameters.insertion_info.insertion_box_point_1 = {-0.5, -0.5, -0.05};
   dem_parameters.insertion_info.insertion_box_point_2 = {0.5, 0.5, 0.05};
   dem_parameters.insertion_info.direction_sequence    = {0, 1, 2};
-  dem_parameters.insertion_info.inserted_this_step    = 100;
+  dem_parameters.insertion_info.inserted_this_step    = 1000;
   dem_parameters.insertion_info.distance_threshold    = 2;
   dem_parameters.lagrangian_physical_properties.particle_type_number = 1;
   dem_parameters.lagrangian_physical_properties.distribution_type.push_back(
@@ -84,7 +90,10 @@ test()
   insertion_object.insert(particle_handler, tr, dem_parameters);
 
   // Output
-  int particle_number = 0;
+  double             sum_dp          = 0.;
+  int                particle_number = 0;
+  const unsigned int total_number_of_particles =
+    dem_parameters.lagrangian_physical_properties.number[0];
   for (auto particle = particle_handler.begin();
        particle != particle_handler.end();
        ++particle, ++particle_number)
@@ -95,7 +104,25 @@ test()
 
       deallog << "Particle " << particle_number << " diameter is: " << dp
               << std::endl;
+
+      sum_dp += dp;
     }
+  const double mean_dp  = sum_dp / total_number_of_particles;
+  double       variance = 0.;
+  for (auto particle = particle_handler.begin();
+       particle != particle_handler.end();
+       ++particle)
+    {
+      auto   particle_properties = particle->get_properties();
+      double dp                  = particle_properties[PropertiesIndex::dp];
+
+      variance += std::pow(dp - mean_dp, 2);
+    }
+  variance           = variance / total_number_of_particles;
+  const double sigma = sqrt(variance);
+
+  deallog << "Distribution mean: " << mean_dp << std::endl;
+  deallog << "Distribution standard distribution: " << sigma << std::endl;
 }
 
 int
