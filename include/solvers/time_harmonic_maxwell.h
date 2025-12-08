@@ -29,6 +29,7 @@
 
 #include <deal.II/grid/grid_tools.h>
 
+#include <deal.II/lac/lapack_full_matrix.h>
 #include <deal.II/lac/solver_control.h>
 #include <deal.II/lac/sparsity_pattern.h>
 #include <deal.II/lac/sparsity_tools.h>
@@ -41,7 +42,7 @@
 #include <deal.II/numerics/vector_tools.h>
 
 #include <memory.h>
-
+#include <complex>
 
 
 /**
@@ -478,69 +479,49 @@ private:
    */
   void
   assemble_system_rhs() override;
-  // TODO
-  // /**
-  //  * @brief Assemble the local matrix for a given cell.
-  //  *
-  //  * Use the WorkStream class to assemble the system matrix. It is
-  //  * a thread safe function.
-  //  *
-  //  * @param cell The cell for which the local matrix is assembled.
-  //  *
-  //  * @param scratch_data The scratch data which is used to store
-  //  * the calculated finite element information at the gauss point.
-  //  * See the documentation for TimeHarmonicMaxwellScratchData for more
-  //  * information
-  //  *
-  //  * @param copy_data The copy data which is used to store
-  //  * the results of the assembly over a cell
-  //  */
-  // virtual void
-  // assemble_local_system_matrix(
-  //   const typename DoFHandler<dim>::active_cell_iterator &cell,
-  //   TimeHarmonicMaxwellScratchData<dim>                  &scratch_data,
-  //   CopyData                                             &copy_data);
 
-  // /**
-  //  * @brief Assemble the local rhs for a given cell
-  //  *
-  //  * @param cell The cell for which the local matrix is assembled.
-  //  *
-  //  * @param scratch_data The scratch data which is used to store
-  //  * the calculated finite element information at the gauss point.
-  //  * See the documentation for TimeHarmonicMaxwellScratchData for more
-  //  * information
-  //  *
-  //  * @param copy_data The copy data which is used to store
-  //  * the results of the assembly over a cell
-  //  */
-  // virtual void
-  // assemble_local_system_rhs(
-  //   const typename DoFHandler<dim>::active_cell_iterator &cell,
-  //   TimeHarmonicMaxwellScratchData<dim>                  &scratch_data,
-  //   CopyData                                             &copy_data);
+  /**
+   * @brief Reconstruct the interior solution from the skeleton solution after solving
+   * the linear system on the skeleton only.
+   */
+  void
+  reconstruct_interior_solution();
 
-  // /**
-  //  * @brief Set up the vector of assembler functions
-  //  */
-  // virtual void
-  // setup_assemblers();
 
-  // /**
-  //  * @brief Copy local cell information to global matrix
-  //  */
+  /**
+   * This helper function projects a 3D tensor onto the tangential plane
+   * defined by the given normal vector. Mathematically, it computes:
+   * \f[
+   * \mathbf{t} = \mathbf{n} \times (\mathbf{v} \times \mathbf{n})
+   * \f]
+   * which removes the normal component of the vector \f$\mathbf{v}\f$,
+   * keeping only the tangential part.
+   *
+   * @tparam dim Spatial dimension (typically 3).
+   * @param tensor Input vector (field value) to be projected.
+   * @param normal Unit normal vector defining the face orientation.
+   * @return The tangential component of the input vector.
+   *
+   * @note This operation is used to obtain traces in H^{-1/2}(curl) spaces,
+   * where only tangential components are continuous across interfaces. The
+   * inline keyword is enforced to make sure that the tensor operations are
+   * efficient as they are called frequently during assembly.
+   */
+  DEAL_II_ALWAYS_INLINE inline Tensor<1, dim, std::complex<double>>
+  map_H12(const Tensor<1, dim, std::complex<double>> &tensor,
+          const Tensor<1, dim>                       &normal)
+  {
+    if (dim != 3)
+      {
+        AssertThrow(
+          false,
+          ExcMessage(
+            "The map_H12 function is only implemented for 3D problems."));
+      }
+    auto result = cross_product_3d(normal, cross_product_3d(tensor, normal));
 
-  // virtual void
-  // copy_local_matrix_to_global_matrix(
-  //   const CopyData &copy_data);
-
-  // /**
-  //  * @brief Copy local cell rhs information to global rhs
-  //  */
-
-  // virtual void
-  // copy_local_rhs_to_global_rhs(const CopyData &copy_data);
-
+    return result;
+  }
 
   /////// Auxiliary physics parameters for TimeHarmonicMaxwell solver ////////
 

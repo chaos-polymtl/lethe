@@ -43,7 +43,6 @@ LinearSolverStrategy<VectorType>::solve()
   PhysicsSolver<VectorType> *solver = this->physics_solver;
 
   solver->assemble_system_matrix();
-  solver->setup_preconditioner();
   solver->assemble_system_rhs();
   solver->solve_linear_system();
 }
