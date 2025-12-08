@@ -18,7 +18,8 @@ NormalDistribution::NormalDistribution(const double       &d_average,
     {
       // 2.5 -> approx 99% of all diameters are bigger
       dia_min_cutoff = diameter_average - 2.5 * standard_deviation;
-      AssertThrow(dia_min_cutoff < 0.,
+      std::cout << dia_min_cutoff << std::endl;
+      AssertThrow(dia_min_cutoff > 0.,
                   ExcMessage(
                     "The \"standard deviation\" parameter is to "
                     "high relative to the \"average diameter\" "
@@ -113,7 +114,7 @@ LogNormalDistribution::LogNormalDistribution(const double &d_average,
     {
       // approx 99% of all diameters are bigger
       dia_min_cutoff = std::exp(mu_ln - 2.5 * sigma_ln);
-      AssertThrow(dia_min_cutoff < 0.,
+      AssertThrow(dia_min_cutoff > 0.,
                   ExcMessage(
                     "The \"standard deviation\" parameter is to "
                     "high relative to the \"average diameter\" "
@@ -228,7 +229,7 @@ UniformDistribution::print_psd_declaration_string(
   const ConditionalOStream &pcout)
 {
   pcout << "The particle size distribution of particle type " << particle_type
-        << " is custom." << std::endl;
+        << " is uniform." << std::endl;
 }
 
 CustomDistribution::CustomDistribution(
