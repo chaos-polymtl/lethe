@@ -36,7 +36,7 @@ This example simulates a gas–solid fluidized bed inside a cylindrical column (
 DEM Parameter File
 -------------------
 
-A detailed description of all the DEM parameter subsections can be found in the `parameter section <../../../parameters/dem.html>`_. The subsections in the DEM parameter file ``particle-packing.prm`` that are pertinent to this example are described below. 
+A DEM simulation is first run to inset the required number of particles. A detailed description of all the DEM parameter subsections can be found in the `parameter section <../../../parameters/dem.html>`_. The subsections in the DEM parameter file ``particle-packing.prm`` that are pertinent to this example are described below. 
 
 Mesh
 ~~~~~
@@ -46,26 +46,63 @@ As mentioned in the example description, the particles are packed inside a cylin
 .. code-block:: text
 
     subsection mesh
-        set type               = cylinder
-        set grid type          = balanced
-        set grid arguments     = 44:0.01:0.22
-        set initial refinement = 2
+        set type                                = cylinder
+        set grid type                           = balanced
+        set grid arguments                      = 44:0.01:0.22
+        set initial refinement                  = 2
         set expand particle-wall contact search = true
     end
     
 Simulation Control
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
+The ``simulation control`` subsection specifies the ``time step``, ``time end``, ``log frequency``, ``output frequency`` and ``output path`` of the DEM simulation. ``output boundaries`` is set to ``true`` so that the cylindrical column walls are also written to file for visualization. The chosen ``time step`` corresponds to approximately 11% of the `Rayleigh timestep <../../../parameters/dem/simulation_control.html>`_, ensuring numerical stability. The simulation end time is set to 0.7 s, a duration sufficient for all inserted particles to settle within the column.
+
+.. code-block:: text
+
+    subsection simulation control
+        set time step         = 0.000005
+        set time end          = 0.7
+        set log frequency     = 1000
+        set output frequency  = 2000
+        set output path       = ./output_dem/
+        set output boundaries = true
+    end
 
 Restart
 ~~~~~~~~~~~~~~~~~~~
 
+The initial state of the particles in the CFD-DEM solver corresponds to the final state of the DEM packing simulation. Therefore, the ``restart`` subsection is used to enable writing the checkpoint files that need to be read by the CFD-DEM solver. The prefix of these files in set as ``dem`` in the ``filename`` option.
 
+.. code-block:: text
+
+    subsection restart
+        set checkpoint = true
+        set frequency  = 10000
+        set restart    = false
+        set filename   = dem
+    end
 
 Model Parameters
 ~~~~~~~~~~~~~~~~~
 
+Details on the model parameters subsection are provided in the `DEM model parameters guide <../../../parameters/dem/model_parameters.html>`_ and `DEM examples <../../dem/dem.html>`_. The ``neighborhood threshold`` is set to 1.1, providing a balance between accurate contact detection and computational efficiency.
 
+.. code-block:: text
+
+    subsection model parameters
+        subsection contact detection
+            set contact detection method = dynamic
+            set neighborhood threshold   = 1.1
+        end
+        subsection load balancing
+            set load balance method     = frequent
+            set frequency = 10000
+        end
+        set particle particle contact force method = hertz_mindlin_limit_overlap
+        set particle wall contact force method     = nonlinear
+        set integration method                     = velocity_verlet
+    end
 
 Lagrangian Physical Properties
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
