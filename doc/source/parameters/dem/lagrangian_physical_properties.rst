@@ -32,7 +32,7 @@ In this subsection, gravitational acceleration, and the physical properties of t
       set minimum diameter cutoff           = -1.
       set maximum diameter cutoff           = -1.
 
-      # If distribution type = normal, lognormal  or custom
+      # If distribution type = normal, lognormal or custom
       set distribution prn seed             = 1
 
       # For every distribution types
