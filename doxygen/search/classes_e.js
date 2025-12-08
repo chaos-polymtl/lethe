@@ -1,6 +1,6 @@
 var searchData=
 [
-  ['particle_5fcomparison_0',['particle_comparison',['../structDEM_1_1particle__comparison.html',1,'DEM']]],
+  ['particle_5fcomparison_0',['particle_comparison',['../structparticle__comparison.html',1,'']]],
   ['particle_5fline_5fcontact_5finfo_1',['particle_line_contact_info',['../structparticle__line__contact__info.html',1,'']]],
   ['particle_5fparticle_5fcontact_5finfo_2',['particle_particle_contact_info',['../structparticle__particle__contact__info.html',1,'']]],
   ['particle_5fpoint_5fcontact_5finfo_3',['particle_point_contact_info',['../structparticle__point__contact__info.html',1,'']]],

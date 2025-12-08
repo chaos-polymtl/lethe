@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=11"/>
 <meta name="generator" content="Doxygen 1.9.8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1"/>
-<title>Lethe Open-Source Library: DEM::cut_cell_comparison&lt; dim &gt; Struct Template Reference</title>
+<title>Lethe Open-Source Library: cell_comparison&lt; dim &gt; Struct Template Reference</title>
 <link href="tabs.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="jquery.js"></script>
 <script type="text/javascript" src="dynsections.js"></script>
@@ -79,33 +79,30 @@ $(function() {
 </div>
 </div>
 
-<div id="nav-path" class="navpath">
-  <ul>
-<li class="navelem"><a class="el" href="namespaceDEM.html">DEM</a></li><li class="navelem"><a class="el" href="structDEM_1_1cut__cell__comparison.html">cut_cell_comparison</a></li>  </ul>
-</div>
 </div><!-- top -->
 <div class="header">
   <div class="summary">
 <a href="#pub-methods">Public Member Functions</a> &#124;
-<a href="structDEM_1_1cut__cell__comparison-members.html">List of all members</a>  </div>
-  <div class="headertitle"><div class="title">DEM::cut_cell_comparison&lt; dim &gt; Struct Template Reference</div></div>
+<a href="structcell__comparison-members.html">List of all members</a>  </div>
+  <div class="headertitle"><div class="title">cell_comparison&lt; dim &gt; Struct Template Reference</div></div>
 </div><!--header-->
 <div class="contents">
 
-<p><code>#include &lt;<a class="el" href="data__containers_8h_source.html">data_containers.h</a>&gt;</code></p>
+<p><code>#include &lt;<a class="el" href="utilities_8h_source.html">utilities.h</a>&gt;</code></p>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pub-methods" name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
-<tr class="memitem:a0ed7d72aff80a2d1d1dce3a371b0fa9e" id="r_a0ed7d72aff80a2d1d1dce3a371b0fa9e"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structDEM_1_1cut__cell__comparison.html#a0ed7d72aff80a2d1d1dce3a371b0fa9e">operator()</a> (const typename Triangulation&lt; dim - 1, dim &gt;::active_cell_iterator &amp;cell_1, const typename Triangulation&lt; dim - 1, dim &gt;::active_cell_iterator &amp;cell_2) const</td></tr>
-<tr class="separator:a0ed7d72aff80a2d1d1dce3a371b0fa9e"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:acb392d810bb42bfdc551fca338ea0905" id="r_acb392d810bb42bfdc551fca338ea0905"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structcell__comparison.html#acb392d810bb42bfdc551fca338ea0905">operator()</a> (const typename Triangulation&lt; dim &gt;::active_cell_iterator &amp;cell_1, const typename Triangulation&lt; dim &gt;::active_cell_iterator &amp;cell_2) const</td></tr>
+<tr class="separator:acb392d810bb42bfdc551fca338ea0905"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><div class="compoundTemplParams">template&lt;int dim&gt;<br />
-struct DEM::cut_cell_comparison&lt; dim &gt;</div>
-<p class="definition">Definition at line <a class="el" href="data__containers_8h_source.html#l00077">77</a> of file <a class="el" href="data__containers_8h_source.html">data_containers.h</a>.</p>
+struct cell_comparison&lt; dim &gt;</div><p>Operator overloading to enable using triangulation cells as map keys. </p>
+
+<p class="definition">Definition at line <a class="el" href="utilities_8h_source.html#l01058">1058</a> of file <a class="el" href="utilities_8h_source.html">utilities.h</a>.</p>
 </div><h2 class="groupheader">Member Function Documentation</h2>
-<a id="a0ed7d72aff80a2d1d1dce3a371b0fa9e" name="a0ed7d72aff80a2d1d1dce3a371b0fa9e"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a0ed7d72aff80a2d1d1dce3a371b0fa9e">&#9670;&#160;</a></span>operator()()</h2>
+<a id="acb392d810bb42bfdc551fca338ea0905" name="acb392d810bb42bfdc551fca338ea0905"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#acb392d810bb42bfdc551fca338ea0905">&#9670;&#160;</a></span>operator()()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -116,15 +113,15 @@ template&lt;int dim&gt; </div>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">bool <a class="el" href="structDEM_1_1cut__cell__comparison.html">DEM::cut_cell_comparison</a>&lt; dim &gt;::operator() </td>
+          <td class="memname">bool <a class="el" href="structcell__comparison.html">cell_comparison</a>&lt; dim &gt;::operator() </td>
           <td>(</td>
-          <td class="paramtype">const typename Triangulation&lt; dim - 1, dim &gt;::active_cell_iterator &amp;&#160;</td>
+          <td class="paramtype">const typename Triangulation&lt; dim &gt;::active_cell_iterator &amp;&#160;</td>
           <td class="paramname"><em>cell_1</em>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">const typename Triangulation&lt; dim - 1, dim &gt;::active_cell_iterator &amp;&#160;</td>
+          <td class="paramtype">const typename Triangulation&lt; dim &gt;::active_cell_iterator &amp;&#160;</td>
           <td class="paramname"><em>cell_2</em>&#160;</td>
         </tr>
         <tr>
@@ -140,12 +137,12 @@ template&lt;int dim&gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="data__containers_8h_source.html#l00080">80</a> of file <a class="el" href="data__containers_8h_source.html">data_containers.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="utilities_8h_source.html#l01061">1061</a> of file <a class="el" href="utilities_8h_source.html">utilities.h</a>.</p>
 
 </div>
 </div>
 <hr/>The documentation for this struct was generated from the following file:<ul>
-<li>/home/runner/work/lethe/lethe/include/dem/<a class="el" href="data__containers_8h_source.html">data_containers.h</a></li>
+<li>/home/runner/work/lethe/lethe/include/core/<a class="el" href="utilities_8h_source.html">utilities.h</a></li>
 </ul>
 </div><!-- contents -->
 <!-- start footer part -->

@@ -32,7 +32,7 @@ var searchData=
   ['particle_29',['particle',['../structparticle__wall__contact__info.html#accedd859a724910b1f4cc04a4b4bb453',1,'particle_wall_contact_info::particle'],['../structparticle__line__contact__info.html#ad0e52916e4f9b7baeb2f2553cc94ad62',1,'particle_line_contact_info::particle'],['../structparticle__point__contact__info.html#a9318e4feae59f64a4e14c6995d58b978',1,'particle_point_contact_info::particle']]],
   ['particle_5faverage_5fdiameter_30',['particle_average_diameter',['../structParameters_1_1Lagrangian_1_1LagrangianPhysicalProperties.html#a4b72bd96f13d2bf1be4363f9f236fc2f',1,'Parameters::Lagrangian::LagrangianPhysicalProperties']]],
   ['particle_5fcircle_5fintersection_5f2d_31',['particle_circle_intersection_2d',['../particle__projector_8h.html#a295257336d7ec7de9c5303816983fe23',1,'particle_projector.h']]],
-  ['particle_5fcomparison_32',['particle_comparison',['../structDEM_1_1particle__comparison.html',1,'DEM']]],
+  ['particle_5fcomparison_32',['particle_comparison',['../structparticle__comparison.html',1,'']]],
   ['particle_5fcontact_5finfo_33',['particle_contact_info',['../structDEM_1_1dem__data__structures.html#a8410f89e19e0746b627be7168759e098',1,'DEM::dem_data_structures']]],
   ['particle_5fcontainer_34',['particle_container',['../classDEMContactManager.html#a63de2152b68334eddf9eb5e2634ffbea',1,'DEMContactManager']]],
   ['particle_5fcounts_35',['particle_counts',['../classParticleVisualization.html#ac4e0d7a6ea011681fd7ed4123baec0a3',1,'ParticleVisualization']]],
