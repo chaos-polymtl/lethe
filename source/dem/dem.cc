@@ -202,6 +202,8 @@ DEMSolver<dim, PropertiesIndex>::setup_distribution_type()
                 lpp.seed_for_distributions[particle_type] + this_mpi_process);
             break;
         }
+      size_distribution_object_container[particle_type]
+        ->print_psd_declaration_string(particle_type, pcout);
 
       maximum_particle_diameter = std::max(
         maximum_particle_diameter,

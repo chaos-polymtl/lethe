@@ -73,7 +73,7 @@ namespace Parameters
       std::unordered_map<unsigned int, std::vector<double>>
         particle_custom_probability;
 
-      // Cutoff used for the lognormal distribution 
+      // Cutoff used for the lognormal distribution
       std::vector<double> diameter_min_cutoff, diameter_max_cutoff;
 
       // Random seed for the size distribution

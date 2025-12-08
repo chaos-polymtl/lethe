@@ -18,15 +18,14 @@ NormalDistribution::NormalDistribution(const double       &d_average,
     {
       // 2.5 -> approx 99% of all diameters are bigger
       dia_min_cutoff = diameter_average - 2.5 * standard_deviation;
-      if (dia_min_cutoff < 0.)
-        AssertThrow(dia_min_cutoff < dia_max_cutoff,
-                    ExcMessage(
-                      "The \"standard deviation\" parameter is to "
-                      "high relative to the \"average diameter\" "
-                      "parameter. This would results with frequent negative "
-                      "diameter values. To fix this problem, please change "
-                      "the value of those two parameters or define a "
-                      "\"minimum diameter cutoff\" bigger than \"0.\""));
+      AssertThrow(dia_min_cutoff < 0.,
+                  ExcMessage(
+                    "The \"standard deviation\" parameter is to "
+                    "high relative to the \"average diameter\" "
+                    "parameter. This would results with frequent negative "
+                    "diameter values. To fix this problem, please change "
+                    "the value of those two parameters or define a "
+                    "\"minimum diameter cutoff\" bigger than \"0.\""));
     }
   else
     dia_min_cutoff = min_cutoff;
@@ -74,6 +73,31 @@ NormalDistribution::find_max_diameter()
   return dia_max_cutoff;
 }
 
+void
+NormalDistribution::print_psd_declaration_string(
+  const unsigned int        particle_type,
+  const ConditionalOStream &pcout)
+{
+  const double z_min = (dia_min_cutoff - diameter_average) / standard_deviation;
+  const double z_max = (dia_max_cutoff - diameter_average) / standard_deviation;
+
+  const double q_min = 0.5 * (1.0 + std::erf(z_min / std::numbers::sqrt2));
+  const double q_max = 0.5 * (1.0 + std::erf(z_max / std::numbers::sqrt2));
+
+  pcout << "The particle size distribution of particle type " << particle_type
+        << " is normal." << std::endl;
+
+  if (q_min > 0.25 || q_max < 0.75)
+    pcout
+      << "Warning: The minimal and maximal cutoffs of the distribution are at "
+      << q_min * 100. << " and " << q_max * 100. << " respectively."
+      << std::endl;
+  else
+    pcout << "The minimal and maximal cutoffs of the distribution are at "
+          << q_min * 100. << " and " << q_max * 100. << " respectively."
+          << std::endl;
+}
+
 LogNormalDistribution::LogNormalDistribution(const double &d_average,
                                              const double &d_standard_deviation,
                                              const unsigned int &prn_seed,
@@ -89,15 +113,14 @@ LogNormalDistribution::LogNormalDistribution(const double &d_average,
     {
       // approx 99% of all diameters are bigger
       dia_min_cutoff = std::exp(mu_ln - 2.5 * sigma_ln);
-      if (dia_min_cutoff < 0.)
-        AssertThrow(dia_min_cutoff < dia_max_cutoff,
-                   ExcMessage(
-                     "The \"standard deviation\" parameter is to "
-                     "high relative to the \"average diameter\" "
-                     "parameter. This would results with frequent negative "
-                     "diameter values. To fix this problem, please change "
-                     "the value of those two parameters or define a "
-                     "\"minimum diameter cutoff\" bigger than \"0.\""));
+      AssertThrow(dia_min_cutoff < 0.,
+                  ExcMessage(
+                    "The \"standard deviation\" parameter is to "
+                    "high relative to the \"average diameter\" "
+                    "parameter. This would results with frequent negative "
+                    "diameter values. To fix this problem, please change "
+                    "the value of those two parameters or define a "
+                    "\"minimum diameter cutoff\" bigger than \"0.\""));
     }
   else
     dia_min_cutoff = min_cutoff;
@@ -148,7 +171,30 @@ LogNormalDistribution::find_max_diameter()
   return dia_max_cutoff;
 }
 
+void
+LogNormalDistribution::print_psd_declaration_string(
+  const unsigned int        particle_type,
+  const ConditionalOStream &pcout)
+{
+  const double z_min = (std::log(dia_min_cutoff) - mu_ln) / sigma_ln;
+  const double z_max = (std::log(dia_max_cutoff) - mu_ln) / sigma_ln;
 
+  const double q_min = 0.5 * (1.0 + std::erf(z_min / std::numbers::sqrt2));
+  const double q_max = 0.5 * (1.0 + std::erf(z_max / std::numbers::sqrt2));
+
+  pcout << "The particle size distribution of particle type " << particle_type
+        << " is lognormal." << std::endl;
+
+  if (q_min > 0.25 || q_max < 0.75)
+    pcout
+      << "Warning: The minimal and maximal cutoffs of the distribution are at "
+      << q_min * 100. << " and " << q_max * 100. << " percentiles respectively."
+      << std::endl;
+  else
+    pcout << "The minimal and maximal cutoffs of the distribution are at "
+          << q_min * 100. << " and " << q_max * 100.
+          << " percentiles respectively." << std::endl;
+}
 
 UniformDistribution::UniformDistribution(const double &d_values)
   : diameter_value(d_values)
@@ -174,6 +220,15 @@ double
 UniformDistribution::find_max_diameter()
 {
   return this->diameter_value;
+}
+
+void
+UniformDistribution::print_psd_declaration_string(
+  const unsigned int        particle_type,
+  const ConditionalOStream &pcout)
+{
+  pcout << "The particle size distribution of particle type " << particle_type
+        << " is custom." << std::endl;
 }
 
 CustomDistribution::CustomDistribution(
@@ -246,4 +301,13 @@ double
 CustomDistribution::find_max_diameter()
 {
   return *std::ranges::max_element(diameter_custom_values);
+}
+
+void
+CustomDistribution::print_psd_declaration_string(
+  const unsigned int        particle_type,
+  const ConditionalOStream &pcout)
+{
+  pcout << "The particle size distribution of particle type " << particle_type
+        << " is custom." << std::endl;
 }

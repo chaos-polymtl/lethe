@@ -39,6 +39,18 @@ public:
    */
   virtual double
   find_max_diameter() = 0;
+
+  /**
+   * @brief Return the declaration string relative to the particle size
+   * distribution used.
+   *
+   * @param particle_type Particle type of the distribution
+   * @param pcout Parallel conditional output stream used to print the
+   * information
+   */
+  virtual void
+  print_psd_declaration_string(const unsigned int        particle_type,
+                               const ConditionalOStream &pcout) = 0;
 };
 
 class NormalDistribution : public Distribution
@@ -87,6 +99,18 @@ public:
   double
   find_max_diameter() override;
 
+  /**
+   * @brief Return the declaration string relative to the particle size
+   * distribution used.
+   *
+   * @param particle_type Particle type of the distribution
+   * @param pcout Parallel conditional output stream used to print the
+   * information
+   */
+  void
+  print_psd_declaration_string(const unsigned int        particle_type,
+                               const ConditionalOStream &pcout) override;
+
 private:
   /**
    * @brief Average diameter of the normal distribution.
@@ -104,9 +128,14 @@ private:
   std::mt19937 gen;
 
   /**
-   * @brief Cut off diameters values.
+   * @brief Minimal cut off diameters values.
    */
-  double dia_min_cutoff, dia_max_cutoff;
+  double dia_min_cutoff;
+
+  /**
+   * @brief Maximum cut off diameters values.
+   */
+  double dia_max_cutoff;
 };
 
 
@@ -155,6 +184,18 @@ public:
    */
   double
   find_max_diameter() override;
+
+  /**
+   * @brief Return the declaration string relative to the particle size
+   * distribution used.
+   *
+   * @param particle_type Particle type of the distribution
+   * @param pcout Parallel conditional output stream used to print the
+   * information
+   */
+  void
+  print_psd_declaration_string(const unsigned int        particle_type,
+                               const ConditionalOStream &pcout) override;
 
 private:
   /**
@@ -214,6 +255,19 @@ public:
   double
   find_max_diameter() override;
 
+
+  /**
+   * @brief Return the declaration string relative to the particle size
+   * distribution used.
+   *
+   * @param particle_type Particle type of the distribution
+   * @param pcout Parallel conditional output stream used to print the
+   * information
+   */
+  void
+  print_psd_declaration_string(const unsigned int        particle_type,
+                               const ConditionalOStream &pcout) override;
+
 private:
   /**
    * @brief The diameter value of the distribution.
@@ -262,6 +316,18 @@ public:
    */
   double
   find_max_diameter() override;
+
+  /**
+   * @brief Return the declaration string relative to the particle size
+   * distribution used.
+   *
+   * @param particle_type Particle type of the distribution
+   * @param pcout Parallel conditional output stream used to print the
+   * information
+   */
+  void
+  print_psd_declaration_string(const unsigned int        particle_type,
+                               const ConditionalOStream &pcout) override;
 
 private:
   /**
