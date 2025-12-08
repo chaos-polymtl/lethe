@@ -19,10 +19,10 @@ public:
   /**
    * @brief Carries out the size sampling of particles. This is the base class of
    * NormalDistribution, UniformDistribution and CustomDistribution classes.
-   * @param particle_number Number of particle inserted at a given insertion time step.
+   * @param number_of_particles Number of particle inserted at a given insertion time step.
    */
   virtual void
-  particle_size_sampling(const unsigned int &particle_number) = 0;
+  particle_size_sampling(const unsigned int &number_of_particles) = 0;
 
   /**
    * @brief Return the minimum diameter for a certain distribution.
@@ -77,11 +77,11 @@ public:
    * @brief Carries out the size sampling of each particle inserted at an insertion
    * time step for the normal distribution.
    *
-   * @param[in] particle_number Number of particle inserted at a given insertion
-   * time step.
+   * @param[in] number_of_particles Number of particle inserted at a given
+   * insertion time step.
    */
   void
-  particle_size_sampling(const unsigned int &particle_number) override;
+  particle_size_sampling(const unsigned int &number_of_particles) override;
 
   /**
    * @brief Find the minimum diameter a normal distribution.
@@ -163,11 +163,11 @@ public:
    * @brief Carries out the size sampling of each particle inserted at an insertion
    * time step for the normal distribution.
    *
-   * @param[in] particle_number Number of particle inserted at a given insertion
-   * time step.
+   * @param[in] number_of_particles Number of particle inserted at a given
+   * insertion time step.
    */
   void
-  particle_size_sampling(const unsigned int &particle_number) override;
+  particle_size_sampling(const unsigned int &number_of_particles) override;
 
   /**
    * @brief Find the minimum diameter a normal distribution.
@@ -234,10 +234,10 @@ public:
    * @brief Carries out the size sampling of every particles inserted at an insertion
    * time step for the uniform distribution.
    *
-   * @param particle_number Number of particle inserted at a given insertion time step.
+   * @param number_of_particles Number of particle inserted at a given insertion time step.
    */
   void
-  particle_size_sampling(const unsigned int &particle_number) override;
+  particle_size_sampling(const unsigned int &number_of_particles) override;
 
   /**
    * @brief Find the minimum diameter of the uniform distribution.
@@ -295,11 +295,11 @@ public:
    * @brief Carries out the size sampling of each particle inserted at an insertion
    * time step for the histogram distribution.
    *
-   * @param[in] particle_number Number of particles inserted at a given
+   * @param[in] number_of_particles Number of particles inserted at a given
    * insertion time step.
    */
   void
-  particle_size_sampling(const unsigned int &particle_number) override;
+  particle_size_sampling(const unsigned int &number_of_particles) override;
 
   /**
    * @brief Find the minimum diameter of the custom distribution.
