@@ -10,8 +10,6 @@
 #include <core/tensors_and_points_dimension_manipulation.h>
 #include <core/utilities.h>
 
-#include <dem/data_containers.h>
-
 #include <deal.II/base/function.h>
 
 #include <deal.II/dofs/dof_handler.h>
