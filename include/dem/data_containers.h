@@ -4,6 +4,8 @@
 #ifndef lethe_data_containers_h
 #define lethe_data_containers_h
 
+#include <core/utilities.h>
+
 #include <dem/boundary_cells_info_struct.h>
 #include <dem/contact_info.h>
 
@@ -35,57 +37,9 @@ namespace DEM
    */
   typedef unsigned int global_face_id;
 
-  /**
-   * @brief Operator overloading to enable using triangulation cells as map keys.
-   */
   using namespace dealii;
 
-  template <int dim>
-  struct cell_comparison
-  {
-    inline bool
-    operator()(
-      const typename Triangulation<dim>::active_cell_iterator &cell_1,
-      const typename Triangulation<dim>::active_cell_iterator &cell_2) const
-    {
-      return cell_1->global_active_cell_index() <
-             cell_2->global_active_cell_index();
-    }
-  };
 
-  /**
-   * @brief Operator overloading to enable using particle iterators as map keys.
-   */
-
-  template <int dim>
-  struct particle_comparison
-  {
-    inline bool
-    operator()(const Particles::ParticleIterator<dim> &particle_1,
-               const Particles::ParticleIterator<dim> &particle_2)
-    {
-      return particle_1->id() < particle_2->id();
-    }
-  };
-
-  /**
-   * @brief Operator overloading to enable using triangulation cells as map keys.
-   */
-  using namespace dealii;
-
-  template <int dim>
-  struct cut_cell_comparison
-  {
-    inline bool
-    operator()(
-      const typename Triangulation<dim - 1, dim>::active_cell_iterator &cell_1,
-      const typename Triangulation<dim - 1, dim>::active_cell_iterator &cell_2)
-      const
-    {
-      return cell_1->global_active_cell_index() <
-             cell_2->global_active_cell_index();
-    }
-  };
 
   /**
    * @brief DEM data structure containers

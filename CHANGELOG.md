@@ -4,6 +4,11 @@ All notable changes to the Lethe project will be documented in this file.
 The changelog for the previous releases of Lethe are located in the release_notes folder.
 The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
+### [Master] - 2025-12-08
+
+### Fixed
+
+- MINOR The SerialSolid class, which is in the core library, had become dependent on the DEM library which is not something that fits our architecture. This was because of a single functor used for comparisons. This has been fixed by moving these functors used for cell comparisons to utilities.h. In the future we might coalesce these functions into a separate header file. [#1842](https://github.com/chaos-polymtl/lethe/pull/1842)
 
 ### [Master] - 2025-12-04
 
