@@ -2,10 +2,10 @@
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
 /**
-* @brief Inserting particles following a lognormal distribution. At the end, the
- * mean and standard deviation of the inserted particles is computed. By increasing
- * the number of inserted particles, those two values should converge the parameter
- * used as inputs.
+ * @brief Inserting particles following a lognormal distribution. At the end, the
+ * mean and standard deviation of the inserted particles is computed. By
+ * increasing the number of inserted particles, those two values should converge
+ * the parameter used as inputs.
  */
 
 

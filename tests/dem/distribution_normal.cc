@@ -3,9 +3,9 @@
 
 /**
  * @brief Inserting particles following a normal distribution. At the end, the
- * mean and standard deviation of the inserted particles is computed. By increasing
- * the number of inserted particles, those two values should converge the parameter
- * used as inputs.
+ * mean and standard deviation of the inserted particles is computed. By
+ * increasing the number of inserted particles, those two values should converge
+ * the parameter used as inputs.
  */
 
 // Deal.II includes

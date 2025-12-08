@@ -19,7 +19,14 @@ NormalDistribution::NormalDistribution(const double       &d_average,
       // 2.5 -> approx 99% of all diameters are bigger
       dia_min_cutoff = diameter_average - 2.5 * standard_deviation;
       if (dia_min_cutoff < 0.)
-        dia_min_cutoff = DBL_MIN;
+        AssertThrow(dia_min_cutoff < dia_max_cutoff,
+                    ExcMessage(
+                      "The \"standard deviation\" parameter is to "
+                      "high relative to the \"average diameter\" "
+                      "parameter. This would results with frequent negative "
+                      "diameter values. To fix this problem, please change "
+                      "the value of those two parameters or define a "
+                      "\"minimum diameter cutoff\" bigger than \"0.\""));
     }
   else
     dia_min_cutoff = min_cutoff;
@@ -31,9 +38,8 @@ NormalDistribution::NormalDistribution(const double       &d_average,
     dia_max_cutoff = max_cutoff;
 
   AssertThrow(dia_min_cutoff < dia_max_cutoff,
-              ExcMessage(
-                "The \"minimum diameter cutoff\" parameter need to be smaller "
-                "than the \"maximum diameter cutoff\"."));
+              ExcMessage("The \"minimum diameter cutoff\" parameter need to"
+                         " be smaller than the \"maximum diameter cutoff\"."));
 }
 
 void
@@ -84,7 +90,14 @@ LogNormalDistribution::LogNormalDistribution(const double &d_average,
       // approx 99% of all diameters are bigger
       dia_min_cutoff = std::exp(mu_ln - 2.5 * sigma_ln);
       if (dia_min_cutoff < 0.)
-        dia_min_cutoff = DBL_MIN;
+        AssertThrow(dia_min_cutoff < dia_max_cutoff,
+                   ExcMessage(
+                     "The \"standard deviation\" parameter is to "
+                     "high relative to the \"average diameter\" "
+                     "parameter. This would results with frequent negative "
+                     "diameter values. To fix this problem, please change "
+                     "the value of those two parameters or define a "
+                     "\"minimum diameter cutoff\" bigger than \"0.\""));
     }
   else
     dia_min_cutoff = min_cutoff;
