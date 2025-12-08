@@ -16,6 +16,8 @@
 
 #include <deal.II/fe/fe_values.h>
 
+#include <deal.II/particles/particle_iterator.h>
+
 #include <boost/archive/text_iarchive.hpp>
 #include <boost/archive/text_oarchive.hpp>
 
@@ -1048,6 +1050,55 @@ convert_string_to_vector(const ParameterHandler &prm,
   return std::vector<T>();
 }
 
+/**
+ * @brief Operator overloading to enable using triangulation cells as map keys.
+ */
 
+template <int dim>
+struct cell_comparison
+{
+  inline bool
+  operator()(
+    const typename Triangulation<dim>::active_cell_iterator &cell_1,
+    const typename Triangulation<dim>::active_cell_iterator &cell_2) const
+  {
+    return cell_1->global_active_cell_index() <
+           cell_2->global_active_cell_index();
+  }
+};
+
+/**
+ * @brief Operator overloading to enable using particle iterators as map keys.
+ */
+
+template <int dim>
+struct particle_comparison
+{
+  inline bool
+  operator()(const Particles::ParticleIterator<dim> &particle_1,
+             const Particles::ParticleIterator<dim> &particle_2)
+  {
+    return particle_1->id() < particle_2->id();
+  }
+};
+
+/**
+ * @brief Operator overloading to enable using triangulation cells as map keys.
+ */
+using namespace dealii;
+
+template <int dim>
+struct cut_cell_comparison
+{
+  inline bool
+  operator()(
+    const typename Triangulation<dim - 1, dim>::active_cell_iterator &cell_1,
+    const typename Triangulation<dim - 1, dim>::active_cell_iterator &cell_2)
+    const
+  {
+    return cell_1->global_active_cell_index() <
+           cell_2->global_active_cell_index();
+  }
+};
 
 #endif
