@@ -15,6 +15,7 @@
 #include <solvers/simulation_parameters.h>
 
 #include <deal.II/base/convergence_table.h>
+#include <deal.II/base/tensor.h>
 #include <deal.II/base/timer.h>
 
 #include <deal.II/distributed/solution_transfer.h>
@@ -42,6 +43,7 @@
 #include <deal.II/numerics/vector_tools.h>
 
 #include <memory.h>
+
 #include <complex>
 
 
@@ -108,6 +110,12 @@ DeclException1(
   types::boundary_id,
   << "The boundary id: " << arg1
   << " is defined in the triangulation, but not as a boundary condition for the TimeHarmonicMaxwell physics. Lethe does not assign a default boundary condition to boundary ids. Every boundary id defined within the triangulation must have a corresponding boundary condition defined in the input file.");
+
+DeclException1(
+  TimeHarmonicMaxwellDimensionNotSupported,
+  int,
+  << "The time-harmonic Maxwell solver does not support dimension: " << arg1
+  << ". Currently, only 3D problems are supported as the 2D version of curls and cross products have completely different definitions than their 3D counterparts.");
 
 template <int dim>
 class TimeHarmonicMaxwell : public AuxiliaryPhysics<dim, VectorType>
@@ -670,6 +678,11 @@ private:
    * @brief A vector containing all the values of the solution on the skeleton for the trial space.
    */
   std::shared_ptr<GlobalVectorType> present_solution_skeleton;
+
+  /*
+   * @brief A vector containing all the values of the DPG built-in a-posteriori error indicator.
+   */
+  std::shared_ptr<GlobalVectorType> present_DPG_error_indicator;
 
   /**
    * @brief The right hand side vector.
