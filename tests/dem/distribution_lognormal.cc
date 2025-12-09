@@ -2,10 +2,10 @@
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
 /**
- * @brief Inserting particles following a lognormal distribution. At the end, the
+ * @brief Insert particles following a lognormal distribution. At the end, the
  * mean and standard deviation of the inserted particles is computed. By
  * increasing the number of inserted particles, those two values should converge
- * the parameter used as inputs.
+ * to the input parameters.
  */
 
 
@@ -80,7 +80,7 @@ test()
       dem_parameters.lagrangian_physical_properties.diameter_min_cutoff[0],
       dem_parameters.lagrangian_physical_properties.diameter_max_cutoff[0]));
 
-  // Calling volume insertion
+  // Insert the particles
   InsertionVolume<dim, PropertiesIndex> insertion_object(
     distribution_object_container,
     tr,
