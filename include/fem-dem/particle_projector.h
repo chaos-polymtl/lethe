@@ -705,7 +705,7 @@ private:
 
   /// Boolean indicator used to check if the particle have at least been
   /// projected once. This is mainly use for assertions and sanity checking
-  /// purposed
+  /// purposes
   bool particle_have_been_projected;
 
 public:

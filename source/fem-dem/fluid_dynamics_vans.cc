@@ -423,7 +423,26 @@ FluidDynamicsVANS<dim>::assemble_system_matrix()
           *this->mapping,
           *particle_projector.fluid_drag_on_particles.fe,
           *particle_projector.fluid_force_on_particles_two_way_coupling.fe,
-          *particle_projector.particle_velocity.fe);
+          *particle_projector.particle_velocity.fe,
+          *particle_projector.momentum_transfer_coefficient.fe);
+        if (this->cfd_dem_simulation_parameters.cfd_dem.drag_coupling ==
+            Parameters::DragCoupling::fully_implicit)
+          {
+            this->particle_projector.calculate_particle_fluid_forces_projection(
+              this->cfd_dem_simulation_parameters.cfd_dem,
+              *this->dof_handler,
+              *this->present_solution,
+              *this->previous_solutions,
+              this->cfd_dem_simulation_parameters.dem_parameters
+                .lagrangian_physical_properties.g,
+              NavierStokesScratchData<dim>(
+                this->simulation_control,
+                this->simulation_parameters.physical_properties_manager,
+                *this->fe,
+                *this->cell_quadrature,
+                *this->mapping,
+                *this->face_quadrature));
+          }
       }
 
     scratch_data.enable_particle_fluid_interactions(
@@ -543,14 +562,24 @@ FluidDynamicsVANS<dim>::assemble_local_system_matrix(
         cell->index(),
         &this->particle_projector.particle_velocity.dof_handler);
 
+      typename DoFHandler<dim>::active_cell_iterator
+        particle_momentum_transfer_coefficient_cell(
+          &(*(this->triangulation)),
+          cell->level(),
+          cell->index(),
+          &this->particle_projector.momentum_transfer_coefficient.dof_handler);
+
       scratch_data.calculate_particle_fields_values(
         particle_drag_cell,
         particle_two_way_coupling_force_cell,
         particle_velocity_cell,
+        particle_momentum_transfer_coefficient_cell,
         particle_projector.fluid_drag_on_particles.particle_field_solution,
         particle_projector.fluid_force_on_particles_two_way_coupling
           .particle_field_solution,
         particle_projector.particle_velocity.particle_field_solution,
+        particle_projector.momentum_transfer_coefficient
+          .particle_field_solution,
         cfd_dem_simulation_parameters.cfd_dem.drag_coupling);
     }
 
@@ -618,7 +647,26 @@ FluidDynamicsVANS<dim>::assemble_system_rhs()
         *this->mapping,
         *particle_projector.fluid_drag_on_particles.fe,
         *particle_projector.fluid_force_on_particles_two_way_coupling.fe,
-        *particle_projector.particle_velocity.fe);
+        *particle_projector.particle_velocity.fe,
+        *particle_projector.momentum_transfer_coefficient.fe);
+      if (this->cfd_dem_simulation_parameters.cfd_dem.drag_coupling ==
+          Parameters::DragCoupling::fully_implicit)
+        {
+          this->particle_projector.calculate_particle_fluid_forces_projection(
+            this->cfd_dem_simulation_parameters.cfd_dem,
+            *this->dof_handler,
+            *this->present_solution,
+            *this->previous_solutions,
+            this->cfd_dem_simulation_parameters.dem_parameters
+              .lagrangian_physical_properties.g,
+            NavierStokesScratchData<dim>(
+              this->simulation_control,
+              this->simulation_parameters.physical_properties_manager,
+              *this->fe,
+              *this->cell_quadrature,
+              *this->mapping,
+              *this->face_quadrature));
+        }
     }
 
   scratch_data.enable_particle_fluid_interactions(
@@ -741,14 +789,24 @@ FluidDynamicsVANS<dim>::assemble_local_system_rhs(
         cell->index(),
         &this->particle_projector.particle_velocity.dof_handler);
 
+      typename DoFHandler<dim>::active_cell_iterator
+        particle_momentum_transfer_coefficient_cell(
+          &(*(this->triangulation)),
+          cell->level(),
+          cell->index(),
+          &this->particle_projector.momentum_transfer_coefficient.dof_handler);
+
       scratch_data.calculate_particle_fields_values(
         particle_drag_cell,
         particle_two_way_coupling_force_cell,
         particle_velocity_cell,
+        particle_momentum_transfer_coefficient_cell,
         particle_projector.fluid_drag_on_particles.particle_field_solution,
         particle_projector.fluid_force_on_particles_two_way_coupling
           .particle_field_solution,
         particle_projector.particle_velocity.particle_field_solution,
+        particle_projector.momentum_transfer_coefficient
+          .particle_field_solution,
         cfd_dem_simulation_parameters.cfd_dem.drag_coupling);
     }
 
