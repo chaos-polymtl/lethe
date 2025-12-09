@@ -7,14 +7,11 @@ This subsection is the most important in a simulation and therefore, the most co
 .. tip::
 	A standard convention in Lethe is to keep this section at the top of the parameter file, since it is generally the most accessed one.
 
-.. seealso::
-	For further understanding about the numerical method used and advanced parameters, the interested reader is referred to the theory guide.
-
 .. code-block:: text
 
   subsection simulation control
     # Type of solver or time-stepping scheme
-    set method = steady
+    set method = steady 
   
     #---------------------------------------------------
     # Steady-state simulation parameters
@@ -122,38 +119,39 @@ Steady-state simulation parameters
 
 * ``number mesh adapt``: number of mesh adaptations during the steady-state simulation.
 
-* ``stop tolerance``: tolerance at which the adjoint time stepping steady state simulation (``method = steady_bdf``) stops. 
-
-
-.. note::
-	The adjoint time stepping will stop when the :math:`\mathcal{L}_2` norm of the initial residual is lower than ``stop tolerance`` at the start of a non-linear solution step.
+* ``stop tolerance``: tolerance at which the adjoint time stepping steady-state simulation (``method = steady_bdf``) stops. The adjoint time stepping will stop when the :math:`\mathcal{L}_2` norm of the initial residual is lower than ``stop tolerance`` at the beggining of a time step.
 
 ----------------------
 BDF scheme parameters
 ----------------------
 
-* ``bdf startup method``: scheme used to start a high order bdf scheme (2nd order and above). The available options are: 
-	* ``multiple step bdf``
-	* ``initial solution``
+* ``bdf startup method``: scheme used to start a high order BDF scheme (2nd order and above). The available options are: 
+	* ``multiple step bdf``:  A lower order BDF scheme is used to start the simulation. For example, in the case of ``bdf3``, the first step is done using ``bdf1``, the second with ``bdf2```and the third and onward are done with ``bdf3```.
+	* ``initial solution``: In this case, a time-dependent initial solution is provided and that initial solution is used to start the time stepping. This is mostly useful when using the method of manufactured solution to establish the formal accuracy of the BDF time stepping schemes. 
 
 * ``startup time scaling``: scaling factor used in the iterations necessary to startup the BDF schemes.
 
 .. note::
-	SDIRK schemes don't require any additional parameter.
+	SDIRK schemes are self-starting and do not require any additional parameter.
 
 ---------------------------------
 Transient simulations parameters
 ---------------------------------
 
-* ``time end``: value of the time to end the transient simulation.
+* ``time end``: value of the time at which the simulation ends.
 
 * ``time step``: value of the time step.
 
 * ``adapt``: controls if adaptive time-stepping is enabled. If set to ``true``, the time-step will evolve to ensure that the ``max cfl`` value is reached.
 
-* ``override time step on restart``: controls if the time step should be overridden by the set value upon restart. If set to ``true``, the time-step will be set to the value of ``time step``, as opposed to being matched to the time-step value recorded at the last checkpoint.
+* ``override time step on restart``: controls if the time step should be overridden by the set value upon restart. If set to ``true``, the time-step will be set to the value of ``time step`` and the time-step value recorded at the last checkpoint will be overrriden at the start of the simulation.
 
-* ``max cfl``: maximum value of the :math:`\text{CFL}` condition that can be reached during the simulation. This parameter is only used when ``set adapt = true``.
+* ``max cfl``: maximum value of the :math:`\text{CFL}` condition that can be reached during the simulation. This parameter is only used when ``set adapt = true``. The :math:`N_{\mathrm{CFL}}` is calculated as:
+
+  .. math::
+    N_{\mathrm{CFL}} = \max_q \frac{|\mathbf{u}_q| \Delta t} {h}
+
+  where :math:`q` the Gauss points and :math:`|\mathbf{u}_q|` is the velocity at the Gauss points. Essentially, the maximum CFL is the max of the CFl evaluated at every Gauss point in the mesh.
 
 * ``max time step``: maximum time step value that can be reached during the simulation. This parameter is only used when ``set adapt = true``. It is useful when the problem of interest has an additional time step constraint such as the capillary time step limit described in :doc:`../../examples/multiphysics/capillary-wave/capillary-wave`.
 
@@ -165,9 +163,9 @@ Transient simulations parameters
 Log file parameters
 --------------------
 
-* ``log frequency``: frequency at which information is written in terminal.
+* ``log frequency``: frequency at which information is written in the terminal.
 
-* ``log precision``: number of significant digits used when writting in terminal.
+* ``log precision``: number of significant digits used when writting in the terminal.
 
 --------------------------------
 Paraview output file parameters
@@ -175,47 +173,45 @@ Paraview output file parameters
 
 * ``output path``: directory for the output files.
 
-* ``output name``: prefix for the Paraview output files (``.pvd`` / ``.vtu``)
+* ``output name``: prefix for the Paraview output files (``.pvd`` / ``.vtu`` / ``.pvtu``)
 
-.. important::
-	Lethe saves the simulation results in the Paraview format: ``.vtu`` for one iteration, and ``.pvd`` files linking all iterations together. Use the open-source software `Paraview <https://www.paraview.org/>`_ to visualize them.
+  .. important::
+	  Lethe saves the simulation results in the Paraview format. For every iteration, one or more ``.vtu`` are produced, which are indexed by a single ``.pvtu`` file. A single ``.pvd`` files linking all iterations together is also generated. Use the open-source software `Paraview <https://www.paraview.org/>`_ to visualize them.
 
 * ``output control``: control for the output of the simulation results. The available options are: 
-	* ``iteration``: results will be outputted at constant iteration frequency. The time interval for this kind of output can also be specified.
+	* ``iteration``: results will be outputted at constant iteration frequency. 
 	* ``time`` : results will be outputted based on time parameters (specific times or time frequency). The results can also be outputted for certain time interval.
 
-* ``output frequency``: controls after which number of iterations the ``.pvd`` / ``.vtu`` results are written. This parameter is only used when ``set output control = iteration``.
+* ``output frequency``: controls after which number of iterations the results are written. This parameter is only used when ``set output control = iteration``.
 
-.. tip::
-	If ``set output frequency = 0``, no ``.pvd`` / ``.vtu`` file will be written.
+  .. tip::
+	  If ``set output frequency = 0``, no output file will be generated. This is the only way to prevent the generation of output files.
 
-	If the ``output frequency`` is set at a higher number than the total number of iterations in the simulation, the startup iteration will still be outputted.
+* ``output time frequency``: controls the time frequency when the results are written, e.g., if set to 1, paraview files will be outputted every unit of time. This parameter is only used when ``set output control = time``.
 
-* ``output time frequency``: controls the time frequency when the ``.pvd`` / ``.vtu`` results are written, e.g., if set to 1, paraview files will be outputted every second. This parameter is only used when ``set output control = time``.
+* ``output times``: allows to specify specific times for the output of ``.pvd`` / ``.vtu`` files. This parameter is only used when ``set output control = time``. As an example, one can output files only at 5 seconds, by setting ``set output times = 5`` or at multiple specific times separating the values with commas: ``set output times = 5, 14``.
 
-* ``output times``: allows to specify specific times for the output of ``.pvd`` / ``.vtu``. This parameter is only used when ``set output control = time``. As an example, one can output files only at 5 seconds, by setting ``set output times = 5`` or at multiple specific times separating the values with commas: ``set output times = 5, 14``.
+  .. warning::
+	  Since it is possible that the times specified in the interval or in specific output times do not correspond to the time of specific iterations, Lethe will always write the Paraview files before and after the time specified. 
 
 * ``output time interval``: Only writes the ``.pvd`` / ``.vtu`` files when the simulation time is within the closed interval defined by the ``output time interval``. Default values are 0s and 1.7e308s. Used for both ``iteration`` and ``time`` output control.
 
-.. warning::
-	Since it is possible that the times specified in the interval or in specific output times do not correspond to the time of specific iterations, Lethe will always write the paraview files before and after the time specified. 
+* ``group files``: number of ``.vtu`` files generated in a parallel simulation. 
 
-* ``group files``: number of ``.vtu`` files generated in a parallel simulation
+  .. tip::
+	  This parameter reduces the number of files generated when the simulation is run with a large number of processors. ``set group files = 1`` ensures that a single ``.vtu`` file will be generated. In this case, the file is written using MPI IO functionalities.
 
-.. tip::
-	This parameter allows to reduce the number of files generated when the simulation is run with a large number of processors. ``set group files = 1`` ensures that a single ``.vtu`` file will be generated. In this case, the file is written using MPI IO functionalities.
+	  The value for this parameter should always be a compromise between keeping a low number of files but preventing excessive MPI communications. We have found that the default value of 1 does not have a significant impact except in very large simulations.
 
-	The value for this parameter should always be a compromise between keeping a low number of files but preventing excessive MPI communications. We have found that the default value of 1 does not have a significant impact on performance on Compute Canada clusters.
-
-	.. warning::
-		However, as soon as the size of the output ``.vtu`` file reaches 1 Gb, it is preferable to start splitting them into multiple smaller files as this may lead to corrupted files on some file systems.
+	  .. warning::
+	  	As soon as the size of the output ``.vtu`` file reaches 3 Gb, it is preferable to start splitting them into multiple smaller files as this may lead to corrupted files on some file systems.
 
 * ``output boundaries``: controls if the boundaries of the domain are written to a file. This will write additional ``.vtu`` files made of the contour of the domain. 
 
-.. tip::
-	This is particularly useful for the visualisation of 3D flows with obstacles or objects.
+  .. tip::
+	  This is particularly useful for the visualisation of 3D flows with obstacles or objects.
 
 * ``subdivision``: sub-division of the mesh cells to enable visualisation of high-order elements with Paraview. 
 
-.. tip::
-	Generally, we advise to use a subdivision level of :math:`(n)` for interpolation order of :math:`n`. For example, a Q2-Q1 interpolation could be visualized with ``set subdivision = 2``.
+  .. tip::
+	  Generally, we advise to use a subdivision level of :math:`(n)` for interpolation order of :math:`n`. For example, a Q2-Q1 interpolation could be visualized with ``set subdivision = 2``.
