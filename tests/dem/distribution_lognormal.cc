@@ -2,11 +2,12 @@
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
 /**
- * @brief Inserting particles following a normal distribution. At the end, the
+ * @brief Insert particles following a lognormal distribution. At the end, the
  * mean and standard deviation of the inserted particles is computed. By
  * increasing the number of inserted particles, those two values should converge
- * the parameter used as inputs.
+ * to the input parameters.
  */
+
 
 // Deal.II includes
 #include <deal.II/fe/mapping_q.h>
@@ -18,6 +19,8 @@
 #include <dem/insertion_volume.h>
 
 // Tests (with common definitions)
+#include <deal.II/numerics/vector_tools_common.h>
+
 #include <../tests/tests.h>
 
 using namespace dealii;
@@ -47,14 +50,14 @@ test()
   dem_parameters.insertion_info.distance_threshold    = 2;
   dem_parameters.lagrangian_physical_properties.particle_type_number = 1;
   dem_parameters.lagrangian_physical_properties.distribution_type.push_back(
-    Parameters::Lagrangian::SizeDistributionType::normal);
+    Parameters::Lagrangian::SizeDistributionType::lognormal);
   dem_parameters.lagrangian_physical_properties.particle_average_diameter[0] =
     0.005;
   dem_parameters.lagrangian_physical_properties.particle_size_std[0] = 0.0005;
   dem_parameters.lagrangian_physical_properties.seed_for_distributions
     .push_back(10);
   dem_parameters.lagrangian_physical_properties.diameter_min_cutoff.push_back(
-    -1.);
+    -1);
   dem_parameters.lagrangian_physical_properties.diameter_max_cutoff.push_back(
     -1.);
   dem_parameters.lagrangian_physical_properties.density_particle[0] = 2500;
@@ -68,14 +71,16 @@ test()
 
   // Calling uniform insertion
   std::vector<std::shared_ptr<Distribution>> distribution_object_container;
-  distribution_object_container.push_back(std::make_shared<NormalDistribution>(
-    dem_parameters.lagrangian_physical_properties.particle_average_diameter[0],
-    dem_parameters.lagrangian_physical_properties.particle_size_std[0],
-    dem_parameters.lagrangian_physical_properties.seed_for_distributions[0],
-    dem_parameters.lagrangian_physical_properties.diameter_min_cutoff[0],
-    dem_parameters.lagrangian_physical_properties.diameter_max_cutoff[0]));
+  distribution_object_container.push_back(
+    std::make_shared<LogNormalDistribution>(
+      dem_parameters.lagrangian_physical_properties
+        .particle_average_diameter[0],
+      dem_parameters.lagrangian_physical_properties.particle_size_std[0],
+      dem_parameters.lagrangian_physical_properties.seed_for_distributions[0],
+      dem_parameters.lagrangian_physical_properties.diameter_min_cutoff[0],
+      dem_parameters.lagrangian_physical_properties.diameter_max_cutoff[0]));
 
-  // Calling volume insertion
+  // Insert the particles
   InsertionVolume<dim, PropertiesIndex> insertion_object(
     distribution_object_container,
     tr,

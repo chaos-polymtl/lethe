@@ -19,10 +19,10 @@ public:
   /**
    * @brief Carries out the size sampling of particles. This is the base class of
    * NormalDistribution, UniformDistribution and CustomDistribution classes.
-   * @param particle_number Number of particle inserted at a given insertion time step.
+   * @param number_of_particles Number of particle inserted at a given insertion time step.
    */
   virtual void
-  particle_size_sampling(const unsigned int &particle_number) = 0;
+  particle_size_sampling(const unsigned int &number_of_particles) = 0;
 
   /**
    * @brief Return the minimum diameter for a certain distribution.
@@ -39,6 +39,18 @@ public:
    */
   virtual double
   find_max_diameter() = 0;
+
+  /**
+   * @brief Print the declaration string relative to the particle size
+   * distribution used.
+   *
+   * @param particle_type Particle type of the distribution
+   * @param pcout Parallel conditional output stream used to print the
+   * information
+   */
+  virtual void
+  print_psd_declaration_string(const unsigned int        particle_type,
+                               const ConditionalOStream &pcout) = 0;
 };
 
 class NormalDistribution : public Distribution
@@ -48,23 +60,28 @@ public:
    * @brief The constructor stores the parameters necessary to define the normal
    * distribution.
    *
-   * @param d_average Average diameters for a certain normal distribution.
-   * @param d_standard_deviation Standard deviation of the diameter for a certain
-   * normal distribution.
-   * @param prn_seed Pseudo-random number seed for the diameter generation.
+   * @param[in] d_average Average diameters for a certain normal distribution.
+   * @param[in] d_standard_deviation Standard deviation of the diameter for a
+   * certain normal distribution.
+   * @param[in] prn_seed Pseudo-random number seed for the diameter generation.
+   * @param[in] min_cutoff Minimum cutoff diameter.
+   * @param[in] max_cutoff Maximum cutoff diameter.
    */
   NormalDistribution(const double       &d_average,
                      const double       &d_standard_deviation,
-                     const unsigned int &prn_seed);
+                     const unsigned int &prn_seed,
+                     const double       &min_cutoff,
+                     const double       &max_cutoff);
 
   /**
    * @brief Carries out the size sampling of each particle inserted at an insertion
    * time step for the normal distribution.
    *
-   * @param particle_number Number of particle inserted at a given insertion time step.
+   * @param[in] number_of_particles Number of particle inserted at a given
+   * insertion time step.
    */
   void
-  particle_size_sampling(const unsigned int &particle_number) override;
+  particle_size_sampling(const unsigned int &number_of_particles) override;
 
   /**
    * @brief Find the minimum diameter a normal distribution.
@@ -82,6 +99,18 @@ public:
   double
   find_max_diameter() override;
 
+  /**
+   * @brief Print the declaration string relative to the particle size
+   * distribution used.
+   *
+   * @param particle_type Particle type of the distribution
+   * @param pcout Parallel conditional output stream used to print the
+   * information
+   */
+  void
+  print_psd_declaration_string(const unsigned int        particle_type,
+                               const ConditionalOStream &pcout) override;
+
 private:
   /**
    * @brief Average diameter of the normal distribution.
@@ -97,6 +126,97 @@ private:
    * @brief Random number generator for the diameter selection.
    */
   std::mt19937 gen;
+
+  /**
+   * @brief Minimal cut off diameters values.
+   */
+  double dia_min_cutoff;
+
+  /**
+   * @brief Maximum cut off diameters values.
+   */
+  double dia_max_cutoff;
+};
+
+
+class LogNormalDistribution : public Distribution
+{
+public:
+  /**
+   * @brief The constructor stores the parameters necessary to define the normal
+   * distribution.
+   *
+   * @param[in] d_average Average diameters for a certain normal distribution.
+   * @param[in] d_standard_deviation Standard deviation of the diameter for a
+   * certain normal distribution.
+   * @param[in] prn_seed Pseudo-random number seed for the diameter generation.
+   * @param[in] min_cutoff Minimum cutoff diameter.
+   * @param[in] max_cutoff Maximum cutoff diameter.
+   */
+  LogNormalDistribution(const double       &d_average,
+                        const double       &d_standard_deviation,
+                        const unsigned int &prn_seed,
+                        const double        min_cutoff,
+                        const double        max_cutoff);
+
+  /**
+   * @brief Carries out the size sampling of each particle inserted at an insertion
+   * time step for the normal distribution.
+   *
+   * @param[in] number_of_particles Number of particle inserted at a given
+   * insertion time step.
+   */
+  void
+  particle_size_sampling(const unsigned int &number_of_particles) override;
+
+  /**
+   * @brief Find the minimum diameter a normal distribution.
+   *
+   * @return The minimum diameter of a normal distribution.
+   */
+  double
+  find_min_diameter() override;
+
+  /**
+   * @brief Find the maximum diameter of the normal distribution.
+   *
+   * @return The maximum diameter of the normal distribution.
+   */
+  double
+  find_max_diameter() override;
+
+  /**
+   * @brief Print the declaration string relative to the particle size
+   * distribution used.
+   *
+   * @param particle_type Particle type of the distribution
+   * @param pcout Parallel conditional output stream used to print the
+   * information
+   */
+  void
+  print_psd_declaration_string(const unsigned int        particle_type,
+                               const ConditionalOStream &pcout) override;
+
+private:
+  /**
+   * @brief Standard deviation of distribution of the normal distribution.
+   */
+  const double sigma_ln;
+
+  /**
+   * @brief Average diameter of the normal distribution.
+   */
+  const double mu_ln;
+
+  /**
+   * @brief Random number generator for the diameter selection.
+   */
+  std::mt19937 gen;
+
+  /**
+   * @brief Cut off diameters values.
+   */
+  double dia_min_cutoff, dia_max_cutoff;
 };
 
 class UniformDistribution : public Distribution
@@ -114,10 +234,10 @@ public:
    * @brief Carries out the size sampling of every particles inserted at an insertion
    * time step for the uniform distribution.
    *
-   * @param particle_number Number of particle inserted at a given insertion time step.
+   * @param number_of_particles Number of particle inserted at a given insertion time step.
    */
   void
-  particle_size_sampling(const unsigned int &particle_number) override;
+  particle_size_sampling(const unsigned int &number_of_particles) override;
 
   /**
    * @brief Find the minimum diameter of the uniform distribution.
@@ -135,6 +255,19 @@ public:
   double
   find_max_diameter() override;
 
+
+  /**
+   * @brief Print the declaration string relative to the particle size
+   * distribution used.
+   *
+   * @param particle_type Particle type of the distribution
+   * @param pcout Parallel conditional output stream used to print the
+   * information
+   */
+  void
+  print_psd_declaration_string(const unsigned int        particle_type,
+                               const ConditionalOStream &pcout) override;
+
 private:
   /**
    * @brief The diameter value of the distribution.
@@ -149,10 +282,10 @@ public:
    * @brief The constructor stores the parameters necessary to define the histogram
    * distribution.
    *
-   * @param d_list Vector of diameter values.
-   * @param d_probabilities Vector of probability values based on volume fraction
-   * with respect to each diameter value.
-   * @param prn_seed Pseudo-random number seed for the diameter generation.
+   * @param[in] d_list Vector of diameter values.
+   * @param[in] d_probabilities Vector of probability values based on volume
+   * fraction with respect to each diameter value.
+   * @param[in] prn_seed Pseudo-random number seed for the diameter generation.
    */
   CustomDistribution(const std::vector<double> &d_list,
                      const std::vector<double> &d_probabilities,
@@ -162,11 +295,11 @@ public:
    * @brief Carries out the size sampling of each particle inserted at an insertion
    * time step for the histogram distribution.
    *
-   * @param particle_number Number of particles inserted at a given insertion time
-   * step.
+   * @param[in] number_of_particles Number of particles inserted at a given
+   * insertion time step.
    */
   void
-  particle_size_sampling(const unsigned int &particle_number) override;
+  particle_size_sampling(const unsigned int &number_of_particles) override;
 
   /**
    * @brief Find the minimum diameter of the custom distribution.
@@ -183,6 +316,18 @@ public:
    */
   double
   find_max_diameter() override;
+
+  /**
+   * @brief Print the declaration string relative to the particle size
+   * distribution used.
+   *
+   * @param particle_type Particle type of the distribution
+   * @param pcout Parallel conditional output stream used to print the
+   * information
+   */
+  void
+  print_psd_declaration_string(const unsigned int        particle_type,
+                               const ConditionalOStream &pcout) override;
 
 private:
   /**

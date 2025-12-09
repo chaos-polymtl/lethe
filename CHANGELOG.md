@@ -4,6 +4,12 @@ All notable changes to the Lethe project will be documented in this file.
 The changelog for the previous releases of Lethe are located in the release_notes folder.
 The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
+### [Master] - 2025-12-09
+
+### Added
+
+- MAJOR The user can now generate particle using a ``lognormal`` distribution. Two new parameter have been added, namely the `minimum diameter cutoff ` and the `maximum diameter cutoff` which are used to specify the minimal and maximal particle diameter that can be inserted in a DEM simulation. By default, for a ``normal`` the smallest and biggest diameter that can be generated are 2.5 standard deviation from the means, which wasn't the case previously. [#1837](https://github.com/chaos-polymtl/lethe/pull/1837)
+
 ### [Master] - 2025-12-08
 
 ### Fixed

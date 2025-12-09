@@ -45,6 +45,7 @@ namespace Parameters
     {
       uniform,
       normal,
+      lognormal,
       custom
     };
 
@@ -71,6 +72,9 @@ namespace Parameters
       // custom distribution for each particle type
       std::unordered_map<unsigned int, std::vector<double>>
         particle_custom_probability;
+
+      // Cutoff used for the lognormal distribution
+      std::vector<double> diameter_min_cutoff, diameter_max_cutoff;
 
       // Random seed for the size distribution
       std::vector<unsigned int> seed_for_distributions;
@@ -253,6 +257,8 @@ namespace Parameters
         std::unordered_map<unsigned int, std::vector<double>>
                                                  &p_custom_probability,
         std::vector<unsigned int>                &seed_for_dist,
+        std::vector<double>                      &diameter_min_cutoff,
+        std::vector<double>                      &diameter_max_cutoff,
         std::unordered_map<unsigned int, int>    &p_number,
         std::unordered_map<unsigned int, double> &p_density,
         std::unordered_map<unsigned int, double> &p_youngs_modulus,

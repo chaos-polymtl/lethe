@@ -140,6 +140,8 @@ namespace Parameters
                             particle_custom_diameter,
                             particle_custom_probability,
                             seed_for_distributions,
+                            diameter_min_cutoff,
+                            diameter_max_cutoff,
                             number,
                             density_particle,
                             youngs_modulus_particle,
@@ -213,13 +215,14 @@ namespace Parameters
     {
       prm.declare_entry("size distribution type",
                         "uniform",
-                        Patterns::Selection("uniform|normal|custom"),
+                        Patterns::Selection("uniform|normal|lognormal|custom"),
                         "Particle size distribution"
-                        "Choices are <uniform|normal|custom>.");
-      prm.declare_entry("diameter",
+                        "Choices are <uniform|normal|lognormal|custom>.");
+      prm.declare_entry("average diameter",
                         "0.001",
                         Patterns::Double(),
                         "Particle diameter");
+      prm.declare_alias("average diameter", "diameter", false);
       prm.declare_entry("standard deviation",
                         "0",
                         Patterns::Double(),
@@ -228,16 +231,30 @@ namespace Parameters
                         "0.001 , 0.0005",
                         Patterns::List(Patterns::Double()),
                         "Diameter values for a custom distribution");
-      prm.declare_entry(
-        "custom volume fractions",
-        "0.6 , 0.4",
-        Patterns::List(Patterns::Double()),
-        "Probabilities of each diameter of the custom distribution based on the volume fraction");
-      prm.declare_entry(
-        "random seed distribution",
-        "1",
-        Patterns::Integer(),
-        "Seed for generation of random numbers for the size distribution");
+      prm.declare_entry("custom volume fractions",
+                        "0.6 , 0.4",
+                        Patterns::List(Patterns::Double()),
+                        "Probabilities of each diameter of the custom"
+                        " distribution based on the volume fraction");
+      prm.declare_entry("random seed distribution",
+                        "1",
+                        Patterns::Integer(),
+                        "Seed for generation of random numbers"
+                        " for the size distribution");
+      prm.declare_entry("minimum diameter cutoff",
+                        "-1.",
+                        Patterns::Double(),
+                        "Cutoff values used when the log-normal distribution "
+                        "is used. If equal to -1., the cut of will be fixed at "
+                        "0.1% of the cumulative density function of the "
+                        "log-normal distribution");
+      prm.declare_entry("maximum diameter cutoff",
+                        "-1.",
+                        Patterns::Double(),
+                        "Cutoff values used when the log-normal distribution "
+                        "is used. If equal to -1., the cut of will be fixed at "
+                        "99.9% of the cumulative density function of the "
+                        "log-normal distribution");
       prm.declare_entry("number of particles",
                         "0",
                         Patterns::Integer(),
@@ -313,15 +330,21 @@ namespace Parameters
       const unsigned int     &particle_type,
       const ParameterHandler &prm)
     {
-      particle_average_diameter.at(particle_type) = prm.get_double("diameter");
+      // unordered maps
+      particle_average_diameter.at(particle_type) =
+        prm.get_double("average diameter");
       particle_size_std.at(particle_type) =
         prm.get_double("standard deviation");
       particle_custom_diameter.at(particle_type) =
         convert_string_to_vector<double>(prm, "custom diameters");
       particle_custom_probability.at(particle_type) =
         convert_string_to_vector<double>(prm, "custom volume fractions");
+
+      // vectors
       seed_for_distributions.push_back(
         prm.get_integer("random seed distribution"));
+      diameter_min_cutoff.push_back(prm.get_double("minimum diameter cutoff"));
+      diameter_max_cutoff.push_back(prm.get_double("maximum diameter cutoff"));
 
       double probability_sum =
         std::reduce(particle_custom_probability.at(particle_type).begin(),
@@ -342,6 +365,10 @@ namespace Parameters
       else if (size_distribution_type_str == "normal")
         {
           distribution_type.at(particle_type) = SizeDistributionType::normal;
+        }
+      else if (size_distribution_type_str == "lognormal")
+        {
+          distribution_type.at(particle_type) = SizeDistributionType::lognormal;
         }
       else if (size_distribution_type_str == "custom")
         {
@@ -403,6 +430,8 @@ namespace Parameters
       std::unordered_map<unsigned int, std::vector<double>>
                                                &p_custom_probability,
       std::vector<unsigned int>                &seed_for_dist,
+      std::vector<double>                      &d_min_cutoff,
+      std::vector<double>                      &d_max_cutoff,
       std::unordered_map<unsigned int, int>    &p_number,
       std::unordered_map<unsigned int, double> &p_density,
       std::unordered_map<unsigned int, double> &p_youngs_modulus,
@@ -449,6 +478,8 @@ namespace Parameters
           real_youngs_modulus_p.insert({counter, 0.});
         }
       seed_for_dist.reserve(particle_type_maximum_number);
+      d_min_cutoff.reserve(particle_type_maximum_number);
+      d_max_cutoff.reserve(particle_type_maximum_number);
     }
 
     template <int dim>
