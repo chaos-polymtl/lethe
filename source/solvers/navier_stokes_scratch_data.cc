@@ -339,7 +339,8 @@ NavierStokesScratchData<dim>::enable_particle_field_projection(
   const Mapping<dim>       &mapping,
   const FiniteElement<dim> &fe_particle_drag_proj,
   const FiniteElement<dim> &fe_particle_two_way_coupling_force_proj,
-  const FiniteElement<dim> &fe_particle_velocity_proj)
+  const FiniteElement<dim> &fe_particle_velocity_proj,
+  const FiniteElement<dim> &fe_particle_momentum_transfer_coefficient)
 {
   gather_particle_field_project = true;
 
@@ -353,11 +354,18 @@ NavierStokesScratchData<dim>::enable_particle_field_projection(
                                     update_values);
   fe_values_particle_velocity = std::make_shared<FEValues<dim>>(
     mapping, fe_particle_velocity_proj, quadrature, update_values);
+  fe_values_particle_momentum_transfer_coefficient =
+    std::make_shared<FEValues<dim>>(mapping,
+                                    fe_particle_momentum_transfer_coefficient,
+                                    quadrature,
+                                    update_values);
 
   particle_drag_values = std::vector<Tensor<1, dim>>(this->n_q_points);
   particle_two_way_coupling_force_values =
     std::vector<Tensor<1, dim>>(this->n_q_points);
   particle_velocity_values = std::vector<Tensor<1, dim>>(this->n_q_points);
+  particle_momentum_transfer_coefficient_values =
+    std::vector<double>(this->n_q_points);
 }
 
 template <int dim>
