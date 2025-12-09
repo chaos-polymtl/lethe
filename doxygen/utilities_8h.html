@@ -102,6 +102,7 @@ $(function() {
 <code>#include &lt;deal.II/particles/particle_iterator.h&gt;</code><br />
 <code>#include &lt;boost/archive/text_iarchive.hpp&gt;</code><br />
 <code>#include &lt;boost/archive/text_oarchive.hpp&gt;</code><br />
+<code>#include &lt;boost/math/special_functions/erf.hpp&gt;</code><br />
 <code>#include &lt;fstream&gt;</code><br />
 <code>#include &lt;map&gt;</code><br />
 <code>#include &lt;regex&gt;</code><br />
@@ -113,41 +114,43 @@ Include dependency graph for utilities.h:</div>
 <div class="dyncontent">
 <div class="center"><img src="utilities_8h__incl.png" border="0" usemap="#a_2home_2runner_2work_2lethe_2lethe_2include_2core_2utilities_8h" alt=""/></div>
 <map name="a_2home_2runner_2work_2lethe_2lethe_2include_2core_2utilities_8h" id="a_2home_2runner_2work_2lethe_2lethe_2include_2core_2utilities_8h">
-<area shape="rect" title=" " alt="" coords="1405,5,1612,45"/>
+<area shape="rect" title=" " alt="" coords="1496,5,1703,45"/>
 <area shape="rect" href="output__struct_8h.html" title=" " alt="" coords="110,101,262,126"/>
-<area shape="poly" title=" " alt="" coords="1405,30,1198,33,916,43,597,63,434,77,274,96,247,101,246,95,274,91,433,72,597,57,916,37,1197,27,1405,24"/>
+<area shape="poly" title=" " alt="" coords="1496,29,1274,31,971,41,624,61,447,76,274,96,247,101,246,95,274,91,447,71,624,55,970,35,1274,26,1496,24"/>
 <area shape="rect" title=" " alt="" coords="5,181,140,221"/>
-<area shape="poly" title=" " alt="" coords="1405,31,1074,37,652,50,279,69,156,81,118,88,100,96,87,110,79,129,73,168,68,167,74,127,83,108,96,91,117,83,155,76,279,64,651,44,1074,32,1405,26"/>
+<area shape="poly" title=" " alt="" coords="1496,31,1145,36,693,48,293,68,160,81,120,88,100,96,87,110,79,129,73,168,68,167,74,127,83,108,96,91,118,83,160,75,292,62,693,43,1145,31,1496,25"/>
 <area shape="rect" title=" " alt="" coords="286,93,459,133"/>
-<area shape="poly" title=" " alt="" coords="1405,32,1001,50,740,69,474,96,473,91,740,63,1001,45,1405,27"/>
+<area shape="poly" title=" " alt="" coords="1496,31,1307,37,1055,48,768,67,474,96,473,91,768,62,1055,43,1307,31,1496,26"/>
 <area shape="rect" title=" " alt="" coords="484,93,653,133"/>
-<area shape="poly" title=" " alt="" coords="1405,34,1080,54,876,72,667,96,667,91,876,67,1080,49,1405,29"/>
+<area shape="poly" title=" " alt="" coords="1496,33,1133,52,903,70,667,96,667,91,903,65,1133,47,1496,27"/>
 <area shape="rect" title=" " alt="" coords="678,101,825,126"/>
-<area shape="poly" title=" " alt="" coords="1405,36,1147,58,992,75,838,96,813,101,812,95,838,91,992,69,1146,52,1405,31"/>
+<area shape="poly" title=" " alt="" coords="1496,34,1199,55,1019,73,838,96,813,101,812,95,838,91,1018,67,1199,50,1495,29"/>
 <area shape="rect" title=" " alt="" coords="849,101,1003,126"/>
-<area shape="poly" title=" " alt="" coords="1405,41,1223,64,1016,96,991,100,990,95,1015,91,1222,59,1405,36"/>
+<area shape="poly" title=" " alt="" coords="1496,38,1275,61,1016,96,990,101,989,95,1015,91,1274,56,1495,33"/>
 <area shape="rect" title=" " alt="" coords="1027,101,1214,126"/>
-<area shape="poly" title=" " alt="" coords="1424,48,1186,100,1185,95,1423,43"/>
+<area shape="poly" title=" " alt="" coords="1496,48,1198,101,1197,96,1495,43"/>
 <area shape="rect" title=" " alt="" coords="1239,101,1397,126"/>
-<area shape="poly" title=" " alt="" coords="1468,48,1357,98,1355,93,1466,43"/>
+<area shape="poly" title=" " alt="" coords="1538,48,1370,99,1368,94,1537,43"/>
 <area shape="rect" title=" " alt="" coords="1421,93,1596,133"/>
-<area shape="poly" title=" " alt="" coords="1511,46,1511,79,1506,79,1506,46"/>
+<area shape="poly" title=" " alt="" coords="1581,48,1540,86,1537,82,1577,44"/>
 <area shape="rect" title=" " alt="" coords="1620,93,1760,133"/>
-<area shape="poly" title=" " alt="" coords="1550,43,1639,85,1637,90,1547,48"/>
+<area shape="poly" title=" " alt="" coords="1621,44,1662,82,1658,86,1618,48"/>
 <area shape="rect" title=" " alt="" coords="1784,93,1924,133"/>
-<area shape="poly" title=" " alt="" coords="1585,43,1771,89,1770,94,1584,48"/>
-<area shape="rect" title=" " alt="" coords="1948,101,2021,126"/>
-<area shape="poly" title=" " alt="" coords="1612,34,1767,55,1853,71,1937,91,1946,93,1945,99,1936,96,1852,76,1766,60,1612,39"/>
-<area shape="rect" title=" " alt="" coords="2046,101,2097,126"/>
-<area shape="poly" title=" " alt="" coords="1613,27,1704,33,1811,45,1924,63,2035,91,2040,93,2038,98,2033,96,1923,69,1810,50,1704,38,1612,32"/>
-<area shape="rect" title=" " alt="" coords="2121,101,2179,126"/>
-<area shape="poly" title=" " alt="" coords="1613,26,1717,31,1843,42,1977,62,2109,91,2116,93,2115,98,2108,96,1976,67,1842,48,1717,36,1612,31"/>
-<area shape="rect" title=" " alt="" coords="2203,101,2262,126"/>
-<area shape="poly" title=" " alt="" coords="1612,24,1732,27,1878,38,2036,58,2115,73,2192,91,2199,93,2197,98,2191,96,2114,78,2035,63,1877,43,1732,33,1612,29"/>
-<area shape="rect" title=" " alt="" coords="2287,101,2341,126"/>
-<area shape="poly" title=" " alt="" coords="1612,29,1965,51,2145,68,2218,79,2275,91,2281,93,2279,98,2273,96,2217,84,2144,74,1964,56,1612,34"/>
-<area shape="rect" title=" " alt="" coords="2365,101,2428,126"/>
-<area shape="poly" title=" " alt="" coords="1612,28,2004,49,2207,67,2291,78,2355,91,2362,93,2361,98,2353,96,2290,84,2207,73,2004,55,1612,33"/>
+<area shape="poly" title=" " alt="" coords="1656,43,1786,86,1785,92,1654,48"/>
+<area shape="rect" title=" " alt="" coords="1949,93,2095,133"/>
+<area shape="poly" title=" " alt="" coords="1697,43,1935,90,1934,96,1696,48"/>
+<area shape="rect" title=" " alt="" coords="2120,101,2193,126"/>
+<area shape="poly" title=" " alt="" coords="1703,31,1893,51,2001,68,2108,91,2118,94,2117,99,2107,96,2000,73,1892,56,1703,36"/>
+<area shape="rect" title=" " alt="" coords="2218,101,2269,126"/>
+<area shape="poly" title=" " alt="" coords="1703,24,1809,29,1936,40,2073,59,2207,91,2212,92,2210,98,2205,96,2072,65,1936,45,1809,34,1703,30"/>
+<area shape="rect" title=" " alt="" coords="2293,101,2351,126"/>
+<area shape="poly" title=" " alt="" coords="1703,24,1822,28,1968,38,2125,58,2205,73,2281,91,2288,93,2287,98,2280,96,2203,78,2125,63,1967,43,1822,33,1703,29"/>
+<area shape="rect" title=" " alt="" coords="2375,101,2434,126"/>
+<area shape="poly" title=" " alt="" coords="1703,29,2055,51,2234,69,2308,79,2364,91,2371,93,2369,98,2363,96,2307,85,2234,74,2054,56,1703,34"/>
+<area shape="rect" title=" " alt="" coords="2459,101,2513,126"/>
+<area shape="poly" title=" " alt="" coords="1703,28,1882,35,2096,48,2299,67,2383,78,2447,91,2454,93,2452,98,2445,96,2382,83,2299,72,2095,54,1881,41,1703,33"/>
+<area shape="rect" title=" " alt="" coords="2537,101,2600,126"/>
+<area shape="poly" title=" " alt="" coords="1703,27,1898,35,2135,47,2362,66,2456,77,2527,91,2535,93,2533,98,2525,96,2455,83,2362,71,2135,53,1898,40,1703,32"/>
 <area shape="poly" title=" " alt="" coords="172,128,110,175,107,171,169,124"/>
 <area shape="rect" title=" " alt="" coords="164,181,323,221"/>
 <area shape="poly" title=" " alt="" coords="196,125,225,168,221,171,192,128"/>
@@ -478,9 +481,9 @@ Functions</h2></td></tr>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="utilities_8h_source.html#l00086">86</a> of file <a class="el" href="utilities_8h_source.html">utilities.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="utilities_8h_source.html#l00087">87</a> of file <a class="el" href="utilities_8h_source.html">utilities.h</a>.</p>
 
-<p class="reference">References <a class="el" href="utilities_8h_source.html#l00070">statistics::average</a>, <a class="el" href="utilities_8h_source.html#l00064">statistics::max</a>, <a class="el" href="utilities_8h_source.html#l00061">statistics::min</a>, and <a class="el" href="utilities_8h_source.html#l00067">statistics::total</a>.</p>
+<p class="reference">References <a class="el" href="utilities_8h_source.html#l00071">statistics::average</a>, <a class="el" href="utilities_8h_source.html#l00065">statistics::max</a>, <a class="el" href="utilities_8h_source.html#l00062">statistics::min</a>, and <a class="el" href="utilities_8h_source.html#l00068">statistics::total</a>.</p>
 
 </div>
 </div>
@@ -538,7 +541,7 @@ Functions</h2></td></tr>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="utilities_8h_source.html#l00467">467</a> of file <a class="el" href="utilities_8h_source.html">utilities.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="utilities_8h_source.html#l00468">468</a> of file <a class="el" href="utilities_8h_source.html">utilities.h</a>.</p>
 
 </div>
 </div>
@@ -592,7 +595,7 @@ Functions</h2></td></tr>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="utilities_8h_source.html#l00296">296</a> of file <a class="el" href="utilities_8h_source.html">utilities.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="utilities_8h_source.html#l00297">297</a> of file <a class="el" href="utilities_8h_source.html">utilities.h</a>.</p>
 
 <p class="reference">References <a class="el" href="multiphysics_8h.html#a2cbb04ef215561a69b48772159577fdda7ee7184c970537ea83afe7f9bae4c61f">phase</a>.</p>
 
@@ -650,9 +653,9 @@ Functions</h2></td></tr>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>double Equivalent property for the given phase. </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="utilities_8h_source.html#l00369">369</a> of file <a class="el" href="utilities_8h_source.html">utilities.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="utilities_8h_source.html#l00370">370</a> of file <a class="el" href="utilities_8h_source.html">utilities.h</a>.</p>
 
-<p class="reference">References <a class="el" href="multiphysics_8h.html#a2cbb04ef215561a69b48772159577fdda7ee7184c970537ea83afe7f9bae4c61f">phase</a>, <a class="el" href="multiphysics_8h.html#a2cbb04ef215561a69b48772159577fdda680362fee5d2ef1fb4a224fec18cfc36">phase_cahn_hilliard</a>, and <a class="el" href="utilities_8h_source.html#l00333">sgn()</a>.</p>
+<p class="reference">References <a class="el" href="multiphysics_8h.html#a2cbb04ef215561a69b48772159577fdda7ee7184c970537ea83afe7f9bae4c61f">phase</a>, <a class="el" href="multiphysics_8h.html#a2cbb04ef215561a69b48772159577fdda680362fee5d2ef1fb4a224fec18cfc36">phase_cahn_hilliard</a>, and <a class="el" href="utilities_8h_source.html#l00334">sgn()</a>.</p>
 
 </div>
 </div>
@@ -707,7 +710,7 @@ template&lt;typename T &gt; </div>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>Clipped variable that is not below the lower limit and not above the upper limit </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="utilities_8h_source.html#l00350">350</a> of file <a class="el" href="utilities_8h_source.html">utilities.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="utilities_8h_source.html#l00351">351</a> of file <a class="el" href="utilities_8h_source.html">utilities.h</a>.</p>
 
 </div>
 </div>
@@ -763,7 +766,7 @@ template&lt;int dim&gt; </div>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>Cell diameter value. </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="utilities_8h_source.html#l00727">727</a> of file <a class="el" href="utilities_8h_source.html">utilities.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="utilities_8h_source.html#l00728">728</a> of file <a class="el" href="utilities_8h_source.html">utilities.h</a>.</p>
 
 </div>
 </div>
@@ -806,7 +809,7 @@ template&lt;int dim&gt; </div>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>Area (2D) volume (3D) of the cell. </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="utilities_8h_source.html#l00755">755</a> of file <a class="el" href="utilities_8h_source.html">utilities.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="utilities_8h_source.html#l00756">756</a> of file <a class="el" href="utilities_8h_source.html">utilities.h</a>.</p>
 
 </div>
 </div>
@@ -893,7 +896,7 @@ template&lt;typename T &gt; </div>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>A std::vector&lt;double&gt; corresponding to the entry_string in the prm file. </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="utilities_8h_source.html#l01011">1011</a> of file <a class="el" href="utilities_8h_source.html">utilities.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="utilities_8h_source.html#l01012">1012</a> of file <a class="el" href="utilities_8h_source.html">utilities.h</a>.</p>
 
 </div>
 </div>
@@ -982,7 +985,7 @@ template&lt;typename T &gt; </div>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="utilities_8h_source.html#l00983">983</a> of file <a class="el" href="utilities_8h_source.html">utilities.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="utilities_8h_source.html#l00984">984</a> of file <a class="el" href="utilities_8h_source.html">utilities.h</a>.</p>
 
 </div>
 </div>
@@ -1094,7 +1097,7 @@ template&lt;typename T &gt; </div>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="utilities_8h_source.html#l00518">518</a> of file <a class="el" href="utilities_8h_source.html">utilities.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="utilities_8h_source.html#l00519">519</a> of file <a class="el" href="utilities_8h_source.html">utilities.h</a>.</p>
 
 </div>
 </div>
@@ -1141,9 +1144,9 @@ template&lt;typename T &gt; </div>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="utilities_8h_source.html#l00566">566</a> of file <a class="el" href="utilities_8h_source.html">utilities.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="utilities_8h_source.html#l00567">567</a> of file <a class="el" href="utilities_8h_source.html">utilities.h</a>.</p>
 
-<p class="reference">References <a class="el" href="utilities_8h_source.html#l00518">deserialize_table()</a>.</p>
+<p class="reference">References <a class="el" href="utilities_8h_source.html#l00519">deserialize_table()</a>.</p>
 
 </div>
 </div>
@@ -1181,7 +1184,7 @@ template&lt;typename key , typename val &gt; </div>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>keys Vector of keys from the map </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="utilities_8h_source.html#l00856">856</a> of file <a class="el" href="utilities_8h_source.html">utilities.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="utilities_8h_source.html#l00857">857</a> of file <a class="el" href="utilities_8h_source.html">utilities.h</a>.</p>
 
 </div>
 </div>
@@ -1219,7 +1222,7 @@ template&lt;typename key , typename val &gt; </div>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>values Vector of values from the map </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="utilities_8h_source.html#l00875">875</a> of file <a class="el" href="utilities_8h_source.html">utilities.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="utilities_8h_source.html#l00876">876</a> of file <a class="el" href="utilities_8h_source.html">utilities.h</a>.</p>
 
 </div>
 </div>
@@ -1514,7 +1517,7 @@ template&lt;typename key , typename val &gt; </div>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>double </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="utilities_8h_source.html#l00837">837</a> of file <a class="el" href="utilities_8h_source.html">utilities.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="utilities_8h_source.html#l00838">838</a> of file <a class="el" href="utilities_8h_source.html">utilities.h</a>.</p>
 
 </div>
 </div>
@@ -1584,9 +1587,9 @@ template&lt;int dim&gt; </div>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>Smallest cell size value. </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="utilities_8h_source.html#l00782">782</a> of file <a class="el" href="utilities_8h_source.html">utilities.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="utilities_8h_source.html#l00783">783</a> of file <a class="el" href="utilities_8h_source.html">utilities.h</a>.</p>
 
-<p class="reference">References <a class="el" href="utilities_8h_source.html#l00755">compute_cell_measure_with_JxW()</a>.</p>
+<p class="reference">References <a class="el" href="utilities_8h_source.html#l00756">compute_cell_measure_with_JxW()</a>.</p>
 
 </div>
 </div>
@@ -2058,7 +2061,7 @@ template&lt;int dim&gt; </div>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>Angle between point and the x-axis </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="utilities_8h_source.html#l00944">944</a> of file <a class="el" href="utilities_8h_source.html">utilities.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="utilities_8h_source.html#l00945">945</a> of file <a class="el" href="utilities_8h_source.html">utilities.h</a>.</p>
 
 </div>
 </div>
@@ -2186,7 +2189,7 @@ template&lt;int dim&gt; </div>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>point Point cartesian coordinates </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="utilities_8h_source.html#l00962">962</a> of file <a class="el" href="utilities_8h_source.html">utilities.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="utilities_8h_source.html#l00963">963</a> of file <a class="el" href="utilities_8h_source.html">utilities.h</a>.</p>
 
 </div>
 </div>
@@ -2248,7 +2251,7 @@ template&lt;int dim&gt; </div>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="utilities_8h_source.html#l00489">489</a> of file <a class="el" href="utilities_8h_source.html">utilities.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="utilities_8h_source.html#l00490">490</a> of file <a class="el" href="utilities_8h_source.html">utilities.h</a>.</p>
 
 </div>
 </div>
@@ -2295,9 +2298,9 @@ template&lt;int dim&gt; </div>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="utilities_8h_source.html#l00544">544</a> of file <a class="el" href="utilities_8h_source.html">utilities.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="utilities_8h_source.html#l00545">545</a> of file <a class="el" href="utilities_8h_source.html">utilities.h</a>.</p>
 
-<p class="reference">References <a class="el" href="utilities_8h_source.html#l00489">serialize_table()</a>.</p>
+<p class="reference">References <a class="el" href="utilities_8h_source.html#l00490">serialize_table()</a>.</p>
 
 </div>
 </div>
@@ -2350,7 +2353,7 @@ template&lt;typename T &gt; </div>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="utilities_8h_source.html#l00333">333</a> of file <a class="el" href="utilities_8h_source.html">utilities.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="utilities_8h_source.html#l00334">334</a> of file <a class="el" href="utilities_8h_source.html">utilities.h</a>.</p>
 
 </div>
 </div>
@@ -2396,7 +2399,7 @@ template&lt;int spacedim&gt; </div>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>A Tensor&lt;1,spacedim&gt; corresponding to the <code>value_string</code> in the parameter file. </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="utilities_8h_source.html#l00639">639</a> of file <a class="el" href="utilities_8h_source.html">utilities.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="utilities_8h_source.html#l00640">640</a> of file <a class="el" href="utilities_8h_source.html">utilities.h</a>.</p>
 
 </div>
 </div>
@@ -2460,7 +2463,7 @@ template&lt;int spacedim&gt; </div>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>A Tensor&lt;1,spacedim&gt; corresponding to the input parameters in the parameter file. </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="utilities_8h_source.html#l00681">681</a> of file <a class="el" href="utilities_8h_source.html">utilities.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="utilities_8h_source.html#l00682">682</a> of file <a class="el" href="utilities_8h_source.html">utilities.h</a>.</p>
 
 </div>
 </div>

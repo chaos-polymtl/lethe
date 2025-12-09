@@ -1,9 +1,11 @@
 <map id="Distribution" name="Distribution">
-<area shape="rect" id="Node000001" title=" " alt="" coords="202,5,301,31"/>
+<area shape="rect" id="Node000001" title=" " alt="" coords="303,5,402,31"/>
 <area shape="rect" id="Node000002" href="$classCustomDistribution.html" title=" " alt="" coords="5,79,153,104"/>
-<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="212,38,108,81,106,76,210,33"/>
-<area shape="rect" id="Node000003" href="$classNormalDistribution.html" title=" " alt="" coords="178,79,325,104"/>
-<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="254,44,254,79,249,79,249,44"/>
-<area shape="rect" id="Node000004" href="$classUniformDistribution.html" title=" " alt="" coords="349,79,500,104"/>
-<area shape="poly" id="edge3_Node000001_Node000004" title=" " alt="" coords="293,33,397,76,395,81,291,38"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="296,37,124,81,123,76,295,32"/>
+<area shape="rect" id="Node000003" href="$classLogNormalDistribution.html" title=" " alt="" coords="177,79,347,104"/>
+<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="329,41,278,81,275,76,326,37"/>
+<area shape="rect" id="Node000004" href="$classNormalDistribution.html" title=" " alt="" coords="371,79,518,104"/>
+<area shape="poly" id="edge3_Node000001_Node000004" title=" " alt="" coords="380,37,431,76,428,81,376,41"/>
+<area shape="rect" id="Node000005" href="$classUniformDistribution.html" title=" " alt="" coords="543,79,693,104"/>
+<area shape="poly" id="edge4_Node000001_Node000005" title=" " alt="" coords="409,32,576,76,574,81,408,37"/>
 </map>

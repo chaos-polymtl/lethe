@@ -12,6 +12,7 @@ var searchData=
   ['local_9',['local',['../structParameters_1_1RPTFEMReconstructionParameters.html#a6d9f30c834e2d1f32b26a0dc97f67a1caf5ddaf0ca7929578b408c909429f68f2',1,'Parameters::RPTFEMReconstructionParameters']]],
   ['local_5fparticle_5fparticle_10',['local_particle_particle',['../contact__type_8h.html#a280ac7ff91d81eba6f834d2de978f6faa73f9762a894ea1663807203676102150',1,'contact_type.h']]],
   ['local_5fperiodic_5fparticle_5fparticle_11',['local_periodic_particle_particle',['../contact__type_8h.html#a280ac7ff91d81eba6f834d2de978f6faaa280b5a0f0b0c770b0fa624dbc57de12',1,'contact_type.h']]],
-  ['lowest_5ffloating_5fwall_5findices_12',['lowest_floating_wall_indices',['../classIBParticlesDEM.html#a893106eed57bce2dc8e7602cc58f3b56a405f5a3cdc35e4fb70cee27950c5a1c3',1,'IBParticlesDEM']]],
-  ['lsmg_13',['lsmg',['../structParameters_1_1LinearSolver.html#abcc346895a204b69b5fa4edabd810834a5d266332fc0c9664dfb1414b629535f6',1,'Parameters::LinearSolver']]]
+  ['lognormal_12',['lognormal',['../namespaceParameters_1_1Lagrangian.html#a83e8d3abd57e25e255ac5702e20b98dfa755025229ae92770a8fdb6bb55975c88',1,'Parameters::Lagrangian']]],
+  ['lowest_5ffloating_5fwall_5findices_13',['lowest_floating_wall_indices',['../classIBParticlesDEM.html#a893106eed57bce2dc8e7602cc58f3b56a405f5a3cdc35e4fb70cee27950c5a1c3',1,'IBParticlesDEM']]],
+  ['lsmg_14',['lsmg',['../structParameters_1_1LinearSolver.html#abcc346895a204b69b5fa4edabd810834a5d266332fc0c9664dfb1414b629535f6',1,'Parameters::LinearSolver']]]
 ];

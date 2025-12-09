@@ -324,7 +324,7 @@ template&lt;int dim, typename PropertiesIndex &gt; </div>
 
 <p>Establish if this is a contact detection iteration using the constant contact detection frequency. If the iteration number is a multiple of the frequency, this iteration is considered to be a contact detection iteration. </p>
 
-<p class="definition">Definition at line <a class="el" href="dem_8cc_source.html#l00502">502</a> of file <a class="el" href="dem_8cc_source.html">dem.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="dem_8cc_source.html#l00516">516</a> of file <a class="el" href="dem_8cc_source.html">dem.cc</a>.</p>
 
 </div>
 </div>
@@ -355,7 +355,7 @@ template&lt;int dim, typename PropertiesIndex &gt; </div>
 
 <p>Establish if this is a contact detection iteration using the maximal displacement of the particles. If this particle displacement surpasses a threshold, this iteration is a contact detection iteration. </p>
 
-<p class="definition">Definition at line <a class="el" href="dem_8cc_source.html#l00486">486</a> of file <a class="el" href="dem_8cc_source.html">dem.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="dem_8cc_source.html#l00500">500</a> of file <a class="el" href="dem_8cc_source.html">dem.cc</a>.</p>
 
 </div>
 </div>
@@ -386,7 +386,7 @@ template&lt;int dim, typename PropertiesIndex &gt; </div>
 
 <p>Execute the last post-processing at the end of the simulation and output test results if necessary. </p>
 
-<p class="definition">Definition at line <a class="el" href="dem_8cc_source.html#l00621">621</a> of file <a class="el" href="dem_8cc_source.html">dem.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="dem_8cc_source.html#l00635">635</a> of file <a class="el" href="dem_8cc_source.html">dem.cc</a>.</p>
 
 <p class="reference">References <a class="el" href="structParameters_1_1Timer.html#a2102ec5281247140dbca8d4fe9c1381aa7f021a1415b86f2d013b2618fb31ae53">Parameters::Timer::end</a>, <a class="el" href="structParameters_1_1Testing.html#ad685a47cec3b7e8562c8b6444e8a9a39abdfd37e8359d01ed10577a9d0d609c15">Parameters::Testing::mobility_status</a>, <a class="el" href="structParameters_1_1Testing.html#ad685a47cec3b7e8562c8b6444e8a9a39a7e45214f92b501af4495b82455b39e7c">Parameters::Testing::particles</a>, <a class="el" href="structParameters_1_1Testing.html#ad685a47cec3b7e8562c8b6444e8a9a39acd9fb49631e1e52bac55a75bf39c81a8">Parameters::Testing::subdomain</a>, and <a class="el" href="output__force__torque__calculation_8cc_source.html#l00036">write_forces_torques_output_results()</a>.</p>
 
@@ -419,7 +419,7 @@ template&lt;int dim, typename PropertiesIndex &gt; </div>
 
 <p>Check if particles have to be inserted at this iteration and perform it if necessary. </p>
 
-<p class="definition">Definition at line <a class="el" href="dem_8cc_source.html#l00511">511</a> of file <a class="el" href="dem_8cc_source.html">dem.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="dem_8cc_source.html#l00525">525</a> of file <a class="el" href="dem_8cc_source.html">dem.cc</a>.</p>
 
 </div>
 </div>
@@ -450,7 +450,7 @@ template&lt;int dim, typename PropertiesIndex &gt; </div>
 
 <p>Check if a load balancing is required according to the load balancing method and perform it if necessary. </p>
 
-<p class="definition">Definition at line <a class="el" href="dem_8cc_source.html#l00422">422</a> of file <a class="el" href="dem_8cc_source.html">dem.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="dem_8cc_source.html#l00436">436</a> of file <a class="el" href="dem_8cc_source.html">dem.cc</a>.</p>
 
 </div>
 </div>
@@ -481,7 +481,7 @@ template&lt;int dim, typename PropertiesIndex &gt; </div>
 
 <p>Move all solid objects. </p>
 
-<p class="definition">Definition at line <a class="el" href="dem_8cc_source.html#l00576">576</a> of file <a class="el" href="dem_8cc_source.html">dem.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="dem_8cc_source.html#l00590">590</a> of file <a class="el" href="dem_8cc_source.html">dem.cc</a>.</p>
 
 </div>
 </div>
@@ -512,7 +512,7 @@ template&lt;int dim, typename PropertiesIndex &gt; </div>
 
 <p>Calculates particles-wall contact forces. </p>
 
-<p class="definition">Definition at line <a class="el" href="dem_8cc_source.html#l00530">530</a> of file <a class="el" href="dem_8cc_source.html">dem.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="dem_8cc_source.html#l00544">544</a> of file <a class="el" href="dem_8cc_source.html">dem.cc</a>.</p>
 
 </div>
 </div>
@@ -543,7 +543,7 @@ template&lt;int dim, typename PropertiesIndex &gt; </div>
 
 <p>Calculate average velocity and other post-processed quantities that need to be outputted to files. </p>
 
-<p class="definition">Definition at line <a class="el" href="dem_8cc_source.html#l00750">750</a> of file <a class="el" href="dem_8cc_source.html">dem.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="dem_8cc_source.html#l00764">764</a> of file <a class="el" href="dem_8cc_source.html">dem.cc</a>.</p>
 
 </div>
 </div>
@@ -574,9 +574,9 @@ template&lt;int dim, typename PropertiesIndex &gt; </div>
 
 <p>Calculate statistics on the particles and report them to the terminal. This function is notably used to monitor the time min, max and total performed contact searches, and the instant min, max, avg and total values of the linear velocity, angular velocity, linear kinetic energy and angular kinetic. </p>
 
-<p class="definition">Definition at line <a class="el" href="dem_8cc_source.html#l00769">769</a> of file <a class="el" href="dem_8cc_source.html">dem.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="dem_8cc_source.html#l00783">783</a> of file <a class="el" href="dem_8cc_source.html">dem.cc</a>.</p>
 
-<p class="reference">References <a class="el" href="utilities_8h_source.html#l00086">add_statistics_to_table_handler()</a>, <a class="el" href="dem__post__processing_8cc_source.html#l00012">DEM::calculate_granular_statistics()</a>, <a class="el" href="structParameters_1_1Timer.html#a2102ec5281247140dbca8d4fe9c1381aa6f012ea8d7efd87146dd62db83f2ed99">Parameters::Timer::iteration</a>, <a class="el" href="namespaceDEM.html#af85feac59e2a3e30010cccde5bda5b2bac6d6bd7ebf806f43c76acc3681703b81">DEM::omega</a>, <a class="el" href="namespaceDEM.html#af85feac59e2a3e30010cccde5bda5b2ba0c1c97be26e7d13e9c7757f74414040e">DEM::rotational_kinetic_energy</a>, <a class="el" href="namespaceDEM.html#af85feac59e2a3e30010cccde5bda5b2baeb81959bf8f42fe1d4bdaec5fd3fdb41">DEM::translational_kinetic_energy</a>, and <a class="el" href="namespaceDEM.html#af85feac59e2a3e30010cccde5bda5b2baac1a453d0cdc1f19d9479ccfaa8b082c">DEM::velocity</a>.</p>
+<p class="reference">References <a class="el" href="utilities_8h_source.html#l00087">add_statistics_to_table_handler()</a>, <a class="el" href="dem__post__processing_8cc_source.html#l00012">DEM::calculate_granular_statistics()</a>, <a class="el" href="structParameters_1_1Timer.html#a2102ec5281247140dbca8d4fe9c1381aa6f012ea8d7efd87146dd62db83f2ed99">Parameters::Timer::iteration</a>, <a class="el" href="namespaceDEM.html#af85feac59e2a3e30010cccde5bda5b2bac6d6bd7ebf806f43c76acc3681703b81">DEM::omega</a>, <a class="el" href="namespaceDEM.html#af85feac59e2a3e30010cccde5bda5b2ba0c1c97be26e7d13e9c7757f74414040e">DEM::rotational_kinetic_energy</a>, <a class="el" href="namespaceDEM.html#af85feac59e2a3e30010cccde5bda5b2baeb81959bf8f42fe1d4bdaec5fd3fdb41">DEM::translational_kinetic_energy</a>, and <a class="el" href="namespaceDEM.html#af85feac59e2a3e30010cccde5bda5b2baac1a453d0cdc1f19d9479ccfaa8b082c">DEM::velocity</a>.</p>
 
 </div>
 </div>
@@ -608,7 +608,7 @@ template&lt;int dim, typename PropertiesIndex &gt; </div>
 <p>Set the iteration check function according to the chosen contact detection method. </p>
 <dl class="section return"><dt>Returns</dt><dd>Contact detection method function. </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="dem_8cc_source.html#l00259">259</a> of file <a class="el" href="dem_8cc_source.html">dem.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="dem_8cc_source.html#l00273">273</a> of file <a class="el" href="dem_8cc_source.html">dem.cc</a>.</p>
 
 </div>
 </div>
@@ -640,7 +640,7 @@ template&lt;int dim, typename PropertiesIndex &gt; </div>
 <p>Set the insertion method. </p>
 <dl class="section return"><dt>Returns</dt><dd>The pointer to the insertion object </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="dem_8cc_source.html#l00279">279</a> of file <a class="el" href="dem_8cc_source.html">dem.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="dem_8cc_source.html#l00293">293</a> of file <a class="el" href="dem_8cc_source.html">dem.cc</a>.</p>
 
 </div>
 </div>
@@ -672,7 +672,7 @@ template&lt;int dim, typename PropertiesIndex &gt; </div>
 <p>Set the integration method. </p>
 <dl class="section return"><dt>Returns</dt><dd>The pointer to the integration object </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="dem_8cc_source.html#l00317">317</a> of file <a class="el" href="dem_8cc_source.html">dem.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="dem_8cc_source.html#l00331">331</a> of file <a class="el" href="dem_8cc_source.html">dem.cc</a>.</p>
 
 </div>
 </div>
@@ -703,7 +703,7 @@ template&lt;int dim, typename PropertiesIndex &gt; </div>
 
 <p>Set up the background degree of freedom used for parallel grid output or mapping of periodic dofs when using periodic boundaries. </p>
 
-<p class="definition">Definition at line <a class="el" href="dem_8cc_source.html#l00386">386</a> of file <a class="el" href="dem_8cc_source.html">dem.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="dem_8cc_source.html#l00400">400</a> of file <a class="el" href="dem_8cc_source.html">dem.cc</a>.</p>
 
 </div>
 </div>
@@ -736,7 +736,7 @@ template&lt;int dim, typename PropertiesIndex &gt; </div>
 
 <p class="definition">Definition at line <a class="el" href="dem_8cc_source.html#l00162">162</a> of file <a class="el" href="dem_8cc_source.html">dem.cc</a>.</p>
 
-<p class="reference">References <a class="el" href="parameters__lagrangian_8h_source.html#l00079">Parameters::Lagrangian::LagrangianPhysicalProperties::distribution_type</a>, <a class="el" href="parameters__lagrangian_8h_source.html#l00061">Parameters::Lagrangian::LagrangianPhysicalProperties::particle_average_diameter</a>, <a class="el" href="parameters__lagrangian_8h_source.html#l00068">Parameters::Lagrangian::LagrangianPhysicalProperties::particle_custom_diameter</a>, <a class="el" href="parameters__lagrangian_8h_source.html#l00073">Parameters::Lagrangian::LagrangianPhysicalProperties::particle_custom_probability</a>, <a class="el" href="parameters__lagrangian_8h_source.html#l00064">Parameters::Lagrangian::LagrangianPhysicalProperties::particle_size_std</a>, <a class="el" href="parameters__lagrangian_8h_source.html#l00058">Parameters::Lagrangian::LagrangianPhysicalProperties::particle_type_number</a>, and <a class="el" href="parameters__lagrangian_8h_source.html#l00076">Parameters::Lagrangian::LagrangianPhysicalProperties::seed_for_distributions</a>.</p>
+<p class="reference">References <a class="el" href="parameters__lagrangian_8h_source.html#l00077">Parameters::Lagrangian::LagrangianPhysicalProperties::diameter_max_cutoff</a>, <a class="el" href="parameters__lagrangian_8h_source.html#l00077">Parameters::Lagrangian::LagrangianPhysicalProperties::diameter_min_cutoff</a>, <a class="el" href="parameters__lagrangian_8h_source.html#l00083">Parameters::Lagrangian::LagrangianPhysicalProperties::distribution_type</a>, <a class="el" href="parameters__lagrangian_8h_source.html#l00062">Parameters::Lagrangian::LagrangianPhysicalProperties::particle_average_diameter</a>, <a class="el" href="parameters__lagrangian_8h_source.html#l00069">Parameters::Lagrangian::LagrangianPhysicalProperties::particle_custom_diameter</a>, <a class="el" href="parameters__lagrangian_8h_source.html#l00074">Parameters::Lagrangian::LagrangianPhysicalProperties::particle_custom_probability</a>, <a class="el" href="parameters__lagrangian_8h_source.html#l00065">Parameters::Lagrangian::LagrangianPhysicalProperties::particle_size_std</a>, <a class="el" href="parameters__lagrangian_8h_source.html#l00059">Parameters::Lagrangian::LagrangianPhysicalProperties::particle_type_number</a>, and <a class="el" href="parameters__lagrangian_8h_source.html#l00080">Parameters::Lagrangian::LagrangianPhysicalProperties::seed_for_distributions</a>.</p>
 
 </div>
 </div>
@@ -767,7 +767,7 @@ template&lt;int dim, typename PropertiesIndex &gt; </div>
 
 <p>Set up the pointers to the functions and classes according to the parameters. </p>
 
-<p class="definition">Definition at line <a class="el" href="dem_8cc_source.html#l00240">240</a> of file <a class="el" href="dem_8cc_source.html">dem.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="dem_8cc_source.html#l00254">254</a> of file <a class="el" href="dem_8cc_source.html">dem.cc</a>.</p>
 
 </div>
 </div>
@@ -800,7 +800,7 @@ template&lt;int dim, typename PropertiesIndex &gt; </div>
 
 <p class="definition">Definition at line <a class="el" href="dem_8cc_source.html#l00061">61</a> of file <a class="el" href="dem_8cc_source.html">dem.cc</a>.</p>
 
-<p class="reference">References <a class="el" href="utilities_8h_source.html#l00467">announce_string()</a>, <a class="el" href="utilities_8cc_source.html#l00358">create_output_folder()</a>, <a class="el" href="dem__action__manager_8cc_source.html#l00009">DEMActionManager::get_action_manager()</a>, <a class="el" href="input__parameter__inspection_8cc_source.html#l00010">input_parameter_inspection()</a>, <a class="el" href="structParameters_1_1Timer.html#a2102ec5281247140dbca8d4fe9c1381aa334c4a4c42fdb79d7ebc3e73b517e6f8">Parameters::Timer::none</a>, and <a class="el" href="structParameters_1_1Lagrangian_1_1BCDEM.html#ac65d80d2721f9155291c2622d9261555ae6ffdec5e14fce371eb7ae99edebbbee">Parameters::Lagrangian::BCDEM::periodic</a>.</p>
+<p class="reference">References <a class="el" href="utilities_8h_source.html#l00468">announce_string()</a>, <a class="el" href="utilities_8cc_source.html#l00358">create_output_folder()</a>, <a class="el" href="dem__action__manager_8cc_source.html#l00009">DEMActionManager::get_action_manager()</a>, <a class="el" href="input__parameter__inspection_8cc_source.html#l00010">input_parameter_inspection()</a>, <a class="el" href="structParameters_1_1Timer.html#a2102ec5281247140dbca8d4fe9c1381aa334c4a4c42fdb79d7ebc3e73b517e6f8">Parameters::Timer::none</a>, and <a class="el" href="structParameters_1_1Lagrangian_1_1BCDEM.html#ac65d80d2721f9155291c2622d9261555ae6ffdec5e14fce371eb7ae99edebbbee">Parameters::Lagrangian::BCDEM::periodic</a>.</p>
 
 </div>
 </div>
@@ -831,7 +831,7 @@ template&lt;int dim, typename PropertiesIndex &gt; </div>
 
 <p>Set up the solid object containers with serial objects. TODO: Modify this set up once the solid volumes are fully implemented. </p>
 
-<p class="definition">Definition at line <a class="el" href="dem_8cc_source.html#l00208">208</a> of file <a class="el" href="dem_8cc_source.html">dem.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="dem_8cc_source.html#l00222">222</a> of file <a class="el" href="dem_8cc_source.html">dem.cc</a>.</p>
 
 </div>
 </div>
@@ -862,7 +862,7 @@ template&lt;int dim, typename PropertiesIndex &gt; </div>
 
 <p>Set up the triangulation dependent parameters after the reading of the mesh and/or the simulation restart. </p>
 
-<p class="definition">Definition at line <a class="el" href="dem_8cc_source.html#l00338">338</a> of file <a class="el" href="dem_8cc_source.html">dem.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="dem_8cc_source.html#l00352">352</a> of file <a class="el" href="dem_8cc_source.html">dem.cc</a>.</p>
 
 </div>
 </div>
@@ -885,7 +885,7 @@ template&lt;int dim, typename PropertiesIndex &gt; </div>
 
 <p>Engine of the <a class="el" href="namespaceDEM.html" title="This namespace defines all the data containers and required operations on these containers for the DE...">DEM</a> solver. Calls all the necessary functions to set parameters, solve the simulation, and finish the simulation. </p>
 
-<p class="definition">Definition at line <a class="el" href="dem_8cc_source.html#l00883">883</a> of file <a class="el" href="dem_8cc_source.html">dem.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="dem_8cc_source.html#l00897">897</a> of file <a class="el" href="dem_8cc_source.html">dem.cc</a>.</p>
 
 <p class="reference">References <a class="el" href="find__contact__detection__step_8cc_source.html#l00119">find_floating_mesh_mapping_step()</a>, <a class="el" href="read__checkpoint_8cc_source.html#l00017">read_checkpoint()</a>, <a class="el" href="read__mesh_8cc_source.html#l00015">read_mesh()</a>, <a class="el" href="namespaceParameters.html#a91f1943180a615249347b911b0ed3919a2c7aea4237e25b4f8ee3b0bf77d6fed0">Parameters::verbose</a>, <a class="el" href="write__checkpoint_8cc_source.html#l00016">write_checkpoint()</a>, <a class="el" href="log__collision__data_8cc_source.html#l00158">write_collision_stats()</a>, and <a class="el" href="output__force__torque__calculation_8cc_source.html#l00009">write_forces_torques_output_locally()</a>.</p>
 
@@ -918,7 +918,7 @@ template&lt;int dim, typename PropertiesIndex &gt; </div>
 
 <p>Execute the sorting of particle into subdomains and cells, and reinitialize the containers dependent on the local particle ids. </p>
 
-<p class="definition">Definition at line <a class="el" href="dem_8cc_source.html#l00847">847</a> of file <a class="el" href="dem_8cc_source.html">dem.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="dem_8cc_source.html#l00861">861</a> of file <a class="el" href="dem_8cc_source.html">dem.cc</a>.</p>
 
 </div>
 </div>
@@ -949,7 +949,7 @@ template&lt;int dim, typename PropertiesIndex &gt; </div>
 
 <p>Update solid objects temperatures. </p>
 
-<p class="definition">Definition at line <a class="el" href="dem_8cc_source.html#l00596">596</a> of file <a class="el" href="dem_8cc_source.html">dem.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="dem_8cc_source.html#l00610">610</a> of file <a class="el" href="dem_8cc_source.html">dem.cc</a>.</p>
 
 </div>
 </div>
@@ -980,7 +980,7 @@ template&lt;int dim, typename PropertiesIndex &gt; </div>
 
 <p>Generate VTU file with particles information for visualization. </p>
 
-<p class="definition">Definition at line <a class="el" href="dem_8cc_source.html#l00683">683</a> of file <a class="el" href="dem_8cc_source.html">dem.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="dem_8cc_source.html#l00697">697</a> of file <a class="el" href="dem_8cc_source.html">dem.cc</a>.</p>
 
 <p class="reference">References <a class="el" href="visualization_8cc_source.html#l00015">Visualization&lt; dim, PropertiesIndex &gt;::build_patches()</a>.</p>
 
