@@ -11,12 +11,12 @@ set dimension = 3
 #---------------------------------------------------
 
 subsection simulation control
-  set time step        = 0.000005
-  set time end         = 0.7
-  set log frequency    = 1000
-  set output frequency = 2000
-  set output path      = ./output_dem/
-  set output boundaries= true
+  set time step         = 0.000005
+  set time end          = 0.7
+  set log frequency     = 1000
+  set output frequency  = 2000
+  set output path       = ./output_dem/
+  set output boundaries = true
 end
 
 #---------------------------------------------------
@@ -28,9 +28,8 @@ subsection timer
 end
 
 subsection post-processing
-   # Enable output of grid, granular temperature, and particles' average velocity
-   set lagrangian post-processing = true
-
+  # Enable output of grid, granular temperature, and particles' average velocity
+  set lagrangian post-processing = true
 end
 
 #---------------------------------------------------
@@ -54,8 +53,8 @@ subsection model parameters
     set neighborhood threshold   = 1.1
   end
   subsection load balancing
-    set load balance method     = frequent
-    set frequency = 10000
+    set load balance method = frequent
+    set frequency           = 10000
   end
   set particle particle contact force method = hertz_mindlin_limit_overlap
   set particle wall contact force method     = nonlinear
@@ -100,7 +99,6 @@ subsection insertion info
   set insertion maximum offset                       = 0.02
   set insertion prn seed                             = 19
   set insertion direction sequence                   = 1, 2, 0
-
 end
 
 #---------------------------------------------------
@@ -130,9 +128,9 @@ end
 #---------------------------------------------------
 
 subsection mesh
-  set type               = cylinder
-  set grid type          = balanced
-  set grid arguments     = 44:0.01:0.22
-  set initial refinement = 2
+  set type                                = cylinder
+  set grid type                           = balanced
+  set grid arguments                      = 44:0.01:0.22
+  set initial refinement                  = 2
   set expand particle-wall contact search = true
 end
