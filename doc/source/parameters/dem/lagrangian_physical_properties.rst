@@ -100,17 +100,23 @@ In this subsection, gravitational acceleration, and the physical properties of t
 
 * The ``diameter`` parameter defines the diameter of the particles in a ``uniform`` distribution.
 
-* For a ``normal`` or a ``lognormal``  distribution, the ``average diameter`` and the ``standard deviation`` parameters should be defined to indicate the average (:math:`{\mu_d}`) and the standard deviation (:math:`{\sigma_d}`) of the particle size distribution weighted by number. The ``minimum cutoff`` and ``maximum cutoff`` parameters can be used to limit the lower and upper value of the diameter sampled from the distribution. If set to ``-1``, those two bounds are set to :math:`\mu_d \pm2.5 \sigma_d` for the ``normal`` distribution and to :math:`e^{\mu \pm2.5 \sigma}` for the ``lognormal`` distribution.
+* For a ``normal`` distribution, the ``average diameter`` and the ``standard deviation`` parameters defines the average (:math:`{\mu_d}`) and the standard deviation (:math:`{\sigma_d}`) of the particle size distribution *weighted by number*. The ``minimum cutoff`` and ``maximum cutoff`` parameters can be used to limit the lower and upper value of the diameter sampled from the distribution. If set to ``-1``, those two bounds are set to :math:`\mu_d \pm2.5 \sigma_d`. The number-weighted probability density function (:math:`f_{x}^{N}(d)`)  of a normal distribution is defined as:
 
-.. note::
-   :math:`\mu_d` and :math:`\sigma_d` **are not** the mean (:math:`\mu`) and the standard deviation (:math:`\sigma`) of **the underlying normal distribution** (i.e., the natural logarithm of the variable).
+.. math::
+    f_{x}^{N}(d)=\frac{1}{\sigma_d\sqrt{2\pi}}\exp\left(-\frac{(d-\mu_d)^2}{2\sigma_{d}^2}\right).
 
-   .. math::
+* For a ``lognormal`` distribution, the ``average diameter`` and the ``standard deviation`` parameters defines the average (:math:`{\mu_d}`) and the standard deviation (:math:`{\sigma_d}`) of the particle size distribution *weighted by number*. The ``minimum cutoff`` and ``maximum cutoff`` parameters can be used to limit the lower and upper value of the diameter sampled from the distribution. If set to ``-1``, those two bounds are set to :math:`\exp(\mu \pm2.5 \sigma)`. The number-weighted probability density function (:math:`f_{x}^{N}(d)`)  of a lognormal distribution is defined as:
 
-      \sigma = \sqrt{\ln\left(1 + \left(\frac{\sigma_d}{\mu_d}\right)^2\right)}
+.. math::
+    f_{x}^{N}(d)=\frac{1}{\sigma\sqrt{2\pi}}\exp\left(-\frac{(d-\mu)^2}{2\sigma^2}\right).
 
-      \mu = \ln(\mu_d) - 0.5 \sigma^2
+where :math:`{\mu}` and :math:`{\sigma}` are the mean and standard deviation of the underlying normal distribution which can be computed using:
 
+.. math::
+    \sigma = \sqrt{\ln \left(1 + \left(\frac{\sigma_d}{\mu_d}\right)^2\right)},
+
+.. math::
+    \mu = \ln(\mu_d) - 0.5 \sigma^2.
 
 * For a ``custom`` distribution, the ``custom diameters`` parameter defines the different diameter values used when generating particles. The ``custom volume fractions`` parameter defines the probabilities corresponding to each diameter value previously declared based on volume fraction. Both list must have the same length.
 
