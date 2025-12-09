@@ -41,7 +41,7 @@ public:
   find_max_diameter() = 0;
 
   /**
-   * @brief Return the declaration string relative to the particle size
+   * @brief Print the declaration string relative to the particle size
    * distribution used.
    *
    * @param particle_type Particle type of the distribution
@@ -100,7 +100,7 @@ public:
   find_max_diameter() override;
 
   /**
-   * @brief Return the declaration string relative to the particle size
+   * @brief Print the declaration string relative to the particle size
    * distribution used.
    *
    * @param particle_type Particle type of the distribution
@@ -186,7 +186,7 @@ public:
   find_max_diameter() override;
 
   /**
-   * @brief Return the declaration string relative to the particle size
+   * @brief Print the declaration string relative to the particle size
    * distribution used.
    *
    * @param particle_type Particle type of the distribution
@@ -257,7 +257,7 @@ public:
 
 
   /**
-   * @brief Return the declaration string relative to the particle size
+   * @brief Print the declaration string relative to the particle size
    * distribution used.
    *
    * @param particle_type Particle type of the distribution
@@ -318,7 +318,7 @@ public:
   find_max_diameter() override;
 
   /**
-   * @brief Return the declaration string relative to the particle size
+   * @brief Print the declaration string relative to the particle size
    * distribution used.
    *
    * @param particle_type Particle type of the distribution
