@@ -40,9 +40,7 @@ TimeHarmonicMaxwell<dim>::TimeHarmonicMaxwell(
     }
   else
     {
-      AssertThrow(dim == 3,
-                  ExcMessage(
-                    "TimeHarmonicMaxwell only implemented for 3D problems."));
+      AssertThrow(dim == 3, TimeHarmonicMaxwellDimensionNotSupported(dim));
 
       AssertThrow(
         simulation_parameters.fem_parameters.electromagnetics_trial_order <
@@ -87,8 +85,10 @@ TimeHarmonicMaxwell<dim>::TimeHarmonicMaxwell(
       face_quadrature = std::make_shared<QGauss<dim - 1>>(fe_test->degree + 1);
     }
 
-  // Initialize solution shared_ptr
-  present_solution = std::make_shared<GlobalVectorType>();
+  // Initialize solutions and DPG error indicator shared_ptr
+  present_solution            = std::make_shared<GlobalVectorType>();
+  present_solution_skeleton   = std::make_shared<GlobalVectorType>();
+  present_DPG_error_indicator = std::make_shared<GlobalVectorType>();
 
   // Allocate solution transfer
   solution_transfer = std::make_shared<SolutionTransfer<dim, GlobalVectorType>>(
@@ -438,7 +438,7 @@ TimeHarmonicMaxwell<dim>::setup_dofs()
   this->locally_relevant_dofs_test =
     DoFTools::extract_locally_relevant_dofs(*this->dof_handler_test);
 
-  // Initialize the solution vector
+  // Initialize the solution vectors and error indicator
   this->present_solution->reinit(this->locally_owned_dofs_trial_interior,
                                  this->locally_relevant_dofs_trial_interior,
                                  mpi_communicator);
@@ -446,6 +446,9 @@ TimeHarmonicMaxwell<dim>::setup_dofs()
     this->locally_owned_dofs_trial_skeleton,
     this->locally_relevant_dofs_trial_skeleton,
     mpi_communicator);
+  this->present_DPG_error_indicator->reinit(this->locally_owned_dofs_test,
+                                            this->locally_relevant_dofs_test,
+                                            mpi_communicator);
 
   // We reinitialize the system rhs with the skeleton dofs because we have
   // performed a static condensation of the interior dofs using the Schur
@@ -816,9 +819,22 @@ TimeHarmonicMaxwell<dim>::solve_linear_system()
   reconstruct_interior_solution();
 }
 
-template <int dim>
+template <>
 void
-TimeHarmonicMaxwell<dim>::assemble_system_matrix()
+TimeHarmonicMaxwell<2>::assemble_system_matrix()
+{
+  // We need a specific definition of the function for the 2D so the compiler
+  // doesn't try to build curl and cross operations at compile time that will
+  // never be used anyway. Indeed, curl and cross operation behaves very
+  // differently in 2D than in 3D. This physics only support 3D problem at the
+  // moment. So even though the class is templated in dim, we only want to
+  // compile the whole function when dim=3.
+  AssertThrow(false, TimeHarmonicMaxwellDimensionNotSupported(2));
+}
+
+template <>
+void
+TimeHarmonicMaxwell<3>::assemble_system_matrix()
 {
   // Material properties
   std::complex<double> epsilon_r;
@@ -851,12 +867,16 @@ TimeHarmonicMaxwell<dim>::assemble_system_matrix()
   static constexpr double               speed_of_light = 299792458.;
   static constexpr double               pi             = 3.14159265358979323846;
   static constexpr std::complex<double> imag{0., 1.};
+  static constexpr int                  dim =
+    3; // Since we are in the specialized 3D function we define dim=3 here. This
+       // makes easier to read the code below to see what are templated in dim
+       // and what are not.
 
   // We define some constants that will be used during the assembly. Those
   // would change according to the material parameters, but here we only have
   // one material.
 
-  const double omega = 2.0 * pi * frequency / speed_of_light;
+  const double               omega = 2.0 * pi * frequency / speed_of_light;
   const std::complex<double> epsilon_r_eff = epsilon_r + imag * sigma_r;
   const std::complex<double> k_z =
     (std::sqrt(omega * omega * epsilon_r_eff * mu_r -
@@ -1133,7 +1153,7 @@ TimeHarmonicMaxwell<dim>::assemble_system_matrix()
             {
               // Get the information on which element the dof is
               const unsigned int current_element_test_i =
-                fe_test.system_to_base_index(i).first.first;
+                this->fe_test->system_to_base_index(i).first.first;
 
               // Fill the load vector relationship
               if ((current_element_test_i == 0) ||
@@ -1147,7 +1167,7 @@ TimeHarmonicMaxwell<dim>::assemble_system_matrix()
               for (unsigned int j : fe_values_test.dof_indices())
                 {
                   const unsigned int current_element_test_j =
-                    fe_test.system_to_base_index(j).first.first;
+                    this->fe_test->system_to_base_index(j).first.first;
                   if (((current_element_test_i == 0) ||
                        (current_element_test_i == 1)) &&
                       ((current_element_test_j == 0) ||
@@ -1183,7 +1203,8 @@ TimeHarmonicMaxwell<dim>::assemble_system_matrix()
               for (unsigned int j : fe_values_trial_interior.dof_indices())
                 {
                   const unsigned int current_element_trial_j =
-                    fe_trial_interior.system_to_base_index(j).first.first;
+                    this->fe_trial_interior->system_to_base_index(j)
+                      .first.first;
 
                   if (((current_element_test_i == 0) ||
                        (current_element_test_i == 1)) &&
@@ -1361,14 +1382,15 @@ TimeHarmonicMaxwell<dim>::assemble_system_matrix()
                 {
                   // Get the information on which element the dof is
                   const unsigned int current_element_test_i =
-                    fe_test.system_to_base_index(i).first.first;
+                    this->fe_test->system_to_base_index(i).first.first;
 
                   // Include future Robin boundary condition here :
                   // B.C. and the load vector and the B_hat matrix will have a
                   // contribution in addition to a modification of the Riesz
                   // map (G matrix) because of the energy norm that we want to
                   // minimize there.
-                  if (false)
+                  if (false) // Change to "true" to activate the Robin B.C. when
+                             // implemented
                     {
                       if ((current_element_test_i == 0) ||
                           (current_element_test_i == 1))
@@ -1381,7 +1403,7 @@ TimeHarmonicMaxwell<dim>::assemble_system_matrix()
                       for (unsigned int j : fe_face_values_test.dof_indices())
                         {
                           const unsigned int current_element_test_j =
-                            fe_test.system_to_base_index(j).first.first;
+                            this->fe_test->system_to_base_index(j).first.first;
 
                           if (((current_element_test_i == 0) ||
                                (current_element_test_i == 1)) &&
@@ -1419,7 +1441,7 @@ TimeHarmonicMaxwell<dim>::assemble_system_matrix()
                            fe_face_values_trial_skeleton.dof_indices())
                         {
                           const unsigned int current_element_trial_j =
-                            fe_trial_skeleton.system_to_base_index(j)
+                            this->fe_trial_skeleton->system_to_base_index(j)
                               .first.first;
 
                           if (((current_element_test_i == 0) ||
@@ -1446,7 +1468,7 @@ TimeHarmonicMaxwell<dim>::assemble_system_matrix()
                            fe_face_values_trial_skeleton.dof_indices())
                         {
                           const unsigned int current_element_trial_j =
-                            fe_trial_skeleton.system_to_base_index(j)
+                            this->fe_trial_skeleton->system_to_base_index(j)
                               .first.first;
 
                           if (((current_element_test_i == 0) ||
@@ -1472,8 +1494,6 @@ TimeHarmonicMaxwell<dim>::assemble_system_matrix()
                    ++q_point)
                 {
                   // Initialize reusable variables
-                  const auto &position =
-                    fe_face_values_trial_skeleton.quadrature_point(q_point);
                   const auto &normal =
                     fe_face_values_trial_skeleton.normal_vector(q_point);
                   const double JxW_face =
@@ -1558,7 +1578,8 @@ TimeHarmonicMaxwell<dim>::assemble_system_matrix()
                     }
 
                   // Here we apply the excitation at the relevant boundary.
-                  if (false)
+                  if (false) // Change to "true" to activate the Robin B.C. when
+                             // implemented
                     {
                       H_inc[0] = 0. + imag * 0.;
                       H_inc[1] = 0. + imag * 0.;
@@ -1698,11 +1719,926 @@ TimeHarmonicMaxwell<dim>::assemble_system_rhs()
   // rhs in the same function and loop for efficiency.
 }
 
-template <int dim>
+template <>
 void
-TimeHarmonicMaxwell<dim>::reconstruct_interior_solution()
+TimeHarmonicMaxwell<2>::reconstruct_interior_solution()
 {
-  // TODO
+  // As for the assembly, we need to perform operations like curl and cross
+  // product, that are completely different in 2D in comparison to 3D. At the
+  // moment, we do not support 2D time-harmonic Maxwell so this function throws
+  // an error.
+  AssertThrow(false, TimeHarmonicMaxwellDimensionNotSupported(2));
+}
+
+
+template <>
+void
+TimeHarmonicMaxwell<3>::reconstruct_interior_solution()
+{
+  // Material properties
+  std::complex<double> epsilon_r;
+  std::complex<double> mu_r;
+  double               sigma_r;
+
+  epsilon_r = {1., 0.};
+  mu_r      = {1., 0.};
+  sigma_r   = 0.;
+
+  /// Excitation properties
+  double       frequency;
+  unsigned int mode_x;
+  unsigned int mode_y;
+  double       waveguide_a;
+  double       waveguide_b;
+
+  frequency   = 3e9;
+  mode_x      = 1;
+  mode_y      = 1;
+  waveguide_a = 0.081574369757;
+  waveguide_b = 0.081574369757;
+
+  // TODO:   the above parameters will need to be removed when they are added to
+  // the physical properties
+
+  TimerOutput::Scope t(this->computing_timer, "Reconstruct interior solution");
+
+  // Constexpr values and used in the assembly.
+  static constexpr double               speed_of_light = 299792458.;
+  static constexpr double               pi             = 3.14159265358979323846;
+  static constexpr std::complex<double> imag{0., 1.};
+  static constexpr int                  dim =
+    3; // Since we are in the specialized 3D function we define dim=3 here. This
+       // makes easier to read the code below to see what are templated in dim
+       // and what are not.
+
+  // We define some constants that will be used during the assembly. Those
+  // would change according to the material parameters, but here we only have
+  // one material.
+
+  const double               omega = 2.0 * pi * frequency / speed_of_light;
+  const std::complex<double> epsilon_r_eff = epsilon_r + imag * sigma_r;
+  const std::complex<double> k_z =
+    (std::sqrt(omega * omega * epsilon_r_eff * mu_r -
+               std::pow(mode_x * M_PI / waveguide_a, 2) -
+               std::pow(mode_y * M_PI / waveguide_b, 2)));
+  const std::complex<double> iwmu_r       = imag * omega * mu_r;
+  const std::complex<double> conj_iwmu_r  = std::conj(iwmu_r);
+  const std::complex<double> iweps_r      = imag * omega * epsilon_r_eff;
+  const std::complex<double> conj_iweps_r = std::conj(iweps_r);
+  const std::complex<double> kz_wmur      = k_z / (omega * mu_r);
+  const std::complex<double> conj_kz_wmur = std::conj(kz_wmur);
+
+  // We then create the corresponding FEValues and FEFaceValues objects. Note
+  // that only the test space needs gradients because of the ultraweak
+  // formulation. Similarly, because everything is on the same triangulation,
+  // we only need to update the quadrature points and JxW values in one of the
+  // spaces. Here we choose the trial space.
+  const unsigned int n_q_points      = this->cell_quadrature->size();
+  const unsigned int n_face_q_points = this->face_quadrature->size();
+
+  FEValues<dim> fe_values_trial_interior(*this->mapping,
+                                         *this->fe_trial_interior,
+                                         *this->cell_quadrature,
+                                         update_values |
+                                           update_quadrature_points |
+                                           update_JxW_values);
+
+  FEValues<dim> fe_values_test(*this->mapping,
+                               *this->fe_test,
+                               *this->cell_quadrature,
+                               update_values | update_gradients);
+
+  FEFaceValues<dim> fe_face_values_trial_skeleton(*this->mapping,
+                                                  *this->fe_trial_skeleton,
+                                                  *this->face_quadrature,
+                                                  update_values |
+                                                    update_quadrature_points |
+                                                    update_normal_vectors |
+                                                    update_JxW_values);
+
+  FEFaceValues<dim> fe_face_values_test(*this->mapping,
+                                        *this->fe_test,
+                                        *this->face_quadrature,
+                                        update_values);
+
+  // We also create all the relevant matrices and vector to build the DPG
+  // system. To do so we first need the number of dofs per cell for each of
+  // the finite element spaces.
+  const unsigned int dofs_per_cell_test = this->fe_test->n_dofs_per_cell();
+  const unsigned int dofs_per_cell_trial_interior =
+    this->fe_trial_interior->n_dofs_per_cell();
+  const unsigned int dofs_per_cell_trial_skeleton =
+    this->fe_trial_skeleton->n_dofs_per_cell();
+
+  // To avoid unecessary computations, we will precompute the shape functions
+  // of all our spaces once and then use those precomputed values to assemble
+  // the local matrices. Consequently, we need to create containers to store
+  // these values. Since those are complex-valued functions, we use two
+  // different containers for the real and imaginary parts because the
+  // conjugate of a complex tensor is not implemented in deal.II.
+  std::vector<Tensor<1, dim, std::complex<double>>> F(dofs_per_cell_test);
+  std::vector<Tensor<1, dim, std::complex<double>>> F_conj(dofs_per_cell_test);
+  std::vector<Tensor<1, dim, std::complex<double>>> I(dofs_per_cell_test);
+  std::vector<Tensor<1, dim, std::complex<double>>> I_conj(dofs_per_cell_test);
+  std::vector<Tensor<1, dim, std::complex<double>>> curl_F(dofs_per_cell_test);
+  std::vector<Tensor<1, dim, std::complex<double>>> curl_F_conj(
+    dofs_per_cell_test);
+  std::vector<Tensor<1, dim, std::complex<double>>> curl_I(dofs_per_cell_test);
+  std::vector<Tensor<1, dim, std::complex<double>>> curl_I_conj(
+    dofs_per_cell_test);
+  std::vector<Tensor<1, dim, std::complex<double>>> F_face(dofs_per_cell_test);
+  std::vector<Tensor<1, dim, std::complex<double>>> F_face_conj(
+    dofs_per_cell_test);
+  std::vector<Tensor<1, dim, std::complex<double>>> I_face_conj(
+    dofs_per_cell_test);
+  std::vector<Tensor<1, dim, std::complex<double>>> n_cross_I_face(
+    dofs_per_cell_test);
+  std::vector<Tensor<1, dim, std::complex<double>>> n_cross_I_face_conj(
+    dofs_per_cell_test);
+
+  std::vector<Tensor<1, dim, std::complex<double>>> E(
+    dofs_per_cell_trial_interior);
+  std::vector<Tensor<1, dim, std::complex<double>>> H(
+    dofs_per_cell_trial_interior);
+  std::vector<Tensor<1, dim, std::complex<double>>> E_hat(
+    dofs_per_cell_trial_skeleton);
+  std::vector<Tensor<1, dim, std::complex<double>>> n_cross_E_hat(
+    dofs_per_cell_trial_skeleton);
+  std::vector<Tensor<1, dim, std::complex<double>>> n_cross_H_hat(
+    dofs_per_cell_trial_skeleton);
+
+  // Also, to avoid multiple "if" calls during the assembly to understand where
+  // each terms need to be assembled in the DPG global matrix, we will use
+  // containers to store dofs relationships for each of the local matrices.
+
+  // G matrix stands for the Riesz map and needs the relationships between test
+  // functions F and I
+  std::vector<std::pair<unsigned int, unsigned int>> G_FF;
+  std::vector<std::pair<unsigned int, unsigned int>> G_FI;
+  std::vector<std::pair<unsigned int, unsigned int>> G_IF;
+  std::vector<std::pair<unsigned int, unsigned int>> G_II;
+
+  // B matrix stands for the bilinear form and needs the relationships between
+  // interior trial space (E and H) and the test (F and I)
+  std::vector<std::pair<unsigned int, unsigned int>> B_FE;
+  std::vector<std::pair<unsigned int, unsigned int>> B_IE;
+  std::vector<std::pair<unsigned int, unsigned int>> B_FH;
+  std::vector<std::pair<unsigned int, unsigned int>> B_IH;
+
+  // B_hat matrix stands for the bilinear form, but on the skeleton, and needs
+  // the relationships between skeleton trial space (E_hat, H_hat) and the test
+  // (F and I). Note that the B_hat_FE is required for the Robin boundary
+  // condition that we chose to apply on the electric field instead of the
+  // magnetic field. This choice is arbitrary but it cannot be applied on both
+  // fields at the same time.
+  std::vector<std::pair<unsigned int, unsigned int>> B_hat_IE;
+  std::vector<std::pair<unsigned int, unsigned int>> B_hat_FH;
+  std::vector<std::pair<unsigned int, unsigned int>> B_hat_FE;
+
+  // l vector stands for the linear form of the problem and needs the
+  // relationships between test functions. Note that in its simplest form, the
+  // time-harmonic Maxwell equation does not have a magnetic source term, so
+  // there is no contribution from the I test functions.
+  std::vector<unsigned int> l_F;
+
+  // Reserve memory to avoid reallocations of each relationship vectors
+  G_FF.reserve(dofs_per_cell_test * dofs_per_cell_test);
+  G_FI.reserve(dofs_per_cell_test * dofs_per_cell_test);
+  G_IF.reserve(dofs_per_cell_test * dofs_per_cell_test);
+  G_II.reserve(dofs_per_cell_test * dofs_per_cell_test);
+
+  B_FE.reserve(dofs_per_cell_trial_interior * dofs_per_cell_test);
+  B_IE.reserve(dofs_per_cell_trial_interior * dofs_per_cell_test);
+  B_FH.reserve(dofs_per_cell_trial_interior * dofs_per_cell_test);
+  B_IH.reserve(dofs_per_cell_trial_interior * dofs_per_cell_test);
+
+  B_hat_IE.reserve(dofs_per_cell_trial_skeleton * dofs_per_cell_test);
+  B_hat_FH.reserve(dofs_per_cell_trial_skeleton * dofs_per_cell_test);
+  B_hat_FE.reserve(dofs_per_cell_trial_skeleton * dofs_per_cell_test);
+
+  l_F.reserve(dofs_per_cell_test);
+
+  // Here we create the DPG local matrices and vector used for the assembly
+  // before condensation.
+  LAPACKFullMatrix<double> G_matrix(dofs_per_cell_test, dofs_per_cell_test);
+
+  LAPACKFullMatrix<double> B_matrix(dofs_per_cell_test,
+                                    dofs_per_cell_trial_interior);
+
+  LAPACKFullMatrix<double> B_hat_matrix(dofs_per_cell_test,
+                                        dofs_per_cell_trial_skeleton);
+
+  Vector<double> l_vector(dofs_per_cell_test);
+
+  // We create the condensation matrices which are defined as :
+  // $M_1 = B^\dagger G^{-1}B$;
+  // $M_2 = B^\dagger G^{-1}\hat{B}$;
+  // $M_3 = \hat{B}^\dagger G^{-1}\hat{B}$;
+  // $M_4 = B^\dagger G^{-1}$;
+  // $M_5 = \hat{B}^\dagger G^{-1}$.
+  LAPACKFullMatrix<double> M1_matrix(dofs_per_cell_trial_interior,
+                                     dofs_per_cell_trial_interior);
+  LAPACKFullMatrix<double> M2_matrix(dofs_per_cell_trial_interior,
+                                     dofs_per_cell_trial_skeleton);
+  LAPACKFullMatrix<double> M3_matrix(dofs_per_cell_trial_skeleton,
+                                     dofs_per_cell_trial_skeleton);
+  LAPACKFullMatrix<double> M4_matrix(dofs_per_cell_trial_interior,
+                                     dofs_per_cell_test);
+  LAPACKFullMatrix<double> M5_matrix(dofs_per_cell_trial_skeleton,
+                                     dofs_per_cell_test);
+
+  // During the calculation of matrix vector product, we require intermediary
+  // matrices and vector that we also allocate here. The temporary matrices
+  // are defined as :
+  // $tmp_matrix_M2M1  = M_2^\dagger M_1^{-1}$;
+  // $tmp_matrix_M2M1M2 = M_2^\dagger M_1^{-1} M_2$;
+  // $tmp_matrix_M2M1M4 = M_2^\dagger M_1^{-1} M_4$.
+
+  LAPACKFullMatrix<double> tmp_matrix_M2M1(dofs_per_cell_trial_skeleton,
+                                           dofs_per_cell_trial_interior);
+
+  LAPACKFullMatrix<double> tmp_matrix_M2M1M2(dofs_per_cell_trial_skeleton,
+                                             dofs_per_cell_trial_skeleton);
+
+  LAPACKFullMatrix<double> tmp_matrix_M2M1M4(dofs_per_cell_trial_skeleton,
+                                             dofs_per_cell_test);
+
+  // We create the cell matrix and the RHS that will be distributed in the
+  // full system after the assembly along with the index’s mapping.
+  FullMatrix<double> cell_matrix(dofs_per_cell_trial_skeleton,
+                                 dofs_per_cell_trial_skeleton);
+  Vector<double>     cell_skeleton_rhs(dofs_per_cell_trial_skeleton);
+
+  std::vector<types::global_dof_index> local_dof_indices(
+    dofs_per_cell_trial_skeleton);
+
+  // We also create objects to store the incident fields that will be used to
+  // compute the excitation for the Robin boundary condition.
+  Tensor<1, dim, std::complex<double>> H_inc;
+  Tensor<1, dim, std::complex<double>> E_inc;
+  Tensor<1, dim, std::complex<double>> g_inc;
+
+  // The above declarations are the same as the ones in the assembly of the
+  // skeleton system. Below we add new ones that are specific to the
+  // reconstruction of the interior solution.
+
+  auto mpi_communicator = this->triangulation->get_mpi_communicator();
+
+  // We initialize vectors to store the locally owned solution and the error
+  // indicator.
+  GlobalVectorType locally_owned_solution_interior(
+    this->locally_owned_dofs_trial_interior, mpi_communicator);
+  GlobalVectorType locally_owned_error_indicator(this->locally_owned_dofs_test,
+                                                 mpi_communicator);
+
+  // Temporary vector used when reconstructing the interior solution :
+  // $tmp_{interior} = M_2 * x_{skeleton}$
+  Vector<double> tmp_vector_interior(dofs_per_cell_trial_interior);
+
+  // Temporary vector used when computing the error indicator :
+  // $tmp_{error\_indicator} = B * x_{interior}$
+  Vector<double> tmp_vector_error_indicator(dofs_per_cell_test);
+
+  // Finally, when reconstructing the interior solution from the skeleton, we
+  // require additional vectors that we allocate here.
+  Vector<double> cell_interior_rhs(dofs_per_cell_trial_interior);
+  Vector<double> cell_interior_solution(dofs_per_cell_trial_interior);
+  Vector<double> cell_skeleton_solution(dofs_per_cell_trial_skeleton);
+  Vector<double> cell_residual(dofs_per_cell_test);
+
+  // The assembly on each cell is the same as previously done, so we first loop
+  // over the cells of the triangulation.
+  for (const auto &cell :
+       this->dof_handler_trial_interior->active_cell_iterators())
+    {
+      if (cell->is_locally_owned())
+        {
+          // We reinitialize the FEValues objects to the current cell.
+          fe_values_trial_interior.reinit(cell);
+
+          // We will also need to reinitialize the FEValues for the test
+          // space and make sure that is the same cell as the one used for the
+          // trial space.
+          const typename DoFHandler<dim>::active_cell_iterator cell_test =
+            cell->as_dof_handler_iterator(*this->dof_handler_test);
+          fe_values_test.reinit(cell_test);
+
+          // Similarly, we reinitialize the FEValues for the trial space on
+          // the skeleton, but this will not be used before we also loop on
+          // the cells faces.
+          const typename DoFHandler<dim>::active_cell_iterator cell_skeleton =
+            cell->as_dof_handler_iterator(*this->dof_handler_trial_skeleton);
+
+          // We then reinitialize all the matrices that we are aggregating
+          // information for each cell.
+          G_matrix     = 0;
+          B_matrix     = 0;
+          B_hat_matrix = 0;
+          l_vector     = 0;
+
+          // We also need to reinitialize the $M_1$ condensation matrix
+          // between each iteration on cell to get rid of its inverse status.
+          M1_matrix = 0;
+
+          // Here we reset the dofs relationships containers. These containers
+          // are use to store all the relationships between the dof i
+          // dof j according to which space they belong to. Indeed, when
+          // looping over all the test and trial dofs, the terms  we need to
+          // compute depend on the specific combination of spaces
+          // involved. The following containers are therefore use use to avoid
+          // multiple "if" statement inside the dofs loops and are fill with
+          // all the relevant dofs pairs that we need for each of the
+          // different terms.
+
+          // For example, in the ultraweak form of Maxwell equation we have a
+          // term (E, curl(I)) in the interior so the matrix B as a term
+          // (curl(I_i), E_j), so we want to only compute this term for the
+          // dofs i that are in the test space I and the dofs j that are in
+          // the trial space for E. Therefore, when looping on all the
+          // interior and test dofs in a cell we add the pairs of dofs that
+          // are in those spaces to the container B_IE. We do this for all the
+          // different terms of the formulation.
+
+          // Finally, we can loop on all the pairs that we have assigned in
+          // each vector container to compute the desired terms.
+          G_FF.clear();
+          G_FI.clear();
+          G_IF.clear();
+          G_II.clear();
+
+          B_FE.clear();
+          B_IE.clear();
+          B_FH.clear();
+          B_IH.clear();
+
+          l_F.clear();
+
+          // We fill the dofs relationship containers at the cell level. To do
+          // so, we first loop on the test space dofs.
+          for (unsigned int i : fe_values_test.dof_indices())
+            {
+              // Get the information on which element the dof is
+              const unsigned int current_element_test_i =
+                this->fe_test->system_to_base_index(i).first.first;
+
+              // Fill the load vector relationship
+              if ((current_element_test_i == 0) ||
+                  (current_element_test_i == 1))
+                {
+                  l_F.emplace_back(i);
+                }
+
+              // Loop over the test dofs a second time to fill the dofs
+              // relationship for the G matrix (Riesz map)
+              for (unsigned int j : fe_values_test.dof_indices())
+                {
+                  const unsigned int current_element_test_j =
+                    this->fe_test->system_to_base_index(j).first.first;
+                  if (((current_element_test_i == 0) ||
+                       (current_element_test_i == 1)) &&
+                      ((current_element_test_j == 0) ||
+                       (current_element_test_j == 1)))
+                    {
+                      G_FF.emplace_back(i, j);
+                    }
+                  if (((current_element_test_i == 0) ||
+                       (current_element_test_i == 1)) &&
+                      ((current_element_test_j == 2) ||
+                       (current_element_test_j == 3)))
+                    {
+                      G_FI.emplace_back(i, j);
+                    }
+                  if (((current_element_test_i == 2) ||
+                       (current_element_test_i == 3)) &&
+                      ((current_element_test_j == 0) ||
+                       (current_element_test_j == 1)))
+                    {
+                      G_IF.emplace_back(i, j);
+                    }
+                  if (((current_element_test_i == 2) ||
+                       (current_element_test_i == 3)) &&
+                      ((current_element_test_j == 2) ||
+                       (current_element_test_j == 3)))
+                    {
+                      G_II.emplace_back(i, j);
+                    }
+                }
+
+              // Then we loop over the trial dofs space to fill the dofs
+              // relationship for the B matrix (bilinear form)
+              for (unsigned int j : fe_values_trial_interior.dof_indices())
+                {
+                  const unsigned int current_element_trial_j =
+                    this->fe_trial_interior->system_to_base_index(j)
+                      .first.first;
+
+                  if (((current_element_test_i == 0) ||
+                       (current_element_test_i == 1)) &&
+                      ((current_element_trial_j == 0) ||
+                       (current_element_trial_j == 1)))
+                    {
+                      B_FE.emplace_back(i, j);
+                    }
+                  if (((current_element_test_i == 0) ||
+                       (current_element_test_i == 1)) &&
+                      ((current_element_trial_j == 2) ||
+                       (current_element_trial_j == 3)))
+                    {
+                      B_FH.emplace_back(i, j);
+                    }
+                  if (((current_element_test_i == 2) ||
+                       (current_element_test_i == 3)) &&
+                      ((current_element_trial_j == 0) ||
+                       (current_element_trial_j == 1)))
+                    {
+                      B_IE.emplace_back(i, j);
+                    }
+                  if (((current_element_test_i == 2) ||
+                       (current_element_test_i == 3)) &&
+                      ((current_element_trial_j == 2) ||
+                       (current_element_trial_j == 3)))
+                    {
+                      B_IH.emplace_back(i, j);
+                    }
+                }
+            }
+
+          // Now we loop over all quadrature points of the cell
+          for (unsigned int q_point = 0; q_point < n_q_points; ++q_point)
+            {
+              // To avoid unnecessary computation, we fill the shape values
+              // containers for the real and imaginary parts of the electric
+              // and magnetic fields and the dofs relationship at the current
+              // quadrature point.
+              const double &JxW = fe_values_trial_interior.JxW(q_point);
+
+              for (unsigned int i : fe_values_test.dof_indices())
+                {
+                  F[i] =
+                    fe_values_test[extractor_E_real].value(i, q_point) +
+                    imag * fe_values_test[extractor_E_imag].value(i, q_point);
+                  F_conj[i] =
+                    fe_values_test[extractor_E_real].value(i, q_point) -
+                    imag * fe_values_test[extractor_E_imag].value(i, q_point);
+
+                  curl_F[i] =
+                    fe_values_test[extractor_E_real].curl(i, q_point) +
+                    imag * fe_values_test[extractor_E_imag].curl(i, q_point);
+                  curl_F_conj[i] =
+                    fe_values_test[extractor_E_real].curl(i, q_point) -
+                    imag * fe_values_test[extractor_E_imag].curl(i, q_point);
+
+                  I[i] =
+                    fe_values_test[extractor_H_real].value(i, q_point) +
+                    imag * fe_values_test[extractor_H_imag].value(i, q_point);
+                  I_conj[i] =
+                    fe_values_test[extractor_H_real].value(i, q_point) -
+                    imag * fe_values_test[extractor_H_imag].value(i, q_point);
+
+                  curl_I[i] =
+                    fe_values_test[extractor_H_real].curl(i, q_point) +
+                    imag * fe_values_test[extractor_H_imag].curl(i, q_point);
+                  curl_I_conj[i] =
+                    fe_values_test[extractor_H_real].curl(i, q_point) -
+                    imag * fe_values_test[extractor_H_imag].curl(i, q_point);
+                }
+
+              for (unsigned int i : fe_values_trial_interior.dof_indices())
+                {
+                  E[i] =
+                    fe_values_trial_interior[extractor_E_real].value(i,
+                                                                     q_point) +
+                    imag *
+                      fe_values_trial_interior[extractor_E_imag].value(i,
+                                                                       q_point);
+                  H[i] =
+                    fe_values_trial_interior[extractor_H_real].value(i,
+                                                                     q_point) +
+                    imag *
+                      fe_values_trial_interior[extractor_H_imag].value(i,
+                                                                       q_point);
+                }
+
+              // Now we loop on each relationship container to assemble the
+              // relevant matrices
+              for (const auto &[i, j] : G_FF)
+                {
+                  G_matrix(i, j) +=
+                    (((F[j] * F_conj[i]) + (curl_F[j] * curl_F_conj[i]) +
+                      (conj_iweps_r * F[j] * iweps_r * F_conj[i])) *
+                     JxW)
+                      .real();
+                }
+
+              for (const auto &[i, j] : G_FI)
+                {
+                  G_matrix(i, j) += (((curl_I[j] * iweps_r * F_conj[i]) -
+                                      (conj_iwmu_r * I[j] * curl_F_conj[i])) *
+                                     JxW)
+                                      .real();
+                }
+
+              for (const auto &[i, j] : G_IF)
+                {
+                  G_matrix(i, j) += (((conj_iweps_r * F[j] * curl_I_conj[i]) -
+                                      (curl_F[j] * iwmu_r * I_conj[i])) *
+                                     JxW)
+                                      .real();
+                }
+
+              for (const auto &[i, j] : G_II)
+                {
+                  G_matrix(i, j) +=
+                    (((I[j] * I_conj[i]) + (curl_I[j] * curl_I_conj[i]) +
+                      (conj_iwmu_r * I[j] * iwmu_r * I_conj[i])) *
+                     JxW)
+                      .real();
+                }
+
+              for (const auto &[i, j] : B_FE)
+                {
+                  B_matrix(i, j) += (iweps_r * E[j] * F_conj[i] * JxW).real();
+                }
+
+              for (const auto &[i, j] : B_FH)
+                {
+                  B_matrix(i, j) += (H[j] * curl_F_conj[i] * JxW).real();
+                }
+
+              for (const auto &[i, j] : B_IE)
+                {
+                  B_matrix(i, j) += (E[j] * curl_I_conj[i] * JxW).real();
+                }
+
+              for (const auto &[i, j] : B_IH)
+                {
+                  B_matrix(i, j) -= (iwmu_r * H[j] * I_conj[i] * JxW).real();
+                }
+
+              for (const auto &i : l_F)
+                {
+                  l_vector[i] += 0.0;
+                }
+            }
+
+          // We now build the skeleton terms. Similarly, we choose to loop on
+          // the skeleton trial space faces.
+          for (const auto &face : cell_skeleton->face_iterators())
+            {
+              // We reinitialize the FEFaceValues objects to the current
+              // faces.
+              fe_face_values_test.reinit(cell_test, face);
+              fe_face_values_trial_skeleton.reinit(cell_skeleton, face);
+
+              // Reset the face dofs relationships
+              G_FF.clear();
+              G_FI.clear();
+              G_IF.clear();
+              G_II.clear();
+
+              B_hat_FH.clear();
+              B_hat_IE.clear();
+              B_hat_FE.clear();
+
+              l_F.clear();
+
+              // We fill the dofs relationship containers at the face level.
+              // To do so, we first loop on the test space dofs.
+              for (unsigned int i : fe_face_values_test.dof_indices())
+                {
+                  // Get the information on which element the dof is
+                  const unsigned int current_element_test_i =
+                    this->fe_test->system_to_base_index(i).first.first;
+
+                  // Include future Robin boundary condition here :
+                  // B.C. and the load vector and the B_hat matrix will have a
+                  // contribution in addition to a modification of the Riesz
+                  // map (G matrix) because of the energy norm that we want to
+                  // minimize there.
+                  if (false) // Change to "true" to activate the Robin B.C. when
+                             // implemented
+                    {
+                      if ((current_element_test_i == 0) ||
+                          (current_element_test_i == 1))
+                        {
+                          l_F.emplace_back(i);
+                        }
+
+                      // Loop over the dofs test to fill the G_matrix dofs
+                      // relationship
+                      for (unsigned int j : fe_face_values_test.dof_indices())
+                        {
+                          const unsigned int current_element_test_j =
+                            this->fe_test->system_to_base_index(j).first.first;
+
+                          if (((current_element_test_i == 0) ||
+                               (current_element_test_i == 1)) &&
+                              ((current_element_test_j == 0) ||
+                               (current_element_test_j == 1)))
+                            {
+                              G_FF.emplace_back(i, j);
+                            }
+                          if (((current_element_test_i == 0) ||
+                               (current_element_test_i == 1)) &&
+                              ((current_element_test_j == 2) ||
+                               (current_element_test_j == 3)))
+                            {
+                              G_FI.emplace_back(i, j);
+                            }
+                          if (((current_element_test_i == 2) ||
+                               (current_element_test_i == 3)) &&
+                              ((current_element_test_j == 0) ||
+                               (current_element_test_j == 1)))
+                            {
+                              G_IF.emplace_back(i, j);
+                            }
+                          if (((current_element_test_i == 2) ||
+                               (current_element_test_i == 3)) &&
+                              ((current_element_test_j == 2) ||
+                               (current_element_test_j == 3)))
+                            {
+                              G_II.emplace_back(i, j);
+                            }
+                        }
+                      // Loop over the dofs trial space to fill the B_hat
+                      // matrix dofs relationship for the Robin boundary
+                      // condition
+                      for (unsigned int j :
+                           fe_face_values_trial_skeleton.dof_indices())
+                        {
+                          const unsigned int current_element_trial_j =
+                            this->fe_trial_skeleton->system_to_base_index(j)
+                              .first.first;
+
+                          if (((current_element_test_i == 0) ||
+                               (current_element_test_i == 1)) &&
+                              ((current_element_trial_j == 0) ||
+                               (current_element_trial_j == 1)))
+                            {
+                              B_hat_FE.emplace_back(i, j);
+                            }
+                          if (((current_element_test_i == 2) ||
+                               (current_element_test_i == 3)) &&
+                              ((current_element_trial_j == 0) ||
+                               (current_element_trial_j == 1)))
+                            {
+                              B_hat_IE.emplace_back(i, j);
+                            }
+                        }
+                    }
+                  else
+                    {
+                      // If not on a Robin B.C., assemble all the other
+                      // relevant skeleton terms
+                      for (unsigned int j :
+                           fe_face_values_trial_skeleton.dof_indices())
+                        {
+                          const unsigned int current_element_trial_j =
+                            this->fe_trial_skeleton->system_to_base_index(j)
+                              .first.first;
+
+                          if (((current_element_test_i == 0) ||
+                               (current_element_test_i == 1)) &&
+                              ((current_element_trial_j == 2) ||
+                               (current_element_trial_j == 3)))
+                            {
+                              B_hat_FH.emplace_back(i, j);
+                            }
+                          if (((current_element_test_i == 2) ||
+                               (current_element_test_i == 3)) &&
+                              ((current_element_trial_j == 0) ||
+                               (current_element_trial_j == 1)))
+                            {
+                              B_hat_IE.emplace_back(i, j);
+                            }
+                        }
+                    }
+                }
+
+              // Loop over all face quadrature points
+              for (unsigned int q_point = 0; q_point < n_face_q_points;
+                   ++q_point)
+                {
+                  // Initialize reusable variables
+                  const auto &normal =
+                    fe_face_values_trial_skeleton.normal_vector(q_point);
+                  const double JxW_face =
+                    fe_face_values_trial_skeleton.JxW(q_point);
+
+                  // As for the cell, we first loop over the test dofs to fill
+                  // the face values containers
+                  for (unsigned int i : fe_face_values_test.dof_indices())
+                    {
+                      F_face[i] =
+                        fe_face_values_test[extractor_E_real].value(i,
+                                                                    q_point) +
+                        imag *
+                          fe_face_values_test[extractor_E_imag].value(i,
+                                                                      q_point);
+                      F_face_conj[i] =
+                        fe_face_values_test[extractor_E_real].value(i,
+                                                                    q_point) -
+                        imag *
+                          fe_face_values_test[extractor_E_imag].value(i,
+                                                                      q_point);
+
+                      I_face_conj[i] =
+                        fe_face_values_test[extractor_H_real].value(i,
+                                                                    q_point) -
+                        imag *
+                          fe_face_values_test[extractor_H_imag].value(i,
+                                                                      q_point);
+
+                      n_cross_I_face[i] = cross_product_3d(
+                        normal,
+                        fe_face_values_test[extractor_H_real].value(i,
+                                                                    q_point) +
+                          imag * fe_face_values_test[extractor_H_imag].value(
+                                   i, q_point));
+                      n_cross_I_face_conj[i] = cross_product_3d(
+                        normal,
+                        fe_face_values_test[extractor_H_real].value(i,
+                                                                    q_point) -
+                          imag * fe_face_values_test[extractor_H_imag].value(
+                                   i, q_point));
+                    }
+
+                  // Then, similarly we loop over the trial dofs to fill the
+                  // face values containers. Note that to be in
+                  // H^-1/2(curl), the fields needs to have the tangential
+                  // property mapping (n x (E x n)) which effectively extract
+                  // the tangential component of the field at the face. So
+                  // here we apply this operation using the map_H12 function
+                  // that we defined earlier. Stricly speeking, nx(E_parallel)
+                  // = n x E, and we would not need to use the map_H12
+                  // function, but we keep it for consistency.
+                  for (unsigned int i :
+                       fe_face_values_trial_skeleton.dof_indices())
+                    {
+                      E_hat[i] = map_H12(
+                        fe_face_values_trial_skeleton[extractor_E_real].value(
+                          i, q_point) +
+                          imag * fe_face_values_trial_skeleton[extractor_E_imag]
+                                   .value(i, q_point),
+                        normal);
+
+                      n_cross_E_hat[i] = cross_product_3d(
+                        normal,
+                        map_H12(
+                          fe_face_values_trial_skeleton[extractor_E_real].value(
+                            i, q_point) +
+                            imag *
+                              fe_face_values_trial_skeleton[extractor_E_imag]
+                                .value(i, q_point),
+                          normal));
+
+                      n_cross_H_hat[i] = cross_product_3d(
+                        normal,
+                        map_H12(
+                          fe_face_values_trial_skeleton[extractor_H_real].value(
+                            i, q_point) +
+                            imag *
+                              fe_face_values_trial_skeleton[extractor_H_imag]
+                                .value(i, q_point),
+                          normal));
+                    }
+
+                  // Here we apply the excitation at the relevant boundary.
+                  if (false) // Change to "true" to activate the Robin B.C. when
+                             // implemented
+                    {
+                      H_inc[0] = 0. + imag * 0.;
+                      H_inc[1] = 0. + imag * 0.;
+                      H_inc[2] = 0. + imag * 0.;
+
+                      E_inc[0] = 0. + imag * 0.;
+                      E_inc[1] = 0. + imag * 0.;
+                      E_inc[2] = 0. + imag * 0.;
+
+                      g_inc = cross_product_3d(normal, H_inc) +
+                              map_H12(kz_wmur * E_inc, normal);
+                    }
+
+                  // Now we loop on each relationship container to assemble
+                  // the relevant matrices.
+                  for (const auto &[i, j] : G_FF)
+                    {
+                      G_matrix(i, j) += (conj_kz_wmur * F_face[j] * kz_wmur *
+                                         F_face_conj[i] * JxW_face)
+                                          .real();
+                    }
+
+                  for (const auto &[i, j] : G_FI)
+                    {
+                      G_matrix(i, j) += (n_cross_I_face[j] * kz_wmur *
+                                         F_face_conj[i] * JxW_face)
+                                          .real();
+                    }
+
+                  for (const auto &[i, j] : G_IF)
+                    {
+                      G_matrix(i, j) += (conj_kz_wmur * F_face[j] *
+                                         n_cross_I_face_conj[i] * JxW_face)
+                                          .real();
+                    }
+
+                  for (const auto &[i, j] : G_II)
+                    {
+                      G_matrix(i, j) +=
+                        (n_cross_I_face[j] * n_cross_I_face_conj[i] * JxW_face)
+                          .real();
+                    }
+
+                  for (const auto &[i, j] : B_hat_FH)
+                    {
+                      B_hat_matrix(i, j) +=
+                        (n_cross_H_hat[j] * F_face_conj[i] * JxW_face).real();
+                    }
+
+                  for (const auto &[i, j] : B_hat_IE)
+                    {
+                      B_hat_matrix(i, j) +=
+                        (n_cross_E_hat[j] * I_face_conj[i] * JxW_face).real();
+                    }
+
+                  for (const auto &[i, j] : B_hat_FE)
+                    {
+                      B_hat_matrix(i, j) -=
+                        (kz_wmur * E_hat[j] * F_face_conj[i] * JxW_face).real();
+                    }
+
+                  for (const auto &i : l_F)
+                    {
+                      l_vector[i] -= (g_inc * F_face_conj[i] * JxW_face).real();
+                    }
+                }
+            } // End of face loop
+
+          // Finally, after having assembled all the matrices and vectors, we
+          // build the condensed version of the system.
+
+          // We only need the inverse of the Gram matrix $G$, so we
+          // invert it.
+          G_matrix.invert();
+
+          // We construct $M_4 = B^\dagger G^{-1}$ and $M_5 = \hat{B}^\dagger
+          // G^{-1}$ with it:
+          B_matrix.Tmmult(M4_matrix, G_matrix);
+          B_hat_matrix.Tmmult(M5_matrix, G_matrix);
+
+          // Then using $M_4$ we compute the condensed matrix $M_1 = B^\dagger
+          // G^{-1} B$ and $M_2 = B^\dagger G^{-1} \hat{B}$:
+          M4_matrix.mmult(M1_matrix, B_matrix);
+          M4_matrix.mmult(M2_matrix, B_hat_matrix);
+
+          // We also compute the matrix $M_3 = \hat{B}^\dagger G^{-1} \hat{B}$
+          M5_matrix.mmult(M3_matrix, B_hat_matrix);
+
+          // Finally, as for the $G$ matrix, we invert the $M_1$
+          // matrix:
+          M1_matrix.invert();
+
+          // Now,  we have already the
+          // solution on the skeleton and only need to perform $u_h = M_1^{-1}
+          // (M_4 l - M_2 \hat{u}_h)$ on each cell. When this is obtained, we
+          // can perform at the same time the error indicator (\Psi =
+          // G^{-1}(l-B u_h
+          // - \hat{B}\hat{u}_h)).
+
+          // We first get the solution vector for this cell.
+          cell_skeleton->get_dof_values(*present_solution_skeleton,
+                                        cell_skeleton_solution);
+
+          // Then we do the matrix-vector products to obtain the interior
+          // unknowns.
+          M2_matrix.vmult(tmp_vector_interior, cell_skeleton_solution);
+          M4_matrix.vmult(cell_interior_rhs, l_vector);
+          cell_interior_rhs -= tmp_vector_interior;
+          M1_matrix.vmult(cell_interior_solution, cell_interior_rhs);
+
+          // Finally, we map the cell interior solution to the global
+          // interior solution.
+          cell->distribute_local_to_global(cell_interior_solution,
+                                           locally_owned_solution_interior);
+
+          // We can also compute the error indicator on this cell.
+          B_matrix.vmult(tmp_vector_error_indicator, cell_interior_solution);
+          B_hat_matrix.vmult_add(tmp_vector_error_indicator,
+                                 cell_skeleton_solution);
+          l_vector -= tmp_vector_error_indicator;
+          G_matrix.vmult(cell_residual, l_vector);
+          cell_test->distribute_local_to_global(cell_residual,
+                                                locally_owned_error_indicator);
+        }
+    }
+
+  // After the loop over the cells, we finalize the assembly by compressing
+  // the vectors because of the MPI parallelization.
+  locally_owned_solution_interior.compress(VectorOperation::add);
+  locally_owned_error_indicator.compress(VectorOperation::add);
+
+  *this->present_solution            = locally_owned_solution_interior;
+  *this->present_DPG_error_indicator = locally_owned_error_indicator;
 }
 
 
