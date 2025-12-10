@@ -879,7 +879,7 @@ namespace Parameters
       heat_transfer_dcdd_stabilization =
         prm.get_bool("heat transfer dcdd stabilization");
       vof_dcdd_stabilization = prm.get_bool("vof dcdd stabilization");
-      dcdd_diff_coeff        = prm.get_double("vof dcdd diffusion factor");
+      dcdd_diffusion_coeff        = prm.get_double("vof dcdd diffusion factor");
 
       pressure_scaling_factor = prm.get_double("pressure scaling factor");
     }

@@ -39,7 +39,7 @@ There are three choices of stabilization strategy:
 
 * ``vof dcdd stabilization`` applies the DCDD stabilization term on the :doc:`VOF equation<../../theory/multiphase/cfd/vof>`. For more information, see `Tezduyar, T. E. (2003) <https://doi.org/10.1002/fld.505>`_\.
 
-* ``vof dcdd diffusion factor`` is the diffusion coefficient applied in the DCDD stabilization term on the :doc:`VOF equation<../../theory/multiphase/cfd/vof>`.
+* ``vof dcdd diffusion factor`` is the diffusion coefficient applied to the DCDD stabilization term in the :doc:`VOF equation<../../theory/multiphase/cfd/vof>`.
 
 * ``pressure scaling factor`` used as a multiplier for the pressure in the momentum equation; the inverse of the factor is applied to the pressure after solving. It helps the convergence of the linear solver by decreasing the condition number for cases where pressure and velocity have very different scales.
 

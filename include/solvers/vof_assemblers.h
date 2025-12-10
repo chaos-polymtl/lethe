@@ -175,7 +175,7 @@ public:
     const std::shared_ptr<SimulationControl> &simulation_control,
     const Parameters::Stabilization          &stabilization_parameters)
     : simulation_control(simulation_control)
-    , diffusion_constant(stabilization_parameters.dcdd_diff_coeff)
+    , diffusion_constant(stabilization_parameters.dcdd_diffusion_coeff)
   {}
 
   /**
@@ -202,7 +202,7 @@ public:
 
   const std::shared_ptr<SimulationControl> simulation_control;
 
-  /// Difussion coefficient
+  /// Diffusion coefficient
   const double diffusion_constant;
 };
 
