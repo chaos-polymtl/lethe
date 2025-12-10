@@ -827,7 +827,8 @@ namespace Parameters
         "vof dcdd diffusion factor",
         "0.5",
         Patterns::Double(),
-        "Diffusion factor scaling the DCDD stabilization term in the VOF");
+        "Diffusion factor scaling the DCDD stabilization term in the VOF "
+        "equation");
 
       prm.declare_entry(
         "pressure scaling factor",

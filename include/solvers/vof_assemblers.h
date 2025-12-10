@@ -167,6 +167,9 @@ public:
    * information related to the control of the steady-state or transient
    * simulation. This is used to extrapolate velocity solutions in time for
    * transient simulations.
+   *
+   * @param[in] stabilization_parameters Parameters for the stabilization to
+   * get the value of the diffusion coefficient.
    */
   VOFAssemblerDCDDStabilization(
     const std::shared_ptr<SimulationControl> &simulation_control,
@@ -199,6 +202,7 @@ public:
 
   const std::shared_ptr<SimulationControl> simulation_control;
 
+  /// Difussion coefficient
   const double diffusion_constant;
 };
 

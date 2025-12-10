@@ -787,7 +787,7 @@ VolumeOfFluid<dim>::gather_output_hook()
           signed_distance_solver->setup_dofs();
 
           signed_distance_solver->set_level_set_from_background_mesh(
-            dof_handler, this->present_solution);
+            *dof_handler, *this->present_solution);
 
           signed_distance_solver->solve();
         }
