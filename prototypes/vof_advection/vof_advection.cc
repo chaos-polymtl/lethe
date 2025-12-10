@@ -3,7 +3,6 @@
 
 #include <deal.II/base/data_out_base.h>
 #include <deal.II/base/function.h>
-#include <deal.II/base/function_signed_distance.h>
 #include <deal.II/base/index_set.h>
 #include <deal.II/base/parameter_handler.h>
 #include <deal.II/base/quadrature_lib.h>
@@ -183,8 +182,9 @@ namespace PrototypeGridTools
   // Already implemented in LetheGridTools
   template <int dim>
   inline double
-  compute_point_2_interface_min_distance(const std::vector<Point<dim>> &triangle,
-                                         const Point<dim>             &point)
+  compute_point_2_interface_min_distance(
+    const std::vector<Point<dim>> &triangle,
+    const Point<dim>              &point)
   {
     double            D;
     const Point<dim> &point_0 = triangle[0];
@@ -699,9 +699,11 @@ namespace InterfaceTools
                                       &interface_reconstruction_cells,
     std::set<types::global_dof_index> &intersected_dofs)
   {
+    // Warning: for fe.degree=2, at least 2 subdivisions should be used for the
+    // marching-cube algorithm
     GridTools::MarchingCubeAlgorithm<dim, VectorType> marching_cube(mapping,
                                                                     fe,
-                                                                    2,
+                                                                    1,
                                                                     1e-10);
     const unsigned int dofs_per_cell = fe.n_dofs_per_cell();
 
@@ -771,12 +773,6 @@ namespace InterfaceTools
     get_level_set(const MPI_Comm &mpi_communicator);
 
     void
-    reinit_system_volume_correction(const IndexSet &locally_owned_dofs,
-                                       const DynamicSparsityPattern &dsp,
-                                       const MPI_Comm &mpi_communicator);
-    
-
-    void
     output_interface_reconstruction(const std::string  output_name,
                                     const std::string  output_path,
                                     const unsigned int it) const;
@@ -837,13 +833,13 @@ namespace InterfaceTools
                                          const unsigned int    local_face_id);
 
     inline void
-    compute_residual(const Tensor<1, dim>                 &x_n_to_x_I_real,
-                     const Tensor<1, dim>                 &distance_gradient,
+    compute_residual(const Tensor<1, dim>                  &x_n_to_x_I_real,
+                     const Tensor<1, dim>                  &distance_gradient,
                      const DerivativeForm<1, dim - 1, dim> &transformation_jac,
-                     Tensor<1, dim - 1>                   &residual_ref);
+                     Tensor<1, dim - 1>                    &residual_ref);
 
     inline std::vector<Point<dim>>
-    compute_numerical_jacobian_stencil(const Point<dim>   &x_ref,
+    compute_numerical_jacobian_stencil(const Point<dim>  &x_ref,
                                        const unsigned int local_face_id,
                                        const double       perturbation);
 
@@ -895,7 +891,7 @@ namespace InterfaceTools
     std::map<types::global_cell_index, std::vector<CellData<dim - 1>>>
       interface_reconstruction_cells;
 
-    std::set<types::global_dof_index> intersected_dofs;
+    std::set<types::global_dof_index>                 intersected_dofs;
     std::map<unsigned int, std::vector<unsigned int>> dof_opposite_faces_map;
   };
 
@@ -934,6 +930,21 @@ namespace InterfaceTools
     constraints.reinit(locally_owned_dofs, locally_relevant_dofs);
     DoFTools::make_hanging_node_constraints(dof_handler, constraints);
     constraints.close();
+
+    DynamicSparsityPattern dsp(locally_relevant_dofs);
+    DoFTools::make_sparsity_pattern(dof_handler,
+                                    dsp,
+                                    constraints,
+                                    /*keep_constrained_dofs =*/false);
+    SparsityTools::distribute_sparsity_pattern(dsp,
+                                               dof_handler.locally_owned_dofs(),
+                                               mpi_communicator,
+                                               locally_relevant_dofs);
+    system_matrix_volume_correction.reinit(locally_owned_dofs,
+                                           locally_owned_dofs,
+                                           dsp,
+                                           mpi_communicator);
+    system_rhs_volume_correction.reinit(locally_owned_dofs, mpi_communicator);
   }
 
   template <int dim>
@@ -1017,20 +1028,6 @@ namespace InterfaceTools
 
     return level_set;
   }
-
-  template <int dim>
-  void
-  SignedDistanceSolver<dim>::reinit_system_volume_correction(const IndexSet &locally_owned_dofs,
-                                       const DynamicSparsityPattern &dsp,
-                                       const MPI_Comm &mpi_communicator)
-  {
-    system_matrix_volume_correction.reinit(locally_owned_dofs,
-                                         locally_owned_dofs,
-                                         dsp,
-                                         mpi_communicator);
-    system_rhs_volume_correction.reinit(locally_owned_dofs, mpi_communicator);
-  }
-
 
   template <int dim>
   void
@@ -1186,7 +1183,6 @@ namespace InterfaceTools
      * interface. It works in a similar manner as a marching algorithm from the
      * knowledge of the signed distance for the interface first neighbors. */
 
-    // const unsigned int max_n_opposite_faces_per_dof = 2*dim;
     std::vector<unsigned int> dof_opposite_faces;
     const unsigned int        dofs_per_cell = fe.n_dofs_per_cell();
 
@@ -1547,15 +1543,17 @@ namespace InterfaceTools
 
   template <int dim>
   void
-  SignedDistanceSolver<dim>::compute_cell_wise_volume_correction(const MPI_Comm &mpi_communicator)
+  SignedDistanceSolver<dim>::compute_cell_wise_volume_correction(
+    const MPI_Comm &mpi_communicator)
   {
     FEPointEvaluation<1, dim> fe_point_evaluation(
       mapping, fe, update_jacobians | update_JxW_values);
 
     const unsigned int dofs_per_cell = fe.n_dofs_per_cell();
 
-    /* For the L2 projection of the cell-wise correction (the projection for a
-    given DOF corresponds to the average of the neighbor cell values)*/
+    /* For the approximate L2 projection of the cell-wise correction (the
+    projection for a given DOF corresponds to the average of the neighbor cell
+    values)*/
     // double n_cells_per_dofs_inv = 1.0 / 4.0;
     // if constexpr (dim == 3)
     //   {
@@ -1710,8 +1708,8 @@ namespace InterfaceTools
             // Store eta_n
             eta_cell[cell_index] = eta_n;
 
-            // L2 projection of the cell-wise (discontinuous) correction to have
-            // a continuous correction at the dofs.
+            // Approximate L2 projection of the cell-wise (discontinuous)
+            // correction to have a continuous correction at the dofs.
             // std::vector<types::global_dof_index> dof_indices(dofs_per_cell);
             // cell->get_dof_indices(dof_indices);
             // for (unsigned int i = 0; i < dofs_per_cell; ++i)
@@ -1722,7 +1720,7 @@ namespace InterfaceTools
           }
       } // End loop on cells.
 
-    // Solve L2 projection of the cell-wise (discontinuous) correction to have
+    // Compute L2 projection of the cell-wise (discontinuous) correction to have
     // a continuous correction at the dofs.
     compute_volume_correction_L2_projection(eta_cell, mpi_communicator);
 
@@ -1730,6 +1728,13 @@ namespace InterfaceTools
     volume_correction.update_ghost_values();
   }
 
+  /**
+   * @brief Compute the L2 projection of the cell-wise correction.
+   *
+   * @param[in] eta_cell Cell-wise correction of the signed distance
+   *
+   * @param[in] mpi_communicator MPI communicator
+   */
   template <int dim>
   void
   SignedDistanceSolver<dim>::compute_volume_correction_L2_projection(
@@ -1737,6 +1742,8 @@ namespace InterfaceTools
     const MPI_Comm &mpi_communicator)
   {
     // Assemble System
+    system_matrix_volume_correction = 0;
+    system_rhs_volume_correction    = 0;
 
     FEValues<dim> fe_values(this->fe,
                             QGauss<dim>(fe.degree + 2),
@@ -1797,8 +1804,7 @@ namespace InterfaceTools
           }
       }
 
-
-    // Solve
+    // Solve system
     const double       linear_solver_tolerance = 1e-12;
     const unsigned int max_iterations          = 100;
 
@@ -1832,7 +1838,7 @@ namespace InterfaceTools
     LinearAlgebra::distributed::Vector<double> tmp_volume_correction(
       this->locally_owned_dofs, mpi_communicator);
     dealii::LinearAlgebra::ReadWriteVector<double> rwv(
-    tmp_volume_correction.locally_owned_elements());
+      tmp_volume_correction.locally_owned_elements());
     rwv.reinit(completely_distributed_volume_correction);
     tmp_volume_correction.import_elements(rwv, dealii::VectorOperation::insert);
 
@@ -1956,7 +1962,7 @@ namespace InterfaceTools
   }
 
   /**
-   * @brief Set the map of local id of the opposite faces to the given local dofs
+   * @brief Set the map of local ids of the opposite faces to the given local dofs
    * (works for quad only).
    */
   template <int dim>
@@ -2017,7 +2023,7 @@ namespace InterfaceTools
   }
 
   /**
-   * @brief Return the local id of the opposite faces to the given dof
+   * @brief Return the local ids of the opposite faces to the given dof
    * (works for quad only).
    *
    * @param[in] local_dof_id Local id of the dof in the cell
@@ -2032,7 +2038,7 @@ namespace InterfaceTools
     std::vector<unsigned int> &local_opposite_faces)
   {
     local_opposite_faces = dof_opposite_faces_map.at(local_dof_id);
-  };
+  }
 
   /**
    * @brief Return the number of opposite faces for the given dof
@@ -2040,7 +2046,7 @@ namespace InterfaceTools
    *
    * @param[in] local_dof_id Local id of the dof in the cell
    *
-   * @return n_opposite_faces_per_dof The number of opposite faces
+   * @return n_opposite_faces_per_dof Number of opposite faces
    */
   template <int dim>
   inline unsigned int
@@ -2128,10 +2134,10 @@ namespace InterfaceTools
   template <int dim>
   inline void
   SignedDistanceSolver<dim>::compute_residual(
-    const Tensor<1, dim>                 &x_n_to_x_I_real,
-    const Tensor<1, dim>                 &distance_gradient,
+    const Tensor<1, dim>                  &x_n_to_x_I_real,
+    const Tensor<1, dim>                  &distance_gradient,
     const DerivativeForm<1, dim - 1, dim> &transformation_jac,
-    Tensor<1, dim - 1>                   &residual_ref)
+    Tensor<1, dim - 1>                    &residual_ref)
   {
     Tensor<1, dim> residual_real =
       distance_gradient - (1.0 / x_n_to_x_I_real.norm()) * x_n_to_x_I_real;
@@ -2148,7 +2154,7 @@ namespace InterfaceTools
   template <int dim>
   inline std::vector<Point<dim>>
   SignedDistanceSolver<dim>::compute_numerical_jacobian_stencil(
-    const Point<dim>   &x_ref,
+    const Point<dim>  &x_ref,
     const unsigned int local_face_id,
     const double       perturbation)
   {
@@ -2282,17 +2288,14 @@ template <int dim>
 Tensor<1, dim>
 AdvectionField<dim>::value(const Point<dim> &p) const
 {
-  const double   period = 0.6;
+  const double   period = 2.0;
   Tensor<1, dim> value;
-  // value[0] =
-  //   -(Utilities::pow(sin(numbers::PI * p[0]), 2) * sin(2 * numbers::PI * p[1]) *
-  //     cos(numbers::PI * this->get_time() / period));
   value[0] =
-     (cos(numbers::PI * this->get_time() / period));
-  // value[1] = Utilities::pow(sin(numbers::PI * p[1]), 2) *
-  //            sin(2 * numbers::PI * p[0]) *
-  //            cos(numbers::PI * this->get_time() / period);
-  value[1]=0;
+    -(Utilities::pow(sin(numbers::PI * p[0]), 2) * sin(2 * numbers::PI * p[1]) *
+      cos(numbers::PI * this->get_time() / period));
+  value[1] = Utilities::pow(sin(numbers::PI * p[1]), 2) *
+             sin(2 * numbers::PI * p[0]) *
+             cos(numbers::PI * this->get_time() / period);
 
   return value;
 }
@@ -2421,7 +2424,6 @@ private:
 
   VectorType solution;
   VectorType previous_solution;
-  VectorType analytical_solution;
   VectorType system_rhs;
 
   double dt;
@@ -2431,7 +2433,6 @@ private:
   ConditionalOStream pcout;
 
   VectorType level_set;
-  VectorType analytical_level_set;
 
   InterfaceTools::SignedDistanceSolver<dim> signed_distance_solver;
 
@@ -2455,8 +2456,8 @@ AdvectionProblem<dim>::AdvectionProblem(const Settings &p_parameters)
                   typename Triangulation<dim>::MeshSmoothing(
                     Triangulation<dim>::smoothing_on_refinement |
                     Triangulation<dim>::smoothing_on_coarsening))
-  , mapping(2)
-  , fe(2)
+  , mapping(1)
+  , fe(1)
   , dof_handler(triangulation)
   , dt(p_parameters.time_step)
   , mpi_communicator(MPI_COMM_WORLD)
@@ -2493,7 +2494,6 @@ AdvectionProblem<dim>::make_grid()
                                             p_1);
 
   triangulation.refine_global(parameters.initial_refinement);
-  // GridTools::distort_random(0.2, triangulation, true);
 }
 
 template <int dim>
@@ -2510,12 +2510,6 @@ AdvectionProblem<dim>::setup_system()
   previous_solution.reinit(locally_owned_dofs,
                            locally_relevant_dofs,
                            mpi_communicator);
-  analytical_solution.reinit(locally_owned_dofs,
-                             locally_relevant_dofs,
-                             mpi_communicator);
-  analytical_level_set.reinit(locally_owned_dofs,
-                              locally_relevant_dofs,
-                              mpi_communicator);
   level_set.reinit(locally_owned_dofs, locally_relevant_dofs, mpi_communicator);
 
   system_rhs.reinit(locally_owned_dofs, mpi_communicator);
@@ -2538,8 +2532,6 @@ AdvectionProblem<dim>::setup_system()
                        locally_owned_dofs,
                        dsp,
                        mpi_communicator);
-  
-  signed_distance_solver.reinit_system_volume_correction(locally_owned_dofs,dsp,mpi_communicator);
 }
 
 template <int dim>
@@ -2805,35 +2797,17 @@ void
 AdvectionProblem<dim>::compute_phase_fraction_from_level_set()
 {
   VectorType solution_owned(this->locally_owned_dofs, mpi_communicator);
-  VectorType analytical_solution_owned(this->locally_owned_dofs,
-                                       mpi_communicator);
-  VectorType analytical_level_set_owned(this->locally_owned_dofs,
-                                        mpi_communicator);
   std::map<types::global_dof_index, Point<dim>> dof_support_points =
     DoFTools::map_dofs_to_support_points(mapping, dof_handler);
-
-  Point<dim> sphere_center = Point<dim>();
-  sphere_center(0)         = 0.5+sin(numbers::PI * time / 0.6)*0.6/numbers::PI;
-  sphere_center(1)         = 0.75;
-  if constexpr (dim == 3)
-    sphere_center(2) = 0.5;
-  Functions::SignedDistance::Sphere<dim> sphere(sphere_center, 0.15);
 
   for (auto p : this->locally_owned_dofs)
     {
       const double signed_dist = level_set[p];
       solution_owned[p] = 0.5 - 0.5 * std::tanh(signed_dist / tanh_thickness);
-      analytical_level_set_owned[p] = sphere.value(dof_support_points.at(p));
-      analytical_solution_owned[p] =
-        0.5 - 0.5 * std::tanh(analytical_level_set_owned[p] / tanh_thickness);
     }
   constraints.distribute(solution_owned);
-  constraints.distribute(analytical_solution_owned);
-  constraints.distribute(analytical_level_set_owned);
 
-  solution             = solution_owned;
-  analytical_solution  = analytical_solution_owned;
-  analytical_level_set = analytical_level_set_owned;
+  solution = solution_owned;
 }
 
 template <int dim>
@@ -2926,7 +2900,7 @@ AdvectionProblem<dim>::monitor_volume(unsigned int time_iteration)
   table_volume_monitoring.add_value("volume_phase", volume_phase);
   table_volume_monitoring.set_scientific("volume_phase", true);
 
-  std::ofstream output(parameters.output_path+"/volume.dat");
+  std::ofstream output(parameters.output_path + "/volume.dat");
   table_volume_monitoring.write_text(output);
 
   pcout << "Volume = " << volume_sharp << std::endl;
@@ -2941,17 +2915,8 @@ AdvectionProblem<dim>::output_results(const int time_iteration) const
   DataOut<dim> data_out;
   data_out.attach_dof_handler(dof_handler);
 
-  Vector<float> subdomain(triangulation.n_active_cells());
-  for (unsigned int i = 0; i < subdomain.size(); ++i)
-    subdomain(i) = triangulation.locally_owned_subdomain();
-  data_out.add_data_vector(subdomain,
-                           "subdomain",
-                           DataOut<dim>::type_cell_data);
-
   data_out.add_data_vector(solution, "solution");
   data_out.add_data_vector(previous_solution, "previous_solution");
-  data_out.add_data_vector(analytical_solution, "analytical_solution");
-  data_out.add_data_vector(analytical_level_set, "analytical_level_set");
   data_out.add_data_vector(level_set, "level_set");
 
   data_out.build_patches(fe.degree);
@@ -2968,31 +2933,6 @@ AdvectionProblem<dim>::output_results(const int time_iteration) const
 
   signed_distance_solver.output_interface_reconstruction(
     "interface_" + filename, output_path, time_iteration);
-
-  // Compute the L2 norm of the error.
-  Vector<float> error_per_cell(triangulation.n_active_cells());
-  Point<dim>    sphere_center = Point<dim>();
-  sphere_center(0)            = 0.5+sin(numbers::PI * time / 0.6)*0.6/numbers::PI;
-  sphere_center(1)            = 0.75;
-  if constexpr (dim == 3)
-    sphere_center(2) = 0.5;
-
-  VectorTools::integrate_difference(
-    mapping,
-    dof_handler,
-    level_set,
-    Functions::SignedDistance::Sphere<dim>(sphere_center, 0.15),
-    error_per_cell,
-    QGauss<dim>(fe.degree + 1),
-    VectorTools::L2_norm);
-
-  const double error_L2 =
-    VectorTools::compute_global_error(triangulation,
-                                      error_per_cell,
-                                      VectorTools::L2_norm);
-
-  pcout << "The L2 norm of the signed distance error is: " << error_L2
-        << std::endl;
 }
 
 template <int dim>
@@ -3008,8 +2948,8 @@ AdvectionProblem<dim>::run()
   unsigned int it         = 0;
   double       final_time = parameters.time_end;
 
-  // for (unsigned int i = 0; i < parameters.initial_refinement_steps; ++i)
-  //   refine_grid();
+  for (unsigned int i = 0; i < parameters.initial_refinement_steps; ++i)
+    refine_grid();
 
   previous_solution = solution;
 
@@ -3035,8 +2975,7 @@ AdvectionProblem<dim>::run()
       output_results(it);
       monitor_volume(it);
 
-
-      // refine_grid();
+      refine_grid();
 
       previous_solution = solution;
     }
