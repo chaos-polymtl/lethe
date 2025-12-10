@@ -822,7 +822,7 @@ namespace Parameters
         Patterns::Bool(),
         "Apply Discontinuity-Capturing Directional Dissipation (DCDD) "
         "stabilization term on the VOF phase fraction <true|false>");
-        
+
       prm.declare_entry(
         "vof dcdd diffusion factor",
         "0.5",
@@ -878,7 +878,7 @@ namespace Parameters
       heat_transfer_dcdd_stabilization =
         prm.get_bool("heat transfer dcdd stabilization");
       vof_dcdd_stabilization = prm.get_bool("vof dcdd stabilization");
-      dcdd_diff_coeff = prm.get_double("vof dcdd diffusion factor");
+      dcdd_diff_coeff        = prm.get_double("vof dcdd diffusion factor");
 
       pressure_scaling_factor = prm.get_double("pressure scaling factor");
     }

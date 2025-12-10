@@ -171,8 +171,8 @@ public:
   VOFAssemblerDCDDStabilization(
     const std::shared_ptr<SimulationControl> &simulation_control,
     const Parameters::Stabilization          &stabilization_parameters)
-    : simulation_control(simulation_control),
-    diffusion_constant(stabilization_parameters.dcdd_diff_coeff)
+    : simulation_control(simulation_control)
+    , diffusion_constant(stabilization_parameters.dcdd_diff_coeff)
   {}
 
   /**
@@ -200,7 +200,6 @@ public:
   const std::shared_ptr<SimulationControl> simulation_control;
 
   const double diffusion_constant;
-
 };
 
 

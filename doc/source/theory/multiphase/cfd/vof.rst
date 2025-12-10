@@ -96,13 +96,13 @@ where the first element-wise summation represents the SUPG stabilization term an
 
 .. math::
 
-  &v_\mathrm{DCDD} = \frac{1}{2} h^2 \|\mathbf{u}\| \| \nabla \phi^h_\mathrm{old} \| \\
+  &v_\mathrm{DCDD} = D_\mathrm{DCDD} h^2 \|\mathbf{u}\| \| \nabla \phi^h_\mathrm{old} \| \\
   &\mathbf{f}_\mathrm{DCDD} =
     \frac{\mathbf{u}}{\|\mathbf{u}\| } \otimes \frac{\mathbf{u}}{\|\mathbf{u}\|}
     - \left(\frac{\nabla \phi^h_\mathrm{old}}{\| \nabla \phi^h_\mathrm{old} \|} \cdot \frac{\mathbf{u}}{\|\mathbf{u}\| } \right)^2
     \frac{\nabla \phi^h_\mathrm{old}}{\| \nabla \phi^h_\mathrm{old} \|} \otimes \frac{\nabla \phi^h_\mathrm{old}}{\| \nabla \phi^h_\mathrm{old} \|}
 
-The term :math:`v_\mathrm{DCDD}` ensures that diffusivity is added only where there is a large phase gradient and a non-zero velocity, i.e., where the interface :math:`\Gamma` is in motion. The term :math:`\mathbf{f}_\mathrm{DCDD}` adds diffusivity only in the crosswind direction, since streamline diffusion is already added by the SUPG stabilization.
+where :math:`D_\mathrm{DCDD}` is a user-defined diffusion coefficient. The term :math:`v_\mathrm{DCDD}` ensures that diffusivity is added only where there is a large phase gradient and a non-zero velocity, i.e., where the interface :math:`\Gamma` is in motion. The term :math:`\mathbf{f}_\mathrm{DCDD}` adds diffusivity only in the crosswind direction, since streamline diffusion is already added by the SUPG stabilization.
 
 To avoid a non-linear finite element formulation, the phase gradient of the previous time step :math:`(\phi^h_\mathrm{old})` is used.
 
