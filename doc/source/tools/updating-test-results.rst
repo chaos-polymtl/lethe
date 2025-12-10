@@ -27,6 +27,7 @@ TXR can be installed to file:`/usr/local/bin` as follows:
 
    curl 'https://www.kylheku.com/cgit/txr/snapshot/txr-285.tar.gz' | tar -xzf -
    cd txr-285
+   ./configure
    make
    sudo make install
 
@@ -36,17 +37,16 @@ In this situation, the build has to be reconfigured, for example with:
 
 .. code-block:: shell
 
-   cmake -S. -Bbuild
+   cmake ../lethe
 
-assuming the current directory is Lethe's root directory, and the build
-directory file:`build`.
+assuming the current directory is your `build` directory and that you have followed the installation instruction.
 
 -----
 Usage
 -----
-Assuming the build directory is file:`build`, the following command
+Assuming that you are in your `build` directory, the following command
 updates the golden files:
 
 .. code-block:: shell
    
-   cmake --build build --target update-golden
+   cmake --build . --target update-golden
