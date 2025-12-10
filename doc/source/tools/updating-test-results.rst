@@ -31,8 +31,9 @@ TXR can be installed to file:`/usr/local/bin` as follows:
    make
    sudo make install
 
-If Lethe's build was configured before TXR was installed, then the
-`update-golden` target will not exist.
+Once that TXR is installed, the `update-golden.tl` script can be run in two ways which will be discussed in :ref:`Usage`.
+The first way requires adding the script as a target in your CMake build directory.
+If Lethe's build was configured before TXR was installed, then the `update-golden` target will not exist.
 In this situation, the build has to be reconfigured, for example with:
 
 .. code-block:: shell
@@ -41,12 +42,21 @@ In this situation, the build has to be reconfigured, for example with:
 
 assuming the current directory is your `build` directory and that you have followed the installation instruction.
 
+.. _Usage:
 -----
 Usage
 -----
-Assuming that you are in your `build` directory, the following command
-updates the golden files:
+If the script was added as a target in your CMake build directory and assuming that you are in your `build` directory,
+the following command updates the golden files:
 
 .. code-block:: shell
    
    cmake --build . --target update-golden
+
+The second option to run the `update-golden.tl` script is to run it manually using the following command:
+
+.. code-block:: shell
+    txr ../lethe/contrib/utilities/update-golden.tl  -v . ../lethe
+
+assuming that TXR is installed in `usr/bin` on your machine, that you are in your `build` directory and that you have
+followed the installation instructions.
