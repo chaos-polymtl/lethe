@@ -34,7 +34,7 @@ set time step = 0.000833
 
 # Simulation time value
 
-set time end = 1.21
+set time end = 2.0
 
 # Name for vtu files
 
@@ -42,4 +42,4 @@ set output name = solution
 
 # Path for vtu output files
 
-set output path = ./output_q2_lateral_2/
+set output path = ./output/
