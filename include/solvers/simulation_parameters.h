@@ -100,6 +100,8 @@ public:
       prm, size_of_subsections.boundary_conditions);
     boundary_conditions_cahn_hilliard.declare_parameters(
       prm, size_of_subsections.boundary_conditions);
+    boundary_conditions_time_harmonic_electromagnetics.declare_parameters(
+      prm, size_of_subsections.boundary_conditions);
 
     initial_condition = new Parameters::InitialConditions<dim>;
     initial_condition->declare_parameters(prm);
@@ -202,6 +204,7 @@ public:
     boundary_conditions_tracer.parse_parameters(prm);
     boundary_conditions_vof.parse_parameters(prm);
     boundary_conditions_cahn_hilliard.parse_parameters(prm);
+    boundary_conditions_time_harmonic_electromagnetics.parse_parameters(prm);
     manifolds_parameters.parse_parameters(prm);
     initial_condition->parse_parameters(prm);
     analytical_solution->parse_parameters(prm);

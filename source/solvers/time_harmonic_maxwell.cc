@@ -475,11 +475,13 @@ TimeHarmonicMaxwell<dim>::setup_dofs()
                              this->locally_owned_dofs_trial_skeleton,
                              dsp,
                              mpi_communicator);
-
-  this->pcout << "   Number of skeleton degrees of freedom: "
-              << this->dof_handler_trial_skeleton->n_dofs() << std::endl;
-  this->pcout << "   Number of interior degrees of freedom: "
-              << this->dof_handler_trial_interior->n_dofs() << std::endl;
+  this->pcout << "  DPG system:" << std::endl;
+  this->pcout
+    << "   Number of skeleton degrees of freedom for Time-Harmonic Maxwell: "
+    << this->dof_handler_trial_skeleton->n_dofs() << std::endl;
+  this->pcout
+    << "   Number of interior degrees of freedom for Time-Harmonic Maxwell: "
+    << this->dof_handler_trial_interior->n_dofs() << std::endl;
 
   // Provide the TimeHarmonicMaxwell dof_handler and solution to the
   // multiphysics interface. Note that we provide the interior dof_handler and
@@ -488,6 +490,53 @@ TimeHarmonicMaxwell<dim>::setup_dofs()
                                 this->dof_handler_trial_interior);
   multiphysics->set_solution(PhysicsID::electromagnetics,
                              this->present_solution);
+}
+
+template <int dim>
+void
+TimeHarmonicMaxwell<dim>::set_initial_conditions()
+{
+
+  // This tmp vector is used instead of the newton update vector as they don't exist
+  // for this solver.
+  GlobalVectorType tmp(this->locally_owned_dofs_trial_interior,
+                       this->triangulation->get_mpi_communicator());
+
+  VectorTools::interpolate(
+    *this->mapping,
+    *this->dof_handler_trial_interior,
+    simulation_parameters.initial_condition->electromagnetics,
+    tmp,
+    fe_trial_interior->component_mask(extractor_E_real));
+
+  VectorTools::interpolate(
+    *this->mapping,
+    *this->dof_handler_trial_interior,
+    simulation_parameters.initial_condition->electromagnetics,
+    tmp,
+    fe_trial_interior->component_mask(extractor_E_imag));
+
+  VectorTools::interpolate(
+    *this->mapping,
+    *this->dof_handler_trial_interior,
+    simulation_parameters.initial_condition->electromagnetics,
+    tmp,
+    fe_trial_interior->component_mask(extractor_H_real));
+
+  VectorTools::interpolate(
+    *this->mapping,
+    *this->dof_handler_trial_interior,
+    simulation_parameters.initial_condition->electromagnetics,
+    tmp,
+    fe_trial_interior->component_mask(extractor_H_imag));
+
+  // Note that we don't apply the constraints as the initial condition only
+  // gives values on the interior dofs and not on the skeleton dofs.
+
+  // No percolation of time vectors is needed as this is always a steady-state
+  // solver.
+
+  *this->present_solution = tmp;
 }
 
 template <int dim>
@@ -628,7 +677,7 @@ TimeHarmonicMaxwell<dim>::define_constraints()
           // Real
           VectorTools::project_boundary_values_curl_conforming_l2(
             *this->dof_handler_trial_skeleton,
-            0,
+            2 * dim,
             TimeHarmonicMaxwellMagneticFieldDefined<dim>(
               &this->simulation_parameters
                  .boundary_conditions_time_harmonic_electromagnetics
@@ -660,7 +709,7 @@ TimeHarmonicMaxwell<dim>::define_constraints()
           // Imaginary
           VectorTools::project_boundary_values_curl_conforming_l2(
             *this->dof_handler_trial_skeleton,
-            dim,
+            3 * dim,
             TimeHarmonicMaxwellMagneticFieldDefined<dim>(
               &this->simulation_parameters
                  .boundary_conditions_time_harmonic_electromagnetics
@@ -852,11 +901,11 @@ TimeHarmonicMaxwell<3>::assemble_system_matrix()
   double       waveguide_a;
   double       waveguide_b;
 
-  frequency   = 3e9;
+  frequency   = 670356315.7;
   mode_x      = 1;
-  mode_y      = 1;
-  waveguide_a = 0.081574369757;
-  waveguide_b = 0.081574369757;
+  mode_y      = 0;
+  waveguide_a = 0.25;
+  waveguide_b = 0.25;
 
   // TODO:   the above parameters will need to be removed when they are added to
   // the physical properties
@@ -1751,11 +1800,11 @@ TimeHarmonicMaxwell<3>::reconstruct_interior_solution()
   double       waveguide_a;
   double       waveguide_b;
 
-  frequency   = 3e9;
+  frequency   = 670356315.7;
   mode_x      = 1;
-  mode_y      = 1;
-  waveguide_a = 0.081574369757;
-  waveguide_b = 0.081574369757;
+  mode_y      = 0;
+  waveguide_a = 0.25;
+  waveguide_b = 0.25;
 
   // TODO:   the above parameters will need to be removed when they are added to
   // the physical properties

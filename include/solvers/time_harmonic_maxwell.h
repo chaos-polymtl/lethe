@@ -275,13 +275,7 @@ public:
    * the use of L2 projection or steady-state solutions.
    */
   virtual void
-  set_initial_conditions() override
-  {
-    AssertThrow(
-      false,
-      ExcMessage(
-        " The TimeHarmonicMaxwell solver does not support initial conditions as it is a frequency domain solver. Consequently, this method always solves a steady-state problem."));
-  };
+  set_initial_conditions() override;
 
   /**
    * @brief Set up preconditioner. Not used for the auxiliary physics but
