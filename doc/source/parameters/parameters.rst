@@ -29,4 +29,4 @@ Launching an application requires an executable of the required solver, and a pa
 
 .. warning::
   
-  The radioative particle-tracking (RPT) applications of Lethe has been migrated to a separate repository which is available `here <https://github.com/chaos-polymtl/lethe-rpt>`_.
+  The radioactive particle-tracking (RPT) applications of Lethe has been migrated to a separate repository which is available `here <https://github.com/chaos-polymtl/lethe-rpt>`_.
