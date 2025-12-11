@@ -10,8 +10,8 @@
 #
 # * Description
 #
-# The checkdeps utility checks Lethe's core, dem, solvers, fem-dem and
-# rpt libraries for unintended dependencies, including circular
+# The checkdeps utility checks Lethe's core, dem, solvers and fem-dem
+# libraries for unintended dependencies, including circular
 # dependencies.
 # It prints the filename, line number and line of every include
 # directive that refers to a potentially problematic header.
@@ -50,9 +50,8 @@ core_deps="$common_deps"
 dem_deps="$common_deps|core[/]"
 solvers_deps="$common_deps|core[/]"
 fem_dem_deps="$common_deps|core[/]|dem[/]|solvers[/]"
-rpt_deps="$common_deps|core[/]"
 # Many false positives; skip for now.
-#all_deps="$common_deps|core[/]|dem[/]|solvers[/]|fem-dem[/]|rpt[/]"
+#all_deps="$common_deps|core[/]|dem[/]|solvers[/]|fem-dem[/]"
 
 # ** Checking a library
 
@@ -102,7 +101,6 @@ main() {
   checklib dem "$dem_deps"
   checklib solvers "$solvers_deps"
   checklib fem-dem "$fem_dem_deps"
-  checklib rpt "$rpt_deps"
   #checklib - "$all_deps" applications prototypes tests
   rm -f "$tmpfile"
   if test "$badpath" -ne 0; then
