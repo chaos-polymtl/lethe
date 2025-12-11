@@ -46,7 +46,6 @@ It can readily be noticed that the include and source folder are subdivided into
 * ``/core``
 * ``/dem``
 * ``/fem-dem``
-* ``/rpt``
 * ``/solvers``
 
 The content of Lethe is subdivided into modules that are generally independent of one another. This encapsulates furthermore the content of the software. The core module contains the core functionality of Lethe, whereas the solvers module contains the applications that are related to the finite element solution of multiphysics problems. The dependency between the module can only be unidirectional. For example, the solvers module requires the core module, but the core module could not require the solvers module. 
@@ -89,7 +88,6 @@ The ``/examples`` folder includes the parameter file and the post-processing scr
 * ``/dem``
 * ``/incompressible_flow``
 * ``/multiphysics``
-* ``/rpt``
 
 Detailed descriptions of most of these examples can be found on the :doc:`examples/examples` tab of this page.
 
