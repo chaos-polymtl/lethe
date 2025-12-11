@@ -103,7 +103,8 @@ namespace Parameters
       Functions::ParsedFunction<dim>(2);
 
     // Time-Harmonic Maxwells
-    Functions::ParsedFunction<dim> electromagnetics = Functions::ParsedFunction<dim>(4*dim);
+    Functions::ParsedFunction<dim> electromagnetics =
+      Functions::ParsedFunction<dim>(4 * dim);
 
     // Path to the checkpointed average velocity profile
     std::string average_velocity_folder;

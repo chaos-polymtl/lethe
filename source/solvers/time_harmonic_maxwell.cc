@@ -496,9 +496,8 @@ template <int dim>
 void
 TimeHarmonicMaxwell<dim>::set_initial_conditions()
 {
-
-  // This tmp vector is used instead of the newton update vector as they don't exist
-  // for this solver.
+  // This tmp vector is used instead of the newton update vector as they don't
+  // exist for this solver.
   GlobalVectorType tmp(this->locally_owned_dofs_trial_interior,
                        this->triangulation->get_mpi_communicator());
 
@@ -916,10 +915,10 @@ TimeHarmonicMaxwell<3>::assemble_system_matrix()
   static constexpr double               speed_of_light = 299792458.;
   static constexpr double               pi             = 3.14159265358979323846;
   static constexpr std::complex<double> imag{0., 1.};
-  static constexpr int                  dim =
-    3; // Since we are in the specialized 3D function we define dim=3 here. This
-       // makes easier to read the code below to see what are templated in dim
-       // and what are not.
+  static constexpr int                  dim = 3;
+  // Since we are in the specialized 3D function we define dim=3 here. This
+  // makes easier to read the code below to see what are templated in dim
+  // and what are not.
 
   // We define some constants that will be used during the assembly. Those
   // would change according to the material parameters, but here we only have
@@ -1122,11 +1121,10 @@ TimeHarmonicMaxwell<3>::assemble_system_matrix()
   std::vector<types::global_dof_index> local_dof_indices(
     dofs_per_cell_trial_skeleton);
 
-  // We also create objects to store the incident fields that will be used to
-  // compute the excitation for the Robin boundary condition.
-  Tensor<1, dim, std::complex<double>> H_inc;
-  Tensor<1, dim, std::complex<double>> E_inc;
+  // We also create objects used for the various Robin boundary condition.
+  BoundaryConditions::BoundaryType     bc_type;
   Tensor<1, dim, std::complex<double>> g_inc;
+  std::complex<double>                 surface_impedance;
 
   // As it is standard we first loop over the cells of the triangulation. Here
   // we have the choice of the DoFHandler to perform this loop. We use the
@@ -1433,106 +1431,123 @@ TimeHarmonicMaxwell<3>::assemble_system_matrix()
                   const unsigned int current_element_test_i =
                     this->fe_test->system_to_base_index(i).first.first;
 
-                  // Include future Robin boundary condition here :
-                  // B.C. and the load vector and the B_hat matrix will have a
+                  // Apply the diffrent Robin boundary conditionss if needed.
+                  // The load vector and the B_hat matrix will have a
                   // contribution in addition to a modification of the Riesz
                   // map (G matrix) because of the energy norm that we want to
                   // minimize there.
-                  if (false) // Change to "true" to activate the Robin B.C. when
-                             // implemented
+                  if (face->at_boundary())
                     {
-                      if ((current_element_test_i == 0) ||
-                          (current_element_test_i == 1))
+                      // Check the type of boundary
+                      bc_type =
+                        this->simulation_parameters
+                          .boundary_conditions_time_harmonic_electromagnetics
+                          .type.at(face->boundary_id());
+
+                      // If in corresponds to a Robin B.C., assemble the
+                      // relevant terms
+                      if ((bc_type ==
+                           BoundaryConditions::BoundaryType::silver_muller) ||
+                          (bc_type == BoundaryConditions::BoundaryType::
+                                        imposed_electromagnetic_excitation) ||
+                          (bc_type == BoundaryConditions::BoundaryType::
+                                        imperfect_conductor))
                         {
-                          l_F.emplace_back(i);
+                          if ((current_element_test_i == 0) ||
+                              (current_element_test_i == 1))
+                            {
+                              l_F.emplace_back(i);
+                            }
+
+                          // Loop over the dofs test to fill the G_matrix dofs
+                          // relationship
+                          for (unsigned int j :
+                               fe_face_values_test.dof_indices())
+                            {
+                              const unsigned int current_element_test_j =
+                                this->fe_test->system_to_base_index(j)
+                                  .first.first;
+
+                              if (((current_element_test_i == 0) ||
+                                   (current_element_test_i == 1)) &&
+                                  ((current_element_test_j == 0) ||
+                                   (current_element_test_j == 1)))
+                                {
+                                  G_FF.emplace_back(i, j);
+                                }
+                              if (((current_element_test_i == 0) ||
+                                   (current_element_test_i == 1)) &&
+                                  ((current_element_test_j == 2) ||
+                                   (current_element_test_j == 3)))
+                                {
+                                  G_FI.emplace_back(i, j);
+                                }
+                              if (((current_element_test_i == 2) ||
+                                   (current_element_test_i == 3)) &&
+                                  ((current_element_test_j == 0) ||
+                                   (current_element_test_j == 1)))
+                                {
+                                  G_IF.emplace_back(i, j);
+                                }
+                              if (((current_element_test_i == 2) ||
+                                   (current_element_test_i == 3)) &&
+                                  ((current_element_test_j == 2) ||
+                                   (current_element_test_j == 3)))
+                                {
+                                  G_II.emplace_back(i, j);
+                                }
+                            }
+                          // Loop over the dofs trial space to fill the B_hat
+                          // matrix dofs relationship for the Robin boundary
+                          // condition
+                          for (unsigned int j :
+                               fe_face_values_trial_skeleton.dof_indices())
+                            {
+                              const unsigned int current_element_trial_j =
+                                this->fe_trial_skeleton->system_to_base_index(j)
+                                  .first.first;
+
+                              if (((current_element_test_i == 0) ||
+                                   (current_element_test_i == 1)) &&
+                                  ((current_element_trial_j == 0) ||
+                                   (current_element_trial_j == 1)))
+                                {
+                                  B_hat_FE.emplace_back(i, j);
+                                }
+                              if (((current_element_test_i == 2) ||
+                                   (current_element_test_i == 3)) &&
+                                  ((current_element_trial_j == 0) ||
+                                   (current_element_trial_j == 1)))
+                                {
+                                  B_hat_IE.emplace_back(i, j);
+                                }
+                            }
                         }
-
-                      // Loop over the dofs test to fill the G_matrix dofs
-                      // relationship
-                      for (unsigned int j : fe_face_values_test.dof_indices())
+                      else
                         {
-                          const unsigned int current_element_test_j =
-                            this->fe_test->system_to_base_index(j).first.first;
+                          // If not on a Robin B.C., assemble all the other
+                          // relevant skeleton terms
+                          for (unsigned int j :
+                               fe_face_values_trial_skeleton.dof_indices())
+                            {
+                              const unsigned int current_element_trial_j =
+                                this->fe_trial_skeleton->system_to_base_index(j)
+                                  .first.first;
 
-                          if (((current_element_test_i == 0) ||
-                               (current_element_test_i == 1)) &&
-                              ((current_element_test_j == 0) ||
-                               (current_element_test_j == 1)))
-                            {
-                              G_FF.emplace_back(i, j);
-                            }
-                          if (((current_element_test_i == 0) ||
-                               (current_element_test_i == 1)) &&
-                              ((current_element_test_j == 2) ||
-                               (current_element_test_j == 3)))
-                            {
-                              G_FI.emplace_back(i, j);
-                            }
-                          if (((current_element_test_i == 2) ||
-                               (current_element_test_i == 3)) &&
-                              ((current_element_test_j == 0) ||
-                               (current_element_test_j == 1)))
-                            {
-                              G_IF.emplace_back(i, j);
-                            }
-                          if (((current_element_test_i == 2) ||
-                               (current_element_test_i == 3)) &&
-                              ((current_element_test_j == 2) ||
-                               (current_element_test_j == 3)))
-                            {
-                              G_II.emplace_back(i, j);
-                            }
-                        }
-                      // Loop over the dofs trial space to fill the B_hat
-                      // matrix dofs relationship for the Robin boundary
-                      // condition
-                      for (unsigned int j :
-                           fe_face_values_trial_skeleton.dof_indices())
-                        {
-                          const unsigned int current_element_trial_j =
-                            this->fe_trial_skeleton->system_to_base_index(j)
-                              .first.first;
-
-                          if (((current_element_test_i == 0) ||
-                               (current_element_test_i == 1)) &&
-                              ((current_element_trial_j == 0) ||
-                               (current_element_trial_j == 1)))
-                            {
-                              B_hat_FE.emplace_back(i, j);
-                            }
-                          if (((current_element_test_i == 2) ||
-                               (current_element_test_i == 3)) &&
-                              ((current_element_trial_j == 0) ||
-                               (current_element_trial_j == 1)))
-                            {
-                              B_hat_IE.emplace_back(i, j);
-                            }
-                        }
-                    }
-                  else
-                    {
-                      // If not on a Robin B.C., assemble all the other
-                      // relevant skeleton terms
-                      for (unsigned int j :
-                           fe_face_values_trial_skeleton.dof_indices())
-                        {
-                          const unsigned int current_element_trial_j =
-                            this->fe_trial_skeleton->system_to_base_index(j)
-                              .first.first;
-
-                          if (((current_element_test_i == 0) ||
-                               (current_element_test_i == 1)) &&
-                              ((current_element_trial_j == 2) ||
-                               (current_element_trial_j == 3)))
-                            {
-                              B_hat_FH.emplace_back(i, j);
-                            }
-                          if (((current_element_test_i == 2) ||
-                               (current_element_test_i == 3)) &&
-                              ((current_element_trial_j == 0) ||
-                               (current_element_trial_j == 1)))
-                            {
-                              B_hat_IE.emplace_back(i, j);
+                              if (((current_element_test_i == 0) ||
+                                   (current_element_test_i == 1)) &&
+                                  ((current_element_trial_j == 2) ||
+                                   (current_element_trial_j == 3)))
+                                {
+                                  B_hat_FH.emplace_back(i, j);
+                                }
+                              if (((current_element_test_i == 2) ||
+                                   (current_element_test_i == 3)) &&
+                                  ((current_element_trial_j == 0) ||
+                                   (current_element_trial_j == 1)))
+                                {
+                                  B_hat_IE.emplace_back(i, j);
+                                }
                             }
                         }
                     }
@@ -1543,6 +1558,8 @@ TimeHarmonicMaxwell<3>::assemble_system_matrix()
                    ++q_point)
                 {
                   // Initialize reusable variables
+                  const auto &position =
+                    fe_face_values_trial_skeleton.quadrature_point(q_point);
                   const auto &normal =
                     fe_face_values_trial_skeleton.normal_vector(q_point);
                   const double JxW_face =
@@ -1627,19 +1644,55 @@ TimeHarmonicMaxwell<3>::assemble_system_matrix()
                     }
 
                   // Here we apply the excitation at the relevant boundary.
-                  if (false) // Change to "true" to activate the Robin B.C. when
-                             // implemented
+                  if (bc_type ==
+                      BoundaryConditions::BoundaryType::silver_muller)
                     {
-                      H_inc[0] = 0. + imag * 0.;
-                      H_inc[1] = 0. + imag * 0.;
-                      H_inc[2] = 0. + imag * 0.;
+                      g_inc = 0.;
+                    }
+                  if (bc_type == BoundaryConditions::BoundaryType::
+                                   imposed_electromagnetic_excitation)
+                    {
+                      unsigned int face_id = face->boundary_id();
 
-                      E_inc[0] = 0. + imag * 0.;
-                      E_inc[1] = 0. + imag * 0.;
-                      E_inc[2] = 0. + imag * 0.;
+                      // Get the incident electromagnetic field at this face
+                      Function<dim> &excitation_real =
+                        *this->simulation_parameters
+                           .boundary_conditions_time_harmonic_electromagnetics
+                           .excitation_x_real.at(face_id);
+                      Function<dim> &excitation_imag =
+                        *this->simulation_parameters
+                           .boundary_conditions_time_harmonic_electromagnetics
+                           .excitation_x_imag.at(face_id);
 
-                      g_inc = cross_product_3d(normal, H_inc) +
-                              map_H12(kz_wmur * E_inc, normal);
+                      g_inc[0] = excitation_real.value(position) +
+                                 imag * excitation_imag.value(position);
+
+                      excitation_real =
+                        *this->simulation_parameters
+                           .boundary_conditions_time_harmonic_electromagnetics
+                           .excitation_y_real.at(face_id);
+                      excitation_imag =
+                        *this->simulation_parameters
+                           .boundary_conditions_time_harmonic_electromagnetics
+                           .excitation_y_imag.at(face_id);
+                      g_inc[1] = excitation_real.value(position) +
+                                 imag * excitation_imag.value(position);
+
+                      excitation_real =
+                        *this->simulation_parameters
+                           .boundary_conditions_time_harmonic_electromagnetics
+                           .excitation_z_real.at(face_id);
+                      excitation_imag =
+                        *this->simulation_parameters
+                           .boundary_conditions_time_harmonic_electromagnetics
+                           .excitation_z_imag.at(face_id);
+                      g_inc[2] = excitation_real.value(position) +
+                                 imag * excitation_imag.value(position);
+                    }
+                  if (bc_type ==
+                      BoundaryConditions::BoundaryType::imperfect_conductor)
+                    {
+                      g_inc = 0.;
                     }
 
                   // Now we loop on each relationship container to assemble
@@ -2021,11 +2074,10 @@ TimeHarmonicMaxwell<3>::reconstruct_interior_solution()
   std::vector<types::global_dof_index> local_dof_indices(
     dofs_per_cell_trial_skeleton);
 
-  // We also create objects to store the incident fields that will be used to
-  // compute the excitation for the Robin boundary condition.
-  Tensor<1, dim, std::complex<double>> H_inc;
-  Tensor<1, dim, std::complex<double>> E_inc;
+  // We also create objects used for the various Robin boundary condition.
+  BoundaryConditions::BoundaryType     bc_type;
   Tensor<1, dim, std::complex<double>> g_inc;
+  std::complex<double>                 surface_impedance;
 
   // The above declarations are the same as the ones in the assembly of the
   // skeleton system. Below we add new ones that are specific to the
@@ -2359,106 +2411,123 @@ TimeHarmonicMaxwell<3>::reconstruct_interior_solution()
                   const unsigned int current_element_test_i =
                     this->fe_test->system_to_base_index(i).first.first;
 
-                  // Include future Robin boundary condition here :
-                  // B.C. and the load vector and the B_hat matrix will have a
+                  // Apply the diffrent Robin boundary conditionss if needed.
+                  // The load vector and the B_hat matrix will have a
                   // contribution in addition to a modification of the Riesz
                   // map (G matrix) because of the energy norm that we want to
                   // minimize there.
-                  if (false) // Change to "true" to activate the Robin B.C. when
-                             // implemented
+                  if (face->at_boundary())
                     {
-                      if ((current_element_test_i == 0) ||
-                          (current_element_test_i == 1))
+                      // Check the type of boundary
+                      bc_type =
+                        this->simulation_parameters
+                          .boundary_conditions_time_harmonic_electromagnetics
+                          .type.at(face->boundary_id());
+
+                      // If in corresponds to a Robin B.C., assemble the
+                      // relevant terms
+                      if ((bc_type ==
+                           BoundaryConditions::BoundaryType::silver_muller) ||
+                          (bc_type == BoundaryConditions::BoundaryType::
+                                        imposed_electromagnetic_excitation) ||
+                          (bc_type == BoundaryConditions::BoundaryType::
+                                        imperfect_conductor))
                         {
-                          l_F.emplace_back(i);
+                          if ((current_element_test_i == 0) ||
+                              (current_element_test_i == 1))
+                            {
+                              l_F.emplace_back(i);
+                            }
+
+                          // Loop over the dofs test to fill the G_matrix dofs
+                          // relationship
+                          for (unsigned int j :
+                               fe_face_values_test.dof_indices())
+                            {
+                              const unsigned int current_element_test_j =
+                                this->fe_test->system_to_base_index(j)
+                                  .first.first;
+
+                              if (((current_element_test_i == 0) ||
+                                   (current_element_test_i == 1)) &&
+                                  ((current_element_test_j == 0) ||
+                                   (current_element_test_j == 1)))
+                                {
+                                  G_FF.emplace_back(i, j);
+                                }
+                              if (((current_element_test_i == 0) ||
+                                   (current_element_test_i == 1)) &&
+                                  ((current_element_test_j == 2) ||
+                                   (current_element_test_j == 3)))
+                                {
+                                  G_FI.emplace_back(i, j);
+                                }
+                              if (((current_element_test_i == 2) ||
+                                   (current_element_test_i == 3)) &&
+                                  ((current_element_test_j == 0) ||
+                                   (current_element_test_j == 1)))
+                                {
+                                  G_IF.emplace_back(i, j);
+                                }
+                              if (((current_element_test_i == 2) ||
+                                   (current_element_test_i == 3)) &&
+                                  ((current_element_test_j == 2) ||
+                                   (current_element_test_j == 3)))
+                                {
+                                  G_II.emplace_back(i, j);
+                                }
+                            }
+                          // Loop over the dofs trial space to fill the B_hat
+                          // matrix dofs relationship for the Robin boundary
+                          // condition
+                          for (unsigned int j :
+                               fe_face_values_trial_skeleton.dof_indices())
+                            {
+                              const unsigned int current_element_trial_j =
+                                this->fe_trial_skeleton->system_to_base_index(j)
+                                  .first.first;
+
+                              if (((current_element_test_i == 0) ||
+                                   (current_element_test_i == 1)) &&
+                                  ((current_element_trial_j == 0) ||
+                                   (current_element_trial_j == 1)))
+                                {
+                                  B_hat_FE.emplace_back(i, j);
+                                }
+                              if (((current_element_test_i == 2) ||
+                                   (current_element_test_i == 3)) &&
+                                  ((current_element_trial_j == 0) ||
+                                   (current_element_trial_j == 1)))
+                                {
+                                  B_hat_IE.emplace_back(i, j);
+                                }
+                            }
                         }
-
-                      // Loop over the dofs test to fill the G_matrix dofs
-                      // relationship
-                      for (unsigned int j : fe_face_values_test.dof_indices())
+                      else
                         {
-                          const unsigned int current_element_test_j =
-                            this->fe_test->system_to_base_index(j).first.first;
+                          // If not on a Robin B.C., assemble all the other
+                          // relevant skeleton terms
+                          for (unsigned int j :
+                               fe_face_values_trial_skeleton.dof_indices())
+                            {
+                              const unsigned int current_element_trial_j =
+                                this->fe_trial_skeleton->system_to_base_index(j)
+                                  .first.first;
 
-                          if (((current_element_test_i == 0) ||
-                               (current_element_test_i == 1)) &&
-                              ((current_element_test_j == 0) ||
-                               (current_element_test_j == 1)))
-                            {
-                              G_FF.emplace_back(i, j);
-                            }
-                          if (((current_element_test_i == 0) ||
-                               (current_element_test_i == 1)) &&
-                              ((current_element_test_j == 2) ||
-                               (current_element_test_j == 3)))
-                            {
-                              G_FI.emplace_back(i, j);
-                            }
-                          if (((current_element_test_i == 2) ||
-                               (current_element_test_i == 3)) &&
-                              ((current_element_test_j == 0) ||
-                               (current_element_test_j == 1)))
-                            {
-                              G_IF.emplace_back(i, j);
-                            }
-                          if (((current_element_test_i == 2) ||
-                               (current_element_test_i == 3)) &&
-                              ((current_element_test_j == 2) ||
-                               (current_element_test_j == 3)))
-                            {
-                              G_II.emplace_back(i, j);
-                            }
-                        }
-                      // Loop over the dofs trial space to fill the B_hat
-                      // matrix dofs relationship for the Robin boundary
-                      // condition
-                      for (unsigned int j :
-                           fe_face_values_trial_skeleton.dof_indices())
-                        {
-                          const unsigned int current_element_trial_j =
-                            this->fe_trial_skeleton->system_to_base_index(j)
-                              .first.first;
-
-                          if (((current_element_test_i == 0) ||
-                               (current_element_test_i == 1)) &&
-                              ((current_element_trial_j == 0) ||
-                               (current_element_trial_j == 1)))
-                            {
-                              B_hat_FE.emplace_back(i, j);
-                            }
-                          if (((current_element_test_i == 2) ||
-                               (current_element_test_i == 3)) &&
-                              ((current_element_trial_j == 0) ||
-                               (current_element_trial_j == 1)))
-                            {
-                              B_hat_IE.emplace_back(i, j);
-                            }
-                        }
-                    }
-                  else
-                    {
-                      // If not on a Robin B.C., assemble all the other
-                      // relevant skeleton terms
-                      for (unsigned int j :
-                           fe_face_values_trial_skeleton.dof_indices())
-                        {
-                          const unsigned int current_element_trial_j =
-                            this->fe_trial_skeleton->system_to_base_index(j)
-                              .first.first;
-
-                          if (((current_element_test_i == 0) ||
-                               (current_element_test_i == 1)) &&
-                              ((current_element_trial_j == 2) ||
-                               (current_element_trial_j == 3)))
-                            {
-                              B_hat_FH.emplace_back(i, j);
-                            }
-                          if (((current_element_test_i == 2) ||
-                               (current_element_test_i == 3)) &&
-                              ((current_element_trial_j == 0) ||
-                               (current_element_trial_j == 1)))
-                            {
-                              B_hat_IE.emplace_back(i, j);
+                              if (((current_element_test_i == 0) ||
+                                   (current_element_test_i == 1)) &&
+                                  ((current_element_trial_j == 2) ||
+                                   (current_element_trial_j == 3)))
+                                {
+                                  B_hat_FH.emplace_back(i, j);
+                                }
+                              if (((current_element_test_i == 2) ||
+                                   (current_element_test_i == 3)) &&
+                                  ((current_element_trial_j == 0) ||
+                                   (current_element_trial_j == 1)))
+                                {
+                                  B_hat_IE.emplace_back(i, j);
+                                }
                             }
                         }
                     }
@@ -2469,6 +2538,8 @@ TimeHarmonicMaxwell<3>::reconstruct_interior_solution()
                    ++q_point)
                 {
                   // Initialize reusable variables
+                  const auto &position =
+                    fe_face_values_trial_skeleton.quadrature_point(q_point);
                   const auto &normal =
                     fe_face_values_trial_skeleton.normal_vector(q_point);
                   const double JxW_face =
@@ -2553,19 +2624,55 @@ TimeHarmonicMaxwell<3>::reconstruct_interior_solution()
                     }
 
                   // Here we apply the excitation at the relevant boundary.
-                  if (false) // Change to "true" to activate the Robin B.C. when
-                             // implemented
+                  if (bc_type ==
+                      BoundaryConditions::BoundaryType::silver_muller)
                     {
-                      H_inc[0] = 0. + imag * 0.;
-                      H_inc[1] = 0. + imag * 0.;
-                      H_inc[2] = 0. + imag * 0.;
+                      g_inc = 0.;
+                    }
+                  if (bc_type == BoundaryConditions::BoundaryType::
+                                   imposed_electromagnetic_excitation)
+                    {
+                      unsigned int face_id = face->boundary_id();
 
-                      E_inc[0] = 0. + imag * 0.;
-                      E_inc[1] = 0. + imag * 0.;
-                      E_inc[2] = 0. + imag * 0.;
+                      // Get the incident electromagnetic field at this face
+                      Function<dim> &excitation_real =
+                        *this->simulation_parameters
+                           .boundary_conditions_time_harmonic_electromagnetics
+                           .excitation_x_real.at(face_id);
+                      Function<dim> &excitation_imag =
+                        *this->simulation_parameters
+                           .boundary_conditions_time_harmonic_electromagnetics
+                           .excitation_x_imag.at(face_id);
 
-                      g_inc = cross_product_3d(normal, H_inc) +
-                              map_H12(kz_wmur * E_inc, normal);
+                      g_inc[0] = excitation_real.value(position) +
+                                 imag * excitation_imag.value(position);
+
+                      excitation_real =
+                        *this->simulation_parameters
+                           .boundary_conditions_time_harmonic_electromagnetics
+                           .excitation_y_real.at(face_id);
+                      excitation_imag =
+                        *this->simulation_parameters
+                           .boundary_conditions_time_harmonic_electromagnetics
+                           .excitation_y_imag.at(face_id);
+                      g_inc[1] = excitation_real.value(position) +
+                                 imag * excitation_imag.value(position);
+
+                      excitation_real =
+                        *this->simulation_parameters
+                           .boundary_conditions_time_harmonic_electromagnetics
+                           .excitation_z_real.at(face_id);
+                      excitation_imag =
+                        *this->simulation_parameters
+                           .boundary_conditions_time_harmonic_electromagnetics
+                           .excitation_z_imag.at(face_id);
+                      g_inc[2] = excitation_real.value(position) +
+                                 imag * excitation_imag.value(position);
+                    }
+                  if (bc_type ==
+                      BoundaryConditions::BoundaryType::imperfect_conductor)
+                    {
+                      g_inc = 0.;
                     }
 
                   // Now we loop on each relationship container to assemble
