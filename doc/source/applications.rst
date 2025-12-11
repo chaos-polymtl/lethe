@@ -6,7 +6,7 @@ Lethe has several applications that can be used depending on the problem to be s
 
 .. warning::
   
-  The radioative particle-tracking (RPT) applications of Lethe has been migrated to a separate repository which is available `here <https://github.com/chaos-polymtl/lethe-rpt>`_.
+  The radioactive particle-tracking (RPT) applications of Lethe has been migrated to a separate repository which is available `here <https://github.com/chaos-polymtl/lethe-rpt>`_.
 
 .. list-table::
    :header-rows: 1
