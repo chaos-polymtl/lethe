@@ -56,7 +56,3 @@ Lethe has several applications that can be used depending on the problem to be s
      - * Steady-state single-phase flows
      - This application solves the Navier-Stokes equations in a monolithic way using block preconditioner. **This solver is experimental and is only adequate for steady-state simulations**.
 
-
-
-
-
