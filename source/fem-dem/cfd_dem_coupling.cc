@@ -1669,10 +1669,13 @@ CFDDEMSolver<dim>::solve()
           NavierStokesBase<dim, GlobalVectorType, IndexSet>::refine_mesh();
           this->vertices_cell_mapping();
         }
-
+      
       this->calculate_void_fraction(
         this->simulation_control->get_current_time());
-
+      
+      {
+        TimerOutput::Scope t(this->computing_timer,
+                             "Calculate particle-fluid projection");
       // Project particle forces into the fluid mesh if the parameter is enabled
       if (this->cfd_dem_simulation_parameters.cfd_dem.project_particle_forces)
         {
@@ -1691,6 +1694,7 @@ CFDDEMSolver<dim>::solve()
               *this->mapping,
               *this->face_quadrature));
         }
+      }
       this->iterate();
 
       if (this->cfd_dem_simulation_parameters.cfd_parameters.test.enabled)
