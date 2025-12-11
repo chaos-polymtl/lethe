@@ -205,6 +205,7 @@ It is located at the bottom of the hopper, before the channel.
       set number of floating walls = 1
       subsection wall 0
         set point on wall = 0., 0.
+        set normal vector = 0., 1.
         set start time = 0
         set end time   = 4.5
       end
