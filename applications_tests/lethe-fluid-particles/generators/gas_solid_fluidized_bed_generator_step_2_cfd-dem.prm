@@ -210,7 +210,7 @@ end
 subsection floating walls
   set number of floating walls = 1
   subsection wall 0
-    set point on wall = 0., -0.86, 0.
+    set point on wall = 0., -0.06, 0.
     set normal vector = 0., 1., 0.
     set start time = 0
     set end time   = 5
