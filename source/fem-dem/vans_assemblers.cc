@@ -2261,11 +2261,11 @@ VANSAssemblerFPIProjection<dim>::assemble_matrix(
 
       // Subtraction of forces applied on fluid from the residual for GLS
       // stabilization
-      // If the coupling is explicit, beta_drag is zero. Otherwise, fluid_drag is zero.
+      // If the coupling is explicit, beta_drag is zero. Otherwise, fluid_drag
+      // is zero.
       strong_residual[q] -=
-        ( fluid_drag
-          - beta_drag * (velocity - particles_velocity) +
-          two_way_coupling_force);
+        (fluid_drag - beta_drag * (velocity - particles_velocity) +
+         two_way_coupling_force);
 
       for (unsigned int j = 0; j < n_dofs; ++j)
         {
@@ -2325,11 +2325,11 @@ VANSAssemblerFPIProjection<dim>::assemble_rhs(
 
       // Calculate the strong residual for GLS stabilization
       // Drag Force and other two-way coupling forces
-      // If the coupling is explicit, beta_drag is zero. Otherwise, fluid_drag is zero.
+      // If the coupling is explicit, beta_drag is zero. Otherwise, fluid_drag
+      // is zero.
       strong_residual[q] -=
-        ( fluid_drag
-          - beta_drag * (velocity - particles_velocity) +
-          two_way_coupling_force);
+        (fluid_drag - beta_drag * (velocity - particles_velocity) +
+         two_way_coupling_force);
 
       // Assembly of the right-hand side
       for (unsigned int i = 0; i < n_dofs; ++i)
@@ -2338,11 +2338,12 @@ VANSAssemblerFPIProjection<dim>::assemble_rhs(
           // Drag Force
           // The distinction between Model A and B of the VANS equations is
           // made in the shear and pressure forces assemblers.
-          // If the coupling is explicit, beta_drag is zero. Otherwise, fluid_drag is zero.
-          local_rhs(i) += (fluid_drag
-                            - beta_drag * (velocity - particles_velocity) +
-                            two_way_coupling_force) *
-                          phi_u_i * JxW;
+          // If the coupling is explicit, beta_drag is zero. Otherwise,
+          // fluid_drag is zero.
+          local_rhs(i) +=
+            (fluid_drag - beta_drag * (velocity - particles_velocity) +
+             two_way_coupling_force) *
+            phi_u_i * JxW;
         }
     }
 }
