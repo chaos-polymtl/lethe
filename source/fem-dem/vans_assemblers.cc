@@ -2261,10 +2261,9 @@ VANSAssemblerFPIProjection<dim>::assemble_matrix(
 
       // Subtraction of forces applied on fluid from the residual for GLS
       // stabilization
+      // If the coupling is explicit, beta_drag is zero. Otherwise, fluid_drag is zero.
       strong_residual[q] -=
-        ( // This term is zero if the coupling is not explicit
-          fluid_drag
-          // This term is zero if the coupling is explicit
+        ( fluid_drag
           - beta_drag * (velocity - particles_velocity) +
           two_way_coupling_force);
 
@@ -2326,10 +2325,9 @@ VANSAssemblerFPIProjection<dim>::assemble_rhs(
 
       // Calculate the strong residual for GLS stabilization
       // Drag Force and other two-way coupling forces
+      // If the coupling is explicit, beta_drag is zero. Otherwise, fluid_drag is zero.
       strong_residual[q] -=
-        ( // This term is zero if the coupling is not explicit
-          fluid_drag
-          // This term is zero if the coupling is explicit
+        ( fluid_drag
           - beta_drag * (velocity - particles_velocity) +
           two_way_coupling_force);
 
@@ -2338,12 +2336,10 @@ VANSAssemblerFPIProjection<dim>::assemble_rhs(
         {
           const auto phi_u_i = scratch_data.phi_u[q][i];
           // Drag Force
-          //  The distinction between Model A and B of the VANS equations is
-          //  made in the shear and pressure forces assemblers.
-          local_rhs(i) += (
-                            // This term is zero if the coupling is not explicit
-                            fluid_drag
-                            // This term is zero if the coupling is explicit
+          // The distinction between Model A and B of the VANS equations is
+          // made in the shear and pressure forces assemblers.
+          // If the coupling is explicit, beta_drag is zero. Otherwise, fluid_drag is zero.
+          local_rhs(i) += (fluid_drag
                             - beta_drag * (velocity - particles_velocity) +
                             two_way_coupling_force) *
                           phi_u_i * JxW;
