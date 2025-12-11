@@ -103,8 +103,8 @@ Inheritance diagram for VOFAssemblerDCDDStabilization&lt; dim &gt;:</div>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pub-methods" name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
-<tr class="memitem:aec4a28ddde5147c5c202711035b6692a" id="r_aec4a28ddde5147c5c202711035b6692a"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classVOFAssemblerDCDDStabilization.html#aec4a28ddde5147c5c202711035b6692a">VOFAssemblerDCDDStabilization</a> (const std::shared_ptr&lt; <a class="el" href="classSimulationControl.html">SimulationControl</a> &gt; &amp;<a class="el" href="classVOFAssemblerDCDDStabilization.html#aec5f08e7df568b2af00f16be528862e3">simulation_control</a>)</td></tr>
-<tr class="separator:aec4a28ddde5147c5c202711035b6692a"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a61228a95172b9cfc62b5c345a3206bcd" id="r_a61228a95172b9cfc62b5c345a3206bcd"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classVOFAssemblerDCDDStabilization.html#a61228a95172b9cfc62b5c345a3206bcd">VOFAssemblerDCDDStabilization</a> (const std::shared_ptr&lt; <a class="el" href="classSimulationControl.html">SimulationControl</a> &gt; &amp;<a class="el" href="classVOFAssemblerDCDDStabilization.html#aec5f08e7df568b2af00f16be528862e3">simulation_control</a>, const <a class="el" href="structParameters_1_1Stabilization.html">Parameters::Stabilization</a> &amp;stabilization_parameters)</td></tr>
+<tr class="separator:a61228a95172b9cfc62b5c345a3206bcd"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a9b3b1d0e1cc48593b3176640bf3b6c73" id="r_a9b3b1d0e1cc48593b3176640bf3b6c73"><td class="memItemLeft" align="right" valign="top">virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classVOFAssemblerDCDDStabilization.html#a9b3b1d0e1cc48593b3176640bf3b6c73">assemble_matrix</a> (const <a class="el" href="classVOFScratchData.html">VOFScratchData</a>&lt; dim &gt; &amp;scratch_data, <a class="el" href="classStabilizedMethodsCopyData.html">StabilizedMethodsCopyData</a> &amp;copy_data) override</td></tr>
 <tr class="separator:a9b3b1d0e1cc48593b3176640bf3b6c73"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aa67bb33a4017df068a9ef1a6f2b8c6e9" id="r_aa67bb33a4017df068a9ef1a6f2b8c6e9"><td class="memItemLeft" align="right" valign="top">virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classVOFAssemblerDCDDStabilization.html#aa67bb33a4017df068a9ef1a6f2b8c6e9">assemble_rhs</a> (const <a class="el" href="classVOFScratchData.html">VOFScratchData</a>&lt; dim &gt; &amp;scratch_data, <a class="el" href="classStabilizedMethodsCopyData.html">StabilizedMethodsCopyData</a> &amp;copy_data) override</td></tr>
@@ -121,6 +121,8 @@ Public Member Functions</h2></td></tr>
 Public Attributes</h2></td></tr>
 <tr class="memitem:aec5f08e7df568b2af00f16be528862e3" id="r_aec5f08e7df568b2af00f16be528862e3"><td class="memItemLeft" align="right" valign="top">const std::shared_ptr&lt; <a class="el" href="classSimulationControl.html">SimulationControl</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classVOFAssemblerDCDDStabilization.html#aec5f08e7df568b2af00f16be528862e3">simulation_control</a></td></tr>
 <tr class="separator:aec5f08e7df568b2af00f16be528862e3"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:af30c1e8cde3e53a1e4b9896363db427e" id="r_af30c1e8cde3e53a1e4b9896363db427e"><td class="memItemLeft" align="right" valign="top">const double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classVOFAssemblerDCDDStabilization.html#af30c1e8cde3e53a1e4b9896363db427e">diffusion_constant</a></td></tr>
+<tr class="separator:af30c1e8cde3e53a1e4b9896363db427e"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><div class="compoundTemplParams">template&lt;int dim&gt;<br />
@@ -135,8 +137,8 @@ class VOFAssemblerDCDDStabilization&lt; dim &gt;</div><p>Assemble the Discontinu
 
 <p class="definition">Definition at line <a class="el" href="vof__assemblers_8h_source.html#l00160">160</a> of file <a class="el" href="vof__assemblers_8h_source.html">vof_assemblers.h</a>.</p>
 </div><h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
-<a id="aec4a28ddde5147c5c202711035b6692a" name="aec4a28ddde5147c5c202711035b6692a"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#aec4a28ddde5147c5c202711035b6692a">&#9670;&#160;</a></span>VOFAssemblerDCDDStabilization()</h2>
+<a id="a61228a95172b9cfc62b5c345a3206bcd" name="a61228a95172b9cfc62b5c345a3206bcd"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a61228a95172b9cfc62b5c345a3206bcd">&#9670;&#160;</a></span>VOFAssemblerDCDDStabilization()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -150,8 +152,18 @@ template&lt;int dim&gt; </div>
           <td class="memname"><a class="el" href="classVOFAssemblerDCDDStabilization.html">VOFAssemblerDCDDStabilization</a>&lt; dim &gt;<a class="el" href="classVOFAssemblerDCDDStabilization.html">::VOFAssemblerDCDDStabilization</a> </td>
           <td>(</td>
           <td class="paramtype">const std::shared_ptr&lt; <a class="el" href="classSimulationControl.html">SimulationControl</a> &gt; &amp;&#160;</td>
-          <td class="paramname"><em>simulation_control</em></td><td>)</td>
+          <td class="paramname"><em>simulation_control</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
           <td></td>
+          <td class="paramtype">const <a class="el" href="structParameters_1_1Stabilization.html">Parameters::Stabilization</a> &amp;&#160;</td>
+          <td class="paramname"><em>stabilization_parameters</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
         </tr>
       </table>
   </td>
@@ -164,12 +176,13 @@ template&lt;int dim&gt; </div>
 <p>Default constructor of the assembler. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramdir">[in]</td><td class="paramname">simulation_control</td><td><a class="el" href="classSimulationControl.html" title="Base class for controlling steady-state and transient simulations in Lethe.">SimulationControl</a> object that holds information related to the control of the steady-state or transient simulation. This is used to extrapolate velocity solutions in time for transient simulations. </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">simulation_control</td><td><a class="el" href="classSimulationControl.html" title="Base class for controlling steady-state and transient simulations in Lethe.">SimulationControl</a> object that holds information related to the control of the steady-state or transient simulation. This is used to extrapolate velocity solutions in time for transient simulations.</td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">stabilization_parameters</td><td><a class="el" href="namespaceParameters.html">Parameters</a> for the stabilization to get the value of the diffusion coefficient. </td></tr>
   </table>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="vof__assemblers_8h_source.html#l00171">171</a> of file <a class="el" href="vof__assemblers_8h_source.html">vof_assemblers.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="vof__assemblers_8h_source.html#l00174">174</a> of file <a class="el" href="vof__assemblers_8h_source.html">vof_assemblers.h</a>.</p>
 
 </div>
 </div>
@@ -277,6 +290,26 @@ template&lt;int dim&gt; </div>
 </div>
 </div>
 <h2 class="groupheader">Member Data Documentation</h2>
+<a id="af30c1e8cde3e53a1e4b9896363db427e" name="af30c1e8cde3e53a1e4b9896363db427e"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#af30c1e8cde3e53a1e4b9896363db427e">&#9670;&#160;</a></span>diffusion_constant</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;int dim&gt; </div>
+      <table class="memname">
+        <tr>
+          <td class="memname">const double <a class="el" href="classVOFAssemblerDCDDStabilization.html">VOFAssemblerDCDDStabilization</a>&lt; dim &gt;::diffusion_constant</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Diffusion coefficient. </p>
+
+<p class="definition">Definition at line <a class="el" href="vof__assemblers_8h_source.html#l00206">206</a> of file <a class="el" href="vof__assemblers_8h_source.html">vof_assemblers.h</a>.</p>
+
+</div>
+</div>
 <a id="aec5f08e7df568b2af00f16be528862e3" name="aec5f08e7df568b2af00f16be528862e3"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#aec5f08e7df568b2af00f16be528862e3">&#9670;&#160;</a></span>simulation_control</h2>
 
@@ -291,7 +324,7 @@ template&lt;int dim&gt; </div>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="vof__assemblers_8h_source.html#l00198">198</a> of file <a class="el" href="vof__assemblers_8h_source.html">vof_assemblers.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="vof__assemblers_8h_source.html#l00203">203</a> of file <a class="el" href="vof__assemblers_8h_source.html">vof_assemblers.h</a>.</p>
 
 </div>
 </div>

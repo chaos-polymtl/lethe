@@ -271,131 +271,139 @@ $(document).ready(function() { init_codefold(0); });
 <div class="line"><a id="l00167" name="l00167"></a><span class="lineno">  167</span><span class="comment">   * information related to the control of the steady-state or transient</span></div>
 <div class="line"><a id="l00168" name="l00168"></a><span class="lineno">  168</span><span class="comment">   * simulation. This is used to extrapolate velocity solutions in time for</span></div>
 <div class="line"><a id="l00169" name="l00169"></a><span class="lineno">  169</span><span class="comment">   * transient simulations.</span></div>
-<div class="line"><a id="l00170" name="l00170"></a><span class="lineno">  170</span><span class="comment">   */</span></div>
-<div class="foldopen" id="foldopen00171" data-start="{" data-end="}">
-<div class="line"><a id="l00171" name="l00171"></a><span class="lineno"><a class="line" href="classVOFAssemblerDCDDStabilization.html#aec4a28ddde5147c5c202711035b6692a">  171</a></span>  <a class="code hl_function" href="classVOFAssemblerDCDDStabilization.html#aec4a28ddde5147c5c202711035b6692a">VOFAssemblerDCDDStabilization</a>(</div>
-<div class="line"><a id="l00172" name="l00172"></a><span class="lineno">  172</span>    <span class="keyword">const</span> std::shared_ptr&lt;SimulationControl&gt; &amp;<a class="code hl_variable" href="classVOFAssemblerDCDDStabilization.html#aec5f08e7df568b2af00f16be528862e3">simulation_control</a>)</div>
-<div class="line"><a id="l00173" name="l00173"></a><span class="lineno">  173</span>    : <a class="code hl_variable" href="classVOFAssemblerDCDDStabilization.html#aec5f08e7df568b2af00f16be528862e3">simulation_control</a>(<a class="code hl_variable" href="classVOFAssemblerDCDDStabilization.html#aec5f08e7df568b2af00f16be528862e3">simulation_control</a>)</div>
-<div class="line"><a id="l00174" name="l00174"></a><span class="lineno">  174</span>  {}</div>
+<div class="line"><a id="l00170" name="l00170"></a><span class="lineno">  170</span><span class="comment">   *</span></div>
+<div class="line"><a id="l00171" name="l00171"></a><span class="lineno">  171</span><span class="comment">   * @param[in] stabilization_parameters Parameters for the stabilization to</span></div>
+<div class="line"><a id="l00172" name="l00172"></a><span class="lineno">  172</span><span class="comment">   * get the value of the diffusion coefficient.</span></div>
+<div class="line"><a id="l00173" name="l00173"></a><span class="lineno">  173</span><span class="comment">   */</span></div>
+<div class="foldopen" id="foldopen00174" data-start="{" data-end="}">
+<div class="line"><a id="l00174" name="l00174"></a><span class="lineno"><a class="line" href="classVOFAssemblerDCDDStabilization.html#a61228a95172b9cfc62b5c345a3206bcd">  174</a></span>  <a class="code hl_function" href="classVOFAssemblerDCDDStabilization.html#a61228a95172b9cfc62b5c345a3206bcd">VOFAssemblerDCDDStabilization</a>(</div>
+<div class="line"><a id="l00175" name="l00175"></a><span class="lineno">  175</span>    <span class="keyword">const</span> std::shared_ptr&lt;SimulationControl&gt; &amp;<a class="code hl_variable" href="classVOFAssemblerDCDDStabilization.html#aec5f08e7df568b2af00f16be528862e3">simulation_control</a>,</div>
+<div class="line"><a id="l00176" name="l00176"></a><span class="lineno">  176</span>    <span class="keyword">const</span> <a class="code hl_struct" href="structParameters_1_1Stabilization.html">Parameters::Stabilization</a>          &amp;stabilization_parameters)</div>
+<div class="line"><a id="l00177" name="l00177"></a><span class="lineno">  177</span>    : <a class="code hl_variable" href="classVOFAssemblerDCDDStabilization.html#aec5f08e7df568b2af00f16be528862e3">simulation_control</a>(<a class="code hl_variable" href="classVOFAssemblerDCDDStabilization.html#aec5f08e7df568b2af00f16be528862e3">simulation_control</a>)</div>
+<div class="line"><a id="l00178" name="l00178"></a><span class="lineno">  178</span>    , <a class="code hl_variable" href="classVOFAssemblerDCDDStabilization.html#af30c1e8cde3e53a1e4b9896363db427e">diffusion_constant</a>(stabilization_parameters.dcdd_diffusion_coeff)</div>
+<div class="line"><a id="l00179" name="l00179"></a><span class="lineno">  179</span>  {}</div>
 </div>
-<div class="line"><a id="l00175" name="l00175"></a><span class="lineno">  175</span><span class="comment"></span> </div>
-<div class="line"><a id="l00176" name="l00176"></a><span class="lineno">  176</span><span class="comment">  /**</span></div>
-<div class="line"><a id="l00177" name="l00177"></a><span class="lineno">  177</span><span class="comment">   * @brief Assemble the matrix</span></div>
-<div class="line"><a id="l00178" name="l00178"></a><span class="lineno">  178</span><span class="comment">   *</span></div>
-<div class="line"><a id="l00179" name="l00179"></a><span class="lineno">  179</span><span class="comment">   * @param[in] scratch_data (see base class).</span></div>
-<div class="line"><a id="l00180" name="l00180"></a><span class="lineno">  180</span><span class="comment">   *</span></div>
-<div class="line"><a id="l00181" name="l00181"></a><span class="lineno">  181</span><span class="comment">   * @param[in,out] copy_data (see base class).</span></div>
-<div class="line"><a id="l00182" name="l00182"></a><span class="lineno">  182</span><span class="comment">   */</span></div>
-<div class="line"><a id="l00183" name="l00183"></a><span class="lineno">  183</span>  <span class="keyword">virtual</span> <span class="keywordtype">void</span></div>
-<div class="line"><a id="l00184" name="l00184"></a><span class="lineno">  184</span>  <a class="code hl_function" href="classVOFAssemblerDCDDStabilization.html#a9b3b1d0e1cc48593b3176640bf3b6c73">assemble_matrix</a>(<span class="keyword">const</span> <a class="code hl_class" href="classVOFScratchData.html">VOFScratchData&lt;dim&gt;</a> &amp;scratch_data,</div>
-<div class="line"><a id="l00185" name="l00185"></a><span class="lineno">  185</span>                  <a class="code hl_class" href="classStabilizedMethodsCopyData.html">StabilizedMethodsCopyData</a> &amp;copy_data) <span class="keyword">override</span>;</div>
-<div class="line"><a id="l00186" name="l00186"></a><span class="lineno">  186</span><span class="comment"></span> </div>
-<div class="line"><a id="l00187" name="l00187"></a><span class="lineno">  187</span><span class="comment">  /**</span></div>
-<div class="line"><a id="l00188" name="l00188"></a><span class="lineno">  188</span><span class="comment">   * @brief Assemble the right-hand side (rhs).</span></div>
-<div class="line"><a id="l00189" name="l00189"></a><span class="lineno">  189</span><span class="comment">   *</span></div>
-<div class="line"><a id="l00190" name="l00190"></a><span class="lineno">  190</span><span class="comment">   * @param[in] scratch_data (see base class)</span></div>
-<div class="line"><a id="l00191" name="l00191"></a><span class="lineno">  191</span><span class="comment">   *</span></div>
-<div class="line"><a id="l00192" name="l00192"></a><span class="lineno">  192</span><span class="comment">   * @param[in,out] copy_data (see base class)</span></div>
-<div class="line"><a id="l00193" name="l00193"></a><span class="lineno">  193</span><span class="comment">   */</span></div>
-<div class="line"><a id="l00194" name="l00194"></a><span class="lineno">  194</span>  <span class="keyword">virtual</span> <span class="keywordtype">void</span></div>
-<div class="line"><a id="l00195" name="l00195"></a><span class="lineno">  195</span>  <a class="code hl_function" href="classVOFAssemblerDCDDStabilization.html#aa67bb33a4017df068a9ef1a6f2b8c6e9">assemble_rhs</a>(<span class="keyword">const</span> <a class="code hl_class" href="classVOFScratchData.html">VOFScratchData&lt;dim&gt;</a> &amp;scratch_data,</div>
-<div class="line"><a id="l00196" name="l00196"></a><span class="lineno">  196</span>               <a class="code hl_class" href="classStabilizedMethodsCopyData.html">StabilizedMethodsCopyData</a> &amp;copy_data) <span class="keyword">override</span>;</div>
-<div class="line"><a id="l00197" name="l00197"></a><span class="lineno">  197</span> </div>
-<div class="line"><a id="l00198" name="l00198"></a><span class="lineno"><a class="line" href="classVOFAssemblerDCDDStabilization.html#aec5f08e7df568b2af00f16be528862e3">  198</a></span>  <span class="keyword">const</span> std::shared_ptr&lt;SimulationControl&gt; <a class="code hl_variable" href="classVOFAssemblerDCDDStabilization.html#aec5f08e7df568b2af00f16be528862e3">simulation_control</a>;</div>
-<div class="line"><a id="l00199" name="l00199"></a><span class="lineno">  199</span>};</div>
+<div class="line"><a id="l00180" name="l00180"></a><span class="lineno">  180</span><span class="comment"></span> </div>
+<div class="line"><a id="l00181" name="l00181"></a><span class="lineno">  181</span><span class="comment">  /**</span></div>
+<div class="line"><a id="l00182" name="l00182"></a><span class="lineno">  182</span><span class="comment">   * @brief Assemble the matrix</span></div>
+<div class="line"><a id="l00183" name="l00183"></a><span class="lineno">  183</span><span class="comment">   *</span></div>
+<div class="line"><a id="l00184" name="l00184"></a><span class="lineno">  184</span><span class="comment">   * @param[in] scratch_data (see base class).</span></div>
+<div class="line"><a id="l00185" name="l00185"></a><span class="lineno">  185</span><span class="comment">   *</span></div>
+<div class="line"><a id="l00186" name="l00186"></a><span class="lineno">  186</span><span class="comment">   * @param[in,out] copy_data (see base class).</span></div>
+<div class="line"><a id="l00187" name="l00187"></a><span class="lineno">  187</span><span class="comment">   */</span></div>
+<div class="line"><a id="l00188" name="l00188"></a><span class="lineno">  188</span>  <span class="keyword">virtual</span> <span class="keywordtype">void</span></div>
+<div class="line"><a id="l00189" name="l00189"></a><span class="lineno">  189</span>  <a class="code hl_function" href="classVOFAssemblerDCDDStabilization.html#a9b3b1d0e1cc48593b3176640bf3b6c73">assemble_matrix</a>(<span class="keyword">const</span> <a class="code hl_class" href="classVOFScratchData.html">VOFScratchData&lt;dim&gt;</a> &amp;scratch_data,</div>
+<div class="line"><a id="l00190" name="l00190"></a><span class="lineno">  190</span>                  <a class="code hl_class" href="classStabilizedMethodsCopyData.html">StabilizedMethodsCopyData</a> &amp;copy_data) <span class="keyword">override</span>;</div>
+<div class="line"><a id="l00191" name="l00191"></a><span class="lineno">  191</span><span class="comment"></span> </div>
+<div class="line"><a id="l00192" name="l00192"></a><span class="lineno">  192</span><span class="comment">  /**</span></div>
+<div class="line"><a id="l00193" name="l00193"></a><span class="lineno">  193</span><span class="comment">   * @brief Assemble the right-hand side (rhs).</span></div>
+<div class="line"><a id="l00194" name="l00194"></a><span class="lineno">  194</span><span class="comment">   *</span></div>
+<div class="line"><a id="l00195" name="l00195"></a><span class="lineno">  195</span><span class="comment">   * @param[in] scratch_data (see base class)</span></div>
+<div class="line"><a id="l00196" name="l00196"></a><span class="lineno">  196</span><span class="comment">   *</span></div>
+<div class="line"><a id="l00197" name="l00197"></a><span class="lineno">  197</span><span class="comment">   * @param[in,out] copy_data (see base class)</span></div>
+<div class="line"><a id="l00198" name="l00198"></a><span class="lineno">  198</span><span class="comment">   */</span></div>
+<div class="line"><a id="l00199" name="l00199"></a><span class="lineno">  199</span>  <span class="keyword">virtual</span> <span class="keywordtype">void</span></div>
+<div class="line"><a id="l00200" name="l00200"></a><span class="lineno">  200</span>  <a class="code hl_function" href="classVOFAssemblerDCDDStabilization.html#aa67bb33a4017df068a9ef1a6f2b8c6e9">assemble_rhs</a>(<span class="keyword">const</span> <a class="code hl_class" href="classVOFScratchData.html">VOFScratchData&lt;dim&gt;</a> &amp;scratch_data,</div>
+<div class="line"><a id="l00201" name="l00201"></a><span class="lineno">  201</span>               <a class="code hl_class" href="classStabilizedMethodsCopyData.html">StabilizedMethodsCopyData</a> &amp;copy_data) <span class="keyword">override</span>;</div>
+<div class="line"><a id="l00202" name="l00202"></a><span class="lineno">  202</span> </div>
+<div class="line"><a id="l00203" name="l00203"></a><span class="lineno"><a class="line" href="classVOFAssemblerDCDDStabilization.html#aec5f08e7df568b2af00f16be528862e3">  203</a></span>  <span class="keyword">const</span> std::shared_ptr&lt;SimulationControl&gt; <a class="code hl_variable" href="classVOFAssemblerDCDDStabilization.html#aec5f08e7df568b2af00f16be528862e3">simulation_control</a>;</div>
+<div class="line"><a id="l00204" name="l00204"></a><span class="lineno">  204</span><span class="comment"></span> </div>
+<div class="line"><a id="l00205" name="l00205"></a><span class="lineno">  205</span><span class="comment">  /// Diffusion coefficient</span></div>
+<div class="line"><a id="l00206" name="l00206"></a><span class="lineno"><a class="line" href="classVOFAssemblerDCDDStabilization.html#af30c1e8cde3e53a1e4b9896363db427e">  206</a></span><span class="comment"></span>  <span class="keyword">const</span> <span class="keywordtype">double</span> <a class="code hl_variable" href="classVOFAssemblerDCDDStabilization.html#af30c1e8cde3e53a1e4b9896363db427e">diffusion_constant</a>;</div>
+<div class="line"><a id="l00207" name="l00207"></a><span class="lineno">  207</span>};</div>
 </div>
-<div class="line"><a id="l00200" name="l00200"></a><span class="lineno">  200</span> </div>
-<div class="line"><a id="l00201" name="l00201"></a><span class="lineno">  201</span><span class="comment"></span> </div>
-<div class="line"><a id="l00202" name="l00202"></a><span class="lineno">  202</span><span class="comment">/**</span></div>
-<div class="line"><a id="l00203" name="l00203"></a><span class="lineno">  203</span><span class="comment"> * @brief Class that assembles the core (cells) of the VOF equation for DG elements.</span></div>
-<div class="line"><a id="l00204" name="l00204"></a><span class="lineno">  204</span><span class="comment"> * This class assembles the weak form of:</span></div>
-<div class="line"><a id="l00205" name="l00205"></a><span class="lineno">  205</span><span class="comment"> * \f$\mathbf{u} \cdot \nabla \phi = 0 \f$</span></div>
-<div class="line"><a id="l00206" name="l00206"></a><span class="lineno">  206</span><span class="comment"> *</span></div>
-<div class="line"><a id="l00207" name="l00207"></a><span class="lineno">  207</span><span class="comment"> * @tparam dim An integer that denotes the number of spatial dimensions</span></div>
-<div class="line"><a id="l00208" name="l00208"></a><span class="lineno">  208</span><span class="comment"> *</span></div>
-<div class="line"><a id="l00209" name="l00209"></a><span class="lineno">  209</span><span class="comment"> * @ingroup assemblers</span></div>
-<div class="line"><a id="l00210" name="l00210"></a><span class="lineno">  210</span><span class="comment"> */</span></div>
-<div class="line"><a id="l00211" name="l00211"></a><span class="lineno">  211</span><span class="keyword">template</span> &lt;<span class="keywordtype">int</span> dim&gt;</div>
-<div class="foldopen" id="foldopen00212" data-start="{" data-end="};">
-<div class="line"><a id="l00212" name="l00212"></a><span class="lineno"><a class="line" href="classVOFAssemblerDGCore.html">  212</a></span><span class="keyword">class </span><a class="code hl_class" href="classVOFAssemblerDGCore.html">VOFAssemblerDGCore</a> : <span class="keyword">public</span> <a class="code hl_class" href="classPhysicsAssemblerBase.html">VOFAssemblerBase</a>&lt;dim&gt;</div>
-<div class="line"><a id="l00213" name="l00213"></a><span class="lineno">  213</span>{</div>
-<div class="line"><a id="l00214" name="l00214"></a><span class="lineno">  214</span><span class="keyword">public</span>:</div>
-<div class="foldopen" id="foldopen00215" data-start="{" data-end="}">
-<div class="line"><a id="l00215" name="l00215"></a><span class="lineno"><a class="line" href="classVOFAssemblerDGCore.html#a43508c991c6ddf1f10eee1650edc15f8">  215</a></span>  <a class="code hl_function" href="classVOFAssemblerDGCore.html#a43508c991c6ddf1f10eee1650edc15f8">VOFAssemblerDGCore</a>()</div>
-<div class="line"><a id="l00216" name="l00216"></a><span class="lineno">  216</span>  {}</div>
+<div class="line"><a id="l00208" name="l00208"></a><span class="lineno">  208</span> </div>
+<div class="line"><a id="l00209" name="l00209"></a><span class="lineno">  209</span><span class="comment"></span> </div>
+<div class="line"><a id="l00210" name="l00210"></a><span class="lineno">  210</span><span class="comment">/**</span></div>
+<div class="line"><a id="l00211" name="l00211"></a><span class="lineno">  211</span><span class="comment"> * @brief Class that assembles the core (cells) of the VOF equation for DG elements.</span></div>
+<div class="line"><a id="l00212" name="l00212"></a><span class="lineno">  212</span><span class="comment"> * This class assembles the weak form of:</span></div>
+<div class="line"><a id="l00213" name="l00213"></a><span class="lineno">  213</span><span class="comment"> * \f$\mathbf{u} \cdot \nabla \phi = 0 \f$</span></div>
+<div class="line"><a id="l00214" name="l00214"></a><span class="lineno">  214</span><span class="comment"> *</span></div>
+<div class="line"><a id="l00215" name="l00215"></a><span class="lineno">  215</span><span class="comment"> * @tparam dim An integer that denotes the number of spatial dimensions</span></div>
+<div class="line"><a id="l00216" name="l00216"></a><span class="lineno">  216</span><span class="comment"> *</span></div>
+<div class="line"><a id="l00217" name="l00217"></a><span class="lineno">  217</span><span class="comment"> * @ingroup assemblers</span></div>
+<div class="line"><a id="l00218" name="l00218"></a><span class="lineno">  218</span><span class="comment"> */</span></div>
+<div class="line"><a id="l00219" name="l00219"></a><span class="lineno">  219</span><span class="keyword">template</span> &lt;<span class="keywordtype">int</span> dim&gt;</div>
+<div class="foldopen" id="foldopen00220" data-start="{" data-end="};">
+<div class="line"><a id="l00220" name="l00220"></a><span class="lineno"><a class="line" href="classVOFAssemblerDGCore.html">  220</a></span><span class="keyword">class </span><a class="code hl_class" href="classVOFAssemblerDGCore.html">VOFAssemblerDGCore</a> : <span class="keyword">public</span> <a class="code hl_class" href="classPhysicsAssemblerBase.html">VOFAssemblerBase</a>&lt;dim&gt;</div>
+<div class="line"><a id="l00221" name="l00221"></a><span class="lineno">  221</span>{</div>
+<div class="line"><a id="l00222" name="l00222"></a><span class="lineno">  222</span><span class="keyword">public</span>:</div>
+<div class="foldopen" id="foldopen00223" data-start="{" data-end="}">
+<div class="line"><a id="l00223" name="l00223"></a><span class="lineno"><a class="line" href="classVOFAssemblerDGCore.html#a43508c991c6ddf1f10eee1650edc15f8">  223</a></span>  <a class="code hl_function" href="classVOFAssemblerDGCore.html#a43508c991c6ddf1f10eee1650edc15f8">VOFAssemblerDGCore</a>()</div>
+<div class="line"><a id="l00224" name="l00224"></a><span class="lineno">  224</span>  {}</div>
 </div>
-<div class="line"><a id="l00217" name="l00217"></a><span class="lineno">  217</span><span class="comment"></span> </div>
-<div class="line"><a id="l00218" name="l00218"></a><span class="lineno">  218</span><span class="comment">  /**</span></div>
-<div class="line"><a id="l00219" name="l00219"></a><span class="lineno">  219</span><span class="comment">   * @brief Assemble the matrix</span></div>
-<div class="line"><a id="l00220" name="l00220"></a><span class="lineno">  220</span><span class="comment">   * @param[in] scratch_data (see base class)</span></div>
-<div class="line"><a id="l00221" name="l00221"></a><span class="lineno">  221</span><span class="comment">   * @param[in,out] copy_data (see base class)</span></div>
-<div class="line"><a id="l00222" name="l00222"></a><span class="lineno">  222</span><span class="comment">   */</span></div>
-<div class="line"><a id="l00223" name="l00223"></a><span class="lineno">  223</span>  <span class="keyword">virtual</span> <span class="keywordtype">void</span></div>
-<div class="line"><a id="l00224" name="l00224"></a><span class="lineno">  224</span>  <a class="code hl_function" href="classVOFAssemblerDGCore.html#aa9e00aa66cf1e6bfa68a394ef54a98af">assemble_matrix</a>(<span class="keyword">const</span> <a class="code hl_class" href="classVOFScratchData.html">VOFScratchData&lt;dim&gt;</a> &amp;scratch_data,</div>
-<div class="line"><a id="l00225" name="l00225"></a><span class="lineno">  225</span>                  <a class="code hl_class" href="classStabilizedMethodsCopyData.html">StabilizedMethodsCopyData</a> &amp;copy_data) <span class="keyword">override</span>;</div>
-<div class="line"><a id="l00226" name="l00226"></a><span class="lineno">  226</span> </div>
-<div class="line"><a id="l00227" name="l00227"></a><span class="lineno">  227</span><span class="comment"></span> </div>
-<div class="line"><a id="l00228" name="l00228"></a><span class="lineno">  228</span><span class="comment">  /**</span></div>
-<div class="line"><a id="l00229" name="l00229"></a><span class="lineno">  229</span><span class="comment">   * @brief Assemble the rhs</span></div>
-<div class="line"><a id="l00230" name="l00230"></a><span class="lineno">  230</span><span class="comment">   * @param[in] scratch_data (see base class)</span></div>
-<div class="line"><a id="l00231" name="l00231"></a><span class="lineno">  231</span><span class="comment">   * @param[in,out] copy_data (see base class)</span></div>
-<div class="line"><a id="l00232" name="l00232"></a><span class="lineno">  232</span><span class="comment">   */</span></div>
-<div class="line"><a id="l00233" name="l00233"></a><span class="lineno">  233</span>  <span class="keyword">virtual</span> <span class="keywordtype">void</span></div>
-<div class="line"><a id="l00234" name="l00234"></a><span class="lineno">  234</span>  <a class="code hl_function" href="classVOFAssemblerDGCore.html#ad6e03904929b3e995c9cb9eeedb9fa80">assemble_rhs</a>(<span class="keyword">const</span> <a class="code hl_class" href="classVOFScratchData.html">VOFScratchData&lt;dim&gt;</a> &amp;scratch_data,</div>
-<div class="line"><a id="l00235" name="l00235"></a><span class="lineno">  235</span>               <a class="code hl_class" href="classStabilizedMethodsCopyData.html">StabilizedMethodsCopyData</a> &amp;copy_data) <span class="keyword">override</span>;</div>
-<div class="line"><a id="l00236" name="l00236"></a><span class="lineno">  236</span>};</div>
+<div class="line"><a id="l00225" name="l00225"></a><span class="lineno">  225</span><span class="comment"></span> </div>
+<div class="line"><a id="l00226" name="l00226"></a><span class="lineno">  226</span><span class="comment">  /**</span></div>
+<div class="line"><a id="l00227" name="l00227"></a><span class="lineno">  227</span><span class="comment">   * @brief Assemble the matrix</span></div>
+<div class="line"><a id="l00228" name="l00228"></a><span class="lineno">  228</span><span class="comment">   * @param[in] scratch_data (see base class)</span></div>
+<div class="line"><a id="l00229" name="l00229"></a><span class="lineno">  229</span><span class="comment">   * @param[in,out] copy_data (see base class)</span></div>
+<div class="line"><a id="l00230" name="l00230"></a><span class="lineno">  230</span><span class="comment">   */</span></div>
+<div class="line"><a id="l00231" name="l00231"></a><span class="lineno">  231</span>  <span class="keyword">virtual</span> <span class="keywordtype">void</span></div>
+<div class="line"><a id="l00232" name="l00232"></a><span class="lineno">  232</span>  <a class="code hl_function" href="classVOFAssemblerDGCore.html#aa9e00aa66cf1e6bfa68a394ef54a98af">assemble_matrix</a>(<span class="keyword">const</span> <a class="code hl_class" href="classVOFScratchData.html">VOFScratchData&lt;dim&gt;</a> &amp;scratch_data,</div>
+<div class="line"><a id="l00233" name="l00233"></a><span class="lineno">  233</span>                  <a class="code hl_class" href="classStabilizedMethodsCopyData.html">StabilizedMethodsCopyData</a> &amp;copy_data) <span class="keyword">override</span>;</div>
+<div class="line"><a id="l00234" name="l00234"></a><span class="lineno">  234</span> </div>
+<div class="line"><a id="l00235" name="l00235"></a><span class="lineno">  235</span><span class="comment"></span> </div>
+<div class="line"><a id="l00236" name="l00236"></a><span class="lineno">  236</span><span class="comment">  /**</span></div>
+<div class="line"><a id="l00237" name="l00237"></a><span class="lineno">  237</span><span class="comment">   * @brief Assemble the rhs</span></div>
+<div class="line"><a id="l00238" name="l00238"></a><span class="lineno">  238</span><span class="comment">   * @param[in] scratch_data (see base class)</span></div>
+<div class="line"><a id="l00239" name="l00239"></a><span class="lineno">  239</span><span class="comment">   * @param[in,out] copy_data (see base class)</span></div>
+<div class="line"><a id="l00240" name="l00240"></a><span class="lineno">  240</span><span class="comment">   */</span></div>
+<div class="line"><a id="l00241" name="l00241"></a><span class="lineno">  241</span>  <span class="keyword">virtual</span> <span class="keywordtype">void</span></div>
+<div class="line"><a id="l00242" name="l00242"></a><span class="lineno">  242</span>  <a class="code hl_function" href="classVOFAssemblerDGCore.html#ad6e03904929b3e995c9cb9eeedb9fa80">assemble_rhs</a>(<span class="keyword">const</span> <a class="code hl_class" href="classVOFScratchData.html">VOFScratchData&lt;dim&gt;</a> &amp;scratch_data,</div>
+<div class="line"><a id="l00243" name="l00243"></a><span class="lineno">  243</span>               <a class="code hl_class" href="classStabilizedMethodsCopyData.html">StabilizedMethodsCopyData</a> &amp;copy_data) <span class="keyword">override</span>;</div>
+<div class="line"><a id="l00244" name="l00244"></a><span class="lineno">  244</span>};</div>
 </div>
-<div class="line"><a id="l00237" name="l00237"></a><span class="lineno">  237</span> </div>
-<div class="line"><a id="l00238" name="l00238"></a><span class="lineno">  238</span><span class="comment"></span> </div>
-<div class="line"><a id="l00239" name="l00239"></a><span class="lineno">  239</span><span class="comment">/**</span></div>
-<div class="line"><a id="l00240" name="l00240"></a><span class="lineno">  240</span><span class="comment"> * @brief Assembles the symmetric interior penalty Galerkin (SIPG) method (or</span></div>
-<div class="line"><a id="l00241" name="l00241"></a><span class="lineno">  241</span><span class="comment"> * Nitsche&#39;s method) for internal faces. This assembler is only required</span></div>
-<div class="line"><a id="l00242" name="l00242"></a><span class="lineno">  242</span><span class="comment"> * when solving the VOF equation using a discontinuous Galerkin</span></div>
-<div class="line"><a id="l00243" name="l00243"></a><span class="lineno">  243</span><span class="comment"> * discretization.</span></div>
-<div class="line"><a id="l00244" name="l00244"></a><span class="lineno">  244</span><span class="comment"> *</span></div>
-<div class="line"><a id="l00245" name="l00245"></a><span class="lineno">  245</span><span class="comment"> * @tparam dim An integer that denotes the number of spatial dimensions</span></div>
-<div class="line"><a id="l00246" name="l00246"></a><span class="lineno">  246</span><span class="comment"> *</span></div>
-<div class="line"><a id="l00247" name="l00247"></a><span class="lineno">  247</span><span class="comment"> * @ingroup assemblers</span></div>
-<div class="line"><a id="l00248" name="l00248"></a><span class="lineno">  248</span><span class="comment"> */</span></div>
-<div class="line"><a id="l00249" name="l00249"></a><span class="lineno">  249</span><span class="keyword">template</span> &lt;<span class="keywordtype">int</span> dim&gt;</div>
-<div class="foldopen" id="foldopen00250" data-start="{" data-end="};">
-<div class="line"><a id="l00250" name="l00250"></a><span class="lineno"><a class="line" href="classVOFAssemblerSIPG.html">  250</a></span><span class="keyword">class </span><a class="code hl_class" href="classVOFAssemblerSIPG.html">VOFAssemblerSIPG</a> : <span class="keyword">public</span> <a class="code hl_class" href="classPhysicsFaceAssemblerBase.html">VOFFaceAssemblerBase</a>&lt;dim&gt;</div>
-<div class="line"><a id="l00251" name="l00251"></a><span class="lineno">  251</span>{</div>
-<div class="line"><a id="l00252" name="l00252"></a><span class="lineno">  252</span><span class="keyword">public</span>:</div>
-<div class="foldopen" id="foldopen00253" data-start="{" data-end="}">
-<div class="line"><a id="l00253" name="l00253"></a><span class="lineno"><a class="line" href="classVOFAssemblerSIPG.html#acc32486b9e468c50a01b9f7c796acdbb">  253</a></span>  <a class="code hl_function" href="classVOFAssemblerSIPG.html#acc32486b9e468c50a01b9f7c796acdbb">VOFAssemblerSIPG</a>()</div>
-<div class="line"><a id="l00254" name="l00254"></a><span class="lineno">  254</span>  {}</div>
+<div class="line"><a id="l00245" name="l00245"></a><span class="lineno">  245</span> </div>
+<div class="line"><a id="l00246" name="l00246"></a><span class="lineno">  246</span><span class="comment"></span> </div>
+<div class="line"><a id="l00247" name="l00247"></a><span class="lineno">  247</span><span class="comment">/**</span></div>
+<div class="line"><a id="l00248" name="l00248"></a><span class="lineno">  248</span><span class="comment"> * @brief Assembles the symmetric interior penalty Galerkin (SIPG) method (or</span></div>
+<div class="line"><a id="l00249" name="l00249"></a><span class="lineno">  249</span><span class="comment"> * Nitsche&#39;s method) for internal faces. This assembler is only required</span></div>
+<div class="line"><a id="l00250" name="l00250"></a><span class="lineno">  250</span><span class="comment"> * when solving the VOF equation using a discontinuous Galerkin</span></div>
+<div class="line"><a id="l00251" name="l00251"></a><span class="lineno">  251</span><span class="comment"> * discretization.</span></div>
+<div class="line"><a id="l00252" name="l00252"></a><span class="lineno">  252</span><span class="comment"> *</span></div>
+<div class="line"><a id="l00253" name="l00253"></a><span class="lineno">  253</span><span class="comment"> * @tparam dim An integer that denotes the number of spatial dimensions</span></div>
+<div class="line"><a id="l00254" name="l00254"></a><span class="lineno">  254</span><span class="comment"> *</span></div>
+<div class="line"><a id="l00255" name="l00255"></a><span class="lineno">  255</span><span class="comment"> * @ingroup assemblers</span></div>
+<div class="line"><a id="l00256" name="l00256"></a><span class="lineno">  256</span><span class="comment"> */</span></div>
+<div class="line"><a id="l00257" name="l00257"></a><span class="lineno">  257</span><span class="keyword">template</span> &lt;<span class="keywordtype">int</span> dim&gt;</div>
+<div class="foldopen" id="foldopen00258" data-start="{" data-end="};">
+<div class="line"><a id="l00258" name="l00258"></a><span class="lineno"><a class="line" href="classVOFAssemblerSIPG.html">  258</a></span><span class="keyword">class </span><a class="code hl_class" href="classVOFAssemblerSIPG.html">VOFAssemblerSIPG</a> : <span class="keyword">public</span> <a class="code hl_class" href="classPhysicsFaceAssemblerBase.html">VOFFaceAssemblerBase</a>&lt;dim&gt;</div>
+<div class="line"><a id="l00259" name="l00259"></a><span class="lineno">  259</span>{</div>
+<div class="line"><a id="l00260" name="l00260"></a><span class="lineno">  260</span><span class="keyword">public</span>:</div>
+<div class="foldopen" id="foldopen00261" data-start="{" data-end="}">
+<div class="line"><a id="l00261" name="l00261"></a><span class="lineno"><a class="line" href="classVOFAssemblerSIPG.html#acc32486b9e468c50a01b9f7c796acdbb">  261</a></span>  <a class="code hl_function" href="classVOFAssemblerSIPG.html#acc32486b9e468c50a01b9f7c796acdbb">VOFAssemblerSIPG</a>()</div>
+<div class="line"><a id="l00262" name="l00262"></a><span class="lineno">  262</span>  {}</div>
 </div>
-<div class="line"><a id="l00255" name="l00255"></a><span class="lineno">  255</span><span class="comment"></span> </div>
-<div class="line"><a id="l00256" name="l00256"></a><span class="lineno">  256</span><span class="comment">  /**</span></div>
-<div class="line"><a id="l00257" name="l00257"></a><span class="lineno">  257</span><span class="comment">   * @brief Interface to call the matrix assembly</span></div>
-<div class="line"><a id="l00258" name="l00258"></a><span class="lineno">  258</span><span class="comment">   * @param[in]  scratch_data Scratch data containing the VOF</span></div>
-<div class="line"><a id="l00259" name="l00259"></a><span class="lineno">  259</span><span class="comment">   * information. It is important to note that the scratch data has to have been</span></div>
-<div class="line"><a id="l00260" name="l00260"></a><span class="lineno">  260</span><span class="comment">   * re-inited before calling for matrix assembly.</span></div>
-<div class="line"><a id="l00261" name="l00261"></a><span class="lineno">  261</span><span class="comment">   * @param[in,out]  copy_data Destination where the local_rhs and local_matrix</span></div>
-<div class="line"><a id="l00262" name="l00262"></a><span class="lineno">  262</span><span class="comment">   * should be copied.</span></div>
-<div class="line"><a id="l00263" name="l00263"></a><span class="lineno">  263</span><span class="comment">   */</span></div>
-<div class="line"><a id="l00264" name="l00264"></a><span class="lineno">  264</span>  <span class="keyword">virtual</span> <span class="keywordtype">void</span></div>
-<div class="line"><a id="l00265" name="l00265"></a><span class="lineno">  265</span>  <a class="code hl_function" href="classVOFAssemblerSIPG.html#ac5e727d4de6e4fba2360e245f8a6d668">assemble_matrix</a>(<span class="keyword">const</span> <a class="code hl_class" href="classVOFScratchData.html">VOFScratchData&lt;dim&gt;</a>   &amp;scratch_data,</div>
-<div class="line"><a id="l00266" name="l00266"></a><span class="lineno">  266</span>                  <a class="code hl_class" href="classStabilizedDGMethodsCopyData.html">StabilizedDGMethodsCopyData</a> &amp;copy_data) <span class="keyword">override</span>;</div>
-<div class="line"><a id="l00267" name="l00267"></a><span class="lineno">  267</span> </div>
-<div class="line"><a id="l00268" name="l00268"></a><span class="lineno">  268</span><span class="comment"></span> </div>
-<div class="line"><a id="l00269" name="l00269"></a><span class="lineno">  269</span><span class="comment">  /**</span></div>
-<div class="line"><a id="l00270" name="l00270"></a><span class="lineno">  270</span><span class="comment">   * @brief Interface for the call to rhs</span></div>
-<div class="line"><a id="l00271" name="l00271"></a><span class="lineno">  271</span><span class="comment">   * @param[in]  scratch_data Scratch data containing the VOF</span></div>
-<div class="line"><a id="l00272" name="l00272"></a><span class="lineno">  272</span><span class="comment">   * information. It is important to note that the scratch data has to have been</span></div>
-<div class="line"><a id="l00273" name="l00273"></a><span class="lineno">  273</span><span class="comment">   * re-inited before calling for matrix assembly.</span></div>
-<div class="line"><a id="l00274" name="l00274"></a><span class="lineno">  274</span><span class="comment">   * @param[in,out]  copy_data Destination where the local_rhs and local_matrix</span></div>
-<div class="line"><a id="l00275" name="l00275"></a><span class="lineno">  275</span><span class="comment">   * should be copied.</span></div>
-<div class="line"><a id="l00276" name="l00276"></a><span class="lineno">  276</span><span class="comment">   */</span></div>
-<div class="line"><a id="l00277" name="l00277"></a><span class="lineno">  277</span>  <span class="keyword">virtual</span> <span class="keywordtype">void</span></div>
-<div class="line"><a id="l00278" name="l00278"></a><span class="lineno">  278</span>  <a class="code hl_function" href="classVOFAssemblerSIPG.html#a4a11c29266bbce776c748b7afd391938">assemble_rhs</a>(<span class="keyword">const</span> <a class="code hl_class" href="classVOFScratchData.html">VOFScratchData&lt;dim&gt;</a>   &amp;scratch_data,</div>
-<div class="line"><a id="l00279" name="l00279"></a><span class="lineno">  279</span>               <a class="code hl_class" href="classStabilizedDGMethodsCopyData.html">StabilizedDGMethodsCopyData</a> &amp;copy_data) <span class="keyword">override</span>;</div>
-<div class="line"><a id="l00280" name="l00280"></a><span class="lineno">  280</span>};</div>
+<div class="line"><a id="l00263" name="l00263"></a><span class="lineno">  263</span><span class="comment"></span> </div>
+<div class="line"><a id="l00264" name="l00264"></a><span class="lineno">  264</span><span class="comment">  /**</span></div>
+<div class="line"><a id="l00265" name="l00265"></a><span class="lineno">  265</span><span class="comment">   * @brief Interface to call the matrix assembly</span></div>
+<div class="line"><a id="l00266" name="l00266"></a><span class="lineno">  266</span><span class="comment">   * @param[in]  scratch_data Scratch data containing the VOF</span></div>
+<div class="line"><a id="l00267" name="l00267"></a><span class="lineno">  267</span><span class="comment">   * information. It is important to note that the scratch data has to have been</span></div>
+<div class="line"><a id="l00268" name="l00268"></a><span class="lineno">  268</span><span class="comment">   * re-inited before calling for matrix assembly.</span></div>
+<div class="line"><a id="l00269" name="l00269"></a><span class="lineno">  269</span><span class="comment">   * @param[in,out]  copy_data Destination where the local_rhs and local_matrix</span></div>
+<div class="line"><a id="l00270" name="l00270"></a><span class="lineno">  270</span><span class="comment">   * should be copied.</span></div>
+<div class="line"><a id="l00271" name="l00271"></a><span class="lineno">  271</span><span class="comment">   */</span></div>
+<div class="line"><a id="l00272" name="l00272"></a><span class="lineno">  272</span>  <span class="keyword">virtual</span> <span class="keywordtype">void</span></div>
+<div class="line"><a id="l00273" name="l00273"></a><span class="lineno">  273</span>  <a class="code hl_function" href="classVOFAssemblerSIPG.html#ac5e727d4de6e4fba2360e245f8a6d668">assemble_matrix</a>(<span class="keyword">const</span> <a class="code hl_class" href="classVOFScratchData.html">VOFScratchData&lt;dim&gt;</a>   &amp;scratch_data,</div>
+<div class="line"><a id="l00274" name="l00274"></a><span class="lineno">  274</span>                  <a class="code hl_class" href="classStabilizedDGMethodsCopyData.html">StabilizedDGMethodsCopyData</a> &amp;copy_data) <span class="keyword">override</span>;</div>
+<div class="line"><a id="l00275" name="l00275"></a><span class="lineno">  275</span> </div>
+<div class="line"><a id="l00276" name="l00276"></a><span class="lineno">  276</span><span class="comment"></span> </div>
+<div class="line"><a id="l00277" name="l00277"></a><span class="lineno">  277</span><span class="comment">  /**</span></div>
+<div class="line"><a id="l00278" name="l00278"></a><span class="lineno">  278</span><span class="comment">   * @brief Interface for the call to rhs</span></div>
+<div class="line"><a id="l00279" name="l00279"></a><span class="lineno">  279</span><span class="comment">   * @param[in]  scratch_data Scratch data containing the VOF</span></div>
+<div class="line"><a id="l00280" name="l00280"></a><span class="lineno">  280</span><span class="comment">   * information. It is important to note that the scratch data has to have been</span></div>
+<div class="line"><a id="l00281" name="l00281"></a><span class="lineno">  281</span><span class="comment">   * re-inited before calling for matrix assembly.</span></div>
+<div class="line"><a id="l00282" name="l00282"></a><span class="lineno">  282</span><span class="comment">   * @param[in,out]  copy_data Destination where the local_rhs and local_matrix</span></div>
+<div class="line"><a id="l00283" name="l00283"></a><span class="lineno">  283</span><span class="comment">   * should be copied.</span></div>
+<div class="line"><a id="l00284" name="l00284"></a><span class="lineno">  284</span><span class="comment">   */</span></div>
+<div class="line"><a id="l00285" name="l00285"></a><span class="lineno">  285</span>  <span class="keyword">virtual</span> <span class="keywordtype">void</span></div>
+<div class="line"><a id="l00286" name="l00286"></a><span class="lineno">  286</span>  <a class="code hl_function" href="classVOFAssemblerSIPG.html#a4a11c29266bbce776c748b7afd391938">assemble_rhs</a>(<span class="keyword">const</span> <a class="code hl_class" href="classVOFScratchData.html">VOFScratchData&lt;dim&gt;</a>   &amp;scratch_data,</div>
+<div class="line"><a id="l00287" name="l00287"></a><span class="lineno">  287</span>               <a class="code hl_class" href="classStabilizedDGMethodsCopyData.html">StabilizedDGMethodsCopyData</a> &amp;copy_data) <span class="keyword">override</span>;</div>
+<div class="line"><a id="l00288" name="l00288"></a><span class="lineno">  288</span>};</div>
 </div>
-<div class="line"><a id="l00281" name="l00281"></a><span class="lineno">  281</span> </div>
-<div class="line"><a id="l00282" name="l00282"></a><span class="lineno">  282</span> </div>
-<div class="line"><a id="l00283" name="l00283"></a><span class="lineno">  283</span><span class="preprocessor">#endif</span></div>
+<div class="line"><a id="l00289" name="l00289"></a><span class="lineno">  289</span> </div>
+<div class="line"><a id="l00290" name="l00290"></a><span class="lineno">  290</span> </div>
+<div class="line"><a id="l00291" name="l00291"></a><span class="lineno">  291</span><span class="preprocessor">#endif</span></div>
 <div class="ttc" id="aclassPhysicsAssemblerBase_html"><div class="ttname"><a href="classPhysicsAssemblerBase.html">PhysicsAssemblerBase</a></div><div class="ttdoc">Base class for assembler objects of physics and subequations.</div><div class="ttdef"><b>Definition</b> <a href="physics__assemblers_8h_source.html#l00017">physics_assemblers.h:18</a></div></div>
 <div class="ttc" id="aclassPhysicsFaceAssemblerBase_html"><div class="ttname"><a href="classPhysicsFaceAssemblerBase.html">PhysicsFaceAssemblerBase</a></div><div class="ttdoc">Base class for assembler objects of physics and subequations that require a face assembly....</div><div class="ttdef"><b>Definition</b> <a href="physics__assemblers_8h_source.html#l00067">physics_assemblers.h:68</a></div></div>
 <div class="ttc" id="aclassStabilizedDGMethodsCopyData_html"><div class="ttname"><a href="classStabilizedDGMethodsCopyData.html">StabilizedDGMethodsCopyData</a></div><div class="ttdoc">Responsible for storing the information calculated using the discontinuous galerkin (DG) assembly of ...</div><div class="ttdef"><b>Definition</b> <a href="copy__data_8h_source.html#l00125">copy_data.h:126</a></div></div>
@@ -414,23 +422,25 @@ $(document).ready(function() { init_codefold(0); });
 <div class="ttc" id="aclassVOFAssemblerCore_html_af53eea7d50d9ddc327d4e3c5c64f2ec8"><div class="ttname"><a href="classVOFAssemblerCore.html#af53eea7d50d9ddc327d4e3c5c64f2ec8">VOFAssemblerCore::assemble_matrix</a></div><div class="ttdeci">virtual void assemble_matrix(const VOFScratchData&lt; dim &gt; &amp;scratch_data, StabilizedMethodsCopyData &amp;copy_data) override</div><div class="ttdoc">assemble_matrix Assembles the matrix</div><div class="ttdef"><b>Definition</b> <a href="vof__assemblers_8cc_source.html#l00014">vof_assemblers.cc:14</a></div></div>
 <div class="ttc" id="aclassVOFAssemblerCore_html_af61fe4ab83db8a7b62226b2048dfee2f"><div class="ttname"><a href="classVOFAssemblerCore.html#af61fe4ab83db8a7b62226b2048dfee2f">VOFAssemblerCore::assemble_rhs</a></div><div class="ttdeci">virtual void assemble_rhs(const VOFScratchData&lt; dim &gt; &amp;scratch_data, StabilizedMethodsCopyData &amp;copy_data) override</div><div class="ttdoc">assemble_rhs Assembles the rhs</div><div class="ttdef"><b>Definition</b> <a href="vof__assemblers_8cc_source.html#l00121">vof_assemblers.cc:121</a></div></div>
 <div class="ttc" id="aclassVOFAssemblerDCDDStabilization_html"><div class="ttname"><a href="classVOFAssemblerDCDDStabilization.html">VOFAssemblerDCDDStabilization</a></div><div class="ttdoc">Assemble the Discontinuity-Capturing Directional Dissipation (DCDD) stabilization term for the VOF ph...</div><div class="ttdef"><b>Definition</b> <a href="vof__assemblers_8h_source.html#l00160">vof_assemblers.h:161</a></div></div>
+<div class="ttc" id="aclassVOFAssemblerDCDDStabilization_html_a61228a95172b9cfc62b5c345a3206bcd"><div class="ttname"><a href="classVOFAssemblerDCDDStabilization.html#a61228a95172b9cfc62b5c345a3206bcd">VOFAssemblerDCDDStabilization::VOFAssemblerDCDDStabilization</a></div><div class="ttdeci">VOFAssemblerDCDDStabilization(const std::shared_ptr&lt; SimulationControl &gt; &amp;simulation_control, const Parameters::Stabilization &amp;stabilization_parameters)</div><div class="ttdoc">Default constructor of the assembler.</div><div class="ttdef"><b>Definition</b> <a href="vof__assemblers_8h_source.html#l00174">vof_assemblers.h:174</a></div></div>
 <div class="ttc" id="aclassVOFAssemblerDCDDStabilization_html_a9b3b1d0e1cc48593b3176640bf3b6c73"><div class="ttname"><a href="classVOFAssemblerDCDDStabilization.html#a9b3b1d0e1cc48593b3176640bf3b6c73">VOFAssemblerDCDDStabilization::assemble_matrix</a></div><div class="ttdeci">virtual void assemble_matrix(const VOFScratchData&lt; dim &gt; &amp;scratch_data, StabilizedMethodsCopyData &amp;copy_data) override</div><div class="ttdoc">Assemble the matrix.</div><div class="ttdef"><b>Definition</b> <a href="vof__assemblers_8cc_source.html#l00325">vof_assemblers.cc:325</a></div></div>
 <div class="ttc" id="aclassVOFAssemblerDCDDStabilization_html_aa67bb33a4017df068a9ef1a6f2b8c6e9"><div class="ttname"><a href="classVOFAssemblerDCDDStabilization.html#aa67bb33a4017df068a9ef1a6f2b8c6e9">VOFAssemblerDCDDStabilization::assemble_rhs</a></div><div class="ttdeci">virtual void assemble_rhs(const VOFScratchData&lt; dim &gt; &amp;scratch_data, StabilizedMethodsCopyData &amp;copy_data) override</div><div class="ttdoc">Assemble the right-hand side (rhs).</div><div class="ttdef"><b>Definition</b> <a href="vof__assemblers_8cc_source.html#l00395">vof_assemblers.cc:395</a></div></div>
-<div class="ttc" id="aclassVOFAssemblerDCDDStabilization_html_aec4a28ddde5147c5c202711035b6692a"><div class="ttname"><a href="classVOFAssemblerDCDDStabilization.html#aec4a28ddde5147c5c202711035b6692a">VOFAssemblerDCDDStabilization::VOFAssemblerDCDDStabilization</a></div><div class="ttdeci">VOFAssemblerDCDDStabilization(const std::shared_ptr&lt; SimulationControl &gt; &amp;simulation_control)</div><div class="ttdoc">Default constructor of the assembler.</div><div class="ttdef"><b>Definition</b> <a href="vof__assemblers_8h_source.html#l00171">vof_assemblers.h:171</a></div></div>
-<div class="ttc" id="aclassVOFAssemblerDCDDStabilization_html_aec5f08e7df568b2af00f16be528862e3"><div class="ttname"><a href="classVOFAssemblerDCDDStabilization.html#aec5f08e7df568b2af00f16be528862e3">VOFAssemblerDCDDStabilization::simulation_control</a></div><div class="ttdeci">const std::shared_ptr&lt; SimulationControl &gt; simulation_control</div><div class="ttdef"><b>Definition</b> <a href="vof__assemblers_8h_source.html#l00198">vof_assemblers.h:198</a></div></div>
-<div class="ttc" id="aclassVOFAssemblerDGCore_html"><div class="ttname"><a href="classVOFAssemblerDGCore.html">VOFAssemblerDGCore</a></div><div class="ttdoc">Class that assembles the core (cells) of the VOF equation for DG elements. This class assembles the w...</div><div class="ttdef"><b>Definition</b> <a href="vof__assemblers_8h_source.html#l00212">vof_assemblers.h:213</a></div></div>
-<div class="ttc" id="aclassVOFAssemblerDGCore_html_a43508c991c6ddf1f10eee1650edc15f8"><div class="ttname"><a href="classVOFAssemblerDGCore.html#a43508c991c6ddf1f10eee1650edc15f8">VOFAssemblerDGCore::VOFAssemblerDGCore</a></div><div class="ttdeci">VOFAssemblerDGCore()</div><div class="ttdef"><b>Definition</b> <a href="vof__assemblers_8h_source.html#l00215">vof_assemblers.h:215</a></div></div>
+<div class="ttc" id="aclassVOFAssemblerDCDDStabilization_html_aec5f08e7df568b2af00f16be528862e3"><div class="ttname"><a href="classVOFAssemblerDCDDStabilization.html#aec5f08e7df568b2af00f16be528862e3">VOFAssemblerDCDDStabilization::simulation_control</a></div><div class="ttdeci">const std::shared_ptr&lt; SimulationControl &gt; simulation_control</div><div class="ttdef"><b>Definition</b> <a href="vof__assemblers_8h_source.html#l00203">vof_assemblers.h:203</a></div></div>
+<div class="ttc" id="aclassVOFAssemblerDCDDStabilization_html_af30c1e8cde3e53a1e4b9896363db427e"><div class="ttname"><a href="classVOFAssemblerDCDDStabilization.html#af30c1e8cde3e53a1e4b9896363db427e">VOFAssemblerDCDDStabilization::diffusion_constant</a></div><div class="ttdeci">const double diffusion_constant</div><div class="ttdoc">Diffusion coefficient.</div><div class="ttdef"><b>Definition</b> <a href="vof__assemblers_8h_source.html#l00206">vof_assemblers.h:206</a></div></div>
+<div class="ttc" id="aclassVOFAssemblerDGCore_html"><div class="ttname"><a href="classVOFAssemblerDGCore.html">VOFAssemblerDGCore</a></div><div class="ttdoc">Class that assembles the core (cells) of the VOF equation for DG elements. This class assembles the w...</div><div class="ttdef"><b>Definition</b> <a href="vof__assemblers_8h_source.html#l00220">vof_assemblers.h:221</a></div></div>
+<div class="ttc" id="aclassVOFAssemblerDGCore_html_a43508c991c6ddf1f10eee1650edc15f8"><div class="ttname"><a href="classVOFAssemblerDGCore.html#a43508c991c6ddf1f10eee1650edc15f8">VOFAssemblerDGCore::VOFAssemblerDGCore</a></div><div class="ttdeci">VOFAssemblerDGCore()</div><div class="ttdef"><b>Definition</b> <a href="vof__assemblers_8h_source.html#l00223">vof_assemblers.h:223</a></div></div>
 <div class="ttc" id="aclassVOFAssemblerDGCore_html_aa9e00aa66cf1e6bfa68a394ef54a98af"><div class="ttname"><a href="classVOFAssemblerDGCore.html#aa9e00aa66cf1e6bfa68a394ef54a98af">VOFAssemblerDGCore::assemble_matrix</a></div><div class="ttdeci">virtual void assemble_matrix(const VOFScratchData&lt; dim &gt; &amp;scratch_data, StabilizedMethodsCopyData &amp;copy_data) override</div><div class="ttdoc">Assemble the matrix.</div><div class="ttdef"><b>Definition</b> <a href="vof__assemblers_8cc_source.html#l00464">vof_assemblers.cc:464</a></div></div>
 <div class="ttc" id="aclassVOFAssemblerDGCore_html_ad6e03904929b3e995c9cb9eeedb9fa80"><div class="ttname"><a href="classVOFAssemblerDGCore.html#ad6e03904929b3e995c9cb9eeedb9fa80">VOFAssemblerDGCore::assemble_rhs</a></div><div class="ttdeci">virtual void assemble_rhs(const VOFScratchData&lt; dim &gt; &amp;scratch_data, StabilizedMethodsCopyData &amp;copy_data) override</div><div class="ttdoc">Assemble the rhs.</div><div class="ttdef"><b>Definition</b> <a href="vof__assemblers_8cc_source.html#l00506">vof_assemblers.cc:506</a></div></div>
-<div class="ttc" id="aclassVOFAssemblerSIPG_html"><div class="ttname"><a href="classVOFAssemblerSIPG.html">VOFAssemblerSIPG</a></div><div class="ttdoc">Assembles the symmetric interior penalty Galerkin (SIPG) method (or Nitsche's method) for internal fa...</div><div class="ttdef"><b>Definition</b> <a href="vof__assemblers_8h_source.html#l00250">vof_assemblers.h:251</a></div></div>
+<div class="ttc" id="aclassVOFAssemblerSIPG_html"><div class="ttname"><a href="classVOFAssemblerSIPG.html">VOFAssemblerSIPG</a></div><div class="ttdoc">Assembles the symmetric interior penalty Galerkin (SIPG) method (or Nitsche's method) for internal fa...</div><div class="ttdef"><b>Definition</b> <a href="vof__assemblers_8h_source.html#l00258">vof_assemblers.h:259</a></div></div>
 <div class="ttc" id="aclassVOFAssemblerSIPG_html_a4a11c29266bbce776c748b7afd391938"><div class="ttname"><a href="classVOFAssemblerSIPG.html#a4a11c29266bbce776c748b7afd391938">VOFAssemblerSIPG::assemble_rhs</a></div><div class="ttdeci">virtual void assemble_rhs(const VOFScratchData&lt; dim &gt; &amp;scratch_data, StabilizedDGMethodsCopyData &amp;copy_data) override</div><div class="ttdoc">Interface for the call to rhs.</div><div class="ttdef"><b>Definition</b> <a href="vof__assemblers_8cc_source.html#l00580">vof_assemblers.cc:580</a></div></div>
 <div class="ttc" id="aclassVOFAssemblerSIPG_html_ac5e727d4de6e4fba2360e245f8a6d668"><div class="ttname"><a href="classVOFAssemblerSIPG.html#ac5e727d4de6e4fba2360e245f8a6d668">VOFAssemblerSIPG::assemble_matrix</a></div><div class="ttdeci">virtual void assemble_matrix(const VOFScratchData&lt; dim &gt; &amp;scratch_data, StabilizedDGMethodsCopyData &amp;copy_data) override</div><div class="ttdoc">Interface to call the matrix assembly.</div><div class="ttdef"><b>Definition</b> <a href="vof__assemblers_8cc_source.html#l00546">vof_assemblers.cc:546</a></div></div>
-<div class="ttc" id="aclassVOFAssemblerSIPG_html_acc32486b9e468c50a01b9f7c796acdbb"><div class="ttname"><a href="classVOFAssemblerSIPG.html#acc32486b9e468c50a01b9f7c796acdbb">VOFAssemblerSIPG::VOFAssemblerSIPG</a></div><div class="ttdeci">VOFAssemblerSIPG()</div><div class="ttdef"><b>Definition</b> <a href="vof__assemblers_8h_source.html#l00253">vof_assemblers.h:253</a></div></div>
+<div class="ttc" id="aclassVOFAssemblerSIPG_html_acc32486b9e468c50a01b9f7c796acdbb"><div class="ttname"><a href="classVOFAssemblerSIPG.html#acc32486b9e468c50a01b9f7c796acdbb">VOFAssemblerSIPG::VOFAssemblerSIPG</a></div><div class="ttdeci">VOFAssemblerSIPG()</div><div class="ttdef"><b>Definition</b> <a href="vof__assemblers_8h_source.html#l00261">vof_assemblers.h:261</a></div></div>
 <div class="ttc" id="aclassVOFScratchData_html"><div class="ttname"><a href="classVOFScratchData.html">VOFScratchData</a></div><div class="ttdoc">Store the information required by the assembly procedure for a VOF free surface equation....</div><div class="ttdef"><b>Definition</b> <a href="vof__scratch__data_8h_source.html#l00038">vof_scratch_data.h:39</a></div></div>
 <div class="ttc" id="acopy__data_8h_html"><div class="ttname"><a href="copy__data_8h.html">copy_data.h</a></div></div>
 <div class="ttc" id="aphysics__assemblers_8h_html"><div class="ttname"><a href="physics__assemblers_8h.html">physics_assemblers.h</a></div></div>
 <div class="ttc" id="asimulation__control_8h_html"><div class="ttname"><a href="simulation__control_8h.html">simulation_control.h</a></div><div class="ttdoc">Simulation control classes for managing time-stepping and iteration control in Lethe.</div></div>
-<div class="ttc" id="astructParameters_1_1FEM_html"><div class="ttname"><a href="structParameters_1_1FEM.html">Parameters::FEM</a></div><div class="ttdoc">FEM - The finite element section controls the properties of the finite element method....</div><div class="ttdef"><b>Definition</b> <a href="parameters_8h_source.html#l01112">parameters.h:1113</a></div></div>
+<div class="ttc" id="astructParameters_1_1FEM_html"><div class="ttname"><a href="structParameters_1_1FEM.html">Parameters::FEM</a></div><div class="ttdoc">FEM - The finite element section controls the properties of the finite element method....</div><div class="ttdef"><b>Definition</b> <a href="parameters_8h_source.html#l01115">parameters.h:1116</a></div></div>
+<div class="ttc" id="astructParameters_1_1Stabilization_html"><div class="ttname"><a href="structParameters_1_1Stabilization.html">Parameters::Stabilization</a></div><div class="ttdoc">Stabilization - Defines parameters for an advanced control over the stabilization strategy used by th...</div><div class="ttdef"><b>Definition</b> <a href="parameters_8h_source.html#l00732">parameters.h:733</a></div></div>
 <div class="ttc" id="astructParameters_1_1VOF_html"><div class="ttname"><a href="structParameters_1_1VOF.html">Parameters::VOF</a></div><div class="ttdoc">VOF - Defines the parameters for free surface simulations using the VOF method. Has to be declared be...</div><div class="ttdef"><b>Definition</b> <a href="parameters__multiphysics_8h_source.html#l00338">parameters_multiphysics.h:339</a></div></div>
 <div class="ttc" id="avof__scratch__data_8h_html"><div class="ttname"><a href="vof__scratch__data_8h.html">vof_scratch_data.h</a></div></div>
 </div><!-- fragment --></div><!-- contents -->

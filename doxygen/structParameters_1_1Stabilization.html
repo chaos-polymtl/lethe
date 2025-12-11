@@ -127,6 +127,8 @@ Public Attributes</h2></td></tr>
 <tr class="separator:a7a7cc857727f157042cd8cb4dbf308e0"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aefd7fa6792b4089a2bc220bf42aeefda" id="r_aefd7fa6792b4089a2bc220bf42aeefda"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structParameters_1_1Stabilization.html#aefd7fa6792b4089a2bc220bf42aeefda">vof_dcdd_stabilization</a></td></tr>
 <tr class="separator:aefd7fa6792b4089a2bc220bf42aeefda"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aa133b6804995db2caa618fd987910376" id="r_aa133b6804995db2caa618fd987910376"><td class="memItemLeft" align="right" valign="top">double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structParameters_1_1Stabilization.html#aa133b6804995db2caa618fd987910376">dcdd_diffusion_coeff</a></td></tr>
+<tr class="separator:aa133b6804995db2caa618fd987910376"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a978f1c321f2edfd3601e5e235f89105e" id="r_a978f1c321f2edfd3601e5e235f89105e"><td class="memItemLeft" align="right" valign="top">double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structParameters_1_1Stabilization.html#a978f1c321f2edfd3601e5e235f89105e">pressure_scaling_factor</a></td></tr>
 <tr class="separator:a978f1c321f2edfd3601e5e235f89105e"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ae7aa4d80ac010b83de1242172de802ef" id="r_ae7aa4d80ac010b83de1242172de802ef"><td class="memItemLeft" align="right" valign="top">enum <a class="el" href="structParameters_1_1Stabilization.html#a7f67c17b0ca688dd966290f8610583bb">Parameters::Stabilization::NavierStokesStabilization</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structParameters_1_1Stabilization.html#ae7aa4d80ac010b83de1242172de802ef">stabilization</a></td></tr>
@@ -164,7 +166,7 @@ Public Attributes</h2></td></tr>
 <tr><td class="fieldname"><a id="a7f67c17b0ca688dd966290f8610583bba5b26215bec0d4dc2a7af08e2ae886418" name="a7f67c17b0ca688dd966290f8610583bba5b26215bec0d4dc2a7af08e2ae886418"></a>grad_div&#160;</td><td class="fielddoc"></td></tr>
 </table>
 
-<p class="definition">Definition at line <a class="el" href="parameters_8h_source.html#l00747">747</a> of file <a class="el" href="parameters_8h_source.html">parameters.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="parameters_8h_source.html#l00750">750</a> of file <a class="el" href="parameters_8h_source.html">parameters.h</a>.</p>
 
 </div>
 </div>
@@ -192,7 +194,7 @@ Public Attributes</h2></td></tr>
 <tr><td class="fieldname"><a id="a94f05a62f14f6e768934d0036a56a79ca334c4a4c42fdb79d7ebc3e73b517e6f8" name="a94f05a62f14f6e768934d0036a56a79ca334c4a4c42fdb79d7ebc3e73b517e6f8"></a>none&#160;</td><td class="fielddoc"></td></tr>
 </table>
 
-<p class="definition">Definition at line <a class="el" href="parameters_8h_source.html#l00754">754</a> of file <a class="el" href="parameters_8h_source.html">parameters.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="parameters_8h_source.html#l00757">757</a> of file <a class="el" href="parameters_8h_source.html">parameters.h</a>.</p>
 
 </div>
 </div>
@@ -241,13 +243,29 @@ Public Attributes</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="parameters_8cc_source.html#l00845">845</a> of file <a class="el" href="parameters_8cc_source.html">parameters.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="parameters_8cc_source.html#l00852">852</a> of file <a class="el" href="parameters_8cc_source.html">parameters.cc</a>.</p>
 
-<p class="reference">References <a class="el" href="structParameters_1_1Stabilization.html#a7f67c17b0ca688dd966290f8610583bbaca6efd547a7b6d9885402b9544f941d5">gls</a>, <a class="el" href="structParameters_1_1Stabilization.html#a7f67c17b0ca688dd966290f8610583bba5b26215bec0d4dc2a7af08e2ae886418">grad_div</a>, <a class="el" href="parameters_8h_source.html#l00737">heat_transfer_dcdd_stabilization</a>, <a class="el" href="structParameters_1_1Stabilization.html#a94f05a62f14f6e768934d0036a56a79ca7f33334d4c2f6dd6ffc701944cec2f1c">moe</a>, <a class="el" href="structParameters_1_1Stabilization.html#a94f05a62f14f6e768934d0036a56a79ca334c4a4c42fdb79d7ebc3e73b517e6f8">none</a>, <a class="el" href="parameters_8h_source.html#l00745">pressure_scaling_factor</a>, <a class="el" href="structParameters_1_1Stabilization.html#a7f67c17b0ca688dd966290f8610583bbaae21e5838883a96aab921c84e14383bb">pspg_supg</a>, <a class="el" href="structParameters_1_1Stabilization.html#a9392e3c81cdb38e014a315d167d12485">scalar_limiter</a>, <a class="el" href="structParameters_1_1Stabilization.html#ae7aa4d80ac010b83de1242172de802ef">stabilization</a>, <a class="el" href="parameters_8h_source.html#l00735">use_default_stabilization</a>, and <a class="el" href="parameters_8h_source.html#l00741">vof_dcdd_stabilization</a>.</p>
+<p class="reference">References <a class="el" href="parameters_8h_source.html#l00744">dcdd_diffusion_coeff</a>, <a class="el" href="structParameters_1_1Stabilization.html#a7f67c17b0ca688dd966290f8610583bbaca6efd547a7b6d9885402b9544f941d5">gls</a>, <a class="el" href="structParameters_1_1Stabilization.html#a7f67c17b0ca688dd966290f8610583bba5b26215bec0d4dc2a7af08e2ae886418">grad_div</a>, <a class="el" href="parameters_8h_source.html#l00737">heat_transfer_dcdd_stabilization</a>, <a class="el" href="structParameters_1_1Stabilization.html#a94f05a62f14f6e768934d0036a56a79ca7f33334d4c2f6dd6ffc701944cec2f1c">moe</a>, <a class="el" href="structParameters_1_1Stabilization.html#a94f05a62f14f6e768934d0036a56a79ca334c4a4c42fdb79d7ebc3e73b517e6f8">none</a>, <a class="el" href="parameters_8h_source.html#l00748">pressure_scaling_factor</a>, <a class="el" href="structParameters_1_1Stabilization.html#a7f67c17b0ca688dd966290f8610583bbaae21e5838883a96aab921c84e14383bb">pspg_supg</a>, <a class="el" href="structParameters_1_1Stabilization.html#a9392e3c81cdb38e014a315d167d12485">scalar_limiter</a>, <a class="el" href="structParameters_1_1Stabilization.html#ae7aa4d80ac010b83de1242172de802ef">stabilization</a>, <a class="el" href="parameters_8h_source.html#l00735">use_default_stabilization</a>, and <a class="el" href="parameters_8h_source.html#l00741">vof_dcdd_stabilization</a>.</p>
 
 </div>
 </div>
 <h2 class="groupheader">Member Data Documentation</h2>
+<a id="aa133b6804995db2caa618fd987910376" name="aa133b6804995db2caa618fd987910376"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aa133b6804995db2caa618fd987910376">&#9670;&#160;</a></span>dcdd_diffusion_coeff</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">double Parameters::Stabilization::dcdd_diffusion_coeff</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p class="definition">Definition at line <a class="el" href="parameters_8h_source.html#l00744">744</a> of file <a class="el" href="parameters_8h_source.html">parameters.h</a>.</p>
+
+</div>
+</div>
 <a id="a7a7cc857727f157042cd8cb4dbf308e0" name="a7a7cc857727f157042cd8cb4dbf308e0"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a7a7cc857727f157042cd8cb4dbf308e0">&#9670;&#160;</a></span>heat_transfer_dcdd_stabilization</h2>
 
@@ -276,7 +294,7 @@ Public Attributes</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="parameters_8h_source.html#l00745">745</a> of file <a class="el" href="parameters_8h_source.html">parameters.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="parameters_8h_source.html#l00748">748</a> of file <a class="el" href="parameters_8h_source.html">parameters.h</a>.</p>
 
 </div>
 </div>

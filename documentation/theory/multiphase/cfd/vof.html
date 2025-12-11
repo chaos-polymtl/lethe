@@ -538,13 +538,13 @@
 <p>where the first element-wise summation represents the SUPG stabilization term and the second is the shock capturing scheme. The same SUPG stabilization as in the Navier-Stokes finite element formulation is used (see <a class="reference internal" href="../../multiphysics/fluid_dynamics/stabilization.html"><span class="doc">On the Need for Stabilization</span></a>). The terms of the DCDD scheme are:</p>
 <div class="math-wrapper docutils container">
 <div class="math notranslate nohighlight">
-\[\begin{split}&amp;v_\mathrm{DCDD} = \frac{1}{2} h^2 \|\mathbf{u}\| \| \nabla \phi^h_\mathrm{old} \| \\
+\[\begin{split}&amp;v_\mathrm{DCDD} = D_\mathrm{DCDD} h^2 \|\mathbf{u}\| \| \nabla \phi^h_\mathrm{old} \| \\
 &amp;\mathbf{f}_\mathrm{DCDD} =
   \frac{\mathbf{u}}{\|\mathbf{u}\| } \otimes \frac{\mathbf{u}}{\|\mathbf{u}\|}
   - \left(\frac{\nabla \phi^h_\mathrm{old}}{\| \nabla \phi^h_\mathrm{old} \|} \cdot \frac{\mathbf{u}}{\|\mathbf{u}\| } \right)^2
   \frac{\nabla \phi^h_\mathrm{old}}{\| \nabla \phi^h_\mathrm{old} \|} \otimes \frac{\nabla \phi^h_\mathrm{old}}{\| \nabla \phi^h_\mathrm{old} \|}\end{split}\]</div>
 </div>
-<p>The term <span class="math notranslate nohighlight">\(v_\mathrm{DCDD}\)</span> ensures that diffusivity is added only where there is a large phase gradient and a non-zero velocity, i.e., where the interface <span class="math notranslate nohighlight">\(\Gamma\)</span> is in motion. The term <span class="math notranslate nohighlight">\(\mathbf{f}_\mathrm{DCDD}\)</span> adds diffusivity only in the crosswind direction, since streamline diffusion is already added by the SUPG stabilization.</p>
+<p>where <span class="math notranslate nohighlight">\(D_\mathrm{DCDD}\)</span> is a user-defined diffusion coefficient. The term <span class="math notranslate nohighlight">\(v_\mathrm{DCDD}\)</span> ensures that diffusivity is added only where there is a large phase gradient and a non-zero velocity, i.e., where the interface <span class="math notranslate nohighlight">\(\Gamma\)</span> is in motion. The term <span class="math notranslate nohighlight">\(\mathbf{f}_\mathrm{DCDD}\)</span> adds diffusivity only in the crosswind direction, since streamline diffusion is already added by the SUPG stabilization.</p>
 <p>To avoid a non-linear finite element formulation, the phase gradient of the previous time step <span class="math notranslate nohighlight">\((\phi^h_\mathrm{old})\)</span> is used.</p>
 </section>
 <section id="interface-diffusion-and-regularization">
