@@ -1515,10 +1515,10 @@ namespace BoundaryConditions
     // Impedance
     std::map<types::boundary_id,
              std::shared_ptr<Functions::ParsedFunction<dim>>>
-      electromagnetics_impedance_real;
+      surface_impedance_real;
     std::map<types::boundary_id,
              std::shared_ptr<Functions::ParsedFunction<dim>>>
-      electromagnetics_impedance_imag;
+      surface_impedance_imag;
 
     /// Excitation
     std::map<types::boundary_id,
@@ -1582,11 +1582,11 @@ namespace BoundaryConditions
   {
     prm.declare_entry(
       "type",
-      "silver_muller",
+      "silver muller",
       Patterns::Selection(
-        "pec|pmc|silver_muller|imposed_electric_field|imposed_magnetic_field|imposed_electromagnetic_excitation|imperfect_conductor"),
+        "pec|pmc|silver muller|imposed electric field|imposed magnetic field|imposed electromagnetic excitation|imperfect conductor"),
       "Type of boundary condition for Time Harmonic Maxwell equations"
-      "Choices are <pec|pmc|silver_muller|imposed_electric_field|imposed_magnetic_field|imposed_electromagnetic_excitation|imperfect_conductor>.");
+      "Choices are <pec|pmc|silver muller|imposed electric field|imposed magnetic field|imposed electromagnetic excitation|imperfect conductor>.");
 
     prm.declare_entry("id",
                       Utilities::int_to_string(default_boundary_id, 2),
@@ -1597,87 +1597,87 @@ namespace BoundaryConditions
     // declare the appropriate parameters for the relevant boundary conditions.
     TimeHarmonicMaxwellImposedElectromagneticField<dim> temporary_em_functions;
 
-    prm.enter_subsection("e_x_real");
-    temporary_em_functions.declare_parameters(prm);
+    prm.enter_subsection("E_x real");
+    temporary_em_functions.e_x_real.declare_parameters(prm);
     prm.leave_subsection();
 
-    prm.enter_subsection("e_y_real");
-    temporary_em_functions.declare_parameters(prm);
+    prm.enter_subsection("E_y real");
+    temporary_em_functions.e_y_real.declare_parameters(prm);
     prm.leave_subsection();
 
-    prm.enter_subsection("e_z_real");
-    temporary_em_functions.declare_parameters(prm);
+    prm.enter_subsection("E_z real");
+    temporary_em_functions.e_z_real.declare_parameters(prm);
     prm.leave_subsection();
 
-    prm.enter_subsection("e_x_imag");
-    temporary_em_functions.declare_parameters(prm);
+    prm.enter_subsection("E_x imag");
+    temporary_em_functions.e_x_imag.declare_parameters(prm);
     prm.leave_subsection();
 
-    prm.enter_subsection("e_y_imag");
-    temporary_em_functions.declare_parameters(prm);
+    prm.enter_subsection("E_y imag");
+    temporary_em_functions.e_y_imag.declare_parameters(prm);
     prm.leave_subsection();
 
-    prm.enter_subsection("e_z_imag");
-    temporary_em_functions.declare_parameters(prm);
+    prm.enter_subsection("E_z imag");
+    temporary_em_functions.e_z_imag.declare_parameters(prm);
     prm.leave_subsection();
 
-    prm.enter_subsection("h_x_real");
-    temporary_em_functions.declare_parameters(prm);
+    prm.enter_subsection("H_x real");
+    temporary_em_functions.h_x_real.declare_parameters(prm);
     prm.leave_subsection();
 
-    prm.enter_subsection("h_y_real");
-    temporary_em_functions.declare_parameters(prm);
+    prm.enter_subsection("H_y real");
+    temporary_em_functions.h_y_real.declare_parameters(prm);
     prm.leave_subsection();
 
-    prm.enter_subsection("h_z_real");
-    temporary_em_functions.declare_parameters(prm);
+    prm.enter_subsection("H_z real");
+    temporary_em_functions.h_z_real.declare_parameters(prm);
     prm.leave_subsection();
 
-    prm.enter_subsection("h_x_imag");
-    temporary_em_functions.declare_parameters(prm);
+    prm.enter_subsection("H_x imag");
+    temporary_em_functions.h_x_imag.declare_parameters(prm);
     prm.leave_subsection();
 
-    prm.enter_subsection("h_y_imag");
-    temporary_em_functions.declare_parameters(prm);
+    prm.enter_subsection("H_y imag");
+    temporary_em_functions.h_y_imag.declare_parameters(prm);
     prm.leave_subsection();
 
-    prm.enter_subsection("h_z_imag");
-    temporary_em_functions.declare_parameters(prm);
+    prm.enter_subsection("H_z imag");
+    temporary_em_functions.h_z_imag.declare_parameters(prm);
     prm.leave_subsection();
 
     // Create a dummy object to declare the appropriate parameters for the
     // relevant boundary conditions.
     Functions::ParsedFunction<dim> temporary_function;
 
-    prm.enter_subsection("surface_impedance_real");
+    prm.enter_subsection("surface impedance real");
     temporary_function.declare_parameters(prm);
     prm.leave_subsection();
 
-    prm.enter_subsection("surface_impedance_imag");
+    prm.enter_subsection("surface impedance imag");
     temporary_function.declare_parameters(prm);
     prm.leave_subsection();
 
-    prm.enter_subsection("excitation_x_real");
+    prm.enter_subsection("excitation_x real");
     temporary_function.declare_parameters(prm);
     prm.leave_subsection();
 
-    prm.enter_subsection("excitation_x_imag");
+    prm.enter_subsection("excitation_x imag");
     temporary_function.declare_parameters(prm);
     prm.leave_subsection();
 
-    prm.enter_subsection("excitation_y_real");
+    prm.enter_subsection("excitation_y real");
     temporary_function.declare_parameters(prm);
     prm.leave_subsection();
 
-    prm.enter_subsection("excitation_y_imag");
+    prm.enter_subsection("excitation_y imag");
     temporary_function.declare_parameters(prm);
     prm.leave_subsection();
 
-    prm.enter_subsection("excitation_z_real");
+    prm.enter_subsection("excitation_z real");
     temporary_function.declare_parameters(prm);
     prm.leave_subsection();
 
-    prm.enter_subsection("excitation_z_imag");
+    prm.enter_subsection("excitation_z imag");
     temporary_function.declare_parameters(prm);
     prm.leave_subsection();
   }
@@ -1746,69 +1746,69 @@ namespace BoundaryConditions
     for (const auto boundary_id : boundary_ids)
       {
         AssertThrow(this->type.find(boundary_id) == this->type.end(),
-                    TimeHarmonicMaxwellBoundaryConditions(boundary_id));
+                    TimeHarmonicMaxwellDuplicated(boundary_id));
 
         // Allocate the imposed electromagnetic field functions object for every
         // boundary condition
         imposed_electromagnetic_fields[boundary_id] = std::make_shared<
           TimeHarmonicMaxwellImposedElectromagneticField<dim>>();
 
-        prm.enter_subsection("e_x_real");
+        prm.enter_subsection("E_x real");
         imposed_electromagnetic_fields[boundary_id]->e_x_real.parse_parameters(
           prm);
         prm.leave_subsection();
 
-        prm.enter_subsection("e_y_real");
+        prm.enter_subsection("E_y real");
         imposed_electromagnetic_fields[boundary_id]->e_y_real.parse_parameters(
           prm);
         prm.leave_subsection();
 
-        prm.enter_subsection("e_z_real");
+        prm.enter_subsection("E_z real");
         imposed_electromagnetic_fields[boundary_id]->e_z_real.parse_parameters(
           prm);
         prm.leave_subsection();
 
-        prm.enter_subsection("e_x_imag");
+        prm.enter_subsection("E_x imag");
         imposed_electromagnetic_fields[boundary_id]->e_x_imag.parse_parameters(
           prm);
         prm.leave_subsection();
 
-        prm.enter_subsection("e_y_imag");
+        prm.enter_subsection("E_y imag");
         imposed_electromagnetic_fields[boundary_id]->e_y_imag.parse_parameters(
           prm);
         prm.leave_subsection();
 
-        prm.enter_subsection("e_z_imag");
+        prm.enter_subsection("E_z imag");
         imposed_electromagnetic_fields[boundary_id]->e_z_imag.parse_parameters(
           prm);
         prm.leave_subsection();
 
-        prm.enter_subsection("h_x_real");
+        prm.enter_subsection("H_x real");
         imposed_electromagnetic_fields[boundary_id]->h_x_real.parse_parameters(
           prm);
         prm.leave_subsection();
 
-        prm.enter_subsection("h_y_real");
+        prm.enter_subsection("H_y real");
         imposed_electromagnetic_fields[boundary_id]->h_y_real.parse_parameters(
           prm);
         prm.leave_subsection();
 
-        prm.enter_subsection("h_z_real");
+        prm.enter_subsection("H_z real");
         imposed_electromagnetic_fields[boundary_id]->h_z_real.parse_parameters(
           prm);
         prm.leave_subsection();
 
-        prm.enter_subsection("h_x_imag");
+        prm.enter_subsection("H_x imag");
         imposed_electromagnetic_fields[boundary_id]->h_x_imag.parse_parameters(
           prm);
         prm.leave_subsection();
 
-        prm.enter_subsection("h_y_imag");
+        prm.enter_subsection("H_y imag");
         imposed_electromagnetic_fields[boundary_id]->h_y_imag.parse_parameters(
           prm);
         prm.leave_subsection();
 
-        prm.enter_subsection("h_z_imag");
+        prm.enter_subsection("H_z imag");
         imposed_electromagnetic_fields[boundary_id]->h_z_imag.parse_parameters(
           prm);
         prm.leave_subsection();
@@ -1816,51 +1816,51 @@ namespace BoundaryConditions
         /// The following functions are parsed individually because they will be
         /// used for robin boundary conditions and will not be applied on the
         /// global solution vector.
-        prm.enter_subsection("surface_impedance_real");
+        prm.enter_subsection("surface impedance real");
         this->surface_impedance_real[boundary_id] =
-          std::make_shared<FunctionParser<dim>>();
+          std::make_shared<Functions::ParsedFunction<dim>>();
         this->surface_impedance_real[boundary_id]->parse_parameters(prm);
         prm.leave_subsection();
 
-        prm.enter_subsection("surface_impedance_imag");
+        prm.enter_subsection("surface impedance imag");
         this->surface_impedance_imag[boundary_id] =
-          std::make_shared<FunctionParser<dim>>();
+          std::make_shared<Functions::ParsedFunction<dim>>();
         this->surface_impedance_imag[boundary_id]->parse_parameters(prm);
         prm.leave_subsection();
 
-        prm.enter_subsection("excitation_x_real");
+        prm.enter_subsection("excitation_x real");
         this->excitation_x_real[boundary_id] =
-          std::make_shared<FunctionParser<dim>>();
+          std::make_shared<Functions::ParsedFunction<dim>>();
         this->excitation_x_real[boundary_id]->parse_parameters(prm);
         prm.leave_subsection();
 
-        prm.enter_subsection("excitation_z_real");
-        this->excitation_z_real[boundary_id] =
-          std::make_shared<FunctionParser<dim>>();
-        this->excitation_z_real[boundary_id]->parse_parameters(prm);
-        prm.leave_subsection();
-
-        prm.enter_subsection("excitation_y_real");
+        prm.enter_subsection("excitation_y real");
         this->excitation_y_real[boundary_id] =
-          std::make_shared<FunctionParser<dim>>();
+          std::make_shared<Functions::ParsedFunction<dim>>();
         this->excitation_y_real[boundary_id]->parse_parameters(prm);
         prm.leave_subsection();
 
-        prm.enter_subsection("excitation_x_imag");
+        prm.enter_subsection("excitation_z real");
+        this->excitation_z_real[boundary_id] =
+          std::make_shared<Functions::ParsedFunction<dim>>();
+        this->excitation_z_real[boundary_id]->parse_parameters(prm);
+        prm.leave_subsection();
+
+        prm.enter_subsection("excitation_x imag");
         this->excitation_x_imag[boundary_id] =
-          std::make_shared<FunctionParser<dim>>();
+          std::make_shared<Functions::ParsedFunction<dim>>();
         this->excitation_x_imag[boundary_id]->parse_parameters(prm);
         prm.leave_subsection();
 
-        prm.enter_subsection("excitation_y_imag");
+        prm.enter_subsection("excitation_y imag");
         this->excitation_y_imag[boundary_id] =
-          std::make_shared<FunctionParser<dim>>();
+          std::make_shared<Functions::ParsedFunction<dim>>();
         this->excitation_y_imag[boundary_id]->parse_parameters(prm);
         prm.leave_subsection();
 
-        prm.enter_subsection("excitation_z_imag");
+        prm.enter_subsection("excitation_z imag");
         this->excitation_z_imag[boundary_id] =
-          std::make_shared<FunctionParser<dim>>();
+          std::make_shared<Functions::ParsedFunction<dim>>();
         this->excitation_z_imag[boundary_id]->parse_parameters(prm);
         prm.leave_subsection();
 
@@ -1874,24 +1874,24 @@ namespace BoundaryConditions
           {
             this->type[boundary_id] = BoundaryType::pmc;
           }
-        else if (op == "silver_muller")
+        else if (op == "silver muller")
           {
             this->type[boundary_id] = BoundaryType::silver_muller;
           }
-        else if (op == "imposed_electric_field")
+        else if (op == "imposed electric field")
           {
             this->type[boundary_id] = BoundaryType::imposed_electric_field;
           }
-        else if (op == "imposed_magnetic_field")
+        else if (op == "imposed magnetic field")
           {
             this->type[boundary_id] = BoundaryType::imposed_magnetic_field;
           }
-        else if (op == "imposed_electromagnetic_excitation")
+        else if (op == "imposed electromagnetic excitation")
           {
             this->type[boundary_id] =
               BoundaryType::imposed_electromagnetic_excitation;
           }
-        else if (op == "imperfect_conductor")
+        else if (op == "imperfect conductor")
           {
             this->type[boundary_id] = BoundaryType::imperfect_conductor;
           }
