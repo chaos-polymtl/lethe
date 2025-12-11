@@ -56,7 +56,8 @@ the following command updates the golden files:
 The second option to run the `update-golden.tl` script is to run it manually using the following command:
 
 .. code-block:: shell
-    txr ../lethe/contrib/utilities/update-golden.tl  -v . ../lethe
+
+   txr ../lethe/contrib/utilities/update-golden.tl  -v . ../lethe
 
 assuming that TXR is installed in `usr/bin` on your machine, that you are in your `build` directory and that you have
 followed the installation instructions.
