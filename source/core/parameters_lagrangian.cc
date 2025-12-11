@@ -1445,13 +1445,12 @@ namespace Parameters
       // Normal
       Tensor<1, dim> wall_normal(
         value_string_to_tensor<dim>(prm.get("normal vector")));
-      wall_normal = wall_normal/wall_normal.norm();
+      wall_normal = wall_normal / wall_normal.norm();
       this->floating_walls_normal_vectors.push_back(wall_normal);
 
       // Time
       time_start.push_back(prm.get_double("start time"));
       time_end.push_back(prm.get_double("end time"));
-
     }
 
     void
