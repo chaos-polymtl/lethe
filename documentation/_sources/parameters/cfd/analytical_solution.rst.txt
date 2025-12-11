@@ -31,44 +31,29 @@ If the problem being simulated has a known analytical solution, or an exact solu
 
 * The ``enable`` parameter is set to true if the problem has an analytical solution. This enables the calculation of the analytical solution and the :math:`L^2` norm of the error.
 
-The :math:`L^2` norm of the error is calculated as
-
-.. math::
- L^2 = \int_\Omega (u-u_a)^2 \mathrm{d} \Omega
-
-where :math:`u` is the numerical solution and  :math:`u_a` is the analytical solution.
-
-
+  The :math:`L^2` norm of the error is calculated as
+  
+  .. math::
+   L^2 = \int_\Omega (u-u_a)^2 \mathrm{d} \Omega
+  
+  where :math:`u` is the numerical solution and  :math:`u_a` is the analytical solution.
 
 * The ``verbosity`` parameter enables printing the L2 error after each mesh refinement if it is set to ``verbose`` and if ``enable`` is ``true``.
 
 * The ``filename`` parameter sets the file name to output the L2 error norm if ``enable`` is ``true``.
 
-If there is an analytical solution for velocity and pressure, enter the ``uvwp`` subsection.
+Analytical solutions for all physics are supported. They are all declared in their own subsection:
 
-* The ``Function expression`` parameter sets the expression for the analytical solution in regards to :math:`u`, :math:`v` and :math:`p` for a 2D simulation and to :math:`u`, :math:`v`, :math:`w` and :math:`p` for a 3D simulation.
-
-If there is an analytical solution for the fluid's temperature, enter the ``temperature`` subsection.
-
-* The ``Function expression`` parameter sets the expression of the temperature.
-
-If there is an analytical solution for a tracer, enter the ``tracer`` subsection.
-
-* The ``Function expression`` parameter sets the expression of the tracer.
-
-If there is an analytical solution for the VOF physics, enter the ``VOF`` subsection.
-
-* The ``Function expression`` parameter sets the expression of the VOF indicator.
-
-If there is an analytical solution for the Cahn-Hilliard physics, enter the ``cahn hilliard`` subsection.
-
-* The ``Function expression`` parameter sets the expression of the phase order parameter and the chemical potential.
+* ``uvwp``: Analytical solution for the velocity and pressure fields obtained from fluid dynamics. The expression must provide :math:`u`, :math:`v` and :math:`p` for a 2D simulation and :math:`u`, :math:`v`, :math:`w` and :math:`p` for a 3D simulation.
+* ``temperature``: Analytical solution for temperature obtained with the heat transfer physics.
+* ``tracer``: Analytical solution for the tracer physics.
+* ``VOF``: Analytical solution for the VOF field.
+* ``cahn hilliard``: Analytical solution for the phase order and the chemical potential of the Cahn-Hilliard physics.
 
 .. note:: 
     The variables *x*, *y*, *z* (3D) and *t* (time-dependent) can be used in the function expressions.
 
-In all four last subsections, you can add a ``Function constants`` parameter that will act as a constant in the ``Function expression``.
-
+In all subsections, you can add a ``Function constants`` parameter that will act as a constant in the ``Function expression``.
 
 Ex:
 

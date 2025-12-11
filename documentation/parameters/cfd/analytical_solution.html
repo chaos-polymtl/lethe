@@ -482,44 +482,31 @@
 end
 </pre></div>
 </div>
-<ul class="simple">
-<li><p>The <code class="docutils literal notranslate"><span class="pre">enable</span></code> parameter is set to true if the problem has an analytical solution. This enables the calculation of the analytical solution and the <span class="math notranslate nohighlight">\(L^2\)</span> norm of the error.</p></li>
-</ul>
+<ul>
+<li><p>The <code class="docutils literal notranslate"><span class="pre">enable</span></code> parameter is set to true if the problem has an analytical solution. This enables the calculation of the analytical solution and the <span class="math notranslate nohighlight">\(L^2\)</span> norm of the error.</p>
 <p>The <span class="math notranslate nohighlight">\(L^2\)</span> norm of the error is calculated as</p>
 <div class="math-wrapper docutils container">
 <div class="math notranslate nohighlight">
 \[L^2 = \int_\Omega (u-u_a)^2 \mathrm{d} \Omega\]</div>
 </div>
 <p>where <span class="math notranslate nohighlight">\(u\)</span> is the numerical solution and  <span class="math notranslate nohighlight">\(u_a\)</span> is the analytical solution.</p>
-<ul class="simple">
+</li>
 <li><p>The <code class="docutils literal notranslate"><span class="pre">verbosity</span></code> parameter enables printing the L2 error after each mesh refinement if it is set to <code class="docutils literal notranslate"><span class="pre">verbose</span></code> and if <code class="docutils literal notranslate"><span class="pre">enable</span></code> is <code class="docutils literal notranslate"><span class="pre">true</span></code>.</p></li>
 <li><p>The <code class="docutils literal notranslate"><span class="pre">filename</span></code> parameter sets the file name to output the L2 error norm if <code class="docutils literal notranslate"><span class="pre">enable</span></code> is <code class="docutils literal notranslate"><span class="pre">true</span></code>.</p></li>
 </ul>
-<p>If there is an analytical solution for velocity and pressure, enter the <code class="docutils literal notranslate"><span class="pre">uvwp</span></code> subsection.</p>
+<p>Analytical solutions for all physics are supported. They are all declared in their own subsection:</p>
 <ul class="simple">
-<li><p>The <code class="docutils literal notranslate"><span class="pre">Function</span> <span class="pre">expression</span></code> parameter sets the expression for the analytical solution in regards to <span class="math notranslate nohighlight">\(u\)</span>, <span class="math notranslate nohighlight">\(v\)</span> and <span class="math notranslate nohighlight">\(p\)</span> for a 2D simulation and to <span class="math notranslate nohighlight">\(u\)</span>, <span class="math notranslate nohighlight">\(v\)</span>, <span class="math notranslate nohighlight">\(w\)</span> and <span class="math notranslate nohighlight">\(p\)</span> for a 3D simulation.</p></li>
-</ul>
-<p>If there is an analytical solution for the fluid’s temperature, enter the <code class="docutils literal notranslate"><span class="pre">temperature</span></code> subsection.</p>
-<ul class="simple">
-<li><p>The <code class="docutils literal notranslate"><span class="pre">Function</span> <span class="pre">expression</span></code> parameter sets the expression of the temperature.</p></li>
-</ul>
-<p>If there is an analytical solution for a tracer, enter the <code class="docutils literal notranslate"><span class="pre">tracer</span></code> subsection.</p>
-<ul class="simple">
-<li><p>The <code class="docutils literal notranslate"><span class="pre">Function</span> <span class="pre">expression</span></code> parameter sets the expression of the tracer.</p></li>
-</ul>
-<p>If there is an analytical solution for the VOF physics, enter the <code class="docutils literal notranslate"><span class="pre">VOF</span></code> subsection.</p>
-<ul class="simple">
-<li><p>The <code class="docutils literal notranslate"><span class="pre">Function</span> <span class="pre">expression</span></code> parameter sets the expression of the VOF indicator.</p></li>
-</ul>
-<p>If there is an analytical solution for the Cahn-Hilliard physics, enter the <code class="docutils literal notranslate"><span class="pre">cahn</span> <span class="pre">hilliard</span></code> subsection.</p>
-<ul class="simple">
-<li><p>The <code class="docutils literal notranslate"><span class="pre">Function</span> <span class="pre">expression</span></code> parameter sets the expression of the phase order parameter and the chemical potential.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">uvwp</span></code>: Analytical solution for the velocity and pressure fields obtained from fluid dynamics. The expression must provide <span class="math notranslate nohighlight">\(u\)</span>, <span class="math notranslate nohighlight">\(v\)</span> and <span class="math notranslate nohighlight">\(p\)</span> for a 2D simulation and <span class="math notranslate nohighlight">\(u\)</span>, <span class="math notranslate nohighlight">\(v\)</span>, <span class="math notranslate nohighlight">\(w\)</span> and <span class="math notranslate nohighlight">\(p\)</span> for a 3D simulation.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">temperature</span></code>: Analytical solution for temperature obtained with the heat transfer physics.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">tracer</span></code>: Analytical solution for the tracer physics.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">VOF</span></code>: Analytical solution for the VOF field.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">cahn</span> <span class="pre">hilliard</span></code>: Analytical solution for the phase order and the chemical potential of the Cahn-Hilliard physics.</p></li>
 </ul>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
 <p>The variables <em>x</em>, <em>y</em>, <em>z</em> (3D) and <em>t</em> (time-dependent) can be used in the function expressions.</p>
 </div>
-<p>In all four last subsections, you can add a <code class="docutils literal notranslate"><span class="pre">Function</span> <span class="pre">constants</span></code> parameter that will act as a constant in the <code class="docutils literal notranslate"><span class="pre">Function</span> <span class="pre">expression</span></code>.</p>
+<p>In all subsections, you can add a <code class="docutils literal notranslate"><span class="pre">Function</span> <span class="pre">constants</span></code> parameter that will act as a constant in the <code class="docutils literal notranslate"><span class="pre">Function</span> <span class="pre">expression</span></code>.</p>
 <p>Ex:</p>
 <div class="highlight-text notranslate"><div class="highlight"><pre><span></span>subsection analytical solution
  set enable                = true
