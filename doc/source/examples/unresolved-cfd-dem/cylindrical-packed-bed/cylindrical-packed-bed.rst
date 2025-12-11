@@ -156,16 +156,8 @@ We need to pack the particles in the middle of the cylinder. Therefore, we creat
     subsection floating walls
       set number of floating walls = 1
       subsection wall 0
-        subsection point on wall
-          set x = -0.01
-          set y = 0
-          set z = 0
-        end
-        subsection normal vector
-          set nx = 1
-          set ny = 0
-          set nz = 0
-        end
+        set point on wall = -0.01, 0., 0.
+        set normal vector = 1., 0., 0.
         set start time = 0
         set end time   = 2
       end

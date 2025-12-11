@@ -204,14 +204,8 @@ It is located at the bottom of the hopper, before the channel.
     subsection floating walls
       set number of floating walls = 1
       subsection wall 0
-        subsection point on wall
-          set x = 0
-          set y = 0
-        end
-        subsection normal vector
-          set nx = 0
-          set ny = 1
-        end
+        set point on wall = 0., 0.
+        set normal vector = 0., 1.
         set start time = 0
         set end time   = 4.5
       end

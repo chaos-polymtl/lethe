@@ -177,30 +177,14 @@ At the beginning of the simulation, floating walls are placed vertically at both
    subsection floating walls
      set number of floating walls = 2
      subsection wall 0
-       subsection point on wall
-         set x = -0.45
-         set y = 0
-         set z = 0
-       end
-       subsection normal vector
-         set nx = 1
-         set ny = 0
-         set nz = 0
-       end
+       set point on wall = -0.45, 0., 0.
+       set normal vector = 1., 0., 0.
        set start time = 0
        set end time   = 0.75
      end
      subsection wall 1
-       subsection point on wall
-         set x = 0.45
-         set y = 0
-         set z = 0
-       end
-       subsection normal vector
-         set nx = 1
-         set ny = 0
-         set nz = 0
-       end
+       set point on wall = 0.45, 0., 0.
+       set normal vector = 1., 0., 0.
        set start time = 0
        set end time   = 0.75
      end
