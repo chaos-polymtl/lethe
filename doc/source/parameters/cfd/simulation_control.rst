@@ -192,7 +192,7 @@ Paraview output file parameters
 * ``output times``: allows to specify specific times for the output of ``.pvd`` / ``.vtu`` files. This parameter is only used when ``set output control = time``. As an example, one can output files only at 5 seconds, by setting ``set output times = 5`` or at multiple specific times separating the values with commas: ``set output times = 5, 14``.
 
   .. warning::
-	  Since it is possible that the times specified in the interval or in specific output times do not correspond to the time of specific iterations, Lethe will always write the Paraview files before and after the time specified. 
+	  Since it is possible that the times specified in the interval or in specific output times do not correspond to the time of specific iterations, Lethe will always write the Paraview files before and after the time specified. Furthermore, it is **not possible** to use both ``output times`` and ``output time frequency`` at the same time. For the ``output times`` to work, the value of ``output time frequency`` must be set to -1, which is the default value for the parameter. 
 
 * ``output time interval``: Only writes the ``.pvd`` / ``.vtu`` files when the simulation time is within the closed interval defined by the ``output time interval``. Default values are 0s and 1.7e308s. Used for both ``iteration`` and ``time`` output control.
 
