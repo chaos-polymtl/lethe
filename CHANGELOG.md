@@ -25,3 +25,9 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/).
 ### Fixed
 
 - MAJOR/MINOR/PATCH Description (#PR).
+
+## [Master] - 2025/12/10
+
+### Added
+
+- MINOR This PR adds the possibility to change the diffusion factor of the VOF DCDD stabilization in the prm file. [#1847](https://github.com/chaos-polymtl/lethe/pull/1847)

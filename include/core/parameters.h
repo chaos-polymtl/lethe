@@ -740,6 +740,9 @@ namespace Parameters
     /// fraction should be assembled (@p true) or not (@p false).
     bool vof_dcdd_stabilization;
 
+    // Diffusion factor scaling the DCDD stabilization term in the VOF equation
+    double dcdd_diffusion_coeff;
+
     // Pressure scaling factor used to facilitate the linear solving when
     // pressure and velocity have very different scales
     double pressure_scaling_factor;

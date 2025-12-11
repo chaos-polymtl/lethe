@@ -207,7 +207,8 @@ VolumeOfFluid<dim>::setup_assemblers()
       if (this->simulation_parameters.stabilization.vof_dcdd_stabilization)
         this->assemblers.emplace_back(
           std::make_shared<VOFAssemblerDCDDStabilization<dim>>(
-            this->simulation_control));
+            this->simulation_control,
+            this->simulation_parameters.stabilization));
     }
 }
 

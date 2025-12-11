@@ -15,6 +15,7 @@ To solve the Navier-Stokes equations (and other), Lethe uses stabilization techn
     # DCDD stabilization
     set heat transfer dcdd stabilization = false
     set vof dcdd stabilization           = true
+    set vof dcdd diffusion factor        = 0.5
 
     # Pressure scaling factor
     set pressure scaling factor          = 1
@@ -37,6 +38,8 @@ There are three choices of stabilization strategy:
 * ``heat transfer dcdd stabilization`` applies the Discontinuity-Capturing Directional Dissipation (DCDD) stabilization term on the heat transfer equation. For more information, see `Tezduyar, T. E. (2003) <https://doi.org/10.1002/fld.505>`_\.
 
 * ``vof dcdd stabilization`` applies the DCDD stabilization term on the :doc:`VOF equation<../../theory/multiphase/cfd/vof>`. For more information, see `Tezduyar, T. E. (2003) <https://doi.org/10.1002/fld.505>`_\.
+
+* ``vof dcdd diffusion factor`` is the diffusion coefficient applied to the DCDD stabilization term in the :doc:`VOF equation<../../theory/multiphase/cfd/vof>`.
 
 * ``pressure scaling factor`` used as a multiplier for the pressure in the momentum equation; the inverse of the factor is applied to the pressure after solving. It helps the convergence of the linear solver by decreasing the condition number for cases where pressure and velocity have very different scales.
 
