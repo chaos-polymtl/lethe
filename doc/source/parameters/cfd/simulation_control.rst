@@ -119,15 +119,15 @@ Steady-state simulation parameters
 
 * ``number mesh adapt``: number of mesh adaptations during the steady-state simulation.
 
-* ``stop tolerance``: tolerance at which the adjoint time stepping steady-state simulation (``method = steady_bdf``) stops. The adjoint time stepping will stop when the :math:`\mathcal{L}_2` norm of the initial residual is lower than ``stop tolerance`` at the beggining of a time step.
+* ``stop tolerance``: tolerance at which the adjoint time stepping steady-state simulation (``method = steady_bdf``) stops. The adjoint time stepping will stop when the :math:`\mathcal{L}_2` norm of the initial residual is lower than ``stop tolerance`` at the beginning of a time step.
 
 ----------------------
 BDF scheme parameters
 ----------------------
 
 * ``bdf startup method``: scheme used to start a high order BDF scheme (2nd order and above). The available options are: 
-	* ``multiple step bdf``:  A lower order BDF scheme is used to start the simulation. For example, in the case of ``bdf3``, the first step is done using ``bdf1``, the second with ``bdf2```and the third and onward are done with ``bdf3```.
-	* ``initial solution``: In this case, a time-dependent initial solution is provided and that initial solution is used to start the time stepping. This is mostly useful when using the method of manufactured solution to establish the formal accuracy of the BDF time stepping schemes. 
+	* ``multiple step bdf``:  A lower order BDF scheme is used to start the simulation. For example, in the case of ``bdf3``, the first step is done using ``bdf1``, the second with ``bdf2`` and the third and onward are done with ``bdf3``.
+	* ``initial solution``: In this case, a time-dependent initial solution is provided and that initial solution is used to start the time stepping. This is mostly useful when using the method of manufactured solutions to establish the formal accuracy of the BDF time stepping schemes. 
 
 * ``startup time scaling``: scaling factor used in the iterations necessary to startup the BDF schemes.
 
@@ -144,14 +144,14 @@ Transient simulations parameters
 
 * ``adapt``: controls if adaptive time-stepping is enabled. If set to ``true``, the time-step will evolve to ensure that the ``max cfl`` value is reached.
 
-* ``override time step on restart``: controls if the time step should be overridden by the set value upon restart. If set to ``true``, the time-step will be set to the value of ``time step`` and the time-step value recorded at the last checkpoint will be overrriden at the start of the simulation.
+* ``override time step on restart``: controls if the time step should be overridden by the set value upon restart. If set to ``true``, the time-step will be set to the value of ``time step`` and the time-step value recorded at the last checkpoint will be overridden at the start of the simulation.
 
-* ``max cfl``: maximum value of the :math:`\text{CFL}` condition that can be reached during the simulation. This parameter is only used when ``set adapt = true``. The :math:`N_{\mathrm{CFL}}` is calculated as:
+* ``max cfl``: maximum value of the :math:`\text{CFL}` condition number that can be reached during the simulation. This parameter is only used when ``set adapt = true``. The :math:`N_{\mathrm{CFL}}` is calculated as:
 
   .. math::
     N_{\mathrm{CFL}} = \max_q \frac{|\mathbf{u}_q| \Delta t} {h}
 
-  where :math:`q` the Gauss points and :math:`|\mathbf{u}_q|` is the velocity at the Gauss points. Essentially, the maximum CFL is the max of the CFl evaluated at every Gauss point in the mesh.
+  where :math:`q` the Gauss points and :math:`|\mathbf{u}_q|` is the velocity at the Gauss points. Essentially, the maximum CFL is the max of the CFL evaluated at every Gauss point in the mesh.
 
 * ``max time step``: maximum time step value that can be reached during the simulation. This parameter is only used when ``set adapt = true``. It is useful when the problem of interest has an additional time step constraint such as the capillary time step limit described in :doc:`../../examples/multiphysics/capillary-wave/capillary-wave`.
 
@@ -176,7 +176,7 @@ Paraview output file parameters
 * ``output name``: prefix for the Paraview output files (``.pvd`` / ``.vtu`` / ``.pvtu``)
 
   .. important::
-	  Lethe saves the simulation results in the Paraview format. For every iteration, one or more ``.vtu`` are produced, which are indexed by a single ``.pvtu`` file. A single ``.pvd`` files linking all iterations together is also generated. Use the open-source software `Paraview <https://www.paraview.org/>`_ to visualize them.
+	  Lethe saves the simulation results in the Paraview format. For every iteration, one or more ``.vtu`` are produced, which are indexed by a single ``.pvtu`` file. A single ``.pvd`` file linking all iterations together is also generated. Use the open-source software `Paraview <https://www.paraview.org/>`_ to visualize them.
 
 * ``output control``: control for the output of the simulation results. The available options are: 
 	* ``iteration``: results will be outputted at constant iteration frequency. 
@@ -204,7 +204,7 @@ Paraview output file parameters
 	  The value for this parameter should always be a compromise between keeping a low number of files but preventing excessive MPI communications. We have found that the default value of 1 does not have a significant impact except in very large simulations.
 
 	  .. warning::
-	  	As soon as the size of the output ``.vtu`` file reaches 3 Gb, it is preferable to start splitting them into multiple smaller files as this may lead to corrupted files on some file systems.
+	  	As soon as the size of the output ``.vtu`` files reaches 3 Gb, it is preferable to start splitting them into multiple smaller files as this may lead to corrupted files on some file systems.
 
 * ``output boundaries``: controls if the boundaries of the domain are written to a file. This will write additional ``.vtu`` files made of the contour of the domain. 
 

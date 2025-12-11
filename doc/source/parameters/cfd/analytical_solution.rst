@@ -42,9 +42,9 @@ If the problem being simulated has a known analytical solution, or an exact solu
 
 * The ``filename`` parameter sets the file name to output the L2 error norm if ``enable`` is ``true``.
 
-Analytical solutions for all physics is supported. They are all declared in their own subsection:
+Analytical solutions for all physics are supported. They are all declared in their own subsection:
 
-* ``uvwp``: Analytical solution for the velocity and pressure field obtained from fluid dynamics. The expression must provide :math:`u`, :math:`v` and :math:`p` for a 2D simulation and to :math:`u`, :math:`v`, :math:`w` and :math:`p` for a 3D simulation.
+* ``uvwp``: Analytical solution for the velocity and pressure fields obtained from fluid dynamics. The expression must provide :math:`u`, :math:`v` and :math:`p` for a 2D simulation and :math:`u`, :math:`v`, :math:`w` and :math:`p` for a 3D simulation.
 * ``temperature``: Analytical solution for temperature obtained with the heat transfer physics.
 * ``tracer``: Analytical solution for the tracer physics.
 * ``VOF``: Analytical solution for the VOF field.
