@@ -109,7 +109,7 @@ and `lethe-core` is a transitive dependency of `lethe-solvers`.
 
 ## Dependencies between Lethe's libraries
 
-Lethe consists of five libraries: core, DEM, solvers and FEM-DEM.
+Lethe consists of four libraries: core, DEM, solvers and FEM-DEM.
 They all depend on deal.II (and Boost), but they also depend on each
 other, as follows:
 
