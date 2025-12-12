@@ -26,6 +26,7 @@ The mortar section is used when simulating rotor-stator geometries, in which the
     end
     set penalty factor      = 1.0
     set oversampling factor = 2
+    set radius tolerance    = 1e-4
     set verbosity           = verbose
   end
 
@@ -54,6 +55,8 @@ The mortar section is used when simulating rotor-stator geometries, in which the
 * The ``penalty factor`` is used for the weak imposition of the mortar coupling at the interface. This parameter is akin to the symmetric interior penalty factor in SIPG (Symmetric Interior penalty Galerkin Method) [#larson2013]_.
 
 * The ``oversampling factor`` is used to increase the number of quadrature points. This feature is used to better approximate the weak imposition of the interface coupling.
+
+* The ``radius tolerance`` is the tolerance adopted in the computation of the rotor-stator interface radius. 
 
 * When enabling ``verbosity`` (``set verbosity = verbose``), the rotor rotation information is printed at every iteration.
 
