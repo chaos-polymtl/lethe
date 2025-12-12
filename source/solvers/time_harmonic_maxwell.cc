@@ -390,8 +390,9 @@ TimeHarmonicMaxwell<dim>::gather_tables()
 template <int dim>
 void
 TimeHarmonicMaxwell<dim>::compute_kelly(
-  [[maybe_unused]] const std::pair<const Variable, Parameters::MultipleAdaptationParameters>
-                         &ivar,
+  [[maybe_unused]] const std::pair<const Variable,
+                                   Parameters::MultipleAdaptationParameters>
+                                         &ivar,
   [[maybe_unused]] dealii::Vector<float> &estimated_error_per_cell)
 {
   // TODO
@@ -401,8 +402,8 @@ template <int dim>
 void
 TimeHarmonicMaxwell<dim>::compute_energy_norm(
   [[maybe_unused]] const std::pair<const Variable,
-                                    Parameters::MultipleAdaptationParameters>
-    &ivar,
+                                   Parameters::MultipleAdaptationParameters>
+                                         &ivar,
   [[maybe_unused]] dealii::Vector<float> &estimated_error_per_cell)
 {
   // TODO
