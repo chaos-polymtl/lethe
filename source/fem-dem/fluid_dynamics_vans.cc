@@ -600,8 +600,6 @@ FluidDynamicsVANS<dim>::assemble_system_rhs()
 
   if (this->cfd_dem_simulation_parameters.cfd_dem.project_particle_forces)
     {
-      TimerOutput::Scope t(this->computing_timer,
-                           "Calculate particle-fluid projection");
       scratch_data.enable_particle_field_projection(
         *this->cell_quadrature,
         *this->mapping,
@@ -612,6 +610,8 @@ FluidDynamicsVANS<dim>::assemble_system_rhs()
       if (this->cfd_dem_simulation_parameters.cfd_dem.drag_coupling ==
           Parameters::DragCoupling::fully_implicit)
         {
+          TimerOutput::Scope t(this->computing_timer,
+                           "Calculate particle-fluid projection");
           this->particle_projector.calculate_particle_fluid_forces_projection(
             this->cfd_dem_simulation_parameters.cfd_dem,
             *this->dof_handler,
