@@ -5,6 +5,8 @@
 
 #include <dem/distributions.h>
 
+#include <numbers>
+
 NormalDistribution::NormalDistribution(const double       &d_average,
                                        const double       &d_standard_deviation,
                                        const unsigned int &prn_seed,
