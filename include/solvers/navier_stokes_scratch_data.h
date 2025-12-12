@@ -197,7 +197,8 @@ public:
         sd.fe_values.get_mapping(),
         sd.fe_values_particle_drag->get_fe(),
         sd.fe_values_particle_two_way_coupling_force->get_fe(),
-        sd.fe_values_particle_velocity->get_fe());
+        sd.fe_values_particle_velocity->get_fe(),
+        sd.fe_values_particle_momentum_transfer_coefficient->get_fe());
 
     gather_hessian = sd.gather_hessian;
   }
@@ -612,7 +613,11 @@ public:
    * @param fe_particle_two_way_coupling_force_proj FiniteElement associated with the projected
    * particle two-way coupling force
    *
-   * @param fe_particle_velocity_proj FiniteElement associated with the projected particle velocity
+   * @param fe_particle_velocity_proj FiniteElement associated with the projected particle
+   * velocity
+   *
+   * @param fe_particle_velocity_proj FiniteElement associated with the projected particle
+   * momentum transfer coefficient
    */
   void
   enable_particle_field_projection(
@@ -620,7 +625,8 @@ public:
     const Mapping<dim>       &mapping,
     const FiniteElement<dim> &fe_particle_drag_proj,
     const FiniteElement<dim> &fe_particle_two_way_coupling_force_proj,
-    const FiniteElement<dim> &fe_particle_velocity_proj);
+    const FiniteElement<dim> &fe_particle_velocity_proj,
+    const FiniteElement<dim> &fe_particle_momentum_transfer_coefficient);
 
   /**
    *  @brief Reinitialize the content of the scratch for the void fraction
@@ -1337,10 +1343,13 @@ public:
     const typename DoFHandler<dim>::active_cell_iterator
       &particle_two_way_coupling_force_cell,
     const typename DoFHandler<dim>::active_cell_iterator
-                                   &particle_velocity_cell,
+      &particle_velocity_cell,
+    const typename DoFHandler<dim>::active_cell_iterator
+                                   &particle_momentum_transfer_coefficient_cell,
     const VectorType               &particle_fluid_drag,
     const VectorType               &particle_fluid_force_two_way_coupling,
     const VectorType               &particle_velocity,
+    const VectorType               &particle_momentum_transfer_coefficient,
     const Parameters::DragCoupling &drag_coupling)
   {
     constexpr FEValuesExtractors::Vector vector_index(0);
@@ -1364,6 +1373,13 @@ public:
         this->fe_values_particle_velocity->reinit(particle_velocity_cell);
         (*this->fe_values_particle_velocity)[vector_index].get_function_values(
           particle_velocity, this->particle_velocity_values);
+
+        this->fe_values_particle_momentum_transfer_coefficient->reinit(
+          particle_momentum_transfer_coefficient_cell);
+        (*this->fe_values_particle_momentum_transfer_coefficient)
+          .get_function_values(
+            particle_momentum_transfer_coefficient,
+            this->particle_momentum_transfer_coefficient_values);
       }
   }
 
@@ -1511,12 +1527,15 @@ public:
   std::shared_ptr<FEValues<dim>> fe_values_particle_drag;
   std::shared_ptr<FEValues<dim>> fe_values_particle_two_way_coupling_force;
   std::shared_ptr<FEValues<dim>> fe_values_particle_velocity;
+  std::shared_ptr<FEValues<dim>>
+    fe_values_particle_momentum_transfer_coefficient;
 
   bool                        gather_particle_field_project;
   std::vector<Tensor<1, dim>> particle_velocity;
   std::vector<Tensor<1, dim>> particle_velocity_values;
   std::vector<Tensor<1, dim>> particle_drag_values;
   std::vector<Tensor<1, dim>> particle_two_way_coupling_force_values;
+  std::vector<double>         particle_momentum_transfer_coefficient_values;
   Tensor<1, dim>              average_particle_velocity;
   std::vector<Tensor<1, dim>> fluid_velocity_at_particle_location;
   std::vector<Tensor<1, dim>>
