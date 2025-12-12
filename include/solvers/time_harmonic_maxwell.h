@@ -418,7 +418,7 @@ public:
    * @param[in] display_precision Number of outputted digits.
    */
   void
-  output_newton_update_norms(const unsigned int display_precision) override
+  output_newton_update_norms([[maybe_unused]] const unsigned int display_precision) override
   {
     AssertThrow(
       false,
