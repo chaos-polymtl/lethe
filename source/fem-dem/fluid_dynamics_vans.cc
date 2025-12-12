@@ -611,7 +611,7 @@ FluidDynamicsVANS<dim>::assemble_system_rhs()
           Parameters::DragCoupling::fully_implicit)
         {
           TimerOutput::Scope t(this->computing_timer,
-                           "Calculate particle-fluid projection");
+                               "Calculate particle-fluid projection");
           this->particle_projector.calculate_particle_fluid_forces_projection(
             this->cfd_dem_simulation_parameters.cfd_dem,
             *this->dof_handler,
