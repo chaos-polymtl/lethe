@@ -159,10 +159,10 @@ subsection initial conditions
   end
 end
 
-
 #---------------------------------------------------
 # Analytical Solution
 #---------------------------------------------------
+
 subsection analytical solution
   set enable    = true
   set verbosity = verbose
