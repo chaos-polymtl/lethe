@@ -16,19 +16,11 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
 - MINOR The documentation for the simulation control and the analytical solution was improved. [#1843](https://github.com/chaos-polymtl/lethe/pull/1843)
 
-### Removed
-
-- MAJOR Officially deprecate the RPT applications and remove them. The applications are now available at https://github.com/chaos-polymtl/lethe-rpt. This significantly decreases the size of the repository and the length of the CI procedure. [#1851](https://github.com/chaos-polymtl/lethe/pull/1851) 
-
 ## [Master] - 2025/12/10
 
 ### Added
 
 - MINOR This PR adds the possibility to change the diffusion factor of the VOF DCDD stabilization in the prm file. [#1847](https://github.com/chaos-polymtl/lethe/pull/1847)
-
-### Fixed
-
-- MINOR The extract-slice-from-vtu.py tool was not working properly with --np > 1 because an argument (file path) was missing in the call of extract_slice. This PR fixes this bug and add 2 functionalities. 1) When the flag group files in the .prm (parallel output of Lethe) was set to a value larger than 1, the extract-slice-from-vtu.py would not slice all .vtus associated with a .pvtu. Since pyvista can read .pvtus correctly, the list of files to read is now based on .pvtus instead of .vtus. 2) There was no sliced .pvd file generated, so the slices could not be used easily in other post-processing tools using .pvds. The .pvd file of the slices is now generated. [#1848] (https://github.com/chaos-polymtl/lethe/pull/1848)
 
 ## [Sample] - YYYY/MM/DD
 
@@ -52,3 +44,8 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
 - MAJOR/MINOR/PATCH Description (#PR).
 
+## [Master] - 2025/12/10
+
+### Fixed
+
+- MINOR The extract-slice-from-vtu.py tool was not working properly with --np > 1 because an argument (file path) was missing in the call of extract_slice. This PR fixes this bug and add 2 functionalities. 1) When the flag group files in the .prm (parallel output of Lethe) was set to a value larger than 1, the extract-slice-from-vtu.py would not slice all .vtus associated with a .pvtu. Since pyvista can read .pvtus correctly, the list of files to read is now based on .pvtus instead of .vtus. 2) There was no sliced .pvd file generated, so the slices could not be used easily in other post-processing tools using .pvds. The .pvd file of the slices is now generated. [#1848] (https://github.com/chaos-polymtl/lethe/pull/1848)

@@ -1,0 +1,25 @@
+
+DEAL::Particle position 0 | Detector 0
+DEAL:: h = 0.500000
+DEAL:: rho = 1.00000
+DEAL::Particle position 0 | Detector 1
+DEAL:: h = 0.500000
+DEAL:: rho = 0.00000
+DEAL::Particle position 1 | Detector 0
+DEAL:: h = 0.00000
+DEAL:: rho = 1.00000
+DEAL::Particle position 1 | Detector 1
+DEAL:: h = 0.00000
+DEAL:: rho = 0.00000
+DEAL::Particle position 2 | Detector 0
+DEAL:: h = 0.500000
+DEAL:: rho = 0.00000
+DEAL::Particle position 2 | Detector 1
+DEAL:: h = 0.500000
+DEAL:: rho = 1.00000
+DEAL::Particle position 3 | Detector 0
+DEAL:: h = 0.250000
+DEAL:: rho = 0.250000
+DEAL::Particle position 3 | Detector 1
+DEAL:: h = 0.250000
+DEAL:: rho = 1.25000
