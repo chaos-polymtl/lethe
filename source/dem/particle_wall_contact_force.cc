@@ -406,6 +406,7 @@ ParticleWallContactForce<dim,
                               // each contact is occurring on two different
                               // edges. This is not a double contact, C2 is
                               // also valid.
+                              ++C2;
                               continue;
                             }
                         }
@@ -447,6 +448,7 @@ ParticleWallContactForce<dim,
                               break;
                             }
                           // Otherwise, C1 is valid.
+                          ++C2;
                           continue;
                         }
                       // If C1 and C2 are vertex contacts,
