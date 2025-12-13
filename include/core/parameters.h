@@ -1854,6 +1854,8 @@ namespace Parameters
     double sip_factor;
     /// Oversampling factor for quadrature points
     unsigned int oversampling_factor;
+    /// Tolerance used for rotor-stator interface radius computation
+    double radius_tolerance;
     /// Type of verbosity for mortar
     Verbosity verbosity;
 
