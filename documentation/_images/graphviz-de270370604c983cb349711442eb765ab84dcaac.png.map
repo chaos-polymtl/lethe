@@ -1,6 +1,0 @@
-<map id="rpt_diagram" name="rpt_diagram">
-<area shape="rect" id="node1" href="https://chaos-polymtl.github.io/lethe/documentation/examples/rpt/rpt.html" title="Radioactive Particle \nTracking (RPT)" alt="" coords="5,125,269,221"/>
-<area shape="rect" id="node2" href="https://chaos-polymtl.github.io/lethe/documentation/examples/rpt/photon-count-calculation-in-a-cylindrical-vessel/photon-count-calculation-in-a-cylindrical-vessel.html" title="Photon count calculation in a cylindrical vessel" alt="" coords="451,5,782,101"/>
-<area shape="rect" id="node3" href="https://chaos-polymtl.github.io/lethe/documentation/examples/rpt/tuning-parameters-with-nomad/tuning-parameters-with-nomad.html" title="Tuning count calculation model parameters with NOMAD" alt="" coords="413,125,820,221"/>
-<area shape="rect" id="node4" href="https://chaos-polymtl.github.io/lethe/documentation/examples/rpt/particle-fem-reconstruction/particle-fem-reconstruction.html" title="Particle FEM reconstruction" alt="" coords="443,245,791,341"/>
-</map>

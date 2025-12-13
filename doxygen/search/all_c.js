@@ -26,7 +26,5 @@ var searchData=
   ['kinsol_5fstrategy_23',['kinsol_strategy',['../structParameters_1_1NonLinearSolver.html#a6bc685ae85be73e914c14dda0e3272f6',1,'Parameters::NonLinearSolver']]],
   ['kinsolnewtonnonlinearsolverstrategy_24',['kinsolnewtonnonlinearsolverstrategy',['../classKinsolNewtonNonLinearSolverStrategy.html',1,'KinsolNewtonNonLinearSolverStrategy&lt; VectorType &gt;'],['../classKinsolNewtonNonLinearSolverStrategy.html#a032519182ef20e909ac0edceeb55da90',1,'KinsolNewtonNonLinearSolverStrategy::KinsolNewtonNonLinearSolverStrategy()']]],
   ['kinsolstrategy_25',['KinsolStrategy',['../structParameters_1_1NonLinearSolver.html#aadd162b7703a436847050b2aaae3871d',1,'Parameters::NonLinearSolver']]],
-  ['known_5fpositions_26',['known_positions',['../classRPTCellReconstruction.html#aa8a492e50c9b07d48ced65bcdea71cba',1,'RPTCellReconstruction']]],
-  ['known_5fpositions_5ffile_27',['known_positions_file',['../structParameters_1_1RPTReconstructionParameters.html#a0f2a0c033c3740e0899a7d84fe758840',1,'Parameters::RPTReconstructionParameters']]],
-  ['kochhill_28',['kochhill',['../namespaceParameters.html#a8b408c8f42632c3dd96b69b720ace6f6a9e42d27391c1851954ee4d7795d713cf',1,'Parameters']]]
+  ['kochhill_26',['kochhill',['../namespaceParameters.html#a8b408c8f42632c3dd96b69b720ace6f6a9e42d27391c1851954ee4d7795d713cf',1,'Parameters']]]
 ];

@@ -1,6 +1,6 @@
 var searchData=
 [
-  ['h_0',['h',['../classParticleDetectorInteractions.html#aef249d1dcaa0fa6b2f877252ac2ed0cb',1,'ParticleDetectorInteractions::h'],['../classBoundaryConditions_1_1HTBoundaryConditions.html#a63fd1fb158b3b9214a84c715eb249454',1,'BoundaryConditions::HTBoundaryConditions::h']]],
+  ['h_0',['h',['../classBoundaryConditions_1_1HTBoundaryConditions.html#a63fd1fb158b3b9214a84c715eb249454',1,'BoundaryConditions::HTBoundaryConditions']]],
   ['half_5flength_1',['half_length',['../classCylinder.html#a61761b17c9291f6cae66bbf5528db011',1,'Cylinder']]],
   ['half_5flengths_2',['half_lengths',['../classSuperquadric.html#afb0e43158fb41d79db46bf8ef7954055',1,'Superquadric::half_lengths'],['../classHyperRectangle.html#a3127b564ccfca11c86f4a37639970db0',1,'HyperRectangle::half_lengths']]],
   ['hamaker_5fconstant_5fparticle_3',['hamaker_constant_particle',['../structParameters_1_1Lagrangian_1_1LagrangianPhysicalProperties.html#a194a3076e5771ead3f83efe7372d62a9',1,'Parameters::Lagrangian::LagrangianPhysicalProperties']]],

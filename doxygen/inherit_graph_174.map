@@ -1,9 +1,3 @@
 <map id="Graphical Class Hierarchy" name="Graphical Class Hierarchy">
-<area shape="rect" id="Node000000" href="$classPhysicsFaceAssemblerBase.html" title="Base class for assembler objects of physics and subequations that require a face assembly...." alt="" coords="5,69,268,109"/>
-<area shape="rect" id="Node000001" href="$classTracerAssemblerBoundaryNitsche.html" title="Assembles Nitsche&#39;s method for boundary faces. This assembler is only required when solving the Trace..." alt="" coords="316,5,557,45"/>
-<area shape="poly" id="edge177_Node000000_Node000001" title=" " alt="" coords="244,64,342,43,343,48,245,69"/>
-<area shape="rect" id="Node000002" href="$classTracerAssemblerSIPG.html" title="Assembles the symmetric interior penalty (SIPG) method (or Nitsche&#39;s method) for internal faces...." alt="" coords="357,69,517,109"/>
-<area shape="poly" id="edge178_Node000000_Node000002" title=" " alt="" coords="282,87,356,87,356,92,282,92"/>
-<area shape="rect" id="Node000003" href="$classVOFAssemblerSIPG.html" title="Assembles the symmetric interior penalty Galerkin (SIPG) method (or Nitsche&#39;s method) for internal fa..." alt="" coords="336,134,537,159"/>
-<area shape="poly" id="edge179_Node000000_Node000003" title=" " alt="" coords="256,109,370,131,369,137,255,115"/>
+<area shape="rect" id="Node000000" href="$classPhysicsSolverStrategy.html" title=" " alt="" coords="5,5,211,60"/>
 </map>

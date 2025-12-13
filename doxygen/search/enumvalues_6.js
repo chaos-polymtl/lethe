@@ -13,9 +13,8 @@ var searchData=
   ['ghost_5fparticle_5fparticle_10',['ghost_particle_particle',['../contact__type_8h.html#a280ac7ff91d81eba6f834d2de978f6faa68a8a4ba6e02dff9747fee8bbdd6d778',1,'contact_type.h']]],
   ['ghost_5fperiodic_5fparticle_5fparticle_11',['ghost_periodic_particle_particle',['../contact__type_8h.html#a280ac7ff91d81eba6f834d2de978f6faa16be8ebed688d98d8e43741d5592f8c8',1,'contact_type.h']]],
   ['gidaspow_12',['gidaspow',['../namespaceParameters.html#a8b408c8f42632c3dd96b69b720ace6f6a5b11eff46b4ff2d0e186789cb3a402ed',1,'Parameters']]],
-  ['global_13',['global',['../structParameters_1_1RPTFEMReconstructionParameters.html#a6d9f30c834e2d1f32b26a0dc97f67a1ca9c70933aff6b2a6d08c687a6cbb6b765',1,'Parameters::RPTFEMReconstructionParameters']]],
-  ['gls_14',['gls',['../structParameters_1_1Stabilization.html#a7f67c17b0ca688dd966290f8610583bbaca6efd547a7b6d9885402b9544f941d5',1,'Parameters::Stabilization']]],
-  ['gmres_15',['gmres',['../structParameters_1_1LinearSolver.html#aa5b1b843871c36f9abfbd2c7b4811929ad43c33b8e3d5435d9cbe65c156887a02',1,'Parameters::LinearSolver::gmres'],['../structParameters_1_1LinearSolver.html#a0c300811885c24fbdc85d98143af8743ad43c33b8e3d5435d9cbe65c156887a02',1,'Parameters::LinearSolver::gmres']]],
-  ['gmsh_16',['gmsh',['../structParameters_1_1RPTFEMReconstructionParameters.html#abcdd422f5bd67d0cab793a003dec9df2ab7c7797f3a0a1098b484e5e3a780e025',1,'Parameters::RPTFEMReconstructionParameters::gmsh'],['../structParameters_1_1Mesh.html#a98b00ca6e2274cc90b7bec52bdc7c50bab7c7797f3a0a1098b484e5e3a780e025',1,'Parameters::Mesh::gmsh']]],
-  ['grad_5fdiv_17',['grad_div',['../structParameters_1_1Stabilization.html#a7f67c17b0ca688dd966290f8610583bba5b26215bec0d4dc2a7af08e2ae886418',1,'Parameters::Stabilization']]]
+  ['gls_13',['gls',['../structParameters_1_1Stabilization.html#a7f67c17b0ca688dd966290f8610583bbaca6efd547a7b6d9885402b9544f941d5',1,'Parameters::Stabilization']]],
+  ['gmres_14',['gmres',['../structParameters_1_1LinearSolver.html#aa5b1b843871c36f9abfbd2c7b4811929ad43c33b8e3d5435d9cbe65c156887a02',1,'Parameters::LinearSolver::gmres'],['../structParameters_1_1LinearSolver.html#a0c300811885c24fbdc85d98143af8743ad43c33b8e3d5435d9cbe65c156887a02',1,'Parameters::LinearSolver::gmres']]],
+  ['gmsh_15',['gmsh',['../structParameters_1_1Mesh.html#a98b00ca6e2274cc90b7bec52bdc7c50bab7c7797f3a0a1098b484e5e3a780e025',1,'Parameters::Mesh']]],
+  ['grad_5fdiv_16',['grad_div',['../structParameters_1_1Stabilization.html#a7f67c17b0ca688dd966290f8610583bba5b26215bec0d4dc2a7af08e2ae886418',1,'Parameters::Stabilization']]]
 ];

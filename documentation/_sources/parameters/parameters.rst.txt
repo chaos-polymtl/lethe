@@ -13,7 +13,6 @@ Launching an application requires an executable of the required solver, and a pa
     dem/dem
     unresolved-cfd-dem/unresolved-cfd-dem
     sharp-immersed-boundary/sharp-immersed-boundary
-    rpt/rpt
 
 .. tip:: 
 	The complete options for the parameter file, with information regarding the parameters that can be used, can be obtained by doing the following:
@@ -27,3 +26,7 @@ Launching an application requires an executable of the required solver, and a pa
 	* The parameters are established one by one using the following syntax: ``set parameter name = value``
 	* Comments are preceded by the sharp symbol (e.g. ``#comment``)
 	* The parameter file format has a sanity checking mechanism in place and will throw an error if an unknown parameter or an invalid value is entered.
+
+.. warning::
+  
+  The radioactive particle-tracking (RPT) applications of Lethe has been migrated to a separate repository which is available `here <https://github.com/chaos-polymtl/lethe-rpt>`_.

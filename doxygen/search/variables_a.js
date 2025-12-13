@@ -19,7 +19,5 @@ var searchData=
   ['kinematic_5fviscosity_5fvector_16',['kinematic_viscosity_vector',['../classNavierStokesOperatorBase.html#ae4cf079cb974ce0ad18a839e14da5bcf',1,'NavierStokesOperatorBase']]],
   ['kinetic_5fenergy_5foutput_5fname_17',['kinetic_energy_output_name',['../structParameters_1_1PostProcessing.html#a9bc91c5ebc9e3ecb9bd89aa1431ac6b1',1,'Parameters::PostProcessing']]],
   ['kinetic_5fenergy_5ftable_18',['kinetic_energy_table',['../classNavierStokesBase.html#a89c0eac806edbe8aa8698a5cd7ef3899',1,'NavierStokesBase']]],
-  ['kinsol_5fstrategy_19',['kinsol_strategy',['../structParameters_1_1NonLinearSolver.html#a6bc685ae85be73e914c14dda0e3272f6',1,'Parameters::NonLinearSolver']]],
-  ['known_5fpositions_20',['known_positions',['../classRPTCellReconstruction.html#aa8a492e50c9b07d48ced65bcdea71cba',1,'RPTCellReconstruction']]],
-  ['known_5fpositions_5ffile_21',['known_positions_file',['../structParameters_1_1RPTReconstructionParameters.html#a0f2a0c033c3740e0899a7d84fe758840',1,'Parameters::RPTReconstructionParameters']]]
+  ['kinsol_5fstrategy_19',['kinsol_strategy',['../structParameters_1_1NonLinearSolver.html#a6bc685ae85be73e914c14dda0e3272f6',1,'Parameters::NonLinearSolver']]]
 ];

@@ -16,9 +16,8 @@ var searchData=
   ['dem_5fsolver_5fparameters_2eh_13',['dem_solver_parameters.h',['../dem__solver__parameters_8h.html',1,'']]],
   ['density_5fmodel_2ecc_14',['density_model.cc',['../density__model_8cc.html',1,'']]],
   ['density_5fmodel_2eh_15',['density_model.h',['../density__model_8h.html',1,'']]],
-  ['detector_2eh_16',['detector.h',['../detector_8h.html',1,'']]],
-  ['dimensionality_2ecc_17',['dimensionality.cc',['../dimensionality_8cc.html',1,'']]],
-  ['dimensionality_2eh_18',['dimensionality.h',['../dimensionality_8h.html',1,'']]],
-  ['distributions_2ecc_19',['distributions.cc',['../distributions_8cc.html',1,'']]],
-  ['distributions_2eh_20',['distributions.h',['../distributions_8h.html',1,'']]]
+  ['dimensionality_2ecc_16',['dimensionality.cc',['../dimensionality_8cc.html',1,'']]],
+  ['dimensionality_2eh_17',['dimensionality.h',['../dimensionality_8h.html',1,'']]],
+  ['distributions_2ecc_18',['distributions.cc',['../distributions_8cc.html',1,'']]],
+  ['distributions_2eh_19',['distributions.h',['../distributions_8h.html',1,'']]]
 ];

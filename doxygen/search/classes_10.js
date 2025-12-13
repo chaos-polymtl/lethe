@@ -1,22 +1,12 @@
 var searchData=
 [
-  ['radioparticle_0',['RadioParticle',['../classRadioParticle.html',1,'']]],
-  ['ramp_1',['Ramp',['../structParameters_1_1Ramp.html',1,'Parameters']]],
-  ['ramp_5fn_2',['Ramp_n',['../structParameters_1_1Ramp__n.html',1,'Parameters']]],
-  ['ramp_5fviscosity_3',['Ramp_viscosity',['../structParameters_1_1Ramp__viscosity.html',1,'Parameters']]],
-  ['raytracingsolver_4',['RayTracingSolver',['../classRayTracingSolver.html',1,'']]],
-  ['raytracingsolverparameters_5',['RayTracingSolverParameters',['../classRayTracingSolverParameters.html',1,'']]],
-  ['rbfshape_6',['RBFShape',['../classRBFShape.html',1,'']]],
-  ['restart_7',['Restart',['../structParameters_1_1Restart.html',1,'Parameters']]],
-  ['rheologicalmodel_8',['RheologicalModel',['../classRheologicalModel.html',1,'']]],
-  ['rigidsolidobject_9',['RigidSolidObject',['../classParameters_1_1RigidSolidObject.html',1,'Parameters']]],
-  ['rpt_10',['RPT',['../classRPT.html',1,'']]],
-  ['rptcalculatingparameters_11',['RPTCalculatingParameters',['../classRPTCalculatingParameters.html',1,'']]],
-  ['rptcellreconstruction_12',['RPTCellReconstruction',['../classRPTCellReconstruction.html',1,'']]],
-  ['rptfemreconstruction_13',['RPTFEMReconstruction',['../classRPTFEMReconstruction.html',1,'']]],
-  ['rptfemreconstructionparameters_14',['RPTFEMReconstructionParameters',['../structParameters_1_1RPTFEMReconstructionParameters.html',1,'Parameters']]],
-  ['rptl2projection_15',['RPTL2Projection',['../classRPTL2Projection.html',1,'']]],
-  ['rptparameters_16',['RPTParameters',['../structParameters_1_1RPTParameters.html',1,'Parameters']]],
-  ['rptreconstructionparameters_17',['RPTReconstructionParameters',['../structParameters_1_1RPTReconstructionParameters.html',1,'Parameters']]],
-  ['rpttuningparameters_18',['RPTTuningParameters',['../structParameters_1_1RPTTuningParameters.html',1,'Parameters']]]
+  ['ramp_0',['Ramp',['../structParameters_1_1Ramp.html',1,'Parameters']]],
+  ['ramp_5fn_1',['Ramp_n',['../structParameters_1_1Ramp__n.html',1,'Parameters']]],
+  ['ramp_5fviscosity_2',['Ramp_viscosity',['../structParameters_1_1Ramp__viscosity.html',1,'Parameters']]],
+  ['raytracingsolver_3',['RayTracingSolver',['../classRayTracingSolver.html',1,'']]],
+  ['raytracingsolverparameters_4',['RayTracingSolverParameters',['../classRayTracingSolverParameters.html',1,'']]],
+  ['rbfshape_5',['RBFShape',['../classRBFShape.html',1,'']]],
+  ['restart_6',['Restart',['../structParameters_1_1Restart.html',1,'Parameters']]],
+  ['rheologicalmodel_7',['RheologicalModel',['../classRheologicalModel.html',1,'']]],
+  ['rigidsolidobject_8',['RigidSolidObject',['../classParameters_1_1RigidSolidObject.html',1,'Parameters']]]
 ];
