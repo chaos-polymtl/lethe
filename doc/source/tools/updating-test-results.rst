@@ -43,6 +43,7 @@ In this situation, the build has to be reconfigured, for example with:
 assuming the current directory is your `build` directory and that you have followed the installation instruction.
 
 .. _Usage:
+
 -----
 Usage
 -----
