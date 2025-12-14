@@ -57,6 +57,6 @@ The second option is to run the `update-golden.tl` manually using the following 
 
 .. code-block:: shell
 
-   txr ../lethe/contrib/utilities/update-golden.tl  -v /path/to/build/directory /path/to/lethe/directory
+   txr /path/to/lethe/contrib/utilities/update-golden.tl  -v /path/to/build/directory /path/to/lethe/
 
 assuming that TXR is installed in `usr/bin` on your machine.
