@@ -4,6 +4,12 @@ All notable changes to the Lethe project will be documented in this file.
 The changelog for the previous releases of Lethe are located in the release_notes folder.
 The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
+## [Master] - 2025/12/14
+
+### Changed
+
+- MAJOR A new message is added at the start of every DEM and unresolved CDF-DEM simulation which informs the user about the kind of distribution being used for every particle type. When using a normal or lognormal distribution, an extra message is written about the diameter cutoff values relative to the entire distribution. This change is MAJOR since every application test using the `lethe-particles`, `lethe-fluid-particles` and `lethe-fluid-particles-matrix-free` solver had to be updated. Also in this PR, the documentation relative to the `update-golden.tl` script got updated. [#1849](https://github.com/chaos-polymtl/lethe/pull/1849)
+
 ## [Master] - 2025/12/13
 
 ### Fixed
@@ -51,4 +57,3 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/).
 ### Fixed
 
 - MAJOR/MINOR/PATCH Description (#PR).
-

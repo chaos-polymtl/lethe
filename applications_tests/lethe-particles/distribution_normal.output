@@ -2,6 +2,8 @@
 *********************
 Running on 1 rank(s)
 *********************
+The particle size distribution of particle type 0 is lognormal.
+The minimal and maximal cutoffs of the distribution are at 1.20147e-05 and 97.8064 percentiles respectively.
 DEM time-step is 0.0124804% of Rayleigh time step
 Warning: It is recommended to increase the time-step
 Reading triangulation

@@ -3,6 +3,7 @@ Warning in file <deprecated_parameters.prm>: You are using the deprecated spelli
 *********************
 Running on 1 rank(s)
 *********************
+The particle size distribution of particle type 0 is uniform.
 DEM time-step is 7.30826% of Rayleigh time step
 Reading triangulation
 

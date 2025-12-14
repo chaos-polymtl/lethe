@@ -1,4 +1,5 @@
 Running on 1 MPI rank(s)...
+The particle size distribution of particle type 0 is uniform.
 DEM time-step is 2203.52% of Rayleigh time step
    Number of active cells:       128
    Number of degrees of freedom: 900

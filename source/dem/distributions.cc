@@ -85,6 +85,7 @@ NormalDistribution::print_psd_declaration_string(
   const double z_min = (dia_min_cutoff - diameter_average) / standard_deviation;
   const double z_max = (dia_max_cutoff - diameter_average) / standard_deviation;
 
+  // Quantile
   const double q_min = 0.5 * (1.0 + std::erf(z_min / std::numbers::sqrt2));
   const double q_max = 0.5 * (1.0 + std::erf(z_max / std::numbers::sqrt2));
 
@@ -183,6 +184,7 @@ LogNormalDistribution::print_psd_declaration_string(
   const double z_min = (std::log(dia_min_cutoff) - mu_ln) / sigma_ln;
   const double z_max = (std::log(dia_max_cutoff) - mu_ln) / sigma_ln;
 
+  // Quantile
   const double q_min = 0.5 * (1.0 + std::erf(z_min / std::numbers::sqrt2));
   const double q_max = 0.5 * (1.0 + std::erf(z_max / std::numbers::sqrt2));
 

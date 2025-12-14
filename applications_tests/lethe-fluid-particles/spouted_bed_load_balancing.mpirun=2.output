@@ -1,4 +1,5 @@
 Running on 2 MPI rank(s)...
+The particle size distribution of particle type 0 is uniform.
 DEM time-step is 5.879363789% of Rayleigh time step
 Reading DEM checkpoint
 Finished reading DEM checkpoint
