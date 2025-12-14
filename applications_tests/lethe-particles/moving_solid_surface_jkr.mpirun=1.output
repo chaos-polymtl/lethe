@@ -24,7 +24,7 @@ Transient iteration: 10000    Time: 0.5      Time step: 5e-05
 | Rotational kinetic energy    | 0.0000e+00 | 2.2251e-308 | 0.0000e+00 | 0.0000e+00 |
 
 *****************************************************************
-Transient iteration: 20000    Time: 1        Time step: 5e-05   
+Transient iteration: 20000    Time: 1        Time step: 5e-05
 *****************************************************************
 | Variable                     | Min        | Max         | Average    | Total      |
 | Contact list generation      | 0.0000e+00 | 2.8000e+01  | 2.4000e+01 | 4.8000e+01 |

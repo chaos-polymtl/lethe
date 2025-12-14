@@ -53,11 +53,10 @@ the following command updates the golden files:
    
    cmake --build . --target update-golden
 
-The second option to run the `update-golden.tl` script is to run it manually using the following command:
+The second option is to run the `update-golden.tl` manually using the following command:
 
 .. code-block:: shell
 
-   txr ../lethe/contrib/utilities/update-golden.tl  -v . ../lethe
+   txr ../lethe/contrib/utilities/update-golden.tl  -v /path/to/build/directory /path/to/lethe/directory
 
-assuming that TXR is installed in `usr/bin` on your machine, that you are in your `build` directory and that you have
-followed the installation instructions.
+assuming that TXR is installed in `usr/bin` on your machine.
