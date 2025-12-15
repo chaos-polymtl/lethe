@@ -2667,6 +2667,18 @@ TimeHarmonicMaxwell<3>::reconstruct_interior_solution()
                   if (bc_type ==
                       BoundaryConditions::BoundaryType::imperfect_conductor)
                     {
+                      Function<dim> &surface_impedance_real =
+                        *this->simulation_parameters
+                           .boundary_conditions_time_harmonic_electromagnetics
+                           .surface_impedance_real.at(face->boundary_id());
+                      Function<dim> &surface_impedance_imag =
+                        *this->simulation_parameters
+                           .boundary_conditions_time_harmonic_electromagnetics
+                           .surface_impedance_imag.at(face->boundary_id());
+
+                      surface_impedance =
+                        surface_impedance_real.value(position) +
+                        imag * surface_impedance_imag.value(position);
                       g_inc = 0.;
                     }
 
