@@ -103,15 +103,15 @@ TimeHarmonicMaxwell<dim>::gather_output_hook()
 
   // Interior output setup
   std::vector<std::string> solution_interior_names(dim, "E_real");
-  for (unsigned int i = 0; i < dim; ++i)
+  for (int i = 0; i < dim; ++i)
     {
       solution_interior_names.emplace_back("E_imag");
     }
-  for (unsigned int i = 0; i < dim; ++i)
+  for (int i = 0; i < dim; ++i)
     {
       solution_interior_names.emplace_back("H_real");
     }
-  for (unsigned int i = 0; i < dim; ++i)
+  for (int i = 0; i < dim; ++i)
     {
       solution_interior_names.emplace_back("H_imag");
     }
@@ -199,7 +199,7 @@ TimeHarmonicMaxwell<dim>::calculate_L2_error()
               const double JxW = fe_values_trial_interior.JxW(q);
 
               // Loop on dimensions to compute the squared error
-              for (unsigned int d = 0; d < dim; ++d)
+              for (int d = 0; d < dim; ++d)
                 {
                   // E real part
                   L2_error_E_real +=
@@ -777,9 +777,7 @@ TimeHarmonicMaxwell<dim>::define_constraints()
                   // Find the first iterator in the cell dof indices that
                   // matches the face dof (find where the face dof is in the
                   // cell dof indices)
-                  const auto it = std::find(cell_dof_indices.begin(),
-                                            cell_dof_indices.end(),
-                                            face_dof);
+                  const auto it = std::ranges::find(cell_dof_indices, face_dof);
 
                   // If the dof is on the face (find returns the second
                   // iterator if no match is found), set the corresponding
@@ -915,7 +913,7 @@ TimeHarmonicMaxwell<3>::assemble_system_matrix()
 
   // Constexpr values and used in the assembly.
   static constexpr double               speed_of_light = 299792458.;
-  static constexpr double               pi             = 3.14159265358979323846;
+  static constexpr double               pi             = std::numbers::pi;
   static constexpr std::complex<double> imag{0., 1.};
   static constexpr int                  dim = 3;
   // Since we are in the specialized 3D function we define dim=3 here. This
@@ -2082,7 +2080,7 @@ TimeHarmonicMaxwell<3>::reconstruct_interior_solution()
   // skeleton system. Below we add new ones that are specific to the
   // reconstruction of the interior solution.
 
-  auto mpi_communicator = this->triangulation->get_mpi_communicator();
+  auto *mpi_communicator = this->triangulation->get_mpi_communicator();
 
   // We initialize vectors to store the locally owned solution and the error
   // indicator.
