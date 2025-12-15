@@ -105,7 +105,7 @@ subsection boundary conditions time harmonic maxwell
   end
   subsection bc 4
     set id   = 4
-    set type = electromagnetic_
+    set type = imposed_electromagnetic_excitation
     subsection E_x real
       set Function expression = 0
     end
@@ -127,25 +127,7 @@ subsection boundary conditions time harmonic maxwell
   end
   subsection bc 5
     set id   = 5
-    set type = imposed magnetic field
-    subsection H_x real
-      set Function expression = 0
-    end
-    subsection H_x imag
-      set Function expression = -0.5*sin(4*pi*x)
-    end
-    subsection H_y real
-      set Function expression = 0
-    end
-    subsection H_y imag
-      set Function expression = 0
-    end
-    subsection H_z real
-      set Function expression = cos(4*pi*x)
-    end
-    subsection H_z imag
-      set Function expression = 0
-    end
+    set type = silver_muller
   end
 end
 
