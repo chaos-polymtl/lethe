@@ -1652,39 +1652,39 @@ TimeHarmonicMaxwell<3>::assemble_system_matrix()
                       unsigned int face_id = face->boundary_id();
 
                       // Get the incident electromagnetic field at this face
-                      Function<dim> &excitation_real =
-                        *this->simulation_parameters
-                           .boundary_conditions_time_harmonic_electromagnetics
-                           .excitation_x_real.at(face_id);
-                      Function<dim> &excitation_imag =
-                        *this->simulation_parameters
-                           .boundary_conditions_time_harmonic_electromagnetics
-                           .excitation_x_imag.at(face_id);
+                      g_inc[0] =
+                        this->simulation_parameters
+                          .boundary_conditions_time_harmonic_electromagnetics
+                          .excitation_x_real.at(face_id)
+                          ->value(position) +
+                        imag *
+                          this->simulation_parameters
+                            .boundary_conditions_time_harmonic_electromagnetics
+                            .excitation_x_imag.at(face_id)
+                            ->value(position);
 
-                      g_inc[0] = excitation_real.value(position) +
-                                 imag * excitation_imag.value(position);
+                      ;
+                      g_inc[1] =
+                        this->simulation_parameters
+                          .boundary_conditions_time_harmonic_electromagnetics
+                          .excitation_y_real.at(face_id)
+                          ->value(position) +
+                        imag *
+                          this->simulation_parameters
+                            .boundary_conditions_time_harmonic_electromagnetics
+                            .excitation_y_imag.at(face_id)
+                            ->value(position);
 
-                      excitation_real =
-                        *this->simulation_parameters
-                           .boundary_conditions_time_harmonic_electromagnetics
-                           .excitation_y_real.at(face_id);
-                      excitation_imag =
-                        *this->simulation_parameters
-                           .boundary_conditions_time_harmonic_electromagnetics
-                           .excitation_y_imag.at(face_id);
-                      g_inc[1] = excitation_real.value(position) +
-                                 imag * excitation_imag.value(position);
-
-                      excitation_real =
-                        *this->simulation_parameters
-                           .boundary_conditions_time_harmonic_electromagnetics
-                           .excitation_z_real.at(face_id);
-                      excitation_imag =
-                        *this->simulation_parameters
-                           .boundary_conditions_time_harmonic_electromagnetics
-                           .excitation_z_imag.at(face_id);
-                      g_inc[2] = excitation_real.value(position) +
-                                 imag * excitation_imag.value(position);
+                      g_inc[2] =
+                        this->simulation_parameters
+                          .boundary_conditions_time_harmonic_electromagnetics
+                          .excitation_z_real.at(face_id)
+                          ->value(position) +
+                        imag *
+                          this->simulation_parameters
+                            .boundary_conditions_time_harmonic_electromagnetics
+                            .excitation_z_imag.at(face_id)
+                            ->value(position);
                     }
                   if (bc_type ==
                       BoundaryConditions::BoundaryType::imperfect_conductor)
@@ -2628,39 +2628,40 @@ TimeHarmonicMaxwell<3>::reconstruct_interior_solution()
                       unsigned int face_id = face->boundary_id();
 
                       // Get the incident electromagnetic field at this face
-                      Function<dim> &excitation_real =
-                        *this->simulation_parameters
-                           .boundary_conditions_time_harmonic_electromagnetics
-                           .excitation_x_real.at(face_id);
-                      Function<dim> &excitation_imag =
-                        *this->simulation_parameters
-                           .boundary_conditions_time_harmonic_electromagnetics
-                           .excitation_x_imag.at(face_id);
 
-                      g_inc[0] = excitation_real.value(position) +
-                                 imag * excitation_imag.value(position);
+                      g_inc[0] =
+                        this->simulation_parameters
+                          .boundary_conditions_time_harmonic_electromagnetics
+                          .excitation_x_real.at(face_id)
+                          ->value(position) +
+                        imag *
+                          this->simulation_parameters
+                            .boundary_conditions_time_harmonic_electromagnetics
+                            .excitation_x_imag.at(face_id)
+                            ->value(position);
 
-                      excitation_real =
-                        *this->simulation_parameters
-                           .boundary_conditions_time_harmonic_electromagnetics
-                           .excitation_y_real.at(face_id);
-                      excitation_imag =
-                        *this->simulation_parameters
-                           .boundary_conditions_time_harmonic_electromagnetics
-                           .excitation_y_imag.at(face_id);
-                      g_inc[1] = excitation_real.value(position) +
-                                 imag * excitation_imag.value(position);
+                      ;
+                      g_inc[1] =
+                        this->simulation_parameters
+                          .boundary_conditions_time_harmonic_electromagnetics
+                          .excitation_y_real.at(face_id)
+                          ->value(position) +
+                        imag *
+                          this->simulation_parameters
+                            .boundary_conditions_time_harmonic_electromagnetics
+                            .excitation_y_imag.at(face_id)
+                            ->value(position);
 
-                      excitation_real =
-                        *this->simulation_parameters
-                           .boundary_conditions_time_harmonic_electromagnetics
-                           .excitation_z_real.at(face_id);
-                      excitation_imag =
-                        *this->simulation_parameters
-                           .boundary_conditions_time_harmonic_electromagnetics
-                           .excitation_z_imag.at(face_id);
-                      g_inc[2] = excitation_real.value(position) +
-                                 imag * excitation_imag.value(position);
+                      g_inc[2] =
+                        this->simulation_parameters
+                          .boundary_conditions_time_harmonic_electromagnetics
+                          .excitation_z_real.at(face_id)
+                          ->value(position) +
+                        imag *
+                          this->simulation_parameters
+                            .boundary_conditions_time_harmonic_electromagnetics
+                            .excitation_z_imag.at(face_id)
+                            ->value(position);
                     }
                   if (bc_type ==
                       BoundaryConditions::BoundaryType::imperfect_conductor)
