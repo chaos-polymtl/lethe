@@ -1863,7 +1863,7 @@ TimeHarmonicMaxwell<3>::reconstruct_interior_solution()
 
   // Constexpr values and used in the assembly.
   static constexpr double               speed_of_light = 299792458.;
-  static constexpr double               pi             = 3.14159265358979323846;
+  static constexpr double               pi             = std::numbers::pi;
   static constexpr std::complex<double> imag{0., 1.};
   static constexpr int                  dim =
     3; // Since we are in the specialized 3D function we define dim=3 here. This
