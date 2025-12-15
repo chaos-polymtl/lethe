@@ -604,20 +604,21 @@ public:
    * @brief enable_particle_field_projection Enables the collection of the particle fields
    * projection data by the scratch
    *
-   * @param quadrature Quadrature rule of the Navier-Stokes problem assembly
+   * @param[in] quadrature Quadrature rule of the Navier-Stokes problem assembly
    *
-   * @param mapping Mapping used for the Navier-Stokes problem assembly
+   * @param[in] mapping Mapping used for the Navier-Stokes problem assembly
    *
-   * @param fe_particle_drag_proj FiniteElement associated with the projected particle drag force
+   * @param[in] fe_particle_drag_proj FiniteElement associated with the
+   * projected particle drag force
    *
-   * @param fe_particle_two_way_coupling_force_proj FiniteElement associated with the projected
-   * particle two-way coupling force
+   * @param[in] fe_particle_two_way_coupling_force_proj FiniteElement associated
+   * with the projected particle two-way coupling force
    *
-   * @param fe_particle_velocity_proj FiniteElement associated with the projected particle
-   * velocity
+   * @param[in] fe_particle_velocity_proj FiniteElement associated with the
+   * projected particle velocity
    *
-   * @param fe_particle_velocity_proj FiniteElement associated with the projected particle
-   * momentum transfer coefficient
+   * @param[in] fe_particle_velocity_proj FiniteElement associated with the
+   * projected particle momentum transfer coefficient
    */
   void
   enable_particle_field_projection(
@@ -1320,21 +1321,33 @@ public:
    * @param[in] particle_drag_cell Iterator pointing to the current active cell
    * using the particle drag force DoFHandler
    *
-   * @param[in] particle_two_way_coupling_force Iterator pointing to the current
-   * active cell using the particle two-way coupling force DoFHandler
+   * @param[in] particle_two_way_coupling_force_cell Iterator pointing to the
+   * current active cell using the particle two-way coupling force DoFHandler
    *
    * @param[in] particle_velocity_cell Iterator pointing to the current active
    * cell using the particle velocity DoFHandler
    *
-   * @param[in] particle_fluid_drag Object containing the projection of the
-   * particle drag onto the fluid dofs
+   * @param[in] particle_momentum_transfer_coefficient_cell Iterator pointing to
+   * the current active cell using the particle momentum transfer coefficient
+   * DoFHandler
    *
-   * @param[in] particle_two_way_coupling_force Object containing the projection
-   * of the two-way coupling force projected from the particles onto the fluid
-   * dofs
+   * @param[in] particle_fluid_drag Object containing the projection of the drag
+   * calculated for the particles onto the fluid dofs
+   *
+   * @param[in] particle_fluid_force_two_way_coupling Object containing the
+   * projection of the two-way coupling force calculated for the particles onto
+   * the fluid dofs
    *
    * @param[in] particle_velocity Object containing the projection of the
    * particle velocities onto the fluid dofs
+   *
+   * @param[in] particle_momentum_transfer_coefficient Object containing the
+   * projection of the momentum transfer coefficient calculated for the
+   * particles onto the fluid dofs
+   *
+   * @param[in] drag_coupling Enumeration specifying the the numerical coupling
+   * strategy used for the computation of the drag force between the fluid and
+   * the particles.
    */
   template <typename VectorType>
   void
@@ -1360,10 +1373,13 @@ public:
       .get_function_values(particle_fluid_force_two_way_coupling,
                            this->particle_two_way_coupling_force_values);
 
+    // particle_drag_values will remain zero in the implicit and semi-implicit
+    // coupling, since the momentum transfer coefficient is used instead, while
+    // particle_momentum_transfer_coefficient_values and
+    // particle_velocity_values will remain zero in the fully explicit coupling
+
     if (drag_coupling == Parameters::DragCoupling::fully_explicit)
-      { // particle_drag_values will remain zero in the implicit and
-        // semi-implicit coupling, since the momentum transfer
-        // coefficient is used instead
+      {
         this->fe_values_particle_drag->reinit(particle_drag_cell);
         (*this->fe_values_particle_drag)[vector_index].get_function_values(
           particle_fluid_drag, this->particle_drag_values);

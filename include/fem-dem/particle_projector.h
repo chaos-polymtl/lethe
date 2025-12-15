@@ -703,7 +703,7 @@ private:
   const double l2_smoothing_factor =
     Utilities::fixed_power<2>(void_fraction_parameters->l2_smoothing_length);
 
-  /// Boolean indicator used to check if the particle have at least been
+  /// Boolean indicator used to check if the particles have at least been
   /// projected once. This is mainly use for assertions and sanity checking
   /// purposes
   bool particle_have_been_projected;

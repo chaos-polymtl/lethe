@@ -5,7 +5,7 @@
 #----------------------
 
 # Test the sedimentation of a single particle with the implicit coupling.
-# A python file is provided within the /single_particle_sedimentation_reference/
+# A python file is provided within the ./single_particle_sedimentation_reference/
 # folder that can be used to verify the validity of the solution
 # for the particle trajectory and velocity.
 
@@ -18,7 +18,7 @@ set dimension = 3
 subsection simulation control
   set method           = bdf1
   set output name      = result
-  set output frequency = 1
+  set output frequency = 0
   set time end         = 0.2
   set time step        = 0.005
 end
