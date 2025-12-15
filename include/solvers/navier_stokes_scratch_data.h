@@ -1345,7 +1345,7 @@ public:
    * projection of the momentum transfer coefficient calculated for the
    * particles onto the fluid dofs
    *
-   * @param[in] drag_coupling Enumeration specifying the the numerical coupling
+   * @param[in] drag_coupling Enumeration specifying the numerical coupling
    * strategy used for the computation of the drag force between the fluid and
    * the particles.
    */
@@ -1377,7 +1377,6 @@ public:
     // coupling, since the momentum transfer coefficient is used instead, while
     // particle_momentum_transfer_coefficient_values and
     // particle_velocity_values will remain zero in the fully explicit coupling
-
     if (drag_coupling == Parameters::DragCoupling::fully_explicit)
       {
         this->fe_values_particle_drag->reinit(particle_drag_cell);
