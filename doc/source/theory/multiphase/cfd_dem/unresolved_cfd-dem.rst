@@ -93,8 +93,8 @@ where:
 
 
 .. math::
-    \bar{\mathbf{f}}_\mathrm{A}^{\mathrm{pf}} &= \sum_{i} k_r \left (\lVert \mathbf{x} - \mathbf{x}_i \rVert \right ) \left (\mathbf{F}_i^{\mathrm{pf}} - \mathbf{F}_i^{\nabla p} - \mathbf{F}_i^{\nabla \cdot \mathbf{\tau}} \right ) \\
-    \bar{\mathbf{f}}_\mathrm{B}^{\mathrm{pf}} &= \sum_{i} k_r \left (\lVert \mathbf{x} - \mathbf{x}_i \rVert \right ) \mathbf{F}_i^{\mathrm{pf}}
+    \bar{\mathbf{f}}_{\mathrm{pf},\mathrm{A}} &= \sum_{i} k_r \left (\lVert \mathbf{x} - \mathbf{x}_i \rVert \right ) \left(- \left (\mathbf{F}_{\mathrm{fp},i} - \mathbf{F}_{\nabla p,i} - \mathbf{F}_{\nabla \cdot \mathbf{\tau},i} \right ) \right) \\
+    \bar{\mathbf{f}}_{\mathrm{pf},\mathrm{B}} &= \sum_{i} k_r \left (\lVert \mathbf{x} - \mathbf{x}_i \rVert \right ) \left(-\mathbf{F}_{{\mathrm{fp},i}} \right)
 
 with :math:`k_r` normalized such that
 
