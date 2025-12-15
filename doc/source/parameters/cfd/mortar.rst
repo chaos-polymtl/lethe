@@ -26,7 +26,7 @@ The mortar section is used when simulating rotor-stator geometries, in which the
     end
     set penalty factor      = 1.0
     set oversampling factor = 2
-    set radius tolerance    = 1e-4
+    set radius tolerance    = 1e-8
     set verbosity           = verbose
   end
 

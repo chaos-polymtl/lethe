@@ -4314,7 +4314,7 @@ namespace Parameters
                         Patterns::Integer(),
                         "Oversampling factor for quadrature points");
       prm.declare_entry("radius tolerance",
-                        "1e-4",
+                        "1e-8",
                         Patterns::Double(),
                         "Tolerance used for the interface radius computation");
       prm.declare_entry(
