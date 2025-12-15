@@ -461,26 +461,32 @@ is <a class="reference external" href="https://www.nongnu.org/txr/">TXR</a>.</p>
 <p>TXR can be installed to file:<cite>/usr/local/bin</cite> as follows:</p>
 <div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>curl<span class="w"> </span><span class="s1">&#39;https://www.kylheku.com/cgit/txr/snapshot/txr-285.tar.gz&#39;</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>tar<span class="w"> </span>-xzf<span class="w"> </span>-
 <span class="nb">cd</span><span class="w"> </span>txr-285
+./configure
 make
 sudo<span class="w"> </span>make<span class="w"> </span>install
 </pre></div>
 </div>
-<p>If Lethe’s build was configured before TXR was installed, then the
-<cite>update-golden</cite> target will not exist.
+<p>Once that TXR is installed, the <cite>update-golden.tl</cite> script can be run in two ways which will be discussed in <a class="reference internal" href="#usage"><span class="std std-ref">Usage</span></a>.
+The first way requires adding the script as a target in your CMake build directory.
+If Lethe’s build was configured before TXR was installed, then the <cite>update-golden</cite> target will not exist.
 In this situation, the build has to be reconfigured, for example with:</p>
-<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>cmake<span class="w"> </span>-S.<span class="w"> </span>-Bbuild
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>cmake<span class="w"> </span>../lethe
 </pre></div>
 </div>
-<p>assuming the current directory is Lethe’s root directory, and the build
-directory file:<cite>build</cite>.</p>
+<p>assuming the current directory is your <cite>build</cite> directory and that you have followed the installation instruction.</p>
 </section>
 <section id="usage">
-<h2>Usage<a class="headerlink" href="#usage" title="Link to this heading">#</a></h2>
-<p>Assuming the build directory is file:<cite>build</cite>, the following command
-updates the golden files:</p>
-<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>cmake<span class="w"> </span>--build<span class="w"> </span>build<span class="w"> </span>--target<span class="w"> </span>update-golden
+<span id="id1"></span><h2>Usage<a class="headerlink" href="#usage" title="Link to this heading">#</a></h2>
+<p>If the script was added as a target in your CMake build directory and assuming that you are in your <cite>build</cite> directory,
+the following command updates the golden files:</p>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>cmake<span class="w"> </span>--build<span class="w"> </span>.<span class="w"> </span>--target<span class="w"> </span>update-golden
 </pre></div>
 </div>
+<p>The second option is to run the <cite>update-golden.tl</cite> manually using the following command:</p>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>txr<span class="w"> </span>/path/to/lethe/contrib/utilities/update-golden.tl<span class="w">  </span>-v<span class="w"> </span>/path/to/build/directory<span class="w"> </span>/path/to/lethe/
+</pre></div>
+</div>
+<p>assuming that TXR is installed in <cite>usr/bin</cite> on your machine.</p>
 </section>
 </section>
 
