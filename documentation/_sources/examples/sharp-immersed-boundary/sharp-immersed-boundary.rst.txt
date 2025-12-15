@@ -42,13 +42,13 @@ Sharp Immersed Boundary Solver
 
       sharp_2_5 [label="Inclined 3D Mixer with Pitched-Blade \nTurbine Impeller Using Composite \nSharp-Immersed Boundary", href="https://chaos-polymtl.github.io/lethe/documentation/examples/sharp-immersed-boundary/inclined-3d-composite-mixer-with-pbt-impeller/inclined-3d-composite-mixer-with-pbt-impeller.html", tooltip="Inclined 3D mixer with pitched-blade turbine impeller using composite sharp-immersed boundary"];
 
-      sharp_2_6 [label="3D Static Mixer \nImpeller Using RBF", href="https://chaos-polymtl.github.io/lethe/documentation/examples/sharp-immersed-boundary/3d-rbf-static-mixer/3d-rbf-static-mixer.html", tooltip="3D Static Mixer \nImpeller Using RBF Sharp-immersed boundary"];
+      sharp_2_6 [label="3D Static Mixer \nImpeller Using RBF", href="https://chaos-polymtl.github.io/lethe/documentation/examples/sharp-immersed-boundary/3d-rbf-static-mixer/3d-rbf-static-mixer.html", tooltip="3D Static Mixer Impeller Using RBF Sharp-immersed boundary"];
 
-      sharp_2_7 [label="Flow Around a Finite \nCylindrical Particle Using the \nSharp Interface Method", href="https://chaos-polymtl.github.io/lethe/documentation/examples/sharp-immersed-boundary/cylindrical-particle-drag-evaluation-with-sharp-interface/cylindrical-particle-drag-evaluation-with-sharp-interface.html", tooltop = "Flow Around a finite \ncylindrical particle using the \nsharp interface method"]
+      sharp_2_7 [label="Flow Around a Finite \nCylindrical Particle Using the \nSharp Interface Method", href="https://chaos-polymtl.github.io/lethe/documentation/examples/sharp-immersed-boundary/cylindrical-particle-drag-evaluation-with-sharp-interface/cylindrical-particle-drag-evaluation-with-sharp-interface.html", tooltip = "Flow Around a finite cylindrical particle using the sharp interface method"]
 
       sharp_3 [label="Geometry Definition", href="https://chaos-polymtl.github.io/lethe/documentation/examples/sharp-immersed-boundary/geometry-definition.html"];
 
-      sharp_3_1 [label="Simple Plane Model From Composite", href="https://chaos-polymtl.github.io/lethe/documentation/examples/sharp-immersed-boundary/sharp-immersed-boundary/simple-plane-model-from-composite.html", tooltip="Simple Plane Model From Composite"];
+      sharp_3_1 [label="Simple Plane Model From Composite", href="https://chaos-polymtl.github.io/lethe/documentation/examples/sharp-immersed-boundary/simple-plane-model-from-composite/simple-plane-model-from-composite.html", tooltip="Simple Plane Model From Composite"];
 
       sharp_immersed_boundary_solver -> sharp_1:w;
       sharp_immersed_boundary_solver -> sharp_2:w;
