@@ -62,6 +62,15 @@ Volume-Averaged Navier-Stokes
 
 Since we represent the fluid at a meso-scale, the quantities calculated for the cells are filtered. Additionally, variations in time and space of the volume occupied by the fluid are accounted for by the void fraction (or porosity). The resulting equations are the Volumed-Averaged Navier-Stokes (VANS) equations, which are solved to obtain the velocity and the pressure of the continuous fluid phase. In Lethe, the VANS equations are presented in two different formulations, so-called Model A (or Set II) and Model B (or Set I) `[2] <https://doi.org/10.1017/S002211201000306X>`_.
 
+The VANS equations can be derived by averaging the continuity and momentum conservation equations using a weighting function. This approach was developed by Anderson and Jackson [#Anderson1967]_ and is briefly presented here. In this approach, any weighting function :math:`k_r(\lVert \mathbf{x} \rVert)` may be chosen, provided that it satisfies a set of conditions, including :math:`k_r(\lVert \mathbf{x} \rVert) > 0` and :math:`\int_{\Omega} k_r(\lVert \mathbf{x} \rVert)\,\mathrm{d}\mathbf{x} = 1`.
+
+Using this function, local mean values of any fluid- or solid-phase property, :math:`a(\mathbf{x},t)` and :math:`b(\mathbf{x},t)`, respectively, can be defined at a scale larger than the particle diameter yet smaller than the macroscopic length scale of the problem, as per the following:
+
+.. math::
+    \varepsilon_f(\mathbf{x},t) a(\mathbf{x},t) &= \int_{\Omega} a'(\mathbf{y},t) k_r \left (\lVert \mathbf{x} - \mathbf{y}' \rVert \right ) \mathrm{d}\mathbf{y} \\
+    \left[1-\varepsilon_f\right](\mathbf{x},t) b(\mathbf{x},t) &= \int_{\Omega} b'(\mathbf{y},t) k_r \left (\lVert \mathbf{x} - \mathbf{y}' \rVert \right ) \mathrm{d}\mathbf{y}
+where :math:`\varepsilon_f(\mathbf{x},t)` is the void fraction at position :math:`\mathbf{x}` and time :math:`t`, and :math:`a'` and :math:`b'` are the point values of the corresponding properties.
+
 Considering an incompressible flow, the continuity equation for both models is:
 
 .. math::
@@ -127,7 +136,6 @@ Lethe also has the option of smoothing the void fraction profile, which helps to
 
 where :math:`L` is the smoothing length, used as parameter in Lethe unresolved CFD-DEM simulations. In Lethe, three void fraction schemes are currently supported to calculate :math:`\epsilon_{f}`. They are the particle centroid method, the satellite point method, and the quadrature centered method.
 
-
 The Particle Centroid Method
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 The Particle Centroid Method (PCM) [#peng2014]_ is simple and it is a commonly used method. It consists of tracking the position of the centroid of each particle and applying the total volume of the particle to the calculation of the void fraction of the cell. This means that in either of the following situations the void fraction of the colored cell is the same:
@@ -181,13 +189,14 @@ where :math:`V^N_{sphere}` is the normalized volume of the volume averaging sphe
 
 .. math:: 
     \frac{h_{\Omega}}{2} \leq R_s \leq h_{\Omega}
-    
 
 References
 -----------
 .. [#berard2020] \A. Bérard, G. S. Patience, and B. Blais, “Experimental methods in chemical engineering: Unresolved CFD-DEM,” *Can. J. Chem. Eng.*, vol. 98, no. 2, pp. 424–440, 2020, doi: `10.1002/cjce.23686 <https://doi.org/10.1002/cjce.23686>`_\.
 
 .. [#zhou2010] \Z. Y. Zhou, S. B. Kuang, K. W. Chu, and A. B. Yu, “Discrete particle simulation of particle–fluid flow: model formulations and their applicability,” *J. Fluid Mech.*, vol. 661, pp. 482–510, Oct. 2010, doi: `10.1017/S002211201000306X <https://doi.org/10.1017/S002211201000306X>`_\.
+
+.. [#Anderson1967] \T. B. Anderson and R. Jackson, “A Fluid Mechanical Description of Fluidized Beds,” *Ind. Eng. Chem. Fundam.*, vol. 6, no. 4 pp. 527–539, Nov. 1967, doi: `10.1021/i160024a007 <https://doi.org/10.1021/i160024a007>`_\.
 
 .. [#nitsche1994] \L. C. Nitsche, “Microhydrodynamics: Principles and selected applications. By Sangtae Kim and Seppo J. Karrila, Butterworth-Heinemann, Boston, 1991” *AIChE J.*, vol. 40, no. 4, pp. 739–743, 1994, doi: `10.1002/aic.690400418 <https://doi.org/10.1002/aic.690400418>`_\.
 
