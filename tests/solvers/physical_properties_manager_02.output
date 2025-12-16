@@ -1,12 +1,22 @@
 
 DEAL::Testing PhysicalPropertiesManager - Fluid 0 
-DEAL::Density              : 1.00000
-DEAL::Specific heat        : 2.00000
-DEAL::Thermal conductivity : 3.00000
+DEAL::Density                      : 1.00000
+DEAL::Specific heat                : 2.00000
+DEAL::Thermal conductivity         : 3.00000
+DEAL::Electric conductivity        : 0.50000
+DEAL::Electric permittivity (real) : 1.50000
+DEAL::Electric permittivity (imag) : 0.10000
+DEAL::Magnetic permeability (real) : 2.50000
+DEAL::Magnetic permeability (imag) : 0.20000
 DEAL::Testing PhysicalPropertiesManager - Solid 0 
-DEAL::Density              : 10.0000
-DEAL::Specific heat        : 20.0000
-DEAL::Thermal conductivity : 30.0000
+DEAL::Density                      : 10.0000
+DEAL::Specific heat                : 20.0000
+DEAL::Thermal conductivity         : 30.0000
+DEAL::Electric conductivity        : 5.00000
+DEAL::Electric permittivity (real) : 15.0000
+DEAL::Electric permittivity (imag) : 1.00000
+DEAL::Magnetic permeability (real) : 25.0000
+DEAL::Magnetic permeability (imag) : 2.00000
 DEAL::Testing PhysicalPropertiesManager - Material interaction 0
-DEAL::Surface tension      : 70.0000
-DEAL::Mobility             : 10.0000
+DEAL::Surface tension              : 70.0000
+DEAL::Mobility                     : 10.0000

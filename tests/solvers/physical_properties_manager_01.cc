@@ -31,10 +31,21 @@ test()
     Parameters::Material::SpecificHeatModel::constant;
   physical_properties.fluids[0].thermal_conductivity_model =
     Parameters::Material::ThermalConductivityModel::constant;
+  physical_properties.fluids[0].electric_conductivity_model =
+    Parameters::Material::ElectricConductivityModel::constant;
+  physical_properties.fluids[0].electric_permittivity_model =
+    Parameters::Material::ElectricPermittivityModel::constant;
+  physical_properties.fluids[0].magnetic_permeability_model =
+    Parameters::Material::MagneticPermeabilityModel::constant;
 
-  physical_properties.fluids[0].density              = 1;
-  physical_properties.fluids[0].thermal_conductivity = 3;
-  physical_properties.fluids[0].specific_heat        = 2;
+  physical_properties.fluids[0].density                    = 1;
+  physical_properties.fluids[0].thermal_conductivity       = 3;
+  physical_properties.fluids[0].specific_heat              = 2;
+  physical_properties.fluids[0].electric_conductivity      = 0.5;
+  physical_properties.fluids[0].electric_permittivity_real = 1.5;
+  physical_properties.fluids[0].electric_permittivity_imag = 0.1;
+  physical_properties.fluids[0].magnetic_permeability_real = 1.5;
+  physical_properties.fluids[0].magnetic_permeability_imag = 0.1;
 
   PhysicalPropertiesManager physical_properties_manager;
   physical_properties_manager.initialize(physical_properties);
@@ -52,6 +63,26 @@ test()
   deallog << "Thermal conductivity : "
           << physical_properties_manager.get_thermal_conductivity()->value(
                dummy_fields)
+          << std::endl;
+  deallog << "Electric conductivity: "
+          << physical_properties_manager.get_electric_conductivity()->value(
+               dummy_fields)
+          << std::endl;
+  deallog << "Electric permittivity (real): "
+          << physical_properties_manager.get_electric_permittivity_real()
+               ->value(dummy_fields)
+          << std::endl;
+  deallog << "Electric permittivity (imag): "
+          << physical_properties_manager.get_electric_permittivity_imag()
+               ->value(dummy_fields)
+          << std::endl;
+  deallog << "Magnetic permeability (real): "
+          << physical_properties_manager.get_magnetic_permeability_real()
+               ->value(dummy_fields)
+          << std::endl;
+  deallog << "Magnetic permeability (imag): "
+          << physical_properties_manager.get_magnetic_permeability_imag()
+               ->value(dummy_fields)
           << std::endl;
 }
 
