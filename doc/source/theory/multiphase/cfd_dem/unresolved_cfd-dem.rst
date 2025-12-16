@@ -20,28 +20,27 @@ Particles
 Applying Newton's second law and Euler's law of angular motion on the particle :math:`i` surrounded by fluid a :math:`f`, we find:
 
 .. math::
-    m_i \frac{\mathrm{d}\mathbf{v}_i}{\mathrm{d}t} = \sum_{j}\mathbf{F}_{\mathrm{c},ij} + \sum_{j}\mathbf{F}_{\mathrm{nc},ij} + \mathbf{F}_{\mathrm{fp},i} + \mathbf{F}_{\mathbf{g},i} \\
-    I_i \frac{\mathrm{d}\mathbf{\omega}_i}{\mathrm{d}t} = \sum_{j}\left ( \mathbf{M}_{\mathrm{c},ij} + \mathbf{M}_{\mathrm{r},ij} \right ) + \sum_{w}\left ( \mathbf{M}_{\mathrm{c},iw} + \mathbf{M}_{\mathrm{r},iw} \right )
+    m_i \frac{\mathrm{d}\mathbf{v}_i}{\mathrm{d}t} = \mathbf{F}_{\mathrm{fp},i} + \mathbf{F}_{\mathbf{g},i} + \sum_{j} \left( \mathbf{F}_{\mathrm{c},ij} + \mathbf{F}_{\mathrm{nc},ij} \right) \\
+    I_i \frac{\mathrm{d}\mathbf{\omega}_i}{\mathrm{d}t} = \mathbf{M}_{\mathrm{fp},i} + \sum_{j}\left ( \mathbf{M}_{\mathrm{c},ij} + \mathbf{M}_{\mathrm{r},ij} \right ) 
 
 where:
 
 * :math:`m_i` is the mass of the particle :math:`i`;
 * :math:`\mathbf{v}_i` is the velocity of the particle :math:`i`;
-* :math:`\mathbf{F}_{\mathrm{c},ij}` are the contact forces between particles :math:`i` and :math:`j` (detailed in the DEM section of this guide);
-* :math:`\mathbf{F}_{\mathrm{nc},ij}` are the non-contact forces between particles :math:`i` and :math:`j`, such as lubrication forces [#nitsche1994]_;
 * :math:`\mathbf{F}_{\mathrm{fp},i}` is the force exerted by the surrounding fluid over particle :math:`i`. Here, the subscript :math:`fp` indicates the force exerted by the fluid on the particles;
 * :math:`\mathbf{F}_{\mathbf{g},i}` is the gravitational force;
+* :math:`\mathbf{F}_{\mathrm{c},ij}` are the contact forces between particles :math:`i` and :math:`j` (detailed in the DEM section of this guide);
+* :math:`\mathbf{F}_{\mathrm{nc},ij}` are the non-contact forces between particles :math:`i` and :math:`j`, such as lubrication forces [#nitsche1994]_;
 * :math:`I_i` is the moment of inertia;
 * :math:`\mathbf{\omega}_i` is the angular velocity;
+* :math:`\mathbf{M}_{\mathrm{fp},i}` is the torque exeerted by the surrounding fluid over the particle :math:`i`.
 * :math:`\mathbf{M}_{\mathrm{c},ij}` is the torque between particles :math:`i` and :math:`j`;
 * :math:`\mathbf{M}_{\mathrm{r},ij}` is the rolling friction between particles :math:`i` and :math:`j`;
-* :math:`\mathbf{M}_{\mathrm{c},iw}` is the torque between particle :math:`i` and walls :math:`w`;
-* :math:`\mathbf{M}_{\mathrm{c},iw}` is the rolling friction between particle :math:`i` and walls :math:`w`;
 
-Apart from :math:`\mathbf{F}_{\mathrm{fp},i}`, all the other terms of the previous equations are detailed in the DEM section of this theory guide (see :doc:`../dem/dem`). The momentum transfer between phases, :math:`\mathbf{F}_{\mathrm{fp},i}`, can be written as:
+The momentum transfer between phases, :math:`\mathbf{F}_{\mathrm{fp},i}`, can be written as:
 
 .. math::
-    \mathbf{F}_{fp,i} = \mathbf{F}_{\nabla p,i} + \mathbf{F}_{\nabla \cdot \mathbf{\tau},i} + \mathbf{F}_{\mathrm{d},i} + \mathbf{F}_{\mathrm{Ar},i} + \mathbf{F}_{\mathrm{S},i} + \mathbf{F}''_{i}
+    \mathbf{F}_{fp,i} = \mathbf{F}_{\nabla p,i} + \mathbf{F}_{\nabla \cdot \mathbf{\tau},i} + \mathbf{F}_{\mathrm{d},i} + \mathbf{F}_{\mathrm{Ar},i} + \mathbf{F}_{\mathrm{S},i} + \mathbf{F}_{\mathrm{M},i} + \mathbf{F}''_{i}
 
 where:
 
@@ -50,7 +49,8 @@ where:
 * :math:`\mathbf{F}_{\mathrm{d},i}` is the drag force;
 * :math:`\mathbf{F}_{\mathrm{Ar},i}` is the buoyancy (Archimedes) force;
 * :math:`\mathbf{F}_{\mathrm{S},i}` is the Saffman lift force;
-* :math:`\mathbf{F}''_{i}` are the remaining forces, including virtual mass, Basset, and Magnus lift which are currently not implemented in Lethe.
+* :math:`\mathbf{F}_{\mathrm{M},i}` is the Magnus lift force;
+* :math:`\mathbf{F}''_{i}` are the remaining forces, including virtual mass, Basset which are currently not implemented in Lethe.
 
 .. note::
     Since the pressure in Lethe does not account for the hydrostatic pressure, i.e., the gravity term is not taken into account in the Navier-Stokes equations (see :doc:`../../multiphysics/fluid_dynamics/navier-stokes`), we explicitly insert :math:`\mathbf{f}_{Ar,i}` in :math:`\mathbf{f}_{pf,i}`.  
