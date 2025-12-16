@@ -2,13 +2,13 @@
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
 /**
- * @brief Tests the constant electromagnetic conductivity, permittivity and permeability properties.
+ * @brief Tests the constant electromagnetic properties : conductivity, permittivity and permeability.
  */
 
 // Lethe
-#include <core/electromagnetic_conductivity_model.h>
-#include <core/electromagnetic_permeability_model.h>
-#include <core/electromagnetic_permittivity_model.h>
+#include <core/electric_conductivity_model.h>
+#include <core/magnetic_permeability_model.h>
+#include <core/electric_permittivity_model.h>
 
 #include <../tests/tests.h>
 
@@ -23,22 +23,22 @@ test()
   deallog << "Begin test" << std::endl;
 
 
-  deallog << "Testing Electromagnetic Conductivity" << std::endl;
-  ConstantElectroMagneticConductivity conductivity_model(5);
-  deallog << "Electromagnetic Conductivity = "
+  deallog << "Testing Electric Conductivity" << std::endl;
+  ConstantElectricConductivity conductivity_model(5);
+  deallog << "Electric Conductivity = "
           << conductivity_model.value(field_values) << std::endl;
 
 
-  deallog << "Testing Electromagnetic Permittivity" << std::endl;
-  ConstantElectroMagneticPermittivity permittivity_model(6);
+  deallog << "Testing Electric Permittivity" << std::endl;
+  ConstantElectricPermittivity permittivity_model(6);
 
-  deallog << "Electromagnetic Conductivity = "
+  deallog << "Electric Permittivity = "
           << permittivity_model.value(field_values) << std::endl;
 
-  deallog << "Testing Electromagnetic Permeability" << std::endl;
-  ConstantElectroMagneticPermeability permeability_model(7);
+  deallog << "Testing Magnetic Permeability" << std::endl;
+  ConstantMagneticPermeability permeability_model(7);
 
-  deallog << "Electromagnetic Permeability = "
+  deallog << "Magnetic Permeability = "
           << permeability_model.value(field_values) << std::endl;
 
   deallog << "OK" << std::endl;

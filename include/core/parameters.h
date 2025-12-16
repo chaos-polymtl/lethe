@@ -531,12 +531,12 @@ namespace Parameters
 
     /// Material parameters for the electromagnetics solver
 
-    /// Electromagnetic_conductivity
-    double electromagnetic_conductivity;
-    /// Electromagnetic_permeability
-    double electromagnetic_permeability;
-    /// Electromagnetic_permittivity
-    double electromagnetic_permittivity;
+    /// Electric_conductivity
+    double electric_conductivity;
+    /// Magnetic_permeability
+    double magnetic_permeability;
+    /// Electric_permittivity
+    double electric_permittivity;
   };
 
   /**
