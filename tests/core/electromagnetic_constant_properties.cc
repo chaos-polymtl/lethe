@@ -7,8 +7,8 @@
 
 // Lethe
 #include <core/electric_conductivity_model.h>
-#include <core/magnetic_permeability_model.h>
 #include <core/electric_permittivity_model.h>
+#include <core/magnetic_permeability_model.h>
 
 #include <../tests/tests.h>
 

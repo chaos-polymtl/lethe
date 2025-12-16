@@ -9,27 +9,35 @@
 
 /**
  * @brief Abstract class that allows to calculate the
- * electric permittivity on each quadrature point.
+ * electric permittivity real and imaginary part on each quadrature point.
  */
 class ElectricPermittivityModel : public PhysicalPropertyModel
 {
 public:
   /**
    * @brief Instantiates and returns a pointer to a ElectricPermittivityModel object by casting it to
-   * the proper child class
+   * the proper child class for the real part of the permittivity.
    *
    * @param material_properties Parameters for a material
    */
   static std::shared_ptr<ElectricPermittivityModel>
-  model_cast(const Parameters::Material &material_properties);
+  model_cast_real(const Parameters::Material &material_properties);
+
+  /**
+   * @brief Instantiates and returns a pointer to a ElectricPermittivityModel object by casting it to
+   * the proper child class for the imaginary part of the permittivity.
+   *
+   * @param material_properties Parameters for a material
+   */
+  static std::shared_ptr<ElectricPermittivityModel>
+  model_cast_imag(const Parameters::Material &material_properties);
 };
 
 
 /**
  * @brief Constant electric permittivity.
  */
-class ConstantElectricPermittivity
-  : public ElectricPermittivityModel
+class ConstantElectricPermittivity : public ElectricPermittivityModel
 {
 public:
   /**
@@ -60,8 +68,7 @@ public:
     [[maybe_unused]] const std::map<field, std::vector<double>> &field_vectors,
     std::vector<double> &property_vector) override
   {
-    property_vector.assign(property_vector.size(),
-                           electric_permittivity);
+    property_vector.assign(property_vector.size(), electric_permittivity);
   }
 
   /**

@@ -16,27 +16,34 @@ class MagneticPermeabilityModel : public PhysicalPropertyModel
 public:
   /**
    * @brief Instantiates and returns a pointer to a MagneticPermeabilityModel object by casting it to
-   * the proper child class
+   * the proper child class for the real part of the permeability.
    *
    * @param material_properties Parameters for a material
    */
   static std::shared_ptr<MagneticPermeabilityModel>
-  model_cast(const Parameters::Material &material_properties);
+  model_cast_real(const Parameters::Material &material_properties);
+
+  /**
+   * @brief Instantiates and returns a pointer to a MagneticPermeabilityModel object by casting it to
+   * the proper child class for the imaginary part of the permeability.
+   *
+   * @param material_properties Parameters for a material
+   */
+  static std::shared_ptr<MagneticPermeabilityModel>
+  model_cast_imag(const Parameters::Material &material_properties);
 };
 
 
 /**
  * @brief Constant magnetic permeability.
  */
-class ConstantMagneticPermeability
-  : public MagneticPermeabilityModel
+class ConstantMagneticPermeability : public MagneticPermeabilityModel
 {
 public:
   /**
    * @brief Default constructor
    */
-  ConstantMagneticPermeability(
-    const double p_magnetic_permeability)
+  ConstantMagneticPermeability(const double p_magnetic_permeability)
     : magnetic_permeability(p_magnetic_permeability)
   {}
 
@@ -61,8 +68,7 @@ public:
     [[maybe_unused]] const std::map<field, std::vector<double>> &field_vectors,
     std::vector<double> &property_vector) override
   {
-    property_vector.assign(property_vector.size(),
-                           magnetic_permeability);
+    property_vector.assign(property_vector.size(), magnetic_permeability);
   }
 
   /**

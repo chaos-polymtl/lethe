@@ -28,8 +28,7 @@ public:
 /**
  * @brief Constant electric conductivity.
  */
-class ConstantElectricConductivity
-  : public ElectricConductivityModel
+class ConstantElectricConductivity : public ElectricConductivityModel
 {
 public:
   /**
@@ -60,8 +59,7 @@ public:
     [[maybe_unused]] const std::map<field, std::vector<double>> &field_vectors,
     std::vector<double> &property_vector) override
   {
-    property_vector.assign(property_vector.size(),
-                           electric_conductivity);
+    property_vector.assign(property_vector.size(), electric_conductivity);
   }
 
   /**

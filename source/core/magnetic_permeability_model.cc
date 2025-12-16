@@ -4,9 +4,31 @@
 #include <core/magnetic_permeability_model.h>
 
 std::shared_ptr<MagneticPermeabilityModel>
-MagneticPermeabilityModel::model_cast(
+MagneticPermeabilityModel::model_cast_real(
   const Parameters::Material &material_properties)
 {
-  return std::make_shared<ConstantMagneticPermeability>(
-    material_properties.magnetic_permeability);
+  if (material_properties.magnetic_permeability_model ==
+      Parameters::Material::MagneticPermeabilityModel::constant)
+    return std::make_shared<ConstantMagneticPermeability>(
+      material_properties.magnetic_permeability_real);
+  else
+    AssertThrow(
+      false,
+      ExcMessage(
+        "Invalid magnetic permeability model. The choices are <constant>"));
+}
+
+std::shared_ptr<MagneticPermeabilityModel>
+MagneticPermeabilityModel::model_cast_imag(
+  const Parameters::Material &material_properties)
+{
+  if (material_properties.magnetic_permeability_model ==
+      Parameters::Material::MagneticPermeabilityModel::constant)
+    return std::make_shared<ConstantMagneticPermeability>(
+      material_properties.magnetic_permeability_imag);
+  else
+    AssertThrow(
+      false,
+      ExcMessage(
+        "Invalid magnetic permeability model. The choices are <constant>"));
 }
