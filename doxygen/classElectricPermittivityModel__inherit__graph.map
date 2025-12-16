@@ -1,0 +1,7 @@
+<map id="ElectricPermittivityModel" name="ElectricPermittivityModel">
+<area shape="rect" id="Node000001" title="Abstract class that allows to calculate the electric permittivity real and imaginary part on each qua..." alt="" coords="15,79,201,104"/>
+<area shape="rect" id="Node000003" href="$classConstantElectricPermittivity.html" title="Constant electric permittivity." alt="" coords="5,152,211,177"/>
+<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="111,118,111,152,105,152,105,118"/>
+<area shape="rect" id="Node000002" href="$classPhysicalPropertyModel.html" title="Abstract class that defines the interface for a physical property model Physical property model provi..." alt="" coords="23,5,193,31"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="111,44,111,79,105,79,105,44"/>
+</map>

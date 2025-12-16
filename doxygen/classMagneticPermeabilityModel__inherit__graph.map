@@ -1,0 +1,7 @@
+<map id="MagneticPermeabilityModel" name="MagneticPermeabilityModel">
+<area shape="rect" id="Node000001" title="Abstract class that allows to calculate the magnetic permeability on each quadrature point." alt="" coords="14,79,219,104"/>
+<area shape="rect" id="Node000003" href="$classConstantMagneticPermeability.html" title="Constant magnetic permeability." alt="" coords="5,152,228,177"/>
+<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="119,118,119,152,114,152,114,118"/>
+<area shape="rect" id="Node000002" href="$classPhysicalPropertyModel.html" title="Abstract class that defines the interface for a physical property model Physical property model provi..." alt="" coords="31,5,202,31"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="119,44,119,79,114,79,114,44"/>
+</map>

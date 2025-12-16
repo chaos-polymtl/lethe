@@ -1,0 +1,7 @@
+<map id="ElectricConductivityModel" name="ElectricConductivityModel">
+<area shape="rect" id="Node000001" title="Abstract class that allows to calculate the electric conductivity on each quadrature point." alt="" coords="15,79,207,104"/>
+<area shape="rect" id="Node000003" href="$classConstantElectricConductivity.html" title="Constant electric conductivity." alt="" coords="5,152,216,177"/>
+<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="113,118,113,152,108,152,108,118"/>
+<area shape="rect" id="Node000002" href="$classPhysicalPropertyModel.html" title="Abstract class that defines the interface for a physical property model Physical property model provi..." alt="" coords="25,5,196,31"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="113,44,113,79,108,79,108,44"/>
+</map>
