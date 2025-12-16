@@ -7,6 +7,6 @@ std::shared_ptr<ElectroMagneticPermittivityModel>
 ElectroMagneticPermittivityModel::model_cast(
   const Parameters::Material &material_properties)
 {
-  return std::make_shared<ConstantElectroMagneticConductivity>(
+  return std::make_shared<ConstantElectroMagneticPermittivity>(
     material_properties.electromagnetic_permittivity);
 }

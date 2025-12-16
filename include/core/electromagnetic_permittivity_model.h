@@ -28,14 +28,14 @@ public:
 /**
  * @brief Constant electromagnetic conductivity.
  */
-class ConstantElectroMagneticConductivity
+class ConstantElectroMagneticPermittivity
   : public ElectroMagneticPermittivityModel
 {
 public:
   /**
    * @brief Default constructor
    */
-  ConstantElectroMagneticConductivity(const double p_em_conductivity)
+  ConstantElectroMagneticPermittivity(const double p_em_conductivity)
     : electromagnetic_permittivity(p_em_conductivity)
   {}
 

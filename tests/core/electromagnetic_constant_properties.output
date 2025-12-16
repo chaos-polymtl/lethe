@@ -1,0 +1,9 @@
+
+DEAL::Begin test
+DEAL::Testing Electromagnetic Conductivity
+DEAL::Electromagnetic Conductivity = 5.00000
+DEAL::Testing Electromagnetic Permittivity
+DEAL::Electromagnetic Conductivity = 6.00000
+DEAL::Testing Electromagnetic Permeability
+DEAL::Electromagnetic Permeability = 7.00000
+DEAL::OK
