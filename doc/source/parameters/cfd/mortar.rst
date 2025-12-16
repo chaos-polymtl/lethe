@@ -26,6 +26,7 @@ The mortar section is used when simulating rotor-stator geometries, in which the
     end
     set penalty factor      = 1.0
     set oversampling factor = 2
+    set radius tolerance    = 1e-8
     set verbosity           = verbose
   end
 
@@ -54,6 +55,16 @@ The mortar section is used when simulating rotor-stator geometries, in which the
 * The ``penalty factor`` is used for the weak imposition of the mortar coupling at the interface. This parameter is akin to the symmetric interior penalty factor in SIPG (Symmetric Interior penalty Galerkin Method) [#larson2013]_.
 
 * The ``oversampling factor`` is used to increase the number of quadrature points. This feature is used to better approximate the weak imposition of the interface coupling.
+
+* When computing the rotor-stator interface radius, the radial distance of every node at both rotor and stator boundaries to the ``center of rotation`` is computed, and the following check is performed:
+
+.. math::
+   |r_{max} - r_{min}| < tol
+
+where :math:`r_{max}`, :math:`r_{min}` are the maximum and minimum values obtained, respectively, and  :math:`tol` is the prescribed ``radius tolerance`` parameter.
+
+.. note::
+  The default value for ``radius tolerance`` is :math:`10^{-8}`, which should cover the precision range of deal.II-generated grids. The tolerance might need to be increased for some ``gmsh`` mesh type cases or for large simulations running in multiple cores, when the above verification fails even if the mesh discretization is coherent.
 
 * When enabling ``verbosity`` (``set verbosity = verbose``), the rotor rotation information is printed at every iteration.
 

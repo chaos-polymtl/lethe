@@ -4,6 +4,12 @@ All notable changes to the Lethe project will be documented in this file.
 The changelog for the previous releases of Lethe are located in the release_notes folder.
 The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
+## [Master] - 2025/12/15
+
+### Fixed
+
+-MINOR The tolerance adopted in the radius computation at the rotor-stator mortar interface was a hard-coded value, which was not ideal. This PR fixes this by introducing a radius tolerance parameter. [#1853](https://github.com/chaos-polymtl/lethe/pull/1853)
+
 ## [Master] - 2025/12/14
 
 ### Changed

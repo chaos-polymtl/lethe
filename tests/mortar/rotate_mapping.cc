@@ -75,6 +75,7 @@ test()
   mortar_parameters.stator_boundary_id         = 4;
   mortar_parameters.rotor_boundary_id          = 5; // after shifting
   mortar_parameters.rotation_axis              = Tensor<1, dim>({0, 0});
+  mortar_parameters.radius_tolerance           = 1e-8;
   const double rotation_angle =
     2 * numbers::PI * mortar_parameters.rotor_mesh->rotation_angle / 360.0;
 

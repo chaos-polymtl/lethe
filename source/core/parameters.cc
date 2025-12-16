@@ -4313,6 +4313,10 @@ namespace Parameters
                         "1",
                         Patterns::Integer(),
                         "Oversampling factor for quadrature points");
+      prm.declare_entry("radius tolerance",
+                        "1e-8",
+                        Patterns::Double(),
+                        "Tolerance used for the interface radius computation");
       prm.declare_entry(
         "verbosity",
         "quiet",
@@ -4348,6 +4352,7 @@ namespace Parameters
 
       sip_factor          = prm.get_double("penalty factor");
       oversampling_factor = prm.get_integer("oversampling factor");
+      radius_tolerance    = prm.get_double("radius tolerance");
 
       // Enable printing of mortar information
       const std::string op = prm.get("verbosity");
