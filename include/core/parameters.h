@@ -528,6 +528,15 @@ namespace Parameters
     // Linear thermal conductivity parameters: k = k_A0 + k_A1 * T
     double k_A0;
     double k_A1;
+
+    /// Material parameters for the electromagnetics solver
+
+    /// Electromagnetic_conductivity
+    double electromagnetic_conductivity;
+    /// Electromagnetic_permeability
+    double electromagnetic_permeability;
+    /// Electromagnetic_permittivity
+    double electromagnetic_permittivity;
   };
 
   /**
