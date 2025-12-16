@@ -1,5 +1,5 @@
 ====================================
-Cynlidrical Gas-Solid Fluidized Bed
+Gas-Solid Fluidized Cylinder Bed
 ====================================
 
 This example simulates the fluidization of particles in air within a cylindrical bed. It is based on the fluidized bed test case presented in the work of El Geitani *et al* [#ElGeitani2023]_ and was used to validate one of the earliest CFD-DEM implementations in Lethe. Most importantly, this example compares the pressure drop across the bed as a function of the superficial gas velocity with correlations available in the literature.
@@ -18,7 +18,7 @@ Features
 Files Used in This Example
 ---------------------------
 
-All files mentioned below are located in the example's folder (``examples/unresolved-cfd-dem/gas-solid-fluidized-bed-cylindrical``).
+All files mentioned below are located in the example's folder (``examples/unresolved-cfd-dem/gas-solid-fluidized-cylinder-bed``).
 
 - Parameter file for particle generation and packing: ``particle-packing.prm``
 - Parameter file for CFD-DEM simulation of the gas-solid fluidized bed: ``mb-fluidized-bed-modelA.prm``, ``mb-fluidized-bed-modelB.prm``, ``mb-fluidized-bed-modelA-qcm.prm``, ``mb-fluidized-bed-modelB-qcm.prm`` and ``mf-fluidized-bed-modelA.prm``
@@ -58,7 +58,7 @@ As mentioned in the example description, the particles are packed inside a cylin
 Simulation Control
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-The ``simulation control`` subsection specifies the ``time step``, ``time end``, ``log frequency``, ``output frequency`` and ``output path`` of the DEM simulation. ``output boundaries`` is set to ``true`` so that the cylindrical column walls are also written to file for visualization. The chosen ``time step`` corresponds to approximately :math:`11\%` of the `Rayleigh timestep <../../../parameters/dem/simulation_control.html>`_, ensuring numerical stability. The simulation end time is set to :math:`0.7` s, a duration sufficient for all inserted particles to settle within the column.
+The ``simulation control`` subsection specifies the ``time step``, ``time end``, ``log frequency``, ``output frequency`` and ``output path`` of the DEM simulation. ``output boundaries`` is set to ``true`` so that the cylindrical column walls are also written to file for visualization. The ``time step`` corresponds to approximately :math:`11\%` of the `Rayleigh timestep <../../../parameters/dem/simulation_control.html>`_, ensuring numerical stability. The simulation end time is set to :math:`0.7` s, a duration sufficient for all inserted particles to settle within the column.
 
 .. code-block:: text
 
@@ -90,7 +90,7 @@ The initial state of the particles in the CFD-DEM solver corresponds to the fina
 Model Parameters
 ~~~~~~~~~~~~~~~~~
 
-Details on the model parameters subsection are provided in the `DEM Model Parameters guide <../../../parameters/dem/model_parameters.html>`_ and other `DEM examples <../../dem/dem.html>`_. The ``neighborhood threshold`` is set to 1.1, providing a balance between accurate contact detection and computational efficiency.
+Details on the model parameters subsection are provided in the `DEM Model Parameters guide <../../../parameters/dem/model_parameters.html>`_ and other `DEM examples <../../dem/dem.html>`_. The ``neighborhood threshold`` is set to 1.1 as an adequate compromise between the number of contact detection steps and the number of neighbours of each particle. This is mostly for computational efficiency and a value of 1.2 or 1.3 could also be used here.
 
 .. code-block:: text
 
@@ -112,7 +112,7 @@ Details on the model parameters subsection are provided in the `DEM Model Parame
 Lagrangian Physical Properties
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-The ``Lagrangian Physical Properties`` subsection defines the physical properties of the particles and walls in the simulation. All properties are chosen to match those used in the work of El Geitani *et al* [#ElGeitani2023]_. Accordingly, the cylindrical bed is filled with :math:`200 000` particles, each with a diameter of :math:`500\;\mu\text{m}` and a density of :math:`1000\;\text{kg}/\text{m}^3`.
+The ``lagrangian physical properties`` subsection defines the physical properties of the particles and walls in the simulation. All properties are chosen to match those used in the work of El Geitani *et al* [#ElGeitani2023]_. Accordingly, the cylindrical bed is filled with :math:`200 000` particles, each with a diameter of :math:`500\;\mu\text{m}` and a density of :math:`1000\;\text{kg}/\text{m}^3`.
 
 .. code-block:: text
 
@@ -145,25 +145,15 @@ The particles are inserted into the cylindrical column using the ``insertion inf
 
 .. code-block:: text
 
-    subsection lagrangian physical properties
-        set g                        = -9.81, 0, 0
-        set number of particle types = 1
-        subsection particle type 0
-            set size distribution type            = uniform
-            set diameter                          = 0.0005
-            set number of particles               = 200000
-            set density particles                 = 1000
-            set young modulus particles           = 1e6
-            set poisson ratio particles           = 0.3
-            set restitution coefficient particles = 0.9
-            set friction coefficient particles    = 0.1
-            set rolling friction particles        = 0.1
-        end
-        set young modulus wall           = 1e6
-        set poisson ratio wall           = 0.3
-        set restitution coefficient wall = 0.9
-        set friction coefficient wall    = 0.1
-        set rolling friction wall        = 0.1
+    subsection insertion info
+        set insertion method                               = volume
+        set inserted number of particles at each time step = 200000
+        set insertion frequency                            = 200000
+        set insertion box points coordinates               = -0.179, -0.0065, -0.0065 : 0.2, 0.0065, 0.0065
+        set insertion distance threshold                   = 1.1
+        set insertion maximum offset                       = 0.02
+        set insertion prn seed                             = 19
+        set insertion direction sequence                   = 1, 2, 0
     end
 
 
@@ -188,7 +178,7 @@ To allow the gas flow to develop before reaching the particles, the latter are p
                 set nz = 0
             end
             set start time = 0
-            set end time   = 5
+            set end time   = 100
         end
     end
 
@@ -219,9 +209,9 @@ The CFD-DEM simulation is run using the matrix-based solver ``lethe-fluid-partic
 The objective of the simulations is to represent the pressure drop across the bed as a function of the Reynolds number based on the superficial gas velocity and the column diameter:
 
 .. math::
-  Re = \frac{U_{g} D}{\nu_f}
+  Re = \frac{U_{\mathrm{g}} D}{\nu_{\mathrm{f}}}
 
-where :math:`U_{g}` is the superficial gas velocity, :math:`D` is the column diameter and :math:`\nu_f` is the kinematic viscosity of the fluid. For a Reynolds number interval ranging from :math:`200` to :math:`800`, the gas inlet velocity is varied from :math:`0.02\;\text{m/s}` to :math:`0.4\;\text{m/s}` in increments of :math:`0.02\;\text{m/s}`, each value applied for :math:`0.05` s.
+where :math:`U_{\mathrm{g}}` is the superficial gas velocity, :math:`D` is the column diameter and :math:`\nu_{\mathrm{f}}` is the kinematic viscosity of the fluid. For a Reynolds number interval ranging from :math:`200` to :math:`800`, the gas inlet velocity is varied from :math:`0.02\;\text{m/s}` to :math:`0.4\;\text{m/s}` in increments of :math:`0.02\;\text{m/s}`, each value applied for :math:`0.05` s.
 
 
 Simulation Control
@@ -233,16 +223,15 @@ To reach an inlet velocity of :math:`0.4\;\text{m/s}`, as described earlier, the
 
     subsection simulation control
         set method           = bdf1
-        set output frequency = 5
+        set output frequency = 50
         set time end         = 1.0
         set time step        = 0.0002
-        set output path      = ./output_modelA_mb/
     end
 
 Physical Properties
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-The gas is taken to have a density of :math:`1\;\text{kg/m}^3` and a kinematic viscosity of :math:`10^{-5}\;\text{Pa}\cdot\text{s}`.
+The gas is taken to have a density of :math:`1\;\text{kg/m}^3` and a kinematic viscosity of :math:`10^{-5}\;\text{m}^2/\text{s}`.
 
 .. code-block:: text
 
@@ -253,25 +242,10 @@ The gas is taken to have a density of :math:`1\;\text{kg/m}^3` and a kinematic v
         end
     end
 
-
-Initial Conditions
-~~~~~~~~~~~~~~~~~~
-
-The velocity is initialized to be zero throughout the domain.
-
-.. code-block:: text
-
-    subsection initial conditions
-        subsection uvwp
-            set Function expression = 0; 0; 0; 0
-        end
-    end
-
-
 Boundary Conditions
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-The boundary conditions are chosen as follows: a no-slip condition on the lateral wall of the column (``id = 0``), a time-dependent inlet velocity defined as a piecewise constant function of time with :math:`0.02\;\text{m/s}` increments every :math:`0.05` s, and an outlet condition on the top wall of the column (``id = 2``).
+The boundary conditions are chosen as follows: a no-slip condition on the lateral wall of the column (``id = 0``), a time-dependent inlet velocity defined as a piecewise constant function of time with :math:`0.02\;\text{m/s}` increments every :math:`0.05` s (``id = 1``), and an outlet condition on the top wall of the column (``id = 2``).
 
 .. code-block:: text
 
@@ -280,7 +254,7 @@ The boundary conditions are chosen as follows: a no-slip condition on the latera
         set time dependent = true
         subsection bc 0
             set id   = 0
-            set type = noslip
+            set type = slip
         end
         subsection bc 1
             set id   = 1
@@ -310,10 +284,10 @@ The void fraction is computed using the particle information available in the DE
 .. code-block:: text
 
     subsection void fraction
-        set mode                = qcm
+        set mode                         = qcm
         set qcm sphere equal cell volume = true
-        set read dem            = true
-        set dem file name       = dem
+        set read dem                     = true
+        set dem file name                = dem
         set l2 smoothing length = 0.001
     end
 
@@ -321,7 +295,7 @@ The void fraction is computed using the particle information available in the DE
 CFD-DEM
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-All hydrodynamic forces are enabled in the ``cfd-dem`` subsection. This allows testing the different models; particularly, the shear and pressure forces need to be enabled to properly test model B. Grad-div stabilization is also enabled to improve mass conservation, using a length-scale equal to the column's radius, which is of the same order of the characteristic length of the flow, as recommended in the `CFD-DEM parameters section <../../../parameters/unresolved-cfd-dem/cfd-dem.html>`_. In simulations where the QCM projection is applied to the particle–fluid forces, the parameter ``project particle forces`` is set to ``true``, and the ``drag coupling`` is set to ``explicit``.
+All hydrodynamic forces are enabled in the ``cfd-dem`` subsection. This allows testing the different models. Grad-div stabilization is also enabled to improve mass conservation, using a length-scale equal to the column's radius, which is of the same order of the characteristic length of the flow, as recommended in the `CFD-DEM parameters section <../../../parameters/unresolved-cfd-dem/cfd-dem.html>`_. In simulations where the QCM projection is applied to the particle–fluid forces, the parameter ``project particle forces`` is set to ``true``, and the ``drag coupling`` is set to ``explicit``.
 
 .. code-block:: text
 
@@ -342,23 +316,23 @@ All hydrodynamic forces are enabled in the ``cfd-dem`` subsection. This allows t
 Post-processing
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-The pressure drop is calculated across the bed at each time step (or every 10 time steps for cases using the QCM force projection with explicit drag coupling). The parameters ``inlet boundary id`` and ``outlet boundary id`` are specified as the inlet and outlet of the column, respectively.
+The pressure drop is calculated across the bed. The parameters ``inlet boundary id`` and ``outlet boundary id`` are specified as the inlet and outlet of the column, respectively.
 
 .. code-block:: text
 
     subsection post-processing
         set calculate pressure drop = true
-        set inlet boundary id = 1
-        set outlet boundary id = 2
-        set output frequency = 10
-        set verbosity = verbose
+        set inlet boundary id       = 1
+        set outlet boundary id      = 2
+        set output frequency        = 10
+        set verbosity               = verbose
     end
 
 
 Non-linear Solver
 ~~~~~~~~~~~~~~~~~
 
-The ``newton`` nonlinear solver is used, as the ``inexact_newton`` solver provided only a slight improvement in simulation speed. The tolerance is selected to balance simulation time and accuracy.
+The ``newton`` nonlinear solver is used. The tolerance is selected to balance simulation time and accuracy.
 
 .. code-block:: text
 
@@ -405,17 +379,17 @@ The simulations are launched with the matrix-based solver (and corresponding par
 .. code-block:: text
   :class: copy-button
 
-  mpirun -np 128 lethe-fluid-particles mb-fluidized-bed-modelA.prm
+  mpirun -np 8 lethe-fluid-particles mb-fluidized-bed-modelA.prm
 
 The matrix-free solver is run following:
 
 .. code-block:: text
   :class: copy-button
 
-  mpirun -np 128 lethe-fluid-particles-matrix-free mf-fluidized-bed-modelA.prm
+  mpirun -np 8 lethe-fluid-particles-matrix-free mf-fluidized-bed-modelA.prm
 
 .. note::   
-    The simulation runtimes are as follows:
+    The simulation runtimes on 128 cores, which are approximate, are as follows:
 
     +------------------+-------------+------------------+--------------------+
     | Solver           | VANS Model  | Force projection | Simulation runtime |
@@ -436,21 +410,21 @@ The matrix-free solver is run following:
 Results
 --------
 
-The pressure drop is calculated during the simulation. In the post-processing Python script, for each velocity value sampled every :math:`0.05` s, we average the pressure drop over the last :math:`0.025` s and calculate the corresponding standard deviation. The resulting mean pressure drop is then plotted as a function of the Reynolds number, with the standard deviation shown as error bars. The vertical lines correspond to the fluidization limit predicted by the Wen-Yu [#WenYu1966]_ correlation:
+The pressure drop is calculated during the simulation. In the post-processing Python script, for each velocity value (which lasts for :math:`0.05` s), we average the pressure drop over the last :math:`0.025` s and calculate the corresponding standard deviation. The resulting mean pressure drop is then plotted as a function of the Reynolds number, with the standard deviation shown as error bars. The vertical lines correspond to the fluidization limit predicted by the Wen-Yu [#WenYu1966]_ correlation:
 
 .. math::
-  Re_{\text{mf}} = \left(33.7^2 + 0.0408 \, Ar \right)^{0.5} - 33.7
+  \mathrm{Re}_{\text{mf}} = \left(33.7^2 + 0.0408 \, Ar \right)^{0.5} - 33.7
 
 and that predicted by Noda *et al* [#Noda1986]_:
 
 .. math::
-  Re_{\text{mf}} = \left(19.29^2 + 0.0276 \, Ar \right)^{0.5} - 19.29
+  \mathrm{Re}_{\text{mf}} = \left(19.29^2 + 0.0276 \, Ar \right)^{0.5} - 19.29
     
 
-Here, the subscript :math:`\mathrm{mf}` refers to minimum fluidization, and :math:`Ar` is the Archimedes number, which depends on the acceleration due to gravity, :math:`g`, the fluid density, :math:`\rho_f`, and dynamic viscosity, :math:`\mu_f`, as well as the particle diameter, :math:`d_p`, and particle density, :math:`\rho_p`:
+Here, the subscript :math:`\mathrm{mf}` refers to minimum fluidization, and :math:`\mathrm{Ar}` is the Archimedes number, which depends on the acceleration due to gravity, :math:`g`, the fluid density, :math:`\rho_{\mathrm{f}}`, and dynamic viscosity, :math:`\mu_{\mathrm{f}}`, as well as the particle diameter, :math:`d_{\mathrm{p}}`, and particle density, :math:`\rho_{\mathrm{p}}`:
 
 .. math::
-  Ar = \frac{g \rho_f (\rho_p - \rho_f) d_p^3}{\mu_f^2}.
+  \mathrm{Ar} = \frac{g \rho_{\mathrm{f}} (\rho_{\mathrm{p}} - \rho_{\mathrm{f}}) d_{\mathrm{p}}^3}{\mu_{\mathrm{f}}^2}.
 
 .. image:: images/pressure-drop.png
     :alt: Pressure drop across the bed as a function of the Reynolds number at the column inlet
@@ -459,9 +433,9 @@ Here, the subscript :math:`\mathrm{mf}` refers to minimum fluidization, and :mat
 It can be seen that all simulations recover the expected constant pressure-drop plateau after fluidization (shown with the horizontal dashed line), equal to the net weight of the particle bed (weight minus buoyancy) per unit area:
 
 .. math::
-  \Delta p = \frac{N_p V_p (\rho_p-\rho_f) g}{A_b}
+  \Delta p = \frac{N_\mathrm{p} V_\mathrm{p} (\rho_\mathrm{p}-\rho_\mathrm{f}) g}{A_\mathrm{b}}
 
-with :math:`N_p` the number of particles, :math:`V_p` the volume of a particle, and :math:`A_b` the cross-sectional area of the bed.
+with :math:`N_\mathrm{p}` the number of particles, :math:`V_\mathrm{p}` the volume of a particle, and :math:`A_\mathrm{b}` the cross-sectional area of the bed.
 
 The figure on the left compares the matrix-based (MB) solver results with cell-based force projection for models A and B, as well as the matrix-free (MF) solver for model A (which uses only QCM filtering for the force projection). The figure on the right compares the MB solver results with QCM force projection for models A and B and the MF solver with QCM force projection.
 

@@ -12,10 +12,10 @@ set dimension = 3
 
 subsection simulation control
   set method           = bdf1
-  set output frequency = 10
+  set output frequency = 100
   set time end         = 1.0
   set time step        = 0.0001
-  set output path      = ./output_modelA_project_forces_qcm/
+  set output path      = ./output_mb_qcm_explicit/
 end
 
 #---------------------------------------------------
@@ -75,9 +75,9 @@ subsection cfd-dem
   set shear force                   = true
   set pressure force                = true
   set drag model                    = difelice
-  set drag coupling                 = explicit
   set coupling frequency            = 100
   set vans model                    = modelA
+  set drag coupling                 = explicit
   set project particle forces       = true
 end
 
@@ -100,7 +100,7 @@ subsection boundary conditions
   set time dependent = true
   subsection bc 0
     set id   = 0
-    set type = noslip
+    set type = slip
   end
   subsection bc 1
     set id   = 1
@@ -137,11 +137,6 @@ subsection model parameters
   subsection contact detection
     set contact detection method = dynamic
     set neighborhood threshold   = 1.1
-  end
-  subsection load balancing
-    set load balance method     = dynamic
-    set threshold               = 0.5
-    set dynamic check frequency = 10000
   end
   set particle particle contact force method = hertz_mindlin_limit_overlap
   set particle wall contact force method     = nonlinear
@@ -191,7 +186,7 @@ subsection floating walls
       set nz = 0
     end
     set start time = 0
-    set end time   = 6
+    set end time   = 100
   end
 end
 
@@ -235,7 +230,7 @@ subsection post-processing
   set calculate pressure drop = true
   set inlet boundary id       = 1
   set outlet boundary id      = 2
-  set output frequency        = 10
+  set output frequency        = 1
   set verbosity               = verbose
 end
 

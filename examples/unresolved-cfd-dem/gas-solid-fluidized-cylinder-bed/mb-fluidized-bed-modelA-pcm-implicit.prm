@@ -12,10 +12,10 @@ set dimension = 3
 
 subsection simulation control
   set method           = bdf1
-  set output frequency = 5
+  set output frequency = 50
   set time end         = 1.0
   set time step        = 0.0002
-  set output path      = ./output_modelA_mb/
+  set output path      = ./output_mb_pcm_implicit/
 end
 
 #---------------------------------------------------
@@ -55,8 +55,7 @@ end
 #---------------------------------------------------
 
 subsection void fraction
-  set mode                         = qcm
-  set qcm sphere equal cell volume = true
+  set mode                         = pcm
   set read dem                     = true
   set dem file name                = dem
   set l2 smoothing length          = 0.001
@@ -77,6 +76,7 @@ subsection cfd-dem
   set drag model                    = difelice
   set coupling frequency            = 100
   set vans model                    = modelA
+  set drag coupling                 = implicit
 end
 
 #---------------------------------------------------
@@ -98,7 +98,7 @@ subsection boundary conditions
   set time dependent = true
   subsection bc 0
     set id   = 0
-    set type = noslip
+    set type = slip
   end
   subsection bc 1
     set id   = 1
@@ -135,11 +135,6 @@ subsection model parameters
   subsection contact detection
     set contact detection method = dynamic
     set neighborhood threshold   = 1.1
-  end
-  subsection load balancing
-    set load balance method     = dynamic
-    set threshold               = 0.5
-    set dynamic check frequency = 10000
   end
   set particle particle contact force method = hertz_mindlin_limit_overlap
   set particle wall contact force method     = nonlinear
@@ -189,7 +184,7 @@ subsection floating walls
       set nz = 0
     end
     set start time = 0
-    set end time   = 6
+    set end time   = 100
   end
 end
 

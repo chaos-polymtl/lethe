@@ -12,7 +12,7 @@ This section includes examples related to multiphase fluid-solid flows. We organ
     single-particle-sedimentation/single-particle-sedimentation
     cylindrical-packed-bed/cylindrical-packed-bed
     gas-solid-fluidized-bed/gas-solid-fluidized-bed
-    gas-solid-fluidized-bed-cylindrical/gas-solid-fluidized-bed-cylindrical
+    gas-solid-fluidized-cylinder-bed/gas-solid-fluidized-cylinder-bed
     pseudo-2d-gas-solid-fluidized-bed/pseudo-2d-gas-solid-fluidized-bed
     gas-solid-spouted-rectangular-bed/gas-solid-spouted-rectangular-bed
     liquid-solid-fluidized-bed/liquid-solid-fluidized-bed
@@ -37,7 +37,7 @@ This section includes examples related to multiphase fluid-solid flows. We organ
 
       cfd_dem_3 [label="Gas-Solid Fluidized Bed", href="https://chaos-polymtl.github.io/lethe/documentation/examples/unresolved-cfd-dem/gas-solid-fluidized-bed/gas-solid-fluidized-bed.html"];
 
-      cfd_dem_4 [label="Cylindrical Gas-Solid Fluidized Bed", href="https://chaos-polymtl.github.io/lethe/documentation/examples/unresolved-cfd-dem/gas-solid-fluidized-bed/gas-solid-fluidized-bed-cylindrical.html"];
+      cfd_dem_4 [label="Gas-Solid Fluidized Cylinder Bed", href="https://chaos-polymtl.github.io/lethe/documentation/examples/unresolved-cfd-dem/gas-solid-fluidized-cylinder-bed/gas-solid-fluidized-cylinder-bed.html"];
 
       cfd_dem_5 [label="Pseudo-2D Gas-Solid Fluidized Bed", href="https://chaos-polymtl.github.io/lethe/documentation/examples/unresolved-cfd-dem/pseudo-2d-gas-solid-fluidized-bed/pseudo-2d-gas-solid-fluidized-bed.html"];
 
