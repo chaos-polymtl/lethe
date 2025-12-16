@@ -4,6 +4,13 @@ All notable changes to the Lethe project will be documented in this file.
 The changelog for the previous releases of Lethe are located in the release_notes folder.
 The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
+## [Master] - 2025/12/16
+
+### Added
+
+-MINOR This PR add the material properties that will be used by the time-harmonic electromagnetic solver which include the electric conductivity, the complex electric permittivity and the complex magnetic permeability. At the moment, those properties only support a "constant" field. A unit test for the electromagnetic constant properties was added, along with the update of the already existing "physical_properties_manager" tests. [#1862](https://github.com/chaos-polymtl/lethe/pull/1862)
+
+
 ## [Master] - 2025/12/15
 
 ### Fixed
