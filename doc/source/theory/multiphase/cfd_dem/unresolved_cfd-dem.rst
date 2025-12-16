@@ -163,14 +163,14 @@ This results in the PCM being discontinuous in space and time. Consequently, the
  The void fraction in a cell using PCM can be written as:
 
 .. math:: 
-    \epsilon_f = 1 - \frac{\sum_{i,c}^{n_\mathrm{p}} V_{\mathrm{p},i}}{V_c}
+    \epsilon_f = 1 - \frac{\sum_{i,\Omega_e}^{n_\mathrm{p}} V_{\mathrm{p},i}}{V_{\Omega_e}}
 
-where :math:`n_\mathrm{p}` is the number of particles whose centroids lie inside the cell :math:`c` of volume :math:`V_{c}`. Comparing this equation with equation :eq:`eq:eps_definition`, we can see that this is equivalent to using the following weighting function:
+where :math:`n_\mathrm{p}` is the number of particles whose centroids lie inside the cell :math:`\Omega_e` of volume :math:`V_{\Omega_e}`. Comparing this equation with equation :eq:`eq:eps_definition`, we can see that this is equivalent to using the following weighting function:
 
 .. math::
-    k_r \left (\lVert \mathbf{x} - \mathbf{x}_i \rVert \right ) = \frac{1_{\{\mathbf{x}_i \in c\}}}{V_c}
+    k_r \left (\lVert \mathbf{x} - \mathbf{x}_i \rVert \right ) = \frac{1_{\{\mathbf{x}_i \in \Omega_e\}}}{V_{\Omega_e}}
 
-where :math:`\mathbf{1}_{\{\mathbf{x}_i \in c\}}` is the indicator function that is equal to 1 if the centroid of particle :math:`i` lies inside cell :math:`c` and 0 otherwise, and :math:`V_c` is the volume of cell :math:`c`. It can be verified that using this weighting function for calculating the void fraction and the interaction forces ensures the conservation of mass of both phases, as well as the third law of Newton:
+where :math:`\mathbf{1}_{\{\mathbf{x}_i \in \Omega_e\}}` is the indicator function that is equal to 1 if the centroid of particle :math:`i` lies inside cell :math:`\Omega_e` and 0 otherwise, and :math:`V_{\Omega_e}` is the volume of cell :math:`\Omega_e`. It can be verified that using this weighting function for calculating the void fraction and the interaction forces ensures the conservation of mass of both phases, as well as the third law of Newton:
 
 .. math::
 
@@ -190,12 +190,12 @@ This method divides each particle into pseudo-particles where the sum of the vol
 The void fraction in a cell using SPM can be written as: 
 
 .. math:: 
-       \epsilon_f = 1 - \frac{\sum_{i}^{n_\mathrm{p}}\sum_{j,c}^{n_{\mathrm{sp}}} V_{\mathrm{sp},j}}{V_c}
+       \epsilon_f = 1 - \frac{\sum_{i}^{n_\mathrm{p}}\sum_{j,\Omega_e}^{n_{\mathrm{sp}}} V_{\mathrm{sp},j}}{V_{\Omega_e}}
 
-where :math:`n_{\mathrm{sp}}` is the number of pseudo-particles j belonging to particle i and with a centroid inside the cell :math:`c` with volume :math:`V_{c}`, and :math:`V_{\mathrm{sp}}` is the volume of the satellite point.  The corresponding weighting function is thus:
+where :math:`n_{\mathrm{sp}}` is the number of pseudo-particles j belonging to particle i and with a centroid inside the cell :math:`\Omega_e` with volume :math:`V_{\Omega_e}`, and :math:`V_{\mathrm{sp}}` is the volume of the satellite point.  The corresponding weighting function is thus:
 
 .. math::
-    k_r \left (\lVert \mathbf{x} - \mathbf{x}_i \rVert \right ) = \frac{\sum_{i}^{n_\mathrm{p}}(1/V_{\mathrm{p},i})\sum_{j,c}^{n_{\mathrm{sp}}} V_{\mathrm{sp},j}}{V_c}
+    k_r \left (\lVert \mathbf{x} - \mathbf{x}_i \rVert \right ) = \frac{\sum_{i}^{n_\mathrm{p}}(1/V_{\mathrm{p},i})\sum_{j,\Omega_e}^{n_{\mathrm{sp}}} V_{\mathrm{sp},j}}{V_{\Omega_e}}
 
 This function is similar to the weighting function used in the Particle-in-Cell (PCM) method, but it varies gradually (albeit discontinuously) at the cell boundaries. Hence, it suffers from the same limitations as the PCM method. However, it conserves mass, with an accuracy that depends on how well each particle is approximated by its satellite particles. This method is used with a PCM projection for the particle forces in Lethe.
 
