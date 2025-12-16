@@ -465,6 +465,7 @@
   end
   set penalty factor      = 1.0
   set oversampling factor = 2
+  set radius tolerance    = 1e-8
   set verbosity           = verbose
 end
 </pre></div>
@@ -497,6 +498,18 @@ To circumvent this, the rotor boundary IDs are shifted. The <code class="docutil
 <ul class="simple">
 <li><p>The <code class="docutils literal notranslate"><span class="pre">penalty</span> <span class="pre">factor</span></code> is used for the weak imposition of the mortar coupling at the interface. This parameter is akin to the symmetric interior penalty factor in SIPG (Symmetric Interior penalty Galerkin Method) <a class="footnote-reference brackets" href="#larson2013" id="id1" role="doc-noteref"><span class="fn-bracket">[</span>1<span class="fn-bracket">]</span></a>.</p></li>
 <li><p>The <code class="docutils literal notranslate"><span class="pre">oversampling</span> <span class="pre">factor</span></code> is used to increase the number of quadrature points. This feature is used to better approximate the weak imposition of the interface coupling.</p></li>
+<li><p>When computing the rotor-stator interface radius, the radial distance of every node at both rotor and stator boundaries to the <code class="docutils literal notranslate"><span class="pre">center</span> <span class="pre">of</span> <span class="pre">rotation</span></code> is computed, and the following check is performed:</p></li>
+</ul>
+<div class="math-wrapper docutils container">
+<div class="math notranslate nohighlight">
+\[|r_{max} - r_{min}| &lt; tol\]</div>
+</div>
+<p>where <span class="math notranslate nohighlight">\(r_{max}\)</span>, <span class="math notranslate nohighlight">\(r_{min}\)</span> are the maximum and minimum values obtained, respectively, and  <span class="math notranslate nohighlight">\(tol\)</span> is the prescribed <code class="docutils literal notranslate"><span class="pre">radius</span> <span class="pre">tolerance</span></code> parameter.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>The default value for <code class="docutils literal notranslate"><span class="pre">radius</span> <span class="pre">tolerance</span></code> is <span class="math notranslate nohighlight">\(10^{-8}\)</span>, which should cover the precision range of deal.II-generated grids. The tolerance might need to be increased for some <code class="docutils literal notranslate"><span class="pre">gmsh</span></code> mesh type cases or for large simulations running in multiple cores, when the above verification fails even if the mesh discretization is coherent.</p>
+</div>
+<ul class="simple">
 <li><p>When enabling <code class="docutils literal notranslate"><span class="pre">verbosity</span></code> (<code class="docutils literal notranslate"><span class="pre">set</span> <span class="pre">verbosity</span> <span class="pre">=</span> <span class="pre">verbose</span></code>), the rotor rotation information is printed at every iteration.</p></li>
 </ul>
 <section id="reference">
@@ -584,5 +597,6 @@ To circumvent this, the rotor boundary IDs are shifted. The <code class="docutil
     <script src="../../_static/scripts/furo.js?v=32e29ea5"></script>
     <script src="../../_static/clipboard.min.js?v=a7894cd8"></script>
     <script src="../../_static/copybutton.js?v=7cec7674"></script>
+    <script async="async" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
     </body>
 </html>

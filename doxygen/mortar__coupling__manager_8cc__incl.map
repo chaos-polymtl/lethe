@@ -1,20 +1,22 @@
 <map id="/home/runner/work/lethe/lethe/source/core/mortar_coupling_manager.cc" name="/home/runner/work/lethe/lethe/source/core/mortar_coupling_manager.cc">
-<area shape="rect" id="Node000001" title=" " alt="" coords="468,5,655,60"/>
+<area shape="rect" id="Node000001" title=" " alt="" coords="555,5,741,60"/>
 <area shape="rect" id="Node000002" title=" " alt="" coords="5,203,157,229"/>
-<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="490,63,361,110,124,201,122,196,359,106,489,58"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="555,58,461,82,361,111,229,157,122,200,120,195,227,152,359,105,459,76,554,53"/>
 <area shape="rect" id="Node000003" href="$mortar__coupling__manager_8h.html" title=" " alt="" coords="372,108,532,148"/>
-<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="532,62,486,101,483,97,529,58"/>
-<area shape="rect" id="Node000046" title=" " alt="" coords="557,108,785,148"/>
-<area shape="poly" id="edge43_Node000001_Node000046" title=" " alt="" coords="594,58,640,97,636,101,591,62"/>
-<area shape="rect" id="Node000047" title=" " alt="" coords="809,115,973,141"/>
-<area shape="poly" id="edge44_Node000001_Node000047" title=" " alt="" coords="655,57,838,109,836,114,653,63"/>
+<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="594,62,505,105,503,100,592,58"/>
+<area shape="rect" id="Node000046" title=" " alt="" coords="556,115,740,141"/>
+<area shape="poly" id="edge43_Node000001_Node000046" title=" " alt="" coords="651,60,651,101,645,101,645,60"/>
+<area shape="rect" id="Node000047" title=" " alt="" coords="765,108,993,148"/>
+<area shape="poly" id="edge44_Node000001_Node000047" title=" " alt="" coords="714,58,821,100,819,105,712,63"/>
+<area shape="rect" id="Node000048" title=" " alt="" coords="1017,115,1181,141"/>
+<area shape="poly" id="edge45_Node000001_Node000048" title=" " alt="" coords="742,51,1030,110,1029,115,741,56"/>
 <area shape="poly" id="edge3_Node000003_Node000002" title=" " alt="" coords="372,150,145,203,144,198,371,145"/>
 <area shape="rect" id="Node000004" href="$parameters_8h.html" title=" " alt="" coords="560,203,701,229"/>
 <area shape="poly" id="edge4_Node000003_Node000004" title=" " alt="" coords="492,146,596,195,593,200,490,150"/>
 <area shape="rect" id="Node000015" href="$utilities_8h.html" title=" " alt="" coords="399,467,513,493"/>
 <area shape="poly" id="edge39_Node000003_Node000015" title=" " alt="" coords="533,143,645,170,690,183,715,194,734,214,744,234,755,283,759,305,754,325,718,353,647,391,495,464,493,459,645,386,715,349,750,323,754,305,749,285,739,236,730,217,712,198,688,188,644,175,531,149"/>
 <area shape="rect" id="Node000043" title=" " alt="" coords="815,196,1043,236"/>
-<area shape="poly" id="edge40_Node000003_Node000043" title=" " alt="" coords="533,143,546,145,804,191,803,196,545,151,532,148"/>
+<area shape="poly" id="edge40_Node000003_Node000043" title=" " alt="" coords="533,143,544,145,803,191,802,196,544,151,532,148"/>
 <area shape="rect" id="Node000044" title=" " alt="" coords="181,203,344,229"/>
 <area shape="poly" id="edge41_Node000003_Node000044" title=" " alt="" coords="412,150,301,200,299,195,409,146"/>
 <area shape="rect" id="Node000045" title=" " alt="" coords="369,196,535,236"/>
