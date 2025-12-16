@@ -1417,12 +1417,18 @@ namespace Parameters
                         "Point on wall");
 
       prm.enter_subsection("point on wall");
+      prm.declare_entry("x", "0.", Patterns::Double(), "X Point on wall");
+      prm.declare_entry("y", "0.", Patterns::Double(), "Y Point on wall");
+      prm.declare_entry("z", "0.", Patterns::Double(), "Z Point on wall");
       prm.mark_as_deprecated("x");
       prm.mark_as_deprecated("y");
       prm.mark_as_deprecated("z");
       prm.leave_subsection();
 
       prm.enter_subsection("normal vector");
+      prm.declare_entry("nx", "0.", Patterns::Double(), "X Normal vector wall");
+      prm.declare_entry("ny", "0.", Patterns::Double(), "Y Normal vector wall");
+      prm.declare_entry("nz", "0.", Patterns::Double(), "Z Normal vector wall");
       prm.mark_as_deprecated("nx");
       prm.mark_as_deprecated("ny");
       prm.mark_as_deprecated("nz");
