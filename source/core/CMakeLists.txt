@@ -5,12 +5,15 @@ add_library(lethe-core
   dem_properties.cc
   density_model.cc
   dimensionality.cc
+  electric_conductivity_model.cc
+  electric_permittivity_model.cc
   evaporation_model.cc
   grids.cc
   ib_particle.cc
   ib_stencil.cc
   interface_tools.cc
   lethe_grid_tools.cc
+  magnetic_permeability_model.cc
   manifolds.cc
   mesh_controller.cc
   mobility_cahn_hilliard_model.cc
@@ -46,6 +49,8 @@ add_library(lethe-core
   ../../include/core/dem_properties.h
   ../../include/core/density_model.h
   ../../include/core/dimensionality.h
+  ../../include/core/electric_conductivity_model.h
+  ../../include/core/electric_permittivity_model.h
   ../../include/core/evaporation_model.h
   ../../include/core/exceptions.h
   ../../include/core/grids.h
@@ -57,6 +62,7 @@ add_library(lethe-core
   ../../include/core/kinsol_newton_non_linear_solver_strategy.h
   ../../include/core/lethe_grid_tools.h
   ../../include/core/linear_solver_strategy.h
+  ../../include/core/magnetic_permeability_model.h
   ../../include/core/manifolds.h
   ../../include/core/mesh_controller.h
   ../../include/core/mobility_cahn_hilliard_model.h

@@ -5,6 +5,9 @@
 #define lethe_physical_properties_manager_h
 
 #include <core/density_model.h>
+#include <core/electric_conductivity_model.h>
+#include <core/electric_permittivity_model.h>
+#include <core/magnetic_permeability_model.h>
 #include <core/mobility_cahn_hilliard_model.h>
 #include <core/rheological_model.h>
 #include <core/specific_heat_model.h>
@@ -183,6 +186,80 @@ public:
     return mobility_cahn_hilliard[material_interaction_id];
   }
 
+  /**
+   * @brief Returns the electric conductivity model for a given fluid_id and material_id
+   * @param fluid_id
+   * @param material_id
+   * @return A shared pointer to a ElectricConductivityModel which inherits from
+   * the PhysicalPropertyModel class.
+   */
+  std::shared_ptr<ElectricConductivityModel>
+  get_electric_conductivity(const unsigned int fluid_id    = 0,
+                            const unsigned int material_id = 0) const
+  {
+    return electric_conductivity[calculate_global_id(fluid_id, material_id)];
+  }
+
+  /**
+   * @brief Returns the electric permittivity model of the real part for a given fluid_id and material_id
+   * @param fluid_id
+   * @param material_id
+   * @return A shared pointer to a ElectricPermittivityModel which inherits from
+   * the PhysicalPropertyModel class.
+   */
+  std::shared_ptr<ElectricPermittivityModel>
+  get_electric_permittivity_real(const unsigned int fluid_id    = 0,
+                                 const unsigned int material_id = 0) const
+  {
+    return electric_permittivity_real[calculate_global_id(fluid_id,
+                                                          material_id)];
+  }
+
+  /**
+   * @brief Returns the electric permittivity model of the imaginary part for a given fluid_id and material_id
+   * @param fluid_id
+   * @param material_id
+   * @return A shared pointer to a ElectricPermittivityModel which inherits from
+   * the PhysicalPropertyModel class.
+   */
+  std::shared_ptr<ElectricPermittivityModel>
+  get_electric_permittivity_imag(const unsigned int fluid_id    = 0,
+                                 const unsigned int material_id = 0) const
+  {
+    return electric_permittivity_imag[calculate_global_id(fluid_id,
+                                                          material_id)];
+  }
+
+  /**
+   * @brief Returns the magnetic permeability model of the real part for a given fluid_id and material_id
+   * @param fluid_id
+   * @param material_id
+   * @return A shared pointer to a MagneticPermeabilityModel which inherits from
+   * the PhysicalPropertyModel class.
+   */
+  std::shared_ptr<MagneticPermeabilityModel>
+  get_magnetic_permeability_real(const unsigned int fluid_id    = 0,
+                                 const unsigned int material_id = 0) const
+  {
+    return magnetic_permeability_real[calculate_global_id(fluid_id,
+                                                          material_id)];
+  }
+
+  /**
+   * @brief Returns the magnetic permeability model of the imaginary part for a given fluid_id and material_id
+   * @param fluid_id
+   * @param material_id
+   * @return A shared pointer to a MagneticPermeabilityModel which inherits from
+   * the PhysicalPropertyModel class.
+   */
+  std::shared_ptr<MagneticPermeabilityModel>
+  get_magnetic_permeability_imag(const unsigned int fluid_id    = 0,
+                                 const unsigned int material_id = 0) const
+  {
+    return magnetic_permeability_imag[calculate_global_id(fluid_id,
+                                                          material_id)];
+  }
+
   // Vector Getters for the physical property models
   std::vector<std::shared_ptr<DensityModel>>
   get_density_vector() const
@@ -241,6 +318,61 @@ public:
   get_mobility_cahn_hilliard_vector() const
   {
     return mobility_cahn_hilliard;
+  }
+
+  /**
+   * @brief Returns the vector of all electric conductivity models defined in the problem.
+   * @return A vector of shared pointer, each one them pointing to a
+   * ElectricConductivityModel.
+   */
+  std::vector<std::shared_ptr<ElectricConductivityModel>>
+  get_electric_conductivity_vector() const
+  {
+    return electric_conductivity;
+  }
+
+  /**
+   * @brief Returns the vector of all real part electric permittivity models defined in the problem.
+   * @return A vector of shared pointer, each one them pointing to a
+   * ElectricPermittivityModel.
+   */
+  std::vector<std::shared_ptr<ElectricPermittivityModel>>
+  get_electric_permittivity_real_vector() const
+  {
+    return electric_permittivity_real;
+  }
+
+  /**
+   * @brief Returns the vector of all imaginary part electric permittivity models defined in the problem.
+   * @return A vector of shared pointer, each one them pointing to a
+   * ElectricPermittivityModel.
+   */
+  std::vector<std::shared_ptr<ElectricPermittivityModel>>
+  get_electric_permittivity_imag_vector() const
+  {
+    return electric_permittivity_imag;
+  }
+
+  /**
+   * @brief Returns the vector of all real part magnetic permeability models defined in the problem.
+   * @return A vector of shared pointer, each one them pointing to a
+   * ElectricPermittivityModel.
+   */
+  std::vector<std::shared_ptr<MagneticPermeabilityModel>>
+  get_magnetic_permeability_real_vector() const
+  {
+    return magnetic_permeability_real;
+  }
+
+  /**
+   * @brief Returns the vector of all imaginary part magnetic permeability models defined in the problem.
+   * @return A vector of shared pointer, each one them pointing to a
+   * ElectricPermittivityModel.
+   */
+  std::vector<std::shared_ptr<MagneticPermeabilityModel>>
+  get_magnetic_permeability_imag_vector() const
+  {
+    return magnetic_permeability_imag;
   }
 
   double
@@ -376,6 +508,15 @@ private:
   std::vector<std::shared_ptr<MobilityCahnHilliardModel>>
                                        mobility_cahn_hilliard;
   std::vector<Parameters::PhaseChange> phase_change_parameters;
+  std::vector<std::shared_ptr<ElectricConductivityModel>> electric_conductivity;
+  std::vector<std::shared_ptr<ElectricPermittivityModel>>
+    electric_permittivity_real;
+  std::vector<std::shared_ptr<ElectricPermittivityModel>>
+    electric_permittivity_imag;
+  std::vector<std::shared_ptr<MagneticPermeabilityModel>>
+    magnetic_permeability_real;
+  std::vector<std::shared_ptr<MagneticPermeabilityModel>>
+    magnetic_permeability_imag;
 
   std::map<field, bool> required_fields;
 

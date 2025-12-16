@@ -1,0 +1,9 @@
+
+DEAL::Begin test
+DEAL::Testing Electric Conductivity
+DEAL::Electric Conductivity = 5.00000
+DEAL::Testing Electric Permittivity
+DEAL::Electric Permittivity = 6.00000
+DEAL::Testing Magnetic Permeability
+DEAL::Magnetic Permeability = 7.00000
+DEAL::OK

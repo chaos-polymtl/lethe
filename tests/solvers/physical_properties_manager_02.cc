@@ -35,6 +35,12 @@ test()
     Parameters::Material::SpecificHeatModel::constant;
   physical_properties.fluids[0].thermal_conductivity_model =
     Parameters::Material::ThermalConductivityModel::constant;
+  physical_properties.fluids[0].electric_conductivity_model =
+    Parameters::Material::ElectricConductivityModel::constant;
+  physical_properties.fluids[0].electric_permittivity_model =
+    Parameters::Material::ElectricPermittivityModel::constant;
+  physical_properties.fluids[0].magnetic_permeability_model =
+    Parameters::Material::MagneticPermeabilityModel::constant;
 
   // Generate solid properties
   physical_properties.solids.resize(1);
@@ -44,6 +50,12 @@ test()
     Parameters::Material::SpecificHeatModel::constant;
   physical_properties.solids[0].thermal_conductivity_model =
     Parameters::Material::ThermalConductivityModel::constant;
+  physical_properties.solids[0].electric_conductivity_model =
+    Parameters::Material::ElectricConductivityModel::constant;
+  physical_properties.solids[0].electric_permittivity_model =
+    Parameters::Material::ElectricPermittivityModel::constant;
+  physical_properties.solids[0].magnetic_permeability_model =
+    Parameters::Material::MagneticPermeabilityModel::constant;
 
   // Generate fluid-solid interaction properties
   physical_properties.material_interactions.resize(1);
@@ -53,14 +65,24 @@ test()
     Parameters::MaterialInteractions::MobilityCahnHilliardModel::constant;
 
   // Fix fluid properties
-  physical_properties.fluids[0].density              = 1;
-  physical_properties.fluids[0].thermal_conductivity = 3;
-  physical_properties.fluids[0].specific_heat        = 2;
+  physical_properties.fluids[0].density                    = 1;
+  physical_properties.fluids[0].thermal_conductivity       = 3;
+  physical_properties.fluids[0].specific_heat              = 2;
+  physical_properties.fluids[0].electric_conductivity      = 0.5;
+  physical_properties.fluids[0].electric_permittivity_real = 1.5;
+  physical_properties.fluids[0].electric_permittivity_imag = 0.1;
+  physical_properties.fluids[0].magnetic_permeability_real = 2.5;
+  physical_properties.fluids[0].magnetic_permeability_imag = 0.2;
 
   // Fix solid properties
-  physical_properties.solids[0].density              = 10;
-  physical_properties.solids[0].thermal_conductivity = 30;
-  physical_properties.solids[0].specific_heat        = 20;
+  physical_properties.solids[0].density                    = 10;
+  physical_properties.solids[0].thermal_conductivity       = 30;
+  physical_properties.solids[0].specific_heat              = 20;
+  physical_properties.solids[0].electric_conductivity      = 5.;
+  physical_properties.solids[0].electric_permittivity_real = 15;
+  physical_properties.solids[0].electric_permittivity_imag = 1;
+  physical_properties.solids[0].magnetic_permeability_real = 25;
+  physical_properties.solids[0].magnetic_permeability_imag = 2;
 
   // Fix fluid-solid interaction properties
   physical_properties.material_interactions[0]
@@ -85,6 +107,26 @@ test()
           << physical_properties_manager.get_thermal_conductivity()->value(
                dummy_fields)
           << std::endl;
+  deallog << "Electric conductivity: "
+          << physical_properties_manager.get_electric_conductivity()->value(
+               dummy_fields)
+          << std::endl;
+  deallog << "Electric permittivity (real): "
+          << physical_properties_manager.get_electric_permittivity_real()
+               ->value(dummy_fields)
+          << std::endl;
+  deallog << "Electric permittivity (imag): "
+          << physical_properties_manager.get_electric_permittivity_imag()
+               ->value(dummy_fields)
+          << std::endl;
+  deallog << "Magnetic permeability (real): "
+          << physical_properties_manager.get_magnetic_permeability_real()
+               ->value(dummy_fields)
+          << std::endl;
+  deallog << "Magnetic permeability (imag): "
+          << physical_properties_manager.get_magnetic_permeability_imag()
+               ->value(dummy_fields)
+          << std::endl;
 
   deallog << "Testing PhysicalPropertiesManager - Solid 0 " << std::endl;
   deallog << "Density              : "
@@ -97,6 +139,26 @@ test()
   deallog << "Thermal conductivity : "
           << physical_properties_manager.get_thermal_conductivity(0, 1)->value(
                dummy_fields)
+          << std::endl;
+  deallog << "Electric conductivity: "
+          << physical_properties_manager.get_electric_conductivity(0, 1)->value(
+               dummy_fields)
+          << std::endl;
+  deallog << "Electric permittivity (real): "
+          << physical_properties_manager.get_electric_permittivity_real(0, 1)
+               ->value(dummy_fields)
+          << std::endl;
+  deallog << "Electric permittivity (imag): "
+          << physical_properties_manager.get_electric_permittivity_imag(0, 1)
+               ->value(dummy_fields)
+          << std::endl;
+  deallog << "Magnetic permeability (real): "
+          << physical_properties_manager.get_magnetic_permeability_real(0, 1)
+               ->value(dummy_fields)
+          << std::endl;
+  deallog << "Magnetic permeability (imag): "
+          << physical_properties_manager.get_magnetic_permeability_imag(0, 1)
+               ->value(dummy_fields)
           << std::endl;
 
   deallog << "Testing PhysicalPropertiesManager - Material interaction 0 "

@@ -1263,6 +1263,60 @@ namespace Parameters
                         "0",
                         Patterns::Double(),
                         "k_A1 parameter for linear conductivity model");
+
+      // ----------------------------------
+      // Electromagnetic properties
+      // ----------------------------------
+      prm.declare_entry(
+        "electric conductivity model",
+        "constant",
+        Patterns::Selection("constant"),
+        "Model used for the calculation of the electric conductivity"
+        "Choices are <constant>.");
+      prm.declare_entry(
+        "electric conductivity",
+        "0",
+        Patterns::Double(),
+        "Electric conductivity for the fluid corresponding to Phase = " +
+          Utilities::int_to_string(id, 1));
+
+      prm.declare_entry(
+        "electric permittivity model",
+        "constant",
+        Patterns::Selection("constant"),
+        "Model used for the calculation of the electric permittivity"
+        "Choices are <constant>.");
+      prm.declare_entry(
+        "electric permittivity real",
+        "1",
+        Patterns::Double(),
+        "Real part of the electric permittivity for the fluid corresponding to Phase = " +
+          Utilities::int_to_string(id, 1));
+      prm.declare_entry(
+        "electric permittivity imag",
+        "0",
+        Patterns::Double(),
+        "Imaginary part of the electric permittivity for the fluid corresponding to Phase = " +
+          Utilities::int_to_string(id, 1));
+
+      prm.declare_entry(
+        "magnetic permeability model",
+        "constant",
+        Patterns::Selection("constant"),
+        "Model used for the calculation of the magnetic permeability"
+        "Choices are <constant>.");
+      prm.declare_entry(
+        "magnetic permeability real",
+        "1",
+        Patterns::Double(),
+        "Real part of the magnetic permeability for the fluid corresponding to Phase = " +
+          Utilities::int_to_string(id, 1));
+      prm.declare_entry(
+        "magnetic permeability imag",
+        "0",
+        Patterns::Double(),
+        "Imaginary part of the magnetic permeability for the fluid corresponding to Phase = " +
+          Utilities::int_to_string(id, 1));
     }
     prm.leave_subsection();
   }
@@ -1418,6 +1472,26 @@ namespace Parameters
       // Phase change properties
       //--------------------------------
       phase_change_parameters.parse_parameters(prm, dimensions);
+
+      //--------------------------------
+      // Electromagnetic properties
+      //--------------------------------
+      op = prm.get("electric conductivity model");
+      if (op == "constant")
+        electric_conductivity_model = ElectricConductivityModel::constant;
+      electric_conductivity = prm.get_double("electric conductivity");
+
+      op = prm.get("electric permittivity model");
+      if (op == "constant")
+        electric_permittivity_model = ElectricPermittivityModel::constant;
+      electric_permittivity_real = prm.get_double("electric permittivity real");
+      electric_permittivity_imag = prm.get_double("electric permittivity imag");
+
+      op = prm.get("magnetic permeability model");
+      if (op == "constant")
+        magnetic_permeability_model = MagneticPermeabilityModel::constant;
+      magnetic_permeability_real = prm.get_double("magnetic permeability real");
+      magnetic_permeability_imag = prm.get_double("magnetic permeability imag");
     }
     prm.leave_subsection();
   }

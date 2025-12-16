@@ -113,6 +113,23 @@ PhysicalPropertiesManager::initialize(
 
       if (rheology.back()->is_non_newtonian_rheological_model())
         non_newtonian_flow = true;
+
+      electric_conductivity.push_back(
+        ElectricConductivityModel::model_cast(physical_properties.fluids[f]));
+
+      electric_permittivity_real.push_back(
+        ElectricPermittivityModel::model_cast_real(
+          physical_properties.fluids[f]));
+      electric_permittivity_imag.push_back(
+        ElectricPermittivityModel::model_cast_imag(
+          physical_properties.fluids[f]));
+
+      magnetic_permeability_real.push_back(
+        MagneticPermeabilityModel::model_cast_real(
+          physical_properties.fluids[f]));
+      magnetic_permeability_imag.push_back(
+        MagneticPermeabilityModel::model_cast_imag(
+          physical_properties.fluids[f]));
     }
 
   // For each solid, append the physical properties
@@ -160,6 +177,23 @@ PhysicalPropertiesManager::initialize(
         ThermalExpansionModel::model_cast(physical_properties.solids[s]));
       establish_fields_required_by_model(
         *thermal_expansion[s + number_of_fluids]);
+
+      electric_conductivity.push_back(
+        ElectricConductivityModel::model_cast(physical_properties.solids[s]));
+
+      electric_permittivity_real.push_back(
+        ElectricPermittivityModel::model_cast_real(
+          physical_properties.solids[s]));
+      electric_permittivity_imag.push_back(
+        ElectricPermittivityModel::model_cast_imag(
+          physical_properties.solids[s]));
+
+      magnetic_permeability_real.push_back(
+        MagneticPermeabilityModel::model_cast_real(
+          physical_properties.solids[s]));
+      magnetic_permeability_imag.push_back(
+        MagneticPermeabilityModel::model_cast_imag(
+          physical_properties.solids[s]));
     }
 
   // For each pair of interacting materials (fluid-fluid or fluid-solid), append

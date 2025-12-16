@@ -517,6 +517,21 @@ namespace Parameters
       immersed_boundary_gaussian
     } tracer_reaction_prefactor_model;
 
+    enum class ElectricConductivityModel : std::int8_t
+    {
+      constant
+    } electric_conductivity_model;
+
+    enum class ElectricPermittivityModel : std::int8_t
+    {
+      constant
+    } electric_permittivity_model;
+
+    enum class MagneticPermeabilityModel : std::int8_t
+    {
+      constant
+    } magnetic_permeability_model;
+
     // Struct that contains the parameters to handle physical properties when
     // immersed solids tanh models are used
     ImmersedSolidTanhParameters immersed_solid_tanh_parameters;
@@ -528,6 +543,21 @@ namespace Parameters
     // Linear thermal conductivity parameters: k = k_A0 + k_A1 * T
     double k_A0;
     double k_A1;
+
+    /// Material parameters for the electromagnetics solver. Only the
+    /// permittivity and the permability are complex-valued because they can
+    /// store electromagnetic energy in the medium and also dissipate it.
+
+    /// Electric_conductivity
+    double electric_conductivity;
+
+    /// Magnetic_permeability
+    double magnetic_permeability_real;
+    double magnetic_permeability_imag;
+
+    /// Electric_permittivity
+    double electric_permittivity_real;
+    double electric_permittivity_imag;
   };
 
   /**
