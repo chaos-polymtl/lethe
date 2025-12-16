@@ -5,10 +5,16 @@
 
 #include <core/mortar_coupling_manager.h>
 
+#include <deal.II/base/exceptions.h>
 #include <deal.II/base/mpi_noncontiguous_partitioner.templates.h>
 
 #include <deal.II/fe/fe_nothing.h>
 
+DeclException1(
+  InterfaceRadiusTolerance,
+  double,
+  << "The computed radius of the rotor mesh has a variation of " << arg1
+  << " along the interface boundary, which exceeds the prescribed tolerance.");
 
 /*-------------- MortarManagerBase -------------------------------*/
 
@@ -640,12 +646,8 @@ compute_n_subdivisions_and_radius(
   const auto radius_diff = std::abs(radius_max - radius_min);
 
   // Check if variation is withing the prescribed tolerance
-  std::ostringstream oss;
-  oss
-    << "The computed radius of the rotor mesh has a variation of "
-    << std::scientific << std::setprecision(2) << radius_diff
-    << " along the interface boundary, which exceeds the prescribed tolerance.";
-  AssertThrow(radius_diff < radius_tolerance, ExcMessage(oss.str()));
+  AssertThrow(radius_diff < radius_tolerance,
+              InterfaceRadiusTolerance(radius_diff));
 
   // Final radius value
   const double radius = radius_min;
