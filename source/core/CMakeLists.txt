@@ -6,6 +6,8 @@ add_library(lethe-core
   density_model.cc
   dimensionality.cc
   electromagnetic_conductivity_model.cc
+  electromagnetic_permeability_model.cc
+  electromagnetic_permittivity_model.cc
   evaporation_model.cc
   grids.cc
   ib_particle.cc
@@ -48,6 +50,8 @@ add_library(lethe-core
   ../../include/core/density_model.h
   ../../include/core/dimensionality.h
   ../../include/core/electromagnetic_conductivity_model.h
+  ../../include/core/electromagnetic_permeability_model.h
+  ../../include/core/electromagnetic_permittivity_model.h
   ../../include/core/evaporation_model.h
   ../../include/core/exceptions.h
   ../../include/core/grids.h

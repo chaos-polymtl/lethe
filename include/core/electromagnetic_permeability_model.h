@@ -1,53 +1,54 @@
 // SPDX-FileCopyrightText: Copyright (c) 2025 The Lethe Authors
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
-#ifndef lethe_electromagnetic_conductivity_model_h
-#define lethe_electromagnetic_conductivity_model_h
+#ifndef lethe_electromagnetic_permeability_model_h
+#define lethe_electromagnetic_permeability_model_h
 
 #include <core/parameters.h>
 #include <core/physical_property_model.h>
 
 /**
  * @brief Abstract class that allows to calculate the
- * electromagnetic conductivity on each quadrature point.
+ * electromagnetic permeability on each quadrature point.
  */
-class ElectroMagneticConductivityModel : public PhysicalPropertyModel
+class ElectroMagneticPermeabilityModel : public PhysicalPropertyModel
 {
 public:
   /**
-   * @brief Instantiates and returns a pointer to a ElectromagneticsConductivityModel object by casting it to
+   * @brief Instantiates and returns a pointer to a ElectromagneticsPermeabilityModel object by casting it to
    * the proper child class
    *
    * @param material_properties Parameters for a material
    */
-  static std::shared_ptr<ElectroMagneticConductivityModel>
+  static std::shared_ptr<ElectroMagneticPermeabilityModel>
   model_cast(const Parameters::Material &material_properties);
 };
 
 
 /**
- * @brief Constant electromagnetic conductivity.
+ * @brief Constant electromagnetic permeability.
  */
-class ConstantElectroMagneticConductivity
-  : public ElectroMagneticConductivityModel
+class ConstantElectroMagneticPermeability
+  : public ElectroMagneticPermeabilityModel
 {
 public:
   /**
    * @brief Default constructor
    */
-  ConstantElectroMagneticConductivity(const double p_em_conductivity)
-    : electromagnetic_permittivity(p_em_conductivity)
+  ConstantElectroMagneticPermeability(
+    const double p_electromagnetic_permeability)
+    : electromagnetic_permeability(p_electromagnetic_permeability)
   {}
 
   /**
-   * @brief value Calculates the value the electromagnetic conductivity
-   * @param fields_value Value of the various field on which the electromagnetic conductivity depends.
-   * @return value of the electromagnetic conductivity calculated with the fields_value.
+   * @brief value Calculates the value the electromagnetic permeability
+   * @param fields_value Value of the various field on which the electromagnetic permeability depends.
+   * @return value of the electromagnetic permeability calculated with the fields_value.
    */
   double
   value([[maybe_unused]] const std::map<field, double> &fields_value) override
   {
-    return electromagnetic_permittivity;
+    return electromagnetic_permeability;
   };
 
   /**
@@ -61,15 +62,15 @@ public:
     std::vector<double> &property_vector) override
   {
     property_vector.assign(property_vector.size(),
-                           electromagnetic_permittivity);
+                           electromagnetic_permeability);
   }
 
   /**
-   * @brief jacobian Calculates the jacobian (the partial derivative) of the electromagnetic conductivity with respect to a field
+   * @brief jacobian Calculates the jacobian (the partial derivative) of the electromagnetic permeability with respect to a field
    * @param field_values Value of the various fields on which the property may depend.
    * @param id Indicator of the field with respect to which the jacobian
    * should be calculated
-   * @return value of the partial derivative of the electromagnetic conductivity with respect to the field.
+   * @return value of the partial derivative of the electromagnetic permeability with respect to the field.
    */
 
   double
@@ -80,10 +81,10 @@ public:
   };
 
   /**
-   * @brief vector_jacobian Calculate the derivative of the electromagnetic conductivity with respect to a field
+   * @brief vector_jacobian Calculate the derivative of the electromagnetic permeability with respect to a field
    * @param field_vectors Vector for the values of the fields used to evaluate the property
    * @param id Identifier of the field with respect to which a derivative should be calculated
-   * @param jacobian Vector of the value of the derivative of the electromagnetic conductivity with respect to the field id
+   * @param jacobian Vector of the value of the derivative of the electromagnetic permeability with respect to the field id
    */
 
   void
@@ -96,7 +97,7 @@ public:
   };
 
 private:
-  const double electromagnetic_permittivity;
+  const double electromagnetic_permeability;
 };
 
 #endif

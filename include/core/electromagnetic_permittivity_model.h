@@ -1,8 +1,8 @@
 // SPDX-FileCopyrightText: Copyright (c) 2025 The Lethe Authors
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
-#ifndef lethe_electromagnetic_conductivity_model_h
-#define lethe_electromagnetic_conductivity_model_h
+#ifndef lethe_electromagnetic_permittivity_model_h
+#define lethe_electromagnetic_permittivity_model_h
 
 #include <core/parameters.h>
 #include <core/physical_property_model.h>
@@ -11,7 +11,7 @@
  * @brief Abstract class that allows to calculate the
  * electromagnetic conductivity on each quadrature point.
  */
-class ElectroMagneticConductivityModel : public PhysicalPropertyModel
+class ElectroMagneticPermittivityModel : public PhysicalPropertyModel
 {
 public:
   /**
@@ -20,7 +20,7 @@ public:
    *
    * @param material_properties Parameters for a material
    */
-  static std::shared_ptr<ElectroMagneticConductivityModel>
+  static std::shared_ptr<ElectroMagneticPermittivityModel>
   model_cast(const Parameters::Material &material_properties);
 };
 
@@ -29,7 +29,7 @@ public:
  * @brief Constant electromagnetic conductivity.
  */
 class ConstantElectroMagneticConductivity
-  : public ElectroMagneticConductivityModel
+  : public ElectroMagneticPermittivityModel
 {
 public:
   /**
