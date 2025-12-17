@@ -93,6 +93,11 @@ TimeHarmonicMaxwell<dim>::TimeHarmonicMaxwell(
   // Allocate solution transfer
   solution_transfer = std::make_shared<SolutionTransfer<dim, GlobalVectorType>>(
     *dof_handler_trial_interior);
+
+  // Change the behavior of the timer for situations when you don't want
+  // outputs
+  if (simulation_parameters.timer.type == Parameters::Timer::Type::none)
+    this->computing_timer.disable_output();
 }
 
 template <int dim>
