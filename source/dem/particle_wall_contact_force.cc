@@ -178,8 +178,8 @@ ParticleWallContactForce<dim,
         solids[solid_counter]->get_neighbors_maps();
 
       // For each solid surface, we create a map, called the contact_record,
-      // used to store every contact. The key of that map is the particle local ID.
-      // The value is a vector of tuple storing the required information to
+      // used to store every contact. The key of that map is the particle local
+      // ID. The value is a vector of tuple storing the required information to
       // compute the contact force later on.
       // The information includes:
       // 1. The triangle cell with which the contact is occurring,
