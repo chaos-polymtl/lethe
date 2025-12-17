@@ -20,8 +20,8 @@ Files Used in This Example
 
 All files mentioned below are located in the example's folder (``examples/unresolved-cfd-dem/gas-solid-fluidized-cylinder-bed``).
 
-- Parameter file for particle generation and packing: ``particle-packing.prm``
-- Parameter file for CFD-DEM simulation of the gas-solid fluidized bed: ``mb-fluidized-bed-modelA.prm``, ``mb-fluidized-bed-modelB.prm``, ``mb-fluidized-bed-modelA-qcm.prm``, ``mb-fluidized-bed-modelB-qcm.prm`` and ``mf-fluidized-bed-modelA.prm``
+- Parameter file for particle generation and packing: ``packing-particles.prm``
+- Parameter files for CFD-DEM simulation of the gas-solid fluidized bed: ``mb-fluidized-bed-modelA-pcm-explicit.prm``, ``mb-fluidized-bed-modelA-pcm-implicit.prm``, ``mb-fluidized-bed-modelA-pcm-semi-implicit.prm``, ``mb-fluidized-bed-modelA-qcm-explicit.prm``, ``mb-fluidized-bed-modelA-qcm-implicit.prm ``, ``mb-fluidized-bed-modelA-qcm-semi-implicit.prm``, ``mf-fluidized-bed-modelA-qcm-explicit.prm``, ``mf-fluidized-bed-modelA-qcm-implicit.prm``, ``mf-fluidized-bed-modelA-qcm-semi-implicit.prm``
 - Post-processing Python script: ``plot-pressure.py``
 
 
@@ -29,14 +29,28 @@ All files mentioned below are located in the example's folder (``examples/unreso
 Description of the Case
 -----------------------
 
-This example simulates a gas–solid fluidized bed inside a cylindrical column (diameter :math:`0.02` m, height :math:`0.4` m). First, ``lethe-particles`` is used with ``particle-packing.prm`` to generate and pack spherical particles (diameter :math:`0.0005` m, density :math:`1000\;\text{kg}/\text{m}^3`) inside the column. After packing, the solid–fluid mixture is simulated with two solvers: the matrix-free solver ``lethe-fluid-particle-matrix-free`` and the matrix-based CFD–DEM solver ``lethe-fluid-particles``. For the matrix-based solver we test two VANS models (model A and model B), and for each model we project particle–fluid forces using one of two approaches: a cell-based filter or the Quadrature-Centered Method (QCM) filter. The superficial gas velocity at the inlet is varied from :math:`0.02` to :math:`0.4\;\text{m}/\text{s}` and the pressure drop across the bed is recorded. Results are compared with correlations from the literature for validation.
+This example simulates a gas–solid fluidized bed inside a cylindrical column (diameter :math:`0.02` m, height :math:`0.4` m). First, ``lethe-particles`` is used with ``packing-particles.prm`` to generate and pack spherical particles (diameter :math:`0.0005` m, density :math:`1000\;\text{kg}/\text{m}^3`) inside the column. After packing, the solid–fluid mixture is simulated using the model A of the VANS equations with two solvers:
+ 1. The matrix-based CFD–DEM solver ``lethe-fluid-particles``
+   
+    The VANS model A using the matrix-based solver is tested with two different projection filters:
+
+       * a cell-based filter (corresponding to the Particle Centroid Method, PCM)
+       * the Quadrature-Centered Method (QCM) filter. 
+  
+ 2. The matrix-free solver ``lethe-fluid-particle-matrix-free`` 
+   
+    This solver only works with the QCM filter
+
+For more details on the different filtering approaches used in Lethe, the reader is invited to consult the `Unresolved CFD-DEM section <../../../theory/multiphase/cfd_dem/unresolved_cfd-dem.html>`_ of Lethe's theory guide. It is worth noting that in this example, the same filter is applied to both the void fraction and the particle–fluid forces, which is mathematically consistent. However, different filters can be applied to the void fraction and to the particle–fluid forces independently, if desired. Each case is run with three different coupling approaches for the drag force: explicit, implicit, and semi-implicit.
+
+The superficial gas velocity at the inlet is varied from :math:`0.02` to :math:`0.3\;\text{m}/\text{s}` and the pressure drop across the bed is recorded. Results are compared with correlations from the literature for validation.
 
 
 -------------------
 DEM Parameter File
 -------------------
 
-A DEM simulation is first run to insert the required number of particles. A detailed description of all the DEM parameter subsections can be found in the `DEM parameters section <../../../parameters/dem/dem.html>`_. The subsections in the DEM parameter file ``particle-packing.prm`` that are pertinent to this example are described below. 
+A DEM simulation is first run to insert the required number of particles. A detailed description of all the DEM parameter subsections can be found in the `DEM parameters section <../../../parameters/dem/dem.html>`_. The subsections in the DEM parameter file ``packing-particles.prm`` that are pertinent to this example are described below. 
 
 
 Mesh
@@ -192,7 +206,7 @@ The packing simulation can be launched on 16 processors using the following comm
 .. code-block:: text
   :class: copy-button
 
-  mpirun -np 16 lethe-particles particle-packing.prm
+  mpirun -np 16 lethe-particles packing-particles.prm
 
 .. note:: 
     Running this simulation should take approximately 1 hour and 10 minutes on 16 cores.
@@ -204,27 +218,27 @@ Now that the particles are packed inside the cylindrical column, the CFD-DEM sim
 CFD-DEM Parameter File
 -----------------------
 
-The CFD-DEM simulation is run using the matrix-based solver ``lethe-fluid-particles`` or the matrix-free solver ``lethe-fluid-particles-matrix-free``. For the matrix-based solver, four parameter files are provided to test two VANS models (model A and model B) with two force projection methods (cell-based and QCM). The matrix-free solver is only tested with model A. The main description in this section follows the matrix-based parameter file ``mb-fluidized-bed-modelA.prm``. Differences associated with the remaining parameter files will be highlighted where relevant.
+The CFD-DEM simulation is run using the matrix-based solver ``lethe-fluid-particles`` or the matrix-free solver ``lethe-fluid-particles-matrix-free``. For the matrix-based solver, six parameter files are provided to test VANS model A with two projection filters (cell-based and QCM) and three different drag coupling approaches (explicit, implicit, and semi-implicit). The matrix-free solver is also tested with the QCM filter and the three drag coupling schemes. The main description in this section follows the matrix-based parameter file ``mb-fluidized-bed-modelA-qcm-semi-implicit.prm``. Differences associated with the remaining parameter files will be highlighted where relevant.
 
 The objective of the simulations is to represent the pressure drop across the bed as a function of the Reynolds number based on the superficial gas velocity and the column diameter:
 
 .. math::
-  Re = \frac{U_{\mathrm{g}} D}{\nu_{\mathrm{f}}}
+  \mathrm{Re} = \frac{U_{\mathrm{g}} D}{\nu_{\mathrm{f}}}
 
-where :math:`U_{\mathrm{g}}` is the superficial gas velocity, :math:`D` is the column diameter and :math:`\nu_{\mathrm{f}}` is the kinematic viscosity of the fluid. For a Reynolds number interval ranging from :math:`200` to :math:`800`, the gas inlet velocity is varied from :math:`0.02\;\text{m/s}` to :math:`0.4\;\text{m/s}` in increments of :math:`0.02\;\text{m/s}`, each value applied for :math:`0.05` s.
+where :math:`U_{\mathrm{g}}` is the superficial gas velocity, :math:`D` is the column diameter and :math:`\nu_{\mathrm{f}}` is the kinematic viscosity of the fluid. For a Reynolds number interval ranging from :math:`200` to :math:`600`, the gas inlet velocity is varied from :math:`0.02\;\text{m/s}` to :math:`0.3\;\text{m/s}` in increments of :math:`0.02\;\text{m/s}`, each value applied for :math:`0.05` s.
 
 
 Simulation Control
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-To reach an inlet velocity of :math:`0.4\;\text{m/s}`, as described earlier, the CFD-DEM simulation is run for a total time of :math:`1` s with a time step of :math:`0.0002` s. In the case of the QCM projection of the forces with the matrix-based solver, only an explicit coupling of the drag is available at the time this example was created. Therefore, in the latter case, the time step is reduced to :math:`0.0001` s to ensure numerical stability.
+To reach an inlet velocity of :math:`0.3\;\text{m/s}`, as described earlier, the CFD-DEM simulation is run for a total time of :math:`0.75` s with a time step of :math:`0.0002` s. For cases with an explicit drag coupling, the time step is reduced to :math:`0.0001` s to ensure numerical stability.
 
 .. code-block:: text
 
     subsection simulation control
         set method           = bdf1
         set output frequency = 50
-        set time end         = 1.0
+        set time end         = 0.75
         set time step        = 0.0002
     end
 
@@ -260,7 +274,7 @@ The boundary conditions are chosen as follows: a no-slip condition on the latera
             set id   = 1
             set type = function
             subsection u
-            set Function expression = min(0.02 * floor(t / 0.05 + 1), 0.4)
+            set Function expression = min(0.02 * floor(t / 0.05 + 1), 0.3)
             end
             subsection v
             set Function expression = 0
@@ -279,7 +293,7 @@ The boundary conditions are chosen as follows: a no-slip condition on the latera
 Void Fraction
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-The void fraction is computed using the particle information available in the DEM files, so ``read_dem`` is set to ``true``. The ``dem file name`` corresponds to the files written during the previous DEM simulation using checkpointing. The calculation method is set to ``qcm``, with the sphere’s radius chosen such that its volume equals the cell’s volume by setting ``qcm sphere equal cell volume`` to ``true``. A smoothing length equal to twice the particle diameter is used.
+The void fraction is computed using the particle information available in the DEM files, so ``read_dem`` is set to ``true``. The ``dem file name`` corresponds to the files written during the previous DEM simulation using checkpointing. The calculation method is set to ``qcm``, with the sphere’s radius chosen such that its volume equals the cell’s volume by setting ``qcm sphere equal cell volume`` to ``true``. For cases using the PCM filter, the void fraction ``mode`` is set to ``pcm`` instead. A smoothing length equal to twice the particle diameter is used.
 
 .. code-block:: text
 
@@ -295,7 +309,7 @@ The void fraction is computed using the particle information available in the DE
 CFD-DEM
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-All hydrodynamic forces are enabled in the ``cfd-dem`` subsection. This allows testing the different models. Grad-div stabilization is also enabled to improve mass conservation, using a length-scale equal to the column's radius, which is of the same order of the characteristic length of the flow, as recommended in the `CFD-DEM parameters section <../../../parameters/unresolved-cfd-dem/cfd-dem.html>`_. In simulations where the QCM projection is applied to the particle–fluid forces, the parameter ``project particle forces`` is set to ``true``, and the ``drag coupling`` is set to ``explicit``.
+All hydrodynamic forces are enabled in the ``cfd-dem`` subsection. This allows testing the different models. Grad-div stabilization is also enabled to improve mass conservation, using a length-scale equal to the column's radius, which is of the same order of the characteristic length of the flow, as recommended in the `CFD-DEM parameters section <../../../parameters/unresolved-cfd-dem/cfd-dem.html>`_. In simulations of this example using the QCM filter, the parameter ``project particle forces`` is set to ``true``, to use the QCM filter to calculate the particle-fluid forces (by default, this parameter is ``false``, and the cell-based filter is used to calculate the particle-fluid forces term in the VANS equations). The ``drag coupling`` parameter is set to the desired coupling approach and defaults to ``semi-implicit``.
 
 .. code-block:: text
 
@@ -310,6 +324,8 @@ All hydrodynamic forces are enabled in the ``cfd-dem`` subsection. This allows t
         set drag model                    = difelice
         set coupling frequency            = 100
         set vans model                    = modelA
+        set drag coupling                 = semi-implicit
+        set project particle forces       = true
     end
 
 
@@ -379,31 +395,39 @@ The simulations are launched with the matrix-based solver (and corresponding par
 .. code-block:: text
   :class: copy-button
 
-  mpirun -np 8 lethe-fluid-particles mb-fluidized-bed-modelA.prm
+  mpirun -np 8 lethe-fluid-particles mb-fluidized-bed-modelA-qcm-semi-implicit.prm
 
 The matrix-free solver is run following:
 
 .. code-block:: text
   :class: copy-button
 
-  mpirun -np 8 lethe-fluid-particles-matrix-free mf-fluidized-bed-modelA.prm
+  mpirun -np 8 lethe-fluid-particles-matrix-free mf-fluidized-bed-modelA-qcm-semi-implicit.prm
 
 .. note::   
     The simulation runtimes on 128 cores, which are approximate, are as follows:
 
-    +------------------+-------------+------------------+--------------------+
-    | Solver           | VANS Model  | Force projection | Simulation runtime |
-    +==================+=============+==================+====================+
-    | Matrix-based     | A           | Cell-based       | 1 h 30 min         |
-    +------------------+-------------+------------------+--------------------+
-    | Matrix-based     | B           | Cell-based       | 2 h 30 min         |
-    +------------------+-------------+------------------+--------------------+
-    | Matrix-based     | A           | QCM              | 3 h                |
-    +------------------+-------------+------------------+--------------------+
-    | Matrix-based     | B           | QCM              | 3 h                |
-    +------------------+-------------+------------------+--------------------+
-    | Matrix-free      | A           | QCM              | 1 h 20 min         |
-    +------------------+-------------+------------------+--------------------+
+    +---------------+-------------+-------------------+--------------------+-----------------+
+    | Solver        | VANS Model  | Force projection  | Drag coupling  | Simulation runtime  |
+    +===============+=============+===================+================+=====================+
+    | Matrix-based  | A           | PCM (Cell-based)  | Explicit       | 2 h 50 min          |  
+    +---------------+-------------+-------------------+----------------+---------------------+
+    | Matrix-based  | A           | PCM (Cell-based)  | Semi-implicit  | 1 h 9 min           |
+    +---------------+-------------+-------------------+----------------+---------------------+
+    | Matrix-based  | A           | PCM (Cell-based)  | Implicit       | 1 h 25 min          |
+    +---------------+-------------+-------------------+----------------+---------------------+
+    | Matrix-based  | A           | QCM               | Explicit       | 2 h 11 min          |
+    +---------------+-------------+-------------------+----------------+---------------------+
+    | Matrix-based  | A           | QCM               | Semi-implicit  | 1 h 5 min           |
+    +---------------+-------------+-------------------+----------------+---------------------+
+    | Matrix-based  | A           | QCM               | Implicit       | 1 h 39 min          |
+    +---------------+-------------+-------------------+----------------+---------------------+
+    | Matrix-free   | A           | QCM               | Explicit       | 1 h 56 min          |
+    +---------------+-------------+-------------------+----------------+---------------------+
+    | Matrix-free   | A           | QCM               | Semi-implicit  | 54 min              |
+    +---------------+-------------+-------------------+----------------+---------------------+
+    | Matrix-free   | A           | QCM               | Implicit       | 1 h 16 min          |
+    +---------------+-------------+-------------------+----------------+---------------------+
 
 
 --------
@@ -427,8 +451,10 @@ Here, the subscript :math:`\mathrm{mf}` refers to minimum fluidization, and :mat
   \mathrm{Ar} = \frac{g \rho_{\mathrm{f}} (\rho_{\mathrm{p}} - \rho_{\mathrm{f}}) d_{\mathrm{p}}^3}{\mu_{\mathrm{f}}^2}.
 
 .. image:: images/pressure-drop.png
-    :alt: Pressure drop across the bed as a function of the Reynolds number at the column inlet
+    :alt: Pressure drop across the bed as a function of the Reynolds number at the column inlet. The error bar indicates the standard deviation of the pressure drop over the last 0.025 s of each velocity step.
     :align: center
+
+The figure on the left compares the matrix-based (MB) solver results with a cell-based PCM filter and to those with the same solver but a QCM filter. The figure on the right compares the MB solver with the matrix-free (MF) solver results, both obtained with a QCM filter. The different colors correspond to the different drag coupling approaches (explicit in green, semi-implicit in orange, and implicit in purple).
 
 It can be seen that all simulations recover the expected constant pressure-drop plateau after fluidization (shown with the horizontal dashed line), equal to the net weight of the particle bed (weight minus buoyancy) per unit area:
 
@@ -437,30 +463,7 @@ It can be seen that all simulations recover the expected constant pressure-drop 
 
 with :math:`N_\mathrm{p}` the number of particles, :math:`V_\mathrm{p}` the volume of a particle, and :math:`A_\mathrm{b}` the cross-sectional area of the bed.
 
-The figure on the left compares the matrix-based (MB) solver results with cell-based force projection for models A and B, as well as the matrix-free (MF) solver for model A (which uses only QCM filtering for the force projection). The figure on the right compares the MB solver results with QCM force projection for models A and B and the MF solver with QCM force projection.
-
-It can be seen that the increasing portion of the pressure-drop curve varies only slightly between the MB simulations with cell-based force projection and the MF model. In contrast, the MB simulations using QCM force projection exhibit a steeper rise before fluidization, resulting in a fluidization point closer to the shown correlations. This behaviour may be attributed to the smaller time step required for numerical stability when using an explicit drag coupling with QCM force projection, as well as to the cell-independent nature of the filtering (which is also the case for the MF solver). Discrepancies appear in the fluctuations of the plateau region after fluidization, which may be better resolved by using a smaller time step or tighter nonlinear solver tolerances.
-
-The following table summarizes the fluidization Reynolds number obtained with each simulation (taken to be the first intersection point with the horizontal dotted line), compared to the Wen-Yu [#WenYu1966]_  and Noda *et al* [#Noda1986]_ correlations:
-
-    +---------------------------+-------------+------------------+------------------------+
-    | Solver                    | VANS Model  | Force projection | :math:`Re_{\text{mf}}` |
-    +===========================+=============+==================+========================+
-    | Matrix-based              | A           | Cell-based       | 426                    |
-    +---------------------------+-------------+------------------+------------------------+
-    | Matrix-based              | B           | Cell-based       | 393                    |
-    +---------------------------+-------------+------------------+------------------------+
-    | Matrix-based              | A           | QCM              | 361                    |
-    +---------------------------+-------------+------------------+------------------------+
-    | Matrix-based              | B           | QCM              | 361                    |
-    +---------------------------+-------------+------------------+------------------------+
-    | Matrix-free               | A           | QCM              | 426                    |
-    +---------------------------+-------------+------------------+------------------------+
-    | Wen-Yu [#WenYu1966]_      | A           | QCM              | 270                    |
-    +---------------------------+-------------+------------------+------------------------+
-    | Noda *et al* [#Noda1986]_ | A           | QCM              | 294                    |
-    +---------------------------+-------------+------------------+------------------------+
-
+It can be seen that the increasing portion of the pressure-drop curve is almost identical across the different cases, with the most pronounced deviation observed for the explicit drag coupling using the PCM filter. All curves appear to plateau at a similar :math:`\mathrm{Re}`, between :math:`300` and :math:`400`, which is close to the minimum fluidization Reynolds number predicted by the Wen–Yu (:math:`\mathrm{Re}_{\text{mf}}=270`) and Noda et al. (:math:`\mathrm{Re}_{\text{mf}}=294`) correlations. Fluctuations in the pressure-drop values appear after fluidization, generally increasing with increasing :math:`\mathrm{Re}`. These fluctuations are expected, as the particles become more dynamic, requiring longer sampling times (longer than :math:`0.05` s). Differences between the different cases in this region arise from the sensitivity of the particle dynamics to small changes in the different variables, a consequence of the chaotic behavior. Overall, the results demonstrate good agreement between the different solver configurations and with the expected physical behavior of a gas–solid fluidized bed.
 
 -----------
 References

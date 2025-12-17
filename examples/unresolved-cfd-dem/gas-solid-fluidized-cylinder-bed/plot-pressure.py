@@ -14,13 +14,15 @@ from cycler import cycler
 #############################################################################
 # Steup plot parameters
 #############################################################################
-colors=['#1b9e77','#d95f02','#7570b3','#e7298a','#66a61e','#e6ab02']
+colors=['#1b9e77','#d95f02','#7570b3']
+markers = ['o', 's']
 
 plt.rcParams['axes.prop_cycle'] = cycler(color=colors)
 
 #############################################################################
 # Helper functions
 #############################################################################
+# === Binning function ===
 def bin_and_average(time, pressure, bins, averaging_window):
     indices = np.digitize(time, bins) - 1
     mean_p, std_p = [], []
@@ -36,11 +38,13 @@ def bin_and_average(time, pressure, bins, averaging_window):
 
 # === Plotting function ===
 def plot_pressure(Re, dataset_keys, labels, subscript):
-    for key, label in zip(dataset_keys, labels):
-        plt.errorbar(Re, datasets[key]["mean"], yerr=datasets[key]["std"], fmt='o-', capsize=3, label=label)
-    plt.plot([0, max(Re)], [delta_p_analytical]*2, 'k--', label="Analytical Δp")
-    plt.plot([Re_mf_WY_inlet, Re_mf_WY_inlet], [0, max([datasets[k]["mean"].max() for k in dataset_keys])*1.1], ':', label="Wen-Yu")
-    plt.plot([Re_mf_N_inlet, Re_mf_N_inlet], [0, max([datasets[k]["mean"].max() for k in dataset_keys])*1.1], '-.', label="Noda")
+    
+    for i, (key, label) in enumerate(zip(dataset_keys, labels)):
+        marker = markers[(i // 3) % len(markers)]
+        plt.errorbar(Re, datasets[key]["mean"], yerr=datasets[key]["std"], fmt=marker+'-',  markerfacecolor='none', markersize=8, capsize=3, label=label)
+    plt.plot([0, max(Re)], [delta_p_analytical]*2, 'k--', label="Fluidization Δp")
+    plt.plot([Re_mf_WY_inlet, Re_mf_WY_inlet], [0, max([datasets[k]["mean"].max() for k in dataset_keys])*1.1], 'k:')
+    plt.plot([Re_mf_N_inlet, Re_mf_N_inlet], [0, max([datasets[k]["mean"].max() for k in dataset_keys])*1.1], 'k-.')
       # Add annotations below the lines with arrows pointing up  
     # Fixed y for annotations
     y_annot = 80
@@ -52,22 +56,27 @@ def plot_pressure(Re, dataset_keys, labels, subscript):
         arrowprops=dict(facecolor='black', arrowstyle="->",
                         connectionstyle="arc3,rad=0.3"),    
         horizontalalignment='right',
-        verticalalignment='top'
+        verticalalignment='top',
+        fontsize=12
     )
     # Noda annotation (arrow from right, curved)
     plt.annotate(
-        "Noda",
+        "Noda et al.",
         xy=(Re_mf_N_inlet, y_annot),
-        xytext=(Re_mf_N_inlet + 0.1*max(Re), y_annot),  
+        xytext=(Re_mf_N_inlet + 0.09*max(Re), y_annot),  
         arrowprops=dict(facecolor='black', arrowstyle="->",
                         connectionstyle="arc3,rad=-0.3"),  
         horizontalalignment='left',
-        verticalalignment='top'
+        verticalalignment='top',
+        fontsize=12
     )
-    plt.xlabel("Re")
-    plt.ylabel("$\\Delta p$")
+    plt.grid(True, which='major', linestyle='--', linewidth=0.5, alpha=0.6)
+    plt.xticks(fontsize=12)
+    plt.yticks(fontsize=12)
+    plt.xlabel("Re", fontsize=14)
+    plt.ylabel("$\\Delta p$ (Pa)", fontsize=14)
     plt.legend()
-    plt.savefig(f"Figure_{subscript}.png", dpi=300, bbox_inches='tight')
+    plt.savefig(f"Figure_{subscript}.png", dpi=600, bbox_inches='tight')
     plt.show()
 
 
@@ -75,11 +84,15 @@ def plot_pressure(Re, dataset_keys, labels, subscript):
 # Load data
 #############################################################################
 data_files = {
-    "A_MB": "output_modelA_mb/pressure_drop.dat",
-    "B_MB": "output_modelB_mb/pressure_drop.dat",
-    "A_MB_proj": "output_modelA_project_forces_qcm/pressure_drop.dat",
-    "B_MB_proj": "output_modelB_project_forces_qcm/pressure_drop.dat",
-    "A_MF": "output_modelA_mf/pressure_drop.dat"
+    "MB_PCM_E": "output_mb_pcm_explicit/pressure_drop.dat",
+    "MB_PCM_SI": "output_mb_pcm_semi_implicit/pressure_drop.dat",
+    "MB_PCM_I": "output_mb_pcm_implicit/pressure_drop.dat",
+    "MB_QCM_E": "output_mb_qcm_explicit/pressure_drop.dat",
+    "MB_QCM_SI": "output_mb_qcm_semi_implicit/pressure_drop.dat",
+    "MB_QCM_I": "output_mb_qcm_implicit/pressure_drop.dat",
+    "MF_QCM_E": "output_mf_explicit/pressure_drop.dat",
+    "MF_QCM_SI": "output_mf_semi_implicit/pressure_drop.dat",
+    "MF_QCM_I": "output_mf_implicit/pressure_drop.dat"
 }
 
 datasets = {}
@@ -154,19 +167,19 @@ for key, ds in datasets.items():
 # Plot
 #############################################################################
 # Reynolds numbers for x-axis
-velocity = np.minimum(0.02 * np.floor(bin_centers / 0.05 + 1), 0.4)
+velocity = np.minimum(0.02 * np.floor(bin_centers / 0.05 + 1), 0.3)
 Re = velocity * D / nu
 
 plot_pressure(
     Re,
-    ["A_MB", "A_MF", "B_MB"],
-    ["Model A MB", "Model A MF", "Model B MB"],
-    "cell-based-MB"
+    ["MB_PCM_E", "MB_PCM_SI", "MB_PCM_I", "MB_QCM_E", "MB_QCM_SI", "MB_QCM_I"],
+    ["MB PCM Explicit", "MB PCM Semi-Implicit", "MB PCM Implicit", "MB QCM Explicit", "MB QCM Semi-Implicit", "MB QCM Implicit"],
+    "MB"
 )
 
 plot_pressure(
     Re,
-    ["A_MB_proj", "A_MF", "B_MB_proj"],
-    ["Model A MB-QCM", "Model A MF", "Model B MB-QCM"],
-    "qcm-based-MB"
+    ["MF_QCM_E", "MF_QCM_SI", "MF_QCM_I", "MB_QCM_E", "MB_QCM_SI", "MB_QCM_I"],
+    ["MF QCM Explicit", "MF QCM Semi-Implicit", "MF QCM Implicit", "MB QCM Explicit", "MB QCM Semi-Implicit", "MB QCM Implicit"],
+    "MB-MF"
 )
