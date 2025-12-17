@@ -6,24 +6,25 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
 ## [Master] - 2025/12/17
 
+- MAJOR Floating walls declaration in a parameter file got changed so that it requires fewer parameters for the ``point on wall`` and the ``normal vector``. A bug was also find during this change: the ``normal vector`` wasn't normalized after being parsed. As a results, if the user did not declare a unit vector in the parameter file, the normal overlap between particles and this ``floating wall`` is off by some factor. This problem got fixed, but resulted in the change of an application-test output (which was declaring the normal vector as a non-unit vector). [#1850](https://github.com/chaos-polymtl/lethe/pull/1850)
+
 ### Fixed
 
--MINOR This is a follow-up of #1863. Although #1863 fixed the restart and prevented the simulations from crashing, the time history of the void fraction was not store appropriately. This stemmed from a confusion since in the matrix-free solver, it is the deal.II distributed vectors for the void fraction which are checkpointed and not the Trilinos ones. This PR reads the correct deal.II vector when reading a checkpoint, but also ensures that the values in the Trilinos vectors matches that of the deal.II vectors. This allows reproducing the norm of the residuals to machine accuracy when restarting. [#1864](https://github.com/chaos-polymtl/lethe/pull/1864)
+- MINOR This is a follow-up of #1863. Although #1863 fixed the restart and prevented the simulations from crashing, the time history of the void fraction was not store appropriately. This stemmed from a confusion since in the matrix-free solver, it is the deal.II distributed vectors for the void fraction which are checkpointed and not the Trilinos ones. This PR reads the correct deal.II vector when reading a checkpoint, but also ensures that the values in the Trilinos vectors matches that of the deal.II vectors. This allows reproducing the norm of the residuals to machine accuracy when restarting. [#1864](https://github.com/chaos-polymtl/lethe/pull/1864)
 
--MINOR The Matrix-free CFD-DEM solver could not restart adequately. This is because the solution vector for the fluid was not sized accordingly. The deal.II vectors require that the locally relevant dofs be provided to the vector before reading a checkpoint, which is not the case for the Trilinos vectors. This would prevent restarts in parallel. [#1863](https://github.com/chaos-polymtl/lethe/pull/1863)
+- MINOR The Matrix-free CFD-DEM solver could not restart adequately. This is because the solution vector for the fluid was not sized accordingly. The deal.II vectors require that the locally relevant dofs be provided to the vector before reading a checkpoint, which is not the case for the Trilinos vectors. This would prevent restarts in parallel. [#1863](https://github.com/chaos-polymtl/lethe/pull/1863)
 
 ## [Master] - 2025/12/16
 
 ### Added
 
--MINOR This PR add the material properties that will be used by the time-harmonic electromagnetic solver which include the electric conductivity, the complex electric permittivity and the complex magnetic permeability. At the moment, those properties only support a "constant" field. A unit test for the electromagnetic constant properties was added, along with the update of the already existing "physical_properties_manager" tests. [#1862](https://github.com/chaos-polymtl/lethe/pull/1862)
-
+- MINOR This PR add the material properties that will be used by the time-harmonic electromagnetic solver which include the electric conductivity, the complex electric permittivity and the complex magnetic permeability. At the moment, those properties only support a "constant" field. A unit test for the electromagnetic constant properties was added, along with the update of the already existing "physical_properties_manager" tests. [#1862](https://github.com/chaos-polymtl/lethe/pull/1862)
 
 ## [Master] - 2025/12/15
 
 ### Fixed
 
--MINOR The tolerance adopted in the radius computation at the rotor-stator mortar interface was a hard-coded value, which was not ideal. This PR fixes this by introducing a radius tolerance parameter. [#1853](https://github.com/chaos-polymtl/lethe/pull/1853)
+- MINOR The tolerance adopted in the radius computation at the rotor-stator mortar interface was a hard-coded value, which was not ideal. This PR fixes this by introducing a radius tolerance parameter. [#1853](https://github.com/chaos-polymtl/lethe/pull/1853)
 
 ## [Master] - 2025/12/14
 
@@ -78,3 +79,4 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/).
 ### Fixed
 
 - MAJOR/MINOR/PATCH Description (#PR).
+

@@ -1407,16 +1407,31 @@ namespace Parameters
     void
     FloatingWalls<dim>::declareDefaultEntry(ParameterHandler &prm)
     {
+      prm.declare_entry("point on wall",
+                        "0., 0., 0.",
+                        Patterns::List(Patterns::Double(), 2, 3),
+                        "Point on wall");
+      prm.declare_entry("normal vector",
+                        "1., 0., 0.",
+                        Patterns::List(Patterns::Double(), 2, 3),
+                        "Point on wall");
+
       prm.enter_subsection("point on wall");
       prm.declare_entry("x", "0.", Patterns::Double(), "X Point on wall");
       prm.declare_entry("y", "0.", Patterns::Double(), "Y Point on wall");
       prm.declare_entry("z", "0.", Patterns::Double(), "Z Point on wall");
+      prm.mark_as_deprecated("x");
+      prm.mark_as_deprecated("y");
+      prm.mark_as_deprecated("z");
       prm.leave_subsection();
 
       prm.enter_subsection("normal vector");
       prm.declare_entry("nx", "0.", Patterns::Double(), "X Normal vector wall");
       prm.declare_entry("ny", "0.", Patterns::Double(), "Y Normal vector wall");
       prm.declare_entry("nz", "0.", Patterns::Double(), "Z Normal vector wall");
+      prm.mark_as_deprecated("nx");
+      prm.mark_as_deprecated("ny");
+      prm.mark_as_deprecated("nz");
       prm.leave_subsection();
 
       prm.declare_entry("start time", "0.", Patterns::Double(), "Start time");
@@ -1428,24 +1443,18 @@ namespace Parameters
     void
     FloatingWalls<dim>::parse_floating_wall(ParameterHandler &prm)
     {
-      prm.enter_subsection("point on wall");
-      Point<dim> wall_point;
-      wall_point[0] = prm.get_double("x");
-      wall_point[1] = prm.get_double("y");
-      if (dim == 3)
-        wall_point[2] = prm.get_double("z");
+      // Position
+      Point<dim> wall_point(
+        value_string_to_tensor<dim>(prm.get("point on wall")));
       this->points_on_walls.push_back(wall_point);
-      prm.leave_subsection();
 
-      prm.enter_subsection("normal vector");
-      Tensor<1, dim> wall_normal;
-      wall_normal[0] = prm.get_double("nx");
-      wall_normal[1] = prm.get_double("ny");
-      if (dim == 3)
-        wall_normal[2] = prm.get_double("nz");
+      // Normal
+      Tensor<1, dim> wall_normal(
+        value_string_to_tensor<dim>(prm.get("normal vector")));
+      wall_normal = wall_normal / wall_normal.norm();
       this->floating_walls_normal_vectors.push_back(wall_normal);
-      prm.leave_subsection();
 
+      // Time
       time_start.push_back(prm.get_double("start time"));
       time_end.push_back(prm.get_double("end time"));
     }

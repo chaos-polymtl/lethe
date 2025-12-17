@@ -165,16 +165,8 @@ To ensure the gas flow is fully developed before reaching the particles, the par
     subsection floating walls
       set number of floating walls = 1
       subsection wall 0
-        subsection point on wall
-          set x = 0
-          set y = 0
-          set z = 0
-        end
-        subsection normal vector
-          set nx = 0
-          set ny = 0
-          set nz = 1
-        end
+        set point on wall = 0., 0., 0.
+        set normal vector = 0., 0., 1.
         set start time = 0
         set end time   = 20
       end
