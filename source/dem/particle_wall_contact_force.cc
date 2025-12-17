@@ -166,7 +166,6 @@ ParticleWallContactForce<dim,
     get_force_calculation_threshold_distance();
 
   // Initiate containers
-  std::vector<Particles::ParticleIterator<dim>> particle_iterators;
   std::vector<Point<dim>> triangle(this->vertices_per_triangle);
 
   // Iterating over the solid objects
@@ -193,52 +192,38 @@ ParticleWallContactForce<dim,
         &particle_floating_mesh_potential_contact_pair =
           particle_floating_mesh_potentially_in_contact[solid_counter];
 
+      // Loop over every triangle of the solid object
       for (auto &[triangle_cell_iterator, map_info] :
            particle_floating_mesh_potential_contact_pair)
         {
           if (map_info.empty())
             continue;
 
-          // Clear the particle locations vector for the new cut cell and
-          // reserve the required size for the particle locations.
-          particle_iterators.clear();
-          const unsigned int n_particles = map_info.size();
-          particle_iterators.reserve(n_particles);
-
-          // Gather all the particles locations in a vector
-          for (auto &&contact_info : map_info | boost::adaptors::map_values)
-            particle_iterators.emplace_back(contact_info.particle);
-
           // Build triangle vector from the triangle cell vertices
           for (unsigned int vertex = 0; vertex < this->vertices_per_triangle;
                ++vertex)
             triangle[vertex] = triangle_cell_iterator->vertex(vertex);
 
-          // Getting the projection of particles on the triangle
-          // (triangle cell)
-          auto particle_triangle_information =
-            LetheGridTools::find_particle_triangle_projection<dim,
-                                                              PropertiesIndex>(
-              triangle, particle_iterators, n_particles);
+          // We reserve the contact record of this triangle an arbitrary number
+          // of contacts
+          contact_record.reserve(map_info.size());
 
-          const auto &[pass_distance_check,
-                       projection_points,
-                       normal_vectors,
-                       contact_indicators] = particle_triangle_information;
-
-          // We reserve the contact record relative to the number of
-          // trues there is in the "pass_distance_check".
-          contact_record.reserve(std::count(pass_distance_check.begin(),
-                                            pass_distance_check.end(),
-                                            true));
-
-          // Loop on every particle contact info
-          unsigned int particle_counter = 0;
+          // Loop on every particle using their contact info
           for (auto &&contact_info : map_info | boost::adaptors::map_values)
             {
+              // We check the contact between the triangle and the particle.
+              auto particle_triangle_information = LetheGridTools::
+                find_particle_triangle_projection<dim, PropertiesIndex>(
+                  triangle, contact_info.particle);
+
+              const auto &[pass_distance_check,
+                           projection_point,
+                           normal_vector,
+                           contact_indicator] = particle_triangle_information;
+
               // If the particle is close enough to the triangle in
               // the direction normal to the triangle.
-              if (pass_distance_check[particle_counter])
+              if (pass_distance_check)
                 {
                   // Defining local variables which will be used to store
                   // the contact in the contact record
@@ -246,8 +231,7 @@ ParticleWallContactForce<dim,
                   auto         particle_properties = particle->get_properties();
                   Point<3>     particle_location_3d = get_location(particle);
                   const double particle_triangle_distance =
-                    particle_location_3d.distance(
-                      projection_points[particle_counter]);
+                    particle_location_3d.distance(projection_point);
 
                   // Find normal overlap
                   const double normal_overlap =
@@ -259,20 +243,17 @@ ParticleWallContactForce<dim,
                   if (normal_overlap > force_calculation_threshold_distance)
                     {
                       // Update information in the contact_info
-                      contact_info.normal_vector =
-                        normal_vectors[particle_counter];
-                      contact_info.point_on_boundary =
-                        projection_points[particle_counter];
-                      contact_info.boundary_id = solid_counter;
+                      contact_info.normal_vector     = normal_vector;
+                      contact_info.point_on_boundary = projection_point;
+                      contact_info.boundary_id       = solid_counter;
 
                       contact_record[particle->get_local_index()].emplace_back(
                         triangle_cell_iterator,
                         normal_overlap,
-                        contact_indicators[particle_counter],
+                        contact_indicator,
                         contact_info);
                     }
                 }
-              particle_counter++;
             }
         }
       // Every contact between this solid object and the particles are
@@ -294,12 +275,8 @@ ParticleWallContactForce<dim,
                      contact_info_C1] = *C1;
 
               // Assigning the triangle neighboring list of T1;
-              const std::vector<
-                typename Triangulation<dim - 1, dim>::active_cell_iterator>
-                &T1_es_neighbors = this_solid_es_neighbors.at(T1_cell);
-              const std::vector<
-                typename Triangulation<dim - 1, dim>::active_cell_iterator>
-                &T1_vs_neighbors = this_solid_vs_neighbors.at(T1_cell);
+              const auto &T1_es_neighbors = this_solid_es_neighbors.at(T1_cell);
+              const auto &T1_vs_neighbors = this_solid_vs_neighbors.at(T1_cell);
 
               // Initialize variables. We need to compare C1 to every other
               // contact (C2) that was not compared yet.
