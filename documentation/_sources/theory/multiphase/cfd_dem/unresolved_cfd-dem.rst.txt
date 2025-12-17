@@ -17,40 +17,40 @@ In this guide, we summarize the theory behind Unresolved CFD-DEM. For further de
 Particles
 ----------
 
-Applying Newton's second law on the particle :math:`i` surrounded by fluid a :math:`f`, we find:
+Applying Newton's second law and Euler's law of angular motion on the particle :math:`i` surrounded by fluid a :math:`f`, we find:
 
 .. math::
-    m_i \frac{\mathrm{d}\mathbf{v}_i}{\mathrm{d}t} = \sum_{j}\mathbf{f}_{c,ij} + \sum_{j}\mathbf{f}_{nc,ij} + \mathbf{f}_{fp,i} + \mathbf{f}_{g,i} \\
-    I_i \frac{\mathrm{d}\mathbf{\omega}_i}{\mathrm{d}t} = \sum_{j}\left ( \mathbf{M}_{c,ij} + \mathbf{M}_{r,ij} \right ) + \sum_{w}\left ( \mathbf{M}_{c,iw} + \mathbf{M}_{r,iw} \right )
+    m_i \frac{\mathrm{d}\mathbf{v}_i}{\mathrm{d}t} = \mathbf{F}_{\mathrm{fp},i} + \mathbf{F}_{\mathbf{g},i} + \sum_{j} \left( \mathbf{F}_{\mathrm{c},ij} + \mathbf{F}_{\mathrm{nc},ij} \right) \\
+    I_i \frac{\mathrm{d}\mathbf{\omega}_i}{\mathrm{d}t} = \mathbf{M}_{\mathrm{fp},i} + \sum_{j}\left ( \mathbf{M}_{\mathrm{c},ij} + \mathbf{M}_{\mathrm{r},ij} \right ) 
 
 where:
 
 * :math:`m_i` is the mass of the particle :math:`i`;
 * :math:`\mathbf{v}_i` is the velocity of the particle :math:`i`;
-* :math:`\mathbf{f}_{c,ij}` are the contact forces between particles :math:`i` and :math:`j` (detailed in the DEM section of this guide);
-* :math:`\mathbf{f}_{nc,ij}` are the non-contact forces between particles :math:`i` and :math:`j`, such as lubrication forces [#nitsche1994]_;
-* :math:`\mathbf{f}_{fp,i}` is the force exerted by the surrounding fluid over particle :math:`i`. Here, the subscript :math:`fp` indicates the force exerted by the fluid on the particles;
-* :math:`\mathbf{f}_{g,i}` is the gravitational force;
+* :math:`\mathbf{F}_{\mathrm{fp},i}` is the force exerted by the surrounding fluid over particle :math:`i`. Here, the subscript :math:`fp` indicates the force exerted by the fluid on the particles;
+* :math:`\mathbf{F}_{\mathbf{g},i}` is the gravitational force;
+* :math:`\mathbf{F}_{\mathrm{c},ij}` are the contact forces (normal and tangential) between particles :math:`i` and :math:`j` (detailed in the DEM section of this guide);
+* :math:`\mathbf{F}_{\mathrm{nc},ij}` are the non-contact forces between particles :math:`i` and :math:`j`, such as cohesive and lubrication forces [#nitsche1994]_;
 * :math:`I_i` is the moment of inertia;
 * :math:`\mathbf{\omega}_i` is the angular velocity;
-* :math:`\mathbf{M}_{c,ij}` is the torque between particles :math:`i` and :math:`j`;
-* :math:`\mathbf{M}_{r,ij}` is the rolling friction between particles :math:`i` and :math:`j`;
-* :math:`\mathbf{M}_{c,iw}` is the torque between particle :math:`i` and walls :math:`w`;
-* :math:`\mathbf{M}_{c,iw}` is the rolling friction between particle :math:`i` and walls :math:`w`;
+* :math:`\mathbf{M}_{\mathrm{fp},i}` is the torque exerted by the surrounding fluid over the particle :math:`i`.
+* :math:`\mathbf{M}_{\mathrm{c},ij}` is the contact torque between particles :math:`i` and :math:`j`. Since only spherical particles are currently supported the unresolved CFD-DEM implementation of Lethe, this torque is only due to tangential forces;
+* :math:`\mathbf{M}_{\mathrm{r},ij}` is the rolling friction between particles :math:`i` and :math:`j`;
 
-Apart from :math:`\mathbf{f}_{fp,i}`, all the other terms of the previous equations are detailed in the DEM section of this theory guide (see :doc:`../dem/dem`). The momentum transport between phases :math:`\mathbf{f}_{fp,i}` can be written as:
+The momentum transfer between phases, :math:`\mathbf{F}_{\mathrm{fp},i}`, can be written as:
 
 .. math::
-    \mathbf{f}_{fp,i} = \mathbf{f}_{\nabla p,i} + \mathbf{f}_{\nabla \cdot \mathbf{\tau},i} + \mathbf{f}_{d,i} + \mathbf{f}_{Ar,i} + \mathbf{f}_{g,i} + \mathbf{f}''_{i}
+    \mathbf{F}_{fp,i} = \mathbf{F}_{\nabla p,i} + \mathbf{F}_{\nabla \cdot \mathbf{\tau},i} + \mathbf{F}_{\mathrm{d},i} + \mathbf{F}_{\mathrm{Ar},i} + \mathbf{F}_{\mathrm{S},i} + \mathbf{F}_{\mathrm{M},i} + \mathbf{F}''_{i}
 
 where:
 
-* :math:`\mathbf{f}_{\nabla p,i}` is the force due to the pressure gradient;
-* :math:`\mathbf{f}_{\nabla \cdot \tau,i}` is the force due to the shear stress;
-* :math:`\mathbf{f}_{d,i}` is the drag force;
-* :math:`\mathbf{f}_{Ar,i}` is the buoyancy (Archimedes) force;
-* :math:`\mathbf{f}_{g,i}` is the force due to gravity;
-* :math:`\mathbf{f}''_{i}` are the remaining forces, including virtual mass, Basset, Lift, and Magnus (currently not implemented in Lethe).
+* :math:`\mathbf{F}_{\nabla p,i}` is the force due to the pressure gradient;
+* :math:`\mathbf{F}_{\nabla \cdot \tau,i}` is the force due to the shear stress;
+* :math:`\mathbf{F}_{\mathrm{d},i}` is the drag force;
+* :math:`\mathbf{F}_{\mathrm{Ar},i}` is the buoyancy (Archimedes) force;
+* :math:`\mathbf{F}_{\mathrm{S},i}` is the Saffman lift force;
+* :math:`\mathbf{F}_{\mathrm{M},i}` is the Magnus lift force;
+* :math:`\mathbf{F}''_{i}` are the remaining forces, including virtual mass, Basset which are currently not implemented in Lethe.
 
 .. note::
     Since the pressure in Lethe does not account for the hydrostatic pressure, i.e., the gravity term is not taken into account in the Navier-Stokes equations (see :doc:`../../multiphysics/fluid_dynamics/navier-stokes`), we explicitly insert :math:`\mathbf{f}_{Ar,i}` in :math:`\mathbf{f}_{pf,i}`.  
@@ -77,24 +77,24 @@ Models A and B differ from each other in the way the momentum equation is calcul
 Model A:
 
 .. math:: 
-    \rho_f \left ( \frac{\partial \left ( \varepsilon_f \mathbf{u} \right )}{\partial t} + \nabla \cdot \left ( \varepsilon_f \mathbf{u} \otimes \mathbf{u} \right ) \right ) = -\varepsilon \nabla p + \varepsilon \nabla \cdot \tau +  \bar{\mathbf{F}}_\mathrm{A}^{\mathrm{pf}}
+    \rho_f \left ( \frac{\partial \left ( \varepsilon_f \mathbf{u} \right )}{\partial t} + \nabla \cdot \left ( \varepsilon_f \mathbf{u} \otimes \mathbf{u} \right ) \right ) = -\varepsilon \nabla p + \varepsilon \nabla \cdot \tau +  \bar{\mathbf{f}}_{\mathrm{pf},\mathrm{A}}
 
 Model B:
 
 .. math:: 
-    \rho_f \left ( \frac{\partial \left ( \varepsilon_f \mathbf{u} \right )}{\partial t} + \nabla \cdot \left ( \varepsilon_f \mathbf{u} \otimes \mathbf{u} \right ) \right ) = -\nabla p + \nabla \cdot \tau +  \bar{\mathbf{F}}_\mathrm{B}^{\mathrm{pf}}
+    \rho_f \left ( \frac{\partial \left ( \varepsilon_f \mathbf{u} \right )}{\partial t} + \nabla \cdot \left ( \varepsilon_f \mathbf{u} \otimes \mathbf{u} \right ) \right ) = -\nabla p + \nabla \cdot \tau +  \bar{\mathbf{f}}_{\mathrm{pf},\mathrm{B}}
 
 where:
 
 * :math:`\rho_f` is the density of the fluid;
 * :math:`p` is the pressure;
 * :math:`\tau` is the deviatoric stress tensor;
-* :math:`\bar{\mathbf{F}}_\mathrm{A}^{\mathrm{pf}}` and :math:`\bar{\mathbf{F}}_\mathrm{B}^{\mathrm{pf}}` are the source terms representing the volumetric forces on the fluid due to the interaction with particles for Models A and B, respectively. We note them as capital letter to emphasize that they are forces per unit volume and not forces. These volumetric interaction forces (:math:`\mathbf{F}_{pf}^A` and :math:`\mathbf{F}_{pf}^B`) are obtained by regularizing the particle-fluid interaction forces using a kernel function :math:`k_r` :
+* :math:`\bar{\mathbf{f}}_\mathrm{A}^{\mathrm{pf}}` and :math:`\bar{\mathbf{f}}_\mathrm{B}^{\mathrm{pf}}` are the source terms representing the volumetric forces on the fluid due to the interaction with particles for Models A and B, respectively. We note them as lower-case letter to emphasize that they are forces per unit volume and not forces. These volumetric interaction forces (:math:`\mathbf{f}_{pf}^A` and :math:`\mathbf{f}_{pf}^B`) are obtained by regularizing the particle-fluid interaction forces using a kernel function :math:`k_r` :
 
 
 .. math::
-    \bar{\mathbf{F}}_\mathrm{A}^{\mathrm{pf}} &= \sum_{i} k_r \left (\lVert \mathbf{x} - \mathbf{x}_i \rVert \right ) \left (\mathbf{f}_i^{\mathrm{pf}} - \mathbf{f}_i^{\nabla p} - \mathbf{f}_i^{\nabla \cdot \mathbf{\tau}} \right ) \\
-    \bar{\mathbf{F}}_\mathrm{B}^{\mathrm{pf}} &= \sum_{i} k_r \left (\lVert \mathbf{x} - \mathbf{x}_i \rVert \right ) \mathbf{f}_i^{\mathrm{pf}}
+    \bar{\mathbf{f}}_{\mathrm{pf},\mathrm{A}} &= \sum_{i} k_r \left (\lVert \mathbf{x} - \mathbf{x}_i \rVert \right ) \left(- \left (\mathbf{F}_{\mathrm{fp},i} - \mathbf{F}_{\nabla p,i} - \mathbf{F}_{\nabla \cdot \mathbf{\tau},i} \right ) \right) \\
+    \bar{\mathbf{f}}_{\mathrm{pf},\mathrm{B}} &= \sum_{i} k_r \left (\lVert \mathbf{x} - \mathbf{x}_i \rVert \right ) \left(-\mathbf{F}_{{\mathrm{fp},i}} \right)
 
 with :math:`k_r` normalized such that
 
