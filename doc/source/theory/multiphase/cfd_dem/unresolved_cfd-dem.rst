@@ -33,7 +33,7 @@ where:
 * :math:`\mathbf{F}_{\mathrm{nc},ij}` are the non-contact forces between particles :math:`i` and :math:`j`, such as cohesive and lubrication forces [#nitsche1994]_;
 * :math:`I_i` is the moment of inertia;
 * :math:`\mathbf{\omega}_i` is the angular velocity;
-* :math:`\mathbf{M}_{\mathrm{fp},i}` is the torque exeerted by the surrounding fluid over the particle :math:`i`.
+* :math:`\mathbf{M}_{\mathrm{fp},i}` is the torque exerted by the surrounding fluid over the particle :math:`i`.
 * :math:`\mathbf{M}_{\mathrm{c},ij}` is the torque between particles :math:`i` and :math:`j`;
 * :math:`\mathbf{M}_{\mathrm{r},ij}` is the rolling friction between particles :math:`i` and :math:`j`;
 
