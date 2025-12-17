@@ -702,10 +702,13 @@ CFDDEMMatrixFree<dim>::read_checkpoint()
   vf_system_trans_vectors.deserialize(vf_system);
 
   this->particle_projector.void_fraction_solution = vf_distributed_system;
+
+#ifndef LETHE_USE_LDV
   // We also wish the Trilinos solution to be updated.
   convert_vector_dealii_to_trilinos(
     this->particle_projector.void_fraction_locally_relevant,
     this->particle_projector.void_fraction_solution);
+#endif
 
   for (unsigned int i = 0;
        i < this->particle_projector.previous_void_fraction.size();
@@ -714,10 +717,12 @@ CFDDEMMatrixFree<dim>::read_checkpoint()
       this->particle_projector.void_fraction_previous_solution[i] =
         vf_distributed_previous_solutions[i];
 
+#ifndef LETHE_USE_LDV
       // We also wish the Trilinos solution to be updated.
       convert_vector_dealii_to_trilinos(
         this->particle_projector.previous_void_fraction[i],
         this->particle_projector.void_fraction_previous_solution[i]);
+#endif
     }
 
   if (this->simulation_parameters.flow_control.enable_flow_control)
