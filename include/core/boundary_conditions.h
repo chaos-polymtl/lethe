@@ -234,11 +234,10 @@ namespace BoundaryConditions
       "Choices are <noslip|slip|function|periodic|pressure|function weak|partial slip|outlet>.");
 
 
-    prm.declare_entry(
-      "id",
-      Utilities::to_string(default_boundary_id, 2),
-      Patterns::List(Patterns::Integer()),
-      "Mesh id for boundary conditions.");
+    prm.declare_entry("id",
+                      Utilities::to_string(default_boundary_id, 2),
+                      Patterns::List(Patterns::Integer()),
+                      "Mesh id for boundary conditions.");
 
     prm.declare_entry(
       "periodic id",
