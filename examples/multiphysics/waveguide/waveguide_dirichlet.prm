@@ -1,6 +1,11 @@
 # SPDX-FileCopyrightText: Copyright (c) 2025 The Lethe Authors
 # SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
+# This test case runs the time-harmonic electromagnetic solver to simulate the
+# propagation of one wavelenght in a waveguide with perfectly conducting walls.
+# This test impose dirichlet conditions on both the electric field (inlet) and
+# magnetic field (outlet) to validate the implementation of those conditions.
+
 # Listing of Parameters
 #----------------------
 
@@ -58,92 +63,60 @@ end
 #---------------------------------------------------
 
 subsection boundary conditions
-  set number = 6
+  set number = 1
   subsection bc 0
-    set id   = 0
-    set type = noslip
-  end
-  subsection bc 1
-    set id   = 1
-    set type = noslip
-  end
-  subsection bc 2
-    set id   = 2
-    set type = noslip
-  end
-  subsection bc 3
-    set id   = 3
-    set type = noslip
-  end
-  subsection bc 4
-    set id   = 4
-    set type = noslip
-  end
-  subsection bc 5
-    set id   = 5
+    set id   = 0, 1, 2, 3, 4, 5
     set type = noslip
   end
 end
 
 subsection boundary conditions time harmonic maxwell
-  set number = 6
+  set number = 3
   subsection bc 0
-    set id   = 0
+    set id   = 0, 1, 2, 3
     set type = pec
   end
   subsection bc 1
-    set id   = 1
-    set type = pec
-  end
-  subsection bc 2
-    set id   = 2
-    set type = pec
-  end
-  subsection bc 3
-    set id   = 3
-    set type = pec
-  end
-  subsection bc 4
     set id   = 4
-    set type = imposed electric field
-    subsection E_x real
+    set type = electric field
+    subsection E x real
       set Function expression = 0
     end
-    subsection E_x imag
+    subsection E x imag
       set Function expression = 0
     end
-    subsection E_y real
+    subsection E y real
       set Function expression = 0
     end
-    subsection E_y imag
+    subsection E y imag
       set Function expression = 20^(1/2)/(4)*sin(4*pi*x)
     end
-    subsection E_z real
+    subsection E z real
       set Function expression = 0
     end
-    subsection E_z imag
+    subsection E z imag
       set Function expression = 0
     end
   end
-  subsection bc 5
+  subsection bc 2
     set id   = 5
-    set type = imposed magnetic field
-    subsection H_x real
+    set type = magnetic field
+    subsection H x real
       set Function expression = 0
     end
-    subsection H_x imag
+    subsection H x imag
       set Function expression = -0.5*sin(4*pi*x)
     end
-    subsection H_y real
+    subsection H y real
       set Function expression = 0
     end
-    subsection H_y imag
+    subsection H y imag
       set Function expression = 0
     end
-    subsection H_z real
+    subsection H z real
       set Function expression = cos(4*pi*x)
     end
-    subsection H_z imag
+    subsection H z imag
       set Function expression = 0
     end
   end

@@ -89,9 +89,9 @@ namespace BoundaryConditions
     pec,
     pmc,
     silver_muller,
-    imposed_electric_field,
-    imposed_magnetic_field,
-    imposed_electromagnetic_excitation,
+    electric_field,
+    magnetic_field,
+    electromagnetic_excitation,
     imperfect_conductor
   };
 
@@ -168,7 +168,7 @@ namespace BoundaryConditions
   };
 
   /**
-   * @brief This class manages the functions associated with both imposed electric and magnetic field boundary conditions of the Time Harmonic Maxwell equations
+   * @brief This class manages the functions associated with both imposed electric and magnetic fields boundary conditions of the Time Harmonic Maxwell equations
    *
    */
   template <int dim>
@@ -177,16 +177,16 @@ namespace BoundaryConditions
   public:
     // Electric field components
     Functions::ParsedFunction<dim> e_x_real;
-    Functions::ParsedFunction<dim> e_z_real;
     Functions::ParsedFunction<dim> e_y_real;
+    Functions::ParsedFunction<dim> e_z_real;
     Functions::ParsedFunction<dim> e_x_imag;
     Functions::ParsedFunction<dim> e_y_imag;
     Functions::ParsedFunction<dim> e_z_imag;
 
     /// Magnetic field components
     Functions::ParsedFunction<dim> h_x_real;
-    Functions::ParsedFunction<dim> h_z_real;
     Functions::ParsedFunction<dim> h_y_real;
+    Functions::ParsedFunction<dim> h_z_real;
     Functions::ParsedFunction<dim> h_x_imag;
     Functions::ParsedFunction<dim> h_y_imag;
     Functions::ParsedFunction<dim> h_z_imag;
@@ -1490,7 +1490,7 @@ namespace BoundaryConditions
 
 
   /**
-   * @brief This class manages the boundary conditions for Time Harmonic Maxwell solver
+   * @brief This class manages the boundary conditions for Time Harmonic Maxwell solver.
    * It introduces the boundary functions and declares the boundary conditions
    * coherently.
    */
@@ -1499,15 +1499,15 @@ namespace BoundaryConditions
   class TimeHarmonicMaxwellBoundaryConditions : public BoundaryConditions
   {
   public:
-    /// Functions for (Ex_real, Ey_real, Ez_real, Ex_imag, Ey_imag, Ez_imag,
-    /// H_x_real, Hy_real, Hz_real, Hx_imag, Hy_imag, Hz_imag)
+    /// Functions for (e_x_real, e_y_real, e_z_real, e_x_imag, e_y_imag,
+    /// e_z_imag, h_x_real, h_y_real, h_z_real, h_x_imag, h_y_imag, h_z_imag)
     std::map<
       types::boundary_id,
       std::shared_ptr<TimeHarmonicMaxwellImposedElectromagneticField<dim>>>
       imposed_electromagnetic_fields;
 
     /// The following functions are associated with both imperfect conductor
-    /// boundary and imposed electromagnetic excitation conditions of the Time
+    /// and imposed electromagnetic excitation boundary conditions of the Time
     /// Harmonic Maxwell equations, but are parsed individually because they
     /// will not be applied to the vector solution and will therefore be handled
     /// manually in the solver.
@@ -1571,7 +1571,6 @@ namespace BoundaryConditions
    * @brief Declares the default parameters for a boundary condition id i_bc
    *
    * @param prm A parameter handler which is currently used to parse the simulation information
-   *
    * @param default_boundary_id Default value given to the boundary id.
    */
   template <int dim>
@@ -1584,64 +1583,64 @@ namespace BoundaryConditions
       "type",
       "silver muller",
       Patterns::Selection(
-        "pec|pmc|silver muller|imposed electric field|imposed magnetic field|imposed electromagnetic excitation|imperfect conductor"),
+        "pec|pmc|silver muller|electric field|magnetic field|electromagnetic excitation|imperfect conductor"),
       "Type of boundary condition for Time Harmonic Maxwell equations"
-      "Choices are <pec|pmc|silver muller|imposed electric field|imposed magnetic field|imposed electromagnetic excitation|imperfect conductor>.");
+      "Choices are <pec|pmc|silver muller|electric field|magnetic field|  electromagnetic excitation|imperfect conductor>.");
 
     prm.declare_entry("id",
                       Utilities::int_to_string(default_boundary_id, 2),
-                      Patterns::Integer(),
+                      Patterns::List(Patterns::Integer()),
                       "Mesh id for boundary conditions");
 
     // Create a dummy TimeHarmonicMaxwellImposedElectromagneticField object to
     // declare the appropriate parameters for the relevant boundary conditions.
     TimeHarmonicMaxwellImposedElectromagneticField<dim> temporary_em_functions;
 
-    prm.enter_subsection("E_x real");
+    prm.enter_subsection("E x real");
     temporary_em_functions.e_x_real.declare_parameters(prm);
     prm.leave_subsection();
 
-    prm.enter_subsection("E_y real");
+    prm.enter_subsection("E y real");
     temporary_em_functions.e_y_real.declare_parameters(prm);
     prm.leave_subsection();
 
-    prm.enter_subsection("E_z real");
+    prm.enter_subsection("E z real");
     temporary_em_functions.e_z_real.declare_parameters(prm);
     prm.leave_subsection();
 
-    prm.enter_subsection("E_x imag");
+    prm.enter_subsection("E x imag");
     temporary_em_functions.e_x_imag.declare_parameters(prm);
     prm.leave_subsection();
 
-    prm.enter_subsection("E_y imag");
+    prm.enter_subsection("E y imag");
     temporary_em_functions.e_y_imag.declare_parameters(prm);
     prm.leave_subsection();
 
-    prm.enter_subsection("E_z imag");
+    prm.enter_subsection("E z imag");
     temporary_em_functions.e_z_imag.declare_parameters(prm);
     prm.leave_subsection();
 
-    prm.enter_subsection("H_x real");
+    prm.enter_subsection("H x real");
     temporary_em_functions.h_x_real.declare_parameters(prm);
     prm.leave_subsection();
 
-    prm.enter_subsection("H_y real");
+    prm.enter_subsection("H y real");
     temporary_em_functions.h_y_real.declare_parameters(prm);
     prm.leave_subsection();
 
-    prm.enter_subsection("H_z real");
+    prm.enter_subsection("H z real");
     temporary_em_functions.h_z_real.declare_parameters(prm);
     prm.leave_subsection();
 
-    prm.enter_subsection("H_x imag");
+    prm.enter_subsection("H x imag");
     temporary_em_functions.h_x_imag.declare_parameters(prm);
     prm.leave_subsection();
 
-    prm.enter_subsection("H_y imag");
+    prm.enter_subsection("H y imag");
     temporary_em_functions.h_y_imag.declare_parameters(prm);
     prm.leave_subsection();
 
-    prm.enter_subsection("H_z imag");
+    prm.enter_subsection("H z imag");
     temporary_em_functions.h_z_imag.declare_parameters(prm);
     prm.leave_subsection();
 
@@ -1657,27 +1656,27 @@ namespace BoundaryConditions
     temporary_function.declare_parameters(prm);
     prm.leave_subsection();
 
-    prm.enter_subsection("excitation_x real");
+    prm.enter_subsection("excitation x real");
     temporary_function.declare_parameters(prm);
     prm.leave_subsection();
 
-    prm.enter_subsection("excitation_x imag");
+    prm.enter_subsection("excitation x imag");
     temporary_function.declare_parameters(prm);
     prm.leave_subsection();
 
-    prm.enter_subsection("excitation_y real");
+    prm.enter_subsection("excitation y real");
     temporary_function.declare_parameters(prm);
     prm.leave_subsection();
 
-    prm.enter_subsection("excitation_y imag");
+    prm.enter_subsection("excitation y imag");
     temporary_function.declare_parameters(prm);
     prm.leave_subsection();
 
-    prm.enter_subsection("excitation_z real");
+    prm.enter_subsection("excitation z real");
     temporary_function.declare_parameters(prm);
     prm.leave_subsection();
 
-    prm.enter_subsection("excitation_z imag");
+    prm.enter_subsection("excitation z imag");
     temporary_function.declare_parameters(prm);
     prm.leave_subsection();
   }
@@ -1753,68 +1752,68 @@ namespace BoundaryConditions
         imposed_electromagnetic_fields[boundary_id] = std::make_shared<
           TimeHarmonicMaxwellImposedElectromagneticField<dim>>();
 
-        prm.enter_subsection("E_x real");
+        prm.enter_subsection("E x real");
         imposed_electromagnetic_fields[boundary_id]->e_x_real.parse_parameters(
           prm);
         prm.leave_subsection();
 
-        prm.enter_subsection("E_y real");
+        prm.enter_subsection("E y real");
         imposed_electromagnetic_fields[boundary_id]->e_y_real.parse_parameters(
           prm);
         prm.leave_subsection();
 
-        prm.enter_subsection("E_z real");
+        prm.enter_subsection("E z real");
         imposed_electromagnetic_fields[boundary_id]->e_z_real.parse_parameters(
           prm);
         prm.leave_subsection();
 
-        prm.enter_subsection("E_x imag");
+        prm.enter_subsection("E x imag");
         imposed_electromagnetic_fields[boundary_id]->e_x_imag.parse_parameters(
           prm);
         prm.leave_subsection();
 
-        prm.enter_subsection("E_y imag");
+        prm.enter_subsection("E y imag");
         imposed_electromagnetic_fields[boundary_id]->e_y_imag.parse_parameters(
           prm);
         prm.leave_subsection();
 
-        prm.enter_subsection("E_z imag");
+        prm.enter_subsection("E z imag");
         imposed_electromagnetic_fields[boundary_id]->e_z_imag.parse_parameters(
           prm);
         prm.leave_subsection();
 
-        prm.enter_subsection("H_x real");
+        prm.enter_subsection("H x real");
         imposed_electromagnetic_fields[boundary_id]->h_x_real.parse_parameters(
           prm);
         prm.leave_subsection();
 
-        prm.enter_subsection("H_y real");
+        prm.enter_subsection("H y real");
         imposed_electromagnetic_fields[boundary_id]->h_y_real.parse_parameters(
           prm);
         prm.leave_subsection();
 
-        prm.enter_subsection("H_z real");
+        prm.enter_subsection("H z real");
         imposed_electromagnetic_fields[boundary_id]->h_z_real.parse_parameters(
           prm);
         prm.leave_subsection();
 
-        prm.enter_subsection("H_x imag");
+        prm.enter_subsection("H x imag");
         imposed_electromagnetic_fields[boundary_id]->h_x_imag.parse_parameters(
           prm);
         prm.leave_subsection();
 
-        prm.enter_subsection("H_y imag");
+        prm.enter_subsection("H y imag");
         imposed_electromagnetic_fields[boundary_id]->h_y_imag.parse_parameters(
           prm);
         prm.leave_subsection();
 
-        prm.enter_subsection("H_z imag");
+        prm.enter_subsection("H z imag");
         imposed_electromagnetic_fields[boundary_id]->h_z_imag.parse_parameters(
           prm);
         prm.leave_subsection();
 
         /// The following functions are parsed individually because they will be
-        /// used for robin boundary conditions and will not be applied on the
+        /// used for Robin boundary conditions and will not be applied on the
         /// global solution vector.
         prm.enter_subsection("surface impedance real");
         this->surface_impedance_real[boundary_id] =
@@ -1828,37 +1827,37 @@ namespace BoundaryConditions
         this->surface_impedance_imag[boundary_id]->parse_parameters(prm);
         prm.leave_subsection();
 
-        prm.enter_subsection("excitation_x real");
+        prm.enter_subsection("excitation x real");
         this->excitation_x_real[boundary_id] =
           std::make_shared<Functions::ParsedFunction<dim>>();
         this->excitation_x_real[boundary_id]->parse_parameters(prm);
         prm.leave_subsection();
 
-        prm.enter_subsection("excitation_y real");
+        prm.enter_subsection("excitation y real");
         this->excitation_y_real[boundary_id] =
           std::make_shared<Functions::ParsedFunction<dim>>();
         this->excitation_y_real[boundary_id]->parse_parameters(prm);
         prm.leave_subsection();
 
-        prm.enter_subsection("excitation_z real");
+        prm.enter_subsection("excitation z real");
         this->excitation_z_real[boundary_id] =
           std::make_shared<Functions::ParsedFunction<dim>>();
         this->excitation_z_real[boundary_id]->parse_parameters(prm);
         prm.leave_subsection();
 
-        prm.enter_subsection("excitation_x imag");
+        prm.enter_subsection("excitation x imag");
         this->excitation_x_imag[boundary_id] =
           std::make_shared<Functions::ParsedFunction<dim>>();
         this->excitation_x_imag[boundary_id]->parse_parameters(prm);
         prm.leave_subsection();
 
-        prm.enter_subsection("excitation_y imag");
+        prm.enter_subsection("excitation y imag");
         this->excitation_y_imag[boundary_id] =
           std::make_shared<Functions::ParsedFunction<dim>>();
         this->excitation_y_imag[boundary_id]->parse_parameters(prm);
         prm.leave_subsection();
 
-        prm.enter_subsection("excitation_z imag");
+        prm.enter_subsection("excitation z imag");
         this->excitation_z_imag[boundary_id] =
           std::make_shared<Functions::ParsedFunction<dim>>();
         this->excitation_z_imag[boundary_id]->parse_parameters(prm);
@@ -1878,18 +1877,17 @@ namespace BoundaryConditions
           {
             this->type[boundary_id] = BoundaryType::silver_muller;
           }
-        else if (op == "imposed electric field")
+        else if (op == "electric field")
           {
-            this->type[boundary_id] = BoundaryType::imposed_electric_field;
+            this->type[boundary_id] = BoundaryType::electric_field;
           }
-        else if (op == "imposed magnetic field")
+        else if (op == "magnetic field")
           {
-            this->type[boundary_id] = BoundaryType::imposed_magnetic_field;
+            this->type[boundary_id] = BoundaryType::magnetic_field;
           }
-        else if (op == "imposed electromagnetic excitation")
+        else if (op == "electromagnetic excitation")
           {
-            this->type[boundary_id] =
-              BoundaryType::imposed_electromagnetic_excitation;
+            this->type[boundary_id] = BoundaryType::electromagnetic_excitation;
           }
         else if (op == "imperfect conductor")
           {
@@ -2083,7 +2081,7 @@ CahnHilliardFunctionDefined<dim>::value(const Point<dim>  &p,
 
 
 /**
- * @brief This class implements a boundary conditions for the Time Harmonic Maxwell equation
+ * @brief This class implements a boundary condition type for the Time Harmonic Maxwell equation
  * where the electric field components are defined using individual functions
  */
 template <int dim>
@@ -2119,11 +2117,10 @@ public:
 
 
 /**
- * @brief Calculates the value of a imposed electric field equations
+ * @brief Calculates the value of an imposed electric field equations.
  *
- * @param point A point at which the function will be evaluated
- *
- * @param component The vector component of the boundary condition (0-x real, 1- y real, 2-z real, 3-x imag, 4-y imag, 5-z imag)
+ * @param point A point at which the function will be evaluated.
+ * @param component The vector component of the boundary condition (0-> E x real, 1-> E y real, 2-> E z real, 3-> E x imag, 4-> E y imag, 5-> E z imag)
  */
 template <int dim>
 double
@@ -2162,7 +2159,7 @@ TimeHarmonicMaxwellElectricFieldDefined<dim>::value(
 }
 
 /**
- * @brief This class implements a boundary conditions for the Time Harmonic Maxwell equation
+ * @brief This class implements a boundary condition type for the Time Harmonic Maxwell equation
  * where the magnetic field components are defined using individual functions
  */
 template <int dim>
@@ -2198,11 +2195,10 @@ public:
 
 
 /**
- * @brief Calculates the value of a imposed magnetic field equations
+ * @brief Calculates the value of an imposed magnetic field equations.
  *
- * @param point A point at which the function will be evaluated
- *
- * @param component The vector component of the boundary condition (6-x real, 7- y real, 8-z real, 9-x imag, 10-y imag, 11-z imag)
+ * @param point A point at which the function will be evaluated.
+ * @param component The vector component of the boundary condition (6-> H x real, 7-> H y real, 8-> H z real, 9-> H x imag, 10-> H y imag, 11-> H z imag)
  */
 template <int dim>
 double
