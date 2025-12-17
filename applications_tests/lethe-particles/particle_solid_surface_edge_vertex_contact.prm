@@ -2,10 +2,10 @@
 # SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
 # Test description:
-# In this test, a single particle in bouncing on two triangles that are edge sharing. 
-# The particle touches the edge of one triangle and the vertex on the other one. 
-# This application test was added after PR 1855, in which we found a bug related to 
-# this specific situation. 
+# In this test, a single particle in bouncing on two triangles that are edge sharing.
+# The particle touches the edge of one triangle and the vertex on the other one.
+# This application test was added after PR 1855, in which we found a bug related to
+# this specific situation.
 
 # Listing of Parameters
 #----------------------

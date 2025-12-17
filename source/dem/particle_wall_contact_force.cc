@@ -314,7 +314,9 @@ ParticleWallContactForce<dim,
                   // are not neighbors, C1 and C2 are automatically valid.
                   // (Disconnected triangles)
                   if (std::ranges::find(T1_es_neighbors, T2_cell) ==
-                      T1_es_neighbors.end())
+                        T1_es_neighbors.end() &&
+                      std::ranges::find(T1_vs_neighbors, T2_cell) ==
+                        T1_vs_neighbors.end())
                     {
                       ++C2;
                       continue;
