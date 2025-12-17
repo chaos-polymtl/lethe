@@ -330,10 +330,7 @@ public:
                   }
               }
           }
-        else // non-constant
-             // surface
-             // tension
-             // model
+        else // non-constant surface tension model
           {
             if (physical_properties.number_of_material_interactions == 0)
               {

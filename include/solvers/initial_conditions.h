@@ -102,7 +102,7 @@ namespace Parameters
     Functions::ParsedFunction<dim> cahn_hilliard =
       Functions::ParsedFunction<dim>(2);
 
-    // Time-Harmonic Maxwells
+    // Time-Harmonic Maxwell
     Functions::ParsedFunction<dim> electromagnetics =
       Functions::ParsedFunction<dim>(4 * dim);
 

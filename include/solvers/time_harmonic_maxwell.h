@@ -49,14 +49,21 @@
 
 
 /**
- * @class TimeHamonicMaxwell Auxiliary physics solver for the time harmonic
+ * @class TimeHarmonicMaxwell Auxiliary physics solver for the time harmonic
  * form of the Maxwell equations.
- * TODO Add more details here.
- *
+ * This class implements an auxiliary physics solver for the ultraweak
+ * formulation of the time-harmonic Maxwell equations using the Discontinuous
+ * Petrov-Galerkin (DPG) method. The solver is designed to work in
+ * three-dimensional spaces and requires the 3 sets of Finite Element spaces
+ *that define the DPG method: the interior trial space that is discontinuous
+ *between elements, the skeleton trace space that lives on the faces of the mesh
+ * elements and connects the interior solutions of adjacent elements, and the
+ * test space that is enriched compared to the trial space and is also
+ * discontinuous between elements.
  **/
 
 /// TODO in this PR:
-/// [] Remplir chacune des fonctions
+/// [] TimeHarmonicMaxwell class
 ///   [x] Constructeur
 ///   [x] Destructeur
 ///   [x] Gather output hook
@@ -88,8 +95,8 @@
 ///   [x] get_nonzero_constraints
 ///   [x] output_newton_update_norms
 ///   [x] get_residual_rescale_metric
-///   [] assemble_system_matrix
-///   [] assemble_system_rhs
+///   [x] assemble_system_matrix
+///   [x] assemble_system_rhs
 ///   - assemble_local_system_matrix
 ///   - assemble_local_system_rhs
 ///   - setup_assemblers
@@ -97,10 +104,10 @@
 ///   - copy_local_rhs_to_global_rhs
 /// [x] Physics field
 /// [x] Multiphysics interface components
-/// [] Physical Properties
-///   [] Electrical conductivity
-///   [] Permetivity
-///   [] Permeability
+/// - Physical Properties
+///   - Electrical conductivity
+///   - Permittivity
+///   - Permeability
 /// [X] FEM section for DPG
 /// - Mesh adaptation
 
@@ -127,14 +134,11 @@ public:
    *
    * @param multiphysics_interface Map of the auxiliary physics that will be
    * solved on top of a computational fluid dynamic simulation.
-   *
-   * @param p_simulation_parameters Contain the simulation parameter file
+   * @param p_simulation_parameters Contains the simulation parameter file
    * information.
-   *
-   * @param p_triangulation Contain the mesh information. In a
+   * @param p_triangulation Contains the mesh information. In a
    * parallel::DistributedTriangulationBase<dim> not every detail may be known
    * on each processor. The mesh is distributed between the processors.
-   *
    * @param p_simulation_control Object responsible for the control of
    * steady-state and transient simulations. Contains all the information
    * related to time stepping and the stopping criteria.
@@ -182,7 +186,7 @@ public:
   percolate_time_vectors() override;
 
   /**
-   * @brief Carry out modifications on the auxiliary physic solution.
+   * @brief Carry out modifications on the auxiliary physics solution.
    * To be defined for some physics only (eg. free surface, see vof.h).
    */
   virtual void
@@ -240,7 +244,7 @@ public:
   gather_tables() override;
 
   /**
-   * @brief Compute the Kelly error estimator used to refine mesh on a auxiliary physic parameter.
+   * @brief Compute the Kelly error estimator used to refine mesh on an auxiliary physics parameter.
    *
    * @param ivar The current element of the map simulation_parameters.mesh_adaptation.variables
    *
@@ -252,7 +256,7 @@ public:
                 dealii::Vector<float> &estimated_error_per_cell) override;
 
   /**
-   * @brief Compute the DPG error estimator based on the energy norm residual used to refine mesh of the TimeHarmonicMaxwell physic.
+   * @brief Compute the DPG error estimator based on the energy norm residual used to refine mesh of the TimeHarmonicMaxwell physics.
    *
    * @param ivar The current element of the map simulation_parameters.mesh_adaptation.variables
    *
@@ -265,13 +269,13 @@ public:
     dealii::Vector<float> &estimated_error_per_cell);
 
   /**
-   * @brief Sets-up the DofHandler and the degree of freedom associated with the physics.
+   * @brief Sets up the DofHandler and the degree of freedom associated with the physics.
    */
   virtual void
   setup_dofs() override;
 
   /**
-   * @brief Sets-up the initial conditions associated with the physics. Generally, physics
+   * @brief Sets up the initial conditions associated with the physics. Generally, most physics
    * only support imposing nodal values, but some physics additionally support
    * the use of L2 projection or steady-state solutions.
    */
@@ -279,8 +283,7 @@ public:
   set_initial_conditions() override;
 
   /**
-   * @brief Set up preconditioner. Not used for the auxiliary physics but
-   * needed for the compilation of the non-linear solver.
+   * @brief Sets up preconditioner of the system matrix.
    */
   void
   setup_preconditioner() override;
@@ -299,9 +302,11 @@ public:
 
   /**
    * @brief Getter method to access the private attribute dof_handler for the
-   * physic currently solved. NB : The dof_handler that is returned is the one
-   * for the interior trial space only has it is where the solution lives. The
-   * other two DoFHandlers of the class are used for computation only.
+   * physics currently solved. NB : The dof_handler that is returned by this
+   * function is the one for the interior trial space of the DPG system. It is
+   * where the interior solution lives and therefore is the one we are
+   * interested in. The other two DoFHandlers of the class are used for
+   * computation to obtain the interior of the cell solution.
    */
   virtual const DoFHandler<dim> &
   get_dof_handler() override
@@ -311,7 +316,7 @@ public:
 
   /**
    * @brief Getter method to access the private attribute evaluation_point for
-   * the physic currently solved.
+   * the currently solved physics.
    *
    * @return The vector at which the evaluation is performed.
    */
@@ -342,7 +347,7 @@ public:
 
   /**
    * @brief Getter method to access the private attribute
-   * newton_update for the physic currently solved.
+   * newton_update for the currently solved physics.
    *
    * @return The direction used to perform the newton iteration.
    */
@@ -357,7 +362,7 @@ public:
 
   /**
    * @brief Getter method to access the private attribute
-   * present_solution for the physic currently solved. NB : present_solution is
+   * present_solution for the currently solved physics. NB : present_solution is
    * now passed to the multiphysics interface at the end of the setup_dofs
    * method. In the case of TimeHarmonicMaxwell, it corresponds to the solution
    * in the interior trial space.
@@ -373,10 +378,10 @@ public:
 
   /**
    * @brief Getter method to access the private attribute
-   * present_solution_skeleton for the physic currently solved. NB :
-   * present_solution_skeleton is not passed to the multiphysics interface at
-   * the end of the setup_dofs method. In the case of TimeHarmonicMaxwell, it
-   * corresponds to the solution on the skeleton for the trial space.
+   * present_solution_skeleton for the currently solved physics. NB :
+   * present_solution_skeleton is only defined for the currently solved physics
+   * and is not passed to the multiphysics interface at the end of the
+   * setup_dofs method.
    *
    * @return A vector containing all the values of the solution.
    */
@@ -389,7 +394,7 @@ public:
 
   /**
    * @brief Getter method to access the private attribute
-   * system_rhs for the physic currently solved.
+   * system_rhs for the currently solved physics.
    *
    * @return Right hand side vector.
    */
@@ -401,7 +406,7 @@ public:
 
   /**
    * @brief Getter method to access the private attribute
-   * nonzero_constraints for the physic currently solved.
+   * nonzero_constraints for the currently solved physics.
    *
    * @return The nonzero constraints that arise from several sources such
    * as boundary conditions and hanging nodes in the mesh. See the deal.II
@@ -450,7 +455,7 @@ private:
 
   /**
    * @brief Verify consistency of the input parameters for boundary
-   * conditions to ensure that for every boundary condition within the
+   * conditions to ensure that for every boundary id within the
    * triangulation, a boundary condition has been specified in the input file.
    */
   void
@@ -501,7 +506,7 @@ private:
    * which removes the normal component of the vector \f$\mathbf{v}\f$,
    * keeping only the tangential part.
    *
-   * @tparam dim Spatial dimension (typically 3).
+   * @tparam dim Spatial dimension.
    * @param tensor Input vector (field value) to be projected.
    * @param normal Unit normal vector defining the face orientation.
    * @return The tangential component of the input vector.
@@ -562,23 +567,28 @@ private:
   /**
    * @brief Given a triangulation and a description of a finite element, this
    * class enumerates degrees of freedom on all vertices, edges, faces, and
-   * cells of the triangulation of the trial space for the interior dofs.
+   * cells of the triangulation of the trial space for the interior dofs. NB:
+   * Since it is based on DG elements, there are no dofs on vertices, edges or
+   * faces.
    */
   std::shared_ptr<DoFHandler<dim>> dof_handler_trial_interior;
 
   /**
    * @brief Given a triangulation and a description of a finite element, this
    * class enumerates degrees of freedom on all vertices, edges, faces, and
-   * cells of the triangulation of the trial space for the skeleton dofs.
+   * cells of the triangulation of the trial space for the skeleton dofs. NB:
+   * This DoFHandler is based on global FE spaces with frozen interior dofs, so
+   * the dofs effectively live only on faces, edges and vertices.
    */
   std::shared_ptr<DoFHandler<dim>> dof_handler_trial_skeleton;
 
   /**
    * @brief Given a triangulation and a description of a finite element, this
    * class enumerates degrees of freedom on all vertices, edges, faces, and
-   * cells of the triangulation of the test space dofs. Note that in DPG, the
+   * cells of the triangulation of the test space dofs. NB: in DPG, the
    * test space is not split into interior and skeleton dofs in opposition to
-   * the trial space.
+   * the trial space and therefore manages vertices, edges, faces and cells
+   * dofs.
    */
   std::shared_ptr<DoFHandler<dim>> dof_handler_test;
 
@@ -617,12 +627,12 @@ private:
    */
   std::shared_ptr<Mapping<dim>> mapping;
   /**
-   * @brief Approximate an integral by evaluating the integrand at specific
+   * @brief Approximate an integral over a cell by evaluating the integrand at specific
    * points and summing the point values with specific weights.
    */
   std::shared_ptr<Quadrature<dim>> cell_quadrature;
   /**
-   * @brief Approximate an integral by evaluating the integrand at specific
+   * @brief Approximate an integral over a cell's face by evaluating the integrand at specific
    * points and summing the point values with specific weights.
    */
   std::shared_ptr<Quadrature<dim - 1>> face_quadrature;

@@ -150,7 +150,7 @@ TimeHarmonicMaxwell<dim>::calculate_L2_error()
 
   const unsigned int n_q_points = this->cell_quadrature->size();
 
-  // The exact solution will be defined by user but will need to be on all
+  // The exact solution will be defined by the user but will need to be on all
   // possible fields of the ultraweak formulation so we need 4*dim components.
   std::vector<Vector<double>> exact_solution_values(n_q_points,
                                                     Vector<double>(4 * dim));
@@ -165,7 +165,7 @@ TimeHarmonicMaxwell<dim>::calculate_L2_error()
   std::vector<Tensor<1, dim>> local_H_values_real(n_q_points);
   std::vector<Tensor<1, dim>> local_H_values_imag(n_q_points);
 
-  // We create variables that will store all the integration result we are
+  // We create variables that will store all the integration results we are
   // interested in.
   double L2_error_E_real = 0;
   double L2_error_E_imag = 0;
@@ -485,9 +485,10 @@ TimeHarmonicMaxwell<dim>::setup_dofs()
     << "   Number of interior degrees of freedom for Time-Harmonic Maxwell: "
     << this->dof_handler_trial_interior->n_dofs() << std::endl;
 
-  // Provide the TimeHarmonicMaxwell dof_handler and solution to the
-  // multiphysics interface. Note that we provide the interior dof_handler and
-  // solution has it is the one useful for the other physics.
+  // Update the multiphysics interface with the TimeHarmonicMaxwell dof_handler
+  // and solution. Note that we provide the interior dof_handler and interior
+  // solution as it is the one useful for the other physics (we do not provide
+  // the skeleton dof_handler and skeleton solution).
   multiphysics->set_dof_handler(PhysicsID::electromagnetics,
                                 this->dof_handler_trial_interior);
   multiphysics->set_solution(PhysicsID::electromagnetics,
@@ -559,7 +560,7 @@ TimeHarmonicMaxwell<dim>::define_constraints()
   DoFTools::make_hanging_node_constraints(*this->dof_handler_trial_skeleton,
                                           this->nonzero_constraints);
 
-  // Loop over all boundary conditions defined
+  // Loop over all defined boundary conditions
   for (const auto &[id, type] :
        this->simulation_parameters
          .boundary_conditions_time_harmonic_electromagnetics.type)
@@ -873,7 +874,7 @@ TimeHarmonicMaxwell<2>::assemble_system_matrix()
 {
   // We need a specific definition of the function for the 2D so the compiler
   // doesn't try to build curl and cross operations at compile time that will
-  // never be used anyway. Indeed, curl and cross operation behaves very
+  // never be used anyway. Indeed, curl and cross operations behave very
   // differently in 2D than in 3D. This physics only support 3D problem at the
   // moment. So even though the class is templated in dim, we only want to
   // compile the whole function when dim=3.
@@ -1017,7 +1018,7 @@ TimeHarmonicMaxwell<3>::assemble_system_matrix()
     dofs_per_cell_trial_skeleton);
 
   // Also, to avoid multiple "if" calls during the assembly to understand where
-  // each terms need to be assembled in the DPG global matrix, we will use
+  // each term needs to be assembled in the DPG global matrix, we will use
   // containers to store dofs relationships for each of the local matrices.
 
   // G matrix stands for the Riesz map and needs the relationships between test
@@ -1121,7 +1122,7 @@ TimeHarmonicMaxwell<3>::assemble_system_matrix()
   std::vector<types::global_dof_index> local_dof_indices(
     dofs_per_cell_trial_skeleton);
 
-  // We also create objects used for the various Robin boundary condition.
+  // We also create objects used for the various Robin boundary conditions.
   BoundaryConditions::BoundaryType bc_type(
     BoundaryConditions::BoundaryType::none);
   Tensor<1, dim, std::complex<double>> g_inc;
@@ -1151,8 +1152,8 @@ TimeHarmonicMaxwell<3>::assemble_system_matrix()
           const typename DoFHandler<dim>::active_cell_iterator cell_skeleton =
             cell->as_dof_handler_iterator(*this->dof_handler_trial_skeleton);
 
-          // We then reinitialize all the matrices that we are aggregating
-          // information for each cell.
+          // We then reinitialize all the matrices where we are aggregating
+          // information for the current cell.
           G_matrix     = 0;
           B_matrix     = 0;
           B_hat_matrix = 0;
@@ -1163,23 +1164,25 @@ TimeHarmonicMaxwell<3>::assemble_system_matrix()
           M1_matrix = 0;
 
           // Here we reset the dofs relationships containers. These containers
-          // are use to store all the relationships between the dof i
+          // are used to store all the relationships between the dof i
           // dof j according to which space they belong to. Indeed, when
           // looping over all the test and trial dofs, the terms  we need to
           // compute depend on the specific combination of spaces
-          // involved. The following containers are therefore use use to avoid
-          // multiple "if" statement inside the dofs loops and are fill with
+          // involved. The following containers are therefore used to avoid
+          // multiple "if" statements inside the dofs loops and are filled with
           // all the relevant dofs pairs that we need for each of the
           // different terms.
 
           // For example, in the ultraweak form of Maxwell equation we have a
-          // term (E, curl(I)) in the interior so the matrix B as a term
+          // term (E, curl(I)) in the interior so the matrix B has a term
           // (curl(I_i), E_j), so we want to only compute this term for the
           // dofs i that are in the test space I and the dofs j that are in
           // the trial space for E. Therefore, when looping on all the
           // interior and test dofs in a cell we add the pairs of dofs that
-          // are in those spaces to the container B_IE. We do this for all the
-          // different terms of the formulation.
+          // are in those spaces to the container B_IE. In the end, the
+          // container B_IE has all the required pairs of dofs indices for which
+          // we need to compute the term. We do this for all the different terms
+          // of the formulation.
 
           // Finally, we can loop on all the pairs that we have assigned in
           // each vector container to compute the desired terms.
@@ -1441,7 +1444,7 @@ TimeHarmonicMaxwell<3>::assemble_system_matrix()
                   const unsigned int current_element_test_i =
                     this->fe_test->system_to_base_index(i).first.first;
 
-                  // Apply the diffrent Robin boundary conditionss if needed.
+                  // Apply the different Robin boundary conditions if needed.
                   // The load vector and the B_hat matrix will have a
                   // contribution in addition to a modification of the Riesz
                   // map (G matrix) because of the energy norm that we want to
@@ -1867,8 +1870,8 @@ TimeHarmonicMaxwell<3>::reconstruct_interior_solution()
   static constexpr std::complex<double> imag{0., 1.};
   static constexpr int                  dim =
     3; // Since we are in the specialized 3D function we define dim=3 here. This
-       // makes easier to read the code below to see what are templated in dim
-       // and what are not.
+       // makes it easier to read the code below to see what is templated in dim
+       // and what is not.
 
   // We define some constants that will be used during the assembly. Those
   // would change according to the material parameters, but here we only have
@@ -1967,7 +1970,7 @@ TimeHarmonicMaxwell<3>::reconstruct_interior_solution()
     dofs_per_cell_trial_skeleton);
 
   // Also, to avoid multiple "if" calls during the assembly to understand where
-  // each terms need to be assembled in the DPG global matrix, we will use
+  // each term needs to be assembled in the DPG global matrix, we will use
   // containers to store dofs relationships for each of the local matrices.
 
   // G matrix stands for the Riesz map and needs the relationships between test
@@ -2046,22 +2049,6 @@ TimeHarmonicMaxwell<3>::reconstruct_interior_solution()
   LAPACKFullMatrix<double> M5_matrix(dofs_per_cell_trial_skeleton,
                                      dofs_per_cell_test);
 
-  // During the calculation of matrix vector product, we require intermediary
-  // matrices and vector that we also allocate here. The temporary matrices
-  // are defined as :
-  // $tmp_matrix_M2M1  = M_2^\dagger M_1^{-1}$;
-  // $tmp_matrix_M2M1M2 = M_2^\dagger M_1^{-1} M_2$;
-  // $tmp_matrix_M2M1M4 = M_2^\dagger M_1^{-1} M_4$.
-
-  LAPACKFullMatrix<double> tmp_matrix_M2M1(dofs_per_cell_trial_skeleton,
-                                           dofs_per_cell_trial_interior);
-
-  LAPACKFullMatrix<double> tmp_matrix_M2M1M2(dofs_per_cell_trial_skeleton,
-                                             dofs_per_cell_trial_skeleton);
-
-  LAPACKFullMatrix<double> tmp_matrix_M2M1M4(dofs_per_cell_trial_skeleton,
-                                             dofs_per_cell_test);
-
   // We create the cell matrix and the RHS that will be distributed in the
   // full system after the assembly along with the index’s mapping.
   FullMatrix<double> cell_matrix(dofs_per_cell_trial_skeleton,
@@ -2071,7 +2058,7 @@ TimeHarmonicMaxwell<3>::reconstruct_interior_solution()
   std::vector<types::global_dof_index> local_dof_indices(
     dofs_per_cell_trial_skeleton);
 
-  // We also create objects used for the various Robin boundary condition.
+  // We also create objects used for the various Robin boundary conditions.
   BoundaryConditions::BoundaryType     bc_type;
   Tensor<1, dim, std::complex<double>> g_inc;
   std::complex<double>                 surface_impedance;
@@ -2139,17 +2126,17 @@ TimeHarmonicMaxwell<3>::reconstruct_interior_solution()
           M1_matrix = 0;
 
           // Here we reset the dofs relationships containers. These containers
-          // are use to store all the relationships between the dof i
+          // are used to store all the relationships between the dof i
           // dof j according to which space they belong to. Indeed, when
           // looping over all the test and trial dofs, the terms  we need to
           // compute depend on the specific combination of spaces
-          // involved. The following containers are therefore use use to avoid
+          // involved. The following containers are therefore used to avoid
           // multiple "if" statement inside the dofs loops and are fill with
           // all the relevant dofs pairs that we need for each of the
           // different terms.
 
           // For example, in the ultraweak form of Maxwell equation we have a
-          // term (E, curl(I)) in the interior so the matrix B as a term
+          // term (E, curl(I)) in the interior so the matrix B has a term
           // (curl(I_i), E_j), so we want to only compute this term for the
           // dofs i that are in the test space I and the dofs j that are in
           // the trial space for E. Therefore, when looping on all the
@@ -2417,7 +2404,7 @@ TimeHarmonicMaxwell<3>::reconstruct_interior_solution()
                   const unsigned int current_element_test_i =
                     this->fe_test->system_to_base_index(i).first.first;
 
-                  // Apply the diffrent Robin boundary conditionss if needed.
+                  // Apply the different Robin boundary conditions if needed.
                   // The load vector and the B_hat matrix will have a
                   // contribution in addition to a modification of the Riesz
                   // map (G matrix) because of the energy norm that we want to
@@ -2579,7 +2566,7 @@ TimeHarmonicMaxwell<3>::reconstruct_interior_solution()
                   // Then, similarly we loop over the trial dofs to fill the
                   // face values containers. Note that to be in
                   // H^-1/2(curl), the fields needs to have the tangential
-                  // property mapping (n x (E x n)) which effectively extract
+                  // property mapping (n x (E x n)) which effectively extracts
                   // the tangential component of the field at the face. So
                   // here we apply this operation using the map_H12 function
                   // that we defined earlier. Stricly speeking, nx(E_parallel)

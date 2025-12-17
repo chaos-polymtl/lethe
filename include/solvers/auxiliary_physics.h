@@ -49,7 +49,7 @@ public:
    * This constructor builds an auxiliary physics which solves a non-linear
    * problem. Consequently, the auxiliary physics must assemble its
    * right-hand-side and matrix in the residual form. This means that the
-   * solution is reached when |R(u)|=0 with R the residual vector and u the
+   * solution is reached when |R(u)|=0 where R is the residual vector and u the
    * solution.
    *
    * @param[in] non_linear_solver_parameters Parameters for the non-linear
