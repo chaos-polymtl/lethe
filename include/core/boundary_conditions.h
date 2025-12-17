@@ -238,7 +238,7 @@ namespace BoundaryConditions
       "id",
       Utilities::to_string(default_boundary_id, 2),
       Patterns::List(Patterns::Integer()),
-      "Mesh id for boundary conditions. Default entry is -1 to ensure that the id is set by the user");
+      "Mesh id for boundary conditions.");
 
     prm.declare_entry(
       "periodic id",
@@ -587,7 +587,7 @@ namespace BoundaryConditions
 
     prm.declare_entry("id",
                       Utilities::to_string(default_boundary_id, 2),
-                      Patterns::Integer(),
+                      Patterns::List(Patterns::Integer()),
                       "Mesh id for boundary conditions");
 
     Functions::ParsedFunction<dim> temporary_function;
@@ -854,7 +854,7 @@ namespace BoundaryConditions
 
     prm.declare_entry("id",
                       Utilities::int_to_string(default_boundary_id, 2),
-                      Patterns::Integer(),
+                      Patterns::List(Patterns::Integer()),
                       "Mesh id for boundary conditions");
 
     Functions::ParsedFunction<dim> temporary_function;
@@ -1069,7 +1069,7 @@ namespace BoundaryConditions
 
     prm.declare_entry("id",
                       Utilities::int_to_string(default_boundary_id, 2),
-                      Patterns::Integer(),
+                      Patterns::List(Patterns::Integer()),
                       "Mesh id for boundary conditions");
 
     prm.declare_entry(
@@ -1298,7 +1298,7 @@ namespace BoundaryConditions
 
     prm.declare_entry("id",
                       Utilities::int_to_string(default_boundary_id, 2),
-                      Patterns::Integer(),
+                      Patterns::List(Patterns::Integer()),
                       "Mesh id for boundary conditions");
 
     Functions::ParsedFunction<dim> temporary_function;
