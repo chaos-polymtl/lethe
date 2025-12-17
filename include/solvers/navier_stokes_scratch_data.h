@@ -601,8 +601,8 @@ public:
                        const Mapping<dim>       &mapping);
 
   /**
-   * @brief enable_particle_field_projection Enables the collection of the particle fields
-   * projection data by the scratch
+   * @brief enable_particle_field_projection Enables the collection of the particle
+   * fields projection data by the scratch
    *
    * @param[in] quadrature Quadrature rule of the Navier-Stokes problem assembly
    *
@@ -617,8 +617,8 @@ public:
    * @param[in] fe_particle_velocity_proj FiniteElement associated with the
    * projected particle velocity
    *
-   * @param[in] fe_particle_velocity_proj FiniteElement associated with the
-   * projected particle momentum transfer coefficient
+   * @param[in] fe_particle_momentum_transfer_coefficient FiniteElement associated
+   * with the projected particle momentum transfer coefficient
    */
   void
   enable_particle_field_projection(
