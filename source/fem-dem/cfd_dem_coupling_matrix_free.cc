@@ -633,6 +633,7 @@ CFDDEMMatrixFree<dim>::read_checkpoint()
   std::vector<VectorType *> x_system(1 + this->previous_solutions->size());
 
   VectorType distributed_system(this->locally_owned_dofs,
+                                this->locally_relevant_dofs,
                                 this->mpi_communicator);
 
   x_system[0] = &(distributed_system);
@@ -644,7 +645,9 @@ CFDDEMMatrixFree<dim>::read_checkpoint()
   for (unsigned int i = 0; i < this->previous_solutions->size(); ++i)
     {
       distributed_previous_solutions.emplace_back(
-        VectorType(this->locally_owned_dofs, this->mpi_communicator));
+        VectorType(this->locally_owned_dofs,
+                   this->locally_relevant_dofs,
+                   this->mpi_communicator));
       x_system[i + 1] = &distributed_previous_solutions[i];
     }
 
@@ -671,7 +674,9 @@ CFDDEMMatrixFree<dim>::read_checkpoint()
     1 + this->particle_projector.previous_void_fraction.size());
 
   GlobalVectorType vf_distributed_system(
-    this->particle_projector.locally_owned_dofs, this->mpi_communicator);
+    this->particle_projector.locally_owned_dofs,
+    this->particle_projector.locally_relevant_dofs,
+    this->mpi_communicator);
 
   vf_system[0] = &(vf_distributed_system);
 
@@ -686,6 +691,7 @@ CFDDEMMatrixFree<dim>::read_checkpoint()
     {
       vf_distributed_previous_solutions.emplace_back(
         GlobalVectorType(this->particle_projector.locally_owned_dofs,
+                         this->particle_projector.locally_relevant_dofs,
                          this->mpi_communicator));
       vf_system[i + 1] = &vf_distributed_previous_solutions[i];
     }
@@ -709,7 +715,6 @@ CFDDEMMatrixFree<dim>::read_checkpoint()
     {
       this->flow_control.read(prefix);
     }
-
   this->multiphysics->read_checkpoint();
 
   // Deserialize particles have the triangulation has been read
