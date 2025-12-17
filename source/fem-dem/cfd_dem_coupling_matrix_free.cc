@@ -670,17 +670,17 @@ CFDDEMMatrixFree<dim>::read_checkpoint()
     }
 
   // Void Fraction Vectors
-  std::vector<GlobalVectorType *> vf_system(
+  std::vector<VectorType *> vf_system(
     1 + this->particle_projector.previous_void_fraction.size());
 
-  GlobalVectorType vf_distributed_system(
+  VectorType vf_distributed_system(
     this->particle_projector.locally_owned_dofs,
     this->particle_projector.locally_relevant_dofs,
     this->mpi_communicator);
 
   vf_system[0] = &(vf_distributed_system);
 
-  std::vector<GlobalVectorType> vf_distributed_previous_solutions;
+  std::vector<VectorType> vf_distributed_previous_solutions;
 
   vf_distributed_previous_solutions.reserve(
     this->particle_projector.previous_void_fraction.size());
@@ -690,25 +690,39 @@ CFDDEMMatrixFree<dim>::read_checkpoint()
        ++i)
     {
       vf_distributed_previous_solutions.emplace_back(
-        GlobalVectorType(this->particle_projector.locally_owned_dofs,
-                         this->particle_projector.locally_relevant_dofs,
-                         this->mpi_communicator));
+        VectorType(this->particle_projector.locally_owned_dofs,
+                   this->particle_projector.locally_relevant_dofs,
+                   this->mpi_communicator));
       vf_system[i + 1] = &vf_distributed_previous_solutions[i];
     }
 
-  SolutionTransfer<dim, GlobalVectorType> vf_system_trans_vectors(
+  SolutionTransfer<dim, VectorType> vf_system_trans_vectors(
     this->particle_projector.dof_handler);
 
   vf_system_trans_vectors.deserialize(vf_system);
 
-  this->particle_projector.void_fraction_locally_relevant =
-    vf_distributed_system;
+  this->particle_projector.void_fraction_solution = vf_distributed_system;
+
+#ifndef LETHE_USE_LDV
+  // We also wish the Trilinos solution to be updated.
+  convert_vector_dealii_to_trilinos(
+    this->particle_projector.void_fraction_locally_relevant,
+    this->particle_projector.void_fraction_solution);
+#endif
+
   for (unsigned int i = 0;
        i < this->particle_projector.previous_void_fraction.size();
        ++i)
     {
-      this->particle_projector.previous_void_fraction[i] =
+      this->particle_projector.void_fraction_previous_solution[i] =
         vf_distributed_previous_solutions[i];
+
+#ifndef LETHE_USE_LDV
+      // We also wish the Trilinos solution to be updated.
+      convert_vector_dealii_to_trilinos(
+        this->particle_projector.previous_void_fraction[i],
+        this->particle_projector.void_fraction_previous_solution[i]);
+#endif
     }
 
   if (this->simulation_parameters.flow_control.enable_flow_control)
