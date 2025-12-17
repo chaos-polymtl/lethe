@@ -61,7 +61,8 @@ namespace AnalyticalSolutions
       , temperature(1)
       , tracer(1)
       , cahn_hilliard(2)
-      , electromagnetics(4 * dim)
+      , electromagnetics(4 * dim) // The 4 components correspond to the real and
+                                  // imaginary parts of E and H
     {}
 
     /**
