@@ -289,10 +289,10 @@ namespace LetheGridTools
    * @param particle A particle_iterator that refers to the particle
    * located in the background (base) cell
    *
-   * @return A tuple in which: 0. a vector of bools to determine if the particle is
-   * less than a radius away from the triangle plane, 1. a vector of projected
-   * location of particles on the triangle, 2. a vector of normal contact
-   * vectors between the triangle and the particles, 3. a vector of the contact
+   * @return A tuple in which: 0. a bool to determine if the particle is
+   * less than a radius away from the triangle plane, 1. a projected
+   * location of the particle on the triangle, 2. a normal contact
+   * vector between the triangle and the particle, 3. a contact
    * type between the particle and the triangle.
    */
   template <int dim, typename PropertiesIndex>
