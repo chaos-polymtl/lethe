@@ -1,6 +1,12 @@
 # SPDX-FileCopyrightText: Copyright (c) 2025 The Lethe Authors
 # SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
+# This test case runs the time-harmonic electromagnetic solver to simulate the 
+# propagation of one wavelenght in a waveguide with perfectly conducting walls.
+# This test impose robin conditions: an excitation at the inlet and an open 
+# boundary (silver-muller) at the outlet to validate the implementation of those 
+# conditions.
+
 # Listing of Parameters
 #----------------------
 
@@ -58,74 +64,42 @@ end
 #---------------------------------------------------
 
 subsection boundary conditions
-  set number = 6
+  set number = 1
   subsection bc 0
-    set id   = 0
-    set type = noslip
-  end
-  subsection bc 1
-    set id   = 1
-    set type = noslip
-  end
-  subsection bc 2
-    set id   = 2
-    set type = noslip
-  end
-  subsection bc 3
-    set id   = 3
-    set type = noslip
-  end
-  subsection bc 4
-    set id   = 4
-    set type = noslip
-  end
-  subsection bc 5
-    set id   = 5
+    set id   = 0, 1, 2, 3, 4, 5
     set type = noslip
   end
 end
 
 subsection boundary conditions time harmonic maxwell
-  set number = 6
+  set number = 3
   subsection bc 0
-    set id   = 0
+    set id   = 0, 1, 2, 3
     set type = pec
   end
   subsection bc 1
-    set id   = 1
-    set type = pec
-  end
-  subsection bc 2
-    set id   = 2
-    set type = pec
-  end
-  subsection bc 3
-    set id   = 3
-    set type = pec
-  end
-  subsection bc 4
     set id   = 4
-    set type = imposed electromagnetic excitation
-    subsection excitation_x real
+    set type = electromagnetic excitation
+    subsection excitation x real
       set Function expression = 0
     end
-    subsection excitation_x imag
+    subsection excitation x imag
       set Function expression = 0
     end
-    subsection excitation_y real
+    subsection excitation y real
       set Function expression = 0
     end
-    subsection excitation_y imag
+    subsection excitation y imag
       set Function expression = sin(4*pi*x)
     end
-    subsection excitation_z real
+    subsection excitation z real
       set Function expression = 0
     end
-    subsection excitation_z imag
+    subsection excitation z imag
       set Function expression = 0
     end
   end
-  subsection bc 5
+  subsection bc 2
     set id   = 5
     set type = silver muller
   end

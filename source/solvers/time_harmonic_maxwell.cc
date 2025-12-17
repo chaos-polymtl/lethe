@@ -602,7 +602,7 @@ TimeHarmonicMaxwell<dim>::define_constraints()
             id,
             this->nonzero_constraints);
         }
-      if (type == BoundaryConditions::BoundaryType::imposed_electric_field)
+      if (type == BoundaryConditions::BoundaryType::electric_field)
         {
           // Imposed electric field boundary condition
 
@@ -671,7 +671,7 @@ TimeHarmonicMaxwell<dim>::define_constraints()
             this->nonzero_constraints);
         }
 
-      if (type == BoundaryConditions::BoundaryType::imposed_magnetic_field)
+      if (type == BoundaryConditions::BoundaryType::magnetic_field)
         {
           // Imposed magnetic field boundary condition
 
@@ -1449,7 +1449,7 @@ TimeHarmonicMaxwell<3>::assemble_system_matrix()
                   if ((bc_type ==
                        BoundaryConditions::BoundaryType::silver_muller) ||
                       (bc_type == BoundaryConditions::BoundaryType::
-                                    imposed_electromagnetic_excitation) ||
+                                    electromagnetic_excitation) ||
                       (bc_type ==
                        BoundaryConditions::BoundaryType::imperfect_conductor))
                     {
@@ -1647,7 +1647,7 @@ TimeHarmonicMaxwell<3>::assemble_system_matrix()
                       g_inc = 0.;
                     }
                   if (bc_type == BoundaryConditions::BoundaryType::
-                                   imposed_electromagnetic_excitation)
+                                   electromagnetic_excitation)
                     {
                       unsigned int face_id = face->boundary_id();
 
@@ -2425,7 +2425,7 @@ TimeHarmonicMaxwell<3>::reconstruct_interior_solution()
                   if ((bc_type ==
                        BoundaryConditions::BoundaryType::silver_muller) ||
                       (bc_type == BoundaryConditions::BoundaryType::
-                                    imposed_electromagnetic_excitation) ||
+                                    electromagnetic_excitation) ||
                       (bc_type ==
                        BoundaryConditions::BoundaryType::imperfect_conductor))
                     {
@@ -2623,7 +2623,7 @@ TimeHarmonicMaxwell<3>::reconstruct_interior_solution()
                       g_inc = 0.;
                     }
                   if (bc_type == BoundaryConditions::BoundaryType::
-                                   imposed_electromagnetic_excitation)
+                                   electromagnetic_excitation)
                     {
                       unsigned int face_id = face->boundary_id();
 
