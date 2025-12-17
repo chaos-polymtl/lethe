@@ -63,7 +63,7 @@ The default parameters for ``temperature`` and ``convection-radiation-flux`` are
 
     Likewise, if ``number = 2`` and there is no ``subsection bc 0`` explicitly stated, the boundary is still created, with ``noflux`` by default.
 
-* ``id`` is the number associated with the boundary condition. By default, Lethe assumes that the id is equivalent to the number of the bc.
+* ``id``  is the number associated with the boundary condition. By default, Lethe assumes that the id is equivalent to the number ``#`` of the bc. The parameter also accepts a list of boundary ids, to which the same boundary condition will be applied. In this case, id numbers should be separated by commas, for example: ``set id = 0,1,2``.
 
 * ``type``: type of boundary condition being imposed. At the moment, choices are:
     * ``noflux`` (default) so that there is no heat transfer boundary condition,
