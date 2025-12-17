@@ -166,7 +166,7 @@ ParticleWallContactForce<dim,
     get_force_calculation_threshold_distance();
 
   // Initiate containers
-  std::vector<Particles::ParticleIterator<dim>> particle_locations;
+  std::vector<Particles::ParticleIterator<dim>> particle_iterators;
   std::vector<Point<dim>> triangle(this->vertices_per_triangle);
 
   // Iterating over the solid objects
@@ -200,13 +200,13 @@ ParticleWallContactForce<dim,
             {
               // Clear the particle locations vector for the new cut cell and
               // reserve the required size for the particle locations.
-              particle_locations.clear();
+              particle_iterators.clear();
               const unsigned int n_particles = map_info.size();
-              particle_locations.reserve(n_particles);
+              particle_iterators.reserve(n_particles);
 
               // Gather all the particles locations in a vector
               for (auto &&contact_info : map_info | boost::adaptors::map_values)
-                particle_locations.emplace_back(contact_info.particle);
+                particle_iterators.emplace_back(contact_info.particle);
 
               // Build triangle vector from the triangle cell vertices
               for (unsigned int vertex = 0;
@@ -218,7 +218,7 @@ ParticleWallContactForce<dim,
               // (triangle cell)
               auto particle_triangle_information = LetheGridTools::
                 find_particle_triangle_projection<dim, PropertiesIndex>(
-                  triangle, particle_locations, n_particles);
+                  triangle, particle_iterators, n_particles);
 
               const auto &[pass_distance_check,
                            projection_points,
