@@ -17,7 +17,7 @@ set dimension = 3
 #---------------------------------------------------
 
 subsection simulation control
-  set method      = steady
+  set method           = steady
   set output frequency = 0
 end
 
