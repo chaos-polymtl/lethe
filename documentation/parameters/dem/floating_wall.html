@@ -452,18 +452,10 @@
 
   subsection wall 0
     # Defining a point on the floating wall
-    subsection point on wall
-      set x = 0
-      set y = 0
-      set z = -0.06
-    end
+    set point on wall = 0., 0., 0.
 
     # Defining normal vector of the floating wall
-    subsection normal vector
-      set nx = 0
-      set ny = 0.5
-      set nz = 1
-    end
+    set normal vector = 1., 0., 0.
 
     # Starting time of the floating wall
     set start time = 0
@@ -477,8 +469,8 @@ end
 <ul class="simple">
 <li><p><code class="docutils literal notranslate"><span class="pre">number</span> <span class="pre">of</span> <span class="pre">floating</span> <span class="pre">walls</span></code> parameter defines the total number of floating walls we wish to insert during the simulation.</p></li>
 <li><p>For each floating wall, we need a separate subsection (for instance,  <code class="docutils literal notranslate"><span class="pre">subsection</span> <span class="pre">wall</span> <span class="pre">0</span></code>) in which the information of the floating wall (the normal vector, start and end times, and a point on the floating wall) is defined.</p></li>
-<li><p>In the subsection <code class="docutils literal notranslate"><span class="pre">point</span> <span class="pre">on</span> <span class="pre">wall</span></code>, we define a point (with coordinates <code class="docutils literal notranslate"><span class="pre">x</span></code>, <code class="docutils literal notranslate"><span class="pre">y</span></code>, and <code class="docutils literal notranslate"><span class="pre">z</span></code>) on the floating wall.</p></li>
-<li><p>In the subsection <code class="docutils literal notranslate"><span class="pre">normal</span> <span class="pre">vector</span> <span class="pre">of</span> <span class="pre">the</span> <span class="pre">floating</span> <span class="pre">wall</span></code>, we define the normal vector (with components of <code class="docutils literal notranslate"><span class="pre">nx</span></code>, <code class="docutils literal notranslate"><span class="pre">ny</span></code>, and <code class="docutils literal notranslate"><span class="pre">nz</span></code> in <cite>x</cite>, <cite>y</cite>, and <cite>z</cite> directions) of the floating wall.</p></li>
+<li><p>The <code class="docutils literal notranslate"><span class="pre">point</span> <span class="pre">on</span> <span class="pre">wall</span></code> parameter defines a point on the floating wall in <cite>x</cite>, <cite>y</cite>, and <cite>z</cite> directions.</p></li>
+<li><p>The <code class="docutils literal notranslate"><span class="pre">normal</span> <span class="pre">vector</span></code> parameter defines the normal vector of the floating wall in <cite>x</cite>, <cite>y</cite>, and <cite>z</cite> directions.</p></li>
 <li><p>The <code class="docutils literal notranslate"><span class="pre">start</span> <span class="pre">time</span></code> parameter specifies the start time at which the floating wall is applied in the simulation.</p></li>
 <li><p>The <code class="docutils literal notranslate"><span class="pre">end</span> <span class="pre">time</span></code> parameter defines the time at which the floating wall is removed from the simulation. In simulations that the user wishes to keep a floating wall during the entire simulation, <code class="docutils literal notranslate"><span class="pre">end</span> <span class="pre">time</span></code> should be specified greater than the total simulation time.</p></li>
 </ul>
