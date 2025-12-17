@@ -34,7 +34,7 @@ where:
 * :math:`I_i` is the moment of inertia;
 * :math:`\mathbf{\omega}_i` is the angular velocity;
 * :math:`\mathbf{M}_{\mathrm{fp},i}` is the torque exerted by the surrounding fluid over the particle :math:`i`.
-* :math:`\mathbf{M}_{\mathrm{c},ij}` is the torque between particles :math:`i` and :math:`j`;
+* :math:`\mathbf{M}_{\mathrm{c},ij}` is the contact torque between particles :math:`i` and :math:`j`. Since only spherical particles are currently supported the unresolved CFD-DEM implementation of Lethe, this torque is only due to tangential forces;
 * :math:`\mathbf{M}_{\mathrm{r},ij}` is the rolling friction between particles :math:`i` and :math:`j`;
 
 The momentum transfer between phases, :math:`\mathbf{F}_{\mathrm{fp},i}`, can be written as:
