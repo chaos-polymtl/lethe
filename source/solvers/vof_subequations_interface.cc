@@ -58,49 +58,6 @@ VOFSubequationsInterface<dim>::initialize_subequations(
   reset_subequations_solutions_validity();
 }
 
-template <int dim>
-void
-VOFSubequationsInterface<dim>::prepare_for_algebraic_reinitialization()
-{
-  AssertThrow((std::find(this->active_subequations.begin(),
-                         this->active_subequations.end(),
-                         VOFSubequationsID::phase_gradient_projection) !=
-               this->active_subequations.end()),
-              ExcInternalError());
-
-  // Set phase fraction gradient projection diffusion coefficient to 0
-  std::shared_ptr<VOFPhaseGradientProjection<dim>>
-    phase_fraction_gradient_projection_solver =
-      std::dynamic_pointer_cast<VOFPhaseGradientProjection<dim>>(
-        this->subequations.find(VOFSubequationsID::phase_gradient_projection)
-          ->second);
-  phase_fraction_gradient_projection_solver->set_diffusion_factor(0);
-
-  // Solve phase gradient projection without diffusion
-  phase_fraction_gradient_projection_solver->solve();
-}
-
-template <int dim>
-void
-VOFSubequationsInterface<dim>::finalize_algebraic_reinitialization()
-{
-  AssertThrow((std::find(this->active_subequations.begin(),
-                         this->active_subequations.end(),
-                         VOFSubequationsID::phase_gradient_projection) !=
-               this->active_subequations.end()),
-              ExcInternalError());
-
-  // Reset phase fraction gradient projection diffusion coefficient to
-  // user-defined value
-  std::shared_ptr<VOFPhaseGradientProjection<dim>>
-    phase_fraction_gradient_projection_solver =
-      std::dynamic_pointer_cast<VOFPhaseGradientProjection<dim>>(
-        this->subequations.find(VOFSubequationsID::phase_gradient_projection)
-          ->second);
-  phase_fraction_gradient_projection_solver->set_diffusion_factor(
-    phase_gradient_projection_diffusion_coefficient);
-}
-
 
 template class VOFSubequationsInterface<2>;
 template class VOFSubequationsInterface<3>;

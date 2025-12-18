@@ -3038,10 +3038,11 @@ VolumeOfFluid<dim>::reinitialize_interface_with_algebraic_method()
 
       // Solve phase gradient projection followed by algebraic interface
       // reinitialization steps
-      this->vof_subequations_interface
-        ->prepare_for_algebraic_reinitialization();
+      this->vof_subequations_interface->solve_specific_subequation(
+        VOFSubequationsID::phase_gradient_projection);
       this->vof_subequations_interface->solve_specific_subequation(
         VOFSubequationsID::algebraic_interface_reinitialization);
+      // this->vof_subequations_interface->solve();
 
       // Overwrite VOF previous solution with the reinitialized result
       FETools::interpolate(
@@ -3069,9 +3070,11 @@ VolumeOfFluid<dim>::reinitialize_interface_with_algebraic_method()
 
   // Solve phase gradient projection followed by algebraic interface
   // reinitialization steps
-  this->vof_subequations_interface->prepare_for_algebraic_reinitialization();
+  this->vof_subequations_interface->solve_specific_subequation(
+    VOFSubequationsID::phase_gradient_projection);
   this->vof_subequations_interface->solve_specific_subequation(
     VOFSubequationsID::algebraic_interface_reinitialization);
+  // this->vof_subequations_interface->solve();
 
   // Overwrite the VOF solution with the algebraic interface reinitialization
   FETools::interpolate(
@@ -3083,10 +3086,6 @@ VolumeOfFluid<dim>::reinitialize_interface_with_algebraic_method()
     this->nonzero_constraints,
     this->local_evaluation_point);
   *this->present_solution = this->local_evaluation_point;
-
-  // Reset phase fraction gradient projection diffusion coefficient to
-  // user-defined value
-  this->vof_subequations_interface->finalize_algebraic_reinitialization();
 }
 
 template <int dim>
