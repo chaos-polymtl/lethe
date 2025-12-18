@@ -50,11 +50,6 @@ VOFPhaseGradientProjection<dim>::assemble_system_matrix_and_rhs()
   std::vector<Tensor<1, dim>> phi(n_dofs_per_cell);
   std::vector<Tensor<2, dim>> grad_phi(n_dofs_per_cell);
 
-  // Get the diffusion factor
-  const double diffusion_factor =
-    this->simulation_parameters.multiphysics.vof_parameters
-      .surface_tension_force.phase_fraction_gradient_diffusion_factor;
-
   // Loop over phase gradient projection cells
   for (const auto &cell : this->dof_handler->active_cell_iterators())
     {
@@ -113,7 +108,7 @@ VOFPhaseGradientProjection<dim>::assemble_system_matrix_and_rhs()
                     {
                       local_matrix(i, j) +=
                         (phi[i] * phi[j] +
-                         h * h * diffusion_factor *
+                         h * h * diffusion_coefficient *
                            scalar_product(grad_phi[i], grad_phi[j])) *
                         JxW_vec[q];
                     }

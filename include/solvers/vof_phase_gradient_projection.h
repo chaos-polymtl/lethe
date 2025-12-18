@@ -77,6 +77,9 @@ public:
         p_pcout,
         p_triangulation,
         p_subequations_interface)
+    , diffusion_coefficient(
+        p_simulation_parameters.multiphysics.vof_parameters
+          .surface_tension_force.phase_fraction_gradient_diffusion_factor)
   {
     if (this->simulation_parameters.mesh.simplex)
       {
@@ -107,6 +110,16 @@ public:
    */
   ~VOFPhaseGradientProjection() = default;
 
+  /**
+   * @brief Sets the diffusion coefficient to @p p_diffusion_coefficient.
+   * @param p_diffusion_coefficient Value of the diffusion coefficient.
+   */
+  void
+  set_diffusion_factor(const double p_diffusion_coefficient)
+  {
+    this->diffusion_coefficient = p_diffusion_coefficient;
+  }
+
 private:
   /**
    * @brief Assemble system matrix and right-hand side (rhs).
@@ -119,6 +132,9 @@ private:
    */
   void
   check_dependencies_validity() override;
+
+  /// Diffusion coefficient for the diffusive term of the projection equation
+  double diffusion_coefficient;
 };
 
 #endif
