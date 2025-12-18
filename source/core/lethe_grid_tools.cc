@@ -1259,14 +1259,22 @@ LetheGridTools::find_particle_triangle_projection(
   // Check to see if the particle is located on the correct side (with
   // respect to the normal vector) of the triangle
   if (vector_to_plane * unit_normal > 0)
-      unit_normal *= -1.0;
+    unit_normal *= -1.0;
 
   double distance_squared = scalar_product(vector_to_plane, unit_normal);
 
   // If the particle is too far from the plane, set distance squared as an
   // arbitrary distance and continue
   if (distance_squared > (radius * radius))
-    pass_distance_check = false;
+    {
+      // We return right away since the particle is too far from the triangle anyways.
+      pass_distance_check = false;
+      contact_indicator = ParticleTriangleContactIndicator::no_contact;
+      return std::make_tuple(pass_distance_check,
+                             Point<3>(),
+                             Tensor<1, 3>(),
+                             contact_indicator);
+    }
 
   // Otherwise, do the full calculation taken from Eberly 2003
   const double d = scalar_product(e_0, vector_to_plane);
@@ -1341,11 +1349,7 @@ LetheGridTools::find_particle_triangle_projection(
 
           // In region 0, normal vector is the face normal vector
           // Cast unit_normal to a tensor<1, 3>
-          if constexpr (dim == 3)
-            unit_normal_3d = unit_normal;
-
-          if constexpr (dim == 2)
-            unit_normal_3d = tensor_nd_to_3d(unit_normal);
+          unit_normal_3d = tensor_nd_to_3d(unit_normal);
 
           region_zero       = true;
           contact_indicator = ParticleTriangleContactIndicator::face_contact;

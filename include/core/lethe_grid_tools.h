@@ -268,7 +268,8 @@ namespace LetheGridTools
   {
     face_contact,
     edge_contact,
-    vertex_contact
+    vertex_contact,
+    no_contact
   };
 
   /**
