@@ -1,7 +1,8 @@
 // SPDX-FileCopyrightText: Copyright (c) 2025 The Lethe Authors
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
-// Description : This file defines two perpendicular triangles that are sharing an edge.
+// Description : This file defines a mesh of two triangles that are sharing an edge.
+// The two triangles are not coplanar, nor perpendicular.
 
 // Define a variable
 ymin= -1.;

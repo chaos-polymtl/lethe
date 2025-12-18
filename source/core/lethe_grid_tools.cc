@@ -1259,9 +1259,7 @@ LetheGridTools::find_particle_triangle_projection(
   // Check to see if the particle is located on the correct side (with
   // respect to the normal vector) of the triangle
   if (vector_to_plane * unit_normal > 0)
-    {
       unit_normal *= -1.0;
-    }
 
   double distance_squared = scalar_product(vector_to_plane, unit_normal);
 
