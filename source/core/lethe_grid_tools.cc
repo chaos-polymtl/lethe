@@ -1267,9 +1267,10 @@ LetheGridTools::find_particle_triangle_projection(
   // arbitrary distance and continue
   if (distance_squared > (radius * radius))
     {
-      // We return right away since the particle is too far from the triangle anyways.
+      // We return right away since the particle is too far from the triangle
+      // anyways.
       pass_distance_check = false;
-      contact_indicator = ParticleTriangleContactIndicator::no_contact;
+      contact_indicator   = ParticleTriangleContactIndicator::no_contact;
       return std::make_tuple(pass_distance_check,
                              Point<3>(),
                              Tensor<1, 3>(),
