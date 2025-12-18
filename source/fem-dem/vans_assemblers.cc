@@ -2110,7 +2110,7 @@ VANSAssemblerFPI<dim>::assemble_matrix(
   const NavierStokesScratchData<dim>   &scratch_data,
   StabilizedMethodsTensorCopyData<dim> &copy_data)
 {
-  // Loop and quadrature informations
+  // Loop and quadrature information
   const auto        &JxW_vec    = scratch_data.JxW;
   const unsigned int n_q_points = scratch_data.n_q_points;
   const unsigned int n_dofs     = scratch_data.n_dofs;
@@ -2171,7 +2171,7 @@ VANSAssemblerFPI<dim>::assemble_rhs(
   const NavierStokesScratchData<dim>   &scratch_data,
   StabilizedMethodsTensorCopyData<dim> &copy_data)
 {
-  // Loop and quadrature informations
+  // Loop and quadrature information
   const auto        &JxW_vec    = scratch_data.JxW;
   const unsigned int n_q_points = scratch_data.n_q_points;
   const unsigned int n_dofs     = scratch_data.n_dofs;
@@ -2228,9 +2228,67 @@ template class VANSAssemblerFPI<3>;
 template <int dim>
 void
 VANSAssemblerFPIProjection<dim>::assemble_matrix(
-  [[maybe_unused]] const NavierStokesScratchData<dim>   &scratch_data,
-  [[maybe_unused]] StabilizedMethodsTensorCopyData<dim> &copy_data)
-{}
+  const NavierStokesScratchData<dim>   &scratch_data,
+  StabilizedMethodsTensorCopyData<dim> &copy_data)
+{
+  // Loop and quadrature information
+  const auto        &JxW_vec    = scratch_data.JxW;
+  const unsigned int n_q_points = scratch_data.n_q_points;
+  const unsigned int n_dofs     = scratch_data.n_dofs;
+  // The CFD-DEM solver only supports constant density for now
+  const double density = scratch_data.density_scale;
+
+  // Copy data elements
+  auto &strong_residual = copy_data.strong_residual;
+  auto &strong_jacobian = copy_data.strong_jacobian;
+  auto &local_matrix    = copy_data.local_matrix;
+
+  // Loop over the quadrature points
+  for (unsigned int q = 0; q < n_q_points; ++q)
+    {
+      const Tensor<1, dim> &two_way_coupling_force =
+        -scratch_data.particle_two_way_coupling_force_values[q] / density;
+      const Tensor<1, dim> &fluid_drag =
+        -scratch_data.particle_drag_values[q] / density;
+      const double &beta_drag =
+        scratch_data.particle_momentum_transfer_coefficient_values[q];
+      const Tensor<1, dim> particles_velocity =
+        scratch_data.particle_velocity_values[q];
+      const Tensor<1, dim> velocity = scratch_data.velocity_values[q];
+
+      // Store JxW in local variable for faster access;
+      const double JxW = JxW_vec[q];
+
+      // Subtraction of forces applied on fluid from the residual for GLS
+      // stabilization
+      // If the coupling is explicit, beta_drag is zero. Otherwise, fluid_drag
+      // is zero.
+      strong_residual[q] -=
+        (fluid_drag - beta_drag * (velocity - particles_velocity) +
+         two_way_coupling_force);
+
+      for (unsigned int j = 0; j < n_dofs; ++j)
+        {
+          const auto &phi_u_j = scratch_data.phi_u[q][j];
+          strong_jacobian[q][j] +=
+            // Drag Force
+            beta_drag * phi_u_j;
+        }
+
+      for (unsigned int i = 0; i < n_dofs; ++i)
+        {
+          const auto &phi_u_i = scratch_data.phi_u[q][i];
+
+          for (unsigned int j = 0; j < n_dofs; ++j)
+            {
+              const auto &phi_u_j = scratch_data.phi_u[q][j];
+
+              local_matrix(i, j) += // Drag Force
+                beta_drag * phi_u_j * phi_u_i * JxW;
+            }
+        }
+    }
+}
 
 template <int dim>
 void
@@ -2238,7 +2296,7 @@ VANSAssemblerFPIProjection<dim>::assemble_rhs(
   const NavierStokesScratchData<dim>   &scratch_data,
   StabilizedMethodsTensorCopyData<dim> &copy_data)
 {
-  // Loop and quadrature informations
+  // Loop and quadrature information
   const auto        &JxW_vec    = scratch_data.JxW;
   const unsigned int n_q_points = scratch_data.n_q_points;
   const unsigned int n_dofs     = scratch_data.n_dofs;
@@ -2256,22 +2314,36 @@ VANSAssemblerFPIProjection<dim>::assemble_rhs(
         -scratch_data.particle_two_way_coupling_force_values[q] / density;
       const Tensor<1, dim> &fluid_drag =
         -scratch_data.particle_drag_values[q] / density;
+      const double &beta_drag =
+        scratch_data.particle_momentum_transfer_coefficient_values[q];
+      const Tensor<1, dim> particles_velocity =
+        scratch_data.particle_velocity_values[q];
+      const Tensor<1, dim> velocity = scratch_data.velocity_values[q];
 
       // Store JxW in local variable for faster access;
       const double JxW = JxW_vec[q];
 
       // Calculate the strong residual for GLS stabilization
       // Drag Force and other two-way coupling forces
-      strong_residual[q] -= (fluid_drag + two_way_coupling_force);
+      // If the coupling is explicit, beta_drag is zero. Otherwise, fluid_drag
+      // is zero.
+      strong_residual[q] -=
+        (fluid_drag - beta_drag * (velocity - particles_velocity) +
+         two_way_coupling_force);
 
       // Assembly of the right-hand side
       for (unsigned int i = 0; i < n_dofs; ++i)
         {
           const auto phi_u_i = scratch_data.phi_u[q][i];
           // Drag Force
-          //  The distinction between Model A and B of the VANS equations is
-          //  made in the shear and pressure forces assemblers.
-          local_rhs(i) += (fluid_drag + two_way_coupling_force) * phi_u_i * JxW;
+          // The distinction between Model A and B of the VANS equations is
+          // made in the shear and pressure forces assemblers.
+          // If the coupling is explicit, beta_drag is zero. Otherwise,
+          // fluid_drag is zero.
+          local_rhs(i) +=
+            (fluid_drag - beta_drag * (velocity - particles_velocity) +
+             two_way_coupling_force) *
+            phi_u_i * JxW;
         }
     }
 }

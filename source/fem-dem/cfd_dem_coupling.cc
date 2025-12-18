@@ -1596,15 +1596,6 @@ template <int dim>
 void
 CFDDEMSolver<dim>::solve()
 {
-  AssertThrow(
-    (this->cfd_dem_simulation_parameters.cfd_dem.project_particle_forces ==
-     false) ||
-      (this->cfd_dem_simulation_parameters.cfd_dem.project_particle_forces &&
-       this->cfd_dem_simulation_parameters.cfd_dem.drag_coupling ==
-         Parameters::DragCoupling::fully_explicit),
-    ExcMessage(
-      "The CFD-DEM solver only supports the projection of the particle force fields when the drag coupling is set to explicit."));
-
   this->computing_timer.enter_subsection("Read mesh, manifolds and particles");
 
   read_mesh_and_manifolds(
@@ -1682,24 +1673,29 @@ CFDDEMSolver<dim>::solve()
       this->calculate_void_fraction(
         this->simulation_control->get_current_time());
 
-      // Project particle forces into the fluid mesh if the parameter is enabled
-      if (this->cfd_dem_simulation_parameters.cfd_dem.project_particle_forces)
-        {
-          this->particle_projector.calculate_particle_fluid_forces_projection(
-            this->cfd_dem_simulation_parameters.cfd_dem,
-            *this->dof_handler,
-            *this->present_solution,
-            *this->previous_solutions,
-            this->cfd_dem_simulation_parameters.dem_parameters
-              .lagrangian_physical_properties.g,
-            NavierStokesScratchData<dim>(
-              this->simulation_control,
-              this->simulation_parameters.physical_properties_manager,
-              *this->fe,
-              *this->cell_quadrature,
-              *this->mapping,
-              *this->face_quadrature));
-        }
+      {
+        TimerOutput::Scope t(this->computing_timer,
+                             "Calculate particle-fluid projection");
+        // Project particle forces into the fluid mesh if the parameter is
+        // enabled
+        if (this->cfd_dem_simulation_parameters.cfd_dem.project_particle_forces)
+          {
+            this->particle_projector.calculate_particle_fluid_forces_projection(
+              this->cfd_dem_simulation_parameters.cfd_dem,
+              *this->dof_handler,
+              *this->present_solution,
+              *this->previous_solutions,
+              this->cfd_dem_simulation_parameters.dem_parameters
+                .lagrangian_physical_properties.g,
+              NavierStokesScratchData<dim>(
+                this->simulation_control,
+                this->simulation_parameters.physical_properties_manager,
+                *this->fe,
+                *this->cell_quadrature,
+                *this->mapping,
+                *this->face_quadrature));
+          }
+      }
       this->iterate();
 
       if (this->cfd_dem_simulation_parameters.cfd_parameters.test.enabled)

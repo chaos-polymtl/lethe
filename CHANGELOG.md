@@ -36,6 +36,10 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
 - MAJOR A new message is added at the start of every DEM and unresolved CDF-DEM simulation which informs the user about the kind of distribution being used for every particle type. When using a normal or lognormal distribution, an extra message is written about the diameter cutoff values relative to the entire distribution. This change is MAJOR since every application test using the `lethe-particles`, `lethe-fluid-particles` and `lethe-fluid-particles-matrix-free` solver had to be updated. Also in this PR, the documentation relative to the `update-golden.tl` script got updated. [#1849](https://github.com/chaos-polymtl/lethe/pull/1849)
 
+### Added
+
+- MINOR This PR adds the possibility to use the semi-implicit and implicit drag couplings with the CFD-DEM matrix-based solver while also using the QCM filter to project the particle forces onto the fluid. At this stage, it has been tested with the single particle sedimentation case. [#1845](https://github.com/chaos-polymtl/lethe/pull/1845)
+
 ## [Master] - 2025/12/13
 
 ### Fixed

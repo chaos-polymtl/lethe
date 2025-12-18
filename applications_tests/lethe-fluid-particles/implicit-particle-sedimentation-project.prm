@@ -4,12 +4,7 @@
 # Listing of Parameters
 #----------------------
 
-# Test the sedimentation of a single particle using an explicit coupling
-# with a projection-based method. In this approach, the particle forces
-# are projected onto the fluid in the VANS equations.
-# The particle is expected to follow the analytical solution.
-# The projection-based coupling prevents the overshoot that can occur
-# with standard explicit two-way coupling.
+# Test the sedimentation of a single particle with the implicit coupling.
 # A python file is provided within the ./single_particle_sedimentation_reference/
 # folder that can be used to verify the validity of the solution
 # for the particle trajectory and velocity.
@@ -24,7 +19,7 @@ subsection simulation control
   set method           = bdf1
   set output name      = result
   set output frequency = 0
-  set time end         = 0.5
+  set time end         = 0.2
   set time step        = 0.005
 end
 
@@ -89,7 +84,7 @@ subsection cfd-dem
   set coupling frequency            = 1
   set grad-div length scale         = 0.005
   set vans model                    = modelA
-  set drag coupling                 = explicit
+  set drag coupling                 = implicit
   set project particle forces       = true
 end
 

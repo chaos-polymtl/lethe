@@ -369,78 +369,74 @@ template <int dim>
 void
 FluidDynamicsVANS<dim>::assemble_system_matrix()
 {
-  {
-    TimerOutput::Scope t(this->computing_timer, "Assemble matrix");
-    this->system_matrix = 0;
+  TimerOutput::Scope t(this->computing_timer, "Assemble matrix");
+  this->system_matrix = 0;
 
-    setup_assemblers();
+  setup_assemblers();
 
-    auto scratch_data = NavierStokesScratchData<dim>(
-      this->simulation_control,
-      this->simulation_parameters.physical_properties_manager,
-      *this->fe,
-      *this->cell_quadrature,
-      *this->mapping,
-      *this->face_quadrature);
+  auto scratch_data = NavierStokesScratchData<dim>(
+    this->simulation_control,
+    this->simulation_parameters.physical_properties_manager,
+    *this->fe,
+    *this->cell_quadrature,
+    *this->mapping,
+    *this->face_quadrature);
 
-    if (this->simulation_parameters.multiphysics.VOF)
-      {
-        const DoFHandler<dim> &dof_handler_vof =
-          this->multiphysics->get_dof_handler(PhysicsID::VOF);
-        scratch_data.enable_vof(
-          dof_handler_vof.get_fe(),
-          *this->cell_quadrature,
-          *this->mapping,
-          this->simulation_parameters.multiphysics.vof_parameters.phase_filter);
+  if (this->simulation_parameters.multiphysics.VOF)
+    {
+      const DoFHandler<dim> &dof_handler_vof =
+        this->multiphysics->get_dof_handler(PhysicsID::VOF);
+      scratch_data.enable_vof(
+        dof_handler_vof.get_fe(),
+        *this->cell_quadrature,
+        *this->mapping,
+        this->simulation_parameters.multiphysics.vof_parameters.phase_filter);
 
-        if (this->simulation_parameters.multiphysics.vof_parameters
-              .surface_tension_force.enable)
-          {
-            const DoFHandler<dim>
-              &projected_phase_fraction_gradient_dof_handler =
-                this->multiphysics
-                  ->get_projected_phase_fraction_gradient_dof_handler();
-            const DoFHandler<dim> &curvature_dof_handler =
-              this->multiphysics->get_curvature_dof_handler();
-            scratch_data.enable_projected_phase_fraction_gradient(
-              projected_phase_fraction_gradient_dof_handler.get_fe(),
-              *this->cell_quadrature,
-              *this->mapping);
-            scratch_data.enable_curvature(curvature_dof_handler.get_fe(),
-                                          *this->cell_quadrature,
-                                          *this->mapping);
-          }
-      }
+      if (this->simulation_parameters.multiphysics.vof_parameters
+            .surface_tension_force.enable)
+        {
+          const DoFHandler<dim> &projected_phase_fraction_gradient_dof_handler =
+            this->multiphysics
+              ->get_projected_phase_fraction_gradient_dof_handler();
+          const DoFHandler<dim> &curvature_dof_handler =
+            this->multiphysics->get_curvature_dof_handler();
+          scratch_data.enable_projected_phase_fraction_gradient(
+            projected_phase_fraction_gradient_dof_handler.get_fe(),
+            *this->cell_quadrature,
+            *this->mapping);
+          scratch_data.enable_curvature(curvature_dof_handler.get_fe(),
+                                        *this->cell_quadrature,
+                                        *this->mapping);
+        }
+    }
 
-    scratch_data.enable_void_fraction(*particle_projector.fe,
-                                      *this->cell_quadrature,
-                                      *this->mapping);
+  scratch_data.enable_void_fraction(*particle_projector.fe,
+                                    *this->cell_quadrature,
+                                    *this->mapping);
+  if (this->cfd_dem_simulation_parameters.cfd_dem.project_particle_forces)
+    {
+      scratch_data.enable_particle_field_projection(
+        *this->cell_quadrature,
+        *this->mapping,
+        *particle_projector.fluid_drag_on_particles.fe,
+        *particle_projector.fluid_force_on_particles_two_way_coupling.fe,
+        *particle_projector.particle_velocity.fe,
+        *particle_projector.momentum_transfer_coefficient.fe);
+    }
+  scratch_data.enable_particle_fluid_interactions(
+    particle_handler.n_global_max_particles_per_cell(),
+    this->cfd_dem_simulation_parameters.cfd_dem.interpolated_void_fraction);
 
-    if (this->cfd_dem_simulation_parameters.cfd_dem.project_particle_forces)
-      {
-        scratch_data.enable_particle_field_projection(
-          *this->cell_quadrature,
-          *this->mapping,
-          *particle_projector.fluid_drag_on_particles.fe,
-          *particle_projector.fluid_force_on_particles_two_way_coupling.fe,
-          *particle_projector.particle_velocity.fe);
-      }
-
-    scratch_data.enable_particle_fluid_interactions(
-      particle_handler.n_global_max_particles_per_cell(),
-      this->cfd_dem_simulation_parameters.cfd_dem.interpolated_void_fraction);
-
-    WorkStream::run(
-      this->dof_handler->begin_active(),
-      this->dof_handler->end(),
-      *this,
-      &FluidDynamicsVANS::assemble_local_system_matrix,
-      &FluidDynamicsVANS::copy_local_matrix_to_global_matrix,
-      scratch_data,
-      StabilizedMethodsTensorCopyData<dim>(this->fe->n_dofs_per_cell(),
-                                           this->cell_quadrature->size()));
-    this->system_matrix.compress(VectorOperation::add);
-  }
+  WorkStream::run(
+    this->dof_handler->begin_active(),
+    this->dof_handler->end(),
+    *this,
+    &FluidDynamicsVANS::assemble_local_system_matrix,
+    &FluidDynamicsVANS::copy_local_matrix_to_global_matrix,
+    scratch_data,
+    StabilizedMethodsTensorCopyData<dim>(this->fe->n_dofs_per_cell(),
+                                         this->cell_quadrature->size()));
+  this->system_matrix.compress(VectorOperation::add);
 }
 
 template <int dim>
@@ -543,14 +539,24 @@ FluidDynamicsVANS<dim>::assemble_local_system_matrix(
         cell->index(),
         &this->particle_projector.particle_velocity.dof_handler);
 
+      typename DoFHandler<dim>::active_cell_iterator
+        particle_momentum_transfer_coefficient_cell(
+          &(*(this->triangulation)),
+          cell->level(),
+          cell->index(),
+          &this->particle_projector.momentum_transfer_coefficient.dof_handler);
+
       scratch_data.calculate_particle_fields_values(
         particle_drag_cell,
         particle_two_way_coupling_force_cell,
         particle_velocity_cell,
+        particle_momentum_transfer_coefficient_cell,
         particle_projector.fluid_drag_on_particles.particle_field_solution,
         particle_projector.fluid_force_on_particles_two_way_coupling
           .particle_field_solution,
         particle_projector.particle_velocity.particle_field_solution,
+        particle_projector.momentum_transfer_coefficient
+          .particle_field_solution,
         cfd_dem_simulation_parameters.cfd_dem.drag_coupling);
     }
 
@@ -582,12 +588,7 @@ template <int dim>
 void
 FluidDynamicsVANS<dim>::assemble_system_rhs()
 {
-  TimerOutput::Scope t(this->computing_timer, "Assemble RHS");
-
-  this->system_rhs = 0;
-
-  setup_assemblers();
-
+  this->computing_timer.enter_subsection("Assemble RHS");
   auto scratch_data = NavierStokesScratchData<dim>(
     this->simulation_control,
     this->simulation_parameters.physical_properties_manager,
@@ -595,7 +596,43 @@ FluidDynamicsVANS<dim>::assemble_system_rhs()
     *this->cell_quadrature,
     *this->mapping,
     *this->face_quadrature);
+  this->computing_timer.leave_subsection("Assemble RHS");
 
+  if (this->cfd_dem_simulation_parameters.cfd_dem.project_particle_forces)
+    {
+      scratch_data.enable_particle_field_projection(
+        *this->cell_quadrature,
+        *this->mapping,
+        *particle_projector.fluid_drag_on_particles.fe,
+        *particle_projector.fluid_force_on_particles_two_way_coupling.fe,
+        *particle_projector.particle_velocity.fe,
+        *particle_projector.momentum_transfer_coefficient.fe);
+      if (this->cfd_dem_simulation_parameters.cfd_dem.drag_coupling ==
+          Parameters::DragCoupling::fully_implicit)
+        {
+          TimerOutput::Scope t(this->computing_timer,
+                               "Calculate particle-fluid projection");
+          this->particle_projector.calculate_particle_fluid_forces_projection(
+            this->cfd_dem_simulation_parameters.cfd_dem,
+            *this->dof_handler,
+            *this->present_solution,
+            *this->previous_solutions,
+            this->cfd_dem_simulation_parameters.dem_parameters
+              .lagrangian_physical_properties.g,
+            NavierStokesScratchData<dim>(
+              this->simulation_control,
+              this->simulation_parameters.physical_properties_manager,
+              *this->fe,
+              *this->cell_quadrature,
+              *this->mapping,
+              *this->face_quadrature));
+        }
+    }
+
+  TimerOutput::Scope t(this->computing_timer, "Assemble RHS");
+  this->system_rhs = 0;
+
+  setup_assemblers();
 
   if (this->simulation_parameters.multiphysics.VOF)
     {
@@ -610,17 +647,6 @@ FluidDynamicsVANS<dim>::assemble_system_rhs()
   scratch_data.enable_void_fraction(*particle_projector.fe,
                                     *this->cell_quadrature,
                                     *this->mapping);
-
-  if (this->cfd_dem_simulation_parameters.cfd_dem.project_particle_forces)
-    {
-      scratch_data.enable_particle_field_projection(
-        *this->cell_quadrature,
-        *this->mapping,
-        *particle_projector.fluid_drag_on_particles.fe,
-        *particle_projector.fluid_force_on_particles_two_way_coupling.fe,
-        *particle_projector.particle_velocity.fe);
-    }
-
   scratch_data.enable_particle_fluid_interactions(
     particle_handler.n_global_max_particles_per_cell(),
     this->cfd_dem_simulation_parameters.cfd_dem.interpolated_void_fraction);
@@ -741,14 +767,24 @@ FluidDynamicsVANS<dim>::assemble_local_system_rhs(
         cell->index(),
         &this->particle_projector.particle_velocity.dof_handler);
 
+      typename DoFHandler<dim>::active_cell_iterator
+        particle_momentum_transfer_coefficient_cell(
+          &(*(this->triangulation)),
+          cell->level(),
+          cell->index(),
+          &this->particle_projector.momentum_transfer_coefficient.dof_handler);
+
       scratch_data.calculate_particle_fields_values(
         particle_drag_cell,
         particle_two_way_coupling_force_cell,
         particle_velocity_cell,
+        particle_momentum_transfer_coefficient_cell,
         particle_projector.fluid_drag_on_particles.particle_field_solution,
         particle_projector.fluid_force_on_particles_two_way_coupling
           .particle_field_solution,
         particle_projector.particle_velocity.particle_field_solution,
+        particle_projector.momentum_transfer_coefficient
+          .particle_field_solution,
         cfd_dem_simulation_parameters.cfd_dem.drag_coupling);
     }
 
