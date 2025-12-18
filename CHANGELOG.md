@@ -8,7 +8,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
 ### Added
 
-- MAJOR This PR add a rudumentary version of the new time harmonic electromagnetic auxiliary physics solver. It put in place the time_harmonic_maxwell.h and .cc files with the minimum required functions to solve the DPG linear system with two .prm files as input. The electromagnetic multiphysic, its most basic boundary conditions, the initial condition, the analytical solution and the post processing of the interior fields function skeletons are set in place. The other functionality implementation will come in future PRs. The solver is tested with two new application tests based on the .prm. [#1852](https://github.com/chaos-polymtl/lethe/pull/1852)
+- MAJOR This PR add a rudimentary version of the new time harmonic electromagnetic auxiliary physics solver. It put in place the time_harmonic_maxwell.h and .cc files with the minimum required functions to solve the DPG linear system with two .prm files as input. The electromagnetic multiphysics, its most basic boundary conditions, the initial condition, the analytical solution, and the post processing of the interior fields function skeletons are set in place. The other functionality implementation will come in future PRs. The solver is tested with two new application tests based on the .prm. [#1852](https://github.com/chaos-polymtl/lethe/pull/1852)
 
 ## [Master] - 2025/12/23
 
