@@ -63,6 +63,9 @@ public:
                                               p_triangulation,
     const std::shared_ptr<SimulationControl> &p_simulation_control)
     : pcout(p_pcout)
+    , phase_gradient_projection_diffusion_coefficient(
+        p_simulation_parameters.multiphysics.vof_parameters
+          .surface_tension_force.phase_fraction_gradient_diffusion_factor)
   {
     initialize_subequations(p_simulation_parameters,
                             p_triangulation,
@@ -419,6 +422,29 @@ public:
     return true;
   }
 
+  /**
+   * @brief Set the diffusion coefficient of the phase gradient projection
+   * equation to zero and solve the equation.
+   *
+   * @note In Olsson et al. [1], they do not mention diffusion in the phase
+   * fraction gradient projection equation.
+   *  E. Olsson, G. Kreiss, S. Zahedi, A conservative level set method for
+   *  two phase flow ii, Journal of Computational Physics 225 (2007) 785–
+   *  807. URL:
+   * https://www.sciencedirect.com/science/article/pii/S0021999107000046.
+   *  doi:https://doi.org/10.1016/j.jcp.2006.12.027
+   */
+  void
+  prepare_for_algebraic_reinitialization();
+
+
+  /**
+   * @brief Set back the diffusion coefficient of the phase gradient projection
+   * equation to the user-defined value.
+   */
+  void
+  finalize_algebraic_reinitialization();
+
 private:
   /**
    * @brief Reset all boolean in the validity associated with active
@@ -435,6 +461,9 @@ private:
 
   /// Parallel consol output object
   const ConditionalOStream pcout;
+
+  /// User-defined phase gradient projection diffusion coefficient
+  const double phase_gradient_projection_diffusion_coefficient;
 
   /// VOF DoFHandler associated with solved equations
   std::optional<std::reference_wrapper<const DoFHandler<dim>>> dof_handler_vof;
