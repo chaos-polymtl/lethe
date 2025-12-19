@@ -2134,31 +2134,26 @@ TimeHarmonicMaxwellElectricFieldDefined<dim>::value(
     {
       return e_x_real->value(point);
     }
-  else if (component == 1)
+  if (component == 1)
     {
       return e_y_real->value(point);
     }
-  else if (component == 2)
+  if (component == 2)
     {
       return e_z_real->value(point);
     }
-  else if (component == 3)
+  if (component == 3)
     {
       return e_x_imag->value(point);
     }
-  else if (component == 4)
+  if (component == 4)
     {
       return e_y_imag->value(point);
     }
-  else if (component == 5)
+  if (component == 5)
     {
       return e_z_imag->value(point);
     }
-  else
-    AssertThrow(
-      false,
-      ExcMessage(
-        "Component index out of range in TimeHarmonicMaxwellElectricFieldDefined. It should always be applied to the electric field components of the ultraweak DPG system (components 0 to 5)."));
   return 0.;
 }
 
@@ -2217,31 +2212,26 @@ TimeHarmonicMaxwellMagneticFieldDefined<dim>::value(
     {
       return h_x_real->value(point);
     }
-  else if (component == 7)
+  if (component == 7)
     {
       return h_y_real->value(point);
     }
-  else if (component == 8)
+  if (component == 8)
     {
       return h_z_real->value(point);
     }
-  else if (component == 9)
+  if (component == 9)
     {
       return h_x_imag->value(point);
     }
-  else if (component == 10)
+  if (component == 10)
     {
       return h_y_imag->value(point);
     }
-  else if (component == 11)
+  if (component == 11)
     {
       return h_z_imag->value(point);
     }
-  else
-    AssertThrow(
-      false,
-      ExcMessage(
-        "Component index out of range in TimeHarmonicMaxwellMagneticFieldDefined. It should always be applied to the magnetic field components of the ultraweak DPG system (components 6 to 11)."));
   return 0.;
 }
 
