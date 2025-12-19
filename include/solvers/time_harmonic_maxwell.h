@@ -55,10 +55,10 @@
  * formulation of the time-harmonic Maxwell equations using the Discontinuous
  * Petrov-Galerkin (DPG) method. The solver is designed to work in
  * three-dimensional spaces and requires the 3 sets of Finite Element spaces
- *that define the DPG method: the interior trial space that is discontinuous
- *between elements, the skeleton trace space that lives on the faces of the mesh
- * elements and connects the interior solutions of adjacent elements, and the
- * test space that is enriched compared to the trial space and is also
+ * that define the DPG method: the interior trial space that is discontinuous
+ * between elements, the skeleton trace space that lives on the faces of the
+ *mesh elements and connects the interior solutions of adjacent elements, and
+ *the test space that is enriched compared to the trial space and is also
  * discontinuous between elements.
  **/
 

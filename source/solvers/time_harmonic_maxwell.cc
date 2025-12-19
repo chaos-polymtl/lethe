@@ -2136,7 +2136,7 @@ TimeHarmonicMaxwell<3>::reconstruct_interior_solution()
           // looping over all the test and trial dofs, the terms  we need to
           // compute depend on the specific combination of spaces
           // involved. The following containers are therefore used to avoid
-          // multiple "if" statement inside the dofs loops and are fill with
+          // multiple "if" statements inside the dofs loops and are filled with
           // all the relevant dofs pairs that we need for each of the
           // different terms.
 
