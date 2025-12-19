@@ -79,7 +79,7 @@ where :math:`\beta` is a constant  and :math:`(\mathbf{u}\cdot \mathbf{n})_{-}` 
   Keep in mind that this is **not** the same behavior as in the ``lethe-fluid-matrix-free`` solver, where only the coarse grid solver (within the multigrid preconditioner) contains a fixed pressure node. In the ``lethe-fluid`` case, ``set fix pressure constant = true`` sets pressure as zero in a single node throughout the whole simulation.
 
 * Each fluid dynamics boundary condition is stored in a ``bc #`` subsection :
-    * ``id``  is the number associated with the boundary condition. By default, Lethe assumes that the id is equivalent to the number ``#`` of the bc. The parameter also accepts a list of boundary ids, to which the same boundary condition will be applied. In this case, id numbers should be separated by commas, for example: ``set id = 0,1,2``.
+    * ``id`` is the number associated with the boundary condition. By default, Lethe assumes that the id is equivalent to the number ``#`` of the bc. The parameter also accepts a list of boundary ids, to which the same boundary condition will be applied. In this case, id numbers should be separated by commas, for example: ``set id = 0,1,2``.
     
     * ``type`` is the type of the boundary condition.
     
