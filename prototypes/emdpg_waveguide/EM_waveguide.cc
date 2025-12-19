@@ -189,7 +189,7 @@ namespace EM_DPG
 
     // Default frequency and excitation modes
     frequency = 670356315.23; // This corresponds to the TE10 mode with a
-                              // wavelenght of 1 for a = 0.25
+                              // wavelength of 1 for a = 0.25
     mode_x = 1;               // Mode in x direction
     mode_y = 0;               // Mode in y direction
 

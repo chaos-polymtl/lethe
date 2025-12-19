@@ -172,7 +172,7 @@ namespace BoundaryConditions
    *
    */
   template <int dim>
-  class TimeHarmonicMaxwellImposedElectromagneticField
+  class TimeHarmonicMaxwellBoundaryFunctions
   {
   public:
     // Electric field components
@@ -1501,9 +1501,8 @@ namespace BoundaryConditions
   public:
     /// Functions for (e_x_real, e_y_real, e_z_real, e_x_imag, e_y_imag,
     /// e_z_imag, h_x_real, h_y_real, h_z_real, h_x_imag, h_y_imag, h_z_imag)
-    std::map<
-      types::boundary_id,
-      std::shared_ptr<TimeHarmonicMaxwellImposedElectromagneticField<dim>>>
+    std::map<types::boundary_id,
+             std::shared_ptr<TimeHarmonicMaxwellBoundaryFunctions<dim>>>
       imposed_electromagnetic_fields;
 
     /// The following functions are associated with both imperfect conductor
@@ -1585,16 +1584,16 @@ namespace BoundaryConditions
       Patterns::Selection(
         "pec|pmc|silver muller|electric field|magnetic field|electromagnetic excitation|imperfect conductor"),
       "Type of boundary condition for Time Harmonic Maxwell equations"
-      "Choices are <pec|pmc|silver muller|electric field|magnetic field|  electromagnetic excitation|imperfect conductor>.");
+      "Choices are <pec|pmc|silver muller|electric field|magnetic field|electromagnetic excitation|imperfect conductor>.");
 
     prm.declare_entry("id",
                       Utilities::int_to_string(default_boundary_id, 2),
                       Patterns::List(Patterns::Integer()),
                       "Mesh id for boundary conditions");
 
-    // Create a dummy TimeHarmonicMaxwellImposedElectromagneticField object to
+    // Create a dummy TimeHarmonicMaxwellBoundaryFunctions object to
     // declare the appropriate parameters for the relevant boundary conditions.
-    TimeHarmonicMaxwellImposedElectromagneticField<dim> temporary_em_functions;
+    TimeHarmonicMaxwellBoundaryFunctions<dim> temporary_em_functions;
 
     prm.enter_subsection("E x real");
     temporary_em_functions.e_x_real.declare_parameters(prm);
@@ -1749,8 +1748,8 @@ namespace BoundaryConditions
 
         // Allocate the imposed electromagnetic field functions object for every
         // boundary condition
-        imposed_electromagnetic_fields[boundary_id] = std::make_shared<
-          TimeHarmonicMaxwellImposedElectromagneticField<dim>>();
+        imposed_electromagnetic_fields[boundary_id] =
+          std::make_shared<TimeHarmonicMaxwellBoundaryFunctions<dim>>();
 
         prm.enter_subsection("E x real");
         imposed_electromagnetic_fields[boundary_id]->e_x_real.parse_parameters(
@@ -2135,26 +2134,31 @@ TimeHarmonicMaxwellElectricFieldDefined<dim>::value(
     {
       return e_x_real->value(point);
     }
-  if (component == 1)
+  else if (component == 1)
     {
       return e_y_real->value(point);
     }
-  if (component == 2)
+  else if (component == 2)
     {
       return e_z_real->value(point);
     }
-  if (component == 3)
+  else if (component == 3)
     {
       return e_x_imag->value(point);
     }
-  if (component == 4)
+  else if (component == 4)
     {
       return e_y_imag->value(point);
     }
-  if (component == 5)
+  else if (component == 5)
     {
       return e_z_imag->value(point);
     }
+  else
+    AssertThrow(
+      false,
+      ExcMessage(
+        "Component index out of range in TimeHarmonicMaxwellElectricFieldDefined. It should always be applied to the electric field components of the ultraweak DPG system (components 0 to 5)."));
   return 0.;
 }
 
@@ -2213,26 +2217,31 @@ TimeHarmonicMaxwellMagneticFieldDefined<dim>::value(
     {
       return h_x_real->value(point);
     }
-  if (component == 7)
+  else if (component == 7)
     {
       return h_y_real->value(point);
     }
-  if (component == 8)
+  else if (component == 8)
     {
       return h_z_real->value(point);
     }
-  if (component == 9)
+  else if (component == 9)
     {
       return h_x_imag->value(point);
     }
-  if (component == 10)
+  else if (component == 10)
     {
       return h_y_imag->value(point);
     }
-  if (component == 11)
+  else if (component == 11)
     {
       return h_z_imag->value(point);
     }
+  else
+    AssertThrow(
+      false,
+      ExcMessage(
+        "Component index out of range in TimeHarmonicMaxwellMagneticFieldDefined. It should always be applied to the magnetic field components of the ultraweak DPG system (components 6 to 11)."));
   return 0.;
 }
 

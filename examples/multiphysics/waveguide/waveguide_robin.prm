@@ -2,8 +2,8 @@
 # SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
 # This test case runs the time-harmonic electromagnetic solver to simulate the
-# propagation of one wavelenght in a waveguide with perfectly conducting walls.
-# This test impose robin conditions: an excitation at the inlet and an open
+# propagation of one wavelength in a waveguide with perfectly conducting walls.
+# This test impose Robin boundary conditions: an excitation at the inlet and an open
 # boundary (silver-muller) at the outlet to validate the implementation of those
 # conditions.
 
@@ -18,7 +18,6 @@ set dimension = 3
 
 subsection simulation control
   set method      = steady
-  set output name = out
   set output path = ./output/
 end
 
