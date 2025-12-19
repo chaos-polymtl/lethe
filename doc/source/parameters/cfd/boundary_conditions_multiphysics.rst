@@ -63,7 +63,7 @@ The default parameters for ``temperature`` and ``convection-radiation-flux`` are
 
     Likewise, if ``number = 2`` and there is no ``subsection bc 0`` explicitly stated, the boundary is still created, with ``noflux`` by default.
 
-* ``id`` is the number associated with the boundary condition. By default, Lethe assumes that the id is equivalent to the number of the bc.
+* ``id`` is the number associated with the boundary condition. By default, Lethe assumes that the id is equivalent to the number ``#`` of the bc. The parameter also accepts a list of boundary ids, to which the same boundary condition will be applied. In this case, id numbers should be separated by commas, for example: ``set id = 0,1,2``.
 
 * ``type``: type of boundary condition being imposed. At the moment, choices are:
     * ``noflux`` (default) so that there is no heat transfer boundary condition,
@@ -114,7 +114,7 @@ For tracer boundary conditions, the defaults parameters are:
 
 * ``time dependent`` specifies if a boundary condition is time-dependent (``true``) or steady (``false``). By default, this parameter is set to ``false``. This improves the computational efficiency for transient cases in which the boundary conditions do not change.
 
-* ``id`` is the number associated with the boundary condition. By default, Lethe assumes that the id is equivalent to the number of the bc.
+* ``id`` is the number associated with the boundary condition. By default, Lethe assumes that the id is equivalent to the number ``#`` of the bc. The parameter also accepts a list of boundary ids, to which the same boundary condition will be applied. In this case, id numbers should be separated by commas, for example: ``set id = 0,1,2``.
 
 * ``type``: This is the type of boundary condition being imposed:
     * ``dirichlet`` to impose specific values;
@@ -161,7 +161,7 @@ For VOF boundary conditions (multiphase flow), the possible ``types`` are ``none
 
 * ``time dependent`` specifies if a boundary condition is time-dependent (``true``) or steady (``false``). By default, this parameter is set to ``false``. This improves the computational efficiency for transient cases in which the boundary conditions do not change.
 
-* ``id`` is the number associated with the boundary condition. By default, Lethe assumes that the id is equivalent to the number of the bc.
+* ``id`` is the number associated with the boundary condition. By default, Lethe assumes that the id is equivalent to the number ``#`` of the bc. The parameter also accepts a list of boundary ids, to which the same boundary condition will be applied. In this case, id numbers should be separated by commas, for example: ``set id = 0,1,2``.
 
 * ``type``: This is the type of boundary condition being imposed. At the moment, choices are:
     * ``none`` for which nothing happens;
@@ -212,7 +212,7 @@ For Cahn-Hilliard boundary conditions, the available ``types`` are ``none`` (def
 
 * ``time dependent`` specifies if a boundary condition is time-dependent (``true``) or not (``false``). By default, this parameter is set to ``false``. It is used to improve the computational efficiency of transient cases in which the boundary conditions do not change.
 
-* ``id`` is the number associated with the boundary condition. By default, Lethe assumes that the id is equivalent to the number of the bc.
+* ``id`` is the number associated with the boundary condition. By default, Lethe assumes that the id is equivalent to the number ``#`` of the bc. The parameter also accepts a list of boundary ids, to which the same boundary condition will be applied. In this case, id numbers should be separated by commas, for example: ``set id = 0,1,2``.
 
 * ``type``: Type of boundary condition being imposed. At the moment, the choices are:
     * ``none`` (default): for which nothing happens.

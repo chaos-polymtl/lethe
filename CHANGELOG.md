@@ -4,6 +4,12 @@ All notable changes to the Lethe project will be documented in this file.
 The changelog for the previous releases of Lethe are located in the release_notes folder.
 The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
+## [Master] - 2025/12/18
+
+### Fixed
+
+- MINOR This PR fixes boundary list that were added in #1697. Boundary lists were not being parsed properly for physics other than fluid dynamic. The parameter parsing now expected a list of integers instead of an integer. [#1866](https://github.com/chaos-polymtl/lethe/pull/1866)
+
 ## [Master] - 2025/12/17
 
 ### Changed
