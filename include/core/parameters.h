@@ -1176,6 +1176,13 @@ namespace Parameters
     bool enable_bubble_function_velocity;
     bool enable_bubble_function_pressure;
 
+    /// Polynomial order for the different electromagnetics spaces.
+    /// The trial order sets the polynomial degree for the solution and the test
+    /// order is used for the computation of the cell matrix necessary when
+    /// solving a system using the DPG method.
+    unsigned int electromagnetics_trial_order;
+    unsigned int electromagnetics_test_order;
+
     static void
     declare_parameters(ParameterHandler &prm);
     void

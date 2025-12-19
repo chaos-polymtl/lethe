@@ -6,12 +6,13 @@
 
 enum PhysicsID : unsigned int
 {
-  fluid_dynamics = 0,
-  heat_transfer  = 1,
-  tracer         = 2,
-  VOF            = 3,
-  cahn_hilliard  = 4,
-  void_fraction  = 5
+  fluid_dynamics   = 0,
+  heat_transfer    = 1,
+  tracer           = 2,
+  VOF              = 3,
+  cahn_hilliard    = 4,
+  void_fraction    = 5,
+  electromagnetics = 6
 };
 
 /**
@@ -33,7 +34,11 @@ enum class Variable : unsigned int
   /// Chemical potential scalar field from Cahn Hilliard
   chemical_potential_cahn_hilliard = 5,
   /// Tracer scalar field
-  tracer = 6
+  tracer = 6,
+  /// Electromagnetics field. This is a single field since mesh adaptation
+  /// is carried out on the entire solution and not on the electric or magnetic
+  /// field separately.
+  electomagnetics = 7
 };
 
 /**
@@ -56,6 +61,8 @@ get_physics_id(std::string physics_name)
     return PhysicsID::cahn_hilliard;
   else if (physics_name == "void fraction")
     return PhysicsID::void_fraction;
+  else if (physics_name == "electromagnetics")
+    return PhysicsID::electromagnetics;
   else
     AssertThrow(false,
                 dealii::StandardExceptions::ExcMessage(

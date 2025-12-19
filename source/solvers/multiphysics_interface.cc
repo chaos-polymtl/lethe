@@ -1,6 +1,7 @@
 // SPDX-FileCopyrightText: Copyright (c) 2021-2025 The Lethe Authors
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
+#include "solvers/time_harmonic_maxwell.h"
 #include <solvers/cahn_hilliard.h>
 #include <solvers/heat_transfer.h>
 #include <solvers/multiphysics_interface.h>
@@ -136,6 +137,22 @@ MultiphysicsInterface<dim>::MultiphysicsInterface(
       active_physics.push_back(PhysicsID::cahn_hilliard);
       physics[PhysicsID::cahn_hilliard] = std::make_shared<CahnHilliard<dim>>(
         this, nsparam, p_triangulation, p_simulation_control);
+    }
+
+  if (multiphysics_parameters.electromagnetics)
+    {
+      verbosity[PhysicsID::electromagnetics] =
+        (nsparam.linear_solver.at(PhysicsID::electromagnetics).verbosity !=
+         Parameters::Verbosity::quiet) ?
+          Parameters::Verbosity::verbose :
+          Parameters::Verbosity::quiet;
+
+      active_physics.push_back(PhysicsID::electromagnetics);
+      physics[PhysicsID::electromagnetics] =
+        std::make_shared<TimeHarmonicMaxwell<dim>>(this,
+                                                   nsparam,
+                                                   p_triangulation,
+                                                   p_simulation_control);
     }
 }
 

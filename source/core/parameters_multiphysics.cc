@@ -58,6 +58,12 @@ Parameters::Multiphysics::declare_parameters(ParameterHandler &prm) const
                       Patterns::Bool(),
                       "Cahn-Hilliard calculation <true|false>");
 
+    prm.declare_entry(
+      "electromagnetics",
+      "false",
+      Patterns::Bool(),
+      "Time harmonic electromagnetics calculation <true|false>");
+
     // subparameters for heat_transfer
     prm.declare_entry("viscous dissipation",
                       "false",
@@ -81,11 +87,12 @@ Parameters::Multiphysics::parse_parameters(ParameterHandler     &prm,
 {
   prm.enter_subsection("multiphysics");
   {
-    fluid_dynamics = prm.get_bool("fluid dynamics");
-    heat_transfer  = prm.get_bool("heat transfer");
-    tracer         = prm.get_bool("tracer");
-    VOF            = prm.get_bool("VOF");
-    cahn_hilliard  = prm.get_bool("cahn hilliard");
+    fluid_dynamics   = prm.get_bool("fluid dynamics");
+    heat_transfer    = prm.get_bool("heat transfer");
+    tracer           = prm.get_bool("tracer");
+    VOF              = prm.get_bool("VOF");
+    cahn_hilliard    = prm.get_bool("cahn hilliard");
+    electromagnetics = prm.get_bool("electromagnetics");
 
     // subparameters for heat_transfer
     viscous_dissipation = prm.get_bool("viscous dissipation");
