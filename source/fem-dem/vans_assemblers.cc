@@ -418,6 +418,8 @@ VANSAssemblerCoreModelA<dim>::assemble_matrix(
         scratch_data.velocity_gradients[q];
       const Tensor<1, dim> velocity_laplacian =
         scratch_data.velocity_laplacians[q];
+      const Tensor<1, dim> velocity_gradient_divergence =
+        scratch_data.velocity_gradient_divergence[q];
 
       const Tensor<1, dim> pressure_gradient =
         scratch_data.pressure_gradients[q];
@@ -470,12 +472,14 @@ VANSAssemblerCoreModelA<dim>::assemble_matrix(
       auto strong_residual =
         velocity_gradient * velocity * void_fraction +
         // Mass Source
-        mass_source * velocity
+        +mass_source * velocity
         // Pressure
-        + void_fraction * pressure_gradient -
+        + void_fraction * pressure_gradient
         // Kinematic viscosity and Force
-        void_fraction * kinematic_viscosity * velocity_laplacian -
-        force * void_fraction + strong_residual_vec[q];
+        - void_fraction * kinematic_viscosity * velocity_laplacian
+        // Compute term ∂j∂iuj = ∂i∂juj
+        - void_fraction * kinematic_viscosity * velocity_gradient_divergence 
+        - force * void_fraction + strong_residual_vec[q];
 
       // Pressure scaling factor
       const double pressure_scaling_factor =
@@ -488,6 +492,8 @@ VANSAssemblerCoreModelA<dim>::assemble_matrix(
           const auto &phi_u_j           = scratch_data.phi_u[q][j];
           const auto &grad_phi_u_j      = scratch_data.grad_phi_u[q][j];
           const auto &laplacian_phi_u_j = scratch_data.laplacian_phi_u[q][j];
+          const auto &gradient_divergence_phi_u_j =
+            scratch_data.gradient_divergence_phi_u[q][j];
 
           const auto &grad_phi_p_j =
             pressure_scaling_factor * scratch_data.grad_phi_p[q][j];
@@ -500,7 +506,8 @@ VANSAssemblerCoreModelA<dim>::assemble_matrix(
              // Pressure
              void_fraction * grad_phi_p_j
              // Kinematic viscosity
-             - void_fraction * kinematic_viscosity * laplacian_phi_u_j);
+             - void_fraction * kinematic_viscosity * laplacian_phi_u_j
+             - void_fraction * kinematic_viscosity * gradient_divergence_phi_u_j);
         }
 
       for (unsigned int i = 0; i < n_dofs; ++i)
@@ -554,6 +561,22 @@ VANSAssemblerCoreModelA<dim>::assemble_matrix(
                                            void_fraction_gradients * phi_u_i +
                                          mass_source * phi_u_j * phi_u_i;
                     }
+                  // Compute term ν_fε_f ∂_j(ϕ_i) ∂_i(δu_j) +
+                  // ν_f ϕ_i ∂_i(δu_j) ∂_j(ε_f) (i and j are vector components)
+                  // local_matrix_ij += void_fraction * kinematic_viscosity *
+                  //                      transpose(grad_phi_u_j) * grad_phi_u_i +
+                  //                    kinematic_viscosity *
+                  //                      transpose(grad_phi_u_j) *
+                  //                      void_fraction_gradients * phi_u_i;
+                  // In shape functions components terms, if this improves
+                  // performance:
+                  local_matrix_ij += void_fraction * kinematic_viscosity *
+                                       grad_phi_u_i[component_i][component_j] *
+                                       grad_phi_u_j[component_j][component_i] +
+                                     kinematic_viscosity *
+                                       grad_phi_u_j[component_j][component_i] *
+                                       void_fraction_gradients[component_j] *
+                                       phi_u_i[component_i];
                 }
 
               // The jacobian matrix for the SUPG formulation
