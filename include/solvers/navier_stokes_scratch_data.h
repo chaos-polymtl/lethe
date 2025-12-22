@@ -294,7 +294,7 @@ public:
       current_solution, this->velocity_gradients);
     this->fe_values[velocities].get_function_laplacians(
       current_solution, this->velocity_laplacians);
-    if (gather_hessian)
+    if (gather_hessian || gather_void_fraction)
       this->fe_values[velocities].get_function_hessians(
         current_solution, this->velocity_hessians);
 
@@ -306,6 +306,19 @@ public:
     for (unsigned int q = 0; q < this->n_q_points; ++q)
       {
         this->velocity_divergences[q] = trace(this->velocity_gradients[q]);
+        if (gather_void_fraction)
+          {
+            // Compute term ∂j(∂iuj) = ∂i(∂juj) to be used in the strong residual
+            // of the VANS  momentum equations
+            for (int d1 = 0; d1 < dim; ++d1)
+              {
+                for (int d2 = 0; d2 < dim; ++d2)
+                  {
+                    this->velocity_gradient_divergence[q][d1] +=
+                      (this->velocity_hessians[q][d2][d1][d2]);
+                  }
+              }
+          }
       }
 
     // Gather pressure (values, gradient)
@@ -343,6 +356,20 @@ public:
             this->hess_phi_u[q][k] = this->fe_values[velocities].hessian(k, q);
             for (int d = 0; d < dim; ++d)
               this->laplacian_phi_u[q][k][d] = trace(this->hess_phi_u[q][k][d]);
+
+            if (gather_void_fraction)
+          {
+            // Compute term ∂j(∂iuj) = ∂i(∂juj) to be used in the strong Jacobian
+            // of the VANS  momentum equations
+            for (int d1 = 0; d1 < dim; ++d1)
+              {
+                for (int d2 = 0; d2 < dim; ++d2)
+                  {
+                    this->gradient_divergence_phi_u[q][k][d1] +=
+                      (this->hess_phi_u[q][k][d2][d1][d2]);
+                  }
+              }
+          }
             // Pressure
             this->phi_p[q][k]      = this->fe_values[pressure].value(k, q);
             this->grad_phi_p[q][k] = this->fe_values[pressure].gradient(k, q);
@@ -1483,6 +1510,8 @@ public:
   std::vector<Tensor<2, dim>>              velocity_gradients;
   std::vector<Tensor<1, dim>>              velocity_laplacians;
   std::vector<Tensor<3, dim>>              velocity_hessians;
+  std::vector<Tensor<1, dim>>              velocity_gradient_divergence;
+  // The gradient of the velocity divergence
   std::vector<Tensor<1, dim>>              velocity_for_stabilization;
   std::vector<double>                      shear_rate;
   std::vector<double>                      pressure_values;
@@ -1496,6 +1525,7 @@ public:
   Table<2, Tensor<1, dim>> phi_u;
   Table<2, Tensor<3, dim>> hess_phi_u;
   Table<2, Tensor<1, dim>> laplacian_phi_u;
+  Table<2, Tensor<1, dim>> gradient_divergence_phi_u;
   Table<2, Tensor<2, dim>> grad_phi_u;
   Table<2, double>         phi_p;
   Table<2, Tensor<1, dim>> grad_phi_p;
