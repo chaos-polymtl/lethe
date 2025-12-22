@@ -245,7 +245,11 @@ public:
     // update solution
     constraints.distribute(completely_distributed_solution);
     delta_solution = completely_distributed_solution;
-    solution += delta_solution;
+
+    TrilinosWrappers::MPI::Vector local_solution(system_rhs);
+    local_solution = solution;
+    local_solution += completely_distributed_solution;
+    solution = local_solution;
   }
 
   void
@@ -276,8 +280,6 @@ public:
         // get vectors without any ghosts
         TrilinosWrappers::MPI::Vector local_delta_solution(system_rhs);
         local_delta_solution = delta_solution;
-        TrilinosWrappers::MPI::Vector local_solution(system_rhs);
-        local_solution = solution;
 
         // calculate error
         error = local_delta_solution.l2_norm();
@@ -286,8 +288,6 @@ public:
         pcout << "   Iter " << it << " - Delta solution norm, Linfty norm: "
               << local_delta_solution.linfty_norm()
               << " L2 norm: " << local_delta_solution.l2_norm() << std::endl;
-
-        solution = local_solution;
 
         // output iteration results
         output_results(it);
