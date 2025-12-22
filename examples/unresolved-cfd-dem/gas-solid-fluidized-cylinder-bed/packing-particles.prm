@@ -27,8 +27,11 @@ subsection timer
   set type = none
 end
 
+#---------------------------------------------------
+# Post-processing
+#---------------------------------------------------
+
 subsection post-processing
-  # Enable output of grid, granular temperature, and particles' average velocity
   set lagrangian post-processing = true
 end
 

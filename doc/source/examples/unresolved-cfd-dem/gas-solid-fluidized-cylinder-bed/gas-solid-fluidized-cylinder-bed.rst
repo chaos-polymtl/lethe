@@ -11,6 +11,7 @@ Features
 - Solvers: ``lethe-particles``, ``lethe-fluid-particles`` and ``lethe-fluid-particles-matrix-free``, with Q1-Q1
 - Three-dimensional problem
 - Displays the selection of models and physical properties
+- Shows the three coupling strategies for the drag force (implicit, semi-implicit and explicit)
 - Simulates a cylindrical solid-gas fluidized bed
 
 
@@ -21,7 +22,7 @@ Files Used in This Example
 All files mentioned below are located in the example's folder (``examples/unresolved-cfd-dem/gas-solid-fluidized-cylinder-bed``).
 
 - Parameter file for particle generation and packing: ``packing-particles.prm``
-- Parameter files for CFD-DEM simulation of the gas-solid fluidized bed: ``mb-fluidized-bed-modelA-pcm-explicit.prm``, ``mb-fluidized-bed-modelA-pcm-implicit.prm``, ``mb-fluidized-bed-modelA-pcm-semi-implicit.prm``, ``mb-fluidized-bed-modelA-qcm-explicit.prm``, ``mb-fluidized-bed-modelA-qcm-implicit.prm ``, ``mb-fluidized-bed-modelA-qcm-semi-implicit.prm``, ``mf-fluidized-bed-modelA-qcm-explicit.prm``, ``mf-fluidized-bed-modelA-qcm-implicit.prm``, ``mf-fluidized-bed-modelA-qcm-semi-implicit.prm``
+- Parameter files for CFD-DEM simulation of the gas-solid fluidized bed: ``mb-fluidized-bed-modelA-pcm-explicit.prm``, ``mb-fluidized-bed-modelA-pcm-implicit.prm``, ``mb-fluidized-bed-modelA-pcm-semi-implicit.prm``, ``mb-fluidized-bed-modelA-qcm-explicit.prm``, ``mb-fluidized-bed-modelA-qcm-implicit.prm``, ``mb-fluidized-bed-modelA-qcm-semi-implicit.prm``, ``mf-fluidized-bed-modelA-qcm-explicit.prm``, ``mf-fluidized-bed-modelA-qcm-implicit.prm``, ``mf-fluidized-bed-modelA-qcm-semi-implicit.prm``
 - Post-processing Python script: ``plot-pressure.py``
 
 
@@ -30,8 +31,9 @@ Description of the Case
 -----------------------
 
 This example simulates a gas–solid fluidized bed inside a cylindrical column (diameter :math:`0.02` m, height :math:`0.4` m). First, ``lethe-particles`` is used with ``packing-particles.prm`` to generate and pack spherical particles (diameter :math:`0.0005` m, density :math:`1000\;\text{kg}/\text{m}^3`) inside the column. After packing, the solid–fluid mixture is simulated using the model A of the VANS equations with two solvers:
+
  1. The matrix-based CFD–DEM solver ``lethe-fluid-particles``
-   
+
     The VANS model A using the matrix-based solver is tested with two different projection filters:
 
        * a cell-based filter (corresponding to the Particle Centroid Method, PCM)
@@ -50,13 +52,13 @@ The superficial gas velocity at the inlet is varied from :math:`0.02` to :math:`
 DEM Parameter File
 -------------------
 
-A DEM simulation is first run to insert the required number of particles. A detailed description of all the DEM parameter subsections can be found in the `DEM parameters section <../../../parameters/dem/dem.html>`_. The subsections in the DEM parameter file ``packing-particles.prm`` that are pertinent to this example are described below. 
+A DEM simulation is first run to insert the particles. The subsections in the DEM parameter file ``packing-particles.prm`` that are pertinent to this example are described below. 
 
 
 Mesh
 ~~~~~
 
-As mentioned in the example description, the particles are packed inside a cylindrical column. For this reason, the mesh type is set to ``cylinder`` with a ``balanced`` grid. This mesh uses the same input arguments as the ``GridGenerator::subdivided_cylinder`` function of Deal.II, yet leads to more uniform cells across the domain. An initial refinement level of :math:`2` provides enough cells for the CFD solver while keeping the smallest cell size larger than the particle diameter. Finally, the particle–wall contact search expansion is enabled to ensure proper detection of particle–wall interactions in the curved convex geometry.
+The particles are packed inside a cylindrical column. For this reason, the mesh type is set to ``cylinder`` with a ``balanced`` grid. This mesh uses the same input arguments as the ``GridGenerator::subdivided_cylinder`` function of Deal.II, yet leads to more uniform cells across the domain. An initial refinement level of :math:`2` provides enough cells for the CFD solver while keeping the smallest cell size larger than the particle diameter. Finally, the particle–wall contact search expansion is enabled to ensure proper detection of particle–wall interactions in the curved convex geometry.
 
 .. code-block:: text
 
@@ -104,7 +106,7 @@ The initial state of the particles in the CFD-DEM solver corresponds to the fina
 Model Parameters
 ~~~~~~~~~~~~~~~~~
 
-Details on the model parameters subsection are provided in the `DEM Model Parameters guide <../../../parameters/dem/model_parameters.html>`_ and other `DEM examples <../../dem/dem.html>`_. The ``neighborhood threshold`` is set to 1.1 as an adequate compromise between the number of contact detection steps and the number of neighbours of each particle. This is mostly for computational efficiency and a value of 1.2 or 1.3 could also be used here.
+Details on the model parameters subsection are provided in the `DEM Model Parameters guide <../../../parameters/dem/model_parameters.html>`_ and other `DEM examples <../../dem/dem.html>`_. The ``neighborhood threshold`` is set to :math:`1.1` as an adequate compromise between the number of contact detection steps and the number of neighbours of each particle. This is mostly for computational efficiency and a value of :math:`1.2` or :math:`1.3` could also be used here.
 
 .. code-block:: text
 
@@ -114,8 +116,8 @@ Details on the model parameters subsection are provided in the `DEM Model Parame
             set neighborhood threshold   = 1.1
         end
         subsection load balancing
-            set load balance method     = frequent
-            set frequency = 10000
+            set load balance method = frequent
+            set frequency           = 10000
         end
         set particle particle contact force method = hertz_mindlin_limit_overlap
         set particle wall contact force method     = nonlinear
@@ -126,7 +128,7 @@ Details on the model parameters subsection are provided in the `DEM Model Parame
 Lagrangian Physical Properties
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-The ``lagrangian physical properties`` subsection defines the physical properties of the particles and walls in the simulation. All properties are chosen to match those used in the work of El Geitani *et al* [#ElGeitani2023]_. Accordingly, the cylindrical bed is filled with :math:`200 000` particles, each with a diameter of :math:`500\;\mu\text{m}` and a density of :math:`1000\;\text{kg}/\text{m}^3`.
+The ``lagrangian physical properties`` subsection defines the physical properties of the particles and walls in the simulation. All properties are chosen to match those used in the work of El Geitani *et al* [#ElGeitani2023]_. Accordingly, the cylindrical bed is filled with :math:`200\;000` particles, each with a diameter of :math:`500\;\mu\text{m}` and a density of :math:`1000\;\text{kg}/\text{m}^3`.
 
 .. code-block:: text
 
@@ -155,7 +157,7 @@ The ``lagrangian physical properties`` subsection defines the physical propertie
 Insertion Info
 ~~~~~~~~~~~~~~~~~~~
 
-The particles are inserted into the cylindrical column using the ``insertion info`` subsection. All the particles are inserted at the first iteration and the insertion box dimensions are thus chosen such that it can contain all particles.
+The particles are inserted into the cylindrical column using the ``insertion info`` subsection. All the particles are inserted at the first iteration and the insertion box dimensions are chosen so that it contains all particles.
 
 .. code-block:: text
 
@@ -181,18 +183,10 @@ To allow the gas flow to develop before reaching the particles, the latter are p
     subsection floating walls
         set number of floating walls = 1
         subsection wall 0
-            subsection point on wall
-                set x = -0.18
-                set y = 0
-                set z = 0
-            end
-            subsection normal vector
-                set nx = 1
-                set ny = 0
-                set nz = 0
-            end
-            set start time = 0
-            set end time   = 100
+            set point on wall = -0.18, 0., 0.
+            set normal vector = 1., 0., 0.
+            set start time    = 0
+            set end time      = 100
         end
     end
 
@@ -220,7 +214,7 @@ CFD-DEM Parameter File
 
 The CFD-DEM simulation is run using the matrix-based solver ``lethe-fluid-particles`` or the matrix-free solver ``lethe-fluid-particles-matrix-free``. For the matrix-based solver, six parameter files are provided to test VANS model A with two projection filters (cell-based and QCM) and three different drag coupling approaches (explicit, implicit, and semi-implicit). The matrix-free solver is also tested with the QCM filter and the three drag coupling schemes. The main description in this section follows the matrix-based parameter file ``mb-fluidized-bed-modelA-qcm-semi-implicit.prm``. Differences associated with the remaining parameter files will be highlighted where relevant.
 
-The objective of the simulations is to represent the pressure drop across the bed as a function of the Reynolds number based on the superficial gas velocity and the column diameter:
+The objective of the simulations is to predict the pressure drop across the bed as a function of the Reynolds number based on the superficial gas velocity and the column diameter:
 
 .. math::
   \mathrm{Re} = \frac{U_{\mathrm{g}} D}{\nu_{\mathrm{f}}}
@@ -231,7 +225,7 @@ where :math:`U_{\mathrm{g}}` is the superficial gas velocity, :math:`D` is the c
 Simulation Control
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-To reach an inlet velocity of :math:`0.3\;\text{m/s}`, as described earlier, the CFD-DEM simulation is run for a total time of :math:`0.75` s with a time step of :math:`0.0002` s. For cases with an explicit drag coupling, the time step is reduced to :math:`0.0001` s to ensure numerical stability.
+To reach an inlet velocity of :math:`0.3\;\text{m/s}`, the CFD-DEM simulation is run for a total time of :math:`0.75` s with a time step of :math:`0.0002` s. For cases with an explicit drag coupling, the time step is reduced to :math:`0.0001` s to ensure numerical stability.
 
 .. code-block:: text
 
@@ -241,6 +235,7 @@ To reach an inlet velocity of :math:`0.3\;\text{m/s}`, as described earlier, the
         set time end         = 0.75
         set time step        = 0.0002
     end
+
 
 Physical Properties
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -255,6 +250,7 @@ The gas is taken to have a density of :math:`1\;\text{kg/m}^3` and a kinematic v
             set density             = 1
         end
     end
+
 
 Boundary Conditions
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -293,7 +289,7 @@ The boundary conditions are chosen as follows: a no-slip condition on the latera
 Void Fraction
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-The void fraction is computed using the particle information available in the DEM files, so ``read_dem`` is set to ``true``. The ``dem file name`` corresponds to the files written during the previous DEM simulation using checkpointing. The calculation method is set to ``qcm``, with the sphere’s radius chosen such that its volume equals the cell’s volume by setting ``qcm sphere equal cell volume`` to ``true``. For cases using the PCM filter, the void fraction ``mode`` is set to ``pcm`` instead. A smoothing length equal to twice the particle diameter is used.
+The ``dem file name`` corresponds to the files written during the previous DEM simulation using checkpointing. The calculation method is set to ``qcm``, with the sphere’s radius chosen such that its volume equals the cell’s volume by setting ``qcm sphere equal cell volume`` to ``true``. For cases using the PCM filter, the void fraction ``mode`` is set to ``pcm`` instead. A smoothing length equal to twice the particle diameter is used.
 
 .. code-block:: text
 
@@ -302,7 +298,7 @@ The void fraction is computed using the particle information available in the DE
         set qcm sphere equal cell volume = true
         set read dem                     = true
         set dem file name                = dem
-        set l2 smoothing length = 0.001
+        set l2 smoothing length          = 0.001
     end
 
 
@@ -340,7 +336,7 @@ The pressure drop is calculated across the bed. The parameters ``inlet boundary 
         set calculate pressure drop = true
         set inlet boundary id       = 1
         set outlet boundary id      = 2
-        set output frequency        = 10
+        set output frequency        = 1
         set verbosity               = verbose
     end
 
@@ -362,30 +358,6 @@ The ``newton`` nonlinear solver is used. The tolerance is selected to balance si
     end
 
     
-Linear Solver
-~~~~~~~~~~~~~
-
-The GMRES solver with the ILU preconditioner is chosen, using an initial fill level of 0. The initial fill level and the relative tolerance are selected to provide adequate convergence while keeping the simulation time reasonable.
-
-.. code-block:: text
-
-    subsection linear solver
-        subsection fluid dynamics
-            set method                                = gmres
-            set max iters                             = 500
-            set relative residual                     = 1e-3
-            set minimum residual                      = 1e-10
-            set preconditioner                        = ilu
-            set ilu preconditioner fill               = 0
-            set ilu preconditioner absolute tolerance = 1e-14
-            set ilu preconditioner relative tolerance = 1.00
-            set verbosity                             = verbose
-            set max krylov vectors                    = 500
-        end
-    end
-
-
-
 ------------------------------
 Running the CFD-DEM Simulation
 ------------------------------
@@ -395,14 +367,16 @@ The simulations are launched with the matrix-based solver (and corresponding par
 .. code-block:: text
   :class: copy-button
 
-  mpirun -np 8 lethe-fluid-particles mb-fluidized-bed-modelA-qcm-semi-implicit.prm
+  mpirun -np $numproc lethe-fluid-particles mb-fluidized-bed-modelA-qcm-semi-implicit.prm
+
+where ``$numproc`` represents the number of processors to be used.
 
 The matrix-free solver is run following:
 
 .. code-block:: text
   :class: copy-button
 
-  mpirun -np 8 lethe-fluid-particles-matrix-free mf-fluidized-bed-modelA-qcm-semi-implicit.prm
+  mpirun -np $numproc lethe-fluid-particles-matrix-free mf-fluidized-bed-modelA-qcm-semi-implicit.prm
 
 .. note::   
     The simulation runtimes on 128 cores, which are approximate, are as follows:
@@ -444,7 +418,6 @@ and that predicted by Noda *et al* [#Noda1986]_:
 .. math::
   \mathrm{Re}_{\text{mf}} = \left(19.29^2 + 0.0276 \, Ar \right)^{0.5} - 19.29
     
-
 Here, the subscript :math:`\mathrm{mf}` refers to minimum fluidization, and :math:`\mathrm{Ar}` is the Archimedes number, which depends on the acceleration due to gravity, :math:`g`, the fluid density, :math:`\rho_{\mathrm{f}}`, and dynamic viscosity, :math:`\mu_{\mathrm{f}}`, as well as the particle diameter, :math:`d_{\mathrm{p}}`, and particle density, :math:`\rho_{\mathrm{p}}`:
 
 .. math::
