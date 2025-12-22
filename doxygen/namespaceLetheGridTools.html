@@ -101,6 +101,7 @@ Enumerations</h2></td></tr>
 <tr class="memitem:aa73fd4047286eeafd3b77323f913b364" id="r_aa73fd4047286eeafd3b77323f913b364"><td class="memItemLeft" align="right" valign="top">enum class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceLetheGridTools.html#aa73fd4047286eeafd3b77323f913b364">ParticleTriangleContactIndicator</a> : std::uint8_t { <a class="el" href="namespaceLetheGridTools.html#aa73fd4047286eeafd3b77323f913b364ab658544443f4930b2eead45c221ca340">face_contact</a>
 , <a class="el" href="namespaceLetheGridTools.html#aa73fd4047286eeafd3b77323f913b364a875320c330c016a8b0c1f9428a60808a">edge_contact</a>
 , <a class="el" href="namespaceLetheGridTools.html#aa73fd4047286eeafd3b77323f913b364a3d3dcccf529551e535700526a44f21c3">vertex_contact</a>
+, <a class="el" href="namespaceLetheGridTools.html#aa73fd4047286eeafd3b77323f913b364a8b2daa8ea3781a11ebed7fca802656bf">no_contact</a>
  }</td></tr>
 <tr class="separator:aa73fd4047286eeafd3b77323f913b364"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
@@ -148,9 +149,9 @@ Functions</h2></td></tr>
 <tr class="memitem:adcc54656da552f633c48fca2b6f172e1" id="r_adcc54656da552f633c48fca2b6f172e1"><td class="memTemplParams" colspan="2">template&lt;int spacedim, int structdim&gt; </td></tr>
 <tr class="memitem:adcc54656da552f633c48fca2b6f172e1"><td class="memTemplItemLeft" align="right" valign="top">std::map&lt; typename DoFHandler&lt; spacedim &gt;::active_cell_iterator, std::map&lt; unsigned int, typename DoFHandler&lt; structdim, spacedim &gt;::active_cell_iterator &gt; &gt;&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespaceLetheGridTools.html#adcc54656da552f633c48fca2b6f172e1">find_cells_cut_by_object</a> (const DoFHandler&lt; spacedim &gt; &amp;dof_handler, std::map&lt; unsigned int, std::set&lt; typename DoFHandler&lt; spacedim &gt;::active_cell_iterator &gt; &gt; &amp;vertices_cell_map, std::vector&lt; <a class="el" href="classSerialSolid.html">SerialSolid</a>&lt; structdim, spacedim &gt; &gt; &amp;list_of_objects)</td></tr>
 <tr class="separator:adcc54656da552f633c48fca2b6f172e1"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a89a45669ce22bab640360a3560d27d07" id="r_a89a45669ce22bab640360a3560d27d07"><td class="memTemplParams" colspan="2">template&lt;int dim, typename PropertiesIndex &gt; </td></tr>
-<tr class="memitem:a89a45669ce22bab640360a3560d27d07"><td class="memTemplItemLeft" align="right" valign="top">std::tuple&lt; std::vector&lt; bool &gt;, std::vector&lt; Point&lt; 3 &gt; &gt;, std::vector&lt; Tensor&lt; 1, 3 &gt; &gt;, std::vector&lt; <a class="el" href="namespaceLetheGridTools.html#aa73fd4047286eeafd3b77323f913b364">ParticleTriangleContactIndicator</a> &gt; &gt;&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespaceLetheGridTools.html#a89a45669ce22bab640360a3560d27d07">find_particle_triangle_projection</a> (const std::vector&lt; Point&lt; dim &gt; &gt; &amp;triangle, const std::vector&lt; Particles::ParticleIterator&lt; dim &gt; &gt; &amp;particles, const unsigned int &amp;n_particles_in_base_cell)</td></tr>
-<tr class="separator:a89a45669ce22bab640360a3560d27d07"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a27fab7ba7182b6475b802f0e98844496" id="r_a27fab7ba7182b6475b802f0e98844496"><td class="memTemplParams" colspan="2">template&lt;int dim, typename PropertiesIndex &gt; </td></tr>
+<tr class="memitem:a27fab7ba7182b6475b802f0e98844496"><td class="memTemplItemLeft" align="right" valign="top">std::tuple&lt; bool, Point&lt; 3 &gt;, Tensor&lt; 1, 3 &gt;, <a class="el" href="namespaceLetheGridTools.html#aa73fd4047286eeafd3b77323f913b364">ParticleTriangleContactIndicator</a> &gt;&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespaceLetheGridTools.html#a27fab7ba7182b6475b802f0e98844496">find_particle_triangle_projection</a> (const std::vector&lt; Point&lt; dim &gt; &gt; &amp;triangle, const Particles::ParticleIterator&lt; dim &gt; &amp;particle)</td></tr>
+<tr class="separator:a27fab7ba7182b6475b802f0e98844496"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a0441112a1d2ecc434246a30f9ef098a1" id="r_a0441112a1d2ecc434246a30f9ef098a1"><td class="memTemplParams" colspan="2">template&lt;int dim&gt; </td></tr>
 <tr class="memitem:a0441112a1d2ecc434246a30f9ef098a1"><td class="memTemplItemLeft" align="right" valign="top">double&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespaceLetheGridTools.html#a0441112a1d2ecc434246a30f9ef098a1">find_point_triangle_distance</a> (const std::vector&lt; Point&lt; dim &gt; &gt; &amp;triangle_vertices, const Point&lt; dim &gt; &amp;point)</td></tr>
 <tr class="separator:a0441112a1d2ecc434246a30f9ef098a1"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -196,6 +197,7 @@ Functions</h2></td></tr>
 <tr><th colspan="2">Enumerator</th></tr><tr><td class="fieldname"><a id="aa73fd4047286eeafd3b77323f913b364ab658544443f4930b2eead45c221ca340" name="aa73fd4047286eeafd3b77323f913b364ab658544443f4930b2eead45c221ca340"></a>face_contact&#160;</td><td class="fielddoc"></td></tr>
 <tr><td class="fieldname"><a id="aa73fd4047286eeafd3b77323f913b364a875320c330c016a8b0c1f9428a60808a" name="aa73fd4047286eeafd3b77323f913b364a875320c330c016a8b0c1f9428a60808a"></a>edge_contact&#160;</td><td class="fielddoc"></td></tr>
 <tr><td class="fieldname"><a id="aa73fd4047286eeafd3b77323f913b364a3d3dcccf529551e535700526a44f21c3" name="aa73fd4047286eeafd3b77323f913b364a3d3dcccf529551e535700526a44f21c3"></a>vertex_contact&#160;</td><td class="fielddoc"></td></tr>
+<tr><td class="fieldname"><a id="aa73fd4047286eeafd3b77323f913b364a8b2daa8ea3781a11ebed7fca802656bf" name="aa73fd4047286eeafd3b77323f913b364a8b2daa8ea3781a11ebed7fca802656bf"></a>no_contact&#160;</td><td class="fielddoc"></td></tr>
 </table>
 
 <p class="definition">Definition at line <a class="el" href="lethe__grid__tools_8h_source.html#l00267">267</a> of file <a class="el" href="lethe__grid__tools_8h_source.html">lethe_grid_tools.h</a>.</p>
@@ -557,7 +559,7 @@ template&lt;int dim, int spacedim = dim&gt; </div>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="lethe__grid__tools_8cc_source.html#l01960">1960</a> of file <a class="el" href="lethe__grid__tools_8cc_source.html">lethe_grid_tools.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="lethe__grid__tools_8cc_source.html#l01918">1918</a> of file <a class="el" href="lethe__grid__tools_8cc_source.html">lethe_grid_tools.cc</a>.</p>
 
 </div>
 </div>
@@ -814,12 +816,12 @@ template&lt;int dim&gt; </div>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>A vector of points that are the intersection points between the line and the sphere. The vector can be empty if there is no intersection, or contain one or two points if there is an intersection. </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="lethe__grid__tools_8cc_source.html#l01769">1769</a> of file <a class="el" href="lethe__grid__tools_8cc_source.html">lethe_grid_tools.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="lethe__grid__tools_8cc_source.html#l01727">1727</a> of file <a class="el" href="lethe__grid__tools_8cc_source.html">lethe_grid_tools.cc</a>.</p>
 
 </div>
 </div>
-<a id="a89a45669ce22bab640360a3560d27d07" name="a89a45669ce22bab640360a3560d27d07"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a89a45669ce22bab640360a3560d27d07">&#9670;&#160;</a></span>find_particle_triangle_projection()</h2>
+<a id="a27fab7ba7182b6475b802f0e98844496" name="a27fab7ba7182b6475b802f0e98844496"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a27fab7ba7182b6475b802f0e98844496">&#9670;&#160;</a></span>find_particle_triangle_projection()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -827,7 +829,7 @@ template&lt;int dim&gt; </div>
 template&lt;int dim, typename PropertiesIndex &gt; </div>
       <table class="memname">
         <tr>
-          <td class="memname">std::tuple&lt; std::vector&lt; bool &gt;, std::vector&lt; Point&lt; 3 &gt; &gt;, std::vector&lt; Tensor&lt; 1, 3 &gt; &gt;, std::vector&lt; <a class="el" href="namespaceLetheGridTools.html#aa73fd4047286eeafd3b77323f913b364">ParticleTriangleContactIndicator</a> &gt; &gt; LetheGridTools::find_particle_triangle_projection </td>
+          <td class="memname">std::tuple&lt; bool, Point&lt; 3 &gt;, Tensor&lt; 1, 3 &gt;, <a class="el" href="namespaceLetheGridTools.html#aa73fd4047286eeafd3b77323f913b364">ParticleTriangleContactIndicator</a> &gt; LetheGridTools::find_particle_triangle_projection </td>
           <td>(</td>
           <td class="paramtype">const std::vector&lt; Point&lt; dim &gt; &gt; &amp;&#160;</td>
           <td class="paramname"><em>triangle</em>, </td>
@@ -835,14 +837,8 @@ template&lt;int dim, typename PropertiesIndex &gt; </div>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">const std::vector&lt; Particles::ParticleIterator&lt; dim &gt; &gt; &amp;&#160;</td>
-          <td class="paramname"><em>particles</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">const unsigned int &amp;&#160;</td>
-          <td class="paramname"><em>n_particles_in_base_cell</em>&#160;</td>
+          <td class="paramtype">const Particles::ParticleIterator&lt; dim &gt; &amp;&#160;</td>
+          <td class="paramname"><em>particle</em>&#160;</td>
         </tr>
         <tr>
           <td></td>
@@ -863,12 +859,11 @@ template&lt;int dim, typename PropertiesIndex &gt; </div>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">triangle</td><td>A vector of points that defines a triangle </td></tr>
-    <tr><td class="paramname">particles</td><td>A particle_iterator_range that refers to all the particles located in the background (base) cell </td></tr>
-    <tr><td class="paramname">n_particles_in_base_cell</td><td>Number of particles in the base cell</td></tr>
+    <tr><td class="paramname">particle</td><td>A particle_iterator that refers to the particle located in the background (base) cell</td></tr>
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd>A tuple in which: 0. a vector of bools to determine if the particle is less than a radius away from the triangle plane, 1. a vector of projected location of particles on the triangle, 2. a vector of normal contact vectors between the triangle and the particles, 3. a vector of the contact type between the particle and the triangle. </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>A tuple in which: 0. a bool to determine if the particle is less than a radius away from the triangle plane, 1. a projected location of the particle on the triangle, 2. a normal contact vector between the triangle and the particle, 3. a contact type between the particle and the triangle. </dd></dl>
 
 </div>
 </div>
@@ -926,7 +921,7 @@ template&lt;int dim&gt; </div>
 </dl>
 <p>return distance </p>
 
-<p class="definition">Definition at line <a class="el" href="lethe__grid__tools_8h_source.html#l00378">378</a> of file <a class="el" href="lethe__grid__tools_8h_source.html">lethe_grid_tools.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="lethe__grid__tools_8h_source.html#l00374">374</a> of file <a class="el" href="lethe__grid__tools_8h_source.html">lethe_grid_tools.h</a>.</p>
 
 </div>
 </div>
@@ -968,7 +963,7 @@ template&lt;int dim&gt; </div>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="lethe__grid__tools_8cc_source.html#l01558">1558</a> of file <a class="el" href="lethe__grid__tools_8cc_source.html">lethe_grid_tools.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="lethe__grid__tools_8cc_source.html#l01516">1516</a> of file <a class="el" href="lethe__grid__tools_8cc_source.html">lethe_grid_tools.cc</a>.</p>
 
 </div>
 </div>
@@ -1084,7 +1079,7 @@ template&lt;int dim&gt; </div>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="lethe__grid__tools_8cc_source.html#l01831">1831</a> of file <a class="el" href="lethe__grid__tools_8cc_source.html">lethe_grid_tools.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="lethe__grid__tools_8cc_source.html#l01789">1789</a> of file <a class="el" href="lethe__grid__tools_8cc_source.html">lethe_grid_tools.cc</a>.</p>
 
 </div>
 </div>
@@ -1166,7 +1161,7 @@ template&lt;int dim, int spacedim&gt; </div>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="lethe__grid__tools_8cc_source.html#l01905">1905</a> of file <a class="el" href="lethe__grid__tools_8cc_source.html">lethe_grid_tools.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="lethe__grid__tools_8cc_source.html#l01863">1863</a> of file <a class="el" href="lethe__grid__tools_8cc_source.html">lethe_grid_tools.cc</a>.</p>
 
 </div>
 </div>
