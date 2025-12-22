@@ -4,7 +4,13 @@ All notable changes to the Lethe project will be documented in this file.
 The changelog for the previous releases of Lethe are located in the release_notes folder.
 The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
-## [Master] - 2025/12/18
+## [Master] - 2025/12/19
+
+### Fixed
+
+- MINOR This is the follow-up to PR 1855, where we fixed the infinite while loop related to solid surface. This PR adds an application that was falling previously to this fix. This PR also changes how the main loop on every solid object is built during the force calculation which results in a significant speed-up of the code. [#1865](https://github.com/chaos-polymtl/lethe/pull/1865)
+
+## [Master] - 2025/12/18**
 
 ### Fixed
 

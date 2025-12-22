@@ -166,7 +166,6 @@ ParticleWallContactForce<dim,
     get_force_calculation_threshold_distance();
 
   // Initiate containers
-  std::vector<Particles::ParticleIterator<dim>> particle_locations;
   std::vector<Point<dim>> triangle(this->vertices_per_triangle);
 
   // Iterating over the solid objects
@@ -177,13 +176,15 @@ ParticleWallContactForce<dim,
       const auto &[this_solid_es_neighbors, this_solid_vs_neighbors] =
         solids[solid_counter]->get_neighbors_maps();
 
-      // For each solid surface, we create a map used to store every contact.
-      // The key of that map is the particle local ID.
-      // The value is a vector of tuple storing the required information to
+      // For each solid surface, we create a map, called the contact_record,
+      // used to store every contact. The key of that map is the particle local
+      // ID. The value is a vector of tuple storing the required information to
       // compute the contact force later on.
-      // The information includes: 1. The triangle cell with which the contact
-      // is occurring, 2. The normal overlap, 3. The type of contact (face, edge
-      // or vertex) 4. The contact info associated.
+      // The information includes:
+      // 1. The triangle cell with which the contact is occurring,
+      // 2. The normal overlap,
+      // 3. The type of contact (face, edge or vertex)
+      // 4. The contact info associated.
       particle_triangle_contact_record contact_record;
 
       typename dem_data_structures<
@@ -191,84 +192,67 @@ ParticleWallContactForce<dim,
         &particle_floating_mesh_potential_contact_pair =
           particle_floating_mesh_potentially_in_contact[solid_counter];
 
+      // Loop over every triangle of the solid object
       for (auto &[triangle_cell_iterator, map_info] :
            particle_floating_mesh_potential_contact_pair)
         {
-          if (!map_info.empty())
+          if (map_info.empty())
+            continue;
+
+          // Build triangle vector from the triangle cell vertices
+          for (unsigned int vertex = 0; vertex < this->vertices_per_triangle;
+               ++vertex)
+            triangle[vertex] = triangle_cell_iterator->vertex(vertex);
+
+          // We reserve the contact record of this triangle an arbitrary number
+          // of contacts
+          contact_record.reserve(map_info.size());
+
+          // Loop on every particle using their contact info
+          for (auto &&contact_info : map_info | boost::adaptors::map_values)
             {
-              // Clear the particle locations vector for the new cut cell and
-              // reserve the required size for the particle locations.
-              particle_locations.clear();
-              const unsigned int n_particles = map_info.size();
-              particle_locations.reserve(n_particles);
-
-              // Gather all the particles locations in a vector
-              for (auto &&contact_info : map_info | boost::adaptors::map_values)
-                particle_locations.emplace_back(contact_info.particle);
-
-              // Build triangle vector from the triangle cell vertices
-              for (unsigned int vertex = 0;
-                   vertex < this->vertices_per_triangle;
-                   ++vertex)
-                triangle[vertex] = triangle_cell_iterator->vertex(vertex);
-
-              // Getting the projection of particles on the triangle
-              // (triangle cell)
+              // We check the contact between the triangle and the particle.
               auto particle_triangle_information = LetheGridTools::
                 find_particle_triangle_projection<dim, PropertiesIndex>(
-                  triangle, particle_locations, n_particles);
+                  triangle, contact_info.particle);
 
               const auto &[pass_distance_check,
-                           projection_points,
-                           normal_vectors,
-                           contact_indicators] = particle_triangle_information;
+                           projection_point,
+                           normal_vector,
+                           contact_indicator] = particle_triangle_information;
 
-              // Loop on every particle contact info
-              unsigned int particle_counter = 0;
-              for (auto &&contact_info : map_info | boost::adaptors::map_values)
+              // If the particle is close enough to the triangle in
+              // the direction normal to the triangle.
+              if (pass_distance_check)
                 {
-                  // We reserve the contact record relative to the number of
-                  // trues there is in the "pass_distance_check".
-                  contact_record.reserve(std::count(pass_distance_check.begin(),
-                                                    pass_distance_check.end(),
-                                                    true));
-                  // If the particle is close enough to the triangle in
-                  // the direction normal to the triangle.
-                  if (pass_distance_check[particle_counter])
+                  // Defining local variables which will be used to store
+                  // the contact in the contact record
+                  auto        &particle            = contact_info.particle;
+                  auto         particle_properties = particle->get_properties();
+                  Point<3>     particle_location_3d = get_location(particle);
+                  const double particle_triangle_distance =
+                    particle_location_3d.distance(projection_point);
+
+                  // Find normal overlap
+                  const double normal_overlap =
+                    0.5 * particle_properties[PropertiesIndex::dp] -
+                    particle_triangle_distance;
+
+                  // The contact is potentially valid, thus we need to store
+                  // it in the contact record.
+                  if (normal_overlap > force_calculation_threshold_distance)
                     {
-                      // Defining local variables which will be used to store
-                      // the contact in the contact record
-                      auto    &particle            = contact_info.particle;
-                      auto     particle_properties = particle->get_properties();
-                      Point<3> particle_location_3d = get_location(particle);
-                      const double particle_triangle_distance =
-                        particle_location_3d.distance(
-                          projection_points[particle_counter]);
+                      // Update information in the contact_info
+                      contact_info.normal_vector     = normal_vector;
+                      contact_info.point_on_boundary = projection_point;
+                      contact_info.boundary_id       = solid_counter;
 
-                      // Find normal overlap
-                      const double normal_overlap =
-                        0.5 * particle_properties[PropertiesIndex::dp] -
-                        particle_triangle_distance;
-
-                      // The contact is potentially valid, thus we need to store
-                      // it in the contact record.
-                      if (normal_overlap > force_calculation_threshold_distance)
-                        {
-                          // Update information in the contact_info
-                          contact_info.normal_vector =
-                            normal_vectors[particle_counter];
-                          contact_info.point_on_boundary =
-                            projection_points[particle_counter];
-                          contact_info.boundary_id = solid_counter;
-
-                          contact_record[particle->get_local_index()]
-                            .emplace_back(triangle_cell_iterator,
-                                          normal_overlap,
-                                          contact_indicators[particle_counter],
-                                          contact_info);
-                        }
+                      contact_record[particle->get_local_index()].emplace_back(
+                        triangle_cell_iterator,
+                        normal_overlap,
+                        contact_indicator,
+                        contact_info);
                     }
-                  particle_counter++;
                 }
             }
         }
@@ -291,12 +275,8 @@ ParticleWallContactForce<dim,
                      contact_info_C1] = *C1;
 
               // Assigning the triangle neighboring list of T1;
-              const std::vector<
-                typename Triangulation<dim - 1, dim>::active_cell_iterator>
-                &T1_es_neighbors = this_solid_es_neighbors.at(T1_cell);
-              const std::vector<
-                typename Triangulation<dim - 1, dim>::active_cell_iterator>
-                &T1_vs_neighbors = this_solid_vs_neighbors.at(T1_cell);
+              const auto &T1_es_neighbors = this_solid_es_neighbors.at(T1_cell);
+              const auto &T1_vs_neighbors = this_solid_vs_neighbors.at(T1_cell);
 
               // Initialize variables. We need to compare C1 to every other
               // contact (C2) that was not compared yet.
@@ -314,7 +294,9 @@ ParticleWallContactForce<dim,
                   // are not neighbors, C1 and C2 are automatically valid.
                   // (Disconnected triangles)
                   if (std::ranges::find(T1_es_neighbors, T2_cell) ==
-                      T1_es_neighbors.end())
+                        T1_es_neighbors.end() &&
+                      std::ranges::find(T1_vs_neighbors, T2_cell) ==
+                        T1_vs_neighbors.end())
                     {
                       ++C2;
                       continue;

@@ -268,7 +268,8 @@ namespace LetheGridTools
   {
     face_contact,
     edge_contact,
-    vertex_contact
+    vertex_contact,
+    no_contact
   };
 
   /**
@@ -286,25 +287,20 @@ namespace LetheGridTools
    * @tparam PropertiesIndex Index of the properties used within the ParticleHandler.
    *
    * @param triangle A vector of points that defines a triangle
-   * @param particles A particle_iterator_range that refers to all the particles
+   * @param particle A particle_iterator that refers to the particle
    * located in the background (base) cell
-   * @param n_particles_in_base_cell Number of particles in the base cell
    *
-   * @return A tuple in which: 0. a vector of bools to determine if the particle is
-   * less than a radius away from the triangle plane, 1. a vector of projected
-   * location of particles on the triangle, 2. a vector of normal contact
-   * vectors between the triangle and the particles, 3. a vector of the contact
+   * @return A tuple in which: 0. a bool to determine if the particle is
+   * less than a radius away from the triangle plane, 1. a projected
+   * location of the particle on the triangle, 2. a normal contact
+   * vector between the triangle and the particle, 3. a contact
    * type between the particle and the triangle.
    */
   template <int dim, typename PropertiesIndex>
-  std::tuple<std::vector<bool>,
-             std::vector<Point<3>>,
-             std::vector<Tensor<1, 3>>,
-             std::vector<ParticleTriangleContactIndicator>>
+  std::tuple<bool, Point<3>, Tensor<1, 3>, ParticleTriangleContactIndicator>
   find_particle_triangle_projection(
-    const std::vector<Point<dim>>                       &triangle,
-    const std::vector<Particles::ParticleIterator<dim>> &particles,
-    const unsigned int &n_particles_in_base_cell);
+    const std::vector<Point<dim>>          &triangle,
+    const Particles::ParticleIterator<dim> &particle);
 
   /**
    * @brief Calculates the distance between points and a triangle (defined using

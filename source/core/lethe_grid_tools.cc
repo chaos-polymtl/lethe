@@ -1219,20 +1219,16 @@ LetheGridTools::find_cells_cut_by_object(
 
 
 template <int dim, typename PropertiesIndex>
-std::tuple<std::vector<bool>,
-           std::vector<Point<3>>,
-           std::vector<Tensor<1, 3>>,
-           std::vector<LetheGridTools::ParticleTriangleContactIndicator>>
+std::tuple<bool,
+           Point<3>,
+           Tensor<1, 3>,
+           LetheGridTools::ParticleTriangleContactIndicator>
 LetheGridTools::find_particle_triangle_projection(
-  const std::vector<Point<dim>>                       &triangle,
-  const std::vector<Particles::ParticleIterator<dim>> &particles,
-  const unsigned int                                  &n_particles_in_base_cell)
+  const std::vector<Point<dim>>          &triangle,
+  const Particles::ParticleIterator<dim> &particle)
 {
-  std::vector<bool>         pass_distance_check(n_particles_in_base_cell);
-  std::vector<Point<3>>     projection_points(n_particles_in_base_cell);
-  std::vector<Tensor<1, 3>> normal_vectors(n_particles_in_base_cell);
-  std::vector<LetheGridTools::ParticleTriangleContactIndicator>
-    contact_indicators(n_particles_in_base_cell);
+  // Variable declarations
+  bool pass_distance_check;
 
   auto &p_0 = triangle[0];
   auto &p_1 = triangle[1];
@@ -1245,7 +1241,6 @@ LetheGridTools::find_particle_triangle_projection(
   const double   norm_normal = normal.norm();
   Tensor<1, dim> unit_normal = normal / norm_normal;
   Tensor<1, 3>   unit_normal_3d;
-  Point<3>       pt_in_triangle_3d;
 
   const double a   = e_0.norm_square();
   const double b   = scalar_product(e_0, e_1);
@@ -1253,304 +1248,267 @@ LetheGridTools::find_particle_triangle_projection(
   const double det = a * c - b * b;
 
   // Pre-allocation for speed
-  Tensor<1, dim> vector_to_plane;
-  Point<dim>     pt_in_triangle;
+  const double radius = particle->get_properties()[PropertiesIndex::dp] * 0.5;
+  const Point<dim>     particle_position = particle->get_location();
+  const Tensor<1, dim> vector_to_plane   = p_0 - particle_position;
 
-  unsigned int k = 0;
-  for (auto &part : particles)
+  ParticleTriangleContactIndicator contact_indicator;
+  // A bool variable for region 0
+  bool region_zero = false;
+
+  // Check to see if the particle is located on the correct side (with
+  // respect to the normal vector) of the triangle
+  if (vector_to_plane * unit_normal > 0)
+    unit_normal *= -1.0;
+
+  double distance_squared = scalar_product(vector_to_plane, unit_normal);
+
+  // If the particle is too far from the plane, set distance squared as an
+  // arbitrary distance and continue
+  if (distance_squared > (radius * radius))
     {
-      const double radius = part->get_properties()[PropertiesIndex::dp] * 0.5;
-      Point<dim>   particle_position = part->get_location();
-      vector_to_plane                = p_0 - particle_position;
+      // We return right away since the particle is too far from the triangle
+      // anyways.
+      pass_distance_check = false;
+      contact_indicator   = ParticleTriangleContactIndicator::no_contact;
+      return std::make_tuple(pass_distance_check,
+                             Point<3>(),
+                             Tensor<1, 3>(),
+                             contact_indicator);
+    }
 
-      ParticleTriangleContactIndicator this_contact_indicator;
-      // A bool variable for region 0
-      bool region_zero = false;
+  // Otherwise, do the full calculation taken from Eberly 2003
+  const double d = scalar_product(e_0, vector_to_plane);
+  const double e = scalar_product(e_1, vector_to_plane);
 
-      // Check to see if the particle is located on the correct side (with
-      // respect to the normal vector) of the triangle
-      if (vector_to_plane * unit_normal > 0)
+  // Calculate necessary values;
+  double s = b * e - c * d;
+  double t = b * d - a * e;
+
+  if (s + t <= det)
+    {
+      if (s < 0)
         {
-          unit_normal *= -1.0;
-        }
-
-      double distance_squared = scalar_product(vector_to_plane, unit_normal);
-
-      // If the particle is too far from the plane, set distance squared as an
-      // arbitrary distance and continue
-      if (distance_squared > (radius * radius))
-        {
-          pass_distance_check[k] = false;
-          ++k;
-          continue;
-        }
-
-      // Otherwise, do the full calculation taken from Eberly 2003
-      const double d = scalar_product(e_0, vector_to_plane);
-      const double e = scalar_product(e_1, vector_to_plane);
-
-      // Calculate necessary values;
-      double s = b * e - c * d;
-      double t = b * d - a * e;
-
-      if (s + t <= det)
-        {
-          if (s < 0)
+          if (t < 0)
             {
-              if (t < 0)
+              // Region 4
+              contact_indicator =
+                ParticleTriangleContactIndicator::vertex_contact;
+              if (d < 0)
                 {
-                  // Region 4
-                  this_contact_indicator =
-                    ParticleTriangleContactIndicator::vertex_contact;
-                  if (d < 0)
-                    {
-                      t = 0;
-                      if (-d >= a)
-                        s = 1;
-                      else
-                        s = -d / a;
-                    }
+                  t = 0;
+                  if (-d >= a)
+                    s = 1;
                   else
-                    {
-                      s = 0;
-                      if (e >= 0)
-                        t = 0;
-                      else if (-e >= c)
-                        t = 1;
-                      else
-                        t = e / c;
-                    }
+                    s = -d / a;
                 }
               else
                 {
-                  // Region 3
-                  this_contact_indicator =
-                    ParticleTriangleContactIndicator::edge_contact;
-
                   s = 0;
                   if (e >= 0)
                     t = 0;
                   else if (-e >= c)
                     t = 1;
                   else
-                    t = -e / c;
+                    t = e / c;
                 }
-            }
-          else if (t < 0)
-            {
-              // Region 5
-              this_contact_indicator =
-                ParticleTriangleContactIndicator::edge_contact;
-
-              t = 0;
-              if (d >= 0)
-                s = 0;
-              else if (-d >= a)
-                s = 1;
-              else
-                s = -d / a;
             }
           else
             {
-              // Region 0
-              const double inv_det = 1. / det;
-              s *= inv_det;
-              t *= inv_det;
+              // Region 3
+              contact_indicator =
+                ParticleTriangleContactIndicator::edge_contact;
 
-              // In region 0, normal vector is the face normal vector
-              // Cast unit_normal to a tensor<1, 3>
-              if constexpr (dim == 3)
-                unit_normal_3d = unit_normal;
+              s = 0;
+              if (e >= 0)
+                t = 0;
+              else if (-e >= c)
+                t = 1;
+              else
+                t = -e / c;
+            }
+        }
+      else if (t < 0)
+        {
+          // Region 5
+          contact_indicator = ParticleTriangleContactIndicator::edge_contact;
 
-              if constexpr (dim == 2)
-                unit_normal_3d = tensor_nd_to_3d(unit_normal);
+          t = 0;
+          if (d >= 0)
+            s = 0;
+          else if (-d >= a)
+            s = 1;
+          else
+            s = -d / a;
+        }
+      else
+        {
+          // Region 0
+          const double inv_det = 1. / det;
+          s *= inv_det;
+          t *= inv_det;
 
-              region_zero = true;
-              this_contact_indicator =
-                ParticleTriangleContactIndicator::face_contact;
+          // In region 0, normal vector is the face normal vector
+          // Cast unit_normal to a tensor<1, 3>
+          unit_normal_3d = tensor_nd_to_3d(unit_normal);
+
+          region_zero       = true;
+          contact_indicator = ParticleTriangleContactIndicator::face_contact;
+        }
+    }
+  else
+    {
+      if (s < 0)
+        {
+          // Region 2
+          contact_indicator = ParticleTriangleContactIndicator::vertex_contact;
+
+          const double tmp0 = b + d;
+          const double tmp1 = c + e;
+          if (tmp1 > tmp0)
+            {
+              const double numer = tmp1 - tmp0;
+              const double denom = a - 2 * b + c;
+              if (numer >= denom)
+                s = 1;
+              else
+                s = numer / denom;
+
+              t = 1 - s;
+            }
+          else
+            {
+              s = 0;
+              if (tmp1 <= 0)
+                t = 1;
+              else if (e >= 0)
+                t = 0;
+              else
+                t = -e / c;
+            }
+        }
+      else if (t < 0)
+        {
+          // Region 6
+          contact_indicator = ParticleTriangleContactIndicator::vertex_contact;
+
+          const double tmp0 = b + e;
+          const double tmp1 = a + d;
+          if (tmp1 > tmp0)
+            {
+              const double numer = tmp1 - tmp0;
+              const double denom = a - 2 * b + c;
+              if (numer >= denom)
+                t = 1;
+              else
+                t = numer / denom;
+              s = 1 - t;
+            }
+          else
+            {
+              t = 0;
+              if (tmp1 <= 0)
+                s = 1;
+              else if (d >= 0)
+                s = 0;
+              else
+                s = -d / a;
             }
         }
       else
         {
-          if (s < 0)
-            {
-              // Region 2
-              this_contact_indicator =
-                ParticleTriangleContactIndicator::vertex_contact;
+          // Region 1
+          contact_indicator = ParticleTriangleContactIndicator::edge_contact;
 
-              const double tmp0 = b + d;
-              const double tmp1 = c + e;
-              if (tmp1 > tmp0)
-                {
-                  const double numer = tmp1 - tmp0;
-                  const double denom = a - 2 * b + c;
-                  if (numer >= denom)
-                    s = 1;
-                  else
-                    s = numer / denom;
-
-                  t = 1 - s;
-                }
-              else
-                {
-                  s = 0;
-                  if (tmp1 <= 0)
-                    t = 1;
-                  else if (e >= 0)
-                    t = 0;
-                  else
-                    t = -e / c;
-                }
-            }
-          else if (t < 0)
-            {
-              // Region 6
-              this_contact_indicator =
-                ParticleTriangleContactIndicator::vertex_contact;
-
-              const double tmp0 = b + e;
-              const double tmp1 = a + d;
-              if (tmp1 > tmp0)
-                {
-                  const double numer = tmp1 - tmp0;
-                  const double denom = a - 2 * b + c;
-                  if (numer >= denom)
-                    t = 1;
-                  else
-                    t = numer / denom;
-                  s = 1 - t;
-                }
-              else
-                {
-                  t = 0;
-                  if (tmp1 <= 0)
-                    s = 1;
-                  else if (d >= 0)
-                    s = 0;
-                  else
-                    s = -d / a;
-                }
-            }
+          const double numer = (c + e) - (b + d);
+          if (numer <= 0)
+            s = 0;
           else
             {
-              // Region 1
-              this_contact_indicator =
-                ParticleTriangleContactIndicator::edge_contact;
-
-              const double numer = (c + e) - (b + d);
-              if (numer <= 0)
-                s = 0;
+              const double denom = a - 2 * b + c;
+              if (numer >= denom)
+                s = 1;
               else
-                {
-                  const double denom = a - 2 * b + c;
-                  if (numer >= denom)
-                    s = 1;
-                  else
-                    s = numer / denom;
-                }
-              t = 1 - s;
+                s = numer / denom;
             }
+          t = 1 - s;
         }
-
-      pt_in_triangle = p_0 + s * e_0 + t * e_1;
-
-      if (!region_zero)
-        {
-          // normal vector
-          normal = particle_position - pt_in_triangle;
-
-          if constexpr (dim == 3)
-            unit_normal_3d = normal / normal.norm();
-
-          if constexpr (dim == 2)
-            unit_normal_3d = tensor_nd_to_3d(normal / normal.norm());
-        }
-
-
-      // Cast pt_in_triangle on Point<3>
-      if constexpr (dim == 3)
-        pt_in_triangle_3d = pt_in_triangle;
-
-      if constexpr (dim == 2)
-        pt_in_triangle_3d = point_nd_to_3d(pt_in_triangle);
-
-      projection_points[k]   = pt_in_triangle_3d;
-      pass_distance_check[k] = true;
-      normal_vectors[k]      = unit_normal_3d;
-      contact_indicators[k]  = this_contact_indicator;
-      ++k;
     }
+
+  const Point<dim> pt_in_triangle = p_0 + s * e_0 + t * e_1;
+
+  if (!region_zero)
+    {
+      // normal vector
+      normal         = particle_position - pt_in_triangle;
+      unit_normal_3d = tensor_nd_to_3d(normal / normal.norm());
+    }
+
+  // Cast pt_in_triangle on Point<3>
+  Point<3> pt_in_triangle_3d = point_nd_to_3d(pt_in_triangle);
+  pass_distance_check        = true;
+
   return std::make_tuple(pass_distance_check,
-                         projection_points,
-                         normal_vectors,
-                         contact_indicators);
+                         pt_in_triangle_3d,
+                         unit_normal_3d,
+                         contact_indicator);
 }
 
-template std::tuple<
-  std::vector<bool>,
-  std::vector<Point<3>>,
-  std::vector<Tensor<1, 3>>,
-  std::vector<LetheGridTools::ParticleTriangleContactIndicator>>
+// input dim == 2
+template std::tuple<bool,
+                    Point<3>,
+                    Tensor<1, 3>,
+                    LetheGridTools::ParticleTriangleContactIndicator>
 LetheGridTools::
   find_particle_triangle_projection<2, DEM::DEMProperties::PropertiesIndex>(
-    const std::vector<Point<2>>                       &triangle,
-    const std::vector<Particles::ParticleIterator<2>> &particles,
-    const unsigned int &n_particles_in_base_cell);
+    const std::vector<Point<2>>          &triangle,
+    const Particles::ParticleIterator<2> &particle);
 
-template std::tuple<
-  std::vector<bool>,
-  std::vector<Point<3>>,
-  std::vector<Tensor<1, 3>>,
-  std::vector<LetheGridTools::ParticleTriangleContactIndicator>>
+template std::tuple<bool,
+                    Point<3>,
+                    Tensor<1, 3>,
+                    LetheGridTools::ParticleTriangleContactIndicator>
 LetheGridTools::
   find_particle_triangle_projection<2, DEM::CFDDEMProperties::PropertiesIndex>(
-    const std::vector<Point<2>>                       &triangle,
-    const std::vector<Particles::ParticleIterator<2>> &particles,
-    const unsigned int &n_particles_in_base_cell);
+    const std::vector<Point<2>>          &triangle,
+    const Particles::ParticleIterator<2> &particle);
 
-template std::tuple<
-  std::vector<bool>,
-  std::vector<Point<3>>,
-  std::vector<Tensor<1, 3>>,
-  std::vector<LetheGridTools::ParticleTriangleContactIndicator>>
+template std::tuple<bool,
+                    Point<3>,
+                    Tensor<1, 3>,
+                    LetheGridTools::ParticleTriangleContactIndicator>
 LetheGridTools::
   find_particle_triangle_projection<2, DEM::DEMMPProperties::PropertiesIndex>(
-    const std::vector<Point<2>>                       &triangle,
-    const std::vector<Particles::ParticleIterator<2>> &particles,
-    const unsigned int &n_particles_in_base_cell);
+    const std::vector<Point<2>>          &triangle,
+    const Particles::ParticleIterator<2> &particle);
 
-template std::tuple<
-  std::vector<bool>,
-  std::vector<Point<3>>,
-  std::vector<Tensor<1, 3>>,
-  std::vector<LetheGridTools::ParticleTriangleContactIndicator>>
+// input dim == 3
+template std::tuple<bool,
+                    Point<3>,
+                    Tensor<1, 3>,
+                    LetheGridTools::ParticleTriangleContactIndicator>
 LetheGridTools::
   find_particle_triangle_projection<3, DEM::DEMProperties::PropertiesIndex>(
-    const std::vector<Point<3>>                       &triangle,
-    const std::vector<Particles::ParticleIterator<3>> &particles,
-    const unsigned int &n_particles_in_base_cell);
+    const std::vector<Point<3>>          &triangle,
+    const Particles::ParticleIterator<3> &particle);
 
-template std::tuple<
-  std::vector<bool>,
-  std::vector<Point<3>>,
-  std::vector<Tensor<1, 3>>,
-  std::vector<LetheGridTools::ParticleTriangleContactIndicator>>
+template std::tuple<bool,
+                    Point<3>,
+                    Tensor<1, 3>,
+                    LetheGridTools::ParticleTriangleContactIndicator>
 LetheGridTools::
   find_particle_triangle_projection<3, DEM::CFDDEMProperties::PropertiesIndex>(
-    const std::vector<Point<3>>                       &triangle,
-    const std::vector<Particles::ParticleIterator<3>> &particles,
-    const unsigned int &n_particles_in_base_cell);
+    const std::vector<Point<3>>          &triangle,
+    const Particles::ParticleIterator<3> &particle);
 
-template std::tuple<
-  std::vector<bool>,
-  std::vector<Point<3>>,
-  std::vector<Tensor<1, 3>>,
-  std::vector<LetheGridTools::ParticleTriangleContactIndicator>>
+template std::tuple<bool,
+                    Point<3>,
+                    Tensor<1, 3>,
+                    LetheGridTools::ParticleTriangleContactIndicator>
 LetheGridTools::
   find_particle_triangle_projection<3, DEM::DEMMPProperties::PropertiesIndex>(
-    const std::vector<Point<3>>                       &triangle,
-    const std::vector<Particles::ParticleIterator<3>> &particles,
-    const unsigned int &n_particles_in_base_cell);
+    const std::vector<Point<3>>          &triangle,
+    const Particles::ParticleIterator<3> &particle);
 
 
 template <int dim>
