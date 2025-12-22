@@ -62,7 +62,7 @@ Volume-Averaged Navier-Stokes
 
 Since we represent the fluid at a meso-scale, the quantities calculated for the cells are filtered. Additionally, variations in time and space of the volume occupied by the fluid are accounted for by the void fraction (or porosity). The resulting equations are the Volumed-Averaged Navier-Stokes (VANS) equations, which are solved to obtain the velocity and the pressure of the continuous fluid phase. In Lethe, the VANS equations are presented in two different formulations, so-called Model A (or Set II) and Model B (or Set I) `[2] <https://doi.org/10.1017/S002211201000306X>`_.
 
-The VANS equations can be derived by averaging the continuity and momentum conservation equations using a weighting function. This approach was developed by Anderson and Jackson [#Anderson1967]_ and is briefly presented here. In this approach, any weighting function :math:`k_r(\lVert \mathbf{x} \rVert)` may be chosen, provided that it satisfies a set of conditions, including :math:`k_r(\lVert \mathbf{x} \rVert) > 0, \: \forall \mathbf{x}`, and :math:`\int_{\Omega} k_r(\lVert \mathbf{x} \rVert)\,\mathrm{d}\mathbf{x} = 1`. :math:`\Omega` refers to the whole domain.
+The VANS equations can be derived by averaging the continuity and momentum conservation equations using a weighting function. This approach was developed by Anderson and Jackson [#Anderson1967]_ and is briefly presented here. In this approach, any weighting function :math:`k_r(\lVert \mathbf{x} \rVert)` may be chosen, provided that it satisfies a set of conditions, including :math:`k_r(\lVert \mathbf{x} \rVert) > 0, \: \forall \mathbf{x}`, and :math:`\int_{\Omega} k_r(\lVert \mathbf{x} \rVert)\,\mathrm{d}\mathbf{x} = 1`, where :math:`\Omega` refers to the whole domain.
 
 Using this function, local mean values of any fluid- or solid-phase property, :math:`\bar{a}(\mathbf{x},t)` and :math:`\bar{b}(\mathbf{x},t)`, respectively, can be defined at a scale larger than the particle diameter yet smaller than the macroscopic length scale of the problem, as per the following:
 
@@ -91,7 +91,7 @@ Models A and B differ from each other in the way the momentum equation is calcul
 Model A:
 
 .. math:: 
-    \rho_f \left ( \frac{\partial \left ( \varepsilon_f \mathbf{u} \right )}{\partial t} + \nabla \cdot \left ( \varepsilon_f \mathbf{u} \otimes \mathbf{u} \right ) \right ) = -\varepsilon \nabla p + \varepsilon \nabla \cdot \tau +  \frac{1-\varepsilon_f}{V_{\mathrm{p}}}\bar{\mathbf{f}}_{\mathrm{pf},\mathrm{A}}
+    \rho_f \left ( \frac{\partial \left ( \varepsilon_f \mathbf{u} \right )}{\partial t} + \nabla \cdot \left ( \varepsilon_f \mathbf{u} \otimes \mathbf{u} \right ) \right ) = -\varepsilon_f \nabla p + \varepsilon_f \nabla \cdot \tau +  \frac{1-\varepsilon_f}{V_{\mathrm{p}}}\bar{\mathbf{f}}_{\mathrm{pf},\mathrm{A}}
 
 Model B:
 
@@ -142,7 +142,7 @@ where :math:`\epsilon_{f}` is the void fraction, :math:`\varphi_j` is the finite
     \int_{\Omega} \varepsilon_{f,j} \varphi_i  \varphi_j d \Omega = \int_{\Omega}  \epsilon_{f} \varphi_i d \Omega
 
 
-Lethe also has the option of smoothing the void fraction profile, which helps to mitigate sharp discontinuities. This is specifically advantageous when using void fraction schemes that are discontinuous in space and time such as the PCM and SPM. To do so, we add to the left hand side of the previous equation a term similar to a Poisson equation. This acts as an additional parabolic filter. The resulting equation is:
+Lethe also has the option of smoothing the void fraction profile, which helps to mitigate sharp discontinuities. This is specifically advantageous when using void fraction schemes that are discontinuous in space and time such as the Particle Centroid Method (PCM) and the Satellite Point Method (SPM). To do so, we add to the left hand side of the previous equation a term similar to a Poisson equation. This acts as an additional parabolic filter. The resulting equation is:
 
 .. math::
     \int_{\Omega} \varepsilon_{f,j} \varphi_i  \varphi_j d \Omega +  \iint_\Omega L^2 \varepsilon_{f,j} \nabla \varphi_i \nabla \varphi_j d\Omega = \int_{\Omega} \epsilon_{f} \varphi_i d \Omega
@@ -151,7 +151,7 @@ where :math:`L` is the smoothing length, used as parameter in Lethe unresolved C
 
 The Particle Centroid Method
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-The Particle Centroid Method (PCM) [#peng2014]_ is simple and it is a commonly used method. It consists of tracking the position of the centroid of each particle and applying the total volume of the particle to the calculation of the void fraction of the cell. This means that in either of the following situations the void fraction of the colored cell is the same:
+The PCM [#peng2014]_ is a simple and commonly used method. It consists of tracking the position of the centroid of each particle and applying the total volume of the particle to the calculation of the void fraction of the cell. This means that in either of the following situations the void fraction of the colored cell is the same:
 
 .. image:: images/void_frac1.png
    :width: 49% 
@@ -160,7 +160,7 @@ The Particle Centroid Method (PCM) [#peng2014]_ is simple and it is a commonly u
 
 This results in the PCM being discontinuous in space and time. Consequently, the PCM method significantly relies on the smoothing of the void fraction to lead to a sufficiently smooth void fraction field. We refer the reader to [#geitani2023]_  for an extensive discussion on this topic. 
 
- The void fraction in a cell using PCM can be written as:
+The void fraction in a cell using PCM can be written as:
 
 .. math:: 
     \epsilon_f = 1 - \frac{\sum_{i,\Omega_e}^{n_\mathrm{p}} V_{\mathrm{p},i}}{V_{\Omega_e}}
