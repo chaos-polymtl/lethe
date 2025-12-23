@@ -4,6 +4,12 @@ All notable changes to the Lethe project will be documented in this file.
 The changelog for the previous releases of Lethe are located in the release_notes folder.
 The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
+## [Master] - 2025/12/23
+
+### Added
+
+- MINOR This PR adds a gas-solid cylindrical fluidized bed example to the Lethe example suite. Different filtering and drag coupling approaches are compared using a robust benchmark problem: the dependence of the pressure drop on the superficial gas inlet velocity. VANS Model A is used with both QCM and cell-based filters using the matrix-based solver. The same model is also tested with the QCM filter using the matrix-free solver. For each configuration, three drag coupling strategies are considered: explicit, semi-implicit, and implicit. [#1844](https://github.com/chaos-polymtl/lethe/pull/1844)
+
 ## [Master] - 2025/12/19
 
 ### Fixed
