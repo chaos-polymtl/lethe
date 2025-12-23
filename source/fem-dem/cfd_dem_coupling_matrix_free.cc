@@ -797,37 +797,61 @@ CFDDEMMatrixFree<dim>::load_balance()
   if (!dem_action_manager->check_load_balance())
     return;
 
+  this->pcout << __FILE__ << " : " << __LINE__ << std::endl;
+
+
   using VectorType = LinearAlgebra::distributed::Vector<double>;
+
+
+  this->pcout << __FILE__ << " : " << __LINE__ << std::endl;
 
   // First prepare the solution of the VANS equations for the transfer
   std::vector<const VectorType *> sol_set_transfer;
   sol_set_transfer.push_back(&(*this->present_solution));
+  this->present_solution->update_ghost_values();
   for (unsigned int i = 0; i < this->previous_solutions->size(); ++i)
     {
+      (*this->previous_solutions)[i].update_ghost_values();
       sol_set_transfer.push_back(&(*this->previous_solutions)[i]);
     }
+
+
+  this->pcout << __FILE__ << " : " << __LINE__ << std::endl;
 
   // Prepare for Serialization
   SolutionTransfer<dim, VectorType> system_trans_vectors(*this->dof_handler);
   system_trans_vectors.prepare_for_coarsening_and_refinement(sol_set_transfer);
 
+
+  this->pcout << __FILE__ << " : " << __LINE__ << std::endl;
+
   // Now do the same process for the void fractgion
   // Void Fraction
   std::vector<const VectorType *> vf_set_transfer;
   vf_set_transfer.push_back(&this->particle_projector.void_fraction_solution);
+  this->particle_projector.void_fraction_solution.update_ghost_values();
+
   for (unsigned int i = 0;
        i < this->particle_projector.void_fraction_previous_solution.size();
        ++i)
     {
+      this->particle_projector.void_fraction_previous_solution[i]
+        .update_ghost_values();
       vf_set_transfer.push_back(
         &this->particle_projector.void_fraction_previous_solution[i]);
     }
+
+
+  this->pcout << __FILE__ << " : " << __LINE__ << std::endl;
 
   // Prepare for Serialization
   SolutionTransfer<dim, VectorType> vf_system_trans_vectors(
     this->particle_projector.dof_handler);
   vf_system_trans_vectors.prepare_for_coarsening_and_refinement(
     vf_set_transfer);
+
+
+  this->pcout << __FILE__ << " : " << __LINE__ << std::endl;
 
   // Let's now prepare the particle handler for the load balancing
   // Prepare particle handle for serialization
@@ -839,6 +863,9 @@ CFDDEMMatrixFree<dim>::load_balance()
     dynamic_cast<parallel::distributed::Triangulation<dim> *>(
       &*this->triangulation);
 
+
+  this->pcout << __FILE__ << " : " << __LINE__ << std::endl;
+
   parallel_triangulation->repartition();
 
   // If PBC are enabled remap periodic cells
@@ -848,6 +875,9 @@ CFDDEMMatrixFree<dim>::load_balance()
   // Update cell neighbors
   contact_manager.update_cell_neighbors(*parallel_triangulation,
                                         periodic_boundaries_cells_information);
+
+
+  this->pcout << __FILE__ << " : " << __LINE__ << std::endl;
 
   boundary_cell_object.build(
     *parallel_triangulation,
@@ -859,12 +889,18 @@ CFDDEMMatrixFree<dim>::load_balance()
       .expand_particle_wall_contact_search,
     this->pcout);
 
+
+  this->pcout << __FILE__ << " : " << __LINE__ << std::endl;
+
   const auto average_minimum_maximum_cells =
     Utilities::MPI::min_max_avg(parallel_triangulation->n_active_cells(),
                                 this->mpi_communicator);
 
   const auto average_minimum_maximum_particles = Utilities::MPI::min_max_avg(
     this->particle_handler.n_locally_owned_particles(), this->mpi_communicator);
+
+
+  this->pcout << __FILE__ << " : " << __LINE__ << std::endl;
 
   this->pcout << "Load balance finished" << std::endl;
   this->pcout
@@ -877,6 +913,9 @@ CFDDEMMatrixFree<dim>::load_balance()
     << average_minimum_maximum_cells.min << " and "
     << average_minimum_maximum_cells.max << std::endl;
 
+
+  this->pcout << __FILE__ << " : " << __LINE__ << std::endl;
+
   this->pcout << "Setup DOFs" << std::endl;
   this->setup_dofs();
 
@@ -888,11 +927,18 @@ CFDDEMMatrixFree<dim>::load_balance()
         this->particle_projector.void_fraction_constraints);
     }
 
+
+  this->pcout << __FILE__ << " : " << __LINE__ << std::endl;
+
   // Velocity Vectors
   std::vector<VectorType *> x_system(1 + this->previous_solutions->size());
 
   VectorType distributed_system(this->locally_owned_dofs,
+                                this->locally_relevant_dofs,
                                 this->mpi_communicator);
+
+
+  this->pcout << __FILE__ << " : " << __LINE__ << std::endl;
 
   x_system[0] = &(distributed_system);
 
@@ -903,17 +949,29 @@ CFDDEMMatrixFree<dim>::load_balance()
   for (unsigned int i = 0; i < this->previous_solutions->size(); ++i)
     {
       distributed_previous_solutions.emplace_back(
-        VectorType(this->locally_owned_dofs, this->mpi_communicator));
+        VectorType(this->locally_owned_dofs,
+                   this->locally_relevant_dofs,
+                   this->mpi_communicator));
       x_system[i + 1] = &distributed_previous_solutions[i];
     }
 
+
+  this->pcout << __FILE__ << " : " << __LINE__ << std::endl;
+
   system_trans_vectors.interpolate(x_system);
 
+  distributed_system.update_ghost_values();
   *this->present_solution = distributed_system;
+  this->pcout << __FILE__ << " : " << __LINE__ << std::endl;
+
   for (unsigned int i = 0; i < this->previous_solutions->size(); ++i)
     {
+      this->pcout << __FILE__ << " : " << __LINE__ << std::endl;
+      distributed_previous_solutions[i].update_ghost_values();
       (*this->previous_solutions)[i] = distributed_previous_solutions[i];
     }
+
+  this->pcout << __FILE__ << " : " << __LINE__ << std::endl;
 
   x_system.clear();
 
@@ -921,53 +979,78 @@ CFDDEMMatrixFree<dim>::load_balance()
   std::vector<VectorType *> vf_system(
     1 + this->particle_projector.previous_void_fraction.size());
 
-  VectorType vf_distributed_system(this->particle_projector.locally_owned_dofs,
-                                   this->mpi_communicator);
+  this->pcout << __FILE__ << " : " << __LINE__ << std::endl;
+
+  VectorType vf_distributed_system(
+    this->particle_projector.locally_owned_dofs,
+    this->particle_projector.locally_relevant_dofs,
+    this->mpi_communicator);
 
   vf_system[0] = &(vf_distributed_system);
+  this->pcout << __FILE__ << " : " << __LINE__ << std::endl;
 
   std::vector<VectorType> vf_distributed_previous_solutions;
 
   vf_distributed_previous_solutions.reserve(
     this->particle_projector.previous_void_fraction.size());
+  this->pcout << __FILE__ << " : " << __LINE__ << std::endl;
 
   for (unsigned int i = 0;
        i < this->particle_projector.previous_void_fraction.size();
        ++i)
     {
+      this->pcout << __FILE__ << " : " << __LINE__ << std::endl;
+
       vf_distributed_previous_solutions.emplace_back(
         VectorType(this->particle_projector.locally_owned_dofs,
+                   this->particle_projector.locally_relevant_dofs,
                    this->mpi_communicator));
       vf_system[i + 1] = &vf_distributed_previous_solutions[i];
     }
+  this->pcout << __FILE__ << " : " << __LINE__ << std::endl;
 
   vf_system_trans_vectors.interpolate(vf_system);
+
+  this->pcout << __FILE__ << " : " << __LINE__ << std::endl;
 
 #ifndef LETHE_USE_LDV
   // We also wish the Trilinos solution to be updated.
   convert_vector_dealii_to_trilinos(
-    this->particle_projector.void_fraction_locally_relevant,
+    this->particle_projector.void_fraction_locally_owned,
     this->particle_projector.void_fraction_solution);
+
+  this->particle_projector.void_fraction_locally_relevant =
+    this->particle_projector.void_fraction_locally_owned,
 #endif
 
+  this->pcout << __FILE__ << " : " << __LINE__ << std::endl;
+
   this->particle_projector.void_fraction_solution = vf_distributed_system;
+  this->pcout << __FILE__ << " : " << __LINE__ << std::endl;
+
   for (unsigned int i = 0;
        i < this->particle_projector.previous_void_fraction.size();
        ++i)
     {
+      this->pcout << __FILE__ << " : " << __LINE__ << std::endl;
+
       this->particle_projector.void_fraction_previous_solution[i] =
         vf_distributed_previous_solutions[i];
+      this->pcout << __FILE__ << " : " << __LINE__ << std::endl;
 
 #ifndef LETHE_USE_LDV
       // We also wish the Trilinos solution to be updated.
       convert_vector_dealii_to_trilinos(
-        this->particle_projector.previous_void_fraction[i],
+        this->particle_projector.void_fraction_locally_owned,
         this->particle_projector.void_fraction_previous_solution[i]);
+      this->particle_projector.previous_void_fraction[i] =
+        this->particle_projector.void_fraction_locally_owned;
 #endif
     }
+  this->pcout << __FILE__ << " : " << __LINE__ << std::endl;
 
   vf_system.clear();
-
+  this->pcout << __FILE__ << " : " << __LINE__ << std::endl;
   // Unpack particle handler after load balancing step
   this->particle_handler.unpack_after_coarsening_and_refinement();
 }

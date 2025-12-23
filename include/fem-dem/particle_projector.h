@@ -442,6 +442,9 @@ public:
   /// Fully distributed (including locally relevant) solution
   GlobalVectorType void_fraction_locally_relevant;
 
+  /// Locally owned solution of the void fraction
+  GlobalVectorType void_fraction_locally_owned;
+
   /// deal.II vector for the void fraction
   LinearAlgebra::distributed::Vector<double> void_fraction_solution;
 
@@ -663,8 +666,6 @@ private:
   /// Particle handler used when the void fraction depends on particles
   Particles::ParticleHandler<dim> *particle_handler;
 
-  /// Locally owned solution of the void fraction
-  GlobalVectorType void_fraction_locally_owned;
 
   /// Preconditioner used for the solution of the smoothed L2 projection of the
   /// void fraction
