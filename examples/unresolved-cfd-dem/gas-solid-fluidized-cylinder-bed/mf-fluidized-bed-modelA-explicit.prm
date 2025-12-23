@@ -1,0 +1,244 @@
+# SPDX-FileCopyrightText: Copyright (c) 2025 The Lethe Authors
+# SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
+
+# Listing of Parameters
+#----------------------
+
+set dimension = 3
+
+#---------------------------------------------------
+# Simulation Control
+#---------------------------------------------------
+
+subsection simulation control
+  set method           = bdf1
+  set output frequency = 100
+  set time end         = 0.75
+  set time step        = 0.0001
+  set output path      = ./output_mf_explicit/
+end
+
+#---------------------------------------------------
+# FEM
+#---------------------------------------------------
+
+subsection FEM
+  set velocity order = 1
+  set pressure order = 1
+end
+
+#---------------------------------------------------
+# Physical Properties
+#---------------------------------------------------
+
+subsection physical properties
+  subsection fluid 0
+    set kinematic viscosity = 1e-5
+    set density             = 1
+  end
+end
+
+#---------------------------------------------------
+# Mesh
+#---------------------------------------------------
+
+subsection mesh
+  set type                                = cylinder
+  set grid type                           = balanced
+  set grid arguments                      = 44:0.01:0.22
+  set initial refinement                  = 2
+  set expand particle-wall contact search = true
+end
+
+#---------------------------------------------------
+# Void Fraction
+#---------------------------------------------------
+
+subsection void fraction
+  set mode                         = qcm
+  set qcm sphere equal cell volume = true
+  set read dem                     = true
+  set dem file name                = dem
+  set l2 smoothing length          = 0.001
+end
+
+#---------------------------------------------------
+# CFD-DEM
+#---------------------------------------------------
+
+subsection cfd-dem
+  set grad div                      = true
+  set grad-div length scale         = 0.01
+  set void fraction time derivative = true
+  set drag force                    = true
+  set buoyancy force                = true
+  set shear force                   = true
+  set pressure force                = true
+  set drag model                    = difelice
+  set coupling frequency            = 100
+  set vans model                    = modelA
+  set drag coupling                 = explicit
+end
+
+#---------------------------------------------------
+# Initial condition
+#---------------------------------------------------
+
+subsection initial conditions
+  subsection uvwp
+    set Function expression = 0; 0; 0; 0
+  end
+end
+
+#---------------------------------------------------
+# Boundary Conditions
+#---------------------------------------------------
+
+subsection boundary conditions
+  set number         = 3
+  set time dependent = true
+  subsection bc 0
+    set id   = 0
+    set type = slip
+  end
+  subsection bc 1
+    set id   = 1
+    set type = function
+    subsection u
+      set Function expression = min(0.02 * floor(t / 0.05 + 1), 0.3)
+    end
+    subsection v
+      set Function expression = 0
+    end
+    subsection w
+      set Function expression = 0
+    end
+  end
+  subsection bc 2
+    set id   = 2
+    set type = outlet
+  end
+end
+
+#---------------------------------------------------
+# Timer
+#---------------------------------------------------
+
+subsection timer
+  set type = iteration
+end
+
+#---------------------------------------------------
+# Model parameters
+#---------------------------------------------------
+
+subsection model parameters
+  subsection contact detection
+    set contact detection method = dynamic
+    set neighborhood threshold   = 1.1
+  end
+  set particle particle contact force method = hertz_mindlin_limit_overlap
+  set particle wall contact force method     = nonlinear
+  set integration method                     = velocity_verlet
+end
+
+#---------------------------------------------------
+# Physical Properties
+#---------------------------------------------------
+
+subsection lagrangian physical properties
+  set g                        = -9.81, 0, 0
+  set number of particle types = 1
+  subsection particle type 0
+    set size distribution type            = uniform
+    set diameter                          = 0.0005
+    set number of particles               = 200000
+    set density particles                 = 1000
+    set young modulus particles           = 1e6
+    set poisson ratio particles           = 0.3
+    set restitution coefficient particles = 0.9
+    set friction coefficient particles    = 0.1
+    set rolling friction particles        = 0.1
+  end
+  set young modulus wall           = 1e6
+  set poisson ratio wall           = 0.3
+  set restitution coefficient wall = 0.9
+  set friction coefficient wall    = 0.1
+  set rolling friction wall        = 0.1
+end
+
+#---------------------------------------------------
+# Floating walls
+#---------------------------------------------------
+
+subsection floating walls
+  set number of floating walls = 1
+  subsection wall 0
+    set point on wall = -0.18, 0., 0.
+    set normal vector = 1., 0., 0.
+    set start time    = 0
+    set end time      = 100
+  end
+end
+
+#---------------------------------------------------
+# Non-Linear Solver Control
+#---------------------------------------------------
+
+subsection non-linear solver
+  subsection fluid dynamics
+    set solver         = newton
+    set tolerance      = 1e-8
+    set max iterations = 10
+    set verbosity      = verbose
+  end
+end
+
+#---------------------------------------------------
+# Linear Solver Control
+#---------------------------------------------------
+
+subsection linear solver
+  subsection void fraction
+    set relative residual = 1e-13
+    set minimum residual  = 1e-13
+  end
+  subsection fluid dynamics
+    set method                          = gmres
+    set relative residual               = 1e-3
+    set minimum residual                = 1e-9
+    set preconditioner                  = gcmg
+    set verbosity                       = verbose
+    set mg verbosity                    = verbose
+    set mg smoother iterations          = 5
+    set mg smoother eig estimation      = true
+    set mg smoother preconditioner type = inverse diagonal
+    set eig estimation verbosity        = verbose
+    set mg coarse grid solver           = amg
+    set max krylov vectors              = 400
+    set max iters                       = 400
+  end
+end
+
+#---------------------------------------------------
+# Post-processing
+#---------------------------------------------------
+
+subsection post-processing
+  set calculate pressure drop = true
+  set inlet boundary id       = 1
+  set outlet boundary id      = 2
+  set output frequency        = 1
+  set verbosity               = verbose
+end
+
+#---------------------------------------------------
+# Restart
+#---------------------------------------------------
+
+subsection restart
+  set checkpoint = true
+  set frequency  = 100
+  set filename   = restart
+  set restart    = false
+end

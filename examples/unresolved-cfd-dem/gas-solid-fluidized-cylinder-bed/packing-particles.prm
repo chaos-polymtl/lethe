@@ -1,0 +1,131 @@
+# SPDX-FileCopyrightText: Copyright (c) 2025 The Lethe Authors
+# SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
+
+# Listing of Parameters
+#----------------------
+
+set dimension = 3
+
+#---------------------------------------------------
+# Simulation Control
+#---------------------------------------------------
+
+subsection simulation control
+  set time step         = 0.000005
+  set time end          = 0.7
+  set log frequency     = 1000
+  set output frequency  = 2000
+  set output path       = ./output_dem/
+  set output boundaries = true
+end
+
+#---------------------------------------------------
+# Timer
+#---------------------------------------------------
+
+subsection timer
+  set type = none
+end
+
+#---------------------------------------------------
+# Post-processing
+#---------------------------------------------------
+
+subsection post-processing
+  set lagrangian post-processing = true
+end
+
+#---------------------------------------------------
+# Restart
+#---------------------------------------------------
+
+subsection restart
+  set checkpoint = true
+  set frequency  = 10000
+  set restart    = false
+  set filename   = dem
+end
+
+#---------------------------------------------------
+# Model parameters
+#---------------------------------------------------
+
+subsection model parameters
+  subsection contact detection
+    set contact detection method = dynamic
+    set neighborhood threshold   = 1.1
+  end
+  subsection load balancing
+    set load balance method = frequent
+    set frequency           = 10000
+  end
+  set particle particle contact force method = hertz_mindlin_limit_overlap
+  set particle wall contact force method     = nonlinear
+  set integration method                     = velocity_verlet
+end
+
+#---------------------------------------------------
+# Physical Properties
+#---------------------------------------------------
+
+subsection lagrangian physical properties
+  set g                        = -9.81, 0, 0
+  set number of particle types = 1
+  subsection particle type 0
+    set size distribution type            = uniform
+    set diameter                          = 0.0005
+    set number of particles               = 200000
+    set density particles                 = 1000
+    set young modulus particles           = 1e6
+    set poisson ratio particles           = 0.3
+    set restitution coefficient particles = 0.9
+    set friction coefficient particles    = 0.1
+    set rolling friction particles        = 0.1
+  end
+  set young modulus wall           = 1e6
+  set poisson ratio wall           = 0.3
+  set restitution coefficient wall = 0.9
+  set friction coefficient wall    = 0.1
+  set rolling friction wall        = 0.1
+end
+
+#---------------------------------------------------
+# Insertion Info
+#---------------------------------------------------
+
+subsection insertion info
+  set insertion method                               = volume
+  set inserted number of particles at each time step = 200000
+  set insertion frequency                            = 200000
+  set insertion box points coordinates               = -0.179, -0.0065, -0.0065 : 0.2, 0.0065, 0.0065
+  set insertion distance threshold                   = 1.1
+  set insertion maximum offset                       = 0.02
+  set insertion prn seed                             = 19
+  set insertion direction sequence                   = 1, 2, 0
+end
+
+#---------------------------------------------------
+# Floating walls
+#---------------------------------------------------
+
+subsection floating walls
+  set number of floating walls = 1
+  subsection wall 0
+    set point on wall = -0.18, 0., 0.
+    set normal vector = 1., 0., 0.
+    set start time    = 0
+    set end time      = 100
+  end
+end
+
+#---------------------------------------------------
+# Mesh
+#---------------------------------------------------
+
+subsection mesh
+  set type                                = cylinder
+  set grid type                           = balanced
+  set grid arguments                      = 44:0.01:0.22
+  set initial refinement                  = 2
+  set expand particle-wall contact search = true
+end
