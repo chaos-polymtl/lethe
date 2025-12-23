@@ -10,6 +10,8 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
 - MINOR This PR adds a gas-solid cylindrical fluidized bed example to the Lethe example suite. Different filtering and drag coupling approaches are compared using a robust benchmark problem: the dependence of the pressure drop on the superficial gas inlet velocity. VANS Model A is used with both QCM and cell-based filters using the matrix-based solver. The same model is also tested with the QCM filter using the matrix-free solver. For each configuration, three drag coupling strategies are considered: explicit, semi-implicit, and implicit. [#1844](https://github.com/chaos-polymtl/lethe/pull/1844)
 
+- MAJOR The unresolved CFD-DEM matrix-free implementation could not allow dynamic load balancing during the simulation since this feature had not been implemented yet. This adds the load balance implementation as well as make sure that it works well in both releaseand debug mode. An application test which is the sedimentation of a particle in parallel with dynamic load balancing is added to ensure that the test is stable in parallel since it was quite difficult to figure out all of the ghost logic of the vectors considering that both Trilinos and deal.II vectors are used in the ParticleProjector class. [#1869](https://github.com/chaos-polymtl/lethe/pull/1869)
+
 ## [Master] - 2025/12/19
 
 ### Fixed
