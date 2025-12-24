@@ -569,6 +569,15 @@ template <int dim>
 std::vector<OutputStruct<dim, LinearAlgebra::distributed::Vector<double>>>
 FluidDynamicsVANSMatrixFree<dim>::gather_output_hook()
 {
+  // Make sure all of the particle-related vectors have adequate ghost values.
+  particle_projector.void_fraction_solution.update_ghost_values();
+  particle_projector.fluid_drag_on_particles.particle_field_solution
+    .update_ghost_values();
+  particle_projector.particle_velocity.particle_field_solution
+    .update_ghost_values();
+  particle_projector.momentum_transfer_coefficient.particle_field_solution
+    .update_ghost_values();
+
   std::vector<std::string> name = {"void_fraction"};
   std::vector<DataComponentInterpretation::DataComponentInterpretation>
     component_interpretation = {
