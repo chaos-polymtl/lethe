@@ -681,288 +681,297 @@ $(document).ready(function() { init_codefold(0); });
 <div class="foldopen" id="foldopen00570" data-start="{" data-end="}">
 <div class="line"><a id="l00570" name="l00570"></a><span class="lineno"><a class="line" href="classFluidDynamicsVANSMatrixFree.html#a565378c53e79e0dd166e6328ded1f7b2">  570</a></span><a class="code hl_function" href="classFluidDynamicsVANSMatrixFree.html#a565378c53e79e0dd166e6328ded1f7b2">FluidDynamicsVANSMatrixFree&lt;dim&gt;::gather_output_hook</a>()</div>
 <div class="line"><a id="l00571" name="l00571"></a><span class="lineno">  571</span>{</div>
-<div class="line"><a id="l00572" name="l00572"></a><span class="lineno">  572</span>  std::vector&lt;std::string&gt; name = {<span class="stringliteral">&quot;void_fraction&quot;</span>};</div>
-<div class="line"><a id="l00573" name="l00573"></a><span class="lineno">  573</span>  std::vector&lt;DataComponentInterpretation::DataComponentInterpretation&gt;</div>
-<div class="line"><a id="l00574" name="l00574"></a><span class="lineno">  574</span>    component_interpretation = {</div>
-<div class="line"><a id="l00575" name="l00575"></a><span class="lineno">  575</span>      DataComponentInterpretation::component_is_scalar};</div>
-<div class="line"><a id="l00576" name="l00576"></a><span class="lineno">  576</span>  <a class="code hl_struct" href="structOutputStructSolution.html">OutputStructSolution&lt;dim, LinearAlgebra::distributed::Vector&lt;double&gt;</a>&gt;</div>
-<div class="line"><a id="l00577" name="l00577"></a><span class="lineno">  577</span>    void_fraction_struct(particle_projector.dof_handler,</div>
-<div class="line"><a id="l00578" name="l00578"></a><span class="lineno">  578</span>                         particle_projector.void_fraction_solution,</div>
-<div class="line"><a id="l00579" name="l00579"></a><span class="lineno">  579</span>                         name,</div>
-<div class="line"><a id="l00580" name="l00580"></a><span class="lineno">  580</span>                         component_interpretation);</div>
-<div class="line"><a id="l00581" name="l00581"></a><span class="lineno">  581</span> </div>
-<div class="line"><a id="l00582" name="l00582"></a><span class="lineno">  582</span>  std::vector&lt;std::string&gt; force_names(dim, <span class="stringliteral">&quot;fluid_drag_on_particles&quot;</span>);</div>
-<div class="line"><a id="l00583" name="l00583"></a><span class="lineno">  583</span>  std::vector&lt;DataComponentInterpretation::DataComponentInterpretation&gt;</div>
-<div class="line"><a id="l00584" name="l00584"></a><span class="lineno">  584</span>    force_component_interpretation(</div>
-<div class="line"><a id="l00585" name="l00585"></a><span class="lineno">  585</span>      dim, DataComponentInterpretation::component_is_part_of_vector);</div>
-<div class="line"><a id="l00586" name="l00586"></a><span class="lineno">  586</span> </div>
-<div class="line"><a id="l00587" name="l00587"></a><span class="lineno">  587</span>  <a class="code hl_struct" href="structOutputStructSolution.html">OutputStructSolution&lt;dim, LinearAlgebra::distributed::Vector&lt;double&gt;</a>&gt;</div>
-<div class="line"><a id="l00588" name="l00588"></a><span class="lineno">  588</span>    particle_fluid_drag_struct(</div>
-<div class="line"><a id="l00589" name="l00589"></a><span class="lineno">  589</span>      particle_projector.fluid_drag_on_particles.dof_handler,</div>
-<div class="line"><a id="l00590" name="l00590"></a><span class="lineno">  590</span>      particle_projector.fluid_drag_on_particles.particle_field_solution,</div>
-<div class="line"><a id="l00591" name="l00591"></a><span class="lineno">  591</span>      force_names,</div>
-<div class="line"><a id="l00592" name="l00592"></a><span class="lineno">  592</span>      force_component_interpretation);</div>
-<div class="line"><a id="l00593" name="l00593"></a><span class="lineno">  593</span> </div>
-<div class="line"><a id="l00594" name="l00594"></a><span class="lineno">  594</span>  std::vector&lt;std::string&gt; particle_velocity_names(dim, <span class="stringliteral">&quot;particle_velocity&quot;</span>);</div>
-<div class="line"><a id="l00595" name="l00595"></a><span class="lineno">  595</span>  std::vector&lt;DataComponentInterpretation::DataComponentInterpretation&gt;</div>
-<div class="line"><a id="l00596" name="l00596"></a><span class="lineno">  596</span>    particle_velocity_component_interpretation(</div>
-<div class="line"><a id="l00597" name="l00597"></a><span class="lineno">  597</span>      dim, DataComponentInterpretation::component_is_part_of_vector);</div>
-<div class="line"><a id="l00598" name="l00598"></a><span class="lineno">  598</span> </div>
-<div class="line"><a id="l00599" name="l00599"></a><span class="lineno">  599</span>  <a class="code hl_struct" href="structOutputStructSolution.html">OutputStructSolution&lt;dim, LinearAlgebra::distributed::Vector&lt;double&gt;</a>&gt;</div>
-<div class="line"><a id="l00600" name="l00600"></a><span class="lineno">  600</span>    particle_velocity_struct(</div>
-<div class="line"><a id="l00601" name="l00601"></a><span class="lineno">  601</span>      particle_projector.particle_velocity.dof_handler,</div>
-<div class="line"><a id="l00602" name="l00602"></a><span class="lineno">  602</span>      particle_projector.particle_velocity.particle_field_solution,</div>
-<div class="line"><a id="l00603" name="l00603"></a><span class="lineno">  603</span>      particle_velocity_names,</div>
-<div class="line"><a id="l00604" name="l00604"></a><span class="lineno">  604</span>      particle_velocity_component_interpretation);</div>
-<div class="line"><a id="l00605" name="l00605"></a><span class="lineno">  605</span> </div>
-<div class="line"><a id="l00606" name="l00606"></a><span class="lineno">  606</span>  std::vector&lt;std::string&gt; mtc_name(1, <span class="stringliteral">&quot;momentum_transfer_coefficient&quot;</span>);</div>
-<div class="line"><a id="l00607" name="l00607"></a><span class="lineno">  607</span>  std::vector&lt;DataComponentInterpretation::DataComponentInterpretation&gt;</div>
-<div class="line"><a id="l00608" name="l00608"></a><span class="lineno">  608</span>    mtc_component_interpretation(</div>
-<div class="line"><a id="l00609" name="l00609"></a><span class="lineno">  609</span>      1, DataComponentInterpretation::component_is_scalar);</div>
-<div class="line"><a id="l00610" name="l00610"></a><span class="lineno">  610</span> </div>
-<div class="line"><a id="l00611" name="l00611"></a><span class="lineno">  611</span>  <a class="code hl_struct" href="structOutputStructSolution.html">OutputStructSolution&lt;dim, LinearAlgebra::distributed::Vector&lt;double&gt;</a>&gt;</div>
-<div class="line"><a id="l00612" name="l00612"></a><span class="lineno">  612</span>    mtc_struct(</div>
-<div class="line"><a id="l00613" name="l00613"></a><span class="lineno">  613</span>      particle_projector.momentum_transfer_coefficient.dof_handler,</div>
-<div class="line"><a id="l00614" name="l00614"></a><span class="lineno">  614</span>      particle_projector.momentum_transfer_coefficient.particle_field_solution,</div>
-<div class="line"><a id="l00615" name="l00615"></a><span class="lineno">  615</span>      mtc_name,</div>
-<div class="line"><a id="l00616" name="l00616"></a><span class="lineno">  616</span>      mtc_component_interpretation);</div>
-<div class="line"><a id="l00617" name="l00617"></a><span class="lineno">  617</span> </div>
-<div class="line"><a id="l00618" name="l00618"></a><span class="lineno">  618</span> </div>
-<div class="line"><a id="l00619" name="l00619"></a><span class="lineno">  619</span>  <span class="keywordflow">return</span> {void_fraction_struct,</div>
-<div class="line"><a id="l00620" name="l00620"></a><span class="lineno">  620</span>          particle_fluid_drag_struct,</div>
-<div class="line"><a id="l00621" name="l00621"></a><span class="lineno">  621</span>          particle_velocity_struct,</div>
-<div class="line"><a id="l00622" name="l00622"></a><span class="lineno">  622</span>          mtc_struct};</div>
-<div class="line"><a id="l00623" name="l00623"></a><span class="lineno">  623</span>}</div>
+<div class="line"><a id="l00572" name="l00572"></a><span class="lineno">  572</span>  <span class="comment">// Make sure all of the particle-related vectors have adequate ghost values.</span></div>
+<div class="line"><a id="l00573" name="l00573"></a><span class="lineno">  573</span>  particle_projector.void_fraction_solution.update_ghost_values();</div>
+<div class="line"><a id="l00574" name="l00574"></a><span class="lineno">  574</span>  particle_projector.fluid_drag_on_particles.particle_field_solution</div>
+<div class="line"><a id="l00575" name="l00575"></a><span class="lineno">  575</span>    .update_ghost_values();</div>
+<div class="line"><a id="l00576" name="l00576"></a><span class="lineno">  576</span>  particle_projector.particle_velocity.particle_field_solution</div>
+<div class="line"><a id="l00577" name="l00577"></a><span class="lineno">  577</span>    .update_ghost_values();</div>
+<div class="line"><a id="l00578" name="l00578"></a><span class="lineno">  578</span>  particle_projector.momentum_transfer_coefficient.particle_field_solution</div>
+<div class="line"><a id="l00579" name="l00579"></a><span class="lineno">  579</span>    .update_ghost_values();</div>
+<div class="line"><a id="l00580" name="l00580"></a><span class="lineno">  580</span> </div>
+<div class="line"><a id="l00581" name="l00581"></a><span class="lineno">  581</span>  std::vector&lt;std::string&gt; name = {<span class="stringliteral">&quot;void_fraction&quot;</span>};</div>
+<div class="line"><a id="l00582" name="l00582"></a><span class="lineno">  582</span>  std::vector&lt;DataComponentInterpretation::DataComponentInterpretation&gt;</div>
+<div class="line"><a id="l00583" name="l00583"></a><span class="lineno">  583</span>    component_interpretation = {</div>
+<div class="line"><a id="l00584" name="l00584"></a><span class="lineno">  584</span>      DataComponentInterpretation::component_is_scalar};</div>
+<div class="line"><a id="l00585" name="l00585"></a><span class="lineno">  585</span>  <a class="code hl_struct" href="structOutputStructSolution.html">OutputStructSolution&lt;dim, LinearAlgebra::distributed::Vector&lt;double&gt;</a>&gt;</div>
+<div class="line"><a id="l00586" name="l00586"></a><span class="lineno">  586</span>    void_fraction_struct(particle_projector.dof_handler,</div>
+<div class="line"><a id="l00587" name="l00587"></a><span class="lineno">  587</span>                         particle_projector.void_fraction_solution,</div>
+<div class="line"><a id="l00588" name="l00588"></a><span class="lineno">  588</span>                         name,</div>
+<div class="line"><a id="l00589" name="l00589"></a><span class="lineno">  589</span>                         component_interpretation);</div>
+<div class="line"><a id="l00590" name="l00590"></a><span class="lineno">  590</span> </div>
+<div class="line"><a id="l00591" name="l00591"></a><span class="lineno">  591</span>  std::vector&lt;std::string&gt; force_names(dim, <span class="stringliteral">&quot;fluid_drag_on_particles&quot;</span>);</div>
+<div class="line"><a id="l00592" name="l00592"></a><span class="lineno">  592</span>  std::vector&lt;DataComponentInterpretation::DataComponentInterpretation&gt;</div>
+<div class="line"><a id="l00593" name="l00593"></a><span class="lineno">  593</span>    force_component_interpretation(</div>
+<div class="line"><a id="l00594" name="l00594"></a><span class="lineno">  594</span>      dim, DataComponentInterpretation::component_is_part_of_vector);</div>
+<div class="line"><a id="l00595" name="l00595"></a><span class="lineno">  595</span> </div>
+<div class="line"><a id="l00596" name="l00596"></a><span class="lineno">  596</span>  <a class="code hl_struct" href="structOutputStructSolution.html">OutputStructSolution&lt;dim, LinearAlgebra::distributed::Vector&lt;double&gt;</a>&gt;</div>
+<div class="line"><a id="l00597" name="l00597"></a><span class="lineno">  597</span>    particle_fluid_drag_struct(</div>
+<div class="line"><a id="l00598" name="l00598"></a><span class="lineno">  598</span>      particle_projector.fluid_drag_on_particles.dof_handler,</div>
+<div class="line"><a id="l00599" name="l00599"></a><span class="lineno">  599</span>      particle_projector.fluid_drag_on_particles.particle_field_solution,</div>
+<div class="line"><a id="l00600" name="l00600"></a><span class="lineno">  600</span>      force_names,</div>
+<div class="line"><a id="l00601" name="l00601"></a><span class="lineno">  601</span>      force_component_interpretation);</div>
+<div class="line"><a id="l00602" name="l00602"></a><span class="lineno">  602</span> </div>
+<div class="line"><a id="l00603" name="l00603"></a><span class="lineno">  603</span>  std::vector&lt;std::string&gt; particle_velocity_names(dim, <span class="stringliteral">&quot;particle_velocity&quot;</span>);</div>
+<div class="line"><a id="l00604" name="l00604"></a><span class="lineno">  604</span>  std::vector&lt;DataComponentInterpretation::DataComponentInterpretation&gt;</div>
+<div class="line"><a id="l00605" name="l00605"></a><span class="lineno">  605</span>    particle_velocity_component_interpretation(</div>
+<div class="line"><a id="l00606" name="l00606"></a><span class="lineno">  606</span>      dim, DataComponentInterpretation::component_is_part_of_vector);</div>
+<div class="line"><a id="l00607" name="l00607"></a><span class="lineno">  607</span> </div>
+<div class="line"><a id="l00608" name="l00608"></a><span class="lineno">  608</span>  <a class="code hl_struct" href="structOutputStructSolution.html">OutputStructSolution&lt;dim, LinearAlgebra::distributed::Vector&lt;double&gt;</a>&gt;</div>
+<div class="line"><a id="l00609" name="l00609"></a><span class="lineno">  609</span>    particle_velocity_struct(</div>
+<div class="line"><a id="l00610" name="l00610"></a><span class="lineno">  610</span>      particle_projector.particle_velocity.dof_handler,</div>
+<div class="line"><a id="l00611" name="l00611"></a><span class="lineno">  611</span>      particle_projector.particle_velocity.particle_field_solution,</div>
+<div class="line"><a id="l00612" name="l00612"></a><span class="lineno">  612</span>      particle_velocity_names,</div>
+<div class="line"><a id="l00613" name="l00613"></a><span class="lineno">  613</span>      particle_velocity_component_interpretation);</div>
+<div class="line"><a id="l00614" name="l00614"></a><span class="lineno">  614</span> </div>
+<div class="line"><a id="l00615" name="l00615"></a><span class="lineno">  615</span>  std::vector&lt;std::string&gt; mtc_name(1, <span class="stringliteral">&quot;momentum_transfer_coefficient&quot;</span>);</div>
+<div class="line"><a id="l00616" name="l00616"></a><span class="lineno">  616</span>  std::vector&lt;DataComponentInterpretation::DataComponentInterpretation&gt;</div>
+<div class="line"><a id="l00617" name="l00617"></a><span class="lineno">  617</span>    mtc_component_interpretation(</div>
+<div class="line"><a id="l00618" name="l00618"></a><span class="lineno">  618</span>      1, DataComponentInterpretation::component_is_scalar);</div>
+<div class="line"><a id="l00619" name="l00619"></a><span class="lineno">  619</span> </div>
+<div class="line"><a id="l00620" name="l00620"></a><span class="lineno">  620</span>  <a class="code hl_struct" href="structOutputStructSolution.html">OutputStructSolution&lt;dim, LinearAlgebra::distributed::Vector&lt;double&gt;</a>&gt;</div>
+<div class="line"><a id="l00621" name="l00621"></a><span class="lineno">  621</span>    mtc_struct(</div>
+<div class="line"><a id="l00622" name="l00622"></a><span class="lineno">  622</span>      particle_projector.momentum_transfer_coefficient.dof_handler,</div>
+<div class="line"><a id="l00623" name="l00623"></a><span class="lineno">  623</span>      particle_projector.momentum_transfer_coefficient.particle_field_solution,</div>
+<div class="line"><a id="l00624" name="l00624"></a><span class="lineno">  624</span>      mtc_name,</div>
+<div class="line"><a id="l00625" name="l00625"></a><span class="lineno">  625</span>      mtc_component_interpretation);</div>
+<div class="line"><a id="l00626" name="l00626"></a><span class="lineno">  626</span> </div>
+<div class="line"><a id="l00627" name="l00627"></a><span class="lineno">  627</span> </div>
+<div class="line"><a id="l00628" name="l00628"></a><span class="lineno">  628</span>  <span class="keywordflow">return</span> {void_fraction_struct,</div>
+<div class="line"><a id="l00629" name="l00629"></a><span class="lineno">  629</span>          particle_fluid_drag_struct,</div>
+<div class="line"><a id="l00630" name="l00630"></a><span class="lineno">  630</span>          particle_velocity_struct,</div>
+<div class="line"><a id="l00631" name="l00631"></a><span class="lineno">  631</span>          mtc_struct};</div>
+<div class="line"><a id="l00632" name="l00632"></a><span class="lineno">  632</span>}</div>
 </div>
-<div class="line"><a id="l00624" name="l00624"></a><span class="lineno">  624</span> </div>
-<div class="line"><a id="l00625" name="l00625"></a><span class="lineno">  625</span><span class="keyword">template</span> &lt;<span class="keywordtype">int</span> dim&gt;</div>
-<div class="line"><a id="l00626" name="l00626"></a><span class="lineno">  626</span><span class="keywordtype">void</span></div>
-<div class="foldopen" id="foldopen00627" data-start="{" data-end="}">
-<div class="line"><a id="l00627" name="l00627"></a><span class="lineno"><a class="line" href="classFluidDynamicsVANSMatrixFree.html#ad207ba19294b06090f28e69d1cb543fd">  627</a></span><a class="code hl_function" href="classFluidDynamicsVANSMatrixFree.html#ad207ba19294b06090f28e69d1cb543fd">FluidDynamicsVANSMatrixFree&lt;dim&gt;::evaluate_time_derivative_void_fraction</a>()</div>
-<div class="line"><a id="l00628" name="l00628"></a><span class="lineno">  628</span>{</div>
-<div class="line"><a id="l00629" name="l00629"></a><span class="lineno">  629</span>  this-&gt;time_derivative_void_fraction = 0;</div>
-<div class="line"><a id="l00630" name="l00630"></a><span class="lineno">  630</span> </div>
-<div class="line"><a id="l00631" name="l00631"></a><span class="lineno">  631</span>  <span class="comment">// If the void fraction time derivative is disabled, we just leave it at zero.</span></div>
-<div class="line"><a id="l00632" name="l00632"></a><span class="lineno">  632</span>  <span class="keywordflow">if</span> (cfd_dem_simulation_parameters.cfd_dem.void_fraction_time_derivative ==</div>
-<div class="line"><a id="l00633" name="l00633"></a><span class="lineno">  633</span>      <span class="keyword">false</span>)</div>
-<div class="line"><a id="l00634" name="l00634"></a><span class="lineno">  634</span>    {</div>
-<div class="line"><a id="l00635" name="l00635"></a><span class="lineno">  635</span>      <span class="comment">// Even though it is zero, we still need to update its ghost values.</span></div>
-<div class="line"><a id="l00636" name="l00636"></a><span class="lineno">  636</span>      time_derivative_void_fraction.update_ghost_values();</div>
-<div class="line"><a id="l00637" name="l00637"></a><span class="lineno">  637</span>      <span class="keywordflow">return</span>;</div>
-<div class="line"><a id="l00638" name="l00638"></a><span class="lineno">  638</span>    }</div>
-<div class="line"><a id="l00639" name="l00639"></a><span class="lineno">  639</span>  <span class="comment">// Time stepping information</span></div>
-<div class="line"><a id="l00640" name="l00640"></a><span class="lineno">  640</span>  <span class="keyword">const</span> <span class="keyword">auto</span> method = this-&gt;simulation_control-&gt;get_assembly_method();</div>
-<div class="line"><a id="l00641" name="l00641"></a><span class="lineno">  641</span>  <span class="comment">// Vector for the BDF coefficients</span></div>
-<div class="line"><a id="l00642" name="l00642"></a><span class="lineno">  642</span>  <span class="keyword">const</span> Vector&lt;double&gt; &amp;bdf_coefs =</div>
-<div class="line"><a id="l00643" name="l00643"></a><span class="lineno">  643</span>    this-&gt;simulation_control-&gt;get_bdf_coefficients();</div>
-<div class="line"><a id="l00644" name="l00644"></a><span class="lineno">  644</span> </div>
-<div class="line"><a id="l00645" name="l00645"></a><span class="lineno">  645</span>  this-&gt;time_derivative_void_fraction.add(</div>
-<div class="line"><a id="l00646" name="l00646"></a><span class="lineno">  646</span>    bdf_coefs[0], this-&gt;particle_projector.void_fraction_solution);</div>
-<div class="line"><a id="l00647" name="l00647"></a><span class="lineno">  647</span>  <span class="keywordflow">for</span> (<span class="keywordtype">unsigned</span> <span class="keywordtype">int</span> p = 0; p &lt; <a class="code hl_function" href="bdf_8h.html#a79e44dc10ababc737a8659c2f5f8c18a">number_of_previous_solutions</a>(method); ++p)</div>
-<div class="line"><a id="l00648" name="l00648"></a><span class="lineno">  648</span>    {</div>
-<div class="line"><a id="l00649" name="l00649"></a><span class="lineno">  649</span>      this-&gt;time_derivative_void_fraction.add(</div>
-<div class="line"><a id="l00650" name="l00650"></a><span class="lineno">  650</span>        bdf_coefs[p + 1],</div>
-<div class="line"><a id="l00651" name="l00651"></a><span class="lineno">  651</span>        this-&gt;particle_projector.void_fraction_previous_solution[p]);</div>
-<div class="line"><a id="l00652" name="l00652"></a><span class="lineno">  652</span>    }</div>
+<div class="line"><a id="l00633" name="l00633"></a><span class="lineno">  633</span> </div>
+<div class="line"><a id="l00634" name="l00634"></a><span class="lineno">  634</span><span class="keyword">template</span> &lt;<span class="keywordtype">int</span> dim&gt;</div>
+<div class="line"><a id="l00635" name="l00635"></a><span class="lineno">  635</span><span class="keywordtype">void</span></div>
+<div class="foldopen" id="foldopen00636" data-start="{" data-end="}">
+<div class="line"><a id="l00636" name="l00636"></a><span class="lineno"><a class="line" href="classFluidDynamicsVANSMatrixFree.html#ad207ba19294b06090f28e69d1cb543fd">  636</a></span><a class="code hl_function" href="classFluidDynamicsVANSMatrixFree.html#ad207ba19294b06090f28e69d1cb543fd">FluidDynamicsVANSMatrixFree&lt;dim&gt;::evaluate_time_derivative_void_fraction</a>()</div>
+<div class="line"><a id="l00637" name="l00637"></a><span class="lineno">  637</span>{</div>
+<div class="line"><a id="l00638" name="l00638"></a><span class="lineno">  638</span>  this-&gt;time_derivative_void_fraction = 0;</div>
+<div class="line"><a id="l00639" name="l00639"></a><span class="lineno">  639</span> </div>
+<div class="line"><a id="l00640" name="l00640"></a><span class="lineno">  640</span>  <span class="comment">// If the void fraction time derivative is disabled, we just leave it at zero.</span></div>
+<div class="line"><a id="l00641" name="l00641"></a><span class="lineno">  641</span>  <span class="keywordflow">if</span> (cfd_dem_simulation_parameters.cfd_dem.void_fraction_time_derivative ==</div>
+<div class="line"><a id="l00642" name="l00642"></a><span class="lineno">  642</span>      <span class="keyword">false</span>)</div>
+<div class="line"><a id="l00643" name="l00643"></a><span class="lineno">  643</span>    {</div>
+<div class="line"><a id="l00644" name="l00644"></a><span class="lineno">  644</span>      <span class="comment">// Even though it is zero, we still need to update its ghost values.</span></div>
+<div class="line"><a id="l00645" name="l00645"></a><span class="lineno">  645</span>      time_derivative_void_fraction.update_ghost_values();</div>
+<div class="line"><a id="l00646" name="l00646"></a><span class="lineno">  646</span>      <span class="keywordflow">return</span>;</div>
+<div class="line"><a id="l00647" name="l00647"></a><span class="lineno">  647</span>    }</div>
+<div class="line"><a id="l00648" name="l00648"></a><span class="lineno">  648</span>  <span class="comment">// Time stepping information</span></div>
+<div class="line"><a id="l00649" name="l00649"></a><span class="lineno">  649</span>  <span class="keyword">const</span> <span class="keyword">auto</span> method = this-&gt;simulation_control-&gt;get_assembly_method();</div>
+<div class="line"><a id="l00650" name="l00650"></a><span class="lineno">  650</span>  <span class="comment">// Vector for the BDF coefficients</span></div>
+<div class="line"><a id="l00651" name="l00651"></a><span class="lineno">  651</span>  <span class="keyword">const</span> Vector&lt;double&gt; &amp;bdf_coefs =</div>
+<div class="line"><a id="l00652" name="l00652"></a><span class="lineno">  652</span>    this-&gt;simulation_control-&gt;get_bdf_coefficients();</div>
 <div class="line"><a id="l00653" name="l00653"></a><span class="lineno">  653</span> </div>
-<div class="line"><a id="l00654" name="l00654"></a><span class="lineno">  654</span>  <span class="comment">// After the void fraction time derivative is calculated, we update its ghost</span></div>
-<div class="line"><a id="l00655" name="l00655"></a><span class="lineno">  655</span>  <span class="comment">// values.</span></div>
-<div class="line"><a id="l00656" name="l00656"></a><span class="lineno">  656</span>  time_derivative_void_fraction.update_ghost_values();</div>
-<div class="line"><a id="l00657" name="l00657"></a><span class="lineno">  657</span>}</div>
+<div class="line"><a id="l00654" name="l00654"></a><span class="lineno">  654</span>  this-&gt;time_derivative_void_fraction.add(</div>
+<div class="line"><a id="l00655" name="l00655"></a><span class="lineno">  655</span>    bdf_coefs[0], this-&gt;particle_projector.void_fraction_solution);</div>
+<div class="line"><a id="l00656" name="l00656"></a><span class="lineno">  656</span>  <span class="keywordflow">for</span> (<span class="keywordtype">unsigned</span> <span class="keywordtype">int</span> p = 0; p &lt; <a class="code hl_function" href="bdf_8h.html#a79e44dc10ababc737a8659c2f5f8c18a">number_of_previous_solutions</a>(method); ++p)</div>
+<div class="line"><a id="l00657" name="l00657"></a><span class="lineno">  657</span>    {</div>
+<div class="line"><a id="l00658" name="l00658"></a><span class="lineno">  658</span>      this-&gt;time_derivative_void_fraction.add(</div>
+<div class="line"><a id="l00659" name="l00659"></a><span class="lineno">  659</span>        bdf_coefs[p + 1],</div>
+<div class="line"><a id="l00660" name="l00660"></a><span class="lineno">  660</span>        this-&gt;particle_projector.void_fraction_previous_solution[p]);</div>
+<div class="line"><a id="l00661" name="l00661"></a><span class="lineno">  661</span>    }</div>
+<div class="line"><a id="l00662" name="l00662"></a><span class="lineno">  662</span> </div>
+<div class="line"><a id="l00663" name="l00663"></a><span class="lineno">  663</span>  <span class="comment">// After the void fraction time derivative is calculated, we update its ghost</span></div>
+<div class="line"><a id="l00664" name="l00664"></a><span class="lineno">  664</span>  <span class="comment">// values.</span></div>
+<div class="line"><a id="l00665" name="l00665"></a><span class="lineno">  665</span>  time_derivative_void_fraction.update_ghost_values();</div>
+<div class="line"><a id="l00666" name="l00666"></a><span class="lineno">  666</span>}</div>
 </div>
-<div class="line"><a id="l00658" name="l00658"></a><span class="lineno">  658</span> </div>
-<div class="line"><a id="l00659" name="l00659"></a><span class="lineno">  659</span><span class="keyword">template</span> &lt;<span class="keywordtype">int</span> dim&gt;</div>
-<div class="line"><a id="l00660" name="l00660"></a><span class="lineno">  660</span><span class="keywordtype">void</span></div>
-<div class="foldopen" id="foldopen00661" data-start="{" data-end="}">
-<div class="line"><a id="l00661" name="l00661"></a><span class="lineno"><a class="line" href="classFluidDynamicsVANSMatrixFree.html#a075e8ac2fda3a33b1e1ad31ca7c15ebd">  661</a></span><a class="code hl_function" href="classFluidDynamicsVANSMatrixFree.html#a075e8ac2fda3a33b1e1ad31ca7c15ebd">FluidDynamicsVANSMatrixFree&lt;dim&gt;::solve</a>()</div>
-<div class="line"><a id="l00662" name="l00662"></a><span class="lineno">  662</span>{</div>
-<div class="line"><a id="l00663" name="l00663"></a><span class="lineno">  663</span>  this-&gt;computing_timer.enter_subsection(<span class="stringliteral">&quot;Read mesh, manifolds and particles&quot;</span>);</div>
-<div class="line"><a id="l00664" name="l00664"></a><span class="lineno">  664</span> </div>
-<div class="line"><a id="l00665" name="l00665"></a><span class="lineno">  665</span>  <a class="code hl_function" href="grids_8h.html#ad6aedbdfb242c889dd35f353ee01c3e9">read_mesh_and_manifolds</a>(</div>
-<div class="line"><a id="l00666" name="l00666"></a><span class="lineno">  666</span>    *this-&gt;triangulation,</div>
-<div class="line"><a id="l00667" name="l00667"></a><span class="lineno">  667</span>    this-&gt;cfd_dem_simulation_parameters.cfd_parameters.mesh,</div>
-<div class="line"><a id="l00668" name="l00668"></a><span class="lineno">  668</span>    this-&gt;cfd_dem_simulation_parameters.cfd_parameters.manifolds_parameters,</div>
-<div class="line"><a id="l00669" name="l00669"></a><span class="lineno">  669</span>    this-&gt;cfd_dem_simulation_parameters.cfd_parameters.restart_parameters</div>
-<div class="line"><a id="l00670" name="l00670"></a><span class="lineno">  670</span>        .restart ||</div>
-<div class="line"><a id="l00671" name="l00671"></a><span class="lineno">  671</span>      this-&gt;cfd_dem_simulation_parameters.void_fraction-&gt;read_dem == <span class="keyword">true</span>,</div>
-<div class="line"><a id="l00672" name="l00672"></a><span class="lineno">  672</span>    this-&gt;cfd_dem_simulation_parameters.cfd_parameters.boundary_conditions);</div>
+<div class="line"><a id="l00667" name="l00667"></a><span class="lineno">  667</span> </div>
+<div class="line"><a id="l00668" name="l00668"></a><span class="lineno">  668</span><span class="keyword">template</span> &lt;<span class="keywordtype">int</span> dim&gt;</div>
+<div class="line"><a id="l00669" name="l00669"></a><span class="lineno">  669</span><span class="keywordtype">void</span></div>
+<div class="foldopen" id="foldopen00670" data-start="{" data-end="}">
+<div class="line"><a id="l00670" name="l00670"></a><span class="lineno"><a class="line" href="classFluidDynamicsVANSMatrixFree.html#a075e8ac2fda3a33b1e1ad31ca7c15ebd">  670</a></span><a class="code hl_function" href="classFluidDynamicsVANSMatrixFree.html#a075e8ac2fda3a33b1e1ad31ca7c15ebd">FluidDynamicsVANSMatrixFree&lt;dim&gt;::solve</a>()</div>
+<div class="line"><a id="l00671" name="l00671"></a><span class="lineno">  671</span>{</div>
+<div class="line"><a id="l00672" name="l00672"></a><span class="lineno">  672</span>  this-&gt;computing_timer.enter_subsection(<span class="stringliteral">&quot;Read mesh, manifolds and particles&quot;</span>);</div>
 <div class="line"><a id="l00673" name="l00673"></a><span class="lineno">  673</span> </div>
-<div class="line"><a id="l00674" name="l00674"></a><span class="lineno">  674</span>  <span class="keywordflow">if</span> (this-&gt;cfd_dem_simulation_parameters.void_fraction-&gt;read_dem == <span class="keyword">true</span> &amp;&amp;</div>
-<div class="line"><a id="l00675" name="l00675"></a><span class="lineno">  675</span>      this-&gt;cfd_dem_simulation_parameters.cfd_parameters.restart_parameters</div>
-<div class="line"><a id="l00676" name="l00676"></a><span class="lineno">  676</span>          .restart == <span class="keyword">false</span>)</div>
-<div class="line"><a id="l00677" name="l00677"></a><span class="lineno">  677</span>    read_dem();</div>
-<div class="line"><a id="l00678" name="l00678"></a><span class="lineno">  678</span> </div>
-<div class="line"><a id="l00679" name="l00679"></a><span class="lineno">  679</span>  this-&gt;computing_timer.leave_subsection(<span class="stringliteral">&quot;Read mesh, manifolds and particles&quot;</span>);</div>
-<div class="line"><a id="l00680" name="l00680"></a><span class="lineno">  680</span> </div>
-<div class="line"><a id="l00681" name="l00681"></a><span class="lineno">  681</span>  this-&gt;setup_dofs();</div>
+<div class="line"><a id="l00674" name="l00674"></a><span class="lineno">  674</span>  <a class="code hl_function" href="grids_8h.html#ad6aedbdfb242c889dd35f353ee01c3e9">read_mesh_and_manifolds</a>(</div>
+<div class="line"><a id="l00675" name="l00675"></a><span class="lineno">  675</span>    *this-&gt;triangulation,</div>
+<div class="line"><a id="l00676" name="l00676"></a><span class="lineno">  676</span>    this-&gt;cfd_dem_simulation_parameters.cfd_parameters.mesh,</div>
+<div class="line"><a id="l00677" name="l00677"></a><span class="lineno">  677</span>    this-&gt;cfd_dem_simulation_parameters.cfd_parameters.manifolds_parameters,</div>
+<div class="line"><a id="l00678" name="l00678"></a><span class="lineno">  678</span>    this-&gt;cfd_dem_simulation_parameters.cfd_parameters.restart_parameters</div>
+<div class="line"><a id="l00679" name="l00679"></a><span class="lineno">  679</span>        .restart ||</div>
+<div class="line"><a id="l00680" name="l00680"></a><span class="lineno">  680</span>      this-&gt;cfd_dem_simulation_parameters.void_fraction-&gt;read_dem == <span class="keyword">true</span>,</div>
+<div class="line"><a id="l00681" name="l00681"></a><span class="lineno">  681</span>    this-&gt;cfd_dem_simulation_parameters.cfd_parameters.boundary_conditions);</div>
 <div class="line"><a id="l00682" name="l00682"></a><span class="lineno">  682</span> </div>
-<div class="line"><a id="l00683" name="l00683"></a><span class="lineno">  683</span>  particle_projector.initialize_void_fraction(</div>
-<div class="line"><a id="l00684" name="l00684"></a><span class="lineno">  684</span>    this-&gt;simulation_control-&gt;get_current_time());</div>
-<div class="line"><a id="l00685" name="l00685"></a><span class="lineno">  685</span> </div>
-<div class="line"><a id="l00686" name="l00686"></a><span class="lineno">  686</span>  this-&gt;set_initial_condition(</div>
-<div class="line"><a id="l00687" name="l00687"></a><span class="lineno">  687</span>    this-&gt;simulation_parameters.initial_condition-&gt;type,</div>
-<div class="line"><a id="l00688" name="l00688"></a><span class="lineno">  688</span>    this-&gt;simulation_parameters.restart_parameters.restart);</div>
+<div class="line"><a id="l00683" name="l00683"></a><span class="lineno">  683</span>  <span class="keywordflow">if</span> (this-&gt;cfd_dem_simulation_parameters.void_fraction-&gt;read_dem == <span class="keyword">true</span> &amp;&amp;</div>
+<div class="line"><a id="l00684" name="l00684"></a><span class="lineno">  684</span>      this-&gt;cfd_dem_simulation_parameters.cfd_parameters.restart_parameters</div>
+<div class="line"><a id="l00685" name="l00685"></a><span class="lineno">  685</span>          .restart == <span class="keyword">false</span>)</div>
+<div class="line"><a id="l00686" name="l00686"></a><span class="lineno">  686</span>    read_dem();</div>
+<div class="line"><a id="l00687" name="l00687"></a><span class="lineno">  687</span> </div>
+<div class="line"><a id="l00688" name="l00688"></a><span class="lineno">  688</span>  this-&gt;computing_timer.leave_subsection(<span class="stringliteral">&quot;Read mesh, manifolds and particles&quot;</span>);</div>
 <div class="line"><a id="l00689" name="l00689"></a><span class="lineno">  689</span> </div>
-<div class="line"><a id="l00690" name="l00690"></a><span class="lineno">  690</span>  <span class="comment">// Only needed if other physics apart from fluid dynamics are enabled.</span></div>
-<div class="line"><a id="l00691" name="l00691"></a><span class="lineno">  691</span>  <span class="keywordflow">if</span> (this-&gt;multiphysics-&gt;get_active_physics().size() &gt; 1)</div>
-<div class="line"><a id="l00692" name="l00692"></a><span class="lineno">  692</span>    this-&gt;update_multiphysics_time_average_solution();</div>
-<div class="line"><a id="l00693" name="l00693"></a><span class="lineno">  693</span> </div>
-<div class="line"><a id="l00694" name="l00694"></a><span class="lineno">  694</span>  <span class="keywordflow">while</span> (this-&gt;simulation_control-&gt;integrate())</div>
-<div class="line"><a id="l00695" name="l00695"></a><span class="lineno">  695</span>    {</div>
-<div class="line"><a id="l00696" name="l00696"></a><span class="lineno">  696</span>      <span class="keywordflow">if</span> (this-&gt;forcing_function)</div>
-<div class="line"><a id="l00697" name="l00697"></a><span class="lineno">  697</span>        this-&gt;forcing_function-&gt;set_time(</div>
-<div class="line"><a id="l00698" name="l00698"></a><span class="lineno">  698</span>          this-&gt;simulation_control-&gt;get_current_time());</div>
-<div class="line"><a id="l00699" name="l00699"></a><span class="lineno">  699</span> </div>
-<div class="line"><a id="l00700" name="l00700"></a><span class="lineno">  700</span>      this-&gt;update_boundary_conditions();</div>
-<div class="line"><a id="l00701" name="l00701"></a><span class="lineno">  701</span>      this-&gt;multiphysics-&gt;update_boundary_conditions();</div>
+<div class="line"><a id="l00690" name="l00690"></a><span class="lineno">  690</span>  this-&gt;setup_dofs();</div>
+<div class="line"><a id="l00691" name="l00691"></a><span class="lineno">  691</span> </div>
+<div class="line"><a id="l00692" name="l00692"></a><span class="lineno">  692</span>  particle_projector.initialize_void_fraction(</div>
+<div class="line"><a id="l00693" name="l00693"></a><span class="lineno">  693</span>    this-&gt;simulation_control-&gt;get_current_time());</div>
+<div class="line"><a id="l00694" name="l00694"></a><span class="lineno">  694</span> </div>
+<div class="line"><a id="l00695" name="l00695"></a><span class="lineno">  695</span>  this-&gt;set_initial_condition(</div>
+<div class="line"><a id="l00696" name="l00696"></a><span class="lineno">  696</span>    this-&gt;simulation_parameters.initial_condition-&gt;type,</div>
+<div class="line"><a id="l00697" name="l00697"></a><span class="lineno">  697</span>    this-&gt;simulation_parameters.restart_parameters.restart);</div>
+<div class="line"><a id="l00698" name="l00698"></a><span class="lineno">  698</span> </div>
+<div class="line"><a id="l00699" name="l00699"></a><span class="lineno">  699</span>  <span class="comment">// Only needed if other physics apart from fluid dynamics are enabled.</span></div>
+<div class="line"><a id="l00700" name="l00700"></a><span class="lineno">  700</span>  <span class="keywordflow">if</span> (this-&gt;multiphysics-&gt;get_active_physics().size() &gt; 1)</div>
+<div class="line"><a id="l00701" name="l00701"></a><span class="lineno">  701</span>    this-&gt;update_multiphysics_time_average_solution();</div>
 <div class="line"><a id="l00702" name="l00702"></a><span class="lineno">  702</span> </div>
-<div class="line"><a id="l00703" name="l00703"></a><span class="lineno">  703</span>      this-&gt;simulation_control-&gt;print_progression(this-&gt;pcout);</div>
-<div class="line"><a id="l00704" name="l00704"></a><span class="lineno">  704</span>      this-&gt;dynamic_flow_control();</div>
-<div class="line"><a id="l00705" name="l00705"></a><span class="lineno">  705</span> </div>
-<div class="line"><a id="l00706" name="l00706"></a><span class="lineno">  706</span>      <span class="keywordflow">if</span> (!this-&gt;simulation_control-&gt;is_at_start())</div>
-<div class="line"><a id="l00707" name="l00707"></a><span class="lineno">  707</span>        {</div>
-<div class="line"><a id="l00708" name="l00708"></a><span class="lineno">  708</span>          this-&gt;refine_mesh();</div>
-<div class="line"><a id="l00709" name="l00709"></a><span class="lineno">  709</span>        }</div>
-<div class="line"><a id="l00710" name="l00710"></a><span class="lineno">  710</span> </div>
-<div class="line"><a id="l00711" name="l00711"></a><span class="lineno">  711</span>      <span class="keywordflow">if</span> (<a class="code hl_function" href="time__integration__utilities_8h.html#a94d97298696587439e993f24b29c936e">time_stepping_is_bdf</a>(this-&gt;simulation_control-&gt;get_assembly_method()))</div>
-<div class="line"><a id="l00712" name="l00712"></a><span class="lineno">  712</span>        {</div>
-<div class="line"><a id="l00713" name="l00713"></a><span class="lineno">  713</span>          this-&gt;computing_timer.enter_subsection(</div>
-<div class="line"><a id="l00714" name="l00714"></a><span class="lineno">  714</span>            <span class="stringliteral">&quot;Calculate time derivative previous solutions&quot;</span>);</div>
-<div class="line"><a id="l00715" name="l00715"></a><span class="lineno">  715</span> </div>
-<div class="line"><a id="l00716" name="l00716"></a><span class="lineno">  716</span>          this-&gt;calculate_time_derivative_previous_solutions();</div>
-<div class="line"><a id="l00717" name="l00717"></a><span class="lineno">  717</span>          this-&gt;time_derivative_previous_solutions.update_ghost_values();</div>
-<div class="line"><a id="l00718" name="l00718"></a><span class="lineno">  718</span>          this-&gt;system_operator-&gt;evaluate_time_derivative_previous_solutions(</div>
-<div class="line"><a id="l00719" name="l00719"></a><span class="lineno">  719</span>            this-&gt;time_derivative_previous_solutions);</div>
-<div class="line"><a id="l00720" name="l00720"></a><span class="lineno">  720</span> </div>
-<div class="line"><a id="l00721" name="l00721"></a><span class="lineno">  721</span>          this-&gt;computing_timer.leave_subsection(</div>
-<div class="line"><a id="l00722" name="l00722"></a><span class="lineno">  722</span>            <span class="stringliteral">&quot;Calculate time derivative previous solutions&quot;</span>);</div>
-<div class="line"><a id="l00723" name="l00723"></a><span class="lineno">  723</span> </div>
-<div class="line"><a id="l00724" name="l00724"></a><span class="lineno">  724</span>          <span class="keywordflow">if</span> (this-&gt;simulation_parameters.flow_control.enable_flow_control)</div>
-<div class="line"><a id="l00725" name="l00725"></a><span class="lineno">  725</span>            this-&gt;system_operator-&gt;update_beta_force(</div>
-<div class="line"><a id="l00726" name="l00726"></a><span class="lineno">  726</span>              this-&gt;flow_control.get_beta());</div>
-<div class="line"><a id="l00727" name="l00727"></a><span class="lineno">  727</span>        }</div>
-<div class="line"><a id="l00728" name="l00728"></a><span class="lineno">  728</span> </div>
-<div class="line"><a id="l00729" name="l00729"></a><span class="lineno">  729</span>      {</div>
-<div class="line"><a id="l00730" name="l00730"></a><span class="lineno">  730</span>        TimerOutput::Scope t(this-&gt;computing_timer,</div>
-<div class="line"><a id="l00731" name="l00731"></a><span class="lineno">  731</span>                             <span class="stringliteral">&quot;Calculate particle-fluid projection&quot;</span>);</div>
+<div class="line"><a id="l00703" name="l00703"></a><span class="lineno">  703</span>  <span class="keywordflow">while</span> (this-&gt;simulation_control-&gt;integrate())</div>
+<div class="line"><a id="l00704" name="l00704"></a><span class="lineno">  704</span>    {</div>
+<div class="line"><a id="l00705" name="l00705"></a><span class="lineno">  705</span>      <span class="keywordflow">if</span> (this-&gt;forcing_function)</div>
+<div class="line"><a id="l00706" name="l00706"></a><span class="lineno">  706</span>        this-&gt;forcing_function-&gt;set_time(</div>
+<div class="line"><a id="l00707" name="l00707"></a><span class="lineno">  707</span>          this-&gt;simulation_control-&gt;get_current_time());</div>
+<div class="line"><a id="l00708" name="l00708"></a><span class="lineno">  708</span> </div>
+<div class="line"><a id="l00709" name="l00709"></a><span class="lineno">  709</span>      this-&gt;update_boundary_conditions();</div>
+<div class="line"><a id="l00710" name="l00710"></a><span class="lineno">  710</span>      this-&gt;multiphysics-&gt;update_boundary_conditions();</div>
+<div class="line"><a id="l00711" name="l00711"></a><span class="lineno">  711</span> </div>
+<div class="line"><a id="l00712" name="l00712"></a><span class="lineno">  712</span>      this-&gt;simulation_control-&gt;print_progression(this-&gt;pcout);</div>
+<div class="line"><a id="l00713" name="l00713"></a><span class="lineno">  713</span>      this-&gt;dynamic_flow_control();</div>
+<div class="line"><a id="l00714" name="l00714"></a><span class="lineno">  714</span> </div>
+<div class="line"><a id="l00715" name="l00715"></a><span class="lineno">  715</span>      <span class="keywordflow">if</span> (!this-&gt;simulation_control-&gt;is_at_start())</div>
+<div class="line"><a id="l00716" name="l00716"></a><span class="lineno">  716</span>        {</div>
+<div class="line"><a id="l00717" name="l00717"></a><span class="lineno">  717</span>          this-&gt;refine_mesh();</div>
+<div class="line"><a id="l00718" name="l00718"></a><span class="lineno">  718</span>        }</div>
+<div class="line"><a id="l00719" name="l00719"></a><span class="lineno">  719</span> </div>
+<div class="line"><a id="l00720" name="l00720"></a><span class="lineno">  720</span>      <span class="keywordflow">if</span> (<a class="code hl_function" href="time__integration__utilities_8h.html#a94d97298696587439e993f24b29c936e">time_stepping_is_bdf</a>(this-&gt;simulation_control-&gt;get_assembly_method()))</div>
+<div class="line"><a id="l00721" name="l00721"></a><span class="lineno">  721</span>        {</div>
+<div class="line"><a id="l00722" name="l00722"></a><span class="lineno">  722</span>          this-&gt;computing_timer.enter_subsection(</div>
+<div class="line"><a id="l00723" name="l00723"></a><span class="lineno">  723</span>            <span class="stringliteral">&quot;Calculate time derivative previous solutions&quot;</span>);</div>
+<div class="line"><a id="l00724" name="l00724"></a><span class="lineno">  724</span> </div>
+<div class="line"><a id="l00725" name="l00725"></a><span class="lineno">  725</span>          this-&gt;calculate_time_derivative_previous_solutions();</div>
+<div class="line"><a id="l00726" name="l00726"></a><span class="lineno">  726</span>          this-&gt;time_derivative_previous_solutions.update_ghost_values();</div>
+<div class="line"><a id="l00727" name="l00727"></a><span class="lineno">  727</span>          this-&gt;system_operator-&gt;evaluate_time_derivative_previous_solutions(</div>
+<div class="line"><a id="l00728" name="l00728"></a><span class="lineno">  728</span>            this-&gt;time_derivative_previous_solutions);</div>
+<div class="line"><a id="l00729" name="l00729"></a><span class="lineno">  729</span> </div>
+<div class="line"><a id="l00730" name="l00730"></a><span class="lineno">  730</span>          this-&gt;computing_timer.leave_subsection(</div>
+<div class="line"><a id="l00731" name="l00731"></a><span class="lineno">  731</span>            <span class="stringliteral">&quot;Calculate time derivative previous solutions&quot;</span>);</div>
 <div class="line"><a id="l00732" name="l00732"></a><span class="lineno">  732</span> </div>
-<div class="line"><a id="l00733" name="l00733"></a><span class="lineno">  733</span>        <span class="comment">// Calculate the new void fraction</span></div>
-<div class="line"><a id="l00734" name="l00734"></a><span class="lineno">  734</span>        particle_projector.calculate_void_fraction(</div>
-<div class="line"><a id="l00735" name="l00735"></a><span class="lineno">  735</span>          this-&gt;simulation_control-&gt;get_current_time());</div>
-<div class="line"><a id="l00736" name="l00736"></a><span class="lineno">  736</span> </div>
-<div class="line"><a id="l00737" name="l00737"></a><span class="lineno">  737</span>        <span class="comment">// and its derivative</span></div>
-<div class="line"><a id="l00738" name="l00738"></a><span class="lineno">  738</span>        evaluate_time_derivative_void_fraction();</div>
-<div class="line"><a id="l00739" name="l00739"></a><span class="lineno">  739</span> </div>
-<div class="line"><a id="l00740" name="l00740"></a><span class="lineno">  740</span>        particle_projector.calculate_particle_fluid_forces_projection(</div>
-<div class="line"><a id="l00741" name="l00741"></a><span class="lineno">  741</span>          this-&gt;cfd_dem_simulation_parameters.cfd_dem,</div>
-<div class="line"><a id="l00742" name="l00742"></a><span class="lineno">  742</span>          *this-&gt;dof_handler,</div>
-<div class="line"><a id="l00743" name="l00743"></a><span class="lineno">  743</span>          *this-&gt;present_solution,</div>
-<div class="line"><a id="l00744" name="l00744"></a><span class="lineno">  744</span>          *this-&gt;previous_solutions,</div>
-<div class="line"><a id="l00745" name="l00745"></a><span class="lineno">  745</span>          cfd_dem_simulation_parameters.dem_parameters</div>
-<div class="line"><a id="l00746" name="l00746"></a><span class="lineno">  746</span>            .lagrangian_physical_properties.g,</div>
-<div class="line"><a id="l00747" name="l00747"></a><span class="lineno">  747</span>          <a class="code hl_class" href="classNavierStokesScratchData.html">NavierStokesScratchData&lt;dim&gt;</a>(</div>
-<div class="line"><a id="l00748" name="l00748"></a><span class="lineno">  748</span>            this-&gt;simulation_control,</div>
-<div class="line"><a id="l00749" name="l00749"></a><span class="lineno">  749</span>            this-&gt;simulation_parameters.physical_properties_manager,</div>
-<div class="line"><a id="l00750" name="l00750"></a><span class="lineno">  750</span>            *this-&gt;fe,</div>
-<div class="line"><a id="l00751" name="l00751"></a><span class="lineno">  751</span>            *this-&gt;cell_quadrature,</div>
-<div class="line"><a id="l00752" name="l00752"></a><span class="lineno">  752</span>            *this-&gt;mapping,</div>
-<div class="line"><a id="l00753" name="l00753"></a><span class="lineno">  753</span>            *this-&gt;face_quadrature));</div>
-<div class="line"><a id="l00754" name="l00754"></a><span class="lineno">  754</span> </div>
-<div class="line"><a id="l00755" name="l00755"></a><span class="lineno">  755</span>        <span class="comment">// The base matrix-free operator is not aware of the various VANS</span></div>
-<div class="line"><a id="l00756" name="l00756"></a><span class="lineno">  756</span>        <span class="comment">// coupling term. We must do a cast here to ensure that the operator is</span></div>
-<div class="line"><a id="l00757" name="l00757"></a><span class="lineno">  757</span>        <span class="comment">// of the right type.</span></div>
-<div class="line"><a id="l00758" name="l00758"></a><span class="lineno">  758</span>        <span class="keywordflow">if</span> (<span class="keyword">auto</span> mf_operator = <span class="keyword">dynamic_cast&lt;</span><a class="code hl_class" href="classVANSOperator.html">VANSOperator&lt;dim, double&gt;</a> *<span class="keyword">&gt;</span>(</div>
-<div class="line"><a id="l00759" name="l00759"></a><span class="lineno">  759</span>              this-&gt;system_operator.get()))</div>
-<div class="line"><a id="l00760" name="l00760"></a><span class="lineno">  760</span>          {</div>
-<div class="line"><a id="l00761" name="l00761"></a><span class="lineno">  761</span>            TimerOutput::Scope t(this-&gt;computing_timer,</div>
-<div class="line"><a id="l00762" name="l00762"></a><span class="lineno">  762</span>                                 <span class="stringliteral">&quot;Prepare MF operator for VANS&quot;</span>);</div>
+<div class="line"><a id="l00733" name="l00733"></a><span class="lineno">  733</span>          <span class="keywordflow">if</span> (this-&gt;simulation_parameters.flow_control.enable_flow_control)</div>
+<div class="line"><a id="l00734" name="l00734"></a><span class="lineno">  734</span>            this-&gt;system_operator-&gt;update_beta_force(</div>
+<div class="line"><a id="l00735" name="l00735"></a><span class="lineno">  735</span>              this-&gt;flow_control.get_beta());</div>
+<div class="line"><a id="l00736" name="l00736"></a><span class="lineno">  736</span>        }</div>
+<div class="line"><a id="l00737" name="l00737"></a><span class="lineno">  737</span> </div>
+<div class="line"><a id="l00738" name="l00738"></a><span class="lineno">  738</span>      {</div>
+<div class="line"><a id="l00739" name="l00739"></a><span class="lineno">  739</span>        TimerOutput::Scope t(this-&gt;computing_timer,</div>
+<div class="line"><a id="l00740" name="l00740"></a><span class="lineno">  740</span>                             <span class="stringliteral">&quot;Calculate particle-fluid projection&quot;</span>);</div>
+<div class="line"><a id="l00741" name="l00741"></a><span class="lineno">  741</span> </div>
+<div class="line"><a id="l00742" name="l00742"></a><span class="lineno">  742</span>        <span class="comment">// Calculate the new void fraction</span></div>
+<div class="line"><a id="l00743" name="l00743"></a><span class="lineno">  743</span>        particle_projector.calculate_void_fraction(</div>
+<div class="line"><a id="l00744" name="l00744"></a><span class="lineno">  744</span>          this-&gt;simulation_control-&gt;get_current_time());</div>
+<div class="line"><a id="l00745" name="l00745"></a><span class="lineno">  745</span> </div>
+<div class="line"><a id="l00746" name="l00746"></a><span class="lineno">  746</span>        <span class="comment">// and its derivative</span></div>
+<div class="line"><a id="l00747" name="l00747"></a><span class="lineno">  747</span>        evaluate_time_derivative_void_fraction();</div>
+<div class="line"><a id="l00748" name="l00748"></a><span class="lineno">  748</span> </div>
+<div class="line"><a id="l00749" name="l00749"></a><span class="lineno">  749</span>        particle_projector.calculate_particle_fluid_forces_projection(</div>
+<div class="line"><a id="l00750" name="l00750"></a><span class="lineno">  750</span>          this-&gt;cfd_dem_simulation_parameters.cfd_dem,</div>
+<div class="line"><a id="l00751" name="l00751"></a><span class="lineno">  751</span>          *this-&gt;dof_handler,</div>
+<div class="line"><a id="l00752" name="l00752"></a><span class="lineno">  752</span>          *this-&gt;present_solution,</div>
+<div class="line"><a id="l00753" name="l00753"></a><span class="lineno">  753</span>          *this-&gt;previous_solutions,</div>
+<div class="line"><a id="l00754" name="l00754"></a><span class="lineno">  754</span>          cfd_dem_simulation_parameters.dem_parameters</div>
+<div class="line"><a id="l00755" name="l00755"></a><span class="lineno">  755</span>            .lagrangian_physical_properties.g,</div>
+<div class="line"><a id="l00756" name="l00756"></a><span class="lineno">  756</span>          <a class="code hl_class" href="classNavierStokesScratchData.html">NavierStokesScratchData&lt;dim&gt;</a>(</div>
+<div class="line"><a id="l00757" name="l00757"></a><span class="lineno">  757</span>            this-&gt;simulation_control,</div>
+<div class="line"><a id="l00758" name="l00758"></a><span class="lineno">  758</span>            this-&gt;simulation_parameters.physical_properties_manager,</div>
+<div class="line"><a id="l00759" name="l00759"></a><span class="lineno">  759</span>            *this-&gt;fe,</div>
+<div class="line"><a id="l00760" name="l00760"></a><span class="lineno">  760</span>            *this-&gt;cell_quadrature,</div>
+<div class="line"><a id="l00761" name="l00761"></a><span class="lineno">  761</span>            *this-&gt;mapping,</div>
+<div class="line"><a id="l00762" name="l00762"></a><span class="lineno">  762</span>            *this-&gt;face_quadrature));</div>
 <div class="line"><a id="l00763" name="l00763"></a><span class="lineno">  763</span> </div>
-<div class="line"><a id="l00764" name="l00764"></a><span class="lineno">  764</span>            mf_operator-&gt;compute_void_fraction(</div>
-<div class="line"><a id="l00765" name="l00765"></a><span class="lineno">  765</span>              particle_projector.dof_handler,</div>
-<div class="line"><a id="l00766" name="l00766"></a><span class="lineno">  766</span>              particle_projector.void_fraction_solution,</div>
-<div class="line"><a id="l00767" name="l00767"></a><span class="lineno">  767</span>              this-&gt;time_derivative_void_fraction);</div>
-<div class="line"><a id="l00768" name="l00768"></a><span class="lineno">  768</span> </div>
-<div class="line"><a id="l00769" name="l00769"></a><span class="lineno">  769</span>            mf_operator-&gt;compute_particle_fluid_interaction(</div>
-<div class="line"><a id="l00770" name="l00770"></a><span class="lineno">  770</span>              particle_projector.fluid_force_on_particles_two_way_coupling</div>
-<div class="line"><a id="l00771" name="l00771"></a><span class="lineno">  771</span>                .dof_handler,</div>
-<div class="line"><a id="l00772" name="l00772"></a><span class="lineno">  772</span>              particle_projector.fluid_force_on_particles_two_way_coupling</div>
-<div class="line"><a id="l00773" name="l00773"></a><span class="lineno">  773</span>                .particle_field_solution,</div>
-<div class="line"><a id="l00774" name="l00774"></a><span class="lineno">  774</span>              particle_projector.fluid_drag_on_particles.dof_handler,</div>
-<div class="line"><a id="l00775" name="l00775"></a><span class="lineno">  775</span>              particle_projector.fluid_drag_on_particles</div>
-<div class="line"><a id="l00776" name="l00776"></a><span class="lineno">  776</span>                .particle_field_solution,</div>
-<div class="line"><a id="l00777" name="l00777"></a><span class="lineno">  777</span>              particle_projector.particle_velocity.dof_handler,</div>
-<div class="line"><a id="l00778" name="l00778"></a><span class="lineno">  778</span>              particle_projector.particle_velocity.particle_field_solution,</div>
-<div class="line"><a id="l00779" name="l00779"></a><span class="lineno">  779</span>              particle_projector.momentum_transfer_coefficient.dof_handler,</div>
-<div class="line"><a id="l00780" name="l00780"></a><span class="lineno">  780</span>              particle_projector.momentum_transfer_coefficient</div>
-<div class="line"><a id="l00781" name="l00781"></a><span class="lineno">  781</span>                .particle_field_solution);</div>
-<div class="line"><a id="l00782" name="l00782"></a><span class="lineno">  782</span>          }</div>
-<div class="line"><a id="l00783" name="l00783"></a><span class="lineno">  783</span>      }</div>
-<div class="line"><a id="l00784" name="l00784"></a><span class="lineno">  784</span> </div>
-<div class="line"><a id="l00785" name="l00785"></a><span class="lineno">  785</span>      this-&gt;iterate();</div>
-<div class="line"><a id="l00786" name="l00786"></a><span class="lineno">  786</span>      this-&gt;postprocess(<span class="keyword">false</span>);</div>
-<div class="line"><a id="l00787" name="l00787"></a><span class="lineno">  787</span>      this-&gt;finish_time_step();</div>
-<div class="line"><a id="l00788" name="l00788"></a><span class="lineno">  788</span> </div>
-<div class="line"><a id="l00789" name="l00789"></a><span class="lineno">  789</span>      <span class="keywordflow">if</span> (this-&gt;simulation_parameters.timer.type ==</div>
-<div class="line"><a id="l00790" name="l00790"></a><span class="lineno">  790</span>          <a class="code hl_enumvalue" href="structParameters_1_1Timer.html#a2102ec5281247140dbca8d4fe9c1381aa6f012ea8d7efd87146dd62db83f2ed99">Parameters::Timer::Type::iteration</a>)</div>
-<div class="line"><a id="l00791" name="l00791"></a><span class="lineno">  791</span>        this-&gt;print_mg_setup_times();</div>
-<div class="line"><a id="l00792" name="l00792"></a><span class="lineno">  792</span>    }</div>
-<div class="line"><a id="l00793" name="l00793"></a><span class="lineno">  793</span>  <span class="keywordflow">if</span> (this-&gt;simulation_parameters.timer.type == <a class="code hl_enumvalue" href="structParameters_1_1Timer.html#a2102ec5281247140dbca8d4fe9c1381aa7f021a1415b86f2d013b2618fb31ae53">Parameters::Timer::Type::end</a>)</div>
-<div class="line"><a id="l00794" name="l00794"></a><span class="lineno">  794</span>    this-&gt;print_mg_setup_times();</div>
-<div class="line"><a id="l00795" name="l00795"></a><span class="lineno">  795</span> </div>
-<div class="line"><a id="l00796" name="l00796"></a><span class="lineno">  796</span>  this-&gt;finish_simulation();</div>
-<div class="line"><a id="l00797" name="l00797"></a><span class="lineno">  797</span>}</div>
+<div class="line"><a id="l00764" name="l00764"></a><span class="lineno">  764</span>        <span class="comment">// The base matrix-free operator is not aware of the various VANS</span></div>
+<div class="line"><a id="l00765" name="l00765"></a><span class="lineno">  765</span>        <span class="comment">// coupling term. We must do a cast here to ensure that the operator is</span></div>
+<div class="line"><a id="l00766" name="l00766"></a><span class="lineno">  766</span>        <span class="comment">// of the right type.</span></div>
+<div class="line"><a id="l00767" name="l00767"></a><span class="lineno">  767</span>        <span class="keywordflow">if</span> (<span class="keyword">auto</span> mf_operator = <span class="keyword">dynamic_cast&lt;</span><a class="code hl_class" href="classVANSOperator.html">VANSOperator&lt;dim, double&gt;</a> *<span class="keyword">&gt;</span>(</div>
+<div class="line"><a id="l00768" name="l00768"></a><span class="lineno">  768</span>              this-&gt;system_operator.get()))</div>
+<div class="line"><a id="l00769" name="l00769"></a><span class="lineno">  769</span>          {</div>
+<div class="line"><a id="l00770" name="l00770"></a><span class="lineno">  770</span>            TimerOutput::Scope t(this-&gt;computing_timer,</div>
+<div class="line"><a id="l00771" name="l00771"></a><span class="lineno">  771</span>                                 <span class="stringliteral">&quot;Prepare MF operator for VANS&quot;</span>);</div>
+<div class="line"><a id="l00772" name="l00772"></a><span class="lineno">  772</span> </div>
+<div class="line"><a id="l00773" name="l00773"></a><span class="lineno">  773</span>            mf_operator-&gt;compute_void_fraction(</div>
+<div class="line"><a id="l00774" name="l00774"></a><span class="lineno">  774</span>              particle_projector.dof_handler,</div>
+<div class="line"><a id="l00775" name="l00775"></a><span class="lineno">  775</span>              particle_projector.void_fraction_solution,</div>
+<div class="line"><a id="l00776" name="l00776"></a><span class="lineno">  776</span>              this-&gt;time_derivative_void_fraction);</div>
+<div class="line"><a id="l00777" name="l00777"></a><span class="lineno">  777</span> </div>
+<div class="line"><a id="l00778" name="l00778"></a><span class="lineno">  778</span>            mf_operator-&gt;compute_particle_fluid_interaction(</div>
+<div class="line"><a id="l00779" name="l00779"></a><span class="lineno">  779</span>              particle_projector.fluid_force_on_particles_two_way_coupling</div>
+<div class="line"><a id="l00780" name="l00780"></a><span class="lineno">  780</span>                .dof_handler,</div>
+<div class="line"><a id="l00781" name="l00781"></a><span class="lineno">  781</span>              particle_projector.fluid_force_on_particles_two_way_coupling</div>
+<div class="line"><a id="l00782" name="l00782"></a><span class="lineno">  782</span>                .particle_field_solution,</div>
+<div class="line"><a id="l00783" name="l00783"></a><span class="lineno">  783</span>              particle_projector.fluid_drag_on_particles.dof_handler,</div>
+<div class="line"><a id="l00784" name="l00784"></a><span class="lineno">  784</span>              particle_projector.fluid_drag_on_particles</div>
+<div class="line"><a id="l00785" name="l00785"></a><span class="lineno">  785</span>                .particle_field_solution,</div>
+<div class="line"><a id="l00786" name="l00786"></a><span class="lineno">  786</span>              particle_projector.particle_velocity.dof_handler,</div>
+<div class="line"><a id="l00787" name="l00787"></a><span class="lineno">  787</span>              particle_projector.particle_velocity.particle_field_solution,</div>
+<div class="line"><a id="l00788" name="l00788"></a><span class="lineno">  788</span>              particle_projector.momentum_transfer_coefficient.dof_handler,</div>
+<div class="line"><a id="l00789" name="l00789"></a><span class="lineno">  789</span>              particle_projector.momentum_transfer_coefficient</div>
+<div class="line"><a id="l00790" name="l00790"></a><span class="lineno">  790</span>                .particle_field_solution);</div>
+<div class="line"><a id="l00791" name="l00791"></a><span class="lineno">  791</span>          }</div>
+<div class="line"><a id="l00792" name="l00792"></a><span class="lineno">  792</span>      }</div>
+<div class="line"><a id="l00793" name="l00793"></a><span class="lineno">  793</span> </div>
+<div class="line"><a id="l00794" name="l00794"></a><span class="lineno">  794</span>      this-&gt;iterate();</div>
+<div class="line"><a id="l00795" name="l00795"></a><span class="lineno">  795</span>      this-&gt;postprocess(<span class="keyword">false</span>);</div>
+<div class="line"><a id="l00796" name="l00796"></a><span class="lineno">  796</span>      this-&gt;finish_time_step();</div>
+<div class="line"><a id="l00797" name="l00797"></a><span class="lineno">  797</span> </div>
+<div class="line"><a id="l00798" name="l00798"></a><span class="lineno">  798</span>      <span class="keywordflow">if</span> (this-&gt;simulation_parameters.timer.type ==</div>
+<div class="line"><a id="l00799" name="l00799"></a><span class="lineno">  799</span>          <a class="code hl_enumvalue" href="structParameters_1_1Timer.html#a2102ec5281247140dbca8d4fe9c1381aa6f012ea8d7efd87146dd62db83f2ed99">Parameters::Timer::Type::iteration</a>)</div>
+<div class="line"><a id="l00800" name="l00800"></a><span class="lineno">  800</span>        this-&gt;print_mg_setup_times();</div>
+<div class="line"><a id="l00801" name="l00801"></a><span class="lineno">  801</span>    }</div>
+<div class="line"><a id="l00802" name="l00802"></a><span class="lineno">  802</span>  <span class="keywordflow">if</span> (this-&gt;simulation_parameters.timer.type == <a class="code hl_enumvalue" href="structParameters_1_1Timer.html#a2102ec5281247140dbca8d4fe9c1381aa7f021a1415b86f2d013b2618fb31ae53">Parameters::Timer::Type::end</a>)</div>
+<div class="line"><a id="l00803" name="l00803"></a><span class="lineno">  803</span>    this-&gt;print_mg_setup_times();</div>
+<div class="line"><a id="l00804" name="l00804"></a><span class="lineno">  804</span> </div>
+<div class="line"><a id="l00805" name="l00805"></a><span class="lineno">  805</span>  this-&gt;finish_simulation();</div>
+<div class="line"><a id="l00806" name="l00806"></a><span class="lineno">  806</span>}</div>
 </div>
-<div class="line"><a id="l00798" name="l00798"></a><span class="lineno">  798</span> </div>
-<div class="line"><a id="l00799" name="l00799"></a><span class="lineno">  799</span> </div>
-<div class="line"><a id="l00800" name="l00800"></a><span class="lineno">  800</span><span class="keyword">template</span> &lt;<span class="keywordtype">int</span> dim&gt;</div>
-<div class="line"><a id="l00801" name="l00801"></a><span class="lineno">  801</span><span class="keywordtype">void</span></div>
-<div class="foldopen" id="foldopen00802" data-start="{" data-end="}">
-<div class="line"><a id="l00802" name="l00802"></a><span class="lineno"><a class="line" href="classFluidDynamicsVANSMatrixFree.html#a29d058b88593e0c40e69b31d0a466c96">  802</a></span><a class="code hl_function" href="classFluidDynamicsVANSMatrixFree.html#a29d058b88593e0c40e69b31d0a466c96">FluidDynamicsVANSMatrixFree&lt;dim&gt;::create_GMG</a>()</div>
-<div class="line"><a id="l00803" name="l00803"></a><span class="lineno">  803</span>{</div>
-<div class="line"><a id="l00804" name="l00804"></a><span class="lineno">  804</span>  this-&gt;gmg_preconditioner =</div>
-<div class="line"><a id="l00805" name="l00805"></a><span class="lineno">  805</span>    std::make_shared&lt;MFNavierStokesVANSPreconditionGMG&lt;dim&gt;&gt;(</div>
-<div class="line"><a id="l00806" name="l00806"></a><span class="lineno">  806</span>      this-&gt;cfd_dem_simulation_parameters,</div>
-<div class="line"><a id="l00807" name="l00807"></a><span class="lineno">  807</span>      *this-&gt;dof_handler,</div>
-<div class="line"><a id="l00808" name="l00808"></a><span class="lineno">  808</span>      this-&gt;dof_handler_fe_q_iso_q1);</div>
-<div class="line"><a id="l00809" name="l00809"></a><span class="lineno">  809</span> </div>
-<div class="line"><a id="l00810" name="l00810"></a><span class="lineno">  810</span>  this-&gt;gmg_preconditioner-&gt;reinit(this-&gt;mapping,</div>
-<div class="line"><a id="l00811" name="l00811"></a><span class="lineno">  811</span>                                   this-&gt;cell_quadrature,</div>
-<div class="line"><a id="l00812" name="l00812"></a><span class="lineno">  812</span>                                   this-&gt;forcing_function,</div>
-<div class="line"><a id="l00813" name="l00813"></a><span class="lineno">  813</span>                                   this-&gt;simulation_control,</div>
-<div class="line"><a id="l00814" name="l00814"></a><span class="lineno">  814</span>                                   this-&gt;physical_properties_manager,</div>
-<div class="line"><a id="l00815" name="l00815"></a><span class="lineno">  815</span>                                   this-&gt;fe);</div>
-<div class="line"><a id="l00816" name="l00816"></a><span class="lineno">  816</span>}</div>
+<div class="line"><a id="l00807" name="l00807"></a><span class="lineno">  807</span> </div>
+<div class="line"><a id="l00808" name="l00808"></a><span class="lineno">  808</span> </div>
+<div class="line"><a id="l00809" name="l00809"></a><span class="lineno">  809</span><span class="keyword">template</span> &lt;<span class="keywordtype">int</span> dim&gt;</div>
+<div class="line"><a id="l00810" name="l00810"></a><span class="lineno">  810</span><span class="keywordtype">void</span></div>
+<div class="foldopen" id="foldopen00811" data-start="{" data-end="}">
+<div class="line"><a id="l00811" name="l00811"></a><span class="lineno"><a class="line" href="classFluidDynamicsVANSMatrixFree.html#a29d058b88593e0c40e69b31d0a466c96">  811</a></span><a class="code hl_function" href="classFluidDynamicsVANSMatrixFree.html#a29d058b88593e0c40e69b31d0a466c96">FluidDynamicsVANSMatrixFree&lt;dim&gt;::create_GMG</a>()</div>
+<div class="line"><a id="l00812" name="l00812"></a><span class="lineno">  812</span>{</div>
+<div class="line"><a id="l00813" name="l00813"></a><span class="lineno">  813</span>  this-&gt;gmg_preconditioner =</div>
+<div class="line"><a id="l00814" name="l00814"></a><span class="lineno">  814</span>    std::make_shared&lt;MFNavierStokesVANSPreconditionGMG&lt;dim&gt;&gt;(</div>
+<div class="line"><a id="l00815" name="l00815"></a><span class="lineno">  815</span>      this-&gt;cfd_dem_simulation_parameters,</div>
+<div class="line"><a id="l00816" name="l00816"></a><span class="lineno">  816</span>      *this-&gt;dof_handler,</div>
+<div class="line"><a id="l00817" name="l00817"></a><span class="lineno">  817</span>      this-&gt;dof_handler_fe_q_iso_q1);</div>
+<div class="line"><a id="l00818" name="l00818"></a><span class="lineno">  818</span> </div>
+<div class="line"><a id="l00819" name="l00819"></a><span class="lineno">  819</span>  this-&gt;gmg_preconditioner-&gt;reinit(this-&gt;mapping,</div>
+<div class="line"><a id="l00820" name="l00820"></a><span class="lineno">  820</span>                                   this-&gt;cell_quadrature,</div>
+<div class="line"><a id="l00821" name="l00821"></a><span class="lineno">  821</span>                                   this-&gt;forcing_function,</div>
+<div class="line"><a id="l00822" name="l00822"></a><span class="lineno">  822</span>                                   this-&gt;simulation_control,</div>
+<div class="line"><a id="l00823" name="l00823"></a><span class="lineno">  823</span>                                   this-&gt;physical_properties_manager,</div>
+<div class="line"><a id="l00824" name="l00824"></a><span class="lineno">  824</span>                                   this-&gt;fe);</div>
+<div class="line"><a id="l00825" name="l00825"></a><span class="lineno">  825</span>}</div>
 </div>
-<div class="line"><a id="l00817" name="l00817"></a><span class="lineno">  817</span> </div>
-<div class="line"><a id="l00818" name="l00818"></a><span class="lineno">  818</span><span class="keyword">template</span> &lt;<span class="keywordtype">int</span> dim&gt;</div>
-<div class="line"><a id="l00819" name="l00819"></a><span class="lineno">  819</span><span class="keywordtype">void</span></div>
-<div class="foldopen" id="foldopen00820" data-start="{" data-end="}">
-<div class="line"><a id="l00820" name="l00820"></a><span class="lineno"><a class="line" href="classFluidDynamicsVANSMatrixFree.html#a057a90a8ff9caa259574b2645f07beb3">  820</a></span><a class="code hl_function" href="classFluidDynamicsVANSMatrixFree.html#a057a90a8ff9caa259574b2645f07beb3">FluidDynamicsVANSMatrixFree&lt;dim&gt;::initialize_GMG</a>()</div>
-<div class="line"><a id="l00821" name="l00821"></a><span class="lineno">  821</span>{</div>
-<div class="line"><a id="l00822" name="l00822"></a><span class="lineno">  822</span>  <span class="keyword">dynamic_cast&lt;</span><a class="code hl_class" href="classMFNavierStokesVANSPreconditionGMG.html">MFNavierStokesVANSPreconditionGMG&lt;dim&gt;</a> *<span class="keyword">&gt;</span>(</div>
-<div class="line"><a id="l00823" name="l00823"></a><span class="lineno">  823</span>    this-&gt;gmg_preconditioner.get())</div>
-<div class="line"><a id="l00824" name="l00824"></a><span class="lineno">  824</span>    -&gt;initialize(this-&gt;simulation_control,</div>
-<div class="line"><a id="l00825" name="l00825"></a><span class="lineno">  825</span>                 this-&gt;flow_control,</div>
-<div class="line"><a id="l00826" name="l00826"></a><span class="lineno">  826</span>                 *this-&gt;present_solution,</div>
-<div class="line"><a id="l00827" name="l00827"></a><span class="lineno">  827</span>                 this-&gt;time_derivative_previous_solutions,</div>
-<div class="line"><a id="l00828" name="l00828"></a><span class="lineno">  828</span>                 this-&gt;time_derivative_void_fraction,</div>
-<div class="line"><a id="l00829" name="l00829"></a><span class="lineno">  829</span>                 this-&gt;particle_projector);</div>
-<div class="line"><a id="l00830" name="l00830"></a><span class="lineno">  830</span>}</div>
+<div class="line"><a id="l00826" name="l00826"></a><span class="lineno">  826</span> </div>
+<div class="line"><a id="l00827" name="l00827"></a><span class="lineno">  827</span><span class="keyword">template</span> &lt;<span class="keywordtype">int</span> dim&gt;</div>
+<div class="line"><a id="l00828" name="l00828"></a><span class="lineno">  828</span><span class="keywordtype">void</span></div>
+<div class="foldopen" id="foldopen00829" data-start="{" data-end="}">
+<div class="line"><a id="l00829" name="l00829"></a><span class="lineno"><a class="line" href="classFluidDynamicsVANSMatrixFree.html#a057a90a8ff9caa259574b2645f07beb3">  829</a></span><a class="code hl_function" href="classFluidDynamicsVANSMatrixFree.html#a057a90a8ff9caa259574b2645f07beb3">FluidDynamicsVANSMatrixFree&lt;dim&gt;::initialize_GMG</a>()</div>
+<div class="line"><a id="l00830" name="l00830"></a><span class="lineno">  830</span>{</div>
+<div class="line"><a id="l00831" name="l00831"></a><span class="lineno">  831</span>  <span class="keyword">dynamic_cast&lt;</span><a class="code hl_class" href="classMFNavierStokesVANSPreconditionGMG.html">MFNavierStokesVANSPreconditionGMG&lt;dim&gt;</a> *<span class="keyword">&gt;</span>(</div>
+<div class="line"><a id="l00832" name="l00832"></a><span class="lineno">  832</span>    this-&gt;gmg_preconditioner.get())</div>
+<div class="line"><a id="l00833" name="l00833"></a><span class="lineno">  833</span>    -&gt;initialize(this-&gt;simulation_control,</div>
+<div class="line"><a id="l00834" name="l00834"></a><span class="lineno">  834</span>                 this-&gt;flow_control,</div>
+<div class="line"><a id="l00835" name="l00835"></a><span class="lineno">  835</span>                 *this-&gt;present_solution,</div>
+<div class="line"><a id="l00836" name="l00836"></a><span class="lineno">  836</span>                 this-&gt;time_derivative_previous_solutions,</div>
+<div class="line"><a id="l00837" name="l00837"></a><span class="lineno">  837</span>                 this-&gt;time_derivative_void_fraction,</div>
+<div class="line"><a id="l00838" name="l00838"></a><span class="lineno">  838</span>                 this-&gt;particle_projector);</div>
+<div class="line"><a id="l00839" name="l00839"></a><span class="lineno">  839</span>}</div>
 </div>
-<div class="line"><a id="l00831" name="l00831"></a><span class="lineno">  831</span> </div>
-<div class="line"><a id="l00832" name="l00832"></a><span class="lineno">  832</span><span class="comment">// Pre-compile the 2D and 3D solver to ensure that the</span></div>
-<div class="line"><a id="l00833" name="l00833"></a><span class="lineno">  833</span><span class="comment">// library is valid before we actually compile the solver</span></div>
-<div class="line"><a id="l00834" name="l00834"></a><span class="lineno">  834</span><span class="keyword">template</span> <span class="keyword">class </span><a class="code hl_class" href="classFluidDynamicsVANSMatrixFree.html">FluidDynamicsVANSMatrixFree&lt;2&gt;</a>;</div>
-<div class="line"><a id="l00835" name="l00835"></a><span class="lineno">  835</span><span class="keyword">template</span> <span class="keyword">class </span><a class="code hl_class" href="classFluidDynamicsVANSMatrixFree.html">FluidDynamicsVANSMatrixFree&lt;3&gt;</a>;</div>
+<div class="line"><a id="l00840" name="l00840"></a><span class="lineno">  840</span> </div>
+<div class="line"><a id="l00841" name="l00841"></a><span class="lineno">  841</span><span class="comment">// Pre-compile the 2D and 3D solver to ensure that the</span></div>
+<div class="line"><a id="l00842" name="l00842"></a><span class="lineno">  842</span><span class="comment">// library is valid before we actually compile the solver</span></div>
+<div class="line"><a id="l00843" name="l00843"></a><span class="lineno">  843</span><span class="keyword">template</span> <span class="keyword">class </span><a class="code hl_class" href="classFluidDynamicsVANSMatrixFree.html">FluidDynamicsVANSMatrixFree&lt;2&gt;</a>;</div>
+<div class="line"><a id="l00844" name="l00844"></a><span class="lineno">  844</span><span class="keyword">template</span> <span class="keyword">class </span><a class="code hl_class" href="classFluidDynamicsVANSMatrixFree.html">FluidDynamicsVANSMatrixFree&lt;3&gt;</a>;</div>
 <div class="ttc" id="abdf_8h_html_a79e44dc10ababc737a8659c2f5f8c18a"><div class="ttname"><a href="bdf_8h.html#a79e44dc10ababc737a8659c2f5f8c18a">number_of_previous_solutions</a></div><div class="ttdeci">unsigned int number_of_previous_solutions(const Parameters::SimulationControl::TimeSteppingMethod method)</div><div class="ttdoc">Get the number of previous time steps for a specific BDF scheme.</div><div class="ttdef"><b>Definition</b> <a href="bdf_8h_source.html#l00097">bdf.h:97</a></div></div>
 <div class="ttc" id="aclassCFDDEMSimulationParameters_html"><div class="ttname"><a href="classCFDDEMSimulationParameters.html">CFDDEMSimulationParameters</a></div><div class="ttdef"><b>Definition</b> <a href="cfd__dem__simulation__parameters_8h_source.html#l00018">cfd_dem_simulation_parameters.h:19</a></div></div>
 <div class="ttc" id="aclassFlowControl_html"><div class="ttname"><a href="classFlowControl.html">FlowControl</a></div><div class="ttdoc">Class allows to dynamically control the flow with a beta coefficient calculated at each step time.</div><div class="ttdef"><b>Definition</b> <a href="flow__control_8h_source.html#l00018">flow_control.h:19</a></div></div>
 <div class="ttc" id="aclassFluidDynamicsMatrixFree_html"><div class="ttname"><a href="classFluidDynamicsMatrixFree.html">FluidDynamicsMatrixFree</a></div><div class="ttdoc">A solver for the incompressible Navier-Stokes equations implemented in a matrix-free fashion.</div><div class="ttdef"><b>Definition</b> <a href="fluid__dynamics__matrix__free_8h_source.html#l00407">fluid_dynamics_matrix_free.h:411</a></div></div>
 <div class="ttc" id="aclassFluidDynamicsMatrixFree_html_a8aa6a65d14fd42df04349abb9793ff86"><div class="ttname"><a href="classFluidDynamicsMatrixFree.html#a8aa6a65d14fd42df04349abb9793ff86">FluidDynamicsMatrixFree::system_operator</a></div><div class="ttdeci">std::shared_ptr&lt; NavierStokesOperatorBase&lt; dim, double &gt; &gt; system_operator</div><div class="ttdoc">Matrix-free operator in used for all the matrix-vector multiplications calls (vmult).</div><div class="ttdef"><b>Definition</b> <a href="fluid__dynamics__matrix__free_8h_source.html#l00637">fluid_dynamics_matrix_free.h:637</a></div></div>
 <div class="ttc" id="aclassFluidDynamicsVANSMatrixFree_html"><div class="ttname"><a href="classFluidDynamicsVANSMatrixFree.html">FluidDynamicsVANSMatrixFree</a></div><div class="ttdoc">A solver for the Volume-Averaged incompressible Navier-Stokes equations implemented in a matrix-free ...</div><div class="ttdef"><b>Definition</b> <a href="fluid__dynamics__vans__matrix__free_8h_source.html#l00149">fluid_dynamics_vans_matrix_free.h:150</a></div></div>
-<div class="ttc" id="aclassFluidDynamicsVANSMatrixFree_html_a057a90a8ff9caa259574b2645f07beb3"><div class="ttname"><a href="classFluidDynamicsVANSMatrixFree.html#a057a90a8ff9caa259574b2645f07beb3">FluidDynamicsVANSMatrixFree::initialize_GMG</a></div><div class="ttdeci">void initialize_GMG() override</div><div class="ttdef"><b>Definition</b> <a href="fluid__dynamics__vans__matrix__free_8cc_source.html#l00820">fluid_dynamics_vans_matrix_free.cc:820</a></div></div>
-<div class="ttc" id="aclassFluidDynamicsVANSMatrixFree_html_a075e8ac2fda3a33b1e1ad31ca7c15ebd"><div class="ttname"><a href="classFluidDynamicsVANSMatrixFree.html#a075e8ac2fda3a33b1e1ad31ca7c15ebd">FluidDynamicsVANSMatrixFree::solve</a></div><div class="ttdeci">void solve() override</div><div class="ttdoc">Solve the problem defined by simulation parameters by iterating through time or through the mesh refi...</div><div class="ttdef"><b>Definition</b> <a href="fluid__dynamics__vans__matrix__free_8cc_source.html#l00661">fluid_dynamics_vans_matrix_free.cc:661</a></div></div>
-<div class="ttc" id="aclassFluidDynamicsVANSMatrixFree_html_a29d058b88593e0c40e69b31d0a466c96"><div class="ttname"><a href="classFluidDynamicsVANSMatrixFree.html#a29d058b88593e0c40e69b31d0a466c96">FluidDynamicsVANSMatrixFree::create_GMG</a></div><div class="ttdeci">void create_GMG() override</div><div class="ttdoc">Create geometric multigrid preconditioner.</div><div class="ttdef"><b>Definition</b> <a href="fluid__dynamics__vans__matrix__free_8cc_source.html#l00802">fluid_dynamics_vans_matrix_free.cc:802</a></div></div>
+<div class="ttc" id="aclassFluidDynamicsVANSMatrixFree_html_a057a90a8ff9caa259574b2645f07beb3"><div class="ttname"><a href="classFluidDynamicsVANSMatrixFree.html#a057a90a8ff9caa259574b2645f07beb3">FluidDynamicsVANSMatrixFree::initialize_GMG</a></div><div class="ttdeci">void initialize_GMG() override</div><div class="ttdef"><b>Definition</b> <a href="fluid__dynamics__vans__matrix__free_8cc_source.html#l00829">fluid_dynamics_vans_matrix_free.cc:829</a></div></div>
+<div class="ttc" id="aclassFluidDynamicsVANSMatrixFree_html_a075e8ac2fda3a33b1e1ad31ca7c15ebd"><div class="ttname"><a href="classFluidDynamicsVANSMatrixFree.html#a075e8ac2fda3a33b1e1ad31ca7c15ebd">FluidDynamicsVANSMatrixFree::solve</a></div><div class="ttdeci">void solve() override</div><div class="ttdoc">Solve the problem defined by simulation parameters by iterating through time or through the mesh refi...</div><div class="ttdef"><b>Definition</b> <a href="fluid__dynamics__vans__matrix__free_8cc_source.html#l00670">fluid_dynamics_vans_matrix_free.cc:670</a></div></div>
+<div class="ttc" id="aclassFluidDynamicsVANSMatrixFree_html_a29d058b88593e0c40e69b31d0a466c96"><div class="ttname"><a href="classFluidDynamicsVANSMatrixFree.html#a29d058b88593e0c40e69b31d0a466c96">FluidDynamicsVANSMatrixFree::create_GMG</a></div><div class="ttdeci">void create_GMG() override</div><div class="ttdoc">Create geometric multigrid preconditioner.</div><div class="ttdef"><b>Definition</b> <a href="fluid__dynamics__vans__matrix__free_8cc_source.html#l00811">fluid_dynamics_vans_matrix_free.cc:811</a></div></div>
 <div class="ttc" id="aclassFluidDynamicsVANSMatrixFree_html_a565378c53e79e0dd166e6328ded1f7b2"><div class="ttname"><a href="classFluidDynamicsVANSMatrixFree.html#a565378c53e79e0dd166e6328ded1f7b2">FluidDynamicsVANSMatrixFree::gather_output_hook</a></div><div class="ttdeci">std::vector&lt; OutputStruct&lt; dim, LinearAlgebra::distributed::Vector&lt; double &gt; &gt; &gt; gather_output_hook() override</div><div class="ttdoc">Add void fraction field to output files.</div><div class="ttdef"><b>Definition</b> <a href="fluid__dynamics__vans__matrix__free_8cc_source.html#l00570">fluid_dynamics_vans_matrix_free.cc:570</a></div></div>
 <div class="ttc" id="aclassFluidDynamicsVANSMatrixFree_html_a5e6bfcfe1a09f4e7732e3f51cfc648b8"><div class="ttname"><a href="classFluidDynamicsVANSMatrixFree.html#a5e6bfcfe1a09f4e7732e3f51cfc648b8">FluidDynamicsVANSMatrixFree::FluidDynamicsVANSMatrixFree</a></div><div class="ttdeci">FluidDynamicsVANSMatrixFree(CFDDEMSimulationParameters&lt; dim &gt; &amp;param)</div><div class="ttdoc">Constructor that sets the finite element degree and system operator according to simulation parameter...</div><div class="ttdef"><b>Definition</b> <a href="fluid__dynamics__vans__matrix__free_8cc_source.html#l00331">fluid_dynamics_vans_matrix_free.cc:331</a></div></div>
 <div class="ttc" id="aclassFluidDynamicsVANSMatrixFree_html_a857ae58b2c85b5adf736e59ad872249a"><div class="ttname"><a href="classFluidDynamicsVANSMatrixFree.html#a857ae58b2c85b5adf736e59ad872249a">FluidDynamicsVANSMatrixFree::cfd_dem_simulation_parameters</a></div><div class="ttdeci">CFDDEMSimulationParameters&lt; dim &gt; cfd_dem_simulation_parameters</div><div class="ttdoc">Simulation parameters for CFD-DEM simulations.</div><div class="ttdef"><b>Definition</b> <a href="fluid__dynamics__vans__matrix__free_8h_source.html#l00229">fluid_dynamics_vans_matrix_free.h:229</a></div></div>
@@ -970,7 +979,7 @@ $(document).ready(function() { init_codefold(0); });
 <div class="ttc" id="aclassFluidDynamicsVANSMatrixFree_html_aafa177adb480470bcc8d6c2235203768"><div class="ttname"><a href="classFluidDynamicsVANSMatrixFree.html#aafa177adb480470bcc8d6c2235203768">FluidDynamicsVANSMatrixFree::assemble_system_rhs</a></div><div class="ttdeci">void assemble_system_rhs() override</div><div class="ttdoc">Assembles the RHS of the VANS system of equation. This function also recalculates the particle-fluid ...</div><div class="ttdef"><b>Definition</b> <a href="fluid__dynamics__vans__matrix__free_8cc_source.html#l00480">fluid_dynamics_vans_matrix_free.cc:480</a></div></div>
 <div class="ttc" id="aclassFluidDynamicsVANSMatrixFree_html_ab69c54228f25ad4d57f48366413a3128"><div class="ttname"><a href="classFluidDynamicsVANSMatrixFree.html#ab69c54228f25ad4d57f48366413a3128">FluidDynamicsVANSMatrixFree::setup_dofs</a></div><div class="ttdeci">void setup_dofs() override</div><div class="ttdoc">Setup the degree of freedom of the flow solver and the degrees of freedom and constraints for the voi...</div><div class="ttdef"><b>Definition</b> <a href="fluid__dynamics__vans__matrix__free_8cc_source.html#l00377">fluid_dynamics_vans_matrix_free.cc:377</a></div></div>
 <div class="ttc" id="aclassFluidDynamicsVANSMatrixFree_html_ac33a8c63495f78d28921f7584e822108"><div class="ttname"><a href="classFluidDynamicsVANSMatrixFree.html#ac33a8c63495f78d28921f7584e822108">FluidDynamicsVANSMatrixFree::has_periodic_boundaries</a></div><div class="ttdeci">bool has_periodic_boundaries</div><div class="ttdoc">Member variables which are used to manage boundary conditions.</div><div class="ttdef"><b>Definition</b> <a href="fluid__dynamics__vans__matrix__free_8h_source.html#l00242">fluid_dynamics_vans_matrix_free.h:242</a></div></div>
-<div class="ttc" id="aclassFluidDynamicsVANSMatrixFree_html_ad207ba19294b06090f28e69d1cb543fd"><div class="ttname"><a href="classFluidDynamicsVANSMatrixFree.html#ad207ba19294b06090f28e69d1cb543fd">FluidDynamicsVANSMatrixFree::evaluate_time_derivative_void_fraction</a></div><div class="ttdeci">void evaluate_time_derivative_void_fraction()</div><div class="ttdoc">Evaluate the time derivative of the void fraction. This evaluates the time-derivative as a solution v...</div><div class="ttdef"><b>Definition</b> <a href="fluid__dynamics__vans__matrix__free_8cc_source.html#l00627">fluid_dynamics_vans_matrix_free.cc:627</a></div></div>
+<div class="ttc" id="aclassFluidDynamicsVANSMatrixFree_html_ad207ba19294b06090f28e69d1cb543fd"><div class="ttname"><a href="classFluidDynamicsVANSMatrixFree.html#ad207ba19294b06090f28e69d1cb543fd">FluidDynamicsVANSMatrixFree::evaluate_time_derivative_void_fraction</a></div><div class="ttdeci">void evaluate_time_derivative_void_fraction()</div><div class="ttdoc">Evaluate the time derivative of the void fraction. This evaluates the time-derivative as a solution v...</div><div class="ttdef"><b>Definition</b> <a href="fluid__dynamics__vans__matrix__free_8cc_source.html#l00636">fluid_dynamics_vans_matrix_free.cc:636</a></div></div>
 <div class="ttc" id="aclassFluidDynamicsVANSMatrixFree_html_af457b597e5af7a9873717579d0eae650"><div class="ttname"><a href="classFluidDynamicsVANSMatrixFree.html#af457b597e5af7a9873717579d0eae650">FluidDynamicsVANSMatrixFree::read_dem</a></div><div class="ttdeci">virtual void read_dem()</div><div class="ttdoc">Read particles arising from a DEM simulation.</div><div class="ttdef"><b>Definition</b> <a href="fluid__dynamics__vans__matrix__free_8cc_source.html#l00394">fluid_dynamics_vans_matrix_free.cc:394</a></div></div>
 <div class="ttc" id="aclassMFNavierStokesPreconditionGMGBase_html_a4bbc619f6ae34a719d76ef86f557ac88"><div class="ttname"><a href="classMFNavierStokesPreconditionGMGBase.html#a4bbc619f6ae34a719d76ef86f557ac88">MFNavierStokesPreconditionGMGBase::initialize</a></div><div class="ttdeci">void initialize()</div><div class="ttdoc">Initialize smoother, coarse grid solver and multigrid object needed for the geometric multigrid preco...</div><div class="ttdef"><b>Definition</b> <a href="fluid__dynamics__matrix__free_8cc_source.html#l01697">fluid_dynamics_matrix_free.cc:1697</a></div></div>
 <div class="ttc" id="aclassMFNavierStokesPreconditionGMG_html"><div class="ttname"><a href="classMFNavierStokesPreconditionGMG.html">MFNavierStokesPreconditionGMG</a></div><div class="ttdoc">A geometric multigrid preconditioner implementation for incompressible flow.</div><div class="ttdef"><b>Definition</b> <a href="fluid__dynamics__matrix__free_8h_source.html#l00337">fluid_dynamics_matrix_free.h:339</a></div></div>
@@ -984,12 +993,12 @@ $(document).ready(function() { init_codefold(0); });
 <div class="ttc" id="aclassParticleFieldQCM_html_a8400cbd12282ca18661e7db91aa94a79"><div class="ttname"><a href="classParticleFieldQCM.html#a8400cbd12282ca18661e7db91aa94a79">ParticleFieldQCM::dof_handler</a></div><div class="ttdeci">DoFHandler&lt; dim &gt; dof_handler</div><div class="ttdoc">DoFHandler that manages the void fraction.</div><div class="ttdef"><b>Definition</b> <a href="particle__projector_8h_source.html#l00150">particle_projector.h:150</a></div></div>
 <div class="ttc" id="aclassParticleFieldQCM_html_adee0078bc923dbd31c30b2f2b27b2482"><div class="ttname"><a href="classParticleFieldQCM.html#adee0078bc923dbd31c30b2f2b27b2482">ParticleFieldQCM::particle_field_solution</a></div><div class="ttdeci">LinearAlgebra::distributed::Vector&lt; double &gt; particle_field_solution</div><div class="ttdoc">deal.II vector for the particle velocity</div><div class="ttdef"><b>Definition</b> <a href="particle__projector_8h_source.html#l00153">particle_projector.h:153</a></div></div>
 <div class="ttc" id="aclassParticleProjector_html"><div class="ttname"><a href="classParticleProjector.html">ParticleProjector</a></div><div class="ttdoc">Particle information projection. This class manages the calculation of the projection of the particle...</div><div class="ttdef"><b>Definition</b> <a href="particle__projector_8h_source.html#l00207">particle_projector.h:208</a></div></div>
-<div class="ttc" id="aclassParticleProjector_html_a75798e43c3b6bbf142ae3f1503198b97"><div class="ttname"><a href="classParticleProjector.html#a75798e43c3b6bbf142ae3f1503198b97">ParticleProjector::momentum_transfer_coefficient</a></div><div class="ttdeci">ParticleFieldQCM&lt; dim, 1, DEM::CFDDEMProperties::PropertiesIndex::momentum_transfer_coefficient &gt; momentum_transfer_coefficient</div><div class="ttdef"><b>Definition</b> <a href="particle__projector_8h_source.html#l00744">particle_projector.h:744</a></div></div>
-<div class="ttc" id="aclassParticleProjector_html_a78ded01c662bc5ee7fda52fe352fa031"><div class="ttname"><a href="classParticleProjector.html#a78ded01c662bc5ee7fda52fe352fa031">ParticleProjector::fluid_force_on_particles_two_way_coupling</a></div><div class="ttdeci">ParticleFieldQCM&lt; dim, 3, DEM::CFDDEMProperties::PropertiesIndex::fem_force_two_way_coupling_x &gt; fluid_force_on_particles_two_way_coupling</div><div class="ttdef"><b>Definition</b> <a href="particle__projector_8h_source.html#l00727">particle_projector.h:727</a></div></div>
-<div class="ttc" id="aclassParticleProjector_html_a91df5d33aab7979a5c445ad32b2fc4eb"><div class="ttname"><a href="classParticleProjector.html#a91df5d33aab7979a5c445ad32b2fc4eb">ParticleProjector::particle_velocity</a></div><div class="ttdeci">ParticleFieldQCM&lt; dim, 3, DEM::CFDDEMProperties::PropertiesIndex::v_x &gt; particle_velocity</div><div class="ttdef"><b>Definition</b> <a href="particle__projector_8h_source.html#l00717">particle_projector.h:717</a></div></div>
+<div class="ttc" id="aclassParticleProjector_html_a75798e43c3b6bbf142ae3f1503198b97"><div class="ttname"><a href="classParticleProjector.html#a75798e43c3b6bbf142ae3f1503198b97">ParticleProjector::momentum_transfer_coefficient</a></div><div class="ttdeci">ParticleFieldQCM&lt; dim, 1, DEM::CFDDEMProperties::PropertiesIndex::momentum_transfer_coefficient &gt; momentum_transfer_coefficient</div><div class="ttdef"><b>Definition</b> <a href="particle__projector_8h_source.html#l00745">particle_projector.h:745</a></div></div>
+<div class="ttc" id="aclassParticleProjector_html_a78ded01c662bc5ee7fda52fe352fa031"><div class="ttname"><a href="classParticleProjector.html#a78ded01c662bc5ee7fda52fe352fa031">ParticleProjector::fluid_force_on_particles_two_way_coupling</a></div><div class="ttdeci">ParticleFieldQCM&lt; dim, 3, DEM::CFDDEMProperties::PropertiesIndex::fem_force_two_way_coupling_x &gt; fluid_force_on_particles_two_way_coupling</div><div class="ttdef"><b>Definition</b> <a href="particle__projector_8h_source.html#l00728">particle_projector.h:728</a></div></div>
+<div class="ttc" id="aclassParticleProjector_html_a91df5d33aab7979a5c445ad32b2fc4eb"><div class="ttname"><a href="classParticleProjector.html#a91df5d33aab7979a5c445ad32b2fc4eb">ParticleProjector::particle_velocity</a></div><div class="ttdeci">ParticleFieldQCM&lt; dim, 3, DEM::CFDDEMProperties::PropertiesIndex::v_x &gt; particle_velocity</div><div class="ttdef"><b>Definition</b> <a href="particle__projector_8h_source.html#l00718">particle_projector.h:718</a></div></div>
 <div class="ttc" id="aclassParticleProjector_html_a9629b8db44e070e669add0118563213d"><div class="ttname"><a href="classParticleProjector.html#a9629b8db44e070e669add0118563213d">ParticleProjector::dof_handler</a></div><div class="ttdeci">DoFHandler&lt; dim &gt; dof_handler</div><div class="ttdoc">DoFHandler that manages the void fraction.</div><div class="ttdef"><b>Definition</b> <a href="particle__projector_8h_source.html#l00430">particle_projector.h:430</a></div></div>
-<div class="ttc" id="aclassParticleProjector_html_acdbc7e58e70921a26bcae089699b6a26"><div class="ttname"><a href="classParticleProjector.html#acdbc7e58e70921a26bcae089699b6a26">ParticleProjector::void_fraction_solution</a></div><div class="ttdeci">LinearAlgebra::distributed::Vector&lt; double &gt; void_fraction_solution</div><div class="ttdoc">deal.II vector for the void fraction</div><div class="ttdef"><b>Definition</b> <a href="particle__projector_8h_source.html#l00446">particle_projector.h:446</a></div></div>
-<div class="ttc" id="aclassParticleProjector_html_ad8c733e957921c4e4ddbc1f2d0dafd96"><div class="ttname"><a href="classParticleProjector.html#ad8c733e957921c4e4ddbc1f2d0dafd96">ParticleProjector::fluid_drag_on_particles</a></div><div class="ttdeci">ParticleFieldQCM&lt; dim, 3, DEM::CFDDEMProperties::PropertiesIndex::fem_drag_x &gt; fluid_drag_on_particles</div><div class="ttdef"><b>Definition</b> <a href="particle__projector_8h_source.html#l00734">particle_projector.h:734</a></div></div>
+<div class="ttc" id="aclassParticleProjector_html_acdbc7e58e70921a26bcae089699b6a26"><div class="ttname"><a href="classParticleProjector.html#acdbc7e58e70921a26bcae089699b6a26">ParticleProjector::void_fraction_solution</a></div><div class="ttdeci">LinearAlgebra::distributed::Vector&lt; double &gt; void_fraction_solution</div><div class="ttdoc">deal.II vector for the void fraction</div><div class="ttdef"><b>Definition</b> <a href="particle__projector_8h_source.html#l00449">particle_projector.h:449</a></div></div>
+<div class="ttc" id="aclassParticleProjector_html_ad8c733e957921c4e4ddbc1f2d0dafd96"><div class="ttname"><a href="classParticleProjector.html#ad8c733e957921c4e4ddbc1f2d0dafd96">ParticleProjector::fluid_drag_on_particles</a></div><div class="ttdeci">ParticleFieldQCM&lt; dim, 3, DEM::CFDDEMProperties::PropertiesIndex::fem_drag_x &gt; fluid_drag_on_particles</div><div class="ttdef"><b>Definition</b> <a href="particle__projector_8h_source.html#l00735">particle_projector.h:735</a></div></div>
 <div class="ttc" id="aclassVANSOperator_html"><div class="ttname"><a href="classVANSOperator.html">VANSOperator</a></div><div class="ttdoc">Implements the matrix-free operator for the VANS equations.</div><div class="ttdef"><b>Definition</b> <a href="fluid__dynamics__vans__matrix__free__operators_8h_source.html#l00020">fluid_dynamics_vans_matrix_free_operators.h:21</a></div></div>
 <div class="ttc" id="afluid__dynamics__vans__matrix__free_8h_html"><div class="ttname"><a href="fluid__dynamics__vans__matrix__free_8h.html">fluid_dynamics_vans_matrix_free.h</a></div></div>
 <div class="ttc" id="afluid__dynamics__vans__matrix__free__operators_8h_html"><div class="ttname"><a href="fluid__dynamics__vans__matrix__free__operators_8h.html">fluid_dynamics_vans_matrix_free_operators.h</a></div></div>
