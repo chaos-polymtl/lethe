@@ -1,0 +1,1158 @@
+Running on 2 MPI rank(s)...
+The particle size distribution of particle type 0 is uniform.
+DEM time-step is 2203.52% of Rayleigh time step
+   Number of active cells:       128
+   Number of degrees of freedom: 900
+   Volume of triangulation:      0.00025
+---------------------------------------------------------------
+Initializing DEM parameters
+Warning: expansion of particle-wall contact list is disabled. 
+This feature is useful in geometries with concave boundaries. 
+Finished initializing DEM parameters
+DEM time-step is 0.005 s
+--------------
+Void Fraction
+--------------
+
+*******************************************************************************
+Transient iteration: 1        Time: 0.005    Time step: 0.005    CFL: 0       
+*******************************************************************************
+*********************************************************************
+1 particles of type 0 were inserted, 0 particles of type 0 remaining
+*********************************************************************
+--------------
+Void Fraction
+--------------
+----
+DEM
+----
+DEM contact search at dem step 0
+Finished 1 DEM iterations
+---------------------------------------------------------------
+--------------------
+Particle statistics
+--------------------
+| Variable                     | Min          | Max           | Average      | Total        | 
+| Contact list generation      | 0.000000e+00 | 1.000000e+00  | 1.000000e+00 | 1.000000e+00 | 
+| Velocity magnitude           | 4.459091e-03 | 4.459091e-03  | 4.459091e-03 | 4.459091e-03 | 
+| Angular velocity magnitude   | 0.000000e+00 | 2.225074e-308 | 0.000000e+00 | 0.000000e+00 | 
+| Translational kinetic energy | 8.946929e-11 | 8.946929e-11  | 8.946929e-11 | 8.946929e-11 | 
+| Rotational kinetic energy    | 0.000000e+00 | 2.225074e-308 | 0.000000e+00 | 0.000000e+00 | 
+
+*******************************************************************************
+Transient iteration: 2        Time: 0.01     Time step: 0.005    CFL: 0       
+*******************************************************************************
+--------------
+Void Fraction
+--------------
+----
+DEM
+----
+DEM contact search at dem step 0
+Finished 1 DEM iterations
+---------------------------------------------------------------
+--------------------
+Particle statistics
+--------------------
+| Variable                     | Min          | Max           | Average      | Total        | 
+| Contact list generation      | 0.000000e+00 | 1.000000e+00  | 1.000000e+00 | 2.000000e+00 | 
+| Velocity magnitude           | 8.802220e-03 | 8.802220e-03  | 8.802220e-03 | 8.802220e-03 | 
+| Angular velocity magnitude   | 0.000000e+00 | 2.225074e-308 | 0.000000e+00 | 0.000000e+00 | 
+| Translational kinetic energy | 3.486308e-10 | 3.486308e-10  | 3.486308e-10 | 3.486308e-10 | 
+| Rotational kinetic energy    | 0.000000e+00 | 2.225074e-308 | 0.000000e+00 | 0.000000e+00 | 
+
+**********************************************************************************
+Transient iteration: 3        Time: 0.015    Time step: 0.005    CFL: 1.45238e-08
+**********************************************************************************
+--------------
+Void Fraction
+--------------
+----
+DEM
+----
+DEM contact search at dem step 0
+Finished 1 DEM iterations
+---------------------------------------------------------------
+--------------------
+Particle statistics
+--------------------
+| Variable                     | Min          | Max           | Average      | Total        | 
+| Contact list generation      | 0.000000e+00 | 1.000000e+00  | 1.000000e+00 | 3.000000e+00 | 
+| Velocity magnitude           | 1.297243e-02 | 1.297243e-02  | 1.297243e-02 | 1.297243e-02 | 
+| Angular velocity magnitude   | 0.000000e+00 | 2.225074e-308 | 0.000000e+00 | 0.000000e+00 | 
+| Translational kinetic energy | 7.572236e-10 | 7.572236e-10  | 7.572236e-10 | 7.572236e-10 | 
+| Rotational kinetic energy    | 0.000000e+00 | 2.225074e-308 | 0.000000e+00 | 0.000000e+00 | 
+
+**********************************************************************************
+Transient iteration: 4        Time: 0.02     Time step: 0.005    CFL: 4.89895e-08
+**********************************************************************************
+--------------
+Void Fraction
+--------------
+----
+DEM
+----
+DEM contact search at dem step 0
+Finished 1 DEM iterations
+---------------------------------------------------------------
+--------------------
+Particle statistics
+--------------------
+| Variable                     | Min          | Max           | Average      | Total        | 
+| Contact list generation      | 0.000000e+00 | 1.000000e+00  | 1.000000e+00 | 4.000000e+00 | 
+| Velocity magnitude           | 1.693353e-02 | 1.693353e-02  | 1.693353e-02 | 1.693353e-02 | 
+| Angular velocity magnitude   | 0.000000e+00 | 2.225074e-308 | 0.000000e+00 | 0.000000e+00 | 
+| Translational kinetic energy | 1.290258e-09 | 1.290258e-09  | 1.290258e-09 | 1.290258e-09 | 
+| Rotational kinetic energy    | 0.000000e+00 | 2.225074e-308 | 0.000000e+00 | 0.000000e+00 | 
+
+**********************************************************************************
+Transient iteration: 5        Time: 0.025    Time step: 0.005    CFL: 1.07483e-07
+**********************************************************************************
+--------------
+Void Fraction
+--------------
+----
+DEM
+----
+DEM contact search at dem step 0
+Finished 1 DEM iterations
+---------------------------------------------------------------
+--------------------
+Particle statistics
+--------------------
+| Variable                     | Min          | Max           | Average      | Total        | 
+| Contact list generation      | 0.000000e+00 | 1.000000e+00  | 1.000000e+00 | 5.000000e+00 | 
+| Velocity magnitude           | 2.066093e-02 | 2.066093e-02  | 2.066093e-02 | 2.066093e-02 | 
+| Angular velocity magnitude   | 0.000000e+00 | 2.225074e-308 | 0.000000e+00 | 0.000000e+00 | 
+| Translational kinetic energy | 1.920795e-09 | 1.920795e-09  | 1.920795e-09 | 1.920795e-09 | 
+| Rotational kinetic energy    | 0.000000e+00 | 2.225074e-308 | 0.000000e+00 | 0.000000e+00 | 
+
+**********************************************************************************
+Transient iteration: 6        Time: 0.03     Time step: 0.005    CFL: 1.92665e-07
+**********************************************************************************
+--------------
+Void Fraction
+--------------
+----
+DEM
+----
+DEM contact search at dem step 0
+Finished 1 DEM iterations
+---------------------------------------------------------------
+--------------------
+Particle statistics
+--------------------
+| Variable                     | Min          | Max           | Average      | Total        | 
+| Contact list generation      | 0.000000e+00 | 1.000000e+00  | 1.000000e+00 | 6.000000e+00 | 
+| Velocity magnitude           | 2.413921e-02 | 2.413921e-02  | 2.413921e-02 | 2.413921e-02 | 
+| Angular velocity magnitude   | 0.000000e+00 | 2.225074e-308 | 0.000000e+00 | 0.000000e+00 | 
+| Translational kinetic energy | 2.621968e-09 | 2.621968e-09  | 2.621968e-09 | 2.621968e-09 | 
+| Rotational kinetic energy    | 0.000000e+00 | 2.225074e-308 | 0.000000e+00 | 0.000000e+00 | 
+
+**********************************************************************************
+Transient iteration: 7        Time: 0.035    Time step: 0.005    CFL: 3.06105e-07
+**********************************************************************************
+--------------
+Void Fraction
+--------------
+----
+DEM
+----
+DEM contact search at dem step 0
+Finished 1 DEM iterations
+---------------------------------------------------------------
+--------------------
+Particle statistics
+--------------------
+| Variable                     | Min          | Max           | Average      | Total        | 
+| Contact list generation      | 0.000000e+00 | 1.000000e+00  | 1.000000e+00 | 7.000000e+00 | 
+| Velocity magnitude           | 2.736064e-02 | 2.736064e-02  | 2.736064e-02 | 2.736064e-02 | 
+| Angular velocity magnitude   | 0.000000e+00 | 2.225074e-308 | 0.000000e+00 | 0.000000e+00 | 
+| Translational kinetic energy | 3.368478e-09 | 3.368478e-09  | 3.368478e-09 | 3.368478e-09 | 
+| Rotational kinetic energy    | 0.000000e+00 | 2.225074e-308 | 0.000000e+00 | 0.000000e+00 | 
+
+**********************************************************************************
+Transient iteration: 8        Time: 0.04     Time step: 0.005    CFL: 4.48938e-07
+**********************************************************************************
+--------------
+Void Fraction
+--------------
+----
+DEM
+----
+DEM contact search at dem step 0
+Finished 1 DEM iterations
+---------------------------------------------------------------
+--------------------
+Particle statistics
+--------------------
+| Variable                     | Min          | Max           | Average      | Total        | 
+| Contact list generation      | 0.000000e+00 | 1.000000e+00  | 1.000000e+00 | 8.000000e+00 | 
+| Velocity magnitude           | 3.032390e-02 | 3.032390e-02  | 3.032390e-02 | 3.032390e-02 | 
+| Angular velocity magnitude   | 0.000000e+00 | 2.225074e-308 | 0.000000e+00 | 0.000000e+00 | 
+| Translational kinetic energy | 4.137628e-09 | 4.137628e-09  | 4.137628e-09 | 4.137628e-09 | 
+| Rotational kinetic energy    | 0.000000e+00 | 2.225074e-308 | 0.000000e+00 | 0.000000e+00 | 
+
+**********************************************************************************
+Transient iteration: 9        Time: 0.045    Time step: 0.005    CFL: 6.21859e-07
+**********************************************************************************
+--------------
+Void Fraction
+--------------
+----
+DEM
+----
+DEM contact search at dem step 0
+Finished 1 DEM iterations
+---------------------------------------------------------------
+--------------------
+Particle statistics
+--------------------
+| Variable                     | Min          | Max           | Average      | Total        | 
+| Contact list generation      | 0.000000e+00 | 1.000000e+00  | 1.000000e+00 | 9.000000e+00 | 
+| Velocity magnitude           | 3.303291e-02 | 3.303291e-02  | 3.303291e-02 | 3.303291e-02 | 
+| Angular velocity magnitude   | 0.000000e+00 | 2.225074e-308 | 0.000000e+00 | 0.000000e+00 | 
+| Translational kinetic energy | 4.909927e-09 | 4.909927e-09  | 4.909927e-09 | 4.909927e-09 | 
+| Rotational kinetic energy    | 0.000000e+00 | 2.225074e-308 | 0.000000e+00 | 0.000000e+00 | 
+
+**********************************************************************************
+Transient iteration: 10       Time: 0.05     Time step: 0.005    CFL: 8.25677e-07
+**********************************************************************************
+--------------
+Void Fraction
+--------------
+----
+DEM
+----
+-->Repartitioning triangulation
+Load balance finished
+Average, minimum and maximum number of particles on the processors are 0.5 , 0 and 1
+Minimum and maximum number of cells owned by the processors are 128 and 128
+Setup DOFs
+   Number of active cells:       128
+   Number of degrees of freedom: 900
+   Volume of triangulation:      0.00025
+DEM contact search at dem step 0
+Finished 1 DEM iterations
+---------------------------------------------------------------
+--------------------
+Particle statistics
+--------------------
+| Variable                     | Min          | Max           | Average      | Total        | 
+| Contact list generation      | 0.000000e+00 | 1.000000e+00  | 1.000000e+00 | 1.000000e+01 | 
+| Velocity magnitude           | 3.549573e-02 | 3.549573e-02  | 3.549573e-02 | 3.549573e-02 | 
+| Angular velocity magnitude   | 0.000000e+00 | 2.225074e-308 | 0.000000e+00 | 0.000000e+00 | 
+| Translational kinetic energy | 5.669353e-09 | 5.669353e-09  | 5.669353e-09 | 5.669353e-09 | 
+| Rotational kinetic energy    | 0.000000e+00 | 2.225074e-308 | 0.000000e+00 | 0.000000e+00 | 
+
+********************************************************************************
+Transient iteration: 11       Time: 0.055    Time step: 0.005    CFL: 1.061e-06
+********************************************************************************
+--------------
+Void Fraction
+--------------
+----
+DEM
+----
+DEM contact search at dem step 0
+Finished 1 DEM iterations
+---------------------------------------------------------------
+--------------------
+Particle statistics
+--------------------
+| Variable                     | Min          | Max           | Average      | Total        | 
+| Contact list generation      | 0.000000e+00 | 1.000000e+00  | 1.000000e+00 | 1.100000e+01 | 
+| Velocity magnitude           | 3.772351e-02 | 3.772351e-02  | 3.772351e-02 | 3.772351e-02 | 
+| Angular velocity magnitude   | 0.000000e+00 | 2.225074e-308 | 0.000000e+00 | 0.000000e+00 | 
+| Translational kinetic energy | 6.403324e-09 | 6.403324e-09  | 6.403324e-09 | 6.403324e-09 | 
+| Rotational kinetic energy    | 0.000000e+00 | 2.225074e-308 | 0.000000e+00 | 0.000000e+00 | 
+
+**********************************************************************************
+Transient iteration: 12       Time: 0.06     Time step: 0.005    CFL: 1.32803e-06
+**********************************************************************************
+--------------
+Void Fraction
+--------------
+----
+DEM
+----
+DEM contact search at dem step 0
+Finished 1 DEM iterations
+---------------------------------------------------------------
+--------------------
+Particle statistics
+--------------------
+| Variable                     | Min          | Max           | Average      | Total        | 
+| Contact list generation      | 0.000000e+00 | 1.000000e+00  | 1.000000e+00 | 1.200000e+01 | 
+| Velocity magnitude           | 3.972962e-02 | 3.972962e-02  | 3.972962e-02 | 3.972962e-02 | 
+| Angular velocity magnitude   | 0.000000e+00 | 2.225074e-308 | 0.000000e+00 | 0.000000e+00 | 
+| Translational kinetic energy | 7.102481e-09 | 7.102481e-09  | 7.102481e-09 | 7.102481e-09 | 
+| Rotational kinetic energy    | 0.000000e+00 | 2.225074e-308 | 0.000000e+00 | 0.000000e+00 | 
+
+**********************************************************************************
+Transient iteration: 13       Time: 0.065    Time step: 0.005    CFL: 1.62667e-06
+**********************************************************************************
+--------------
+Void Fraction
+--------------
+----
+DEM
+----
+DEM contact search at dem step 0
+Finished 1 DEM iterations
+---------------------------------------------------------------
+--------------------
+Particle statistics
+--------------------
+| Variable                     | Min          | Max           | Average      | Total        | 
+| Contact list generation      | 0.000000e+00 | 1.000000e+00  | 1.000000e+00 | 1.300000e+01 | 
+| Velocity magnitude           | 4.152884e-02 | 4.152884e-02  | 4.152884e-02 | 4.152884e-02 | 
+| Angular velocity magnitude   | 0.000000e+00 | 2.225074e-308 | 0.000000e+00 | 0.000000e+00 | 
+| Translational kinetic energy | 7.760343e-09 | 7.760343e-09  | 7.760343e-09 | 7.760343e-09 | 
+| Rotational kinetic energy    | 0.000000e+00 | 2.225074e-308 | 0.000000e+00 | 0.000000e+00 | 
+
+**********************************************************************************
+Transient iteration: 14       Time: 0.07     Time step: 0.005    CFL: 1.95622e-06
+**********************************************************************************
+--------------
+Void Fraction
+--------------
+----
+DEM
+----
+DEM contact search at dem step 0
+Finished 1 DEM iterations
+---------------------------------------------------------------
+--------------------
+Particle statistics
+--------------------
+| Variable                     | Min          | Max           | Average      | Total        | 
+| Contact list generation      | 0.000000e+00 | 1.000000e+00  | 1.000000e+00 | 1.400000e+01 | 
+| Velocity magnitude           | 4.313672e-02 | 4.313672e-02  | 4.313672e-02 | 4.313672e-02 | 
+| Angular velocity magnitude   | 0.000000e+00 | 2.225074e-308 | 0.000000e+00 | 0.000000e+00 | 
+| Translational kinetic energy | 8.372892e-09 | 8.372892e-09  | 8.372892e-09 | 8.372892e-09 | 
+| Rotational kinetic energy    | 0.000000e+00 | 2.225074e-308 | 0.000000e+00 | 0.000000e+00 | 
+
+**********************************************************************************
+Transient iteration: 15       Time: 0.075    Time step: 0.005    CFL: 2.31544e-06
+**********************************************************************************
+--------------
+Void Fraction
+--------------
+----
+DEM
+----
+DEM contact search at dem step 0
+Finished 1 DEM iterations
+---------------------------------------------------------------
+--------------------
+Particle statistics
+--------------------
+| Variable                     | Min          | Max           | Average      | Total        | 
+| Contact list generation      | 0.000000e+00 | 1.000000e+00  | 1.000000e+00 | 1.500000e+01 | 
+| Velocity magnitude           | 4.456900e-02 | 4.456900e-02  | 4.456900e-02 | 4.456900e-02 | 
+| Angular velocity magnitude   | 0.000000e+00 | 2.225074e-308 | 0.000000e+00 | 0.000000e+00 | 
+| Translational kinetic energy | 8.938141e-09 | 8.938141e-09  | 8.938141e-09 | 8.938141e-09 | 
+| Rotational kinetic energy    | 0.000000e+00 | 2.225074e-308 | 0.000000e+00 | 0.000000e+00 | 
+
+**********************************************************************************
+Transient iteration: 16       Time: 0.08     Time step: 0.005    CFL: 2.70228e-06
+**********************************************************************************
+--------------
+Void Fraction
+--------------
+----
+DEM
+----
+DEM contact search at dem step 0
+Finished 1 DEM iterations
+---------------------------------------------------------------
+--------------------
+Particle statistics
+--------------------
+| Variable                     | Min          | Max           | Average      | Total        | 
+| Contact list generation      | 0.000000e+00 | 1.000000e+00  | 1.000000e+00 | 1.600000e+01 | 
+| Velocity magnitude           | 4.584127e-02 | 4.584127e-02  | 4.584127e-02 | 4.584127e-02 | 
+| Angular velocity magnitude   | 0.000000e+00 | 2.225074e-308 | 0.000000e+00 | 0.000000e+00 | 
+| Translational kinetic energy | 9.455720e-09 | 9.455720e-09  | 9.455720e-09 | 9.455720e-09 | 
+| Rotational kinetic energy    | 0.000000e+00 | 2.225074e-308 | 0.000000e+00 | 0.000000e+00 | 
+
+**********************************************************************************
+Transient iteration: 17       Time: 0.085    Time step: 0.005    CFL: 3.11385e-06
+**********************************************************************************
+--------------
+Void Fraction
+--------------
+----
+DEM
+----
+DEM contact search at dem step 0
+Finished 1 DEM iterations
+---------------------------------------------------------------
+--------------------
+Particle statistics
+--------------------
+| Variable                     | Min          | Max           | Average      | Total        | 
+| Contact list generation      | 0.000000e+00 | 1.000000e+00  | 1.000000e+00 | 1.700000e+01 | 
+| Velocity magnitude           | 4.696857e-02 | 4.696857e-02  | 4.696857e-02 | 4.696857e-02 | 
+| Angular velocity magnitude   | 0.000000e+00 | 2.225074e-308 | 0.000000e+00 | 0.000000e+00 | 
+| Translational kinetic energy | 9.926498e-09 | 9.926498e-09  | 9.926498e-09 | 9.926498e-09 | 
+| Rotational kinetic energy    | 0.000000e+00 | 2.225074e-308 | 0.000000e+00 | 0.000000e+00 | 
+
+**********************************************************************************
+Transient iteration: 18       Time: 0.09     Time step: 0.005    CFL: 3.54645e-06
+**********************************************************************************
+--------------
+Void Fraction
+--------------
+----
+DEM
+----
+DEM contact search at dem step 0
+Finished 1 DEM iterations
+---------------------------------------------------------------
+--------------------
+Particle statistics
+--------------------
+| Variable                     | Min          | Max           | Average      | Total        | 
+| Contact list generation      | 0.000000e+00 | 1.000000e+00  | 1.000000e+00 | 1.800000e+01 | 
+| Velocity magnitude           | 4.796524e-02 | 4.796524e-02  | 4.796524e-02 | 4.796524e-02 | 
+| Angular velocity magnitude   | 0.000000e+00 | 2.225074e-308 | 0.000000e+00 | 0.000000e+00 | 
+| Translational kinetic energy | 1.035224e-08 | 1.035224e-08  | 1.035224e-08 | 1.035224e-08 | 
+| Rotational kinetic energy    | 0.000000e+00 | 2.225074e-308 | 0.000000e+00 | 0.000000e+00 | 
+
+**********************************************************************************
+Transient iteration: 19       Time: 0.095    Time step: 0.005    CFL: 3.99566e-06
+**********************************************************************************
+--------------
+Void Fraction
+--------------
+----
+DEM
+----
+DEM contact search at dem step 0
+Finished 1 DEM iterations
+---------------------------------------------------------------
+--------------------
+Particle statistics
+--------------------
+| Variable                     | Min          | Max           | Average      | Total        | 
+| Contact list generation      | 0.000000e+00 | 1.000000e+00  | 1.000000e+00 | 1.900000e+01 | 
+| Velocity magnitude           | 4.884471e-02 | 4.884471e-02  | 4.884471e-02 | 4.884471e-02 | 
+| Angular velocity magnitude   | 0.000000e+00 | 2.225074e-308 | 0.000000e+00 | 0.000000e+00 | 
+| Translational kinetic energy | 1.073536e-08 | 1.073536e-08  | 1.073536e-08 | 1.073536e-08 | 
+| Rotational kinetic energy    | 0.000000e+00 | 2.225074e-308 | 0.000000e+00 | 0.000000e+00 | 
+
+**********************************************************************************
+Transient iteration: 20       Time: 0.1      Time step: 0.005    CFL: 4.45786e-06
+**********************************************************************************
+--------------
+Void Fraction
+--------------
+----
+DEM
+----
+-->Repartitioning triangulation
+Load balance finished
+Average, minimum and maximum number of particles on the processors are 0.5 , 0 and 1
+Minimum and maximum number of cells owned by the processors are 128 and 128
+Setup DOFs
+   Number of active cells:       128
+   Number of degrees of freedom: 900
+   Volume of triangulation:      0.00025
+DEM contact search at dem step 0
+Finished 1 DEM iterations
+---------------------------------------------------------------
+--------------------
+Particle statistics
+--------------------
+| Variable                     | Min          | Max           | Average      | Total        | 
+| Contact list generation      | 0.000000e+00 | 1.000000e+00  | 1.000000e+00 | 2.000000e+01 | 
+| Velocity magnitude           | 4.961948e-02 | 4.961948e-02  | 4.961948e-02 | 4.961948e-02 | 
+| Angular velocity magnitude   | 0.000000e+00 | 2.225074e-308 | 0.000000e+00 | 0.000000e+00 | 
+| Translational kinetic energy | 1.107862e-08 | 1.107862e-08  | 1.107862e-08 | 1.107862e-08 | 
+| Rotational kinetic energy    | 0.000000e+00 | 2.225074e-308 | 0.000000e+00 | 0.000000e+00 | 
+
+**********************************************************************************
+Transient iteration: 21       Time: 0.105    Time step: 0.005    CFL: 4.92982e-06
+**********************************************************************************
+--------------
+Void Fraction
+--------------
+----
+DEM
+----
+DEM contact search at dem step 0
+Finished 1 DEM iterations
+---------------------------------------------------------------
+--------------------
+Particle statistics
+--------------------
+| Variable                     | Min          | Max           | Average      | Total        | 
+| Contact list generation      | 0.000000e+00 | 1.000000e+00  | 1.000000e+00 | 2.100000e+01 | 
+| Velocity magnitude           | 5.030101e-02 | 5.030101e-02  | 5.030101e-02 | 5.030101e-02 | 
+| Angular velocity magnitude   | 0.000000e+00 | 2.225074e-308 | 0.000000e+00 | 0.000000e+00 | 
+| Translational kinetic energy | 1.138504e-08 | 1.138504e-08  | 1.138504e-08 | 1.138504e-08 | 
+| Rotational kinetic energy    | 0.000000e+00 | 2.225074e-308 | 0.000000e+00 | 0.000000e+00 | 
+
+**********************************************************************************
+Transient iteration: 22       Time: 0.11     Time step: 0.005    CFL: 5.40843e-06
+**********************************************************************************
+--------------
+Void Fraction
+--------------
+----
+DEM
+----
+DEM contact search at dem step 0
+Finished 1 DEM iterations
+---------------------------------------------------------------
+--------------------
+Particle statistics
+--------------------
+| Variable                     | Min          | Max           | Average      | Total        | 
+| Contact list generation      | 0.000000e+00 | 1.000000e+00  | 1.000000e+00 | 2.200000e+01 | 
+| Velocity magnitude           | 5.089978e-02 | 5.089978e-02  | 5.089978e-02 | 5.089978e-02 | 
+| Angular velocity magnitude   | 0.000000e+00 | 2.225074e-308 | 0.000000e+00 | 0.000000e+00 | 
+| Translational kinetic energy | 1.165771e-08 | 1.165771e-08  | 1.165771e-08 | 1.165771e-08 | 
+| Rotational kinetic energy    | 0.000000e+00 | 2.225074e-308 | 0.000000e+00 | 0.000000e+00 | 
+
+**********************************************************************************
+Transient iteration: 23       Time: 0.115    Time step: 0.005    CFL: 5.89135e-06
+**********************************************************************************
+--------------
+Void Fraction
+--------------
+----
+DEM
+----
+DEM contact search at dem step 0
+Finished 1 DEM iterations
+---------------------------------------------------------------
+--------------------
+Particle statistics
+--------------------
+| Variable                     | Min          | Max           | Average      | Total        | 
+| Contact list generation      | 0.000000e+00 | 1.000000e+00  | 1.000000e+00 | 2.300000e+01 | 
+| Velocity magnitude           | 5.142528e-02 | 5.142528e-02  | 5.142528e-02 | 5.142528e-02 | 
+| Angular velocity magnitude   | 0.000000e+00 | 2.225074e-308 | 0.000000e+00 | 0.000000e+00 | 
+| Translational kinetic energy | 1.189966e-08 | 1.189966e-08  | 1.189966e-08 | 1.189966e-08 | 
+| Rotational kinetic energy    | 0.000000e+00 | 2.225074e-308 | 0.000000e+00 | 0.000000e+00 | 
+
+**********************************************************************************
+Transient iteration: 24       Time: 0.12     Time step: 0.005    CFL: 6.37703e-06
+**********************************************************************************
+--------------
+Void Fraction
+--------------
+----
+DEM
+----
+DEM contact search at dem step 0
+Finished 1 DEM iterations
+---------------------------------------------------------------
+--------------------
+Particle statistics
+--------------------
+| Variable                     | Min          | Max           | Average      | Total        | 
+| Contact list generation      | 0.000000e+00 | 1.000000e+00  | 1.000000e+00 | 2.400000e+01 | 
+| Velocity magnitude           | 5.188606e-02 | 5.188606e-02  | 5.188606e-02 | 5.188606e-02 | 
+| Angular velocity magnitude   | 0.000000e+00 | 2.225074e-308 | 0.000000e+00 | 0.000000e+00 | 
+| Translational kinetic energy | 1.211387e-08 | 1.211387e-08  | 1.211387e-08 | 1.211387e-08 | 
+| Rotational kinetic energy    | 0.000000e+00 | 2.225074e-308 | 0.000000e+00 | 0.000000e+00 | 
+
+**********************************************************************************
+Transient iteration: 25       Time: 0.125    Time step: 0.005    CFL: 6.86463e-06
+**********************************************************************************
+--------------
+Void Fraction
+--------------
+----
+DEM
+----
+DEM contact search at dem step 0
+Finished 1 DEM iterations
+---------------------------------------------------------------
+--------------------
+Particle statistics
+--------------------
+| Variable                     | Min          | Max           | Average      | Total        | 
+| Contact list generation      | 0.000000e+00 | 1.000000e+00  | 1.000000e+00 | 2.500000e+01 | 
+| Velocity magnitude           | 5.228979e-02 | 5.228979e-02  | 5.228979e-02 | 5.228979e-02 | 
+| Angular velocity magnitude   | 0.000000e+00 | 2.225074e-308 | 0.000000e+00 | 0.000000e+00 | 
+| Translational kinetic energy | 1.230311e-08 | 1.230311e-08  | 1.230311e-08 | 1.230311e-08 | 
+| Rotational kinetic energy    | 0.000000e+00 | 2.225074e-308 | 0.000000e+00 | 0.000000e+00 | 
+
+**********************************************************************************
+Transient iteration: 26       Time: 0.13     Time step: 0.005    CFL: 7.35381e-06
+**********************************************************************************
+--------------
+Void Fraction
+--------------
+----
+DEM
+----
+DEM contact search at dem step 0
+Finished 1 DEM iterations
+---------------------------------------------------------------
+--------------------
+Particle statistics
+--------------------
+| Variable                     | Min          | Max           | Average      | Total        | 
+| Contact list generation      | 0.000000e+00 | 1.000000e+00  | 1.000000e+00 | 2.600000e+01 | 
+| Velocity magnitude           | 5.264330e-02 | 5.264330e-02  | 5.264330e-02 | 5.264330e-02 | 
+| Angular velocity magnitude   | 0.000000e+00 | 2.225074e-308 | 0.000000e+00 | 0.000000e+00 | 
+| Translational kinetic energy | 1.247003e-08 | 1.247003e-08  | 1.247003e-08 | 1.247003e-08 | 
+| Rotational kinetic energy    | 0.000000e+00 | 2.225074e-308 | 0.000000e+00 | 0.000000e+00 | 
+
+**********************************************************************************
+Transient iteration: 27       Time: 0.135    Time step: 0.005    CFL: 7.84444e-06
+**********************************************************************************
+--------------
+Void Fraction
+--------------
+----
+DEM
+----
+DEM contact search at dem step 0
+Finished 1 DEM iterations
+---------------------------------------------------------------
+--------------------
+Particle statistics
+--------------------
+| Variable                     | Min          | Max           | Average      | Total        | 
+| Contact list generation      | 0.000000e+00 | 1.000000e+00  | 1.000000e+00 | 2.700000e+01 | 
+| Velocity magnitude           | 5.295271e-02 | 5.295271e-02  | 5.295271e-02 | 5.295271e-02 | 
+| Angular velocity magnitude   | 0.000000e+00 | 2.225074e-308 | 0.000000e+00 | 0.000000e+00 | 
+| Translational kinetic energy | 1.261705e-08 | 1.261705e-08  | 1.261705e-08 | 1.261705e-08 | 
+| Rotational kinetic energy    | 0.000000e+00 | 2.225074e-308 | 0.000000e+00 | 0.000000e+00 | 
+
+**********************************************************************************
+Transient iteration: 28       Time: 0.14     Time step: 0.005    CFL: 8.33651e-06
+**********************************************************************************
+--------------
+Void Fraction
+--------------
+----
+DEM
+----
+DEM contact search at dem step 0
+Finished 1 DEM iterations
+---------------------------------------------------------------
+--------------------
+Particle statistics
+--------------------
+| Variable                     | Min          | Max           | Average      | Total        | 
+| Contact list generation      | 0.000000e+00 | 1.000000e+00  | 1.000000e+00 | 2.800000e+01 | 
+| Velocity magnitude           | 5.322341e-02 | 5.322341e-02  | 5.322341e-02 | 5.322341e-02 | 
+| Angular velocity magnitude   | 0.000000e+00 | 2.225074e-308 | 0.000000e+00 | 0.000000e+00 | 
+| Translational kinetic energy | 1.274638e-08 | 1.274638e-08  | 1.274638e-08 | 1.274638e-08 | 
+| Rotational kinetic energy    | 0.000000e+00 | 2.225074e-308 | 0.000000e+00 | 0.000000e+00 | 
+
+**********************************************************************************
+Transient iteration: 29       Time: 0.145    Time step: 0.005    CFL: 8.83013e-06
+**********************************************************************************
+--------------
+Void Fraction
+--------------
+----
+DEM
+----
+DEM contact search at dem step 0
+Finished 1 DEM iterations
+---------------------------------------------------------------
+--------------------
+Particle statistics
+--------------------
+| Variable                     | Min          | Max           | Average      | Total        | 
+| Contact list generation      | 0.000000e+00 | 1.000000e+00  | 1.000000e+00 | 2.900000e+01 | 
+| Velocity magnitude           | 5.346012e-02 | 5.346012e-02  | 5.346012e-02 | 5.346012e-02 | 
+| Angular velocity magnitude   | 0.000000e+00 | 2.225074e-308 | 0.000000e+00 | 0.000000e+00 | 
+| Translational kinetic energy | 1.286001e-08 | 1.286001e-08  | 1.286001e-08 | 1.286001e-08 | 
+| Rotational kinetic energy    | 0.000000e+00 | 2.225074e-308 | 0.000000e+00 | 0.000000e+00 | 
+
+**********************************************************************************
+Transient iteration: 30       Time: 0.15     Time step: 0.005    CFL: 9.32556e-06
+**********************************************************************************
+--------------
+Void Fraction
+--------------
+----
+DEM
+----
+-->Repartitioning triangulation
+Load balance finished
+Average, minimum and maximum number of particles on the processors are 0.5 , 0 and 1
+Minimum and maximum number of cells owned by the processors are 128 and 128
+Setup DOFs
+   Number of active cells:       128
+   Number of degrees of freedom: 900
+   Volume of triangulation:      0.00025
+DEM contact search at dem step 0
+Finished 1 DEM iterations
+---------------------------------------------------------------
+--------------------
+Particle statistics
+--------------------
+| Variable                     | Min          | Max           | Average      | Total        | 
+| Contact list generation      | 0.000000e+00 | 1.000000e+00  | 1.000000e+00 | 3.000000e+01 | 
+| Velocity magnitude           | 5.366695e-02 | 5.366695e-02  | 5.366695e-02 | 5.366695e-02 | 
+| Angular velocity magnitude   | 0.000000e+00 | 2.225074e-308 | 0.000000e+00 | 0.000000e+00 | 
+| Translational kinetic energy | 1.295971e-08 | 1.295971e-08  | 1.295971e-08 | 1.295971e-08 | 
+| Rotational kinetic energy    | 0.000000e+00 | 2.225074e-308 | 0.000000e+00 | 0.000000e+00 | 
+
+**********************************************************************************
+Transient iteration: 31       Time: 0.155    Time step: 0.005    CFL: 9.82286e-06
+**********************************************************************************
+--------------
+Void Fraction
+--------------
+----
+DEM
+----
+DEM contact search at dem step 0
+Finished 1 DEM iterations
+---------------------------------------------------------------
+--------------------
+Particle statistics
+--------------------
+| Variable                     | Min          | Max           | Average      | Total        | 
+| Contact list generation      | 0.000000e+00 | 1.000000e+00  | 1.000000e+00 | 3.100000e+01 | 
+| Velocity magnitude           | 5.384762e-02 | 5.384762e-02  | 5.384762e-02 | 5.384762e-02 | 
+| Angular velocity magnitude   | 0.000000e+00 | 2.225074e-308 | 0.000000e+00 | 0.000000e+00 | 
+| Translational kinetic energy | 1.304711e-08 | 1.304711e-08  | 1.304711e-08 | 1.304711e-08 | 
+| Rotational kinetic energy    | 0.000000e+00 | 2.225074e-308 | 0.000000e+00 | 0.000000e+00 | 
+
+**********************************************************************************
+Transient iteration: 32       Time: 0.16     Time step: 0.005    CFL: 1.03221e-05
+**********************************************************************************
+--------------
+Void Fraction
+--------------
+----
+DEM
+----
+DEM contact search at dem step 0
+Finished 1 DEM iterations
+---------------------------------------------------------------
+--------------------
+Particle statistics
+--------------------
+| Variable                     | Min          | Max           | Average      | Total        | 
+| Contact list generation      | 0.000000e+00 | 1.000000e+00  | 1.000000e+00 | 3.200000e+01 | 
+| Velocity magnitude           | 5.400540e-02 | 5.400540e-02  | 5.400540e-02 | 5.400540e-02 | 
+| Angular velocity magnitude   | 0.000000e+00 | 2.225074e-308 | 0.000000e+00 | 0.000000e+00 | 
+| Translational kinetic energy | 1.312368e-08 | 1.312368e-08  | 1.312368e-08 | 1.312368e-08 | 
+| Rotational kinetic energy    | 0.000000e+00 | 2.225074e-308 | 0.000000e+00 | 0.000000e+00 | 
+
+**********************************************************************************
+Transient iteration: 33       Time: 0.165    Time step: 0.005    CFL: 1.08231e-05
+**********************************************************************************
+--------------
+Void Fraction
+--------------
+----
+DEM
+----
+DEM contact search at dem step 0
+Finished 1 DEM iterations
+---------------------------------------------------------------
+--------------------
+Particle statistics
+--------------------
+| Variable                     | Min          | Max           | Average      | Total        | 
+| Contact list generation      | 0.000000e+00 | 1.000000e+00  | 1.000000e+00 | 3.300000e+01 | 
+| Velocity magnitude           | 5.414317e-02 | 5.414317e-02  | 5.414317e-02 | 5.414317e-02 | 
+| Angular velocity magnitude   | 0.000000e+00 | 2.225074e-308 | 0.000000e+00 | 0.000000e+00 | 
+| Translational kinetic energy | 1.319073e-08 | 1.319073e-08  | 1.319073e-08 | 1.319073e-08 | 
+| Rotational kinetic energy    | 0.000000e+00 | 2.225074e-308 | 0.000000e+00 | 0.000000e+00 | 
+
+**********************************************************************************
+Transient iteration: 34       Time: 0.17     Time step: 0.005    CFL: 1.13252e-05
+**********************************************************************************
+--------------
+Void Fraction
+--------------
+----
+DEM
+----
+DEM contact search at dem step 0
+Finished 1 DEM iterations
+---------------------------------------------------------------
+--------------------
+Particle statistics
+--------------------
+| Variable                     | Min          | Max           | Average      | Total        | 
+| Contact list generation      | 0.000000e+00 | 1.000000e+00  | 1.000000e+00 | 3.400000e+01 | 
+| Velocity magnitude           | 5.426346e-02 | 5.426346e-02  | 5.426346e-02 | 5.426346e-02 | 
+| Angular velocity magnitude   | 0.000000e+00 | 2.225074e-308 | 0.000000e+00 | 0.000000e+00 | 
+| Translational kinetic energy | 1.324940e-08 | 1.324940e-08  | 1.324940e-08 | 1.324940e-08 | 
+| Rotational kinetic energy    | 0.000000e+00 | 2.225074e-308 | 0.000000e+00 | 0.000000e+00 | 
+
+**********************************************************************************
+Transient iteration: 35       Time: 0.175    Time step: 0.005    CFL: 1.18269e-05
+**********************************************************************************
+--------------
+Void Fraction
+--------------
+----
+DEM
+----
+DEM contact search at dem step 0
+Finished 1 DEM iterations
+---------------------------------------------------------------
+--------------------
+Particle statistics
+--------------------
+| Variable                     | Min          | Max           | Average      | Total        | 
+| Contact list generation      | 0.000000e+00 | 1.000000e+00  | 1.000000e+00 | 3.500000e+01 | 
+| Velocity magnitude           | 5.436848e-02 | 5.436848e-02  | 5.436848e-02 | 5.436848e-02 | 
+| Angular velocity magnitude   | 0.000000e+00 | 2.225074e-308 | 0.000000e+00 | 0.000000e+00 | 
+| Translational kinetic energy | 1.330074e-08 | 1.330074e-08  | 1.330074e-08 | 1.330074e-08 | 
+| Rotational kinetic energy    | 0.000000e+00 | 2.225074e-308 | 0.000000e+00 | 0.000000e+00 | 
+
+**********************************************************************************
+Transient iteration: 36       Time: 0.18     Time step: 0.005    CFL: 1.23254e-05
+**********************************************************************************
+--------------
+Void Fraction
+--------------
+----
+DEM
+----
+DEM contact search at dem step 0
+Finished 1 DEM iterations
+---------------------------------------------------------------
+--------------------
+Particle statistics
+--------------------
+| Variable                     | Min          | Max           | Average      | Total        | 
+| Contact list generation      | 0.000000e+00 | 1.000000e+00  | 1.000000e+00 | 3.600000e+01 | 
+| Velocity magnitude           | 5.446016e-02 | 5.446016e-02  | 5.446016e-02 | 5.446016e-02 | 
+| Angular velocity magnitude   | 0.000000e+00 | 2.225074e-308 | 0.000000e+00 | 0.000000e+00 | 
+| Translational kinetic energy | 1.334563e-08 | 1.334563e-08  | 1.334563e-08 | 1.334563e-08 | 
+| Rotational kinetic energy    | 0.000000e+00 | 2.225074e-308 | 0.000000e+00 | 0.000000e+00 | 
+
+**********************************************************************************
+Transient iteration: 37       Time: 0.185    Time step: 0.005    CFL: 1.28174e-05
+**********************************************************************************
+--------------
+Void Fraction
+--------------
+----
+DEM
+----
+DEM contact search at dem step 0
+Finished 1 DEM iterations
+---------------------------------------------------------------
+--------------------
+Particle statistics
+--------------------
+| Variable                     | Min          | Max           | Average      | Total        | 
+| Contact list generation      | 0.000000e+00 | 1.000000e+00  | 1.000000e+00 | 3.700000e+01 | 
+| Velocity magnitude           | 5.454021e-02 | 5.454021e-02  | 5.454021e-02 | 5.454021e-02 | 
+| Angular velocity magnitude   | 0.000000e+00 | 2.225074e-308 | 0.000000e+00 | 0.000000e+00 | 
+| Translational kinetic energy | 1.338489e-08 | 1.338489e-08  | 1.338489e-08 | 1.338489e-08 | 
+| Rotational kinetic energy    | 0.000000e+00 | 2.225074e-308 | 0.000000e+00 | 0.000000e+00 | 
+
+**********************************************************************************
+Transient iteration: 38       Time: 0.19     Time step: 0.005    CFL: 1.32993e-05
+**********************************************************************************
+--------------
+Void Fraction
+--------------
+----
+DEM
+----
+DEM contact search at dem step 0
+Finished 1 DEM iterations
+---------------------------------------------------------------
+--------------------
+Particle statistics
+--------------------
+| Variable                     | Min          | Max           | Average      | Total        | 
+| Contact list generation      | 0.000000e+00 | 1.000000e+00  | 1.000000e+00 | 3.800000e+01 | 
+| Velocity magnitude           | 5.461009e-02 | 5.461009e-02  | 5.461009e-02 | 5.461009e-02 | 
+| Angular velocity magnitude   | 0.000000e+00 | 2.225074e-308 | 0.000000e+00 | 0.000000e+00 | 
+| Translational kinetic energy | 1.341922e-08 | 1.341922e-08  | 1.341922e-08 | 1.341922e-08 | 
+| Rotational kinetic energy    | 0.000000e+00 | 2.225074e-308 | 0.000000e+00 | 0.000000e+00 | 
+
+**********************************************************************************
+Transient iteration: 39       Time: 0.195    Time step: 0.005    CFL: 1.37663e-05
+**********************************************************************************
+--------------
+Void Fraction
+--------------
+----
+DEM
+----
+DEM contact search at dem step 0
+Finished 1 DEM iterations
+---------------------------------------------------------------
+--------------------
+Particle statistics
+--------------------
+| Variable                     | Min          | Max           | Average      | Total        | 
+| Contact list generation      | 0.000000e+00 | 1.000000e+00  | 1.000000e+00 | 3.900000e+01 | 
+| Velocity magnitude           | 5.467112e-02 | 5.467112e-02  | 5.467112e-02 | 5.467112e-02 | 
+| Angular velocity magnitude   | 0.000000e+00 | 2.225074e-308 | 0.000000e+00 | 0.000000e+00 | 
+| Translational kinetic energy | 1.344922e-08 | 1.344922e-08  | 1.344922e-08 | 1.344922e-08 | 
+| Rotational kinetic energy    | 0.000000e+00 | 2.225074e-308 | 0.000000e+00 | 0.000000e+00 | 
+
+**********************************************************************************
+Transient iteration: 40       Time: 0.2      Time step: 0.005    CFL: 1.42134e-05
+**********************************************************************************
+--------------
+Void Fraction
+--------------
+----
+DEM
+----
+-->Repartitioning triangulation
+Load balance finished
+Average, minimum and maximum number of particles on the processors are 0.5 , 0 and 1
+Minimum and maximum number of cells owned by the processors are 128 and 128
+Setup DOFs
+   Number of active cells:       128
+   Number of degrees of freedom: 900
+   Volume of triangulation:      0.00025
+DEM contact search at dem step 0
+Finished 1 DEM iterations
+---------------------------------------------------------------
+--------------------
+Particle statistics
+--------------------
+| Variable                     | Min          | Max           | Average      | Total        | 
+| Contact list generation      | 0.000000e+00 | 1.000000e+00  | 1.000000e+00 | 4.000000e+01 | 
+| Velocity magnitude           | 5.472440e-02 | 5.472440e-02  | 5.472440e-02 | 5.472440e-02 | 
+| Angular velocity magnitude   | 0.000000e+00 | 2.225074e-308 | 0.000000e+00 | 0.000000e+00 | 
+| Translational kinetic energy | 1.347545e-08 | 1.347545e-08  | 1.347545e-08 | 1.347545e-08 | 
+| Rotational kinetic energy    | 0.000000e+00 | 2.225074e-308 | 0.000000e+00 | 0.000000e+00 | 
+
+*********************************************************************************
+Transient iteration: 41       Time: 0.205    Time step: 0.005    CFL: 1.4637e-05
+*********************************************************************************
+--------------
+Void Fraction
+--------------
+----
+DEM
+----
+DEM contact search at dem step 0
+Finished 1 DEM iterations
+---------------------------------------------------------------
+--------------------
+Particle statistics
+--------------------
+| Variable                     | Min          | Max           | Average      | Total        | 
+| Contact list generation      | 0.000000e+00 | 1.000000e+00  | 1.000000e+00 | 4.100000e+01 | 
+| Velocity magnitude           | 5.477091e-02 | 5.477091e-02  | 5.477091e-02 | 5.477091e-02 | 
+| Angular velocity magnitude   | 0.000000e+00 | 2.225074e-308 | 0.000000e+00 | 0.000000e+00 | 
+| Translational kinetic energy | 1.349837e-08 | 1.349837e-08  | 1.349837e-08 | 1.349837e-08 | 
+| Rotational kinetic energy    | 0.000000e+00 | 2.225074e-308 | 0.000000e+00 | 0.000000e+00 | 
+
+*********************************************************************************
+Transient iteration: 42       Time: 0.21     Time step: 0.005    CFL: 1.5036e-05
+*********************************************************************************
+--------------
+Void Fraction
+--------------
+----
+DEM
+----
+DEM contact search at dem step 0
+Finished 1 DEM iterations
+---------------------------------------------------------------
+--------------------
+Particle statistics
+--------------------
+| Variable                     | Min          | Max           | Average      | Total        | 
+| Contact list generation      | 0.000000e+00 | 1.000000e+00  | 1.000000e+00 | 4.200000e+01 | 
+| Velocity magnitude           | 5.481150e-02 | 5.481150e-02  | 5.481150e-02 | 5.481150e-02 | 
+| Angular velocity magnitude   | 0.000000e+00 | 2.225074e-308 | 0.000000e+00 | 0.000000e+00 | 
+| Translational kinetic energy | 1.351838e-08 | 1.351838e-08  | 1.351838e-08 | 1.351838e-08 | 
+| Rotational kinetic energy    | 0.000000e+00 | 2.225074e-308 | 0.000000e+00 | 0.000000e+00 | 
+
+**********************************************************************************
+Transient iteration: 43       Time: 0.215    Time step: 0.005    CFL: 1.54111e-05
+**********************************************************************************
+--------------
+Void Fraction
+--------------
+----
+DEM
+----
+DEM contact search at dem step 0
+Finished 1 DEM iterations
+---------------------------------------------------------------
+--------------------
+Particle statistics
+--------------------
+| Variable                     | Min          | Max           | Average      | Total        | 
+| Contact list generation      | 0.000000e+00 | 1.000000e+00  | 1.000000e+00 | 4.300000e+01 | 
+| Velocity magnitude           | 5.484692e-02 | 5.484692e-02  | 5.484692e-02 | 5.484692e-02 | 
+| Angular velocity magnitude   | 0.000000e+00 | 2.225074e-308 | 0.000000e+00 | 0.000000e+00 | 
+| Translational kinetic energy | 1.353586e-08 | 1.353586e-08  | 1.353586e-08 | 1.353586e-08 | 
+| Rotational kinetic energy    | 0.000000e+00 | 2.225074e-308 | 0.000000e+00 | 0.000000e+00 | 
+
+**********************************************************************************
+Transient iteration: 44       Time: 0.22     Time step: 0.005    CFL: 1.57644e-05
+**********************************************************************************
+--------------
+Void Fraction
+--------------
+----
+DEM
+----
+DEM contact search at dem step 0
+Finished 1 DEM iterations
+---------------------------------------------------------------
+--------------------
+Particle statistics
+--------------------
+| Variable                     | Min          | Max           | Average      | Total        | 
+| Contact list generation      | 0.000000e+00 | 1.000000e+00  | 1.000000e+00 | 4.400000e+01 | 
+| Velocity magnitude           | 5.487781e-02 | 5.487781e-02  | 5.487781e-02 | 5.487781e-02 | 
+| Angular velocity magnitude   | 0.000000e+00 | 2.225074e-308 | 0.000000e+00 | 0.000000e+00 | 
+| Translational kinetic energy | 1.355111e-08 | 1.355111e-08  | 1.355111e-08 | 1.355111e-08 | 
+| Rotational kinetic energy    | 0.000000e+00 | 2.225074e-308 | 0.000000e+00 | 0.000000e+00 | 
+
+*********************************************************************************
+Transient iteration: 45       Time: 0.225    Time step: 0.005    CFL: 1.6104e-05
+*********************************************************************************
+--------------
+Void Fraction
+--------------
+----
+DEM
+----
+DEM contact search at dem step 0
+Finished 1 DEM iterations
+---------------------------------------------------------------
+--------------------
+Particle statistics
+--------------------
+| Variable                     | Min          | Max           | Average      | Total        | 
+| Contact list generation      | 0.000000e+00 | 1.000000e+00  | 1.000000e+00 | 4.500000e+01 | 
+| Velocity magnitude           | 5.490473e-02 | 5.490473e-02  | 5.490473e-02 | 5.490473e-02 | 
+| Angular velocity magnitude   | 0.000000e+00 | 2.225074e-308 | 0.000000e+00 | 0.000000e+00 | 
+| Translational kinetic energy | 1.356441e-08 | 1.356441e-08  | 1.356441e-08 | 1.356441e-08 | 
+| Rotational kinetic energy    | 0.000000e+00 | 2.225074e-308 | 0.000000e+00 | 0.000000e+00 | 
+
+*********************************************************************************
+Transient iteration: 46       Time: 0.23     Time step: 0.005    CFL: 1.6482e-05
+*********************************************************************************
+--------------
+Void Fraction
+--------------
+----
+DEM
+----
+DEM contact search at dem step 0
+Finished 1 DEM iterations
+---------------------------------------------------------------
+--------------------
+Particle statistics
+--------------------
+| Variable                     | Min          | Max           | Average      | Total        | 
+| Contact list generation      | 0.000000e+00 | 1.000000e+00  | 1.000000e+00 | 4.600000e+01 | 
+| Velocity magnitude           | 5.492819e-02 | 5.492819e-02  | 5.492819e-02 | 5.492819e-02 | 
+| Angular velocity magnitude   | 0.000000e+00 | 2.225074e-308 | 0.000000e+00 | 0.000000e+00 | 
+| Translational kinetic energy | 1.357600e-08 | 1.357600e-08  | 1.357600e-08 | 1.357600e-08 | 
+| Rotational kinetic energy    | 0.000000e+00 | 2.225074e-308 | 0.000000e+00 | 0.000000e+00 | 
+
+**********************************************************************************
+Transient iteration: 47       Time: 0.235    Time step: 0.005    CFL: 1.68547e-05
+**********************************************************************************
+--------------
+Void Fraction
+--------------
+----
+DEM
+----
+DEM contact search at dem step 0
+Finished 1 DEM iterations
+---------------------------------------------------------------
+--------------------
+Particle statistics
+--------------------
+| Variable                     | Min          | Max           | Average      | Total        | 
+| Contact list generation      | 0.000000e+00 | 1.000000e+00  | 1.000000e+00 | 4.700000e+01 | 
+| Velocity magnitude           | 5.494863e-02 | 5.494863e-02  | 5.494863e-02 | 5.494863e-02 | 
+| Angular velocity magnitude   | 0.000000e+00 | 2.225074e-308 | 0.000000e+00 | 0.000000e+00 | 
+| Translational kinetic energy | 1.358611e-08 | 1.358611e-08  | 1.358611e-08 | 1.358611e-08 | 
+| Rotational kinetic energy    | 0.000000e+00 | 2.225074e-308 | 0.000000e+00 | 0.000000e+00 | 
+
+**********************************************************************************
+Transient iteration: 48       Time: 0.24     Time step: 0.005    CFL: 1.72214e-05
+**********************************************************************************
+--------------
+Void Fraction
+--------------
+----
+DEM
+----
+DEM contact search at dem step 0
+Finished 1 DEM iterations
+---------------------------------------------------------------
+--------------------
+Particle statistics
+--------------------
+| Variable                     | Min          | Max           | Average      | Total        | 
+| Contact list generation      | 0.000000e+00 | 1.000000e+00  | 1.000000e+00 | 4.800000e+01 | 
+| Velocity magnitude           | 5.496644e-02 | 5.496644e-02  | 5.496644e-02 | 5.496644e-02 | 
+| Angular velocity magnitude   | 0.000000e+00 | 2.225074e-308 | 0.000000e+00 | 0.000000e+00 | 
+| Translational kinetic energy | 1.359492e-08 | 1.359492e-08  | 1.359492e-08 | 1.359492e-08 | 
+| Rotational kinetic energy    | 0.000000e+00 | 2.225074e-308 | 0.000000e+00 | 0.000000e+00 | 
+
+**********************************************************************************
+Transient iteration: 49       Time: 0.245    Time step: 0.005    CFL: 1.75788e-05
+**********************************************************************************
+--------------
+Void Fraction
+--------------
+----
+DEM
+----
+DEM contact search at dem step 0
+Finished 1 DEM iterations
+---------------------------------------------------------------
+--------------------
+Particle statistics
+--------------------
+| Variable                     | Min          | Max           | Average      | Total        | 
+| Contact list generation      | 0.000000e+00 | 1.000000e+00  | 1.000000e+00 | 4.900000e+01 | 
+| Velocity magnitude           | 5.498195e-02 | 5.498195e-02  | 5.498195e-02 | 5.498195e-02 | 
+| Angular velocity magnitude   | 0.000000e+00 | 2.225074e-308 | 0.000000e+00 | 0.000000e+00 | 
+| Translational kinetic energy | 1.360259e-08 | 1.360259e-08  | 1.360259e-08 | 1.360259e-08 | 
+| Rotational kinetic energy    | 0.000000e+00 | 2.225074e-308 | 0.000000e+00 | 0.000000e+00 | 
+
+**********************************************************************************
+Transient iteration: 50       Time: 0.25     Time step: 0.005    CFL: 1.79234e-05
+**********************************************************************************
+--------------
+Void Fraction
+--------------
+----
+DEM
+----
+-->Repartitioning triangulation
+Load balance finished
+Average, minimum and maximum number of particles on the processors are 0.5 , 0 and 1
+Minimum and maximum number of cells owned by the processors are 128 and 128
+Setup DOFs
+   Number of active cells:       128
+   Number of degrees of freedom: 900
+   Volume of triangulation:      0.00025
+DEM contact search at dem step 0
+Finished 1 DEM iterations
+---------------------------------------------------------------
+--------------------
+Particle statistics
+--------------------
+| Variable                     | Min          | Max           | Average      | Total        | 
+| Contact list generation      | 0.000000e+00 | 1.000000e+00  | 1.000000e+00 | 5.000000e+01 | 
+| Velocity magnitude           | 5.499546e-02 | 5.499546e-02  | 5.499546e-02 | 5.499546e-02 | 
+| Angular velocity magnitude   | 0.000000e+00 | 2.225074e-308 | 0.000000e+00 | 0.000000e+00 | 
+| Translational kinetic energy | 1.360927e-08 | 1.360927e-08  | 1.360927e-08 | 1.360927e-08 | 
+| Rotational kinetic energy    | 0.000000e+00 | 2.225074e-308 | 0.000000e+00 | 0.000000e+00 | 
