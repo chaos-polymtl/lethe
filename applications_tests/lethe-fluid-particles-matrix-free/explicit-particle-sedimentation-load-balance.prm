@@ -111,7 +111,7 @@ subsection model parameters
   end
   subsection load balancing
     set load balance method = frequent
-    set frequency = 10
+    set frequency           = 10
   end
 end
 
