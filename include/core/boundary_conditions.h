@@ -72,6 +72,7 @@ namespace BoundaryConditions
     function_weak,
     partial_slip,
     pressure,
+    Neumann_traction,
     //  for heat transfer
     noflux,
     temperature,
@@ -146,8 +147,18 @@ namespace BoundaryConditions
     Functions::ParsedFunction<dim> v;
     Functions::ParsedFunction<dim> w;
 
+
     /// Pressure
     Functions::ParsedFunction<dim> p;
+
+    /*
+       Functions::ParsedFunction<dim> traction_vector;
+    */
+
+    ///Neumann Traction sigma.n = g
+    Functions::ParsedFunction<dim> t_x;
+    Functions::ParsedFunction<dim> t_y;
+    Functions::ParsedFunction<dim> t_z;
 
     /// Point for the center of rotation
     Point<dim> center_of_rotation;
@@ -202,7 +213,7 @@ namespace BoundaryConditions
   class NSBoundaryConditions : public BoundaryConditions
   {
   public:
-    /// Functions for (u, v, w, p) for all boundaries
+    /// Functions for (u, v, w, p, (Neumann traction: t_x, t_y, t_z)) for all boundaries
     std::map<types::boundary_id, std::shared_ptr<NSBoundaryFunctions<dim>>>
       navier_stokes_functions;
 
@@ -268,9 +279,9 @@ namespace BoundaryConditions
       "type",
       "none",
       Patterns::Selection(
-        "none|noslip|slip|function|periodic|pressure|function weak|partial slip|outlet"),
+        "none|noslip|slip|function|periodic|pressure|Neumann traction|function weak|partial slip|outlet"),
       "Type of boundary condition"
-      "Choices are <noslip|slip|function|periodic|pressure|function weak|partial slip|outlet>.");
+      "Choices are <noslip|slip|function|periodic|pressure|Neumann traction|function weak|partial slip|outlet>.");
 
 
     prm.declare_entry("id",
@@ -313,6 +324,24 @@ namespace BoundaryConditions
 
     prm.enter_subsection("p");
     temporary_fluid_dynamics_functions.p.declare_parameters(prm);
+    prm.leave_subsection();
+
+    /*
+       prm.enter_subsection("traction_vector");
+        temporary_fluid_dynamics_functions.traction_vector.declare_parameters(prm,dim);
+        prm.leave_subsection();
+    */
+
+    prm.enter_subsection("t_x");
+    temporary_fluid_dynamics_functions.t_x.declare_parameters(prm);
+    prm.leave_subsection();
+
+    prm.enter_subsection("t_y");
+    temporary_fluid_dynamics_functions.t_y.declare_parameters(prm);
+    prm.leave_subsection();
+
+    prm.enter_subsection("t_z");
+    temporary_fluid_dynamics_functions.t_z.declare_parameters(prm);
     prm.leave_subsection();
 
     // Center of rotation of the boundary condition for torque calculation
@@ -383,6 +412,24 @@ namespace BoundaryConditions
         navier_stokes_functions[boundary_id]->p.parse_parameters(prm);
         prm.leave_subsection();
 
+        /*
+           prm.enter_subsection("t");
+          navier_stokes_functions[boundary_id]->traction_vector.parse_parameters(prm);
+            prm.leave_subsection();
+        */
+
+        prm.enter_subsection("t_x");
+        navier_stokes_functions[boundary_id]->t_x.parse_parameters(prm);
+        prm.leave_subsection();
+
+        prm.enter_subsection("t_y");
+        navier_stokes_functions[boundary_id]->t_y.parse_parameters(prm);
+        prm.leave_subsection();
+
+        prm.enter_subsection("t_z");
+        navier_stokes_functions[boundary_id]->t_z.parse_parameters(prm);
+        prm.leave_subsection();
+
         prm.enter_subsection("center of rotation");
         navier_stokes_functions[boundary_id]->center_of_rotation[0] =
           prm.get_double("x");
@@ -414,6 +461,10 @@ namespace BoundaryConditions
         if (op == "pressure")
           {
             this->type[boundary_id] = BoundaryType::pressure;
+          }
+        if(op == "Neumann_traction")
+          {
+            this->type[boundary_id] = BoundaryType::Neumann_traction;
           }
         if (op == "periodic")
           {
@@ -452,6 +503,26 @@ namespace BoundaryConditions
             navier_stokes_functions[periodic_boundary_id]->w.parse_parameters(
               prm);
             prm.leave_subsection();
+
+            /*
+           prm.enter_subsection("t");
+          navier_stokes_functions[boundary_id]->traction_vector.parse_parameters(prm);
+            prm.leave_subsection();
+          */
+            
+            //Prescribed Neumann traction function
+            prm.enter_subsection("t_x");
+            navier_stokes_functions[boundary_id]->t_x.parse_parameters(prm);
+            prm.leave_subsection();
+
+            prm.enter_subsection("t_y");
+            navier_stokes_functions[boundary_id]->t_y.parse_parameters(prm);
+            prm.leave_subsection();
+
+            prm.enter_subsection("t_z");
+            navier_stokes_functions[boundary_id]->t_z.parse_parameters(prm);
+            prm.leave_subsection();
+
 
             prm.enter_subsection("p");
             navier_stokes_functions[periodic_boundary_id]->p.parse_parameters(
@@ -1990,6 +2061,65 @@ NavierStokesFunctionDefined<dim>::value(const Point<dim>  &point,
     }
   return 0.;
 }
+
+/**
+ * @brief This class implements a boundary conditions for the Navier-Stokes equation
+ * where the Neumann traction component are defined using individual functions
+ */
+template <int dim>
+class NavierStokesTractionFunctionDefined : public Function<dim>
+{
+  Functions::ParsedFunction<dim> *t_x;
+  Functions::ParsedFunction<dim> *t_y;
+  Functions::ParsedFunction<dim> *t_z;
+
+public:
+  NavierStokesTractionFunctionDefined(Functions::ParsedFunction<dim> *pt_x,
+                              Functions::ParsedFunction<dim> *pt_y,
+                              Functions::ParsedFunction<dim> *pt_z)
+    : Function<dim>(dim + 1)
+    , t_x(pt_x)
+    , t_y(pt_y)
+    , t_z(pt_z)
+  {}
+
+  double
+  value(const Point<dim> &point, const unsigned int component) const override;
+
+};
+
+
+/**
+ * @brief Calculates the value of a Function-type Navier-Stokes equations
+ *
+ * @param point A point at which the function will be evaluated
+ *
+ * @param component The vector component of the boundary condition (0-x, 1-y and 2-z)
+ */
+template <int dim>
+double
+NavierStokesTractionFunctionDefined<dim>::value(const Point<dim>  &point,
+                                        const unsigned int component) const
+{
+  Assert(component < this->n_components,
+         ExcIndexRange(component, 0, this->n_components));
+
+  if (component == 0)
+    {
+      return t_x->value(point);
+    }
+  if (component == 1)
+    {
+      return t_y->value(point);
+    }
+  if (component == 2)
+    {
+      return t_z->value(point);
+    }
+  return 0.;
+}
+
+
 
 /**
  * @brief This class implements a pressure boundary condition for the Navier-Stokes equations.
