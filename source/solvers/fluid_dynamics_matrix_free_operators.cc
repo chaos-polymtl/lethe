@@ -163,6 +163,13 @@ NavierStokesOperatorBase<dim, number>::reinit(
             update_values | update_quadrature_points | update_JxW_values |
             update_normal_vectors;
         }
+      else if (type == BoundaryConditions::BoundaryType::Neumann_traction)
+        {
+          this->enable_face_terms = true;
+          additional_data.mapping_update_flags_boundary_faces =
+            update_values | update_quadrature_points | update_JxW_values |
+            update_normal_vectors;
+        }
     }
 
   matrix_free.reinit(
@@ -813,6 +820,61 @@ NavierStokesOperatorBase<dim, number>::get_element_size() const
 template <int dim, typename number>
 void
 NavierStokesOperatorBase<dim, number>::
+  evaluate_prescribed_neumann_traction()
+{
+  if (enable_face_terms)
+  {
+  //Change the timer subsection name.
+  this->timer.enter_subsection("operator::evaluate_prescribed_neumann_traction");
+  const unsigned int n_inner_faces    = matrix_free.n_inner_face_batches();
+  const unsigned int n_boundary_faces = matrix_free.n_boundary_face_batches();
+ 
+  FEFaceIntegrator face_integrator(matrix_free, true, 0);
+  
+  prescribed_neumann_traction.reinit(
+    n_boundary_faces, face_integrator.n_q_points);
+
+  for (unsigned int face = n_inner_faces;
+           face < n_inner_faces + n_boundary_faces;
+           ++face)
+  {
+          face_integrator.reinit(face);
+
+          for (const auto q : face_integrator.quadrature_point_indices())
+          {
+            Point<dim, VectorizedArray<number>> point_batch =
+                    face_integrator.quadrature_point(q);
+
+
+                  prescribed_neumann_traction(face- n_inner_faces,q)[0] = evaluate_function<dim, number>(
+                    this->boundary_conditions.navier_stokes_functions
+                      .at(face_integrator.boundary_id())
+                      ->t_x,
+                    point_batch);
+
+                  prescribed_neumann_traction(face- n_inner_faces,q)[1] = evaluate_function<dim, number>(
+                    this->boundary_conditions.navier_stokes_functions
+                      .at(face_integrator.boundary_id())
+                      ->t_y,
+                    point_batch);
+
+                  if constexpr (dim == 3)
+                    prescribed_neumann_traction(face- n_inner_faces,q)[2] = evaluate_function<dim, number>(
+                      this->boundary_conditions.navier_stokes_functions
+                        .at(face_integrator.boundary_id())
+                        ->t_z,
+                      point_batch);
+          }
+  }
+  this->timer.leave_subsection("operator::evaluate_prescribed_neumann_traction");
+}
+
+}
+
+
+template <int dim, typename number>
+void
+NavierStokesOperatorBase<dim, number>::
   evaluate_non_linear_term_and_calculate_tau(const VectorType &newton_step)
 {
   this->timer.enter_subsection("operator::evaluate_non_linear_term");
@@ -1378,11 +1440,14 @@ NavierStokesOperatorBase<dim, number>::do_boundary_face_integral_local(
 
   // If the boundary condition is not in our list of boundary
   // conditions or the boundary condition that is set in the list is
-  // not a boundary condition that requires face asssembly (for example
-  // pressure, weak dirichlet or outlet), there is nothing to do, so we set the
+  // not a weak function or outlet BC or Neumann traction, there is nothing to do, so we set the
   // values to zero and return
-  if (boundary_condition_requires_face_assembly(
-        this->boundary_conditions.type.at(integrator.boundary_id())) == false)
+  if (this->boundary_conditions.type.at(integrator.boundary_id()) !=
+        BoundaryConditions::BoundaryType::function_weak &&
+      this->boundary_conditions.type.at(integrator.boundary_id()) !=
+        BoundaryConditions::BoundaryType::outlet &&
+      this->boundary_conditions.type.at(integrator.boundary_id()) !=
+        BoundaryConditions::BoundaryType::Neumann_traction)
     {
       const VectorizedArray<number> zero = 0.0;
 
@@ -1442,6 +1507,24 @@ NavierStokesOperatorBase<dim, number>::do_boundary_face_integral_local(
 
       integrator.integrate(EvaluationFlags::EvaluationFlags::values |
                            EvaluationFlags::EvaluationFlags::gradients);
+    }
+    // This part assembles the prescribed Neumann traction boundary condition $\sigma \dot \mathbf{n} = \mathbf{t}$
+    // only on the RHS (residual) since it does not depend on the solution
+    else if(this->boundary_conditions.type.at(integrator.boundary_id()) ==
+            BoundaryConditions::BoundaryType::Neumann_traction)
+    {
+      integrator.evaluate(EvaluationFlags::values);
+      if constexpr(assemble_residual)
+      {
+         for (const auto q : integrator.quadrature_point_indices())
+        {
+          
+                
+          integrator.submit_value(this->prescribed_neumann_traction(face_index,q), q);
+        }
+        
+          integrator.integrate(EvaluationFlags::EvaluationFlags::values);
+      }
     }
 
   else if (this->boundary_conditions.type.at(integrator.boundary_id()) ==

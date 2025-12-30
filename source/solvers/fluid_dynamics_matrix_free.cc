@@ -3295,6 +3295,11 @@ FluidDynamicsMatrixFree<dim>::assemble_system_rhs()
   this->system_operator->evaluate_non_linear_term_and_calculate_tau(
     this->evaluation_point);
 
+  /*
+    (σ . n , v)  = (t, v) on Γ_N for the prescribed Neumann traction
+  */
+  this->system_operator->evaluate_prescribed_neumann_traction();
+
   this->system_operator->evaluate_residual(this->system_rhs,
                                            this->evaluation_point);
 

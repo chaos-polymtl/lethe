@@ -406,6 +406,14 @@ public:
   void
   compute_inverse_diagonal(VectorType &diagonal) const;
 
+   /**
+   * @brief Store the values of the prescribed Neumann traction boundary condition to use it
+   * in the residual assembly and Jacobian ?
+   */
+  void
+  evaluate_prescribed_neumann_traction();
+
+
   /**
    * @brief Store relevant values of the vector of the last newton step to use it
    * in the Jacobian and pre-calculate the stabilization parameter tau.
@@ -759,7 +767,7 @@ protected:
    *
    */
   Table<2, Tensor<1, dim, VectorizedArray<number>>> face_target_velocity;
-
+ 
   /**
    * @brief Table with correct alignment for vectorization to store the values
    * of the target pressure of a pressure boundary condition.
@@ -767,6 +775,17 @@ protected:
    */
   Table<2, VectorizedArray<number>> face_target_pressure;
 
+   /**
+   * @brief Table with correct alignment for vectorization to store the values
+   * of the prescribed Neumann traction boundary condition values.
+   *
+   * $\sigma \cdot n = g_{N}$ 
+   * assembled (v, g_N) on boundary faces where Neumann traction is prescribed.
+   * our test function v involves both velocity and pressure components. Hence,
+   * the prescribed_neumann_traction has dim components corresponding to velocity
+   * and 1 component corresponding to pressure (which is dummy), totalling dim+1 components.
+   */
+  Table<2, Tensor<1, dim+1, VectorizedArray<number>>> prescribed_neumann_traction;
 
   /**
    * @brief Table with correct alignment for vectorization to store the values

@@ -2103,6 +2103,11 @@ NavierStokesBase<dim, VectorType, DofsType>::define_zero_constraints()
           /*The directional do-nothing boundary condition is implemented
            * in the matrix-based assemblers and the matrix-free operators*/
         }
+      else if (type == BoundaryConditions::BoundaryType::Neumann_traction)
+      {
+        /*The Neumann traction boundary condition is implemented
+         * in the  matrix-free operators*/
+      }
       else if (type == BoundaryConditions::BoundaryType::none)
         {
           /*Default boundary condition*/
