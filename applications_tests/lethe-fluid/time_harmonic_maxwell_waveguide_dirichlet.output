@@ -2,7 +2,7 @@ Running on 1 MPI rank(s)...
    Number of active cells:       4
    Number of degrees of freedom: 80
    Volume of triangulation:      0.0625
-  DPG system:
+  DPG system for Time-Harmonic Maxwell Equations:
    Number of skeleton degrees of freedom for Time-Harmonic Maxwell: 720
    Number of interior degrees of freedom for Time-Harmonic Maxwell: 384
 

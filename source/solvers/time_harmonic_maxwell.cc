@@ -3,8 +3,6 @@
 
 #include <solvers/time_harmonic_maxwell.h>
 
-using VectorType = GlobalVectorType;
-
 template <int dim>
 TimeHarmonicMaxwell<dim>::TimeHarmonicMaxwell(
   MultiphysicsInterface<dim>      *multiphysics_interface,
@@ -134,7 +132,7 @@ TimeHarmonicMaxwell<dim>::gather_output_hook()
 
   // Skeleton output setup
   // TODO:  it will need its own writer probably because we need to use
-  // DataOutFaces object
+  // DataOutFaces object, add the skeleton output to all physics when required?
 
   return solution_output_structs;
 }
@@ -159,7 +157,7 @@ TimeHarmonicMaxwell<dim>::calculate_L2_error()
   // possible fields of the ultraweak formulation so we need 4*dim components.
   std::vector<Vector<double>> exact_solution_values(n_q_points,
                                                     Vector<double>(4 * dim));
-  auto                       &exact_solution =
+  auto                       &exact_solution_function =
     simulation_parameters.analytical_solution->electromagnetics;
 
   // When looping on each cell we will extract the different field
@@ -194,7 +192,7 @@ TimeHarmonicMaxwell<dim>::calculate_L2_error()
             *present_solution, local_H_values_imag);
 
           // Get the exact solution at quadrature points
-          exact_solution.vector_value_list(
+          exact_solution_function.vector_value_list(
             fe_values_trial_interior.get_quadrature_points(),
             exact_solution_values);
 
@@ -208,26 +206,26 @@ TimeHarmonicMaxwell<dim>::calculate_L2_error()
                 {
                   // E real part
                   L2_error_E_real +=
-                    pow(local_E_values_real[q][d] - exact_solution_values[q][d],
-                        2) *
+                    Utilities::fixed_power<2>(local_E_values_real[q][d] -
+                                   exact_solution_values[q][d]) *
                     JxW;
 
                   // E imag part
-                  L2_error_E_imag += pow(local_E_values_imag[q][d] -
-                                           exact_solution_values[q][d + dim],
-                                         2) *
-                                     JxW;
+                  L2_error_E_imag +=
+                    Utilities::fixed_power<2>(local_E_values_imag[q][d] -
+                                   exact_solution_values[q][d + dim]) *
+                    JxW;
+
                   // H real part
                   L2_error_H_real +=
-                    pow(local_H_values_real[q][d] -
-                          exact_solution_values[q][d + 2 * dim],
-                        2) *
+                    Utilities::fixed_power<2>(local_H_values_real[q][d] -
+                                   exact_solution_values[q][d + 2 * dim]) *
                     JxW;
+
                   // H imag part
                   L2_error_H_imag +=
-                    pow(local_H_values_imag[q][d] -
-                          exact_solution_values[q][d + 3 * dim],
-                        2) *
+                    Utilities::fixed_power<2>(local_H_values_imag[q][d] -
+                                   exact_solution_values[q][d + 3 * dim]) *
                     JxW;
                 }
             }
@@ -482,7 +480,8 @@ TimeHarmonicMaxwell<dim>::setup_dofs()
                              this->locally_owned_dofs_trial_skeleton,
                              dsp,
                              mpi_communicator);
-  this->pcout << "  DPG system:" << std::endl;
+  this->pcout << "  DPG system for Time-Harmonic Maxwell Equations:"
+              << std::endl;
   this->pcout
     << "   Number of skeleton degrees of freedom for Time-Harmonic Maxwell: "
     << this->dof_handler_trial_skeleton->n_dofs() << std::endl;
@@ -749,12 +748,12 @@ TimeHarmonicMaxwell<dim>::define_constraints()
 
   // The DPG method requires the use of skeleton elements and shape functions.
   // Because we want to use high-order Nedelec elements for the face, but dealii
-  // does not support a FE_FaceNedelec, we hack our way around by using full
-  // cell elements, but freezing the interior dofs using constrain_dofs_to_zero.
-  // To do so, we create a container for all dof indices and a container for the
-  // face dof indices and we loop on all the faces of each cell to find which
-  // dofs are on the face and flag them. The remaining dofs are then constrained
-  // to zero.
+  // does not support a FE_FaceNedelec, we hack our way around this by using
+  // full cell elements, but freezing the interior dofs using the function
+  // constrain_dof_to_zero. To do so, we create a container for all dof indices
+  // and a container for the face dof indices and we loop on all the faces of
+  // each cell to find which dofs are on the face and flag them. The remaining
+  // dofs are then constrained to zero.
 
   std::vector<types::global_dof_index> cell_dof_indices(
     this->fe_trial_skeleton->n_dofs_per_cell());
@@ -841,8 +840,6 @@ TimeHarmonicMaxwell<dim>::solve_linear_system()
     }
 
   // Set up the solver control
-  setup_preconditioner();
-
   SolverControl solver_control(this->dof_handler_trial_skeleton->n_dofs(),
                                linear_solver_tolerance);
 
@@ -912,7 +909,7 @@ TimeHarmonicMaxwell<3>::assemble_system_matrix()
   waveguide_a = 0.25;
   waveguide_b = 0.25;
 
-  // TODO:   the above parameters will need to be removed when they are added to
+  // TODO:   the parameters above will need to be removed when they are added to
   // the physical properties
 
   TimerOutput::Scope t(this->computing_timer, "Assemble matrix and RHS");
@@ -1421,13 +1418,13 @@ TimeHarmonicMaxwell<3>::assemble_system_matrix()
               fe_face_values_trial_skeleton.reinit(cell_skeleton, face);
 
               // Get the boundary condition type on the current face
+              bc_type = BoundaryConditions::BoundaryType::none;
+
               if (face->at_boundary())
                 bc_type =
                   this->simulation_parameters
                     .boundary_conditions_time_harmonic_electromagnetics.type.at(
                       face->boundary_id());
-              else
-                bc_type = BoundaryConditions::BoundaryType::none;
 
               // Reset the face dofs relationships
               G_FF.clear();
@@ -2381,13 +2378,13 @@ TimeHarmonicMaxwell<3>::reconstruct_interior_solution()
               fe_face_values_trial_skeleton.reinit(cell_skeleton, face);
 
               // Get the boundary condition type on the current face
+              bc_type = BoundaryConditions::BoundaryType::none;
+
               if (face->at_boundary())
                 bc_type =
                   this->simulation_parameters
                     .boundary_conditions_time_harmonic_electromagnetics.type.at(
                       face->boundary_id());
-              else
-                bc_type = BoundaryConditions::BoundaryType::none;
 
               // Reset the face dofs relationships
               G_FF.clear();

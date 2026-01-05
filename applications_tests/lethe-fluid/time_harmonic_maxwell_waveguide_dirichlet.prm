@@ -3,8 +3,8 @@
 
 # This test case runs the time-harmonic electromagnetic solver to simulate the
 # propagation of one wavelength in a waveguide with perfectly conducting walls.
-# This test impose Dirichlet boundary conditions on both the electric field (inlet) and
-# magnetic field (outlet) to validate the implementation of those conditions.
+# This test imposes Dirichlet boundary conditions on both the electric field (inlet) and
+# magnetic field (outlet) to verify the implementation of those conditions.
 
 # Listing of Parameters
 #----------------------

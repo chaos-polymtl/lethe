@@ -62,7 +62,8 @@
  * discontinuous between elements.
  **/
 
-/// TODO in this PR:
+/// TODO until completion of the auxiliary physics :
+
 /// [] TimeHarmonicMaxwell class
 ///   [x] Constructeur
 ///   [x] Destructeur
@@ -75,11 +76,11 @@
 ///   [x] postprocess
 ///   [x] pre_mesh_adaptation
 ///   [x] post_mesh_adaptation
-///   - write_checkpoint
-///   - read_checkpoint
-///   - gather_tables()
-///   - compute_kelly
-///   - compute_energy_norm
+///   [ ] write_checkpoint
+///   [ ] read_checkpoint
+///   [ ] gather_tables()
+///   [ ] compute_kelly
+///   [ ] compute_energy_norm
 ///   [x] Setup_dofs
 ///   [x] set_initial_conditions
 ///   [x] setup_preconditioner
@@ -97,19 +98,19 @@
 ///   [x] get_residual_rescale_metric
 ///   [x] assemble_system_matrix
 ///   [x] assemble_system_rhs
-///   - assemble_local_system_matrix
-///   - assemble_local_system_rhs
-///   - setup_assemblers
-///   - copy_local_matrix_to_global_matrix
-///   - copy_local_rhs_to_global_rhs
+///   [ ] assemble_local_system_matrix
+///   [ ] assemble_local_system_rhs
+///   [ ] setup_assemblers
+///   [ ] copy_local_matrix_to_global_matrix
+///   [ ] copy_local_rhs_to_global_rhs
 /// [x] Physics field
 /// [x] Multiphysics interface components
-/// - Physical Properties
-///   - Electrical conductivity
-///   - Permittivity
-///   - Permeability
+/// [ ] Physical Properties
+///   [ ] Electrical conductivity
+///   [ ] Permittivity
+///   [ ] Permeability
 /// [X] FEM section for DPG
-/// - Mesh adaptation
+/// [ ] Mesh adaptation
 
 using VectorType = GlobalVectorType;
 
@@ -130,9 +131,9 @@ class TimeHarmonicMaxwell : public AuxiliaryPhysics<dim, VectorType>
 {
 public:
   /**
-   * @brief Constructor for the TimeHarmonicMaxwell object
+   * @brief Constructor
    *
-   * @param multiphysics_interface Map of the auxiliary physics that will be
+   * @param multiphysics_interface Interface to the auxiliary physics that will be
    * solved on top of a computational fluid dynamic simulation.
    * @param p_simulation_parameters Contains the simulation parameter file
    * information.
@@ -396,7 +397,7 @@ public:
    * @brief Getter method to access the private attribute
    * system_rhs for the currently solved physics.
    *
-   * @return Right hand side vector.
+   * @return Reference to the right hand side vector.
    */
   GlobalVectorType &
   get_system_rhs() override
@@ -451,8 +452,6 @@ public:
   }
 
 private:
-  ///////                Physics solver core functions               ////////
-
   /**
    * @brief Verify consistency of the input parameters for boundary
    * conditions to ensure that for every boundary id within the
@@ -532,8 +531,6 @@ private:
     return result;
   }
 
-  /////// Auxiliary physics parameters for TimeHarmonicMaxwell solver ////////
-
   MultiphysicsInterface<dim> *multiphysics;
 
   /**
@@ -547,8 +544,6 @@ private:
    */
   const SimulationParameters<dim> &simulation_parameters;
 
-
-  ////////////// Core elements of the TimeHarmonicMaxwell solver //////////////
 
   /**
    * @brief Collection of cells that cover the domain on which one wants to
@@ -619,26 +614,23 @@ private:
    */
   ConvergenceTable error_table;
 
-  /////////////               Mapping and Quadrature             /////////////
-
   /**
    * @brief Transformation which maps point in the reference cell to
    * points in the actual grid cell.
    */
   std::shared_ptr<Mapping<dim>> mapping;
+
   /**
    * @brief Approximate an integral over a cell by evaluating the integrand at specific
    * points and summing the point values with specific weights.
    */
   std::shared_ptr<Quadrature<dim>> cell_quadrature;
+
   /**
    * @brief Approximate an integral over a cell's face by evaluating the integrand at specific
    * points and summing the point values with specific weights.
    */
   std::shared_ptr<Quadrature<dim - 1>> face_quadrature;
-
-
-  /////////////               Solution storage                /////////////
 
   /**
    * @brief IndexSet of the owned degrees of freedom for the interior trial space.
@@ -712,21 +704,21 @@ private:
    */
   std::shared_ptr<SolutionTransfer<dim, GlobalVectorType>> solution_transfer;
 
-
-  ///////         TimeHarmonicMaxwell specific parameters         ////////
-
   /**
    * @brief Extractor for the real part of the electric field vector.
    */
   const FEValuesExtractors::Vector extractor_E_real;
+
   /**
    * @brief Extractor for the imaginary part of the electric field vector.
    */
   const FEValuesExtractors::Vector extractor_E_imag;
+
   /**
    * @brief Extractor for the real part of the magnetic field vector.
    */
   const FEValuesExtractors::Vector extractor_H_real;
+
   /**
    * @brief Extractor for the imaginary part of the magnetic field vector.
    */

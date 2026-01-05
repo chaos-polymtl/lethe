@@ -3,8 +3,8 @@
 
 # This test case runs the time-harmonic electromagnetic solver to simulate the
 # propagation of one wavelength in a waveguide with perfectly conducting walls.
-# This test impose Robin boundary conditions: an excitation at the inlet and an open
-# boundary (silver-muller) at the outlet to validate the implementation of those
+# This test imposes Robin boundary conditions: an excitation at the inlet and an open
+# boundary (Silver-Müller) at the outlet to verify the implementation of those
 # conditions.
 
 # Listing of Parameters
