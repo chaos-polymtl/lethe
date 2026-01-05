@@ -207,26 +207,26 @@ TimeHarmonicMaxwell<dim>::calculate_L2_error()
                   // E real part
                   L2_error_E_real +=
                     Utilities::fixed_power<2>(local_E_values_real[q][d] -
-                                   exact_solution_values[q][d]) *
+                                              exact_solution_values[q][d]) *
                     JxW;
 
                   // E imag part
-                  L2_error_E_imag +=
-                    Utilities::fixed_power<2>(local_E_values_imag[q][d] -
-                                   exact_solution_values[q][d + dim]) *
-                    JxW;
+                  L2_error_E_imag += Utilities::fixed_power<2>(
+                                       local_E_values_imag[q][d] -
+                                       exact_solution_values[q][d + dim]) *
+                                     JxW;
 
                   // H real part
-                  L2_error_H_real +=
-                    Utilities::fixed_power<2>(local_H_values_real[q][d] -
-                                   exact_solution_values[q][d + 2 * dim]) *
-                    JxW;
+                  L2_error_H_real += Utilities::fixed_power<2>(
+                                       local_H_values_real[q][d] -
+                                       exact_solution_values[q][d + 2 * dim]) *
+                                     JxW;
 
                   // H imag part
-                  L2_error_H_imag +=
-                    Utilities::fixed_power<2>(local_H_values_imag[q][d] -
-                                   exact_solution_values[q][d + 3 * dim]) *
-                    JxW;
+                  L2_error_H_imag += Utilities::fixed_power<2>(
+                                       local_H_values_imag[q][d] -
+                                       exact_solution_values[q][d + 3 * dim]) *
+                                     JxW;
                 }
             }
         }
