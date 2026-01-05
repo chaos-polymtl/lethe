@@ -470,15 +470,16 @@ VANSAssemblerCoreModelA<dim>::assemble_matrix(
 
       // Calculate the strong residual for GLS stabilization
       auto strong_residual =
-        velocity_gradient * velocity * void_fraction +
+        velocity_gradient * velocity * void_fraction
         // Mass Source
-        +mass_source * velocity
+        + mass_source * velocity
         // Pressure
         + void_fraction * pressure_gradient
-        // Kinematic viscosity and Force
+        // Kinematic viscosity laplacian term
         - void_fraction * kinematic_viscosity * velocity_laplacian
         // Compute term ∂j∂iuj = ∂i∂juj
-        - void_fraction * kinematic_viscosity * velocity_gradient_divergence 
+        - void_fraction * kinematic_viscosity * velocity_gradient_divergence
+        // Force
         - force * void_fraction + strong_residual_vec[q];
 
       // Pressure scaling factor
@@ -506,8 +507,8 @@ VANSAssemblerCoreModelA<dim>::assemble_matrix(
              // Pressure
              void_fraction * grad_phi_p_j
              // Kinematic viscosity
-             - void_fraction * kinematic_viscosity * laplacian_phi_u_j
-             - void_fraction * kinematic_viscosity * gradient_divergence_phi_u_j);
+             - void_fraction * kinematic_viscosity * laplacian_phi_u_j -
+             void_fraction * kinematic_viscosity * gradient_divergence_phi_u_j);
         }
 
       for (unsigned int i = 0; i < n_dofs; ++i)
@@ -564,9 +565,10 @@ VANSAssemblerCoreModelA<dim>::assemble_matrix(
                   // Compute term ν_fε_f ∂_j(ϕ_i) ∂_i(δu_j) +
                   // ν_f ϕ_i ∂_i(δu_j) ∂_j(ε_f) (i and j are vector components)
                   // local_matrix_ij += void_fraction * kinematic_viscosity *
-                  //                      transpose(grad_phi_u_j) * grad_phi_u_i +
+                  //                      scalar_product(transpose(grad_phi_u_j), grad_phi_u_i)
+                  //                      +
                   //                    kinematic_viscosity *
-                  //                      transpose(grad_phi_u_j) *
+                  //                      grad_phi_u_j *
                   //                      void_fraction_gradients * phi_u_i;
                   // In shape functions components terms, if this improves
                   // performance:
@@ -648,6 +650,8 @@ VANSAssemblerCoreModelA<dim>::assemble_rhs(
         scratch_data.velocity_gradients[q];
       const Tensor<1, dim> velocity_laplacian =
         scratch_data.velocity_laplacians[q];
+      const Tensor<1, dim> velocity_gradient_divergence =
+        scratch_data.velocity_gradient_divergence[q];
 
       // Pressure
       const double         pressure = scratch_data.pressure_values[q];
@@ -701,14 +705,17 @@ VANSAssemblerCoreModelA<dim>::assemble_rhs(
 
       // Calculate the strong residual for GLS stabilization
       auto strong_residual =
-        velocity_gradient * velocity * void_fraction +
+        velocity_gradient * velocity * void_fraction
         // Mass Source
-        mass_source * velocity
+        + mass_source * velocity
         // Pressure
-        + void_fraction * pressure_gradient -
-        // Kinematic viscosity and Force
-        void_fraction * kinematic_viscosity * velocity_laplacian -
-        force * void_fraction + strong_residual_vec[q];
+        + void_fraction * pressure_gradient
+        // Kinematic viscosity laplacian term
+        - void_fraction * kinematic_viscosity * velocity_laplacian
+        // Compute term ∂j∂iuj = ∂i∂juj
+        - void_fraction * kinematic_viscosity * velocity_gradient_divergence
+            // Force
+        - force * void_fraction + strong_residual_vec[q];
 
       // Assembly of the right-hand side
       for (unsigned int i = 0; i < n_dofs; ++i)
@@ -727,17 +734,21 @@ VANSAssemblerCoreModelA<dim>::assemble_rhs(
           if (component_i < dim)
             local_rhs_i += (
               // Momentum
-              -(void_fraction * kinematic_viscosity *
+              - (void_fraction * kinematic_viscosity *
                   scalar_product(velocity_gradient, grad_phi_u_i) +
                 kinematic_viscosity * velocity_gradient *
-                  void_fraction_gradients * phi_u_i) -
-              velocity_gradient * velocity * void_fraction * phi_u_i
+                  void_fraction_gradients * phi_u_i)
+              - (void_fraction * kinematic_viscosity * div_phi_u_i *
+                 velocity_divergence +
+               kinematic_viscosity * velocity_divergence *
+                 void_fraction_gradients * phi_u_i)
+              - velocity_gradient * velocity * void_fraction * phi_u_i
               // Mass Source
               - mass_source * velocity * phi_u_i
               // Pressure and Force
               + (void_fraction * pressure * div_phi_u_i +
-                 pressure * void_fraction_gradients * phi_u_i) +
-              force * void_fraction * phi_u_i);
+                 pressure * void_fraction_gradients * phi_u_i)
+              + force * void_fraction * phi_u_i);
 
           if (component_i == dim)
             // Continuity
