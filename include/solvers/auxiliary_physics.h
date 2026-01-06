@@ -45,13 +45,29 @@ class AuxiliaryPhysics : public PhysicsSolver<VectorType>
 {
 public:
   /**
-   * @brief AuxiliaryPhysics - Base constructor for Auxiliary physics. At the present
-   * moment this is an interface with nothing. The auxiliary physics is a pure
-   * virtual class.
+   * @brief AuxiliaryPhysics - Base constructor for Auxiliary physics.
+   * This constructor builds an auxiliary physics which solves a non-linear
+   * problem. Consequently, the auxiliary physics must assemble its
+   * right-hand-side and matrix in the residual form. This means that the
+   * solution is reached when |R(u)|=0 where R is the residual vector and u the
+   * solution.
+   *
+   * @param[in] non_linear_solver_parameters Parameters for the non-linear
+   * solvers that drives the solution of the non-linear physics.
    */
   AuxiliaryPhysics(
     const Parameters::NonLinearSolver non_linear_solver_parameters)
     : PhysicsSolver<VectorType>(non_linear_solver_parameters)
+  {}
+
+  /**
+   * @brief AuxiliaryPhysics - Base constructor for Auxiliary physics.
+   * This constructor builds an auxiliary physics which solves a linear
+   * problem. Consequently, the auxiliary physics must assemble its
+   * right-hand-side and matrix in the form Au=b.
+   */
+  AuxiliaryPhysics()
+    : PhysicsSolver<VectorType>()
   {}
 
   /**

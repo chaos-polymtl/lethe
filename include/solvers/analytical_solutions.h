@@ -61,6 +61,8 @@ namespace AnalyticalSolutions
       , temperature(1)
       , tracer(1)
       , cahn_hilliard(2)
+      , electromagnetics(4 * dim) // The 4 components correspond to the real and
+                                  // imaginary parts of E and H
     {}
 
     /**
@@ -150,6 +152,12 @@ namespace AnalyticalSolutions
      * and the chemical potential.
      */
     Functions::ParsedFunction<dim> cahn_hilliard;
+
+    /**
+     * ParsedFunction that contains the analytical solution for the electric
+     * and magnetic fields (real and imaginary parts).
+     */
+    Functions::ParsedFunction<dim> electromagnetics;
   };
 } // namespace AnalyticalSolutions
 

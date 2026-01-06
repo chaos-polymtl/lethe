@@ -48,8 +48,10 @@ public:
   BoundaryConditions::TracerBoundaryConditions<dim> boundary_conditions_tracer;
   BoundaryConditions::VOFBoundaryConditions<dim>    boundary_conditions_vof;
   BoundaryConditions::CahnHilliardBoundaryConditions<dim>
-                                      boundary_conditions_cahn_hilliard;
-  Parameters::InitialConditions<dim> *initial_condition;
+    boundary_conditions_cahn_hilliard;
+  BoundaryConditions::TimeHarmonicMaxwellBoundaryConditions<dim>
+    boundary_conditions_time_harmonic_electromagnetics;
+  Parameters::InitialConditions<dim>           *initial_condition;
   AnalyticalSolutions::AnalyticalSolution<dim> *analytical_solution;
   SourceTerms::SourceTerm<dim>                  source_term;
   Parameters::VelocitySource                    velocity_sources;
@@ -98,6 +100,8 @@ public:
       prm, size_of_subsections.boundary_conditions);
     boundary_conditions_cahn_hilliard.declare_parameters(
       prm, size_of_subsections.boundary_conditions);
+    boundary_conditions_time_harmonic_electromagnetics.declare_parameters(
+      prm, size_of_subsections.boundary_conditions);
 
     initial_condition = new Parameters::InitialConditions<dim>;
     initial_condition->declare_parameters(prm);
@@ -110,10 +114,14 @@ public:
     Parameters::MeshAdaptation::declare_parameters(prm);
     mesh_box_refinement = std::make_shared<Parameters::MeshBoxRefinement>();
     mesh_box_refinement->declare_parameters(prm);
-    for (auto physics_name : physics_names)
+    for (auto physics_name : nonlinear_physics_names)
       {
         Parameters::LinearSolver::declare_parameters(prm, physics_name);
         Parameters::NonLinearSolver::declare_parameters(prm, physics_name);
+      }
+    for (auto physics_name : linear_physics_names)
+      {
+        Parameters::LinearSolver::declare_parameters(prm, physics_name);
       }
     for (const auto &vof_subequation_name : vof_subequations_names)
       {
@@ -156,12 +164,17 @@ public:
     dimensionality.parse_parameters(prm);
     test.parse_parameters(prm);
 
-    for (auto physics_name : physics_names)
+    for (auto physics_name : nonlinear_physics_names)
       {
         PhysicsID physics_id = get_physics_id(physics_name);
         linear_solver[physics_id].parse_parameters(prm, physics_name);
         physics_solving_strategy[physics_id].parse_parameters(prm,
                                                               physics_name);
+      }
+    for (auto physics_name : linear_physics_names)
+      {
+        PhysicsID physics_id = get_physics_id(physics_name);
+        linear_solver[physics_id].parse_parameters(prm, physics_name);
       }
     for (const auto &vof_subequation_name : vof_subequations_names)
       {
@@ -191,6 +204,7 @@ public:
     boundary_conditions_tracer.parse_parameters(prm);
     boundary_conditions_vof.parse_parameters(prm);
     boundary_conditions_cahn_hilliard.parse_parameters(prm);
+    boundary_conditions_time_harmonic_electromagnetics.parse_parameters(prm);
     manifolds_parameters.parse_parameters(prm);
     initial_condition->parse_parameters(prm);
     analytical_solution->parse_parameters(prm);
@@ -492,12 +506,13 @@ public:
 private:
   Parameters::PhysicalProperties physical_properties;
   // names for the physics supported by Lethe
-  std::vector<std::string> physics_names = {"fluid dynamics",
-                                            "heat transfer",
-                                            "tracer",
-                                            "VOF",
-                                            "cahn hilliard",
-                                            "void fraction"};
+  std::vector<std::string> nonlinear_physics_names = {"fluid dynamics",
+                                                      "heat transfer",
+                                                      "tracer",
+                                                      "VOF",
+                                                      "cahn hilliard",
+                                                      "void fraction"};
+  std::vector<std::string> linear_physics_names    = {"electromagnetics"};
   // Names of subequations within VOF that inherits from PhysicsSolver
   std::vector<std::string> vof_subequations_names = {
     "VOF algebraic interface reinitialization"};

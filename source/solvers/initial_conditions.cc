@@ -151,6 +151,10 @@ namespace Parameters
       cahn_hilliard.declare_parameters(prm, 2);
       prm.leave_subsection();
 
+      prm.enter_subsection("electromagnetics");
+      electromagnetics.declare_parameters(prm, 4 * dim);
+      prm.leave_subsection();
+
       prm.enter_subsection("average velocity profile");
       prm.declare_entry(
         "checkpoint folder",
@@ -221,6 +225,10 @@ namespace Parameters
 
       prm.enter_subsection("cahn hilliard");
       cahn_hilliard.parse_parameters(prm);
+      prm.leave_subsection();
+
+      prm.enter_subsection("electromagnetics");
+      electromagnetics.parse_parameters(prm);
       prm.leave_subsection();
 
       prm.enter_subsection("average velocity profile");

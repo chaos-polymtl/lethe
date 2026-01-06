@@ -392,6 +392,7 @@ namespace Parameters
     bool tracer;
     bool VOF;
     bool cahn_hilliard;
+    bool electromagnetics;
 
     // subparameters for heat_transfer
     bool viscous_dissipation;
