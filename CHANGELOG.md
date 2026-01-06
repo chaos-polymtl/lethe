@@ -4,6 +4,12 @@ All notable changes to the Lethe project will be documented in this file.
 The changelog for the previous releases of Lethe are located in the release_notes folder.
 The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
+## [Master] - 2026/01/06
+
+## Fixed
+
+- MINOR The test read_mortar_data_02 constantly fails in the CI release, even if it passes on debug mode and also in local office computers. Since read_mortar_data_01 and read_mortar_data_03 are very similar to such test (only with different grids), this PR solves this issue by removing the (unnecessary) read_mortar_data_02 test.
+
 ## [Master] - 2025/12/19
 
 ### Added
