@@ -239,7 +239,7 @@ $(document).ready(function() { init_codefold(0); });
 <div class="line"><a id="l00139" name="l00139"></a><span class="lineno">  139</span>  <span class="keywordtype">void</span></div>
 <div class="foldopen" id="foldopen00140" data-start="{" data-end="}">
 <div class="line"><a id="l00140" name="l00140"></a><span class="lineno"><a class="line" href="classCahnHilliardScratchData.html#aee2615c17b9b368cce9a152a16e31dee">  140</a></span>  <a class="code hl_function" href="classCahnHilliardScratchData.html#aee2615c17b9b368cce9a152a16e31dee">reinit</a>(<span class="keyword">const</span> <span class="keyword">typename</span> DoFHandler&lt;dim&gt;::active_cell_iterator &amp;cell,</div>
-<div class="line"><a id="l00141" name="l00141"></a><span class="lineno">  141</span>         <span class="keyword">const</span> VectorType                                     &amp;current_solution,</div>
+<div class="line"><a id="l00141" name="l00141"></a><span class="lineno">  141</span>         <span class="keyword">const</span> <a class="code hl_typedef" href="time__harmonic__maxwell_8h.html#a5114f84176ad5081553f88d2b5d2525e">VectorType</a>                                     &amp;current_solution,</div>
 <div class="line"><a id="l00142" name="l00142"></a><span class="lineno">  142</span>         <span class="keyword">const</span> std::vector&lt;VectorType&gt; &amp;previous_solutions,</div>
 <div class="line"><a id="l00143" name="l00143"></a><span class="lineno">  143</span>         Function&lt;dim&gt;                 *source_function)</div>
 <div class="line"><a id="l00144" name="l00144"></a><span class="lineno">  144</span>  {</div>
@@ -375,7 +375,7 @@ $(document).ready(function() { init_codefold(0); });
 <div class="line"><a id="l00273" name="l00273"></a><span class="lineno">  273</span>  <span class="keywordtype">void</span></div>
 <div class="foldopen" id="foldopen00274" data-start="{" data-end="}">
 <div class="line"><a id="l00274" name="l00274"></a><span class="lineno"><a class="line" href="classCahnHilliardScratchData.html#ac92fa3d3c4689333ec4d840a444e67cc">  274</a></span>  <a class="code hl_function" href="classCahnHilliardScratchData.html#ac92fa3d3c4689333ec4d840a444e67cc">reinit_velocity</a>(<span class="keyword">const</span> <span class="keyword">typename</span> DoFHandler&lt;dim&gt;::active_cell_iterator &amp;cell,</div>
-<div class="line"><a id="l00275" name="l00275"></a><span class="lineno">  275</span>                  <span class="keyword">const</span> VectorType           &amp;current_solution,</div>
+<div class="line"><a id="l00275" name="l00275"></a><span class="lineno">  275</span>                  <span class="keyword">const</span> <a class="code hl_typedef" href="time__harmonic__maxwell_8h.html#a5114f84176ad5081553f88d2b5d2525e">VectorType</a>           &amp;current_solution,</div>
 <div class="line"><a id="l00276" name="l00276"></a><span class="lineno">  276</span>                  <span class="keyword">const</span> <a class="code hl_class" href="classParameters_1_1ALE.html">Parameters::ALE&lt;dim&gt;</a> &amp;ale)</div>
 <div class="line"><a id="l00277" name="l00277"></a><span class="lineno">  277</span>  {</div>
 <div class="line"><a id="l00278" name="l00278"></a><span class="lineno">  278</span>    FEValuesExtractors::Vector <a class="code hl_variable" href="classCahnHilliardScratchData.html#add7a8c17b6ef385f755c1e8d4ba7e8b0">velocities</a>(0);</div>
@@ -561,6 +561,7 @@ $(document).ready(function() { init_codefold(0); });
 <div class="ttc" id="anamespacedealii_html"><div class="ttname"><a href="namespacedealii.html">dealii</a></div><div class="ttdef"><b>Definition</b> <a href="fluid__dynamics__matrix__free_8h_source.html#l00032">fluid_dynamics_matrix_free.h:33</a></div></div>
 <div class="ttc" id="aphysical__properties__manager_8h_html"><div class="ttname"><a href="physical__properties__manager_8h.html">physical_properties_manager.h</a></div></div>
 <div class="ttc" id="aphysics__scratch__data_8h_html"><div class="ttname"><a href="physics__scratch__data_8h.html">physics_scratch_data.h</a></div></div>
+<div class="ttc" id="atime__harmonic__maxwell_8h_html_a5114f84176ad5081553f88d2b5d2525e"><div class="ttname"><a href="time__harmonic__maxwell_8h.html#a5114f84176ad5081553f88d2b5d2525e">VectorType</a></div><div class="ttdeci">GlobalVectorType VectorType</div><div class="ttdoc">TODO until completion of the auxiliary physics :</div><div class="ttdef"><b>Definition</b> <a href="time__harmonic__maxwell_8h_source.html#l00115">time_harmonic_maxwell.h:115</a></div></div>
 <div class="ttc" id="autilities_8h_html_a3d02cb065c32b672c94bb862ecff4431"><div class="ttname"><a href="utilities_8h.html#a3d02cb065c32b672c94bb862ecff4431">compute_cell_measure_with_JxW</a></div><div class="ttdeci">double compute_cell_measure_with_JxW(const std::vector&lt; double &gt; &amp;JxW_values)</div><div class="ttdoc">Computes the area (2D) or volume (3D) of the cell by integrating 1 over the cell, by summing JxW valu...</div><div class="ttdef"><b>Definition</b> <a href="utilities_8h_source.html#l00756">utilities.h:756</a></div></div>
 </div><!-- fragment --></div><!-- contents -->
 <!-- start footer part -->

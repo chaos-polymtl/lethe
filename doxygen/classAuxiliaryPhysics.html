@@ -95,6 +95,8 @@ Inheritance diagram for AuxiliaryPhysics&lt; dim, VectorType &gt;:</div>
 <div class="center"><img src="classAuxiliaryPhysics__inherit__graph.png" border="0" usemap="#aAuxiliaryPhysics_3_01dim_00_01VectorType_01_4_inherit__map" alt="Inheritance graph"/></div>
 <map name="aAuxiliaryPhysics_3_01dim_00_01VectorType_01_4_inherit__map" id="aAuxiliaryPhysics_3_01dim_00_01VectorType_01_4_inherit__map">
 <area shape="rect" title=" " alt="" coords="25,79,199,119"/>
+<area shape="rect" href="classTimeHarmonicMaxwell.html" title=" " alt="" coords="25,167,199,207"/>
+<area shape="poly" title=" " alt="" coords="115,133,115,166,109,166,109,133"/>
 <area shape="rect" href="classPhysicsSolver.html" title="Contain all the common elements of a physics solver. It creates the non&#45;linear solver as specified by..." alt="" coords="5,5,219,31"/>
 <area shape="poly" title=" " alt="" coords="115,44,115,79,109,79,109,44"/>
 </map>
@@ -104,9 +106,11 @@ Inheritance diagram for AuxiliaryPhysics&lt; dim, VectorType &gt;:</div>
 Public Member Functions</h2></td></tr>
 <tr class="memitem:afe5c8707f20900ab81eae0526156dc82" id="r_afe5c8707f20900ab81eae0526156dc82"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classAuxiliaryPhysics.html#afe5c8707f20900ab81eae0526156dc82">AuxiliaryPhysics</a> (const <a class="el" href="structParameters_1_1NonLinearSolver.html">Parameters::NonLinearSolver</a> non_linear_solver_parameters)</td></tr>
 <tr class="separator:afe5c8707f20900ab81eae0526156dc82"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:afba17578da847e046f13b2d766b3f68f" id="r_afba17578da847e046f13b2d766b3f68f"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classAuxiliaryPhysics.html#afba17578da847e046f13b2d766b3f68f">AuxiliaryPhysics</a> ()</td></tr>
+<tr class="separator:afba17578da847e046f13b2d766b3f68f"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a5559d192bb50405effa6e5ef52ca3a1e" id="r_a5559d192bb50405effa6e5ef52ca3a1e"><td class="memItemLeft" align="right" valign="top">virtual&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classAuxiliaryPhysics.html#a5559d192bb50405effa6e5ef52ca3a1e">~AuxiliaryPhysics</a> ()</td></tr>
 <tr class="separator:a5559d192bb50405effa6e5ef52ca3a1e"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a4ebbb78aa057532aae3143b3a1f5647a" id="r_a4ebbb78aa057532aae3143b3a1f5647a"><td class="memItemLeft" align="right" valign="top">virtual std::vector&lt; <a class="el" href="output__struct_8h.html#a24c1f4e015db04387ac9c28a58ee7378">OutputStruct</a>&lt; dim, VectorType &gt; &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classAuxiliaryPhysics.html#a4ebbb78aa057532aae3143b3a1f5647a">gather_output_hook</a> ()</td></tr>
+<tr class="memitem:a4ebbb78aa057532aae3143b3a1f5647a" id="r_a4ebbb78aa057532aae3143b3a1f5647a"><td class="memItemLeft" align="right" valign="top">virtual std::vector&lt; <a class="el" href="output__struct_8h.html#a24c1f4e015db04387ac9c28a58ee7378">OutputStruct</a>&lt; dim, <a class="el" href="time__harmonic__maxwell_8h.html#a5114f84176ad5081553f88d2b5d2525e">VectorType</a> &gt; &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classAuxiliaryPhysics.html#a4ebbb78aa057532aae3143b3a1f5647a">gather_output_hook</a> ()</td></tr>
 <tr class="separator:a4ebbb78aa057532aae3143b3a1f5647a"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aa917fdacf48dbefe7657aa7978edd53a" id="r_aa917fdacf48dbefe7657aa7978edd53a"><td class="memItemLeft" align="right" valign="top">virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classAuxiliaryPhysics.html#aa917fdacf48dbefe7657aa7978edd53a">finish_simulation</a> ()=0</td></tr>
 <tr class="separator:aa917fdacf48dbefe7657aa7978edd53a"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -155,15 +159,15 @@ Public Member Functions</h2></td></tr>
 <tr class="separator:a4d98831ac8b521abed70f31162b4f6f4 inherit pub_methods_classPhysicsSolver"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:afcbaa24bbccef95e74f88926d5d3e7eb inherit pub_methods_classPhysicsSolver" id="r_afcbaa24bbccef95e74f88926d5d3e7eb"><td class="memItemLeft" align="right" valign="top">virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classPhysicsSolver.html#afcbaa24bbccef95e74f88926d5d3e7eb">apply_constraints</a> ()</td></tr>
 <tr class="separator:afcbaa24bbccef95e74f88926d5d3e7eb inherit pub_methods_classPhysicsSolver"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:afb198eb8763f9770a48edccd21073731 inherit pub_methods_classPhysicsSolver" id="r_afb198eb8763f9770a48edccd21073731"><td class="memItemLeft" align="right" valign="top">virtual VectorType &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classPhysicsSolver.html#afb198eb8763f9770a48edccd21073731">get_evaluation_point</a> ()=0</td></tr>
+<tr class="memitem:afb198eb8763f9770a48edccd21073731 inherit pub_methods_classPhysicsSolver" id="r_afb198eb8763f9770a48edccd21073731"><td class="memItemLeft" align="right" valign="top">virtual <a class="el" href="time__harmonic__maxwell_8h.html#a5114f84176ad5081553f88d2b5d2525e">VectorType</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classPhysicsSolver.html#afb198eb8763f9770a48edccd21073731">get_evaluation_point</a> ()=0</td></tr>
 <tr class="separator:afb198eb8763f9770a48edccd21073731 inherit pub_methods_classPhysicsSolver"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ae6cc2bfa320526e438a44bd6dc8ee804 inherit pub_methods_classPhysicsSolver" id="r_ae6cc2bfa320526e438a44bd6dc8ee804"><td class="memItemLeft" align="right" valign="top">virtual VectorType &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classPhysicsSolver.html#ae6cc2bfa320526e438a44bd6dc8ee804">get_local_evaluation_point</a> ()=0</td></tr>
+<tr class="memitem:ae6cc2bfa320526e438a44bd6dc8ee804 inherit pub_methods_classPhysicsSolver" id="r_ae6cc2bfa320526e438a44bd6dc8ee804"><td class="memItemLeft" align="right" valign="top">virtual <a class="el" href="time__harmonic__maxwell_8h.html#a5114f84176ad5081553f88d2b5d2525e">VectorType</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classPhysicsSolver.html#ae6cc2bfa320526e438a44bd6dc8ee804">get_local_evaluation_point</a> ()=0</td></tr>
 <tr class="separator:ae6cc2bfa320526e438a44bd6dc8ee804 inherit pub_methods_classPhysicsSolver"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:afb66d0340d77e712bca30814eef04e5d inherit pub_methods_classPhysicsSolver" id="r_afb66d0340d77e712bca30814eef04e5d"><td class="memItemLeft" align="right" valign="top">virtual VectorType &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classPhysicsSolver.html#afb66d0340d77e712bca30814eef04e5d">get_newton_update</a> ()=0</td></tr>
+<tr class="memitem:afb66d0340d77e712bca30814eef04e5d inherit pub_methods_classPhysicsSolver" id="r_afb66d0340d77e712bca30814eef04e5d"><td class="memItemLeft" align="right" valign="top">virtual <a class="el" href="time__harmonic__maxwell_8h.html#a5114f84176ad5081553f88d2b5d2525e">VectorType</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classPhysicsSolver.html#afb66d0340d77e712bca30814eef04e5d">get_newton_update</a> ()=0</td></tr>
 <tr class="separator:afb66d0340d77e712bca30814eef04e5d inherit pub_methods_classPhysicsSolver"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a0a64669b4bbd93475dc816a8291a588f inherit pub_methods_classPhysicsSolver" id="r_a0a64669b4bbd93475dc816a8291a588f"><td class="memItemLeft" align="right" valign="top">virtual VectorType &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classPhysicsSolver.html#a0a64669b4bbd93475dc816a8291a588f">get_present_solution</a> ()=0</td></tr>
+<tr class="memitem:a0a64669b4bbd93475dc816a8291a588f inherit pub_methods_classPhysicsSolver" id="r_a0a64669b4bbd93475dc816a8291a588f"><td class="memItemLeft" align="right" valign="top">virtual <a class="el" href="time__harmonic__maxwell_8h.html#a5114f84176ad5081553f88d2b5d2525e">VectorType</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classPhysicsSolver.html#a0a64669b4bbd93475dc816a8291a588f">get_present_solution</a> ()=0</td></tr>
 <tr class="separator:a0a64669b4bbd93475dc816a8291a588f inherit pub_methods_classPhysicsSolver"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aaadb8be69e716aaa9541f4984a20508f inherit pub_methods_classPhysicsSolver" id="r_aaadb8be69e716aaa9541f4984a20508f"><td class="memItemLeft" align="right" valign="top">virtual VectorType &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classPhysicsSolver.html#aaadb8be69e716aaa9541f4984a20508f">get_system_rhs</a> ()=0</td></tr>
+<tr class="memitem:aaadb8be69e716aaa9541f4984a20508f inherit pub_methods_classPhysicsSolver" id="r_aaadb8be69e716aaa9541f4984a20508f"><td class="memItemLeft" align="right" valign="top">virtual <a class="el" href="time__harmonic__maxwell_8h.html#a5114f84176ad5081553f88d2b5d2525e">VectorType</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classPhysicsSolver.html#aaadb8be69e716aaa9541f4984a20508f">get_system_rhs</a> ()=0</td></tr>
 <tr class="separator:aaadb8be69e716aaa9541f4984a20508f inherit pub_methods_classPhysicsSolver"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:abf527a264ed49a5327db8f48e16ee182 inherit pub_methods_classPhysicsSolver" id="r_abf527a264ed49a5327db8f48e16ee182"><td class="memItemLeft" align="right" valign="top">virtual AffineConstraints&lt; double &gt; &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classPhysicsSolver.html#abf527a264ed49a5327db8f48e16ee182">get_nonzero_constraints</a> ()=0</td></tr>
 <tr class="separator:abf527a264ed49a5327db8f48e16ee182 inherit pub_methods_classPhysicsSolver"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -185,7 +189,7 @@ Additional Inherited Members</h2></td></tr>
 <tr class="separator:a13df07fecddd07c49c6c6f7355c27ac8 inherit pub_attribs_classPhysicsSolver"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
-<div class="textblock"><div class="compoundTemplParams">template&lt;int dim, typename VectorType&gt;<br />
+<div class="textblock"><div class="compoundTemplParams">template&lt;int dim, typename <a class="el" href="time__harmonic__maxwell_8h.html#a5114f84176ad5081553f88d2b5d2525e">VectorType</a>&gt;<br />
 class AuxiliaryPhysics&lt; dim, VectorType &gt;</div><p>Au auxiliary physics is defined as a physics that is solved on top of a core physics, the latter being the Navier-Stokes equations. Auxiliary physics are simpler physics around which the entire simulation process does not need to be tailored. Examples of auxiliary physics are temperature and concentration. Generally, the auxiliary physics does not affect the core physics. For example, temperature is advected by the fluid flow, but buoyancy effects are not taken into account.</p>
 <p>The auxiliary physics are managed by the multiphysics interface of Lethe.</p>
 <p>This base class is used to establish all of the routines that an auxiliary physics must be able to provide to the Multiphysics interface. These elements are then called at specific moments of a simulation.</p>
@@ -200,18 +204,18 @@ class AuxiliaryPhysics&lt; dim, VectorType &gt;</div><p>Au auxiliary physics is 
 <p class="definition">Definition at line <a class="el" href="auxiliary__physics_8h_source.html#l00044">44</a> of file <a class="el" href="auxiliary__physics_8h_source.html">auxiliary_physics.h</a>.</p>
 </div><h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
 <a id="afe5c8707f20900ab81eae0526156dc82" name="afe5c8707f20900ab81eae0526156dc82"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#afe5c8707f20900ab81eae0526156dc82">&#9670;&#160;</a></span>AuxiliaryPhysics()</h2>
+<h2 class="memtitle"><span class="permalink"><a href="#afe5c8707f20900ab81eae0526156dc82">&#9670;&#160;</a></span>AuxiliaryPhysics() <span class="overload">[1/2]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;int dim, typename VectorType &gt; </div>
+template&lt;int dim, typename <a class="el" href="time__harmonic__maxwell_8h.html#a5114f84176ad5081553f88d2b5d2525e">VectorType</a> &gt; </div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname"><a class="el" href="classAuxiliaryPhysics.html">AuxiliaryPhysics</a>&lt; dim, VectorType &gt;<a class="el" href="classAuxiliaryPhysics.html">::AuxiliaryPhysics</a> </td>
+          <td class="memname"><a class="el" href="classAuxiliaryPhysics.html">AuxiliaryPhysics</a>&lt; dim, <a class="el" href="time__harmonic__maxwell_8h.html#a5114f84176ad5081553f88d2b5d2525e">VectorType</a> &gt;<a class="el" href="classAuxiliaryPhysics.html">::AuxiliaryPhysics</a> </td>
           <td>(</td>
           <td class="paramtype">const <a class="el" href="structParameters_1_1NonLinearSolver.html">Parameters::NonLinearSolver</a>&#160;</td>
           <td class="paramname"><em>non_linear_solver_parameters</em></td><td>)</td>
@@ -225,9 +229,46 @@ template&lt;int dim, typename VectorType &gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p><a class="el" href="classAuxiliaryPhysics.html">AuxiliaryPhysics</a> - Base constructor for Auxiliary physics. At the present moment this is an interface with nothing. The auxiliary physics is a pure virtual class. </p>
+<p><a class="el" href="classAuxiliaryPhysics.html">AuxiliaryPhysics</a> - Base constructor for Auxiliary physics. This constructor builds an auxiliary physics which solves a non-linear problem. Consequently, the auxiliary physics must assemble its right-hand-side and matrix in the residual form. This means that the solution is reached when |R(u)|=0 where R is the residual vector and u the solution. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramdir">[in]</td><td class="paramname">non_linear_solver_parameters</td><td><a class="el" href="namespaceParameters.html">Parameters</a> for the non-linear solvers that drives the solution of the non-linear physics. </td></tr>
+  </table>
+  </dd>
+</dl>
 
-<p class="definition">Definition at line <a class="el" href="auxiliary__physics_8h_source.html#l00052">52</a> of file <a class="el" href="auxiliary__physics_8h_source.html">auxiliary_physics.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="auxiliary__physics_8h_source.html#l00058">58</a> of file <a class="el" href="auxiliary__physics_8h_source.html">auxiliary_physics.h</a>.</p>
+
+</div>
+</div>
+<a id="afba17578da847e046f13b2d766b3f68f" name="afba17578da847e046f13b2d766b3f68f"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#afba17578da847e046f13b2d766b3f68f">&#9670;&#160;</a></span>AuxiliaryPhysics() <span class="overload">[2/2]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;int dim, typename <a class="el" href="time__harmonic__maxwell_8h.html#a5114f84176ad5081553f88d2b5d2525e">VectorType</a> &gt; </div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="classAuxiliaryPhysics.html">AuxiliaryPhysics</a>&lt; dim, <a class="el" href="time__harmonic__maxwell_8h.html#a5114f84176ad5081553f88d2b5d2525e">VectorType</a> &gt;<a class="el" href="classAuxiliaryPhysics.html">::AuxiliaryPhysics</a> </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p><a class="el" href="classAuxiliaryPhysics.html">AuxiliaryPhysics</a> - Base constructor for Auxiliary physics. This constructor builds an auxiliary physics which solves a linear problem. Consequently, the auxiliary physics must assemble its right-hand-side and matrix in the form Au=b. </p>
+
+<p class="definition">Definition at line <a class="el" href="auxiliary__physics_8h_source.html#l00069">69</a> of file <a class="el" href="auxiliary__physics_8h_source.html">auxiliary_physics.h</a>.</p>
 
 </div>
 </div>
@@ -237,13 +278,13 @@ template&lt;int dim, typename VectorType &gt; </div>
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;int dim, typename VectorType &gt; </div>
+template&lt;int dim, typename <a class="el" href="time__harmonic__maxwell_8h.html#a5114f84176ad5081553f88d2b5d2525e">VectorType</a> &gt; </div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">virtual <a class="el" href="classAuxiliaryPhysics.html">AuxiliaryPhysics</a>&lt; dim, VectorType &gt;::~<a class="el" href="classAuxiliaryPhysics.html">AuxiliaryPhysics</a> </td>
+          <td class="memname">virtual <a class="el" href="classAuxiliaryPhysics.html">AuxiliaryPhysics</a>&lt; dim, <a class="el" href="time__harmonic__maxwell_8h.html#a5114f84176ad5081553f88d2b5d2525e">VectorType</a> &gt;::~<a class="el" href="classAuxiliaryPhysics.html">AuxiliaryPhysics</a> </td>
           <td>(</td>
           <td class="paramname"></td><td>)</td>
           <td></td>
@@ -258,7 +299,7 @@ template&lt;int dim, typename VectorType &gt; </div>
 
 <p><a class="el" href="classAuxiliaryPhysics.html">AuxiliaryPhysics</a> - Base destructor. At the present moment this is an interface with nothing. </p>
 
-<p class="definition">Definition at line <a class="el" href="auxiliary__physics_8h_source.html#l00061">61</a> of file <a class="el" href="auxiliary__physics_8h_source.html">auxiliary_physics.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="auxiliary__physics_8h_source.html#l00077">77</a> of file <a class="el" href="auxiliary__physics_8h_source.html">auxiliary_physics.h</a>.</p>
 
 </div>
 </div>
@@ -269,13 +310,13 @@ template&lt;int dim, typename VectorType &gt; </div>
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;int dim, typename VectorType &gt; </div>
+template&lt;int dim, typename <a class="el" href="time__harmonic__maxwell_8h.html#a5114f84176ad5081553f88d2b5d2525e">VectorType</a> &gt; </div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">virtual void <a class="el" href="classAuxiliaryPhysics.html">AuxiliaryPhysics</a>&lt; dim, VectorType &gt;::compute_kelly </td>
+          <td class="memname">virtual void <a class="el" href="classAuxiliaryPhysics.html">AuxiliaryPhysics</a>&lt; dim, <a class="el" href="time__harmonic__maxwell_8h.html#a5114f84176ad5081553f88d2b5d2525e">VectorType</a> &gt;::compute_kelly </td>
           <td>(</td>
           <td class="paramtype">const std::pair&lt; const <a class="el" href="multiphysics_8h.html#a2cbb04ef215561a69b48772159577fdd">Variable</a>, <a class="el" href="structParameters_1_1MultipleAdaptationParameters.html">Parameters::MultipleAdaptationParameters</a> &gt; &amp;&#160;</td>
           <td class="paramname"><em>ivar</em>, </td>
@@ -308,7 +349,7 @@ template&lt;int dim, typename VectorType &gt; </div>
   </dd>
 </dl>
 
-<p>Implemented in <a class="el" href="classTracer.html#ae37db3727824079215f6379e56fd7f60">Tracer&lt; dim &gt;</a>, <a class="el" href="classCahnHilliard.html#a7256cf0d8415b8a20750fa7895940d1c">CahnHilliard&lt; dim &gt;</a>, <a class="el" href="classHeatTransfer.html#a17ef0b6ef66ea797dec821c826e06fa1">HeatTransfer&lt; dim &gt;</a>, and <a class="el" href="classVolumeOfFluid.html#ad4bf3d39a169ad2406ddabed0d2a63bf">VolumeOfFluid&lt; dim &gt;</a>.</p>
+<p>Implemented in <a class="el" href="classTracer.html#ae37db3727824079215f6379e56fd7f60">Tracer&lt; dim &gt;</a>, <a class="el" href="classCahnHilliard.html#a7256cf0d8415b8a20750fa7895940d1c">CahnHilliard&lt; dim &gt;</a>, <a class="el" href="classHeatTransfer.html#a17ef0b6ef66ea797dec821c826e06fa1">HeatTransfer&lt; dim &gt;</a>, <a class="el" href="classTimeHarmonicMaxwell.html#aabe74e59a7ac67afe4f3f28e486d9e11">TimeHarmonicMaxwell&lt; dim &gt;</a>, and <a class="el" href="classVolumeOfFluid.html#ad4bf3d39a169ad2406ddabed0d2a63bf">VolumeOfFluid&lt; dim &gt;</a>.</p>
 
 </div>
 </div>
@@ -318,13 +359,13 @@ template&lt;int dim, typename VectorType &gt; </div>
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;int dim, typename VectorType &gt; </div>
+template&lt;int dim, typename <a class="el" href="time__harmonic__maxwell_8h.html#a5114f84176ad5081553f88d2b5d2525e">VectorType</a> &gt; </div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">virtual void <a class="el" href="classAuxiliaryPhysics.html">AuxiliaryPhysics</a>&lt; dim, VectorType &gt;::finish_simulation </td>
+          <td class="memname">virtual void <a class="el" href="classAuxiliaryPhysics.html">AuxiliaryPhysics</a>&lt; dim, <a class="el" href="time__harmonic__maxwell_8h.html#a5114f84176ad5081553f88d2b5d2525e">VectorType</a> &gt;::finish_simulation </td>
           <td>(</td>
           <td class="paramname"></td><td>)</td>
           <td></td>
@@ -339,7 +380,7 @@ template&lt;int dim, typename VectorType &gt; </div>
 
 <p>Carry out the operations required to finish a simulation correctly. </p>
 
-<p>Implemented in <a class="el" href="classCahnHilliard.html#a2cb71332d1e345a18e5be0472de4b31e">CahnHilliard&lt; dim &gt;</a>, <a class="el" href="classHeatTransfer.html#a900850f6c5346a85f740fa2a218e223a">HeatTransfer&lt; dim &gt;</a>, <a class="el" href="classTracer.html#ae9356d51b14f4d8db3505e21e179d82c">Tracer&lt; dim &gt;</a>, and <a class="el" href="classVolumeOfFluid.html#aa14d04810a528f23c4a98d3513c9509d">VolumeOfFluid&lt; dim &gt;</a>.</p>
+<p>Implemented in <a class="el" href="classCahnHilliard.html#a2cb71332d1e345a18e5be0472de4b31e">CahnHilliard&lt; dim &gt;</a>, <a class="el" href="classHeatTransfer.html#a900850f6c5346a85f740fa2a218e223a">HeatTransfer&lt; dim &gt;</a>, <a class="el" href="classTimeHarmonicMaxwell.html#a04471109ef5696647088f9d7c0f20ba6">TimeHarmonicMaxwell&lt; dim &gt;</a>, <a class="el" href="classTracer.html#ae9356d51b14f4d8db3505e21e179d82c">Tracer&lt; dim &gt;</a>, and <a class="el" href="classVolumeOfFluid.html#aa14d04810a528f23c4a98d3513c9509d">VolumeOfFluid&lt; dim &gt;</a>.</p>
 
 </div>
 </div>
@@ -349,13 +390,13 @@ template&lt;int dim, typename VectorType &gt; </div>
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;int dim, typename VectorType &gt; </div>
+template&lt;int dim, typename <a class="el" href="time__harmonic__maxwell_8h.html#a5114f84176ad5081553f88d2b5d2525e">VectorType</a> &gt; </div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">virtual std::vector&lt; <a class="el" href="output__struct_8h.html#a24c1f4e015db04387ac9c28a58ee7378">OutputStruct</a>&lt; dim, VectorType &gt; &gt; <a class="el" href="classAuxiliaryPhysics.html">AuxiliaryPhysics</a>&lt; dim, VectorType &gt;::gather_output_hook </td>
+          <td class="memname">virtual std::vector&lt; <a class="el" href="output__struct_8h.html#a24c1f4e015db04387ac9c28a58ee7378">OutputStruct</a>&lt; dim, <a class="el" href="time__harmonic__maxwell_8h.html#a5114f84176ad5081553f88d2b5d2525e">VectorType</a> &gt; &gt; <a class="el" href="classAuxiliaryPhysics.html">AuxiliaryPhysics</a>&lt; dim, <a class="el" href="time__harmonic__maxwell_8h.html#a5114f84176ad5081553f88d2b5d2525e">VectorType</a> &gt;::gather_output_hook </td>
           <td>(</td>
           <td class="paramname"></td><td>)</td>
           <td></td>
@@ -371,9 +412,9 @@ template&lt;int dim, typename VectorType &gt; </div>
 <p>Gather and return vector of output structs that are particular to some applications. </p>
 <dl class="section return"><dt>Returns</dt><dd>Vector of OutputStructs that will be used to write the output results as VTU files. </dd></dl>
 
-<p>Reimplemented in <a class="el" href="classCahnHilliard.html#afce4ed0d7f29285c9a96f5257db89f48">CahnHilliard&lt; dim &gt;</a>, <a class="el" href="classHeatTransfer.html#a7447e2540ba5d2c11c4320c8388fa0fa">HeatTransfer&lt; dim &gt;</a>, <a class="el" href="classTracer.html#aed23220122e490c3ebda3336276adf3a">Tracer&lt; dim &gt;</a>, and <a class="el" href="classVolumeOfFluid.html#aa1048badcbcc1dda01162e1449e7c689">VolumeOfFluid&lt; dim &gt;</a>.</p>
+<p>Reimplemented in <a class="el" href="classCahnHilliard.html#afce4ed0d7f29285c9a96f5257db89f48">CahnHilliard&lt; dim &gt;</a>, <a class="el" href="classHeatTransfer.html#a7447e2540ba5d2c11c4320c8388fa0fa">HeatTransfer&lt; dim &gt;</a>, <a class="el" href="classTimeHarmonicMaxwell.html#a54741c7370a294a8680a19cdb0f5eeae">TimeHarmonicMaxwell&lt; dim &gt;</a>, <a class="el" href="classTracer.html#aed23220122e490c3ebda3336276adf3a">Tracer&lt; dim &gt;</a>, and <a class="el" href="classVolumeOfFluid.html#aa1048badcbcc1dda01162e1449e7c689">VolumeOfFluid&lt; dim &gt;</a>.</p>
 
-<p class="definition">Definition at line <a class="el" href="auxiliary__physics_8h_source.html#l00070">70</a> of file <a class="el" href="auxiliary__physics_8h_source.html">auxiliary_physics.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="auxiliary__physics_8h_source.html#l00086">86</a> of file <a class="el" href="auxiliary__physics_8h_source.html">auxiliary_physics.h</a>.</p>
 
 </div>
 </div>
@@ -383,13 +424,13 @@ template&lt;int dim, typename VectorType &gt; </div>
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;int dim, typename VectorType &gt; </div>
+template&lt;int dim, typename <a class="el" href="time__harmonic__maxwell_8h.html#a5114f84176ad5081553f88d2b5d2525e">VectorType</a> &gt; </div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">virtual std::vector&lt; <a class="el" href="structOutputStructTableHandler.html">OutputStructTableHandler</a> &gt; <a class="el" href="classAuxiliaryPhysics.html">AuxiliaryPhysics</a>&lt; dim, VectorType &gt;::gather_tables </td>
+          <td class="memname">virtual std::vector&lt; <a class="el" href="structOutputStructTableHandler.html">OutputStructTableHandler</a> &gt; <a class="el" href="classAuxiliaryPhysics.html">AuxiliaryPhysics</a>&lt; dim, <a class="el" href="time__harmonic__maxwell_8h.html#a5114f84176ad5081553f88d2b5d2525e">VectorType</a> &gt;::gather_tables </td>
           <td>(</td>
           <td class="paramname"></td><td>)</td>
           <td></td>
@@ -405,7 +446,7 @@ template&lt;int dim, typename VectorType &gt; </div>
 <p>Returns a vector of references to TableHandler objects that needs to be serialized/deserialized for a given <a class="el" href="classAuxiliaryPhysics.html">AuxiliaryPhysics</a> solver. </p>
 <dl class="section return"><dt>Returns</dt><dd>Structure containing the TableHandler objects and their corresponding file names. </dd></dl>
 
-<p>Implemented in <a class="el" href="classCahnHilliard.html#a0487ff8872d374d89d14bd51205ca6dc">CahnHilliard&lt; dim &gt;</a>, <a class="el" href="classHeatTransfer.html#aaa7662383d9bbbba61db49dfad67f4f8">HeatTransfer&lt; dim &gt;</a>, <a class="el" href="classTracer.html#a0a252bcc7b27a68eece263ff2623b3b1">Tracer&lt; dim &gt;</a>, and <a class="el" href="classVolumeOfFluid.html#aef4db3593c3ef9753faf75682531025d">VolumeOfFluid&lt; dim &gt;</a>.</p>
+<p>Implemented in <a class="el" href="classCahnHilliard.html#a0487ff8872d374d89d14bd51205ca6dc">CahnHilliard&lt; dim &gt;</a>, <a class="el" href="classHeatTransfer.html#aaa7662383d9bbbba61db49dfad67f4f8">HeatTransfer&lt; dim &gt;</a>, <a class="el" href="classTimeHarmonicMaxwell.html#a4a69b49c671f2911e65b602e304c4b8f">TimeHarmonicMaxwell&lt; dim &gt;</a>, <a class="el" href="classTracer.html#a0a252bcc7b27a68eece263ff2623b3b1">Tracer&lt; dim &gt;</a>, and <a class="el" href="classVolumeOfFluid.html#aef4db3593c3ef9753faf75682531025d">VolumeOfFluid&lt; dim &gt;</a>.</p>
 
 </div>
 </div>
@@ -415,13 +456,13 @@ template&lt;int dim, typename VectorType &gt; </div>
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;int dim, typename VectorType &gt; </div>
+template&lt;int dim, typename <a class="el" href="time__harmonic__maxwell_8h.html#a5114f84176ad5081553f88d2b5d2525e">VectorType</a> &gt; </div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">virtual const DoFHandler&lt; dim &gt; &amp; <a class="el" href="classAuxiliaryPhysics.html">AuxiliaryPhysics</a>&lt; dim, VectorType &gt;::get_dof_handler </td>
+          <td class="memname">virtual const DoFHandler&lt; dim &gt; &amp; <a class="el" href="classAuxiliaryPhysics.html">AuxiliaryPhysics</a>&lt; dim, <a class="el" href="time__harmonic__maxwell_8h.html#a5114f84176ad5081553f88d2b5d2525e">VectorType</a> &gt;::get_dof_handler </td>
           <td>(</td>
           <td class="paramname"></td><td>)</td>
           <td></td>
@@ -436,7 +477,7 @@ template&lt;int dim, typename VectorType &gt; </div>
 
 <p>Provide the dof handler associated with an auxiliary physics TODO : delete as the auxiliary physics are supposed to pass their dof_handler to the multiphysics_interface directly. </p>
 
-<p>Implemented in <a class="el" href="classCahnHilliard.html#a5346a4f335a4e5deb15ea9b0f2393e16">CahnHilliard&lt; dim &gt;</a>, <a class="el" href="classHeatTransfer.html#aa44413febcf358e27983ae7a851d16c4">HeatTransfer&lt; dim &gt;</a>, <a class="el" href="classTracer.html#a77845404417ec823247bc56c5f3ef82b">Tracer&lt; dim &gt;</a>, and <a class="el" href="classVolumeOfFluid.html#a6cf62cef361b0fe399ad62ca18f553e2">VolumeOfFluid&lt; dim &gt;</a>.</p>
+<p>Implemented in <a class="el" href="classCahnHilliard.html#a5346a4f335a4e5deb15ea9b0f2393e16">CahnHilliard&lt; dim &gt;</a>, <a class="el" href="classHeatTransfer.html#aa44413febcf358e27983ae7a851d16c4">HeatTransfer&lt; dim &gt;</a>, <a class="el" href="classTimeHarmonicMaxwell.html#ad7abbb9dcbffdbbfb588295875dcdca6">TimeHarmonicMaxwell&lt; dim &gt;</a>, <a class="el" href="classTracer.html#a77845404417ec823247bc56c5f3ef82b">Tracer&lt; dim &gt;</a>, and <a class="el" href="classVolumeOfFluid.html#a6cf62cef361b0fe399ad62ca18f553e2">VolumeOfFluid&lt; dim &gt;</a>.</p>
 
 </div>
 </div>
@@ -446,13 +487,13 @@ template&lt;int dim, typename VectorType &gt; </div>
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;int dim, typename VectorType &gt; </div>
+template&lt;int dim, typename <a class="el" href="time__harmonic__maxwell_8h.html#a5114f84176ad5081553f88d2b5d2525e">VectorType</a> &gt; </div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">virtual void <a class="el" href="classAuxiliaryPhysics.html">AuxiliaryPhysics</a>&lt; dim, VectorType &gt;::modify_solution </td>
+          <td class="memname">virtual void <a class="el" href="classAuxiliaryPhysics.html">AuxiliaryPhysics</a>&lt; dim, <a class="el" href="time__harmonic__maxwell_8h.html#a5114f84176ad5081553f88d2b5d2525e">VectorType</a> &gt;::modify_solution </td>
           <td>(</td>
           <td class="paramname"></td><td>)</td>
           <td></td>
@@ -467,9 +508,9 @@ template&lt;int dim, typename VectorType &gt; </div>
 
 <p>Carry out modifications on the auxiliary physic solution. To be defined for some physics only (eg. free surface, see <a class="el" href="vof_8h.html">vof.h</a>). </p>
 
-<p>Reimplemented in <a class="el" href="classCahnHilliard.html#a66eb728bcf77d15809adb397558f0681">CahnHilliard&lt; dim &gt;</a>, <a class="el" href="classTracer.html#a896e2a2c869162a258cf3258aabdb4a9">Tracer&lt; dim &gt;</a>, and <a class="el" href="classVolumeOfFluid.html#a29ca82046f032548ac60d4ad4f8c5c4c">VolumeOfFluid&lt; dim &gt;</a>.</p>
+<p>Reimplemented in <a class="el" href="classCahnHilliard.html#a66eb728bcf77d15809adb397558f0681">CahnHilliard&lt; dim &gt;</a>, <a class="el" href="classTimeHarmonicMaxwell.html#acd2a7ad74cdd88844047f901f46fd865">TimeHarmonicMaxwell&lt; dim &gt;</a>, <a class="el" href="classTracer.html#a896e2a2c869162a258cf3258aabdb4a9">Tracer&lt; dim &gt;</a>, and <a class="el" href="classVolumeOfFluid.html#a29ca82046f032548ac60d4ad4f8c5c4c">VolumeOfFluid&lt; dim &gt;</a>.</p>
 
-<p class="definition">Definition at line <a class="el" href="auxiliary__physics_8h_source.html#l00093">93</a> of file <a class="el" href="auxiliary__physics_8h_source.html">auxiliary_physics.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="auxiliary__physics_8h_source.html#l00109">109</a> of file <a class="el" href="auxiliary__physics_8h_source.html">auxiliary_physics.h</a>.</p>
 
 </div>
 </div>
@@ -479,13 +520,13 @@ template&lt;int dim, typename VectorType &gt; </div>
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;int dim, typename VectorType &gt; </div>
+template&lt;int dim, typename <a class="el" href="time__harmonic__maxwell_8h.html#a5114f84176ad5081553f88d2b5d2525e">VectorType</a> &gt; </div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">virtual void <a class="el" href="classAuxiliaryPhysics.html">AuxiliaryPhysics</a>&lt; dim, VectorType &gt;::percolate_time_vectors </td>
+          <td class="memname">virtual void <a class="el" href="classAuxiliaryPhysics.html">AuxiliaryPhysics</a>&lt; dim, <a class="el" href="time__harmonic__maxwell_8h.html#a5114f84176ad5081553f88d2b5d2525e">VectorType</a> &gt;::percolate_time_vectors </td>
           <td>(</td>
           <td class="paramname"></td><td>)</td>
           <td></td>
@@ -500,7 +541,7 @@ template&lt;int dim, typename VectorType &gt; </div>
 
 <p>Carry out the operations required to rearrange the values of the previous solution at the end of a time step. </p>
 
-<p>Implemented in <a class="el" href="classCahnHilliard.html#acae32e8fc7fca8cd911338d65154bf22">CahnHilliard&lt; dim &gt;</a>, <a class="el" href="classHeatTransfer.html#a040566235155e688bb20b8124871e9a8">HeatTransfer&lt; dim &gt;</a>, <a class="el" href="classTracer.html#ac03b008aba02e9b4a43562d3b2857039">Tracer&lt; dim &gt;</a>, and <a class="el" href="classVolumeOfFluid.html#aa16c78e23c3357cdd49d032bdcc46f0b">VolumeOfFluid&lt; dim &gt;</a>.</p>
+<p>Implemented in <a class="el" href="classCahnHilliard.html#acae32e8fc7fca8cd911338d65154bf22">CahnHilliard&lt; dim &gt;</a>, <a class="el" href="classHeatTransfer.html#a040566235155e688bb20b8124871e9a8">HeatTransfer&lt; dim &gt;</a>, <a class="el" href="classTimeHarmonicMaxwell.html#a58c663d1ffcc345059b640190bde43be">TimeHarmonicMaxwell&lt; dim &gt;</a>, <a class="el" href="classTracer.html#ac03b008aba02e9b4a43562d3b2857039">Tracer&lt; dim &gt;</a>, and <a class="el" href="classVolumeOfFluid.html#aa16c78e23c3357cdd49d032bdcc46f0b">VolumeOfFluid&lt; dim &gt;</a>.</p>
 
 </div>
 </div>
@@ -510,13 +551,13 @@ template&lt;int dim, typename VectorType &gt; </div>
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;int dim, typename VectorType &gt; </div>
+template&lt;int dim, typename <a class="el" href="time__harmonic__maxwell_8h.html#a5114f84176ad5081553f88d2b5d2525e">VectorType</a> &gt; </div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">virtual void <a class="el" href="classAuxiliaryPhysics.html">AuxiliaryPhysics</a>&lt; dim, VectorType &gt;::post_mesh_adaptation </td>
+          <td class="memname">virtual void <a class="el" href="classAuxiliaryPhysics.html">AuxiliaryPhysics</a>&lt; dim, <a class="el" href="time__harmonic__maxwell_8h.html#a5114f84176ad5081553f88d2b5d2525e">VectorType</a> &gt;::post_mesh_adaptation </td>
           <td>(</td>
           <td class="paramname"></td><td>)</td>
           <td></td>
@@ -531,7 +572,7 @@ template&lt;int dim, typename VectorType &gt; </div>
 
 <p>post_mesh_adaption Interpolates the auxiliary physics variables to the new mesh </p>
 
-<p>Implemented in <a class="el" href="classCahnHilliard.html#aa67bd4ae2b4f0a07d92224ef73b01e4e">CahnHilliard&lt; dim &gt;</a>, <a class="el" href="classHeatTransfer.html#a647057ca3043ee2d38e880e1366be62d">HeatTransfer&lt; dim &gt;</a>, <a class="el" href="classTracer.html#a795a508e06b9df7eff9187203b4be415">Tracer&lt; dim &gt;</a>, and <a class="el" href="classVolumeOfFluid.html#a905b7c8067a996b4cb42522610f12ae3">VolumeOfFluid&lt; dim &gt;</a>.</p>
+<p>Implemented in <a class="el" href="classCahnHilliard.html#aa67bd4ae2b4f0a07d92224ef73b01e4e">CahnHilliard&lt; dim &gt;</a>, <a class="el" href="classHeatTransfer.html#a647057ca3043ee2d38e880e1366be62d">HeatTransfer&lt; dim &gt;</a>, <a class="el" href="classTimeHarmonicMaxwell.html#a14993cfc634d9468b847593c1ba2935c">TimeHarmonicMaxwell&lt; dim &gt;</a>, <a class="el" href="classTracer.html#a795a508e06b9df7eff9187203b4be415">Tracer&lt; dim &gt;</a>, and <a class="el" href="classVolumeOfFluid.html#a905b7c8067a996b4cb42522610f12ae3">VolumeOfFluid&lt; dim &gt;</a>.</p>
 
 </div>
 </div>
@@ -541,13 +582,13 @@ template&lt;int dim, typename VectorType &gt; </div>
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;int dim, typename VectorType &gt; </div>
+template&lt;int dim, typename <a class="el" href="time__harmonic__maxwell_8h.html#a5114f84176ad5081553f88d2b5d2525e">VectorType</a> &gt; </div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">virtual void <a class="el" href="classAuxiliaryPhysics.html">AuxiliaryPhysics</a>&lt; dim, VectorType &gt;::postprocess </td>
+          <td class="memname">virtual void <a class="el" href="classAuxiliaryPhysics.html">AuxiliaryPhysics</a>&lt; dim, <a class="el" href="time__harmonic__maxwell_8h.html#a5114f84176ad5081553f88d2b5d2525e">VectorType</a> &gt;::postprocess </td>
           <td>(</td>
           <td class="paramtype">bool&#160;</td>
           <td class="paramname"><em>first_iteration</em></td><td>)</td>
@@ -563,7 +604,7 @@ template&lt;int dim, typename VectorType &gt; </div>
 
 <p>Postprocess the auxiliary physics results. Post-processing this case implies the calculation of all derived quantities using the solution vector of the physics. It does not concern the output of the solution using the DataOutObject, which is accomplished through the attach_solution_to_output function. </p>
 
-<p>Implemented in <a class="el" href="classCahnHilliard.html#ae7097ba585595d2f1d00ea69498e7603">CahnHilliard&lt; dim &gt;</a>, <a class="el" href="classHeatTransfer.html#ab8b8c17211654416df6da0ddf54e91ad">HeatTransfer&lt; dim &gt;</a>, <a class="el" href="classTracer.html#ac4b7c30629b580945490919c0427db12">Tracer&lt; dim &gt;</a>, and <a class="el" href="classVolumeOfFluid.html#ab92bd70714cdfe999cf0fa7b7d49caf4">VolumeOfFluid&lt; dim &gt;</a>.</p>
+<p>Implemented in <a class="el" href="classCahnHilliard.html#ae7097ba585595d2f1d00ea69498e7603">CahnHilliard&lt; dim &gt;</a>, <a class="el" href="classHeatTransfer.html#ab8b8c17211654416df6da0ddf54e91ad">HeatTransfer&lt; dim &gt;</a>, <a class="el" href="classTimeHarmonicMaxwell.html#a4e05f6e3520d6f75e73469a9b9c86a42">TimeHarmonicMaxwell&lt; dim &gt;</a>, <a class="el" href="classTracer.html#ac4b7c30629b580945490919c0427db12">Tracer&lt; dim &gt;</a>, and <a class="el" href="classVolumeOfFluid.html#ab92bd70714cdfe999cf0fa7b7d49caf4">VolumeOfFluid&lt; dim &gt;</a>.</p>
 
 </div>
 </div>
@@ -573,13 +614,13 @@ template&lt;int dim, typename VectorType &gt; </div>
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;int dim, typename VectorType &gt; </div>
+template&lt;int dim, typename <a class="el" href="time__harmonic__maxwell_8h.html#a5114f84176ad5081553f88d2b5d2525e">VectorType</a> &gt; </div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">virtual void <a class="el" href="classAuxiliaryPhysics.html">AuxiliaryPhysics</a>&lt; dim, VectorType &gt;::pre_mesh_adaptation </td>
+          <td class="memname">virtual void <a class="el" href="classAuxiliaryPhysics.html">AuxiliaryPhysics</a>&lt; dim, <a class="el" href="time__harmonic__maxwell_8h.html#a5114f84176ad5081553f88d2b5d2525e">VectorType</a> &gt;::pre_mesh_adaptation </td>
           <td>(</td>
           <td class="paramname"></td><td>)</td>
           <td></td>
@@ -594,7 +635,7 @@ template&lt;int dim, typename VectorType &gt; </div>
 
 <p>pre_mesh_adaption Prepares the auxiliary physics variables for a mesh refinement/coarsening </p>
 
-<p>Implemented in <a class="el" href="classCahnHilliard.html#afa1b7715047c80410dcca6a64b040e74">CahnHilliard&lt; dim &gt;</a>, <a class="el" href="classHeatTransfer.html#a9424b244231895ee5b12f1fd16c6a09c">HeatTransfer&lt; dim &gt;</a>, <a class="el" href="classTracer.html#a5c2e4178c68808459672f3607e0b80b1">Tracer&lt; dim &gt;</a>, and <a class="el" href="classVolumeOfFluid.html#adac10018ee53525cce69597ea7778a04">VolumeOfFluid&lt; dim &gt;</a>.</p>
+<p>Implemented in <a class="el" href="classCahnHilliard.html#afa1b7715047c80410dcca6a64b040e74">CahnHilliard&lt; dim &gt;</a>, <a class="el" href="classHeatTransfer.html#a9424b244231895ee5b12f1fd16c6a09c">HeatTransfer&lt; dim &gt;</a>, <a class="el" href="classTimeHarmonicMaxwell.html#a0e1602a38ad161756a2a29dee2a56b72">TimeHarmonicMaxwell&lt; dim &gt;</a>, <a class="el" href="classTracer.html#a5c2e4178c68808459672f3607e0b80b1">Tracer&lt; dim &gt;</a>, and <a class="el" href="classVolumeOfFluid.html#adac10018ee53525cce69597ea7778a04">VolumeOfFluid&lt; dim &gt;</a>.</p>
 
 </div>
 </div>
@@ -604,13 +645,13 @@ template&lt;int dim, typename VectorType &gt; </div>
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;int dim, typename VectorType &gt; </div>
+template&lt;int dim, typename <a class="el" href="time__harmonic__maxwell_8h.html#a5114f84176ad5081553f88d2b5d2525e">VectorType</a> &gt; </div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">virtual void <a class="el" href="classAuxiliaryPhysics.html">AuxiliaryPhysics</a>&lt; dim, VectorType &gt;::read_checkpoint </td>
+          <td class="memname">virtual void <a class="el" href="classAuxiliaryPhysics.html">AuxiliaryPhysics</a>&lt; dim, <a class="el" href="time__harmonic__maxwell_8h.html#a5114f84176ad5081553f88d2b5d2525e">VectorType</a> &gt;::read_checkpoint </td>
           <td>(</td>
           <td class="paramname"></td><td>)</td>
           <td></td>
@@ -625,7 +666,7 @@ template&lt;int dim, typename VectorType &gt; </div>
 
 <p>Set solution vector of Auxiliary Physics using checkpoint. </p>
 
-<p>Implemented in <a class="el" href="classCahnHilliard.html#aa96108c743c84c51fb532dc02c45fb92">CahnHilliard&lt; dim &gt;</a>, <a class="el" href="classHeatTransfer.html#a8e4d76beacb77c787c9079c5a0ca7c55">HeatTransfer&lt; dim &gt;</a>, <a class="el" href="classTracer.html#aeb8ac98be79872fb1ea9d30414e8cc5a">Tracer&lt; dim &gt;</a>, and <a class="el" href="classVolumeOfFluid.html#a188df7785423f0182e5f1882426dfc71">VolumeOfFluid&lt; dim &gt;</a>.</p>
+<p>Implemented in <a class="el" href="classCahnHilliard.html#aa96108c743c84c51fb532dc02c45fb92">CahnHilliard&lt; dim &gt;</a>, <a class="el" href="classHeatTransfer.html#a8e4d76beacb77c787c9079c5a0ca7c55">HeatTransfer&lt; dim &gt;</a>, <a class="el" href="classTimeHarmonicMaxwell.html#a464afe05178a71e40b9df01464143072">TimeHarmonicMaxwell&lt; dim &gt;</a>, <a class="el" href="classTracer.html#aeb8ac98be79872fb1ea9d30414e8cc5a">Tracer&lt; dim &gt;</a>, and <a class="el" href="classVolumeOfFluid.html#a188df7785423f0182e5f1882426dfc71">VolumeOfFluid&lt; dim &gt;</a>.</p>
 
 </div>
 </div>
@@ -635,13 +676,13 @@ template&lt;int dim, typename VectorType &gt; </div>
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;int dim, typename VectorType &gt; </div>
+template&lt;int dim, typename <a class="el" href="time__harmonic__maxwell_8h.html#a5114f84176ad5081553f88d2b5d2525e">VectorType</a> &gt; </div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">virtual void <a class="el" href="classAuxiliaryPhysics.html">AuxiliaryPhysics</a>&lt; dim, VectorType &gt;::set_initial_conditions </td>
+          <td class="memname">virtual void <a class="el" href="classAuxiliaryPhysics.html">AuxiliaryPhysics</a>&lt; dim, <a class="el" href="time__harmonic__maxwell_8h.html#a5114f84176ad5081553f88d2b5d2525e">VectorType</a> &gt;::set_initial_conditions </td>
           <td>(</td>
           <td class="paramname"></td><td>)</td>
           <td></td>
@@ -656,7 +697,7 @@ template&lt;int dim, typename VectorType &gt; </div>
 
 <p>Sets-up the initial conditions associated with the physics. Generally, physics only support imposing nodal values, but some physics additionally support the use of L2 projection or steady-state solutions. </p>
 
-<p>Implemented in <a class="el" href="classCahnHilliard.html#ade1e46e3e24c91cf566a00a799c75e36">CahnHilliard&lt; dim &gt;</a>, <a class="el" href="classHeatTransfer.html#af7e209dda017e39d3988b1e3f3751857">HeatTransfer&lt; dim &gt;</a>, <a class="el" href="classTracer.html#ab09781c62a32bbf7bfcc87e501deb8a0">Tracer&lt; dim &gt;</a>, and <a class="el" href="classVolumeOfFluid.html#af6671ae1cb1643f4dadb1194bd577450">VolumeOfFluid&lt; dim &gt;</a>.</p>
+<p>Implemented in <a class="el" href="classCahnHilliard.html#ade1e46e3e24c91cf566a00a799c75e36">CahnHilliard&lt; dim &gt;</a>, <a class="el" href="classHeatTransfer.html#af7e209dda017e39d3988b1e3f3751857">HeatTransfer&lt; dim &gt;</a>, <a class="el" href="classTimeHarmonicMaxwell.html#aa0b0db3cffcae0bc3b9f0d0a2ba7ce21">TimeHarmonicMaxwell&lt; dim &gt;</a>, <a class="el" href="classTracer.html#ab09781c62a32bbf7bfcc87e501deb8a0">Tracer&lt; dim &gt;</a>, and <a class="el" href="classVolumeOfFluid.html#af6671ae1cb1643f4dadb1194bd577450">VolumeOfFluid&lt; dim &gt;</a>.</p>
 
 </div>
 </div>
@@ -666,13 +707,13 @@ template&lt;int dim, typename VectorType &gt; </div>
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;int dim, typename VectorType &gt; </div>
+template&lt;int dim, typename <a class="el" href="time__harmonic__maxwell_8h.html#a5114f84176ad5081553f88d2b5d2525e">VectorType</a> &gt; </div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">virtual void <a class="el" href="classAuxiliaryPhysics.html">AuxiliaryPhysics</a>&lt; dim, VectorType &gt;::setup_dofs </td>
+          <td class="memname">virtual void <a class="el" href="classAuxiliaryPhysics.html">AuxiliaryPhysics</a>&lt; dim, <a class="el" href="time__harmonic__maxwell_8h.html#a5114f84176ad5081553f88d2b5d2525e">VectorType</a> &gt;::setup_dofs </td>
           <td>(</td>
           <td class="paramname"></td><td>)</td>
           <td></td>
@@ -687,7 +728,7 @@ template&lt;int dim, typename VectorType &gt; </div>
 
 <p>Sets-up the DofHandler and the degree of freedom associated with the physics. </p>
 
-<p>Implemented in <a class="el" href="classCahnHilliard.html#a5e73668b024d2697820f386fdbebccd6">CahnHilliard&lt; dim &gt;</a>, <a class="el" href="classHeatTransfer.html#aca8c8523ca5b4d9df7c1ed977ed7d113">HeatTransfer&lt; dim &gt;</a>, <a class="el" href="classTracer.html#af8dfb40376adc77b7bc9236fa7de3689">Tracer&lt; dim &gt;</a>, and <a class="el" href="classVolumeOfFluid.html#a2f6f5ee7b4e9fcdd1fcdaacd0c4bc17d">VolumeOfFluid&lt; dim &gt;</a>.</p>
+<p>Implemented in <a class="el" href="classCahnHilliard.html#a5e73668b024d2697820f386fdbebccd6">CahnHilliard&lt; dim &gt;</a>, <a class="el" href="classHeatTransfer.html#aca8c8523ca5b4d9df7c1ed977ed7d113">HeatTransfer&lt; dim &gt;</a>, <a class="el" href="classTimeHarmonicMaxwell.html#a382c53aa900e8e47a3075b90aea763e0">TimeHarmonicMaxwell&lt; dim &gt;</a>, <a class="el" href="classTracer.html#af8dfb40376adc77b7bc9236fa7de3689">Tracer&lt; dim &gt;</a>, and <a class="el" href="classVolumeOfFluid.html#a2f6f5ee7b4e9fcdd1fcdaacd0c4bc17d">VolumeOfFluid&lt; dim &gt;</a>.</p>
 
 </div>
 </div>
@@ -697,13 +738,13 @@ template&lt;int dim, typename VectorType &gt; </div>
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;int dim, typename VectorType &gt; </div>
+template&lt;int dim, typename <a class="el" href="time__harmonic__maxwell_8h.html#a5114f84176ad5081553f88d2b5d2525e">VectorType</a> &gt; </div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">void <a class="el" href="classAuxiliaryPhysics.html">AuxiliaryPhysics</a>&lt; dim, VectorType &gt;::setup_preconditioner </td>
+          <td class="memname">void <a class="el" href="classAuxiliaryPhysics.html">AuxiliaryPhysics</a>&lt; dim, <a class="el" href="time__harmonic__maxwell_8h.html#a5114f84176ad5081553f88d2b5d2525e">VectorType</a> &gt;::setup_preconditioner </td>
           <td>(</td>
           <td class="paramname"></td><td>)</td>
           <td></td>
@@ -720,7 +761,9 @@ template&lt;int dim, typename VectorType &gt; </div>
 
 <p>Implements <a class="el" href="classPhysicsSolver.html#a566177a0569619dcf0c3a5f2fb1cdf4d">PhysicsSolver&lt; VectorType &gt;</a>.</p>
 
-<p class="definition">Definition at line <a class="el" href="auxiliary__physics_8h_source.html#l00185">185</a> of file <a class="el" href="auxiliary__physics_8h_source.html">auxiliary_physics.h</a>.</p>
+<p>Reimplemented in <a class="el" href="classTimeHarmonicMaxwell.html#a19bce29a7b265f24d66bbead2898be6b">TimeHarmonicMaxwell&lt; dim &gt;</a>.</p>
+
+<p class="definition">Definition at line <a class="el" href="auxiliary__physics_8h_source.html#l00201">201</a> of file <a class="el" href="auxiliary__physics_8h_source.html">auxiliary_physics.h</a>.</p>
 
 </div>
 </div>
@@ -730,13 +773,13 @@ template&lt;int dim, typename VectorType &gt; </div>
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;int dim, typename VectorType &gt; </div>
+template&lt;int dim, typename <a class="el" href="time__harmonic__maxwell_8h.html#a5114f84176ad5081553f88d2b5d2525e">VectorType</a> &gt; </div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">virtual void <a class="el" href="classAuxiliaryPhysics.html">AuxiliaryPhysics</a>&lt; dim, VectorType &gt;::update_boundary_conditions </td>
+          <td class="memname">virtual void <a class="el" href="classAuxiliaryPhysics.html">AuxiliaryPhysics</a>&lt; dim, <a class="el" href="time__harmonic__maxwell_8h.html#a5114f84176ad5081553f88d2b5d2525e">VectorType</a> &gt;::update_boundary_conditions </td>
           <td>(</td>
           <td class="paramname"></td><td>)</td>
           <td></td>
@@ -751,9 +794,9 @@ template&lt;int dim, typename VectorType &gt; </div>
 
 <p>Update non zero constraints if the boundary is time-dependent. </p>
 
-<p>Reimplemented in <a class="el" href="classCahnHilliard.html#af92cd0dbe8d21a2b38062e4fa49e39b1">CahnHilliard&lt; dim &gt;</a>, <a class="el" href="classHeatTransfer.html#aae39576731dcd9328bf2c3b7c72db6ac">HeatTransfer&lt; dim &gt;</a>, <a class="el" href="classTracer.html#aa403435dbd466e2e896452662bb16ade">Tracer&lt; dim &gt;</a>, and <a class="el" href="classVolumeOfFluid.html#ac16c051531902a4be73dcdeb6d348115">VolumeOfFluid&lt; dim &gt;</a>.</p>
+<p>Reimplemented in <a class="el" href="classCahnHilliard.html#af92cd0dbe8d21a2b38062e4fa49e39b1">CahnHilliard&lt; dim &gt;</a>, <a class="el" href="classHeatTransfer.html#aae39576731dcd9328bf2c3b7c72db6ac">HeatTransfer&lt; dim &gt;</a>, <a class="el" href="classTimeHarmonicMaxwell.html#a384f172408c3a5059c6d0581ff915673">TimeHarmonicMaxwell&lt; dim &gt;</a>, <a class="el" href="classTracer.html#aa403435dbd466e2e896452662bb16ade">Tracer&lt; dim &gt;</a>, and <a class="el" href="classVolumeOfFluid.html#ac16c051531902a4be73dcdeb6d348115">VolumeOfFluid&lt; dim &gt;</a>.</p>
 
-<p class="definition">Definition at line <a class="el" href="auxiliary__physics_8h_source.html#l00099">99</a> of file <a class="el" href="auxiliary__physics_8h_source.html">auxiliary_physics.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="auxiliary__physics_8h_source.html#l00115">115</a> of file <a class="el" href="auxiliary__physics_8h_source.html">auxiliary_physics.h</a>.</p>
 
 </div>
 </div>
@@ -763,13 +806,13 @@ template&lt;int dim, typename VectorType &gt; </div>
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;int dim, typename VectorType &gt; </div>
+template&lt;int dim, typename <a class="el" href="time__harmonic__maxwell_8h.html#a5114f84176ad5081553f88d2b5d2525e">VectorType</a> &gt; </div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">virtual void <a class="el" href="classAuxiliaryPhysics.html">AuxiliaryPhysics</a>&lt; dim, VectorType &gt;::write_checkpoint </td>
+          <td class="memname">virtual void <a class="el" href="classAuxiliaryPhysics.html">AuxiliaryPhysics</a>&lt; dim, <a class="el" href="time__harmonic__maxwell_8h.html#a5114f84176ad5081553f88d2b5d2525e">VectorType</a> &gt;::write_checkpoint </td>
           <td>(</td>
           <td class="paramname"></td><td>)</td>
           <td></td>
@@ -784,7 +827,7 @@ template&lt;int dim, typename VectorType &gt; </div>
 
 <p>Prepares auxiliary physics to write checkpoint. </p>
 
-<p>Implemented in <a class="el" href="classCahnHilliard.html#aadf3482b407082b319fbfeb31bbc99ad">CahnHilliard&lt; dim &gt;</a>, <a class="el" href="classHeatTransfer.html#a57220cba37f8342ad6941e3188ff8971">HeatTransfer&lt; dim &gt;</a>, <a class="el" href="classTracer.html#a18399604e964cdbaecf39baef51c4d61">Tracer&lt; dim &gt;</a>, and <a class="el" href="classVolumeOfFluid.html#ae4e1fd51b66f71b532cc5d5db30788f9">VolumeOfFluid&lt; dim &gt;</a>.</p>
+<p>Implemented in <a class="el" href="classCahnHilliard.html#aadf3482b407082b319fbfeb31bbc99ad">CahnHilliard&lt; dim &gt;</a>, <a class="el" href="classHeatTransfer.html#a57220cba37f8342ad6941e3188ff8971">HeatTransfer&lt; dim &gt;</a>, <a class="el" href="classTimeHarmonicMaxwell.html#a954de39253094ec607966649bb335b42">TimeHarmonicMaxwell&lt; dim &gt;</a>, <a class="el" href="classTracer.html#a18399604e964cdbaecf39baef51c4d61">Tracer&lt; dim &gt;</a>, and <a class="el" href="classVolumeOfFluid.html#ae4e1fd51b66f71b532cc5d5db30788f9">VolumeOfFluid&lt; dim &gt;</a>.</p>
 
 </div>
 </div>

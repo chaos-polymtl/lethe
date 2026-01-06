@@ -243,8 +243,8 @@ Include dependency graph for postprocessing_cfd.cc:</div>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="func-members" name="func-members"></a>
 Functions</h2></td></tr>
-<tr class="memitem:a1f3b24760b037b982e4a3eac96cff32b" id="r_a1f3b24760b037b982e4a3eac96cff32b"><td class="memTemplParams" colspan="2">template&lt;int dim, typename VectorType &gt; </td></tr>
-<tr class="memitem:a1f3b24760b037b982e4a3eac96cff32b"><td class="memTemplItemLeft" align="right" valign="top">std::pair&lt; double, double &gt;&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="postprocessing__cfd_8cc.html#a1f3b24760b037b982e4a3eac96cff32b">calculate_pressure_drop</a> (const DoFHandler&lt; dim &gt; &amp;dof_handler, const Mapping&lt; dim &gt; &amp;mapping, const VectorType &amp;evaluation_point, const Quadrature&lt; dim &gt; &amp;cell_quadrature_formula, const Quadrature&lt; dim - 1 &gt; &amp;face_quadrature_formula, const unsigned int inlet_boundary_id, const unsigned int outlet_boundary_id)</td></tr>
+<tr class="memitem:a1f3b24760b037b982e4a3eac96cff32b" id="r_a1f3b24760b037b982e4a3eac96cff32b"><td class="memTemplParams" colspan="2">template&lt;int dim, typename <a class="el" href="time__harmonic__maxwell_8h.html#a5114f84176ad5081553f88d2b5d2525e">VectorType</a> &gt; </td></tr>
+<tr class="memitem:a1f3b24760b037b982e4a3eac96cff32b"><td class="memTemplItemLeft" align="right" valign="top">std::pair&lt; double, double &gt;&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="postprocessing__cfd_8cc.html#a1f3b24760b037b982e4a3eac96cff32b">calculate_pressure_drop</a> (const DoFHandler&lt; dim &gt; &amp;dof_handler, const Mapping&lt; dim &gt; &amp;mapping, const <a class="el" href="time__harmonic__maxwell_8h.html#a5114f84176ad5081553f88d2b5d2525e">VectorType</a> &amp;evaluation_point, const Quadrature&lt; dim &gt; &amp;cell_quadrature_formula, const Quadrature&lt; dim - 1 &gt; &amp;face_quadrature_formula, const unsigned int inlet_boundary_id, const unsigned int outlet_boundary_id)</td></tr>
 <tr class="separator:a1f3b24760b037b982e4a3eac96cff32b"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a8f4a1e6d24fdfbc5a4ed1b2e37c17275" id="r_a8f4a1e6d24fdfbc5a4ed1b2e37c17275"><td class="memItemLeft" align="right" valign="top">template std::pair&lt; double, double &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="postprocessing__cfd_8cc.html#a8f4a1e6d24fdfbc5a4ed1b2e37c17275">calculate_pressure_drop&lt; 2, GlobalVectorType &gt;</a> (const DoFHandler&lt; 2 &gt; &amp;dof_handler, const Mapping&lt; 2 &gt; &amp;mapping, const <a class="el" href="vector_8h.html#a4ea4005d75c88e60bee47d4e79a13a39">GlobalVectorType</a> &amp;evaluation_point, const Quadrature&lt; 2 &gt; &amp;cell_quadrature_formula, const Quadrature&lt; 1 &gt; &amp;face_quadrature_formula, const unsigned int inlet_boundary_id, const unsigned int outlet_boundary_id)</td></tr>
 <tr class="separator:a8f4a1e6d24fdfbc5a4ed1b2e37c17275"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -258,8 +258,8 @@ Functions</h2></td></tr>
 <tr class="separator:abb76c820a8250a2ed90f228994fe4d33"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:adde7a668521e8511d6718c4c2425ee1c" id="r_adde7a668521e8511d6718c4c2425ee1c"><td class="memItemLeft" align="right" valign="top">template std::pair&lt; double, double &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="postprocessing__cfd_8cc.html#adde7a668521e8511d6718c4c2425ee1c">calculate_pressure_drop&lt; 3, LinearAlgebra::distributed::Vector&lt; double &gt; &gt;</a> (const DoFHandler&lt; 3 &gt; &amp;dof_handler, const Mapping&lt; 3 &gt; &amp;mapping, const LinearAlgebra::distributed::Vector&lt; double &gt; &amp;evaluation_point, const Quadrature&lt; 3 &gt; &amp;cell_quadrature_formula, const Quadrature&lt; 2 &gt; &amp;face_quadrature_formula, const unsigned int inlet_boundary_id, const unsigned int outlet_boundary_id)</td></tr>
 <tr class="separator:adde7a668521e8511d6718c4c2425ee1c"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a79160fa3703aadaf40fb29841456e49b" id="r_a79160fa3703aadaf40fb29841456e49b"><td class="memTemplParams" colspan="2">template&lt;int dim, typename VectorType &gt; </td></tr>
-<tr class="memitem:a79160fa3703aadaf40fb29841456e49b"><td class="memTemplItemLeft" align="right" valign="top">double&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="postprocessing__cfd_8cc.html#a79160fa3703aadaf40fb29841456e49b">calculate_CFL</a> (const DoFHandler&lt; dim &gt; &amp;dof_handler, const VectorType &amp;evaluation_point, const double time_step, const Quadrature&lt; dim &gt; &amp;quadrature_formula, const Mapping&lt; dim &gt; &amp;mapping)</td></tr>
+<tr class="memitem:a79160fa3703aadaf40fb29841456e49b" id="r_a79160fa3703aadaf40fb29841456e49b"><td class="memTemplParams" colspan="2">template&lt;int dim, typename <a class="el" href="time__harmonic__maxwell_8h.html#a5114f84176ad5081553f88d2b5d2525e">VectorType</a> &gt; </td></tr>
+<tr class="memitem:a79160fa3703aadaf40fb29841456e49b"><td class="memTemplItemLeft" align="right" valign="top">double&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="postprocessing__cfd_8cc.html#a79160fa3703aadaf40fb29841456e49b">calculate_CFL</a> (const DoFHandler&lt; dim &gt; &amp;dof_handler, const <a class="el" href="time__harmonic__maxwell_8h.html#a5114f84176ad5081553f88d2b5d2525e">VectorType</a> &amp;evaluation_point, const double time_step, const Quadrature&lt; dim &gt; &amp;quadrature_formula, const Mapping&lt; dim &gt; &amp;mapping)</td></tr>
 <tr class="separator:a79160fa3703aadaf40fb29841456e49b"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ac72d9e27e85571c1b1a56fa6e4adb095" id="r_ac72d9e27e85571c1b1a56fa6e4adb095"><td class="memItemLeft" align="right" valign="top">template double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="postprocessing__cfd_8cc.html#ac72d9e27e85571c1b1a56fa6e4adb095">calculate_CFL&lt; 2, GlobalVectorType &gt;</a> (const DoFHandler&lt; 2 &gt; &amp;dof_handler, const <a class="el" href="vector_8h.html#a4ea4005d75c88e60bee47d4e79a13a39">GlobalVectorType</a> &amp;evaluation_point, const double time_step, const Quadrature&lt; 2 &gt; &amp;quadrature_formula, const Mapping&lt; 2 &gt; &amp;mapping)</td></tr>
 <tr class="separator:ac72d9e27e85571c1b1a56fa6e4adb095"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -273,8 +273,8 @@ Functions</h2></td></tr>
 <tr class="separator:a483a374fa7d6d843e8d9c8c245ae8925"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a58dfbfc945004c7486455ee7555b807f" id="r_a58dfbfc945004c7486455ee7555b807f"><td class="memItemLeft" align="right" valign="top">template double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="postprocessing__cfd_8cc.html#a58dfbfc945004c7486455ee7555b807f">calculate_CFL&lt; 3, GlobalBlockVectorType &gt;</a> (const DoFHandler&lt; 3 &gt; &amp;dof_handler, const <a class="el" href="vector_8h.html#ac71ba75c5119edae876800f9e80b59e7">GlobalBlockVectorType</a> &amp;evaluation_point, const double time_step, const Quadrature&lt; 3 &gt; &amp;quadrature_formula, const Mapping&lt; 3 &gt; &amp;mapping)</td></tr>
 <tr class="separator:a58dfbfc945004c7486455ee7555b807f"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ada57d5e521dc73dc11b3146b8860a2ea" id="r_ada57d5e521dc73dc11b3146b8860a2ea"><td class="memTemplParams" colspan="2">template&lt;int dim, typename VectorType &gt; </td></tr>
-<tr class="memitem:ada57d5e521dc73dc11b3146b8860a2ea"><td class="memTemplItemLeft" align="right" valign="top">double&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="postprocessing__cfd_8cc.html#ada57d5e521dc73dc11b3146b8860a2ea">calculate_enstrophy</a> (const DoFHandler&lt; dim &gt; &amp;dof_handler, const VectorType &amp;evaluation_point, const Quadrature&lt; dim &gt; &amp;quadrature_formula, const Mapping&lt; dim &gt; &amp;mapping)</td></tr>
+<tr class="memitem:ada57d5e521dc73dc11b3146b8860a2ea" id="r_ada57d5e521dc73dc11b3146b8860a2ea"><td class="memTemplParams" colspan="2">template&lt;int dim, typename <a class="el" href="time__harmonic__maxwell_8h.html#a5114f84176ad5081553f88d2b5d2525e">VectorType</a> &gt; </td></tr>
+<tr class="memitem:ada57d5e521dc73dc11b3146b8860a2ea"><td class="memTemplItemLeft" align="right" valign="top">double&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="postprocessing__cfd_8cc.html#ada57d5e521dc73dc11b3146b8860a2ea">calculate_enstrophy</a> (const DoFHandler&lt; dim &gt; &amp;dof_handler, const <a class="el" href="time__harmonic__maxwell_8h.html#a5114f84176ad5081553f88d2b5d2525e">VectorType</a> &amp;evaluation_point, const Quadrature&lt; dim &gt; &amp;quadrature_formula, const Mapping&lt; dim &gt; &amp;mapping)</td></tr>
 <tr class="separator:ada57d5e521dc73dc11b3146b8860a2ea"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a46483f57846032806f4ad74281a6783c" id="r_a46483f57846032806f4ad74281a6783c"><td class="memItemLeft" align="right" valign="top">template double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="postprocessing__cfd_8cc.html#a46483f57846032806f4ad74281a6783c">calculate_enstrophy&lt; 2, GlobalVectorType &gt;</a> (const DoFHandler&lt; 2 &gt; &amp;dof_handler, const <a class="el" href="vector_8h.html#a4ea4005d75c88e60bee47d4e79a13a39">GlobalVectorType</a> &amp;evaluation_point, const Quadrature&lt; 2 &gt; &amp;quadrature_formula, const Mapping&lt; 2 &gt; &amp;mapping)</td></tr>
 <tr class="separator:a46483f57846032806f4ad74281a6783c"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -288,8 +288,8 @@ Functions</h2></td></tr>
 <tr class="separator:abada41f8d363b21b31172053f971f69f"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ab294da8cc29c77d68f22455720f5eafa" id="r_ab294da8cc29c77d68f22455720f5eafa"><td class="memItemLeft" align="right" valign="top">template double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="postprocessing__cfd_8cc.html#ab294da8cc29c77d68f22455720f5eafa">calculate_enstrophy&lt; 3, LinearAlgebra::distributed::Vector&lt; double &gt; &gt;</a> (const DoFHandler&lt; 3 &gt; &amp;dof_handler, const LinearAlgebra::distributed::Vector&lt; double &gt; &amp;evaluation_point, const Quadrature&lt; 3 &gt; &amp;quadrature_formula, const Mapping&lt; 3 &gt; &amp;mapping)</td></tr>
 <tr class="separator:ab294da8cc29c77d68f22455720f5eafa"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a0b1f61ed52d8cbc4dbf70848099af8f9" id="r_a0b1f61ed52d8cbc4dbf70848099af8f9"><td class="memTemplParams" colspan="2">template&lt;int dim, typename VectorType &gt; </td></tr>
-<tr class="memitem:a0b1f61ed52d8cbc4dbf70848099af8f9"><td class="memTemplItemLeft" align="right" valign="top">double&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="postprocessing__cfd_8cc.html#a0b1f61ed52d8cbc4dbf70848099af8f9">calculate_pressure_power</a> (const DoFHandler&lt; dim &gt; &amp;dof_handler, const VectorType &amp;evaluation_point, const Quadrature&lt; dim &gt; &amp;quadrature_formula, const Mapping&lt; dim &gt; &amp;mapping)</td></tr>
+<tr class="memitem:a0b1f61ed52d8cbc4dbf70848099af8f9" id="r_a0b1f61ed52d8cbc4dbf70848099af8f9"><td class="memTemplParams" colspan="2">template&lt;int dim, typename <a class="el" href="time__harmonic__maxwell_8h.html#a5114f84176ad5081553f88d2b5d2525e">VectorType</a> &gt; </td></tr>
+<tr class="memitem:a0b1f61ed52d8cbc4dbf70848099af8f9"><td class="memTemplItemLeft" align="right" valign="top">double&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="postprocessing__cfd_8cc.html#a0b1f61ed52d8cbc4dbf70848099af8f9">calculate_pressure_power</a> (const DoFHandler&lt; dim &gt; &amp;dof_handler, const <a class="el" href="time__harmonic__maxwell_8h.html#a5114f84176ad5081553f88d2b5d2525e">VectorType</a> &amp;evaluation_point, const Quadrature&lt; dim &gt; &amp;quadrature_formula, const Mapping&lt; dim &gt; &amp;mapping)</td></tr>
 <tr class="separator:a0b1f61ed52d8cbc4dbf70848099af8f9"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a32289d6b4baeb2686b169655e69234be" id="r_a32289d6b4baeb2686b169655e69234be"><td class="memItemLeft" align="right" valign="top">template double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="postprocessing__cfd_8cc.html#a32289d6b4baeb2686b169655e69234be">calculate_pressure_power&lt; 2, GlobalVectorType &gt;</a> (const DoFHandler&lt; 2 &gt; &amp;dof_handler, const <a class="el" href="vector_8h.html#a4ea4005d75c88e60bee47d4e79a13a39">GlobalVectorType</a> &amp;evaluation_point, const Quadrature&lt; 2 &gt; &amp;quadrature_formula, const Mapping&lt; 2 &gt; &amp;mapping)</td></tr>
 <tr class="separator:a32289d6b4baeb2686b169655e69234be"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -303,8 +303,8 @@ Functions</h2></td></tr>
 <tr class="separator:a37d5de664d0cda07c21f669d440fe7b7"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ab79907f63c50bebdccac411942e57b0c" id="r_ab79907f63c50bebdccac411942e57b0c"><td class="memItemLeft" align="right" valign="top">template double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="postprocessing__cfd_8cc.html#ab79907f63c50bebdccac411942e57b0c">calculate_pressure_power&lt; 3, LinearAlgebra::distributed::Vector&lt; double &gt; &gt;</a> (const DoFHandler&lt; 3 &gt; &amp;dof_handler, const LinearAlgebra::distributed::Vector&lt; double &gt; &amp;evaluation_point, const Quadrature&lt; 3 &gt; &amp;quadrature_formula, const Mapping&lt; 3 &gt; &amp;mapping)</td></tr>
 <tr class="separator:ab79907f63c50bebdccac411942e57b0c"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aeb2970566392bf1cf6d22557893a9f6a" id="r_aeb2970566392bf1cf6d22557893a9f6a"><td class="memTemplParams" colspan="2">template&lt;int dim, typename VectorType &gt; </td></tr>
-<tr class="memitem:aeb2970566392bf1cf6d22557893a9f6a"><td class="memTemplItemLeft" align="right" valign="top">double&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="postprocessing__cfd_8cc.html#aeb2970566392bf1cf6d22557893a9f6a">calculate_viscous_dissipation</a> (const DoFHandler&lt; dim &gt; &amp;dof_handler, const VectorType &amp;evaluation_point, const Quadrature&lt; dim &gt; &amp;quadrature_formula, const Mapping&lt; dim &gt; &amp;mapping, const <a class="el" href="classPhysicalPropertiesManager.html">PhysicalPropertiesManager</a> &amp;properties_manager)</td></tr>
+<tr class="memitem:aeb2970566392bf1cf6d22557893a9f6a" id="r_aeb2970566392bf1cf6d22557893a9f6a"><td class="memTemplParams" colspan="2">template&lt;int dim, typename <a class="el" href="time__harmonic__maxwell_8h.html#a5114f84176ad5081553f88d2b5d2525e">VectorType</a> &gt; </td></tr>
+<tr class="memitem:aeb2970566392bf1cf6d22557893a9f6a"><td class="memTemplItemLeft" align="right" valign="top">double&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="postprocessing__cfd_8cc.html#aeb2970566392bf1cf6d22557893a9f6a">calculate_viscous_dissipation</a> (const DoFHandler&lt; dim &gt; &amp;dof_handler, const <a class="el" href="time__harmonic__maxwell_8h.html#a5114f84176ad5081553f88d2b5d2525e">VectorType</a> &amp;evaluation_point, const Quadrature&lt; dim &gt; &amp;quadrature_formula, const Mapping&lt; dim &gt; &amp;mapping, const <a class="el" href="classPhysicalPropertiesManager.html">PhysicalPropertiesManager</a> &amp;properties_manager)</td></tr>
 <tr class="separator:aeb2970566392bf1cf6d22557893a9f6a"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a7fb3dcb6dcbea59408d152d4b24b708b" id="r_a7fb3dcb6dcbea59408d152d4b24b708b"><td class="memItemLeft" align="right" valign="top">template double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="postprocessing__cfd_8cc.html#a7fb3dcb6dcbea59408d152d4b24b708b">calculate_viscous_dissipation&lt; 2, GlobalVectorType &gt;</a> (const DoFHandler&lt; 2 &gt; &amp;dof_handler, const <a class="el" href="vector_8h.html#a4ea4005d75c88e60bee47d4e79a13a39">GlobalVectorType</a> &amp;evaluation_point, const Quadrature&lt; 2 &gt; &amp;quadrature_formula, const Mapping&lt; 2 &gt; &amp;mapping, const <a class="el" href="classPhysicalPropertiesManager.html">PhysicalPropertiesManager</a> &amp;properties_manager)</td></tr>
 <tr class="separator:a7fb3dcb6dcbea59408d152d4b24b708b"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -318,8 +318,8 @@ Functions</h2></td></tr>
 <tr class="separator:ae2832480fe6f894a8dc6ace8f38942fb"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aa7689ff20e5c3fc08a4103574dc6ab5f" id="r_aa7689ff20e5c3fc08a4103574dc6ab5f"><td class="memItemLeft" align="right" valign="top">template double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="postprocessing__cfd_8cc.html#aa7689ff20e5c3fc08a4103574dc6ab5f">calculate_viscous_dissipation&lt; 3, LinearAlgebra::distributed::Vector&lt; double &gt; &gt;</a> (const DoFHandler&lt; 3 &gt; &amp;dof_handler, const LinearAlgebra::distributed::Vector&lt; double &gt; &amp;evaluation_point, const Quadrature&lt; 3 &gt; &amp;quadrature_formula, const Mapping&lt; 3 &gt; &amp;mapping, const <a class="el" href="classPhysicalPropertiesManager.html">PhysicalPropertiesManager</a> &amp;properties_manager)</td></tr>
 <tr class="separator:aa7689ff20e5c3fc08a4103574dc6ab5f"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a6e07b611c2791d19a53166c71c24e6cc" id="r_a6e07b611c2791d19a53166c71c24e6cc"><td class="memTemplParams" colspan="2">template&lt;int dim, typename VectorType &gt; </td></tr>
-<tr class="memitem:a6e07b611c2791d19a53166c71c24e6cc"><td class="memTemplItemLeft" align="right" valign="top">double&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="postprocessing__cfd_8cc.html#a6e07b611c2791d19a53166c71c24e6cc">calculate_kinetic_energy</a> (const DoFHandler&lt; dim &gt; &amp;dof_handler, const VectorType &amp;evaluation_point, const Quadrature&lt; dim &gt; &amp;quadrature_formula, const Mapping&lt; dim &gt; &amp;mapping)</td></tr>
+<tr class="memitem:a6e07b611c2791d19a53166c71c24e6cc" id="r_a6e07b611c2791d19a53166c71c24e6cc"><td class="memTemplParams" colspan="2">template&lt;int dim, typename <a class="el" href="time__harmonic__maxwell_8h.html#a5114f84176ad5081553f88d2b5d2525e">VectorType</a> &gt; </td></tr>
+<tr class="memitem:a6e07b611c2791d19a53166c71c24e6cc"><td class="memTemplItemLeft" align="right" valign="top">double&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="postprocessing__cfd_8cc.html#a6e07b611c2791d19a53166c71c24e6cc">calculate_kinetic_energy</a> (const DoFHandler&lt; dim &gt; &amp;dof_handler, const <a class="el" href="time__harmonic__maxwell_8h.html#a5114f84176ad5081553f88d2b5d2525e">VectorType</a> &amp;evaluation_point, const Quadrature&lt; dim &gt; &amp;quadrature_formula, const Mapping&lt; dim &gt; &amp;mapping)</td></tr>
 <tr class="separator:a6e07b611c2791d19a53166c71c24e6cc"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a2989079b8ddd1613577c5ef9ae3de795" id="r_a2989079b8ddd1613577c5ef9ae3de795"><td class="memItemLeft" align="right" valign="top">template double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="postprocessing__cfd_8cc.html#a2989079b8ddd1613577c5ef9ae3de795">calculate_kinetic_energy&lt; 2, GlobalVectorType &gt;</a> (const DoFHandler&lt; 2 &gt; &amp;dof_handler, const <a class="el" href="vector_8h.html#a4ea4005d75c88e60bee47d4e79a13a39">GlobalVectorType</a> &amp;evaluation_point, const Quadrature&lt; 2 &gt; &amp;quadrature_formula, const Mapping&lt; 2 &gt; &amp;mapping)</td></tr>
 <tr class="separator:a2989079b8ddd1613577c5ef9ae3de795"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -333,8 +333,8 @@ Functions</h2></td></tr>
 <tr class="separator:ac68df5223356846a1538897ab43f0d4c"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ae34fc735809da3269e7b5abc1535765a" id="r_ae34fc735809da3269e7b5abc1535765a"><td class="memItemLeft" align="right" valign="top">template double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="postprocessing__cfd_8cc.html#ae34fc735809da3269e7b5abc1535765a">calculate_kinetic_energy&lt; 3, LinearAlgebra::distributed::Vector&lt; double &gt; &gt;</a> (const DoFHandler&lt; 3 &gt; &amp;dof_handler, const LinearAlgebra::distributed::Vector&lt; double &gt; &amp;evaluation_point, const Quadrature&lt; 3 &gt; &amp;quadrature_formula, const Mapping&lt; 3 &gt; &amp;mapping)</td></tr>
 <tr class="separator:ae34fc735809da3269e7b5abc1535765a"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a435a5183c6ea1ba3055d9d24b1a699da" id="r_a435a5183c6ea1ba3055d9d24b1a699da"><td class="memTemplParams" colspan="2">template&lt;int dim, typename VectorType &gt; </td></tr>
-<tr class="memitem:a435a5183c6ea1ba3055d9d24b1a699da"><td class="memTemplItemLeft" align="right" valign="top">double&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="postprocessing__cfd_8cc.html#a435a5183c6ea1ba3055d9d24b1a699da">calculate_apparent_viscosity</a> (const DoFHandler&lt; dim &gt; &amp;dof_handler, const VectorType &amp;evaluation_point, const Quadrature&lt; dim &gt; &amp;quadrature_formula, const Mapping&lt; dim &gt; &amp;mapping, const <a class="el" href="classPhysicalPropertiesManager.html">PhysicalPropertiesManager</a> &amp;properties_manager)</td></tr>
+<tr class="memitem:a435a5183c6ea1ba3055d9d24b1a699da" id="r_a435a5183c6ea1ba3055d9d24b1a699da"><td class="memTemplParams" colspan="2">template&lt;int dim, typename <a class="el" href="time__harmonic__maxwell_8h.html#a5114f84176ad5081553f88d2b5d2525e">VectorType</a> &gt; </td></tr>
+<tr class="memitem:a435a5183c6ea1ba3055d9d24b1a699da"><td class="memTemplItemLeft" align="right" valign="top">double&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="postprocessing__cfd_8cc.html#a435a5183c6ea1ba3055d9d24b1a699da">calculate_apparent_viscosity</a> (const DoFHandler&lt; dim &gt; &amp;dof_handler, const <a class="el" href="time__harmonic__maxwell_8h.html#a5114f84176ad5081553f88d2b5d2525e">VectorType</a> &amp;evaluation_point, const Quadrature&lt; dim &gt; &amp;quadrature_formula, const Mapping&lt; dim &gt; &amp;mapping, const <a class="el" href="classPhysicalPropertiesManager.html">PhysicalPropertiesManager</a> &amp;properties_manager)</td></tr>
 <tr class="separator:a435a5183c6ea1ba3055d9d24b1a699da"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ab8b143e22e5ba771ff4f7af229ed8773" id="r_ab8b143e22e5ba771ff4f7af229ed8773"><td class="memItemLeft" align="right" valign="top">template double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="postprocessing__cfd_8cc.html#ab8b143e22e5ba771ff4f7af229ed8773">calculate_apparent_viscosity&lt; 2, GlobalVectorType &gt;</a> (const DoFHandler&lt; 2 &gt; &amp;dof_handler, const <a class="el" href="vector_8h.html#a4ea4005d75c88e60bee47d4e79a13a39">GlobalVectorType</a> &amp;evaluation_point, const Quadrature&lt; 2 &gt; &amp;quadrature_formula, const Mapping&lt; 2 &gt; &amp;mapping, const <a class="el" href="classPhysicalPropertiesManager.html">PhysicalPropertiesManager</a> &amp;properties_manager)</td></tr>
 <tr class="separator:ab8b143e22e5ba771ff4f7af229ed8773"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -348,8 +348,8 @@ Functions</h2></td></tr>
 <tr class="separator:ae4d9206a1407abc8efd5258903b0cc9c"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a2f192b5b1d3fe1339c90c7bc442979e7" id="r_a2f192b5b1d3fe1339c90c7bc442979e7"><td class="memItemLeft" align="right" valign="top">template double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="postprocessing__cfd_8cc.html#a2f192b5b1d3fe1339c90c7bc442979e7">calculate_apparent_viscosity&lt; 3, LinearAlgebra::distributed::Vector&lt; double &gt; &gt;</a> (const DoFHandler&lt; 3 &gt; &amp;dof_handler, const LinearAlgebra::distributed::Vector&lt; double &gt; &amp;evaluation_point, const Quadrature&lt; 3 &gt; &amp;quadrature_formula, const Mapping&lt; 3 &gt; &amp;mapping, const <a class="el" href="classPhysicalPropertiesManager.html">PhysicalPropertiesManager</a> &amp;properties_manager)</td></tr>
 <tr class="separator:a2f192b5b1d3fe1339c90c7bc442979e7"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a005fde469d4ada72cb97626d77c420a8" id="r_a005fde469d4ada72cb97626d77c420a8"><td class="memTemplParams" colspan="2">template&lt;int dim, typename VectorType &gt; </td></tr>
-<tr class="memitem:a005fde469d4ada72cb97626d77c420a8"><td class="memTemplItemLeft" align="right" valign="top">std::vector&lt; std::map&lt; types::boundary_id, Tensor&lt; 1, dim &gt; &gt; &gt;&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="postprocessing__cfd_8cc.html#a005fde469d4ada72cb97626d77c420a8">calculate_forces</a> (const DoFHandler&lt; dim &gt; &amp;dof_handler, const VectorType &amp;evaluation_point, const <a class="el" href="classPhysicalPropertiesManager.html">PhysicalPropertiesManager</a> &amp;properties_manager, const <a class="el" href="classBoundaryConditions_1_1NSBoundaryConditions.html">BoundaryConditions::NSBoundaryConditions</a>&lt; dim &gt; &amp;boundary_conditions, const Quadrature&lt; dim - 1 &gt; &amp;face_quadrature_formula, const Mapping&lt; dim &gt; &amp;mapping)</td></tr>
+<tr class="memitem:a005fde469d4ada72cb97626d77c420a8" id="r_a005fde469d4ada72cb97626d77c420a8"><td class="memTemplParams" colspan="2">template&lt;int dim, typename <a class="el" href="time__harmonic__maxwell_8h.html#a5114f84176ad5081553f88d2b5d2525e">VectorType</a> &gt; </td></tr>
+<tr class="memitem:a005fde469d4ada72cb97626d77c420a8"><td class="memTemplItemLeft" align="right" valign="top">std::vector&lt; std::map&lt; types::boundary_id, Tensor&lt; 1, dim &gt; &gt; &gt;&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="postprocessing__cfd_8cc.html#a005fde469d4ada72cb97626d77c420a8">calculate_forces</a> (const DoFHandler&lt; dim &gt; &amp;dof_handler, const <a class="el" href="time__harmonic__maxwell_8h.html#a5114f84176ad5081553f88d2b5d2525e">VectorType</a> &amp;evaluation_point, const <a class="el" href="classPhysicalPropertiesManager.html">PhysicalPropertiesManager</a> &amp;properties_manager, const <a class="el" href="classBoundaryConditions_1_1NSBoundaryConditions.html">BoundaryConditions::NSBoundaryConditions</a>&lt; dim &gt; &amp;boundary_conditions, const Quadrature&lt; dim - 1 &gt; &amp;face_quadrature_formula, const Mapping&lt; dim &gt; &amp;mapping)</td></tr>
 <tr class="separator:a005fde469d4ada72cb97626d77c420a8"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a1f5091247bbb8ab8ddc70c50286092c9" id="r_a1f5091247bbb8ab8ddc70c50286092c9"><td class="memItemLeft" align="right" valign="top">template std::vector&lt; std::map&lt; types::boundary_id, Tensor&lt; 1, 2 &gt; &gt; &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="postprocessing__cfd_8cc.html#a1f5091247bbb8ab8ddc70c50286092c9">calculate_forces&lt; 2, GlobalVectorType &gt;</a> (const DoFHandler&lt; 2 &gt; &amp;dof_handler, const <a class="el" href="vector_8h.html#a4ea4005d75c88e60bee47d4e79a13a39">GlobalVectorType</a> &amp;evaluation_point, const <a class="el" href="classPhysicalPropertiesManager.html">PhysicalPropertiesManager</a> &amp;properties_manager, const <a class="el" href="classBoundaryConditions_1_1NSBoundaryConditions.html">BoundaryConditions::NSBoundaryConditions</a>&lt; 2 &gt; &amp;boundary_conditions, const Quadrature&lt; 1 &gt; &amp;face_quadrature_formula, const Mapping&lt; 2 &gt; &amp;mapping)</td></tr>
 <tr class="separator:a1f5091247bbb8ab8ddc70c50286092c9"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -363,8 +363,8 @@ Functions</h2></td></tr>
 <tr class="separator:a3a06149ec40c36be177d3aac82530d85"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:adb88a1449cdb3acba6fa094bdb9db0e7" id="r_adb88a1449cdb3acba6fa094bdb9db0e7"><td class="memItemLeft" align="right" valign="top">template std::vector&lt; std::map&lt; types::boundary_id, Tensor&lt; 1, 3 &gt; &gt; &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="postprocessing__cfd_8cc.html#adb88a1449cdb3acba6fa094bdb9db0e7">calculate_forces&lt; 3, LinearAlgebra::distributed::Vector&lt; double &gt; &gt;</a> (const DoFHandler&lt; 3 &gt; &amp;dof_handler, const LinearAlgebra::distributed::Vector&lt; double &gt; &amp;evaluation_point, const <a class="el" href="classPhysicalPropertiesManager.html">PhysicalPropertiesManager</a> &amp;properties_manager, const <a class="el" href="classBoundaryConditions_1_1NSBoundaryConditions.html">BoundaryConditions::NSBoundaryConditions</a>&lt; 3 &gt; &amp;boundary_conditions, const Quadrature&lt; 2 &gt; &amp;face_quadrature_formula, const Mapping&lt; 3 &gt; &amp;mapping)</td></tr>
 <tr class="separator:adb88a1449cdb3acba6fa094bdb9db0e7"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ae728951e3443d452f4801efee46373e3" id="r_ae728951e3443d452f4801efee46373e3"><td class="memTemplParams" colspan="2">template&lt;int dim, typename VectorType &gt; </td></tr>
-<tr class="memitem:ae728951e3443d452f4801efee46373e3"><td class="memTemplItemLeft" align="right" valign="top">std::map&lt; types::boundary_id, Tensor&lt; 1, 3 &gt; &gt;&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="postprocessing__cfd_8cc.html#ae728951e3443d452f4801efee46373e3">calculate_torques</a> (const DoFHandler&lt; dim &gt; &amp;dof_handler, const VectorType &amp;evaluation_point, const <a class="el" href="classPhysicalPropertiesManager.html">PhysicalPropertiesManager</a> &amp;properties_manager, const <a class="el" href="classBoundaryConditions_1_1NSBoundaryConditions.html">BoundaryConditions::NSBoundaryConditions</a>&lt; dim &gt; &amp;boundary_conditions, const Quadrature&lt; dim - 1 &gt; &amp;face_quadrature_formula, const Mapping&lt; dim &gt; &amp;mapping)</td></tr>
+<tr class="memitem:ae728951e3443d452f4801efee46373e3" id="r_ae728951e3443d452f4801efee46373e3"><td class="memTemplParams" colspan="2">template&lt;int dim, typename <a class="el" href="time__harmonic__maxwell_8h.html#a5114f84176ad5081553f88d2b5d2525e">VectorType</a> &gt; </td></tr>
+<tr class="memitem:ae728951e3443d452f4801efee46373e3"><td class="memTemplItemLeft" align="right" valign="top">std::map&lt; types::boundary_id, Tensor&lt; 1, 3 &gt; &gt;&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="postprocessing__cfd_8cc.html#ae728951e3443d452f4801efee46373e3">calculate_torques</a> (const DoFHandler&lt; dim &gt; &amp;dof_handler, const <a class="el" href="time__harmonic__maxwell_8h.html#a5114f84176ad5081553f88d2b5d2525e">VectorType</a> &amp;evaluation_point, const <a class="el" href="classPhysicalPropertiesManager.html">PhysicalPropertiesManager</a> &amp;properties_manager, const <a class="el" href="classBoundaryConditions_1_1NSBoundaryConditions.html">BoundaryConditions::NSBoundaryConditions</a>&lt; dim &gt; &amp;boundary_conditions, const Quadrature&lt; dim - 1 &gt; &amp;face_quadrature_formula, const Mapping&lt; dim &gt; &amp;mapping)</td></tr>
 <tr class="separator:ae728951e3443d452f4801efee46373e3"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aa462ce0cef477194c0ce9584e471c2d0" id="r_aa462ce0cef477194c0ce9584e471c2d0"><td class="memItemLeft" align="right" valign="top">template std::map&lt; types::boundary_id, Tensor&lt; 1, 3 &gt; &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="postprocessing__cfd_8cc.html#aa462ce0cef477194c0ce9584e471c2d0">calculate_torques&lt; 2, GlobalVectorType &gt;</a> (const DoFHandler&lt; 2 &gt; &amp;dof_handler, const <a class="el" href="vector_8h.html#a4ea4005d75c88e60bee47d4e79a13a39">GlobalVectorType</a> &amp;evaluation_point, const <a class="el" href="classPhysicalPropertiesManager.html">PhysicalPropertiesManager</a> &amp;properties_manager, const <a class="el" href="classBoundaryConditions_1_1NSBoundaryConditions.html">BoundaryConditions::NSBoundaryConditions</a>&lt; 2 &gt; &amp;boundary_conditions, const Quadrature&lt; 1 &gt; &amp;face_quadrature_formula, const Mapping&lt; 2 &gt; &amp;mapping)</td></tr>
 <tr class="separator:aa462ce0cef477194c0ce9584e471c2d0"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -378,8 +378,8 @@ Functions</h2></td></tr>
 <tr class="separator:ad0f63925c44b8e3f0068e1370e89ed66"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a9fd543ce662891d994ee051526ca41dc" id="r_a9fd543ce662891d994ee051526ca41dc"><td class="memItemLeft" align="right" valign="top">template std::map&lt; types::boundary_id, Tensor&lt; 1, 3 &gt; &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="postprocessing__cfd_8cc.html#a9fd543ce662891d994ee051526ca41dc">calculate_torques&lt; 3, LinearAlgebra::distributed::Vector&lt; double &gt; &gt;</a> (const DoFHandler&lt; 3 &gt; &amp;dof_handler, const LinearAlgebra::distributed::Vector&lt; double &gt; &amp;evaluation_point, const <a class="el" href="classPhysicalPropertiesManager.html">PhysicalPropertiesManager</a> &amp;properties_manager, const <a class="el" href="classBoundaryConditions_1_1NSBoundaryConditions.html">BoundaryConditions::NSBoundaryConditions</a>&lt; 3 &gt; &amp;boundary_conditions, const Quadrature&lt; 2 &gt; &amp;face_quadrature_formula, const Mapping&lt; 3 &gt; &amp;mapping)</td></tr>
 <tr class="separator:a9fd543ce662891d994ee051526ca41dc"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a9b636835e83ecfabab925b0df0efd246" id="r_a9b636835e83ecfabab925b0df0efd246"><td class="memTemplParams" colspan="2">template&lt;int dim, typename VectorType &gt; </td></tr>
-<tr class="memitem:a9b636835e83ecfabab925b0df0efd246"><td class="memTemplItemLeft" align="right" valign="top">std::pair&lt; double, double &gt;&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="postprocessing__cfd_8cc.html#a9b636835e83ecfabab925b0df0efd246">calculate_L2_error</a> (const DoFHandler&lt; dim &gt; &amp;dof_handler, const VectorType &amp;evaluation_point, const Function&lt; dim &gt; *exact_solution, const Quadrature&lt; dim &gt; &amp;quadrature_formula, const Mapping&lt; dim &gt; &amp;mapping)</td></tr>
+<tr class="memitem:a9b636835e83ecfabab925b0df0efd246" id="r_a9b636835e83ecfabab925b0df0efd246"><td class="memTemplParams" colspan="2">template&lt;int dim, typename <a class="el" href="time__harmonic__maxwell_8h.html#a5114f84176ad5081553f88d2b5d2525e">VectorType</a> &gt; </td></tr>
+<tr class="memitem:a9b636835e83ecfabab925b0df0efd246"><td class="memTemplItemLeft" align="right" valign="top">std::pair&lt; double, double &gt;&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="postprocessing__cfd_8cc.html#a9b636835e83ecfabab925b0df0efd246">calculate_L2_error</a> (const DoFHandler&lt; dim &gt; &amp;dof_handler, const <a class="el" href="time__harmonic__maxwell_8h.html#a5114f84176ad5081553f88d2b5d2525e">VectorType</a> &amp;evaluation_point, const Function&lt; dim &gt; *exact_solution, const Quadrature&lt; dim &gt; &amp;quadrature_formula, const Mapping&lt; dim &gt; &amp;mapping)</td></tr>
 <tr class="separator:a9b636835e83ecfabab925b0df0efd246"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a6c8e76a37c0386c9dd4e48d0a15d3952" id="r_a6c8e76a37c0386c9dd4e48d0a15d3952"><td class="memItemLeft" align="right" valign="top">template std::pair&lt; double, double &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="postprocessing__cfd_8cc.html#a6c8e76a37c0386c9dd4e48d0a15d3952">calculate_L2_error</a> (const DoFHandler&lt; 2 &gt; &amp;dof_handler, const <a class="el" href="vector_8h.html#a4ea4005d75c88e60bee47d4e79a13a39">GlobalVectorType</a> &amp;present_solution, const Function&lt; 2 &gt; *l_exact_solution, const Quadrature&lt; 2 &gt; &amp;quadrature_formula, const Mapping&lt; 2 &gt; &amp;mapping)</td></tr>
 <tr class="separator:a6c8e76a37c0386c9dd4e48d0a15d3952"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -393,8 +393,8 @@ Functions</h2></td></tr>
 <tr class="separator:ad269cc55b3436fa102fe6c757c8f1d47"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a83f10877b7968107dd2c9569b0d55362" id="r_a83f10877b7968107dd2c9569b0d55362"><td class="memItemLeft" align="right" valign="top">template std::pair&lt; double, double &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="postprocessing__cfd_8cc.html#a83f10877b7968107dd2c9569b0d55362">calculate_L2_error</a> (const DoFHandler&lt; 3 &gt; &amp;dof_handler, const LinearAlgebra::distributed::Vector&lt; double &gt; &amp;present_solution, const Function&lt; 3 &gt; *l_exact_solution, const Quadrature&lt; 3 &gt; &amp;quadrature_formula, const Mapping&lt; 3 &gt; &amp;mapping)</td></tr>
 <tr class="separator:a83f10877b7968107dd2c9569b0d55362"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a6dce45dbd881bd5e831aa2c3794adfa9" id="r_a6dce45dbd881bd5e831aa2c3794adfa9"><td class="memTemplParams" colspan="2">template&lt;int dim, typename VectorType &gt; </td></tr>
-<tr class="memitem:a6dce45dbd881bd5e831aa2c3794adfa9"><td class="memTemplItemLeft" align="right" valign="top">std::pair&lt; double, double &gt;&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="postprocessing__cfd_8cc.html#a6dce45dbd881bd5e831aa2c3794adfa9">calculate_flow_rate</a> (const DoFHandler&lt; dim &gt; &amp;dof_handler, const VectorType &amp;present_solution, const unsigned int &amp;boundary_id, const Quadrature&lt; dim - 1 &gt; &amp;face_quadrature_formula, const Mapping&lt; dim &gt; &amp;mapping)</td></tr>
+<tr class="memitem:a6dce45dbd881bd5e831aa2c3794adfa9" id="r_a6dce45dbd881bd5e831aa2c3794adfa9"><td class="memTemplParams" colspan="2">template&lt;int dim, typename <a class="el" href="time__harmonic__maxwell_8h.html#a5114f84176ad5081553f88d2b5d2525e">VectorType</a> &gt; </td></tr>
+<tr class="memitem:a6dce45dbd881bd5e831aa2c3794adfa9"><td class="memTemplItemLeft" align="right" valign="top">std::pair&lt; double, double &gt;&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="postprocessing__cfd_8cc.html#a6dce45dbd881bd5e831aa2c3794adfa9">calculate_flow_rate</a> (const DoFHandler&lt; dim &gt; &amp;dof_handler, const <a class="el" href="time__harmonic__maxwell_8h.html#a5114f84176ad5081553f88d2b5d2525e">VectorType</a> &amp;present_solution, const unsigned int &amp;boundary_id, const Quadrature&lt; dim - 1 &gt; &amp;face_quadrature_formula, const Mapping&lt; dim &gt; &amp;mapping)</td></tr>
 <tr class="separator:a6dce45dbd881bd5e831aa2c3794adfa9"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aefb11b581c698596e9f8f5c801eb827c" id="r_aefb11b581c698596e9f8f5c801eb827c"><td class="memItemLeft" align="right" valign="top">template std::pair&lt; double, double &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="postprocessing__cfd_8cc.html#aefb11b581c698596e9f8f5c801eb827c">calculate_flow_rate</a> (const DoFHandler&lt; 2 &gt; &amp;dof_handler, const <a class="el" href="vector_8h.html#a4ea4005d75c88e60bee47d4e79a13a39">GlobalVectorType</a> &amp;present_solution, const unsigned int &amp;boundary_id, const Quadrature&lt; 1 &gt; &amp;face_quadrature_formula, const Mapping&lt; 2 &gt; &amp;mapping)</td></tr>
 <tr class="separator:aefb11b581c698596e9f8f5c801eb827c"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -408,8 +408,8 @@ Functions</h2></td></tr>
 <tr class="separator:a4865f599357f70f7f5e6e198190e3388"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:af5d43f282814c886a14e2de6f07990f0" id="r_af5d43f282814c886a14e2de6f07990f0"><td class="memItemLeft" align="right" valign="top">template std::pair&lt; double, double &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="postprocessing__cfd_8cc.html#af5d43f282814c886a14e2de6f07990f0">calculate_flow_rate</a> (const DoFHandler&lt; 3 &gt; &amp;dof_handler, const LinearAlgebra::distributed::Vector&lt; double &gt; &amp;present_solution, const unsigned int &amp;boundary_id, const Quadrature&lt; 2 &gt; &amp;face_quadrature_formula, const Mapping&lt; 3 &gt; &amp;mapping)</td></tr>
 <tr class="separator:af5d43f282814c886a14e2de6f07990f0"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a885519f82401f5f66cb4f0363b9715a9" id="r_a885519f82401f5f66cb4f0363b9715a9"><td class="memTemplParams" colspan="2">template&lt;int dim, typename VectorType &gt; </td></tr>
-<tr class="memitem:a885519f82401f5f66cb4f0363b9715a9"><td class="memTemplItemLeft" align="right" valign="top">double&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="postprocessing__cfd_8cc.html#a885519f82401f5f66cb4f0363b9715a9">calculate_average_velocity</a> (const DoFHandler&lt; dim &gt; &amp;dof_handler, const VectorType &amp;present_solution, const unsigned int &amp;boundary_id, const Quadrature&lt; dim - 1 &gt; &amp;face_quadrature_formula, const Mapping&lt; dim &gt; &amp;mapping)</td></tr>
+<tr class="memitem:a885519f82401f5f66cb4f0363b9715a9" id="r_a885519f82401f5f66cb4f0363b9715a9"><td class="memTemplParams" colspan="2">template&lt;int dim, typename <a class="el" href="time__harmonic__maxwell_8h.html#a5114f84176ad5081553f88d2b5d2525e">VectorType</a> &gt; </td></tr>
+<tr class="memitem:a885519f82401f5f66cb4f0363b9715a9"><td class="memTemplItemLeft" align="right" valign="top">double&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="postprocessing__cfd_8cc.html#a885519f82401f5f66cb4f0363b9715a9">calculate_average_velocity</a> (const DoFHandler&lt; dim &gt; &amp;dof_handler, const <a class="el" href="time__harmonic__maxwell_8h.html#a5114f84176ad5081553f88d2b5d2525e">VectorType</a> &amp;present_solution, const unsigned int &amp;boundary_id, const Quadrature&lt; dim - 1 &gt; &amp;face_quadrature_formula, const Mapping&lt; dim &gt; &amp;mapping)</td></tr>
 <tr class="separator:a885519f82401f5f66cb4f0363b9715a9"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:acce6650a81c6a17b8564815c2aa6c2ab" id="r_acce6650a81c6a17b8564815c2aa6c2ab"><td class="memItemLeft" align="right" valign="top">template double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="postprocessing__cfd_8cc.html#acce6650a81c6a17b8564815c2aa6c2ab">calculate_average_velocity</a> (const DoFHandler&lt; 2 &gt; &amp;dof_handler, const <a class="el" href="vector_8h.html#a4ea4005d75c88e60bee47d4e79a13a39">GlobalVectorType</a> &amp;present_solution, const unsigned int &amp;boundary_id, const Quadrature&lt; 1 &gt; &amp;face_quadrature_formula, const Mapping&lt; 2 &gt; &amp;mapping)</td></tr>
 <tr class="separator:acce6650a81c6a17b8564815c2aa6c2ab"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -423,8 +423,8 @@ Functions</h2></td></tr>
 <tr class="separator:a6860f8353292cf1462a1a2c904c2e132"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a3a7e586d61f4ae39be88f9b4c01f0368" id="r_a3a7e586d61f4ae39be88f9b4c01f0368"><td class="memItemLeft" align="right" valign="top">template double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="postprocessing__cfd_8cc.html#a3a7e586d61f4ae39be88f9b4c01f0368">calculate_average_velocity</a> (const DoFHandler&lt; 3 &gt; &amp;dof_handler, const LinearAlgebra::distributed::Vector&lt; double &gt; &amp;present_solution, const unsigned int &amp;boundary_id, const Quadrature&lt; 2 &gt; &amp;face_quadrature_formula, const Mapping&lt; 3 &gt; &amp;mapping)</td></tr>
 <tr class="separator:a3a7e586d61f4ae39be88f9b4c01f0368"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aee1fb4336881f211ecf53258f34d712e" id="r_aee1fb4336881f211ecf53258f34d712e"><td class="memTemplParams" colspan="2">template&lt;int dim, typename VectorType &gt; </td></tr>
-<tr class="memitem:aee1fb4336881f211ecf53258f34d712e"><td class="memTemplItemLeft" align="right" valign="top">double&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="postprocessing__cfd_8cc.html#aee1fb4336881f211ecf53258f34d712e">calculate_average_velocity</a> (const DoFHandler&lt; dim &gt; &amp;dof_handler, const DoFHandler&lt; dim &gt; &amp;void_fraction_dof_handler, const VectorType &amp;present_solution, const VectorType &amp;present_void_fraction_solution, const unsigned int &amp;flow_direction, const Quadrature&lt; dim &gt; &amp;quadrature_formula, const Mapping&lt; dim &gt; &amp;mapping)</td></tr>
+<tr class="memitem:aee1fb4336881f211ecf53258f34d712e" id="r_aee1fb4336881f211ecf53258f34d712e"><td class="memTemplParams" colspan="2">template&lt;int dim, typename <a class="el" href="time__harmonic__maxwell_8h.html#a5114f84176ad5081553f88d2b5d2525e">VectorType</a> &gt; </td></tr>
+<tr class="memitem:aee1fb4336881f211ecf53258f34d712e"><td class="memTemplItemLeft" align="right" valign="top">double&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="postprocessing__cfd_8cc.html#aee1fb4336881f211ecf53258f34d712e">calculate_average_velocity</a> (const DoFHandler&lt; dim &gt; &amp;dof_handler, const DoFHandler&lt; dim &gt; &amp;void_fraction_dof_handler, const <a class="el" href="time__harmonic__maxwell_8h.html#a5114f84176ad5081553f88d2b5d2525e">VectorType</a> &amp;present_solution, const <a class="el" href="time__harmonic__maxwell_8h.html#a5114f84176ad5081553f88d2b5d2525e">VectorType</a> &amp;present_void_fraction_solution, const unsigned int &amp;flow_direction, const Quadrature&lt; dim &gt; &amp;quadrature_formula, const Mapping&lt; dim &gt; &amp;mapping)</td></tr>
 <tr class="separator:aee1fb4336881f211ecf53258f34d712e"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a3e5f3d5aac24280f2ad9a4b5d9df2441" id="r_a3e5f3d5aac24280f2ad9a4b5d9df2441"><td class="memItemLeft" align="right" valign="top">template double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="postprocessing__cfd_8cc.html#a3e5f3d5aac24280f2ad9a4b5d9df2441">calculate_average_velocity</a> (const DoFHandler&lt; 2 &gt; &amp;dof_handler, const DoFHandler&lt; 2 &gt; &amp;void_fraction_dof_handler, const <a class="el" href="vector_8h.html#a4ea4005d75c88e60bee47d4e79a13a39">GlobalVectorType</a> &amp;present_solution, const <a class="el" href="vector_8h.html#a4ea4005d75c88e60bee47d4e79a13a39">GlobalVectorType</a> &amp;present_void_fraction_solution, const unsigned int &amp;flow_direction, const Quadrature&lt; 2 &gt; &amp;quadrature_formula, const Mapping&lt; 2 &gt; &amp;mapping)</td></tr>
 <tr class="separator:a3e5f3d5aac24280f2ad9a4b5d9df2441"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -442,7 +442,7 @@ Functions</h2></td></tr>
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;int dim, typename VectorType &gt; </div>
+template&lt;int dim, typename <a class="el" href="time__harmonic__maxwell_8h.html#a5114f84176ad5081553f88d2b5d2525e">VectorType</a> &gt; </div>
       <table class="memname">
         <tr>
           <td class="memname">double calculate_apparent_viscosity </td>
@@ -453,7 +453,7 @@ template&lt;int dim, typename VectorType &gt; </div>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">const VectorType &amp;&#160;</td>
+          <td class="paramtype">const <a class="el" href="time__harmonic__maxwell_8h.html#a5114f84176ad5081553f88d2b5d2525e">VectorType</a> &amp;&#160;</td>
           <td class="paramname"><em>evaluation_point</em>, </td>
         </tr>
         <tr>
@@ -1291,7 +1291,7 @@ template&lt;int dim, typename VectorType &gt; </div>
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;int dim, typename VectorType &gt; </div>
+template&lt;int dim, typename <a class="el" href="time__harmonic__maxwell_8h.html#a5114f84176ad5081553f88d2b5d2525e">VectorType</a> &gt; </div>
       <table class="memname">
         <tr>
           <td class="memname">double calculate_average_velocity </td>
@@ -1308,13 +1308,13 @@ template&lt;int dim, typename VectorType &gt; </div>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">const VectorType &amp;&#160;</td>
+          <td class="paramtype">const <a class="el" href="time__harmonic__maxwell_8h.html#a5114f84176ad5081553f88d2b5d2525e">VectorType</a> &amp;&#160;</td>
           <td class="paramname"><em>present_solution</em>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">const VectorType &amp;&#160;</td>
+          <td class="paramtype">const <a class="el" href="time__harmonic__maxwell_8h.html#a5114f84176ad5081553f88d2b5d2525e">VectorType</a> &amp;&#160;</td>
           <td class="paramname"><em>present_void_fraction_solution</em>, </td>
         </tr>
         <tr>
@@ -1370,7 +1370,7 @@ template&lt;int dim, typename VectorType &gt; </div>
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;int dim, typename VectorType &gt; </div>
+template&lt;int dim, typename <a class="el" href="time__harmonic__maxwell_8h.html#a5114f84176ad5081553f88d2b5d2525e">VectorType</a> &gt; </div>
       <table class="memname">
         <tr>
           <td class="memname">double calculate_average_velocity </td>
@@ -1381,7 +1381,7 @@ template&lt;int dim, typename VectorType &gt; </div>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">const VectorType &amp;&#160;</td>
+          <td class="paramtype">const <a class="el" href="time__harmonic__maxwell_8h.html#a5114f84176ad5081553f88d2b5d2525e">VectorType</a> &amp;&#160;</td>
           <td class="paramname"><em>present_solution</em>, </td>
         </tr>
         <tr>
@@ -1434,7 +1434,7 @@ template&lt;int dim, typename VectorType &gt; </div>
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;int dim, typename VectorType &gt; </div>
+template&lt;int dim, typename <a class="el" href="time__harmonic__maxwell_8h.html#a5114f84176ad5081553f88d2b5d2525e">VectorType</a> &gt; </div>
       <table class="memname">
         <tr>
           <td class="memname">double calculate_CFL </td>
@@ -1445,7 +1445,7 @@ template&lt;int dim, typename VectorType &gt; </div>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">const VectorType &amp;&#160;</td>
+          <td class="paramtype">const <a class="el" href="time__harmonic__maxwell_8h.html#a5114f84176ad5081553f88d2b5d2525e">VectorType</a> &amp;&#160;</td>
           <td class="paramname"><em>evaluation_point</em>, </td>
         </tr>
         <tr>
@@ -1774,7 +1774,7 @@ template&lt;int dim, typename VectorType &gt; </div>
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;int dim, typename VectorType &gt; </div>
+template&lt;int dim, typename <a class="el" href="time__harmonic__maxwell_8h.html#a5114f84176ad5081553f88d2b5d2525e">VectorType</a> &gt; </div>
       <table class="memname">
         <tr>
           <td class="memname">double calculate_enstrophy </td>
@@ -1785,7 +1785,7 @@ template&lt;int dim, typename VectorType &gt; </div>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">const VectorType &amp;&#160;</td>
+          <td class="paramtype">const <a class="el" href="time__harmonic__maxwell_8h.html#a5114f84176ad5081553f88d2b5d2525e">VectorType</a> &amp;&#160;</td>
           <td class="paramname"><em>evaluation_point</em>, </td>
         </tr>
         <tr>
@@ -2346,7 +2346,7 @@ template&lt;int dim, typename VectorType &gt; </div>
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;int dim, typename VectorType &gt; </div>
+template&lt;int dim, typename <a class="el" href="time__harmonic__maxwell_8h.html#a5114f84176ad5081553f88d2b5d2525e">VectorType</a> &gt; </div>
       <table class="memname">
         <tr>
           <td class="memname">std::pair&lt; double, double &gt; calculate_flow_rate </td>
@@ -2357,7 +2357,7 @@ template&lt;int dim, typename VectorType &gt; </div>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">const VectorType &amp;&#160;</td>
+          <td class="paramtype">const <a class="el" href="time__harmonic__maxwell_8h.html#a5114f84176ad5081553f88d2b5d2525e">VectorType</a> &amp;&#160;</td>
           <td class="paramname"><em>present_solution</em>, </td>
         </tr>
         <tr>
@@ -2408,7 +2408,7 @@ template&lt;int dim, typename VectorType &gt; </div>
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;int dim, typename VectorType &gt; </div>
+template&lt;int dim, typename <a class="el" href="time__harmonic__maxwell_8h.html#a5114f84176ad5081553f88d2b5d2525e">VectorType</a> &gt; </div>
       <table class="memname">
         <tr>
           <td class="memname">std::vector&lt; std::map&lt; types::boundary_id, Tensor&lt; 1, dim &gt; &gt; &gt; calculate_forces </td>
@@ -2419,7 +2419,7 @@ template&lt;int dim, typename VectorType &gt; </div>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">const VectorType &amp;&#160;</td>
+          <td class="paramtype">const <a class="el" href="time__harmonic__maxwell_8h.html#a5114f84176ad5081553f88d2b5d2525e">VectorType</a> &amp;&#160;</td>
           <td class="paramname"><em>evaluation_point</em>, </td>
         </tr>
         <tr>
@@ -2470,7 +2470,7 @@ template&lt;int dim, typename VectorType &gt; </div>
 
 <p class="definition">Definition at line <a class="el" href="postprocessing__cfd_8cc_source.html#l00882">882</a> of file <a class="el" href="postprocessing__cfd_8cc_source.html">postprocessing_cfd.cc</a>.</p>
 
-<p class="reference">References <a class="el" href="rheological__model_8h_source.html#l00690">calculate_shear_rate_magnitude()</a>, <a class="el" href="physical__properties__manager_8h_source.html#l00141">PhysicalPropertiesManager::get_rheology()</a>, <a class="el" href="physical__property__model_8h_source.html#l00043">pressure</a>, <a class="el" href="physical__property__model_8h_source.html#l00039">shear_rate</a>, and <a class="el" href="boundary__conditions_8h_source.html#l00096">BoundaryConditions::BoundaryConditions::type</a>.</p>
+<p class="reference">References <a class="el" href="rheological__model_8h_source.html#l00690">calculate_shear_rate_magnitude()</a>, <a class="el" href="physical__properties__manager_8h_source.html#l00141">PhysicalPropertiesManager::get_rheology()</a>, <a class="el" href="physical__property__model_8h_source.html#l00043">pressure</a>, <a class="el" href="physical__property__model_8h_source.html#l00039">shear_rate</a>, and <a class="el" href="boundary__conditions_8h_source.html#l00109">BoundaryConditions::BoundaryConditions::type</a>.</p>
 
 </div>
 </div>
@@ -2792,7 +2792,7 @@ template&lt;int dim, typename VectorType &gt; </div>
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;int dim, typename VectorType &gt; </div>
+template&lt;int dim, typename <a class="el" href="time__harmonic__maxwell_8h.html#a5114f84176ad5081553f88d2b5d2525e">VectorType</a> &gt; </div>
       <table class="memname">
         <tr>
           <td class="memname">double calculate_kinetic_energy </td>
@@ -2803,7 +2803,7 @@ template&lt;int dim, typename VectorType &gt; </div>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">const VectorType &amp;&#160;</td>
+          <td class="paramtype">const <a class="el" href="time__harmonic__maxwell_8h.html#a5114f84176ad5081553f88d2b5d2525e">VectorType</a> &amp;&#160;</td>
           <td class="paramname"><em>evaluation_point</em>, </td>
         </tr>
         <tr>
@@ -3364,7 +3364,7 @@ template&lt;int dim, typename VectorType &gt; </div>
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;int dim, typename VectorType &gt; </div>
+template&lt;int dim, typename <a class="el" href="time__harmonic__maxwell_8h.html#a5114f84176ad5081553f88d2b5d2525e">VectorType</a> &gt; </div>
       <table class="memname">
         <tr>
           <td class="memname">std::pair&lt; double, double &gt; calculate_L2_error </td>
@@ -3375,7 +3375,7 @@ template&lt;int dim, typename VectorType &gt; </div>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">const VectorType &amp;&#160;</td>
+          <td class="paramtype">const <a class="el" href="time__harmonic__maxwell_8h.html#a5114f84176ad5081553f88d2b5d2525e">VectorType</a> &amp;&#160;</td>
           <td class="paramname"><em>evaluation_point</em>, </td>
         </tr>
         <tr>
@@ -3429,7 +3429,7 @@ template&lt;int dim, typename VectorType &gt; </div>
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;int dim, typename VectorType &gt; </div>
+template&lt;int dim, typename <a class="el" href="time__harmonic__maxwell_8h.html#a5114f84176ad5081553f88d2b5d2525e">VectorType</a> &gt; </div>
       <table class="memname">
         <tr>
           <td class="memname">std::pair&lt; double, double &gt; calculate_pressure_drop </td>
@@ -3446,7 +3446,7 @@ template&lt;int dim, typename VectorType &gt; </div>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">const VectorType &amp;&#160;</td>
+          <td class="paramtype">const <a class="el" href="time__harmonic__maxwell_8h.html#a5114f84176ad5081553f88d2b5d2525e">VectorType</a> &amp;&#160;</td>
           <td class="paramname"><em>evaluation_point</em>, </td>
         </tr>
         <tr>
@@ -3856,7 +3856,7 @@ template&lt;int dim, typename VectorType &gt; </div>
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;int dim, typename VectorType &gt; </div>
+template&lt;int dim, typename <a class="el" href="time__harmonic__maxwell_8h.html#a5114f84176ad5081553f88d2b5d2525e">VectorType</a> &gt; </div>
       <table class="memname">
         <tr>
           <td class="memname">double calculate_pressure_power </td>
@@ -3867,7 +3867,7 @@ template&lt;int dim, typename VectorType &gt; </div>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">const VectorType &amp;&#160;</td>
+          <td class="paramtype">const <a class="el" href="time__harmonic__maxwell_8h.html#a5114f84176ad5081553f88d2b5d2525e">VectorType</a> &amp;&#160;</td>
           <td class="paramname"><em>evaluation_point</em>, </td>
         </tr>
         <tr>
@@ -4154,7 +4154,7 @@ template&lt;int dim, typename VectorType &gt; </div>
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;int dim, typename VectorType &gt; </div>
+template&lt;int dim, typename <a class="el" href="time__harmonic__maxwell_8h.html#a5114f84176ad5081553f88d2b5d2525e">VectorType</a> &gt; </div>
       <table class="memname">
         <tr>
           <td class="memname">std::map&lt; types::boundary_id, Tensor&lt; 1, 3 &gt; &gt; calculate_torques </td>
@@ -4165,7 +4165,7 @@ template&lt;int dim, typename VectorType &gt; </div>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">const VectorType &amp;&#160;</td>
+          <td class="paramtype">const <a class="el" href="time__harmonic__maxwell_8h.html#a5114f84176ad5081553f88d2b5d2525e">VectorType</a> &amp;&#160;</td>
           <td class="paramname"><em>evaluation_point</em>, </td>
         </tr>
         <tr>
@@ -4216,7 +4216,7 @@ template&lt;int dim, typename VectorType &gt; </div>
 
 <p class="definition">Definition at line <a class="el" href="postprocessing__cfd_8cc_source.html#l01049">1049</a> of file <a class="el" href="postprocessing__cfd_8cc_source.html">postprocessing_cfd.cc</a>.</p>
 
-<p class="reference">References <a class="el" href="rheological__model_8h_source.html#l00690">calculate_shear_rate_magnitude()</a>, <a class="el" href="physical__properties__manager_8h_source.html#l00141">PhysicalPropertiesManager::get_rheology()</a>, <a class="el" href="boundary__conditions_8h_source.html#l00168">BoundaryConditions::NSBoundaryConditions&lt; dim &gt;::navier_stokes_functions</a>, <a class="el" href="physical__property__model_8h_source.html#l00043">pressure</a>, <a class="el" href="physical__property__model_8h_source.html#l00039">shear_rate</a>, and <a class="el" href="boundary__conditions_8h_source.html#l00096">BoundaryConditions::BoundaryConditions::type</a>.</p>
+<p class="reference">References <a class="el" href="rheological__model_8h_source.html#l00690">calculate_shear_rate_magnitude()</a>, <a class="el" href="physical__properties__manager_8h_source.html#l00141">PhysicalPropertiesManager::get_rheology()</a>, <a class="el" href="boundary__conditions_8h_source.html#l00207">BoundaryConditions::NSBoundaryConditions&lt; dim &gt;::navier_stokes_functions</a>, <a class="el" href="physical__property__model_8h_source.html#l00043">pressure</a>, <a class="el" href="physical__property__model_8h_source.html#l00039">shear_rate</a>, and <a class="el" href="boundary__conditions_8h_source.html#l00109">BoundaryConditions::BoundaryConditions::type</a>.</p>
 
 </div>
 </div>
@@ -4538,7 +4538,7 @@ template&lt;int dim, typename VectorType &gt; </div>
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;int dim, typename VectorType &gt; </div>
+template&lt;int dim, typename <a class="el" href="time__harmonic__maxwell_8h.html#a5114f84176ad5081553f88d2b5d2525e">VectorType</a> &gt; </div>
       <table class="memname">
         <tr>
           <td class="memname">double calculate_viscous_dissipation </td>
@@ -4549,7 +4549,7 @@ template&lt;int dim, typename VectorType &gt; </div>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">const VectorType &amp;&#160;</td>
+          <td class="paramtype">const <a class="el" href="time__harmonic__maxwell_8h.html#a5114f84176ad5081553f88d2b5d2525e">VectorType</a> &amp;&#160;</td>
           <td class="paramname"><em>evaluation_point</em>, </td>
         </tr>
         <tr>

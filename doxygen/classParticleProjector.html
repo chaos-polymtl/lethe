@@ -116,8 +116,8 @@ Public Member Functions</h2></td></tr>
 <tr class="separator:a33331968e0849b6ece00173b6196b34f"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a5271694c3d91b7b4393b0c6b385c7240" id="r_a5271694c3d91b7b4393b0c6b385c7240"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classParticleProjector.html#a5271694c3d91b7b4393b0c6b385c7240">calculate_void_fraction</a> (const double time)</td></tr>
 <tr class="separator:a5271694c3d91b7b4393b0c6b385c7240"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a54c5bb90644697d463f589d0c2081290" id="r_a54c5bb90644697d463f589d0c2081290"><td class="memTemplParams" colspan="2">template&lt;typename VectorType &gt; </td></tr>
-<tr class="memitem:a54c5bb90644697d463f589d0c2081290"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classParticleProjector.html#a54c5bb90644697d463f589d0c2081290">calculate_particle_fluid_forces_projection</a> (const <a class="el" href="structParameters_1_1CFDDEM.html">Parameters::CFDDEM</a> &amp;cfd_dem_parameters, DoFHandler&lt; dim &gt; &amp;fluid_dof_handler, const VectorType &amp;present_velocity_pressure_solution, const std::vector&lt; VectorType &gt; &amp;previous_velocity_pressure_solution, const Tensor&lt; 1, 3 &gt; &amp;gravity, <a class="el" href="classNavierStokesScratchData.html">NavierStokesScratchData</a>&lt; dim &gt; scratch_data)</td></tr>
+<tr class="memitem:a54c5bb90644697d463f589d0c2081290" id="r_a54c5bb90644697d463f589d0c2081290"><td class="memTemplParams" colspan="2">template&lt;typename <a class="el" href="time__harmonic__maxwell_8h.html#a5114f84176ad5081553f88d2b5d2525e">VectorType</a> &gt; </td></tr>
+<tr class="memitem:a54c5bb90644697d463f589d0c2081290"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classParticleProjector.html#a54c5bb90644697d463f589d0c2081290">calculate_particle_fluid_forces_projection</a> (const <a class="el" href="structParameters_1_1CFDDEM.html">Parameters::CFDDEM</a> &amp;cfd_dem_parameters, DoFHandler&lt; dim &gt; &amp;fluid_dof_handler, const <a class="el" href="time__harmonic__maxwell_8h.html#a5114f84176ad5081553f88d2b5d2525e">VectorType</a> &amp;present_velocity_pressure_solution, const std::vector&lt; <a class="el" href="time__harmonic__maxwell_8h.html#a5114f84176ad5081553f88d2b5d2525e">VectorType</a> &gt; &amp;previous_velocity_pressure_solution, const Tensor&lt; 1, 3 &gt; &amp;gravity, <a class="el" href="classNavierStokesScratchData.html">NavierStokesScratchData</a>&lt; dim &gt; scratch_data)</td></tr>
 <tr class="separator:a54c5bb90644697d463f589d0c2081290"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ad0eb5a936e34fbc45a07690030322689" id="r_ad0eb5a936e34fbc45a07690030322689"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classParticleProjector.html#ad0eb5a936e34fbc45a07690030322689">solve</a> () override</td></tr>
 <tr class="separator:ad0eb5a936e34fbc45a07690030322689"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -465,7 +465,7 @@ template&lt;int dim&gt; </div>
 <div class="memtemplate">
 template&lt;int dim&gt; </div>
 <div class="memtemplate">
-template&lt;typename VectorType &gt; </div>
+template&lt;typename <a class="el" href="time__harmonic__maxwell_8h.html#a5114f84176ad5081553f88d2b5d2525e">VectorType</a> &gt; </div>
       <table class="memname">
         <tr>
           <td class="memname">template void <a class="el" href="classParticleProjector.html">ParticleProjector</a>&lt; dim &gt;::calculate_particle_fluid_forces_projection </td>
@@ -482,13 +482,13 @@ template&lt;typename VectorType &gt; </div>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">const VectorType &amp;&#160;</td>
+          <td class="paramtype">const <a class="el" href="time__harmonic__maxwell_8h.html#a5114f84176ad5081553f88d2b5d2525e">VectorType</a> &amp;&#160;</td>
           <td class="paramname"><em>present_velocity_pressure_solution</em>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">const std::vector&lt; VectorType &gt; &amp;&#160;</td>
+          <td class="paramtype">const std::vector&lt; <a class="el" href="time__harmonic__maxwell_8h.html#a5114f84176ad5081553f88d2b5d2525e">VectorType</a> &gt; &amp;&#160;</td>
           <td class="paramname"><em>previous_velocity_pressure_solution</em>, </td>
         </tr>
         <tr>

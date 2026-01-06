@@ -206,7 +206,7 @@ $(document).ready(function() { init_codefold(0); });
 <div class="line"><a id="l00108" name="l00108"></a><span class="lineno">  108</span><span class="comment">   */</span></div>
 <div class="line"><a id="l00109" name="l00109"></a><span class="lineno">  109</span>  <span class="keyword">virtual</span> <span class="keywordtype">void</span></div>
 <div class="line"><a id="l00110" name="l00110"></a><span class="lineno">  110</span>  <a class="code hl_function" href="classVANSOperator.html#ae0ee413bc626c3f851ce39f446245a2b">evaluate_non_linear_term_and_calculate_tau</a>(</div>
-<div class="line"><a id="l00111" name="l00111"></a><span class="lineno">  111</span>    <span class="keyword">const</span> <a class="code hl_typedef" href="classVANSOperator.html#a29b82b8585005408aeb7f12a2964252e">VectorType</a> &amp;newton_step) <span class="keyword">override</span>;</div>
+<div class="line"><a id="l00111" name="l00111"></a><span class="lineno">  111</span>    <span class="keyword">const</span> <a class="code hl_typedef" href="time__harmonic__maxwell_8h.html#a5114f84176ad5081553f88d2b5d2525e">VectorType</a> &amp;newton_step) <span class="keyword">override</span>;</div>
 <div class="line"><a id="l00112" name="l00112"></a><span class="lineno">  112</span><span class="comment"></span> </div>
 <div class="line"><a id="l00113" name="l00113"></a><span class="lineno">  113</span><span class="comment">  /**</span></div>
 <div class="line"><a id="l00114" name="l00114"></a><span class="lineno">  114</span><span class="comment">   * @brief Perform cell integral on a cell batch without gathering and scattering</span></div>
@@ -232,8 +232,8 @@ $(document).ready(function() { init_codefold(0); });
 <div class="line"><a id="l00134" name="l00134"></a><span class="lineno">  134</span>  <span class="keywordtype">void</span></div>
 <div class="line"><a id="l00135" name="l00135"></a><span class="lineno">  135</span>  <a class="code hl_function" href="classVANSOperator.html#a06c1d0c13bedb859725b5f0b74e988f0">local_evaluate_residual</a>(</div>
 <div class="line"><a id="l00136" name="l00136"></a><span class="lineno">  136</span>    <span class="keyword">const</span> MatrixFree&lt;dim, number&gt;               &amp;<a class="code hl_variable" href="classNavierStokesOperatorBase.html#affbf806be564c4ec70c6d71a28026e91">matrix_free</a>,</div>
-<div class="line"><a id="l00137" name="l00137"></a><span class="lineno">  137</span>    <a class="code hl_typedef" href="classVANSOperator.html#a29b82b8585005408aeb7f12a2964252e">VectorType</a>                                  &amp;dst,</div>
-<div class="line"><a id="l00138" name="l00138"></a><span class="lineno">  138</span>    <span class="keyword">const</span> <a class="code hl_typedef" href="classVANSOperator.html#a29b82b8585005408aeb7f12a2964252e">VectorType</a>                            &amp;src,</div>
+<div class="line"><a id="l00137" name="l00137"></a><span class="lineno">  137</span>    <a class="code hl_typedef" href="time__harmonic__maxwell_8h.html#a5114f84176ad5081553f88d2b5d2525e">VectorType</a>                                  &amp;dst,</div>
+<div class="line"><a id="l00138" name="l00138"></a><span class="lineno">  138</span>    <span class="keyword">const</span> <a class="code hl_typedef" href="time__harmonic__maxwell_8h.html#a5114f84176ad5081553f88d2b5d2525e">VectorType</a>                            &amp;src,</div>
 <div class="line"><a id="l00139" name="l00139"></a><span class="lineno">  139</span>    <span class="keyword">const</span> std::pair&lt;unsigned int, unsigned int&gt; &amp;range) <span class="keyword">const override</span>;</div>
 <div class="line"><a id="l00140" name="l00140"></a><span class="lineno">  140</span><span class="comment"></span> </div>
 <div class="line"><a id="l00141" name="l00141"></a><span class="lineno">  141</span><span class="comment">  /// Table with correct alignment for vectorization to store the values of the</span></div>
@@ -306,6 +306,7 @@ $(document).ready(function() { init_codefold(0); });
 <div class="ttc" id="aparticle__projector_8h_html"><div class="ttname"><a href="particle__projector_8h.html">particle_projector.h</a></div></div>
 <div class="ttc" id="astructParameters_1_1CFDDEM_html"><div class="ttname"><a href="structParameters_1_1CFDDEM.html">Parameters::CFDDEM</a></div><div class="ttdef"><b>Definition</b> <a href="parameters__cfd__dem_8h_source.html#l00128">parameters_cfd_dem.h:129</a></div></div>
 <div class="ttc" id="astructParameters_1_1CFDDEM_html_abc50ccf686c6f1054383d3e3a432b2d1"><div class="ttname"><a href="structParameters_1_1CFDDEM.html#abc50ccf686c6f1054383d3e3a432b2d1">Parameters::CFDDEM::vans_model</a></div><div class="ttdeci">VANSModel vans_model</div><div class="ttdef"><b>Definition</b> <a href="parameters__cfd__dem_8h_source.html#l00133">parameters_cfd_dem.h:133</a></div></div>
+<div class="ttc" id="atime__harmonic__maxwell_8h_html_a5114f84176ad5081553f88d2b5d2525e"><div class="ttname"><a href="time__harmonic__maxwell_8h.html#a5114f84176ad5081553f88d2b5d2525e">VectorType</a></div><div class="ttdeci">GlobalVectorType VectorType</div><div class="ttdoc">TODO until completion of the auxiliary physics :</div><div class="ttdef"><b>Definition</b> <a href="time__harmonic__maxwell_8h_source.html#l00115">time_harmonic_maxwell.h:115</a></div></div>
 </div><!-- fragment --></div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>

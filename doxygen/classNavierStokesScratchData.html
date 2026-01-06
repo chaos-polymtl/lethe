@@ -109,8 +109,8 @@ Public Member Functions</h2></td></tr>
 <tr class="separator:a05a68c1d47ea11eeea610580e93f1d0e"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ad98b8bde0f425d5269cde4132d5cdfd3" id="r_ad98b8bde0f425d5269cde4132d5cdfd3"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classNavierStokesScratchData.html#ad98b8bde0f425d5269cde4132d5cdfd3">allocate</a> () override</td></tr>
 <tr class="separator:ad98b8bde0f425d5269cde4132d5cdfd3"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a991574ac5b97689773fd0108eeab24a0" id="r_a991574ac5b97689773fd0108eeab24a0"><td class="memTemplParams" colspan="2">template&lt;typename VectorType &gt; </td></tr>
-<tr class="memitem:a991574ac5b97689773fd0108eeab24a0"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classNavierStokesScratchData.html#a991574ac5b97689773fd0108eeab24a0">reinit</a> (const typename DoFHandler&lt; dim &gt;::active_cell_iterator &amp;cell, const VectorType &amp;current_solution, const std::vector&lt; VectorType &gt; &amp;previous_solutions, const VectorType &amp;sum_over_previous_stages, std::shared_ptr&lt; Function&lt; dim &gt; &gt; forcing_function, Tensor&lt; 1, dim &gt; <a class="el" href="classNavierStokesScratchData.html#aefffdd294c642100ea21ba30aea5d185">beta_force</a>, const double <a class="el" href="classNavierStokesScratchData.html#a24846172d49e366a6d0fed30df1213fd">pressure_scaling_factor</a>)</td></tr>
+<tr class="memitem:a991574ac5b97689773fd0108eeab24a0" id="r_a991574ac5b97689773fd0108eeab24a0"><td class="memTemplParams" colspan="2">template&lt;typename <a class="el" href="time__harmonic__maxwell_8h.html#a5114f84176ad5081553f88d2b5d2525e">VectorType</a> &gt; </td></tr>
+<tr class="memitem:a991574ac5b97689773fd0108eeab24a0"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classNavierStokesScratchData.html#a991574ac5b97689773fd0108eeab24a0">reinit</a> (const typename DoFHandler&lt; dim &gt;::active_cell_iterator &amp;cell, const <a class="el" href="time__harmonic__maxwell_8h.html#a5114f84176ad5081553f88d2b5d2525e">VectorType</a> &amp;current_solution, const std::vector&lt; <a class="el" href="time__harmonic__maxwell_8h.html#a5114f84176ad5081553f88d2b5d2525e">VectorType</a> &gt; &amp;previous_solutions, const <a class="el" href="time__harmonic__maxwell_8h.html#a5114f84176ad5081553f88d2b5d2525e">VectorType</a> &amp;sum_over_previous_stages, std::shared_ptr&lt; Function&lt; dim &gt; &gt; forcing_function, Tensor&lt; 1, dim &gt; <a class="el" href="classNavierStokesScratchData.html#aefffdd294c642100ea21ba30aea5d185">beta_force</a>, const double <a class="el" href="classNavierStokesScratchData.html#a24846172d49e366a6d0fed30df1213fd">pressure_scaling_factor</a>)</td></tr>
 <tr class="separator:a991574ac5b97689773fd0108eeab24a0"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aa3ac2a1e98dd07b62ee49f808642ce09" id="r_aa3ac2a1e98dd07b62ee49f808642ce09"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classNavierStokesScratchData.html#aa3ac2a1e98dd07b62ee49f808642ce09">enable_vof</a> (const FiniteElement&lt; dim &gt; &amp;fe, const Quadrature&lt; dim &gt; &amp;quadrature, const Mapping&lt; dim &gt; &amp;mapping, const <a class="el" href="structParameters_1_1VOF__PhaseFilter.html">Parameters::VOF_PhaseFilter</a> &amp;phase_filter_parameters)</td></tr>
 <tr class="separator:aa3ac2a1e98dd07b62ee49f808642ce09"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -120,21 +120,21 @@ Public Member Functions</h2></td></tr>
 <tr class="separator:a6937a49938e44bf91ff473c99e176561"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a9f3a9b09303fb38071eba70e6392dc0c" id="r_a9f3a9b09303fb38071eba70e6392dc0c"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classNavierStokesScratchData.html#a9f3a9b09303fb38071eba70e6392dc0c">enable_curvature</a> (const FiniteElement&lt; dim &gt; &amp;fe_curvature, const Quadrature&lt; dim &gt; &amp;quadrature, const Mapping&lt; dim &gt; &amp;mapping)</td></tr>
 <tr class="separator:a9f3a9b09303fb38071eba70e6392dc0c"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ae83e521a115865e9bec668fc26be1e49" id="r_ae83e521a115865e9bec668fc26be1e49"><td class="memTemplParams" colspan="2">template&lt;typename VectorType &gt; </td></tr>
-<tr class="memitem:ae83e521a115865e9bec668fc26be1e49"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classNavierStokesScratchData.html#ae83e521a115865e9bec668fc26be1e49">reinit_vof</a> (const typename DoFHandler&lt; dim &gt;::active_cell_iterator &amp;cell, const VectorType &amp;current_solution, const VectorType &amp;current_filtered_solution, const std::vector&lt; VectorType &gt; &amp;previous_solutions)</td></tr>
+<tr class="memitem:ae83e521a115865e9bec668fc26be1e49" id="r_ae83e521a115865e9bec668fc26be1e49"><td class="memTemplParams" colspan="2">template&lt;typename <a class="el" href="time__harmonic__maxwell_8h.html#a5114f84176ad5081553f88d2b5d2525e">VectorType</a> &gt; </td></tr>
+<tr class="memitem:ae83e521a115865e9bec668fc26be1e49"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classNavierStokesScratchData.html#ae83e521a115865e9bec668fc26be1e49">reinit_vof</a> (const typename DoFHandler&lt; dim &gt;::active_cell_iterator &amp;cell, const <a class="el" href="time__harmonic__maxwell_8h.html#a5114f84176ad5081553f88d2b5d2525e">VectorType</a> &amp;current_solution, const <a class="el" href="time__harmonic__maxwell_8h.html#a5114f84176ad5081553f88d2b5d2525e">VectorType</a> &amp;current_filtered_solution, const std::vector&lt; <a class="el" href="time__harmonic__maxwell_8h.html#a5114f84176ad5081553f88d2b5d2525e">VectorType</a> &gt; &amp;previous_solutions)</td></tr>
 <tr class="separator:ae83e521a115865e9bec668fc26be1e49"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a0e506238dac667b6c23647eb1b237120" id="r_a0e506238dac667b6c23647eb1b237120"><td class="memTemplParams" colspan="2">template&lt;typename VectorType &gt; </td></tr>
-<tr class="memitem:a0e506238dac667b6c23647eb1b237120"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classNavierStokesScratchData.html#a0e506238dac667b6c23647eb1b237120">reinit_projected_phase_fraction_gradient</a> (const typename DoFHandler&lt; dim &gt;::active_cell_iterator &amp;projected_phase_fraction_gradient_cell, const VectorType &amp;current_projected_phase_fraction_gradient_solution)</td></tr>
+<tr class="memitem:a0e506238dac667b6c23647eb1b237120" id="r_a0e506238dac667b6c23647eb1b237120"><td class="memTemplParams" colspan="2">template&lt;typename <a class="el" href="time__harmonic__maxwell_8h.html#a5114f84176ad5081553f88d2b5d2525e">VectorType</a> &gt; </td></tr>
+<tr class="memitem:a0e506238dac667b6c23647eb1b237120"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classNavierStokesScratchData.html#a0e506238dac667b6c23647eb1b237120">reinit_projected_phase_fraction_gradient</a> (const typename DoFHandler&lt; dim &gt;::active_cell_iterator &amp;projected_phase_fraction_gradient_cell, const <a class="el" href="time__harmonic__maxwell_8h.html#a5114f84176ad5081553f88d2b5d2525e">VectorType</a> &amp;current_projected_phase_fraction_gradient_solution)</td></tr>
 <tr class="separator:a0e506238dac667b6c23647eb1b237120"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ada4d466d38ae48bee70c5b562e4a74af" id="r_ada4d466d38ae48bee70c5b562e4a74af"><td class="memTemplParams" colspan="2">template&lt;typename VectorType &gt; </td></tr>
-<tr class="memitem:ada4d466d38ae48bee70c5b562e4a74af"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classNavierStokesScratchData.html#ada4d466d38ae48bee70c5b562e4a74af">reinit_curvature</a> (const typename DoFHandler&lt; dim &gt;::active_cell_iterator &amp;curvature_cell, const VectorType &amp;current_curvature_solution)</td></tr>
+<tr class="memitem:ada4d466d38ae48bee70c5b562e4a74af" id="r_ada4d466d38ae48bee70c5b562e4a74af"><td class="memTemplParams" colspan="2">template&lt;typename <a class="el" href="time__harmonic__maxwell_8h.html#a5114f84176ad5081553f88d2b5d2525e">VectorType</a> &gt; </td></tr>
+<tr class="memitem:ada4d466d38ae48bee70c5b562e4a74af"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classNavierStokesScratchData.html#ada4d466d38ae48bee70c5b562e4a74af">reinit_curvature</a> (const typename DoFHandler&lt; dim &gt;::active_cell_iterator &amp;curvature_cell, const <a class="el" href="time__harmonic__maxwell_8h.html#a5114f84176ad5081553f88d2b5d2525e">VectorType</a> &amp;current_curvature_solution)</td></tr>
 <tr class="separator:ada4d466d38ae48bee70c5b562e4a74af"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a2c271b97942ba7a74d7f4e9e0c545b6b" id="r_a2c271b97942ba7a74d7f4e9e0c545b6b"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classNavierStokesScratchData.html#a2c271b97942ba7a74d7f4e9e0c545b6b">enable_void_fraction</a> (const FiniteElement&lt; dim &gt; &amp;fe, const Quadrature&lt; dim &gt; &amp;quadrature, const Mapping&lt; dim &gt; &amp;mapping)</td></tr>
 <tr class="separator:a2c271b97942ba7a74d7f4e9e0c545b6b"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ae2a3ed127e245590945df2e30f5fa331" id="r_ae2a3ed127e245590945df2e30f5fa331"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classNavierStokesScratchData.html#ae2a3ed127e245590945df2e30f5fa331">enable_particle_field_projection</a> (const Quadrature&lt; dim &gt; &amp;quadrature, const Mapping&lt; dim &gt; &amp;mapping, const FiniteElement&lt; dim &gt; &amp;fe_particle_drag_proj, const FiniteElement&lt; dim &gt; &amp;fe_particle_two_way_coupling_force_proj, const FiniteElement&lt; dim &gt; &amp;fe_particle_velocity_proj, const FiniteElement&lt; dim &gt; &amp;fe_particle_momentum_transfer_coefficient)</td></tr>
 <tr class="separator:ae2a3ed127e245590945df2e30f5fa331"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a59cf6c71f993b535281774fb63838cbd" id="r_a59cf6c71f993b535281774fb63838cbd"><td class="memTemplParams" colspan="2">template&lt;typename VectorType &gt; </td></tr>
-<tr class="memitem:a59cf6c71f993b535281774fb63838cbd"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classNavierStokesScratchData.html#a59cf6c71f993b535281774fb63838cbd">reinit_void_fraction</a> (const typename DoFHandler&lt; dim &gt;::active_cell_iterator &amp;cell, const VectorType &amp;current_solution, const std::vector&lt; VectorType &gt; &amp;previous_solutions)</td></tr>
+<tr class="memitem:a59cf6c71f993b535281774fb63838cbd" id="r_a59cf6c71f993b535281774fb63838cbd"><td class="memTemplParams" colspan="2">template&lt;typename <a class="el" href="time__harmonic__maxwell_8h.html#a5114f84176ad5081553f88d2b5d2525e">VectorType</a> &gt; </td></tr>
+<tr class="memitem:a59cf6c71f993b535281774fb63838cbd"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classNavierStokesScratchData.html#a59cf6c71f993b535281774fb63838cbd">reinit_void_fraction</a> (const typename DoFHandler&lt; dim &gt;::active_cell_iterator &amp;cell, const <a class="el" href="time__harmonic__maxwell_8h.html#a5114f84176ad5081553f88d2b5d2525e">VectorType</a> &amp;current_solution, const std::vector&lt; <a class="el" href="time__harmonic__maxwell_8h.html#a5114f84176ad5081553f88d2b5d2525e">VectorType</a> &gt; &amp;previous_solutions)</td></tr>
 <tr class="separator:a59cf6c71f993b535281774fb63838cbd"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a661e62ccc078b9798322641b2c56655c" id="r_a661e62ccc078b9798322641b2c56655c"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classNavierStokesScratchData.html#a661e62ccc078b9798322641b2c56655c">enable_particle_fluid_interactions</a> (const unsigned int n_global_max_particles_per_cell, const bool enable_void_fraction_interpolation)</td></tr>
 <tr class="separator:a661e62ccc078b9798322641b2c56655c"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -146,36 +146,36 @@ Public Member Functions</h2></td></tr>
 <tr class="separator:af72659fbca48ccb8a9a76fcacef290ee"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aa2e6cff4889a98d9ed713209ad8e9a06" id="r_aa2e6cff4889a98d9ed713209ad8e9a06"><td class="memItemLeft" align="right" valign="top">Quadrature&lt; dim &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classNavierStokesScratchData.html#aa2e6cff4889a98d9ed713209ad8e9a06">gather_particles_reference_location</a> ()</td></tr>
 <tr class="separator:aa2e6cff4889a98d9ed713209ad8e9a06"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a20d613e76742dd78344449cd0099990a" id="r_a20d613e76742dd78344449cd0099990a"><td class="memTemplParams" colspan="2">template&lt;typename VectorType &gt; </td></tr>
-<tr class="memitem:a20d613e76742dd78344449cd0099990a"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classNavierStokesScratchData.html#a20d613e76742dd78344449cd0099990a">calculate_fluid_fields_at_particle_location</a> (const Quadrature&lt; dim &gt; &amp;q_particles_location, const typename DoFHandler&lt; dim &gt;::active_cell_iterator &amp;velocity_cell, const VectorType &amp;present_velocity_pressure_solution, const VectorType &amp;previous_velocity_pressure_solution, const <a class="el" href="namespaceParameters.html#ab888bbb141fede015eec33a09e2a5e46">Parameters::DragCoupling</a> &amp;drag_coupling)</td></tr>
+<tr class="memitem:a20d613e76742dd78344449cd0099990a" id="r_a20d613e76742dd78344449cd0099990a"><td class="memTemplParams" colspan="2">template&lt;typename <a class="el" href="time__harmonic__maxwell_8h.html#a5114f84176ad5081553f88d2b5d2525e">VectorType</a> &gt; </td></tr>
+<tr class="memitem:a20d613e76742dd78344449cd0099990a"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classNavierStokesScratchData.html#a20d613e76742dd78344449cd0099990a">calculate_fluid_fields_at_particle_location</a> (const Quadrature&lt; dim &gt; &amp;q_particles_location, const typename DoFHandler&lt; dim &gt;::active_cell_iterator &amp;velocity_cell, const <a class="el" href="time__harmonic__maxwell_8h.html#a5114f84176ad5081553f88d2b5d2525e">VectorType</a> &amp;present_velocity_pressure_solution, const <a class="el" href="time__harmonic__maxwell_8h.html#a5114f84176ad5081553f88d2b5d2525e">VectorType</a> &amp;previous_velocity_pressure_solution, const <a class="el" href="namespaceParameters.html#ab888bbb141fede015eec33a09e2a5e46">Parameters::DragCoupling</a> &amp;drag_coupling)</td></tr>
 <tr class="separator:a20d613e76742dd78344449cd0099990a"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a899d3f71f0c5958d0a5a6321b5d1b62c" id="r_a899d3f71f0c5958d0a5a6321b5d1b62c"><td class="memTemplParams" colspan="2">template&lt;typename VectorType &gt; </td></tr>
-<tr class="memitem:a899d3f71f0c5958d0a5a6321b5d1b62c"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classNavierStokesScratchData.html#a899d3f71f0c5958d0a5a6321b5d1b62c">calculate_void_fraction_at_particle_location</a> (const Quadrature&lt; dim &gt; &amp;q_particles_location, const typename DoFHandler&lt; dim &gt;::active_cell_iterator &amp;void_fraction_cell, const VectorType &amp;void_fraction_solution)</td></tr>
+<tr class="memitem:a899d3f71f0c5958d0a5a6321b5d1b62c" id="r_a899d3f71f0c5958d0a5a6321b5d1b62c"><td class="memTemplParams" colspan="2">template&lt;typename <a class="el" href="time__harmonic__maxwell_8h.html#a5114f84176ad5081553f88d2b5d2525e">VectorType</a> &gt; </td></tr>
+<tr class="memitem:a899d3f71f0c5958d0a5a6321b5d1b62c"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classNavierStokesScratchData.html#a899d3f71f0c5958d0a5a6321b5d1b62c">calculate_void_fraction_at_particle_location</a> (const Quadrature&lt; dim &gt; &amp;q_particles_location, const typename DoFHandler&lt; dim &gt;::active_cell_iterator &amp;void_fraction_cell, const <a class="el" href="time__harmonic__maxwell_8h.html#a5114f84176ad5081553f88d2b5d2525e">VectorType</a> &amp;void_fraction_solution)</td></tr>
 <tr class="separator:a899d3f71f0c5958d0a5a6321b5d1b62c"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a75b812c13d59aa2d7dccb006301ae84e" id="r_a75b812c13d59aa2d7dccb006301ae84e"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classNavierStokesScratchData.html#a75b812c13d59aa2d7dccb006301ae84e">calculate_fluid_properties_at_particle_location</a> ()</td></tr>
 <tr class="separator:a75b812c13d59aa2d7dccb006301ae84e"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a6ddebf3c3b40b8989c7ab25fd83c4b5c" id="r_a6ddebf3c3b40b8989c7ab25fd83c4b5c"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classNavierStokesScratchData.html#a6ddebf3c3b40b8989c7ab25fd83c4b5c">calculate_force_parameters_at_particle_location</a> ()</td></tr>
 <tr class="separator:a6ddebf3c3b40b8989c7ab25fd83c4b5c"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a4757cd43b23a146abbbfb67be6fa7c81" id="r_a4757cd43b23a146abbbfb67be6fa7c81"><td class="memTemplParams" colspan="2">template&lt;typename VectorType &gt; </td></tr>
-<tr class="memitem:a4757cd43b23a146abbbfb67be6fa7c81"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classNavierStokesScratchData.html#a4757cd43b23a146abbbfb67be6fa7c81">calculate_vof_at_particle_location</a> (const Quadrature&lt; dim &gt; &amp;q_particles_location, const typename DoFHandler&lt; dim &gt;::active_cell_iterator &amp;phase_cell, const VectorType &amp;current_filtered_solution)</td></tr>
+<tr class="memitem:a4757cd43b23a146abbbfb67be6fa7c81" id="r_a4757cd43b23a146abbbfb67be6fa7c81"><td class="memTemplParams" colspan="2">template&lt;typename <a class="el" href="time__harmonic__maxwell_8h.html#a5114f84176ad5081553f88d2b5d2525e">VectorType</a> &gt; </td></tr>
+<tr class="memitem:a4757cd43b23a146abbbfb67be6fa7c81"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classNavierStokesScratchData.html#a4757cd43b23a146abbbfb67be6fa7c81">calculate_vof_at_particle_location</a> (const Quadrature&lt; dim &gt; &amp;q_particles_location, const typename DoFHandler&lt; dim &gt;::active_cell_iterator &amp;phase_cell, const <a class="el" href="time__harmonic__maxwell_8h.html#a5114f84176ad5081553f88d2b5d2525e">VectorType</a> &amp;current_filtered_solution)</td></tr>
 <tr class="separator:a4757cd43b23a146abbbfb67be6fa7c81"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aa42c878c9960fdc0fe245e34a2c6373e" id="r_aa42c878c9960fdc0fe245e34a2c6373e"><td class="memTemplParams" colspan="2">template&lt;typename VectorType &gt; </td></tr>
-<tr class="memitem:aa42c878c9960fdc0fe245e34a2c6373e"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classNavierStokesScratchData.html#aa42c878c9960fdc0fe245e34a2c6373e">reinit_particle_fluid_interactions</a> (const typename DoFHandler&lt; dim &gt;::active_cell_iterator &amp;velocity_cell, const typename DoFHandler&lt; dim &gt;::active_cell_iterator &amp;void_fraction_cell, const VectorType &amp;present_velocity_pressure_solution, const VectorType &amp;previous_velocity_pressure_solution, const VectorType &amp;void_fraction_solution, const Particles::ParticleHandler&lt; dim &gt; &amp;particle_handler, const <a class="el" href="namespaceParameters.html#ab888bbb141fede015eec33a09e2a5e46">Parameters::DragCoupling</a> &amp;drag_coupling)</td></tr>
+<tr class="memitem:aa42c878c9960fdc0fe245e34a2c6373e" id="r_aa42c878c9960fdc0fe245e34a2c6373e"><td class="memTemplParams" colspan="2">template&lt;typename <a class="el" href="time__harmonic__maxwell_8h.html#a5114f84176ad5081553f88d2b5d2525e">VectorType</a> &gt; </td></tr>
+<tr class="memitem:aa42c878c9960fdc0fe245e34a2c6373e"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classNavierStokesScratchData.html#aa42c878c9960fdc0fe245e34a2c6373e">reinit_particle_fluid_interactions</a> (const typename DoFHandler&lt; dim &gt;::active_cell_iterator &amp;velocity_cell, const typename DoFHandler&lt; dim &gt;::active_cell_iterator &amp;void_fraction_cell, const <a class="el" href="time__harmonic__maxwell_8h.html#a5114f84176ad5081553f88d2b5d2525e">VectorType</a> &amp;present_velocity_pressure_solution, const <a class="el" href="time__harmonic__maxwell_8h.html#a5114f84176ad5081553f88d2b5d2525e">VectorType</a> &amp;previous_velocity_pressure_solution, const <a class="el" href="time__harmonic__maxwell_8h.html#a5114f84176ad5081553f88d2b5d2525e">VectorType</a> &amp;void_fraction_solution, const Particles::ParticleHandler&lt; dim &gt; &amp;particle_handler, const <a class="el" href="namespaceParameters.html#ab888bbb141fede015eec33a09e2a5e46">Parameters::DragCoupling</a> &amp;drag_coupling)</td></tr>
 <tr class="separator:aa42c878c9960fdc0fe245e34a2c6373e"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:abfbb4d61c18545e4ba914da0fa33dd78" id="r_abfbb4d61c18545e4ba914da0fa33dd78"><td class="memTemplParams" colspan="2">template&lt;typename VectorType &gt; </td></tr>
-<tr class="memitem:abfbb4d61c18545e4ba914da0fa33dd78"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classNavierStokesScratchData.html#abfbb4d61c18545e4ba914da0fa33dd78">reinit_particle_fluid_interactions</a> (const typename DoFHandler&lt; dim &gt;::active_cell_iterator &amp;velocity_cell, const typename DoFHandler&lt; dim &gt;::active_cell_iterator &amp;void_fraction_cell, const typename DoFHandler&lt; dim &gt;::active_cell_iterator &amp;phase_cell, const VectorType &amp;present_velocity_pressure_solution, const VectorType &amp;previous_velocity_pressure_solution, const VectorType &amp;void_fraction_solution, const Particles::ParticleHandler&lt; dim &gt; &amp;particle_handler, const <a class="el" href="namespaceParameters.html#ab888bbb141fede015eec33a09e2a5e46">Parameters::DragCoupling</a> &amp;drag_coupling, const VectorType &amp;current_filtered_VOF_solution)</td></tr>
+<tr class="memitem:abfbb4d61c18545e4ba914da0fa33dd78" id="r_abfbb4d61c18545e4ba914da0fa33dd78"><td class="memTemplParams" colspan="2">template&lt;typename <a class="el" href="time__harmonic__maxwell_8h.html#a5114f84176ad5081553f88d2b5d2525e">VectorType</a> &gt; </td></tr>
+<tr class="memitem:abfbb4d61c18545e4ba914da0fa33dd78"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classNavierStokesScratchData.html#abfbb4d61c18545e4ba914da0fa33dd78">reinit_particle_fluid_interactions</a> (const typename DoFHandler&lt; dim &gt;::active_cell_iterator &amp;velocity_cell, const typename DoFHandler&lt; dim &gt;::active_cell_iterator &amp;void_fraction_cell, const typename DoFHandler&lt; dim &gt;::active_cell_iterator &amp;phase_cell, const <a class="el" href="time__harmonic__maxwell_8h.html#a5114f84176ad5081553f88d2b5d2525e">VectorType</a> &amp;present_velocity_pressure_solution, const <a class="el" href="time__harmonic__maxwell_8h.html#a5114f84176ad5081553f88d2b5d2525e">VectorType</a> &amp;previous_velocity_pressure_solution, const <a class="el" href="time__harmonic__maxwell_8h.html#a5114f84176ad5081553f88d2b5d2525e">VectorType</a> &amp;void_fraction_solution, const Particles::ParticleHandler&lt; dim &gt; &amp;particle_handler, const <a class="el" href="namespaceParameters.html#ab888bbb141fede015eec33a09e2a5e46">Parameters::DragCoupling</a> &amp;drag_coupling, const <a class="el" href="time__harmonic__maxwell_8h.html#a5114f84176ad5081553f88d2b5d2525e">VectorType</a> &amp;current_filtered_VOF_solution)</td></tr>
 <tr class="separator:abfbb4d61c18545e4ba914da0fa33dd78"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a59bab3e52c8e29cf84473965f49baefe" id="r_a59bab3e52c8e29cf84473965f49baefe"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classNavierStokesScratchData.html#a59bab3e52c8e29cf84473965f49baefe">enable_heat_transfer</a> (const FiniteElement&lt; dim &gt; &amp;fe, const Quadrature&lt; dim &gt; &amp;quadrature, const Mapping&lt; dim &gt; &amp;mapping)</td></tr>
 <tr class="separator:a59bab3e52c8e29cf84473965f49baefe"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a3c148603b147b2f0e746395d8756ab52" id="r_a3c148603b147b2f0e746395d8756ab52"><td class="memTemplParams" colspan="2">template&lt;typename VectorType &gt; </td></tr>
-<tr class="memitem:a3c148603b147b2f0e746395d8756ab52"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classNavierStokesScratchData.html#a3c148603b147b2f0e746395d8756ab52">reinit_heat_transfer</a> (const typename DoFHandler&lt; dim &gt;::active_cell_iterator &amp;cell, const VectorType &amp;current_solution, const std::vector&lt; VectorType &gt; &amp;previous_solutions)</td></tr>
+<tr class="memitem:a3c148603b147b2f0e746395d8756ab52" id="r_a3c148603b147b2f0e746395d8756ab52"><td class="memTemplParams" colspan="2">template&lt;typename <a class="el" href="time__harmonic__maxwell_8h.html#a5114f84176ad5081553f88d2b5d2525e">VectorType</a> &gt; </td></tr>
+<tr class="memitem:a3c148603b147b2f0e746395d8756ab52"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classNavierStokesScratchData.html#a3c148603b147b2f0e746395d8756ab52">reinit_heat_transfer</a> (const typename DoFHandler&lt; dim &gt;::active_cell_iterator &amp;cell, const <a class="el" href="time__harmonic__maxwell_8h.html#a5114f84176ad5081553f88d2b5d2525e">VectorType</a> &amp;current_solution, const std::vector&lt; <a class="el" href="time__harmonic__maxwell_8h.html#a5114f84176ad5081553f88d2b5d2525e">VectorType</a> &gt; &amp;previous_solutions)</td></tr>
 <tr class="separator:a3c148603b147b2f0e746395d8756ab52"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a126d7e05decf1cd0ab526d786a86e1af" id="r_a126d7e05decf1cd0ab526d786a86e1af"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classNavierStokesScratchData.html#a126d7e05decf1cd0ab526d786a86e1af">enable_cahn_hilliard</a> (const FiniteElement&lt; dim &gt; &amp;fe, const Quadrature&lt; dim &gt; &amp;quadrature, const Mapping&lt; dim &gt; &amp;mapping, const <a class="el" href="structParameters_1_1CahnHilliard.html">Parameters::CahnHilliard</a> &amp;cahn_hilliard_parameters)</td></tr>
 <tr class="separator:a126d7e05decf1cd0ab526d786a86e1af"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a73f68215f2c16e0e5a4ef75350ebf1bd" id="r_a73f68215f2c16e0e5a4ef75350ebf1bd"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classNavierStokesScratchData.html#a73f68215f2c16e0e5a4ef75350ebf1bd">enable_cahn_hilliard</a> (const FiniteElement&lt; dim &gt; &amp;fe, const Quadrature&lt; dim &gt; &amp;quadrature, const Mapping&lt; dim &gt; &amp;mapping, const std::shared_ptr&lt; <a class="el" href="classCahnHilliardFilterBase.html">CahnHilliardFilterBase</a> &gt; &amp;<a class="el" href="classNavierStokesScratchData.html#a9a9121f92c46736d4be8b92933fb6874">cahn_hilliard_filter</a>)</td></tr>
 <tr class="separator:a73f68215f2c16e0e5a4ef75350ebf1bd"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a89be382ee756efb20600f131017a5d33" id="r_a89be382ee756efb20600f131017a5d33"><td class="memTemplParams" colspan="2">template&lt;typename VectorType &gt; </td></tr>
-<tr class="memitem:a89be382ee756efb20600f131017a5d33"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classNavierStokesScratchData.html#a89be382ee756efb20600f131017a5d33">reinit_cahn_hilliard</a> (const typename DoFHandler&lt; dim &gt;::active_cell_iterator &amp;cell, const VectorType &amp;current_solution, const VectorType &amp;current_filtered_solution)</td></tr>
+<tr class="memitem:a89be382ee756efb20600f131017a5d33" id="r_a89be382ee756efb20600f131017a5d33"><td class="memTemplParams" colspan="2">template&lt;typename <a class="el" href="time__harmonic__maxwell_8h.html#a5114f84176ad5081553f88d2b5d2525e">VectorType</a> &gt; </td></tr>
+<tr class="memitem:a89be382ee756efb20600f131017a5d33"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classNavierStokesScratchData.html#a89be382ee756efb20600f131017a5d33">reinit_cahn_hilliard</a> (const typename DoFHandler&lt; dim &gt;::active_cell_iterator &amp;cell, const <a class="el" href="time__harmonic__maxwell_8h.html#a5114f84176ad5081553f88d2b5d2525e">VectorType</a> &amp;current_solution, const <a class="el" href="time__harmonic__maxwell_8h.html#a5114f84176ad5081553f88d2b5d2525e">VectorType</a> &amp;current_filtered_solution)</td></tr>
 <tr class="separator:a89be382ee756efb20600f131017a5d33"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a51cadf33b64ca212d6b49e6bfa7be9e1" id="r_a51cadf33b64ca212d6b49e6bfa7be9e1"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classNavierStokesScratchData.html#a51cadf33b64ca212d6b49e6bfa7be9e1">enable_mortar</a> ()</td></tr>
 <tr class="separator:a51cadf33b64ca212d6b49e6bfa7be9e1"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -183,8 +183,8 @@ Public Member Functions</h2></td></tr>
 <tr class="separator:a3377bdde203866dd8bd0d4670df2fb89"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a30ca912e22e35000f7109061ad47726b" id="r_a30ca912e22e35000f7109061ad47726b"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classNavierStokesScratchData.html#a30ca912e22e35000f7109061ad47726b">calculate_physical_properties</a> ()</td></tr>
 <tr class="separator:a30ca912e22e35000f7109061ad47726b"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:af9397036afa08baa53f3aec5b3deb967" id="r_af9397036afa08baa53f3aec5b3deb967"><td class="memTemplParams" colspan="2">template&lt;typename VectorType &gt; </td></tr>
-<tr class="memitem:af9397036afa08baa53f3aec5b3deb967"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classNavierStokesScratchData.html#af9397036afa08baa53f3aec5b3deb967">calculate_particle_fields_values</a> (const typename DoFHandler&lt; dim &gt;::active_cell_iterator &amp;particle_drag_cell, const typename DoFHandler&lt; dim &gt;::active_cell_iterator &amp;particle_two_way_coupling_force_cell, const typename DoFHandler&lt; dim &gt;::active_cell_iterator &amp;particle_velocity_cell, const typename DoFHandler&lt; dim &gt;::active_cell_iterator &amp;particle_momentum_transfer_coefficient_cell, const VectorType &amp;particle_fluid_drag, const VectorType &amp;particle_fluid_force_two_way_coupling, const VectorType &amp;<a class="el" href="classNavierStokesScratchData.html#ab1202093c4ca2dfbbce9b93b93cc9b14">particle_velocity</a>, const VectorType &amp;particle_momentum_transfer_coefficient, const <a class="el" href="namespaceParameters.html#ab888bbb141fede015eec33a09e2a5e46">Parameters::DragCoupling</a> &amp;drag_coupling)</td></tr>
+<tr class="memitem:af9397036afa08baa53f3aec5b3deb967" id="r_af9397036afa08baa53f3aec5b3deb967"><td class="memTemplParams" colspan="2">template&lt;typename <a class="el" href="time__harmonic__maxwell_8h.html#a5114f84176ad5081553f88d2b5d2525e">VectorType</a> &gt; </td></tr>
+<tr class="memitem:af9397036afa08baa53f3aec5b3deb967"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classNavierStokesScratchData.html#af9397036afa08baa53f3aec5b3deb967">calculate_particle_fields_values</a> (const typename DoFHandler&lt; dim &gt;::active_cell_iterator &amp;particle_drag_cell, const typename DoFHandler&lt; dim &gt;::active_cell_iterator &amp;particle_two_way_coupling_force_cell, const typename DoFHandler&lt; dim &gt;::active_cell_iterator &amp;particle_velocity_cell, const typename DoFHandler&lt; dim &gt;::active_cell_iterator &amp;particle_momentum_transfer_coefficient_cell, const <a class="el" href="time__harmonic__maxwell_8h.html#a5114f84176ad5081553f88d2b5d2525e">VectorType</a> &amp;particle_fluid_drag, const <a class="el" href="time__harmonic__maxwell_8h.html#a5114f84176ad5081553f88d2b5d2525e">VectorType</a> &amp;particle_fluid_force_two_way_coupling, const <a class="el" href="time__harmonic__maxwell_8h.html#a5114f84176ad5081553f88d2b5d2525e">VectorType</a> &amp;<a class="el" href="classNavierStokesScratchData.html#ab1202093c4ca2dfbbce9b93b93cc9b14">particle_velocity</a>, const <a class="el" href="time__harmonic__maxwell_8h.html#a5114f84176ad5081553f88d2b5d2525e">VectorType</a> &amp;particle_momentum_transfer_coefficient, const <a class="el" href="namespaceParameters.html#ab888bbb141fede015eec33a09e2a5e46">Parameters::DragCoupling</a> &amp;drag_coupling)</td></tr>
 <tr class="separator:af9397036afa08baa53f3aec5b3deb967"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="inherit_header pub_methods_classPhysicsScratchDataBase"><td colspan="2" onclick="javascript:toggleInherit('pub_methods_classPhysicsScratchDataBase')"><img src="closed.png" alt="-"/>&#160;Public Member Functions inherited from <a class="el" href="classPhysicsScratchDataBase.html">PhysicsScratchDataBase</a></td></tr>
 <tr class="memitem:a700adea215edf6f2040d59d4d31acc18 inherit pub_methods_classPhysicsScratchDataBase" id="r_a700adea215edf6f2040d59d4d31acc18"><td class="memItemLeft" align="right" valign="top">virtual&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classPhysicsScratchDataBase.html#a700adea215edf6f2040d59d4d31acc18">~PhysicsScratchDataBase</a> ()=default</td></tr>
@@ -732,7 +732,7 @@ template&lt;int dim&gt; </div>
 <div class="memtemplate">
 template&lt;int dim&gt; </div>
 <div class="memtemplate">
-template&lt;typename VectorType &gt; </div>
+template&lt;typename <a class="el" href="time__harmonic__maxwell_8h.html#a5114f84176ad5081553f88d2b5d2525e">VectorType</a> &gt; </div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
@@ -752,13 +752,13 @@ template&lt;typename VectorType &gt; </div>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">const VectorType &amp;&#160;</td>
+          <td class="paramtype">const <a class="el" href="time__harmonic__maxwell_8h.html#a5114f84176ad5081553f88d2b5d2525e">VectorType</a> &amp;&#160;</td>
           <td class="paramname"><em>present_velocity_pressure_solution</em>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">const VectorType &amp;&#160;</td>
+          <td class="paramtype">const <a class="el" href="time__harmonic__maxwell_8h.html#a5114f84176ad5081553f88d2b5d2525e">VectorType</a> &amp;&#160;</td>
           <td class="paramname"><em>previous_velocity_pressure_solution</em>, </td>
         </tr>
         <tr>
@@ -872,7 +872,7 @@ template&lt;int dim&gt; </div>
 <div class="memtemplate">
 template&lt;int dim&gt; </div>
 <div class="memtemplate">
-template&lt;typename VectorType &gt; </div>
+template&lt;typename <a class="el" href="time__harmonic__maxwell_8h.html#a5114f84176ad5081553f88d2b5d2525e">VectorType</a> &gt; </div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
@@ -904,25 +904,25 @@ template&lt;typename VectorType &gt; </div>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">const VectorType &amp;&#160;</td>
+          <td class="paramtype">const <a class="el" href="time__harmonic__maxwell_8h.html#a5114f84176ad5081553f88d2b5d2525e">VectorType</a> &amp;&#160;</td>
           <td class="paramname"><em>particle_fluid_drag</em>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">const VectorType &amp;&#160;</td>
+          <td class="paramtype">const <a class="el" href="time__harmonic__maxwell_8h.html#a5114f84176ad5081553f88d2b5d2525e">VectorType</a> &amp;&#160;</td>
           <td class="paramname"><em>particle_fluid_force_two_way_coupling</em>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">const VectorType &amp;&#160;</td>
+          <td class="paramtype">const <a class="el" href="time__harmonic__maxwell_8h.html#a5114f84176ad5081553f88d2b5d2525e">VectorType</a> &amp;&#160;</td>
           <td class="paramname"><em>particle_velocity</em>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">const VectorType &amp;&#160;</td>
+          <td class="paramtype">const <a class="el" href="time__harmonic__maxwell_8h.html#a5114f84176ad5081553f88d2b5d2525e">VectorType</a> &amp;&#160;</td>
           <td class="paramname"><em>particle_momentum_transfer_coefficient</em>, </td>
         </tr>
         <tr>
@@ -999,7 +999,7 @@ template&lt;int dim&gt; </div>
 <div class="memtemplate">
 template&lt;int dim&gt; </div>
 <div class="memtemplate">
-template&lt;typename VectorType &gt; </div>
+template&lt;typename <a class="el" href="time__harmonic__maxwell_8h.html#a5114f84176ad5081553f88d2b5d2525e">VectorType</a> &gt; </div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
@@ -1019,7 +1019,7 @@ template&lt;typename VectorType &gt; </div>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">const VectorType &amp;&#160;</td>
+          <td class="paramtype">const <a class="el" href="time__harmonic__maxwell_8h.html#a5114f84176ad5081553f88d2b5d2525e">VectorType</a> &amp;&#160;</td>
           <td class="paramname"><em>current_filtered_solution</em>&#160;</td>
         </tr>
         <tr>
@@ -1059,7 +1059,7 @@ template&lt;typename VectorType &gt; </div>
 <div class="memtemplate">
 template&lt;int dim&gt; </div>
 <div class="memtemplate">
-template&lt;typename VectorType &gt; </div>
+template&lt;typename <a class="el" href="time__harmonic__maxwell_8h.html#a5114f84176ad5081553f88d2b5d2525e">VectorType</a> &gt; </div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
@@ -1079,7 +1079,7 @@ template&lt;typename VectorType &gt; </div>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">const VectorType &amp;&#160;</td>
+          <td class="paramtype">const <a class="el" href="time__harmonic__maxwell_8h.html#a5114f84176ad5081553f88d2b5d2525e">VectorType</a> &amp;&#160;</td>
           <td class="paramname"><em>void_fraction_solution</em>&#160;</td>
         </tr>
         <tr>
@@ -1704,7 +1704,7 @@ template&lt;int dim&gt; </div>
 <div class="memtemplate">
 template&lt;int dim&gt; </div>
 <div class="memtemplate">
-template&lt;typename VectorType &gt; </div>
+template&lt;typename <a class="el" href="time__harmonic__maxwell_8h.html#a5114f84176ad5081553f88d2b5d2525e">VectorType</a> &gt; </div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
@@ -1718,19 +1718,19 @@ template&lt;typename VectorType &gt; </div>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">const VectorType &amp;&#160;</td>
+          <td class="paramtype">const <a class="el" href="time__harmonic__maxwell_8h.html#a5114f84176ad5081553f88d2b5d2525e">VectorType</a> &amp;&#160;</td>
           <td class="paramname"><em>current_solution</em>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">const std::vector&lt; VectorType &gt; &amp;&#160;</td>
+          <td class="paramtype">const std::vector&lt; <a class="el" href="time__harmonic__maxwell_8h.html#a5114f84176ad5081553f88d2b5d2525e">VectorType</a> &gt; &amp;&#160;</td>
           <td class="paramname"><em>previous_solutions</em>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">const VectorType &amp;&#160;</td>
+          <td class="paramtype">const <a class="el" href="time__harmonic__maxwell_8h.html#a5114f84176ad5081553f88d2b5d2525e">VectorType</a> &amp;&#160;</td>
           <td class="paramname"><em>sum_over_previous_stages</em>, </td>
         </tr>
         <tr>
@@ -1791,7 +1791,7 @@ template&lt;typename VectorType &gt; </div>
 <div class="memtemplate">
 template&lt;int dim&gt; </div>
 <div class="memtemplate">
-template&lt;typename VectorType &gt; </div>
+template&lt;typename <a class="el" href="time__harmonic__maxwell_8h.html#a5114f84176ad5081553f88d2b5d2525e">VectorType</a> &gt; </div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
@@ -1805,13 +1805,13 @@ template&lt;typename VectorType &gt; </div>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">const VectorType &amp;&#160;</td>
+          <td class="paramtype">const <a class="el" href="time__harmonic__maxwell_8h.html#a5114f84176ad5081553f88d2b5d2525e">VectorType</a> &amp;&#160;</td>
           <td class="paramname"><em>current_solution</em>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">const VectorType &amp;&#160;</td>
+          <td class="paramtype">const <a class="el" href="time__harmonic__maxwell_8h.html#a5114f84176ad5081553f88d2b5d2525e">VectorType</a> &amp;&#160;</td>
           <td class="paramname"><em>current_filtered_solution</em>&#160;</td>
         </tr>
         <tr>
@@ -1850,7 +1850,7 @@ template&lt;typename VectorType &gt; </div>
 <div class="memtemplate">
 template&lt;int dim&gt; </div>
 <div class="memtemplate">
-template&lt;typename VectorType &gt; </div>
+template&lt;typename <a class="el" href="time__harmonic__maxwell_8h.html#a5114f84176ad5081553f88d2b5d2525e">VectorType</a> &gt; </div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
@@ -1864,7 +1864,7 @@ template&lt;typename VectorType &gt; </div>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">const VectorType &amp;&#160;</td>
+          <td class="paramtype">const <a class="el" href="time__harmonic__maxwell_8h.html#a5114f84176ad5081553f88d2b5d2525e">VectorType</a> &amp;&#160;</td>
           <td class="paramname"><em>current_curvature_solution</em>&#160;</td>
         </tr>
         <tr>
@@ -1894,7 +1894,7 @@ template&lt;typename VectorType &gt; </div>
 <div class="memtemplate">
 template&lt;int dim&gt; </div>
 <div class="memtemplate">
-template&lt;typename VectorType &gt; </div>
+template&lt;typename <a class="el" href="time__harmonic__maxwell_8h.html#a5114f84176ad5081553f88d2b5d2525e">VectorType</a> &gt; </div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
@@ -1908,13 +1908,13 @@ template&lt;typename VectorType &gt; </div>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">const VectorType &amp;&#160;</td>
+          <td class="paramtype">const <a class="el" href="time__harmonic__maxwell_8h.html#a5114f84176ad5081553f88d2b5d2525e">VectorType</a> &amp;&#160;</td>
           <td class="paramname"><em>current_solution</em>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">const std::vector&lt; VectorType &gt; &amp;&#160;</td>
+          <td class="paramtype">const std::vector&lt; <a class="el" href="time__harmonic__maxwell_8h.html#a5114f84176ad5081553f88d2b5d2525e">VectorType</a> &gt; &amp;&#160;</td>
           <td class="paramname"><em>previous_solutions</em>&#160;</td>
         </tr>
         <tr>
@@ -1992,7 +1992,7 @@ template&lt;int dim&gt; </div>
 
 <p class="definition">Definition at line <a class="el" href="navier__stokes__scratch__data_8cc_source.html#l00405">405</a> of file <a class="el" href="navier__stokes__scratch__data_8cc_source.html">navier_stokes_scratch_data.cc</a>.</p>
 
-<p class="reference">References <a class="el" href="parameters_8h_source.html#l01876">Parameters::Mortar&lt; dim &gt;::center_of_rotation</a>, and <a class="el" href="parameters_8h_source.html#l01882">Parameters::Mortar&lt; dim &gt;::rotor_angular_velocity</a>.</p>
+<p class="reference">References <a class="el" href="parameters_8h_source.html#l01883">Parameters::Mortar&lt; dim &gt;::center_of_rotation</a>, and <a class="el" href="parameters_8h_source.html#l01889">Parameters::Mortar&lt; dim &gt;::rotor_angular_velocity</a>.</p>
 
 </div>
 </div>
@@ -2029,7 +2029,7 @@ template&lt;int dim&gt; </div>
 <div class="memtemplate">
 template&lt;int dim&gt; </div>
 <div class="memtemplate">
-template&lt;typename VectorType &gt; </div>
+template&lt;typename <a class="el" href="time__harmonic__maxwell_8h.html#a5114f84176ad5081553f88d2b5d2525e">VectorType</a> &gt; </div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
@@ -2055,19 +2055,19 @@ template&lt;typename VectorType &gt; </div>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">const VectorType &amp;&#160;</td>
+          <td class="paramtype">const <a class="el" href="time__harmonic__maxwell_8h.html#a5114f84176ad5081553f88d2b5d2525e">VectorType</a> &amp;&#160;</td>
           <td class="paramname"><em>present_velocity_pressure_solution</em>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">const VectorType &amp;&#160;</td>
+          <td class="paramtype">const <a class="el" href="time__harmonic__maxwell_8h.html#a5114f84176ad5081553f88d2b5d2525e">VectorType</a> &amp;&#160;</td>
           <td class="paramname"><em>previous_velocity_pressure_solution</em>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">const VectorType &amp;&#160;</td>
+          <td class="paramtype">const <a class="el" href="time__harmonic__maxwell_8h.html#a5114f84176ad5081553f88d2b5d2525e">VectorType</a> &amp;&#160;</td>
           <td class="paramname"><em>void_fraction_solution</em>, </td>
         </tr>
         <tr>
@@ -2085,7 +2085,7 @@ template&lt;typename VectorType &gt; </div>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">const VectorType &amp;&#160;</td>
+          <td class="paramtype">const <a class="el" href="time__harmonic__maxwell_8h.html#a5114f84176ad5081553f88d2b5d2525e">VectorType</a> &amp;&#160;</td>
           <td class="paramname"><em>current_filtered_VOF_solution</em>&#160;</td>
         </tr>
         <tr>
@@ -2131,7 +2131,7 @@ template&lt;typename VectorType &gt; </div>
 <div class="memtemplate">
 template&lt;int dim&gt; </div>
 <div class="memtemplate">
-template&lt;typename VectorType &gt; </div>
+template&lt;typename <a class="el" href="time__harmonic__maxwell_8h.html#a5114f84176ad5081553f88d2b5d2525e">VectorType</a> &gt; </div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
@@ -2151,19 +2151,19 @@ template&lt;typename VectorType &gt; </div>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">const VectorType &amp;&#160;</td>
+          <td class="paramtype">const <a class="el" href="time__harmonic__maxwell_8h.html#a5114f84176ad5081553f88d2b5d2525e">VectorType</a> &amp;&#160;</td>
           <td class="paramname"><em>present_velocity_pressure_solution</em>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">const VectorType &amp;&#160;</td>
+          <td class="paramtype">const <a class="el" href="time__harmonic__maxwell_8h.html#a5114f84176ad5081553f88d2b5d2525e">VectorType</a> &amp;&#160;</td>
           <td class="paramname"><em>previous_velocity_pressure_solution</em>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">const VectorType &amp;&#160;</td>
+          <td class="paramtype">const <a class="el" href="time__harmonic__maxwell_8h.html#a5114f84176ad5081553f88d2b5d2525e">VectorType</a> &amp;&#160;</td>
           <td class="paramname"><em>void_fraction_solution</em>, </td>
         </tr>
         <tr>
@@ -2219,7 +2219,7 @@ template&lt;typename VectorType &gt; </div>
 <div class="memtemplate">
 template&lt;int dim&gt; </div>
 <div class="memtemplate">
-template&lt;typename VectorType &gt; </div>
+template&lt;typename <a class="el" href="time__harmonic__maxwell_8h.html#a5114f84176ad5081553f88d2b5d2525e">VectorType</a> &gt; </div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
@@ -2233,7 +2233,7 @@ template&lt;typename VectorType &gt; </div>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">const VectorType &amp;&#160;</td>
+          <td class="paramtype">const <a class="el" href="time__harmonic__maxwell_8h.html#a5114f84176ad5081553f88d2b5d2525e">VectorType</a> &amp;&#160;</td>
           <td class="paramname"><em>current_projected_phase_fraction_gradient_solution</em>&#160;</td>
         </tr>
         <tr>
@@ -2263,7 +2263,7 @@ template&lt;typename VectorType &gt; </div>
 <div class="memtemplate">
 template&lt;int dim&gt; </div>
 <div class="memtemplate">
-template&lt;typename VectorType &gt; </div>
+template&lt;typename <a class="el" href="time__harmonic__maxwell_8h.html#a5114f84176ad5081553f88d2b5d2525e">VectorType</a> &gt; </div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
@@ -2277,19 +2277,19 @@ template&lt;typename VectorType &gt; </div>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">const VectorType &amp;&#160;</td>
+          <td class="paramtype">const <a class="el" href="time__harmonic__maxwell_8h.html#a5114f84176ad5081553f88d2b5d2525e">VectorType</a> &amp;&#160;</td>
           <td class="paramname"><em>current_solution</em>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">const VectorType &amp;&#160;</td>
+          <td class="paramtype">const <a class="el" href="time__harmonic__maxwell_8h.html#a5114f84176ad5081553f88d2b5d2525e">VectorType</a> &amp;&#160;</td>
           <td class="paramname"><em>current_filtered_solution</em>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">const std::vector&lt; VectorType &gt; &amp;&#160;</td>
+          <td class="paramtype">const std::vector&lt; <a class="el" href="time__harmonic__maxwell_8h.html#a5114f84176ad5081553f88d2b5d2525e">VectorType</a> &gt; &amp;&#160;</td>
           <td class="paramname"><em>previous_solutions</em>&#160;</td>
         </tr>
         <tr>
@@ -2330,7 +2330,7 @@ template&lt;typename VectorType &gt; </div>
 <div class="memtemplate">
 template&lt;int dim&gt; </div>
 <div class="memtemplate">
-template&lt;typename VectorType &gt; </div>
+template&lt;typename <a class="el" href="time__harmonic__maxwell_8h.html#a5114f84176ad5081553f88d2b5d2525e">VectorType</a> &gt; </div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
@@ -2344,13 +2344,13 @@ template&lt;typename VectorType &gt; </div>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">const VectorType &amp;&#160;</td>
+          <td class="paramtype">const <a class="el" href="time__harmonic__maxwell_8h.html#a5114f84176ad5081553f88d2b5d2525e">VectorType</a> &amp;&#160;</td>
           <td class="paramname"><em>current_solution</em>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">const std::vector&lt; VectorType &gt; &amp;&#160;</td>
+          <td class="paramtype">const std::vector&lt; <a class="el" href="time__harmonic__maxwell_8h.html#a5114f84176ad5081553f88d2b5d2525e">VectorType</a> &gt; &amp;&#160;</td>
           <td class="paramname"><em>previous_solutions</em>&#160;</td>
         </tr>
         <tr>

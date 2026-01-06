@@ -1,0 +1,5 @@
+<map id="TimeHarmonicMaxwellMagneticFieldDefined&lt; dim &gt;" name="TimeHarmonicMaxwellMagneticFieldDefined&lt; dim &gt;">
+<area shape="rect" id="Node000001" title="This class implements a boundary condition type for the Time Harmonic Maxwell equation where the magn..." alt="" coords="5,79,239,119"/>
+<area shape="rect" id="Node000002" title=" " alt="" coords="56,5,188,31"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="125,44,125,79,119,79,119,44"/>
+</map>

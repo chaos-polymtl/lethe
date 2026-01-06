@@ -1,13 +1,15 @@
 <map id="BoundaryConditions::BoundaryConditions" name="BoundaryConditions::BoundaryConditions">
-<area shape="rect" id="Node000001" title="This class is the base class for all boundary conditions. It stores the general information that all ..." alt="" coords="5,170,167,210"/>
-<area shape="rect" id="Node000002" href="$classBoundaryConditions_1_1CahnHilliardBoundaryConditions.html" title="This class manages the boundary conditions for the Cahn&#45;Hilliard solver It introduces the boundary fu..." alt="" coords="215,5,456,60"/>
-<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="111,158,156,112,213,69,235,58,238,63,216,74,159,116,115,162"/>
-<area shape="rect" id="Node000003" href="$classBoundaryConditions_1_1HTBoundaryConditions.html" title="This class manages the boundary conditions for Heat&#45;Transfer solver It introduces the boundary functi..." alt="" coords="246,84,425,139"/>
-<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="162,163,247,136,249,141,164,168"/>
-<area shape="rect" id="Node000004" href="$classBoundaryConditions_1_1NSBoundaryConditions.html" title="This class manages the boundary conditions for Navier&#45;Stokes solver It introduces the boundary functi..." alt="" coords="246,163,425,217"/>
-<area shape="poly" id="edge3_Node000001_Node000004" title=" " alt="" coords="181,187,246,187,246,193,181,193"/>
-<area shape="rect" id="Node000005" href="$classBoundaryConditions_1_1TracerBoundaryConditions.html" title="This class manages the boundary conditions for Tracer solver It introduces the boundary functions and..." alt="" coords="235,241,435,296"/>
-<area shape="poly" id="edge4_Node000001_Node000005" title=" " alt="" coords="164,212,249,239,247,244,162,217"/>
-<area shape="rect" id="Node000006" href="$classBoundaryConditions_1_1VOFBoundaryConditions.html" title="This class manages the boundary conditions for VOF solver It introduces the boundary functions and de..." alt="" coords="241,320,429,375"/>
-<area shape="poly" id="edge5_Node000001_Node000006" title=" " alt="" coords="115,218,160,263,216,305,242,318,240,323,213,310,156,267,112,222"/>
+<area shape="rect" id="Node000001" title="This class is the base class for all boundary conditions. It stores the general information that all ..." alt="" coords="5,210,167,250"/>
+<area shape="rect" id="Node000002" href="$classBoundaryConditions_1_1CahnHilliardBoundaryConditions.html" title="This class manages the boundary conditions for the Cahn&#45;Hilliard solver It introduces the boundary fu..." alt="" coords="215,5,457,60"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="103,197,148,132,178,98,213,69,232,58,235,63,216,74,182,102,152,136,107,200"/>
+<area shape="rect" id="Node000003" href="$classBoundaryConditions_1_1HTBoundaryConditions.html" title="This class manages the boundary conditions for Heat&#45;Transfer solver It introduces the boundary functi..." alt="" coords="247,84,425,139"/>
+<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="125,200,167,173,214,148,246,134,248,139,216,152,169,177,128,204"/>
+<area shape="rect" id="Node000004" href="$classBoundaryConditions_1_1NSBoundaryConditions.html" title="This class manages the boundary conditions for Navier&#45;Stokes solver It introduces the boundary functi..." alt="" coords="247,163,425,217"/>
+<area shape="poly" id="edge3_Node000001_Node000004" title=" " alt="" coords="180,212,246,202,247,207,181,218"/>
+<area shape="rect" id="Node000005" href="$classBoundaryConditions_1_1TimeHarmonicMaxwellBoundaryConditions.html" title="This class manages the boundary conditions for Time Harmonic Maxwell solver. It introduces the bounda..." alt="" coords="215,241,457,296"/>
+<area shape="poly" id="edge4_Node000001_Node000005" title=" " alt="" coords="181,242,215,247,214,252,180,247"/>
+<area shape="rect" id="Node000006" href="$classBoundaryConditions_1_1TracerBoundaryConditions.html" title="This class manages the boundary conditions for Tracer solver It introduces the boundary functions and..." alt="" coords="236,320,436,375"/>
+<area shape="poly" id="edge5_Node000001_Node000006" title=" " alt="" coords="129,255,170,281,216,305,246,317,244,322,214,310,167,285,126,260"/>
+<area shape="rect" id="Node000007" href="$classBoundaryConditions_1_1VOFBoundaryConditions.html" title="This class manages the boundary conditions for VOF solver It introduces the boundary functions and de..." alt="" coords="242,399,430,453"/>
+<area shape="poly" id="edge6_Node000001_Node000007" title=" " alt="" coords="108,260,152,323,182,356,216,384,243,399,240,403,213,388,179,360,148,326,103,263"/>
 </map>

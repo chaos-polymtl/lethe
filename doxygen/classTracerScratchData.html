@@ -109,24 +109,24 @@ Public Member Functions</h2></td></tr>
 <tr class="separator:a0594b102906d6ec2f6137d6675db0514"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a419e0e07bdd7c750635eaa1405fe75bc" id="r_a419e0e07bdd7c750635eaa1405fe75bc"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classTracerScratchData.html#a419e0e07bdd7c750635eaa1405fe75bc">allocate</a> () override</td></tr>
 <tr class="separator:a419e0e07bdd7c750635eaa1405fe75bc"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:afd65777a054d80408e8bfffc25dc9fd0" id="r_afd65777a054d80408e8bfffc25dc9fd0"><td class="memTemplParams" colspan="2">template&lt;typename VectorType &gt; </td></tr>
-<tr class="memitem:afd65777a054d80408e8bfffc25dc9fd0"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classTracerScratchData.html#afd65777a054d80408e8bfffc25dc9fd0">reinit</a> (const typename DoFHandler&lt; dim &gt;::active_cell_iterator &amp;cell, const VectorType &amp;current_solution, const std::vector&lt; VectorType &gt; &amp;previous_solutions, const Function&lt; dim &gt; *source_function)</td></tr>
+<tr class="memitem:afd65777a054d80408e8bfffc25dc9fd0" id="r_afd65777a054d80408e8bfffc25dc9fd0"><td class="memTemplParams" colspan="2">template&lt;typename <a class="el" href="time__harmonic__maxwell_8h.html#a5114f84176ad5081553f88d2b5d2525e">VectorType</a> &gt; </td></tr>
+<tr class="memitem:afd65777a054d80408e8bfffc25dc9fd0"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classTracerScratchData.html#afd65777a054d80408e8bfffc25dc9fd0">reinit</a> (const typename DoFHandler&lt; dim &gt;::active_cell_iterator &amp;cell, const <a class="el" href="time__harmonic__maxwell_8h.html#a5114f84176ad5081553f88d2b5d2525e">VectorType</a> &amp;current_solution, const std::vector&lt; <a class="el" href="time__harmonic__maxwell_8h.html#a5114f84176ad5081553f88d2b5d2525e">VectorType</a> &gt; &amp;previous_solutions, const Function&lt; dim &gt; *source_function)</td></tr>
 <tr class="separator:afd65777a054d80408e8bfffc25dc9fd0"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a9f81a61cac9e16d445fd2ca0a62effce" id="r_a9f81a61cac9e16d445fd2ca0a62effce"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classTracerScratchData.html#a9f81a61cac9e16d445fd2ca0a62effce">reinit_signed_distance</a> (const typename DoFHandler&lt; dim &gt;::active_cell_iterator &amp;cell, std::shared_ptr&lt; <a class="el" href="classShape.html">Shape</a>&lt; dim &gt; &gt; immersed_solid_shape)</td></tr>
 <tr class="separator:a9f81a61cac9e16d445fd2ca0a62effce"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a9dd951cb9959ca1b22014951ed83f0cb" id="r_a9dd951cb9959ca1b22014951ed83f0cb"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classTracerScratchData.html#a9dd951cb9959ca1b22014951ed83f0cb">reinit_signed_distance_at_face</a> (const typename DoFHandler&lt; dim &gt;::active_cell_iterator &amp;cell, const unsigned int &amp;face_no, std::shared_ptr&lt; <a class="el" href="classShape.html">Shape</a>&lt; dim &gt; &gt; immersed_solid_shape)</td></tr>
 <tr class="separator:a9dd951cb9959ca1b22014951ed83f0cb"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a562036bff335d8380ca8430c00ede811" id="r_a562036bff335d8380ca8430c00ede811"><td class="memTemplParams" colspan="2">template&lt;typename VectorType &gt; </td></tr>
-<tr class="memitem:a562036bff335d8380ca8430c00ede811"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classTracerScratchData.html#a562036bff335d8380ca8430c00ede811">reinit_velocity</a> (const typename DoFHandler&lt; dim &gt;::active_cell_iterator &amp;cell, const VectorType &amp;velocity_solution, const <a class="el" href="classParameters_1_1ALE.html">Parameters::ALE</a>&lt; dim &gt; &amp;ale, std::shared_ptr&lt; Functions::ParsedFunction&lt; dim &gt; &gt; drift_velocity)</td></tr>
+<tr class="memitem:a562036bff335d8380ca8430c00ede811" id="r_a562036bff335d8380ca8430c00ede811"><td class="memTemplParams" colspan="2">template&lt;typename <a class="el" href="time__harmonic__maxwell_8h.html#a5114f84176ad5081553f88d2b5d2525e">VectorType</a> &gt; </td></tr>
+<tr class="memitem:a562036bff335d8380ca8430c00ede811"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classTracerScratchData.html#a562036bff335d8380ca8430c00ede811">reinit_velocity</a> (const typename DoFHandler&lt; dim &gt;::active_cell_iterator &amp;cell, const <a class="el" href="time__harmonic__maxwell_8h.html#a5114f84176ad5081553f88d2b5d2525e">VectorType</a> &amp;velocity_solution, const <a class="el" href="classParameters_1_1ALE.html">Parameters::ALE</a>&lt; dim &gt; &amp;ale, std::shared_ptr&lt; Functions::ParsedFunction&lt; dim &gt; &gt; drift_velocity)</td></tr>
 <tr class="separator:a562036bff335d8380ca8430c00ede811"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a311d51f1f37b5aff280f41b9f8f654a3" id="r_a311d51f1f37b5aff280f41b9f8f654a3"><td class="memTemplParams" colspan="2">template&lt;typename VectorType &gt; </td></tr>
-<tr class="memitem:a311d51f1f37b5aff280f41b9f8f654a3"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classTracerScratchData.html#a311d51f1f37b5aff280f41b9f8f654a3">reinit_internal_face</a> (const typename DoFHandler&lt; dim &gt;::active_cell_iterator &amp;cell, const unsigned int &amp;face_no, const unsigned int &amp;sub_face_no, const typename DoFHandler&lt; dim &gt;::active_cell_iterator &amp;neigh_cell, const unsigned int &amp;neigh_face_no, const unsigned int &amp;neigh_sub_face_no, const VectorType &amp;current_solution)</td></tr>
+<tr class="memitem:a311d51f1f37b5aff280f41b9f8f654a3" id="r_a311d51f1f37b5aff280f41b9f8f654a3"><td class="memTemplParams" colspan="2">template&lt;typename <a class="el" href="time__harmonic__maxwell_8h.html#a5114f84176ad5081553f88d2b5d2525e">VectorType</a> &gt; </td></tr>
+<tr class="memitem:a311d51f1f37b5aff280f41b9f8f654a3"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classTracerScratchData.html#a311d51f1f37b5aff280f41b9f8f654a3">reinit_internal_face</a> (const typename DoFHandler&lt; dim &gt;::active_cell_iterator &amp;cell, const unsigned int &amp;face_no, const unsigned int &amp;sub_face_no, const typename DoFHandler&lt; dim &gt;::active_cell_iterator &amp;neigh_cell, const unsigned int &amp;neigh_face_no, const unsigned int &amp;neigh_sub_face_no, const <a class="el" href="time__harmonic__maxwell_8h.html#a5114f84176ad5081553f88d2b5d2525e">VectorType</a> &amp;current_solution)</td></tr>
 <tr class="separator:a311d51f1f37b5aff280f41b9f8f654a3"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a49b549f09cbfbcbac3664af0797370cb" id="r_a49b549f09cbfbcbac3664af0797370cb"><td class="memTemplParams" colspan="2">template&lt;typename VectorType &gt; </td></tr>
-<tr class="memitem:a49b549f09cbfbcbac3664af0797370cb"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classTracerScratchData.html#a49b549f09cbfbcbac3664af0797370cb">reinit_boundary_face</a> (const typename DoFHandler&lt; dim &gt;::active_cell_iterator &amp;cell, const unsigned int &amp;face_no, const unsigned int &amp;<a class="el" href="classTracerScratchData.html#a1d371284515b118b0a535e5354f0cba6">boundary_index</a>, const VectorType &amp;current_solution)</td></tr>
+<tr class="memitem:a49b549f09cbfbcbac3664af0797370cb" id="r_a49b549f09cbfbcbac3664af0797370cb"><td class="memTemplParams" colspan="2">template&lt;typename <a class="el" href="time__harmonic__maxwell_8h.html#a5114f84176ad5081553f88d2b5d2525e">VectorType</a> &gt; </td></tr>
+<tr class="memitem:a49b549f09cbfbcbac3664af0797370cb"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classTracerScratchData.html#a49b549f09cbfbcbac3664af0797370cb">reinit_boundary_face</a> (const typename DoFHandler&lt; dim &gt;::active_cell_iterator &amp;cell, const unsigned int &amp;face_no, const unsigned int &amp;<a class="el" href="classTracerScratchData.html#a1d371284515b118b0a535e5354f0cba6">boundary_index</a>, const <a class="el" href="time__harmonic__maxwell_8h.html#a5114f84176ad5081553f88d2b5d2525e">VectorType</a> &amp;current_solution)</td></tr>
 <tr class="separator:a49b549f09cbfbcbac3664af0797370cb"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a7a07de89a6abd253c1ec6366532aff67" id="r_a7a07de89a6abd253c1ec6366532aff67"><td class="memTemplParams" colspan="2">template&lt;typename VectorType &gt; </td></tr>
-<tr class="memitem:a7a07de89a6abd253c1ec6366532aff67"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classTracerScratchData.html#a7a07de89a6abd253c1ec6366532aff67">reinit_face_velocity</a> (const typename DoFHandler&lt; dim &gt;::active_cell_iterator &amp;velocity_cell, const unsigned int &amp;face_no, const VectorType &amp;velocity_solution, const <a class="el" href="classParameters_1_1ALE.html">Parameters::ALE</a>&lt; dim &gt; &amp;ale, std::shared_ptr&lt; Functions::ParsedFunction&lt; dim &gt; &gt; drift_velocity)</td></tr>
+<tr class="memitem:a7a07de89a6abd253c1ec6366532aff67" id="r_a7a07de89a6abd253c1ec6366532aff67"><td class="memTemplParams" colspan="2">template&lt;typename <a class="el" href="time__harmonic__maxwell_8h.html#a5114f84176ad5081553f88d2b5d2525e">VectorType</a> &gt; </td></tr>
+<tr class="memitem:a7a07de89a6abd253c1ec6366532aff67"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classTracerScratchData.html#a7a07de89a6abd253c1ec6366532aff67">reinit_face_velocity</a> (const typename DoFHandler&lt; dim &gt;::active_cell_iterator &amp;velocity_cell, const unsigned int &amp;face_no, const <a class="el" href="time__harmonic__maxwell_8h.html#a5114f84176ad5081553f88d2b5d2525e">VectorType</a> &amp;velocity_solution, const <a class="el" href="classParameters_1_1ALE.html">Parameters::ALE</a>&lt; dim &gt; &amp;ale, std::shared_ptr&lt; Functions::ParsedFunction&lt; dim &gt; &gt; drift_velocity)</td></tr>
 <tr class="separator:a7a07de89a6abd253c1ec6366532aff67"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a38a988f74cd354f234fa11b8095df9b5" id="r_a38a988f74cd354f234fa11b8095df9b5"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classTracerScratchData.html#a38a988f74cd354f234fa11b8095df9b5">calculate_face_physical_properties</a> ()</td></tr>
 <tr class="separator:a38a988f74cd354f234fa11b8095df9b5"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -454,7 +454,7 @@ template&lt;int dim&gt; </div>
 <div class="memtemplate">
 template&lt;int dim&gt; </div>
 <div class="memtemplate">
-template&lt;typename VectorType &gt; </div>
+template&lt;typename <a class="el" href="time__harmonic__maxwell_8h.html#a5114f84176ad5081553f88d2b5d2525e">VectorType</a> &gt; </div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
@@ -468,13 +468,13 @@ template&lt;typename VectorType &gt; </div>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">const VectorType &amp;&#160;</td>
+          <td class="paramtype">const <a class="el" href="time__harmonic__maxwell_8h.html#a5114f84176ad5081553f88d2b5d2525e">VectorType</a> &amp;&#160;</td>
           <td class="paramname"><em>current_solution</em>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">const std::vector&lt; VectorType &gt; &amp;&#160;</td>
+          <td class="paramtype">const std::vector&lt; <a class="el" href="time__harmonic__maxwell_8h.html#a5114f84176ad5081553f88d2b5d2525e">VectorType</a> &gt; &amp;&#160;</td>
           <td class="paramname"><em>previous_solutions</em>, </td>
         </tr>
         <tr>
@@ -522,7 +522,7 @@ template&lt;typename VectorType &gt; </div>
 <div class="memtemplate">
 template&lt;int dim&gt; </div>
 <div class="memtemplate">
-template&lt;typename VectorType &gt; </div>
+template&lt;typename <a class="el" href="time__harmonic__maxwell_8h.html#a5114f84176ad5081553f88d2b5d2525e">VectorType</a> &gt; </div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
@@ -548,7 +548,7 @@ template&lt;typename VectorType &gt; </div>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">const VectorType &amp;&#160;</td>
+          <td class="paramtype">const <a class="el" href="time__harmonic__maxwell_8h.html#a5114f84176ad5081553f88d2b5d2525e">VectorType</a> &amp;&#160;</td>
           <td class="paramname"><em>current_solution</em>&#160;</td>
         </tr>
         <tr>
@@ -588,7 +588,7 @@ template&lt;typename VectorType &gt; </div>
 <div class="memtemplate">
 template&lt;int dim&gt; </div>
 <div class="memtemplate">
-template&lt;typename VectorType &gt; </div>
+template&lt;typename <a class="el" href="time__harmonic__maxwell_8h.html#a5114f84176ad5081553f88d2b5d2525e">VectorType</a> &gt; </div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
@@ -608,7 +608,7 @@ template&lt;typename VectorType &gt; </div>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">const VectorType &amp;&#160;</td>
+          <td class="paramtype">const <a class="el" href="time__harmonic__maxwell_8h.html#a5114f84176ad5081553f88d2b5d2525e">VectorType</a> &amp;&#160;</td>
           <td class="paramname"><em>velocity_solution</em>, </td>
         </tr>
         <tr>
@@ -660,7 +660,7 @@ template&lt;typename VectorType &gt; </div>
 <div class="memtemplate">
 template&lt;int dim&gt; </div>
 <div class="memtemplate">
-template&lt;typename VectorType &gt; </div>
+template&lt;typename <a class="el" href="time__harmonic__maxwell_8h.html#a5114f84176ad5081553f88d2b5d2525e">VectorType</a> &gt; </div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
@@ -704,7 +704,7 @@ template&lt;typename VectorType &gt; </div>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">const VectorType &amp;&#160;</td>
+          <td class="paramtype">const <a class="el" href="time__harmonic__maxwell_8h.html#a5114f84176ad5081553f88d2b5d2525e">VectorType</a> &amp;&#160;</td>
           <td class="paramname"><em>current_solution</em>&#160;</td>
         </tr>
         <tr>
@@ -857,7 +857,7 @@ template&lt;int dim&gt; </div>
 <div class="memtemplate">
 template&lt;int dim&gt; </div>
 <div class="memtemplate">
-template&lt;typename VectorType &gt; </div>
+template&lt;typename <a class="el" href="time__harmonic__maxwell_8h.html#a5114f84176ad5081553f88d2b5d2525e">VectorType</a> &gt; </div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
@@ -871,7 +871,7 @@ template&lt;typename VectorType &gt; </div>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">const VectorType &amp;&#160;</td>
+          <td class="paramtype">const <a class="el" href="time__harmonic__maxwell_8h.html#a5114f84176ad5081553f88d2b5d2525e">VectorType</a> &amp;&#160;</td>
           <td class="paramname"><em>velocity_solution</em>, </td>
         </tr>
         <tr>

@@ -151,6 +151,8 @@ Public Attributes</h2></td></tr>
 <tr class="separator:a0470350291ff35c42defb756edc783d2"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a44718bd24a09cbe18b2a76fb78b43448" id="r_a44718bd24a09cbe18b2a76fb78b43448"><td class="memItemLeft" align="right" valign="top"><a class="el" href="classBoundaryConditions_1_1CahnHilliardBoundaryConditions.html">BoundaryConditions::CahnHilliardBoundaryConditions</a>&lt; dim &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classSimulationParameters.html#a44718bd24a09cbe18b2a76fb78b43448">boundary_conditions_cahn_hilliard</a></td></tr>
 <tr class="separator:a44718bd24a09cbe18b2a76fb78b43448"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:adb3c29ea398f4cdee6ba472065523c5b" id="r_adb3c29ea398f4cdee6ba472065523c5b"><td class="memItemLeft" align="right" valign="top"><a class="el" href="classBoundaryConditions_1_1TimeHarmonicMaxwellBoundaryConditions.html">BoundaryConditions::TimeHarmonicMaxwellBoundaryConditions</a>&lt; dim &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classSimulationParameters.html#adb3c29ea398f4cdee6ba472065523c5b">boundary_conditions_time_harmonic_electromagnetics</a></td></tr>
+<tr class="separator:adb3c29ea398f4cdee6ba472065523c5b"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aa89fab8a74968668ded6f115d726be85" id="r_aa89fab8a74968668ded6f115d726be85"><td class="memItemLeft" align="right" valign="top"><a class="el" href="classParameters_1_1InitialConditions.html">Parameters::InitialConditions</a>&lt; dim &gt; *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classSimulationParameters.html#aa89fab8a74968668ded6f115d726be85">initial_condition</a></td></tr>
 <tr class="separator:aa89fab8a74968668ded6f115d726be85"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a4e87eaeafb95e780e16748b3d8bb5e9b" id="r_a4e87eaeafb95e780e16748b3d8bb5e9b"><td class="memItemLeft" align="right" valign="top"><a class="el" href="classAnalyticalSolutions_1_1AnalyticalSolution.html">AnalyticalSolutions::AnalyticalSolution</a>&lt; dim &gt; *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classSimulationParameters.html#a4e87eaeafb95e780e16748b3d8bb5e9b">analytical_solution</a></td></tr>
@@ -184,8 +186,10 @@ Public Attributes</h2></td></tr>
 Private Attributes</h2></td></tr>
 <tr class="memitem:abddd6b5d231e603412289f8305eddfe7" id="r_abddd6b5d231e603412289f8305eddfe7"><td class="memItemLeft" align="right" valign="top"><a class="el" href="classParameters_1_1PhysicalProperties.html">Parameters::PhysicalProperties</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classSimulationParameters.html#abddd6b5d231e603412289f8305eddfe7">physical_properties</a></td></tr>
 <tr class="separator:abddd6b5d231e603412289f8305eddfe7"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a80b1bf4292014bf22e9b58b7ee723be0" id="r_a80b1bf4292014bf22e9b58b7ee723be0"><td class="memItemLeft" align="right" valign="top">std::vector&lt; std::string &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classSimulationParameters.html#a80b1bf4292014bf22e9b58b7ee723be0">physics_names</a></td></tr>
-<tr class="separator:a80b1bf4292014bf22e9b58b7ee723be0"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a80e39317c6c40c7ea0147382e0ffbb32" id="r_a80e39317c6c40c7ea0147382e0ffbb32"><td class="memItemLeft" align="right" valign="top">std::vector&lt; std::string &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classSimulationParameters.html#a80e39317c6c40c7ea0147382e0ffbb32">nonlinear_physics_names</a></td></tr>
+<tr class="separator:a80e39317c6c40c7ea0147382e0ffbb32"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:adc5d14f26104f5dc0538be0844825bd5" id="r_adc5d14f26104f5dc0538be0844825bd5"><td class="memItemLeft" align="right" valign="top">std::vector&lt; std::string &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classSimulationParameters.html#adc5d14f26104f5dc0538be0844825bd5">linear_physics_names</a> = {&quot;electromagnetics&quot;}</td></tr>
+<tr class="separator:adc5d14f26104f5dc0538be0844825bd5"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aabf33ba7478f81089c7269a30d05a003" id="r_aabf33ba7478f81089c7269a30d05a003"><td class="memItemLeft" align="right" valign="top">std::vector&lt; std::string &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classSimulationParameters.html#aabf33ba7478f81089c7269a30d05a003">vof_subequations_names</a></td></tr>
 <tr class="separator:aabf33ba7478f81089c7269a30d05a003"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
@@ -230,9 +234,9 @@ template&lt;int dim&gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="simulation__parameters_8h_source.html#l00070">70</a> of file <a class="el" href="simulation__parameters_8h_source.html">simulation_parameters.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="simulation__parameters_8h_source.html#l00072">72</a> of file <a class="el" href="simulation__parameters_8h_source.html">simulation_parameters.h</a>.</p>
 
-<p class="reference">References <a class="el" href="simulation__parameters_8h_source.html#l00061">SimulationParameters&lt; dim &gt;::ale</a>, <a class="el" href="simulation__parameters_8h_source.html#l00053">SimulationParameters&lt; dim &gt;::analytical_solution</a>, <a class="el" href="parameters_8h_source.html#l00032">Parameters::SizeOfSubsections::boundary_conditions</a>, <a class="el" href="simulation__parameters_8h_source.html#l00046">SimulationParameters&lt; dim &gt;::boundary_conditions</a>, <a class="el" href="simulation__parameters_8h_source.html#l00051">SimulationParameters&lt; dim &gt;::boundary_conditions_cahn_hilliard</a>, <a class="el" href="simulation__parameters_8h_source.html#l00047">SimulationParameters&lt; dim &gt;::boundary_conditions_ht</a>, <a class="el" href="simulation__parameters_8h_source.html#l00048">SimulationParameters&lt; dim &gt;::boundary_conditions_tracer</a>, <a class="el" href="simulation__parameters_8h_source.html#l00049">SimulationParameters&lt; dim &gt;::boundary_conditions_vof</a>, <a class="el" href="simulation__parameters_8h_source.html#l00059">SimulationParameters&lt; dim &gt;::constrain_solid_domain</a>, <a class="el" href="dimensionality_8cc_source.html#l00033">Parameters::Dimensionality::declare_parameters()</a>, <a class="el" href="parameters_8cc_source.html#l00079">Parameters::SimulationControl::declare_parameters()</a>, <a class="el" href="parameters_8cc_source.html#l01017">Parameters::PhysicalProperties::declare_parameters()</a>, <a class="el" href="parameters_8cc_source.html#l00796">Parameters::Stabilization::declare_parameters()</a>, <a class="el" href="parameters_8cc_source.html#l00291">Parameters::Timer::declare_parameters()</a>, <a class="el" href="parameters_8cc_source.html#l01784">Parameters::Forces::declare_parameters()</a>, <a class="el" href="parameters_8cc_source.html#l02107">Parameters::PostProcessing::declare_parameters()</a>, <a class="el" href="parameters_8cc_source.html#l01695">Parameters::FEM::declare_parameters()</a>, <a class="el" href="parameters_8cc_source.html#l02590">Parameters::Mesh::declare_parameters()</a>, <a class="el" href="parameters_8cc_source.html#l03221">Parameters::MeshAdaptation::declare_parameters()</a>, <a class="el" href="parameters_8cc_source.html#l03385">Parameters::Testing::declare_parameters()</a>, <a class="el" href="parameters_8cc_source.html#l03432">Parameters::Restart::declare_parameters()</a>, <a class="el" href="parameters_8cc_source.html#l03473">Parameters::VelocitySource::declare_parameters()</a>, <a class="el" href="parameters_8cc_source.html#l04232">Parameters::Evaporation::declare_parameters()</a>, <a class="el" href="analytical__solutions_8cc_source.html#l00010">AnalyticalSolutions::AnalyticalSolution&lt; dim &gt;::declare_parameters()</a>, <a class="el" href="initial__conditions_8cc_source.html#l00106">Parameters::InitialConditions&lt; dim &gt;::declare_parameters()</a>, <a class="el" href="parameters__multiphysics_8cc_source.html#l00032">Parameters::Multiphysics::declare_parameters()</a>, <a class="el" href="parameters_8cc_source.html#l02443">Parameters::NonLinearSolver::declare_parameters()</a>, <a class="el" href="parameters_8cc_source.html#l02777">Parameters::LinearSolver::declare_parameters()</a>, <a class="el" href="manifolds_8cc_source.html#l00065">Parameters::Manifolds::declare_parameters()</a>, <a class="el" href="simulation__parameters_8h_source.html#l00035">SimulationParameters&lt; dim &gt;::dimensionality</a>, <a class="el" href="simulation__parameters_8h_source.html#l00052">SimulationParameters&lt; dim &gt;::initial_condition</a>, <a class="el" href="simulation__parameters_8h_source.html#l00042">SimulationParameters&lt; dim &gt;::laser_parameters</a>, <a class="el" href="parameters_8h_source.html#l00033">Parameters::SizeOfSubsections::manifolds</a>, <a class="el" href="simulation__parameters_8h_source.html#l00045">SimulationParameters&lt; dim &gt;::manifolds_parameters</a>, <a class="el" href="simulation__parameters_8h_source.html#l00036">SimulationParameters&lt; dim &gt;::mesh_box_refinement</a>, <a class="el" href="simulation__parameters_8h_source.html#l00064">SimulationParameters&lt; dim &gt;::mortar_parameters</a>, <a class="el" href="simulation__parameters_8h_source.html#l00058">SimulationParameters&lt; dim &gt;::multiphysics</a>, <a class="el" href="simulation__parameters_8h_source.html#l00037">SimulationParameters&lt; dim &gt;::nitsche</a>, <a class="el" href="simulation__parameters_8h_source.html#l00056">SimulationParameters&lt; dim &gt;::particlesParameters</a>, <a class="el" href="simulation__parameters_8h_source.html#l00493">SimulationParameters&lt; dim &gt;::physical_properties</a>, <a class="el" href="simulation__parameters_8h_source.html#l00495">SimulationParameters&lt; dim &gt;::physics_names</a>, <a class="el" href="simulation__parameters_8h_source.html#l00054">SimulationParameters&lt; dim &gt;::source_term</a>, <a class="el" href="simulation__parameters_8h_source.html#l00063">SimulationParameters&lt; dim &gt;::tracer_drift_velocity</a>, and <a class="el" href="simulation__parameters_8h_source.html#l00502">SimulationParameters&lt; dim &gt;::vof_subequations_names</a>.</p>
+<p class="reference">References <a class="el" href="simulation__parameters_8h_source.html#l00063">SimulationParameters&lt; dim &gt;::ale</a>, <a class="el" href="simulation__parameters_8h_source.html#l00055">SimulationParameters&lt; dim &gt;::analytical_solution</a>, <a class="el" href="parameters_8h_source.html#l00032">Parameters::SizeOfSubsections::boundary_conditions</a>, <a class="el" href="simulation__parameters_8h_source.html#l00046">SimulationParameters&lt; dim &gt;::boundary_conditions</a>, <a class="el" href="simulation__parameters_8h_source.html#l00051">SimulationParameters&lt; dim &gt;::boundary_conditions_cahn_hilliard</a>, <a class="el" href="simulation__parameters_8h_source.html#l00047">SimulationParameters&lt; dim &gt;::boundary_conditions_ht</a>, <a class="el" href="simulation__parameters_8h_source.html#l00053">SimulationParameters&lt; dim &gt;::boundary_conditions_time_harmonic_electromagnetics</a>, <a class="el" href="simulation__parameters_8h_source.html#l00048">SimulationParameters&lt; dim &gt;::boundary_conditions_tracer</a>, <a class="el" href="simulation__parameters_8h_source.html#l00049">SimulationParameters&lt; dim &gt;::boundary_conditions_vof</a>, <a class="el" href="simulation__parameters_8h_source.html#l00061">SimulationParameters&lt; dim &gt;::constrain_solid_domain</a>, <a class="el" href="dimensionality_8cc_source.html#l00033">Parameters::Dimensionality::declare_parameters()</a>, <a class="el" href="parameters_8cc_source.html#l00079">Parameters::SimulationControl::declare_parameters()</a>, <a class="el" href="parameters_8cc_source.html#l01017">Parameters::PhysicalProperties::declare_parameters()</a>, <a class="el" href="parameters_8cc_source.html#l00796">Parameters::Stabilization::declare_parameters()</a>, <a class="el" href="parameters_8cc_source.html#l00291">Parameters::Timer::declare_parameters()</a>, <a class="el" href="parameters_8cc_source.html#l01798">Parameters::Forces::declare_parameters()</a>, <a class="el" href="parameters_8cc_source.html#l02121">Parameters::PostProcessing::declare_parameters()</a>, <a class="el" href="parameters_8cc_source.html#l01695">Parameters::FEM::declare_parameters()</a>, <a class="el" href="parameters_8cc_source.html#l02604">Parameters::Mesh::declare_parameters()</a>, <a class="el" href="parameters_8cc_source.html#l03235">Parameters::MeshAdaptation::declare_parameters()</a>, <a class="el" href="parameters_8cc_source.html#l03399">Parameters::Testing::declare_parameters()</a>, <a class="el" href="parameters_8cc_source.html#l03446">Parameters::Restart::declare_parameters()</a>, <a class="el" href="parameters_8cc_source.html#l03487">Parameters::VelocitySource::declare_parameters()</a>, <a class="el" href="parameters_8cc_source.html#l04246">Parameters::Evaporation::declare_parameters()</a>, <a class="el" href="analytical__solutions_8cc_source.html#l00010">AnalyticalSolutions::AnalyticalSolution&lt; dim &gt;::declare_parameters()</a>, <a class="el" href="initial__conditions_8cc_source.html#l00106">Parameters::InitialConditions&lt; dim &gt;::declare_parameters()</a>, <a class="el" href="parameters__multiphysics_8cc_source.html#l00032">Parameters::Multiphysics::declare_parameters()</a>, <a class="el" href="parameters_8cc_source.html#l02457">Parameters::NonLinearSolver::declare_parameters()</a>, <a class="el" href="parameters_8cc_source.html#l02791">Parameters::LinearSolver::declare_parameters()</a>, <a class="el" href="manifolds_8cc_source.html#l00065">Parameters::Manifolds::declare_parameters()</a>, <a class="el" href="simulation__parameters_8h_source.html#l00035">SimulationParameters&lt; dim &gt;::dimensionality</a>, <a class="el" href="simulation__parameters_8h_source.html#l00054">SimulationParameters&lt; dim &gt;::initial_condition</a>, <a class="el" href="simulation__parameters_8h_source.html#l00042">SimulationParameters&lt; dim &gt;::laser_parameters</a>, <a class="el" href="simulation__parameters_8h_source.html#l00515">SimulationParameters&lt; dim &gt;::linear_physics_names</a>, <a class="el" href="parameters_8h_source.html#l00033">Parameters::SizeOfSubsections::manifolds</a>, <a class="el" href="simulation__parameters_8h_source.html#l00045">SimulationParameters&lt; dim &gt;::manifolds_parameters</a>, <a class="el" href="simulation__parameters_8h_source.html#l00036">SimulationParameters&lt; dim &gt;::mesh_box_refinement</a>, <a class="el" href="simulation__parameters_8h_source.html#l00066">SimulationParameters&lt; dim &gt;::mortar_parameters</a>, <a class="el" href="simulation__parameters_8h_source.html#l00060">SimulationParameters&lt; dim &gt;::multiphysics</a>, <a class="el" href="simulation__parameters_8h_source.html#l00037">SimulationParameters&lt; dim &gt;::nitsche</a>, <a class="el" href="simulation__parameters_8h_source.html#l00509">SimulationParameters&lt; dim &gt;::nonlinear_physics_names</a>, <a class="el" href="simulation__parameters_8h_source.html#l00058">SimulationParameters&lt; dim &gt;::particlesParameters</a>, <a class="el" href="simulation__parameters_8h_source.html#l00507">SimulationParameters&lt; dim &gt;::physical_properties</a>, <a class="el" href="simulation__parameters_8h_source.html#l00056">SimulationParameters&lt; dim &gt;::source_term</a>, <a class="el" href="simulation__parameters_8h_source.html#l00065">SimulationParameters&lt; dim &gt;::tracer_drift_velocity</a>, and <a class="el" href="simulation__parameters_8h_source.html#l00517">SimulationParameters&lt; dim &gt;::vof_subequations_names</a>.</p>
 
 </div>
 </div>
@@ -262,7 +266,7 @@ template&lt;int dim&gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="simulation__parameters_8h_source.html#l00477">477</a> of file <a class="el" href="simulation__parameters_8h_source.html">simulation_parameters.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="simulation__parameters_8h_source.html#l00491">491</a> of file <a class="el" href="simulation__parameters_8h_source.html">simulation_parameters.h</a>.</p>
 
 <p class="reference">References <a class="el" href="classParameters_1_1MaterialInteractions.html#a95e5a70b22007fa05e326faceaad0f83a617ac08757d38a5a7ed91c224f0e90a0">Parameters::MaterialInteractions::constant</a>.</p>
 
@@ -294,7 +298,7 @@ template&lt;int dim&gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="simulation__parameters_8h_source.html#l00460">460</a> of file <a class="el" href="simulation__parameters_8h_source.html">simulation_parameters.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="simulation__parameters_8h_source.html#l00474">474</a> of file <a class="el" href="simulation__parameters_8h_source.html">simulation_parameters.h</a>.</p>
 
 <p class="reference">References <a class="el" href="physical__properties__manager_8h_source.html#l00042">fluid_fluid</a>.</p>
 
@@ -326,9 +330,9 @@ template&lt;int dim&gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="simulation__parameters_8h_source.html#l00154">154</a> of file <a class="el" href="simulation__parameters_8h_source.html">simulation_parameters.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="simulation__parameters_8h_source.html#l00162">162</a> of file <a class="el" href="simulation__parameters_8h_source.html">simulation_parameters.h</a>.</p>
 
-<p class="reference">References <a class="el" href="simulation__parameters_8h_source.html#l00061">SimulationParameters&lt; dim &gt;::ale</a>, <a class="el" href="simulation__parameters_8h_source.html#l00053">SimulationParameters&lt; dim &gt;::analytical_solution</a>, <a class="el" href="simulation__parameters_8h_source.html#l00046">SimulationParameters&lt; dim &gt;::boundary_conditions</a>, <a class="el" href="simulation__parameters_8h_source.html#l00051">SimulationParameters&lt; dim &gt;::boundary_conditions_cahn_hilliard</a>, <a class="el" href="simulation__parameters_8h_source.html#l00047">SimulationParameters&lt; dim &gt;::boundary_conditions_ht</a>, <a class="el" href="simulation__parameters_8h_source.html#l00048">SimulationParameters&lt; dim &gt;::boundary_conditions_tracer</a>, <a class="el" href="simulation__parameters_8h_source.html#l00049">SimulationParameters&lt; dim &gt;::boundary_conditions_vof</a>, <a class="el" href="parameters__multiphysics_8h_source.html#l00394">Parameters::Multiphysics::cahn_hilliard</a>, <a class="el" href="simulation__parameters_8h_source.html#l00059">SimulationParameters&lt; dim &gt;::constrain_solid_domain</a>, <a class="el" href="simulation__parameters_8h_source.html#l00035">SimulationParameters&lt; dim &gt;::dimensionality</a>, <a class="el" href="parameters__multiphysics_8h_source.html#l00167">Parameters::VOF_SurfaceTensionForce::enable</a>, <a class="el" href="parameters__multiphysics_8h_source.html#l00178">Parameters::VOF_SurfaceTensionForce::enable_marangoni_effect</a>, <a class="el" href="simulation__parameters_8h_source.html#l00062">SimulationParameters&lt; dim &gt;::evaporation</a>, <a class="el" href="simulation__parameters_8h_source.html#l00040">SimulationParameters&lt; dim &gt;::fem_parameters</a>, <a class="el" href="simulation__parameters_8h_source.html#l00057">SimulationParameters&lt; dim &gt;::flow_control</a>, <a class="el" href="namespaceParameters.html#af7808f8635a6a7dc05ee8c1487118f2fa1e04d9b58aa70e6fb6501fde7608fd13">Parameters::fluid1</a>, <a class="el" href="simulation__parameters_8h_source.html#l00041">SimulationParameters&lt; dim &gt;::forces_parameters</a>, <a class="el" href="physical__properties__manager_8h_source.html#l00101">PhysicalPropertiesManager::get_number_of_fluids()</a>, <a class="el" href="multiphysics_8h_source.html#l00045">get_physics_id()</a>, <a class="el" href="vof__subequations_8h_source.html#l00030">get_vof_subequation_id()</a>, <a class="el" href="parameters__multiphysics_8h_source.html#l00391">Parameters::Multiphysics::heat_transfer</a>, <a class="el" href="simulation__parameters_8h_source.html#l00052">SimulationParameters&lt; dim &gt;::initial_condition</a>, <a class="el" href="physical__properties__manager_8cc_source.html#l00031">PhysicalPropertiesManager::initialize()</a>, <a class="el" href="simulation__parameters_8h_source.html#l00477">SimulationParameters&lt; dim &gt;::is_constant_surface_tension_model()</a>, <a class="el" href="simulation__parameters_8h_source.html#l00042">SimulationParameters&lt; dim &gt;::laser_parameters</a>, <a class="el" href="classParameters_1_1Laser.html#a4726af2264cb248b3d4d6a4823759517">Parameters::Laser&lt; dim &gt;::laser_type</a>, <a class="el" href="simulation__parameters_8h_source.html#l00027">SimulationParameters&lt; dim &gt;::linear_solver</a>, <a class="el" href="simulation__parameters_8h_source.html#l00045">SimulationParameters&lt; dim &gt;::manifolds_parameters</a>, <a class="el" href="parameters_8h_source.html#l00648">Parameters::PhysicalProperties::material_interactions</a>, <a class="el" href="simulation__parameters_8h_source.html#l00034">SimulationParameters&lt; dim &gt;::mesh</a>, <a class="el" href="simulation__parameters_8h_source.html#l00033">SimulationParameters&lt; dim &gt;::mesh_adaptation</a>, <a class="el" href="simulation__parameters_8h_source.html#l00036">SimulationParameters&lt; dim &gt;::mesh_box_refinement</a>, <a class="el" href="simulation__parameters_8h_source.html#l00064">SimulationParameters&lt; dim &gt;::mortar_parameters</a>, <a class="el" href="simulation__parameters_8h_source.html#l00058">SimulationParameters&lt; dim &gt;::multiphysics</a>, <a class="el" href="simulation__parameters_8h_source.html#l00037">SimulationParameters&lt; dim &gt;::nitsche</a>, <a class="el" href="simulation__parameters_8h_source.html#l00460">SimulationParameters&lt; dim &gt;::no_fluid_fluid_interaction_error()</a>, <a class="el" href="parameters_8h_source.html#l00639">Parameters::PhysicalProperties::number_of_fluids</a>, <a class="el" href="parameters_8h_source.html#l00649">Parameters::PhysicalProperties::number_of_material_interactions</a>, <a class="el" href="dimensionality_8cc_source.html#l00070">Parameters::Dimensionality::parse_parameters()</a>, <a class="el" href="manifolds_8cc_source.html#l00091">Parameters::Manifolds::parse_parameters()</a>, <a class="el" href="parameters_8cc_source.html#l00212">Parameters::SimulationControl::parse_parameters()</a>, <a class="el" href="parameters_8cc_source.html#l00852">Parameters::Stabilization::parse_parameters()</a>, <a class="el" href="parameters_8cc_source.html#l00310">Parameters::Timer::parse_parameters()</a>, <a class="el" href="parameters_8cc_source.html#l01827">Parameters::Forces::parse_parameters()</a>, <a class="el" href="parameters_8cc_source.html#l02367">Parameters::PostProcessing::parse_parameters()</a>, <a class="el" href="parameters_8cc_source.html#l01760">Parameters::FEM::parse_parameters()</a>, <a class="el" href="parameters_8cc_source.html#l02696">Parameters::Mesh::parse_parameters()</a>, <a class="el" href="parameters_8cc_source.html#l03303">Parameters::MeshAdaptation::parse_parameters()</a>, <a class="el" href="parameters_8cc_source.html#l03408">Parameters::Testing::parse_parameters()</a>, <a class="el" href="parameters_8cc_source.html#l03460">Parameters::Restart::parse_parameters()</a>, <a class="el" href="parameters_8cc_source.html#l03514">Parameters::VelocitySource::parse_parameters()</a>, <a class="el" href="parameters_8cc_source.html#l04200">Parameters::DynamicFlowControl::parse_parameters()</a>, <a class="el" href="parameters_8cc_source.html#l04300">Parameters::Evaporation::parse_parameters()</a>, <a class="el" href="parameters__multiphysics_8cc_source.html#l00079">Parameters::Multiphysics::parse_parameters()</a>, <a class="el" href="parameters_8cc_source.html#l01076">Parameters::PhysicalProperties::parse_parameters()</a>, <a class="el" href="simulation__parameters_8h_source.html#l00056">SimulationParameters&lt; dim &gt;::particlesParameters</a>, <a class="el" href="simulation__parameters_8h_source.html#l00493">SimulationParameters&lt; dim &gt;::physical_properties</a>, <a class="el" href="simulation__parameters_8h_source.html#l00067">SimulationParameters&lt; dim &gt;::physical_properties_manager</a>, <a class="el" href="simulation__parameters_8h_source.html#l00495">SimulationParameters&lt; dim &gt;::physics_names</a>, <a class="el" href="simulation__parameters_8h_source.html#l00028">SimulationParameters&lt; dim &gt;::physics_solving_strategy</a>, <a class="el" href="simulation__parameters_8h_source.html#l00043">SimulationParameters&lt; dim &gt;::post_processing</a>, <a class="el" href="parameters_8h_source.html#l01099">Parameters::PostProcessing::postprocessed_fluid</a>, <a class="el" href="simulation__parameters_8h_source.html#l00044">SimulationParameters&lt; dim &gt;::restart_parameters</a>, <a class="el" href="simulation__parameters_8h_source.html#l00038">SimulationParameters&lt; dim &gt;::simulation_control</a>, <a class="el" href="simulation__parameters_8h_source.html#l00054">SimulationParameters&lt; dim &gt;::source_term</a>, <a class="el" href="simulation__parameters_8h_source.html#l00060">SimulationParameters&lt; dim &gt;::stabilization</a>, <a class="el" href="parameters__multiphysics_8h_source.html#l00340">Parameters::VOF::surface_tension_force</a>, <a class="el" href="simulation__parameters_8h_source.html#l00026">SimulationParameters&lt; dim &gt;::test</a>, <a class="el" href="simulation__parameters_8h_source.html#l00039">SimulationParameters&lt; dim &gt;::timer</a>, <a class="el" href="simulation__parameters_8h_source.html#l00063">SimulationParameters&lt; dim &gt;::tracer_drift_velocity</a>, <a class="el" href="simulation__parameters_8h_source.html#l00055">SimulationParameters&lt; dim &gt;::velocity_sources</a>, <a class="el" href="parameters__multiphysics_8h_source.html#l00393">Parameters::Multiphysics::VOF</a>, <a class="el" href="parameters__multiphysics_8h_source.html#l00400">Parameters::Multiphysics::vof_parameters</a>, <a class="el" href="simulation__parameters_8h_source.html#l00030">SimulationParameters&lt; dim &gt;::vof_subequations_linear_solvers</a>, <a class="el" href="simulation__parameters_8h_source.html#l00502">SimulationParameters&lt; dim &gt;::vof_subequations_names</a>, and <a class="el" href="simulation__parameters_8h_source.html#l00032">SimulationParameters&lt; dim &gt;::vof_subequations_non_linear_solvers</a>.</p>
+<p class="reference">References <a class="el" href="simulation__parameters_8h_source.html#l00063">SimulationParameters&lt; dim &gt;::ale</a>, <a class="el" href="simulation__parameters_8h_source.html#l00055">SimulationParameters&lt; dim &gt;::analytical_solution</a>, <a class="el" href="simulation__parameters_8h_source.html#l00046">SimulationParameters&lt; dim &gt;::boundary_conditions</a>, <a class="el" href="simulation__parameters_8h_source.html#l00051">SimulationParameters&lt; dim &gt;::boundary_conditions_cahn_hilliard</a>, <a class="el" href="simulation__parameters_8h_source.html#l00047">SimulationParameters&lt; dim &gt;::boundary_conditions_ht</a>, <a class="el" href="simulation__parameters_8h_source.html#l00053">SimulationParameters&lt; dim &gt;::boundary_conditions_time_harmonic_electromagnetics</a>, <a class="el" href="simulation__parameters_8h_source.html#l00048">SimulationParameters&lt; dim &gt;::boundary_conditions_tracer</a>, <a class="el" href="simulation__parameters_8h_source.html#l00049">SimulationParameters&lt; dim &gt;::boundary_conditions_vof</a>, <a class="el" href="parameters__multiphysics_8h_source.html#l00394">Parameters::Multiphysics::cahn_hilliard</a>, <a class="el" href="simulation__parameters_8h_source.html#l00061">SimulationParameters&lt; dim &gt;::constrain_solid_domain</a>, <a class="el" href="simulation__parameters_8h_source.html#l00035">SimulationParameters&lt; dim &gt;::dimensionality</a>, <a class="el" href="parameters__multiphysics_8h_source.html#l00167">Parameters::VOF_SurfaceTensionForce::enable</a>, <a class="el" href="parameters__multiphysics_8h_source.html#l00178">Parameters::VOF_SurfaceTensionForce::enable_marangoni_effect</a>, <a class="el" href="simulation__parameters_8h_source.html#l00064">SimulationParameters&lt; dim &gt;::evaporation</a>, <a class="el" href="simulation__parameters_8h_source.html#l00040">SimulationParameters&lt; dim &gt;::fem_parameters</a>, <a class="el" href="simulation__parameters_8h_source.html#l00059">SimulationParameters&lt; dim &gt;::flow_control</a>, <a class="el" href="namespaceParameters.html#af7808f8635a6a7dc05ee8c1487118f2fa1e04d9b58aa70e6fb6501fde7608fd13">Parameters::fluid1</a>, <a class="el" href="simulation__parameters_8h_source.html#l00041">SimulationParameters&lt; dim &gt;::forces_parameters</a>, <a class="el" href="physical__properties__manager_8h_source.html#l00101">PhysicalPropertiesManager::get_number_of_fluids()</a>, <a class="el" href="multiphysics_8h_source.html#l00050">get_physics_id()</a>, <a class="el" href="vof__subequations_8h_source.html#l00030">get_vof_subequation_id()</a>, <a class="el" href="parameters__multiphysics_8h_source.html#l00391">Parameters::Multiphysics::heat_transfer</a>, <a class="el" href="simulation__parameters_8h_source.html#l00054">SimulationParameters&lt; dim &gt;::initial_condition</a>, <a class="el" href="physical__properties__manager_8cc_source.html#l00031">PhysicalPropertiesManager::initialize()</a>, <a class="el" href="simulation__parameters_8h_source.html#l00491">SimulationParameters&lt; dim &gt;::is_constant_surface_tension_model()</a>, <a class="el" href="simulation__parameters_8h_source.html#l00042">SimulationParameters&lt; dim &gt;::laser_parameters</a>, <a class="el" href="classParameters_1_1Laser.html#a4726af2264cb248b3d4d6a4823759517">Parameters::Laser&lt; dim &gt;::laser_type</a>, <a class="el" href="simulation__parameters_8h_source.html#l00515">SimulationParameters&lt; dim &gt;::linear_physics_names</a>, <a class="el" href="simulation__parameters_8h_source.html#l00027">SimulationParameters&lt; dim &gt;::linear_solver</a>, <a class="el" href="simulation__parameters_8h_source.html#l00045">SimulationParameters&lt; dim &gt;::manifolds_parameters</a>, <a class="el" href="parameters_8h_source.html#l00648">Parameters::PhysicalProperties::material_interactions</a>, <a class="el" href="simulation__parameters_8h_source.html#l00034">SimulationParameters&lt; dim &gt;::mesh</a>, <a class="el" href="simulation__parameters_8h_source.html#l00033">SimulationParameters&lt; dim &gt;::mesh_adaptation</a>, <a class="el" href="simulation__parameters_8h_source.html#l00036">SimulationParameters&lt; dim &gt;::mesh_box_refinement</a>, <a class="el" href="simulation__parameters_8h_source.html#l00066">SimulationParameters&lt; dim &gt;::mortar_parameters</a>, <a class="el" href="simulation__parameters_8h_source.html#l00060">SimulationParameters&lt; dim &gt;::multiphysics</a>, <a class="el" href="simulation__parameters_8h_source.html#l00037">SimulationParameters&lt; dim &gt;::nitsche</a>, <a class="el" href="simulation__parameters_8h_source.html#l00474">SimulationParameters&lt; dim &gt;::no_fluid_fluid_interaction_error()</a>, <a class="el" href="simulation__parameters_8h_source.html#l00509">SimulationParameters&lt; dim &gt;::nonlinear_physics_names</a>, <a class="el" href="parameters_8h_source.html#l00639">Parameters::PhysicalProperties::number_of_fluids</a>, <a class="el" href="parameters_8h_source.html#l00649">Parameters::PhysicalProperties::number_of_material_interactions</a>, <a class="el" href="dimensionality_8cc_source.html#l00070">Parameters::Dimensionality::parse_parameters()</a>, <a class="el" href="manifolds_8cc_source.html#l00091">Parameters::Manifolds::parse_parameters()</a>, <a class="el" href="parameters_8cc_source.html#l00212">Parameters::SimulationControl::parse_parameters()</a>, <a class="el" href="parameters_8cc_source.html#l00852">Parameters::Stabilization::parse_parameters()</a>, <a class="el" href="parameters_8cc_source.html#l00310">Parameters::Timer::parse_parameters()</a>, <a class="el" href="parameters_8cc_source.html#l01841">Parameters::Forces::parse_parameters()</a>, <a class="el" href="parameters_8cc_source.html#l02381">Parameters::PostProcessing::parse_parameters()</a>, <a class="el" href="parameters_8cc_source.html#l01770">Parameters::FEM::parse_parameters()</a>, <a class="el" href="parameters_8cc_source.html#l02710">Parameters::Mesh::parse_parameters()</a>, <a class="el" href="parameters_8cc_source.html#l03317">Parameters::MeshAdaptation::parse_parameters()</a>, <a class="el" href="parameters_8cc_source.html#l03422">Parameters::Testing::parse_parameters()</a>, <a class="el" href="parameters_8cc_source.html#l03474">Parameters::Restart::parse_parameters()</a>, <a class="el" href="parameters_8cc_source.html#l03528">Parameters::VelocitySource::parse_parameters()</a>, <a class="el" href="parameters_8cc_source.html#l04214">Parameters::DynamicFlowControl::parse_parameters()</a>, <a class="el" href="parameters_8cc_source.html#l04314">Parameters::Evaporation::parse_parameters()</a>, <a class="el" href="parameters__multiphysics_8cc_source.html#l00085">Parameters::Multiphysics::parse_parameters()</a>, <a class="el" href="parameters_8cc_source.html#l01076">Parameters::PhysicalProperties::parse_parameters()</a>, <a class="el" href="simulation__parameters_8h_source.html#l00058">SimulationParameters&lt; dim &gt;::particlesParameters</a>, <a class="el" href="simulation__parameters_8h_source.html#l00507">SimulationParameters&lt; dim &gt;::physical_properties</a>, <a class="el" href="simulation__parameters_8h_source.html#l00069">SimulationParameters&lt; dim &gt;::physical_properties_manager</a>, <a class="el" href="simulation__parameters_8h_source.html#l00028">SimulationParameters&lt; dim &gt;::physics_solving_strategy</a>, <a class="el" href="simulation__parameters_8h_source.html#l00043">SimulationParameters&lt; dim &gt;::post_processing</a>, <a class="el" href="parameters_8h_source.html#l01099">Parameters::PostProcessing::postprocessed_fluid</a>, <a class="el" href="simulation__parameters_8h_source.html#l00044">SimulationParameters&lt; dim &gt;::restart_parameters</a>, <a class="el" href="simulation__parameters_8h_source.html#l00038">SimulationParameters&lt; dim &gt;::simulation_control</a>, <a class="el" href="simulation__parameters_8h_source.html#l00056">SimulationParameters&lt; dim &gt;::source_term</a>, <a class="el" href="simulation__parameters_8h_source.html#l00062">SimulationParameters&lt; dim &gt;::stabilization</a>, <a class="el" href="parameters__multiphysics_8h_source.html#l00340">Parameters::VOF::surface_tension_force</a>, <a class="el" href="simulation__parameters_8h_source.html#l00026">SimulationParameters&lt; dim &gt;::test</a>, <a class="el" href="simulation__parameters_8h_source.html#l00039">SimulationParameters&lt; dim &gt;::timer</a>, <a class="el" href="simulation__parameters_8h_source.html#l00065">SimulationParameters&lt; dim &gt;::tracer_drift_velocity</a>, <a class="el" href="simulation__parameters_8h_source.html#l00057">SimulationParameters&lt; dim &gt;::velocity_sources</a>, <a class="el" href="parameters__multiphysics_8h_source.html#l00393">Parameters::Multiphysics::VOF</a>, <a class="el" href="parameters__multiphysics_8h_source.html#l00401">Parameters::Multiphysics::vof_parameters</a>, <a class="el" href="simulation__parameters_8h_source.html#l00030">SimulationParameters&lt; dim &gt;::vof_subequations_linear_solvers</a>, <a class="el" href="simulation__parameters_8h_source.html#l00517">SimulationParameters&lt; dim &gt;::vof_subequations_names</a>, and <a class="el" href="simulation__parameters_8h_source.html#l00032">SimulationParameters&lt; dim &gt;::vof_subequations_non_linear_solvers</a>.</p>
 
 </div>
 </div>
@@ -347,7 +351,7 @@ template&lt;int dim&gt; </div>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="simulation__parameters_8h_source.html#l00061">61</a> of file <a class="el" href="simulation__parameters_8h_source.html">simulation_parameters.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="simulation__parameters_8h_source.html#l00063">63</a> of file <a class="el" href="simulation__parameters_8h_source.html">simulation_parameters.h</a>.</p>
 
 </div>
 </div>
@@ -365,7 +369,7 @@ template&lt;int dim&gt; </div>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="simulation__parameters_8h_source.html#l00053">53</a> of file <a class="el" href="simulation__parameters_8h_source.html">simulation_parameters.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="simulation__parameters_8h_source.html#l00055">55</a> of file <a class="el" href="simulation__parameters_8h_source.html">simulation_parameters.h</a>.</p>
 
 </div>
 </div>
@@ -423,6 +427,24 @@ template&lt;int dim&gt; </div>
 
 </div>
 </div>
+<a id="adb3c29ea398f4cdee6ba472065523c5b" name="adb3c29ea398f4cdee6ba472065523c5b"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#adb3c29ea398f4cdee6ba472065523c5b">&#9670;&#160;</a></span>boundary_conditions_time_harmonic_electromagnetics</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;int dim&gt; </div>
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="classBoundaryConditions_1_1TimeHarmonicMaxwellBoundaryConditions.html">BoundaryConditions::TimeHarmonicMaxwellBoundaryConditions</a>&lt;dim&gt; <a class="el" href="classSimulationParameters.html">SimulationParameters</a>&lt; dim &gt;::boundary_conditions_time_harmonic_electromagnetics</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p class="definition">Definition at line <a class="el" href="simulation__parameters_8h_source.html#l00053">53</a> of file <a class="el" href="simulation__parameters_8h_source.html">simulation_parameters.h</a>.</p>
+
+</div>
+</div>
 <a id="a754d3b9f7e55451e2eeb5d687516a9df" name="a754d3b9f7e55451e2eeb5d687516a9df"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a754d3b9f7e55451e2eeb5d687516a9df">&#9670;&#160;</a></span>boundary_conditions_tracer</h2>
 
@@ -473,7 +495,7 @@ template&lt;int dim&gt; </div>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="simulation__parameters_8h_source.html#l00059">59</a> of file <a class="el" href="simulation__parameters_8h_source.html">simulation_parameters.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="simulation__parameters_8h_source.html#l00061">61</a> of file <a class="el" href="simulation__parameters_8h_source.html">simulation_parameters.h</a>.</p>
 
 </div>
 </div>
@@ -509,7 +531,7 @@ template&lt;int dim&gt; </div>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="simulation__parameters_8h_source.html#l00062">62</a> of file <a class="el" href="simulation__parameters_8h_source.html">simulation_parameters.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="simulation__parameters_8h_source.html#l00064">64</a> of file <a class="el" href="simulation__parameters_8h_source.html">simulation_parameters.h</a>.</p>
 
 </div>
 </div>
@@ -545,7 +567,7 @@ template&lt;int dim&gt; </div>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="simulation__parameters_8h_source.html#l00057">57</a> of file <a class="el" href="simulation__parameters_8h_source.html">simulation_parameters.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="simulation__parameters_8h_source.html#l00059">59</a> of file <a class="el" href="simulation__parameters_8h_source.html">simulation_parameters.h</a>.</p>
 
 </div>
 </div>
@@ -581,7 +603,7 @@ template&lt;int dim&gt; </div>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="simulation__parameters_8h_source.html#l00052">52</a> of file <a class="el" href="simulation__parameters_8h_source.html">simulation_parameters.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="simulation__parameters_8h_source.html#l00054">54</a> of file <a class="el" href="simulation__parameters_8h_source.html">simulation_parameters.h</a>.</p>
 
 </div>
 </div>
@@ -600,6 +622,32 @@ template&lt;int dim&gt; </div>
 </div><div class="memdoc">
 
 <p class="definition">Definition at line <a class="el" href="simulation__parameters_8h_source.html#l00042">42</a> of file <a class="el" href="simulation__parameters_8h_source.html">simulation_parameters.h</a>.</p>
+
+</div>
+</div>
+<a id="adc5d14f26104f5dc0538be0844825bd5" name="adc5d14f26104f5dc0538be0844825bd5"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#adc5d14f26104f5dc0538be0844825bd5">&#9670;&#160;</a></span>linear_physics_names</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;int dim&gt; </div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">std::vector&lt;std::string&gt; <a class="el" href="classSimulationParameters.html">SimulationParameters</a>&lt; dim &gt;::linear_physics_names = {&quot;electromagnetics&quot;}</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">private</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p class="definition">Definition at line <a class="el" href="simulation__parameters_8h_source.html#l00515">515</a> of file <a class="el" href="simulation__parameters_8h_source.html">simulation_parameters.h</a>.</p>
 
 </div>
 </div>
@@ -707,7 +755,7 @@ template&lt;int dim&gt; </div>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="simulation__parameters_8h_source.html#l00064">64</a> of file <a class="el" href="simulation__parameters_8h_source.html">simulation_parameters.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="simulation__parameters_8h_source.html#l00066">66</a> of file <a class="el" href="simulation__parameters_8h_source.html">simulation_parameters.h</a>.</p>
 
 </div>
 </div>
@@ -725,7 +773,7 @@ template&lt;int dim&gt; </div>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="simulation__parameters_8h_source.html#l00058">58</a> of file <a class="el" href="simulation__parameters_8h_source.html">simulation_parameters.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="simulation__parameters_8h_source.html#l00060">60</a> of file <a class="el" href="simulation__parameters_8h_source.html">simulation_parameters.h</a>.</p>
 
 </div>
 </div>
@@ -747,6 +795,38 @@ template&lt;int dim&gt; </div>
 
 </div>
 </div>
+<a id="a80e39317c6c40c7ea0147382e0ffbb32" name="a80e39317c6c40c7ea0147382e0ffbb32"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a80e39317c6c40c7ea0147382e0ffbb32">&#9670;&#160;</a></span>nonlinear_physics_names</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;int dim&gt; </div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">std::vector&lt;std::string&gt; <a class="el" href="classSimulationParameters.html">SimulationParameters</a>&lt; dim &gt;::nonlinear_physics_names</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">private</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+<b>Initial value:</b><div class="fragment"><div class="line">= {<span class="stringliteral">&quot;fluid dynamics&quot;</span>,</div>
+<div class="line">                                                      <span class="stringliteral">&quot;heat transfer&quot;</span>,</div>
+<div class="line">                                                      <span class="stringliteral">&quot;tracer&quot;</span>,</div>
+<div class="line">                                                      <span class="stringliteral">&quot;VOF&quot;</span>,</div>
+<div class="line">                                                      <span class="stringliteral">&quot;cahn hilliard&quot;</span>,</div>
+<div class="line">                                                      <span class="stringliteral">&quot;void fraction&quot;</span>}</div>
+</div><!-- fragment -->
+<p class="definition">Definition at line <a class="el" href="simulation__parameters_8h_source.html#l00509">509</a> of file <a class="el" href="simulation__parameters_8h_source.html">simulation_parameters.h</a>.</p>
+
+</div>
+</div>
 <a id="a5db791ea5bf09b3721bbe63b2277c05d" name="a5db791ea5bf09b3721bbe63b2277c05d"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a5db791ea5bf09b3721bbe63b2277c05d">&#9670;&#160;</a></span>particlesParameters</h2>
 
@@ -761,7 +841,7 @@ template&lt;int dim&gt; </div>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="simulation__parameters_8h_source.html#l00056">56</a> of file <a class="el" href="simulation__parameters_8h_source.html">simulation_parameters.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="simulation__parameters_8h_source.html#l00058">58</a> of file <a class="el" href="simulation__parameters_8h_source.html">simulation_parameters.h</a>.</p>
 
 </div>
 </div>
@@ -787,7 +867,7 @@ template&lt;int dim&gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="simulation__parameters_8h_source.html#l00493">493</a> of file <a class="el" href="simulation__parameters_8h_source.html">simulation_parameters.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="simulation__parameters_8h_source.html#l00507">507</a> of file <a class="el" href="simulation__parameters_8h_source.html">simulation_parameters.h</a>.</p>
 
 </div>
 </div>
@@ -805,39 +885,7 @@ template&lt;int dim&gt; </div>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="simulation__parameters_8h_source.html#l00067">67</a> of file <a class="el" href="simulation__parameters_8h_source.html">simulation_parameters.h</a>.</p>
-
-</div>
-</div>
-<a id="a80b1bf4292014bf22e9b58b7ee723be0" name="a80b1bf4292014bf22e9b58b7ee723be0"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a80b1bf4292014bf22e9b58b7ee723be0">&#9670;&#160;</a></span>physics_names</h2>
-
-<div class="memitem">
-<div class="memproto">
-<div class="memtemplate">
-template&lt;int dim&gt; </div>
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">std::vector&lt;std::string&gt; <a class="el" href="classSimulationParameters.html">SimulationParameters</a>&lt; dim &gt;::physics_names</td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">private</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-<b>Initial value:</b><div class="fragment"><div class="line">= {<span class="stringliteral">&quot;fluid dynamics&quot;</span>,</div>
-<div class="line">                                            <span class="stringliteral">&quot;heat transfer&quot;</span>,</div>
-<div class="line">                                            <span class="stringliteral">&quot;tracer&quot;</span>,</div>
-<div class="line">                                            <span class="stringliteral">&quot;VOF&quot;</span>,</div>
-<div class="line">                                            <span class="stringliteral">&quot;cahn hilliard&quot;</span>,</div>
-<div class="line">                                            <span class="stringliteral">&quot;void fraction&quot;</span>}</div>
-</div><!-- fragment -->
-<p class="definition">Definition at line <a class="el" href="simulation__parameters_8h_source.html#l00495">495</a> of file <a class="el" href="simulation__parameters_8h_source.html">simulation_parameters.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="simulation__parameters_8h_source.html#l00069">69</a> of file <a class="el" href="simulation__parameters_8h_source.html">simulation_parameters.h</a>.</p>
 
 </div>
 </div>
@@ -927,7 +975,7 @@ template&lt;int dim&gt; </div>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="simulation__parameters_8h_source.html#l00054">54</a> of file <a class="el" href="simulation__parameters_8h_source.html">simulation_parameters.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="simulation__parameters_8h_source.html#l00056">56</a> of file <a class="el" href="simulation__parameters_8h_source.html">simulation_parameters.h</a>.</p>
 
 </div>
 </div>
@@ -945,7 +993,7 @@ template&lt;int dim&gt; </div>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="simulation__parameters_8h_source.html#l00060">60</a> of file <a class="el" href="simulation__parameters_8h_source.html">simulation_parameters.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="simulation__parameters_8h_source.html#l00062">62</a> of file <a class="el" href="simulation__parameters_8h_source.html">simulation_parameters.h</a>.</p>
 
 </div>
 </div>
@@ -999,7 +1047,7 @@ template&lt;int dim&gt; </div>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="simulation__parameters_8h_source.html#l00063">63</a> of file <a class="el" href="simulation__parameters_8h_source.html">simulation_parameters.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="simulation__parameters_8h_source.html#l00065">65</a> of file <a class="el" href="simulation__parameters_8h_source.html">simulation_parameters.h</a>.</p>
 
 </div>
 </div>
@@ -1017,7 +1065,7 @@ template&lt;int dim&gt; </div>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="simulation__parameters_8h_source.html#l00055">55</a> of file <a class="el" href="simulation__parameters_8h_source.html">simulation_parameters.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="simulation__parameters_8h_source.html#l00057">57</a> of file <a class="el" href="simulation__parameters_8h_source.html">simulation_parameters.h</a>.</p>
 
 </div>
 </div>
@@ -1063,7 +1111,7 @@ template&lt;int dim&gt; </div>
 <b>Initial value:</b><div class="fragment"><div class="line">= {</div>
 <div class="line">    <span class="stringliteral">&quot;VOF algebraic interface reinitialization&quot;</span>}</div>
 </div><!-- fragment -->
-<p class="definition">Definition at line <a class="el" href="simulation__parameters_8h_source.html#l00502">502</a> of file <a class="el" href="simulation__parameters_8h_source.html">simulation_parameters.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="simulation__parameters_8h_source.html#l00517">517</a> of file <a class="el" href="simulation__parameters_8h_source.html">simulation_parameters.h</a>.</p>
 
 </div>
 </div>

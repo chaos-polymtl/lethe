@@ -144,7 +144,7 @@ $(document).ready(function() { init_codefold(0); });
 <div class="line"><a id="l00048" name="l00048"></a><span class="lineno">   48</span><span class="comment">   * @tparam FEType The finite element type used to discretize the problem.</span></div>
 <div class="line"><a id="l00049" name="l00049"></a><span class="lineno">   49</span><span class="comment">   */</span></div>
 <div class="line"><a id="l00050" name="l00050"></a><span class="lineno">   50</span>  <span class="keyword">template</span> &lt;<span class="keywordtype">int</span> dim,</div>
-<div class="line"><a id="l00051" name="l00051"></a><span class="lineno">   51</span>            <span class="keyword">typename</span> VectorType = Vector&lt;double&gt;,</div>
+<div class="line"><a id="l00051" name="l00051"></a><span class="lineno">   51</span>            <span class="keyword">typename</span> <a class="code hl_typedef" href="time__harmonic__maxwell_8h.html#a5114f84176ad5081553f88d2b5d2525e">VectorType</a> = Vector&lt;double&gt;,</div>
 <div class="line"><a id="l00052" name="l00052"></a><span class="lineno">   52</span>            <span class="keyword">typename</span> FEType     = FE_Q&lt;dim&gt;&gt;</div>
 <div class="foldopen" id="foldopen00053" data-start="{" data-end="};">
 <div class="line"><a id="l00053" name="l00053"></a><span class="lineno"><a class="line" href="classInterfaceTools_1_1CellWiseFunction.html">   53</a></span>  <span class="keyword">class </span><a class="code hl_class" href="classInterfaceTools_1_1CellWiseFunction.html">CellWiseFunction</a> : <span class="keyword">public</span> Function&lt;dim&gt;</div>
@@ -172,7 +172,7 @@ $(document).ready(function() { init_codefold(0); });
 <div class="line"><a id="l00073" name="l00073"></a><span class="lineno">   73</span><span class="comment">     */</span></div>
 <div class="line"><a id="l00074" name="l00074"></a><span class="lineno">   74</span>    <span class="keywordtype">void</span></div>
 <div class="foldopen" id="foldopen00075" data-start="{" data-end="}">
-<div class="line"><a id="l00075" name="l00075"></a><span class="lineno"><a class="line" href="classInterfaceTools_1_1CellWiseFunction.html#a44045f399b7900ae620cd59073c05609">   75</a></span>    <a class="code hl_function" href="classInterfaceTools_1_1CellWiseFunction.html#a44045f399b7900ae620cd59073c05609">set_active_cell</a>(<span class="keyword">const</span> VectorType &amp;in_local_dof_values)</div>
+<div class="line"><a id="l00075" name="l00075"></a><span class="lineno"><a class="line" href="classInterfaceTools_1_1CellWiseFunction.html#a44045f399b7900ae620cd59073c05609">   75</a></span>    <a class="code hl_function" href="classInterfaceTools_1_1CellWiseFunction.html#a44045f399b7900ae620cd59073c05609">set_active_cell</a>(<span class="keyword">const</span> <a class="code hl_typedef" href="time__harmonic__maxwell_8h.html#a5114f84176ad5081553f88d2b5d2525e">VectorType</a> &amp;in_local_dof_values)</div>
 <div class="line"><a id="l00076" name="l00076"></a><span class="lineno">   76</span>    {</div>
 <div class="line"><a id="l00077" name="l00077"></a><span class="lineno">   77</span>      <a class="code hl_variable" href="classInterfaceTools_1_1CellWiseFunction.html#a2a226711ea62d23ee50b0b02b78437c3">cell_dof_values</a> = in_local_dof_values;</div>
 <div class="line"><a id="l00078" name="l00078"></a><span class="lineno">   78</span>    }</div>
@@ -232,7 +232,7 @@ $(document).ready(function() { init_codefold(0); });
 <div class="line"><a id="l00131" name="l00131"></a><span class="lineno"><a class="line" href="classInterfaceTools_1_1CellWiseFunction.html#a94bfe85c7a3812c84ba21c1a92c89d8d">  131</a></span><span class="comment"></span>    <span class="keywordtype">unsigned</span> <span class="keywordtype">int</span> <a class="code hl_variable" href="classInterfaceTools_1_1CellWiseFunction.html#a94bfe85c7a3812c84ba21c1a92c89d8d">n_cell_wise_dofs</a>;</div>
 <div class="line"><a id="l00132" name="l00132"></a><span class="lineno">  132</span><span class="comment"></span> </div>
 <div class="line"><a id="l00133" name="l00133"></a><span class="lineno">  133</span><span class="comment">    /// Value of the level-set field at the DoFs of the cell</span></div>
-<div class="line"><a id="l00134" name="l00134"></a><span class="lineno"><a class="line" href="classInterfaceTools_1_1CellWiseFunction.html#a2a226711ea62d23ee50b0b02b78437c3">  134</a></span><span class="comment"></span>    VectorType <a class="code hl_variable" href="classInterfaceTools_1_1CellWiseFunction.html#a2a226711ea62d23ee50b0b02b78437c3">cell_dof_values</a>;</div>
+<div class="line"><a id="l00134" name="l00134"></a><span class="lineno"><a class="line" href="classInterfaceTools_1_1CellWiseFunction.html#a2a226711ea62d23ee50b0b02b78437c3">  134</a></span><span class="comment"></span>    <a class="code hl_typedef" href="time__harmonic__maxwell_8h.html#a5114f84176ad5081553f88d2b5d2525e">VectorType</a> <a class="code hl_variable" href="classInterfaceTools_1_1CellWiseFunction.html#a2a226711ea62d23ee50b0b02b78437c3">cell_dof_values</a>;</div>
 <div class="line"><a id="l00135" name="l00135"></a><span class="lineno">  135</span>  };</div>
 </div>
 <div class="line"><a id="l00136" name="l00136"></a><span class="lineno">  136</span> </div>
@@ -347,7 +347,7 @@ $(document).ready(function() { init_codefold(0); });
 <div class="line"><a id="l00239" name="l00239"></a><span class="lineno">  239</span>  std::pair&lt;double, double&gt;</div>
 <div class="line"><a id="l00240" name="l00240"></a><span class="lineno">  240</span>  <a class="code hl_function" href="namespaceInterfaceTools.html#a9ccc3916532b0c8bb3f6908a5d9b23da">compute_surface_and_volume</a>(<span class="keyword">const</span> DoFHandler&lt;dim&gt;    &amp;dof_handler,</div>
 <div class="line"><a id="l00241" name="l00241"></a><span class="lineno">  241</span>                             <span class="keyword">const</span> FiniteElement&lt;dim&gt; &amp;fe,</div>
-<div class="line"><a id="l00242" name="l00242"></a><span class="lineno">  242</span>                             <span class="keyword">const</span> VectorType         &amp;level_set_vector,</div>
+<div class="line"><a id="l00242" name="l00242"></a><span class="lineno">  242</span>                             <span class="keyword">const</span> <a class="code hl_typedef" href="time__harmonic__maxwell_8h.html#a5114f84176ad5081553f88d2b5d2525e">VectorType</a>         &amp;level_set_vector,</div>
 <div class="line"><a id="l00243" name="l00243"></a><span class="lineno">  243</span>                             <span class="keyword">const</span> <span class="keywordtype">double</span>              iso_level,</div>
 <div class="line"><a id="l00244" name="l00244"></a><span class="lineno">  244</span>                             <span class="keyword">const</span> MPI_Comm           &amp;mpi_communicator);</div>
 <div class="line"><a id="l00245" name="l00245"></a><span class="lineno">  245</span><span class="comment"></span> </div>
@@ -393,7 +393,7 @@ $(document).ready(function() { init_codefold(0); });
 <div class="line"><a id="l00285" name="l00285"></a><span class="lineno">  285</span>    <span class="keyword">const</span> Mapping&lt;dim&gt;       &amp;mapping,</div>
 <div class="line"><a id="l00286" name="l00286"></a><span class="lineno">  286</span>    <span class="keyword">const</span> DoFHandler&lt;dim&gt;    &amp;dof_handler,</div>
 <div class="line"><a id="l00287" name="l00287"></a><span class="lineno">  287</span>    <span class="keyword">const</span> FiniteElement&lt;dim&gt; &amp;fe,</div>
-<div class="line"><a id="l00288" name="l00288"></a><span class="lineno">  288</span>    <span class="keyword">const</span> VectorType         &amp;level_set_vector,</div>
+<div class="line"><a id="l00288" name="l00288"></a><span class="lineno">  288</span>    <span class="keyword">const</span> <a class="code hl_typedef" href="time__harmonic__maxwell_8h.html#a5114f84176ad5081553f88d2b5d2525e">VectorType</a>         &amp;level_set_vector,</div>
 <div class="line"><a id="l00289" name="l00289"></a><span class="lineno">  289</span>    <span class="keyword">const</span> <span class="keywordtype">double</span>              iso_level,</div>
 <div class="line"><a id="l00290" name="l00290"></a><span class="lineno">  290</span>    std::map&lt;types::global_cell_index, std::vector&lt;Point&lt;dim&gt;&gt;&gt;</div>
 <div class="line"><a id="l00291" name="l00291"></a><span class="lineno">  291</span>      &amp;interface_reconstruction_vertices,</div>
@@ -569,7 +569,7 @@ $(document).ready(function() { init_codefold(0); });
 <div class="line"><a id="l00448" name="l00448"></a><span class="lineno">  448</span>    <span class="keywordtype">void</span></div>
 <div class="line"><a id="l00449" name="l00449"></a><span class="lineno">  449</span>    <a class="code hl_function" href="classInterfaceTools_1_1SignedDistanceSolver.html#a0dd249772c4781c042e3b63360245859">set_level_set_from_background_mesh</a>(</div>
 <div class="line"><a id="l00450" name="l00450"></a><span class="lineno">  450</span>      <span class="keyword">const</span> DoFHandler&lt;dim&gt; &amp;background_dof_handler,</div>
-<div class="line"><a id="l00451" name="l00451"></a><span class="lineno">  451</span>      <span class="keyword">const</span> VectorType      &amp;background_level_set_vector);</div>
+<div class="line"><a id="l00451" name="l00451"></a><span class="lineno">  451</span>      <span class="keyword">const</span> <a class="code hl_typedef" href="time__harmonic__maxwell_8h.html#a5114f84176ad5081553f88d2b5d2525e">VectorType</a>      &amp;background_level_set_vector);</div>
 <div class="line"><a id="l00452" name="l00452"></a><span class="lineno">  452</span><span class="comment"></span> </div>
 <div class="line"><a id="l00453" name="l00453"></a><span class="lineno">  453</span><span class="comment">    /**</span></div>
 <div class="line"><a id="l00454" name="l00454"></a><span class="lineno">  454</span><span class="comment">     * @brief Solve for the signed distance from the given level of the level-set vector.</span></div>
@@ -586,7 +586,7 @@ $(document).ready(function() { init_codefold(0); });
 <div class="line"><a id="l00465" name="l00465"></a><span class="lineno">  465</span><span class="comment">     *</span></div>
 <div class="line"><a id="l00466" name="l00466"></a><span class="lineno">  466</span><span class="comment">     * @return Reference to the vector storing the computed signed distance values.</span></div>
 <div class="line"><a id="l00467" name="l00467"></a><span class="lineno">  467</span><span class="comment">     */</span></div>
-<div class="line"><a id="l00468" name="l00468"></a><span class="lineno">  468</span>    VectorType &amp;</div>
+<div class="line"><a id="l00468" name="l00468"></a><span class="lineno">  468</span>    <a class="code hl_typedef" href="time__harmonic__maxwell_8h.html#a5114f84176ad5081553f88d2b5d2525e">VectorType</a> &amp;</div>
 <div class="line"><a id="l00469" name="l00469"></a><span class="lineno">  469</span>    <a class="code hl_function" href="classInterfaceTools_1_1SignedDistanceSolver.html#a9b41dc84b1bc98b1c955a9fd7723a8ee">get_signed_distance</a>();</div>
 <div class="line"><a id="l00470" name="l00470"></a><span class="lineno">  470</span><span class="comment"></span> </div>
 <div class="line"><a id="l00471" name="l00471"></a><span class="lineno">  471</span><span class="comment">    /**</span></div>
@@ -1081,7 +1081,7 @@ $(document).ready(function() { init_codefold(0); });
 <div class="line"><a id="l00940" name="l00940"></a><span class="lineno"><a class="line" href="classInterfaceTools_1_1SignedDistanceSolver.html#a847fdf450e5c8e8f19f72eafe3737365">  940</a></span><span class="comment"></span>    IndexSet <a class="code hl_variable" href="classInterfaceTools_1_1SignedDistanceSolver.html#a847fdf450e5c8e8f19f72eafe3737365">locally_active_dofs</a>;</div>
 <div class="line"><a id="l00941" name="l00941"></a><span class="lineno">  941</span><span class="comment"></span> </div>
 <div class="line"><a id="l00942" name="l00942"></a><span class="lineno">  942</span><span class="comment">    /// Level-set field coming from the main solver</span></div>
-<div class="line"><a id="l00943" name="l00943"></a><span class="lineno"><a class="line" href="classInterfaceTools_1_1SignedDistanceSolver.html#a53672191443f586430a8b17296740a0d">  943</a></span><span class="comment"></span>    VectorType <a class="code hl_variable" href="classInterfaceTools_1_1SignedDistanceSolver.html#a53672191443f586430a8b17296740a0d">level_set</a>;</div>
+<div class="line"><a id="l00943" name="l00943"></a><span class="lineno"><a class="line" href="classInterfaceTools_1_1SignedDistanceSolver.html#a53672191443f586430a8b17296740a0d">  943</a></span><span class="comment"></span>    <a class="code hl_typedef" href="time__harmonic__maxwell_8h.html#a5114f84176ad5081553f88d2b5d2525e">VectorType</a> <a class="code hl_variable" href="classInterfaceTools_1_1SignedDistanceSolver.html#a53672191443f586430a8b17296740a0d">level_set</a>;</div>
 <div class="line"><a id="l00944" name="l00944"></a><span class="lineno">  944</span><span class="comment"></span> </div>
 <div class="line"><a id="l00945" name="l00945"></a><span class="lineno">  945</span><span class="comment">    /// Solution vector of the signed distance (write only)</span></div>
 <div class="line"><a id="l00946" name="l00946"></a><span class="lineno"><a class="line" href="classInterfaceTools_1_1SignedDistanceSolver.html#a9d5678c373d01150cd2ac4548b53ad33">  946</a></span><span class="comment"></span>    LinearAlgebra::distributed::Vector&lt;double&gt; <a class="code hl_variable" href="classInterfaceTools_1_1SignedDistanceSolver.html#a9d5678c373d01150cd2ac4548b53ad33">signed_distance</a>;</div>
@@ -1212,6 +1212,7 @@ $(document).ready(function() { init_codefold(0); });
 <div class="ttc" id="anamespacedealii_html"><div class="ttname"><a href="namespacedealii.html">dealii</a></div><div class="ttdef"><b>Definition</b> <a href="fluid__dynamics__matrix__free_8h_source.html#l00032">fluid_dynamics_matrix_free.h:33</a></div></div>
 <div class="ttc" id="aoutput__struct_8h_html"><div class="ttname"><a href="output__struct_8h.html">output_struct.h</a></div></div>
 <div class="ttc" id="asolutions__output_8h_html"><div class="ttname"><a href="solutions__output_8h.html">solutions_output.h</a></div></div>
+<div class="ttc" id="atime__harmonic__maxwell_8h_html_a5114f84176ad5081553f88d2b5d2525e"><div class="ttname"><a href="time__harmonic__maxwell_8h.html#a5114f84176ad5081553f88d2b5d2525e">VectorType</a></div><div class="ttdeci">GlobalVectorType VectorType</div><div class="ttdoc">TODO until completion of the auxiliary physics :</div><div class="ttdef"><b>Definition</b> <a href="time__harmonic__maxwell_8h_source.html#l00115">time_harmonic_maxwell.h:115</a></div></div>
 <div class="ttc" id="autilities_8h_html"><div class="ttname"><a href="utilities_8h.html">utilities.h</a></div></div>
 <div class="ttc" id="avector_8h_html"><div class="ttname"><a href="vector_8h.html">vector.h</a></div></div>
 <div class="ttc" id="avector_8h_html_a4ea4005d75c88e60bee47d4e79a13a39"><div class="ttname"><a href="vector_8h.html#a4ea4005d75c88e60bee47d4e79a13a39">GlobalVectorType</a></div><div class="ttdeci">dealii::TrilinosWrappers::MPI::Vector GlobalVectorType</div><div class="ttdef"><b>Definition</b> <a href="vector_8h_source.html#l00017">vector.h:17</a></div></div>

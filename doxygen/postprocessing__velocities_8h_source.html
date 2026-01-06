@@ -152,7 +152,7 @@ $(document).ready(function() { init_codefold(0); });
 <div class="line"><a id="l00056" name="l00056"></a><span class="lineno">   56</span><span class="comment">   */</span></div>
 <div class="line"><a id="l00057" name="l00057"></a><span class="lineno">   57</span>  <span class="keywordtype">void</span></div>
 <div class="line"><a id="l00058" name="l00058"></a><span class="lineno">   58</span>  <a class="code hl_function" href="classAverageVelocities.html#ab3721c4ebf1ee463dbad8cdb27bf2e50">calculate_average_velocities</a>(</div>
-<div class="line"><a id="l00059" name="l00059"></a><span class="lineno">   59</span>    <span class="keyword">const</span> VectorType                 &amp;local_evaluation_point,</div>
+<div class="line"><a id="l00059" name="l00059"></a><span class="lineno">   59</span>    <span class="keyword">const</span> <a class="code hl_typedef" href="time__harmonic__maxwell_8h.html#a5114f84176ad5081553f88d2b5d2525e">VectorType</a>                 &amp;local_evaluation_point,</div>
 <div class="line"><a id="l00060" name="l00060"></a><span class="lineno">   60</span>    <span class="keyword">const</span> <a class="code hl_struct" href="structParameters_1_1PostProcessing.html">Parameters::PostProcessing</a> &amp;post_processing,</div>
 <div class="line"><a id="l00061" name="l00061"></a><span class="lineno">   61</span>    <span class="keyword">const</span> <span class="keywordtype">double</span>                     &amp;current_time,</div>
 <div class="line"><a id="l00062" name="l00062"></a><span class="lineno">   62</span>    <span class="keyword">const</span> <span class="keywordtype">double</span>                     &amp;time_step);</div>
@@ -170,7 +170,7 @@ $(document).ready(function() { init_codefold(0); });
 <div class="line"><a id="l00074" name="l00074"></a><span class="lineno">   74</span><span class="comment">   * @param[in] local_evaluation_point The solution vector with no ghost cells.</span></div>
 <div class="line"><a id="l00075" name="l00075"></a><span class="lineno">   75</span><span class="comment">   */</span></div>
 <div class="line"><a id="l00076" name="l00076"></a><span class="lineno">   76</span>  <span class="keywordtype">void</span></div>
-<div class="line"><a id="l00077" name="l00077"></a><span class="lineno">   77</span>  <a class="code hl_function" href="classAverageVelocities.html#a62b8f5905278c238a20a59cf7ab9f630">calculate_reynolds_stresses</a>(<span class="keyword">const</span> VectorType &amp;local_evaluation_point);</div>
+<div class="line"><a id="l00077" name="l00077"></a><span class="lineno">   77</span>  <a class="code hl_function" href="classAverageVelocities.html#a62b8f5905278c238a20a59cf7ab9f630">calculate_reynolds_stresses</a>(<span class="keyword">const</span> <a class="code hl_typedef" href="time__harmonic__maxwell_8h.html#a5114f84176ad5081553f88d2b5d2525e">VectorType</a> &amp;local_evaluation_point);</div>
 <div class="line"><a id="l00078" name="l00078"></a><span class="lineno">   78</span><span class="comment"></span> </div>
 <div class="line"><a id="l00079" name="l00079"></a><span class="lineno">   79</span><span class="comment">  /**</span></div>
 <div class="line"><a id="l00080" name="l00080"></a><span class="lineno">   80</span><span class="comment">   * @brief Give the average of solutions with ghost cells.</span></div>
@@ -193,7 +193,7 @@ $(document).ready(function() { init_codefold(0); });
 <div class="line"><a id="l00095" name="l00095"></a><span class="lineno">   95</span><span class="comment">   * @return Vector with average normal Reynolds stresses.</span></div>
 <div class="line"><a id="l00096" name="l00096"></a><span class="lineno">   96</span><span class="comment">   *</span></div>
 <div class="line"><a id="l00097" name="l00097"></a><span class="lineno">   97</span><span class="comment">   */</span></div>
-<div class="line"><a id="l00098" name="l00098"></a><span class="lineno">   98</span>  <span class="keyword">const</span> VectorType &amp;</div>
+<div class="line"><a id="l00098" name="l00098"></a><span class="lineno">   98</span>  <span class="keyword">const</span> <a class="code hl_typedef" href="time__harmonic__maxwell_8h.html#a5114f84176ad5081553f88d2b5d2525e">VectorType</a> &amp;</div>
 <div class="foldopen" id="foldopen00099" data-start="{" data-end="}">
 <div class="line"><a id="l00099" name="l00099"></a><span class="lineno"><a class="line" href="classAverageVelocities.html#aa48c89588368113c0eb49e56b2c8eefa">   99</a></span>  <a class="code hl_function" href="classAverageVelocities.html#aa48c89588368113c0eb49e56b2c8eefa">get_reynolds_normal_stresses</a>()</div>
 <div class="line"><a id="l00100" name="l00100"></a><span class="lineno">  100</span>  {</div>
@@ -207,7 +207,7 @@ $(document).ready(function() { init_codefold(0); });
 <div class="line"><a id="l00107" name="l00107"></a><span class="lineno">  107</span><span class="comment">   * @return Vector with average shear Reynolds stresses.</span></div>
 <div class="line"><a id="l00108" name="l00108"></a><span class="lineno">  108</span><span class="comment">   *</span></div>
 <div class="line"><a id="l00109" name="l00109"></a><span class="lineno">  109</span><span class="comment">   */</span></div>
-<div class="line"><a id="l00110" name="l00110"></a><span class="lineno">  110</span>  <span class="keyword">const</span> VectorType &amp;</div>
+<div class="line"><a id="l00110" name="l00110"></a><span class="lineno">  110</span>  <span class="keyword">const</span> <a class="code hl_typedef" href="time__harmonic__maxwell_8h.html#a5114f84176ad5081553f88d2b5d2525e">VectorType</a> &amp;</div>
 <div class="foldopen" id="foldopen00111" data-start="{" data-end="}">
 <div class="line"><a id="l00111" name="l00111"></a><span class="lineno"><a class="line" href="classAverageVelocities.html#aa0972b63f367b91a647be1c46578ceea">  111</a></span>  <a class="code hl_function" href="classAverageVelocities.html#aa0972b63f367b91a647be1c46578ceea">get_reynolds_shear_stresses</a>()</div>
 <div class="line"><a id="l00112" name="l00112"></a><span class="lineno">  112</span>  {</div>
@@ -310,19 +310,19 @@ $(document).ready(function() { init_codefold(0); });
 <div class="line"><a id="l00206" name="l00206"></a><span class="lineno">  206</span><span class="comment">   * @brief Vector to store the velocity multiplied by time step.</span></div>
 <div class="line"><a id="l00207" name="l00207"></a><span class="lineno">  207</span><span class="comment">   *</span></div>
 <div class="line"><a id="l00208" name="l00208"></a><span class="lineno">  208</span><span class="comment">   */</span></div>
-<div class="line"><a id="l00209" name="l00209"></a><span class="lineno"><a class="line" href="classAverageVelocities.html#a34b43864be46564108acdff5ad94e3fa">  209</a></span>  VectorType <a class="code hl_variable" href="classAverageVelocities.html#a34b43864be46564108acdff5ad94e3fa">velocity_dt</a>;</div>
+<div class="line"><a id="l00209" name="l00209"></a><span class="lineno"><a class="line" href="classAverageVelocities.html#a34b43864be46564108acdff5ad94e3fa">  209</a></span>  <a class="code hl_typedef" href="time__harmonic__maxwell_8h.html#a5114f84176ad5081553f88d2b5d2525e">VectorType</a> <a class="code hl_variable" href="classAverageVelocities.html#a34b43864be46564108acdff5ad94e3fa">velocity_dt</a>;</div>
 <div class="line"><a id="l00210" name="l00210"></a><span class="lineno">  210</span><span class="comment"></span> </div>
 <div class="line"><a id="l00211" name="l00211"></a><span class="lineno">  211</span><span class="comment">  /**</span></div>
 <div class="line"><a id="l00212" name="l00212"></a><span class="lineno">  212</span><span class="comment">   * @brief Vector to store the sum of all the velocities multiplied by time step.</span></div>
 <div class="line"><a id="l00213" name="l00213"></a><span class="lineno">  213</span><span class="comment">   *</span></div>
 <div class="line"><a id="l00214" name="l00214"></a><span class="lineno">  214</span><span class="comment">   */</span></div>
-<div class="line"><a id="l00215" name="l00215"></a><span class="lineno"><a class="line" href="classAverageVelocities.html#a0701c06fc66bd4e9bb887281fc938811">  215</a></span>  VectorType <a class="code hl_variable" href="classAverageVelocities.html#a0701c06fc66bd4e9bb887281fc938811">sum_velocity_dt</a>;</div>
+<div class="line"><a id="l00215" name="l00215"></a><span class="lineno"><a class="line" href="classAverageVelocities.html#a0701c06fc66bd4e9bb887281fc938811">  215</a></span>  <a class="code hl_typedef" href="time__harmonic__maxwell_8h.html#a5114f84176ad5081553f88d2b5d2525e">VectorType</a> <a class="code hl_variable" href="classAverageVelocities.html#a0701c06fc66bd4e9bb887281fc938811">sum_velocity_dt</a>;</div>
 <div class="line"><a id="l00216" name="l00216"></a><span class="lineno">  216</span><span class="comment"></span> </div>
 <div class="line"><a id="l00217" name="l00217"></a><span class="lineno">  217</span><span class="comment">  /**</span></div>
 <div class="line"><a id="l00218" name="l00218"></a><span class="lineno">  218</span><span class="comment">   * @brief Vector to store average velocities.</span></div>
 <div class="line"><a id="l00219" name="l00219"></a><span class="lineno">  219</span><span class="comment">   *</span></div>
 <div class="line"><a id="l00220" name="l00220"></a><span class="lineno">  220</span><span class="comment">   */</span></div>
-<div class="line"><a id="l00221" name="l00221"></a><span class="lineno"><a class="line" href="classAverageVelocities.html#a1bf176d8cb26d2933280a6a47c6b69b0">  221</a></span>  VectorType <a class="code hl_variable" href="classAverageVelocities.html#a1bf176d8cb26d2933280a6a47c6b69b0">average_velocities</a>;</div>
+<div class="line"><a id="l00221" name="l00221"></a><span class="lineno"><a class="line" href="classAverageVelocities.html#a1bf176d8cb26d2933280a6a47c6b69b0">  221</a></span>  <a class="code hl_typedef" href="time__harmonic__maxwell_8h.html#a5114f84176ad5081553f88d2b5d2525e">VectorType</a> <a class="code hl_variable" href="classAverageVelocities.html#a1bf176d8cb26d2933280a6a47c6b69b0">average_velocities</a>;</div>
 <div class="line"><a id="l00222" name="l00222"></a><span class="lineno">  222</span><span class="comment"></span> </div>
 <div class="line"><a id="l00223" name="l00223"></a><span class="lineno">  223</span><span class="comment">  /**</span></div>
 <div class="line"><a id="l00224" name="l00224"></a><span class="lineno">  224</span><span class="comment">   * @brief Shared pointer to the getter vector for the average velocities.</span></div>
@@ -335,72 +335,72 @@ $(document).ready(function() { init_codefold(0); });
 <div class="line"><a id="l00231" name="l00231"></a><span class="lineno">  231</span><span class="comment">   * calculate the normal stresses.</span></div>
 <div class="line"><a id="l00232" name="l00232"></a><span class="lineno">  232</span><span class="comment">   *</span></div>
 <div class="line"><a id="l00233" name="l00233"></a><span class="lineno">  233</span><span class="comment">   */</span></div>
-<div class="line"><a id="l00234" name="l00234"></a><span class="lineno"><a class="line" href="classAverageVelocities.html#a092dae7d0f5713396a0bc69a2c652d23">  234</a></span>  VectorType <a class="code hl_variable" href="classAverageVelocities.html#a092dae7d0f5713396a0bc69a2c652d23">reynolds_normal_stress_dt</a>;</div>
+<div class="line"><a id="l00234" name="l00234"></a><span class="lineno"><a class="line" href="classAverageVelocities.html#a092dae7d0f5713396a0bc69a2c652d23">  234</a></span>  <a class="code hl_typedef" href="time__harmonic__maxwell_8h.html#a5114f84176ad5081553f88d2b5d2525e">VectorType</a> <a class="code hl_variable" href="classAverageVelocities.html#a092dae7d0f5713396a0bc69a2c652d23">reynolds_normal_stress_dt</a>;</div>
 <div class="line"><a id="l00235" name="l00235"></a><span class="lineno">  235</span><span class="comment"></span> </div>
 <div class="line"><a id="l00236" name="l00236"></a><span class="lineno">  236</span><span class="comment">  /**</span></div>
 <div class="line"><a id="l00237" name="l00237"></a><span class="lineno">  237</span><span class="comment">   * @brief Vector to store sum of the velocities multiplied by the time step to</span></div>
 <div class="line"><a id="l00238" name="l00238"></a><span class="lineno">  238</span><span class="comment">   * calculate the normal stresses.</span></div>
 <div class="line"><a id="l00239" name="l00239"></a><span class="lineno">  239</span><span class="comment">   *</span></div>
 <div class="line"><a id="l00240" name="l00240"></a><span class="lineno">  240</span><span class="comment">   */</span></div>
-<div class="line"><a id="l00241" name="l00241"></a><span class="lineno"><a class="line" href="classAverageVelocities.html#af5c999080816b4da875449d65c7bd27c">  241</a></span>  VectorType <a class="code hl_variable" href="classAverageVelocities.html#af5c999080816b4da875449d65c7bd27c">sum_reynolds_normal_stress_dt</a>;</div>
+<div class="line"><a id="l00241" name="l00241"></a><span class="lineno"><a class="line" href="classAverageVelocities.html#af5c999080816b4da875449d65c7bd27c">  241</a></span>  <a class="code hl_typedef" href="time__harmonic__maxwell_8h.html#a5114f84176ad5081553f88d2b5d2525e">VectorType</a> <a class="code hl_variable" href="classAverageVelocities.html#af5c999080816b4da875449d65c7bd27c">sum_reynolds_normal_stress_dt</a>;</div>
 <div class="line"><a id="l00242" name="l00242"></a><span class="lineno">  242</span><span class="comment"></span> </div>
 <div class="line"><a id="l00243" name="l00243"></a><span class="lineno">  243</span><span class="comment">  /**</span></div>
 <div class="line"><a id="l00244" name="l00244"></a><span class="lineno">  244</span><span class="comment">   * @brief Vector with average Reynolds normal stresses.</span></div>
 <div class="line"><a id="l00245" name="l00245"></a><span class="lineno">  245</span><span class="comment">   *</span></div>
 <div class="line"><a id="l00246" name="l00246"></a><span class="lineno">  246</span><span class="comment">   */</span></div>
-<div class="line"><a id="l00247" name="l00247"></a><span class="lineno"><a class="line" href="classAverageVelocities.html#afbf99d9446474aae08ab2af053c8ac3b">  247</a></span>  VectorType <a class="code hl_variable" href="classAverageVelocities.html#afbf99d9446474aae08ab2af053c8ac3b">reynolds_normal_stresses</a>;</div>
+<div class="line"><a id="l00247" name="l00247"></a><span class="lineno"><a class="line" href="classAverageVelocities.html#afbf99d9446474aae08ab2af053c8ac3b">  247</a></span>  <a class="code hl_typedef" href="time__harmonic__maxwell_8h.html#a5114f84176ad5081553f88d2b5d2525e">VectorType</a> <a class="code hl_variable" href="classAverageVelocities.html#afbf99d9446474aae08ab2af053c8ac3b">reynolds_normal_stresses</a>;</div>
 <div class="line"><a id="l00248" name="l00248"></a><span class="lineno">  248</span><span class="comment"></span> </div>
 <div class="line"><a id="l00249" name="l00249"></a><span class="lineno">  249</span><span class="comment">  /**</span></div>
 <div class="line"><a id="l00250" name="l00250"></a><span class="lineno">  250</span><span class="comment">   * @brief Getter vector for the average Reynolds normal stresses.</span></div>
 <div class="line"><a id="l00251" name="l00251"></a><span class="lineno">  251</span><span class="comment">   *</span></div>
 <div class="line"><a id="l00252" name="l00252"></a><span class="lineno">  252</span><span class="comment">   */</span></div>
-<div class="line"><a id="l00253" name="l00253"></a><span class="lineno"><a class="line" href="classAverageVelocities.html#a51453267a4ce6dfc785b1a801042dd66">  253</a></span>  VectorType <a class="code hl_variable" href="classAverageVelocities.html#a51453267a4ce6dfc785b1a801042dd66">get_rns</a>;</div>
+<div class="line"><a id="l00253" name="l00253"></a><span class="lineno"><a class="line" href="classAverageVelocities.html#a51453267a4ce6dfc785b1a801042dd66">  253</a></span>  <a class="code hl_typedef" href="time__harmonic__maxwell_8h.html#a5114f84176ad5081553f88d2b5d2525e">VectorType</a> <a class="code hl_variable" href="classAverageVelocities.html#a51453267a4ce6dfc785b1a801042dd66">get_rns</a>;</div>
 <div class="line"><a id="l00254" name="l00254"></a><span class="lineno">  254</span><span class="comment"></span> </div>
 <div class="line"><a id="l00255" name="l00255"></a><span class="lineno">  255</span><span class="comment">  /**</span></div>
 <div class="line"><a id="l00256" name="l00256"></a><span class="lineno">  256</span><span class="comment">   * @brief Vector to store the velocities multiplied by the time step to</span></div>
 <div class="line"><a id="l00257" name="l00257"></a><span class="lineno">  257</span><span class="comment">   * calculate the shear stresses.</span></div>
 <div class="line"><a id="l00258" name="l00258"></a><span class="lineno">  258</span><span class="comment">   *</span></div>
 <div class="line"><a id="l00259" name="l00259"></a><span class="lineno">  259</span><span class="comment">   */</span></div>
-<div class="line"><a id="l00260" name="l00260"></a><span class="lineno"><a class="line" href="classAverageVelocities.html#af102f181752cafc9946f4cfe99761374">  260</a></span>  VectorType <a class="code hl_variable" href="classAverageVelocities.html#af102f181752cafc9946f4cfe99761374">reynolds_shear_stress_dt</a>;</div>
+<div class="line"><a id="l00260" name="l00260"></a><span class="lineno"><a class="line" href="classAverageVelocities.html#af102f181752cafc9946f4cfe99761374">  260</a></span>  <a class="code hl_typedef" href="time__harmonic__maxwell_8h.html#a5114f84176ad5081553f88d2b5d2525e">VectorType</a> <a class="code hl_variable" href="classAverageVelocities.html#af102f181752cafc9946f4cfe99761374">reynolds_shear_stress_dt</a>;</div>
 <div class="line"><a id="l00261" name="l00261"></a><span class="lineno">  261</span><span class="comment"></span> </div>
 <div class="line"><a id="l00262" name="l00262"></a><span class="lineno">  262</span><span class="comment">  /**</span></div>
 <div class="line"><a id="l00263" name="l00263"></a><span class="lineno">  263</span><span class="comment">   * @brief Vector to store the sum the velocities multiplied by the time step to</span></div>
 <div class="line"><a id="l00264" name="l00264"></a><span class="lineno">  264</span><span class="comment">   * calculate the shear stresses.</span></div>
 <div class="line"><a id="l00265" name="l00265"></a><span class="lineno">  265</span><span class="comment">   *</span></div>
 <div class="line"><a id="l00266" name="l00266"></a><span class="lineno">  266</span><span class="comment">   */</span></div>
-<div class="line"><a id="l00267" name="l00267"></a><span class="lineno"><a class="line" href="classAverageVelocities.html#a5290661a616361bc0186d5cf43cb37b1">  267</a></span>  VectorType <a class="code hl_variable" href="classAverageVelocities.html#a5290661a616361bc0186d5cf43cb37b1">sum_reynolds_shear_stress_dt</a>;</div>
+<div class="line"><a id="l00267" name="l00267"></a><span class="lineno"><a class="line" href="classAverageVelocities.html#a5290661a616361bc0186d5cf43cb37b1">  267</a></span>  <a class="code hl_typedef" href="time__harmonic__maxwell_8h.html#a5114f84176ad5081553f88d2b5d2525e">VectorType</a> <a class="code hl_variable" href="classAverageVelocities.html#a5290661a616361bc0186d5cf43cb37b1">sum_reynolds_shear_stress_dt</a>;</div>
 <div class="line"><a id="l00268" name="l00268"></a><span class="lineno">  268</span><span class="comment"></span> </div>
 <div class="line"><a id="l00269" name="l00269"></a><span class="lineno">  269</span><span class="comment">  /**</span></div>
 <div class="line"><a id="l00270" name="l00270"></a><span class="lineno">  270</span><span class="comment">   * @brief Vector with average average Reynolds shear stresses.</span></div>
 <div class="line"><a id="l00271" name="l00271"></a><span class="lineno">  271</span><span class="comment">   *</span></div>
 <div class="line"><a id="l00272" name="l00272"></a><span class="lineno">  272</span><span class="comment">   */</span></div>
-<div class="line"><a id="l00273" name="l00273"></a><span class="lineno"><a class="line" href="classAverageVelocities.html#af4692d086cd2535f6495e696ebadfa83">  273</a></span>  VectorType <a class="code hl_variable" href="classAverageVelocities.html#af4692d086cd2535f6495e696ebadfa83">reynolds_shear_stresses</a>;</div>
+<div class="line"><a id="l00273" name="l00273"></a><span class="lineno"><a class="line" href="classAverageVelocities.html#af4692d086cd2535f6495e696ebadfa83">  273</a></span>  <a class="code hl_typedef" href="time__harmonic__maxwell_8h.html#a5114f84176ad5081553f88d2b5d2525e">VectorType</a> <a class="code hl_variable" href="classAverageVelocities.html#af4692d086cd2535f6495e696ebadfa83">reynolds_shear_stresses</a>;</div>
 <div class="line"><a id="l00274" name="l00274"></a><span class="lineno">  274</span><span class="comment"></span> </div>
 <div class="line"><a id="l00275" name="l00275"></a><span class="lineno">  275</span><span class="comment">  /**</span></div>
 <div class="line"><a id="l00276" name="l00276"></a><span class="lineno">  276</span><span class="comment">   * @brief Getter vector for the average Reynolds shear stresses.</span></div>
 <div class="line"><a id="l00277" name="l00277"></a><span class="lineno">  277</span><span class="comment">   *</span></div>
 <div class="line"><a id="l00278" name="l00278"></a><span class="lineno">  278</span><span class="comment">   */</span></div>
-<div class="line"><a id="l00279" name="l00279"></a><span class="lineno"><a class="line" href="classAverageVelocities.html#a61b139bf6299a4ef937379a4f5daf05e">  279</a></span>  VectorType <a class="code hl_variable" href="classAverageVelocities.html#a61b139bf6299a4ef937379a4f5daf05e">get_rss</a>;</div>
+<div class="line"><a id="l00279" name="l00279"></a><span class="lineno"><a class="line" href="classAverageVelocities.html#a61b139bf6299a4ef937379a4f5daf05e">  279</a></span>  <a class="code hl_typedef" href="time__harmonic__maxwell_8h.html#a5114f84176ad5081553f88d2b5d2525e">VectorType</a> <a class="code hl_variable" href="classAverageVelocities.html#a61b139bf6299a4ef937379a4f5daf05e">get_rss</a>;</div>
 <div class="line"><a id="l00280" name="l00280"></a><span class="lineno">  280</span><span class="comment"></span> </div>
 <div class="line"><a id="l00281" name="l00281"></a><span class="lineno">  281</span><span class="comment">  /**</span></div>
 <div class="line"><a id="l00282" name="l00282"></a><span class="lineno">  282</span><span class="comment">   * @brief Ghosted vector to store the sum of all the velocities multiplied by time step.</span></div>
 <div class="line"><a id="l00283" name="l00283"></a><span class="lineno">  283</span><span class="comment">   *</span></div>
 <div class="line"><a id="l00284" name="l00284"></a><span class="lineno">  284</span><span class="comment">   */</span></div>
-<div class="line"><a id="l00285" name="l00285"></a><span class="lineno"><a class="line" href="classAverageVelocities.html#a1755d0d02d5ace1d221843df0209965a">  285</a></span>  VectorType <a class="code hl_variable" href="classAverageVelocities.html#a1755d0d02d5ace1d221843df0209965a">sum_velocity_dt_with_ghost_cells</a>;</div>
+<div class="line"><a id="l00285" name="l00285"></a><span class="lineno"><a class="line" href="classAverageVelocities.html#a1755d0d02d5ace1d221843df0209965a">  285</a></span>  <a class="code hl_typedef" href="time__harmonic__maxwell_8h.html#a5114f84176ad5081553f88d2b5d2525e">VectorType</a> <a class="code hl_variable" href="classAverageVelocities.html#a1755d0d02d5ace1d221843df0209965a">sum_velocity_dt_with_ghost_cells</a>;</div>
 <div class="line"><a id="l00286" name="l00286"></a><span class="lineno">  286</span><span class="comment"></span> </div>
 <div class="line"><a id="l00287" name="l00287"></a><span class="lineno">  287</span><span class="comment">  /**</span></div>
 <div class="line"><a id="l00288" name="l00288"></a><span class="lineno">  288</span><span class="comment">   * @brief Ghosted vector to store sum of the velocities multiplied by the time step to</span></div>
 <div class="line"><a id="l00289" name="l00289"></a><span class="lineno">  289</span><span class="comment">   * calculate the normal stresses.</span></div>
 <div class="line"><a id="l00290" name="l00290"></a><span class="lineno">  290</span><span class="comment">   *</span></div>
 <div class="line"><a id="l00291" name="l00291"></a><span class="lineno">  291</span><span class="comment">   */</span></div>
-<div class="line"><a id="l00292" name="l00292"></a><span class="lineno"><a class="line" href="classAverageVelocities.html#a1e532d3d1b7005ba66d2ecc964ce5b8e">  292</a></span>  VectorType <a class="code hl_variable" href="classAverageVelocities.html#a1e532d3d1b7005ba66d2ecc964ce5b8e">sum_rns_dt_with_ghost_cells</a>;</div>
+<div class="line"><a id="l00292" name="l00292"></a><span class="lineno"><a class="line" href="classAverageVelocities.html#a1e532d3d1b7005ba66d2ecc964ce5b8e">  292</a></span>  <a class="code hl_typedef" href="time__harmonic__maxwell_8h.html#a5114f84176ad5081553f88d2b5d2525e">VectorType</a> <a class="code hl_variable" href="classAverageVelocities.html#a1e532d3d1b7005ba66d2ecc964ce5b8e">sum_rns_dt_with_ghost_cells</a>;</div>
 <div class="line"><a id="l00293" name="l00293"></a><span class="lineno">  293</span><span class="comment"></span> </div>
 <div class="line"><a id="l00294" name="l00294"></a><span class="lineno">  294</span><span class="comment">  /**</span></div>
 <div class="line"><a id="l00295" name="l00295"></a><span class="lineno">  295</span><span class="comment">   * @brief Ghosted vector to store the sum the velocities multiplied by the time step to</span></div>
 <div class="line"><a id="l00296" name="l00296"></a><span class="lineno">  296</span><span class="comment">   * calculate the shear stresses.</span></div>
 <div class="line"><a id="l00297" name="l00297"></a><span class="lineno">  297</span><span class="comment">   *</span></div>
 <div class="line"><a id="l00298" name="l00298"></a><span class="lineno">  298</span><span class="comment">   */</span></div>
-<div class="line"><a id="l00299" name="l00299"></a><span class="lineno"><a class="line" href="classAverageVelocities.html#a7ce4a57740c66f128df5f67f238f608c">  299</a></span>  VectorType <a class="code hl_variable" href="classAverageVelocities.html#a7ce4a57740c66f128df5f67f238f608c">sum_rss_dt_with_ghost_cells</a>;</div>
+<div class="line"><a id="l00299" name="l00299"></a><span class="lineno"><a class="line" href="classAverageVelocities.html#a7ce4a57740c66f128df5f67f238f608c">  299</a></span>  <a class="code hl_typedef" href="time__harmonic__maxwell_8h.html#a5114f84176ad5081553f88d2b5d2525e">VectorType</a> <a class="code hl_variable" href="classAverageVelocities.html#a7ce4a57740c66f128df5f67f238f608c">sum_rss_dt_with_ghost_cells</a>;</div>
 <div class="line"><a id="l00300" name="l00300"></a><span class="lineno">  300</span><span class="comment"></span> </div>
 <div class="line"><a id="l00301" name="l00301"></a><span class="lineno">  301</span><span class="comment">  /**</span></div>
 <div class="line"><a id="l00302" name="l00302"></a><span class="lineno">  302</span><span class="comment">   * @brief Object used to transfer the average velocities in case of mesh adaptation.</span></div>
@@ -500,6 +500,7 @@ $(document).ready(function() { init_codefold(0); });
 <div class="ttc" id="anamespacedealii_html"><div class="ttname"><a href="namespacedealii.html">dealii</a></div><div class="ttdef"><b>Definition</b> <a href="fluid__dynamics__matrix__free_8h_source.html#l00032">fluid_dynamics_matrix_free.h:33</a></div></div>
 <div class="ttc" id="aparameters_8h_html"><div class="ttname"><a href="parameters_8h.html">parameters.h</a></div></div>
 <div class="ttc" id="astructParameters_1_1PostProcessing_html"><div class="ttname"><a href="structParameters_1_1PostProcessing.html">Parameters::PostProcessing</a></div><div class="ttdoc">Postprocessing - Defines the parameters for the post-processing. In Lethe, post-processing implies th...</div><div class="ttdef"><b>Definition</b> <a href="parameters_8h_source.html#l00997">parameters.h:998</a></div></div>
+<div class="ttc" id="atime__harmonic__maxwell_8h_html_a5114f84176ad5081553f88d2b5d2525e"><div class="ttname"><a href="time__harmonic__maxwell_8h.html#a5114f84176ad5081553f88d2b5d2525e">VectorType</a></div><div class="ttdeci">GlobalVectorType VectorType</div><div class="ttdoc">TODO until completion of the auxiliary physics :</div><div class="ttdef"><b>Definition</b> <a href="time__harmonic__maxwell_8h_source.html#l00115">time_harmonic_maxwell.h:115</a></div></div>
 </div><!-- fragment --></div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>

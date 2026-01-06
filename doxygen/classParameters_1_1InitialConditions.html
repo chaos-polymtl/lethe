@@ -126,6 +126,8 @@ Public Attributes</h2></td></tr>
 <tr class="separator:a3e11201ab43e854f3b7b39e93bf47bef"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ad2d3549932fe9c51586b020dfc10e497" id="r_ad2d3549932fe9c51586b020dfc10e497"><td class="memItemLeft" align="right" valign="top">Functions::ParsedFunction&lt; dim &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classParameters_1_1InitialConditions.html#ad2d3549932fe9c51586b020dfc10e497">cahn_hilliard</a></td></tr>
 <tr class="separator:ad2d3549932fe9c51586b020dfc10e497"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a465d6d9a18ef94e067c91543f62c19d4" id="r_a465d6d9a18ef94e067c91543f62c19d4"><td class="memItemLeft" align="right" valign="top">Functions::ParsedFunction&lt; dim &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classParameters_1_1InitialConditions.html#a465d6d9a18ef94e067c91543f62c19d4">electromagnetics</a></td></tr>
+<tr class="separator:a465d6d9a18ef94e067c91543f62c19d4"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ad7057047793622a590cab56728a37853" id="r_ad7057047793622a590cab56728a37853"><td class="memItemLeft" align="right" valign="top">std::string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classParameters_1_1InitialConditions.html#ad7057047793622a590cab56728a37853">average_velocity_folder</a></td></tr>
 <tr class="separator:ad7057047793622a590cab56728a37853"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a8153d8e4aede20142fd8dd9d725095e9" id="r_a8153d8e4aede20142fd8dd9d725095e9"><td class="memItemLeft" align="right" valign="top">std::string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classParameters_1_1InitialConditions.html#a8153d8e4aede20142fd8dd9d725095e9">average_velocity_file_name</a></td></tr>
@@ -186,7 +188,7 @@ template&lt;int dim&gt; </div>
 
 <p class="definition">Definition at line <a class="el" href="initial__conditions_8cc_source.html#l00106">106</a> of file <a class="el" href="initial__conditions_8cc_source.html">initial_conditions.cc</a>.</p>
 
-<p class="reference">References <a class="el" href="multiphysics_8h_source.html#l00013">cahn_hilliard</a>, <a class="el" href="parameters__multiphysics_8cc_source.html#l00100">Parameters::VOF::declare_parameters()</a>, <a class="el" href="namespaceParameters.html#a87f2367892b0cda4800d7fac3b21fc12a93939238f5427e2d2d2b1365d18483f9">Parameters::ramp</a>, <a class="el" href="physical__property__model_8h_source.html#l00040">temperature</a>, and <a class="el" href="multiphysics_8h_source.html#l00011">tracer</a>.</p>
+<p class="reference">References <a class="el" href="multiphysics_8h_source.html#l00013">cahn_hilliard</a>, <a class="el" href="parameters__multiphysics_8cc_source.html#l00107">Parameters::VOF::declare_parameters()</a>, <a class="el" href="multiphysics_8h_source.html#l00015">electromagnetics</a>, <a class="el" href="namespaceParameters.html#a87f2367892b0cda4800d7fac3b21fc12a93939238f5427e2d2d2b1365d18483f9">Parameters::ramp</a>, <a class="el" href="physical__property__model_8h_source.html#l00040">temperature</a>, and <a class="el" href="multiphysics_8h_source.html#l00011">tracer</a>.</p>
 
 </div>
 </div>
@@ -208,9 +210,9 @@ template&lt;int dim&gt; </div>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="initial__conditions_8cc_source.html#l00173">173</a> of file <a class="el" href="initial__conditions_8cc_source.html">initial_conditions.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="initial__conditions_8cc_source.html#l00177">177</a> of file <a class="el" href="initial__conditions_8cc_source.html">initial_conditions.cc</a>.</p>
 
-<p class="reference">References <a class="el" href="namespaceParameters.html#a87f2367892b0cda4800d7fac3b21fc12a322f09c14d8c26231fdc7ee2a82f1427">Parameters::average_velocity_profile</a>, <a class="el" href="multiphysics_8h_source.html#l00013">cahn_hilliard</a>, <a class="el" href="namespaceParameters.html#aca60e44f749baf07d4d93e3751eb1d8ca142a3e0f4cf6590eb56586a5187666c0">Parameters::diffusive</a>, <a class="el" href="namespaceParameters.html#aca60e44f749baf07d4d93e3751eb1d8ca65a383f3960a0cb2b8b0ace54817d575">Parameters::geometric</a>, <a class="el" href="namespaceParameters.html#a87f2367892b0cda4800d7fac3b21fc12a1dbb598cb79bfd4936b225bb4caa77ee">Parameters::L2projection</a>, <a class="el" href="namespaceParameters.html#a87f2367892b0cda4800d7fac3b21fc12a2e69977b7c3df8d5c77016255b4006f2">Parameters::nodal</a>, <a class="el" href="namespaceParameters.html#aca60e44f749baf07d4d93e3751eb1d8ca334c4a4c42fdb79d7ebc3e73b517e6f8">Parameters::none</a>, <a class="el" href="parameters__multiphysics_8cc_source.html#l00132">Parameters::VOF::parse_parameters()</a>, <a class="el" href="namespaceParameters.html#a87f2367892b0cda4800d7fac3b21fc12a93939238f5427e2d2d2b1365d18483f9">Parameters::ramp</a>, <a class="el" href="physical__property__model_8h_source.html#l00040">temperature</a>, <a class="el" href="multiphysics_8h_source.html#l00011">tracer</a>, and <a class="el" href="namespaceParameters.html#a87f2367892b0cda4800d7fac3b21fc12a2ac1ff5ff990bc0a4b3afa2286b9e55f">Parameters::viscous</a>.</p>
+<p class="reference">References <a class="el" href="namespaceParameters.html#a87f2367892b0cda4800d7fac3b21fc12a322f09c14d8c26231fdc7ee2a82f1427">Parameters::average_velocity_profile</a>, <a class="el" href="multiphysics_8h_source.html#l00013">cahn_hilliard</a>, <a class="el" href="namespaceParameters.html#aca60e44f749baf07d4d93e3751eb1d8ca142a3e0f4cf6590eb56586a5187666c0">Parameters::diffusive</a>, <a class="el" href="multiphysics_8h_source.html#l00015">electromagnetics</a>, <a class="el" href="namespaceParameters.html#aca60e44f749baf07d4d93e3751eb1d8ca65a383f3960a0cb2b8b0ace54817d575">Parameters::geometric</a>, <a class="el" href="namespaceParameters.html#a87f2367892b0cda4800d7fac3b21fc12a1dbb598cb79bfd4936b225bb4caa77ee">Parameters::L2projection</a>, <a class="el" href="namespaceParameters.html#a87f2367892b0cda4800d7fac3b21fc12a2e69977b7c3df8d5c77016255b4006f2">Parameters::nodal</a>, <a class="el" href="namespaceParameters.html#aca60e44f749baf07d4d93e3751eb1d8ca334c4a4c42fdb79d7ebc3e73b517e6f8">Parameters::none</a>, <a class="el" href="parameters__multiphysics_8cc_source.html#l00139">Parameters::VOF::parse_parameters()</a>, <a class="el" href="namespaceParameters.html#a87f2367892b0cda4800d7fac3b21fc12a93939238f5427e2d2d2b1365d18483f9">Parameters::ramp</a>, <a class="el" href="physical__property__model_8h_source.html#l00040">temperature</a>, <a class="el" href="multiphysics_8h_source.html#l00011">tracer</a>, and <a class="el" href="namespaceParameters.html#a87f2367892b0cda4800d7fac3b21fc12a2ac1ff5ff990bc0a4b3afa2286b9e55f">Parameters::viscous</a>.</p>
 
 </div>
 </div>
@@ -229,7 +231,7 @@ template&lt;int dim&gt; </div>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="initial__conditions_8h_source.html#l00107">107</a> of file <a class="el" href="initial__conditions_8h_source.html">initial_conditions.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="initial__conditions_8h_source.html#l00111">111</a> of file <a class="el" href="initial__conditions_8h_source.html">initial_conditions.h</a>.</p>
 
 </div>
 </div>
@@ -247,7 +249,7 @@ template&lt;int dim&gt; </div>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="initial__conditions_8h_source.html#l00106">106</a> of file <a class="el" href="initial__conditions_8h_source.html">initial_conditions.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="initial__conditions_8h_source.html#l00110">110</a> of file <a class="el" href="initial__conditions_8h_source.html">initial_conditions.h</a>.</p>
 
 </div>
 </div>
@@ -268,6 +270,26 @@ template&lt;int dim&gt; </div>
 <div class="line">      Functions::ParsedFunction&lt;dim&gt;(2)</div>
 </div><!-- fragment -->
 <p class="definition">Definition at line <a class="el" href="initial__conditions_8h_source.html#l00102">102</a> of file <a class="el" href="initial__conditions_8h_source.html">initial_conditions.h</a>.</p>
+
+</div>
+</div>
+<a id="a465d6d9a18ef94e067c91543f62c19d4" name="a465d6d9a18ef94e067c91543f62c19d4"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a465d6d9a18ef94e067c91543f62c19d4">&#9670;&#160;</a></span>electromagnetics</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;int dim&gt; </div>
+      <table class="memname">
+        <tr>
+          <td class="memname">Functions::ParsedFunction&lt;dim&gt; <a class="el" href="classParameters_1_1InitialConditions.html">Parameters::InitialConditions</a>&lt; dim &gt;::electromagnetics</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<b>Initial value:</b><div class="fragment"><div class="line">=</div>
+<div class="line">      Functions::ParsedFunction&lt;dim&gt;(4 * dim)</div>
+</div><!-- fragment -->
+<p class="definition">Definition at line <a class="el" href="initial__conditions_8h_source.html#l00106">106</a> of file <a class="el" href="initial__conditions_8h_source.html">initial_conditions.h</a>.</p>
 
 </div>
 </div>

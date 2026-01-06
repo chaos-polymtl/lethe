@@ -125,6 +125,8 @@ Public Attributes</h2></td></tr>
 <tr class="separator:a6ceb1daead9e7da2d1b27825c4d69420"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a0115ff125f40027162497934796e1c62" id="r_a0115ff125f40027162497934796e1c62"><td class="memItemLeft" align="right" valign="top">Functions::ParsedFunction&lt; dim &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classAnalyticalSolutions_1_1AnalyticalSolution.html#a0115ff125f40027162497934796e1c62">cahn_hilliard</a></td></tr>
 <tr class="separator:a0115ff125f40027162497934796e1c62"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a43f774abf8102676ae460d37a9b59ef5" id="r_a43f774abf8102676ae460d37a9b59ef5"><td class="memItemLeft" align="right" valign="top">Functions::ParsedFunction&lt; dim &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classAnalyticalSolutions_1_1AnalyticalSolution.html#a43f774abf8102676ae460d37a9b59ef5">electromagnetics</a></td></tr>
+<tr class="separator:a43f774abf8102676ae460d37a9b59ef5"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pri-attribs" name="pri-attribs"></a>
 Private Attributes</h2></td></tr>
@@ -206,7 +208,7 @@ template&lt;int dim&gt; </div>
 
 <p>Checks if the calculation of the error using the analytical solution is enabled. This option is there to prevent unnecessary calculations when no analytical solutions are required. </p>
 
-<p class="definition">Definition at line <a class="el" href="analytical__solutions_8h_source.html#l00092">92</a> of file <a class="el" href="analytical__solutions_8h_source.html">analytical_solutions.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="analytical__solutions_8h_source.html#l00094">94</a> of file <a class="el" href="analytical__solutions_8h_source.html">analytical_solutions.h</a>.</p>
 
 <p class="reference">References <a class="el" href="analytical__solutions_8h_source.html#l00042">AnalyticalSolutions::AnalyticalSolution&lt; dim &gt;::enable</a>.</p>
 
@@ -248,7 +250,7 @@ template&lt;int dim&gt; </div>
 
 <p class="definition">Definition at line <a class="el" href="analytical__solutions_8cc_source.html#l00010">10</a> of file <a class="el" href="analytical__solutions_8cc_source.html">analytical_solutions.cc</a>.</p>
 
-<p class="reference">References <a class="el" href="multiphysics_8h_source.html#l00013">cahn_hilliard</a>, <a class="el" href="multiphysics_8h.html#a2cbb04ef215561a69b48772159577fdda7ee7184c970537ea83afe7f9bae4c61f">phase</a>, <a class="el" href="physical__property__model_8h_source.html#l00040">temperature</a>, and <a class="el" href="multiphysics_8h_source.html#l00011">tracer</a>.</p>
+<p class="reference">References <a class="el" href="multiphysics_8h_source.html#l00013">cahn_hilliard</a>, <a class="el" href="multiphysics_8h_source.html#l00015">electromagnetics</a>, <a class="el" href="multiphysics_8h.html#a2cbb04ef215561a69b48772159577fdda7ee7184c970537ea83afe7f9bae4c61f">phase</a>, <a class="el" href="physical__property__model_8h_source.html#l00040">temperature</a>, and <a class="el" href="multiphysics_8h_source.html#l00011">tracer</a>.</p>
 
 </div>
 </div>
@@ -280,7 +282,7 @@ template&lt;int dim&gt; </div>
 <p>Get the file name associated with the output of the L2 norm of the error calculated using the analytical solution. </p>
 <dl class="section return"><dt>Returns</dt><dd>filename A string that contains the filename used to output the L2 norm of the error. </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="analytical__solutions_8h_source.html#l00115">115</a> of file <a class="el" href="analytical__solutions_8h_source.html">analytical_solutions.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="analytical__solutions_8h_source.html#l00117">117</a> of file <a class="el" href="analytical__solutions_8h_source.html">analytical_solutions.h</a>.</p>
 
 <p class="reference">References <a class="el" href="analytical__solutions_8h_source.html#l00047">AnalyticalSolutions::AnalyticalSolution&lt; dim &gt;::filename</a>.</p>
 
@@ -320,9 +322,9 @@ template&lt;int dim&gt; </div>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="analytical__solutions_8cc_source.html#l00065">65</a> of file <a class="el" href="analytical__solutions_8cc_source.html">analytical_solutions.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="analytical__solutions_8cc_source.html#l00071">71</a> of file <a class="el" href="analytical__solutions_8cc_source.html">analytical_solutions.cc</a>.</p>
 
-<p class="reference">References <a class="el" href="multiphysics_8h_source.html#l00013">cahn_hilliard</a>, <a class="el" href="multiphysics_8h.html#a2cbb04ef215561a69b48772159577fdda7ee7184c970537ea83afe7f9bae4c61f">phase</a>, <a class="el" href="namespaceParameters.html#a91f1943180a615249347b911b0ed3919a556966c7830465dc4623d62e32cec31d">Parameters::quiet</a>, <a class="el" href="physical__property__model_8h_source.html#l00040">temperature</a>, <a class="el" href="multiphysics_8h_source.html#l00011">tracer</a>, and <a class="el" href="namespaceParameters.html#a91f1943180a615249347b911b0ed3919a2c7aea4237e25b4f8ee3b0bf77d6fed0">Parameters::verbose</a>.</p>
+<p class="reference">References <a class="el" href="multiphysics_8h_source.html#l00013">cahn_hilliard</a>, <a class="el" href="multiphysics_8h_source.html#l00015">electromagnetics</a>, <a class="el" href="multiphysics_8h.html#a2cbb04ef215561a69b48772159577fdda7ee7184c970537ea83afe7f9bae4c61f">phase</a>, <a class="el" href="namespaceParameters.html#a91f1943180a615249347b911b0ed3919a556966c7830465dc4623d62e32cec31d">Parameters::quiet</a>, <a class="el" href="physical__property__model_8h_source.html#l00040">temperature</a>, <a class="el" href="multiphysics_8h_source.html#l00011">tracer</a>, and <a class="el" href="namespaceParameters.html#a91f1943180a615249347b911b0ed3919a2c7aea4237e25b4f8ee3b0bf77d6fed0">Parameters::verbose</a>.</p>
 
 </div>
 </div>
@@ -354,7 +356,7 @@ template&lt;int dim&gt; </div>
 
 <p>Enables the usage of the analytical solution. </p>
 
-<p class="definition">Definition at line <a class="el" href="analytical__solutions_8h_source.html#l00102">102</a> of file <a class="el" href="analytical__solutions_8h_source.html">analytical_solutions.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="analytical__solutions_8h_source.html#l00104">104</a> of file <a class="el" href="analytical__solutions_8h_source.html">analytical_solutions.h</a>.</p>
 
 <p class="reference">References <a class="el" href="analytical__solutions_8h_source.html#l00042">AnalyticalSolutions::AnalyticalSolution&lt; dim &gt;::enable</a>.</p>
 
@@ -376,7 +378,26 @@ template&lt;int dim&gt; </div>
 </div><div class="memdoc">
 <p>ParsedFunction that contains the analytical solution for the phase order and the chemical potential. </p>
 
-<p class="definition">Definition at line <a class="el" href="analytical__solutions_8h_source.html#l00152">152</a> of file <a class="el" href="analytical__solutions_8h_source.html">analytical_solutions.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="analytical__solutions_8h_source.html#l00154">154</a> of file <a class="el" href="analytical__solutions_8h_source.html">analytical_solutions.h</a>.</p>
+
+</div>
+</div>
+<a id="a43f774abf8102676ae460d37a9b59ef5" name="a43f774abf8102676ae460d37a9b59ef5"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a43f774abf8102676ae460d37a9b59ef5">&#9670;&#160;</a></span>electromagnetics</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;int dim&gt; </div>
+      <table class="memname">
+        <tr>
+          <td class="memname">Functions::ParsedFunction&lt;dim&gt; <a class="el" href="classAnalyticalSolutions_1_1AnalyticalSolution.html">AnalyticalSolutions::AnalyticalSolution</a>&lt; dim &gt;::electromagnetics</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<p>ParsedFunction that contains the analytical solution for the electric and magnetic fields (real and imaginary parts). </p>
+
+<p class="definition">Definition at line <a class="el" href="analytical__solutions_8h_source.html#l00160">160</a> of file <a class="el" href="analytical__solutions_8h_source.html">analytical_solutions.h</a>.</p>
 
 </div>
 </div>
@@ -449,7 +470,7 @@ template&lt;int dim&gt; </div>
 </div><div class="memdoc">
 <p>ParsedFunction that contains the analytical solution for the phase. </p>
 
-<p class="definition">Definition at line <a class="el" href="analytical__solutions_8h_source.html#l00146">146</a> of file <a class="el" href="analytical__solutions_8h_source.html">analytical_solutions.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="analytical__solutions_8h_source.html#l00148">148</a> of file <a class="el" href="analytical__solutions_8h_source.html">analytical_solutions.h</a>.</p>
 
 </div>
 </div>
@@ -468,7 +489,7 @@ template&lt;int dim&gt; </div>
 </div><div class="memdoc">
 <p>ParsedFunction that contains the analytical solution for the temperature. </p>
 
-<p class="definition">Definition at line <a class="el" href="analytical__solutions_8h_source.html#l00136">136</a> of file <a class="el" href="analytical__solutions_8h_source.html">analytical_solutions.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="analytical__solutions_8h_source.html#l00138">138</a> of file <a class="el" href="analytical__solutions_8h_source.html">analytical_solutions.h</a>.</p>
 
 </div>
 </div>
@@ -487,7 +508,7 @@ template&lt;int dim&gt; </div>
 </div><div class="memdoc">
 <p>ParsedFunction that contains the analytical solution for the tracer. </p>
 
-<p class="definition">Definition at line <a class="el" href="analytical__solutions_8h_source.html#l00141">141</a> of file <a class="el" href="analytical__solutions_8h_source.html">analytical_solutions.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="analytical__solutions_8h_source.html#l00143">143</a> of file <a class="el" href="analytical__solutions_8h_source.html">analytical_solutions.h</a>.</p>
 
 </div>
 </div>
@@ -506,7 +527,7 @@ template&lt;int dim&gt; </div>
 </div><div class="memdoc">
 <p>ParsedFunction that contains the analytical solution for the velocity components and the pressure. </p>
 
-<p class="definition">Definition at line <a class="el" href="analytical__solutions_8h_source.html#l00131">131</a> of file <a class="el" href="analytical__solutions_8h_source.html">analytical_solutions.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="analytical__solutions_8h_source.html#l00133">133</a> of file <a class="el" href="analytical__solutions_8h_source.html">analytical_solutions.h</a>.</p>
 
 </div>
 </div>
@@ -525,7 +546,7 @@ template&lt;int dim&gt; </div>
 </div><div class="memdoc">
 <p>Controls if the L2 norm of the error is printed to the terminal during the simulation. </p>
 
-<p class="definition">Definition at line <a class="el" href="analytical__solutions_8h_source.html#l00125">125</a> of file <a class="el" href="analytical__solutions_8h_source.html">analytical_solutions.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="analytical__solutions_8h_source.html#l00127">127</a> of file <a class="el" href="analytical__solutions_8h_source.html">analytical_solutions.h</a>.</p>
 
 </div>
 </div>

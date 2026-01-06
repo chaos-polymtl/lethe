@@ -109,7 +109,7 @@ Inheritance diagram for InterfaceTools::CellWiseFunction&lt; dim, VectorType, FE
 Public Member Functions</h2></td></tr>
 <tr class="memitem:a5123f545b73b158b5a6cdb1868dbc086" id="r_a5123f545b73b158b5a6cdb1868dbc086"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classInterfaceTools_1_1CellWiseFunction.html#a5123f545b73b158b5a6cdb1868dbc086">CellWiseFunction</a> (const unsigned int p_fe_degree)</td></tr>
 <tr class="separator:a5123f545b73b158b5a6cdb1868dbc086"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a44045f399b7900ae620cd59073c05609" id="r_a44045f399b7900ae620cd59073c05609"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classInterfaceTools_1_1CellWiseFunction.html#a44045f399b7900ae620cd59073c05609">set_active_cell</a> (const VectorType &amp;in_local_dof_values)</td></tr>
+<tr class="memitem:a44045f399b7900ae620cd59073c05609" id="r_a44045f399b7900ae620cd59073c05609"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classInterfaceTools_1_1CellWiseFunction.html#a44045f399b7900ae620cd59073c05609">set_active_cell</a> (const <a class="el" href="time__harmonic__maxwell_8h.html#a5114f84176ad5081553f88d2b5d2525e">VectorType</a> &amp;in_local_dof_values)</td></tr>
 <tr class="separator:a44045f399b7900ae620cd59073c05609"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a700b54994d2d67f901243243fb286488" id="r_a700b54994d2d67f901243243fb286488"><td class="memItemLeft" align="right" valign="top">double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classInterfaceTools_1_1CellWiseFunction.html#a700b54994d2d67f901243243fb286488">value</a> (const Point&lt; dim &gt; &amp;point, const unsigned int component=0) const override</td></tr>
 <tr class="separator:a700b54994d2d67f901243243fb286488"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -124,11 +124,11 @@ Private Attributes</h2></td></tr>
 <tr class="separator:a38f7d054d7354a67b91ae2d85f2683fb"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a94bfe85c7a3812c84ba21c1a92c89d8d" id="r_a94bfe85c7a3812c84ba21c1a92c89d8d"><td class="memItemLeft" align="right" valign="top">unsigned int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classInterfaceTools_1_1CellWiseFunction.html#a94bfe85c7a3812c84ba21c1a92c89d8d">n_cell_wise_dofs</a></td></tr>
 <tr class="separator:a94bfe85c7a3812c84ba21c1a92c89d8d"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a2a226711ea62d23ee50b0b02b78437c3" id="r_a2a226711ea62d23ee50b0b02b78437c3"><td class="memItemLeft" align="right" valign="top">VectorType&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classInterfaceTools_1_1CellWiseFunction.html#a2a226711ea62d23ee50b0b02b78437c3">cell_dof_values</a></td></tr>
+<tr class="memitem:a2a226711ea62d23ee50b0b02b78437c3" id="r_a2a226711ea62d23ee50b0b02b78437c3"><td class="memItemLeft" align="right" valign="top"><a class="el" href="time__harmonic__maxwell_8h.html#a5114f84176ad5081553f88d2b5d2525e">VectorType</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classInterfaceTools_1_1CellWiseFunction.html#a2a226711ea62d23ee50b0b02b78437c3">cell_dof_values</a></td></tr>
 <tr class="separator:a2a226711ea62d23ee50b0b02b78437c3"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
-<div class="textblock"><div class="compoundTemplParams">template&lt;int dim, typename VectorType = Vector&lt;double&gt;, typename FEType = FE_Q&lt;dim&gt;&gt;<br />
+<div class="textblock"><div class="compoundTemplParams">template&lt;int dim, typename <a class="el" href="time__harmonic__maxwell_8h.html#a5114f84176ad5081553f88d2b5d2525e">VectorType</a> = Vector&lt;double&gt;, typename FEType = FE_Q&lt;dim&gt;&gt;<br />
 class InterfaceTools::CellWiseFunction&lt; dim, VectorType, FEType &gt;</div><p>Scalar function defined by the DOF values of a single cell. Based on the <a class="el" href="classInterfaceTools_1_1CellWiseFunction.html" title="Scalar function defined by the DOF values of a single cell. Based on the CellWiseFunction and RefSpac...">CellWiseFunction</a> and RefSpaceFEFieldFunction of dealii. </p>
 <dl class="tparams"><dt>Template Parameters</dt><dd>
   <table class="tparams">
@@ -147,13 +147,13 @@ class InterfaceTools::CellWiseFunction&lt; dim, VectorType, FEType &gt;</div><p>
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;int dim, typename VectorType  = Vector&lt;double&gt;, typename FEType  = FE_Q&lt;dim&gt;&gt; </div>
+template&lt;int dim, typename <a class="el" href="time__harmonic__maxwell_8h.html#a5114f84176ad5081553f88d2b5d2525e">VectorType</a>  = Vector&lt;double&gt;, typename FEType  = FE_Q&lt;dim&gt;&gt; </div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname"><a class="el" href="classInterfaceTools_1_1CellWiseFunction.html">InterfaceTools::CellWiseFunction</a>&lt; dim, VectorType, FEType &gt;::CellWiseFunction </td>
+          <td class="memname"><a class="el" href="classInterfaceTools_1_1CellWiseFunction.html">InterfaceTools::CellWiseFunction</a>&lt; dim, <a class="el" href="time__harmonic__maxwell_8h.html#a5114f84176ad5081553f88d2b5d2525e">VectorType</a>, FEType &gt;::CellWiseFunction </td>
           <td>(</td>
           <td class="paramtype">const unsigned int&#160;</td>
           <td class="paramname"><em>p_fe_degree</em></td><td>)</td>
@@ -186,13 +186,13 @@ template&lt;int dim, typename VectorType  = Vector&lt;double&gt;, typename FETyp
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;int dim, typename VectorType , typename FEType &gt; </div>
+template&lt;int dim, typename <a class="el" href="time__harmonic__maxwell_8h.html#a5114f84176ad5081553f88d2b5d2525e">VectorType</a> , typename FEType &gt; </div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">Tensor&lt; 1, dim &gt; <a class="el" href="classInterfaceTools_1_1CellWiseFunction.html">InterfaceTools::CellWiseFunction</a>&lt; dim, VectorType, FEType &gt;::gradient </td>
+          <td class="memname">Tensor&lt; 1, dim &gt; <a class="el" href="classInterfaceTools_1_1CellWiseFunction.html">InterfaceTools::CellWiseFunction</a>&lt; dim, <a class="el" href="time__harmonic__maxwell_8h.html#a5114f84176ad5081553f88d2b5d2525e">VectorType</a>, FEType &gt;::gradient </td>
           <td>(</td>
           <td class="paramtype">const Point&lt; dim &gt; &amp;&#160;</td>
           <td class="paramname"><em>point</em>, </td>
@@ -236,13 +236,13 @@ template&lt;int dim, typename VectorType , typename FEType &gt; </div>
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;int dim, typename VectorType , typename FEType &gt; </div>
+template&lt;int dim, typename <a class="el" href="time__harmonic__maxwell_8h.html#a5114f84176ad5081553f88d2b5d2525e">VectorType</a> , typename FEType &gt; </div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">SymmetricTensor&lt; 2, dim &gt; <a class="el" href="classInterfaceTools_1_1CellWiseFunction.html">InterfaceTools::CellWiseFunction</a>&lt; dim, VectorType, FEType &gt;::hessian </td>
+          <td class="memname">SymmetricTensor&lt; 2, dim &gt; <a class="el" href="classInterfaceTools_1_1CellWiseFunction.html">InterfaceTools::CellWiseFunction</a>&lt; dim, <a class="el" href="time__harmonic__maxwell_8h.html#a5114f84176ad5081553f88d2b5d2525e">VectorType</a>, FEType &gt;::hessian </td>
           <td>(</td>
           <td class="paramtype">const Point&lt; dim &gt; &amp;&#160;</td>
           <td class="paramname"><em>point</em>, </td>
@@ -286,15 +286,15 @@ template&lt;int dim, typename VectorType , typename FEType &gt; </div>
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;int dim, typename VectorType  = Vector&lt;double&gt;, typename FEType  = FE_Q&lt;dim&gt;&gt; </div>
+template&lt;int dim, typename <a class="el" href="time__harmonic__maxwell_8h.html#a5114f84176ad5081553f88d2b5d2525e">VectorType</a>  = Vector&lt;double&gt;, typename FEType  = FE_Q&lt;dim&gt;&gt; </div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">void <a class="el" href="classInterfaceTools_1_1CellWiseFunction.html">InterfaceTools::CellWiseFunction</a>&lt; dim, VectorType, FEType &gt;::set_active_cell </td>
+          <td class="memname">void <a class="el" href="classInterfaceTools_1_1CellWiseFunction.html">InterfaceTools::CellWiseFunction</a>&lt; dim, <a class="el" href="time__harmonic__maxwell_8h.html#a5114f84176ad5081553f88d2b5d2525e">VectorType</a>, FEType &gt;::set_active_cell </td>
           <td>(</td>
-          <td class="paramtype">const VectorType &amp;&#160;</td>
+          <td class="paramtype">const <a class="el" href="time__harmonic__maxwell_8h.html#a5114f84176ad5081553f88d2b5d2525e">VectorType</a> &amp;&#160;</td>
           <td class="paramname"><em>in_local_dof_values</em></td><td>)</td>
           <td></td>
         </tr>
@@ -326,13 +326,13 @@ template&lt;int dim, typename VectorType  = Vector&lt;double&gt;, typename FETyp
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;int dim, typename VectorType , typename FEType &gt; </div>
+template&lt;int dim, typename <a class="el" href="time__harmonic__maxwell_8h.html#a5114f84176ad5081553f88d2b5d2525e">VectorType</a> , typename FEType &gt; </div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">double <a class="el" href="classInterfaceTools_1_1CellWiseFunction.html">InterfaceTools::CellWiseFunction</a>&lt; dim, VectorType, FEType &gt;::value </td>
+          <td class="memname">double <a class="el" href="classInterfaceTools_1_1CellWiseFunction.html">InterfaceTools::CellWiseFunction</a>&lt; dim, <a class="el" href="time__harmonic__maxwell_8h.html#a5114f84176ad5081553f88d2b5d2525e">VectorType</a>, FEType &gt;::value </td>
           <td>(</td>
           <td class="paramtype">const Point&lt; dim &gt; &amp;&#160;</td>
           <td class="paramname"><em>point</em>, </td>
@@ -377,13 +377,13 @@ template&lt;int dim, typename VectorType , typename FEType &gt; </div>
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;int dim, typename VectorType  = Vector&lt;double&gt;, typename FEType  = FE_Q&lt;dim&gt;&gt; </div>
+template&lt;int dim, typename <a class="el" href="time__harmonic__maxwell_8h.html#a5114f84176ad5081553f88d2b5d2525e">VectorType</a>  = Vector&lt;double&gt;, typename FEType  = FE_Q&lt;dim&gt;&gt; </div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">VectorType <a class="el" href="classInterfaceTools_1_1CellWiseFunction.html">InterfaceTools::CellWiseFunction</a>&lt; dim, VectorType, FEType &gt;::cell_dof_values</td>
+          <td class="memname"><a class="el" href="time__harmonic__maxwell_8h.html#a5114f84176ad5081553f88d2b5d2525e">VectorType</a> <a class="el" href="classInterfaceTools_1_1CellWiseFunction.html">InterfaceTools::CellWiseFunction</a>&lt; dim, <a class="el" href="time__harmonic__maxwell_8h.html#a5114f84176ad5081553f88d2b5d2525e">VectorType</a>, FEType &gt;::cell_dof_values</td>
         </tr>
       </table>
   </td>
@@ -405,13 +405,13 @@ template&lt;int dim, typename VectorType  = Vector&lt;double&gt;, typename FETyp
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;int dim, typename VectorType  = Vector&lt;double&gt;, typename FEType  = FE_Q&lt;dim&gt;&gt; </div>
+template&lt;int dim, typename <a class="el" href="time__harmonic__maxwell_8h.html#a5114f84176ad5081553f88d2b5d2525e">VectorType</a>  = Vector&lt;double&gt;, typename FEType  = FE_Q&lt;dim&gt;&gt; </div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">FEType <a class="el" href="classInterfaceTools_1_1CellWiseFunction.html">InterfaceTools::CellWiseFunction</a>&lt; dim, VectorType, FEType &gt;::fe</td>
+          <td class="memname">FEType <a class="el" href="classInterfaceTools_1_1CellWiseFunction.html">InterfaceTools::CellWiseFunction</a>&lt; dim, <a class="el" href="time__harmonic__maxwell_8h.html#a5114f84176ad5081553f88d2b5d2525e">VectorType</a>, FEType &gt;::fe</td>
         </tr>
       </table>
   </td>
@@ -433,13 +433,13 @@ template&lt;int dim, typename VectorType  = Vector&lt;double&gt;, typename FETyp
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;int dim, typename VectorType  = Vector&lt;double&gt;, typename FEType  = FE_Q&lt;dim&gt;&gt; </div>
+template&lt;int dim, typename <a class="el" href="time__harmonic__maxwell_8h.html#a5114f84176ad5081553f88d2b5d2525e">VectorType</a>  = Vector&lt;double&gt;, typename FEType  = FE_Q&lt;dim&gt;&gt; </div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">unsigned int <a class="el" href="classInterfaceTools_1_1CellWiseFunction.html">InterfaceTools::CellWiseFunction</a>&lt; dim, VectorType, FEType &gt;::n_cell_wise_dofs</td>
+          <td class="memname">unsigned int <a class="el" href="classInterfaceTools_1_1CellWiseFunction.html">InterfaceTools::CellWiseFunction</a>&lt; dim, <a class="el" href="time__harmonic__maxwell_8h.html#a5114f84176ad5081553f88d2b5d2525e">VectorType</a>, FEType &gt;::n_cell_wise_dofs</td>
         </tr>
       </table>
   </td>

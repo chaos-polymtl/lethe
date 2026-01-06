@@ -165,18 +165,18 @@ $(document).ready(function() { init_codefold(0); });
 <div class="foldopen" id="foldopen00068" data-start="{" data-end="}">
 <div class="line"><a id="l00068" name="l00068"></a><span class="lineno"><a class="line" href="namespaceInterfaceTools.html#a9ccc3916532b0c8bb3f6908a5d9b23da">   68</a></span><a class="code hl_function" href="namespaceInterfaceTools.html#a9ccc3916532b0c8bb3f6908a5d9b23da">InterfaceTools::compute_surface_and_volume</a>(<span class="keyword">const</span> DoFHandler&lt;dim&gt; &amp;dof_handler,</div>
 <div class="line"><a id="l00069" name="l00069"></a><span class="lineno">   69</span>                                           <span class="keyword">const</span> FiniteElement&lt;dim&gt; &amp;fe,</div>
-<div class="line"><a id="l00070" name="l00070"></a><span class="lineno">   70</span>                                           <span class="keyword">const</span> VectorType &amp;level_set_vector,</div>
+<div class="line"><a id="l00070" name="l00070"></a><span class="lineno">   70</span>                                           <span class="keyword">const</span> <a class="code hl_typedef" href="time__harmonic__maxwell_8h.html#a5114f84176ad5081553f88d2b5d2525e">VectorType</a> &amp;level_set_vector,</div>
 <div class="line"><a id="l00071" name="l00071"></a><span class="lineno">   71</span>                                           <span class="keyword">const</span> <span class="keywordtype">double</span>      iso_level,</div>
 <div class="line"><a id="l00072" name="l00072"></a><span class="lineno">   72</span>                                           <span class="keyword">const</span> MPI_Comm   &amp;mpi_communicator)</div>
 <div class="line"><a id="l00073" name="l00073"></a><span class="lineno">   73</span>{</div>
-<div class="line"><a id="l00074" name="l00074"></a><span class="lineno">   74</span>  VectorType level_set_vector_owned_copy(dof_handler.locally_owned_dofs(),</div>
+<div class="line"><a id="l00074" name="l00074"></a><span class="lineno">   74</span>  <a class="code hl_typedef" href="time__harmonic__maxwell_8h.html#a5114f84176ad5081553f88d2b5d2525e">VectorType</a> level_set_vector_owned_copy(dof_handler.locally_owned_dofs(),</div>
 <div class="line"><a id="l00075" name="l00075"></a><span class="lineno">   75</span>                                         mpi_communicator);</div>
 <div class="line"><a id="l00076" name="l00076"></a><span class="lineno">   76</span> </div>
 <div class="line"><a id="l00077" name="l00077"></a><span class="lineno">   77</span>  level_set_vector_owned_copy = level_set_vector;</div>
 <div class="line"><a id="l00078" name="l00078"></a><span class="lineno">   78</span> </div>
 <div class="line"><a id="l00079" name="l00079"></a><span class="lineno">   79</span>  level_set_vector_owned_copy.add(-iso_level);</div>
 <div class="line"><a id="l00080" name="l00080"></a><span class="lineno">   80</span> </div>
-<div class="line"><a id="l00081" name="l00081"></a><span class="lineno">   81</span>  VectorType level_set_vector_relevant_copy(</div>
+<div class="line"><a id="l00081" name="l00081"></a><span class="lineno">   81</span>  <a class="code hl_typedef" href="time__harmonic__maxwell_8h.html#a5114f84176ad5081553f88d2b5d2525e">VectorType</a> level_set_vector_relevant_copy(</div>
 <div class="line"><a id="l00082" name="l00082"></a><span class="lineno">   82</span>    dof_handler.locally_owned_dofs(),</div>
 <div class="line"><a id="l00083" name="l00083"></a><span class="lineno">   83</span>    DoFTools::extract_locally_relevant_dofs(dof_handler),</div>
 <div class="line"><a id="l00084" name="l00084"></a><span class="lineno">   84</span>    mpi_communicator);</div>
@@ -262,7 +262,7 @@ $(document).ready(function() { init_codefold(0); });
 <div class="line"><a id="l00162" name="l00162"></a><span class="lineno">  162</span>  <span class="keyword">const</span> Mapping&lt;dim&gt;       &amp;mapping,</div>
 <div class="line"><a id="l00163" name="l00163"></a><span class="lineno">  163</span>  <span class="keyword">const</span> DoFHandler&lt;dim&gt;    &amp;dof_handler,</div>
 <div class="line"><a id="l00164" name="l00164"></a><span class="lineno">  164</span>  <span class="keyword">const</span> FiniteElement&lt;dim&gt; &amp;fe,</div>
-<div class="line"><a id="l00165" name="l00165"></a><span class="lineno">  165</span>  <span class="keyword">const</span> VectorType         &amp;level_set_vector,</div>
+<div class="line"><a id="l00165" name="l00165"></a><span class="lineno">  165</span>  <span class="keyword">const</span> <a class="code hl_typedef" href="time__harmonic__maxwell_8h.html#a5114f84176ad5081553f88d2b5d2525e">VectorType</a>         &amp;level_set_vector,</div>
 <div class="line"><a id="l00166" name="l00166"></a><span class="lineno">  166</span>  <span class="keyword">const</span> <span class="keywordtype">double</span>              iso_level,</div>
 <div class="line"><a id="l00167" name="l00167"></a><span class="lineno">  167</span>  std::map&lt;types::global_cell_index, std::vector&lt;Point&lt;dim&gt;&gt;&gt;</div>
 <div class="line"><a id="l00168" name="l00168"></a><span class="lineno">  168</span>    &amp;interface_reconstruction_vertices,</div>
@@ -412,11 +412,11 @@ $(document).ready(function() { init_codefold(0); });
 <div class="line"><a id="l00308" name="l00308"></a><span class="lineno"><a class="line" href="classInterfaceTools_1_1SignedDistanceSolver.html#a0dd249772c4781c042e3b63360245859">  308</a></span><a class="code hl_function" href="classInterfaceTools_1_1SignedDistanceSolver.html#a0dd249772c4781c042e3b63360245859">InterfaceTools::SignedDistanceSolver&lt;dim, VectorType&gt;::</a></div>
 <div class="line"><a id="l00309" name="l00309"></a><span class="lineno">  309</span><a class="code hl_function" href="classInterfaceTools_1_1SignedDistanceSolver.html#a0dd249772c4781c042e3b63360245859">  set_level_set_from_background_mesh</a>(</div>
 <div class="line"><a id="l00310" name="l00310"></a><span class="lineno">  310</span>    <span class="keyword">const</span> DoFHandler&lt;dim&gt; &amp;background_dof_handler,</div>
-<div class="line"><a id="l00311" name="l00311"></a><span class="lineno">  311</span>    <span class="keyword">const</span> VectorType      &amp;background_level_set_vector)</div>
+<div class="line"><a id="l00311" name="l00311"></a><span class="lineno">  311</span>    <span class="keyword">const</span> <a class="code hl_typedef" href="time__harmonic__maxwell_8h.html#a5114f84176ad5081553f88d2b5d2525e">VectorType</a>      &amp;background_level_set_vector)</div>
 <div class="line"><a id="l00312" name="l00312"></a><span class="lineno">  312</span>{</div>
 <div class="line"><a id="l00313" name="l00313"></a><span class="lineno">  313</span>  <span class="keyword">const</span> MPI_Comm mpi_communicator = dof_handler.get_mpi_communicator();</div>
 <div class="line"><a id="l00314" name="l00314"></a><span class="lineno">  314</span> </div>
-<div class="line"><a id="l00315" name="l00315"></a><span class="lineno">  315</span>  VectorType tmp_local_level_set(this-&gt;locally_owned_dofs, mpi_communicator);</div>
+<div class="line"><a id="l00315" name="l00315"></a><span class="lineno">  315</span>  <a class="code hl_typedef" href="time__harmonic__maxwell_8h.html#a5114f84176ad5081553f88d2b5d2525e">VectorType</a> tmp_local_level_set(this-&gt;locally_owned_dofs, mpi_communicator);</div>
 <div class="line"><a id="l00316" name="l00316"></a><span class="lineno">  316</span> </div>
 <div class="line"><a id="l00317" name="l00317"></a><span class="lineno">  317</span>  FETools::interpolate(background_dof_handler,</div>
 <div class="line"><a id="l00318" name="l00318"></a><span class="lineno">  318</span>                       background_level_set_vector,</div>
@@ -505,13 +505,13 @@ $(document).ready(function() { init_codefold(0); });
 </div>
 <div class="line"><a id="l00397" name="l00397"></a><span class="lineno">  397</span> </div>
 <div class="line"><a id="l00398" name="l00398"></a><span class="lineno">  398</span><span class="keyword">template</span> &lt;<span class="keywordtype">int</span> dim, <span class="keyword">typename</span> VectorType&gt;</div>
-<div class="line"><a id="l00399" name="l00399"></a><span class="lineno">  399</span>VectorType &amp;</div>
+<div class="line"><a id="l00399" name="l00399"></a><span class="lineno">  399</span><a class="code hl_typedef" href="time__harmonic__maxwell_8h.html#a5114f84176ad5081553f88d2b5d2525e">VectorType</a> &amp;</div>
 <div class="foldopen" id="foldopen00400" data-start="{" data-end="}">
 <div class="line"><a id="l00400" name="l00400"></a><span class="lineno"><a class="line" href="classInterfaceTools_1_1SignedDistanceSolver.html#a9b41dc84b1bc98b1c955a9fd7723a8ee">  400</a></span><a class="code hl_function" href="classInterfaceTools_1_1SignedDistanceSolver.html#a9b41dc84b1bc98b1c955a9fd7723a8ee">InterfaceTools::SignedDistanceSolver&lt;dim, VectorType&gt;::get_signed_distance</a>()</div>
 <div class="line"><a id="l00401" name="l00401"></a><span class="lineno">  401</span>{</div>
 <div class="line"><a id="l00402" name="l00402"></a><span class="lineno">  402</span>  <span class="keyword">const</span> MPI_Comm mpi_communicator = dof_handler.get_mpi_communicator();</div>
 <div class="line"><a id="l00403" name="l00403"></a><span class="lineno">  403</span> </div>
-<div class="line"><a id="l00404" name="l00404"></a><span class="lineno">  404</span>  VectorType tmp_local_level_set(this-&gt;locally_owned_dofs, mpi_communicator);</div>
+<div class="line"><a id="l00404" name="l00404"></a><span class="lineno">  404</span>  <a class="code hl_typedef" href="time__harmonic__maxwell_8h.html#a5114f84176ad5081553f88d2b5d2525e">VectorType</a> tmp_local_level_set(this-&gt;locally_owned_dofs, mpi_communicator);</div>
 <div class="line"><a id="l00405" name="l00405"></a><span class="lineno">  405</span> </div>
 <div class="line"><a id="l00406" name="l00406"></a><span class="lineno">  406</span>  <span class="comment">// Loop on the DoFs to be compatible with the difference in vector type</span></div>
 <div class="line"><a id="l00407" name="l00407"></a><span class="lineno">  407</span>  <span class="comment">// between level_set and signed_distance</span></div>
@@ -1586,6 +1586,7 @@ $(document).ready(function() { init_codefold(0); });
 <div class="ttc" id="aoutput__struct_8h_html"><div class="ttname"><a href="output__struct_8h.html">output_struct.h</a></div></div>
 <div class="ttc" id="asolutions__output_8h_html_a5a089ca01c372f5358454bced543e961"><div class="ttname"><a href="solutions__output_8h.html#a5a089ca01c372f5358454bced543e961">write_vtu_and_pvd</a></div><div class="ttdeci">void write_vtu_and_pvd(PVDHandler &amp;pvd_handler, const DataOutInterface&lt; dim, spacedim &gt; &amp;data_out, const std::string &amp;folder, const std::string &amp;file_prefix, const double time, const unsigned int iter, const unsigned int group_files, const MPI_Comm &amp;mpi_communicator, const unsigned int digits=5)</div><div class="ttdoc">Output the data out to &quot;group_files&quot; vtu files, with a pvtu file and a pvd to store the timing This f...</div><div class="ttdef"><b>Definition</b> <a href="solutions__output_8cc_source.html#l00017">solutions_output.cc:17</a></div></div>
 <div class="ttc" id="astructOutputStructSolution_html"><div class="ttname"><a href="structOutputStructSolution.html">OutputStructSolution</a></div><div class="ttdoc">Struct containing information about the solution output. It is used to pass all the information requi...</div><div class="ttdef"><b>Definition</b> <a href="output__struct_8h_source.html#l00053">output_struct.h:54</a></div></div>
+<div class="ttc" id="atime__harmonic__maxwell_8h_html_a5114f84176ad5081553f88d2b5d2525e"><div class="ttname"><a href="time__harmonic__maxwell_8h.html#a5114f84176ad5081553f88d2b5d2525e">VectorType</a></div><div class="ttdeci">GlobalVectorType VectorType</div><div class="ttdoc">TODO until completion of the auxiliary physics :</div><div class="ttdef"><b>Definition</b> <a href="time__harmonic__maxwell_8h_source.html#l00115">time_harmonic_maxwell.h:115</a></div></div>
 <div class="ttc" id="autilities_8h_html_a9329b0f36d22e7ab552519cfd2846612"><div class="ttname"><a href="utilities_8h.html#a9329b0f36d22e7ab552519cfd2846612">announce_string</a></div><div class="ttdeci">void announce_string(const ConditionalOStream &amp;pcout, const std::string &amp;expression, const char delimiter='-')</div><div class="ttdoc">Prints a string and then adds a line above and below made with dashes containing as many dashes as th...</div><div class="ttdef"><b>Definition</b> <a href="utilities_8h_source.html#l00468">utilities.h:468</a></div></div>
 <div class="ttc" id="autilities_8h_html_a98568bafc4d0b4639358a2ad100b2cfc"><div class="ttname"><a href="utilities_8h.html#a98568bafc4d0b4639358a2ad100b2cfc">sgn</a></div><div class="ttdeci">constexpr int sgn(const T val) noexcept</div><div class="ttdoc">Retrieve the sign of a value.</div><div class="ttdef"><b>Definition</b> <a href="utilities_8h_source.html#l00334">utilities.h:334</a></div></div>
 <div class="ttc" id="avector_8h_html_a4ea4005d75c88e60bee47d4e79a13a39"><div class="ttname"><a href="vector_8h.html#a4ea4005d75c88e60bee47d4e79a13a39">GlobalVectorType</a></div><div class="ttdeci">dealii::TrilinosWrappers::MPI::Vector GlobalVectorType</div><div class="ttdef"><b>Definition</b> <a href="vector_8h_source.html#l00017">vector.h:17</a></div></div>

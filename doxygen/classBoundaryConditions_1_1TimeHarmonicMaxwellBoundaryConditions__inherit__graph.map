@@ -1,0 +1,5 @@
+<map id="BoundaryConditions::TimeHarmonicMaxwellBoundaryConditions&lt; dim &gt;" name="BoundaryConditions::TimeHarmonicMaxwellBoundaryConditions&lt; dim &gt;">
+<area shape="rect" id="Node000001" title="This class manages the boundary conditions for Time Harmonic Maxwell solver. It introduces the bounda..." alt="" coords="5,93,248,148"/>
+<area shape="rect" id="Node000002" href="$classBoundaryConditions_1_1BoundaryConditions.html" title="This class is the base class for all boundary conditions. It stores the general information that all ..." alt="" coords="46,5,207,45"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="129,59,129,93,124,93,124,59"/>
+</map>

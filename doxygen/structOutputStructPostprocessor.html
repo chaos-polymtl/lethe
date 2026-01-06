@@ -93,20 +93,20 @@ $(function() {
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pub-methods" name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
-<tr class="memitem:ac519b0ec5620f79987110b9664c28750" id="r_ac519b0ec5620f79987110b9664c28750"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structOutputStructPostprocessor.html#ac519b0ec5620f79987110b9664c28750">OutputStructPostprocessor</a> (const DoFHandler&lt; dim &gt; &amp;<a class="el" href="structOutputStructPostprocessor.html#ade62b3c99b640814e88bed1282a63654">dof_handler</a>, const VectorType &amp;<a class="el" href="structOutputStructPostprocessor.html#a5b76124272854c614239ce3dc4dfe0cb">solution</a>, const std::shared_ptr&lt; DataPostprocessor&lt; dim &gt; &gt; <a class="el" href="structOutputStructPostprocessor.html#ac09423fe7a5d453f1c9c8507b4e64557">data_postprocessor</a>)</td></tr>
+<tr class="memitem:ac519b0ec5620f79987110b9664c28750" id="r_ac519b0ec5620f79987110b9664c28750"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structOutputStructPostprocessor.html#ac519b0ec5620f79987110b9664c28750">OutputStructPostprocessor</a> (const DoFHandler&lt; dim &gt; &amp;<a class="el" href="structOutputStructPostprocessor.html#ade62b3c99b640814e88bed1282a63654">dof_handler</a>, const <a class="el" href="time__harmonic__maxwell_8h.html#a5114f84176ad5081553f88d2b5d2525e">VectorType</a> &amp;<a class="el" href="structOutputStructPostprocessor.html#a5b76124272854c614239ce3dc4dfe0cb">solution</a>, const std::shared_ptr&lt; DataPostprocessor&lt; dim &gt; &gt; <a class="el" href="structOutputStructPostprocessor.html#ac09423fe7a5d453f1c9c8507b4e64557">data_postprocessor</a>)</td></tr>
 <tr class="separator:ac519b0ec5620f79987110b9664c28750"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pub-attribs" name="pub-attribs"></a>
 Public Attributes</h2></td></tr>
 <tr class="memitem:ade62b3c99b640814e88bed1282a63654" id="r_ade62b3c99b640814e88bed1282a63654"><td class="memItemLeft" align="right" valign="top">const DoFHandler&lt; dim &gt; &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structOutputStructPostprocessor.html#ade62b3c99b640814e88bed1282a63654">dof_handler</a></td></tr>
 <tr class="separator:ade62b3c99b640814e88bed1282a63654"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a5b76124272854c614239ce3dc4dfe0cb" id="r_a5b76124272854c614239ce3dc4dfe0cb"><td class="memItemLeft" align="right" valign="top">const VectorType &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structOutputStructPostprocessor.html#a5b76124272854c614239ce3dc4dfe0cb">solution</a></td></tr>
+<tr class="memitem:a5b76124272854c614239ce3dc4dfe0cb" id="r_a5b76124272854c614239ce3dc4dfe0cb"><td class="memItemLeft" align="right" valign="top">const <a class="el" href="time__harmonic__maxwell_8h.html#a5114f84176ad5081553f88d2b5d2525e">VectorType</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structOutputStructPostprocessor.html#a5b76124272854c614239ce3dc4dfe0cb">solution</a></td></tr>
 <tr class="separator:a5b76124272854c614239ce3dc4dfe0cb"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ac09423fe7a5d453f1c9c8507b4e64557" id="r_ac09423fe7a5d453f1c9c8507b4e64557"><td class="memItemLeft" align="right" valign="top">const std::shared_ptr&lt; DataPostprocessor&lt; dim &gt; &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structOutputStructPostprocessor.html#ac09423fe7a5d453f1c9c8507b4e64557">data_postprocessor</a></td></tr>
 <tr class="separator:ac09423fe7a5d453f1c9c8507b4e64557"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
-<div class="textblock"><div class="compoundTemplParams">template&lt;int dim, typename VectorType&gt;<br />
+<div class="textblock"><div class="compoundTemplParams">template&lt;int dim, typename <a class="el" href="time__harmonic__maxwell_8h.html#a5114f84176ad5081553f88d2b5d2525e">VectorType</a>&gt;<br />
 struct OutputStructPostprocessor&lt; dim, VectorType &gt;</div><p>Struct containing information about the solution output. It is used to pass the information required upon calling add_data_vector() for the DataOut instance without losing track of its attributes such as name and data component interpretation. This version of the struct uses Postprocessors. </p>
 
 <p class="definition">Definition at line <a class="el" href="output__struct_8h_source.html#l00021">21</a> of file <a class="el" href="output__struct_8h_source.html">output_struct.h</a>.</p>
@@ -117,13 +117,13 @@ struct OutputStructPostprocessor&lt; dim, VectorType &gt;</div><p>Struct contain
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;int dim, typename VectorType &gt; </div>
+template&lt;int dim, typename <a class="el" href="time__harmonic__maxwell_8h.html#a5114f84176ad5081553f88d2b5d2525e">VectorType</a> &gt; </div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname"><a class="el" href="structOutputStructPostprocessor.html">OutputStructPostprocessor</a>&lt; dim, VectorType &gt;<a class="el" href="structOutputStructPostprocessor.html">::OutputStructPostprocessor</a> </td>
+          <td class="memname"><a class="el" href="structOutputStructPostprocessor.html">OutputStructPostprocessor</a>&lt; dim, <a class="el" href="time__harmonic__maxwell_8h.html#a5114f84176ad5081553f88d2b5d2525e">VectorType</a> &gt;<a class="el" href="structOutputStructPostprocessor.html">::OutputStructPostprocessor</a> </td>
           <td>(</td>
           <td class="paramtype">const DoFHandler&lt; dim &gt; &amp;&#160;</td>
           <td class="paramname"><em>dof_handler</em>, </td>
@@ -131,7 +131,7 @@ template&lt;int dim, typename VectorType &gt; </div>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">const VectorType &amp;&#160;</td>
+          <td class="paramtype">const <a class="el" href="time__harmonic__maxwell_8h.html#a5114f84176ad5081553f88d2b5d2525e">VectorType</a> &amp;&#160;</td>
           <td class="paramname"><em>solution</em>, </td>
         </tr>
         <tr>
@@ -174,10 +174,10 @@ template&lt;int dim, typename VectorType &gt; </div>
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;int dim, typename VectorType &gt; </div>
+template&lt;int dim, typename <a class="el" href="time__harmonic__maxwell_8h.html#a5114f84176ad5081553f88d2b5d2525e">VectorType</a> &gt; </div>
       <table class="memname">
         <tr>
-          <td class="memname">const std::shared_ptr&lt;DataPostprocessor&lt;dim&gt; &gt; <a class="el" href="structOutputStructPostprocessor.html">OutputStructPostprocessor</a>&lt; dim, VectorType &gt;::data_postprocessor</td>
+          <td class="memname">const std::shared_ptr&lt;DataPostprocessor&lt;dim&gt; &gt; <a class="el" href="structOutputStructPostprocessor.html">OutputStructPostprocessor</a>&lt; dim, <a class="el" href="time__harmonic__maxwell_8h.html#a5114f84176ad5081553f88d2b5d2525e">VectorType</a> &gt;::data_postprocessor</td>
         </tr>
       </table>
 </div><div class="memdoc">
@@ -192,10 +192,10 @@ template&lt;int dim, typename VectorType &gt; </div>
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;int dim, typename VectorType &gt; </div>
+template&lt;int dim, typename <a class="el" href="time__harmonic__maxwell_8h.html#a5114f84176ad5081553f88d2b5d2525e">VectorType</a> &gt; </div>
       <table class="memname">
         <tr>
-          <td class="memname">const DoFHandler&lt;dim&gt;&amp; <a class="el" href="structOutputStructPostprocessor.html">OutputStructPostprocessor</a>&lt; dim, VectorType &gt;::dof_handler</td>
+          <td class="memname">const DoFHandler&lt;dim&gt;&amp; <a class="el" href="structOutputStructPostprocessor.html">OutputStructPostprocessor</a>&lt; dim, <a class="el" href="time__harmonic__maxwell_8h.html#a5114f84176ad5081553f88d2b5d2525e">VectorType</a> &gt;::dof_handler</td>
         </tr>
       </table>
 </div><div class="memdoc">
@@ -210,10 +210,10 @@ template&lt;int dim, typename VectorType &gt; </div>
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;int dim, typename VectorType &gt; </div>
+template&lt;int dim, typename <a class="el" href="time__harmonic__maxwell_8h.html#a5114f84176ad5081553f88d2b5d2525e">VectorType</a> &gt; </div>
       <table class="memname">
         <tr>
-          <td class="memname">const VectorType&amp; <a class="el" href="structOutputStructPostprocessor.html">OutputStructPostprocessor</a>&lt; dim, VectorType &gt;::solution</td>
+          <td class="memname">const <a class="el" href="time__harmonic__maxwell_8h.html#a5114f84176ad5081553f88d2b5d2525e">VectorType</a>&amp; <a class="el" href="structOutputStructPostprocessor.html">OutputStructPostprocessor</a>&lt; dim, <a class="el" href="time__harmonic__maxwell_8h.html#a5114f84176ad5081553f88d2b5d2525e">VectorType</a> &gt;::solution</td>
         </tr>
       </table>
 </div><div class="memdoc">

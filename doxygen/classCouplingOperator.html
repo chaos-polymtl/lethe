@@ -100,11 +100,11 @@ Public Member Functions</h2></td></tr>
 <tr class="separator:a0ec58bc77b07f196be27f90ede1b67ce"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a29c8fe9170e542463d5b277febfa17a4" id="r_a29c8fe9170e542463d5b277febfa17a4"><td class="memItemLeft" align="right" valign="top">const AffineConstraints&lt; Number &gt; &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classCouplingOperator.html#a29c8fe9170e542463d5b277febfa17a4">get_affine_constraints</a> () const</td></tr>
 <tr class="separator:a29c8fe9170e542463d5b277febfa17a4"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a44b5304c09a68d41cab5ec19ff44ffa4" id="r_a44b5304c09a68d41cab5ec19ff44ffa4"><td class="memTemplParams" colspan="2">template&lt;typename VectorType &gt; </td></tr>
-<tr class="memitem:a44b5304c09a68d41cab5ec19ff44ffa4"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classCouplingOperator.html#a44b5304c09a68d41cab5ec19ff44ffa4">vmult_add</a> (VectorType &amp;dst, const VectorType &amp;src) const</td></tr>
+<tr class="memitem:a44b5304c09a68d41cab5ec19ff44ffa4" id="r_a44b5304c09a68d41cab5ec19ff44ffa4"><td class="memTemplParams" colspan="2">template&lt;typename <a class="el" href="time__harmonic__maxwell_8h.html#a5114f84176ad5081553f88d2b5d2525e">VectorType</a> &gt; </td></tr>
+<tr class="memitem:a44b5304c09a68d41cab5ec19ff44ffa4"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classCouplingOperator.html#a44b5304c09a68d41cab5ec19ff44ffa4">vmult_add</a> (<a class="el" href="time__harmonic__maxwell_8h.html#a5114f84176ad5081553f88d2b5d2525e">VectorType</a> &amp;dst, const <a class="el" href="time__harmonic__maxwell_8h.html#a5114f84176ad5081553f88d2b5d2525e">VectorType</a> &amp;src) const</td></tr>
 <tr class="separator:a44b5304c09a68d41cab5ec19ff44ffa4"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a16207cd8be71ddd6e86ce6798c290136" id="r_a16207cd8be71ddd6e86ce6798c290136"><td class="memTemplParams" colspan="2">template&lt;typename VectorType &gt; </td></tr>
-<tr class="memitem:a16207cd8be71ddd6e86ce6798c290136"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classCouplingOperator.html#a16207cd8be71ddd6e86ce6798c290136">add_diagonal_entries</a> (VectorType &amp;diagonal) const</td></tr>
+<tr class="memitem:a16207cd8be71ddd6e86ce6798c290136" id="r_a16207cd8be71ddd6e86ce6798c290136"><td class="memTemplParams" colspan="2">template&lt;typename <a class="el" href="time__harmonic__maxwell_8h.html#a5114f84176ad5081553f88d2b5d2525e">VectorType</a> &gt; </td></tr>
+<tr class="memitem:a16207cd8be71ddd6e86ce6798c290136"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classCouplingOperator.html#a16207cd8be71ddd6e86ce6798c290136">add_diagonal_entries</a> (<a class="el" href="time__harmonic__maxwell_8h.html#a5114f84176ad5081553f88d2b5d2525e">VectorType</a> &amp;diagonal) const</td></tr>
 <tr class="separator:a16207cd8be71ddd6e86ce6798c290136"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:abda73f3e3975d4c3148d14a278e712d4" id="r_abda73f3e3975d4c3148d14a278e712d4"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classCouplingOperator.html#abda73f3e3975d4c3148d14a278e712d4">add_sparsity_pattern_entries</a> (SparsityPatternBase &amp;dsp) const</td></tr>
 <tr class="separator:abda73f3e3975d4c3148d14a278e712d4"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -257,12 +257,12 @@ template&lt;int dim, typename Number &gt; </div>
 <div class="memtemplate">
 template&lt;int dim, typename Number &gt; </div>
 <div class="memtemplate">
-template&lt;typename VectorType &gt; </div>
+template&lt;typename <a class="el" href="time__harmonic__maxwell_8h.html#a5114f84176ad5081553f88d2b5d2525e">VectorType</a> &gt; </div>
       <table class="memname">
         <tr>
           <td class="memname">template void <a class="el" href="classCouplingOperator.html">CouplingOperator</a>&lt; dim, Number &gt;::add_diagonal_entries </td>
           <td>(</td>
-          <td class="paramtype">VectorType &amp;&#160;</td>
+          <td class="paramtype"><a class="el" href="time__harmonic__maxwell_8h.html#a5114f84176ad5081553f88d2b5d2525e">VectorType</a> &amp;&#160;</td>
           <td class="paramname"><em>diagonal</em></td><td>)</td>
           <td> const</td>
         </tr>
@@ -552,18 +552,18 @@ template&lt;int dim, typename Number &gt; </div>
 <div class="memtemplate">
 template&lt;int dim, typename Number &gt; </div>
 <div class="memtemplate">
-template&lt;typename VectorType &gt; </div>
+template&lt;typename <a class="el" href="time__harmonic__maxwell_8h.html#a5114f84176ad5081553f88d2b5d2525e">VectorType</a> &gt; </div>
       <table class="memname">
         <tr>
           <td class="memname">template void <a class="el" href="classCouplingOperator.html">CouplingOperator</a>&lt; dim, Number &gt;::vmult_add </td>
           <td>(</td>
-          <td class="paramtype">VectorType &amp;&#160;</td>
+          <td class="paramtype"><a class="el" href="time__harmonic__maxwell_8h.html#a5114f84176ad5081553f88d2b5d2525e">VectorType</a> &amp;&#160;</td>
           <td class="paramname"><em>dst</em>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">const VectorType &amp;&#160;</td>
+          <td class="paramtype">const <a class="el" href="time__harmonic__maxwell_8h.html#a5114f84176ad5081553f88d2b5d2525e">VectorType</a> &amp;&#160;</td>
           <td class="paramname"><em>src</em>&#160;</td>
         </tr>
         <tr>
