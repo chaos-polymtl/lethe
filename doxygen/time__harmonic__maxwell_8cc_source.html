@@ -2213,7 +2213,7 @@ $(document).ready(function() { init_codefold(0); });
 <div class="line"><a id="l02069" name="l02069"></a><span class="lineno"> 2069</span>  <span class="comment">// skeleton system. Below we add new ones that are specific to the</span></div>
 <div class="line"><a id="l02070" name="l02070"></a><span class="lineno"> 2070</span>  <span class="comment">// reconstruction of the interior solution.</span></div>
 <div class="line"><a id="l02071" name="l02071"></a><span class="lineno"> 2071</span> </div>
-<div class="line"><a id="l02072" name="l02072"></a><span class="lineno"> 2072</span>  <span class="keyword">auto</span> *mpi_communicator = this-&gt;triangulation-&gt;get_mpi_communicator();</div>
+<div class="line"><a id="l02072" name="l02072"></a><span class="lineno"> 2072</span>  MPI_Comm mpi_communicator = this-&gt;triangulation-&gt;get_mpi_communicator();</div>
 <div class="line"><a id="l02073" name="l02073"></a><span class="lineno"> 2073</span> </div>
 <div class="line"><a id="l02074" name="l02074"></a><span class="lineno"> 2074</span>  <span class="comment">// We initialize vectors to store the locally owned solution and the error</span></div>
 <div class="line"><a id="l02075" name="l02075"></a><span class="lineno"> 2075</span>  <span class="comment">// indicator.</span></div>
