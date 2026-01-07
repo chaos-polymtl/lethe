@@ -1656,12 +1656,16 @@ CFDDEMMatrixFree<dim>::solve()
           this->evaluate_time_derivative_void_fraction();
           this->computing_timer.leave_subsection("Calculate time derivatives");
 
+          this->computing_timer.enter_subsection("Calculate flow controller");
           if (this->simulation_parameters.flow_control.enable_flow_control)
             this->system_operator->update_beta_force(
               this->flow_control.get_beta());
+          this->computing_timer.leave_subsection("Calculate flow controller");
         }
 
 
+      this->computing_timer.enter_subsection(
+        "Calculate particle-fluid forces projection");
       this->particle_projector.calculate_particle_fluid_forces_projection(
         this->cfd_dem_simulation_parameters.cfd_dem,
         *this->dof_handler,
@@ -1676,6 +1680,9 @@ CFDDEMMatrixFree<dim>::solve()
           *this->cell_quadrature,
           *this->mapping,
           *this->face_quadrature));
+      this->computing_timer.leave_subsection(
+        "Calculate particle-fluid forces projection");
+
 
       // The base matrix-free operator is not aware of the various VANS
       // coupling terms. We must do a cast here to ensure that the operator is
