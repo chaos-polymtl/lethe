@@ -91,25 +91,24 @@ Models A and B differ from each other in the way the momentum equation is calcul
 Model A:
 
 .. math:: 
-    \rho_f \left ( \frac{\partial \left ( \varepsilon_f \mathbf{u} \right )}{\partial t} + \nabla \cdot \left ( \varepsilon_f \mathbf{u} \otimes \mathbf{u} \right ) \right ) = -\varepsilon_f \nabla p + \varepsilon_f \nabla \cdot \tau +  \frac{1-\varepsilon_f}{V_{\mathrm{p}}}\bar{\mathbf{F}}_{\mathrm{pf},\mathrm{A}}
+    \rho_f \left ( \frac{\partial \left ( \varepsilon_f \mathbf{u} \right )}{\partial t} + \nabla \cdot \left ( \varepsilon_f \mathbf{u} \otimes \mathbf{u} \right ) \right ) = -\varepsilon_f \nabla p + \varepsilon_f \nabla \cdot \tau + \mathbf{f}_{\mathrm{pf},\mathrm{A}}
 
 Model B:
 
 .. math:: 
-    \rho_f \left ( \frac{\partial \left ( \varepsilon_f \mathbf{u} \right )}{\partial t} + \nabla \cdot \left ( \varepsilon_f \mathbf{u} \otimes \mathbf{u} \right ) \right ) = -\nabla p + \nabla \cdot \tau +  \frac{1-\varepsilon_f}{V_{\mathrm{p}}}\bar{\mathbf{F}}_{\mathrm{pf},\mathrm{B}}
+    \rho_f \left ( \frac{\partial \left ( \varepsilon_f \mathbf{u} \right )}{\partial t} + \nabla \cdot \left ( \varepsilon_f \mathbf{u} \otimes \mathbf{u} \right ) \right ) = -\nabla p + \nabla \cdot \tau +  \mathbf{f}_{\mathrm{pf},\mathrm{B}}
 
 where:
 
 * :math:`\rho_f` is the density of the fluid;
 * :math:`p` is the pressure;
 * :math:`\tau` is the deviatoric stress tensor;
-* :math:`V_{\mathrm{p}}` is the particle volume, taken to be the same for all particles in the simulation (a necessary assumption in the derivation of the equations);
-* :math:`\bar{\mathbf{F}}_\mathrm{A}^{\mathrm{pf}}` and :math:`\bar{\mathbf{F}}_\mathrm{B}^{\mathrm{pf}}` are the source terms representing the forces on the fluid due to the interaction with particles for Models A and B, respectively. We note that the term :math:`\frac{1-\varepsilon_f}{V_{\mathrm{p}}}\bar{\mathbf{F}}_{\mathrm{pf}}` is volumetric and is obtained by regularizing the particle-fluid interaction forces using a kernel function :math:`k_r` :
+* :math:`\mathbf{f}_\mathrm{A}^{\mathrm{pf}}` and :math:`\mathbf{f}_\mathrm{B}^{\mathrm{pf}}` denote the interphase momentum exchange terms resulting from fluid–particle interactions in Models A and B, respectively. The term :math:`\mathbf{f}_{\mathrm{pf}}`, which has units of a volumetric force, is obtained by regularizing the particle-fluid interaction forces using a kernel function :math:`k_r` :
 
 
 .. math::
-     \frac{1-\varepsilon_f}{V_{\mathrm{p}}}\bar{\mathbf{F}}_{\mathrm{pf},\mathrm{A}} &= \sum_{i} k_r \left (\lVert \mathbf{x} - \mathbf{x}_i \rVert \right ) \left(- \left (\mathbf{F}_{\mathrm{fp},i} - \mathbf{F}_{\nabla p,i} - \mathbf{F}_{\nabla \cdot \mathbf{\tau},i} \right ) \right) \\
-     \frac{1-\varepsilon_f}{V_{\mathrm{p}}}\bar{\mathbf{F}}_{\mathrm{pf},\mathrm{B}} &= \sum_{i} k_r \left (\lVert \mathbf{x} - \mathbf{x}_i \rVert \right ) \left(-\mathbf{F}_{{\mathrm{fp},i}} \right)            
+     \mathbf{f}_{\mathrm{pf},\mathrm{A}} &= \sum_{i} k_r \left (\lVert \mathbf{x} - \mathbf{x}_i \rVert \right ) \left(- \left (\mathbf{F}_{\mathrm{fp},i} - \mathbf{F}_{\nabla p,i} - \mathbf{F}_{\nabla \cdot \mathbf{\tau},i} \right ) \right) \\
+     \mathbf{f}_{\mathrm{pf},\mathrm{B}} &= \sum_{i} k_r \left (\lVert \mathbf{x} - \mathbf{x}_i \rVert \right ) \left(-\mathbf{F}_{{\mathrm{fp},i}} \right)            
 
 Different choices of the weighting function :math:`k_r(\lVert \mathbf{x} \rVert)` are possible, and Lethe provides two options. When the Particle-in-Cell (PIC) method is used for particle–fluid coupling, particle properties are regularized over the mesh cells by averaging them within each cell. This procedure is equivalent to using a cell-based top-hat weighting function over the cell containing the point :math:`\mathbf{x}`. However, this approach is not ideal, as it leads to force definitions that depend on the mesh resolution.
 
@@ -175,8 +174,8 @@ where :math:`\mathbf{1}_{\{\mathbf{x}_i \in \Omega_e\}}` is the indicator functi
 .. math::
 
     \begin{align}
-        \int_{\Omega} \frac{1-\varepsilon_f}{V_{\mathrm{p}}}\bar{\mathbf{F}}_{\mathrm{pf},A} d\mathbf{x} &= \sum_{i} -\left(\mathbf{F}_{\mathrm{fp},i}- \mathbf{F}_{\nabla p,i} - \mathbf{F}_{\nabla \cdot \mathbf{\tau},i}\right)\\
-        \int_{\Omega} \frac{1-\varepsilon_f}{V_{\mathrm{p}}}\bar{\mathbf{F}}_{\mathrm{pf},B} d\mathbf{x} &= \sum_{i} -\mathbf{F}_{\mathrm{fp},i}
+        \int_{\Omega} \mathbf{f}_{\mathrm{pf},\mathrm{A}} d\mathbf{x} &= \sum_{i} -\left(\mathbf{F}_{\mathrm{fp},i}- \mathbf{F}_{\nabla p,i} - \mathbf{F}_{\nabla \cdot \mathbf{\tau},i}\right)\\
+        \int_{\Omega} \mathbf{f}_{\mathrm{pf},\mathrm{B}} d\mathbf{x} &= \sum_{i} \left(-\mathbf{F}_{\mathrm{fp},i}\right)
     \end{align}
 
 The Satellite Point Method
@@ -219,19 +218,17 @@ where :math:`S_q` is the sphere centered at :math:`\mathbf{x}_q`, :math:`V_{p\ca
 .. math:: 
       k_r \left (\lVert \mathbf{x}_q - \mathbf{x}_i \rVert \right )  = \frac{1}{\sum_{q}{V_{p\cap S_q}}}V_{p\cap S_q}\frac{1}{w_q|J|}
 
-This weighting function is also used to calculate the fluid-particle momentum term (equation shown for model B without loss of generality):
+This weighting function is also used to compute the fluid–particle momentum exchange term. Integrating this term over the computational domain demonstrates that the formulation also satisfies Newton’s third law (the corresponding expression is shown for Model B without loss of generality):
 
 .. math:: 
-      \frac{1-\varepsilon_f}{V_{\mathrm{p}}}\bar{\mathbf{F}}_{\mathrm{pf}}  = \sum_{i}{\left(-\mathbf{F}_{{\mathrm{fp},i}} \right)\frac{1}{\sum_{q}{V_{p\cap S_q}}}V_{p\cap S_q}\frac{1}{w_q|J|}}
+      \int_{\Omega} \mathbf{f}_{\mathrm{pf}}  d\mathbf{x} = \sum_{q} \sum_{i}{\left(-\mathbf{F}_{{\mathrm{fp},i}} \right)\frac{1}{\sum_{q}{V_{p\cap S_q}}}V_{p\cap S_q}\frac{1}{w_q|J|}} \times w_q|J| = \sum_{i} \left(-\mathbf{F}_{{\mathrm{fp},i}} \right)
 
-The scheme also respects the third law of Newton, which can be shown by integrating the above equation over the whole domain.
-
-The averaging spheres must be sufficiently large to ensure that all particles in the domain contribute to the averaged void fraction, which can be achieved by selecting an adequate number of quadrature points together with an appropriate averaging radius, :math:`R_s`. However, the radius of the averaging spheres is constrained by the mesh resolution. Since each cell only has access to its direct neighboring cells, the averaging volume cannot extend beyond this local neighborhood. Consequently, the radius of the averaging spheres must satisfy:
+The averaging spheres must be sufficiently large to ensure that all particles in the domain contribute to the averaged void fraction, which can be achieved by selecting an adequate number of quadrature points together with an appropriate averaging radius, :math:`R_s`. However, in Lethe, the radius of the averaging spheres is currently constrained by the mesh resolution. Since each cell only has access to its direct neighboring cells, the averaging volume cannot extend beyond this local neighborhood. Consequently, the radius of the averaging spheres must satisfy:
 
 .. math:: 
     R_s \leq h_{\Omega}
 
-where :math:`h_{\Omega}` denotes the characteristic cell size.
+where :math:`h_{\Omega}` denotes the characteristic cell size. This limitation may be relaxed in future versions of Lethe.
 
 References
 -----------
