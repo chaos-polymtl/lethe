@@ -67,6 +67,7 @@ NavierStokesScratchData<dim>::allocate()
   this->div_phi_u.reinit(n_q_points, n_dofs);
   this->hess_phi_u.reinit(n_q_points, n_dofs);
   this->laplacian_phi_u.reinit(n_q_points, n_dofs);
+  this->gradient_divergence_phi_u.reinit(n_q_points, n_dofs);
 
   // Pressure shape functions
   this->phi_p.reinit(n_q_points, n_dofs);

@@ -500,15 +500,16 @@ VANSAssemblerCoreModelA<dim>::assemble_matrix(
             pressure_scaling_factor * scratch_data.grad_phi_p[q][j];
 
           strong_jacobian_vec[q][j] +=
-            (velocity_gradient * phi_u_j * void_fraction +
-             grad_phi_u_j * velocity * void_fraction +
+            (  velocity_gradient * phi_u_j * void_fraction 
+             + grad_phi_u_j * velocity * void_fraction 
              // Mass Source
-             mass_source * phi_u_j +
+             + mass_source * phi_u_j 
              // Pressure
-             void_fraction * grad_phi_p_j
+             + void_fraction * grad_phi_p_j
              // Kinematic viscosity
-             - void_fraction * kinematic_viscosity * laplacian_phi_u_j -
-             void_fraction * kinematic_viscosity * gradient_divergence_phi_u_j);
+             - void_fraction * kinematic_viscosity * laplacian_phi_u_j 
+             - void_fraction * kinematic_viscosity * gradient_divergence_phi_u_j
+            );
         }
 
       for (unsigned int i = 0; i < n_dofs; ++i)
@@ -568,14 +569,14 @@ VANSAssemblerCoreModelA<dim>::assemble_matrix(
                   //                      scalar_product(transpose(grad_phi_u_j), grad_phi_u_i)
                   //                      +
                   //                    kinematic_viscosity *
-                  //                      grad_phi_u_j *
-                  //                      void_fraction_gradients * phi_u_i;
+                  //                      void_fraction_gradients  *
+                  //                      grad_phi_u_j * phi_u_i;
                   // In shape functions components terms, if this improves
                   // performance:
                   local_matrix_ij += void_fraction * kinematic_viscosity *
                                        grad_phi_u_i[component_i][component_j] *
-                                       grad_phi_u_j[component_j][component_i] +
-                                     kinematic_viscosity *
+                                       grad_phi_u_j[component_j][component_i] 
+                                    + kinematic_viscosity *
                                        grad_phi_u_j[component_j][component_i] *
                                        void_fraction_gradients[component_j] *
                                        phi_u_i[component_i];
