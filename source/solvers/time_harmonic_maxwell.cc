@@ -2069,7 +2069,7 @@ TimeHarmonicMaxwell<3>::reconstruct_interior_solution()
   // skeleton system. Below we add new ones that are specific to the
   // reconstruction of the interior solution.
 
-  auto *mpi_communicator = this->triangulation->get_mpi_communicator();
+  MPI_Comm mpi_communicator = this->triangulation->get_mpi_communicator();
 
   // We initialize vectors to store the locally owned solution and the error
   // indicator.
