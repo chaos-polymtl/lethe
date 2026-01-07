@@ -27,6 +27,9 @@ namespace Parameters
     surface_tension_gradient_scaling = 1. * theta * T * T / M;
     cahn_hilliard_mobility_scaling   = 1. * M / L / L / L / T;
     cahn_hilliard_epsilon_scaling    = 1. / L;
+    electromagnetic_frequency_scaling =
+      1. * L / T / 299792458.0; // speed of light in m/s to get the frequency scaling
+                            // to match the other electromagnetic properties
   }
 
   void

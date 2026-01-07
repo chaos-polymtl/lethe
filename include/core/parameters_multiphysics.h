@@ -101,6 +101,17 @@ namespace Parameters
   };
 
   /**
+   * @brief Types of waveguide port mode.
+   */
+  enum class WaveguideMode : std::int8_t
+  {
+    // Transverse Electric mode
+    TE,
+    // Transverse Magnetic mode
+    TM
+  };
+
+  /**
    * @brief CahnHilliard_PhaseFilter - Defines the parameters for the phase filtration of CahnHilliard physics
    */
   struct CahnHilliard_PhaseFilter
@@ -381,6 +392,39 @@ namespace Parameters
     void
     parse_parameters(ParameterHandler &prm, const Dimensionality &dimensions);
   };
+
+  /**
+   * @brief TimeHarmonicMaxwell - Defines the parameters for
+   * time-harmonic Maxwell simulations.
+   */
+  struct TimeHarmonicMaxwell
+  {
+    // We use vectors in the following to be able to define multiple waveguides
+    // in the same simulation.
+
+    unsigned int number_of_waveguide_inlets;
+
+    // Frequency of the electromagnetic wave (in Hz)
+    double electromagnetic_frequency;
+
+    // Waveguide mode to simulate (TE|TM)
+    std::vector<Parameters::WaveguideMode> waveguide_mode;
+
+    // Waveguide modes order (m,n) to simulate
+    std::vector<unsigned int> mode_order_m;
+    std::vector<unsigned int> mode_order_n;
+
+    // Waveguide corners location (we only implement the 3D, in 2D it would be 2
+    // points with 2D coordinates).
+    std::vector<std::array<Tensor<1, 3>, 4>> waveguide_corners_3D;
+
+    void
+    declare_parameters(ParameterHandler &prm) const;
+
+    void
+    parse_parameters(ParameterHandler &prm, const Dimensionality &dimensions);
+  };
+
 
   /**
    * @brief Multiphysics - the parameters for multiphysics simulations

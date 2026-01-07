@@ -766,3 +766,126 @@ Parameters::CahnHilliard::parse_parameters(ParameterHandler     &prm,
   }
   prm.leave_subsection();
 }
+
+
+
+void
+Parameters::TimeHarmonicMaxwell::declare_parameters(ParameterHandler &prm) const
+{
+  prm.enter_subsection("time harmonic maxwell");
+  {
+    prm.declare_entry(
+      "electromagnetics frequency",
+      "1",
+      Patterns::Double(),
+      "Frequency of the time harmonic electromagnetic wave excitation (in Hz).");
+
+    prm.declare_entry("number of waveguide inlets",
+                      "1",
+                      Patterns::Integer(1),
+                      "Number of waveguide inlets in the simulation.");
+
+    // Declare inlets dynamically based on number
+    for (unsigned int inlet = 0; inlet < number_of_waveguide_inlets; ++inlet)
+      {
+        prm.enter_subsection("waveguide inlet " + std::to_string(inlet));
+        {
+          prm.enter_subsection("waveguide mode");
+          {
+            prm.declare_entry(
+              "mode type",
+              "TE",
+              Patterns::Selection("TE|TM"),
+              "The waveguide mode excitation for a rectangular waveguide can be either Transverse Electric (TE) or Transverse Magnetic (TM).");
+
+            prm.declare_entry(
+              "mode order m",
+              "1.0",
+              Patterns::Double(),
+              "The mode order m in the first transverse direction of the rectangular waveguide.");
+
+            prm.declare_entry(
+              "mode order n",
+              "0.0",
+              Patterns::Double(),
+              "The mode order n in the second transverse direction of the rectangular waveguide.");
+          }
+          prm.leave_subsection();
+          for (unsigned int corner = 1; corner <= 4; ++corner)
+            {
+              prm.declare_entry("corner " + std::to_string(corner),
+                                "0, 0, 0",
+                                Patterns::List(Patterns::Double(), 3, 3),
+                                "Coordinates of corner " +
+                                  std::to_string(corner));
+            }
+        }
+        prm.leave_subsection();
+      }
+    prm.leave_subsection();
+  }
+  prm.leave_subsection();
+}
+
+void
+Parameters::TimeHarmonicMaxwell::parse_parameters(
+  ParameterHandler     &prm,
+  const Dimensionality &dimensions)
+{
+  prm.enter_subsection("time harmonic maxwell");
+  {
+    TimeHarmonicMaxwell::electromagnetic_frequency =
+      prm.get_double("electromagnetics frequency") *
+      dimensions.electromagnetic_frequency_scaling;
+
+    TimeHarmonicMaxwell::number_of_waveguide_inlets =
+      prm.get_integer("number of waveguide inlets");
+
+    for (unsigned int inlet = 0; inlet < number_of_waveguide_inlets; ++inlet)
+      {
+        prm.enter_subsection("waveguide inlet " + std::to_string(inlet));
+        {
+          prm.enter_subsection("waveguide mode");
+          {
+            const std::string op_mode_type = prm.get("mode type");
+            if (op_mode_type == "TE")
+              {
+                TimeHarmonicMaxwell::waveguide_mode[inlet] =
+                  Parameters::WaveguideMode::TE;
+              }
+            else if (op_mode_type == "TM")
+              {
+                TimeHarmonicMaxwell::waveguide_mode[inlet] =
+                  Parameters::WaveguideMode::TM;
+              }
+            else
+              throw(std::runtime_error("Invalid waveguide mode type. "
+                                       "Options are 'TE' or 'TM'."));
+
+            TimeHarmonicMaxwell::mode_order_m[inlet] =
+              prm.get_integer("mode order m");
+
+            TimeHarmonicMaxwell::mode_order_n[inlet] =
+              prm.get_integer("mode order n");
+          }
+          prm.leave_subsection();
+
+          std::array<Tensor<1, 3>, 4> tmp_corners;
+
+          for (unsigned int corner = 1; corner <= 4; ++corner)
+            {
+              const std::string corner_name =
+                "corner " + std::to_string(corner);
+              const Tensor<1, 3> corner_value =
+                value_string_to_tensor<3>(prm.get(corner_name));
+
+              tmp_corners[corner - 1] = corner_value;
+            }
+          TimeHarmonicMaxwell::waveguide_corners_3D.push_back(tmp_corners);
+        }
+        prm.leave_subsection();
+      }
+    prm.leave_subsection();
+  }
+  prm.leave_subsection();
+}

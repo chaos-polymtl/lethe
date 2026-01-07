@@ -93,6 +93,7 @@ namespace Parameters
     double surface_tension_gradient_scaling;
     double cahn_hilliard_mobility_scaling;
     double cahn_hilliard_epsilon_scaling;
+    double electromagnetic_frequency_scaling;
   };
 } // namespace Parameters
 
