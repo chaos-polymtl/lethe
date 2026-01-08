@@ -48,7 +48,7 @@ var searchData=
   ['materialinteractions_45',['materialinteractions',['../classParameters_1_1MaterialInteractions.html#a0cad25788da479c0a50b0d1bb04a0318',1,'Parameters::MaterialInteractions::MaterialInteractions()'],['../classParameters_1_1MaterialInteractions.html',1,'Parameters::MaterialInteractions']]],
   ['materialinteractionstype_46',['MaterialInteractionsType',['../classParameters_1_1MaterialInteractions.html#aa83721a319b4784e22860ee35916a6b8',1,'Parameters::MaterialInteractions']]],
   ['matrix_5ffree_47',['matrix_free',['../classNavierStokesOperatorBase.html#affbf806be564c4ec70c6d71a28026e91',1,'NavierStokesOperatorBase']]],
-  ['matrix_5frequires_5fassembly_48',['matrix_requires_assembly',['../classInexactNewtonNonLinearSolverStrategy.html#a09bc41ce28e039c1da2dc0a22109f5d1',1,'InexactNewtonNonLinearSolverStrategy']]],
+  ['matrix_5frequires_5fassembly_48',['matrix_requires_assembly',['../classInexactNewtonNonLinearSolverStrategy.html#a09bc41ce28e039c1da2dc0a22109f5d1',1,'InexactNewtonNonLinearSolverStrategy::matrix_requires_assembly'],['../classParticleFieldQCM.html#afc6ec86139df35bd9bf487e8e42ec4e0',1,'ParticleFieldQCM::matrix_requires_assembly']]],
   ['matrix_5ftolerance_49',['matrix_tolerance',['../structParameters_1_1NonLinearSolver.html#a85953a05784955ab6da9e571ca56342d',1,'Parameters::NonLinearSolver']]],
   ['max_50',['max',['../classstatistics.html#a04dec28f738b790becb32245ef23a1d0',1,'statistics']]],
   ['max_5fangular_5foffset_51',['max_angular_offset',['../structParameters_1_1Lagrangian_1_1ParticleRayTracing.html#a1467d435fb22613a2c2d288e30cfff32',1,'Parameters::Lagrangian::ParticleRayTracing']]],

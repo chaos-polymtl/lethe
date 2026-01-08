@@ -116,10 +116,14 @@ Public Attributes</h2></td></tr>
 <tr class="separator:ace1a27fc1da442b443756ef51798cef8"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:adf5f5cdbed13df9032a665b061a9ec36" id="r_adf5f5cdbed13df9032a665b061a9ec36"><td class="memItemLeft" align="right" valign="top">AffineConstraints&lt; double &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classParticleFieldQCM.html#adf5f5cdbed13df9032a665b061a9ec36">particle_field_constraints</a></td></tr>
 <tr class="separator:adf5f5cdbed13df9032a665b061a9ec36"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aaf6464074dffae560a1e24123cbf057e" id="r_aaf6464074dffae560a1e24123cbf057e"><td class="memItemLeft" align="right" valign="top">std::shared_ptr&lt; TrilinosWrappers::PreconditionILU &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classParticleFieldQCM.html#aaf6464074dffae560a1e24123cbf057e">ilu_preconditioner</a></td></tr>
+<tr class="separator:aaf6464074dffae560a1e24123cbf057e"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a194fb0db15a65fd259130156ae150e70" id="r_a194fb0db15a65fd259130156ae150e70"><td class="memItemLeft" align="right" valign="top">const bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classParticleFieldQCM.html#a194fb0db15a65fd259130156ae150e70">neumann_boundaries</a></td></tr>
 <tr class="separator:a194fb0db15a65fd259130156ae150e70"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a572e6771735e529d7af6fc5ad35a136c" id="r_a572e6771735e529d7af6fc5ad35a136c"><td class="memItemLeft" align="right" valign="top">const bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classParticleFieldQCM.html#a572e6771735e529d7af6fc5ad35a136c">conservative_projection</a></td></tr>
 <tr class="separator:a572e6771735e529d7af6fc5ad35a136c"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:afc6ec86139df35bd9bf487e8e42ec4e0" id="r_afc6ec86139df35bd9bf487e8e42ec4e0"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classParticleFieldQCM.html#afc6ec86139df35bd9bf487e8e42ec4e0">matrix_requires_assembly</a></td></tr>
+<tr class="separator:afc6ec86139df35bd9bf487e8e42ec4e0"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><div class="compoundTemplParams">template&lt;int dim, int n_components, int property_start_index = -1&gt;<br />
@@ -203,7 +207,7 @@ template&lt;int dim, int n_components, int property_start_index = -1&gt; </div>
 
 <p class="definition">Definition at line <a class="el" href="particle__projector_8h_source.html#l00128">128</a> of file <a class="el" href="particle__projector_8h_source.html">particle_projector.h</a>.</p>
 
-<p class="reference">References <a class="el" href="particle__projector_8h_source.html#l00156">ParticleFieldQCM&lt; dim, n_components, property_start_index &gt;::fe</a>.</p>
+<p class="reference">References <a class="el" href="particle__projector_8h_source.html#l00157">ParticleFieldQCM&lt; dim, n_components, property_start_index &gt;::fe</a>.</p>
 
 </div>
 </div>
@@ -245,8 +249,9 @@ template&lt;int dim, int n_components, int property_start_index = -1&gt; </div>
         </tr>
       </table>
 </div><div class="memdoc">
+<p>Boolean that indicates if the projection is conservative. If the projection is conservative, the integral over the domain of the field will recover the sum of the field over all particles. </p>
 
-<p class="definition">Definition at line <a class="el" href="particle__projector_8h_source.html#l00181">181</a> of file <a class="el" href="particle__projector_8h_source.html">particle_projector.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="particle__projector_8h_source.html#l00191">191</a> of file <a class="el" href="particle__projector_8h_source.html">particle_projector.h</a>.</p>
 
 </div>
 </div>
@@ -266,7 +271,7 @@ template&lt;int dim, int n_components, int property_start_index = -1&gt; </div>
 
 <p>DoFHandler that manages the void fraction. </p>
 
-<p class="definition">Definition at line <a class="el" href="particle__projector_8h_source.html#l00150">150</a> of file <a class="el" href="particle__projector_8h_source.html">particle_projector.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="particle__projector_8h_source.html#l00151">151</a> of file <a class="el" href="particle__projector_8h_source.html">particle_projector.h</a>.</p>
 
 </div>
 </div>
@@ -286,7 +291,26 @@ template&lt;int dim, int n_components, int property_start_index = -1&gt; </div>
 
 <p>Finite element for the particle field. </p>
 
-<p class="definition">Definition at line <a class="el" href="particle__projector_8h_source.html#l00156">156</a> of file <a class="el" href="particle__projector_8h_source.html">particle_projector.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="particle__projector_8h_source.html#l00157">157</a> of file <a class="el" href="particle__projector_8h_source.html">particle_projector.h</a>.</p>
+
+</div>
+</div>
+<a id="aaf6464074dffae560a1e24123cbf057e" name="aaf6464074dffae560a1e24123cbf057e"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aaf6464074dffae560a1e24123cbf057e">&#9670;&#160;</a></span>ilu_preconditioner</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;int dim, int n_components, int property_start_index = -1&gt; </div>
+      <table class="memname">
+        <tr>
+          <td class="memname">std::shared_ptr&lt;TrilinosWrappers::PreconditionILU&gt; <a class="el" href="classParticleFieldQCM.html">ParticleFieldQCM</a>&lt; dim, n_components, property_start_index &gt;::ilu_preconditioner</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<p>Preconditioner used when solving the L2 projection. This preconditioner is stored within the class since there are situations where the matrix is kept for multiple iterations. Consequently, there is no point in reassembling the preconditioner for these iterations. </p>
+
+<p class="definition">Definition at line <a class="el" href="particle__projector_8h_source.html#l00180">180</a> of file <a class="el" href="particle__projector_8h_source.html">particle_projector.h</a>.</p>
 
 </div>
 </div>
@@ -306,7 +330,7 @@ template&lt;int dim, int n_components, int property_start_index = -1&gt; </div>
 
 <p>Index set for the locally owned degree of freedoms. </p>
 
-<p class="definition">Definition at line <a class="el" href="particle__projector_8h_source.html#l00159">159</a> of file <a class="el" href="particle__projector_8h_source.html">particle_projector.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="particle__projector_8h_source.html#l00160">160</a> of file <a class="el" href="particle__projector_8h_source.html">particle_projector.h</a>.</p>
 
 </div>
 </div>
@@ -326,7 +350,26 @@ template&lt;int dim, int n_components, int property_start_index = -1&gt; </div>
 
 <p>Index set for the locally relevant degree of freedoms. </p>
 
-<p class="definition">Definition at line <a class="el" href="particle__projector_8h_source.html#l00162">162</a> of file <a class="el" href="particle__projector_8h_source.html">particle_projector.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="particle__projector_8h_source.html#l00163">163</a> of file <a class="el" href="particle__projector_8h_source.html">particle_projector.h</a>.</p>
+
+</div>
+</div>
+<a id="afc6ec86139df35bd9bf487e8e42ec4e0" name="afc6ec86139df35bd9bf487e8e42ec4e0"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#afc6ec86139df35bd9bf487e8e42ec4e0">&#9670;&#160;</a></span>matrix_requires_assembly</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;int dim, int n_components, int property_start_index = -1&gt; </div>
+      <table class="memname">
+        <tr>
+          <td class="memname">bool <a class="el" href="classParticleFieldQCM.html">ParticleFieldQCM</a>&lt; dim, n_components, property_start_index &gt;::matrix_requires_assembly</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<p>When a projection does not have neumann_boundaries, the matrix for the system is constant in time. Consequently, there is no point in assembling the matrix and initializing the preconditioner. This flag monitors if the matrix has already been assembled. It is reset every time <a class="el" href="classParticleFieldQCM.html#a80a6ae088e4a992315ad05b46282f516" title="Setup the degrees of freedom. This function allocates the necessary memory.">setup_dofs()</a> is called for the projector. </p>
+
+<p class="definition">Definition at line <a class="el" href="particle__projector_8h_source.html#l00198">198</a> of file <a class="el" href="particle__projector_8h_source.html">particle_projector.h</a>.</p>
 
 </div>
 </div>
@@ -345,7 +388,7 @@ template&lt;int dim, int n_components, int property_start_index = -1&gt; </div>
 </div><div class="memdoc">
 <p>Boolean that indicates if Neumann boundary conditions are used during the projection In this case, instead of assuming a value of zero if there are no particles, the mass matrix is cancelled in region without particles which results in a no flux zone. </p>
 
-<p class="definition">Definition at line <a class="el" href="particle__projector_8h_source.html#l00179">179</a> of file <a class="el" href="particle__projector_8h_source.html">particle_projector.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="particle__projector_8h_source.html#l00186">186</a> of file <a class="el" href="particle__projector_8h_source.html">particle_projector.h</a>.</p>
 
 </div>
 </div>
@@ -365,7 +408,7 @@ template&lt;int dim, int n_components, int property_start_index = -1&gt; </div>
 
 <p>Constraints used for the boundary conditions of the particle field. </p>
 
-<p class="definition">Definition at line <a class="el" href="particle__projector_8h_source.html#l00173">173</a> of file <a class="el" href="particle__projector_8h_source.html">particle_projector.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="particle__projector_8h_source.html#l00174">174</a> of file <a class="el" href="particle__projector_8h_source.html">particle_projector.h</a>.</p>
 
 </div>
 </div>
@@ -385,7 +428,7 @@ template&lt;int dim, int n_components, int property_start_index = -1&gt; </div>
 
 <p>deal.II vector for the particle velocity </p>
 
-<p class="definition">Definition at line <a class="el" href="particle__projector_8h_source.html#l00153">153</a> of file <a class="el" href="particle__projector_8h_source.html">particle_projector.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="particle__projector_8h_source.html#l00154">154</a> of file <a class="el" href="particle__projector_8h_source.html">particle_projector.h</a>.</p>
 
 </div>
 </div>
@@ -404,7 +447,7 @@ template&lt;int dim, int n_components, int property_start_index = -1&gt; </div>
 </div><div class="memdoc">
 <p>System matrix used to assemble the smoothed L2 projection of the void fraction </p>
 
-<p class="definition">Definition at line <a class="el" href="particle__projector_8h_source.html#l00166">166</a> of file <a class="el" href="particle__projector_8h_source.html">particle_projector.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="particle__projector_8h_source.html#l00167">167</a> of file <a class="el" href="particle__projector_8h_source.html">particle_projector.h</a>.</p>
 
 </div>
 </div>
@@ -423,7 +466,7 @@ template&lt;int dim, int n_components, int property_start_index = -1&gt; </div>
 </div><div class="memdoc">
 <p>Right-hand side used to assemble the smoothed L2 projection of the void fraction </p>
 
-<p class="definition">Definition at line <a class="el" href="particle__projector_8h_source.html#l00170">170</a> of file <a class="el" href="particle__projector_8h_source.html">particle_projector.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="particle__projector_8h_source.html#l00171">171</a> of file <a class="el" href="particle__projector_8h_source.html">particle_projector.h</a>.</p>
 
 </div>
 </div>
