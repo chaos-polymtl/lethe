@@ -1320,7 +1320,7 @@ ParticleProjector<dim>::calculate_field_projection(
                   if (field_qcm.matrix_requires_assembly == true)
                     {
                       // We extract the component i and j to only calculate the
-                      // matrix when i and j are equal This is an optimization
+                      // matrix when i and j are equal. This is an optimization
                       // that is only necessary when we have more than 1
                       // component, but the cost is marginal when there is only
                       // one component so might as well live with it.
