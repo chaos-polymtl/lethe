@@ -445,6 +445,7 @@ namespace Parameters
 
     Parameters::VOF          vof_parameters;
     Parameters::CahnHilliard cahn_hilliard_parameters;
+    Parameters::TimeHarmonicMaxwell time_harmonic_maxwell_parameters;
 
     void
     declare_parameters(ParameterHandler &prm) const;

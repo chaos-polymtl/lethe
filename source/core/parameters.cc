@@ -1484,14 +1484,14 @@ namespace Parameters
       op = prm.get("electric permittivity model");
       if (op == "constant")
         electric_permittivity_model = ElectricPermittivityModel::constant;
-      electric_permittivity_real = prm.get_double("electric permittivity real");
-      electric_permittivity_imag = prm.get_double("electric permittivity imag");
+      electric_permittivity_real = prm.get_double("electric permittivity real part");
+      electric_permittivity_imag = prm.get_double("electric permittivity imag part");
 
       op = prm.get("magnetic permeability model");
       if (op == "constant")
         magnetic_permeability_model = MagneticPermeabilityModel::constant;
-      magnetic_permeability_real = prm.get_double("magnetic permeability real");
-      magnetic_permeability_imag = prm.get_double("magnetic permeability imag");
+      magnetic_permeability_real = prm.get_double("magnetic permeability real part");
+      magnetic_permeability_imag = prm.get_double("magnetic permeability imag part");
     }
     prm.leave_subsection();
   }

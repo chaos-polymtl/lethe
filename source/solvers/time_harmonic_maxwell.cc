@@ -888,26 +888,60 @@ void
 TimeHarmonicMaxwell<3>::assemble_system_matrix()
 {
   // Material properties
-  std::complex<double> epsilon_r;
-  std::complex<double> mu_r;
-  double               sigma_r;
+  auto &properties_manager =
+    this->simulation_parameters.physical_properties_manager;
+  std::map<field, double> field_values;
 
-  epsilon_r = {1., 0.};
-  mu_r      = {1., 0.};
-  sigma_r   = 0.;
+  std::complex<double>    epsilon_r;
+  std::complex<double>    mu_r;       
+  double    sigma_r;
+  
+  const auto electric_conductivity_model =
+                properties_manager.get_electric_conductivity();
+
+  const auto electric_permittivity_model_real =
+                properties_manager.get_electric_permittivity_real();
+
+  const auto electric_permittivity_model_imag =
+                properties_manager.get_electric_permittivity_imag();
+          
+  const auto magnetic_permeability_model =
+                properties_manager.get_magnetic_permeability_real();
+
+  const auto magnetic_permeability_model_imag =
+                properties_manager.get_magnetic_permeability_imag();
+
+  sigma_r = electric_conductivity_model->value(field_values);
+  epsilon_r = std::complex<double>(
+                electric_permittivity_model_real->value(field_values),
+                electric_permittivity_model_imag->value(field_values));
+  mu_r = std::complex<double>(
+                magnetic_permeability_model->value(field_values),
+                magnetic_permeability_model_imag->value(field_values));
 
   /// Excitation properties
+  const Parameters::TimeHarmonicMaxwell &time_harmonic_maxwell_parameters =
+    this->simulation_parameters.multiphysics.time_harmonic_maxwell_parameters;
   double       frequency;
   unsigned int mode_x;
   unsigned int mode_y;
   double       waveguide_a;
   double       waveguide_b;
 
-  frequency   = 670356315.7;
-  mode_x      = 1;
-  mode_y      = 0;
-  waveguide_a = 0.25;
-  waveguide_b = 0.25;
+//  frequency   = 670356315.7;
+//  mode_x      = 1;
+//  mode_y      = 0;
+//  waveguide_a = 0.25;
+//  waveguide_b = 0.25;
+  
+  frequency   = time_harmonic_maxwell_parameters.electromagnetic_frequency;
+  mode_x      = time_harmonic_maxwell_parameters.mode_order_m[0];
+  mode_y      = time_harmonic_maxwell_parameters.mode_order_n[0];
+  waveguide_a = (time_harmonic_maxwell_parameters.waveguide_corners_3D[0][1] - 
+                 time_harmonic_maxwell_parameters.waveguide_corners_3D[0][0]).norm();
+  waveguide_b = (time_harmonic_maxwell_parameters.waveguide_corners_3D[0][2] - 
+                 time_harmonic_maxwell_parameters.waveguide_corners_3D[0][0]).norm();
+  
 
   // TODO:   the parameters above will need to be removed when they are added to
   // the physical properties
