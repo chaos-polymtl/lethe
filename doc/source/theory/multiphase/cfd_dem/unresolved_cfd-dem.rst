@@ -62,7 +62,21 @@ Volume-Averaged Navier-Stokes
 
 Since we represent the fluid at a meso-scale, the quantities calculated for the cells are filtered. Additionally, variations in time and space of the volume occupied by the fluid are accounted for by the void fraction (or porosity). The resulting equations are the Volumed-Averaged Navier-Stokes (VANS) equations, which are solved to obtain the velocity and the pressure of the continuous fluid phase. In Lethe, the VANS equations are presented in two different formulations, so-called Model A (or Set II) and Model B (or Set I) `[2] <https://doi.org/10.1017/S002211201000306X>`_.
 
-Considering an incompressible flow, the continuity equation for both models is:
+The VANS equations can be derived by averaging the continuity and momentum conservation equations using a weighting function. This approach was developed by Anderson and Jackson [#Anderson1967]_ and is briefly presented here. In this approach, any weighting function :math:`k_r(\lVert \mathbf{x} \rVert)` may be chosen, provided that it satisfies a set of conditions, including :math:`k_r(\lVert \mathbf{x} \rVert) > 0, \: \forall \mathbf{x}`, and :math:`\int_{\Omega} k_r(\lVert \mathbf{x} \rVert)\,\mathrm{d}\mathbf{x} = 1`, where :math:`\Omega` refers to the whole domain.
+
+Using this function, local mean values of any fluid- or solid-phase property, :math:`\bar{a}(\mathbf{x},t)` and :math:`\bar{b}(\mathbf{x},t)`, respectively, can be defined at a scale larger than the particle diameter yet smaller than the macroscopic length scale of the problem, as per the following:
+
+.. math:: 
+    :label: eq:average_definition
+
+        \begin{align}
+            \varepsilon_f(\mathbf{x},t) \bar{a}(\mathbf{x},t) &= \int_{\Omega_f} a(\mathbf{y},t) k_r \left (\lVert \mathbf{x} - \mathbf{y} \rVert \right ) \mathrm{d}\mathbf{y} \\
+            \left[1-\varepsilon_f(\mathbf{x},t)\right] \bar{b}(\mathbf{x},t) &= \int_{\Omega_s} b(\mathbf{y},t) k_r \left (\lVert \mathbf{x} - \mathbf{y} \rVert \right ) \mathrm{d}\mathbf{y} \approx \sum_{i} V_{\mathrm{p},i} \bar{b}_i(t)k_r(\lVert \mathbf{x}-\mathbf{x_i} \rVert)
+        \end{align}
+
+where :math:`\varepsilon_f(\mathbf{x},t)` is the void fraction at position :math:`\mathbf{x}` and time :math:`t`, the subscripts :math:`f` and :math:`s` denote the fluid and solid, respectively, and :math:`a` and :math:`b` are the point values of the corresponding properties. The index :math:`i` in the summation denotes again each particle in the system, with volume :math:`V_{\mathrm{p},i}` and position :math:`\mathbf{x}_i`. :math:`\bar{b}_i(t)` represents the average of the point property :math:`b` over the volume of particle :math:`i`. For the solid-phase property :math:`b(\mathbf{x},t)`, the approximation in the second equation stems from the assumption that the weighting function varies little over the volume of a single particle. This condition must be met when selecting the weighting kernel radius. Filtering the mass and momentum conservation equations using the weighting function leads to the VANS equations presented in the following.
+
+Considering an incompressible flow, the continuity equation for both models A and B is:
 
 .. math::
     \frac{\partial \varepsilon_f}{\partial t} + \nabla \cdot \left ( \varepsilon_f \mathbf{u} \right ) = 0
@@ -77,37 +91,46 @@ Models A and B differ from each other in the way the momentum equation is calcul
 Model A:
 
 .. math:: 
-    \rho_f \left ( \frac{\partial \left ( \varepsilon_f \mathbf{u} \right )}{\partial t} + \nabla \cdot \left ( \varepsilon_f \mathbf{u} \otimes \mathbf{u} \right ) \right ) = -\varepsilon \nabla p + \varepsilon \nabla \cdot \tau +  \bar{\mathbf{f}}_{\mathrm{pf},\mathrm{A}}
+    \rho_f \left ( \frac{\partial \left ( \varepsilon_f \mathbf{u} \right )}{\partial t} + \nabla \cdot \left ( \varepsilon_f \mathbf{u} \otimes \mathbf{u} \right ) \right ) = -\varepsilon_f \nabla p + \varepsilon_f \nabla \cdot \tau + \mathbf{f}_{\mathrm{pf},\mathrm{A}}
 
 Model B:
 
 .. math:: 
-    \rho_f \left ( \frac{\partial \left ( \varepsilon_f \mathbf{u} \right )}{\partial t} + \nabla \cdot \left ( \varepsilon_f \mathbf{u} \otimes \mathbf{u} \right ) \right ) = -\nabla p + \nabla \cdot \tau +  \bar{\mathbf{f}}_{\mathrm{pf},\mathrm{B}}
+    \rho_f \left ( \frac{\partial \left ( \varepsilon_f \mathbf{u} \right )}{\partial t} + \nabla \cdot \left ( \varepsilon_f \mathbf{u} \otimes \mathbf{u} \right ) \right ) = -\nabla p + \nabla \cdot \tau +  \mathbf{f}_{\mathrm{pf},\mathrm{B}}
 
 where:
 
 * :math:`\rho_f` is the density of the fluid;
 * :math:`p` is the pressure;
 * :math:`\tau` is the deviatoric stress tensor;
-* :math:`\bar{\mathbf{f}}_\mathrm{A}^{\mathrm{pf}}` and :math:`\bar{\mathbf{f}}_\mathrm{B}^{\mathrm{pf}}` are the source terms representing the volumetric forces on the fluid due to the interaction with particles for Models A and B, respectively. We note them as lower-case letter to emphasize that they are forces per unit volume and not forces. These volumetric interaction forces (:math:`\mathbf{f}_{pf}^A` and :math:`\mathbf{f}_{pf}^B`) are obtained by regularizing the particle-fluid interaction forces using a kernel function :math:`k_r` :
+* :math:`\mathbf{f}_\mathrm{A}^{\mathrm{pf}}` and :math:`\mathbf{f}_\mathrm{B}^{\mathrm{pf}}` denote the interphase momentum exchange terms resulting from fluid–particle interactions in Models A and B, respectively. The term :math:`\mathbf{f}_{\mathrm{pf}}`, which has units of a volumetric force, is obtained by regularizing the particle-fluid interaction forces using a kernel function :math:`k_r` :
 
 
 .. math::
-    \bar{\mathbf{f}}_{\mathrm{pf},\mathrm{A}} &= \sum_{i} k_r \left (\lVert \mathbf{x} - \mathbf{x}_i \rVert \right ) \left(- \left (\mathbf{F}_{\mathrm{fp},i} - \mathbf{F}_{\nabla p,i} - \mathbf{F}_{\nabla \cdot \mathbf{\tau},i} \right ) \right) \\
-    \bar{\mathbf{f}}_{\mathrm{pf},\mathrm{B}} &= \sum_{i} k_r \left (\lVert \mathbf{x} - \mathbf{x}_i \rVert \right ) \left(-\mathbf{F}_{{\mathrm{fp},i}} \right)
+     \mathbf{f}_{\mathrm{pf},\mathrm{A}} &= \sum_{i} k_r \left (\lVert \mathbf{x} - \mathbf{x}_i \rVert \right ) \left(- \left (\mathbf{F}_{\mathrm{fp},i} - \mathbf{F}_{\nabla p,i} - \mathbf{F}_{\nabla \cdot \mathbf{\tau},i} \right ) \right) \\
+     \mathbf{f}_{\mathrm{pf},\mathrm{B}} &= \sum_{i} k_r \left (\lVert \mathbf{x} - \mathbf{x}_i \rVert \right ) \left(-\mathbf{F}_{{\mathrm{fp},i}} \right)            
 
-with :math:`k_r` normalized such that
+Different choices of the weighting function :math:`k_r(\lVert \mathbf{x} \rVert)` are possible, and Lethe provides two options. When the Particle-in-Cell (PIC) method is used for particle–fluid coupling, particle properties are regularized over the mesh cells by averaging them within each cell. This procedure is equivalent to using a cell-based top-hat weighting function over the cell containing the point :math:`\mathbf{x}`. However, this approach is not ideal, as it leads to force definitions that depend on the mesh resolution.
 
-.. math::
-    \int_{\Omega} k_r \left (\lVert \mathbf{x} \rVert \right ) \mathrm{d}\mathbf{x} = 1
-
-When the Particle-in-Cell method is used for the particle-fluid coupling, the regularization is carried out over the cells of the mesh by averaging the quantity over the cells. However, this is not ideal since it leads to a definition of the force that depends on the mesh. To remediate this issue, Lethe also supports filtering the solid-fluid forces using a spherical top-hat filter through the Quadrature-Centered method (QCM). This results in a filter definition that is independent of the mesh and that depends only on the top-hat filter radius.
+To mitigate this issue, Lethe also supports filtering of solid–fluid interaction forces using a spherical top-hat filter centered at the quadrature points, with a user-defined radius that should be larger than the particle diameter. This approach, referred to as the Quadrature-Centered Method (QCM), yields a filtering operation that is independent of the mesh and depends solely on the chosen filter radius.
 
 Lethe is capable of simulating unresolved CFD-DEM cases with both Models A and B (see the :doc:`../../../parameters/unresolved-cfd-dem/cfd-dem` page of this guide).
 
 Void Fraction
 --------------
-Determining the void fraction is an important step in unresolved CFD-DEM, as can be noted by the VANS equations and the drag models [#rong2013]_. There exist several methods for the calculation of the void fraction in a CFD-DEM simulation. Some are approximations while others are analytical approaches. In the finite element method, the void fraction is initially calculated inside a cell but must then be projected to the mesh nodes so that one can assemble the system of equations. This is done by :math:`\mathcal{L}^2` projection [#larson2013]_:
+Determining the void fraction is an important step in unresolved CFD-DEM, as can be noted by the VANS equations and the drag models [#rong2013]_. There exist several methods for the calculation of the void fraction in a CFD-DEM simulation. Some are approximations while others are analytical approaches. If one applies the averaging definition in equations :eq:`eq:average_definition` while taking :math:`b(\mathbf{x},t)=1`, one obtains:
+
+.. math::
+    1-\varepsilon_f(\mathbf{x},t) \approx \sum_{i} V_{\mathrm{p},i} k_r(\lVert \mathbf{x}-\mathbf{x_i} \rVert)
+
+This equation can be used in practice to calculate the void fraction at a given point :math:`\mathbf{x}`:
+
+.. math:: 
+    :label: eq:eps_definition
+
+    \varepsilon_f(\mathbf{x},t) \approx 1 - \sum_{i} V_{\mathrm{p},i} k_r(\lVert \mathbf{x}-\mathbf{x_i} \rVert)
+
+In the finite element method, the void fraction is initially calculated at quadrature points. However, the solution of the VANS equation requires not only the void fraction, but its gradient. Therefore, it is necessary to be able to represent the void fraction using a finite element interpolation (e.g. Lagrange Q elements). The best polynomial representation of the void fraction can be obtained by solving the following minimization problem (which is essentially an  :math:`\mathcal{L}^2` projection  [#larson2013]_):
 
 .. math:: 
     \min_{\varepsilon_{f,j} \in \mathbb{R}} \frac{1}{2} \sum_i \left (\sum_j \varepsilon_{f,j} \varphi_j - \epsilon_{f} \right )^2 \varphi_i
@@ -118,19 +141,16 @@ where :math:`\epsilon_{f}` is the void fraction, :math:`\varphi_j` is the finite
     \int_{\Omega} \varepsilon_{f,j} \varphi_i  \varphi_j d \Omega = \int_{\Omega}  \epsilon_{f} \varphi_i d \Omega
 
 
-Lethe also has the option of smoothing the void fraction profile, which helps to mitigate sharp discontinuities. This is specifically advantageous when using void fraction schemes that are discontinuous in space and time such as the PCM and SPM. To do so, we add to the left hand side of the previous equation a term similar to a Poisson equation. This acts as an additional parabolic filter. The resulting equation is:
+Lethe also has the option of smoothing the void fraction profile, which helps to mitigate sharp discontinuities. This is specifically advantageous when using void fraction schemes that are discontinuous in space and time such as the Particle Centroid Method (PCM) and the Satellite Point Method (SPM). To do so, we add to the left hand side of the previous equation a term similar to a Poisson equation. This acts as an additional parabolic (Gaussian) filter. The resulting equation is:
 
 .. math::
     \int_{\Omega} \varepsilon_{f,j} \varphi_i  \varphi_j d \Omega +  \iint_\Omega L^2 \varepsilon_{f,j} \nabla \varphi_i \nabla \varphi_j d\Omega = \int_{\Omega} \epsilon_{f} \varphi_i d \Omega
 
-   
-
 where :math:`L` is the smoothing length, used as parameter in Lethe unresolved CFD-DEM simulations. In Lethe, three void fraction schemes are currently supported to calculate :math:`\epsilon_{f}`. They are the particle centroid method, the satellite point method, and the quadrature centered method.
-
 
 The Particle Centroid Method
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-The Particle Centroid Method (PCM) [#peng2014]_ is simple and it is a commonly used method. It consists of tracking the position of the centroid of each particle and applying the total volume of the particle to the calculation of the void fraction of the cell. This means that in either of the following situations the void fraction of the colored cell is the same:
+The PCM [#peng2014]_ is a simple and commonly used method. It consists of tracking the position of the centroid of each particle and applying the total volume of the particle to the calculation of the void fraction of the cell. This means that in either of the following situations the void fraction of the colored cell is the same:
 
 .. image:: images/void_frac1.png
    :width: 49% 
@@ -139,13 +159,24 @@ The Particle Centroid Method (PCM) [#peng2014]_ is simple and it is a commonly u
 
 This results in the PCM being discontinuous in space and time. Consequently, the PCM method significantly relies on the smoothing of the void fraction to lead to a sufficiently smooth void fraction field. We refer the reader to [#geitani2023]_  for an extensive discussion on this topic. 
 
- The void fraction in a cell using PCM can be written as:
+The void fraction in a cell using PCM can be written as:
 
 .. math:: 
-    \epsilon_f = 1 - \frac{\sum_{i}^{n_p} V_{p,i}}{V_\Omega}
+    \epsilon_f = 1 - \frac{\sum_{i,\Omega_e}^{n_\mathrm{p}} V_{\mathrm{p},i}}{V_{\Omega_e}}
 
-where :math:`n_p` is the number of particles whose centroids lie inside the cell :math:`\Omega` of volume :math:`V_{\Omega}`. 
+where :math:`n_\mathrm{p}` is the number of particles whose centroids lie inside the cell :math:`\Omega_e` of volume :math:`V_{\Omega_e}`. Comparing this equation with equation :eq:`eq:eps_definition`, we can see that this is equivalent to using the following weighting function:
 
+.. math::
+    k_r \left (\lVert \mathbf{x} - \mathbf{x}_i \rVert \right ) = \frac{1_{\{\mathbf{x}_i \in \Omega_e\}}}{V_{\Omega_e}}
+
+where :math:`\mathbf{1}_{\{\mathbf{x}_i \in \Omega_e\}}` is the indicator function that is equal to 1 if the centroid of particle :math:`i` lies inside cell :math:`\Omega_e` and 0 otherwise, and :math:`V_{\Omega_e}` is the volume of cell :math:`\Omega_e`. It can be verified that using this weighting function for calculating the void fraction and the interaction forces ensures the conservation of mass of both phases, as well as Newton's third law:
+
+.. math::
+
+    \begin{align}
+        \int_{\Omega} \mathbf{f}_{\mathrm{pf},\mathrm{A}} d\mathbf{x} &= \sum_{i} -\left(\mathbf{F}_{\mathrm{fp},i}- \mathbf{F}_{\nabla p,i} - \mathbf{F}_{\nabla \cdot \mathbf{\tau},i}\right)\\
+        \int_{\Omega} \mathbf{f}_{\mathrm{pf},\mathrm{B}} d\mathbf{x} &= \sum_{i} \left(-\mathbf{F}_{\mathrm{fp},i}\right)
+    \end{align}
 
 The Satellite Point Method
 ~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -158,9 +189,14 @@ This method divides each particle into pseudo-particles where the sum of the vol
 The void fraction in a cell using SPM can be written as: 
 
 .. math:: 
-       \epsilon_f = 1 - \frac{\sum_{i}^{n_p}\sum_{i}^{n_{sp}} V_{sp,j}}{V_\Omega}
+       \epsilon_f = 1 - \frac{\sum_{i}^{n_\mathrm{p}}\sum_{j,\Omega_e}^{n_{\mathrm{sp}}} V_{\mathrm{sp},j}}{V_{\Omega_e}}
 
-where :math:`n_{sp}` is the number of pseudo-particles j belonging to particle i with centroid inside the cell :math:`\Omega` with volume :math:`V_{\Omega}` and :math:`V_{sp}` is the volume of the satellite point. The satellite point method suffers from the same limitations as the PCM. However, it is slightly less discontinuous due to the refined nature of the particles.
+where :math:`n_{\mathrm{sp}}` is the number of pseudo-particles j belonging to particle i and with a centroid inside the cell :math:`\Omega_e` with volume :math:`V_{\Omega_e}`, and :math:`V_{\mathrm{sp}}` is the volume of the satellite point.  The corresponding weighting function is thus:
+
+.. math::
+    k_r \left (\lVert \mathbf{x} - \mathbf{x}_i \rVert \right ) = \frac{\sum_{i}^{n_\mathrm{p}}(1/V_{\mathrm{p},i})\sum_{j,\Omega_e}^{n_{\mathrm{sp}}} V_{\mathrm{sp},j}}{V_{\Omega_e}}
+
+This function is similar to the weighting function used in the Particle-in-Cell (PCM) method, but it varies gradually (albeit discontinuously) at the cell boundaries. Hence, it suffers from the same limitations as the PCM method. However, it also conserves mass. Lethe only supports the SPM for the calculation of the void fraction. For the calculation of the force with SPM, Lethe uses PCM.
 
 The Quadrature Centered Method
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -172,22 +208,35 @@ An averaging volume sphere is constructed around each quadrature point. All part
    :width: 49% 
    :align: center
 
-The void fraction at the quadrature point using QCM can be written as:
+The void fraction at the quadrature point using QCM is:
 
 .. math:: 
-      \epsilon_f  = 1 - \frac{\sum_{i}^{n_p} V^N_{p,i}}{V^N_{sphere}}
+      \epsilon_f (\mathbf{x}_q,t) = 1-\sum_{i}{\frac{V_{\mathrm{p},i}}{\sum_{q}{V_{\mathrm{p}\cap S_q}}}V_{\mathrm{p}\cap S_Q}\frac{1}{w_q|J|}}
     
-where :math:`V^N_{sphere}` is the normalized volume of the volume averaging spheres and :math:`V^N_{p,i}` is the normalized volume of the particle. In order not to miss any particle in the current cell and to avoid exceeding neighboring cells, the volume of the averaging spheres is defined through the user specified sphere radius (:math:`R_s`) and should respect the following condition:
+where :math:`S_q` is the sphere centered at :math:`\mathbf{x}_q`, :math:`V_{p\cap S_q}` is the intersection volume of the particle with the sphere, :math:`w_q|J|` is the weight at the quadrature point located at :math:`\mathbf{x}_q`, multiplied by the volume of the cell containing the quadrature point. The division by the product of the latter term and :math:`\sum_{q}{V_{\mathrm{p}\cap S_q}}` is done to ensure mass conservation over the whole domain. The corresponding weighting function is:
 
 .. math:: 
-    \frac{h_{\Omega}}{2} \leq R_s \leq h_{\Omega}
-    
+      k_r \left (\lVert \mathbf{x}_q - \mathbf{x}_i \rVert \right )  = \frac{1}{\sum_{q}{V_{p\cap S_q}}}V_{p\cap S_q}\frac{1}{w_q|J|}
+
+This weighting function is also used to compute the fluid–particle momentum exchange term. Integrating this term over the computational domain demonstrates that the formulation also satisfies Newton’s third law (the corresponding expression is shown for Model B without loss of generality):
+
+.. math:: 
+      \int_{\Omega} \mathbf{f}_{\mathrm{pf}}  d\mathbf{x} = \sum_{q} \sum_{i}{\left(-\mathbf{F}_{{\mathrm{fp},i}} \right)\frac{1}{\sum_{q}{V_{p\cap S_q}}}V_{p\cap S_q}\frac{1}{w_q|J|}} \times w_q|J| = \sum_{i} \left(-\mathbf{F}_{{\mathrm{fp},i}} \right)
+
+The averaging spheres must be sufficiently large to ensure that all particles in the domain contribute to the averaged void fraction, which can be achieved by selecting an adequate number of quadrature points together with an appropriate averaging radius, :math:`R_s`. However, in Lethe, the radius of the averaging spheres is currently constrained by the mesh resolution. Since each cell only has access to its direct neighboring cells, the averaging volume cannot extend beyond this local neighborhood. Consequently, the radius of the averaging spheres must satisfy:
+
+.. math:: 
+    R_s \leq h_{\Omega}
+
+where :math:`h_{\Omega}` denotes the characteristic cell size. This limitation may be relaxed in future versions of Lethe.
 
 References
 -----------
 .. [#berard2020] \A. Bérard, G. S. Patience, and B. Blais, “Experimental methods in chemical engineering: Unresolved CFD-DEM,” *Can. J. Chem. Eng.*, vol. 98, no. 2, pp. 424–440, 2020, doi: `10.1002/cjce.23686 <https://doi.org/10.1002/cjce.23686>`_\.
 
 .. [#zhou2010] \Z. Y. Zhou, S. B. Kuang, K. W. Chu, and A. B. Yu, “Discrete particle simulation of particle–fluid flow: model formulations and their applicability,” *J. Fluid Mech.*, vol. 661, pp. 482–510, Oct. 2010, doi: `10.1017/S002211201000306X <https://doi.org/10.1017/S002211201000306X>`_\.
+
+.. [#Anderson1967] \T. B. Anderson and R. Jackson, “A Fluid Mechanical Description of Fluidized Beds,” *Ind. Eng. Chem. Fundam.*, vol. 6, no. 4 pp. 527–539, Nov. 1967, doi: `10.1021/i160024a007 <https://doi.org/10.1021/i160024a007>`_\.
 
 .. [#nitsche1994] \L. C. Nitsche, “Microhydrodynamics: Principles and selected applications. By Sangtae Kim and Seppo J. Karrila, Butterworth-Heinemann, Boston, 1991” *AIChE J.*, vol. 40, no. 4, pp. 739–743, 1994, doi: `10.1002/aic.690400418 <https://doi.org/10.1002/aic.690400418>`_\.
 
