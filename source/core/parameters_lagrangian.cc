@@ -142,6 +142,7 @@ namespace Parameters
                             seed_for_distributions,
                             diameter_min_cutoff,
                             diameter_max_cutoff,
+                            distribution_weighting_type,
                             number,
                             density_particle,
                             youngs_modulus_particle,
@@ -255,6 +256,11 @@ namespace Parameters
                         "is used. If equal to -1., the cut of will be fixed at "
                         "99.9% of the cumulative density function of the "
                         "log-normal distribution");
+      prm.declare_entry("distribution weighting basis",
+                        "number",
+                        Patterns::Selection("number|volume"),
+                        "Weighting basis for the size distribution. "
+                        "Choices are <number|volume>.");
       prm.declare_entry("number of particles",
                         "0",
                         Patterns::Integer(),
@@ -356,29 +362,29 @@ namespace Parameters
           throw(std::runtime_error(
             "Invalid custom volume fraction. The sum of volume fractions should be equal to 1.0 "));
         }
+      std::string distribution_weighting_type_str =
+        prm.get("distribution weighting basis");
+      if (distribution_weighting_type_str == "number")
+        distribution_weighting_type.at(particle_type) =
+          DistributionWeightingType::number_based;
+      else
+        distribution_weighting_type.at(particle_type) =
+          DistributionWeightingType::volume_based;
+
       const std::string size_distribution_type_str =
         prm.get("size distribution type");
       if (size_distribution_type_str == "uniform")
-        {
           distribution_type.at(particle_type) = SizeDistributionType::uniform;
-        }
       else if (size_distribution_type_str == "normal")
-        {
           distribution_type.at(particle_type) = SizeDistributionType::normal;
-        }
       else if (size_distribution_type_str == "lognormal")
-        {
           distribution_type.at(particle_type) = SizeDistributionType::lognormal;
-        }
       else if (size_distribution_type_str == "custom")
-        {
           distribution_type.at(particle_type) = SizeDistributionType::custom;
-        }
       else
-        {
           throw(std::runtime_error(
             "Invalid size distribution type. Choices are <uniform|normal|custom>."));
-        }
+
       number.at(particle_type) = prm.get_integer("number of particles");
       density_particle.at(particle_type) = prm.get_double("density particles");
       youngs_modulus_particle.at(particle_type) =
@@ -430,8 +436,9 @@ namespace Parameters
       std::unordered_map<unsigned int, std::vector<double>>
                                                &p_custom_probability,
       std::vector<unsigned int>                &seed_for_dist,
-      std::vector<double>                      &d_min_cutoff,
-      std::vector<double>                      &d_max_cutoff,
+      std::vector<double>                      &dia_min_cutoff,
+      std::vector<double>                      &dia_max_cutoff,
+      std::vector<DistributionWeightingType>   &distribution_weighting_basis_type,
       std::unordered_map<unsigned int, int>    &p_number,
       std::unordered_map<unsigned int, double> &p_density,
       std::unordered_map<unsigned int, double> &p_youngs_modulus,
@@ -478,8 +485,9 @@ namespace Parameters
           real_youngs_modulus_p.insert({counter, 0.});
         }
       seed_for_dist.reserve(particle_type_maximum_number);
-      d_min_cutoff.reserve(particle_type_maximum_number);
-      d_max_cutoff.reserve(particle_type_maximum_number);
+      dia_min_cutoff.reserve(particle_type_maximum_number);
+      dia_max_cutoff.reserve(particle_type_maximum_number);
+      distribution_weighting_basis_type.resize(particle_type_maximum_number);
     }
 
     template <int dim>
