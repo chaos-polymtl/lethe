@@ -1,4 +1,4 @@
-// SPDX-FileCopyrightText: Copyright (c) 2021-2025 The Lethe Authors
+// SPDX-FileCopyrightText: Copyright (c) 2021-2026 The Lethe Authors
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
 #ifndef lethe_void_fraction_h
@@ -133,6 +133,7 @@ public:
     : dof_handler(*triangulation)
     , neumann_boundaries(neumann_boundaries)
     , conservative_projection(conservative_projection)
+    , matrix_requires_assembly(true)
   {
     if (simplex)
       {
@@ -172,13 +173,29 @@ public:
   /// Constraints used for the boundary conditions of the particle field
   AffineConstraints<double> particle_field_constraints;
 
+  /// Preconditioner used when solving the L2 projection. This preconditioner
+  /// is stored within the class since there are situations where the matrix
+  /// is kept for multiple iterations. Consequently, there is no point in
+  /// reassembling the preconditioner for these iterations.
+  std::shared_ptr<TrilinosWrappers::PreconditionILU> ilu_preconditioner;
+
   /// Boolean that indicates if Neumann boundary conditions are used during the
   /// projection In this case, instead of assuming a value of zero if there are
   /// no particles, the mass matrix is cancelled in region without particles
   /// which results in a no flux zone.
   const bool neumann_boundaries;
 
+  /// Boolean that indicates if the projection is conservative. If the
+  /// projection is conservative, the integral over the domain of the field will
+  /// recover the sum of the field over all particles.
   const bool conservative_projection;
+
+  /// When a projection does not have neumann_boundaries, the matrix for the
+  /// system is constant in time. Consequently, there is no point in assembling
+  /// the matrix and initializing the preconditioner. This flag monitors if the
+  /// matrix has already been assembled. It is reset every time setup_dofs() is
+  /// called for the projector.
+  bool matrix_requires_assembly;
 
   /**
    * @brief Setup the degrees of freedom. This function allocates the necessary memory.

@@ -1,4 +1,4 @@
-// SPDX-FileCopyrightText: Copyright (c) 2021-2025 The Lethe Authors
+// SPDX-FileCopyrightText: Copyright (c) 2021-2026 The Lethe Authors
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
 #include <core/lethe_grid_tools.h>
@@ -85,6 +85,9 @@ ParticleFieldQCM<dim, n_components, component_start>::setup_dofs()
   system_rhs.reinit(locally_owned_dofs,
                     locally_relevant_dofs,
                     mpi_communicator);
+
+  // Since we have reset the entire matrix, it now requires assembly;
+  matrix_requires_assembly = true;
 }
 
 template <int dim>
@@ -227,7 +230,6 @@ ParticleProjector<dim>::setup_constraints(
 
 
   // Reinit system matrix
-
   DynamicSparsityPattern dsp(locally_relevant_dofs);
   DoFTools::make_sparsity_pattern(dof_handler,
                                   dsp,
@@ -1102,8 +1104,11 @@ ParticleProjector<dim>::calculate_field_projection(
 
   // Set the system rhs to zero, but also zero out the ghost values so that
   // we can also write to the ghost values.
-  field_qcm.system_rhs    = 0;
-  field_qcm.system_matrix = 0;
+  field_qcm.system_rhs = 0;
+
+  // The matrix is reset to zero only if it requires assembly.
+  if (field_qcm.matrix_requires_assembly)
+    field_qcm.system_matrix = 0;
 
   for (const auto &cell : field_qcm.dof_handler.active_cell_iterators())
     {
@@ -1305,37 +1310,44 @@ ParticleProjector<dim>::calculate_field_projection(
               if (field_qcm.conservative_projection == false)
                 particle_field_in_sphere = particle_field_in_sphere /
                                            total_volume_of_particles_in_sphere;
-
+              // Assemble L2 projection with smoothing coefficient.
               for (unsigned int i = 0; i < dofs_per_cell; ++i)
                 {
-                  // We extract the component i and j to only calculate the
-                  // matrix when i and j are equal This is an optimization
-                  // that is only necessary when we have more than 1
-                  // component, but the cost is marginal when there is only
-                  // one component so might as well live with it.
-
-                  const unsigned int component_i =
-                    field_qcm.fe->system_to_component_index(i).first;
-                  // Assemble L2 projection
-                  // Matrix assembly
-                  for (unsigned int j = 0; j < dofs_per_cell; ++j)
+                  // We assemble the matrix only when the assembly is required
+                  // This if statement is annoying, but since that bool is not
+                  // changing within the function call, the cost should be
+                  // minimal.
+                  if (field_qcm.matrix_requires_assembly == true)
                     {
-                      const unsigned int component_j =
-                        field_qcm.fe->system_to_component_index(j).first;
-                      if (component_i == component_j)
+                      // We extract the component i and j to only calculate the
+                      // matrix when i and j are equal. This is an optimization
+                      // that is only necessary when we have more than 1
+                      // component, but the cost is marginal when there is only
+                      // one component so might as well live with it.
+                      const unsigned int component_i =
+                        field_qcm.fe->system_to_component_index(i).first;
+                      // Matrix assembly
+                      for (unsigned int j = 0; j < dofs_per_cell; ++j)
                         {
-                          // If there are particles, assemble a smoothed L2
-                          // projection
-                          if (field_qcm.neumann_boundaries == false ||
-                              total_volume_of_particles_in_sphere > 0)
+                          const unsigned int component_j =
+                            field_qcm.fe->system_to_component_index(j).first;
+                          if (component_i == component_j)
                             {
-                              local_matrix(i, j) += (phi_vf[j] * phi_vf[i]) *
-                                                    fe_values_field.JxW(q);
+                              // If there are particles, assemble a smoothed L2
+                              // projection
+                              if (field_qcm.neumann_boundaries == false ||
+                                  total_volume_of_particles_in_sphere > 0)
+                                {
+                                  local_matrix(i, j) +=
+                                    (phi_vf[j] * phi_vf[i]) *
+                                    fe_values_field.JxW(q);
+                                }
+                              local_matrix(i, j) +=
+                                ((this->l2_smoothing_factor *
+                                  scalar_product(grad_phi_vf[j],
+                                                 grad_phi_vf[i]))) *
+                                fe_values_field.JxW(q);
                             }
-                          local_matrix(i, j) +=
-                            ((this->l2_smoothing_factor *
-                              scalar_product(grad_phi_vf[j], grad_phi_vf[i]))) *
-                            fe_values_field.JxW(q);
                         }
                     }
 
@@ -1376,6 +1388,8 @@ ParticleProjector<dim>::calculate_field_projection(
   field_qcm.system_matrix.compress(VectorOperation::add);
   field_qcm.system_rhs.compress(VectorOperation::add);
 
+
+
   // Calculate rescale metric in case rescale is active.
   const double rescale_metric =
     linear_solver_parameters.rescale_residual_by_volume ?
@@ -1411,15 +1425,21 @@ ParticleProjector<dim>::calculate_field_projection(
   TrilinosWrappers::PreconditionILU::AdditionalData preconditionerOptions(
     ilu_fill, ilu_atol, ilu_rtol, 0);
 
-  ilu_preconditioner = std::make_shared<TrilinosWrappers::PreconditionILU>();
+  // If the matrix has just been assembled, we need to recreate the
+  // preconditioner and initialize it.
+  if (field_qcm.matrix_requires_assembly)
+    {
+      field_qcm.ilu_preconditioner =
+        std::make_shared<TrilinosWrappers::PreconditionILU>();
 
-  ilu_preconditioner->initialize(field_qcm.system_matrix,
-                                 preconditionerOptions);
+      field_qcm.ilu_preconditioner->initialize(field_qcm.system_matrix,
+                                               preconditionerOptions);
+    }
 
   solver.solve(field_qcm.system_matrix,
                field_qcm.particle_field_solution,
                field_qcm.system_rhs,
-               *ilu_preconditioner);
+               *field_qcm.ilu_preconditioner);
 
   // Now that the solution has been solved for, update the ghost values.
   field_qcm.particle_field_solution.update_ghost_values();
@@ -1430,6 +1450,12 @@ ParticleProjector<dim>::calculate_field_projection(
                   << solver_control.last_step() / rescale_metric << " steps "
                   << std::endl;
     }
+
+  // If the field does not have Neumann boundary condition, then the matrix
+  // remains unchanged. We thus mark that it does not require assembly and
+  // we will keep reusing this matrix as long as it is possible.
+  if (field_qcm.neumann_boundaries == false)
+    field_qcm.matrix_requires_assembly = false;
 }
 
 
@@ -1464,8 +1490,8 @@ ParticleProjector<dim>::calculate_particle_fluid_forces_projection(
 
 
   // We aim to project the particle-fluid forces. To maximize code reuse, we
-  // currently reuse the particle-fluid force model architecture. The projection
-  // follows the following steps:
+  // currently reuse the particle-fluid force model architecture. The
+  // projection follows the following steps:
   // 1. We set up the particle-fluid assemblers that we wish to use
   // 2. We loop over the cells:
   //    A. Reinit the scratch data for the fluid solution
@@ -1573,8 +1599,8 @@ ParticleProjector<dim>::calculate_particle_fluid_forces_projection(
     {
       if (cell->is_locally_owned())
         {
-          // A. We reinit the scratch data at the particle location for the void
-          // fraction and the velocity. This is what we will require to
+          // A. We reinit the scratch data at the particle location for the
+          // void fraction and the velocity. This is what we will require to
           // calculate the particle-fluid forces.
           typename DoFHandler<dim>::active_cell_iterator void_fraction_cell(
             &(this->dof_handler.get_triangulation()),
@@ -1591,11 +1617,11 @@ ParticleProjector<dim>::calculate_particle_fluid_forces_projection(
           // interaction is calculated.
           scratch_data.calculate_physical_properties();
 
-          // We need to check if the function is called with deal.II vectors or
-          // not. If it is called with deal.II vectors, then the vector type of
-          // the void fraction will not match the vector type of the velocity.
-          // In that case, we need to use the deal.II vector version of the void
-          // fraction to ensure consistency.
+          // We need to check if the function is called with deal.II vectors
+          // or not. If it is called with deal.II vectors, then the vector
+          // type of the void fraction will not match the vector type of the
+          // velocity. In that case, we need to use the deal.II vector version
+          // of the void fraction to ensure consistency.
           if constexpr (std::is_same_v<
                           VectorType,
                           LinearAlgebra::distributed::Vector<double>>)
@@ -1632,7 +1658,8 @@ ParticleProjector<dim>::calculate_particle_fluid_forces_projection(
         }
     }
 
-  // Ghost particles need to be updated to take into account the new drag force
+  // Ghost particles need to be updated to take into account the new drag
+  // force
   particle_handler->update_ghost_particles();
 
   // We project both the fluid force (without drag) and the drag force.

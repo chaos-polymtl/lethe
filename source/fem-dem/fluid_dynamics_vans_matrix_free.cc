@@ -1,5 +1,5 @@
 
-// SPDX-FileCopyrightText: Copyright (c) 2023-2025 The Lethe Authors
+// SPDX-FileCopyrightText: Copyright (c) 2023-2026 The Lethe Authors
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
 #include <core/grids.h>
@@ -486,29 +486,33 @@ FluidDynamicsVANSMatrixFree<dim>::assemble_system_rhs()
   if (auto mf_operator =
         dynamic_cast<VANSOperator<dim, double> *>(this->system_operator.get()))
     {
-      TimerOutput::Scope t(this->computing_timer,
-                           "Prepare MF operator for VANS");
-
       // If the coupling is implicit, we need to carry out the projection of
       // the particle information onto the CFD mesh at every RHS evaluation
       // since the momentum exchange term evolves.
       if (cfd_dem_simulation_parameters.cfd_dem.drag_coupling ==
           Parameters::DragCoupling::fully_implicit)
-        particle_projector.calculate_particle_fluid_forces_projection(
-          this->cfd_dem_simulation_parameters.cfd_dem,
-          *this->dof_handler,
-          this->evaluation_point,
-          *this->previous_solutions,
-          this->cfd_dem_simulation_parameters.dem_parameters
-            .lagrangian_physical_properties.g,
-          NavierStokesScratchData<dim>(
-            this->simulation_control,
-            this->simulation_parameters.physical_properties_manager,
-            *this->fe,
-            *this->cell_quadrature,
-            *this->mapping,
-            *this->face_quadrature));
+        {
+          this->computing_timer.enter_subsection(
+            "Calculate particle-fluid forces projection");
+          particle_projector.calculate_particle_fluid_forces_projection(
+            this->cfd_dem_simulation_parameters.cfd_dem,
+            *this->dof_handler,
+            this->evaluation_point,
+            *this->previous_solutions,
+            this->cfd_dem_simulation_parameters.dem_parameters
+              .lagrangian_physical_properties.g,
+            NavierStokesScratchData<dim>(
+              this->simulation_control,
+              this->simulation_parameters.physical_properties_manager,
+              *this->fe,
+              *this->cell_quadrature,
+              *this->mapping,
+              *this->face_quadrature));
+          this->computing_timer.leave_subsection(
+            "Calculate particle-fluid forces projection");
+        }
 
+      this->computing_timer.enter_subsection("Prepare MF operator for VANS");
       mf_operator->compute_particle_fluid_interaction(
         particle_projector.fluid_force_on_particles_two_way_coupling
           .dof_handler,
@@ -521,6 +525,7 @@ FluidDynamicsVANSMatrixFree<dim>::assemble_system_rhs()
         particle_projector.momentum_transfer_coefficient.dof_handler,
         particle_projector.momentum_transfer_coefficient
           .particle_field_solution);
+      this->computing_timer.leave_subsection("Prepare MF operator for VANS");
     }
 
   TimerOutput::Scope t(this->computing_timer, "Assemble RHS");

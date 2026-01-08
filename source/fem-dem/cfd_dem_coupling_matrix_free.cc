@@ -1,4 +1,4 @@
-// SPDX-FileCopyrightText: Copyright (c) 2025 The Lethe Authors
+// SPDX-FileCopyrightText: Copyright (c) 2025-2026 The Lethe Authors
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
 #include <core/grids.h>
@@ -1656,12 +1656,16 @@ CFDDEMMatrixFree<dim>::solve()
           this->evaluate_time_derivative_void_fraction();
           this->computing_timer.leave_subsection("Calculate time derivatives");
 
+          this->computing_timer.enter_subsection("Calculate flow controller");
           if (this->simulation_parameters.flow_control.enable_flow_control)
             this->system_operator->update_beta_force(
               this->flow_control.get_beta());
+          this->computing_timer.leave_subsection("Calculate flow controller");
         }
 
 
+      this->computing_timer.enter_subsection(
+        "Calculate particle-fluid forces projection");
       this->particle_projector.calculate_particle_fluid_forces_projection(
         this->cfd_dem_simulation_parameters.cfd_dem,
         *this->dof_handler,
@@ -1676,6 +1680,9 @@ CFDDEMMatrixFree<dim>::solve()
           *this->cell_quadrature,
           *this->mapping,
           *this->face_quadrature));
+      this->computing_timer.leave_subsection(
+        "Calculate particle-fluid forces projection");
+
 
       // The base matrix-free operator is not aware of the various VANS
       // coupling terms. We must do a cast here to ensure that the operator is
@@ -1683,8 +1690,8 @@ CFDDEMMatrixFree<dim>::solve()
       if (auto mf_operator = dynamic_cast<VANSOperator<dim, double> *>(
             this->system_operator.get()))
         {
-          TimerOutput::Scope t(this->computing_timer,
-                               "Prepare MF operator for VANS");
+          this->computing_timer.enter_subsection(
+            "Prepare MF operator for VANS");
 
           mf_operator->compute_void_fraction(
             this->particle_projector.dof_handler,
@@ -1704,6 +1711,9 @@ CFDDEMMatrixFree<dim>::solve()
             this->particle_projector.momentum_transfer_coefficient.dof_handler,
             this->particle_projector.momentum_transfer_coefficient
               .particle_field_solution);
+
+          this->computing_timer.leave_subsection(
+            "Prepare MF operator for VANS");
         }
 
       this->iterate();
