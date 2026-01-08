@@ -1425,7 +1425,7 @@ ParticleProjector<dim>::calculate_field_projection(
   TrilinosWrappers::PreconditionILU::AdditionalData preconditionerOptions(
     ilu_fill, ilu_atol, ilu_rtol, 0);
 
-  // The matrix has just been assembled, consequently we need to recreate the
+  // If the matrix has just been assembled, we need to recreate the
   // preconditioner and initialize it.
   if (field_qcm.matrix_requires_assembly)
     {
