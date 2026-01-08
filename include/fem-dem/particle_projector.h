@@ -173,10 +173,10 @@ public:
   /// Constraints used for the boundary conditions of the particle field
   AffineConstraints<double> particle_field_constraints;
 
-  /// Preconditioner used when solving the L2Projection. This preconditioner
+  /// Preconditioner used when solving the L2 projection. This preconditioner
   /// is stored within the class since there are situations where the matrix
-  /// is kept for multiple iterations. Consequently, there is not point in
-  /// reassembling the preconditioner for these iterations
+  /// is kept for multiple iterations. Consequently, there is no point in
+  /// reassembling the preconditioner for these iterations.
   std::shared_ptr<TrilinosWrappers::PreconditionILU> ilu_preconditioner;
 
   /// Boolean that indicates if Neumann boundary conditions are used during the
