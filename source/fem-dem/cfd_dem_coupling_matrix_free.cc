@@ -1690,8 +1690,8 @@ CFDDEMMatrixFree<dim>::solve()
       if (auto mf_operator = dynamic_cast<VANSOperator<dim, double> *>(
             this->system_operator.get()))
         {
-          TimerOutput::Scope t(this->computing_timer,
-                               "Prepare MF operator for VANS");
+          this->computing_timer.enter_subsection(
+            "Prepare MF operator for VANS");
 
           mf_operator->compute_void_fraction(
             this->particle_projector.dof_handler,
@@ -1711,6 +1711,9 @@ CFDDEMMatrixFree<dim>::solve()
             this->particle_projector.momentum_transfer_coefficient.dof_handler,
             this->particle_projector.momentum_transfer_coefficient
               .particle_field_solution);
+
+          this->computing_timer.leave_subsection(
+            "Prepare MF operator for VANS");
         }
 
       this->iterate();
