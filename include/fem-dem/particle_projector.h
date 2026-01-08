@@ -190,9 +190,11 @@ public:
   /// recover the sum of the field over all particles.
   const bool conservative_projection;
 
-  /// When a projection is conservative, the matrix for the system is constant
-  /// in time. This flag monitors if the matrix has already been assembled.
-  /// It is reset every time setup_dofs() is called for the projector.
+  /// When a projection does not have neumann_boundaries, the matrix for the
+  /// system is constant in time. Consequently, there is no point in assembling
+  /// the matrix and initializing the preconditioner. This flag monitors if the
+  /// matrix has already been assembled. It is reset every time setup_dofs() is
+  /// called for the projector.
   bool matrix_requires_assembly;
 
   /**
