@@ -4,6 +4,8 @@
 #ifndef lethe_distributions_h
 #define lethe_distributions_h
 
+#include <core/parameters_lagrangian.h>
+
 #include <random>
 
 class Distribution
@@ -347,5 +349,59 @@ private:
    */
   std::mt19937 gen;
 };
+
+using namespace Parameters::Lagrangian;
+inline void
+setup_distributions(const LagrangianPhysicalProperties &lpp,
+                    std::vector<std::shared_ptr<Distribution>>
+                                &size_distribution_object_container,
+                    double      &maximum_particle_diameter,
+                    unsigned int mpi_process_id,
+                    const ConditionalOStream &pcout)
+{
+  for (unsigned int particle_type = 0; particle_type < lpp.particle_type_number;
+       particle_type++)
+    {
+      switch (lpp.distribution_type.at(particle_type))
+        {
+          case SizeDistributionType::uniform:
+            size_distribution_object_container[particle_type] =
+              std::make_shared<UniformDistribution>(
+                lpp.particle_average_diameter.at(particle_type));
+            break;
+          case SizeDistributionType::normal:
+            size_distribution_object_container[particle_type] =
+              std::make_shared<NormalDistribution>(
+                lpp.particle_average_diameter.at(particle_type),
+                lpp.particle_size_std.at(particle_type),
+                lpp.seed_for_distributions[particle_type] + mpi_process_id,
+                lpp.diameter_min_cutoff.at(particle_type),
+                lpp.diameter_max_cutoff.at(particle_type));
+            break;
+          case SizeDistributionType::lognormal:
+            size_distribution_object_container[particle_type] =
+              std::make_shared<LogNormalDistribution>(
+                lpp.particle_average_diameter.at(particle_type),
+                lpp.particle_size_std.at(particle_type),
+                lpp.seed_for_distributions[particle_type] + mpi_process_id,
+                lpp.diameter_min_cutoff.at(particle_type),
+                lpp.diameter_max_cutoff.at(particle_type));
+            break;
+          case SizeDistributionType::custom:
+            size_distribution_object_container[particle_type] =
+              std::make_shared<CustomDistribution>(
+                lpp.particle_custom_diameter.at(particle_type),
+                lpp.particle_custom_probability.at(particle_type),
+                lpp.seed_for_distributions[particle_type] + mpi_process_id);
+            break;
+        }
+      size_distribution_object_container[particle_type]
+        ->print_psd_declaration_string(particle_type, pcout);
+
+      maximum_particle_diameter = std::max(
+        maximum_particle_diameter,
+        size_distribution_object_container[particle_type]->find_max_diameter());
+    }
+}
 
 #endif
