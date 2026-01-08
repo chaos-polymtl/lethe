@@ -332,7 +332,7 @@ private:
   /**
    * @brief The grid motion object.
    */
-  std::shared_ptr<GridMotion<dim>> grid_motion_object;
+  std::shared_ptr<::GridMotion<dim>> grid_motion_object;
 
   /**
    * @brief The particle-particle contact force object.

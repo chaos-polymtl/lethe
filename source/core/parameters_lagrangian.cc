@@ -374,16 +374,16 @@ namespace Parameters
       const std::string size_distribution_type_str =
         prm.get("size distribution type");
       if (size_distribution_type_str == "uniform")
-          distribution_type.at(particle_type) = SizeDistributionType::uniform;
+        distribution_type.at(particle_type) = SizeDistributionType::uniform;
       else if (size_distribution_type_str == "normal")
-          distribution_type.at(particle_type) = SizeDistributionType::normal;
+        distribution_type.at(particle_type) = SizeDistributionType::normal;
       else if (size_distribution_type_str == "lognormal")
-          distribution_type.at(particle_type) = SizeDistributionType::lognormal;
+        distribution_type.at(particle_type) = SizeDistributionType::lognormal;
       else if (size_distribution_type_str == "custom")
-          distribution_type.at(particle_type) = SizeDistributionType::custom;
+        distribution_type.at(particle_type) = SizeDistributionType::custom;
       else
-          throw(std::runtime_error(
-            "Invalid size distribution type. Choices are <uniform|normal|custom>."));
+        throw(std::runtime_error(
+          "Invalid size distribution type. Choices are <uniform|normal|custom>."));
 
       number.at(particle_type) = prm.get_integer("number of particles");
       density_particle.at(particle_type) = prm.get_double("density particles");
@@ -434,12 +434,12 @@ namespace Parameters
       std::vector<SizeDistributionType>                     &dist_type,
       std::unordered_map<unsigned int, std::vector<double>> &p_custom_diameter,
       std::unordered_map<unsigned int, std::vector<double>>
-                                               &p_custom_probability,
-      std::vector<unsigned int>                &seed_for_dist,
-      std::vector<double>                      &dia_min_cutoff,
-      std::vector<double>                      &dia_max_cutoff,
-      std::vector<DistributionWeightingType>   &distribution_weighting_basis_type,
-      std::unordered_map<unsigned int, int>    &p_number,
+                                             &p_custom_probability,
+      std::vector<unsigned int>              &seed_for_dist,
+      std::vector<double>                    &dia_min_cutoff,
+      std::vector<double>                    &dia_max_cutoff,
+      std::vector<DistributionWeightingType> &distribution_weighting_basis_type,
+      std::unordered_map<unsigned int, int>  &p_number,
       std::unordered_map<unsigned int, double> &p_density,
       std::unordered_map<unsigned int, double> &p_youngs_modulus,
       std::unordered_map<unsigned int, double> &p_poisson_ratio,

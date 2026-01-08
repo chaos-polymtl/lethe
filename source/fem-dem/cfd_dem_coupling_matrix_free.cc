@@ -30,57 +30,12 @@ template <int dim>
 void
 CFDDEMMatrixFree<dim>::setup_distribution_type()
 {
-  // Use namespace and alias to make the code more readable
-  using namespace Parameters::Lagrangian;
-  const unsigned int this_mpi_process =
-    Utilities::MPI::this_mpi_process(this->mpi_communicator);
-  LagrangianPhysicalProperties &lpp =
-    dem_parameters.lagrangian_physical_properties;
-
   maximum_particle_diameter = 0;
-  for (unsigned int particle_type = 0; particle_type < lpp.particle_type_number;
-       particle_type++)
-    {
-      switch (lpp.distribution_type.at(particle_type))
-        {
-          case SizeDistributionType::uniform:
-            size_distribution_object_container[particle_type] =
-              std::make_shared<UniformDistribution>(
-                lpp.particle_average_diameter.at(particle_type));
-            break;
-          case SizeDistributionType::normal:
-            size_distribution_object_container[particle_type] =
-              std::make_shared<NormalDistribution>(
-                lpp.particle_average_diameter.at(particle_type),
-                lpp.particle_size_std.at(particle_type),
-                lpp.seed_for_distributions[particle_type] + this_mpi_process,
-                lpp.diameter_min_cutoff.at(particle_type),
-                lpp.diameter_max_cutoff.at(particle_type));
-            break;
-          case SizeDistributionType::lognormal:
-            size_distribution_object_container[particle_type] =
-              std::make_shared<LogNormalDistribution>(
-                lpp.particle_average_diameter.at(particle_type),
-                lpp.particle_size_std.at(particle_type),
-                lpp.seed_for_distributions[particle_type] + this_mpi_process,
-                lpp.diameter_min_cutoff.at(particle_type),
-                lpp.diameter_max_cutoff.at(particle_type));
-            break;
-          case SizeDistributionType::custom:
-            size_distribution_object_container[particle_type] =
-              std::make_shared<CustomDistribution>(
-                lpp.particle_custom_diameter.at(particle_type),
-                lpp.particle_custom_probability.at(particle_type),
-                lpp.seed_for_distributions[particle_type] + this_mpi_process);
-            break;
-        }
-      size_distribution_object_container[particle_type]
-        ->print_psd_declaration_string(particle_type, this->pcout);
-
-      maximum_particle_diameter = std::max(
-        maximum_particle_diameter,
-        size_distribution_object_container[particle_type]->find_max_diameter());
-    }
+  setup_distributions(dem_parameters.lagrangian_physical_properties,
+                      size_distribution_object_container,
+                      maximum_particle_diameter,
+                      Utilities::MPI::this_mpi_process(this->mpi_communicator),
+                      this->pcout);
 
   neighborhood_threshold_squared =
     std::pow(dem_parameters.model_parameters.neighborhood_threshold *
