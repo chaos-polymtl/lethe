@@ -16,6 +16,16 @@ protected:
   Distribution(const Parameters::Lagrangian::DistributionWeightingType
                  &distribution_weighting_type);
 
+  /**
+   * @brief Minimal cut off diameters values.
+   */
+  double dia_min_cutoff;
+
+  /**
+   * @brief Maximum cut off diameters values.
+   */
+  double dia_max_cutoff;
+
 public:
   std::vector<double> particle_sizes;
 
@@ -126,27 +136,17 @@ private:
   /**
    * @brief Average diameter of the normal distribution.
    */
-  const double diameter_average;
+  double diameter_average;
 
   /**
    * @brief Standard deviation of distribution of the normal distribution.
    */
-  const double standard_deviation;
+  double standard_deviation;
 
   /**
    * @brief Random number generator for the diameter selection.
    */
   std::mt19937 gen;
-
-  /**
-   * @brief Minimal cut off diameters values.
-   */
-  double dia_min_cutoff;
-
-  /**
-   * @brief Maximum cut off diameters values.
-   */
-  double dia_max_cutoff;
 };
 
 
@@ -220,17 +220,12 @@ private:
   /**
    * @brief Average diameter of the normal distribution.
    */
-  const double mu_ln;
+  double mu_ln;
 
   /**
    * @brief Random number generator for the diameter selection.
    */
   std::mt19937 gen;
-
-  /**
-   * @brief Cut off diameters values.
-   */
-  double dia_min_cutoff, dia_max_cutoff;
 };
 
 class UniformDistribution : public Distribution
