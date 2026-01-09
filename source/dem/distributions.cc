@@ -1,9 +1,11 @@
-// SPDX-FileCopyrightText: Copyright (c) 2023-2026 The Lethe Authors
+// SPDX-FileCopyrightText: Copyright (c) 2023-2025 The Lethe Authors
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
 #include <core/utilities.h>
 
 #include <dem/distributions.h>
+
+#include <deal.II/lac/lapack_full_matrix.h>
 
 #include <numbers>
 Distribution::Distribution(
@@ -19,15 +21,128 @@ NormalDistribution::NormalDistribution(
   const double                     max_cutoff,
   const DistributionWeightingType &distribution_weighting_type)
   : Distribution(distribution_weighting_type)
-  , diameter_average(d_average)
-  , standard_deviation(d_standard_deviation)
   , gen(prn_seed)
 {
+  // We need the average and the standard deviation to be based on number to do
+  // our sample.
+  if (this->weighting_type == DistributionWeightingType::number_based)
+    {
+      diameter_average   = d_average;
+      standard_deviation = d_standard_deviation;
+    }
+  // If the user specified the distribution as volume based, we need to convert
+  // the average and standard deviation to be number based. To do so, we need to
+  // solve a nonlinear system.
+  // https://mfix.netl.doe.gov/doc/mfix-exa/guide/latest/references/size_distributions.html#normal-distribution
+  else if (this->weighting_type == DistributionWeightingType::volume_based)
+    {
+      // Volume based parameters
+      const double mu_v            = d_average;
+      const double sigma_v         = d_standard_deviation;
+      const double sigma_v_squared = sigma_v * sigma_v;
+      const double mu_v_squared    = mu_v * mu_v;
+
+      // Matrix and RHS
+      LAPACKFullMatrix<double> system_matrix;
+      Vector<double>           system_rhs;
+
+      double       residual_l2_norm  = 1.;
+      unsigned int iteration_counter = 0;
+
+      system_matrix.reinit(2);
+      system_rhs.reinit(2);
+
+      // Initial estimates of mu_n and sigma_n
+      double mu_n    = d_average;
+      double sigma_n = d_standard_deviation;
+
+      while (residual_l2_norm > 1.e-12 && iteration_counter < 100)
+        {
+          double sigma_n_squared = sigma_n * sigma_n;
+          double sigma_n_cubed   = sigma_n_squared * sigma_n;
+          double sigma_n_fourth  = sigma_n_squared * sigma_n_squared;
+
+          double mu_n_squared = mu_n * mu_n;
+          double mu_n_cubed   = mu_n_squared * mu_n;
+          double mu_n_fourth  = mu_n_squared * mu_n_squared;
+
+          // Jacobien
+          double dR1_sigma_n =
+            12. * sigma_n * (sigma_n_squared + mu_n_squared) +
+            6. * sigma_n * mu_n * mu_v;
+          double dR1_mu_n = 12. * sigma_n_squared * mu_n +
+                            4. * mu_n_squared * mu_n -
+                            3. * mu_v * (sigma_n_squared + mu_n_squared);
+
+          double dR2_sigma_n =
+            12. * sigma_n_cubed * (5. * mu_n - 2. * mu_v) +
+            2. * sigma_n * mu_n *
+              (10. * mu_n_squared - 9. * mu_n * mu_v +
+               3. * mu_n * mu_v_squared - 3. * sigma_v_squared * mu_n);
+
+          double dR2_mu_n = 15. * sigma_n_squared * sigma_n_squared +
+                            30. * mu_n_squared * sigma_n_squared -
+                            18. * mu_n * mu_v * sigma_n_squared +
+                            3. * sigma_n_squared * mu_v_squared +
+                            5. * mu_n_squared * mu_n_squared +
+                            3. * mu_n_squared * mu_v_squared -
+                            4. * mu_n_cubed * mu_v -
+                            3. * sigma_n_squared * sigma_v_squared +
+                            3 * mu_n_squared * sigma_v_squared;
+
+          system_matrix.set(0, 0, dR1_sigma_n);
+          system_matrix.set(0, 1, dR1_mu_n);
+          system_matrix.set(1, 0, dR2_sigma_n);
+          system_matrix.set(1, 1, dR2_mu_n);
+
+          // Resisual RHS
+          double R1 = 3. * sigma_n_fourth +
+                      6. * sigma_n_squared * mu_n_squared + mu_n_fourth -
+                      mu_v * (3. * sigma_n_squared * mu_n + mu_n_cubed);
+
+          double R2 =
+            3. * sigma_n_fourth * (5. * mu_n - 2. * mu_v) +
+            sigma_n_squared * (10. * mu_n_cubed - 9. * mu_n_squared * mu_v +
+                               3. * mu_n * mu_v_squared) +
+            mu_n_squared * mu_n_squared * mu_n + mu_n_cubed * mu_v_squared -
+            mu_n_fourth * mu_v -
+            sigma_v_squared * (3. * sigma_n_squared * mu_n + mu_n_cubed);
+
+          // Add the minus sign for Newton-Raphson
+          system_rhs[0] = -R1;
+          system_rhs[1] = -R2;
+
+          // Solve for the update
+          system_matrix.solve(system_rhs);
+
+          // Apply the update
+          sigma_n += system_rhs[0];
+          mu_n += system_rhs[1];
+
+          // prevent non-physical values
+          sigma_n = std::max(sigma_n, 1e-10);
+          mu_n    = std::max(mu_n, 1e-10);
+
+          // while loop conditions
+          residual_l2_norm = system_rhs.l2_norm();
+          iteration_counter++;
+        }
+      AssertThrow(
+        iteration_counter < 100.,
+        ExcMessage("The numbered weighted mean and standard deviation of "
+                   "the normal distribution has not been found from the volume "
+                   "weighted values provided in the parameter file. To solve "
+                   "this issue, devine the distribution as number based."));
+
+      diameter_average   = mu_n;
+      standard_deviation = sigma_n;
+    }
+
   if (min_cutoff < 0.)
     {
       // 2.5 -> approx 99% of all diameters are bigger
-      dia_min_cutoff = diameter_average - 2.5 * standard_deviation;
-      AssertThrow(dia_min_cutoff > 0.,
+      this->dia_min_cutoff = diameter_average - 2.5 * standard_deviation;
+      AssertThrow(this->dia_min_cutoff > 0.,
                   ExcMessage(
                     "The \"standard deviation\" parameter is to "
                     "high relative to the \"average diameter\" "
@@ -37,15 +152,15 @@ NormalDistribution::NormalDistribution(
                     "\"minimum diameter cutoff\" bigger than \"0.\""));
     }
   else
-    dia_min_cutoff = min_cutoff;
+    this->dia_min_cutoff = min_cutoff;
 
   if (max_cutoff < 0.)
     // 2.5 -> approx 99% of all diameters are smaller
-    dia_max_cutoff = diameter_average + 2.5 * standard_deviation;
+    this->dia_max_cutoff = diameter_average + 2.5 * standard_deviation;
   else
-    dia_max_cutoff = max_cutoff;
+    this->dia_max_cutoff = max_cutoff;
 
-  AssertThrow(dia_min_cutoff < dia_max_cutoff,
+  AssertThrow(this->dia_min_cutoff < this->dia_max_cutoff,
               ExcMessage("The \"minimum diameter cutoff\" parameter need to"
                          " be smaller than the \"maximum diameter cutoff\"."));
 }
@@ -63,7 +178,8 @@ NormalDistribution::particle_size_sampling(
   while (n_created_diameter < number_of_particles)
     {
       const double temp_diameter = distribution(gen);
-      if (temp_diameter > dia_min_cutoff && temp_diameter < dia_max_cutoff)
+      if (temp_diameter > this->dia_min_cutoff &&
+          temp_diameter < this->dia_max_cutoff)
         {
           n_created_diameter++;
           this->particle_sizes.push_back(temp_diameter);
@@ -74,13 +190,13 @@ NormalDistribution::particle_size_sampling(
 double
 NormalDistribution::find_min_diameter()
 {
-  return dia_min_cutoff;
+  return this->dia_min_cutoff;
 }
 
 double
 NormalDistribution::find_max_diameter()
 {
-  return dia_max_cutoff;
+  return this->dia_max_cutoff;
 }
 
 void
@@ -88,8 +204,10 @@ NormalDistribution::print_psd_declaration_string(
   const unsigned int        particle_type,
   const ConditionalOStream &pcout)
 {
-  const double z_min = (dia_min_cutoff - diameter_average) / standard_deviation;
-  const double z_max = (dia_max_cutoff - diameter_average) / standard_deviation;
+  const double z_min =
+    (this->dia_min_cutoff - diameter_average) / standard_deviation;
+  const double z_max =
+    (this->dia_max_cutoff - diameter_average) / standard_deviation;
 
   // Quantile
   const double q_min = 0.5 * (1.0 + std::erf(z_min / std::numbers::sqrt2));
@@ -120,15 +238,29 @@ LogNormalDistribution::LogNormalDistribution(
   : Distribution(distribution_weighting_type)
   , sigma_ln(std::sqrt(std::log(
       1. + Utilities::fixed_power<2>(d_standard_deviation / d_average))))
-  , mu_ln(std::log(d_average) -
-          0.5 * Utilities::fixed_power<2>(d_standard_deviation))
   , gen(prn_seed)
 {
+  // We need the average and the standard deviation to be based on number to do
+  // our sample. The standard deviation is always the same.
+  if (this->weighting_type == DistributionWeightingType::number_based)
+    {
+      mu_ln = std::log(d_average) -
+              0.5 * Utilities::fixed_power<2>(d_standard_deviation);
+    }
+  // If the user specified the distribution as volume based, we need to convert
+  // the average and standard deviation to be number based.
+  // https://mfix.netl.doe.gov/doc/mfix-exa/guide/latest/references/size_distributions.html#log-normal-distribution
+  else if (this->weighting_type == DistributionWeightingType::volume_based)
+    {
+      mu_ln = std::log(d_average) -
+              0.5 * Utilities::fixed_power<2>(d_standard_deviation) -
+              3. * sigma_ln;
+    }
   if (min_cutoff < 0.)
     {
       // approx 99% of all diameters are bigger
-      dia_min_cutoff = std::exp(mu_ln - 2.5 * sigma_ln);
-      AssertThrow(dia_min_cutoff > 0.,
+      this->dia_min_cutoff = std::exp(mu_ln - 2.5 * sigma_ln);
+      AssertThrow(this->dia_min_cutoff > 0.,
                   ExcMessage(
                     "The \"standard deviation\" parameter is to "
                     "high relative to the \"average diameter\" "
@@ -138,15 +270,15 @@ LogNormalDistribution::LogNormalDistribution(
                     "\"minimum diameter cutoff\" bigger than \"0.\""));
     }
   else
-    dia_min_cutoff = min_cutoff;
+    this->dia_min_cutoff = min_cutoff;
 
   if (max_cutoff < 0.)
     // approx 99% of all diameters are bigger
-    dia_max_cutoff = std::exp(mu_ln + 2.5 * sigma_ln);
+    this->dia_max_cutoff = std::exp(mu_ln + 2.5 * sigma_ln);
   else
-    dia_max_cutoff = max_cutoff;
+    this->dia_max_cutoff = max_cutoff;
 
-  AssertThrow(dia_min_cutoff < dia_max_cutoff,
+  AssertThrow(this->dia_min_cutoff < this->dia_max_cutoff,
               ExcMessage(
                 "The \"minimum diameter cutoff\" parameter need to be smaller "
                 "than the \"maximum diameter cutoff\"."));
@@ -166,7 +298,8 @@ LogNormalDistribution::particle_size_sampling(
   while (n_created_diameter < number_of_particles)
     {
       const double temp_diameter = distribution(gen);
-      if (temp_diameter > dia_min_cutoff && temp_diameter < dia_max_cutoff)
+      if (temp_diameter > this->dia_min_cutoff &&
+          temp_diameter < this->dia_max_cutoff)
         {
           n_created_diameter++;
           this->particle_sizes.push_back(temp_diameter);
@@ -177,13 +310,13 @@ LogNormalDistribution::particle_size_sampling(
 double
 LogNormalDistribution::find_min_diameter()
 {
-  return dia_min_cutoff;
+  return this->dia_min_cutoff;
 }
 
 double
 LogNormalDistribution::find_max_diameter()
 {
-  return dia_max_cutoff;
+  return this->dia_max_cutoff;
 }
 
 void
@@ -191,8 +324,8 @@ LogNormalDistribution::print_psd_declaration_string(
   const unsigned int        particle_type,
   const ConditionalOStream &pcout)
 {
-  const double z_min = (std::log(dia_min_cutoff) - mu_ln) / sigma_ln;
-  const double z_max = (std::log(dia_max_cutoff) - mu_ln) / sigma_ln;
+  const double z_min = (std::log(this->dia_min_cutoff) - mu_ln) / sigma_ln;
+  const double z_max = (std::log(this->dia_max_cutoff) - mu_ln) / sigma_ln;
 
   // Quantile
   const double q_min = 0.5 * (1.0 + std::erf(z_min / std::numbers::sqrt2));
