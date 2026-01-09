@@ -407,6 +407,10 @@ namespace Parameters
     // Frequency of the electromagnetic wave (in Hz)
     double electromagnetic_frequency;
 
+    // Boundary ids where waveguide ports are applied so the port can be linked
+    // to the right boundary
+    std::vector<int> waveguide_boundary_ids;
+
     // Waveguide mode to simulate (TE|TM)
     std::vector<Parameters::WaveguideMode> waveguide_mode;
 
@@ -443,8 +447,8 @@ namespace Parameters
     bool viscous_dissipation;
     bool buoyancy_force;
 
-    Parameters::VOF          vof_parameters;
-    Parameters::CahnHilliard cahn_hilliard_parameters;
+    Parameters::VOF                 vof_parameters;
+    Parameters::CahnHilliard        cahn_hilliard_parameters;
     Parameters::TimeHarmonicMaxwell time_harmonic_maxwell_parameters;
 
     void

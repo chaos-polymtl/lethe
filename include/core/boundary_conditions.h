@@ -92,7 +92,8 @@ namespace BoundaryConditions
     electric_field,
     magnetic_field,
     electromagnetic_excitation,
-    imperfect_conductor
+    imperfect_conductor,
+    waveguide_port
   };
 
   /**
@@ -1514,10 +1515,10 @@ namespace BoundaryConditions
     // Impedance
     std::map<types::boundary_id,
              std::shared_ptr<Functions::ParsedFunction<dim>>>
-      surface_impedance_real;
+      surface_admittance_real;
     std::map<types::boundary_id,
              std::shared_ptr<Functions::ParsedFunction<dim>>>
-      surface_impedance_imag;
+      surface_admittance_imag;
 
     /// Excitation
     std::map<types::boundary_id,
@@ -1647,11 +1648,11 @@ namespace BoundaryConditions
     // relevant boundary conditions.
     Functions::ParsedFunction<dim> temporary_function;
 
-    prm.enter_subsection("surface impedance real");
+    prm.enter_subsection("surface admittance real");
     temporary_function.declare_parameters(prm);
     prm.leave_subsection();
 
-    prm.enter_subsection("surface impedance imag");
+    prm.enter_subsection("surface admittance imag");
     temporary_function.declare_parameters(prm);
     prm.leave_subsection();
 
@@ -1814,16 +1815,16 @@ namespace BoundaryConditions
         /// The following functions are parsed individually because they will be
         /// used for Robin boundary conditions and will not be applied on the
         /// global solution vector.
-        prm.enter_subsection("surface impedance real");
-        this->surface_impedance_real[boundary_id] =
+        prm.enter_subsection("surface admittance real");
+        this->surface_admittance_real[boundary_id] =
           std::make_shared<Functions::ParsedFunction<dim>>();
-        this->surface_impedance_real[boundary_id]->parse_parameters(prm);
+        this->surface_admittance_real[boundary_id]->parse_parameters(prm);
         prm.leave_subsection();
 
-        prm.enter_subsection("surface impedance imag");
-        this->surface_impedance_imag[boundary_id] =
+        prm.enter_subsection("surface admittance imag");
+        this->surface_admittance_imag[boundary_id] =
           std::make_shared<Functions::ParsedFunction<dim>>();
-        this->surface_impedance_imag[boundary_id]->parse_parameters(prm);
+        this->surface_admittance_imag[boundary_id]->parse_parameters(prm);
         prm.leave_subsection();
 
         prm.enter_subsection("excitation x real");
@@ -1891,6 +1892,10 @@ namespace BoundaryConditions
         else if (op == "imperfect conductor")
           {
             this->type[boundary_id] = BoundaryType::imperfect_conductor;
+          }
+        else if (op == "waveguide port")
+          {
+            this->type[boundary_id] = BoundaryType::waveguide_port;
           }
         else
           {

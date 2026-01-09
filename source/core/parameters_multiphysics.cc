@@ -79,6 +79,7 @@ Parameters::Multiphysics::declare_parameters(ParameterHandler &prm) const
 
   vof_parameters.declare_parameters(prm);
   cahn_hilliard_parameters.declare_parameters(prm);
+  time_harmonic_maxwell_parameters.declare_parameters(prm);
 }
 
 void
@@ -101,6 +102,7 @@ Parameters::Multiphysics::parse_parameters(ParameterHandler     &prm,
   prm.leave_subsection();
   vof_parameters.parse_parameters(prm);
   cahn_hilliard_parameters.parse_parameters(prm, dimensions);
+  time_harmonic_maxwell_parameters.parse_parameters(prm, dimensions);
 }
 
 void
@@ -775,7 +777,7 @@ Parameters::TimeHarmonicMaxwell::declare_parameters(ParameterHandler &prm) const
   prm.enter_subsection("time harmonic maxwell");
   {
     prm.declare_entry(
-      "electromagnetics frequency",
+      "electromagnetic frequency",
       "1",
       Patterns::Double(),
       "Frequency of the time harmonic electromagnetic wave excitation (in Hz).");
@@ -785,11 +787,21 @@ Parameters::TimeHarmonicMaxwell::declare_parameters(ParameterHandler &prm) const
                       Patterns::Integer(1),
                       "Number of waveguide inlets in the simulation.");
 
+    unsigned int tmp_number_of_waveguide_inlets =
+      prm.get_integer("number of waveguide inlets");
+
     // Declare inlets dynamically based on number
-    for (unsigned int inlet = 0; inlet < number_of_waveguide_inlets; ++inlet)
+    for (unsigned int inlet = 0; inlet < tmp_number_of_waveguide_inlets;
+         ++inlet)
       {
         prm.enter_subsection("waveguide inlet " + std::to_string(inlet));
         {
+          prm.declare_entry(
+            "port boundary id",
+            "0",
+            Patterns::Integer(0),
+            "The boundary id where the waveguide inlet is applied.");
+
           prm.enter_subsection("waveguide mode");
           {
             prm.declare_entry(
@@ -800,14 +812,14 @@ Parameters::TimeHarmonicMaxwell::declare_parameters(ParameterHandler &prm) const
 
             prm.declare_entry(
               "mode order m",
-              "1.0",
-              Patterns::Double(),
+              "1",
+              Patterns::Integer(),
               "The mode order m in the first transverse direction of the rectangular waveguide.");
 
             prm.declare_entry(
               "mode order n",
-              "0.0",
-              Patterns::Double(),
+              "0",
+              Patterns::Integer(),
               "The mode order n in the second transverse direction of the rectangular waveguide.");
           }
           prm.leave_subsection();
@@ -835,16 +847,25 @@ Parameters::TimeHarmonicMaxwell::parse_parameters(
   prm.enter_subsection("time harmonic maxwell");
   {
     TimeHarmonicMaxwell::electromagnetic_frequency =
-      prm.get_double("electromagnetics frequency") *
+      prm.get_double("electromagnetic frequency") *
       dimensions.electromagnetic_frequency_scaling;
 
     TimeHarmonicMaxwell::number_of_waveguide_inlets =
       prm.get_integer("number of waveguide inlets");
 
+    // Resize vectors to hold the correct number of inlets
+    waveguide_mode.resize(number_of_waveguide_inlets);
+    mode_order_m.resize(number_of_waveguide_inlets);
+    mode_order_n.resize(number_of_waveguide_inlets);
+    waveguide_boundary_ids.resize(number_of_waveguide_inlets);
+
     for (unsigned int inlet = 0; inlet < number_of_waveguide_inlets; ++inlet)
       {
         prm.enter_subsection("waveguide inlet " + std::to_string(inlet));
         {
+          TimeHarmonicMaxwell::waveguide_boundary_ids.push_back(
+            prm.get_integer("port boundary id"));
+
           prm.enter_subsection("waveguide mode");
           {
             const std::string op_mode_type = prm.get("mode type");
@@ -881,6 +902,23 @@ Parameters::TimeHarmonicMaxwell::parse_parameters(
 
               tmp_corners[corner - 1] = corner_value;
             }
+
+          // Check if corners define a coplanar quadrilateral
+          const Tensor<1, 3> vec1 =
+            tmp_corners[1] - tmp_corners[0]; // Vector from corner 1 to corner 2
+          const Tensor<1, 3> vec2 =
+            tmp_corners[2] - tmp_corners[0]; // Vector from corner 1 to corner 3
+          const Tensor<1, 3> vec3 =
+            tmp_corners[3] - tmp_corners[0]; // Vector from corner 1 to corner 4
+          const double determinant =
+            scalar_product(vec3, cross_product_3d(vec1, vec2));
+
+          AssertThrow(std::abs(determinant) < 1e-12,
+                      ExcMessage("The provided corners for waveguide inlet " +
+                                 std::to_string(inlet) +
+                                 " do not define a coplanar quadrilateral. "
+                                 "Please check the corner coordinates."));
+
           TimeHarmonicMaxwell::waveguide_corners_3D.push_back(tmp_corners);
         }
         prm.leave_subsection();

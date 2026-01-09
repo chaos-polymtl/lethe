@@ -97,6 +97,12 @@ subsection boundary conditions time harmonic maxwell
     subsection excitation z imag
       set Function expression = 0
     end
+    subsection surface admittance real
+      set Function expression = 0.780962
+    end
+    subsection surface admittance imag
+      set Function expression = 0.640236
+    end
   end
   subsection bc 2
     set id   = 5

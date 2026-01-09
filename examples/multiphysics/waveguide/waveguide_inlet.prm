@@ -37,16 +37,16 @@ end
 subsection physical properties
   set number of fluids = 1
   subsection fluid 0
-    set electirc conductivity model = constant
+    set electric conductivity model = constant
     set electric conductivity = 1.
 
     set electric permittivity model = constant
     set electric permittivity real part = 1.
     set electric permittivity imag part = 0.
     
-    set magnetic_permeability model = constant
-    set magnetic_permeability real part = 1.
-    set magnetic_permeability imag part = 0.
+    set magnetic permeability model = constant
+    set magnetic permeability real part = 1.
+    set magnetic permeability imag part = 0.
 
   end
 end
@@ -81,13 +81,15 @@ subsection time harmonic maxwell
   
   subsection waveguide inlet 0
 
+    set port boundary id = 4
+
     set corner 1 = 0,0,0
     set corner 2 = 0.25,0,0
     set corner 3 = 0, 0.25, 0
     set corner 4 = 0.25, 0.25, 0
 
     subsection waveguide mode
-      set waveguide mode = TE
+      set mode type = TE
       set mode order m = 1
       set mode order n = 0
     end 
@@ -115,25 +117,7 @@ subsection boundary conditions time harmonic maxwell
   end
   subsection bc 1
     set id   = 4
-    set type = electromagnetic excitation
-    subsection excitation x real
-      set Function expression = 0
-    end
-    subsection excitation x imag
-      set Function expression = 0
-    end
-    subsection excitation y real
-      set Function expression = 0
-    end
-    subsection excitation y imag
-      set Function expression = sin(4*pi*x)
-    end
-    subsection excitation z real
-      set Function expression = 0
-    end
-    subsection excitation z imag
-      set Function expression = 0
-    end
+    set type = waveguide port
   end
   subsection bc 2
     set id   = 5
