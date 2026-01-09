@@ -10,6 +10,12 @@
 
 class Distribution
 {
+protected:
+  const Parameters::Lagrangian::DistributionWeightingType weighting_type;
+
+  Distribution(const Parameters::Lagrangian::DistributionWeightingType
+                 &distribution_weighting_type);
+
 public:
   std::vector<double> particle_sizes;
 
@@ -68,12 +74,15 @@ public:
    * @param[in] prn_seed Pseudo-random number seed for the diameter generation.
    * @param[in] min_cutoff Minimum cutoff diameter.
    * @param[in] max_cutoff Maximum cutoff diameter.
+   * @param distribution_weighting_type Weighting type of the distribution.
    */
   NormalDistribution(const double       &d_average,
                      const double       &d_standard_deviation,
                      const unsigned int &prn_seed,
-                     const double       &min_cutoff,
-                     const double       &max_cutoff);
+                     double              min_cutoff,
+                     double              max_cutoff,
+                     const Parameters::Lagrangian::DistributionWeightingType
+                       &distribution_weighting_type);
 
   /**
    * @brief Carries out the size sampling of each particle inserted at an insertion
@@ -154,12 +163,15 @@ public:
    * @param[in] prn_seed Pseudo-random number seed for the diameter generation.
    * @param[in] min_cutoff Minimum cutoff diameter.
    * @param[in] max_cutoff Maximum cutoff diameter.
+   * @param distribution_weighting_type Weighting type of the distribution.
    */
   LogNormalDistribution(const double       &d_average,
                         const double       &d_standard_deviation,
                         const unsigned int &prn_seed,
-                        const double        min_cutoff,
-                        const double        max_cutoff);
+                        double              min_cutoff,
+                        double              max_cutoff,
+                        const Parameters::Lagrangian::DistributionWeightingType
+                          &distribution_weighting_type);
 
   /**
    * @brief Carries out the size sampling of each particle inserted at an insertion
@@ -288,10 +300,17 @@ public:
    * @param[in] d_probabilities Vector of probability values based on volume
    * fraction with respect to each diameter value.
    * @param[in] prn_seed Pseudo-random number seed for the diameter generation.
+   * @param[in] min_cutoff Minimum cutoff diameter.
+   * @param[in] max_cutoff Maximum cutoff diameter.
+   * @param distribution_weighting_type Weighting type of the distribution.
    */
   CustomDistribution(const std::vector<double> &d_list,
                      const std::vector<double> &d_probabilities,
-                     const unsigned int        &prn_seed);
+                     const unsigned int        &prn_seed,
+                     double                     min_cutoff,
+                     double                     max_cutoff,
+                     const Parameters::Lagrangian::DistributionWeightingType
+                       &distribution_weighting_type);
 
   /**
    * @brief Carries out the size sampling of each particle inserted at an insertion
@@ -350,6 +369,10 @@ private:
   std::mt19937 gen;
 };
 
+/**
+ * @brief Setup the distributions for each particle type at the start of a
+ * simulation.
+ */
 using namespace Parameters::Lagrangian;
 inline void
 setup_distributions(const LagrangianPhysicalProperties &lpp,
@@ -376,7 +399,8 @@ setup_distributions(const LagrangianPhysicalProperties &lpp,
                 lpp.particle_size_std.at(particle_type),
                 lpp.seed_for_distributions[particle_type] + mpi_process_id,
                 lpp.diameter_min_cutoff.at(particle_type),
-                lpp.diameter_max_cutoff.at(particle_type));
+                lpp.diameter_max_cutoff.at(particle_type),
+                lpp.distribution_weighting_type.at(particle_type));
             break;
           case SizeDistributionType::lognormal:
             size_distribution_object_container[particle_type] =
@@ -385,14 +409,18 @@ setup_distributions(const LagrangianPhysicalProperties &lpp,
                 lpp.particle_size_std.at(particle_type),
                 lpp.seed_for_distributions[particle_type] + mpi_process_id,
                 lpp.diameter_min_cutoff.at(particle_type),
-                lpp.diameter_max_cutoff.at(particle_type));
+                lpp.diameter_max_cutoff.at(particle_type),
+                lpp.distribution_weighting_type.at(particle_type));
             break;
           case SizeDistributionType::custom:
             size_distribution_object_container[particle_type] =
               std::make_shared<CustomDistribution>(
                 lpp.particle_custom_diameter.at(particle_type),
                 lpp.particle_custom_probability.at(particle_type),
-                lpp.seed_for_distributions[particle_type] + mpi_process_id);
+                lpp.seed_for_distributions[particle_type] + mpi_process_id,
+                lpp.diameter_min_cutoff.at(particle_type),
+                lpp.diameter_max_cutoff.at(particle_type),
+                lpp.distribution_weighting_type.at(particle_type));
             break;
         }
       size_distribution_object_container[particle_type]

@@ -6,13 +6,20 @@
 #include <dem/distributions.h>
 
 #include <numbers>
+Distribution::Distribution(
+  const DistributionWeightingType &distribution_weighting_type)
+  : weighting_type(distribution_weighting_type)
+{}
 
-NormalDistribution::NormalDistribution(const double       &d_average,
-                                       const double       &d_standard_deviation,
-                                       const unsigned int &prn_seed,
-                                       const double       &min_cutoff,
-                                       const double       &max_cutoff)
-  : diameter_average(d_average)
+NormalDistribution::NormalDistribution(
+  const double                    &d_average,
+  const double                    &d_standard_deviation,
+  const unsigned int              &prn_seed,
+  const double                     min_cutoff,
+  const double                     max_cutoff,
+  const DistributionWeightingType &distribution_weighting_type)
+  : Distribution(distribution_weighting_type)
+  , diameter_average(d_average)
   , standard_deviation(d_standard_deviation)
   , gen(prn_seed)
 {
@@ -102,12 +109,16 @@ NormalDistribution::print_psd_declaration_string(
           << std::endl;
 }
 
-LogNormalDistribution::LogNormalDistribution(const double &d_average,
-                                             const double &d_standard_deviation,
-                                             const unsigned int &prn_seed,
-                                             const double        min_cutoff,
-                                             const double        max_cutoff)
-  : sigma_ln(std::sqrt(std::log(
+LogNormalDistribution::LogNormalDistribution(
+  const double       &d_average,
+  const double       &d_standard_deviation,
+  const unsigned int &prn_seed,
+  double              min_cutoff,
+  double              max_cutoff,
+  const Parameters::Lagrangian::DistributionWeightingType
+    &distribution_weighting_type)
+  : Distribution(distribution_weighting_type)
+  , sigma_ln(std::sqrt(std::log(
       1. + Utilities::fixed_power<2>(d_standard_deviation / d_average))))
   , mu_ln(std::log(d_average) -
           0.5 * Utilities::fixed_power<2>(d_standard_deviation))
@@ -202,7 +213,9 @@ LogNormalDistribution::print_psd_declaration_string(
 }
 
 UniformDistribution::UniformDistribution(const double &d_values)
-  : diameter_value(d_values)
+  : Distribution(
+      Parameters::Lagrangian::DistributionWeightingType::number_based)
+  , diameter_value(d_values)
 {}
 
 void
@@ -240,8 +253,13 @@ UniformDistribution::print_psd_declaration_string(
 CustomDistribution::CustomDistribution(
   const std::vector<double> &d_list,
   const std::vector<double> &d_probabilities,
-  const unsigned int        &prn_seed)
-  : diameter_custom_values(d_list)
+  const unsigned int        &prn_seed,
+  const double               min_cutoff,
+  const double               max_cutoff,
+  const Parameters::Lagrangian::DistributionWeightingType
+    &distribution_weighting_type)
+  : Distribution(distribution_weighting_type)
+  , diameter_custom_values(d_list)
   , gen(prn_seed)
 {
   std::vector<double> cumulative_probability_vector, n_i_vector;
