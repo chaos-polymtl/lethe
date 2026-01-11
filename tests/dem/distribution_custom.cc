@@ -19,7 +19,9 @@
 
 using namespace dealii;
 
-template <int dim, typename PropertiesIndex>
+template <int dim,
+          typename PropertiesIndex,
+          DistributionWeightingType weighting_type>
 void
 test()
 {
@@ -54,15 +56,14 @@ test()
 
   // Lagrangian physical properties
   lpp.particle_type_number = 1;
-  lpp.distribution_weighting_type.push_back(
-    Parameters::Lagrangian::DistributionWeightingType::number_based);
+  lpp.distribution_weighting_type.push_back(weighting_type);
   lpp.distribution_type.push_back(
     Parameters::Lagrangian::SizeDistributionType::custom);
   lpp.seed_for_distributions.push_back(10);
   lpp.particle_custom_diameter[0]    = {0.005, 0.0025};
   lpp.particle_custom_probability[0] = {0.5, 0.5};
-  lpp.diameter_min_cutoff.push_back(-1);
-  lpp.diameter_max_cutoff.push_back(-1.);
+  // lpp.diameter_min_cutoff.push_back(-1);
+  // lpp.diameter_max_cutoff.push_back(-1.);
   lpp.density_particle[0] = 2500;
   lpp.number[0]           = 1000;
 
@@ -76,8 +77,8 @@ test()
     std::make_shared<CustomDistribution>(lpp.particle_custom_diameter[0],
                                          lpp.particle_custom_probability[0],
                                          lpp.seed_for_distributions[0],
-                                         lpp.diameter_min_cutoff[0],
-                                         lpp.diameter_max_cutoff[0],
+                                         // lpp.diameter_min_cutoff[0],
+                                         // lpp.diameter_max_cutoff[0],
                                          lpp.distribution_weighting_type[0]));
 
   // Calling volume insertion
@@ -90,6 +91,10 @@ test()
   insertion_object.insert(particle_handler, tr, dem_parameters);
 
   // Output
+  if constexpr (weighting_type == DistributionWeightingType::number_based)
+    deallog << "Numbered weighted normal distribution " << std::endl;
+  if constexpr (weighting_type == DistributionWeightingType::volume_based)
+    deallog << "Volume weighted normal distribution " << std::endl;
   int particle_number = 0;
   for (auto particle = particle_handler.begin();
        particle != particle_handler.end();
@@ -112,7 +117,9 @@ main(int argc, char **argv)
       Utilities::MPI::MPI_InitFinalize mpi_initialization(argc, argv, 1);
 
       initlog();
-      test<3, DEM::DEMProperties::PropertiesIndex>();
+      test<3,
+           DEM::DEMProperties::PropertiesIndex,
+           DistributionWeightingType::volume_based>();
     }
   catch (std::exception &exc)
     {
