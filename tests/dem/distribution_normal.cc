@@ -22,9 +22,11 @@
 
 using namespace dealii;
 
-template <int dim, typename PropertiesIndex>
+template <int dim,
+          typename PropertiesIndex,
+          DistributionWeightingType weighting_type>
 void
-test()
+test(const double mu, const double sigma)
 {
   // Creating the mesh and refinement
   parallel::distributed::Triangulation<dim> tr(MPI_COMM_WORLD);
@@ -57,12 +59,11 @@ test()
 
   // Lagrangian physical properties
   lpp.particle_type_number = 1;
-  lpp.distribution_weighting_type.push_back(
-    Parameters::Lagrangian::DistributionWeightingType::number_based);
+  lpp.distribution_weighting_type.push_back(weighting_type);
   lpp.distribution_type.push_back(
     Parameters::Lagrangian::SizeDistributionType::normal);
-  lpp.particle_average_diameter[0] = 0.005;
-  lpp.particle_size_std[0]         = 0.0005;
+  lpp.particle_average_diameter[0] = mu;
+  lpp.particle_size_std[0]         = sigma;
   lpp.seed_for_distributions.push_back(10);
   lpp.diameter_min_cutoff.push_back(-1.);
   lpp.diameter_max_cutoff.push_back(-1.);
@@ -94,6 +95,12 @@ test()
   insertion_object.insert(particle_handler, tr, dem_parameters);
 
   // Output
+  if constexpr (weighting_type == DistributionWeightingType::number_based)
+    deallog << "Numbered weighted normal distribution " << std::endl;
+
+  if constexpr (weighting_type == DistributionWeightingType::volume_based)
+    deallog << "Volume weighted normal distribution " << std::endl;
+
   double             sum_dp                    = 0.;
   int                particle_number           = 0;
   const unsigned int total_number_of_particles = lpp.number[0];
@@ -121,11 +128,12 @@ test()
 
       variance += std::pow(dp - mean_dp, 2);
     }
-  variance           = variance / total_number_of_particles;
-  const double sigma = sqrt(variance);
+  variance                 = variance / total_number_of_particles;
+  const double sigma_verif = std::sqrt(variance);
 
   deallog << "Distribution mean: " << mean_dp << std::endl;
-  deallog << "Distribution standard distribution: " << sigma << std::endl;
+  deallog << "Distribution standard distribution: " << sigma_verif << std::endl
+          << std::endl;
 }
 
 int
@@ -136,7 +144,15 @@ main(int argc, char **argv)
       Utilities::MPI::MPI_InitFinalize mpi_initialization(argc, argv, 1);
 
       initlog();
-      test<3, DEM::DEMProperties::PropertiesIndex>();
+      test<3,
+           DEM::DEMProperties::PropertiesIndex,
+           DistributionWeightingType::number_based>(0.005, 0.0005);
+
+      // const double mu_v    = 2.033376613398894;
+      // const double sigma_v = 0.14877088048483555;
+      // test<3,
+      //      DEM::DEMProperties::PropertiesIndex,
+      //      DistributionWeightingType::volume_based>(mu_v, sigma_v);
     }
   catch (std::exception &exc)
     {

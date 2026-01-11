@@ -36,11 +36,22 @@ NormalDistribution::NormalDistribution(
   // https://mfix.netl.doe.gov/doc/mfix-exa/guide/latest/references/size_distributions.html#normal-distribution
   else if (this->weighting_type == DistributionWeightingType::volume_based)
     {
+      // Either there is an error with the Newton-Raphson solver or the problem
+      // is too stiff due to the order of the polynomial we are trying to solve
+      // for. Because of this, volume_based distribution is not supported for
+      // now. MFIX-exa uses a homotopy method to solve the system.
+      AssertThrow(false,
+                  ExcMessage(
+                    "Normal distribution only support volume weight"
+                    " distribution for now. Please change the 'distribution "
+                    "weighting basis' parameter to 'number'."));
+
       // Volume based parameters
-      const double mu_v            = d_average;
-      const double sigma_v         = d_standard_deviation;
-      const double sigma_v_squared = sigma_v * sigma_v;
-      const double mu_v_squared    = mu_v * mu_v;
+      const double mv  = d_average;
+      const double mv2 = mv * mv;
+
+      const double sv  = d_standard_deviation;
+      const double sv2 = sv * sv;
 
       // Matrix and RHS
       LAPACKFullMatrix<double> system_matrix;
@@ -55,40 +66,34 @@ NormalDistribution::NormalDistribution(
       // Initial estimates of mu_n and sigma_n
       double mu_n    = d_average;
       double sigma_n = d_standard_deviation;
-
-      while (residual_l2_norm > 1.e-12 && iteration_counter < 100)
+      while (residual_l2_norm > 1.e-10 && iteration_counter < 1000)
         {
-          double sigma_n_squared = sigma_n * sigma_n;
-          double sigma_n_cubed   = sigma_n_squared * sigma_n;
-          double sigma_n_fourth  = sigma_n_squared * sigma_n_squared;
+          const double sn  = sigma_n;
+          const double sn2 = sn * sn;
+          const double sn3 = sn2 * sn;
+          const double sn4 = sn2 * sn2;
 
-          double mu_n_squared = mu_n * mu_n;
-          double mu_n_cubed   = mu_n_squared * mu_n;
-          double mu_n_fourth  = mu_n_squared * mu_n_squared;
+          const double mn  = mu_n;
+          const double mn2 = mu_n * mu_n;
+          const double mn3 = mn2 * mu_n;
+          const double mn4 = mn2 * mn2;
+          const double mn5 = mn4 * mn;
 
           // Jacobien
-          double dR1_sigma_n =
-            12. * sigma_n * (sigma_n_squared + mu_n_squared) +
-            6. * sigma_n * mu_n * mu_v;
-          double dR1_mu_n = 12. * sigma_n_squared * mu_n +
-                            4. * mu_n_squared * mu_n -
-                            3. * mu_v * (sigma_n_squared + mu_n_squared);
+          const double dR1_sigma_n =
+            6. * (2. * (sn3 + sn * mn2) - mv * sn * mn);
 
-          double dR2_sigma_n =
-            12. * sigma_n_cubed * (5. * mu_n - 2. * mu_v) +
-            2. * sigma_n * mu_n *
-              (10. * mu_n_squared - 9. * mu_n * mu_v +
-               3. * mu_n * mu_v_squared - 3. * sigma_v_squared * mu_n);
+          const double dR1_mu_n =
+            12. * sn2 * mn + 4 * mn3 - 3. * mv * (sn2 + mn2);
 
-          double dR2_mu_n = 15. * sigma_n_squared * sigma_n_squared +
-                            30. * mu_n_squared * sigma_n_squared -
-                            18. * mu_n * mu_v * sigma_n_squared +
-                            3. * sigma_n_squared * mu_v_squared +
-                            5. * mu_n_squared * mu_n_squared +
-                            3. * mu_n_squared * mu_v_squared -
-                            4. * mu_n_cubed * mu_v -
-                            3. * sigma_n_squared * sigma_v_squared +
-                            3 * mu_n_squared * sigma_v_squared;
+          const double dR2_sigma_n =
+            12 * sn3 * (5 * mn - 2 * mv) +
+            2 * sn * (10 * mn3 - 12 * mn2 * mv + 3 * mn * mv2) -
+            6 * sv2 * sn * mn;
+
+          const double dR2_mu_n =
+            15 * sn4 + sn2 * (30 * mn2 - 24 * mn * mv + 3 * mv2) + 5 * mn4 +
+            3 * mn2 * mv2 - 8 * mn3 * mv - sv2 * (3 * sn2 + 3 * mn2);
 
           system_matrix.set(0, 0, dR1_sigma_n);
           system_matrix.set(0, 1, dR1_mu_n);
@@ -96,17 +101,13 @@ NormalDistribution::NormalDistribution(
           system_matrix.set(1, 1, dR2_mu_n);
 
           // Resisual RHS
-          double R1 = 3. * sigma_n_fourth +
-                      6. * sigma_n_squared * mu_n_squared + mu_n_fourth -
-                      mu_v * (3. * sigma_n_squared * mu_n + mu_n_cubed);
+          const double R1 =
+            3. * sn4 + 6. * sn2 * mn2 + mn4 - mv * (3. * sn2 * mn + mn3);
 
-          double R2 =
-            3. * sigma_n_fourth * (5. * mu_n - 2. * mu_v) +
-            sigma_n_squared * (10. * mu_n_cubed - 9. * mu_n_squared * mu_v +
-                               3. * mu_n * mu_v_squared) +
-            mu_n_squared * mu_n_squared * mu_n + mu_n_cubed * mu_v_squared -
-            mu_n_fourth * mu_v -
-            sigma_v_squared * (3. * sigma_n_squared * mu_n + mu_n_cubed);
+          const double R2 = 3. * sn4 * (5. * mn - 2. * mv) +
+                            sn2 * (10. * mn3 - 12. * mn2 * mv + 3. * mn * mv2) +
+                            mn5 + mn3 * mv2 - 2. * mn4 * mv -
+                            sv2 * (3. * sn2 * mn + mn3);
 
           // Add the minus sign for Newton-Raphson
           system_rhs[0] = -R1;
@@ -115,20 +116,23 @@ NormalDistribution::NormalDistribution(
           // Solve for the update
           system_matrix.solve(system_rhs);
 
-          // Apply the update
+          std::cout << "Step: d_sigma=" << system_rhs[0]
+                    << " d_mu=" << system_rhs[1] << std::endl;
+
+          // USE THE MATHEMATICALLY CORRECT MAPPING:
           sigma_n += system_rhs[0];
           mu_n += system_rhs[1];
 
-          // prevent non-physical values
+          // Helps prevent non-physical values
           sigma_n = std::max(sigma_n, 1e-10);
           mu_n    = std::max(mu_n, 1e-10);
 
-          // while loop conditions
+          // While loop conditions
           residual_l2_norm = system_rhs.l2_norm();
           iteration_counter++;
         }
       AssertThrow(
-        iteration_counter < 100.,
+        iteration_counter < 1000.,
         ExcMessage("The numbered weighted mean and standard deviation of "
                    "the normal distribution has not been found from the volume "
                    "weighted values provided in the parameter file. To solve "
@@ -244,18 +248,18 @@ LogNormalDistribution::LogNormalDistribution(
   // our sample. The standard deviation is always the same.
   if (this->weighting_type == DistributionWeightingType::number_based)
     {
-      mu_ln = std::log(d_average) -
-              0.5 * Utilities::fixed_power<2>(d_standard_deviation);
+      mu_ln = std::log(d_average)
+              - 0.5 * Utilities::fixed_power<2>(sigma_ln);
     }
   // If the user specified the distribution as volume based, we need to convert
   // the average and standard deviation to be number based.
   // https://mfix.netl.doe.gov/doc/mfix-exa/guide/latest/references/size_distributions.html#log-normal-distribution
   else if (this->weighting_type == DistributionWeightingType::volume_based)
     {
-      mu_ln = std::log(d_average) -
-              0.5 * Utilities::fixed_power<2>(d_standard_deviation) -
-              3. * sigma_ln;
+      mu_ln = std::log(d_average)
+              - 3.5 * Utilities::fixed_power<2>(sigma_ln);
     }
+
   if (min_cutoff < 0.)
     {
       // approx 99% of all diameters are bigger
@@ -387,14 +391,21 @@ CustomDistribution::CustomDistribution(
   const std::vector<double> &d_list,
   const std::vector<double> &d_probabilities,
   const unsigned int        &prn_seed,
-  const double               min_cutoff,
-  const double               max_cutoff,
+  // const double               min_cutoff,
+  // const double               max_cutoff,
   const Parameters::Lagrangian::DistributionWeightingType
     &distribution_weighting_type)
   : Distribution(distribution_weighting_type)
   , diameter_custom_values(d_list)
   , gen(prn_seed)
 {
+  AssertThrow(distribution_weighting_type ==
+                DistributionWeightingType::volume_based,
+              ExcMessage(
+                "Custom distribution only supports volume based "
+                "distribution. Please set the 'distribution weighting basis' "
+                "parameter to `volume`."));
+
   std::vector<double> cumulative_probability_vector, n_i_vector;
   double              n_tot = 0.;
 
