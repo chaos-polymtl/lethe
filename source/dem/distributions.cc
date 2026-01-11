@@ -1,4 +1,4 @@
-// SPDX-FileCopyrightText: Copyright (c) 2023-2025 The Lethe Authors
+// SPDX-FileCopyrightText: Copyright (c) 2023-2026 The Lethe Authors
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
 #include <core/utilities.h>
@@ -248,16 +248,14 @@ LogNormalDistribution::LogNormalDistribution(
   // our sample. The standard deviation is always the same.
   if (this->weighting_type == DistributionWeightingType::number_based)
     {
-      mu_ln = std::log(d_average)
-              - 0.5 * Utilities::fixed_power<2>(sigma_ln);
+      mu_ln = std::log(d_average) - 0.5 * Utilities::fixed_power<2>(sigma_ln);
     }
   // If the user specified the distribution as volume based, we need to convert
   // the average and standard deviation to be number based.
   // https://mfix.netl.doe.gov/doc/mfix-exa/guide/latest/references/size_distributions.html#log-normal-distribution
   else if (this->weighting_type == DistributionWeightingType::volume_based)
     {
-      mu_ln = std::log(d_average)
-              - 3.5 * Utilities::fixed_power<2>(sigma_ln);
+      mu_ln = std::log(d_average) - 3.5 * Utilities::fixed_power<2>(sigma_ln);
     }
 
   if (min_cutoff < 0.)
