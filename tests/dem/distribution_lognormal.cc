@@ -1,4 +1,4 @@
-// SPDX-FileCopyrightText: Copyright (c) 2023-2025 The Lethe Authors
+// SPDX-FileCopyrightText: Copyright (c) 2023-2026 The Lethe Authors
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
 /**
@@ -154,8 +154,7 @@ main(int argc, char **argv)
       // the same output as the number based one.
       test<3,
            DEM::DEMProperties::PropertiesIndex,
-           DistributionWeightingType::volume_based>(0.005151505,
-                                                    0.0005151505);
+           DistributionWeightingType::volume_based>(0.005151505, 0.0005151505);
     }
   catch (std::exception &exc)
     {
