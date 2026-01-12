@@ -33,8 +33,8 @@ DEM contact search at dem step 0
 DEM contact search at dem step 32
 DEM contact search at dem step 49
 Finished 50 DEM iterations
-Pressure drop: 9.78948 Pa
-Total pressure drop: 9.74 Pa
+Pressure drop: 9.78918 Pa
+Total pressure drop: 9.7397 Pa
 ---------------------------------------------------------------
-Global continuity equation error: -5.07193e-11 s^-1
+Global continuity equation error: -2.94206e-10 s^-1
 Max local continuity error: 2.94812e-06 s^-1
