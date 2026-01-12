@@ -17,8 +17,16 @@ set dimension = 3
 
 subsection simulation control
   set method      = steady
-  set output name = out
   set output path = ./output/
+  set number mesh adapt = 1
+end
+
+
+#---------------------------------------------------
+# Mesh Adaptation
+#---------------------------------------------------
+subsection mesh adaptation
+  set type                     = uniform
 end
 
 #---------------------------------------------------
@@ -26,8 +34,8 @@ end
 #---------------------------------------------------
 
 subsection FEM
-  set electromagnetics trial order = 1
-  set electromagnetics test order  = 2
+  set electromagnetics trial order = 2
+  set electromagnetics test order  = 3
 end
 
 #---------------------------------------------------
@@ -36,6 +44,19 @@ end
 
 subsection physical properties
   set number of fluids = 1
+  subsection fluid 0
+    set electric conductivity model = constant
+    set electric conductivity = 0.
+
+    set electric permittivity model = constant
+    set electric permittivity real part = 1.
+    set electric permittivity imag part = 0.
+    
+    set magnetic permeability model = constant
+    set magnetic permeability real part = 1.
+    set magnetic permeability imag part = 0.
+
+  end
 end
 
 #---------------------------------------------------
@@ -45,7 +66,7 @@ end
 subsection mesh
   set type               = dealii
   set grid type          = subdivided_hyper_rectangle
-  set grid arguments     = 2, 2, 8 : 0, 0, 0 : 0.25, 0.25, 1 : true
+  set grid arguments     = 1, 1, 4 : 0, 0, 0 : 0.25, 0.25, 1 : true
   set initial refinement = 1
 end
 
@@ -56,6 +77,14 @@ end
 subsection multiphysics
   set fluid dynamics   = false
   set electromagnetics = true
+end
+
+#---------------------------------------------------
+# Time Harmonic Maxwell
+#---------------------------------------------------
+
+subsection time harmonic maxwell
+  set electromagnetic frequency = 670356315.7
 end
 
 #---------------------------------------------------

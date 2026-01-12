@@ -19,6 +19,14 @@ set dimension = 3
 subsection simulation control
   set method      = steady
   set output path = ./output/
+  set number mesh adapt = 2
+end
+
+#---------------------------------------------------
+# Mesh Adaptation
+#---------------------------------------------------
+subsection mesh adaptation
+  set type                     = uniform
 end
 
 #---------------------------------------------------
@@ -36,6 +44,19 @@ end
 
 subsection physical properties
   set number of fluids = 1
+  subsection fluid 0
+    set electric conductivity model = constant
+    set electric conductivity = 0.
+
+    set electric permittivity model = constant
+    set electric permittivity real part = 1.
+    set electric permittivity imag part = 0.
+    
+    set magnetic permeability model = constant
+    set magnetic permeability real part = 1.
+    set magnetic permeability imag part = 0.
+
+  end
 end
 
 #---------------------------------------------------
@@ -45,7 +66,7 @@ end
 subsection mesh
   set type               = dealii
   set grid type          = subdivided_hyper_rectangle
-  set grid arguments     = 2, 2, 8 : 0, 0, 0 : 0.25, 0.25, 1 : true
+  set grid arguments     = 1, 1, 4 : 0, 0, 0 : 0.25, 0.25, 1 : true
   set initial refinement = 1
 end
 
@@ -57,6 +78,15 @@ subsection multiphysics
   set fluid dynamics   = false
   set electromagnetics = true
 end
+
+#---------------------------------------------------
+# Time Harmonic Maxwell
+#---------------------------------------------------
+
+subsection time harmonic maxwell
+  set electromagnetic frequency = 670356315.7
+end
+
 
 #---------------------------------------------------
 # Boundary Conditions
@@ -78,7 +108,7 @@ subsection boundary conditions time harmonic maxwell
   end
   subsection bc 1
     set id   = 4
-    set type = electromagnetic excitation
+    set type = impedance boundary
     subsection excitation x real
       set Function expression = 0
     end
@@ -98,15 +128,39 @@ subsection boundary conditions time harmonic maxwell
       set Function expression = 0
     end
     subsection surface admittance real
-      set Function expression = 0.780962
+      set Function expression = 0.4472135952
     end
     subsection surface admittance imag
-      set Function expression = 0.640236
+      set Function expression = 0.
     end
   end
   subsection bc 2
     set id   = 5
-    set type = silver muller
+    set type = impedance boundary
+    subsection excitation x real
+      set Function expression = 0
+    end
+    subsection excitation x imag
+      set Function expression = 0
+    end
+    subsection excitation y real
+      set Function expression = 0
+    end
+    subsection excitation y imag
+      set Function expression = 0
+    end
+    subsection excitation z real
+      set Function expression = 0
+    end
+    subsection excitation z imag
+      set Function expression = 0
+    end
+    subsection surface admittance real
+      set Function expression = 0.4472135952
+    end
+    subsection surface admittance imag
+      set Function expression = 0.
+    end
   end
 end
 

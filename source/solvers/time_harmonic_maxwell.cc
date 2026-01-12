@@ -239,7 +239,10 @@ TimeHarmonicMaxwell<dim>::calculate_L2_error()
   L2_error_H_real = Utilities::MPI::sum(L2_error_H_real, mpi_communicator);
   L2_error_H_imag = Utilities::MPI::sum(L2_error_H_imag, mpi_communicator);
 
-  return {L2_error_E_real, L2_error_E_imag, L2_error_H_real, L2_error_H_imag};
+  return {std::sqrt(L2_error_E_real),
+          std::sqrt(L2_error_E_imag),
+          std::sqrt(L2_error_H_real),
+          std::sqrt(L2_error_H_imag)};
 }
 
 
@@ -255,22 +258,26 @@ TimeHarmonicMaxwell<dim>::finish_simulation()
       simulation_parameters.analytical_solution->verbosity !=
         Parameters::Verbosity::quiet)
     {
-      this->error_table.evaluate_all_convergence_rates(
-        ConvergenceTable::reduction_rate_log2);
+      ConvergenceTable &error_table = this->error_table;
 
-      this->error_table.set_scientific("error_E_real", true);
-      this->error_table.set_scientific("error_E_imag", true);
-      this->error_table.set_scientific("error_H_real", true);
-      this->error_table.set_scientific("error_H_imag", true);
-      this->error_table.set_precision(
+      error_table.omit_column_from_convergence_rate_evaluation("cells");
+
+      error_table.evaluate_all_convergence_rates(
+         ConvergenceTable::reduction_rate_log2);
+
+      error_table.set_scientific("error_E_real", true);
+      error_table.set_scientific("error_E_imag", true);
+      error_table.set_scientific("error_H_real", true);
+      error_table.set_scientific("error_H_imag", true);
+      error_table.set_precision(
         "error_E_real", this->simulation_control->get_log_precision());
-      this->error_table.set_precision(
+      error_table.set_precision(
         "error_E_imag", this->simulation_control->get_log_precision());
-      this->error_table.set_precision(
+      error_table.set_precision(
         "error_H_real", this->simulation_control->get_log_precision());
-      this->error_table.set_precision(
+      error_table.set_precision(
         "error_H_imag", this->simulation_control->get_log_precision());
-      this->error_table.write_text(std::cout);
+      error_table.write_text(std::cout);
     }
 }
 
@@ -952,9 +959,14 @@ TimeHarmonicMaxwell<3>::assemble_system_matrix()
   //                time_harmonic_maxwell_parameters.waveguide_corners_3D[0][0]).norm();
   //     const std::complex<double> k_z =
   //   (std::sqrt(omega * omega * epsilon_r_eff * mu_r -
-  //              std::pow(mode_x * M_PI / waveguide_a, 2) -
-  //              std::pow(mode_y * M_PI / waveguide_b, 2)));
+  //              std::pow(1 * M_PI / 0.25, 2) -
+  //              std::pow(0 * M_PI / 0.25, 2)));
   //   const std::complex<double> kz_wmur = k_z / (omega * mu_r);
+  // std::cout << "k_z: " << k_z << std::endl;
+  // std::cout << "omega: " << omega << std::endl;
+  // std::cout << "mu_r: " << mu_r << std::endl;
+  // std::cout << "epsilon_r_eff: " << epsilon_r_eff << std::endl;
+  // std::cout << "kz_wmur: " << kz_wmur << std::endl;
   // const std::complex<double> conj_kz_wmur = std::conj(kz_wmur);
 
   TimerOutput::Scope t(this->computing_timer, "Assemble matrix and RHS");
@@ -1475,9 +1487,7 @@ TimeHarmonicMaxwell<3>::assemble_system_matrix()
                   if ((bc_type ==
                        BoundaryConditions::BoundaryType::silver_muller) ||
                       (bc_type == BoundaryConditions::BoundaryType::
-                                    electromagnetic_excitation) ||
-                      (bc_type ==
-                       BoundaryConditions::BoundaryType::imperfect_conductor) ||
+                                    impedance_boundary) ||
                       (bc_type ==
                        BoundaryConditions::BoundaryType::waveguide_port))
                     {
@@ -1678,7 +1688,7 @@ TimeHarmonicMaxwell<3>::assemble_system_matrix()
                       g_inc                      = 0.;
                     }
                   if (bc_type == BoundaryConditions::BoundaryType::
-                                   electromagnetic_excitation)
+                                   impedance_boundary)
                     {
                       unsigned int face_id = face->boundary_id();
 
@@ -1729,27 +1739,6 @@ TimeHarmonicMaxwell<3>::assemble_system_matrix()
                             .boundary_conditions_time_harmonic_electromagnetics
                             .excitation_z_imag.at(face_id)
                             ->value(position);
-                    }
-                  if (bc_type ==
-                      BoundaryConditions::BoundaryType::imperfect_conductor)
-                    {
-                      unsigned int face_id = face->boundary_id();
-
-                      boundary_surface_admittance =
-                        this->simulation_parameters
-                          .boundary_conditions_time_harmonic_electromagnetics
-                          .surface_admittance_real.at(face_id)
-                          ->value(position) +
-                        imag *
-                          this->simulation_parameters
-                            .boundary_conditions_time_harmonic_electromagnetics
-                            .surface_admittance_imag.at(face_id)
-                            ->value(position);
-
-                      conj_boundary_surface_admittance =
-                        std::conj(boundary_surface_admittance);
-
-                      g_inc = 0.;
                     }
                   if (bc_type ==
                       BoundaryConditions::BoundaryType::waveguide_port)
@@ -2478,9 +2467,7 @@ TimeHarmonicMaxwell<3>::reconstruct_interior_solution()
                   if ((bc_type ==
                        BoundaryConditions::BoundaryType::silver_muller) ||
                       (bc_type == BoundaryConditions::BoundaryType::
-                                    electromagnetic_excitation) ||
-                      (bc_type ==
-                       BoundaryConditions::BoundaryType::imperfect_conductor) ||
+                                    impedance_boundary) ||
                       (bc_type ==
                        BoundaryConditions::BoundaryType::waveguide_port))
                     {
@@ -2681,7 +2668,7 @@ TimeHarmonicMaxwell<3>::reconstruct_interior_solution()
                       g_inc                      = 0.;
                     }
                   if (bc_type == BoundaryConditions::BoundaryType::
-                                   electromagnetic_excitation)
+                                   impedance_boundary)
                     {
                       unsigned int face_id = face->boundary_id();
 
@@ -2732,27 +2719,6 @@ TimeHarmonicMaxwell<3>::reconstruct_interior_solution()
                             .boundary_conditions_time_harmonic_electromagnetics
                             .excitation_z_imag.at(face_id)
                             ->value(position);
-                    }
-                  if (bc_type ==
-                      BoundaryConditions::BoundaryType::imperfect_conductor)
-                    {
-                      unsigned int face_id = face->boundary_id();
-
-                      boundary_surface_admittance =
-                        this->simulation_parameters
-                          .boundary_conditions_time_harmonic_electromagnetics
-                          .surface_admittance_real.at(face_id)
-                          ->value(position) +
-                        imag *
-                          this->simulation_parameters
-                            .boundary_conditions_time_harmonic_electromagnetics
-                            .surface_admittance_imag.at(face_id)
-                            ->value(position);
-
-                      conj_boundary_surface_admittance =
-                        std::conj(boundary_surface_admittance);
-
-                      g_inc = 0.;
                     }
                   if (bc_type ==
                       BoundaryConditions::BoundaryType::waveguide_port)

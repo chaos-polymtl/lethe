@@ -91,8 +91,7 @@ namespace BoundaryConditions
     silver_muller,
     electric_field,
     magnetic_field,
-    electromagnetic_excitation,
-    imperfect_conductor,
+    impedance_boundary,
     waveguide_port
   };
 
@@ -1507,7 +1506,7 @@ namespace BoundaryConditions
       imposed_electromagnetic_fields;
 
     /// The following functions are associated with both imperfect conductor
-    /// and imposed electromagnetic excitation boundary conditions of the Time
+    /// and imposed electromagnetic excitation or absorption boundary conditions of the Time
     /// Harmonic Maxwell equations, but are parsed individually because they
     /// will not be applied to the vector solution and will therefore be handled
     /// manually in the solver.
@@ -1583,9 +1582,9 @@ namespace BoundaryConditions
       "type",
       "silver muller",
       Patterns::Selection(
-        "pec|pmc|silver muller|electric field|magnetic field|electromagnetic excitation|imperfect conductor"),
+        "pec|pmc|silver muller|electric field|magnetic field|impedance boundary"),
       "Type of boundary condition for Time Harmonic Maxwell equations"
-      "Choices are <pec|pmc|silver muller|electric field|magnetic field|electromagnetic excitation|imperfect conductor>.");
+      "Choices are <pec|pmc|silver muller|electric field|magnetic field|impedance boundary>.");
 
     prm.declare_entry("id",
                       Utilities::int_to_string(default_boundary_id, 2),
@@ -1885,13 +1884,9 @@ namespace BoundaryConditions
           {
             this->type[boundary_id] = BoundaryType::magnetic_field;
           }
-        else if (op == "electromagnetic excitation")
+        else if (op == "impedance boundary")
           {
-            this->type[boundary_id] = BoundaryType::electromagnetic_excitation;
-          }
-        else if (op == "imperfect conductor")
-          {
-            this->type[boundary_id] = BoundaryType::imperfect_conductor;
+            this->type[boundary_id] = BoundaryType::impedance_boundary;
           }
         else if (op == "waveguide port")
           {

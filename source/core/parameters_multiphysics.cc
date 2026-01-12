@@ -854,17 +854,17 @@ Parameters::TimeHarmonicMaxwell::parse_parameters(
       prm.get_integer("number of waveguide inlets");
 
     // Resize vectors to hold the correct number of inlets
-    waveguide_mode.resize(number_of_waveguide_inlets);
-    mode_order_m.resize(number_of_waveguide_inlets);
-    mode_order_n.resize(number_of_waveguide_inlets);
-    waveguide_boundary_ids.resize(number_of_waveguide_inlets);
+    TimeHarmonicMaxwell::waveguide_mode.resize(number_of_waveguide_inlets);
+    TimeHarmonicMaxwell::mode_order_m.resize(number_of_waveguide_inlets);
+    TimeHarmonicMaxwell::mode_order_n.resize(number_of_waveguide_inlets);
+    TimeHarmonicMaxwell::waveguide_boundary_ids.resize(number_of_waveguide_inlets);
 
     for (unsigned int inlet = 0; inlet < number_of_waveguide_inlets; ++inlet)
       {
         prm.enter_subsection("waveguide inlet " + std::to_string(inlet));
         {
-          TimeHarmonicMaxwell::waveguide_boundary_ids.push_back(
-            prm.get_integer("port boundary id"));
+          TimeHarmonicMaxwell::waveguide_boundary_ids[inlet] =
+            prm.get_integer("port boundary id");
 
           prm.enter_subsection("waveguide mode");
           {
