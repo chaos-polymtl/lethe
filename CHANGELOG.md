@@ -4,11 +4,14 @@ All notable changes to the Lethe project will be documented in this file.
 The changelog for the previous releases of Lethe are located in the release_notes folder.
 The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
+
 ## [Master] - 2026/01/12
 
 ## Fixed
 
 - Minor The lethe-particles/distribution_normal.prm application test was using a log-normal distribution. The parameter was changed back to ``normal``. As a result, the output of the test did change. [#1876](https://github.com/chaos-polymtl/lethe/pull/1876) 
+
+- Minor The convection term in the VANS equations for models A and B is changed from ``local_matrix_ij += ((phi_u_j * void_fraction * velocity_gradient * phi_u_i) + (grad_phi_u_j * void_fraction * velocity * phi_u_i));`` to ``local_matrix_ij += ((velocity_gradient * phi_u_j * void_fraction * phi_u_i) + (grad_phi_u_j * void_fraction * velocity * phi_u_i))`` in the matrix assembly, to match the correct algebraic formula. The output of the ``lethe-fluid-particles`` and ``lethe-fluid-vans`` application tests changed only slightly. Therefore, their outputs were updated in this PR as well. [#1874](https://github.com/chaos-polymtl/lethe/pull/1874) 
 
 
 ## [Master] - 2026/01/07
