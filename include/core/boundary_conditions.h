@@ -1582,9 +1582,9 @@ namespace BoundaryConditions
       "type",
       "silver muller",
       Patterns::Selection(
-        "pec|pmc|silver muller|electric field|magnetic field|impedance boundary"),
+        "pec|pmc|silver muller|electric field|magnetic field|impedance boundary|waveguide port"),
       "Type of boundary condition for Time Harmonic Maxwell equations"
-      "Choices are <pec|pmc|silver muller|electric field|magnetic field|impedance boundary>.");
+      "Choices are <pec|pmc|silver muller|electric field|magnetic field|impedance boundary|waveguide port>.");
 
     prm.declare_entry("id",
                       Utilities::int_to_string(default_boundary_id, 2),

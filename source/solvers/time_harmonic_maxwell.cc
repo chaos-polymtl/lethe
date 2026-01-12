@@ -98,6 +98,179 @@ TimeHarmonicMaxwell<dim>::TimeHarmonicMaxwell(
     this->computing_timer.disable_output();
 }
 
+
+
+template <>
+std::pair<Tensor<1, 2, std::complex<double>>, std::complex<double>>
+TimeHarmonicMaxwell<2>::compute_waveguide_port_excitation(
+  const Point<2> & /*p*/,
+  const Tensor<1, 2> & /*normal*/,
+  const std::complex<double> & /*epsilon_r_eff*/,
+  const std::complex<double> & /*mu_r*/,
+  const unsigned int /*boundary_id_index*/)
+{
+  // We make a call to the waveguide_corners_3D which is incompatible with 2D.
+  // Since, we do not support 2D time-harmonic Maxwell so this function throws
+  // an error.
+  AssertThrow(false, TimeHarmonicMaxwellDimensionNotSupported(2));
+  return std::pair<Tensor<1, 2, std::complex<double>>, std::complex<double>>();
+}
+
+template <>
+std::pair<Tensor<1, 3, std::complex<double>>, std::complex<double>>
+TimeHarmonicMaxwell<3>::compute_waveguide_port_excitation(
+  const Point<3>             &p,
+  const Tensor<1, 3>         &normal,
+  const std::complex<double> &epsilon_r_eff,
+  const std::complex<double> &mu_r,
+  const unsigned int          boundary_id_index)
+{
+  // Define some constexpr values for the computation
+  static constexpr std::complex<double> imag{0., 1.};
+  static constexpr double               PI  = numbers::PI;
+  static constexpr unsigned int         dim = 3;
+
+  // Gather the relevant waveguide parameters
+  const Parameters::TimeHarmonicMaxwell &time_harmonic_maxwell_parameters =
+    this->simulation_parameters.multiphysics.time_harmonic_maxwell_parameters;
+  const double omega =
+    2.0 * PI * time_harmonic_maxwell_parameters.electromagnetic_frequency;
+  const auto &waveguide_corners =
+    time_harmonic_maxwell_parameters.waveguide_corners_3D[boundary_id_index];
+  const Parameters::WaveguideMode mode =
+    time_harmonic_maxwell_parameters.waveguide_mode[boundary_id_index];
+  const unsigned int m =
+    time_harmonic_maxwell_parameters.mode_order_m[boundary_id_index];
+  const unsigned int n =
+    time_harmonic_maxwell_parameters.mode_order_n[boundary_id_index];
+
+  // We first define the transverse face vectors of the waveguide in the global
+  // system
+  Tensor<1, dim> transverse_vector_1 =
+    waveguide_corners[1] - waveguide_corners[0];
+  Tensor<1, dim> transverse_vector_2 =
+    waveguide_corners[2] - waveguide_corners[0];
+  double         length_t1 = transverse_vector_1.norm();
+  double         length_t2 = transverse_vector_2.norm();
+  Tensor<1, dim> e_t1      = transverse_vector_1 / length_t1;
+  Tensor<1, dim> e_t2      = transverse_vector_2 / length_t2;
+
+  // Verify that the those transverse vectors with respect to the normal of the
+  // face is coherent and form an orthogonal basis.
+  if (!(std::abs(normal * e_t1) < 1e-12) && !(std::abs(normal * e_t2) < 1e-12))
+    AssertThrow(
+      false,
+      ExcMessage(
+        "The transverse plane defined by the waveguide corners for the waveguide port at boundary ID " +
+        std::to_string(time_harmonic_maxwell_parameters
+                         .waveguide_boundary_ids[boundary_id_index]) +
+        " is not orthogonal to the boundary face normal. Please check the waveguide corners definition in the input prm file."));
+
+  // Ensure e_t1 and e_t2 form a right-handed coordinate system with the normal.
+  // They do if the scalar triple product is negative. If they don't, we swap
+  // e_t1 and e_t2.
+  if ((normal * cross_product_3d(e_t1, e_t2)) > 0)
+    {
+      length_t1 = transverse_vector_2.norm();
+      length_t2 = transverse_vector_1.norm();
+      e_t1      = transverse_vector_2 / length_t1;
+      e_t2      = transverse_vector_1 / length_t2;
+    }
+
+  // Compute the various wavenumber k in using this global coordinate system
+  double k_t1 = m * PI / length_t1;                   // Transverse wavenumber 1
+  double k_t2 = n * PI / length_t2;                   // Transverse wavenumber 2
+  double k_c  = std::sqrt(k_t1 * k_t1 + k_t2 * k_t2); // Cutoff wavenumber
+  std::complex<double> k =
+    omega * std::sqrt(epsilon_r_eff * mu_r); // Wavenumber in the medium
+  std::complex<double> k_l =
+    std::sqrt(k * k - k_c * k_c); // Longitudinal wavenumber
+
+  // Verify that the mode is not evanescent, i.e. k_l is not purely imaginary
+  // (k_c^2 < k^2).
+  AssertThrow(std::norm(k) > (k_c * k_c),
+              ExcMessage(
+                "The chosen mode for the waveguide port at boundary ID " +
+                std::to_string(time_harmonic_maxwell_parameters
+                                 .waveguide_boundary_ids[boundary_id_index]) +
+                " is evanescent at the given frequency. Please "
+                "choose another mode or increase the frequency."));
+
+  // Now we want to compute the electromagnetic field and surface admittance at
+  // point p as if the waveguide center was at the origin. So we will perform a
+  // change of basis to a local coordinate system where the waveguide center is
+  // at the origin.
+
+  std::complex<double> surface_admittance = k_l / (omega * mu_r);
+  Tensor<1, dim>       origin_local =
+    0.25 * (waveguide_corners[0] + waveguide_corners[1] + waveguide_corners[2] +
+            waveguide_corners[3]);
+  Tensor<1, dim> p_local =
+    p - origin_local; // Coordinates of point p in this local system.
+  double x_local = p_local * e_t1; // Coordinate along e_t1 in the local system
+  double y_local = p_local * e_t2; // Coordinate along e_t2 in the local system
+  // We assume that the z_local coordinate is 0 since we are on the face.
+
+  // Finally, we can compute the eletromagnetic excitation at point p.
+  Tensor<1, dim, std::complex<double>> E_inc;
+  Tensor<1, dim, std::complex<double>> H_inc;
+  Tensor<1, dim, std::complex<double>> excitation;
+
+
+  if (mode == Parameters::WaveguideMode::TE)
+    {
+      std::complex<double> factor =
+        imag * k * k / (k_c * k_c * epsilon_r_eff * omega);
+
+      E_inc[0] = -factor * k_t2 * std::cos(k_t1 * (x_local + length_t1 / 2)) *
+                 std::sin(k_t2 * (y_local + length_t2 / 2));
+      E_inc[1] = factor * k_t1 * std::sin(k_t1 * (x_local + length_t1 / 2)) *
+                 std::cos(k_t2 * (y_local + length_t2 / 2));
+      E_inc[2] = 0.0;
+
+      H_inc[0] = -imag * k_l * k_t1 / (k_c * k_c) *
+                 std::sin(k_t1 * (x_local + length_t1 / 2)) *
+                 std::cos(k_t2 * (y_local + length_t2 / 2));
+      H_inc[1] = -imag * k_l * k_t2 / (k_c * k_c) *
+                 std::cos(k_t1 * (x_local + length_t1 / 2)) *
+                 std::sin(k_t2 * (y_local + length_t2 / 2));
+      H_inc[2] = std::cos(k_t1 * (x_local + length_t1 / 2)) *
+                 std::cos(k_t2 * (y_local + length_t2 / 2));
+
+      excitation = cross_product_3d(normal, H_inc) +
+                   map_H12(k_l / (omega * mu_r) * E_inc, normal);
+    }
+  else if (mode == Parameters::WaveguideMode::TM)
+    {
+      std::complex<double> factor = imag * k * k / (k_c * k_c * mu_r * omega);
+
+      H_inc[0] = -factor * k_t2 * std::sin(k_t1 * (x_local + length_t1 / 2)) *
+                 std::cos(k_t2 * (y_local + length_t2 / 2));
+      H_inc[1] = factor * k_t1 * std::cos(k_t1 * (x_local + length_t1 / 2)) *
+                 std::sin(k_t2 * (y_local + length_t2 / 2));
+      H_inc[2] = 0.0;
+
+      E_inc[0] = imag * k_l * k_t1 / (k_c * k_c) *
+                 std::cos(k_t1 * (x_local + length_t1 / 2)) *
+                 std::sin(k_t2 * (y_local + length_t2 / 2));
+      E_inc[1] = imag * k_l * k_t2 / (k_c * k_c) *
+                 std::sin(k_t1 * (x_local + length_t1 / 2)) *
+                 std::cos(k_t2 * (y_local + length_t2 / 2));
+      E_inc[2] = std::sin(k_t1 * (x_local + length_t1 / 2)) *
+                 std::sin(k_t2 * (y_local + length_t2 / 2));
+
+      excitation = cross_product_3d(normal, H_inc) +
+                   map_H12(k_l / (omega * mu_r) * E_inc, normal);
+    }
+  else
+    {
+      AssertThrow(false, ExcMessage("Unknown waveguide mode type."));
+    }
+
+  return std::make_pair(excitation, surface_admittance);
+}
+
+
 template <int dim>
 std::vector<OutputStruct<dim, GlobalVectorType>>
 TimeHarmonicMaxwell<dim>::gather_output_hook()
@@ -897,7 +1070,7 @@ TimeHarmonicMaxwell<3>::assemble_system_matrix()
   // Constexpr values and used in the assembly. Since we are in the specialized
   // 3D function we define dim=3 here. This makes easier to read the code below
   // to see what are templated in dim and what are not.
-  static constexpr double               pi = std::numbers::pi;
+  static constexpr double               PI = numbers::PI;
   static constexpr std::complex<double> imag{0., 1.};
   static constexpr int                  dim = 3;
 
@@ -937,7 +1110,7 @@ TimeHarmonicMaxwell<3>::assemble_system_matrix()
   const Parameters::TimeHarmonicMaxwell &time_harmonic_maxwell_parameters =
     this->simulation_parameters.multiphysics.time_harmonic_maxwell_parameters;
   const double omega =
-    2.0 * pi * time_harmonic_maxwell_parameters.electromagnetic_frequency;
+    2.0 * PI * time_harmonic_maxwell_parameters.electromagnetic_frequency;
 
   // We define some constants that will be used during the assembly. Those
   // would change according to the material parameters, but here we only have
@@ -947,27 +1120,6 @@ TimeHarmonicMaxwell<3>::assemble_system_matrix()
   const std::complex<double> iweps_r      = imag * omega * epsilon_r_eff;
   const std::complex<double> conj_iweps_r = std::conj(iweps_r);
 
-
-  // frequency   = time_harmonic_maxwell_parameters.electromagnetic_frequency;
-  // mode_x      = time_harmonic_maxwell_parameters.mode_order_m[0];
-  // mode_y      = time_harmonic_maxwell_parameters.mode_order_n[0];
-  // waveguide_a = (time_harmonic_maxwell_parameters.waveguide_corners_3D[0][1]
-  // -
-  //                time_harmonic_maxwell_parameters.waveguide_corners_3D[0][0]).norm();
-  // waveguide_b = (time_harmonic_maxwell_parameters.waveguide_corners_3D[0][2]
-  // -
-  //                time_harmonic_maxwell_parameters.waveguide_corners_3D[0][0]).norm();
-  //     const std::complex<double> k_z =
-  //   (std::sqrt(omega * omega * epsilon_r_eff * mu_r -
-  //              std::pow(1 * M_PI / 0.25, 2) -
-  //              std::pow(0 * M_PI / 0.25, 2)));
-  //   const std::complex<double> kz_wmur = k_z / (omega * mu_r);
-  // std::cout << "k_z: " << k_z << std::endl;
-  // std::cout << "omega: " << omega << std::endl;
-  // std::cout << "mu_r: " << mu_r << std::endl;
-  // std::cout << "epsilon_r_eff: " << epsilon_r_eff << std::endl;
-  // std::cout << "kz_wmur: " << kz_wmur << std::endl;
-  // const std::complex<double> conj_kz_wmur = std::conj(kz_wmur);
 
   TimerOutput::Scope t(this->computing_timer, "Assemble matrix and RHS");
 
@@ -1743,10 +1895,24 @@ TimeHarmonicMaxwell<3>::assemble_system_matrix()
                   if (bc_type ==
                       BoundaryConditions::BoundaryType::waveguide_port)
                     {
-                      AssertThrow(false,
-                                  ExcMessage(
-                                    "Waveguide port boundary condition not yet "
-                                    "implemented in 3D."));
+                      unsigned int boundary_index = std::distance(
+                        time_harmonic_maxwell_parameters.waveguide_boundary_ids
+                          .begin(),
+                        std::find(time_harmonic_maxwell_parameters
+                                    .waveguide_boundary_ids.begin(),
+                                  time_harmonic_maxwell_parameters
+                                    .waveguide_boundary_ids.end(),
+                                  face->boundary_id()));
+
+                      std::tie(g_inc, boundary_surface_admittance) =
+                        compute_waveguide_port_excitation(position,
+                                                          normal,
+                                                          epsilon_r_eff,
+                                                          mu_r,
+                                                          boundary_index);
+
+                      conj_boundary_surface_admittance =
+                        std::conj(boundary_surface_admittance);
                     }
 
                   // Now we loop on each relationship container to assemble
@@ -1900,7 +2066,7 @@ TimeHarmonicMaxwell<3>::reconstruct_interior_solution()
   // Constexpr values and used in the assembly. Since we are in the specialized
   // 3D function we define dim=3 here. This makes easier to read the code below
   // to see what are templated in dim and what are not.
-  static constexpr double               pi = std::numbers::pi;
+  static constexpr double               PI = numbers::PI;
   static constexpr std::complex<double> imag{0., 1.};
   static constexpr int                  dim = 3;
 
@@ -1940,7 +2106,7 @@ TimeHarmonicMaxwell<3>::reconstruct_interior_solution()
   const Parameters::TimeHarmonicMaxwell &time_harmonic_maxwell_parameters =
     this->simulation_parameters.multiphysics.time_harmonic_maxwell_parameters;
   const double omega =
-    2.0 * pi * time_harmonic_maxwell_parameters.electromagnetic_frequency;
+    2.0 * PI * time_harmonic_maxwell_parameters.electromagnetic_frequency;
 
   // We define some constants that will be used during the assembly. Those
   // would change according to the material parameters, but here we only have
@@ -2729,10 +2895,24 @@ TimeHarmonicMaxwell<3>::reconstruct_interior_solution()
                   if (bc_type ==
                       BoundaryConditions::BoundaryType::waveguide_port)
                     {
-                      AssertThrow(false,
-                                  ExcMessage(
-                                    "Waveguide port boundary condition not yet "
-                                    "implemented in 3D."));
+                      unsigned int boundary_index = std::distance(
+                        time_harmonic_maxwell_parameters.waveguide_boundary_ids
+                          .begin(),
+                        std::find(time_harmonic_maxwell_parameters
+                                    .waveguide_boundary_ids.begin(),
+                                  time_harmonic_maxwell_parameters
+                                    .waveguide_boundary_ids.end(),
+                                  face->boundary_id()));
+
+                      std::tie(g_inc, boundary_surface_admittance) =
+                        compute_waveguide_port_excitation(position,
+                                                          normal,
+                                                          epsilon_r_eff,
+                                                          mu_r,
+                                                          boundary_index);
+
+                      conj_boundary_surface_admittance =
+                        std::conj(boundary_surface_admittance);
                     }
 
                   // Now we loop on each relationship container to assemble
