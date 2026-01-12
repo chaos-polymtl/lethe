@@ -37,7 +37,6 @@ In this subsection, gravitational acceleration, and the physical properties of t
       set distribution prn seed             = 1
 
       # For every distribution types
-      set distribution weighting basis      = number
       set number of particles               = 0
       set density particles                 = 1000
       set young modulus particles           = 1000000
