@@ -263,20 +263,20 @@ TimeHarmonicMaxwell<dim>::finish_simulation()
       error_table.omit_column_from_convergence_rate_evaluation("cells");
 
       error_table.evaluate_all_convergence_rates(
-         ConvergenceTable::reduction_rate_log2);
+        ConvergenceTable::reduction_rate_log2);
 
       error_table.set_scientific("error_E_real", true);
       error_table.set_scientific("error_E_imag", true);
       error_table.set_scientific("error_H_real", true);
       error_table.set_scientific("error_H_imag", true);
-      error_table.set_precision(
-        "error_E_real", this->simulation_control->get_log_precision());
-      error_table.set_precision(
-        "error_E_imag", this->simulation_control->get_log_precision());
-      error_table.set_precision(
-        "error_H_real", this->simulation_control->get_log_precision());
-      error_table.set_precision(
-        "error_H_imag", this->simulation_control->get_log_precision());
+      error_table.set_precision("error_E_real",
+                                this->simulation_control->get_log_precision());
+      error_table.set_precision("error_E_imag",
+                                this->simulation_control->get_log_precision());
+      error_table.set_precision("error_H_real",
+                                this->simulation_control->get_log_precision());
+      error_table.set_precision("error_H_imag",
+                                this->simulation_control->get_log_precision());
       error_table.write_text(std::cout);
     }
 }
@@ -1486,8 +1486,8 @@ TimeHarmonicMaxwell<3>::assemble_system_matrix()
                   // minimize there.
                   if ((bc_type ==
                        BoundaryConditions::BoundaryType::silver_muller) ||
-                      (bc_type == BoundaryConditions::BoundaryType::
-                                    impedance_boundary) ||
+                      (bc_type ==
+                       BoundaryConditions::BoundaryType::impedance_boundary) ||
                       (bc_type ==
                        BoundaryConditions::BoundaryType::waveguide_port))
                     {
@@ -1685,10 +1685,10 @@ TimeHarmonicMaxwell<3>::assemble_system_matrix()
                       boundary_surface_admittance = sqrt(epsilon_r_eff / mu_r);
                       conj_boundary_surface_admittance =
                         std::conj(boundary_surface_admittance);
-                      g_inc                      = 0.;
+                      g_inc = 0.;
                     }
-                  if (bc_type == BoundaryConditions::BoundaryType::
-                                   impedance_boundary)
+                  if (bc_type ==
+                      BoundaryConditions::BoundaryType::impedance_boundary)
                     {
                       unsigned int face_id = face->boundary_id();
 
@@ -1749,27 +1749,31 @@ TimeHarmonicMaxwell<3>::assemble_system_matrix()
                                     "implemented in 3D."));
                     }
 
-                    // Now we loop on each relationship container to assemble
-                    // the relevant matrices.
-                    for (const auto &[i, j] : G_FF)
-                  {
-                    G_matrix(i, j) += (conj_boundary_surface_admittance * F_face[j] * boundary_surface_admittance *
-                                       F_face_conj[i] * JxW_face)
-                                        .real();
-                  }
+                  // Now we loop on each relationship container to assemble
+                  // the relevant matrices.
+                  for (const auto &[i, j] : G_FF)
+                    {
+                      G_matrix(i, j) +=
+                        (conj_boundary_surface_admittance * F_face[j] *
+                         boundary_surface_admittance * F_face_conj[i] *
+                         JxW_face)
+                          .real();
+                    }
 
                   for (const auto &[i, j] : G_FI)
                     {
-                      G_matrix(i, j) += (n_cross_I_face[j] * boundary_surface_admittance *
-                                         F_face_conj[i] * JxW_face)
-                                          .real();
+                      G_matrix(i, j) +=
+                        (n_cross_I_face[j] * boundary_surface_admittance *
+                         F_face_conj[i] * JxW_face)
+                          .real();
                     }
 
                   for (const auto &[i, j] : G_IF)
                     {
-                      G_matrix(i, j) += (conj_boundary_surface_admittance * F_face[j] *
-                                         n_cross_I_face_conj[i] * JxW_face)
-                                          .real();
+                      G_matrix(i, j) +=
+                        (conj_boundary_surface_admittance * F_face[j] *
+                         n_cross_I_face_conj[i] * JxW_face)
+                          .real();
                     }
 
                   for (const auto &[i, j] : G_II)
@@ -1794,7 +1798,9 @@ TimeHarmonicMaxwell<3>::assemble_system_matrix()
                   for (const auto &[i, j] : B_hat_FE)
                     {
                       B_hat_matrix(i, j) -=
-                        (boundary_surface_admittance * E_hat[j] * F_face_conj[i] * JxW_face).real();
+                        (boundary_surface_admittance * E_hat[j] *
+                         F_face_conj[i] * JxW_face)
+                          .real();
                     }
 
                   for (const auto &i : l_F)
@@ -2466,8 +2472,8 @@ TimeHarmonicMaxwell<3>::reconstruct_interior_solution()
                   // minimize there.
                   if ((bc_type ==
                        BoundaryConditions::BoundaryType::silver_muller) ||
-                      (bc_type == BoundaryConditions::BoundaryType::
-                                    impedance_boundary) ||
+                      (bc_type ==
+                       BoundaryConditions::BoundaryType::impedance_boundary) ||
                       (bc_type ==
                        BoundaryConditions::BoundaryType::waveguide_port))
                     {
@@ -2665,10 +2671,10 @@ TimeHarmonicMaxwell<3>::reconstruct_interior_solution()
                       boundary_surface_admittance = sqrt(epsilon_r_eff / mu_r);
                       conj_boundary_surface_admittance =
                         std::conj(boundary_surface_admittance);
-                      g_inc                      = 0.;
+                      g_inc = 0.;
                     }
-                  if (bc_type == BoundaryConditions::BoundaryType::
-                                   impedance_boundary)
+                  if (bc_type ==
+                      BoundaryConditions::BoundaryType::impedance_boundary)
                     {
                       unsigned int face_id = face->boundary_id();
 
@@ -2733,23 +2739,27 @@ TimeHarmonicMaxwell<3>::reconstruct_interior_solution()
                   // the relevant matrices.
                   for (const auto &[i, j] : G_FF)
                     {
-                      G_matrix(i, j) += (conj_boundary_surface_admittance * F_face[j] * boundary_surface_admittance *
-                                         F_face_conj[i] * JxW_face)
-                                          .real();
+                      G_matrix(i, j) +=
+                        (conj_boundary_surface_admittance * F_face[j] *
+                         boundary_surface_admittance * F_face_conj[i] *
+                         JxW_face)
+                          .real();
                     }
 
                   for (const auto &[i, j] : G_FI)
                     {
-                      G_matrix(i, j) += (n_cross_I_face[j] * boundary_surface_admittance *
-                                         F_face_conj[i] * JxW_face)
-                                          .real();
+                      G_matrix(i, j) +=
+                        (n_cross_I_face[j] * boundary_surface_admittance *
+                         F_face_conj[i] * JxW_face)
+                          .real();
                     }
 
                   for (const auto &[i, j] : G_IF)
                     {
-                      G_matrix(i, j) += (conj_boundary_surface_admittance * F_face[j] *
-                                         n_cross_I_face_conj[i] * JxW_face)
-                                          .real();
+                      G_matrix(i, j) +=
+                        (conj_boundary_surface_admittance * F_face[j] *
+                         n_cross_I_face_conj[i] * JxW_face)
+                          .real();
                     }
 
                   for (const auto &[i, j] : G_II)
@@ -2774,7 +2784,9 @@ TimeHarmonicMaxwell<3>::reconstruct_interior_solution()
                   for (const auto &[i, j] : B_hat_FE)
                     {
                       B_hat_matrix(i, j) -=
-                        (boundary_surface_admittance * E_hat[j] * F_face_conj[i] * JxW_face).real();
+                        (boundary_surface_admittance * E_hat[j] *
+                         F_face_conj[i] * JxW_face)
+                          .real();
                     }
 
                   for (const auto &i : l_F)

@@ -1506,10 +1506,10 @@ namespace BoundaryConditions
       imposed_electromagnetic_fields;
 
     /// The following functions are associated with both imperfect conductor
-    /// and imposed electromagnetic excitation or absorption boundary conditions of the Time
-    /// Harmonic Maxwell equations, but are parsed individually because they
-    /// will not be applied to the vector solution and will therefore be handled
-    /// manually in the solver.
+    /// and imposed electromagnetic excitation or absorption boundary conditions
+    /// of the Time Harmonic Maxwell equations, but are parsed individually
+    /// because they will not be applied to the vector solution and will
+    /// therefore be handled manually in the solver.
 
     // Impedance
     std::map<types::boundary_id,

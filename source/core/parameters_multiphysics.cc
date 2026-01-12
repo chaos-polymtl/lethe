@@ -857,7 +857,8 @@ Parameters::TimeHarmonicMaxwell::parse_parameters(
     TimeHarmonicMaxwell::waveguide_mode.resize(number_of_waveguide_inlets);
     TimeHarmonicMaxwell::mode_order_m.resize(number_of_waveguide_inlets);
     TimeHarmonicMaxwell::mode_order_n.resize(number_of_waveguide_inlets);
-    TimeHarmonicMaxwell::waveguide_boundary_ids.resize(number_of_waveguide_inlets);
+    TimeHarmonicMaxwell::waveguide_boundary_ids.resize(
+      number_of_waveguide_inlets);
 
     for (unsigned int inlet = 0; inlet < number_of_waveguide_inlets; ++inlet)
       {
