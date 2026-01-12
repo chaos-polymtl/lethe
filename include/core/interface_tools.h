@@ -891,6 +891,48 @@ namespace InterfaceTools
         }
     };
 
+    inline void
+    compute_analytical_jacobian(
+      const Point<dim>     &x_real,
+      const Point<dim>                  &x_I_real,
+      const DerivativeForm<1, dim - 1, dim>
+                               &transformation_jacobian,
+      LAPACKFullMatrix<double> &jacobian_matrix)
+    {
+
+      const Tensor<1, dim> x_n_to_x_I_real_p1 =
+            x_I_real - x_real;
+
+      const x_n_to_x_I_real_p1_norm = x_n_to_x_I_real_p1.norm();
+
+      const x_n_to_x_I_real_p1_norm_squared = x_n_to_x_I_real_p1_norm * x_n_to_x_I_real_p1_norm;
+
+      const x_n_to_x_I_real_p1_norm_cubic = x_n_to_x_I_real_p1_norm_squared * x_n_to_x_I_real_p1_norm;
+
+      LAPACKFullMatrix<double> hessian_matrix(dim, dim);
+
+      for (unsigned int i = 0; i < dim; ++i)
+        {
+          for (unsigned int j = 0; j < dim; ++i)
+            {
+              double h_ij = -(x_n_to_x_I_real_p1[i]*x_n_to_x_I_real_p1[j])/x_n_to_x_I_real_p1_norm_cubic;
+              if (i == j)
+                h_ij += 1/x_n_to_x_I_real_p1_norm;
+              
+              hessian_matrix.set(i,j, h_ij);
+            }
+        }
+        
+        const DerivativeForm<1, dim, dim - 1> transformation_jacobian_tanspose = transformation_jacobian.transpose();
+
+      for (unsigned int i = 0; i < dim - 1; ++i)
+        for (unsigned int j = 0; j < dim; ++j)
+          jacobian_matrix
+          residual_ref[i] +=
+            transformation_jac_transpose[i][j] * residual_real[j];
+
+    };
+
     /**
      * @brief
      * Compute the distance according to: d(x_I) = d(x_n) + ||x_I - x_n||
