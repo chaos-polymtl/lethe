@@ -54,7 +54,7 @@ subsection lagrangian physical properties
   set g                        = 0, -9.81, 0.
   set number of particle types = 1
   subsection particle type 0
-    set size distribution type            = lognormal
+    set size distribution type            = normal
     set average diameter                  = 6.366e-2
     set standard deviation                = 1.445e-2
     set minimum diameter cutoff           = 2.0e-2

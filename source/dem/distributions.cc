@@ -1,4 +1,4 @@
-// SPDX-FileCopyrightText: Copyright (c) 2023-2025 The Lethe Authors
+// SPDX-FileCopyrightText: Copyright (c) 2023-2026 The Lethe Authors
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
 #include <core/utilities.h>
@@ -20,7 +20,6 @@ NormalDistribution::NormalDistribution(const double       &d_average,
     {
       // 2.5 -> approx 99% of all diameters are bigger
       dia_min_cutoff = diameter_average - 2.5 * standard_deviation;
-      std::cout << dia_min_cutoff << std::endl;
       AssertThrow(dia_min_cutoff > 0.,
                   ExcMessage(
                     "The \"standard deviation\" parameter is to "
