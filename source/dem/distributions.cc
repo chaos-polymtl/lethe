@@ -20,7 +20,6 @@ NormalDistribution::NormalDistribution(const double       &d_average,
     {
       // 2.5 -> approx 99% of all diameters are bigger
       dia_min_cutoff = diameter_average - 2.5 * standard_deviation;
-      std::cout << dia_min_cutoff << std::endl;
       AssertThrow(dia_min_cutoff > 0.,
                   ExcMessage(
                     "The \"standard deviation\" parameter is to "
