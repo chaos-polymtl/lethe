@@ -8,30 +8,36 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
 ### Changed
 
+- MINOR The algebraic reinitialization PDE had some issues converging towards steady-state. To solve them, this PR:
+  - changes the weak formulation of the problem solved (the curvature field is no more required);
+  - changes how the artificial time-step is computed;
+  - changes how the steady-state criterion is evaluated;
+  - removes the filtered VOF solution field for the computation of the projected phase gradient used to compute the unit interface normal vector, and;
+  - renames the `reinitialization CFL` parameter to `artificial time-step factor` (an alias was made for `reinitialization CFL`, to avoid parameter file version issues) [#1879](https://github.com/chaos-polymtl/lethe/pull/1879)
 - MINOR This PR replaces the duplicate ``set_insertion_type`` function definitions in ``dem.cc``, ``cfd_dem_coupling.cc``, and ``cfd_dem_coupling_matrix_free.cc`` with a single definition in ``set_insertion_method.cc``. [#1877](https://github.com/chaos-polymtl/lethe/pull/1877)
 
 ## [Master] - 2026/01/12
 
-## Fixed
+### Fixed
 
-- Minor The lethe-particles/distribution_normal.prm application test was using a log-normal distribution. The parameter was changed back to ``normal``. As a result, the output of the test did change. [#1876](https://github.com/chaos-polymtl/lethe/pull/1876) 
+- MINOR The lethe-particles/distribution_normal.prm application test was using a log-normal distribution. The parameter was changed back to ``normal``. As a result, the output of the test did change. [#1876](https://github.com/chaos-polymtl/lethe/pull/1876) 
 
 - Minor The convection term in the VANS equations for models A and B is changed from ``local_matrix_ij += ((phi_u_j * void_fraction * velocity_gradient * phi_u_i) + (grad_phi_u_j * void_fraction * velocity * phi_u_i));`` to ``local_matrix_ij += ((velocity_gradient * phi_u_j * void_fraction * phi_u_i) + (grad_phi_u_j * void_fraction * velocity * phi_u_i))`` in the matrix assembly, to match the correct algebraic formula. The output of the ``lethe-fluid-particles`` and ``lethe-fluid-vans`` application tests changed only slightly. Therefore, their outputs were updated in this PR as well. [#1874](https://github.com/chaos-polymtl/lethe/pull/1874) 
 
 
 ## [Master] - 2026/01/07
 
-## Added
+### Added
 
 - MINOR The particle projector can be used to project the particle-fluid force onto the CFD mesh. This requires the assembly of a matrix and a right-hand side. On smaller meshes, this assembly is quite cheap, but when using the matrix-free methods, it becomes a significant cost for large parallel simulations. This PR optimizes this projection step by ensuring that the matrix and the preconditioner are only recalculated and reinitialized when it is necessary. In the case when the projected field does not have a Neumann boundary condition, then the matrix is only assembled once, whenever the degrees of freedom are set up, instead of at every iteration. This greatly diminishes the cost of the explicit, semi-implicit and implicit coupling. There are still optimizations remaining (for example, to carry out all the projections in a single step instead of one by one), but these will be addressed in a follow-up PR. This already reduces the cost by 20-25% of the projection. Furthermore, the projection was not adequately timed, this has been fixed in this PR. [#1873](https://github.com/chaos-polymtl/lethe/pull/1873)
 
-## Fixed
+### Fixed
 
 - MINOR  The use of an automatic pointer was creating a compilation error on modern C++ compiler. The communicator is explicitely declared instead of using an automatic pointer. This does not affect anything, but makes compilation more stable accross platforms. [#1872](https://github.com/chaos-polymtl/lethe/pull/1872)
 
 ## [Master] - 2026/01/06
 
-## Fixed
+### Fixed
 
 - MINOR The test read_mortar_data_02 constantly fails in the CI release, even if it passes on debug mode and also in local office computers. Since read_mortar_data_01 and read_mortar_data_03 are very similar to such test (only with different grids), this PR solves this issue by removing the (unnecessary) read_mortar_data_02 test. [#1871](https://github.com/chaos-polymtl/lethe/pull/1871)
 
