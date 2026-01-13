@@ -13,7 +13,7 @@ using namespace dealii;
 DeclExceptionMsg(
   ValidityMapNotReset,
   "The subequation validity map is not reset. Call "
-  "'set_vof_dof_handler_and_filtered_solution' before 'set_vof_solution'.");
+  "'set_vof_solution_and_dof_handler' before 'set_vof_solution'.");
 
 DeclException1(
   InvalidSubequationSolution,
@@ -185,7 +185,7 @@ public:
    * @brief Get a reference to the DoFHandler of the VOF auxiliary physics.
    *
    * @return Reference to the DoFHandler of the VOF auxiliary physics associated
-   * to the set Filtered VOF solution field.
+   * to the set VOF solution field.
    */
   const DoFHandler<dim> &
   get_vof_dof_handler()
@@ -212,17 +212,6 @@ public:
   }
 
   /**
-   * @brief Get a reference to the filtered phase fraction solution vector.
-   *
-   * @return Reference to the filtered phase fraction solution vector.
-   */
-  const GlobalVectorType &
-  get_vof_filtered_solution()
-  {
-    return *this->vof_filtered_solution_vector;
-  }
-
-  /**
    * @brief Get a reference to the phase fraction solution vector.
    *
    * @return Reference to the phase fraction solution vector.
@@ -235,19 +224,16 @@ public:
 
   /**
    * @brief Check and return a boolean indicating if the solution of the
-   * subequation has been solved for the corresponding @p dof_handler_vof,
-   * @p vof_filtered_solution_vector and/or @p vof_solution_vector previously set
-   * with
-   * VOFSubequationsInterface<dim>::set_vof_filtered_solution_and_dof_handler
-   * and VOFSubequationsInterface<dim>::set_vof_solution.
+   * subequation has been solved for the corresponding @p dof_handler_vof
+   * and/or @p vof_solution_vector previously set with
+   * VOFSubequationsInterface<dim>::set_vof_solution_and_dof_handler
    *
    * @param[in] subequation_id Identifier associated with a specific
    * subequation.
    *
    * @return
    *  - @p true if the solution of the subequation corresponds to the set
-   * @p dof_handler_vof, @p vof_filtered_solution_vector and/or
-   * @p vof_solution_vector.
+   * @p dof_handler_vof and/or @p vof_solution_vector.
    *  - Otherwise, @p false.
    */
   bool
@@ -339,49 +325,25 @@ public:
   }
 
   /**
-   * @brief Set a new VOF filtered solution vector and DoFHandler for the
-   * subequations to be solved and reset their validity.
+   * @brief Set a new VOF solution vector and DoFHandler for the subequations
+   * to be solved and reset their validity.
    *
-   * @param[in] vof_filtered_solution_vector Reference to the filtered VOF
-   * solution vector associated with the subequations to be solved.
+   * @param[in] vof_solution_vector VOF solution vector associated with the
+   * subequations to be solved.
    *
    * @param[in] dof_handler_vof Reference to the DoFHandler associated with the
-   * specified VOF filtered solution.
-   *
-   * @note At the moment, the VOF filtered solution is only used in
-   * VOFPhaseGradientProjection.
+   * specified VOF solution.
    */
   void
-  set_vof_filtered_solution_and_dof_handler(
-    const GlobalVectorType &vof_filtered_solution_vector,
-    const DoFHandler<dim>  &dof_handler_vof)
+  set_vof_solution_and_dof_handler(const GlobalVectorType &vof_solution_vector,
+                                   const DoFHandler<dim>  &dof_handler_vof)
   {
     // Reset validity map
     reset_subequations_solutions_validity();
 
     // Set solution values and DoFHandler
-    this->vof_filtered_solution_vector =
-      std::cref(vof_filtered_solution_vector);
-    this->dof_handler_vof = std::cref(dof_handler_vof);
-  }
-
-  /**
-   * @brief Set a new VOF solution vector and DoFHandler for the subequations to
-   * be solved.
-   *
-   * @param[in] vof_solution_vector VOF solution vector associated with the
-   * subequations to be solved.
-   *
-   * @note At the moment, the VOF unfiltered solution is only used in
-   * VOFAlgebraicInterfaceReinitialization.
-   */
-  void
-  set_vof_solution(const GlobalVectorType &vof_solution_vector)
-  {
-    // By checking if the validity map has been reset, we make sure that the VOF
-    // solution is consistent with the set filtered solution and the DoFHandler.
-    AssertThrow(validity_map_has_been_reset(), ValidityMapNotReset());
     this->vof_solution_vector = std::cref(vof_solution_vector);
+    this->dof_handler_vof     = std::cref(dof_handler_vof);
   }
 
   /**
@@ -439,11 +401,6 @@ private:
   /// VOF DoFHandler associated with solved equations
   std::optional<std::reference_wrapper<const DoFHandler<dim>>> dof_handler_vof;
 
-  /** Filtered VOF solution field associated with solved equations
-   * @note Used in the computation of VOF phase gradient projection */
-  std::optional<std::reference_wrapper<const GlobalVectorType>>
-    vof_filtered_solution_vector;
-
   /** VOF solution field associated with solved equations
    * @note Serves as initial condition in algebraic reinitialization */
   std::optional<std::reference_wrapper<const GlobalVectorType>>
@@ -467,16 +424,15 @@ private:
 
   /**
    * Booleans indicating if the subequation has been solved with the set VOF
-   * filtered and unfiltered solution vectors set respectively with
-   * VOFSubequationsInterface<dim>::set_vof_filtered_solution_and_dof_handler
-   * and VOFSubequationsInterface<dim>::set_vof_solution.
+   * solution vector. The VOF solution vector is set with
+   * VOFSubequationsInterface<dim>::set_vof_solution_and_dof_handler.
    *
    * During initialization
    * (VOFSubequationsInterface<dim>::initialize_subequations),
    * all boolean are set to @p false.
    *
-   * We start by setting a VOF filtered solution and DOFHandler
-   * (VOFSubequationsInterface<dim>::set_vof_filtered_solution_and_dof_handler),
+   * We start by setting a VOF solution and DOFHandler
+   * (VOFSubequationsInterface<dim>::set_vof_solution_and_dof_handler),
    * and then start solving equations making sure that dependencies are met
    * (VOFPhaseGradientProjection<dim>::check_dependencies_validity,
    * VOFCurvatureProjection<dim>::check_dependencies_validity, and
@@ -485,25 +441,20 @@ private:
    * gradient projection subequation has to be solved before as the projected
    * phase gradient is used in the curvature projection subequation.
    *
-   * A subequation in the validity map is to @p true only when it is solved and
-   * it remains valid until a new VOF filtered solution and/or DOFHandler are
+   * A subequation in the validity map is to @p true only when it is solved, and
+   * it remains valid until a new VOF solution and/or DOFHandler are
    * set through
-   * VOFSubequationsInterface<dim>::set_vof_filtered_solution_and_dof_handler.
+   * VOFSubequationsInterface<dim>::set_vof_solution_and_dof_handler.
    *
    * This validation mechanism allows, to check if:
-   * - A new VOF filtered/unfiltered solution has been set;
+   * - A new VOF solution has been set;
    * - All dependencies of the subequation have been solved;
-   * - The current solution of the subequation is valid and avoid unnecessarily
+   * - The current solution of the subequation is valid, and avoid unnecessarily
    * solving it once more.
    *
    * @note
-   * VOFSubequationsInterface<dim>::set_vof_filtered_solution_and_dof_handler
+   * VOFSubequationsInterface<dim>::set_vof_solution_and_dof_handler
    * also resets the validity map values to @p false.
-   *
-   * @note VOFAlgebraicInterfaceReinitialization also requires a VOF unfiltered
-   * solution. The solution is set by calling
-   * VOFSubequationsInterface<dim>::set_vof_solution, right after
-   * VOFSubequationsInterface<dim>::set_vof_filtered_solution_and_dof_handler.
    */
   std::map<VOFSubequationsID, bool> subequations_solutions_validity;
 };

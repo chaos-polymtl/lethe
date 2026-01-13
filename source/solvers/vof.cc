@@ -1700,13 +1700,8 @@ VolumeOfFluid<dim>::modify_solution()
   if (simulation_parameters.multiphysics.vof_parameters.surface_tension_force
         .enable)
     {
-      // TODO AA test with unfiltered solution
-      // this->vof_subequations_interface
-      //   ->set_vof_filtered_solution_and_dof_handler(this->filtered_solution,
-      //                                               this->dof_handler);
-      this->vof_subequations_interface
-        ->set_vof_filtered_solution_and_dof_handler(*this->present_solution,
-                                                    *this->dof_handler);
+      this->vof_subequations_interface->set_vof_solution_and_dof_handler(
+        *this->present_solution, *this->dof_handler);
       this->vof_subequations_interface->solve_specific_subequation(
         VOFSubequationsID::phase_gradient_projection);
       this->vof_subequations_interface->solve_specific_subequation(
@@ -2582,9 +2577,8 @@ VolumeOfFluid<dim>::set_initial_conditions()
       simulation_parameters.multiphysics.vof_parameters.regularization_method
         .algebraic_interface_reinitialization.enable)
     {
-      this->vof_subequations_interface
-        ->set_vof_filtered_solution_and_dof_handler(*this->present_solution,
-                                                    *this->dof_handler);
+      this->vof_subequations_interface->set_vof_solution_and_dof_handler(
+        *this->present_solution, *this->dof_handler);
       this->vof_subequations_interface->solve_specific_subequation(
         VOFSubequationsID::phase_gradient_projection);
       this->vof_subequations_interface->solve_specific_subequation(
@@ -3019,22 +3013,10 @@ VolumeOfFluid<dim>::reinitialize_interface_with_algebraic_method()
 
       GlobalVectorType previous_reinitialized_solution_owned(
         this->locally_owned_dofs, mpi_communicator);
-      GlobalVectorType previous_filtered_solution(this->locally_owned_dofs,
-                                                  this->locally_relevant_dofs,
-                                                  mpi_communicator);
-
-      // Apply filter to previous solution
-      apply_phase_filter((*this->previous_solutions)[0],
-                         previous_filtered_solution);
-
-      // TODO AA: remove filtered solution and use only unfiltered values
 
       // Set VOF information in the VOF subequations interface
-      this->vof_subequations_interface
-        ->set_vof_filtered_solution_and_dof_handler(
-          (*this->previous_solutions)[0], *this->dof_handler);
-      this->vof_subequations_interface->set_vof_solution(
-        (*this->previous_solutions)[0]);
+      this->vof_subequations_interface->set_vof_solution_and_dof_handler(
+        (*this->previous_solutions)[0], *this->dof_handler);
 
       // Solve phase gradient projection followed by algebraic interface
       // reinitialization steps
@@ -3042,7 +3024,6 @@ VolumeOfFluid<dim>::reinitialize_interface_with_algebraic_method()
         VOFSubequationsID::phase_gradient_projection);
       this->vof_subequations_interface->solve_specific_subequation(
         VOFSubequationsID::algebraic_interface_reinitialization);
-      // this->vof_subequations_interface->solve();
 
       // Overwrite VOF previous solution with the reinitialized result
       FETools::interpolate(
@@ -3056,17 +3037,9 @@ VolumeOfFluid<dim>::reinitialize_interface_with_algebraic_method()
       (*this->previous_solutions)[0] = previous_reinitialized_solution_owned;
     }
 
-  // Apply filter to solution and set VOF information in the subequation
-  // interface
-  apply_phase_filter(*this->present_solution, *this->filtered_solution);
-
-  // TODO AA: remove filtered solution and use only unfiltered values
-
   // Set VOF information in the VOF subequations interface
-  this->vof_subequations_interface->set_vof_filtered_solution_and_dof_handler(
+  this->vof_subequations_interface->set_vof_solution_and_dof_handler(
     *this->present_solution, *this->dof_handler);
-  this->vof_subequations_interface->set_vof_solution(*this->present_solution);
-
 
   // Solve phase gradient projection followed by algebraic interface
   // reinitialization steps
@@ -3074,7 +3047,6 @@ VolumeOfFluid<dim>::reinitialize_interface_with_algebraic_method()
     VOFSubequationsID::phase_gradient_projection);
   this->vof_subequations_interface->solve_specific_subequation(
     VOFSubequationsID::algebraic_interface_reinitialization);
-  // this->vof_subequations_interface->solve();
 
   // Overwrite the VOF solution with the algebraic interface reinitialization
   FETools::interpolate(

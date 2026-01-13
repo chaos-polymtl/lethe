@@ -9,24 +9,24 @@
 #include <deal.II/fe/fe_simplex_p.h>
 
 DeclException1(
-  SameFilteredVOFSolution,
+  SameVOFSolution,
   std::string,
-  "A new VOF filtered phase fraction solution has not been set. There is no need "
+  "A new VOF phase fraction solution has not been set. There is no need "
   "to solve once more the following equation: "
     << arg1
-    << ". If you wish to solve the subequation for a new filtered phase "
-       "fraction field, please set a new VOF filtered solution field with "
-       "VOFSubequationsInterface<dim>::set_vof_filtered_solution_and_dof_handler() "
+    << ". If you wish to solve the subequation for a new phase fraction field, "
+       "please set a new VOF solution field with "
+       "VOFSubequationsInterface<dim>::set_vof_solution_and_dof_handler() "
        "before solving the subequation.");
 
 DeclException1(
-  NoFilteredVOFSolution,
+  NoVOFSolution,
   std::string,
-  "No VOF filtered phase fraction solution has been set. A valid VOF filtered "
-  "phase fraction solution is required to solve the "
+  "No VOF phase fraction solution has been set. A valid VOF phase fraction "
+  "solution is required to solve the "
     << arg1
-    << ". Please set a new VOF filtered phase fraction solution field with "
-       "VOFSubequationsInterface<dim>::set_vof_filtered_solution_and_dof_handler() "
+    << ". Please set a new VOF phase fraction solution field with "
+       "VOFSubequationsInterface<dim>::set_vof_solution_and_dof_handler() "
        "before solving the subequation.");
 
 /**
@@ -115,7 +115,7 @@ private:
   assemble_system_matrix_and_rhs() override;
 
   /**
-   * @brief Check if a new VOF filtered solution has been set.
+   * @brief Check if a new VOF solution has been set.
    */
   void
   check_dependencies_validity() override;

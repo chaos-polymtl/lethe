@@ -1,4 +1,4 @@
-# SPDX-FileCopyrightText: Copyright (c) 2025 The Lethe Authors
+# SPDX-FileCopyrightText: Copyright (c) 2025-2026 The Lethe Authors
 # SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
 # Listing of Parameters
@@ -62,10 +62,10 @@ subsection VOF
     set type      = algebraic interface reinitialization
     set frequency = 1
     subsection algebraic interface reinitialization
-      set diffusivity multiplier = 0.6
-      set diffusivity power      = 1
-      set max steps number       = 5
-      set reinitialization CFL   = 1
+      set diffusivity multiplier      = 0.6
+      set diffusivity power           = 1
+      set max steps number            = 5
+      set artificial time-step factor = 1
     end
   end
 end

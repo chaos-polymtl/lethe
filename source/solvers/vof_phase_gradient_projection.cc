@@ -43,8 +43,8 @@ VOFPhaseGradientProjection<dim>::assemble_system_matrix_and_rhs()
   // Extractor for phase fraction gradient vector
   FEValuesExtractors::Vector phase_fraction_gradients(0);
 
-  // Initialize filtered phase fraction gradient solution array
-  std::vector<Tensor<1, dim>> present_filtered_vof_phase_gradients(n_q_points);
+  // Initialize phase fraction gradient solution array
+  std::vector<Tensor<1, dim>> present_vof_phase_gradients(n_q_points);
 
   // Initialize shape function arrays
   std::vector<Tensor<1, dim>> phi(n_dofs_per_cell);
@@ -86,10 +86,10 @@ VOFPhaseGradientProjection<dim>::assemble_system_matrix_and_rhs()
             compute_cell_diameter<dim>(compute_cell_measure_with_JxW(JxW_vec),
                                        fe_phase_gradient_projection.degree);
 
-          // Get VOF filtered phase fraction gradients
+          // Get VOF phase fraction gradients
           fe_values_vof.get_function_gradients(
-            this->subequations_interface.get_vof_filtered_solution(),
-            present_filtered_vof_phase_gradients);
+            this->subequations_interface.get_vof_solution(),
+            present_vof_phase_gradients);
 
           // Loop over quadrature points
           for (unsigned int q = 0; q < n_q_points; ++q)
@@ -118,9 +118,8 @@ VOFPhaseGradientProjection<dim>::assemble_system_matrix_and_rhs()
                         JxW_vec[q];
                     }
                   // Assemble local right-hand side (rhs)
-                  local_rhs(i) += phi[i] *
-                                  present_filtered_vof_phase_gradients[q] *
-                                  JxW_vec[q];
+                  local_rhs(i) +=
+                    phi[i] * present_vof_phase_gradients[q] * JxW_vec[q];
                 }
             }
 
@@ -141,12 +140,11 @@ template <int dim>
 void
 VOFPhaseGradientProjection<dim>::check_dependencies_validity()
 {
-  AssertThrow(
-    this->subequations_interface.get_vof_filtered_solution().size() > 0,
-    NoFilteredVOFSolution(this->subequations_interface.get_subequation_string(
-      this->subequation_id)));
+  AssertThrow(this->subequations_interface.get_vof_solution().size() > 0,
+              NoVOFSolution(this->subequations_interface.get_subequation_string(
+                this->subequation_id)));
   AssertThrow(this->subequations_interface.validity_map_has_been_reset(),
-              SameFilteredVOFSolution(
+              SameVOFSolution(
                 this->subequations_interface.get_subequation_string(
                   this->subequation_id)));
 }

@@ -763,7 +763,7 @@ VOFAlgebraicInterfaceReinitialization<dim>::write_output_results(
     file_name,
     step, // time,
     step,
-    1, // group_files, //TODO AA get value from simualtion control somehow
+    this->simulation_parameters.simulation_control.group_files,
     mpi_communicator);
 }
 

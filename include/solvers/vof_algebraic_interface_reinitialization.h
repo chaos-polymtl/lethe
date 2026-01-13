@@ -98,14 +98,12 @@ public:
    */
   ~VOFAlgebraicInterfaceReinitialization() = default;
 
-
   /**
    * @brief Set up the DofHandler and the degree of freedom associated with
    * the subequation.
    */
   void
   setup_dofs() override;
-
 
   /**
    * @brief Solve interface algebraic reinitialization process until one of the
@@ -266,11 +264,10 @@ private:
   inline double
   compute_time_step()
   {
-    // Get CFL value
-    const double cfl =
+    // Get artificial time-step factor
+    const double dtau_factor =
       this->simulation_parameters.multiphysics.vof_parameters
-        .regularization_method.algebraic_interface_reinitialization
-        .reinitialization_cfl;
+        .regularization_method.algebraic_interface_reinitialization.dtau_factor;
 
     // Get the minimum cell size
     const double h_min =
@@ -283,7 +280,7 @@ private:
     const double diffusivity_inv = 1.0 / compute_diffusivity(h_min);
 
     // Compute pseudo time step
-    const double dtau = h_min * h_min * diffusivity_inv * cfl;
+    const double dtau = h_min * h_min * diffusivity_inv * dtau_factor;
 
     // Use the smallest of the computed pseudo time-step and the simulation
     // time-step for the reinitialization scheme
@@ -349,7 +346,7 @@ private:
       }
     else
       {
-        // Get the stop criterion of the pseudo-time-stepping scheme
+        // Get the stop criterion of the artificial time-stepping scheme
         double steady_state_criterion =
           this->simulation_parameters.multiphysics.vof_parameters
             .regularization_method.algebraic_interface_reinitialization
