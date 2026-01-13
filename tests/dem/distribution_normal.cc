@@ -148,11 +148,11 @@ main(int argc, char **argv)
            DEM::DEMProperties::PropertiesIndex,
            DistributionWeightingType::number_based>(0.005, 0.0005);
 
-      // const double mu_v    = 2.033376613398894;
-      // const double sigma_v = 0.14877088048483555;
-      // test<3,
-      //      DEM::DEMProperties::PropertiesIndex,
-      //      DistributionWeightingType::volume_based>(mu_v, sigma_v);
+      const double mu_v    = 0.0051470873786407766;
+      const double sigma_v = 0.000492877682433179;
+      test<3,
+           DEM::DEMProperties::PropertiesIndex,
+           DistributionWeightingType::volume_based>(mu_v, sigma_v);
     }
   catch (std::exception &exc)
     {

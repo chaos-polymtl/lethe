@@ -40,11 +40,7 @@ NormalDistribution::NormalDistribution(
       // is too stiff due to the order of the polynomial we are trying to solve
       // for. Because of this, volume_based distribution is not supported for
       // now. MFIX-exa uses a homotopy method to solve the system.
-      AssertThrow(false,
-                  ExcMessage(
-                    "Normal distribution only support volume weight"
-                    " distribution for now. Please change the 'distribution "
-                    "weighting basis' parameter to 'number'."));
+
 
       // Volume based parameters
       const double mv  = d_average;
@@ -66,7 +62,7 @@ NormalDistribution::NormalDistribution(
       // Initial estimates of mu_n and sigma_n
       double mu_n    = d_average;
       double sigma_n = d_standard_deviation;
-      while (residual_l2_norm > 1.e-10 && iteration_counter < 1000)
+      while (residual_l2_norm > 1.e-12 && iteration_counter < 1000)
         {
           const double sn  = sigma_n;
           const double sn2 = sn * sn;
@@ -74,8 +70,8 @@ NormalDistribution::NormalDistribution(
           const double sn4 = sn2 * sn2;
 
           const double mn  = mu_n;
-          const double mn2 = mu_n * mu_n;
-          const double mn3 = mn2 * mu_n;
+          const double mn2 = mn * mn;
+          const double mn3 = mn2 * mn;
           const double mn4 = mn2 * mn2;
           const double mn5 = mn4 * mn;
 
@@ -87,13 +83,14 @@ NormalDistribution::NormalDistribution(
             12. * sn2 * mn + 4 * mn3 - 3. * mv * (sn2 + mn2);
 
           const double dR2_sigma_n =
-            12 * sn3 * (5 * mn - 2 * mv) +
-            2 * sn * (10 * mn3 - 12 * mn2 * mv + 3 * mn * mv2) -
-            6 * sv2 * sn * mn;
+            12. * sn3 * (5. * mn - 2. * mv) +
+            2. * sn * (10. * mn3 - 12. * mn2 * mv + 3. * mn * mv2) -
+            6. * sv2 * sn * mn;
 
-          const double dR2_mu_n =
-            15 * sn4 + sn2 * (30 * mn2 - 24 * mn * mv + 3 * mv2) + 5 * mn4 +
-            3 * mn2 * mv2 - 8 * mn3 * mv - sv2 * (3 * sn2 + 3 * mn2);
+          const double dR2_mu_n = 15. * sn4 +
+                                  sn2 * (30. * mn2 - 24. * mn * mv + 3. * mv2) +
+                                  5. * mn4 + 3. * mn2 * mv2 - 8. * mn3 * mv -
+                                  sv2 * (3. * sn2 + 3. * mn2);
 
           system_matrix.set(0, 0, dR1_sigma_n);
           system_matrix.set(0, 1, dR1_mu_n);
@@ -113,19 +110,16 @@ NormalDistribution::NormalDistribution(
           system_rhs[0] = -R1;
           system_rhs[1] = -R2;
 
-          // Solve for the update
-          system_matrix.solve(system_rhs);
+          system_matrix.print_formatted(std::cout);
+          system_rhs.print(std::cout);
 
-          std::cout << "Step: d_sigma=" << system_rhs[0]
-                    << " d_mu=" << system_rhs[1] << std::endl;
+          // Solve for the update
+          system_matrix.compute_lu_factorization();
+          system_matrix.solve(system_rhs);
 
           // USE THE MATHEMATICALLY CORRECT MAPPING:
           sigma_n += system_rhs[0];
           mu_n += system_rhs[1];
-
-          // Helps prevent non-physical values
-          sigma_n = std::max(sigma_n, 1e-10);
-          mu_n    = std::max(mu_n, 1e-10);
 
           // While loop conditions
           residual_l2_norm = system_rhs.l2_norm();
