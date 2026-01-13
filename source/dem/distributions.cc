@@ -30,19 +30,19 @@ NormalDistribution::NormalDistribution(
       diameter_average   = d_average;
       standard_deviation = d_standard_deviation;
     }
-  // If the user specified the distribution as volume based, we need to convert
-  // the average and standard deviation to be number based. To do so, we need to
+  // If the user specified the distribution as volume-based, we need to convert
+  // the average and standard deviation to be number-based. To do so, we need to
   // solve a nonlinear system.
   // https://mfix.netl.doe.gov/doc/mfix-exa/guide/latest/references/size_distributions.html#normal-distribution
   else if (this->weighting_type == DistributionWeightingType::volume_based)
     {
       // Either there is an error with the Newton-Raphson solver or the problem
       // is too stiff due to the order of the polynomial we are trying to solve
-      // for. Because of this, volume_based distribution is not supported for
+      // for. Because of this, volume-based distribution is not supported for
       // now. MFIX-exa uses a homotopy method to solve the system.
 
 
-      // Volume based parameters
+      // Volume-based parameters
       const double mv  = d_average;
       const double mv2 = mv * mv;
 
@@ -127,7 +127,7 @@ NormalDistribution::NormalDistribution(
         ExcMessage("The numbered weighted mean and standard deviation of "
                    "the normal distribution has not been found from the volume "
                    "weighted values provided in the parameter file. To solve "
-                   "this issue, devine the distribution as number based."));
+                   "this issue, define the distribution as number-based."));
 
       diameter_average   = mu_n;
       standard_deviation = sigma_n;
@@ -235,14 +235,14 @@ LogNormalDistribution::LogNormalDistribution(
       1. + Utilities::fixed_power<2>(d_standard_deviation / d_average))))
   , gen(prn_seed)
 {
-  // We need the average and the standard deviation to be based on number to do
+  // We need the number-based average and standard deviation to do
   // our sample. The standard deviation is always the same.
   if (this->weighting_type == DistributionWeightingType::number_based)
     {
       mu_ln = std::log(d_average) - 0.5 * Utilities::fixed_power<2>(sigma_ln);
     }
-  // If the user specified the distribution as volume based, we need to convert
-  // the average and standard deviation to be number based.
+  // If the user specified the distribution as volume-based, we need to convert
+  // the average and standard deviation to be number-based.
   // https://mfix.netl.doe.gov/doc/mfix-exa/guide/latest/references/size_distributions.html#log-normal-distribution
   else if (this->weighting_type == DistributionWeightingType::volume_based)
     {
@@ -391,7 +391,7 @@ CustomDistribution::CustomDistribution(
   AssertThrow(distribution_weighting_type ==
                 DistributionWeightingType::volume_based,
               ExcMessage(
-                "Custom distribution only supports volume based "
+                "Custom distribution only supports volume-based "
                 "distribution. Please set the 'distribution weighting basis' "
                 "parameter to `volume`."));
 

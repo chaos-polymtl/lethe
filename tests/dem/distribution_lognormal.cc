@@ -2,10 +2,10 @@
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
 /**
- * @brief Inserting particles following a normal distribution. At the end, the
+ * @brief Inserting particles following a log-normal distribution. At the end, the
  * mean and standard deviation of the inserted particles is computed. By
  * increasing the number of inserted particles, those two values should converge
- * the parameter used as inputs.
+ * to the parameter used as inputs.
  */
 
 // Deal.II includes
@@ -74,7 +74,7 @@ test(const double mu, const double sigma)
   Particles::ParticleHandler<dim> particle_handler(
     tr, mapping, PropertiesIndex::n_properties);
 
-  // Calling normal distribution
+  // Calling log-normal distribution
   std::vector<std::shared_ptr<Distribution>> distribution_object_container;
 
   distribution_object_container.push_back(
@@ -97,10 +97,10 @@ test(const double mu, const double sigma)
 
   // Output
   if constexpr (weighting_type == DistributionWeightingType::number_based)
-    deallog << "Numbered weighted normal distribution " << std::endl;
+    deallog << "Numbered weighted log-normal distribution " << std::endl;
 
   if constexpr (weighting_type == DistributionWeightingType::volume_based)
-    deallog << "Volume weighted normal distribution " << std::endl;
+    deallog << "Volume weighted log-normal distribution " << std::endl;
 
   double             sum_dp                    = 0.;
   int                particle_number           = 0;
@@ -133,7 +133,7 @@ test(const double mu, const double sigma)
   const double sigma_verif = std::sqrt(variance);
 
   deallog << "Distribution mean: " << mean_dp << std::endl;
-  deallog << "Distribution standard distribution: " << sigma_verif << std::endl
+  deallog << "Distribution standard deviation: " << sigma_verif << std::endl
           << std::endl;
 }
 
