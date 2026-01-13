@@ -17,12 +17,12 @@ protected:
                  &distribution_weighting_type);
 
   /**
-   * @brief Minimal cut off diameters values.
+   * @brief Minimal cutoff diameters values.
    */
   double dia_min_cutoff;
 
   /**
-   * @brief Maximum cut off diameters values.
+   * @brief Maximum cutoff diameters values.
    */
   double dia_max_cutoff;
 
@@ -84,7 +84,7 @@ public:
    * @param[in] prn_seed Pseudo-random number seed for the diameter generation.
    * @param[in] min_cutoff Minimum cutoff diameter.
    * @param[in] max_cutoff Maximum cutoff diameter.
-   * @param distribution_weighting_type Weighting type of the distribution.
+   * @param[in[ distribution_weighting_type Weighting type of the distribution.
    */
   NormalDistribution(const double       &d_average,
                      const double       &d_standard_deviation,
@@ -139,7 +139,7 @@ private:
   double diameter_average;
 
   /**
-   * @brief Standard deviation of distribution of the normal distribution.
+   * @brief Standard deviation of the normal distribution.
    */
   double standard_deviation;
 
@@ -163,7 +163,7 @@ public:
    * @param[in] prn_seed Pseudo-random number seed for the diameter generation.
    * @param[in] min_cutoff Minimum cutoff diameter.
    * @param[in] max_cutoff Maximum cutoff diameter.
-   * @param distribution_weighting_type Weighting type of the distribution.
+   * @param[in] distribution_weighting_type Weighting type of the distribution.
    */
   LogNormalDistribution(const double       &d_average,
                         const double       &d_standard_deviation,
@@ -297,7 +297,7 @@ public:
    * @param[in] prn_seed Pseudo-random number seed for the diameter generation.
   // * @param[in] min_cutoff Minimum cutoff diameter.
   // * @param[in] max_cutoff Maximum cutoff diameter.
-   * @param distribution_weighting_type Weighting type of the distribution.
+   * @param[in] distribution_weighting_type Weighting type of the distribution.
    */
   CustomDistribution(const std::vector<double> &d_list,
                      const std::vector<double> &d_probabilities,

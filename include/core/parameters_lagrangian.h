@@ -229,9 +229,9 @@ namespace Parameters
        * based on volume fraction for the custom distribution for each particle
        * type.
        * @param[in,out] seed_for_dist Random seed for the size distribution.
-       * @param dia_min_cutoff
-       * @param diameter_max_cutoff
-       * @param distribution_weighting_basis_type
+       * @param[in,out] dia_min_cutoff
+       * @param[in,out] dia_max_cutoff
+       * @param[in,out] distribution_weighting_basis_type
        * @param[in,out] p_number Number of each particle type.
        * @param[in,out] p_density Density of each particle type.
        * @param[in,out] p_youngs_modulus Young's modulus of each particle type.
@@ -270,7 +270,7 @@ namespace Parameters
                                   &p_custom_probability,
         std::vector<unsigned int> &seed_for_dist,
         std::vector<double>       &dia_min_cutoff,
-        std::vector<double>       &diameter_max_cutoff,
+        std::vector<double>       &dia_max_cutoff,
         std::vector<DistributionWeightingType>
           &distribution_weighting_basis_type,
         std::unordered_map<unsigned int, int>    &p_number,
