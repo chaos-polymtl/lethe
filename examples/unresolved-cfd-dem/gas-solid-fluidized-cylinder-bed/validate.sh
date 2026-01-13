@@ -23,7 +23,7 @@ parse_command_line "$@"
 
 folder="$output_root/gas-solid-fluidized-bed-cylindrical"
 action_packing="mpirun -np $n_proc lethe-particles packing-particles.prm" 
-action_cfddem="mpirun -np $n_proc lethe-fluid-particles mf-fluidized-bed-modelA-semi-implicit.prm" 
+action_cfddem="mpirun -np $n_proc lethe-fluid-particles-matrix-free mf-fluidized-bed-modelA-semi-implicit.prm" 
 
 recreate_folder "$folder"
 
