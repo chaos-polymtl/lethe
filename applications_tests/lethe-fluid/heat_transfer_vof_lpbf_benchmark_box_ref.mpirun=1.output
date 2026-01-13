@@ -28,12 +28,12 @@ Temperature statistics on fluid:
 VOF Mass Conservation
 ----------------------
     time     surface_fluid_0 geometric_surface_fluid_0 mass_per_length_fluid_0 length_fluid_0 momentum-x_fluid_0 momentum-y_fluid_0 surface_fluid_1 geometric_surface_fluid_1 mass_per_length_fluid_1 length_fluid_1 momentum-x_fluid_1 momentum-y_fluid_1 sharpening_threshold 
-6.012000e-06    1.026563e-01              1.026881e-01            1.831388e-10   6.000000e-01       1.580186e-11       7.297458e-14    2.573437e-01              2.573119e-01            1.137459e-06   6.000000e-01       9.008449e-12       1.135449e-10         5.000000e-01 
+6.012000e-06    1.026563e-01              1.026881e-01            1.831388e-10   6.000000e-01       1.580193e-11       7.298858e-14    2.573437e-01              2.573119e-01            1.137459e-06   6.000000e-01       9.004790e-12       1.135106e-10         5.000000e-01
 
 **********************************************************************************
-Transient iteration: 32       Time: 6.212e-06 Time step: 2e-07    CFL: 0.00236028
+Transient iteration: 32       Time: 6.212e-06 Time step: 2e-07    CFL: 0.00236027
 **********************************************************************************
-Temperature statistics on fluid: 
+Temperature statistics on fluid:
 	     Min: 298
 	     Max: 2071.61
 	 Average: 306.259
@@ -42,13 +42,13 @@ Temperature statistics on fluid:
 ----------------------
 VOF Mass Conservation
 ----------------------
-    time     surface_fluid_0 geometric_surface_fluid_0 mass_per_length_fluid_0 length_fluid_0 momentum-x_fluid_0 momentum-y_fluid_0 surface_fluid_1 geometric_surface_fluid_1 mass_per_length_fluid_1 length_fluid_1 momentum-x_fluid_1 momentum-y_fluid_1 sharpening_threshold 
-6.212000e-06    1.026563e-01              1.026881e-01            1.831388e-10   6.000000e-01       1.583368e-11       7.216750e-14    2.573437e-01              2.573119e-01            1.137459e-06   6.000000e-01       1.002648e-11       1.835078e-10         5.000000e-01 
+    time     surface_fluid_0 geometric_surface_fluid_0 mass_per_length_fluid_0 length_fluid_0 momentum-x_fluid_0 momentum-y_fluid_0 surface_fluid_1 geometric_surface_fluid_1 mass_per_length_fluid_1 length_fluid_1 momentum-x_fluid_1 momentum-y_fluid_1 sharpening_threshold
+6.212000e-06    1.026563e-01              1.026881e-01            1.831388e-10   6.000000e-01       1.583386e-11       7.220477e-14    2.573437e-01              2.573119e-01            1.137459e-06   6.000000e-01       1.002188e-11       1.834351e-10         5.000000e-01
 
 **********************************************************************************
-Transient iteration: 33       Time: 6.412e-06 Time step: 2e-07    CFL: 0.00260554
+Transient iteration: 33       Time: 6.412e-06 Time step: 2e-07    CFL: 0.00260552
 **********************************************************************************
-Temperature statistics on fluid: 
+Temperature statistics on fluid:
 	     Min: 298
 	     Max: 2098.94
 	 Average: 306.498
@@ -57,13 +57,13 @@ Temperature statistics on fluid:
 ----------------------
 VOF Mass Conservation
 ----------------------
-    time     surface_fluid_0 geometric_surface_fluid_0 mass_per_length_fluid_0 length_fluid_0 momentum-x_fluid_0 momentum-y_fluid_0 surface_fluid_1 geometric_surface_fluid_1 mass_per_length_fluid_1 length_fluid_1 momentum-x_fluid_1 momentum-y_fluid_1 sharpening_threshold 
-6.412000e-06    1.026563e-01              1.026881e-01            1.831388e-10   6.000000e-01       1.580683e-11       6.835889e-14    2.573437e-01              2.573119e-01            1.137459e-06   6.000000e-01       1.031684e-11       2.625442e-10         5.000000e-01 
+    time     surface_fluid_0 geometric_surface_fluid_0 mass_per_length_fluid_0 length_fluid_0 momentum-x_fluid_0 momentum-y_fluid_0 surface_fluid_1 geometric_surface_fluid_1 mass_per_length_fluid_1 length_fluid_1 momentum-x_fluid_1 momentum-y_fluid_1 sharpening_threshold
+6.412000e-06    1.026563e-01              1.026881e-01            1.831388e-10   6.000000e-01       1.580711e-11       6.841603e-14    2.573437e-01              2.573119e-01            1.137459e-06   6.000000e-01       1.031147e-11       2.624294e-10         5.000000e-01
 
-**********************************************************************************
-Transient iteration: 34       Time: 6.612e-06 Time step: 2e-07    CFL: 0.00271933
-**********************************************************************************
-Temperature statistics on fluid: 
+*********************************************************************************
+Transient iteration: 34       Time: 6.612e-06 Time step: 2e-07    CFL: 0.0027193
+*********************************************************************************
+Temperature statistics on fluid:
 	     Min: 298
 	     Max: 2125.57
 	 Average: 306.736
@@ -72,5 +72,5 @@ Temperature statistics on fluid:
 ----------------------
 VOF Mass Conservation
 ----------------------
-    time     surface_fluid_0 geometric_surface_fluid_0 mass_per_length_fluid_0 length_fluid_0 momentum-x_fluid_0 momentum-y_fluid_0 surface_fluid_1 geometric_surface_fluid_1 mass_per_length_fluid_1 length_fluid_1 momentum-x_fluid_1 momentum-y_fluid_1 sharpening_threshold 
-6.612000e-06    1.026563e-01              1.026881e-01            1.831388e-10   6.000000e-01       1.579341e-11       6.074112e-14    2.573437e-01              2.573119e-01            1.137459e-06   6.000000e-01       1.011615e-11       3.397020e-10         5.000000e-01 
+    time     surface_fluid_0 geometric_surface_fluid_0 mass_per_length_fluid_0 length_fluid_0 momentum-x_fluid_0 momentum-y_fluid_0 surface_fluid_1 geometric_surface_fluid_1 mass_per_length_fluid_1 length_fluid_1 momentum-x_fluid_1 momentum-y_fluid_1 sharpening_threshold
+6.612000e-06    1.026563e-01              1.026881e-01            1.831388e-10   6.000000e-01       1.579374e-11       6.081300e-14    2.573437e-01              2.573119e-01            1.137459e-06   6.000000e-01       1.011016e-11       3.395390e-10         5.000000e-01

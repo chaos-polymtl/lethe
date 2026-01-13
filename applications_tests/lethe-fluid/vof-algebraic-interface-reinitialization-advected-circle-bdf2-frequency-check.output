@@ -72,13 +72,13 @@ Transient iteration: 4        Time: 3        Time step: 1        CFL: 0.770874
 VOF Mass Conservation
 ----------------------
     time     surface_fluid_0 geometric_surface_fluid_0 mass_per_length_fluid_0 length_fluid_0 momentum-x_fluid_0 momentum-y_fluid_0 surface_fluid_1 geometric_surface_fluid_1 mass_per_length_fluid_1 length_fluid_1 momentum-x_fluid_1 momentum-y_fluid_1 sharpening_threshold 
-3.000000e+00    1.427576e+01              1.430502e+01            1.427576e+02   4.617564e+00       3.548107e+00       0.000000e+00    1.724237e+00              1.694978e+00            1.724237e+01   4.617564e+00       4.310594e-01       0.000000e+00         5.000000e-01 
+3.000000e+00    1.427734e+01              1.431624e+01            1.427734e+02   4.603200e+00       3.548503e+00       0.000000e+00    1.722656e+00              1.683758e+00            1.722656e+01   4.603200e+00       4.306641e-01       0.000000e+00         5.000000e-01
 
 ---------------
 VOF Barycenter
 ---------------
-    time        x_vof         y_vof        vx_vof       vy_vof    
-3.000000e+00 7.521281e-02 -2.261012e-10 2.500000e-02 0.000000e+00 
+    time        x_vof         y_vof        vx_vof       vy_vof
+3.000000e+00 7.533435e-02 -2.220533e-10 2.500000e-02 0.000000e+00
 
 *******************************************************************************
 Transient iteration: 5        Time: 4        Time step: 1        CFL: 0.770874
@@ -87,14 +87,14 @@ Transient iteration: 5        Time: 4        Time step: 1        CFL: 0.770874
 ----------------------
 VOF Mass Conservation
 ----------------------
-    time     surface_fluid_0 geometric_surface_fluid_0 mass_per_length_fluid_0 length_fluid_0 momentum-x_fluid_0 momentum-y_fluid_0 surface_fluid_1 geometric_surface_fluid_1 mass_per_length_fluid_1 length_fluid_1 momentum-x_fluid_1 momentum-y_fluid_1 sharpening_threshold 
-4.000000e+00    1.427576e+01              1.430449e+01            1.427576e+02   4.617804e+00       3.548107e+00       0.000000e+00    1.724241e+00              1.695509e+00            1.724241e+01   4.617804e+00       4.310601e-01       0.000000e+00         5.000000e-01 
+    time     surface_fluid_0 geometric_surface_fluid_0 mass_per_length_fluid_0 length_fluid_0 momentum-x_fluid_0 momentum-y_fluid_0 surface_fluid_1 geometric_surface_fluid_1 mass_per_length_fluid_1 length_fluid_1 momentum-x_fluid_1 momentum-y_fluid_1 sharpening_threshold
+4.000000e+00    1.427734e+01              1.431631e+01            1.427734e+02   4.602605e+00       3.548503e+00       0.000000e+00    1.722656e+00              1.683694e+00            1.722656e+01   4.602605e+00       4.306641e-01       0.000000e+00         5.000000e-01
 
 ---------------
 VOF Barycenter
 ---------------
-    time        x_vof         y_vof        vx_vof       vy_vof    
-4.000000e+00 1.004172e-01 -2.586627e-10 2.500000e-02 0.000000e+00 
+    time        x_vof         y_vof        vx_vof       vy_vof
+4.000000e+00 1.005204e-01 -2.536344e-10 2.500000e-02 0.000000e+00
 
 *******************************************************************************
 Transient iteration: 6        Time: 5        Time step: 1        CFL: 0.770874
@@ -103,14 +103,14 @@ Transient iteration: 6        Time: 5        Time step: 1        CFL: 0.770874
 ----------------------
 VOF Mass Conservation
 ----------------------
-    time     surface_fluid_0 geometric_surface_fluid_0 mass_per_length_fluid_0 length_fluid_0 momentum-x_fluid_0 momentum-y_fluid_0 surface_fluid_1 geometric_surface_fluid_1 mass_per_length_fluid_1 length_fluid_1 momentum-x_fluid_1 momentum-y_fluid_1 sharpening_threshold 
-5.000000e+00    1.427576e+01              1.430448e+01            1.427576e+02   4.617920e+00       3.548106e+00       0.000000e+00    1.724242e+00              1.695519e+00            1.724242e+01   4.617920e+00       4.310604e-01       0.000000e+00         5.000000e-01 
+    time     surface_fluid_0 geometric_surface_fluid_0 mass_per_length_fluid_0 length_fluid_0 momentum-x_fluid_0 momentum-y_fluid_0 surface_fluid_1 geometric_surface_fluid_1 mass_per_length_fluid_1 length_fluid_1 momentum-x_fluid_1 momentum-y_fluid_1 sharpening_threshold
+5.000000e+00    1.427734e+01              1.431662e+01            1.427734e+02   4.602222e+00       3.548503e+00       0.000000e+00    1.722656e+00              1.683382e+00            1.722656e+01   4.602222e+00       4.306640e-01       0.000000e+00         5.000000e-01
 
 ---------------
 VOF Barycenter
 ---------------
-    time        x_vof         y_vof        vx_vof       vy_vof    
-5.000000e+00 1.256563e-01 -2.694647e-10 2.500000e-02 0.000000e+00 
+    time        x_vof         y_vof        vx_vof       vy_vof
+5.000000e+00 1.257259e-01 -2.641100e-10 2.500000e-02 0.000000e+00
 
 *******************************************************************************
 Transient iteration: 7        Time: 6        Time step: 1        CFL: 0.770874
@@ -119,14 +119,14 @@ Transient iteration: 7        Time: 6        Time step: 1        CFL: 0.770874
 ----------------------
 VOF Mass Conservation
 ----------------------
-    time     surface_fluid_0 geometric_surface_fluid_0 mass_per_length_fluid_0 length_fluid_0 momentum-x_fluid_0 momentum-y_fluid_0 surface_fluid_1 geometric_surface_fluid_1 mass_per_length_fluid_1 length_fluid_1 momentum-x_fluid_1 momentum-y_fluid_1 sharpening_threshold 
-6.000000e+00    1.427576e+01              1.430411e+01            1.427576e+02   4.618130e+00       3.548106e+00       0.000000e+00    1.724242e+00              1.695887e+00            1.724242e+01   4.618130e+00       4.310605e-01       0.000000e+00         5.000000e-01 
+    time     surface_fluid_0 geometric_surface_fluid_0 mass_per_length_fluid_0 length_fluid_0 momentum-x_fluid_0 momentum-y_fluid_0 surface_fluid_1 geometric_surface_fluid_1 mass_per_length_fluid_1 length_fluid_1 momentum-x_fluid_1 momentum-y_fluid_1 sharpening_threshold
+6.000000e+00    1.427734e+01              1.431664e+01            1.427734e+02   4.601658e+00       3.548503e+00       0.000000e+00    1.722656e+00              1.683355e+00            1.722656e+01   4.601658e+00       4.306640e-01       0.000000e+00         5.000000e-01
 
 ---------------
 VOF Barycenter
 ---------------
-    time        x_vof         y_vof        vx_vof       vy_vof    
-6.000000e+00 1.508988e-01 -2.729450e-10 2.500000e-02 0.000000e+00 
+    time        x_vof         y_vof        vx_vof       vy_vof
+6.000000e+00 1.509330e-01 -3.759991e-10 2.500000e-02 0.000000e+00
 
 *******************************************************************************
 Transient iteration: 8        Time: 7        Time step: 1        CFL: 0.770874
@@ -135,14 +135,14 @@ Transient iteration: 8        Time: 7        Time step: 1        CFL: 0.770874
 ----------------------
 VOF Mass Conservation
 ----------------------
-    time     surface_fluid_0 geometric_surface_fluid_0 mass_per_length_fluid_0 length_fluid_0 momentum-x_fluid_0 momentum-y_fluid_0 surface_fluid_1 geometric_surface_fluid_1 mass_per_length_fluid_1 length_fluid_1 momentum-x_fluid_1 momentum-y_fluid_1 sharpening_threshold 
-7.000000e+00    1.427463e+01              1.429686e+01            1.427463e+02   4.628523e+00       3.547823e+00       0.000000e+00    1.725374e+00              1.703138e+00            1.725374e+01   4.628523e+00       4.313436e-01       0.000000e+00         5.000000e-01 
+    time     surface_fluid_0 geometric_surface_fluid_0 mass_per_length_fluid_0 length_fluid_0 momentum-x_fluid_0 momentum-y_fluid_0 surface_fluid_1 geometric_surface_fluid_1 mass_per_length_fluid_1 length_fluid_1 momentum-x_fluid_1 momentum-y_fluid_1 sharpening_threshold
+7.000000e+00    1.427734e+01              1.431166e+01            1.427734e+02   4.608963e+00       3.548503e+00       0.000000e+00    1.722656e+00              1.688336e+00            1.722656e+01   4.608963e+00       4.306640e-01       0.000000e+00         5.000000e-01
 
 ---------------
 VOF Barycenter
 ---------------
-    time        x_vof         y_vof        vx_vof       vy_vof    
-7.000000e+00 1.755222e-01 -2.798460e-10 2.500000e-02 0.000000e+00 
+    time        x_vof         y_vof        vx_vof       vy_vof
+7.000000e+00 1.758517e-01 -5.254367e-10 2.500000e-02 0.000000e+00
 
 *******************************************************************************
 Transient iteration: 9        Time: 8        Time step: 1        CFL: 0.770874
@@ -151,14 +151,14 @@ Transient iteration: 9        Time: 8        Time step: 1        CFL: 0.770874
 ----------------------
 VOF Mass Conservation
 ----------------------
-    time     surface_fluid_0 geometric_surface_fluid_0 mass_per_length_fluid_0 length_fluid_0 momentum-x_fluid_0 momentum-y_fluid_0 surface_fluid_1 geometric_surface_fluid_1 mass_per_length_fluid_1 length_fluid_1 momentum-x_fluid_1 momentum-y_fluid_1 sharpening_threshold 
-8.000000e+00    1.427462e+01              1.429616e+01            1.427462e+02   4.628942e+00       3.547822e+00       0.000000e+00    1.725378e+00              1.703843e+00            1.725378e+01   4.628942e+00       4.313445e-01       0.000000e+00         5.000000e-01 
+    time     surface_fluid_0 geometric_surface_fluid_0 mass_per_length_fluid_0 length_fluid_0 momentum-x_fluid_0 momentum-y_fluid_0 surface_fluid_1 geometric_surface_fluid_1 mass_per_length_fluid_1 length_fluid_1 momentum-x_fluid_1 momentum-y_fluid_1 sharpening_threshold
+8.000000e+00    1.427734e+01              1.431167e+01            1.427734e+02   4.608524e+00       3.548503e+00       0.000000e+00    1.722656e+00              1.688332e+00            1.722656e+01   4.608524e+00       4.306640e-01       0.000000e+00         5.000000e-01
 
 ---------------
 VOF Barycenter
 ---------------
-    time        x_vof         y_vof        vx_vof       vy_vof    
-8.000000e+00 2.007530e-01 -2.802881e-10 2.500000e-02 0.000000e+00 
+    time        x_vof         y_vof        vx_vof       vy_vof
+8.000000e+00 2.010558e-01 -5.731394e-10 2.500000e-02 0.000000e+00
 
 *******************************************************************************
 Transient iteration: 10       Time: 9        Time step: 1        CFL: 0.770874
@@ -167,14 +167,14 @@ Transient iteration: 10       Time: 9        Time step: 1        CFL: 0.770874
 ----------------------
 VOF Mass Conservation
 ----------------------
-    time     surface_fluid_0 geometric_surface_fluid_0 mass_per_length_fluid_0 length_fluid_0 momentum-x_fluid_0 momentum-y_fluid_0 surface_fluid_1 geometric_surface_fluid_1 mass_per_length_fluid_1 length_fluid_1 momentum-x_fluid_1 momentum-y_fluid_1 sharpening_threshold 
-9.000000e+00    1.427462e+01              1.429551e+01            1.427462e+02   4.629816e+00       3.547822e+00       0.000000e+00    1.725379e+00              1.704486e+00            1.725379e+01   4.629816e+00       4.313449e-01       0.000000e+00         5.000000e-01 
+    time     surface_fluid_0 geometric_surface_fluid_0 mass_per_length_fluid_0 length_fluid_0 momentum-x_fluid_0 momentum-y_fluid_0 surface_fluid_1 geometric_surface_fluid_1 mass_per_length_fluid_1 length_fluid_1 momentum-x_fluid_1 momentum-y_fluid_1 sharpening_threshold
+9.000000e+00    1.427734e+01              1.431167e+01            1.427734e+02   4.608505e+00       3.548503e+00       0.000000e+00    1.722656e+00              1.688333e+00            1.722656e+01   4.608505e+00       4.306640e-01       0.000000e+00         5.000000e-01
 
 ---------------
 VOF Barycenter
 ---------------
-    time        x_vof         y_vof        vx_vof       vy_vof    
-9.000000e+00 2.260163e-01 -2.803801e-10 2.500000e-02 0.000000e+00 
+    time        x_vof         y_vof        vx_vof       vy_vof
+9.000000e+00 2.262717e-01 -5.890742e-10 2.500000e-02 0.000000e+00
 
 *******************************************************************************
 Transient iteration: 11       Time: 10       Time step: 1        CFL: 0.770874
@@ -183,14 +183,14 @@ Transient iteration: 11       Time: 10       Time step: 1        CFL: 0.770874
 ----------------------
 VOF Mass Conservation
 ----------------------
-    time     surface_fluid_0 geometric_surface_fluid_0 mass_per_length_fluid_0 length_fluid_0 momentum-x_fluid_0 momentum-y_fluid_0 surface_fluid_1 geometric_surface_fluid_1 mass_per_length_fluid_1 length_fluid_1 momentum-x_fluid_1 momentum-y_fluid_1 sharpening_threshold 
-1.000000e+01    1.427462e+01              1.429588e+01            1.427462e+02   4.629257e+00       3.547822e+00       0.000000e+00    1.725380e+00              1.704122e+00            1.725380e+01   4.629257e+00       4.313450e-01       0.000000e+00         5.000000e-01 
+    time     surface_fluid_0 geometric_surface_fluid_0 mass_per_length_fluid_0 length_fluid_0 momentum-x_fluid_0 momentum-y_fluid_0 surface_fluid_1 geometric_surface_fluid_1 mass_per_length_fluid_1 length_fluid_1 momentum-x_fluid_1 momentum-y_fluid_1 sharpening_threshold
+1.000000e+01    1.427734e+01              1.431227e+01            1.427734e+02   4.607663e+00       3.548503e+00       0.000000e+00    1.722656e+00              1.687732e+00            1.722656e+01   4.607663e+00       4.306640e-01       0.000000e+00         5.000000e-01
 
 ---------------
 VOF Barycenter
 ---------------
-    time        x_vof         y_vof        vx_vof       vy_vof    
-1.000000e+01 2.512801e-01 -2.802077e-10 2.500000e-02 0.000000e+00 
+    time        x_vof         y_vof        vx_vof       vy_vof
+1.000000e+01 2.514864e-01 -5.943909e-10 2.500000e-02 0.000000e+00
 
 *******************************************************************************
 Transient iteration: 12       Time: 11       Time step: 1        CFL: 0.770874
@@ -199,14 +199,14 @@ Transient iteration: 12       Time: 11       Time step: 1        CFL: 0.770874
 ----------------------
 VOF Mass Conservation
 ----------------------
-    time     surface_fluid_0 geometric_surface_fluid_0 mass_per_length_fluid_0 length_fluid_0 momentum-x_fluid_0 momentum-y_fluid_0 surface_fluid_1 geometric_surface_fluid_1 mass_per_length_fluid_1 length_fluid_1 momentum-x_fluid_1 momentum-y_fluid_1 sharpening_threshold 
-1.100000e+01    1.427357e+01              1.429343e+01            1.427357e+02   4.632880e+00       3.547560e+00       0.000000e+00    1.726426e+00              1.706566e+00            1.726426e+01   4.632880e+00       4.316065e-01       0.000000e+00         5.000000e-01 
+    time     surface_fluid_0 geometric_surface_fluid_0 mass_per_length_fluid_0 length_fluid_0 momentum-x_fluid_0 momentum-y_fluid_0 surface_fluid_1 geometric_surface_fluid_1 mass_per_length_fluid_1 length_fluid_1 momentum-x_fluid_1 momentum-y_fluid_1 sharpening_threshold
+1.100000e+01    1.427734e+01              1.430773e+01            1.427734e+02   4.613821e+00       3.548503e+00       0.000000e+00    1.722656e+00              1.692272e+00            1.722656e+01   4.613821e+00       4.306640e-01       0.000000e+00         5.000000e-01
 
 ---------------
 VOF Barycenter
 ---------------
-    time        x_vof         y_vof        vx_vof       vy_vof    
-1.100000e+01 2.758440e-01 -2.835557e-10 2.500000e-02 0.000000e+00 
+    time        x_vof         y_vof        vx_vof       vy_vof
+1.100000e+01 2.762913e-01 -7.251986e-10 2.500000e-02 0.000000e+00
 
 *******************************************************************************
 Transient iteration: 13       Time: 12       Time step: 1        CFL: 0.770874
@@ -215,14 +215,14 @@ Transient iteration: 13       Time: 12       Time step: 1        CFL: 0.770874
 ----------------------
 VOF Mass Conservation
 ----------------------
-    time     surface_fluid_0 geometric_surface_fluid_0 mass_per_length_fluid_0 length_fluid_0 momentum-x_fluid_0 momentum-y_fluid_0 surface_fluid_1 geometric_surface_fluid_1 mass_per_length_fluid_1 length_fluid_1 momentum-x_fluid_1 momentum-y_fluid_1 sharpening_threshold 
-1.200000e+01    1.427357e+01              1.429342e+01            1.427357e+02   4.632756e+00       3.547559e+00       0.000000e+00    1.726430e+00              1.706582e+00            1.726430e+01   4.632756e+00       4.316076e-01       0.000000e+00         5.000000e-01 
+    time     surface_fluid_0 geometric_surface_fluid_0 mass_per_length_fluid_0 length_fluid_0 momentum-x_fluid_0 momentum-y_fluid_0 surface_fluid_1 geometric_surface_fluid_1 mass_per_length_fluid_1 length_fluid_1 momentum-x_fluid_1 momentum-y_fluid_1 sharpening_threshold
+1.200000e+01    1.427734e+01              1.430817e+01            1.427734e+02   4.613362e+00       3.548503e+00       0.000000e+00    1.722656e+00              1.691832e+00            1.722656e+01   4.613362e+00       4.306640e-01       0.000000e+00         5.000000e-01
 
 ---------------
 VOF Barycenter
 ---------------
-    time        x_vof         y_vof        vx_vof       vy_vof    
-1.200000e+01 3.010812e-01 -2.841535e-10 2.500000e-02 0.000000e+00 
+    time        x_vof         y_vof        vx_vof       vy_vof
+1.200000e+01 3.015015e-01 -7.660820e-10 2.500000e-02 0.000000e+00
 
 *******************************************************************************
 Transient iteration: 14       Time: 13       Time step: 1        CFL: 0.770874
@@ -231,14 +231,14 @@ Transient iteration: 14       Time: 13       Time step: 1        CFL: 0.770874
 ----------------------
 VOF Mass Conservation
 ----------------------
-    time     surface_fluid_0 geometric_surface_fluid_0 mass_per_length_fluid_0 length_fluid_0 momentum-x_fluid_0 momentum-y_fluid_0 surface_fluid_1 geometric_surface_fluid_1 mass_per_length_fluid_1 length_fluid_1 momentum-x_fluid_1 momentum-y_fluid_1 sharpening_threshold 
-1.300000e+01    1.427357e+01              1.429257e+01            1.427357e+02   4.633580e+00       3.547559e+00       0.000000e+00    1.726432e+00              1.707429e+00            1.726432e+01   4.633580e+00       4.316079e-01       0.000000e+00         5.000000e-01 
+    time     surface_fluid_0 geometric_surface_fluid_0 mass_per_length_fluid_0 length_fluid_0 momentum-x_fluid_0 momentum-y_fluid_0 surface_fluid_1 geometric_surface_fluid_1 mass_per_length_fluid_1 length_fluid_1 momentum-x_fluid_1 momentum-y_fluid_1 sharpening_threshold
+1.300000e+01    1.427734e+01              1.430805e+01            1.427734e+02   4.613170e+00       3.548503e+00       0.000000e+00    1.722656e+00              1.691948e+00            1.722656e+01   4.613170e+00       4.306639e-01       0.000000e+00         5.000000e-01
 
 ---------------
 VOF Barycenter
 ---------------
-    time        x_vof         y_vof        vx_vof       vy_vof    
-1.300000e+01 3.263499e-01 -2.843382e-10 2.500000e-02 0.000000e+00 
+    time        x_vof         y_vof        vx_vof       vy_vof
+1.300000e+01 3.267235e-01 -7.797482e-10 2.500000e-02 0.000000e+00
 
 *******************************************************************************
 Transient iteration: 15       Time: 14       Time step: 1        CFL: 0.770874
@@ -247,14 +247,14 @@ Transient iteration: 15       Time: 14       Time step: 1        CFL: 0.770874
 ----------------------
 VOF Mass Conservation
 ----------------------
-    time     surface_fluid_0 geometric_surface_fluid_0 mass_per_length_fluid_0 length_fluid_0 momentum-x_fluid_0 momentum-y_fluid_0 surface_fluid_1 geometric_surface_fluid_1 mass_per_length_fluid_1 length_fluid_1 momentum-x_fluid_1 momentum-y_fluid_1 sharpening_threshold 
-1.400000e+01    1.427357e+01              1.429259e+01            1.427357e+02   4.633633e+00       3.547559e+00       0.000000e+00    1.726432e+00              1.707408e+00            1.726432e+01   4.633633e+00       4.316080e-01       0.000000e+00         5.000000e-01 
+    time     surface_fluid_0 geometric_surface_fluid_0 mass_per_length_fluid_0 length_fluid_0 momentum-x_fluid_0 momentum-y_fluid_0 surface_fluid_1 geometric_surface_fluid_1 mass_per_length_fluid_1 length_fluid_1 momentum-x_fluid_1 momentum-y_fluid_1 sharpening_threshold
+1.400000e+01    1.427734e+01              1.430832e+01            1.427734e+02   4.612898e+00       3.548503e+00       0.000000e+00    1.722656e+00              1.691675e+00            1.722656e+01   4.612898e+00       4.306639e-01       0.000000e+00         5.000000e-01
 
 ---------------
 VOF Barycenter
 ---------------
-    time        x_vof         y_vof        vx_vof       vy_vof    
-1.400000e+01 3.516183e-01 -2.842103e-10 2.500000e-02 0.000000e+00 
+    time        x_vof         y_vof        vx_vof       vy_vof
+1.400000e+01 3.519439e-01 -7.843009e-10 2.500000e-02 0.000000e+00
 
 *******************************************************************************
 Transient iteration: 16       Time: 15       Time step: 1        CFL: 0.770874
@@ -263,11 +263,11 @@ Transient iteration: 16       Time: 15       Time step: 1        CFL: 0.770874
 ----------------------
 VOF Mass Conservation
 ----------------------
-    time     surface_fluid_0 geometric_surface_fluid_0 mass_per_length_fluid_0 length_fluid_0 momentum-x_fluid_0 momentum-y_fluid_0 surface_fluid_1 geometric_surface_fluid_1 mass_per_length_fluid_1 length_fluid_1 momentum-x_fluid_1 momentum-y_fluid_1 sharpening_threshold 
-1.500000e+01    1.427254e+01              1.429262e+01            1.427254e+02   4.634572e+00       3.547301e+00       0.000000e+00    1.727462e+00              1.707383e+00            1.727462e+01   4.634572e+00       4.318655e-01       0.000000e+00         5.000000e-01 
+    time     surface_fluid_0 geometric_surface_fluid_0 mass_per_length_fluid_0 length_fluid_0 momentum-x_fluid_0 momentum-y_fluid_0 surface_fluid_1 geometric_surface_fluid_1 mass_per_length_fluid_1 length_fluid_1 momentum-x_fluid_1 momentum-y_fluid_1 sharpening_threshold
+1.500000e+01    1.427734e+01              1.430545e+01            1.427734e+02   4.617410e+00       3.548503e+00       0.000000e+00    1.722655e+00              1.694555e+00            1.722655e+01   4.617410e+00       4.306639e-01       0.000000e+00         5.000000e-01
 
 ---------------
 VOF Barycenter
 ---------------
-    time        x_vof         y_vof        vx_vof       vy_vof    
-1.500000e+01 3.761693e-01 -2.859903e-10 2.500000e-02 0.000000e+00 
+    time        x_vof         y_vof        vx_vof       vy_vof
+1.500000e+01 3.766746e-01 -7.942624e-10 2.500000e-02 0.000000e+00
