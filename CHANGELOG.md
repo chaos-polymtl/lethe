@@ -4,7 +4,6 @@ All notable changes to the Lethe project will be documented in this file.
 The changelog for the previous releases of Lethe are located in the release_notes folder.
 The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
-
 ## [Master] - 2026/01/12
 
 ## Fixed
