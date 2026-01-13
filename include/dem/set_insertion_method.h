@@ -13,7 +13,6 @@
 
 /**
  * @brief Set up the particle insertion method for the simulation.
- *
  * Creates and configures the appropriate insertion object based on the
  * simulation parameters (e.g., volume insertion, plane insertion, etc.).
  *
