@@ -16,18 +16,18 @@ set dimension = 3
 #---------------------------------------------------
 
 subsection simulation control
-  set method           = steady
-  set output frequency = 0
+  set method            = steady
+  set output frequency  = 0
   set number mesh adapt = 1
 end
 
 #---------------------------------------------------
 # Mesh Adaptation
 #---------------------------------------------------
-subsection mesh adaptation
-  set type                     = uniform
-end
 
+subsection mesh adaptation
+  set type = uniform
+end
 
 #---------------------------------------------------
 # FEM
@@ -46,16 +46,15 @@ subsection physical properties
   set number of fluids = 1
   subsection fluid 0
     set electric conductivity model = constant
-    set electric conductivity = 0.
+    set electric conductivity       = 0.
 
-    set electric permittivity model = constant
+    set electric permittivity model     = constant
     set electric permittivity real part = 1.
     set electric permittivity imag part = 0.
-    
-    set magnetic permeability model = constant
+
+    set magnetic permeability model     = constant
     set magnetic permeability real part = 1.
     set magnetic permeability imag part = 0.
-
   end
 end
 

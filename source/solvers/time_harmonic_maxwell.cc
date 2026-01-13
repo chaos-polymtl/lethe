@@ -201,8 +201,7 @@ TimeHarmonicMaxwell<3>::compute_waveguide_port_excitation(
   // change of basis to a local coordinate system where the waveguide center is
   // at the origin.
 
-  std::complex<double> surface_admittance = k_l / (omega * mu_r);
-  Tensor<1, dim>       origin_local =
+  Tensor<1, dim> origin_local =
     0.25 * (waveguide_corners[0] + waveguide_corners[1] + waveguide_corners[2] +
             waveguide_corners[3]);
   Tensor<1, dim> p_local =
@@ -215,6 +214,7 @@ TimeHarmonicMaxwell<3>::compute_waveguide_port_excitation(
   Tensor<1, dim, std::complex<double>> E_inc;
   Tensor<1, dim, std::complex<double>> H_inc;
   Tensor<1, dim, std::complex<double>> excitation;
+  std::complex<double>                 surface_admittance;
 
 
   if (mode == Parameters::WaveguideMode::TE)
@@ -237,8 +237,10 @@ TimeHarmonicMaxwell<3>::compute_waveguide_port_excitation(
       H_inc[2] = std::cos(k_t1 * (x_local + length_t1 / 2)) *
                  std::cos(k_t2 * (y_local + length_t2 / 2));
 
+      surface_admittance = k_l / (omega * mu_r);
+
       excitation = cross_product_3d(normal, H_inc) +
-                   map_H12(k_l / (omega * mu_r) * E_inc, normal);
+                   map_H12(surface_admittance * E_inc, normal);
     }
   else if (mode == Parameters::WaveguideMode::TM)
     {
@@ -259,8 +261,10 @@ TimeHarmonicMaxwell<3>::compute_waveguide_port_excitation(
       E_inc[2] = std::sin(k_t1 * (x_local + length_t1 / 2)) *
                  std::sin(k_t2 * (y_local + length_t2 / 2));
 
+      surface_admittance = omega * epsilon_r_eff / k_l;
+
       excitation = cross_product_3d(normal, H_inc) +
-                   map_H12(k_l / (omega * mu_r) * E_inc, normal);
+                   map_H12(surface_admittance * E_inc, normal);
     }
   else
     {
