@@ -11,7 +11,7 @@
 plots="pressure-drop-Re-mf-qcm-si.pdf"
 
 # Store filenames of all data files in a variable (space-seperated)
-data="solution-pressure-drop-Re.dat"
+data="solution-pressure-drop-Re-mf-qcm-si.dat"
 
 # Default path
 output_root="./"

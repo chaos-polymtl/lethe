@@ -85,7 +85,7 @@ def plot_pressure(datasets, Re, dataset_keys, labels, subscript, validate):
     plt.ylabel("$\\Delta p$ (Pa)", fontsize=14)
     plt.legend()
     if validate:
-        plt.savefig(f"pressure-drop-{subscript}.pdf")
+        plt.savefig(f"pressure-drop-Re-{subscript}.pdf")
         mean_col = datasets[key]["mean"].reshape(-1, 1)
         solution = mean_col
         return solution
