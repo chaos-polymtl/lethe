@@ -80,17 +80,6 @@ private:
   setup_distribution_type();
 
   /**
-   * @brief Set up the particle insertion method for the simulation.
-   *
-   * Creates and configures the appropriate insertion object based on the
-   * simulation parameters (e.g., volume insertion, plane insertion, etc.).
-   *
-   * @return Shared pointer to the configured insertion object
-   */
-  std::shared_ptr<Insertion<dim, DEM::CFDDEMProperties::PropertiesIndex>>
-  set_insertion_type();
-
-  /**
    * @brief Set up the time integration method for particle motion.
    *
    * Creates and configures the appropriate integration scheme for solving

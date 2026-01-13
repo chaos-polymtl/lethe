@@ -7,11 +7,8 @@
 #include <dem/dem_post_processing.h>
 #include <dem/explicit_euler_integrator.h>
 #include <dem/find_contact_detection_step.h>
-#include <dem/insertion_file.h>
-#include <dem/insertion_list.h>
-#include <dem/insertion_plane.h>
-#include <dem/insertion_volume.h>
 #include <dem/particle_handler_conversion.h>
+#include <dem/set_insertion_method.h>
 #include <dem/set_particle_particle_contact_force_model.h>
 #include <dem/set_particle_wall_contact_force_model.h>
 #include <dem/velocity_verlet_integrator.h>
@@ -135,7 +132,12 @@ CFDDEMSolver<dim>::dem_setup_parameters()
         }
     }
 
-  insertion_object = set_insertion_type();
+  insertion_object = set_insertion_type<dim, CFDDEMProperties::PropertiesIndex>(
+    size_distribution_object_container,
+    *parallel_triangulation,
+    dem_parameters,
+    maximum_particle_diameter);
+
   // Initialize the total contact list counter
   integrator_object = set_integrator_type();
   particle_particle_contact_force_object =
@@ -206,58 +208,6 @@ CFDDEMSolver<dim>::setup_distribution_type()
     std::pow(dem_parameters.model_parameters.neighborhood_threshold *
                maximum_particle_diameter,
              2);
-}
-
-template <int dim>
-std::shared_ptr<Insertion<dim, DEM::CFDDEMProperties::PropertiesIndex>>
-CFDDEMSolver<dim>::set_insertion_type()
-{
-  using namespace Parameters::Lagrangian;
-  typename InsertionInfo<dim>::InsertionMethod insertion_method =
-    dem_parameters.insertion_info.insertion_method;
-
-  const auto parallel_triangulation =
-    dynamic_cast<parallel::distributed::Triangulation<dim> *>(
-      &*this->triangulation);
-
-  switch (insertion_method)
-    {
-      case InsertionInfo<dim>::InsertionMethod::file:
-        {
-          return std::make_shared<
-            InsertionFile<dim, DEM::CFDDEMProperties::PropertiesIndex>>(
-            size_distribution_object_container,
-            *parallel_triangulation,
-            dem_parameters);
-        }
-      case InsertionInfo<dim>::InsertionMethod::list:
-        {
-          return std::make_shared<
-            InsertionList<dim, DEM::CFDDEMProperties::PropertiesIndex>>(
-            size_distribution_object_container,
-            *parallel_triangulation,
-            dem_parameters);
-        }
-      case InsertionInfo<dim>::InsertionMethod::plane:
-        {
-          return std::make_shared<
-            InsertionPlane<dim, DEM::CFDDEMProperties::PropertiesIndex>>(
-            size_distribution_object_container,
-            *parallel_triangulation,
-            dem_parameters);
-        }
-      case InsertionInfo<dim>::InsertionMethod::volume:
-        {
-          return std::make_shared<
-            InsertionVolume<dim, DEM::CFDDEMProperties::PropertiesIndex>>(
-            size_distribution_object_container,
-            *parallel_triangulation,
-            dem_parameters,
-            maximum_particle_diameter);
-        }
-      default:
-        throw(std::runtime_error("Invalid insertion method."));
-    }
 }
 
 template <int dim>

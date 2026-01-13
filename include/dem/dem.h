@@ -96,14 +96,6 @@ private:
   set_contact_search_iteration_function();
 
   /**
-   * @brief Set the insertion method.
-   *
-   * @return The pointer to the insertion object
-   */
-  std::shared_ptr<Insertion<dim, PropertiesIndex>>
-  set_insertion_type();
-
-  /**
    * @brief Set the integration method.
    *
    * @return The pointer to the integration object
