@@ -279,10 +279,10 @@ private:
     // Compute diffusivity
     const double diffusivity_inv = 1.0 / compute_diffusivity(h_min);
 
-    // Compute pseudo time step
+    // Compute artificial time-step
     const double dtau = h_min * h_min * diffusivity_inv * dtau_factor;
 
-    // Use the smallest of the computed pseudo time-step and the simulation
+    // Use the smallest of the computed artificial time-step and the simulation
     // time-step for the reinitialization scheme
     return std::min(dtau, this->simulation_control->get_time_step());
   }

@@ -188,7 +188,7 @@ In Lethe, two functions are available to achieve that: a hyperbolic tangent func
 Algebraic Interface Reinitialization
 """"""""""""""""""""""""""""""""""""""""
 
-The algebraic interface reinitialization method consists of compressing and diffusing the interface in its normal direction. This is done by solving the following transient Partial Differential Equation (PDE) until steady-state is reached using a artificial time-stepping scheme as proposed by Olsson and coworkers (2007) [#olsson2007]_:
+The algebraic interface reinitialization method consists of compressing and diffusing the interface in its normal direction. This is done by solving the following transient Partial Differential Equation (PDE) until steady-state is reached using an artificial time-stepping scheme as proposed by Olsson and coworkers (2007) [#olsson2007]_:
 
 .. math::
 
