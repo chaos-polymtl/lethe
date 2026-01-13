@@ -1,9 +1,10 @@
-# SPDX-FileCopyrightText: Copyright (c) 2025 The Lethe Authors
+# SPDX-FileCopyrightText: Copyright (c) 2025-2026 The Lethe Authors
 # SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
 #############################################################################
 # Import Libraries
 #############################################################################
+import argparse
 import numpy as np
 import pyvista as pv
 import pandas as pd
@@ -12,12 +13,19 @@ import matplotlib.pyplot as plt
 from cycler import cycler
 
 #############################################################################
-# Steup plot parameters
+# Setup plot parameters
 #############################################################################
 colors=['#1b9e77','#d95f02','#7570b3']
 markers = ['o', 's']
 
 plt.rcParams['axes.prop_cycle'] = cycler(color=colors)
+
+#############################################################################
+# Define argument parser for validation mode
+#############################################################################
+parser = argparse.ArgumentParser(description='Arguments for the post-processing of the cylindrical fluidized bed example')
+parser.add_argument("--validate", action="store_true", help="Launches the script in validation mode. This will log the content of the graph and prevent the display of figures", default=False)
+args, leftovers=parser.parse_known_args()
 
 #############################################################################
 # Helper functions
@@ -37,11 +45,11 @@ def bin_and_average(time, pressure, bins, averaging_window):
     return np.array(mean_p), np.array(std_p)
 
 # === Plotting function ===
-def plot_pressure(Re, dataset_keys, labels, subscript):
-    
+def plot_pressure(datasets, Re, dataset_keys, labels, subscript, validate):
     for i, (key, label) in enumerate(zip(dataset_keys, labels)):
         marker = markers[(i // 3) % len(markers)]
         plt.errorbar(Re, datasets[key]["mean"], yerr=datasets[key]["std"], fmt=marker+'-',  markerfacecolor='none', markersize=8, capsize=3, label=label)
+        
     plt.plot([0, max(Re)], [delta_p_analytical]*2, 'k--', label="Fluidization Δp")
     plt.plot([Re_mf_WY_inlet, Re_mf_WY_inlet], [0, max([datasets[k]["mean"].max() for k in dataset_keys])*1.1], 'k:')
     plt.plot([Re_mf_N_inlet, Re_mf_N_inlet], [0, max([datasets[k]["mean"].max() for k in dataset_keys])*1.1], 'k-.')
@@ -76,25 +84,33 @@ def plot_pressure(Re, dataset_keys, labels, subscript):
     plt.xlabel("Re", fontsize=14)
     plt.ylabel("$\\Delta p$ (Pa)", fontsize=14)
     plt.legend()
-    plt.savefig(f"Figure_{subscript}.png", dpi=600, bbox_inches='tight')
-    plt.show()
+    if validate:
+        plt.savefig(f"pressure-drop-{subscript}.pdf")
+        mean_col = datasets[key]["mean"].reshape(-1, 1)
+        solution = mean_col
+        return solution
+    else:
+        plt.savefig(f"pressure-drop-{subscript}.png", dpi=600, bbox_inches='tight')
+        plt.show()
 
 
 #############################################################################
 # Load data
 #############################################################################
-data_files = {
-    "MB_PCM_E": "output_mb_pcm_explicit/pressure_drop.dat",
-    "MB_PCM_SI": "output_mb_pcm_semi_implicit/pressure_drop.dat",
-    "MB_PCM_I": "output_mb_pcm_implicit/pressure_drop.dat",
-    "MB_QCM_E": "output_mb_qcm_explicit/pressure_drop.dat",
-    "MB_QCM_SI": "output_mb_qcm_semi_implicit/pressure_drop.dat",
-    "MB_QCM_I": "output_mb_qcm_implicit/pressure_drop.dat",
-    "MF_QCM_E": "output_mf_explicit/pressure_drop.dat",
-    "MF_QCM_SI": "output_mf_semi_implicit/pressure_drop.dat",
-    "MF_QCM_I": "output_mf_implicit/pressure_drop.dat"
-}
-
+if args.validate:
+    data_files = {"MF_QCM_SI": "output_mf_semi_implicit/pressure_drop.dat"}
+else:
+    data_files = {
+        "MB_PCM_E": "output_mb_pcm_explicit/pressure_drop.dat",
+        "MB_PCM_SI": "output_mb_pcm_semi_implicit/pressure_drop.dat",
+        "MB_PCM_I": "output_mb_pcm_implicit/pressure_drop.dat",
+        "MB_QCM_E": "output_mb_qcm_explicit/pressure_drop.dat",
+        "MB_QCM_SI": "output_mb_qcm_semi_implicit/pressure_drop.dat",
+        "MB_QCM_I": "output_mb_qcm_implicit/pressure_drop.dat",
+        "MF_QCM_E": "output_mf_explicit/pressure_drop.dat",
+        "MF_QCM_SI": "output_mf_semi_implicit/pressure_drop.dat",
+        "MF_QCM_I": "output_mf_implicit/pressure_drop.dat"
+    }
 datasets = {}
 for key, path in data_files.items():
     t, p, _ = np.loadtxt(path, unpack=True, skiprows=1)
@@ -170,16 +186,31 @@ for key, ds in datasets.items():
 velocity = np.minimum(0.02 * np.floor(bin_centers / 0.05 + 1), 0.3)
 Re = velocity * D / nu
 
-plot_pressure(
+if args.validate:
+    sol = plot_pressure(
+    datasets,
+    Re,
+    ["MF_QCM_SI"],
+    ["MF QCM Semi-Implicit"],
+    "mf-qcm-si", args.validate)
+else:
+    plot_pressure(
+    datasets,
     Re,
     ["MB_PCM_E", "MB_PCM_SI", "MB_PCM_I", "MB_QCM_E", "MB_QCM_SI", "MB_QCM_I"],
     ["MB PCM Explicit", "MB PCM Semi-Implicit", "MB PCM Implicit", "MB QCM Explicit", "MB QCM Semi-Implicit", "MB QCM Implicit"],
-    "MB"
-)
+    "MB", args.validate)
 
-plot_pressure(
-    Re,
-    ["MF_QCM_E", "MF_QCM_SI", "MF_QCM_I", "MB_QCM_E", "MB_QCM_SI", "MB_QCM_I"],
-    ["MF QCM Explicit", "MF QCM Semi-Implicit", "MF QCM Implicit", "MB QCM Explicit", "MB QCM Semi-Implicit", "MB QCM Implicit"],
-    "MB-MF"
-)
+    plot_pressure(
+        datasets,
+        Re,
+        ["MF_QCM_E", "MF_QCM_SI", "MF_QCM_I", "MB_QCM_E", "MB_QCM_SI", "MB_QCM_I"],
+        ["MF QCM Explicit", "MF QCM Semi-Implicit", "MF QCM Implicit", "MB QCM Explicit", "MB QCM Semi-Implicit", "MB QCM Implicit"],
+        "MB-MF", args.validate)
+
+if args.validate:
+    final_solution = [Re.reshape(-1,1), sol]
+    headers_list = ["Re", "MF_QCM_SI"]
+    
+    final_solution = np.hstack(final_solution)
+    np.savetxt("solution-pressure-drop-Re-mf-qcm-si.dat", final_solution, header=" ".join(headers_list))
