@@ -288,44 +288,6 @@ DEMSolver<dim, PropertiesIndex>::set_contact_search_iteration_function()
     }
 }
 
-// template <int dim, typename PropertiesIndex>
-// std::shared_ptr<Insertion<dim, PropertiesIndex>>
-// DEMSolver<dim, PropertiesIndex>::set_insertion_type()
-// {
-//   using namespace Parameters::Lagrangian;
-//   typename InsertionInfo<dim>::InsertionMethod insertion_method =
-//     parameters.insertion_info.insertion_method;
-//
-//   switch (insertion_method)
-//     {
-//       case InsertionInfo<dim>::InsertionMethod::file:
-//         {
-//           return std::make_shared<InsertionFile<dim, PropertiesIndex>>(
-//             size_distribution_object_container, triangulation, parameters);
-//         }
-//       case InsertionInfo<dim>::InsertionMethod::list:
-//         {
-//           return std::make_shared<InsertionList<dim, PropertiesIndex>>(
-//             size_distribution_object_container, triangulation, parameters);
-//         }
-//       case InsertionInfo<dim>::InsertionMethod::plane:
-//         {
-//           return std::make_shared<InsertionPlane<dim, PropertiesIndex>>(
-//             size_distribution_object_container, triangulation, parameters);
-//         }
-//       case InsertionInfo<dim>::InsertionMethod::volume:
-//         {
-//           return std::make_shared<InsertionVolume<dim, PropertiesIndex>>(
-//             size_distribution_object_container,
-//             triangulation,
-//             parameters,
-//             maximum_particle_diameter);
-//         }
-//       default:
-//         throw(std::runtime_error("Invalid insertion method."));
-//     }
-// }
-
 template <int dim, typename PropertiesIndex>
 std::shared_ptr<Integrator<dim, PropertiesIndex>>
 DEMSolver<dim, PropertiesIndex>::set_integrator_type()
