@@ -110,9 +110,6 @@ NormalDistribution::NormalDistribution(
           system_rhs[0] = -R1;
           system_rhs[1] = -R2;
 
-          system_matrix.print_formatted(std::cout);
-          system_rhs.print(std::cout);
-
           // Solve for the update
           system_matrix.compute_lu_factorization();
           system_matrix.solve(system_rhs);
