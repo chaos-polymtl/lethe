@@ -133,8 +133,7 @@ test(const double mu, const double sigma)
   const double sigma_verif = std::sqrt(variance);
 
   deallog << "Distribution mean: " << mean_dp << std::endl;
-  deallog << "Distribution standard deviation: " << sigma_verif << std::endl
-          << std::endl;
+  deallog << "Distribution standard deviation: " << sigma_verif << std::endl;
 }
 
 int

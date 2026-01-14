@@ -1002,7 +1002,6 @@ DEAL::Particle 998 diameter is: 0.00549379
 DEAL::Particle 999 diameter is: 0.00509206
 DEAL::Distribution mean: 0.00498992
 DEAL::Distribution standard deviation: 0.000477502
-DEAL::
 DEAL::Volume weighted normal distribution
 DEAL::Particle 0 diameter is: 0.00497437
 DEAL::Particle 1 diameter is: 0.00404653
@@ -2006,4 +2005,3 @@ DEAL::Particle 998 diameter is: 0.00549379
 DEAL::Particle 999 diameter is: 0.00509206
 DEAL::Distribution mean: 0.00498992
 DEAL::Distribution standard deviation: 0.000477502
-DEAL::
