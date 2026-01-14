@@ -8,7 +8,7 @@
 # implementation of those conditions. The mode tested is the TE12 with a
 # dissipative medium. Note that the test also change the dimension to centimeters,
 # but increase the frequency to make sure the problem is not in a high frequency 
-# regime ()
+# regime (kL >> 1), but still show a noticable decay of the wave amplitude.
 
 # Listing of Parameters
 #----------------------
@@ -21,7 +21,7 @@ set dimension = 3
 
 subsection simulation control
   set method            = steady
-  set output path = ./output/
+  set output frequency  = 0
   set number mesh adapt = 1
 end
 
@@ -154,10 +154,10 @@ subsection boundary conditions time harmonic maxwell
       set Function expression = 0
     end
     subsection surface admittance real
-      set Function expression = 0.361
+      set Function expression = 0.360746
     end
     subsection surface admittance imag
-      set Function expression = 0.133
+      set Function expression = 0.132856
     end
   end
 end
@@ -170,7 +170,7 @@ subsection analytical solution
   set enable    = true
   set verbosity = verbose
   subsection electromagnetics
-    set Function expression = cos(4*pi*(x-1)) * sin(4*pi*(y-1)) * exp(-2.64*(z-1)) * (0.015*cos(6.75*(z-1)) + 0.75*sin(6.75*(z-1)));    sin(4*pi*(x-1)) * cos(4*pi*(y-1)) * exp(-2.64*(z-1)) * (-0.015*cos(6.75*(z-1)) - 0.75*sin(6.75*(z-1)));    0.;    cos(4*pi*(x-1)) * sin(4*pi*(y-1)) * exp(-2.64*(z-1)) * (-0.75*cos(6.75*(z-1)) + 0.015*sin(6.75*(z-1)));    sin(4*pi*(x-1)) * cos(4*pi*(y-1)) * exp(-2.64*(z-1)) * (0.75*cos(6.75*(z-1)) - 0.015*sin(6.75*(z-1)));    0.;    sin(4*pi*(x-1)) * cos(4*pi*(y-1)) * exp(-2.64*(z-1)) * (0.1051*cos(6.75*(z-1)) + 0.2686*sin(6.75*(z-1)));    cos(4*pi*(x-1)) * sin(4*pi*(y-1)) * exp(-2.64*(z-1)) * (0.1051*cos(6.75*(z-1)) + 0.2686*sin(6.75*(z-1)));    cos(4*pi*(x-1)) * cos(4*pi*(y-1)) * exp(-2.64*(z-1)) * cos(6.75*(z-1));    sin(4*pi*(x-1)) * cos(4*pi*(y-1)) * exp(-2.64*(z-1)) * (-0.2686*cos(6.75*(z-1)) + 0.1051*sin(6.75*(z-1)));    cos(4*pi*(x-1)) * sin(4*pi*(y-1)) * exp(-2.64*(z-1)) * (-0.2686*cos(6.75*(z-1)) + 0.1051*sin(6.75*(z-1)));    cos(4*pi*(x-1)) * cos(4*pi*(y-1)) * exp(-2.64*(z-1)) * sin(6.75*(z-1))
+    set Function expression = cos(4*pi*(x-1)) * sin(4*pi*(y-1)) * exp(-2.624723*(z-1)) * (0.014987*cos(6.767844*(z-1)) + 0.750154*sin(6.767844*(z-1)));    sin(4*pi*(x-1)) * cos(4*pi*(y-1)) * exp(-2.624723*(z-1)) * (-0.014987*cos(6.767844*(z-1)) - 0.750154*sin(6.767844*(z-1)));    0.;    cos(4*pi*(x-1)) * sin(4*pi*(y-1)) * exp(-2.624723*(z-1)) * (-0.750154*cos(6.767844*(z-1)) + 0.014987*sin(6.767844*(z-1)));    sin(4*pi*(x-1)) * cos(4*pi*(y-1)) * exp(-2.624723*(z-1)) * (0.750154*cos(6.767844*(z-1)) - 0.014987*sin(6.767844*(z-1)));    0.;    sin(4*pi*(x-1)) * cos(4*pi*(y-1)) * exp(-2.624723*(z-1)) * (0.104397*cos(6.767844*(z-1)) + 0.269215*sin(6.767844*(z-1)));    cos(4*pi*(x-1)) * sin(4*pi*(y-1)) * exp(-2.624723*(z-1)) * (0.104397*cos(6.767844*(z-1)) + 0.269215*sin(6.767844*(z-1)));    cos(4*pi*(x-1)) * cos(4*pi*(y-1)) * exp(-2.624723*(z-1)) * cos(6.767844*(z-1));    sin(4*pi*(x-1)) * cos(4*pi*(y-1)) * exp(-2.624723*(z-1)) * (-0.269215*cos(6.767844*(z-1)) + 0.104397*sin(6.767844*(z-1)));    cos(4*pi*(x-1)) * sin(4*pi*(y-1)) * exp(-2.624723*(z-1)) * (-0.269215*cos(6.767844*(z-1)) + 0.104397*sin(6.767844*(z-1)));    cos(4*pi*(x-1)) * cos(4*pi*(y-1)) * exp(-2.624723*(z-1)) * sin(6.767844*(z-1))
   end
 end
 
