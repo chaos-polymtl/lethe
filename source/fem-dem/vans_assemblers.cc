@@ -1,4 +1,4 @@
-// SPDX-FileCopyrightText: Copyright (c) 2021-2025 The Lethe Authors
+// SPDX-FileCopyrightText: Copyright (c) 2021-2026 The Lethe Authors
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
 #include <core/bdf.h>
@@ -174,7 +174,7 @@ VANSAssemblerCoreModelB<dim>::assemble_matrix(
                 {
                   // Convection
                   local_matrix_ij +=
-                    ((phi_u_j * void_fraction * velocity_gradient * phi_u_i) +
+                    ((velocity_gradient * phi_u_j * void_fraction * phi_u_i) +
                      (grad_phi_u_j * void_fraction * velocity * phi_u_i));
 
                   if (component_i == component_j)
@@ -542,7 +542,7 @@ VANSAssemblerCoreModelA<dim>::assemble_matrix(
                 {
                   // Convection
                   local_matrix_ij +=
-                    ((phi_u_j * void_fraction * velocity_gradient * phi_u_i) +
+                    ((velocity_gradient * phi_u_j * void_fraction * phi_u_i) +
                      (grad_phi_u_j * void_fraction * velocity * phi_u_i));
 
                   if (component_i == component_j)
