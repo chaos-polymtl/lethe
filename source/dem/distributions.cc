@@ -56,14 +56,14 @@ NormalDistribution::NormalDistribution(
       double       residual_l2_norm  = 1.;
       unsigned int iteration_counter = 0;
 
-      system_matrix.reinit(2);
-      system_rhs.reinit(2);
-
       // Initial estimates of mu_n and sigma_n
       double mu_n    = d_average;
       double sigma_n = d_standard_deviation;
       while (residual_l2_norm > 1.e-12 && iteration_counter < 1000)
         {
+          system_matrix.reinit(2);
+          system_rhs.reinit(2);
+
           const double sn  = sigma_n;
           const double sn2 = sn * sn;
           const double sn3 = sn2 * sn;
