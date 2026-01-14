@@ -290,7 +290,7 @@ VOFAlgebraicInterfaceReinitialization<dim>::assemble_system_matrix()
           std::vector<double> JxW_vec =
             fe_values_algebraic_reinitialization.get_JxW_values();
 
-          // Get get present phase fraction and projected VOF phase gradient
+          // Get present phase fraction and projected VOF phase gradient
           fe_values_algebraic_reinitialization.get_function_values(
             this->evaluation_point, present_phase_fraction_values);
           fe_values_phase_gradient_projection[phase_fraction_gradients]
@@ -431,7 +431,7 @@ VOFAlgebraicInterfaceReinitialization<dim>::assemble_system_rhs()
     calculate_bdf_coefficients(method, this->time_step_vector);
 
   // Set tolerance to avoid division by zero
-  const double tolerance = 1e-12;
+  constexpr double tolerance = 1e-12;
 
   for (const auto &cell : this->dof_handler->active_cell_iterators())
     {

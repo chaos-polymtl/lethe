@@ -226,7 +226,7 @@ namespace Parameters
     /// Constant representing the power to which the mesh-size is elevated in
     /// the evaluation of the diffusion coefficient.
     double diffusivity_power;
-    /// Constant factor used is the computation of the artificial time-step of
+    /// Constant factor used in the computation of the artificial time-step of
     /// the reinitialization equation
     double dtau_factor;
     /// Steady-state criterion used for the artificial time-stepping scheme.
