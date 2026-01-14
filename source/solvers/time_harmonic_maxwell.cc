@@ -538,6 +538,9 @@ TimeHarmonicMaxwell<dim>::post_mesh_adaptation()
 {
   auto mpi_communicator = this->triangulation->get_mpi_communicator();
 
+  // Re-setup DOFs and constraints on the new mesh. This needs to be done in addition to the Navier-Stokes base class because we have additional DOFHandlers here.
+  setup_dofs();
+
   // Set up the vectors for the transfer
   GlobalVectorType tmp(this->locally_owned_dofs_trial_interior,
                        mpi_communicator);
@@ -545,8 +548,7 @@ TimeHarmonicMaxwell<dim>::post_mesh_adaptation()
   // Interpolate the solution at time and previous time
   this->solution_transfer->interpolate(tmp);
 
-  // Distribute constraints
-  this->nonzero_constraints.distribute(tmp);
+  // Distribute constraints does not need to be call for the DPG method transfer as they live on the skeleton only, but we transfer the interior solution only for multiphysics purposes.
 
   // Fix on the new mesh
   *this->present_solution = tmp;
@@ -1902,10 +1904,8 @@ TimeHarmonicMaxwell<3>::assemble_system_matrix()
                       unsigned int boundary_index = std::distance(
                         time_harmonic_maxwell_parameters.waveguide_boundary_ids
                           .begin(),
-                        std::find(time_harmonic_maxwell_parameters
-                                    .waveguide_boundary_ids.begin(),
-                                  time_harmonic_maxwell_parameters
-                                    .waveguide_boundary_ids.end(),
+                        std::ranges::find(time_harmonic_maxwell_parameters
+                                    .waveguide_boundary_ids,
                                   face->boundary_id()));
 
                       std::tie(g_inc, boundary_surface_admittance) =
@@ -2902,10 +2902,8 @@ TimeHarmonicMaxwell<3>::reconstruct_interior_solution()
                       unsigned int boundary_index = std::distance(
                         time_harmonic_maxwell_parameters.waveguide_boundary_ids
                           .begin(),
-                        std::find(time_harmonic_maxwell_parameters
-                                    .waveguide_boundary_ids.begin(),
-                                  time_harmonic_maxwell_parameters
-                                    .waveguide_boundary_ids.end(),
+                        std::ranges::find(time_harmonic_maxwell_parameters
+                                    .waveguide_boundary_ids,
                                   face->boundary_id()));
 
                       std::tie(g_inc, boundary_surface_admittance) =
