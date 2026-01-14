@@ -210,7 +210,7 @@ else:
 
 if args.validate:
     final_solution = [Re.reshape(-1,1), sol]
-    headers_list = ["Re", "MF_QCM_SI"]
+    headers_list = ["Re", "delta_p"]
     
     final_solution = np.hstack(final_solution)
     np.savetxt("solution-pressure-drop-Re-mf-qcm-si.dat", final_solution, header=" ".join(headers_list))
