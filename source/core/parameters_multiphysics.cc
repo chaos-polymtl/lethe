@@ -834,7 +834,6 @@ Parameters::TimeHarmonicMaxwell::declare_parameters(ParameterHandler &prm) const
         }
         prm.leave_subsection();
       }
-    prm.leave_subsection();
   }
   prm.leave_subsection();
 }
@@ -924,7 +923,6 @@ Parameters::TimeHarmonicMaxwell::parse_parameters(
         }
         prm.leave_subsection();
       }
-    prm.leave_subsection();
   }
   prm.leave_subsection();
 }
