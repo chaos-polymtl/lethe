@@ -8,7 +8,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
 ### Changed
 
-- MINOR The ``set_insertion_type`` function from the ``dem.cc`` file was duplicated in the ``cfd_dem_coupling.cc`` and ``cfd_dem_coupling_matrix_free.cc`` files. This PR fixes this issues by replacing each instance by a single one. [#1877](https://github.com/chaos-polymtl/lethe/pull/1877)
+- MINOR This PR replaces the duplicate ``set_insertion_type`` function definitions in ``dem.cc``, ``cfd_dem_coupling.cc``, and ``cfd_dem_coupling_matrix_free.cc`` with a single definition in ``set_insertion_method.cc``. [#1877](https://github.com/chaos-polymtl/lethe/pull/1877)
 
 ## [Master] - 2026/01/12
 
