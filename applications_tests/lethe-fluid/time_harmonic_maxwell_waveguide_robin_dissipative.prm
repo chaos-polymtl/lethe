@@ -7,7 +7,7 @@
 # at the inlet and an abosrbing impedance boundary at the outlet to verify the
 # implementation of those conditions. The mode tested is the TE12 with a
 # dissipative medium. Note that the test also change the dimension to centimeters,
-# but increase the frequency to make sure the problem is not in a high frequency 
+# but increase the frequency to make sure the problem is not in a high frequency
 # regime (kL >> 1), but still show a noticable decay of the wave amplitude.
 
 # Listing of Parameters
@@ -173,7 +173,6 @@ subsection analytical solution
     set Function expression = cos(4*pi*(x-1)) * sin(4*pi*(y-1)) * exp(-2.624723*(z-1)) * (0.014987*cos(6.767844*(z-1)) + 0.750154*sin(6.767844*(z-1)));    sin(4*pi*(x-1)) * cos(4*pi*(y-1)) * exp(-2.624723*(z-1)) * (-0.014987*cos(6.767844*(z-1)) - 0.750154*sin(6.767844*(z-1)));    0.;    cos(4*pi*(x-1)) * sin(4*pi*(y-1)) * exp(-2.624723*(z-1)) * (-0.750154*cos(6.767844*(z-1)) + 0.014987*sin(6.767844*(z-1)));    sin(4*pi*(x-1)) * cos(4*pi*(y-1)) * exp(-2.624723*(z-1)) * (0.750154*cos(6.767844*(z-1)) - 0.014987*sin(6.767844*(z-1)));    0.;    sin(4*pi*(x-1)) * cos(4*pi*(y-1)) * exp(-2.624723*(z-1)) * (0.104397*cos(6.767844*(z-1)) + 0.269215*sin(6.767844*(z-1)));    cos(4*pi*(x-1)) * sin(4*pi*(y-1)) * exp(-2.624723*(z-1)) * (0.104397*cos(6.767844*(z-1)) + 0.269215*sin(6.767844*(z-1)));    cos(4*pi*(x-1)) * cos(4*pi*(y-1)) * exp(-2.624723*(z-1)) * cos(6.767844*(z-1));    sin(4*pi*(x-1)) * cos(4*pi*(y-1)) * exp(-2.624723*(z-1)) * (-0.269215*cos(6.767844*(z-1)) + 0.104397*sin(6.767844*(z-1)));    cos(4*pi*(x-1)) * sin(4*pi*(y-1)) * exp(-2.624723*(z-1)) * (-0.269215*cos(6.767844*(z-1)) + 0.104397*sin(6.767844*(z-1)));    cos(4*pi*(x-1)) * cos(4*pi*(y-1)) * exp(-2.624723*(z-1)) * sin(6.767844*(z-1))
   end
 end
-
 
 #---------------------------------------------------
 # Linear Solver Control
