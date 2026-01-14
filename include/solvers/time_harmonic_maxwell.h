@@ -105,10 +105,10 @@
 ///   [ ] copy_local_rhs_to_global_rhs
 /// [x] Physics field
 /// [x] Multiphysics interface components
-/// [ ] Physical Properties
-///   [ ] Electrical conductivity
-///   [ ] Permittivity
-///   [ ] Permeability
+/// [x] Physical Properties
+///   [x] Electrical conductivity
+///   [x] Permittivity
+///   [x] Permeability
 /// [X] FEM section for DPG
 /// [ ] Mesh adaptation
 
