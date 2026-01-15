@@ -19,10 +19,10 @@
  * @param size_distribution_object_container Contains all distribution for each
  * particle type.
  * @param triangulation Triangulation to access the cells in which the
- * particles will be inserted
- * @param dem_parameters DEM parameters declared in the .prm file
+ * particles will be inserted.
+ * @param dem_parameters DEM parameters declared in the .prm file.
  * @param maximum_particle_diameter Maximum particle diameter based on values
- * defined in the parameter handler
+ * defined in the parameter handler.
  *
  * @return Shared pointer to the configured insertion object
  */
@@ -56,7 +56,7 @@ set_insertion_type(std::vector<std::shared_ptr<Distribution>>
           dem_parameters,
           maximum_particle_diameter);
       default:
-        throw(std::runtime_error("Invalid insertion method."));
+        AssertThrow(false, ExcMessage("Invalid insertion method."));
     }
 }
 #endif
