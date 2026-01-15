@@ -13,7 +13,9 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/).
   - changes how the artificial time-step is computed;
   - changes how the steady-state criterion is evaluated;
   - removes the filtered VOF solution field for the computation of the projected phase gradient used to compute the unit interface normal vector and the curvature, and;
-  - renames the `reinitialization CFL` parameter to `artificial time-step factor` (an alias was made for `reinitialization CFL`, to avoid parameter file version issues) [#1879](https://github.com/chaos-polymtl/lethe/pull/1879)
+  - renames the `reinitialization CFL` parameter to `artificial time-step factor` (an alias was made for `reinitialization CFL`, to avoid parameter file version issues)
+
+  This PR also updates the rising bubble example. Other VOF examples with surface tension force (static bubble, capillary wave, and Rayleigh-Plateau instability) will have to be checked and updated in a future PR. [#1879](https://github.com/chaos-polymtl/lethe/pull/1879)
 
 - MINOR This PR replaces the duplicate ``set_insertion_type`` function definitions in ``dem.cc``, ``cfd_dem_coupling.cc``, and ``cfd_dem_coupling_matrix_free.cc`` with a single definition in ``set_insertion_method.cc``. [#1877](https://github.com/chaos-polymtl/lethe/pull/1877)
 

@@ -159,9 +159,9 @@ Finally, the signed distance field is transformed to a phase fraction field. Her
 .. math::
   \phi \approx
   \begin{cases}
-    1 \quad \text{if } d < -d_\mathrm{max} \\
-    0.5 \quad \text{if } d = 0\\
-    0 \quad \text{if } d > d_\mathrm{max} \\
+    1 &\quad \text{if } d < -d_\mathrm{max} \\
+    0.5 &\quad \text{if } d = 0\\
+    0 &\quad \text{if } d > d_\mathrm{max} \\
   \end{cases}
 
 In Lethe, two functions are available to achieve that: a hyperbolic tangent function or a 4th degree, piecewise polynomial. 

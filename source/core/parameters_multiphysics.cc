@@ -515,11 +515,11 @@ Parameters::VOF_AlgebraicInterfaceReinitialization::declare_parameters(
       "Power value applied to the mesh-size in the mesh-dependant diffusion "
       "coefficient of the algebraic interface reinitialization.");
     prm.declare_entry("steady-state criterion",
-                      "1e-2",
+                      "1e-4",
                       Patterns::Double(),
                       "Tolerance for the artificial time-stepping scheme.");
     prm.declare_entry("max steps number",
-                      "5",
+                      "10000",
                       Patterns::Integer(),
                       "Maximum number of reinitialization steps.");
     prm.declare_entry(

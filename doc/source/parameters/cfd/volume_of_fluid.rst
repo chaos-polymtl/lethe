@@ -48,8 +48,8 @@ The default values of the VOF parameters are given in the text box below.
 
       subsection algebraic interface reinitialization
         set output reinitialization steps = false
-        set steady-state criterion        = 1e-2
-        set max steps number              = 5
+        set steady-state criterion        = 1e-4
+        set max steps number              = 10000
         set diffusivity multiplier        = 1.0
         set diffusivity power             = 1.0
         set artificial time-step factor   = 0.25
