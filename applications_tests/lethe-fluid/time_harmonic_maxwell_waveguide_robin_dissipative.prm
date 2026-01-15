@@ -65,8 +65,7 @@ end
 subsection mesh
   set type               = dealii
   set grid type          = subdivided_hyper_rectangle
-  set grid arguments     = 2, 2, 4 : 1, 1, 1 : 1.25, 1.5, 1.5 : true
-  set initial refinement = 0
+  set grid arguments     = 1, 2, 2 : 1, 1, 1 : 1.25, 1.5, 1.5 : true
 end
 
 #---------------------------------------------------
@@ -91,16 +90,16 @@ end
 #---------------------------------------------------
 
 subsection time harmonic maxwell
-  set electromagnetic frequency  = 89937737400
+  set electromagnetic frequency  = 8.99377374e10
   set number of waveguide inlets = 1
 
   subsection waveguide inlet 0
     set port boundary id = 4
 
-    set corner 1 = 1,1,1
-    set corner 2 = 1.25,1,1
-    set corner 3 = 1, 1.5, 1
-    set corner 4 = 1.25, 1.5, 1
+    set corner 0 = 1,1,1
+    set corner 1 = 1.25,1,1
+    set corner 2 = 1, 1.5, 1
+    set corner 3 = 1.25, 1.5, 1
 
     subsection waveguide mode
       set mode type    = TE

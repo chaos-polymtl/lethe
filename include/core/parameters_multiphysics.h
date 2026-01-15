@@ -12,6 +12,7 @@
 #include <core/parameters.h>
 
 #include <deal.II/base/parameter_handler.h>
+#include <deal.II/base/utilities.h>
 
 using namespace dealii;
 
@@ -397,11 +398,11 @@ namespace Parameters
    * @brief TimeHarmonicMaxwell - Defines the parameters for
    * time-harmonic Maxwell simulations.
    */
+  template <int dim>
   struct TimeHarmonicMaxwell
   {
     // We use vectors in the following to be able to define multiple waveguides
     // in the same simulation.
-
     unsigned int number_of_waveguide_inlets;
 
     // Frequency of the electromagnetic wave (in Hz)
@@ -418,9 +419,9 @@ namespace Parameters
     std::vector<unsigned int> mode_order_m;
     std::vector<unsigned int> mode_order_n;
 
-    // Waveguide corners location (we only implement the 3D, in 2D it would be 2
-    // points with 2D coordinates).
-    std::vector<std::array<Tensor<1, 3>, 4>> waveguide_corners_3D;
+    // Waveguide corners locations
+    std::vector<std::array<Tensor<1, dim>, Utilities::fixed_power<2>(dim - 1)>>
+      waveguide_corners;
 
     void
     declare_parameters(ParameterHandler &prm) const;
@@ -434,6 +435,7 @@ namespace Parameters
    * @brief Multiphysics - the parameters for multiphysics simulations
    * and handles sub-physics parameters.
    */
+  template <int dim>
   struct Multiphysics
   {
     bool fluid_dynamics;
@@ -447,9 +449,9 @@ namespace Parameters
     bool viscous_dissipation;
     bool buoyancy_force;
 
-    Parameters::VOF                 vof_parameters;
-    Parameters::CahnHilliard        cahn_hilliard_parameters;
-    Parameters::TimeHarmonicMaxwell time_harmonic_maxwell_parameters;
+    Parameters::VOF                      vof_parameters;
+    Parameters::CahnHilliard             cahn_hilliard_parameters;
+    Parameters::TimeHarmonicMaxwell<dim> time_harmonic_maxwell_parameters;
 
     void
     declare_parameters(ParameterHandler &prm) const;

@@ -1,12 +1,9 @@
-# SPDX-FileCopyrightText: Copyright (c) 2025-2026 The Lethe Authors
+# SPDX-FileCopyrightText: Copyright (c) 2025 The Lethe Authors
 # SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
 # This test case runs the time-harmonic electromagnetic solver to simulate the
-# propagation of half a wavelength in a waveguide with perfectly conducting walls.
-# This test imposes Robin boundary conditions: build-in waveguide port excitation
-# at the inlet and an abosrbing impedance boundary at the outlet to verify the
-# implementation of those conditions. The mode tested is the TM12. Note that
-# the test offset the geometry to test this functionality also.
+# propagation of one wavelength in a waveguide with perfectly conducting walls.
+# This test imposes Robin boundary conditions: an excitation at the inlet and and outlet to verify the implementation of this
 
 # Listing of Parameters
 #----------------------
@@ -18,17 +15,16 @@ set dimension = 3
 #---------------------------------------------------
 
 subsection simulation control
-  set method            = steady
-  set output frequency  = 0
+  set method      = steady
+  set output path = ./output/
   set number mesh adapt = 1
 end
 
 #---------------------------------------------------
 # Mesh Adaptation
 #---------------------------------------------------
-
 subsection mesh adaptation
-  set type = uniform
+  set type                     = uniform
 end
 
 #---------------------------------------------------
@@ -40,19 +36,24 @@ subsection FEM
   set electromagnetics test order  = 2
 end
 
+#---------------------------------------------------
+# Physical Properties
+#---------------------------------------------------
+
 subsection physical properties
   set number of fluids = 1
   subsection fluid 0
     set electric conductivity model = constant
-    set electric conductivity       = 0.
+    set electric conductivity = 0.
 
-    set electric permittivity model     = constant
+    set electric permittivity model = constant
     set electric permittivity real part = 1.
     set electric permittivity imag part = 0.
-
-    set magnetic permeability model     = constant
+    
+    set magnetic permeability model = constant
     set magnetic permeability real part = 1.
     set magnetic permeability imag part = 0.
+
   end
 end
 
@@ -63,7 +64,7 @@ end
 subsection mesh
   set type               = dealii
   set grid type          = subdivided_hyper_rectangle
-  set grid arguments     = 1, 1, 2 : 1, 1, 1 : 1.25, 1.5, 1.5 : true
+  set grid arguments     = 1, 1, 4 : 0, 0, 0 : 0.25, 0.25, 1 : true
   set initial refinement = 1
 end
 
@@ -81,24 +82,9 @@ end
 #---------------------------------------------------
 
 subsection time harmonic maxwell
-  set electromagnetic frequency  = 8.99377374e8
-  set number of waveguide inlets = 1
-
-  subsection waveguide inlet 0
-    set port boundary id = 4
-
-    set corner 0 = 1,1,1
-    set corner 1 = 1.25,1,1
-    set corner 2 = 1, 1.5, 1
-    set corner 3 = 1.25, 1.5, 1
-
-    subsection waveguide mode
-      set mode type    = TM
-      set mode order m = 1
-      set mode order n = 2
-    end
-  end
+  set electromagnetic frequency = 670356315.7
 end
+
 
 #---------------------------------------------------
 # Boundary Conditions
@@ -120,7 +106,31 @@ subsection boundary conditions time harmonic maxwell
   end
   subsection bc 1
     set id   = 4
-    set type = waveguide port
+    set type = impedance boundary
+    subsection excitation x real
+      set Function expression = 0
+    end
+    subsection excitation x imag
+      set Function expression = 0
+    end
+    subsection excitation y real
+      set Function expression = 0
+    end
+    subsection excitation y imag
+      set Function expression = sin(4*pi*x)
+    end
+    subsection excitation z real
+      set Function expression = 0
+    end
+    subsection excitation z imag
+      set Function expression = 0
+    end
+    subsection surface admittance real
+      set Function expression = 0.4472135952
+    end
+    subsection surface admittance imag
+      set Function expression = 0.
+    end
   end
   subsection bc 2
     set id   = 5
@@ -144,11 +154,21 @@ subsection boundary conditions time harmonic maxwell
       set Function expression = 0
     end
     subsection surface admittance real
-      set Function expression = 3
+      set Function expression = 0.4472135952
     end
     subsection surface admittance imag
       set Function expression = 0.
     end
+  end
+end
+
+#---------------------------------------------------
+# Initial condition
+#---------------------------------------------------
+
+subsection initial conditions
+  subsection electromagnetics
+    set Function expression = 0.;-20^(1/2)/(4)*sin(4*pi*x)*sin(2*pi*z);0.;0.;20^(1/2)/(4)*sin(4*pi*x)*cos(2*pi*z); 0.; 0.5*sin(4*pi*x)*sin(2*pi*z);0.;cos(4*pi*x)*cos(2*pi*z);-0.5*sin(4*pi*x)*cos(2*pi*z); 0.; cos(4*pi*x)*sin(2*pi*z)
   end
 end
 
@@ -160,8 +180,16 @@ subsection analytical solution
   set enable    = true
   set verbosity = verbose
   subsection electromagnetics
-    set Function expression = -1/4 * cos(4*pi*(x-1)) * sin(4*pi*(y-1)) * sin(2*pi*(z-1));    -1/4 * sin(4*pi*(x-1)) * cos(4*pi*(y-1)) * sin(2*pi*(z-1));    sin(4*pi*(x-1)) * sin(4*pi*(y-1)) * cos(2*pi*(z-1));    1/4 * cos(4*pi*(x-1)) * sin(4*pi*(y-1)) * cos(2*pi*(z-1));    1/4 * sin(4*pi*(x-1)) * cos(4*pi*(y-1)) * cos(2*pi*(z-1));    sin(4*pi*(x-1)) * sin(4*pi*(y-1)) * sin(2*pi*(z-1));    3/4 * sin(4*pi*(x-1)) * cos(4*pi*(y-1)) * sin(2*pi*(z-1));    -3/4 * cos(4*pi*(x-1)) * sin(4*pi*(y-1)) * sin(2*pi*(z-1));     0.;    -3/4 * sin(4*pi*(x-1)) * cos(4*pi*(y-1)) * cos(2*pi*(z-1));      3/4 * cos(4*pi*(x-1)) * sin(4*pi*(y-1)) * cos(2*pi*(z-1));  0.
+    set Function expression = 0.;-20^(1/2)/(4)*sin(4*pi*x)*sin(2*pi*z);0.;0.;20^(1/2)/(4)*sin(4*pi*x)*cos(2*pi*z); 0.; 0.5*sin(4*pi*x)*sin(2*pi*z);0.;cos(4*pi*x)*cos(2*pi*z);-0.5*sin(4*pi*x)*cos(2*pi*z); 0.; cos(4*pi*x)*sin(2*pi*z)
   end
+end
+
+#---------------------------------------------------
+# Postprocessing
+#---------------------------------------------------
+
+subsection post-processing
+  set verbosity = verbose
 end
 
 #---------------------------------------------------
@@ -170,18 +198,8 @@ end
 
 subsection linear solver
   subsection electromagnetics
-    set verbosity         = quiet
+    set verbosity         = verbose
     set relative residual = 1e-8
     set minimum residual  = 1e-12
-  end
-end
-
-#---------------------------------------------------
-# Non-Linear Solver Control
-#---------------------------------------------------
-
-subsection non-linear solver
-  subsection fluid dynamics
-    set verbosity = quiet
   end
 end

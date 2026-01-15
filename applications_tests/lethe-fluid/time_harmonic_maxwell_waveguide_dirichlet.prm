@@ -4,7 +4,8 @@
 # This test case runs the time-harmonic electromagnetic solver to simulate the
 # propagation of one wavelength in a waveguide with perfectly conducting walls.
 # This test imposes Dirichlet boundary conditions on both the electric field (inlet) and
-# magnetic field (outlet) to verify the implementation of those conditions. We also monitor the convergence for one refinement to make sure that we recover the right order.
+# magnetic field (outlet) to verify the implementation of those conditions. We also 
+# monitor the convergence for one refinement to make sure that we recover the right order.
 
 # Listing of Parameters
 #----------------------
@@ -65,8 +66,7 @@ end
 subsection mesh
   set type               = dealii
   set grid type          = subdivided_hyper_rectangle
-  set grid arguments     = 2, 2, 8 : 0, 0, 0 : 0.25, 0.25, 1 : true
-  set initial refinement = 0
+  set grid arguments     = 1, 1, 4 : 0, 0, 0 : 0.25, 0.25, 1. : true
 end
 
 #---------------------------------------------------
@@ -83,7 +83,7 @@ end
 #---------------------------------------------------
 
 subsection time harmonic maxwell
-  set electromagnetic frequency = 670356315.7
+  set electromagnetic frequency = 6.703563157e8
 end
 
 #---------------------------------------------------

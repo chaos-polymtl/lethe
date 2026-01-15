@@ -109,9 +109,7 @@ TimeHarmonicMaxwell<2>::compute_waveguide_port_excitation(
   const std::complex<double> & /*mu_r*/,
   const unsigned int /*boundary_id_index*/)
 {
-  // We make a call to the waveguide_corners_3D which is incompatible with 2D.
-  // Since, we do not support 2D time-harmonic Maxwell so this function throws
-  // an error.
+  // The waveguide port excitation would be completely different in 2D as curls and cross products are not defined the same way as in 3D. Therefore, we do not implement it for now and throw an error if someone tries to use the 2D version.
   AssertThrow(false, TimeHarmonicMaxwellDimensionNotSupported(2));
   return std::pair<Tensor<1, 2, std::complex<double>>, std::complex<double>>();
 }
@@ -131,12 +129,12 @@ TimeHarmonicMaxwell<3>::compute_waveguide_port_excitation(
   static constexpr unsigned int         dim = 3;
 
   // Gather the relevant waveguide parameters
-  const Parameters::TimeHarmonicMaxwell &time_harmonic_maxwell_parameters =
+  const Parameters::TimeHarmonicMaxwell<dim> &time_harmonic_maxwell_parameters =
     this->simulation_parameters.multiphysics.time_harmonic_maxwell_parameters;
   const double omega =
     2.0 * PI * time_harmonic_maxwell_parameters.electromagnetic_frequency;
   const auto &waveguide_corners =
-    time_harmonic_maxwell_parameters.waveguide_corners_3D[boundary_id_index];
+    time_harmonic_maxwell_parameters.waveguide_corners[boundary_id_index];
   const Parameters::WaveguideMode mode =
     time_harmonic_maxwell_parameters.waveguide_mode[boundary_id_index];
   const unsigned int m =
@@ -538,9 +536,6 @@ TimeHarmonicMaxwell<dim>::post_mesh_adaptation()
 {
   auto mpi_communicator = this->triangulation->get_mpi_communicator();
 
-  // Re-setup DOFs and constraints on the new mesh. This needs to be done in addition to the Navier-Stokes base class because we have additional DOFHandlers here.
-  setup_dofs();
-
   // Set up the vectors for the transfer
   GlobalVectorType tmp(this->locally_owned_dofs_trial_interior,
                        mpi_communicator);
@@ -548,7 +543,9 @@ TimeHarmonicMaxwell<dim>::post_mesh_adaptation()
   // Interpolate the solution at time and previous time
   this->solution_transfer->interpolate(tmp);
 
-  // Distribute constraints does not need to be call for the DPG method transfer as they live on the skeleton only, but we transfer the interior solution only for multiphysics purposes.
+  // Distribute constraints does not need to be call for the DPG method transfer
+  // as they live on the skeleton only, but we transfer the interior solution
+  // only for multiphysics purposes.
 
   // Fix on the new mesh
   *this->present_solution = tmp;
@@ -1113,7 +1110,7 @@ TimeHarmonicMaxwell<3>::assemble_system_matrix()
                                  field_values)};
 
   /// Excitation properties
-  const Parameters::TimeHarmonicMaxwell &time_harmonic_maxwell_parameters =
+  const Parameters::TimeHarmonicMaxwell<dim> &time_harmonic_maxwell_parameters =
     this->simulation_parameters.multiphysics.time_harmonic_maxwell_parameters;
   const double omega =
     2.0 * PI * time_harmonic_maxwell_parameters.electromagnetic_frequency;
@@ -1905,8 +1902,8 @@ TimeHarmonicMaxwell<3>::assemble_system_matrix()
                         time_harmonic_maxwell_parameters.waveguide_boundary_ids
                           .begin(),
                         std::ranges::find(time_harmonic_maxwell_parameters
-                                    .waveguide_boundary_ids,
-                                  face->boundary_id()));
+                                            .waveguide_boundary_ids,
+                                          face->boundary_id()));
 
                       std::tie(g_inc, boundary_surface_admittance) =
                         compute_waveguide_port_excitation(position,
@@ -2107,7 +2104,7 @@ TimeHarmonicMaxwell<3>::reconstruct_interior_solution()
                                  field_values)};
 
   /// Excitation properties
-  const Parameters::TimeHarmonicMaxwell &time_harmonic_maxwell_parameters =
+  const Parameters::TimeHarmonicMaxwell<dim> &time_harmonic_maxwell_parameters =
     this->simulation_parameters.multiphysics.time_harmonic_maxwell_parameters;
   const double omega =
     2.0 * PI * time_harmonic_maxwell_parameters.electromagnetic_frequency;
@@ -2903,8 +2900,8 @@ TimeHarmonicMaxwell<3>::reconstruct_interior_solution()
                         time_harmonic_maxwell_parameters.waveguide_boundary_ids
                           .begin(),
                         std::ranges::find(time_harmonic_maxwell_parameters
-                                    .waveguide_boundary_ids,
-                                  face->boundary_id()));
+                                            .waveguide_boundary_ids,
+                                          face->boundary_id()));
 
                       std::tie(g_inc, boundary_surface_admittance) =
                         compute_waveguide_port_excitation(position,
