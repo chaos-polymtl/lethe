@@ -52,7 +52,7 @@ The default values of the VOF parameters are given in the text box below.
         set max steps number              = 5
         set diffusivity multiplier        = 1.0
         set diffusivity power             = 1.0
-        set artificial time-step factor   = 1.0
+        set artificial time-step factor   = 0.25
       end
     end
 
@@ -202,6 +202,13 @@ The algebraic interface reinitialization PDE contains a diffusion term. This ter
 * ``diffusivity multiplier``: factor :math:`(C)` multiplying the smallest cell-size value :math:`(h_\text{min})` in the evaluation of the diffusion coefficient of the PDE.
 
 * ``diffusivity power``: power :math:`(d)` to which the smallest cell-size value :math:`(h_\text{min})` is elevated in the evaluation of the diffusion coefficient of the PDE.
+
+.. note::
+
+    Here, we define the cell-size :math:`(h)` as being the diameter of:
+
+    - a disk with equivalent area in 2D, and;
+    - a sphere with equivalent volume in 3D.
 
 * ``artificial time-step factor``: factor used to evaluate the artificial time-step :math:`(\Delta\tau)`.
 

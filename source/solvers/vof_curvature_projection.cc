@@ -58,6 +58,11 @@ VOFCurvatureProjection<dim>::assemble_system_matrix_and_rhs()
     this->simulation_parameters.multiphysics.vof_parameters
       .surface_tension_force.curvature_diffusion_factor;
 
+  // Get present phase gradient projection solution
+  auto &present_phase_gradient_projection_solution =
+    this->subequations_interface.get_solution(
+      VOFSubequationsID::phase_gradient_projection);
+
   // Loop over phase gradient projection cells
   for (const auto &cell : this->dof_handler->active_cell_iterators())
     {
@@ -93,10 +98,8 @@ VOFCurvatureProjection<dim>::assemble_system_matrix_and_rhs()
 
           // Get projected fraction gradient values
           fe_values_phase_gradient_projection[phase_fraction_gradients]
-            .get_function_values(
-              this->subequations_interface.get_solution(
-                VOFSubequationsID::phase_gradient_projection),
-              present_phase_gradient_projection_values);
+            .get_function_values(present_phase_gradient_projection_solution,
+                                 present_phase_gradient_projection_values);
 
           // Set tolerance to avoid division by zero
           const double tolerance = 1e-12;

@@ -213,10 +213,10 @@ where:
 
 .. note::
 
-    Here, we define the cell-size as being the diameter of:
+    Here, we define the cell-size :math:`(h)` as being the diameter of:
 
-    - a disk of equivalent area in 2D, and;
-    - a sphere of equivalent volume in 3D.
+    - a disk with equivalent area in 2D, and;
+    - a sphere with equivalent volume in 3D.
 
 The equation is solved using the finite element method:
 

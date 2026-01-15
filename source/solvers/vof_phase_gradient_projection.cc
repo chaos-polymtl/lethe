@@ -55,6 +55,9 @@ VOFPhaseGradientProjection<dim>::assemble_system_matrix_and_rhs()
     this->simulation_parameters.multiphysics.vof_parameters
       .surface_tension_force.phase_fraction_gradient_diffusion_factor;
 
+  // Get present vof solution
+  auto &present_vof_solution = this->subequations_interface.get_vof_solution();
+
   // Loop over phase gradient projection cells
   for (const auto &cell : this->dof_handler->active_cell_iterators())
     {
@@ -87,9 +90,8 @@ VOFPhaseGradientProjection<dim>::assemble_system_matrix_and_rhs()
                                        fe_phase_gradient_projection.degree);
 
           // Get VOF phase fraction gradients
-          fe_values_vof.get_function_gradients(
-            this->subequations_interface.get_vof_solution(),
-            present_vof_phase_gradients);
+          fe_values_vof.get_function_gradients(present_vof_solution,
+                                               present_vof_phase_gradients);
 
           // Loop over quadrature points
           for (unsigned int q = 0; q < n_q_points; ++q)

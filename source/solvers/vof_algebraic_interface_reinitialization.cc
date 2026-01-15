@@ -265,6 +265,11 @@ VOFAlgebraicInterfaceReinitialization<dim>::assemble_system_matrix()
   const Vector<double> bdf_coefficient_vector =
     calculate_bdf_coefficients(method, this->time_step_vector);
 
+  // Get present phase gradient projection solution
+  auto &present_phase_gradient_projection_solution =
+    this->subequations_interface.get_solution(
+      VOFSubequationsID::phase_gradient_projection);
+
   // Assemble system matrix
   for (const auto &cell : this->dof_handler->active_cell_iterators())
     {
@@ -294,10 +299,8 @@ VOFAlgebraicInterfaceReinitialization<dim>::assemble_system_matrix()
           fe_values_algebraic_reinitialization.get_function_values(
             this->evaluation_point, present_phase_fraction_values);
           fe_values_phase_gradient_projection[phase_fraction_gradients]
-            .get_function_values(
-              this->subequations_interface.get_solution(
-                VOFSubequationsID::phase_gradient_projection),
-              present_phase_gradient_projection_values);
+            .get_function_values(present_phase_gradient_projection_solution,
+                                 present_phase_gradient_projection_values);
 
           // Set tolerance to avoid division by zero
           const double tolerance = 1e-12;
@@ -761,7 +764,7 @@ VOFAlgebraicInterfaceReinitialization<dim>::write_output_results(
     data_out,
     folder,
     file_name,
-    step, // time,
+    step,
     step,
     this->simulation_parameters.simulation_control.group_files,
     mpi_communicator);

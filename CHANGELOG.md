@@ -8,12 +8,13 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
 ### Changed
 
-- MINOR The algebraic reinitialization PDE had some issues converging towards steady-state. To solve them, this PR:
+- MAJOR The algebraic reinitialization PDE had some issues converging towards steady-state. To solve them, this PR: 
   - changes the weak formulation of the problem solved (the curvature field is no more required);
   - changes how the artificial time-step is computed;
   - changes how the steady-state criterion is evaluated;
-  - removes the filtered VOF solution field for the computation of the projected phase gradient used to compute the unit interface normal vector, and;
+  - removes the filtered VOF solution field for the computation of the projected phase gradient used to compute the unit interface normal vector and the curvature, and;
   - renames the `reinitialization CFL` parameter to `artificial time-step factor` (an alias was made for `reinitialization CFL`, to avoid parameter file version issues) [#1879](https://github.com/chaos-polymtl/lethe/pull/1879)
+
 - MINOR This PR replaces the duplicate ``set_insertion_type`` function definitions in ``dem.cc``, ``cfd_dem_coupling.cc``, and ``cfd_dem_coupling_matrix_free.cc`` with a single definition in ``set_insertion_method.cc``. [#1877](https://github.com/chaos-polymtl/lethe/pull/1877)
 
 ## [Master] - 2026/01/12
@@ -22,7 +23,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
 - MINOR The lethe-particles/distribution_normal.prm application test was using a log-normal distribution. The parameter was changed back to ``normal``. As a result, the output of the test did change. [#1876](https://github.com/chaos-polymtl/lethe/pull/1876) 
 
-- Minor The convection term in the VANS equations for models A and B is changed from ``local_matrix_ij += ((phi_u_j * void_fraction * velocity_gradient * phi_u_i) + (grad_phi_u_j * void_fraction * velocity * phi_u_i));`` to ``local_matrix_ij += ((velocity_gradient * phi_u_j * void_fraction * phi_u_i) + (grad_phi_u_j * void_fraction * velocity * phi_u_i))`` in the matrix assembly, to match the correct algebraic formula. The output of the ``lethe-fluid-particles`` and ``lethe-fluid-vans`` application tests changed only slightly. Therefore, their outputs were updated in this PR as well. [#1874](https://github.com/chaos-polymtl/lethe/pull/1874) 
+- MINOR The convection term in the VANS equations for models A and B is changed from ``local_matrix_ij += ((phi_u_j * void_fraction * velocity_gradient * phi_u_i) + (grad_phi_u_j * void_fraction * velocity * phi_u_i));`` to ``local_matrix_ij += ((velocity_gradient * phi_u_j * void_fraction * phi_u_i) + (grad_phi_u_j * void_fraction * velocity * phi_u_i))`` in the matrix assembly, to match the correct algebraic formula. The output of the ``lethe-fluid-particles`` and ``lethe-fluid-vans`` application tests changed only slightly. Therefore, their outputs were updated in this PR as well. [#1874](https://github.com/chaos-polymtl/lethe/pull/1874) 
 
 
 ## [Master] - 2026/01/07
