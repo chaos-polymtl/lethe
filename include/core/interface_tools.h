@@ -422,6 +422,7 @@ namespace InterfaceTools
     {
       mapping = std::make_shared<MappingFE<dim>>(*fe);
       set_face_opposite_dofs_map();
+      set_face_dofs_map();
     }
 
     /**
@@ -624,6 +625,32 @@ namespace InterfaceTools
         }
     }
 
+        /**
+     * @brief Set the map of local id of the opposite DoFs to the given face
+     * (works for quad only).
+     */
+    inline void
+    set_face_dofs_map()
+    {
+      if constexpr (dim == 2)
+        {
+          face_dofs_map[0] = {0,2};
+          face_dofs_map[1] = {1,3};
+          face_dofs_map[2] = {0,1};
+          face_dofs_map[3] = {2,3};
+        }
+
+      if constexpr (dim == 3)
+        {
+          face_dofs_map[0] = {0, 2, 4, 6};
+          face_dofs_map[1] = {1, 3, 5, 7};
+          face_dofs_map[2] = {0, 1, 4, 5};
+          face_dofs_map[3] = {2, 3, 6, 7};
+          face_dofs_map[4] = {0, 1, 2, 3};
+          face_dofs_map[5] = {4, 5, 6, 7};
+        }
+    }
+
     /**
      * @brief Return the local id of the opposite DoFs to the given face
      * (works for quad only).
@@ -638,6 +665,22 @@ namespace InterfaceTools
                            std::vector<unsigned int> &local_opposite_dofs)
     {
       local_opposite_dofs = face_opposite_dofs_map.at(local_face_id);
+    };
+
+     /**
+     * @brief Return the local id of the opposite DoFs to the given face
+     * (works for quad only).
+     *
+     * @param[in] local_face_id Local id of the face in the cell
+     *
+     * @param[out] local_opposite_dofs The vector containing the id of the
+     * opposite faces
+     */
+    inline void
+    get_face_dofs(unsigned int               local_face_id,
+                           std::vector<unsigned int> &local_dofs)
+    {
+      local_dofs = face_dofs_map.at(local_face_id);
     };
 
     /**
@@ -903,33 +946,65 @@ namespace InterfaceTools
       const Tensor<1, dim> x_n_to_x_I_real_p1 =
             x_I_real - x_real;
 
-      const x_n_to_x_I_real_p1_norm = x_n_to_x_I_real_p1.norm();
+      const double x_n_to_x_I_real_p1_norm = x_n_to_x_I_real_p1.norm();
 
-      const x_n_to_x_I_real_p1_norm_squared = x_n_to_x_I_real_p1_norm * x_n_to_x_I_real_p1_norm;
+      const double x_n_to_x_I_real_p1_norm_squared = x_n_to_x_I_real_p1_norm * x_n_to_x_I_real_p1_norm;
 
-      const x_n_to_x_I_real_p1_norm_cubic = x_n_to_x_I_real_p1_norm_squared * x_n_to_x_I_real_p1_norm;
+      const double x_n_to_x_I_real_p1_norm_cubic = x_n_to_x_I_real_p1_norm_squared * x_n_to_x_I_real_p1_norm;
 
       LAPACKFullMatrix<double> hessian_matrix(dim, dim);
 
       for (unsigned int i = 0; i < dim; ++i)
         {
-          for (unsigned int j = 0; j < dim; ++i)
+          for (unsigned int j = 0; j < dim; ++j)
             {
               double h_ij = -(x_n_to_x_I_real_p1[i]*x_n_to_x_I_real_p1[j])/x_n_to_x_I_real_p1_norm_cubic;
               if (i == j)
-                h_ij += 1/x_n_to_x_I_real_p1_norm;
+                h_ij += 1.0/x_n_to_x_I_real_p1_norm;
               
               hessian_matrix.set(i,j, h_ij);
             }
         }
         
-        const DerivativeForm<1, dim, dim - 1> transformation_jacobian_tanspose = transformation_jacobian.transpose();
+      const DerivativeForm<1, dim, dim - 1> transformation_jacobian_tanspose = transformation_jacobian.transpose();
+      
+      LAPACKFullMatrix<double> H_x_transformation_jacobian(dim, dim-1);
+      for (unsigned int i = 0; i < dim; ++i)
+        {
+          for (unsigned int j = 0; j < dim-1; ++j)
+            {
+              double matrix_ij = 0;
+              for (unsigned int k = 0; k < dim; ++k)
+                {
+                  matrix_ij += hessian_matrix(i,k)*transformation_jacobian[k][j];
+                }
+              H_x_transformation_jacobian.set(i,j, matrix_ij);
+            }
+        }
 
-      for (unsigned int i = 0; i < dim - 1; ++i)
-        for (unsigned int j = 0; j < dim; ++j)
-          jacobian_matrix
-          residual_ref[i] +=
-            transformation_jac_transpose[i][j] * residual_real[j];
+      for (unsigned int i = 0; i < dim-1; ++i)
+        {
+          for (unsigned int j = 0; j < dim-1; ++j)
+            {
+              double matrix_ij = 0;
+              for (unsigned int k = 0; k < dim; ++k)
+                {
+                  matrix_ij += transformation_jacobian_tanspose[i][k]*H_x_transformation_jacobian(k,j);
+                }
+              jacobian_matrix.set(i,j, matrix_ij);
+            }
+        }
+        
+        // std::cout <<"hessian_matrix = " << std::endl;
+        // hessian_matrix.print_formatted(std::cout, 3, true, 0,"0.0");
+
+        // std::cout <<"H_x_transformation_jacobian = " << std::endl;
+        // H_x_transformation_jacobian.print_formatted(std::cout, 3, true, 0,"0.0");
+
+        // std::cout << "J = " << transformation_jacobian << std::endl;
+        // std::cout << "J^T = " << transformation_jacobian_tanspose << std::endl;
+
+
 
     };
 
@@ -1028,6 +1103,9 @@ namespace InterfaceTools
     PVDHandler pvd_handler_signed_distance;
 
     std::map<unsigned int, std::vector<unsigned int>> face_opposite_dofs_map;
+
+    std::map<unsigned int, std::vector<unsigned int>> face_dofs_map;
+
   };
 } // namespace InterfaceTools
 
