@@ -1,4 +1,4 @@
-// SPDX-FileCopyrightText: Copyright (c) 2020-2025 The Lethe Authors
+// SPDX-FileCopyrightText: Copyright (c) 2020-2026 The Lethe Authors
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
 #include <core/manifolds.h>
@@ -10,15 +10,12 @@
 #include <dem/explicit_euler_integrator.h>
 #include <dem/find_contact_detection_step.h>
 #include <dem/input_parameter_inspection.h>
-#include <dem/insertion_file.h>
-#include <dem/insertion_list.h>
-#include <dem/insertion_plane.h>
-#include <dem/insertion_volume.h>
 #include <dem/lagrangian_post_processing.h>
 #include <dem/multiphysics_integrator.h>
 #include <dem/output_force_torque_calculation.h>
 #include <dem/read_checkpoint.h>
 #include <dem/read_mesh.h>
+#include <dem/set_insertion_method.h>
 #include <dem/set_particle_particle_contact_force_model.h>
 #include <dem/set_particle_wall_contact_force_model.h>
 #include <dem/velocity_verlet_integrator.h>
@@ -257,7 +254,11 @@ DEMSolver<dim, PropertiesIndex>::setup_functions_and_pointers()
 
   // Set insertion object type before the restart because the restart only
   // rebuilds the member of the insertion object
-  insertion_object = set_insertion_type();
+  insertion_object =
+    set_insertion_type<dim, PropertiesIndex>(size_distribution_object_container,
+                                             triangulation,
+                                             parameters,
+                                             maximum_particle_diameter);
 
   // Setting chosen contact force, insertion and integration methods
   integrator_object = set_integrator_type();
@@ -284,44 +285,6 @@ DEMSolver<dim, PropertiesIndex>::set_contact_search_iteration_function()
         return [&] { check_contact_search_iteration_dynamic(); };
       default:
         throw(std::runtime_error("Invalid contact detection method."));
-    }
-}
-
-template <int dim, typename PropertiesIndex>
-std::shared_ptr<Insertion<dim, PropertiesIndex>>
-DEMSolver<dim, PropertiesIndex>::set_insertion_type()
-{
-  using namespace Parameters::Lagrangian;
-  typename InsertionInfo<dim>::InsertionMethod insertion_method =
-    parameters.insertion_info.insertion_method;
-
-  switch (insertion_method)
-    {
-      case InsertionInfo<dim>::InsertionMethod::file:
-        {
-          return std::make_shared<InsertionFile<dim, PropertiesIndex>>(
-            size_distribution_object_container, triangulation, parameters);
-        }
-      case InsertionInfo<dim>::InsertionMethod::list:
-        {
-          return std::make_shared<InsertionList<dim, PropertiesIndex>>(
-            size_distribution_object_container, triangulation, parameters);
-        }
-      case InsertionInfo<dim>::InsertionMethod::plane:
-        {
-          return std::make_shared<InsertionPlane<dim, PropertiesIndex>>(
-            size_distribution_object_container, triangulation, parameters);
-        }
-      case InsertionInfo<dim>::InsertionMethod::volume:
-        {
-          return std::make_shared<InsertionVolume<dim, PropertiesIndex>>(
-            size_distribution_object_container,
-            triangulation,
-            parameters,
-            maximum_particle_diameter);
-        }
-      default:
-        throw(std::runtime_error("Invalid insertion method."));
     }
 }
 

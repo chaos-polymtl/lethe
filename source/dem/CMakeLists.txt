@@ -97,6 +97,7 @@ add_library(lethe-dem
   ../../include/dem/read_checkpoint.h
   ../../include/dem/read_mesh.h
   ../../include/dem/rolling_resistance_torque_models.h
+  ../../include/dem/set_insertion_method.h
   ../../include/dem/set_particle_particle_contact_force_model.h
   ../../include/dem/set_particle_wall_contact_force_model.h
   ../../include/dem/update_fine_search_candidates.h

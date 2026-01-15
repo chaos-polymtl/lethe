@@ -1,4 +1,4 @@
-// SPDX-FileCopyrightText: Copyright (c) 2020-2025 The Lethe Authors
+// SPDX-FileCopyrightText: Copyright (c) 2020-2026 The Lethe Authors
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
 #ifndef lethe_dem_h
@@ -94,14 +94,6 @@ private:
    */
   inline std::function<void()>
   set_contact_search_iteration_function();
-
-  /**
-   * @brief Set the insertion method.
-   *
-   * @return The pointer to the insertion object
-   */
-  std::shared_ptr<Insertion<dim, PropertiesIndex>>
-  set_insertion_type();
 
   /**
    * @brief Set the integration method.

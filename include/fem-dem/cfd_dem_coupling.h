@@ -1,4 +1,4 @@
-// SPDX-FileCopyrightText: Copyright (c) 2021-2025 The Lethe Authors
+// SPDX-FileCopyrightText: Copyright (c) 2021-2026 The Lethe Authors
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
 #ifndef lethe_cfd_dem_coupling_h
@@ -84,17 +84,6 @@ private:
    */
   void
   setup_distribution_type();
-
-  /**
-   * @brief Set up the particle insertion method for the simulation.
-   *
-   * Creates and configures the appropriate insertion object based on the
-   * simulation parameters (e.g., volume insertion, plane insertion, etc.).
-   *
-   * @return Shared pointer to the configured insertion object
-   */
-  std::shared_ptr<Insertion<dim, DEM::CFDDEMProperties::PropertiesIndex>>
-  set_insertion_type();
 
   /**
    * @brief Set up the time integration method for particle motion.

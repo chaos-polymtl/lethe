@@ -4,6 +4,12 @@ All notable changes to the Lethe project will be documented in this file.
 The changelog for the previous releases of Lethe are located in the release_notes folder.
 The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
+## [Master] - 2026-01-13
+
+### Changed
+
+- MINOR This PR replaces the duplicate ``set_insertion_type`` function definitions in ``dem.cc``, ``cfd_dem_coupling.cc``, and ``cfd_dem_coupling_matrix_free.cc`` with a single definition in ``set_insertion_method.cc``. [#1877](https://github.com/chaos-polymtl/lethe/pull/1877)
+
 ## [Master] - 2026/01/12
 
 ## Fixed
