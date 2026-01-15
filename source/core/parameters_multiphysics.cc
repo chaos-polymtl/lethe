@@ -872,11 +872,12 @@ Parameters::TimeHarmonicMaxwell<dim>::parse_parameters(
 
     // Ensure that the number of waveguide inlets is smaller than the maximum
     // declared in declare_parameters.
-    AssertThrow(TimeHarmonicMaxwell::number_of_waveguide_inlets <=
-                  10,
-                ExcMessage("The number of waveguide inlets specified exceeds "
-                           "the maximum allowed. Please increase the value "
-                           "of max_waveguide_inlets in the code declare_parameters section of the TimeHarmonicMaxwell class."));
+    AssertThrow(
+      TimeHarmonicMaxwell::number_of_waveguide_inlets <= 10,
+      ExcMessage(
+        "The number of waveguide inlets specified exceeds "
+        "the maximum allowed. Please increase the value "
+        "of max_waveguide_inlets in the code declare_parameters section of the TimeHarmonicMaxwell class."));
 
     // Resize vectors to hold the correct number of inlets
     TimeHarmonicMaxwell::waveguide_mode.resize(number_of_waveguide_inlets);

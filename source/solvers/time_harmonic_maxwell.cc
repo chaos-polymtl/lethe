@@ -109,7 +109,10 @@ TimeHarmonicMaxwell<2>::compute_waveguide_port_excitation(
   const std::complex<double> & /*mu_r*/,
   const unsigned int /*boundary_id_index*/)
 {
-  // The waveguide port excitation would be completely different in 2D as curls and cross products are not defined the same way as in 3D. Therefore, we do not implement it for now and throw an error if someone tries to use the 2D version.
+  // The waveguide port excitation would be completely different in 2D as curls
+  // and cross products are not defined the same way as in 3D. Therefore, we do
+  // not implement it for now and throw an error if someone tries to use the 2D
+  // version.
   AssertThrow(false, TimeHarmonicMaxwellDimensionNotSupported(2));
   return std::pair<Tensor<1, 2, std::complex<double>>, std::complex<double>>();
 }
