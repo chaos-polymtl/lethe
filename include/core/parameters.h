@@ -110,6 +110,12 @@ namespace Parameters
     // Max time step
     double max_dt;
 
+    /**
+     * Boolean indicating if the capillary time-step constraint should be
+     * controlling the simulation time-step
+    */
+    bool respect_capillary_time_step_constraint;
+
     // Aimed tolerance at which simulation is stopped
     double stop_tolerance;
 
@@ -119,7 +125,7 @@ namespace Parameters
     // BDF startup time scaling
     double startup_timestep_scaling;
 
-    // True if the time-step should be overriden upon restart
+    // True if the time-step should be overridden upon restart
     bool override_time_step_on_restart;
 
     // Number of mesh adaptation (steady simulations)
