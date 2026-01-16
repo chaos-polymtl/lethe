@@ -24,7 +24,7 @@ NormalDistribution::NormalDistribution(
   , gen(prn_seed)
 {
   // We need the average and the standard deviation to be based on number to do
-  // our sample.
+  // our sampling.
   if (this->weighting_type == DistributionWeightingType::number_based)
     {
       diameter_average   = d_average;
@@ -76,7 +76,7 @@ NormalDistribution::NormalDistribution(
           const double sn3 = sn2 * sn;  // standard deviation cubed
           const double sn4 = sn2 * sn2; // standard deviation ^4
 
-          // Jacobien
+          // Jacobian
           const double dR1_sigma_n =
             6. * (2. * (sn3 + sn * mn2) - mv * sn * mn);
 
@@ -140,7 +140,7 @@ NormalDistribution::NormalDistribution(
       this->dia_min_cutoff = diameter_average - 2.5 * standard_deviation;
       AssertThrow(this->dia_min_cutoff > 0.,
                   ExcMessage(
-                    "The \"standard deviation\" parameter is to "
+                    "The \"standard deviation\" parameter is too "
                     "high relative to the \"average diameter\" "
                     "parameter. This would results with frequent negative "
                     "diameter values. To fix this problem, please change "
@@ -157,7 +157,7 @@ NormalDistribution::NormalDistribution(
     this->dia_max_cutoff = max_cutoff;
 
   AssertThrow(this->dia_min_cutoff < this->dia_max_cutoff,
-              ExcMessage("The \"minimum diameter cutoff\" parameter need to"
+              ExcMessage("The \"minimum diameter cutoff\" parameter needs to"
                          " be smaller than the \"maximum diameter cutoff\"."));
 }
 
