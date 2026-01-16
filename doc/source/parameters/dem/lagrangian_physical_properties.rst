@@ -97,11 +97,11 @@ In this subsection, gravitational acceleration, and the physical properties of t
   - For the ``custom`` size distribution, particle diameters are sampled from a list of diameters with a corresponding list of probabilities.
 
 .. note::
-    In the ``custom`` size distribution, the probability values are based on the volume fraction taken by all the particles of the associated diameter, not to the total number of particles. For example, if a probability is equal to ``0.5`` , this means that approximately half of the total volume of inserted particles will be occupied by particle with the associated diameter value as the number of inserted particles tends to infinity.
+    In the ``custom`` size distribution, the probability values represent the fraction of the total particle volume occupied by each diameter, rather than the fraction of particles by number. For example, if a probability is 0.5 for a particular diameter, this means that, as the total number of inserted particles becomes very large, approximately half of the total particle volume will consist of particles with that diameter.
 
 * The ``diameter`` parameter defines the diameter of the particles in a ``uniform`` distribution.
 
-* For a ``normal`` distribution, the ``average diameter`` and the ``standard deviation`` parameters defines the average (:math:`{\mu_d}`) and the standard deviation (:math:`{\sigma_d}`) of the particle size distribution. The ``minimum cutoff`` and ``maximum cutoff`` parameters can be used to limit the lower and upper value of the diameter sampled from the distribution. If set to ``-1``, those two bounds are set to :math:`\mu_d \pm2.5 \sigma_d`. The number-weighted probability density function (:math:`f_{x}^{N}(d)`)  of a normal distribution is defined as:
+* For a ``normal`` distribution, the ``average diameter`` and the ``standard deviation`` parameters define the average (:math:`{\mu_d}`) and the standard deviation (:math:`{\sigma_d}`) of the particle size distribution. The ``minimum cutoff`` and ``maximum cutoff`` parameters can be used to limit the lower and upper value of the diameter sampled from the distribution. If set to ``-1``, those two bounds are set to :math:`\mu_d \pm2.5 \sigma_d`. The number-weighted probability density function (:math:`f_{x}^{N}(d)`)  of a normal distribution is defined as:
 
 .. math::
     f_{x}^{N}(d)=\frac{1}{\sigma_d\sqrt{2\pi}}\exp\left(-\frac{(d-\mu_d)^2}{2\sigma_{d}^2}\right).
