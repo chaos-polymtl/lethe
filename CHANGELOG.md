@@ -4,6 +4,12 @@ All notable changes to the Lethe project will be documented in this file.
 The changelog for the previous releases of Lethe are located in the release_notes folder.
 The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
+## [Master] - 2026-01-16
+
+### Changed
+
+- MINOR This PR adds the option to declare a particle size distribution in the parameter file as volume-based for the ``normal`` and ``lognormal`` distribution. The ``custom`` distribution is the only distribution that is not supporting the ``number-based`` distribution. The will get fixed in a follow up PR. [#1875](https://github.com/chaos-polymtl/lethe/pull/1875)
+
 ## [Master] - 2026/01/15
 
 ### Changed
@@ -18,7 +24,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
   This PR also updates the rising bubble example. Other VOF examples with surface tension force (static bubble, capillary wave, and Rayleigh-Plateau instability) will have to be checked and updated in a future PR. [#1879](https://github.com/chaos-polymtl/lethe/pull/1879)
 
-## [Master] - 2026/01/13
+## [Master] - 2026-01-13
 
 ### Changed
 
@@ -26,26 +32,26 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
 ## [Master] - 2026/01/12
 
-### Fixed
+## Fixed
 
-- MINOR The lethe-particles/distribution_normal.prm application test was using a log-normal distribution. The parameter was changed back to ``normal``. As a result, the output of the test did change. [#1876](https://github.com/chaos-polymtl/lethe/pull/1876) 
+- Minor The lethe-particles/distribution_normal.prm application test was using a log-normal distribution. The parameter was changed back to ``normal``. As a result, the output of the test did change. [#1876](https://github.com/chaos-polymtl/lethe/pull/1876) 
 
-- MINOR The convection term in the VANS equations for models A and B is changed from ``local_matrix_ij += ((phi_u_j * void_fraction * velocity_gradient * phi_u_i) + (grad_phi_u_j * void_fraction * velocity * phi_u_i));`` to ``local_matrix_ij += ((velocity_gradient * phi_u_j * void_fraction * phi_u_i) + (grad_phi_u_j * void_fraction * velocity * phi_u_i))`` in the matrix assembly, to match the correct algebraic formula. The output of the ``lethe-fluid-particles`` and ``lethe-fluid-vans`` application tests changed only slightly. Therefore, their outputs were updated in this PR as well. [#1874](https://github.com/chaos-polymtl/lethe/pull/1874) 
+- Minor The convection term in the VANS equations for models A and B is changed from ``local_matrix_ij += ((phi_u_j * void_fraction * velocity_gradient * phi_u_i) + (grad_phi_u_j * void_fraction * velocity * phi_u_i));`` to ``local_matrix_ij += ((velocity_gradient * phi_u_j * void_fraction * phi_u_i) + (grad_phi_u_j * void_fraction * velocity * phi_u_i))`` in the matrix assembly, to match the correct algebraic formula. The output of the ``lethe-fluid-particles`` and ``lethe-fluid-vans`` application tests changed only slightly. Therefore, their outputs were updated in this PR as well. [#1874](https://github.com/chaos-polymtl/lethe/pull/1874) 
 
 
 ## [Master] - 2026/01/07
 
-### Added
+## Added
 
 - MINOR The particle projector can be used to project the particle-fluid force onto the CFD mesh. This requires the assembly of a matrix and a right-hand side. On smaller meshes, this assembly is quite cheap, but when using the matrix-free methods, it becomes a significant cost for large parallel simulations. This PR optimizes this projection step by ensuring that the matrix and the preconditioner are only recalculated and reinitialized when it is necessary. In the case when the projected field does not have a Neumann boundary condition, then the matrix is only assembled once, whenever the degrees of freedom are set up, instead of at every iteration. This greatly diminishes the cost of the explicit, semi-implicit and implicit coupling. There are still optimizations remaining (for example, to carry out all the projections in a single step instead of one by one), but these will be addressed in a follow-up PR. This already reduces the cost by 20-25% of the projection. Furthermore, the projection was not adequately timed, this has been fixed in this PR. [#1873](https://github.com/chaos-polymtl/lethe/pull/1873)
 
-### Fixed
+## Fixed
 
 - MINOR  The use of an automatic pointer was creating a compilation error on modern C++ compiler. The communicator is explicitely declared instead of using an automatic pointer. This does not affect anything, but makes compilation more stable accross platforms. [#1872](https://github.com/chaos-polymtl/lethe/pull/1872)
 
 ## [Master] - 2026/01/06
 
-### Fixed
+## Fixed
 
 - MINOR The test read_mortar_data_02 constantly fails in the CI release, even if it passes on debug mode and also in local office computers. Since read_mortar_data_01 and read_mortar_data_03 are very similar to such test (only with different grids), this PR solves this issue by removing the (unnecessary) read_mortar_data_02 test. [#1871](https://github.com/chaos-polymtl/lethe/pull/1871)
 
