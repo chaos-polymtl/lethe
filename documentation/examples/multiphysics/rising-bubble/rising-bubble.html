@@ -567,19 +567,20 @@ end
 </section>
 <section id="initial-conditions">
 <h3>Initial Conditions<a class="headerlink" href="#initial-conditions" title="Link to this heading">#</a></h3>
-<p>In the <code class="docutils literal notranslate"><span class="pre">initial</span> <span class="pre">conditions</span></code> subsection, the initial velocity and initial position of the liquid phase are defined. The light phase is initially defined as a circle with a radius <span class="math notranslate nohighlight">\(r= 0.25\)</span> and a center located at <span class="math notranslate nohighlight">\((x,y)=(0.5, 0.5)\)</span>. We enable the use of a projection step to ensure that the initial phase distribution is sufficiently smooth, as explained in the <a class="reference internal" href="../static-bubble/static-bubble.html"><span class="doc">Static Bubble</span></a> example.</p>
+<p>In the <code class="docutils literal notranslate"><span class="pre">initial</span> <span class="pre">conditions</span></code> subsection, the initial velocity and initial position of the liquid phase are defined. The light phase is initially defined as a circle with a radius <span class="math notranslate nohighlight">\(r= 0.25\)</span> and a center located at <span class="math notranslate nohighlight">\((x_\text{c},y_\text{c})=(0.5, 0.5)\)</span>. To ensure that the initial condition is sufficiently smooth, we define the phase fraction field with the analytical solution of both the PDE and geometric reinitialization methods:</p>
+<div class="math-wrapper docutils container">
+<div class="math notranslate nohighlight">
+\[\phi = 0.5 - 0.5 \tanh \left[ \frac{d}{2\varepsilon h}\right]\]</div>
+</div>
+<p>where <span class="math notranslate nohighlight">\(d = \left[\sqrt{(x-x_\text{c})^2 + (y-y_\text{c})^2} - 0.25\right]\)</span> is the signed distance from the interface, <span class="math notranslate nohighlight">\(\varepsilon\)</span> an interface thickness parameter, and <span class="math notranslate nohighlight">\(h\)</span> the smallest cell size.</p>
 <div class="highlight-text notranslate"><div class="highlight"><pre><span></span>subsection initial conditions
   set type = nodal
   subsection uvwp
     set Function expression = 0; 0; 0
   end
   subsection VOF
-    set Function expression = if ((x-0.5) * (x-0.5) + (y-0.5) * (y-0.5) &lt; 0.25 * 0.25 , 1, 0)
-
-    subsection projection step
-      set enable           = true
-      set diffusion factor = 1
-    end
+    set Function constants  = eps=1, hCell=0.0022, center=0.5
+    set Function expression = 0.5 - 0.5*tanh((sqrt((x-center)*(x-center)+(y-center)*(y-center))-0.25)/(2*eps*hCell))
   end
 end
 </pre></div>
@@ -701,7 +702,7 @@ Run</p>
 <section id="case-2">
 <h3>Case 2<a class="headerlink" href="#case-2" title="Link to this heading">#</a></h3>
 <p>The same python post-processing code (<code class="docutils literal notranslate"><span class="pre">rising-bubble.py</span></code>) is used for test case 2, with <code class="docutils literal notranslate"><span class="pre">-c</span> <span class="pre">2</span></code> instead.</p>
-<div class="copy-button highlight-text notranslate"><div class="highlight"><pre><span></span>python3 ./rising-bubble.py -f rising-bubble-proj -c 2
+<div class="copy-button highlight-text notranslate"><div class="highlight"><pre><span></span>python3 ./rising-bubble.py -p rising-bubble-proj -c 2
 </pre></div>
 </div>
 <p>The following image shows the shape of the bubble after <span class="math notranslate nohighlight">\(3\)</span> seconds of simulation, and compares it with results obtained by three different codes reported in the work of Hysing <em>et al.</em> <a class="footnote-reference brackets" href="#hysing2009" id="id7" role="doc-noteref"><span class="fn-bracket">[</span>1<span class="fn-bracket">]</span></a>: TP2D, FreeLIFE and MooNMD.</p>
@@ -717,28 +718,38 @@ Run</p>
 <h3>Parameter Files<a class="headerlink" href="#parameter-files" title="Link to this heading">#</a></h3>
 <p>For the methods other than <code class="docutils literal notranslate"><span class="pre">projection-based</span> <span class="pre">interface</span> <span class="pre">sharpening</span></code>, the <code class="docutils literal notranslate"><span class="pre">.prm</span></code> file is modified as follows. In the <code class="docutils literal notranslate"><span class="pre">VOF</span></code> subsection, the <code class="docutils literal notranslate"><span class="pre">interface</span> <span class="pre">regularization</span> <span class="pre">method</span></code> is changed to <code class="docutils literal notranslate"><span class="pre">geometric</span> <span class="pre">interface</span> <span class="pre">reinitialization</span></code> or <code class="docutils literal notranslate"><span class="pre">algebraic</span> <span class="pre">interface</span> <span class="pre">reinitialization</span></code>. The associated parameter files, <code class="docutils literal notranslate"><span class="pre">rising-bubble-geo.prm</span></code> and <code class="docutils literal notranslate"><span class="pre">rising-bubble-alge.prm</span></code> respectively, are available in the example’s folder. The subsections are modified according to each regularization method:</p>
 <ul class="simple">
-<li><p>With the geometric method, the phase fraction field is regularized using the signed distance from the interface, as described in <a class="reference internal" href="../../../theory/multiphase/cfd/vof.html"><span class="doc">The Volume of Fluid (VOF) Method</span></a> theory guide. The <code class="docutils literal notranslate"><span class="pre">max</span> <span class="pre">reinitialization</span> <span class="pre">distance</span></code> parameter is set to <span class="math notranslate nohighlight">\(0.032\)</span> and we select the <code class="docutils literal notranslate"><span class="pre">piecewise</span> <span class="pre">polynomial</span></code> function to transform the signed distance in a phase fraction field.</p></li>
+<li><p>With the geometric method, the phase fraction field is regularized using the signed distance from the interface, as described in <a class="reference internal" href="../../../theory/multiphase/cfd/vof.html"><span class="doc">The Volume of Fluid (VOF) Method</span></a> theory guide. We select the <code class="docutils literal notranslate"><span class="pre">tanh</span></code> function to transform the signed distance in a phase fraction field. The <code class="docutils literal notranslate"><span class="pre">tanh</span> <span class="pre">thickness</span></code> is set to <span class="math notranslate nohighlight">\(0.0066\)</span> and the <code class="docutils literal notranslate"><span class="pre">max</span> <span class="pre">reinitialization</span> <span class="pre">distance</span></code> parameter is set to <span class="math notranslate nohighlight">\(0.0264\)</span>.</p></li>
 </ul>
 <div class="highlight-text notranslate"><div class="highlight"><pre><span></span>subsection interface regularization method
   set type       = geometric interface reinitialization
   set frequency  = 20
   set verbosity  = verbose
   subsection geometric interface reinitialization
-    set max reinitialization distance = 0.032
-    set transformation type           = piecewise polynomial
+    set max reinitialization distance = 0.0264
+    set tanh thickness                = 0.0066
+    set transformation type           = tanh
+  end
+end
+</pre></div>
+</div>
+<p>For the geometric method, we use a slightly thicker interface and we adapt the initial condition accordingly by increasing <span class="math notranslate nohighlight">\(\varepsilon\)</span> from <span class="math notranslate nohighlight">\(1\)</span> to <span class="math notranslate nohighlight">\(1.5\)</span>.</p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>subsection initial conditions
+  subsection VOF
+    set Function constants  = eps=1.5, hCell=0.0022, center=0.5
+    set Function expression = 0.5 - 0.5*tanh((sqrt((x-center)*(x-center)+(y-center)*(y-center))-0.25)/(2*eps*hCell))
   end
 end
 </pre></div>
 </div>
 <ul class="simple">
-<li><p>For the algebraic method, an intermidiary PDE is solved to compress the interface until reaching a pseudo-steady-state. This PDE is described in <a class="reference internal" href="../../../theory/multiphase/cfd/vof.html"><span class="doc">The Volume of Fluid (VOF) Method</span></a> theory guide. Setting the <code class="docutils literal notranslate"><span class="pre">steady-state</span> <span class="pre">criterion</span></code> to <span class="math notranslate nohighlight">\(10^{-3}\)</span> yields good results.</p></li>
+<li><p>For the algebraic method, an intermediary PDE is solved to compress the interface until reaching a pseudo-steady-state. This PDE is described in <a class="reference internal" href="../../../theory/multiphase/cfd/vof.html"><span class="doc">The Volume of Fluid (VOF) Method</span></a> theory guide. Setting the <code class="docutils literal notranslate"><span class="pre">diffusivity</span> <span class="pre">multiplier</span></code> to <span class="math notranslate nohighlight">\(1\)</span> yields good results.</p></li>
 </ul>
 <div class="highlight-text notranslate"><div class="highlight"><pre><span></span>subsection interface regularization method
   set type      = algebraic interface reinitialization
   set frequency = 20
   set verbosity = verbose
   subsection algebraic interface reinitialization
-    set steady-state criterion = 1e-3
+    set diffusivity multiplier = 1
   end
 end
 </pre></div>
@@ -753,8 +764,8 @@ end
 <div class="copy-button highlight-text notranslate"><div class="highlight"><pre><span></span>mpirun -np 8 lethe-fluid rising-bubble-alge.prm
 </pre></div>
 </div>
-<p>We are interested in four metrics for this comparison: the barycenter position and velocity, the bubble shape, and the volume conservation. To compare these metrics between the three regularization methods, the python post-processing script <code class="docutils literal notranslate"><span class="pre">rising-bubble-comparison.py</span></code> is used:</p>
-<div class="copy-button highlight-text notranslate"><div class="highlight"><pre><span></span>python3 ./rising-bubble-comparison.py -s rising-bubble-proj -g rising-bubble-geo -a rising-bubble-alge -c 1
+<p>We are interested in four metrics for this comparison: the barycenter position and velocity, the bubble shape, and the volume conservation. To compare these metrics between the three regularization methods, the python post-processing script <code class="docutils literal notranslate"><span class="pre">rising-bubble.py</span></code> is used:</p>
+<div class="copy-button highlight-text notranslate"><div class="highlight"><pre><span></span>python3 ./rising-bubble.py -p rising-bubble-proj -g rising-bubble-geo -a rising-bubble-alge -c 1
 </pre></div>
 </div>
 <p>where <code class="docutils literal notranslate"><span class="pre">rising-bubble-proj</span></code>, <code class="docutils literal notranslate"><span class="pre">rising-bubble-geo</span></code>, and <code class="docutils literal notranslate"><span class="pre">rising-bubble-alge</span></code> are the folders that contain the simulation results. Additionally, <code class="docutils literal notranslate"><span class="pre">-c</span> <span class="pre">1</span></code> is used for test case 1 and <code class="docutils literal notranslate"><span class="pre">-c</span> <span class="pre">2</span></code> for test case 2.</p>
@@ -781,7 +792,7 @@ end
 <li><p><span class="math notranslate nohighlight">\(V =\int_{\Omega_\mathrm{1}} 1 \, d\Omega\)</span>, denoted the geometric volume
 where <span class="math notranslate nohighlight">\(\Omega_1\)</span> represents the domain occupied by fluid 1, corresponding to the bubble in this case.</p></li>
 </ul>
-<p>The following images show the evolution of their ratio to the initial volume throughout the simulation, with the global volume shown on the left and the geometric volume, on the right. The PDE-based method has a smaller volume variation, while the projection-based method has a maximum volume variation of about <span class="math notranslate nohighlight">\(0.25 %\)</span> and the geometric method has a maximum volume loss of <span class="math notranslate nohighlight">\(0.6%\)</span> at the end of the simulation.</p>
+<p>The following images show the evolution of their ratio to the initial volume throughout the simulation, with the global volume shown on the left and the geometric volume, on the right. The PDE-based method has a smaller volume variation, while the projection-based method has a maximum volume variation of about <span class="math notranslate nohighlight">\(0.1 %\)</span> and the geometric method has a maximum volume loss of <span class="math notranslate nohighlight">\(1.0 %\)</span> at the end of the simulation.</p>
 <a class="reference internal image-reference" href="../../../_images/global-mass-conservation-case1.png"><img alt="../../../_images/global-mass-conservation-case1.png" src="../../../_images/global-mass-conservation-case1.png" style="width: 350px;" /></a>
 <a class="reference internal image-reference" href="../../../_images/geo-mass-conservation-case1.png"><img alt="../../../_images/geo-mass-conservation-case1.png" src="../../../_images/geo-mass-conservation-case1.png" style="width: 350px;" /></a>
 </li>
@@ -796,7 +807,7 @@ where <span class="math notranslate nohighlight">\(\Omega_1\)</span> represents 
 <a class="reference internal image-reference" href="../../../_images/ymean-t-case2.png"><img alt="../../../_images/ymean-t-case2.png" class="align-center" src="../../../_images/ymean-t-case2.png" style="width: 400px;" /></a>
 </li>
 <li><p>Bubble Contour</p>
-<p>Regarding the final shape and dimensions of the bubble, the geometric and algebraic methods seem to reproduce the results from  Hysing <em>et al.</em> <a class="footnote-reference brackets" href="#hysing2009" id="id16" role="doc-noteref"><span class="fn-bracket">[</span>1<span class="fn-bracket">]</span></a> more accurately than the projection-based method. However, the three regularization methods capture the skirt of the bubble differently: the geometric and projection-based methods result, respectively, in a continuous and discontinuous skirt, while the PDE-based does not capture this feature.</p>
+<p>Regarding the final shape and dimensions of the bubble, the geometric and algebraic methods seem to reproduce the results from  Hysing <em>et al.</em> <a class="footnote-reference brackets" href="#hysing2009" id="id16" role="doc-noteref"><span class="fn-bracket">[</span>1<span class="fn-bracket">]</span></a> more accurately than the projection-based method. However, the three regularization methods capture the skirt of the bubble differently: the geometric method results in a continuous skirt, while the PDE-based and projection-based methods result in a discontinuous skirt.</p>
 <a class="reference internal image-reference" href="../../../_images/proj-bubble-contour-case2.png"><img alt="../../../_images/proj-bubble-contour-case2.png" src="../../../_images/proj-bubble-contour-case2.png" style="width: 350px;" /></a>
 <a class="reference internal image-reference" href="../../../_images/geo-bubble-contour-case2.png"><img alt="../../../_images/geo-bubble-contour-case2.png" src="../../../_images/geo-bubble-contour-case2.png" style="width: 350px;" /></a>
 <a class="reference internal image-reference" href="../../../_images/alge-bubble-contour-case2.png"><img alt="../../../_images/alge-bubble-contour-case2.png" src="../../../_images/alge-bubble-contour-case2.png" style="width: 350px;" /></a>

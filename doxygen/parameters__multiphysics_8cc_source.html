@@ -93,7 +93,7 @@ $(document).ready(function() { init_codefold(0); });
   <div class="headertitle"><div class="title">parameters_multiphysics.cc</div></div>
 </div><!--header-->
 <div class="contents">
-<a href="parameters__multiphysics_8cc.html">Go to the documentation of this file.</a><div class="fragment"><div class="line"><a id="l00001" name="l00001"></a><span class="lineno">    1</span><span class="comment">// SPDX-FileCopyrightText: Copyright (c) 2021-2025 The Lethe Authors</span></div>
+<a href="parameters__multiphysics_8cc.html">Go to the documentation of this file.</a><div class="fragment"><div class="line"><a id="l00001" name="l00001"></a><span class="lineno">    1</span><span class="comment">// SPDX-FileCopyrightText: Copyright (c) 2021-2026 The Lethe Authors</span></div>
 <div class="line"><a id="l00002" name="l00002"></a><span class="lineno">    2</span><span class="comment">// SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later</span></div>
 <div class="line"><a id="l00003" name="l00003"></a><span class="lineno">    3</span> </div>
 <div class="line"><a id="l00004" name="l00004"></a><span class="lineno">    4</span><span class="preprocessor">#include &lt;<a class="code" href="parameters__multiphysics_8h.html">core/parameters_multiphysics.h</a>&gt;</span></div>
@@ -635,268 +635,271 @@ $(document).ready(function() { init_codefold(0); });
 <div class="line"><a id="l00515" name="l00515"></a><span class="lineno">  515</span>      <span class="stringliteral">&quot;Power value applied to the mesh-size in the mesh-dependant diffusion &quot;</span></div>
 <div class="line"><a id="l00516" name="l00516"></a><span class="lineno">  516</span>      <span class="stringliteral">&quot;coefficient of the algebraic interface reinitialization.&quot;</span>);</div>
 <div class="line"><a id="l00517" name="l00517"></a><span class="lineno">  517</span>    prm.declare_entry(<span class="stringliteral">&quot;steady-state criterion&quot;</span>,</div>
-<div class="line"><a id="l00518" name="l00518"></a><span class="lineno">  518</span>                      <span class="stringliteral">&quot;1e-2&quot;</span>,</div>
+<div class="line"><a id="l00518" name="l00518"></a><span class="lineno">  518</span>                      <span class="stringliteral">&quot;1e-4&quot;</span>,</div>
 <div class="line"><a id="l00519" name="l00519"></a><span class="lineno">  519</span>                      Patterns::Double(),</div>
-<div class="line"><a id="l00520" name="l00520"></a><span class="lineno">  520</span>                      <span class="stringliteral">&quot;Tolerance for the pseudo-time-stepping scheme.&quot;</span>);</div>
+<div class="line"><a id="l00520" name="l00520"></a><span class="lineno">  520</span>                      <span class="stringliteral">&quot;Tolerance for the artificial time-stepping scheme.&quot;</span>);</div>
 <div class="line"><a id="l00521" name="l00521"></a><span class="lineno">  521</span>    prm.declare_entry(<span class="stringliteral">&quot;max steps number&quot;</span>,</div>
-<div class="line"><a id="l00522" name="l00522"></a><span class="lineno">  522</span>                      <span class="stringliteral">&quot;5&quot;</span>,</div>
+<div class="line"><a id="l00522" name="l00522"></a><span class="lineno">  522</span>                      <span class="stringliteral">&quot;10000&quot;</span>,</div>
 <div class="line"><a id="l00523" name="l00523"></a><span class="lineno">  523</span>                      Patterns::Integer(),</div>
 <div class="line"><a id="l00524" name="l00524"></a><span class="lineno">  524</span>                      <span class="stringliteral">&quot;Maximum number of reinitialization steps.&quot;</span>);</div>
 <div class="line"><a id="l00525" name="l00525"></a><span class="lineno">  525</span>    prm.declare_entry(</div>
-<div class="line"><a id="l00526" name="l00526"></a><span class="lineno">  526</span>      <span class="stringliteral">&quot;reinitialization CFL&quot;</span>,</div>
-<div class="line"><a id="l00527" name="l00527"></a><span class="lineno">  527</span>      <span class="stringliteral">&quot;1.&quot;</span>,</div>
+<div class="line"><a id="l00526" name="l00526"></a><span class="lineno">  526</span>      <span class="stringliteral">&quot;artificial time-step factor&quot;</span>,</div>
+<div class="line"><a id="l00527" name="l00527"></a><span class="lineno">  527</span>      <span class="stringliteral">&quot;0.25&quot;</span>,</div>
 <div class="line"><a id="l00528" name="l00528"></a><span class="lineno">  528</span>      Patterns::Double(),</div>
-<div class="line"><a id="l00529" name="l00529"></a><span class="lineno">  529</span>      <span class="stringliteral">&quot;CFL value for pseudo-time-step calculation purposes in the algebraic &quot;</span></div>
+<div class="line"><a id="l00529" name="l00529"></a><span class="lineno">  529</span>      <span class="stringliteral">&quot;Factor multiplying the artificial time-step in the algebraic &quot;</span></div>
 <div class="line"><a id="l00530" name="l00530"></a><span class="lineno">  530</span>      <span class="stringliteral">&quot;interface reinitialization.&quot;</span>);</div>
-<div class="line"><a id="l00531" name="l00531"></a><span class="lineno">  531</span>  }</div>
-<div class="line"><a id="l00532" name="l00532"></a><span class="lineno">  532</span>  prm.leave_subsection();</div>
-<div class="line"><a id="l00533" name="l00533"></a><span class="lineno">  533</span>}</div>
+<div class="line"><a id="l00531" name="l00531"></a><span class="lineno">  531</span>    prm.declare_alias(<span class="stringliteral">&quot;artificial time-step factor&quot;</span>,</div>
+<div class="line"><a id="l00532" name="l00532"></a><span class="lineno">  532</span>                      <span class="stringliteral">&quot;reinitialization CFL&quot;</span>,</div>
+<div class="line"><a id="l00533" name="l00533"></a><span class="lineno">  533</span>                      <span class="keyword">true</span>);</div>
+<div class="line"><a id="l00534" name="l00534"></a><span class="lineno">  534</span>  }</div>
+<div class="line"><a id="l00535" name="l00535"></a><span class="lineno">  535</span>  prm.leave_subsection();</div>
+<div class="line"><a id="l00536" name="l00536"></a><span class="lineno">  536</span>}</div>
 </div>
-<div class="line"><a id="l00534" name="l00534"></a><span class="lineno">  534</span> </div>
-<div class="line"><a id="l00535" name="l00535"></a><span class="lineno">  535</span><span class="keywordtype">void</span></div>
-<div class="foldopen" id="foldopen00536" data-start="{" data-end="}">
-<div class="line"><a id="l00536" name="l00536"></a><span class="lineno"><a class="line" href="structParameters_1_1VOF__AlgebraicInterfaceReinitialization.html#a8cc0b30244ca169e833da68bc1a9a6de">  536</a></span><a class="code hl_function" href="structParameters_1_1VOF__AlgebraicInterfaceReinitialization.html#a8cc0b30244ca169e833da68bc1a9a6de">Parameters::VOF_AlgebraicInterfaceReinitialization::parse_parameters</a>(</div>
-<div class="line"><a id="l00537" name="l00537"></a><span class="lineno">  537</span>  dealii::ParameterHandler &amp;prm)</div>
-<div class="line"><a id="l00538" name="l00538"></a><span class="lineno">  538</span>{</div>
-<div class="line"><a id="l00539" name="l00539"></a><span class="lineno">  539</span>  prm.enter_subsection(<span class="stringliteral">&quot;algebraic interface reinitialization&quot;</span>);</div>
-<div class="line"><a id="l00540" name="l00540"></a><span class="lineno">  540</span>  {</div>
-<div class="line"><a id="l00541" name="l00541"></a><span class="lineno">  541</span>    this-&gt;output_reinitialization_steps =</div>
-<div class="line"><a id="l00542" name="l00542"></a><span class="lineno">  542</span>      prm.get_bool(<span class="stringliteral">&quot;output reinitialization steps&quot;</span>);</div>
-<div class="line"><a id="l00543" name="l00543"></a><span class="lineno">  543</span>    this-&gt;diffusivity_multiplier = prm.get_double(<span class="stringliteral">&quot;diffusivity multiplier&quot;</span>);</div>
-<div class="line"><a id="l00544" name="l00544"></a><span class="lineno">  544</span>    this-&gt;diffusivity_power      = prm.get_double(<span class="stringliteral">&quot;diffusivity power&quot;</span>);</div>
-<div class="line"><a id="l00545" name="l00545"></a><span class="lineno">  545</span>    this-&gt;reinitialization_cfl   = prm.get_double(<span class="stringliteral">&quot;reinitialization CFL&quot;</span>);</div>
-<div class="line"><a id="l00546" name="l00546"></a><span class="lineno">  546</span>    this-&gt;steady_state_criterion = prm.get_double(<span class="stringliteral">&quot;steady-state criterion&quot;</span>);</div>
-<div class="line"><a id="l00547" name="l00547"></a><span class="lineno">  547</span>    this-&gt;max_steps_number       = prm.get_integer(<span class="stringliteral">&quot;max steps number&quot;</span>);</div>
-<div class="line"><a id="l00548" name="l00548"></a><span class="lineno">  548</span>  }</div>
-<div class="line"><a id="l00549" name="l00549"></a><span class="lineno">  549</span>  prm.leave_subsection();</div>
-<div class="line"><a id="l00550" name="l00550"></a><span class="lineno">  550</span>}</div>
+<div class="line"><a id="l00537" name="l00537"></a><span class="lineno">  537</span> </div>
+<div class="line"><a id="l00538" name="l00538"></a><span class="lineno">  538</span><span class="keywordtype">void</span></div>
+<div class="foldopen" id="foldopen00539" data-start="{" data-end="}">
+<div class="line"><a id="l00539" name="l00539"></a><span class="lineno"><a class="line" href="structParameters_1_1VOF__AlgebraicInterfaceReinitialization.html#a8cc0b30244ca169e833da68bc1a9a6de">  539</a></span><a class="code hl_function" href="structParameters_1_1VOF__AlgebraicInterfaceReinitialization.html#a8cc0b30244ca169e833da68bc1a9a6de">Parameters::VOF_AlgebraicInterfaceReinitialization::parse_parameters</a>(</div>
+<div class="line"><a id="l00540" name="l00540"></a><span class="lineno">  540</span>  dealii::ParameterHandler &amp;prm)</div>
+<div class="line"><a id="l00541" name="l00541"></a><span class="lineno">  541</span>{</div>
+<div class="line"><a id="l00542" name="l00542"></a><span class="lineno">  542</span>  prm.enter_subsection(<span class="stringliteral">&quot;algebraic interface reinitialization&quot;</span>);</div>
+<div class="line"><a id="l00543" name="l00543"></a><span class="lineno">  543</span>  {</div>
+<div class="line"><a id="l00544" name="l00544"></a><span class="lineno">  544</span>    this-&gt;output_reinitialization_steps =</div>
+<div class="line"><a id="l00545" name="l00545"></a><span class="lineno">  545</span>      prm.get_bool(<span class="stringliteral">&quot;output reinitialization steps&quot;</span>);</div>
+<div class="line"><a id="l00546" name="l00546"></a><span class="lineno">  546</span>    this-&gt;diffusivity_multiplier = prm.get_double(<span class="stringliteral">&quot;diffusivity multiplier&quot;</span>);</div>
+<div class="line"><a id="l00547" name="l00547"></a><span class="lineno">  547</span>    this-&gt;diffusivity_power      = prm.get_double(<span class="stringliteral">&quot;diffusivity power&quot;</span>);</div>
+<div class="line"><a id="l00548" name="l00548"></a><span class="lineno">  548</span>    this-&gt;dtau_factor = prm.get_double(<span class="stringliteral">&quot;artificial time-step factor&quot;</span>);</div>
+<div class="line"><a id="l00549" name="l00549"></a><span class="lineno">  549</span>    this-&gt;steady_state_criterion = prm.get_double(<span class="stringliteral">&quot;steady-state criterion&quot;</span>);</div>
+<div class="line"><a id="l00550" name="l00550"></a><span class="lineno">  550</span>    this-&gt;max_steps_number       = prm.get_integer(<span class="stringliteral">&quot;max steps number&quot;</span>);</div>
+<div class="line"><a id="l00551" name="l00551"></a><span class="lineno">  551</span>  }</div>
+<div class="line"><a id="l00552" name="l00552"></a><span class="lineno">  552</span>  prm.leave_subsection();</div>
+<div class="line"><a id="l00553" name="l00553"></a><span class="lineno">  553</span>}</div>
 </div>
-<div class="line"><a id="l00551" name="l00551"></a><span class="lineno">  551</span> </div>
-<div class="line"><a id="l00552" name="l00552"></a><span class="lineno">  552</span><span class="keywordtype">void</span></div>
-<div class="foldopen" id="foldopen00553" data-start="{" data-end="}">
-<div class="line"><a id="l00553" name="l00553"></a><span class="lineno"><a class="line" href="structParameters_1_1VOF__GeometricInterfaceReinitialization.html#a8a5a1fa9bc1b0032cf9aa6e0dbf98876">  553</a></span><a class="code hl_function" href="structParameters_1_1VOF__GeometricInterfaceReinitialization.html#a8a5a1fa9bc1b0032cf9aa6e0dbf98876">Parameters::VOF_GeometricInterfaceReinitialization::declare_parameters</a>(</div>
-<div class="line"><a id="l00554" name="l00554"></a><span class="lineno">  554</span>  dealii::ParameterHandler &amp;prm)</div>
-<div class="line"><a id="l00555" name="l00555"></a><span class="lineno">  555</span>{</div>
-<div class="line"><a id="l00556" name="l00556"></a><span class="lineno">  556</span>  prm.enter_subsection(<span class="stringliteral">&quot;geometric interface reinitialization&quot;</span>);</div>
-<div class="line"><a id="l00557" name="l00557"></a><span class="lineno">  557</span>  {</div>
-<div class="line"><a id="l00558" name="l00558"></a><span class="lineno">  558</span>    prm.declare_entry(</div>
-<div class="line"><a id="l00559" name="l00559"></a><span class="lineno">  559</span>      <span class="stringliteral">&quot;output signed distance&quot;</span>,</div>
-<div class="line"><a id="l00560" name="l00560"></a><span class="lineno">  560</span>      <span class="stringliteral">&quot;false&quot;</span>,</div>
-<div class="line"><a id="l00561" name="l00561"></a><span class="lineno">  561</span>      Patterns::Bool(),</div>
-<div class="line"><a id="l00562" name="l00562"></a><span class="lineno">  562</span>      <span class="stringliteral">&quot;Enables pvtu format outputs of the geometric interface reinitialization &quot;</span></div>
-<div class="line"><a id="l00563" name="l00563"></a><span class="lineno">  563</span>      <span class="stringliteral">&quot;steps &lt;true|false&gt;&quot;</span>);</div>
-<div class="line"><a id="l00564" name="l00564"></a><span class="lineno">  564</span>    prm.declare_entry(<span class="stringliteral">&quot;max reinitialization distance&quot;</span>,</div>
-<div class="line"><a id="l00565" name="l00565"></a><span class="lineno">  565</span>                      <span class="stringliteral">&quot;1.&quot;</span>,</div>
-<div class="line"><a id="l00566" name="l00566"></a><span class="lineno">  566</span>                      Patterns::Double(),</div>
-<div class="line"><a id="l00567" name="l00567"></a><span class="lineno">  567</span>                      <span class="stringliteral">&quot;Maximum reinitialization distance value&quot;</span>);</div>
-<div class="line"><a id="l00568" name="l00568"></a><span class="lineno">  568</span>    prm.declare_entry(</div>
-<div class="line"><a id="l00569" name="l00569"></a><span class="lineno">  569</span>      <span class="stringliteral">&quot;transformation type&quot;</span>,</div>
-<div class="line"><a id="l00570" name="l00570"></a><span class="lineno">  570</span>      <span class="stringliteral">&quot;tanh&quot;</span>,</div>
-<div class="line"><a id="l00571" name="l00571"></a><span class="lineno">  571</span>      Patterns::Selection(<span class="stringliteral">&quot;tanh|piecewise polynomial&quot;</span>),</div>
-<div class="line"><a id="l00572" name="l00572"></a><span class="lineno">  572</span>      <span class="stringliteral">&quot;Transformation function used to get the phase indicator from the signed &quot;</span></div>
-<div class="line"><a id="l00573" name="l00573"></a><span class="lineno">  573</span>      <span class="stringliteral">&quot;distance&quot;</span>);</div>
-<div class="line"><a id="l00574" name="l00574"></a><span class="lineno">  574</span>    prm.declare_entry(<span class="stringliteral">&quot;tanh thickness&quot;</span>,</div>
-<div class="line"><a id="l00575" name="l00575"></a><span class="lineno">  575</span>                      <span class="stringliteral">&quot;1.&quot;</span>,</div>
-<div class="line"><a id="l00576" name="l00576"></a><span class="lineno">  576</span>                      Patterns::Double(),</div>
-<div class="line"><a id="l00577" name="l00577"></a><span class="lineno">  577</span>                      <span class="stringliteral">&quot;Interface thickness for the tanh transformation&quot;</span>);</div>
-<div class="line"><a id="l00578" name="l00578"></a><span class="lineno">  578</span>  }</div>
-<div class="line"><a id="l00579" name="l00579"></a><span class="lineno">  579</span>  prm.leave_subsection();</div>
-<div class="line"><a id="l00580" name="l00580"></a><span class="lineno">  580</span>}</div>
+<div class="line"><a id="l00554" name="l00554"></a><span class="lineno">  554</span> </div>
+<div class="line"><a id="l00555" name="l00555"></a><span class="lineno">  555</span><span class="keywordtype">void</span></div>
+<div class="foldopen" id="foldopen00556" data-start="{" data-end="}">
+<div class="line"><a id="l00556" name="l00556"></a><span class="lineno"><a class="line" href="structParameters_1_1VOF__GeometricInterfaceReinitialization.html#a8a5a1fa9bc1b0032cf9aa6e0dbf98876">  556</a></span><a class="code hl_function" href="structParameters_1_1VOF__GeometricInterfaceReinitialization.html#a8a5a1fa9bc1b0032cf9aa6e0dbf98876">Parameters::VOF_GeometricInterfaceReinitialization::declare_parameters</a>(</div>
+<div class="line"><a id="l00557" name="l00557"></a><span class="lineno">  557</span>  dealii::ParameterHandler &amp;prm)</div>
+<div class="line"><a id="l00558" name="l00558"></a><span class="lineno">  558</span>{</div>
+<div class="line"><a id="l00559" name="l00559"></a><span class="lineno">  559</span>  prm.enter_subsection(<span class="stringliteral">&quot;geometric interface reinitialization&quot;</span>);</div>
+<div class="line"><a id="l00560" name="l00560"></a><span class="lineno">  560</span>  {</div>
+<div class="line"><a id="l00561" name="l00561"></a><span class="lineno">  561</span>    prm.declare_entry(</div>
+<div class="line"><a id="l00562" name="l00562"></a><span class="lineno">  562</span>      <span class="stringliteral">&quot;output signed distance&quot;</span>,</div>
+<div class="line"><a id="l00563" name="l00563"></a><span class="lineno">  563</span>      <span class="stringliteral">&quot;false&quot;</span>,</div>
+<div class="line"><a id="l00564" name="l00564"></a><span class="lineno">  564</span>      Patterns::Bool(),</div>
+<div class="line"><a id="l00565" name="l00565"></a><span class="lineno">  565</span>      <span class="stringliteral">&quot;Enables pvtu format outputs of the geometric interface reinitialization &quot;</span></div>
+<div class="line"><a id="l00566" name="l00566"></a><span class="lineno">  566</span>      <span class="stringliteral">&quot;steps &lt;true|false&gt;&quot;</span>);</div>
+<div class="line"><a id="l00567" name="l00567"></a><span class="lineno">  567</span>    prm.declare_entry(<span class="stringliteral">&quot;max reinitialization distance&quot;</span>,</div>
+<div class="line"><a id="l00568" name="l00568"></a><span class="lineno">  568</span>                      <span class="stringliteral">&quot;1.&quot;</span>,</div>
+<div class="line"><a id="l00569" name="l00569"></a><span class="lineno">  569</span>                      Patterns::Double(),</div>
+<div class="line"><a id="l00570" name="l00570"></a><span class="lineno">  570</span>                      <span class="stringliteral">&quot;Maximum reinitialization distance value&quot;</span>);</div>
+<div class="line"><a id="l00571" name="l00571"></a><span class="lineno">  571</span>    prm.declare_entry(</div>
+<div class="line"><a id="l00572" name="l00572"></a><span class="lineno">  572</span>      <span class="stringliteral">&quot;transformation type&quot;</span>,</div>
+<div class="line"><a id="l00573" name="l00573"></a><span class="lineno">  573</span>      <span class="stringliteral">&quot;tanh&quot;</span>,</div>
+<div class="line"><a id="l00574" name="l00574"></a><span class="lineno">  574</span>      Patterns::Selection(<span class="stringliteral">&quot;tanh|piecewise polynomial&quot;</span>),</div>
+<div class="line"><a id="l00575" name="l00575"></a><span class="lineno">  575</span>      <span class="stringliteral">&quot;Transformation function used to get the phase indicator from the signed &quot;</span></div>
+<div class="line"><a id="l00576" name="l00576"></a><span class="lineno">  576</span>      <span class="stringliteral">&quot;distance&quot;</span>);</div>
+<div class="line"><a id="l00577" name="l00577"></a><span class="lineno">  577</span>    prm.declare_entry(<span class="stringliteral">&quot;tanh thickness&quot;</span>,</div>
+<div class="line"><a id="l00578" name="l00578"></a><span class="lineno">  578</span>                      <span class="stringliteral">&quot;1.&quot;</span>,</div>
+<div class="line"><a id="l00579" name="l00579"></a><span class="lineno">  579</span>                      Patterns::Double(),</div>
+<div class="line"><a id="l00580" name="l00580"></a><span class="lineno">  580</span>                      <span class="stringliteral">&quot;Interface thickness for the tanh transformation&quot;</span>);</div>
+<div class="line"><a id="l00581" name="l00581"></a><span class="lineno">  581</span>  }</div>
+<div class="line"><a id="l00582" name="l00582"></a><span class="lineno">  582</span>  prm.leave_subsection();</div>
+<div class="line"><a id="l00583" name="l00583"></a><span class="lineno">  583</span>}</div>
 </div>
-<div class="line"><a id="l00581" name="l00581"></a><span class="lineno">  581</span> </div>
-<div class="line"><a id="l00582" name="l00582"></a><span class="lineno">  582</span><span class="keywordtype">void</span></div>
-<div class="foldopen" id="foldopen00583" data-start="{" data-end="}">
-<div class="line"><a id="l00583" name="l00583"></a><span class="lineno"><a class="line" href="structParameters_1_1VOF__GeometricInterfaceReinitialization.html#a16f3c3d90c6a0a94b8fc88029ec0c183">  583</a></span><a class="code hl_function" href="structParameters_1_1VOF__GeometricInterfaceReinitialization.html#a16f3c3d90c6a0a94b8fc88029ec0c183">Parameters::VOF_GeometricInterfaceReinitialization::parse_parameters</a>(</div>
-<div class="line"><a id="l00584" name="l00584"></a><span class="lineno">  584</span>  dealii::ParameterHandler &amp;prm)</div>
-<div class="line"><a id="l00585" name="l00585"></a><span class="lineno">  585</span>{</div>
-<div class="line"><a id="l00586" name="l00586"></a><span class="lineno">  586</span>  prm.enter_subsection(<span class="stringliteral">&quot;geometric interface reinitialization&quot;</span>);</div>
-<div class="line"><a id="l00587" name="l00587"></a><span class="lineno">  587</span>  {</div>
-<div class="line"><a id="l00588" name="l00588"></a><span class="lineno">  588</span>    this-&gt;output_signed_distance = prm.get_bool(<span class="stringliteral">&quot;output signed distance&quot;</span>);</div>
-<div class="line"><a id="l00589" name="l00589"></a><span class="lineno">  589</span>    this-&gt;max_reinitialization_distance =</div>
-<div class="line"><a id="l00590" name="l00590"></a><span class="lineno">  590</span>      prm.get_double(<span class="stringliteral">&quot;max reinitialization distance&quot;</span>);</div>
-<div class="line"><a id="l00591" name="l00591"></a><span class="lineno">  591</span>    <span class="keyword">const</span> std::string t = prm.get(<span class="stringliteral">&quot;transformation type&quot;</span>);</div>
-<div class="line"><a id="l00592" name="l00592"></a><span class="lineno">  592</span>    <span class="keywordflow">if</span> (t == <span class="stringliteral">&quot;tanh&quot;</span>)</div>
-<div class="line"><a id="l00593" name="l00593"></a><span class="lineno">  593</span>      this-&gt;transformation_type =</div>
-<div class="line"><a id="l00594" name="l00594"></a><span class="lineno">  594</span>        <a class="code hl_enumvalue" href="namespaceParameters.html#a34edd9cb3faad925234f73958172eb84a5c0dbba3a6ee4ac0eb26cfee75ccb8b4">Parameters::RedistanciationTransformationType::tanh</a>;</div>
-<div class="line"><a id="l00595" name="l00595"></a><span class="lineno">  595</span>    <span class="keywordflow">else</span> <span class="keywordflow">if</span> (t == <span class="stringliteral">&quot;piecewise polynomial&quot;</span>)</div>
-<div class="line"><a id="l00596" name="l00596"></a><span class="lineno">  596</span>      {</div>
-<div class="line"><a id="l00597" name="l00597"></a><span class="lineno">  597</span>        this-&gt;transformation_type =</div>
-<div class="line"><a id="l00598" name="l00598"></a><span class="lineno">  598</span>          <a class="code hl_enumvalue" href="namespaceParameters.html#a34edd9cb3faad925234f73958172eb84a338eb4303c1c9e5f2b2eed4bce1fd873">Parameters::RedistanciationTransformationType::piecewise_polynomial</a>;</div>
-<div class="line"><a id="l00599" name="l00599"></a><span class="lineno">  599</span>      }</div>
-<div class="line"><a id="l00600" name="l00600"></a><span class="lineno">  600</span>    <span class="keywordflow">else</span></div>
-<div class="line"><a id="l00601" name="l00601"></a><span class="lineno">  601</span>      <span class="keywordflow">throw</span>(std::runtime_error(</div>
-<div class="line"><a id="l00602" name="l00602"></a><span class="lineno">  602</span>        <span class="stringliteral">&quot;Invalid transformation type for the geometric interface reinitialization method!&quot;</span>));</div>
-<div class="line"><a id="l00603" name="l00603"></a><span class="lineno">  603</span>    this-&gt;tanh_thickness = prm.get_double(<span class="stringliteral">&quot;tanh thickness&quot;</span>);</div>
-<div class="line"><a id="l00604" name="l00604"></a><span class="lineno">  604</span>  }</div>
-<div class="line"><a id="l00605" name="l00605"></a><span class="lineno">  605</span>  prm.leave_subsection();</div>
-<div class="line"><a id="l00606" name="l00606"></a><span class="lineno">  606</span>}</div>
+<div class="line"><a id="l00584" name="l00584"></a><span class="lineno">  584</span> </div>
+<div class="line"><a id="l00585" name="l00585"></a><span class="lineno">  585</span><span class="keywordtype">void</span></div>
+<div class="foldopen" id="foldopen00586" data-start="{" data-end="}">
+<div class="line"><a id="l00586" name="l00586"></a><span class="lineno"><a class="line" href="structParameters_1_1VOF__GeometricInterfaceReinitialization.html#a16f3c3d90c6a0a94b8fc88029ec0c183">  586</a></span><a class="code hl_function" href="structParameters_1_1VOF__GeometricInterfaceReinitialization.html#a16f3c3d90c6a0a94b8fc88029ec0c183">Parameters::VOF_GeometricInterfaceReinitialization::parse_parameters</a>(</div>
+<div class="line"><a id="l00587" name="l00587"></a><span class="lineno">  587</span>  dealii::ParameterHandler &amp;prm)</div>
+<div class="line"><a id="l00588" name="l00588"></a><span class="lineno">  588</span>{</div>
+<div class="line"><a id="l00589" name="l00589"></a><span class="lineno">  589</span>  prm.enter_subsection(<span class="stringliteral">&quot;geometric interface reinitialization&quot;</span>);</div>
+<div class="line"><a id="l00590" name="l00590"></a><span class="lineno">  590</span>  {</div>
+<div class="line"><a id="l00591" name="l00591"></a><span class="lineno">  591</span>    this-&gt;output_signed_distance = prm.get_bool(<span class="stringliteral">&quot;output signed distance&quot;</span>);</div>
+<div class="line"><a id="l00592" name="l00592"></a><span class="lineno">  592</span>    this-&gt;max_reinitialization_distance =</div>
+<div class="line"><a id="l00593" name="l00593"></a><span class="lineno">  593</span>      prm.get_double(<span class="stringliteral">&quot;max reinitialization distance&quot;</span>);</div>
+<div class="line"><a id="l00594" name="l00594"></a><span class="lineno">  594</span>    <span class="keyword">const</span> std::string t = prm.get(<span class="stringliteral">&quot;transformation type&quot;</span>);</div>
+<div class="line"><a id="l00595" name="l00595"></a><span class="lineno">  595</span>    <span class="keywordflow">if</span> (t == <span class="stringliteral">&quot;tanh&quot;</span>)</div>
+<div class="line"><a id="l00596" name="l00596"></a><span class="lineno">  596</span>      this-&gt;transformation_type =</div>
+<div class="line"><a id="l00597" name="l00597"></a><span class="lineno">  597</span>        <a class="code hl_enumvalue" href="namespaceParameters.html#a34edd9cb3faad925234f73958172eb84a5c0dbba3a6ee4ac0eb26cfee75ccb8b4">Parameters::RedistanciationTransformationType::tanh</a>;</div>
+<div class="line"><a id="l00598" name="l00598"></a><span class="lineno">  598</span>    <span class="keywordflow">else</span> <span class="keywordflow">if</span> (t == <span class="stringliteral">&quot;piecewise polynomial&quot;</span>)</div>
+<div class="line"><a id="l00599" name="l00599"></a><span class="lineno">  599</span>      {</div>
+<div class="line"><a id="l00600" name="l00600"></a><span class="lineno">  600</span>        this-&gt;transformation_type =</div>
+<div class="line"><a id="l00601" name="l00601"></a><span class="lineno">  601</span>          <a class="code hl_enumvalue" href="namespaceParameters.html#a34edd9cb3faad925234f73958172eb84a338eb4303c1c9e5f2b2eed4bce1fd873">Parameters::RedistanciationTransformationType::piecewise_polynomial</a>;</div>
+<div class="line"><a id="l00602" name="l00602"></a><span class="lineno">  602</span>      }</div>
+<div class="line"><a id="l00603" name="l00603"></a><span class="lineno">  603</span>    <span class="keywordflow">else</span></div>
+<div class="line"><a id="l00604" name="l00604"></a><span class="lineno">  604</span>      <span class="keywordflow">throw</span>(std::runtime_error(</div>
+<div class="line"><a id="l00605" name="l00605"></a><span class="lineno">  605</span>        <span class="stringliteral">&quot;Invalid transformation type for the geometric interface reinitialization method!&quot;</span>));</div>
+<div class="line"><a id="l00606" name="l00606"></a><span class="lineno">  606</span>    this-&gt;tanh_thickness = prm.get_double(<span class="stringliteral">&quot;tanh thickness&quot;</span>);</div>
+<div class="line"><a id="l00607" name="l00607"></a><span class="lineno">  607</span>  }</div>
+<div class="line"><a id="l00608" name="l00608"></a><span class="lineno">  608</span>  prm.leave_subsection();</div>
+<div class="line"><a id="l00609" name="l00609"></a><span class="lineno">  609</span>}</div>
 </div>
-<div class="line"><a id="l00607" name="l00607"></a><span class="lineno">  607</span> </div>
-<div class="line"><a id="l00608" name="l00608"></a><span class="lineno">  608</span><span class="keywordtype">void</span></div>
-<div class="foldopen" id="foldopen00609" data-start="{" data-end="}">
-<div class="line"><a id="l00609" name="l00609"></a><span class="lineno"><a class="line" href="structParameters_1_1CahnHilliard__PhaseFilter.html#a497060c80af88ec6b29e3b196b46d83d">  609</a></span><a class="code hl_function" href="structParameters_1_1CahnHilliard__PhaseFilter.html#a497060c80af88ec6b29e3b196b46d83d">Parameters::CahnHilliard_PhaseFilter::declare_parameters</a>(ParameterHandler &amp;prm)</div>
-<div class="line"><a id="l00610" name="l00610"></a><span class="lineno">  610</span>{</div>
-<div class="line"><a id="l00611" name="l00611"></a><span class="lineno">  611</span>  prm.enter_subsection(<span class="stringliteral">&quot;phase filtration&quot;</span>);</div>
-<div class="line"><a id="l00612" name="l00612"></a><span class="lineno">  612</span>  {</div>
-<div class="line"><a id="l00613" name="l00613"></a><span class="lineno">  613</span>    prm.declare_entry(</div>
-<div class="line"><a id="l00614" name="l00614"></a><span class="lineno">  614</span>      <span class="stringliteral">&quot;type&quot;</span>,</div>
-<div class="line"><a id="l00615" name="l00615"></a><span class="lineno">  615</span>      <span class="stringliteral">&quot;none&quot;</span>,</div>
-<div class="line"><a id="l00616" name="l00616"></a><span class="lineno">  616</span>      Patterns::Selection(<span class="stringliteral">&quot;none|clip|tanh&quot;</span>),</div>
-<div class="line"><a id="l00617" name="l00617"></a><span class="lineno">  617</span>      <span class="stringliteral">&quot;CahnHilliard phase filtration type, &quot;</span></div>
-<div class="line"><a id="l00618" name="l00618"></a><span class="lineno">  618</span>      <span class="stringliteral">&quot;if &lt;none&gt; is selected, the phase won&#39;t be filtered&quot;</span></div>
-<div class="line"><a id="l00619" name="l00619"></a><span class="lineno">  619</span>      <span class="stringliteral">&quot;if &lt;clip&gt; is selected, the phase order values above 1 (respectively below -1) will be brought back to 1 (respectively -1)&quot;</span></div>
-<div class="line"><a id="l00620" name="l00620"></a><span class="lineno">  620</span>      <span class="stringliteral">&quot;if &lt;tanh&gt; is selected, the filtered phase will be a result of the &quot;</span></div>
-<div class="line"><a id="l00621" name="l00621"></a><span class="lineno">  621</span>      <span class="stringliteral">&quot;following function: \\alpha_f = \\tanh(\\beta\\alpha); &quot;</span></div>
-<div class="line"><a id="l00622" name="l00622"></a><span class="lineno">  622</span>      <span class="stringliteral">&quot;where beta is a parameter influencing the interface thickness that &quot;</span></div>
-<div class="line"><a id="l00623" name="l00623"></a><span class="lineno">  623</span>      <span class="stringliteral">&quot;must be defined&quot;</span>);</div>
-<div class="line"><a id="l00624" name="l00624"></a><span class="lineno">  624</span>    prm.declare_entry(</div>
-<div class="line"><a id="l00625" name="l00625"></a><span class="lineno">  625</span>      <span class="stringliteral">&quot;beta&quot;</span>,</div>
-<div class="line"><a id="l00626" name="l00626"></a><span class="lineno">  626</span>      <span class="stringliteral">&quot;20&quot;</span>,</div>
-<div class="line"><a id="l00627" name="l00627"></a><span class="lineno">  627</span>      Patterns::Double(),</div>
-<div class="line"><a id="l00628" name="l00628"></a><span class="lineno">  628</span>      <span class="stringliteral">&quot;This parameter appears in the tanh filter function. It influence &quot;</span></div>
-<div class="line"><a id="l00629" name="l00629"></a><span class="lineno">  629</span>      <span class="stringliteral">&quot;the thickness and the shape of the interface. For higher values of &quot;</span></div>
-<div class="line"><a id="l00630" name="l00630"></a><span class="lineno">  630</span>      <span class="stringliteral">&quot;beta, a thinner and &#39;sharper/pixelated&#39; interface will be seen.&quot;</span>);</div>
-<div class="line"><a id="l00631" name="l00631"></a><span class="lineno">  631</span>    prm.declare_entry(<span class="stringliteral">&quot;verbosity&quot;</span>,</div>
-<div class="line"><a id="l00632" name="l00632"></a><span class="lineno">  632</span>                      <span class="stringliteral">&quot;quiet&quot;</span>,</div>
-<div class="line"><a id="l00633" name="l00633"></a><span class="lineno">  633</span>                      Patterns::Selection(<span class="stringliteral">&quot;quiet|verbose|extra verbose&quot;</span>),</div>
-<div class="line"><a id="l00634" name="l00634"></a><span class="lineno">  634</span>                      <span class="stringliteral">&quot;States whether the filtered data should be printed &quot;</span></div>
-<div class="line"><a id="l00635" name="l00635"></a><span class="lineno">  635</span>                      <span class="stringliteral">&quot;Choices are &lt;quiet|verbose&gt;.&quot;</span>);</div>
-<div class="line"><a id="l00636" name="l00636"></a><span class="lineno">  636</span>  }</div>
-<div class="line"><a id="l00637" name="l00637"></a><span class="lineno">  637</span>  prm.leave_subsection();</div>
-<div class="line"><a id="l00638" name="l00638"></a><span class="lineno">  638</span>}</div>
+<div class="line"><a id="l00610" name="l00610"></a><span class="lineno">  610</span> </div>
+<div class="line"><a id="l00611" name="l00611"></a><span class="lineno">  611</span><span class="keywordtype">void</span></div>
+<div class="foldopen" id="foldopen00612" data-start="{" data-end="}">
+<div class="line"><a id="l00612" name="l00612"></a><span class="lineno"><a class="line" href="structParameters_1_1CahnHilliard__PhaseFilter.html#a497060c80af88ec6b29e3b196b46d83d">  612</a></span><a class="code hl_function" href="structParameters_1_1CahnHilliard__PhaseFilter.html#a497060c80af88ec6b29e3b196b46d83d">Parameters::CahnHilliard_PhaseFilter::declare_parameters</a>(ParameterHandler &amp;prm)</div>
+<div class="line"><a id="l00613" name="l00613"></a><span class="lineno">  613</span>{</div>
+<div class="line"><a id="l00614" name="l00614"></a><span class="lineno">  614</span>  prm.enter_subsection(<span class="stringliteral">&quot;phase filtration&quot;</span>);</div>
+<div class="line"><a id="l00615" name="l00615"></a><span class="lineno">  615</span>  {</div>
+<div class="line"><a id="l00616" name="l00616"></a><span class="lineno">  616</span>    prm.declare_entry(</div>
+<div class="line"><a id="l00617" name="l00617"></a><span class="lineno">  617</span>      <span class="stringliteral">&quot;type&quot;</span>,</div>
+<div class="line"><a id="l00618" name="l00618"></a><span class="lineno">  618</span>      <span class="stringliteral">&quot;none&quot;</span>,</div>
+<div class="line"><a id="l00619" name="l00619"></a><span class="lineno">  619</span>      Patterns::Selection(<span class="stringliteral">&quot;none|clip|tanh&quot;</span>),</div>
+<div class="line"><a id="l00620" name="l00620"></a><span class="lineno">  620</span>      <span class="stringliteral">&quot;CahnHilliard phase filtration type, &quot;</span></div>
+<div class="line"><a id="l00621" name="l00621"></a><span class="lineno">  621</span>      <span class="stringliteral">&quot;if &lt;none&gt; is selected, the phase won&#39;t be filtered&quot;</span></div>
+<div class="line"><a id="l00622" name="l00622"></a><span class="lineno">  622</span>      <span class="stringliteral">&quot;if &lt;clip&gt; is selected, the phase order values above 1 (respectively below -1) will be brought back to 1 (respectively -1)&quot;</span></div>
+<div class="line"><a id="l00623" name="l00623"></a><span class="lineno">  623</span>      <span class="stringliteral">&quot;if &lt;tanh&gt; is selected, the filtered phase will be a result of the &quot;</span></div>
+<div class="line"><a id="l00624" name="l00624"></a><span class="lineno">  624</span>      <span class="stringliteral">&quot;following function: \\alpha_f = \\tanh(\\beta\\alpha); &quot;</span></div>
+<div class="line"><a id="l00625" name="l00625"></a><span class="lineno">  625</span>      <span class="stringliteral">&quot;where beta is a parameter influencing the interface thickness that &quot;</span></div>
+<div class="line"><a id="l00626" name="l00626"></a><span class="lineno">  626</span>      <span class="stringliteral">&quot;must be defined&quot;</span>);</div>
+<div class="line"><a id="l00627" name="l00627"></a><span class="lineno">  627</span>    prm.declare_entry(</div>
+<div class="line"><a id="l00628" name="l00628"></a><span class="lineno">  628</span>      <span class="stringliteral">&quot;beta&quot;</span>,</div>
+<div class="line"><a id="l00629" name="l00629"></a><span class="lineno">  629</span>      <span class="stringliteral">&quot;20&quot;</span>,</div>
+<div class="line"><a id="l00630" name="l00630"></a><span class="lineno">  630</span>      Patterns::Double(),</div>
+<div class="line"><a id="l00631" name="l00631"></a><span class="lineno">  631</span>      <span class="stringliteral">&quot;This parameter appears in the tanh filter function. It influence &quot;</span></div>
+<div class="line"><a id="l00632" name="l00632"></a><span class="lineno">  632</span>      <span class="stringliteral">&quot;the thickness and the shape of the interface. For higher values of &quot;</span></div>
+<div class="line"><a id="l00633" name="l00633"></a><span class="lineno">  633</span>      <span class="stringliteral">&quot;beta, a thinner and &#39;sharper/pixelated&#39; interface will be seen.&quot;</span>);</div>
+<div class="line"><a id="l00634" name="l00634"></a><span class="lineno">  634</span>    prm.declare_entry(<span class="stringliteral">&quot;verbosity&quot;</span>,</div>
+<div class="line"><a id="l00635" name="l00635"></a><span class="lineno">  635</span>                      <span class="stringliteral">&quot;quiet&quot;</span>,</div>
+<div class="line"><a id="l00636" name="l00636"></a><span class="lineno">  636</span>                      Patterns::Selection(<span class="stringliteral">&quot;quiet|verbose|extra verbose&quot;</span>),</div>
+<div class="line"><a id="l00637" name="l00637"></a><span class="lineno">  637</span>                      <span class="stringliteral">&quot;States whether the filtered data should be printed &quot;</span></div>
+<div class="line"><a id="l00638" name="l00638"></a><span class="lineno">  638</span>                      <span class="stringliteral">&quot;Choices are &lt;quiet|verbose&gt;.&quot;</span>);</div>
+<div class="line"><a id="l00639" name="l00639"></a><span class="lineno">  639</span>  }</div>
+<div class="line"><a id="l00640" name="l00640"></a><span class="lineno">  640</span>  prm.leave_subsection();</div>
+<div class="line"><a id="l00641" name="l00641"></a><span class="lineno">  641</span>}</div>
 </div>
-<div class="line"><a id="l00639" name="l00639"></a><span class="lineno">  639</span> </div>
-<div class="line"><a id="l00640" name="l00640"></a><span class="lineno">  640</span><span class="keywordtype">void</span></div>
-<div class="foldopen" id="foldopen00641" data-start="{" data-end="}">
-<div class="line"><a id="l00641" name="l00641"></a><span class="lineno"><a class="line" href="structParameters_1_1CahnHilliard__PhaseFilter.html#a79acb9008f767e5befb2785e0430a046">  641</a></span><a class="code hl_function" href="structParameters_1_1CahnHilliard__PhaseFilter.html#a79acb9008f767e5befb2785e0430a046">Parameters::CahnHilliard_PhaseFilter::parse_parameters</a>(ParameterHandler &amp;prm)</div>
-<div class="line"><a id="l00642" name="l00642"></a><span class="lineno">  642</span>{</div>
-<div class="line"><a id="l00643" name="l00643"></a><span class="lineno">  643</span>  prm.enter_subsection(<span class="stringliteral">&quot;phase filtration&quot;</span>);</div>
-<div class="line"><a id="l00644" name="l00644"></a><span class="lineno">  644</span>  {</div>
-<div class="line"><a id="l00645" name="l00645"></a><span class="lineno">  645</span>    <span class="comment">// filter type</span></div>
-<div class="line"><a id="l00646" name="l00646"></a><span class="lineno">  646</span>    <span class="keyword">const</span> std::string t = prm.get(<span class="stringliteral">&quot;type&quot;</span>);</div>
-<div class="line"><a id="l00647" name="l00647"></a><span class="lineno">  647</span>    <span class="keywordflow">if</span> (t == <span class="stringliteral">&quot;none&quot;</span>)</div>
-<div class="line"><a id="l00648" name="l00648"></a><span class="lineno">  648</span>      {</div>
-<div class="line"><a id="l00649" name="l00649"></a><span class="lineno">  649</span>        type = <a class="code hl_enumvalue" href="namespaceParameters.html#af7f1dc7c6e6c0acaebb4395af3c3f07ba334c4a4c42fdb79d7ebc3e73b517e6f8">Parameters::FilterType::none</a>;</div>
-<div class="line"><a id="l00650" name="l00650"></a><span class="lineno">  650</span>      }</div>
-<div class="line"><a id="l00651" name="l00651"></a><span class="lineno">  651</span>    <span class="keywordflow">else</span> <span class="keywordflow">if</span> (t == <span class="stringliteral">&quot;clip&quot;</span>)</div>
-<div class="line"><a id="l00652" name="l00652"></a><span class="lineno">  652</span>      {</div>
-<div class="line"><a id="l00653" name="l00653"></a><span class="lineno">  653</span>        type = <a class="code hl_enumvalue" href="namespaceParameters.html#af7f1dc7c6e6c0acaebb4395af3c3f07baf6d8b886335927d46fad323c60335d09">Parameters::FilterType::clip</a>;</div>
-<div class="line"><a id="l00654" name="l00654"></a><span class="lineno">  654</span>      }</div>
-<div class="line"><a id="l00655" name="l00655"></a><span class="lineno">  655</span>    <span class="keywordflow">else</span> <span class="keywordflow">if</span> (t == <span class="stringliteral">&quot;tanh&quot;</span>)</div>
-<div class="line"><a id="l00656" name="l00656"></a><span class="lineno">  656</span>      {</div>
-<div class="line"><a id="l00657" name="l00657"></a><span class="lineno">  657</span>        type = <a class="code hl_enumvalue" href="namespaceParameters.html#af7f1dc7c6e6c0acaebb4395af3c3f07ba5c0dbba3a6ee4ac0eb26cfee75ccb8b4">Parameters::FilterType::tanh</a>;</div>
-<div class="line"><a id="l00658" name="l00658"></a><span class="lineno">  658</span>      }</div>
-<div class="line"><a id="l00659" name="l00659"></a><span class="lineno">  659</span>    <span class="keywordflow">else</span></div>
-<div class="line"><a id="l00660" name="l00660"></a><span class="lineno">  660</span>      <span class="keywordflow">throw</span>(std::logic_error(</div>
-<div class="line"><a id="l00661" name="l00661"></a><span class="lineno">  661</span>        <span class="stringliteral">&quot;Error, invalid filter type. Choices are &#39;none&#39;, &#39;clip&#39; or &#39;tanh&#39;&quot;</span>));</div>
-<div class="line"><a id="l00662" name="l00662"></a><span class="lineno">  662</span> </div>
-<div class="line"><a id="l00663" name="l00663"></a><span class="lineno">  663</span>    <span class="comment">// beta</span></div>
-<div class="line"><a id="l00664" name="l00664"></a><span class="lineno">  664</span>    beta = prm.get_double(<span class="stringliteral">&quot;beta&quot;</span>);</div>
+<div class="line"><a id="l00642" name="l00642"></a><span class="lineno">  642</span> </div>
+<div class="line"><a id="l00643" name="l00643"></a><span class="lineno">  643</span><span class="keywordtype">void</span></div>
+<div class="foldopen" id="foldopen00644" data-start="{" data-end="}">
+<div class="line"><a id="l00644" name="l00644"></a><span class="lineno"><a class="line" href="structParameters_1_1CahnHilliard__PhaseFilter.html#a79acb9008f767e5befb2785e0430a046">  644</a></span><a class="code hl_function" href="structParameters_1_1CahnHilliard__PhaseFilter.html#a79acb9008f767e5befb2785e0430a046">Parameters::CahnHilliard_PhaseFilter::parse_parameters</a>(ParameterHandler &amp;prm)</div>
+<div class="line"><a id="l00645" name="l00645"></a><span class="lineno">  645</span>{</div>
+<div class="line"><a id="l00646" name="l00646"></a><span class="lineno">  646</span>  prm.enter_subsection(<span class="stringliteral">&quot;phase filtration&quot;</span>);</div>
+<div class="line"><a id="l00647" name="l00647"></a><span class="lineno">  647</span>  {</div>
+<div class="line"><a id="l00648" name="l00648"></a><span class="lineno">  648</span>    <span class="comment">// filter type</span></div>
+<div class="line"><a id="l00649" name="l00649"></a><span class="lineno">  649</span>    <span class="keyword">const</span> std::string t = prm.get(<span class="stringliteral">&quot;type&quot;</span>);</div>
+<div class="line"><a id="l00650" name="l00650"></a><span class="lineno">  650</span>    <span class="keywordflow">if</span> (t == <span class="stringliteral">&quot;none&quot;</span>)</div>
+<div class="line"><a id="l00651" name="l00651"></a><span class="lineno">  651</span>      {</div>
+<div class="line"><a id="l00652" name="l00652"></a><span class="lineno">  652</span>        type = <a class="code hl_enumvalue" href="namespaceParameters.html#af7f1dc7c6e6c0acaebb4395af3c3f07ba334c4a4c42fdb79d7ebc3e73b517e6f8">Parameters::FilterType::none</a>;</div>
+<div class="line"><a id="l00653" name="l00653"></a><span class="lineno">  653</span>      }</div>
+<div class="line"><a id="l00654" name="l00654"></a><span class="lineno">  654</span>    <span class="keywordflow">else</span> <span class="keywordflow">if</span> (t == <span class="stringliteral">&quot;clip&quot;</span>)</div>
+<div class="line"><a id="l00655" name="l00655"></a><span class="lineno">  655</span>      {</div>
+<div class="line"><a id="l00656" name="l00656"></a><span class="lineno">  656</span>        type = <a class="code hl_enumvalue" href="namespaceParameters.html#af7f1dc7c6e6c0acaebb4395af3c3f07baf6d8b886335927d46fad323c60335d09">Parameters::FilterType::clip</a>;</div>
+<div class="line"><a id="l00657" name="l00657"></a><span class="lineno">  657</span>      }</div>
+<div class="line"><a id="l00658" name="l00658"></a><span class="lineno">  658</span>    <span class="keywordflow">else</span> <span class="keywordflow">if</span> (t == <span class="stringliteral">&quot;tanh&quot;</span>)</div>
+<div class="line"><a id="l00659" name="l00659"></a><span class="lineno">  659</span>      {</div>
+<div class="line"><a id="l00660" name="l00660"></a><span class="lineno">  660</span>        type = <a class="code hl_enumvalue" href="namespaceParameters.html#af7f1dc7c6e6c0acaebb4395af3c3f07ba5c0dbba3a6ee4ac0eb26cfee75ccb8b4">Parameters::FilterType::tanh</a>;</div>
+<div class="line"><a id="l00661" name="l00661"></a><span class="lineno">  661</span>      }</div>
+<div class="line"><a id="l00662" name="l00662"></a><span class="lineno">  662</span>    <span class="keywordflow">else</span></div>
+<div class="line"><a id="l00663" name="l00663"></a><span class="lineno">  663</span>      <span class="keywordflow">throw</span>(std::logic_error(</div>
+<div class="line"><a id="l00664" name="l00664"></a><span class="lineno">  664</span>        <span class="stringliteral">&quot;Error, invalid filter type. Choices are &#39;none&#39;, &#39;clip&#39; or &#39;tanh&#39;&quot;</span>));</div>
 <div class="line"><a id="l00665" name="l00665"></a><span class="lineno">  665</span> </div>
-<div class="line"><a id="l00666" name="l00666"></a><span class="lineno">  666</span>    <span class="comment">// Verbosity</span></div>
-<div class="line"><a id="l00667" name="l00667"></a><span class="lineno">  667</span>    <span class="keyword">const</span> std::string filter_v = prm.get(<span class="stringliteral">&quot;verbosity&quot;</span>);</div>
-<div class="line"><a id="l00668" name="l00668"></a><span class="lineno">  668</span>    <span class="keywordflow">if</span> (filter_v == <span class="stringliteral">&quot;verbose&quot;</span>)</div>
-<div class="line"><a id="l00669" name="l00669"></a><span class="lineno">  669</span>      verbosity = <a class="code hl_enumvalue" href="namespaceParameters.html#a91f1943180a615249347b911b0ed3919a2c7aea4237e25b4f8ee3b0bf77d6fed0">Parameters::Verbosity::verbose</a>;</div>
-<div class="line"><a id="l00670" name="l00670"></a><span class="lineno">  670</span>    <span class="keywordflow">else</span> <span class="keywordflow">if</span> (filter_v == <span class="stringliteral">&quot;quiet&quot;</span>)</div>
-<div class="line"><a id="l00671" name="l00671"></a><span class="lineno">  671</span>      verbosity = <a class="code hl_enumvalue" href="namespaceParameters.html#a91f1943180a615249347b911b0ed3919a556966c7830465dc4623d62e32cec31d">Parameters::Verbosity::quiet</a>;</div>
-<div class="line"><a id="l00672" name="l00672"></a><span class="lineno">  672</span>    <span class="keywordflow">else</span></div>
-<div class="line"><a id="l00673" name="l00673"></a><span class="lineno">  673</span>      <span class="keywordflow">throw</span>(std::logic_error(<span class="stringliteral">&quot;Invalid verbosity level&quot;</span>));</div>
-<div class="line"><a id="l00674" name="l00674"></a><span class="lineno">  674</span>  }</div>
-<div class="line"><a id="l00675" name="l00675"></a><span class="lineno">  675</span>  prm.leave_subsection();</div>
-<div class="line"><a id="l00676" name="l00676"></a><span class="lineno">  676</span>}</div>
+<div class="line"><a id="l00666" name="l00666"></a><span class="lineno">  666</span>    <span class="comment">// beta</span></div>
+<div class="line"><a id="l00667" name="l00667"></a><span class="lineno">  667</span>    beta = prm.get_double(<span class="stringliteral">&quot;beta&quot;</span>);</div>
+<div class="line"><a id="l00668" name="l00668"></a><span class="lineno">  668</span> </div>
+<div class="line"><a id="l00669" name="l00669"></a><span class="lineno">  669</span>    <span class="comment">// Verbosity</span></div>
+<div class="line"><a id="l00670" name="l00670"></a><span class="lineno">  670</span>    <span class="keyword">const</span> std::string filter_v = prm.get(<span class="stringliteral">&quot;verbosity&quot;</span>);</div>
+<div class="line"><a id="l00671" name="l00671"></a><span class="lineno">  671</span>    <span class="keywordflow">if</span> (filter_v == <span class="stringliteral">&quot;verbose&quot;</span>)</div>
+<div class="line"><a id="l00672" name="l00672"></a><span class="lineno">  672</span>      verbosity = <a class="code hl_enumvalue" href="namespaceParameters.html#a91f1943180a615249347b911b0ed3919a2c7aea4237e25b4f8ee3b0bf77d6fed0">Parameters::Verbosity::verbose</a>;</div>
+<div class="line"><a id="l00673" name="l00673"></a><span class="lineno">  673</span>    <span class="keywordflow">else</span> <span class="keywordflow">if</span> (filter_v == <span class="stringliteral">&quot;quiet&quot;</span>)</div>
+<div class="line"><a id="l00674" name="l00674"></a><span class="lineno">  674</span>      verbosity = <a class="code hl_enumvalue" href="namespaceParameters.html#a91f1943180a615249347b911b0ed3919a556966c7830465dc4623d62e32cec31d">Parameters::Verbosity::quiet</a>;</div>
+<div class="line"><a id="l00675" name="l00675"></a><span class="lineno">  675</span>    <span class="keywordflow">else</span></div>
+<div class="line"><a id="l00676" name="l00676"></a><span class="lineno">  676</span>      <span class="keywordflow">throw</span>(std::logic_error(<span class="stringliteral">&quot;Invalid verbosity level&quot;</span>));</div>
+<div class="line"><a id="l00677" name="l00677"></a><span class="lineno">  677</span>  }</div>
+<div class="line"><a id="l00678" name="l00678"></a><span class="lineno">  678</span>  prm.leave_subsection();</div>
+<div class="line"><a id="l00679" name="l00679"></a><span class="lineno">  679</span>}</div>
 </div>
-<div class="line"><a id="l00677" name="l00677"></a><span class="lineno">  677</span> </div>
-<div class="line"><a id="l00678" name="l00678"></a><span class="lineno">  678</span><span class="keywordtype">void</span></div>
-<div class="foldopen" id="foldopen00679" data-start="{" data-end="}">
-<div class="line"><a id="l00679" name="l00679"></a><span class="lineno"><a class="line" href="structParameters_1_1CahnHilliard.html#a5804ef49724a1a17899535211bb9eff4">  679</a></span><a class="code hl_function" href="structParameters_1_1CahnHilliard.html#a5804ef49724a1a17899535211bb9eff4">Parameters::CahnHilliard::declare_parameters</a>(ParameterHandler &amp;prm)<span class="keyword"> const</span></div>
-<div class="line"><a id="l00680" name="l00680"></a><span class="lineno">  680</span><span class="keyword"></span>{</div>
-<div class="line"><a id="l00681" name="l00681"></a><span class="lineno">  681</span>  prm.enter_subsection(<span class="stringliteral">&quot;cahn hilliard&quot;</span>);</div>
-<div class="line"><a id="l00682" name="l00682"></a><span class="lineno">  682</span>  {</div>
-<div class="line"><a id="l00683" name="l00683"></a><span class="lineno">  683</span>    cahn_hilliard_phase_filter.declare_parameters(prm);</div>
-<div class="line"><a id="l00684" name="l00684"></a><span class="lineno">  684</span> </div>
-<div class="line"><a id="l00685" name="l00685"></a><span class="lineno">  685</span>    prm.declare_entry(</div>
-<div class="line"><a id="l00686" name="l00686"></a><span class="lineno">  686</span>      <span class="stringliteral">&quot;potential smoothing coefficient&quot;</span>,</div>
-<div class="line"><a id="l00687" name="l00687"></a><span class="lineno">  687</span>      <span class="stringliteral">&quot;1&quot;</span>,</div>
-<div class="line"><a id="l00688" name="l00688"></a><span class="lineno">  688</span>      Patterns::Double(),</div>
-<div class="line"><a id="l00689" name="l00689"></a><span class="lineno">  689</span>      <span class="stringliteral">&quot;Smoothing coefficient for the chemical potential in the Cahn-Hilliard equations.&quot;</span>);</div>
-<div class="line"><a id="l00690" name="l00690"></a><span class="lineno">  690</span> </div>
-<div class="line"><a id="l00691" name="l00691"></a><span class="lineno">  691</span>    prm.enter_subsection(<span class="stringliteral">&quot;epsilon&quot;</span>);</div>
-<div class="line"><a id="l00692" name="l00692"></a><span class="lineno">  692</span>    {</div>
-<div class="line"><a id="l00693" name="l00693"></a><span class="lineno">  693</span>      prm.declare_entry(</div>
-<div class="line"><a id="l00694" name="l00694"></a><span class="lineno">  694</span>        <span class="stringliteral">&quot;method&quot;</span>,</div>
-<div class="line"><a id="l00695" name="l00695"></a><span class="lineno">  695</span>        <span class="stringliteral">&quot;automatic&quot;</span>,</div>
-<div class="line"><a id="l00696" name="l00696"></a><span class="lineno">  696</span>        Patterns::Selection(<span class="stringliteral">&quot;automatic|manual&quot;</span>),</div>
-<div class="line"><a id="l00697" name="l00697"></a><span class="lineno">  697</span>        <span class="stringliteral">&quot;Epsilon is either set to two times the characteristic length (automatic) of the element or user defined on all the domain (manual)&quot;</span>);</div>
-<div class="line"><a id="l00698" name="l00698"></a><span class="lineno">  698</span> </div>
-<div class="line"><a id="l00699" name="l00699"></a><span class="lineno">  699</span>      prm.declare_entry(</div>
-<div class="line"><a id="l00700" name="l00700"></a><span class="lineno">  700</span>        <span class="stringliteral">&quot;value&quot;</span>,</div>
-<div class="line"><a id="l00701" name="l00701"></a><span class="lineno">  701</span>        <span class="stringliteral">&quot;1.0&quot;</span>,</div>
-<div class="line"><a id="l00702" name="l00702"></a><span class="lineno">  702</span>        Patterns::Double(),</div>
-<div class="line"><a id="l00703" name="l00703"></a><span class="lineno">  703</span>        <span class="stringliteral">&quot;Parameter linked to the interface thickness. Should always be bigger than the characteristic size of the smallest element&quot;</span>);</div>
-<div class="line"><a id="l00704" name="l00704"></a><span class="lineno">  704</span> </div>
-<div class="line"><a id="l00705" name="l00705"></a><span class="lineno">  705</span>      prm.declare_entry(</div>
-<div class="line"><a id="l00706" name="l00706"></a><span class="lineno">  706</span>        <span class="stringliteral">&quot;verbosity&quot;</span>,</div>
-<div class="line"><a id="l00707" name="l00707"></a><span class="lineno">  707</span>        <span class="stringliteral">&quot;quiet&quot;</span>,</div>
-<div class="line"><a id="l00708" name="l00708"></a><span class="lineno">  708</span>        Patterns::Selection(<span class="stringliteral">&quot;quiet|verbose&quot;</span>),</div>
-<div class="line"><a id="l00709" name="l00709"></a><span class="lineno">  709</span>        <span class="stringliteral">&quot;Display the value of epsilon for each time iteration if set to verbose&quot;</span>);</div>
-<div class="line"><a id="l00710" name="l00710"></a><span class="lineno">  710</span>    }</div>
-<div class="line"><a id="l00711" name="l00711"></a><span class="lineno">  711</span>    prm.leave_subsection();</div>
-<div class="line"><a id="l00712" name="l00712"></a><span class="lineno">  712</span>  }</div>
-<div class="line"><a id="l00713" name="l00713"></a><span class="lineno">  713</span>  prm.leave_subsection();</div>
-<div class="line"><a id="l00714" name="l00714"></a><span class="lineno">  714</span>}</div>
+<div class="line"><a id="l00680" name="l00680"></a><span class="lineno">  680</span> </div>
+<div class="line"><a id="l00681" name="l00681"></a><span class="lineno">  681</span><span class="keywordtype">void</span></div>
+<div class="foldopen" id="foldopen00682" data-start="{" data-end="}">
+<div class="line"><a id="l00682" name="l00682"></a><span class="lineno"><a class="line" href="structParameters_1_1CahnHilliard.html#a5804ef49724a1a17899535211bb9eff4">  682</a></span><a class="code hl_function" href="structParameters_1_1CahnHilliard.html#a5804ef49724a1a17899535211bb9eff4">Parameters::CahnHilliard::declare_parameters</a>(ParameterHandler &amp;prm)<span class="keyword"> const</span></div>
+<div class="line"><a id="l00683" name="l00683"></a><span class="lineno">  683</span><span class="keyword"></span>{</div>
+<div class="line"><a id="l00684" name="l00684"></a><span class="lineno">  684</span>  prm.enter_subsection(<span class="stringliteral">&quot;cahn hilliard&quot;</span>);</div>
+<div class="line"><a id="l00685" name="l00685"></a><span class="lineno">  685</span>  {</div>
+<div class="line"><a id="l00686" name="l00686"></a><span class="lineno">  686</span>    cahn_hilliard_phase_filter.declare_parameters(prm);</div>
+<div class="line"><a id="l00687" name="l00687"></a><span class="lineno">  687</span> </div>
+<div class="line"><a id="l00688" name="l00688"></a><span class="lineno">  688</span>    prm.declare_entry(</div>
+<div class="line"><a id="l00689" name="l00689"></a><span class="lineno">  689</span>      <span class="stringliteral">&quot;potential smoothing coefficient&quot;</span>,</div>
+<div class="line"><a id="l00690" name="l00690"></a><span class="lineno">  690</span>      <span class="stringliteral">&quot;1&quot;</span>,</div>
+<div class="line"><a id="l00691" name="l00691"></a><span class="lineno">  691</span>      Patterns::Double(),</div>
+<div class="line"><a id="l00692" name="l00692"></a><span class="lineno">  692</span>      <span class="stringliteral">&quot;Smoothing coefficient for the chemical potential in the Cahn-Hilliard equations.&quot;</span>);</div>
+<div class="line"><a id="l00693" name="l00693"></a><span class="lineno">  693</span> </div>
+<div class="line"><a id="l00694" name="l00694"></a><span class="lineno">  694</span>    prm.enter_subsection(<span class="stringliteral">&quot;epsilon&quot;</span>);</div>
+<div class="line"><a id="l00695" name="l00695"></a><span class="lineno">  695</span>    {</div>
+<div class="line"><a id="l00696" name="l00696"></a><span class="lineno">  696</span>      prm.declare_entry(</div>
+<div class="line"><a id="l00697" name="l00697"></a><span class="lineno">  697</span>        <span class="stringliteral">&quot;method&quot;</span>,</div>
+<div class="line"><a id="l00698" name="l00698"></a><span class="lineno">  698</span>        <span class="stringliteral">&quot;automatic&quot;</span>,</div>
+<div class="line"><a id="l00699" name="l00699"></a><span class="lineno">  699</span>        Patterns::Selection(<span class="stringliteral">&quot;automatic|manual&quot;</span>),</div>
+<div class="line"><a id="l00700" name="l00700"></a><span class="lineno">  700</span>        <span class="stringliteral">&quot;Epsilon is either set to two times the characteristic length (automatic) of the element or user defined on all the domain (manual)&quot;</span>);</div>
+<div class="line"><a id="l00701" name="l00701"></a><span class="lineno">  701</span> </div>
+<div class="line"><a id="l00702" name="l00702"></a><span class="lineno">  702</span>      prm.declare_entry(</div>
+<div class="line"><a id="l00703" name="l00703"></a><span class="lineno">  703</span>        <span class="stringliteral">&quot;value&quot;</span>,</div>
+<div class="line"><a id="l00704" name="l00704"></a><span class="lineno">  704</span>        <span class="stringliteral">&quot;1.0&quot;</span>,</div>
+<div class="line"><a id="l00705" name="l00705"></a><span class="lineno">  705</span>        Patterns::Double(),</div>
+<div class="line"><a id="l00706" name="l00706"></a><span class="lineno">  706</span>        <span class="stringliteral">&quot;Parameter linked to the interface thickness. Should always be bigger than the characteristic size of the smallest element&quot;</span>);</div>
+<div class="line"><a id="l00707" name="l00707"></a><span class="lineno">  707</span> </div>
+<div class="line"><a id="l00708" name="l00708"></a><span class="lineno">  708</span>      prm.declare_entry(</div>
+<div class="line"><a id="l00709" name="l00709"></a><span class="lineno">  709</span>        <span class="stringliteral">&quot;verbosity&quot;</span>,</div>
+<div class="line"><a id="l00710" name="l00710"></a><span class="lineno">  710</span>        <span class="stringliteral">&quot;quiet&quot;</span>,</div>
+<div class="line"><a id="l00711" name="l00711"></a><span class="lineno">  711</span>        Patterns::Selection(<span class="stringliteral">&quot;quiet|verbose&quot;</span>),</div>
+<div class="line"><a id="l00712" name="l00712"></a><span class="lineno">  712</span>        <span class="stringliteral">&quot;Display the value of epsilon for each time iteration if set to verbose&quot;</span>);</div>
+<div class="line"><a id="l00713" name="l00713"></a><span class="lineno">  713</span>    }</div>
+<div class="line"><a id="l00714" name="l00714"></a><span class="lineno">  714</span>    prm.leave_subsection();</div>
+<div class="line"><a id="l00715" name="l00715"></a><span class="lineno">  715</span>  }</div>
+<div class="line"><a id="l00716" name="l00716"></a><span class="lineno">  716</span>  prm.leave_subsection();</div>
+<div class="line"><a id="l00717" name="l00717"></a><span class="lineno">  717</span>}</div>
 </div>
-<div class="line"><a id="l00715" name="l00715"></a><span class="lineno">  715</span> </div>
-<div class="line"><a id="l00716" name="l00716"></a><span class="lineno">  716</span><span class="keywordtype">void</span></div>
-<div class="foldopen" id="foldopen00717" data-start="{" data-end="}">
-<div class="line"><a id="l00717" name="l00717"></a><span class="lineno"><a class="line" href="structParameters_1_1CahnHilliard.html#a16e6c832ffc9bee3559c3b229d9b29a0">  717</a></span><a class="code hl_function" href="structParameters_1_1CahnHilliard.html#a16e6c832ffc9bee3559c3b229d9b29a0">Parameters::CahnHilliard::parse_parameters</a>(ParameterHandler     &amp;prm,</div>
-<div class="line"><a id="l00718" name="l00718"></a><span class="lineno">  718</span>                                           <span class="keyword">const</span> <a class="code hl_class" href="classParameters_1_1Dimensionality.html">Dimensionality</a> &amp;dimensions)</div>
-<div class="line"><a id="l00719" name="l00719"></a><span class="lineno">  719</span>{</div>
-<div class="line"><a id="l00720" name="l00720"></a><span class="lineno">  720</span>  prm.enter_subsection(<span class="stringliteral">&quot;cahn hilliard&quot;</span>);</div>
-<div class="line"><a id="l00721" name="l00721"></a><span class="lineno">  721</span>  {</div>
-<div class="line"><a id="l00722" name="l00722"></a><span class="lineno">  722</span>    cahn_hilliard_phase_filter.parse_parameters(prm);</div>
-<div class="line"><a id="l00723" name="l00723"></a><span class="lineno">  723</span> </div>
-<div class="line"><a id="l00724" name="l00724"></a><span class="lineno">  724</span>    <a class="code hl_variable" href="structParameters_1_1CahnHilliard.html#a9a470cbe7f58b13fe0b5211d88665dea">CahnHilliard::potential_smoothing_coefficient</a> =</div>
-<div class="line"><a id="l00725" name="l00725"></a><span class="lineno">  725</span>      prm.get_double(<span class="stringliteral">&quot;potential smoothing coefficient&quot;</span>);</div>
+<div class="line"><a id="l00718" name="l00718"></a><span class="lineno">  718</span> </div>
+<div class="line"><a id="l00719" name="l00719"></a><span class="lineno">  719</span><span class="keywordtype">void</span></div>
+<div class="foldopen" id="foldopen00720" data-start="{" data-end="}">
+<div class="line"><a id="l00720" name="l00720"></a><span class="lineno"><a class="line" href="structParameters_1_1CahnHilliard.html#a16e6c832ffc9bee3559c3b229d9b29a0">  720</a></span><a class="code hl_function" href="structParameters_1_1CahnHilliard.html#a16e6c832ffc9bee3559c3b229d9b29a0">Parameters::CahnHilliard::parse_parameters</a>(ParameterHandler     &amp;prm,</div>
+<div class="line"><a id="l00721" name="l00721"></a><span class="lineno">  721</span>                                           <span class="keyword">const</span> <a class="code hl_class" href="classParameters_1_1Dimensionality.html">Dimensionality</a> &amp;dimensions)</div>
+<div class="line"><a id="l00722" name="l00722"></a><span class="lineno">  722</span>{</div>
+<div class="line"><a id="l00723" name="l00723"></a><span class="lineno">  723</span>  prm.enter_subsection(<span class="stringliteral">&quot;cahn hilliard&quot;</span>);</div>
+<div class="line"><a id="l00724" name="l00724"></a><span class="lineno">  724</span>  {</div>
+<div class="line"><a id="l00725" name="l00725"></a><span class="lineno">  725</span>    cahn_hilliard_phase_filter.parse_parameters(prm);</div>
 <div class="line"><a id="l00726" name="l00726"></a><span class="lineno">  726</span> </div>
-<div class="line"><a id="l00727" name="l00727"></a><span class="lineno">  727</span>    prm.enter_subsection(<span class="stringliteral">&quot;epsilon&quot;</span>);</div>
-<div class="line"><a id="l00728" name="l00728"></a><span class="lineno">  728</span>    {</div>
-<div class="line"><a id="l00729" name="l00729"></a><span class="lineno">  729</span>      <span class="keyword">const</span> std::string op_epsilon = prm.get(<span class="stringliteral">&quot;method&quot;</span>);</div>
-<div class="line"><a id="l00730" name="l00730"></a><span class="lineno">  730</span>      <span class="keywordflow">if</span> (op_epsilon == <span class="stringliteral">&quot;automatic&quot;</span>)</div>
-<div class="line"><a id="l00731" name="l00731"></a><span class="lineno">  731</span>        {</div>
-<div class="line"><a id="l00732" name="l00732"></a><span class="lineno">  732</span>          <a class="code hl_variable" href="structParameters_1_1CahnHilliard.html#a8bb7a325458114eb9bb0bd9b439af795">CahnHilliard::epsilon_set_method</a> =</div>
-<div class="line"><a id="l00733" name="l00733"></a><span class="lineno">  733</span>            <a class="code hl_enumvalue" href="namespaceParameters.html#aea64bd5414c051b692d8df44e5ccd369a2bd9c0ed00116be1258e0cc66617d7c8">Parameters::EpsilonSetMethod::automatic</a>;</div>
-<div class="line"><a id="l00734" name="l00734"></a><span class="lineno">  734</span>        }</div>
-<div class="line"><a id="l00735" name="l00735"></a><span class="lineno">  735</span>      <span class="keywordflow">else</span> <span class="keywordflow">if</span> (op_epsilon == <span class="stringliteral">&quot;manual&quot;</span>)</div>
-<div class="line"><a id="l00736" name="l00736"></a><span class="lineno">  736</span>        {</div>
-<div class="line"><a id="l00737" name="l00737"></a><span class="lineno">  737</span>          <a class="code hl_variable" href="structParameters_1_1CahnHilliard.html#a8bb7a325458114eb9bb0bd9b439af795">CahnHilliard::epsilon_set_method</a> =</div>
-<div class="line"><a id="l00738" name="l00738"></a><span class="lineno">  738</span>            <a class="code hl_enumvalue" href="namespaceParameters.html#aea64bd5414c051b692d8df44e5ccd369a3c78b35502b2693fefdfc51cba3a53a5">Parameters::EpsilonSetMethod::manual</a>;</div>
-<div class="line"><a id="l00739" name="l00739"></a><span class="lineno">  739</span>        }</div>
-<div class="line"><a id="l00740" name="l00740"></a><span class="lineno">  740</span>      <span class="keywordflow">else</span></div>
-<div class="line"><a id="l00741" name="l00741"></a><span class="lineno">  741</span>        <span class="keywordflow">throw</span>(std::runtime_error(<span class="stringliteral">&quot;Invalid epsilon setting strategy. &quot;</span></div>
-<div class="line"><a id="l00742" name="l00742"></a><span class="lineno">  742</span>                                 <span class="stringliteral">&quot;Options are &#39;automatic&#39; or &#39;manual&#39;.&quot;</span>));</div>
-<div class="line"><a id="l00743" name="l00743"></a><span class="lineno">  743</span> </div>
-<div class="line"><a id="l00744" name="l00744"></a><span class="lineno">  744</span>      <span class="keyword">const</span> std::string op_epsilon_verbosity = prm.get(<span class="stringliteral">&quot;verbosity&quot;</span>);</div>
-<div class="line"><a id="l00745" name="l00745"></a><span class="lineno">  745</span>      <span class="keywordflow">if</span> (op_epsilon_verbosity == <span class="stringliteral">&quot;quiet&quot;</span>)</div>
-<div class="line"><a id="l00746" name="l00746"></a><span class="lineno">  746</span>        {</div>
-<div class="line"><a id="l00747" name="l00747"></a><span class="lineno">  747</span>          <a class="code hl_variable" href="structParameters_1_1CahnHilliard.html#a72688ff44bbc67a29e02b0822b6a223e">CahnHilliard::epsilon_verbosity</a> = <a class="code hl_enumvalue" href="namespaceParameters.html#a326d18b20b98632daf31aad2a3119462a556966c7830465dc4623d62e32cec31d">Parameters::EpsilonVerbosity::quiet</a>;</div>
-<div class="line"><a id="l00748" name="l00748"></a><span class="lineno">  748</span>        }</div>
-<div class="line"><a id="l00749" name="l00749"></a><span class="lineno">  749</span>      <span class="keywordflow">else</span> <span class="keywordflow">if</span> (op_epsilon_verbosity == <span class="stringliteral">&quot;verbose&quot;</span>)</div>
-<div class="line"><a id="l00750" name="l00750"></a><span class="lineno">  750</span>        {</div>
-<div class="line"><a id="l00751" name="l00751"></a><span class="lineno">  751</span>          <a class="code hl_variable" href="structParameters_1_1CahnHilliard.html#a72688ff44bbc67a29e02b0822b6a223e">CahnHilliard::epsilon_verbosity</a> =</div>
-<div class="line"><a id="l00752" name="l00752"></a><span class="lineno">  752</span>            <a class="code hl_enumvalue" href="namespaceParameters.html#a326d18b20b98632daf31aad2a3119462a2c7aea4237e25b4f8ee3b0bf77d6fed0">Parameters::EpsilonVerbosity::verbose</a>;</div>
-<div class="line"><a id="l00753" name="l00753"></a><span class="lineno">  753</span>        }</div>
-<div class="line"><a id="l00754" name="l00754"></a><span class="lineno">  754</span>      <span class="keywordflow">else</span></div>
-<div class="line"><a id="l00755" name="l00755"></a><span class="lineno">  755</span>        AssertThrow(<span class="keyword">false</span>,</div>
-<div class="line"><a id="l00756" name="l00756"></a><span class="lineno">  756</span>                    ExcMessage(<span class="stringliteral">&quot;Invalid epsilon verbosity. &quot;</span></div>
-<div class="line"><a id="l00757" name="l00757"></a><span class="lineno">  757</span>                               <span class="stringliteral">&quot;Options are &#39;quiet&#39; or &#39;verbose&#39;.&quot;</span>));</div>
-<div class="line"><a id="l00758" name="l00758"></a><span class="lineno">  758</span> </div>
-<div class="line"><a id="l00759" name="l00759"></a><span class="lineno">  759</span>      epsilon = prm.get_double(<span class="stringliteral">&quot;value&quot;</span>);</div>
-<div class="line"><a id="l00760" name="l00760"></a><span class="lineno">  760</span>      epsilon *= dimensions.<a class="code hl_variable" href="classParameters_1_1Dimensionality.html#ae66bedc890daea206984e38b01172574">cahn_hilliard_epsilon_scaling</a>;</div>
-<div class="line"><a id="l00761" name="l00761"></a><span class="lineno">  761</span>    }</div>
-<div class="line"><a id="l00762" name="l00762"></a><span class="lineno">  762</span>    prm.leave_subsection();</div>
-<div class="line"><a id="l00763" name="l00763"></a><span class="lineno">  763</span>  }</div>
-<div class="line"><a id="l00764" name="l00764"></a><span class="lineno">  764</span>  prm.leave_subsection();</div>
-<div class="line"><a id="l00765" name="l00765"></a><span class="lineno">  765</span>}</div>
+<div class="line"><a id="l00727" name="l00727"></a><span class="lineno">  727</span>    <a class="code hl_variable" href="structParameters_1_1CahnHilliard.html#a9a470cbe7f58b13fe0b5211d88665dea">CahnHilliard::potential_smoothing_coefficient</a> =</div>
+<div class="line"><a id="l00728" name="l00728"></a><span class="lineno">  728</span>      prm.get_double(<span class="stringliteral">&quot;potential smoothing coefficient&quot;</span>);</div>
+<div class="line"><a id="l00729" name="l00729"></a><span class="lineno">  729</span> </div>
+<div class="line"><a id="l00730" name="l00730"></a><span class="lineno">  730</span>    prm.enter_subsection(<span class="stringliteral">&quot;epsilon&quot;</span>);</div>
+<div class="line"><a id="l00731" name="l00731"></a><span class="lineno">  731</span>    {</div>
+<div class="line"><a id="l00732" name="l00732"></a><span class="lineno">  732</span>      <span class="keyword">const</span> std::string op_epsilon = prm.get(<span class="stringliteral">&quot;method&quot;</span>);</div>
+<div class="line"><a id="l00733" name="l00733"></a><span class="lineno">  733</span>      <span class="keywordflow">if</span> (op_epsilon == <span class="stringliteral">&quot;automatic&quot;</span>)</div>
+<div class="line"><a id="l00734" name="l00734"></a><span class="lineno">  734</span>        {</div>
+<div class="line"><a id="l00735" name="l00735"></a><span class="lineno">  735</span>          <a class="code hl_variable" href="structParameters_1_1CahnHilliard.html#a8bb7a325458114eb9bb0bd9b439af795">CahnHilliard::epsilon_set_method</a> =</div>
+<div class="line"><a id="l00736" name="l00736"></a><span class="lineno">  736</span>            <a class="code hl_enumvalue" href="namespaceParameters.html#aea64bd5414c051b692d8df44e5ccd369a2bd9c0ed00116be1258e0cc66617d7c8">Parameters::EpsilonSetMethod::automatic</a>;</div>
+<div class="line"><a id="l00737" name="l00737"></a><span class="lineno">  737</span>        }</div>
+<div class="line"><a id="l00738" name="l00738"></a><span class="lineno">  738</span>      <span class="keywordflow">else</span> <span class="keywordflow">if</span> (op_epsilon == <span class="stringliteral">&quot;manual&quot;</span>)</div>
+<div class="line"><a id="l00739" name="l00739"></a><span class="lineno">  739</span>        {</div>
+<div class="line"><a id="l00740" name="l00740"></a><span class="lineno">  740</span>          <a class="code hl_variable" href="structParameters_1_1CahnHilliard.html#a8bb7a325458114eb9bb0bd9b439af795">CahnHilliard::epsilon_set_method</a> =</div>
+<div class="line"><a id="l00741" name="l00741"></a><span class="lineno">  741</span>            <a class="code hl_enumvalue" href="namespaceParameters.html#aea64bd5414c051b692d8df44e5ccd369a3c78b35502b2693fefdfc51cba3a53a5">Parameters::EpsilonSetMethod::manual</a>;</div>
+<div class="line"><a id="l00742" name="l00742"></a><span class="lineno">  742</span>        }</div>
+<div class="line"><a id="l00743" name="l00743"></a><span class="lineno">  743</span>      <span class="keywordflow">else</span></div>
+<div class="line"><a id="l00744" name="l00744"></a><span class="lineno">  744</span>        <span class="keywordflow">throw</span>(std::runtime_error(<span class="stringliteral">&quot;Invalid epsilon setting strategy. &quot;</span></div>
+<div class="line"><a id="l00745" name="l00745"></a><span class="lineno">  745</span>                                 <span class="stringliteral">&quot;Options are &#39;automatic&#39; or &#39;manual&#39;.&quot;</span>));</div>
+<div class="line"><a id="l00746" name="l00746"></a><span class="lineno">  746</span> </div>
+<div class="line"><a id="l00747" name="l00747"></a><span class="lineno">  747</span>      <span class="keyword">const</span> std::string op_epsilon_verbosity = prm.get(<span class="stringliteral">&quot;verbosity&quot;</span>);</div>
+<div class="line"><a id="l00748" name="l00748"></a><span class="lineno">  748</span>      <span class="keywordflow">if</span> (op_epsilon_verbosity == <span class="stringliteral">&quot;quiet&quot;</span>)</div>
+<div class="line"><a id="l00749" name="l00749"></a><span class="lineno">  749</span>        {</div>
+<div class="line"><a id="l00750" name="l00750"></a><span class="lineno">  750</span>          <a class="code hl_variable" href="structParameters_1_1CahnHilliard.html#a72688ff44bbc67a29e02b0822b6a223e">CahnHilliard::epsilon_verbosity</a> = <a class="code hl_enumvalue" href="namespaceParameters.html#a326d18b20b98632daf31aad2a3119462a556966c7830465dc4623d62e32cec31d">Parameters::EpsilonVerbosity::quiet</a>;</div>
+<div class="line"><a id="l00751" name="l00751"></a><span class="lineno">  751</span>        }</div>
+<div class="line"><a id="l00752" name="l00752"></a><span class="lineno">  752</span>      <span class="keywordflow">else</span> <span class="keywordflow">if</span> (op_epsilon_verbosity == <span class="stringliteral">&quot;verbose&quot;</span>)</div>
+<div class="line"><a id="l00753" name="l00753"></a><span class="lineno">  753</span>        {</div>
+<div class="line"><a id="l00754" name="l00754"></a><span class="lineno">  754</span>          <a class="code hl_variable" href="structParameters_1_1CahnHilliard.html#a72688ff44bbc67a29e02b0822b6a223e">CahnHilliard::epsilon_verbosity</a> =</div>
+<div class="line"><a id="l00755" name="l00755"></a><span class="lineno">  755</span>            <a class="code hl_enumvalue" href="namespaceParameters.html#a326d18b20b98632daf31aad2a3119462a2c7aea4237e25b4f8ee3b0bf77d6fed0">Parameters::EpsilonVerbosity::verbose</a>;</div>
+<div class="line"><a id="l00756" name="l00756"></a><span class="lineno">  756</span>        }</div>
+<div class="line"><a id="l00757" name="l00757"></a><span class="lineno">  757</span>      <span class="keywordflow">else</span></div>
+<div class="line"><a id="l00758" name="l00758"></a><span class="lineno">  758</span>        AssertThrow(<span class="keyword">false</span>,</div>
+<div class="line"><a id="l00759" name="l00759"></a><span class="lineno">  759</span>                    ExcMessage(<span class="stringliteral">&quot;Invalid epsilon verbosity. &quot;</span></div>
+<div class="line"><a id="l00760" name="l00760"></a><span class="lineno">  760</span>                               <span class="stringliteral">&quot;Options are &#39;quiet&#39; or &#39;verbose&#39;.&quot;</span>));</div>
+<div class="line"><a id="l00761" name="l00761"></a><span class="lineno">  761</span> </div>
+<div class="line"><a id="l00762" name="l00762"></a><span class="lineno">  762</span>      epsilon = prm.get_double(<span class="stringliteral">&quot;value&quot;</span>);</div>
+<div class="line"><a id="l00763" name="l00763"></a><span class="lineno">  763</span>      epsilon *= dimensions.<a class="code hl_variable" href="classParameters_1_1Dimensionality.html#ae66bedc890daea206984e38b01172574">cahn_hilliard_epsilon_scaling</a>;</div>
+<div class="line"><a id="l00764" name="l00764"></a><span class="lineno">  764</span>    }</div>
+<div class="line"><a id="l00765" name="l00765"></a><span class="lineno">  765</span>    prm.leave_subsection();</div>
+<div class="line"><a id="l00766" name="l00766"></a><span class="lineno">  766</span>  }</div>
+<div class="line"><a id="l00767" name="l00767"></a><span class="lineno">  767</span>  prm.leave_subsection();</div>
+<div class="line"><a id="l00768" name="l00768"></a><span class="lineno">  768</span>}</div>
 </div>
 <div class="ttc" id="aclassParameters_1_1Dimensionality_html"><div class="ttname"><a href="classParameters_1_1Dimensionality.html">Parameters::Dimensionality</a></div><div class="ttdoc">Class used to rescale physical properties for cases where the main dimensions of the problems (Length...</div><div class="ttdef"><b>Definition</b> <a href="dimensionality_8h_source.html#l00023">dimensionality.h:24</a></div></div>
 <div class="ttc" id="aclassParameters_1_1Dimensionality_html_ae66bedc890daea206984e38b01172574"><div class="ttname"><a href="classParameters_1_1Dimensionality.html#ae66bedc890daea206984e38b01172574">Parameters::Dimensionality::cahn_hilliard_epsilon_scaling</a></div><div class="ttdeci">double cahn_hilliard_epsilon_scaling</div><div class="ttdef"><b>Definition</b> <a href="dimensionality_8h_source.html#l00095">dimensionality.h:95</a></div></div>
@@ -928,21 +931,21 @@ $(document).ready(function() { init_codefold(0); });
 <div class="ttc" id="anamespaceParameters_html_af7f1dc7c6e6c0acaebb4395af3c3f07baf6d8b886335927d46fad323c60335d09"><div class="ttname"><a href="namespaceParameters.html#af7f1dc7c6e6c0acaebb4395af3c3f07baf6d8b886335927d46fad323c60335d09">Parameters::FilterType::clip</a></div><div class="ttdeci">@ clip</div></div>
 <div class="ttc" id="aparameters__multiphysics_8cc_html_aac7a108111c4415032fbb2be27d1f969"><div class="ttname"><a href="parameters__multiphysics_8cc.html#aac7a108111c4415032fbb2be27d1f969">DeclException1</a></div><div class="ttdeci">DeclException1(SharpeningThresholdError, double,&lt;&lt; &quot;Sharpening threshold : &quot;&lt;&lt; arg1&lt;&lt; &quot; is smaller than 0 or larger than 1.&quot;&lt;&lt; std::endl&lt;&lt; &quot;Projection-based interface sharpening model requires a sharpening threshold between 0 and 1.&quot;)</div></div>
 <div class="ttc" id="aparameters__multiphysics_8h_html"><div class="ttname"><a href="parameters__multiphysics_8h.html">parameters_multiphysics.h</a></div></div>
-<div class="ttc" id="astructParameters_1_1CahnHilliard__PhaseFilter_html_a497060c80af88ec6b29e3b196b46d83d"><div class="ttname"><a href="structParameters_1_1CahnHilliard__PhaseFilter.html#a497060c80af88ec6b29e3b196b46d83d">Parameters::CahnHilliard_PhaseFilter::declare_parameters</a></div><div class="ttdeci">static void declare_parameters(ParameterHandler &amp;prm)</div><div class="ttdef"><b>Definition</b> <a href="parameters__multiphysics_8cc_source.html#l00609">parameters_multiphysics.cc:609</a></div></div>
-<div class="ttc" id="astructParameters_1_1CahnHilliard__PhaseFilter_html_a79acb9008f767e5befb2785e0430a046"><div class="ttname"><a href="structParameters_1_1CahnHilliard__PhaseFilter.html#a79acb9008f767e5befb2785e0430a046">Parameters::CahnHilliard_PhaseFilter::parse_parameters</a></div><div class="ttdeci">void parse_parameters(ParameterHandler &amp;prm)</div><div class="ttdef"><b>Definition</b> <a href="parameters__multiphysics_8cc_source.html#l00641">parameters_multiphysics.cc:641</a></div></div>
-<div class="ttc" id="astructParameters_1_1CahnHilliard_html_a16e6c832ffc9bee3559c3b229d9b29a0"><div class="ttname"><a href="structParameters_1_1CahnHilliard.html#a16e6c832ffc9bee3559c3b229d9b29a0">Parameters::CahnHilliard::parse_parameters</a></div><div class="ttdeci">void parse_parameters(ParameterHandler &amp;prm, const Dimensionality &amp;dimensions)</div><div class="ttdef"><b>Definition</b> <a href="parameters__multiphysics_8cc_source.html#l00717">parameters_multiphysics.cc:717</a></div></div>
-<div class="ttc" id="astructParameters_1_1CahnHilliard_html_a5804ef49724a1a17899535211bb9eff4"><div class="ttname"><a href="structParameters_1_1CahnHilliard.html#a5804ef49724a1a17899535211bb9eff4">Parameters::CahnHilliard::declare_parameters</a></div><div class="ttdeci">void declare_parameters(ParameterHandler &amp;prm) const</div><div class="ttdef"><b>Definition</b> <a href="parameters__multiphysics_8cc_source.html#l00679">parameters_multiphysics.cc:679</a></div></div>
-<div class="ttc" id="astructParameters_1_1CahnHilliard_html_a72688ff44bbc67a29e02b0822b6a223e"><div class="ttname"><a href="structParameters_1_1CahnHilliard.html#a72688ff44bbc67a29e02b0822b6a223e">Parameters::CahnHilliard::epsilon_verbosity</a></div><div class="ttdeci">Parameters::EpsilonVerbosity epsilon_verbosity</div><div class="ttdef"><b>Definition</b> <a href="parameters__multiphysics_8h_source.html#l00370">parameters_multiphysics.h:370</a></div></div>
-<div class="ttc" id="astructParameters_1_1CahnHilliard_html_a8bb7a325458114eb9bb0bd9b439af795"><div class="ttname"><a href="structParameters_1_1CahnHilliard.html#a8bb7a325458114eb9bb0bd9b439af795">Parameters::CahnHilliard::epsilon_set_method</a></div><div class="ttdeci">Parameters::EpsilonSetMethod epsilon_set_method</div><div class="ttdef"><b>Definition</b> <a href="parameters__multiphysics_8h_source.html#l00367">parameters_multiphysics.h:367</a></div></div>
-<div class="ttc" id="astructParameters_1_1CahnHilliard_html_a9a470cbe7f58b13fe0b5211d88665dea"><div class="ttname"><a href="structParameters_1_1CahnHilliard.html#a9a470cbe7f58b13fe0b5211d88665dea">Parameters::CahnHilliard::potential_smoothing_coefficient</a></div><div class="ttdeci">double potential_smoothing_coefficient</div><div class="ttdef"><b>Definition</b> <a href="parameters__multiphysics_8h_source.html#l00364">parameters_multiphysics.h:364</a></div></div>
+<div class="ttc" id="astructParameters_1_1CahnHilliard__PhaseFilter_html_a497060c80af88ec6b29e3b196b46d83d"><div class="ttname"><a href="structParameters_1_1CahnHilliard__PhaseFilter.html#a497060c80af88ec6b29e3b196b46d83d">Parameters::CahnHilliard_PhaseFilter::declare_parameters</a></div><div class="ttdeci">static void declare_parameters(ParameterHandler &amp;prm)</div><div class="ttdef"><b>Definition</b> <a href="parameters__multiphysics_8cc_source.html#l00612">parameters_multiphysics.cc:612</a></div></div>
+<div class="ttc" id="astructParameters_1_1CahnHilliard__PhaseFilter_html_a79acb9008f767e5befb2785e0430a046"><div class="ttname"><a href="structParameters_1_1CahnHilliard__PhaseFilter.html#a79acb9008f767e5befb2785e0430a046">Parameters::CahnHilliard_PhaseFilter::parse_parameters</a></div><div class="ttdeci">void parse_parameters(ParameterHandler &amp;prm)</div><div class="ttdef"><b>Definition</b> <a href="parameters__multiphysics_8cc_source.html#l00644">parameters_multiphysics.cc:644</a></div></div>
+<div class="ttc" id="astructParameters_1_1CahnHilliard_html_a16e6c832ffc9bee3559c3b229d9b29a0"><div class="ttname"><a href="structParameters_1_1CahnHilliard.html#a16e6c832ffc9bee3559c3b229d9b29a0">Parameters::CahnHilliard::parse_parameters</a></div><div class="ttdeci">void parse_parameters(ParameterHandler &amp;prm, const Dimensionality &amp;dimensions)</div><div class="ttdef"><b>Definition</b> <a href="parameters__multiphysics_8cc_source.html#l00720">parameters_multiphysics.cc:720</a></div></div>
+<div class="ttc" id="astructParameters_1_1CahnHilliard_html_a5804ef49724a1a17899535211bb9eff4"><div class="ttname"><a href="structParameters_1_1CahnHilliard.html#a5804ef49724a1a17899535211bb9eff4">Parameters::CahnHilliard::declare_parameters</a></div><div class="ttdeci">void declare_parameters(ParameterHandler &amp;prm) const</div><div class="ttdef"><b>Definition</b> <a href="parameters__multiphysics_8cc_source.html#l00682">parameters_multiphysics.cc:682</a></div></div>
+<div class="ttc" id="astructParameters_1_1CahnHilliard_html_a72688ff44bbc67a29e02b0822b6a223e"><div class="ttname"><a href="structParameters_1_1CahnHilliard.html#a72688ff44bbc67a29e02b0822b6a223e">Parameters::CahnHilliard::epsilon_verbosity</a></div><div class="ttdeci">Parameters::EpsilonVerbosity epsilon_verbosity</div><div class="ttdef"><b>Definition</b> <a href="parameters__multiphysics_8h_source.html#l00371">parameters_multiphysics.h:371</a></div></div>
+<div class="ttc" id="astructParameters_1_1CahnHilliard_html_a8bb7a325458114eb9bb0bd9b439af795"><div class="ttname"><a href="structParameters_1_1CahnHilliard.html#a8bb7a325458114eb9bb0bd9b439af795">Parameters::CahnHilliard::epsilon_set_method</a></div><div class="ttdeci">Parameters::EpsilonSetMethod epsilon_set_method</div><div class="ttdef"><b>Definition</b> <a href="parameters__multiphysics_8h_source.html#l00368">parameters_multiphysics.h:368</a></div></div>
+<div class="ttc" id="astructParameters_1_1CahnHilliard_html_a9a470cbe7f58b13fe0b5211d88665dea"><div class="ttname"><a href="structParameters_1_1CahnHilliard.html#a9a470cbe7f58b13fe0b5211d88665dea">Parameters::CahnHilliard::potential_smoothing_coefficient</a></div><div class="ttdeci">double potential_smoothing_coefficient</div><div class="ttdef"><b>Definition</b> <a href="parameters__multiphysics_8h_source.html#l00365">parameters_multiphysics.h:365</a></div></div>
 <div class="ttc" id="astructParameters_1_1Multiphysics_html_a50b54cade9d4cbe3c4626094645d506c"><div class="ttname"><a href="structParameters_1_1Multiphysics.html#a50b54cade9d4cbe3c4626094645d506c">Parameters::Multiphysics::parse_parameters</a></div><div class="ttdeci">void parse_parameters(ParameterHandler &amp;prm, const Dimensionality &amp;dimensions)</div><div class="ttdef"><b>Definition</b> <a href="parameters__multiphysics_8cc_source.html#l00085">parameters_multiphysics.cc:85</a></div></div>
-<div class="ttc" id="astructParameters_1_1Multiphysics_html_aab6b0ba47aa6708613083c9db2e5c36c"><div class="ttname"><a href="structParameters_1_1Multiphysics.html#aab6b0ba47aa6708613083c9db2e5c36c">Parameters::Multiphysics::cahn_hilliard_parameters</a></div><div class="ttdeci">Parameters::CahnHilliard cahn_hilliard_parameters</div><div class="ttdef"><b>Definition</b> <a href="parameters__multiphysics_8h_source.html#l00402">parameters_multiphysics.h:402</a></div></div>
-<div class="ttc" id="astructParameters_1_1Multiphysics_html_abdedafcd7954c3b70c14e33de92e6a65"><div class="ttname"><a href="structParameters_1_1Multiphysics.html#abdedafcd7954c3b70c14e33de92e6a65">Parameters::Multiphysics::vof_parameters</a></div><div class="ttdeci">Parameters::VOF vof_parameters</div><div class="ttdef"><b>Definition</b> <a href="parameters__multiphysics_8h_source.html#l00401">parameters_multiphysics.h:401</a></div></div>
+<div class="ttc" id="astructParameters_1_1Multiphysics_html_aab6b0ba47aa6708613083c9db2e5c36c"><div class="ttname"><a href="structParameters_1_1Multiphysics.html#aab6b0ba47aa6708613083c9db2e5c36c">Parameters::Multiphysics::cahn_hilliard_parameters</a></div><div class="ttdeci">Parameters::CahnHilliard cahn_hilliard_parameters</div><div class="ttdef"><b>Definition</b> <a href="parameters__multiphysics_8h_source.html#l00403">parameters_multiphysics.h:403</a></div></div>
+<div class="ttc" id="astructParameters_1_1Multiphysics_html_abdedafcd7954c3b70c14e33de92e6a65"><div class="ttname"><a href="structParameters_1_1Multiphysics.html#abdedafcd7954c3b70c14e33de92e6a65">Parameters::Multiphysics::vof_parameters</a></div><div class="ttdeci">Parameters::VOF vof_parameters</div><div class="ttdef"><b>Definition</b> <a href="parameters__multiphysics_8h_source.html#l00402">parameters_multiphysics.h:402</a></div></div>
 <div class="ttc" id="astructParameters_1_1Multiphysics_html_ad2c271460fee01221a9b74f2370e9357"><div class="ttname"><a href="structParameters_1_1Multiphysics.html#ad2c271460fee01221a9b74f2370e9357">Parameters::Multiphysics::declare_parameters</a></div><div class="ttdeci">void declare_parameters(ParameterHandler &amp;prm) const</div><div class="ttdef"><b>Definition</b> <a href="parameters__multiphysics_8cc_source.html#l00032">parameters_multiphysics.cc:32</a></div></div>
 <div class="ttc" id="astructParameters_1_1VOF__AlgebraicInterfaceReinitialization_html_a70479a4d822dfd1086a903a9eb5031cd"><div class="ttname"><a href="structParameters_1_1VOF__AlgebraicInterfaceReinitialization.html#a70479a4d822dfd1086a903a9eb5031cd">Parameters::VOF_AlgebraicInterfaceReinitialization::declare_parameters</a></div><div class="ttdeci">static void declare_parameters(ParameterHandler &amp;prm)</div><div class="ttdoc">Declare the parameters.</div><div class="ttdef"><b>Definition</b> <a href="parameters__multiphysics_8cc_source.html#l00494">parameters_multiphysics.cc:494</a></div></div>
-<div class="ttc" id="astructParameters_1_1VOF__AlgebraicInterfaceReinitialization_html_a8cc0b30244ca169e833da68bc1a9a6de"><div class="ttname"><a href="structParameters_1_1VOF__AlgebraicInterfaceReinitialization.html#a8cc0b30244ca169e833da68bc1a9a6de">Parameters::VOF_AlgebraicInterfaceReinitialization::parse_parameters</a></div><div class="ttdeci">void parse_parameters(ParameterHandler &amp;prm)</div><div class="ttdoc">Parse the parameters.</div><div class="ttdef"><b>Definition</b> <a href="parameters__multiphysics_8cc_source.html#l00536">parameters_multiphysics.cc:536</a></div></div>
-<div class="ttc" id="astructParameters_1_1VOF__GeometricInterfaceReinitialization_html_a16f3c3d90c6a0a94b8fc88029ec0c183"><div class="ttname"><a href="structParameters_1_1VOF__GeometricInterfaceReinitialization.html#a16f3c3d90c6a0a94b8fc88029ec0c183">Parameters::VOF_GeometricInterfaceReinitialization::parse_parameters</a></div><div class="ttdeci">void parse_parameters(ParameterHandler &amp;prm)</div><div class="ttdoc">Parse the parameters.</div><div class="ttdef"><b>Definition</b> <a href="parameters__multiphysics_8cc_source.html#l00583">parameters_multiphysics.cc:583</a></div></div>
-<div class="ttc" id="astructParameters_1_1VOF__GeometricInterfaceReinitialization_html_a8a5a1fa9bc1b0032cf9aa6e0dbf98876"><div class="ttname"><a href="structParameters_1_1VOF__GeometricInterfaceReinitialization.html#a8a5a1fa9bc1b0032cf9aa6e0dbf98876">Parameters::VOF_GeometricInterfaceReinitialization::declare_parameters</a></div><div class="ttdeci">static void declare_parameters(ParameterHandler &amp;prm)</div><div class="ttdoc">Declare the parameters.</div><div class="ttdef"><b>Definition</b> <a href="parameters__multiphysics_8cc_source.html#l00553">parameters_multiphysics.cc:553</a></div></div>
+<div class="ttc" id="astructParameters_1_1VOF__AlgebraicInterfaceReinitialization_html_a8cc0b30244ca169e833da68bc1a9a6de"><div class="ttname"><a href="structParameters_1_1VOF__AlgebraicInterfaceReinitialization.html#a8cc0b30244ca169e833da68bc1a9a6de">Parameters::VOF_AlgebraicInterfaceReinitialization::parse_parameters</a></div><div class="ttdeci">void parse_parameters(ParameterHandler &amp;prm)</div><div class="ttdoc">Parse the parameters.</div><div class="ttdef"><b>Definition</b> <a href="parameters__multiphysics_8cc_source.html#l00539">parameters_multiphysics.cc:539</a></div></div>
+<div class="ttc" id="astructParameters_1_1VOF__GeometricInterfaceReinitialization_html_a16f3c3d90c6a0a94b8fc88029ec0c183"><div class="ttname"><a href="structParameters_1_1VOF__GeometricInterfaceReinitialization.html#a16f3c3d90c6a0a94b8fc88029ec0c183">Parameters::VOF_GeometricInterfaceReinitialization::parse_parameters</a></div><div class="ttdeci">void parse_parameters(ParameterHandler &amp;prm)</div><div class="ttdoc">Parse the parameters.</div><div class="ttdef"><b>Definition</b> <a href="parameters__multiphysics_8cc_source.html#l00586">parameters_multiphysics.cc:586</a></div></div>
+<div class="ttc" id="astructParameters_1_1VOF__GeometricInterfaceReinitialization_html_a8a5a1fa9bc1b0032cf9aa6e0dbf98876"><div class="ttname"><a href="structParameters_1_1VOF__GeometricInterfaceReinitialization.html#a8a5a1fa9bc1b0032cf9aa6e0dbf98876">Parameters::VOF_GeometricInterfaceReinitialization::declare_parameters</a></div><div class="ttdeci">static void declare_parameters(ParameterHandler &amp;prm)</div><div class="ttdoc">Declare the parameters.</div><div class="ttdef"><b>Definition</b> <a href="parameters__multiphysics_8cc_source.html#l00556">parameters_multiphysics.cc:556</a></div></div>
 <div class="ttc" id="astructParameters_1_1VOF__InterfaceSharpening_html_a39b29b0cc3c19002b40c7d15c9b522b5"><div class="ttname"><a href="structParameters_1_1VOF__InterfaceSharpening.html#a39b29b0cc3c19002b40c7d15c9b522b5">Parameters::VOF_InterfaceSharpening::declare_parameters</a></div><div class="ttdeci">static void declare_parameters(ParameterHandler &amp;prm)</div><div class="ttdef"><b>Definition</b> <a href="parameters__multiphysics_8cc_source.html#l00256">parameters_multiphysics.cc:256</a></div></div>
 <div class="ttc" id="astructParameters_1_1VOF__InterfaceSharpening_html_a7f4d45f09bfe1f66121ada8de37482f9"><div class="ttname"><a href="structParameters_1_1VOF__InterfaceSharpening.html#a7f4d45f09bfe1f66121ada8de37482f9">Parameters::VOF_InterfaceSharpening::parse_parameters</a></div><div class="ttdeci">void parse_parameters(ParameterHandler &amp;prm)</div><div class="ttdef"><b>Definition</b> <a href="parameters__multiphysics_8cc_source.html#l00322">parameters_multiphysics.cc:322</a></div></div>
 <div class="ttc" id="astructParameters_1_1VOF__PhaseFilter_html_a306ca1cac8fba597079fad67537077e7"><div class="ttname"><a href="structParameters_1_1VOF__PhaseFilter.html#a306ca1cac8fba597079fad67537077e7">Parameters::VOF_PhaseFilter::declare_parameters</a></div><div class="ttdeci">static void declare_parameters(ParameterHandler &amp;prm)</div><div class="ttdef"><b>Definition</b> <a href="parameters__multiphysics_8cc_source.html#l00433">parameters_multiphysics.cc:433</a></div></div>
@@ -951,7 +954,7 @@ $(document).ready(function() { init_codefold(0); });
 <div class="ttc" id="astructParameters_1_1VOF__RegularizationMethod_html_a4d556a048559fd943d4c5707c97cb01c"><div class="ttname"><a href="structParameters_1_1VOF__RegularizationMethod.html#a4d556a048559fd943d4c5707c97cb01c">Parameters::VOF_RegularizationMethod::declare_parameters</a></div><div class="ttdeci">void declare_parameters(ParameterHandler &amp;prm) const</div><div class="ttdoc">Declare the parameters.</div><div class="ttdef"><b>Definition</b> <a href="parameters__multiphysics_8cc_source.html#l00167">parameters_multiphysics.cc:167</a></div></div>
 <div class="ttc" id="astructParameters_1_1VOF__SurfaceTensionForce_html_a2659d053996f72c18f5462c704df5847"><div class="ttname"><a href="structParameters_1_1VOF__SurfaceTensionForce.html#a2659d053996f72c18f5462c704df5847">Parameters::VOF_SurfaceTensionForce::declare_parameters</a></div><div class="ttdeci">static void declare_parameters(ParameterHandler &amp;prm)</div><div class="ttdef"><b>Definition</b> <a href="parameters__multiphysics_8cc_source.html#l00365">parameters_multiphysics.cc:365</a></div></div>
 <div class="ttc" id="astructParameters_1_1VOF__SurfaceTensionForce_html_ab937321e5ce77c8eae53d128594fb267"><div class="ttname"><a href="structParameters_1_1VOF__SurfaceTensionForce.html#ab937321e5ce77c8eae53d128594fb267">Parameters::VOF_SurfaceTensionForce::parse_parameters</a></div><div class="ttdeci">void parse_parameters(ParameterHandler &amp;prm)</div><div class="ttdef"><b>Definition</b> <a href="parameters__multiphysics_8cc_source.html#l00408">parameters_multiphysics.cc:408</a></div></div>
-<div class="ttc" id="astructParameters_1_1VOF_html"><div class="ttname"><a href="structParameters_1_1VOF.html">Parameters::VOF</a></div><div class="ttdoc">VOF - Defines the parameters for free surface simulations using the VOF method. Has to be declared be...</div><div class="ttdef"><b>Definition</b> <a href="parameters__multiphysics_8h_source.html#l00338">parameters_multiphysics.h:339</a></div></div>
+<div class="ttc" id="astructParameters_1_1VOF_html"><div class="ttname"><a href="structParameters_1_1VOF.html">Parameters::VOF</a></div><div class="ttdoc">VOF - Defines the parameters for free surface simulations using the VOF method. Has to be declared be...</div><div class="ttdef"><b>Definition</b> <a href="parameters__multiphysics_8h_source.html#l00339">parameters_multiphysics.h:340</a></div></div>
 <div class="ttc" id="astructParameters_1_1VOF_html_a5e96ea1229e96d15cd79c67feffb6b11"><div class="ttname"><a href="structParameters_1_1VOF.html#a5e96ea1229e96d15cd79c67feffb6b11">Parameters::VOF::declare_parameters</a></div><div class="ttdeci">void declare_parameters(ParameterHandler &amp;prm) const</div><div class="ttdef"><b>Definition</b> <a href="parameters__multiphysics_8cc_source.html#l00107">parameters_multiphysics.cc:107</a></div></div>
 <div class="ttc" id="astructParameters_1_1VOF_html_a87a6545d4db764545a57ac9450eaf51f"><div class="ttname"><a href="structParameters_1_1VOF.html#a87a6545d4db764545a57ac9450eaf51f">Parameters::VOF::parse_parameters</a></div><div class="ttdeci">void parse_parameters(ParameterHandler &amp;prm)</div><div class="ttdef"><b>Definition</b> <a href="parameters__multiphysics_8cc_source.html#l00139">parameters_multiphysics.cc:139</a></div></div>
 <div class="ttc" id="avof__subequations_8h_html_a24bad343f5052b85d1cc3dbd877b3a12a95a3deae4fb177241e3f65f1193835cd"><div class="ttname"><a href="vof__subequations_8h.html#a24bad343f5052b85d1cc3dbd877b3a12a95a3deae4fb177241e3f65f1193835cd">VOFSubequationsID::algebraic_interface_reinitialization</a></div><div class="ttdeci">@ algebraic_interface_reinitialization</div><div class="ttdoc">VOF algebraic interface reinitialization.</div></div>

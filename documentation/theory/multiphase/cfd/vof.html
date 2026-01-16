@@ -575,9 +575,9 @@ a phase fraction threshold (generally <span class="math notranslate nohighlight"
 <div class="math notranslate nohighlight">
 \[\begin{split}\phi \approx
 \begin{cases}
-  1 \quad \text{if } d &lt; -d_\mathrm{max} \\
-  0.5 \quad \text{if } d = 0\\
-  0 \quad \text{if } d &gt; d_\mathrm{max} \\
+  1 &amp;\quad \text{if } d &lt; -d_\mathrm{max} \\
+  0.5 &amp;\quad \text{if } d = 0\\
+  0 &amp;\quad \text{if } d &gt; d_\mathrm{max} \\
 \end{cases}\end{split}\]</div>
 </div>
 <p>In Lethe, two functions are available to achieve that: a hyperbolic tangent function or a 4th degree, piecewise polynomial.</p>
@@ -604,7 +604,7 @@ a phase fraction threshold (generally <span class="math notranslate nohighlight"
 </section>
 <section id="algebraic-interface-reinitialization">
 <h3>Algebraic Interface Reinitialization<a class="headerlink" href="#algebraic-interface-reinitialization" title="Link to this heading">#</a></h3>
-<p>The algebraic interface reinitialization method consists of compressing and diffusing the interface in its normal direction. This is done by solving the following transient Partial Differential Equation (PDE) until steady-state is reached using a pseudo-time-stepping scheme as proposed by Olsson and coworkers (2007) <a class="footnote-reference brackets" href="#olsson2007" id="id6" role="doc-noteref"><span class="fn-bracket">[</span>4<span class="fn-bracket">]</span></a>:</p>
+<p>The algebraic interface reinitialization method consists of compressing and diffusing the interface in its normal direction. This is done by solving the following transient Partial Differential Equation (PDE) until steady-state is reached using an artificial time-stepping scheme as proposed by Olsson and coworkers (2007) <a class="footnote-reference brackets" href="#olsson2007" id="id6" role="doc-noteref"><span class="fn-bracket">[</span>4<span class="fn-bracket">]</span></a>:</p>
 <div class="math-wrapper docutils container">
 <div class="math notranslate nohighlight">
 \[\underbrace{\frac{\partial\phi_\text{reinit}}{\partial \tau}}_\text{transient}
@@ -614,7 +614,7 @@ a phase fraction threshold (generally <span class="math notranslate nohighlight"
 <p>where:</p>
 <ul class="simple">
 <li><p><span class="math notranslate nohighlight">\(\phi_\text{reinit}\)</span> is the reinitialized phase fraction;</p></li>
-<li><p><span class="math notranslate nohighlight">\(\tau\)</span> is the pseudo-time independent variable. It is different from the time independent variable <span class="math notranslate nohighlight">\(t\)</span> of the actual simulation.</p></li>
+<li><p><span class="math notranslate nohighlight">\(\tau\)</span> is the artificial time independent variable. It is different from the time independent variable <span class="math notranslate nohighlight">\(t\)</span> of the actual simulation.</p></li>
 <li><p><span class="math notranslate nohighlight">\(\mathbf{n} = \frac{\nabla \psi}{\lVert \nabla \psi \rVert}\)</span> is the normal vector of the interface with <span class="math notranslate nohighlight">\(\nabla \psi\)</span> the <a class="reference internal" href="#normal-and-curvature-computations"><span class="std std-ref">projected VOF phase gradient</span></a>, and;</p></li>
 <li><p><span class="math notranslate nohighlight">\(\varepsilon = C \, h_\text{min}^d\)</span> is the diffusion coefficient with  <span class="math notranslate nohighlight">\(h_\text{min}\)</span> the smallest cell-size, <span class="math notranslate nohighlight">\(C\)</span> a constant factor multiplying <span class="math notranslate nohighlight">\(h_\text{min}\)</span>, and <span class="math notranslate nohighlight">\(d\)</span> a constant power to which <span class="math notranslate nohighlight">\(h_\text{min}\)</span> is elevated. As default, <span class="math notranslate nohighlight">\(C\)</span> and <span class="math notranslate nohighlight">\(d\)</span> are set to <span class="math notranslate nohighlight">\(1\)</span>.</p></li>
 </ul>
@@ -624,10 +624,10 @@ a phase fraction threshold (generally <span class="math notranslate nohighlight"
 </div>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
-<p>Here, we define the cell-size as being the diameter of:</p>
+<p>Here, we define the cell-size <span class="math notranslate nohighlight">\((h)\)</span> as being the diameter of:</p>
 <ul class="simple">
-<li><p>a disk of equivalent area in 2D, and;</p></li>
-<li><p>a sphere of equivalent volume in 3D.</p></li>
+<li><p>a disk with equivalent area in 2D, and;</p></li>
+<li><p>a sphere with equivalent volume in 3D.</p></li>
 </ul>
 </div>
 <p>The equation is solved using the finite element method:</p>
@@ -640,11 +640,14 @@ a phase fraction threshold (generally <span class="math notranslate nohighlight"
 <p>As the equation is non-linear, we use the <a class="reference external" href="https://en.wikipedia.org/wiki/Newton%27s_method">Newton-Raphson method</a> and solve the linear system <span class="math notranslate nohighlight">\(\mathcal{J} \, \delta\phi_\text{reinit} = -\mathcal{R}\)</span>. We obtain the Residual (<span class="math notranslate nohighlight">\(\mathcal{R}\)</span>) and Jacobian (<span class="math notranslate nohighlight">\(\mathcal{J}\)</span>) below:</p>
 <div class="math-wrapper docutils container">
 <div class="math notranslate nohighlight">
-\[ \begin{align}\begin{aligned}\begin{split}\begin{split}
-\mathcal{R} = &amp; \int_\Omega \upsilon \, \partial_\tau \phi_\text{reinit}^{n} \, \mathrm{d}\Omega \\
-               &amp; + \int_\Omega\upsilon
-              \left[ \mathbf{n} \cdot \nabla \phi_\text{reinit}^{n} - \mathbf{n} \cdot \left(  2 \phi_\text{reinit}^{n} \nabla \phi_\text{reinit}^{n}\right) +(\phi_\text{reinit}^{n} -{\left(\phi_\text{reinit}^{n}\right)}^2) (\nabla \cdot \mathbf{n}) \right] \mathrm{d}\Omega \\
-               &amp; + \int_\Omega \nabla\upsilon \cdot \varepsilon (\nabla \phi_\text{reinit}^{n} \cdot \mathbf{n}) \mathbf{n} \, \mathrm{d} \Omega\end{split}\\\end{split}\end{aligned}\end{align} \]</div>
+\[\begin{split}\begin{split}
+\mathcal{R} = &amp; \underbrace{\int_\Omega \upsilon \, \partial_\tau \phi_\text{reinit}^{n} \, \mathrm{d}\Omega}_\text{transient}
+                - \underbrace{
+               \int_\Omega \nabla\upsilon \cdot \left[\left(\phi_\text{reinit}^{n} - {\left(\phi_\text{reinit}^{n}\right)}^2 \right) \cdot \mathbf{n} \right] \, \mathrm{d} \Omega}_\text{compression} &amp; \\ &amp;
+                + \underbrace{
+               \int_\Omega \nabla\upsilon \cdot \varepsilon (\nabla \phi_\text{reinit}^{n} \cdot \mathbf{n}) \mathbf{n} \, \mathrm{d} \Omega}_\text{diffusion}
+               &amp;\qquad \forall \upsilon \in V
+\end{split}\end{split}\]</div>
 </div>
 <p>where, <span class="math notranslate nohighlight">\(\phi_\text{reinit}^{n}\)</span> is the reinitialized phase fraction value of the previous Newton iteration.</p>
 <p>Considering,</p>
@@ -655,11 +658,12 @@ a phase fraction threshold (generally <span class="math notranslate nohighlight"
 <p>where <span class="math notranslate nohighlight">\(\xi_j\)</span> is the <span class="math notranslate nohighlight">\(j\text{th}\)</span> interpolation function of the reinitialized phase fraction field, the Jacobian reads:</p>
 <div class="math-wrapper docutils container">
 <div class="math notranslate nohighlight">
-\[ \begin{align}\begin{aligned}\begin{split}\begin{split}
-\mathcal{J} = &amp; \int_\Omega \upsilon \, \partial_\tau \xi_j \, \mathrm{d}\Omega \\
-               &amp; + \int_\Omega\upsilon
-              \left[ \mathbf{n} \cdot \left( \nabla \xi_j - 2 \phi_\text{reinit}^{n} \nabla \xi_j -2 \xi_j \nabla\phi_\text{reinit}^{n} \right) + \left( \xi_j -2\phi_\text{reinit}^{n}\xi_j \right) \right] \mathrm{d}\Omega \\
-               &amp; + \int_\Omega \nabla\upsilon \cdot \varepsilon (\nabla \xi_j \cdot \mathbf{n}) \mathbf{n} \,\mathrm{d}\Omega\end{split}\\\end{split}\end{aligned}\end{align} \]</div>
+\[\begin{split}\begin{split}
+\mathcal{J} = &amp; \underbrace{\int_\Omega \upsilon \, \partial_\tau \xi_j \, \mathrm{d}\Omega}_\text{transient}
+                - \underbrace{\int_\Omega \nabla\upsilon \cdot (\xi_j - 2 \phi_\text{reinit}^{n} \xi_j) \mathbf{n} \,\mathrm{d}\Omega}_\text{compression}&amp; \\
+               &amp; + \underbrace{\int_\Omega \nabla\upsilon \cdot \varepsilon (\nabla \xi_j \cdot \mathbf{n}) \mathbf{n} \,\mathrm{d}\Omega}_\text{diffusion}
+               &amp; \qquad \forall \upsilon \in V
+\end{split}\end{split}\]</div>
 </div>
 <p>and the reinitialized phase fraction is given by:</p>
 <div class="math-wrapper docutils container">

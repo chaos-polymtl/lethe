@@ -485,11 +485,11 @@
 
     subsection algebraic interface reinitialization
       set output reinitialization steps = false
-      set steady-state criterion        = 1e-2
-      set max steps number              = 5
+      set steady-state criterion        = 1e-4
+      set max steps number              = 10000
       set diffusivity multiplier        = 1.0
       set diffusivity power             = 1.0
-      set reinitialization CFL          = 1.0
+      set artificial time-step factor   = 0.25
     end
   end
 
@@ -627,9 +627,9 @@ number of iterations to reach the mass conservation tolerance.
 <li><p><code class="docutils literal notranslate"><span class="pre">steady-state</span> <span class="pre">criterion</span></code>: one of the two stop criteria of the interface reinitialization process. This parameter <span class="math notranslate nohighlight">\((\alpha_\text{ss})\)</span> acts as a tolerance for reaching steady-state when solving the algebraic interface reinitialization partial differential equation (PDE).</p>
 <div class="math-wrapper docutils container">
 <div class="math notranslate nohighlight">
-\[\alpha_\text{ss} \geq \frac{ \lVert \phi_\text{reinit}^{\tau + 1} - \phi_\text{reinit}^{\tau} \rVert_2}{\Delta \tau}\]</div>
+\[\alpha_\text{ss} \geq \frac{ \lVert \phi_\text{reinit}^{\iota + 1} - \phi_\text{reinit}^{\iota} \rVert_2}{\lVert \phi_\text{reinit}^{\iota} \rVert_2}\]</div>
 </div>
-<p>where <span class="math notranslate nohighlight">\(\tau\)</span> is the pseudo-time used to solve the reinitialization PDE and <span class="math notranslate nohighlight">\(\Delta \tau\)</span> is the associated pseudo-time-step.</p>
+<p>where <span class="math notranslate nohighlight">\(\iota\)</span> is the artificial time iterator used to solve the reinitialization PDE and <span class="math notranslate nohighlight">\(\Delta \tau\)</span> is the associated artificial time-step.</p>
 </li>
 <li><p><code class="docutils literal notranslate"><span class="pre">max</span> <span class="pre">steps</span> <span class="pre">number</span></code>: indicates the maximum number of interface reinitialization steps that can be applied before the process ends.</p></li>
 </ul>
@@ -638,15 +638,25 @@ number of iterations to reach the mass conservation tolerance.
 <div class="math notranslate nohighlight">
 \[\varepsilon = C h_\text{min}^d\]</div>
 </div>
-<ul>
+<ul class="simple">
 <li><p><code class="docutils literal notranslate"><span class="pre">diffusivity</span> <span class="pre">multiplier</span></code>: factor <span class="math notranslate nohighlight">\((C)\)</span> multiplying the smallest cell-size value <span class="math notranslate nohighlight">\((h_\text{min})\)</span> in the evaluation of the diffusion coefficient of the PDE.</p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">diffusivity</span> <span class="pre">power</span></code>: power <span class="math notranslate nohighlight">\((d)\)</span> to which the smallest cell-size value <span class="math notranslate nohighlight">\((h_\text{min})\)</span> is elevated in the evaluation of the diffusion coefficient of the PDE.</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">reinitialization</span> <span class="pre">CFL</span></code>: CFL condition of the interface reinitialization process. This is used to evaluate the pseudo-time-step <span class="math notranslate nohighlight">\((\Delta\tau)\)</span>.</p>
+</ul>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Here, we define the cell size <span class="math notranslate nohighlight">\((h)\)</span> as being the diameter of:</p>
+<ul class="simple">
+<li><p>a disk with equivalent area in 2D, and;</p></li>
+<li><p>a sphere with equivalent volume in 3D.</p></li>
+</ul>
+</div>
+<ul>
+<li><p><code class="docutils literal notranslate"><span class="pre">artificial</span> <span class="pre">time-step</span> <span class="pre">factor</span></code>: factor used to evaluate the artificial time-step <span class="math notranslate nohighlight">\((\Delta\tau)\)</span>.</p>
 <div class="math-wrapper docutils container">
 <div class="math notranslate nohighlight">
-\[\Delta \tau = C_\text{CFL} \, h_\text{min}\]</div>
+\[\Delta \tau = \min{\left(\frac{C_\tau \, h_\text{min}^2}{\varepsilon}, \Delta t \right)}\]</div>
 </div>
-<p>where <span class="math notranslate nohighlight">\(C_\text{CFL}\)</span> is the imposed CFL condition and <span class="math notranslate nohighlight">\(h_\text{min}\)</span> is the size of the smallest cell.</p>
+<p>where <span class="math notranslate nohighlight">\(C_\tau\)</span> is the imposed artificial time-step factor, <span class="math notranslate nohighlight">\(h_\text{min}\)</span> is the size of the smallest cell, and <span class="math notranslate nohighlight">\(\Delta t\)</span> is the simulation time-step.</p>
 </li>
 </ul>
 </section>

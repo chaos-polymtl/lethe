@@ -159,9 +159,9 @@ Finally, the signed distance field is transformed to a phase fraction field. Her
 .. math::
   \phi \approx
   \begin{cases}
-    1 \quad \text{if } d < -d_\mathrm{max} \\
-    0.5 \quad \text{if } d = 0\\
-    0 \quad \text{if } d > d_\mathrm{max} \\
+    1 &\quad \text{if } d < -d_\mathrm{max} \\
+    0.5 &\quad \text{if } d = 0\\
+    0 &\quad \text{if } d > d_\mathrm{max} \\
   \end{cases}
 
 In Lethe, two functions are available to achieve that: a hyperbolic tangent function or a 4th degree, piecewise polynomial. 
@@ -188,7 +188,7 @@ In Lethe, two functions are available to achieve that: a hyperbolic tangent func
 Algebraic Interface Reinitialization
 """"""""""""""""""""""""""""""""""""""""
 
-The algebraic interface reinitialization method consists of compressing and diffusing the interface in its normal direction. This is done by solving the following transient Partial Differential Equation (PDE) until steady-state is reached using a pseudo-time-stepping scheme as proposed by Olsson and coworkers (2007) [#olsson2007]_:
+The algebraic interface reinitialization method consists of compressing and diffusing the interface in its normal direction. This is done by solving the following transient Partial Differential Equation (PDE) until steady-state is reached using an artificial time-stepping scheme as proposed by Olsson and coworkers (2007) [#olsson2007]_:
 
 .. math::
 
@@ -201,7 +201,7 @@ where:
 
 - :math:`\phi_\text{reinit}` is the reinitialized phase fraction;
 
-- :math:`\tau` is the pseudo-time independent variable. It is different from the time independent variable :math:`t` of the actual simulation.
+- :math:`\tau` is the artificial time independent variable. It is different from the time independent variable :math:`t` of the actual simulation.
 
 - :math:`\mathbf{n} = \frac{\nabla \psi}{\lVert \nabla \psi \rVert}` is the normal vector of the interface with :math:`\nabla \psi` the :ref:`projected VOF phase gradient<Normal and curvature computations>`, and;
 
@@ -213,10 +213,10 @@ where:
 
 .. note::
 
-    Here, we define the cell-size as being the diameter of:
+    Here, we define the cell-size :math:`(h)` as being the diameter of:
 
-    - a disk of equivalent area in 2D, and;
-    - a sphere of equivalent volume in 3D.
+    - a disk with equivalent area in 2D, and;
+    - a sphere with equivalent volume in 3D.
 
 The equation is solved using the finite element method:
 
@@ -232,11 +232,12 @@ As the equation is non-linear, we use the `Newton-Raphson method <https://en.wik
 
 .. math::
     \begin{split}
-    \mathcal{R} = & \int_\Omega \upsilon \, \partial_\tau \phi_\text{reinit}^{n} \, \mathrm{d}\Omega \\
-                   & + \int_\Omega\upsilon
-                  \left[ \mathbf{n} \cdot \nabla \phi_\text{reinit}^{n} - \mathbf{n} \cdot \left(  2 \phi_\text{reinit}^{n} \nabla \phi_\text{reinit}^{n}\right) +(\phi_\text{reinit}^{n} -{\left(\phi_\text{reinit}^{n}\right)}^2) (\nabla \cdot \mathbf{n}) \right] \mathrm{d}\Omega \\
-                   & + \int_\Omega \nabla\upsilon \cdot \varepsilon (\nabla \phi_\text{reinit}^{n} \cdot \mathbf{n}) \mathbf{n} \, \mathrm{d} \Omega
-
+    \mathcal{R} = & \underbrace{\int_\Omega \upsilon \, \partial_\tau \phi_\text{reinit}^{n} \, \mathrm{d}\Omega}_\text{transient}
+                    - \underbrace{
+                   \int_\Omega \nabla\upsilon \cdot \left[\left(\phi_\text{reinit}^{n} - {\left(\phi_\text{reinit}^{n}\right)}^2 \right) \cdot \mathbf{n} \right] \, \mathrm{d} \Omega}_\text{compression} & \\ &
+                    + \underbrace{
+                   \int_\Omega \nabla\upsilon \cdot \varepsilon (\nabla \phi_\text{reinit}^{n} \cdot \mathbf{n}) \mathbf{n} \, \mathrm{d} \Omega}_\text{diffusion}
+                   &\qquad \forall \upsilon \in V
     \end{split}
 
 where, :math:`\phi_\text{reinit}^{n}` is the reinitialized phase fraction value of the previous Newton iteration.
@@ -251,11 +252,10 @@ where :math:`\xi_j` is the :math:`j\text{th}` interpolation function of the rein
 
 .. math::
     \begin{split}
-    \mathcal{J} = & \int_\Omega \upsilon \, \partial_\tau \xi_j \, \mathrm{d}\Omega \\
-                   & + \int_\Omega\upsilon
-                  \left[ \mathbf{n} \cdot \left( \nabla \xi_j - 2 \phi_\text{reinit}^{n} \nabla \xi_j -2 \xi_j \nabla\phi_\text{reinit}^{n} \right) + \left( \xi_j -2\phi_\text{reinit}^{n}\xi_j \right) \right] \mathrm{d}\Omega \\
-                   & + \int_\Omega \nabla\upsilon \cdot \varepsilon (\nabla \xi_j \cdot \mathbf{n}) \mathbf{n} \,\mathrm{d}\Omega
-
+    \mathcal{J} = & \underbrace{\int_\Omega \upsilon \, \partial_\tau \xi_j \, \mathrm{d}\Omega}_\text{transient}
+                    - \underbrace{\int_\Omega \nabla\upsilon \cdot (\xi_j - 2 \phi_\text{reinit}^{n} \xi_j) \mathbf{n} \,\mathrm{d}\Omega}_\text{compression}& \\
+                   & + \underbrace{\int_\Omega \nabla\upsilon \cdot \varepsilon (\nabla \xi_j \cdot \mathbf{n}) \mathbf{n} \,\mathrm{d}\Omega}_\text{diffusion}
+                   & \qquad \forall \upsilon \in V
     \end{split}
 
 and the reinitialized phase fraction is given by:
