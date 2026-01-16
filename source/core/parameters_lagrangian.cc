@@ -382,8 +382,10 @@ namespace Parameters
       else if (size_distribution_type_str == "custom")
         distribution_type.at(particle_type) = SizeDistributionType::custom;
       else
-        throw(std::runtime_error(
-          "Invalid size distribution type. Choices are <uniform|normal|custom>."));
+        AssertThrow(
+          false,
+          dealii::ExcMessage(
+            "Invalid size distribution type. Choices are <uniform|normal|custom>."));
 
       number.at(particle_type) = prm.get_integer("number of particles");
       density_particle.at(particle_type) = prm.get_double("density particles");
