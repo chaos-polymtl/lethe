@@ -4,6 +4,12 @@ All notable changes to the Lethe project will be documented in this file.
 The changelog for the previous releases of Lethe are located in the release_notes folder.
 The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
+## [Master] - 2026-01-16
+
+### Changed
+
+- MINOR This PR adds the option to declare a particle size distribution in the parameter file as volume-based for the ``normal`` and ``lognormal`` distribution. The ``custom`` distribution is the only distribution that is not supporting the ``number-based`` distribution. The will get fixed in a follow up PR. [#1875](https://github.com/chaos-polymtl/lethe/pull/1875)
+
 ## [Master] - 2026-01-13
 
 ### Changed
