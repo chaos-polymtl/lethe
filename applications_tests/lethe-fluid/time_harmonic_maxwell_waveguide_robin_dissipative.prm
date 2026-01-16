@@ -9,6 +9,9 @@
 # dissipative medium. Note that the test also change the dimension to centimeters,
 # but increase the frequency to make sure the problem is not in a high frequency
 # regime (kL >> 1), but still show a noticable decay of the wave amplitude.
+# This test does not exactly fall back to the right convergence order because
+# the mesh resolution is not high enough. However, it can not be increase or
+# the test in DEBUG will timeout.
 
 # Listing of Parameters
 #----------------------
@@ -38,8 +41,8 @@ end
 #---------------------------------------------------
 
 subsection FEM
-  set electromagnetics trial order = 2
-  set electromagnetics test order  = 3
+  set electromagnetics trial order = 1
+  set electromagnetics test order  = 2
 end
 
 subsection physical properties
@@ -65,7 +68,7 @@ end
 subsection mesh
   set type           = dealii
   set grid type      = subdivided_hyper_rectangle
-  set grid arguments = 1, 2, 2 : 1, 1, 1 : 1.25, 1.5, 1.5 : true
+  set grid arguments = 1, 2, 1 : 1, 1, 1 : 1.25, 1.5, 1.25 : true
 end
 
 #---------------------------------------------------

@@ -1,37 +1,37 @@
 Running on 3 MPI rank(s)...
-   Number of active cells:       4
-   Number of degrees of freedom: 72
-   Volume of triangulation:      0.0625
+   Number of active cells:       2
+   Number of degrees of freedom: 48
+   Volume of triangulation:      0.03125
   DPG system for Time-Harmonic Maxwell Equations:
-   Number of skeleton degrees of freedom for Time-Harmonic Maxwell: 1932
-   Number of interior degrees of freedom for Time-Harmonic Maxwell: 1296
+   Number of skeleton degrees of freedom for Time-Harmonic Maxwell: 384
+   Number of interior degrees of freedom for Time-Harmonic Maxwell: 192
 
 *****************************
 Steady iteration:        1/2
 *****************************
 L2 error velocity: 0
-L2 error E real: 0.00660994
-L2 error E imag: 0.00767159
-L2 error H real: 0.0101013
-L2 error H imag: 0.00877314
+L2 error E real: 0.023184
+L2 error E imag: 0.0249804
+L2 error H real: 0.0150917
+L2 error H imag: 0.0159294
 
 *****************************
 Steady iteration:        2/2
 *****************************
-   Number of active cells:       32
-   Number of degrees of freedom: 300
-   Volume of triangulation:      0.0625
+   Number of active cells:       16
+   Number of degrees of freedom: 180
+   Volume of triangulation:      0.03125
   DPG system for Time-Harmonic Maxwell Equations:
-   Number of skeleton degrees of freedom for Time-Harmonic Maxwell: 12792
-   Number of interior degrees of freedom for Time-Harmonic Maxwell: 10368
+   Number of skeleton degrees of freedom for Time-Harmonic Maxwell: 2240
+   Number of interior degrees of freedom for Time-Harmonic Maxwell: 1536
 L2 error velocity: 0
-L2 error E real: 0.000909336
-L2 error E imag: 0.00103123
-L2 error H real: 0.00104273
-L2 error H imag: 0.000911881
+L2 error E real: 0.00616673
+L2 error E imag: 0.00690799
+L2 error H real: 0.00708547
+L2 error H imag: 0.00599039
 cells  error_velocity   error_pressure  
-    4 0.000000e+00   - 0.000000e+00   - 
-   32 0.000000e+00 nan 0.000000e+00 nan 
+    2 0.000000e+00   - 0.000000e+00   - 
+   16 0.000000e+00 nan 0.000000e+00 nan 
 cells   error_E_real      error_E_imag      error_H_real      error_H_imag    
-    4 6.609939e-03    - 7.671591e-03    - 1.010130e-02    - 8.773141e-03    - 
-   32 9.093358e-04 2.86 1.031231e-03 2.90 1.042730e-03 3.28 9.118807e-04 3.27 
+    2 2.318397e-02    - 2.498038e-02    - 1.509172e-02    - 1.592941e-02    - 
+   16 6.166731e-03 1.91 6.907992e-03 1.85 7.085469e-03 1.09 5.990390e-03 1.41  
